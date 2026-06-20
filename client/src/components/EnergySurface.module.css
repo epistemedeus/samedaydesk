@@ -1,0 +1,40 @@
+.surface {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+/* Low-contrast lime energy bloom, off to one side */
+.glow {
+  position: absolute;
+  top: -30%;
+  right: -10%;
+  width: 70vw;
+  height: 70vw;
+  max-width: 900px;
+  max-height: 900px;
+  background:
+    radial-gradient(closest-side, color-mix(in srgb, var(--lime) 22%, transparent), transparent 70%);
+  filter: blur(40px);
+  opacity: 0.5;
+}
+.glow::after {
+  content: "";
+  position: absolute;
+  inset: 18% 22%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--lime) 30%, transparent), transparent 70%);
+  filter: blur(30px);
+}
+/* faint engineered grid */
+.grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(120% 90% at 70% 10%, #000 10%, transparent 75%);
+          mask-image: radial-gradient(120% 90% at 70% 10%, #000 10%, transparent 75%);
+  opacity: 0.6;
+}

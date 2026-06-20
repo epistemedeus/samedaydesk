@@ -1,0 +1,24 @@
+.wrap {
+  min-height: 100svh;
+  display: grid;
+  place-content: center;
+  justify-items: start;
+  gap: var(--space-s);
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding: var(--space-l) var(--space-s);
+}
+.back {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+  display: inline-flex;
+  gap: 0.5em;
+  align-items: center;
+}
+.back span { color: var(--lime); }
+.h1 { font-family: var(--font-display); font-size: var(--step-5); }
+.note { color: var(--ink-dim); max-width: 42ch; }
+.home { color: var(--lime); font-weight: 600; }
+.home:hover { text-decoration: underline; text-underline-offset: 4px; }

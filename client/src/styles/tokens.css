@@ -1,0 +1,56 @@
+/* SameDayDesk — design tokens. "Engineered Speed": dark, precise, one lime signal. */
+:root {
+  /* ── Color ── */
+  --bg:        #0a0b0d;
+  --bg-1:      #101216; /* elevated surface */
+  --bg-2:      #15181d; /* card */
+  --ink:       #f4f4f0;
+  --ink-dim:   #a7abb1;
+  --ink-faint: #6b7178;
+  --lime:      #ccff00;
+  --lime-ink:  #0a0b0d; /* text on lime */
+  --lime-soft: rgba(204, 255, 0, 0.14);
+  --lime-glow: rgba(204, 255, 0, 0.35);
+  --line:      rgba(244, 244, 240, 0.10);
+  --line-2:    rgba(244, 244, 240, 0.18);
+  --danger:    #ff5a4d;
+
+  /* ── Type families (self-hosted variable, OFL) ── */
+  --font-sans:    "Inter Variable", system-ui, -apple-system, sans-serif;
+  --font-display: "Space Grotesk Variable", "Inter Variable", sans-serif;
+  --font-mono:    "JetBrains Mono Variable", ui-monospace, "SF Mono", monospace;
+
+  /* ── Fluid type scale (Utopia-style; every max ≤ 2.5× min → WCAG 1.4.4) ── */
+  --step--2: clamp(0.69rem, 0.66rem + 0.16vw, 0.80rem);
+  --step--1: clamp(0.83rem, 0.78rem + 0.24vw, 0.95rem);
+  --step-0:  clamp(1.00rem, 0.93rem + 0.34vw, 1.13rem);
+  --step-1:  clamp(1.20rem, 1.11rem + 0.46vw, 1.50rem);
+  --step-2:  clamp(1.44rem, 1.30rem + 0.69vw, 2.00rem);
+  --step-3:  clamp(1.73rem, 1.53rem + 1.00vw, 2.66rem);
+  --step-4:  clamp(2.07rem, 1.78rem + 1.46vw, 3.55rem);
+  --step-5:  clamp(2.49rem, 2.07rem + 2.10vw, 4.74rem);
+  --step-6:  clamp(2.99rem, 2.39rem + 2.98vw, 6.31rem);
+
+  /* ── Spacing (fluid) ── */
+  --space-xs:  clamp(0.75rem, 0.69rem + 0.30vw, 0.94rem);
+  --space-s:   clamp(1.00rem, 0.91rem + 0.46vw, 1.50rem);
+  --space-m:   clamp(1.50rem, 1.30rem + 1.00vw, 2.50rem);
+  --space-l:   clamp(2.50rem, 2.13rem + 1.85vw, 4.00rem);
+  --space-xl:  clamp(4.00rem, 3.30rem + 3.50vw, 7.00rem);
+  --space-2xl: clamp(6.00rem, 4.80rem + 6.00vw, 11.0rem);
+
+  /* ── Geometry ── */
+  --maxw: 78rem;
+  --radius: 14px;
+  --radius-s: 9px;
+
+  /* ── Motion ── */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* fast-out, soft-settle */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-1: 0.18s;
+  --dur-2: 0.36s;
+  --dur-3: 0.6s;
+
+  /* ── Layout ── */
+  --nav-h: 68px;
+}

@@ -1,0 +1,33 @@
+# deps
+node_modules/
+client/node_modules/
+
+# build output
+client/dist/
+dist/
+
+# env / secrets — NEVER commit
+.env
+.env.*
+!.env.example
+*.key
+service-account*.json
+secrets/
+
+# logs
+*.log
+npm-debug.log*
+
+# editor / OS
+.DS_Store
+.vscode/
+.idea/
+
+# test/coverage
+coverage/
+playwright-report/
+test-results/
+
+# supabase local
+supabase/.temp/
+supabase/.branches/
