@@ -1,0 +1,63 @@
+.wrap {
+  min-height: 100svh;
+  max-width: 52rem;
+  margin-inline: auto;
+  padding: var(--space-l) var(--space-s) var(--space-2xl);
+}
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-xl);
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--step-1);
+}
+.mark { color: var(--lime); font-size: 0.7em; letter-spacing: -0.15em; }
+.signout {
+  font-size: var(--step--1);
+  color: var(--ink-dim);
+  padding: 0.5em 1em;
+  border: 1px solid var(--line-2);
+  border-radius: 99px;
+  transition: color 0.18s, border-color 0.18s;
+}
+.signout:hover { color: var(--ink); border-color: var(--ink); }
+
+.h1 { font-family: var(--font-display); font-size: var(--step-4); }
+.sub { color: var(--ink-dim); margin-top: var(--space-xs); }
+.ok { color: var(--lime); }
+
+.card {
+  margin-top: var(--space-l);
+  padding: var(--space-l);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-1);
+}
+.cardHead {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: var(--space-s);
+}
+.empty { color: var(--ink-dim); }
+.quick { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-m); }
+.quickItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.6em 1em;
+  border: 1px solid var(--line-2);
+  border-radius: 99px;
+  font-size: var(--step--1);
+  transition: border-color 0.18s, background 0.18s;
+}
+.quickItem:hover { border-color: var(--lime); background: var(--lime-soft); }

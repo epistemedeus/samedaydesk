@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import clsx from "clsx";
 import MagneticButton from "./MagneticButton";
+import { useAuth } from "../lib/auth";
 import styles from "./Nav.module.css";
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -18,7 +20,7 @@ export default function Nav() {
     <header className={clsx(styles.nav, scrolled && styles.scrolled)}>
       <div className={clsx("container", styles.inner)}>
         <Link to="/" className={styles.brand} aria-label="SameDayDesk — home">
-          <span className={styles.mark} aria-hidden>▸▸</span>
+          <span className={styles.mark} aria-hidden="true">▸▸</span>
           <span className={styles.word}>SameDayDesk</span>
         </Link>
 
@@ -29,8 +31,14 @@ export default function Nav() {
         </nav>
 
         <div className={styles.actions}>
-          <Link to="/login" className={styles.signin} viewTransition>Sign in</Link>
-          <MagneticButton to="/signup" variant="primary" className={styles.cta}>Get started</MagneticButton>
+          {user ? (
+            <MagneticButton to="/dashboard" variant="primary" className={styles.cta}>Your desk</MagneticButton>
+          ) : (
+            <>
+              <Link to="/login" className={styles.signin} viewTransition>Sign in</Link>
+              <MagneticButton to="/signup" variant="primary" className={styles.cta}>Get started</MagneticButton>
+            </>
+          )}
         </div>
       </div>
     </header>
