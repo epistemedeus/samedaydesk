@@ -1,0 +1,33 @@
+.frame {
+  position: fixed;
+  inset: 0;
+  z-index: 101;
+  pointer-events: none;
+}
+.mark {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+}
+.mark::before,
+.mark::after {
+  content: "";
+  position: absolute;
+  background: var(--reg);
+}
+/* horizontal hairline */
+.mark::before { left: 0; right: 0; top: 50%; height: 1px; transform: translateY(-50%); }
+/* vertical hairline */
+.mark::after { top: 0; bottom: 0; left: 50%; width: 1px; transform: translateX(-50%); }
+
+.tl { top: 16px; left: 16px; }
+.tr { top: 16px; right: 16px; }
+.bl { bottom: 16px; left: 16px; }
+.br { bottom: 16px; right: 16px; }
+
+@media (max-width: 600px) {
+  .tl, .tr { top: 12px; }
+  .bl, .br { bottom: 12px; }
+  .tl, .bl { left: 12px; }
+  .tr, .br { right: 12px; }
+}

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Maskable master: full-bleed near-black so Android's adaptive mask never clips a corner.
+       The chevron sits inside the center safe circle (radius 40%, so 30 to 70 here). -->
+  <rect width="100" height="100" fill="#0a0b0d"/>
+  <path fill="#ccff00" d="M33 35 L49 50 L33 65 Z"/>
+  <path fill="#ccff00" d="M48 35 L64 50 L48 65 Z"/>
+</svg>

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import clsx from "clsx";
 import MagneticButton from "./MagneticButton";
+import BrandMark from "./BrandMark";
+import ThemeToggle from "./ThemeToggle";
 import { useAuth } from "../lib/auth";
 import styles from "./Nav.module.css";
 
@@ -19,8 +21,8 @@ export default function Nav() {
   return (
     <header className={clsx(styles.nav, scrolled && styles.scrolled)}>
       <div className={clsx("container", styles.inner)}>
-        <Link to="/" className={styles.brand} aria-label="SameDayDesk — home">
-          <span className={styles.mark} aria-hidden="true">▸▸</span>
+        <Link to="/" className={styles.brand} aria-label="SameDayDesk home">
+          <BrandMark className={styles.mark} />
           <span className={styles.word}>SameDayDesk</span>
         </Link>
 
@@ -31,6 +33,7 @@ export default function Nav() {
         </nav>
 
         <div className={styles.actions}>
+          <ThemeToggle />
           {user ? (
             <MagneticButton to="/dashboard" variant="primary" className={styles.cta}>Your desk</MagneticButton>
           ) : (

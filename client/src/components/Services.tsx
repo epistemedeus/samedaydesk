@@ -14,7 +14,7 @@ export default function Services() {
             Clear scope. Clear price. <span className="lime">Work you can use.</span>
           </h2>
           <p className={styles.lead}>
-            Pick a job below — or send us something else entirely. Every order is same-day,
+            Pick a job below, or send us something else entirely. Every order is same-day,
             includes a free revision round, and is money-back if the first draft isn't right.
           </p>
         </header>
@@ -58,7 +58,7 @@ export default function Services() {
                       ariaLabel={`Start ${o.name} for $${o.price}`}
                       onClick={() => track("offer_selected", { offer: o.slug, price: o.price })}
                     >
-                      Start — ${o.price}
+                      Start · ${o.price}
                     </MagneticButton>
                   </article>
                 ))}

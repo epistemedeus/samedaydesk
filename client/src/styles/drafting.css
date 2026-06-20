@@ -1,0 +1,85 @@
+/*
+  Drafting Table: light-theme decorative layer.
+  Everything here is keyed under [data-theme="drafting"] so the dark brand is untouched.
+  The token re-bind in tokens.css already recolors every component to paper + graphite +
+  oxide-red. This file adds the *drafting* gestures the tokens cannot: the hairline grid
+  ground, editorial plate numbers, oversized grotesque headers, and oxide annotations.
+*/
+
+/* ── Paper ground: a graphite hairline grid, like engineering paper ───────────── */
+[data-theme="drafting"] body {
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(to right, var(--line) var(--hair), transparent var(--hair)),
+    linear-gradient(to bottom, var(--line) var(--hair), transparent var(--hair));
+  background-size: var(--grid-major) var(--grid-major);
+  background-position: calc(var(--grid-major) / -2) calc(var(--grid-major) / -2);
+}
+
+/* The bone is warm; nudge global selection + focus to oxide for cohesion (tokens cover most). */
+[data-theme="drafting"] ::selection { background: var(--reg); color: var(--lime-ink); }
+
+/* ── Typography: the Swiss move (tight tracking on big display, generous on small mono) ── */
+[data-theme="drafting"] main h2 {
+  font-size: var(--step-5);
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+}
+[data-theme="drafting"] p { text-wrap: pretty; }
+
+/* Eyebrows become editorial plate captions: "FIG. 01 / ..." with an oxide figure number. */
+[data-theme="drafting"] #main { counter-reset: fig; }
+[data-theme="drafting"] .eyebrow {
+  color: var(--ink-dim);
+  letter-spacing: 0.16em;
+}
+[data-theme="drafting"] .eyebrow::before {
+  counter-increment: fig;
+  content: "Fig. " counter(fig, decimal-leading-zero) " / ";
+  color: var(--reg);
+  font-weight: 600;
+}
+
+/* Accent words (the old lime highlights) read as oxide annotations, lightly underlined. */
+[data-theme="drafting"] .lime {
+  color: var(--reg);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--reg) 45%, transparent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+}
+
+/* Skip-link text stays legible on the oxide chip in both themes. */
+[data-theme="drafting"] .skip-link { color: var(--lime-ink); }
+
+/* A subtle paper grain, applied to the whole page once, behind content. Gated off when the
+   user asks for reduced data, and kept whisper-faint so text stays crisp. */
+[data-theme="drafting"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (prefers-reduced-data: reduce) {
+  [data-theme="drafting"] body::before { display: none; }
+}
+
+/* ── Theme-switch: kill all transitions during the swap so nothing cross-fades muddy ── */
+.theme-changing,
+.theme-changing *,
+.theme-changing *::before,
+.theme-changing *::after {
+  transition: none !important;
+  animation-duration: 0.001ms !important;
+}
+
+/* View Transition: respect reduced motion (the circular reveal becomes an instant cut). */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none !important; }
+}

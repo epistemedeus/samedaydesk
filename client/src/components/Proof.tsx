@@ -21,7 +21,7 @@ export default function Proof() {
       });
       if (out) tl.from(out, { opacity: 0, x: 24, duration: 0.7 }, 0);
       if (ts) {
-        ts.textContent = "—";
+        ts.textContent = "...";
         tl.to(ts, { duration: 1.2, scrambleText: { text: "Today", chars: "0123456789:APM ", speed: 0.4 } }, 0.5);
       }
     }, root);
@@ -58,14 +58,14 @@ export default function Proof() {
             </div>
             <p className={styles.label}>What you get back</p>
             <p className={clsx(styles.snippet, styles.after)}>
-              “Resolved 60+ daily B2B support conversations at 94% CSAT — 6 points above team average —
+              “Resolved 60+ daily B2B support conversations at 94% CSAT, 6 points above team average,
               and cut first-response time from 6h to under 2h.”
             </p>
           </div>
         </div>
 
         <p className={styles.foot}>
-          <span className="mono lime">~4 hrs</span> typical turnaround · every order reviewed by a human before it reaches you
+          <span className="mono lime">~4 hrs</span> typical turnaround
         </p>
       </div>
     </section>

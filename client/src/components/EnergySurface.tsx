@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import styles from "./EnergySurface.module.css";
-import { prefersReducedMotion } from "../motion/gsap";
+import { useTheme } from "../lib/theme";
 
 const vertex = /* glsl */ `
   attribute vec2 uv;
@@ -29,42 +29,55 @@ const fragment = /* glsl */ `
     vec2 uv = vUv;
     float aspect = uResolution.x / max(uResolution.y, 1.0);
     vec2 p = uv; p.x *= aspect;
-    float t = uTime * (0.05 + uVel * 0.30);
+
+    // Scroll velocity nudges the drift SPEED only. It never touches brightness, so a fast
+    // scroll can no longer flash the layer.
+    float t = uTime * (0.05 + uVel * 0.18);
     vec2 q = vec2(fbm(p + vec2(0.0, t)), fbm(p + vec2(5.2, 1.3 - t)));
     float f = fbm(p + 1.7 * q + vec2(t * 0.5, -t * 0.3));
     float bands = smoothstep(0.34, 0.78, f);
     vec3 lime = vec3(0.80, 1.0, 0.0);
     vec3 col = lime * bands;
     float mask = smoothstep(1.15, 0.15, distance(uv, vec2(0.80, 0.86)));
-    float a = bands * mask * (0.16 + 0.30 * uVel);
+    float a = bands * mask * (0.18 + 0.04 * uVel);
+
+    // Interleaved Gradient Noise (Jimenez): a zero-mean +/- 0.5 LSB dither that breaks up
+    // 8-bit banding under the screen blend, with no visible texture.
+    float ign = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715))));
+    float d = (ign - 0.5) / 255.0;
+    col += d;
+    a = clamp(a + d, 0.0, 1.0);
     gl_FragColor = vec4(col, a);
   }
 `;
 
 export default function EnergySurface() {
   const host = useRef<HTMLDivElement>(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
-    if (prefersReducedMotion()) return;
+    // The shader is a dark-brand artifact. Under the paper "Drafting Table" theme the hero
+    // is still, so we never spin up WebGL there (and tear it down when toggling to it).
+    if (theme === "drafting") return;
     const el = host.current;
     if (!el || typeof window === "undefined") return;
 
     let disposed = false;
     const cleanups: Array<() => void> = [];
-    let vel = 0;
+
+    // Raw, clamped scroll-velocity target. The render loop chases this with damping; the
+    // scroll handler never jams the live value, so a single fast scroll can't punch a spike.
+    let velTarget = 0;
     let lastY = window.scrollY;
     let lastT = performance.now();
-
     const onScroll = () => {
       const now = performance.now();
       const dy = Math.abs(window.scrollY - lastY);
-      const dt = Math.max(16, now - lastT);
-      vel = Math.min(1.4, Math.max(vel, (dy / dt) * 7));
+      const dtMs = Math.max(16, now - lastT);
+      velTarget = Math.min(1.0, (dy / dtMs) * 6);
       lastY = window.scrollY;
       lastT = now;
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    cleanups.push(() => window.removeEventListener("scroll", onScroll));
 
     const start = async () => {
       if (disposed) return;
@@ -72,18 +85,15 @@ export default function EnergySurface() {
       try {
         mod = await import("ogl");
       } catch {
-        return; // bundle/network issue → CSS fallback stays
+        return; // bundle/network issue: CSS fallback stays
       }
       if (disposed) return;
       const { Renderer, Program, Mesh, Triangle } = mod;
 
       let gl: import("ogl").OGLRenderingContext | undefined;
       try {
-        const renderer = new Renderer({
-          alpha: true,
-          dpr: Math.min(1.5, window.devicePixelRatio || 1),
-          powerPreference: "low-power",
-        });
+        const dpr = Math.min(1.5, Math.floor((window.devicePixelRatio || 1) * 2) / 2);
+        const renderer = new Renderer({ alpha: true, dpr, powerPreference: "low-power" });
         gl = renderer.gl;
         gl.clearColor(0, 0, 0, 0);
         const canvas = gl.canvas as HTMLCanvasElement;
@@ -108,20 +118,54 @@ export default function EnergySurface() {
 
         let raf = 0;
         let running = false;
-        const loop = (t: number) => {
-          program.uniforms.uTime.value = t * 0.001;
+        // Accumulate animation time from per-frame deltas, not the absolute rAF clock.
+        // Pausing (IntersectionObserver / hidden tab) freezes time; resuming continues from
+        // where it left off, so the field never teleports or flashes.
+        let elapsed = 0;
+        let lastFrame = 0;
+        const loop = (now: number) => {
+          if (lastFrame === 0) lastFrame = now;
+          const dt = Math.min(0.05, (now - lastFrame) * 0.001); // clamp resume/jank slip
+          lastFrame = now;
+          elapsed += dt;
+          program.uniforms.uTime.value = elapsed % 1000.0; // wrap: keep hash() in a stable range
+
+          // frame-rate-independent exponential damping (same feel at 60 or 120 Hz)
+          velTarget *= Math.exp(-3.0 * dt);
           const u = program.uniforms.uVel.value as number;
-          program.uniforms.uVel.value = u + (vel - u) * 0.06;
-          vel *= 0.92;
+          program.uniforms.uVel.value = u + (velTarget - u) * (1 - Math.exp(-6.0 * dt));
+
           renderer.render({ scene: mesh });
           raf = requestAnimationFrame(loop);
         };
-        const play = () => { if (!running) { running = true; raf = requestAnimationFrame(loop); } };
+        const play = () => { if (!running) { running = true; lastFrame = 0; raf = requestAnimationFrame(loop); } };
         const pause = () => { if (running) { running = false; cancelAnimationFrame(raf); } };
 
-        const io = new IntersectionObserver(([e]) => (e.isIntersecting ? play() : pause()), { threshold: 0 });
+        const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+        const startMotion = () => {
+          if (mq.matches) {
+            renderer.render({ scene: mesh }); // one static frame, no loop
+            return;
+          }
+          window.addEventListener("scroll", onScroll, { passive: true });
+          cleanups.push(() => window.removeEventListener("scroll", onScroll));
+          play();
+        };
+        startMotion();
+
+        const onMotionPref = () => {
+          if (mq.matches) { pause(); renderer.render({ scene: mesh }); }
+          else play();
+        };
+        mq.addEventListener("change", onMotionPref);
+        cleanups.push(() => mq.removeEventListener("change", onMotionPref));
+
+        const io = new IntersectionObserver(
+          ([e]) => (e.isIntersecting && !mq.matches ? play() : pause()),
+          { threshold: 0 },
+        );
         io.observe(el);
-        const onVis = () => (document.hidden ? pause() : play());
+        const onVis = () => (document.hidden ? pause() : (!mq.matches && play()));
         document.addEventListener("visibilitychange", onVis);
 
         cleanups.push(() => {
@@ -136,7 +180,7 @@ export default function EnergySurface() {
       }
     };
 
-    // Defer until the browser is idle (after LCP).
+    // Defer until the browser is idle (after LCP). Reduced motion is handled inside start().
     const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
     const handle = ric ? ric(start, { timeout: 1600 }) : window.setTimeout(start, 900);
 
@@ -146,13 +190,14 @@ export default function EnergySurface() {
       else window.clearTimeout(handle as number);
       cleanups.forEach((c) => c());
     };
-  }, []);
+  }, [theme]);
 
   return (
     <div className={styles.surface} aria-hidden="true">
       <div ref={host} className={styles.canvasHost} />
       <div className={styles.glow} />
       <div className={styles.grid} />
+      <div className={styles.draftMark} />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import clsx from "clsx";
+import BrandMark from "./BrandMark";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
@@ -8,8 +9,8 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={clsx("container", styles.inner)}>
         <div className={styles.brandCol}>
-          <Link to="/" className={styles.brand} aria-label="SameDayDesk — home">
-            <span className={styles.mark} aria-hidden>▸▸</span> SameDayDesk
+          <Link to="/" className={styles.brand} aria-label="SameDayDesk home">
+            <BrandMark className={styles.mark} /> SameDayDesk
           </Link>
           <p className={styles.tag}>Hand off the busywork. Get it back today.</p>
           <a className={styles.contact} href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a>
@@ -34,7 +35,7 @@ export default function Footer() {
 
       <div className={clsx("container", styles.base)}>
         <span className="mono">© {year} SameDayDesk</span>
-        <span className={styles.usco}>A registered US company · same-day, money-back guaranteed</span>
+        <span className={styles.usco}>Same-day, done-for-you desk.</span>
       </div>
     </footer>
   );

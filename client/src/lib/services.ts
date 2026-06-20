@@ -1,5 +1,5 @@
 // Config-driven service catalog. Adding a gig or whole category = one entry here.
-// The brand is "a same-day desk", not "a résumé service" — this list is meant to grow.
+// The brand is "a same-day desk", not "a résumé service". This list is meant to grow.
 export type Offer = {
   slug: string;
   name: string;
@@ -30,7 +30,7 @@ export const CATEGORIES: Category[] = [
         price: 59,
         turnaround: "Same day",
         flagship: true,
-        blurb: "A full rewrite of your résumé plus a matching LinkedIn headline & About — tuned to your target role and built to pass ATS screens.",
+        blurb: "A full rewrite of your résumé plus a matching LinkedIn headline & About, tuned to your target role and built to pass ATS screens.",
         includes: ["Full résumé rewrite", "LinkedIn headline + About", "ATS-friendly formatting", "Tailored to 1 target role", "One revision round", "Editable Doc + PDF"],
       },
       {
@@ -38,7 +38,7 @@ export const CATEGORIES: Category[] = [
         name: "Cover Letter",
         price: 39,
         turnaround: "Same day",
-        blurb: "A sharp, specific cover letter written for one job posting — matched to the company's tone. Never a template.",
+        blurb: "A sharp, specific cover letter written for one job posting, matched to the company's tone. Never a template.",
         includes: ["Tailored to one job posting", "Matched to company tone", "One revision round", "Editable Doc + PDF"],
       },
     ],
@@ -53,7 +53,7 @@ export const CATEGORIES: Category[] = [
         name: "Landing Page Copy",
         price: 69,
         turnaround: "24 hours",
-        blurb: "Conversion-focused copy for one page — headline, value proposition, body sections, and CTA — delivered ready to paste in.",
+        blurb: "Conversion-focused copy for one page: headline, value proposition, body sections, and CTA, delivered ready to paste in.",
         includes: ["Headline + subhead + value prop", "Up to 5 body sections", "Clear CTA + microcopy", "Tone matched to your brand", "One revision round"],
       },
     ],
@@ -76,11 +76,11 @@ export const CATEGORIES: Category[] = [
   },
 ];
 
-// The open-amount path — operator sends an instant Payment Link after agreeing scope.
+// The open-amount path: operator sends an instant Payment Link after agreeing scope.
 export const CUSTOM = {
   slug: "custom_quote",
   name: "Something else?",
-  blurb: "Small code fixes, spreadsheet/data cleanup, or custom writing. Send the task — you get a flat quote before any work starts.",
+  blurb: "Small code fixes, spreadsheet/data cleanup, or custom writing. Send the task, you get a flat quote before any work starts.",
 };
 
 export const ALL_OFFERS: Offer[] = CATEGORIES.flatMap((c) => c.offers);

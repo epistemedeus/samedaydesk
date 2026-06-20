@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-// Public anon/publishable key — safe in the browser. The client is created lazily via a
+// Public anon/publishable key, safe in the browser. The client is created lazily via a
 // dynamic import so supabase-js stays out of the critical landing bundle (loads post-LCP).
 const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const anon = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;

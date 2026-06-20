@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Profile picture, light: bone ground + oxide chevron with a faint registration ring,
+       the Drafting Table flavor. Use on light profile surfaces. Circular-crop safe. -->
+  <rect width="100" height="100" fill="#f4f1ea"/>
+  <circle cx="50" cy="50" r="40" fill="none" stroke="#9e3b2e" stroke-width="0.7" opacity="0.45"/>
+  <path fill="#9e3b2e" d="M31 33 L51 50 L31 67 Z"/>
+  <path fill="#9e3b2e" d="M48 33 L68 50 L48 67 Z"/>
+</svg>

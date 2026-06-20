@@ -6,18 +6,18 @@ import styles from "./HowItWorks.module.css";
 const STEPS = [
   {
     n: "01",
-    t: "Send the task — or claim a free teaser",
+    t: "Send the task, or claim a free teaser",
     d: "Tell us the role, the job posting, or the page. Attach your current file. Not sure yet? We'll rewrite a piece of it free, today, so you can judge the real quality before paying a cent.",
   },
   {
     n: "02",
-    t: "We rewrite it — same day",
-    d: "Sharp editorial judgment paired with modern AI tooling. Every deliverable is directed, edited, and quality-checked by a human before it reaches you.",
+    t: "We rewrite it, same day",
+    d: "Sharp editorial judgment on every line. Each deliverable is directed, edited, and quality-checked before it reaches you.",
   },
   {
     n: "03",
     t: "Get editable files + a free revision",
-    d: "Delivered as an editable Doc and a clean PDF, usually within hours. Not right? One free revision — and if it's still not for you, money back.",
+    d: "Delivered as an editable Doc and a clean PDF, usually within hours. Not right? One free revision, and if it's still not for you, money back.",
   },
 ];
 

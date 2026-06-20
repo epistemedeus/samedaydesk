@@ -62,7 +62,7 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
         authedFetch("/api/auth/welcome", { method: "POST" }).catch(() => {}); // best-effort
       }
       if (data.session) navigate(dest(), { replace: true });
-      else setNotice("Almost there — check your email to confirm your account.");
+      else setNotice("Almost there. Check your email to confirm your account.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {

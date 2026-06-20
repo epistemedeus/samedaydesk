@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- App-icon master: near-black rounded stamp + lime double-chevron. Universal (reads on
+       any home-screen wallpaper, light or dark). Rasterized to apple-touch / 192 / 512 / ico. -->
+  <rect width="100" height="100" rx="22" fill="#0a0b0d"/>
+  <path fill="#ccff00" d="M26 28 L49 50 L26 72 Z"/>
+  <path fill="#ccff00" d="M48 28 L71 50 L48 72 Z"/>
+</svg>

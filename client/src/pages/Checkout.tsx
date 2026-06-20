@@ -138,7 +138,7 @@ function Intake({ uid, offer }: { uid?: string; offer: string }) {
           value={details}
           onChange={(e) => setDetails(e.target.value)}
           onBlur={() => saveDraft()}
-          placeholder="e.g. Senior Customer Success role at a B2B SaaS — here's the posting: …"
+          placeholder="e.g. Senior Customer Success role at a B2B SaaS, here's the posting: …"
         />
       </label>
       <label className={styles.upload}>

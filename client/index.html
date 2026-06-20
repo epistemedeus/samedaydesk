@@ -3,37 +3,72 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="theme-color" content="#0a0b0d" />
 
-    <title>SameDayDesk — Hand off the busywork. Get it back today.</title>
+    <!-- No-FOUC: resolve the theme and paint the right ground BEFORE the React bundle (a
+         deferred module) runs. Must stay inline and synchronous. -->
+    <script>
+      (function () {
+        try {
+          var KEY = "sdd-theme"; // 'dark' | 'drafting' | 'system'
+          var BRAND_DEFAULT = "drafting"; // lead with the Drafting Table (light) look
+          var stored = localStorage.getItem(KEY);
+          var systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var theme;
+          if (stored === "dark" || stored === "drafting") theme = stored;
+          else if (stored === "system") theme = systemDark ? "dark" : "drafting";
+          else theme = BRAND_DEFAULT;
+          var root = document.documentElement;
+          root.setAttribute("data-theme", theme);
+          root.style.colorScheme = theme === "drafting" ? "light" : "dark";
+          root.style.background = theme === "drafting" ? "#F4F1EA" : "#0a0b0d";
+          var m = document.createElement("meta");
+          m.setAttribute("name", "theme-color");
+          m.setAttribute("content", theme === "drafting" ? "#F4F1EA" : "#0a0b0d");
+          document.head.appendChild(m);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "drafting");
+          document.documentElement.style.background = "#F4F1EA";
+        }
+      })();
+    </script>
+
+    <!-- Per-theme browser chrome (no-JS / system case). JS updates a non-media tag on toggle. -->
+    <meta name="theme-color" content="#0a0b0d" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F4F1EA" media="(prefers-color-scheme: light)" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <title>SameDayDesk: hand off the busywork, get it back today</title>
     <meta
       name="description"
-      content="A same-day, done-for-you desk: résumés, LinkedIn, cover letters, landing-page copy and quick fixes — rewritten by sharp humans + AI and delivered in hours. See the quality free, first. Money-back guaranteed."
+      content="A same-day, done-for-you desk for résumés, LinkedIn, cover letters, landing-page copy and quick fixes. Delivered in hours. See the quality free, first."
     />
     <link rel="canonical" href="https://samedaydesk.com/" />
 
-    <!-- Open Graph / social preview (static — works for crawlers without JS) -->
+    <!-- Open Graph / social preview (static, works for crawlers without JS) -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SameDayDesk" />
-    <meta property="og:title" content="SameDayDesk — Hand off the busywork. Get it back today." />
+    <meta property="og:title" content="SameDayDesk: hand off the busywork, get it back today" />
     <meta
       property="og:description"
-      content="Same-day, done-for-you: résumés, LinkedIn, cover letters & copy. Delivered in hours. See the quality free, first. Money-back guaranteed."
+      content="Same-day, done-for-you résumés, LinkedIn, cover letters and copy, delivered in hours. See the quality free, first."
     />
     <meta property="og:url" content="https://samedaydesk.com/" />
     <meta property="og:image" content="https://samedaydesk.com/og.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="SameDayDesk — Hand off the busywork. Get it back today." />
+    <meta name="twitter:title" content="SameDayDesk: hand off the busywork, get it back today" />
     <meta
       name="twitter:description"
-      content="Same-day, done-for-you: résumés, LinkedIn, cover letters & copy. Delivered in hours. See the quality free, first."
+      content="Same-day, done-for-you résumés, LinkedIn, cover letters and copy, delivered in hours. See the quality free, first."
     />
     <meta name="twitter:image" content="https://samedaydesk.com/og.png" />
 
-    <!-- avoid white flash before CSS loads -->
+    <!-- Fallback ground for no-JS only; the inline script above sets the live value. -->
     <style>
-      html { background: #0a0b0d; color-scheme: dark; }
+      html { background: #F4F1EA; }
     </style>
   </head>
   <body>

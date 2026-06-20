@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
 
-// Lenis smooth scroll — desktop + fine-pointer only, off under reduced-motion and on touch.
+// Lenis smooth scroll: desktop + fine-pointer only, off under reduced-motion and on touch.
 // Exposed on window for optional GSAP ScrollTrigger sync.
 export function useSmoothScroll() {
   useEffect(() => {

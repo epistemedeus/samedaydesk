@@ -10,7 +10,7 @@
 .canvas {
   position: absolute;
   inset: 0;
-  opacity: 0.6;
+  opacity: 0.8;
   mix-blend-mode: screen;
 }
 /* Low-contrast lime energy bloom, off to one side */
@@ -46,3 +46,23 @@
           mask-image: radial-gradient(120% 90% at 70% 10%, #000 10%, transparent 75%);
   opacity: 0.6;
 }
+
+/* ── Drafting Table (light) hero: the smoke is off; a single oversized registration
+      target stands in as the blueprint focal point. ── */
+.draftMark {
+  display: none;
+  position: absolute;
+  top: -6%;
+  right: -80px;
+  width: clamp(320px, 42vw, 560px);
+  aspect-ratio: 1;
+  background-color: var(--reg);
+  opacity: 0.4;
+  -webkit-mask: var(--reg-target) center / contain no-repeat;
+          mask: var(--reg-target) center / contain no-repeat;
+}
+
+[data-theme="drafting"] .canvasHost,
+[data-theme="drafting"] .glow { display: none; }
+[data-theme="drafting"] .grid { display: none; }
+[data-theme="drafting"] .draftMark { display: block; }

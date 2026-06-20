@@ -41,9 +41,8 @@ export default function Hero() {
         </h1>
 
         <p className={styles.sub} data-hero-fade>
-          A same-day desk for the work you don't have time for — résumés, LinkedIn, cover letters,
-          landing copy, quick fixes. Sharp humans <span className={styles.plus}>+</span> AI, delivered
-          in hours. See the quality <em>free</em>, first.
+          A same-day desk for the work you don't have time for: résumés, LinkedIn, cover letters,
+          landing copy, quick fixes. Sharp, specific, delivered in hours. See the quality <em>free</em>, first.
         </p>
 
         <div className={styles.ctas} data-hero-fade>
@@ -59,11 +58,6 @@ export default function Hero() {
           <MagneticButton href="#services" variant="ghost">See pricing</MagneticButton>
         </div>
 
-        <ul className={styles.trust} data-hero-fade aria-label="Why SameDayDesk">
-          <li><span className={styles.dot} aria-hidden="true" /> Money-back guarantee</li>
-          <li><span className={styles.dot} aria-hidden="true" /> Same-day turnaround</li>
-          <li><span className={styles.dot} aria-hidden="true" /> Registered US company</li>
-        </ul>
       </div>
 
       <a href="#proof" className={styles.scrollcue} aria-label="See how fast it is">

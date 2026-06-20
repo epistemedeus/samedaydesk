@@ -1,4 +1,4 @@
-/* SameDayDesk — design tokens. "Engineered Speed": dark, precise, one lime signal. */
+/* SameDayDesk design tokens. "Engineered Speed": dark, precise, one lime signal. */
 :root {
   /* ── Color ── */
   --bg:        #0a0b0d;
@@ -53,4 +53,51 @@
 
   /* ── Layout ── */
   --nav-h: 68px;
+
+  /* drafting-only tokens (no-op under dark; defined so var() never falls back to invalid) */
+  --grid: 8px;
+  --grid-major: 64px;
+  --hair: 0.75px;
+  --reg: var(--lime);
+  --reg-target: none;
+}
+
+/*
+  ── Drafting Table (light) ──────────────────────────────────────────────────
+  A deliberate counterpart to dark "Engineered Speed", not an inversion: warm-bone
+  paper, graphite hairline ink, a single scarce oxide-red annotation accent. The
+  accent re-binds the --lime "signal" slot, so every token-driven component re-skins
+  for free. Palette is WCAG-AA checked against the bone ground (#F4F1EA):
+  ink 15.4:1, ink-dim 6.9:1, oxide-red 5.97:1. Hairlines are decorative (no info).
+*/
+[data-theme="drafting"] {
+  color-scheme: light;
+
+  /* paper grounds */
+  --bg:        #f4f1ea; /* warm bone (primary)  */
+  --bg-1:      #f8f5ee; /* ivory card / elevated */
+  --bg-2:      #ece6d8; /* oat band / footer    */
+
+  /* graphite ink */
+  --ink:       #1a1a1a; /* headers + body */
+  --ink-dim:   #55524c; /* captions, mono labels */
+  --ink-faint: #8a867e; /* decorative secondary */
+
+  /* signal slot re-bound to oxide-red (scarce annotation only, never body copy) */
+  --lime:      #9e3b2e;
+  --lime-ink:  #f4f1ea;
+  --lime-soft: rgba(158, 59, 46, 0.10);
+  --lime-glow: rgba(158, 59, 46, 0.18);
+
+  /* hairlines (low-contrast on purpose) */
+  --line:      #c9c4b8;
+  --line-2:    #b4ae9f;
+  --danger:    #9e3b2e;
+
+  /* drafting decorative tokens */
+  --grid:       8px;
+  --grid-major: 56px;
+  --hair:       1px;
+  --reg:        #9e3b2e;
+  --reg-target: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23000' stroke-width='0.7'%3E%3Ccircle cx='50' cy='50' r='47'/%3E%3Ccircle cx='50' cy='50' r='31'/%3E%3Ccircle cx='50' cy='50' r='14'/%3E%3Cline x1='50' y1='1' x2='50' y2='99'/%3E%3Cline x1='1' y1='50' x2='99' y2='50'/%3E%3C/g%3E%3C/svg%3E");
 }

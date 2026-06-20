@@ -33,7 +33,7 @@ export default function Dashboard() {
         <button className={styles.signout} onClick={() => signOut()}>Sign out</button>
       </header>
 
-      {justPaid && <div className={styles.banner}>✓ Payment received — we're on it. Watch your inbox; your deliverable lands today.</div>}
+      {justPaid && <div className={styles.banner}>✓ Payment received. We're on it. Watch your inbox; your deliverable lands today.</div>}
 
       <h1 className={styles.h1}>Your desk</h1>
       <p className={styles.sub}>

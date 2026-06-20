@@ -15,7 +15,7 @@ type Props = {
 };
 
 // A button/link that drifts toward the cursor on hover (desktop, fine-pointer, motion-ok).
-// Used sparingly — the flagship CTA. No-ops on touch / keyboard / reduced-motion.
+// Used sparingly: the flagship CTA. No-ops on touch / keyboard / reduced-motion.
 export default function MagneticButton({
   children, to, href, onClick, variant = "primary", magnetic = false, className, ariaLabel,
 }: Props) {

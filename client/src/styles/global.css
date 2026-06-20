@@ -56,6 +56,10 @@ ul, ol { list-style: none; padding: 0; }
 .lime { color: var(--lime); }
 .dim { color: var(--ink-dim); }
 
+/* Brand mark (BrandMark.tsx): accent tile + knockout chevron, token-driven so it themes itself */
+.bm-tile { fill: var(--lime); }
+.bm-chev { fill: var(--bg); }
+
 /* route suspense / auth-loading placeholder */
 .route-loading { min-height: 100svh; background: var(--bg); }
 

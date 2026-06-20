@@ -1,5 +1,5 @@
 // Cookieless, privacy-light analytics. Dynamically imported so posthog-js never
-// weighs down the critical landing bundle — it loads only when a key is set.
+// weighs down the critical landing bundle, so it loads only when a key is set.
 type PH = typeof import("posthog-js").default;
 
 let ph: PH | null = null;
@@ -11,7 +11,7 @@ export function initAnalytics() {
   loading = import("posthog-js").then(({ default: posthog }) => {
     posthog.init(key, {
       api_host: (import.meta.env.VITE_POSTHOG_HOST as string) || "https://us.i.posthog.com",
-      persistence: "memory", // cookieless — no consent banner needed
+      persistence: "memory", // cookieless, no consent banner needed
       person_profiles: "identified_only",
       capture_pageview: true,
       autocapture: false,

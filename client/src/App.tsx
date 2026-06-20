@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import StubPage from "./pages/StubPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import DraftingFrame from "./components/DraftingFrame";
 import { AuthProvider } from "./lib/auth";
 import { initAnalytics } from "./lib/posthog";
 import { useSmoothScroll } from "./motion/useSmoothScroll";
@@ -20,6 +21,7 @@ export default function App() {
 
   return (
     <AuthProvider>
+      <DraftingFrame />
       <Suspense fallback={<div className="route-loading" aria-busy="true" />}>
         <Routes>
           <Route path="/" element={<Landing />} />
