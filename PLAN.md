@@ -117,4 +117,24 @@ Defaulted (noted in commits): fonts → free self-hosted variable; receipts → 
 - **Auth:** Email/Password on; **Confirm email OFF** (P3 testing) — turn ON at P7. Google OAuth + Site/redirect URLs: deferred to P5/P7. SMTP→Resend: P6.
 - **Stripe sandbox** `acct_1SAPeUPwY9LS48U1` (test keys in env). 4 Payment Links + instant-link helper seeded. Live dashboard acct is separate (`acct_1SAPeHLafhbMG1jP`) — keys come at P8.
 - **Resend:** key `samedaydesk` created (in env). ⚠️ **Resend account owner = `prophetevo@gmail.com`** (not vanbarthelemy) — in test mode sends only reach that address from `onboarding@resend.dev`. P6: verify `samedaydesk.com` in Resend → switch FROM to `contact@samedaydesk.com`, then any recipient (incl. ADMIN_EMAIL=vanbarthelemy@gmail.com) works.
-- **GitHub:** gh CLI authed as `epistemedeus`; repo push happens at P5 (Hostinger deploy). Hostinger will need the operator to approve the GitHub-app authorization.
+- **GitHub:** repo pushed → `github.com/epistemedeus/samedaydesk` (private). 8 commits.
+- **Hostinger:** Business plan; Node-app website created on temp domain **`seagreen-otter-933516.hostingersite.com`**. Remaining: Advanced → GIT → connect repo; set Install `npm install`, Build `npm run build`, Start `node server/index.js`, Node 22; add env vars; deploy; then connect `samedaydesk.com`.
+
+---
+
+## 8. Remaining work & handoff
+
+**Done & verified (committed + pushed):** P0 scaffold/Supabase, P1 landing + polish (timer, OG), P2 auth, P3 email, P4 payments (Element + webhook + fulfillment + 4 Payment Links), Google sign-in *app code*.
+
+**Needs an operator decision / action:**
+1. **Resend domain** — free plan = 1 domain, already used by `info.neomorphic.io` on the `prophetevo@gmail.com` account. To send `contact@samedaydesk.com` to real recipients, either **(a)** create a *separate free Resend account* for SameDayDesk (new account = fresh 1-domain slot; I can't create accounts) and give me its API key, or **(b)** upgrade that account to Pro ($20/mo). Recommend (a). Then I add the DNS records + switch `RESEND_FROM_EMAIL`.
+2. **Google OAuth client** — app code is done. Need a Google Cloud OAuth client (GCP project `samedaydesk` exists via the old Firebase). Redirect URI: `https://arvmcttdegqwiwdaembr.supabase.co/auth/v1/callback`. Then enable Google in Supabase (Auth → Providers) with the client ID/secret. I can drive this if GCP console is logged in.
+3. **Stripe live keys** (P8) — operator provides.
+
+**I can finish autonomously (next):**
+- Hostinger: connect GitHub in Advanced→GIT, set build/start, env vars, deploy to temp domain, smoke-test.
+- Payment-Link UI test (hosted checkout) via claude-in-chrome computer-typing.
+- P7: flip Supabase email-confirm on + enforce `requireVerifiedEmail` (do last).
+- Connect `samedaydesk.com` to the Hostinger site + DNS (MX/SPF/DKIM/DMARC reconciliation per synthesis §3) + mailbox `contact@` + forwarder→vanbarthelemy@gmail.com + Gmail send-as.
+
+**Hostinger env vars to set** (from local `.env` / `client/.env`): `NODE_ENV=production`, `PUBLIC_URL=https://samedaydesk.com`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_BUCKET=intake-uploads`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (from the prod dashboard webhook), `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `ADMIN_EMAIL`, plus build-time `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_STRIPE_PUBLISHABLE_KEY`, `VITE_SITE_URL`, (`VITE_POSTHOG_KEY` optional). Do NOT set `PORT`.
