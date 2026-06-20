@@ -30,7 +30,7 @@ export default function HowItWorks() {
           <h2 className={styles.title}>Three steps. <span className="lime">No friction.</span></h2>
         </header>
 
-        <ol className={styles.steps}>
+        <ol className={styles.steps} data-reveal data-reveal-stagger>
           {STEPS.map((s) => (
             <li key={s.n} className={styles.step}>
               <span className={clsx("mono", styles.num)}>{s.n}</span>

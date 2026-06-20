@@ -18,14 +18,7 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: false,
-    // Keep the initial JS lean; heavy/deferred libs split out so they load after the LCP.
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          gsap: ["gsap"],
-          webgl: ["ogl"],
-        },
-      },
-    },
+    // OGL is dynamically imported (its own chunk, loaded after LCP). GSAP is split by
+    // route/usage automatically. Keep the config minimal so types stay clean.
   },
 });

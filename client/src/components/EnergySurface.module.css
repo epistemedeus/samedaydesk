@@ -5,6 +5,14 @@
   pointer-events: none;
   z-index: 0;
 }
+/* WebGL flow-field canvas (deferred). Layered with the CSS glow via screen blend. */
+.canvasHost { position: absolute; inset: 0; }
+.canvas {
+  position: absolute;
+  inset: 0;
+  opacity: 0.6;
+  mix-blend-mode: screen;
+}
 /* Low-contrast lime energy bloom, off to one side */
 .glow {
   position: absolute;

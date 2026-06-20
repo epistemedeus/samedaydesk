@@ -5,8 +5,10 @@ import Services from "../components/Services";
 import HowItWorks from "../components/HowItWorks";
 import Guarantee from "../components/Guarantee";
 import Footer from "../components/Footer";
+import { useScrollReveal } from "../motion/useScrollReveal";
 
 export default function Landing() {
+  useScrollReveal();
   return (
     <>
       <a href="#main" className="skip-link">Skip to content</a>

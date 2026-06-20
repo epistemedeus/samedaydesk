@@ -4,7 +4,7 @@ export default function Guarantee() {
   return (
     <section id="guarantee" className={styles.section}>
       <div className="container">
-        <div className={styles.card}>
+        <div className={styles.card} data-reveal>
           <p className="eyebrow">The guarantee</p>
           <h2 className={styles.title}>
             If you're not happy with the first draft, <span className="lime">you don't pay.</span>

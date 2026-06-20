@@ -8,14 +8,14 @@ export default function Proof() {
   return (
     <section id="proof" className={styles.section} data-proof>
       <div className="container">
-        <header className={styles.head}>
+        <header className={styles.head} data-reveal>
           <p className="eyebrow">The same-day promise, made literal</p>
           <h2 className={styles.title}>
             You send it in the morning. <span className="lime">It's done by tonight.</span>
           </h2>
         </header>
 
-        <div className={styles.ticket}>
+        <div className={styles.ticket} data-reveal>
           <div className={styles.col} data-step="in">
             <div className={styles.stamp}><span className={styles.dotMuted} /> Received · 9:14 AM</div>
             <p className={styles.label}>What you send</p>

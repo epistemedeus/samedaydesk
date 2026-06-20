@@ -8,7 +8,7 @@ export default function Services() {
   return (
     <section id="services" className={styles.section}>
       <div className="container">
-        <header className={styles.head}>
+        <header className={styles.head} data-reveal>
           <p className="eyebrow">Pricing · flat fees</p>
           <h2 className={styles.title}>
             Clear scope. Clear price. <span className="lime">Work you can use.</span>
@@ -27,7 +27,7 @@ export default function Services() {
                 <span className={styles.catTag}>{cat.tagline}</span>
               </div>
 
-              <div className={styles.cards}>
+              <div className={styles.cards} data-reveal data-reveal-stagger>
                 {cat.offers.map((o) => (
                   <article key={o.slug} className={clsx(styles.card, o.flagship && styles.flagship)}>
                     {o.flagship && <span className={clsx(styles.badge, styles.badgeLime)}>Most popular</span>}
