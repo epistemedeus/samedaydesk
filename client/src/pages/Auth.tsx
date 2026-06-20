@@ -1,6 +1,6 @@
 import { useState, useEffect, type FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { getSupabase, isAuthConfigured } from "../lib/supabase";
+import { getSupabase, isAuthConfigured, authedFetch } from "../lib/supabase";
 import { useAuth } from "../lib/auth";
 import { ALL_OFFERS } from "../lib/services";
 import { track } from "../lib/posthog";
@@ -41,6 +41,9 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
           : await sb.auth.signInWithPassword({ email, password });
       if (error) throw error;
       track(mode === "signup" ? "signup_completed" : "login", { offer: offerSlug });
+      if (mode === "signup" && data.session) {
+        authedFetch("/api/auth/welcome", { method: "POST" }).catch(() => {}); // best-effort
+      }
       if (data.session) navigate(dest(), { replace: true });
       else setNotice("Almost there — check your email to confirm your account.");
     } catch (err) {

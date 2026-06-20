@@ -18,6 +18,23 @@ export async function sendReceipt({ to, label, amount, orderId }) {
   }
 }
 
+export async function sendWelcome({ to }) {
+  if (!isEmailConfigured() || !to) return { skipped: true };
+  try {
+    const { data, error } = await resend.emails.send({
+      from: FROM,
+      to,
+      subject: "Welcome to SameDayDesk",
+      html: welcomeHtml(),
+    });
+    if (error) { console.error("[notify] welcome", error.message); return { error: error.message }; }
+    return { id: data?.id };
+  } catch (e) {
+    console.error("[notify] welcome failed", e?.message);
+    return { error: e?.message };
+  }
+}
+
 export async function notifyAdmin(subject, html) {
   const admin = process.env.ADMIN_EMAIL;
   if (!isEmailConfigured() || !admin) return;
@@ -26,6 +43,20 @@ export async function notifyAdmin(subject, html) {
   } catch (e) {
     console.error("[notify] admin failed", e?.message);
   }
+}
+
+function welcomeHtml() {
+  return `
+  <div style="font-family:Inter,Arial,sans-serif;max-width:480px;margin:auto;padding:28px;color:#1a1a1a">
+    <h1 style="font-size:18px;margin:0 0 8px">Welcome to SameDayDesk 👋</h1>
+    <p style="color:#555">You're all set. Send us a task — a résumé, a cover letter, landing-page copy, or
+    something custom — and we'll turn it around <strong>today</strong>.</p>
+    <p style="color:#555">Not sure yet? Ask for a <strong>free teaser</strong> first: we'll rewrite a piece
+    of your résumé free so you can judge the quality before paying a cent.</p>
+    <p style="margin-top:16px"><a href="https://samedaydesk.com/dashboard"
+      style="background:#0a0b0d;color:#ccff00;padding:10px 18px;border-radius:99px;text-decoration:none;font-weight:600">Go to your desk →</a></p>
+    <p style="color:#888;font-size:12px;margin-top:20px">Same-day, money-back guaranteed. Just reply to this email any time.</p>
+  </div>`;
 }
 
 function receiptHtml({ label, amount, orderId }) {
