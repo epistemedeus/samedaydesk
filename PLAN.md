@@ -115,5 +115,6 @@ Defaulted (noted in commits): fonts → free self-hosted variable; receipts → 
 - **Supabase project ref:** `arvmcttdegqwiwdaembr` · URL `https://arvmcttdegqwiwdaembr.supabase.co` · new-format keys (`sb_publishable_…` client, `sb_secret_…` server, asymmetric JWT → JWKS verify). Keys in gitignored `.env` / `client/.env`.
 - **Schema applied** (`supabase/migrations/0001_init.sql`): `profiles` (+ new-user trigger), `orders`, `drafts`, `email_suppressions`; default-deny RLS (owner-select; server-only writes); private bucket `intake-uploads` (10MB, per-user folder RLS `{uid}/…`).
 - **Auth:** Email/Password on; **Confirm email OFF** (P3 testing) — turn ON at P7. Google OAuth + Site/redirect URLs: deferred to P5/P7. SMTP→Resend: P6.
-- **Stripe sandbox** `acct_1SAPeUPwY9LS48U1` (test keys in env). Live dashboard acct is separate (`acct_1SAPeHLafhbMG1jP`) — keys come at P8.
-- **GitHub:** `epistemedeus`; repo push deferred to P5 (Hostinger deploy).
+- **Stripe sandbox** `acct_1SAPeUPwY9LS48U1` (test keys in env). 4 Payment Links + instant-link helper seeded. Live dashboard acct is separate (`acct_1SAPeHLafhbMG1jP`) — keys come at P8.
+- **Resend:** key `samedaydesk` created (in env). ⚠️ **Resend account owner = `prophetevo@gmail.com`** (not vanbarthelemy) — in test mode sends only reach that address from `onboarding@resend.dev`. P6: verify `samedaydesk.com` in Resend → switch FROM to `contact@samedaydesk.com`, then any recipient (incl. ADMIN_EMAIL=vanbarthelemy@gmail.com) works.
+- **GitHub:** gh CLI authed as `epistemedeus`; repo push happens at P5 (Hostinger deploy). Hostinger will need the operator to approve the GitHub-app authorization.

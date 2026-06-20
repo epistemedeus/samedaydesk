@@ -1,12 +1,35 @@
+import { useRef, useLayoutEffect } from "react";
 import clsx from "clsx";
+import { setupGsap, gsap, prefersReducedMotion } from "../motion/gsap";
 import styles from "./Proof.module.css";
 
 // Proof-of-speed: the same-day promise made literal. A "job ticket" that travels from
-// received → rewritten → delivered, all within one day. Enhanced into a scroll-pinned
-// sequence with a ScrambleText timestamp in a later pass (data-* hooks are in place).
+// received → rewritten → delivered. On scroll-in, the connector runs, the rewritten
+// line reveals, and the delivery timestamp ScrambleText-races to "Today".
 export default function Proof() {
+  const root = useRef<HTMLElement>(null);
+
+  useLayoutEffect(() => {
+    if (prefersReducedMotion() || !root.current) return;
+    setupGsap();
+    const ctx = gsap.context(() => {
+      const ts = root.current!.querySelector<HTMLElement>("[data-timestamp]");
+      const out = root.current!.querySelector<HTMLElement>("[data-step='out']");
+      const tl = gsap.timeline({
+        defaults: { ease: "power3.out" },
+        scrollTrigger: { trigger: root.current!, start: "top 70%", once: true },
+      });
+      if (out) tl.from(out, { opacity: 0, x: 24, duration: 0.7 }, 0);
+      if (ts) {
+        ts.textContent = "—";
+        tl.to(ts, { duration: 1.2, scrambleText: { text: "Today", chars: "0123456789:APM ", speed: 0.4 } }, 0.5);
+      }
+    }, root);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="proof" className={styles.section} data-proof>
+    <section id="proof" className={styles.section} data-proof ref={root}>
       <div className="container">
         <header className={styles.head} data-reveal>
           <p className="eyebrow">The same-day promise, made literal</p>
