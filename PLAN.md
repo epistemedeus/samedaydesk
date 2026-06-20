@@ -107,3 +107,13 @@ Accounts confirmed logged-in & ready: **Hostinger** (Business plan), **Supabase*
 - **Scope:** ✅ design **extensible** for future gigs (config-driven services), not boxed into current micro-deliverables.
 
 Defaulted (noted in commits): fonts → free self-hosted variable; receipts → Stripe receipt + our order-confirmation email; analytics → cookieless PostHog; verification → Supabase native OTP (not custom hash); DMARC ramp none→quarantine→reject.
+
+---
+
+## 7. Live config (filled during build)
+
+- **Supabase project ref:** `arvmcttdegqwiwdaembr` · URL `https://arvmcttdegqwiwdaembr.supabase.co` · new-format keys (`sb_publishable_…` client, `sb_secret_…` server, asymmetric JWT → JWKS verify). Keys in gitignored `.env` / `client/.env`.
+- **Schema applied** (`supabase/migrations/0001_init.sql`): `profiles` (+ new-user trigger), `orders`, `drafts`, `email_suppressions`; default-deny RLS (owner-select; server-only writes); private bucket `intake-uploads` (10MB, per-user folder RLS `{uid}/…`).
+- **Auth:** Email/Password on; **Confirm email OFF** (P3 testing) — turn ON at P7. Google OAuth + Site/redirect URLs: deferred to P5/P7. SMTP→Resend: P6.
+- **Stripe sandbox** `acct_1SAPeUPwY9LS48U1` (test keys in env). Live dashboard acct is separate (`acct_1SAPeHLafhbMG1jP`) — keys come at P8.
+- **GitHub:** `epistemedeus`; repo push deferred to P5 (Hostinger deploy).
