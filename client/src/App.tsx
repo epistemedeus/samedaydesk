@@ -10,6 +10,7 @@ import { useSmoothScroll } from "./motion/useSmoothScroll";
 
 const Auth = lazy(() => import("./pages/Auth"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Checkout = lazy(() => import("./pages/Checkout"));
 
 export default function App() {
   useEffect(() => {
@@ -25,7 +26,7 @@ export default function App() {
           <Route path="/login" element={<Auth mode="login" />} />
           <Route path="/signup" element={<Auth mode="signup" />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/checkout" element={<ProtectedRoute><StubPage title="Checkout" note="Coming with payments." /></ProtectedRoute>} />
+          <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
           <Route path="/terms" element={<StubPage title="Terms of Service" note="Legal copy coming soon." />} />
           <Route path="/privacy" element={<StubPage title="Privacy Policy" note="Legal copy coming soon." />} />
           <Route path="*" element={<StubPage title="Not found" note="That page doesn't exist." />} />
