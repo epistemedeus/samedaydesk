@@ -91,4 +91,15 @@ mkdirSync("brand/explore", { recursive: true });
 for (const [name, svg] of Object.entries(variants)) {
   writeFileSync(`brand/explore/${name}.svg`, svg);
 }
-console.log("wrote", Object.keys(variants).length, "variants:", Object.keys(variants).join(", "));
+
+// Wide cover / banner lockup (3:1) to pair with the chosen profile mark. Square canvas with
+// the content as a centered band, so a centered 3:1 crop after rasterizing lands exactly.
+const cover = `<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1500" viewBox="0 -500 1500 1500"><defs>${FONTS}</defs>
+  <rect x="0" y="-500" width="1500" height="1500" fill="${RED}"/>
+  ${arrows(292, 250, 4.5, WHITE)}
+  <text x="438" y="304" font-family="SG" font-weight="600" font-size="150" letter-spacing="-4" fill="${WHITE}">samedaydesk</text>
+</svg>`;
+mkdirSync("brand/export", { recursive: true });
+writeFileSync("brand/export/cover-red.svg", cover);
+
+console.log("wrote", Object.keys(variants).length, "variants +", "cover-red");

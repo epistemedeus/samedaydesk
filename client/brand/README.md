@@ -15,7 +15,15 @@ The browser-tab favicon is `client/public/favicon.svg` (adapts to the browser's 
 
 ## Profile pictures (ready to upload)
 
-In `export/`:
+Chosen profile mark: the "arrow-forward" concept (red ground, white double-chevron, spaced
+wordmark), explored as `explore/v5-arrow.svg`. Final exports in `export/`:
+
+- `profile-v5-512.png`, `profile-v5-400.png` : the square avatar.
+- `cover-red-1500x500.png` : a wide red lockup (arrow + samedaydesk) for cover / banner images.
+
+The six explored concepts live in `explore/` (run `node brand/make-profile.mjs` to regenerate).
+
+Earlier neutral variants also in `export/`:
 
 - `profile-dark-512.png`, `profile-dark-400.png`
 - `profile-light-512.png`, `profile-light-400.png`

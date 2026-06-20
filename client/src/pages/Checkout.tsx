@@ -1,32 +1,62 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, useMemo, type FormEvent } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import type { Appearance } from "@stripe/stripe-js";
 import { getStripe } from "../lib/stripe";
 import { getSupabase, authedFetch } from "../lib/supabase";
 import { useAuth } from "../lib/auth";
+import { useTheme, type Theme } from "../lib/theme";
 import { ALL_OFFERS } from "../lib/services";
 import { track } from "../lib/posthog";
 import styles from "./Checkout.module.css";
 
-const appearance: Appearance = {
-  theme: "night",
-  variables: {
-    colorPrimary: "#ccff00",
-    colorBackground: "#0f1116",
-    colorText: "#f4f4f0",
-    colorDanger: "#ff5a4d",
-    fontFamily: "Inter, system-ui, sans-serif",
-    borderRadius: "9px",
-    spacingUnit: "4px",
-  },
-};
+// The Stripe Payment Element renders in its own iframe, so it can't read our CSS tokens.
+// We hand it an appearance that matches the active theme: the dark "Engineered Speed" night
+// look, or the light "Drafting Table" paper look (oxide accent, hairline borders, graphite ink).
+function appearanceFor(theme: Theme): Appearance {
+  if (theme === "drafting") {
+    return {
+      theme: "flat",
+      variables: {
+        colorPrimary: "#9e3b2e",
+        colorBackground: "#f8f5ee",
+        colorText: "#1a1a1a",
+        colorTextSecondary: "#55524c",
+        colorDanger: "#9e3b2e",
+        fontFamily: "Inter, system-ui, sans-serif",
+        borderRadius: "9px",
+        spacingUnit: "4px",
+      },
+      rules: {
+        ".Tab, .Input, .Block, .CheckboxInput, .CodeInput": { border: "1px solid #c9c4b8" },
+        ".Tab:hover": { borderColor: "#b4ae9f" },
+        ".Tab--selected, .Tab--selected:focus": { borderColor: "#9e3b2e", boxShadow: "0 0 0 1px #9e3b2e" },
+        ".Label": { color: "#55524c" },
+        ".Input:focus": { borderColor: "#9e3b2e", boxShadow: "0 0 0 1px #9e3b2e" },
+      },
+    };
+  }
+  return {
+    theme: "night",
+    variables: {
+      colorPrimary: "#ccff00",
+      colorBackground: "#0f1116",
+      colorText: "#f4f4f0",
+      colorDanger: "#ff5a4d",
+      fontFamily: "Inter, system-ui, sans-serif",
+      borderRadius: "9px",
+      spacingUnit: "4px",
+    },
+  };
+}
 
 export default function Checkout() {
   const [params] = useSearchParams();
   const slug = params.get("offer") || "resume_linkedin";
   const offer = ALL_OFFERS.find((o) => o.slug === slug) || ALL_OFFERS[0];
   const { user } = useAuth();
+  const { theme } = useTheme();
+  const appearance = useMemo(() => appearanceFor(theme), [theme]);
 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
