@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireAuth } from "../middleware/auth.js";
+import { requireAuth, requireVerifiedEmail } from "../middleware/auth.js";
 import { stripe, isStripeConfigured } from "../lib/stripe.js";
 import { getOffer, CURRENCY } from "../pricing.js";
 import { fulfillFromIntent } from "../lib/fulfill.js";
@@ -8,7 +8,7 @@ const router = Router();
 
 // Server-authoritative PaymentIntent. The client sends an offer SLUG only — the amount is
 // computed here and stamped into metadata, which fulfillment reads back (never the client).
-router.post("/create-payment-intent", requireAuth, async (req, res) => {
+router.post("/create-payment-intent", requireAuth, requireVerifiedEmail, async (req, res) => {
   if (!isStripeConfigured()) return res.status(503).json({ error: "Payments not configured" });
   const slug = req.body?.offer;
   const uploadPath = typeof req.body?.upload_path === "string" ? req.body.upload_path : "";
@@ -38,7 +38,7 @@ router.post("/create-payment-intent", requireAuth, async (req, res) => {
 });
 
 // Verify-on-return (webhook backup). Both paths run the same idempotent fulfill().
-router.post("/verify", requireAuth, async (req, res) => {
+router.post("/verify", requireAuth, requireVerifiedEmail, async (req, res) => {
   if (!isStripeConfigured()) return res.status(503).json({ error: "Payments not configured" });
   const id = req.body?.paymentIntentId;
   if (!id) return res.status(400).json({ error: "Missing paymentIntentId" });
