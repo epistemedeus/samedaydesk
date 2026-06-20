@@ -2,6 +2,10 @@
 // never break the user's request or fulfillment. No-ops until Resend is configured (P3).
 import { resend, isEmailConfigured, FROM } from "./resend.js";
 
+// Transactional mail sends from the mail.samedaydesk.com subdomain (protects the root
+// domain's reputation); replies route to the human-monitored contact@ inbox.
+const REPLY_TO = process.env.RESEND_REPLY_TO || "contact@samedaydesk.com";
+
 const dollars = (cents) => `$${(Number(cents) / 100).toFixed(2)}`;
 
 export async function sendReceipt({ to, label, amount, orderId }) {
@@ -9,6 +13,7 @@ export async function sendReceipt({ to, label, amount, orderId }) {
   try {
     await resend.emails.send({
       from: FROM,
+      replyTo: REPLY_TO,
       to,
       subject: `Your SameDayDesk order — ${label}`,
       html: receiptHtml({ label, amount, orderId }),
@@ -23,6 +28,7 @@ export async function sendWelcome({ to }) {
   try {
     const { data, error } = await resend.emails.send({
       from: FROM,
+      replyTo: REPLY_TO,
       to,
       subject: "Welcome to SameDayDesk",
       html: welcomeHtml(),
@@ -39,7 +45,7 @@ export async function notifyAdmin(subject, html) {
   const admin = process.env.ADMIN_EMAIL;
   if (!isEmailConfigured() || !admin) return;
   try {
-    await resend.emails.send({ from: FROM, to: admin, subject, html });
+    await resend.emails.send({ from: FROM, replyTo: REPLY_TO, to: admin, subject, html });
   } catch (e) {
     console.error("[notify] admin failed", e?.message);
   }
