@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How to get your local business recommended by ChatGPT & AI search (2026)</title>
+<meta name="description" content="A practical guide for local service businesses (dentists, lawyers, salons, contractors) to get recommended by AI assistants like ChatGPT, Perplexity, and Google AI: LocalBusiness structured data, AI-crawler access, and the fixes that get you named. Free checker included." />
+<link rel="canonical" href="https://samedaydesk.com/guides/local-business-ai-search.html" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="How to get your local business recommended by ChatGPT & AI search (2026)" />
+<meta property="og:description" content="The checklist to make your local business visible to AI assistants, plus a free checker." />
+<meta property="og:url" content="https://samedaydesk.com/guides/local-business-ai-search.html" />
+<meta property="og:image" content="https://samedaydesk.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<style>
+  :root{--bg:#f4f1ea;--card:#f8f5ee;--ink:#1a1a1a;--dim:#55524c;--line:#c9c4b8;--oxide:#9e3b2e}
+  *{box-sizing:border-box}html{background:var(--bg)}
+  body{margin:0;color:var(--ink);background:var(--bg);font:17px/1.65 Inter,system-ui,-apple-system,sans-serif}
+  .wrap{max-width:48rem;margin:0 auto;padding:3rem 1.25rem 5rem}
+  a{color:var(--oxide)}
+  .eyebrow{font:600 12px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--oxide);margin:0 0 1rem}
+  h1{font-size:clamp(1.8rem,1.3rem+2.2vw,2.7rem);line-height:1.1;letter-spacing:-0.02em;margin:.2em 0}
+  h2{font-size:1.4rem;margin:2.2rem 0 .5rem}
+  .lead{font-size:1.18rem;color:var(--dim)}
+  code{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:.1rem .4rem;font-size:.9em}
+  pre{background:#15181d;color:#e8e8e3;border-radius:10px;padding:1rem;overflow:auto;font-size:.82rem;line-height:1.5}
+  pre code{background:none;border:none;color:inherit;padding:0}
+  .tip{border-left:4px solid var(--oxide);background:var(--card);padding:.8rem 1rem;border-radius:0 8px 8px 0;margin:1rem 0}
+  .cta{background:#15181d;color:#f4f4f0;border-radius:14px;padding:1.6rem 1.5rem;margin:2.2rem 0}
+  .cta h2{margin:0 0 .4rem;color:#fff}
+  .cta a.btn{display:inline-block;margin:.5rem .5rem 0 0;background:#ccff00;color:#0a0b0d;font-weight:700;text-decoration:none;padding:.7rem 1.2rem;border-radius:9px}
+  .cta a.btn2{display:inline-block;margin:.5rem 0 0;color:#ccff00;border:1px solid #444;text-decoration:none;padding:.7rem 1.2rem;border-radius:9px}
+  .muted{color:var(--dim);font-size:.9rem}
+  footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--line);color:var(--dim);font-size:.9rem}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"Article","headline":"How to get your local business recommended by ChatGPT & AI search (2026)","datePublished":"2026-06-23","dateModified":"2026-06-23","author":{"@type":"Organization","name":"SameDayDesk"},"publisher":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"mainEntityOfPage":"https://samedaydesk.com/guides/local-business-ai-search.html"},
+ {"@type":"FAQPage","mainEntity":[
+   {"@type":"Question","name":"Do people use ChatGPT to find local businesses?","acceptedAnswer":{"@type":"Answer","text":"Increasingly, yes. People ask AI assistants for recommendations like 'best dentist near me' or 'a good family lawyer in Dallas.' To be named, your site must be crawlable by AI bots and carry LocalBusiness structured data the assistant can read."}},
+   {"@type":"Question","name":"What's the most common AI-search gap on local business sites?","acceptedAnswer":{"@type":"Answer","text":"Missing LocalBusiness JSON-LD (name, address, phone, hours, service area) and, on some sites, robots.txt rules that block AI crawlers. Both make a business invisible to AI assistants even if it ranks on Google Maps."}},
+   {"@type":"Question","name":"How do I check my local business site?","acceptedAnswer":{"@type":"Answer","text":"Scan it free at samedaydesk.com/scan?url=yoursite.com or use the checker at samedaydesk.com/tools/ai-readiness"}}
+ ]}
+]}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">SameDayDesk · Guide · 2026</p>
+  <h1>How to get your local business recommended by ChatGPT & AI search</h1>
+  <p class="lead">More people are asking AI assistants "who's a good dentist / lawyer / contractor near me?" To be the business the AI names, your website has to be readable by AI crawlers and carry the right structured data. Here's the checklist for local service businesses.</p>
+
+  <p><a href="https://samedaydesk.com/tools/ai-readiness"><strong>Check your site free first</strong></a> to see what you're missing.</p>
+
+  <div class="tip">Honest note: for local businesses, Google Business Profile and reviews still matter most for "near me" searches. AI-search readiness is the fast-growing <em>additional</em> channel, and the fixes below are cheap and one-time.</div>
+
+  <h2>1. Make sure AI crawlers can read your site</h2>
+  <p>Check that <code>GPTBot</code>, <code>PerplexityBot</code>, <code>ClaudeBot</code>, and <code>Google-Extended</code> aren't blocked in your <code>robots.txt</code>. Many small-business sites built on template platforms or with security plugins block them by accident.</p>
+
+  <h2>2. Add LocalBusiness structured data</h2>
+  <p>This is the single biggest gap we see on local sites. It tells AI assistants exactly who you are, what you do, where, and when you're open. Add this to your homepage <code>&lt;head&gt;</code>:</p>
+  <pre><code>{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Your Business",
+  "telephone": "+1-555-555-5555",
+  "address": { "@type": "PostalAddress",
+    "streetAddress": "123 Main St", "addressLocality": "Dallas",
+    "addressRegion": "TX", "postalCode": "75201" },
+  "openingHours": "Mo-Fr 09:00-17:00",
+  "areaServed": "Dallas, TX"
+}</code></pre>
+
+  <h2>3. Add FAQ schema for the questions people ask</h2>
+  <p>"Do you take walk-ins? What insurance do you accept? What are your prices?" Put these as <code>FAQPage</code> schema — it's exactly the Q&A format AI assistants quote. <a href="https://samedaydesk.com/tools/schema-generator.html">Generate it free here</a>.</p>
+
+  <h2>4. State your services and area plainly in your copy</h2>
+  <p>AI engines quote concrete text. Say what you do, where you serve, and what makes you different in plain words near the top of the page, not buried in marketing language.</p>
+
+  <h2>5. Publish a sitemap and submit it to Bing</h2>
+  <p>Submit your <code>/sitemap.xml</code> in <a href="https://www.bing.com/webmasters/about">Bing Webmaster Tools</a>. ChatGPT Search reads the Bing index, so this is a direct line to ChatGPT visibility.</p>
+
+  <div class="cta">
+    <h2>Want it done for your business today?</h2>
+    <p>Run the free check, then let us handle the technical part. The <strong>Fix Pack ($39)</strong> gives you LocalBusiness + FAQ JSON-LD, an AI-crawler-friendly robots.txt, a sitemap, and clean title/meta/Open Graph tags built for your exact site, delivered same day. No tech skills needed.</p>
+    <a class="btn" href="https://samedaydesk.com/tools/ai-readiness">Check my site free →</a>
+    <a class="btn" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · $39</a>
+  </div>
+
+  <p class="muted">See also: <a href="https://samedaydesk.com/guides/get-cited-by-ai-search.html">the full AI-search checklist</a> · <a href="https://samedaydesk.com/guides/shopify-ai-search.html">for Shopify stores</a>.</p>
+  <footer><p>By <a href="https://samedaydesk.com/">SameDayDesk</a>, a same-day desk for data, code, AI builds and copy.</p></footer>
+</div>
+</body>
+</html>
