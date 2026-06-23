@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Free XML Sitemap Generator — paste your URLs, get sitemap.xml — SameDayDesk</title>
+<meta name="description" content="Paste a list of page URLs and instantly get a valid sitemap.xml (with optional lastmod, changefreq, priority) so Google, Bing, and AI search engines can find all your pages. Free, no signup." />
+<link rel="canonical" href="https://samedaydesk.com/tools/sitemap-generator.html" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Free XML Sitemap Generator" />
+<meta property="og:description" content="Paste your URLs, get a valid sitemap.xml. Free, no signup, instant." />
+<meta property="og:url" content="https://samedaydesk.com/tools/sitemap-generator.html" />
+<meta property="og:image" content="https://samedaydesk.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"What is a sitemap.xml and why do I need one?","acceptedAnswer":{"@type":"Answer","text":"sitemap.xml is a file at the root of your site that lists your pages so search engines and AI crawlers can discover and index them efficiently. It helps Google, Bing (which feeds ChatGPT Search), and Perplexity find every page rather than relying on link-following alone."}},
+{"@type":"Question","name":"Where do I put the sitemap and how do search engines find it?","acceptedAnswer":{"@type":"Answer","text":"Host it at https://yourdomain.com/sitemap.xml and add a line to your robots.txt: Sitemap: https://yourdomain.com/sitemap.xml. You can also submit it in Google Search Console and Bing Webmaster Tools."}},
+{"@type":"Question","name":"What do changefreq and priority do?","acceptedAnswer":{"@type":"Answer","text":"They are optional hints. changefreq suggests how often a page changes (daily, weekly, monthly); priority (0.0-1.0) suggests relative importance. Modern engines treat them loosely, but a clean lastmod date is genuinely useful."}}
+]}
+</script>
+<style>
+  :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; }
+  * { box-sizing:border-box; } html { background:var(--bg); }
+  body { margin:0; color:var(--ink); background:var(--bg); font:16px/1.6 Inter,system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:46rem; margin:0 auto; padding:2.5rem 1.25rem 5rem; }
+  a { color:var(--oxide); }
+  .eyebrow { font:600 12px/1 ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--oxide); margin:0 0 1rem; }
+  h1 { font-size:clamp(1.6rem,1.2rem+1.8vw,2.4rem); line-height:1.1; letter-spacing:-0.02em; margin:.2em 0; }
+  .lead { color:var(--dim); font-size:1.1rem; }
+  label { display:block; font-size:.85rem; color:var(--dim); margin:.8rem 0 .25rem; font-weight:600; }
+  textarea, input, select { width:100%; padding:.6rem .7rem; font:inherit; background:#fff; border:1px solid var(--line); border-radius:8px; }
+  textarea { font:13px/1.5 ui-monospace,monospace; }
+  textarea:focus, input:focus { outline:none; border-color:var(--oxide); }
+  .row { display:flex; gap:1rem; flex-wrap:wrap; } .row > div { flex:1; min-width:9rem; }
+  .opts { display:flex; align-items:center; gap:.5rem; margin:.8rem 0; font-size:.9rem; color:var(--dim); }
+  button.act { font:inherit; font-weight:700; cursor:pointer; border-radius:8px; border:none; padding:.65rem 1.2rem; background:#15181d; color:#fff; margin-top:.6rem; }
+  .out { position:relative; margin-top:1.4rem; }
+  pre { background:#15181d; color:#e8e8e3; border-radius:10px; padding:1rem; overflow:auto; font-size:.8rem; line-height:1.5; min-height:5rem; white-space:pre-wrap; }
+  .copy { position:absolute; top:.6rem; right:.6rem; background:#ccff00; color:#0a0b0d; border:none; border-radius:7px; padding:.35rem .7rem; font-weight:700; cursor:pointer; }
+  .hint { font-size:.85rem; color:var(--dim); }
+  .cta { background:#15181d; color:#f4f4f0; border-radius:14px; padding:1.4rem; margin:2rem 0; }
+  .cta h2 { margin:0 0 .4rem; color:#fff; font-size:1.25rem; }
+  .cta a.btn { display:inline-block; margin:.5rem .5rem 0 0; background:#ccff00; color:#0a0b0d; font-weight:700; text-decoration:none; padding:.6rem 1.1rem; border-radius:9px; }
+  .cta a.btn2 { display:inline-block; margin:.5rem 0 0; color:#ccff00; border:1px solid #444; text-decoration:none; padding:.6rem 1.1rem; border-radius:9px; }
+  footer { margin-top:2.5rem; padding-top:1.2rem; border-top:1px solid var(--line); color:var(--dim); font-size:.9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">SameDayDesk · Free tool</p>
+  <h1>XML Sitemap Generator</h1>
+  <p class="lead">Paste your page URLs and get a valid <code>sitemap.xml</code> — so Google, Bing (which feeds ChatGPT Search), and AI crawlers can find every page. Free, no signup.</p>
+
+  <label>Your page URLs (one per line)</label>
+  <textarea id="urls" rows="8" placeholder="https://yourdomain.com/&#10;https://yourdomain.com/about&#10;https://yourdomain.com/pricing&#10;https://yourdomain.com/blog/post-1"></textarea>
+
+  <div class="row">
+    <div>
+      <label>Default change frequency</label>
+      <select id="freq"><option value="">(none)</option><option>daily</option><option selected>weekly</option><option>monthly</option><option>yearly</option></select>
+    </div>
+    <div>
+      <label>Last modified date</label>
+      <input id="lastmod" type="date" />
+    </div>
+  </div>
+  <div class="opts"><input type="checkbox" id="prio" style="width:auto" checked /> <label for="prio" style="margin:0">Set priority 1.0 for the first URL, 0.8 for the rest</label></div>
+  <button class="act" id="run" type="button">Generate sitemap.xml</button>
+
+  <div class="out">
+    <button class="copy" id="copyBtn" type="button">Copy</button>
+    <pre id="output">&lt;?xml version="1.0" encoding="UTF-8"?&gt;…</pre>
+    <p class="hint">Save as <code>sitemap.xml</code> at your site root, then add <code>Sitemap: https://yourdomain.com/sitemap.xml</code> to your robots.txt.</p>
+  </div>
+
+  <div class="cta">
+    <h2>Want the whole AI-search foundation done for you?</h2>
+    <p>The <strong>Fix Pack ($39)</strong> ships your real <code>sitemap.xml</code> <em>and</em> a crawler-welcoming <code>robots.txt</code>, JSON-LD structured data, and clean title/meta/Open Graph tags — installed-ready, today. <a style="color:#ccff00" href="https://samedaydesk.com/tools/ai-readiness">Run the free AI-readiness check first</a>.</p>
+    <a class="btn" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · $39</a>
+    <a class="btn2" href="https://samedaydesk.com/tools/ai-readiness">Free check first</a>
+  </div>
+
+  <footer>By <a href="https://samedaydesk.com/">SameDayDesk</a>. See also: <a href="https://samedaydesk.com/tools/ai-crawler-checker.html">AI crawler checker</a> · <a href="https://samedaydesk.com/tools/meta-tag-generator.html">meta tag generator</a> · <a href="https://samedaydesk.com/tools/schema-generator.html">JSON-LD generator</a> · <a href="https://samedaydesk.com/tools/llms-txt-generator.html">llms.txt generator</a>.</footer>
+</div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  function gen(){
+    const urls = $("urls").value.split(/\n/).map(s=>s.trim()).filter(Boolean)
+      .filter(u=>/^https?:\/\//i.test(u));
+    const freq = $("freq").value, lastmod = $("lastmod").value, prio = $("prio").checked;
+    let out = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+    if(!urls.length){ out += '  <!-- paste at least one http(s) URL above -->\n'; }
+    urls.forEach((u,i) => {
+      out += '  <url>\n    <loc>' + esc(u) + '</loc>\n';
+      if(lastmod) out += '    <lastmod>' + esc(lastmod) + '</lastmod>\n';
+      if(freq) out += '    <changefreq>' + freq + '</changefreq>\n';
+      if(prio) out += '    <priority>' + (i===0 ? '1.0' : '0.8') + '</priority>\n';
+      out += '  </url>\n';
+    });
+    out += '</urlset>';
+    $("output").textContent = out;
+  }
+  $("run").addEventListener("click", gen);
+  $("copyBtn").addEventListener("click", async ()=>{ try{ await navigator.clipboard.writeText($("output").textContent); $("copyBtn").textContent="Copied!"; setTimeout(()=>$("copyBtn").textContent="Copy",1500);}catch{} });
+  gen();
+</script>
+</body>
+</html>
