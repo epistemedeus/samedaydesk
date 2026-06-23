@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How to get cited by AI search (ChatGPT, Perplexity, Google AI): the 2026 checklist</title>
+<meta name="description" content="A practical, no-fluff checklist to make your website visible to AI search engines (ChatGPT, Perplexity, Claude, Google AI Overviews): AI-crawler access, JSON-LD structured data, titles and meta, Open Graph, sitemaps, and the truth about llms.txt. Includes a free checker." />
+<link rel="canonical" href="https://samedaydesk.com/guides/get-cited-by-ai-search.html" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="How to get cited by AI search (ChatGPT, Perplexity, Google AI): the 2026 checklist" />
+<meta property="og:description" content="The practical checklist to make your site visible to AI search engines, plus a free checker." />
+<meta property="og:url" content="https://samedaydesk.com/guides/get-cited-by-ai-search.html" />
+<meta property="og:image" content="https://samedaydesk.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<style>
+  :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; }
+  * { box-sizing:border-box; } html { background:var(--bg); }
+  body { margin:0; color:var(--ink); background:var(--bg); font:17px/1.65 Inter,system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:48rem; margin:0 auto; padding:3rem 1.25rem 5rem; }
+  a { color:var(--oxide); }
+  .eyebrow { font:600 12px/1 ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--oxide); margin:0 0 1rem; }
+  h1 { font-size:clamp(1.8rem,1.3rem+2.2vw,2.8rem); line-height:1.1; letter-spacing:-0.02em; margin:.2em 0; }
+  h2 { font-size:1.45rem; margin:2.4rem 0 .6rem; scroll-margin-top:1rem; }
+  h3 { font-size:1.1rem; margin:1.4rem 0 .3rem; }
+  .lead { font-size:1.18rem; color:var(--dim); }
+  ol.toc { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:1rem 1rem 1rem 2.2rem; }
+  code { background:var(--card); border:1px solid var(--line); border-radius:6px; padding:.1rem .4rem; font-size:.9em; }
+  pre { background:#15181d; color:#e8e8e3; border-radius:10px; padding:1rem; overflow:auto; font-size:.85rem; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  .tip { border-left:4px solid var(--oxide); background:var(--card); padding:.8rem 1rem; border-radius:0 8px 8px 0; margin:1rem 0; }
+  .cta { background:#15181d; color:#f4f4f0; border-radius:14px; padding:1.6rem 1.5rem; margin:2.5rem 0; }
+  .cta h2 { margin-top:0; color:#fff; }
+  .cta a.btn { display:inline-block; margin:.5rem .5rem 0 0; background:#ccff00; color:#0a0b0d; font-weight:700; text-decoration:none; padding:.7rem 1.2rem; border-radius:9px; }
+  .cta a.btn2 { display:inline-block; margin:.5rem 0 0; color:#ccff00; border:1px solid #444; text-decoration:none; padding:.7rem 1.2rem; border-radius:9px; }
+  .muted { color:var(--dim); font-size:.9rem; }
+  footer { margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--line); color:var(--dim); font-size:.9rem; }
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"Article","headline":"How to get cited by AI search (ChatGPT, Perplexity, Google AI): the 2026 checklist","datePublished":"2026-06-23","dateModified":"2026-06-23","author":{"@type":"Organization","name":"SameDayDesk"},"publisher":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"mainEntityOfPage":"https://samedaydesk.com/guides/get-cited-by-ai-search.html"},
+ {"@type":"HowTo","name":"Make your website visible to AI search engines","step":[
+   {"@type":"HowToStep","name":"Allow AI crawlers","text":"In robots.txt, allow GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, Google-Extended, and CCBot."},
+   {"@type":"HowToStep","name":"Add JSON-LD structured data","text":"Add Organization, FAQPage, and Article JSON-LD so engines can classify and quote your content."},
+   {"@type":"HowToStep","name":"Write a clear title and meta description","text":"Use a 15-65 character title and a 70-165 character meta description that answers a real question."},
+   {"@type":"HowToStep","name":"Add Open Graph tags","text":"Add og:title, og:description, og:image, and og:url."},
+   {"@type":"HowToStep","name":"Publish a sitemap and submit it to Bing","text":"Publish /sitemap.xml and submit it in Bing Webmaster Tools, since ChatGPT Search reads the Bing index."}
+ ]},
+ {"@type":"FAQPage","mainEntity":[
+   {"@type":"Question","name":"Does ChatGPT use Google or Bing?","acceptedAnswer":{"@type":"Answer","text":"ChatGPT Search results map heavily to the Bing index. Getting indexed and ranking in Bing, and using IndexNow to notify Bing quickly, is the fastest path to being eligible for ChatGPT citations."}},
+   {"@type":"Question","name":"Does llms.txt help me rank in AI search?","acceptedAnswer":{"@type":"Answer","text":"There is no evidence that llms.txt improves AI citations as of 2026. Treat it as optional, harmless hygiene, not a ranking factor. Be skeptical of anyone selling it as a boost."}},
+   {"@type":"Question","name":"How do I check if my site is AI-search ready?","acceptedAnswer":{"@type":"Answer","text":"Use a free checker like samedaydesk.com/tools/ai-readiness, or run the open-source CLI npx github:epistemedeus/ai-readiness yoursite.com."}}
+ ]}
+]}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">SameDayDesk · Guide · 2026</p>
+  <h1>How to get cited by AI search (ChatGPT, Perplexity, Google AI)</h1>
+  <p class="lead">AI assistants increasingly answer questions by quoting a handful of web pages. If your site isn't crawlable and machine-readable, you're invisible in those answers. Here's the practical, no-fluff checklist to fix that, in rough order of impact.</p>
+
+  <p><a href="https://samedaydesk.com/tools/ai-readiness"><strong>Check your own site free first</strong></a> so you know which of these you're missing.</p>
+
+  <ol class="toc">
+    <li><a href="#crawlers">Let AI crawlers in (robots.txt)</a></li>
+    <li><a href="#schema">Add JSON-LD structured data</a></li>
+    <li><a href="#meta">Fix titles and meta descriptions</a></li>
+    <li><a href="#og">Add Open Graph tags</a></li>
+    <li><a href="#sitemap">Sitemap + Bing + IndexNow</a></li>
+    <li><a href="#llms">The truth about llms.txt</a></li>
+    <li><a href="#content">Write content engines can quote</a></li>
+  </ol>
+
+  <h2 id="crawlers">1. Let AI crawlers in (the #1 silent killer)</h2>
+  <p>If your <code>robots.txt</code> blocks AI user-agents, no amount of good content matters. Confirm these are allowed:</p>
+  <pre><code>User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: CCBot
+Allow: /
+
+Sitemap: https://yoursite.com/sitemap.xml</code></pre>
+  <div class="tip">Many sites block these by accident via a blanket rule or a security plugin. This is the most common, highest-impact gap we see.</div>
+
+  <h2 id="schema">2. Add JSON-LD structured data (the biggest gap on real sites)</h2>
+  <p>AI engines lean on structured data to classify and quote a page. In a scan of 24 top SaaS sites, <strong>1 in 3 had none at all</strong>. At minimum add <code>Organization</code> and <code>FAQPage</code>; add <code>Article</code> on content pages. Example, in a <code>&lt;script type="application/ld+json"&gt;</code> tag in your <code>&lt;head&gt;</code>:</p>
+  <pre><code>{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Your Company",
+  "url": "https://yoursite.com/",
+  "description": "One clear sentence about what you do."
+}</code></pre>
+  <p>FAQ schema is especially valuable: pages with it are meaningfully more likely to appear in AI Overviews, because the question/answer format is exactly what engines extract.</p>
+
+  <h2 id="meta">3. Fix titles and meta descriptions</h2>
+  <p>Give engines a clean summary to work with. Use a descriptive <strong>15-65 character title</strong> and a <strong>70-165 character meta description</strong> that answers a real question a buyer would ask. A one-word title or a missing description leaves the engine guessing.</p>
+
+  <h2 id="og">4. Add Open Graph tags</h2>
+  <p>Add <code>og:title</code>, <code>og:description</code>, <code>og:image</code>, and <code>og:url</code>. They power clean link previews and give machines extra structured context about each page.</p>
+
+  <h2 id="sitemap">5. Sitemap + Bing + IndexNow (the fast lane)</h2>
+  <p>Publish <code>/sitemap.xml</code> and submit it in <a href="https://www.bing.com/webmasters/about">Bing Webmaster Tools</a>. This matters more than most people realize: <strong>ChatGPT Search results map heavily to the Bing index</strong>, so being indexed in Bing is a prerequisite for ChatGPT citations. Use the <a href="https://www.indexnow.org/">IndexNow</a> protocol to notify Bing of new or changed pages in minutes instead of waiting weeks.</p>
+
+  <h2 id="llms">6. The truth about llms.txt</h2>
+  <p>You'll see a lot of hype about adding an <code>llms.txt</code> file. Be honest with yourself: <strong>there is no evidence it improves AI citations as of 2026.</strong> Across hundreds of millions of AI-bot visits, almost none request the file, and it's absent on nearly all of the most-cited sites. Add it if you like as cheap, harmless hygiene, but don't expect a ranking boost, and don't pay anyone who sells it as one.</p>
+
+  <h2 id="content">7. Write content engines can actually quote</h2>
+  <p>Once the plumbing is right, the content wins are: answer specific questions directly in the first sentence; use clear headings that match how people ask; include real data, numbers, and comparisons (engines preferentially cite concrete, factual pages); and keep pages fresh, recently-updated content earns more citations.</p>
+
+  <div class="cta">
+    <h2>Don't want to do all this by hand?</h2>
+    <p>Run the free checker to see exactly what your site is missing, then let us fix it. The <strong>Fix Pack ($39)</strong> hands you copy-paste JSON-LD, a corrected robots.txt, a sitemap, and clean meta/Open Graph tags built for your exact site, delivered today. The <strong>full AI-Search Visibility Audit ($249)</strong> also tests whether ChatGPT, Perplexity, and Google actually cite you for real buyer queries and benchmarks you against competitors.</p>
+    <a class="btn" href="https://samedaydesk.com/tools/ai-readiness">Run the free check →</a>
+    <a class="btn" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · $39</a>
+    <a class="btn2" href="https://buy.stripe.com/fZuaEY2FI4jl2OPbICeZ206">Full audit · $249</a>
+  </div>
+
+  <p class="muted">Reproduce the technical checks yourself anytime: <code>npx github:epistemedeus/ai-readiness yoursite.com</code> (<a href="https://github.com/epistemedeus/ai-readiness">open source</a>).</p>
+
+  <footer>
+    <p>By <a href="https://samedaydesk.com/">SameDayDesk</a>, a same-day desk for data, code, AI builds and copy. See also: <a href="https://samedaydesk.com/reports/ai-search-readiness-saas-2026.html">our scan of 24 top SaaS sites</a>.</p>
+  </footer>
+</div>
+</body>
+</html>
