@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>We scanned 24 top SaaS sites for AI-search readiness (2026) — 1 in 3 have no structured data</title>
+<meta name="description" content="A June 2026 snapshot: we ran 24 of the most popular SaaS sites through an AI-search readiness check (ChatGPT, Perplexity, Claude, Google AI). 1 in 3 have no JSON-LD structured data, and names like Figma, Linear, Airtable and Clerk score a C. Full data, methodology, and a free checker." />
+<link rel="canonical" href="https://samedaydesk.com/reports/ai-search-readiness-saas-2026.html" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="We scanned 24 top SaaS sites for AI-search readiness — 1 in 3 have no structured data" />
+<meta property="og:description" content="June 2026 snapshot of how the most popular SaaS sites do on the technical fundamentals of AI search. Full data + a free checker." />
+<meta property="og:url" content="https://samedaydesk.com/reports/ai-search-readiness-saas-2026.html" />
+<meta property="og:image" content="https://samedaydesk.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<style>
+  :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; --good:#3a7d44; --warn:#b58100; }
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body { margin:0; color:var(--ink); background:var(--bg); font:17px/1.6 Inter,system-ui,-apple-system,sans-serif; }
+  .wrap { max-width: 50rem; margin:0 auto; padding: 3rem 1.25rem 5rem; }
+  a { color: var(--oxide); }
+  .eyebrow { font:600 12px/1 ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--oxide); margin:0 0 1rem; }
+  h1 { font-size: clamp(1.8rem,1.3rem+2.2vw,2.9rem); line-height:1.08; letter-spacing:-0.02em; margin:.2em 0; }
+  h2 { font-size:1.5rem; margin:2.5rem 0 .6rem; }
+  h3 { font-size:1.15rem; margin:1.6rem 0 .4rem; }
+  .lead { font-size:1.2rem; color:var(--dim); }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1rem; margin:2rem 0; }
+  .stat { background:var(--card); border:1px solid var(--line); border-left:4px solid var(--oxide); border-radius:10px; padding:1rem 1.1rem; }
+  .stat b { display:block; font-size:2rem; font-family:ui-monospace,monospace; line-height:1; }
+  .stat span { color:var(--dim); font-size:.85rem; }
+  table { width:100%; border-collapse:collapse; margin:1rem 0; font-size:.95rem; }
+  th,td { text-align:left; padding:.5rem .6rem; border-bottom:1px solid var(--line); }
+  th { font:600 12px/1 ui-monospace,monospace; letter-spacing:.06em; text-transform:uppercase; color:var(--dim); }
+  td.g { font-weight:700; }
+  .A{color:var(--good)} .B{color:#2f6e7a} .C{color:var(--oxide)}
+  .num { font-family:ui-monospace,monospace; }
+  .cta { background:#15181d; color:#f4f4f0; border-radius:14px; padding:1.6rem 1.5rem; margin:2.5rem 0; }
+  .cta h2 { margin-top:0; color:#fff; }
+  .cta a.btn { display:inline-block; margin-top:.6rem; background:#ccff00; color:#0a0b0d; font-weight:700; text-decoration:none; padding:.7rem 1.2rem; border-radius:9px; }
+  code { background:var(--card); border:1px solid var(--line); border-radius:6px; padding:.1rem .4rem; font-size:.9em; }
+  .muted { color:var(--dim); font-size:.9rem; }
+  footer { margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--line); color:var(--dim); font-size:.9rem; }
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"Article","headline":"We scanned 24 top SaaS sites for AI-search readiness (2026)","datePublished":"2026-06-23","dateModified":"2026-06-23","author":{"@type":"Organization","name":"SameDayDesk"},"publisher":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"mainEntityOfPage":"https://samedaydesk.com/reports/ai-search-readiness-saas-2026.html","about":"AI search optimization, generative engine optimization, structured data"},
+ {"@type":"FAQPage","mainEntity":[
+   {"@type":"Question","name":"What is AI-search readiness?","acceptedAnswer":{"@type":"Answer","text":"Whether AI search engines (ChatGPT, Perplexity, Claude, Google AI) can crawl and understand a site: AI-crawler access in robots.txt, JSON-LD structured data, a clear title and meta description, Open Graph tags, an XML sitemap, and optionally llms.txt."}},
+   {"@type":"Question","name":"Why do a third of top SaaS sites fail on structured data?","acceptedAnswer":{"@type":"Answer","text":"Many marketing sites ship without JSON-LD because it is invisible to human visitors. But AI engines rely on it to classify and quote content, so its absence is a real AI-search gap even on otherwise-polished sites."}},
+   {"@type":"Question","name":"How can I check my own site?","acceptedAnswer":{"@type":"Answer","text":"Use the free checker at samedaydesk.com/tools/ai-readiness, or run the open-source CLI: npx github:epistemedeus/ai-readiness yoursite.com"}}
+ ]}
+]}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">SameDayDesk · Report · June 2026</p>
+  <h1>We scanned 24 top SaaS sites for AI-search readiness. 1 in 3 have no structured data.</h1>
+  <p class="lead">AI search (ChatGPT, Perplexity, Claude, Google AI) is becoming how buyers find software. We ran 24 of the most popular SaaS sites through a readiness check. The headline: even polished, well-funded sites routinely miss the technical fundamentals that decide whether AI engines can read and cite them.</p>
+
+  <div class="stats">
+    <div class="stat"><b>24</b><span>SaaS homepages scanned</span></div>
+    <div class="stat"><b>87</b><span>average score / 100</span></div>
+    <div class="stat"><b>33%</b><span>have no JSON-LD structured data (8 of 24)</span></div>
+    <div class="stat"><b>5</b><span>scored only a C (incl. Figma, Linear, Airtable, Clerk)</span></div>
+  </div>
+
+  <h2>What we found</h2>
+  <p>The good news: none of these sites block AI crawlers outright, and all have a sitemap and Open Graph tags. The gaps cluster in two places:</p>
+  <ul>
+    <li><b>Structured data is the #1 gap.</b> 8 of 24 sites (33%) ship <b>no JSON-LD at all</b> on the homepage, including Notion, Linear, Airtable, Substack, Clerk, Cal.com, PostHog and Gumroad. JSON-LD (<code>Organization</code>, <code>FAQPage</code>, <code>Article</code>) is the layer AI engines use to classify and quote a page. Its absence is invisible to humans but real to machines.</li>
+    <li><b>Titles and meta descriptions are often too short.</b> Several sites use a 1-3 word title or a thin description, giving engines little to summarize.</li>
+    <li><b>llms.txt is rare</b> — but that is fine. There is no evidence it improves AI citations yet, so we treat it as optional hygiene, not a ranking factor.</li>
+  </ul>
+
+  <h2>The full data</h2>
+  <table>
+    <thead><tr><th>Grade</th><th>Score</th><th>Site</th><th>Main gap</th></tr></thead>
+    <tbody>
+      <tr><td class="g A">A</td><td class="num">100</td><td>stripe.com</td><td>—</td></tr>
+      <tr><td class="g A">A</td><td class="num">100</td><td>supabase.com</td><td>—</td></tr>
+      <tr><td class="g A">A</td><td class="num">100</td><td>webflow.com</td><td>—</td></tr>
+      <tr><td class="g A">A</td><td class="num">100</td><td>render.com</td><td>—</td></tr>
+      <tr><td class="g A">A</td><td class="num">100</td><td>retool.com</td><td>—</td></tr>
+      <tr><td class="g A">A</td><td class="num">100</td><td>railway.com</td><td>—</td></tr>
+      <tr><td class="g A">A</td><td class="num">100</td><td>resend.com</td><td>—</td></tr>
+      <tr><td class="g A">A</td><td class="num">100</td><td>framer.com</td><td>—</td></tr>
+      <tr><td class="g A">A</td><td class="num">100</td><td>zapier.com</td><td>—</td></tr>
+      <tr><td class="g A">A</td><td class="num">100</td><td>mailchimp.com</td><td>—</td></tr>
+      <tr><td class="g A">A</td><td class="num">98</td><td>buffer.com</td><td>—</td></tr>
+      <tr><td class="g A">A</td><td class="num">93</td><td>vercel.com</td><td>short title/description</td></tr>
+      <tr><td class="g A">A</td><td class="num">90</td><td>hubspot.com</td><td>short title/description</td></tr>
+      <tr><td class="g A">A</td><td class="num">90</td><td>ghost.org</td><td>short title/description</td></tr>
+      <tr><td class="g B">B</td><td class="num">83</td><td>calendly.com</td><td>minor</td></tr>
+      <tr><td class="g B">B</td><td class="num">78</td><td>cal.com</td><td>no JSON-LD</td></tr>
+      <tr><td class="g B">B</td><td class="num">78</td><td>notion.com</td><td>no JSON-LD</td></tr>
+      <tr><td class="g B">B</td><td class="num">78</td><td>posthog.com</td><td>no JSON-LD</td></tr>
+      <tr><td class="g B">B</td><td class="num">76</td><td>gumroad.com</td><td>no JSON-LD</td></tr>
+      <tr><td class="g C">C</td><td class="num">73</td><td>figma.com</td><td>thin meta + minor</td></tr>
+      <tr><td class="g C">C</td><td class="num">71</td><td>linear.app</td><td>no JSON-LD</td></tr>
+      <tr><td class="g C">C</td><td class="num">68</td><td>substack.com</td><td>no JSON-LD</td></tr>
+      <tr><td class="g C">C</td><td class="num">68</td><td>airtable.com</td><td>no JSON-LD</td></tr>
+      <tr><td class="g C">C</td><td class="num">61</td><td>clerk.com</td><td>no JSON-LD</td></tr>
+    </tbody>
+  </table>
+  <p class="muted">Snapshot of each site's homepage + robots.txt, June 2026. A homepage check is a sample, not a full-site audit; scores can change as sites update.</p>
+
+  <div class="cta">
+    <h2>Check your own site free</h2>
+    <p>Paste your URL and get the same scorecard plus the exact fixes, in seconds. No signup.</p>
+    <a class="btn" href="https://samedaydesk.com/tools/ai-readiness">Run the free check →</a>
+    <p class="muted" style="color:#a7abb1;margin-top:1rem">Reproduce this report yourself: <code style="background:#0a0b0d;color:#ccff00;border-color:#333">npx github:epistemedeus/ai-readiness yoursite.com</code> · <a style="color:#ccff00" href="https://github.com/epistemedeus/ai-readiness">source on GitHub</a></p>
+  </div>
+
+  <h2>What to do about it</h2>
+  <p>The fixes are mostly fast and deterministic: add <code>Organization</code> + <code>FAQPage</code> JSON-LD, tighten your title and meta description, and confirm AI crawlers are allowed in <code>robots.txt</code>. If you would rather have it done for you, with real citation testing across ChatGPT, Perplexity and Google AI and a competitor benchmark, that is the <a href="https://samedaydesk.com/">AI-Search Visibility Audit</a> from SameDayDesk, delivered same day.</p>
+
+  <footer>
+    <p>Published by <a href="https://samedaydesk.com/">SameDayDesk</a>, a same-day desk for data, code, AI builds and copy. Method and tool are open source for reproducibility.</p>
+  </footer>
+</div>
+</body>
+</html>
