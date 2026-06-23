@@ -18,18 +18,18 @@ export default function Footer() {
 
         <nav className={styles.col} aria-label="Services">
           <h3 className={styles.colhead}>Services</h3>
-          <a href="#services">Résumé + LinkedIn</a>
-          <a href="#services">Cover letters</a>
-          <a href="#services">Landing page copy</a>
-          <a href="#services">Custom work</a>
+          <Link to="/#services">Lead lists & data</Link>
+          <Link to="/#services">Code & automation</Link>
+          <Link to="/#services">AI builds</Link>
+          <Link to="/#services">Custom work</Link>
         </nav>
 
-        <nav className={styles.col} aria-label="Company">
-          <h3 className={styles.colhead}>Company</h3>
+        <nav className={styles.col} aria-label="Free tools">
+          <h3 className={styles.colhead}>Free tools</h3>
+          <Link to="/tools/ai-readiness" viewTransition>AI visibility checker</Link>
           <a href="#how">How it works</a>
           <a href="#guarantee">Guarantee</a>
           <Link to="/terms" viewTransition>Terms</Link>
-          <Link to="/privacy" viewTransition>Privacy</Link>
         </nav>
       </div>
 

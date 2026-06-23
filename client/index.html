@@ -44,7 +44,7 @@
     <title>SameDayDesk: hand off the busywork, get it back today</title>
     <meta
       name="description"
-      content="A same-day, done-for-you desk for résumés, LinkedIn, cover letters, landing-page copy and quick fixes. Delivered in hours. See the quality free, first."
+      content="A same-day, done-for-you desk: verified lead lists and data cleanup, web scraping, bug fixes and automation, AI builds (RAG chatbots, MCP servers), AI-search audits, and conversion copy. Delivered in hours. See the quality free, first."
     />
     <link rel="canonical" href="https://samedaydesk.com/" />
 
@@ -54,7 +54,7 @@
     <meta property="og:title" content="SameDayDesk: hand off the busywork, get it back today" />
     <meta
       property="og:description"
-      content="Same-day, done-for-you résumés, LinkedIn, cover letters and copy, delivered in hours. See the quality free, first."
+      content="Same-day, done-for-you data, code, AI builds and copy, delivered in hours. See the quality free, first."
     />
     <meta property="og:url" content="https://samedaydesk.com/" />
     <meta property="og:image" content="https://samedaydesk.com/og.png" />
@@ -62,7 +62,7 @@
     <meta name="twitter:title" content="SameDayDesk: hand off the busywork, get it back today" />
     <meta
       name="twitter:description"
-      content="Same-day, done-for-you résumés, LinkedIn, cover letters and copy, delivered in hours. See the quality free, first."
+      content="Same-day, done-for-you data, code, AI builds and copy, delivered in hours. See the quality free, first."
     />
     <meta name="twitter:image" content="https://samedaydesk.com/og.png" />
 
@@ -70,6 +70,54 @@
     <style>
       html { background: #F4F1EA; }
     </style>
+
+    <!-- Structured data: helps AI search engines classify and cite the business + its services. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://samedaydesk.com/#org",
+          "name": "SameDayDesk",
+          "url": "https://samedaydesk.com/",
+          "email": "contact@samedaydesk.com",
+          "description": "A same-day, done-for-you desk for data, code, AI builds and copy. Delivered in hours."
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://samedaydesk.com/#site",
+          "url": "https://samedaydesk.com/",
+          "name": "SameDayDesk",
+          "publisher": { "@id": "https://samedaydesk.com/#org" }
+        },
+        {
+          "@type": "ProfessionalService",
+          "@id": "https://samedaydesk.com/#service",
+          "name": "SameDayDesk",
+          "url": "https://samedaydesk.com/",
+          "image": "https://samedaydesk.com/og.png",
+          "priceRange": "$$",
+          "areaServed": "Worldwide",
+          "parentOrganization": { "@id": "https://samedaydesk.com/#org" },
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Same-day services",
+            "itemListElement": [
+              { "@type": "Offer", "priceCurrency": "USD", "price": "69", "itemOffered": { "@type": "Service", "name": "Local Business Lead List" } },
+              { "@type": "Offer", "priceCurrency": "USD", "price": "39", "itemOffered": { "@type": "Service", "name": "Spreadsheet Cleanup & Dedup" } },
+              { "@type": "Offer", "priceCurrency": "USD", "price": "89", "itemOffered": { "@type": "Service", "name": "Scrape to Spreadsheet" } },
+              { "@type": "Offer", "priceCurrency": "USD", "price": "49", "itemOffered": { "@type": "Service", "name": "Script / Bug Fix" } },
+              { "@type": "Offer", "priceCurrency": "USD", "price": "149", "itemOffered": { "@type": "Service", "name": "Automation / Integration Build" } },
+              { "@type": "Offer", "priceCurrency": "USD", "price": "399", "itemOffered": { "@type": "Service", "name": "RAG Chatbot Over Your Docs" } },
+              { "@type": "Offer", "priceCurrency": "USD", "price": "349", "itemOffered": { "@type": "Service", "name": "Custom MCP Server" } },
+              { "@type": "Offer", "priceCurrency": "USD", "price": "249", "itemOffered": { "@type": "Service", "name": "AI-Search Visibility Audit" } }
+            ]
+          }
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

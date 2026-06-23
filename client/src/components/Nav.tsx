@@ -29,7 +29,7 @@ export default function Nav() {
         <nav className={styles.links} aria-label="Primary">
           <a href="#services">Services</a>
           <a href="#how">How it works</a>
-          <a href="#guarantee">Guarantee</a>
+          <Link to="/tools/ai-readiness" viewTransition>Free tool</Link>
         </nav>
 
         <div className={styles.actions}>
