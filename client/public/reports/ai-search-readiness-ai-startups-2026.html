@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>We tested 25 top AI startups for AI-search readiness — Perplexity scored a C, LlamaIndex a D (2026)</title>
+<meta name="description" content="June 2026: we ran 25 leading AI/LLM startups through an AI-search readiness check. Perplexity — an AI search engine — scored a C; LlamaIndex, whose product makes data readable by LLMs, scored a D. Full data + a free checker." />
+<link rel="canonical" href="https://samedaydesk.com/reports/ai-search-readiness-ai-startups-2026.html" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="We tested 25 top AI startups for AI-search readiness — Perplexity scored a C, LlamaIndex a D" />
+<meta property="og:description" content="The AI companies themselves are often hard for AI search to read. June 2026 data + a free checker." />
+<meta property="og:url" content="https://samedaydesk.com/reports/ai-search-readiness-ai-startups-2026.html" />
+<meta property="og:image" content="https://samedaydesk.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<style>
+  :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; --good:#3a7d44; }
+  * { box-sizing:border-box; } html { background:var(--bg); }
+  body { margin:0; color:var(--ink); background:var(--bg); font:17px/1.6 Inter,system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:50rem; margin:0 auto; padding:3rem 1.25rem 5rem; }
+  a { color:var(--oxide); }
+  .eyebrow { font:600 12px/1 ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--oxide); margin:0 0 1rem; }
+  h1 { font-size:clamp(1.8rem,1.3rem+2.2vw,2.9rem); line-height:1.08; letter-spacing:-0.02em; margin:.2em 0; }
+  h2 { font-size:1.5rem; margin:2.5rem 0 .6rem; }
+  .lead { font-size:1.2rem; color:var(--dim); }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1rem; margin:2rem 0; }
+  .stat { background:var(--card); border:1px solid var(--line); border-left:4px solid var(--oxide); border-radius:10px; padding:1rem 1.1rem; }
+  .stat b { display:block; font-size:2rem; font-family:ui-monospace,monospace; line-height:1; }
+  .stat span { color:var(--dim); font-size:.85rem; }
+  table { width:100%; border-collapse:collapse; margin:1rem 0; font-size:.95rem; }
+  th,td { text-align:left; padding:.5rem .6rem; border-bottom:1px solid var(--line); }
+  th { font:600 12px/1 ui-monospace,monospace; letter-spacing:.06em; text-transform:uppercase; color:var(--dim); }
+  td.g { font-weight:700; } .A{color:var(--good)} .B{color:#2f6e7a} .C{color:var(--oxide)} .D{color:var(--oxide)}
+  .num { font-family:ui-monospace,monospace; }
+  .cta { background:#15181d; color:#f4f4f0; border-radius:14px; padding:1.6rem 1.5rem; margin:2.5rem 0; }
+  .cta h2 { margin-top:0; color:#fff; }
+  .cta a.btn { display:inline-block; margin:.5rem .5rem 0 0; background:#ccff00; color:#0a0b0d; font-weight:700; text-decoration:none; padding:.7rem 1.2rem; border-radius:9px; }
+  .cta a.btn2 { display:inline-block; margin:.5rem 0 0; color:#ccff00; border:1px solid #444; text-decoration:none; padding:.7rem 1.2rem; border-radius:9px; }
+  code { background:var(--card); border:1px solid var(--line); border-radius:6px; padding:.1rem .4rem; font-size:.9em; }
+  .muted { color:var(--dim); font-size:.9rem; }
+  footer { margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--line); color:var(--dim); font-size:.9rem; }
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"Article","headline":"We tested 25 top AI startups for AI-search readiness (2026)","datePublished":"2026-06-23","dateModified":"2026-06-23","author":{"@type":"Organization","name":"SameDayDesk"},"publisher":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"mainEntityOfPage":"https://samedaydesk.com/reports/ai-search-readiness-ai-startups-2026.html"},
+ {"@type":"FAQPage","mainEntity":[
+   {"@type":"Question","name":"Why would an AI company score poorly on AI-search readiness?","acceptedAnswer":{"@type":"Answer","text":"Most AI startups ship a client-rendered single-page marketing site with little server-side HTML, sparse structured data, and sometimes no sitemap. AI search crawlers that do not execute JavaScript then see little content to classify or quote — independent of how good the company's own AI product is."}},
+   {"@type":"Question","name":"What was the most common gap?","acceptedAnswer":{"@type":"Answer","text":"Missing JSON-LD structured data and thin server-rendered content. Among 25 leading AI startups the average score was 83/100, but the laggards shared those two gaps; the lowest scorers also lacked a discoverable sitemap."}},
+   {"@type":"Question","name":"How do I check my own site?","acceptedAnswer":{"@type":"Answer","text":"Use the free checker at samedaydesk.com/tools/ai-readiness, or run npx github:epistemedeus/ai-readiness yourdomain.com"}}
+ ]}
+]}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">SameDayDesk · Report · June 2026</p>
+  <h1>We tested 25 top AI startups for AI-search readiness. Perplexity scored a C. LlamaIndex scored a D.</h1>
+  <p class="lead">AI engines like ChatGPT, Perplexity, and Google AI can only cite pages they can actually read. So we pointed an AI-search readiness check at the homepages of 25 well-known AI/LLM startups — the companies building this very future. Many do great. But some of the most recognizable names are surprisingly hard for AI search to read, including an AI search engine and a company whose product is making data legible to LLMs.</p>
+
+  <div class="stats">
+    <div class="stat"><b>25</b><span>AI startups scanned</span></div>
+    <div class="stat"><b>83</b><span>average score /100</span></div>
+    <div class="stat"><b>7</b><span>scored C or D</span></div>
+    <div class="stat"><b>1</b><span>scored a D (LlamaIndex)</span></div>
+  </div>
+
+  <h2>The full results</h2>
+  <p class="muted">Scored June 23, 2026 with the same free <a href="https://samedaydesk.com/tools/ai-readiness">AI Readiness Checker</a> anyone can run. Each homepage is checked for AI-crawler access (GPTBot, ClaudeBot, PerplexityBot, Google-Extended), JSON-LD structured data, title/meta, Open Graph, an XML sitemap, and llms.txt.</p>
+  <table>
+    <thead><tr><th>Company</th><th>Score</th><th>Grade</th></tr></thead>
+    <tbody>
+      <tr><td>llamaindex.ai</td><td class="num">53</td><td class="g D">D</td></tr>
+      <tr><td>character.ai</td><td class="num">60</td><td class="g C">C</td></tr>
+      <tr><td>perplexity.ai</td><td class="num">60</td><td class="g C">C</td></tr>
+      <tr><td>replicate.com</td><td class="num">63</td><td class="g C">C</td></tr>
+      <tr><td>cerebras.ai</td><td class="num">68</td><td class="g C">C</td></tr>
+      <tr><td>poolside.ai</td><td class="num">68</td><td class="g C">C</td></tr>
+      <tr><td>browserbase.com</td><td class="num">71</td><td class="g C">C</td></tr>
+      <tr><td>groq.com</td><td class="num">76</td><td class="g B">B</td></tr>
+      <tr><td>harvey.ai</td><td class="num">76</td><td class="g B">B</td></tr>
+      <tr><td>langchain.com</td><td class="num">76</td><td class="g B">B</td></tr>
+      <tr><td>mistral.ai</td><td class="num">78</td><td class="g B">B</td></tr>
+      <tr><td>weaviate.io</td><td class="num">78</td><td class="g B">B</td></tr>
+      <tr><td>together.ai</td><td class="num">83</td><td class="g B">B</td></tr>
+      <tr><td>modal.com</td><td class="num">85</td><td class="g B">B</td></tr>
+      <tr><td>runwayml.com</td><td class="num">90</td><td class="g A">A</td></tr>
+      <tr><td>contextual.ai</td><td class="num">93</td><td class="g A">A</td></tr>
+      <tr><td>codeium.com</td><td class="num">98</td><td class="g A">A</td></tr>
+      <tr><td>fireworks.ai</td><td class="num">98</td><td class="g A">A</td></tr>
+      <tr><td>glean.com</td><td class="num">98</td><td class="g A">A</td></tr>
+      <tr><td>cohere.com</td><td class="num">100</td><td class="g A">A</td></tr>
+      <tr><td>cursor.com</td><td class="num">100</td><td class="g A">A</td></tr>
+      <tr><td>elevenlabs.io</td><td class="num">100</td><td class="g A">A</td></tr>
+      <tr><td>lovable.dev</td><td class="num">100</td><td class="g A">A</td></tr>
+      <tr><td>pinecone.io</td><td class="num">100</td><td class="g A">A</td></tr>
+      <tr><td>suno.com</td><td class="num">100</td><td class="g A">A</td></tr>
+    </tbody>
+  </table>
+
+  <h2>The irony, and the lesson</h2>
+  <p><strong>Perplexity</strong>, an AI answer engine, scored a 60 (C). <strong>LlamaIndex</strong>, whose entire product is about making data readable by LLMs, scored a 53 (D) — the lowest in the set. This isn't a knock on their products; it's a reflection of how their <em>marketing sites</em> are built. The pattern among the C's and D's was consistent:</p>
+  <ul>
+    <li><strong>JavaScript-only rendering.</strong> A client-rendered SPA serves crawlers that don't run JS a near-empty shell. The product is great; the homepage an AI crawler sees is thin.</li>
+    <li><strong>Little or no JSON-LD structured data,</strong> so engines have no machine-readable description to quote.</li>
+    <li><strong>No discoverable sitemap</strong> on the lowest scorers.</li>
+  </ul>
+  <p>The A-graders (Cohere, Cursor, ElevenLabs, Pinecone, Suno, Lovable, Glean) simply ship server-readable content, structured data, a clean robots.txt, and a sitemap. None of it is exotic — it's hygiene. And if the companies <em>building</em> AI are leaving citations on the table, almost every other business is too.</p>
+
+  <div class="cta">
+    <h2>Check your site in 10 seconds</h2>
+    <p>Run the free <strong>AI Readiness Checker</strong> on any URL. If it flags gaps, the <strong>Fix Pack ($39)</strong> ships a corrected robots.txt, sitemap, JSON-LD structured data, and clean title/meta/OG tags — installed-ready, today.</p>
+    <a class="btn" href="https://samedaydesk.com/tools/ai-readiness">Run the free check</a>
+    <a class="btn2" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · $39</a>
+  </div>
+
+  <p class="muted">Method: each company's homepage was fetched once and scored on AI-crawler access, JSON-LD, title/meta, Open Graph, XML sitemap, and llms.txt. This is a point-in-time, homepage-level snapshot, not a full-site audit, and scores change as sites update. Run your own at <a href="https://samedaydesk.com/tools/ai-readiness">samedaydesk.com/tools/ai-readiness</a>.</p>
+
+  <footer>By <a href="https://samedaydesk.com/">SameDayDesk</a>. More: <a href="https://samedaydesk.com/reports/ai-search-readiness-saas-2026.html">SaaS report</a> · <a href="https://samedaydesk.com/reports/ai-search-readiness-ecommerce-2026.html">e-commerce report</a> · <a href="https://samedaydesk.com/reports/ai-search-readiness-marketing-agencies-2026.html">agencies report</a> · <a href="https://samedaydesk.com/tools/free-seo-ai-tools.html">free tools</a>.</footer>
+</div>
+</body>
+</html>
