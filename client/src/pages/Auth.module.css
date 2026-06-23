@@ -62,7 +62,7 @@
   padding: 0.8em 1.2em;
   border-radius: var(--radius-s);
   border: 1px solid var(--line-2);
-  background: var(--ink);
+  background: #fff;
   color: #1a1a1a;
   font-weight: 600;
   font-size: var(--step-0);
