@@ -120,6 +120,35 @@
     </script>
   </head>
   <body>
+    <!-- Crawler-visible content for engines that don't execute JS (GPTBot, ClaudeBot,
+         PerplexityBot, CCBot). The React app below replaces #root for real users; this
+         noscript block gives AI search engines real prose + services to read and cite. -->
+    <noscript>
+      <h1>SameDayDesk: hand off the busywork, get it back today</h1>
+      <p>
+        SameDayDesk is a same-day, done-for-you desk run by a small senior team. You hand off a
+        task, we deliver it in hours, with a free revision and a money-back guarantee. For code and
+        data jobs: it runs or it is free.
+      </p>
+      <h2>Services and flat prices</h2>
+      <ul>
+        <li>Local Business Lead List (500 verified businesses for your niche and city): $69</li>
+        <li>Spreadsheet Cleanup and Dedup (up to 5,000 rows, validated): $39</li>
+        <li>Scrape to Spreadsheet (one public site to a clean CSV/XLSX): $89</li>
+        <li>Script or Bug Fix (it runs or it is free): $49</li>
+        <li>Automation and Integration Build (connect your tools): $149</li>
+        <li>RAG Chatbot Over Your Docs (a chatbot that answers from your content): $399</li>
+        <li>Custom MCP Server (wrap any API or tool as an MCP server): $349</li>
+        <li>AI-Search Visibility Audit (do ChatGPT, Perplexity and Google cite you?): $249</li>
+      </ul>
+      <h2>Free tool: AI Readiness Checker</h2>
+      <p>
+        Check whether AI search engines like ChatGPT, Perplexity, Claude and Google AI can crawl and
+        understand your website. No signup. It scores AI crawler access, JSON-LD structured data,
+        title and meta, Open Graph, your XML sitemap and llms.txt, with concrete fixes. Try it at
+        <a href="https://samedaydesk.com/tools/ai-readiness">samedaydesk.com/tools/ai-readiness</a>.
+      </p>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
