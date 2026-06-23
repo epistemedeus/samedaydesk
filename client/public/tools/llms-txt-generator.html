@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Free llms.txt Generator — make an /llms.txt for AI agents — SameDayDesk</title>
+<meta name="description" content="Generate a clean, spec-compliant llms.txt file so AI agents and LLMs get a curated map of your site. Free, no signup, instant. Honest guidance on what llms.txt does and doesn't do." />
+<link rel="canonical" href="https://samedaydesk.com/tools/llms-txt-generator.html" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Free llms.txt Generator" />
+<meta property="og:description" content="Generate a spec-compliant llms.txt for AI agents. Free, no signup, instant." />
+<meta property="og:url" content="https://samedaydesk.com/tools/llms-txt-generator.html" />
+<meta property="og:image" content="https://samedaydesk.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"What is llms.txt?","acceptedAnswer":{"@type":"Answer","text":"llms.txt is a proposed Markdown file at the root of your domain (https://yourdomain.com/llms.txt) that gives AI agents and LLMs a curated, link-based map of your most important pages, so they can find and read your content efficiently rather than crawling everything."}},
+{"@type":"Question","name":"Does llms.txt improve my AI search rankings or citations?","acceptedAnswer":{"@type":"Answer","text":"Honestly, no — there is no strong evidence that llms.txt increases how often AI search engines cite you. Major engines have not confirmed using it for ranking. Treat it as documentation hygiene and a clean index for agents that fetch it, not as a ranking hack. The things that actually move AI citations are crawlability, structured data, and clear answer-shaped content."}},
+{"@type":"Question","name":"Where do I put the llms.txt file?","acceptedAnswer":{"@type":"Answer","text":"Save it as a plain text/Markdown file named llms.txt and host it at the root of your domain so it resolves at https://yourdomain.com/llms.txt."}}
+]}
+</script>
+<style>
+  :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; }
+  * { box-sizing:border-box; } html { background:var(--bg); }
+  body { margin:0; color:var(--ink); background:var(--bg); font:16px/1.6 Inter,system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:46rem; margin:0 auto; padding:2.5rem 1.25rem 5rem; }
+  a { color:var(--oxide); }
+  .eyebrow { font:600 12px/1 ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--oxide); margin:0 0 1rem; }
+  h1 { font-size:clamp(1.6rem,1.2rem+1.8vw,2.4rem); line-height:1.1; letter-spacing:-0.02em; margin:.2em 0; }
+  .lead { color:var(--dim); font-size:1.1rem; }
+  .note { background:#fff5e6; border:1px solid #e6c98a; border-radius:9px; padding:.7rem .9rem; font-size:.9rem; color:#5c4a1f; margin:1rem 0; }
+  label { display:block; font-size:.85rem; color:var(--dim); margin:.8rem 0 .25rem; font-weight:600; }
+  input, textarea { width:100%; padding:.6rem .7rem; font:inherit; background:#fff; border:1px solid var(--line); border-radius:8px; }
+  input:focus, textarea:focus { outline:none; border-color:var(--oxide); }
+  .secRow { border:1px dashed var(--line); border-radius:8px; padding:.6rem; margin:.5rem 0; }
+  button.act { font:inherit; font-weight:600; cursor:pointer; border-radius:8px; border:1px solid var(--line); padding:.5rem 1rem; background:var(--card); }
+  .out { position:relative; margin-top:1.4rem; }
+  pre { background:#15181d; color:#e8e8e3; border-radius:10px; padding:1rem; overflow:auto; font-size:.82rem; line-height:1.5; min-height:5rem; white-space:pre-wrap; }
+  .copy { position:absolute; top:.6rem; right:.6rem; background:#ccff00; color:#0a0b0d; border:none; border-radius:7px; padding:.35rem .7rem; font-weight:700; cursor:pointer; }
+  .hint { font-size:.85rem; color:var(--dim); }
+  .cta { background:#15181d; color:#f4f4f0; border-radius:14px; padding:1.4rem; margin:2rem 0; }
+  .cta h2 { margin:0 0 .4rem; color:#fff; font-size:1.25rem; }
+  .cta a.btn { display:inline-block; margin:.5rem .5rem 0 0; background:#ccff00; color:#0a0b0d; font-weight:700; text-decoration:none; padding:.6rem 1.1rem; border-radius:9px; }
+  .cta a.btn2 { display:inline-block; margin:.5rem 0 0; color:#ccff00; border:1px solid #444; text-decoration:none; padding:.6rem 1.1rem; border-radius:9px; }
+  footer { margin-top:2.5rem; padding-top:1.2rem; border-top:1px solid var(--line); color:var(--dim); font-size:.9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">SameDayDesk · Free tool</p>
+  <h1>llms.txt Generator</h1>
+  <p class="lead">Build a clean, spec-compliant <code>llms.txt</code> — a curated Markdown map of your site for AI agents and LLMs. Free, no signup, instant.</p>
+
+  <div class="note"><strong>Straight talk:</strong> <code>llms.txt</code> is documentation hygiene, not a ranking hack. There's no solid evidence it boosts AI citations. Ship it as a clean index for agents that fetch it — and rely on crawlability + structured data + answer-shaped content for actual visibility. (We'd rather tell you the truth than sell you a myth.)</div>
+
+  <label>Site / project name</label>
+  <input id="name" placeholder="Acme Inc." />
+  <label>One-line summary (becomes the blockquote)</label>
+  <input id="summary" placeholder="Acme builds project-management software for design teams." />
+  <label>Longer description (optional)</label>
+  <textarea id="desc" rows="2" placeholder="Acme helps design teams plan, track, and ship work in one place."></textarea>
+
+  <div id="sections"></div>
+  <button class="act" id="addSec" type="button" style="margin-top:.6rem">+ Add section</button>
+
+  <div class="out">
+    <button class="copy" id="copyBtn" type="button">Copy</button>
+    <pre id="output"># Your llms.txt will appear here…</pre>
+    <p class="hint">Save as <code>llms.txt</code> and host it at <code>https://yourdomain.com/llms.txt</code>.</p>
+  </div>
+
+  <div class="cta">
+    <h2>Want the stuff that actually moves AI visibility, done for you?</h2>
+    <p>The <strong>Fix Pack ($39)</strong> ships the things engines really reward: a crawler-welcoming <code>robots.txt</code>, a sitemap, JSON-LD structured data, and clean title/meta/Open Graph tags — plus this <code>llms.txt</code> — installed-ready, today. <a style="color:#ccff00" href="https://samedaydesk.com/tools/ai-readiness">See where your site stands first</a>.</p>
+    <a class="btn" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · $39</a>
+    <a class="btn2" href="https://samedaydesk.com/tools/ai-readiness">Free AI-readiness check</a>
+  </div>
+
+  <footer>By <a href="https://samedaydesk.com/">SameDayDesk</a>. See also: <a href="https://samedaydesk.com/tools/ai-crawler-checker.html">AI crawler checker</a> · <a href="https://samedaydesk.com/guides/get-cited-by-ai-search.html">how to get cited by AI search</a>.</footer>
+</div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  function secRow(title="Docs", links="Getting started | https://yourdomain.com/docs | Start here\nAPI reference | https://yourdomain.com/api"){
+    const d = document.createElement("div"); d.className="secRow";
+    d.innerHTML = '<label>Section name</label><input class="st"><label>Links — one per line: <code>title | url | optional note</code></label><textarea class="sl" rows="3"></textarea>';
+    d.querySelector(".st").value=title; d.querySelector(".sl").value=links;
+    d.querySelectorAll("input,textarea").forEach(el=>el.addEventListener("input", render));
+    return d;
+  }
+  $("addSec").addEventListener("click", ()=>{ $("sections").appendChild(secRow("Optional","Blog | https://yourdomain.com/blog")); render(); });
+  $("sections").appendChild(secRow());
+
+  function render(){
+    const name = $("name").value.trim() || "Your Site";
+    let out = `# ${name}\n`;
+    const sum = $("summary").value.trim();
+    if(sum) out += `\n> ${sum}\n`;
+    const desc = $("desc").value.trim();
+    if(desc) out += `\n${desc}\n`;
+    document.querySelectorAll("#sections .secRow").forEach(row => {
+      const title = row.querySelector(".st").value.trim();
+      const lines = row.querySelector(".sl").value.split(/\n/).map(s=>s.trim()).filter(Boolean);
+      if(!title || !lines.length) return;
+      out += `\n## ${title}\n`;
+      lines.forEach(l => {
+        const parts = l.split("|").map(s=>s.trim());
+        const t = parts[0]||"", u = parts[1]||"", note = parts[2]||"";
+        if(t && u) out += `- [${t}](${u})${note?`: ${note}`:""}\n`;
+      });
+    });
+    $("output").textContent = out;
+  }
+  ["name","summary","desc"].forEach(id=>$(id).addEventListener("input", render));
+  render();
+  $("copyBtn").addEventListener("click", async ()=>{ try{ await navigator.clipboard.writeText($("output").textContent); $("copyBtn").textContent="Copied!"; setTimeout(()=>$("copyBtn").textContent="Copy",1500);}catch{} });
+</script>
+</body>
+</html>

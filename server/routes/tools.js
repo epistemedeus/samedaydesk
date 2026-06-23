@@ -228,4 +228,88 @@ router.get("/ai-readiness", async (req, res) => {
   }
 });
 
+// Free llms.txt generator: build a spec-shaped llms.txt from a site's sitemap (or homepage
+// links), with page titles/descriptions. Genuinely useful dev-doc hygiene; honestly NOT a
+// citation-ranking lever (we say so on the tool page). Funnels to the paid audit.
+router.get("/llms-txt", async (req, res) => {
+  try {
+    const u = normalizeUrl(req.query.url);
+    await assertPublicHost(u.hostname);
+
+    let page;
+    try { page = await fetchText(u.toString(), { acceptHtml: true }); }
+    catch { throw httpErr(502, "Could not reach that site"); }
+    const origin = (() => { try { return new URL(page.finalUrl || u.toString()).origin; } catch { return u.origin; } })();
+    const h = analyzeHtml(page.body);
+
+    const pathLabel = (link) => {
+      try {
+        const p = new URL(link).pathname.replace(/\/+$/, "");
+        if (p === "") return "Home";
+        return (p.split("/").pop() || p).replace(/\.[a-z0-9]+$/i, "").replace(/[-_]+/g, " ").trim() || p;
+      } catch { return link; }
+    };
+
+    // Collect URLs from sitemap.xml (follow one level of sitemap index), else homepage links.
+    let urls = [];
+    try {
+      const sm = await fetchText(origin + "/sitemap.xml");
+      if (sm.ok) {
+        let locs = [...sm.body.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)].map((m) => m[1]);
+        if (/<sitemapindex/i.test(sm.body) && locs.length) {
+          const child = await fetchText(locs[0]).catch(() => null);
+          if (child && child.ok) locs = [...child.body.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)].map((m) => m[1]);
+        }
+        urls = locs;
+      }
+    } catch { /* fall through to link scrape */ }
+
+    if (!urls.length) {
+      const set = new Set();
+      for (const m of page.body.matchAll(/<a[^>]+href\s*=\s*["']([^"']+)["']/gi)) {
+        try {
+          const abs = new URL(m[1], origin);
+          if (abs.origin === origin) set.add(abs.toString().replace(/[#?].*$/, ""));
+        } catch { /* ignore bad href */ }
+      }
+      urls = [...set];
+    }
+
+    // dedupe (trailing slash insensitive) + cap
+    const seen = new Set();
+    const deduped = [];
+    for (const x of urls) {
+      const key = x.replace(/\/+$/, "");
+      if (!seen.has(key)) { seen.add(key); deduped.push(x); }
+    }
+    urls = deduped.slice(0, 50);
+
+    // fetch title/description for the first N pages in parallel; label the rest from the path
+    const TITLE_N = 14;
+    const head = await Promise.all(urls.slice(0, TITLE_N).map(async (link) => {
+      try {
+        const r = await fetchText(link, { acceptHtml: true });
+        const a = analyzeHtml(r.body);
+        return { url: link, title: a.title || pathLabel(link), desc: a.description || "" };
+      } catch { return { url: link, title: pathLabel(link), desc: "" }; }
+    }));
+    const tail = urls.slice(TITLE_N).map((link) => ({ url: link, title: pathLabel(link), desc: "" }));
+    const pages = [...head, ...tail];
+
+    const hostname = new URL(origin).hostname;
+    const siteName = (h.title || hostname).split(/[|–—:·]|\s-\s/)[0].trim().slice(0, 60) || hostname;
+    let out = `# ${siteName}\n\n`;
+    if (h.description) out += `> ${h.description.replace(/\s+/g, " ").trim()}\n\n`;
+    out += `## Pages\n\n`;
+    for (const p of pages) {
+      const t = (p.title || p.url).replace(/\s+/g, " ").trim().slice(0, 80);
+      out += `- [${t}](${p.url})${p.desc ? ": " + p.desc.replace(/\s+/g, " ").trim().slice(0, 130) : ""}\n`;
+    }
+
+    res.json({ origin, siteName, count: pages.length, llmsTxt: out });
+  } catch (e) {
+    res.status(e.status || 502).json({ error: e.message || "Could not generate llms.txt" });
+  }
+});
+
 export default router;

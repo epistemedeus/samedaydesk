@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Crawler & robots.txt Checker — is GPTBot, ClaudeBot, PerplexityBot blocked? — SameDayDesk</title>
+<meta name="description" content="Paste your robots.txt to instantly see which AI crawlers (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, CCBot and more) you allow or block — with the exact lines to fix it. Free, no signup." />
+<link rel="canonical" href="https://samedaydesk.com/tools/ai-crawler-checker.html" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="AI Crawler & robots.txt Checker — GPTBot / ClaudeBot / PerplexityBot" />
+<meta property="og:description" content="See which AI crawlers your robots.txt blocks, and get the exact fix. Free, no signup." />
+<meta property="og:url" content="https://samedaydesk.com/tools/ai-crawler-checker.html" />
+<meta property="og:image" content="https://samedaydesk.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Why would I want AI crawlers like GPTBot to access my site?","acceptedAnswer":{"@type":"Answer","text":"AI search engines (ChatGPT Search, Perplexity, Google AI Overviews, Claude) can only quote and cite pages their crawlers are allowed to read. If your robots.txt blocks GPTBot, ClaudeBot, PerplexityBot or Google-Extended, you are invisible in those answers. Allowing them is how you become eligible to be cited."}},
+{"@type":"Question","name":"How do I find my robots.txt?","acceptedAnswer":{"@type":"Answer","text":"It lives at the root of your domain: https://yourdomain.com/robots.txt. Open that URL, copy everything, and paste it into this checker."}},
+{"@type":"Question","name":"What is the difference between GPTBot and ChatGPT-User?","acceptedAnswer":{"@type":"Answer","text":"GPTBot is OpenAI's training/indexing crawler; OAI-SearchBot powers ChatGPT Search results; ChatGPT-User fetches a page live when a user clicks a link. Blocking GPTBot but allowing OAI-SearchBot lets you appear in ChatGPT Search without contributing to model training."}}
+]}
+</script>
+<style>
+  :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; --ok:#1c7c4a; --bad:#9e3b2e; }
+  * { box-sizing:border-box; } html { background:var(--bg); }
+  body { margin:0; color:var(--ink); background:var(--bg); font:16px/1.6 Inter,system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:46rem; margin:0 auto; padding:2.5rem 1.25rem 5rem; }
+  a { color:var(--oxide); }
+  .eyebrow { font:600 12px/1 ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--oxide); margin:0 0 1rem; }
+  h1 { font-size:clamp(1.6rem,1.2rem+1.8vw,2.4rem); line-height:1.1; letter-spacing:-0.02em; margin:.2em 0; }
+  .lead { color:var(--dim); font-size:1.1rem; }
+  label { display:block; font-size:.85rem; color:var(--dim); margin:.8rem 0 .25rem; font-weight:600; }
+  textarea { width:100%; padding:.7rem; font:13px/1.5 ui-monospace,monospace; background:#fff; border:1px solid var(--line); border-radius:8px; }
+  textarea:focus { outline:none; border-color:var(--oxide); }
+  button.act { font:inherit; font-weight:700; cursor:pointer; border-radius:8px; border:none; padding:.65rem 1.2rem; background:#15181d; color:#fff; margin-top:.6rem; }
+  .scoreline { margin:1.4rem 0 .4rem; font-size:1.15rem; font-weight:700; }
+  table { width:100%; border-collapse:collapse; margin:.6rem 0 1rem; font-size:.92rem; }
+  th, td { text-align:left; padding:.45rem .5rem; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; color:var(--dim); }
+  .pill { display:inline-block; font-size:.78rem; font-weight:700; padding:.1rem .5rem; border-radius:99px; }
+  .pill.ok { background:#dff3e6; color:var(--ok); }
+  .pill.bad { background:#f6e1de; color:var(--bad); }
+  .who { color:var(--dim); font-size:.82rem; }
+  .out { position:relative; margin-top:1rem; }
+  pre { background:#15181d; color:#e8e8e3; border-radius:10px; padding:1rem; overflow:auto; font-size:.82rem; line-height:1.5; }
+  .copy { position:absolute; top:.6rem; right:.6rem; background:#ccff00; color:#0a0b0d; padding:.35rem .7rem; font-weight:700; border:none; border-radius:7px; cursor:pointer; }
+  .hint { font-size:.85rem; color:var(--dim); }
+  .cta { background:#15181d; color:#f4f4f0; border-radius:14px; padding:1.4rem; margin:2rem 0; }
+  .cta h2 { margin:0 0 .4rem; color:#fff; font-size:1.25rem; }
+  .cta a.btn { display:inline-block; margin:.5rem .5rem 0 0; background:#ccff00; color:#0a0b0d; font-weight:700; text-decoration:none; padding:.6rem 1.1rem; border-radius:9px; }
+  .cta a.btn2 { display:inline-block; margin:.5rem 0 0; color:#ccff00; border:1px solid #444; text-decoration:none; padding:.6rem 1.1rem; border-radius:9px; }
+  footer { margin-top:2.5rem; padding-top:1.2rem; border-top:1px solid var(--line); color:var(--dim); font-size:.9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">SameDayDesk · Free tool</p>
+  <h1>AI Crawler &amp; robots.txt Checker</h1>
+  <p class="lead">Paste your <code>robots.txt</code> to see which AI search crawlers — GPTBot, ClaudeBot, PerplexityBot, Google-Extended and more — you currently <strong>allow</strong> or <strong>block</strong>. If a bot is blocked, that engine can't cite you. Free, no signup.</p>
+
+  <label for="rt">Your robots.txt (open <code>https://yourdomain.com/robots.txt</code>, copy, paste here — or leave blank to see an AI-friendly template)</label>
+  <textarea id="rt" rows="8" placeholder="User-agent: *&#10;Disallow:&#10;&#10;User-agent: GPTBot&#10;Disallow: /"></textarea>
+  <button class="act" id="run" type="button">Check my AI crawler access</button>
+
+  <div id="results"></div>
+
+  <div class="out" id="genWrap" hidden>
+    <button class="copy" id="copyGen" type="button">Copy</button>
+    <p class="hint" style="margin-top:1.4rem">Recommended AI-friendly <code>robots.txt</code> (allows the major AI search crawlers, keeps your existing site rules in mind — review before shipping):</p>
+    <pre id="gen"></pre>
+  </div>
+
+  <div class="cta">
+    <h2>Want this fixed on your real site today?</h2>
+    <p>The <strong>Fix Pack ($39)</strong> ships you a corrected <code>robots.txt</code> that welcomes AI crawlers, plus a sitemap, JSON-LD structured data, and clean title/meta/Open Graph tags — installed-ready, delivered today. Want the full picture first? <a style="color:#ccff00" href="https://samedaydesk.com/tools/ai-readiness">Run the free AI-readiness check</a>.</p>
+    <a class="btn" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · $39</a>
+    <a class="btn2" href="https://samedaydesk.com/tools/ai-readiness">Full free check</a>
+  </div>
+
+  <footer>By <a href="https://samedaydesk.com/">SameDayDesk</a>. See also: <a href="https://samedaydesk.com/guides/get-cited-by-ai-search.html">how to get cited by AI search</a> · <a href="https://samedaydesk.com/tools/schema-generator.html">JSON-LD schema generator</a>.</footer>
+</div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  // Known AI / LLM crawlers worth surfacing. token = robots.txt user-agent token.
+  const BOTS = [
+    { token:"GPTBot", who:"OpenAI — trains & indexes for ChatGPT" },
+    { token:"OAI-SearchBot", who:"OpenAI — powers ChatGPT Search results" },
+    { token:"ChatGPT-User", who:"OpenAI — live fetch when a user clicks a link" },
+    { token:"ClaudeBot", who:"Anthropic — indexes for Claude" },
+    { token:"Claude-Web", who:"Anthropic — live browsing" },
+    { token:"anthropic-ai", who:"Anthropic — legacy crawler token" },
+    { token:"PerplexityBot", who:"Perplexity — indexes for citations" },
+    { token:"Perplexity-User", who:"Perplexity — live fetch on user request" },
+    { token:"Google-Extended", who:"Google — Gemini & AI Overviews training/grounding" },
+    { token:"CCBot", who:"Common Crawl — feeds many open LLMs" },
+    { token:"Bytespider", who:"ByteDance / TikTok AI" },
+    { token:"Amazonbot", who:"Amazon — Alexa & AI" },
+    { token:"Applebot-Extended", who:"Apple Intelligence training" },
+    { token:"meta-externalagent", who:"Meta AI crawler" },
+    { token:"cohere-ai", who:"Cohere LLM crawler" }
+  ];
+
+  // Minimal robots.txt parser → groups of { agents:[], rules:[{allow,path}] }
+  function parse(txt){
+    const groups = []; let cur = null; let lastWasAgent = false;
+    txt.split(/\r?\n/).forEach(raw => {
+      const line = raw.replace(/#.*$/, "").trim();
+      if(!line) return;
+      const idx = line.indexOf(":"); if(idx<0) return;
+      const field = line.slice(0,idx).trim().toLowerCase();
+      const val = line.slice(idx+1).trim();
+      if(field === "user-agent"){
+        if(!cur || !lastWasAgent){ cur = { agents:[], rules:[] }; groups.push(cur); }
+        cur.agents.push(val.toLowerCase()); lastWasAgent = true;
+      } else if(field === "disallow" || field === "allow"){
+        if(!cur){ cur = { agents:["*"], rules:[] }; groups.push(cur); }
+        cur.rules.push({ allow: field === "allow", path: val }); lastWasAgent = false;
+      } else { lastWasAgent = false; }
+    });
+    return groups;
+  }
+  // Pick the most specific matching group for a bot token (exact token > "*")
+  function groupFor(groups, token){
+    const t = token.toLowerCase();
+    let star = null, exact = null;
+    groups.forEach(g => {
+      g.agents.forEach(a => {
+        if(a === "*") star = star || g;
+        else if(a === t || t.startsWith(a) || a.startsWith(t)) exact = exact || g;
+      });
+    });
+    return exact || star || null;
+  }
+  // Is path "/" allowed for this group? longest-match wins; Allow wins ties; no group => allowed.
+  function allowsRoot(group){
+    if(!group) return true;
+    const path = "/";
+    let best = null; // {allow, len}
+    group.rules.forEach(r => {
+      // empty Disallow means "allow all"; empty Allow is ignored
+      if(r.path === "" ) { if(!r.allow){ /* Disallow: (empty) = allow all, lowest specificity */ if(!best) best = {allow:true, len:-1}; } return; }
+      const p = r.path;
+      // simple prefix match against "/"
+      const matches = path.startsWith(p) || p === "/";
+      if(matches){
+        const len = p.length;
+        if(!best || len > best.len || (len === best.len && r.allow)) best = { allow: r.allow, len };
+      }
+    });
+    return best ? best.allow : true;
+  }
+
+  function recommended(){
+    return [
+      "# AI-friendly robots.txt — welcomes major AI search crawlers",
+      "User-agent: *",
+      "Allow: /",
+      "",
+      "# Explicitly welcome AI search engines so they can cite you",
+      ...["GPTBot","OAI-SearchBot","ChatGPT-User","ClaudeBot","PerplexityBot","Perplexity-User","Google-Extended","CCBot","Applebot-Extended"]
+        .map(b => `User-agent: ${b}\nAllow: /\n`).join("").trim().split("\n"),
+      "",
+      "Sitemap: https://yourdomain.com/sitemap.xml"
+    ].join("\n");
+  }
+
+  function render(groups, empty){
+    const rows = BOTS.map(b => {
+      const g = groupFor(groups, b.token);
+      const allowed = empty ? true : allowsRoot(g);
+      return { ...b, allowed };
+    });
+    const blocked = rows.filter(r => !r.allowed).length;
+    const total = rows.length;
+    let html = "";
+    if(empty){
+      html += `<p class="scoreline">No robots.txt pasted — here's what an AI-friendly one looks like.</p>`;
+      html += `<p class="hint">A missing or empty robots.txt usually means crawlers <em>are</em> allowed by default — but having an explicit, welcoming one (plus a Sitemap line) is the clean, signal-rich setup AI engines reward.</p>`;
+    } else if(blocked === 0){
+      html += `<p class="scoreline" style="color:var(--ok)">✓ All ${total} major AI crawlers can access your site.</p><p class="hint">Good — you're eligible to be cited. The other half of the battle is having <a href="https://samedaydesk.com/tools/schema-generator.html">structured data</a> and crawlable content so engines can actually quote you.</p>`;
+    } else {
+      html += `<p class="scoreline" style="color:var(--bad)">✕ You're blocking ${blocked} of ${total} AI crawlers.</p><p class="hint">Each blocked crawler is an AI engine that cannot quote or cite your site. The recommended <code>robots.txt</code> below fixes this.</p>`;
+    }
+    html += `<table><thead><tr><th>AI crawler</th><th>Status</th></tr></thead><tbody>`;
+    rows.forEach(r => {
+      html += `<tr><td><strong>${r.token}</strong><div class="who">${r.who}</div></td><td><span class="pill ${r.allowed?'ok':'bad'}">${r.allowed?'Allowed':'Blocked'}</span></td></tr>`;
+    });
+    html += `</tbody></table>`;
+    $("results").innerHTML = html;
+    $("gen").textContent = recommended();
+    $("genWrap").hidden = false;
+  }
+
+  $("run").addEventListener("click", () => {
+    const txt = $("rt").value.trim();
+    if(!txt){ render([], true); return; }
+    render(parse(txt), false);
+  });
+  $("copyGen").addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText($("gen").textContent); $("copyGen").textContent="Copied!"; setTimeout(()=>$("copyGen").textContent="Copy",1500);} catch {}
+  });
+</script>
+</body>
+</html>
