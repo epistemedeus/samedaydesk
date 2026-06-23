@@ -123,6 +123,18 @@
   transition: filter var(--dur-1) var(--ease-out);
 }
 .ctaBtn:hover { filter: brightness(1.08); }
+.ctaActions { display: flex; flex-direction: column; gap: 0.6rem; flex: none; }
+.ctaBtnSecondary {
+  flex: none;
+  padding: 0.85rem 1.5rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--ink); background: transparent;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-s); text-decoration: none;
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+.ctaBtnSecondary:hover { border-color: var(--ink-dim); }
 
 /* ── FAQ ── */
 .faq { margin-top: var(--space-2xl); }

@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { CATEGORIES, CUSTOM } from "../lib/services";
+import { CATEGORIES, CUSTOM, PAYMENT_LINKS } from "../lib/services";
 import MagneticButton from "./MagneticButton";
 import { track } from "../lib/posthog";
 import styles from "./Services.module.css";
@@ -51,7 +51,9 @@ export default function Services() {
                     </ul>
 
                     <MagneticButton
-                      to={`/signup?offer=${o.slug}`}
+                      {...(PAYMENT_LINKS[o.slug]
+                        ? { href: PAYMENT_LINKS[o.slug] }
+                        : { to: `/signup?offer=${o.slug}` })}
                       variant={o.flagship ? "primary" : "ghost"}
                       magnetic={o.flagship}
                       className={styles.cardCta}
@@ -73,7 +75,7 @@ export default function Services() {
             <p className={styles.customBlurb}>{CUSTOM.blurb}</p>
           </div>
           <MagneticButton
-            to="/signup?offer=custom_quote"
+            href={PAYMENT_LINKS.custom_quote}
             variant="ghost"
             onClick={() => track("offer_selected", { offer: "custom_quote" })}
           >

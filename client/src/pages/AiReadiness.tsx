@@ -1,5 +1,4 @@
 import { useState, type FormEvent } from "react";
-import { Link } from "react-router-dom";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import { track } from "../lib/posthog";
@@ -104,21 +103,36 @@ export default function AiReadiness() {
 
             <div className={styles.cta}>
               <div>
-                <h2 className={styles.ctaTitle}>This is the surface. Want the full picture?</h2>
+                <h2 className={styles.ctaTitle}>Want the fixes done for you?</h2>
                 <p className={styles.ctaText}>
-                  The <strong>AI-Search Visibility Audit</strong> goes further: we test whether ChatGPT,
-                  Perplexity and Google actually <em>cite you</em> for your real buyer queries, benchmark you
-                  against named competitors, and hand you a prioritized fix list as a PDF and web report.
-                  Same day.
+                  Skip the manual work. The <strong>Fix Pack</strong> hands you copy-paste JSON-LD, a
+                  corrected robots.txt, an XML sitemap, and clean title / meta / Open Graph tags built
+                  for your exact site, plus a prioritized checklist. Delivered today. Need the deep
+                  version? The full <strong>AI-Search Visibility Audit</strong> also tests whether
+                  ChatGPT, Perplexity and Google actually <em>cite you</em> for real buyer queries and
+                  benchmarks you against named competitors.
                 </p>
               </div>
-              <Link
-                to="/signup?offer=ai_audit"
-                className={styles.ctaBtn}
-                onClick={() => track("tool_cta_clicked", { tool: "ai_readiness", offer: "ai_audit" })}
-              >
-                Get the full audit · $249 →
-              </Link>
+              <div className={styles.ctaActions}>
+                <a
+                  href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.ctaBtn}
+                  onClick={() => track("tool_cta_clicked", { tool: "ai_readiness", offer: "ai_fixpack" })}
+                >
+                  Get the Fix Pack · $39 →
+                </a>
+                <a
+                  href="https://buy.stripe.com/fZuaEY2FI4jl2OPbICeZ206"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.ctaBtnSecondary}
+                  onClick={() => track("tool_cta_clicked", { tool: "ai_readiness", offer: "ai_audit" })}
+                >
+                  Full audit · $249 →
+                </a>
+              </div>
             </div>
           </section>
         )}

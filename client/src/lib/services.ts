@@ -192,3 +192,18 @@ export const CUSTOM = {
 
 export const ALL_OFFERS: Offer[] = CATEGORIES.flatMap((c) => c.offers);
 export const flagship = ALL_OFFERS.find((o) => o.flagship)!;
+
+// Frictionless live Stripe Payment Links (Neomorphic LLC). When a slug has one, the card
+// links straight to checkout — no signup/email wall (the conversion killer for cold buyers).
+// Edge-fit offers + custom only; amounts match server/pricing.js. See exp/0008 payment-links.md.
+export const PAYMENT_LINKS: Record<string, string> = {
+  lead_list:        "https://buy.stripe.com/cNicN6eoqaHJ1KL8wqeZ208",
+  data_cleanup:     "https://buy.stripe.com/fZu00k6VY5npgFF4gaeZ20a",
+  scrape_csv:       "https://buy.stripe.com/bJe5kE1BE9DFexx7smeZ20b",
+  bug_fix:          "https://buy.stripe.com/cNi7sM4NQbLN3ST9AueZ207",
+  automation_build: "https://buy.stripe.com/5kQaEYdkm3fhahhh2WeZ209",
+  rag_bot:          "https://buy.stripe.com/3cIdRa5RU7vx9dd7smeZ20c",
+  mcp_server:       "https://buy.stripe.com/14A4gA6VY7vxahh6oieZ20d",
+  ai_audit:         "https://buy.stripe.com/fZuaEY2FI4jl2OPbICeZ206",
+  custom_quote:     "https://buy.stripe.com/bJe4gAbcedTV8993c6eZ205",
+};

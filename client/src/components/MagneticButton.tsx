@@ -42,7 +42,7 @@ export default function MagneticButton({
   const body = <span ref={inner} className={styles.inner}>{children}</span>;
   const h = magnetic ? { onMouseMove: onMove, onMouseLeave: onLeave } : {};
 
-  if (to) return <Link to={to} className={cls} aria-label={ariaLabel} viewTransition {...h}>{body}</Link>;
-  if (href) return <a href={href} className={cls} aria-label={ariaLabel} {...h}>{body}</a>;
+  if (to) return <Link to={to} className={cls} aria-label={ariaLabel} viewTransition onClick={onClick} {...h}>{body}</Link>;
+  if (href) return <a href={href} className={cls} aria-label={ariaLabel} target="_blank" rel="noopener noreferrer" onClick={onClick} {...h}>{body}</a>;
   return <button type="button" className={cls} aria-label={ariaLabel} onClick={onClick} {...h}>{body}</button>;
 }
