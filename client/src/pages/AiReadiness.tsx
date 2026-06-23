@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import { track } from "../lib/posthog";
@@ -21,6 +21,23 @@ export default function AiReadiness() {
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+
+  // Per-route SEO: the SPA shell ships the homepage <title>; give the flagship tool page
+  // its own title + description so search engines (which render JS) rank it for its query.
+  useEffect(() => {
+    const prevTitle = document.title;
+    document.title = "Free AI Readiness Checker — is your site visible to ChatGPT & Perplexity? | SameDayDesk";
+    const meta = document.querySelector('meta[name="description"]');
+    const prevDesc = meta?.getAttribute("content") ?? null;
+    meta?.setAttribute(
+      "content",
+      "Free, no-signup AI readiness checker: see whether AI search engines (ChatGPT, Perplexity, Claude, Google AI) can crawl and understand your website. Scores AI crawler access, JSON-LD, metadata, sitemap and llms.txt, with concrete fixes.",
+    );
+    return () => {
+      document.title = prevTitle;
+      if (prevDesc !== null) meta?.setAttribute("content", prevDesc);
+    };
+  }, []);
 
   async function run(e: FormEvent) {
     e.preventDefault();
