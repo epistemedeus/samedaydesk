@@ -53,6 +53,14 @@
 
   <div class="note"><strong>Straight talk:</strong> <code>llms.txt</code> is documentation hygiene, not a ranking hack. There's no solid evidence it boosts AI citations. Ship it as a clean index for agents that fetch it — and rely on crawlability + structured data + answer-shaped content for actual visibility. (We'd rather tell you the truth than sell you a myth.)</div>
 
+  <label>Auto-generate from your URL <span class="hint" style="font-weight:400">(we read your sitemap/homepage and draft it for you)</span></label>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+    <input id="autoUrl" placeholder="https://yourdomain.com" style="flex:1;min-width:12rem" />
+    <button class="act" id="autoBtn" type="button" style="background:#15181d;color:#fff;border:none">Auto-generate</button>
+  </div>
+  <p class="hint" id="autoStatus" style="margin:.3rem 0 1.2rem"></p>
+
+  <p class="hint" style="border-top:1px solid var(--line);padding-top:1rem">…or build it by hand:</p>
   <label>Site / project name</label>
   <input id="name" placeholder="Acme Inc." />
   <label>One-line summary (becomes the blockquote)</label>
@@ -114,6 +122,22 @@
   ["name","summary","desc"].forEach(id=>$(id).addEventListener("input", render));
   render();
   $("copyBtn").addEventListener("click", async ()=>{ try{ await navigator.clipboard.writeText($("output").textContent); $("copyBtn").textContent="Copied!"; setTimeout(()=>$("copyBtn").textContent="Copy",1500);}catch{} });
+
+  // Auto-generate from a URL via the server route (reads sitemap/homepage).
+  $("autoBtn").addEventListener("click", async () => {
+    const url = $("autoUrl").value.trim();
+    if(!url){ $("autoStatus").textContent = "Enter a URL first."; return; }
+    $("autoBtn").disabled = true; $("autoStatus").textContent = "Reading the site…";
+    try {
+      const r = await fetch("/api/tools/llms-txt?url=" + encodeURIComponent(url));
+      const data = await r.json();
+      if(!r.ok || !data.llmsTxt) throw new Error(data.error || "Could not generate");
+      $("output").textContent = data.llmsTxt;
+      $("autoStatus").textContent = `Drafted from ${data.count} page(s). Review and edit below, then copy.`;
+    } catch(e) {
+      $("autoStatus").textContent = "Couldn't read that site automatically — build it by hand below. (" + (e.message||"error") + ")";
+    } finally { $("autoBtn").disabled = false; }
+  });
 </script>
 </body>
 </html>
