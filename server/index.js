@@ -9,6 +9,7 @@ import healthRouter from "./routes/health.js";
 import authRouter from "./routes/auth.js";
 import teaserRouter from "./routes/teaser.js";
 import toolsRouter from "./routes/tools.js";
+import scanRouter from "./routes/scan.js";
 import checkoutRouter from "./routes/checkout.js";
 import uploadsRouter from "./routes/uploads.js";
 import stripeWebhookRouter from "./routes/stripe-webhook.js";
@@ -45,6 +46,9 @@ app.use("/api/webhooks/resend", resendWebhookRouter);
 
 // Unknown /api route → JSON 404 (never fall through to the SPA shell).
 app.use("/api", (_req, res) => res.status(404).json({ error: "Not found" }));
+
+// Server-rendered shareable proof page (must be before the SPA fallback).
+app.use("/scan", scanRouter);
 
 // 4) Static SPA + history fallback (production only; in dev Vite serves the client).
 if (isProd) {
