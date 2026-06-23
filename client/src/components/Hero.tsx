@@ -41,8 +41,8 @@ export default function Hero() {
         </h1>
 
         <p className={styles.sub} data-hero-fade>
-          A same-day desk for the work you don't have time for: résumés, LinkedIn, cover letters,
-          landing copy, quick fixes. Sharp, specific, delivered in hours. See the quality <em>free</em>, first.
+          A same-day desk for the work you don't have time for: clean data and lead lists, scrapers,
+          bug fixes, AI builds, and sharp copy. Specific, tested, delivered in hours. See the quality <em>free</em>, first.
         </p>
 
         <div className={styles.ctas} data-hero-fade>

@@ -55,10 +55,10 @@ function welcomeHtml() {
   return `
   <div style="font-family:Inter,Arial,sans-serif;max-width:480px;margin:auto;padding:28px;color:#1a1a1a">
     <h1 style="font-size:18px;margin:0 0 8px">Welcome to SameDayDesk 👋</h1>
-    <p style="color:#555">You're all set. Send us a task — a résumé, a cover letter, landing-page copy, or
-    something custom — and we'll turn it around <strong>today</strong>.</p>
-    <p style="color:#555">Not sure yet? Ask for a <strong>free teaser</strong> first: we'll rewrite a piece
-    of your résumé free so you can judge the quality before paying a cent.</p>
+    <p style="color:#555">You're all set. Send us a task: clean up a spreadsheet, build a lead list, fix a
+    script, ship an AI build, or polish your copy. We'll turn it around <strong>today</strong>.</p>
+    <p style="color:#555">Not sure yet? Ask for a <strong>free teaser</strong> first: we'll do a small piece
+    free so you can judge the quality before paying a cent.</p>
     <p style="margin-top:16px"><a href="https://samedaydesk.com/dashboard"
       style="background:#0a0b0d;color:#ccff00;padding:10px 18px;border-radius:99px;text-decoration:none;font-weight:600">Go to your desk →</a></p>
     <p style="color:#888;font-size:12px;margin-top:20px">Same-day, money-back guaranteed. Just reply to this email any time.</p>

@@ -105,7 +105,7 @@ export default function Checkout() {
         </aside>
 
         <section className={styles.pay}>
-          <Intake uid={user?.id} offer={slug} />
+          <Intake uid={user?.id} offer={slug} hint={offer.intake} />
 
           <h2 className={styles.payHead}>Payment</h2>
           {err && <p className={styles.error} role="alert">{err}</p>}
@@ -123,7 +123,10 @@ export default function Checkout() {
   );
 }
 
-function Intake({ uid, offer }: { uid?: string; offer: string }) {
+function Intake({ uid, offer, hint }: { uid?: string; offer: string; hint?: { label: string; placeholder: string; accept: string } }) {
+  const label = hint?.label ?? "Target role, job link, or what you need";
+  const placeholder = hint?.placeholder ?? "e.g. Senior Customer Success role at a B2B SaaS, here's the posting: …";
+  const accept = hint?.accept ?? ".pdf,.doc,.docx,image/*";
   const [details, setDetails] = useState("");
   const [uploadName, setUploadName] = useState<string | null>(null);
   const [uploadErr, setUploadErr] = useState<string | null>(null);
@@ -162,17 +165,17 @@ function Intake({ uid, offer }: { uid?: string; offer: string }) {
     <div className={styles.intake}>
       <h2 className={styles.payHead}>Your task</h2>
       <label className={styles.field}>
-        <span>Target role, job link, or what you need</span>
+        <span>{label}</span>
         <textarea
           rows={3}
           value={details}
           onChange={(e) => setDetails(e.target.value)}
           onBlur={() => saveDraft()}
-          placeholder="e.g. Senior Customer Success role at a B2B SaaS, here's the posting: …"
+          placeholder={placeholder}
         />
       </label>
       <label className={styles.upload}>
-        <input type="file" accept=".pdf,.doc,.docx,image/*" onChange={(e) => onFile(e.target.files?.[0])} disabled={busy} />
+        <input type="file" accept={accept} onChange={(e) => onFile(e.target.files?.[0])} disabled={busy} />
         <span>{busy ? "Uploading…" : uploadName ? `✓ ${uploadName}` : "Attach your current file (optional)"}</span>
       </label>
       {uploadErr && <p className={styles.error}>{uploadErr}</p>}
