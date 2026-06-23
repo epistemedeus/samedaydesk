@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Free JSON-LD / Schema Validator — check your structured data for AI search — SameDayDesk</title>
+<meta name="description" content="Paste your JSON-LD structured data to validate it: catches JSON syntax errors, missing @context/@type, and missing recommended fields for common schema types (Organization, Product, FAQPage, Article, LocalBusiness). Free, no signup, instant." />
+<link rel="canonical" href="https://samedaydesk.com/tools/schema-validator.html" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Free JSON-LD / Schema Validator" />
+<meta property="og:description" content="Validate your JSON-LD structured data for AI search and Google. Free, no signup, instant." />
+<meta property="og:url" content="https://samedaydesk.com/tools/schema-validator.html" />
+<meta property="og:image" content="https://samedaydesk.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"What does a JSON-LD validator check?","acceptedAnswer":{"@type":"Answer","text":"It confirms your structured data is valid JSON, has the required @context and @type, and includes the fields that Google and AI search engines expect for the schema type you're using (for example a Product needs a name and offers; an FAQPage needs mainEntity questions with answers)."}},
+{"@type":"Question","name":"Why does structured data matter for AI search?","acceptedAnswer":{"@type":"Answer","text":"JSON-LD is the machine-readable layer AI engines and Google use to classify and quote your pages. Valid, complete schema raises your odds of being surfaced in AI answers and rich results; broken or incomplete schema is silently ignored."}},
+{"@type":"Question","name":"Is this the same as Google's Rich Results Test?","acceptedAnswer":{"@type":"Answer","text":"This is a fast client-side sanity check for syntax and common required fields. For rich-result eligibility specifically, also run Google's Rich Results Test and Schema.org's validator. Use this to catch the obvious mistakes instantly before you ship."}}
+]}
+</script>
+<style>
+  :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; --ok:#1c7c4a; --bad:#9e3b2e; --warn:#9a6b00; }
+  * { box-sizing:border-box; } html { background:var(--bg); }
+  body { margin:0; color:var(--ink); background:var(--bg); font:16px/1.6 Inter,system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:46rem; margin:0 auto; padding:2.5rem 1.25rem 5rem; }
+  a { color:var(--oxide); }
+  .eyebrow { font:600 12px/1 ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--oxide); margin:0 0 1rem; }
+  h1 { font-size:clamp(1.6rem,1.2rem+1.8vw,2.4rem); line-height:1.1; letter-spacing:-0.02em; margin:.2em 0; }
+  .lead { color:var(--dim); font-size:1.1rem; }
+  label { display:block; font-size:.85rem; color:var(--dim); margin:.8rem 0 .25rem; font-weight:600; }
+  textarea { width:100%; padding:.7rem; font:13px/1.5 ui-monospace,monospace; background:#fff; border:1px solid var(--line); border-radius:8px; }
+  textarea:focus { outline:none; border-color:var(--oxide); }
+  button.act { font:inherit; font-weight:700; cursor:pointer; border-radius:8px; border:none; padding:.65rem 1.2rem; background:#15181d; color:#fff; margin-top:.6rem; }
+  .scoreline { margin:1.3rem 0 .4rem; font-size:1.15rem; font-weight:700; }
+  .msg { border-radius:8px; padding:.5rem .7rem; margin:.4rem 0; font-size:.92rem; border:1px solid var(--line); }
+  .msg.ok { background:#dff3e6; border-color:#a8d8bb; color:var(--ok); }
+  .msg.bad { background:#f6e1de; border-color:#e1b0a8; color:var(--bad); }
+  .msg.warn { background:#fbf1d8; border-color:#e6cd8a; color:var(--warn); }
+  .cta { background:#15181d; color:#f4f4f0; border-radius:14px; padding:1.4rem; margin:2rem 0; }
+  .cta h2 { margin:0 0 .4rem; color:#fff; font-size:1.25rem; }
+  .cta a.btn { display:inline-block; margin:.5rem .5rem 0 0; background:#ccff00; color:#0a0b0d; font-weight:700; text-decoration:none; padding:.6rem 1.1rem; border-radius:9px; }
+  .cta a.btn2 { display:inline-block; margin:.5rem 0 0; color:#ccff00; border:1px solid #444; text-decoration:none; padding:.6rem 1.1rem; border-radius:9px; }
+  .hint { font-size:.85rem; color:var(--dim); }
+  footer { margin-top:2.5rem; padding-top:1.2rem; border-top:1px solid var(--line); color:var(--dim); font-size:.9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">SameDayDesk · Free tool</p>
+  <h1>JSON-LD / Schema Validator</h1>
+  <p class="lead">Paste your structured data to catch the mistakes AI engines and Google silently ignore: invalid JSON, missing <code>@context</code>/<code>@type</code>, and missing required fields for common types. Free, no signup.</p>
+
+  <label>Your JSON-LD (paste the contents of your <code>&lt;script type="application/ld+json"&gt;</code> block)</label>
+  <textarea id="src" rows="10" placeholder='{&#10;  "@context": "https://schema.org",&#10;  "@type": "Organization",&#10;  "name": "Acme Inc.",&#10;  "url": "https://acme.com"&#10;}'></textarea>
+  <button class="act" id="run" type="button">Validate</button>
+
+  <div id="results"></div>
+
+  <div class="cta">
+    <h2>Want valid structured data installed on your real pages?</h2>
+    <p>The <strong>Fix Pack ($39)</strong> ships correct JSON-LD for your actual site (Organization, plus Product/FAQ/LocalBusiness as relevant), a crawler-welcoming <code>robots.txt</code>, a sitemap, and clean meta/Open Graph tags — delivered today. <a style="color:#ccff00" href="https://samedaydesk.com/tools/ai-readiness">Run the free AI-readiness check first</a>.</p>
+    <a class="btn" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · $39</a>
+    <a class="btn2" href="https://samedaydesk.com/tools/schema-generator.html">Generate schema</a>
+  </div>
+
+  <footer>By <a href="https://samedaydesk.com/">SameDayDesk</a>. See also: <a href="https://samedaydesk.com/tools/schema-generator.html">JSON-LD generator</a> · <a href="https://samedaydesk.com/tools/ai-crawler-checker.html">AI crawler checker</a> · <a href="https://samedaydesk.com/tools/meta-tag-generator.html">meta tag generator</a>.</footer>
+</div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  // recommended fields per common schema.org type (not exhaustive — the high-value ones)
+  const REQ = {
+    Organization: ["name","url"],
+    LocalBusiness: ["name","address"],
+    Product: ["name","offers"],
+    Offer: ["price","priceCurrency"],
+    Article: ["headline","author"],
+    BlogPosting: ["headline","author"],
+    FAQPage: ["mainEntity"],
+    Question: ["name","acceptedAnswer"],
+    BreadcrumbList: ["itemListElement"],
+    WebSite: ["name","url"],
+    Person: ["name"],
+    Event: ["name","startDate"],
+    Recipe: ["name","recipeIngredient"]
+  };
+  const msgs = [];
+  const add = (cls, text) => msgs.push({cls, text});
+
+  function checkNode(node, path){
+    if(Array.isArray(node)){ node.forEach((n,i)=>checkNode(n, `${path}[${i}]`)); return; }
+    if(!node || typeof node !== "object") return;
+    const type = node["@type"];
+    if(type){
+      const types = Array.isArray(type) ? type : [type];
+      types.forEach(t => {
+        const req = REQ[t];
+        if(req){
+          const missing = req.filter(f => node[f] === undefined || node[f] === "" || (Array.isArray(node[f]) && !node[f].length));
+          if(missing.length) add("warn", `${path||"root"} (${t}): missing recommended field(s): ${missing.join(", ")}`);
+          else add("ok", `${path||"root"} (${t}): has the key recommended fields ✓`);
+        }
+      });
+    }
+    // recurse into nested objects/@graph
+    Object.keys(node).forEach(k => {
+      if(k === "@context" || k === "@type") return;
+      const v = node[k];
+      if(v && typeof v === "object") checkNode(v, path ? `${path}.${k}` : k);
+    });
+  }
+
+  function validate(){
+    msgs.length = 0;
+    const raw = $("src").value.trim();
+    if(!raw){ render("Paste some JSON-LD above to validate."); return; }
+    let data;
+    try { data = JSON.parse(raw); }
+    catch(e){ add("bad", "Invalid JSON: " + e.message + ". AI engines and Google will ignore this entirely until the syntax is fixed."); render(); return; }
+    add("ok", "Valid JSON syntax ✓");
+    // @context
+    const ctx = data["@context"];
+    const ctxOk = (typeof ctx === "string" && /schema\.org/.test(ctx)) || (ctx && typeof ctx === "object");
+    if(!ctxOk) add("bad", 'Missing or non-schema.org "@context". Add "@context": "https://schema.org".');
+    else add("ok", "@context present ✓");
+    // @type (allow @graph)
+    if(data["@graph"]){ add("ok", "@graph present — validating each node ✓"); checkNode(data["@graph"], "@graph"); }
+    else if(!data["@type"]) add("bad", 'Missing "@type". Every JSON-LD node needs a @type (e.g. Organization, Product, FAQPage).');
+    else checkNode(data, "");
+    render();
+  }
+  function render(empty){
+    if(empty){ $("results").innerHTML = `<p class="hint" style="margin-top:1rem">${empty}</p>`; return; }
+    const bad = msgs.filter(m=>m.cls==="bad").length, warn = msgs.filter(m=>m.cls==="warn").length;
+    let head = bad ? `<p class="scoreline" style="color:var(--bad)">✕ ${bad} error${bad>1?"s":""} found${warn?`, ${warn} warning${warn>1?"s":""}`:""}.</p>`
+      : warn ? `<p class="scoreline" style="color:var(--warn)">⚠ Valid, but ${warn} recommended field${warn>1?"s":""} missing.</p>`
+      : `<p class="scoreline" style="color:var(--ok)">✓ Looks good — valid and complete on the basics.</p>`;
+    $("results").innerHTML = head + msgs.map(m=>`<div class="msg ${m.cls}">${m.text.replace(/</g,"&lt;")}</div>`).join("");
+  }
+  $("run").addEventListener("click", validate);
+</script>
+</body>
+</html>
