@@ -68,6 +68,8 @@ if (isProd) {
       },
     }),
   );
+  // Clean URL for the SkillGuard landing page (the CLI/README funnel target).
+  app.get("/skillguard", (_req, res) => res.sendFile(path.join(CLIENT_DIST, "skillguard.html")));
   app.use((req, res, next) => {
     if (req.method !== "GET") return next();
     res.sendFile(path.join(CLIENT_DIST, "index.html"));

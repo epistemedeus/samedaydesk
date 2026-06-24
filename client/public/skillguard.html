@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SkillGuard — scan a Claude Code skill or MCP server for malware before you install it</title>
+<meta name="description" content="A free CLI that statically scans Claude Code skills, plugins, and MCP servers for env-var exfiltration, install-time shell hooks, prompt injection, and committed malware — before you install. Never runs the scanned code. Paid deep audit + continuous watch available." />
+<link rel="canonical" href="https://samedaydesk.com/skillguard" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="SkillGuard — vet a Claude Code skill or MCP server before you install it" />
+<meta property="og:description" content="Free static scanner for malicious skills/MCP servers. 71 malicious skills found in the wild; 26% carry vulnerabilities. Check yours in seconds." />
+<meta property="og:url" content="https://samedaydesk.com/skillguard" />
+<meta property="og:image" content="https://samedaydesk.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SkillGuard","applicationCategory":"SecurityApplication","operatingSystem":"Node.js 18+","offers":[{"@type":"Offer","name":"Free CLI","price":"0","priceCurrency":"USD"},{"@type":"Offer","name":"Deep audit","price":"29","priceCurrency":"USD"},{"@type":"Offer","name":"Watch mode","price":"12","priceCurrency":"USD"}],"description":"Static security scanner for Claude Code skills, plugins, and MCP servers.","url":"https://samedaydesk.com/skillguard"}
+</script>
+<style>
+  :root{--bg:#0d1014;--card:#161a20;--ink:#e8e8e3;--dim:#9aa0a8;--line:#262b33;--acc:#ccff00;--good:#6fcf97;--bad:#e07a5f}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 -apple-system,Inter,system-ui,sans-serif}
+  .wrap{max-width:46rem;margin:0 auto;padding:3rem 1.25rem 5rem}
+  a{color:var(--acc)}
+  .eyebrow{font:600 12px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:0 0 1rem}
+  h1{font-size:clamp(1.9rem,1.3rem+2.4vw,2.8rem);line-height:1.08;letter-spacing:-.02em;margin:.2em 0}
+  h2{font-size:1.35rem;margin:2.4rem 0 .6rem}
+  .lead{font-size:1.2rem;color:var(--dim)}
+  pre{background:#0a0c10;border:1px solid var(--line);border-radius:10px;padding:1rem;overflow:auto;font-size:.85rem;line-height:1.5}
+  .cmd{background:#0a0c10;border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:10px;padding:.9rem 1rem;font:14px/1.5 ui-monospace,monospace;overflow:auto}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin:1.8rem 0}
+  .stat{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--bad);border-radius:10px;padding:.9rem 1rem}
+  .stat b{display:block;font-size:1.7rem;font-family:ui-monospace,monospace;line-height:1}.stat span{color:var(--dim);font-size:.82rem}
+  .tiers{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.2rem 0}
+  @media(max-width:33rem){.tiers{grid-template-columns:1fr}}
+  .tier{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.3rem}
+  .tier h3{margin:0 0 .2rem}.tier .price{font-size:1.6rem;font-weight:700}.tier .price small{font-size:.9rem;color:var(--dim);font-weight:400}
+  .tier ul{padding-left:1.1rem;color:var(--dim);font-size:.92rem}
+  .btn{display:block;text-align:center;margin-top:1rem;background:var(--acc);color:#0a0b0d;font-weight:700;text-decoration:none;padding:.7rem 1rem;border-radius:9px}
+  .btn2{display:block;text-align:center;margin-top:1rem;color:var(--acc);border:1px solid #3a3f48;text-decoration:none;padding:.7rem 1rem;border-radius:9px}
+  .muted{color:var(--dim);font-size:.9rem}
+  footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--line);color:var(--dim);font-size:.9rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">SkillGuard · by SameDayDesk</p>
+  <h1>Scan a Claude Code skill or MCP server for malware <em>before</em> you install it.</h1>
+  <p class="lead">The skill/MCP ecosystem is exploding — and so is the attack surface. SkillGuard statically scans any skill, plugin, or MCP server for the patterns attackers actually use, in seconds. Free, no signup, and it <strong>never runs the code it's inspecting</strong>.</p>
+
+  <div class="cmd">npx github:epistemedeus/skillguard https://github.com/owner/repo</div>
+
+  <div class="stats">
+    <div class="stat"><b>71</b><span>malicious skills found in the wild</span></div>
+    <div class="stat"><b>26%</b><span>of published skills carry vulnerabilities</span></div>
+    <div class="stat"><b>30+</b><span>MCP CVEs in 60 days</span></div>
+  </div>
+
+  <h2>What it catches</h2>
+  <pre>DANGER (4)
+  SKILL.md
+    ■ Prompt-injection / data-exfil instruction in text     [prompt-injection]
+  index.js
+    ■ Env/secret exfiltration (sensitive env var + network) [env-exfil]
+    ■ Hardcoded webhook / pastebin / raw-IP endpoint        [exfil-host]
+    ■ Obfuscated exec: eval(atob), curl | bash              [obfuscation]
+
+✗ DANGEROUS — do NOT install without reviewing the flagged files.</pre>
+  <p class="muted">Also detects committed binaries, hardcoded private keys, the "commit an encrypted artifact" honeypot pattern, install-time <code>postinstall</code> hooks, and auto-approve-all / <code>--dangerously-skip-permissions</code> configs. Exit codes (0/2/3) let you gate CI on it. <a href="https://github.com/epistemedeus/skillguard">Source on GitHub →</a></p>
+
+  <h2>Stop worrying about what you install</h2>
+  <p>The free CLI is the first line of defense. If you pull in third-party skills and MCP servers regularly, we'll do the deeper work for you:</p>
+  <div class="tiers">
+    <div class="tier">
+      <h3>Deep audit</h3>
+      <div class="price">$29 <small>one-time</small></div>
+      <ul>
+        <li>A human review of one skill / MCP / plugin you're about to depend on</li>
+        <li>Written risk report with specific findings + a go / no-go</li>
+        <li>Delivered same day</li>
+      </ul>
+      <a class="btn" href="https://buy.stripe.com/6oUaEY0xA179899fYSeZ20f">Get a deep audit · $29</a>
+    </div>
+    <div class="tier">
+      <h3>Watch mode</h3>
+      <div class="price">$12 <small>/ month</small></div>
+      <ul>
+        <li>We re-scan the skills + MCP servers you depend on on every upstream release</li>
+        <li>Alert the moment new risk appears (the rug-pull / mutable-tool problem)</li>
+        <li>Cancel anytime</li>
+      </ul>
+      <a class="btn2" href="https://buy.stripe.com/5kQ8wQ4NQ4jlahhh2WeZ20g">Start watching · $12/mo</a>
+    </div>
+  </div>
+
+  <h2>Safe by design</h2>
+  <p>SkillGuard does <strong>static analysis only</strong>. It clones with <code>git clone</code> (hooks disabled) and reads files — it never runs <code>npm install</code>, never executes build/postinstall scripts, and never runs the target code. Scanning a malicious package can't harm you. (A scanner that executed what it inspects would be the very risk it's meant to prevent.)</p>
+  <p class="muted">Heuristics catch known-bad patterns; a novel, determined attack can evade any static scanner. SkillGuard is a fast first line of defense, not a guarantee.</p>
+
+  <footer>By <a href="https://samedaydesk.com/">SameDayDesk</a> · <a href="https://github.com/epistemedeus/skillguard">github.com/epistemedeus/skillguard</a> · also try our <a href="https://samedaydesk.com/tools/ai-readiness">free AI-readiness checker</a>.</footer>
+</div>
+</body>
+</html>
