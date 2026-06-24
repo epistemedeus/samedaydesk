@@ -15,6 +15,7 @@ import uploadsRouter from "./routes/uploads.js";
 import stripeWebhookRouter from "./routes/stripe-webhook.js";
 import resendWebhookRouter from "./routes/resend-webhook.js";
 import pulseRouter from "./routes/pulse.js";
+import mcpRouter from "./routes/mcp.js";
 import { pulseMiddleware } from "./lib/pulse.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -56,6 +57,9 @@ app.use("/api", (_req, res) => res.status(404).json({ error: "Not found" }));
 
 // Server-rendered shareable proof page (must be before the SPA fallback).
 app.use("/scan", scanRouter);
+
+// Remote (Streamable HTTP) MCP server at /mcp (before the SPA fallback).
+app.use("/mcp", mcpRouter);
 
 // 4) Static SPA + history fallback (production only; in dev Vite serves the client).
 if (isProd) {
