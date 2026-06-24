@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The med-spa AI-citation schema gap (2026): we checked the clinics that surface for "best med spa" searches</title>
+<meta name="description" content="Original June 2026 research: we ran the med-spa pages that actually surface for high-intent searches across 8 US metros and tabulated their structured data. 77% have basic JSON-LD, but only 8% carry FAQPage, 2% carry Review, and 11% mark up their services — the exact fields AI assistants use to quote a business. Full data + a free generator." />
+<link rel="canonical" href="https://samedaydesk.com/reports/ai-citation-schema-med-spas-2026.html" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="The med-spa AI-citation schema gap (2026): the fields AI assistants quote are almost universally missing" />
+<meta property="og:description" content="We checked the med-spa pages that surface for high-intent searches in 8 metros. 77% have basic structured data; only 8% have FAQ, 2% have reviews, 11% mark up services. Full data + a free JSON-LD generator." />
+<meta property="og:url" content="https://samedaydesk.com/reports/ai-citation-schema-med-spas-2026.html" />
+<meta property="og:image" content="https://samedaydesk.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<style>
+  :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; --good:#3a7d44; --warn:#b58100; }
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body { margin:0; color:var(--ink); background:var(--bg); font:17px/1.6 Inter,system-ui,-apple-system,sans-serif; }
+  .wrap { max-width: 50rem; margin:0 auto; padding: 3rem 1.25rem 5rem; }
+  a { color: var(--oxide); }
+  .eyebrow { font:600 12px/1 ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--oxide); margin:0 0 1rem; }
+  h1 { font-size: clamp(1.8rem,1.3rem+2.2vw,2.9rem); line-height:1.08; letter-spacing:-0.02em; margin:.2em 0; }
+  h2 { font-size:1.5rem; margin:2.5rem 0 .6rem; }
+  h3 { font-size:1.15rem; margin:1.6rem 0 .4rem; }
+  .lead { font-size:1.2rem; color:var(--dim); }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1rem; margin:2rem 0; }
+  .stat { background:var(--card); border:1px solid var(--line); border-left:4px solid var(--oxide); border-radius:10px; padding:1rem 1.1rem; }
+  .stat b { display:block; font-size:2rem; font-family:ui-monospace,monospace; line-height:1; }
+  .stat span { color:var(--dim); font-size:.85rem; }
+  table { width:100%; border-collapse:collapse; margin:1rem 0; font-size:.95rem; }
+  th,td { text-align:left; padding:.5rem .6rem; border-bottom:1px solid var(--line); }
+  th { font:600 12px/1 ui-monospace,monospace; letter-spacing:.06em; text-transform:uppercase; color:var(--dim); }
+  td.num { font-family:ui-monospace,monospace; text-align:right; }
+  .bar { height:8px; background:var(--line); border-radius:5px; overflow:hidden; min-width:80px; }
+  .bar > i { display:block; height:100%; background:var(--oxide); }
+  .rare i { background:var(--warn); }
+  .cta { background:#15181d; color:#f4f4f0; border-radius:14px; padding:1.6rem 1.5rem; margin:2.5rem 0; }
+  .cta h2 { margin-top:0; color:#fff; }
+  .cta p { color:#cfcdc6; }
+  .cta a.btn { display:inline-block; margin:.5rem .5rem 0 0; background:#ccff00; color:#0a0b0d; font-weight:700; text-decoration:none; padding:.7rem 1.2rem; border-radius:9px; }
+  .cta a.btn2 { display:inline-block; margin:.5rem 0 0; color:#ccff00; border:1px solid #444; text-decoration:none; padding:.7rem 1.2rem; border-radius:9px; }
+  code, pre { background:var(--card); border:1px solid var(--line); border-radius:6px; font-size:.86em; }
+  code { padding:.1rem .4rem; }
+  pre { padding:1rem; overflow:auto; white-space:pre-wrap; word-break:break-word; }
+  .tool { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:1.3rem; margin:2rem 0; }
+  .tool label { display:block; font-size:.85rem; color:var(--dim); margin:.6rem 0 .2rem; }
+  .tool input { width:100%; padding:.55rem .7rem; border:1px solid var(--line); border-radius:8px; font:inherit; background:#fff; }
+  .tool button { margin-top:1rem; background:var(--oxide); color:#fff; border:0; border-radius:8px; padding:.6rem 1.1rem; font:600 1rem Inter,sans-serif; cursor:pointer; }
+  .muted { color:var(--dim); font-size:.9rem; }
+  footer { margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--line); color:var(--dim); font-size:.9rem; }
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"Article","headline":"The med-spa AI-citation schema gap (2026)","datePublished":"2026-06-24","dateModified":"2026-06-24","author":{"@type":"Organization","name":"SameDayDesk"},"publisher":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"mainEntityOfPage":"https://samedaydesk.com/reports/ai-citation-schema-med-spas-2026.html","about":"AI search optimization, structured data, JSON-LD, generative engine optimization, med spas"},
+ {"@type":"Dataset","name":"Med-spa AI-citation schema prevalence (2026-W26)","description":"Structured-data (JSON-LD) prevalence among the 61 reachable individual med-spa / aesthetic-clinic pages that surface for high-intent queries ('best med spa', 'Botox', 'laser hair removal' + city) across 8 US metros (Austin, Scottsdale, Miami, Dallas, Nashville, Los Angeles, Chicago, Denver).","creator":{"@type":"Organization","name":"SameDayDesk"},"datePublished":"2026-06-24","license":"https://creativecommons.org/licenses/by/4.0/","measurementTechnique":"First-party HTTP fetch and JSON-LD parsing of the surfaced page set","variableMeasured":["% with any JSON-LD","% with LocalBusiness/MedicalBusiness","% with AggregateRating","% with Review","% with FAQPage","% with Service/OfferCatalog","% with priceRange","% with geo","% with openingHours"]},
+ {"@type":"FAQPage","mainEntity":[
+   {"@type":"Question","name":"What structured data do AI assistants use to recommend a local business?","acceptedAnswer":{"@type":"Answer","text":"AI assistants quote machine-readable facts: a LocalBusiness/MedicalBusiness block (name, address, phone, geo, hours), Service/OfferCatalog markup for treatments and prices, FAQPage markup for common questions, and Review/AggregateRating for ratings. Pages that carry these are eligible to be quoted; pages that don't are usually skipped."}},
+   {"@type":"Question","name":"How many med spas have the right structured data?","acceptedAnswer":{"@type":"Answer","text":"In our June 2026 check of 61 med-spa pages that surface for high-intent searches across 8 US metros, 77% had some JSON-LD and 59% had a LocalBusiness block, but only 8% had FAQPage, 2% had Review markup, and 11% marked up their services with prices — the answer-rich fields are almost universally missing."}},
+   {"@type":"Question","name":"How do I add this structured data to my own site?","acceptedAnswer":{"@type":"Answer","text":"Use the free starter generator on this page for a basic block, or get the complete paste-ready bundle (FAQPage + Service + Review/AggregateRating + geo + hours) tuned to your live site with a gap diff at samedaydesk.com. Verify your site's current structured data free with the AI-readiness checker."}}
+ ]}
+]}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">SameDayDesk · SchemaForge Research · June 2026</p>
+  <h1>The med-spa pages AI assistants can quote are almost the ones that don't exist.</h1>
+  <p class="lead">We took the high-intent searches real patients run — "best med spa in [city]," "Botox [city]," "laser hair removal [city]" — across 8 US metros, and checked the structured data on the clinic pages that actually surface. The basics are common. The fields an AI assistant needs to <em>quote</em> a clinic are almost universally missing.</p>
+
+  <div class="stats">
+    <div class="stat"><b>77%</b><span>have some JSON-LD structured data</span></div>
+    <div class="stat"><b>8%</b><span>have FAQPage markup</span></div>
+    <div class="stat"><b>2%</b><span>have Review / rating markup</span></div>
+    <div class="stat"><b>11%</b><span>mark up their services &amp; prices</span></div>
+  </div>
+
+  <p>Across <strong>61 reachable clinic pages</strong> (of 62 sampled) in Austin, Scottsdale, Miami, Dallas, Nashville, Los Angeles, Chicago and Denver, the pattern is consistent: clinics get the <em>identity</em> basics right — name, address, phone — and skip the <em>answer-rich</em> markup that lets ChatGPT, Perplexity and Google AI actually pull them into an answer.</p>
+
+  <h2>The data: structured-data prevalence among surfaced med-spa pages</h2>
+  <p class="muted">% of the 61 reachable clinic pages carrying each structured-data signal. June 2026 (week 2026-W26).</p>
+  <table>
+    <thead><tr><th>Structured-data signal</th><th>Have it</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>Any JSON-LD</td><td class="num">77%</td><td><div class="bar"><i style="width:77%"></i></div></td></tr>
+      <tr><td>LocalBusiness / MedicalBusiness</td><td class="num">59%</td><td><div class="bar"><i style="width:59%"></i></div></td></tr>
+      <tr><td>Telephone</td><td class="num">59%</td><td><div class="bar"><i style="width:59%"></i></div></td></tr>
+      <tr><td>Postal address</td><td class="num">57%</td><td><div class="bar"><i style="width:57%"></i></div></td></tr>
+      <tr><td>sameAs (linked profiles)</td><td class="num">62%</td><td><div class="bar"><i style="width:62%"></i></div></td></tr>
+      <tr><td>Opening hours</td><td class="num">48%</td><td><div class="bar"><i style="width:48%"></i></div></td></tr>
+      <tr><td>Geo coordinates</td><td class="num">43%</td><td><div class="bar"><i style="width:43%"></i></div></td></tr>
+      <tr><td>AggregateRating</td><td class="num">31%</td><td><div class="bar rare"><i style="width:31%"></i></div></td></tr>
+      <tr><td>priceRange</td><td class="num">25%</td><td><div class="bar rare"><i style="width:25%"></i></div></td></tr>
+      <tr><td>Service / OfferCatalog</td><td class="num">11%</td><td><div class="bar rare"><i style="width:11%"></i></div></td></tr>
+      <tr><td>FAQPage</td><td class="num">8%</td><td><div class="bar rare"><i style="width:8%"></i></div></td></tr>
+      <tr><td>Review markup</td><td class="num">2%</td><td><div class="bar rare"><i style="width:2%"></i></div></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Why this is the gap that matters</h2>
+  <p>When someone asks an AI assistant "what's a good med spa near me for Botox," the assistant assembles an answer from machine-readable facts: which businesses exist, what they offer, what it costs, how they're rated, and the questions people ask. A page with a bare <code>LocalBusiness</code> block is listed. A page that also carries <code>Service</code> + <code>priceRange</code>, <code>FAQPage</code>, and real <code>Review</code>/<code>AggregateRating</code> markup is <em>quotable</em> — it gives the model the exact sentences and numbers to cite.</p>
+  <p>The data says the second kind of page barely exists in this category. That's not a reason to despair — it's the cheapest competitive edge in local aesthetics right now. The fields are a one-time paste into your site's <code>&lt;head&gt;</code>.</p>
+
+  <div class="tool">
+    <h3 style="margin-top:0">Free: generate a starter JSON-LD block for your clinic</h3>
+    <p class="muted">Fill these in for a valid <code>MedicalBusiness</code> + <code>FAQPage</code> starter you can paste today. (The complete bundle — Service+price, your real Review/AggregateRating, geo &amp; hours, tuned to your live site with a gap diff — is below.)</p>
+    <label>Clinic name</label><input id="sf-name" placeholder="Refine Aesthetics" />
+    <label>City</label><input id="sf-city" placeholder="Austin" />
+    <label>Website URL</label><input id="sf-url" placeholder="https://yourclinic.com" />
+    <label>Top services (comma-separated)</label><input id="sf-svc" placeholder="Botox, Dermal Fillers, Laser Hair Removal" />
+    <button onclick="sfGen()">Generate starter block</button>
+    <pre id="sf-out" style="display:none"></pre>
+  </div>
+
+  <div class="cta">
+    <h2>Get the complete, paste-ready bundle for your site — $59</h2>
+    <p>The starter above is the identity block. The full SchemaForge bundle adds the fields almost no clinic has — <strong>Service + priceRange, FAQPage, Review/AggregateRating, geo &amp; opening hours</strong> — generated against your live site, with a gap diff showing exactly what you're missing and a ranked fix list. Paste it once; become eligible to be cited.</p>
+    <a class="btn" href="https://buy.stripe.com/fZuaEYdkm5np611cMGeZ20k">Get my bundle · $59</a>
+    <a class="btn2" href="https://samedaydesk.com/tools/ai-readiness">Check my site free first →</a>
+  </div>
+
+  <h2>Methodology</h2>
+  <p>For each of 8 metros we ran the high-intent queries a patient would ("best med spa in [metro]," plus a treatment query — Botox, laser hair removal, or injectables) through web search and collected the individual-clinic pages that surfaced (aggregators and listicles like Yelp were excluded from the clinic tally). We fetched each page first-party and parsed its JSON-LD with our open <a href="https://github.com/epistemedeus/ai-readiness">AI-readiness checker</a> engine, then tabulated which schema types and fields each page carries. Sample: 62 clinic URLs, 61 reachable. This is a structured-data census of the surfaced set — it measures what makes a page <em>eligible</em> to be cited, not a live count of any one engine's citations. We refresh it monthly; this snapshot is week 2026-W26.</p>
+  <p class="muted">Want your industry checked, or the raw data? <a href="https://samedaydesk.com/tools/ai-readiness">Run the free checker</a> or see the open methodology behind <code>npx github:epistemedeus/ai-readiness yoursite.com</code>.</p>
+
+  <footer>
+    <p>By <a href="https://samedaydesk.com/">SameDayDesk</a> — a same-day desk for data, code, AI builds and search. See also: <a href="https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html">the AI-search readiness leaderboard</a> and <a href="https://samedaydesk.com/guides/get-cited-by-ai-search.html">how to get cited by AI search</a>.</p>
+  </footer>
+</div>
+
+<script>
+function esc(s){return String(s||'').replace(/[<>&"]/g,function(c){return{'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];});}
+function sfGen(){
+  var name=document.getElementById('sf-name').value.trim()||'{{BUSINESS_NAME}}';
+  var city=document.getElementById('sf-city').value.trim()||'{{CITY}}';
+  var url=document.getElementById('sf-url').value.trim()||'https://yourclinic.com';
+  var origin=url; try{origin=new URL(url).origin;}catch(e){}
+  var svc=(document.getElementById('sf-svc').value.trim()||'Botox, Dermal Fillers, Laser Hair Removal').split(',').map(function(s){return s.trim();}).filter(Boolean);
+  var graph=[
+    {"@type":["MedicalBusiness","HealthAndBeautyBusiness"],"@id":origin+"/#business","name":name,"url":origin,"telephone":"{{PHONE}}","priceRange":"$$",
+     "address":{"@type":"PostalAddress","streetAddress":"{{STREET}}","addressLocality":city,"addressRegion":"{{STATE}}","postalCode":"{{ZIP}}","addressCountry":"US"},
+     "hasOfferCatalog":{"@type":"OfferCatalog","name":"Services","itemListElement":svc.map(function(s){return {"@type":"Offer","itemOffered":{"@type":"Service","name":s,"areaServed":city}};})}},
+    {"@type":"FAQPage","@id":origin+"/#faq","mainEntity":[
+      {"@type":"Question","name":"How much does Botox cost here?","acceptedAnswer":{"@type":"Answer","text":"Botox is priced per unit; most treatments range from $10–$18 per unit. Book a consultation for an exact quote."}},
+      {"@type":"Question","name":"Who performs the injections?","acceptedAnswer":{"@type":"Answer","text":"All injectable treatments are performed by licensed medical professionals."}}
+    ]}
+  ];
+  var doc={"@context":"https://schema.org","@graph":graph};
+  var out=document.getElementById('sf-out');
+  out.style.display='block';
+  out.textContent='<script type="application/ld+json">\n'+JSON.stringify(doc,null,2)+'\n<\/script>';
+}
+</script>
+</body>
+</html>
