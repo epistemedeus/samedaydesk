@@ -132,13 +132,22 @@ export default function AiReadiness() {
               </div>
               <div className={styles.ctaActions}>
                 <a
-                  href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e"
+                  href="https://buy.stripe.com/7sYbJ2946179611dQKeZ20i"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.ctaBtn}
+                  onClick={() => track("tool_cta_clicked", { tool: "ai_readiness", offer: "ai_kit" })}
+                >
+                  DIY Kit · $9 instant download →
+                </a>
+                <a
+                  href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.ctaBtnSecondary}
                   onClick={() => track("tool_cta_clicked", { tool: "ai_readiness", offer: "ai_fixpack" })}
                 >
-                  Get the Fix Pack · $39 →
+                  Done-for-you Fix Pack · $39 →
                 </a>
                 <a
                   href="https://buy.stripe.com/fZuaEY2FI4jl2OPbICeZ206"
