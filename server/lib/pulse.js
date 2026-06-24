@@ -10,6 +10,9 @@
 // No PII is stored: IPs are bucketed to a coarse hash only for unique-ish counts.
 
 import crypto from "node:crypto";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 
 const RECENT_CAP = 80;
 
@@ -26,6 +29,43 @@ const state = {
   funnel: { home: 0, scan: 0, tools: 0, reports: 0, guides: 0, pricing: 0 },
   recent: [], // last N events
 };
+
+// Best-effort persistence: the in-memory state would otherwise reset on every
+// restart/redeploy (frequent), and we'd lose the first real visitors. Snapshot
+// to a tmp file and reload on boot. Harmless if the FS doesn't persist.
+const PULSE_FILE = process.env.PULSE_FILE || path.join(os.tmpdir(), "sdd-pulse-v1.json");
+let dirty = false;
+
+function saveSnapshot() {
+  try {
+    fs.writeFileSync(PULSE_FILE, JSON.stringify({ ...state, uniqueHumans: [...state.uniqueHumans] }));
+    dirty = false;
+  } catch {
+    /* ignore */
+  }
+}
+function loadSnapshot() {
+  try {
+    const s = JSON.parse(fs.readFileSync(PULSE_FILE, "utf8"));
+    state.total = s.total || 0;
+    state.humans = s.humans || 0;
+    state.bots = s.bots || 0;
+    state.aiCrawlers = s.aiCrawlers || 0;
+    Object.assign(state.byPath, s.byPath || {});
+    Object.assign(state.byReferer, s.byReferer || {});
+    Object.assign(state.byAiBot, s.byAiBot || {});
+    Object.assign(state.funnel, s.funnel || {});
+    state.uniqueHumans = new Set(s.uniqueHumans || []);
+    state.recent = Array.isArray(s.recent) ? s.recent.slice(-RECENT_CAP) : [];
+    if (s.startedAt) state.startedAt = s.startedAt; // keep the true window start
+  } catch {
+    /* no snapshot yet */
+  }
+}
+loadSnapshot();
+setInterval(() => dirty && saveSnapshot(), 15000).unref();
+process.on("SIGTERM", saveSnapshot);
+process.on("beforeExit", saveSnapshot);
 
 const AI_CRAWLERS = [
   ["GPTBot", /GPTBot/i],
@@ -122,6 +162,7 @@ export function pulseMiddleware(req, _res, next) {
       ref: kind === "human" ? ref : undefined,
     });
     if (state.recent.length > RECENT_CAP) state.recent.shift();
+    dirty = true;
   } catch {
     // Never let analytics break a request.
   }
