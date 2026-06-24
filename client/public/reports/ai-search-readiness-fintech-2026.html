@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>We scored 16 fintech companies for AI-search readiness — Klarna got an F (2026)</title>
+<meta name="description" content="June 2026: we ran 16 well-known fintech companies through an AI-search readiness check. The results were the most polarized of any industry — payments infrastructure (Plaid, Brex, Betterment) scored 100, while Klarna scored an F and Chime, Ramp, and Gusto each scored a D. Full data + a free checker." />
+<link rel="canonical" href="https://samedaydesk.com/reports/ai-search-readiness-fintech-2026.html" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="We scored 16 fintech companies for AI-search readiness — Klarna got an F" />
+<meta property="og:description" content="Fintech's AI-search readiness is wildly polarized: Plaid and Brex scored 100, Klarna an F. June 2026 data + a free checker." />
+<meta property="og:url" content="https://samedaydesk.com/reports/ai-search-readiness-fintech-2026.html" />
+<meta property="og:image" content="https://samedaydesk.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"Article","headline":"We scored 16 fintech companies for AI-search readiness (2026)","datePublished":"2026-06-23","dateModified":"2026-06-23","author":{"@type":"Organization","name":"SameDayDesk"},"publisher":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"mainEntityOfPage":"https://samedaydesk.com/reports/ai-search-readiness-fintech-2026.html"},
+ {"@type":"FAQPage","mainEntity":[
+   {"@type":"Question","name":"Why does AI-search readiness matter for fintech?","acceptedAnswer":{"@type":"Answer","text":"Consumers increasingly ask ChatGPT, Perplexity, and Google AI to compare cards, loans, banking apps, and payment tools. If a fintech site cannot be crawled by AI engines or lacks structured data, it is less likely to be surfaced or quoted, ceding the recommendation to a competitor or an aggregator."}},
+   {"@type":"Question","name":"Which fintechs scored best and worst?","acceptedAnswer":{"@type":"Answer","text":"In our June 2026 scan of 16 fintechs, payments and infrastructure players led — Plaid, Brex, Rippling, and Betterment each scored 100. The laggards were consumer-facing: Klarna scored an F (38), and Chime, Ramp, and Gusto each scored a D. The industry averaged 74/100."}},
+   {"@type":"Question","name":"How can a fintech check and fix its score?","acceptedAnswer":{"@type":"Answer","text":"Run the free checker at samedaydesk.com/tools/ai-readiness, or npx github:epistemedeus/ai-readiness yourdomain.com. The common fixes are adding JSON-LD structured data, a crawler-welcoming robots.txt, and an XML sitemap."}}
+ ]}
+]}
+</script>
+<style>
+  :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; --good:#3a7d44; }
+  * { box-sizing:border-box; } html { background:var(--bg); }
+  body { margin:0; color:var(--ink); background:var(--bg); font:17px/1.6 Inter,system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:50rem; margin:0 auto; padding:3rem 1.25rem 5rem; }
+  a { color:var(--oxide); }
+  .eyebrow { font:600 12px/1 ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--oxide); margin:0 0 1rem; }
+  h1 { font-size:clamp(1.8rem,1.3rem+2.2vw,2.9rem); line-height:1.08; letter-spacing:-0.02em; margin:.2em 0; }
+  h2 { font-size:1.5rem; margin:2.5rem 0 .6rem; }
+  .lead { font-size:1.2rem; color:var(--dim); }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1rem; margin:2rem 0; }
+  .stat { background:var(--card); border:1px solid var(--line); border-left:4px solid var(--oxide); border-radius:10px; padding:1rem 1.1rem; }
+  .stat b { display:block; font-size:2rem; font-family:ui-monospace,monospace; line-height:1; }
+  .stat span { color:var(--dim); font-size:.85rem; }
+  table { width:100%; border-collapse:collapse; margin:1rem 0; font-size:.95rem; }
+  th,td { text-align:left; padding:.5rem .6rem; border-bottom:1px solid var(--line); }
+  th { font:600 12px/1 ui-monospace,monospace; letter-spacing:.06em; text-transform:uppercase; color:var(--dim); }
+  td.g { font-weight:700; } .A{color:var(--good)} .B{color:#2f6e7a} .C{color:var(--oxide)} .D{color:var(--oxide)} .F{color:var(--oxide)}
+  .num { font-family:ui-monospace,monospace; }
+  .cta { background:#15181d; color:#f4f4f0; border-radius:14px; padding:1.6rem 1.5rem; margin:2.5rem 0; }
+  .cta h2 { margin-top:0; color:#fff; }
+  .cta a.btn { display:inline-block; margin:.5rem .5rem 0 0; background:#ccff00; color:#0a0b0d; font-weight:700; text-decoration:none; padding:.7rem 1.2rem; border-radius:9px; }
+  .cta a.btn2 { display:inline-block; margin:.5rem 0 0; color:#ccff00; border:1px solid #444; text-decoration:none; padding:.7rem 1.2rem; border-radius:9px; }
+  code { background:var(--card); border:1px solid var(--line); border-radius:6px; padding:.1rem .4rem; font-size:.9em; }
+  .muted { color:var(--dim); font-size:.9rem; }
+  footer { margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--line); color:var(--dim); font-size:.9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">SameDayDesk · Report · June 2026</p>
+  <h1>We scored 16 fintech companies for AI-search readiness. Klarna got an F.</h1>
+  <p class="lead">People increasingly ask ChatGPT, Perplexity, and Google AI which card, loan, or banking app to use. So we checked whether 16 well-known fintechs can even be read by those engines. The result was the most polarized of any industry we've tested: the infrastructure players nailed it, while several big consumer names are nearly invisible.</p>
+
+  <div class="stats">
+    <div class="stat"><b>16</b><span>fintechs scanned</span></div>
+    <div class="stat"><b>74</b><span>average score /100</span></div>
+    <div class="stat"><b>4</b><span>scored 100</span></div>
+    <div class="stat"><b>F→A</b><span>full grade spread</span></div>
+  </div>
+
+  <h2>The results</h2>
+  <p class="muted">Scored June 23, 2026 with the same free <a href="https://samedaydesk.com/tools/ai-readiness">AI Readiness Checker</a> anyone can run. Each homepage is checked for AI-crawler access (GPTBot, ClaudeBot, PerplexityBot, Google-Extended), JSON-LD structured data, title/meta, Open Graph, an XML sitemap, and llms.txt.</p>
+  <table>
+    <thead><tr><th>Company</th><th>Score</th><th>Grade</th></tr></thead>
+    <tbody>
+      <tr><td>plaid.com</td><td class="num">100</td><td class="g A">A</td></tr>
+      <tr><td>brex.com</td><td class="num">100</td><td class="g A">A</td></tr>
+      <tr><td>rippling.com</td><td class="num">100</td><td class="g A">A</td></tr>
+      <tr><td>betterment.com</td><td class="num">100</td><td class="g A">A</td></tr>
+      <tr><td>mercury.com</td><td class="num">90</td><td class="g A">A</td></tr>
+      <tr><td>wise.com</td><td class="num">90</td><td class="g A">A</td></tr>
+      <tr><td>squareup.com</td><td class="num">78</td><td class="g B">B</td></tr>
+      <tr><td>deel.com</td><td class="num">78</td><td class="g B">B</td></tr>
+      <tr><td>robinhood.com</td><td class="num">68</td><td class="g C">C</td></tr>
+      <tr><td>affirm.com</td><td class="num">68</td><td class="g C">C</td></tr>
+      <tr><td>coinbase.com</td><td class="num">63</td><td class="g C">C</td></tr>
+      <tr><td>sofi.com</td><td class="num">60</td><td class="g C">C</td></tr>
+      <tr><td>ramp.com</td><td class="num">55</td><td class="g D">D</td></tr>
+      <tr><td>chime.com</td><td class="num">45</td><td class="g D">D</td></tr>
+      <tr><td>gusto.com</td><td class="num">45</td><td class="g D">D</td></tr>
+      <tr><td>klarna.com</td><td class="num">38</td><td class="g F">F</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Infrastructure aces it; consumer brands lag</h2>
+  <p>The split is striking. The companies whose customers are <em>developers</em> — Plaid, Brex, Mercury, Wise — ship clean, server-readable, structured sites and scored at the top. The lowest scorers were consumer-facing brands (Klarna, Chime, Ramp, Gusto) whose marketing sites lean on JavaScript-heavy rendering with little structured data, leaving AI engines little to read. The recurring gaps:</p>
+  <ul>
+    <li><strong>JavaScript-only homepages</strong> that serve AI crawlers a near-empty shell.</li>
+    <li><strong>No JSON-LD structured data</strong> (<code>Organization</code>, <code>FAQPage</code>, <code>FinancialProduct</code>), so engines can't classify or quote the brand.</li>
+    <li><strong>No discoverable sitemap</strong> on the lowest scorers.</li>
+  </ul>
+  <p>None of this requires regulatory review or product changes — it's web hygiene that makes an existing site legible to AI search. Given how often people now ask AI assistants for financial-product recommendations, the consumer fintechs have the most to gain.</p>
+
+  <div class="cta">
+    <h2>Check your fintech site in 10 seconds</h2>
+    <p>Run the free <strong>AI Readiness Checker</strong> on any URL. If it flags gaps, the <strong>Fix Pack ($39)</strong> ships a corrected robots.txt, sitemap, JSON-LD structured data, and clean title/meta/Open Graph tags — installed-ready, today.</p>
+    <a class="btn" href="https://samedaydesk.com/tools/ai-readiness">Run the free check</a>
+    <a class="btn2" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · $39</a>
+  </div>
+
+  <p class="muted">Method: each company's homepage was fetched once and scored on AI-crawler access, JSON-LD, title/meta, Open Graph, XML sitemap, and llms.txt. Point-in-time, homepage-level snapshot, not a full-site audit or a financial/regulatory assessment. Run your own at <a href="https://samedaydesk.com/tools/ai-readiness">samedaydesk.com/tools/ai-readiness</a>.</p>
+
+  <footer>By <a href="https://samedaydesk.com/">SameDayDesk</a>. See the full <a href="https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html">136-company leaderboard</a> · more: <a href="https://samedaydesk.com/reports/ai-search-readiness-healthtech-2026.html">healthtech</a>, <a href="https://samedaydesk.com/reports/ai-search-readiness-ai-startups-2026.html">AI startups</a>, <a href="https://samedaydesk.com/reports/ai-search-readiness-saas-2026.html">SaaS</a>.</footer>
+</div>
+</body>
+</html>
