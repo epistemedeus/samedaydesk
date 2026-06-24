@@ -61,6 +61,12 @@ app.use("/scan", scanRouter);
 // Remote (Streamable HTTP) MCP server at /mcp (before the SPA fallback).
 app.use("/mcp", mcpRouter);
 
+// Domain-ownership proof for the MCP registry (lets us list the remote MCP
+// server under the com.samedaydesk namespace).
+app.get("/.well-known/mcp-registry-auth", (_req, res) =>
+  res.type("text/plain").send("v=MCPv1; k=ed25519; p=j1v9MjBVY0nqrVTwoNqXomOhEAisPObP5Fnq+J7Zc88="),
+);
+
 // 4) Static SPA + history fallback (production only; in dev Vite serves the client).
 if (isProd) {
   app.use(
