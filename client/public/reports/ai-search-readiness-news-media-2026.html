@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>News publishers and AI search: who blocks the crawlers, who's accidentally invisible (2026)</title>
+<meta name="description" content="June 2026: we tested 10 major news publishers for AI-search readiness. They split in two: sites deliberately blocking AI crawlers amid the licensing fight (NYT, The Verge, TechCrunch), and sites that allow crawlers but ship no structured data, making them accidentally invisible (Ars Technica scored an F). Full data + a free checker." />
+<link rel="canonical" href="https://samedaydesk.com/reports/ai-search-readiness-news-media-2026.html" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="News publishers and AI search: who blocks the crawlers, who's accidentally invisible" />
+<meta property="og:description" content="The AI-vs-publishers fight shows up in robots.txt — but some publishers undermine their own AI visibility by accident. June 2026 data." />
+<meta property="og:url" content="https://samedaydesk.com/reports/ai-search-readiness-news-media-2026.html" />
+<meta property="og:image" content="https://samedaydesk.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"Article","headline":"News publishers and AI search: who blocks the crawlers, who's accidentally invisible (2026)","datePublished":"2026-06-23","dateModified":"2026-06-23","author":{"@type":"Organization","name":"SameDayDesk"},"publisher":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"mainEntityOfPage":"https://samedaydesk.com/reports/ai-search-readiness-news-media-2026.html"},
+ {"@type":"FAQPage","mainEntity":[
+   {"@type":"Question","name":"Do news sites block AI crawlers on purpose?","acceptedAnswer":{"@type":"Answer","text":"Often yes. Many major publishers (e.g., The New York Times, The Verge, TechCrunch) block GPTBot, ClaudeBot, PerplexityBot or Google-Extended in robots.txt as part of copyright and licensing disputes with AI companies. That deliberately lowers their AI-search readiness — it is a strategy, not a mistake."}},
+   {"@type":"Question","name":"What is 'accidental' AI invisibility?","acceptedAnswer":{"@type":"Answer","text":"A site that allows AI crawlers but ships no structured data, no clean title/meta, and no sitemap, so AI engines that can crawl it still find little to classify or quote. In our scan, Ars Technica allowed crawlers but had none of those fundamentals and scored an F — invisible to AI search despite not blocking anyone."}},
+   {"@type":"Question","name":"How can a publisher that wants AI traffic improve?","acceptedAnswer":{"@type":"Answer","text":"If you want AI search referral traffic, allow the crawlers you're comfortable with, then add NewsArticle/Organization JSON-LD, clean titles and descriptions, Open Graph tags, and a sitemap. Check your own site free at samedaydesk.com/tools/ai-readiness."}}
+ ]}
+]}
+</script>
+<style>
+  :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; --good:#3a7d44; }
+  * { box-sizing:border-box; } html { background:var(--bg); }
+  body { margin:0; color:var(--ink); background:var(--bg); font:17px/1.6 Inter,system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:50rem; margin:0 auto; padding:3rem 1.25rem 5rem; }
+  a { color:var(--oxide); }
+  .eyebrow { font:600 12px/1 ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--oxide); margin:0 0 1rem; }
+  h1 { font-size:clamp(1.8rem,1.3rem+2.2vw,2.9rem); line-height:1.08; letter-spacing:-0.02em; margin:.2em 0; }
+  h2 { font-size:1.5rem; margin:2.5rem 0 .6rem; }
+  .lead { font-size:1.2rem; color:var(--dim); }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1rem; margin:2rem 0; }
+  .stat { background:var(--card); border:1px solid var(--line); border-left:4px solid var(--oxide); border-radius:10px; padding:1rem 1.1rem; }
+  .stat b { display:block; font-size:2rem; font-family:ui-monospace,monospace; line-height:1; }
+  .stat span { color:var(--dim); font-size:.85rem; }
+  table { width:100%; border-collapse:collapse; margin:1rem 0; font-size:.92rem; }
+  th,td { text-align:left; padding:.5rem .55rem; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { font:600 12px/1 ui-monospace,monospace; letter-spacing:.06em; text-transform:uppercase; color:var(--dim); }
+  td.g { font-weight:700; } .A{color:var(--good)} .B{color:#2f6e7a} .C{color:var(--oxide)} .D{color:var(--oxide)} .F{color:var(--oxide)}
+  .num { font-family:ui-monospace,monospace; }
+  .why { color:var(--dim); font-size:.85rem; }
+  .cta { background:#15181d; color:#f4f4f0; border-radius:14px; padding:1.6rem 1.5rem; margin:2.5rem 0; }
+  .cta h2 { margin-top:0; color:#fff; }
+  .cta a.btn { display:inline-block; margin:.5rem .5rem 0 0; background:#ccff00; color:#0a0b0d; font-weight:700; text-decoration:none; padding:.7rem 1.2rem; border-radius:9px; }
+  .cta a.btn2 { display:inline-block; margin:.5rem 0 0; color:#ccff00; border:1px solid #444; text-decoration:none; padding:.7rem 1.2rem; border-radius:9px; }
+  code { background:var(--card); border:1px solid var(--line); border-radius:6px; padding:.1rem .4rem; font-size:.9em; }
+  .muted { color:var(--dim); font-size:.9rem; }
+  footer { margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--line); color:var(--dim); font-size:.9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">SameDayDesk · Report · June 2026</p>
+  <h1>News publishers and AI search: who's blocking the robots, and who's invisible by accident.</h1>
+  <p class="lead">Publishers and AI companies are locked in a fight over whether AI can read and cite the news. So we checked the robots.txt and structured data of 10 major news sites. They split into two camps — and the second one is doing it to itself.</p>
+
+  <div class="stats">
+    <div class="stat"><b>10</b><span>news sites scanned</span></div>
+    <div class="stat"><b>64</b><span>average score /100</span></div>
+    <div class="stat"><b>2</b><span>camps: blocked vs invisible</span></div>
+    <div class="stat"><b>F</b><span>lowest (Ars Technica)</span></div>
+  </div>
+
+  <h2>The results</h2>
+  <p class="muted">Scored June 23, 2026 with the free <a href="https://samedaydesk.com/tools/ai-readiness">AI Readiness Checker</a>. "Why" notes the dominant reason for the score.</p>
+  <table>
+    <thead><tr><th>Publisher</th><th>Score</th><th>Grade</th><th>Dominant reason</th></tr></thead>
+    <tbody>
+      <tr><td>techcrunch.com</td><td class="num">80</td><td class="g B">B</td><td class="why">Blocks GPTBot/ClaudeBot (deliberate); everything else clean.</td></tr>
+      <tr><td>nytimes.com</td><td class="num">73</td><td class="g C">C</td><td class="why">Blocks GPTBot/OAI-SearchBot (deliberate); strong schema + sitemap.</td></tr>
+      <tr><td>theverge.com</td><td class="num">73</td><td class="g C">C</td><td class="why">Blocks ClaudeBot/PerplexityBot/Google-Extended (deliberate); good otherwise.</td></tr>
+      <tr><td>wired.com</td><td class="num">73</td><td class="g C">C</td><td class="why">Mixed crawler blocks; some structural gaps.</td></tr>
+      <tr><td>businessinsider.com</td><td class="num">73</td><td class="g C">C</td><td class="why">Mixed crawler blocks; some structural gaps.</td></tr>
+      <tr><td>forbes.com</td><td class="num">73</td><td class="g C">C</td><td class="why">Mixed crawler blocks; some structural gaps.</td></tr>
+      <tr><td>bbc.com</td><td class="num">69</td><td class="g C">C</td><td class="why">Crawler restrictions + structural gaps.</td></tr>
+      <tr><td>bloomberg.com</td><td class="num">43</td><td class="g D">D</td><td class="why">Blocks GPTBot + no JSON-LD/OG; served an "Are you a robot?" page to our fetch.</td></tr>
+      <tr><td>theguardian.com</td><td class="num">43</td><td class="g D">D</td><td class="why">Crawler blocks + missing structured data.</td></tr>
+      <tr><td>arstechnica.com</td><td class="num">38</td><td class="g F">F</td><td class="why"><strong>Allows all crawlers</strong> but ships no JSON-LD, no title/meta, no OG, no sitemap — accidentally invisible.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Two very different problems</h2>
+  <p><strong>Camp 1 — deliberate blockers.</strong> The New York Times, The Verge, and TechCrunch block one or more AI crawlers in <code>robots.txt</code>. That's a <em>strategy</em> in the copyright/licensing fight, not an oversight — and their other fundamentals (structured data, sitemaps, Open Graph) are largely in place. Their lower "AI readiness" score is a choice.</p>
+  <p><strong>Camp 2 — accidentally invisible.</strong> The more interesting case is <strong>Ars Technica</strong>: it blocks <em>nothing</em>, so AI crawlers are welcome — yet it ships no structured data, no title/meta, no Open Graph, and no sitemap, so an engine that crawls it finds almost nothing to quote. It scored an F not by choice but by neglect. <strong>Bloomberg</strong> manages to do both: it blocks GPTBot <em>and</em> lacks structured data <em>and</em> served an anti-bot "Are you a robot?" page to a plain request.</p>
+  <p>The lesson for any publisher that actually wants AI-search referral traffic: blocking is a deliberate lever you can pull or not — but missing structured data, titles, and a sitemap just throws away visibility for free.</p>
+
+  <div class="cta">
+    <h2>Want AI search to find you (and not by accident)?</h2>
+    <p>If you <em>want</em> AI engines to surface you but you're invisible by neglect, the <strong>Fix Pack ($39)</strong> ships JSON-LD structured data, clean title/meta/Open Graph tags, a sitemap, and a crawler policy that welcomes the engines you choose — installed-ready, today. Check where you stand first with the free <a style="color:#ccff00" href="https://samedaydesk.com/tools/ai-readiness">AI Readiness Checker</a>.</p>
+    <a class="btn" href="https://samedaydesk.com/tools/ai-readiness">Run the free check</a>
+    <a class="btn2" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · $39</a>
+  </div>
+
+  <p class="muted">Method: each publisher's homepage was fetched once and scored on AI-crawler access, JSON-LD, title/meta, Open Graph, XML sitemap, and llms.txt. Crawler-blocking is reported neutrally — for publishers it is often a deliberate, reasonable choice. Point-in-time, homepage-level snapshot; scores change as sites update. Run your own at <a href="https://samedaydesk.com/tools/ai-readiness">samedaydesk.com/tools/ai-readiness</a>.</p>
+
+  <footer>By <a href="https://samedaydesk.com/">SameDayDesk</a>. See the full <a href="https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html">189-company leaderboard</a> · more: <a href="https://samedaydesk.com/reports/ai-search-readiness-healthtech-2026.html">healthtech</a>, <a href="https://samedaydesk.com/reports/ai-search-readiness-ai-startups-2026.html">AI startups</a>, <a href="https://samedaydesk.com/reports/ai-search-readiness-fintech-2026.html">fintech</a>.</footer>
+</div>
+</body>
+</html>
