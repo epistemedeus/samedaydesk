@@ -9,6 +9,15 @@ import net from "node:net";
 // runCheck() is exported so the server-rendered /scan proof page can reuse it.
 const router = Router();
 
+// Public, read-only tool APIs: allow cross-origin calls (our github.io study page,
+// third-party embeds). No credentials; they only read public sites.
+router.use((req, res, next) => {
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+  if (req.method === "OPTIONS") return res.sendStatus(204);
+  next();
+});
+
 const AI_CRAWLERS = [
   { ua: "GPTBot", who: "ChatGPT (OpenAI index/training)" },
   { ua: "OAI-SearchBot", who: "ChatGPT Search" },
