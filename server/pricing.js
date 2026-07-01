@@ -12,6 +12,11 @@ export const OFFERS = {
   rag_bot:          { amount: 39900, label: "RAG Chatbot Over Your Docs",     category: "ai", flagship: true },
   mcp_server:       { amount: 34900, label: "Custom MCP Server",              category: "ai" },
   ai_audit:         { amount: 24900, label: "AI-Search Visibility Audit",     category: "search" },
+  // GEO done-for-you service (2026-07-01 reset — the durable bet). Priced to CLOSE, not to max.
+  geo_audit:        { amount: 19900, label: "AI Visibility Audit",            category: "geo", flagship: true },
+  geo_fix:          { amount: 39900, label: "AI Visibility Audit + Fix (done-for-you)", category: "geo", bestValue: true },
+  geo_sprint:       { amount: 49900, label: "AI Visibility Sprint (multi-location)",    category: "geo" },
+  // geo_retainer: $1,500-3,000/mo — sold as a custom Payment Link (createInstantLink), not a fixed SKU.
   // Career / copy (original catalog)
   resume_linkedin: { amount: 5900, label: "Résumé + LinkedIn Rewrite", category: "career" },
   cover_letter:    { amount: 3900, label: "Custom Cover Letter",        category: "career" },
