@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Free llms.txt Generator — make an /llms.txt for AI agents — SameDayDesk</title>
+<title>Free llms.txt Generator: make an /llms.txt for AI agents | SameDayDesk</title>
 <meta name="description" content="Generate a clean, spec-compliant llms.txt file so AI agents and LLMs get a curated map of your site. Free, no signup, instant. Honest guidance on what llms.txt does and doesn't do." />
 <link rel="canonical" href="https://samedaydesk.com/tools/llms-txt-generator.html" />
 <meta property="og:type" content="website" />
@@ -15,7 +15,7 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"What is llms.txt?","acceptedAnswer":{"@type":"Answer","text":"llms.txt is a proposed Markdown file at the root of your domain (https://yourdomain.com/llms.txt) that gives AI agents and LLMs a curated, link-based map of your most important pages, so they can find and read your content efficiently rather than crawling everything."}},
-{"@type":"Question","name":"Does llms.txt improve my AI search rankings or citations?","acceptedAnswer":{"@type":"Answer","text":"Honestly, no — there is no strong evidence that llms.txt increases how often AI search engines cite you. Major engines have not confirmed using it for ranking. Treat it as documentation hygiene and a clean index for agents that fetch it, not as a ranking hack. The things that actually move AI citations are crawlability, structured data, and clear answer-shaped content."}},
+{"@type":"Question","name":"Does llms.txt improve my AI search rankings or citations?","acceptedAnswer":{"@type":"Answer","text":"Honestly, no. There is no strong evidence that llms.txt increases how often AI search engines cite you. Major engines have not confirmed using it for ranking. Treat it as documentation hygiene and a clean index for agents that fetch it, not as a ranking hack. The things that actually move AI citations are crawlability, structured data, and clear answer-shaped content."}},
 {"@type":"Question","name":"Where do I put the llms.txt file?","acceptedAnswer":{"@type":"Answer","text":"Save it as a plain text/Markdown file named llms.txt and host it at the root of your domain so it resolves at https://yourdomain.com/llms.txt."}}
 ]}
 </script>
@@ -49,9 +49,9 @@
 <div class="wrap">
   <p class="eyebrow">SameDayDesk · Free tool</p>
   <h1>llms.txt Generator</h1>
-  <p class="lead">Build a clean, spec-compliant <code>llms.txt</code> — a curated Markdown map of your site for AI agents and LLMs. Free, no signup, instant.</p>
+  <p class="lead">Build a clean, spec-compliant <code>llms.txt</code>, a curated Markdown map of your site for AI agents and LLMs. Free, no signup, instant.</p>
 
-  <div class="note"><strong>Straight talk:</strong> <code>llms.txt</code> is documentation hygiene, not a ranking hack. There's no solid evidence it boosts AI citations. Ship it as a clean index for agents that fetch it — and rely on crawlability + structured data + answer-shaped content for actual visibility. (We'd rather tell you the truth than sell you a myth.)</div>
+  <div class="note"><strong>Straight talk:</strong> <code>llms.txt</code> is documentation hygiene, not a ranking hack. There's no solid evidence it boosts AI citations. Ship it as a clean index for agents that fetch it, and rely on crawlability + structured data + answer-shaped content for actual visibility. (We'd rather tell you the truth than sell you a myth.)</div>
 
   <label>Auto-generate from your URL <span class="hint" style="font-weight:400">(we read your sitemap/homepage and draft it for you)</span></label>
   <div style="display:flex;gap:.5rem;flex-wrap:wrap">
@@ -79,7 +79,7 @@
 
   <div class="cta">
     <h2>Want the stuff that actually moves AI visibility, done for you?</h2>
-    <p>The <strong>Fix Pack ($39)</strong> ships the things engines really reward: a crawler-welcoming <code>robots.txt</code>, a sitemap, JSON-LD structured data, and clean title/meta/Open Graph tags — plus this <code>llms.txt</code> — installed-ready, today. <a style="color:#ccff00" href="https://samedaydesk.com/tools/ai-readiness">See where your site stands first</a>.</p>
+    <p>The <strong>Fix Pack ($39)</strong> ships the things engines really reward: a crawler-welcoming <code>robots.txt</code>, a sitemap, JSON-LD structured data, and clean title/meta/Open Graph tags (plus this <code>llms.txt</code>), installed-ready, today. <a style="color:#ccff00" href="https://samedaydesk.com/tools/ai-readiness">See where your site stands first</a>.</p>
     <a class="btn" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · $39</a>
     <a class="btn2" href="https://samedaydesk.com/tools/ai-readiness">Free AI-readiness check</a>
   </div>
@@ -91,7 +91,7 @@
   const $ = (id) => document.getElementById(id);
   function secRow(title="Docs", links="Getting started | https://yourdomain.com/docs | Start here\nAPI reference | https://yourdomain.com/api"){
     const d = document.createElement("div"); d.className="secRow";
-    d.innerHTML = '<label>Section name</label><input class="st"><label>Links — one per line: <code>title | url | optional note</code></label><textarea class="sl" rows="3"></textarea>';
+    d.innerHTML = '<label>Section name</label><input class="st"><label>Links, one per line: <code>title | url | optional note</code></label><textarea class="sl" rows="3"></textarea>';
     d.querySelector(".st").value=title; d.querySelector(".sl").value=links;
     d.querySelectorAll("input,textarea").forEach(el=>el.addEventListener("input", render));
     return d;
@@ -135,7 +135,7 @@
       $("output").textContent = data.llmsTxt;
       $("autoStatus").textContent = `Drafted from ${data.count} page(s). Review and edit below, then copy.`;
     } catch(e) {
-      $("autoStatus").textContent = "Couldn't read that site automatically — build it by hand below. (" + (e.message||"error") + ")";
+      $("autoStatus").textContent = "Couldn't read that site automatically. Build it by hand below. (" + (e.message||"error") + ")";
     } finally { $("autoBtn").disabled = false; }
   });
 </script>

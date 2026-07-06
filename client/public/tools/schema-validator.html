@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Free JSON-LD / Schema Validator — check your structured data for AI search — SameDayDesk</title>
+<title>Free JSON-LD / Schema Validator: check your structured data for AI search | SameDayDesk</title>
 <meta name="description" content="Paste your JSON-LD structured data to validate it: catches JSON syntax errors, missing @context/@type, and missing recommended fields for common schema types (Organization, Product, FAQPage, Article, LocalBusiness). Free, no signup, instant." />
 <link rel="canonical" href="https://samedaydesk.com/tools/schema-validator.html" />
 <meta property="og:type" content="website" />
@@ -59,7 +59,7 @@
 
   <div class="cta">
     <h2>Want valid structured data installed on your real pages?</h2>
-    <p>The <strong>Fix Pack ($39)</strong> ships correct JSON-LD for your actual site (Organization, plus Product/FAQ/LocalBusiness as relevant), a crawler-welcoming <code>robots.txt</code>, a sitemap, and clean meta/Open Graph tags — delivered today. <a style="color:#ccff00" href="https://samedaydesk.com/tools/ai-readiness">Run the free AI-readiness check first</a>.</p>
+    <p>The <strong>Fix Pack ($39)</strong> ships correct JSON-LD for your actual site (Organization, plus Product/FAQ/LocalBusiness as relevant), a crawler-welcoming <code>robots.txt</code>, a sitemap, and clean meta/Open Graph tags, delivered today. <a style="color:#ccff00" href="https://samedaydesk.com/tools/ai-readiness">Run the free AI-readiness check first</a>.</p>
     <a class="btn" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · $39</a>
     <a class="btn2" href="https://samedaydesk.com/tools/schema-generator.html">Generate schema</a>
   </div>
@@ -69,7 +69,7 @@
 
 <script>
   const $ = (id) => document.getElementById(id);
-  // recommended fields per common schema.org type (not exhaustive — the high-value ones)
+  // recommended fields per common schema.org type (not exhaustive, the high-value ones)
   const REQ = {
     Organization: ["name","url"],
     LocalBusiness: ["name","address"],
@@ -125,7 +125,7 @@
     if(!ctxOk) add("bad", 'Missing or non-schema.org "@context". Add "@context": "https://schema.org".');
     else add("ok", "@context present ✓");
     // @type (allow @graph)
-    if(data["@graph"]){ add("ok", "@graph present — validating each node ✓"); checkNode(data["@graph"], "@graph"); }
+    if(data["@graph"]){ add("ok", "@graph present: validating each node ✓"); checkNode(data["@graph"], "@graph"); }
     else if(!data["@type"]) add("bad", 'Missing "@type". Every JSON-LD node needs a @type (e.g. Organization, Product, FAQPage).');
     else checkNode(data, "");
     render();
@@ -135,7 +135,7 @@
     const bad = msgs.filter(m=>m.cls==="bad").length, warn = msgs.filter(m=>m.cls==="warn").length;
     let head = bad ? `<p class="scoreline" style="color:var(--bad)">✕ ${bad} error${bad>1?"s":""} found${warn?`, ${warn} warning${warn>1?"s":""}`:""}.</p>`
       : warn ? `<p class="scoreline" style="color:var(--warn)">⚠ Valid, but ${warn} recommended field${warn>1?"s":""} missing.</p>`
-      : `<p class="scoreline" style="color:var(--ok)">✓ Looks good — valid and complete on the basics.</p>`;
+      : `<p class="scoreline" style="color:var(--ok)">✓ Looks good: valid and complete on the basics.</p>`;
     $("results").innerHTML = head + msgs.map(m=>`<div class="msg ${m.cls}">${m.text.replace(/</g,"&lt;")}</div>`).join("");
   }
   $("run").addEventListener("click", validate);

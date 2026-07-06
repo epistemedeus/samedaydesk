@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AI Search Readiness Kit — templates, benchmark & checklist | SameDayDesk</title>
+<title>AI Search Readiness Kit: templates, benchmark & checklist | SameDayDesk</title>
 <meta name="description" content="The instant-download kit to make any website readable by AI search (ChatGPT, Perplexity, Claude, Google AI): the 189-company benchmark, ready-to-paste JSON-LD / robots.txt / sitemap / meta templates, and a prioritized fix checklist." />
 <meta name="robots" content="noindex" />
 <style>
@@ -35,10 +35,10 @@
 <div class="wrap">
   <p class="eyebrow">SameDayDesk · AI Search Readiness Kit</p>
   <div class="thanks" id="thanks">
-    <strong>Thank you — your kit is ready.</strong> Bookmark or print this page (⌘/Ctrl-P → Save as PDF) to keep it. Everything below is yours to copy and apply. Questions? <a href="https://samedaydesk.com/">samedaydesk.com</a>.
+    <strong>Thank you. Your kit is ready.</strong> Bookmark or print this page (⌘/Ctrl-P → Save as PDF) to keep it. Everything below is yours to copy and apply. Questions? <a href="https://samedaydesk.com/">samedaydesk.com</a>.
   </div>
   <h1>AI Search Readiness Kit</h1>
-  <p class="lead">Everything you need to make a website readable — and quotable — by AI search engines (ChatGPT, Perplexity, Claude, Google AI Overviews). The benchmark, the exact templates, and a prioritized checklist. Apply it in an afternoon.</p>
+  <p class="lead">Everything you need to make a website readable (and quotable) by AI search engines (ChatGPT, Perplexity, Claude, Google AI Overviews). The benchmark, the exact templates, and a prioritized checklist. Apply it in an afternoon.</p>
 
   <h2>1 · Why this matters (the 189-company benchmark)</h2>
   <p>AI search can only quote pages it can actually <em>crawl and parse</em>. We scored the homepages of <strong>189 well-known companies across 10 industries</strong> on six fundamentals: AI-crawler access, JSON-LD structured data, title/meta, Open Graph, an XML sitemap, and <code>llms.txt</code>. Average score by industry:</p>
@@ -55,11 +55,11 @@
     <tr><td>News media</td><td>64</td></tr>
     <tr><td>Healthtech</td><td>63</td></tr>
   </table>
-  <p>Names that surprised us: <strong>OpenAI</strong> and <strong>GitHub</strong> scored a <strong>D</strong> (JS-heavy homepages, thin server-rendered content); <strong>Perplexity</strong> — an AI <em>search</em> engine — a <strong>C</strong>; <strong>LlamaIndex</strong>, whose whole product is making data readable by LLMs, a <strong>D</strong>; <strong>Klarna</strong> an <strong>F</strong> (38, the lowest). The gaps are almost always the same three: JavaScript-only rendering, no JSON-LD, no sitemap. All fixable below. <span class="muted">Raw data (CC-BY, 189 rows): <a href="https://raw.githubusercontent.com/epistemedeus/ai-readiness/main/data/ai-search-readiness-2026.csv">CSV</a>.</span></p>
+  <p>Names that surprised us: <strong>OpenAI</strong> and <strong>GitHub</strong> scored a <strong>D</strong> (JS-heavy homepages, thin server-rendered content); <strong>Perplexity</strong> (an AI <em>search</em> engine) a <strong>C</strong>; <strong>LlamaIndex</strong>, whose whole product is making data readable by LLMs, a <strong>D</strong>; <strong>Klarna</strong> an <strong>F</strong> (38, the lowest). The gaps are almost always the same three: JavaScript-only rendering, no JSON-LD, no sitemap. All fixable below. <span class="muted">Raw data (CC-BY, 189 rows): <a href="https://raw.githubusercontent.com/epistemedeus/ai-readiness/main/data/ai-search-readiness-2026.csv">CSV</a>.</span></p>
 
   <h2>2 · The templates (copy, fill the REPLACE blanks, paste)</h2>
 
-  <h3>2a · Organization JSON-LD — into your homepage <code>&lt;head&gt;</code></h3>
+  <h3>2a · Organization JSON-LD: into your homepage <code>&lt;head&gt;</code></h3>
   <pre>&lt;script type="application/ld+json"&gt;
 {
   "@context": "https://schema.org",
@@ -75,7 +75,7 @@
 }
 &lt;/script&gt;</pre>
 
-  <h3>2b · FAQPage JSON-LD — engines quote these directly</h3>
+  <h3>2b · FAQPage JSON-LD: engines quote these directly</h3>
   <pre>&lt;script type="application/ld+json"&gt;
 {
   "@context": "https://schema.org",
@@ -91,7 +91,7 @@
 }
 &lt;/script&gt;</pre>
 
-  <h3>2c · <code>/robots.txt</code> — explicitly welcome the AI crawlers</h3>
+  <h3>2c · <code>/robots.txt</code>: explicitly welcome the AI crawlers</h3>
   <pre>User-agent: GPTBot
 Allow: /
 User-agent: OAI-SearchBot
@@ -110,7 +110,7 @@ User-agent: *
 Allow: /
 Sitemap: https://REPLACE_DOMAIN/sitemap.xml</pre>
 
-  <h3>2d · <code>/sitemap.xml</code> — so pages get discovered</h3>
+  <h3>2d · <code>/sitemap.xml</code>: so pages get discovered</h3>
   <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;
   &lt;url&gt;&lt;loc&gt;https://REPLACE_DOMAIN/&lt;/loc&gt;&lt;/url&gt;
@@ -118,10 +118,10 @@ Sitemap: https://REPLACE_DOMAIN/sitemap.xml</pre>
   &lt;url&gt;&lt;loc&gt;https://REPLACE_DOMAIN/about&lt;/loc&gt;&lt;/url&gt;
 &lt;/urlset&gt;</pre>
 
-  <h3>2e · Title, meta & Open Graph — into <code>&lt;head&gt;</code></h3>
-  <pre>&lt;title&gt;REPLACE_Company — REPLACE_what you do in 5 words&lt;/title&gt;
+  <h3>2e · Title, meta & Open Graph: into <code>&lt;head&gt;</code></h3>
+  <pre>&lt;title&gt;REPLACE_Company: REPLACE_what you do in 5 words&lt;/title&gt;
 &lt;meta name="description" content="REPLACE_One clear sentence a person (or an AI) could quote." /&gt;
-&lt;meta property="og:title" content="REPLACE_Company — REPLACE_what you do" /&gt;
+&lt;meta property="og:title" content="REPLACE_Company: REPLACE_what you do" /&gt;
 &lt;meta property="og:description" content="REPLACE_Same clear sentence." /&gt;
 &lt;meta property="og:type" content="website" /&gt;
 &lt;meta property="og:url" content="https://REPLACE_DOMAIN/" /&gt;
@@ -129,11 +129,11 @@ Sitemap: https://REPLACE_DOMAIN/sitemap.xml</pre>
 
   <h2>3 · The prioritized checklist</h2>
   <div class="step"><strong>1. Server-render your core copy.</strong> If your homepage is a JS shell, AI crawlers see nothing. Ensure the headline, what-you-do sentence, and key facts are in the initial HTML (SSR/SSG or prerender).</div>
-  <div class="step"><strong>2. Add Organization + FAQPage JSON-LD</strong> (2a, 2b). This is the single highest-leverage fix — it gives engines machine-readable facts to quote.</div>
+  <div class="step"><strong>2. Add Organization + FAQPage JSON-LD</strong> (2a, 2b). This is the single highest-leverage fix: it gives engines machine-readable facts to quote.</div>
   <div class="step"><strong>3. Replace <code>/robots.txt</code></strong> (2c) so GPTBot / PerplexityBot / ClaudeBot / Google-Extended are explicitly allowed.</div>
   <div class="step"><strong>4. Publish <code>/sitemap.xml</code></strong> (2d) and submit it in <a href="https://www.bing.com/webmasters">Bing Webmaster Tools</a> (ChatGPT reads Bing's index).</div>
-  <div class="step"><strong>5. Fix title + meta + Open Graph</strong> (2e) — one clear, quotable sentence beats clever copy.</div>
-  <div class="step"><strong>6. Add a short <code>/llms.txt</code></strong> with your name, what you do, pricing, and links — a clean summary for LLMs.</div>
+  <div class="step"><strong>5. Fix title + meta + Open Graph</strong> (2e): one clear, quotable sentence beats clever copy.</div>
+  <div class="step"><strong>6. Add a short <code>/llms.txt</code></strong> with your name, what you do, pricing, and links, a clean summary for LLMs.</div>
   <div class="step"><strong>7. Re-check.</strong> Run your site through the free checker and confirm each gap is now green.</div>
 
   <h2>4 · Verify your work (free)</h2>
@@ -142,9 +142,9 @@ Sitemap: https://REPLACE_DOMAIN/sitemap.xml</pre>
   <p>Or in the browser: <a href="https://samedaydesk.com/tools/ai-readiness">samedaydesk.com/tools/ai-readiness</a>.</p>
 
   <h2 class="noprint">Want it done for you?</h2>
-  <p class="noprint">If you'd rather not touch code, the <strong>Fix Pack ($39)</strong> delivers all of the above filled in for <em>your exact site</em>, same day — <a class="btn" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack →</a> &nbsp; and the <strong>$249 AI-Search Visibility Audit</strong> tests whether ChatGPT/Perplexity actually cite you vs. named competitors.</p>
+  <p class="noprint">If you'd rather not touch code, the <strong>Fix Pack ($39)</strong> delivers all of the above filled in for <em>your exact site</em>, same day. <a class="btn" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack →</a> &nbsp; and the <strong>$249 AI-Search Visibility Audit</strong> tests whether ChatGPT/Perplexity actually cite you vs. named competitors.</p>
 
-  <p class="muted" style="margin-top:3rem">Methodology: each site scored 0–100 across AI-crawler access, JSON-LD, title/meta, Open Graph, XML sitemap, and llms.txt, June 2026. © SameDayDesk. This kit is for the purchaser's use.</p>
+  <p class="muted" style="margin-top:3rem">Methodology: each site scored 0 to 100 across AI-crawler access, JSON-LD, title/meta, Open Graph, XML sitemap, and llms.txt, June 2026. © SameDayDesk. This kit is for the purchaser's use.</p>
 </div>
 <script>
   if (new URLSearchParams(location.search).get("purchased") === "1") {

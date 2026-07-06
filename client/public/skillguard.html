@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>SkillGuard — scan a Claude Code skill or MCP server for malware before you install it</title>
-<meta name="description" content="A free CLI that statically scans Claude Code skills, plugins, and MCP servers for env-var exfiltration, install-time shell hooks, prompt injection, and committed malware — before you install. Never runs the scanned code. Paid deep audit + continuous watch available." />
+<title>SkillGuard: scan a Claude Code skill or MCP server for malware before you install it</title>
+<meta name="description" content="A free CLI that statically scans Claude Code skills, plugins, and MCP servers for env-var exfiltration, install-time shell hooks, prompt injection, and committed malware, before you install. Never runs the scanned code. Paid deep audit + continuous watch available." />
 <link rel="canonical" href="https://samedaydesk.com/skillguard" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="SkillGuard — vet a Claude Code skill or MCP server before you install it" />
+<meta property="og:title" content="SkillGuard: vet a Claude Code skill or MCP server before you install it" />
 <meta property="og:description" content="Free static scanner for malicious skills/MCP servers. 71 malicious skills found in the wild; 26% carry vulnerabilities. Check yours in seconds." />
 <meta property="og:url" content="https://samedaydesk.com/skillguard" />
 <meta property="og:image" content="https://samedaydesk.com/og.png" />
@@ -44,7 +44,7 @@
 <div class="wrap">
   <p class="eyebrow">SkillGuard · by SameDayDesk</p>
   <h1>Scan a Claude Code skill or MCP server for malware <em>before</em> you install it.</h1>
-  <p class="lead">The skill/MCP ecosystem is exploding — and so is the attack surface. SkillGuard statically scans any skill, plugin, or MCP server for the patterns attackers actually use, in seconds. Free, no signup, and it <strong>never runs the code it's inspecting</strong>.</p>
+  <p class="lead">The skill/MCP ecosystem is exploding, and so is the attack surface. SkillGuard statically scans any skill, plugin, or MCP server for the patterns attackers actually use, in seconds. Free, no signup, and it <strong>never runs the code it's inspecting</strong>.</p>
 
   <div class="cmd">npx github:epistemedeus/skillguard https://github.com/owner/repo</div>
 
@@ -63,7 +63,7 @@
     ■ Hardcoded webhook / pastebin / raw-IP endpoint        [exfil-host]
     ■ Obfuscated exec: eval(atob), curl | bash              [obfuscation]
 
-✗ DANGEROUS — do NOT install without reviewing the flagged files.</pre>
+✗ DANGEROUS: do NOT install without reviewing the flagged files.</pre>
   <p class="muted">Also detects committed binaries, hardcoded private keys, the "commit an encrypted artifact" honeypot pattern, install-time <code>postinstall</code> hooks, and auto-approve-all / <code>--dangerously-skip-permissions</code> configs. Exit codes (0/2/3) let you gate CI on it. <a href="https://github.com/epistemedeus/skillguard">Source on GitHub →</a></p>
 
   <h2>Stop worrying about what you install</h2>
@@ -92,7 +92,7 @@
   </div>
 
   <h2>Safe by design</h2>
-  <p>SkillGuard does <strong>static analysis only</strong>. It clones with <code>git clone</code> (hooks disabled) and reads files — it never runs <code>npm install</code>, never executes build/postinstall scripts, and never runs the target code. Scanning a malicious package can't harm you. (A scanner that executed what it inspects would be the very risk it's meant to prevent.)</p>
+  <p>SkillGuard does <strong>static analysis only</strong>. It clones with <code>git clone</code> (hooks disabled) and reads files. It never runs <code>npm install</code>, never executes build/postinstall scripts, and never runs the target code. Scanning a malicious package can't harm you. (A scanner that executed what it inspects would be the very risk it's meant to prevent.)</p>
   <p class="muted">Heuristics catch known-bad patterns; a novel, determined attack can evade any static scanner. SkillGuard is a fast first line of defense, not a guarantee.</p>
 
   <footer>By <a href="https://samedaydesk.com/">SameDayDesk</a> · <a href="https://github.com/epistemedeus/skillguard">github.com/epistemedeus/skillguard</a> · also try our <a href="https://samedaydesk.com/tools/ai-readiness">free AI-readiness checker</a>.</footer>

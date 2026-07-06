@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>The med-spa AI-citation schema gap (2026): we checked the clinics that surface for "best med spa" searches</title>
-<meta name="description" content="Original June 2026 research: we ran the med-spa pages that actually surface for high-intent searches across 8 US metros and tabulated their structured data. 77% have basic JSON-LD, but only 8% carry FAQPage, 2% carry Review, and 11% mark up their services — the exact fields AI assistants use to quote a business. Full data + a free generator." />
+<meta name="description" content="Original June 2026 research: we ran the med-spa pages that actually surface for high-intent searches across 8 US metros and tabulated their structured data. 77% have basic JSON-LD, but only 8% carry FAQPage, 2% carry Review, and 11% mark up their services, the exact fields AI assistants use to quote a business. Full data + a free generator." />
 <link rel="canonical" href="https://samedaydesk.com/reports/ai-citation-schema-med-spas-2026.html" />
 <meta property="og:type" content="article" />
 <meta property="og:title" content="The med-spa AI-citation schema gap (2026): the fields AI assistants quote are almost universally missing" />
@@ -56,7 +56,7 @@
  {"@type":"Dataset","name":"Med-spa AI-citation schema prevalence (2026-W26)","description":"Structured-data (JSON-LD) prevalence among the 61 reachable individual med-spa / aesthetic-clinic pages that surface for high-intent queries ('best med spa', 'Botox', 'laser hair removal' + city) across 8 US metros (Austin, Scottsdale, Miami, Dallas, Nashville, Los Angeles, Chicago, Denver).","creator":{"@type":"Organization","name":"SameDayDesk"},"datePublished":"2026-06-24","license":"https://creativecommons.org/licenses/by/4.0/","measurementTechnique":"First-party HTTP fetch and JSON-LD parsing of the surfaced page set","variableMeasured":["% with any JSON-LD","% with LocalBusiness/MedicalBusiness","% with AggregateRating","% with Review","% with FAQPage","% with Service/OfferCatalog","% with priceRange","% with geo","% with openingHours"]},
  {"@type":"FAQPage","mainEntity":[
    {"@type":"Question","name":"What structured data do AI assistants use to recommend a local business?","acceptedAnswer":{"@type":"Answer","text":"AI assistants quote machine-readable facts: a LocalBusiness/MedicalBusiness block (name, address, phone, geo, hours), Service/OfferCatalog markup for treatments and prices, FAQPage markup for common questions, and Review/AggregateRating for ratings. Pages that carry these are eligible to be quoted; pages that don't are usually skipped."}},
-   {"@type":"Question","name":"How many med spas have the right structured data?","acceptedAnswer":{"@type":"Answer","text":"In our June 2026 check of 61 med-spa pages that surface for high-intent searches across 8 US metros, 77% had some JSON-LD and 59% had a LocalBusiness block, but only 8% had FAQPage, 2% had Review markup, and 11% marked up their services with prices — the answer-rich fields are almost universally missing."}},
+   {"@type":"Question","name":"How many med spas have the right structured data?","acceptedAnswer":{"@type":"Answer","text":"In our June 2026 check of 61 med-spa pages that surface for high-intent searches across 8 US metros, 77% had some JSON-LD and 59% had a LocalBusiness block, but only 8% had FAQPage, 2% had Review markup, and 11% marked up their services with prices. The answer-rich fields are almost universally missing."}},
    {"@type":"Question","name":"How do I add this structured data to my own site?","acceptedAnswer":{"@type":"Answer","text":"Use the free starter generator on this page for a basic block, or get the complete paste-ready bundle (FAQPage + Service + Review/AggregateRating + geo + hours) tuned to your live site with a gap diff at samedaydesk.com. Verify your site's current structured data free with the AI-readiness checker."}}
  ]}
 ]}
@@ -66,7 +66,7 @@
 <div class="wrap">
   <p class="eyebrow">SameDayDesk · SchemaForge Research · June 2026</p>
   <h1>The med-spa pages AI assistants can quote are almost the ones that don't exist.</h1>
-  <p class="lead">We took the high-intent searches real patients run — "best med spa in [city]," "Botox [city]," "laser hair removal [city]" — across 8 US metros, and checked the structured data on the clinic pages that actually surface. The basics are common. The fields an AI assistant needs to <em>quote</em> a clinic are almost universally missing.</p>
+  <p class="lead">We took the high-intent searches real patients run ("best med spa in [city]," "Botox [city]," "laser hair removal [city]") across 8 US metros, and checked the structured data on the clinic pages that actually surface. The basics are common. The fields an AI assistant needs to <em>quote</em> a clinic are almost universally missing.</p>
 
   <div class="stats">
     <div class="stat"><b>77%</b><span>have some JSON-LD structured data</span></div>
@@ -75,7 +75,7 @@
     <div class="stat"><b>11%</b><span>mark up their services &amp; prices</span></div>
   </div>
 
-  <p>Across <strong>61 reachable clinic pages</strong> (of 62 sampled) in Austin, Scottsdale, Miami, Dallas, Nashville, Los Angeles, Chicago and Denver, the pattern is consistent: clinics get the <em>identity</em> basics right — name, address, phone — and skip the <em>answer-rich</em> markup that lets ChatGPT, Perplexity and Google AI actually pull them into an answer.</p>
+  <p>Across <strong>61 reachable clinic pages</strong> (of 62 sampled) in Austin, Scottsdale, Miami, Dallas, Nashville, Los Angeles, Chicago and Denver, the pattern is consistent: clinics get the <em>identity</em> basics right (name, address, phone) and skip the <em>answer-rich</em> markup that lets ChatGPT, Perplexity and Google AI actually pull them into an answer.</p>
 
   <h2>The data: structured-data prevalence among surfaced med-spa pages</h2>
   <p class="muted">% of the 61 reachable clinic pages carrying each structured-data signal. June 2026 (week 2026-W26).</p>
@@ -98,12 +98,12 @@
   </table>
 
   <h2>Why this is the gap that matters</h2>
-  <p>When someone asks an AI assistant "what's a good med spa near me for Botox," the assistant assembles an answer from machine-readable facts: which businesses exist, what they offer, what it costs, how they're rated, and the questions people ask. A page with a bare <code>LocalBusiness</code> block is listed. A page that also carries <code>Service</code> + <code>priceRange</code>, <code>FAQPage</code>, and real <code>Review</code>/<code>AggregateRating</code> markup is <em>quotable</em> — it gives the model the exact sentences and numbers to cite.</p>
-  <p>The data says the second kind of page barely exists in this category. That's not a reason to despair — it's the cheapest competitive edge in local aesthetics right now. The fields are a one-time paste into your site's <code>&lt;head&gt;</code>.</p>
+  <p>When someone asks an AI assistant "what's a good med spa near me for Botox," the assistant assembles an answer from machine-readable facts: which businesses exist, what they offer, what it costs, how they're rated, and the questions people ask. A page with a bare <code>LocalBusiness</code> block is listed. A page that also carries <code>Service</code> + <code>priceRange</code>, <code>FAQPage</code>, and real <code>Review</code>/<code>AggregateRating</code> markup is <em>quotable</em>: it gives the model the exact sentences and numbers to cite.</p>
+  <p>The data says the second kind of page barely exists in this category. That's not a reason to despair. It's the cheapest competitive edge in local aesthetics right now. The fields are a one-time paste into your site's <code>&lt;head&gt;</code>.</p>
 
   <div class="tool">
     <h3 style="margin-top:0">Free: generate a starter JSON-LD block for your clinic</h3>
-    <p class="muted">Fill these in for a valid <code>MedicalBusiness</code> + <code>FAQPage</code> starter you can paste today. (The complete bundle — Service+price, your real Review/AggregateRating, geo &amp; hours, tuned to your live site with a gap diff — is below.)</p>
+    <p class="muted">Fill these in for a valid <code>MedicalBusiness</code> + <code>FAQPage</code> starter you can paste today. (The complete bundle, Service+price, your real Review/AggregateRating, geo &amp; hours, tuned to your live site with a gap diff, is below.)</p>
     <label>Clinic name</label><input id="sf-name" placeholder="Refine Aesthetics" />
     <label>City</label><input id="sf-city" placeholder="Austin" />
     <label>Website URL</label><input id="sf-url" placeholder="https://yourclinic.com" />
@@ -113,18 +113,18 @@
   </div>
 
   <div class="cta">
-    <h2>Get the complete, paste-ready bundle for your site — $59</h2>
-    <p>The starter above is the identity block. The full SchemaForge bundle adds the fields almost no clinic has — <strong>Service + priceRange, FAQPage, Review/AggregateRating, geo &amp; opening hours</strong> — generated against your live site, with a gap diff showing exactly what you're missing and a ranked fix list. Paste it once; become eligible to be cited.</p>
+    <h2>Get the complete, paste-ready bundle for your site: $59</h2>
+    <p>The starter above is the identity block. The full SchemaForge bundle adds the fields almost no clinic has (<strong>Service + priceRange, FAQPage, Review/AggregateRating, geo &amp; opening hours</strong>) generated against your live site, with a gap diff showing exactly what you're missing and a ranked fix list. Paste it once; become eligible to be cited.</p>
     <a class="btn" href="https://buy.stripe.com/fZuaEYdkm5np611cMGeZ20k?utm_source=report&utm_medium=cta&utm_campaign=schemaforge">Get my bundle · $59</a>
     <a class="btn2" href="https://samedaydesk.com/tools/ai-readiness">Check my site free first →</a>
   </div>
 
   <h2>Methodology</h2>
-  <p>For each of 8 metros we ran the high-intent queries a patient would ("best med spa in [metro]," plus a treatment query — Botox, laser hair removal, or injectables) through web search and collected the individual-clinic pages that surfaced (aggregators and listicles like Yelp were excluded from the clinic tally). We fetched each page first-party and parsed its JSON-LD with our open <a href="https://github.com/epistemedeus/ai-readiness">AI-readiness checker</a> engine, then tabulated which schema types and fields each page carries. Sample: 62 clinic URLs, 61 reachable. This is a structured-data census of the surfaced set — it measures what makes a page <em>eligible</em> to be cited, not a live count of any one engine's citations. We refresh it monthly; this snapshot is week 2026-W26.</p>
+  <p>For each of 8 metros we ran the high-intent queries a patient would ("best med spa in [metro]," plus a treatment query: Botox, laser hair removal, or injectables) through web search and collected the individual-clinic pages that surfaced (aggregators and listicles like Yelp were excluded from the clinic tally). We fetched each page first-party and parsed its JSON-LD with our open <a href="https://github.com/epistemedeus/ai-readiness">AI-readiness checker</a> engine, then tabulated which schema types and fields each page carries. Sample: 62 clinic URLs, 61 reachable. This is a structured-data census of the surfaced set: it measures what makes a page <em>eligible</em> to be cited, not a live count of any one engine's citations. We refresh it monthly; this snapshot is week 2026-W26.</p>
   <p class="muted">Want the raw data? It's open (CC-BY): <a href="https://github.com/epistemedeus/ai-citation-schema-corpus">the full corpus + per-site CSV on GitHub</a> (<a href="https://epistemedeus.github.io/ai-citation-schema-corpus/">summary</a>). Want your industry checked? <a href="https://samedaydesk.com/tools/ai-readiness">Run the free checker</a>, or reproduce the technical parse with <code>npx github:epistemedeus/ai-readiness yoursite.com</code>.</p>
 
   <footer>
-    <p>By <a href="https://samedaydesk.com/">SameDayDesk</a> — a same-day desk for data, code, AI builds and search. See also: <a href="https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html">the AI-search readiness leaderboard</a> and <a href="https://samedaydesk.com/guides/get-cited-by-ai-search.html">how to get cited by AI search</a>.</p>
+    <p>By <a href="https://samedaydesk.com/">SameDayDesk</a>, a same-day desk for data, code, AI builds and search. See also: <a href="https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html">the AI-search readiness leaderboard</a> and <a href="https://samedaydesk.com/guides/get-cited-by-ai-search.html">how to get cited by AI search</a>.</p>
   </footer>
 </div>
 
@@ -141,7 +141,7 @@ function sfGen(){
      "address":{"@type":"PostalAddress","streetAddress":"{{STREET}}","addressLocality":city,"addressRegion":"{{STATE}}","postalCode":"{{ZIP}}","addressCountry":"US"},
      "hasOfferCatalog":{"@type":"OfferCatalog","name":"Services","itemListElement":svc.map(function(s){return {"@type":"Offer","itemOffered":{"@type":"Service","name":s,"areaServed":city}};})}},
     {"@type":"FAQPage","@id":origin+"/#faq","mainEntity":[
-      {"@type":"Question","name":"How much does Botox cost here?","acceptedAnswer":{"@type":"Answer","text":"Botox is priced per unit; most treatments range from $10–$18 per unit. Book a consultation for an exact quote."}},
+      {"@type":"Question","name":"How much does Botox cost here?","acceptedAnswer":{"@type":"Answer","text":"Botox is priced per unit; most treatments range from $10 to $18 per unit. Book a consultation for an exact quote."}},
       {"@type":"Question","name":"Who performs the injections?","acceptedAnswer":{"@type":"Answer","text":"All injectable treatments are performed by licensed medical professionals."}}
     ]}
   ];
