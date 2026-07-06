@@ -27,10 +27,17 @@
   .card{background:var(--card);border:1px solid var(--line);border-radius:.7rem;padding:1.2rem 1.35rem;margin:1rem 0}
   .btn{display:inline-block;background:var(--oxide);color:#fff;font-weight:700;text-decoration:none;padding:.8rem 1.4rem;border-radius:.55rem;margin:.4rem .5rem .4rem 0}
   .btn.ghost{background:transparent;color:var(--oxide);border:1.5px solid var(--oxide)}
-  .tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:.9rem;margin:1rem 0}
-  .tier{background:var(--card);border:1px solid var(--line);border-radius:.7rem;padding:1.1rem}
-  .tier .p{font-size:1.7rem;font-weight:700;color:var(--oxide)}
-  .tier.best{border-color:var(--oxide);border-width:2px}
+  .tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:1rem;margin:1.1rem 0}
+  .tier{background:var(--card);border:1px solid var(--line);border-radius:.7rem;padding:1.15rem;display:flex;flex-direction:column;position:relative}
+  .tier .p{font-size:1.9rem;font-weight:700;color:var(--oxide);margin-top:.15rem}
+  .tier h3{font-size:1.02rem;margin:.1rem 0 .4rem}
+  .tier .tag{flex:1}
+  .tier.best{border-color:var(--oxide);border-width:2px;box-shadow:0 8px 22px -14px rgba(158,59,46,.55)}
+  .badge{position:absolute;top:-.62rem;left:1.1rem;background:var(--oxide);color:#fff;font-size:.66rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:.18rem .5rem;border-radius:.3rem}
+  .buy{display:block;text-align:center;background:var(--oxide);color:#fff;font-weight:700;text-decoration:none;padding:.7rem 1rem;border-radius:.5rem;margin-top:.9rem}
+  .tier:not(.best) .buy{background:transparent;color:var(--oxide);border:1.5px solid var(--oxide)}
+  .buy:hover{opacity:.92}
+  .orline{color:var(--dim);font-size:.92rem;margin:1.3rem 0 .2rem}
   .tag{color:var(--dim);font-size:.85rem}
   ul{margin:.4rem 0 .4rem 1.1rem;padding:0}li{margin:.3rem 0}
   .foot{color:var(--dim);font-size:.82rem;margin-top:3rem;border-top:1px solid var(--line);padding-top:1rem}
@@ -60,24 +67,29 @@
   <div class="tiers">
     <div class="tier">
       <div class="p">$199</div>
-      <div><b>AI Visibility Audit</b></div>
+      <h3>AI Visibility Audit</h3>
       <p class="tag">The full report: where you rank vs competitors across every AI engine for your top queries, every gap, and a prioritized fix list. 2 days.</p>
+      <a class="buy" href="https://buy.stripe.com/3cIbJ2gwy2bdgFFfYSeZ20u" id="buy-audit" data-ev="begin_checkout" data-tier="geo_audit">Get the Audit → $199</a>
     </div>
     <div class="tier best">
+      <div class="badge">Most popular</div>
       <div class="p">$399</div>
-      <div><b>Audit + Fix</b> · most popular</div>
+      <h3>Audit + Fix</h3>
       <p class="tag">Everything in the audit, plus we DO the fixes: paste-ready structured data, Google Business Profile, and content for your money queries — with a 30-day re-audit to prove it moved. 5 days.</p>
+      <a class="buy" href="https://buy.stripe.com/3cI00kdkmeXZ6118wqeZ20v" id="buy-fix" data-ev="begin_checkout" data-tier="geo_fix">Get Audit + Fix → $399</a>
     </div>
     <div class="tier">
       <div class="p">$499</div>
-      <div><b>Multi-location Sprint</b></div>
+      <h3>Multi-location Sprint</h3>
       <p class="tag">The Audit + Fix for a multi-location or larger business (up to 3 locations). 5–7 days.</p>
+      <a class="buy" href="https://buy.stripe.com/00w00k1BE9DF2OP282eZ20w" id="buy-sprint" data-ev="begin_checkout" data-tier="geo_sprint">Start the Sprint → $499</a>
     </div>
   </div>
-  <p class="tag">Want to stay ahead every month (new queries, fresh content, tracking)? Ask about the monthly retainer.</p>
+  <p class="tag">Secure checkout via Stripe · no lock-in · want to stay ahead every month (new queries, fresh content, tracking)? Ask about the monthly retainer.</p>
 
-  <div style="margin:1.5rem 0">
-    <a class="btn" href="mailto:hello@samedaydesk.com?subject=AI%20Visibility%20Audit%20-%20my%20website&body=My%20website%3A%20%0AMy%20city%2Fservice%3A%20" id="cta-book" data-ev="begin_checkout">Get my audit → tell us your website</a>
+  <p class="orline"><b>Not sure which — or want us to look first?</b> Tell us your site and we'll point you to the right one. No pressure.</p>
+  <div style="margin:.3rem 0 0">
+    <a class="btn ghost" href="mailto:contact@samedaydesk.com?subject=AI%20Visibility%20Audit%20-%20my%20website&body=My%20website%3A%20%0AMy%20city%2Fservice%3A%20" id="cta-book" data-ev="lead_email">Tell us your website →</a>
   </div>
 
   <h2>Why this works (and why it's honest)</h2>
@@ -94,7 +106,7 @@
 <!-- PostHog funnel instrumentation. No-op until POSTHOG_KEY is set (operator step). -->
 <script>
 (function(){
-  var POSTHOG_KEY = ""; // <-- operator: paste the PostHog project key to turn on tracking
+  var POSTHOG_KEY = "phc_xb5fJEZLiErjaZS2xckH37rxwocD5b4h7w43qL9QaYBd"; // PostHog project 474775 (US)
   var POSTHOG_HOST = "https://us.i.posthog.com";
   function track(ev, props){ try{ if(window.posthog) window.posthog.capture(ev, props||{}); }catch(e){} }
   if (POSTHOG_KEY) {
