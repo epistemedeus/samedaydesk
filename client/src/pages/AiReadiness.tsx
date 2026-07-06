@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect, useRef, type FormEvent } from "react";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import { track } from "../lib/posthog";
@@ -21,6 +21,12 @@ export default function AiReadiness() {
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Land the cursor in the URL box on arrival so a visitor can check their site right away.
+  useEffect(() => {
+    inputRef.current?.focus({ preventScroll: true });
+  }, []);
 
   // Per-route SEO: the SPA shell ships the homepage <title>; give the flagship tool page
   // its own title + description so search engines (which render JS) rank it for its query.
@@ -76,10 +82,12 @@ export default function AiReadiness() {
 
           <form className={styles.form} onSubmit={run}>
             <input
+              ref={inputRef}
               className={styles.input}
               type="text"
               inputMode="url"
               placeholder="yourwebsite.com"
+              autoFocus
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               aria-label="Website URL"
