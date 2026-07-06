@@ -38,6 +38,21 @@ app.use((req, res, next) => {
   next();
 });
 
+// 0b) Retired/consolidated URLs → 301 to their canonical replacement. Runs before
+//     express.static so the old file (if still present) never serves a 200. Add a
+//     row here whenever a near-duplicate page is folded into another.
+const RETIRED_301 = new Map([
+  // Near-duplicate of the AI-citation checklist; folded into the well-linked hub page.
+  ["/guides/how-to-get-cited-by-ai-search-2026.html", "/guides/get-cited-by-ai-search.html"],
+]);
+app.use((req, res, next) => {
+  if (req.method === "GET" || req.method === "HEAD") {
+    const dest = RETIRED_301.get(req.path);
+    if (dest) return res.redirect(301, dest);
+  }
+  next();
+});
+
 // 1) Webhooks need the RAW, unparsed body for signature verification. Mount these
 //    BEFORE express.json(), and stash the raw bytes for the handler.
 function captureRaw(req, _res, next) {
