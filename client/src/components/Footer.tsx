@@ -27,8 +27,8 @@ export default function Footer() {
         <nav className={styles.col} aria-label="Free tools">
           <h3 className={styles.colhead}>Free tools</h3>
           <Link to="/tools/ai-readiness" viewTransition>AI visibility checker</Link>
-          <a href="#how">How it works</a>
-          <a href="#guarantee">Guarantee</a>
+          <Link to="/#how">How it works</Link>
+          <Link to="/#guarantee">Guarantee</Link>
           <Link to="/terms" viewTransition>Terms</Link>
         </nav>
       </div>
