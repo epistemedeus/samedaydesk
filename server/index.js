@@ -25,6 +25,19 @@ const CLIENT_DIST = path.resolve(__dirname, "../client/dist");
 const app = express();
 app.disable("x-powered-by");
 
+// 0) Canonical host: 301 any `www.` request to the bare apex, preserving path + query.
+//    Runs first so a www hit short-circuits before anything else. GET/HEAD only, so
+//    API/webhook POSTs are never redirected (a 301 on POST can drop the body). The
+//    apex is already what <link rel="canonical"> and the sitemap point at; this makes
+//    www a redirect instead of a 200 duplicate.
+app.use((req, res, next) => {
+  const host = req.headers.host || "";
+  if ((req.method === "GET" || req.method === "HEAD") && host.startsWith("www.")) {
+    return res.redirect(301, `https://${host.slice(4)}${req.originalUrl}`);
+  }
+  next();
+});
+
 // 1) Webhooks need the RAW, unparsed body for signature verification. Mount these
 //    BEFORE express.json(), and stash the raw bytes for the handler.
 function captureRaw(req, _res, next) {
