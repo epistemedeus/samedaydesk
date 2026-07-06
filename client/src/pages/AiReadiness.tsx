@@ -24,8 +24,17 @@ export default function AiReadiness() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Land the cursor in the URL box on arrival so a visitor can check their site right away.
+  // Re-assert across mount + next paint + a short delay so it also wins after the View
+  // Transition used by the nav/footer links (which can leave focus on <body> briefly).
   useEffect(() => {
-    inputRef.current?.focus({ preventScroll: true });
+    const focus = () => inputRef.current?.focus({ preventScroll: true });
+    focus();
+    const raf = requestAnimationFrame(focus);
+    const t = window.setTimeout(focus, 80);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(t);
+    };
   }, []);
 
   // Per-route SEO: the SPA shell ships the homepage <title>; give the flagship tool page
