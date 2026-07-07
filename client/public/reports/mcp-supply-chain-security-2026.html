@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>I scanned the official MCP registry for supply-chain risk: here's what I found (2026)</title>
+<title>We scanned the official MCP registry for supply-chain risk: here's what we found (2026)</title>
 <meta name="description" content="A first static-security pass over Model Context Protocol servers listed in the official registry. The encouraging finding: no clear malware in the sample. The nuance: the common flags are dual-use (install hooks, curl|bash installers), and a notable share of listed repos were unreachable. Methodology + how to vet your own." />
 <link rel="canonical" href="https://samedaydesk.com/reports/mcp-supply-chain-security-2026.html" />
 <meta property="og:type" content="article" />
-<meta property="og:title" content="I scanned the official MCP registry for supply-chain risk" />
+<meta property="og:title" content="We scanned the official MCP registry for supply-chain risk" />
 <meta property="og:description" content="No clear malware in the sample, but the dual-use patterns (install hooks, curl|bash) are exactly what you should review before installing an MCP server." />
 <meta property="og:url" content="https://samedaydesk.com/reports/mcp-supply-chain-security-2026.html" />
 <meta property="og:image" content="https://samedaydesk.com/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Article","headline":"I scanned the official MCP registry for supply-chain risk: here's what I found","datePublished":"2026-06-24","dateModified":"2026-06-24","author":{"@type":"Organization","name":"SameDayDesk"},"publisher":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"mainEntityOfPage":"https://samedaydesk.com/reports/mcp-supply-chain-security-2026.html"}
+{"@context":"https://schema.org","@type":"Article","headline":"We scanned the official MCP registry for supply-chain risk: here's what we found","datePublished":"2026-06-24","dateModified":"2026-06-24","author":{"@type":"Organization","name":"SameDayDesk"},"publisher":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"mainEntityOfPage":"https://samedaydesk.com/reports/mcp-supply-chain-security-2026.html"}
 </script>
 <style>
   :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; --good:#3a7d44; }
@@ -42,8 +42,8 @@
 <body>
 <div class="wrap">
   <p class="eyebrow">SameDayDesk · Report · June 2026</p>
-  <h1>I scanned the official MCP registry for supply-chain risk. Here's what I found.</h1>
-  <p class="lead">The Model Context Protocol ecosystem is exploding, and so are the warnings: 71 malicious "skills" found in the wild, ~26% of published skills carrying vulnerabilities, 30+ MCP CVEs in a single 60-day stretch. So I pointed a static scanner at the servers listed in the official MCP registry. The headline is reassuring; the nuance is where the lesson is.</p>
+  <h1>We scanned the official MCP registry for supply-chain risk. Here's what we found.</h1>
+  <p class="lead">The Model Context Protocol ecosystem is exploding, and so are the warnings: 71 malicious "skills" found in the wild, ~26% of published skills carrying vulnerabilities, 30+ MCP CVEs in a single 60-day stretch. So we pointed a static scanner at the servers listed in the official MCP registry. The headline is reassuring; the nuance is where the lesson is.</p>
 
   <div class="stats">
     <div class="stat"><b>33</b><span>registry servers sampled</span></div>
@@ -53,7 +53,7 @@
   </div>
 
   <h2>The encouraging part</h2>
-  <p>Of the 18 servers whose repositories I could actually clone and scan, <strong>none showed clear malware</strong>: no whole-environment exfiltration to suspicious hosts, no obfuscated <code>eval(atob(...))</code> payloads, no committed binaries, no hardcoded credentials. Fifteen were clean; three drew review-level flags. That's a better picture than the breathless headlines suggest for the curated registry specifically.</p>
+  <p>Of the 18 servers whose repositories we could actually clone and scan, <strong>none showed clear malware</strong>: no whole-environment exfiltration to suspicious hosts, no obfuscated <code>eval(atob(...))</code> payloads, no committed binaries, no hardcoded credentials. Fifteen were clean; three drew review-level flags. That's a better picture than the breathless headlines suggest for the curated registry specifically.</p>
 
   <h2>The nuance: the flags are all dual-use</h2>
   <p>The three "review" flags were exactly the patterns that are <em>indistinguishable from benign by a static check</em>:</p>
@@ -65,7 +65,7 @@
   <p>This is the core lesson of supply-chain scanning: the dangerous and the routine share a shape. A scanner can surface candidates in seconds, but separating a real threat from benign dual-use is human judgment.</p>
 
   <h2>The other finding: registry hygiene</h2>
-  <p>Nearly half the listed entries I sampled (15 of 33) pointed to repositories that <strong>couldn't be cloned</strong> (private, moved, or removed). That's not a security verdict, but it's a freshness signal worth knowing: a registry listing is not a guarantee the code is still there, let alone unchanged since it was reviewed. The "mutable tool" / rug-pull problem is real, which is why a one-time scan isn't enough.</p>
+  <p>Nearly half the listed entries we sampled (15 of 33) pointed to repositories that <strong>couldn't be cloned</strong> (private, moved, or removed). That's not a security verdict, but it's a freshness signal worth knowing: a registry listing is not a guarantee the code is still there, let alone unchanged since it was reviewed. The "mutable tool" / rug-pull problem is real, which is why a one-time scan isn't enough.</p>
 
   <h2>How to vet a server before you install it</h2>
   <p>Read the install/lifecycle scripts; trace where secrets and <code>process.env</code> go; look for obfuscation and committed binaries; read <code>SKILL.md</code> and tool descriptions as instructions. Or run a scanner that checks all of it in seconds, and re-checks on every upstream release, because clean-today isn't clean-forever.</p>
