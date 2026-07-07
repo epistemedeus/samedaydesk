@@ -1,0 +1,88 @@
+# ai-readiness
+
+What ai-readiness is and every way to run it.
+
+## MCP Reference
+
+### ai-readiness
+
+Path: `/docs/ai-readiness/`
+Version: 1.1.3
+
+#### Operations
+
+##### TOOL check_ai_readiness
+
+Summary: check_ai_readiness
+
+Check whether a website is visible to AI search engines (ChatGPT, Perplexity, Claude, Google AI Overviews). Fetches the site + robots.txt and scores AI-crawler access, structured data (JSON-LD), title/meta, Open Graph, sitemap, and llms.txt. Returns a 0-100 score, a letter grade, and a specific fix for each gap.
+
+Parameters:
+- `url` (argument, string, required) - The website to check, e.g. example.com or https://example.com
+
+##### TOOL generate_ai_readiness_fixes
+
+Summary: generate_ai_readiness_fixes
+
+Generate starter fixes to make a website visible to AI search: Organization + FAQPage JSON-LD (pre-filled from the site's real title/description) and an AI-crawler-friendly robots.txt. Paste the JSON-LD into the homepage <head> and replace robots.txt. This is the free starter version of the same-day Fix Pack.
+
+Parameters:
+- `url` (argument, string, required) - The website to generate fixes for, e.g. example.com
+
+## Guides
+
+### Overview
+
+Path: `/docs/ai-readiness/guides/overview.html`
+
+What ai-readiness is and every way to run it.
+
+ai-readiness ai-readiness answers one question: can AI search engines (ChatGPT, Perplexity, Claude, Google AI Overviews) crawl and understand your website? It fetches the page plus robots.txt, sitemap.xml, and llms.txt, runs six weighted checks , and returns a 0-100 score with a letter grade and a specific fix for each gap. It is dependency-free Node (no npm installs at runtime), MIT licensed, and ships four ways to run the same engine ( lib.js ): CLI : npx -y github:epistemedeus/ai-readiness yoursite.com ( details ) MCP server (stdio) : npx -y github:epistemedeus/ai-readiness mcp for Claude Desktop, Cursor, Cline, and other local MCP clients MCP server (streamable HTTP) : a stateless CORS-enabled HTTP transport for remote MCP clients ( details ) Library : import { run, generateFix, AI_CRAWLERS } ( details ) There is also a hosted UI at samedaydesk.com/tools/ai-readiness , which is this project's declared homepage ( manifest.json ). The two MCP tools, check_ai_readiness and generate_ai_readiness_fixes , are documented with their full input schemas in the MCP Reference tab of this site.
+
+### The six checks
+
+Path: `/docs/ai-readiness/guides/checks.html`
+
+Every check, its pass/warn/fail semantics, its weight, and the scoring model.
+
+run(url) executes six checks ( lib.js#L97-L113 ). Each check returns a status ( pass , warn , or fail ), a detail string, and a concrete fix when it does not pass. # Check Weight Pass Fail 1 AI crawler access 35 No tracked AI crawler is blocked by robots.txt Every tracked crawler is blocked 2 Structured data (JSON-LD) 22 At least one parseable JSON-LD block with a type None found 3 Title and meta description 15 Title 15-65 chars and description 70-165 chars Both missing 4 Open Graph tags 8 3 or more og: tags None 5 XML sitemap 15 /sitemap.xml exists (or is declared in robots.txt) None found 6 llms.txt 5 /llms.txt exists and is non-empty Warn only: absence never fails a site Notes on semantics, straight from the source: Check 1 blocks only on a group-level Disallow: / (or /* ) that applies to the crawler and is not offset by a root Allow ( lib.js#L47-L64 ). Partial-path disallows do not count as blocking. Check 2 distinguishes parseable JSON-LD from unparseable blocks: unparseable JSON-LD downgrades to warn , not fail ( lib.js#L103-L105 ). Check 6 is deliberately gentle: the detail text notes there is no proven citation effect, so a missing llms.txt is hygiene, not a ranking problem ( lib.js#L113 ). Scoring and grades Statuses map to points ( pass 1, warn 0.5, fail 0) and are combined with the weights above ( lib.js#L115-L118 ): score = round(100 x sum(weight x points) / sum(weights)) Grades: A at 90+, B at 75+, C at 60+, D at 40+, F below 40
+
+### Tracked AI crawlers
+
+Path: `/docs/ai-readiness/guides/crawlers.html`
+
+The seven crawlers the checker tests robots.txt against, and why each matters.
+
+The AI_CRAWLERS export ( lib.js#L6-L14 ) is the exact list the crawler-access check tests against, and the list generate_ai_readiness_fixes welcomes in its robots.txt template: User-agent Feeds GPTBot ChatGPT (OpenAI index and training) OAI-SearchBot ChatGPT Search ClaudeBot Claude PerplexityBot Perplexity Google-Extended Google Gemini and AI Overviews CCBot Common Crawl (feeds many LLMs) Bingbot Bing (powers ChatGPT Search results) How blocking is evaluated The robots.txt parser groups rules by User-agent and picks the most specific group for each crawler (exact name first, then * ). A crawler counts as blocked only when its group carries Disallow: / or Disallow: /* without a root-level Allow ( lib.js#L47-L64 ). Blocking some but not all tracked crawlers yields warn ; blocking all seven yields fail .
+
+### Generated fixes
+
+Path: `/docs/ai-readiness/guides/fix-outputs.html`
+
+The three artifacts generate_ai_readiness_fixes produces and their guardrails.
+
+generateFix(url) ( lib.js#L125-L163 ) fetches the live page and pre-fills three starter artifacts from the site's real title and description: Organization JSON-LD : @type: Organization with name, url, description, and a logo placeholder. The name is derived from the first segment of the page title, capped at 60 chars. FAQPage JSON-LD : three starter questions (what the business does, the service area, how to contact). The first answer is pre-filled from the real meta description; the other two carry explicit REPLACE placeholders so a human fills in facts the page does not state. robots.txt : a template that allows all traffic, then explicitly welcomes each of the seven tracked AI crawlers, and declares the sitemap URL. Guardrails worth knowing: The description used in JSON-LD falls back to a generated one-liner when the page's meta description is shorter than 40 chars, and is capped at 300 chars. Placeholders are loud by design: answers a machine cannot know say REPLACE rather than inventing facts. The same SSRF guard as the checker applies: private and loopback hosts are rejected before any fetch ( lib.js#L18-L38 ).
+
+### Library use
+
+Path: `/docs/ai-readiness/guides/library.html`
+
+The three exports, their return shapes, and the built-in safety limits.
+
+lib.js exports three things ( lib.js ): run(url, asJson?) Runs the six checks. Returns { url, score, grade, checks: [{ label, status, detail, fix }] } where status is pass | warn | fail and fix is a concrete remediation string or null. generateFix(url) Returns { url, host, name, organizationJsonLd, faqJsonLd, robotsTxt } ; see Generated fixes . AI_CRAWLERS The tracked-crawler list, [{ ua, who }] ; see Tracked AI crawlers . Safety and limits SSRF guard : hostnames are DNS-resolved and rejected if any address is private, loopback, link-local, or CGNAT ( lib.js#L18-L38 ). Timeout : every fetch aborts after 10 seconds ( lib.js#L16 ). Size cap : response bodies are truncated at 2.5 MB ( lib.js#L16 ). Identified UA : requests send a versioned user-agent that links back to the repository ( lib.js#L15 ).
+
+### CLI and GitHub Action
+
+Path: `/docs/ai-readiness/guides/cli.html`
+
+Command-line usage, flags, exit codes, and the composite GitHub Action.
+
+CLI Copy npx -y github:epistemedeus/ai-readiness yoursite.com npx -y github:epistemedeus/ai-readiness yoursite.com --json npx -y github:epistemedeus/ai-readiness mcp # start the stdio MCP server The CLI ( index.js ) prints a scored report with PASS/WARN/FAIL lines and a fix hint per gap. Flags and behaviors: --json : print the raw run() result as JSON and exit 0 mcp or --mcp : switch to the stdio MCP server instead of the one-shot check Package bins: ai-readiness (CLI and MCP launcher) and ai-readiness-mcp (MCP server directly) ( package.json ) Errors (bad URL, non-public host, fetch failure) print to stderr and exit 1 GitHub Action The repo doubles as a composite action ( action.yml ): input url (required), runs the CLI against it. Example: Copy - uses : epistemedeus/ai-readiness@main with : url : https://yoursite.com
+
+### HTTP MCP server
+
+Path: `/docs/ai-readiness/guides/http-server.html`
+
+The streamable HTTP transport for remote MCP clients: endpoints, CORS, and limits.
+
+http.js ( source ) exposes the same two MCP tools over a stateless, CORS-enabled streamable HTTP transport, for MCP clients that cannot spawn a local stdio process (ChatGPT connectors, Claude custom connectors, and similar). Endpoints Method Path Behavior GET / Plain-text landing page with client config and tool list GET /health Returns ok POST /mcp (or /) JSON-RPC request or batch; returns the JSON-RPC response OPTIONS any CORS preflight, 204 Behaviors and limits Batching : a JSON array of requests is processed concurrently and answered as an array; notification-only input returns 202 with an empty body. Body cap : requests over 1 MB are rejected with a JSON-RPC error and 413. CORS : Access-Control-Allow-Origin: * plus the MCP session headers, so browser-based clients work out of the box. Port : PORT env var, default 8080; a Dockerfile ships in the repo for one-command container deploys ( Dockerfile ). Client configuration: Copy { "mcpServers" : { "ai-readiness" : { "url" : "https:// /mcp" } } }
