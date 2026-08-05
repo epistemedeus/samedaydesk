@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Solana Ecosystem Pulse Data Product Case Study | SameDayDesk</title>
+<meta name="description" content="How SameDayDesk built a keyless, auto-updating Solana ecosystem dashboard with direct RPC, source health, anomaly detection, JSON, Markdown, and a live interactive report." />
+<link rel="canonical" href="https://samedaydesk.com/data-lab/solana-pulse/" />
+<meta name="robots" content="index,follow" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Solana Ecosystem Pulse: a verifiable public-data product" />
+<meta property="og:description" content="Eight keyless sources, three output formats, robust anomaly detection, and a live scheduled deployment." />
+<meta property="og:url" content="https://samedaydesk.com/data-lab/solana-pulse/" />
+<meta property="og:image" content="https://samedaydesk.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "TechArticle",
+      "headline": "Solana Ecosystem Pulse: a verifiable public-data product",
+      "datePublished": "2026-08-05",
+      "dateModified": "2026-08-05",
+      "author": {"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},
+      "mainEntityOfPage": "https://samedaydesk.com/data-lab/solana-pulse/",
+      "about": "Automated public data collection, anomaly detection, and multi-format reporting"
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "name": "Solana Ecosystem Pulse",
+      "codeRepository": "https://github.com/epistemedeus/solana-ecosystem-pulse",
+      "programmingLanguage": "Python",
+      "runtimePlatform": "Python 3.10+ and static web hosting",
+      "license": "https://opensource.org/license/mit"
+    },
+    {
+      "@type": "Service",
+      "name": "Auto-updating intelligence dashboard build",
+      "serviceType": "Public-data engineering and interactive reporting",
+      "provider": {"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"}
+    }
+  ]
+}
+</script>
+<style>
+  :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; --green:#167054; --blue:#3b61b6; --lime:#ccff00; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.65 Inter,system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:55rem; margin:0 auto; padding:3rem 1.25rem 5rem; }
+  a { color:var(--oxide); }
+  .eyebrow { margin:0 0 1rem; color:var(--oxide); font:600 12px/1 ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; }
+  h1 { margin:.2em 0; font-size:clamp(2rem,1.3rem + 2.5vw,3.35rem); line-height:1.05; letter-spacing:-.035em; }
+  h2 { margin:2.5rem 0 .6rem; font-size:1.45rem; line-height:1.2; }
+  h3 { margin:.15rem 0 .3rem; font-size:1.05rem; }
+  .lead { max-width:48rem; color:var(--dim); font-size:1.18rem; }
+  .status { display:inline-flex; align-items:center; gap:.55rem; margin:1rem 0; padding:.45rem .7rem; border:1px solid #9fc5b6; border-radius:999px; color:var(--green); background:#edf7f2; font:600 12px/1.2 ui-monospace,monospace; }
+  .dot { width:.55rem; height:.55rem; border-radius:50%; background:var(--green); }
+  .facts { display:grid; grid-template-columns:repeat(auto-fit,minmax(10rem,1fr)); gap:.8rem; margin:1.7rem 0; }
+  .fact { padding:1rem; border:1px solid var(--line); border-radius:10px; background:var(--card); }
+  .fact b { display:block; font:700 1.35rem/1.1 ui-monospace,monospace; }
+  .fact span { color:var(--dim); font-size:.86rem; }
+  .flow { display:grid; grid-template-columns:repeat(4,1fr); gap:.6rem; margin:1.4rem 0; }
+  .flow div { position:relative; padding:1rem .85rem; border:1px solid var(--line); border-radius:10px; background:var(--card); }
+  .flow b { display:block; color:var(--blue); font:700 11px/1.2 ui-monospace,monospace; letter-spacing:.08em; text-transform:uppercase; }
+  .flow span { display:block; margin-top:.35rem; font-size:.92rem; }
+  .proof { margin:.8rem 0; padding:1rem 1.1rem; border-left:4px solid var(--green); border-radius:0 10px 10px 0; background:var(--card); }
+  .proof p { margin:.25rem 0 0; color:var(--dim); }
+  .links { margin:1.5rem 0; padding:1.25rem; border:1px solid var(--line); border-radius:12px; background:var(--card); }
+  .links p { margin:.35rem 0; }
+  .note { margin:1.4rem 0; padding:1rem 1.1rem; border:1px solid var(--line); border-radius:10px; color:var(--dim); font-size:.93rem; }
+  .cta { margin:2.6rem 0 0; padding:1.55rem; border-radius:14px; color:#f4f4f0; background:#15181d; }
+  .cta h2 { margin:0 0 .45rem; color:#fff; }
+  .cta p { margin:.25rem 0; color:#c7c9cc; }
+  .btn { display:inline-block; margin:.8rem .5rem 0 0; padding:.7rem 1.1rem; border-radius:9px; color:#0a0b0d; background:var(--lime); font-weight:700; text-decoration:none; }
+  .btn.alt { color:var(--lime); background:transparent; border:1px solid #4b4e53; }
+  footer { margin-top:2.5rem; padding-top:1.2rem; border-top:1px solid var(--line); color:var(--dim); font-size:.9rem; }
+  @media(max-width:640px){ .flow{grid-template-columns:1fr 1fr;} }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <p class="eyebrow">SameDayDesk · Public-data product lab · August 2026</p>
+  <h1>Solana Ecosystem Pulse: public data that shows its work</h1>
+  <p class="lead">A live ecosystem-health product built around a simple rule: if a source fails, say so. Do not hide the error, reuse a stale number, or invent a replacement.</p>
+
+  <div class="status"><span class="dot"></span>Live · scheduled refresh every six hours</div>
+
+  <div class="facts">
+    <div class="fact"><b>8</b><span>keyless live sources</span></div>
+    <div class="fact"><b>3</b><span>JSON, Markdown &amp; HTML outputs</span></div>
+    <div class="fact"><b>0</b><span>API keys or runtime dependencies</span></div>
+    <div class="fact"><b>5/5</b><span>collector tests passing</span></div>
+  </div>
+
+  <h2>The reporting pipeline</h2>
+  <div class="flow">
+    <div><b>Collect</b><span>Direct RPC + public APIs run concurrently.</span></div>
+    <div><b>Normalize</b><span>One documented, versioned JSON schema.</span></div>
+    <div><b>Detect</b><span>Safety rules + median/MAD baselines.</span></div>
+    <div><b>Publish</b><span>Atomic files, source health, static deploy.</span></div>
+  </div>
+
+  <div class="links">
+    <h3>Inspect the live product</h3>
+    <p><a href="https://epistemedeus.github.io/solana-ecosystem-pulse/dashboard/">Interactive dashboard</a> · <a href="https://epistemedeus.github.io/solana-ecosystem-pulse/data/latest.json">machine-readable JSON</a> · <a href="https://epistemedeus.github.io/solana-ecosystem-pulse/reports/latest.md">Markdown report</a></p>
+    <p><a href="https://github.com/epistemedeus/solana-ecosystem-pulse">Source, tests, setup, data definitions and automation</a></p>
+  </div>
+
+  <h2>What makes it maintainable</h2>
+  <div class="proof"><h3>No-key baseline</h3><p>The default build uses Solana JSON-RPC, DeFiLlama, CoinGecko, official Solana RSS, and GitHub's public API. A private RPC can be supplied without changing the code.</p></div>
+  <div class="proof"><h3>Partial truth beats complete fiction</h3><p>Every source carries status, timestamp, latency, URL, and a bounded error. Missing metrics remain visibly unavailable.</p></div>
+  <div class="proof"><h3>Two kinds of anomaly</h3><p>Fixed safety thresholds catch understood failure modes. Robust z-scores catch new deviations without letting one incident erase its own baseline.</p></div>
+  <div class="proof"><h3>One run, three audiences</h3><p>Operators get a dashboard, researchers get Markdown, and software agents get the same facts as structured JSON.</p></div>
+
+  <p class="note"><strong>Transparency:</strong> SameDayDesk is not affiliated with Solana Foundation, Superteam, DeFiLlama, or CoinGecko. This is an independently built public-data product and portfolio case study. Source-specific methodology and rate-limit risk are documented in the repository.</p>
+
+  <section class="cta">
+    <h2>Need a dashboard that updates itself?</h2>
+    <p>We build focused public-data products with reproducible collection, explicit provenance, alerts, and outputs your team and its agents can both use.</p>
+    <a class="btn" href="mailto:contact@samedaydesk.com?subject=Auto-updating%20data%20dashboard&amp;body=Data%20sources%3A%0AUsers%3A%0ARefresh%20interval%3A%0A">Scope a dashboard</a>
+    <a class="btn alt" href="/resources.html">See more work</a>
+  </section>
+
+  <footer><a href="/">SameDayDesk home</a> · <a href="/resources.html">Guides, reports &amp; tools</a> · <a href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a></footer>
+</main>
+</body>
+</html>
