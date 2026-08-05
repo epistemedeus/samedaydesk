@@ -12,6 +12,7 @@
 ## Agent interfaces
 
 - [Remote MCP server](https://samedaydesk.com/mcp): Streamable HTTP MCP interface for the AI-readiness checker.
+- [x402 data gateway](https://samedaydesk.com/x402): Seven pay-per-call MCP tools, prices, source, and connection instructions.
 - [x402 service health](https://x402-url-extractor-production.up.railway.app/healthz): Live health and pricing for the SameDayDesk agent data gateway.
 - [x402 resource manifest](https://x402-url-extractor-production.up.railway.app/.well-known/x402): Machine-readable paid resources on Base mainnet using USDC.
 - [x402 gateway llms.txt](https://x402-url-extractor-production.up.railway.app/llms.txt): Endpoint descriptions and payment instructions.
