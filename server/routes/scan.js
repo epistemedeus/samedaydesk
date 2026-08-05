@@ -7,7 +7,7 @@ import { runCheck } from "./tools.js";
 const router = Router();
 
 const FIX_PACK = "https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e"; // $39
-const AUDIT = "https://buy.stripe.com/fZuaEY2FI4jl2OPbICeZ206";   // $249
+const AUDIT = "https://buy.stripe.com/3cIbJ2gwy2bdgFFfYSeZ20u";   // $199
 
 const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
@@ -93,8 +93,8 @@ router.get("/", async (req, res) => {
         <h2>${esc(ctaTitle)}</h2>
         <p>${esc(ctaText)}</p>
         ${r.grade === "A"
-          ? `<a class="btn" href="${AUDIT}">Get the full audit · $249</a>`
-          : `<a class="btn" href="${FIX_PACK}">Fix it today · $39</a><a class="btn2" href="${AUDIT}">Full audit · $249</a>`}
+          ? `<a class="btn" href="${AUDIT}">Get the full audit · $199</a>`
+          : `<a class="btn" href="${FIX_PACK}">Fix it today · $39</a><a class="btn2" href="${AUDIT}">Full audit · $199</a>`}
       </div>
       <p class="muted">Check another site:</p>${form()}
       <p class="muted">Snapshot of the homepage + robots.txt, ${esc(new Date(r.checkedAt).toISOString().slice(0, 10))}.</p>`;

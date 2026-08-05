@@ -167,13 +167,13 @@ export default function AiReadiness() {
                   Done-for-you Fix Pack · $39 →
                 </a>
                 <a
-                  href="https://buy.stripe.com/fZuaEY2FI4jl2OPbICeZ206"
+                  href="https://buy.stripe.com/3cIbJ2gwy2bdgFFfYSeZ20u"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.ctaBtnSecondary}
                   onClick={() => track("tool_cta_clicked", { tool: "ai_readiness", offer: "ai_audit" })}
                 >
-                  Full audit · $249 →
+                  Full audit · $199 →
                 </a>
               </div>
             </div>

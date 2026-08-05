@@ -119,7 +119,7 @@ export const CATEGORIES: Category[] = [
       {
         slug: "ai_audit",
         name: "AI-Search Visibility Audit",
-        price: 249,
+        price: 199,
         turnaround: "Same day",
         blurb: "Find out if ChatGPT, Perplexity, and Google AI cite your site, why not, and exactly what to fix. A report you can act on.",
         includes: ["Whether AI engines cite you, vs competitors", "AI-crawler access + robots check", "Schema / JSON-LD gaps", "Buyer-intent prompt testing", "Prioritized fix list", "PDF + shareable web report"],
@@ -204,6 +204,6 @@ export const PAYMENT_LINKS: Record<string, string> = {
   automation_build: "https://buy.stripe.com/5kQaEYdkm3fhahhh2WeZ209",
   rag_bot:          "https://buy.stripe.com/3cIdRa5RU7vx9dd7smeZ20c",
   mcp_server:       "https://buy.stripe.com/14A4gA6VY7vxahh6oieZ20d",
-  ai_audit:         "https://buy.stripe.com/fZuaEY2FI4jl2OPbICeZ206",
+  ai_audit:         "https://buy.stripe.com/3cIbJ2gwy2bdgFFfYSeZ20u",
   custom_quote:     "https://buy.stripe.com/bJe4gAbcedTV8993c6eZ205",
 };
