@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>mechanisms/evm/exact/facilitator - x402 SDK Integration</title><meta name="description" content="github.com/x402-foundation/x402/go/v2/mechanisms/evm/exact/facilitator"/><meta name="generator" content="Sourcey 3.6.5"/><link rel="canonical" href="https://samedaydesk.com/docs/x402-sdk/api/pkg-mechanisms-evm-exact-facilitator.html"/><meta property="og:title" content="mechanisms/evm/exact/facilitator - x402 SDK Integration"/><meta property="og:description" content="github.com/x402-foundation/x402/go/v2/mechanisms/evm/exact/facilitator"/><meta property="og:type" content="website"/><meta property="og:site_name" content="x402 SDK Integration"/><meta property="og:url" content="https://samedaydesk.com/docs/x402-sdk/api/pkg-mechanisms-evm-exact-facilitator.html"/><meta property="og:image" content="https://samedaydesk.com/docs/x402-sdk/_og/api/pkg-mechanisms-evm-exact-facilitator.png"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image:type" content="image/png"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="mechanisms/evm/exact/facilitator - x402 SDK Integration"/><meta name="twitter:description" content="github.com/x402-foundation/x402/go/v2/mechanisms/evm/exact/facilitator"/><meta name="twitter:image" content="https://samedaydesk.com/docs/x402-sdk/_og/api/pkg-mechanisms-evm-exact-facilitator.png"/><meta name="sourcey-search" content="../search-index.json"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap"/><style>
+    :root {
+      --color-primary: 35 87 217;
+      --color-primary-light: 77 121 230;
+      --color-primary-dark: 23 59 148;
+      --color-primary-ink: 23 59 148;
+      --color-background-light: 255 255 255;
+      --color-background-dark: 11 12 16;
+      --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, 'Liberation Mono', Menlo, monospace;
+      --sidebar-width: 18rem;
+      --toc-width: 19rem;
+      --content-max-width: 44rem;
+      --header-height: 7.5rem;
+    }
+    html { scroll-padding-top: var(--header-height); }
+    @media (min-width: 1024px) {
+      :root { --header-height: 7rem; }
+    }
+    body { margin: 0; background: rgb(var(--color-background-light)); }
+    .dark body { background: rgb(var(--color-background-dark)); }
+  </style><script>(function(){var t=localStorage.getItem('sourcey-theme');if(t==='dark')document.documentElement.classList.add('dark')})()</script><link rel="stylesheet" href="../sourcey.css"/></head><body id="sourcey"><div id="page" class="relative antialiased text-[rgb(var(--color-gray-500))] dark:text-[rgb(var(--color-gray-400))]"><div id="navbar" class="z-30 fixed lg:sticky top-0 w-full"><div class="absolute w-full h-full flex-none border-b border-[rgb(var(--color-gray-200)/0.7)] dark:border-[rgb(var(--color-gray-300)/0.06)] bg-[rgb(var(--color-background-light))] dark:bg-[rgb(var(--color-background-dark))]"></div><div class="max-w-[92rem] mx-auto relative"><div class="relative"><div class="flex items-center lg:px-12 h-16 min-w-0 mx-4 lg:mx-0"><div class="h-full relative flex-1 flex items-center gap-x-4 min-w-0 border-b border-[rgb(var(--color-gray-500)/0.08)] dark:border-[rgb(var(--color-gray-300)/0.08)]"><div class="flex-1 flex items-center gap-x-4"><a href="../introduction.html" class="select-none inline-block"><span class="text-sm font-semibold text-[rgb(var(--color-gray-900))] dark:text-[rgb(var(--color-gray-200))]">x402 SDK Integration</span></a></div><div class="relative hidden lg:flex items-center flex-1 z-20 gap-2"><button id="search-open" type="button" class="group flex pointer-events-auto rounded-lg w-full items-center text-sm leading-6 h-9 pl-3.5 pr-3 text-[rgb(var(--color-gray-500))] dark:text-[rgb(var(--color-gray-400))] ring-1 ring-[rgb(var(--color-gray-400)/0.3)] hover:ring-[rgb(var(--color-gray-600)/0.3)] dark:ring-[rgb(var(--color-gray-600)/0.3)] dark:hover:ring-[rgb(var(--color-gray-500)/0.3)] justify-between truncate gap-2 min-w-[43px] cursor-pointer bg-[rgb(var(--color-background-light))] dark:bg-[rgb(var(--color-background-dark))] dark:brightness-110 dark:hover:brightness-125"><div class="flex items-center gap-2 min-w-[42px]"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="min-w-4 flex-none"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><div class="truncate min-w-0">Type <kbd>/</kbd> to search</div></div></button></div><div class="flex-1 relative hidden lg:flex items-center ml-auto justify-end space-x-4"><nav class="text-sm"><ul class="flex space-x-6 items-center"><li><a href="https://samedaydesk.com/x402" target="_blank" rel="noopener noreferrer" aria-label="SameDayDesk x402" class="text-[rgb(var(--color-gray-500))] hover:text-[rgb(var(--color-gray-700))] dark:text-[rgb(var(--color-gray-400))] dark:hover:text-[rgb(var(--color-gray-300))]">SameDayDesk x402</a></li><li><a href="https://github.com/x402-foundation/x402" target="_blank" rel="noopener noreferrer" aria-label="Upstream x402" class="text-[rgb(var(--color-gray-500))] hover:text-[rgb(var(--color-gray-700))] dark:text-[rgb(var(--color-gray-400))] dark:hover:text-[rgb(var(--color-gray-300))]"><svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span class="ml-1">Upstream x402</span></a></li></ul></nav><button id="theme-toggle" type="button" aria-label="Toggle theme" class="p-2 flex items-center justify-center cursor-pointer text-[rgb(var(--color-gray-400))] hover:text-[rgb(var(--color-gray-600))] dark:text-[rgb(var(--color-gray-500))] dark:hover:text-[rgb(var(--color-gray-300))]"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" class="h-4 w-4 block dark:hidden"><g stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.11V2"></path><path d="M12.87 3.13L12.24 3.76"></path><path d="M14.89 8H14"></path><path d="M12.87 12.87L12.24 12.24"></path><path d="M8 14.89V14"></path><path d="M3.13 12.87L3.76 12.24"></path><path d="M1.11 8H2"></path><path d="M3.13 3.13L3.76 3.76"></path><circle cx="8" cy="8" r="3.78"></circle></g></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="h-4 w-4 hidden dark:block"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg></button></div><div class="flex lg:hidden items-center gap-3"><button id="search-open-mobile" type="button" aria-label="Search" class="text-[rgb(var(--color-gray-500))] w-8 h-8 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="min-w-4 flex-none"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></button><button type="button" data-drawer-slide="right" aria-label="Open menu" class="text-[rgb(var(--color-gray-500))] w-8 h-8 flex items-center justify-center hover:text-[rgb(var(--color-gray-600))]"><svg class="h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"></path></svg></button></div></div></div></div><div class="flex lg:hidden items-center h-14 px-5 text-sm overflow-hidden"><div class="flex items-center min-w-0 space-x-3 leading-6 whitespace-nowrap"><div class="flex items-center space-x-3 shrink-0 text-[rgb(var(--color-gray-500))] dark:text-[rgb(var(--color-gray-400))]"><span>Go API Reference</span><svg width="3" height="24" viewBox="0 -9 3 24" class="h-5 overflow-visible shrink-0"><path d="M0 0L3 3L0 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></div><span class="font-semibold text-[rgb(var(--color-gray-900))] dark:text-[rgb(var(--color-gray-200))] truncate min-w-0">mechanisms/evm/exact/facilitator</span></div></div><div class="hidden lg:flex px-12 h-12"><div class="h-full flex text-sm gap-x-6"><a href="../introduction.html" class="group relative h-full gap-2 flex items-center font-medium cursor-pointer transition-colors text-[rgb(var(--color-gray-600))] dark:text-[rgb(var(--color-gray-400))] hover:text-[rgb(var(--color-gray-800))] dark:hover:text-[rgb(var(--color-gray-300))]">Integration<div class="absolute bottom-0 h-[1.5px] w-full left-0 group-hover:bg-[rgb(var(--color-gray-200))] dark:group-hover:bg-[rgb(var(--color-gray-700))]"></div></a><a href="../api.html" class="group relative h-full gap-2 flex items-center font-medium cursor-pointer transition-colors text-[rgb(var(--color-gray-800))] dark:text-[rgb(var(--color-gray-200))] [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]">Go API Reference<div class="absolute bottom-0 h-[1.5px] w-full left-0 bg-[rgb(var(--color-primary))] dark:bg-[rgb(var(--color-primary-light))]"></div></a></div></div></div></div><span class="fixed inset-0 bg-[rgb(var(--color-background-light))] dark:bg-[rgb(var(--color-background-dark))] -z-10 pointer-events-none"></span><div class="max-w-[92rem] mx-auto relative px-4 lg:px-8"><div id="sidebar" class="z-20 hidden lg:block fixed bottom-0 right-auto w-[18rem]" style="top: var(--header-height)"><div class="absolute inset-0 z-10 overflow-auto pr-8 pb-10" data-sourcey-sidebar-scroll="true" data-sourcey-sidebar-tab="api"><div class="relative text-sm leading-6"><div class="sticky top-0 h-8 z-10 bg-gradient-to-b from-[rgb(var(--color-background-light))] dark:from-[rgb(var(--color-background-dark))]"></div><nav id="nav" role="navigation"><div class><h5 class="nav-group-label">Go API Reference</h5><ul class="space-y-px"><li><a href="../api.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">Overview</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Extensions</h5><ul class="space-y-px"><li><a href="../api/pkg-extensions-bazaar.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">extensions/bazaar</span></a></li><li><a href="../api/pkg-extensions-buildercode.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">extensions/buildercode</span></a></li><li><a href="../api/pkg-extensions-eip2612gassponsor.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">extensions/eip2612gassponsor</span></a></li><li><a href="../api/pkg-extensions-erc20approvalgassponsor.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">extensions/erc20approvalgassponsor</span></a></li><li><a href="../api/pkg-extensions-paymentidentifier.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">extensions/paymentidentifier</span></a></li><li><a href="../api/pkg-extensions-signinwithx.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">extensions/signinwithx</span></a></li><li><a href="../api/pkg-extensions-types.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">extensions/types</span></a></li><li><a href="../api/pkg-extensions-v1.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">extensions/v1</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Http</h5><ul class="space-y-px"><li><a href="../api/pkg-http.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">http</span></a></li><li><a href="../api/pkg-http-echo.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">http/echo</span></a></li><li><a href="../api/pkg-http-gin.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">http/gin</span></a></li><li><a href="../api/pkg-http-nethttp.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">http/nethttp</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Mcp</h5><ul class="space-y-px"><li><a href="../api/pkg-mcp.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mcp</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Mechanisms</h5><ul class="space-y-px"><li><a href="../api/pkg-mechanisms-evm.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm</span></a></li><li><a href="../api/pkg-mechanisms-evm-batch-settlement.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/batch-settlement</span></a></li><li><a href="../api/pkg-mechanisms-evm-batch-settlement-client.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/batch-settlement/client</span></a></li><li><a href="../api/pkg-mechanisms-evm-batch-settlement-facilitator.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/batch-settlement/facilitator</span></a></li><li><a href="../api/pkg-mechanisms-evm-batch-settlement-server.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/batch-settlement/server</span></a></li><li><a href="../api/pkg-mechanisms-evm-exact-client.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/exact/client</span></a></li><li><a href="../api/pkg-mechanisms-evm-exact-facilitator.html" class="nav-link active"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/exact/facilitator</span></a></li><li><a href="../api/pkg-mechanisms-evm-exact-server.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/exact/server</span></a></li><li><a href="../api/pkg-mechanisms-evm-exact-v1-client.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/exact/v1/client</span></a></li><li><a href="../api/pkg-mechanisms-evm-exact-v1-facilitator.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/exact/v1/facilitator</span></a></li><li><a href="../api/pkg-mechanisms-evm-upto-client.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/upto/client</span></a></li><li><a href="../api/pkg-mechanisms-evm-upto-facilitator.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/upto/facilitator</span></a></li><li><a href="../api/pkg-mechanisms-evm-upto-server.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/upto/server</span></a></li><li><a href="../api/pkg-mechanisms-evm-v1.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/v1</span></a></li><li><a href="../api/pkg-mechanisms-svm.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/svm</span></a></li><li><a href="../api/pkg-mechanisms-svm-exact-client.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/svm/exact/client</span></a></li><li><a href="../api/pkg-mechanisms-svm-exact-facilitator.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/svm/exact/facilitator</span></a></li><li><a href="../api/pkg-mechanisms-svm-exact-server.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/svm/exact/server</span></a></li><li><a href="../api/pkg-mechanisms-svm-exact-v1-client.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/svm/exact/v1/client</span></a></li><li><a href="../api/pkg-mechanisms-svm-exact-v1-facilitator.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/svm/exact/v1/facilitator</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Root</h5><ul class="space-y-px"><li><a href="../api/package-root.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">x402</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Signers</h5><ul class="space-y-px"><li><a href="../api/pkg-signers-evm.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">signers/evm</span></a></li><li><a href="../api/pkg-signers-svm.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">signers/svm</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Types</h5><ul class="space-y-px"><li><a href="../api/pkg-types.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">types</span></a></li></ul></div></nav></div></div></div><dialog id="mobile-nav" class="mobile-nav-dialog"><div class="pt-5 px-4 shrink-0"><div class="drawer-dropdown"><button id="drawer-group-toggle" type="button" class="drawer-dropdown-trigger" aria-expanded="false"><span class="drawer-dropdown-label">Go API Reference</span><svg class="drawer-dropdown-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button><ul id="drawer-group-list" class="drawer-dropdown-list" style="display:none"><li><a href="../introduction.html" class="drawer-dropdown-item">Integration</a></li><li><a href="../api.html" class="drawer-dropdown-item active">Go API Reference</a></li></ul></div></div><nav class="pt-5 pb-3 px-4 flex-1 overflow-y-auto"><div class><h5 class="nav-group-label">Go API Reference</h5><ul class="space-y-px"><li><a href="../api.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">Overview</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Extensions</h5><ul class="space-y-px"><li><a href="../api/pkg-extensions-bazaar.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">extensions/bazaar</span></a></li><li><a href="../api/pkg-extensions-buildercode.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">extensions/buildercode</span></a></li><li><a href="../api/pkg-extensions-eip2612gassponsor.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">extensions/eip2612gassponsor</span></a></li><li><a href="../api/pkg-extensions-erc20approvalgassponsor.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">extensions/erc20approvalgassponsor</span></a></li><li><a href="../api/pkg-extensions-paymentidentifier.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">extensions/paymentidentifier</span></a></li><li><a href="../api/pkg-extensions-signinwithx.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">extensions/signinwithx</span></a></li><li><a href="../api/pkg-extensions-types.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">extensions/types</span></a></li><li><a href="../api/pkg-extensions-v1.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">extensions/v1</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Http</h5><ul class="space-y-px"><li><a href="../api/pkg-http.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">http</span></a></li><li><a href="../api/pkg-http-echo.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">http/echo</span></a></li><li><a href="../api/pkg-http-gin.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">http/gin</span></a></li><li><a href="../api/pkg-http-nethttp.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">http/nethttp</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Mcp</h5><ul class="space-y-px"><li><a href="../api/pkg-mcp.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mcp</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Mechanisms</h5><ul class="space-y-px"><li><a href="../api/pkg-mechanisms-evm.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm</span></a></li><li><a href="../api/pkg-mechanisms-evm-batch-settlement.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/batch-settlement</span></a></li><li><a href="../api/pkg-mechanisms-evm-batch-settlement-client.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/batch-settlement/client</span></a></li><li><a href="../api/pkg-mechanisms-evm-batch-settlement-facilitator.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/batch-settlement/facilitator</span></a></li><li><a href="../api/pkg-mechanisms-evm-batch-settlement-server.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/batch-settlement/server</span></a></li><li><a href="../api/pkg-mechanisms-evm-exact-client.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/exact/client</span></a></li><li><a href="../api/pkg-mechanisms-evm-exact-facilitator.html" class="nav-link active"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/exact/facilitator</span></a></li><li><a href="../api/pkg-mechanisms-evm-exact-server.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/exact/server</span></a></li><li><a href="../api/pkg-mechanisms-evm-exact-v1-client.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/exact/v1/client</span></a></li><li><a href="../api/pkg-mechanisms-evm-exact-v1-facilitator.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/exact/v1/facilitator</span></a></li><li><a href="../api/pkg-mechanisms-evm-upto-client.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/upto/client</span></a></li><li><a href="../api/pkg-mechanisms-evm-upto-facilitator.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/upto/facilitator</span></a></li><li><a href="../api/pkg-mechanisms-evm-upto-server.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/upto/server</span></a></li><li><a href="../api/pkg-mechanisms-evm-v1.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/evm/v1</span></a></li><li><a href="../api/pkg-mechanisms-svm.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/svm</span></a></li><li><a href="../api/pkg-mechanisms-svm-exact-client.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/svm/exact/client</span></a></li><li><a href="../api/pkg-mechanisms-svm-exact-facilitator.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/svm/exact/facilitator</span></a></li><li><a href="../api/pkg-mechanisms-svm-exact-server.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/svm/exact/server</span></a></li><li><a href="../api/pkg-mechanisms-svm-exact-v1-client.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/svm/exact/v1/client</span></a></li><li><a href="../api/pkg-mechanisms-svm-exact-v1-facilitator.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">mechanisms/svm/exact/v1/facilitator</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Root</h5><ul class="space-y-px"><li><a href="../api/package-root.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">x402</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Signers</h5><ul class="space-y-px"><li><a href="../api/pkg-signers-evm.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">signers/evm</span></a></li><li><a href="../api/pkg-signers-svm.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">signers/svm</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Types</h5><ul class="space-y-px"><li><a href="../api/pkg-types.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">types</span></a></li></ul></div></nav><div class="px-4 py-3 border-t border-[rgb(var(--color-gray-200)/0.7)] dark:border-[rgb(var(--color-gray-800)/0.5)] shrink-0"><ul class="space-y-3"><li><a href="https://samedaydesk.com/x402" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 text-[rgb(var(--color-gray-600))] hover:text-[rgb(var(--color-gray-900))] dark:text-[rgb(var(--color-gray-400))] dark:hover:text-[rgb(var(--color-gray-200))]"><span>SameDayDesk x402</span></a></li><li><a href="https://github.com/x402-foundation/x402" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 text-[rgb(var(--color-gray-600))] hover:text-[rgb(var(--color-gray-900))] dark:text-[rgb(var(--color-gray-400))] dark:hover:text-[rgb(var(--color-gray-200))]"><svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span>Upstream x402</span></a></li></ul></div></dialog><main id="docs" class="pt-[8.5rem] lg:pt-10"><div class="flex flex-row-reverse gap-12 box-border w-full"><aside id="toc" class="hidden xl:flex self-start sticky xl:flex-col max-w-[28rem] z-[21]" style="height: calc(100vh - var(--header-height) - 2.5rem); top: calc(var(--header-height) + 2.5rem)"><div class="z-10 hidden xl:flex box-border max-h-full pl-10 w-[19rem]"><div class="text-[rgb(var(--color-gray-600))] text-sm leading-6 w-[16.5rem] overflow-y-auto space-y-2 pb-4 -mt-10 pt-10"><h5 class="font-medium text-[rgb(var(--color-gray-700))] dark:text-[rgb(var(--color-gray-300))] flex items-center gap-2"><svg class="shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/></svg>On this page</h5><nav><ul><li><a href="#constants" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors py-1 font-medium">Constants</a></li><li><a href="#functions" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors py-1 font-medium">Functions</a><ul class="mb-2"><li><a href="#func-BuildPermit2SettleArgs" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">BuildPermit2SettleArgs</a></li><li><a href="#func-CheckPermit2Prerequisites" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">CheckPermit2Prerequisites</a></li><li><a href="#func-ClassifyEIP3009Signature" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">ClassifyEIP3009Signature</a></li><li><a href="#func-DiagnoseEIP3009SimulationFailure" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">DiagnoseEIP3009SimulationFailure</a></li><li><a href="#func-DiagnosePermit2SimulationFailure" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">DiagnosePermit2SimulationFailure</a></li><li><a href="#func-ExecuteTransferWithAuthorization" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">ExecuteTransferWithAuthorization</a></li><li><a href="#func-HasEIP6492Deployment" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">HasEIP6492Deployment</a></li><li><a href="#func-NewExactEvmScheme" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">NewExactEvmScheme</a></li><li><a href="#func-ParseEIP3009Authorization" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">ParseEIP3009Authorization</a></li><li><a href="#func-SendDeployTransaction" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">SendDeployTransaction</a></li><li><a href="#func-SettlePermit2" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">SettlePermit2</a></li><li><a href="#func-SimulateEIP3009Transfer" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">SimulateEIP3009Transfer</a></li><li><a href="#func-SimulatePermit2Settle" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">SimulatePermit2Settle</a></li><li><a href="#func-SimulatePermit2SettleWithPermit" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">SimulatePermit2SettleWithPermit</a></li><li><a href="#func-ValidateErc20ApprovalForPayment" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">ValidateErc20ApprovalForPayment</a></li><li><a href="#func-VerifyPermit2" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">VerifyPermit2</a></li></ul></li><li><a href="#types" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors py-1 font-medium">Types</a><ul class="mb-2"><li><a href="#type-EIP3009SignatureClassification" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">EIP3009SignatureClassification</a></li><li><a href="#type-ExactEvmScheme" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">ExactEvmScheme</a></li><li><a href="#type-ExactEvmSchemeConfig" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">ExactEvmSchemeConfig</a></li><li><a href="#type-ParsedEIP3009Authorization" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">ParsedEIP3009Authorization</a></li><li><a href="#type-Permit2FacilitatorConfig" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">Permit2FacilitatorConfig</a></li><li><a href="#type-Permit2SettleArgs" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">Permit2SettleArgs</a></li><li><a href="#type-VerifyPermit2Options" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">VerifyPermit2Options</a></li></ul></li></ul></nav></div></div></aside><div class="relative grow box-border flex-col w-full mx-auto px-1 min-w-0 lg:pl-[23.7rem] lg:-ml-12 xl:w-[calc(100%-28rem)]" id="content-area"><header class="relative leading-none"><div class="mt-0.5 space-y-2.5"><div class="h-5 text-[rgb(var(--color-primary-ink))] dark:text-[rgb(var(--color-primary-light))] text-sm font-semibold">Mechanisms</div><div class="flex flex-col sm:flex-row items-start sm:items-center relative gap-2 min-w-0"><h1 class="text-2xl sm:text-3xl text-[rgb(var(--color-gray-900))] tracking-tight dark:text-[rgb(var(--color-gray-200))] font-bold" style="overflow-wrap: anywhere">mechanisms/evm/exact/facilitator</h1></div></div><div class="page-description mt-2 text-lg prose prose-gray dark:prose-invert" style="overflow-wrap: anywhere"><span>github.com/x402-foundation/x402/go/v2/mechanisms/evm/exact/facilitator</span></div></header><div class="prose prose-gray dark:prose-invert relative mt-8 mb-14 max-w-none"><p class="godoc-import"><code>import "github.com/x402-foundation/x402/go/v2/mechanisms/evm/exact/facilitator"</code></p>
+<nav class="godoc-toc not-prose"><h4>Index</h4><ul><li><a href="#constants">Constants</a></li><li><a href="#functions">Functions</a></li><li class="godoc-toc-sub"><a href="#func-BuildPermit2SettleArgs">func BuildPermit2SettleArgs(permit2Payload *evm.ExactPermit2Payload) (*Permit2SettleArgs, error)</a></li><li class="godoc-toc-sub"><a href="#func-CheckPermit2Prerequisites">func CheckPermit2Prerequisites(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	tokenAddress string,
+	payer string,
+	amountRequired string,
+) *x402.VerifyResponse</a></li><li class="godoc-toc-sub"><a href="#func-ClassifyEIP3009Signature">func ClassifyEIP3009Signature(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	authorization evm.ExactEIP3009Authorization,
+	signature []byte,
+	chainID *big.Int,
+	tokenAddress string,
+	tokenName string,
+	tokenVersion string,
+) (*EIP3009SignatureClassification, error)</a></li><li class="godoc-toc-sub"><a href="#func-DiagnoseEIP3009SimulationFailure">func DiagnoseEIP3009SimulationFailure(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	tokenAddress string,
+	authorization evm.ExactEIP3009Authorization,
+	requiredAmount *big.Int,
+	tokenName string,
+	tokenVersion string,
+) string</a></li><li class="godoc-toc-sub"><a href="#func-DiagnosePermit2SimulationFailure">func DiagnosePermit2SimulationFailure(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	tokenAddress string,
+	permit2Payload *evm.ExactPermit2Payload,
+	amountRequired string,
+) *x402.VerifyResponse</a></li><li class="godoc-toc-sub"><a href="#func-ExecuteTransferWithAuthorization">func ExecuteTransferWithAuthorization(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	tokenAddress string,
+	parsed *ParsedEIP3009Authorization,
+	sigData *evm.ERC6492SignatureData,
+	dataSuffix []byte,
+) (string, error)</a></li><li class="godoc-toc-sub"><a href="#func-HasEIP6492Deployment">func HasEIP6492Deployment(sigData *evm.ERC6492SignatureData) bool</a></li><li class="godoc-toc-sub"><a href="#func-NewExactEvmScheme">func NewExactEvmScheme(signer evm.FacilitatorEvmSigner, config *ExactEvmSchemeConfig) *ExactEvmScheme</a></li><li class="godoc-toc-sub"><a href="#func-ParseEIP3009Authorization">func ParseEIP3009Authorization(
+	authorization evm.ExactEIP3009Authorization,
+) (*ParsedEIP3009Authorization, error)</a></li><li class="godoc-toc-sub"><a href="#func-SendDeployTransaction">func SendDeployTransaction(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	sigData *evm.ERC6492SignatureData,
+) error</a></li><li class="godoc-toc-sub"><a href="#func-SettlePermit2">func SettlePermit2(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	payload types.PaymentPayload,
+	requirements types.PaymentRequirements,
+	permit2Payload *evm.ExactPermit2Payload,
+	facilCtx *x402.FacilitatorContext,
+	config *Permit2FacilitatorConfig,
+) (*x402.SettleResponse, error)</a></li><li class="godoc-toc-sub"><a href="#func-SimulateEIP3009Transfer">func SimulateEIP3009Transfer(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	tokenAddress string,
+	parsed *ParsedEIP3009Authorization,
+	sigData *evm.ERC6492SignatureData,
+) (bool, error)</a></li><li class="godoc-toc-sub"><a href="#func-SimulatePermit2Settle">func SimulatePermit2Settle(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	permit2Payload *evm.ExactPermit2Payload,
+) (bool, error)</a></li><li class="godoc-toc-sub"><a href="#func-SimulatePermit2SettleWithPermit">func SimulatePermit2SettleWithPermit(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	permit2Payload *evm.ExactPermit2Payload,
+	eip2612Signature, eip2612Amount, eip2612DeadlineStr string,
+) (bool, error)</a></li><li class="godoc-toc-sub"><a href="#func-ValidateErc20ApprovalForPayment">func ValidateErc20ApprovalForPayment(info *erc20approvalgassponsor.Info, payer, tokenAddress string) (reason, message string)</a></li><li class="godoc-toc-sub"><a href="#func-VerifyPermit2">func VerifyPermit2(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	payload types.PaymentPayload,
+	requirements types.PaymentRequirements,
+	permit2Payload *evm.ExactPermit2Payload,
+	facilCtx *x402.FacilitatorContext,
+	opts *VerifyPermit2Options,
+) (*x402.VerifyResponse, error)</a></li><li><a href="#types">Types</a></li><li class="godoc-toc-sub"><a href="#type-EIP3009SignatureClassification">type EIP3009SignatureClassification</a></li><li class="godoc-toc-sub"><a href="#type-ExactEvmScheme">type ExactEvmScheme</a></li><li class="godoc-toc-sub"><a href="#type-ExactEvmSchemeConfig">type ExactEvmSchemeConfig</a></li><li class="godoc-toc-sub"><a href="#type-ParsedEIP3009Authorization">type ParsedEIP3009Authorization</a></li><li class="godoc-toc-sub"><a href="#type-Permit2FacilitatorConfig">type Permit2FacilitatorConfig</a></li><li class="godoc-toc-sub"><a href="#type-Permit2SettleArgs">type Permit2SettleArgs</a></li><li class="godoc-toc-sub"><a href="#type-VerifyPermit2Options">type VerifyPermit2Options</a></li></ul></nav>
+<h2 id="constants">Constants</h2>
+<section class="godoc-value" id="const-ErrInvalidScheme"><div class="godoc-doc"><p>Facilitator error constants for the exact EVM scheme</p></div><p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/errors.go#L8" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/errors.go:8</a></p><div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">const</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> (</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// EIP-3009 Verify errors</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrInvalidScheme</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">               =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_scheme"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrNetworkMismatch</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">             =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_network_mismatch"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrInvalidPayload</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">              =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_payload"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrMissingSignature</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">            =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_payload_missing_signature"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrFailedToGetNetworkConfig</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">    =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_failed_to_get_network_config"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrMissingEip712Domain</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">         =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_missing_eip712_domain"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrRecipientMismatch</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">           =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_recipient_mismatch"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrInvalidAuthorizationValue</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">   =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_authorization_value"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrInvalidRequiredAmount</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">       =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_required_amount"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrAuthorizationValueMismatch</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">  =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_payload_authorization_value_mismatch"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrFailedToCheckNonce</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">          =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_failed_to_check_nonce"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrNonceAlreadyUsed</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">            =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_nonce_already_used"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrFailedToGetBalance</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">          =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_failed_to_get_balance"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrInsufficientBalance</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">         =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_insufficient_balance"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrInvalidSignatureFormat</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">      =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_signature_format"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrFailedToVerifySignature</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">     =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_failed_to_verify_signature"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrInvalidSignature</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">            =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_signature"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrValidBeforeExpired</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">          =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_payload_authorization_valid_before"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrValidAfterInFuture</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">          =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_payload_authorization_valid_after"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrEip3009TokenNameMismatch</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">    =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_token_name_mismatch"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrEip3009TokenVersionMismatch</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_token_version_mismatch"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrEip3009NotSupported</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">         =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_eip3009_not_supported"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrEip3009SimulationFailed</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">     =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_transaction_simulation_failed"</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// EIP-3009 Settle errors</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrVerificationFailed</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">      =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_verification_failed"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrFailedToParseSignature</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">  =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_failed_to_parse_signature"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrFailedToCheckDeployment</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_failed_to_check_deployment"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrFailedToExecuteTransfer</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_failed_to_execute_transfer"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrFailedToGetReceipt</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">      =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_failed_to_get_receipt"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrTransactionFailed</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">       =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_transaction_failed"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrTransferEventMismatch</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">   =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_transfer_event_mismatch"</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// Smart wallet errors (shared by EIP-3009 and Permit2)</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrUndeployedSmartWallet</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">       =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_exact_evm_payload_undeployed_smart_wallet"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrSmartWalletDeploymentFailed</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "smart_wallet_deployment_failed"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrFactoryNotAllowed</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">           =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "eip6492_factory_not_allowed"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrUnsupportedPayloadType</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">      =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "unsupported_payload_type"</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// Permit2 verify errors - canonical values live in evm.ErrPermit2*</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrPermit2InvalidSpender</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">    =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrPermit2InvalidSpender</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrPermit2RecipientMismatch</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrPermit2RecipientMismatch</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrPermit2DeadlineExpired</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">   =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrPermit2DeadlineExpired</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrPermit2NotYetValid</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">       =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrPermit2NotYetValid</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrPermit2AmountMismatch</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">    =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrPermit2AmountMismatch</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrPermit2TokenMismatch</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">     =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrPermit2TokenMismatch</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrPermit2InvalidSignature</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">  =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrPermit2InvalidSignature</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrPermit2AllowanceRequired</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrPermit2AllowanceRequired</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// Permit2 settle errors (from contract reverts)</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrPermit2InvalidAmount</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">      =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrPermit2InvalidAmount</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrPermit2InvalidDestination</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrPermit2InvalidDestination</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrPermit2InvalidOwner</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">       =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrPermit2InvalidOwner</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrPermit2PaymentTooEarly</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">    =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrPermit2PaymentTooEarly</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrPermit2InvalidNonce</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">       =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrPermit2InvalidNonce</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrPermit2612AmountMismatch</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">  =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrPermit2612AmountMismatch</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// Permit2 simulation errors</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrPermit2SimulationFailed</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">    =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrPermit2SimulationFailed</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrPermit2InsufficientBalance</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrPermit2InsufficientBalance</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrPermit2ProxyNotDeployed</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">    =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrPermit2ProxyNotDeployed</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrErc20ApprovalTxFailed</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">      =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "erc20_approval_tx_failed"</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// ERC-20 approval gas sponsoring errors</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrErc20ApprovalInsufficientEth</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrErc20ApprovalInsufficientEth</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrErc20ApprovalInvalidFormat</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">   =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "invalid_erc20_approval_extension_format"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrErc20ApprovalFromMismatch</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">    =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "erc20_approval_from_mismatch"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrErc20ApprovalAssetMismatch</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">   =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "erc20_approval_asset_mismatch"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrErc20ApprovalWrongSpender</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">    =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "erc20_approval_spender_not_permit2"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrErc20ApprovalTxParseFailed</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">   =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "erc20_approval_tx_parse_failed"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrErc20ApprovalWrongTarget</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">     =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "erc20_approval_tx_wrong_target"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrErc20ApprovalWrongSelector</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">   =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "erc20_approval_tx_wrong_selector"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrErc20ApprovalWrongCalldata</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">   =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "erc20_approval_tx_wrong_spender"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrErc20ApprovalSignerMismatch</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">  =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "erc20_approval_tx_signer_mismatch"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrErc20ApprovalInvalidSig</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">      =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "erc20_approval_tx_invalid_signature"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ErrErc20ApprovalBroadcastFailed</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">ErrErc20ApprovalBroadcastFailed</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">)</span></span></code></pre></div>
+</div></section>
+<a id="const-ErrNetworkMismatch" class="godoc-anchor"></a>
+<a id="const-ErrInvalidPayload" class="godoc-anchor"></a>
+<a id="const-ErrMissingSignature" class="godoc-anchor"></a>
+<a id="const-ErrFailedToGetNetworkConfig" class="godoc-anchor"></a>
+<a id="const-ErrMissingEip712Domain" class="godoc-anchor"></a>
+<a id="const-ErrRecipientMismatch" class="godoc-anchor"></a>
+<a id="const-ErrInvalidAuthorizationValue" class="godoc-anchor"></a>
+<a id="const-ErrInvalidRequiredAmount" class="godoc-anchor"></a>
+<a id="const-ErrAuthorizationValueMismatch" class="godoc-anchor"></a>
+<a id="const-ErrFailedToCheckNonce" class="godoc-anchor"></a>
+<a id="const-ErrNonceAlreadyUsed" class="godoc-anchor"></a>
+<a id="const-ErrFailedToGetBalance" class="godoc-anchor"></a>
+<a id="const-ErrInsufficientBalance" class="godoc-anchor"></a>
+<a id="const-ErrInvalidSignatureFormat" class="godoc-anchor"></a>
+<a id="const-ErrFailedToVerifySignature" class="godoc-anchor"></a>
+<a id="const-ErrInvalidSignature" class="godoc-anchor"></a>
+<a id="const-ErrValidBeforeExpired" class="godoc-anchor"></a>
+<a id="const-ErrValidAfterInFuture" class="godoc-anchor"></a>
+<a id="const-ErrEip3009TokenNameMismatch" class="godoc-anchor"></a>
+<a id="const-ErrEip3009TokenVersionMismatch" class="godoc-anchor"></a>
+<a id="const-ErrEip3009NotSupported" class="godoc-anchor"></a>
+<a id="const-ErrEip3009SimulationFailed" class="godoc-anchor"></a>
+<a id="const-ErrVerificationFailed" class="godoc-anchor"></a>
+<a id="const-ErrFailedToParseSignature" class="godoc-anchor"></a>
+<a id="const-ErrFailedToCheckDeployment" class="godoc-anchor"></a>
+<a id="const-ErrFailedToExecuteTransfer" class="godoc-anchor"></a>
+<a id="const-ErrFailedToGetReceipt" class="godoc-anchor"></a>
+<a id="const-ErrTransactionFailed" class="godoc-anchor"></a>
+<a id="const-ErrTransferEventMismatch" class="godoc-anchor"></a>
+<a id="const-ErrUndeployedSmartWallet" class="godoc-anchor"></a>
+<a id="const-ErrSmartWalletDeploymentFailed" class="godoc-anchor"></a>
+<a id="const-ErrFactoryNotAllowed" class="godoc-anchor"></a>
+<a id="const-ErrUnsupportedPayloadType" class="godoc-anchor"></a>
+<a id="const-ErrPermit2InvalidSpender" class="godoc-anchor"></a>
+<a id="const-ErrPermit2RecipientMismatch" class="godoc-anchor"></a>
+<a id="const-ErrPermit2DeadlineExpired" class="godoc-anchor"></a>
+<a id="const-ErrPermit2NotYetValid" class="godoc-anchor"></a>
+<a id="const-ErrPermit2AmountMismatch" class="godoc-anchor"></a>
+<a id="const-ErrPermit2TokenMismatch" class="godoc-anchor"></a>
+<a id="const-ErrPermit2InvalidSignature" class="godoc-anchor"></a>
+<a id="const-ErrPermit2AllowanceRequired" class="godoc-anchor"></a>
+<a id="const-ErrPermit2InvalidAmount" class="godoc-anchor"></a>
+<a id="const-ErrPermit2InvalidDestination" class="godoc-anchor"></a>
+<a id="const-ErrPermit2InvalidOwner" class="godoc-anchor"></a>
+<a id="const-ErrPermit2PaymentTooEarly" class="godoc-anchor"></a>
+<a id="const-ErrPermit2InvalidNonce" class="godoc-anchor"></a>
+<a id="const-ErrPermit2612AmountMismatch" class="godoc-anchor"></a>
+<a id="const-ErrPermit2SimulationFailed" class="godoc-anchor"></a>
+<a id="const-ErrPermit2InsufficientBalance" class="godoc-anchor"></a>
+<a id="const-ErrPermit2ProxyNotDeployed" class="godoc-anchor"></a>
+<a id="const-ErrErc20ApprovalTxFailed" class="godoc-anchor"></a>
+<a id="const-ErrErc20ApprovalInsufficientEth" class="godoc-anchor"></a>
+<a id="const-ErrErc20ApprovalInvalidFormat" class="godoc-anchor"></a>
+<a id="const-ErrErc20ApprovalFromMismatch" class="godoc-anchor"></a>
+<a id="const-ErrErc20ApprovalAssetMismatch" class="godoc-anchor"></a>
+<a id="const-ErrErc20ApprovalWrongSpender" class="godoc-anchor"></a>
+<a id="const-ErrErc20ApprovalTxParseFailed" class="godoc-anchor"></a>
+<a id="const-ErrErc20ApprovalWrongTarget" class="godoc-anchor"></a>
+<a id="const-ErrErc20ApprovalWrongSelector" class="godoc-anchor"></a>
+<a id="const-ErrErc20ApprovalWrongCalldata" class="godoc-anchor"></a>
+<a id="const-ErrErc20ApprovalSignerMismatch" class="godoc-anchor"></a>
+<a id="const-ErrErc20ApprovalInvalidSig" class="godoc-anchor"></a>
+<a id="const-ErrErc20ApprovalBroadcastFailed" class="godoc-anchor"></a>
+<h2 id="functions">Functions</h2>
+<section class="godoc-func" id="func-BuildPermit2SettleArgs">
+<h3 class="godoc-symbol">func BuildPermit2SettleArgs(permit2Payload *evm.ExactPermit2Payload) (*Permit2SettleArgs, error)</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/permit2_helpers.go#L33" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/permit2_helpers.go:33</a></p>
+<div class="godoc-doc"><p>BuildPermit2SettleArgs converts a raw ExactPermit2Payload into typed contract-call
+arguments, deduplicating the struct construction shared by verify simulation and settle.</p></div>
+</section>
+<section class="godoc-func" id="func-CheckPermit2Prerequisites">
+<h3 class="godoc-symbol">func CheckPermit2Prerequisites(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	tokenAddress string,
+	payer string,
+	amountRequired string,
+) *x402.VerifyResponse</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/permit2_helpers.go#L223" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/permit2_helpers.go:223</a></p>
+<div class="godoc-doc"><p>CheckPermit2Prerequisites checks proxy deployment and payer token balance.</p></div>
+</section>
+<section class="godoc-func" id="func-ClassifyEIP3009Signature">
+<h3 class="godoc-symbol">func ClassifyEIP3009Signature(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	authorization evm.ExactEIP3009Authorization,
+	signature []byte,
+	chainID *big.Int,
+	tokenAddress string,
+	tokenName string,
+	tokenVersion string,
+) (*EIP3009SignatureClassification, error)</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/eip3009_helpers.go#L124" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/eip3009_helpers.go:124</a></p>
+<div class="godoc-doc"><p>ClassifyEIP3009Signature checks the signature directly when possible, while preserving
+smart-wallet signatures for simulation-first verification.</p></div>
+</section>
+<section class="godoc-func" id="func-DiagnoseEIP3009SimulationFailure">
+<h3 class="godoc-symbol">func DiagnoseEIP3009SimulationFailure(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	tokenAddress string,
+	authorization evm.ExactEIP3009Authorization,
+	requiredAmount *big.Int,
+	tokenName string,
+	tokenVersion string,
+) string</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/eip3009_helpers.go#L281" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/eip3009_helpers.go:281</a></p>
+<div class="godoc-doc"><p>DiagnoseEIP3009SimulationFailure resolves a failed simulation into the most specific error.</p></div>
+</section>
+<section class="godoc-func" id="func-DiagnosePermit2SimulationFailure">
+<h3 class="godoc-symbol">func DiagnosePermit2SimulationFailure(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	tokenAddress string,
+	permit2Payload *evm.ExactPermit2Payload,
+	amountRequired string,
+) *x402.VerifyResponse</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/permit2_helpers.go#L166" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/permit2_helpers.go:166</a></p>
+<div class="godoc-doc"><p>DiagnosePermit2SimulationFailure runs a multicall diagnostic to return the most
+specific error reason after a simulation failure.</p></div>
+</section>
+<section class="godoc-func" id="func-ExecuteTransferWithAuthorization">
+<h3 class="godoc-symbol">func ExecuteTransferWithAuthorization(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	tokenAddress string,
+	parsed *ParsedEIP3009Authorization,
+	sigData *evm.ERC6492SignatureData,
+	dataSuffix []byte,
+) (string, error)</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/eip3009_helpers.go#L352" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/eip3009_helpers.go:352</a></p>
+<div class="godoc-doc"><p>ExecuteTransferWithAuthorization executes the actual transfer onchain.</p></div>
+</section>
+<section class="godoc-func" id="func-HasEIP6492Deployment">
+<h3 class="godoc-symbol">func HasEIP6492Deployment(sigData *evm.ERC6492SignatureData) bool</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/eip3009_helpers.go#L476" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/eip3009_helpers.go:476</a></p>
+</section>
+<section class="godoc-func" id="func-NewExactEvmScheme">
+<h3 class="godoc-symbol">func NewExactEvmScheme(signer evm.FacilitatorEvmSigner, config *ExactEvmSchemeConfig) *ExactEvmScheme</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/scheme.go#L40" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/scheme.go:40</a></p>
+<div class="godoc-doc"><p>NewExactEvmScheme creates a new ExactEvmScheme
+Args:</p>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" width="18" xmlns="http://www.w3.org/2000/svg">Copy<path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki" tabindex="0"><code><span class="line"><span>signer: The EVM signer for facilitator operations</span></span>
+<span class="line"><span>config: Optional configuration (nil uses defaults)</span></span></code></pre></div>
+</div><p>Returns:</p>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" width="18" xmlns="http://www.w3.org/2000/svg">Copy<path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki" tabindex="0"><code><span class="line"><span>Configured ExactEvmScheme instance</span></span></code></pre></div>
+</div></div>
+</section>
+<section class="godoc-func" id="func-ParseEIP3009Authorization">
+<h3 class="godoc-symbol">func ParseEIP3009Authorization(
+	authorization evm.ExactEIP3009Authorization,
+) (*ParsedEIP3009Authorization, error)</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/eip3009_helpers.go#L83" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/eip3009_helpers.go:83</a></p>
+<div class="godoc-doc"><p>ParseEIP3009Authorization parses authorization fields into contract-call arguments.</p></div>
+</section>
+<section class="godoc-func" id="func-SendDeployTransaction">
+<h3 class="godoc-symbol">func SendDeployTransaction(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	sigData *evm.ERC6492SignatureData,
+) error</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/eip3009_helpers.go#L402" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/eip3009_helpers.go:402</a></p>
+<div class="godoc-doc"><p>SendDeployTransaction submits the ERC-6492 factory deployment transaction and waits
+for the receipt, returning an error if the deployment transaction reverted.</p></div>
+</section>
+<section class="godoc-func" id="func-SettlePermit2">
+<h3 class="godoc-symbol">func SettlePermit2(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	payload types.PaymentPayload,
+	requirements types.PaymentRequirements,
+	permit2Payload *evm.ExactPermit2Payload,
+	facilCtx *x402.FacilitatorContext,
+	config *Permit2FacilitatorConfig,
+) (*x402.SettleResponse, error)</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/permit2.go#L212" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/permit2.go:212</a></p>
+<div class="godoc-doc"><p>SettlePermit2 settles a Permit2 payment by calling x402ExactPermit2Proxy.settle().</p></div>
+</section>
+<section class="godoc-func" id="func-SimulateEIP3009Transfer">
+<h3 class="godoc-symbol">func SimulateEIP3009Transfer(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	tokenAddress string,
+	parsed *ParsedEIP3009Authorization,
+	sigData *evm.ERC6492SignatureData,
+) (bool, error)</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/eip3009_helpers.go#L199" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/eip3009_helpers.go:199</a></p>
+<div class="godoc-doc"><p>SimulateEIP3009Transfer runs the transfer via eth_call.</p></div>
+</section>
+<section class="godoc-func" id="func-SimulatePermit2Settle">
+<h3 class="godoc-symbol">func SimulatePermit2Settle(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	permit2Payload *evm.ExactPermit2Payload,
+) (bool, error)</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/permit2_helpers.go#L73" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/permit2_helpers.go:73</a></p>
+<div class="godoc-doc"><p>SimulatePermit2Settle runs settle() via eth_call (ReadContract).
+Returns true if the simulation succeeded.</p></div>
+</section>
+<section class="godoc-func" id="func-SimulatePermit2SettleWithPermit">
+<h3 class="godoc-symbol">func SimulatePermit2SettleWithPermit(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	permit2Payload *evm.ExactPermit2Payload,
+	eip2612Signature, eip2612Amount, eip2612DeadlineStr string,
+) (bool, error)</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/permit2_helpers.go#L105" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/permit2_helpers.go:105</a></p>
+<div class="godoc-doc"><p>SimulatePermit2SettleWithPermit runs settleWithPermit() via eth_call.
+The contract atomically calls token.permit() then PERMIT2.permitTransferFrom(),
+so simulation covers allowance + balance + nonces.</p></div>
+</section>
+<section class="godoc-func" id="func-ValidateErc20ApprovalForPayment">
+<h3 class="godoc-symbol">func ValidateErc20ApprovalForPayment(info *erc20approvalgassponsor.Info, payer, tokenAddress string) (reason, message string)</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/erc20_approval.go#L22" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/erc20_approval.go:22</a></p>
+<div class="godoc-doc"><p>ValidateErc20ApprovalForPayment validates the ERC-20 approval extension data.
+Returns ("", "") if valid, or (reason, message) on failure where reason is the
+error constant and message is a human-readable contextual description.</p></div>
+</section>
+<section class="godoc-func" id="func-VerifyPermit2">
+<h3 class="godoc-symbol">func VerifyPermit2(
+	ctx context.Context,
+	signer evm.FacilitatorEvmSigner,
+	payload types.PaymentPayload,
+	requirements types.PaymentRequirements,
+	permit2Payload *evm.ExactPermit2Payload,
+	facilCtx *x402.FacilitatorContext,
+	opts *VerifyPermit2Options,
+) (*x402.VerifyResponse, error)</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/permit2.go#L32" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/permit2.go:32</a></p>
+<div class="godoc-doc"><p>VerifyPermit2 verifies a Permit2 payment payload.</p></div>
+</section>
+<h2 id="types">Types</h2>
+<section class="godoc-type" id="type-EIP3009SignatureClassification">
+<h3 class="godoc-symbol">type EIP3009SignatureClassification</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/eip3009_helpers.go#L27" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/eip3009_helpers.go:27</a></p>
+<div class="godoc-doc"><p>EIP3009SignatureClassification captures how the signature should be treated.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> EIP3009SignatureClassification</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Valid</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0">         bool</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	IsSmartWallet</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0"> bool</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	IsUndeployed</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0">  bool</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	SigData</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">       *</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">evm</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">ERC6492SignatureData</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<details class="godoc-fields" open><summary>Fields</summary><ul><li class="godoc-field"><code class="godoc-field-sig">Valid <span class="godoc-field-type">bool</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">IsSmartWallet <span class="godoc-field-type">bool</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">IsUndeployed <span class="godoc-field-type">bool</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">SigData <span class="godoc-field-type">*evm.ERC6492SignatureData</span></code> </li></ul></details>
+</section>
+<section class="godoc-type" id="type-ExactEvmScheme">
+<h3 class="godoc-symbol">type ExactEvmScheme</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/scheme.go#L26" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/scheme.go:26</a></p>
+<div class="godoc-doc"><p>ExactEvmScheme implements the SchemeNetworkFacilitator interface for EVM exact payments (V2)</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> ExactEvmScheme</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// contains filtered or unexported fields</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<section class="godoc-func" id="method-ExactEvmScheme-CaipFamily">
+<h3 class="godoc-symbol">func  CaipFamily() string</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/scheme.go#L57" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/scheme.go:57</a></p>
+<div class="godoc-doc"><p>CaipFamily returns the CAIP family pattern this facilitator supports</p></div>
+</section>
+<section class="godoc-func" id="method-ExactEvmScheme-GetExtra">
+<h3 class="godoc-symbol">func  GetExtra(_ x402.Network) map[string]interface{}</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/scheme.go#L63" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/scheme.go:63</a></p>
+<div class="godoc-doc"><p>GetExtra returns mechanism-specific extra data for the supported kinds endpoint.
+For EVM, no extra data is needed.</p></div>
+</section>
+<section class="godoc-func" id="method-ExactEvmScheme-GetSigners">
+<h3 class="godoc-symbol">func  GetSigners(_ x402.Network) []string</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/scheme.go#L69" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/scheme.go:69</a></p>
+<div class="godoc-doc"><p>GetSigners returns signer addresses used by this facilitator.
+Returns all addresses this facilitator can use for signing/settling transactions.</p></div>
+</section>
+<section class="godoc-func" id="method-ExactEvmScheme-Scheme">
+<h3 class="godoc-symbol">func  Scheme) Scheme() string</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/scheme.go#L52" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/scheme.go:52</a></p>
+<div class="godoc-doc"><p>Scheme returns the scheme identifier</p></div>
+</section>
+<section class="godoc-func" id="method-ExactEvmScheme-Settle">
+<h3 class="godoc-symbol">func  Settle(
+	ctx context.Context,
+	payload types.PaymentPayload,
+	requirements types.PaymentRequirements,
+	fctx *x402.FacilitatorContext,
+) (*x402.SettleResponse, error)</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/scheme.go#L96" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/scheme.go:96</a></p>
+<div class="godoc-doc"><p>Settle settles a V2 payment on-chain.
+Routes to EIP-3009 or Permit2 settlement based on payload type.</p></div>
+</section>
+<section class="godoc-func" id="method-ExactEvmScheme-Verify">
+<h3 class="godoc-symbol">func  Verify(
+	ctx context.Context,
+	payload types.PaymentPayload,
+	requirements types.PaymentRequirements,
+	fctx *x402.FacilitatorContext,
+) (*x402.VerifyResponse, error)</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/scheme.go#L75" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/scheme.go:75</a></p>
+<div class="godoc-doc"><p>Verify verifies a V2 payment payload against requirements.
+Routes to EIP-3009 or Permit2 verification based on payload type.</p></div>
+</section>
+</section>
+<section class="godoc-type" id="type-ExactEvmSchemeConfig">
+<h3 class="godoc-symbol">type ExactEvmSchemeConfig</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/scheme.go#L13" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/scheme.go:13</a></p>
+<div class="godoc-doc"><p>ExactEvmSchemeConfig holds configuration for the ExactEvmScheme facilitator</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> ExactEvmSchemeConfig</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// EIP6492AllowedFactories is the allowlist of factory contract addresses (hex strings,</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// case-insensitive) that the facilitator will call when deploying an undeployed smart wallet</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// via ERC-6492. A non-empty list enables ERC-4337 smart wallet deployment. An empty list</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// (the default) denies all factory deployment calls. Facilitators must explicitly list every</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// factory they trust to prevent arbitrary transaction injection via attacker-controlled</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// ERC-6492 signature wrappers.</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	EIP6492AllowedFactories</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> []</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0">string</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// SimulateInSettle reruns transfer simulation during settle. Verify always simulates.</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	SimulateInSettle</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0"> bool</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<details class="godoc-fields" open><summary>Fields</summary><ul><li class="godoc-field"><code class="godoc-field-sig">EIP6492AllowedFactories <span class="godoc-field-type">[]string</span></code> <div class="godoc-field-doc"><p>EIP6492AllowedFactories is the allowlist of factory contract addresses (hex strings,
+case-insensitive) that the facilitator will call when deploying an undeployed smart wallet
+via ERC-6492. A non-empty list enables ERC-4337 smart wallet deployment. An empty list
+(the default) denies all factory deployment calls. Facilitators must explicitly list every
+factory they trust to prevent arbitrary transaction injection via attacker-controlled
+ERC-6492 signature wrappers.</p></div></li><li class="godoc-field"><code class="godoc-field-sig">SimulateInSettle <span class="godoc-field-type">bool</span></code> <div class="godoc-field-doc"><p>SimulateInSettle reruns transfer simulation during settle. Verify always simulates.</p></div></li></ul></details>
+</section>
+<section class="godoc-type" id="type-ParsedEIP3009Authorization">
+<h3 class="godoc-symbol">type ParsedEIP3009Authorization</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/eip3009_helpers.go#L17" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/eip3009_helpers.go:17</a></p>
+<div class="godoc-doc"><p>ParsedEIP3009Authorization contains the parsed transfer arguments used by verify and settle.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> ParsedEIP3009Authorization</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	From</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">        common</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Address</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	To</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">          common</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Address</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Value</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">       *</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">big</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Int</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	ValidAfter</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">  *</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">big</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Int</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	ValidBefore</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> *</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">big</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Int</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Nonce</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">       [</span><span style="--shiki-light:#0550AE;--shiki-dark:#B5CEA8">32</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">]</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0">byte</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<details class="godoc-fields" open><summary>Fields</summary><ul><li class="godoc-field"><code class="godoc-field-sig">From <span class="godoc-field-type">common.Address</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">To <span class="godoc-field-type">common.Address</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Value <span class="godoc-field-type">*big.Int</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">ValidAfter <span class="godoc-field-type">*big.Int</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">ValidBefore <span class="godoc-field-type">*big.Int</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Nonce <span class="godoc-field-type">[32]byte</span></code> </li></ul></details>
+</section>
+<section class="godoc-type" id="type-Permit2FacilitatorConfig">
+<h3 class="godoc-symbol">type Permit2FacilitatorConfig</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/permit2.go#L205" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/permit2.go:205</a></p>
+<div class="godoc-doc"><p>Permit2FacilitatorConfig holds optional settlement-time configuration.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> Permit2FacilitatorConfig</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// SimulateInSettle re-runs simulation during settle</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// When false (default), the settle path skips simulation since verify already ran it</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	SimulateInSettle</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0"> bool</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<details class="godoc-fields" open><summary>Fields</summary><ul><li class="godoc-field"><code class="godoc-field-sig">SimulateInSettle <span class="godoc-field-type">bool</span></code> <div class="godoc-field-doc"><p>SimulateInSettle re-runs simulation during settle
+When false (default), the settle path skips simulation since verify already ran it</p></div></li></ul></details>
+</section>
+<section class="godoc-type" id="type-Permit2SettleArgs">
+<h3 class="godoc-symbol">type Permit2SettleArgs</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/permit2_helpers.go#L14" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/permit2_helpers.go:14</a></p>
+<div class="godoc-doc"><p>Permit2SettleArgs holds the parsed and typed arguments for settle() / settleWithPermit().</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> Permit2SettleArgs</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Permit</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">		Permitted</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">			Token</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">  common</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Address</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">			Amount</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> *</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">big</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Int</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">		}</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">		Nonce</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">    *</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">big</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Int</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">		Deadline</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> *</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">big</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Int</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">	}</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Owner</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">   common</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Address</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Witness</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">		To</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">         common</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Address</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">		ValidAfter</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> *</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">big</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Int</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">	}</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Signature</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> []</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0">byte</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<details class="godoc-fields" open><summary>Fields</summary><ul><li class="godoc-field"><code class="godoc-field-sig">Permit <span class="godoc-field-type">struct {
+	Permitted struct {
+		Token  common.Address
+		Amount *big.Int
+	}
+	Nonce    *big.Int
+	Deadline *big.Int
+}</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Owner <span class="godoc-field-type">common.Address</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Witness <span class="godoc-field-type">struct {
+	To         common.Address
+	ValidAfter *big.Int
+}</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Signature <span class="godoc-field-type">[]byte</span></code> </li></ul></details>
+</section>
+<section class="godoc-type" id="type-VerifyPermit2Options">
+<h3 class="godoc-symbol">type VerifyPermit2Options</h3>
+<p class="godoc-source"><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/permit2.go#L19" target="_blank" rel="noopener noreferrer">Source: mechanisms/evm/exact/facilitator/permit2.go:19</a></p>
+<div class="godoc-doc"><p>VerifyPermit2Options controls optional behaviour for VerifyPermit2.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> VerifyPermit2Options</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// Simulate enables onchain simulation. Defaults to true when zero-value.</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Simulate</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> *</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0">bool</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<details class="godoc-fields" open><summary>Fields</summary><ul><li class="godoc-field"><code class="godoc-field-sig">Simulate <span class="godoc-field-type">*bool</span></code> <div class="godoc-field-doc"><p>Simulate enables onchain simulation. Defaults to true when zero-value.</p></div></li></ul></details>
+</section></div><nav class="mt-12 flex items-stretch justify-between gap-4"><a href="../api/pkg-mechanisms-evm-exact-client.html" class="group flex flex-col gap-1 px-4 py-3 rounded-lg border border-[rgb(var(--color-gray-200)/0.7)] dark:border-[rgb(var(--color-gray-800)/0.5)] hover:border-[rgb(var(--color-primary)/0.4)] dark:hover:border-[rgb(var(--color-primary-light)/0.3)] transition-colors no-underline"><span class="text-xs text-[rgb(var(--color-gray-500))] dark:text-[rgb(var(--color-gray-400))]">← Previous</span><span class="text-sm font-medium text-[rgb(var(--color-gray-700))] dark:text-[rgb(var(--color-gray-300))] group-hover:text-[rgb(var(--color-primary-ink))] dark:group-hover:text-[rgb(var(--color-primary-light))] transition-colors">mechanisms/evm/exact/client</span></a><a href="../api/pkg-mechanisms-evm-exact-server.html" class="group flex flex-col gap-1 px-4 py-3 rounded-lg border border-[rgb(var(--color-gray-200)/0.7)] dark:border-[rgb(var(--color-gray-800)/0.5)] hover:border-[rgb(var(--color-primary)/0.4)] dark:hover:border-[rgb(var(--color-primary-light)/0.3)] transition-colors no-underline text-right ml-auto"><span class="text-xs text-[rgb(var(--color-gray-500))] dark:text-[rgb(var(--color-gray-400))]">Next →</span><span class="text-sm font-medium text-[rgb(var(--color-gray-700))] dark:text-[rgb(var(--color-gray-300))] group-hover:text-[rgb(var(--color-primary-ink))] dark:group-hover:text-[rgb(var(--color-primary-light))] transition-colors">mechanisms/evm/exact/server</span></a></nav><div class="mt-16 mb-8 flex items-center justify-between border-t border-[rgb(var(--color-gray-200)/0.7)] dark:border-[rgb(var(--color-gray-800)/0.5)] pt-6 text-xs text-[rgb(var(--color-gray-500))] dark:text-[rgb(var(--color-gray-400))]"><a href="https://sourcey.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 hover:text-[rgb(var(--color-gray-600))] dark:hover:text-[rgb(var(--color-gray-300))] transition-colors">Built with<img src="https://sourcey.com/sourcey-logo.png" alt="Sourcey" class="h-4 w-4"/></a><div class="flex items-center gap-4"><a href="https://github.com/x402-foundation/x402/edit/34cb6bd04c88f4333f56b9c778d3d35df997379c/go/mechanisms/evm/exact/facilitator/eip3009.go" target="_blank" rel="noopener noreferrer" class="hover:text-[rgb(var(--color-gray-600))] dark:hover:text-[rgb(var(--color-gray-300))] transition-colors flex items-center gap-1"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 mr-0.5"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"></path></svg>Edit this page</a><a href="https://x402-url-extractor-production.up.railway.app/.well-known/x402" target="_blank" rel="noopener noreferrer" aria-label="Live x402 manifest" class="hover:text-[rgb(var(--color-gray-600))] dark:hover:text-[rgb(var(--color-gray-300))] transition-colors">Live x402 manifest</a><a href="https://github.com/x402-foundation/x402/tree/34cb6bd04c88f4333f56b9c778d3d35df997379c" target="_blank" rel="noopener noreferrer" aria-label="Pinned upstream source" class="hover:text-[rgb(var(--color-gray-600))] dark:hover:text-[rgb(var(--color-gray-300))] transition-colors">Pinned upstream source</a><a href="https://github.com/x402-foundation/x402/blob/34cb6bd04c88f4333f56b9c778d3d35df997379c/LICENSE" target="_blank" rel="noopener noreferrer" aria-label="Apache 2.0 license" class="hover:text-[rgb(var(--color-gray-600))] dark:hover:text-[rgb(var(--color-gray-300))] transition-colors">Apache 2.0 license</a></div></div></div></div></main></div><div id="search-dialog" role="dialog" aria-label="Search"><div class="search-dialog-inner"><div class="search-input-row"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="search-input-icon"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd"></path></svg><input id="search-input" type="text" placeholder="Search docs..." autocomplete="off" spellcheck="false"/></div><div id="search-results"></div><div class="search-footer"><span class="search-footer-hint"><kbd>↑↓</kbd> navigate</span><span class="search-footer-hint"><kbd>↵</kbd> select</span><span class="search-footer-hint"><kbd>esc</kbd> close</span></div></div></div></div><script src="../sourcey.js" defer></script></body></html>

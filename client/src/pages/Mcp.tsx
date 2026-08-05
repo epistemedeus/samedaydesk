@@ -87,6 +87,9 @@ export default function Mcp() {
             >
               View source
             </a>
+            <a className={styles.secondary} href="/docs/x402-sdk/">
+              Read SDK docs
+            </a>
           </div>
           <a className={styles.badge} href={SMITHERY_URL} target="_blank" rel="noopener noreferrer">
             <span aria-hidden>◆</span> Listed on Smithery
@@ -134,6 +137,10 @@ export default function Mcp() {
               <a href={`${GATEWAY_URL}/.well-known/x402`} target="_blank" rel="noopener noreferrer">
                 {GATEWAY_URL}/.well-known/x402
               </a>
+            </div>
+            <div>
+              <span>x402 integration reference</span>
+              <a href="/docs/x402-sdk/">samedaydesk.com/docs/x402-sdk/</a>
             </div>
           </div>
         </section>
