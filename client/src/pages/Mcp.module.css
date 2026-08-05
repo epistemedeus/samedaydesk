@@ -1,0 +1,190 @@
+.wrap {
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding: clamp(8rem, 14vw, 11rem) var(--space-s) var(--space-xl);
+}
+
+.hero {
+  max-width: 860px;
+  padding-bottom: var(--space-xl);
+}
+
+.h1 {
+  max-width: 13ch;
+  margin-top: var(--space-xs);
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 7rem);
+  letter-spacing: -0.055em;
+}
+
+.lead {
+  max-width: 66ch;
+  margin-top: var(--space-m);
+  color: var(--ink-dim);
+  font-size: var(--step-1);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: var(--space-m);
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--line-2);
+  border-radius: 9px;
+  font-weight: 650;
+}
+
+.primary {
+  border-color: var(--lime);
+  background: var(--lime);
+  color: var(--lime-ink);
+}
+
+.secondary:hover {
+  border-color: var(--lime);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: var(--space-s);
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--line-1);
+  border-radius: 999px;
+  color: var(--ink-dim);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+}
+
+.badge span {
+  color: var(--lime);
+}
+
+.section,
+.connect,
+.note {
+  border-top: 1px solid var(--line-1);
+  padding-block: var(--space-l);
+}
+
+.sectionHead {
+  display: grid;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-m);
+}
+
+.section h2,
+.connect h2,
+.note h2 {
+  max-width: 18ch;
+  font-size: var(--step-3);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--line-1);
+  border-radius: 12px;
+  background: var(--line-1);
+}
+
+.card {
+  min-height: 190px;
+  padding: var(--space-m);
+  background: var(--bg);
+}
+
+.cardTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cardTop code {
+  color: var(--lime);
+  font-family: var(--font-mono);
+  font-size: var(--step-1);
+}
+
+.cardTop span {
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  white-space: nowrap;
+}
+
+.card p {
+  max-width: 52ch;
+  margin-top: var(--space-s);
+  color: var(--ink-dim);
+}
+
+.connect,
+.note {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: var(--space-l);
+}
+
+.connect > div:first-child > p:last-child,
+.note > p {
+  max-width: 60ch;
+  margin-top: var(--space-s);
+  color: var(--ink-dim);
+}
+
+.commands {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.commands div {
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--line-1);
+  border-radius: 9px;
+}
+
+.commands span {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.commands code,
+.commands a {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--lime);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+}
+
+@media (max-width: 720px) {
+  .grid,
+  .connect,
+  .note {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    min-height: 0;
+  }
+}

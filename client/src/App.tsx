@@ -14,6 +14,7 @@ const Auth = lazy(() => import("./pages/Auth"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const AiReadiness = lazy(() => import("./pages/AiReadiness"));
+const Mcp = lazy(() => import("./pages/Mcp"));
 
 export default function App() {
   useEffect(() => {
@@ -29,6 +30,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/tools/ai-readiness" element={<AiReadiness />} />
+          <Route path="/mcp" element={<Mcp />} />
           <Route path="/login" element={<Auth mode="login" />} />
           <Route path="/signup" element={<Auth mode="signup" />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
