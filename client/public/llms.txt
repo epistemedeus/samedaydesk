@@ -22,6 +22,7 @@
 ## Public work
 
 - [OpenScan documentation case study](https://samedaydesk.com/docs-lab/openscan/): Durable, source-backed documentation created from a real open-source project.
+- [GopherJS API documentation case study](https://samedaydesk.com/docs-lab/gopherjs/): Searchable Sourcey reference for 17 packages and 197 exports, generated from pinned GopherJS source with an open upstream adoption PR.
 - [Solana Ecosystem Pulse](https://samedaydesk.com/data-lab/solana-pulse/): Public-data dashboard with synchronized JSON, Markdown, and interactive HTML outputs.
 - [AI Search Readiness Leaderboard](https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html): Original benchmark of 189 companies across 10 industries.
 
@@ -39,4 +40,4 @@
 - [X](https://x.com/samedaydesk)
 - Email: contact@samedaydesk.com
 
-Last updated: 2026-08-05
+Last updated: 2026-08-07

@@ -37,6 +37,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://samedaydesk.com/docs-lab/gopherjs/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://samedaydesk.com/data-lab/solana-pulse/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>daily</changefreq>
