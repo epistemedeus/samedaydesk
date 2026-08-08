@@ -60,6 +60,12 @@ function normalizeCriteria(value) {
   return value.slice(0, 10).map((item, index) => boundedText(item, `acceptance_criteria[${index}]`, 300));
 }
 
+function shellQuote(value) {
+  const text = String(value);
+  if (/^[a-zA-Z0-9_./:=+,-]+$/.test(text)) return text;
+  return `'${text.replaceAll("'", `'"'"'`)}'`;
+}
+
 export function buildTaskMarketDelegationPlan(input, now = new Date()) {
   const request = boundedText(input?.request, "request", 2_000);
   const deliverable = boundedText(input?.deliverable, "deliverable", 1_000);
@@ -105,6 +111,17 @@ export function buildTaskMarketDelegationPlan(input, now = new Date()) {
   const createdAt = new Date(now);
   if (Number.isNaN(createdAt.getTime())) throw new Error("now must be a valid date");
 
+  const cliArgs = [
+    "task", "create",
+    "--description", payload.description,
+    "--reward", baseUnitsToUsdc(reward),
+    "--duration", String(deadlineHours),
+    "--mode", mode,
+    "--tags", finalTags.join(","),
+    "--task-visibility", "public",
+    "--submission-visibility", "winner_only",
+  ];
+
   return {
     plan_id: planId,
     created_at: createdAt.toISOString(),
@@ -122,6 +139,13 @@ export function buildTaskMarketDelegationPlan(input, now = new Date()) {
       body: payload,
       x402_required: true,
       executed: false,
+    },
+    official_cli: {
+      executable: "taskmarket",
+      argv: cliArgs,
+      display_command: ["taskmarket", ...cliArgs].map(shellQuote).join(" "),
+      executed: false,
+      note: "Run only in the official TaskMarket CLI after reviewing the plan and approving its x402 escrow payment.",
     },
     next_action: "Present the brief, reward, deadline, visibility, and spending ceiling to the user. If approved, hand the payload to TaskMarket's official creation flow.",
   };
@@ -148,10 +172,14 @@ function summarizeTask(task, now = new Date()) {
   const hoursRemaining = Number.isFinite(expiry) ? Math.max(0, (expiry - now.getTime()) / 3_600_000) : null;
   return {
     id: task.id,
+    requester: task.requester || null,
     title: String(task.description || "").split("\n").find(Boolean)?.replace(/^#+\s*/, "").slice(0, 160) || "Untitled task",
     description: String(task.description || "").slice(0, 1_200),
     reward_usdc: baseUnitsToUsdc(task.reward || "0"),
+    net_reward_usdc: task.netReward == null ? null : baseUnitsToUsdc(task.netReward),
+    platform_fee_bps: task.platformFeeBps == null ? null : Number(task.platformFeeBps),
     status: task.status,
+    phase: task.phase || null,
     mode: task.mode,
     tags: Array.isArray(task.tags) ? task.tags.slice(0, 10) : [],
     expires_at: task.expiryTime || null,
@@ -159,6 +187,7 @@ function summarizeTask(task, now = new Date()) {
     submission_count: Number(task.submissionCount || 0),
     award_count: Number(task.awardCount || 0),
     stake_required: Boolean(task.stakeRequired),
+    escrow_tx_hash: task.escrowTxHash || null,
     source_url: `https://taskmarket.dev/tasks/${task.id}`,
   };
 }
@@ -267,4 +296,3 @@ export async function trackTaskMarketTask(input, deps = {}) {
     authorization: "This tool is read-only. Creating, updating, rejecting, accepting, rating, and refunding stay in TaskMarket's official flow and require separate user authorization.",
   };
 }
-
