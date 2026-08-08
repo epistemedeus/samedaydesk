@@ -7,6 +7,8 @@ import styles from "./Mcp.module.css";
 const SMITHERY_URL = "https://smithery.ai/servers/epistemedeus/x402-data-gateway";
 const GATEWAY_URL = "https://x402-url-extractor-production.up.railway.app";
 const DEMO_URL = "https://youtu.be/QTsTs_ZjwNo";
+const TASKMARKET_URL = "https://taskmarket.dev";
+const TASKMARKET_SOURCE = "https://github.com/epistemedeus/samedaydesk/blob/main/TASKMARKET-INTEGRATION.md";
 
 const tools = [
   {
@@ -46,6 +48,21 @@ const tools = [
   },
 ];
 
+const taskmarketTools = [
+  {
+    name: "plan_taskmarket_delegation",
+    description: "Turn an external-work request into a bounded TaskMarket payload with a separate reward ceiling and an explicit payment checkpoint.",
+  },
+  {
+    name: "browse_taskmarket_tasks",
+    description: "Read current public tasks through TaskMarket's official API and filter by status, mode, tag, text, and reward.",
+  },
+  {
+    name: "track_taskmarket_task",
+    description: "Track deadline, submissions, artifact hashes, awards, and the next action without accepting or spending automatically.",
+  },
+];
+
 export default function Mcp() {
   useEffect(() => {
     const previousTitle = document.title;
@@ -54,7 +71,7 @@ export default function Mcp() {
     const previousDescription = meta?.getAttribute("content") ?? null;
     meta?.setAttribute(
       "content",
-      "Seven pay-per-call MCP tools for URL extraction, Markdown reading, repository security scans, company and wallet enrichment, structured data, and AI-search audits. Pay in USDC on Base through x402.",
+      "Seven pay-per-call MCP data tools plus free TaskMarket delegation planning, public task browsing, and read-only tracking with explicit spending controls.",
     );
 
     const params = new URLSearchParams(window.location.search);
@@ -156,6 +173,51 @@ export default function Mcp() {
                   <code>{tool.name}</code>
                   <span>{tool.price} USDC</span>
                 </div>
+                <p>{tool.description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.delegation} aria-labelledby="delegation-title">
+          <div className={styles.delegationIntro}>
+            <p className="eyebrow">TaskMarket delegation bridge</p>
+            <h2 id="delegation-title">Delegate outside work without giving the server a wallet</h2>
+            <p>
+              The free SameDayDesk MCP integration helps an agent scope external work, inspect the live
+              TaskMarket, and track the result. Creation, funding, and acceptance stay in TaskMarket's
+              official flow as separate, visible user-authorized actions.
+            </p>
+            <ol className={styles.flow}>
+              <li>Define the deliverable, deadline, reward, and maximum spend.</li>
+              <li>Review the exact TaskMarket payload before any x402 payment.</li>
+              <li>Track submissions and settlement evidence without automatic acceptance.</li>
+            </ol>
+            <div className={styles.actions}>
+              <a
+                className={styles.primary}
+                href={TASKMARKET_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackAction("open_taskmarket", "delegation")}
+              >
+                Open TaskMarket →
+              </a>
+              <a
+                className={styles.secondary}
+                href={TASKMARKET_SOURCE}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackAction("view_taskmarket_source", "delegation")}
+              >
+                Read implementation and safety model
+              </a>
+            </div>
+          </div>
+          <div className={styles.taskmarketGrid}>
+            {taskmarketTools.map((tool) => (
+              <article className={styles.taskmarketCard} key={tool.name}>
+                <code>{tool.name}</code>
                 <p>{tool.description}</p>
               </article>
             ))}
