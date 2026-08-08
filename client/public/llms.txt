@@ -31,6 +31,7 @@
 - [How to get cited by AI search](https://samedaydesk.com/guides/get-cited-by-ai-search.html)
 - [Does llms.txt work?](https://samedaydesk.com/guides/does-llms-txt-work-2026.html)
 - [AI crawler list](https://samedaydesk.com/guides/ai-crawler-list-2026.html)
+- [AI search visibility tools compared](https://samedaydesk.com/guides/ai-search-visibility-tools-2026.html): Free checks, paid monitoring, and a clearly disclosed TopifyAI referral option.
 - [llms.txt generator](https://samedaydesk.com/tools/llms-txt-generator.html)
 - [JSON-LD schema generator](https://samedaydesk.com/tools/schema-generator.html)
 
