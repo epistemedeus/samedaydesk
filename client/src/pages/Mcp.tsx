@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
+import { track } from "../lib/posthog";
 import styles from "./Mcp.module.css";
 
 const SMITHERY_URL = "https://smithery.ai/servers/epistemedeus/x402-data-gateway";
 const GATEWAY_URL = "https://x402-url-extractor-production.up.railway.app";
+const DEMO_URL = "https://youtu.be/QTsTs_ZjwNo";
 
 const tools = [
   {
@@ -55,11 +57,31 @@ export default function Mcp() {
       "Seven pay-per-call MCP tools for URL extraction, Markdown reading, repository security scans, company and wallet enrichment, structured data, and AI-search audits. Pay in USDC on Base through x402.",
     );
 
+    const params = new URLSearchParams(window.location.search);
+    const referrerHost = (() => {
+      if (!document.referrer) return "direct";
+      try {
+        return new URL(document.referrer).hostname;
+      } catch {
+        return "unknown";
+      }
+    })();
+    track("x402_page_viewed", {
+      referrer_host: referrerHost,
+      source: params.get("utm_source") || params.get("source") || undefined,
+      medium: params.get("utm_medium") || undefined,
+      campaign: params.get("utm_campaign") || undefined,
+    });
+
     return () => {
       document.title = previousTitle;
       if (previousDescription !== null) meta?.setAttribute("content", previousDescription);
     };
   }, []);
+
+  function trackAction(action: string, location: string) {
+    track("x402_cta_clicked", { action, location });
+  }
 
   return (
     <>
@@ -76,7 +98,13 @@ export default function Mcp() {
             the x402 protocol.
           </p>
           <div className={styles.actions}>
-            <a className={styles.primary} href={SMITHERY_URL} target="_blank" rel="noopener noreferrer">
+            <a
+              className={styles.primary}
+              href={SMITHERY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackAction("open_smithery", "hero")}
+            >
               Open in Smithery →
             </a>
             <a
@@ -84,14 +112,34 @@ export default function Mcp() {
               href="https://github.com/epistemedeus/x402-url-extractor"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackAction("view_source", "hero")}
             >
               View source
             </a>
-            <a className={styles.secondary} href="/docs/x402-sdk/">
+            <a
+              className={styles.secondary}
+              href={DEMO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackAction("watch_demo", "hero")}
+            >
+              Watch 2-minute demo
+            </a>
+            <a
+              className={styles.secondary}
+              href="/docs/x402-sdk/"
+              onClick={() => trackAction("read_sdk_docs", "hero")}
+            >
               Read SDK docs
             </a>
           </div>
-          <a className={styles.badge} href={SMITHERY_URL} target="_blank" rel="noopener noreferrer">
+          <a
+            className={styles.badge}
+            href={SMITHERY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackAction("open_smithery", "badge")}
+          >
             <span aria-hidden>◆</span> Listed on Smithery
           </a>
         </header>
@@ -134,13 +182,23 @@ export default function Mcp() {
             </div>
             <div>
               <span>x402 resource manifest</span>
-              <a href={`${GATEWAY_URL}/.well-known/x402`} target="_blank" rel="noopener noreferrer">
+              <a
+                href={`${GATEWAY_URL}/.well-known/x402`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackAction("inspect_manifest", "connect")}
+              >
                 {GATEWAY_URL}/.well-known/x402
               </a>
             </div>
             <div>
               <span>x402 integration reference</span>
-              <a href="/docs/x402-sdk/">samedaydesk.com/docs/x402-sdk/</a>
+              <a
+                href="/docs/x402-sdk/"
+                onClick={() => trackAction("read_sdk_docs", "connect")}
+              >
+                samedaydesk.com/docs/x402-sdk/
+              </a>
             </div>
           </div>
         </section>
@@ -153,7 +211,18 @@ export default function Mcp() {
           <p>
             An unpaid request returns the x402 payment requirements. A compatible client signs the exact
             USDC amount, retries the call, and receives the result. Pricing and the recipient address are
-            published in the live resource manifest.
+            published in the live resource manifest. You can inspect a real unpaid challenge without
+            connecting a wallet or spending anything.
+            {" "}
+            <a
+              className={styles.inlineLink}
+              href={`${GATEWAY_URL}/enrich?domain=stripe.com`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackAction("inspect_402_challenge", "payment")}
+            >
+              See the live 402 response →
+            </a>
           </p>
         </section>
       </main>

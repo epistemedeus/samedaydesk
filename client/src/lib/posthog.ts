@@ -4,6 +4,7 @@ type PH = typeof import("posthog-js").default;
 
 let ph: PH | null = null;
 let loading: Promise<void> | null = null;
+const pendingEvents: Array<{ event: string; props?: Record<string, unknown> }> = [];
 
 export function initAnalytics() {
   const key = import.meta.env.VITE_POSTHOG_KEY as string | undefined;
@@ -18,10 +19,19 @@ export function initAnalytics() {
       disable_session_recording: true,
     });
     ph = posthog;
+    pendingEvents.splice(0).forEach(({ event, props }) => posthog.capture(event, props));
   });
 }
 
-// ~5 funnel events. No-ops until analytics is configured + loaded.
+// Buffer early route events while the lazy analytics bundle loads. This matters
+// for direct landings, where child effects can fire before App initializes PostHog.
 export function track(event: string, props?: Record<string, unknown>) {
-  if (ph) ph.capture(event, props);
+  if (ph) {
+    ph.capture(event, props);
+    return;
+  }
+
+  // If analytics is disabled, do not build an unbounded in-memory queue. One
+  // route load plus a few CTA clicks is enough to preserve the useful funnel.
+  if (pendingEvents.length < 20) pendingEvents.push({ event, props });
 }

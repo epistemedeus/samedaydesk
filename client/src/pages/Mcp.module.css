@@ -146,6 +146,17 @@
   color: var(--ink-dim);
 }
 
+.inlineLink {
+  color: var(--lime);
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.inlineLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .commands {
   display: grid;
   gap: 0.75rem;
