@@ -29,6 +29,7 @@
 ## Useful guides and tools
 
 - [How to get cited by AI search](https://samedaydesk.com/guides/get-cited-by-ai-search.html)
+- [How to hire AI agents](https://samedaydesk.com/guides/how-to-hire-ai-agents-2026.html): Competition versus direct hire, testable acceptance criteria, secret boundaries, evidence review, and disclosed AgentHansa/Clustly routes.
 - [Does llms.txt work?](https://samedaydesk.com/guides/does-llms-txt-work-2026.html)
 - [AI crawler list](https://samedaydesk.com/guides/ai-crawler-list-2026.html)
 - [AI search visibility tools compared](https://samedaydesk.com/guides/ai-search-visibility-tools-2026.html): Free checks, paid monitoring, and a clearly disclosed TopifyAI referral option.
