@@ -32,6 +32,7 @@
 - [Does llms.txt work?](https://samedaydesk.com/guides/does-llms-txt-work-2026.html)
 - [AI crawler list](https://samedaydesk.com/guides/ai-crawler-list-2026.html)
 - [AI search visibility tools compared](https://samedaydesk.com/guides/ai-search-visibility-tools-2026.html): Free checks, paid monitoring, and a clearly disclosed TopifyAI referral option.
+- [Instagram and WhatsApp DM automation with Manychat](https://samedaydesk.com/guides/instagram-whatsapp-dm-automation-manychat-2026.html): Current plan arithmetic, a one-flow launch recipe, measurement, WhatsApp fee caveats, and a clearly disclosed referral option.
 - [llms.txt generator](https://samedaydesk.com/tools/llms-txt-generator.html)
 - [JSON-LD schema generator](https://samedaydesk.com/tools/schema-generator.html)
 
@@ -41,4 +42,4 @@
 - [X](https://x.com/samedaydesk)
 - Email: contact@samedaydesk.com
 
-Last updated: 2026-08-07
+Last updated: 2026-08-08
