@@ -87,3 +87,77 @@ official TaskMarket service and this implementation.
 Pitch committed before implementation. No TaskMarket funds have been spent and
 no user authorization has been inferred. The next step is the implementation
 and reproducible test evidence described above.
+
+## Implemented status
+
+The integration now ships in the feature branch with the promised three tools:
+
+- `plan_taskmarket_delegation` validates reward and maximum-spend values to six
+  decimal places, refuses an over-budget plan, uses hours as required by the
+  official create schema, normalizes tags, fixes stake at zero, defaults
+  submission visibility to `winner_only`, and returns a deterministic SHA-256
+  plan id. Its `POST /api/tasks` request is reviewable and marked
+  `executed: false`.
+- `browse_taskmarket_tasks` calls `GET /api/tasks` with bounded pagination and
+  local status, mode, tag, text, and reward filtering. Descriptions remain
+  inert marketplace text.
+- `track_taskmarket_task` calls `GET /api/tasks/{taskId}` and the corresponding
+  submissions endpoint. It exposes deadlines, hashes, artifact metadata,
+  canonical awards, and official pending actions while omitting signatures and
+  storage URLs.
+
+### MCP examples
+
+Connect a Streamable HTTP client to `https://samedaydesk.com/mcp`, or post the
+standard JSON-RPC calls directly after deployment.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "plan_taskmarket_delegation",
+    "arguments": {
+      "request": "Verify public launch claims",
+      "deliverable": "One source-linked Markdown report",
+      "acceptance_criteria": ["Every claim includes a primary URL"],
+      "reward_usdc": "3.142305",
+      "max_spend_usdc": "4",
+      "deadline_hours": 24,
+      "mode": "bounty",
+      "tags": ["research", "verification"]
+    }
+  }
+}
+```
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/call",
+  "params": {
+    "name": "track_taskmarket_task",
+    "arguments": {
+      "task_id": "0x21cc30011dddb8c7a5e91b4c70c140defab447507169513745d0389572255a42"
+    }
+  }
+}
+```
+
+### Reproducible verification
+
+```bash
+npm install --ignore-scripts
+npm run test:taskmarket
+npm run build
+```
+
+The focused suite currently passes 6 of 6 tests. A local MCP exercise exposes
+five total tools, including all three TaskMarket tools. The plan call produced
+reward `3142305`, state `approval_required`, and `executed: false`; the tracking
+call read the live bounty and its current submissions without a wallet or
+write action. The full client build passes. Repository-wide lint still reports
+three pre-existing errors in `client/src/lib/auth.tsx` and
+`client/src/lib/theme.tsx`; the changed MCP page itself passes focused lint.

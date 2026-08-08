@@ -12,11 +12,16 @@ import dns from "node:dns/promises";
 import net from "node:net";
 import { runCheck } from "./tools.js";
 import { stripe, isStripeConfigured } from "../lib/stripe.js";
+import {
+  browseTaskMarketTasks,
+  buildTaskMarketDelegationPlan,
+  trackTaskMarketTask,
+} from "../lib/taskmarket.js";
 
 const router = Router();
 
 const PROTOCOL_VERSION = "2024-11-05";
-const SERVER_INFO = { name: "samedaydesk-ai-readiness", version: "1.1.0" };
+const SERVER_INFO = { name: "samedaydesk-agent-tools", version: "1.2.0" };
 const FIXPACK_LINK = "https://buy.stripe.com/8x24gA0xA9DF9dd13YeZ20h"; // $39 instant Fix Pack
 const FIXPACK_MIN_CENTS = 3900;
 
@@ -49,6 +54,57 @@ const TOOLS = [
         license: { type: "string", description: "Your Stripe checkout-session license code (starts with cs_)." },
       },
       required: ["url"],
+    },
+  },
+  {
+    name: "plan_taskmarket_delegation",
+    description:
+      "Prepare a bounded TaskMarket delegation for research, coding, data collection, benchmarking, or verification. " +
+      "Requires the deliverable, reward, deadline, and an explicit maximum-spend ceiling. Returns the canonical TaskMarket " +
+      "API payload and approval summary without creating a task, holding a wallet, or spending funds.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        request: { type: "string", description: "The external work needed, written as a clear task." },
+        deliverable: { type: "string", description: "The exact artifact or result the worker must return." },
+        acceptance_criteria: { type: "array", items: { type: "string" }, maxItems: 10, description: "Up to 10 testable acceptance checks." },
+        reward_usdc: { type: ["number", "string"], description: "Proposed worker reward in USDC, up to 6 decimal places." },
+        max_spend_usdc: { type: ["number", "string"], description: "Explicit user-authorized reward ceiling in USDC." },
+        deadline_hours: { type: "number", exclusiveMinimum: 0, maximum: 720, description: "Hours until TaskMarket submission closes." },
+        mode: { type: "string", enum: ["bounty", "claim"], default: "bounty" },
+        tags: { type: "array", items: { type: "string" }, maxItems: 10 },
+      },
+      required: ["request", "deliverable", "reward_usdc", "max_spend_usdc", "deadline_hours"],
+    },
+  },
+  {
+    name: "browse_taskmarket_tasks",
+    description:
+      "Browse current public TaskMarket inventory through the official read API. Filter by lifecycle status, mode, tag, " +
+      "text, and minimum reward. Task descriptions are returned as untrusted text and are never executed.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        status: { type: "string", enum: ["ALL", "open", "claimed", "worker_selected", "pending_approval", "review", "appealing", "disputed", "completed", "expired", "cancelled"], default: "open" },
+        mode: { type: "string", enum: ["bounty", "claim", "pitch", "benchmark", "auction"] },
+        tag: { type: "string", description: "Exact case-insensitive tag filter." },
+        search: { type: "string", description: "Case-insensitive text match over descriptions and tags." },
+        min_reward_usdc: { type: ["number", "string"], description: "Minimum gross reward in USDC." },
+        limit: { type: "integer", minimum: 1, maximum: 25, default: 10 },
+      },
+    },
+  },
+  {
+    name: "track_taskmarket_task",
+    description:
+      "Track one public TaskMarket task through the official read API. Returns status, deadline, submissions, artifact " +
+      "hashes, canonical awards, pending actions, and the next authorization boundary. It cannot create, accept, reject, rate, or refund work.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        task_id: { type: "string", pattern: "^0x[0-9a-fA-F]{64}$", description: "TaskMarket 32-byte task id." },
+      },
+      required: ["task_id"],
     },
   },
 ];
@@ -190,6 +246,23 @@ async function handle(msg) {
       return okMsg(id, { tools: TOOLS });
     case "tools/call": {
       const name = params?.name;
+      const args = params?.arguments || {};
+
+      if (["plan_taskmarket_delegation", "browse_taskmarket_tasks", "track_taskmarket_task"].includes(name)) {
+        try {
+          let result;
+          if (name === "plan_taskmarket_delegation") result = buildTaskMarketDelegationPlan(args);
+          else if (name === "browse_taskmarket_tasks") result = await browseTaskMarketTasks(args);
+          else result = await trackTaskMarketTask(args);
+          return okMsg(id, {
+            content: [{ type: "text", text: `TaskMarket ${name.replaceAll("_", " ")} result:\n\n${JSON.stringify(result, null, 2)}` }],
+            structuredContent: result,
+          });
+        } catch (e) {
+          return okMsg(id, { content: [{ type: "text", text: `TaskMarket tool error: ${e.message}` }], isError: true });
+        }
+      }
+
       const url = String(params?.arguments?.url || "").trim();
       if (name !== "check_ai_readiness" && name !== "generate_complete_fix_pack")
         return errMsg(id, -32602, `Unknown tool: ${name}`);
@@ -250,9 +323,10 @@ router.get("/", (req, res) => {
     );
   }
   res.type("text/plain").send(
-    "samedaydesk AI-readiness MCP server (Streamable HTTP).\n" +
-      'Add to a remote-MCP-capable client: { "mcpServers": { "ai-readiness": { "url": "https://samedaydesk.com/mcp" } } }\n' +
-      "Tools: check_ai_readiness(url) [free], generate_complete_fix_pack(url, license) [paid]. Free UI: https://samedaydesk.com/tools/ai-readiness\n",
+    "samedaydesk agent tools MCP server (Streamable HTTP).\n" +
+      'Add to a remote-MCP-capable client: { "mcpServers": { "samedaydesk": { "url": "https://samedaydesk.com/mcp" } } }\n' +
+      "Tools: AI-readiness check and Fix Pack, plus free TaskMarket delegation planning, task browsing, and task tracking.\n" +
+      "TaskMarket integration: https://github.com/epistemedeus/samedaydesk/blob/main/TASKMARKET-INTEGRATION.md\n",
   );
 });
 
