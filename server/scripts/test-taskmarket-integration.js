@@ -41,6 +41,10 @@ test("delegation plan is bounded, deterministic, and never executed", () => {
   assert.equal(first.request.body.submissionVisibility, "winner_only");
   assert.equal(first.request.executed, false);
   assert.equal(first.authorization.state, "approval_required");
+  assert.deepEqual(first.official_cli.argv.slice(0, 2), ["task", "create"]);
+  assert.match(first.official_cli.display_command, /^taskmarket task create /);
+  assert.match(first.official_cli.display_command, /--reward 3\.142305/);
+  assert.equal(first.official_cli.executed, false);
 });
 
 test("delegation plan refuses reward above explicit spending ceiling", () => {
@@ -83,7 +87,12 @@ test("tracking exposes evidence but strips storage URLs and signatures", async (
       id,
       description: "# Public task",
       reward: "3000000",
+      netReward: "2775000",
+      platformFeeBps: 750,
+      requester: "0xrequester",
+      escrowTxHash: "0xescrow",
       status: "open",
+      phase: "active",
       mode: "bounty",
       tags: ["research"],
       expiryTime: "2026-08-09T12:00:00.000Z",
@@ -98,10 +107,12 @@ test("tracking exposes evidence but strips storage URLs and signatures", async (
   assert.equal(JSON.stringify(result).includes("secret-signature"), false);
   assert.equal(JSON.stringify(result).includes("s3://"), false);
   assert.equal(result.pending_actions[0].payment_usdc, "0.001");
+  assert.equal(result.task.escrow_tx_hash, "0xescrow");
+  assert.equal(result.task.net_reward_usdc, "2.775");
+  assert.equal(result.task.phase, "active");
   assert.match(result.next_action, /separate explicit authorization/);
 });
 
 test("tracking rejects malformed task identifiers before network use", async () => {
   await assert.rejects(() => trackTaskMarketTask({ task_id: "bad" }, { fetchImpl: async () => { throw new Error("should not run"); } }), /32-byte/);
 });
-

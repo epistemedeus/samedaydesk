@@ -97,14 +97,33 @@ The integration now ships in the feature branch with the promised three tools:
   official create schema, normalizes tags, fixes stake at zero, defaults
   submission visibility to `winner_only`, and returns a deterministic SHA-256
   plan id. Its `POST /api/tasks` request is reviewable and marked
-  `executed: false`.
+  `executed: false`. It also returns the equivalent official
+  `taskmarket task create` argument vector and safely quoted display command;
+  neither route is executed by SameDayDesk.
 - `browse_taskmarket_tasks` calls `GET /api/tasks` with bounded pagination and
   local status, mode, tag, text, and reward filtering. Descriptions remain
   inert marketplace text.
 - `track_taskmarket_task` calls `GET /api/tasks/{taskId}` and the corresponding
   submissions endpoint. It exposes deadlines, hashes, artifact metadata,
-  canonical awards, and official pending actions while omitting signatures and
-  storage URLs.
+  canonical awards, official pending actions, requester, phase, net reward,
+  fee, and escrow transaction while omitting signatures and storage URLs.
+
+### Real creation and escrow fixture
+
+SameDayDesk had already created and funded a genuine TaskMarket task through
+the official x402 route before this integration:
+
+- task: `0x20ac27a69d26c03165bdf22c60881cd1adc7dd0705e47c1bbdc0c1578b7858cc`
+- reward: 0.10 USDC
+- escrow transaction:
+  `0x6de7d2c3ecfd4fc808c301fa274126e58e8c7411f8880303f9c3111d5bdaab4a`
+- current phase: `awaiting_settlement`
+- independent submissions visible to the live tracking tool: 51
+
+This fixture proves the official create and escrow route without another
+spend. The new planning tool now emits both the exact REST payload and official
+CLI handoff for the same flow; the tracking tool reads the funded task and its
+submissions back from TaskMarket. Acceptance remains separately authorized.
 
 ### MCP examples
 
