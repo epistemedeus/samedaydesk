@@ -12,6 +12,19 @@ This is the working execution doc. The synthesis is the *why*; this is the *what
 
 ## 0. Locked decisions
 
+### Current product-direction signal, 2026-08-08
+
+Agentic payments and x402 are now a primary strategic lane for SameDayDesk and
+may become the main product family as usage and buyer evidence accumulate. The
+first implementation step is live: the fixed primary header gives the x402
+gateway a highlighted `Agent payments` entry on every React route. Route and
+section navigation now lands deterministically at the intended top position.
+Keep the broader same-day services catalog available while measuring x402 page
+visits, tool calls, payment challenges, paid settlements, and qualified buyer
+requests. Promote agentic payments further when those signals outperform the
+general service funnel; avoid claiming a completed company-wide pivot before
+the demand evidence exists.
+
 | Area | Decision |
 |---|---|
 | **Stack** | Vite SPA (**React + TS**) + **single Express process** (`/api/*` + built SPA + SPA fallback). Marketing routes **prerendered** (`vite-react-ssg`) for real OG/meta + text LCP. |
