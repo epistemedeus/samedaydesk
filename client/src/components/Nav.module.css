@@ -42,6 +42,32 @@
 .links a { transition: color 0.18s; }
 .links a:hover { color: var(--ink); }
 .actions { display: flex; align-items: center; gap: var(--space-s); }
+.x402 {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.4rem;
+  padding: 0.42rem 0.72rem;
+  border: 1px solid color-mix(in srgb, var(--lime) 55%, var(--line-2));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--lime) 8%, transparent);
+  color: var(--ink);
+  font-size: var(--step--1);
+  font-weight: 600;
+  transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+}
+.x402:hover,
+.x402:focus-visible {
+  border-color: var(--lime);
+  background: color-mix(in srgb, var(--lime) 14%, transparent);
+  box-shadow: 0 0 24px -12px var(--lime-glow);
+}
+.x402Code {
+  color: var(--lime);
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+.x402Label { display: none; }
 .signin {
   font-size: var(--step--1);
   color: var(--ink-dim);
@@ -57,7 +83,8 @@
   .brand { font-size: var(--step-0); gap: 0.4em; }
   .mark { width: 1.4em; height: 1.4em; }
   .inner { gap: var(--space-s); }
-  .actions { gap: 0.55rem; }
+  .actions { gap: 0.45rem; }
+  .x402 { min-height: 2.2rem; padding: 0.35rem 0.58rem; }
   .cta :global(.inner) { padding: 0.55em 0.85em; }
 }
 
@@ -67,4 +94,5 @@
 }
 @media (min-width: 980px) {
   .links { gap: var(--space-l); }
+  .x402Label { display: inline; }
 }

@@ -10,25 +10,19 @@ function headerOffset() {
   return h + 16;
 }
 
-// Scroll to an element id. Prefer Lenis when it's actually running (it provides
-// the smooth animation); if Lenis is absent or inert, fall back to a direct jump.
-// Uses the two-arg window.scrollTo because native `behavior:"smooth"` is a no-op
-// while Lenis is loaded.
+// Scroll to an element id. Route transitions can mount the target while Lenis is
+// still easing from the previous page, so use an immediate destination update.
+// This keeps every section aligned under the fixed header instead of sometimes
+// stopping a few hundred pixels early.
 function scrollToId(id: string): boolean {
   const el = document.getElementById(id);
   if (!el) return false;
   const target = Math.max(0, el.getBoundingClientRect().top + window.scrollY - headerOffset());
-  const before = window.scrollY;
   const lenis = (window as unknown as { __lenis?: Lenis }).__lenis;
   if (lenis && typeof lenis.scrollTo === "function") {
-    lenis.scrollTo(target, { duration: 1 });
+    lenis.scrollTo(target, { immediate: true });
   }
-  // If Lenis didn't start moving the page shortly after, jump there directly.
-  window.setTimeout(() => {
-    if (Math.abs(window.scrollY - before) < 4 && Math.abs(window.scrollY - target) > 8) {
-      window.scrollTo(0, target);
-    }
-  }, 120);
+  window.scrollTo(0, target);
   return true;
 }
 
@@ -36,7 +30,20 @@ function scrollToId(id: string): boolean {
 // is clicked from another route (navigate to "/#how", then scroll once the landing
 // section has mounted). Mount once, inside the Router.
 export default function ScrollToHash() {
-  const { hash, key } = useLocation();
+  const { pathname, search, hash, key } = useLocation();
+
+  // React Router preserves the previous page's scroll position by default.
+  // Route links such as /x402 and /tools/ai-readiness should always open at
+  // their own top instead of inheriting a deep scroll position from the page
+  // the visitor just left.
+  useEffect(() => {
+    if (hash) return;
+    const lenis = (window as unknown as { __lenis?: Lenis }).__lenis;
+    if (lenis && typeof lenis.scrollTo === "function") {
+      lenis.scrollTo(0, { immediate: true });
+    }
+    window.scrollTo(0, 0);
+  }, [pathname, search, hash, key]);
 
   // Router-driven navigations (<Link to="/#services">).
   useEffect(() => {

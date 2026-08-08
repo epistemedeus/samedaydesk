@@ -33,6 +33,15 @@ export default function Nav() {
         </nav>
 
         <div className={styles.actions}>
+          <Link
+            to="/x402"
+            className={styles.x402}
+            aria-label="Agent payments and x402 data gateway"
+            viewTransition
+          >
+            <span className={styles.x402Code}>x402</span>
+            <span className={styles.x402Label}>Agent payments</span>
+          </Link>
           <ThemeToggle />
           {user ? (
             <MagneticButton to="/dashboard" variant="primary" className={styles.cta}>Your desk</MagneticButton>

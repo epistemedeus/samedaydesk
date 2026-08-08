@@ -43,6 +43,21 @@ export default function MagneticButton({
   const h = magnetic ? { onMouseMove: onMove, onMouseLeave: onLeave } : {};
 
   if (to) return <Link to={to} className={cls} aria-label={ariaLabel} viewTransition onClick={onClick} {...h}>{body}</Link>;
-  if (href) return <a href={href} className={cls} aria-label={ariaLabel} target="_blank" rel="noopener noreferrer" onClick={onClick} {...h}>{body}</a>;
+  if (href) {
+    const external = /^https?:\/\//i.test(href);
+    return (
+      <a
+        href={href}
+        className={cls}
+        aria-label={ariaLabel}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noopener noreferrer" : undefined}
+        onClick={onClick}
+        {...h}
+      >
+        {body}
+      </a>
+    );
+  }
   return <button type="button" className={cls} aria-label={ariaLabel} onClick={onClick} {...h}>{body}</button>;
 }
