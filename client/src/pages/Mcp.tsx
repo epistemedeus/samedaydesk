@@ -61,6 +61,11 @@ const tools = [
     price: "$0.25",
     description: "Cross-check a Base Morpho market across canonical API, REST, and direct RPC, then expose liquidity, utilization, APY history, borrower concentration, health bands, bad debt, and PreLiquidation supply as separate evidence flags.",
   },
+  {
+    name: "morpho_preliquidation_replay",
+    price: "$0.10",
+    description: "Replay a successful Base PreLiquidation transaction from direct block-state reads, including repaid debt, seized collateral, protocol-oracle gross incentive, gas, and the limits of any net-profit inference.",
+  },
 ];
 
 const taskmarketTools = [
@@ -86,7 +91,7 @@ export default function Mcp() {
     const previousDescription = meta?.getAttribute("content") ?? null;
     meta?.setAttribute(
       "content",
-      "Ten pay-per-call machine tools for deterministic data, Morpho borrower protection, and market underwriting, plus free TaskMarket delegation helpers.",
+      "Eleven pay-per-call machine tools for deterministic data, Morpho borrower protection, market underwriting, and PreLiquidation replay, plus free TaskMarket delegation helpers.",
     );
 
     const params = new URLSearchParams(window.location.search);
@@ -125,8 +130,8 @@ export default function Mcp() {
             Agents discover a service, call it, <span className="lime">pay, and continue</span>
           </h1>
           <p className={styles.lead}>
-            Ten deterministic tools for research, security, enrichment, Morpho borrower protection,
-            and market underwriting. No API key, subscription, or account is required. Each
+            Eleven deterministic tools for research, security, enrichment, Morpho borrower protection,
+            market underwriting, and PreLiquidation replay. No API key, subscription, or account is required. Each
             successful paid call settles USDC on Base through x402 and returns a machine-readable result.
           </p>
           <div className={styles.actions}>
@@ -179,7 +184,7 @@ export default function Mcp() {
         <section className={styles.section} aria-labelledby="tools-title">
           <div className={styles.sectionHead}>
             <p className="eyebrow">Available tools</p>
-            <h2 id="tools-title">Ten focused calls, from $0.02</h2>
+            <h2 id="tools-title">Eleven focused calls, from $0.02</h2>
           </div>
           <div className={styles.grid}>
             {tools.map((tool) => (
@@ -245,7 +250,7 @@ export default function Mcp() {
             <h2 id="connect-title">Use Smithery or connect directly</h2>
             <p>
               Smithery provides a managed connection. MCP clients that support Streamable HTTP can
-              connect to the durable public endpoint directly and discover all ten current schemas.
+              connect to the durable public endpoint directly and discover all eleven current schemas.
             </p>
           </div>
           <div className={styles.commands}>
