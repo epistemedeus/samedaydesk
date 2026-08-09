@@ -95,6 +95,14 @@ app.get("/.well-known/mcp-registry-auth", (_req, res) =>
   res.type("text/plain").send("v=MCPv1; k=ed25519; p=j1v9MjBVY0nqrVTwoNqXomOhEAisPObP5Fnq+J7Zc88="),
 );
 
+// A2A Global Registry ownership proof. Express deliberately ignores dotfiles
+// in static directories by default, so expose this single reviewed manifest
+// explicitly while keeping the rest of client/dist's hidden files private.
+app.get("/.well-known/agent-card.json", (_req, res) => {
+  res.setHeader("Cache-Control", "public, max-age=300");
+  res.sendFile(path.join(CLIENT_DIST, ".well-known", "agent-card.json"), { dotfiles: "allow" });
+});
+
 // 4) Static SPA + history fallback (production only; in dev Vite serves the client).
 if (isProd) {
   app.use(
