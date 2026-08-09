@@ -10,7 +10,8 @@ const DEMO_URL = "https://youtu.be/QTsTs_ZjwNo";
 const TASKMARKET_URL = "https://taskmarket.dev";
 const TASKMARKET_SOURCE = "https://github.com/epistemedeus/samedaydesk/blob/main/TASKMARKET-INTEGRATION.md";
 const CENSUS_URL = "/research/agent402-base-seller-protocol-census-2026-08-09.json";
-const SELLER_INTEGRATION_EMAIL = "mailto:contact@samedaydesk.com?subject=x402%20and%20MPP%20seller%20integration";
+const SELLER_DIAGNOSTIC_EMAIL = "mailto:contact@samedaydesk.com?subject=Agent%20payment%20readiness%20diagnostic&body=Origin%20URL%3A%0AWhat%20you%20want%20to%20verify%3A%0A";
+const SELLER_INTEGRATION_EMAIL = "mailto:contact@samedaydesk.com?subject=Production%20x402%20and%20MPP%20integration&body=Origin%20URL%3A%0APaid%20routes%3A%0ARuntime%20or%20repository%20details%3A%0A";
 
 const tools = [
   {
@@ -209,19 +210,26 @@ export default function Mcp() {
         <section className={styles.sellerOffer} aria-labelledby="seller-title">
           <div>
             <p className="eyebrow">For x402 sellers</p>
-            <h2 id="seller-title">Add native MPP without replacing your x402 rail</h2>
+            <h2 id="seller-title">Find the payment failures your catalog cannot see</h2>
             <p>
-              Our production middleware adds route-bound MPP Payment challenges and receipts beside an existing
-              x402 Express paywall. Your current facilitator, recipient, prices, Bazaar extensions, and settlement
-              path remain authoritative.
+              A public listing does not prove that price, request binding, settlement, delivery, and receipts still
+              agree at runtime. We compare your live origin with Agent402, Coinbase Bazaar, and MPP discovery, then
+              return the exact drift and production work that remains. No credentials or payment signing are needed.
             </p>
             <div className={styles.actions}>
               <a
                 className={styles.primary}
+                href={SELLER_DIAGNOSTIC_EMAIL}
+                onClick={() => trackAction("request_payment_readiness_diagnostic", "seller_offer")}
+              >
+                Request a 48-hour diagnostic · $99
+              </a>
+              <a
+                className={styles.secondary}
                 href={SELLER_INTEGRATION_EMAIL}
                 onClick={() => trackAction("request_dual_stack_integration", "seller_offer")}
               >
-                Request a founding integration · $299
+                Request production implementation · $299
               </a>
               <a
                 className={styles.secondary}
@@ -235,16 +243,19 @@ export default function Mcp() {
             </div>
           </div>
           <div className={styles.offerCard}>
-            <span>Founding seller scope</span>
+            <span>Readiness diagnostic</span>
             <ul>
-              <li>Up to ten existing Express GET routes</li>
-              <li>x402 remains intact and independently payable</li>
-              <li>MPP challenge, receipt, and replay integration</li>
-              <li>OpenAPI and machine-discovery metadata</li>
-              <li>Credential-free parity sweep and regression tests</li>
-              <li>One deployment review and one revision</li>
+              <li>One public origin and its paid route inventory</li>
+              <li>Live origin versus Agent402, Bazaar, and MPP discovery</li>
+              <li>Price, recipient, schema, and request-binding conflicts</li>
+              <li>Settlement, receipt, replay, and reconciliation gaps</li>
+              <li>Fixed-scope eligibility and a route-level action plan</li>
+              <li>No wallet access, credentials, or signed payments</li>
             </ul>
-            <p>Fixed $299 for a compatible existing seller. Custom methods, chains, or settlement schemes are scoped separately.</p>
+            <p>
+              Fixed $99, credited in full toward a compatible $299 implementation within 14 days. The founding
+              implementation covers up to ten existing Express GET routes, deployment review, and one revision.
+            </p>
           </div>
         </section>
 
