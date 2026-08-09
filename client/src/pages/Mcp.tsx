@@ -5,7 +5,7 @@ import { track } from "../lib/posthog";
 import styles from "./Mcp.module.css";
 
 const SMITHERY_URL = "https://smithery.ai/servers/epistemedeus/x402-data-gateway";
-const GATEWAY_URL = "https://x402-url-extractor-production.up.railway.app";
+const GATEWAY_URL = "https://agents.samedaydesk.com";
 const DEMO_URL = "https://youtu.be/QTsTs_ZjwNo";
 const TASKMARKET_URL = "https://taskmarket.dev";
 const TASKMARKET_SOURCE = "https://github.com/epistemedeus/samedaydesk/blob/main/TASKMARKET-INTEGRATION.md";
@@ -33,18 +33,28 @@ const tools = [
   },
   {
     name: "enrich",
-    price: "$0.02",
+    price: "$0.05",
     description: "Build a company profile from a domain, including identity, technology, contacts, DNS, email infrastructure, and AI readiness.",
   },
   {
     name: "wallet_enrich",
-    price: "$0.02",
+    price: "$0.05",
     description: "Profile a Base or EVM address using public on-chain data, token metadata, activity, proxy detection, and a derived label.",
   },
   {
     name: "deep_audit",
     price: "$0.25",
     description: "Combine company enrichment, AI-search scoring, structured-data gaps, and a paste-ready fix list in one report.",
+  },
+  {
+    name: "morpho_position",
+    price: "$0.02",
+    description: "Normalize active Morpho positions on Base, calculate LTV and liquidation headroom, run price shocks, and cross-check indexed state against direct RPC.",
+  },
+  {
+    name: "morpho_protection",
+    price: "$0.10",
+    description: "Calculate the partial repay or added collateral needed to withstand a chosen price shock, then return unsigned approval and Morpho call templates with explicit invariants.",
   },
 ];
 
@@ -71,7 +81,7 @@ export default function Mcp() {
     const previousDescription = meta?.getAttribute("content") ?? null;
     meta?.setAttribute(
       "content",
-      "Seven pay-per-call MCP data tools plus free TaskMarket delegation planning, public task browsing, and read-only tracking with explicit spending controls.",
+      "Nine pay-per-call machine tools for deterministic data, Morpho position risk, and unsigned protection plans, plus free TaskMarket delegation helpers.",
     );
 
     const params = new URLSearchParams(window.location.search);
@@ -105,14 +115,14 @@ export default function Mcp() {
       <Nav />
       <main id="main" className={styles.wrap}>
         <header className={styles.hero}>
-          <p className="eyebrow">Remote MCP server · x402 on Base</p>
+          <p className="eyebrow">Machine commerce · MCP, A2A, and x402 on Base</p>
           <h1 className={styles.h1}>
-            Useful data tools that agents can <span className="lime">pay for per call</span>
+            Agents discover a service, call it, <span className="lime">pay, and continue</span>
           </h1>
           <p className={styles.lead}>
-            Seven remote tools for research, security, enrichment, and AI-search work. No API key,
-            subscription, or account is required. Each successful call settles USDC on Base through
-            the x402 protocol.
+            Nine deterministic tools for research, security, enrichment, Morpho position risk, and
+            unsigned protection planning. No API key, subscription, or account is required. Each
+            successful paid call settles USDC on Base through x402 and returns a machine-readable result.
           </p>
           <div className={styles.actions}>
             <a
@@ -164,7 +174,7 @@ export default function Mcp() {
         <section className={styles.section} aria-labelledby="tools-title">
           <div className={styles.sectionHead}>
             <p className="eyebrow">Available tools</p>
-            <h2 id="tools-title">Seven focused calls, from $0.02</h2>
+            <h2 id="tools-title">Nine focused calls, from $0.02</h2>
           </div>
           <div className={styles.grid}>
             {tools.map((tool) => (
@@ -229,8 +239,8 @@ export default function Mcp() {
             <p className="eyebrow">Connect</p>
             <h2 id="connect-title">Use Smithery or connect directly</h2>
             <p>
-              Smithery provides a managed connection and discovered all seven tool schemas. MCP clients
-              that support Streamable HTTP can also connect to the public endpoint directly.
+              Smithery provides a managed connection. MCP clients that support Streamable HTTP can
+              connect to the durable public endpoint directly and discover all nine current schemas.
             </p>
           </div>
           <div className={styles.commands}>
