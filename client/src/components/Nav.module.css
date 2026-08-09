@@ -82,13 +82,14 @@
 @media (max-width: 460px) {
   .brand { font-size: var(--step-0); gap: 0.4em; }
   .mark { width: 1.4em; height: 1.4em; }
+  .word { display: none; }
   .inner { gap: var(--space-s); }
   .actions { gap: 0.45rem; }
   .x402 { min-height: 2.2rem; padding: 0.35rem 0.58rem; }
   .cta :global(.inner) { padding: 0.55em 0.85em; }
 }
 
-@media (min-width: 720px) {
+@media (min-width: 900px) {
   .links { display: flex; }
   .signin { display: inline; }
 }

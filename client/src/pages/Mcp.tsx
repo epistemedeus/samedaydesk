@@ -9,6 +9,8 @@ const GATEWAY_URL = "https://agents.samedaydesk.com";
 const DEMO_URL = "https://youtu.be/QTsTs_ZjwNo";
 const TASKMARKET_URL = "https://taskmarket.dev";
 const TASKMARKET_SOURCE = "https://github.com/epistemedeus/samedaydesk/blob/main/TASKMARKET-INTEGRATION.md";
+const CENSUS_URL = "/research/agent402-base-seller-protocol-census-2026-08-09.json";
+const SELLER_INTEGRATION_EMAIL = "mailto:contact@samedaydesk.com?subject=x402%20and%20MPP%20seller%20integration";
 
 const tools = [
   {
@@ -66,6 +68,11 @@ const tools = [
     price: "$0.10",
     description: "Replay a successful Base PreLiquidation transaction from direct block-state reads, including repaid debt, seized collateral, protocol-oracle gross incentive, gas, and the limits of any net-profit inference.",
   },
+  {
+    name: "opportunity_preflight",
+    price: "$0.05",
+    description: "Evaluate a funded agent-work opportunity using explicit reward, time, cost, access, settlement, competition, and selection assumptions before an agent commits effort.",
+  },
 ];
 
 const taskmarketTools = [
@@ -86,12 +93,12 @@ const taskmarketTools = [
 export default function Mcp() {
   useEffect(() => {
     const previousTitle = document.title;
-    document.title = "x402 Data Gateway MCP Server | SameDayDesk";
+    document.title = "Agent Payment Infrastructure: x402 and MPP | SameDayDesk";
     const meta = document.querySelector('meta[name="description"]');
     const previousDescription = meta?.getAttribute("content") ?? null;
     meta?.setAttribute(
       "content",
-      "Eleven pay-per-call machine tools for deterministic data, Morpho borrower protection, market underwriting, and PreLiquidation replay, plus free TaskMarket delegation helpers.",
+      "Twelve pay-per-call machine tools accepting both x402 and native MPP on Base, plus seller integration, settlement reconciliation, and market integrity evidence.",
     );
 
     const params = new URLSearchParams(window.location.search);
@@ -125,14 +132,14 @@ export default function Mcp() {
       <Nav />
       <main id="main" className={styles.wrap}>
         <header className={styles.hero}>
-          <p className="eyebrow">Machine commerce · MCP, A2A, and x402 on Base</p>
+          <p className="eyebrow">Machine commerce · x402 and native MPP on Base</p>
           <h1 className={styles.h1}>
             Agents discover a service, call it, <span className="lime">pay, and continue</span>
           </h1>
           <p className={styles.lead}>
-            Eleven deterministic tools for research, security, enrichment, Morpho borrower protection,
-            market underwriting, and PreLiquidation replay. No API key, subscription, or account is required. Each
-            successful paid call settles USDC on Base through x402 and returns a machine-readable result.
+            Twelve deterministic tools for research, security, enrichment, agent-work economics, and Morpho
+            decisions. No API key, subscription, or account is required. Every paid HTTP route accepts either x402
+            or native MPP, settles the same exact Base USDC amount, and returns a machine-readable result.
           </p>
           <div className={styles.actions}>
             <a
@@ -184,7 +191,7 @@ export default function Mcp() {
         <section className={styles.section} aria-labelledby="tools-title">
           <div className={styles.sectionHead}>
             <p className="eyebrow">Available tools</p>
-            <h2 id="tools-title">Eleven focused calls, from $0.02</h2>
+            <h2 id="tools-title">Twelve focused calls, from $0.02</h2>
           </div>
           <div className={styles.grid}>
             {tools.map((tool) => (
@@ -196,6 +203,70 @@ export default function Mcp() {
                 <p>{tool.description}</p>
               </article>
             ))}
+          </div>
+        </section>
+
+        <section className={styles.sellerOffer} aria-labelledby="seller-title">
+          <div>
+            <p className="eyebrow">For x402 sellers</p>
+            <h2 id="seller-title">Add native MPP without replacing your x402 rail</h2>
+            <p>
+              Our production middleware adds route-bound MPP Payment challenges and receipts beside an existing
+              x402 Express paywall. Your current facilitator, recipient, prices, Bazaar extensions, and settlement
+              path remain authoritative.
+            </p>
+            <div className={styles.actions}>
+              <a
+                className={styles.primary}
+                href={SELLER_INTEGRATION_EMAIL}
+                onClick={() => trackAction("request_dual_stack_integration", "seller_offer")}
+              >
+                Request a founding integration · $299
+              </a>
+              <a
+                className={styles.secondary}
+                href="https://github.com/epistemedeus/x402-url-extractor/blob/master/mpp-dual-stack.mjs"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackAction("view_mpp_middleware", "seller_offer")}
+              >
+                Inspect production middleware
+              </a>
+            </div>
+          </div>
+          <div className={styles.offerCard}>
+            <span>Founding seller scope</span>
+            <ul>
+              <li>Up to ten existing Express GET routes</li>
+              <li>x402 remains intact and independently payable</li>
+              <li>MPP challenge, receipt, and replay integration</li>
+              <li>OpenAPI and machine-discovery metadata</li>
+              <li>Credential-free parity sweep and regression tests</li>
+              <li>One deployment review and one revision</li>
+            </ul>
+            <p>Fixed $299 for a compatible existing seller. Custom methods, chains, or settlement schemes are scoped separately.</p>
+          </div>
+        </section>
+
+        <section className={styles.marketEvidence} aria-labelledby="evidence-title">
+          <div>
+            <p className="eyebrow">Measured market gap · 9 August 2026</p>
+            <h2 id="evidence-title">Twenty-four verified external Base routes. Twenty-four x402-only.</h2>
+          </div>
+          <div>
+            <p>
+              A bounded credential-free census started from Agent402's live index, selected all 41 healthy HTTPS
+              Base sellers in the declared cohort, and tested one indexed paid GET route per seller. Twenty-four
+              routes returned a valid runtime payment challenge; all twenty-four offered x402 and none offered
+              native MPP. SameDayDesk's twelve routes offer both.
+            </p>
+            <a
+              className={styles.inlineLink}
+              href={CENSUS_URL}
+              onClick={() => trackAction("open_agent402_census", "market_evidence")}
+            >
+              Read the public methodology and aggregate result →
+            </a>
           </div>
         </section>
 
@@ -250,7 +321,7 @@ export default function Mcp() {
             <h2 id="connect-title">Use Smithery or connect directly</h2>
             <p>
               Smithery provides a managed connection. MCP clients that support Streamable HTTP can
-              connect to the durable public endpoint directly and discover all eleven current schemas.
+              connect to the durable public endpoint directly and discover all twelve current schemas.
             </p>
           </div>
           <div className={styles.commands}>
@@ -291,10 +362,10 @@ export default function Mcp() {
             <h2 id="payment-title">Machine-readable pricing, no prepaid balance</h2>
           </div>
           <p>
-            An unpaid request returns the x402 payment requirements. A compatible client signs the exact
-            USDC amount, retries the call, and receives the result. Pricing and the recipient address are
-            published in the live resource manifest. You can inspect a real unpaid challenge without
-            connecting a wallet or spending anything.
+            An unpaid request returns both the extension-rich x402 requirements and a native MPP Payment challenge.
+            A compatible client selects one protocol, authorizes the exact USDC amount, retries the call, and receives
+            the result plus its protocol receipt. Pricing and the recipient address remain identical across both
+            paths. You can inspect a real unpaid challenge without connecting a wallet or spending anything.
             {" "}
             <a
               className={styles.inlineLink}

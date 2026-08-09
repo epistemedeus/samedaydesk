@@ -12,9 +12,9 @@
 ## Agent interfaces
 
 - [Remote MCP server](https://samedaydesk.com/mcp): Streamable HTTP MCP interface for the AI-readiness checker.
-- [x402 data gateway](https://samedaydesk.com/x402): Seven pay-per-call MCP tools, prices, source, and connection instructions.
+- [Agent payment infrastructure](https://samedaydesk.com/x402): Twelve pay-per-call HTTP and MCP tools accepting both x402 and native MPP, plus seller integration, settlement reconciliation, live prices, source, and connection instructions.
 - [x402 SDK integration reference](https://samedaydesk.com/docs/x402-sdk/): Sourcey-generated Go API reference plus production integration notes for the SDK family used by the live gateway.
-- [x402 data gateway on Smithery](https://smithery.ai/servers/epistemedeus/x402-data-gateway): Managed MCP connection and seven published tool schemas.
+- [x402 data gateway on Smithery](https://smithery.ai/servers/epistemedeus/x402-data-gateway): Managed MCP connection and twelve published tool schemas.
 - [x402 service health](https://x402-url-extractor-production.up.railway.app/healthz): Live health and pricing for the SameDayDesk agent data gateway.
 - [x402 resource manifest](https://x402-url-extractor-production.up.railway.app/.well-known/x402): Machine-readable paid resources on Base mainnet using USDC.
 - [x402 gateway llms.txt](https://x402-url-extractor-production.up.railway.app/llms.txt): Endpoint descriptions and payment instructions.
