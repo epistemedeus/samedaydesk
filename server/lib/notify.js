@@ -89,7 +89,7 @@ function welcomeHtml() {
 function receiptHtml({ label, amount, orderId }) {
   return `
   <div style="font-family:Inter,Arial,sans-serif;max-width:480px;margin:auto;padding:28px;color:#1a1a1a">
-    <h1 style="font-size:18px;margin:0 0 8px">Thanks — we've got your order</h1>
+    <h1 style="font-size:18px;margin:0 0 8px">Thanks, we have your order</h1>
     <p style="color:#555">We're on it. You'll receive your deliverable by email today.</p>
     <table style="width:100%;border-collapse:collapse;margin:16px 0">
       <tr><td style="padding:8px 0;color:#888">Service</td><td style="text-align:right;font-weight:600">${label}</td></tr>
