@@ -18,6 +18,8 @@ import pulseRouter from "./routes/pulse.js";
 import mcpRouter from "./routes/mcp.js";
 import { pulseMiddleware } from "./lib/pulse.js";
 import { sendPage } from "./lib/pages.js";
+import intakeRouter from "./routes/intake.js";
+import { startAbandonedSweep } from "./lib/abandoned.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === "production";
@@ -66,8 +68,10 @@ function captureRaw(req, _res, next) {
 app.use("/api/stripe/webhook", express.raw({ type: "application/json" }), captureRaw);
 app.use("/api/webhooks/resend", express.raw({ type: "application/json" }), captureRaw);
 
-// 2) Everything else parses JSON normally.
+// 2) Everything else parses JSON normally. Form posts arrive urlencoded, because every
+//    money and intake form on this site works without JavaScript.
 app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: false, limit: "1mb" }));
 
 // 2b) In-memory, no-PII traffic analytics (records page/content GETs). Must run
 //     before the routers so it sees every request, including /scan and the SPA.
@@ -80,6 +84,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/teaser", teaserRouter);
 app.use("/api/tools", toolsRouter);
 app.use("/api/checkout", checkoutRouter);
+app.use("/api/intake", intakeRouter);
 app.use("/api/uploads", uploadsRouter);
 app.use("/api/stripe", stripeWebhookRouter);
 app.use("/api/webhooks/resend", resendWebhookRouter);
@@ -90,6 +95,15 @@ app.use("/api", (_req, res) => res.status(404).json({ error: "Not found" }));
 // Hand-authored static documents, served ahead of express.static so the app shell never
 // answers for them. These carry the offer facts in first-byte HTML.
 app.get("/", sendPage("home.html"));
+app.get("/terms", sendPage("terms.html"));
+app.get("/methods", sendPage("methods.html"));
+app.get("/for-agents", sendPage("for-agents.html"));
+app.get("/pay/audit", sendPage("pay/audit.html"));
+app.get("/pay/sprint", sendPage("pay/sprint.html"));
+app.get("/pay/sprint-plus", sendPage("pay/sprint-plus.html"));
+
+// Post-payment intake, keyed by the Stripe session id (server rendered, no JavaScript).
+app.use("/intake", intakeRouter);
 
 // Server-rendered shareable proof page (must be before the SPA fallback).
 app.use("/scan", scanRouter);
@@ -135,6 +149,9 @@ if (isProd) {
     res.status(404).sendFile(path.join(CLIENT_DIST, "404.html"));
   });
 }
+
+// Daily one-shot recovery for paid orders whose intake is still open.
+startAbandonedSweep();
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {

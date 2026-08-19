@@ -15,7 +15,7 @@ export async function sendReceipt({ to, label, amount, orderId }) {
       from: FROM,
       replyTo: REPLY_TO,
       to,
-      subject: `Your SameDayDesk order — ${label}`,
+      subject: `Your SameDayDesk order: ${label}`,
       html: receiptHtml({ label, amount, orderId }),
     });
   } catch (e) {
@@ -37,6 +37,27 @@ export async function sendWelcome({ to }) {
     return { id: data?.id };
   } catch (e) {
     console.error("[notify] welcome failed", e?.message);
+    return { error: e?.message };
+  }
+}
+
+// Send one of the templates in server/emails. Best effort, like everything else here:
+// a mail failure must never break a payment, an intake, or a report.
+export async function sendTemplate(to, template) {
+  if (!isEmailConfigured() || !to) return { skipped: true };
+  try {
+    const { error } = await resend.emails.send({
+      from: FROM,
+      replyTo: REPLY_TO,
+      to,
+      subject: template.subject,
+      text: template.text,
+      html: template.html,
+    });
+    if (error) { console.error("[notify] template", error.message); return { error: error.message }; }
+    return { ok: true };
+  } catch (e) {
+    console.error("[notify] template failed", e?.message);
     return { error: e?.message };
   }
 }

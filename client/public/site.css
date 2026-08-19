@@ -1,0 +1,75 @@
+/* One small stylesheet for the hand-authored documents (pay cards, intake, terms,
+   methods, for-agents, report). The homepage carries its own copy inline so its first
+   paint needs no second request. */
+:root{
+  --bg:#f4f1ea; --card:#faf8f3; --ink:#191919; --dim:#56534c; --line:#cdc7ba;
+  --oxide:#9e3b2e; --ok:#3a6b45; --warn:#8a6400; --code:#f1ede3; --shadow:0 1px 0 rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#101215; --card:#171a1f; --ink:#eceae4; --dim:#a09c93; --line:#2c3037;
+    --oxide:#e4785f; --ok:#7fbf8c; --warn:#d5a439; --code:#1b1f25; --shadow:none;
+  }
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;color:var(--ink);background:var(--bg);
+  font:16px/1.62 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-text-size-adjust:100%}
+.wrap{max-width:56rem;margin:0 auto;padding:0 1.15rem}
+.wrap.narrow{max-width:42rem;padding-top:2.5rem;padding-bottom:4rem}
+a{color:var(--oxide)}
+h1,h2,h3{line-height:1.2;letter-spacing:-.015em;margin:0 0 .55rem}
+h1{font-size:clamp(1.5rem,1.2rem+1.6vw,2.1rem)}
+h2{font-size:1.2rem;margin-top:2rem}
+h3{font-size:1.02rem;margin-top:1.4rem}
+p{margin:0 0 1rem}
+.lede{font-size:1.06rem}
+.muted{color:var(--dim)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;
+  background:var(--code);padding:.1em .35em;border-radius:3px}
+pre{background:var(--code);border:1px solid var(--line);border-radius:6px;padding:.85rem 1rem;
+  overflow-x:auto;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.84rem}
+pre code{background:none;padding:0}
+header.site{border-bottom:1px solid var(--line)}
+header.site .inner{display:flex;flex-wrap:wrap;gap:.5rem 1.2rem;align-items:center;
+  justify-content:space-between;padding:.85rem 0}
+header.site .brand{font-weight:700;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+header.site nav{display:flex;flex-wrap:wrap;gap:1rem;font-size:.94rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1.15rem 1.25rem;
+  margin:1.2rem 0;box-shadow:var(--shadow)}
+.card h2,.card h3{margin-top:0}
+.price{font-size:1.9rem;font-weight:700;letter-spacing:-.02em}
+.clock{font-weight:650}
+.exclusion{border-left:3px solid var(--oxide);padding-left:.8rem;margin:1rem 0}
+form .row{margin:0 0 .95rem}
+form label{display:block;font-weight:600;font-size:.93rem;margin:0 0 .3rem}
+form input[type=text],form input[type=email],form input[type=url],form textarea,form select{
+  width:100%;padding:.62rem .7rem;font:inherit;color:var(--ink);background:var(--bg);
+  border:1px solid var(--line);border-radius:7px}
+form textarea{min-height:8rem;resize:vertical}
+form .hint{font-size:.85rem;color:var(--dim);margin:.28rem 0 0}
+form button{font:inherit;font-weight:650;background:var(--oxide);color:#fff;border:0;border-radius:7px;
+  padding:.72rem 1.15rem;cursor:pointer}
+form .check{display:flex;gap:.55rem;align-items:flex-start;margin:.5rem 0}
+form .check input{margin-top:.35rem}
+fieldset{border:1px solid var(--line);border-radius:9px;padding:1rem 1.1rem;margin:1.2rem 0}
+legend{font-weight:650;padding:0 .4rem}
+table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.93rem}
+th,td{border:1px solid var(--line);padding:.55rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--code);font-weight:650}
+.scroll{overflow-x:auto}
+ul.plain{list-style:none;padding:0}
+ul.plain li{padding:.35rem 0;border-bottom:1px solid var(--line)}
+ul.plain li:last-child{border-bottom:none}
+.note{background:var(--code);border:1px solid var(--line);border-radius:8px;padding:.85rem 1rem;margin:1.2rem 0}
+.finding{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--oxide);
+  border-radius:8px;padding:1rem 1.15rem;margin:1.2rem 0}
+.finding.clean{border-left-color:var(--ok)}
+blockquote{margin:.7rem 0;padding:.4rem 0 .4rem 1rem;border-left:3px solid var(--line);color:var(--ink)}
+footer.site{border-top:1px solid var(--line);margin-top:2.5rem;padding:1.5rem 0 3rem;
+  font-size:.9rem;color:var(--dim)}
+footer.site a{color:var(--oxide)}
+.skip{position:absolute;left:-9999px}
+.skip:focus{left:.5rem;top:.5rem;background:var(--card);padding:.5rem .8rem;border:1px solid var(--line)}

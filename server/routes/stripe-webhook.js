@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { stripe, isStripeConfigured } from "../lib/stripe.js";
-import { fulfillFromIntent } from "../lib/fulfill.js";
+import { fulfillFromIntent, fulfillFromSession } from "../lib/fulfill.js";
 import { notifyAdmin } from "../lib/notify.js";
 
 // Authoritative "paid" signal. Mounted under /api/stripe → path /api/stripe/webhook.
@@ -25,25 +25,26 @@ router.post("/webhook", async (req, res) => {
     if (event.type === "payment_intent.succeeded") {
       await fulfillFromIntent(event.data.object);
     } else if (event.type === "checkout.session.completed") {
-      // Payment Link / hosted Checkout. If it carries a known uid we fulfill to that account;
-      // otherwise it's an operator instant-link sale — record + notify the admin.
+      // Hosted Checkout for the current offers: record the order and send the intake link.
+      // Anything else falls through to the legacy account-linked path below.
       const session = event.data.object;
+      const current = await fulfillFromSession(session);
       const piId = session.payment_intent;
-      if (piId) {
+      if (!current.handled && piId) {
         const intent = await stripe.paymentIntents.retrieve(piId);
         const r = await fulfillFromIntent(intent);
         if (!r.ok) {
           await notifyAdmin(
-            `Payment Link sale — ${session.amount_total ? "$" + (session.amount_total / 100).toFixed(2) : ""}`,
+            `Payment Link sale ${session.amount_total ? "$" + (session.amount_total / 100).toFixed(2) : ""}`,
             `<p>A Payment Link checkout completed without a linked account.</p>
-             <p>Session: ${session.id}<br>Email: ${session.customer_details?.email || "—"}</p>`,
+             <p>Session: ${session.id}<br>Email: ${session.customer_details?.email || "not given"}</p>`,
           );
         }
       }
     }
   } catch (e) {
     console.error("[webhook] fulfill error", e?.message);
-    // 500 → Stripe retries; fulfillment is idempotent so retries are safe.
+    // 500 makes Stripe retry; fulfillment is idempotent so retries are safe.
     return res.status(500).json({ error: "fulfill failed" });
   }
 
