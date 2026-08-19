@@ -6,6 +6,7 @@ import { trustPricingFromMetadata, getOffer } from "../pricing.js";
 import { sendReceipt, sendTemplate } from "./notify.js";
 import { recordOrder } from "./orders.js";
 import { paymentConfirmation } from "../emails/index.js";
+import { capture } from "./events.js";
 
 // The current offers: hosted Checkout Session, no account, intake afterwards. Returns
 // false when the session is not one of ours so the caller can fall back to the legacy path.
@@ -24,6 +25,8 @@ export async function fulfillFromSession(session) {
     siteUrl: meta.site_url,
     brandName: meta.brand_name,
   });
+
+  capture("audit_paid", { offer: meta.offer, amount: Number(meta.amount) || session.amount_total });
 
   // Send the intake link once. When storage is down we still send it, because the buyer
   // needs the link more than we need the bookkeeping.

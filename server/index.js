@@ -20,6 +20,8 @@ import { pulseMiddleware } from "./lib/pulse.js";
 import { sendPage } from "./lib/pages.js";
 import intakeRouter from "./routes/intake.js";
 import reportRouter from "./routes/report.js";
+import metricsRouter from "./routes/metrics.js";
+import { attrMiddleware } from "./lib/attr.js";
 import { startAbandonedSweep } from "./lib/abandoned.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -78,9 +80,13 @@ app.use(express.urlencoded({ extended: false, limit: "1mb" }));
 //     before the routers so it sees every request, including /scan and the SPA.
 app.use(pulseMiddleware);
 
+// 2c) First-touch attribution cookie: referrer host, landing path, UTC date. No identifier.
+app.use(attrMiddleware);
+
 // 3) API routes.
 app.use("/api", healthRouter);
 app.use("/api/pulse", pulseRouter);
+app.use("/api/metrics", metricsRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/teaser", teaserRouter);
 app.use("/api/tools", toolsRouter);

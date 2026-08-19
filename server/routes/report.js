@@ -274,6 +274,7 @@ router.post("/", async (req, res) => {
   res.write(tail);
   res.end();
   capture("report_delivered", { domain, panel: panelRan, cards: cards.length });
+  if (panelRan) capture("report_delivered_with_panel", { domain, cards: cards.length });
 });
 
 export default router;

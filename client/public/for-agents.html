@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>For agents: machine interfaces and request examples</title>
+<meta name="description" content="Documentation for software reading this site: the machine-readable files, the free readiness endpoint, the MCP server, and the paid data gateway. No pricing for the human services on this page.">
+<link rel="canonical" href="https://samedaydesk.com/for-agents">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="stylesheet" href="/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site"><div class="wrap inner">
+  <a class="brand" href="/">SameDayDesk</a>
+  <nav aria-label="Primary">
+    <a href="/">Home</a>
+    <a href="/methods">Methods</a>
+    <a href="/audit/samedaydesk/2026-08-19/">Self-audit</a>
+    <a href="/terms">Terms</a>
+  </nav>
+</div></header>
+
+<main id="main"><div class="wrap narrow">
+
+<h1>For agents</h1>
+<p class="lede">Documentation for software reading this site. Everything here is a real request you can run now. The human services and their prices are on the <a href="/">homepage</a>; this page does not price anything.</p>
+
+<h2>Machine-readable files</h2>
+<table>
+  <tr><th>File</th><th>What it carries</th></tr>
+  <tr><td><a href="/llms.txt"><code>/llms.txt</code></a></td><td>Identity, the four offers with prices and clocks, and the pages that carry the detail. Optional metadata; every fact in it is also in the HTML it points at.</td></tr>
+  <tr><td><a href="/sitemap.xml"><code>/sitemap.xml</code></a></td><td>Every URL meant to be crawled, generated from one route manifest.</td></tr>
+  <tr><td><a href="/robots.txt"><code>/robots.txt</code></a></td><td>Allows the search and retrieval fetchers, including the training crawlers. Nothing here is blocked.</td></tr>
+  <tr><td><a href="/.well-known/agent-card.json"><code>/.well-known/agent-card.json</code></a></td><td>Identity and documentation pointers. It publishes no priced offers and no tool count, on purpose.</td></tr>
+</table>
+
+<h2>Read the offer facts without a browser</h2>
+<p>The homepage is a plain document. The prices, the clocks, the comparison table, and every FAQ answer are in the first bytes of the response, with no JavaScript involved.</p>
+<pre><code>curl -sS -A "YourAgent/1.0" https://samedaydesk.com/ | grep -o '&lt;h1&gt;[^&lt;]*&lt;/h1&gt;'
+
+# structured data, generated from the same record the visible page is checked against
+curl -sS https://samedaydesk.com/ \
+  | sed -n '/application\/ld+json/,/&lt;\/script&gt;/p'</code></pre>
+
+<h2>Free readiness endpoint</h2>
+<p>The crawler and structured-data checks behind the free report are a public JSON endpoint. No key, no account, no payment.</p>
+<pre><code>curl -sS "https://samedaydesk.com/api/tools/ai-readiness?url=https://example.com"</code></pre>
+<p>It returns the checks, what each one saw, and the concrete fix for each failure. The same checks run as a CLI and as a library from <a href="https://github.com/epistemedeus/ai-readiness">the public repository</a>.</p>
+
+<h2>MCP server</h2>
+<p>The same checker is available over Streamable HTTP MCP at <code>https://samedaydesk.com/mcp</code>. Point an MCP client at that URL; there is no key and no registration step.</p>
+<pre><code>curl -sS -X POST https://samedaydesk.com/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'</code></pre>
+<p>The answer panel behind the free report is deliberately <em>not</em> exposed here. It costs money per call, and an unauthenticated machine interface to it would be a budget hole rather than a feature.</p>
+
+<h2>Paid data gateway</h2>
+<p>A separate service publishes pay-per-call data tools that settle in USDC on Base, accepting both x402 and native MPP. It has its own manifest, and that manifest is the count and the price list rather than a number written on this site.</p>
+<pre><code>curl -sS https://x402-url-extractor-production.up.railway.app/.well-known/x402</code></pre>
+<p>Human-readable notes on that gateway are at <a href="/x402">/x402</a>, and the SDK reference is at <a href="/docs/x402-sdk/">/docs/x402-sdk/</a>.</p>
+
+<h2>Buying the human services from software</h2>
+<p>There is no machine purchase path for the audit or the sprints, and we would rather say so than publish an endpoint that does not exist. Checkout is a form on each pay card that creates a Stripe session server side. If you are an agent acting for an owner, send them the card:</p>
+<ul>
+  <li><a href="/pay/audit">/pay/audit</a></li>
+  <li><a href="/pay/sprint">/pay/sprint</a></li>
+  <li><a href="/pay/sprint-plus">/pay/sprint-plus</a></li>
+</ul>
+
+<h2>Verifying what this site claims</h2>
+<p>The published self-audit ships a replay script that re-tests its own findings against production and exits non-zero while any of them still hold.</p>
+<pre><code>curl -sS https://samedaydesk.com/audit/samedaydesk/2026-08-19/replay.sh -o replay.sh
+bash replay.sh ; echo "exit=$?"</code></pre>
+
+</div></main>
+<footer class="site"><div class="wrap">
+  <p>SameDayDesk is a trading name of Neomorphic LLC, Sheridan, Wyoming, United States. Operated by Lucian Constantinescu. <a href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a></p>
+</div></footer>
+</body>
+</html>

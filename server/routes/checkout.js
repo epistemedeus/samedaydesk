@@ -2,6 +2,7 @@ import { Router } from "express";
 import { stripe, isStripeConfigured } from "../lib/stripe.js";
 import { getOffer, CURRENCY, clockSentence } from "../pricing.js";
 import { recordOrder, getOrderBySession } from "../lib/orders.js";
+import { capture } from "../lib/events.js";
 
 // Hosted Stripe Checkout, created server side from a slug. No account, no email
 // verification, no client-supplied amount. The three fields collected before payment ride
@@ -68,6 +69,7 @@ router.post("/session", async (req, res) => {
     return res.status(p.status).type("html").send(p.html);
   }
 
+  capture("audit_checkout_started", { offer: slug });
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
