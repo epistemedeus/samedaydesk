@@ -19,6 +19,7 @@ import mcpRouter from "./routes/mcp.js";
 import { pulseMiddleware } from "./lib/pulse.js";
 import { sendPage } from "./lib/pages.js";
 import intakeRouter from "./routes/intake.js";
+import reportRouter from "./routes/report.js";
 import { startAbandonedSweep } from "./lib/abandoned.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -101,6 +102,9 @@ app.get("/for-agents", sendPage("for-agents.html"));
 app.get("/pay/audit", sendPage("pay/audit.html"));
 app.get("/pay/sprint", sendPage("pay/sprint.html"));
 app.get("/pay/sprint-plus", sendPage("pay/sprint-plus.html"));
+
+// The free report: form on GET, streamed two-phase result on POST.
+app.use("/report", reportRouter);
 
 // Post-payment intake, keyed by the Stripe session id (server rendered, no JavaScript).
 app.use("/intake", intakeRouter);
