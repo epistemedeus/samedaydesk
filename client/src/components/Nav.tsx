@@ -21,14 +21,15 @@ export default function Nav() {
   return (
     <header className={clsx(styles.nav, scrolled && styles.scrolled)}>
       <div className={clsx("container", styles.inner)}>
-        <Link to="/" className={styles.brand} aria-label="SameDayDesk home">
+        <a href="/" className={styles.brand} aria-label="SameDayDesk home">
           <BrandMark className={styles.mark} />
           <span className={styles.word}>SameDayDesk</span>
-        </Link>
+        </a>
 
         <nav className={styles.links} aria-label="Primary">
-          <Link to="/#services">Services</Link>
-          <Link to="/#how">How it works</Link>
+          <a href="/report">Free report</a>
+          <a href="/#offers">Prices</a>
+          <a href="/audit/samedaydesk/2026-08-19/">Self-audit</a>
           <Link to="/tools/ai-readiness" viewTransition>Free tool</Link>
         </nav>
 
@@ -46,10 +47,7 @@ export default function Nav() {
           {user ? (
             <MagneticButton to="/dashboard" variant="primary" className={styles.cta}>Your desk</MagneticButton>
           ) : (
-            <>
-              <Link to="/login" className={styles.signin} viewTransition>Sign in</Link>
-              <MagneticButton to="/signup" variant="primary" className={styles.cta}>Get started</MagneticButton>
-            </>
+            <Link to="/login" className={styles.signin} viewTransition>Sign in</Link>
           )}
         </div>
       </div>

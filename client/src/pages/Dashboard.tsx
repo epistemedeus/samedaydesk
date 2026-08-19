@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../lib/auth";
 import { getSupabase, authedFetch } from "../lib/supabase";
-import { CATEGORIES } from "../lib/services";
 import styles from "./Dashboard.module.css";
 
 type Me = { uid: string; email: string; emailVerified: boolean };
@@ -27,13 +26,13 @@ export default function Dashboard() {
   return (
     <main className={styles.wrap}>
       <header className={styles.top}>
-        <Link to="/" className={styles.brand} viewTransition>
-          <span className={styles.mark} aria-hidden="true">▸▸</span> SameDayDesk
-        </Link>
+        <a href="/" className={styles.brand}>
+          <span className={styles.mark} aria-hidden="true">&#9656;&#9656;</span> SameDayDesk
+        </a>
         <button className={styles.signout} onClick={() => signOut()}>Sign out</button>
       </header>
 
-      {justPaid && <div className={styles.banner}>✓ Payment received. We're on it. Watch your inbox; your deliverable lands today.</div>}
+      {justPaid && <div className={styles.banner}>Payment received. Check your inbox for the intake link; the clock starts when that form is complete.</div>}
 
       <h1 className={styles.h1}>Your desk</h1>
       <p className={styles.sub}>
@@ -59,13 +58,9 @@ export default function Dashboard() {
           </ul>
         ) : (
           <>
-            <p className={styles.empty}>No orders yet. Pick a service to send your first task.</p>
+            <p className={styles.empty}>No orders on this account.</p>
             <div className={styles.quick}>
-              {CATEGORIES.flatMap((c) => c.offers).map((o) => (
-                <Link key={o.slug} to={`/checkout?offer=${o.slug}`} className={styles.quickItem} viewTransition>
-                  {o.name} <span className="mono lime">${o.price}</span>
-                </Link>
-              ))}
+              <a href="/#offers" className={styles.quickItem}>See the current offers</a>
             </div>
           </>
         )}

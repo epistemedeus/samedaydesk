@@ -1,4 +1,4 @@
-// SameDayDesk — single Express process.
+// SameDayDesk single Express process.
 // Serves /api/* and (in production) the built Vite SPA from client/dist.
 // Load-bearing order: RAW body for webhooks BEFORE express.json(); SPA fallback last.
 import express from "express";
@@ -44,6 +44,9 @@ app.use((req, res, next) => {
 const RETIRED_301 = new Map([
   // Near-duplicate of the AI-citation checklist; folded into the well-linked hub page.
   ["/guides/how-to-get-cited-by-ai-search-2026.html", "/guides/get-cited-by-ai-search.html"],
+  // The standalone sales page for the retired audit ladder. Same intent as the homepage
+  // offer table, so it redirects rather than 410s.
+  ["/ai-visibility-audit.html", "/"],
 ]);
 app.use((req, res, next) => {
   if (req.method === "GET" || req.method === "HEAD") {
@@ -116,9 +119,15 @@ if (isProd) {
   );
   // Clean URL for the SkillGuard landing page (the CLI/README funnel target).
   app.get("/skillguard", (_req, res) => res.sendFile(path.join(CLIENT_DIST, "skillguard.html")));
+
+  // The SPA owns exactly these paths. Everything else that reached this point does not
+  // exist, so it gets a real 404 instead of a 200 carrying the homepage document
+  // (published self-audit, finding SDD-2026-006).
+  const SPA_PATHS = new Set(["/tools/ai-readiness", "/x402", "/login", "/signup", "/dashboard", "/checkout", "/privacy"]);
   app.use((req, res, next) => {
-    if (req.method !== "GET") return next();
-    res.sendFile(path.join(CLIENT_DIST, "index.html"));
+    if (req.method !== "GET" && req.method !== "HEAD") return next();
+    if (SPA_PATHS.has(req.path)) return res.sendFile(path.join(CLIENT_DIST, "index.html"));
+    res.status(404).sendFile(path.join(CLIENT_DIST, "404.html"));
   });
 }
 

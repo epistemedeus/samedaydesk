@@ -99,7 +99,7 @@ export default function Mcp() {
     const previousDescription = meta?.getAttribute("content") ?? null;
     meta?.setAttribute(
       "content",
-      "Twelve pay-per-call machine tools accepting both x402 and native MPP on Base, plus seller integration, settlement reconciliation, and market integrity evidence.",
+      "Pay-per-call machine tools accepting both x402 and native MPP on Base, plus seller integration, settlement reconciliation, and market integrity evidence. The live manifest is the current list.",
     );
 
     const params = new URLSearchParams(window.location.search);
@@ -138,7 +138,7 @@ export default function Mcp() {
             Agents discover a service, call it, <span className="lime">pay, and continue</span>
           </h1>
           <p className={styles.lead}>
-            Twelve deterministic tools for research, security, enrichment, agent-work economics, and Morpho
+            Deterministic tools for research, security, enrichment, agent-work economics, and Morpho
             decisions. No API key, subscription, or account is required. Every paid HTTP route accepts either x402
             or native MPP, settles the same exact Base USDC amount, and returns a machine-readable result.
           </p>
@@ -192,7 +192,7 @@ export default function Mcp() {
         <section className={styles.section} aria-labelledby="tools-title">
           <div className={styles.sectionHead}>
             <p className="eyebrow">Available tools</p>
-            <h2 id="tools-title">Twelve focused calls, from $0.02</h2>
+            <h2 id="tools-title">Focused calls, from $0.02</h2>
           </div>
           <div className={styles.grid}>
             {tools.map((tool) => (
@@ -269,7 +269,7 @@ export default function Mcp() {
               A bounded credential-free census started from Agent402's live index, selected all 41 healthy HTTPS
               Base sellers in the declared cohort, and tested one indexed paid GET route per seller. Twenty-four
               routes returned a valid runtime payment challenge; all twenty-four offered x402 and none offered
-              native MPP. SameDayDesk's twelve routes offer both.
+              native MPP. The SameDayDesk routes offer both.
             </p>
             <a
               className={styles.inlineLink}
@@ -332,7 +332,7 @@ export default function Mcp() {
             <h2 id="connect-title">Use Smithery or connect directly</h2>
             <p>
               Smithery provides a managed connection. MCP clients that support Streamable HTTP can
-              connect to the durable public endpoint directly and discover all twelve current schemas.
+              connect to the durable public endpoint directly and discover the current schemas.
             </p>
           </div>
           <div className={styles.commands}>

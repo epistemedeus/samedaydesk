@@ -96,6 +96,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useTheme(): Ctx {
   const ctx = useContext(ThemeContext);
   if (ctx) return ctx;
