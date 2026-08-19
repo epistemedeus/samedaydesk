@@ -17,6 +17,7 @@ import resendWebhookRouter from "./routes/resend-webhook.js";
 import pulseRouter from "./routes/pulse.js";
 import mcpRouter from "./routes/mcp.js";
 import { pulseMiddleware } from "./lib/pulse.js";
+import { sendPage } from "./lib/pages.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === "production";
@@ -85,6 +86,10 @@ app.use("/api/webhooks/resend", resendWebhookRouter);
 
 // Unknown /api route → JSON 404 (never fall through to the SPA shell).
 app.use("/api", (_req, res) => res.status(404).json({ error: "Not found" }));
+
+// Hand-authored static documents, served ahead of express.static so the app shell never
+// answers for them. These carry the offer facts in first-byte HTML.
+app.get("/", sendPage("home.html"));
 
 // Server-rendered shareable proof page (must be before the SPA fallback).
 app.use("/scan", scanRouter);

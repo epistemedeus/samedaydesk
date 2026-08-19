@@ -89,6 +89,109 @@ Last updated: ${record.updated}
 `;
 }
 
+// ---------------------------------------------------------------------------
+// JSON-LD for the homepage.
+//
+// The FAQ nodes are read out of the visible HTML rather than written twice, so a
+// schema question can never say something the page does not. Offer nodes come from
+// the same record the visible price table is checked against.
+export function faqFromHtml(html) {
+  const out = [];
+  const re = /<details class="faq"[^>]*>\s*<summary>([\s\S]*?)<\/summary>\s*<div class="a">([\s\S]*?)<\/div>\s*<\/details>/g;
+  let m;
+  while ((m = re.exec(html))) {
+    out.push({ question: decodeEntities(stripTags(m[1])), answer: decodeEntities(stripTags(m[2])) });
+  }
+  return out;
+}
+
+export function stripTags(s) {
+  return s.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+export function decodeEntities(s) {
+  return s
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&middot;/g, "\u00b7")
+    .replace(/&amp;/g, "&");
+}
+
+export function renderHomeJsonLd(record, html) {
+  const site = record.site;
+  const paid = record.offers.filter((o) => o.price > 0);
+  const offerNode = (o) => ({
+    "@type": "Offer",
+    "@id": `${site.url}/#offer-${o.slug}`,
+    name: o.name,
+    url: `${site.url}${o.path}`,
+    price: String(o.price / 100),
+    priceCurrency: record.currency.toUpperCase(),
+    availability: "https://schema.org/InStock",
+    description: `${clockText(record, o)}. ${o.deliverable}`,
+    itemOffered: { "@type": "Service", name: o.name, description: o.who },
+  });
+  const free = record.offers.find((o) => o.price === 0);
+  const graph = [
+    {
+      "@type": "Organization",
+      "@id": `${site.url}/#org`,
+      name: site.name,
+      legalName: site.legal_name,
+      url: `${site.url}/`,
+      email: site.email,
+      founder: { "@type": "Person", name: site.operator },
+      address: { "@type": "PostalAddress", addressLocality: "Sheridan", addressRegion: "WY", addressCountry: "US" },
+      sameAs: [site.github, site.npm],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${site.url}/#site`,
+      url: `${site.url}/`,
+      name: site.name,
+      publisher: { "@id": `${site.url}/#org` },
+    },
+    {
+      "@type": "Service",
+      "@id": `${site.url}/#service`,
+      name: "AI answer correction",
+      description:
+        "Checking what named AI engines answer about a business, and correcting the pages and listings those answers rest on.",
+      url: `${site.url}/`,
+      provider: { "@id": `${site.url}/#org` },
+      areaServed: "Worldwide",
+      offers: [
+        {
+          "@type": "Offer",
+          "@id": `${site.url}/#offer-${free.slug}`,
+          name: free.name,
+          url: `${site.url}${free.path}`,
+          price: "0",
+          priceCurrency: record.currency.toUpperCase(),
+          availability: "https://schema.org/InStock",
+          description: free.deliverable,
+        },
+        ...paid.map(offerNode),
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${site.url}/#faq`,
+      mainEntity: faqFromHtml(html).map((f) => ({
+        "@type": "Question",
+        name: f.question,
+        acceptedAnswer: { "@type": "Answer", text: f.answer },
+      })),
+    },
+  ];
+  return JSON.stringify({ "@context": "https://schema.org", "@graph": graph }, null, 2);
+}
+
+export function injectJsonLd(html, jsonld) {
+  const block = `<!-- JSONLD:START -->\n<script type="application/ld+json">\n${jsonld}\n</script>\n<!-- JSONLD:END -->`;
+  return html.replace(/<!-- JSONLD:START -->[\s\S]*?<!-- JSONLD:END -->/, block);
+}
+
 function main() {
   const record = offers();
   const routeRecord = routes();
@@ -96,6 +199,12 @@ function main() {
   const llmsPath = path.join(root, "client/public/llms.txt");
   fs.writeFileSync(sitemapPath, renderSitemap(routeRecord));
   fs.writeFileSync(llmsPath, renderLlmsTxt(record, routeRecord));
+
+  const homePath = path.join(root, "client/public/home.html");
+  if (fs.existsSync(homePath)) {
+    const html = fs.readFileSync(homePath, "utf8");
+    fs.writeFileSync(homePath, injectJsonLd(html, renderHomeJsonLd(record, html)));
+  }
   console.log(`[machine-layer] wrote ${routeRecord.routes.length} sitemap URLs and llms.txt from shared/offers.json v${record.version}`);
 }
 

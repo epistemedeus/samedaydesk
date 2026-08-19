@@ -45,7 +45,10 @@
       "deliverable": "The report object in the section order of the published sample: the frozen buyer-question panel across named engines, a defect register in buyer words, the cross-surface consistency matrix, and the file set.",
       "refund": "Cash refund on four printed classes, claimable within 14 days of delivery. The report stays delivered either way.",
       "exclusion": "Diagnosis and files. We do not implement on this SKU. Implementation is the $2,400 sprint.",
-      "refund_instruments": ["A", "B"]
+      "refund_instruments": [
+        "A",
+        "B"
+      ]
     },
     {
       "slug": "correction_sprint",
@@ -59,7 +62,9 @@
       "deliverable": "Canonical fact page live, structured data valid, crawlers unblocked, named first-party defects closed, third-party mismatches submitted, a day 10 measurement, and warranty rechecks at day 30 and day 90.",
       "refund": "Acceptance is artifacts, not a model output. The day 30 rule and the classes it never fires for are printed in the terms.",
       "exclusion": "Bounded implementation of a frozen list. This is not a retainer and not a citation guarantee.",
-      "refund_instruments": ["C"]
+      "refund_instruments": [
+        "C"
+      ]
     },
     {
       "slug": "correction_sprint_plus",
@@ -69,11 +74,13 @@
       "path": "/pay/sprint-plus",
       "clock_key": "plus_days",
       "clock_text": "{n} business days from complete access",
-      "who": "For 2 or more location entities, or 2 or more product lines that each need their own prompt panel. One market, one product is the $2,400 sprint.",
+      "who": "For 2 or more location entities, or 2 or more product lines that each need their own prompt panel. One market and one product line is the sprint above.",
       "deliverable": "The same sprint work, run once per entity or product line, with a separate panel and a separate before and after table for each.",
       "refund": "Same acceptance rule as the sprint, applied per entity or product line.",
       "exclusion": "For 2 or more location entities, or 2 or more product lines that each need their own prompt panel. One market, one product is the $2,400 sprint.",
-      "refund_instruments": ["C"]
+      "refund_instruments": [
+        "C"
+      ]
     }
   ],
   "refund_instruments": {
@@ -147,11 +154,40 @@
     "engine_label": "OpenAI {model} API with web search",
     "disclosure": "This card is an API answer with web search on. A consumer ChatGPT session can answer differently.",
     "prompts": [
-      { "slot": "identity", "text": "What does {BUSINESS} do?", "requires": [] },
-      { "slot": "status", "text": "Is {BUSINESS} open? What are their hours?", "requires": [] },
-      { "slot": "service", "text": "Does {BUSINESS} offer {SERVICE}? What services do they offer?", "fallback": "What services does {BUSINESS} offer?", "requires": ["SERVICE"] },
-      { "slot": "head_to_head", "text": "Which should I pick, {BUSINESS} or {COMPETITOR}?", "fallback": "Who is the best {CATEGORY} in {CITY}?", "requires": ["COMPETITOR"] },
-      { "slot": "price", "text": "How much does {BUSINESS} charge for {SERVICE}?", "fallback": "How much does {BUSINESS} charge?", "requires": ["SERVICE"] }
+      {
+        "slot": "identity",
+        "text": "What does {BUSINESS} do?",
+        "requires": []
+      },
+      {
+        "slot": "status",
+        "text": "Is {BUSINESS} open? What are their hours?",
+        "requires": []
+      },
+      {
+        "slot": "service",
+        "text": "Does {BUSINESS} offer {SERVICE}? What services do they offer?",
+        "fallback": "What services does {BUSINESS} offer?",
+        "requires": [
+          "SERVICE"
+        ]
+      },
+      {
+        "slot": "head_to_head",
+        "text": "Which should I pick, {BUSINESS} or {COMPETITOR}?",
+        "fallback": "Who is the best {CATEGORY} in {CITY}?",
+        "requires": [
+          "COMPETITOR"
+        ]
+      },
+      {
+        "slot": "price",
+        "text": "How much does {BUSINESS} charge for {SERVICE}?",
+        "fallback": "How much does {BUSINESS} charge?",
+        "requires": [
+          "SERVICE"
+        ]
+      }
     ]
   }
 }
