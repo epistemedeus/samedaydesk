@@ -66,7 +66,7 @@ test("the gate fails when a banned phrase reaches a money page", () => {
 test("the gate fails when an em dash reaches a file this build owns", () => {
   const dir = fixtureTree();
   const terms = path.join(dir, "client/public/terms.html");
-  fs.writeFileSync(terms, fs.readFileSync(terms, "utf8").replace("<h2>1. Business days</h2>", "<h2>1. Business days — read this</h2>"));
+  fs.writeFileSync(terms, fs.readFileSync(terms, "utf8").replace("<h2>1. Business days</h2>", "<h2>1. Business days \u2014 read this</h2>"));
   const r = runParity(dir);
   assert.equal(r.code, 1);
   assert.match(r.out, /em or en dash/);

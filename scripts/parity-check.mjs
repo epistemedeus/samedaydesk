@@ -116,7 +116,7 @@ for (const rel of tracked) {
   if (DASH_EXCLUDE.some((re) => re.test(rel))) continue;
   const raw = read(rel);
   if (raw == null) continue;
-  const hits = raw.match(/[–—]/g);
+  const hits = raw.match(/[\u2013\u2014]/g);
   if (hits) fail(`${hits.length} em or en dash character(s) in ${rel}`);
 }
 
