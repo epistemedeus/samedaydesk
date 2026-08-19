@@ -2,7 +2,9 @@
 
 Engagement: SDD-SELF-2026-01. Subject: https://samedaydesk.com/
 First fetch (UTC): 2026-08-19T15:30:34Z. All captures in this directory were taken
-inside the same session, before any remediation existed on the production branch.
+inside the same session, before any remediation existed on the production branch. One capture,
+the gateway resource manifest, was taken 21 minutes later at 2026-08-19T15:51:38Z, still before
+any remediation; it carries its own stamp file rather than borrowing the T0 stamp.
 
 Production deploy under test: commit 7978869 (public repo
 https://github.com/epistemedeus/samedaydesk, branch main at capture time).
@@ -45,6 +47,8 @@ live URLs returned at T0.
 | resources.html.txt | https://samedaydesk.com/resources.html | SameDayDeskAudit/0.1 |
 | ai-visibility-audit.html.txt | https://samedaydesk.com/ai-visibility-audit.html | SameDayDeskAudit/0.1 |
 | sitemap-url-status.txt | status code of all 44 sitemap URLs | SameDayDeskAudit/0.1 |
+| x402-gateway-manifest.json.txt | the x402 resource manifest the machine files describe, on the gateway host | SameDayDeskAudit/0.1, fetched 2026-08-19T15:51:38Z |
+| x402-gateway-manifest.fetched-at.txt | the UTC stamp of that one later fetch | n/a |
 | *.headers.txt | response headers for the matching capture | as above |
 
 What was not run: no Lighthouse, no axe, no WAVE, no authenticated surface, no

@@ -113,7 +113,7 @@ rewrite it. Retests are section 13 addenda, and they change only the status fiel
   <dt>Method</dt><dd>SameDayDesk production audit, method version 1.0.0. This is the same section order, card shape, and severity language a paid audit uses.</dd>
   <dt>First fetch (UTC)</dt><dd class="mono">2026-08-19T15:30:34Z</dd>
   <dt>Deploy under test</dt><dd class="mono">7978869</dd>
-  <dt>Surfaces</dt><dd>9 artifacts across 8 URLs (section 4)</dd>
+  <dt>Surfaces</dt><dd>10 artifacts across 9 URLs (section 4)</dd>
   <dt>Lab or field</dt><dd>Field only. Every capture is a fetch of live production. No lab performance run was made, so no lab number is reported.</dd>
   <dt>Overall verdict</dt><dd>As of the stamp above, this site does not meet its own machine-surface consistency rule: the catalog a non-rendering fetcher receives is not the catalog the site sells, and two machine files publish different counts for the same tool set.</dd>
   <dt>Finding counts</dt><dd>High (5): SDD-2026-001, SDD-2026-002, SDD-2026-003, SDD-2026-004, SDD-2026-005. Medium (1): SDD-2026-006. Info (1): SDD-2026-007.</dd>
@@ -155,6 +155,7 @@ files, not a site-wide conformance review. Surfaces outside section 4 were not r
   <li><code>https://samedaydesk.com/resources.html</code></li>
   <li><code>https://samedaydesk.com/ai-visibility-audit.html</code></li>
   <li><code>https://samedaydesk.com/x402</code> first-byte HTML, as one sample of an application route</li>
+  <li>The x402 resource manifest that the machine files above describe, fetched from the gateway host</li>
 </ul>
 <h3>Out of scope</h3>
 <p>Authenticated pages, the checkout and payment flow, email, third-party analytics, the remote MCP
@@ -218,6 +219,7 @@ command. <code>retest-pending</code> is not <code>fixed</code>.</p>
 <tr><td>sitemap.xml</td><td>/sitemap.xml</td><td>curl, then a status sweep of all 44 URLs</td><td class="mono">466fda7af83f&#8230;875247</td><td>Declares which URLs the site wants read</td></tr>
 <tr><td>Resources page</td><td>/resources.html</td><td>curl</td><td class="mono">e4e1a4abfd4a&#8230;bbfcc2</td><td>Human-facing index of the same tools the machine files count</td></tr>
 <tr><td>Standalone sales page</td><td>/ai-visibility-audit.html</td><td>curl</td><td class="mono">be2aee89ccd0&#8230;005b2f</td><td>Publishes prices and a delivery time for a service the homepage also sells</td></tr>
+<tr><td>Gateway resource manifest</td><td>the x402 manifest this site's machine files describe</td><td>curl, fetched 2026-08-19T15:51:38Z</td><td class="mono">c11b672baf3a&#8230;</td><td>It is the surface the tool counts in SDD-2026-003 claim to describe</td></tr>
 </table>
 </div>
 <p>Full hashes are in <a href="evidence/SHA256SUMS.txt">evidence/SHA256SUMS.txt</a>; the capture
@@ -329,19 +331,23 @@ non-rendering fetcher receives.</strong></p>
   <dt>As of</dt><dd class="mono">2026-08-19T15:30:34Z</dd>
   <dt>Rule</dt><dd class="mono">SDD-R-COUNT-PARITY</dd>
   <dt>Expected</dt><dd>Every machine surface that states how many tools exist states the same number, or states none.</dd>
-  <dt>Observed</dt><dd>Two counts are published for the paid gateway and three for the free tools. The agent card says eight; <code>llms.txt</code> and the rendered <code>/x402</code> page say twelve. For the free tools, the hub page links 7, <code>llms.txt</code> names 3, and the resources page names 2 plus the hub.</dd>
+  <dt>Observed</dt><dd>Three different counts are published for the same paid gateway, and the live gateway manifest matches none of them. The resources page says seven, the agent card says eight, and both <code>llms.txt</code> and the rendered <code>/x402</code> page say twelve. The gateway's own manifest, fetched the same day, publishes 23 paid resources. Separately, the free tools are counted three ways: the hub page links 7, <code>llms.txt</code> names 3, and the resources page names 2 plus the hub.</dd>
 </dl>
 <p><strong>Evidence.</strong> Quoted from the captured bodies:</p>
-<pre><code>agent-card.json : "Discovers eight exact-price x402 data and risk actions, ..."
+<pre><code>resources.html  : "x402 MCP data gateway: seven paid data tools on Base mainnet ..."
+agent-card.json : "Discovers eight exact-price x402 data and risk actions, ..."
 llms.txt        : "Twelve pay-per-call HTTP and MCP tools accepting both x402 ..."
-/x402 rendered  : "Twelve focused calls, from $0.02"</code></pre>
-<p>Full numbers are in the matrix at section 8.</p>
+/x402 rendered  : "Twelve focused calls, from $0.02"
+gateway manifest: 23 items, 23 distinct routes (fetched 2026-08-19T15:51:38Z)</code></pre>
+<p>Full numbers are in the matrix at section 8. The gateway manifest was fetched 21 minutes
+after the T0 freeze, still before any remediation; its own fetch stamp is published beside it in
+the evidence pack.</p>
 <dl>
-  <dt>Repro</dt><dd><code>curl -sS https://samedaydesk.com/.well-known/agent-card.json | grep -o eight</code> and <code>curl -sS https://samedaydesk.com/llms.txt | grep -o Twelve</code></dd>
+  <dt>Repro</dt><dd><code>curl -sS https://samedaydesk.com/.well-known/agent-card.json | grep -o eight</code>, <code>curl -sS https://samedaydesk.com/llms.txt | grep -o Twelve</code>, <code>curl -sS https://samedaydesk.com/resources.html | grep -o "seven paid data tools"</code>, and count the manifest with <code>curl -sS https://x402-url-extractor-production.up.railway.app/.well-known/x402 | python3 -c "import json,sys;print(len(json.load(sys.stdin)['items']))"</code></dd>
   <dt>Status</dt><dd><strong>accepted</strong></dd>
   <dt>Owner</dt><dd>Site operator</dd>
   <dt>Clock</dt><dd class="mono">2026-09-02</dd>
-  <dt>Residual</dt><dd>Choosing one canonical count is the close. Until then the canonical column in section 8 is deliberately blank rather than backfilled.</dd>
+  <dt>Residual</dt><dd>The close is to stop publishing a count that a separate service can change without this site knowing, and to point at the manifest instead. Until the close, the canonical column in section 8 is deliberately blank rather than backfilled.</dd>
   <dt>Not this</dt><dd>Not a CVE. Not a user-data exposure. The impact is that an agent reading two files gets two answers to one question.</dd>
   <dt>Challenge</dt><dd><a href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a>, subject line <code>SDD-2026-003</code>.</dd>
 </dl>
@@ -461,7 +467,7 @@ architectural cause.</strong></p>
 <div class="scroll">
 <table>
 <tr><th>Claim</th><th>llms.txt</th><th>Agent card</th><th>/x402 (rendered)</th><th>/resources.html</th><th>Homepage (rendered)</th><th>Homepage (first-byte JSON-LD)</th><th>Homepage (first-byte noscript)</th><th>Canonical</th></tr>
-<tr><td>Paid gateway tool count</td><td>twelve</td><td>eight</td><td>twelve</td><td>not stated</td><td>not stated</td><td>not stated</td><td>not stated</td><td>(blank until the close)</td></tr>
+<tr><td>Paid gateway tool count</td><td>twelve</td><td>eight</td><td>twelve</td><td>seven</td><td>not stated</td><td>not stated</td><td>not stated</td><td>(blank until the close. The gateway manifest itself published 23 items on this date.)</td></tr>
 <tr><td>Free tools linked</td><td>3</td><td>0</td><td>0</td><td>2 plus the hub</td><td>8 links via the hub</td><td>0</td><td>8</td><td>(blank until the close)</td></tr>
 <tr><td>Purchasable services</td><td>1 named, from $199</td><td>0</td><td>0</td><td>0</td><td>12 plus an open amount</td><td>8</td><td>8</td><td>(blank until the close)</td></tr>
 <tr><td>Tagline or one-liner</td><td>same-day research, data, code, automation desk</td><td>machine commerce storefront</td><td>machine tools on Base</td><td>guides, reports, free tools</td><td>hand off the busywork</td><td>same-day desk for data, code, AI builds and copy</td><td>hand off the busywork</td><td>(blank until the close)</td></tr>

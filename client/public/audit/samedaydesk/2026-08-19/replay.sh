@@ -67,13 +67,20 @@ get "/llms.txt" llms.txt
 get "/.well-known/agent-card.json" agent-card.json
 hashline "GET /llms.txt" llms.txt 2d8fd1421a3d708e4c6ba2e5d3339a1965ac75a0dd8a0968748ef1c25786784a
 hashline "GET /.well-known/agent-card.json" agent-card.json 0b6f1659c4dd1f52df7bc4bff8fd51132c00890c630852374a083217a36b3b0c
+get "/resources.html" resources-count.html
 card_eight=$(grep -c -i 'eight' "$TMP/agent-card.json" || true)
 llms_twelve=$(grep -c -i 'twelve' "$TMP/llms.txt" || true)
-echo "  agent card says 'eight': $card_eight match(es); llms.txt says 'twelve': $llms_twelve match(es)"
-if [ "$card_eight" -gt 0 ] && [ "$llms_twelve" -gt 0 ]; then
-  fail "the agent card and llms.txt still publish different counts for the same tool set"
+res_seven=$(grep -c -i 'seven paid data tools' "$TMP/resources-count.html" || true)
+echo "  agent card says 'eight': $card_eight   llms.txt says 'twelve': $llms_twelve   resources says 'seven paid data tools': $res_seven"
+echo "  (at T0 the gateway manifest itself published 23 items, so all three site numbers were wrong)"
+published=0
+[ "$card_eight" -gt 0 ] && published=$((published+1))
+[ "$llms_twelve" -gt 0 ] && published=$((published+1))
+[ "$res_seven" -gt 0 ] && published=$((published+1))
+if [ "$published" -gt 1 ]; then
+  fail "$published site surfaces still publish a hardcoded count for the same tool set"
 else
-  pass "the two surfaces no longer publish contradicting counts"
+  pass "the site no longer publishes contradicting counts for the gateway tool set"
 fi
 echo
 
