@@ -10,7 +10,43 @@ import { spawn } from "node:child_process";
 const PORT = 4197;
 const BASE = `http://127.0.0.1:${PORT}`;
 const MEASURE_FILE = path.join(os.tmpdir(), `sdd-home-measure-test-${PORT}.json`);
+const PULSE_FILE = path.join(os.tmpdir(), `sdd-pulse-test-${PORT}.json`);
 let child;
+
+function pidAlive(pid) {
+  if (!pid) return false;
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function reapChild(proc, ms = 1000) {
+  const pid = proc?.pid;
+  if (!pid) return;
+  try {
+    process.kill(pid, "SIGTERM");
+  } catch {
+    return;
+  }
+  const termDeadline = Date.now() + 400;
+  while (Date.now() < termDeadline && pidAlive(pid)) {
+    await new Promise((r) => setTimeout(r, 50));
+  }
+  if (pidAlive(pid)) {
+    try {
+      process.kill(pid, "SIGKILL");
+    } catch {
+      /* already gone */
+    }
+  }
+  const killDeadline = Date.now() + ms;
+  while (Date.now() < killDeadline && pidAlive(pid)) {
+    await new Promise((r) => setTimeout(r, 20));
+  }
+}
 
 before(async () => {
   child = spawn(process.execPath, ["server/index.js"], {
@@ -24,6 +60,7 @@ before(async () => {
       ADMIN_METRICS_TOKEN: "",
       HOMEPAGE_MEASURE_TOKEN: "",
       HOMEPAGE_MEASURE_FILE: MEASURE_FILE,
+      PULSE_FILE,
     },
     stdio: "ignore",
   });
@@ -38,10 +75,12 @@ before(async () => {
   throw new Error("server did not start");
 });
 
-after(() => {
-  child?.kill();
+after(async () => {
+  const pid = child?.pid;
+  await reapChild(child);
   fs.rmSync(MEASURE_FILE, { force: true });
-  fs.rmSync(`${MEASURE_FILE}.${child?.pid}.tmp`, { force: true });
+  fs.rmSync(`${MEASURE_FILE}.${pid}.tmp`, { force: true });
+  fs.rmSync(PULSE_FILE, { force: true });
 });
 
 test("the homepage is a document, not an app shell", async () => {
