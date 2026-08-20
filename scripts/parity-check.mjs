@@ -8,7 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { offers, routes, clockText, renderSitemap, renderLlmsTxt, renderHomeJsonLd, faqFromHtml, stripTags, decodeEntities, toolCountOf } from "./generate-machine-layer.mjs";
+import { offers, routes, clockText, renderSitemap, renderLlmsTxt, renderHomeJsonLd, stripTags, decodeEntities, toolCountOf } from "./generate-machine-layer.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
@@ -159,54 +159,99 @@ const home = read("client/public/home.html");
 if (!home) {
   notes.push("client/public/home.html not present: homepage assertions skipped");
 } else {
-  for (const offer of record.offers) {
-    const label = offer.price_label;
-    const hits = (home.match(new RegExp(label.replace(/[$.*+?^{}()|[\]\\]/g, "\\$&"), "g")) || []).length;
-    if (offer.price > 0 && hits !== 1) fail(`price ${label} appears ${hits} times in home.html, expected exactly once`);
-    if (offer.price === 0 && hits < 1) fail(`the free offer label is missing from home.html`);
+  const page = record.homepage || {};
+  const visibleHome = ownVoice(home);
+  const required = [
+    page.eyebrow,
+    page.h1 || record.copy.h1,
+    page.subhead || record.copy.subhead,
+    page.primary_cta,
+    page.primary_href,
+    page.secondary_cta,
+    page.secondary_href,
+    page.trust,
+    page.policy,
+    page.proof_h2,
+    page.how_h2,
+    page.hero_ticket?.stamp,
+    page.hero_ticket?.figure,
+    page.hero_ticket?.rail,
+    page.hero_ticket?.asset,
+    page.hero_ticket?.href,
+    page.hero_ticket?.footnote,
+  ].filter(Boolean);
+  for (const snippet of required) {
+    if (!home.includes(snippet)) fail(`home.html is missing binding copy: ${snippet}`);
   }
-  const strays = [...home.matchAll(/\$[0-9][0-9,]*/g)].map((m) => m[0]);
-  const allowedLabels = new Set(record.offers.map((o) => o.price_label));
-  for (const s of strays) if (!allowedLabels.has(s)) fail(`home.html carries a price outside the record: ${s}`);
-  // Our own prices may never be written as a range or a subscription. The comparison table
-  // is allowed to describe other categories' price bands, which is what it is for.
-  if (/from \$[0-9]/i.test(ownVoice(home))) fail("home.html prices something as a from-price");
-  if (/\$[0-9][0-9,]*\s*(\/\s*mo\b|per month|a month|monthly)/i.test(ownVoice(home))) fail("home.html carries a monthly price for our own work");
+  if (!home.includes(`<h1>${page.h1 || record.copy.h1}</h1>`)) fail("home.html does not carry the approved H1 element");
+  if (!home.includes('id="main"')) fail("home.html lost main landmark id");
+  if (!home.includes("Skip to content")) fail("home.html lost the skip link");
+  if (/<div id="root"/.test(home)) fail("home.html contains an empty app shell");
+  if (home.includes("<!--CTA_BUTTON-->")) fail("home.html still has the report CTA token");
+  if (/<form[\s\S]*action="\/report"/.test(home)) fail("home.html still posts the report form");
+  if (/<details class="faq"/.test(home)) fail("home.html still carries a homepage FAQ");
+  if (/<table>/i.test(home)) fail("home.html still carries a table");
 
-  for (const offer of record.offers) {
-    const clock = clockText(record, offer);
-    if (offer.clock_key && !home.includes(clock)) fail(`home.html does not print the clock "${clock}" for ${offer.slug}`);
-    if (!home.includes(offer.who)) fail(`home.html does not carry the record's "who it is for" text for ${offer.slug}`);
-    if (!home.includes(offer.deliverable)) fail(`home.html does not carry the record's deliverable text for ${offer.slug}`);
+  const homepagePrices = ["$250", "$29", "$49", "$490", "$2,400", "$4,800", "$99", "$189", "$199", "$299", "$399", "$59"];
+  for (const price of homepagePrices) {
+    if (home.includes(price) || visibleHome.includes(price)) fail(`human price ${price} on /`);
   }
-  if (!home.includes(record.clock_sentence)) fail("home.html does not print the clock sentence");
-  if (!home.includes(record.copy.h1) && !home.includes(record.copy.h1_fallback)) fail("home.html does not carry an approved H1");
-  if (!home.includes(record.copy.subhead)) fail("home.html does not carry the approved subhead");
-  if (!home.includes("<!--CTA_BUTTON-->")) fail("home.html lost the CTA token, so the button cannot switch with the panel state");
+  if (/\$[0-9]/.test(home)) fail("home.html carries a human dollar price");
+  if (/from \$[0-9]/i.test(visibleHome)) fail("home.html prices something as a from-price");
+  if (/\$[0-9][0-9,]*\s*(\/\s*mo\b|per month|a month|monthly)/i.test(visibleHome)) fail("home.html carries a monthly price for our own work");
 
-  // Structured data must be exactly what the record and the visible FAQ generate.
+  const homepageBans = [
+    "What we do not do",
+    "How it compares",
+    "Is this a real company",
+    "Has anyone actually used you",
+    "ChatGPT still quotes a price you changed two years ago.",
+    "AI is still selling a service you retired last year.",
+    "Buy the audit",
+    "Buy the sprint",
+    "AggregateRating",
+    "OfferCatalog",
+    "registered legal entity",
+    "Most popular",
+  ];
+  for (const phrase of homepageBans) {
+    if (visibleHome.toLowerCase().includes(phrase.toLowerCase()) || home.includes(phrase)) {
+      fail(`banned homepage phrase "${phrase}" in home.html`);
+    }
+  }
+  for (const row of page.proof || []) {
+    if (!home.includes(row.stamp)) fail(`home.html is missing proof stamp ${row.stamp}`);
+    if (!home.includes(row.title)) fail(`home.html is missing proof title ${row.title}`);
+    if (!home.includes(row.figure)) fail(`home.html is missing proof figure ${row.figure}`);
+    if (!home.includes(row.href)) fail(`home.html is missing proof href ${row.href}`);
+  }
+  if ((page.proof || []).length > 3) fail("homepage proof record has more than three rows");
+  for (const step of page.how || []) {
+    if (!home.includes(step.title)) fail(`home.html is missing how title ${step.title}`);
+    if (!home.includes(step.body)) fail(`home.html is missing how body ${step.body}`);
+  }
+
   const expected = renderHomeJsonLd(record, home);
   const actual = home.match(/<script type="application\/ld\+json">\s*([\s\S]*?)\s*<\/script>/)?.[1];
   if (!actual) fail("home.html has no JSON-LD block");
   else if (actual.trim() !== expected.trim()) fail("home.html JSON-LD is stale. Run scripts/generate-machine-layer.mjs.");
   else {
     const graph = JSON.parse(actual)["@graph"];
-    const service = graph.find((n) => n["@type"] === "Service");
-    for (const offer of record.offers) {
-      const node = service.offers.find((o) => o.name === offer.name);
-      if (!node) fail(`JSON-LD has no offer node for ${offer.name}`);
-      else if (node.price !== String(offer.price / 100)) fail(`JSON-LD price for ${offer.name} is ${node.price}, record says ${offer.price / 100}`);
-    }
+    const types = graph.map((n) => n["@type"]);
+    if (types.includes("FAQPage")) fail("homepage JSON-LD still has FAQPage");
+    if (types.includes("Service")) fail("homepage JSON-LD still has Service");
+    if (types.includes("Offer")) fail("homepage JSON-LD still has Offer");
+    if (types.includes("OfferCatalog")) fail("homepage JSON-LD still has OfferCatalog");
+    if (types.includes("AggregateRating")) fail("homepage JSON-LD still has AggregateRating");
+    if (!types.includes("Organization") || !types.includes("WebSite")) fail("homepage JSON-LD must contain Organization and WebSite");
+    if (types.length !== 2) fail(`homepage JSON-LD has unexpected nodes: ${types.join(", ")}`);
     const org = graph.find((n) => n["@type"] === "Organization");
     if (org.legalName !== record.site.legal_name) fail("JSON-LD legalName does not match the record");
     if (org.founder?.name !== record.site.operator) fail("JSON-LD founder does not match the record");
-
-    const faqNodes = graph.find((n) => n["@type"] === "FAQPage").mainEntity.map((q) => q.name);
-    const visible = faqFromHtml(home).map((f) => f.question);
-    const wanted = [...record.faq_owner, ...record.faq_vendor];
-    for (const q of wanted) if (!visible.includes(q)) fail(`the homepage does not ask the research question verbatim: ${q}`);
-    for (const q of faqNodes) if (!visible.includes(q)) fail(`FAQ schema asks a question the page does not: ${q}`);
-    if (faqNodes.length !== visible.length) fail(`FAQ schema has ${faqNodes.length} questions, the page shows ${visible.length}`);
+    const siteNode = graph.find((n) => n["@type"] === "WebSite");
+    if (siteNode.description && siteNode.description !== (page.subhead || record.copy.subhead)) {
+      fail("JSON-LD WebSite description does not match visible homepage subhead");
+    }
   }
 }
 

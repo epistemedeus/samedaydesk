@@ -52,14 +52,27 @@ test("the client mirror matches the record", () => {
   }
 });
 
-test("the ten owner questions and eight vendor questions are present verbatim", () => {
-  assert.equal(record.faq_owner.length, 10);
-  assert.equal(record.faq_vendor.length, 8);
+test("the homepage carries the binding desk copy and no human prices", () => {
   const home = fs.readFileSync(path.join(process.cwd(), "client/public/home.html"), "utf8");
-  for (const q of [...record.faq_owner, ...record.faq_vendor]) {
-    const escaped = q.replace(/"/g, "&quot;").replace(/&(?!quot;)/g, "&amp;");
-    assert.ok(home.includes(q) || home.includes(escaped), `home.html is missing: ${q}`);
+  const page = record.homepage;
+  assert.equal(page.h1, "A desk for agent-era commerce.");
+  assert.ok(home.includes(`<h1>${page.h1}</h1>`));
+  assert.ok(home.includes(page.eyebrow));
+  assert.ok(home.includes(page.subhead));
+  assert.ok(home.includes(page.primary_cta));
+  assert.ok(home.includes(page.primary_href));
+  assert.ok(home.includes(page.secondary_cta));
+  assert.ok(home.includes(page.secondary_href));
+  assert.ok(home.includes(page.trust));
+  assert.ok(home.includes(page.policy));
+  assert.ok(home.includes("23 paid actions"));
+  assert.ok(home.includes("8.00 USDC"));
+  for (const price of ["$490", "$2,400", "$4,800", "$250", "$29", "$49"]) {
+    assert.ok(!home.includes(price), `home.html still contains ${price}`);
   }
+  assert.ok(!home.includes("What we do not do"));
+  assert.ok(!home.includes("<div id=\"root\""));
+  assert.ok(!home.includes("<!--CTA_BUTTON-->"));
 });
 
 test("the frozen panel has the five named slots", () => {
