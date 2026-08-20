@@ -1,17 +1,15 @@
 {
-  "display_name": "SameDayDesk",
-  "package_name": "com.samedaydesk.samedaydesk",
-  "version": "3.0.0",
-  "description": "SameDayDesk checks what AI answers say about a business and corrects the pages those answers rest on. This card is identity and documentation only; it publishes no priced offers and no tool count.",
-  "provider": {
-    "organization": "Neomorphic LLC",
-    "operator": "Lucian Constantinescu",
-    "url": "https://samedaydesk.com/",
-    "email": "contact@samedaydesk.com"
-  },
-  "documentation_url": "https://samedaydesk.com/for-agents",
-  "mcp_endpoint": "https://samedaydesk.com/mcp",
-  "llms_txt": "https://samedaydesk.com/llms.txt",
+  "description": "Discovers eight exact-price x402 data and risk actions, including Morpho borrower stress, and returns their Base USDC payment contracts.",
   "capabilities": [],
-  "skills": []
+  "package_name": "com.samedaydesk.samedaydesk-machine-commerce-s",
+  "display_name": "SameDayDesk Machine Commerce Storefront",
+  "version": "1.0.0",
+  "category": "General",
+  "target_audience": "General",
+  "openapi_url": "https://agents.samedaydesk.com/a2a",
+  "skills": [],
+  "metadata": {
+    "generated_by": "A2A Global Registry",
+    "generated_at": "2026-08-09T01:59:50.796Z"
+  }
 }

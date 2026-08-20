@@ -1,7 +1,7 @@
 // The three server-side gates. Trust nothing from the client for money or status.
 import { verifySupabaseJwt, isSupabaseConfigured } from "../lib/supabase-admin.js";
 
-// requireAuth: a valid Supabase access token (Bearer). Derives identity from the token only.
+// requireAuth — a valid Supabase access token (Bearer). Derives identity from the token only.
 export async function requireAuth(req, res, next) {
   if (!isSupabaseConfigured()) return res.status(503).json({ error: "Auth not configured" });
   const h = req.headers.authorization;
@@ -19,14 +19,14 @@ export async function requireAuth(req, res, next) {
   }
 }
 
-// requireVerifiedEmail: the email gate (enforced server-side, not just in the UI). Off until P7.
+// requireVerifiedEmail — the email gate (enforced server-side, not just in the UI). Off until P7.
 export function requireVerifiedEmail(req, res, next) {
   if (!req.uid) return res.status(401).json({ error: "Not authenticated" });
   if (req.emailVerified) return next();
   res.status(403).json({ error: "Email not verified", code: "email_not_verified" });
 }
 
-// requireAdmin: env-pinned uid/email (never a client-writable role flag).
+// requireAdmin — env-pinned uid/email (never a client-writable role flag).
 export function requireAdmin(req, res, next) {
   const adminEmail = process.env.ADMIN_EMAIL;
   const adminUid = process.env.ADMIN_UID;

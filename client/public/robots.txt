@@ -1,4 +1,4 @@
-# SameDayDesk. AI search engines and crawlers are welcome.
+# SameDayDesk — AI search engines and crawlers are welcome.
 User-agent: *
 Allow: /
 
@@ -19,12 +19,6 @@ User-agent: Claude-Web
 Allow: /
 
 User-agent: anthropic-ai
-Allow: /
-
-User-agent: Claude-SearchBot
-Allow: /
-
-User-agent: Claude-User
 Allow: /
 
 User-agent: PerplexityBot

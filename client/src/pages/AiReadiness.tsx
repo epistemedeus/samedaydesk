@@ -41,7 +41,7 @@ export default function AiReadiness() {
   // its own title + description so search engines (which render JS) rank it for its query.
   useEffect(() => {
     const prevTitle = document.title;
-    document.title = "Free AI Readiness Checker: is your site visible to ChatGPT and Perplexity? | SameDayDesk";
+    document.title = "Free AI Readiness Checker — is your site visible to ChatGPT & Perplexity? | SameDayDesk";
     const meta = document.querySelector('meta[name="description"]');
     const prevDesc = meta?.getAttribute("content") ?? null;
     meta?.setAttribute(

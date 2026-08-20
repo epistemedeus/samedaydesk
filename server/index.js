@@ -1,4 +1,4 @@
-// SameDayDesk single Express process.
+// SameDayDesk — single Express process.
 // Serves /api/* and (in production) the built Vite SPA from client/dist.
 // Load-bearing order: RAW body for webhooks BEFORE express.json(); SPA fallback last.
 import express from "express";
@@ -17,12 +17,6 @@ import resendWebhookRouter from "./routes/resend-webhook.js";
 import pulseRouter from "./routes/pulse.js";
 import mcpRouter from "./routes/mcp.js";
 import { pulseMiddleware } from "./lib/pulse.js";
-import { sendPage } from "./lib/pages.js";
-import intakeRouter from "./routes/intake.js";
-import reportRouter from "./routes/report.js";
-import metricsRouter from "./routes/metrics.js";
-import { attrMiddleware } from "./lib/attr.js";
-import { startAbandonedSweep } from "./lib/abandoned.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === "production";
@@ -50,9 +44,6 @@ app.use((req, res, next) => {
 const RETIRED_301 = new Map([
   // Near-duplicate of the AI-citation checklist; folded into the well-linked hub page.
   ["/guides/how-to-get-cited-by-ai-search-2026.html", "/guides/get-cited-by-ai-search.html"],
-  // The standalone sales page for the retired audit ladder. Same intent as the homepage
-  // offer table, so it redirects rather than 410s.
-  ["/ai-visibility-audit.html", "/"],
 ]);
 app.use((req, res, next) => {
   if (req.method === "GET" || req.method === "HEAD") {
@@ -71,49 +62,26 @@ function captureRaw(req, _res, next) {
 app.use("/api/stripe/webhook", express.raw({ type: "application/json" }), captureRaw);
 app.use("/api/webhooks/resend", express.raw({ type: "application/json" }), captureRaw);
 
-// 2) Everything else parses JSON normally. Form posts arrive urlencoded, because every
-//    money and intake form on this site works without JavaScript.
+// 2) Everything else parses JSON normally.
 app.use(express.json({ limit: "1mb" }));
-app.use(express.urlencoded({ extended: false, limit: "1mb" }));
 
 // 2b) In-memory, no-PII traffic analytics (records page/content GETs). Must run
 //     before the routers so it sees every request, including /scan and the SPA.
 app.use(pulseMiddleware);
 
-// 2c) First-touch attribution cookie: referrer host, landing path, UTC date. No identifier.
-app.use(attrMiddleware);
-
 // 3) API routes.
 app.use("/api", healthRouter);
 app.use("/api/pulse", pulseRouter);
-app.use("/api/metrics", metricsRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/teaser", teaserRouter);
 app.use("/api/tools", toolsRouter);
 app.use("/api/checkout", checkoutRouter);
-app.use("/api/intake", intakeRouter);
 app.use("/api/uploads", uploadsRouter);
 app.use("/api/stripe", stripeWebhookRouter);
 app.use("/api/webhooks/resend", resendWebhookRouter);
 
 // Unknown /api route → JSON 404 (never fall through to the SPA shell).
 app.use("/api", (_req, res) => res.status(404).json({ error: "Not found" }));
-
-// Hand-authored static documents, served ahead of express.static so the app shell never
-// answers for them. These carry the offer facts in first-byte HTML.
-app.get("/", sendPage("home.html"));
-app.get("/terms", sendPage("terms.html"));
-app.get("/methods", sendPage("methods.html"));
-app.get("/for-agents", sendPage("for-agents.html"));
-app.get("/pay/audit", sendPage("pay/audit.html"));
-app.get("/pay/sprint", sendPage("pay/sprint.html"));
-app.get("/pay/sprint-plus", sendPage("pay/sprint-plus.html"));
-
-// The free report: form on GET, streamed two-phase result on POST.
-app.use("/report", reportRouter);
-
-// Post-payment intake, keyed by the Stripe session id (server rendered, no JavaScript).
-app.use("/intake", intakeRouter);
 
 // Server-rendered shareable proof page (must be before the SPA fallback).
 app.use("/scan", scanRouter);
@@ -148,20 +116,11 @@ if (isProd) {
   );
   // Clean URL for the SkillGuard landing page (the CLI/README funnel target).
   app.get("/skillguard", (_req, res) => res.sendFile(path.join(CLIENT_DIST, "skillguard.html")));
-
-  // The SPA owns exactly these paths. Everything else that reached this point does not
-  // exist, so it gets a real 404 instead of a 200 carrying the homepage document
-  // (published self-audit, finding SDD-2026-006).
-  const SPA_PATHS = new Set(["/tools/ai-readiness", "/x402", "/login", "/signup", "/dashboard", "/checkout", "/privacy"]);
   app.use((req, res, next) => {
-    if (req.method !== "GET" && req.method !== "HEAD") return next();
-    if (SPA_PATHS.has(req.path)) return res.sendFile(path.join(CLIENT_DIST, "index.html"));
-    res.status(404).sendFile(path.join(CLIENT_DIST, "404.html"));
+    if (req.method !== "GET") return next();
+    res.sendFile(path.join(CLIENT_DIST, "index.html"));
   });
 }
-
-// Daily one-shot recovery for paid orders whose intake is still open.
-startAbandonedSweep();
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {

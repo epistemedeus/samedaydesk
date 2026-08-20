@@ -2,7 +2,7 @@ import { Router } from "express";
 import dns from "node:dns/promises";
 import net from "node:net";
 
-// Free "AI Readiness Checker": a zero-marginal-cost lead magnet. Given a URL it fetches
+// Free "AI Readiness Checker" — a zero-marginal-cost lead magnet. Given a URL it fetches
 // the page + robots.txt and checks whether AI search engines (ChatGPT/Claude/Perplexity/
 // Gemini) can crawl + understand the site, then returns a score + concrete fixes. The deep
 // version (real citation testing vs competitors) is the paid AI-Search Visibility Audit.
@@ -306,7 +306,7 @@ router.get("/llms-txt", async (req, res) => {
     const pages = [...head, ...tail];
 
     const hostname = new URL(origin).hostname;
-    const siteName = (h.title || hostname).split(/[|\u2013\u2014:\u00b7]|\s-\s/)[0].trim().slice(0, 60) || hostname;
+    const siteName = (h.title || hostname).split(/[|–—:·]|\s-\s/)[0].trim().slice(0, 60) || hostname;
     let out = `# ${siteName}\n\n`;
     if (h.description) out += `> ${h.description.replace(/\s+/g, " ").trim()}\n\n`;
     out += `## Pages\n\n`;
