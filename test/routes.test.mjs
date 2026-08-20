@@ -1,16 +1,32 @@
 import test, { before, after } from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { spawn } from "node:child_process";
 
 // Boots the real server with no environment keys at all, which is also the shape of the
 // production smoke: everything must serve, and every integration must degrade in the open.
-const PORT = 4187;
+const PORT = 4197;
 const BASE = `http://127.0.0.1:${PORT}`;
+const MEASURE_FILE = path.join(os.tmpdir(), `sdd-home-measure-test-${PORT}.json`);
+const PULSE_FILE = path.join(os.tmpdir(), `sdd-pulse-test-${PORT}.json`);
 let child;
 
 before(async () => {
   child = spawn(process.execPath, ["server/index.js"], {
-    env: { ...process.env, NODE_ENV: "production", PORT: String(PORT), OPENAI_API_KEY: "", TURNSTILE_SITE_KEY: "", TURNSTILE_SECRET_KEY: "", ADMIN_METRICS_TOKEN: "" },
+    env: {
+      ...process.env,
+      NODE_ENV: "production",
+      PORT: String(PORT),
+      OPENAI_API_KEY: "",
+      TURNSTILE_SITE_KEY: "",
+      TURNSTILE_SECRET_KEY: "",
+      ADMIN_METRICS_TOKEN: "",
+      HOMEPAGE_MEASURE_TOKEN: "",
+      HOMEPAGE_MEASURE_FILE: MEASURE_FILE,
+      PULSE_FILE,
+    },
     stdio: "ignore",
   });
   for (let i = 0; i < 60; i++) {
@@ -25,18 +41,18 @@ before(async () => {
 });
 
 after(async () => {
-  if (!child) return;
-  if (child.exitCode != null || child.signalCode != null) return;
-  const pid = child.pid;
-  child.kill("SIGTERM");
+  const pid = child?.pid;
   try {
-    await new Promise((resolve, reject) => {
-      const t = setTimeout(() => reject(new Error(`preview pid ${pid} ignored SIGTERM`)), 4000);
-      child.once("exit", () => {
-        clearTimeout(t);
-        resolve();
+    if (child && child.exitCode == null && child.signalCode == null) {
+      child.kill("SIGTERM");
+      await new Promise((resolve, reject) => {
+        const t = setTimeout(() => reject(new Error(`preview pid ${pid} ignored SIGTERM`)), 4000);
+        child.once("exit", () => {
+          clearTimeout(t);
+          resolve();
+        });
       });
-    });
+    }
   } catch (err) {
     try {
       process.kill(pid, "SIGKILL");
@@ -44,6 +60,10 @@ after(async () => {
       /* already gone */
     }
     throw err;
+  } finally {
+    fs.rmSync(MEASURE_FILE, { force: true });
+    if (pid) fs.rmSync(`${MEASURE_FILE}.${pid}.tmp`, { force: true });
+    fs.rmSync(PULSE_FILE, { force: true });
   }
 });
 
@@ -66,6 +86,21 @@ test("a crawler and a browser get the same bytes", async () => {
     fetch(`${BASE}/`, { headers: { "User-Agent": "Mozilla/5.0 Chrome/120 Safari/537.36" } }).then((r) => r.text()),
   ]);
   assert.equal(a, b);
+  assert.equal(a.includes("/i/mail"), false);
+  assert.equal(a.includes("home-measure"), false);
+});
+
+test("POST /i/mail is 204 with no cookie and GET /i/mail does not exist", async () => {
+  const posted = await fetch(`${BASE}/i/mail`, { method: "POST" });
+  assert.equal(posted.status, 204);
+  assert.equal(posted.headers.get("set-cookie"), null);
+  const got = await fetch(`${BASE}/i/mail`);
+  assert.equal(got.status, 404);
+});
+
+test("homepage measurement read is 404 without a token", async () => {
+  const res = await fetch(`${BASE}/api/home-measure`);
+  assert.equal(res.status, 404);
 });
 
 test("retired URLs return their declared status", async () => {

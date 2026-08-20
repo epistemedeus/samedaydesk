@@ -17,12 +17,16 @@ import resendWebhookRouter from "./routes/resend-webhook.js";
 import pulseRouter from "./routes/pulse.js";
 import mcpRouter from "./routes/mcp.js";
 import { persistPulse, pulseMiddleware } from "./lib/pulse.js";
+import { createHomeMeasure } from "./lib/home-measure.js";
 import { sendPage } from "./lib/pages.js";
 import intakeRouter from "./routes/intake.js";
 import reportRouter from "./routes/report.js";
 import metricsRouter from "./routes/metrics.js";
+import { createHomeMeasureRouter } from "./routes/home-measure.js";
 import { attrMiddleware } from "./lib/attr.js";
 import { startAbandonedSweep } from "./lib/abandoned.js";
+
+const homepageMeasure = createHomeMeasure();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === "production";
@@ -80,6 +84,9 @@ app.use(express.urlencoded({ extended: false, limit: "1mb" }));
 //     before the routers so it sees every request, including /scan and the SPA.
 app.use(pulseMiddleware);
 
+// 2b2) Homepage-only daily aggregates. Integer buckets, no IP, cookie, or identity.
+app.use(homepageMeasure.middleware);
+
 // 2c) First-touch attribution cookie: referrer host, landing path, UTC date. No identifier.
 app.use(attrMiddleware);
 
@@ -87,6 +94,7 @@ app.use(attrMiddleware);
 app.use("/api", healthRouter);
 app.use("/api/pulse", pulseRouter);
 app.use("/api/metrics", metricsRouter);
+app.use("/api/home-measure", createHomeMeasureRouter(homepageMeasure));
 app.use("/api/auth", authRouter);
 app.use("/api/teaser", teaserRouter);
 app.use("/api/tools", toolsRouter);
@@ -98,6 +106,10 @@ app.use("/api/webhooks/resend", resendWebhookRouter);
 
 // Unknown /api route → JSON 404 (never fall through to the SPA shell).
 app.use("/api", (_req, res) => res.status(404).json({ error: "Not found" }));
+
+// Homepage mail-CTA sidecar. POST only, 204, no body, no cookie. The live homepage
+// still uses mailto: and does not post here.
+app.post("/i/mail", homepageMeasure.mailIntent);
 
 // Hand-authored static documents, served ahead of express.static so the app shell never
 // answers for them. These carry the offer facts in first-byte HTML.
@@ -184,6 +196,11 @@ function shutdown() {
   shuttingDown = true;
   try {
     persistPulse();
+  } catch {
+    /* never block stop on analytics */
+  }
+  try {
+    homepageMeasure.persist();
   } catch {
     /* never block stop on analytics */
   }

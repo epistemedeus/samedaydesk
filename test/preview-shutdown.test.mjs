@@ -60,6 +60,7 @@ function assertPortReusable(port) {
 
 function startPreview(port) {
   const pulseFile = path.join(os.tmpdir(), `sdd-pulse-shutdown-${port}-${process.pid}.json`);
+  const measureFile = path.join(os.tmpdir(), `sdd-home-measure-shutdown-${port}-${process.pid}.json`);
   const child = spawn(process.execPath, ["server/index.js"], {
     cwd: ROOT,
     env: {
@@ -67,6 +68,8 @@ function startPreview(port) {
       NODE_ENV: "production",
       PORT: String(port),
       PULSE_FILE: pulseFile,
+      HOMEPAGE_MEASURE_FILE: measureFile,
+      HOMEPAGE_MEASURE_TOKEN: "",
       OPENAI_API_KEY: "",
       TURNSTILE_SITE_KEY: "",
       TURNSTILE_SECRET_KEY: "",
@@ -75,6 +78,7 @@ function startPreview(port) {
     stdio: "ignore",
   });
   child.pulseFile = pulseFile;
+  child.measureFile = measureFile;
   return child;
 }
 
@@ -97,6 +101,13 @@ async function signalStopsPreview(signal) {
     assertPidGone(pid);
     await assertPortReusable(port);
     assert.equal(fs.existsSync(child.pulseFile), true, "pulse snapshot should persist on shutdown");
+    assert.equal(fs.existsSync(child.measureFile), true, "homepage measure should persist on shutdown");
+    const measure = JSON.parse(fs.readFileSync(child.measureFile, "utf8"));
+    assert.deepEqual(Object.keys(measure).sort(), ["days", "v"]);
+    const day = Object.keys(measure.days)[0];
+    assert.ok(day, "homepage measure should have a UTC day");
+    assert.ok(measure.days[day].crawler_fetch >= 1, "crawler GET / should land in crawler_fetch");
+    assert.equal(JSON.stringify(measure).includes("OAI-SearchBot"), false);
   } catch (err) {
     try {
       process.kill(pid, "SIGKILL");
@@ -107,6 +118,11 @@ async function signalStopsPreview(signal) {
   } finally {
     try {
       fs.unlinkSync(child.pulseFile);
+    } catch {
+      /* absent */
+    }
+    try {
+      fs.unlinkSync(child.measureFile);
     } catch {
       /* absent */
     }
@@ -129,6 +145,7 @@ test("a taken port exits nonzero and does not linger", { timeout: 10000 }, async
     blocker.listen(port, "0.0.0.0", resolve);
   });
   const pulseFile = path.join(os.tmpdir(), `sdd-pulse-eaddr-${port}-${process.pid}.json`);
+  const measureFile = path.join(os.tmpdir(), `sdd-home-measure-eaddr-${port}-${process.pid}.json`);
   const child = spawn(process.execPath, ["server/index.js"], {
     cwd: ROOT,
     env: {
@@ -136,6 +153,8 @@ test("a taken port exits nonzero and does not linger", { timeout: 10000 }, async
       NODE_ENV: "production",
       PORT: String(port),
       PULSE_FILE: pulseFile,
+      HOMEPAGE_MEASURE_FILE: measureFile,
+      HOMEPAGE_MEASURE_TOKEN: "",
       OPENAI_API_KEY: "",
       TURNSTILE_SITE_KEY: "",
       TURNSTILE_SECRET_KEY: "",
@@ -170,6 +189,11 @@ test("a taken port exits nonzero and does not linger", { timeout: 10000 }, async
   } finally {
     try {
       fs.unlinkSync(pulseFile);
+    } catch {
+      /* absent */
+    }
+    try {
+      fs.unlinkSync(measureFile);
     } catch {
       /* absent */
     }
