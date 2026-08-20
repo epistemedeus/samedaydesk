@@ -45,45 +45,39 @@ export function toolCountOf(routeRecord) {
 
 export function renderLlmsTxt(record, routeRecord) {
   const toolCount = toolCountOf(routeRecord);
-  const o = Object.fromEntries(record.offers.map((x) => [x.slug, x]));
-  const audit = o.answer_audit, sprint = o.correction_sprint, plus = o.correction_sprint_plus;
-  const line = (offer) => `- ${offer.name}: ${offer.price_label}, ${clockText(record, offer)}. ${record.site.url}${offer.path}`;
-  return `# ${record.site.name}
+  const site = record.site;
+  const home = record.homepage || {};
+  const h1 = home.h1 || record.copy.h1;
+  const merchant = home.secondary_href || "https://agents.samedaydesk.com/";
+  return `# ${site.name}
 
-> ${record.site.name} checks what AI answers say about a business and corrects the pages those answers rest on. Operated by ${record.site.operator}. Legal entity ${record.site.legal_name}, ${record.site.jurisdiction}.
+> ${site.name} is a desk for agent-era commerce. Operated by ${site.operator}. Legal entity ${site.legal_name}, ${site.jurisdiction}.
 
 This file is optional metadata. Everything below is also in the HTML of the pages it points at.
 
-## Offers and prices
-
-- ${o.free_report.name}: free, no email address required. ${record.site.url}${o.free_report.path}
-${line(audit)}
-${line(sprint)}
-${line(plus)}
-
-Prices are fixed and complete. There is no monthly retainer on this list, no ranking promise, and no citation promise. Delivery clocks start when the intake form is complete, not when payment succeeds.
-
 ## Start here
 
-- [Home](${record.site.url}/): what the service is, the four prices, how it compares, and the questions owners ask.
-- [Free AI Answer Report](${record.site.url}/report): enter a site, get eligibility checks on the next screen and, when the answer panel is running, quoted answers with timestamps.
-- [Published self-audit](${record.site.url}/audit/samedaydesk/2026-08-19/): the same method run against this site, published while the findings were still live, with a hashed evidence pack and a replay script.
-- [Methods](${record.site.url}/methods): the measurement protocol, the frozen question panel, the engines, and the defect words.
-- [Terms](${record.site.url}/terms): clock rules, refund instruments, and what acceptance means.
-- [For agents](${record.site.url}/for-agents): request examples and machine interfaces, as documentation.
+- [Home](${site.url}/): ${h1} No public price list on this page.
+- [Inspect the rails](${merchant}): live x402 and MPP merchant.
+- [Email the desk](mailto:${site.email}): ${home.primary_cta || "Bring the hard part"}.
+- [For agents](${site.url}/for-agents): machine interfaces as documentation.
+- [Published self-audit](${site.url}/audit/samedaydesk/2026-08-19/): frozen 2026-08-19 evidence pack, kept as historical proof, not the current homepage offer.
+- [Terms](${site.url}/terms): legal terms.
+- [Methods](${site.url}/methods): measurement notes for existing checkout pages, not the homepage offer.
 
 ## Free tools
 
 There are ${toolCount} free tools, all listed on one page. No signup on any of them.
 
-- [AI readiness checker](${record.site.url}/tools/ai-readiness)
-- [All ${toolCount} free tools](${record.site.url}/tools/free-seo-ai-tools.html)
+- [AI readiness checker](${site.url}/tools/ai-readiness)
+- [All ${toolCount} free tools](${site.url}/tools/free-seo-ai-tools.html)
 
 ## Identity
 
-- GitHub: ${record.site.github}
-- Checker source: ${record.site.code_repo}
-- Email: ${record.site.email}
+- GitHub: ${site.github}
+- Checker source: ${site.code_repo}
+- Payment policy: ${site.npm}
+- Email: ${site.email}
 
 Last updated: ${record.updated}
 `;
@@ -92,9 +86,8 @@ Last updated: ${record.updated}
 // ---------------------------------------------------------------------------
 // JSON-LD for the homepage.
 //
-// The FAQ nodes are read out of the visible HTML rather than written twice, so a
-// schema question can never say something the page does not. Offer nodes come from
-// the same record the visible price table is checked against.
+// The public homepage has no priced offers and no FAQ. Schema is Organization
+// plus WebSite only, and those facts must also appear in visible copy.
 export function faqFromHtml(html) {
   const out = [];
   const re = /<details class="faq"[^>]*>\s*<summary>([\s\S]*?)<\/summary>\s*<div class="a">([\s\S]*?)<\/div>\s*<\/details>/g;
@@ -117,21 +110,9 @@ export function decodeEntities(s) {
     .replace(/&amp;/g, "&");
 }
 
-export function renderHomeJsonLd(record, html) {
+export function renderHomeJsonLd(record, _html) {
   const site = record.site;
-  const paid = record.offers.filter((o) => o.price > 0);
-  const offerNode = (o) => ({
-    "@type": "Offer",
-    "@id": `${site.url}/#offer-${o.slug}`,
-    name: o.name,
-    url: `${site.url}${o.path}`,
-    price: String(o.price / 100),
-    priceCurrency: record.currency.toUpperCase(),
-    availability: "https://schema.org/InStock",
-    description: `${clockText(record, o)}. ${o.deliverable}`,
-    itemOffered: { "@type": "Service", name: o.name, description: o.who },
-  });
-  const free = record.offers.find((o) => o.price === 0);
+  const home = record.homepage || {};
   const graph = [
     {
       "@type": "Organization",
@@ -149,39 +130,8 @@ export function renderHomeJsonLd(record, html) {
       "@id": `${site.url}/#site`,
       url: `${site.url}/`,
       name: site.name,
+      description: home.subhead || record.copy.subhead,
       publisher: { "@id": `${site.url}/#org` },
-    },
-    {
-      "@type": "Service",
-      "@id": `${site.url}/#service`,
-      name: "AI answer correction",
-      description:
-        "Checking what named AI engines answer about a business, and correcting the pages and listings those answers rest on.",
-      url: `${site.url}/`,
-      provider: { "@id": `${site.url}/#org` },
-      areaServed: "Worldwide",
-      offers: [
-        {
-          "@type": "Offer",
-          "@id": `${site.url}/#offer-${free.slug}`,
-          name: free.name,
-          url: `${site.url}${free.path}`,
-          price: "0",
-          priceCurrency: record.currency.toUpperCase(),
-          availability: "https://schema.org/InStock",
-          description: free.deliverable,
-        },
-        ...paid.map(offerNode),
-      ],
-    },
-    {
-      "@type": "FAQPage",
-      "@id": `${site.url}/#faq`,
-      mainEntity: faqFromHtml(html).map((f) => ({
-        "@type": "Question",
-        name: f.question,
-        acceptedAnswer: { "@type": "Answer", text: f.answer },
-      })),
     },
   ];
   return JSON.stringify({ "@context": "https://schema.org", "@graph": graph }, null, 2);

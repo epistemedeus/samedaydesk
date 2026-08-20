@@ -31,23 +31,39 @@ async function main() {
   const health = await get("/api/health");
   health.status === 200 ? pass("health endpoint", "200") : fail("health endpoint", `status ${health.status}`);
 
-  // 2. Offer facts in first HTML, to a crawler user agent
+  // 2. Homepage identity in first HTML, to a crawler user agent
   const home = await get("/", { ua: UA_CRAWLER });
+  const page = record.homepage || {};
   if (home.status !== 200) fail("homepage", `status ${home.status}`);
   else {
     const h1 = home.text.match(/<h1>([\s\S]*?)<\/h1>/)?.[1]?.trim();
-    h1 === record.copy.h1 || h1 === record.copy.h1_fallback
+    h1 === (page.h1 || record.copy.h1) || h1 === record.copy.h1_fallback
       ? pass("homepage H1 in first HTML", h1)
       : fail("homepage H1 in first HTML", `got ${h1}`);
-    for (const offer of record.offers.filter((o) => o.price > 0)) {
-      const hits = (home.text.match(new RegExp(offer.price_label.replace(/[$.*+?^{}()|[\]\\]/g, "\\$&"), "g")) || []).length;
-      hits === 1 ? pass(`price ${offer.price_label} once in first HTML`) : fail(`price ${offer.price_label} in first HTML`, `${hits} occurrences`);
-    }
-    /<table>/.test(home.text) ? pass("comparison and price tables are real HTML") : fail("tables missing from first HTML");
-    (home.text.match(/<summary>/g) || []).length >= 18
-      ? pass("FAQ answers in first HTML", `${(home.text.match(/<summary>/g) || []).length} questions`)
-      : fail("FAQ answers in first HTML");
-    home.text.includes(record.clock_sentence) ? pass("clock sentence on the homepage") : fail("clock sentence missing from the homepage");
+    const required = [
+      page.eyebrow,
+      page.subhead,
+      page.primary_cta,
+      page.primary_href,
+      page.secondary_cta,
+      page.secondary_href,
+      page.trust,
+      page.policy,
+      page.hero_ticket?.figure,
+      page.hero_ticket?.footnote,
+      "LIVE",
+      "PUBLIC",
+      "SETTLED",
+      "8.00 USDC",
+      '"@type": "Organization"',
+      '"@type": "WebSite"',
+    ].filter(Boolean);
+    const missing = required.filter((snippet) => !home.text.includes(snippet));
+    missing.length ? fail("homepage binding copy in first HTML", missing.join(", ")) : pass("homepage binding copy in first HTML");
+    const banned = ["$490", "$2,400", "$4,800", "$250", "$29", "What we do not do", 'id="root"', "FAQPage", "OfferCatalog", "<!--CTA_BUTTON-->"];
+    const hits = banned.filter((snippet) => home.text.includes(snippet));
+    hits.length ? fail("homepage banned copy in first HTML", hits.join(", ")) : pass("homepage has no banned SKU or FAQ copy");
+    /<table>/i.test(home.text) ? fail("homepage still has a table") : pass("homepage has no comparison or price table");
     home.text.includes("application/ld+json") ? pass("structured data present") : fail("structured data missing");
   }
 
@@ -104,8 +120,8 @@ async function main() {
   const llms = await get("/llms.txt");
   const sitemap = await get("/sitemap.xml");
   const robots = await get("/robots.txt");
-  llms.status === 200 && record.offers.every((o) => llms.text.includes(o.name))
-    ? pass("llms.txt lists the four offers")
+  llms.status === 200 && llms.text.includes(record.copy.h1) && llms.text.includes("https://agents.samedaydesk.com/") && !llms.text.includes("$490")
+    ? pass("llms.txt describes the desk, not a priced catalog")
     : fail("llms.txt", `status ${llms.status}`);
   sitemap.status === 200 && ["/report", "/pay/audit", "/methods", "/terms", "/for-agents"].every((p) => sitemap.text.includes(`<loc>${routeRecord.base}${p}</loc>`))
     ? pass("sitemap carries the money pages")

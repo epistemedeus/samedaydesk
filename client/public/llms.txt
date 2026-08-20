@@ -1,26 +1,18 @@
 # SameDayDesk
 
-> SameDayDesk checks what AI answers say about a business and corrects the pages those answers rest on. Operated by Lucian Constantinescu. Legal entity Neomorphic LLC, Sheridan, Wyoming, United States.
+> SameDayDesk is a desk for agent-era commerce. Operated by Lucian Constantinescu. Legal entity Neomorphic LLC, Sheridan, Wyoming, United States.
 
 This file is optional metadata. Everything below is also in the HTML of the pages it points at.
 
-## Offers and prices
-
-- Free AI Answer Report: free, no email address required. https://samedaydesk.com/report
-- AI Answer Audit: $490, 5 business days from complete intake. https://samedaydesk.com/pay/audit
-- Answer Correction Sprint: $2,400, 15 business days from complete access. https://samedaydesk.com/pay/sprint
-- Correction Sprint Plus: $4,800, 20 business days from complete access. https://samedaydesk.com/pay/sprint-plus
-
-Prices are fixed and complete. There is no monthly retainer on this list, no ranking promise, and no citation promise. Delivery clocks start when the intake form is complete, not when payment succeeds.
-
 ## Start here
 
-- [Home](https://samedaydesk.com/): what the service is, the four prices, how it compares, and the questions owners ask.
-- [Free AI Answer Report](https://samedaydesk.com/report): enter a site, get eligibility checks on the next screen and, when the answer panel is running, quoted answers with timestamps.
-- [Published self-audit](https://samedaydesk.com/audit/samedaydesk/2026-08-19/): the same method run against this site, published while the findings were still live, with a hashed evidence pack and a replay script.
-- [Methods](https://samedaydesk.com/methods): the measurement protocol, the frozen question panel, the engines, and the defect words.
-- [Terms](https://samedaydesk.com/terms): clock rules, refund instruments, and what acceptance means.
-- [For agents](https://samedaydesk.com/for-agents): request examples and machine interfaces, as documentation.
+- [Home](https://samedaydesk.com/): A desk for agent-era commerce. No public price list on this page.
+- [Inspect the rails](https://agents.samedaydesk.com/): live x402 and MPP merchant.
+- [Email the desk](mailto:contact@samedaydesk.com): Bring the hard part.
+- [For agents](https://samedaydesk.com/for-agents): machine interfaces as documentation.
+- [Published self-audit](https://samedaydesk.com/audit/samedaydesk/2026-08-19/): frozen 2026-08-19 evidence pack, kept as historical proof, not the current homepage offer.
+- [Terms](https://samedaydesk.com/terms): legal terms.
+- [Methods](https://samedaydesk.com/methods): measurement notes for existing checkout pages, not the homepage offer.
 
 ## Free tools
 
@@ -33,6 +25,7 @@ There are 7 free tools, all listed on one page. No signup on any of them.
 
 - GitHub: https://github.com/epistemedeus
 - Checker source: https://github.com/epistemedeus/ai-readiness
+- Payment policy: https://www.npmjs.com/package/agent-payment-policy
 - Email: contact@samedaydesk.com
 
-Last updated: 2026-08-19
+Last updated: 2026-08-20

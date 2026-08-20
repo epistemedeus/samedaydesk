@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { offers, renderHomeJsonLd, faqFromHtml, renderSitemap, routes } from "../scripts/generate-machine-layer.mjs";
+import { offers, renderHomeJsonLd, renderSitemap, routes } from "../scripts/generate-machine-layer.mjs";
 
 const root = process.cwd();
 
@@ -33,13 +33,13 @@ test("the gate passes on the real tree", () => {
   assert.match(r.out, /every published surface matches the record/);
 });
 
-test("the gate fails when a price on the page stops matching the record", () => {
+test("the gate fails when a human price appears on the homepage", () => {
   const dir = fixtureTree();
   const home = path.join(dir, "client/public/home.html");
-  fs.writeFileSync(home, fs.readFileSync(home, "utf8").replace("$2,400", "$2,900"));
+  fs.writeFileSync(home, fs.readFileSync(home, "utf8").replace("<h1>A desk for agent-era commerce.</h1>", "<h1>A desk for agent-era commerce. $490</h1>"));
   const r = runParity(dir);
   assert.equal(r.code, 1);
-  assert.match(r.out, /price \$2,400 appears 0 times|carries a price outside the record/);
+  assert.match(r.out, /human price \$490 on \/|human dollar price/);
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
@@ -56,7 +56,7 @@ test("the gate fails when a pay card loses its exclusion line", () => {
 test("the gate fails when a banned phrase reaches a money page", () => {
   const dir = fixtureTree();
   const home = path.join(dir, "client/public/home.html");
-  fs.writeFileSync(home, fs.readFileSync(home, "utf8").replace("<h2>Proof you can check</h2>", "<h2>We will get you cited</h2>"));
+  fs.writeFileSync(home, fs.readFileSync(home, "utf8").replace("<h1>A desk for agent-era commerce.</h1>", "<h1>We will get you cited</h1>"));
   const r = runParity(dir);
   assert.equal(r.code, 1);
   assert.match(r.out, /banned phrase/);
@@ -83,14 +83,14 @@ test("the gate fails when the sitemap drifts from the route manifest", () => {
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
-test("the gate fails when the schema asks a question the page does not", () => {
+test("the gate fails when homepage JSON-LD drifts from the generator", () => {
   const dir = fixtureTree();
   const home = path.join(dir, "client/public/home.html");
   const html = fs.readFileSync(home, "utf8");
-  fs.writeFileSync(home, html.replace("Where are you based?", "Where on earth are you based?"));
+  fs.writeFileSync(home, html.replace('"legalName": "Neomorphic LLC"', '"legalName": "Some Other LLC"'));
   const r = runParity(dir);
   assert.equal(r.code, 1);
-  assert.match(r.out, /JSON-LD is stale|does not ask the research question verbatim/);
+  assert.match(r.out, /JSON-LD is stale|legalName does not match/);
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
@@ -102,14 +102,13 @@ test("the homepage assertions stay quiet when the homepage does not exist yet", 
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
-test("schema questions are read out of the visible page, not written twice", () => {
+test("homepage schema is Organization and WebSite only", () => {
   const record = offers();
   const home = fs.readFileSync(path.join(root, "client/public/home.html"), "utf8");
-  const visible = faqFromHtml(home);
   const jsonld = JSON.parse(renderHomeJsonLd(record, home));
-  const names = jsonld["@graph"].find((n) => n["@type"] === "FAQPage").mainEntity.map((q) => q.name);
-  assert.deepEqual(names, visible.map((v) => v.question));
-  assert.equal(names.length, record.faq_owner.length + record.faq_vendor.length);
+  const types = jsonld["@graph"].map((n) => n["@type"]).sort();
+  assert.deepEqual(types, ["Organization", "WebSite"]);
+  assert.equal(jsonld["@graph"].find((n) => n["@type"] === "Organization").legalName, record.site.legal_name);
 });
 
 test("the sitemap renderer emits every route and nothing else", () => {

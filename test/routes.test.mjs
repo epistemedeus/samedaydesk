@@ -30,8 +30,12 @@ test("the homepage is a document, not an app shell", async () => {
   const res = await fetch(`${BASE}/`, { headers: { "User-Agent": "OAI-SearchBot/1.4" } });
   const html = await res.text();
   assert.equal(res.status, 200);
-  assert.match(html, /<h1>ChatGPT still quotes a price you changed two years ago\.<\/h1>/);
-  for (const price of ["$490", "$2,400", "$4,800"]) assert.ok(html.includes(price), `first HTML is missing ${price}`);
+  assert.match(html, /<h1>A desk for agent-era commerce\.<\/h1>/);
+  assert.ok(html.includes("Bring the hard part"));
+  assert.ok(html.includes("mailto:contact@samedaydesk.com"));
+  assert.ok(html.includes("Inspect the rails"));
+  assert.ok(html.includes("https://agents.samedaydesk.com/"));
+  for (const price of ["$490", "$2,400", "$4,800"]) assert.ok(!html.includes(price), `first HTML still contains ${price}`);
   assert.ok(!html.includes("<div id=\"root\"></div>"), "the app shell answered for the homepage");
 });
 

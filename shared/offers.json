@@ -1,6 +1,6 @@
 {
-  "version": "3.0.0",
-  "updated": "2026-08-19",
+  "version": "4.0.0",
+  "updated": "2026-08-20",
   "currency": "usd",
   "site": {
     "url": "https://samedaydesk.com",
@@ -119,14 +119,72 @@
     }
   },
   "copy": {
-    "h1": "ChatGPT still quotes a price you changed two years ago.",
-    "h1_fallback": "AI is still selling a service you retired last year.",
-    "subhead": "We check the answers ChatGPT, Google AI Overviews, Gemini, and Perplexity give when buyers ask about your business, then correct the pages those answers rest on. Fixed prices, a refund rule printed before you pay, receipts you can check, and no ranking promises.",
+    "h1": "A desk for agent-era commerce.",
+    "h1_fallback": "A desk for agent-era commerce.",
+    "subhead": "Bring us the part that must actually work: a payment rail, callable service, marketplace integration, or funded task.",
     "cta_panel_on": "Check this site. Quotes on the next page. No email.",
     "cta_panel_off": "Check this site. Eligibility result on the next page. No email.",
     "no_email_line": "You do not need an email address. The report opens on the next page.",
-    "reflexive_proof": "Our own homepage spent months publishing a service catalog we no longer sell to every agent that asked. The self-audit below is us catching it in production.",
-    "clean_verdict": "No wrong-fact class fired on this panel. This is not a $490 job."
+    "meta_title": "SameDayDesk: a desk for agent-era commerce",
+    "meta_description": "Bring us the part that must actually work: a payment rail, callable service, marketplace integration, or funded task."
+  },
+  "homepage": {
+    "eyebrow": "THE AGENT-ERA COMMERCE DESK",
+    "h1": "A desk for agent-era commerce.",
+    "subhead": "Bring us the part that must actually work: a payment rail, callable service, marketplace integration, or funded task.",
+    "subhead_short": "Bring us the hard part: payment rails, callable services, marketplace integrations, or funded work.",
+    "primary_cta": "Bring the hard part",
+    "primary_href": "mailto:contact@samedaydesk.com",
+    "secondary_cta": "Inspect the rails",
+    "secondary_href": "https://agents.samedaydesk.com/",
+    "trust": "Working x402 and MPP rails, public code, settled receipts.",
+    "policy": "Every claim on this page links to an inspectable artifact.",
+    "proof_h2": "Proof you can inspect.",
+    "proof_lead": "Working rails, a public policy, and one settled labor receipt.",
+    "how_h2": "How the desk works",
+    "hero_ticket": {
+      "stamp": "LIVE",
+      "title": "Live merchant",
+      "figure": "23 paid actions",
+      "rail": "x402 + MPP",
+      "asset": "Base USDC",
+      "href": "https://agents.samedaydesk.com/.well-known/x402",
+      "footnote": "Availability, not buyer demand."
+    },
+    "proof": [
+      {
+        "stamp": "LIVE",
+        "title": "Live merchant",
+        "figure": "23 paid actions",
+        "href": "https://agents.samedaydesk.com/"
+      },
+      {
+        "stamp": "PUBLIC",
+        "title": "Payment policy",
+        "figure": "Public source",
+        "href": "https://www.npmjs.com/package/agent-payment-policy"
+      },
+      {
+        "stamp": "SETTLED",
+        "title": "Funded labor receipt",
+        "figure": "8.00 USDC",
+        "href": "https://gofrantic.com/bounties/42"
+      }
+    ],
+    "how": [
+      {
+        "title": "Bring the hard part",
+        "body": "Name the outcome and the surface that is stuck."
+      },
+      {
+        "title": "We scope what we can own",
+        "body": "The desk takes a bounded build or says no."
+      },
+      {
+        "title": "You get working evidence",
+        "body": "Delivery includes tested artifacts and a clear receipt."
+      }
+    ]
   },
   "faq_owner": [
     "Why does Google say my business is closed when we are open?",
