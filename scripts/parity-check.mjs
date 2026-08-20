@@ -213,6 +213,11 @@ if (!home) {
     "OfferCatalog",
     "registered legal entity",
     "Most popular",
+    "23 paid actions",
+    "independent use",
+    "independent buyer",
+    "independent buyers",
+    "banked revenue",
   ];
   for (const phrase of homepageBans) {
     if (visibleHome.toLowerCase().includes(phrase.toLowerCase()) || home.includes(phrase)) {
@@ -226,6 +231,32 @@ if (!home) {
     if (!home.includes(row.href)) fail(`home.html is missing proof href ${row.href}`);
   }
   if ((page.proof || []).length > 3) fail("homepage proof record has more than three rows");
+  if (page.hero_ticket?.figure !== "22 paid actions") fail("homepage ticket figure must be 22 paid actions");
+  if (page.proof?.[0]?.figure !== "22 paid actions") fail("homepage proof figure must be 22 paid actions");
+  if (!page.hero_ticket?.footnote?.includes("Circle Gateway")) fail("homepage footnote must distinguish Circle Gateway from a 23rd product");
+  if (home.includes("23 paid actions") || visibleHome.includes("23 paid actions")) fail("home.html still claims 23 paid actions");
+
+  const agents = read("client/public/for-agents.html");
+  if (agents) {
+    const visibleAgents = ownVoice(agents);
+    if (agents.includes("x402-url-extractor-production.up.railway.app")) fail("for-agents.html still uses the Railway hostname as the merchant origin");
+    if (/human services and their prices are on the/i.test(agents) || /human services and their prices are on the/i.test(visibleAgents)) {
+      fail("for-agents.html still says human prices are on the homepage");
+    }
+    if (/four offers with prices/i.test(agents)) fail("for-agents.html still says llms.txt carries four priced offers");
+    if (!agents.includes("The homepage has no public price list.")) fail("for-agents.html must say the homepage has no public price list");
+    if (!agents.includes("https://agents.samedaydesk.com/")) fail("for-agents.html must point at the canonical merchant origin");
+    if (!agents.includes("22 paid actions on x402 and MPP")) fail("for-agents.html must count 22 dual-rail paid actions");
+    if (!agents.includes("samedaydesk-agent-tools")) fail("for-agents.html must name the homepage MCP as samedaydesk-agent-tools");
+  }
+
+  const agentCard = read("client/public/.well-known/agent-card.json");
+  if (agentCard) {
+    if (/checks what AI answers/i.test(agentCard)) fail("agent-card.json still describes the old GEO thesis");
+    if (!agentCard.includes("https://agents.samedaydesk.com/")) fail("agent-card.json must point at the live merchant origin");
+  }
+  const manifest = read("client/public/site.webmanifest");
+  if (manifest && /checks what AI answers/i.test(manifest)) fail("site.webmanifest still describes the old GEO thesis");
   for (const step of page.how || []) {
     if (!home.includes(step.title)) fail(`home.html is missing how title ${step.title}`);
     if (!home.includes(step.body)) fail(`home.html is missing how body ${step.body}`);

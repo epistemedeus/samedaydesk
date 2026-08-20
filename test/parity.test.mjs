@@ -33,6 +33,16 @@ test("the gate passes on the real tree", () => {
   assert.match(r.out, /every published surface matches the record/);
 });
 
+test("the gate fails when the homepage claims 23 paid actions", () => {
+  const dir = fixtureTree();
+  const home = path.join(dir, "client/public/home.html");
+  fs.writeFileSync(home, fs.readFileSync(home, "utf8").replaceAll("22 paid actions", "23 paid actions").replace('<p class="amount">22</p>', '<p class="amount">23</p>'));
+  const r = runParity(dir);
+  assert.equal(r.code, 1);
+  assert.match(r.out, /23 paid actions/);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
 test("the gate fails when a human price appears on the homepage", () => {
   const dir = fixtureTree();
   const home = path.join(dir, "client/public/home.html");

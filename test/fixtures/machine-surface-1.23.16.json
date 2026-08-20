@@ -1,0 +1,17 @@
+{
+  "comment": "Frozen unpaid live shape for homepage truth tests. Not a live fetch. Circle is an alternate x402 rail, not a 23rd dual-rail product. Candidate 1.23.17 keeps this 22+1 shape and only generates omitted merchant llms routes.",
+  "liveVersion": "1.23.16",
+  "candidateVersion": "1.23.17",
+  "candidateChangesPaidActionCount": false,
+  "canonicalPaidActions": 22,
+  "mcpTools": 22,
+  "a2aRouteSkills": 22,
+  "a2aCatalogSkills": 1,
+  "x402Items": 23,
+  "mppCanonicalPlusPostAliases": 24,
+  "circleAlternateRoute": "/gateway/commerce/payment-offer-preflight",
+  "circleProduct": "payment_offer_preflight",
+  "circleOnMpp": false,
+  "circleOnMcp": false,
+  "circleOnCatalogActions": false
+}

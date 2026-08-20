@@ -65,7 +65,9 @@ test("the homepage carries the binding desk copy and no human prices", () => {
   assert.ok(home.includes(page.secondary_href));
   assert.ok(home.includes(page.trust));
   assert.ok(home.includes(page.policy));
-  assert.ok(home.includes("23 paid actions"));
+  assert.ok(home.includes("22 paid actions"));
+  assert.ok(!home.includes("23 paid actions"));
+  assert.ok(home.includes("Circle Gateway is an alternate x402 rail of payment-offer preflight, not a 23rd product."));
   assert.ok(home.includes("8.00 USDC"));
   for (const price of ["$490", "$2,400", "$4,800", "$250", "$29", "$49"]) {
     assert.ok(!home.includes(price), `home.html still contains ${price}`);

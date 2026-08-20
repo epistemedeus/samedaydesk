@@ -1,7 +1,7 @@
 {
   "name": "SameDayDesk",
   "short_name": "SameDayDesk",
-  "description": "Checks what AI answers say about your business, then corrects the pages those answers rest on.",
+  "description": "A desk for agent-era commerce.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

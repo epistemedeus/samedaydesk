@@ -60,7 +60,7 @@ async function main() {
     ].filter(Boolean);
     const missing = required.filter((snippet) => !home.text.includes(snippet));
     missing.length ? fail("homepage binding copy in first HTML", missing.join(", ")) : pass("homepage binding copy in first HTML");
-    const banned = ["$490", "$2,400", "$4,800", "$250", "$29", "What we do not do", 'id="root"', "FAQPage", "OfferCatalog", "<!--CTA_BUTTON-->"];
+    const banned = ["$490", "$2,400", "$4,800", "$250", "$29", "What we do not do", 'id="root"', "FAQPage", "OfferCatalog", "<!--CTA_BUTTON-->", "23 paid actions"];
     const hits = banned.filter((snippet) => home.text.includes(snippet));
     hits.length ? fail("homepage banned copy in first HTML", hits.join(", ")) : pass("homepage has no banned SKU or FAQ copy");
     /<table>/i.test(home.text) ? fail("homepage still has a table") : pass("homepage has no comparison or price table");
@@ -129,6 +129,11 @@ async function main() {
   robots.status === 200 && ["Claude-SearchBot", "Claude-User", "OAI-SearchBot", "PerplexityBot"].every((t) => robots.text.includes(t))
     ? pass("robots allows the retrieval fetchers")
     : fail("robots", `status ${robots.status}`);
+
+  const agents = await get("/for-agents");
+  agents.status === 200 && agents.text.includes("The homepage has no public price list.") && agents.text.includes("https://agents.samedaydesk.com/") && !agents.text.includes("x402-url-extractor-production.up.railway.app") && !agents.text.includes("four offers with prices")
+    ? pass("for-agents describes the desk and the canonical merchant")
+    : fail("for-agents", `status ${agents.status}`);
 
   // 9. The self-audit is intact
   const audit = await get("/audit/samedaydesk/2026-08-19/");

@@ -2,7 +2,7 @@
   "display_name": "SameDayDesk",
   "package_name": "com.samedaydesk.samedaydesk",
   "version": "3.0.0",
-  "description": "SameDayDesk checks what AI answers say about a business and corrects the pages those answers rest on. This card is identity and documentation only; it publishes no priced offers and no tool count.",
+  "description": "SameDayDesk is a desk for agent-era commerce. This card is identity and documentation only; it publishes no priced offers and no tool count. The live x402 and MPP merchant is https://agents.samedaydesk.com/.",
   "provider": {
     "organization": "Neomorphic LLC",
     "operator": "Lucian Constantinescu",

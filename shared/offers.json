@@ -137,7 +137,7 @@
     "primary_href": "mailto:contact@samedaydesk.com",
     "secondary_cta": "Inspect the rails",
     "secondary_href": "https://agents.samedaydesk.com/",
-    "trust": "Working x402 and MPP rails, public code, settled receipts.",
+    "trust": "Working x402 and MPP rails, public code, one settled labor receipt.",
     "policy": "Every claim on this page links to an inspectable artifact.",
     "proof_h2": "Proof you can inspect.",
     "proof_lead": "Working rails, a public policy, and one settled labor receipt.",
@@ -145,17 +145,17 @@
     "hero_ticket": {
       "stamp": "LIVE",
       "title": "Live merchant",
-      "figure": "23 paid actions",
+      "figure": "22 paid actions",
       "rail": "x402 + MPP",
       "asset": "Base USDC",
       "href": "https://agents.samedaydesk.com/.well-known/x402",
-      "footnote": "Availability, not buyer demand."
+      "footnote": "Availability, not buyer demand. Circle Gateway is an alternate x402 rail of payment-offer preflight, not a 23rd product."
     },
     "proof": [
       {
         "stamp": "LIVE",
         "title": "Live merchant",
-        "figure": "23 paid actions",
+        "figure": "22 paid actions",
         "href": "https://agents.samedaydesk.com/"
       },
       {
