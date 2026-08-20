@@ -1,23 +1,26 @@
 # SameDayDesk
 
-> SameDayDesk is a same-day, done-for-you research, data, code, automation, and AI-search visibility desk. Services have flat prices, a free revision, and a money-back guarantee. Code and data work runs or it is free.
+> SameDayDesk builds agent-ready workflows, MCP servers, x402 and native MPP payment routes, and machine storefronts. Each build has bounded scope, working code, tests, and a deployment handoff.
 
 ## Start here
 
-- [Homepage](https://samedaydesk.com/): Service catalog, prices, guarantee, and order links.
-- [AI Visibility Audit](https://samedaydesk.com/ai-visibility-audit.html): Citation testing, competitor benchmarking, and prioritized fixes from $199.
+- [Homepage](https://samedaydesk.com/): Agent-commerce build catalog, flat prices, acceptance guarantee, and Stripe order links.
+- Agent Workflow Integration: $149.
+- Agent-Ready MCP Server: $349.
+- x402 and native MPP Payment Route: $499.
+- Agent Commerce Storefront: $999.
 - [Free AI Readiness Checker](https://samedaydesk.com/tools/ai-readiness): Check crawler access, metadata, structured data, sitemap, and llms.txt.
 - [Resources](https://samedaydesk.com/resources.html): Original research, practical guides, and free AI-search tools.
 
 ## Agent interfaces
 
 - [Remote MCP server](https://samedaydesk.com/mcp): Streamable HTTP MCP interface for the AI-readiness checker.
-- [Agent payment infrastructure](https://samedaydesk.com/x402): Twelve pay-per-call HTTP and MCP tools accepting both x402 and native MPP, plus seller integration, settlement reconciliation, live prices, source, and connection instructions.
+- [Agent payment infrastructure](https://samedaydesk.com/for-agents): Twenty-two canonical pay-per-call actions accepting both x402 and native MPP, plus seller inspection, settlement evidence, live prices, source, and connection instructions.
 - [x402 SDK integration reference](https://samedaydesk.com/docs/x402-sdk/): Sourcey-generated Go API reference plus production integration notes for the SDK family used by the live gateway.
-- [x402 data gateway on Smithery](https://smithery.ai/servers/epistemedeus/x402-data-gateway): Managed MCP connection and twelve published tool schemas.
-- [x402 service health](https://x402-url-extractor-production.up.railway.app/healthz): Live health and pricing for the SameDayDesk agent data gateway.
-- [x402 resource manifest](https://x402-url-extractor-production.up.railway.app/.well-known/x402): Machine-readable paid resources on Base mainnet using USDC.
-- [x402 gateway llms.txt](https://x402-url-extractor-production.up.railway.app/llms.txt): Endpoint descriptions and payment instructions.
+- [x402 data gateway on Smithery](https://smithery.ai/servers/epistemedeus/x402-data-gateway): Managed MCP connection to the current tool surface.
+- [x402 service health](https://agents.samedaydesk.com/healthz): Live health and pricing for the SameDayDesk agent data gateway.
+- [x402 resource manifest](https://agents.samedaydesk.com/.well-known/x402): Twenty-two canonical paid actions on Base mainnet using USDC, plus one Circle x402-only alternate access path.
+- [x402 gateway llms.txt](https://agents.samedaydesk.com/llms.txt): Endpoint descriptions, callable examples, and payment instructions.
 
 ## Public work
 
@@ -43,4 +46,4 @@
 - [X](https://x.com/samedaydesk)
 - Email: contact@samedaydesk.com
 
-Last updated: 2026-08-08
+Last updated: 2026-08-20

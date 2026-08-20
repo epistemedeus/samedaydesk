@@ -12,15 +12,15 @@ export default function Footer() {
           <Link to="/" className={styles.brand} aria-label="SameDayDesk home">
             <BrandMark className={styles.mark} /> SameDayDesk
           </Link>
-          <p className={styles.tag}>Hand off the busywork. Get it back today.</p>
+          <p className={styles.tag}>Agent commerce, built and shipped.</p>
           <a className={styles.contact} href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a>
         </div>
 
         <nav className={styles.col} aria-label="Services">
           <h3 className={styles.colhead}>Services</h3>
-          <Link to="/#services">Lead lists & data</Link>
-          <Link to="/#services">Code & automation</Link>
-          <Link to="/#services">AI builds</Link>
+          <Link to="/#services">Agent workflows</Link>
+          <Link to="/#services">MCP servers</Link>
+          <Link to="/#services">Machine payments</Link>
           <Link to="/#services">Custom work</Link>
         </nav>
 
@@ -40,7 +40,7 @@ export default function Footer() {
 
       <div className={clsx("container", styles.base)}>
         <span className="mono">© {year} SameDayDesk</span>
-        <span className={styles.usco}>Same-day, done-for-you desk.</span>
+        <span className={styles.usco}>Built by Neomorphic LLC.</span>
       </div>
     </footer>
   );

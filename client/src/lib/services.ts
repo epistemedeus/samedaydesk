@@ -1,18 +1,14 @@
-// Config-driven service catalog. Adding a gig or whole category = one entry here
-// (and a matching slug+amount in server/pricing.js). The brand is "a same-day desk",
-// not "a résumé service". This list is meant to grow; edge-fit work (data / code / AI /
-// search) leads, career/copy follows.
+// SameDayDesk's human checkout layer. The design stays stable while this small
+// catalog tracks the agent-commerce work the desk can actually deliver.
 export type Offer = {
   slug: string;
   name: string;
-  price: number; // USD
+  price: number;
   turnaround: string;
   blurb: string;
   includes: string[];
   flagship?: boolean;
   bestValue?: boolean;
-  // Per-offer checkout intake hint (label/placeholder/accepted files). Falls back to a
-  // career-style default in Checkout when omitted.
   intake?: { label: string; placeholder: string; accept: string };
 };
 
@@ -25,185 +21,118 @@ export type Category = {
 
 export const CATEGORIES: Category[] = [
   {
-    id: "data",
-    label: "Data",
-    tagline: "Clean data, same day.",
+    id: "build",
+    label: "Agent builds",
+    tagline: "Bounded, tested, shipped.",
     offers: [
       {
-        slug: "lead_list",
-        name: "Local Business Lead List",
-        price: 69,
-        turnaround: "Same day",
-        flagship: true,
-        blurb: "500 verified local businesses for your niche and city, pulled from public sources. Deduped, validated, ready to use.",
-        includes: ["500 businesses in your niche + city", "Name, address, phone, website, category", "Email + socials where publicly listed", "Deduped and validated", "Clean CSV + XLSX", "Same-day delivery"],
-        intake: { label: "Your niche + city (and any must-have fields)", placeholder: "e.g. HVAC contractors in Phoenix AZ. Need name, phone, website, and email where listed.", accept: ".csv,.xlsx,.txt" },
-      },
-      {
-        slug: "data_cleanup",
-        name: "Spreadsheet Cleanup & Dedup",
-        price: 39,
-        turnaround: "Same day",
-        blurb: "Send a messy spreadsheet, get a clean one back: deduplicated, standardized, validated, and formatted.",
-        includes: ["Up to 5,000 rows", "Dedupe + merge duplicates", "Standardized columns, casing, formats", "Email + phone validation", "Split / combine fields", "Clean XLSX + CSV"],
-        intake: { label: "What needs fixing + your file", placeholder: "e.g. dedupe by email, split full name into first/last, standardize phone formats. File attached.", accept: ".csv,.xlsx,.xls,.tsv,.txt,.json,.zip" },
-      },
-      {
-        slug: "scrape_csv",
-        name: "Scrape to Spreadsheet",
-        price: 89,
-        turnaround: "Same day",
-        blurb: "One public site or directory turned into a clean spreadsheet with exactly the fields you need.",
-        includes: ["One public site or directory", "The fields you specify, in columns", "Handles pagination", "Deduped + validated", "Clean CSV + XLSX", "Same-day delivery"],
-        intake: { label: "The public page/site + the fields you want", placeholder: "e.g. https://example.com/listings, pull title, price, location, and link into a CSV.", accept: ".csv,.xlsx,.txt" },
-      },
-    ],
-  },
-  {
-    id: "code",
-    label: "Code & Automation",
-    tagline: "It runs, same day.",
-    offers: [
-      {
-        slug: "bug_fix",
-        name: "Script / Bug Fix",
-        price: 49,
-        turnaround: "Same day",
-        flagship: true,
-        blurb: "Send a broken or slow script. Get a fixed, runnable version with a clear explanation and a test that proves it.",
-        includes: ["Python, JS / TS, shell, and more", "Fixed, runnable code", "A diff of what changed", "Plain-English explanation of the bug", "A test that proves the fix", "It runs or it's free"],
-        intake: { label: "What's broken + paste or attach the code", placeholder: "e.g. this Python script throws KeyError on line 42, it should output a CSV. File attached.", accept: ".py,.js,.ts,.json,.txt,.log,.csv,.zip" },
-      },
-      {
-        slug: "automation_build",
-        name: "Automation / Integration Build",
+        slug: "agent_workflow",
+        name: "Agent Workflow Integration",
         price: 149,
         turnaround: "Same day",
-        blurb: "A small working integration or CLI built to your spec: an API client, a webhook-to-action pipeline, or a data pipeline.",
-        includes: ["Built to your written spec", "API client, webhook, ETL, or CLI", "Source code + README", "A working demo run", "Tested before delivery", "Same-day delivery"],
-        intake: { label: "What to automate (the spec)", placeholder: "e.g. when a form is submitted, classify it with an LLM and append a row to Google Sheets.", accept: ".txt,.md,.json,.pdf,.zip" },
+        blurb: "One useful workflow across the APIs and tools you already use, delivered as runnable code instead of a diagram.",
+        includes: [
+          "One bounded workflow",
+          "Existing API, webhook, or CLI integration",
+          "Typed inputs and clear failure states",
+          "Source code and README",
+          "A working demo run",
+          "Tests for the promised path",
+        ],
+        intake: {
+          label: "The workflow and the tools it should connect",
+          placeholder: "Example: when a paid order lands, verify it, enrich the account, and write a receipt to our system.",
+          accept: ".txt,.md,.json,.yaml,.yml,.pdf,.zip",
+        },
       },
-    ],
-  },
-  {
-    id: "ai",
-    label: "AI",
-    tagline: "Ship AI that works.",
-    offers: [
       {
-        slug: "rag_bot",
-        name: "RAG Chatbot Over Your Docs",
-        price: 399,
+        slug: "agent_mcp_server",
+        name: "Agent-Ready MCP Server",
+        price: 349,
         turnaround: "1 to 2 days",
         flagship: true,
-        blurb: "A working chatbot that answers over your own documents: ingestion, embeddings, retrieval, and an embeddable widget.",
-        includes: ["Ingest PDFs, docs, site export, or CSV", "Chunking + embeddings + vector index", "Retrieval + generation API endpoint", "Embeddable chat widget", "Source-cited answers", "Setup notes + handoff"],
-        intake: { label: "Your docs + what it should answer", placeholder: "e.g. a support bot over these 40 PDFs, should answer product and billing questions.", accept: ".pdf,.md,.txt,.csv,.json,.docx,.zip" },
-      },
-      {
-        slug: "mcp_server",
-        name: "Custom MCP Server",
-        price: 349,
-        turnaround: "Same day",
-        blurb: "A working Model Context Protocol server that wraps your API so agents can use it: typed tools, auth, validation, tests.",
-        includes: ["Wraps your API or product", "Built from your OpenAPI / docs", "Typed tools + input validation", "Auth handling", "README + tests", "Works in Claude, Cursor, and agents"],
-        intake: { label: "The API to wrap (link the docs / OpenAPI)", placeholder: "e.g. wrap our internal REST API, OpenAPI spec attached. Need search + create tools.", accept: ".json,.yaml,.yml,.txt,.md,.zip" },
-      },
-    ],
-  },
-  {
-    id: "search",
-    label: "Search / GEO",
-    tagline: "Get found by AI search.",
-    offers: [
-      {
-        slug: "ai_audit",
-        name: "AI-Search Visibility Audit",
-        price: 199,
-        turnaround: "Same day",
-        blurb: "Find out if ChatGPT, Perplexity, and Google AI cite your site, why not, and exactly what to fix. A report you can act on.",
-        includes: ["Whether AI engines cite you, vs competitors", "AI-crawler access + robots check", "Schema / JSON-LD gaps", "Buyer-intent prompt testing", "Prioritized fix list", "PDF + shareable web report"],
-        intake: { label: "Your website URL (and any competitors)", placeholder: "e.g. https://mysite.com, compare against competitora.com and competitorb.com.", accept: ".txt" },
+        blurb: "Turn an existing API into a focused MCP server agents can select and call without guessing the request or response shape.",
+        includes: [
+          "Up to five focused tools",
+          "Typed inputs and structured outputs",
+          "Authentication boundary",
+          "Streamable HTTP transport",
+          "Tests and setup guide",
+          "Public or private deployment handoff",
+        ],
+        intake: {
+          label: "Your API docs, OpenAPI file, or repository",
+          placeholder: "Example: expose search, inspect, and create from our existing REST API. OpenAPI and repository attached.",
+          accept: ".json,.yaml,.yml,.txt,.md,.pdf,.zip",
+        },
       },
     ],
   },
   {
-    id: "career",
-    label: "Career",
-    tagline: "Land the interview.",
+    id: "payments",
+    label: "Machine payments",
+    tagline: "Agents discover, pay, and continue.",
     offers: [
       {
-        slug: "resume_linkedin",
-        name: "Résumé + LinkedIn",
-        price: 59,
-        turnaround: "Same day",
-        blurb: "A full rewrite of your résumé plus a matching LinkedIn headline & About, tuned to your target role and built to pass ATS screens.",
-        includes: ["Full résumé rewrite", "LinkedIn headline + About", "ATS-friendly formatting", "Tailored to 1 target role", "One revision round", "Editable Doc + PDF"],
+        slug: "machine_payment_route",
+        name: "x402 + MPP Payment Route",
+        price: 499,
+        turnaround: "2 to 3 days",
+        blurb: "Make one existing API operation machine-payable with exact Base USDC terms, dual-rail negotiation, and settlement evidence.",
+        includes: [
+          "One existing GET or POST operation",
+          "x402 and native MPP payment negotiation",
+          "Exact asset, amount, recipient, and route binding",
+          "Idempotent retry path",
+          "Settlement and receipt verification",
+          "Deployment tests and handoff",
+        ],
+        intake: {
+          label: "The route, repository, and intended price",
+          placeholder: "Example: make POST /quote payable in Base USDC and return a verifiable receipt with the JSON result.",
+          accept: ".json,.yaml,.yml,.txt,.md,.pdf,.zip",
+        },
       },
       {
-        slug: "cover_letter",
-        name: "Cover Letter",
-        price: 39,
-        turnaround: "Same day",
-        blurb: "A sharp, specific cover letter written for one job posting, matched to the company's tone. Never a template.",
-        includes: ["Tailored to one job posting", "Matched to company tone", "One revision round", "Editable Doc + PDF"],
-      },
-    ],
-  },
-  {
-    id: "copy",
-    label: "Copy",
-    tagline: "Words that convert.",
-    offers: [
-      {
-        slug: "landing_copy",
-        name: "Landing Page Copy",
-        price: 69,
-        turnaround: "24 hours",
-        blurb: "Conversion-focused copy for one page: headline, value proposition, body sections, and CTA, delivered ready to paste in.",
-        includes: ["Headline + subhead + value prop", "Up to 5 body sections", "Clear CTA + microcopy", "Tone matched to your brand", "One revision round"],
-      },
-    ],
-  },
-  {
-    id: "bundle",
-    label: "Bundles",
-    tagline: "Best value.",
-    offers: [
-      {
-        slug: "bundle_all",
-        name: "Application Pack",
-        price: 79,
-        turnaround: "Same day",
+        slug: "agent_storefront",
+        name: "Agent Commerce Storefront",
+        price: 999,
+        turnaround: "3 to 5 days",
         bestValue: true,
-        blurb: "Résumé rewrite + matching LinkedIn + one tailored cover letter. The complete kit for an active job search.",
-        includes: ["Everything in Résumé + LinkedIn", "One tailored cover letter", "Best value for an active search", "One revision round"],
+        blurb: "A compact machine-facing storefront for an existing service: discovery, callable examples, payment, and evidence that stay in sync.",
+        includes: [
+          "Up to five existing API operations",
+          "OpenAPI, MCP, and A2A discovery surfaces",
+          "x402 and native MPP payment routes",
+          "Constructible request examples",
+          "Catalog and live-term parity checks",
+          "Deployment, tests, and operating guide",
+        ],
+        intake: {
+          label: "Your service, repository, and the operations agents should buy",
+          placeholder: "Example: publish five data operations with MCP discovery, dual-rail payment, and one acceptance suite.",
+          accept: ".json,.yaml,.yml,.txt,.md,.pdf,.zip",
+        },
       },
     ],
   },
 ];
 
-// The open-amount path: operator sends an instant Payment Link after agreeing scope.
 export const CUSTOM = {
   slug: "custom_quote",
-  name: "Something else?",
-  blurb: "Bigger volumes, a custom build, or anything not listed. Send the task, you get a flat quote before any work starts.",
+  name: "A harder agent-commerce problem?",
+  blurb: "Send the constraint, the existing system, and the outcome that must work. You get a bounded scope and a flat quote before we touch production.",
 };
 
-export const ALL_OFFERS: Offer[] = CATEGORIES.flatMap((c) => c.offers);
-export const flagship = ALL_OFFERS.find((o) => o.flagship)!;
+export const ALL_OFFERS: Offer[] = CATEGORIES.flatMap((category) => category.offers);
+export const flagship = ALL_OFFERS.find((offer) => offer.flagship)!;
 
-// Frictionless live Stripe Payment Links. When a slug has one, the card
-// links straight to checkout — no signup/email wall (the conversion killer for cold buyers).
-// Edge-fit offers + custom only; amounts match server/pricing.js. See exp/0008 payment-links.md.
+// Live Stripe Payment Links are inserted only after the matching product,
+// price, and metadata have been verified in the Neomorphic LLC account.
 export const PAYMENT_LINKS: Record<string, string> = {
-  lead_list:        "https://buy.stripe.com/cNicN6eoqaHJ1KL8wqeZ208",
-  data_cleanup:     "https://buy.stripe.com/fZu00k6VY5npgFF4gaeZ20a",
-  scrape_csv:       "https://buy.stripe.com/bJe5kE1BE9DFexx7smeZ20b",
-  bug_fix:          "https://buy.stripe.com/cNi7sM4NQbLN3ST9AueZ207",
-  automation_build: "https://buy.stripe.com/5kQaEYdkm3fhahhh2WeZ209",
-  rag_bot:          "https://buy.stripe.com/3cIdRa5RU7vx9dd7smeZ20c",
-  mcp_server:       "https://buy.stripe.com/14A4gA6VY7vxahh6oieZ20d",
-  ai_audit:         "https://buy.stripe.com/3cIbJ2gwy2bdgFFfYSeZ20u",
-  custom_quote:     "https://buy.stripe.com/bJe4gAbcedTV8993c6eZ205",
+  agent_workflow: "https://buy.stripe.com/7sY3cw8025np9dd282eZ20B",
+  agent_mcp_server: "https://buy.stripe.com/eVq7sMdkmaHJ1KL6oieZ20C",
+  machine_payment_route: "https://buy.stripe.com/eVqfZibce2bd2OP7smeZ20D",
+  agent_storefront: "https://buy.stripe.com/dRm4gAdkmbLN4WX7smeZ20E",
+  custom_quote: "https://buy.stripe.com/bJe4gAbcedTV8993c6eZ205",
 };

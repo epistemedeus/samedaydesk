@@ -30,19 +30,19 @@ export default function Hero() {
 
       <div ref={root} className={clsx("container", styles.content)}>
         <p className={styles.eyebrow} data-hero-fade>
-          <span className={styles.tick} aria-hidden="true" /> Same-day · done-for-you desk
+          <span className={styles.tick} aria-hidden="true" /> Agent commerce · built and shipped
         </p>
 
         <h1 ref={h1} className={styles.h1}>
-          <span className={styles.line}>Hand off the busywork.</span>
+          <span className={styles.line}>Make your service</span>
           <span className={styles.line}>
-            Get it back <span className={styles.lime}>today</span>.
+            ready for <span className={styles.lime}>agents</span>.
           </span>
         </h1>
 
         <p className={styles.sub} data-hero-fade>
-          A same-day desk for the work you don't have time for: clean data and lead lists, scrapers,
-          bug fixes, AI builds, and sharp copy. Specific, tested, delivered in hours. See the quality <em>free</em>, first.
+          We build agent-ready workflows, MCP servers, x402 and MPP payment routes, and machine
+          storefronts. Specific scope, working code, tests, and a deployment handoff.
         </p>
 
         <div className={styles.ctas} data-hero-fade>
@@ -50,17 +50,17 @@ export default function Hero() {
             to="/signup"
             variant="primary"
             magnetic
-            ariaLabel="Get my free teaser"
-            onClick={() => track("cta_clicked", { where: "hero", action: "teaser" })}
+            ariaLabel="Get a free route check"
+            onClick={() => track("cta_clicked", { where: "hero", action: "route_check" })}
           >
-            Get my free teaser <span aria-hidden="true">→</span>
+            Get a free route check <span aria-hidden="true">→</span>
           </MagneticButton>
-          <MagneticButton href="#services" variant="ghost">See pricing</MagneticButton>
+          <MagneticButton href="#services" variant="ghost">See agent builds</MagneticButton>
         </div>
 
       </div>
 
-      <a href="#proof" className={styles.scrollcue} aria-label="See how fast it is">
+      <a href="#proof" className={styles.scrollcue} aria-label="See what gets delivered">
         <span className="mono">scroll</span>
         <span className={styles.cueline} aria-hidden="true" />
       </a>

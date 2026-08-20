@@ -52,7 +52,7 @@ function appearanceFor(theme: Theme): Appearance {
 
 export default function Checkout() {
   const [params] = useSearchParams();
-  const slug = params.get("offer") || "resume_linkedin";
+  const slug = params.get("offer") || "agent_mcp_server";
   const offer = ALL_OFFERS.find((o) => o.slug === slug) || ALL_OFFERS[0];
   const { user } = useAuth();
   const { theme } = useTheme();
@@ -91,17 +91,17 @@ export default function Checkout() {
         <aside className={styles.summary}>
           <p className="eyebrow">Order summary</p>
           <h1 className={styles.name}>{offer.name}</h1>
-          <p className={styles.turn}>{offer.turnaround} · one free revision</p>
+          <p className={styles.turn}>{offer.turnaround} · acceptance-tested handoff</p>
           <ul className={styles.includes}>
             {offer.includes.map((i) => (
               <li key={i}><span className={styles.check} aria-hidden="true">›</span> {i}</li>
             ))}
           </ul>
           <div className={styles.total}>
-            <span>Total today</span>
+            <span>Build total</span>
             <span className={styles.totalAmt}><span className={styles.cur}>$</span><span className="mono">{offer.price}</span></span>
           </div>
-          <p className={styles.guarantee}>Money-back if the first draft isn't right.</p>
+          <p className={styles.guarantee}>The scoped path passes, or we repair it at no additional charge.</p>
         </aside>
 
         <section className={styles.pay}>

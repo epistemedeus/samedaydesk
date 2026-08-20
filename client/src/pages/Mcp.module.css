@@ -214,7 +214,8 @@
 
 .cardTop code {
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  word-break: normal;
   color: var(--lime);
   font-family: var(--font-mono);
   font-size: var(--step-1);

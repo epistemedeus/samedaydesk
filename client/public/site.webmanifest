@@ -1,7 +1,7 @@
 {
   "name": "SameDayDesk",
   "short_name": "SameDayDesk",
-  "description": "Same-day, done-for-you résumés, LinkedIn, cover letters and copy.",
+  "description": "Agent-ready workflows, MCP servers, machine payment routes, and storefronts.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

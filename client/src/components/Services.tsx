@@ -9,13 +9,13 @@ export default function Services() {
     <section id="services" className={styles.section}>
       <div className="container">
         <header className={styles.head} data-reveal>
-          <p className="eyebrow">Pricing · flat fees</p>
+          <p className="eyebrow">Agent builds · flat fees</p>
           <h2 className={styles.title}>
-            Clear scope. Clear price. <span className="lime">Work you can use.</span>
+            Clear scope. Clear price. <span className="lime">A real acceptance test.</span>
           </h2>
           <p className={styles.lead}>
-            Pick a job below, or send us something else entirely. Every order is same-day,
-            includes a free revision round, and is money-back if the first draft isn't right.
+            Start with an existing API or workflow. Each build has a bounded route count, a concrete
+            handoff, and tests for the path you paid us to make work.
           </p>
         </header>
 
@@ -30,7 +30,7 @@ export default function Services() {
               <div className={styles.cards} data-reveal data-reveal-stagger>
                 {cat.offers.map((o) => (
                   <article key={o.slug} className={clsx(styles.card, o.flagship && styles.flagship)}>
-                    {o.flagship && <span className={clsx(styles.badge, styles.badgeLime)}>Most popular</span>}
+                    {o.flagship && <span className={clsx(styles.badge, styles.badgeLime)}>Best place to start</span>}
                     {o.bestValue && <span className={styles.badge}>Best value</span>}
 
                     <div className={styles.cardTop}>

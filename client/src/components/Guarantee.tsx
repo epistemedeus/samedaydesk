@@ -7,12 +7,12 @@ export default function Guarantee() {
         <div className={styles.card} data-reveal>
           <p className="eyebrow">The guarantee</p>
           <h2 className={styles.title}>
-            If you're not happy with the first draft, <span className="lime">you don't pay.</span>
+            The promised path passes, <span className="lime">or we keep fixing it.</span>
           </h2>
           <p className={styles.body}>
-            One free revision on every project. If the work still isn't right for you, we refund 100%.
-            No forms, no friction. We'd rather earn a repeat client than keep a dissatisfied one. Payment
-            runs through Stripe, so you're protected either way.
+            Every scope names the acceptance checks before work starts. If our delivered code does not pass
+            those checks in the agreed environment, we repair it at no additional charge. If we cannot make
+            the scoped path pass, we refund the build. Payment runs through Stripe.
           </p>
         </div>
       </div>

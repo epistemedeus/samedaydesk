@@ -139,6 +139,21 @@ const taskmarketTools = [
   },
 ];
 
+function MachineName({ name }: { name: string }) {
+  const parts = name.split("_");
+  return (
+    <>
+      {parts.map((part, index) => (
+        <span key={`${part}-${index}`}>
+          {index > 0 && "_"}
+          {part}
+          {index < parts.length - 1 && <wbr />}
+        </span>
+      ))}
+    </>
+  );
+}
+
 export default function Mcp() {
   useEffect(() => {
     const previousTitle = document.title;
@@ -246,7 +261,7 @@ export default function Mcp() {
             {tools.map((tool) => (
               <article className={styles.card} key={tool.name}>
                 <div className={styles.cardTop}>
-                  <code>{tool.name}</code>
+                  <code><MachineName name={tool.name} /></code>
                   <span>{tool.price} USDC</span>
                 </div>
                 <p>{tool.description}</p>
@@ -368,7 +383,7 @@ export default function Mcp() {
           <div className={styles.taskmarketGrid}>
             {taskmarketTools.map((tool) => (
               <article className={styles.taskmarketCard} key={tool.name}>
-                <code>{tool.name}</code>
+                <code><MachineName name={tool.name} /></code>
                 <p>{tool.description}</p>
               </article>
             ))}

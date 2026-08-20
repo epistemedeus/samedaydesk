@@ -6,18 +6,18 @@ import styles from "./HowItWorks.module.css";
 const STEPS = [
   {
     n: "01",
-    t: "Send the task, or claim a free teaser",
-    d: "Tell us the role, the job posting, or the page. Attach your current file. Not sure yet? We'll rewrite a piece of it free, today, so you can judge the real quality before paying a cent.",
+    t: "Show us the existing service",
+    d: "Send the API docs, repository, or workflow and name the one outcome an agent must be able to complete.",
   },
   {
     n: "02",
-    t: "We rewrite it, same day",
-    d: "Sharp editorial judgment on every line. Each deliverable is directed, edited, and quality-checked before it reaches you.",
+    t: "We bind the exact contract",
+    d: "We make the request constructible, expose the right discovery surfaces, and wire the payment and evidence path the scope requires.",
   },
   {
     n: "03",
-    t: "Get editable files + a free revision",
-    d: "Delivered as an editable Doc and a clean PDF, usually within hours. Not right? One free revision, and if it's still not for you, money back.",
+    t: "Run the acceptance test",
+    d: "You get source, deployment notes, and a repeatable test showing discovery, the call, the response, and any settlement evidence.",
   },
 ];
 
@@ -45,12 +45,12 @@ export default function HowItWorks() {
             to="/signup"
             variant="primary"
             magnetic
-            ariaLabel="Get my free teaser"
-            onClick={() => track("cta_clicked", { where: "how", action: "teaser" })}
+            ariaLabel="Get a free route check"
+            onClick={() => track("cta_clicked", { where: "how", action: "route_check" })}
           >
-            Get my free teaser <span aria-hidden="true">→</span>
+            Get a free route check <span aria-hidden="true">→</span>
           </MagneticButton>
-          <span className={styles.note}>Free sample first · pay only if you like the direction</span>
+          <span className={styles.note}>One route · one failure mode · one useful next step</span>
         </div>
       </div>
     </section>

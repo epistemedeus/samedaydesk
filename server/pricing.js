@@ -3,26 +3,11 @@
 export const CURRENCY = "usd";
 
 export const OFFERS = {
-  // Edge-fit catalog (session 0007): data / code / AI / search. Self-serve, collected via live Stripe.
-  data_cleanup:     { amount: 3900,  label: "Spreadsheet Cleanup & Dedup",    category: "data" },
-  lead_list:        { amount: 6900,  label: "Local Business Lead List",       category: "data", flagship: true },
-  scrape_csv:       { amount: 8900,  label: "Scrape to Spreadsheet",          category: "data" },
-  bug_fix:          { amount: 4900,  label: "Script / Bug Fix",               category: "code", flagship: true },
-  automation_build: { amount: 14900, label: "Automation / Integration Build", category: "code" },
-  rag_bot:          { amount: 39900, label: "RAG Chatbot Over Your Docs",     category: "ai", flagship: true },
-  mcp_server:       { amount: 34900, label: "Custom MCP Server",              category: "ai" },
-  ai_audit:         { amount: 19900, label: "AI-Search Visibility Audit",      category: "search" },
-  // GEO done-for-you service (2026-07-01 reset — the durable bet). Priced to CLOSE, not to max.
-  geo_audit:        { amount: 19900, label: "AI Visibility Audit",            category: "geo", flagship: true },
-  geo_fix:          { amount: 39900, label: "AI Visibility Audit + Fix (done-for-you)", category: "geo", bestValue: true },
-  geo_sprint:       { amount: 49900, label: "AI Visibility Sprint (multi-location)",    category: "geo" },
-  // geo_retainer: $1,500-3,000/mo — sold as a custom Payment Link (createInstantLink), not a fixed SKU.
-  // Career / copy (original catalog)
-  resume_linkedin: { amount: 5900, label: "Résumé + LinkedIn Rewrite", category: "career" },
-  cover_letter:    { amount: 3900, label: "Custom Cover Letter",        category: "career" },
-  landing_copy:    { amount: 6900, label: "Landing Page Copy Refresh",  category: "copy" },
-  bundle_all:      { amount: 7900, label: "Application Pack (Résumé + LinkedIn + Cover Letter)", category: "bundle", bestValue: true },
-  // custom_quote: operator sets the amount on an instant Payment Link (handled in checkout/links).
+  agent_workflow:        { amount: 14900, label: "Agent Workflow Integration", category: "build" },
+  agent_mcp_server:      { amount: 34900, label: "Agent-Ready MCP Server", category: "build", flagship: true },
+  machine_payment_route: { amount: 49900, label: "x402 + MPP Payment Route", category: "payments" },
+  agent_storefront:      { amount: 99900, label: "Agent Commerce Storefront", category: "payments", bestValue: true },
+  // custom_quote: operator sets the amount on an instant Payment Link.
 };
 
 export function getOffer(slug) {
