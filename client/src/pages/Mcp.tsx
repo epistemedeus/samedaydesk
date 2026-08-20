@@ -9,19 +9,17 @@ const GATEWAY_URL = "https://agents.samedaydesk.com";
 const DEMO_URL = "https://youtu.be/QTsTs_ZjwNo";
 const TASKMARKET_URL = "https://taskmarket.dev";
 const TASKMARKET_SOURCE = "https://github.com/epistemedeus/samedaydesk/blob/main/TASKMARKET-INTEGRATION.md";
-const CENSUS_URL = "/research/agent402-base-seller-protocol-census-2026-08-09.json";
-const SELLER_DIAGNOSTIC_EMAIL = "mailto:contact@samedaydesk.com?subject=Agent%20payment%20readiness%20diagnostic&body=Origin%20URL%3A%0AWhat%20you%20want%20to%20verify%3A%0A";
-const SELLER_INTEGRATION_EMAIL = "mailto:contact@samedaydesk.com?subject=Production%20x402%20and%20MPP%20integration&body=Origin%20URL%3A%0APaid%20routes%3A%0ARuntime%20or%20repository%20details%3A%0A";
+const MANIFEST_URL = `${GATEWAY_URL}/.well-known/x402`;
 
 const tools = [
   {
     name: "extract",
-    price: "$0.05",
+    price: "$0.005",
     description: "Turn a public URL into structured page data, including JSON-LD, social metadata, headings, links, and AI readiness signals.",
   },
   {
     name: "read",
-    price: "$0.05",
+    price: "$0.005",
     description: "Return a public page as clean Markdown with navigation, ads, and scripts removed.",
   },
   {
@@ -74,6 +72,56 @@ const tools = [
     price: "$0.05",
     description: "Evaluate a funded agent-work opportunity using explicit reward, time, cost, access, settlement, competition, and selection assumptions before an agent commits effort.",
   },
+  {
+    name: "agent_discoverability_audit",
+    price: "$0.05",
+    description: "Compare one paid service across public discovery views, canonical aliases, live offer terms, prices, and machine-surface coverage without signing or paying.",
+  },
+  {
+    name: "payment_offer_preflight",
+    price: "$0.005",
+    description: "Compare live x402 and MPP challenges, catalog metadata, request binding, and seller-declared response readiness before buyer authorization.",
+  },
+  {
+    name: "settlement_proof",
+    price: "$0.005",
+    description: "Verify one claimed Base USDC settlement against the finalized on-chain receipt, exact recipient, amount, and optional payer.",
+  },
+  {
+    name: "transaction_receipt",
+    price: "$0.002",
+    description: "Normalize a Base or Ethereum transaction receipt, gas, fees, ERC-20 transfers, and canonical USDC movements from one hash.",
+  },
+  {
+    name: "solana_transaction_receipt",
+    price: "$0.002",
+    description: "Normalize a finalized Solana transaction and optionally verify exact SPL-token mint, recipient, amount, and payer deltas.",
+  },
+  {
+    name: "wallet_policy_conformance",
+    price: "$0.01",
+    description: "Evaluate a credential-free allow and deny matrix for an agent wallet or delegated signer without accepting wallet IDs or transactions.",
+  },
+  {
+    name: "stateful_wallet_policy_conformance",
+    price: "$0.01",
+    description: "Evaluate sequential limits, signed-but-unbroadcast accounting, concurrency, and serialization policy observations without wallet access.",
+  },
+  {
+    name: "seller_integrity_audit",
+    price: "$0.01",
+    description: "Audit one paid GET or POST route for constructible input, live unpaid terms, catalog parity, and recursively guaranteed success fields.",
+  },
+  {
+    name: "contract_qualified_search",
+    price: "$0.01",
+    description: "Search Agent402 and MPP for services matching an intent and buyer-required JSON paths, with controlled rejection reasons.",
+  },
+  {
+    name: "agent_surface_budget_audit",
+    price: "$0.01",
+    description: "Measure MCP and OpenAPI discovery bytes, selection contracts, heavy definitions, and progressive-discovery fixes before a call or payment.",
+  },
 ];
 
 const taskmarketTools = [
@@ -99,7 +147,7 @@ export default function Mcp() {
     const previousDescription = meta?.getAttribute("content") ?? null;
     meta?.setAttribute(
       "content",
-      "Twelve pay-per-call machine tools accepting both x402 and native MPP on Base, plus seller integration, settlement reconciliation, and market integrity evidence.",
+      "Twenty-two pay-per-call machine tools accepting both x402 and native MPP on Base, plus one alternate x402-only Circle Gateway route.",
     );
 
     const params = new URLSearchParams(window.location.search);
@@ -138,9 +186,9 @@ export default function Mcp() {
             Agents discover a service, call it, <span className="lime">pay, and continue</span>
           </h1>
           <p className={styles.lead}>
-            Twelve deterministic tools for research, security, enrichment, agent-work economics, and Morpho
-            decisions. No API key, subscription, or account is required. Every paid HTTP route accepts either x402
-            or native MPP, settles the same exact Base USDC amount, and returns a machine-readable result.
+            Twenty-two deterministic tools for discovery, purchase safety, settlement evidence, security, research,
+            and DeFi decisions. No API key, subscription, or account is required. Every canonical paid action accepts
+            either x402 or native MPP, settles the same exact Base USDC amount, and returns a machine-readable result.
           </p>
           <div className={styles.actions}>
             <a
@@ -192,7 +240,7 @@ export default function Mcp() {
         <section className={styles.section} aria-labelledby="tools-title">
           <div className={styles.sectionHead}>
             <p className="eyebrow">Available tools</p>
-            <h2 id="tools-title">Twelve focused calls, from $0.02</h2>
+            <h2 id="tools-title">Twenty-two focused calls, from $0.002</h2>
           </div>
           <div className={styles.grid}>
             {tools.map((tool) => (
@@ -209,74 +257,75 @@ export default function Mcp() {
 
         <section className={styles.sellerOffer} aria-labelledby="seller-title">
           <div>
-            <p className="eyebrow">For x402 sellers</p>
-            <h2 id="seller-title">Find the payment failures your catalog cannot see</h2>
+            <p className="eyebrow">Machine purchase gates</p>
+            <h2 id="seller-title">Inspect before an agent authorizes payment</h2>
             <p>
-              A public listing does not prove that price, request binding, settlement, delivery, and receipts still
-              agree at runtime. We compare your live origin with Agent402, Coinbase Bazaar, and MPP discovery, then
-              return the exact drift and production work that remains. No credentials or payment signing are needed.
+              Discovery is not authorization. These live tools check whether a buyer can construct the request,
+              inspect exact payment terms, verify the promised output contract, and reconcile a settlement. They use
+              no target credentials, wallet signing, or target payment during inspection.
             </p>
             <div className={styles.actions}>
               <a
                 className={styles.primary}
-                href={SELLER_DIAGNOSTIC_EMAIL}
-                onClick={() => trackAction("request_payment_readiness_diagnostic", "seller_offer")}
+                href={`${GATEWAY_URL}/commerce/seller-integrity-audit?method=GET&origin=https%3A%2F%2Fagents.samedaydesk.com&requireBazaar=true&requiredPaths=decision%2Coffers&route=%2Fcommerce%2Fpayment-offer-preflight`}
+                onClick={() => trackAction("inspect_seller_integrity_audit", "seller_offer")}
               >
-                Request a 48-hour diagnostic · $99
+                Inspect the seller audit · $0.01
               </a>
               <a
                 className={styles.secondary}
-                href={SELLER_INTEGRATION_EMAIL}
-                onClick={() => trackAction("request_dual_stack_integration", "seller_offer")}
+                href={`${GATEWAY_URL}/commerce/contract-qualified-search?limit=5&maxPriceDisplayUnits=0.1&query=service+domain+ownership+code+provenance&requiredPaths=data.sourceRepository`}
+                onClick={() => trackAction("inspect_contract_qualified_search", "seller_offer")}
               >
-                Request production implementation · $299
+                Inspect qualified search · $0.01
               </a>
               <a
                 className={styles.secondary}
-                href="https://github.com/epistemedeus/x402-url-extractor/blob/master/mpp-dual-stack.mjs"
+                href="mailto:contact@samedaydesk.com?subject=Agent%20payment%20infrastructure%20build&body=Origin%20or%20repository%3A%0AWhat%20must%20work%3A%0A"
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => trackAction("view_mpp_middleware", "seller_offer")}
+                onClick={() => trackAction("request_agent_payment_build", "seller_offer")}
               >
-                Inspect production middleware
+                Bring us the hard part
               </a>
             </div>
           </div>
           <div className={styles.offerCard}>
-            <span>Readiness diagnostic</span>
+            <span>Exact-operation evidence</span>
             <ul>
-              <li>One public origin and its paid route inventory</li>
-              <li>Live origin versus Agent402, Bazaar, and MPP discovery</li>
-              <li>Price, recipient, schema, and request-binding conflicts</li>
-              <li>Settlement, receipt, replay, and reconciliation gaps</li>
-              <li>Fixed-scope eligibility and a route-level action plan</li>
-              <li>No wallet access, credentials, or signed payments</li>
+              <li>Constructible required input</li>
+              <li>Exact route, method, price, asset, and recipient</li>
+              <li>Buyer-required success paths</li>
+              <li>Settlement and receipt verification</li>
+              <li>Privacy-bounded evidence</li>
+              <li>No target credentials, signature, or payment</li>
             </ul>
             <p>
-              Fixed $99, credited in full toward a compatible $299 implementation within 14 days. The founding
-              implementation covers up to ten existing Express GET routes, deployment review, and one revision.
+              Seller declarations help a buyer plan. They do not replace runtime validation, settlement evidence,
+              or buyer authorization.
             </p>
           </div>
         </section>
 
         <section className={styles.marketEvidence} aria-labelledby="evidence-title">
           <div>
-            <p className="eyebrow">Measured market gap · 9 August 2026</p>
-            <h2 id="evidence-title">Twenty-four verified external Base routes. Twenty-four x402-only.</h2>
+            <p className="eyebrow">Live storefront contract</p>
+            <h2 id="evidence-title">Twenty-two canonical actions. Two payment protocols.</h2>
           </div>
           <div>
             <p>
-              A bounded credential-free census started from Agent402's live index, selected all 41 healthy HTTPS
-              Base sellers in the declared cohort, and tested one indexed paid GET route per seller. Twenty-four
-              routes returned a valid runtime payment challenge; all twenty-four offered x402 and none offered
-              native MPP. SameDayDesk's twelve routes offer both.
+              The live catalog, x402 manifest, MPP OpenAPI, MCP tools, and A2A card describe the same twenty-two
+              canonical actions. The x402 manifest also carries one Circle Gateway alternate for payment preflight;
+              it is an alternate access path, not a twenty-third dual-rail product.
             </p>
             <a
               className={styles.inlineLink}
-              href={CENSUS_URL}
-              onClick={() => trackAction("open_agent402_census", "market_evidence")}
+              href={MANIFEST_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackAction("inspect_manifest", "market_evidence")}
             >
-              Read the public methodology and aggregate result →
+              Inspect the live manifest →
             </a>
           </div>
         </section>
@@ -332,7 +381,7 @@ export default function Mcp() {
             <h2 id="connect-title">Use Smithery or connect directly</h2>
             <p>
               Smithery provides a managed connection. MCP clients that support Streamable HTTP can
-              connect to the durable public endpoint directly and discover all twelve current schemas.
+              connect to the durable public endpoint directly and discover all twenty-two current tools.
             </p>
           </div>
           <div className={styles.commands}>

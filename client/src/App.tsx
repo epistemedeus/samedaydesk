@@ -31,6 +31,7 @@ export default function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/tools/ai-readiness" element={<AiReadiness />} />
           <Route path="/x402" element={<Mcp />} />
+          <Route path="/for-agents" element={<Mcp />} />
           <Route path="/login" element={<Auth mode="login" />} />
           <Route path="/signup" element={<Auth mode="signup" />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
