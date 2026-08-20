@@ -10,7 +10,6 @@
 // No PII is stored: IPs are bucketed to a coarse hash only for unique-ish counts.
 
 import crypto from "node:crypto";
-import { classifyRequest } from "./classify.js";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -28,9 +27,6 @@ const state = {
   byAiBot: Object.create(null), // AI crawler product -> count
   uniqueHumans: new Set(), // coarse ip+ua hash, humans only
   funnel: { home: 0, scan: 0, tools: 0, reports: 0, guides: 0, pricing: 0 },
-  // Request classes per UTC day: { "2026-08-19": { A: 12, B: 3, C: 1, D: 40, E: 2 } }.
-  // A crawler, B agent fetch, C human from an AI surface, D human unknown, E unresolved.
-  classDays: Object.create(null),
   recent: [], // last N events
 };
 
@@ -59,7 +55,6 @@ function loadSnapshot() {
     Object.assign(state.byReferer, s.byReferer || {});
     Object.assign(state.byAiBot, s.byAiBot || {});
     Object.assign(state.funnel, s.funnel || {});
-    Object.assign(state.classDays, s.classDays || {});
     state.uniqueHumans = new Set(s.uniqueHumans || []);
     state.recent = Array.isArray(s.recent) ? s.recent.slice(-RECENT_CAP) : [];
     if (s.startedAt) state.startedAt = s.startedAt; // keep the true window start
@@ -134,14 +129,6 @@ export function pulseMiddleware(req, _res, next) {
 
     const ua = req.headers["user-agent"] || "";
     const { kind, aiBot } = classify(ua);
-
-    // Per-class daily series, kept next to the legacy counters rather than replacing them.
-    const day = new Date().toISOString().slice(0, 10);
-    const { cls } = classifyRequest({ ua, referer: req.headers["referer"] });
-    const bucket = (state.classDays[day] ||= { A: 0, B: 0, C: 0, D: 0, E: 0 });
-    bucket[cls] = (bucket[cls] || 0) + 1;
-    const days = Object.keys(state.classDays).sort();
-    while (days.length > 60) delete state.classDays[days.shift()];
     const ref = refererHost(req.headers["referer"] || req.headers["origin"] || "");
     state.total += 1;
 
@@ -182,12 +169,6 @@ export function pulseMiddleware(req, _res, next) {
   return next();
 }
 
-export function classSeries(days = 30) {
-  const out = {};
-  for (const day of Object.keys(state.classDays).sort().slice(-days)) out[day] = state.classDays[day];
-  return out;
-}
-
 export function pulseSnapshot() {
   return {
     startedAt: state.startedAt,
@@ -201,7 +182,6 @@ export function pulseSnapshot() {
     byPath: state.byPath,
     byReferer: state.byReferer,
     byAiBot: state.byAiBot,
-    classDays: classSeries(30),
     recent: state.recent.slice(-40).reverse(),
   };
 }
