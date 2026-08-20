@@ -13,7 +13,7 @@
     "build": "npm --prefix client install --include=dev && npm --prefix client run build && node scripts/parity-check.mjs",
     "start": "node server/index.js",
     "lint": "npm --prefix client run lint",
-    "test": "node --test-force-exit --test \"test/*.test.mjs\"",
+    "test": "node --test \"test/*.test.mjs\"",
     "generate": "node scripts/generate-machine-layer.mjs",
     "parity": "node scripts/parity-check.mjs",
     "test:taskmarket": "node --test server/scripts/test-taskmarket-integration.js"

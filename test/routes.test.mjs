@@ -24,7 +24,28 @@ before(async () => {
   throw new Error("server did not start");
 });
 
-after(() => child?.kill());
+after(async () => {
+  if (!child) return;
+  if (child.exitCode != null || child.signalCode != null) return;
+  const pid = child.pid;
+  child.kill("SIGTERM");
+  try {
+    await new Promise((resolve, reject) => {
+      const t = setTimeout(() => reject(new Error(`preview pid ${pid} ignored SIGTERM`)), 4000);
+      child.once("exit", () => {
+        clearTimeout(t);
+        resolve();
+      });
+    });
+  } catch (err) {
+    try {
+      process.kill(pid, "SIGKILL");
+    } catch {
+      /* already gone */
+    }
+    throw err;
+  }
+});
 
 test("the homepage is a document, not an app shell", async () => {
   const res = await fetch(`${BASE}/`, { headers: { "User-Agent": "OAI-SearchBot/1.4" } });

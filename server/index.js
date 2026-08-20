@@ -16,7 +16,7 @@ import stripeWebhookRouter from "./routes/stripe-webhook.js";
 import resendWebhookRouter from "./routes/resend-webhook.js";
 import pulseRouter from "./routes/pulse.js";
 import mcpRouter from "./routes/mcp.js";
-import { pulseMiddleware } from "./lib/pulse.js";
+import { persistPulse, pulseMiddleware } from "./lib/pulse.js";
 import { sendPage } from "./lib/pages.js";
 import intakeRouter from "./routes/intake.js";
 import reportRouter from "./routes/report.js";
@@ -164,6 +164,36 @@ if (isProd) {
 startAbandonedSweep();
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, "0.0.0.0", () => {
+const server = app.listen(PORT, "0.0.0.0", () => {
   console.log(`[samedaydesk] listening on :${PORT}  (${isProd ? "production" : "development"})`);
 });
+
+// Graceful preview/process stop. Pulse used to listen for SIGTERM without
+// exiting, so TERM left the HTTP server on the port until SIGKILL.
+let shuttingDown = false;
+function shutdown() {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  try {
+    persistPulse();
+  } catch {
+    /* never block stop on analytics */
+  }
+  const force = setTimeout(() => {
+    try {
+      server.closeAllConnections?.();
+    } catch {
+      /* ignore */
+    }
+    process.exit(1);
+  }, 4000);
+  force.unref?.();
+  try {
+    server.closeIdleConnections?.();
+  } catch {
+    /* ignore */
+  }
+  server.close((err) => process.exit(err ? 1 : 0));
+}
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);

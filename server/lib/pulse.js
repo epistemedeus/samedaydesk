@@ -69,8 +69,14 @@ function loadSnapshot() {
 }
 loadSnapshot();
 setInterval(() => dirty && saveSnapshot(), 15000).unref();
-process.on("SIGTERM", saveSnapshot);
+// Persist on a clean event-loop drain. Do not listen for SIGTERM here: installing
+// any SIGTERM listener replaces Node's default exit, which left preview servers
+// holding their ports after ordinary TERM. server/index.js persists, then closes.
 process.on("beforeExit", saveSnapshot);
+
+export function persistPulse() {
+  saveSnapshot();
+}
 
 const AI_CRAWLERS = [
   ["GPTBot", /GPTBot/i],
