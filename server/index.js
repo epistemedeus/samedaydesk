@@ -164,7 +164,15 @@ if (isProd) {
 startAbandonedSweep();
 
 const PORT = process.env.PORT || 3000;
-const server = app.listen(PORT, "0.0.0.0", () => {
+// Do not pass a callback to app.listen. Express 5 routes the listen `error`
+// event into that callback (`server.once("error", done)`), so an `() => log`
+// handler swallows EADDRINUSE, prints "listening", and the process exits 0.
+const server = app.listen(PORT, "0.0.0.0");
+server.on("error", (err) => {
+  console.error(`[samedaydesk] listen failed on :${PORT}: ${err.code || err.message}`);
+  process.exit(1);
+});
+server.on("listening", () => {
   console.log(`[samedaydesk] listening on :${PORT}  (${isProd ? "production" : "development"})`);
 });
 
