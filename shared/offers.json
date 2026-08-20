@@ -1,0 +1,193 @@
+{
+  "version": "3.0.0",
+  "updated": "2026-08-19",
+  "currency": "usd",
+  "site": {
+    "url": "https://samedaydesk.com",
+    "name": "SameDayDesk",
+    "legal_name": "Neomorphic LLC",
+    "operator": "Lucian Constantinescu",
+    "jurisdiction": "Sheridan, Wyoming, United States",
+    "email": "contact@samedaydesk.com",
+    "github": "https://github.com/epistemedeus",
+    "code_repo": "https://github.com/epistemedeus/ai-readiness",
+    "npm": "https://www.npmjs.com/package/agent-payment-policy"
+  },
+  "clocks": {
+    "audit_days": 5,
+    "sprint_days": 15,
+    "plus_days": 20,
+    "timezone": "America/Los_Angeles",
+    "business_days": "Monday to Friday in America/Los_Angeles, excluding US federal holidays"
+  },
+  "clock_sentence": "The clock starts when that form is complete, not when Stripe succeeds.",
+  "offers": [
+    {
+      "slug": "free_report",
+      "name": "Free AI Answer Report",
+      "price": 0,
+      "price_label": "Free",
+      "path": "/report",
+      "clock_text": "Eligibility on the next screen",
+      "who": "Any owner who wants to see what the engines currently answer about their site.",
+      "deliverable": "Eligibility checks on the next screen, then answer cards with the exact question, the quote, the engine, and the timestamp when the panel is running.",
+      "refund": "No payment and no email address. One live run per domain per day; a repeat visit returns the stored copy with its timestamp."
+    },
+    {
+      "slug": "answer_audit",
+      "name": "AI Answer Audit",
+      "price": 49000,
+      "price_label": "$490",
+      "path": "/pay/audit",
+      "clock_key": "audit_days",
+      "clock_text": "{n} business days from complete intake",
+      "who": "An owner who already knows one answer is wrong and wants the census, the sources, and the files.",
+      "deliverable": "The report object in the section order of the published sample: the frozen buyer-question panel across named engines, a defect register in buyer words, the cross-surface consistency matrix, and the file set.",
+      "refund": "Cash refund on four printed classes, claimable within 14 days of delivery. The report stays delivered either way.",
+      "exclusion": "Diagnosis and files. We do not implement on this SKU. Implementation is the $2,400 sprint.",
+      "refund_instruments": [
+        "A",
+        "B"
+      ]
+    },
+    {
+      "slug": "correction_sprint",
+      "name": "Answer Correction Sprint",
+      "price": 240000,
+      "price_label": "$2,400",
+      "path": "/pay/sprint",
+      "clock_key": "sprint_days",
+      "clock_text": "{n} business days from complete access",
+      "who": "One market and one product line, where the wrong fact lives on pages you can edit.",
+      "deliverable": "Canonical fact page live, structured data valid, crawlers unblocked, named first-party defects closed, third-party mismatches submitted, a day 10 measurement, and warranty rechecks at day 30 and day 90.",
+      "refund": "Acceptance is artifacts, not a model output. The day 30 rule and the classes it never fires for are printed in the terms.",
+      "exclusion": "Bounded implementation of a frozen list. This is not a retainer and not a citation guarantee.",
+      "refund_instruments": [
+        "C"
+      ]
+    },
+    {
+      "slug": "correction_sprint_plus",
+      "name": "Correction Sprint Plus",
+      "price": 480000,
+      "price_label": "$4,800",
+      "path": "/pay/sprint-plus",
+      "clock_key": "plus_days",
+      "clock_text": "{n} business days from complete access",
+      "who": "For 2 or more location entities, or 2 or more product lines that each need their own prompt panel. One market and one product line is the sprint above.",
+      "deliverable": "The same sprint work, run once per entity or product line, with a separate panel and a separate before and after table for each.",
+      "refund": "Same acceptance rule as the sprint, applied per entity or product line.",
+      "exclusion": "For 2 or more location entities, or 2 or more product lines that each need their own prompt panel. One market, one product is the $2,400 sprint.",
+      "refund_instruments": [
+        "C"
+      ]
+    }
+  ],
+  "refund_instruments": {
+    "A": {
+      "name": "Audit quality refund",
+      "kind": "cash",
+      "window": "14 days from delivery",
+      "summary": "A cash refund, claimable in writing within 14 days of delivery. The report stays delivered.",
+      "classes": [
+        "Files are missing or cannot be opened and parsed.",
+        "The report contains no defect a specialist would recognise as one.",
+        "The report missed a competitor you named that the engines recommend on the panel questions.",
+        "A fact you gave us in the intake is contradicted in the answers and is not logged in the register."
+      ],
+      "never": "This refund never fires because an engine did not cite you or did not rank you."
+    },
+    "B": {
+      "name": "Sprint credit",
+      "kind": "credit",
+      "summary": "The $490 applies in full to a sprint started within 30 days of audit delivery. After 30 days the credit expires and the files stay yours."
+    },
+    "C": {
+      "name": "Sprint acceptance",
+      "kind": "acceptance",
+      "summary": "Acceptance is measured at day 30 on a de-personalized resample, three runs per question. It fires when the engine still quotes the old first-party string and cites a URL this sprint edited.",
+      "never": [
+        "Entity collision with a similarly named business",
+        "Best-of lists and roundups",
+        "Reviews and review aggregators",
+        "Answers that come from training memory with no source cited",
+        "Aggregator knowledge graphs",
+        "Franchise or directory name, address, and phone records the client does not own",
+        "Answers produced with search turned off"
+      ],
+      "caps": "The day 30 and day 90 warranty rechecks carry a 2 hour cap each. Work beyond the cap becomes an incident ticket."
+    }
+  },
+  "copy": {
+    "h1": "ChatGPT still quotes a price you changed two years ago.",
+    "h1_fallback": "AI is still selling a service you retired last year.",
+    "subhead": "We check the answers ChatGPT, Google AI Overviews, Gemini, and Perplexity give when buyers ask about your business, then correct the pages those answers rest on. Fixed prices, a refund rule printed before you pay, receipts you can check, and no ranking promises.",
+    "cta_panel_on": "Check this site. Quotes on the next page. No email.",
+    "cta_panel_off": "Check this site. Eligibility result on the next page. No email.",
+    "no_email_line": "You do not need an email address. The report opens on the next page.",
+    "reflexive_proof": "Our own homepage spent months publishing a service catalog we no longer sell to every agent that asked. The self-audit below is us catching it in production.",
+    "clean_verdict": "No wrong-fact class fired on this panel. This is not a $490 job."
+  },
+  "faq_owner": [
+    "Why does Google say my business is closed when we are open?",
+    "How do I fix wrong information about my company in ChatGPT?",
+    "What do I do when the AI overview uses another company's reviews?",
+    "How do I check what ChatGPT, Gemini, and Google actually say about my business?",
+    "Why is ChatGPT sending customers to my competitors?",
+    "I already updated my Google listing. Why is the AI overview still wrong?",
+    "Can I tell Google or OpenAI the answer is wrong?",
+    "How long until the wrong answer actually changes?",
+    "What if AI mixes my business up with a company that has a similar name?",
+    "Do I need a special \"AI\" service, or is this just keeping my information consistent?"
+  ],
+  "faq_vendor": [
+    "Is this a real company?",
+    "Has anyone actually used you?",
+    "Who are your clients?",
+    "Can I see a current-account report, not a generic case study?",
+    "Where are you based?",
+    "How do I know you do more than sell a dashboard?",
+    "What do you actually change after the check?",
+    "Can you guarantee ChatGPT will name me?"
+  ],
+  "panel": {
+    "engine_label": "OpenAI {model} API with web search",
+    "disclosure": "This card is an API answer with web search on. A consumer ChatGPT session can answer differently.",
+    "prompts": [
+      {
+        "slot": "identity",
+        "text": "What does {BUSINESS} do?",
+        "requires": []
+      },
+      {
+        "slot": "status",
+        "text": "Is {BUSINESS} open? What are their hours?",
+        "requires": []
+      },
+      {
+        "slot": "service",
+        "text": "Does {BUSINESS} offer {SERVICE}? What services do they offer?",
+        "fallback": "What services does {BUSINESS} offer?",
+        "requires": [
+          "SERVICE"
+        ]
+      },
+      {
+        "slot": "head_to_head",
+        "text": "Which should I pick, {BUSINESS} or {COMPETITOR}?",
+        "fallback": "Who is the best {CATEGORY} in {CITY}?",
+        "requires": [
+          "COMPETITOR"
+        ]
+      },
+      {
+        "slot": "price",
+        "text": "How much does {BUSINESS} charge for {SERVICE}?",
+        "fallback": "How much does {BUSINESS} charge?",
+        "requires": [
+          "SERVICE"
+        ]
+      }
+    ]
+  }
+}

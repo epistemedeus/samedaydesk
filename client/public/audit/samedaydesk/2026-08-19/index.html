@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-audit of samedaydesk.com, 2026-08-19 (SDD-SELF-2026-01)</title>
+<meta name="description" content="The complete public sample of the paid SameDayDesk audit, run against our own production site while the defects were still live. Five High findings, hashed evidence pack, replay script, 14-day remediation clock.">
+<link rel="canonical" href="https://samedaydesk.com/audit/samedaydesk/2026-08-19/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Self-audit of samedaydesk.com, 2026-08-19">
+<meta property="og:description" content="We ran our own paid audit method against our own production site and published the failing snapshot, with hashes and a replay script.">
+<meta property="og:url" content="https://samedaydesk.com/audit/samedaydesk/2026-08-19/">
+<style>
+  :root{
+    --bg:#f4f1ea; --card:#faf8f3; --ink:#191919; --dim:#56534c; --line:#cdc7ba;
+    --oxide:#9e3b2e; --ok:#3a6b45; --warn:#8a6400; --code:#f1ede3;
+  }
+  *{box-sizing:border-box}
+  html{background:var(--bg)}
+  body{margin:0;color:var(--ink);background:var(--bg);
+    font:16px/1.62 ui-serif,Georgia,"Times New Roman",serif}
+  .wrap{max-width:52rem;margin:0 auto;padding:2.5rem 1.15rem 5rem}
+  h1,h2,h3{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.2;letter-spacing:-.01em}
+  h1{font-size:1.85rem;margin:.2em 0 .4em}
+  h2{font-size:1.22rem;margin:2.6rem 0 .6rem;padding-top:1rem;border-top:1px solid var(--line)}
+  h3{font-size:1.02rem;margin:1.6rem 0 .4rem}
+  a{color:var(--oxide)}
+  code,pre,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em}
+  pre{background:var(--code);border:1px solid var(--line);border-radius:6px;padding:.85rem 1rem;overflow-x:auto}
+  code{background:var(--code);padding:.08em .3em;border-radius:3px}
+  pre code{background:none;padding:0}
+  table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.92rem;
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+  th,td{border:1px solid var(--line);padding:.45rem .6rem;text-align:left;vertical-align:top}
+  th{background:var(--code);font-weight:600}
+  .scroll{overflow-x:auto}
+  dl.stamp{display:grid;grid-template-columns:minmax(9rem,14rem) 1fr;gap:.28rem 1rem;margin:1rem 0;
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:.93rem}
+  dl.stamp dt{color:var(--dim)}
+  dl.stamp dd{margin:0}
+  .lede{font-size:1.06rem}
+  .muted{color:var(--dim)}
+  .finding{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--oxide);
+    border-radius:8px;padding:1.1rem 1.2rem;margin:1.6rem 0}
+  .finding.medium{border-left-color:var(--warn)}
+  .finding.info{border-left-color:var(--dim)}
+  .finding h3{margin-top:0}
+  .finding dl{display:grid;grid-template-columns:minmax(6.5rem,9rem) 1fr;gap:.25rem 1rem;margin:.7rem 0 0;
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:.92rem}
+  .finding dt{color:var(--dim)}
+  .finding dd{margin:0}
+  .sev{display:inline-block;font:600 .72rem/1 ui-sans-serif,system-ui,sans-serif;letter-spacing:.08em;
+    text-transform:uppercase;padding:.3em .55em;border-radius:4px;color:#fff;background:var(--oxide);vertical-align:.15em}
+  .sev.medium{background:var(--warn)}
+  .sev.info{background:var(--dim)}
+  blockquote{margin:.8rem 0;padding:.5rem 0 .5rem 1rem;border-left:3px solid var(--line);color:var(--dim)}
+  .toc{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:.92rem;
+    background:var(--card);border:1px solid var(--line);border-radius:8px;padding:1rem 1.2rem}
+  .toc ol{margin:.4rem 0 0;padding-left:1.3rem}
+  footer{margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--line);color:var(--dim);font-size:.9rem;
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+  @media print{
+    body{background:#fff;font-size:11pt}
+    .wrap{max-width:none;padding:0}
+    a{color:#000;text-decoration:underline}
+    .finding{break-inside:avoid}
+    pre{white-space:pre-wrap}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<p class="mono muted">SDD-SELF-2026-01</p>
+<h1>Self-audit of samedaydesk.com</h1>
+<p class="lede">This document is the complete public sample of the paid SameDayDesk audit. It was
+run against our own production site, and it was published while every finding below was still live
+and reproducible by a stranger.</p>
+
+<h2 id="cite">0. How to cite this report</h2>
+<p>Cite as finding ID plus status plus date, for example <code>SDD-2026-001, accepted, 2026-08-19</code>.
+Severity words are defined in section 3. Counts without IDs are incomplete. The evidence pack for
+every claim is at <a href="evidence/">/audit/samedaydesk/2026-08-19/evidence/</a> and its hashes are in
+<a href="evidence/SHA256SUMS.txt">SHA256SUMS.txt</a>.</p>
+<p>This document is the sample of the paid production audit. Later fixes to the live site do not
+rewrite it. Retests are section 13 addenda, and they change only the status field of a card.</p>
+
+<div class="toc">
+  <strong>Sections</strong>
+  <ol start="0">
+    <li><a href="#cite">How to cite this report</a></li>
+    <li><a href="#stamp">Cover stamp</a></li>
+    <li><a href="#summary">Executive summary</a></li>
+    <li><a href="#scope">Scope, method, severity rubric</a></li>
+    <li><a href="#surfaces">Surfaces and sample</a></li>
+    <li><a href="#bar">What already meets the bar</a></li>
+    <li><a href="#index">Findings index</a></li>
+    <li><a href="#findings">Findings</a></li>
+    <li><a href="#matrix">Cross-surface consistency matrix</a></li>
+    <li><a href="#firstbyte">First byte versus rendered DOM</a></li>
+    <li><a href="#register">Remediation register</a></li>
+    <li><a href="#repro">Reproducibility pack</a></li>
+    <li><a href="#limits">Limits and non-claims</a></li>
+    <li><a href="#retest">Retest log</a></li>
+    <li><a href="#map">Deliverable map</a></li>
+  </ol>
+</div>
+
+<h2 id="stamp">1. Cover stamp</h2>
+<dl class="stamp">
+  <dt>Engagement ID</dt><dd class="mono">SDD-SELF-2026-01</dd>
+  <dt>Vendor and subject</dt><dd>SameDayDesk, auditing its own site, <a href="https://samedaydesk.com/">https://samedaydesk.com</a></dd>
+  <dt>Method</dt><dd>SameDayDesk production audit, method version 1.0.0. This is the same section order, card shape, and severity language a paid audit uses.</dd>
+  <dt>First fetch (UTC)</dt><dd class="mono">2026-08-19T15:30:34Z</dd>
+  <dt>Deploy under test</dt><dd class="mono">7978869</dd>
+  <dt>Surfaces</dt><dd>10 artifacts across 9 URLs (section 4)</dd>
+  <dt>Lab or field</dt><dd>Field only. Every capture is a fetch of live production. No lab performance run was made, so no lab number is reported.</dd>
+  <dt>Overall verdict</dt><dd>As of the stamp above, this site does not meet its own machine-surface consistency rule: the catalog a non-rendering fetcher receives is not the catalog the site sells, and two machine files publish different counts for the same tool set.</dd>
+  <dt>Finding counts</dt><dd>High (5): SDD-2026-001, SDD-2026-002, SDD-2026-003, SDD-2026-004, SDD-2026-005. Medium (1): SDD-2026-006. Info (1): SDD-2026-007.</dd>
+</dl>
+
+<h2 id="summary">2. Executive summary</h2>
+<p><strong>Why this exists.</strong> A buyer deciding whether to pay for an audit should be able to
+read the whole artifact first. This is that artifact, run on the vendor's own production site so the
+sample cannot be a staged demo.</p>
+<p><strong>What was tested.</strong> The homepage as first-byte HTML and as rendered DOM, one further
+application route as first-byte HTML, and the public machine files: <code>llms.txt</code>, the agent
+card, <code>robots.txt</code>, <code>sitemap.xml</code>, the resources page, and one standalone sales
+page. Full list in section 4.</p>
+<p><strong>What was found.</strong> Five High, one Medium, one Info. The Highs are: the first-byte
+JSON-LD catalog (SDD-2026-001), the first-byte noscript catalog (SDD-2026-002), a tool-count
+disagreement between machine files (SDD-2026-003), a brand tagline that sells the service line this
+company is leaving (SDD-2026-004), and one price point published with two different delivery times on
+two live pages (SDD-2026-005).</p>
+<p><strong>Verdict as of the stamp.</strong> This site does not meet its own machine-surface
+consistency rule. It is not a security finding, it is not a data exposure, and no user task on the
+site is broken by any card in this report.</p>
+<p><strong>What happens next.</strong> The four catalog and identity findings carry a 14-day clock to
+2026-09-02 (section 10). The architecture card that causes first-byte drift carries a later named
+date, because pretending a rendering change is a 14-day job would be dishonest.</p>
+<p class="muted">Residual risk: this is a structured sample of one homepage plus the named machine
+files, not a site-wide conformance review. Surfaces outside section 4 were not read.</p>
+
+<h2 id="scope">3. Scope and method</h2>
+<h3>In scope</h3>
+<ul>
+  <li><code>https://samedaydesk.com/</code> first-byte HTML (fetched, JS never executed)</li>
+  <li><code>https://samedaydesk.com/</code> rendered DOM (headless Chrome, JS executed)</li>
+  <li>The JSON-LD blocks inside that first-byte HTML</li>
+  <li>The <code>noscript</code> block inside that first-byte HTML</li>
+  <li>The visible brand tagline, document title, and Open Graph copy</li>
+  <li><code>https://samedaydesk.com/llms.txt</code></li>
+  <li><code>https://samedaydesk.com/.well-known/agent-card.json</code></li>
+  <li><code>https://samedaydesk.com/robots.txt</code> and <code>https://samedaydesk.com/sitemap.xml</code></li>
+  <li><code>https://samedaydesk.com/resources.html</code></li>
+  <li><code>https://samedaydesk.com/ai-visibility-audit.html</code></li>
+  <li><code>https://samedaydesk.com/x402</code> first-byte HTML, as one sample of an application route</li>
+  <li>The x402 resource manifest that the machine files above describe, fetched from the gateway host</li>
+</ul>
+<h3>Out of scope</h3>
+<p>Authenticated pages, the checkout and payment flow, email, third-party analytics, the remote MCP
+endpoint internals, the hosted documentation directories, and every locale other than the default.
+They are out because this sample is bounded to the surfaces that publish what the business sells;
+each of them can be bought as an extension, and none of them was read.</p>
+<h3>Conformance target</h3>
+<p>The bar here is the product rubric, not an external standard: machine surfaces agree with each
+other, first-byte and rendered surfaces agree on what is sold, and no crawler-visible copy offers a
+service line the business is not selling. <strong>This report is not a WCAG conformance claim, not a
+penetration test, not a SOC 2 statement, and not a security advisory.</strong></p>
+<h3>Baseline</h3>
+<p>Logged out, no cookies, cold cache, IPv4 egress, default locale. Two user agents were used:
+<code>SameDayDeskAudit/0.1 (+https://samedaydesk.com/audit)</code> for every capture, and
+<code>OAI-SearchBot/1.4</code> for one crawler-parity capture of the homepage. JS off for all
+first-byte artifacts; JS on for the single rendered artifact.</p>
+<h3>Tools, pinned</h3>
+<table>
+<tr><th>Tool</th><th>Version</th><th>What it did</th></tr>
+<tr><td>curl</td><td>8.14.1, libcurl/8.14.1, OpenSSL/3.5.6</td><td>Every first-byte capture, response headers, status codes</td></tr>
+<tr><td>Google Chrome headless, <code>--dump-dom</code></td><td>151.0.7922.71</td><td>The one rendered-DOM capture</td></tr>
+<tr><td>python3 standard library</td><td>re, json</td><td>JSON-LD and noscript extraction, count arithmetic</td></tr>
+<tr><td>sha256sum, GNU coreutils</td><td>system</td><td>Hashing every captured body</td></tr>
+</table>
+<p>No Lighthouse run, no axe run, no WAVE run. There is therefore no performance or accessibility
+card in this report, and their absence is not a pass.</p>
+<h3>Sample versus exhaustive</h3>
+<p>Homepage plus named machine surfaces plus one application route is a <strong>structured
+sample</strong>. The site has 44 URLs in its sitemap; 41 of them were fetched only for a status code
+(section 4), not read. No random extra URL was added.</p>
+<h3>Human versus automated</h3>
+<p>Every card below was confirmed by a human reading the captured bytes. The only automated step is
+the status-code sweep of the sitemap and the hashing. Nothing in this report is a detector alert
+passed through unreviewed.</p>
+<h3>Severity rubric</h3>
+<table>
+<tr><th>Label</th><th>Meaning in this report</th></tr>
+<tr><td><strong>Critical</strong></td><td>A stated user or agent task cannot complete, or a legal or conformance claim in the site's own copy is false.</td></tr>
+<tr><td><strong>High</strong></td><td>A machine or human surface contradicts a sold claim.</td></tr>
+<tr><td><strong>Medium</strong></td><td>Quality failure with a clear owner and no false claim.</td></tr>
+<tr><td><strong>Low</strong></td><td>Hygiene or best practice.</td></tr>
+<tr><td><strong>Info or needs-review</strong></td><td>Detector alert without human confirmation, or an accepted architectural cause with a later date.</td></tr>
+</table>
+<p>Catalog drift is not a CVE and is not Critical. No card in this report is a security finding.</p>
+<h3>Status enum</h3>
+<p class="mono">open | accepted | fixed | mitigated | wontfix | false-positive | out-of-scope | retest-pending</p>
+<p><code>fixed</code> requires a before excerpt, an after excerpt, a deploy stamp, and a retest
+command. <code>retest-pending</code> is not <code>fixed</code>.</p>
+
+<h2 id="surfaces">4. Surfaces and sample</h2>
+<div class="scroll">
+<table>
+<tr><th>Surface</th><th>URL</th><th>How fetched</th><th>SHA256 of the body at T0</th><th>In sample because</th></tr>
+<tr><td>Homepage, first byte</td><td>/</td><td>curl, SameDayDeskAudit/0.1</td><td class="mono">103ed1c7b690&#8230;7e53d8</td><td>It is what a non-rendering fetcher receives</td></tr>
+<tr><td>Homepage, crawler parity</td><td>/</td><td>curl, OAI-SearchBot/1.4</td><td class="mono">103ed1c7b690&#8230;7e53d8</td><td>Tests whether the site serves crawlers different bytes</td></tr>
+<tr><td>Homepage, rendered DOM</td><td>/</td><td>Chrome headless, JS on</td><td class="mono">9b7fb39b4b9a&#8230;02eb18</td><td>It is what a human with JS receives</td></tr>
+<tr><td>Application route, first byte</td><td>/x402</td><td>curl, SameDayDeskAudit/0.1</td><td class="mono">103ed1c7b690&#8230;7e53d8</td><td>Tests whether routes have their own first-byte document</td></tr>
+<tr><td>llms.txt</td><td>/llms.txt</td><td>curl</td><td class="mono">2d8fd1421a3d&#8230;6784a</td><td>Machine file that describes the offer set</td></tr>
+<tr><td>Agent card</td><td>/.well-known/agent-card.json</td><td>curl</td><td class="mono">0b6f1659c4dd&#8230;6b3b0c</td><td>Machine file that describes the tool set</td></tr>
+<tr><td>robots.txt</td><td>/robots.txt</td><td>curl</td><td class="mono">f6090adca09a&#8230;4633a9</td><td>Crawler access is a precondition for everything else</td></tr>
+<tr><td>sitemap.xml</td><td>/sitemap.xml</td><td>curl, then a status sweep of all 44 URLs</td><td class="mono">466fda7af83f&#8230;875247</td><td>Declares which URLs the site wants read</td></tr>
+<tr><td>Resources page</td><td>/resources.html</td><td>curl</td><td class="mono">e4e1a4abfd4a&#8230;bbfcc2</td><td>Human-facing index of the same tools the machine files count</td></tr>
+<tr><td>Standalone sales page</td><td>/ai-visibility-audit.html</td><td>curl</td><td class="mono">be2aee89ccd0&#8230;005b2f</td><td>Publishes prices and a delivery time for a service the homepage also sells</td></tr>
+<tr><td>Gateway resource manifest</td><td>the x402 manifest this site's machine files describe</td><td>curl, fetched 2026-08-19T15:51:38Z</td><td class="mono">c11b672baf3a&#8230;</td><td>It is the surface the tool counts in SDD-2026-003 claim to describe</td></tr>
+</table>
+</div>
+<p>Full hashes are in <a href="evidence/SHA256SUMS.txt">evidence/SHA256SUMS.txt</a>; the capture
+conditions are in <a href="evidence/CAPTURE-MANIFEST.md">evidence/CAPTURE-MANIFEST.md</a>.</p>
+<p><strong>Explore note.</strong> What the site claims to sell at T0: a same-day task desk with 12
+purchasable services in 7 categories, plus a separate three-tier ladder on one standalone page. What
+the business actually sells from 2026-08-19 forward: correction of what AI answers say about a
+business, at four public prices. The gap between those two sentences is what most of this report is
+about.</p>
+
+<h2 id="bar">5. What already meets the bar</h2>
+<ul>
+  <li>HTTPS on every captured URL, with <code>www</code> answering HTTP 301 to the apex host.</li>
+  <li>No crawler cloaking: the plain-agent capture and the <code>OAI-SearchBot/1.4</code> capture of the homepage are byte-identical (same SHA256), so the site does not serve search fetchers a different document.</li>
+  <li><code>robots.txt</code> allows the AI crawlers that matter for this product (GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, PerplexityBot, Perplexity-User, Google-Extended, Applebot-Extended, CCBot) and points at the sitemap.</li>
+  <li>The public machine files exist and return 200: <code>llms.txt</code>, an agent card, a sitemap.</li>
+  <li>All 44 URLs in the sitemap answer 200 to a plain fetch (with the caveat in SDD-2026-006).</li>
+  <li>The health endpoint answers 200 with a JSON body.</li>
+  <li>The homepage carries JSON-LD at all, and it parses. Most sites in this product's sample do not.</li>
+</ul>
+
+<h2 id="index">6. Findings index</h2>
+<div class="scroll">
+<table>
+<tr><th>ID</th><th>Title</th><th>Severity</th><th>Surface</th><th>Status</th><th>Permalink</th></tr>
+<tr><td class="mono">SDD-2026-001</td><td>First-byte JSON-LD publishes a service catalog that is not the catalog the site sells</td><td>High</td><td>/ first byte</td><td>accepted</td><td><a href="#SDD-2026-001">#SDD-2026-001</a></td></tr>
+<tr><td class="mono">SDD-2026-002</td><td>First-byte noscript block publishes the same catalog as the only prose a non-rendering fetcher receives</td><td>High</td><td>/ first byte</td><td>accepted</td><td><a href="#SDD-2026-002">#SDD-2026-002</a></td></tr>
+<tr><td class="mono">SDD-2026-003</td><td>Machine surfaces disagree on how many tools exist</td><td>High</td><td>llms.txt, agent card, /x402, resources</td><td>accepted</td><td><a href="#SDD-2026-003">#SDD-2026-003</a></td></tr>
+<tr><td class="mono">SDD-2026-004</td><td>Brand tagline, title, and Open Graph copy sell the service line the company is leaving</td><td>High</td><td>/ first byte and rendered</td><td>accepted</td><td><a href="#SDD-2026-004">#SDD-2026-004</a></td></tr>
+<tr><td class="mono">SDD-2026-005</td><td>One price point is published with two different delivery times on two live pages</td><td>High</td><td>/ rendered, /ai-visibility-audit.html</td><td>accepted</td><td><a href="#SDD-2026-005">#SDD-2026-005</a></td></tr>
+<tr><td class="mono">SDD-2026-006</td><td>An unknown URL answers HTTP 200 with the homepage document</td><td>Medium</td><td>any unmatched path</td><td>accepted</td><td><a href="#SDD-2026-006">#SDD-2026-006</a></td></tr>
+<tr><td class="mono">SDD-2026-007</td><td>Every application route returns the same first-byte document</td><td>Info</td><td>/x402 and the route table</td><td>open</td><td><a href="#SDD-2026-007">#SDD-2026-007</a></td></tr>
+</table>
+</div>
+
+<h2 id="findings">7. Findings</h2>
+
+<div class="finding" id="SDD-2026-001">
+<h3>SDD-2026-001 <span class="sev">High</span></h3>
+<p><strong>First-byte JSON-LD publishes a service catalog that is not the catalog the site sells.</strong></p>
+<dl>
+  <dt>Severity</dt><dd>High: a machine or human surface contradicts a sold claim.</dd>
+  <dt>Asset</dt><dd><code>https://samedaydesk.com/</code>, first byte</dd>
+  <dt>As of</dt><dd class="mono">2026-08-19T15:30:34Z</dd>
+  <dt>Rule</dt><dd class="mono">SDD-R-CATALOG-PARITY</dd>
+  <dt>Expected</dt><dd>The structured data a fetcher reads lists the services the business sells, at the prices it charges.</dd>
+  <dt>Observed</dt><dd>The <code>OfferCatalog</code> in first-byte HTML lists 8 offers. The site's own purchase catalog carries 12 offers plus an open-amount option, so 4 sold services appear nowhere in the structured data, and the whole catalog describes a service line the business stops selling on the date of this report.</dd>
+</dl>
+<p><strong>Evidence.</strong> The 8 offers in the first-byte JSON-LD, extracted from the captured body:</p>
+<pre><code>69   Local Business Lead List
+39   Spreadsheet Cleanup &amp; Dedup
+89   Scrape to Spreadsheet
+49   Script / Bug Fix
+149  Automation / Integration Build
+399  RAG Chatbot Over Your Docs
+349  Custom MCP Server
+199  AI-Search Visibility Audit</code></pre>
+<p>The four purchasable services with no node in that catalog, taken from the rendered page:
+Resume and LinkedIn rewrite at $59, custom cover letter at $39, landing page copy at $69, and the
+application pack at $79.</p>
+<dl>
+  <dt>Repro</dt><dd><code>curl -sS -A "SameDayDeskAudit/0.1 (+https://samedaydesk.com/audit)" https://samedaydesk.com/ | grep -c OfferCatalog</code> (curl 8.14.1)</dd>
+  <dt>Status</dt><dd><strong>accepted</strong></dd>
+  <dt>Owner</dt><dd>Site operator</dd>
+  <dt>Clock</dt><dd class="mono">2026-09-02</dd>
+  <dt>Residual</dt><dd>Engines and agents that cached the old catalog before the fix will keep answering from it until they refetch. Nothing on this site controls that refetch date.</dd>
+  <dt>Not this</dt><dd>Not a CVE. Not a user-data exposure. The impact is machine catalog integrity.</dd>
+  <dt>Challenge</dt><dd>Dispute or extend this finding: <a href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a>, subject line <code>SDD-2026-001</code>.</dd>
+</dl>
+<script type="application/json" data-finding="SDD-2026-001">{"id":"SDD-2026-001","severity":"High","status":"accepted","clock":"2026-09-02","surface":"https://samedaydesk.com/ first-byte","asOf":"2026-08-19T15:30:34Z"}</script>
+</div>
+
+<div class="finding" id="SDD-2026-002">
+<h3>SDD-2026-002 <span class="sev">High</span></h3>
+<p><strong>The first-byte noscript block publishes the same catalog, and it is the only prose a
+non-rendering fetcher receives.</strong></p>
+<dl>
+  <dt>Severity</dt><dd>High: a machine or human surface contradicts a sold claim.</dd>
+  <dt>Asset</dt><dd><code>https://samedaydesk.com/</code>, first byte, <code>noscript</code> element</dd>
+  <dt>As of</dt><dd class="mono">2026-08-19T15:30:34Z</dd>
+  <dt>Rule</dt><dd class="mono">SDD-R-CATALOG-PARITY</dd>
+  <dt>Expected</dt><dd>The prose written for fetchers that do not run JS describes the current business.</dd>
+  <dt>Observed</dt><dd>The <code>noscript</code> block is 5,603 bytes of catalog: an H1 selling the previous service line, 8 priced services as a list, 8 tool links, agent interface links, and 9 guide links. It is a separate defect from SDD-2026-001 because a reader who only inspects JSON-LD would not see it, and fixing one does not fix the other.</dd>
+</dl>
+<p><strong>Evidence.</strong> The first lines of the captured noscript block:</p>
+<pre><code>&lt;h1&gt;SameDayDesk: hand off the busywork, get it back today&lt;/h1&gt;
+&lt;p&gt;SameDayDesk is a same-day, done-for-you desk run by a small senior team. ...&lt;/p&gt;
+&lt;h2&gt;Services and flat prices&lt;/h2&gt;
+&lt;ul&gt;&lt;li&gt;Local Business Lead List ...: $69&lt;/li&gt; ... 8 items ...&lt;/ul&gt;</code></pre>
+<p>Full block: <a href="evidence/homepage.firstbyte.noscript.html.txt">evidence/homepage.firstbyte.noscript.html.txt</a>.</p>
+<dl>
+  <dt>Repro</dt><dd><code>curl -sS -A "SameDayDeskAudit/0.1 (+https://samedaydesk.com/audit)" https://samedaydesk.com/ | grep -A5 '&lt;noscript&gt;'</code></dd>
+  <dt>Status</dt><dd><strong>accepted</strong></dd>
+  <dt>Owner</dt><dd>Site operator</dd>
+  <dt>Clock</dt><dd class="mono">2026-09-02</dd>
+  <dt>Residual</dt><dd>Same cache residual as SDD-2026-001.</dd>
+  <dt>Not this</dt><dd>Not a CVE. Not a user-data exposure. The impact is machine catalog integrity.</dd>
+  <dt>Challenge</dt><dd><a href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a>, subject line <code>SDD-2026-002</code>.</dd>
+</dl>
+<script type="application/json" data-finding="SDD-2026-002">{"id":"SDD-2026-002","severity":"High","status":"accepted","clock":"2026-09-02","surface":"https://samedaydesk.com/ first-byte noscript","asOf":"2026-08-19T15:30:34Z"}</script>
+</div>
+
+<div class="finding" id="SDD-2026-003">
+<h3>SDD-2026-003 <span class="sev">High</span></h3>
+<p><strong>Machine surfaces disagree on how many tools exist.</strong></p>
+<dl>
+  <dt>Severity</dt><dd>High: a machine or human surface contradicts a sold claim.</dd>
+  <dt>Asset</dt><dd><code>/llms.txt</code>, <code>/.well-known/agent-card.json</code>, <code>/x402</code> rendered, <code>/resources.html</code></dd>
+  <dt>As of</dt><dd class="mono">2026-08-19T15:30:34Z</dd>
+  <dt>Rule</dt><dd class="mono">SDD-R-COUNT-PARITY</dd>
+  <dt>Expected</dt><dd>Every machine surface that states how many tools exist states the same number, or states none.</dd>
+  <dt>Observed</dt><dd>Three different counts are published for the same paid gateway, and the live gateway manifest matches none of them. The resources page says seven, the agent card says eight, and both <code>llms.txt</code> and the rendered <code>/x402</code> page say twelve. The gateway's own manifest, fetched the same day, publishes 23 paid resources. Separately, the free tools are counted three ways: the hub page links 7, <code>llms.txt</code> names 3, and the resources page names 2 plus the hub.</dd>
+</dl>
+<p><strong>Evidence.</strong> Quoted from the captured bodies:</p>
+<pre><code>resources.html  : "x402 MCP data gateway: seven paid data tools on Base mainnet ..."
+agent-card.json : "Discovers eight exact-price x402 data and risk actions, ..."
+llms.txt        : "Twelve pay-per-call HTTP and MCP tools accepting both x402 ..."
+/x402 rendered  : "Twelve focused calls, from $0.02"
+gateway manifest: 23 items, 23 distinct routes (fetched 2026-08-19T15:51:38Z)</code></pre>
+<p>Full numbers are in the matrix at section 8. The gateway manifest was fetched 21 minutes
+after the T0 freeze, still before any remediation; its own fetch stamp is published beside it in
+the evidence pack.</p>
+<dl>
+  <dt>Repro</dt><dd><code>curl -sS https://samedaydesk.com/.well-known/agent-card.json | grep -o eight</code>, <code>curl -sS https://samedaydesk.com/llms.txt | grep -o Twelve</code>, <code>curl -sS https://samedaydesk.com/resources.html | grep -o "seven paid data tools"</code>, and count the manifest with <code>curl -sS https://x402-url-extractor-production.up.railway.app/.well-known/x402 | python3 -c "import json,sys;print(len(json.load(sys.stdin)['items']))"</code></dd>
+  <dt>Status</dt><dd><strong>accepted</strong></dd>
+  <dt>Owner</dt><dd>Site operator</dd>
+  <dt>Clock</dt><dd class="mono">2026-09-02</dd>
+  <dt>Residual</dt><dd>The close is to stop publishing a count that a separate service can change without this site knowing, and to point at the manifest instead. Until the close, the canonical column in section 8 is deliberately blank rather than backfilled.</dd>
+  <dt>Not this</dt><dd>Not a CVE. Not a user-data exposure. The impact is that an agent reading two files gets two answers to one question.</dd>
+  <dt>Challenge</dt><dd><a href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a>, subject line <code>SDD-2026-003</code>.</dd>
+</dl>
+<script type="application/json" data-finding="SDD-2026-003">{"id":"SDD-2026-003","severity":"High","status":"accepted","clock":"2026-09-02","surface":"llms.txt, agent card, /x402, /resources.html","asOf":"2026-08-19T15:30:34Z"}</script>
+</div>
+
+<div class="finding" id="SDD-2026-004">
+<h3>SDD-2026-004 <span class="sev">High</span></h3>
+<p><strong>The brand tagline, document title, and Open Graph copy sell the service line the company
+is leaving.</strong></p>
+<dl>
+  <dt>Severity</dt><dd>High: a machine or human surface contradicts a sold claim.</dd>
+  <dt>Asset</dt><dd><code>https://samedaydesk.com/</code>, first byte and rendered DOM</dd>
+  <dt>As of</dt><dd class="mono">2026-08-19T15:30:34Z</dd>
+  <dt>Rule</dt><dd class="mono">SDD-R-IDENTITY-PARITY</dd>
+  <dt>Expected</dt><dd>The one sentence a search result, a share card, and a chat answer quote describes what the business sells today.</dd>
+  <dt>Observed</dt><dd>The title, the rendered H1, the noscript H1, the meta description, and both Open Graph strings all sell the task-desk line. The service this company sells from the date of this report, correction of what AI answers say about a business, appears in none of them.</dd>
+</dl>
+<p><strong>Evidence.</strong> Verbatim from the captured first-byte HTML:</p>
+<pre><code>&lt;title&gt;SameDayDesk: hand off the busywork, get it back today&lt;/title&gt;
+&lt;meta property="og:title" content="SameDayDesk: hand off the busywork, get it back today" /&gt;</code></pre>
+<p>And from the rendered DOM: <code>&lt;h1&gt;Hand off the busywork. Get it back today.&lt;/h1&gt;</code></p>
+<p class="muted">No screenshot is published for this card. The primary evidence for a copy claim is
+the fetched bytes, and both the first-byte and the rendered capture are in the evidence pack with
+hashes. A screenshot would add nothing a reader could verify better.</p>
+<dl>
+  <dt>Repro</dt><dd><code>curl -sS https://samedaydesk.com/ | grep -o '&lt;title&gt;[^&lt;]*&lt;/title&gt;'</code></dd>
+  <dt>Status</dt><dd><strong>accepted</strong></dd>
+  <dt>Owner</dt><dd>Site operator</dd>
+  <dt>Clock</dt><dd class="mono">2026-09-02</dd>
+  <dt>Residual</dt><dd>Answers already trained or cached on the old sentence will keep repeating it after the page changes. That lag is the reason this company exists and it applies to this company too.</dd>
+  <dt>Not this</dt><dd>Not a CVE. Not a false legal claim. The impact is that the sentence a machine quotes about this business is the wrong sentence.</dd>
+  <dt>Challenge</dt><dd><a href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a>, subject line <code>SDD-2026-004</code>.</dd>
+</dl>
+<script type="application/json" data-finding="SDD-2026-004">{"id":"SDD-2026-004","severity":"High","status":"accepted","clock":"2026-09-02","surface":"https://samedaydesk.com/ title, H1, OG","asOf":"2026-08-19T15:30:34Z"}</script>
+</div>
+
+<div class="finding" id="SDD-2026-005">
+<h3>SDD-2026-005 <span class="sev">High</span></h3>
+<p><strong>One price point is published with two different delivery times, and two different service
+names, on two live pages.</strong></p>
+<dl>
+  <dt>Severity</dt><dd>High: a machine or human surface contradicts a sold claim.</dd>
+  <dt>Asset</dt><dd><code>https://samedaydesk.com/</code> rendered, and <code>https://samedaydesk.com/ai-visibility-audit.html</code></dd>
+  <dt>As of</dt><dd class="mono">2026-08-19T15:30:34Z</dd>
+  <dt>Rule</dt><dd class="mono">SDD-R-OFFER-PARITY</dd>
+  <dt>Expected</dt><dd>A buyer who reads two pages about the same $199 service reads the same delivery time on both.</dd>
+  <dt>Observed</dt><dd>The homepage card sells the $199 service with the turnaround "Same day". The standalone page sells the $199 service with the turnaround "2 days". The homepage calls it one name; the standalone page calls it another. The standalone page also publishes two further price tiers that appear on no other surface on this site.</dd>
+</dl>
+<p><strong>Evidence.</strong> From the rendered homepage capture, the service card reads
+<code>$199</code> then <code>Same day</code>. From the standalone page capture:
+<code>The full report: ... and a prioritized fix list. 2 days.</code> The two further tiers on that
+page are <code>$399</code> (stated as 5 days) and <code>$499</code>.</p>
+<dl>
+  <dt>Repro</dt><dd><code>curl -sS https://samedaydesk.com/ai-visibility-audit.html | grep -o '2 days'</code>, then read the $199 card in the rendered homepage capture in the evidence pack.</dd>
+  <dt>Status</dt><dd><strong>accepted</strong></dd>
+  <dt>Owner</dt><dd>Site operator</dd>
+  <dt>Clock</dt><dd class="mono">2026-09-02</dd>
+  <dt>Residual</dt><dd>The remediation for this one is retirement of the page and the price point, not reconciliation of the two numbers.</dd>
+  <dt>Not this</dt><dd>Not a CVE. Not a claim that either delivery time was missed for any buyer. No order for this service is being disputed; the defect is that the site publishes two answers.</dd>
+  <dt>Challenge</dt><dd><a href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a>, subject line <code>SDD-2026-005</code>.</dd>
+</dl>
+<script type="application/json" data-finding="SDD-2026-005">{"id":"SDD-2026-005","severity":"High","status":"accepted","clock":"2026-09-02","surface":"/ rendered, /ai-visibility-audit.html","asOf":"2026-08-19T15:30:34Z"}</script>
+</div>
+
+<div class="finding medium" id="SDD-2026-006">
+<h3>SDD-2026-006 <span class="sev medium">Medium</span></h3>
+<p><strong>An unknown URL answers HTTP 200 with the homepage document.</strong></p>
+<dl>
+  <dt>Severity</dt><dd>Medium: quality failure with a clear owner and no false claim.</dd>
+  <dt>Asset</dt><dd>Any path the server does not match, for example <code>/this-page-does-not-exist-9f3a</code></dd>
+  <dt>As of</dt><dd class="mono">2026-08-19T15:30:34Z</dd>
+  <dt>Rule</dt><dd class="mono">SDD-R-STATUS-TRUTH</dd>
+  <dt>Expected</dt><dd>A URL that does not exist answers 404.</dd>
+  <dt>Observed</dt><dd>Three invented paths each returned HTTP 200 carrying the homepage document. A crawler that follows a broken link records a page that exists, containing the catalog described in SDD-2026-001 and SDD-2026-002. It also makes the all-200 sitemap sweep in section 5 weaker evidence than it looks, which is why it is stated as a caveat there.</dd>
+</dl>
+<pre><code>200 /this-page-does-not-exist-9f3a
+200 /guides/nope.html
+200 /tools/nope</code></pre>
+<dl>
+  <dt>Repro</dt><dd><code>curl -sS -o /dev/null -w '%{http_code}\n' https://samedaydesk.com/this-page-does-not-exist-9f3a</code></dd>
+  <dt>Status</dt><dd><strong>accepted</strong></dd>
+  <dt>Owner</dt><dd>Site operator</dd>
+  <dt>Clock</dt><dd class="mono">2026-09-02</dd>
+  <dt>Residual</dt><dd>Fixing the status code does not retract pages already indexed from broken links.</dd>
+  <dt>Not this</dt><dd>Not a CVE. Not a user-data exposure.</dd>
+  <dt>Challenge</dt><dd><a href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a>, subject line <code>SDD-2026-006</code>.</dd>
+</dl>
+<script type="application/json" data-finding="SDD-2026-006">{"id":"SDD-2026-006","severity":"Medium","status":"accepted","clock":"2026-09-02","surface":"unmatched paths","asOf":"2026-08-19T15:30:34Z"}</script>
+</div>
+
+<div class="finding info" id="SDD-2026-007">
+<h3>SDD-2026-007 <span class="sev info">Info</span></h3>
+<p><strong>Every application route returns the same first-byte document, so first-byte drift has one
+architectural cause.</strong></p>
+<dl>
+  <dt>Severity</dt><dd>Info: an accepted architectural cause, carrying a later named date rather than the 14-day clock.</dd>
+  <dt>Asset</dt><dd><code>https://samedaydesk.com/x402</code> first byte, as one sample of the route table</dd>
+  <dt>As of</dt><dd class="mono">2026-08-19T15:30:34Z</dd>
+  <dt>Rule</dt><dd class="mono">SDD-R-ROUTE-FIRSTBYTE</dd>
+  <dt>Expected</dt><dd>A route that publishes its own content publishes its own first-byte document.</dd>
+  <dt>Observed</dt><dd>The first-byte body of <code>/x402</code> is byte-identical to the first-byte body of <code>/</code> (same SHA256, <code>103ed1c7b690&#8230;7e53d8</code>). The route's own content, including the count quoted in SDD-2026-003, exists only after JS runs. This is the mechanism behind SDD-2026-001, SDD-2026-002, and part of SDD-2026-003.</dd>
+</dl>
+<dl>
+  <dt>Repro</dt><dd><code>curl -sS https://samedaydesk.com/x402 | sha256sum</code> and <code>curl -sS https://samedaydesk.com/ | sha256sum</code>, then compare.</dd>
+  <dt>Status</dt><dd><strong>open</strong></dd>
+  <dt>Owner</dt><dd>Site operator</dd>
+  <dt>Clock</dt><dd class="mono">2026-11-30</dd>
+  <dt>Residual</dt><dd>The near-term remediation gives the pages that carry commercial facts their own server-rendered documents. The rest of the route table keeps shipping a shared shell until the date above, and this card stays open until it does not.</dd>
+  <dt>Not this</dt><dd>Not a CVE. Not a claim that a 14-day rendering rewrite is honest. Naming a 14-day date on this card is the dishonest option, so it is not named.</dd>
+  <dt>Challenge</dt><dd><a href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a>, subject line <code>SDD-2026-007</code>.</dd>
+</dl>
+<script type="application/json" data-finding="SDD-2026-007">{"id":"SDD-2026-007","severity":"Info","status":"open","clock":"2026-11-30","surface":"/x402 first-byte and the route table","asOf":"2026-08-19T15:30:34Z"}</script>
+</div>
+
+<h2 id="matrix">8. Cross-surface consistency matrix</h2>
+<div class="scroll">
+<table>
+<tr><th>Claim</th><th>llms.txt</th><th>Agent card</th><th>/x402 (rendered)</th><th>/resources.html</th><th>Homepage (rendered)</th><th>Homepage (first-byte JSON-LD)</th><th>Homepage (first-byte noscript)</th><th>Canonical</th></tr>
+<tr><td>Paid gateway tool count</td><td>twelve</td><td>eight</td><td>twelve</td><td>seven</td><td>not stated</td><td>not stated</td><td>not stated</td><td>(blank until the close. The gateway manifest itself published 23 items on this date.)</td></tr>
+<tr><td>Free tools linked</td><td>3</td><td>0</td><td>0</td><td>2 plus the hub</td><td>8 links via the hub</td><td>0</td><td>8</td><td>(blank until the close)</td></tr>
+<tr><td>Purchasable services</td><td>1 named, from $199</td><td>0</td><td>0</td><td>0</td><td>12 plus an open amount</td><td>8</td><td>8</td><td>(blank until the close)</td></tr>
+<tr><td>Tagline or one-liner</td><td>same-day research, data, code, automation desk</td><td>machine commerce storefront</td><td>machine tools on Base</td><td>guides, reports, free tools</td><td>hand off the busywork</td><td>same-day desk for data, code, AI builds and copy</td><td>hand off the busywork</td><td>(blank until the close)</td></tr>
+</table>
+</div>
+<p>The canonical column stays blank on purpose. Backfilling it before the surfaces actually agree
+would turn this matrix into the thing it is measuring. It gets filled in the retest addendum.</p>
+
+<h2 id="firstbyte">9. First byte versus rendered DOM</h2>
+<p><strong>How first byte was taken.</strong>
+<code>curl -sS -D headers -o body -A "SameDayDeskAudit/0.1 (+https://samedaydesk.com/audit)" https://samedaydesk.com/</code>
+with curl 8.14.1. No JS executed at any point.</p>
+<p><strong>How the rendered DOM was taken.</strong> Google Chrome 151.0.7922.71 headless with
+<code>--dump-dom</code> and an 8 second virtual time budget, same URL, JS executed.</p>
+<p><strong>What a fetcher that does not run JS receives:</strong> a 12,418 byte document whose entire
+commercial content is the JSON-LD catalog of SDD-2026-001 and the noscript catalog of SDD-2026-002.</p>
+<p><strong>What a human with JS receives:</strong> a 42,622 byte DOM with 12 purchasable services.
+Both documents sell the same retired service line, so on this site the rendered page is not the
+current one either. Where they differ is completeness: the rendered page carries 4 services the
+machine catalog omits.</p>
+<p>Automated readability and accessibility tooling usually tests the rendered DOM. This product also
+tests the unrendered bytes, because that is where the catalog in SDD-2026-001 lives and a
+rendered-only test would report this homepage as consistent with itself.</p>
+
+<h2 id="register">10. Remediation register</h2>
+<div class="scroll">
+<table>
+<tr><th>ID</th><th>Status</th><th>Owner</th><th>Clock</th><th>Intended change</th><th>Residual</th></tr>
+<tr><td class="mono">SDD-2026-001</td><td>accepted</td><td>Site operator</td><td class="mono">2026-09-02</td><td>Replace the catalog graph with structured data generated from one offer record that matches the visible page.</td><td>Cached answers persist past the fix.</td></tr>
+<tr><td class="mono">SDD-2026-002</td><td>accepted</td><td>Site operator</td><td class="mono">2026-09-02</td><td>Remove the noscript catalog and serve the homepage as a real document, so the fetcher path and the human path read the same content.</td><td>Cached answers persist past the fix.</td></tr>
+<tr><td class="mono">SDD-2026-003</td><td>accepted</td><td>Site operator</td><td class="mono">2026-09-02</td><td>Pick one canonical count, regenerate llms.txt and the agent card from it, and reconcile the human pages that quote it.</td><td>Third-party copies of the old numbers are not in this site's control.</td></tr>
+<tr><td class="mono">SDD-2026-004</td><td>accepted</td><td>Site operator</td><td class="mono">2026-09-02</td><td>Replace title, H1, description, and Open Graph copy with the sentence that describes the current service.</td><td>Answers quoting the old sentence outlive the edit.</td></tr>
+<tr><td class="mono">SDD-2026-005</td><td>accepted</td><td>Site operator</td><td class="mono">2026-09-02</td><td>Retire the standalone page and the price point, redirect the URL, and publish delivery times from one config value.</td><td>Old links and any cached copy of the retired page.</td></tr>
+<tr><td class="mono">SDD-2026-006</td><td>accepted</td><td>Site operator</td><td class="mono">2026-09-02</td><td>Return 404 for unmatched paths instead of the homepage document.</td><td>Already-indexed phantom URLs need to age out.</td></tr>
+<tr><td class="mono">SDD-2026-007</td><td>open</td><td>Site operator</td><td class="mono">2026-11-30</td><td>Give the pages that carry commercial facts their own server-rendered documents first, then the rest of the route table.</td><td>Until that date, routes outside the commercial set keep returning a shared shell.</td></tr>
+</table>
+</div>
+
+<h2 id="repro">11. Reproducibility pack</h2>
+<p>A stranger with a laptop, curl, and 15 minutes can confirm or falsify every High above without
+talking to this company. Nothing below needs an account, a key, or any SameDayDesk code.</p>
+<h3>If you have 15 minutes, run these four</h3>
+<pre><code># 0. stamp your own run
+date -u
+
+# 1. does first-byte HTML still carry the retired catalog? (SDD-2026-001, SDD-2026-002)
+curl -sS -A "SameDayDeskAudit/0.1 (+https://samedaydesk.com/audit)" \
+  https://samedaydesk.com/ -o home.html
+sha256sum home.html            # T0: 103ed1c7b6901096de45245ad593eabd5e125c3f802e8f2b1bb98368b47e53d8
+grep -c OfferCatalog home.html
+grep -c "Local Business Lead List" home.html
+
+# 2. do the two machine files still publish different counts? (SDD-2026-003)
+curl -sS https://samedaydesk.com/llms.txt -o llms.txt
+curl -sS https://samedaydesk.com/.well-known/agent-card.json -o agent-card.json
+sha256sum llms.txt agent-card.json
+grep -o -i twelve llms.txt ; grep -o -i eight agent-card.json
+
+# 3. does the tagline still sell the retired line? (SDD-2026-004)
+grep -o "<title>[^<]*</title>" home.html
+
+# 4. does an unknown URL still answer 200? (SDD-2026-006)
+curl -sS -o /dev/null -w "%{http_code}\n" \
+  https://samedaydesk.com/this-page-does-not-exist-9f3a</code></pre>
+<h3>Replay script</h3>
+<p><a href="replay.sh">replay.sh</a> runs all of the above and prints, per finding, whether the T0
+predicate still matches production. <strong>It exits 1 while any of the four T0 High predicates still
+match, and 0 once none of them do.</strong> That is deliberate: while the clock is running, the
+script a buyer downloads should fail.</p>
+<pre><code>curl -sS https://samedaydesk.com/audit/samedaydesk/2026-08-19/replay.sh -o replay.sh
+bash replay.sh ; echo "exit=$?"</code></pre>
+<h3>Evidence pack</h3>
+<p>Every captured body, every response header block, the extracted JSON-LD, the extracted noscript,
+the sitemap status sweep, and the capture conditions:
+<a href="evidence/">evidence/</a>, hashed in <a href="evidence/SHA256SUMS.txt">SHA256SUMS.txt</a>,
+described in <a href="evidence/CAPTURE-MANIFEST.md">CAPTURE-MANIFEST.md</a>. Captured bodies carry a
+<code>.txt</code> extension so this directory serves frozen evidence as text and never as a second
+live copy of the site. The bytes are unmodified, so the hashes match what the live URLs returned.</p>
+<h3>What was not run</h3>
+<p>No Lighthouse, no axe, no WAVE, no authenticated surface, no checkout, no email, no mobile
+emulation, no second locale, no repeat capture on another date. Method version 1.0.0, so a later
+audit of this same site can be compared against this one.</p>
+<h3>Challenge address</h3>
+<p id="challenge">Dispute a finding, or send one this report missed:
+<a href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a> with the finding ID in the
+subject. A correct challenge gets an addendum in section 13 with the challenger credited if they
+want to be.</p>
+
+<h2 id="limits">12. Limits and non-claims</h2>
+<ul>
+  <li>This is a structured sample of one homepage plus named machine surfaces, not a site-wide conformance statement.</li>
+  <li>Automated checks miss issues. The absence of a card here is not a pass.</li>
+  <li>Point in time. The live site will change; this file will not.</li>
+  <li>Not a penetration test, not SOC 2, not a legal WCAG statement, not a security advisory.</li>
+  <li>Known unknowns: authenticated pages, the payment path, email deliverability, the MCP endpoint internals, other locales.</li>
+  <li>No claim is made here about what any AI engine currently answers about this business. That measurement is a different artifact with a different method.</li>
+</ul>
+
+<h2 id="retest">13. Retest log</h2>
+<div class="scroll">
+<table>
+<tr><th>Date</th><th>IDs retested</th><th>Result</th><th>Evidence hash</th><th>Addendum</th></tr>
+<tr><td colspan="5" class="muted">Empty at publication. Rows are appended when a retest runs. A retest changes only the status field of a card in section 7 and adds an updated line; T0 titles and evidence excerpts stay as published.</td></tr>
+</table>
+</div>
+
+<h2 id="map">14. Deliverable map</h2>
+<div class="scroll">
+<table>
+<tr><th>Section in this sample</th><th>Section in a paid audit</th></tr>
+<tr><td>0. How to cite</td><td>0. How to cite</td></tr>
+<tr><td>1. Cover stamp</td><td>1. Cover stamp</td></tr>
+<tr><td>2. Executive summary</td><td>2. Executive summary</td></tr>
+<tr><td>3. Scope, method, severity rubric</td><td>3. Scope, method, severity rubric</td></tr>
+<tr><td>4. Surfaces and sample</td><td>4. Surfaces and sample</td></tr>
+<tr><td>5. What already meets the bar</td><td>5. What already meets the bar</td></tr>
+<tr><td>6. Findings index</td><td>6. Findings index</td></tr>
+<tr><td>7. Findings, one card per defect</td><td>7. Findings, one card per defect, plus the answer census cards</td></tr>
+<tr><td>8. Cross-surface consistency matrix</td><td>8. Cross-surface consistency matrix</td></tr>
+<tr><td>9. First byte versus rendered DOM</td><td>9. First byte versus rendered DOM</td></tr>
+<tr><td>10. Remediation register</td><td>10. Remediation register</td></tr>
+<tr><td>11. Reproducibility pack</td><td>11. Reproducibility pack, with your URLs</td></tr>
+<tr><td>12. Limits and non-claims</td><td>12. Limits and non-claims</td></tr>
+<tr><td>13. Retest log</td><td>13. Retest log</td></tr>
+<tr><td>14. Deliverable map</td><td>14. Deliverable map</td></tr>
+</table>
+</div>
+<p>The paid audit adds the answer census: the frozen buyer-question panel run against named engines
+with multiple runs, the defect register in buyer words, and the file set. It removes nothing from the
+list above. The same method can be run against another site: <a href="/">samedaydesk.com</a>.</p>
+
+<footer>
+<p>SameDayDesk is operated by Lucian Constantinescu. Legal entity: Neomorphic LLC, Sheridan,
+Wyoming, United States. Contact: <a href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a>.</p>
+<p>Published 2026-08-19. This document is immutable; corrections appear as addenda in section 13.</p>
+</footer>
+
+</div>
+</body>
+</html>

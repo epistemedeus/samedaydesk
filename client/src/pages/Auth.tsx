@@ -2,14 +2,12 @@ import { useState, useEffect, type FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { getSupabase, isAuthConfigured, authedFetch } from "../lib/supabase";
 import { useAuth } from "../lib/auth";
-import { ALL_OFFERS } from "../lib/services";
 import { track } from "../lib/posthog";
 import styles from "./Auth.module.css";
 
 export default function Auth({ mode }: { mode: "login" | "signup" }) {
   const [params] = useSearchParams();
   const offerSlug = params.get("offer") || undefined;
-  const offer = ALL_OFFERS.find((o) => o.slug === offerSlug);
   const navigate = useNavigate();
   const { user, loading } = useAuth();
 
@@ -74,22 +72,16 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
     <main className={styles.wrap}>
       <div className={styles.glow} aria-hidden="true" />
       <div className={styles.panel}>
-        <Link to="/" className={styles.brand} viewTransition>
-          <span className={styles.mark} aria-hidden="true">▸▸</span> SameDayDesk
-        </Link>
+        <a href="/" className={styles.brand}>
+          <span className={styles.mark} aria-hidden="true">&#9656;&#9656;</span> SameDayDesk
+        </a>
 
         <h1 className={styles.h1}>{mode === "signup" ? "Create your account" : "Welcome back"}</h1>
         <p className={styles.lede}>
           {mode === "signup"
-            ? "One account to send a task, track delivery, and pay securely."
+            ? "An account is only for the order history on this desk. Buying an offer needs no account."
             : "Sign in to pick up where you left off."}
         </p>
-
-        {offer && (
-          <p className={styles.intent}>
-            You're starting <strong>{offer.name}</strong> · <span className="mono lime">${offer.price}</span>
-          </p>
-        )}
 
         <button type="button" className={styles.google} onClick={google} disabled={busy}>
           <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">

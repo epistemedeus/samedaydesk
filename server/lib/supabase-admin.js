@@ -1,4 +1,4 @@
-// Supabase service-role client (bypasses RLS — server-trusted writes) +
+// Supabase service-role client (bypasses RLS, so these are server-trusted writes) plus
 // local JWT verification via the project JWKS (asymmetric keys, default since Oct 2025),
 // with an HS256 fallback for legacy projects. Lazy: nothing throws at import time.
 import { createClient } from "@supabase/supabase-js";

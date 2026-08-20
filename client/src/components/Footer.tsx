@@ -3,44 +3,43 @@ import clsx from "clsx";
 import BrandMark from "./BrandMark";
 import styles from "./Footer.module.css";
 
+// The homepage and the money pages are static documents served ahead of this SPA, so links
+// to them are plain anchors (a full navigation), not router Links.
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer className={styles.footer}>
       <div className={clsx("container", styles.inner)}>
         <div className={styles.brandCol}>
-          <Link to="/" className={styles.brand} aria-label="SameDayDesk home">
+          <a href="/" className={styles.brand} aria-label="SameDayDesk home">
             <BrandMark className={styles.mark} /> SameDayDesk
-          </Link>
-          <p className={styles.tag}>Hand off the busywork. Get it back today.</p>
+          </a>
+          <p className={styles.tag}>We correct what AI answers say about your business.</p>
           <a className={styles.contact} href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a>
         </div>
 
-        <nav className={styles.col} aria-label="Services">
-          <h3 className={styles.colhead}>Services</h3>
-          <Link to="/#services">Lead lists & data</Link>
-          <Link to="/#services">Code & automation</Link>
-          <Link to="/#services">AI builds</Link>
-          <Link to="/#services">Custom work</Link>
+        <nav className={styles.col} aria-label="Offers">
+          <h3 className={styles.colhead}>Offers</h3>
+          <a href="/report">Free AI Answer Report</a>
+          <a href="/pay/audit">AI Answer Audit</a>
+          <a href="/pay/sprint">Answer Correction Sprint</a>
+          <a href="/pay/sprint-plus">Correction Sprint Plus</a>
         </nav>
 
-        <nav className={styles.col} aria-label="Free tools & resources">
-          <h3 className={styles.colhead}>Free tools</h3>
-          <Link to="/tools/ai-readiness" viewTransition>AI visibility checker</Link>
-          <Link to="/x402" viewTransition>x402 data gateway</Link>
-          {/* Static pages served outside the SPA router: plain <a> so the browser
-              does a full navigation instead of React Router hitting the fallback. */}
-          <a href="/tools/free-seo-ai-tools.html">All free tools</a>
-          <a href="/resources.html">Guides &amp; reports</a>
-          <Link to="/#how">How it works</Link>
-          <Link to="/#guarantee">Guarantee</Link>
-          <Link to="/terms" viewTransition>Terms</Link>
+        <nav className={styles.col} aria-label="Proof and documentation">
+          <h3 className={styles.colhead}>Proof and docs</h3>
+          <a href="/audit/samedaydesk/2026-08-19/">Published self-audit</a>
+          <a href="/methods">Methods</a>
+          <a href="/for-agents">For agents</a>
+          <Link to="/tools/ai-readiness" viewTransition>Free readiness checker</Link>
+          <a href="/resources.html">Guides and reports</a>
+          <a href="/terms">Terms</a>
         </nav>
       </div>
 
       <div className={clsx("container", styles.base)}>
-        <span className="mono">© {year} SameDayDesk</span>
-        <span className={styles.usco}>Same-day, done-for-you desk.</span>
+        <span className="mono">{year} SameDayDesk</span>
+        <span className={styles.usco}>Neomorphic LLC, Sheridan, Wyoming. Operated by Lucian Constantinescu.</span>
       </div>
     </footer>
   );

@@ -11,17 +11,19 @@ type AuthState = {
 
 const Ctx = createContext<AuthState>({ user: null, session: null, loading: true, signOut: async () => {} });
 
+// The provider and its hook live together on purpose; the split file that would satisfy
+// the fast-refresh rule buys nothing here.
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(Ctx);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Start settled when there is no auth backend to wait for, so the effect never has to
+  // call setState synchronously on mount.
+  const [loading, setLoading] = useState(() => isAuthConfigured());
 
   useEffect(() => {
-    if (!isAuthConfigured()) {
-      setLoading(false);
-      return;
-    }
+    if (!isAuthConfigured()) return;
     let unsub: (() => void) | undefined;
     let cancelled = false;
 
