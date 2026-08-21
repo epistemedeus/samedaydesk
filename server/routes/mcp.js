@@ -236,7 +236,7 @@ async function handle(msg) {
   const { id, method, params } = msg || {};
   switch (method) {
     case "initialize":
-      return okMsg(id, { protocolVersion: params?.protocolVersion || PROTOCOL_VERSION, capabilities: { tools: {} }, serverInfo: SERVER_INFO });
+      return okMsg(id, { protocolVersion: PROTOCOL_VERSION, capabilities: { tools: {} }, serverInfo: SERVER_INFO });
     case "notifications/initialized":
     case "notifications/cancelled":
       return null;
