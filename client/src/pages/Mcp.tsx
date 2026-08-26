@@ -303,6 +303,9 @@ export default function Mcp() {
               >
                 Bring us the hard part
               </a>
+              <a className={styles.secondary} href="/x402/seller-conformance">
+                Read the seller-conformance proof
+              </a>
             </div>
           </div>
           <div className={styles.offerCard}>
