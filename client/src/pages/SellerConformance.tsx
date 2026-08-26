@@ -13,7 +13,8 @@ const ACTION_PIN = `epistemedeus/agent-payment-integrity@${ACTION_SHA}`;
 const MARKETPLACE_URL = "https://github.com/marketplace/actions/agent-payment-integrity";
 const INTEGRITY_REPO_URL = "https://github.com/epistemedeus/agent-payment-integrity";
 const POLICY_REPO_URL = "https://github.com/epistemedeus/agent-payment-policy";
-const LIVE_AUDIT_URL = "https://agents.samedaydesk.com/commerce/seller-integrity-audit";
+const LIVE_AUDIT_URL =
+  "https://agents.samedaydesk.com/commerce/seller-integrity-audit?method=GET&origin=https%3A%2F%2Fagents.samedaydesk.com&requireBazaar=true&requiredPaths=decision%2Coffers&route=%2Fcommerce%2Fpayment-offer-preflight";
 const AGENT402_PR_URL = "https://github.com/MikeyPetrillo/Agent402/pull/947";
 const CTA_MAILTO =
   "mailto:contact@samedaydesk.com?subject=Existing%20seller%20origin%20or%20repository&body=Existing%20seller%20origin%20or%20repository%3A%0A";

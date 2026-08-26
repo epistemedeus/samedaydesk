@@ -129,3 +129,110 @@ After adding RESULT.md, this file is the only remaining change until it is commi
 - Direct-route fetch returns the SPA index.html shell. Page copy is in the lazy JS chunk, not in the first HTML bytes.
 - Live unpaid 402, marketplace listing, npm registry 404, and Agent402 merge were not re-queried in this run. Copy uses only the supplied 2026-08-26 sources.
 - No pull request opened. No merge. No deploy.
+
+# Amendment 1 (SC-R29-A1-IMPL)
+
+## Identity
+
+- start HEAD: a3ce17d91a0f466ad7f5332642334bde929da6f1
+- start tree: 72aab91649aedc024b64fc60b820afd360d5b5da
+- new HEAD: the single amendment commit on this branch (recorded after push in the run report)
+- new tree: the tree of that amendment commit
+- changed files: client/src/pages/SellerConformance.tsx, RESULT.md
+
+## Fix
+
+Replaced the bare `LIVE_AUDIT_URL` path with one constructed credential-free GET. Both page links reuse that constant: CTA "Inspect the live unpaid 402" and source "Live seller-integrity-audit".
+
+Exact constructed URL:
+
+```
+https://agents.samedaydesk.com/commerce/seller-integrity-audit?method=GET&origin=https%3A%2F%2Fagents.samedaydesk.com&requireBazaar=true&requiredPaths=decision%2Coffers&route=%2Fcommerce%2Fpayment-offer-preflight
+```
+
+Query key order: method, origin, requireBazaar, requiredPaths, route.
+
+## Curl evidence (this run, credential-free)
+
+Command:
+
+```
+curl -sS -D /tmp/a1-audit.headers -o /tmp/a1-audit.json -w '%{http_code}' \
+  'https://agents.samedaydesk.com/commerce/seller-integrity-audit?method=GET&origin=https%3A%2F%2Fagents.samedaydesk.com&requireBazaar=true&requiredPaths=decision%2Coffers&route=%2Fcommerce%2Fpayment-offer-preflight'
+```
+
+No `-u`, no cookies, no PAYMENT header. No signing or payment.
+
+Outcome: HTTP **402** (not 400). `WWW-Authenticate: Payment` present. Body snippet:
+
+```
+{"x402Version":2,"error":"Payment required","accepts":[{"amount":"10000","network":"eip155:8453","asset":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913","payTo":"0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"}]}
+```
+
+Date header: Wed, 26 Aug 2026 16:01:36 GMT.
+
+## Validation
+
+### 1. Constructed URL curl
+
+See above. Status 402. Body has x402Version 2, amount 10000, error Payment required.
+
+### 2. npm --prefix client run build
+
+Command: `npm --prefix client run build`
+
+Outcome: exit 0. Emitted `dist/assets/SellerConformance-BraLsUBn.js` (9.28 kB).
+
+### 3. Scoped lint
+
+Command: `cd client && npx eslint src/pages/SellerConformance.tsx src/App.tsx src/pages/Mcp.tsx`
+
+Outcome: exit 0.
+
+### 4. vite preview + direct route
+
+Commands:
+
+```
+cd client && npm run preview -- --host 127.0.0.1 --port 4173
+curl -sS -D - -o /tmp/a1-route.html -w '%{http_code}' http://127.0.0.1:4173/x402/seller-conformance
+curl -sS -o /tmp/a1-chunk.js http://127.0.0.1:4173/assets/SellerConformance-BraLsUBn.js
+```
+
+Outcome: route HTTP 200. Served chunk contains the constructed query string (`method=GET`, `origin=https%3A%2F%2Fagents.samedaydesk.com`, `requireBazaar=true`, `requiredPaths=decision%2Coffers`, `route=%2Fcommerce%2Fpayment-offer-preflight`). One occurrence of the audit path; it includes the query. The bare path without query is no longer the only `LIVE_AUDIT_URL`.
+
+Chunk snippet:
+
+```
+aydesk.com/commerce/seller-integrity-audit?method=GET&origin=https%3A%2F%2Fagents.samedaydesk.com&requireBazaar=true&requiredPaths=decision%2Coffers&route=%2Fcommerce%2Fpayment-offer-preflight`
+```
+
+### 5. Metadata cleanup
+
+Still present in `SellerConformance.tsx` `useEffect`: title, description, canonical, og:url, og:title, og:description, twitter:title, twitter:description, restored via `restoreAttribute`.
+
+### 6. SHA counts
+
+```
+rg -c 'ef519956505b195454aa670230b0936258b451fb' client/src/pages/SellerConformance.tsx
+# 1
+rg -c '086163e979b6a91a73a8eb82664336ae6dbc5473' client/src/pages/SellerConformance.tsx
+# 1
+```
+
+### 7. Banned-term scan of new/changed files
+
+Scan: the listed banned phrases. Outcome: 0 matches.
+
+### 8. git diff --check
+
+Command: `git diff --check`
+
+Outcome: exit 0.
+
+## Unresolved limits
+
+- Full-project lint is still red on pre-existing auth.tsx / theme.tsx issues. Not edited.
+- Direct-route HTML is still the SPA shell; the constructed URL is in the lazy chunk.
+- This amendment does not re-prove marketplace listing, npm absence, or Agent402 merge.
+- No PR. No merge. No deploy. No payment.
