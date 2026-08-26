@@ -5,11 +5,10 @@
 - repo: epistemedeus/samedaydesk
 - branch: pilot/sc-r29-seller-conformance
 - base SHA: dca510d4a130e202037db2ec03a344db354e6cf1
-- implementation commit: 235dfedd83462cb2111da9945bd48689a06f74ca
-- implementation tree SHA: ae61220869510f132fa0ad7dc69405b2c07801f8
-- final commit: 235dfedd83462cb2111da9945bd48689a06f74ca
-- final tree SHA: ae61220869510f132fa0ad7dc69405b2c07801f8
-- note: this RESULT.md file is added after validation on the same branch; branch HEAD after this file is committed will differ from the implementation SHA above
+- page commit: 235dfedd83462cb2111da9945bd48689a06f74ca
+- page tree SHA: ae61220869510f132fa0ad7dc69405b2c07801f8
+- RESULT.md commit: ef374552130f7aca7c2356282837a224c4b47d26
+- RESULT.md tree SHA: 1adfdc846c4b1a97f627941cdd3ffb6dd0b65543
 
 ## Changed files
 
