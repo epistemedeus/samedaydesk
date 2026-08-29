@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "recordId": "samedaydesk-agent402-seller-integrity-validation-2026-08-29",
+  "occurredAt": "2026-08-29T20:31:18Z",
+  "eventType": "external_runtime_to_settled_audit_delivery",
+  "classification": {
+    "acquisition": "recruited",
+    "runtimeControl": "external",
+    "authorizationControl": "external",
+    "funding": "external_unreimbursed",
+    "revenueClass": "gross_external_validation"
+  },
+  "claims": {
+    "organicDemand": false,
+    "unsolicitedUse": false,
+    "repeatUse": false,
+    "buyerOwnedOutputContractEnforced": false,
+    "sellerRepairSale": false
+  },
+  "controller": {
+    "role": "GitHub workflow actor",
+    "actor": "MikeyPetrillo",
+    "naturalPersonWalletOwnershipInferred": false
+  },
+  "runtime": {
+    "repository": "MikeyPetrillo/Agent402",
+    "workflow": "Paid tool smoke test",
+    "successfulRunId": 33273675513,
+    "headSha": "9c6ca8b3702274ba384d49cff9bad7b1ba0c1fb0",
+    "x402PackageVersion": "2.22.0",
+    "wallet": {
+      "address": "0x902dCf34E53695bDEA2fFB354b1a2e58bD598256",
+      "role": "public workflow canary address",
+      "personalIdentityClaim": false
+    }
+  },
+  "runHistory": {
+    "genuineFailedPurchaseRunIds": [33269567533, 33270346906],
+    "diagnosticRunIds": [33272525475, 33272574606],
+    "diagnosticRunsCountedAsDemand": false,
+    "successfulSettlementCount": 1
+  },
+  "request": {
+    "seller": {
+      "method": "GET",
+      "route": "/commerce/seller-integrity-audit"
+    },
+    "target": {
+      "origin": "https://agent402.tools",
+      "method": "GET",
+      "route": "/api/unemployment-rate",
+      "requiredPaths": ["current", "history", "source"]
+    }
+  },
+  "delivery": {
+    "httpStatus": 200,
+    "decision": "repair_required",
+    "requestedPathGuarantees": {
+      "current": false,
+      "history": false,
+      "source": false
+    },
+    "allRequestedPathsThenUnguaranteed": true,
+    "controllerInspectionConfirmedActualResponseMatchedRequestedAuditIntent": true
+  },
+  "digests": {
+    "buyerRawResponseSha256": "7f0903a5c8a89533e40419ae1d05e4a1288113c36fffff0f52d9e1b9f1aa6c65",
+    "sellerDomainResponseDigest": "68cfe4d2daa016d95f5ddaa403bc52bbfc7a70c15df90a1f57cd86fa69057318"
+  },
+  "settlement": {
+    "chain": "eip155:8453",
+    "asset": {
+      "symbol": "USDC",
+      "canonical": true,
+      "atomicUnits": 10000,
+      "amount": "0.01 USDC"
+    },
+    "transactionHash": "0x2916cfe2c5200fca2a21f8b854fe963ef70d4ed90d59c7444cef16dd21056ef7",
+    "payer": "0x902dCf34E53695bDEA2fFB354b1a2e58bD598256",
+    "transactionSender": "0x4c934c63c786157fefd990945b25ea60a0fb0205",
+    "transactionSenderRole": "transaction relayer, not buyer identity",
+    "recipient": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+  },
+  "sellerCompatibilityRepair": {
+    "repository": "epistemedeus/x402-url-extractor",
+    "commit": "f36c72a74585880ca771cc83df80e5981cc73bcf",
+    "outcome": "This 500-character description-boundary repair enabled the successful retry.",
+    "partOfPaidResponse": false,
+    "additionalPaymentOccurred": false
+  },
+  "targetContractRepair": {
+    "repository": "MikeyPetrillo/Agent402",
+    "contributionCommit": "2827672211535b40c268ff534eb3470ee577d4e9",
+    "mergeCommit": "38d5fd15eee04bda59570109d2bb2d053a426c8a",
+    "pullRequest": "https://github.com/MikeyPetrillo/Agent402/pull/1051",
+    "liveConfirmation": "https://github.com/MikeyPetrillo/Agent402/issues/1047#issuecomment-5464852115",
+    "outcome": "The current live OpenAPI now requires date, current, months, history, and source at the top level.",
+    "partOfPaidResponse": false,
+    "additionalPaymentOccurred": false
+  },
+  "targetChallengeContractRepair": {
+    "repository": "MikeyPetrillo/Agent402",
+    "contributionCommit": "fab50976e56edc553e1d66905e6e3586ede6623c",
+    "mergeCommit": "cf36eb88d43c3829ebaccacf4d6b11d70c35fb88",
+    "pullRequest": "https://github.com/MikeyPetrillo/Agent402/pull/1053",
+    "outcome": "The live payment challenge now carries a byte-budgeted typed output schema derived from the documented example.",
+    "partOfPaidResponse": false,
+    "additionalPaymentOccurred": false
+  },
+  "buyerExpectationContribution": {
+    "repository": "MikeyPetrillo/Agent402",
+    "headCommit": "f2a4548d39e9143bde0a4bd7d7c1730b8dc52062",
+    "pullRequest": "https://github.com/MikeyPetrillo/Agent402/pull/1052",
+    "status": "submitted"
+  },
+  "auditorMultichainRepair": {
+    "repository": "epistemedeus/agent-payment-integrity",
+    "candidate": "candidate.11",
+    "commit": "501a7381988782688bf8a16df3a9443c897dd30a",
+    "release": "https://github.com/epistemedeus/agent-payment-integrity/releases/tag/v0.1.0-candidate.11",
+    "outcome": "The auditor now recognizes valid mixed EVM, Solana, Stellar, and Algorand offers while rejecting namespace-only x402 network identifiers.",
+    "merchantDeployment": {
+      "version": "1.23.27",
+      "commit": "4472a4319951d0810a69eddb095395c50d88b6fc",
+      "deploymentId": "1d736e60-f272-4268-aeb4-ad215c9d8068",
+      "imageDigest": "sha256:d63f7521d603b8d6fb2500bd2badcac334e1607f44dfe9794af6a908f7d17570",
+      "status": "live_verified",
+      "liveProtocols": ["mpp", "x402"]
+    }
+  },
+  "evidence": {
+    "issue": "https://github.com/MikeyPetrillo/Agent402/issues/1047",
+    "maintainerConfirmation": "https://github.com/MikeyPetrillo/Agent402/issues/1047#issuecomment-5464823464",
+    "successfulRun": "https://github.com/MikeyPetrillo/Agent402/actions/runs/33273675513",
+    "sellerCompatibilityRepairCommit": "https://github.com/epistemedeus/x402-url-extractor/commit/f36c72a74585880ca771cc83df80e5981cc73bcf",
+    "auditorRelease": "https://github.com/epistemedeus/agent-payment-integrity/releases/tag/v0.1.0-candidate.11",
+    "settlementTransaction": "https://basescan.org/tx/0x2916cfe2c5200fca2a21f8b854fe963ef70d4ed90d59c7444cef16dd21056ef7",
+    "followUpComment": "https://github.com/MikeyPetrillo/Agent402/issues/1047#issuecomment-5464762481"
+  },
+  "limits": [
+    "This proves only one recruited, non-organic external-runtime settlement and delivered result.",
+    "It does not prove organic discovery, unsolicited demand, repeat use, buyer-owned output enforcement, or a seller-repair sale."
+  ]
+}

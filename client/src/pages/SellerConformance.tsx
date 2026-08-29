@@ -16,6 +16,8 @@ const POLICY_REPO_URL = "https://github.com/epistemedeus/agent-payment-policy";
 const LIVE_AUDIT_URL =
   "https://agents.samedaydesk.com/commerce/seller-integrity-audit?method=GET&origin=https%3A%2F%2Fagents.samedaydesk.com&requireBazaar=true&requiredPaths=decision%2Coffers&route=%2Fcommerce%2Fpayment-offer-preflight";
 const AGENT402_PR_URL = "https://github.com/MikeyPetrillo/Agent402/pull/947";
+const VALIDATION_RECEIPT_URL =
+  "/research/agent402-seller-integrity-validation-2026-08-29.json";
 const CTA_MAILTO =
   "mailto:contact@samedaydesk.com?subject=Existing%20seller%20origin%20or%20repository&body=Existing%20seller%20origin%20or%20repository%3A%0A";
 
@@ -176,21 +178,40 @@ export default function SellerConformance() {
             </div>
             <div>
               <dt>Independent use</dt>
-              <dd>Not evidenced by this page.</dd>
+              <dd>
+                The linked receipt proves one externally controlled runtime, recruited for a
+                bounded validation. It does not prove organic or unsolicited use.
+              </dd>
             </div>
             <div>
               <dt>Settlement</dt>
-              <dd>Not proved by a passing unpaid check.</dd>
+              <dd>
+                The linked receipt proves one 0.01-USDC settlement. The passing unpaid Action
+                check alone does not.
+              </dd>
             </div>
             <div>
               <dt>Demand</dt>
-              <dd>Not proved.</dd>
+              <dd>One recruited validation event; organic and repeat demand remain unproved.</dd>
             </div>
             <div>
               <dt>Revenue</dt>
-              <dd>Not proved.</dd>
+              <dd>One 0.01-USDC external validation receipt; recurring revenue is unproved.</dd>
             </div>
           </dl>
+        </section>
+
+        <section className={styles.section} aria-labelledby="validation-receipt-title">
+          <div className={styles.sectionHead}>
+            <p className="eyebrow">Bounded evidence</p>
+            <h2 id="validation-receipt-title">Agent402 validation receipt</h2>
+          </div>
+          <p className={styles.prose}>
+            This receipt proves only one recruited, non-organic external-runtime settlement and
+            delivered result: 0.01 USDC, with no buyer-owned output enforcement, unsolicited
+            demand, repeat use, or repair sale. It is not a customer case study.{" "}
+            <a href={VALIDATION_RECEIPT_URL}>Read the machine-readable JSON.</a>
+          </p>
         </section>
 
         <section className={styles.sellerOffer} aria-labelledby="live-title">
