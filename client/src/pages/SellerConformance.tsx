@@ -5,7 +5,7 @@ import styles from "./SellerConformance.module.css";
 
 const PAGE_TITLE = "Seller conformance proof | SameDayDesk";
 const PAGE_DESCRIPTION =
-  "Existing SameDayDesk seller-conformance proof: inspect unpaid 402 terms, pin the integrity Action SHA, and separate release verification from marketplace listing, merged contract projection, deployment, settlement, demand, and revenue.";
+  "Inspect SameDayDesk seller-conformance evidence, including one recruited Agent402 payment that led to deployed upstream repairs, without confusing validation with organic or repeat demand.";
 const PAGE_URL = "https://samedaydesk.com/x402/seller-conformance";
 const ACTION_SHA = "ef519956505b195454aa670230b0936258b451fb";
 const MERGE_SHA = "086163e979b6a91a73a8eb82664336ae6dbc5473";
@@ -16,6 +16,9 @@ const POLICY_REPO_URL = "https://github.com/epistemedeus/agent-payment-policy";
 const LIVE_AUDIT_URL =
   "https://agents.samedaydesk.com/commerce/seller-integrity-audit?method=GET&origin=https%3A%2F%2Fagents.samedaydesk.com&requireBazaar=true&requiredPaths=decision%2Coffers&route=%2Fcommerce%2Fpayment-offer-preflight";
 const AGENT402_PR_URL = "https://github.com/MikeyPetrillo/Agent402/pull/947";
+const AGENT402_CUSTOMER_ISSUE_URL = "https://github.com/MikeyPetrillo/Agent402/issues/1047";
+const AGENT402_BUYER_GUARD_PR_URL = "https://github.com/MikeyPetrillo/Agent402/pull/1052";
+const AGENT402_DEPLOYED_REPAIR_PR_URL = "https://github.com/MikeyPetrillo/Agent402/pull/1060";
 const VALIDATION_RECEIPT_URL =
   "/research/agent402-seller-integrity-validation-2026-08-29.json";
 const CTA_MAILTO =
@@ -203,14 +206,32 @@ export default function SellerConformance() {
 
         <section className={styles.section} aria-labelledby="validation-receipt-title">
           <div className={styles.sectionHead}>
-            <p className="eyebrow">Bounded evidence</p>
-            <h2 id="validation-receipt-title">Agent402 validation receipt</h2>
+            <p className="eyebrow">First customer outcome</p>
+            <h2 id="validation-receipt-title">One paid audit led to deployed upstream repairs</h2>
           </div>
           <p className={styles.prose}>
-            This receipt proves only one recruited, non-organic external-runtime settlement and
-            delivered result: 0.01 USDC, with no buyer-owned output enforcement, unsolicited
-            demand, repeat use, or repair sale. It is not a customer case study.{" "}
-            <a href={VALIDATION_RECEIPT_URL}>Read the machine-readable JSON.</a>
+            Agent402&apos;s maintainer used its maintained x402 client and externally controlled
+            canary wallet to buy one exact 0.01-USDC Seller Integrity Audit of an Agent402 route.
+            The delivered audit identified missing guarantees at <code>current</code>,{" "}
+            <code>history</code>, and <code>source</code>. The result then changed software:
+            Agent402 repaired the seller contract, prevented external smokes from starting without
+            an expected result, and deployed a follow-on catalog repair after independently
+            reproducing invalid protocol challenges on 557 of 560 production routes.
+          </p>
+          <p className={styles.prose}>
+            This is a bounded customer outcome: one recruited settlement, one delivered decision,
+            and one upstream repair loop. It does not prove unsolicited acquisition, full
+            buyer-owned schema enforcement, repeat demand, or a repair sale.{" "}
+            <a href={VALIDATION_RECEIPT_URL}>Read the machine-readable payment receipt.</a>{" "}
+            <a href={AGENT402_CUSTOMER_ISSUE_URL} target="_blank" rel="noopener noreferrer">
+              Read the customer trace.
+            </a>{" "}
+            <a href={AGENT402_BUYER_GUARD_PR_URL} target="_blank" rel="noopener noreferrer">
+              Inspect the buyer guard.
+            </a>{" "}
+            <a href={AGENT402_DEPLOYED_REPAIR_PR_URL} target="_blank" rel="noopener noreferrer">
+              Inspect the deployed catalog repair.
+            </a>
           </p>
         </section>
 
