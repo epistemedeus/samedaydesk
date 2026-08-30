@@ -335,7 +335,7 @@ export function findSellerRepairBrief(id: string | null): SellerRepairBrief | nu
 }
 
 export function sellerRepairBriefUrl(id: string): string {
-  return `https://samedaydesk.com/x402/seller-conformance?finding=${encodeURIComponent(id)}`;
+  return `https://samedaydesk.com/x402/seller-conformance/?finding=${encodeURIComponent(id)}`;
 }
 
 export function sellerRepairScopeMailto(brief: SellerRepairBrief): string {

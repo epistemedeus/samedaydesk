@@ -67,7 +67,7 @@ test("builds one canonical brief URL and a context-preserving scope action", () 
   assert.ok(brief);
   assert.equal(
     sellerRepairBriefUrl(brief.id),
-    "https://samedaydesk.com/x402/seller-conformance?finding=onesource-erc20-balance-20260830",
+    "https://samedaydesk.com/x402/seller-conformance/?finding=onesource-erc20-balance-20260830",
   );
   const mailto = decodeURIComponent(sellerRepairScopeMailto(brief));
   assert.match(mailto, /Finding ID: onesource-erc20-balance-20260830/);
