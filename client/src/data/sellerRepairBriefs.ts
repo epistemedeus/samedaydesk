@@ -168,6 +168,45 @@ export const sellerRepairBriefs = Object.freeze([
       },
     ],
   },
+  {
+    id: "vibe-springs-btc-usd-20260830",
+    seller: "Vibe Springs",
+    origin: "https://vibesprings.net",
+    route: "/api/price/btc-usd",
+    method: "GET",
+    routeClass: "paid_get",
+    observedAt: "2026-08-30",
+    livePrice: "0.002 USDC on Base",
+    summary:
+      "The live offer advertises a Coinbase-sourced BTC/USD oracle with price and 24-hour market data, but neither OpenAPI nor Bazaar formally guarantees a returned application field before payment.",
+    observedContract: [
+      "OpenAPI declares the HTTP 200 body only as an object, without properties or required fields.",
+      "The live Bazaar schema requires output.type but leaves output.example as an unconstrained object.",
+      "The example advertises symbol, price, currency, exchange, 24-hour change, high, low, volume, and processing time without requiring any of them.",
+    ],
+    requiredContract: [
+      "Require the stable handler-owned identity and quote fields shared by every successful result, including symbol, price, currency, and exchange.",
+      "Require the advertised 24-hour market fields only where the live handler guarantees them; keep processingTime optional unless it is a stable contract.",
+      "Project the same success schema through OpenAPI and Bazaar and keep the public example schema-valid.",
+    ],
+    scope: [
+      "One truthful OpenAPI 200 schema and matching Bazaar projection for the existing success path.",
+      "Credential-free contract, parity, recursive-required-path, and unchanged live-402 tests.",
+      "No handler, price, rail, recipient, middleware, upstream-data-source, or settlement change.",
+    ],
+    boundaries: [
+      "No credential, signature, target paid request, wallet action, or target payment was used to reproduce this finding.",
+      "The seller confirms the real runtime types and guarantees before any schema repair is merged.",
+    ],
+    evidence: [
+      { label: "Live unpaid 402 route", href: "https://vibesprings.net/api/price/btc-usd" },
+      { label: "Public OpenAPI", href: "https://vibesprings.net/openapi.json" },
+      {
+        label: "Public MCP repository",
+        href: "https://github.com/chrispy90/vibesprings-mcp",
+      },
+    ],
+  },
 ] satisfies readonly SellerRepairBrief[]);
 
 const briefsById = new Map(sellerRepairBriefs.map((brief) => [brief.id, brief]));

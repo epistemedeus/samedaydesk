@@ -5,6 +5,20 @@ type PH = typeof import("posthog-js").default;
 let ph: PH | null = null;
 let loading: Promise<void> | null = null;
 const pendingEvents: Array<{ event: string; props?: Record<string, unknown> }> = [];
+const FIRST_PARTY_EVENTS = new Set([
+  "seller_repair_brief_viewed",
+  "seller_repair_scope_clicked",
+]);
+
+function captureFirstParty(event: string, props?: Record<string, unknown>) {
+  if (!FIRST_PARTY_EVENTS.has(event) || typeof window === "undefined") return;
+  void fetch("/api/pulse/event", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ event, props }),
+    keepalive: true,
+  }).catch(() => undefined);
+}
 
 export function initAnalytics() {
   const key = import.meta.env.VITE_POSTHOG_KEY as string | undefined;
@@ -26,6 +40,7 @@ export function initAnalytics() {
 // Buffer early route events while the lazy analytics bundle loads. This matters
 // for direct landings, where child effects can fire before App initializes PostHog.
 export function track(event: string, props?: Record<string, unknown>) {
+  captureFirstParty(event, props);
   if (ph) {
     ph.capture(event, props);
     return;

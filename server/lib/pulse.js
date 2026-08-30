@@ -1,13 +1,13 @@
-// Lightweight, dependency-free, in-memory request analytics.
+// Lightweight, dependency-free aggregate request analytics.
 //
 // Why this exists: the client-side PostHog key is not present in the production
 // build, so we had ZERO visibility into whether the funnel gets any traffic.
 // This middleware records page/content requests server-side (no client key, no
 // cookies, no DB) and exposes an aggregate read endpoint we can poll over HTTP.
 //
-// Caveat: state is in-memory, so it resets on each restart/redeploy. That is
-// fine for "is anything happening and from where" monitoring between deploys.
-// No PII is stored: IPs are bucketed to a coarse hash only for unique-ish counts.
+// State is held in memory while the process runs and best-effort snapshotted to
+// disk so ordinary restarts do not erase the observation window. No PII is
+// stored: IPs are bucketed to a coarse hash only for unique-ish counts.
 
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -15,6 +15,18 @@ import os from "node:os";
 import path from "node:path";
 
 const RECENT_CAP = 80;
+
+export const sellerRepairFindingRouteClasses = Object.freeze({
+  "hypernatt-liq-radar-20260830": "paid_get",
+  "onesource-erc20-balance-20260830": "paid_get",
+  "402-com-tr-morpho-health-20260830": "paid_get",
+  "scrape402-crypto-20260830": "paid_get",
+  "vibe-springs-btc-usd-20260830": "paid_get",
+});
+export const sellerRepairFindingIds = Object.freeze(
+  Object.keys(sellerRepairFindingRouteClasses),
+);
+const SELLER_REPAIR_FINDING_IDS = new Set(sellerRepairFindingIds);
 
 const state = {
   startedAt: new Date().toISOString(),
@@ -27,6 +39,11 @@ const state = {
   byAiBot: Object.create(null), // AI crawler product -> count
   uniqueHumans: new Set(), // coarse ip+ua hash, humans only
   funnel: { home: 0, scan: 0, tools: 0, reports: 0, guides: 0, pricing: 0 },
+  sellerRepair: {
+    briefViews: 0,
+    scopeClicks: 0,
+    byFinding: Object.create(null),
+  },
   recent: [], // last N events
 };
 
@@ -55,6 +72,21 @@ function loadSnapshot() {
     Object.assign(state.byReferer, s.byReferer || {});
     Object.assign(state.byAiBot, s.byAiBot || {});
     Object.assign(state.funnel, s.funnel || {});
+    state.sellerRepair.briefViews = s.sellerRepair?.briefViews || 0;
+    state.sellerRepair.scopeClicks = s.sellerRepair?.scopeClicks || 0;
+    for (const findingId of sellerRepairFindingIds) {
+      const row = s.sellerRepair?.byFinding?.[findingId];
+      if (row?.routeClass !== sellerRepairFindingRouteClasses[findingId]) continue;
+      state.sellerRepair.byFinding[findingId] = {
+        routeClass: row.routeClass,
+        briefViews: Number.isSafeInteger(row.briefViews) && row.briefViews >= 0
+          ? row.briefViews
+          : 0,
+        scopeClicks: Number.isSafeInteger(row.scopeClicks) && row.scopeClicks >= 0
+          ? row.scopeClicks
+          : 0,
+      };
+    }
     state.uniqueHumans = new Set(s.uniqueHumans || []);
     state.recent = Array.isArray(s.recent) ? s.recent.slice(-RECENT_CAP) : [];
     if (s.startedAt) state.startedAt = s.startedAt; // keep the true window start
@@ -169,6 +201,42 @@ export function pulseMiddleware(req, _res, next) {
   return next();
 }
 
+const SELLER_REPAIR_EVENTS = new Set([
+  "seller_repair_brief_viewed",
+  "seller_repair_scope_clicked",
+]);
+const FINDING_ID_RE = /^[a-z0-9-]{1,96}$/;
+
+// These events are anonymous and spoofable. They are useful only as diagnostic
+// interaction signals, never as seller identity, delivery, acceptance, demand,
+// payment, or revenue evidence.
+export function recordClientEvent(event, props) {
+  if (!SELLER_REPAIR_EVENTS.has(event)) return false;
+  const findingId = props?.finding_id;
+  const routeClass = props?.route_class;
+  if (typeof findingId !== "string" || !FINDING_ID_RE.test(findingId)) return false;
+  if (!SELLER_REPAIR_FINDING_IDS.has(findingId)) return false;
+  if (routeClass !== sellerRepairFindingRouteClasses[findingId]) return false;
+
+  const row = state.sellerRepair.byFinding[findingId] || {
+    routeClass,
+    briefViews: 0,
+    scopeClicks: 0,
+  };
+  if (row.routeClass !== routeClass) return false;
+
+  if (event === "seller_repair_brief_viewed") {
+    row.briefViews += 1;
+    state.sellerRepair.briefViews += 1;
+  } else {
+    row.scopeClicks += 1;
+    state.sellerRepair.scopeClicks += 1;
+  }
+  state.sellerRepair.byFinding[findingId] = row;
+  dirty = true;
+  return true;
+}
+
 export function pulseSnapshot() {
   return {
     startedAt: state.startedAt,
@@ -182,6 +250,7 @@ export function pulseSnapshot() {
     byPath: state.byPath,
     byReferer: state.byReferer,
     byAiBot: state.byAiBot,
+    sellerRepair: state.sellerRepair,
     recent: state.recent.slice(-40).reverse(),
   };
 }
