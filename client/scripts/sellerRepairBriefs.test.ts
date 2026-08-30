@@ -39,6 +39,13 @@ test("resolves stable public repair briefs and rejects unknown IDs", () => {
   assert.equal(exa?.method, "POST");
   assert.equal(exa?.routeClass, "paid_post");
   assert.equal(exa?.livePrice, "0.007 USDC on Base or Solana");
+
+  const driftflight = findSellerRepairBrief("driftflight-image-generation-20260830");
+  assert.equal(driftflight?.origin, "https://agents.driftflight.com");
+  assert.equal(driftflight?.route, "/v1/images/generate");
+  assert.equal(driftflight?.method, "POST");
+  assert.equal(driftflight?.routeClass, "paid_post");
+  assert.equal(driftflight?.livePrice, "0.06 USDC for the default studio tier");
 });
 
 test("keeps IDs unique and every brief bounded to public non-secret evidence", () => {

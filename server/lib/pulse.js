@@ -24,6 +24,7 @@ export const sellerRepairFindingRouteClasses = Object.freeze({
   "vibe-springs-btc-usd-20260830": "paid_get",
   "blockrun-exa-search-20260830": "paid_post",
   "exa-direct-search-20260830": "paid_post",
+  "driftflight-image-generation-20260830": "paid_post",
 });
 export const sellerRepairFindingIds = Object.freeze(
   Object.keys(sellerRepairFindingRouteClasses),

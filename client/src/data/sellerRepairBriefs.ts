@@ -289,6 +289,42 @@ export const sellerRepairBriefs = Object.freeze([
       { label: "Official Exa JavaScript SDK", href: "https://github.com/exa-labs/exa-js" },
     ],
   },
+  {
+    id: "driftflight-image-generation-20260830",
+    seller: "Driftflight via ZeroClick",
+    origin: "https://agents.driftflight.com",
+    route: "/v1/images/generate",
+    method: "POST",
+    routeClass: "paid_post",
+    observedAt: "2026-08-30",
+    livePrice: "0.06 USDC for the default studio tier",
+    summary:
+      "The agent-facing storefront publishes a typed image-generation request and live x402/MPP price, but its HTTP 200 response declares no media type, schema, or guaranteed application field before payment.",
+    observedContract: [
+      "OpenAPI requires prompt and declares the allowed model and preset inputs, while HTTP 200 has only the text Successful response.",
+      "The route's payment metadata prices the default studio image at 0.06 USDC and names Base x402 and Tempo MPP rails.",
+      "ZeroClick's live storefront exposes three image tiers but contactEmail is null; Driftflight's published email domain currently cannot accept the repair message.",
+    ],
+    requiredContract: [
+      "Declare the successful application/json response envelope for every existing image-generation success branch.",
+      "Require only stable handler-owned result fields that the seller guarantees for sketch, studio, and gallery outputs.",
+      "Project the same success contract through the storefront and any downstream capability record without inferring fields from examples or counters.",
+    ],
+    scope: [
+      "One truthful OpenAPI 200 schema and matching agent-storefront projection for the existing route.",
+      "Credential-free request, success-branch, recursive-required-path, and unchanged live-offer tests.",
+      "No handler, prompt contract, model tiers, price, rail, recipient, wallet, proxy, payment middleware, or settlement change.",
+    ],
+    boundaries: [
+      "No credential, signature, target application request, wallet action, or target payment was used to reproduce this finding.",
+      "Driftflight and ZeroClick confirm the real success branches, runtime types, and ownership boundary before any schema repair is merged.",
+    ],
+    evidence: [
+      { label: "Agent-facing OpenAPI", href: "https://agents.driftflight.com/openapi.json" },
+      { label: "Live agent storefront", href: "https://agents.driftflight.com/" },
+      { label: "ZeroClick operating model", href: "https://docs.zeroclick.ai/" },
+    ],
+  },
 ] satisfies readonly SellerRepairBrief[]);
 
 const briefsById = new Map(sellerRepairBriefs.map((brief) => [brief.id, brief]));
