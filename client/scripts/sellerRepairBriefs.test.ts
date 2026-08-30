@@ -14,12 +14,16 @@ test("resolves stable public repair briefs and rejects unknown IDs", () => {
   assert.equal(hypernatt?.livePrice, "0.001 USDC");
   assert.equal(findSellerRepairBrief("not-a-real-finding"), null);
   assert.equal(findSellerRepairBrief(null), null);
+
+  const morpho = findSellerRepairBrief("402-com-tr-morpho-health-20260830");
+  assert.equal(morpho?.route, "/api/x402/morpho-health");
+  assert.equal(morpho?.livePrice, "0.04 USDC on Base or Polygon");
 });
 
 test("keeps IDs unique and every brief bounded to public non-secret evidence", () => {
   const ids = sellerRepairBriefs.map((brief) => brief.id);
   assert.equal(new Set(ids).size, ids.length);
-  assert.ok(sellerRepairBriefs.length >= 2);
+  assert.ok(sellerRepairBriefs.length >= 3);
   for (const brief of sellerRepairBriefs) {
     assert.match(brief.id, /^[a-z0-9-]+$/);
     assert.match(brief.origin, /^https:\/\//);
@@ -42,4 +46,3 @@ test("builds one canonical brief URL and a context-preserving scope action", () 
   assert.match(mailto, /Route: GET \/api\/chain\/erc20-balance/);
   assert.match(mailto, /fixed one-route \$490 scope/);
 });
-

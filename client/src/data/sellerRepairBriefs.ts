@@ -86,6 +86,48 @@ export const sellerRepairBriefs = Object.freeze([
       { label: "Public OpenAPI", href: "https://api.onesource.io/openapi.json" },
     ],
   },
+  {
+    id: "402-com-tr-morpho-health-20260830",
+    seller: "x402 Bazaar",
+    origin: "https://402.com.tr",
+    route: "/api/x402/morpho-health",
+    method: "GET",
+    routeClass: "paid_get",
+    observedAt: "2026-08-30",
+    livePrice: "0.04 USDC on Base or Polygon",
+    summary:
+      "The live offer describes decision-grade Morpho liquidation health, but neither OpenAPI nor Bazaar formally guarantees a single returned field before payment.",
+    observedContract: [
+      "OpenAPI declares the HTTP 200 body only as an object, without properties or required fields.",
+      "The live Bazaar schema requires output.type but leaves output.example as an unconstrained object.",
+      "The example advertises checkedAt, wallet, market, pair, verdict, collateral, collateralToken, and borrowed without requiring any of them.",
+    ],
+    requiredContract: [
+      "Require the stable handler-owned fields shared by every successful result, including checkedAt, wallet, market, pair, and verdict.",
+      "Model active-position and no_borrow outcomes separately so health, LTV, and liquidation fields are required only when the handler guarantees them.",
+      "Project the same schema through OpenAPI and Bazaar and keep the public example schema-valid.",
+    ],
+    scope: [
+      "One truthful OpenAPI 200 schema and matching Bazaar projection for every existing success branch.",
+      "Credential-free request, success-branch, parity, recursive-required-path, and unchanged live-402 tests.",
+      "No handler, price, rail, recipient, prepaid-credit, middleware, or settlement change.",
+    ],
+    boundaries: [
+      "No credential, signature, target paid request, wallet action, or target payment was used to reproduce this finding.",
+      "The seller confirms the real branch shapes and field semantics before any schema repair is merged.",
+    ],
+    evidence: [
+      {
+        label: "Live unpaid 402 route",
+        href: "https://402.com.tr/api/x402/morpho-health?wallet=0x973a31858f4d2125f48c880542da11a2796f12d6",
+      },
+      { label: "Public OpenAPI", href: "https://402.com.tr/openapi.json" },
+      {
+        label: "Public operator repository",
+        href: "https://github.com/sukrutkrdg/x402-bazaar-mcp",
+      },
+    ],
+  },
 ] satisfies readonly SellerRepairBrief[]);
 
 const briefsById = new Map(sellerRepairBriefs.map((brief) => [brief.id, brief]));
