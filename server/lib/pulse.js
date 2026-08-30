@@ -22,6 +22,7 @@ export const sellerRepairFindingRouteClasses = Object.freeze({
   "402-com-tr-morpho-health-20260830": "paid_get",
   "scrape402-crypto-20260830": "paid_get",
   "vibe-springs-btc-usd-20260830": "paid_get",
+  "blockrun-exa-search-20260830": "paid_post",
 });
 export const sellerRepairFindingIds = Object.freeze(
   Object.keys(sellerRepairFindingRouteClasses),

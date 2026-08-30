@@ -26,12 +26,18 @@ test("resolves stable public repair briefs and rejects unknown IDs", () => {
   const vibeSprings = findSellerRepairBrief("vibe-springs-btc-usd-20260830");
   assert.equal(vibeSprings?.route, "/api/price/btc-usd");
   assert.equal(vibeSprings?.livePrice, "0.002 USDC on Base");
+
+  const blockRun = findSellerRepairBrief("blockrun-exa-search-20260830");
+  assert.equal(blockRun?.route, "/api/v1/exa/search");
+  assert.equal(blockRun?.method, "POST");
+  assert.equal(blockRun?.routeClass, "paid_post");
+  assert.equal(blockRun?.livePrice, "0.011 USDC on Base");
 });
 
 test("keeps IDs unique and every brief bounded to public non-secret evidence", () => {
   const ids = sellerRepairBriefs.map((brief) => brief.id);
   assert.equal(new Set(ids).size, ids.length);
-  assert.ok(sellerRepairBriefs.length >= 5);
+  assert.ok(sellerRepairBriefs.length >= 6);
   for (const brief of sellerRepairBriefs) {
     assert.match(brief.id, /^[a-z0-9-]+$/);
     assert.match(brief.origin, /^https:\/\//);

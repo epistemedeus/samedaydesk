@@ -68,6 +68,23 @@ test("rejects a conflicting route class for an existing finding", () => {
   );
 });
 
+test("accepts the canonical paid POST finding only with its exact route class", () => {
+  assert.equal(
+    recordClientEvent("seller_repair_brief_viewed", {
+      finding_id: "blockrun-exa-search-20260830",
+      route_class: "paid_post",
+    }),
+    true,
+  );
+  assert.equal(
+    recordClientEvent("seller_repair_brief_viewed", {
+      finding_id: "blockrun-exa-search-20260830",
+      route_class: "paid_get",
+    }),
+    false,
+  );
+});
+
 test("exposes only the bounded event write route", async (t) => {
   const app = express();
   app.use(express.json());

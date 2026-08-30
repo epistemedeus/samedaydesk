@@ -207,6 +207,48 @@ export const sellerRepairBriefs = Object.freeze([
       },
     ],
   },
+  {
+    id: "blockrun-exa-search-20260830",
+    seller: "BlockRun",
+    origin: "https://blockrun.ai",
+    route: "/api/v1/exa/search",
+    method: "POST",
+    routeClass: "paid_post",
+    observedAt: "2026-08-30",
+    livePrice: "0.011 USDC on Base",
+    summary:
+      "The live Exa route has a well-defined request and active catalog record, but neither OpenAPI nor Bazaar formally guarantees a returned application field before payment.",
+    observedContract: [
+      "OpenAPI requires a JSON body with query, but describes HTTP 200 only as Exa search results without a media type or response schema.",
+      "The live Bazaar record sets output to null and its schema leaves the example results array and every result field optional.",
+      "BlockRun's public Exa skill consumes results with title and url, but consumer expectations are not a seller guarantee.",
+    ],
+    requiredContract: [
+      "Declare the successful application/json envelope and require results when every successful search returns it.",
+      "Require only result fields the live handler guarantees on every item; public client code suggests title and url as the first fields to verify.",
+      "Project the same success contract through OpenAPI and Bazaar and keep the public example schema-valid.",
+    ],
+    scope: [
+      "One truthful OpenAPI 200 schema and matching Bazaar projection for the existing Exa search route.",
+      "Credential-free request, fixture, recursive-required-path, OpenAPI/Bazaar parity, and unchanged live-offer tests.",
+      "No handler, request, price, rail, recipient, wallet, payment middleware, or other-route change.",
+    ],
+    boundaries: [
+      "No credential, signature, target paid request, wallet action, or target payment was used to reproduce this finding.",
+      "The seller confirms the real success envelope, item branches, runtime types, and guarantees before any schema repair is merged.",
+    ],
+    evidence: [
+      { label: "Public OpenAPI", href: "https://blockrun.ai/openapi.json" },
+      {
+        label: "Live Coinbase Bazaar record",
+        href: "https://api.cdp.coinbase.com/platform/v2/x402/discovery/search?query=blockrun%20exa%20search&limit=10",
+      },
+      {
+        label: "Public Exa client and skill",
+        href: "https://github.com/BlockRunAI/blockrun-mcp/tree/main/skills/exa-research",
+      },
+    ],
+  },
 ] satisfies readonly SellerRepairBrief[]);
 
 const briefsById = new Map(sellerRepairBriefs.map((brief) => [brief.id, brief]));
