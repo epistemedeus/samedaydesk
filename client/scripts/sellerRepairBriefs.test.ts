@@ -32,12 +32,19 @@ test("resolves stable public repair briefs and rejects unknown IDs", () => {
   assert.equal(blockRun?.method, "POST");
   assert.equal(blockRun?.routeClass, "paid_post");
   assert.equal(blockRun?.livePrice, "0.011 USDC on Base");
+
+  const exa = findSellerRepairBrief("exa-direct-search-20260830");
+  assert.equal(exa?.origin, "https://api.exa.ai");
+  assert.equal(exa?.route, "/search");
+  assert.equal(exa?.method, "POST");
+  assert.equal(exa?.routeClass, "paid_post");
+  assert.equal(exa?.livePrice, "0.007 USDC on Base or Solana");
 });
 
 test("keeps IDs unique and every brief bounded to public non-secret evidence", () => {
   const ids = sellerRepairBriefs.map((brief) => brief.id);
   assert.equal(new Set(ids).size, ids.length);
-  assert.ok(sellerRepairBriefs.length >= 6);
+  assert.ok(sellerRepairBriefs.length >= 7);
   for (const brief of sellerRepairBriefs) {
     assert.match(brief.id, /^[a-z0-9-]+$/);
     assert.match(brief.origin, /^https:\/\//);

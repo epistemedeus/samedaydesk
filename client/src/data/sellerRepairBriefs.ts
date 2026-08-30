@@ -249,6 +249,46 @@ export const sellerRepairBriefs = Object.freeze([
       },
     ],
   },
+  {
+    id: "exa-direct-search-20260830",
+    seller: "Exa",
+    origin: "https://api.exa.ai",
+    route: "/search",
+    method: "POST",
+    routeClass: "paid_post",
+    observedAt: "2026-08-30",
+    livePrice: "0.007 USDC on Base or Solana",
+    summary:
+      "Exa's seller-owned OpenAPI already guarantees the default JSON search result, but the live Coinbase Bazaar projection drops that contract before payment.",
+    observedContract: [
+      "OpenAPI requires results on every SearchResponse branch and requires title and url on every SearchResultOutput item.",
+      "The live Bazaar schema requires only output.type; output.example is unconstrained, so results and every item field become optional on the discovery surface.",
+      "The live exact offer is 0.007 USDC on Base or Solana, while OpenAPI separately declares dynamic search pricing and an MPP method; this brief changes neither.",
+    ],
+    requiredContract: [
+      "Project the existing OpenAPI SearchResponse authority into Bazaar for the default application/json purchase path.",
+      "Require results and preserve the seller-owned per-item title and url requirements without strengthening optional result metadata.",
+      "Keep the published example schema-valid and add OpenAPI-to-Bazaar recursive-required-path parity tests.",
+    ],
+    scope: [
+      "One Bazaar success-contract projection for the existing direct Exa search offer.",
+      "Credential-free catalog readback, example validation, recursive-required-path, and OpenAPI/Bazaar parity tests.",
+      "No handler, OpenAPI source, request, price, rail, recipient, wallet, payment middleware, streaming branch, or other-route change.",
+    ],
+    boundaries: [
+      "No credential, signature, target application request, wallet action, or target payment was used to reproduce this finding.",
+      "The repair reuses Exa's published OpenAPI authority and does not infer guarantees from examples, counters, or client behavior.",
+    ],
+    evidence: [
+      { label: "Authoritative Exa OpenAPI", href: "https://api.exa.ai/openapi.json" },
+      {
+        label: "Live Coinbase Bazaar record",
+        href: "https://api.cdp.coinbase.com/platform/v2/x402/discovery/search?query=exa%20search&limit=20",
+      },
+      { label: "Official Exa x402 guide", href: "https://exa.ai/docs/reference/x402-guide" },
+      { label: "Official Exa JavaScript SDK", href: "https://github.com/exa-labs/exa-js" },
+    ],
+  },
 ] satisfies readonly SellerRepairBrief[]);
 
 const briefsById = new Map(sellerRepairBriefs.map((brief) => [brief.id, brief]));

@@ -83,6 +83,13 @@ test("accepts the canonical paid POST finding only with its exact route class", 
     }),
     false,
   );
+  assert.equal(
+    recordClientEvent("seller_repair_brief_viewed", {
+      finding_id: "exa-direct-search-20260830",
+      route_class: "paid_post",
+    }),
+    true,
+  );
 });
 
 test("exposes only the bounded event write route", async (t) => {
