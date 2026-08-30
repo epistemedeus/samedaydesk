@@ -128,6 +128,45 @@ export const sellerRepairBriefs = Object.freeze([
       },
     ],
   },
+  {
+    id: "scrape402-crypto-20260830",
+    seller: "scrape402",
+    origin: "https://x402.shizu.me",
+    route: "/crypto",
+    method: "GET",
+    routeClass: "paid_get",
+    observedAt: "2026-08-30",
+    livePrice: "0.007 USDC on Base",
+    summary:
+      "The live route advertises current crypto prices for one or up to ten pairs, but OpenAPI and Bazaar do not formally guarantee the single-pair fields or the batch envelope before payment.",
+    observedContract: [
+      "OpenAPI provides a 200 example with pair, amount, and currency but no response schema.",
+      "The live Bazaar declaration publishes an output example but no formal output schema.",
+      "The advertised multi-pair mode has no buyer-visible envelope or per-item guarantee.",
+    ],
+    requiredContract: [
+      "Declare the successful JSON shape for both single-pair and multi-pair requests.",
+      "Require pair, amount, and currency on every returned price item and define the batch envelope exactly.",
+      "Project the same success contract through OpenAPI and Bazaar and keep both examples schema-valid.",
+    ],
+    scope: [
+      "One truthful OpenAPI 200 schema and matching Bazaar projection for the existing route modes.",
+      "Credential-free single-pair, multi-pair, parity, recursive-required-path, and unchanged live-402 tests.",
+      "No handler, price, rail, recipient, payment middleware, or production-source assumption.",
+    ],
+    boundaries: [
+      "No credential, signature, target paid request, wallet action, or target payment was used to reproduce this finding.",
+      "The public repository contains calling examples, not the production server source; the operator confirms the real branch shapes before any repair.",
+    ],
+    evidence: [
+      { label: "Live unpaid 402 route", href: "https://x402.shizu.me/crypto" },
+      { label: "Public OpenAPI", href: "https://x402.shizu.me/openapi.json" },
+      {
+        label: "Public examples repository",
+        href: "https://github.com/scrape402/x402-examples",
+      },
+    ],
+  },
 ] satisfies readonly SellerRepairBrief[]);
 
 const briefsById = new Map(sellerRepairBriefs.map((brief) => [brief.id, brief]));

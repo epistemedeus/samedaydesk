@@ -18,12 +18,16 @@ test("resolves stable public repair briefs and rejects unknown IDs", () => {
   const morpho = findSellerRepairBrief("402-com-tr-morpho-health-20260830");
   assert.equal(morpho?.route, "/api/x402/morpho-health");
   assert.equal(morpho?.livePrice, "0.04 USDC on Base or Polygon");
+
+  const scrape402 = findSellerRepairBrief("scrape402-crypto-20260830");
+  assert.equal(scrape402?.route, "/crypto");
+  assert.equal(scrape402?.livePrice, "0.007 USDC on Base");
 });
 
 test("keeps IDs unique and every brief bounded to public non-secret evidence", () => {
   const ids = sellerRepairBriefs.map((brief) => brief.id);
   assert.equal(new Set(ids).size, ids.length);
-  assert.ok(sellerRepairBriefs.length >= 3);
+  assert.ok(sellerRepairBriefs.length >= 4);
   for (const brief of sellerRepairBriefs) {
     assert.match(brief.id, /^[a-z0-9-]+$/);
     assert.match(brief.origin, /^https:\/\//);
