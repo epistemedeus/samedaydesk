@@ -142,10 +142,11 @@ export const sellerRepairBriefs = Object.freeze([
     observedContract: [
       "OpenAPI provides a 200 example with pair, amount, and currency but no response schema.",
       "The live Bazaar declaration publishes an output example but no formal output schema.",
+      "OpenAPI makes pair optional while the live Bazaar input contract requires it.",
       "The advertised multi-pair mode has no buyer-visible envelope or per-item guarantee.",
     ],
     requiredContract: [
-      "Declare the successful JSON shape for both single-pair and multi-pair requests.",
+      "Choose one authoritative pair-input rule and declare the successful JSON shape for both single-pair and multi-pair requests.",
       "Require pair, amount, and currency on every returned price item and define the batch envelope exactly.",
       "Project the same success contract through OpenAPI and Bazaar and keep both examples schema-valid.",
     ],
