@@ -1,6 +1,14 @@
 import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
+import {
+  findSellerRepairBrief,
+  sellerRepairBriefs,
+  sellerRepairBriefUrl,
+  sellerRepairScopeMailto,
+} from "../data/sellerRepairBriefs";
+import { track } from "../lib/posthog";
 import styles from "./SellerConformance.module.css";
 
 const PAGE_TITLE = "Seller conformance proof | SameDayDesk";
@@ -29,9 +37,19 @@ function restoreAttribute(el: Element | null, attribute: string, previous: strin
 }
 
 export default function SellerConformance() {
+  const [searchParams] = useSearchParams();
+  const selectedBrief = findSellerRepairBrief(searchParams.get("finding"));
+  const pageTitle = selectedBrief
+    ? `${selectedBrief.seller} repair brief | SameDayDesk`
+    : PAGE_TITLE;
+  const pageDescription = selectedBrief
+    ? `${selectedBrief.seller}: inspect one credential-free finding for ${selectedBrief.method} ${selectedBrief.route}, the exact repair boundary, and the fixed one-route scope.`
+    : PAGE_DESCRIPTION;
+  const pageUrl = selectedBrief ? sellerRepairBriefUrl(selectedBrief.id) : PAGE_URL;
+
   useEffect(() => {
     const previousTitle = document.title;
-    document.title = PAGE_TITLE;
+    document.title = pageTitle;
 
     const description = document.querySelector('meta[name="description"]');
     const canonical = document.querySelector('link[rel="canonical"]');
@@ -49,13 +67,13 @@ export default function SellerConformance() {
     const previousTwitterTitle = twitterTitle?.getAttribute("content") ?? null;
     const previousTwitterDescription = twitterDescription?.getAttribute("content") ?? null;
 
-    description?.setAttribute("content", PAGE_DESCRIPTION);
-    canonical?.setAttribute("href", PAGE_URL);
-    ogUrl?.setAttribute("content", PAGE_URL);
-    ogTitle?.setAttribute("content", PAGE_TITLE);
-    ogDescription?.setAttribute("content", PAGE_DESCRIPTION);
-    twitterTitle?.setAttribute("content", PAGE_TITLE);
-    twitterDescription?.setAttribute("content", PAGE_DESCRIPTION);
+    description?.setAttribute("content", pageDescription);
+    canonical?.setAttribute("href", pageUrl);
+    ogUrl?.setAttribute("content", pageUrl);
+    ogTitle?.setAttribute("content", pageTitle);
+    ogDescription?.setAttribute("content", pageDescription);
+    twitterTitle?.setAttribute("content", pageTitle);
+    twitterDescription?.setAttribute("content", pageDescription);
 
     return () => {
       document.title = previousTitle;
@@ -67,7 +85,15 @@ export default function SellerConformance() {
       restoreAttribute(twitterTitle, "content", previousTwitterTitle);
       restoreAttribute(twitterDescription, "content", previousTwitterDescription);
     };
-  }, []);
+  }, [pageDescription, pageTitle, pageUrl]);
+
+  useEffect(() => {
+    if (!selectedBrief) return;
+    track("seller_repair_brief_viewed", {
+      finding_id: selectedBrief.id,
+      route_class: selectedBrief.routeClass,
+    });
+  }, [selectedBrief]);
 
   return (
     <>
@@ -104,6 +130,104 @@ export default function SellerConformance() {
             </a>
           </div>
         </header>
+
+        {selectedBrief ? (
+          <section className={styles.repairBrief} aria-labelledby="repair-brief-title">
+            <div className={styles.briefHead}>
+              <div>
+                <p className="eyebrow">Exact public repair brief · {selectedBrief.id}</p>
+                <h2 id="repair-brief-title">{selectedBrief.seller}</h2>
+              </div>
+              <dl className={styles.briefMeta}>
+                <div>
+                  <dt>Observed</dt>
+                  <dd>{selectedBrief.observedAt}</dd>
+                </div>
+                <div>
+                  <dt>Route</dt>
+                  <dd><code>{selectedBrief.method} {selectedBrief.route}</code></dd>
+                </div>
+                <div>
+                  <dt>Live offer</dt>
+                  <dd>{selectedBrief.livePrice}</dd>
+                </div>
+              </dl>
+            </div>
+            <p className={styles.prose}>{selectedBrief.summary}</p>
+            <div className={styles.comparison}>
+              <div>
+                <h3>Observed contract</h3>
+                <ul>
+                  {selectedBrief.observedContract.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </div>
+              <div>
+                <h3>Buyer-usable contract</h3>
+                <ul>
+                  {selectedBrief.requiredContract.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </div>
+            </div>
+            <div className={styles.comparison}>
+              <div>
+                <h3>Fixed one-route scope · $490</h3>
+                <ul>
+                  {selectedBrief.scope.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </div>
+              <div>
+                <h3>Evidence boundary</h3>
+                <ul>
+                  {selectedBrief.boundaries.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </div>
+            </div>
+            <div className={styles.actions}>
+              <a
+                className={styles.primary}
+                href={sellerRepairScopeMailto(selectedBrief)}
+                onClick={() => track("seller_repair_scope_clicked", {
+                  finding_id: selectedBrief.id,
+                  route_class: selectedBrief.routeClass,
+                })}
+              >
+                Approve this scope or send the repository
+              </a>
+              {selectedBrief.evidence.map((item) => (
+                <a
+                  className={styles.secondary}
+                  href={item.href}
+                  key={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        <section className={styles.section} aria-labelledby="brief-index-title">
+          <div className={styles.sectionHead}>
+            <p className="eyebrow">Public repair briefs</p>
+            <h2 id="brief-index-title">Reproduced route-level findings</h2>
+          </div>
+          <p className={styles.prose}>
+            Each brief freezes one credential-free observation and a bounded repair scope. It is
+            not proof of runtime delivery, settlement, demand, or seller acceptance.
+          </p>
+          <ul className={styles.briefIndex}>
+            {sellerRepairBriefs.map((brief) => (
+              <li key={brief.id}>
+                <a href={sellerRepairBriefUrl(brief.id)}>
+                  <strong>{brief.seller}</strong>
+                  <span><code>{brief.method} {brief.route}</code> · observed {brief.observedAt}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
 
         <section className={styles.section} aria-labelledby="funnel-title">
           <div className={styles.sectionHead}>
