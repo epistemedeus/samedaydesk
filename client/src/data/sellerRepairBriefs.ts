@@ -221,11 +221,11 @@ export const sellerRepairBriefs = Object.freeze([
     observedContract: [
       "OpenAPI requires a JSON body with query, but describes HTTP 200 only as Exa search results without a media type or response schema.",
       "The live Bazaar record sets output to null and its schema leaves the example results array and every result field optional.",
-      "BlockRun's public Exa skill consumes results with title and url, but consumer expectations are not a seller guarantee.",
+      "BlockRun's seller-owned public Exa skill consumes results with title and url; this is intended-use evidence, not independent buyer demand or a formal response guarantee.",
     ],
     requiredContract: [
       "Declare the successful application/json envelope and require results when every successful search returns it.",
-      "Require only result fields the live handler guarantees on every item; public client code suggests title and url as the first fields to verify.",
+      "Require only result fields the live handler guarantees on every item; the seller-owned skill suggests title and url as the first contract candidates to verify.",
       "Project the same success contract through OpenAPI and Bazaar and keep the public example schema-valid.",
     ],
     scope: [
