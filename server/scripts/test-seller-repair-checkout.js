@@ -7,6 +7,7 @@ process.env.PULSE_FILE = "/dev/null";
 const {
   buildSellerRepairCheckoutSessionParams,
   createSellerRepairCheckoutSession,
+  isPaidCheckoutSessionEvent,
   isValidSellerRepairFindingId,
   SELLER_CONTRACT_REPAIR_SLUG,
   SELLER_REPAIR_INTEGRATION_ID,
@@ -93,6 +94,24 @@ test("sellerRepairCheckoutNotificationContext uses session totals for price disp
   assert.equal(ctx.findingId, SAMPLE_FINDING);
   assert.equal(ctx.offerLabel, "One-route seller contract repair");
   assert.equal(ctx.amountDisplay, "$490.00");
+});
+
+test("processes Checkout Session events only after Stripe marks them paid", () => {
+  const event = (type, paymentStatus) => ({
+    type,
+    data: { object: { payment_status: paymentStatus } },
+  });
+  assert.equal(isPaidCheckoutSessionEvent(event("checkout.session.completed", "paid")), true);
+  assert.equal(isPaidCheckoutSessionEvent(event("checkout.session.completed", "unpaid")), false);
+  assert.equal(
+    isPaidCheckoutSessionEvent(event("checkout.session.async_payment_succeeded", "paid")),
+    true,
+  );
+  assert.equal(
+    isPaidCheckoutSessionEvent(event("checkout.session.async_payment_failed", "unpaid")),
+    false,
+  );
+  assert.equal(isPaidCheckoutSessionEvent(event("payment_intent.succeeded", "paid")), false);
 });
 
 test("seller-repair-session route rejects malformed finding IDs", async (t) => {

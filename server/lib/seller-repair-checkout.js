@@ -7,6 +7,10 @@ import { sellerRepairFindingIds } from "./pulse.js";
 export const SELLER_CONTRACT_REPAIR_SLUG = "seller_contract_repair";
 export const SELLER_REPAIR_INTEGRATION_ID = "seller-contract-repair-sdrprwx";
 export const FINDING_ID_RE = /^[a-z0-9-]{1,96}$/;
+const PAID_CHECKOUT_SESSION_EVENTS = new Set([
+  "checkout.session.completed",
+  "checkout.session.async_payment_succeeded",
+]);
 
 const ALLOWED_FINDING_IDS = new Set(sellerRepairFindingIds);
 
@@ -61,6 +65,11 @@ export function sellerRepairCheckoutNotificationContext(session, intent = {}) {
       ? `$${(session.amount_total / 100).toFixed(2)}`
       : "—",
   };
+}
+
+export function isPaidCheckoutSessionEvent(event) {
+  return PAID_CHECKOUT_SESSION_EVENTS.has(event?.type)
+    && event?.data?.object?.payment_status === "paid";
 }
 
 export async function createSellerRepairCheckoutSession(findingId) {

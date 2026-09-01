@@ -2,7 +2,10 @@ import { Router } from "express";
 import { stripe, isStripeConfigured } from "../lib/stripe.js";
 import { fulfillFromIntent } from "../lib/fulfill.js";
 import { notifyAdmin } from "../lib/notify.js";
-import { sellerRepairCheckoutNotificationContext } from "../lib/seller-repair-checkout.js";
+import {
+  isPaidCheckoutSessionEvent,
+  sellerRepairCheckoutNotificationContext,
+} from "../lib/seller-repair-checkout.js";
 
 // Authoritative "paid" signal. Mounted under /api/stripe → path /api/stripe/webhook.
 // Raw body captured upstream (req.rawBody) BEFORE express.json().
@@ -25,7 +28,7 @@ router.post("/webhook", async (req, res) => {
   try {
     if (event.type === "payment_intent.succeeded") {
       await fulfillFromIntent(event.data.object);
-    } else if (event.type === "checkout.session.completed") {
+    } else if (isPaidCheckoutSessionEvent(event)) {
       // Payment Link / hosted Checkout. If it carries a known uid we fulfill to that account;
       // otherwise it's an operator instant-link sale — record + notify the admin.
       const session = event.data.object;
