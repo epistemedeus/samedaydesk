@@ -10,6 +10,7 @@ import {
 test("accepts only safe Stripe checkout URLs", () => {
   assert.equal(isSafeStripeCheckoutUrl("https://checkout.stripe.com/c/pay/cs_test_abc"), true);
   assert.equal(isSafeStripeCheckoutUrl("https://pay.stripe.com/c/pay/cs_test_abc"), true);
+  assert.equal(isSafeStripeCheckoutUrl("https://preview.checkout.stripe.com/c/pay/cs_test_abc"), false);
   assert.equal(isSafeStripeCheckoutUrl("http://checkout.stripe.com/c/pay/cs_test_abc"), false);
   assert.equal(isSafeStripeCheckoutUrl("https://evil.example/checkout"), false);
   assert.equal(isSafeStripeCheckoutUrl("javascript:alert(1)"), false);
@@ -34,12 +35,12 @@ test("requestSellerRepairCheckoutUrl preserves finding ID and rejects unsafe red
   globalThis.fetch = originalFetch;
 });
 
-test("success and cancel brief URLs keep the same finding without claiming a sale", () => {
+test("success and cancel brief URLs keep the same finding without claiming payment", () => {
   const brief = findSellerRepairBrief("vibe-springs-btc-usd-20260830");
   assert.ok(brief);
   const base = `https://samedaydesk.com/x402/seller-conformance?finding=${encodeURIComponent(brief.id)}`;
-  const success = `${base}&paid=1`;
+  const success = `${base}&checkout=returned`;
   assert.match(success, /finding=vibe-springs-btc-usd-20260830/);
-  assert.match(success, /paid=1/);
-  assert.equal(base.includes("paid=1"), false);
+  assert.match(success, /checkout=returned/);
+  assert.equal(base.includes("checkout=returned"), false);
 });

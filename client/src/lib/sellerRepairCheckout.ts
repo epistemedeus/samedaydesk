@@ -4,8 +4,7 @@ export function isSafeStripeCheckoutUrl(url: string): boolean {
   try {
     const parsed = new URL(url);
     if (parsed.protocol !== "https:") return false;
-    const host = parsed.hostname.toLowerCase();
-    return SAFE_STRIPE_HOSTS.has(host) || host.endsWith(".stripe.com");
+    return SAFE_STRIPE_HOSTS.has(parsed.hostname.toLowerCase());
   } catch {
     return false;
   }

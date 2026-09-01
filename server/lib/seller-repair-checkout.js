@@ -44,7 +44,7 @@ export function buildSellerRepairCheckoutSessionParams(findingId, offer, baseUrl
         quantity: 1,
       },
     ],
-    success_url: `${baseUrl}${briefPath}&paid=1`,
+    success_url: `${baseUrl}${briefPath}&checkout=returned`,
     cancel_url: `${baseUrl}${briefPath}`,
     metadata: stamped,
     payment_intent_data: { metadata: stamped },

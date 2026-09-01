@@ -42,7 +42,7 @@ export default function SellerConformance() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const selectedBrief = findSellerRepairBrief(searchParams.get("finding"));
-  const paymentReceived = searchParams.get("paid") === "1" && selectedBrief !== null;
+  const checkoutReturned = searchParams.get("checkout") === "returned" && selectedBrief !== null;
   const pageTitle = selectedBrief
     ? `${selectedBrief.seller} repair brief | SameDayDesk`
     : PAGE_TITLE;
@@ -154,10 +154,10 @@ export default function SellerConformance() {
 
         {selectedBrief ? (
           <section className={styles.repairBrief} aria-labelledby="repair-brief-title">
-            {paymentReceived ? (
+            {checkoutReturned ? (
               <div className={styles.handoff} role="status">
-                <strong>Payment received.</strong> Watch the checkout email for confirmation.
-                If we need repository access to start the fixed one-route repair, send it by email.
+                <strong>Checkout returned.</strong> Stripe&apos;s signed webhook is the payment
+                authority. Watch for confirmation by email, then send repository access if needed.
               </div>
             ) : null}
             <div className={styles.briefHead}>

@@ -42,9 +42,9 @@ test("buildSellerRepairCheckoutSessionParams stamps server-owned checkout fields
   assert.equal(params.metadata.finding_id, SAMPLE_FINDING);
   assert.deepEqual(params.payment_intent_data.metadata, params.metadata);
   assert.match(params.success_url, /finding=hypernatt-liq-radar-20260830/);
-  assert.match(params.success_url, /paid=1/);
+  assert.match(params.success_url, /checkout=returned/);
   assert.match(params.cancel_url, /finding=hypernatt-liq-radar-20260830/);
-  assert.doesNotMatch(params.cancel_url, /paid=1/);
+  assert.doesNotMatch(params.cancel_url, /checkout=returned/);
   assert.equal("payment_method_types" in params, false);
 });
 
