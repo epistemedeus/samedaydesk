@@ -7,6 +7,7 @@ export const OFFERS = {
   agent_mcp_server:      { amount: 34900, label: "Agent-Ready MCP Server", category: "build", flagship: true },
   machine_payment_route: { amount: 49900, label: "x402 + MPP Payment Route", category: "payments" },
   agent_storefront:      { amount: 99900, label: "Agent Commerce Storefront", category: "payments", bestValue: true },
+  seller_contract_repair: { amount: 49000, label: "One-route seller contract repair", category: "repair" },
   // custom_quote: operator sets the amount on an instant Payment Link.
 };
 

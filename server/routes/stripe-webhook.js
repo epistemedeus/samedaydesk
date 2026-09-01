@@ -2,6 +2,10 @@ import { Router } from "express";
 import { stripe, isStripeConfigured } from "../lib/stripe.js";
 import { fulfillFromIntent } from "../lib/fulfill.js";
 import { notifyAdmin } from "../lib/notify.js";
+import {
+  isPaidCheckoutSessionEvent,
+  sellerRepairCheckoutNotificationContext,
+} from "../lib/seller-repair-checkout.js";
 
 // Authoritative "paid" signal. Mounted under /api/stripe → path /api/stripe/webhook.
 // Raw body captured upstream (req.rawBody) BEFORE express.json().
@@ -24,7 +28,7 @@ router.post("/webhook", async (req, res) => {
   try {
     if (event.type === "payment_intent.succeeded") {
       await fulfillFromIntent(event.data.object);
-    } else if (event.type === "checkout.session.completed") {
+    } else if (isPaidCheckoutSessionEvent(event)) {
       // Payment Link / hosted Checkout. If it carries a known uid we fulfill to that account;
       // otherwise it's an operator instant-link sale — record + notify the admin.
       const session = event.data.object;
@@ -33,10 +37,19 @@ router.post("/webhook", async (req, res) => {
         const intent = await stripe.paymentIntents.retrieve(piId);
         const r = await fulfillFromIntent(intent);
         if (!r.ok) {
+          const { findingId, offerLabel, amountDisplay } = sellerRepairCheckoutNotificationContext(
+            session,
+            intent,
+          );
           await notifyAdmin(
-            `Payment Link sale — ${session.amount_total ? "$" + (session.amount_total / 100).toFixed(2) : ""}`,
-            `<p>A Payment Link checkout completed without a linked account.</p>
-             <p>Session: ${session.id}<br>Email: ${session.customer_details?.email || "—"}</p>`,
+            `Checkout completed — ${amountDisplay}`,
+            `<p>A hosted Checkout completed without a linked account.</p>
+             <p>Session: ${session.id}<br>
+             Email: ${session.customer_details?.email || "—"}<br>
+             Finding ID: ${findingId}<br>
+             Offer label: ${offerLabel}<br>
+             Amount: ${amountDisplay}</p>
+             <p>Finding ID and offer label are for operator context only. Stripe session totals are price authority.</p>`,
           );
         }
       }

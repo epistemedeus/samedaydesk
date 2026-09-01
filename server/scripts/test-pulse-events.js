@@ -55,7 +55,24 @@ test("records only bounded seller-repair funnel events", () => {
     routeClass: "paid_get",
     briefViews: (before.byFinding[props.finding_id]?.briefViews || 0) + 1,
     scopeClicks: (before.byFinding[props.finding_id]?.scopeClicks || 0) + 1,
+    checkoutStarts: before.byFinding[props.finding_id]?.checkoutStarts || 0,
   });
+});
+
+test("records seller-repair checkout starts separately from scope clicks", () => {
+  const props = {
+    finding_id: "blockrun-exa-search-20260830",
+    route_class: "paid_post",
+  };
+  const before = structuredClone(pulseSnapshot().sellerRepair);
+  assert.equal(recordClientEvent("seller_repair_checkout_started", props), true);
+  const snapshot = pulseSnapshot();
+  assert.equal(snapshot.sellerRepair.checkoutStarts, before.checkoutStarts + 1);
+  assert.equal(snapshot.sellerRepair.scopeClicks, before.scopeClicks);
+  assert.equal(
+    snapshot.sellerRepair.byFinding[props.finding_id].checkoutStarts,
+    (before.byFinding[props.finding_id]?.checkoutStarts || 0) + 1,
+  );
 });
 
 test("rejects a conflicting route class for an existing finding", () => {

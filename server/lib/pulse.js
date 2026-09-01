@@ -45,6 +45,7 @@ const state = {
   sellerRepair: {
     briefViews: 0,
     scopeClicks: 0,
+    checkoutStarts: 0,
     byFinding: Object.create(null),
   },
   recent: [], // last N events
@@ -108,6 +109,7 @@ function loadSnapshot() {
     Object.assign(state.funnel, s.funnel || {});
     state.sellerRepair.briefViews = s.sellerRepair?.briefViews || 0;
     state.sellerRepair.scopeClicks = s.sellerRepair?.scopeClicks || 0;
+    state.sellerRepair.checkoutStarts = s.sellerRepair?.checkoutStarts || 0;
     for (const findingId of sellerRepairFindingIds) {
       const row = s.sellerRepair?.byFinding?.[findingId];
       if (row?.routeClass !== sellerRepairFindingRouteClasses[findingId]) continue;
@@ -118,6 +120,9 @@ function loadSnapshot() {
           : 0,
         scopeClicks: Number.isSafeInteger(row.scopeClicks) && row.scopeClicks >= 0
           ? row.scopeClicks
+          : 0,
+        checkoutStarts: Number.isSafeInteger(row.checkoutStarts) && row.checkoutStarts >= 0
+          ? row.checkoutStarts
           : 0,
       };
     }
@@ -243,6 +248,7 @@ export function pulseMiddleware(req, _res, next) {
 const SELLER_REPAIR_EVENTS = new Set([
   "seller_repair_brief_viewed",
   "seller_repair_scope_clicked",
+  "seller_repair_checkout_started",
 ]);
 const FINDING_ID_RE = /^[a-z0-9-]{1,96}$/;
 
@@ -261,15 +267,19 @@ export function recordClientEvent(event, props) {
     routeClass,
     briefViews: 0,
     scopeClicks: 0,
+    checkoutStarts: 0,
   };
   if (row.routeClass !== routeClass) return false;
 
   if (event === "seller_repair_brief_viewed") {
     row.briefViews += 1;
     state.sellerRepair.briefViews += 1;
-  } else {
+  } else if (event === "seller_repair_scope_clicked") {
     row.scopeClicks += 1;
     state.sellerRepair.scopeClicks += 1;
+  } else {
+    row.checkoutStarts += 1;
+    state.sellerRepair.checkoutStarts += 1;
   }
   state.sellerRepair.byFinding[findingId] = row;
   dirty = true;

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
@@ -8,6 +8,7 @@ import {
   sellerRepairBriefUrl,
   sellerRepairScopeMailto,
 } from "../data/sellerRepairBriefs";
+import { requestSellerRepairCheckoutUrl } from "../lib/sellerRepairCheckout";
 import { track } from "../lib/posthog";
 import styles from "./SellerConformance.module.css";
 
@@ -38,7 +39,10 @@ function restoreAttribute(el: Element | null, attribute: string, previous: strin
 
 export default function SellerConformance() {
   const [searchParams] = useSearchParams();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const selectedBrief = findSellerRepairBrief(searchParams.get("finding"));
+  const checkoutReturned = searchParams.get("checkout") === "returned" && selectedBrief !== null;
   const pageTitle = selectedBrief
     ? `${selectedBrief.seller} repair brief | SameDayDesk`
     : PAGE_TITLE;
@@ -95,6 +99,23 @@ export default function SellerConformance() {
     });
   }, [selectedBrief]);
 
+  async function startSellerRepairCheckout() {
+    if (!selectedBrief || checkoutLoading) return;
+    setCheckoutError(null);
+    setCheckoutLoading(true);
+    track("seller_repair_checkout_started", {
+      finding_id: selectedBrief.id,
+      route_class: selectedBrief.routeClass,
+    });
+    try {
+      const url = await requestSellerRepairCheckoutUrl(selectedBrief.id);
+      window.location.assign(url);
+    } catch {
+      setCheckoutError("Checkout could not start. Use email if you need a changed scope.");
+      setCheckoutLoading(false);
+    }
+  }
+
   return (
     <>
       <Nav />
@@ -133,6 +154,12 @@ export default function SellerConformance() {
 
         {selectedBrief ? (
           <section className={styles.repairBrief} aria-labelledby="repair-brief-title">
+            {checkoutReturned ? (
+              <div className={styles.handoff} role="status">
+                <strong>Checkout returned.</strong> Stripe&apos;s signed webhook is the payment
+                authority. Watch for confirmation by email, then send repository access if needed.
+              </div>
+            ) : null}
             <div className={styles.briefHead}>
               <div>
                 <p className="eyebrow">Exact public repair brief · {selectedBrief.id}</p>
@@ -183,16 +210,27 @@ export default function SellerConformance() {
               </div>
             </div>
             <div className={styles.actions}>
-              <a
+              <button
+                type="button"
                 className={styles.primary}
+                onClick={() => void startSellerRepairCheckout()}
+                disabled={checkoutLoading}
+              >
+                {checkoutLoading ? "Starting checkout…" : "Pay the fixed $490 scope"}
+              </button>
+              <a
+                className={styles.secondary}
                 href={sellerRepairScopeMailto(selectedBrief)}
                 onClick={() => track("seller_repair_scope_clicked", {
                   finding_id: selectedBrief.id,
                   route_class: selectedBrief.routeClass,
                 })}
               >
-                Approve this scope or send the repository
+                Approve by email or change scope
               </a>
+              {checkoutError ? (
+                <p className={styles.checkoutError}>{checkoutError}</p>
+              ) : null}
               {selectedBrief.evidence.map((item) => (
                 <a
                   className={styles.secondary}

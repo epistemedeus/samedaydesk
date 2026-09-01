@@ -16,7 +16,11 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const BASE = (process.env.WEBHOOK_BASE_URL || "https://samedaydesk.com").replace(/\/$/, "");
 const URL = `${BASE}/api/stripe/webhook`;
 // Must match the events handled in server/routes/stripe-webhook.js
-const EVENTS = ["payment_intent.succeeded", "checkout.session.completed"];
+const EVENTS = [
+  "payment_intent.succeeded",
+  "checkout.session.completed",
+  "checkout.session.async_payment_succeeded",
+];
 const roll = process.argv.includes("--roll");
 
 async function listAll() {
