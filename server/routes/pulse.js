@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { pulseSnapshot, recordClientEvent } from "../lib/pulse.js";
+import { flushPulseSnapshot, pulseSnapshot, recordClientEvent } from "../lib/pulse.js";
 
 const router = Router();
 
@@ -18,6 +18,9 @@ router.post("/event", (req, res) => {
   // anonymous diagnostic signals and carry no identity or demand authority.
   if (!recordClientEvent(req.body?.event, req.body?.props)) {
     return res.status(400).json({ error: "Unsupported event" });
+  }
+  if (!flushPulseSnapshot()) {
+    return res.status(503).json({ error: "Telemetry unavailable" });
   }
   return res.status(204).end();
 });

@@ -50,23 +50,54 @@ const state = {
   recent: [], // last N events
 };
 
-// Best-effort persistence: the in-memory state would otherwise reset on every
-// restart/redeploy (frequent), and we'd lose the first real visitors. Snapshot
-// to a tmp file and reload on boot. Harmless if the FS doesn't persist.
-const PULSE_FILE = process.env.PULSE_FILE || path.join(os.tmpdir(), "sdd-pulse-v1.json");
+// Production snapshots must live outside the replaceable application release.
+// An explicit file always wins. Otherwise use the conventional per-user state
+// directory in production and reserve the runtime temp directory for local
+// development. This stays provider-neutral while surviving ordinary releases
+// on hosts that preserve the service account's home directory.
+const LEGACY_PULSE_FILE = path.join(os.tmpdir(), "sdd-pulse-v1.json");
+const productionStateHome =
+  process.env.XDG_STATE_HOME ||
+  (process.env.HOME ? path.join(process.env.HOME, ".local", "state") : null);
+const PULSE_FILE =
+  process.env.PULSE_FILE ||
+  (process.env.NODE_ENV === "production" && productionStateHome
+    ? path.join(productionStateHome, "samedaydesk", "pulse-v1.json")
+    : LEGACY_PULSE_FILE);
+const pulseStorage = {
+  mode: process.env.PULSE_FILE
+    ? "explicit"
+    : PULSE_FILE === LEGACY_PULSE_FILE
+      ? "temporary"
+      : "production_state_home",
+  loaded: false,
+  migratedLegacySnapshot: false,
+  lastSaveAt: null,
+  lastSaveOk: null,
+};
 let dirty = false;
 
 function saveSnapshot() {
   try {
+    fs.mkdirSync(path.dirname(PULSE_FILE), { recursive: true, mode: 0o700 });
     fs.writeFileSync(PULSE_FILE, JSON.stringify({ ...state, uniqueHumans: [...state.uniqueHumans] }));
     dirty = false;
+    pulseStorage.lastSaveAt = new Date().toISOString();
+    pulseStorage.lastSaveOk = true;
+    return true;
   } catch {
-    /* ignore */
+    pulseStorage.lastSaveOk = false;
+    return false;
   }
 }
 function loadSnapshot() {
   try {
-    const s = JSON.parse(fs.readFileSync(PULSE_FILE, "utf8"));
+    let source = PULSE_FILE;
+    if (!fs.existsSync(source) && source !== LEGACY_PULSE_FILE && fs.existsSync(LEGACY_PULSE_FILE)) {
+      source = LEGACY_PULSE_FILE;
+      pulseStorage.migratedLegacySnapshot = true;
+    }
+    const s = JSON.parse(fs.readFileSync(source, "utf8"));
     state.total = s.total || 0;
     state.humans = s.humans || 0;
     state.bots = s.bots || 0;
@@ -93,6 +124,11 @@ function loadSnapshot() {
     state.uniqueHumans = new Set(s.uniqueHumans || []);
     state.recent = Array.isArray(s.recent) ? s.recent.slice(-RECENT_CAP) : [];
     if (s.startedAt) state.startedAt = s.startedAt; // keep the true window start
+    pulseStorage.loaded = true;
+    if (source !== PULSE_FILE) {
+      dirty = true;
+      saveSnapshot();
+    }
   } catch {
     /* no snapshot yet */
   }
@@ -240,6 +276,10 @@ export function recordClientEvent(event, props) {
   return true;
 }
 
+export function flushPulseSnapshot() {
+  return saveSnapshot();
+}
+
 export function pulseSnapshot() {
   return {
     startedAt: state.startedAt,
@@ -254,6 +294,7 @@ export function pulseSnapshot() {
     byReferer: state.byReferer,
     byAiBot: state.byAiBot,
     sellerRepair: state.sellerRepair,
+    storage: { ...pulseStorage },
     recent: state.recent.slice(-40).reverse(),
   };
 }

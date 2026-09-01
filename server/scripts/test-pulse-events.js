@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -163,4 +163,63 @@ test("persists and reloads bounded seller-repair counters", (t) => {
   const reloaded = JSON.parse(reader.stdout);
   assert.equal(reloaded.briefViews, 1);
   assert.equal(reloaded.byFinding["vibe-springs-btc-usd-20260830"].briefViews, 1);
+});
+
+test("uses a durable per-user state path in production and migrates the legacy temp snapshot", (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "sdd-pulse-production-test-"));
+  const home = join(dir, "home");
+  const legacyFile = join(dir, "sdd-pulse-v1.json");
+  const durableFile = join(home, ".state", "samedaydesk", "pulse-v1.json");
+  const moduleUrl = new URL("../lib/pulse.js", import.meta.url).href;
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+
+  mkdirSync(home, { recursive: true });
+  writeFileSync(
+    legacyFile,
+    JSON.stringify({
+      startedAt: "2026-08-30T00:00:00.000Z",
+      sellerRepair: {
+        briefViews: 1,
+        scopeClicks: 0,
+        byFinding: {
+          "hypernatt-liq-radar-20260830": {
+            routeClass: "paid_get",
+            briefViews: 1,
+            scopeClicks: 0,
+          },
+        },
+      },
+    }),
+  );
+
+  const env = {
+    ...process.env,
+    NODE_ENV: "production",
+    HOME: home,
+    TMPDIR: dir,
+    XDG_STATE_HOME: join(home, ".state"),
+  };
+  delete env.PULSE_FILE;
+  const writer = spawnSync(
+    process.execPath,
+    [
+      "--input-type=module",
+      "-e",
+      `const { flushPulseSnapshot, pulseSnapshot, recordClientEvent } = await import(${JSON.stringify(moduleUrl)});\n` +
+        `if (!recordClientEvent("seller_repair_brief_viewed", { finding_id: "hypernatt-liq-radar-20260830", route_class: "paid_get" })) process.exit(2);\n` +
+        `if (!flushPulseSnapshot()) process.exit(3);\n` +
+        `console.log(JSON.stringify(pulseSnapshot().storage));`,
+    ],
+    { env, encoding: "utf8" },
+  );
+  assert.equal(writer.status, 0, writer.stderr);
+  const storage = JSON.parse(writer.stdout);
+  assert.equal(storage.mode, "production_state_home");
+  assert.equal(storage.loaded, true);
+  assert.equal(storage.migratedLegacySnapshot, true);
+  assert.equal(storage.lastSaveOk, true);
+  assert.equal(
+    JSON.parse(readFileSync(durableFile, "utf8")).sellerRepair.briefViews,
+    2,
+  );
 });
