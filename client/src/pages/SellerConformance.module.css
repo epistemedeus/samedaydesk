@@ -77,6 +77,27 @@
   scroll-margin-top: 6rem;
 }
 
+.handoff {
+  margin-bottom: var(--space-m);
+  padding: 0.9em 1.1em;
+  border-radius: var(--radius-s);
+  border: 1px solid color-mix(in srgb, var(--lime) 35%, transparent);
+  background: var(--lime-soft);
+  color: var(--ink);
+  font-size: var(--step--1);
+}
+
+.checkoutError {
+  color: var(--ink-dim);
+  font-size: var(--step--1);
+  margin: 0;
+}
+
+.primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .briefHead {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 0.8fr);

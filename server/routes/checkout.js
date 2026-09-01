@@ -3,6 +3,7 @@ import { requireAuth, requireVerifiedEmail } from "../middleware/auth.js";
 import { stripe, isStripeConfigured } from "../lib/stripe.js";
 import { getOffer, CURRENCY } from "../pricing.js";
 import { fulfillFromIntent } from "../lib/fulfill.js";
+import { createSellerRepairCheckoutSession } from "../lib/seller-repair-checkout.js";
 
 const router = Router();
 
@@ -51,6 +52,21 @@ router.post("/verify", requireAuth, requireVerifiedEmail, async (req, res) => {
   } catch (e) {
     console.error("[checkout] verify", e?.message);
     res.status(502).json({ error: "Could not verify payment" });
+  }
+});
+
+// Unauthenticated hosted Checkout for the fixed seller-contract-repair offer.
+// Accepts only a bounded public brief finding ID; amount and label are server-owned.
+router.post("/seller-repair-session", async (req, res) => {
+  if (!isStripeConfigured()) return res.status(503).json({ error: "Payments not configured" });
+  const findingId = req.body?.finding_id;
+  try {
+    const result = await createSellerRepairCheckoutSession(findingId);
+    if (!result.ok) return res.status(result.status).json({ error: result.error });
+    return res.json({ url: result.url });
+  } catch (e) {
+    console.error("[checkout] seller-repair-session", e?.message);
+    return res.status(502).json({ error: "Could not start checkout" });
   }
 });
 

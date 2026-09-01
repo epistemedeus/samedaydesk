@@ -8,6 +8,7 @@ const pendingEvents: Array<{ event: string; props?: Record<string, unknown> }> =
 const FIRST_PARTY_EVENTS = new Set([
   "seller_repair_brief_viewed",
   "seller_repair_scope_clicked",
+  "seller_repair_checkout_started",
 ]);
 
 function captureFirstParty(event: string, props?: Record<string, unknown>) {
