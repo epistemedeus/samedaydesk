@@ -17,7 +17,10 @@
     "test:seller-repair-checkout": "node --test server/scripts/test-seller-repair-checkout.js client/scripts/sellerRepairCheckout.test.ts",
     "test:pulse": "node --test server/scripts/test-pulse-events.js server/scripts/test-pulse-durable-store.js server/scripts/test-pulse-postgres-real.js",
     "test:taskmarket": "node --test server/scripts/test-taskmarket-integration.js",
-    "test:mcp": "node --test server/scripts/test-mcp-protocol-negotiation.js"
+    "test:mcp": "node --test server/scripts/test-mcp-protocol-negotiation.js",
+    "test:spa-fallback": "node --test server/scripts/test-spa-fallback.js",
+    "test:portfolio-discovery": "node --test tools/portfolio-discovery/test.mjs",
+    "test:portfolio-discovery:live": "node tools/portfolio-discovery/cli.mjs --live"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",

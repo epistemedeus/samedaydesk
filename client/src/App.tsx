@@ -40,7 +40,7 @@ export default function App() {
           <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
           <Route path="/terms" element={<StubPage title="Terms of Service" note="Legal copy coming soon." />} />
           <Route path="/privacy" element={<StubPage title="Privacy Policy" note="Legal copy coming soon." />} />
-          <Route path="*" element={<StubPage title="Not found" note="That page doesn't exist." />} />
+          <Route path="*" element={<StubPage title="Not found" note="That page doesn't exist." notFound />} />
         </Routes>
       </Suspense>
     </AuthProvider>

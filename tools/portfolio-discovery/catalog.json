@@ -1,0 +1,232 @@
+{
+  "version": 1,
+  "userAgent": "samedaydesk-portfolio-discovery/1.0",
+  "timeoutMs": 15000,
+  "sites": [
+    {
+      "id": "samedaydesk",
+      "origin": "https://samedaydesk.com",
+      "role": "operating_merchant",
+      "label": "SameDayDesk",
+      "homeFingerprint": {
+        "canonical": "https://samedaydesk.com/",
+        "titleIncludes": "SameDayDesk: agent commerce"
+      },
+      "checks": [
+        {
+          "id": "home",
+          "kind": "document",
+          "path": "/",
+          "expect": {
+            "status": 200,
+            "contentTypePrefix": "text/html",
+            "canonical": "https://samedaydesk.com/"
+          }
+        },
+        {
+          "id": "robots",
+          "kind": "robots",
+          "path": "/robots.txt",
+          "expect": {
+            "status": 200,
+            "contentTypePrefix": "text/plain",
+            "mustInclude": ["User-agent:", "Sitemap:"]
+          }
+        },
+        {
+          "id": "sitemap",
+          "kind": "sitemap",
+          "path": "/sitemap.xml",
+          "expect": {
+            "status": 200,
+            "contentTypePrefix": ["application/xml", "text/xml"],
+            "rootLocalName": "urlset"
+          }
+        },
+        {
+          "id": "llms",
+          "kind": "llms",
+          "path": "/llms.txt",
+          "expect": {
+            "status": 200,
+            "contentTypePrefix": "text/plain"
+          }
+        },
+        {
+          "id": "jsonld",
+          "kind": "jsonld",
+          "from": "home",
+          "expect": {
+            "parseable": true,
+            "mustHaveType": "Organization"
+          }
+        },
+        {
+          "id": "not_found_machine",
+          "kind": "not_found",
+          "path": "/.well-known/portfolio-discovery-probe-missing.json",
+          "expect": {
+            "status": [404, 410],
+            "mustNotLookLikeHomepage": true
+          }
+        },
+        {
+          "id": "agent_card",
+          "kind": "document",
+          "path": "/.well-known/agent-card.json",
+          "expect": {
+            "status": 200,
+            "contentTypePrefix": "application/json"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ein-llc",
+      "origin": "https://ein.llc",
+      "role": "formation_activation",
+      "label": "EIN.LLC",
+      "homeFingerprint": {
+        "canonical": "https://ein.llc/",
+        "titleIncludes": "EIN.LLC"
+      },
+      "checks": [
+        {
+          "id": "home",
+          "kind": "document",
+          "path": "/",
+          "expect": {
+            "status": 200,
+            "contentTypePrefix": "text/html",
+            "canonical": "https://ein.llc/"
+          }
+        },
+        {
+          "id": "robots",
+          "kind": "robots",
+          "path": "/robots.txt",
+          "expect": {
+            "status": 200,
+            "contentTypePrefix": "text/plain",
+            "mustInclude": ["User-agent:", "Sitemap:"]
+          }
+        },
+        {
+          "id": "sitemap",
+          "kind": "sitemap",
+          "path": "/sitemap.xml",
+          "expect": {
+            "status": 200,
+            "contentTypePrefix": ["application/xml", "text/xml"],
+            "rootLocalName": "urlset"
+          }
+        },
+        {
+          "id": "llms",
+          "kind": "llms",
+          "path": "/llms.txt",
+          "expect": {
+            "status": 200,
+            "contentTypePrefix": "text/plain"
+          }
+        },
+        {
+          "id": "jsonld",
+          "kind": "jsonld",
+          "from": "home",
+          "expect": {
+            "parseable": true,
+            "mustHaveType": "Organization"
+          }
+        },
+        {
+          "id": "not_found_machine",
+          "kind": "not_found",
+          "path": "/.well-known/portfolio-discovery-probe-missing.json",
+          "expect": {
+            "status": [404, 410],
+            "mustNotLookLikeHomepage": true
+          }
+        },
+        {
+          "id": "agent_card",
+          "kind": "document",
+          "path": "/.well-known/agent-card.json",
+          "expect": "not_applicable"
+        }
+      ]
+    },
+    {
+      "id": "neomorphic-io",
+      "origin": "https://neomorphic.io",
+      "role": "experiment_trust_lab",
+      "label": "Neomorphic.io",
+      "homeFingerprint": {
+        "canonical": "https://neomorphic.io/",
+        "titleIncludes": "Neomorphic LLC"
+      },
+      "checks": [
+        {
+          "id": "home",
+          "kind": "document",
+          "path": "/",
+          "expect": {
+            "status": 200,
+            "contentTypePrefix": "text/html",
+            "canonical": "https://neomorphic.io/"
+          }
+        },
+        {
+          "id": "robots",
+          "kind": "robots",
+          "path": "/robots.txt",
+          "expect": {
+            "status": 200,
+            "contentTypePrefix": "text/plain",
+            "mustInclude": ["User-agent:", "Sitemap:"]
+          }
+        },
+        {
+          "id": "sitemap",
+          "kind": "sitemap",
+          "path": "/sitemap.xml",
+          "expect": {
+            "status": 200,
+            "contentTypePrefix": ["application/xml", "text/xml"],
+            "rootLocalName": "urlset"
+          }
+        },
+        {
+          "id": "llms",
+          "kind": "llms",
+          "path": "/llms.txt",
+          "expect": {
+            "status": 200,
+            "contentTypePrefix": "text/plain"
+          }
+        },
+        {
+          "id": "jsonld",
+          "kind": "jsonld",
+          "from": "home",
+          "expect": "not_applicable"
+        },
+        {
+          "id": "not_found_machine",
+          "kind": "not_found",
+          "path": "/.well-known/portfolio-discovery-probe-missing.json",
+          "expect": {
+            "status": [404, 410],
+            "mustNotLookLikeHomepage": true
+          }
+        },
+        {
+          "id": "agent_card",
+          "kind": "document",
+          "path": "/.well-known/agent-card.json",
+          "expect": "not_applicable"
+        }
+      ]
+    }
+  ]
+}

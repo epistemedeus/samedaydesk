@@ -54,6 +54,20 @@
   color: var(--ink-faint);
 }
 .usco { color: var(--ink-faint); }
+.related {
+  margin: 0;
+  padding-bottom: var(--space-l);
+  max-width: 72ch;
+  color: var(--ink-faint);
+  font-size: var(--step--2);
+  line-height: 1.5;
+}
+.related a {
+  color: var(--ink-dim);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.related a:hover { color: var(--ink); }
 
 @media (min-width: 720px) {
   .inner { grid-template-columns: 2fr 1fr 1fr; gap: var(--space-xl); }

@@ -42,6 +42,11 @@ export default function Footer() {
         <span className="mono">© {year} SameDayDesk</span>
         <span className={styles.usco}>Built by Neomorphic LLC.</span>
       </div>
+      <p className={clsx("container", styles.related)}>
+        SameDayDesk is the operating merchant.{" "}
+        <a href="https://ein.llc/">EIN.LLC</a> is a separate formation product.{" "}
+        <a href="https://neomorphic.io/">Neomorphic.io</a> is the public experiment lab.
+      </p>
     </footer>
   );
 }

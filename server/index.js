@@ -17,6 +17,7 @@ import resendWebhookRouter from "./routes/resend-webhook.js";
 import pulseRouter from "./routes/pulse.js";
 import mcpRouter from "./routes/mcp.js";
 import { pulseMiddleware } from "./lib/pulse.js";
+import { createSpaFallback } from "./lib/spa-fallback.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === "production";
@@ -116,10 +117,9 @@ if (isProd) {
   );
   // Clean URL for the SkillGuard landing page (the CLI/README funnel target).
   app.get("/skillguard", (_req, res) => res.sendFile(path.join(CLIENT_DIST, "skillguard.html")));
-  app.use((req, res, next) => {
-    if (req.method !== "GET") return next();
-    res.sendFile(path.join(CLIENT_DIST, "index.html"));
-  });
+  // Extensionless GET paths fall through to the SPA. Missing file-like and
+  // well-known resources 404 instead of returning the homepage at HTTP 200.
+  app.use(createSpaFallback(CLIENT_DIST));
 }
 
 const PORT = process.env.PORT || 3000;
