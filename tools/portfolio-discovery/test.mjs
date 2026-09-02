@@ -64,7 +64,7 @@ test("healthy fixtures pass, including not_applicable sibling machine cards", as
   assert.equal(report.totals.missing, 0);
   assert.equal(report.totals.invalid, 0);
   assert.equal(check(report, "ein-llc", "agent_card").status, "not_applicable");
-  assert.equal(check(report, "neomorphic-io", "jsonld").status, "not_applicable");
+  assert.equal(check(report, "neomorphic-io", "jsonld").status, "ok");
   assert.equal(check(report, "neomorphic-io", "agent_card").status, "not_applicable");
   assert.equal(check(report, "samedaydesk", "not_found_machine").status, "ok");
   assert.equal(check(report, "samedaydesk", "jsonld").status, "ok");
@@ -91,7 +91,8 @@ test("distinguishes missing, invalid, and not_applicable on mixed gaps", async (
   assert.equal(check(report, "samedaydesk", "jsonld").status, "invalid");
   assert.equal(check(report, "samedaydesk", "not_found_machine").status, "invalid");
   assert.equal(check(report, "ein-llc", "agent_card").status, "not_applicable");
-  assert.equal(check(report, "neomorphic-io", "jsonld").status, "not_applicable");
+  assert.equal(check(report, "neomorphic-io", "jsonld").status, "ok");
+  assert.equal(check(report, "neomorphic-io", "agent_card").status, "not_applicable");
 });
 
 test("fixture fetch covers every catalog URL for the healthy pack", () => {

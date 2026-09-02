@@ -209,7 +209,10 @@
           "id": "jsonld",
           "kind": "jsonld",
           "from": "home",
-          "expect": "not_applicable"
+          "expect": {
+            "parseable": true,
+            "mustHaveType": "Organization"
+          }
         },
         {
           "id": "not_found_machine",

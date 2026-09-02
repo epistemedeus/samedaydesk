@@ -63,7 +63,7 @@
       "/": {
         "status": 200,
         "contentType": "text/html; charset=UTF-8",
-        "body": "<!doctype html><html><head><link rel=\"canonical\" href=\"https://neomorphic.io/\"><title>Neomorphic LLC · A custodial institution of good standing</title></head><body>Neomorphic</body></html>"
+        "body": "<!doctype html><html><head><link rel=\"canonical\" href=\"https://neomorphic.io/\"><title>Neomorphic LLC · A custodial institution of good standing</title><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"name\":\"Neomorphic LLC\"}]}</script></head><body>Neomorphic</body></html>"
       },
       "/robots.txt": {
         "status": 200,
