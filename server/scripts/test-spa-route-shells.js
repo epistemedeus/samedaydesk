@@ -12,6 +12,7 @@ import {
   HOME_CANONICAL,
   HOME_DESCRIPTION,
   HOME_TITLE,
+  NOT_FOUND_SHELL,
   SPA_ROUTE_SHELLS,
   applyRouteShell,
   generateRouteShellsFromIndex,
@@ -35,6 +36,7 @@ const DECLARED_REACT_ROUTES = Object.freeze([
 
 const here = dirname(fileURLToPath(import.meta.url));
 const SOURCE_INDEX = readFileSync(join(here, "../../client/index.html"), "utf8");
+const LLMS_TXT = readFileSync(join(here, "../../client/public/llms.txt"), "utf8");
 const BUNDLE_SRC = "/assets/index-8f3a1b2c.js";
 const BUNDLE_CSS = "/assets/index-8f3a1b2c.css";
 const HOME_H1 = "SameDayDesk: make your service ready for agents";
@@ -107,7 +109,10 @@ test("catalog is exact, unique, and sufficient to add another public SPA route",
   assert.deepEqual(SPA_HISTORY_ROUTES, DECLARED_REACT_ROUTES);
   assert.deepEqual(
     SPA_ROUTE_SHELLS.map((route) => route.path),
-    ["/x402", "/x402/seller-conformance", "/tools/ai-readiness"],
+    [
+      "/x402", "/x402/seller-conformance", "/tools/ai-readiness", "/for-agents",
+      "/terms", "/privacy", "/login", "/signup", "/dashboard", "/checkout",
+    ],
   );
   for (const route of SPA_ROUTE_SHELLS) {
     assert.equal(SPA_HISTORY_ROUTES.includes(route.path), true, route.path);
@@ -130,6 +135,15 @@ test("catalog is exact, unique, and sufficient to add another public SPA route",
   assert.equal(html.includes("<!doctype html>"), true);
 });
 
+test("apex machine documentation separates free and paid MCP and keeps homepage SKUs", () => {
+  assert.match(LLMS_TXT, /Free apex MCP readiness surface/);
+  assert.match(LLMS_TXT, /https:\/\/agents\.samedaydesk\.com\/mcp/);
+  assert.match(LLMS_TXT, /GET https:\/\/agents\.samedaydesk\.com\/extract\?url=https:\/\/example\.com/);
+  for (const sku of ["Agent Workflow Integration", "Agent-Ready MCP Server", "Agent Commerce Storefront"]) {
+    assert.match(LLMS_TXT, new RegExp(sku));
+  }
+});
+
 test("generator derives route shells from the built index.html without rewriting the homepage", (t) => {
   const dist = mkdtempSync(join(tmpdir(), "route-shells-gen-"));
   t.after(() => rmSync(dist, { recursive: true, force: true }));
@@ -137,13 +151,13 @@ test("generator derives route shells from the built index.html without rewriting
   writeFileSync(join(dist, "index.html"), built);
 
   const generated = generateRouteShellsFromIndex(built);
-  assert.equal(generated.length, 3);
+  assert.equal(generated.length, SPA_ROUTE_SHELLS.length + 1);
   for (const item of generated) {
     assertRouteDocument(item.html, item.route);
   }
 
   const written = writeRouteShells(dist);
-  assert.equal(written.length, 3);
+  assert.equal(written.length, SPA_ROUTE_SHELLS.length + 1);
   assert.equal(readFileSync(join(dist, "index.html"), "utf8"), built);
   const home = inspectHtmlShell(readFileSync(join(dist, "index.html"), "utf8"));
   assert.equal(home.title, HOME_TITLE);
@@ -158,6 +172,10 @@ test("generator derives route shells from the built index.html without rewriting
   assert.match(seller.noscript, /not a product, certificate, or runtime monitor/);
   const tool = inspectHtmlShell(readFileSync(join(dist, written[2].relativeFile), "utf8"));
   assert.match(tool.noscript, /No\s+email required/);
+  for (const routePath of ["/login", "/signup", "/dashboard", "/checkout"]) {
+    const item = written.find((entry) => entry.path === routePath);
+    assert.equal(inspectHtmlShell(readFileSync(join(dist, item.relativeFile), "utf8")).robots, "noindex,follow");
+  }
 });
 
 test("production Express serves exact route shells, 200s every declared React route, and 404s unknown HTML with the SPA index", async (t) => {
@@ -221,12 +239,17 @@ test("production Express serves exact route shells, 200s every declared React ro
   assert.equal(unknownHuman.status, 404);
   assert.notEqual(unknownHuman.status, 200);
   assert.match(unknownHuman.type, /html/);
-  assert.equal(unknownHuman.body, built);
-  assert.equal(inspectHtmlShell(unknownHuman.body).title, HOME_TITLE);
-  assert.equal(inspectHtmlShell(unknownHuman.body).canonical, HOME_CANONICAL);
-  assert.match(unknownHuman.body, new RegExp(HOME_H1));
+  assert.notEqual(unknownHuman.body, built);
+  assertRouteDocument(unknownHuman.body, NOT_FOUND_SHELL);
+  assert.equal(inspectHtmlShell(unknownHuman.body).robots, "noindex,follow");
+  assert.equal(unknownHuman.body.includes(HOME_H1), false);
   assert.match(unknownHuman.body, /<div id="root">/);
   assert.match(unknownHuman.body, new RegExp(BUNDLE_SRC.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+
+  const card = await request(port, "/.well-known/agent-card.json");
+  assert.equal(card.status, 308);
+  assert.equal(card.location, "https://agents.samedaydesk.com/.well-known/agent-card.json");
+  assert.equal(card.body.includes('"skills":[]'), false);
 
   const wellKnown = await request(port, "/.well-known/ai-plugin.json");
   assert.equal(wellKnown.status, 404);

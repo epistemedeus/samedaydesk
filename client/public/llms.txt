@@ -14,7 +14,9 @@
 
 ## Agent interfaces
 
-- [Remote MCP server](https://samedaydesk.com/mcp): Streamable HTTP MCP interface for the AI-readiness checker.
+- [Free apex MCP readiness surface](https://samedaydesk.com/mcp): Streamable HTTP MCP interface for the free AI-readiness checker. This is separate from the paid gateway.
+- [Paid machine gateway MCP](https://agents.samedaydesk.com/mcp): Paid MCP tools from the canonical SameDayDesk machine gateway.
+- First paid HTTP example: `GET https://agents.samedaydesk.com/extract?url=https://example.com`.
 - [Seller conformance proof](https://samedaydesk.com/x402/seller-conformance): a human-auditable seller-conformance proof page, not a product or certificate.
 - [Agent402 validation receipt](https://samedaydesk.com/research/agent402-seller-integrity-validation-2026-08-29.json): One recruited, non-organic external-runtime settlement and delivered result; no buyer-owned output enforcement, unsolicited demand, repeat use, or repair sale.
 - [Agent payment infrastructure](https://samedaydesk.com/for-agents): Twenty-two canonical pay-per-call actions accepting both x402 and native MPP, plus seller inspection, settlement evidence, live prices, source, and connection instructions.

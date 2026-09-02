@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
@@ -8,7 +8,6 @@ import {
   sellerRepairBriefUrl,
   sellerRepairScopeMailto,
 } from "../data/sellerRepairBriefs";
-import { requestSellerRepairCheckoutUrl } from "../lib/sellerRepairCheckout";
 import { track } from "../lib/posthog";
 import styles from "./SellerConformance.module.css";
 
@@ -32,6 +31,7 @@ const VALIDATION_RECEIPT_URL =
   "/research/agent402-seller-integrity-validation-2026-08-29.json";
 const CTA_MAILTO =
   "mailto:contact@samedaydesk.com?subject=Existing%20seller%20origin%20or%20repository&body=Existing%20seller%20origin%20or%20repository%3A%0A";
+const FIXED_SCOPE_URL = "https://neomorphic.io/services/seller-conformance/fixed-scope/";
 
 function restoreAttribute(el: Element | null, attribute: string, previous: string | null) {
   if (previous !== null) el?.setAttribute(attribute, previous);
@@ -39,8 +39,6 @@ function restoreAttribute(el: Element | null, attribute: string, previous: strin
 
 export default function SellerConformance() {
   const [searchParams] = useSearchParams();
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
-  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const selectedBrief = findSellerRepairBrief(searchParams.get("finding"));
   const checkoutReturned = searchParams.get("checkout") === "returned" && selectedBrief !== null;
   const pageTitle = selectedBrief
@@ -98,23 +96,6 @@ export default function SellerConformance() {
       route_class: selectedBrief.routeClass,
     });
   }, [selectedBrief]);
-
-  async function startSellerRepairCheckout() {
-    if (!selectedBrief || checkoutLoading) return;
-    setCheckoutError(null);
-    setCheckoutLoading(true);
-    track("seller_repair_checkout_started", {
-      finding_id: selectedBrief.id,
-      route_class: selectedBrief.routeClass,
-    });
-    try {
-      const url = await requestSellerRepairCheckoutUrl(selectedBrief.id);
-      window.location.assign(url);
-    } catch {
-      setCheckoutError("Checkout could not start. Use email if you need a changed scope.");
-      setCheckoutLoading(false);
-    }
-  }
 
   return (
     <>
@@ -210,14 +191,14 @@ export default function SellerConformance() {
               </div>
             </div>
             <div className={styles.actions}>
-              <button
-                type="button"
+              <a
                 className={styles.primary}
-                onClick={() => void startSellerRepairCheckout()}
-                disabled={checkoutLoading}
+                href={FIXED_SCOPE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                {checkoutLoading ? "Starting checkout…" : "Pay the fixed $490 scope"}
-              </button>
+                Open the Neomorphic fixed-scope page
+              </a>
               <a
                 className={styles.secondary}
                 href={sellerRepairScopeMailto(selectedBrief)}
@@ -228,9 +209,6 @@ export default function SellerConformance() {
               >
                 Approve by email or change scope
               </a>
-              {checkoutError ? (
-                <p className={styles.checkoutError}>{checkoutError}</p>
-              ) : null}
               {selectedBrief.evidence.map((item) => (
                 <a
                   className={styles.secondary}
