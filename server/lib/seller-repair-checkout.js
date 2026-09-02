@@ -126,6 +126,26 @@ export function paidNeomorphicSellerRepairAttribution(
   return isValidSellerRepairFindingId(findingId) ? { findingId } : null;
 }
 
+export function expiredNeomorphicSellerRepairAttribution(
+  event,
+  configuredPaymentLinkId = configuredNeomorphicSellerConformancePaymentLinkId(),
+) {
+  const session = event?.data?.object;
+  if (
+    typeof configuredPaymentLinkId !== "string"
+    || !STRIPE_PAYMENT_LINK_ID_RE.test(configuredPaymentLinkId)
+    || session?.payment_link !== configuredPaymentLinkId
+  ) return null;
+  if (event?.type !== "checkout.session.expired") return null;
+  if (session.status !== "expired") return null;
+  if (session.payment_status !== "unpaid") return null;
+  if (session.currency !== NEOMORPHIC_SELLER_CONFORMANCE_CURRENCY) return null;
+  if (session.amount_total !== NEOMORPHIC_SELLER_CONFORMANCE_AMOUNT) return null;
+
+  const findingId = session.client_reference_id;
+  return isValidSellerRepairFindingId(findingId) ? { findingId } : null;
+}
+
 export async function createSellerRepairCheckoutSession(findingId) {
   if (!isValidSellerRepairFindingId(findingId)) {
     return { ok: false, status: 400, error: "Invalid finding ID" };

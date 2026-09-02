@@ -19,6 +19,7 @@ const URL = `${BASE}/api/stripe/webhook`;
 const EVENTS = [
   "payment_intent.succeeded",
   "checkout.session.completed",
+  "checkout.session.expired",
   "checkout.session.async_payment_succeeded",
 ];
 const roll = process.argv.includes("--roll");
