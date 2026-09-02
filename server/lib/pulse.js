@@ -45,6 +45,7 @@ export const sellerRepairFindingRouteClasses = Object.freeze({
   "exa-direct-search-20260830": "paid_post",
   "driftflight-image-generation-20260830": "paid_post",
   "agenttoll-market-radar-20260901": "paid_post",
+  "argonaut-ecb-fx-reference-20260902": "paid_post",
 });
 export const sellerRepairFindingIds = Object.freeze(
   Object.keys(sellerRepairFindingRouteClasses),

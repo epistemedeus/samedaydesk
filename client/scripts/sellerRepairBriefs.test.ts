@@ -74,6 +74,31 @@ test("resolves stable public repair briefs and rejects unknown IDs", () => {
     "Open free repair PR 4 is not paid delivery, settled revenue, or evidence of independent use.",
   );
   assert.equal(agentToll?.evidence[1]?.label, "Open free repair PR 4");
+
+  const argonaut = findSellerRepairBrief("argonaut-ecb-fx-reference-20260902");
+  assert.equal(argonaut?.seller, "ArgonautWorks ECB FX Reference");
+  assert.equal(argonaut?.origin, "https://official-fx-reference.vercel.app");
+  assert.equal(argonaut?.route, "/api/v1/convert");
+  assert.equal(argonaut?.method, "POST");
+  assert.equal(argonaut?.routeClass, "paid_post");
+  assert.equal(argonaut?.observedAt, "2026-09-02");
+  assert.equal(argonaut?.livePrice, "0.0015 USDC on Base");
+  assert.match(argonaut?.summary || "", /live GET and POST conversion route/);
+  assert.match(
+    argonaut?.observedContract[1] || "",
+    /source\.provider, source\.dataset, source\.url, source\.available_free, cache\.stale, or cache\.age_ms/,
+  );
+  assert.match(argonaut?.requiredContract[0] || "", /source\.provider/);
+  assert.match(argonaut?.requiredContract[1] || "", /cache\.stale and cache\.age_ms/);
+  assert.equal(
+    argonaut?.scope[0],
+    "Open free repair PR 3 requires only those six handler-owned nested fields for /api/v1/convert.",
+  );
+  assert.equal(
+    argonaut?.boundaries[1],
+    "Open free repair PR 3 is not merged or deployed and does not establish buyer use, payment, demand, or revenue.",
+  );
+  assert.equal(argonaut?.evidence[1]?.label, "Open free repair PR 3");
 });
 
 test("keeps IDs unique and every brief bounded to public non-secret evidence", () => {

@@ -367,6 +367,51 @@ export const sellerRepairBriefs = Object.freeze([
       },
     ],
   },
+  {
+    id: "argonaut-ecb-fx-reference-20260902",
+    seller: "ArgonautWorks ECB FX Reference",
+    origin: "https://official-fx-reference.vercel.app",
+    route: "/api/v1/convert",
+    method: "POST",
+    routeClass: "paid_post",
+    observedAt: "2026-09-02",
+    livePrice: "0.0015 USDC on Base",
+    summary:
+      "The live GET and POST conversion route returns ECB provenance and cache state, but its success contract does not require the nested source and cache fields a buyer needs before payment.",
+    observedContract: [
+      "The live unpaid GET and POST route requires 0.0015 USDC on Base for /api/v1/convert.",
+      "OpenAPI already requires the source and cache parent objects but does not require source.provider, source.dataset, source.url, source.available_free, cache.stale, or cache.age_ms.",
+      "The public MIT handler sets all six nested fields on every successful conversion response.",
+    ],
+    requiredContract: [
+      "Require source.provider, source.dataset, source.url, and source.available_free inside the existing source object.",
+      "Require cache.stale and cache.age_ms inside the existing cache object.",
+      "Keep the repair limited to the existing GET and POST conversion success contract without changing optional fields or failure branches.",
+    ],
+    scope: [
+      "Open free repair PR 3 requires only those six handler-owned nested fields for /api/v1/convert.",
+      "Focused OpenAPI and runtime-source tests cover the GET and POST conversion contract.",
+      "No request, price, network, asset, recipient, handler, payment, or settlement behavior change.",
+    ],
+    boundaries: [
+      "No credential, wallet, signature, paid request, or target payment was used to reproduce this finding.",
+      "Open free repair PR 3 is not merged or deployed and does not establish buyer use, payment, demand, or revenue.",
+    ],
+    evidence: [
+      {
+        label: "Live unpaid 402 route",
+        href: "https://official-fx-reference.vercel.app/api/v1/convert?base=USD&quote=EUR&amount=1",
+      },
+      {
+        label: "Open free repair PR 3",
+        href: "https://github.com/ArgonautWorks/ecb-fx-reference/pull/3",
+      },
+      {
+        label: "Public MIT handler source",
+        href: "https://github.com/ArgonautWorks/ecb-fx-reference",
+      },
+    ],
+  },
 ] satisfies readonly SellerRepairBrief[]);
 
 const briefsById = new Map(sellerRepairBriefs.map((brief) => [brief.id, brief]));
