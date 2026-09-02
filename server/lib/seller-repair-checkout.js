@@ -6,7 +6,12 @@ import { sellerRepairFindingIds } from "./pulse.js";
 
 export const SELLER_CONTRACT_REPAIR_SLUG = "seller_contract_repair";
 export const SELLER_REPAIR_INTEGRATION_ID = "seller-contract-repair-sdrprwx";
+export const NEOMORPHIC_SELLER_CONFORMANCE_PAYMENT_LINK_ENV =
+  "NEOMORPHIC_SELLER_CONFORMANCE_STRIPE_PAYMENT_LINK_ID";
+export const NEOMORPHIC_SELLER_CONFORMANCE_AMOUNT = 49000;
+export const NEOMORPHIC_SELLER_CONFORMANCE_CURRENCY = "usd";
 export const FINDING_ID_RE = /^[a-z0-9-]{1,96}$/;
+const STRIPE_PAYMENT_LINK_ID_RE = /^plink_[A-Za-z0-9]+$/;
 const PAID_CHECKOUT_SESSION_EVENTS = new Set([
   "checkout.session.completed",
   "checkout.session.async_payment_succeeded",
@@ -18,6 +23,13 @@ export function isValidSellerRepairFindingId(findingId) {
   return typeof findingId === "string"
     && FINDING_ID_RE.test(findingId)
     && ALLOWED_FINDING_IDS.has(findingId);
+}
+
+export function configuredNeomorphicSellerConformancePaymentLinkId(env = process.env) {
+  const paymentLinkId = env?.[NEOMORPHIC_SELLER_CONFORMANCE_PAYMENT_LINK_ENV];
+  return typeof paymentLinkId === "string" && STRIPE_PAYMENT_LINK_ID_RE.test(paymentLinkId)
+    ? paymentLinkId
+    : null;
 }
 
 export function publicBaseUrl() {
@@ -64,12 +76,54 @@ export function sellerRepairCheckoutNotificationContext(session, intent = {}) {
     amountDisplay: session.amount_total
       ? `$${(session.amount_total / 100).toFixed(2)}`
       : "—",
+    sessionId: session.id || "—",
+    paymentIntentId: intent.id || session.payment_intent || "—",
+    customerEmail:
+      session.customer_details?.email || session.customer_email || intent.receipt_email || "—",
+    publicTargetUrl: sellerRepairPublicTargetUrl(session, intent) || "—",
   };
+}
+
+function sellerRepairPublicTargetUrl(session, intent) {
+  const metadataValue = session.metadata?.public_target_url
+    || intent.metadata?.public_target_url
+    || session.metadata?.target_url
+    || intent.metadata?.target_url;
+  if (typeof metadataValue === "string" && metadataValue) return metadataValue;
+
+  const targetField = session.custom_fields?.find((field) => {
+    const key = typeof field?.key === "string" ? field.key.toLowerCase() : "";
+    const label = typeof field?.label?.custom === "string"
+      ? field.label.custom.toLowerCase().replace(/[^a-z0-9]/g, "")
+      : "";
+    return key === "public_target_url" || key === "target_url" || label === "publictargeturl";
+  });
+  const value = targetField?.text?.value;
+  return typeof value === "string" && value ? value : null;
 }
 
 export function isPaidCheckoutSessionEvent(event) {
   return PAID_CHECKOUT_SESSION_EVENTS.has(event?.type)
     && event?.data?.object?.payment_status === "paid";
+}
+
+export function paidNeomorphicSellerRepairAttribution(
+  event,
+  configuredPaymentLinkId = configuredNeomorphicSellerConformancePaymentLinkId(),
+) {
+  const session = event?.data?.object;
+  if (
+    typeof configuredPaymentLinkId !== "string"
+    || !STRIPE_PAYMENT_LINK_ID_RE.test(configuredPaymentLinkId)
+    || session?.payment_link !== configuredPaymentLinkId
+  ) return null;
+  if (!isPaidCheckoutSessionEvent(event)) return null;
+  if (session.status !== "complete") return null;
+  if (session.currency !== NEOMORPHIC_SELLER_CONFORMANCE_CURRENCY) return null;
+  if (session.amount_total !== NEOMORPHIC_SELLER_CONFORMANCE_AMOUNT) return null;
+
+  const findingId = session.client_reference_id;
+  return isValidSellerRepairFindingId(findingId) ? { findingId } : null;
 }
 
 export async function createSellerRepairCheckoutSession(findingId) {
