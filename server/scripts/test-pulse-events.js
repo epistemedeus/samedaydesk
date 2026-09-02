@@ -109,6 +109,25 @@ test("accepts the canonical paid POST finding only with its exact route class", 
   );
 });
 
+test("keeps the AgentToll finding bound to paid_post", () => {
+  const findingId = "agenttoll-market-radar-20260901";
+  assert.equal(sellerRepairFindingRouteClasses[findingId], "paid_post");
+  assert.equal(
+    recordClientEvent("seller_repair_brief_viewed", {
+      finding_id: findingId,
+      route_class: "paid_post",
+    }),
+    true,
+  );
+  assert.equal(
+    recordClientEvent("seller_repair_brief_viewed", {
+      finding_id: findingId,
+      route_class: "paid_get",
+    }),
+    false,
+  );
+});
+
 test("exposes only the bounded event write route", async (t) => {
   const app = express();
   app.use(express.json());
