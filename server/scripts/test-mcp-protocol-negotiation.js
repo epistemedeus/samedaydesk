@@ -7,6 +7,7 @@ import test, { after, before } from "node:test";
 import { fileURLToPath } from "node:url";
 import express from "express";
 import mcpRouter from "../routes/mcp.js";
+import { MCP_TOOL_NAMES } from "../lib/mcp-tool-inventory.js";
 
 const IMPLEMENTED_PROTOCOL = "2024-11-05";
 const APEX_SERVER_INFO = { name: "samedaydesk-agent-tools", version: "1.2.0" };
@@ -18,7 +19,7 @@ const EXPECTED_TOOL_NAMES = [
   "track_taskmarket_task",
 ];
 // Byte-semantic pins of the five-tool apex surface at base 1b24d3ec1555.
-const FROZEN_TOOLS_BLOCK_SHA256 = "4731853471e9a1af7b4fc83c9afeb5cdb607c20b7b2b361b7c4e42b893437acd";
+const FROZEN_TOOLS_BLOCK_SHA256 = "068cbfdb8ddab4dac7eef335d51fbe347728d6ccca65bef0365a3eb831db6caf";
 const FROZEN_TOOLS_CALL_BLOCK_SHA256 = "e4d2728c9c556cd40f735bd7fe55f732fd270fae0fb7b4c2497ad6574faf35d9";
 
 const MCP_SOURCE_PATH = join(dirname(fileURLToPath(import.meta.url)), "../routes/mcp.js");
@@ -40,8 +41,8 @@ function toolsFromSource(src) {
   const block = extractBlock(src, "const TOOLS = [", "const AI_CRAWLERS");
   const link = src.match(/const FIXPACK_LINK = "([^"]+)"/);
   assert.ok(link, "FIXPACK_LINK missing from MCP source");
-  const load = new Function("FIXPACK_LINK", `${block}\nreturn TOOLS;`);
-  return load(link[1]);
+  const load = new Function("FIXPACK_LINK", "MCP_TOOL_NAMES", `${block}\nreturn TOOLS;`);
+  return load(link[1], MCP_TOOL_NAMES);
 }
 
 function rpcPayload(method, params, id = 1) {

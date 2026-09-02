@@ -27,11 +27,13 @@ import {
   newFlushId,
 } from "./pulse-store/index.js";
 import { assertSnapshotMigrationKeys, validateLegacyFingerprintArray } from "./pulse-store/wal-schema.js";
+import { MCP_TOOL_NAMES, MCP_TOOL_NAME_MAX_LEN } from "./mcp-tool-inventory.js";
 
 const RECENT_CAP = 80;
 const MCP_MOUNT_PATH = "/mcp";
 const MCP_BATCH_MAX = 25;
 const MCP_METHOD_MAX_LEN = 128;
+const MCP_TOOL_NAME_SET = new Set(MCP_TOOL_NAMES);
 
 export const sellerRepairFindingRouteClasses = Object.freeze({
   "hypernatt-liq-radar-20260830": "paid_get",
@@ -62,12 +64,13 @@ const PULSE_FALLBACK_FILE = `${PULSE_FILE}.fallback.json`;
 
 const processStartedAt = new Date().toISOString();
 let observationStartedAt = processStartedAt;
+let mcpToolCallsObservedFrom = processStartedAt;
 let durableStore = createDefaultPulseStore();
 let fileFallback = createDefaultFileFallback(PULSE_FALLBACK_FILE);
 let hydrationState = "pending";
 let durableSnapshot = null;
 let legacyUncertainty = null;
-let pendingDelta = emptyDelta();
+let pendingDelta = emptyDelta(mcpToolCallsObservedFrom);
 let inFlightFlush = null;
 let flushInProgress = false;
 let lastSuccessfulFlush = fileFallback.getLastSuccessfulFlush();
@@ -124,6 +127,9 @@ function addSnapshotCounters(into, from) {
     into.mcpProtocol.byMethod[key] =
       (into.mcpProtocol.byMethod[key] || 0) + (from.mcpProtocol?.byMethod?.[key] || 0);
   }
+  for (const [key, value] of Object.entries(from.mcpToolCallsByName || {})) {
+    bumpCounterMap(into.mcpToolCallsByName, key, value);
+  }
   for (const [key, value] of Object.entries(from.byPath || {})) {
     bumpCounterMap(into.byPath, key, value);
   }
@@ -173,6 +179,7 @@ function operationalCounters() {
         aiCrawlers: 0,
         mcpSurfaceGets: 0,
         mcpProtocol: { requests: 0, messages: 0, byMethod: Object.create(null) },
+        mcpToolCallsByName: Object.create(null),
         byPath: Object.create(null),
         byReferer: Object.create(null),
         byAiBot: Object.create(null),
@@ -194,6 +201,7 @@ function pendingCounters() {
     aiCrawlers: 0,
     mcpSurfaceGets: 0,
     mcpProtocol: { requests: 0, messages: 0, byMethod: Object.create(null) },
+    mcpToolCallsByName: Object.create(null),
     byPath: Object.create(null),
     byReferer: Object.create(null),
     byAiBot: Object.create(null),
@@ -244,13 +252,13 @@ function admitPendingDeltaToWal() {
   const result = fileFallback.enqueuePendingFlush(entry);
   refreshFallbackDiagnostics();
   if (result.outcome === "queued" || result.outcome === "duplicate_same") {
-    pendingDelta = emptyDelta();
+    pendingDelta = emptyDelta(mcpToolCallsObservedFrom);
     walWritePending = false;
     if (!inFlightFlush) inFlightFlush = entry;
     return true;
   }
   if (result.outcome === "dropped_persisted") {
-    pendingDelta = emptyDelta();
+    pendingDelta = emptyDelta(mcpToolCallsObservedFrom);
     walWritePending = false;
     return false;
   }
@@ -293,8 +301,22 @@ function enqueueMigrationDelta(delta) {
 
 async function readDurableSnapshot() {
   const snapshot = await durableStore.readSnapshot(observationStartedAt);
+  if (
+    !Object.hasOwn(snapshot || {}, "mcpToolCallsByName") ||
+    typeof snapshot.mcpToolCallsObservedFrom !== "string" ||
+    !Number.isFinite(Date.parse(snapshot.mcpToolCallsObservedFrom))
+  ) {
+    throw new Error("pulse_incomplete_schema:mcpToolCallsByNameObservation");
+  }
   durableSnapshot = snapshot;
   if (snapshot?.observationStart) observationStartedAt = snapshot.observationStart;
+  mcpToolCallsObservedFrom = snapshot.mcpToolCallsObservedFrom;
+  if (!fileFallback.persistLocalMetadata({ mcpToolCallsObservedFrom })) {
+    walWritePending = true;
+  } else {
+    mcpToolCallsObservedFrom =
+      fileFallback.getMcpToolCallsObservedFrom() || mcpToolCallsObservedFrom;
+  }
   if (snapshot?.legacyUncertainty) legacyUncertainty = snapshot.legacyUncertainty;
   hydrationState = "hydrated";
   return snapshot;
@@ -462,7 +484,7 @@ function migrateLegacySnapshotFileOnce() {
     }
 
     if (loadedSchemaVersion < CLASSIFICATION_SCHEMA_VERSION) {
-      pendingDelta = emptyDelta();
+      pendingDelta = emptyDelta(mcpToolCallsObservedFrom);
       assertSnapshotMigrationKeys(snapshot, 1);
       validateLegacyFingerprintArray(snapshot.uniqueHumans);
       loadLegacyFromFileSnapshot(snapshot);
@@ -470,6 +492,7 @@ function migrateLegacySnapshotFileOnce() {
       if (!fileFallback.persistLocalMetadata({
         legacyUncertainty: legacyUncertaintyForWal(legacyUncertainty),
         observationStartedAt: processStartedAt,
+        mcpToolCallsObservedFrom,
       })) {
         walWritePending = true;
         refreshFallbackDiagnostics();
@@ -493,6 +516,7 @@ function migrateLegacySnapshotFileOnce() {
       refreshFallbackDiagnostics();
       return;
     }
+    mcpToolCallsObservedFrom = migrationDelta.mcpToolCallsObservedFrom;
     if (snapshot.legacyUncertainty) legacyUncertainty = snapshot.legacyUncertainty;
     if (snapshot.startedAt) observationStartedAt = snapshot.startedAt;
     if (!fileFallback.persistLocalMetadata({
@@ -500,6 +524,7 @@ function migrateLegacySnapshotFileOnce() {
         ? legacyUncertaintyForWal(legacyUncertainty)
         : null,
       observationStartedAt,
+      mcpToolCallsObservedFrom,
     })) {
       walWritePending = true;
       refreshFallbackDiagnostics();
@@ -524,6 +549,9 @@ function loadWalStateOnStartup() {
   if (walLegacy) legacyUncertainty = walLegacy;
   const walStartedAt = fileFallback.getObservationStartedAt();
   if (walStartedAt) observationStartedAt = walStartedAt;
+  const walToolStartedAt = fileFallback.getMcpToolCallsObservedFrom();
+  if (walToolStartedAt) mcpToolCallsObservedFrom = walToolStartedAt;
+  else if (!fileFallback.persistLocalMetadata({ mcpToolCallsObservedFrom })) walWritePending = true;
   for (const entry of fileFallback.loadPendingFlushes()) {
     inFlightFlush = entry;
     break;
@@ -696,7 +724,21 @@ export function parseMcpProtocolBody(body) {
   const messages = [];
   for (const entry of entries) {
     if (!isValidMcpRpcMessage(entry)) return { admitted: false, messages: [] };
-    messages.push({ methodClass: mcpMethodClass(entry.method) });
+    const message = { methodClass: mcpMethodClass(entry.method) };
+    if (entry.method === "tools/call") {
+      const params = Object.hasOwn(entry, "params") ? entry.params : null;
+      const descriptor =
+        params && typeof params === "object" && !Array.isArray(params) && Object.hasOwn(params, "name")
+          ? Object.getOwnPropertyDescriptor(params, "name")
+          : null;
+      if (
+        descriptor && Object.hasOwn(descriptor, "value") && typeof descriptor.value === "string" &&
+        descriptor.value.length <= MCP_TOOL_NAME_MAX_LEN && MCP_TOOL_NAME_SET.has(descriptor.value)
+      ) {
+        message.toolName = descriptor.value;
+      }
+    }
+    messages.push(message);
   }
   return { admitted: messages.length > 0, messages };
 }
@@ -724,8 +766,9 @@ function recordMcpProtocolPost(req) {
   pendingDelta.total += 1;
   pendingDelta.mcpProtocolRequests += 1;
   pendingDelta.mcpProtocolMessages += parsed.messages.length;
-  for (const { methodClass } of parsed.messages) {
+  for (const { methodClass, toolName } of parsed.messages) {
     bump(pendingDelta.mcpProtocolByMethod, methodClass);
+    if (toolName) bump(pendingDelta.mcpToolCallsByName, toolName);
   }
   pushRecent({
     t: new Date().toISOString(),
@@ -880,9 +923,19 @@ export function pulseSnapshot() {
       httpRequests: counters.mcpProtocol.requests,
       messages: counters.mcpProtocol.messages,
       byMethod: { ...counters.mcpProtocol.byMethod },
+      toolCallsByName: {
+        counts: { ...counters.mcpToolCallsByName },
+        observedFrom: mcpToolCallsObservedFrom,
+        coverage: "known_from_observed_from",
+        meaning:
+          "Lower-bound declared-name counts from observedFrom only. Calls before observedFrom " +
+          "and calls with absent, invalid, unknown, inherited, prototype, or accessor names " +
+          "are not classified by name. An empty counts map does not mean zero tools/call " +
+          "messages over the broader MCP protocol window.",
+      },
       meaning:
         "Shape-valid POST /mcp JSON-RPC HTTP requests only. " +
-        "Counts HTTP requests and safe method classes, not params, tools, sessions, or delivery. " +
+        "Counts HTTP requests, safe method classes, and exact declared tool names only. " +
         "Not unique agents, buyers, demand, or payment.",
     },
     legacyUncertainty,
@@ -915,7 +968,7 @@ export function configurePulseStoreForTests(options = {}) {
   hydrationState = "pending";
   durableSnapshot = null;
   inFlightFlush = null;
-  pendingDelta = emptyDelta();
+  pendingDelta = emptyDelta(mcpToolCallsObservedFrom);
   localProcess.uniqueHumans = new Set();
   localProcess.recent = [];
   legacyUncertainty = null;
@@ -923,12 +976,16 @@ export function configurePulseStoreForTests(options = {}) {
   walWritePending = false;
   refreshFallbackDiagnostics();
   observationStartedAt = processStartedAt;
+  mcpToolCallsObservedFrom = processStartedAt;
   hydrationPromise = null;
   if (options.reloadWal !== false) {
     const walLegacy = fileFallback.getLegacyUncertainty();
     if (walLegacy) legacyUncertainty = walLegacy;
     const walStartedAt = fileFallback.getObservationStartedAt();
     if (walStartedAt) observationStartedAt = walStartedAt;
+    const walToolStartedAt = fileFallback.getMcpToolCallsObservedFrom();
+    if (walToolStartedAt) mcpToolCallsObservedFrom = walToolStartedAt;
+    else if (!fileFallback.persistLocalMetadata({ mcpToolCallsObservedFrom })) walWritePending = true;
     for (const entry of fileFallback.loadPendingFlushes()) {
       inFlightFlush = entry;
       break;
