@@ -118,10 +118,150 @@ export function looksLikeHomepage(body, fingerprint) {
   return false;
 }
 
+function decodeXmlText(value) {
+  return String(value)
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&amp;/g, "&");
+}
+
+function xmlLocalName(rawName) {
+  const name = String(rawName || "").trim();
+  const idx = name.lastIndexOf(":");
+  return (idx >= 0 ? name.slice(idx + 1) : name).toLowerCase();
+}
+
+function findXmlTagEnd(text, start) {
+  let quote = null;
+  for (let i = start + 1; i < text.length; i += 1) {
+    const ch = text[i];
+    if (quote) {
+      if (ch === quote) quote = null;
+      continue;
+    }
+    if (ch === '"' || ch === "'") {
+      quote = ch;
+      continue;
+    }
+    if (ch === ">") return i;
+  }
+  return -1;
+}
+
+const SITEMAP_XML_LIMITS = {
+  maxDepth: 16,
+  maxTags: 100000,
+};
+
+export function parseSitemapXml(body) {
+  const text = String(body).replace(/^\uFEFF/, "");
+  const stack = [];
+  const locs = [];
+  let root = null;
+  let locChunks = null;
+  let i = 0;
+  let tagCount = 0;
+  let seenRootClose = false;
+
+  const fail = () => ({ ok: false, root, locs: [], detail: "sitemap_unparseable" });
+
+  while (i < text.length) {
+    const next = text.indexOf("<", i);
+    if (next === -1) {
+      const trailing = text.slice(i);
+      if (locChunks) locChunks.push(trailing);
+      else if (stack.length > 0 && trailing.trim()) return fail();
+      break;
+    }
+    if (next > i) {
+      const chunk = text.slice(i, next);
+      if (locChunks) locChunks.push(chunk);
+      else if (stack.length === 0 && chunk.trim()) return fail();
+    }
+    if (text.startsWith("<!--", next)) {
+      const end = text.indexOf("-->", next + 4);
+      if (end === -1) return fail();
+      i = end + 3;
+      continue;
+    }
+    if (text.startsWith("<?", next)) {
+      const end = text.indexOf("?>", next + 2);
+      if (end === -1) return fail();
+      i = end + 2;
+      continue;
+    }
+    if (text.startsWith("<![CDATA[", next)) {
+      const end = text.indexOf("]]>", next + 9);
+      if (end === -1) return fail();
+      if (locChunks) locChunks.push(text.slice(next + 9, end));
+      i = end + 3;
+      continue;
+    }
+    if (text.startsWith("<!", next)) {
+      const end = text.indexOf(">", next + 2);
+      if (end === -1) return fail();
+      i = end + 1;
+      continue;
+    }
+
+    const end = findXmlTagEnd(text, next);
+    if (end === -1) return fail();
+    const raw = text.slice(next + 1, end).trim();
+    if (!raw) return fail();
+
+    if (raw.startsWith("/")) {
+      const name = xmlLocalName(raw.slice(1).split(/\s/, 1)[0]);
+      if (!name || stack.length === 0 || stack[stack.length - 1] !== name) return fail();
+      stack.pop();
+      if (name === "loc" && locChunks) {
+        const loc = decodeXmlText(locChunks.join("").trim());
+        if (loc) locs.push(loc);
+        locChunks = null;
+      }
+      if (stack.length === 0) seenRootClose = true;
+      i = end + 1;
+      continue;
+    }
+
+    const selfClosing = raw.endsWith("/");
+    const openRaw = (selfClosing ? raw.slice(0, -1) : raw).trim();
+    const name = xmlLocalName(openRaw.split(/\s/, 1)[0]);
+    if (!name || !/^[a-z_][\w.-]*$/i.test(name)) return fail();
+    tagCount += 1;
+    if (tagCount > SITEMAP_XML_LIMITS.maxTags) return fail();
+    if (seenRootClose) return fail();
+    if (!selfClosing) {
+      if (stack.length >= SITEMAP_XML_LIMITS.maxDepth) return fail();
+      if (stack.length === 0) {
+        if (root) return fail();
+        root = name;
+      }
+      stack.push(name);
+      if (name === "loc") locChunks = [];
+    } else if (stack.length === 0) {
+      if (root) return fail();
+      root = name;
+      seenRootClose = true;
+    }
+    i = end + 1;
+  }
+
+  if (stack.length !== 0 || locChunks) return fail();
+  if (!root) return fail();
+  return { ok: true, root, locs, detail: "sitemap_xml_ok" };
+}
+
+export function extractSitemapLocs(body) {
+  const parsed = parseSitemapXml(body);
+  return parsed.ok ? parsed.locs : [];
+}
+
 export function sitemapRootName(body) {
-  const trimmed = String(body).replace(/^\uFEFF/, "").trim();
-  const match = trimmed.match(/<(urlset|sitemapindex)\b/i);
-  return match ? match[1].toLowerCase() : null;
+  const parsed = parseSitemapXml(body);
+  if (!parsed.ok) return null;
+  return parsed.root === "urlset" || parsed.root === "sitemapindex" ? parsed.root : null;
 }
 
 function asStatusList(expected) {
@@ -314,7 +454,7 @@ export function createFixtureFetch(fixture) {
       status: rec.status,
       headers: rec.headers || { "content-type": rec.contentType || "text/plain" },
       body: rec.body || "",
-      url,
+      url: rec.url || url,
     };
   };
 }

@@ -5,12 +5,15 @@ import {
   extractJsonLdBlocks,
   isSameOrigin,
   originOf,
+  parseSitemapXml,
   result,
   siteUrl,
-  sitemapRootName,
 } from "./lib.mjs";
 
+export { extractSitemapLocs, parseSitemapXml, sitemapRootName } from "./lib.mjs";
+
 export const DEFAULT_SEARCH_LIMITS = {
+  sitemapDeclarationLimit: 8,
   sitemapSampleLimit: 5,
   llmsSampleLimit: 8,
   hreflangSampleLimit: 3,
@@ -33,6 +36,7 @@ export function searchLimits(catalog) {
     return Number.isFinite(value) && value > 0 ? Math.floor(value) : DEFAULT_SEARCH_LIMITS[key];
   };
   return {
+    sitemapDeclarationLimit: pick("sitemapDeclarationLimit"),
     sitemapSampleLimit: pick("sitemapSampleLimit"),
     llmsSampleLimit: pick("llmsSampleLimit"),
     hreflangSampleLimit: pick("hreflangSampleLimit"),
@@ -51,15 +55,6 @@ export function normalizePageUrl(urlLike, base) {
   }
 }
 
-function decodeXmlText(value) {
-  return String(value)
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&apos;/g, "'")
-    .replace(/&amp;/g, "&");
-}
-
 export function extractRobotsSitemaps(body) {
   const declared = [];
   for (const line of String(body).split(/\r?\n/)) {
@@ -69,13 +64,25 @@ export function extractRobotsSitemaps(body) {
   return declared;
 }
 
-export function extractSitemapLocs(body) {
-  const locs = [];
-  const text = String(body).replace(/^\uFEFF/, "");
-  const re = /<loc\b[^>]*>\s*([^<]+?)\s*<\/loc>/gi;
-  let match;
-  while ((match = re.exec(text))) locs.push(decodeXmlText(match[1].trim()));
-  return locs;
+export function inspectRedirectAuthority(site, requestedUrl, rec) {
+  const finalUrl = rec && rec.url ? rec.url : requestedUrl;
+  if (!finalUrl) return { ok: false, finalUrl: finalUrl || null, detail: "final_url_absent" };
+  const requestedOrigin = originOf(requestedUrl);
+  const finalOrigin = originOf(finalUrl, requestedUrl);
+  if (!finalOrigin) return { ok: false, finalUrl, detail: "final_url_unparseable" };
+  if (requestedOrigin && finalOrigin !== requestedOrigin) {
+    return { ok: false, finalUrl, detail: `redirect_foreign_origin:${finalOrigin}` };
+  }
+  const requestedKey = normalizePageUrl(requestedUrl, site.origin);
+  const finalKey = normalizePageUrl(finalUrl, requestedUrl);
+  const homeKey = normalizePageUrl(siteUrl(site.origin, "/"), site.origin);
+  if (requestedKey && homeKey && requestedKey !== homeKey && finalKey === homeKey) {
+    return { ok: false, finalUrl, detail: "redirect_homepage" };
+  }
+  if (requestedKey && finalKey && requestedKey !== finalKey) {
+    return { ok: false, finalUrl, detail: `redirect_path_drift:${finalKey}` };
+  }
+  return { ok: true, finalUrl };
 }
 
 export function extractHreflang(html) {
@@ -173,7 +180,7 @@ function responseAt(responses, url) {
   return responses.get(url) || null;
 }
 
-function uniqueSameOrigin(urls, origin, limit) {
+function uniqueSameOriginAll(urls, origin) {
   const out = [];
   const seen = new Set();
   const base = origin.endsWith("/") ? origin : `${origin}/`;
@@ -189,9 +196,19 @@ function uniqueSameOrigin(urls, origin, limit) {
     if (seen.has(key)) continue;
     seen.add(key);
     out.push(abs);
-    if (out.length >= limit) break;
   }
   return out;
+}
+
+function boundSample(items, limit) {
+  const cap = Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : items.length;
+  const sampledItems = items.slice(0, cap);
+  return {
+    total: items.length,
+    items: sampledItems,
+    sampled: sampledItems.length,
+    unobserved: items.length - sampledItems.length,
+  };
 }
 
 async function ensureFetched(responses, fetchImpl, urls) {
@@ -203,31 +220,60 @@ async function ensureFetched(responses, fetchImpl, urls) {
   }
 }
 
-function extraUrlsForSite(site, responses, limits) {
+function sameOriginDeclaredSitemaps(site, responses) {
+  const robots = responseAt(responses, siteUrl(site.origin, "/robots.txt"));
+  if (robots?.status !== 200) return [];
+  const declared = [];
+  const base = `${site.origin}/`;
+  for (const item of extractRobotsSitemaps(robots.body || "")) {
+    try {
+      declared.push(new URL(item, base).href);
+    } catch {
+      // skip unparseable declarations; robots_sitemap reports those
+    }
+  }
+  return uniqueSameOriginAll(declared, site.origin);
+}
+
+function sitemapDocumentPlan(site, responses, limits) {
+  const conventional = siteUrl(site.origin, "/sitemap.xml");
+  const declared = sameOriginDeclaredSitemaps(site, responses);
+  const union = uniqueSameOriginAll([conventional, ...declared], site.origin);
+  return boundSample(union, limits.sitemapDeclarationLimit);
+}
+
+function locsFromSitemapDocuments(site, responses, documentUrls) {
+  const locs = [];
+  for (const url of documentUrls) {
+    const rec = responseAt(responses, url);
+    if (rec?.status !== 200) continue;
+    if (!inspectRedirectAuthority(site, url, rec).ok) continue;
+    const parsed = parseSitemapXml(rec.body || "");
+    if (!parsed.ok) continue;
+    locs.push(...parsed.locs);
+  }
+  return locs;
+}
+
+function extraSampleUrlsForSite(site, responses, limits, sitemapDocuments) {
   const urls = [];
   const home = responseAt(responses, siteUrl(site.origin, "/"));
-  const robots = responseAt(responses, siteUrl(site.origin, "/robots.txt"));
-  const sitemap = responseAt(responses, siteUrl(site.origin, "/sitemap.xml"));
   const llms = responseAt(responses, siteUrl(site.origin, "/llms.txt"));
   const base = `${site.origin}/`;
 
-  if (robots?.status === 200) {
-    for (const declared of extractRobotsSitemaps(robots.body || "")) {
-      try {
-        urls.push(new URL(declared, base).href);
-      } catch {
-        // skip
-      }
-    }
-  }
-
-  if (sitemap?.status === 200) {
-    urls.push(...uniqueSameOrigin(extractSitemapLocs(sitemap.body || ""), site.origin, limits.sitemapSampleLimit));
-  }
+  urls.push(
+    ...boundSample(
+      uniqueSameOriginAll(locsFromSitemapDocuments(site, responses, sitemapDocuments), site.origin),
+      limits.sitemapSampleLimit,
+    ).items,
+  );
 
   if (llms?.status === 200) {
-    const machine = extractReferencedUrls(llms.body || "", site.origin).filter((url) => isMachineSurface(url, site.origin));
-    urls.push(...uniqueSameOrigin(machine, site.origin, limits.llmsSampleLimit));
+    const machine = uniqueSameOriginAll(
+      extractReferencedUrls(llms.body || "", site.origin).filter((url) => isMachineSurface(url, site.origin)),
+      site.origin,
+    );
+    urls.push(...boundSample(machine, limits.llmsSampleLimit).items);
   }
 
   if (home?.status === 200) {
@@ -245,9 +291,8 @@ function extraUrlsForSite(site, responses, limits) {
       if (key === sourceKey || seen.has(key)) continue;
       seen.add(key);
       alts.push(abs);
-      if (alts.length >= limits.hreflangSampleLimit) break;
     }
-    urls.push(...alts);
+    urls.push(...boundSample(alts, limits.hreflangSampleLimit).items);
   }
 
   return urls;
@@ -353,43 +398,38 @@ function evaluateRobotsSitemap(site, responses) {
   });
 }
 
-function evaluateSitemapUrls(site, responses) {
-  const url = siteUrl(site.origin, "/sitemap.xml");
-  const response = responseAt(responses, url);
-  if (!response || (response.error && !response.status)) {
-    return result("sitemap_urls", "sitemap_urls", "missing", { url, detail: "no_response" });
+function evaluateOneSitemapDocument(site, url, rec) {
+  if (!rec || (rec.error && !rec.status)) {
+    return { url, httpStatus: rec?.status || 0, bucket: "missing", detail: "no_response" };
   }
-  if (response.status === 404 || response.status === 410) {
-    return result("sitemap_urls", "sitemap_urls", "missing", {
+  const authority = inspectRedirectAuthority(site, url, rec);
+  if (!authority.ok) {
+    return {
       url,
-      httpStatus: response.status,
-      detail: "sitemap_absent",
-    });
+      httpStatus: rec.status || 0,
+      finalUrl: authority.finalUrl,
+      bucket: "invalid",
+      detail: authority.detail,
+    };
   }
-  if (response.status !== 200) {
-    return result("sitemap_urls", "sitemap_urls", "invalid", {
+  if (rec.status === 404 || rec.status === 410) {
+    return { url, httpStatus: rec.status, bucket: "missing", detail: "sitemap_absent" };
+  }
+  if (rec.status !== 200) {
+    return {
       url,
-      httpStatus: response.status,
-      detail: `unexpected_status:${response.status}`,
-    });
+      httpStatus: rec.status,
+      bucket: "invalid",
+      detail: `unexpected_status:${rec.status}`,
+    };
   }
-  const body = response.body || "";
-  const root = sitemapRootName(body);
-  if (root !== "urlset" && root !== "sitemapindex") {
-    return result("sitemap_urls", "sitemap_urls", "invalid", {
-      url,
-      httpStatus: 200,
-      detail: "sitemap_unparseable",
-    });
+  const parsed = parseSitemapXml(rec.body || "");
+  if (!parsed.ok || (parsed.root !== "urlset" && parsed.root !== "sitemapindex")) {
+    return { url, httpStatus: 200, bucket: "invalid", detail: "sitemap_unparseable", root: parsed.root || null };
   }
-  const locs = extractSitemapLocs(body);
+  const locs = parsed.locs;
   if (locs.length === 0) {
-    return result("sitemap_urls", "sitemap_urls", "invalid", {
-      url,
-      httpStatus: 200,
-      detail: "sitemap_empty",
-      root,
-    });
+    return { url, httpStatus: 200, bucket: "invalid", detail: "sitemap_empty", root: parsed.root };
   }
   const foreign = [];
   const seen = new Map();
@@ -400,41 +440,108 @@ function evaluateSitemapUrls(site, responses) {
   }
   const duplicates = [...seen.entries()].filter(([, count]) => count > 1).map(([key]) => key);
   if (foreign.length) {
-    return result("sitemap_urls", "sitemap_urls", "invalid", {
+    return {
       url,
       httpStatus: 200,
+      bucket: "invalid",
       detail: `sitemap_foreign_url:${foreign[0]}`,
       urlCount: locs.length,
       uniqueCount: seen.size,
       foreignCount: foreign.length,
       duplicateCount: duplicates.length,
-    });
+      root: parsed.root,
+    };
   }
   if (duplicates.length) {
-    return result("sitemap_urls", "sitemap_urls", "invalid", {
+    return {
       url,
       httpStatus: 200,
+      bucket: "invalid",
       detail: `sitemap_duplicate_url:${duplicates[0]}`,
       urlCount: locs.length,
       uniqueCount: seen.size,
       foreignCount: 0,
       duplicateCount: duplicates.length,
-    });
+      root: parsed.root,
+    };
   }
-  return result("sitemap_urls", "sitemap_urls", "ok", {
+  return {
     url,
     httpStatus: 200,
+    bucket: "ok",
     detail: "sitemap_urls_ok",
     urlCount: locs.length,
     uniqueCount: seen.size,
-    root,
+    foreignCount: 0,
+    duplicateCount: 0,
+    root: parsed.root,
+  };
+}
+
+function compactSitemapSource(src) {
+  const row = {
+    url: src.url,
+    httpStatus: src.httpStatus,
+    status: src.bucket,
+    detail: src.detail,
+  };
+  if (src.finalUrl && src.finalUrl !== src.url) row.finalUrl = src.finalUrl;
+  if (src.root) row.root = src.root;
+  if (src.urlCount != null) {
+    row.urlCount = src.urlCount;
+    row.uniqueCount = src.uniqueCount;
+    row.foreignCount = src.foreignCount || 0;
+    row.duplicateCount = src.duplicateCount || 0;
+  }
+  return row;
+}
+
+function evaluateSitemapUrls(site, responses, limits) {
+  const conventional = siteUrl(site.origin, "/sitemap.xml");
+  const plan = sitemapDocumentPlan(site, responses, limits);
+  const sources = plan.items.map((url) => evaluateOneSitemapDocument(site, url, responseAt(responses, url)));
+  const rolled = rollupBuckets(sources, "sitemap_urls_ok", {
+    unobserved: plan.unobserved,
+    unobservedDetail: "sitemap_declaration_unobserved",
   });
+  const payload = {
+    url: conventional,
+    detail: rolled.status === "ok" ? "sitemap_urls_ok" : rolled.detail,
+    sources: sources.map(compactSitemapSource),
+    total: plan.total,
+    sampled: plan.sampled,
+    unobserved: plan.unobserved,
+  };
+  if (sources.length === 1) {
+    const src = sources[0];
+    payload.url = src.url;
+    payload.httpStatus = src.httpStatus;
+    if (src.finalUrl && src.finalUrl !== src.url) payload.finalUrl = src.finalUrl;
+    if (src.root) payload.root = src.root;
+    if (src.urlCount != null) {
+      payload.urlCount = src.urlCount;
+      payload.uniqueCount = src.uniqueCount;
+      payload.foreignCount = src.foreignCount || 0;
+      payload.duplicateCount = src.duplicateCount || 0;
+    }
+  }
+  return result("sitemap_urls", "sitemap_urls", rolled.status, payload);
 }
 
 function classifyFetchedTarget(site, target, rec) {
   const httpStatus = rec?.status || 0;
   if ((rec?.error && !httpStatus) || httpStatus === 0) {
     return { url: target, httpStatus, bucket: "missing", detail: `unreachable:${rec?.error || "no_response"}` };
+  }
+  const authority = inspectRedirectAuthority(site, target, rec);
+  if (!authority.ok) {
+    return {
+      url: target,
+      httpStatus,
+      finalUrl: authority.finalUrl,
+      bucket: "invalid",
+      detail: authority.detail,
+    };
   }
   if (httpStatus >= 200 && httpStatus < 300) {
     const homeKey = normalizePageUrl(siteUrl(site.origin, "/"), site.origin);
@@ -454,53 +561,90 @@ function classifyFetchedTarget(site, target, rec) {
   return { url: target, httpStatus, bucket: "invalid", detail: `unexpected_status:${httpStatus}` };
 }
 
-function rollupBuckets(rows, okDetail) {
-  if (rows.some((row) => row.bucket === "invalid")) return { status: "invalid", detail: rows.find((row) => row.bucket === "invalid").detail };
-  if (rows.some((row) => row.bucket === "missing")) return { status: "missing", detail: rows.find((row) => row.bucket === "missing").detail };
+function rollupBuckets(rows, okDetail, extra = {}) {
+  const unobserved = extra.unobserved || 0;
+  const invalid = rows.find((row) => row.bucket === "invalid");
+  if (invalid) return { status: "invalid", detail: invalid.detail };
+  const missing = rows.find((row) => row.bucket === "missing");
+  if (missing) return { status: "missing", detail: missing.detail };
+  if (unobserved > 0) return { status: "missing", detail: extra.unobservedDetail || "sample_unobserved" };
   return { status: "ok", detail: okDetail };
 }
 
 function compactSample(rows) {
-  return rows.map(({ url, httpStatus, detail }) => ({ url, httpStatus, detail }));
+  return rows.map(({ url, httpStatus, detail, finalUrl }) => {
+    const row = { url, httpStatus, detail };
+    if (finalUrl && finalUrl !== url) row.finalUrl = finalUrl;
+    return row;
+  });
+}
+
+function samplingFields(bounded) {
+  return { total: bounded.total, sampled: bounded.sampled, unobserved: bounded.unobserved };
 }
 
 function evaluateSitemapSample(site, responses, limits) {
   const url = siteUrl(site.origin, "/sitemap.xml");
+  const plan = sitemapDocumentPlan(site, responses, limits);
   const response = responseAt(responses, url);
-  if (!response || (response.error && !response.status)) {
-    return result("sitemap_sample", "sitemap_sample", "missing", { url, detail: "no_response" });
-  }
-  if (response.status !== 200) {
-    const status = response.status === 404 || response.status === 410 ? "missing" : "invalid";
-    return result("sitemap_sample", "sitemap_sample", status, {
+  const authority = response ? inspectRedirectAuthority(site, url, response) : { ok: true, finalUrl: url };
+
+  if (response && !authority.ok) {
+    return result("sitemap_sample", "sitemap_sample", "invalid", {
       url,
-      httpStatus: response.status,
-      detail: "sitemap_unavailable",
+      httpStatus: response.status || 0,
+      finalUrl: authority.finalUrl,
+      detail: authority.detail,
+      ...samplingFields({ total: 0, sampled: 0, unobserved: 0 }),
     });
   }
-  const root = sitemapRootName(response.body || "");
-  if (root !== "urlset" && root !== "sitemapindex") {
-    return result("sitemap_sample", "sitemap_sample", "not_applicable", {
-      url,
-      httpStatus: 200,
-      detail: "sitemap_unparseable",
-    });
-  }
-  const sample = uniqueSameOrigin(extractSitemapLocs(response.body || ""), site.origin, limits.sitemapSampleLimit);
-  if (sample.length === 0) {
+
+  const uniqueLocs = uniqueSameOriginAll(locsFromSitemapDocuments(site, responses, plan.items), site.origin);
+  const bounded = boundSample(uniqueLocs, limits.sitemapSampleLimit);
+  if (bounded.total === 0) {
+    if (!response || (response.error && !response.status)) {
+      return result("sitemap_sample", "sitemap_sample", "missing", { url, detail: "no_response" });
+    }
+    if (response.status !== 200) {
+      const status = response.status === 404 || response.status === 410 ? "missing" : "invalid";
+      return result("sitemap_sample", "sitemap_sample", status, {
+        url,
+        httpStatus: response.status,
+        detail: "sitemap_unavailable",
+      });
+    }
+    const parsed = parseSitemapXml(response.body || "");
+    if (!parsed.ok || (parsed.root !== "urlset" && parsed.root !== "sitemapindex")) {
+      return result("sitemap_sample", "sitemap_sample", "not_applicable", {
+        url,
+        httpStatus: 200,
+        detail: "sitemap_unparseable",
+      });
+    }
     return result("sitemap_sample", "sitemap_sample", "not_applicable", {
       url,
       httpStatus: 200,
       detail: "no_same_origin_locs",
+      ...samplingFields(bounded),
     });
   }
-  const rows = sample.map((target) => classifyFetchedTarget(site, target, responseAt(responses, target)));
-  const rolled = rollupBuckets(rows, "sitemap_sample_ok");
+  const rows = bounded.items.map((target) => classifyFetchedTarget(site, target, responseAt(responses, target)));
+  const rolled = rollupBuckets(rows, "sitemap_sample_ok", {
+    unobserved: bounded.unobserved,
+    unobservedDetail: "sitemap_sample_unobserved",
+  });
+  const detail =
+    rolled.status === "ok"
+      ? "sitemap_sample_ok"
+      : rolled.detail === "sitemap_sample_unobserved"
+        ? "sitemap_sample_unobserved"
+        : `sitemap_sample:${rolled.detail}`;
   return result("sitemap_sample", "sitemap_sample", rolled.status, {
     url,
-    httpStatus: 200,
-    detail: rolled.status === "ok" ? "sitemap_sample_ok" : `sitemap_sample:${rolled.detail}`,
+    httpStatus: response?.status || 200,
+    detail,
     sample: compactSample(rows),
+    ...samplingFields(bounded),
   });
 }
 
@@ -614,27 +758,38 @@ function evaluateLlmsReferences(site, responses, limits) {
     });
   }
   const refs = extractReferencedUrls(response.body || "", site.origin);
-  const machine = uniqueSameOrigin(
+  const machine = uniqueSameOriginAll(
     refs.filter((item) => isMachineSurface(item, site.origin)),
     site.origin,
-    limits.llmsSampleLimit,
   );
-  if (machine.length === 0) {
+  const bounded = boundSample(machine, limits.llmsSampleLimit);
+  if (bounded.total === 0) {
     return result("llms_references", "llms_references", "not_applicable", {
       url,
       httpStatus: 200,
       detail: "no_same_origin_machine_refs",
       referenced: refs.length,
+      ...samplingFields(bounded),
     });
   }
-  const rows = machine.map((target) => classifyFetchedTarget(site, target, responseAt(responses, target)));
-  const rolled = rollupBuckets(rows, "llms_references_ok");
-  const prefix = rolled.status === "ok" ? "llms_references_ok" : "llms_ref";
+  const rows = bounded.items.map((target) => classifyFetchedTarget(site, target, responseAt(responses, target)));
+  const rolled = rollupBuckets(rows, "llms_references_ok", {
+    unobserved: bounded.unobserved,
+    unobservedDetail: "llms_references_unobserved",
+  });
+  const detail =
+    rolled.status === "ok"
+      ? "llms_references_ok"
+      : rolled.detail === "llms_references_unobserved"
+        ? "llms_references_unobserved"
+        : `llms_ref:${rolled.detail}`;
   return result("llms_references", "llms_references", rolled.status, {
     url,
     httpStatus: 200,
-    detail: rolled.status === "ok" ? prefix : `${prefix}:${rolled.detail}`,
+    detail,
     sample: compactSample(rows),
+    referenced: refs.length,
+    ...samplingFields(bounded),
   });
 }
 
@@ -678,7 +833,6 @@ function evaluateHreflang(site, responses, limits) {
     if (key === sourceKey || seen.has(key)) continue;
     seen.add(key);
     targets.push(abs);
-    if (targets.length >= limits.hreflangSampleLimit) break;
   }
   if (targets.length === 0) {
     return result("hreflang", "hreflang", "ok", {
@@ -686,10 +840,14 @@ function evaluateHreflang(site, responses, limits) {
       httpStatus: 200,
       detail: "hreflang_self_only",
       declared: declared.length,
+      total: 0,
+      sampled: 0,
+      unobserved: 0,
     });
   }
+  const bounded = boundSample(targets, limits.hreflangSampleLimit);
   const sample = [];
-  for (const target of targets) {
+  for (const target of bounded.items) {
     const rec = responseAt(responses, target);
     const classified = classifyFetchedTarget(site, target, rec);
     if (classified.bucket !== "ok") {
@@ -699,6 +857,7 @@ function evaluateHreflang(site, responses, limits) {
         detail: `hreflang_target:${classified.detail}`,
         target,
         sample,
+        ...samplingFields(bounded),
       });
     }
     const back = extractHreflang(rec.body || "");
@@ -711,15 +870,27 @@ function evaluateHreflang(site, responses, limits) {
         detail: "hreflang_not_reciprocal",
         target,
         sample,
+        ...samplingFields(bounded),
       });
     }
+  }
+  if (bounded.unobserved > 0) {
+    return result("hreflang", "hreflang", "missing", {
+      url,
+      httpStatus: 200,
+      detail: "hreflang_unobserved",
+      declared: declared.length,
+      sample,
+      ...samplingFields(bounded),
+    });
   }
   return result("hreflang", "hreflang", "ok", {
     url,
     httpStatus: 200,
     detail: "hreflang_reciprocal",
     declared: declared.length,
-    sampled: sample.length,
+    sample,
+    ...samplingFields(bounded),
   });
 }
 
@@ -727,7 +898,7 @@ function evaluateSiteSearchReadiness(site, responses, limits) {
   return [
     evaluateCanonicalOrigin(site, responses),
     evaluateRobotsSitemap(site, responses),
-    evaluateSitemapUrls(site, responses),
+    evaluateSitemapUrls(site, responses, limits),
     evaluateSitemapSample(site, responses, limits),
     evaluateJsonLdIdentity(site, responses),
     evaluateLlmsReferences(site, responses, limits),
@@ -749,7 +920,9 @@ export async function runSearchReadiness(catalog, fetchImpl) {
   const limits = searchLimits(catalog);
   const sites = [];
   for (const [index, site] of catalog.sites.entries()) {
-    await ensureFetched(responses, fetchImpl, extraUrlsForSite(site, responses, limits));
+    const documents = sitemapDocumentPlan(site, responses, limits);
+    await ensureFetched(responses, fetchImpl, documents.items);
+    await ensureFetched(responses, fetchImpl, extraSampleUrlsForSite(site, responses, limits, documents.items));
     const checks = [...discovery.sites[index].checks, ...evaluateSiteSearchReadiness(site, responses, limits)];
     sites.push({
       id: site.id,

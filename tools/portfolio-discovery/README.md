@@ -13,10 +13,14 @@ npm run test:portfolio-search-readiness:live
 ```
 
 `--mode search-readiness` adds canonical-origin, robots sitemap declaration,
-sitemap URL integrity, a bounded sitemap HTTP sample, JSON-LD identity where
-declared, same-origin llms.txt machine references, and hreflang reciprocity
-only when a page declares hreflang. Crawlability is an HTTP evaluation.
-Indexing, ranking, GEO citation, and traffic stay `not_observed`.
+every bounded same-origin robots-declared sitemap document, well-formed sitemap
+XML, final-URL authority on sitemap and sample probes, a bounded sitemap HTTP
+sample, JSON-LD identity where declared, same-origin llms.txt machine
+references with total/sampled/unobserved counts, and hreflang reciprocity only
+when a page declares hreflang. Unobserved bounded samples, redirected or
+foreign final URLs, missing declared sitemaps, and truncated sitemap XML cannot
+produce a full ok. Crawlability is an HTTP evaluation. Indexing, ranking, GEO
+citation, and traffic stay `not_observed`.
 
 Default CLI output is compact JSON. Pass `--pretty` to indent.
 

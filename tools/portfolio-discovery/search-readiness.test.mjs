@@ -5,7 +5,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
-import { createFixtureFetch, loadCatalog } from "./lib.mjs";
+import { createFixtureFetch, loadCatalog, parseSitemapXml } from "./lib.mjs";
 import { runSearchReadiness } from "./search-readiness.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -90,6 +90,9 @@ test("healthy search-readiness passes without calling crawlability indexing or r
     assert.equal(check(report, site.id, "sitemap_sample").status, "ok");
     assert.equal(check(report, site.id, "jsonld_identity").status, "ok");
     assert.equal(check(report, site.id, "llms_references").status, "ok");
+    assert.equal(check(report, site.id, "llms_references").unobserved, 0);
+    assert.equal(check(report, site.id, "sitemap_sample").unobserved, 0);
+    assert.equal(check(report, site.id, "sitemap_urls").unobserved, 0);
     assert.equal(check(report, site.id, "hreflang").status, "not_applicable");
     assert.equal(check(report, site.id, "hreflang").detail, "no_hreflang_declared");
   }
@@ -314,4 +317,111 @@ test("CLI search-readiness reports invalid fixtures with compact JSON and exit 1
   assert.equal(parsed.ok, false);
   assert.equal(parsed.mode, "search-readiness");
   assert.equal(parsed.searchClaims.indexing, "not_observed");
+});
+
+test("declared missing sitemap cannot hide behind a healthy /sitemap.xml", async () => {
+  const fixture = overlay(primaryOrigin, {
+    "/robots.txt": {
+      status: 200,
+      contentType: "text/plain; charset=utf-8",
+      body: `User-agent: *\nAllow: /\nSitemap: ${primaryOrigin}/sitemap.xml\nSitemap: ${primaryOrigin}/declared-but-missing.xml\n`,
+    },
+    "/declared-but-missing.xml": {
+      status: 404,
+      contentType: "text/plain",
+      body: "Not found\n",
+    },
+  });
+  const report = await runSearchReadiness(catalog, createFixtureFetch(fixture));
+  assert.equal(report.ok, false);
+  assertClaimsUnobserved(report);
+  const row = check(report, primary.id, "sitemap_urls");
+  assert.notEqual(row.status, "ok");
+  const healthy = row.sources.find((src) => src.url === `${primaryOrigin}/sitemap.xml`);
+  const missing = row.sources.find((src) => src.url === `${primaryOrigin}/declared-but-missing.xml`);
+  assert.ok(healthy, "expected truthful /sitemap.xml source");
+  assert.equal(healthy.status, "ok");
+  assert.ok(missing, "expected declared sitemap source");
+  assert.equal(missing.status, "missing");
+  assert.equal(check(report, primary.id, "sitemap").status, "ok");
+});
+
+test("sitemap URL redirected to another origin is not ok", async () => {
+  const fixture = overlay(primaryOrigin, {
+    "/sitemap.xml": {
+      status: 200,
+      contentType: "application/xml",
+      body: `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${primaryOrigin}/</loc></url></urlset>`,
+      url: "https://example.net/landing",
+    },
+  });
+  const report = await runSearchReadiness(catalog, createFixtureFetch(fixture));
+  assert.equal(report.ok, false);
+  assertClaimsUnobserved(report);
+  const row = check(report, primary.id, "sitemap_urls");
+  assert.equal(row.status, "invalid");
+  assert.match(row.detail, /redirect_foreign_origin/);
+  assert.equal(row.finalUrl, "https://example.net/landing");
+});
+
+test("unobserved llms.txt references cannot produce full readiness ok", async () => {
+  const refs = [];
+  const overlayPaths = {
+    "/llms.txt": {
+      status: 200,
+      contentType: "text/plain; charset=utf-8",
+      body: "",
+    },
+  };
+  for (let i = 1; i <= 9; i += 1) {
+    const path = `/.well-known/machine-ref-${i}.json`;
+    refs.push(`- [r${i}](${primaryOrigin}${path})`);
+    if (i <= 8) {
+      overlayPaths[path] = {
+        status: 200,
+        contentType: "application/json",
+        body: `{"id":${i}}\n`,
+      };
+    }
+  }
+  overlayPaths["/llms.txt"].body = `# SameDayDesk\n\n${refs.join("\n")}\n`;
+  const fixture = overlay(primaryOrigin, overlayPaths);
+  const report = await runSearchReadiness(catalog, createFixtureFetch(fixture));
+  assert.equal(report.ok, false);
+  assertClaimsUnobserved(report);
+  const row = check(report, primary.id, "llms_references");
+  assert.notEqual(row.status, "ok");
+  assert.equal(row.total, 9);
+  assert.equal(row.sampled, 8);
+  assert.equal(row.unobserved, 1);
+  assert.equal(row.sample.length, 8);
+  assert.equal(
+    row.sample.some((item) => item.url === `${primaryOrigin}/.well-known/machine-ref-9.json`),
+    false,
+  );
+});
+
+test("truncated sitemap xml cannot produce full readiness ok", async () => {
+  const truncated = `<urlset><url><loc>${primaryOrigin}/</loc>`;
+  const parsed = parseSitemapXml(truncated);
+  assert.equal(parsed.ok, false);
+  const wellFormed = parseSitemapXml(
+    `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${primaryOrigin}/</loc></url></urlset>`,
+  );
+  assert.equal(wellFormed.ok, true);
+  assert.deepEqual(wellFormed.locs, [`${primaryOrigin}/`]);
+
+  const fixture = overlay(primaryOrigin, {
+    "/sitemap.xml": {
+      status: 200,
+      contentType: "application/xml",
+      body: truncated,
+    },
+  });
+  const report = await runSearchReadiness(catalog, createFixtureFetch(fixture));
+  assert.equal(report.ok, false);
+  assertClaimsUnobserved(report);
+  const row = check(report, primary.id, "sitemap_urls");
+  assert.equal(row.status, "invalid");
+  assert.equal(row.detail, "sitemap_unparseable");
 });
