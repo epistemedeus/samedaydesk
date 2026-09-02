@@ -168,6 +168,25 @@ test("keeps the AgentToll finding bound to paid_post", () => {
   );
 });
 
+test("keeps the Argonaut GET and POST route in the canonical paid_post class", () => {
+  const findingId = "argonaut-ecb-fx-reference-20260902";
+  assert.equal(sellerRepairFindingRouteClasses[findingId], "paid_post");
+  assert.equal(
+    recordClientEvent("seller_repair_brief_viewed", {
+      finding_id: findingId,
+      route_class: "paid_post",
+    }),
+    true,
+  );
+  assert.equal(
+    recordClientEvent("seller_repair_brief_viewed", {
+      finding_id: findingId,
+      route_class: "paid_get",
+    }),
+    false,
+  );
+});
+
 test("exposes only the bounded event write route", async (t) => {
   const app = express();
   app.use(express.json());

@@ -24,6 +24,7 @@ const { default: checkoutRouter } = await import("../routes/checkout.js");
 
 const SAMPLE_FINDING = "hypernatt-liq-radar-20260830";
 const AGENTTOLL_FINDING = "agenttoll-market-radar-20260901";
+const ARGONAUT_FINDING = "argonaut-ecb-fx-reference-20260902";
 const offer = getOffer(SELLER_CONTRACT_REPAIR_SLUG);
 
 test("seller_contract_repair offer is server-owned at 49000 cents", () => {
@@ -134,6 +135,20 @@ test("admits the AgentToll finding to server-owned hosted Checkout", () => {
   assert.equal(params.line_items[0].price_data.unit_amount, 49000);
   assert.match(params.success_url, /finding=agenttoll-market-radar-20260901/);
   assert.match(params.cancel_url, /finding=agenttoll-market-radar-20260901/);
+});
+
+test("admits the Argonaut finding to the existing checkout registry", () => {
+  assert.equal(isValidSellerRepairFindingId(ARGONAUT_FINDING), true);
+  const params = buildSellerRepairCheckoutSessionParams(
+    ARGONAUT_FINDING,
+    offer,
+    "https://samedaydesk.com",
+  );
+  assert.equal(params.client_reference_id, ARGONAUT_FINDING);
+  assert.equal(params.metadata.finding_id, ARGONAUT_FINDING);
+  assert.equal(params.line_items[0].price_data.unit_amount, 49000);
+  assert.match(params.success_url, /finding=argonaut-ecb-fx-reference-20260902/);
+  assert.match(params.cancel_url, /finding=argonaut-ecb-fx-reference-20260902/);
 });
 
 test("createSellerRepairCheckoutSession rejects invalid finding IDs", async () => {

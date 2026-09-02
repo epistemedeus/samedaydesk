@@ -27,6 +27,13 @@ test("known seller finding is preserved in the canonical Neomorphic fixed-scope 
   );
 });
 
+test("Argonaut finding reuses the canonical Neomorphic fixed-scope handoff", () => {
+  assert.equal(
+    sellerRepairFixedScopeUrl("argonaut-ecb-fx-reference-20260902"),
+    "https://neomorphic.io/services/seller-conformance/fixed-scope/?finding=argonaut-ecb-fx-reference-20260902",
+  );
+});
+
 test("absent or unrecognized seller findings retain the generic canonical URL", () => {
   const generic = "https://neomorphic.io/services/seller-conformance/fixed-scope/";
   assert.equal(sellerRepairFixedScopeUrl(null), generic);
