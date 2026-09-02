@@ -4,6 +4,9 @@ import { createSpaFallback } from "./spa-fallback.js";
 import { createRouteShellMiddleware } from "./spa-route-shells.js";
 
 export function mountProductionClient(app, clientDist) {
+  app.get("/.well-known/agent-card.json", (_req, res) => {
+    res.redirect(308, "https://agents.samedaydesk.com/.well-known/agent-card.json");
+  });
   app.use(createRouteShellMiddleware(clientDist));
   app.use(
     express.static(clientDist, {

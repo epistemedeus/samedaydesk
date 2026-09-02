@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 import { findSellerRepairBrief } from "../src/data/sellerRepairBriefs.ts";
@@ -6,6 +9,15 @@ import {
   isSafeStripeCheckoutUrl,
   requestSellerRepairCheckoutUrl,
 } from "../src/lib/sellerRepairCheckout.ts";
+
+const here = dirname(fileURLToPath(import.meta.url));
+
+test("seller-conformance UI delegates the fixed scope to Neomorphic without starting SameDayDesk checkout", () => {
+  const source = readFileSync(join(here, "../src/pages/SellerConformance.tsx"), "utf8");
+  assert.match(source, /https:\/\/neomorphic\.io\/services\/seller-conformance\/fixed-scope\//);
+  assert.doesNotMatch(source, /requestSellerRepairCheckoutUrl|seller_repair_checkout_started|seller-repair-session/);
+  assert.match(source, /LIVE_AUDIT_URL/);
+});
 
 test("accepts only safe Stripe checkout URLs", () => {
   assert.equal(isSafeStripeCheckoutUrl("https://checkout.stripe.com/c/pay/cs_test_abc"), true);
