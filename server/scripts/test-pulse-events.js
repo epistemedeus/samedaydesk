@@ -21,6 +21,41 @@ const {
   sellerRepairFindingRouteClasses,
 } = await import("../lib/pulse.js");
 const { default: pulseRouter } = await import("../routes/pulse.js");
+const { MCP_TOOL_NAMES } = await import("../lib/mcp-tool-inventory.js");
+const { TOOLS } = await import("../routes/mcp.js");
+
+test("bounded MCP tool inventory stays equal to the declared tools", () => {
+  assert.deepEqual(TOOLS.map(({ name }) => name), MCP_TOOL_NAMES);
+});
+
+test("tools/call retains method totals but only admits own data names from the inventory", () => {
+  let getterCalls = 0;
+  const accessorParams = {};
+  Object.defineProperty(accessorParams, "name", {
+    enumerable: true,
+    get() { getterCalls += 1; return MCP_TOOL_NAMES[0]; },
+  });
+  const inheritedParams = Object.create({ name: MCP_TOOL_NAMES[0] });
+  const cases = [
+    [{ name: MCP_TOOL_NAMES[0] }, MCP_TOOL_NAMES[0]],
+    [{ name: "unknown_tool" }, undefined],
+    [{}, undefined],
+    [{ name: 42 }, undefined],
+    [{ name: "x".repeat(500) }, undefined],
+    [{ name: "__proto__" }, undefined],
+    [inheritedParams, undefined],
+    [accessorParams, undefined],
+    [{ name: MCP_TOOL_NAMES[0] }, MCP_TOOL_NAMES[0]],
+  ];
+  const parsed = parseMcpProtocolBody(cases.map(([params], id) => ({
+    jsonrpc: "2.0", id, method: "tools/call", params,
+  })));
+  assert.equal(parsed.admitted, true);
+  assert.equal(parsed.messages.length, cases.length);
+  assert.deepEqual(parsed.messages.map(({ toolName }) => toolName), cases.map(([, expected]) => expected));
+  assert.equal(getterCalls, 0);
+  assert.ok(parsed.messages.every(({ methodClass }) => methodClass === "tools/call"));
+});
 
 test("keeps the server event allowlist equal to the canonical public briefs", () => {
   assert.deepEqual(
