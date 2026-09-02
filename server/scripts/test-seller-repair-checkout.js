@@ -8,6 +8,7 @@ const {
   buildSellerRepairCheckoutSessionParams,
   configuredNeomorphicSellerConformancePaymentLinkId,
   createSellerRepairCheckoutSession,
+  expiredNeomorphicSellerRepairAttribution,
   isPaidCheckoutSessionEvent,
   isValidSellerRepairFindingId,
   NEOMORPHIC_SELLER_CONFORMANCE_AMOUNT,
@@ -119,6 +120,64 @@ test("Neomorphic attribution requires the configured Link and the exact paid off
   });
   assert.equal(paidNeomorphicSellerRepairAttribution({
     type: "checkout.session.completed",
+    data: { object: foreignSession },
+  }, paymentLinkId), null);
+});
+
+test("Neomorphic abandonment requires the exact expired unpaid offer invariants", () => {
+  const paymentLinkId = "plink_exactFixture";
+  const event = {
+    type: "checkout.session.expired",
+    data: { object: {
+      payment_link: paymentLinkId,
+      payment_status: "unpaid",
+      status: "expired",
+      amount_total: NEOMORPHIC_SELLER_CONFORMANCE_AMOUNT,
+      currency: NEOMORPHIC_SELLER_CONFORMANCE_CURRENCY,
+      client_reference_id: SAMPLE_FINDING,
+    } },
+  };
+  assert.deepEqual(expiredNeomorphicSellerRepairAttribution(event, paymentLinkId), {
+    findingId: SAMPLE_FINDING,
+  });
+
+  const rejectedAttributions = [
+    ["absent configuration", {}, null],
+    ["invalid configuration", {}, "not_a_plink"],
+    ["foreign Payment Link", { payment_link: "plink_foreignFixture" }, paymentLinkId],
+    ["missing finding", { client_reference_id: null }, paymentLinkId],
+    ["regex-valid unknown finding", { client_reference_id: "unknown-finding-20260902" }, paymentLinkId],
+    ["malformed finding", { client_reference_id: "bad finding/id" }, paymentLinkId],
+    ["array finding", { client_reference_id: [SAMPLE_FINDING] }, paymentLinkId],
+    ["non-string finding", { client_reference_id: 42 }, paymentLinkId],
+    ["wrong amount", { amount_total: 48999 }, paymentLinkId],
+    ["wrong currency", { currency: "eur" }, paymentLinkId],
+    ["paid expired state", { payment_status: "paid" }, paymentLinkId],
+    ["non-expired state", { status: "open" }, paymentLinkId],
+  ];
+  for (const [name, overrides, configuredId] of rejectedAttributions) {
+    assert.equal(
+      expiredNeomorphicSellerRepairAttribution({
+        ...event,
+        data: { object: { ...event.data.object, ...overrides } },
+      }, configuredId),
+      null,
+      name,
+    );
+  }
+  assert.equal(expiredNeomorphicSellerRepairAttribution({
+    ...event,
+    type: "checkout.session.completed",
+  }, paymentLinkId), null, "unpaid non-expired event");
+
+  const foreignSession = { payment_link: "plink_foreignFixture" };
+  Object.defineProperty(foreignSession, "client_reference_id", {
+    get() {
+      throw new Error("foreign client_reference_id must not be read");
+    },
+  });
+  assert.equal(expiredNeomorphicSellerRepairAttribution({
+    type: "checkout.session.expired",
     data: { object: foreignSession },
   }, paymentLinkId), null);
 });

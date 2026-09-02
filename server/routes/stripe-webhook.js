@@ -4,12 +4,14 @@ import { fulfillFromIntent } from "../lib/fulfill.js";
 import { notifyAdmin } from "../lib/notify.js";
 import {
   configuredNeomorphicSellerConformancePaymentLinkId,
+  expiredNeomorphicSellerRepairAttribution,
   isPaidCheckoutSessionEvent,
   paidNeomorphicSellerRepairAttribution,
   sellerRepairCheckoutNotificationContext,
 } from "../lib/seller-repair-checkout.js";
 
-// Authoritative "paid" signal. Mounted under /api/stripe → path /api/stripe/webhook.
+// Stripe-signed payment authority and bounded exact-link conversion attribution.
+// Mounted under /api/stripe → path /api/stripe/webhook.
 // Raw body captured upstream (req.rawBody) BEFORE express.json().
 function escapeHtml(value) {
   return String(value)
@@ -50,6 +52,33 @@ export function createStripeWebhookRouter({
     try {
       if (event.type === "payment_intent.succeeded") {
         await fulfill(event.data.object);
+      } else if (event.type === "checkout.session.expired") {
+        const attribution = expiredNeomorphicSellerRepairAttribution(
+          event,
+          neomorphicPaymentLinkId,
+        );
+        if (attribution) {
+          const session = event.data.object;
+          const {
+            amountDisplay,
+            customerEmail,
+            publicTargetUrl,
+            sessionId,
+          } = sellerRepairCheckoutNotificationContext(session);
+          const customerEmailLine = customerEmail === "—"
+            ? ""
+            : `<br>Customer email: ${escapeHtml(customerEmail)}`;
+          const publicTargetUrlLine = publicTargetUrl === "—"
+            ? ""
+            : `<br>Public target URL: ${escapeHtml(publicTargetUrl)}`;
+          await notify(
+            `Neomorphic seller repair checkout expired — ${amountDisplay}`,
+            `<p>An attributed Neomorphic seller-repair Checkout Session expired unpaid. This operator-only notice is conversion diagnosis, not proof of payment or fulfillment.</p>
+             <p>Finding ID: ${escapeHtml(attribution.findingId)}<br>
+             Checkout Session: ${escapeHtml(sessionId)}${customerEmailLine}${publicTargetUrlLine}<br>
+             Amount: ${escapeHtml(amountDisplay)}</p>`,
+          );
+        }
       } else if (isPaidCheckoutSessionEvent(event)) {
         // Payment Link / hosted Checkout. If it carries a known uid we fulfill to that account;
         // otherwise it's an operator instant-link sale — record + notify the admin.

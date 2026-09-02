@@ -37,6 +37,16 @@ function checkoutEvent(overrides = {}, type = "checkout.session.completed") {
   };
 }
 
+function expiredCheckoutEvent(overrides = {}, type = "checkout.session.expired") {
+  return checkoutEvent({
+    id: "cs_fixture_expired",
+    payment_status: "unpaid",
+    status: "expired",
+    payment_intent: "pi_expired_must_not_be_retrieved",
+    ...overrides,
+  }, type);
+}
+
 async function createHarness(t, { neomorphicPaymentLinkId = CONFIGURED_LINK } = {}) {
   const calls = {
     fulfill: [],
@@ -117,6 +127,90 @@ function assertGenericNotificationOnly(calls) {
   assert.doesNotMatch(calls.notify[0].html, /paid Neomorphic fixed-scope seller-repair engagement/);
   assert.doesNotMatch(calls.notify[0].html, new RegExp(KNOWN_FINDING));
 }
+
+function assertNoWebhookEffects(calls) {
+  assert.equal(calls.retrieve.length, 0);
+  assert.equal(calls.fulfill.length, 0);
+  assert.equal(calls.notify.length, 0);
+}
+
+test("Stripe webhook isolates exact Neomorphic abandonment from fulfillment", async (t) => {
+  const { calls, post, reset } = await createHarness(t);
+
+  await t.test("expired unpaid exact-link session emits one bounded operator notice", async () => {
+    const response = await post(expiredCheckoutEvent({
+      metadata: { internal_note: "must-not-leak" },
+      customer_details: {
+        email: "abandoned@example.test",
+        name: "Must Not Leak",
+      },
+    }));
+    assert.equal(response.status, 200);
+    assert.equal(calls.retrieve.length, 0);
+    assert.equal(calls.fulfill.length, 0);
+    assert.equal(calls.notify.length, 1);
+    const [{ subject, html }] = calls.notify;
+    assert.equal(subject, "Neomorphic seller repair checkout expired — $490.00");
+    assert.match(html, /expired unpaid/);
+    assert.match(html, new RegExp(`Finding ID: ${KNOWN_FINDING}`));
+    assert.match(html, /Checkout Session: cs_fixture_expired/);
+    assert.match(html, /Customer email: abandoned@example\.test/);
+    assert.match(html, /Public target URL: https:\/\/seller\.example\.test\/paid-route/);
+    assert.match(html, /Amount: \$490\.00/);
+    assert.doesNotMatch(html, /PaymentIntent|Offer label|Must Not Leak|must-not-leak/);
+  });
+
+  await t.test("optional buyer and target context is omitted when absent", async () => {
+    reset();
+    const response = await post(expiredCheckoutEvent({
+      id: "cs_expired_without_optional_context",
+      customer_details: null,
+      customer_email: null,
+      custom_fields: [],
+    }));
+    assert.equal(response.status, 200);
+    assert.equal(calls.notify.length, 1);
+    assert.doesNotMatch(calls.notify[0].html, /Customer email|Public target URL/);
+    assert.equal(calls.retrieve.length, 0);
+    assert.equal(calls.fulfill.length, 0);
+  });
+
+  const rejectedAttributions = [
+    ["foreign Payment Link", { payment_link: "plink_foreignFixture" }],
+    ["missing finding", { client_reference_id: null }],
+    ["regex-valid unknown finding", { client_reference_id: "unknown-finding-20260902" }],
+    ["malformed finding", { client_reference_id: "bad finding/id" }],
+    ["array finding", { client_reference_id: [KNOWN_FINDING] }],
+    ["non-string finding", { client_reference_id: 42 }],
+    ["wrong amount", { amount_total: 48999 }],
+    ["wrong currency", { currency: "eur" }],
+    ["paid expired state", { payment_status: "paid" }],
+    ["expired event with non-expired state", { status: "open" }],
+  ];
+  for (const [name, overrides] of rejectedAttributions) {
+    await t.test(name, async () => {
+      reset();
+      const response = await post(expiredCheckoutEvent(overrides));
+      assert.equal(response.status, 200);
+      assertNoWebhookEffects(calls);
+    });
+  }
+
+  await t.test("unpaid non-expired event remains ignored", async () => {
+    reset();
+    const response = await post(expiredCheckoutEvent({ status: "complete" }, "checkout.session.completed"));
+    assert.equal(response.status, 200);
+    assertNoWebhookEffects(calls);
+  });
+
+  await t.test("bad signature rejects an otherwise attributed expired session", async () => {
+    reset();
+    const response = await post(expiredCheckoutEvent(), "bad-fixture-signature");
+    assert.equal(response.status, 400);
+    assert.match(await response.text(), /Bad signature/);
+    assertNoWebhookEffects(calls);
+  });
+});
 
 test("Stripe webhook admits only an exact paid Neomorphic seller-repair attribution", async (t) => {
   const harness = await createHarness(t);
@@ -272,7 +366,12 @@ test("Stripe webhook admits only an exact paid Neomorphic seller-repair attribut
 });
 
 test("absent Neomorphic Link configuration defaults to generic handling", async (t) => {
-  const { calls, intents, post } = await createHarness(t, { neomorphicPaymentLinkId: null });
+  const { calls, intents, post, reset } = await createHarness(t, { neomorphicPaymentLinkId: null });
+  const expiredResponse = await post(expiredCheckoutEvent());
+  assert.equal(expiredResponse.status, 200);
+  assertNoWebhookEffects(calls);
+
+  reset();
   intents.set("pi_fixture_paid", { id: "pi_fixture_paid", metadata: {} });
   const response = await post(checkoutEvent());
   assert.equal(response.status, 200);
