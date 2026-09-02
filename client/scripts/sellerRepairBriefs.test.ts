@@ -46,6 +46,34 @@ test("resolves stable public repair briefs and rejects unknown IDs", () => {
   assert.equal(driftflight?.method, "POST");
   assert.equal(driftflight?.routeClass, "paid_post");
   assert.equal(driftflight?.livePrice, "0.06 USDC for the default studio tier");
+
+  const agentToll = findSellerRepairBrief("agenttoll-market-radar-20260901");
+  assert.equal(agentToll?.seller, "AgentToll");
+  assert.equal(agentToll?.origin, "https://agenttoll.dev");
+  assert.equal(agentToll?.route, "/paid/x402/market-radar");
+  assert.equal(agentToll?.method, "POST");
+  assert.equal(agentToll?.routeClass, "paid_post");
+  assert.equal(agentToll?.observedAt, "2026-09-01 PDT");
+  assert.equal(agentToll?.livePrice, "0.05 USDC");
+  assert.match(agentToll?.requiredContract[0] || "", /product, service, generated_at, catalog, and agenttoll/);
+  assert.match(agentToll?.requiredContract[1] || "", /nested report objects extensible/);
+  assert.match(
+    agentToll?.scope[2] || "",
+    /No request, price, network, asset, recipient, handler, payment, or settlement behavior change/,
+  );
+  assert.match(
+    agentToll?.boundaries[0] || "",
+    /No credential, wallet, signature, paid request, or target payment/,
+  );
+  assert.equal(
+    agentToll?.scope[0],
+    "Open free repair PR 4 aligns only those five stable top-level fields across OpenAPI and Bazaar.",
+  );
+  assert.equal(
+    agentToll?.boundaries[1],
+    "Open free repair PR 4 is not paid delivery, settled revenue, or evidence of independent use.",
+  );
+  assert.equal(agentToll?.evidence[1]?.label, "Open free repair PR 4");
 });
 
 test("keeps IDs unique and every brief bounded to public non-secret evidence", () => {

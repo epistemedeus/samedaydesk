@@ -25,6 +25,7 @@ export const sellerRepairFindingRouteClasses = Object.freeze({
   "blockrun-exa-search-20260830": "paid_post",
   "exa-direct-search-20260830": "paid_post",
   "driftflight-image-generation-20260830": "paid_post",
+  "agenttoll-market-radar-20260901": "paid_post",
 });
 export const sellerRepairFindingIds = Object.freeze(
   Object.keys(sellerRepairFindingRouteClasses),

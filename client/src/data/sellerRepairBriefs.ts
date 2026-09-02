@@ -325,6 +325,48 @@ export const sellerRepairBriefs = Object.freeze([
       { label: "ZeroClick operating model", href: "https://docs.zeroclick.ai/" },
     ],
   },
+  {
+    id: "agenttoll-market-radar-20260901",
+    seller: "AgentToll",
+    origin: "https://agenttoll.dev",
+    route: "/paid/x402/market-radar",
+    method: "POST",
+    routeClass: "paid_post",
+    observedAt: "2026-09-01 PDT",
+    livePrice: "0.05 USDC",
+    summary:
+      "The live market-radar route returns a handler-owned report envelope, but OpenAPI declares only a bare object and Bazaar guarantees only its wrapper type while the example advertises application fields.",
+    observedContract: [
+      "The current live OpenAPI HTTP 200 schema is only the bare object type and requires no application field.",
+      "The current Bazaar output guarantees only the wrapper type while its example advertises application fields.",
+      "The public MIT handler always owns product, service, generated_at, catalog, and agenttoll on HTTP 200.",
+    ],
+    requiredContract: [
+      "Require only product, service, generated_at, catalog, and agenttoll as stable top-level fields in both OpenAPI and Bazaar.",
+      "Keep nested report objects extensible instead of freezing optional or provider-dependent subfields.",
+      "Keep the Bazaar example schema-valid and prove OpenAPI-to-Bazaar required-field parity.",
+    ],
+    scope: [
+      "Open free repair PR 4 aligns only those five stable top-level fields across OpenAPI and Bazaar.",
+      "Focused schema, example, and parity tests for POST /paid/x402/market-radar.",
+      "No request, price, network, asset, recipient, handler, payment, or settlement behavior change.",
+    ],
+    boundaries: [
+      "No credential, wallet, signature, paid request, or target payment was used to reproduce this finding.",
+      "Open free repair PR 4 is not paid delivery, settled revenue, or evidence of independent use.",
+    ],
+    evidence: [
+      { label: "Live AgentToll service", href: "https://agenttoll.dev" },
+      {
+        label: "Open free repair PR 4",
+        href: "https://github.com/huwhitememes/tollbooth/pull/4",
+      },
+      {
+        label: "Public MIT handler source",
+        href: "https://github.com/huwhitememes/tollbooth",
+      },
+    ],
+  },
 ] satisfies readonly SellerRepairBrief[]);
 
 const briefsById = new Map(sellerRepairBriefs.map((brief) => [brief.id, brief]));

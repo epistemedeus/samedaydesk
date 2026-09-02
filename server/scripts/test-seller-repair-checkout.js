@@ -18,6 +18,7 @@ const { stripe } = await import("../lib/stripe.js");
 const { default: checkoutRouter } = await import("../routes/checkout.js");
 
 const SAMPLE_FINDING = "hypernatt-liq-radar-20260830";
+const AGENTTOLL_FINDING = "agenttoll-market-radar-20260901";
 const offer = getOffer(SELLER_CONTRACT_REPAIR_SLUG);
 
 test("seller_contract_repair offer is server-owned at 49000 cents", () => {
@@ -55,6 +56,20 @@ test("accepts only bounded finding IDs", () => {
   assert.equal(isValidSellerRepairFindingId("bad id"), false);
   assert.equal(isValidSellerRepairFindingId("a".repeat(97)), false);
   assert.equal(isValidSellerRepairFindingId(null), false);
+});
+
+test("admits the AgentToll finding to server-owned hosted Checkout", () => {
+  assert.equal(isValidSellerRepairFindingId(AGENTTOLL_FINDING), true);
+  const params = buildSellerRepairCheckoutSessionParams(
+    AGENTTOLL_FINDING,
+    offer,
+    "https://samedaydesk.com",
+  );
+  assert.equal(params.client_reference_id, AGENTTOLL_FINDING);
+  assert.equal(params.metadata.finding_id, AGENTTOLL_FINDING);
+  assert.equal(params.line_items[0].price_data.unit_amount, 49000);
+  assert.match(params.success_url, /finding=agenttoll-market-radar-20260901/);
+  assert.match(params.cancel_url, /finding=agenttoll-market-radar-20260901/);
 });
 
 test("createSellerRepairCheckoutSession rejects invalid finding IDs", async () => {
