@@ -1,11 +1,27 @@
 -- Add bounded per-declared-tool MCP invocation counts to the existing aggregate.
 alter table public.pulse_aggregate
-  add column if not exists mcp_tool_calls_by_name jsonb not null default '{}'::jsonb;
+  add column if not exists mcp_tool_calls_by_name jsonb not null default '{}'::jsonb,
+  add column if not exists mcp_tool_calls_observed_from timestamptz;
+
+-- This migration is the first truthful boundary for the new dimension.
+-- Existing method totals, including historical tools/call messages, stay unchanged.
+update public.pulse_aggregate
+set mcp_tool_calls_observed_from = now()
+where mcp_tool_calls_observed_from is null;
+
+insert into public.pulse_aggregate (classification_schema_version, mcp_tool_calls_observed_from)
+values (2, now())
+on conflict (classification_schema_version) do nothing;
+
+alter table public.pulse_aggregate
+  alter column mcp_tool_calls_observed_from set default now(),
+  alter column mcp_tool_calls_observed_from set not null;
 
 create or replace function public.pulse_validate_delta(p_delta jsonb)
 returns jsonb language plpgsql immutable set search_path = '' as $$
 declare
   v_schema int;
+  v_tool_observed_from timestamptz;
   v_funnel_keys text[] := array['home', 'scan', 'tools', 'reports', 'guides', 'pricing'];
   v_mcp_keys text[] := array['initialize', 'tools/list', 'tools/call', 'notifications', 'other'];
   v_tool_keys text[] := array['check_ai_readiness', 'generate_complete_fix_pack', 'plan_taskmarket_delegation', 'browse_taskmarket_tasks', 'track_taskmarket_task'];
@@ -13,12 +29,24 @@ begin
   if p_delta is null or jsonb_typeof(p_delta) <> 'object' then raise exception 'pulse_invalid_delta' using errcode = '22023'; end if;
   if (select count(*) from jsonb_object_keys(p_delta) k where k not in (
     'schemaVersion','total','humans','bots','aiCrawlers','mcpSurfaceGets',
-    'mcpProtocolRequests','mcpProtocolMessages','mcpProtocolByMethod','mcpToolCallsByName',
+    'mcpProtocolRequests','mcpProtocolMessages','mcpProtocolByMethod','mcpToolCallsObservedFrom','mcpToolCallsByName',
     'byPath','byReferer','byAiBot','funnel','sellerRepair')) > 0 then
     raise exception 'pulse_invalid_delta' using errcode = '22023';
   end if;
   v_schema := public.pulse_validate_nonneg_int(p_delta -> 'schemaVersion', 'schemaVersion')::int;
   if v_schema <> 2 then raise exception 'pulse_invalid_schema_version' using errcode = '22023'; end if;
+  if jsonb_typeof(p_delta -> 'mcpToolCallsObservedFrom') <> 'string'
+     or (p_delta ->> 'mcpToolCallsObservedFrom') !~ '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$' then
+    raise exception 'pulse_invalid_field:mcpToolCallsObservedFrom' using errcode = '22023';
+  end if;
+  begin
+    v_tool_observed_from := (p_delta ->> 'mcpToolCallsObservedFrom')::timestamptz;
+  exception when others then
+    raise exception 'pulse_invalid_field:mcpToolCallsObservedFrom' using errcode = '22023';
+  end;
+  if not isfinite(v_tool_observed_from) then
+    raise exception 'pulse_invalid_field:mcpToolCallsObservedFrom' using errcode = '22023';
+  end if;
   return jsonb_build_object(
     'schemaVersion',v_schema,
     'total',public.pulse_validate_nonneg_int(p_delta -> 'total','total'),
@@ -29,6 +57,7 @@ begin
     'mcpProtocolRequests',public.pulse_validate_nonneg_int(p_delta -> 'mcpProtocolRequests','mcpProtocolRequests'),
     'mcpProtocolMessages',public.pulse_validate_nonneg_int(p_delta -> 'mcpProtocolMessages','mcpProtocolMessages'),
     'mcpProtocolByMethod',public.pulse_validate_counter_map(p_delta -> 'mcpProtocolByMethod','mcpProtocolByMethod',v_mcp_keys,8,32),
+    'mcpToolCallsObservedFrom',v_tool_observed_from,
     'mcpToolCallsByName',public.pulse_validate_counter_map(p_delta -> 'mcpToolCallsByName','mcpToolCallsByName',v_tool_keys,5,32),
     'byPath',public.pulse_validate_counter_map(p_delta -> 'byPath','byPath',null,200,60),
     'byReferer',public.pulse_validate_counter_map(p_delta -> 'byReferer','byReferer',null,200,96),
@@ -50,11 +79,11 @@ begin
   end if;
   insert into public.pulse_aggregate as a (
     classification_schema_version,observation_started_at,total,humans,bots,ai_crawlers,mcp_surface_gets,
-    mcp_protocol_requests,mcp_protocol_messages,mcp_protocol_by_method,mcp_tool_calls_by_name,
+    mcp_protocol_requests,mcp_protocol_messages,mcp_protocol_by_method,mcp_tool_calls_observed_from,mcp_tool_calls_by_name,
     by_path,by_referer,by_ai_bot,funnel,seller_repair)
   values (v_schema,now(),(v_delta->>'total')::bigint,(v_delta->>'humans')::bigint,(v_delta->>'bots')::bigint,
     (v_delta->>'aiCrawlers')::bigint,(v_delta->>'mcpSurfaceGets')::bigint,(v_delta->>'mcpProtocolRequests')::bigint,
-    (v_delta->>'mcpProtocolMessages')::bigint,v_delta->'mcpProtocolByMethod',v_delta->'mcpToolCallsByName',
+    (v_delta->>'mcpProtocolMessages')::bigint,v_delta->'mcpProtocolByMethod',(v_delta->>'mcpToolCallsObservedFrom')::timestamptz,v_delta->'mcpToolCallsByName',
     v_delta->'byPath',v_delta->'byReferer',v_delta->'byAiBot',v_delta->'funnel',v_delta->'sellerRepair')
   on conflict (classification_schema_version) do update set
     observation_started_at=coalesce(a.observation_started_at,excluded.observation_started_at),total=a.total+excluded.total,
@@ -62,6 +91,7 @@ begin
     mcp_surface_gets=a.mcp_surface_gets+excluded.mcp_surface_gets,mcp_protocol_requests=a.mcp_protocol_requests+excluded.mcp_protocol_requests,
     mcp_protocol_messages=a.mcp_protocol_messages+excluded.mcp_protocol_messages,
     mcp_protocol_by_method=public.pulse_merge_counter_maps(a.mcp_protocol_by_method,excluded.mcp_protocol_by_method),
+    mcp_tool_calls_observed_from=least(a.mcp_tool_calls_observed_from,excluded.mcp_tool_calls_observed_from),
     mcp_tool_calls_by_name=public.pulse_merge_counter_maps(a.mcp_tool_calls_by_name,excluded.mcp_tool_calls_by_name),
     by_path=public.pulse_merge_counter_maps(a.by_path,excluded.by_path),by_referer=public.pulse_merge_counter_maps(a.by_referer,excluded.by_referer),
     by_ai_bot=public.pulse_merge_counter_maps(a.by_ai_bot,excluded.by_ai_bot),funnel=public.pulse_merge_counter_maps(a.funnel,excluded.funnel),
@@ -81,6 +111,7 @@ begin
     'total',coalesce(v_row.total,0),'humans',coalesce(v_row.humans,0),'bots',coalesce(v_row.bots,0),'aiCrawlers',coalesce(v_row.ai_crawlers,0),
     'mcpSurfaceGets',coalesce(v_row.mcp_surface_gets,0),'mcpProtocolRequests',coalesce(v_row.mcp_protocol_requests,0),
     'mcpProtocolMessages',coalesce(v_row.mcp_protocol_messages,0),'mcpProtocolByMethod',coalesce(v_row.mcp_protocol_by_method,'{}'::jsonb),
+    'mcpToolCallsObservedFrom',v_row.mcp_tool_calls_observed_from,
     'mcpToolCallsByName',coalesce(v_row.mcp_tool_calls_by_name,'{}'::jsonb),'byPath',coalesce(v_row.by_path,'{}'::jsonb),
     'byReferer',coalesce(v_row.by_referer,'{}'::jsonb),'byAiBot',coalesce(v_row.by_ai_bot,'{}'::jsonb),'funnel',coalesce(v_row.funnel,'{}'::jsonb),
     'sellerRepair',coalesce(v_row.seller_repair,jsonb_build_object('briefViews',0,'scopeClicks',0,'checkoutStarts',0,'byFinding','{}'::jsonb)));

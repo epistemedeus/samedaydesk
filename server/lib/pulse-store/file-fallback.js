@@ -154,10 +154,23 @@ export function createFileFallbackStore(filePath, options = {}) {
       return view.state.observationStartedAt ?? null;
     },
 
-    persistLocalMetadata({ legacyUncertainty, observationStartedAt } = {}) {
+    getMcpToolCallsObservedFrom() {
+      const view = readView();
+      if (view.corrupt || !view.state) return null;
+      return view.state.mcpToolCallsObservedFrom ?? null;
+    },
+
+    persistLocalMetadata({ legacyUncertainty, observationStartedAt, mcpToolCallsObservedFrom } = {}) {
       const result = withWalTransaction((state) => {
         if (legacyUncertainty !== undefined) state.legacyUncertainty = legacyUncertainty;
         if (observationStartedAt !== undefined) state.observationStartedAt = observationStartedAt;
+        if (mcpToolCallsObservedFrom !== undefined) {
+          state.mcpToolCallsObservedFrom =
+            state.mcpToolCallsObservedFrom &&
+            Date.parse(state.mcpToolCallsObservedFrom) <= Date.parse(mcpToolCallsObservedFrom)
+              ? state.mcpToolCallsObservedFrom
+              : mcpToolCallsObservedFrom;
+        }
         return { outcome: "queued", write: true, state };
       });
       return result.outcome !== "write_failed" && result.outcome !== "corrupt";

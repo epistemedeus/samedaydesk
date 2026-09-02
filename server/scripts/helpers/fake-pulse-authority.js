@@ -13,8 +13,8 @@ function deltaHash(delta) {
   return crypto.createHash("md5").update(JSON.stringify(delta)).digest("hex");
 }
 
-function emptyAggregate() {
-  const delta = emptyDelta();
+function emptyAggregate(observedFrom) {
+  const delta = emptyDelta(observedFrom);
   return {
     total: 0,
     humans: 0,
@@ -24,6 +24,7 @@ function emptyAggregate() {
     mcpProtocolRequests: 0,
     mcpProtocolMessages: 0,
     mcpProtocolByMethod: { ...delta.mcpProtocolByMethod },
+    mcpToolCallsObservedFrom: observedFrom,
     mcpToolCallsByName: {},
     byPath: {},
     byReferer: {},
@@ -43,6 +44,10 @@ function mergeAggregate(existing, delta) {
     mcpProtocolRequests: existing.mcpProtocolRequests + delta.mcpProtocolRequests,
     mcpProtocolMessages: existing.mcpProtocolMessages + delta.mcpProtocolMessages,
     mcpProtocolByMethod: mergeCounterMaps(existing.mcpProtocolByMethod, delta.mcpProtocolByMethod),
+    mcpToolCallsObservedFrom:
+      Date.parse(existing.mcpToolCallsObservedFrom) <= Date.parse(delta.mcpToolCallsObservedFrom)
+        ? existing.mcpToolCallsObservedFrom
+        : delta.mcpToolCallsObservedFrom,
     mcpToolCallsByName: mergeCounterMaps(existing.mcpToolCallsByName, delta.mcpToolCallsByName),
     byPath: mergeCounterMaps(existing.byPath, delta.byPath),
     byReferer: mergeCounterMaps(existing.byReferer, delta.byReferer),
@@ -52,8 +57,10 @@ function mergeAggregate(existing, delta) {
   };
 }
 
-export function createFakePulseAuthority() {
-  let aggregate = emptyAggregate();
+export function createFakePulseAuthority(options = {}) {
+  const observedFrom = options.mcpToolCallsObservedFrom || new Date().toISOString();
+  const observationStartedAt = options.observationStartedAt;
+  let aggregate = emptyAggregate(observedFrom);
   const receipts = new Map();
   const legacyImports = new Map();
 
@@ -78,7 +85,7 @@ export function createFakePulseAuthority() {
     async readSnapshot(observationStartInput, observationEnd = new Date().toISOString()) {
       const out = {
         schemaVersion: 2,
-        observationStart: observationStartInput || new Date().toISOString(),
+        observationStart: observationStartedAt || observationStartInput || new Date().toISOString(),
         observationEnd,
         ...aggregate,
       };

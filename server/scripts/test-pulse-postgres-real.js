@@ -115,6 +115,18 @@ ${AMENDMENT_SQL}
   });
 }
 
+function applyBaseMigration(cluster) {
+  psql(cluster, null, {
+    input: `
+CREATE ROLE anon NOLOGIN;
+CREATE ROLE authenticated NOLOGIN;
+CREATE ROLE service_role NOLOGIN;
+GRANT USAGE ON SCHEMA public TO service_role;
+${MIGRATION_SQL}
+`,
+  });
+}
+
 function serviceRoleSql(cluster, body) {
   psql(cluster, null, {
     input: `SET ROLE service_role;\n${body}\nRESET ROLE;`,
@@ -137,6 +149,12 @@ test("real PostgreSQL: migration applies and RPC semantics hold", { timeout: 120
 
   applyMigration(cluster);
 
+  const freshBoundary = psql(
+    cluster,
+    "SELECT mcp_tool_calls_observed_from IS NOT NULL FROM public.pulse_aggregate WHERE classification_schema_version=2;",
+  );
+  assert.match(freshBoundary, /t/, "fresh schema must persist the dimension boundary");
+
   serviceRoleSql(cluster, `
 DO $$
 DECLARE
@@ -152,6 +170,7 @@ BEGIN
     "total": 10, "humans": 8, "bots": 2, "aiCrawlers": 1,
     "mcpSurfaceGets": 3, "mcpProtocolRequests": 2, "mcpProtocolMessages": 5,
     "mcpProtocolByMethod": {"initialize": 1, "tools/list": 1},
+    "mcpToolCallsObservedFrom": "2026-09-02T12:00:00.000Z",
     "mcpToolCallsByName": {"check_ai_readiness": 2},
     "byPath": {"/pricing": 5}, "byReferer": {"(direct)": 10},
     "byAiBot": {"GPTBot": 1},
@@ -183,7 +202,8 @@ BEGIN
   PERFORM public.pulse_apply_delta(v_flush2, '{
     "schemaVersion": 2, "total": 5, "humans": 3, "bots": 2, "aiCrawlers": 0,
     "mcpSurfaceGets": 0, "mcpProtocolRequests": 0, "mcpProtocolMessages": 0,
-    "mcpProtocolByMethod": {}, "byPath": {}, "byReferer": {}, "byAiBot": {},
+    "mcpProtocolByMethod": {}, "mcpToolCallsObservedFrom": "2026-09-02T12:00:00.000Z",
+    "mcpToolCallsByName": {}, "byPath": {}, "byReferer": {}, "byAiBot": {},
     "funnel": {"home": 0, "scan": 0, "tools": 0, "reports": 0, "guides": 0, "pricing": 0},
     "sellerRepair": {
       "briefViews": 1, "scopeClicks": 0, "checkoutStarts": 1,
@@ -202,6 +222,8 @@ BEGIN
 
   v_snap := public.pulse_read_snapshot('2026-09-01T00:00:00Z'::timestamptz, '2026-09-02T00:00:00Z'::timestamptz);
   IF (v_snap->>'total')::int <> 15 THEN RAISE EXCEPTION 'total wrong'; END IF;
+  IF v_snap->>'mcpToolCallsObservedFrom' IS DISTINCT FROM '2026-09-02T12:00:00+00:00' THEN RAISE EXCEPTION 'tool boundary wrong'; END IF;
+  IF (v_snap->'mcpToolCallsByName'->>'check_ai_readiness')::int <> 2 THEN RAISE EXCEPTION 'tool count wrong'; END IF;
   IF (v_snap->'sellerRepair'->>'briefViews')::int <> 3 THEN RAISE EXCEPTION 'briefViews wrong'; END IF;
 
   v_finding := v_snap->'sellerRepair'->'byFinding'->'vibe-springs-btc-usd-20260830';
@@ -250,7 +272,7 @@ BEGIN
     IF SQLERRM IS DISTINCT FROM 'pulse_invalid_delta' THEN RAISE; END IF;
   END;
   BEGIN
-    PERFORM public.pulse_apply_delta('b0000000-0000-4000-8000-000000000002'::uuid, '{"schemaVersion": 2, "total": -1, "humans": 0, "bots": 0, "aiCrawlers": 0, "mcpSurfaceGets": 0, "mcpProtocolRequests": 0, "mcpProtocolMessages": 0, "mcpProtocolByMethod": {}, "byPath": {}, "byReferer": {}, "byAiBot": {}, "funnel": {"home":0,"scan":0,"tools":0,"reports":0,"guides":0,"pricing":0}, "sellerRepair": {"briefViews":0,"scopeClicks":0,"checkoutStarts":0,"byFinding":{}}}');
+    PERFORM public.pulse_apply_delta('b0000000-0000-4000-8000-000000000002'::uuid, '{"schemaVersion": 2, "total": -1, "humans": 0, "bots": 0, "aiCrawlers": 0, "mcpSurfaceGets": 0, "mcpProtocolRequests": 0, "mcpProtocolMessages": 0, "mcpProtocolByMethod": {}, "mcpToolCallsObservedFrom":"2026-09-02T12:00:00.000Z", "mcpToolCallsByName":{}, "byPath": {}, "byReferer": {}, "byAiBot": {}, "funnel": {"home":0,"scan":0,"tools":0,"reports":0,"guides":0,"pricing":0}, "sellerRepair": {"briefViews":0,"scopeClicks":0,"checkoutStarts":0,"byFinding":{}}}');
     RAISE EXCEPTION 'negative total accepted';
   EXCEPTION WHEN SQLSTATE '22023' THEN
     IF SQLERRM NOT LIKE 'pulse_invalid_field:total%' THEN RAISE; END IF;
@@ -295,4 +317,33 @@ SELECT count(*) FROM public.pulse_flush_receipts;
 SELECT count(*) FROM public.pulse_legacy_observations;
 SELECT public.pulse_read_snapshot('2026-09-01T00:00:00Z'::timestamptz);
 `);
+});
+
+test("real PostgreSQL: existing seven-call row gains only a later name boundary", { timeout: 120_000 }, (t) => {
+  requirePostgresBinaries();
+  const cluster = startDisposableCluster();
+  t.after(() => cluster.stop());
+  applyBaseMigration(cluster);
+  psql(cluster, `
+    INSERT INTO public.pulse_aggregate (
+      classification_schema_version, observation_started_at,
+      mcp_protocol_requests, mcp_protocol_messages, mcp_protocol_by_method
+    ) VALUES (
+      2, '2026-09-01T00:00:00Z', 7, 7, '{"tools/call":7}'::jsonb
+    );
+  `);
+  psql(cluster, null, { input: AMENDMENT_SQL });
+  const migrated = psql(cluster, `
+    SELECT
+      observation_started_at = '2026-09-01T00:00:00Z'::timestamptz,
+      mcp_protocol_by_method->>'tools/call',
+      mcp_tool_calls_by_name = '{}'::jsonb,
+      mcp_tool_calls_observed_from > observation_started_at
+    FROM public.pulse_aggregate WHERE classification_schema_version=2;
+  `);
+  assert.match(migrated, /t\s*\|\s*7\s*\|\s*t\s*\|\s*t/);
+  const boundaryBefore = psql(cluster, "SELECT mcp_tool_calls_observed_from::text FROM public.pulse_aggregate WHERE classification_schema_version=2;");
+  psql(cluster, null, { input: AMENDMENT_SQL });
+  const boundaryAfter = psql(cluster, "SELECT mcp_tool_calls_observed_from::text FROM public.pulse_aggregate WHERE classification_schema_version=2;");
+  assert.equal(boundaryAfter, boundaryBefore, "migration replay must preserve its first boundary");
 });

@@ -86,6 +86,7 @@ test("same flush ID replay is idempotent and conflicting delta fails", async () 
 });
 
 test("declared MCP tool counts survive durable flush, hydration, and idempotent replay", async () => {
+  const observedFrom = "2026-09-02T12:00:00.000Z";
   const authority = createFakePulseAuthority();
   const store = createPulseStoreFromTransport(createFakeRpcTransport(authority));
   const flushId = newFlushId();
@@ -93,13 +94,84 @@ test("declared MCP tool counts survive durable flush, hydration, and idempotent 
     mcpProtocolRequests: 2,
     mcpProtocolMessages: 2,
     mcpProtocolByMethod: { "tools/call": 2 },
+    mcpToolCallsObservedFrom: observedFrom,
     mcpToolCallsByName: { check_ai_readiness: 2 },
   });
   await store.flush(flushId, delta);
   await store.flush(flushId, delta);
   const snapshot = await store.readSnapshot("2026-09-02T00:00:00.000Z");
   assert.deepEqual(snapshot.mcpToolCallsByName, { check_ai_readiness: 2 });
+  assert.equal(snapshot.mcpToolCallsObservedFrom, observedFrom);
   assert.equal(snapshot.mcpProtocolByMethod["tools/call"], 2);
+});
+
+test("new app against old apply RPC retains the exact WAL evidence", async () => {
+  const { configurePulseStoreForTests, pulseSnapshot, __pulseTestInternals } =
+    await import("../lib/pulse.js");
+  const dir = mkdtempSync(join(tmpdir(), "pulse-old-apply-rpc-"));
+  const walFile = join(dir, "fallback.json");
+  configurePulseStoreForTests({
+    store: {
+      configured: true,
+      async readSnapshot() {
+        return {
+          schemaVersion: 2,
+          observationStart: "2026-09-01T00:00:00.000Z",
+          mcpToolCallsObservedFrom: "2026-09-02T12:00:00.000Z",
+          mcpToolCallsByName: {},
+        };
+      },
+      async flush() { throw new Error("pulse_invalid_delta"); },
+      async importLegacyObservation() {},
+    },
+    fallbackFile: walFile,
+    autoHydrate: false,
+  });
+  const { pendingDelta, admitPendingDeltaToWal, drainPendingFlushes } = __pulseTestInternals();
+  pendingDelta.mcpProtocolRequests = 1;
+  pendingDelta.mcpProtocolMessages = 1;
+  pendingDelta.mcpProtocolByMethod["tools/call"] = 1;
+  pendingDelta.mcpToolCallsByName.check_ai_readiness = 1;
+  assert.equal(admitPendingDeltaToWal(), true);
+  const before = readFileSync(walFile, "utf8");
+  await drainPendingFlushes();
+  const after = readFileSync(walFile, "utf8");
+  assert.equal(after, before);
+  assert.equal(pulseSnapshot().complete, false);
+  assert.equal(JSON.parse(after).pendingFlushes.length, 1);
+  rmSync(dir, { recursive: true, force: true });
+});
+
+test("empty named counts expose their later lower-bound window", async () => {
+  const { configurePulseStoreForTests, pulseSnapshot, waitForPulseHydration } =
+    await import("../lib/pulse.js");
+  const observedFrom = "2026-09-02T12:00:00.000Z";
+  const authority = createFakePulseAuthority({
+    observationStartedAt: "2026-09-01T00:00:00.000Z",
+    mcpToolCallsObservedFrom: observedFrom,
+  });
+  await authority.applyDelta(newFlushId(), makeDelta({
+    mcpProtocolRequests: 7,
+    mcpProtocolMessages: 7,
+    mcpProtocolByMethod: { "tools/call": 7 },
+    mcpToolCallsObservedFrom: observedFrom,
+  }));
+  const dir = mkdtempSync(join(tmpdir(), "pulse-later-tool-window-"));
+  configurePulseStoreForTests({
+    store: createPulseStoreFromTransport(createFakeRpcTransport(authority)),
+    fallbackFile: join(dir, "fallback.json"),
+    autoHydrate: false,
+  });
+  await waitForPulseHydration();
+  const snapshot = pulseSnapshot();
+  assert.equal(snapshot.startedAt < observedFrom, true);
+  assert.equal(snapshot.mcpProtocol.byMethod["tools/call"], 7);
+  assert.deepEqual(snapshot.mcpProtocol.toolCallsByName.counts, {});
+  assert.equal(snapshot.mcpProtocol.toolCallsByName.observedFrom, observedFrom);
+  assert.equal(snapshot.mcpProtocol.toolCallsByName.coverage, "known_from_observed_from");
+  assert.match(snapshot.mcpProtocol.toolCallsByName.meaning, /empty counts map does not mean zero/i);
+  assert.match(snapshot.mcpProtocol.toolCallsByName.meaning, /absent, invalid, unknown, inherited, prototype, or accessor/);
+  rmSync(dir, { recursive: true, force: true });
 });
 
 test("mixed-version durable reads cannot claim a complete zero tool map", async () => {
@@ -335,7 +407,11 @@ test("amendment 2 defect 1: legacy snapshot plus WAL duplicate cannot double cou
   const dir = mkdtempSync(join(tmpdir(), "pulse-a2-1-"));
   const pulseFile = join(dir, "pulse.json");
   const walFile = `${pulseFile}.fallback.json`;
-  const delta = makeDelta({ total: 5, humans: 5 });
+  const delta = makeDelta({
+    total: 5,
+    humans: 5,
+    mcpToolCallsObservedFrom: "2026-01-01T00:00:00.000Z",
+  });
   const flushId = stableFlushIdFromDelta(delta);
   writeFileSync(
     pulseFile,
@@ -348,6 +424,8 @@ test("amendment 2 defect 1: legacy snapshot plus WAL duplicate cannot double cou
       aiCrawlers: 0,
       mcpSurfaceGets: 0,
       mcpProtocol: { requests: 0, messages: 0, byMethod: {} },
+      mcpToolCallsObservedFrom: "2026-01-01T00:00:00.000Z",
+      mcpToolCallsByName: {},
       sellerRepair: { briefViews: 0, scopeClicks: 0, checkoutStarts: 0, byFinding: {} },
       byPath: {},
       byReferer: {},
@@ -494,6 +572,8 @@ test("amendment 2 defect 3b: malformed snapshot migration fails closed", () => {
       aiCrawlers: 0,
       mcpSurfaceGets: 0,
       mcpProtocol: { requests: 0, messages: 0, byMethod: {} },
+      mcpToolCallsObservedFrom: "2026-01-01T00:00:00.000Z",
+      mcpToolCallsByName: {},
       sellerRepair: { briefViews: 0, scopeClicks: 0, checkoutStarts: 0, byFinding: {} },
       byPath: {},
       byReferer: {},
@@ -878,7 +958,7 @@ test("controller: durable ack with failed WAL removal remains retryable and inco
   const fallback = createFileFallbackStore(walFile, {
     writeJson(filePath, value) {
       writeCount += 1;
-      if (writeCount === 2) return false;
+      if (writeCount === 3) return false;
       return atomicWriteJson(filePath, value);
     },
   });

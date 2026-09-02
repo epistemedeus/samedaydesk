@@ -64,12 +64,13 @@ const PULSE_FALLBACK_FILE = `${PULSE_FILE}.fallback.json`;
 
 const processStartedAt = new Date().toISOString();
 let observationStartedAt = processStartedAt;
+let mcpToolCallsObservedFrom = processStartedAt;
 let durableStore = createDefaultPulseStore();
 let fileFallback = createDefaultFileFallback(PULSE_FALLBACK_FILE);
 let hydrationState = "pending";
 let durableSnapshot = null;
 let legacyUncertainty = null;
-let pendingDelta = emptyDelta();
+let pendingDelta = emptyDelta(mcpToolCallsObservedFrom);
 let inFlightFlush = null;
 let flushInProgress = false;
 let lastSuccessfulFlush = fileFallback.getLastSuccessfulFlush();
@@ -251,13 +252,13 @@ function admitPendingDeltaToWal() {
   const result = fileFallback.enqueuePendingFlush(entry);
   refreshFallbackDiagnostics();
   if (result.outcome === "queued" || result.outcome === "duplicate_same") {
-    pendingDelta = emptyDelta();
+    pendingDelta = emptyDelta(mcpToolCallsObservedFrom);
     walWritePending = false;
     if (!inFlightFlush) inFlightFlush = entry;
     return true;
   }
   if (result.outcome === "dropped_persisted") {
-    pendingDelta = emptyDelta();
+    pendingDelta = emptyDelta(mcpToolCallsObservedFrom);
     walWritePending = false;
     return false;
   }
@@ -300,11 +301,22 @@ function enqueueMigrationDelta(delta) {
 
 async function readDurableSnapshot() {
   const snapshot = await durableStore.readSnapshot(observationStartedAt);
-  if (!Object.hasOwn(snapshot || {}, "mcpToolCallsByName")) {
-    throw new Error("pulse_incomplete_schema:mcpToolCallsByName");
+  if (
+    !Object.hasOwn(snapshot || {}, "mcpToolCallsByName") ||
+    typeof snapshot.mcpToolCallsObservedFrom !== "string" ||
+    !Number.isFinite(Date.parse(snapshot.mcpToolCallsObservedFrom))
+  ) {
+    throw new Error("pulse_incomplete_schema:mcpToolCallsByNameObservation");
   }
   durableSnapshot = snapshot;
   if (snapshot?.observationStart) observationStartedAt = snapshot.observationStart;
+  mcpToolCallsObservedFrom = snapshot.mcpToolCallsObservedFrom;
+  if (!fileFallback.persistLocalMetadata({ mcpToolCallsObservedFrom })) {
+    walWritePending = true;
+  } else {
+    mcpToolCallsObservedFrom =
+      fileFallback.getMcpToolCallsObservedFrom() || mcpToolCallsObservedFrom;
+  }
   if (snapshot?.legacyUncertainty) legacyUncertainty = snapshot.legacyUncertainty;
   hydrationState = "hydrated";
   return snapshot;
@@ -472,7 +484,7 @@ function migrateLegacySnapshotFileOnce() {
     }
 
     if (loadedSchemaVersion < CLASSIFICATION_SCHEMA_VERSION) {
-      pendingDelta = emptyDelta();
+      pendingDelta = emptyDelta(mcpToolCallsObservedFrom);
       assertSnapshotMigrationKeys(snapshot, 1);
       validateLegacyFingerprintArray(snapshot.uniqueHumans);
       loadLegacyFromFileSnapshot(snapshot);
@@ -480,6 +492,7 @@ function migrateLegacySnapshotFileOnce() {
       if (!fileFallback.persistLocalMetadata({
         legacyUncertainty: legacyUncertaintyForWal(legacyUncertainty),
         observationStartedAt: processStartedAt,
+        mcpToolCallsObservedFrom,
       })) {
         walWritePending = true;
         refreshFallbackDiagnostics();
@@ -503,6 +516,7 @@ function migrateLegacySnapshotFileOnce() {
       refreshFallbackDiagnostics();
       return;
     }
+    mcpToolCallsObservedFrom = migrationDelta.mcpToolCallsObservedFrom;
     if (snapshot.legacyUncertainty) legacyUncertainty = snapshot.legacyUncertainty;
     if (snapshot.startedAt) observationStartedAt = snapshot.startedAt;
     if (!fileFallback.persistLocalMetadata({
@@ -510,6 +524,7 @@ function migrateLegacySnapshotFileOnce() {
         ? legacyUncertaintyForWal(legacyUncertainty)
         : null,
       observationStartedAt,
+      mcpToolCallsObservedFrom,
     })) {
       walWritePending = true;
       refreshFallbackDiagnostics();
@@ -534,6 +549,9 @@ function loadWalStateOnStartup() {
   if (walLegacy) legacyUncertainty = walLegacy;
   const walStartedAt = fileFallback.getObservationStartedAt();
   if (walStartedAt) observationStartedAt = walStartedAt;
+  const walToolStartedAt = fileFallback.getMcpToolCallsObservedFrom();
+  if (walToolStartedAt) mcpToolCallsObservedFrom = walToolStartedAt;
+  else if (!fileFallback.persistLocalMetadata({ mcpToolCallsObservedFrom })) walWritePending = true;
   for (const entry of fileFallback.loadPendingFlushes()) {
     inFlightFlush = entry;
     break;
@@ -905,7 +923,16 @@ export function pulseSnapshot() {
       httpRequests: counters.mcpProtocol.requests,
       messages: counters.mcpProtocol.messages,
       byMethod: { ...counters.mcpProtocol.byMethod },
-      toolCallsByName: { ...counters.mcpToolCallsByName },
+      toolCallsByName: {
+        counts: { ...counters.mcpToolCallsByName },
+        observedFrom: mcpToolCallsObservedFrom,
+        coverage: "known_from_observed_from",
+        meaning:
+          "Lower-bound declared-name counts from observedFrom only. Calls before observedFrom " +
+          "and calls with absent, invalid, unknown, inherited, prototype, or accessor names " +
+          "are not classified by name. An empty counts map does not mean zero tools/call " +
+          "messages over the broader MCP protocol window.",
+      },
       meaning:
         "Shape-valid POST /mcp JSON-RPC HTTP requests only. " +
         "Counts HTTP requests, safe method classes, and exact declared tool names only. " +
@@ -941,7 +968,7 @@ export function configurePulseStoreForTests(options = {}) {
   hydrationState = "pending";
   durableSnapshot = null;
   inFlightFlush = null;
-  pendingDelta = emptyDelta();
+  pendingDelta = emptyDelta(mcpToolCallsObservedFrom);
   localProcess.uniqueHumans = new Set();
   localProcess.recent = [];
   legacyUncertainty = null;
@@ -949,12 +976,16 @@ export function configurePulseStoreForTests(options = {}) {
   walWritePending = false;
   refreshFallbackDiagnostics();
   observationStartedAt = processStartedAt;
+  mcpToolCallsObservedFrom = processStartedAt;
   hydrationPromise = null;
   if (options.reloadWal !== false) {
     const walLegacy = fileFallback.getLegacyUncertainty();
     if (walLegacy) legacyUncertainty = walLegacy;
     const walStartedAt = fileFallback.getObservationStartedAt();
     if (walStartedAt) observationStartedAt = walStartedAt;
+    const walToolStartedAt = fileFallback.getMcpToolCallsObservedFrom();
+    if (walToolStartedAt) mcpToolCallsObservedFrom = walToolStartedAt;
+    else if (!fileFallback.persistLocalMetadata({ mcpToolCallsObservedFrom })) walWritePending = true;
     for (const entry of fileFallback.loadPendingFlushes()) {
       inFlightFlush = entry;
       break;

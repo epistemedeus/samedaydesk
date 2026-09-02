@@ -18,6 +18,7 @@ const WAL_ROOT_KEYS = Object.freeze([
   "legacyImported",
   "legacyUncertainty",
   "observationStartedAt",
+  "mcpToolCallsObservedFrom",
   "migratedSnapshotDigest",
   "snapshotCorrupt",
 ]);
@@ -39,6 +40,7 @@ const V1_SNAPSHOT_KEYS = Object.freeze([
   "legacyUncertainty",
   "mcpSurfaceGets",
   "mcpProtocol",
+  "mcpToolCallsObservedFrom",
   "mcpToolCallsByName",
   "authority",
   "complete",
@@ -55,6 +57,8 @@ const V2_SNAPSHOT_KEYS = Object.freeze([
   "aiCrawlers",
   "mcpSurfaceGets",
   "mcpProtocol",
+  "mcpToolCallsObservedFrom",
+  "mcpToolCallsByName",
   "sellerRepair",
   "byPath",
   "byReferer",
@@ -187,6 +191,9 @@ export function validateWalState(raw) {
   if (raw.observationStartedAt != null && !isIsoTimestamp(raw.observationStartedAt)) {
     throw new Error("pulse_wal_corrupt");
   }
+  if (raw.mcpToolCallsObservedFrom != null && !isIsoTimestamp(raw.mcpToolCallsObservedFrom)) {
+    throw new Error("pulse_wal_corrupt");
+  }
   if (raw.migratedSnapshotDigest != null && !isHexDigest(raw.migratedSnapshotDigest, 64)) {
     throw new Error("pulse_wal_corrupt");
   }
@@ -205,6 +212,7 @@ export function validateWalState(raw) {
     legacyImported: raw.legacyImported ?? false,
     legacyUncertainty,
     observationStartedAt: raw.observationStartedAt ?? null,
+    mcpToolCallsObservedFrom: raw.mcpToolCallsObservedFrom ?? null,
     migratedSnapshotDigest: raw.migratedSnapshotDigest ?? null,
     snapshotCorrupt: raw.snapshotCorrupt ?? false,
   };
@@ -219,6 +227,7 @@ export function defaultWalState() {
     legacyImported: false,
     legacyUncertainty: null,
     observationStartedAt: null,
+    mcpToolCallsObservedFrom: null,
     migratedSnapshotDigest: null,
     snapshotCorrupt: false,
   };
