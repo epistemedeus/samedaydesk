@@ -19,8 +19,9 @@
     "test:taskmarket": "node --test server/scripts/test-taskmarket-integration.js",
     "test:mcp": "node --test server/scripts/test-mcp-protocol-negotiation.js",
     "test:spa-fallback": "node --test server/scripts/test-spa-fallback.js",
-    "test:portfolio-discovery": "node --test tools/portfolio-discovery/test.mjs",
-    "test:portfolio-discovery:live": "node tools/portfolio-discovery/cli.mjs --live"
+    "test:portfolio-discovery": "node --test tools/portfolio-discovery/test.mjs tools/portfolio-discovery/search-readiness.test.mjs",
+    "test:portfolio-discovery:live": "node tools/portfolio-discovery/cli.mjs --live",
+    "test:portfolio-search-readiness:live": "node tools/portfolio-discovery/cli.mjs --mode search-readiness --live"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",

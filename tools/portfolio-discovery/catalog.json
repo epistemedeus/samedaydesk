@@ -2,12 +2,20 @@
   "version": 1,
   "userAgent": "samedaydesk-portfolio-discovery/1.0",
   "timeoutMs": 15000,
+  "searchReadiness": {
+    "sitemapSampleLimit": 5,
+    "llmsSampleLimit": 8,
+    "hreflangSampleLimit": 3
+  },
   "sites": [
     {
       "id": "samedaydesk",
       "origin": "https://samedaydesk.com",
       "role": "operating_merchant",
       "label": "SameDayDesk",
+      "identity": {
+        "organizationName": "SameDayDesk"
+      },
       "homeFingerprint": {
         "canonical": "https://samedaydesk.com/",
         "titleIncludes": "SameDayDesk: agent commerce"
@@ -86,6 +94,9 @@
       "origin": "https://ein.llc",
       "role": "formation_activation",
       "label": "EIN.LLC",
+      "identity": {
+        "organizationName": "EIN.LLC"
+      },
       "homeFingerprint": {
         "canonical": "https://ein.llc/",
         "titleIncludes": "EIN.LLC"
@@ -161,6 +172,9 @@
       "origin": "https://neomorphic.io",
       "role": "experiment_trust_lab",
       "label": "Neomorphic.io",
+      "identity": {
+        "organizationName": "Neomorphic LLC"
+      },
       "homeFingerprint": {
         "canonical": "https://neomorphic.io/",
         "titleIncludes": "Neomorphic LLC"

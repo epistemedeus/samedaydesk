@@ -20,6 +20,24 @@ export function siteUrl(origin, path) {
   return new URL(path, origin.endsWith("/") ? origin : `${origin}/`).href;
 }
 
+export function originOf(urlLike, base) {
+  try {
+    return new URL(urlLike, base).origin;
+  } catch {
+    return null;
+  }
+}
+
+export function isSameOrigin(urlLike, origin) {
+  const base = origin.endsWith("/") ? origin : `${origin}/`;
+  const got = originOf(urlLike, base);
+  try {
+    return got !== null && got === new URL(origin).origin;
+  } catch {
+    return false;
+  }
+}
+
 export function catalogRequestUrls(catalog) {
   const urls = [];
   for (const site of catalog.sites) {
@@ -33,7 +51,7 @@ export function catalogRequestUrls(catalog) {
   return [...new Set(urls)];
 }
 
-function headerValue(headers, name) {
+export function headerValue(headers, name) {
   if (!headers) return "";
   if (typeof headers.get === "function") return headers.get(name) || "";
   const lower = name.toLowerCase();
@@ -54,7 +72,7 @@ function matchesContentType(actual, expected) {
   return needles.some((n) => hay === String(n).toLowerCase());
 }
 
-function extractCanonical(html) {
+export function extractCanonical(html) {
   const tags = String(html).match(/<link\b[^>]*>/gi) || [];
   for (const tag of tags) {
     if (!/\brel\s*=\s*(["']?)canonical\1/i.test(tag)) continue;
@@ -64,12 +82,12 @@ function extractCanonical(html) {
   return null;
 }
 
-function extractTitle(html) {
+export function extractTitle(html) {
   const match = String(html).match(/<title\b[^>]*>([\s\S]*?)<\/title>/i);
   return match ? match[1].replace(/\s+/g, " ").trim() : "";
 }
 
-function extractJsonLdBlocks(html) {
+export function extractJsonLdBlocks(html) {
   const blocks = [];
   const re = /<script\b[^>]*type\s*=\s*["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
   let match;
@@ -91,7 +109,7 @@ function collectTypes(value, into = []) {
   return into;
 }
 
-function looksLikeHomepage(body, fingerprint) {
+export function looksLikeHomepage(body, fingerprint) {
   if (!fingerprint || !body) return false;
   const canonical = extractCanonical(body);
   if (fingerprint.canonical && canonical === fingerprint.canonical) return true;
@@ -100,7 +118,7 @@ function looksLikeHomepage(body, fingerprint) {
   return false;
 }
 
-function sitemapRootName(body) {
+export function sitemapRootName(body) {
   const trimmed = String(body).replace(/^\uFEFF/, "").trim();
   const match = trimmed.match(/<(urlset|sitemapindex)\b/i);
   return match ? match[1].toLowerCase() : null;
@@ -111,7 +129,7 @@ function asStatusList(expected) {
   return Array.isArray(expected) ? expected : [expected];
 }
 
-function result(id, kind, status, extra = {}) {
+export function result(id, kind, status, extra = {}) {
   return { id, kind, status, ...extra };
 }
 

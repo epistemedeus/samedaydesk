@@ -4,7 +4,7 @@
       "/": {
         "status": 200,
         "contentType": "text/html; charset=utf-8",
-        "body": "<!doctype html><html><head><link rel=\"canonical\" href=\"https://samedaydesk.com/\" /><title>SameDayDesk: agent commerce, built and shipped</title><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"name\":\"SameDayDesk\"}]}</script></head><body>SameDayDesk</body></html>"
+        "body": "<!doctype html><html><head><link rel=\"canonical\" href=\"https://samedaydesk.com/\" /><title>SameDayDesk: agent commerce, built and shipped</title><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"name\":\"SameDayDesk\",\"url\":\"https://samedaydesk.com/\"}]}</script></head><body>SameDayDesk</body></html>"
       },
       "/robots.txt": {
         "status": 200,
@@ -14,12 +14,12 @@
       "/sitemap.xml": {
         "status": 200,
         "contentType": "application/xml",
-        "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><url><loc>https://samedaydesk.com/</loc></url></urlset>"
+        "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><url><loc>https://samedaydesk.com/</loc></url><url><loc>https://samedaydesk.com/llms.txt</loc></url></urlset>"
       },
       "/llms.txt": {
         "status": 200,
         "contentType": "text/plain; charset=utf-8",
-        "body": "# SameDayDesk\n\n> Agent commerce.\n"
+        "body": "# SameDayDesk\n\n> Agent commerce.\n\n- [llms](https://samedaydesk.com/llms.txt)\n"
       },
       "/.well-known/portfolio-discovery-probe-missing.json": {
         "status": 404,
@@ -36,7 +36,7 @@
       "/": {
         "status": 200,
         "contentType": "text/html; charset=utf-8",
-        "body": "<!doctype html><html><head><link rel=\"canonical\" href=\"https://ein.llc/\"><title>EIN.LLC : US company and EIN in days, no SSN needed</title><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"name\":\"EIN.LLC\"}]}</script></head><body>EIN.LLC</body></html>"
+        "body": "<!doctype html><html><head><link rel=\"canonical\" href=\"https://ein.llc/\"><title>EIN.LLC : US company and EIN in days, no SSN needed</title><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"name\":\"EIN.LLC\",\"url\":\"https://ein.llc/\"}]}</script></head><body>EIN.LLC</body></html>"
       },
       "/robots.txt": {
         "status": 200,
@@ -46,12 +46,12 @@
       "/sitemap.xml": {
         "status": 200,
         "contentType": "application/xml",
-        "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><url><loc>https://ein.llc/</loc></url></urlset>"
+        "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><url><loc>https://ein.llc/</loc></url><url><loc>https://ein.llc/llms.txt</loc></url></urlset>"
       },
       "/llms.txt": {
         "status": 200,
         "contentType": "text/plain; charset=utf-8",
-        "body": "# EIN.LLC\n"
+        "body": "# EIN.LLC\n\n- [llms](https://ein.llc/llms.txt)\n"
       },
       "/.well-known/portfolio-discovery-probe-missing.json": {
         "status": 404,
@@ -63,7 +63,7 @@
       "/": {
         "status": 200,
         "contentType": "text/html; charset=UTF-8",
-        "body": "<!doctype html><html><head><link rel=\"canonical\" href=\"https://neomorphic.io/\"><title>Neomorphic LLC · A custodial institution of good standing</title><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"name\":\"Neomorphic LLC\"}]}</script></head><body>Neomorphic</body></html>"
+        "body": "<!doctype html><html><head><link rel=\"canonical\" href=\"https://neomorphic.io/\"><title>Neomorphic LLC · A custodial institution of good standing</title><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"name\":\"Neomorphic LLC\",\"url\":\"https://neomorphic.io/\"}]}</script></head><body>Neomorphic</body></html>"
       },
       "/robots.txt": {
         "status": 200,
@@ -73,12 +73,12 @@
       "/sitemap.xml": {
         "status": 200,
         "contentType": "application/xml",
-        "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><url><loc>https://neomorphic.io/</loc></url></urlset>"
+        "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><url><loc>https://neomorphic.io/</loc></url><url><loc>https://neomorphic.io/llms.txt</loc></url></urlset>"
       },
       "/llms.txt": {
         "status": 200,
         "contentType": "text/plain; charset=UTF-8",
-        "body": "# Neomorphic\n"
+        "body": "# Neomorphic\n\n- [llms](https://neomorphic.io/llms.txt)\n"
       },
       "/.well-known/portfolio-discovery-probe-missing.json": {
         "status": 404,
