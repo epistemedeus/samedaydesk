@@ -9,14 +9,29 @@ import {
   isSafeStripeCheckoutUrl,
   requestSellerRepairCheckoutUrl,
 } from "../src/lib/sellerRepairCheckout.ts";
+import { sellerRepairFixedScopeUrl } from "../src/lib/sellerRepairHandoff.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
 test("seller-conformance UI delegates the fixed scope to Neomorphic without starting SameDayDesk checkout", () => {
   const source = readFileSync(join(here, "../src/pages/SellerConformance.tsx"), "utf8");
-  assert.match(source, /https:\/\/neomorphic\.io\/services\/seller-conformance\/fixed-scope\//);
+  assert.match(source, /sellerRepairFixedScopeUrl\(selectedBrief\.id\)/);
   assert.doesNotMatch(source, /requestSellerRepairCheckoutUrl|seller_repair_checkout_started|seller-repair-session/);
   assert.match(source, /LIVE_AUDIT_URL/);
+});
+
+test("known seller finding is preserved in the canonical Neomorphic fixed-scope URL", () => {
+  assert.equal(
+    sellerRepairFixedScopeUrl("hypernatt-liq-radar-20260830"),
+    "https://neomorphic.io/services/seller-conformance/fixed-scope/?finding=hypernatt-liq-radar-20260830",
+  );
+});
+
+test("absent or unrecognized seller findings retain the generic canonical URL", () => {
+  const generic = "https://neomorphic.io/services/seller-conformance/fixed-scope/";
+  assert.equal(sellerRepairFixedScopeUrl(null), generic);
+  assert.equal(sellerRepairFixedScopeUrl("not-a-known-finding"), generic);
+  assert.equal(sellerRepairFixedScopeUrl("bad/value?client_reference_id=spoofed"), generic);
 });
 
 test("accepts only safe Stripe checkout URLs", () => {
