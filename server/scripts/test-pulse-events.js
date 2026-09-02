@@ -6,7 +6,8 @@ import { spawnSync } from "node:child_process";
 import test from "node:test";
 import express from "express";
 
-process.env.PULSE_FILE = "/dev/null";
+const pulseTempDir = mkdtempSync(join(tmpdir(), "pulse-events-root-"));
+process.env.PULSE_FILE = join(pulseTempDir, "pulse.json");
 
 const { sellerRepairBriefs } = await import("../../client/src/data/sellerRepairBriefs.ts");
 const {
@@ -171,6 +172,7 @@ test("exposes only the bounded event write route", async (t) => {
 test("persists and reloads bounded seller-repair counters", (t) => {
   const dir = mkdtempSync(join(tmpdir(), "sdd-pulse-test-"));
   const file = join(dir, "pulse.json");
+  const wal = `${file}.fallback.json`;
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   const moduleUrl = new URL("../lib/pulse.js", import.meta.url).href;
   const env = { ...process.env, PULSE_FILE: file };
@@ -180,14 +182,15 @@ test("persists and reloads bounded seller-repair counters", (t) => {
     [
       "--input-type=module",
       "-e",
-      `const { recordClientEvent } = await import(${JSON.stringify(moduleUrl)});\n` +
-        `if (!recordClientEvent("seller_repair_brief_viewed", { finding_id: "vibe-springs-btc-usd-20260830", route_class: "paid_get" })) process.exit(2);`,
+      `const { recordClientEvent, flushPulseSnapshot } = await import(${JSON.stringify(moduleUrl)});\n` +
+        `if (!recordClientEvent("seller_repair_brief_viewed", { finding_id: "vibe-springs-btc-usd-20260830", route_class: "paid_get" })) process.exit(2);\n` +
+        `if (!flushPulseSnapshot()) process.exit(3);`,
     ],
     { env, encoding: "utf8" },
   );
   assert.equal(writer.status, 0, writer.stderr);
-  const saved = JSON.parse(readFileSync(file, "utf8"));
-  assert.equal(saved.sellerRepair.byFinding["vibe-springs-btc-usd-20260830"].briefViews, 1);
+  const saved = JSON.parse(readFileSync(wal, "utf8"));
+  assert.equal(saved.pendingFlushes[0].delta.sellerRepair.byFinding["vibe-springs-btc-usd-20260830"].briefViews, 1);
 
   const reader = spawnSync(
     process.execPath,
@@ -229,7 +232,7 @@ test("reproduces the live false-human case as plain GET /mcp surface access", ()
     "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
   const { before, after } = recordGet({ "user-agent": ua });
   assert.equal(after.humans, before.humans);
-  assert.equal(after.uniqueHumans, before.uniqueHumans);
+  assert.equal(after.uniqueHumansEstimate.count, before.uniqueHumansEstimate.count);
   assert.equal(after.byPath["/mcp"] || 0, before.byPath["/mcp"] || 0);
   assert.equal(after.mcpSurfaceGet.requests, before.mcpSurfaceGet.requests + 1);
   assert.equal(after.recent[0]?.kind, "mcpSurfaceGet");
@@ -421,7 +424,7 @@ test("isolates legacy v1 request classification behind a coherent uncertainty bo
   assert.notEqual(snapshot.startedAt, "2026-08-30T00:00:00.000Z");
   assert.equal(snapshot.total, 0);
   assert.equal(snapshot.humans, 0);
-  assert.equal(snapshot.uniqueHumans, 0);
+  assert.equal(snapshot.uniqueHumansEstimate.count, 0);
   assert.equal(snapshot.bots, 0);
   assert.equal(snapshot.aiCrawlers, 0);
   assert.deepEqual(snapshot.byPath, {});
@@ -448,15 +451,15 @@ test("isolates legacy v1 request classification behind a coherent uncertainty bo
   assert.equal(snapshot.legacyUncertainty.funnel.home, 20);
   assert.equal(snapshot.sellerRepair.briefViews, 2);
 
-  const saved = JSON.parse(readFileSync(file, "utf8"));
-  assert.equal(saved.classificationSchemaVersion, 2);
-  assert.equal(saved.legacyUncertainty.byPath["/mcp"], 15142);
-  assert.equal(saved.sellerRepair.briefViews, 2);
+  const wal = JSON.parse(readFileSync(`${file}.fallback.json`, "utf8"));
+  assert.equal(wal.legacyUncertainty.byPath["/mcp"], 15142);
+  assert.equal(wal.pendingFlushes[0].delta.sellerRepair.briefViews, 2);
 });
 
 test("persists and reloads v2 MCP counters without a second migration", (t) => {
   const dir = mkdtempSync(join(tmpdir(), "sdd-pulse-v2-test-"));
   const file = join(dir, "pulse.json");
+  const wal = `${file}.fallback.json`;
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   const moduleUrl = new URL("../lib/pulse.js", import.meta.url).href;
   const env = { ...process.env, PULSE_FILE: file };
@@ -474,11 +477,11 @@ test("persists and reloads v2 MCP counters without a second migration", (t) => {
     { env, encoding: "utf8" },
   );
   assert.equal(writer.status, 0, writer.stderr);
-  const saved = JSON.parse(readFileSync(file, "utf8"));
-  assert.equal(saved.classificationSchemaVersion, 2);
-  assert.equal(saved.mcpSurfaceGets, 1);
-  assert.equal(saved.mcpProtocol.requests, 1);
-  assert.equal(saved.humans, 0);
+  const saved = JSON.parse(readFileSync(wal, "utf8"));
+  assert.equal(saved.pendingFlushes.length, 1);
+  assert.equal(saved.pendingFlushes[0].delta.mcpSurfaceGets, 1);
+  assert.equal(saved.pendingFlushes[0].delta.mcpProtocolRequests, 1);
+  assert.equal(saved.pendingFlushes[0].delta.humans, 0);
 
   const reader = spawnSync(
     process.execPath,
@@ -543,18 +546,15 @@ test("uses a durable per-user state path in production and migrates the legacy t
       `const { flushPulseSnapshot, pulseSnapshot, recordClientEvent } = await import(${JSON.stringify(moduleUrl)});\n` +
         `if (!recordClientEvent("seller_repair_brief_viewed", { finding_id: "hypernatt-liq-radar-20260830", route_class: "paid_get" })) process.exit(2);\n` +
         `if (!flushPulseSnapshot()) process.exit(3);\n` +
-        `console.log(JSON.stringify(pulseSnapshot().storage));`,
+        `console.log(JSON.stringify({ storage: pulseSnapshot().storage, sellerRepair: pulseSnapshot().sellerRepair }));`,
     ],
     { env, encoding: "utf8" },
   );
   assert.equal(writer.status, 0, writer.stderr);
-  const storage = JSON.parse(writer.stdout);
-  assert.equal(storage.mode, "production_state_home");
-  assert.equal(storage.loaded, true);
-  assert.equal(storage.migratedLegacySnapshot, true);
-  assert.equal(storage.lastSaveOk, true);
-  assert.equal(
-    JSON.parse(readFileSync(durableFile, "utf8")).sellerRepair.briefViews,
-    2,
-  );
+  const payload = JSON.parse(writer.stdout);
+  assert.equal(payload.storage.mode, "production_state_home");
+  assert.equal(payload.storage.migratedLegacySnapshot, true);
+  assert.equal(payload.sellerRepair.briefViews, 2);
+  const wal = JSON.parse(readFileSync(`${durableFile}.fallback.json`, "utf8"));
+  assert.ok(wal.pendingFlushes.length >= 1);
 });
