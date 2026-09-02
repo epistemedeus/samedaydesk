@@ -15,6 +15,10 @@ import os from "node:os";
 import path from "node:path";
 
 const RECENT_CAP = 80;
+const CLASSIFICATION_SCHEMA_VERSION = 2;
+const MCP_MOUNT_PATH = "/mcp";
+const MCP_BATCH_MAX = 25;
+const MCP_METHOD_MAX_LEN = 128;
 
 export const sellerRepairFindingRouteClasses = Object.freeze({
   "hypernatt-liq-radar-20260830": "paid_get",
@@ -32,17 +36,39 @@ export const sellerRepairFindingIds = Object.freeze(
 );
 const SELLER_REPAIR_FINDING_IDS = new Set(sellerRepairFindingIds);
 
+function emptyMcpProtocol() {
+  return {
+    requests: 0,
+    messages: 0,
+    byMethod: {
+      initialize: 0,
+      "tools/list": 0,
+      "tools/call": 0,
+      notifications: 0,
+      other: 0,
+    },
+  };
+}
+
+function emptyFunnel() {
+  return { home: 0, scan: 0, tools: 0, reports: 0, guides: 0, pricing: 0 };
+}
+
 const state = {
   startedAt: new Date().toISOString(),
+  classificationSchemaVersion: CLASSIFICATION_SCHEMA_VERSION,
   total: 0,
   humans: 0,
   bots: 0,
   aiCrawlers: 0,
-  byPath: Object.create(null), // page path -> count (human + unknown only)
+  mcpSurfaceGets: 0,
+  mcpProtocol: emptyMcpProtocol(),
+  legacyUncertainty: null,
+  byPath: Object.create(null), // page path -> count (humans only)
   byReferer: Object.create(null), // referer host -> count (humans)
   byAiBot: Object.create(null), // AI crawler product -> count
   uniqueHumans: new Set(), // coarse ip+ua hash, humans only
-  funnel: { home: 0, scan: 0, tools: 0, reports: 0, guides: 0, pricing: 0 },
+  funnel: emptyFunnel(),
   sellerRepair: {
     briefViews: 0,
     scopeClicks: 0,
@@ -79,10 +105,17 @@ const pulseStorage = {
 };
 let dirty = false;
 
+function serializeSnapshot() {
+  return {
+    ...state,
+    uniqueHumans: [...state.uniqueHumans],
+  };
+}
+
 function saveSnapshot() {
   try {
     fs.mkdirSync(path.dirname(PULSE_FILE), { recursive: true, mode: 0o700 });
-    fs.writeFileSync(PULSE_FILE, JSON.stringify({ ...state, uniqueHumans: [...state.uniqueHumans] }));
+    fs.writeFileSync(PULSE_FILE, JSON.stringify(serializeSnapshot()));
     dirty = false;
     pulseStorage.lastSaveAt = new Date().toISOString();
     pulseStorage.lastSaveOk = true;
@@ -92,6 +125,95 @@ function saveSnapshot() {
     return false;
   }
 }
+
+function loadSellerRepair(s) {
+  state.sellerRepair.briefViews = s.sellerRepair?.briefViews || 0;
+  state.sellerRepair.scopeClicks = s.sellerRepair?.scopeClicks || 0;
+  state.sellerRepair.checkoutStarts = s.sellerRepair?.checkoutStarts || 0;
+  state.sellerRepair.byFinding = Object.create(null);
+  for (const findingId of sellerRepairFindingIds) {
+    const row = s.sellerRepair?.byFinding?.[findingId];
+    if (row?.routeClass !== sellerRepairFindingRouteClasses[findingId]) continue;
+    state.sellerRepair.byFinding[findingId] = {
+      routeClass: row.routeClass,
+      briefViews: Number.isSafeInteger(row.briefViews) && row.briefViews >= 0
+        ? row.briefViews
+        : 0,
+      scopeClicks: Number.isSafeInteger(row.scopeClicks) && row.scopeClicks >= 0
+        ? row.scopeClicks
+        : 0,
+      checkoutStarts: Number.isSafeInteger(row.checkoutStarts) && row.checkoutStarts >= 0
+        ? row.checkoutStarts
+        : 0,
+    };
+  }
+}
+
+function resetV2RequestCounters() {
+  state.startedAt = new Date().toISOString();
+  state.total = 0;
+  state.humans = 0;
+  state.bots = 0;
+  state.aiCrawlers = 0;
+  state.mcpSurfaceGets = 0;
+  state.mcpProtocol = emptyMcpProtocol();
+  state.byPath = Object.create(null);
+  state.byReferer = Object.create(null);
+  state.byAiBot = Object.create(null);
+  state.uniqueHumans = new Set();
+  state.funnel = emptyFunnel();
+  state.recent = [];
+  state.classificationSchemaVersion = CLASSIFICATION_SCHEMA_VERSION;
+}
+
+function applyLegacyUncertaintyBoundary(s) {
+  state.legacyUncertainty = {
+    schemaVersion: 1,
+    note:
+      "Request-classification counters captured before MCP surface/protocol split. " +
+      "GET /mcp hits were stored as human page views without evidence to relabel them.",
+    startedAt: s.startedAt || null,
+    total: s.total || 0,
+    humans: s.humans || 0,
+    uniqueHumans: Array.isArray(s.uniqueHumans) ? s.uniqueHumans.length : 0,
+    bots: s.bots || 0,
+    aiCrawlers: s.aiCrawlers || 0,
+    byPath: { ...(s.byPath || {}) },
+    byReferer: { ...(s.byReferer || {}) },
+    byAiBot: { ...(s.byAiBot || {}) },
+    funnel: { ...emptyFunnel(), ...(s.funnel || {}) },
+    recent: Array.isArray(s.recent) ? s.recent.slice(-RECENT_CAP) : [],
+  };
+  resetV2RequestCounters();
+  dirty = true;
+}
+
+function loadV2RequestCounters(s) {
+  state.classificationSchemaVersion = s.classificationSchemaVersion || CLASSIFICATION_SCHEMA_VERSION;
+  state.startedAt = s.startedAt || state.startedAt;
+  state.total = s.total || 0;
+  state.humans = s.humans || 0;
+  state.bots = s.bots || 0;
+  state.aiCrawlers = s.aiCrawlers || 0;
+  state.mcpSurfaceGets = s.mcpSurfaceGets || 0;
+  state.mcpProtocol = emptyMcpProtocol();
+  const loadedProtocol = s.mcpProtocol;
+  if (loadedProtocol && typeof loadedProtocol === "object") {
+    state.mcpProtocol.requests = loadedProtocol.requests || 0;
+    state.mcpProtocol.messages = loadedProtocol.messages || 0;
+    for (const key of Object.keys(state.mcpProtocol.byMethod)) {
+      state.mcpProtocol.byMethod[key] = loadedProtocol.byMethod?.[key] || 0;
+    }
+  }
+  Object.assign(state.byPath, s.byPath || {});
+  Object.assign(state.byReferer, s.byReferer || {});
+  Object.assign(state.byAiBot, s.byAiBot || {});
+  Object.assign(state.funnel, { ...emptyFunnel(), ...(s.funnel || {}) });
+  state.uniqueHumans = new Set(s.uniqueHumans || []);
+  state.recent = Array.isArray(s.recent) ? s.recent.slice(-RECENT_CAP) : [];
+  state.legacyUncertainty = s.legacyUncertainty || null;
+}
+
 function loadSnapshot() {
   try {
     let source = PULSE_FILE;
@@ -100,38 +222,17 @@ function loadSnapshot() {
       pulseStorage.migratedLegacySnapshot = true;
     }
     const s = JSON.parse(fs.readFileSync(source, "utf8"));
-    state.total = s.total || 0;
-    state.humans = s.humans || 0;
-    state.bots = s.bots || 0;
-    state.aiCrawlers = s.aiCrawlers || 0;
-    Object.assign(state.byPath, s.byPath || {});
-    Object.assign(state.byReferer, s.byReferer || {});
-    Object.assign(state.byAiBot, s.byAiBot || {});
-    Object.assign(state.funnel, s.funnel || {});
-    state.sellerRepair.briefViews = s.sellerRepair?.briefViews || 0;
-    state.sellerRepair.scopeClicks = s.sellerRepair?.scopeClicks || 0;
-    state.sellerRepair.checkoutStarts = s.sellerRepair?.checkoutStarts || 0;
-    for (const findingId of sellerRepairFindingIds) {
-      const row = s.sellerRepair?.byFinding?.[findingId];
-      if (row?.routeClass !== sellerRepairFindingRouteClasses[findingId]) continue;
-      state.sellerRepair.byFinding[findingId] = {
-        routeClass: row.routeClass,
-        briefViews: Number.isSafeInteger(row.briefViews) && row.briefViews >= 0
-          ? row.briefViews
-          : 0,
-        scopeClicks: Number.isSafeInteger(row.scopeClicks) && row.scopeClicks >= 0
-          ? row.scopeClicks
-          : 0,
-        checkoutStarts: Number.isSafeInteger(row.checkoutStarts) && row.checkoutStarts >= 0
-          ? row.checkoutStarts
-          : 0,
-      };
-    }
-    state.uniqueHumans = new Set(s.uniqueHumans || []);
-    state.recent = Array.isArray(s.recent) ? s.recent.slice(-RECENT_CAP) : [];
-    if (s.startedAt) state.startedAt = s.startedAt; // keep the true window start
+    const loadedSchemaVersion = s.classificationSchemaVersion || 1;
+    loadSellerRepair(s);
     pulseStorage.loaded = true;
-    if (source !== PULSE_FILE) {
+
+    if (loadedSchemaVersion >= CLASSIFICATION_SCHEMA_VERSION) {
+      loadV2RequestCounters(s);
+    } else {
+      applyLegacyUncertaintyBoundary(s);
+    }
+
+    if (source !== PULSE_FILE || loadedSchemaVersion < CLASSIFICATION_SCHEMA_VERSION) {
       dirty = true;
       saveSnapshot();
     }
@@ -175,6 +276,12 @@ function classify(ua) {
   return { kind: "human", aiBot: null };
 }
 
+function headerValue(req, name) {
+  const raw = req.headers?.[name];
+  if (Array.isArray(raw)) return String(raw[0] || "");
+  return typeof raw === "string" ? raw : "";
+}
+
 function refererHost(ref) {
   if (!ref) return "(direct)";
   try {
@@ -189,10 +296,142 @@ function bump(obj, key) {
   obj[key] = (obj[key] || 0) + 1;
 }
 
+function isMcpMountPath(requestPath) {
+  return requestPath === MCP_MOUNT_PATH || requestPath === `${MCP_MOUNT_PATH}/`;
+}
+
+function pushRecent(event) {
+  state.recent.push(event);
+  if (state.recent.length > RECENT_CAP) state.recent.shift();
+  dirty = true;
+}
+
+export function mcpMethodClass(method) {
+  if (method === "initialize") return "initialize";
+  if (method === "tools/list") return "tools/list";
+  if (method === "tools/call") return "tools/call";
+  if (
+    method === "notifications/initialized" ||
+    method === "notifications/cancelled" ||
+    method.startsWith("notifications/")
+  ) {
+    return "notifications";
+  }
+  return "other";
+}
+
+function isValidMcpRpcMessage(msg) {
+  if (!msg || typeof msg !== "object" || Array.isArray(msg)) return false;
+  if (msg.jsonrpc !== "2.0") return false;
+  if (typeof msg.method !== "string" || !msg.method || msg.method.length > MCP_METHOD_MAX_LEN) {
+    return false;
+  }
+  return true;
+}
+
+// Admit shape-valid POST /mcp JSON-RPC bodies only. Params, IDs, and tool names
+// are never read or stored.
+export function parseMcpProtocolBody(body) {
+  let entries;
+  if (Array.isArray(body)) {
+    if (body.length === 0 || body.length > MCP_BATCH_MAX) {
+      return { admitted: false, messages: [] };
+    }
+    entries = body;
+  } else if (body && typeof body === "object") {
+    entries = [body];
+  } else {
+    return { admitted: false, messages: [] };
+  }
+
+  const messages = [];
+  for (const entry of entries) {
+    if (!isValidMcpRpcMessage(entry)) return { admitted: false, messages: [] };
+    messages.push({ methodClass: mcpMethodClass(entry.method) });
+  }
+  return { admitted: messages.length > 0, messages };
+}
+
+export function classifyPulseGet(req, requestPath) {
+  const ua = headerValue(req, "user-agent");
+  const { kind, aiBot } = classify(ua);
+  return { kind, aiBot, recentKind: aiBot || kind };
+}
+
+function recordMcpSurfaceGet() {
+  state.total += 1;
+  state.mcpSurfaceGets += 1;
+  pushRecent({
+    t: new Date().toISOString(),
+    p: MCP_MOUNT_PATH,
+    kind: "mcpSurfaceGet",
+  });
+}
+
+function recordMcpProtocolPost(req) {
+  const parsed = parseMcpProtocolBody(req.body);
+  if (!parsed.admitted) return;
+
+  state.total += 1;
+  state.mcpProtocol.requests += 1;
+  state.mcpProtocol.messages += parsed.messages.length;
+  for (const { methodClass } of parsed.messages) {
+    bump(state.mcpProtocol.byMethod, methodClass);
+  }
+  pushRecent({
+    t: new Date().toISOString(),
+    p: MCP_MOUNT_PATH,
+    kind: "mcpProtocol",
+    n: parsed.messages.length,
+  });
+}
+
+function recordOrdinaryGet(req, p) {
+  const { kind, aiBot, recentKind } = classifyPulseGet(req, p);
+  const ref = refererHost(req.headers["referer"] || req.headers["origin"] || "");
+  state.total += 1;
+
+  if (kind === "ai") {
+    state.aiCrawlers += 1;
+    bump(state.byAiBot, aiBot);
+  } else if (kind === "bot") {
+    state.bots += 1;
+  } else {
+    state.humans += 1;
+    bump(state.byPath, p.length > 60 ? p.slice(0, 60) : p);
+    bump(state.byReferer, ref);
+    const ua = headerValue(req, "user-agent");
+    const ipRaw = (req.headers["x-forwarded-for"] || "").split(",")[0].trim() || req.ip || "";
+    const fp = crypto.createHash("sha1").update(ipRaw + "|" + ua).digest("hex").slice(0, 16);
+    state.uniqueHumans.add(fp);
+  }
+
+  if (p === "/") state.funnel.home += 1;
+  else if (p === "/scan" || p.startsWith("/scan")) state.funnel.scan += 1;
+  else if (p.startsWith("/tools")) state.funnel.tools += 1;
+  else if (p.startsWith("/reports")) state.funnel.reports += 1;
+  else if (p.startsWith("/guides")) state.funnel.guides += 1;
+  else if (p === "/pricing" || p === "/checkout") state.funnel.pricing += 1;
+
+  pushRecent({
+    t: new Date().toISOString(),
+    p,
+    kind: recentKind,
+    ref: kind === "human" ? ref : undefined,
+  });
+}
+
 export function pulseMiddleware(req, _res, next) {
   try {
-    if (req.method !== "GET") return next();
     const p = (req.path || "/").split("?")[0];
+
+    if (req.method === "POST" && isMcpMountPath(p)) {
+      recordMcpProtocolPost(req);
+      return next();
+    }
+
+    if (req.method !== "GET") return next();
+
     // Ignore assets, the pulse endpoint itself, health, and API noise.
     if (
       ASSET_RE.test(p) ||
@@ -204,42 +443,12 @@ export function pulseMiddleware(req, _res, next) {
       return next();
     }
 
-    const ua = req.headers["user-agent"] || "";
-    const { kind, aiBot } = classify(ua);
-    const ref = refererHost(req.headers["referer"] || req.headers["origin"] || "");
-    state.total += 1;
-
-    if (kind === "ai") {
-      state.aiCrawlers += 1;
-      bump(state.byAiBot, aiBot);
-    } else if (kind === "bot") {
-      state.bots += 1;
-    } else {
-      state.humans += 1;
-      bump(state.byPath, p.length > 60 ? p.slice(0, 60) : p);
-      bump(state.byReferer, ref);
-      const ipRaw = (req.headers["x-forwarded-for"] || "").split(",")[0].trim() || req.ip || "";
-      const fp = crypto.createHash("sha1").update(ipRaw + "|" + ua).digest("hex").slice(0, 16);
-      state.uniqueHumans.add(fp);
+    if (isMcpMountPath(p)) {
+      recordMcpSurfaceGet();
+      return next();
     }
 
-    // Funnel buckets (count all visitor kinds; humans matter most but AI crawlers
-    // hitting /scan or /reports is itself a GEO signal).
-    if (p === "/") state.funnel.home += 1;
-    else if (p === "/scan" || p.startsWith("/scan")) state.funnel.scan += 1;
-    else if (p.startsWith("/tools")) state.funnel.tools += 1;
-    else if (p.startsWith("/reports")) state.funnel.reports += 1;
-    else if (p.startsWith("/guides")) state.funnel.guides += 1;
-    else if (p === "/pricing" || p === "/checkout") state.funnel.pricing += 1;
-
-    state.recent.push({
-      t: new Date().toISOString(),
-      p,
-      kind: aiBot || kind,
-      ref: kind === "human" ? ref : undefined,
-    });
-    if (state.recent.length > RECENT_CAP) state.recent.shift();
-    dirty = true;
+    recordOrdinaryGet(req, p);
   } catch {
     // Never let analytics break a request.
   }
@@ -295,11 +504,29 @@ export function pulseSnapshot() {
   return {
     startedAt: state.startedAt,
     now: new Date().toISOString(),
+    classificationSchemaVersion: state.classificationSchemaVersion,
     total: state.total,
     humans: state.humans,
     uniqueHumans: state.uniqueHumans.size,
     bots: state.bots,
     aiCrawlers: state.aiCrawlers,
+    mcpSurfaceGet: {
+      requests: state.mcpSurfaceGets,
+      meaning:
+        "GET /mcp hits the MCP endpoint setup or purchase-return plain-text surface. " +
+        "May be a browser, monitor, registry probe, or client check. " +
+        "Not unique agents, buyers, demand, payment, or protocol use.",
+    },
+    mcpProtocol: {
+      httpRequests: state.mcpProtocol.requests,
+      messages: state.mcpProtocol.messages,
+      byMethod: { ...state.mcpProtocol.byMethod },
+      meaning:
+        "Shape-valid POST /mcp JSON-RPC HTTP requests only. " +
+        "Counts HTTP requests and safe method classes, not params, tools, sessions, or delivery. " +
+        "Not unique agents, buyers, demand, or payment.",
+    },
+    legacyUncertainty: state.legacyUncertainty,
     funnel: state.funnel,
     byPath: state.byPath,
     byReferer: state.byReferer,
