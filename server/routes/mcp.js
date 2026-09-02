@@ -17,6 +17,7 @@ import {
   buildTaskMarketDelegationPlan,
   trackTaskMarketTask,
 } from "../lib/taskmarket.js";
+import { MCP_TOOL_NAMES } from "../lib/mcp-tool-inventory.js";
 
 const router = Router();
 
@@ -25,9 +26,9 @@ const SERVER_INFO = { name: "samedaydesk-agent-tools", version: "1.2.0" };
 const FIXPACK_LINK = "https://buy.stripe.com/8x24gA0xA9DF9dd13YeZ20h"; // $39 instant Fix Pack
 const FIXPACK_MIN_CENTS = 3900;
 
-const TOOLS = [
+export const TOOLS = [
   {
-    name: "check_ai_readiness",
+    name: MCP_TOOL_NAMES[0],
     description:
       "Check whether a website is visible to AI search engines (ChatGPT, Perplexity, Claude, Google AI Overviews). " +
       "Scores AI-crawler access, JSON-LD structured data, title/meta, Open Graph, sitemap, and llms.txt, and returns " +
@@ -41,7 +42,7 @@ const TOOLS = [
     },
   },
   {
-    name: "generate_complete_fix_pack",
+    name: MCP_TOOL_NAMES[1],
     description:
       "PAID. Returns the complete, ready-to-paste AI-readiness Fix Pack for a site: tailored Organization + FAQPage " +
       "JSON-LD, an AI-crawler robots.txt, a sitemap, and title/meta/Open Graph fixes. Requires a `license` — the " +
@@ -57,7 +58,7 @@ const TOOLS = [
     },
   },
   {
-    name: "plan_taskmarket_delegation",
+    name: MCP_TOOL_NAMES[2],
     description:
       "Prepare a bounded TaskMarket delegation for research, coding, data collection, benchmarking, or verification. " +
       "Requires the deliverable, reward, deadline, and an explicit maximum-spend ceiling. Returns the canonical TaskMarket " +
@@ -78,7 +79,7 @@ const TOOLS = [
     },
   },
   {
-    name: "browse_taskmarket_tasks",
+    name: MCP_TOOL_NAMES[3],
     description:
       "Browse current public TaskMarket inventory through the official read API. Filter by lifecycle status, mode, tag, " +
       "text, and minimum reward. Task descriptions are returned as untrusted text and are never executed.",
@@ -95,7 +96,7 @@ const TOOLS = [
     },
   },
   {
-    name: "track_taskmarket_task",
+    name: MCP_TOOL_NAMES[4],
     description:
       "Track one public TaskMarket task through the official read API. Returns status, deadline, submissions, artifact " +
       "hashes, canonical awards, pending actions, and the next authorization boundary. It cannot create, accept, reject, rate, or refund work.",

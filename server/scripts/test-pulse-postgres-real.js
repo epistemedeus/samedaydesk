@@ -11,6 +11,10 @@ const MIGRATION_SQL = readFileSync(
   join(__dirname, "../../supabase/migrations/0002_pulse_durable.sql"),
   "utf8",
 );
+const AMENDMENT_SQL = readFileSync(
+  join(__dirname, "../../supabase/migrations/0003_pulse_mcp_tool_demand.sql"),
+  "utf8",
+);
 
 const PG_BIN = process.env.PULSE_PG_BIN || "/usr/lib/postgresql/17/bin";
 const INITDB = join(PG_BIN, "initdb");
@@ -106,6 +110,7 @@ CREATE ROLE authenticated NOLOGIN;
 CREATE ROLE service_role NOLOGIN;
 GRANT USAGE ON SCHEMA public TO service_role;
 ${MIGRATION_SQL}
+${AMENDMENT_SQL}
 `,
   });
 }
@@ -147,6 +152,7 @@ BEGIN
     "total": 10, "humans": 8, "bots": 2, "aiCrawlers": 1,
     "mcpSurfaceGets": 3, "mcpProtocolRequests": 2, "mcpProtocolMessages": 5,
     "mcpProtocolByMethod": {"initialize": 1, "tools/list": 1},
+    "mcpToolCallsByName": {"check_ai_readiness": 2},
     "byPath": {"/pricing": 5}, "byReferer": {"(direct)": 10},
     "byAiBot": {"GPTBot": 1},
     "funnel": {"home": 3, "scan": 0, "tools": 0, "reports": 0, "guides": 0, "pricing": 0},

@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { MCP_TOOL_NAMES, MCP_TOOL_NAME_MAX_LEN } from "../mcp-tool-inventory.js";
 
 export const CLASSIFICATION_SCHEMA_VERSION = 2;
 export const LEGACY_SCHEMA_VERSION = 1;
@@ -40,6 +41,7 @@ export const DELTA_ALLOWED_KEYS = Object.freeze([
   "mcpProtocolRequests",
   "mcpProtocolMessages",
   "mcpProtocolByMethod",
+  "mcpToolCallsByName",
   "byPath",
   "byReferer",
   "byAiBot",
@@ -96,6 +98,7 @@ export function emptyDelta() {
     mcpProtocolRequests: 0,
     mcpProtocolMessages: 0,
     mcpProtocolByMethod: emptyMcpProtocolByMethod(),
+    mcpToolCallsByName: Object.create(null),
     byPath: Object.create(null),
     byReferer: Object.create(null),
     byAiBot: Object.create(null),
@@ -220,6 +223,11 @@ export function validateDelta(delta) {
     maxKeys: MCP_METHOD_KEYS.length,
     maxKeyLen: 32,
   });
+  out.mcpToolCallsByName = validateCounterMap(delta.mcpToolCallsByName, "mcpToolCallsByName", {
+    allowedKeys: MCP_TOOL_NAMES,
+    maxKeys: MCP_TOOL_NAMES.length,
+    maxKeyLen: MCP_TOOL_NAME_MAX_LEN,
+  });
   for (const key of MCP_METHOD_KEYS) {
     out.mcpProtocolByMethod[key] = out.mcpProtocolByMethod[key] ?? 0;
   }
@@ -277,6 +285,7 @@ const V2_SNAPSHOT_ALLOWED_KEYS = Object.freeze([
   "aiCrawlers",
   "mcpSurfaceGets",
   "mcpProtocol",
+  "mcpToolCallsByName",
   "sellerRepair",
   "byPath",
   "byReferer",
@@ -337,6 +346,11 @@ export function deltaFromV2Snapshot(snapshot) {
       maxKeyLen: 32,
     });
   }
+  delta.mcpToolCallsByName = validateCounterMap(snapshot.mcpToolCallsByName, "mcpToolCallsByName", {
+    allowedKeys: MCP_TOOL_NAMES,
+    maxKeys: MCP_TOOL_NAMES.length,
+    maxKeyLen: MCP_TOOL_NAME_MAX_LEN,
+  });
   delta.byPath = validateCounterMap(snapshot.byPath, "byPath", { maxKeyLen: MAX_PATH_KEY_LEN });
   delta.byReferer = validateCounterMap(snapshot.byReferer, "byReferer", {
     maxKeyLen: MAX_REFERER_KEY_LEN,
@@ -417,6 +431,7 @@ export function deltaIsEmpty(delta) {
   for (const key of MCP_METHOD_KEYS) {
     if ((delta.mcpProtocolByMethod[key] || 0) !== 0) return false;
   }
+  if (Object.keys(delta.mcpToolCallsByName).length > 0) return false;
   for (const map of [delta.byPath, delta.byReferer, delta.byAiBot]) {
     if (Object.keys(map).length > 0) return false;
   }
@@ -475,6 +490,7 @@ export function mergeDeltas(into, from) {
   into.mcpProtocolRequests += from.mcpProtocolRequests;
   into.mcpProtocolMessages += from.mcpProtocolMessages;
   into.mcpProtocolByMethod = mergeCounterMaps(into.mcpProtocolByMethod, from.mcpProtocolByMethod);
+  into.mcpToolCallsByName = mergeCounterMaps(into.mcpToolCallsByName, from.mcpToolCallsByName);
   into.byPath = mergeCounterMaps(into.byPath, from.byPath);
   into.byReferer = mergeCounterMaps(into.byReferer, from.byReferer);
   into.byAiBot = mergeCounterMaps(into.byAiBot, from.byAiBot);
@@ -494,6 +510,7 @@ export function snapshotCountersFromDelta(delta) {
       messages: delta.mcpProtocolMessages,
       byMethod: { ...delta.mcpProtocolByMethod },
     },
+    mcpToolCallsByName: { ...delta.mcpToolCallsByName },
     byPath: { ...delta.byPath },
     byReferer: { ...delta.byReferer },
     byAiBot: { ...delta.byAiBot },
@@ -514,6 +531,7 @@ export function emptySnapshotCounters() {
       messages: 0,
       byMethod: emptyMcpProtocolByMethod(),
     },
+    mcpToolCallsByName: Object.create(null),
     byPath: Object.create(null),
     byReferer: Object.create(null),
     byAiBot: Object.create(null),
@@ -536,6 +554,7 @@ export function durableSnapshotToCounters(snapshot) {
     out.mcpProtocol.byMethod,
     snapshot.mcpProtocolByMethod,
   );
+  out.mcpToolCallsByName = mergeCounterMaps(out.mcpToolCallsByName, snapshot.mcpToolCallsByName);
   out.byPath = mergeCounterMaps(out.byPath, snapshot.byPath);
   out.byReferer = mergeCounterMaps(out.byReferer, snapshot.byReferer);
   out.byAiBot = mergeCounterMaps(out.byAiBot, snapshot.byAiBot);
@@ -555,6 +574,7 @@ export function deltaToRpcPayload(delta) {
     mcpProtocolRequests: delta.mcpProtocolRequests,
     mcpProtocolMessages: delta.mcpProtocolMessages,
     mcpProtocolByMethod: { ...delta.mcpProtocolByMethod },
+    mcpToolCallsByName: { ...delta.mcpToolCallsByName },
     byPath: { ...delta.byPath },
     byReferer: { ...delta.byReferer },
     byAiBot: { ...delta.byAiBot },

@@ -85,6 +85,42 @@ test("same flush ID replay is idempotent and conflicting delta fails", async () 
   assert.equal((await authority.readSnapshot("2026-09-01T00:00:00.000Z")).total, 2);
 });
 
+test("declared MCP tool counts survive durable flush, hydration, and idempotent replay", async () => {
+  const authority = createFakePulseAuthority();
+  const store = createPulseStoreFromTransport(createFakeRpcTransport(authority));
+  const flushId = newFlushId();
+  const delta = makeDelta({
+    mcpProtocolRequests: 2,
+    mcpProtocolMessages: 2,
+    mcpProtocolByMethod: { "tools/call": 2 },
+    mcpToolCallsByName: { check_ai_readiness: 2 },
+  });
+  await store.flush(flushId, delta);
+  await store.flush(flushId, delta);
+  const snapshot = await store.readSnapshot("2026-09-02T00:00:00.000Z");
+  assert.deepEqual(snapshot.mcpToolCallsByName, { check_ai_readiness: 2 });
+  assert.equal(snapshot.mcpProtocolByMethod["tools/call"], 2);
+});
+
+test("mixed-version durable reads cannot claim a complete zero tool map", async () => {
+  const { configurePulseStoreForTests, pulseSnapshot, waitForPulseHydration } = await import("../lib/pulse.js");
+  const dir = mkdtempSync(join(tmpdir(), "pulse-mixed-schema-"));
+  configurePulseStoreForTests({
+    store: {
+      configured: true,
+      async readSnapshot() { return { schemaVersion: 2, total: 7 }; },
+      async flush() { throw new Error("old_function_rejects_new_delta"); },
+      async importLegacyObservation() {},
+    },
+    fallbackFile: join(dir, "fallback.json"),
+    autoHydrate: false,
+  });
+  await waitForPulseHydration();
+  assert.equal(pulseSnapshot().complete, false);
+  assert.equal(pulseSnapshot().authority, "incomplete_local_fallback");
+  assert.equal(pulseSnapshot().storage.hydrationState, "fallback");
+});
+
 test("defect 1: ambiguous ack retry keeps one owner and new events do not double-add", async () => {
   const {
     configurePulseStoreForTests,

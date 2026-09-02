@@ -27,11 +27,13 @@ import {
   newFlushId,
 } from "./pulse-store/index.js";
 import { assertSnapshotMigrationKeys, validateLegacyFingerprintArray } from "./pulse-store/wal-schema.js";
+import { MCP_TOOL_NAMES, MCP_TOOL_NAME_MAX_LEN } from "./mcp-tool-inventory.js";
 
 const RECENT_CAP = 80;
 const MCP_MOUNT_PATH = "/mcp";
 const MCP_BATCH_MAX = 25;
 const MCP_METHOD_MAX_LEN = 128;
+const MCP_TOOL_NAME_SET = new Set(MCP_TOOL_NAMES);
 
 export const sellerRepairFindingRouteClasses = Object.freeze({
   "hypernatt-liq-radar-20260830": "paid_get",
@@ -124,6 +126,9 @@ function addSnapshotCounters(into, from) {
     into.mcpProtocol.byMethod[key] =
       (into.mcpProtocol.byMethod[key] || 0) + (from.mcpProtocol?.byMethod?.[key] || 0);
   }
+  for (const [key, value] of Object.entries(from.mcpToolCallsByName || {})) {
+    bumpCounterMap(into.mcpToolCallsByName, key, value);
+  }
   for (const [key, value] of Object.entries(from.byPath || {})) {
     bumpCounterMap(into.byPath, key, value);
   }
@@ -173,6 +178,7 @@ function operationalCounters() {
         aiCrawlers: 0,
         mcpSurfaceGets: 0,
         mcpProtocol: { requests: 0, messages: 0, byMethod: Object.create(null) },
+        mcpToolCallsByName: Object.create(null),
         byPath: Object.create(null),
         byReferer: Object.create(null),
         byAiBot: Object.create(null),
@@ -194,6 +200,7 @@ function pendingCounters() {
     aiCrawlers: 0,
     mcpSurfaceGets: 0,
     mcpProtocol: { requests: 0, messages: 0, byMethod: Object.create(null) },
+    mcpToolCallsByName: Object.create(null),
     byPath: Object.create(null),
     byReferer: Object.create(null),
     byAiBot: Object.create(null),
@@ -293,6 +300,9 @@ function enqueueMigrationDelta(delta) {
 
 async function readDurableSnapshot() {
   const snapshot = await durableStore.readSnapshot(observationStartedAt);
+  if (!Object.hasOwn(snapshot || {}, "mcpToolCallsByName")) {
+    throw new Error("pulse_incomplete_schema:mcpToolCallsByName");
+  }
   durableSnapshot = snapshot;
   if (snapshot?.observationStart) observationStartedAt = snapshot.observationStart;
   if (snapshot?.legacyUncertainty) legacyUncertainty = snapshot.legacyUncertainty;
@@ -696,7 +706,21 @@ export function parseMcpProtocolBody(body) {
   const messages = [];
   for (const entry of entries) {
     if (!isValidMcpRpcMessage(entry)) return { admitted: false, messages: [] };
-    messages.push({ methodClass: mcpMethodClass(entry.method) });
+    const message = { methodClass: mcpMethodClass(entry.method) };
+    if (entry.method === "tools/call") {
+      const params = Object.hasOwn(entry, "params") ? entry.params : null;
+      const descriptor =
+        params && typeof params === "object" && !Array.isArray(params) && Object.hasOwn(params, "name")
+          ? Object.getOwnPropertyDescriptor(params, "name")
+          : null;
+      if (
+        descriptor && Object.hasOwn(descriptor, "value") && typeof descriptor.value === "string" &&
+        descriptor.value.length <= MCP_TOOL_NAME_MAX_LEN && MCP_TOOL_NAME_SET.has(descriptor.value)
+      ) {
+        message.toolName = descriptor.value;
+      }
+    }
+    messages.push(message);
   }
   return { admitted: messages.length > 0, messages };
 }
@@ -724,8 +748,9 @@ function recordMcpProtocolPost(req) {
   pendingDelta.total += 1;
   pendingDelta.mcpProtocolRequests += 1;
   pendingDelta.mcpProtocolMessages += parsed.messages.length;
-  for (const { methodClass } of parsed.messages) {
+  for (const { methodClass, toolName } of parsed.messages) {
     bump(pendingDelta.mcpProtocolByMethod, methodClass);
+    if (toolName) bump(pendingDelta.mcpToolCallsByName, toolName);
   }
   pushRecent({
     t: new Date().toISOString(),
@@ -880,9 +905,10 @@ export function pulseSnapshot() {
       httpRequests: counters.mcpProtocol.requests,
       messages: counters.mcpProtocol.messages,
       byMethod: { ...counters.mcpProtocol.byMethod },
+      toolCallsByName: { ...counters.mcpToolCallsByName },
       meaning:
         "Shape-valid POST /mcp JSON-RPC HTTP requests only. " +
-        "Counts HTTP requests and safe method classes, not params, tools, sessions, or delivery. " +
+        "Counts HTTP requests, safe method classes, and exact declared tool names only. " +
         "Not unique agents, buyers, demand, or payment.",
     },
     legacyUncertainty,

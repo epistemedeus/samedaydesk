@@ -39,6 +39,7 @@ const V1_SNAPSHOT_KEYS = Object.freeze([
   "legacyUncertainty",
   "mcpSurfaceGets",
   "mcpProtocol",
+  "mcpToolCallsByName",
   "authority",
   "complete",
 ]);
