@@ -22,7 +22,9 @@ import { mountProductionClient } from "./lib/spa-client.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === "production";
-const CLIENT_DIST = path.resolve(__dirname, "../client/dist");
+const CLIENT_DIST = process.env.SAMEDAYDESK_CLIENT_DIST
+  ? path.resolve(process.env.SAMEDAYDESK_CLIENT_DIST)
+  : path.resolve(__dirname, "../client/dist");
 
 const app = express();
 app.disable("x-powered-by");
@@ -97,13 +99,11 @@ app.get("/.well-known/mcp-registry-auth", (_req, res) =>
   res.type("text/plain").send("v=MCPv1; k=ed25519; p=j1v9MjBVY0nqrVTwoNqXomOhEAisPObP5Fnq+J7Zc88="),
 );
 
-// A2A Global Registry ownership proof. Express deliberately ignores dotfiles
-// in static directories by default, so expose this single reviewed manifest
-// explicitly while keeping the rest of client/dist's hidden files private.
-app.get("/.well-known/agent-card.json", (_req, res) => {
-  res.setHeader("Cache-Control", "public, max-age=300");
-  res.sendFile(path.join(CLIENT_DIST, ".well-known", "agent-card.json"), { dotfiles: "allow" });
-});
+// The maintained A2A card lives on the machine-commerce host. Keep the apex
+// discovery path stable without retaining a second, stale copy of that card.
+app.get("/.well-known/agent-card.json", (_req, res) =>
+  res.redirect(308, "https://agents.samedaydesk.com/.well-known/agent-card.json"),
+);
 
 // 4) Exact SPA route shells, then static files, then history fallback.
 //    Route shells run first so /x402 is not a directory redirect to /x402/.
