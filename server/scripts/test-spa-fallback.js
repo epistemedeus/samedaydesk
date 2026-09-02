@@ -5,28 +5,51 @@ import { join } from "node:path";
 import http from "node:http";
 import test from "node:test";
 import express from "express";
-import { createSpaFallback, isSpaFallbackPath } from "../lib/spa-fallback.js";
+import {
+  SPA_HISTORY_ROUTES,
+  createSpaFallback,
+  isMachineResourcePath,
+  isSpaHistoryPath,
+} from "../lib/spa-fallback.js";
 
 const INDEX_HTML = "<!doctype html><html><head><title>SameDayDesk: agent commerce, built and shipped</title></head><body>spa</body></html>";
 
-test("isSpaFallbackPath keeps extensionless client routes and rejects machine paths", () => {
-  assert.equal(isSpaFallbackPath("/"), true);
-  assert.equal(isSpaFallbackPath("/x402"), true);
-  assert.equal(isSpaFallbackPath("/x402/seller-conformance"), true);
-  assert.equal(isSpaFallbackPath("/tools/ai-readiness"), true);
-  assert.equal(isSpaFallbackPath("/login"), true);
-  assert.equal(isSpaFallbackPath("/this-path-does-not-exist-xyz"), true);
-  assert.equal(isSpaFallbackPath("/.well-known"), false);
-  assert.equal(isSpaFallbackPath("/.well-known/"), false);
-  assert.equal(isSpaFallbackPath("/.well-known/ai-plugin.json"), false);
-  assert.equal(isSpaFallbackPath("/.well-known/x402"), false);
-  assert.equal(isSpaFallbackPath("/.well-known/agents.json"), false);
-  assert.equal(isSpaFallbackPath("/agents.json"), false);
-  assert.equal(isSpaFallbackPath("/this-path-does-not-exist.json"), false);
-  assert.equal(isSpaFallbackPath("/security.txt"), false);
-  assert.equal(isSpaFallbackPath("/llms.txt"), false);
-  assert.equal(isSpaFallbackPath("/sitemap.xml"), false);
-  assert.equal(isSpaFallbackPath("/docs/x402-sdk/llms.txt"), false);
+test("SPA history authority is the explicit App.tsx list, not any extensionless string", () => {
+  assert.deepEqual(SPA_HISTORY_ROUTES, [
+    "/",
+    "/tools/ai-readiness",
+    "/x402",
+    "/x402/seller-conformance",
+    "/for-agents",
+    "/login",
+    "/signup",
+    "/dashboard",
+    "/checkout",
+    "/terms",
+    "/privacy",
+  ]);
+  for (const route of SPA_HISTORY_ROUTES) {
+    assert.equal(isSpaHistoryPath(route), true, route);
+    assert.equal(isMachineResourcePath(route), false, route);
+  }
+  assert.equal(isSpaHistoryPath("/login?next=/dashboard"), true);
+  assert.equal(isSpaHistoryPath("/this-path-does-not-exist-xyz"), false);
+  assert.equal(isMachineResourcePath("/this-path-does-not-exist-xyz"), false);
+  assert.equal(isSpaHistoryPath("/login/"), false);
+  assert.equal(isSpaHistoryPath("/x402/"), false);
+  assert.equal(isMachineResourcePath("/.well-known"), true);
+  assert.equal(isMachineResourcePath("/.well-known/"), true);
+  assert.equal(isMachineResourcePath("/.well-known/ai-plugin.json"), true);
+  assert.equal(isMachineResourcePath("/.well-known/x402"), true);
+  assert.equal(isMachineResourcePath("/.well-known/agents.json"), true);
+  assert.equal(isMachineResourcePath("/agents.json"), true);
+  assert.equal(isMachineResourcePath("/this-path-does-not-exist.json"), true);
+  assert.equal(isMachineResourcePath("/security.txt"), true);
+  assert.equal(isMachineResourcePath("/llms.txt"), true);
+  assert.equal(isMachineResourcePath("/sitemap.xml"), true);
+  assert.equal(isMachineResourcePath("/docs/x402-sdk/llms.txt"), true);
+  assert.equal(isSpaHistoryPath("/.well-known/x402"), false);
+  assert.equal(isSpaHistoryPath("/agents.json"), false);
 });
 
 function listen(app) {
@@ -56,7 +79,7 @@ function request(port, path, method = "GET") {
   });
 }
 
-test("production-like static + fallback 404s missing machine paths and keeps SPA routes", async (t) => {
+test("production-like static + fallback 200s declared React routes, 404s unknown HTML with SPA body, and plain-404s machine paths", async (t) => {
   const dist = mkdtempSync(join(tmpdir(), "spa-fallback-"));
   t.after(() => rmSync(dist, { recursive: true, force: true }));
   writeFileSync(join(dist, "index.html"), INDEX_HTML);
@@ -75,10 +98,12 @@ test("production-like static + fallback 404s missing machine paths and keeps SPA
   assert.equal(home.status, 200);
   assert.match(home.body, /spa/);
 
-  const spa = await request(port, "/x402/seller-conformance");
-  assert.equal(spa.status, 200);
-  assert.match(spa.body, /spa/);
-  assert.match(spa.type, /html/);
+  for (const route of SPA_HISTORY_ROUTES) {
+    const spa = await request(port, route);
+    assert.equal(spa.status, 200, route);
+    assert.equal(spa.body, INDEX_HTML, route);
+    assert.match(spa.type, /html/, route);
+  }
 
   const robots = await request(port, "/robots.txt");
   assert.equal(robots.status, 200);
@@ -104,6 +129,12 @@ test("production-like static + fallback 404s missing machine paths and keeps SPA
   assert.equal(agents.status, 404);
 
   const unknownHuman = await request(port, "/this-path-does-not-exist-xyz");
-  assert.equal(unknownHuman.status, 200);
+  assert.equal(unknownHuman.status, 404);
+  assert.match(unknownHuman.type, /html/);
+  assert.equal(unknownHuman.body, INDEX_HTML);
   assert.match(unknownHuman.body, /spa/);
+
+  const unknownNested = await request(port, "/for-agents/not-a-real-page");
+  assert.equal(unknownNested.status, 404);
+  assert.equal(unknownNested.body, INDEX_HTML);
 });

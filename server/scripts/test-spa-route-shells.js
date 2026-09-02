@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 import express from "express";
 import { mountProductionClient } from "../lib/spa-client.js";
+import { SPA_HISTORY_ROUTES } from "../lib/spa-fallback.js";
 import {
   HOME_CANONICAL,
   HOME_DESCRIPTION,
@@ -17,6 +18,20 @@ import {
   inspectHtmlShell,
   writeRouteShells,
 } from "../lib/spa-route-shells.js";
+
+const DECLARED_REACT_ROUTES = Object.freeze([
+  "/",
+  "/tools/ai-readiness",
+  "/x402",
+  "/x402/seller-conformance",
+  "/for-agents",
+  "/login",
+  "/signup",
+  "/dashboard",
+  "/checkout",
+  "/terms",
+  "/privacy",
+]);
 
 const here = dirname(fileURLToPath(import.meta.url));
 const SOURCE_INDEX = readFileSync(join(here, "../../client/index.html"), "utf8");
@@ -89,10 +104,14 @@ function assertRouteDocument(body, route) {
 }
 
 test("catalog is exact, unique, and sufficient to add another public SPA route", () => {
+  assert.deepEqual(SPA_HISTORY_ROUTES, DECLARED_REACT_ROUTES);
   assert.deepEqual(
     SPA_ROUTE_SHELLS.map((route) => route.path),
     ["/x402", "/x402/seller-conformance", "/tools/ai-readiness"],
   );
+  for (const route of SPA_ROUTE_SHELLS) {
+    assert.equal(SPA_HISTORY_ROUTES.includes(route.path), true, route.path);
+  }
   const extra = {
     path: "/new-public-page",
     title: "New public page | SameDayDesk",
@@ -141,7 +160,7 @@ test("generator derives route shells from the built index.html without rewriting
   assert.match(tool.noscript, /No\s+email required/);
 });
 
-test("production Express serves exact route shells, keeps homepage bytes, and preserves 404 SPA behavior", async (t) => {
+test("production Express serves exact route shells, 200s every declared React route, and 404s unknown HTML with the SPA index", async (t) => {
   const dist = mkdtempSync(join(tmpdir(), "route-shells-http-"));
   t.after(() => rmSync(dist, { recursive: true, force: true }));
   const built = asBuiltIndex();
@@ -180,21 +199,34 @@ test("production Express serves exact route shells, keeps homepage bytes, and pr
   assert.equal(homeInfo.ogUrl, HOME_CANONICAL);
   assert.match(homeInfo.noscript, new RegExp(HOME_H1));
 
-  for (const route of SPA_ROUTE_SHELLS) {
-    const res = await request(port, route.path);
-    assert.equal(res.status, 200, route.path);
-    assert.match(res.type, /html/);
-    assert.equal(res.location, "");
-    assert.notEqual(res.body, built);
-    assert.equal(res.body.includes("DECOY"), false);
-    assertRouteDocument(res.body, route);
+  const shellByPath = new Map(SPA_ROUTE_SHELLS.map((route) => [route.path, route]));
+  for (const routePath of DECLARED_REACT_ROUTES) {
+    const res = await request(port, routePath);
+    assert.equal(res.status, 200, routePath);
+    assert.match(res.type, /html/, routePath);
+    assert.equal(res.location, "", routePath);
+    assert.match(res.body, /<div id="root">/, routePath);
+    assert.match(res.body, new RegExp(BUNDLE_SRC.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")), routePath);
+    const shell = shellByPath.get(routePath);
+    if (shell) {
+      assert.notEqual(res.body, built, routePath);
+      assert.equal(res.body.includes("DECOY"), false, routePath);
+      assertRouteDocument(res.body, shell);
+    } else {
+      assert.equal(res.body, built, routePath);
+    }
   }
 
   const unknownHuman = await request(port, "/this-path-does-not-exist-xyz");
-  assert.equal(unknownHuman.status, 200);
+  assert.equal(unknownHuman.status, 404);
+  assert.notEqual(unknownHuman.status, 200);
+  assert.match(unknownHuman.type, /html/);
+  assert.equal(unknownHuman.body, built);
   assert.equal(inspectHtmlShell(unknownHuman.body).title, HOME_TITLE);
   assert.equal(inspectHtmlShell(unknownHuman.body).canonical, HOME_CANONICAL);
   assert.match(unknownHuman.body, new RegExp(HOME_H1));
+  assert.match(unknownHuman.body, /<div id="root">/);
+  assert.match(unknownHuman.body, new RegExp(BUNDLE_SRC.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
 
   const wellKnown = await request(port, "/.well-known/ai-plugin.json");
   assert.equal(wellKnown.status, 404);
