@@ -1,6 +1,7 @@
 // SameDayDesk — single Express process.
 // Serves /api/* and (in production) the built Vite SPA from client/dist.
-// Load-bearing order: RAW body for webhooks BEFORE express.json(); SPA fallback last.
+// Load-bearing order: RAW body for webhooks BEFORE express.json(); exact SPA route
+// shells before static; history fallback last.
 import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -17,7 +18,7 @@ import resendWebhookRouter from "./routes/resend-webhook.js";
 import pulseRouter from "./routes/pulse.js";
 import mcpRouter from "./routes/mcp.js";
 import { pulseMiddleware } from "./lib/pulse.js";
-import { createSpaFallback } from "./lib/spa-fallback.js";
+import { mountProductionClient } from "./lib/spa-client.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === "production";
@@ -104,22 +105,10 @@ app.get("/.well-known/agent-card.json", (_req, res) => {
   res.sendFile(path.join(CLIENT_DIST, ".well-known", "agent-card.json"), { dotfiles: "allow" });
 });
 
-// 4) Static SPA + history fallback (production only; in dev Vite serves the client).
+// 4) Exact SPA route shells, then static files, then history fallback.
+//    Route shells run first so /x402 is not a directory redirect to /x402/.
 if (isProd) {
-  app.use(
-    express.static(CLIENT_DIST, {
-      setHeaders(res, file) {
-        if (file.endsWith(".html")) res.setHeader("Cache-Control", "no-cache");
-        else if (/\.[0-9a-f]{8,}\./.test(file)) res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
-        else res.setHeader("Cache-Control", "public, max-age=3600");
-      },
-    }),
-  );
-  // Clean URL for the SkillGuard landing page (the CLI/README funnel target).
-  app.get("/skillguard", (_req, res) => res.sendFile(path.join(CLIENT_DIST, "skillguard.html")));
-  // Extensionless GET paths fall through to the SPA. Missing file-like and
-  // well-known resources 404 instead of returning the homepage at HTTP 200.
-  app.use(createSpaFallback(CLIENT_DIST));
+  mountProductionClient(app, CLIENT_DIST);
 }
 
 const PORT = process.env.PORT || 3000;
