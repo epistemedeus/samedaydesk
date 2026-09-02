@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { spawn } from "node:child_process";
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import http from "node:http";
 import { tmpdir } from "node:os";
@@ -75,6 +76,37 @@ function request(port, path, method = "GET") {
     });
     req.on("error", reject);
     req.end();
+  });
+}
+
+function reservePort() {
+  return new Promise((resolve, reject) => {
+    const server = http.createServer();
+    server.on("error", reject);
+    server.listen(0, "127.0.0.1", () => {
+      const { port } = server.address();
+      server.close((error) => (error ? reject(error) : resolve(port)));
+    });
+  });
+}
+
+function waitForServer(child, expected) {
+  return new Promise((resolve, reject) => {
+    let output = "";
+    const timer = setTimeout(() => reject(new Error(`server did not start: ${output}`)), 5_000);
+    const collect = (chunk) => {
+      output += chunk.toString("utf8");
+      if (output.includes(expected)) {
+        clearTimeout(timer);
+        resolve();
+      }
+    };
+    child.stdout.on("data", collect);
+    child.stderr.on("data", collect);
+    child.once("exit", (code) => {
+      clearTimeout(timer);
+      reject(new Error(`server exited with ${code}: ${output}`));
+    });
   });
 }
 
@@ -246,11 +278,6 @@ test("production Express serves exact route shells, 200s every declared React ro
   assert.match(unknownHuman.body, /<div id="root">/);
   assert.match(unknownHuman.body, new RegExp(BUNDLE_SRC.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
 
-  const card = await request(port, "/.well-known/agent-card.json");
-  assert.equal(card.status, 308);
-  assert.equal(card.location, "https://agents.samedaydesk.com/.well-known/agent-card.json");
-  assert.equal(card.body.includes('"skills":[]'), false);
-
   const wellKnown = await request(port, "/.well-known/ai-plugin.json");
   assert.equal(wellKnown.status, 404);
   assert.match(wellKnown.type, /text\/plain/);
@@ -268,4 +295,35 @@ test("production Express serves exact route shells, 200s every declared React ro
   const skillguard = await request(port, "/skillguard");
   assert.equal(skillguard.status, 200);
   assert.match(skillguard.body, /SkillGuard/);
+});
+
+test("production entrypoint redirects the apex A2A card before static and SPA routing", async (t) => {
+  const dist = mkdtempSync(join(tmpdir(), "route-shells-entrypoint-"));
+  t.after(() => rmSync(dist, { recursive: true, force: true }));
+  writeFileSync(join(dist, "index.html"), asBuiltIndex());
+  writeRouteShells(dist);
+
+  const port = await reservePort();
+  const child = spawn(process.execPath, [join(here, "../index.js")], {
+    cwd: join(here, "../.."),
+    env: {
+      ...process.env,
+      NODE_ENV: "production",
+      PORT: String(port),
+      SAMEDAYDESK_CLIENT_DIST: dist,
+    },
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  t.after(async () => {
+    if (child.exitCode !== null) return;
+    const exited = new Promise((resolve) => child.once("exit", resolve));
+    child.kill("SIGINT");
+    await exited;
+  });
+  await waitForServer(child, `[samedaydesk] listening on :${port}`);
+
+  const card = await request(port, "/.well-known/agent-card.json");
+  assert.equal(card.status, 308);
+  assert.equal(card.location, "https://agents.samedaydesk.com/.well-known/agent-card.json");
+  assert.equal(card.body.includes('"skills":[]'), false);
 });
