@@ -124,7 +124,7 @@ begin
   if jsonb_typeof(p_map) <> 'object' then
     raise exception 'pulse_invalid_field:%', p_field using errcode = '22023';
   end if;
-  if coalesce(jsonb_object_length(p_map), 0) > p_max_keys then
+  if (select count(*)::int from jsonb_object_keys(p_map)) > p_max_keys then
     raise exception 'pulse_invalid_field:%', p_field using errcode = '22023';
   end if;
   for v_key, v_val in
@@ -185,7 +185,7 @@ declare
   v_brief bigint;
   v_scope bigint;
   v_checkout bigint;
-  v_out jsonb := '{}'::jsonb;
+  v_out jsonb := jsonb_build_object('byFinding', '{}'::jsonb);
   v_allowed_route text[] := array['paid_get', 'paid_post'];
 begin
   if p_map is null then
@@ -208,7 +208,7 @@ begin
     if jsonb_typeof(p_map -> 'byFinding') <> 'object' then
       raise exception 'pulse_invalid_field:sellerRepair.byFinding' using errcode = '22023';
     end if;
-    if coalesce(jsonb_object_length(p_map -> 'byFinding'), 0) > 32 then
+    if (select count(*)::int from jsonb_object_keys(p_map -> 'byFinding')) > 32 then
       raise exception 'pulse_invalid_field:sellerRepair.byFinding' using errcode = '22023';
     end if;
     for v_key, v_row in select key, value from jsonb_each(p_map -> 'byFinding')
@@ -422,8 +422,7 @@ begin
     by_referer,
     by_ai_bot,
     funnel,
-    seller_repair,
-    updated_at
+    seller_repair
   ) values (
     v_schema,
     now(),
