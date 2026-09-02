@@ -1,4 +1,6 @@
+import { existsSync } from "node:fs";
 import path from "node:path";
+import { NOT_FOUND_SHELL, shellFilePath } from "./spa-route-shells.js";
 
 // Declared React history routes from client/src/App.tsx. Route authority is
 // this explicit list, not "any extensionless string". Unknown HTML paths still
@@ -42,6 +44,7 @@ export function isSpaHistoryPath(pathname) {
 
 export function createSpaFallback(clientDist) {
   const indexHtml = path.join(clientDist, "index.html");
+  const notFoundHtml = shellFilePath(clientDist, NOT_FOUND_SHELL.path);
   return function spaFallback(req, res, next) {
     if (req.method !== "GET") return next();
     if (isMachineResourcePath(req.path)) {
@@ -53,6 +56,10 @@ export function createSpaFallback(clientDist) {
     if (!isSpaHistoryPath(req.path)) {
       res.status(404);
       res.setHeader("Cache-Control", "no-cache");
+      if (existsSync(notFoundHtml)) {
+        res.sendFile(notFoundHtml, (err) => (err ? next(err) : undefined));
+        return;
+      }
     }
     res.sendFile(indexHtml, (err) => (err ? next(err) : undefined));
   };

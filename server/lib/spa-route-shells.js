@@ -10,6 +10,41 @@ export const HOME_CANONICAL = `${SITE_ORIGIN}/`;
 export const HOME_DESCRIPTION =
   "Agent-ready workflows, MCP servers, x402 and MPP payment routes, and machine storefronts. Bounded scope, working code, tests, and deployment handoff.";
 
+const PUBLIC_SHELLS = [
+  {
+    path: "/for-agents",
+    title: "Agent payment infrastructure | SameDayDesk",
+    description: "Connect agents to SameDayDesk machine services through documented x402, MPP, MCP, and HTTP interfaces.",
+    crawlerHtml: "<h1>SameDayDesk interfaces for agents</h1><p>Discover the live machine catalog, inspect payment requirements, and call documented services through the agent gateway.</p>",
+  },
+  {
+    path: "/terms",
+    title: "Terms of Service | SameDayDesk",
+    description: "Read the terms that govern use of the SameDayDesk website and services.",
+    crawlerHtml: "<h1>Terms of Service</h1><p>Terms for use of the SameDayDesk website and services.</p>",
+  },
+  {
+    path: "/privacy",
+    title: "Privacy Policy | SameDayDesk",
+    description: "Read how SameDayDesk handles information associated with its website and services.",
+    crawlerHtml: "<h1>Privacy Policy</h1><p>Privacy information for the SameDayDesk website and services.</p>",
+  },
+].map((route) => ({ ...route, canonical: `${SITE_ORIGIN}${route.path}` }));
+
+const ACCOUNT_SHELLS = [
+  ["/login", "Log in | SameDayDesk", "Log in to an existing SameDayDesk account."],
+  ["/signup", "Create an account | SameDayDesk", "Create a SameDayDesk account."],
+  ["/dashboard", "Account dashboard | SameDayDesk", "Open the SameDayDesk account dashboard."],
+  ["/checkout", "Checkout | SameDayDesk", "Complete an authenticated SameDayDesk order."],
+].map(([routePath, title, description]) => ({
+  path: routePath,
+  title,
+  description,
+  canonical: `${SITE_ORIGIN}${routePath}`,
+  robots: "noindex,follow",
+  crawlerHtml: `<h1>${title.replace(" | SameDayDesk", "")}</h1><p>${description}</p>`,
+}));
+
 export const SPA_ROUTE_SHELLS = Object.freeze([
   Object.freeze({
     path: "/x402",
@@ -85,7 +120,18 @@ export const SPA_ROUTE_SHELLS = Object.freeze([
       </p>
     `,
   }),
+  ...PUBLIC_SHELLS.map(Object.freeze),
+  ...ACCOUNT_SHELLS.map(Object.freeze),
 ]);
+
+export const NOT_FOUND_SHELL = Object.freeze({
+  path: "/404",
+  title: "Not found | SameDayDesk",
+  description: "The requested SameDayDesk page could not be found.",
+  canonical: `${SITE_ORIGIN}/404`,
+  robots: "noindex,follow",
+  crawlerHtml: "<h1>Not found</h1><p>The requested page does not exist.</p>",
+});
 
 export function shellFileName(routePath) {
   if (typeof routePath !== "string" || !routePath.startsWith("/") || routePath === "/") {
@@ -159,6 +205,7 @@ export function inspectHtmlShell(html) {
     ogDescription: extractMetaContent(source, "property", "og:description"),
     twitterTitle: extractMetaContent(source, "name", "twitter:title"),
     twitterDescription: extractMetaContent(source, "name", "twitter:description"),
+    robots: extractMetaContent(source, "name", "robots"),
     noscript: noscriptRaw || "",
     jsonLdRaw,
     scripts,
@@ -182,13 +229,14 @@ export function applyRouteShell(indexHtml, route) {
   html = replaceMetaContent(html, "property", "og:url", route.canonical);
   html = replaceMetaContent(html, "name", "twitter:title", ogTitle);
   html = replaceMetaContent(html, "name", "twitter:description", ogDescription);
+  if (route.robots) html = upsertMetaContent(html, "robots", route.robots);
   html = replaceJsonLd(html, routeJsonLd(route));
   html = replaceNoscript(html, route.crawlerHtml);
   assertGeneratedShell(html, route, indexHtml);
   return html;
 }
 
-export function generateRouteShellsFromIndex(indexHtml, routes = SPA_ROUTE_SHELLS) {
+export function generateRouteShellsFromIndex(indexHtml, routes = [...SPA_ROUTE_SHELLS, NOT_FOUND_SHELL]) {
   assertRouteCatalog(routes);
   return routes.map((route) => ({
     route,
@@ -197,7 +245,7 @@ export function generateRouteShellsFromIndex(indexHtml, routes = SPA_ROUTE_SHELL
   }));
 }
 
-export function writeRouteShells(distDir, routes = SPA_ROUTE_SHELLS) {
+export function writeRouteShells(distDir, routes = [...SPA_ROUTE_SHELLS, NOT_FOUND_SHELL]) {
   const indexPath = path.join(distDir, "index.html");
   if (!existsSync(indexPath)) {
     throw new Error(`route-shells: missing ${indexPath}; run the Vite build first`);
@@ -341,6 +389,13 @@ function replaceMetaContent(html, attrName, attrValue, content) {
     throw new Error(`route-shells: expected 1 <meta ${attrName}="${attrValue}">, found ${count}`);
   }
   return next;
+}
+
+function upsertMetaContent(html, name, content) {
+  if (new RegExp(`<meta\\b[^>]*\\bname=["']${escapeRegExp(name)}["']`, "i").test(html)) {
+    return replaceMetaContent(html, "name", name, content);
+  }
+  return html.replace(/<\/head>/i, `    <meta name="${escapeHtml(name)}" content="${escapeHtml(content)}">\n  </head>`);
 }
 
 function replaceJsonLd(html, json) {

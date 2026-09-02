@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { NOT_FOUND_SHELL, ROUTE_SHELL_DIR, shellFileName } from "../lib/spa-route-shells.js";
 import http from "node:http";
 import test from "node:test";
 import express from "express";
@@ -87,6 +88,9 @@ test("production-like static + fallback 200s declared React routes, 404s unknown
   writeFileSync(join(dist, "llms.txt"), "# SameDayDesk\n");
   mkdirSync(join(dist, "docs", "x402-sdk"), { recursive: true });
   writeFileSync(join(dist, "docs", "x402-sdk", "llms.txt"), "# sdk\n");
+  mkdirSync(join(dist, ROUTE_SHELL_DIR), { recursive: true });
+  const notFound = `<!doctype html><html><head><title>${NOT_FOUND_SHELL.title}</title><link rel="canonical" href="${NOT_FOUND_SHELL.canonical}"></head><body>requested page does not exist</body></html>`;
+  writeFileSync(join(dist, ROUTE_SHELL_DIR, shellFileName(NOT_FOUND_SHELL.path)), notFound);
 
   const app = express();
   app.use(express.static(dist));
@@ -131,10 +135,10 @@ test("production-like static + fallback 200s declared React routes, 404s unknown
   const unknownHuman = await request(port, "/this-path-does-not-exist-xyz");
   assert.equal(unknownHuman.status, 404);
   assert.match(unknownHuman.type, /html/);
-  assert.equal(unknownHuman.body, INDEX_HTML);
-  assert.match(unknownHuman.body, /spa/);
+  assert.equal(unknownHuman.body, notFound);
+  assert.equal(unknownHuman.body.includes("agent commerce, built and shipped"), false);
 
   const unknownNested = await request(port, "/for-agents/not-a-real-page");
   assert.equal(unknownNested.status, 404);
-  assert.equal(unknownNested.body, INDEX_HTML);
+  assert.equal(unknownNested.body, notFound);
 });
