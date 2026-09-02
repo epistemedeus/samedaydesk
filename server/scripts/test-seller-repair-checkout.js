@@ -6,9 +6,14 @@ process.env.PULSE_FILE = "/dev/null";
 
 const {
   buildSellerRepairCheckoutSessionParams,
+  configuredNeomorphicSellerConformancePaymentLinkId,
   createSellerRepairCheckoutSession,
   isPaidCheckoutSessionEvent,
   isValidSellerRepairFindingId,
+  NEOMORPHIC_SELLER_CONFORMANCE_AMOUNT,
+  NEOMORPHIC_SELLER_CONFORMANCE_CURRENCY,
+  NEOMORPHIC_SELLER_CONFORMANCE_PAYMENT_LINK_ENV,
+  paidNeomorphicSellerRepairAttribution,
   SELLER_CONTRACT_REPAIR_SLUG,
   SELLER_REPAIR_INTEGRATION_ID,
   sellerRepairCheckoutNotificationContext,
@@ -56,6 +61,65 @@ test("accepts only bounded finding IDs", () => {
   assert.equal(isValidSellerRepairFindingId("bad id"), false);
   assert.equal(isValidSellerRepairFindingId("a".repeat(97)), false);
   assert.equal(isValidSellerRepairFindingId(null), false);
+});
+
+test("Neomorphic Payment Link configuration defaults closed and accepts only an exact Link ID", () => {
+  assert.equal(configuredNeomorphicSellerConformancePaymentLinkId({}), null);
+  assert.equal(configuredNeomorphicSellerConformancePaymentLinkId({
+    [NEOMORPHIC_SELLER_CONFORMANCE_PAYMENT_LINK_ENV]: "",
+  }), null);
+  assert.equal(configuredNeomorphicSellerConformancePaymentLinkId({
+    [NEOMORPHIC_SELLER_CONFORMANCE_PAYMENT_LINK_ENV]: "https://buy.stripe.com/example",
+  }), null);
+  assert.equal(configuredNeomorphicSellerConformancePaymentLinkId({
+    [NEOMORPHIC_SELLER_CONFORMANCE_PAYMENT_LINK_ENV]: " plink_exactFixture ",
+  }), null);
+  assert.equal(configuredNeomorphicSellerConformancePaymentLinkId({
+    [NEOMORPHIC_SELLER_CONFORMANCE_PAYMENT_LINK_ENV]: "plink_exactFixture",
+  }), "plink_exactFixture");
+});
+
+test("Neomorphic attribution requires the configured Link and the exact paid offer invariants", () => {
+  const paymentLinkId = "plink_exactFixture";
+  const event = {
+    type: "checkout.session.completed",
+    data: { object: {
+      payment_link: paymentLinkId,
+      payment_status: "paid",
+      status: "complete",
+      amount_total: NEOMORPHIC_SELLER_CONFORMANCE_AMOUNT,
+      currency: NEOMORPHIC_SELLER_CONFORMANCE_CURRENCY,
+      client_reference_id: SAMPLE_FINDING,
+    } },
+  };
+  assert.deepEqual(paidNeomorphicSellerRepairAttribution(event, paymentLinkId), {
+    findingId: SAMPLE_FINDING,
+  });
+  assert.equal(paidNeomorphicSellerRepairAttribution(event, null), null);
+  assert.equal(paidNeomorphicSellerRepairAttribution(event, "not_a_plink"), null);
+  assert.equal(paidNeomorphicSellerRepairAttribution({
+    ...event,
+    data: { object: { ...event.data.object, status: "open" } },
+  }, paymentLinkId), null);
+  assert.equal(paidNeomorphicSellerRepairAttribution({
+    ...event,
+    data: { object: { ...event.data.object, amount_total: 48999 } },
+  }, paymentLinkId), null);
+  assert.equal(paidNeomorphicSellerRepairAttribution({
+    ...event,
+    data: { object: { ...event.data.object, currency: "eur" } },
+  }, paymentLinkId), null);
+
+  const foreignSession = { payment_link: "plink_foreignFixture" };
+  Object.defineProperty(foreignSession, "client_reference_id", {
+    get() {
+      throw new Error("foreign client_reference_id must not be read");
+    },
+  });
+  assert.equal(paidNeomorphicSellerRepairAttribution({
+    type: "checkout.session.completed",
+    data: { object: foreignSession },
+  }, paymentLinkId), null);
 });
 
 test("admits the AgentToll finding to server-owned hosted Checkout", () => {
