@@ -63,6 +63,10 @@ Pulse owns a small store interface expressed in provider-free operations: `addDe
 - legacy import is idempotent and preserves its incomplete authority label;
 - request classification, seller-repair allowlists, MCP runtime, checkout, and build remain unchanged.
 
+## Implementation note (2026-09-02, amended)
+
+Branch `codex/pulse-durable-store-r1` adds offline-tested `supabase/migrations/0002_pulse_durable.sql` and a replaceable Node adapter under `server/lib/pulse-store/`. The migration defines a constant-size `pulse_aggregate` row plus idempotent flush receipts; it is **not yet applied** to production Supabase. `server/lib/pulse.js` keeps synchronous classification, uses the existing 15-second lifecycle for flush and hydration retry, labels local file reads incomplete, and exposes explicit known-gap states when backlog loss or corrupt fallback is detected. Fake RPC authority for tests lives under `server/scripts/helpers/` only.
+
 ## Adoption and next event
 
 This is internal measurement infrastructure, not a saleable product. Its adoption event is one real SameDayDesk process replacement with exact pre/post durable continuity plus future MCP POST and seller-repair event readback. Package it later only if an independently operated seller asks for the same evidence contract or the same failure recurs outside Hostinger/Supabase.

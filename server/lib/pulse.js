@@ -1,21 +1,34 @@
-// Lightweight, dependency-free aggregate request analytics.
-//
-// Why this exists: the client-side PostHog key is not present in the production
-// build, so we had ZERO visibility into whether the funnel gets any traffic.
-// This middleware records page/content requests server-side (no client key, no
-// cookies, no DB) and exposes an aggregate read endpoint we can poll over HTTP.
-//
-// State is held in memory while the process runs and best-effort snapshotted to
-// disk so ordinary restarts do not erase the observation window. No PII is
-// stored: IPs are bucketed to a coarse hash only for unique-ish counts.
+// Lightweight aggregate request analytics with optional durable atomic backing.
 
 import crypto from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import {
+  CLASSIFICATION_SCHEMA_VERSION,
+  LEGACY_IMPORT_KEY,
+  MCP_METHOD_KEYS,
+  bumpCounterMap,
+  deltaFromV2Snapshot,
+  deltaIsEmpty,
+  deltaToRpcPayload,
+  durableSnapshotToCounters,
+  emptyDelta,
+  emptyFunnel,
+  migrationDigest,
+  snapshotCountersFromDelta,
+  stableFlushIdFromDelta,
+  deltaCanonicalDigest,
+  validateDelta,
+} from "./pulse-store/schema.js";
+import {
+  createDefaultFileFallback,
+  createDefaultPulseStore,
+  newFlushId,
+} from "./pulse-store/index.js";
+import { assertSnapshotMigrationKeys, validateLegacyFingerprintArray } from "./pulse-store/wal-schema.js";
 
 const RECENT_CAP = 80;
-const CLASSIFICATION_SCHEMA_VERSION = 2;
 const MCP_MOUNT_PATH = "/mcp";
 const MCP_BATCH_MAX = 25;
 const MCP_METHOD_MAX_LEN = 128;
@@ -36,53 +49,6 @@ export const sellerRepairFindingIds = Object.freeze(
 );
 const SELLER_REPAIR_FINDING_IDS = new Set(sellerRepairFindingIds);
 
-function emptyMcpProtocol() {
-  return {
-    requests: 0,
-    messages: 0,
-    byMethod: {
-      initialize: 0,
-      "tools/list": 0,
-      "tools/call": 0,
-      notifications: 0,
-      other: 0,
-    },
-  };
-}
-
-function emptyFunnel() {
-  return { home: 0, scan: 0, tools: 0, reports: 0, guides: 0, pricing: 0 };
-}
-
-const state = {
-  startedAt: new Date().toISOString(),
-  classificationSchemaVersion: CLASSIFICATION_SCHEMA_VERSION,
-  total: 0,
-  humans: 0,
-  bots: 0,
-  aiCrawlers: 0,
-  mcpSurfaceGets: 0,
-  mcpProtocol: emptyMcpProtocol(),
-  legacyUncertainty: null,
-  byPath: Object.create(null), // page path -> count (humans only)
-  byReferer: Object.create(null), // referer host -> count (humans)
-  byAiBot: Object.create(null), // AI crawler product -> count
-  uniqueHumans: new Set(), // coarse ip+ua hash, humans only
-  funnel: emptyFunnel(),
-  sellerRepair: {
-    briefViews: 0,
-    scopeClicks: 0,
-    checkoutStarts: 0,
-    byFinding: Object.create(null),
-  },
-  recent: [], // last N events
-};
-
-// Production snapshots must live outside the replaceable application release.
-// An explicit file always wins. Otherwise use the conventional per-user state
-// directory in production and reserve the runtime temp directory for local
-// development. This stays provider-neutral while surviving ordinary releases
-// on hosts that preserve the service account's home directory.
 const LEGACY_PULSE_FILE = path.join(os.tmpdir(), "sdd-pulse-v1.json");
 const productionStateHome =
   process.env.XDG_STATE_HOME ||
@@ -92,158 +58,544 @@ const PULSE_FILE =
   (process.env.NODE_ENV === "production" && productionStateHome
     ? path.join(productionStateHome, "samedaydesk", "pulse-v1.json")
     : LEGACY_PULSE_FILE);
+const PULSE_FALLBACK_FILE = `${PULSE_FILE}.fallback.json`;
+
+const processStartedAt = new Date().toISOString();
+let observationStartedAt = processStartedAt;
+let durableStore = createDefaultPulseStore();
+let fileFallback = createDefaultFileFallback(PULSE_FALLBACK_FILE);
+let hydrationState = "pending";
+let durableSnapshot = null;
+let legacyUncertainty = null;
+let pendingDelta = emptyDelta();
+let inFlightFlush = null;
+let flushInProgress = false;
+let lastSuccessfulFlush = fileFallback.getLastSuccessfulFlush();
+let droppedUnknown = fileFallback.getDroppedUnknown();
+let fallbackCorrupt = fileFallback.isCorrupt();
+let snapshotCorrupt = fileFallback.isSnapshotCorrupt();
+let walWritePending = false;
+
+const localProcess = {
+  uniqueHumans: new Set(),
+  recent: [],
+};
+
 const pulseStorage = {
   mode: process.env.PULSE_FILE
     ? "explicit"
     : PULSE_FILE === LEGACY_PULSE_FILE
       ? "temporary"
       : "production_state_home",
-  loaded: false,
   migratedLegacySnapshot: false,
-  lastSaveAt: null,
-  lastSaveOk: null,
+  durableConfigured: durableStore.configured,
 };
-let dirty = false;
 
-function serializeSnapshot() {
-  return {
-    ...state,
-    uniqueHumans: [...state.uniqueHumans],
-  };
+function refreshFallbackDiagnostics() {
+  droppedUnknown = fileFallback.getDroppedUnknown();
+  fallbackCorrupt = fileFallback.isCorrupt();
+  snapshotCorrupt = fileFallback.isSnapshotCorrupt();
 }
 
-function saveSnapshot() {
+function hasKnownGap() {
+  refreshFallbackDiagnostics();
+  return droppedUnknown > 0 || fallbackCorrupt || snapshotCorrupt;
+}
+
+function hasIncompleteWrite() {
+  return walWritePending;
+}
+
+function addWalCounters(into) {
+  for (const entry of fileFallback.loadPendingFlushes()) {
+    addSnapshotCounters(into, snapshotCountersFromDelta(entry.delta));
+  }
+}
+
+function addSnapshotCounters(into, from) {
+  into.total += from.total || 0;
+  into.humans += from.humans || 0;
+  into.bots += from.bots || 0;
+  into.aiCrawlers += from.aiCrawlers || 0;
+  into.mcpSurfaceGets += from.mcpSurfaceGets || 0;
+  into.mcpProtocol.requests += from.mcpProtocol?.requests || 0;
+  into.mcpProtocol.messages += from.mcpProtocol?.messages || 0;
+  for (const key of MCP_METHOD_KEYS) {
+    into.mcpProtocol.byMethod[key] =
+      (into.mcpProtocol.byMethod[key] || 0) + (from.mcpProtocol?.byMethod?.[key] || 0);
+  }
+  for (const [key, value] of Object.entries(from.byPath || {})) {
+    bumpCounterMap(into.byPath, key, value);
+  }
+  for (const [key, value] of Object.entries(from.byReferer || {})) {
+    bumpCounterMap(into.byReferer, key, value);
+  }
+  for (const [key, value] of Object.entries(from.byAiBot || {})) {
+    bumpCounterMap(into.byAiBot, key, value);
+  }
+  for (const key of Object.keys(emptyFunnel())) {
+    into.funnel[key] = (into.funnel[key] || 0) + (from.funnel?.[key] || 0);
+  }
+  into.sellerRepair = mergeSellerRepairCounters(into.sellerRepair, from.sellerRepair);
+}
+
+function mergeSellerRepairCounters(base, add) {
+  const out = {
+    briefViews: (base.briefViews || 0) + (add?.briefViews || 0),
+    scopeClicks: (base.scopeClicks || 0) + (add?.scopeClicks || 0),
+    checkoutStarts: (base.checkoutStarts || 0) + (add?.checkoutStarts || 0),
+    byFinding: { ...(base.byFinding || {}) },
+  };
+  for (const [findingId, row] of Object.entries(add?.byFinding || {})) {
+    const existing = out.byFinding[findingId] || {
+      routeClass: row.routeClass,
+      briefViews: 0,
+      scopeClicks: 0,
+      checkoutStarts: 0,
+    };
+    out.byFinding[findingId] = {
+      routeClass: existing.routeClass || row.routeClass,
+      briefViews: (existing.briefViews || 0) + (row.briefViews || 0),
+      scopeClicks: (existing.scopeClicks || 0) + (row.scopeClicks || 0),
+      checkoutStarts: (existing.checkoutStarts || 0) + (row.checkoutStarts || 0),
+    };
+  }
+  return out;
+}
+
+function operationalCounters() {
+  const out = durableSnapshot
+    ? durableSnapshotToCounters(durableSnapshot)
+    : {
+        total: 0,
+        humans: 0,
+        bots: 0,
+        aiCrawlers: 0,
+        mcpSurfaceGets: 0,
+        mcpProtocol: { requests: 0, messages: 0, byMethod: Object.create(null) },
+        byPath: Object.create(null),
+        byReferer: Object.create(null),
+        byAiBot: Object.create(null),
+        funnel: emptyFunnel(),
+        sellerRepair: { briefViews: 0, scopeClicks: 0, checkoutStarts: 0, byFinding: {} },
+      };
+  addWalCounters(out);
+  if (!deltaIsEmpty(pendingDelta)) {
+    addSnapshotCounters(out, snapshotCountersFromDelta(pendingDelta));
+  }
+  return out;
+}
+
+function pendingCounters() {
+  const out = {
+    total: 0,
+    humans: 0,
+    bots: 0,
+    aiCrawlers: 0,
+    mcpSurfaceGets: 0,
+    mcpProtocol: { requests: 0, messages: 0, byMethod: Object.create(null) },
+    byPath: Object.create(null),
+    byReferer: Object.create(null),
+    byAiBot: Object.create(null),
+    funnel: emptyFunnel(),
+    sellerRepair: { briefViews: 0, scopeClicks: 0, checkoutStarts: 0, byFinding: {} },
+  };
+  addWalCounters(out);
+  if (!deltaIsEmpty(pendingDelta)) {
+    addSnapshotCounters(out, snapshotCountersFromDelta(pendingDelta));
+  }
+  return out;
+}
+
+function authorityState() {
+  if (hasKnownGap()) return "incomplete_known_gap";
+  if (hasIncompleteWrite()) return "incomplete_local_fallback";
+  if (!durableStore.configured || hydrationState !== "hydrated") {
+    return "incomplete_local_fallback";
+  }
+  if (inFlightFlush || !deltaIsEmpty(pendingDelta)) {
+    return "incomplete_local_fallback";
+  }
+  if (fileFallback.loadPendingFlushes().length > 0) {
+    return "incomplete_local_fallback";
+  }
+  return "durable_atomic_aggregate";
+}
+
+function isComplete() {
+  if (hasKnownGap()) return false;
+  if (hasIncompleteWrite()) return false;
+  if (!durableStore.configured || hydrationState !== "hydrated") return false;
+  if (inFlightFlush) return false;
+  if (!deltaIsEmpty(pendingDelta)) return false;
+  if (fileFallback.loadPendingFlushes().length > 0) return false;
+  return true;
+}
+
+function admitPendingDeltaToWal() {
+  if (deltaIsEmpty(pendingDelta)) return true;
+  const delta = structuredClone(pendingDelta);
+  const flushId = newFlushId();
+  const entry = {
+    flushId,
+    delta,
+    createdAt: new Date().toISOString(),
+  };
+  const result = fileFallback.enqueuePendingFlush(entry);
+  refreshFallbackDiagnostics();
+  if (result.outcome === "queued" || result.outcome === "duplicate_same") {
+    pendingDelta = emptyDelta();
+    walWritePending = false;
+    if (!inFlightFlush) inFlightFlush = entry;
+    return true;
+  }
+  if (result.outcome === "dropped_persisted") {
+    pendingDelta = emptyDelta();
+    walWritePending = false;
+    return false;
+  }
+  if (result.outcome === "write_failed") {
+    walWritePending = true;
+    return false;
+  }
+  walWritePending = false;
+  return false;
+}
+
+function enqueueMigrationDelta(delta) {
+  if (deltaIsEmpty(delta)) return true;
+  const normalized = validateDelta(delta);
+  const canonical = deltaCanonicalDigest(normalized);
+  for (const row of fileFallback.loadPendingFlushes()) {
+    if (deltaCanonicalDigest(row.delta) === canonical) return true;
+  }
+  const flushId = stableFlushIdFromDelta(normalized);
+  if (lastSuccessfulFlush?.flushId === flushId) return true;
+  const entry = {
+    flushId,
+    delta: normalized,
+    createdAt: new Date().toISOString(),
+  };
+  const result = fileFallback.enqueuePendingFlush(entry);
+  refreshFallbackDiagnostics();
+  if (result.outcome === "queued" || result.outcome === "duplicate_same") {
+    walWritePending = false;
+    if (!inFlightFlush) inFlightFlush = entry;
+    return true;
+  }
+  if (result.outcome === "write_failed") {
+    walWritePending = true;
+    return false;
+  }
+  walWritePending = false;
+  return false;
+}
+
+async function readDurableSnapshot() {
+  const snapshot = await durableStore.readSnapshot(observationStartedAt);
+  durableSnapshot = snapshot;
+  if (snapshot?.observationStart) observationStartedAt = snapshot.observationStart;
+  if (snapshot?.legacyUncertainty) legacyUncertainty = snapshot.legacyUncertainty;
+  hydrationState = "hydrated";
+  return snapshot;
+}
+
+async function attemptFlush(entry) {
   try {
-    fs.mkdirSync(path.dirname(PULSE_FILE), { recursive: true, mode: 0o700 });
-    fs.writeFileSync(PULSE_FILE, JSON.stringify(serializeSnapshot()));
-    dirty = false;
-    pulseStorage.lastSaveAt = new Date().toISOString();
-    pulseStorage.lastSaveOk = true;
+    const ack = await durableStore.flush(entry.flushId, entry.delta);
+    const removal = fileFallback.removePendingFlush(entry.flushId);
+    if (removal.outcome !== "queued") {
+      walWritePending = true;
+      return false;
+    }
+    walWritePending = false;
+    lastSuccessfulFlush = {
+      flushId: entry.flushId,
+      status: ack?.status || "applied",
+      at: new Date().toISOString(),
+    };
+    fileFallback.recordSuccessfulFlush(lastSuccessfulFlush);
+    if (inFlightFlush?.flushId === entry.flushId) inFlightFlush = null;
+    try {
+      await readDurableSnapshot();
+    } catch {
+      hydrationState = "stale";
+    }
     return true;
   } catch {
-    pulseStorage.lastSaveOk = false;
+    if (!fileFallback.loadPendingFlushes().some((row) => row.flushId === entry.flushId)) {
+      const result = fileFallback.enqueuePendingFlush(entry);
+      refreshFallbackDiagnostics();
+      if (result.outcome === "write_failed") {
+        walWritePending = true;
+      }
+    }
+    if (inFlightFlush?.flushId !== entry.flushId) {
+      inFlightFlush = entry;
+    }
     return false;
   }
 }
 
-function loadSellerRepair(s) {
-  state.sellerRepair.briefViews = s.sellerRepair?.briefViews || 0;
-  state.sellerRepair.scopeClicks = s.sellerRepair?.scopeClicks || 0;
-  state.sellerRepair.checkoutStarts = s.sellerRepair?.checkoutStarts || 0;
-  state.sellerRepair.byFinding = Object.create(null);
-  for (const findingId of sellerRepairFindingIds) {
-    const row = s.sellerRepair?.byFinding?.[findingId];
-    if (row?.routeClass !== sellerRepairFindingRouteClasses[findingId]) continue;
-    state.sellerRepair.byFinding[findingId] = {
-      routeClass: row.routeClass,
-      briefViews: Number.isSafeInteger(row.briefViews) && row.briefViews >= 0
-        ? row.briefViews
-        : 0,
-      scopeClicks: Number.isSafeInteger(row.scopeClicks) && row.scopeClicks >= 0
-        ? row.scopeClicks
-        : 0,
-      checkoutStarts: Number.isSafeInteger(row.checkoutStarts) && row.checkoutStarts >= 0
-        ? row.checkoutStarts
-        : 0,
-    };
+async function drainPendingFlushes() {
+  if (!durableStore.configured || flushInProgress) return;
+  flushInProgress = true;
+  try {
+    admitPendingDeltaToWal();
+    if (!inFlightFlush) {
+      const backlog = fileFallback.loadPendingFlushes();
+      if (backlog.length > 0) inFlightFlush = backlog[0];
+    }
+    if (inFlightFlush) {
+      await attemptFlush(inFlightFlush);
+    }
+    for (const entry of fileFallback.loadPendingFlushes()) {
+      if (inFlightFlush?.flushId === entry.flushId) continue;
+      await attemptFlush(entry);
+    }
+  } finally {
+    flushInProgress = false;
   }
 }
 
-function resetV2RequestCounters() {
-  state.startedAt = new Date().toISOString();
-  state.total = 0;
-  state.humans = 0;
-  state.bots = 0;
-  state.aiCrawlers = 0;
-  state.mcpSurfaceGets = 0;
-  state.mcpProtocol = emptyMcpProtocol();
-  state.byPath = Object.create(null);
-  state.byReferer = Object.create(null);
-  state.byAiBot = Object.create(null);
-  state.uniqueHumans = new Set();
-  state.funnel = emptyFunnel();
-  state.recent = [];
-  state.classificationSchemaVersion = CLASSIFICATION_SCHEMA_VERSION;
+function scheduleFlush() {
+  void drainPendingFlushes();
 }
 
-function applyLegacyUncertaintyBoundary(s) {
-  state.legacyUncertainty = {
+function legacyUncertaintyForWal(source) {
+  return {
+    schemaVersion: 1,
+    note: source.note,
+    startedAt: source.startedAt,
+    total: source.total,
+    humans: source.humans,
+    uniqueHumans: source.uniqueHumans,
+    bots: source.bots,
+    aiCrawlers: source.aiCrawlers,
+    byPath: source.byPath,
+    byReferer: source.byReferer,
+    byAiBot: source.byAiBot,
+    funnel: source.funnel,
+  };
+}
+
+function loadLegacyFromFileSnapshot(snapshot) {
+  legacyUncertainty = {
     schemaVersion: 1,
     note:
       "Request-classification counters captured before MCP surface/protocol split. " +
       "GET /mcp hits were stored as human page views without evidence to relabel them.",
-    startedAt: s.startedAt || null,
-    total: s.total || 0,
-    humans: s.humans || 0,
-    uniqueHumans: Array.isArray(s.uniqueHumans) ? s.uniqueHumans.length : 0,
-    bots: s.bots || 0,
-    aiCrawlers: s.aiCrawlers || 0,
-    byPath: { ...(s.byPath || {}) },
-    byReferer: { ...(s.byReferer || {}) },
-    byAiBot: { ...(s.byAiBot || {}) },
-    funnel: { ...emptyFunnel(), ...(s.funnel || {}) },
-    recent: Array.isArray(s.recent) ? s.recent.slice(-RECENT_CAP) : [],
+    startedAt: snapshot.startedAt || null,
+    total: snapshot.total || 0,
+    humans: snapshot.humans || 0,
+    uniqueHumans: Array.isArray(snapshot.uniqueHumans) ? snapshot.uniqueHumans.length : 0,
+    bots: snapshot.bots || 0,
+    aiCrawlers: snapshot.aiCrawlers || 0,
+    byPath: { ...(snapshot.byPath || {}) },
+    byReferer: { ...(snapshot.byReferer || {}) },
+    byAiBot: { ...(snapshot.byAiBot || {}) },
+    funnel: { ...emptyFunnel(), ...(snapshot.funnel || {}) },
+    recent: Array.isArray(snapshot.recent) ? snapshot.recent.slice(-RECENT_CAP) : [],
+    authority: "incomplete_historical_evidence",
   };
-  resetV2RequestCounters();
-  dirty = true;
 }
 
-function loadV2RequestCounters(s) {
-  state.classificationSchemaVersion = s.classificationSchemaVersion || CLASSIFICATION_SCHEMA_VERSION;
-  state.startedAt = s.startedAt || state.startedAt;
-  state.total = s.total || 0;
-  state.humans = s.humans || 0;
-  state.bots = s.bots || 0;
-  state.aiCrawlers = s.aiCrawlers || 0;
-  state.mcpSurfaceGets = s.mcpSurfaceGets || 0;
-  state.mcpProtocol = emptyMcpProtocol();
-  const loadedProtocol = s.mcpProtocol;
-  if (loadedProtocol && typeof loadedProtocol === "object") {
-    state.mcpProtocol.requests = loadedProtocol.requests || 0;
-    state.mcpProtocol.messages = loadedProtocol.messages || 0;
-    for (const key of Object.keys(state.mcpProtocol.byMethod)) {
-      state.mcpProtocol.byMethod[key] = loadedProtocol.byMethod?.[key] || 0;
-    }
+function sellerRepairDeltaFromSnapshot(snapshot) {
+  const repair = {
+    briefViews: snapshot.sellerRepair?.briefViews || 0,
+    scopeClicks: snapshot.sellerRepair?.scopeClicks || 0,
+    checkoutStarts: snapshot.sellerRepair?.checkoutStarts || 0,
+    byFinding: Object.create(null),
+  };
+  for (const findingId of sellerRepairFindingIds) {
+    const row = snapshot.sellerRepair?.byFinding?.[findingId];
+    if (row?.routeClass !== sellerRepairFindingRouteClasses[findingId]) continue;
+    repair.byFinding[findingId] = {
+      routeClass: row.routeClass,
+      briefViews:
+        Number.isSafeInteger(row.briefViews) && row.briefViews >= 0 ? row.briefViews : 0,
+      scopeClicks:
+        Number.isSafeInteger(row.scopeClicks) && row.scopeClicks >= 0 ? row.scopeClicks : 0,
+      checkoutStarts:
+        Number.isSafeInteger(row.checkoutStarts) && row.checkoutStarts >= 0
+          ? row.checkoutStarts
+          : 0,
+    };
   }
-  Object.assign(state.byPath, s.byPath || {});
-  Object.assign(state.byReferer, s.byReferer || {});
-  Object.assign(state.byAiBot, s.byAiBot || {});
-  Object.assign(state.funnel, { ...emptyFunnel(), ...(s.funnel || {}) });
-  state.uniqueHumans = new Set(s.uniqueHumans || []);
-  state.recent = Array.isArray(s.recent) ? s.recent.slice(-RECENT_CAP) : [];
-  state.legacyUncertainty = s.legacyUncertainty || null;
+  const delta = emptyDelta();
+  delta.sellerRepair = repair;
+  return delta;
 }
 
-function loadSnapshot() {
+function migrateLegacySnapshotFileOnce() {
   try {
+    const walLegacy = fileFallback.getLegacyUncertainty();
+    if (walLegacy) legacyUncertainty = walLegacy;
+    const walStartedAt = fileFallback.getObservationStartedAt();
+    if (walStartedAt) observationStartedAt = walStartedAt;
+
     let source = PULSE_FILE;
     if (!fs.existsSync(source) && source !== LEGACY_PULSE_FILE && fs.existsSync(LEGACY_PULSE_FILE)) {
       source = LEGACY_PULSE_FILE;
       pulseStorage.migratedLegacySnapshot = true;
     }
-    const s = JSON.parse(fs.readFileSync(source, "utf8"));
-    const loadedSchemaVersion = s.classificationSchemaVersion || 1;
-    loadSellerRepair(s);
-    pulseStorage.loaded = true;
+    if (!fs.existsSync(source)) return;
 
-    if (loadedSchemaVersion >= CLASSIFICATION_SCHEMA_VERSION) {
-      loadV2RequestCounters(s);
-    } else {
-      applyLegacyUncertaintyBoundary(s);
+    const raw = fs.readFileSync(source, "utf8");
+    const digest = migrationDigest(raw);
+    if (fileFallback.getMigratedSnapshotDigest() === digest) return;
+
+    let snapshot;
+    try {
+      snapshot = JSON.parse(raw);
+    } catch {
+      fileFallback.markSnapshotCorrupt();
+      refreshFallbackDiagnostics();
+      return;
     }
 
-    if (source !== PULSE_FILE || loadedSchemaVersion < CLASSIFICATION_SCHEMA_VERSION) {
-      dirty = true;
-      saveSnapshot();
+    const loadedSchemaVersion = snapshot.classificationSchemaVersion || 1;
+    if (loadedSchemaVersion > CLASSIFICATION_SCHEMA_VERSION) {
+      fileFallback.markSnapshotCorrupt();
+      refreshFallbackDiagnostics();
+      return;
     }
+
+    if (loadedSchemaVersion < CLASSIFICATION_SCHEMA_VERSION) {
+      pendingDelta = emptyDelta();
+      assertSnapshotMigrationKeys(snapshot, 1);
+      validateLegacyFingerprintArray(snapshot.uniqueHumans);
+      loadLegacyFromFileSnapshot(snapshot);
+      const repairDelta = sellerRepairDeltaFromSnapshot(snapshot);
+      if (!fileFallback.persistLocalMetadata({
+        legacyUncertainty: legacyUncertaintyForWal(legacyUncertainty),
+        observationStartedAt: processStartedAt,
+      })) {
+        walWritePending = true;
+        refreshFallbackDiagnostics();
+        return;
+      }
+      if (!enqueueMigrationDelta(repairDelta)) return;
+      if (!fileFallback.markSnapshotMigrated(digest)) {
+        refreshFallbackDiagnostics();
+        return;
+      }
+      observationStartedAt = processStartedAt;
+      return;
+    }
+
+    let migrationDelta;
+    try {
+      assertSnapshotMigrationKeys(snapshot, 2);
+      migrationDelta = deltaFromV2Snapshot(snapshot);
+    } catch {
+      fileFallback.markSnapshotCorrupt();
+      refreshFallbackDiagnostics();
+      return;
+    }
+    if (snapshot.legacyUncertainty) legacyUncertainty = snapshot.legacyUncertainty;
+    if (snapshot.startedAt) observationStartedAt = snapshot.startedAt;
+    if (!fileFallback.persistLocalMetadata({
+      legacyUncertainty: legacyUncertainty
+        ? legacyUncertaintyForWal(legacyUncertainty)
+        : null,
+      observationStartedAt,
+    })) {
+      walWritePending = true;
+      refreshFallbackDiagnostics();
+      return;
+    }
+    if (!enqueueMigrationDelta(migrationDelta)) return;
+    if (!fileFallback.markSnapshotMigrated(digest)) {
+      refreshFallbackDiagnostics();
+      return;
+    }
+    localProcess.recent = Array.isArray(snapshot.recent) ? snapshot.recent.slice(-RECENT_CAP) : [];
   } catch {
-    /* no snapshot yet */
+    fileFallback.markSnapshotCorrupt();
+    refreshFallbackDiagnostics();
   }
 }
-loadSnapshot();
-setInterval(() => dirty && saveSnapshot(), 15000).unref();
-process.on("SIGTERM", saveSnapshot);
-process.on("beforeExit", saveSnapshot);
+
+function loadWalStateOnStartup() {
+  migrateLegacySnapshotFileOnce();
+  refreshFallbackDiagnostics();
+  const walLegacy = fileFallback.getLegacyUncertainty();
+  if (walLegacy) legacyUncertainty = walLegacy;
+  const walStartedAt = fileFallback.getObservationStartedAt();
+  if (walStartedAt) observationStartedAt = walStartedAt;
+  for (const entry of fileFallback.loadPendingFlushes()) {
+    inFlightFlush = entry;
+    break;
+  }
+}
+
+async function importLegacyIfNeeded() {
+  if (!legacyUncertainty || fileFallback.isLegacyImported() || !durableStore.configured) return;
+  try {
+    await durableStore.importLegacyObservation(LEGACY_IMPORT_KEY, {
+      schemaVersion: 1,
+      note: legacyUncertainty.note,
+      startedAt: legacyUncertainty.startedAt,
+      total: legacyUncertainty.total,
+      humans: legacyUncertainty.humans,
+      uniqueHumans: legacyUncertainty.uniqueHumans,
+      bots: legacyUncertainty.bots,
+      aiCrawlers: legacyUncertainty.aiCrawlers,
+      byPath: legacyUncertainty.byPath,
+      byReferer: legacyUncertainty.byReferer,
+      byAiBot: legacyUncertainty.byAiBot,
+      funnel: legacyUncertainty.funnel,
+    });
+    fileFallback.markLegacyImported();
+  } catch {
+    /* retry on next hydration */
+  }
+}
+
+async function hydrateFromDurableStore() {
+  if (!durableStore.configured) {
+    hydrationState = "fallback";
+    return;
+  }
+  try {
+    await readDurableSnapshot();
+    await importLegacyIfNeeded();
+    const backlog = fileFallback.loadPendingFlushes();
+    if (backlog.length > 0 && !inFlightFlush) {
+      inFlightFlush = backlog[0];
+    }
+    await drainPendingFlushes();
+  } catch {
+    hydrationState = "fallback";
+  }
+}
+
+let hydrationPromise = null;
+export function waitForPulseHydration() {
+  if (!hydrationPromise) hydrationPromise = hydrateFromDurableStore();
+  return hydrationPromise;
+}
+
+function maybeRetryHydration() {
+  if (!durableStore.configured) return;
+  if (hydrationState === "hydrated") return;
+  hydrationPromise = hydrateFromDurableStore();
+}
+
+loadWalStateOnStartup();
+void waitForPulseHydration();
+setInterval(() => {
+  admitPendingDeltaToWal();
+  scheduleFlush();
+  maybeRetryHydration();
+}, 15000).unref();
+process.on("SIGTERM", () => {
+  admitPendingDeltaToWal();
+});
+process.on("beforeExit", () => {
+  admitPendingDeltaToWal();
+});
 
 const AI_CRAWLERS = [
   ["GPTBot", /GPTBot/i],
@@ -270,7 +622,7 @@ const GENERIC_BOT =
 const ASSET_RE = /\.(?:js|mjs|css|png|jpe?g|gif|svg|webp|ico|woff2?|ttf|map|txt|xml|json|webmanifest)$/i;
 
 function classify(ua) {
-  if (!ua) return { kind: "bot", aiBot: null }; // no UA → almost always a bot/script
+  if (!ua) return { kind: "bot", aiBot: null };
   for (const [name, re] of AI_CRAWLERS) if (re.test(ua)) return { kind: "ai", aiBot: name };
   if (GENERIC_BOT.test(ua)) return { kind: "bot", aiBot: null };
   return { kind: "human", aiBot: null };
@@ -301,9 +653,8 @@ function isMcpMountPath(requestPath) {
 }
 
 function pushRecent(event) {
-  state.recent.push(event);
-  if (state.recent.length > RECENT_CAP) state.recent.shift();
-  dirty = true;
+  localProcess.recent.push(event);
+  if (localProcess.recent.length > RECENT_CAP) localProcess.recent.shift();
 }
 
 export function mcpMethodClass(method) {
@@ -329,8 +680,6 @@ function isValidMcpRpcMessage(msg) {
   return true;
 }
 
-// Admit shape-valid POST /mcp JSON-RPC bodies only. Params, IDs, and tool names
-// are never read or stored.
 export function parseMcpProtocolBody(body) {
   let entries;
   if (Array.isArray(body)) {
@@ -359,8 +708,8 @@ export function classifyPulseGet(req, requestPath) {
 }
 
 function recordMcpSurfaceGet() {
-  state.total += 1;
-  state.mcpSurfaceGets += 1;
+  pendingDelta.total += 1;
+  pendingDelta.mcpSurfaceGets += 1;
   pushRecent({
     t: new Date().toISOString(),
     p: MCP_MOUNT_PATH,
@@ -372,11 +721,11 @@ function recordMcpProtocolPost(req) {
   const parsed = parseMcpProtocolBody(req.body);
   if (!parsed.admitted) return;
 
-  state.total += 1;
-  state.mcpProtocol.requests += 1;
-  state.mcpProtocol.messages += parsed.messages.length;
+  pendingDelta.total += 1;
+  pendingDelta.mcpProtocolRequests += 1;
+  pendingDelta.mcpProtocolMessages += parsed.messages.length;
   for (const { methodClass } of parsed.messages) {
-    bump(state.mcpProtocol.byMethod, methodClass);
+    bump(pendingDelta.mcpProtocolByMethod, methodClass);
   }
   pushRecent({
     t: new Date().toISOString(),
@@ -389,29 +738,29 @@ function recordMcpProtocolPost(req) {
 function recordOrdinaryGet(req, p) {
   const { kind, aiBot, recentKind } = classifyPulseGet(req, p);
   const ref = refererHost(req.headers["referer"] || req.headers["origin"] || "");
-  state.total += 1;
+  pendingDelta.total += 1;
 
   if (kind === "ai") {
-    state.aiCrawlers += 1;
-    bump(state.byAiBot, aiBot);
+    pendingDelta.aiCrawlers += 1;
+    bump(pendingDelta.byAiBot, aiBot);
   } else if (kind === "bot") {
-    state.bots += 1;
+    pendingDelta.bots += 1;
   } else {
-    state.humans += 1;
-    bump(state.byPath, p.length > 60 ? p.slice(0, 60) : p);
-    bump(state.byReferer, ref);
+    pendingDelta.humans += 1;
+    bump(pendingDelta.byPath, p.length > 60 ? p.slice(0, 60) : p);
+    bump(pendingDelta.byReferer, ref);
     const ua = headerValue(req, "user-agent");
     const ipRaw = (req.headers["x-forwarded-for"] || "").split(",")[0].trim() || req.ip || "";
     const fp = crypto.createHash("sha1").update(ipRaw + "|" + ua).digest("hex").slice(0, 16);
-    state.uniqueHumans.add(fp);
+    localProcess.uniqueHumans.add(fp);
   }
 
-  if (p === "/") state.funnel.home += 1;
-  else if (p === "/scan" || p.startsWith("/scan")) state.funnel.scan += 1;
-  else if (p.startsWith("/tools")) state.funnel.tools += 1;
-  else if (p.startsWith("/reports")) state.funnel.reports += 1;
-  else if (p.startsWith("/guides")) state.funnel.guides += 1;
-  else if (p === "/pricing" || p === "/checkout") state.funnel.pricing += 1;
+  if (p === "/") pendingDelta.funnel.home += 1;
+  else if (p === "/scan" || p.startsWith("/scan")) pendingDelta.funnel.scan += 1;
+  else if (p.startsWith("/tools")) pendingDelta.funnel.tools += 1;
+  else if (p.startsWith("/reports")) pendingDelta.funnel.reports += 1;
+  else if (p.startsWith("/guides")) pendingDelta.funnel.guides += 1;
+  else if (p === "/pricing" || p === "/checkout") pendingDelta.funnel.pricing += 1;
 
   pushRecent({
     t: new Date().toISOString(),
@@ -432,7 +781,6 @@ export function pulseMiddleware(req, _res, next) {
 
     if (req.method !== "GET") return next();
 
-    // Ignore assets, the pulse endpoint itself, health, and API noise.
     if (
       ASSET_RE.test(p) ||
       p.startsWith("/api/") ||
@@ -450,7 +798,7 @@ export function pulseMiddleware(req, _res, next) {
 
     recordOrdinaryGet(req, p);
   } catch {
-    // Never let analytics break a request.
+    /* never break requests */
   }
   return next();
 }
@@ -462,9 +810,6 @@ const SELLER_REPAIR_EVENTS = new Set([
 ]);
 const FINDING_ID_RE = /^[a-z0-9-]{1,96}$/;
 
-// These events are anonymous and spoofable. They are useful only as diagnostic
-// interaction signals, never as seller identity, delivery, acceptance, demand,
-// payment, or revenue evidence.
 export function recordClientEvent(event, props) {
   if (!SELLER_REPAIR_EVENTS.has(event)) return false;
   const findingId = props?.finding_id;
@@ -473,7 +818,7 @@ export function recordClientEvent(event, props) {
   if (!SELLER_REPAIR_FINDING_IDS.has(findingId)) return false;
   if (routeClass !== sellerRepairFindingRouteClasses[findingId]) return false;
 
-  const row = state.sellerRepair.byFinding[findingId] || {
+  const row = pendingDelta.sellerRepair.byFinding[findingId] || {
     routeClass,
     briefViews: 0,
     scopeClicks: 0,
@@ -483,56 +828,129 @@ export function recordClientEvent(event, props) {
 
   if (event === "seller_repair_brief_viewed") {
     row.briefViews += 1;
-    state.sellerRepair.briefViews += 1;
+    pendingDelta.sellerRepair.briefViews += 1;
   } else if (event === "seller_repair_scope_clicked") {
     row.scopeClicks += 1;
-    state.sellerRepair.scopeClicks += 1;
+    pendingDelta.sellerRepair.scopeClicks += 1;
   } else {
     row.checkoutStarts += 1;
-    state.sellerRepair.checkoutStarts += 1;
+    pendingDelta.sellerRepair.checkoutStarts += 1;
   }
-  state.sellerRepair.byFinding[findingId] = row;
-  dirty = true;
+  pendingDelta.sellerRepair.byFinding[findingId] = row;
   return true;
 }
 
 export function flushPulseSnapshot() {
-  return saveSnapshot();
+  const ok = admitPendingDeltaToWal();
+  scheduleFlush();
+  return ok && !fallbackCorrupt && !walWritePending;
 }
 
 export function pulseSnapshot() {
+  refreshFallbackDiagnostics();
+  const counters = operationalCounters();
+  const pending = pendingCounters();
+  const durable = hydrationState === "hydrated" ? durableSnapshotToCounters(durableSnapshot) : null;
   return {
-    startedAt: state.startedAt,
+    startedAt: hydrationState === "hydrated" ? observationStartedAt : processStartedAt,
+    processStartedAt,
     now: new Date().toISOString(),
-    classificationSchemaVersion: state.classificationSchemaVersion,
-    total: state.total,
-    humans: state.humans,
-    uniqueHumans: state.uniqueHumans.size,
-    bots: state.bots,
-    aiCrawlers: state.aiCrawlers,
+    classificationSchemaVersion: CLASSIFICATION_SCHEMA_VERSION,
+    authority: authorityState(),
+    complete: isComplete(),
+    total: counters.total,
+    humans: counters.humans,
+    uniqueHumansEstimate: {
+      count: localProcess.uniqueHumans.size,
+      scope: "current_process_only",
+      meaning:
+        "Coarse in-process human-ish estimate from this Node process only. " +
+        "Not durable, not cross-process unique, and not payment or demand evidence.",
+    },
+    bots: counters.bots,
+    aiCrawlers: counters.aiCrawlers,
     mcpSurfaceGet: {
-      requests: state.mcpSurfaceGets,
+      requests: counters.mcpSurfaceGets,
       meaning:
         "GET /mcp hits the MCP endpoint setup or purchase-return plain-text surface. " +
         "May be a browser, monitor, registry probe, or client check. " +
         "Not unique agents, buyers, demand, payment, or protocol use.",
     },
     mcpProtocol: {
-      httpRequests: state.mcpProtocol.requests,
-      messages: state.mcpProtocol.messages,
-      byMethod: { ...state.mcpProtocol.byMethod },
+      httpRequests: counters.mcpProtocol.requests,
+      messages: counters.mcpProtocol.messages,
+      byMethod: { ...counters.mcpProtocol.byMethod },
       meaning:
         "Shape-valid POST /mcp JSON-RPC HTTP requests only. " +
         "Counts HTTP requests and safe method classes, not params, tools, sessions, or delivery. " +
         "Not unique agents, buyers, demand, or payment.",
     },
-    legacyUncertainty: state.legacyUncertainty,
-    funnel: state.funnel,
-    byPath: state.byPath,
-    byReferer: state.byReferer,
-    byAiBot: state.byAiBot,
-    sellerRepair: state.sellerRepair,
-    storage: { ...pulseStorage },
-    recent: state.recent.slice(-40).reverse(),
+    legacyUncertainty,
+    funnel: counters.funnel,
+    byPath: counters.byPath,
+    byReferer: counters.byReferer,
+    byAiBot: counters.byAiBot,
+    sellerRepair: counters.sellerRepair,
+    durable,
+    pending,
+    knownGap: {
+      droppedUnknown,
+      fallbackCorrupt,
+      snapshotCorrupt,
+      walWritePending,
+      meaning:
+        "Any non-zero dropped count, corrupt local evidence, or unresolved WAL write " +
+        "marks admitted-but-unaccounted or unreadable backlog state.",
+    },
+    lastSuccessfulFlush,
+    storage: { ...pulseStorage, hydrationState },
+    recent: localProcess.recent.slice(-40).reverse(),
+  };
+}
+
+export function configurePulseStoreForTests(options = {}) {
+  durableStore = options.store || createDefaultPulseStore(options);
+  fileFallback = options.fileFallback || createDefaultFileFallback(options.fallbackFile || PULSE_FALLBACK_FILE);
+  pulseStorage.durableConfigured = durableStore.configured;
+  hydrationState = "pending";
+  durableSnapshot = null;
+  inFlightFlush = null;
+  pendingDelta = emptyDelta();
+  localProcess.uniqueHumans = new Set();
+  localProcess.recent = [];
+  legacyUncertainty = null;
+  lastSuccessfulFlush = fileFallback.getLastSuccessfulFlush();
+  walWritePending = false;
+  refreshFallbackDiagnostics();
+  observationStartedAt = processStartedAt;
+  hydrationPromise = null;
+  if (options.reloadWal !== false) {
+    const walLegacy = fileFallback.getLegacyUncertainty();
+    if (walLegacy) legacyUncertainty = walLegacy;
+    const walStartedAt = fileFallback.getObservationStartedAt();
+    if (walStartedAt) observationStartedAt = walStartedAt;
+    for (const entry of fileFallback.loadPendingFlushes()) {
+      inFlightFlush = entry;
+      break;
+    }
+  }
+  if (options.autoHydrate !== false) hydrationPromise = hydrateFromDurableStore();
+  return { durableStore, fileFallback, waitForPulseHydration };
+}
+
+export function __pulseTestInternals() {
+  return {
+    pendingDelta,
+    inFlightFlush,
+    durableSnapshot,
+    hydrationState,
+    drainPendingFlushes,
+    hydrateFromDurableStore,
+    maybeRetryHydration,
+    admitPendingDeltaToWal,
+    walWritePending,
+    deltaToRpcPayload,
+    loadWalStateOnStartup,
+    PULSE_FALLBACK_FILE,
   };
 }
