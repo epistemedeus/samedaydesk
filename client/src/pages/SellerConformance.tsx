@@ -9,6 +9,7 @@ import {
   sellerRepairScopeMailto,
 } from "../data/sellerRepairBriefs";
 import { track } from "../lib/posthog";
+import { sellerRepairFixedScopeUrl } from "../lib/sellerRepairHandoff";
 import styles from "./SellerConformance.module.css";
 
 const PAGE_TITLE = "Seller conformance proof | SameDayDesk";
@@ -31,7 +32,6 @@ const VALIDATION_RECEIPT_URL =
   "/research/agent402-seller-integrity-validation-2026-08-29.json";
 const CTA_MAILTO =
   "mailto:contact@samedaydesk.com?subject=Existing%20seller%20origin%20or%20repository&body=Existing%20seller%20origin%20or%20repository%3A%0A";
-const FIXED_SCOPE_URL = "https://neomorphic.io/services/seller-conformance/fixed-scope/";
 
 function restoreAttribute(el: Element | null, attribute: string, previous: string | null) {
   if (previous !== null) el?.setAttribute(attribute, previous);
@@ -193,7 +193,7 @@ export default function SellerConformance() {
             <div className={styles.actions}>
               <a
                 className={styles.primary}
-                href={FIXED_SCOPE_URL}
+                href={sellerRepairFixedScopeUrl(selectedBrief.id)}
                 target="_blank"
                 rel="noopener noreferrer"
               >
