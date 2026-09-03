@@ -1,0 +1,2440 @@
+{
+  "schemaVersion": 2,
+  "schema": "samedaydesk.bazaar-observation.v2",
+  "observedAt": "2026-09-03T09:54:04.798Z",
+  "captureSource": "live",
+  "sources": {
+    "cdp-discovery": {
+      "endpoint": "https://api.cdp.coinbase.com/platform/v2/x402/discovery/search",
+      "sellerCount": 11,
+      "routeCount": 129,
+      "sellers": {
+        "402-com-tr": {
+          "id": "402-com-tr",
+          "name": "402.com.tr",
+          "hosts": [
+            "402.com.tr"
+          ],
+          "queries": [
+            "402.com.tr",
+            "402.com.tr/api/x402",
+            "402.com.tr/api"
+          ],
+          "partial": true,
+          "rowCount": 25,
+          "routes": {
+            "https://402.com.tr/api/x402/ai-summarize": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Compress up to 16K characters of anything — articles, transcripts, email threads, reports — into 3-5 precise bullet points, one micro-payment per call. No API key, no subscription, no prompt engineering: send text=, get bullets back as clean JSON. The digest step for agent pipelines that read more than they can carry in context.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "30000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "8e221317b229989a7e542f218cd5b58446c16c8dd8fe0ff95e4f248308dbf0b3",
+              "comparableDigest": "d21e65d52c549771170f78461b6039e663229aaaf9d97c359317ad04cf735f38"
+            },
+            "https://402.com.tr/api/x402/ai-translate": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Claude-quality translation as a pay-per-call primitive: send text= (up to 6K characters) and to= any language, get only the translation back — no notes, no wrapper prose, safe to pipe straight into the next step. One USDC micro-payment per call, no API key or subscription. Built for agents localizing content, parsing foreign-language sources, or serving multilingual users.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "30000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "ecf9e53a68d49620db95be6f5e023b7b481b2b63e1bf92cbfb59213ca80e71c2",
+              "comparableDigest": "59b57de0eebad004e767d58851dbc072369fd96a2706eb54cd26b15d80d448a5"
+            },
+            "https://402.com.tr/api/x402/basename": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Forward + reverse Basename resolution read from the Base L2 Resolver: turn jesse.base.eth into an address, or an address into its primary Basename. No API key required.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "bfaf08a014129fc92e5d58e3a644599b239c26212e4dbeb3aa7c9c7d26affd18",
+              "comparableDigest": "1ae8ef6b176db0daa240aae8fac161bd386b30ed6f10f33b33b1324138e9603e"
+            },
+            "https://402.com.tr/api/x402/basename-profile": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "🆕 Resolves the complete Base identity behind an address or Basename: resolved address, avatar, description, website and social handles (X/Twitter, GitHub, Farcaster, Discord) read from Base's L2 Resolver text records. Lets an agent turn a counterparty address into a real profile — beyond just the name. Complements address-trust (verification) with the human context.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "20000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "38715b5f1b9e995eea04696fdc4b359c348c0088af323eb8d5c6301d2f2273f0",
+              "comparableDigest": "67676e43319fc4bd76403d36119031cae7c135c7c7d5d1e1cb69211f5fa7846f"
+            },
+            "https://402.com.tr/api/x402/business-days": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Add business days to a date, or count them between two dates, for ~110 countries. Knows each country's weekend (Friday-Saturday where that applies, not just Sat-Sun) and its national public holidays, and names every day it skipped. Holidays observed only in some provinces are deliberately NOT treated as national closures — they are listed separately so you can apply them when your case is regional. Built for payment terms, SLAs and delivery dates.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "2000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "7be5d41f22958ff3424a4705a7c92f38d87e68959bc57ca53d8cf4f805346a24",
+              "comparableDigest": "19f2973e1e8beaffb674aa2751b3bc887355ec1ea154a884932cd0add24256c9"
+            },
+            "https://402.com.tr/api/x402/buy-credits": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Buy a prepaid balance in a single x402 settlement and get a secret credit token. Send it as the `x-credit-token` header on any paid service and each call debits its price from your balance — no per-call signature, no settlement latency. Built for agents that fire many checks a minute. Tiers: $0.25 (starter), $1, $5 (+10%), $20 (+20%). The token is shown once; balance lasts 180 days.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "67ce8a4bb10ff8e73b5c9e31ad821d28a200101882472b30204ea4224d86ce39",
+              "comparableDigest": "35035a3414c9ac82165e44d2a9c9cc7454a9f40c8c23586ff332c74f7623e90f"
+            },
+            "https://402.com.tr/api/x402/company-lei": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Look a company up in GLEIF, the global Legal Entity Identifier register: LEI code, registered legal name, entity status, registration status, jurisdiction and address. The register's own name filter is a token search that returns thousands of unrelated rows, so matches are re-checked here and only an exact one — or one differing solely in legal form (Inc/Ltd/GmbH) — is reported as found; the rest come back as candidates.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "fedef222176777b28906afc89ec211f6a9a0120bf3f6d966cd05f9717acf2277",
+              "comparableDigest": "801b82a2dc1850864ed03c7af7e5a9470c544976db1e91c2855ec6b666517b22"
+            },
+            "https://402.com.tr/api/x402/compliance-check": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Combined counterparty screening for an address: direct OFAC sanctions match, EOA/contract profile, and (for contracts) risk flags — rolled into a single recommendation (blocked / review / clear). Built for compliance agents.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "30000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "ff8ef392e420f5dbd60875add2963fd080c278f73bd8c57488b700e88b6ac8ca",
+              "comparableDigest": "37acf0c3c1d73f057fed4ba382684edc3edadf5500db4fddd714f63e0ce0519b"
+            },
+            "https://402.com.tr/api/x402/contract-abi": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Checks Sourcify for a Base contract's verification status and returns its ABI as function/event name lists + item count (full or partial match). No API key required.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "20000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "bda19086bbee2bfd93dcd74d5fc584f5736929e5709ab015fbb29a929c42a974",
+              "comparableDigest": "73b17fa43e3b9ddd35423299c8e00e346459806925eaa40910de9f4c50fc3ebc"
+            },
+            "https://402.com.tr/api/x402/counterparty-check": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "One call, four public sources: how old the domain is (RDAP), whether mail to the contact will land (DNS), whether the name is on the OFAC list, and whether the company exists in the global LEI register. Returns a single GO / HOLD / STOP with every signal that produced it. Built for the moment an agent has to trust an invoice, a new vendor or a payment-detail change — the classic fraud pattern is a real-looking name on a domain registered weeks ago.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "120000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "f3c1629f5053e8a3cc0f20ea67ceb3a84b187488b9e91560dc7b8831f4f9fcb8",
+              "comparableDigest": "d9744b73a11c131cb70cf336cd625ac96693d422afce6306a6d0d9d52e84bda4"
+            },
+            "https://402.com.tr/api/x402/domain-check": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Registration age, expiry and registry status for any domain, from RDAP — the registries' own protocol. Returns days since registration, days to expiry, registrar, EPP status codes, nameservers and DNSSEC as one GO / HOLD / STOP verdict. Domain age is the strongest cheap signal in invoice and vendor-impersonation fraud: the payment details that change always arrive from a domain registered weeks ago. Refuses rather than guessing when a registry publishes no RDAP.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "20000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "b1a36853b5efba87a20c390c32df148fe7834bcb6ae4283d306b1a186e4fc5b3",
+              "comparableDigest": "02f92ae00d4d8c09fb51a85421b40fdc200ffaec77b82d41aebcc3dab36c7a7e"
+            },
+            "https://402.com.tr/api/x402/email-verify": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Syntax + live DNS (MX/A) + disposable, role and consumer-mailbox detection, as one GO / HOLD / STOP verdict with the reasons listed. Catches throwaway inboxes, support@-style shared mailboxes and one-character domain typos (gmial.com). No SMTP probe, so mailbox existence is not claimed.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "20000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "22a4a3e5df961a53f28a8ccf51f5573844127fb25ba301c983c4deb53ea30b8f",
+              "comparableDigest": "a00a307692096a8bdf38b6213acc44ed4d6737d293e5faf399b49af21d559396"
+            },
+            "https://402.com.tr/api/x402/file-publish": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Send Markdown (or HTML) and get back a URL that renders as a real page — headings, tables, code blocks, mobile-readable, no scripts and no external requests. The other half of an agent's output problem: file-slot is for bytes it will fetch back, this is for the report somebody has to read. Retention 1-30 days. Published on the storage origin, never on 402.com.tr.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "1c0ad8068f28ed09c6f9c98e6db3ab586d869bad941caa9cd7740796ac3913a6",
+              "comparableDigest": "cc46f9dc3bc46bcfefdd41ca2b413618f09b4176ae988a35a1a0a1602e75e98f"
+            },
+            "https://402.com.tr/api/x402/file-slot": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Get a signed upload URL and a retrieval URL for one file, in one call. Your agent PUTs the bytes straight to storage — they never pass through this API, so there is no size ceiling imposed by a serverless runtime and no proxy in the middle. Declare bytes= and the size is signed into the URL. Up to 25 MB, retention 1-30 days, unguessable key. The step every agent hits the moment it produces a report, chart, CSV or build and has nowhere to put it.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "e95ccb56aee9dafe7c1e85fbe3c0d1078a0524425983403fd4addfc28f168b39",
+              "comparableDigest": "d26355e72d6d9c286d5df1a6251527df409db8adea38b0a404b3de203dd2698c"
+            },
+            "https://402.com.tr/api/x402/inflation-adjust": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Restate an amount from one year in another year's money, for any country in the World Bank consumer-price series (1960 onwards). Returns the adjusted amount, the cumulative inflation and both index values so the arithmetic is checkable. The series is annual and published with a lag, so a request for a year that does not exist yet answers with the newest one available and says which. For contract comparisons, historical pricing and long-running budgets.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "2000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "f76b8e72aae07d6a26e769bd26da7a313d9ffc9e2b1ddf7a4f1428ff9a54c282",
+              "comparableDigest": "0d5cd614d3d0ff60745dc26ec4dd98882dea1513b23b5294d4bf4097e4f4ee2b"
+            },
+            "https://402.com.tr/api/x402/phone-check": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Turn the many ways a phone number gets typed into one E.164 string: strips spacing, brackets, the 00 international prefix and the national trunk zero people include out of habit. Returns country, calling code, national number, and whether the length matches that country's numbering plan. Line type (mobile / fixed) is reported ONLY for countries whose ranges are unambiguous and is null elsewhere with a reason — never guessed. Offline: it does not check that the number is assigned or reachable.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "2000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "8c5782b0edad430fa15520869d052b8630d4315c7321eae244bc638ee9cb88ed",
+              "comparableDigest": "9839a2aa366a8e8494bdb26380355f9ed5bc024142f2ea2e8c973930982c4ac9"
+            },
+            "https://402.com.tr/api/x402/sanctions": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Checks an address against the OFAC SDN list of sanctioned digital-currency addresses. Built for compliance agents and bots that must screen counterparties before transacting. Direct-address match; list refreshed regularly. No API key required.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "20000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "71185a79373570820f0e80606d9327319e95538629a6a841b739943d52a9113d",
+              "comparableDigest": "2dcca212c0d31a38dd4788fc7c15c1f5b024c19f8f8b41f0e5a83a50fe69757a"
+            },
+            "https://402.com.tr/api/x402/sanctions-batch": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Pass a comma-separated list of up to 25 addresses and get an OFAC sanctions result for each, plus the flagged subset. Built for compliance agents vetting whole counterparty lists in one call.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "30000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "a730fef325fbd6168b9dc7fc64c55747465c06153a85e2adc596e342f034e3b0",
+              "comparableDigest": "499815ada0a7c645308d20d4c5b77b83ea8fafe653fc7bad17fba4509541249b"
+            },
+            "https://402.com.tr/api/x402/secure-token": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Generate N cryptographically-strong, url-safe random tokens server-side — session IDs, API nonces, one-time codes, coupon secrets. Pass count= for how many. A tiny paid utility for agents that need entropy without a crypto library.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:137",
+                  "amount": "10000",
+                  "asset": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "e940bb5cbfc1d0de20a3049c4610c6a4146a2fd2091e5ed21c240fb0532f6f54",
+              "comparableDigest": "dcaebefb159dce82c755ccd7f1a2c5ada0f9574f8962e73c895d12df8acc9b1b"
+            },
+            "https://402.com.tr/api/x402/token-compare": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Agents choose between tokens, not around them. Pass 2-5 Base token addresses → each gets a 0-100 quality score (safety-weighted: rug score first, then liquidity depth, then momentum), ranked best-first, with a named pick — or an honest 'none pass the gate'. One call returns a decision instead of a dozen data dumps.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "50000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "8a5cc5f3ea283cff42611e25836429397a2156995b021abfb72060192ffcb4e0",
+              "comparableDigest": "7488cea05ce59a397983df5ca81da9047bd448fe811dec1312d320b867947e36"
+            },
+            "https://402.com.tr/api/x402/token-momentum": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Price change and trading volume across 1h, 6h and 24h windows for a Base token, plus a trend read (strong_up → strong_down). Lets agents gauge momentum, not just a single 24h number.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "20000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "a93b8f26966a1bf79a1349b6149a2c18a36dd035542f9ebcbfd6e3e0bbe64a70",
+              "comparableDigest": "5a2638ed8c33596d277f35b862f96bcaf9898254ab7c960ca58df7d0758e739f"
+            },
+            "https://402.com.tr/api/x402/token-price": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Pass a Base token contract address and get the current USD price, 24h change, liquidity, and volume from DexScreener (highest-liquidity pair auto-selected). No API key required.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "20000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "5bd58a398e26e5315fafd8ab850b6e0658b88f00080badbf403d542f0a8a131b",
+              "comparableDigest": "0e297988ba8e8f8d880f99425adfc61976968851e586e1634386fb024bec823d"
+            },
+            "https://402.com.tr/api/x402/tx-decode": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Provide a Base transaction hash and get a structured summary: from/to, ETH value, status, gas used, block, method selector, and nonce — straight from Base RPC.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "20000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "a7e17064bad0c4046a6a1186a74053bfd312e0e1ee43ed5fe4aa3a51678af132",
+              "comparableDigest": "d62299a45dfbba78898e2b710215f5b4de6fd92a00adec28b411133f46ef9b3d"
+            },
+            "https://402.com.tr/api/x402/url-extract": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Pass a URL and get the page as clean text — furniture (nav, scripts, ads, footers) stripped, paragraphs preserved — plus its title, description and site name. The step every agent needs before it can reason about a page, and the one most agents can't do themselves: serverless runtimes and MCP clients have no browser and no HTML parser. Follows redirects safely, refuses non-text content, caps at 2 MB. Nothing crypto about it.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "2000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "545500134ccd7599be26d4334e2a877c80f3f6ab28943dc863fac13a5536d1c7",
+              "comparableDigest": "878e2ba4b854832671851a1c7939be067e3c8f431ae91341ef4d0f2a3f6d61e6"
+            },
+            "https://402.com.tr/api/x402/web-search": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Search the live web from an agent that has no browser: pass query= and get back ranked results (title, URL, snippet, relevance score) plus a synthesized one-paragraph answer over them. maxResults=1..20 (default 5); includeAnswer=false to skip the summary and take sources only. The step before reasoning about anything that happened after the model's training cutoff — prices, releases, incidents, docs. Nothing crypto about it.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x973a31858f4d2125f48c880542da11a2796f12d6"
+                }
+              ],
+              "extensionsDigest": "5f1157892d27911ff573786e3f08a5daa018e2650d1adb9afb3a7e463cf925f3",
+              "comparableDigest": "d28087183242412f306ff9baab4d8f14e095c9ee0a2d9698ca82d5e5a87d2d44"
+            }
+          }
+        },
+        "agentservices": {
+          "id": "agentservices",
+          "name": "AgentServices",
+          "hosts": [
+            "api.agentservices.to",
+            "agentservices.to"
+          ],
+          "queries": [
+            "api.agentservices.to",
+            "agentservices.to"
+          ],
+          "partial": false,
+          "rowCount": 3,
+          "routes": {
+            "https://agentservices.to/v1/indicators/eth": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Technical indicators: RSI, Bollinger Bands, ATR, Support/Resistance",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "20000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x9863aB6242663FCc84c33632741711dB78f8Fd15"
+                }
+              ],
+              "extensionsDigest": "5b949337caf952e75d58130bc9a7f3bd4fe65c62e2bde81d7a77199715add323",
+              "comparableDigest": "d9539a35ff41bb4a3e89e6c2f29f9cda9f2edb743225914510841e9ccba72b50"
+            },
+            "https://api.agentservices.to/v1/fx": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Real-time FX/forex rates for 30+ currencies",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "3000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x9863aB6242663FCc84c33632741711dB78f8Fd15"
+                }
+              ],
+              "extensionsDigest": "6491eb3ea67ba5972057c14de302fe74557e1713159b4b1fde09a8aae0e77e73",
+              "comparableDigest": "b2e2896e4772601f9bb359006b77933fcbb61b9c693a513097ff969c6528ea3a"
+            },
+            "https://api.agentservices.to/v1/search": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "AI-powered web search with structured results",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x9863aB6242663FCc84c33632741711dB78f8Fd15"
+                }
+              ],
+              "extensionsDigest": "e78da4604eb1e30936e049d93d86b304b79082257b8226b91e9aaf7b73af6eff",
+              "comparableDigest": "c2700b2dad3a2d8b447c0969e786a2ddc568e4d03bed5f0b5b90d772c029309d"
+            }
+          }
+        },
+        "agenttoll": {
+          "id": "agenttoll",
+          "name": "AgentToll",
+          "hosts": [
+            "agenttoll.app",
+            "agenttoll.dev"
+          ],
+          "queries": [
+            "agenttoll.app",
+            "agenttoll.dev"
+          ],
+          "partial": false,
+          "rowCount": 14,
+          "routes": {
+            "https://agenttoll.app/api/base/address/:address": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Base wallet lookup: an address's primary basename, ETH balance, transaction count, and whether it is a contract",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0xe55359021a6a22d8385b827405991c56075f56f8"
+                }
+              ],
+              "extensionsDigest": "99194560ba18b7f839225d46c6925965bd0d11d33001fa0c27304079987612d3",
+              "comparableDigest": "96d66cc0140a1ee88d3d7f8420b236cac771851723e76ada0ad681d139212273"
+            },
+            "https://agenttoll.app/api/base/name/:address": {
+              "type": "http",
+              "x402Version": 1,
+              "description": "Basename resolution both ways: name to address, or address to primary name",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "base",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0xE55359021a6a22d8385b827405991C56075f56F8",
+                  "maxAmountRequired": "1000"
+                }
+              ],
+              "extensionsDigest": "3e972e5903d23b3e23006c345cc9c9427e6e7fb96bb2358a19291dc88c3b21c5",
+              "comparableDigest": "2dac578b2478bdf4ba33f48aa77f380f7137033ca4501db79e3fa8cb65f4a9d2"
+            },
+            "https://agenttoll.app/api/base/name/:nameOrAddress": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Basename lookup both ways: a name returns its address and text records, an address returns its primary basename",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0xe55359021a6a22d8385b827405991c56075f56f8"
+                }
+              ],
+              "extensionsDigest": "70ba11d4b5a56303d5561c706f5fd4f3b1c2ad8366e9fe555585a515bf5b0295",
+              "comparableDigest": "48192e17d7151a4edce4f1c0eed5330d634334327c8b88f9f8ed0ab6a3be1800"
+            },
+            "https://agenttoll.app/api/base/name/agenttoll": {
+              "type": "http",
+              "x402Version": 1,
+              "description": "Basename resolution both ways: name to address, or address to primary name",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "base",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0xE55359021a6a22d8385b827405991C56075f56F8",
+                  "maxAmountRequired": "1000"
+                }
+              ],
+              "extensionsDigest": "ec699b62776a5440c63f4b1ad164a424ba5a786540ed8796b00481511fe993a2",
+              "comparableDigest": "13002c1781075689e6ade8a877eff3a89dac8ed3c8367bad87f901e2f8d5deff"
+            },
+            "https://agenttoll.app/api/base/name/jesse.base.eth": {
+              "type": "http",
+              "x402Version": 1,
+              "description": "Basename resolution both ways: name to address, or address to primary name",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "base",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0xE55359021a6a22d8385b827405991C56075f56F8",
+                  "maxAmountRequired": "1000"
+                }
+              ],
+              "extensionsDigest": "ec699b62776a5440c63f4b1ad164a424ba5a786540ed8796b00481511fe993a2",
+              "comparableDigest": "13002c1781075689e6ade8a877eff3a89dac8ed3c8367bad87f901e2f8d5deff"
+            },
+            "https://agenttoll.app/api/base/radar": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "New token radar on Base with a liquidity floor: pools created in the last 24 hours that already hold real liquidity; ?minLiquidity sets the spam floor in USD, default 10000. Each pool carries its token address, so anything interesting can go straight to /api/base/safety",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "3000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0xe55359021a6a22d8385b827405991c56075f56f8"
+                }
+              ],
+              "extensionsDigest": "75e7f6897edd127fce38c5861a3667ed5248fe5ce44397bf0c4ff942faf9ac4d",
+              "comparableDigest": "ac64423758bd858e9b9a559a4a8dbead4c813f2c10aa7542becf417b9b033a74"
+            },
+            "https://agenttoll.app/api/base/scout": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "New token scan with a safety verdict attached: today's new Base pools above your liquidity floor, each already checked for honeypot, taxes and owner powers. One call instead of N+1",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "8000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0xe55359021a6a22d8385b827405991c56075f56f8"
+                }
+              ],
+              "extensionsDigest": "bacb6a3eb8e83fa500d8e9dcb93896e098a083f779f26dc8b6cf7609a96483de",
+              "comparableDigest": "e005f4d3b5803f2457ae1e758c0783bf9f09e653814c24e85a5af0ceccfa83a2"
+            },
+            "https://agenttoll.app/api/base/token/:address": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Base token price lookup by contract address: the onchain USD price for any token on Base",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0xe55359021a6a22d8385b827405991c56075f56f8"
+                }
+              ],
+              "extensionsDigest": "41ccc350526b1603c188844b998382cc8c38205e4040e2291e08a4547ddba9a2",
+              "comparableDigest": "a1f8b13659644caec70cd5e8eeeeaf0678d96317cb236daf88ac6e0c93e65539"
+            },
+            "https://agenttoll.app/api/brief": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Market brief in one call: prices (BTC, ETH and SOL by default, or ?symbols=eth,degen), Base gas, and market sentiment",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0xe55359021a6a22d8385b827405991c56075f56f8"
+                }
+              ],
+              "extensionsDigest": "b6d244ac44558245e4bedb718c606571a6703fa690f5d36507ee6f41de1bc288",
+              "comparableDigest": "7e1401b3cd0f75844782062ac4f15965bd1093f4ca410db2927b37cf2d4ed314"
+            },
+            "https://agenttoll.app/api/gas": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Base gas price check: the current gas price and latest block number; add ?gasLimit=150000 to also get what a transaction that size costs in ETH and USD",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0xe55359021a6a22d8385b827405991c56075f56f8"
+                }
+              ],
+              "extensionsDigest": "2d23f202fc9c0772019de6762f1dc10656e07ab6ecdbafab372330355eca3531",
+              "comparableDigest": "1e4702e33bc743540ffc6ebcf0e7e75537561586a754ceacc0f415c7e47ff6bc"
+            },
+            "https://agenttoll.app/api/price/:symbol": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Token price lookup: spot price in USD and 24h change for a crypto asset, by ticker or CoinGecko id",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0xe55359021a6a22d8385b827405991c56075f56f8"
+                }
+              ],
+              "extensionsDigest": "3182f5b22733837d24fec5a0ed7f4e83839e06a8c290710352b76bdc6baaca58",
+              "comparableDigest": "ae5e2a54cbbeed6a971319aa55a73a89dd413242d7a4e9c63b5fa1c4dcae21be"
+            },
+            "https://agenttoll.app/api/trending": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Trending token scan: the tokens moving across the crypto market right now; ?limit=N trims the list",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "2000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0xe55359021a6a22d8385b827405991c56075f56f8"
+                }
+              ],
+              "extensionsDigest": "d1f1638f5852ef4805e36a6627e5d915882a4f401fe93c17783cdb6e2bceb857",
+              "comparableDigest": "2cf76db3bfd90343579e4974d9eb7a62239c9ebcce982d4e5274b1e720cb635d"
+            },
+            "https://agenttoll.app/api/watch/address/:address": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Wallet activity watch: new activity for a Base address since your cursor, so a scheduled agent only fetches what changed",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "2000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0xe55359021a6a22d8385b827405991c56075f56f8"
+                }
+              ],
+              "extensionsDigest": "d1e80abecda605be2ec6ebf4746f85342a7ad34c325ccce303cc2a8a2143c9f8",
+              "comparableDigest": "0641ccf26953f19cb2ae814b3914d17b5fba5121b1f5cef571492295c98f8430"
+            },
+            "https://agenttoll.app/api/watch/radar": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "New pool watch: only the Base pools that appeared since your cursor, for agents polling on a schedule",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "3000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0xe55359021a6a22d8385b827405991c56075f56f8"
+                }
+              ],
+              "extensionsDigest": "5f7978a49b024313db5c0b585596ef2645cfbac161accaf5fc99a4de716ba41a",
+              "comparableDigest": "5e6acf7c6711207a0c80163105a54d2b2aeb8630d9f2455cef3da7c107bd8152"
+            }
+          }
+        },
+        "argonautworks": {
+          "id": "argonautworks",
+          "name": "ArgonautWorks",
+          "hosts": [
+            "official-fx-reference.vercel.app"
+          ],
+          "queries": [
+            "official-fx-reference.vercel.app",
+            "ArgonautWorks"
+          ],
+          "partial": false,
+          "rowCount": 0,
+          "routes": {}
+        },
+        "gblin": {
+          "id": "gblin",
+          "name": "GBLIN",
+          "hosts": [
+            "gblin.digital"
+          ],
+          "queries": [
+            "gblin.digital"
+          ],
+          "partial": false,
+          "rowCount": 9,
+          "routes": {
+            "https://gblin.digital/api/x402/attestation": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "EIP-712-signed risk attestation, verifiable OFFLINE in one step — no trust in this server required. Perishable (10-min) proof of the BTC/ETH risk regime (calm | elevated | crash) from GBLIN's on-chain Crash Shield on Base. Bought daily by a third-party ERC-8004 agent as a pinned input of its decision rule until 16 Aug 2026 (see /receipts). FREE sample: GET /api/x402/attestation-sample. Free verifier: verify_risk_attestation in @gblin-protocol/mcp-server.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "3000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x0ebA5d314F4f5Dcb7A094953Fa9311a45172dd1B"
+                }
+              ],
+              "extensionsDigest": "14882af916b016da12b0768017c3d4c8677a658156f4c87c2d72062bfbfc0069",
+              "comparableDigest": "364991b21922a78818790ddfd4f9af8d1d0a5cb693f98d1ecd15faebe9320a6f"
+            },
+            "https://gblin.digital/api/x402/catalog": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "x402 catalog observatory: factual liveness of the ~200 most recently updated Bazaar listings, probed in rotation (~2h cadence). Per-endpoint HTTP code, latency, last-OK time, consecutive fails. No payments made by probes; no judgements — measurements only. Free aggregate view: gblin-mcp.gblin-mcp-worker.workers.dev/catalog",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x0ebA5d314F4f5Dcb7A094953Fa9311a45172dd1B"
+                }
+              ],
+              "extensionsDigest": "f40dae0fa3bad4f437a2303bb9a648bc4539b57fecac18a159869faa7366f430",
+              "comparableDigest": "dc056f5ddff09f7109d074b1c90c78dd452436bad44d9593406dbda5c7e92a73"
+            },
+            "https://gblin.digital/api/x402/governance": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "GBLIN protocol governance state: owner, the 48h timelock delay that every owner-only change must pass through, and any pending operation.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x0ebA5d314F4f5Dcb7A094953Fa9311a45172dd1B"
+                }
+              ],
+              "extensionsDigest": "85ea6bad149764c1ad539852781ac58449a6b717eb8b5d2ecd3862caa061423e",
+              "comparableDigest": "64163c192b5a492b3bb3fd1aa24222986fcdc837bfaf96d8e85f3cbc8c983c5f"
+            },
+            "https://gblin.digital/api/x402/health": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Wallet treasury health: GBLIN/USDC/ETH balances, gas runway, and rebalance recommendation. Critical for autonomous decision-making.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "2000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x0ebA5d314F4f5Dcb7A094953Fa9311a45172dd1B"
+                }
+              ],
+              "extensionsDigest": "7c8fae56dcfc39aff1d30a0b574aa7128113d3b110aed8ed47e3ed9081bedea2",
+              "comparableDigest": "0095a1111cc3ade13e883b2c8c2d0c580b3bec7709692e505e31492dad9858cb"
+            },
+            "https://gblin.digital/api/x402/invest": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "USDC→GBLIN treasury-accumulation calldata: two sequential steps (approve USDC, then buyGBLINWithToken) with MEV-safe minOut.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "2000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x0ebA5d314F4f5Dcb7A094953Fa9311a45172dd1B"
+                }
+              ],
+              "extensionsDigest": "7064d6da8e5ce5caab669783da0f10569e9a67215fe11a411bb1989f33f9dc14",
+              "comparableDigest": "7d63099e5ac8453e9a6875eb8a78e702dd3dcb62b2bc60cef1c49a0ebcd2471f"
+            },
+            "https://gblin.digital/api/x402/jit": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Just-In-Time GBLIN→USDC calldata. Returns two ready-to-broadcast steps (sellGBLINForEth + WETH→USDC swap) sized to cover the requested USDC amount; smart accounts can batch them in one UserOp.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x0ebA5d314F4f5Dcb7A094953Fa9311a45172dd1B"
+                }
+              ],
+              "extensionsDigest": "58f7d8d0bd418f3a29173bc8fd41ca60ae3e7befd41116bd0c9040c565e8a15e",
+              "comparableDigest": "99a5cfce4893d9b5cad82b9450e441fe7839e4a0ef6cc68bc2239c7a9d89ae4e"
+            },
+            "https://gblin.digital/api/x402/quote": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Preview a GBLIN swap (buy ETH→GBLIN or sell GBLIN→ETH) with dynamic slippage and a MEV-safe minOut.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x0ebA5d314F4f5Dcb7A094953Fa9311a45172dd1B"
+                }
+              ],
+              "extensionsDigest": "8cecb5c867ddbe289e907571279abbf0fccf8de58df0bce8fa5e947aafba233e",
+              "comparableDigest": "ce79093d9d5328b49bd71dc618edb7c059c499b6d5b6bf5e155ec34c90bc5491"
+            },
+            "https://gblin.digital/api/x402/seal": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "AI Action Receipts: seal the HASHES of an AI action (input/output as hashes; your action label + meta are published) into GBLIN's signed append-only transparency log. Portable receipt: Ed25519 signature + RFC 6962 inclusion proof + C2SP signed checkpoint; root anchored daily on Base (EAS). Proves existence and time — not a compliance certificate. Free reads + demo: gblin-mcp.gblin-mcp-worker.workers.dev/log. Offline verifier: github.com/gblinproject/gblin-treasury-risk-regime",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x0ebA5d314F4f5Dcb7A094953Fa9311a45172dd1B"
+                }
+              ],
+              "extensionsDigest": "b2a520044bed1d0a3250d21fc98310928466c6b525d94879deaad7787207591e",
+              "comparableDigest": "1ca6e40e637268a9edba5239cb47b8724f562724b17e96bb6f6f41621787457a"
+            },
+            "https://gblin.digital/api/x402/treasury-state": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Real-time GBLIN protocol state: NAV in USD, basket composition with dynamic weights, and Crash Shield status.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x0ebA5d314F4f5Dcb7A094953Fa9311a45172dd1B"
+                }
+              ],
+              "extensionsDigest": "e7fd3921a5c81e72e8b4c9a160e5471761bcc7839088e95379f9281a7b06568e",
+              "comparableDigest": "9dfc24500b3c94113077e57b07a74a656f0610147b2ee6c6e625b5c53e93945b"
+            }
+          }
+        },
+        "grey-ridge": {
+          "id": "grey-ridge",
+          "name": "Grey Ridge",
+          "hosts": [
+            "api.greyridgesignals.ai",
+            "x402-data-api.sigrunner.workers.dev"
+          ],
+          "queries": [
+            "api.greyridgesignals.ai",
+            "x402-data-api.sigrunner.workers.dev"
+          ],
+          "partial": false,
+          "rowCount": 21,
+          "routes": {
+            "https://api.greyridgesignals.ai/chain/balance": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "ETH balance of a Base mainnet address, incl. balance_usd.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "9a9e0dfbfe72f6c18788df8dc779eff43ea3883bafd00240ee6c467cb8c368e7",
+              "comparableDigest": "29dd239a6a436d0926949fa3bfe36657b65762512d1f4b7bf09d30eadd5d525e"
+            },
+            "https://api.greyridgesignals.ai/chain/block-number": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Current Base mainnet block number.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "7b189dcfe7c30720bbf6754b924b7526c0945d834a73f6e8bba2eb8da62b9db4",
+              "comparableDigest": "9fd0e2b9f7ac59aefc523522efa94a0169479436e88baa0cdd60492ba34161c7"
+            },
+            "https://api.greyridgesignals.ai/chain/code": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Contract-code check for a Base mainnet address (is_contract + code size + EIP-7702 delegated-EOA detection).",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "20303fa30d7c13b475f2ac2465d958247e58e64daa89504821f54b39e710ba34",
+              "comparableDigest": "be644ad91d053eb0fc263a72b222cac6f780ba18239749eb9852009d2f8581d5"
+            },
+            "https://api.greyridgesignals.ai/chain/gas-price": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Current Base mainnet gas price (wei/gwei), EIP-1559 base_fee_gwei/priority_fee_gwei, and gas_price_usd.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "722b3325ab7c88855177b37a62b229aeb0b9b092069eb00a133a291bee05f731",
+              "comparableDigest": "2dbc8e8688f2eacf6f6b63887dd2e60bb12dff5c4e3fb47537011ad022edfada"
+            },
+            "https://api.greyridgesignals.ai/chain/receipt": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Transaction receipt by hash on Base mainnet: status, gas used, full logs, L1 fee breakdown, l1_fee_usd/total_fee_usd.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "1f0edb4a692b44523a5b78defa388734484ca5bf58422eb812a04595564a8aa4",
+              "comparableDigest": "f61341f104608f2a777d8a68f508570b2f97ec58ef6a00f368adb4c6e5d9dda2"
+            },
+            "https://api.greyridgesignals.ai/chain/token-balance": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "ERC-20 token balance of a Base mainnet address, incl. symbol, decimals, balance_formatted.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "6ae4411da9a09cd00cc73e47786daeabb476312016bc767206ba264fd5e27b3c",
+              "comparableDigest": "4abd5d32b5697dbe68fcf386b88ab5230ba6318f3e722a3eea163c6fb618a19c"
+            },
+            "https://api.greyridgesignals.ai/chain/token-security": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Token security / honeypot detector for a Base mainnet ERC-20: EIP-1967/1822 proxy + upgradeability detection, bytecode dispatcher scan for mint/pause/blacklist/fee-setter/ownership selectors, owner() renouncement check, and a live eth_call state-override simulation testing whether a synthetic wallet can actually transfer() the token. Returns risk_score (0-100) + verdict (clear/review/block) + human-readable flags.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "20000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "ea9f04134a561c9c29374f206ade5212e4d2cd653a3bc607c855139941eee667",
+              "comparableDigest": "fc7677678f3730a5fb87e90e9d9374fbdb05b37cdd391efb642af2c0e2658579"
+            },
+            "https://api.greyridgesignals.ai/chain/tx": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Transaction details by hash on Base mainnet.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "bc428fa272d79bfc803ea5e060ec510b6e6b3bb032c55c5279a70b76fdf0652b",
+              "comparableDigest": "0af76c7cf6cf7c6d1eec6f4d622eb188b47bda680962db95f5e3d3aba24fa9f4"
+            },
+            "https://api.greyridgesignals.ai/chain/wallet": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Wallet bundle: ETH balance + balance_usd + tx count + contract-code check (EIP-7702 delegated-EOA aware) for a Base mainnet address, in one call.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "3000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "6128602d2b5636ccd62049956ff89b1f9dbf139abdc64f8cf47134b3ec750016",
+              "comparableDigest": "3f70d29d437b36e2b5174574266f4ba3b513bb8444ea6c93218ef4ec1f7b9189"
+            },
+            "https://api.greyridgesignals.ai/crypto/prices": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Spot token prices from DefiLlama — pass comma-separated CoinGecko ids, get price/change_24h/symbol/confidence/timestamp.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "4000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "4e7ff32f65108888217636af49b961b952666c956fd72a736830adefcea98567",
+              "comparableDigest": "00751ad6c8ca3eb2ae0889c65957b602d4ebb0a78653cfe6d60acb34d06f15d8"
+            },
+            "https://api.greyridgesignals.ai/defi/yields": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Top DeFi lending/LP yields — project, chain, symbol, pool id, APY breakdown + 1d/7d/30d APY trend, IL risk (incl. il7d), exposure, reward/underlying tokens, outlier flag, mu/sigma, DefiLlama stability forecast, TVL. Filter by project, chain, or stablecoin-only; sort by TVL (default) or risk-adjusted APY (apy/sigma).",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "1395be110eaf814d3649582562cfa7bcc52785aba9a8e708b6e3193acb1e46ce",
+              "comparableDigest": "1b8254ef059beb8a8217446e5ba54c04a061f94812984fe8547510590761e24d"
+            },
+            "https://api.greyridgesignals.ai/pm/markets": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Query live Polymarket prediction markets — question, outcomes, live prices, bestBid/bestAsk/spread, volume24hr/volume1wk, oneDayPriceChange, clobTokenIds, conditionId, category tags, liquidity, end date. Ranked by volume24hr; filter by keyword.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "d177999a06fa4454a742cc101cf92db0185dde6356d218f3e961a265e9d942f1",
+              "comparableDigest": "a94b33e60c627f7ee2f7376cf35e9ef3efa95f7cf781c30e0c0fed47f8766f92"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/chain/balance": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "ETH balance of a Base mainnet address, incl. balance_usd.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "9a9e0dfbfe72f6c18788df8dc779eff43ea3883bafd00240ee6c467cb8c368e7",
+              "comparableDigest": "29dd239a6a436d0926949fa3bfe36657b65762512d1f4b7bf09d30eadd5d525e"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/chain/block-number": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Current Base mainnet block number.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "7b189dcfe7c30720bbf6754b924b7526c0945d834a73f6e8bba2eb8da62b9db4",
+              "comparableDigest": "9fd0e2b9f7ac59aefc523522efa94a0169479436e88baa0cdd60492ba34161c7"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/chain/code": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Contract-code check for a Base mainnet address (is_contract + code size + EIP-7702 delegated-EOA detection).",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "20303fa30d7c13b475f2ac2465d958247e58e64daa89504821f54b39e710ba34",
+              "comparableDigest": "be644ad91d053eb0fc263a72b222cac6f780ba18239749eb9852009d2f8581d5"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/chain/receipt": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Transaction receipt by hash on Base mainnet: status, gas used, full logs, L1 fee breakdown, l1_fee_usd/total_fee_usd.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "1f0edb4a692b44523a5b78defa388734484ca5bf58422eb812a04595564a8aa4",
+              "comparableDigest": "f61341f104608f2a777d8a68f508570b2f97ec58ef6a00f368adb4c6e5d9dda2"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/chain/token-balance": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "ERC-20 token balance of a Base mainnet address, incl. symbol, decimals, balance_formatted.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "6ae4411da9a09cd00cc73e47786daeabb476312016bc767206ba264fd5e27b3c",
+              "comparableDigest": "4abd5d32b5697dbe68fcf386b88ab5230ba6318f3e722a3eea163c6fb618a19c"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/chain/token-security": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Token security / honeypot detector for a Base mainnet ERC-20: EIP-1967/1822 proxy + upgradeability detection, bytecode dispatcher scan for mint/pause/blacklist/fee-setter/ownership selectors, owner() renouncement check, and a live eth_call state-override simulation testing whether a synthetic wallet can actually transfer() the token. Returns risk_score (0-100) + verdict (clear/review/block) + human-readable flags.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "20000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "ea9f04134a561c9c29374f206ade5212e4d2cd653a3bc607c855139941eee667",
+              "comparableDigest": "fc7677678f3730a5fb87e90e9d9374fbdb05b37cdd391efb642af2c0e2658579"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/chain/tx": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Transaction details by hash on Base mainnet.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "bc428fa272d79bfc803ea5e060ec510b6e6b3bb032c55c5279a70b76fdf0652b",
+              "comparableDigest": "0af76c7cf6cf7c6d1eec6f4d622eb188b47bda680962db95f5e3d3aba24fa9f4"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/chain/wallet": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Wallet bundle: ETH balance + balance_usd + tx count + contract-code check (EIP-7702 delegated-EOA aware) for a Base mainnet address, in one call.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "3000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "6128602d2b5636ccd62049956ff89b1f9dbf139abdc64f8cf47134b3ec750016",
+              "comparableDigest": "3f70d29d437b36e2b5174574266f4ba3b513bb8444ea6c93218ef4ec1f7b9189"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/crypto/prices": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Spot token prices from DefiLlama — pass comma-separated CoinGecko ids, get price/change_24h/symbol/confidence/timestamp.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x5765ae06a52dc7A0BB71c36A11db512c7ea9ed10"
+                }
+              ],
+              "extensionsDigest": "4e7ff32f65108888217636af49b961b952666c956fd72a736830adefcea98567",
+              "comparableDigest": "7f7868c4877fa2fcffc8f68f17978c9ac2091339da59c97adf86719607cf5f06"
+            }
+          }
+        },
+        "kr-dart": {
+          "id": "kr-dart",
+          "name": "KR-DART",
+          "hosts": [
+            "dartapi.ljaysk.com"
+          ],
+          "queries": [
+            "dartapi.ljaysk.com",
+            "KR-DART"
+          ],
+          "partial": false,
+          "rowCount": 3,
+          "routes": {
+            "https://dartapi.ljaysk.com/v1/awards": {
+              "type": "http",
+              "x402Version": 1,
+              "description": "Korean government procurement award results (who won which contract, at what amount), cursor-based delta.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "base",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x3b20d22540deb3CF1162B195CD15756adb5ceB5D",
+                  "maxAmountRequired": "5000"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "solana",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "5xrtB5SFAb214aC2EmLiyMJGop2EVef1zWBdDpLF7s9y",
+                  "maxAmountRequired": "5000"
+                }
+              ],
+              "extensionsDigest": "f86a69576715fc546c7df85ac57050848561360d864541954b79cf7af332934f",
+              "comparableDigest": "c3bcc6d062116405240c819fcab9d35e9c7813df6c11b84843615e2b52a62478"
+            },
+            "https://dartapi.ljaysk.com/v1/bids": {
+              "type": "http",
+              "x402Version": 1,
+              "description": "Korean government procurement (KONEPS/Narajangteo) bid notices, cursor-based delta. Goods, services, construction, foreign tenders with budgets and deadlines.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "base",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x3b20d22540deb3CF1162B195CD15756adb5ceB5D",
+                  "maxAmountRequired": "5000"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "solana",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "5xrtB5SFAb214aC2EmLiyMJGop2EVef1zWBdDpLF7s9y",
+                  "maxAmountRequired": "5000"
+                }
+              ],
+              "extensionsDigest": "56971b1637c866b71fb48355ce5dd62148f082cfddb48fa3302f8dc2d1923055",
+              "comparableDigest": "8351c1c4e2e2ef7122a04904e21d3dd7d4422ffdfa0e119ac14d11f402b94d78"
+            },
+            "https://dartapi.ljaysk.com/v1/events": {
+              "type": "http",
+              "x402Version": 1,
+              "description": "Korean corporate disclosure (DART) event stream, cursor-based delta. All filings, classified with importance score.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "base",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x3b20d22540deb3CF1162B195CD15756adb5ceB5D",
+                  "maxAmountRequired": "2000"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "solana",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "5xrtB5SFAb214aC2EmLiyMJGop2EVef1zWBdDpLF7s9y",
+                  "maxAmountRequired": "2000"
+                }
+              ],
+              "extensionsDigest": "f6c994b240d3643a5ec85c74186f7e2cdc9ad153897db147cf0f89bce896ddd6",
+              "comparableDigest": "01d27eeeafe7878c4d60c0c241504f01f2819e47b7d72b8da1e12986368fbc3b"
+            }
+          }
+        },
+        "loyalspark": {
+          "id": "loyalspark",
+          "name": "LoyalSpark",
+          "hosts": [
+            "api.loyalspark.online"
+          ],
+          "queries": [
+            "api.loyalspark.online",
+            "api.loyalspark.online/x402-gateway",
+            "api.loyalspark.online/x402-gateway/balance",
+            "api.loyalspark.online/x402-gateway/recipient-api",
+            "api.loyalspark.online/x402-gateway/analytics",
+            "api.loyalspark.online/x402-gateway/offers",
+            "api.loyalspark.online/x402-gateway/customers",
+            "api.loyalspark.online/x402-gateway/rewards",
+            "api.loyalspark.online/x402-gateway/earn",
+            "api.loyalspark.online/x402-gateway/programs",
+            "api.loyalspark.online/x402-gateway/vouchers",
+            "api.loyalspark.online/x402-gateway/transfer"
+          ],
+          "partial": true,
+          "rowCount": 26,
+          "routes": {
+            "https://api.loyalspark.online/x402-gateway/activate-program": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "10000"
+                }
+              ],
+              "extensionsDigest": "45930b69c71d56887bef2c7adca252318e230ff49d0c8556c3f485219ed5d13c",
+              "comparableDigest": "6b2f04bdcde3a84d39065f20e8016de9948f2a3587062823a962aa81fa38b358"
+            },
+            "https://api.loyalspark.online/x402-gateway/analytics": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "5000"
+                }
+              ],
+              "extensionsDigest": "74f3a12203417e03ca3f062be1d170c9faccecc792ff6e9d2ed948a39d982c1b",
+              "comparableDigest": "02c4dc23678bd640c018b1cb8340401f1856807b5029917053f24cef1dd1ed20"
+            },
+            "https://api.loyalspark.online/x402-gateway/balance": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "1000"
+                }
+              ],
+              "extensionsDigest": "c1b534f035add4406eda5fc19c09a9ccd176a80b312d3bce5061758e386f20aa",
+              "comparableDigest": "5d8c2e482b8a511fbbe2f7f46373619d64f4b389aad381572fbaaf11ea485014"
+            },
+            "https://api.loyalspark.online/x402-gateway/customers": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "2000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "2000"
+                }
+              ],
+              "extensionsDigest": "5405d95d0bf26242897dd6c5d9c3157336f966087474cf80251863d47ad09fd9",
+              "comparableDigest": "c8ad5a2fec0e34639fc5ae348b03fdee8a53b7785d048d9434d17b6500997ab0"
+            },
+            "https://api.loyalspark.online/x402-gateway/earn": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "10000"
+                }
+              ],
+              "extensionsDigest": "7b0d70e5d69016239a73435659ae848d5bc31f5b5e6dfe41f760e240ecbe576e",
+              "comparableDigest": "8ee0e112118fd01d9644a521291ab1807661ad41bc76648ffd8fbe7713082068"
+            },
+            "https://api.loyalspark.online/x402-gateway/merchant-profile": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "5000"
+                }
+              ],
+              "extensionsDigest": "8f7507c70972c15d38b00ec6ba59351856c3fd05edce6fba07b8f0f90bac645d",
+              "comparableDigest": "6b851ab03ea730a086e0a3a3b2cf7ee80d69c94a3b0583b67a32295f299b5a91"
+            },
+            "https://api.loyalspark.online/x402-gateway/mint": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "10000"
+                }
+              ],
+              "extensionsDigest": "8a644a982ddf2819354e0b7ac5287e8fa76ff5a0b9eb97ffa9ba9ed8a0645994",
+              "comparableDigest": "adbd8d7394f5517e60378ff8521f967b057e73480f846461a36bf0ae829d083e"
+            },
+            "https://api.loyalspark.online/x402-gateway/offers": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "1000"
+                }
+              ],
+              "extensionsDigest": "cf22f3a2484aa9f68492cc71f3be476845b5fe6064d1fc2508e4e50aa0c7c0f6",
+              "comparableDigest": "95cae289fc7febcb86d98b3fba41911b08539091750af8d130b7cfba1a5eb75b"
+            },
+            "https://api.loyalspark.online/x402-gateway/program-status": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "5000"
+                }
+              ],
+              "extensionsDigest": "6d0d4a06beb325b75d06c291509406fef3a529fc434855aac7370bccbe548adf",
+              "comparableDigest": "8a36bc85e25bd86a9641b98cc5e81ad0bb82c4264f9b3a33dcb631b87e480498"
+            },
+            "https://api.loyalspark.online/x402-gateway/programs": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "1000"
+                }
+              ],
+              "extensionsDigest": "9ed9e32d7a0e73ff5d1d5ed6eaea6dd388664366e0861811d388d6bba2630539",
+              "comparableDigest": "900b1474e3cf4783feaf19198c382fc287ef6e15b04b8a634a8106ee6227d144"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/accept-offer": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "10000"
+                }
+              ],
+              "extensionsDigest": "8bf8dffb6c10406a8f029fd290be102b155d94702a3a646ee20a86f2a1b14d80",
+              "comparableDigest": "2f5ff5fff42fda9fd39e066d28828bfb77ca7a584707153853f400e59d5da420"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/balance": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "1000"
+                }
+              ],
+              "extensionsDigest": "81be358a70e9faf5b2aff3fdcd2944f471cc3ea549d77bd392852f3d2ac99784",
+              "comparableDigest": "12fc197da5d4fad63bcf7b3966cd0b93e8c09960859f6415e5f022558757b281"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/balances": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "1000"
+                }
+              ],
+              "extensionsDigest": "70cb95ee2dc5cfb9cff7ddbc88fbcd74158ec21d320b93ca420cdcbdbf6ba911",
+              "comparableDigest": "5f10df7cde08d032ed58ba777e583fde9d620d4669c3a57a3351cf23544473c5"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/cancel-offer": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "5000"
+                }
+              ],
+              "extensionsDigest": "4e6c574bb0de42d78f10b6a9a19465cb9d244522525e50f988c6a0bc3c1332fd",
+              "comparableDigest": "dac7cfe5f499696d928b299ece0d7e724c89a64f92afd758d823ed628347f1d3"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/offers": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "1000"
+                }
+              ],
+              "extensionsDigest": "42fc3bd906c8c6ea80e4771ed0171a7e3f163c0990ac25f815e1bd0161b2c737",
+              "comparableDigest": "827cf65da44319e7605573d475fe28d2af02f66d2dee5de8df0680c71afaea2d"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/prepare-transfer": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "5000"
+                }
+              ],
+              "extensionsDigest": "192a5744ad54b259d8074113b19593c5d1e51955d5a6142201b44f572839bfe2",
+              "comparableDigest": "58a206e0e230ddd9ea08708b19d2d16334bba4e2c471c0d18fc5e4236e7cfc16"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/redeem-reward": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "10000"
+                }
+              ],
+              "extensionsDigest": "9c6c266fbfe5fc154e236073de90604e3d93e5c4ed4f36e98ecb0c6e4b7159aa",
+              "comparableDigest": "fd56e7cc9f23f3386ff5476c77d431ecca8b818099fcaf10ef5c8c98c48d4de0"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/rewards": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "1000"
+                }
+              ],
+              "extensionsDigest": "e42e8d9933145118200a7ab5bda74c21fc2aef7c2812e456946b0ef1112ec441",
+              "comparableDigest": "df7397941ca10d933451b0919ba4b47652ec9ebcde786f91518121890777cfc4"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/vouchers": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "1000"
+                }
+              ],
+              "extensionsDigest": "6ed59696fb3fd7ecd777f4a219f06b7a00129141e88106ddb2b222bc836884a5",
+              "comparableDigest": "016577ebcbe5d5a0bbe40e25dae6b37c23269a6ac7fc3bb271bfb433e3f09f97"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/workflow/prepare-reward-redemption": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "5000"
+                }
+              ],
+              "extensionsDigest": "f90551d87ba8c7b900173df11debc0da58a253e45597151fa9346c3c3c5e8b20",
+              "comparableDigest": "801a2b1ead3efbe6c61b477f6346c2b32d2866061b78240cce0b0df7638cda02"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/workflow/reward-status": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "1000"
+                }
+              ],
+              "extensionsDigest": "4d8d46f3a681ea039ce91c1bde67394c718d4cf57b2805d0279db74169c11d8a",
+              "comparableDigest": "3875b629a732df7383cb4dc41ca3a38190ae340c0cba313f5041b47ad41fbc3f"
+            },
+            "https://api.loyalspark.online/x402-gateway/register-program": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "10000"
+                }
+              ],
+              "extensionsDigest": "670c3dce50278170b26b83cb496f0dd7bd98ffef5d31f13eca56cbd6b9dab588",
+              "comparableDigest": "9d2e740eb98ea943dddbdea6657cc501941e13c807a95bfb8d9f401f9c9ca3f5"
+            },
+            "https://api.loyalspark.online/x402-gateway/rewards": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "1000"
+                }
+              ],
+              "extensionsDigest": "99c63321a7f2da45360b2de40ae5c24110ba88b035996bba7112e157199f220f",
+              "comparableDigest": "dbd725ee5100d02b90575723d59a64622a6b17f69bf905b831a2a21905866063"
+            },
+            "https://api.loyalspark.online/x402-gateway/transfer": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "5000"
+                }
+              ],
+              "extensionsDigest": "ed31138d9f54f982a4f493c0e99a8a69cd0badaae8d03c8f4d4e64e6786dd8d2",
+              "comparableDigest": "38b62ee6697d99b3e5c1697fdab62564b88e5c42571b079cb067fab737417102"
+            },
+            "https://api.loyalspark.online/x402-gateway/update-program-config": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "5000"
+                }
+              ],
+              "extensionsDigest": "d4144fe941666588b0aee5d2bc4cde92b345b508bccee9ce5e37067803995171",
+              "comparableDigest": "530b52a7785e64b8b28d459c6f34a0d55c177106e1504041d7ec774c5ef88589"
+            },
+            "https://api.loyalspark.online/x402-gateway/vouchers": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Onchain loyalty platform on Base Network. Businesses launch branded rewards in minutes. Customers earn real value with every purchase. AI agents automate the rest.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x40a8CdD6a10EC1a8cB3dFb2834675e7a2CF4ad8b",
+                  "maxAmountRequired": "1000"
+                }
+              ],
+              "extensionsDigest": "89485da4e08479a6449ddad0bc4ffc45406e01a444c5ccc415a54582208db3b0",
+              "comparableDigest": "c3e36ceeedf059dbe30622ca5b17cc920052227bfaec9cec8b75c30661e5d1c9"
+            }
+          }
+        },
+        "palmyr": {
+          "id": "palmyr",
+          "name": "Palmyr",
+          "hosts": [
+            "palmyr.ai"
+          ],
+          "queries": [
+            "palmyr.ai"
+          ],
+          "partial": false,
+          "rowCount": 19,
+          "routes": {
+            "https://palmyr.ai/cards": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "List your prepaid cards (status, last4, balance — never full card numbers; those are per-card via GET /cards/:id).",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "10000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "e22bc656f48eb4dad4cb2dfd9e21d82322bfd1bb64d64e93474af9f462fa40ff",
+              "comparableDigest": "a5677093b7dcbba26d1147ca3fa7761a096960ec6cf300162b544ade97083448"
+            },
+            "https://palmyr.ai/cards/:id": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Retrieve a prepaid card you own: full card number, CVV, expiry, balance. Owner-verified ($0.01 ownership proof).",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "10000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "333b86bb5a835780883f9641318a1d00e610e2663de4ad83b2835ffecd808e21",
+              "comparableDigest": "8b6b64f947b74dceac1bb04087f36189c2dd44bb5087a5d0ebe766ce6cb3c3d3"
+            },
+            "https://palmyr.ai/cards/:id/refresh": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Refresh a card's live balance and transactions from the issuer (rate-limited upstream: 1 per 5 min per card).",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "10000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "82a14afcac87dc77496a098d2c30bf091e557dba4b0c20697336f15c194c293f",
+              "comparableDigest": "717480f026547dfce77eb393142eec236b2e7214c6509cef869a7863f7ff8f4e"
+            },
+            "https://palmyr.ai/cards/buy": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Buy a USA prepaid Visa card loaded with exactly the requested balance ($5–$1000). Price is dynamic: amount + fee (3% min $0.50) — send unpaid to get a 402 with the exact total. Body: { amount }. Returns 202 + poll_url; card number/CVV via GET /cards/:id when ready (~10s). US merchants only; non-reloadable.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "20600000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "20600000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "4849b2c8d3a19bc7ec65584f2808dea227bc74221b3067a2de435464397d0265",
+              "comparableDigest": "9caee929fe446ffa0a9f88fabe3835fbd2d1c5ccf63c205666cb135b80d3e20f"
+            },
+            "https://palmyr.ai/email/inboxes": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Create an end-to-end encrypted email inbox keyed to your Solana wallet. Defaults to {name}@palmyr.ai; pass `domain` to provision on a Namecheap-registered domain you own (auto-sets MX/SPF/DKIM records).",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "2000000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "2000000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "3db5b28263e19683de996d3fa48c66e142b89f62ac4f00947672e4e669e48921",
+              "comparableDigest": "65910d8d263e18872e14a3f89e89e38bba29df8ff9e70113146eba87cd885b02"
+            },
+            "https://palmyr.ai/email/inboxes/:id/send": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Send an email from an inbox you own. Body: { to, subject, body, html? }",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "80000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "80000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "19a31ca4c9427a3aab69c202c350ccbffd448452130b24ed39627e10cd4e1920",
+              "comparableDigest": "c46facddd900d2b2b4df7e394c283ad5841798df2a2242c33384f4d7121121e4"
+            },
+            "https://palmyr.ai/email/temp": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Provision a cheap, disposable, receive-only email inbox for receiving a one-time verification or order-confirmation email. Auto-expires (default 24h). Reads return plaintext after an x402 ownership proof from the owning wallet.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "500000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "500000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "e76fa86dccc25b69c6b871ac4044f5a3d3a997bb6ee763da016f887382c825e8",
+              "comparableDigest": "8d050b590b6499318d4cc9ce77956f4c3631826c5eb4871f9e355488ecfdd104"
+            },
+            "https://palmyr.ai/phone/numbers": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "List all phone numbers owned by or shared with the calling wallet.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "10000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "5b14efdcbc66ac0729364f24e7febf77aa4b91428414cb3c89eba177bd20fe5c",
+              "comparableDigest": "cdbdf16764147a11a47f032f76561c41f97fa2235c12dec535ea1f14c54527cf"
+            },
+            "https://palmyr.ai/phone/numbers/:id/call": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Place an outbound phone call from a number you own or have shared access to, with optional TTS or audio playback.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "100000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "100000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "b45b39530fa9f9c907be47ced0241f030883583d948432ba2c7030d72e4c4295",
+              "comparableDigest": "5d52498d3cf31c6936479d24589c19187679d1a0ebb073808982e4a3150604cb"
+            },
+            "https://palmyr.ai/phone/numbers/:id/messages": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Read all SMS messages received on a phone number you own or have shared access to.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "20000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "20000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "83e502354b16ac62c12a0cd3bf19ceb33cd6f4eeb4fd2458e09a9a7644189cdb",
+              "comparableDigest": "ec3645d2a5a60dfd1faa0714d9f683b1faf10f7d2e0e10f059220115d50a4d50"
+            },
+            "https://palmyr.ai/phone/numbers/:id/wait-otp": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Wait (blocking, up to 90s) for an SMS verification code / OTP to arrive on a phone number you own, and return the parsed code. Body (all optional): { timeout_s (default 60, max 90), lookback_s (default 10; pass 0 for reused numbers), pattern (custom regex, max 256 chars) }",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "20000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "20000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "3f7b737d330d04082898b1f708723d2c81e3103ab0f7e64e4d95609b52b8044f",
+              "comparableDigest": "c03102c987e0c30c095bb8fc13a59ac3e447fb43a31f22473f5730acea1ecfbb"
+            },
+            "https://palmyr.ai/phone/temp": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Lease a cheap, instant, receive-only US phone number from a pool to receive one SMS verification code — the phone analogue of a disposable temp email inbox. $0.20 for 30 min (ttl_seconds, clamp 300–1800). Receive-only; call wait-otp to catch the code. Good for one-time verification on sites like Google/X/Discord; some (Telegram/WhatsApp/OpenAI) block VoIP numbers. Recycled — one-time codes only.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "200000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "200000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "cf654425cd98c39d917718c759fbce3e4aa4b077a609fb20f2844f9489ee9dc4",
+              "comparableDigest": "acd116d50ff9d940a224e7a26ace47d7e77dd3d4365263d5e5f6d46ed702cb2e"
+            },
+            "https://palmyr.ai/social/twitter/buy": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Palmyr: POST /social/twitter/buy",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "5000000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "a48a8d7921d25e6470639b50abde546645161fab4762e80f61e3a6108c35d8f0",
+              "comparableDigest": "9423c2f935f5d326e48e945c16f0efe9fe12475f5f76fc921334f3447a2ed370"
+            },
+            "https://palmyr.ai/social/twitter/list-my-tweets": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "List recent tweets from an X account you control.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "5000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "7dc42800427d244051601727233cd5f7c2407243a549645e61c18ec66d8daecc",
+              "comparableDigest": "5fc2c7713b5f62d5111ab30086fbad44f86659c8131526220473f87dc2d53f41"
+            },
+            "https://palmyr.ai/social/twitter/pool/mine": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "List pool-bought X accounts your wallet owns or has shared access to.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "1000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "fddba7c167b6f48f0feb3f16ee3e3e8470b6b9beb7cfb3f08e402fbd1d9d3a8b",
+              "comparableDigest": "0b77c9b95b333e7860684e62f382c3cfee0568d0a1099e3098c8f3dd223e5b8c"
+            },
+            "https://palmyr.ai/social/twitter/profile": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Update the profile (name/bio/location/url) of an X account you control.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "1000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "5766cb337754177d3af2e7ef4e622355fffac69e604164e9d947c44cc6b9cad0",
+              "comparableDigest": "7ccd1c9eaea9d4309cfb10f687868dfadc5e0b1c38276fe83b8d7b97829fc1c6"
+            },
+            "https://palmyr.ai/social/twitter/registered/mine": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "List registered X accounts your wallet owns or has shared access to.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "1000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "1000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "aef319db9cc9055310bbabeb9eb3c4e23e889beb6bfcdff3b926ea7916d96e27",
+              "comparableDigest": "310a216740267d12176334711e68d1763a1d1f0ee11c32d718e8644ccebd8dc9"
+            },
+            "https://palmyr.ai/social/twitter/username": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Change the @handle of an X account you control.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "5000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "a108e3d16ebe48b56f0077e18e3ffa691a3ab5505fcc743f52d9b1b2658ae5ac",
+              "comparableDigest": "e75ed4636320493e044522263a2dd59127533cea95125a2d748e81ea526032e0"
+            },
+            "https://palmyr.ai/x/accounts/mine": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "List X accounts your wallet owns or has shared access to (returns full credentials).",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "10000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "GqSs5L9aPWGJwyRQe35YKQaWMDPh3R1dMqfSEPhSgkM"
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x79e999e2f9d5417F2803f1d88602aB1EA4323881"
+                }
+              ],
+              "extensionsDigest": "0c3c95ed781fcd4bf1f996f9f07dcc65b2097e63a7d77bf3ac5530f4bfbeea4d",
+              "comparableDigest": "9fe94ea2433cd8ea01f0cd32ea412d2def763701eab3503a4b8a22e1fa52c3f2"
+            }
+          }
+        },
+        "samedaydesk": {
+          "id": "samedaydesk",
+          "name": "SameDayDesk",
+          "hosts": [
+            "agents.samedaydesk.com"
+          ],
+          "queries": [
+            "agents.samedaydesk.com"
+          ],
+          "partial": false,
+          "rowCount": 8,
+          "routes": {
+            "https://agents.samedaydesk.com/deep-audit": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Domain -> one complete AI-search-readiness audit (firmographics + tech + contact + DNS/email infra + a 0-100 AI-readiness score + a structured-data gap analysis with a paste-ready JSON-LD fix list + a combined letter grade). The bundled deep tier = enrich + schemaforge in one call. Public data only; no auth, no API keys, no subscription.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "250000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+                }
+              ],
+              "extensionsDigest": "7aad267679cefe945fa0a6cf4ccb43dfb4aeefb6a22ba090653324942da375cf",
+              "comparableDigest": "c0d3a22cd9bf396c252bf13afc450655325c15161f0de3e0805c76d02dfa51bf"
+            },
+            "https://agents.samedaydesk.com/defi/morpho-position": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Base address -> deterministic Morpho borrower position snapshot and collateral-price stress scenarios. Returns LTV, LLTV, health factor, liquidation headroom, source freshness, and scenario outcomes. Read-only indexed observation; direct RPC verification is required before execution.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "20000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+                }
+              ],
+              "extensionsDigest": "8a18ef9f79070f7f2af98208bc6a7d4aa2817ea177b78a753bf4a120720a159c",
+              "comparableDigest": "d7b803907d5c26300846af13742c3b1cdf8ae6d2b8d481fbcffc19df20bc3813"
+            },
+            "https://agents.samedaydesk.com/enrich": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Public domain -> structured company intelligence for agents: identity, keywords, tech stack, social and contact surface, DNS and email infrastructure, and AI-search-readiness signals with a 0-100 score. Public data only; no account, API key, or subscription.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "50000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+                }
+              ],
+              "extensionsDigest": "980eb1b5e8fb6e34ca11d97806f444610f3157c72d1fdda06f7fb62d0906f438",
+              "comparableDigest": "1ce751d663b513c20685297368c8613dc01fec3df32f970283df1b937c86b520"
+            },
+            "https://agents.samedaydesk.com/extract": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Extract a public HTTP(S) web page into structured JSON with a clean text excerpt for LLM workflows: title, description, JSON-LD, Open Graph/Twitter metadata, headings, links, and AI-readiness signals. Fetches without JavaScript rendering, follows redirects, and applies a 12-second timeout and 3 MB read cap; use /read for longer cleaned Markdown.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "5000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+                }
+              ],
+              "extensionsDigest": "d5e36bc99f608225b94f0948e77c8688935125b62899ea6c6e243d33cc221624",
+              "comparableDigest": "6fe5648e428cba42cba919854b7f4fde84f79b9085717bc544177fd33800dfc7"
+            },
+            "https://agents.samedaydesk.com/read": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "URL -> full page content as clean Markdown, ready for LLM context. Strips nav/ads/scripts, preserves headings/links/lists. Handles redirects, timeouts, size caps, SSRF. The reliable web-reader agents need before feeding a page to a model.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "50000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+                }
+              ],
+              "extensionsDigest": "a5928d4686d8f37ae222a4351d45fd5358bc7a9b079d347ca2beb2585b3c78ed",
+              "comparableDigest": "c394e6c91605585b366645434a43e3874348805cecb4786dbe9ec1a8ed48fb27"
+            },
+            "https://agents.samedaydesk.com/scan": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Static supply-chain SECURITY scan of a public GitHub repo BEFORE an agent installs/runs it (a dependency, a Claude/MCP skill, an MCP server). Flags exfil sinks, obfuscated code execution, credential-file reads, env-harvest+network, install-time curl|bash. Returns risk = clean|suspicious|dangerous + findings. Static only, never runs the code. Low false positives.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "200000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+                }
+              ],
+              "extensionsDigest": "e64ba24062fba706832df5fbfd2445601a95101f996772077ab0a727a8c5fa39",
+              "comparableDigest": "214a7f8a2c92be4b126bb74ba8251ce36e25f18ecf0b1808f4755d4ce55cab71"
+            },
+            "https://agents.samedaydesk.com/schemaforge": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Business website -> deterministic, paste-ready JSON-LD bundle plus a live structured-data gap analysis and ranked fixes. Covers local business and service, FAQ, offer catalog, reviews, geo, and opening hours. Rating and review fields remain explicit placeholders for the business's real values.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "250000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+                }
+              ],
+              "extensionsDigest": "ca21c11511374e0e682dab44e66f673b99b2a8e067d3a3bd9c30c429bd7991ab",
+              "comparableDigest": "47589960460df3868dfd324d1cd4c548fb0b41b3d440a1c6dc9f328f5e9e2ea0"
+            },
+            "https://agents.samedaydesk.com/wallet-enrich": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Base address -> agent-ready on-chain profile: EOA or contract, ETH and major-token holdings, token or NFT metadata, EIP-1967 proxy detection, activity, and a derived profile label. Uses public Base mainnet RPC with no account or API key. Useful before an agent sends funds, swaps, or calls a contract.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "50000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+                }
+              ],
+              "extensionsDigest": "2cf1a09a36169a99f19a267d73918dab222e97cd8e62a5cd1851dccba48ab91d",
+              "comparableDigest": "413219ecc89fd121e7c3031aeb92b0b47ff32d8a8aab6722de5b69efa11a5587"
+            }
+          }
+        },
+        "the-stall": {
+          "id": "the-stall",
+          "name": "The Stall",
+          "hosts": [
+            "the-stall.intuitek.ai"
+          ],
+          "queries": [
+            "the-stall.intuitek.ai"
+          ],
+          "partial": false,
+          "rowCount": 1,
+          "routes": {
+            "https://the-stall.intuitek.ai/cap/earnings-calendar": {
+              "type": "http",
+              "x402Version": 2,
+              "description": "Earnings calendar for upcoming US stock reports — earnings date, EPS estimate, pre/post-market timing. Filter by ticker for per-company lookups, or scan a date window (1–90 days ahead) for calendar-driven research automation. Data: Alpha Vantage 3-month calendar, cached 2 hr.",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "10000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0x03d773c52B67993e60Ecb3134b17436fE03B584c"
+                }
+              ],
+              "extensionsDigest": "d7255706556ed060f916fa5361e454a217de2485094c1141c8f3e8d1026aa061",
+              "comparableDigest": "f13999d46c8baf906999f93bb8b6025c45667afefb3610d5d0b2db706147d7a7"
+            }
+          }
+        }
+      }
+    }
+  }
+}
