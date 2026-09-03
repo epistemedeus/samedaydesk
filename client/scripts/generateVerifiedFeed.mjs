@@ -4,6 +4,7 @@ export const FEED_SCHEMA_VERSION = "samedaydesk.x402-verified-feed.v1";
 export const SAMEDAYDESK_SELLER = "SameDayDesk";
 export const SAMEDAYDESK_ORIGIN = "https://agents.samedaydesk.com";
 export const BAZAAR_FRESHNESS_MS = 7 * 24 * 60 * 60 * 1000;
+export const NETWORK_IDENTIFIER = /^[a-z0-9]+:[A-Za-z0-9.-]+$/;
 export const FEED_QA = Object.freeze({
   owner: "Pilot Firstmate",
   label: "internal",
@@ -33,6 +34,10 @@ function isStringArray(value) {
   return Array.isArray(value) && value.every((item) => typeof item === "string");
 }
 
+export function isSingleNetworkIdentifier(value) {
+  return typeof value === "string" && NETWORK_IDENTIFIER.test(value);
+}
+
 export function hasLiveContractEvidence(route, asOf = crawl.checkedAt) {
   const observedAt = parseTimestamp(route?.lastVerified);
   const cutoff = parseTimestamp(asOf);
@@ -53,8 +58,7 @@ export function hasLiveContractEvidence(route, asOf = crawl.checkedAt) {
       /^[0-9]+$/.test(route.unpaid402.amount) &&
       typeof route.unpaid402.asset === "string" &&
       route.unpaid402.asset.length > 0 &&
-      typeof route.unpaid402.network === "string" &&
-      route.unpaid402.network.length > 0 &&
+      isSingleNetworkIdentifier(route.unpaid402.network) &&
       isStringArray(route.outputExampleKeys),
   );
 }
@@ -174,8 +178,32 @@ export function verifiedRowsHaveCompleteEvidence(feed) {
         row.agreement.unpaid402OutputSchema === true &&
         row.agreement.cdpBazaarRow === true &&
         row.agreement.cdpBazaarFresh === true &&
-        parseTimestamp(row.bazaarObservedAt) !== null,
+        parseTimestamp(row.bazaarObservedAt) !== null &&
+        isSingleNetworkIdentifier(row.network),
     );
+}
+
+export function feedRejectsForeignMalformedAndUnchecked(feed, asOf = feed?.generatedAt) {
+  if (!feed || !Array.isArray(feed.routes) || !Array.isArray(crawl.findings)) return false;
+  const findingKeys = new Set(
+    crawl.findings.map((item) => `${item.method} ${item.origin}${item.route}`),
+  );
+  return feed.routes.every((row) => {
+    const live =
+      row.seller === SAMEDAYDESK_SELLER &&
+      row.origin === SAMEDAYDESK_ORIGIN &&
+      row.price?.source !== "repair_brief" &&
+      row.registryStatus !== "finding" &&
+      isSingleNetworkIdentifier(row.network) &&
+      row.lastVerified === asOf &&
+      typeof row.contractHash === "string" &&
+      /^[a-f0-9]{64}$/.test(row.contractHash) &&
+      !findingKeys.has(`${row.method} ${row.origin}${row.route}`);
+    const verifiedOnlyWithEvidence =
+      row.badge !== "verified" ||
+      (row.price.source === "live_unpaid_402" && parseTimestamp(row.bazaarObservedAt) !== null);
+    return live && verifiedOnlyWithEvidence;
+  });
 }
 
 export { crawl };

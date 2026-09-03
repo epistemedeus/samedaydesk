@@ -8,12 +8,15 @@ import { fileURLToPath } from "node:url";
 import {
   assignBadge,
   bazaarAgrees,
+  BAZAAR_FRESHNESS_MS,
   crawl,
   feedContainsOnlyCurrentEvidence,
   feedMatchesCurrentCrawl,
+  feedRejectsForeignMalformedAndUnchecked,
   formatAtomicUsdc,
   generateVerifiedFeed,
   hasLiveContractEvidence,
+  isSingleNetworkIdentifier,
   routeFromCrawl,
   verifiedRowsHaveCompleteEvidence,
 } from "./generateVerifiedFeed.mjs";
@@ -126,6 +129,75 @@ test("foreign, unchecked, and non-live source routes cannot enter the feed", () 
   assert.equal(feed.routes[0].seller, "SameDayDesk");
 });
 
+test("OpenAPI agreement bit is observed from the crawl, never synthesized", () => {
+  const source = crawl.routes.find((route) => route.route === "/extract");
+  const withoutDoc = routeFromCrawl({ ...source, openapiPresent: false });
+  assert.equal(withoutDoc.agreement.openapi, false);
+  assert.notEqual(withoutDoc.badge, "verified");
+  const omitted = routeFromCrawl({ ...source, openapiPresent: undefined });
+  assert.equal(omitted.agreement.openapi, false);
+  assert.notEqual(omitted.badge, "verified");
+});
+
+test("malformed compound networks cannot enter or promote", () => {
+  assert.equal(isSingleNetworkIdentifier("eip155:8453"), true);
+  assert.equal(isSingleNetworkIdentifier("Base or Polygon"), false);
+  assert.equal(isSingleNetworkIdentifier("Base or Solana"), false);
+  assert.equal(isSingleNetworkIdentifier("base"), false);
+  const source = crawl.routes.find((route) => route.route === "/extract");
+  for (const network of ["Base or Polygon", "Base or Solana", "Base", ""]) {
+    const route = { ...source, unpaid402: { ...source.unpaid402, network } };
+    assert.equal(hasLiveContractEvidence(route), false);
+    assert.equal(routeFromCrawl(route), null);
+  }
+});
+
+test("repair briefs and crawl findings cannot reach the public feed", () => {
+  const src = readFileSync(path.join(here, "generateVerifiedFeed.mjs"), "utf8");
+  assert.doesNotMatch(src, /routeFromRepairBrief/);
+  assert.doesNotMatch(src, /networkFromBriefPrice/);
+  assert.doesNotMatch(src, /\.findings\s*\|\|\s*\[\]\s*\)\.map/);
+  const feed = generateVerifiedFeed(crawl.checkedAt, {
+    routes: crawl.routes,
+    findings: crawl.findings,
+  });
+  const named = [
+    "HyperNatt",
+    "OneSource",
+    "scrape402",
+    "Vibe Springs",
+    "BlockRun",
+    "Driftflight",
+    "AgentToll",
+    "ArgonautWorks",
+  ];
+  for (const finding of crawl.findings) {
+    assert.equal(
+      feed.routes.some(
+        (row) =>
+          row.seller === finding.seller ||
+          (row.origin === finding.origin && row.route === finding.route),
+      ),
+      false,
+      finding.seller,
+    );
+  }
+  for (const name of named) {
+    assert.equal(
+      feed.routes.some((row) => row.seller.includes(name) || row.origin.includes(name.toLowerCase())),
+      false,
+      name,
+    );
+  }
+  assert.equal(
+    feed.routes.some((row) => row.origin.includes("402.com.tr") || row.origin.includes("exa.ai")),
+    false,
+  );
+  assert.equal(feed.routes.some((row) => row.price.source === "repair_brief"), false);
+  assert.equal(feed.routes.some((row) => row.registryStatus === "finding"), false);
+  assert.notEqual(feed.routes.length, crawl.findings.length);
+});
+
 test("stale Bazaar evidence cannot promote a route to verified", () => {
   const source = crawl.routes.find((route) => route.route === "/extract");
   const stale = {
@@ -148,14 +220,43 @@ test("generated feed excludes repair briefs and unchecked routes, then validates
   assert.equal(feed.routes.every((route) => route.origin === "https://agents.samedaydesk.com"), true);
   assert.equal(feed.routes.some((route) => route.registryStatus === "finding"), false);
   assert.equal(feed.routes.every((route) => route.lastVerified && route.contractHash), true);
+  assert.equal(feed.routes.every((route) => isSingleNetworkIdentifier(route.network)), true);
   assert.equal(feedContainsOnlyCurrentEvidence(feed), true);
   assert.equal(feedMatchesCurrentCrawl(feed), true);
   assert.equal(verifiedRowsHaveCompleteEvidence(feed), true);
+  assert.equal(feedRejectsForeignMalformedAndUnchecked(feed), true);
   const serialized = JSON.parse(JSON.stringify(feed));
   assert.deepEqual(validateJsonSchema(serialized, loadVerifiedSchema()), []);
   validateVerifiedFeed(feed);
   const banned = JSON.stringify(feed).toLowerCase();
   assert.doesNotMatch(banned, /"demand"|revenue|repair_brief/);
+});
+
+test("POST routes without live verification time and contract hash stay out of the feed", () => {
+  const posts = crawl.routes.filter(
+    (route) =>
+      route.method === "POST" &&
+      (route.lastVerified == null || route.contractHash == null || route.unpaid402?.source !== "live_unpaid_402"),
+  );
+  assert.equal(posts.length, 2);
+  const feed = generateVerifiedFeed();
+  for (const route of posts) {
+    assert.equal(hasLiveContractEvidence(route), false);
+    assert.equal(routeFromCrawl(route), null);
+    assert.equal(
+      feed.routes.some((row) => row.method === "POST" && row.route === route.route),
+      false,
+    );
+  }
+  assert.equal(feed.routes.some((row) => row.badge === "verified" && (row.lastVerified == null || row.contractHash == null)), false);
+});
+
+test("README and code define the seven-day Bazaar freshness bound", () => {
+  assert.equal(BAZAAR_FRESHNESS_MS, 7 * 24 * 60 * 60 * 1000);
+  const readme = readFileSync(path.join(here, "../public/x402/README.md"), "utf8");
+  assert.match(readme, /seven days/i);
+  assert.match(readme, /BAZAAR_FRESHNESS_MS/);
+  assert.match(readme, /bazaarObservedAt/);
 });
 
 test("writeVerifiedFeed emits the exact schema-valid committed candidate", () => {
@@ -171,6 +272,7 @@ test("writeVerifiedFeed emits the exact schema-valid committed candidate", () =>
     assert.equal(feedContainsOnlyCurrentEvidence(feed), true);
     assert.equal(feedMatchesCurrentCrawl(feed), true);
     assert.equal(verifiedRowsHaveCompleteEvidence(feed), true);
+    assert.equal(feedRejectsForeignMalformedAndUnchecked(feed), true);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

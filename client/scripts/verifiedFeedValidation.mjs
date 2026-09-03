@@ -5,6 +5,7 @@ import { validateJsonSchema } from "./validateJsonSchema.mjs";
 import {
   feedContainsOnlyCurrentEvidence,
   feedMatchesCurrentCrawl,
+  feedRejectsForeignMalformedAndUnchecked,
   verifiedRowsHaveCompleteEvidence,
 } from "./generateVerifiedFeed.mjs";
 
@@ -28,6 +29,9 @@ export function validateVerifiedFeed(feed) {
   }
   if (!verifiedRowsHaveCompleteEvidence(feed)) {
     throw new Error("verified feed promotes a row without complete current evidence");
+  }
+  if (!feedRejectsForeignMalformedAndUnchecked(feed)) {
+    throw new Error("verified feed contains a foreign, malformed, or unchecked route");
   }
   return feed;
 }
