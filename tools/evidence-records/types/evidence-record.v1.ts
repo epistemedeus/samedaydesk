@@ -16,6 +16,9 @@ export const SOURCE_KINDS = [
   "stripe_event",
   "operator_validation",
   "incentivized_trial",
+  "external_work_payout",
+  "buyer_attested_receipt",
+  "seller_ledger_line",
 ] as const;
 
 export const COMPLETENESS = ["complete", "sampled", "truncated", "unknown"] as const;
@@ -35,6 +38,8 @@ export const ACQUISITION_LABELS = [
   "operator_validation",
   "incentivized_trial",
 ] as const;
+
+export const BUYER_CLASSES = ["independent", "owner", "sponsored", "unknown"] as const;
 
 export const REQUIRED_PROHIBITED_INFERENCES = [
   "cross_source_join_without_exact_key",
@@ -60,6 +65,7 @@ export type SourceKind = (typeof SOURCE_KINDS)[number];
 export type Completeness = (typeof COMPLETENESS)[number];
 export type AuthorityClass = (typeof AUTHORITY_CLASSES)[number];
 export type AcquisitionLabel = (typeof ACQUISITION_LABELS)[number];
+export type BuyerClass = (typeof BUYER_CLASSES)[number];
 export type ProhibitedInference = (typeof PROHIBITED_INFERENCES)[number];
 export type RequiredProhibitedInference = (typeof REQUIRED_PROHIBITED_INFERENCES)[number];
 
@@ -104,6 +110,15 @@ export interface EvidenceLabels {
   acquisition?: AcquisitionLabel;
 }
 
+export interface EvidenceSettlement {
+  operationId: string;
+  amountUsdc: string;
+  buyerClass: BuyerClass;
+  validDeliveryStatus: string;
+  transaction?: string;
+  facilitatorOrPayoutRef?: string;
+}
+
 export interface EvidenceRecord {
   schemaVersion: SchemaVersion;
   recordId: string;
@@ -118,6 +133,7 @@ export interface EvidenceRecord {
   joins?: EvidenceJoin[];
   aggregates?: EvidenceAggregate[];
   labels?: EvidenceLabels;
+  settlement?: EvidenceSettlement;
 }
 
 export interface ValidationError {

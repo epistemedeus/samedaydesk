@@ -7,7 +7,10 @@ const DEFAULT_CATALOG = join(here, "catalog.json");
 const DEFAULT_SCHEMA = join(here, "schema/evidence-record.v1.json");
 const VALID_FIXTURES = join(here, "fixtures/valid");
 const INVALID_FIXTURES = join(here, "fixtures/invalid");
+const SETTLEMENT_FIXTURES = join(here, "fixtures/settlements");
 const INVALID_MANIFEST = join(INVALID_FIXTURES, "manifest.json");
+const DELIVERY_STATUS_RE = /^[a-z][a-z0-9_]{1,95}$/;
+const TX_RE = /^0x[a-f0-9]{64}$/;
 
 const TOKEN_RE = /^[a-z][a-z0-9_]{1,63}$/;
 const POPULATION_RE = /^[a-z][a-z0-9_]{1,95}$/;
@@ -42,6 +45,7 @@ const ROOT_KEYS = Object.freeze([
   "joins",
   "aggregates",
   "labels",
+  "settlement",
 ]);
 const PRODUCER_KEYS = Object.freeze(["id", "providerId", "adapterId", "observedSurface"]);
 const SCOPE_KEYS = Object.freeze(["providerId", "population", "joinKeys", "host"]);
@@ -50,6 +54,14 @@ const JOIN_KEYS = Object.freeze(["otherSourceKind", "exactKey", "exactValue"]);
 const AGGREGATE_KEYS = Object.freeze(["metricId", "parts"]);
 const PART_KEYS = Object.freeze(["recordId", "authorityClass", "value"]);
 const LABEL_KEYS = Object.freeze(["acquisition"]);
+const SETTLEMENT_KEYS = Object.freeze([
+  "operationId",
+  "amountUsdc",
+  "buyerClass",
+  "validDeliveryStatus",
+  "transaction",
+  "facilitatorOrPayoutRef",
+]);
 
 export function defaultCatalogPath() {
   return DEFAULT_CATALOG;
@@ -65,6 +77,10 @@ export function validFixtureDir() {
 
 export function invalidFixtureDir() {
   return INVALID_FIXTURES;
+}
+
+export function settlementFixtureDir() {
+  return SETTLEMENT_FIXTURES;
 }
 
 export function loadCatalog(catalogPath = DEFAULT_CATALOG) {
@@ -446,6 +462,44 @@ export function validateRecord(input, catalog = loadCatalog()) {
             ),
           );
         }
+      }
+    }
+  }
+
+  if (Object.hasOwn(input, "settlement")) {
+    if (!isPlainObject(input.settlement)) {
+      errors.push(error("invalid_shape", "$.settlement", "settlement must be an object"));
+    } else {
+      allowKeys(input.settlement, SETTLEMENT_KEYS, "$.settlement", errors);
+      requireKeys(
+        input.settlement,
+        ["operationId", "amountUsdc", "buyerClass", "validDeliveryStatus"],
+        "$.settlement",
+        errors,
+      );
+      expectString(input.settlement.operationId, RECORD_ID_RE, "$.settlement.operationId", errors);
+      expectString(input.settlement.amountUsdc, DECIMAL_RE, "$.settlement.amountUsdc", errors);
+      if (!Array.isArray(catalog.buyerClasses) || !catalog.buyerClasses.includes(input.settlement.buyerClass)) {
+        errors.push(
+          error("invalid_buyer_class", "$.settlement.buyerClass", "buyerClass is not in the closed set"),
+        );
+      }
+      expectString(
+        input.settlement.validDeliveryStatus,
+        DELIVERY_STATUS_RE,
+        "$.settlement.validDeliveryStatus",
+        errors,
+      );
+      if (Object.hasOwn(input.settlement, "transaction")) {
+        expectString(input.settlement.transaction, TX_RE, "$.settlement.transaction", errors);
+      }
+      if (Object.hasOwn(input.settlement, "facilitatorOrPayoutRef")) {
+        expectString(
+          input.settlement.facilitatorOrPayoutRef,
+          SURFACE_RE,
+          "$.settlement.facilitatorOrPayoutRef",
+          errors,
+        );
       }
     }
   }

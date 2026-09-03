@@ -36,6 +36,8 @@ test("catalog, schema, and types share the same closed sets", () => {
     schema.properties.prohibitedInferences.items.enum,
     catalog.prohibitedInferences,
   );
+  assert.deepEqual(schema.properties.settlement.properties.buyerClass.enum, catalog.buyerClasses);
+  assert.deepEqual(catalog.buyerClasses, ["independent", "owner", "sponsored", "unknown"]);
   for (const kind of sourceKinds) {
     assert.match(types, new RegExp(`"${kind}"`));
   }
@@ -81,8 +83,8 @@ test("every invalid fixture is rejected with the declared code", () => {
 test("suite accepts valid fixtures and rejects each prohibited inference", () => {
   const report = runSuite(catalog);
   assert.equal(report.failed, 0, JSON.stringify(report.results.filter((item) => !item.ok)));
-  assert.equal(report.passed, 14);
-  assert.equal(report.total, 14);
+  assert.equal(report.passed, 17);
+  assert.equal(report.total, 17);
 });
 
 test("collapsing two providers in one record is rejected", () => {
@@ -129,7 +131,7 @@ test("CLI --suite and --expect-reject match the library", () => {
   assert.equal(suite.status, 0, suite.stderr);
   const suiteReport = JSON.parse(suite.stdout);
   assert.equal(suiteReport.ok, true);
-  assert.equal(suiteReport.passed, 14);
+  assert.equal(suiteReport.passed, 17);
   assert.equal(suiteReport.failed, 0);
 
   const reject = spawnSync(
@@ -158,4 +160,17 @@ test("schema file is the committed shape contract", () => {
   assert.equal(defaultSchemaPath().endsWith("schema/evidence-record.v1.json"), true);
   assert.equal(schema.$schema, "https://json-schema.org/draft/2020-12/schema");
   assert.equal(schema.properties.schemaVersion.const, catalog.recordSchemaVersion);
+});
+
+test("settlement buyerClass outside the closed set is rejected", () => {
+  const record = cloneValid("x402-facilitator-settlement.json");
+  record.settlement = {
+    operationId: record.recordId,
+    amountUsdc: "0.010",
+    buyerClass: "revenue",
+    validDeliveryStatus: "unknown",
+  };
+  const result = validateRecord(record, catalog);
+  assert.equal(result.ok, false);
+  assert.ok(result.errors.some((item) => item.code === "invalid_buyer_class"));
 });
