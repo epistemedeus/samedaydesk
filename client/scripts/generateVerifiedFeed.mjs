@@ -5,10 +5,6 @@ export const SAMEDAYDESK_SELLER = "SameDayDesk";
 export const SAMEDAYDESK_ORIGIN = "https://agents.samedaydesk.com";
 export const BAZAAR_FRESHNESS_MS = 7 * 24 * 60 * 60 * 1000;
 export const NETWORK_IDENTIFIER = /^[a-z0-9]+:[A-Za-z0-9.-]+$/;
-export const FEED_QA = Object.freeze({
-  owner: "Pilot Firstmate",
-  label: "internal",
-});
 
 export const FEED_LIMITATIONS = Object.freeze([
   "This feed is build-time inspection evidence from the committed SameDayDesk seller-conformance crawl.",
@@ -145,7 +141,6 @@ export function generateVerifiedFeed(generatedAt = crawl.checkedAt, source = cra
   return {
     schemaVersion: FEED_SCHEMA_VERSION,
     generatedAt,
-    qa: FEED_QA,
     limitations: FEED_LIMITATIONS,
     routes,
   };

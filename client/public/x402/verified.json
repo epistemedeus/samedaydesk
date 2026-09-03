@@ -1,10 +1,6 @@
 {
   "schemaVersion": "samedaydesk.x402-verified-feed.v1",
   "generatedAt": "2026-09-03T09:55:27Z",
-  "qa": {
-    "owner": "Pilot Firstmate",
-    "label": "internal"
-  },
   "limitations": [
     "This feed is build-time inspection evidence from the committed SameDayDesk seller-conformance crawl.",
     "A verified badge requires a current live unpaid 402 contract, an observed OpenAPI operation, and a matching CDP Bazaar row observed no more than seven days before this crawl.",

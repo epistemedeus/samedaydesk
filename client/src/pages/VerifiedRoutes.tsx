@@ -40,7 +40,6 @@ type VerifiedRoute = {
 
 type VerifiedFeed = {
   generatedAt: string;
-  qa: { owner: string; label: string };
   limitations: string[];
   routes: VerifiedRoute[];
 };
@@ -116,7 +115,7 @@ export default function VerifiedRoutes() {
       <Nav />
       <main id="main" className={styles.wrap}>
         <header className={styles.hero}>
-          <p className="eyebrow">Inspection list · unpaid 402 terms · owner QA internal</p>
+          <p className="eyebrow">Inspection list · unpaid 402 terms</p>
           <h1 className={styles.h1}>
             Inspected routes, not a <span className="lime">certificate</span>
           </h1>
@@ -140,17 +139,6 @@ export default function VerifiedRoutes() {
           </div>
         </header>
 
-        <section className={styles.section} aria-labelledby="qa-title">
-          <p className="eyebrow">Owner QA</p>
-          <h2 id="qa-title">Internal inspection label</h2>
-          <p className={styles.prose}>
-            Owner QA is labeled internal. Pilot Firstmate owns the outcome. Facts come from the
-            committed SameDayDesk crawl. Routes without a live verification time and contract hash
-            are excluded. A missing or stale Bazaar row is incomplete discovery, not a payment
-            failure.
-          </p>
-        </section>
-
         {error ? (
           <p className={styles.error} role="alert">
             The inspection feed could not be loaded. {error}
@@ -161,7 +149,7 @@ export default function VerifiedRoutes() {
           <section className={styles.section} aria-labelledby="rows-title">
             <div className={styles.sectionHead}>
               <p className="eyebrow">
-                Generated {feed.generatedAt} · {feed.routes.length} rows · QA {feed.qa.label}
+                Generated {feed.generatedAt} · {feed.routes.length} rows
               </p>
               <h2 id="rows-title">Route rows</h2>
             </div>

@@ -8,7 +8,6 @@
   "required": [
     "schemaVersion",
     "generatedAt",
-    "qa",
     "limitations",
     "routes"
   ],
@@ -20,15 +19,6 @@
     "generatedAt": {
       "type": "string",
       "minLength": 10
-    },
-    "qa": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["owner", "label"],
-      "properties": {
-        "owner": { "type": "string", "minLength": 1 },
-        "label": { "type": "string", "const": "internal" }
-      }
     },
     "limitations": {
       "type": "array",

@@ -213,8 +213,7 @@ test("stale Bazaar evidence cannot promote a route to verified", () => {
 
 test("generated feed excludes repair briefs and unchecked routes, then validates", () => {
   const feed = generateVerifiedFeed();
-  assert.equal(feed.qa.label, "internal");
-  assert.equal(feed.qa.owner, "Pilot Firstmate");
+  assert.equal(feed.qa, undefined);
   assert.equal(feed.routes.length, 20);
   assert.equal(feed.routes.every((route) => route.seller === "SameDayDesk"), true);
   assert.equal(feed.routes.every((route) => route.origin === "https://agents.samedaydesk.com"), true);
