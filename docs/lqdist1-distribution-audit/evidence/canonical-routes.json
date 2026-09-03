@@ -1,0 +1,475 @@
+[
+  {
+    "id": "GET /chain/solana-transaction-receipt",
+    "method": "GET",
+    "path": "/chain/solana-transaction-receipt",
+    "operationId": "getSolanaTransactionReceipt",
+    "product": "solana_transaction_receipt",
+    "class": "canonical",
+    "openapiPrice": "0.002",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "signature"
+    ]
+  },
+  {
+    "id": "GET /chain/transaction-receipt",
+    "method": "GET",
+    "path": "/chain/transaction-receipt",
+    "operationId": "getTransactionReceipt",
+    "product": "transaction_receipt",
+    "class": "canonical",
+    "openapiPrice": "0.002",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "transactionHash"
+    ]
+  },
+  {
+    "id": "GET /commerce/contract-qualified-search",
+    "method": "GET",
+    "path": "/commerce/contract-qualified-search",
+    "operationId": "searchContractQualifiedServices",
+    "product": "contract_qualified_search",
+    "class": "canonical",
+    "openapiPrice": "0.01",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "query",
+      "requiredPaths"
+    ]
+  },
+  {
+    "id": "GET /commerce/payment-offer-preflight",
+    "method": "GET",
+    "path": "/commerce/payment-offer-preflight",
+    "operationId": "preflightPaymentOffer",
+    "product": "payment_offer_preflight",
+    "class": "canonical",
+    "openapiPrice": "0.005",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "url"
+    ]
+  },
+  {
+    "id": "GET /commerce/seller-integrity-audit",
+    "method": "GET",
+    "path": "/commerce/seller-integrity-audit",
+    "operationId": "auditSellerIntegrity",
+    "product": "seller_integrity_audit",
+    "class": "canonical",
+    "openapiPrice": "0.01",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "origin",
+      "route"
+    ]
+  },
+  {
+    "id": "GET /commerce/settlement-proof",
+    "method": "GET",
+    "path": "/commerce/settlement-proof",
+    "operationId": "verifyBaseUsdcSettlement",
+    "product": "settlement_proof",
+    "class": "canonical",
+    "openapiPrice": "0.005",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "transactionHash",
+      "recipient",
+      "amountAtomic"
+    ]
+  },
+  {
+    "id": "GET /deep-audit",
+    "method": "GET",
+    "path": "/deep-audit",
+    "operationId": "auditAiSearchReadiness",
+    "product": "deep_audit",
+    "class": "canonical",
+    "openapiPrice": "0.25",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "domain"
+    ]
+  },
+  {
+    "id": "GET /defi/morpho-market-underwrite",
+    "method": "GET",
+    "path": "/defi/morpho-market-underwrite",
+    "operationId": "underwriteMorphoMarket",
+    "product": "morpho_market_underwrite",
+    "class": "canonical",
+    "openapiPrice": "0.25",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "marketId"
+    ]
+  },
+  {
+    "id": "GET /defi/morpho-position",
+    "method": "GET",
+    "path": "/defi/morpho-position",
+    "operationId": "inspectMorphoPosition",
+    "product": "morpho_position",
+    "class": "canonical",
+    "openapiPrice": "0.02",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "address"
+    ]
+  },
+  {
+    "id": "GET /defi/morpho-preliquidation-replay",
+    "method": "GET",
+    "path": "/defi/morpho-preliquidation-replay",
+    "operationId": "replayMorphoPreLiquidation",
+    "product": "morpho_preliquidation_replay",
+    "class": "canonical",
+    "openapiPrice": "0.1",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "transactionHash"
+    ]
+  },
+  {
+    "id": "GET /defi/morpho-protection",
+    "method": "GET",
+    "path": "/defi/morpho-protection",
+    "operationId": "planMorphoProtection",
+    "product": "morpho_protection",
+    "class": "canonical",
+    "openapiPrice": "0.1",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "address"
+    ]
+  },
+  {
+    "id": "GET /distribution/agent-discoverability-audit",
+    "method": "GET",
+    "path": "/distribution/agent-discoverability-audit",
+    "operationId": "auditAgentDiscoverability",
+    "product": "agent_discoverability_audit",
+    "class": "canonical",
+    "openapiPrice": "0.05",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "origin",
+      "intent"
+    ]
+  },
+  {
+    "id": "GET /distribution/agent-surface-budget-audit",
+    "method": "GET",
+    "path": "/distribution/agent-surface-budget-audit",
+    "operationId": "auditAgentSurfaceBudget",
+    "product": "agent_surface_budget_audit",
+    "class": "canonical",
+    "openapiPrice": "0.01",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "origin"
+    ]
+  },
+  {
+    "id": "GET /enrich",
+    "method": "GET",
+    "path": "/enrich",
+    "operationId": "enrichCompany",
+    "product": "enrich",
+    "class": "canonical",
+    "openapiPrice": "0.05",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "domain"
+    ]
+  },
+  {
+    "id": "GET /extract",
+    "method": "GET",
+    "path": "/extract",
+    "operationId": "extractUrl",
+    "product": "extract",
+    "class": "canonical",
+    "openapiPrice": "0.005",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "url"
+    ]
+  },
+  {
+    "id": "GET /gateway/commerce/payment-offer-preflight",
+    "method": "GET",
+    "path": "/gateway/commerce/payment-offer-preflight",
+    "operationId": "preflightPaymentOfferWithCircleGateway",
+    "product": "payment_offer_preflight_circle_gateway",
+    "class": "circle_gateway_alternate",
+    "openapiPrice": "0.005",
+    "protocols": [
+      "x402"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "url"
+    ]
+  },
+  {
+    "id": "GET /read",
+    "method": "GET",
+    "path": "/read",
+    "operationId": "readUrlAsMarkdown",
+    "product": "read",
+    "class": "canonical",
+    "openapiPrice": "0.005",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "url"
+    ]
+  },
+  {
+    "id": "GET /scan",
+    "method": "GET",
+    "path": "/scan",
+    "operationId": "scanRepositoryRisk",
+    "product": "scan",
+    "class": "canonical",
+    "openapiPrice": "0.2",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "repo"
+    ]
+  },
+  {
+    "id": "GET /schemaforge",
+    "method": "GET",
+    "path": "/schemaforge",
+    "operationId": "generateStructuredData",
+    "product": "schemaforge",
+    "class": "canonical",
+    "openapiPrice": "0.25",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "site"
+    ]
+  },
+  {
+    "id": "GET /wallet-enrich",
+    "method": "GET",
+    "path": "/wallet-enrich",
+    "operationId": "enrichWallet",
+    "product": "wallet_enrich",
+    "class": "canonical",
+    "openapiPrice": "0.05",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "address"
+    ]
+  },
+  {
+    "id": "GET /work/opportunity-preflight",
+    "method": "GET",
+    "path": "/work/opportunity-preflight",
+    "operationId": "preflightAgentOpportunity",
+    "product": "opportunity_preflight",
+    "class": "canonical",
+    "openapiPrice": "0.05",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": false,
+    "queryRequired": [
+      "rewardUsd",
+      "hours",
+      "hourlyCostUsd"
+    ]
+  },
+  {
+    "id": "POST /commerce/payment-offer-preflight",
+    "method": "POST",
+    "path": "/commerce/payment-offer-preflight",
+    "operationId": "preflightPaymentOfferForWorkflow",
+    "product": "payment_offer_preflight",
+    "class": "canonical",
+    "openapiPrice": "0.005",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": true,
+    "queryRequired": []
+  },
+  {
+    "id": "POST /security/stateful-wallet-policy-conformance",
+    "method": "POST",
+    "path": "/security/stateful-wallet-policy-conformance",
+    "operationId": "evaluateStatefulWalletPolicyConformance",
+    "product": "stateful_wallet_policy_conformance",
+    "class": "canonical",
+    "openapiPrice": "0.01",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": true,
+    "queryRequired": []
+  },
+  {
+    "id": "POST /security/wallet-policy-conformance",
+    "method": "POST",
+    "path": "/security/wallet-policy-conformance",
+    "operationId": "evaluateWalletPolicyConformance",
+    "product": "wallet_policy_conformance",
+    "class": "canonical",
+    "openapiPrice": "0.01",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": true,
+    "queryRequired": []
+  },
+  {
+    "id": "POST /work/opportunity-preflight",
+    "method": "POST",
+    "path": "/work/opportunity-preflight",
+    "operationId": "preflightAgentOpportunityForWorkflow",
+    "product": "opportunity_preflight",
+    "class": "canonical",
+    "openapiPrice": "0.05",
+    "protocols": [
+      "x402",
+      "mpp"
+    ],
+    "has402": true,
+    "has200Schema": true,
+    "requestBodySchema": true,
+    "queryRequired": []
+  }
+]
