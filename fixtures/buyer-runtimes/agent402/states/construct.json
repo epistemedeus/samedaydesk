@@ -1,0 +1,27 @@
+{
+  "state": "construct",
+  "provenance": "derived-from-source",
+  "source": {
+    "file": "src/x402-buyer.js",
+    "lines": "408-428",
+    "function": "payX402"
+  },
+  "note": "The unpaid leg is a bare fetch of the seller URL discovered above. No PAYMENT-SIGNATURE, no X-PAYMENT, no wallet. GET cannot carry a body; the required `url` query param is in the URL.",
+  "request": {
+    "method": "GET",
+    "url": "https://agents.samedaydesk.com/extract?url=https://example.com",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "forbiddenHeaders": [
+    "PAYMENT-SIGNATURE",
+    "X-PAYMENT",
+    "Authorization"
+  ],
+  "mustNotInclude": [
+    "privateKey",
+    "AGENT_KEY",
+    "X402_UPSTREAM_BUYER_KEY"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "state": "authorize-ready",
+  "provenance": "derived-from-source",
+  "source": {
+    "file": "typescript/packages/core/src/client/x402Client.ts",
+    "lines": "463-519,696-766,787-790"
+  },
+  "note": "wrapFetchWithPayment next calls client.createPaymentPayload(paymentRequired). That requires a scheme client registered for (exact, eip155:8453) and a signer. This replay asserts the selected accept is present and consistent, then stops before registration or signing.",
+  "wouldCall": "x402Client.createPaymentPayload(paymentRequired)",
+  "requiredFields": {
+    "x402Version": 2,
+    "scheme": "exact",
+    "network": "eip155:8453",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "amount": "5000",
+    "maxAmountRequired": "5000",
+    "extra.name": "USD Coin",
+    "extra.version": "2",
+    "resource": "present",
+    "extensions.bazaar": "present"
+  },
+  "consistency": {
+    "v2AmountField": "amount",
+    "v1CompatField": "maxAmountRequired",
+    "amountEqualsMaxAmountRequired": true,
+    "atomicUsd": 0.005,
+    "payToMatchesBazaarRow": true,
+    "networkMatchesRegisteredExactEvm": true,
+    "extraNameVersionRequiredForEip3009": true,
+    "bazaarOutputRequired": ["ok", "url", "title"]
+  },
+  "stopBefore": [
+    "new x402Client().register('eip155:8453', ExactEvmScheme(signer))",
+    "schemeNetworkClient.createPaymentPayload",
+    "encodePaymentSignatureHeader → PAYMENT-SIGNATURE",
+    "second fetch"
+  ]
+}
