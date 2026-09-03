@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.v1",
+  "recordId": "evr_x402_facilitator_settlement_20260901",
+  "sourceKind": "x402_facilitator_settlement",
+  "producer": {
+    "id": "coinbase_cdp_facilitator",
+    "providerId": "coinbase_cdp_facilitator",
+    "adapterId": "cdp_facilitator_settle_adapter",
+    "observedSurface": "x402 facilitator settle response for one queried window"
+  },
+  "scope": {
+    "providerId": "coinbase_cdp_facilitator",
+    "population": "facilitator_returned_settlements",
+    "joinKeys": ["transaction_hash"]
+  },
+  "observationWindow": {
+    "start": "2026-09-01T00:00:00.000Z",
+    "end": "2026-09-02T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "truncated",
+  "authorityClass": "provider_returned",
+  "unknownWhenAbsent": [
+    "settlements_not_returned_by_this_facilitator",
+    "chain_finality_and_exact_transfer_match"
+  ],
+  "prohibitedInferences": [
+    "cross_source_join_without_exact_key",
+    "sum_across_authority_classes",
+    "organic_label_for_controlled_or_incentivized_traffic",
+    "collapsed_provider_scope",
+    "provider_response_is_chain_settlement",
+    "chain_transfer_is_route_attribution"
+  ]
+}

@@ -1,0 +1,847 @@
+{
+  "schemaVersion": "samedaydesk.seller-conformance-crawl.v1",
+  "checkedAt": "2026-09-03T09:55:27Z",
+  "sources": [
+    "https://agents.samedaydesk.com/.well-known/x402",
+    "https://agents.samedaydesk.com/openapi.json",
+    "https://api.cdp.coinbase.com/platform/v2/x402/discovery/search?query=samedaydesk&limit=20",
+    "credential-free unpaid GET 402 probes of SameDayDesk example URLs",
+    "client/src/data/sellerRepairBriefs.ts"
+  ],
+  "limitations": [
+    "POST routes were not transmitted. Their unpaid 402 output schema is therefore unmarked.",
+    "CDP Bazaar search returned three SameDayDesk-named rows. Absence of a row is incomplete discovery, not a payment-integrity failure.",
+    "This crawl is inspection evidence. It is not a certificate or settlement proof."
+  ],
+  "greenRouteCount": 22,
+  "routes": [
+    {
+      "id": "samedaydesk:GET:/extract",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/extract",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "5000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "aiReadiness",
+        "description",
+        "jsonLd",
+        "ok",
+        "title",
+        "url"
+      ],
+      "contractHash": "7465c0cee5802a94db4a2aa79b6e3bef2033a67dd8a3b6bf76234aaf65ee8712",
+      "cdpBazaar": {
+        "resource": "https://agents.samedaydesk.com/extract",
+        "serviceName": "SameDayDesk",
+        "lastUpdated": "2026-08-30T15:18:51.498Z",
+        "amount": "5000",
+        "network": "eip155:8453",
+        "outputType": "json",
+        "outputExampleKeys": [
+          "aiReadiness",
+          "description",
+          "jsonLd",
+          "ok",
+          "title",
+          "url"
+        ]
+      }
+    },
+    {
+      "id": "samedaydesk:GET:/read",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/read",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "5000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "markdown",
+        "ok",
+        "title",
+        "url",
+        "wordCount"
+      ],
+      "contractHash": "e78518fa86c54ea5ec05811a163080b4ad29a70eaca037f587deb166e83baed5",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/scan",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/scan",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "200000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "filesScanned",
+        "findings",
+        "ok",
+        "repo",
+        "risk",
+        "summary"
+      ],
+      "contractHash": "b6ec3d17df5d9fc05be37185d8de0c9f69c9da1dc1e402f0765e6b31da2b8ee6",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/schemaforge",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/schemaforge",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "250000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "fixList",
+        "jsonLd",
+        "missing",
+        "ok",
+        "site",
+        "vertical"
+      ],
+      "contractHash": "93b6ddc53034afb66457fedffa39cbe204db85b6a4e3d6c625ccb0a7bd9e0987",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/enrich",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/enrich",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "50000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "aiReadiness",
+        "company",
+        "contact",
+        "dns",
+        "domain",
+        "ok",
+        "social",
+        "tech"
+      ],
+      "contractHash": "b6820be9b75796be7f4b8ca2487a4235521ae8d11a3ee6d3378ec9cd09dbadc5",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/wallet-enrich",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/wallet-enrich",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "50000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "address",
+        "contract",
+        "holdingsSummary",
+        "native",
+        "network",
+        "ok",
+        "profile",
+        "tokenHoldings",
+        "type"
+      ],
+      "contractHash": "b99502a980a102af14fb5a8974cccff2cd1dbf97b1fb12152e80ebc8fb909740",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/deep-audit",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/deep-audit",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "250000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "components",
+        "domain",
+        "ok",
+        "product",
+        "summary"
+      ],
+      "contractHash": "382acb7f2c72de374d02d573e1e0c07433796ad65e7c27880d6839e586658e25",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/defi/morpho-position",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/defi/morpho-position",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "20000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "address",
+        "boundary",
+        "chain",
+        "ok",
+        "positionCount",
+        "positions",
+        "source"
+      ],
+      "contractHash": "8141a5d0f8aa01e1e7d0a0ccb621546c6b19193f4cf30474febc55cab7d10cc1",
+      "cdpBazaar": {
+        "resource": "https://agents.samedaydesk.com/defi/morpho-position",
+        "serviceName": "SameDayDesk",
+        "lastUpdated": "2026-08-27T00:23:29.425Z",
+        "amount": "20000",
+        "network": "eip155:8453",
+        "outputType": "json",
+        "outputExampleKeys": [
+          "address",
+          "boundary",
+          "chain",
+          "ok",
+          "positionCount",
+          "positions",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "samedaydesk:GET:/defi/morpho-protection",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/defi/morpho-protection",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "100000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "actionableCount",
+        "address",
+        "boundary",
+        "inputs",
+        "invariants",
+        "ok",
+        "positionCount",
+        "product",
+        "quotes",
+        "unverifiedCount"
+      ],
+      "contractHash": "4fa44c1314563279698789905180e445a4d5bb8948f380930396e9230b0071da",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/defi/morpho-market-underwrite",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/defi/morpho-market-underwrite",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "250000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "borrowers",
+        "boundary",
+        "chain",
+        "decisionChecks",
+        "market",
+        "marketId",
+        "ok",
+        "product",
+        "verification"
+      ],
+      "contractHash": "b527834b38b2c3543556448dc2ac9240a35ef17f2115e0dd48a14930b78b82f4",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/defi/morpho-preliquidation-replay",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/defi/morpho-preliquidation-replay",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "100000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "boundary",
+        "chain",
+        "eventCount",
+        "events",
+        "ok",
+        "product",
+        "transaction",
+        "verification"
+      ],
+      "contractHash": "623b8a4e31f1e94e315f64094678d0549c332aecd873c93fc584460502fab73f",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/work/opportunity-preflight",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/work/opportunity-preflight",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "50000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "boundary",
+        "decision",
+        "economics",
+        "gates",
+        "input",
+        "ok",
+        "platformEvidence",
+        "product",
+        "version"
+      ],
+      "contractHash": "c7471ba1e7a12596038fed0498ac1c9fa0003507591af568d3646554df739fd5",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/distribution/agent-discoverability-audit",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/distribution/agent-discoverability-audit",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "50000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "boundary",
+        "findings",
+        "generatedAt",
+        "input",
+        "method",
+        "nextActions",
+        "ok",
+        "product",
+        "runtimeOfferAudit",
+        "safety",
+        "sources",
+        "summary",
+        "version"
+      ],
+      "contractHash": "5e73a3ba9343f418e20fb23e674cbb619ad07e650e59629b1f03484d2d9c44a7",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/commerce/payment-offer-preflight",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/commerce/payment-offer-preflight",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "5000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "boundary",
+        "catalogCoherence",
+        "checkedAt",
+        "decision",
+        "findings",
+        "offerCount",
+        "offers",
+        "ok",
+        "parity",
+        "product",
+        "protocols",
+        "responseContract",
+        "responseContractAcquisition",
+        "target",
+        "version"
+      ],
+      "contractHash": "f48f9711fa9753fecd48b5106b209e6b87551a82de11b6f9fcdeaa47d68f32f3",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/commerce/settlement-proof",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/commerce/settlement-proof",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "5000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "asset",
+        "boundary",
+        "chain",
+        "checkedAt",
+        "decision",
+        "findings",
+        "ok",
+        "product",
+        "request",
+        "settlement",
+        "transaction",
+        "version"
+      ],
+      "contractHash": "234c57b345bc1d77a8e17b7650b7620672e67056989fd6b5672d520c1c6e2a8e",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/chain/transaction-receipt",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/chain/transaction-receipt",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "2000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "boundary",
+        "canonicalUsdcTransfers",
+        "chain",
+        "checkedAt",
+        "decision",
+        "findings",
+        "ok",
+        "product",
+        "receipt",
+        "request",
+        "transaction",
+        "transfers",
+        "version"
+      ],
+      "contractHash": "e3497f6bc375ad2475dc42790625049bcd54626d0e0ae4eea6459ae37ca30f2b",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/chain/solana-transaction-receipt",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/chain/solana-transaction-receipt",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "2000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "boundary",
+        "canonicalUsdcOwnerDeltas",
+        "chain",
+        "checkedAt",
+        "decision",
+        "findings",
+        "ok",
+        "product",
+        "receipt",
+        "request",
+        "tokenOwnerDeltas",
+        "transaction",
+        "verification",
+        "version"
+      ],
+      "contractHash": "d39727980b3a12a9f50b940a7a655fcead8c6473809383881ae1154019873909",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:POST:/security/wallet-policy-conformance",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/security/wallet-policy-conformance",
+      "method": "POST",
+      "registryStatus": "green",
+      "lastVerified": null,
+      "unpaid402": {
+        "amount": "10000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "x402_manifest"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": false,
+      "outputExampleKeys": [],
+      "contractHash": null,
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:POST:/security/stateful-wallet-policy-conformance",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/security/stateful-wallet-policy-conformance",
+      "method": "POST",
+      "registryStatus": "green",
+      "lastVerified": null,
+      "unpaid402": {
+        "amount": "10000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "x402_manifest"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": false,
+      "outputExampleKeys": [],
+      "contractHash": null,
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/commerce/seller-integrity-audit",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/commerce/seller-integrity-audit",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "10000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [],
+      "contractHash": "f912ec72a74c58a2ccc21df7439b096bde11304072c4d018af822787df27d149",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/commerce/contract-qualified-search",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/commerce/contract-qualified-search",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "10000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "boundary",
+        "checkedAt",
+        "decision",
+        "ok",
+        "product",
+        "qualified",
+        "rejected",
+        "request",
+        "sources",
+        "version"
+      ],
+      "contractHash": "720eae674ad34d5ee146eefbc98bec1e500cd5518328e024fcb7c6c95692a7bc",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/distribution/agent-surface-budget-audit",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/distribution/agent-surface-budget-audit",
+      "method": "GET",
+      "registryStatus": "green",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "10000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "live_unpaid_402"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": [
+        "actions",
+        "boundary",
+        "checkedAt",
+        "decision",
+        "mcp",
+        "ok",
+        "openapi",
+        "product",
+        "request",
+        "version"
+      ],
+      "contractHash": "c3a77b2af7da40e07794c1c26f5ca60bf2d64751df11da92176295bd81ce86d8",
+      "cdpBazaar": null
+    },
+    {
+      "id": "samedaydesk:GET:/gateway/commerce/payment-offer-preflight",
+      "seller": "SameDayDesk",
+      "origin": "https://agents.samedaydesk.com",
+      "route": "/gateway/commerce/payment-offer-preflight",
+      "method": "GET",
+      "registryStatus": "alternate",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "unpaid402": {
+        "amount": "5000",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "source": "x402_manifest"
+      },
+      "openapiPresent": true,
+      "unpaid402OutputSchemaPresent": false,
+      "outputExampleKeys": [],
+      "contractHash": null,
+      "cdpBazaar": null
+    }
+  ],
+  "findings": [
+    {
+      "id": "hypernatt-liq-radar-20260830",
+      "seller": "HyperNatt Terminal",
+      "origin": "https://hypernatt.com",
+      "route": "/api/m2m/liq-radar",
+      "method": "GET",
+      "observedAt": "2026-08-30",
+      "livePrice": "0.001 USDC",
+      "observedContract": [
+        "OpenAPI describes HTTP 200 only as OK, without a media type or schema.",
+        "The live Bazaar schema requires output.type but leaves output.example unconstrained.",
+        "The example advertises product, payload_schema, symbol, and liq_radar without requiring any of them."
+      ]
+    },
+    {
+      "id": "onesource-erc20-balance-20260830",
+      "seller": "OneSource",
+      "origin": "https://api.onesource.io",
+      "route": "/api/chain/erc20-balance",
+      "method": "GET",
+      "observedAt": "2026-08-30",
+      "livePrice": "0.003 USDC",
+      "observedContract": [
+        "OpenAPI requires address and contract; the live Bazaar input requires account and token.",
+        "The success schema requires data and meta but does not require a handler-owned field inside data, including balance.",
+        "The live payment schemes require 3,000 atomic USDC while the Bazaar output example says cost_usdc 0.001."
+      ]
+    },
+    {
+      "id": "402-com-tr-morpho-health-20260830",
+      "seller": "x402 Bazaar",
+      "origin": "https://402.com.tr",
+      "route": "/api/x402/morpho-health",
+      "method": "GET",
+      "observedAt": "2026-08-30",
+      "livePrice": "0.04 USDC on Base or Polygon",
+      "observedContract": [
+        "OpenAPI declares the HTTP 200 body only as an object, without properties or required fields.",
+        "The live Bazaar schema requires output.type but leaves output.example as an unconstrained object.",
+        "The example advertises checkedAt, wallet, market, pair, verdict, collateral, collateralToken, and borrowed without requiring any of them."
+      ]
+    },
+    {
+      "id": "scrape402-crypto-20260830",
+      "seller": "scrape402",
+      "origin": "https://x402.shizu.me",
+      "route": "/crypto",
+      "method": "GET",
+      "observedAt": "2026-08-30",
+      "livePrice": "0.007 USDC on Base",
+      "observedContract": [
+        "OpenAPI provides a 200 example with pair, amount, and currency but no response schema.",
+        "The live Bazaar declaration publishes an output example but no formal output schema.",
+        "OpenAPI makes pair optional while the live Bazaar input contract requires it.",
+        "The advertised multi-pair mode has no buyer-visible envelope or per-item guarantee."
+      ]
+    },
+    {
+      "id": "vibe-springs-btc-usd-20260830",
+      "seller": "Vibe Springs",
+      "origin": "https://vibesprings.net",
+      "route": "/api/price/btc-usd",
+      "method": "GET",
+      "observedAt": "2026-08-30",
+      "livePrice": "0.002 USDC on Base",
+      "observedContract": [
+        "OpenAPI declares the HTTP 200 body only as an object, without properties or required fields.",
+        "The live Bazaar schema requires output.type but leaves output.example as an unconstrained object.",
+        "The example advertises symbol, price, currency, exchange, 24-hour change, high, low, volume, and processing time without requiring any of them."
+      ]
+    },
+    {
+      "id": "blockrun-exa-search-20260830",
+      "seller": "BlockRun",
+      "origin": "https://blockrun.ai",
+      "route": "/api/v1/exa/search",
+      "method": "POST",
+      "observedAt": "2026-08-30",
+      "livePrice": "0.011 USDC on Base",
+      "observedContract": [
+        "OpenAPI requires a JSON body with query, but describes HTTP 200 only as Exa search results without a media type or response schema.",
+        "The live Bazaar record sets output to null and its schema leaves the example results array and every result field optional.",
+        "BlockRun's seller-owned public Exa skill consumes results with title and url; this is intended-use evidence, not independent buyer demand or a formal response guarantee."
+      ]
+    },
+    {
+      "id": "exa-direct-search-20260830",
+      "seller": "Exa",
+      "origin": "https://api.exa.ai",
+      "route": "/search",
+      "method": "POST",
+      "observedAt": "2026-08-30",
+      "livePrice": "0.007 USDC on Base or Solana",
+      "observedContract": [
+        "OpenAPI requires results on every SearchResponse branch and requires title and url on every SearchResultOutput item.",
+        "The live Bazaar schema requires only output.type; output.example is unconstrained, so results and every item field become optional on the discovery surface.",
+        "The live exact offer is 0.007 USDC on Base or Solana, while OpenAPI separately declares dynamic search pricing and an MPP method; this brief changes neither."
+      ]
+    },
+    {
+      "id": "driftflight-image-generation-20260830",
+      "seller": "Driftflight via ZeroClick",
+      "origin": "https://agents.driftflight.com",
+      "route": "/v1/images/generate",
+      "method": "POST",
+      "observedAt": "2026-08-30",
+      "livePrice": "0.06 USDC for the default studio tier",
+      "observedContract": [
+        "OpenAPI requires prompt and declares the allowed model and preset inputs, while HTTP 200 has only the text Successful response.",
+        "The route's payment metadata prices the default studio image at 0.06 USDC and names Base x402 and Tempo MPP rails.",
+        "ZeroClick's live storefront exposes three image tiers but contactEmail is null; Driftflight's published email domain currently cannot accept the repair message."
+      ]
+    },
+    {
+      "id": "agenttoll-market-radar-20260901",
+      "seller": "AgentToll",
+      "origin": "https://agenttoll.dev",
+      "route": "/paid/x402/market-radar",
+      "method": "POST",
+      "observedAt": "2026-09-01 PDT",
+      "livePrice": "0.05 USDC",
+      "observedContract": [
+        "The current live OpenAPI HTTP 200 schema is only the bare object type and requires no application field.",
+        "The current Bazaar output guarantees only the wrapper type while its example advertises application fields.",
+        "The public MIT handler always owns product, service, generated_at, catalog, and agenttoll on HTTP 200."
+      ]
+    },
+    {
+      "id": "argonaut-ecb-fx-reference-20260902",
+      "seller": "ArgonautWorks ECB FX Reference",
+      "origin": "https://official-fx-reference.vercel.app",
+      "route": "/api/v1/convert",
+      "method": "POST",
+      "observedAt": "2026-09-02",
+      "livePrice": "0.0015 USDC on Base",
+      "observedContract": [
+        "The live unpaid GET and POST route requires 0.0015 USDC on Base for /api/v1/convert.",
+        "OpenAPI already requires the source and cache parent objects but does not require source.provider, source.dataset, source.url, source.available_free, cache.stale, or cache.age_ms.",
+        "The public MIT handler sets all six nested fields on every successful conversion response."
+      ]
+    }
+  ]
+}

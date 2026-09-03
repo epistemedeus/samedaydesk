@@ -1,0 +1,47 @@
+{
+  "state": "contract",
+  "provenance": "observed-locally",
+  "source": {
+    "file": "src/x402-buyer.js",
+    "lines": "430-444",
+    "also": [
+      "src/x402-buyer.js:54-65 pickPayableAccept",
+      "client/index.js:553-570 parse402Usd"
+    ]
+  },
+  "note": "SameDayDesk answers the unpaid GET with HTTP 402. Agent402 parses PAYMENT-REQUIRED (v2) via x402HTTPClient.getPaymentRequiredResponse, then picks the exact/Base/USDC accept. parse402Usd reads maxAmountRequired. This fixture pins the stable fields; signatures and validUntil are omitted.",
+  "expectedStatus": 402,
+  "parse": {
+    "header": "PAYMENT-REQUIRED",
+    "bodyAccepts": true,
+    "pick": {
+      "scheme": "exact",
+      "networkLabels": ["eip155:8453", "base", "base-mainnet"],
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+    },
+    "quotedAtomicField": "amount ?? maxAmountRequired",
+    "usdField": "maxAmountRequired / 10^decimals"
+  },
+  "mustReceive": {
+    "x402Version": 2,
+    "scheme": "exact",
+    "network": "eip155:8453",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "amount": "5000",
+    "maxAmountRequired": "5000",
+    "extra": {
+      "name": "USD Coin",
+      "version": "2"
+    },
+    "resource": {
+      "urlContains": "/extract",
+      "mimeType": "application/json",
+      "serviceName": "SameDayDesk"
+    },
+    "bazaarOutputSchema": {
+      "guaranteedPaths": ["ok", "title", "url"],
+      "exampleKeys": ["ok", "url", "title", "description", "jsonLd", "aiReadiness"]
+    }
+  }
+}

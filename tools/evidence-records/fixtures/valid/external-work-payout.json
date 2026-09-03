@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.v1",
+  "recordId": "evr_external_work_payout_20260901",
+  "sourceKind": "external_work_payout",
+  "producer": {
+    "id": "gofrantic_payout",
+    "providerId": "gofrantic",
+    "adapterId": "gofrantic_payout_adapter",
+    "observedSurface": "GoFrantic accepted bounty payout receipt"
+  },
+  "scope": {
+    "providerId": "gofrantic",
+    "population": "accepted_bounty_payouts",
+    "joinKeys": ["transaction_hash", "payment_ref"],
+    "host": "gofrantic.com"
+  },
+  "observationWindow": {
+    "start": "2026-09-01T00:00:00.000Z",
+    "end": "2026-09-02T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "complete",
+  "authorityClass": "independently_reconciled",
+  "unknownWhenAbsent": [
+    "payouts_not_returned_by_this_work_platform",
+    "whether_the_payout_is_a_product_sku"
+  ],
+  "prohibitedInferences": [
+    "cross_source_join_without_exact_key",
+    "sum_across_authority_classes",
+    "organic_label_for_controlled_or_incentivized_traffic",
+    "collapsed_provider_scope",
+    "chain_transfer_is_route_attribution"
+  ]
+}

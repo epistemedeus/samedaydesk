@@ -1,0 +1,49 @@
+{
+  "state": "contract",
+  "provenance": "observed-locally",
+  "source": {
+    "file": "typescript/packages/core/src/http/x402HTTPClient.ts",
+    "lines": "117-138",
+    "also": [
+      "typescript/packages/http/fetch/src/index.ts:56-78",
+      "coinbase/agentkit x402ActionProvider.ts:255-285"
+    ]
+  },
+  "note": "v2 clients decode the PAYMENT-REQUIRED header first. SameDayDesk also returns a JSON body with accepts, resource, extensions.bazaar. AgentKit falls back to body.accepts when the header is missing. Tests pin the stable accept and bazaar output schema.",
+  "expectedStatus": 402,
+  "parse": {
+    "header": "PAYMENT-REQUIRED",
+    "bodyFallback": "x402Version === 1 body, or AgentKit body.accepts",
+    "acceptFields": [
+      "scheme",
+      "network",
+      "payTo",
+      "amount",
+      "maxAmountRequired",
+      "asset",
+      "extra"
+    ]
+  },
+  "mustReceive": {
+    "x402Version": 2,
+    "scheme": "exact",
+    "network": "eip155:8453",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "amount": "5000",
+    "maxAmountRequired": "5000",
+    "extra": {
+      "name": "USD Coin",
+      "version": "2"
+    },
+    "resource": {
+      "urlContains": "/extract",
+      "mimeType": "application/json",
+      "serviceName": "SameDayDesk"
+    },
+    "bazaarOutputSchema": {
+      "guaranteedPaths": ["ok", "title", "url"],
+      "exampleKeys": ["ok", "url", "title", "description", "jsonLd", "aiReadiness"]
+    }
+  }
+}

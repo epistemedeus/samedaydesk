@@ -26,6 +26,7 @@ const DECLARED_REACT_ROUTES = Object.freeze([
   "/tools/ai-readiness",
   "/x402",
   "/x402/seller-conformance",
+  "/x402/verified",
   "/for-agents",
   "/login",
   "/signup",
@@ -142,7 +143,7 @@ test("catalog is exact, unique, and sufficient to add another public SPA route",
   assert.deepEqual(
     SPA_ROUTE_SHELLS.map((route) => route.path),
     [
-      "/x402", "/x402/seller-conformance", "/tools/ai-readiness", "/for-agents",
+      "/x402", "/x402/seller-conformance", "/x402/verified", "/tools/ai-readiness", "/for-agents",
       "/terms", "/privacy", "/login", "/signup", "/dashboard", "/checkout",
     ],
   );
@@ -202,7 +203,9 @@ test("generator derives route shells from the built index.html without rewriting
   assert.match(x402.noscript, /Twenty-two deterministic tools/);
   const seller = inspectHtmlShell(readFileSync(join(dist, written[1].relativeFile), "utf8"));
   assert.match(seller.noscript, /not a product, certificate, or runtime monitor/);
-  const tool = inspectHtmlShell(readFileSync(join(dist, written[2].relativeFile), "utf8"));
+  const verified = inspectHtmlShell(readFileSync(join(dist, written[2].relativeFile), "utf8"));
+  assert.match(verified.noscript, /Inspected routes, not a certificate/);
+  const tool = inspectHtmlShell(readFileSync(join(dist, written[3].relativeFile), "utf8"));
   assert.match(tool.noscript, /No\s+email required/);
   for (const routePath of ["/login", "/signup", "/dashboard", "/checkout"]) {
     const item = written.find((entry) => entry.path === routePath);

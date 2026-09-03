@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.v1",
+  "recordId": "frantic-42-revenue-2026-06-25",
+  "sourceKind": "external_work_payout",
+  "producer": {
+    "id": "gofrantic_payout",
+    "providerId": "gofrantic",
+    "adapterId": "gofrantic_payout_adapter",
+    "observedSurface": "GoFrantic bounty 42 paymentRef and public receipt r/730b47d8"
+  },
+  "scope": {
+    "providerId": "gofrantic",
+    "population": "accepted_bounty_payouts",
+    "joinKeys": ["transaction_hash", "payment_ref"],
+    "host": "gofrantic.com"
+  },
+  "observationWindow": {
+    "start": "2026-06-25T00:31:37.000Z",
+    "end": "2026-06-25T00:31:38.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "complete",
+  "authorityClass": "independently_reconciled",
+  "unknownWhenAbsent": [
+    "whether_the_payout_is_a_product_sku"
+  ],
+  "prohibitedInferences": [
+    "cross_source_join_without_exact_key",
+    "sum_across_authority_classes",
+    "organic_label_for_controlled_or_incentivized_traffic",
+    "collapsed_provider_scope",
+    "chain_transfer_is_route_attribution"
+  ],
+  "settlement": {
+    "operationId": "frantic-42-revenue-2026-06-25",
+    "amountUsdc": "8.000",
+    "buyerClass": "independent",
+    "validDeliveryStatus": "platform_accepted_and_paid",
+    "transaction": "0x1f92ce4c76bd65b61f34b248ed1a3cb0d591e849fbabee6100496f6e4f071814",
+    "facilitatorOrPayoutRef": "gofrantic_bounty_42_payment_ref"
+  }
+}

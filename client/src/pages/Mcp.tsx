@@ -306,6 +306,9 @@ export default function Mcp() {
               <a className={styles.secondary} href="/x402/seller-conformance">
                 Read the seller-conformance proof
               </a>
+              <a className={styles.secondary} href="/x402/verified">
+                Inspect the route list
+              </a>
             </div>
           </div>
           <div className={styles.offerCard}>

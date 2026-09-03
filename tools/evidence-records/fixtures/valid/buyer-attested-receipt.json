@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.v1",
+  "recordId": "evr_buyer_attested_receipt_20260901",
+  "sourceKind": "buyer_attested_receipt",
+  "producer": {
+    "id": "what_agents_buy_receipt",
+    "providerId": "what_agents_buy",
+    "adapterId": "what_agents_buy_receipt_adapter",
+    "observedSurface": "What Agents Buy buyer receipt snapshot"
+  },
+  "scope": {
+    "providerId": "what_agents_buy",
+    "population": "delivered_buyer_receipts",
+    "joinKeys": ["receipt_id", "transaction_hash"],
+    "host": "whatagentsbuy.com"
+  },
+  "observationWindow": {
+    "start": "2026-09-01T00:00:00.000Z",
+    "end": "2026-09-02T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "truncated",
+  "authorityClass": "provider_returned",
+  "unknownWhenAbsent": [
+    "receipts_not_returned_by_this_publisher",
+    "raw_response_bytes_when_raw_ref_is_null"
+  ],
+  "prohibitedInferences": [
+    "cross_source_join_without_exact_key",
+    "sum_across_authority_classes",
+    "organic_label_for_controlled_or_incentivized_traffic",
+    "collapsed_provider_scope",
+    "provider_response_is_chain_settlement"
+  ]
+}

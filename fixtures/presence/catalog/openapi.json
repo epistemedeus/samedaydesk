@@ -1,0 +1,1264 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SameDayDesk machine commerce gateway",
+    "version": "1.23.40",
+    "description": "Deterministic agent APIs for web and company intelligence, repository security, agent-work economics, machine-service discoverability, payment preflight and settlement proof, wallet context, and Morpho decision evidence. Pay per call through Base x402 or native MPP, with a Circle Gateway Nanopayments path for gasless batched USDC.",
+    "contact": {
+      "email": "contact@samedaydesk.com",
+      "url": "https://samedaydesk.com"
+    },
+    "x-guidance": "Choose the narrowest route that answers the task. Supply required query parameters, inspect the HTTP 402 x402 and MPP offers, enforce your own price and network policy, then retry the identical method, path, and query with one supported payment credential. Treat runtime payment challenges as authoritative."
+  },
+  "x-service-info": {
+    "categories": [
+      "agentic-payments",
+      "machine-commerce",
+      "data",
+      "defi"
+    ],
+    "docs": {
+      "apiReference": "https://agents.samedaydesk.com/openapi.json",
+      "homepage": "https://agents.samedaydesk.com",
+      "llms": "https://agents.samedaydesk.com/llms.txt",
+      "buyerPolicyReference": "https://github.com/epistemedeus/agent-payment-policy",
+      "purchaseEvidence": "https://agents.samedaydesk.com/.well-known/agent-payment-evidence.json"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://agents.samedaydesk.com"
+    }
+  ],
+  "paths": {
+    "/v0/cards.json": {
+      "get": {
+        "summary": "Free incident-backed platform health cards. Categories are not calibrated scores.",
+        "operationId": "listPlatformHealthCards",
+        "tags": [
+          "Settlement Radar"
+        ],
+        "responses": {
+          "200": {}
+        }
+      }
+    },
+    "/v0/commerce-demand.json": {
+      "get": {
+        "summary": "Privacy-safe aggregate external machine-commerce observations.",
+        "operationId": "getCommerceDemand",
+        "tags": [
+          "Settlement Radar"
+        ],
+        "responses": {
+          "200": {}
+        }
+      }
+    },
+    "/.well-known/paid-action-effects.json": {
+      "get": {
+        "summary": "Experimental read-only effect and retry contract for SameDayDesk paid POST operations.",
+        "operationId": "getPaidActionEffectProfile",
+        "tags": [
+          "Agent Operations"
+        ],
+        "responses": {
+          "200": {}
+        }
+      }
+    },
+    "/.well-known/agent-payment-evidence.json": {
+      "get": {
+        "summary": "Seller-declared purchase-authorization evidence for every exact paid operation.",
+        "operationId": "getAgentPaymentEvidence",
+        "tags": [
+          "Agent Operations"
+        ],
+        "responses": {
+          "200": {}
+        }
+      }
+    },
+    "/.well-known/agent-card.json": {
+      "get": {
+        "summary": "A2A v1.0 agent card for the free machine-commerce storefront.",
+        "operationId": "getA2aAgentCard",
+        "tags": [
+          "A2A"
+        ],
+        "responses": {
+          "200": {}
+        }
+      }
+    },
+    "/.well-known/glama.json": {
+      "get": {
+        "summary": "Project-owned Glama connector maintainer verification.",
+        "operationId": "getGlamaVerification",
+        "tags": [
+          "Distribution"
+        ],
+        "responses": {
+          "200": {}
+        }
+      }
+    },
+    "/.well-known/x402-verification.json": {
+      "get": {
+        "summary": "Public server-ownership proof for the x402.jobs resource registry.",
+        "operationId": "getX402JobsVerification",
+        "tags": [
+          "Distribution"
+        ],
+        "responses": {
+          "200": {}
+        }
+      }
+    },
+    "/.well-known/agent-registration.json": {
+      "get": {
+        "summary": "ERC-8004-compatible SameDayDesk registration metadata for the Solana Agent Registry.",
+        "operationId": "getSolanaAgentRegistration",
+        "tags": [
+          "A2A"
+        ],
+        "responses": {
+          "200": {}
+        }
+      }
+    },
+    "/.well-known/agent-payment-policy-service-deployment.json": {
+      "get": {
+        "summary": "Signed short-lived binding from the ERC-8004 agent wallet to the canonical SameDayDesk origin, exact paid routes, and exact x402 and MPP settlement identities.",
+        "operationId": "getServiceDeploymentStatement",
+        "tags": [
+          "Agent Operations"
+        ],
+        "responses": {
+          "200": {}
+        }
+      }
+    },
+    "/.well-known/agent-payment-policy-service-deployment.pem": {
+      "get": {
+        "summary": "Ed25519 public key whose raw 32-byte value is the ERC-8004 operational Solana wallet.",
+        "operationId": "getServiceDeploymentPublicKey",
+        "tags": [
+          "Agent Operations"
+        ],
+        "responses": {
+          "200": {}
+        }
+      }
+    },
+    "/schemas/wallet-policy-conformance-v1.json": {
+      "get": {
+        "summary": "Free canonical case matrix and JSON Schemas for the wallet-policy conformance product.",
+        "operationId": "getWalletPolicyConformanceSchema",
+        "tags": [
+          "Security"
+        ],
+        "responses": {
+          "200": {}
+        }
+      }
+    },
+    "/schemas/stateful-wallet-policy-conformance-v1.json": {
+      "get": {
+        "summary": "Free canonical stateful case matrix and JSON Schemas for cumulative wallet-policy conformance.",
+        "operationId": "getStatefulWalletPolicyConformanceSchema",
+        "tags": [
+          "Security"
+        ],
+        "responses": {
+          "200": {}
+        }
+      }
+    },
+    "/a2a/message:send": {
+      "post": {
+        "summary": "Return the exact-price x402 and MPP action catalog as an A2A direct message.",
+        "operationId": "sendA2aMessage",
+        "tags": [
+          "A2A"
+        ],
+        "responses": {
+          "200": {},
+          "400": {}
+        }
+      }
+    },
+    "/platforms": {
+      "get": {
+        "summary": "Human-readable Settlement Radar health cards.",
+        "operationId": "viewSettlementRadar",
+        "tags": [
+          "Settlement Radar"
+        ],
+        "responses": {
+          "200": {}
+        }
+      }
+    },
+    "/work/opportunity-preflight": {
+      "get": {
+        "summary": "Agent work opportunity -> deterministic attempt, verify-first, or abandon preflight using caller-supplied cost and selection assumptions plus dated platform evidence. Returns break-even probability, expected surplus, hard gates, and source-linked evidence. No claim, bid, payment, or submission.",
+        "operationId": "preflightAgentOpportunity",
+        "tags": [
+          "Agent Operations"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.05",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "400": {},
+          "402": {}
+        }
+      },
+      "post": {
+        "summary": "Agent work opportunity -> deterministic attempt, verify-first, or abandon preflight using caller-supplied cost and selection assumptions plus dated platform evidence. Returns break-even probability, expected surplus, hard gates, and source-linked evidence. No claim, bid, payment, or submission. JSON-body form for machine workflow builders.",
+        "operationId": "preflightAgentOpportunityForWorkflow",
+        "tags": [
+          "Agent Operations"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.05",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "x-paid-effect": {
+          "version": "0.1.0",
+          "classification": "read_only",
+          "unpaidRequest": {
+            "applicationEffects": "none",
+            "protocolStateMayBeRecorded": [
+              "payment_challenge"
+            ],
+            "telemetryPersisted": false
+          },
+          "retry": {
+            "applicationEffectAtMostOnce": "not_applicable_read_only",
+            "responseReplay": "conditional",
+            "requestBinding": [
+              "method",
+              "canonical_url",
+              "exact_raw_body_sha256",
+              "payer",
+              "payment_terms",
+              "exact_settled_credential"
+            ],
+            "x402Requirement": "payment-identifier extension",
+            "mppRequirement": "exact settled credential",
+            "mismatchStatus": 409
+          },
+          "profile": "/.well-known/paid-action-effects.json"
+        },
+        "responses": {
+          "200": {},
+          "400": {},
+          "402": {}
+        }
+      }
+    },
+    "/distribution/agent-discoverability-audit": {
+      "get": {
+        "summary": "Audit one x402 or MPP service across ten public machine-discovery views. Returns intent rank, canonical and alias records, duplicates, competitors, expected-route presence, exact-price drift, evidence-based next actions, and source outages. Optional checks compare a same-origin unsigned offer, public Agent Card, ERC-8004 document, action catalog, and Coinbase validation-versus-materialization state. Uses no catalog credential, signature, or payment.",
+        "operationId": "auditAgentDiscoverability",
+        "tags": [
+          "Distribution"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.05",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "400": {},
+          "402": {}
+        }
+      }
+    },
+    "/commerce/payment-offer-preflight": {
+      "get": {
+        "summary": "Compare x402 and MPP challenges plus seller-declared response readiness before buyer authorization for one exact public HTTPS GET URL. Optionally checks catalog metadata against live unsigned offers across request, protocol, amount, network, asset, recipient, and expiry. Returns normalized offers, parity findings, response-contract evidence, and an explicit decision. Uses no credential, signature, or target payment and reads no paid body.",
+        "operationId": "preflightPaymentOffer",
+        "tags": [
+          "Agent Operations"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.005",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "400": {},
+          "402": {},
+          "502": {}
+        }
+      },
+      "post": {
+        "summary": "Compare x402 and MPP challenges plus seller-declared response readiness before buyer authorization for one exact public HTTPS GET URL. Optionally checks catalog metadata against live unsigned offers across request, protocol, amount, network, asset, recipient, and expiry. Returns normalized offers, parity findings, response-contract evidence, and an explicit decision. Uses no credential, signature, or target payment and reads no paid body. JSON-body form for machine workflow builders.",
+        "operationId": "preflightPaymentOfferForWorkflow",
+        "tags": [
+          "Agent Operations"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.005",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "x-paid-effect": {
+          "version": "0.1.0",
+          "classification": "read_only",
+          "unpaidRequest": {
+            "applicationEffects": "none",
+            "protocolStateMayBeRecorded": [
+              "payment_challenge"
+            ],
+            "telemetryPersisted": false
+          },
+          "retry": {
+            "applicationEffectAtMostOnce": "not_applicable_read_only",
+            "responseReplay": "conditional",
+            "requestBinding": [
+              "method",
+              "canonical_url",
+              "exact_raw_body_sha256",
+              "payer",
+              "payment_terms",
+              "exact_settled_credential"
+            ],
+            "x402Requirement": "payment-identifier extension",
+            "mppRequirement": "exact settled credential",
+            "mismatchStatus": 409
+          },
+          "profile": "/.well-known/paid-action-effects.json"
+        },
+        "responses": {
+          "200": {},
+          "400": {},
+          "402": {},
+          "502": {}
+        }
+      }
+    },
+    "/commerce/seller-integrity-audit": {
+      "get": {
+        "summary": "x402 and MPP seller integrity audit for one exact paid GET or POST route after a buyer integration fails, a seller changes the route, or before the next paid retry or release. Returns machine_buyable, contract_ready, or repair_required with exact repair actions. Checks constructible non-secret input, live unpaid GET terms, optional Bazaar metadata, and buyer-required success paths. Uses no credential or target payment, follows no redirect, and sends no target POST.",
+        "operationId": "auditSellerIntegrity",
+        "tags": [
+          "Agent Operations"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.01",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "400": {},
+          "402": {}
+        }
+      }
+    },
+    "/commerce/referral-recheck": {
+      "post": {
+        "summary": "Claim one free seller-integrity recheck with two distinct merchant-signed settlement receipts. The original signed URL alone supplies the audit target, with any prior referral stripped. Receipts do not prove an application HTTP 200 response or output delivery. This route is free and records no payment, settlement, revenue, payer, transaction, or raw receipt evidence.",
+        "operationId": "claimReceiptReferralRecheck",
+        "tags": [
+          "Agent Operations"
+        ],
+        "responses": {
+          "200": {},
+          "400": {},
+          "403": {},
+          "409": {},
+          "502": {},
+          "503": {}
+        }
+      }
+    },
+    "/commerce/contract-qualified-search": {
+      "get": {
+        "summary": "Search Agent402 and the official MPP catalog for paid machine services that both match a capability intent and guarantee buyer-required JSON output paths. Returns bounded machine-buyable or contract-ready candidates plus controlled rejection reasons. Rejects unresolved routes and owned supply before audit, uses no credentials or wallet, sends no seller POST or target payment, reads no paid response body, and retains only a query digest.",
+        "operationId": "searchContractQualifiedServices",
+        "tags": [
+          "Agent Operations"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.01",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "400": {},
+          "402": {}
+        }
+      }
+    },
+    "/distribution/agent-surface-budget-audit": {
+      "get": {
+        "summary": "Measure one public service's free MCP tools/list, OpenAPI, or both before an agent calls or pays. Returns byte counts, byte-derived token estimates, missing selection contracts, heaviest definitions, budget decisions, and progressive-discovery fixes. Unselected surfaces are not fetched or judged. Uses public pinned DNS, follows no redirect, sends no credential or target payment, and calls no target tool.",
+        "operationId": "auditAgentSurfaceBudget",
+        "tags": [
+          "Distribution"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.01",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "400": {},
+          "402": {}
+        }
+      }
+    },
+    "/commerce/settlement-proof": {
+      "get": {
+        "summary": "Verify one claimed canonical Base USDC settlement against the successful on-chain transaction receipt. Binds an exact transaction hash, recipient, atomic amount, and optional payer; returns a deterministic verified or not-verified result, block time, mismatch findings, and no private merchant-ledger data. Read-only and performs no wallet, signing, broadcast, custody, or execution action.",
+        "operationId": "verifyBaseUsdcSettlement",
+        "tags": [
+          "Blockchain"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.005",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "400": {},
+          "402": {}
+        }
+      }
+    },
+    "/chain/transaction-receipt": {
+      "get": {
+        "summary": "Get a normalized Base or Ethereum transaction receipt from one hash: success or revert status, block time, gas used, effective gas price, total transaction fee, decoded ERC-20 Transfer events, and canonical USDC transfers. Returns explicit not-found or RPC-unavailable evidence, excludes raw logs, and performs no wallet, signing, broadcast, custody, or execution action.",
+        "operationId": "getTransactionReceipt",
+        "tags": [
+          "Blockchain"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.002",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "400": {},
+          "402": {}
+        }
+      }
+    },
+    "/chain/solana-transaction-receipt": {
+      "get": {
+        "summary": "Get a normalized finalized Solana transaction receipt from one signature: success or failure status, slot, block time, fee, SPL-token owner deltas, canonical USDC deltas, and optional exact mint, recipient, amount, and payer verification. Returns explicit not-found or RPC-unavailable evidence, excludes raw instructions and logs, and performs no wallet, signing, broadcast, custody, or execution action.",
+        "operationId": "getSolanaTransactionReceipt",
+        "tags": [
+          "Blockchain"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.002",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "400": {},
+          "402": {}
+        }
+      }
+    },
+    "/security/wallet-policy-conformance": {
+      "post": {
+        "summary": "Evaluate a credential-free standardized allow/deny matrix for an agent wallet or delegated signer. Distinguishes explicit provider policy denials from validation and generic provider failures, separates operation allowlisting from exact execution-shape control, and returns conformant, partial, or unsafe without an opaque score. Accepts no credentials, wallet IDs, signatures, transactions, or raw provider responses.",
+        "operationId": "evaluateWalletPolicyConformance",
+        "tags": [
+          "Security"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.01",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "x-paid-effect": {
+          "version": "0.1.0",
+          "classification": "read_only",
+          "unpaidRequest": {
+            "applicationEffects": "none",
+            "protocolStateMayBeRecorded": [
+              "payment_challenge"
+            ],
+            "telemetryPersisted": false
+          },
+          "retry": {
+            "applicationEffectAtMostOnce": "not_applicable_read_only",
+            "responseReplay": "conditional",
+            "requestBinding": [
+              "method",
+              "canonical_url",
+              "exact_raw_body_sha256",
+              "payer",
+              "payment_terms",
+              "exact_settled_credential"
+            ],
+            "x402Requirement": "payment-identifier extension",
+            "mppRequirement": "exact settled credential",
+            "mismatchStatus": 409
+          },
+          "profile": "/.well-known/paid-action-effects.json"
+        },
+        "responses": {
+          "200": {},
+          "400": {},
+          "402": {}
+        }
+      }
+    },
+    "/security/stateful-wallet-policy-conformance": {
+      "post": {
+        "summary": "Evaluate credential-free stateful wallet-policy observations for sequential cumulative limits, signed-but-unbroadcast accounting, ABI extraction integrity, concurrent oversubscription, counter-reference failure, and application serialization. Separates provider-policy enforcement from application guards and returns conformant, partial, or unsafe without an opaque score. Accepts no credentials, wallet or resource IDs, counter values, signatures, transactions, or raw provider responses.",
+        "operationId": "evaluateStatefulWalletPolicyConformance",
+        "tags": [
+          "Security"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.01",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "x-paid-effect": {
+          "version": "0.1.0",
+          "classification": "read_only",
+          "unpaidRequest": {
+            "applicationEffects": "none",
+            "protocolStateMayBeRecorded": [
+              "payment_challenge"
+            ],
+            "telemetryPersisted": false
+          },
+          "retry": {
+            "applicationEffectAtMostOnce": "not_applicable_read_only",
+            "responseReplay": "conditional",
+            "requestBinding": [
+              "method",
+              "canonical_url",
+              "exact_raw_body_sha256",
+              "payer",
+              "payment_terms",
+              "exact_settled_credential"
+            ],
+            "x402Requirement": "payment-identifier extension",
+            "mppRequirement": "exact settled credential",
+            "mismatchStatus": 409
+          },
+          "profile": "/.well-known/paid-action-effects.json"
+        },
+        "responses": {
+          "200": {},
+          "400": {},
+          "402": {}
+        }
+      }
+    },
+    "/extract": {
+      "get": {
+        "summary": "Extract a public HTTP(S) web page into structured JSON with a clean text excerpt for LLM workflows: title, description, JSON-LD, Open Graph/Twitter metadata, headings, links, and AI-readiness signals. Fetches without JavaScript rendering, follows redirects, and applies a 12-second timeout and 3 MB read cap; use /read for longer cleaned Markdown.",
+        "operationId": "extractUrl",
+        "tags": [
+          "Web Data"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.005",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "402": {}
+        }
+      }
+    },
+    "/read": {
+      "get": {
+        "summary": "URL -> full page content as clean Markdown, ready for LLM context. Strips nav/ads/scripts, preserves headings/links/lists.",
+        "operationId": "readUrlAsMarkdown",
+        "tags": [
+          "Web Data"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.005",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "402": {}
+        }
+      }
+    },
+    "/scan": {
+      "get": {
+        "summary": "Static supply-chain security scan of a public GitHub repo before an agent installs/runs it. Flags exfil sinks, obfuscation, credential reads, install-time curl|bash. risk=clean|suspicious|dangerous.",
+        "operationId": "scanRepositoryRisk",
+        "tags": [
+          "Security"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.2",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "402": {}
+        }
+      }
+    },
+    "/schemaforge": {
+      "get": {
+        "summary": "Generate a complete, paste-ready JSON-LD structured-data bundle (LocalBusiness/MedicalBusiness + Service/OfferCatalog + FAQPage + Review/AggregateRating + geo/hours) for a business site, tuned to the fields the pages that surface for high-intent vertical queries carry, plus a gap diff vs the live site and a ranked fix list. Makes a page eligible to be cited by AI assistants.",
+        "operationId": "generateStructuredData",
+        "tags": [
+          "Company Intelligence"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.25",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "402": {}
+        }
+      }
+    },
+    "/enrich": {
+      "get": {
+        "summary": "Domain -> agent-ready company intelligence in one call: identity (name/legal name/description/logo), industry keywords, tech stack (CMS/framework/analytics), social profiles, contact surface (emails/phone/address), DNS + email infrastructure (MX/SPF/DMARC), and AI-search-readiness signals. No auth, no API keys, no subscription. Pay per request in USDC.",
+        "operationId": "enrichCompany",
+        "tags": [
+          "Company Intelligence"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.05",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "402": {}
+        }
+      }
+    },
+    "/wallet-enrich": {
+      "get": {
+        "summary": "Base/EVM address -> agent-ready on-chain profile in one call: EOA vs contract, native ETH + curated Base token holdings, token/NFT contract metadata (ERC-20/721/1155, name/symbol/decimals/supply), EIP-1967 proxy detection, activity (outbound tx count), and a single derived profile label. Pure Base-mainnet RPC, public data only; no keys, no subscription. The frictionless, pay-per-call way for an agent to size up a wallet/contract before it sends funds, swaps, or calls it.",
+        "operationId": "enrichWallet",
+        "tags": [
+          "Blockchain"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.05",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "402": {},
+          "502": {}
+        }
+      }
+    },
+    "/deep-audit": {
+      "get": {
+        "summary": "Domain -> ONE complete AI-search-readiness audit: firmographics + tech stack + contact + DNS/email infra + a 0-100 AI-readiness score, PLUS a structured-data gap analysis with a paste-ready JSON-LD fix list and a combined letter grade. The bundled deep tier (enrich + schemaforge in one call). No auth, no API keys; pay-per-call USDC.",
+        "operationId": "auditAiSearchReadiness",
+        "tags": [
+          "Company Intelligence"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.25",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "402": {}
+        }
+      }
+    },
+    "/defi/morpho-position": {
+      "get": {
+        "summary": "Base address -> deterministic Morpho borrower position snapshot and collateral-price stress scenarios. Returns LTV, LLTV, health factor, liquidation headroom, source freshness, and scenario outcomes. Read-only indexed observation; direct RPC verification is required before execution.",
+        "operationId": "inspectMorphoPosition",
+        "tags": [
+          "DeFi"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.02",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "402": {}
+        }
+      }
+    },
+    "/defi/morpho-protection": {
+      "get": {
+        "summary": "Base Morpho borrower -> exact partial-repay and add-collateral amounts for a chosen stress and target health factor, plus unsigned approval/action templates and explicit invariants. Deterministic and read-only; no wallet, signing, broadcast, or custody.",
+        "operationId": "planMorphoProtection",
+        "tags": [
+          "DeFi"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.1",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "400": {},
+          "402": {}
+        }
+      }
+    },
+    "/defi/morpho-market-underwrite": {
+      "get": {
+        "summary": "Base Morpho market -> deterministic underwriting facts: parameter integrity, direct-chain checks, liquidity, utilization, APY history, borrower concentration and health bands, bad debt, and PreLiquidation supply. Read-only evidence flags; no opaque score or capital action.",
+        "operationId": "underwriteMorphoMarket",
+        "tags": [
+          "DeFi"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.25",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "400": {},
+          "402": {}
+        }
+      }
+    },
+    "/defi/morpho-preliquidation-replay": {
+      "get": {
+        "summary": "Base transaction -> deterministic Morpho PreLiquidation replay: strict event decode, block-time contract parameters and oracle price, repaid debt, seized collateral, gross incentive, and gas. Historical evidence only; no profitability claim or execution.",
+        "operationId": "replayMorphoPreLiquidation",
+        "tags": [
+          "DeFi"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.1",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact"
+              }
+            },
+            {
+              "mpp": {
+                "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "intent": "charge",
+                "method": "evm",
+                "network": "eip155:8453"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "400": {},
+          "402": {}
+        }
+      }
+    },
+    "/gateway/commerce/payment-offer-preflight": {
+      "get": {
+        "summary": "Compare x402 and MPP challenges plus seller-declared response readiness before buyer authorization for one exact public HTTPS GET URL. Optionally checks catalog metadata against live unsigned offers across request, protocol, amount, network, asset, recipient, and expiry. Returns normalized offers, parity findings, response-contract evidence, and an explicit decision. Uses no credential, signature, or target payment and reads no paid body. This access path accepts gasless batched USDC through Circle Gateway Nanopayments.",
+        "operationId": "preflightPaymentOfferWithCircleGateway",
+        "tags": [
+          "Agent Operations"
+        ],
+        "x-payment-info": {
+          "price": {
+            "amount": "0.005",
+            "currency": "USD",
+            "mode": "fixed"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "network": "eip155:8453",
+                "scheme": "exact",
+                "settlement": "circle-gateway-batched"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {},
+          "400": {},
+          "402": {},
+          "502": {}
+        }
+      }
+    }
+  }
+}
