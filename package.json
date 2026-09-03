@@ -25,7 +25,8 @@
     "test:portfolio-discovery:live": "node tools/portfolio-discovery/cli.mjs --live",
     "test:portfolio-search-readiness:live": "node tools/portfolio-discovery/cli.mjs --mode search-readiness --live",
     "indexnow": "node scripts/indexnow-submit.mjs",
-    "test:indexnow": "node --test scripts/indexnow-submit.test.mjs"
+    "test:indexnow": "node --test scripts/indexnow-submit.test.mjs",
+    "test:lqdist1": "node --test tools/lqdist1-distribution-audit/test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",
