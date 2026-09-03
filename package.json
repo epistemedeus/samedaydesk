@@ -25,7 +25,11 @@
     "test:portfolio-discovery:live": "node tools/portfolio-discovery/cli.mjs --live",
     "test:portfolio-search-readiness:live": "node tools/portfolio-discovery/cli.mjs --mode search-readiness --live",
     "indexnow": "node scripts/indexnow-submit.mjs",
-    "test:indexnow": "node --test scripts/indexnow-submit.test.mjs"
+    "test:indexnow": "node --test scripts/indexnow-submit.test.mjs",
+    "bazaar-tracker": "node tools/bazaar-tracker/cli.mjs",
+    "bazaar-tracker:readback": "node tools/bazaar-tracker/cli.mjs --readback",
+    "test:bazaar-tracker": "node --test tools/bazaar-tracker/test.mjs tools/lqtrack1/replay-pr18-disposition.test.mjs",
+    "replay:pr18": "node tools/lqtrack1/replay-pr18-disposition.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",
