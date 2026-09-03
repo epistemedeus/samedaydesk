@@ -21,6 +21,7 @@
     "test:spa-fallback": "node --test server/scripts/test-spa-fallback.js",
     "test:spa-route-shells": "node --test server/scripts/test-spa-route-shells.js",
     "test:portfolio-discovery": "node --test tools/portfolio-discovery/test.mjs tools/portfolio-discovery/search-readiness.test.mjs",
+    "test:evidence-records": "node --test tools/evidence-records/validate.test.mjs",
     "test:schema-validator-search": "node --test server/scripts/test-schema-validator-search.js",
     "test:portfolio-discovery:live": "node tools/portfolio-discovery/cli.mjs --live",
     "test:portfolio-search-readiness:live": "node tools/portfolio-discovery/cli.mjs --mode search-readiness --live",

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.v1",
+  "recordId": "evr_collapsed_cloudflare_hostinger_20260901",
+  "sourceKind": "cloudflare_analytics",
+  "producer": {
+    "id": "mixed_edge_and_host_analytics",
+    "providerId": "cloudflare",
+    "adapterId": "mixed_analytics_adapter",
+    "observedSurface": "Combined Cloudflare and Hostinger analytics export"
+  },
+  "scope": {
+    "providerId": "hostinger",
+    "population": "page_views_for_declared_host",
+    "joinKeys": ["ray_id"],
+    "host": "samedaydesk.com"
+  },
+  "observationWindow": {
+    "start": "2026-09-01T00:00:00.000Z",
+    "end": "2026-09-02T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "sampled",
+  "authorityClass": "provider_returned",
+  "unknownWhenAbsent": [
+    "which_provider_produced_each_count"
+  ],
+  "prohibitedInferences": [
+    "cross_source_join_without_exact_key",
+    "sum_across_authority_classes",
+    "organic_label_for_controlled_or_incentivized_traffic",
+    "collapsed_provider_scope",
+    "analytics_count_is_independent_demand"
+  ]
+}

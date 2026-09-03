@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.v1",
+  "recordId": "evr_operator_validation_20260901",
+  "sourceKind": "operator_validation",
+  "producer": {
+    "id": "operator_route_probe",
+    "providerId": "operator_controlled",
+    "adapterId": "operator_validation_adapter",
+    "observedSurface": "Operator-controlled route probe log"
+  },
+  "scope": {
+    "providerId": "operator_controlled",
+    "population": "scripted_probe_requests",
+    "joinKeys": ["request_id"]
+  },
+  "observationWindow": {
+    "start": "2026-09-01T18:00:00.000Z",
+    "end": "2026-09-01T18:30:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "complete",
+  "authorityClass": "seller_observed",
+  "unknownWhenAbsent": [
+    "whether_any_non_operator_caller_used_the_same_routes",
+    "provider_billing_for_the_probe"
+  ],
+  "prohibitedInferences": [
+    "cross_source_join_without_exact_key",
+    "sum_across_authority_classes",
+    "organic_label_for_controlled_or_incentivized_traffic",
+    "collapsed_provider_scope",
+    "local_observation_is_provider_billing"
+  ],
+  "labels": {
+    "acquisition": "operator_validation"
+  }
+}
