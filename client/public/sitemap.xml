@@ -25,6 +25,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://samedaydesk.com/x402/verified</loc>
+    <lastmod>2026-09-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://samedaydesk.com/docs/x402-sdk/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
