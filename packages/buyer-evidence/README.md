@@ -23,18 +23,11 @@ npm install ./samedaydesk-buyer-evidence-0.1.0.tgz
 
 Given a resource (a 402 `PAYMENT-REQUIRED` body, a discovery row with `accepts`, or a packed replay fixture) and this catalog pin, `verify(resource, evidence)` returns `{ ok, reasons[] }`.
 
-It proves that the resource's stable contract fields match the pin recorded for SameDayDesk `GET https://agents.samedaydesk.com/extract`:
+It compares the resource against the pin recorded for SameDayDesk `GET https://agents.samedaydesk.com/extract`. Read the pin from `fixtures/catalog.json`. The live origin publishes the same unpaid extract terms on that route's 402 / discovery manifest. This README does not copy scheme, network, payTo, asset, amount, or extra.
 
-- `scheme` `exact`
-- `network` `eip155:8453`
-- `payTo` `0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee`
-- `asset` Circle USDC on Base (`0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`)
-- atomic amount `5000` (`$0.005` at 6 decimals)
-- `extra.name` / `extra.version` `USD Coin` / `2`
+`verify()` only returns the four named reasons: `foreign_payTo`, `changed_price`, `stale_timestamp`, `missing_accepts`.
 
 Replay fixtures also record how two clients reach that unpaid GET (discover → construct → contract → authorize-ready → stop) without a wallet. Construct fixtures contain no `PAYMENT-SIGNATURE` or `X-PAYMENT` header.
-
-Named failure reasons: `foreign_payTo`, `changed_price`, `stale_timestamp`, `missing_accepts`.
 
 ## What the evidence does not prove
 

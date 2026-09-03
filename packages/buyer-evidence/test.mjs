@@ -113,6 +113,32 @@ test("a foreign payTo returns ok: false with foreign_payTo", () => {
   assert.ok(result.reasons.includes(REASONS.FOREIGN_PAY_TO), result.reasons.join(","));
 });
 
+test("a matching payTo+amount with a foreign network does not verify", () => {
+  const resource = matchingResource();
+  resource.accepts = [
+    {
+      ...matchingAccept(),
+      network: "eip155:1",
+    },
+  ];
+  const result = verify(resource, catalog);
+  assert.equal(result.ok, false);
+  assert.ok(result.reasons.length > 0, result.reasons.join(","));
+});
+
+test("a matching payTo+amount with a foreign asset does not verify", () => {
+  const resource = matchingResource();
+  resource.accepts = [
+    {
+      ...matchingAccept(),
+      asset: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    },
+  ];
+  const result = verify(resource, catalog);
+  assert.equal(result.ok, false);
+  assert.ok(result.reasons.length > 0, result.reasons.join(","));
+});
+
 test("a changed price returns ok: false with changed_price", () => {
   const resource = matchingResource();
   resource.accepts = [

@@ -299,6 +299,21 @@ export function verify(resource, evidence) {
     }
   }
 
+  const networks = candidates.map((row) => row.network).filter((value) => value != null && value !== "");
+  if (networks.length && pin.network) {
+    if (!networks.some((value) => String(value) === String(pin.network))) {
+      if (!reasons.includes(REASONS.FOREIGN_PAY_TO)) reasons.push(REASONS.FOREIGN_PAY_TO);
+    }
+  }
+
+  const assets = candidates.map((row) => row.asset).filter((value) => value != null && value !== "");
+  if (assets.length && pin.asset) {
+    const expectedAsset = evmAddr(pin.asset);
+    if (!assets.some((value) => evmAddr(value) === expectedAsset)) {
+      if (!reasons.includes(REASONS.FOREIGN_PAY_TO)) reasons.push(REASONS.FOREIGN_PAY_TO);
+    }
+  }
+
   const priceRows = candidates.filter((row) => priceMatches(row, pin) !== null);
   if (priceRows.length && !priceRows.some((row) => priceMatches(row, pin) === true)) {
     reasons.push(REASONS.CHANGED_PRICE);
