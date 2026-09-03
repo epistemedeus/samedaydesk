@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://samedaydesk.com/x402/verified.schema.json",
+  "title": "SameDayDesk inspected x402 route feed",
+  "description": "Build-time inspection list of current SameDayDesk unpaid 402 evidence, including an OpenAPI operation observation and matching fresh CDP Bazaar evidence. Inspection evidence only. Not a certificate.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "qa",
+    "limitations",
+    "routes"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "samedaydesk.x402-verified-feed.v1"
+    },
+    "generatedAt": {
+      "type": "string",
+      "minLength": 10
+    },
+    "qa": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner", "label"],
+      "properties": {
+        "owner": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "const": "internal" }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 8 }
+    },
+    "routes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/route" }
+    }
+  },
+  "$defs": {
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "seller",
+        "route",
+        "origin",
+        "method",
+        "price",
+        "network",
+        "lastVerified",
+        "contractHash",
+        "bazaarObservedAt",
+        "agreement",
+        "badge"
+      ],
+      "properties": {
+        "seller": { "type": "string", "minLength": 1 },
+        "route": { "type": "string", "pattern": "^/" },
+        "origin": { "type": "string", "pattern": "^https://" },
+        "method": { "type": "string", "enum": ["GET", "POST"] },
+        "price": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["amount", "network", "source"],
+          "properties": {
+            "amount": { "type": ["string", "null"] },
+            "display": { "type": "string", "minLength": 1 },
+            "asset": { "type": ["string", "null"] },
+            "network": { "type": ["string", "null"] },
+            "source": {
+              "type": "string",
+              "enum": ["live_unpaid_402", "x402_manifest", "repair_brief"]
+            }
+          }
+        },
+        "network": { "type": ["string", "null"] },
+        "lastVerified": { "type": ["string", "null"] },
+        "contractHash": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+        "bazaarObservedAt": { "type": ["string", "null"] },
+        "agreement": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["openapi", "unpaid402OutputSchema", "cdpBazaarRow", "cdpBazaarFresh"],
+          "properties": {
+            "openapi": {
+              "type": "boolean",
+              "description": "Whether this operation was directly observed in the current OpenAPI crawl."
+            },
+            "unpaid402OutputSchema": {
+              "type": "boolean",
+              "description": "Whether the current credential-free 402 response carried output-schema evidence."
+            },
+            "cdpBazaarRow": {
+              "type": "boolean",
+              "description": "Whether the observed Bazaar row matched the exact resource, seller, terms, and output keys."
+            },
+            "cdpBazaarFresh": {
+              "type": "boolean",
+              "description": "Whether the matching Bazaar observation was no more than seven days old at crawl time."
+            }
+          }
+        },
+        "badge": {
+          "type": "string",
+          "enum": ["verified", "drift", "unverified"]
+        },
+        "registryStatus": {
+          "type": "string",
+          "enum": ["green", "finding", "alternate"]
+        }
+      }
+    }
+  }
+}
