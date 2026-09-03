@@ -9,8 +9,10 @@ call a facilitator, or change Stripe objects.
 
 ```
 npm run test:evidence-records
+npm run test:evidence-reconcile
 node tools/evidence-records/validate.mjs --suite
 node tools/evidence-records/validate.mjs tools/evidence-records/fixtures/valid/cloudflare-analytics.json
+node tools/evidence/reconcile.mjs
 ```
 
 ## Record fields
@@ -31,7 +33,9 @@ Each source kind maps to exactly one provider. Cloudflare analytics and
 hosting analytics are different records. IndexNow receipts and Search Console
 rows are different records. Bazaar listings and registry listings are
 different records. Operator validation traffic and incentivized-trial traffic
-are different records.
+are different records. External work-platform payouts, buyer-attested
+receipts, and seller ledger lines are different records; they are not
+folded into the x402 facilitator provider.
 
 ## Required prohibited inferences
 
@@ -48,6 +52,12 @@ The validator also rejects those inferences when a record attempts them:
 - an aggregate whose parts mix authority classes
 - `labels.acquisition` of `organic` on operator-validation or incentivized-trial sources
 - `producer.providerId` and `scope.providerId` naming two different providers
+
+An optional `settlement` object carries operation id, amount, `buyerClass`
+(`independent` | `owner` | `sponsored` | `unknown`), and delivery status.
+Banked settlement observations live in `fixtures/settlements/` and are
+totaled by `tools/evidence/reconcile.mjs` without summing buyer classes as
+revenue.
 
 JSON Schema (`schema/evidence-record.v1.json`) is the shape contract.
 `lib.mjs` is the authority policy. TypeScript types live in
