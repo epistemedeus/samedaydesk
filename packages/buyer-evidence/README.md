@@ -6,24 +6,27 @@ This repository has no SPDX license file. The package `license` field is `UNLICE
 
 ## Install
 
-From a local checkout of this repository:
+This module is not on the npm registry. Pack **this folder only**:
 
 ```sh
-npm install /path/to/samedaydesk/packages/buyer-evidence
-```
-
-From a packed tarball of this folder (`npm pack`; do not `npm publish`):
-
-```sh
+cd packages/buyer-evidence
 npm pack
-npm install ./samedaydesk-buyer-evidence-0.1.0.tgz
 ```
+
+In a separate empty project:
+
+```sh
+npm init -y
+npm install /absolute/path/to/samedaydesk-buyer-evidence-0.1.0.tgz
+```
+
+Examples are ESM. Save them as `usage.mjs`, or set `"type": "module"` in that project's `package.json`. Do not run `npm pack` at the repository root.
 
 ## What the evidence proves
 
 Given a resource (a 402 `PAYMENT-REQUIRED` body, a discovery row with `accepts`, or a packed replay fixture) and this catalog pin, `verify(resource, evidence)` returns `{ ok, reasons[] }`.
 
-It compares the resource against the pin recorded for SameDayDesk `GET https://agents.samedaydesk.com/extract`. Read the pin from `fixtures/catalog.json`. The live origin publishes the same unpaid extract terms on that route's 402 / discovery manifest. This README does not copy scheme, network, payTo, asset, amount, or extra.
+It proves that the resource's stable contract fields match the catalog pin recorded for SameDayDesk `GET https://agents.samedaydesk.com/extract`. Read the pin from `fixtures/catalog.json`. Current accept terms live on the origin manifest at https://agents.samedaydesk.com/.well-known/x402. This README does not copy scheme, network, payTo, asset, amount, or extra.
 
 `verify()` only returns the four named reasons: `foreign_payTo`, `changed_price`, `stale_timestamp`, `missing_accepts`.
 
@@ -39,7 +42,9 @@ Replay fixtures also record how two clients reach that unpaid GET (discover → 
 
 `now` and `maxAgeSeconds` on `evidence` are caller-supplied. Without them, only an explicit past `validUntil` is treated as stale.
 
-## Usage
+## Attach points (not a standalone program)
+
+These snippets are attach points, not a standalone program. `client` and `paymentRequired` come from the Bazaar, mcpc, and Agent402 codebases named in each block.
 
 ### `@x402/extensions` Bazaar filter
 
@@ -81,12 +86,17 @@ if (!result.ok) {
 }
 ```
 
-## Loader
+## Loader (fixture path, no wallet)
 
 ```js
 import { loadCatalog, loadRuntime, verify } from "@samedaydesk/buyer-evidence";
 
 const evidence = loadCatalog();
 const agent402 = loadRuntime("agent402");
-verify(agent402.states.contract, evidence);
+const result = verify(agent402.states.contract, evidence);
+console.log(result); // { ok: true, reasons: [] }
+```
+
+```sh
+node usage.mjs
 ```
