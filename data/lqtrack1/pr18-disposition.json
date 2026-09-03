@@ -1,0 +1,138 @@
+{
+  "schema": "samedaydesk.pr18-disposition.v2",
+  "pullRequest": "https://github.com/epistemedeus/samedaydesk/pull/18",
+  "replay": {
+    "command": "node tools/lqtrack1/replay-pr18-disposition.mjs --fixture tools/lqtrack1/fixtures/pr18-live-probe.json",
+    "cron": false
+  },
+  "http": {
+    "mode": "fixture",
+    "fixturePath": "tools/lqtrack1/fixtures/pr18-live-probe.json",
+    "capturedAt": "2026-09-03T10:50:21.433Z",
+    "probes": {
+      "listings-root": {
+        "id": "listings-root",
+        "url": "https://samedaydesk.com/listings",
+        "role": "alias-root",
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "location": null,
+        "bodyHead": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\n    <!-- No-FOUC: resolve the theme and paint the right ground BEFORE the React bundle (a\n ",
+        "jsonCatalog": false
+      },
+      "listings-bazaar-mcp": {
+        "id": "listings-bazaar-mcp",
+        "url": "https://samedaydesk.com/listings/bazaar/mcp",
+        "role": "alias-route",
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "location": null,
+        "bodyHead": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\n    <!-- No-FOUC: resolve the theme and paint the right ground BEFORE the React bundle (a\n ",
+        "jsonCatalog": false
+      },
+      "listings-mcp-registry-mcp": {
+        "id": "listings-mcp-registry-mcp",
+        "url": "https://samedaydesk.com/listings/mcp-registry/mcp",
+        "role": "alias-route",
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "location": null,
+        "bodyHead": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\n    <!-- No-FOUC: resolve the theme and paint the right ground BEFORE the React bundle (a\n ",
+        "jsonCatalog": false
+      },
+      "agents-listings-root": {
+        "id": "agents-listings-root",
+        "url": "https://agents.samedaydesk.com/listings",
+        "role": "alias-root",
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "location": null,
+        "bodyHead": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /listings</pre>\n</body>\n</html>\n",
+        "jsonCatalog": false
+      },
+      "apex-mcp": {
+        "id": "apex-mcp",
+        "url": "https://samedaydesk.com/mcp",
+        "role": "existing-canonical",
+        "status": 200,
+        "contentType": "text/plain; charset=utf-8",
+        "location": null,
+        "bodyHead": "samedaydesk agent tools MCP server (Streamable HTTP).\nAdd to a remote-MCP-capable client: { \"mcpServers\": { \"samedaydesk\": { \"url\": \"https://samedaydesk.com/mcp\" } } }\nTools: AI-readiness check and Fix Pack, plus free TaskMarket delegation ",
+        "jsonCatalog": false
+      },
+      "apex-scan": {
+        "id": "apex-scan",
+        "url": "https://samedaydesk.com/scan",
+        "role": "existing-canonical",
+        "status": 200,
+        "contentType": "text/html; charset=utf-8",
+        "location": null,
+        "bodyHead": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Free AI-search readiness scan</title>\n<meta name=\"description\" content=\"Paste a URL and see whether Ch",
+        "jsonCatalog": false
+      }
+    }
+  },
+  "checkout": {
+    "hasListingMount": false,
+    "hasReceiptStoreFile": false,
+    "hasAliasLibFile": false,
+    "indexMentionsListings": false
+  },
+  "pr18": {
+    "ref": "vendored:9878240b26de3d1967e24e108f1e59ca50ca1b09",
+    "present": true,
+    "inMemoryStore": true,
+    "mountedOnIndex": true,
+    "runtimeImportCount": 0,
+    "runtimeImports": [],
+    "testOnlyImportCount": 5,
+    "advertisesListingsRoot": true,
+    "listingAssigned": true,
+    "listingReadCount": 0,
+    "listingUnread": true
+  },
+  "existingReceipts": [
+    {
+      "id": "stripe-email",
+      "path": "server/lib/notify.js",
+      "why": "Resend order email (to, label, amount, orderId). No registry surface field.",
+      "exists": true,
+      "mentionsSurface": false
+    },
+    {
+      "id": "stripe-fulfillment",
+      "path": "server/lib/fulfill.js",
+      "why": "Calls sendReceipt after Stripe checkout. Human commerce, not x402 listing attribution.",
+      "exists": true,
+      "mentionsSurface": false
+    },
+    {
+      "id": "pulse-flush",
+      "path": "supabase/migrations/0002_pulse_durable.sql",
+      "why": "pulse_flush_receipts stores analytics flush hashes, not settlement surface.",
+      "exists": true,
+      "mentionsSurface": false
+    }
+  ],
+  "disposition": {
+    "recommendation": "close",
+    "close": true,
+    "reasons": [
+      "PR18 receipt store is an in-process Map imported only by its test file; no MCP/scan/tools/checkout/fulfill route records surface.",
+      "req.listing is assigned in stampListing and never read.",
+      "Existing Stripe email and pulse flush receipts have no registry surface field and cannot satisfy PR18 attribution without a new product surface.",
+      "This branch (and default) do not mount /listings aliases.",
+      "Advertised /listings alias root is HTTP 404 on live apex and agents host (observational; not required to close).",
+      "Advertised /listings/<surface>/<resource> paths are HTTP 404 (observational; not required to close).",
+      "No recorded response is the JSON listing catalog PR18 documents.",
+      "Canonical /mcp and /scan already exist, but they are not per-surface aliases and cannot carry a registry surface without a new product path."
+    ],
+    "aliasRoot404": true,
+    "aliasRoutes404": true,
+    "catalogPresent": false,
+    "canonicalLive": true,
+    "receiptDisconnected": true,
+    "listingUnread": true,
+    "existingRouteSatisfiesAlias": false
+  }
+}
