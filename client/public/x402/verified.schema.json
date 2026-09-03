@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://samedaydesk.com/x402/verified.schema.json",
+  "title": "SameDayDesk inspected x402 route feed",
+  "description": "Build-time inspection list of unpaid 402 terms, last check time, contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree. Inspection evidence only. Not a certificate.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "qa",
+    "limitations",
+    "routes"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "samedaydesk.x402-verified-feed.v1"
+    },
+    "generatedAt": {
+      "type": "string",
+      "minLength": 10
+    },
+    "qa": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner", "label"],
+      "properties": {
+        "owner": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "const": "internal" }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 8 }
+    },
+    "routes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/route" }
+    }
+  },
+  "$defs": {
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "seller",
+        "route",
+        "origin",
+        "method",
+        "price",
+        "network",
+        "lastVerified",
+        "contractHash",
+        "agreement",
+        "badge"
+      ],
+      "properties": {
+        "seller": { "type": "string", "minLength": 1 },
+        "route": { "type": "string", "pattern": "^/" },
+        "origin": { "type": "string", "pattern": "^https://" },
+        "method": { "type": "string", "enum": ["GET", "POST"] },
+        "price": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["amount", "network", "source"],
+          "properties": {
+            "amount": { "type": ["string", "null"] },
+            "display": { "type": "string", "minLength": 1 },
+            "asset": { "type": ["string", "null"] },
+            "network": { "type": ["string", "null"] },
+            "source": {
+              "type": "string",
+              "enum": ["live_unpaid_402", "x402_manifest", "repair_brief"]
+            }
+          }
+        },
+        "network": { "type": ["string", "null"] },
+        "lastVerified": { "type": ["string", "null"] },
+        "contractHash": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+        "agreement": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["openapi", "unpaid402OutputSchema", "cdpBazaarRow"],
+          "properties": {
+            "openapi": { "type": "boolean" },
+            "unpaid402OutputSchema": { "type": "boolean" },
+            "cdpBazaarRow": { "type": "boolean" }
+          }
+        },
+        "badge": {
+          "type": "string",
+          "enum": ["verified", "drift", "unverified"]
+        },
+        "registryStatus": {
+          "type": "string",
+          "enum": ["green", "finding", "alternate"]
+        }
+      }
+    }
+  }
+}

@@ -18,6 +18,7 @@
 - [Paid machine gateway MCP](https://agents.samedaydesk.com/mcp): Paid MCP tools from the canonical SameDayDesk machine gateway.
 - First paid HTTP example: `GET https://agents.samedaydesk.com/extract?url=https://example.com`.
 - [Seller conformance proof](https://samedaydesk.com/x402/seller-conformance): a human-auditable seller-conformance proof page, not a product or certificate.
+- [Inspected x402 route list](https://samedaydesk.com/x402/verified): build-time inspection feed of unpaid 402 terms, last check time, contract hash, and OpenAPI / 402 schema / CDP Bazaar agreement. Owner QA labeled internal.
 - [Agent402 validation receipt](https://samedaydesk.com/research/agent402-seller-integrity-validation-2026-08-29.json): One recruited, non-organic external-runtime settlement and delivered result; no buyer-owned output enforcement, unsolicited demand, repeat use, or repair sale.
 - [Agent payment infrastructure](https://samedaydesk.com/for-agents): Twenty-two canonical pay-per-call actions accepting both x402 and native MPP, plus seller inspection, settlement evidence, live prices, source, and connection instructions.
 - [x402 SDK integration reference](https://samedaydesk.com/docs/x402-sdk/): Sourcey-generated Go API reference plus production integration notes for the SDK family used by the live gateway.
@@ -57,4 +58,4 @@ SameDayDesk is the operating merchant and case-study surface of Neomorphic LLC. 
 - [EIN.LLC](https://ein.llc/): US LLC formation and EIN activation.
 - [Neomorphic.io](https://neomorphic.io/): public experiment and machine-commerce trust lab.
 
-Last updated: 2026-09-02
+Last updated: 2026-09-03

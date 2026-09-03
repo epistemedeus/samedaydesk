@@ -1,0 +1,774 @@
+{
+  "schemaVersion": "samedaydesk.x402-verified-feed.v1",
+  "generatedAt": "2026-09-03T09:55:27Z",
+  "qa": {
+    "owner": "Pilot Firstmate",
+    "label": "internal"
+  },
+  "limitations": [
+    "This feed is build-time inspection evidence from the committed seller-conformance crawl and repair-brief registry.",
+    "A verified badge means OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row were present and agreed in that crawl. It is not a certificate or runtime monitor.",
+    "POST routes were not transmitted. Missing Bazaar rows are incomplete discovery, not a payment-integrity failure."
+  ],
+  "routes": [
+    {
+      "seller": "SameDayDesk",
+      "route": "/extract",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "5000",
+        "display": "0.005 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "7465c0cee5802a94db4a2aa79b6e3bef2033a67dd8a3b6bf76234aaf65ee8712",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": true
+      },
+      "badge": "verified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/read",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "5000",
+        "display": "0.005 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "e78518fa86c54ea5ec05811a163080b4ad29a70eaca037f587deb166e83baed5",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/scan",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "200000",
+        "display": "0.2 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "b6ec3d17df5d9fc05be37185d8de0c9f69c9da1dc1e402f0765e6b31da2b8ee6",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/schemaforge",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "250000",
+        "display": "0.25 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "93b6ddc53034afb66457fedffa39cbe204db85b6a4e3d6c625ccb0a7bd9e0987",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/enrich",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "50000",
+        "display": "0.05 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "b6820be9b75796be7f4b8ca2487a4235521ae8d11a3ee6d3378ec9cd09dbadc5",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/wallet-enrich",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "50000",
+        "display": "0.05 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "b99502a980a102af14fb5a8974cccff2cd1dbf97b1fb12152e80ebc8fb909740",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/deep-audit",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "250000",
+        "display": "0.25 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "382acb7f2c72de374d02d573e1e0c07433796ad65e7c27880d6839e586658e25",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/defi/morpho-position",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "20000",
+        "display": "0.02 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "8141a5d0f8aa01e1e7d0a0ccb621546c6b19193f4cf30474febc55cab7d10cc1",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": true
+      },
+      "badge": "verified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/defi/morpho-protection",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "100000",
+        "display": "0.1 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "4fa44c1314563279698789905180e445a4d5bb8948f380930396e9230b0071da",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/defi/morpho-market-underwrite",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "250000",
+        "display": "0.25 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "b527834b38b2c3543556448dc2ac9240a35ef17f2115e0dd48a14930b78b82f4",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/defi/morpho-preliquidation-replay",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "100000",
+        "display": "0.1 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "623b8a4e31f1e94e315f64094678d0549c332aecd873c93fc584460502fab73f",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/work/opportunity-preflight",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "50000",
+        "display": "0.05 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "c7471ba1e7a12596038fed0498ac1c9fa0003507591af568d3646554df739fd5",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/distribution/agent-discoverability-audit",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "50000",
+        "display": "0.05 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "5e73a3ba9343f418e20fb23e674cbb619ad07e650e59629b1f03484d2d9c44a7",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/commerce/payment-offer-preflight",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "5000",
+        "display": "0.005 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "f48f9711fa9753fecd48b5106b209e6b87551a82de11b6f9fcdeaa47d68f32f3",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/commerce/settlement-proof",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "5000",
+        "display": "0.005 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "234c57b345bc1d77a8e17b7650b7620672e67056989fd6b5672d520c1c6e2a8e",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/chain/transaction-receipt",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "2000",
+        "display": "0.002 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "e3497f6bc375ad2475dc42790625049bcd54626d0e0ae4eea6459ae37ca30f2b",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/chain/solana-transaction-receipt",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "2000",
+        "display": "0.002 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "d39727980b3a12a9f50b940a7a655fcead8c6473809383881ae1154019873909",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/security/wallet-policy-conformance",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "POST",
+      "price": {
+        "amount": "10000",
+        "display": "0.01 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "x402_manifest"
+      },
+      "network": "eip155:8453",
+      "lastVerified": null,
+      "contractHash": null,
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": false,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/security/stateful-wallet-policy-conformance",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "POST",
+      "price": {
+        "amount": "10000",
+        "display": "0.01 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "x402_manifest"
+      },
+      "network": "eip155:8453",
+      "lastVerified": null,
+      "contractHash": null,
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": false,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/commerce/seller-integrity-audit",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "10000",
+        "display": "0.01 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "f912ec72a74c58a2ccc21df7439b096bde11304072c4d018af822787df27d149",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/commerce/contract-qualified-search",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "10000",
+        "display": "0.01 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "720eae674ad34d5ee146eefbc98bec1e500cd5518328e024fcb7c6c95692a7bc",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/distribution/agent-surface-budget-audit",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "10000",
+        "display": "0.01 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "live_unpaid_402"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": "c3a77b2af7da40e07794c1c26f5ca60bf2d64751df11da92176295bd81ce86d8",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": true,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "green"
+    },
+    {
+      "seller": "SameDayDesk",
+      "route": "/gateway/commerce/payment-offer-preflight",
+      "origin": "https://agents.samedaydesk.com",
+      "method": "GET",
+      "price": {
+        "amount": "5000",
+        "display": "0.005 USDC",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "source": "x402_manifest"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-03T09:55:27Z",
+      "contractHash": null,
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": false,
+        "cdpBazaarRow": false
+      },
+      "badge": "unverified",
+      "registryStatus": "alternate"
+    },
+    {
+      "seller": "HyperNatt Terminal",
+      "route": "/api/m2m/liq-radar",
+      "origin": "https://hypernatt.com",
+      "method": "GET",
+      "price": {
+        "amount": null,
+        "display": "0.001 USDC",
+        "asset": "USDC",
+        "network": null,
+        "source": "repair_brief"
+      },
+      "network": null,
+      "lastVerified": "2026-08-30",
+      "contractHash": "cb1dad88d3ee757b680b481672fb98f6a3e118532b3e5dd0da51a2bbe02ef701",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": false,
+        "cdpBazaarRow": false
+      },
+      "badge": "drift",
+      "registryStatus": "finding"
+    },
+    {
+      "seller": "OneSource",
+      "route": "/api/chain/erc20-balance",
+      "origin": "https://api.onesource.io",
+      "method": "GET",
+      "price": {
+        "amount": null,
+        "display": "0.003 USDC",
+        "asset": "USDC",
+        "network": null,
+        "source": "repair_brief"
+      },
+      "network": null,
+      "lastVerified": "2026-08-30",
+      "contractHash": "90b5d828c2da4f7aa6d7e1f96d1c31efd783cfa5c20b2377f62454b482e433b4",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": false,
+        "cdpBazaarRow": false
+      },
+      "badge": "drift",
+      "registryStatus": "finding"
+    },
+    {
+      "seller": "x402 Bazaar",
+      "route": "/api/x402/morpho-health",
+      "origin": "https://402.com.tr",
+      "method": "GET",
+      "price": {
+        "amount": null,
+        "display": "0.04 USDC on Base or Polygon",
+        "asset": "USDC",
+        "network": "Base or Polygon",
+        "source": "repair_brief"
+      },
+      "network": "Base or Polygon",
+      "lastVerified": "2026-08-30",
+      "contractHash": "e2e82207b4ab32dcb624e31c8b9a2e2d1ce15094bd0f29d3ac0578fd1813213b",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": false,
+        "cdpBazaarRow": false
+      },
+      "badge": "drift",
+      "registryStatus": "finding"
+    },
+    {
+      "seller": "scrape402",
+      "route": "/crypto",
+      "origin": "https://x402.shizu.me",
+      "method": "GET",
+      "price": {
+        "amount": null,
+        "display": "0.007 USDC on Base",
+        "asset": "USDC",
+        "network": "eip155:8453",
+        "source": "repair_brief"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-08-30",
+      "contractHash": "92f0304539e1306b86f7a549055c779ab9e6ad5415d006dd9551840e88c2bbaf",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": false,
+        "cdpBazaarRow": false
+      },
+      "badge": "drift",
+      "registryStatus": "finding"
+    },
+    {
+      "seller": "Vibe Springs",
+      "route": "/api/price/btc-usd",
+      "origin": "https://vibesprings.net",
+      "method": "GET",
+      "price": {
+        "amount": null,
+        "display": "0.002 USDC on Base",
+        "asset": "USDC",
+        "network": "eip155:8453",
+        "source": "repair_brief"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-08-30",
+      "contractHash": "b38570cea51557f9874041966db519d9a0af878c35236c1302553aea582dd2bb",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": false,
+        "cdpBazaarRow": false
+      },
+      "badge": "drift",
+      "registryStatus": "finding"
+    },
+    {
+      "seller": "BlockRun",
+      "route": "/api/v1/exa/search",
+      "origin": "https://blockrun.ai",
+      "method": "POST",
+      "price": {
+        "amount": null,
+        "display": "0.011 USDC on Base",
+        "asset": "USDC",
+        "network": "eip155:8453",
+        "source": "repair_brief"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-08-30",
+      "contractHash": "e962246becc6054022aea95f6d901d23286ab6d708d4e96c487dc9725ec630fa",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": false,
+        "cdpBazaarRow": false
+      },
+      "badge": "drift",
+      "registryStatus": "finding"
+    },
+    {
+      "seller": "Exa",
+      "route": "/search",
+      "origin": "https://api.exa.ai",
+      "method": "POST",
+      "price": {
+        "amount": null,
+        "display": "0.007 USDC on Base or Solana",
+        "asset": "USDC",
+        "network": "Base or Solana",
+        "source": "repair_brief"
+      },
+      "network": "Base or Solana",
+      "lastVerified": "2026-08-30",
+      "contractHash": "5a9c8856b93aa0757415656736805fd3133c42455ecfb5cdbd2ed8ba754cbe09",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": false,
+        "cdpBazaarRow": false
+      },
+      "badge": "drift",
+      "registryStatus": "finding"
+    },
+    {
+      "seller": "Driftflight via ZeroClick",
+      "route": "/v1/images/generate",
+      "origin": "https://agents.driftflight.com",
+      "method": "POST",
+      "price": {
+        "amount": null,
+        "display": "0.06 USDC for the default studio tier",
+        "asset": "USDC",
+        "network": null,
+        "source": "repair_brief"
+      },
+      "network": null,
+      "lastVerified": "2026-08-30",
+      "contractHash": "4fc38483dd8202add40d0af2fcf97dc14982d09b3493dea1307eefda9b6c98c8",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": false,
+        "cdpBazaarRow": false
+      },
+      "badge": "drift",
+      "registryStatus": "finding"
+    },
+    {
+      "seller": "AgentToll",
+      "route": "/paid/x402/market-radar",
+      "origin": "https://agenttoll.dev",
+      "method": "POST",
+      "price": {
+        "amount": null,
+        "display": "0.05 USDC",
+        "asset": "USDC",
+        "network": null,
+        "source": "repair_brief"
+      },
+      "network": null,
+      "lastVerified": "2026-09-01",
+      "contractHash": "f7a657e08c8a0c3583ad74ca38540c605550b6f88cc830a8dd7854244eef08f3",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": false,
+        "cdpBazaarRow": false
+      },
+      "badge": "drift",
+      "registryStatus": "finding"
+    },
+    {
+      "seller": "ArgonautWorks ECB FX Reference",
+      "route": "/api/v1/convert",
+      "origin": "https://official-fx-reference.vercel.app",
+      "method": "POST",
+      "price": {
+        "amount": null,
+        "display": "0.0015 USDC on Base",
+        "asset": "USDC",
+        "network": "eip155:8453",
+        "source": "repair_brief"
+      },
+      "network": "eip155:8453",
+      "lastVerified": "2026-09-02",
+      "contractHash": "88bb7fe9b759e3c2b9aaf6446e3e143e3ed5eec51900c4ff1b598dd20f80471a",
+      "agreement": {
+        "openapi": true,
+        "unpaid402OutputSchema": false,
+        "cdpBazaarRow": false
+      },
+      "badge": "drift",
+      "registryStatus": "finding"
+    }
+  ]
+}

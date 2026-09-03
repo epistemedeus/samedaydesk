@@ -424,6 +424,9 @@ export default function SellerConformance() {
                 </a>
               </li>
               <li>
+                <a href="/x402/verified">Inspected route list</a>
+              </li>
+              <li>
                 <a href={AGENT402_PR_URL} target="_blank" rel="noopener noreferrer">
                   Agent402 PR 947
                 </a>
