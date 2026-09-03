@@ -31,3 +31,7 @@ test-results/
 # supabase local
 supabase/.temp/
 supabase/.branches/
+
+# Full Bazaar discovery snapshots are local-only (used for --from replay).
+# Git tracks changelog.jsonl and an optional compact per-route digest.
+data/bazaar-tracker/snapshots/
