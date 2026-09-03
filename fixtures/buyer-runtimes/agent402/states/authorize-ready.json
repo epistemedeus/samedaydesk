@@ -1,0 +1,41 @@
+{
+  "state": "authorize-ready",
+  "provenance": "derived-from-source",
+  "source": {
+    "file": "src/x402-buyer.js",
+    "lines": "54-65,430-444",
+    "also": [
+      "client/index.js:655-697 withNetworkPreference / withPayeeAllowlist",
+      "client/index.js:553-570 parse402Usd"
+    ]
+  },
+  "note": "This is the last state before a wallet would sign. Agent402 would call createPaymentPayload on a filtered accepts list. This replay asserts the fields that call needs, then stops.",
+  "wouldCall": "x402Client.createPaymentPayload(paymentRequired) after pickPayableAccept",
+  "requiredFields": {
+    "x402Version": 2,
+    "scheme": "exact",
+    "network": "eip155:8453",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "amount": "5000",
+    "maxAmountRequired": "5000",
+    "extra.name": "USD Coin",
+    "extra.version": "2",
+    "resource": "present",
+    "bazaar output guaranteedPaths": ["ok", "title", "url"]
+  },
+  "consistency": {
+    "amountEqualsMaxAmountRequired": true,
+    "atomicUsd": 0.005,
+    "payToMatchesIndex": true,
+    "networkMatchesBuyerChainBase": true,
+    "assetIsCircleUsdcOnBase": true,
+    "outputSchemaMatchesIndexGuaranteedPaths": true
+  },
+  "stopBefore": [
+    "registerExactEvmScheme(client, { signer })",
+    "schemeNetworkClient.createPaymentPayload",
+    "encode PAYMENT-SIGNATURE",
+    "retry the request"
+  ]
+}
