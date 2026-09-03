@@ -1,0 +1,16 @@
+{
+  "result": {
+    "protocolVersion": "2025-03-26",
+    "capabilities": {
+      "tools": {
+        "listChanged": true
+      }
+    },
+    "serverInfo": {
+      "name": "x402-data-gateway",
+      "version": "1.23.40"
+    }
+  },
+  "jsonrpc": "2.0",
+  "id": 1
+}
