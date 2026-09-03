@@ -1,0 +1,399 @@
+{
+  "pagination": {
+    "limit": 100,
+    "offset": 0,
+    "total": 10
+  },
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "x402Version": 2,
+  "resources": [
+    {
+      "resource": "https://x402-url-extractor-production.up.railway.app/wallet-enrich",
+      "type": "http",
+      "description": "Base address -> agent-ready on-chain profile: EOA or contract, ETH and major-token holdings, token or NFT metadata, EIP-1967 proxy detection, activity, and a derived profile label. Uses public Base mainnet RPC with no account or API key. Useful before an agent sends funds, swaps, or calls a contract.",
+      "serviceName": "SameDayDesk",
+      "accepts": [
+        {
+          "amount": "50000",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "extra": {
+            "name": "USD Coin",
+            "version": "2"
+          },
+          "maxTimeoutSeconds": 300,
+          "network": "eip155:8453",
+          "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+          "scheme": "exact"
+        }
+      ],
+      "lastUpdated": "2026-09-01T14:19:07.75Z",
+      "quality": {
+        "l30DaysTotalCalls": 1,
+        "l30DaysUniquePayers": 1,
+        "lastCalledAt": "2026-09-01T14:19:07.502Z"
+      },
+      "x402Version": 2,
+      "tags": [
+        "evm-wallet",
+        "contract-profile",
+        "base",
+        "token-holdings",
+        "onchain"
+      ],
+      "extensions": {
+        "bazaar": {
+          "info": {
+            "input": {
+              "method": "GET"
+            }
+          }
+        }
+      }
+    },
+    {
+      "resource": "https://agents.samedaydesk.com/extract",
+      "type": "http",
+      "description": "Extract a public HTTP(S) web page into structured JSON with a clean text excerpt for LLM workflows: title, description, JSON-LD, Open Graph/Twitter metadata, headings, links, and AI-readiness signals. Fetches without JavaScript rendering, follows redirects, and applies a 12-second timeout and 3 MB read cap; use /read for longer cleaned Markdown.",
+      "serviceName": "SameDayDesk",
+      "accepts": [
+        {
+          "amount": "5000",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "extra": {
+            "name": "USD Coin",
+            "version": "2"
+          },
+          "maxTimeoutSeconds": 300,
+          "network": "eip155:8453",
+          "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+          "scheme": "exact"
+        }
+      ],
+      "lastUpdated": "2026-08-30T15:18:51.498Z",
+      "quality": {
+        "l30DaysTotalCalls": 8,
+        "l30DaysUniquePayers": 5,
+        "lastCalledAt": "2026-08-30T15:18:51.143Z"
+      },
+      "x402Version": 2,
+      "tags": [
+        "web",
+        "web-extraction",
+        "clean-text",
+        "llm-ready",
+        "structured-json"
+      ],
+      "extensions": {
+        "bazaar": {
+          "info": {
+            "input": {
+              "method": "GET"
+            }
+          }
+        }
+      }
+    },
+    {
+      "resource": "https://agents.samedaydesk.com/defi/morpho-position",
+      "type": "http",
+      "description": "Base address -> deterministic Morpho borrower position snapshot and collateral-price stress scenarios. Returns LTV, LLTV, health factor, liquidation headroom, source freshness, and scenario outcomes. Read-only indexed observation; direct RPC verification is required before execution.",
+      "serviceName": "SameDayDesk",
+      "accepts": [
+        {
+          "amount": "20000",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "extra": {
+            "name": "USD Coin",
+            "version": "2"
+          },
+          "maxTimeoutSeconds": 300,
+          "network": "eip155:8453",
+          "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+          "scheme": "exact"
+        }
+      ],
+      "lastUpdated": "2026-08-27T00:23:29.425Z",
+      "quality": {
+        "l30DaysTotalCalls": 7,
+        "l30DaysUniquePayers": 4,
+        "lastCalledAt": "2026-08-27T00:23:29.15Z"
+      },
+      "x402Version": 2,
+      "tags": [
+        "morpho",
+        "borrower-risk",
+        "ltv",
+        "health-factor",
+        "price-shock"
+      ],
+      "extensions": {
+        "bazaar": {
+          "info": {
+            "input": {
+              "method": "GET"
+            }
+          }
+        }
+      }
+    },
+    {
+      "resource": "https://x402-url-extractor-production.up.railway.app/extract",
+      "type": "http",
+      "description": "Extract a public web page into clean structured JSON for agent workflows: title, description, main text, all JSON-LD, Open Graph and Twitter metadata, headings, links, and AI-crawler and structured-data signals. Follows redirects and enforces timeout, response-size, and SSRF safeguards.",
+      "serviceName": null,
+      "accepts": [
+        {
+          "amount": "50000",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "extra": {
+            "name": "USD Coin",
+            "version": "2"
+          },
+          "maxTimeoutSeconds": 300,
+          "network": "eip155:8453",
+          "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+          "scheme": "exact"
+        }
+      ],
+      "lastUpdated": "2026-08-09T16:01:07.346Z",
+      "quality": {
+        "l30DaysTotalCalls": 1,
+        "l30DaysUniquePayers": 1,
+        "lastCalledAt": "2026-08-09T16:01:07.135Z"
+      },
+      "x402Version": 2,
+      "tags": null,
+      "extensions": {
+        "bazaar": {
+          "info": {
+            "input": {
+              "method": "GET"
+            }
+          }
+        }
+      }
+    },
+    {
+      "resource": "https://agents.samedaydesk.com/wallet-enrich",
+      "type": "http",
+      "description": "Base address -> agent-ready on-chain profile: EOA or contract, ETH and major-token holdings, token or NFT metadata, EIP-1967 proxy detection, activity, and a derived profile label. Uses public Base mainnet RPC with no account or API key. Useful before an agent sends funds, swaps, or calls a contract.",
+      "serviceName": null,
+      "accepts": [
+        {
+          "amount": "50000",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "extra": {
+            "name": "USD Coin",
+            "version": "2"
+          },
+          "maxTimeoutSeconds": 300,
+          "network": "eip155:8453",
+          "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+          "scheme": "exact"
+        }
+      ],
+      "lastUpdated": "2026-08-09T15:22:34.083Z",
+      "quality": {
+        "l30DaysTotalCalls": 2,
+        "l30DaysUniquePayers": 1,
+        "lastCalledAt": "2026-08-09T15:22:33.822Z"
+      },
+      "x402Version": 2,
+      "tags": null,
+      "extensions": {
+        "bazaar": {
+          "info": {
+            "input": {
+              "method": "GET"
+            }
+          }
+        }
+      }
+    },
+    {
+      "resource": "https://agents.samedaydesk.com/enrich",
+      "type": "http",
+      "description": "Public domain -> structured company intelligence for agents: identity, keywords, tech stack, social and contact surface, DNS and email infrastructure, and AI-search-readiness signals with a 0-100 score. Public data only; no account, API key, or subscription.",
+      "serviceName": null,
+      "accepts": [
+        {
+          "amount": "50000",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "extra": {
+            "name": "USD Coin",
+            "version": "2"
+          },
+          "maxTimeoutSeconds": 300,
+          "network": "eip155:8453",
+          "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+          "scheme": "exact"
+        }
+      ],
+      "lastUpdated": "2026-08-09T15:22:24.363Z",
+      "quality": {
+        "l30DaysTotalCalls": 2,
+        "l30DaysUniquePayers": 1,
+        "lastCalledAt": "2026-08-09T15:22:24.067Z"
+      },
+      "x402Version": 2,
+      "tags": null,
+      "extensions": {
+        "bazaar": {
+          "info": {
+            "input": {
+              "method": "GET"
+            }
+          }
+        }
+      }
+    },
+    {
+      "resource": "https://agents.samedaydesk.com/deep-audit",
+      "type": "http",
+      "description": "Domain -> one complete AI-search-readiness audit (firmographics + tech + contact + DNS/email infra + a 0-100 AI-readiness score + a structured-data gap analysis with a paste-ready JSON-LD fix list + a combined letter grade). The bundled deep tier = enrich + schemaforge in one call. Public data only; no auth, no API keys, no subscription.",
+      "serviceName": null,
+      "accepts": [
+        {
+          "amount": "250000",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "extra": {
+            "name": "USD Coin",
+            "version": "2"
+          },
+          "maxTimeoutSeconds": 300,
+          "network": "eip155:8453",
+          "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+          "scheme": "exact"
+        }
+      ],
+      "lastUpdated": "2026-08-08T20:40:55.977Z",
+      "quality": {
+        "l30DaysTotalCalls": 1,
+        "l30DaysUniquePayers": 1,
+        "lastCalledAt": "2026-08-08T20:40:55.833Z"
+      },
+      "x402Version": 2,
+      "tags": null,
+      "extensions": {
+        "bazaar": {
+          "info": {
+            "input": {
+              "method": "GET"
+            }
+          }
+        }
+      }
+    },
+    {
+      "resource": "https://agents.samedaydesk.com/schemaforge",
+      "type": "http",
+      "description": "Business website -> deterministic, paste-ready JSON-LD bundle plus a live structured-data gap analysis and ranked fixes. Covers local business and service, FAQ, offer catalog, reviews, geo, and opening hours. Rating and review fields remain explicit placeholders for the business's real values.",
+      "serviceName": null,
+      "accepts": [
+        {
+          "amount": "250000",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "extra": {
+            "name": "USD Coin",
+            "version": "2"
+          },
+          "maxTimeoutSeconds": 300,
+          "network": "eip155:8453",
+          "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+          "scheme": "exact"
+        }
+      ],
+      "lastUpdated": "2026-08-08T20:40:53.869Z",
+      "quality": {
+        "l30DaysTotalCalls": 1,
+        "l30DaysUniquePayers": 1,
+        "lastCalledAt": "2026-08-08T20:40:53.71Z"
+      },
+      "x402Version": 2,
+      "tags": null,
+      "extensions": {
+        "bazaar": {
+          "info": {
+            "input": {
+              "method": "GET"
+            }
+          }
+        }
+      }
+    },
+    {
+      "resource": "https://agents.samedaydesk.com/scan",
+      "type": "http",
+      "description": "Static supply-chain SECURITY scan of a public GitHub repo BEFORE an agent installs/runs it (a dependency, a Claude/MCP skill, an MCP server). Flags exfil sinks, obfuscated code execution, credential-file reads, env-harvest+network, install-time curl|bash. Returns risk = clean|suspicious|dangerous + findings. Static only, never runs the code. Low false positives.",
+      "serviceName": null,
+      "accepts": [
+        {
+          "amount": "200000",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "extra": {
+            "name": "USD Coin",
+            "version": "2"
+          },
+          "maxTimeoutSeconds": 300,
+          "network": "eip155:8453",
+          "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+          "scheme": "exact"
+        }
+      ],
+      "lastUpdated": "2026-08-08T20:40:52.186Z",
+      "quality": {
+        "l30DaysTotalCalls": 1,
+        "l30DaysUniquePayers": 1,
+        "lastCalledAt": "2026-08-08T20:40:51.996Z"
+      },
+      "x402Version": 2,
+      "tags": null,
+      "extensions": {
+        "bazaar": {
+          "info": {
+            "input": {
+              "method": "GET"
+            }
+          }
+        }
+      }
+    },
+    {
+      "resource": "https://agents.samedaydesk.com/read",
+      "type": "http",
+      "description": "URL -> full page content as clean Markdown, ready for LLM context. Strips nav/ads/scripts, preserves headings/links/lists. Handles redirects, timeouts, size caps, SSRF. The reliable web-reader agents need before feeding a page to a model.",
+      "serviceName": null,
+      "accepts": [
+        {
+          "amount": "50000",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "extra": {
+            "name": "USD Coin",
+            "version": "2"
+          },
+          "maxTimeoutSeconds": 300,
+          "network": "eip155:8453",
+          "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+          "scheme": "exact"
+        }
+      ],
+      "lastUpdated": "2026-08-08T20:40:49.722Z",
+      "quality": {
+        "l30DaysTotalCalls": 1,
+        "l30DaysUniquePayers": 1,
+        "lastCalledAt": "2026-08-08T20:40:49.535Z"
+      },
+      "x402Version": 2,
+      "tags": null,
+      "extensions": {
+        "bazaar": {
+          "info": {
+            "input": {
+              "method": "GET"
+            }
+          }
+        }
+      }
+    }
+  ]
+}
