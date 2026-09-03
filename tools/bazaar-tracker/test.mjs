@@ -6,17 +6,23 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
 import {
+  CDP_DISCOVERY_SOURCE,
   createFixtureFetch,
+  diffObservations,
   diffSnapshots,
   editSnapshot,
   flattenComparable,
   loadCohort,
   matchesSeller,
+  observationRecordFromSnapshot,
   previousSnapshotPath,
   readChangelog,
+  readObservation,
   readSnapshot,
+  readbackReport,
   runTracker,
   snapshotFromRows,
+  writeObservation,
 } from "./lib.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -216,8 +222,15 @@ test("first snapshot writes and a second run against a synthetically edited snap
     assert.equal(added.after, "https://402.com.tr/api/x402/morpho-health");
     const log = readChangelog(dataDir);
     assert.equal(log.length, second.changeCount);
-    assert.deepEqual(Object.keys(log[0]).sort(), ["after", "before", "field", "observedAt", "route"]);
+    assert.deepEqual(Object.keys(log[0]).sort(), ["after", "before", "field", "observedAt", "route", "source"]);
     assert.equal(previousSnapshotPath(dataDir), second.snapshotPath);
+    const observation = readObservation(dataDir);
+    assert.equal(observation.schema, "samedaydesk.bazaar-observation.v2");
+    assert.ok(observation.sources[CDP_DISCOVERY_SOURCE].sellers.gblin.routes[baselineRow.resource]);
+    const human = readFileSync(second.humanChangelogPath, "utf8");
+    assert.match(human, /synthetically rematerialized output schema/);
+    assert.match(human, /accepts\.0\.amount/);
+    assert.match(human, /# Bazaar rematerialization changelog/);
   } finally {
     rmSync(dataDir, { recursive: true, force: true });
   }
@@ -258,9 +271,147 @@ test("CLI --fixture writes the first snapshot and --from reports the synthetic d
   }
 });
 
-test("CLI without --live, --from, or --fixture does not probe the network", () => {
+test("CLI without --live, --from, --fixture, or --readback does not probe the network", () => {
   const result = spawnSync(process.execPath, [cli], { encoding: "utf8" });
   assert.equal(result.status, 2);
   assert.match(result.stderr, /pilot-vm-job/);
   assert.match(result.stderr, /no cron, no daemon/);
+  assert.match(result.stderr, /--readback/);
+});
+
+test("compact observations stay source-separated and digest bulky extensions", () => {
+  const snapshot = snapshotFromRows([baselineRow], { observedAt: "2026-09-03T09:54:04.798Z", source: "live" });
+  const record = observationRecordFromSnapshot(snapshot);
+  const route = record.sources[CDP_DISCOVERY_SOURCE].sellers.gblin.routes[baselineRow.resource];
+  assert.equal(route.description, baselineRow.description);
+  assert.equal(route.accepts[0].amount, "3000");
+  assert.equal(route.accepts[0].scheme, "exact");
+  assert.equal(Object.hasOwn(route.accepts[0], "extra"), false);
+  assert.match(route.extensionsDigest, /^[0-9a-f]{64}$/);
+  assert.match(route.comparableDigest, /^[0-9a-f]{64}$/);
+  assert.equal(JSON.stringify(record).includes("EIP-712"), true);
+  assert.equal(JSON.stringify(record).includes("l30DaysTotalCalls"), false);
+});
+
+test("synthetic --from diffs against compact observations when no snapshot is tracked", async () => {
+  const dataDir = tempDataDir();
+  try {
+    const baseline = snapshotFromRows([baselineRow], {
+      observedAt: "2026-09-03T09:54:04.798Z",
+      source: "live",
+      endpoint: cohort.endpoint,
+      sellers: [{ id: "gblin", name: "GBLIN", hosts: ["gblin.digital"], queries: ["gblin.digital"], partial: false, rowCount: 1 }],
+    });
+    writeObservation(dataDir, observationRecordFromSnapshot(baseline));
+
+    const edited = editSnapshot(baseline, (copy) => {
+      copy.rows[0].description = "observation-only synthetic edit";
+      copy.rows[0].accepts[0].amount = "12345";
+    });
+    const editedPath = join(dataDir, "edited-snapshot.json");
+    writeFileSync(editedPath, `${JSON.stringify(edited, null, 2)}\n`);
+
+    const replay = spawnSync(
+      process.execPath,
+      [cli, "--from", editedPath, "--data-dir", dataDir, "--observed-at", "2026-09-03T13:00:00.000Z"],
+      { encoding: "utf8" },
+    );
+    assert.equal(replay.status, 0, replay.stderr);
+    const report = JSON.parse(replay.stdout);
+    assert.ok(report.changeCount >= 2, JSON.stringify(report.changes, null, 2));
+    assert.equal(
+      report.changes.some((row) => row.field === "description" && row.after === "observation-only synthetic edit"),
+      true,
+    );
+    assert.equal(
+      report.changes.some((row) => row.field === "accepts.0.amount" && row.before === "3000" && row.after === "12345"),
+      true,
+    );
+    assert.match(readFileSync(report.humanChangelogPath, "utf8"), /observation-only synthetic edit/);
+    assert.equal(readObservation(dataDir).sources[CDP_DISCOVERY_SOURCE].sellers.gblin.routes[baselineRow.resource].description, "observation-only synthetic edit");
+  } finally {
+    rmSync(dataDir, { recursive: true, force: true });
+  }
+});
+
+test("CLI --readback is cron-free and does not write a snapshot", () => {
+  const dataDir = tempDataDir();
+  try {
+    const first = spawnSync(
+      process.execPath,
+      [cli, "--fixture", fixturePath, "--data-dir", dataDir, "--observed-at", "2026-09-03T11:00:00.000Z"],
+      { encoding: "utf8" },
+    );
+    assert.equal(first.status, 0, first.stderr);
+    const readback = spawnSync(
+      process.execPath,
+      [cli, "--readback", "--data-dir", dataDir],
+      { encoding: "utf8" },
+    );
+    assert.equal(readback.status, 0, readback.stderr);
+    const report = JSON.parse(readback.stdout);
+    assert.equal(report.ok, true);
+    assert.equal(report.cron, false);
+    assert.equal(report.daemon, false);
+    assert.ok(report.routeCount >= 3);
+    assert.deepEqual(report.sources, [CDP_DISCOVERY_SOURCE]);
+    assert.equal(report.observedAt, "2026-09-03T11:00:00.000Z");
+    assert.equal(readbackReport(dataDir).routeCount, report.routeCount);
+  } finally {
+    rmSync(dataDir, { recursive: true, force: true });
+  }
+});
+
+test("committed tracker data does not include a full snapshot", () => {
+  const listed = spawnSync("git", ["-C", join(here, "../.."), "ls-files", "data/bazaar-tracker"], { encoding: "utf8" });
+  assert.equal(listed.status, 0, listed.stderr);
+  const files = listed.stdout.split("\n").filter(Boolean);
+  assert.ok(files.includes("data/bazaar-tracker/observations.json"), files.join(","));
+  assert.ok(files.includes("data/bazaar-tracker/CHANGELOG.md"), files.join(","));
+  assert.equal(files.some((name) => name.includes("/snapshots/") && name.endsWith(".json")), false, listed.stdout);
+  const ignored = spawnSync("git", ["-C", join(here, "../.."), "check-ignore", "-q", "data/bazaar-tracker/snapshots/example.json"]);
+  assert.equal(ignored.status, 0);
+});
+
+test("CLI --from an edited compact observation reports only the edited fields", () => {
+  const dataDir = tempDataDir();
+  try {
+    const baseline = snapshotFromRows([baselineRow], {
+      observedAt: "2026-09-03T09:54:04.798Z",
+      source: "live",
+      endpoint: cohort.endpoint,
+      sellers: [{ id: "gblin", name: "GBLIN", hosts: ["gblin.digital"], queries: ["gblin.digital"], partial: false, rowCount: 1 }],
+    });
+    writeObservation(dataDir, observationRecordFromSnapshot(baseline));
+    const edited = observationRecordFromSnapshot(baseline);
+    const route = edited.sources[CDP_DISCOVERY_SOURCE].sellers.gblin.routes[baselineRow.resource];
+    route.description = "compact-file synthetic edit";
+    route.accepts[0].amount = "12345";
+    const editedPath = join(dataDir, "edited-observations.json");
+    writeFileSync(editedPath, `${JSON.stringify(edited, null, 2)}\n`);
+
+    const replay = spawnSync(
+      process.execPath,
+      [cli, "--from", editedPath, "--data-dir", dataDir, "--observed-at", "2026-09-03T14:00:00.000Z"],
+      { encoding: "utf8" },
+    );
+    assert.equal(replay.status, 0, replay.stderr);
+    const report = JSON.parse(replay.stdout);
+    assert.equal(report.changeCount, 2, JSON.stringify(report.changes, null, 2));
+    assert.equal(report.changes.every((row) => row.field !== "extensionsDigest"), true);
+    assert.equal(report.changes.some((row) => row.field === "description" && row.after === "compact-file synthetic edit"), true);
+    assert.equal(report.changes.some((row) => row.field === "accepts.0.amount" && row.after === "12345"), true);
+  } finally {
+    rmSync(dataDir, { recursive: true, force: true });
+  }
+});
+
+test("diffObservations reports source-separated route field changes", () => {
+  const previous = observationRecordFromSnapshot(snapshotFromRows([baselineRow], { observedAt: "2026-09-01T00:00:00.000Z" }));
+  const current = observationRecordFromSnapshot(snapshotFromRows([
+    { ...baselineRow, description: "compact digest change", accepts: [{ scheme: "exact", amount: "4000", network: "eip155:8453" }] },
+  ], { observedAt: "2026-09-03T10:00:00.000Z" }));
+  const changes = diffObservations(previous, current, "2026-09-03T10:00:00.000Z");
+  assert.equal(changes.some((row) => row.field === "description" && row.source === CDP_DISCOVERY_SOURCE), true);
+  assert.equal(changes.some((row) => row.field === "accepts.0.amount" && row.after === "4000"), true);
 });

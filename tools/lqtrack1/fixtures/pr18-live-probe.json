@@ -1,0 +1,65 @@
+{
+  "capturedAt": "2026-09-03T10:50:21.433Z",
+  "probes": {
+    "listings-root": {
+      "id": "listings-root",
+      "url": "https://samedaydesk.com/listings",
+      "role": "alias-root",
+      "status": 404,
+      "contentType": "text/html; charset=utf-8",
+      "location": null,
+      "bodyHead": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\n    <!-- No-FOUC: resolve the theme and paint the right ground BEFORE the React bundle (a\n ",
+      "jsonCatalog": false
+    },
+    "listings-bazaar-mcp": {
+      "id": "listings-bazaar-mcp",
+      "url": "https://samedaydesk.com/listings/bazaar/mcp",
+      "role": "alias-route",
+      "status": 404,
+      "contentType": "text/html; charset=utf-8",
+      "location": null,
+      "bodyHead": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\n    <!-- No-FOUC: resolve the theme and paint the right ground BEFORE the React bundle (a\n ",
+      "jsonCatalog": false
+    },
+    "listings-mcp-registry-mcp": {
+      "id": "listings-mcp-registry-mcp",
+      "url": "https://samedaydesk.com/listings/mcp-registry/mcp",
+      "role": "alias-route",
+      "status": 404,
+      "contentType": "text/html; charset=utf-8",
+      "location": null,
+      "bodyHead": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\n    <!-- No-FOUC: resolve the theme and paint the right ground BEFORE the React bundle (a\n ",
+      "jsonCatalog": false
+    },
+    "agents-listings-root": {
+      "id": "agents-listings-root",
+      "url": "https://agents.samedaydesk.com/listings",
+      "role": "alias-root",
+      "status": 404,
+      "contentType": "text/html; charset=utf-8",
+      "location": null,
+      "bodyHead": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /listings</pre>\n</body>\n</html>\n",
+      "jsonCatalog": false
+    },
+    "apex-mcp": {
+      "id": "apex-mcp",
+      "url": "https://samedaydesk.com/mcp",
+      "role": "existing-canonical",
+      "status": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "location": null,
+      "bodyHead": "samedaydesk agent tools MCP server (Streamable HTTP).\nAdd to a remote-MCP-capable client: { \"mcpServers\": { \"samedaydesk\": { \"url\": \"https://samedaydesk.com/mcp\" } } }\nTools: AI-readiness check and Fix Pack, plus free TaskMarket delegation ",
+      "jsonCatalog": false
+    },
+    "apex-scan": {
+      "id": "apex-scan",
+      "url": "https://samedaydesk.com/scan",
+      "role": "existing-canonical",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "location": null,
+      "bodyHead": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Free AI-search readiness scan</title>\n<meta name=\"description\" content=\"Paste a URL and see whether Ch",
+      "jsonCatalog": false
+    }
+  }
+}
