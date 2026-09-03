@@ -5,7 +5,7 @@ import styles from "./VerifiedRoutes.module.css";
 
 const PAGE_TITLE = "Inspected x402 routes | SameDayDesk";
 const PAGE_DESCRIPTION =
-  "Build-time inspection list of unpaid 402 terms, last check time, contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree.";
+  "Build-time inspection list of current SameDayDesk unpaid 402 evidence, including an OpenAPI operation observation and matching fresh CDP Bazaar evidence.";
 const PAGE_URL = "https://samedaydesk.com/x402/verified";
 const FEED_URL = "/x402/verified.json";
 const SCHEMA_URL = "/x402/verified.schema.json";
@@ -27,10 +27,12 @@ type VerifiedRoute = {
   network: string | null;
   lastVerified: string | null;
   contractHash: string | null;
+  bazaarObservedAt: string | null;
   agreement: {
     openapi: boolean;
     unpaid402OutputSchema: boolean;
     cdpBazaarRow: boolean;
+    cdpBazaarFresh: boolean;
   };
   badge: VerifiedBadge;
   registryStatus: "green" | "finding" | "alternate";
@@ -119,11 +121,11 @@ export default function VerifiedRoutes() {
             Inspected routes, not a <span className="lime">certificate</span>
           </h1>
           <p className={styles.lead}>
-            Build-time list of routes from the existing seller-conformance crawl and repair-brief
-            registry. Each row records seller, route, unpaid 402 price and network, last check time,
-            contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row
-            agree. The badge is verified, drift, or unverified. This page is inspection evidence. It
-            is not a product, guarantee, or runtime monitor.
+            Build-time list of current SameDayDesk routes from the existing seller-conformance
+            crawl. Each row has a live unpaid 402 check and contract hash. It records whether
+            the operation was observed in OpenAPI and whether a matching CDP Bazaar row was observed
+            within seven days of the crawl. The badge is verified, drift, or unverified. This page
+            is inspection evidence. It is not a product, guarantee, or runtime monitor.
           </p>
           <div className={styles.actions}>
             <a className={styles.primary} href={FEED_URL}>
@@ -143,8 +145,9 @@ export default function VerifiedRoutes() {
           <h2 id="qa-title">Internal inspection label</h2>
           <p className={styles.prose}>
             Owner QA is labeled internal. Pilot Firstmate owns the outcome. Facts come from the
-            committed crawl and the existing repair-brief registry. A missing Bazaar row is
-            incomplete discovery, not a payment failure.
+            committed SameDayDesk crawl. Routes without a live verification time and contract hash
+            are excluded. A missing or stale Bazaar row is incomplete discovery, not a payment
+            failure.
           </p>
         </section>
 
@@ -165,7 +168,7 @@ export default function VerifiedRoutes() {
             <div className={styles.tableWrap}>
               <table className={styles.table}>
                 <caption className={styles.caption}>
-                  Same rows as {FEED_URL}. Green registry routes appear first.
+                  Same current SameDayDesk rows as {FEED_URL}.
                 </caption>
                 <thead>
                   <tr>
@@ -178,7 +181,8 @@ export default function VerifiedRoutes() {
                     <th scope="col">Contract hash</th>
                     <th scope="col">OpenAPI</th>
                     <th scope="col">402 schema</th>
-                    <th scope="col">Bazaar</th>
+                    <th scope="col">Bazaar agreement</th>
+                    <th scope="col">Bazaar observed</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -203,7 +207,14 @@ export default function VerifiedRoutes() {
                       </td>
                       <td>{agreeLabel(row.agreement.openapi)}</td>
                       <td>{agreeLabel(row.agreement.unpaid402OutputSchema)}</td>
-                      <td>{agreeLabel(row.agreement.cdpBazaarRow)}</td>
+                      <td>
+                        {row.agreement.cdpBazaarRow
+                          ? row.agreement.cdpBazaarFresh
+                            ? "agree · fresh"
+                            : "agree · stale"
+                          : "no"}
+                      </td>
+                      <td>{row.bazaarObservedAt || "not observed"}</td>
                     </tr>
                   ))}
                 </tbody>

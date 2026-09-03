@@ -2,7 +2,11 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { validateJsonSchema } from "./validateJsonSchema.mjs";
-import { feedIncludesEveryGreenRoute } from "./generateVerifiedFeed.mjs";
+import {
+  feedContainsOnlyCurrentEvidence,
+  feedMatchesCurrentCrawl,
+  verifiedRowsHaveCompleteEvidence,
+} from "./generateVerifiedFeed.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const VERIFIED_SCHEMA_PATH = path.join(here, "../public/x402/verified.schema.json");
@@ -16,8 +20,14 @@ export function validateVerifiedFeed(feed) {
   if (errors.length) {
     throw new Error(`verified feed schema errors:\n${errors.join("\n")}`);
   }
-  if (!feedIncludesEveryGreenRoute(feed)) {
-    throw new Error("verified feed is missing a green conformance-registry route");
+  if (!feedContainsOnlyCurrentEvidence(feed)) {
+    throw new Error("verified feed contains a foreign or unchecked route");
+  }
+  if (!feedMatchesCurrentCrawl(feed)) {
+    throw new Error("verified feed does not exactly match the current committed crawl");
+  }
+  if (!verifiedRowsHaveCompleteEvidence(feed)) {
+    throw new Error("verified feed promotes a row without complete current evidence");
   }
   return feed;
 }

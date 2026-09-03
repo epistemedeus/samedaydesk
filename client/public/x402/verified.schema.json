@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://samedaydesk.com/x402/verified.schema.json",
   "title": "SameDayDesk inspected x402 route feed",
-  "description": "Build-time inspection list of unpaid 402 terms, last check time, contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree. Inspection evidence only. Not a certificate.",
+  "description": "Build-time inspection list of current SameDayDesk unpaid 402 evidence, including an OpenAPI operation observation and matching fresh CDP Bazaar evidence. Inspection evidence only. Not a certificate.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -54,6 +54,7 @@
         "network",
         "lastVerified",
         "contractHash",
+        "bazaarObservedAt",
         "agreement",
         "badge"
       ],
@@ -80,14 +81,28 @@
         "network": { "type": ["string", "null"] },
         "lastVerified": { "type": ["string", "null"] },
         "contractHash": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+        "bazaarObservedAt": { "type": ["string", "null"] },
         "agreement": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["openapi", "unpaid402OutputSchema", "cdpBazaarRow"],
+          "required": ["openapi", "unpaid402OutputSchema", "cdpBazaarRow", "cdpBazaarFresh"],
           "properties": {
-            "openapi": { "type": "boolean" },
-            "unpaid402OutputSchema": { "type": "boolean" },
-            "cdpBazaarRow": { "type": "boolean" }
+            "openapi": {
+              "type": "boolean",
+              "description": "Whether this operation was directly observed in the current OpenAPI crawl."
+            },
+            "unpaid402OutputSchema": {
+              "type": "boolean",
+              "description": "Whether the current credential-free 402 response carried output-schema evidence."
+            },
+            "cdpBazaarRow": {
+              "type": "boolean",
+              "description": "Whether the observed Bazaar row matched the exact resource, seller, terms, and output keys."
+            },
+            "cdpBazaarFresh": {
+              "type": "boolean",
+              "description": "Whether the matching Bazaar observation was no more than seven days old at crawl time."
+            }
           }
         },
         "badge": {

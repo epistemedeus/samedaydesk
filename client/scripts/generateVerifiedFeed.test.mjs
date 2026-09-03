@@ -9,12 +9,13 @@ import {
   assignBadge,
   bazaarAgrees,
   crawl,
-  feedIncludesEveryGreenRoute,
+  feedContainsOnlyCurrentEvidence,
+  feedMatchesCurrentCrawl,
   formatAtomicUsdc,
   generateVerifiedFeed,
-  greenRegistryRoutes,
+  hasLiveContractEvidence,
   routeFromCrawl,
-  routeFromRepairBrief,
+  verifiedRowsHaveCompleteEvidence,
 } from "./generateVerifiedFeed.mjs";
 import { validateJsonSchema } from "./validateJsonSchema.mjs";
 import { loadVerifiedSchema, validateVerifiedFeed } from "./verifiedFeedValidation.mjs";
@@ -29,97 +30,135 @@ test("formats unpaid 402 atomic USDC amounts from the crawl", () => {
   assert.equal(formatAtomicUsdc(null), null);
 });
 
-test("badge is verified only when OpenAPI, unpaid 402 output schema, and Bazaar agree", () => {
-  assert.equal(
-    assignBadge({ openapi: true, unpaid402OutputSchema: true, cdpBazaarRow: true }, false),
-    "verified",
-  );
-  assert.equal(
-    assignBadge({ openapi: true, unpaid402OutputSchema: true, cdpBazaarRow: false }, false),
-    "unverified",
-  );
-  assert.equal(
-    assignBadge({ openapi: true, unpaid402OutputSchema: false, cdpBazaarRow: false }, true),
-    "drift",
-  );
+test("badge requires live OpenAPI, unpaid 402, matching Bazaar, and fresh Bazaar evidence", () => {
+  const complete = {
+    openapi: true,
+    unpaid402OutputSchema: true,
+    cdpBazaarRow: true,
+    cdpBazaarFresh: true,
+  };
+  assert.equal(assignBadge(complete, false), "verified");
+  assert.equal(assignBadge({ ...complete, cdpBazaarFresh: false }, false), "unverified");
+  assert.equal(assignBadge({ ...complete, openapi: false }, true), "drift");
 });
 
-test("Bazaar agreement requires matching unpaid 402 amount, network, and output keys", () => {
+test("Bazaar agreement binds resource, seller, terms, output, and freshness", () => {
   const extract = crawl.routes.find((route) => route.route === "/extract");
   assert.ok(extract);
-  assert.deepEqual(bazaarAgrees(extract), { agrees: true, conflict: false });
-  const drifted = {
+  assert.deepEqual(bazaarAgrees(extract), {
+    agrees: true,
+    conflict: false,
+    fresh: true,
+    observedAt: "2026-08-30T15:18:51.498Z",
+  });
+  assert.deepEqual(bazaarAgrees({ ...extract, cdpBazaar: null }), {
+    agrees: false,
+    conflict: false,
+    fresh: false,
+    observedAt: null,
+  });
+  const foreign = {
     ...extract,
-    cdpBazaar: { ...extract.cdpBazaar, amount: "1" },
+    cdpBazaar: { ...extract.cdpBazaar, resource: "https://seller.example/extract" },
   };
-  assert.deepEqual(bazaarAgrees(drifted), { agrees: false, conflict: true });
-  const unread = crawl.routes.find((route) => route.route === "/read");
-  assert.ok(unread);
-  assert.equal(unread.cdpBazaar, null);
-  assert.deepEqual(bazaarAgrees(unread), { agrees: false, conflict: false });
+  assert.equal(bazaarAgrees(foreign).conflict, true);
+  assert.equal(bazaarAgrees(foreign).agrees, false);
+  const stale = {
+    ...extract,
+    cdpBazaar: { ...extract.cdpBazaar, lastUpdated: "2026-08-20T09:55:27Z" },
+  };
+  assert.equal(bazaarAgrees(stale).agrees, true);
+  assert.equal(bazaarAgrees(stale).fresh, false);
+  const malformed = {
+    ...extract,
+    cdpBazaar: { ...extract.cdpBazaar, lastUpdated: "not-a-time", outputExampleKeys: {} },
+  };
+  assert.deepEqual(bazaarAgrees(malformed), {
+    agrees: false,
+    conflict: true,
+    fresh: false,
+    observedAt: null,
+  });
 });
 
-test("green SameDayDesk crawl routes keep unpaid 402 price and network", () => {
-  const extract = routeFromCrawl(crawl.routes.find((route) => route.route === "/extract"));
+test("current SameDayDesk crawl route preserves exact observed evidence", () => {
+  const source = crawl.routes.find((route) => route.route === "/extract");
+  const extract = routeFromCrawl(source);
+  assert.ok(extract);
   assert.equal(extract.seller, "SameDayDesk");
   assert.equal(extract.route, "/extract");
   assert.equal(extract.price.amount, "5000");
   assert.equal(extract.price.display, "0.005 USDC");
   assert.equal(extract.network, "eip155:8453");
   assert.equal(extract.price.source, "live_unpaid_402");
-  assert.match(extract.contractHash || "", /^[a-f0-9]{64}$/);
+  assert.match(extract.contractHash, /^[a-f0-9]{64}$/);
+  assert.equal(extract.bazaarObservedAt, "2026-08-30T15:18:51.498Z");
   assert.deepEqual(extract.agreement, {
     openapi: true,
     unpaid402OutputSchema: true,
     cdpBazaarRow: true,
+    cdpBazaarFresh: true,
   });
   assert.equal(extract.badge, "verified");
-  assert.equal(extract.registryStatus, "green");
 });
 
-test("repair briefs become drift rows and do not invent unpaid 402 fields", () => {
-  const brief = crawl.findings.find((item) => item.id === "onesource-erc20-balance-20260830");
-  assert.ok(brief);
-  const row = routeFromRepairBrief(brief);
-  assert.equal(row.seller, "OneSource");
-  assert.equal(row.route, "/api/chain/erc20-balance");
-  assert.equal(row.price.source, "repair_brief");
-  assert.equal(row.price.display, "0.003 USDC");
-  assert.equal(row.price.amount, null);
-  assert.equal(row.badge, "drift");
-  assert.equal(row.registryStatus, "finding");
-  assert.equal(row.agreement.unpaid402OutputSchema, false);
-  assert.equal(row.agreement.cdpBazaarRow, false);
+test("foreign, unchecked, and non-live source routes cannot enter the feed", () => {
+  const source = crawl.routes.find((route) => route.route === "/extract");
+  const hostile = [
+    { ...source, seller: "Foreign Seller" },
+    { ...source, origin: "https://foreign.example" },
+    { ...source, lastVerified: null },
+    { ...source, lastVerified: "2026-09-02T09:55:27Z" },
+    { ...source, contractHash: null },
+    { ...source, contractHash: "not-a-hash" },
+    { ...source, unpaid402: { ...source.unpaid402, source: "x402_manifest" } },
+    { ...source, outputExampleKeys: {} },
+  ];
+  for (const route of hostile) {
+    assert.equal(hasLiveContractEvidence(route), false);
+    assert.equal(routeFromCrawl(route), null);
+  }
+  const feed = generateVerifiedFeed(crawl.checkedAt, {
+    routes: [source, ...hostile],
+    findings: crawl.findings,
+  });
+  assert.equal(feed.routes.length, 1);
+  assert.equal(feed.routes[0].seller, "SameDayDesk");
 });
 
-test("generated feed includes every green registry route and validates against the sibling schema", () => {
-  const green = greenRegistryRoutes();
-  assert.equal(green.length, 22);
+test("stale Bazaar evidence cannot promote a route to verified", () => {
+  const source = crawl.routes.find((route) => route.route === "/extract");
+  const stale = {
+    ...source,
+    cdpBazaar: { ...source.cdpBazaar, lastUpdated: "2026-08-20T09:55:27Z" },
+  };
+  const row = routeFromCrawl(stale);
+  assert.ok(row);
+  assert.equal(row.agreement.cdpBazaarRow, true);
+  assert.equal(row.agreement.cdpBazaarFresh, false);
+  assert.equal(row.badge, "unverified");
+});
+
+test("generated feed excludes repair briefs and unchecked routes, then validates", () => {
   const feed = generateVerifiedFeed();
   assert.equal(feed.qa.label, "internal");
   assert.equal(feed.qa.owner, "Pilot Firstmate");
-  assert.equal(feedIncludesEveryGreenRoute(feed), true);
-  for (const route of green) {
-    const row = feed.routes.find(
-      (item) => item.origin === route.origin && item.route === route.route && item.method === route.method,
-    );
-    assert.ok(row, `${route.method} ${route.route}`);
-    assert.equal(row.registryStatus, "green");
-    assert.equal(row.network, route.unpaid402.network);
-    assert.equal(row.price.amount, route.unpaid402.amount);
-  }
-  assert.equal(
-    feed.routes.filter((route) => route.registryStatus === "finding").length,
-    crawl.findings.length,
-  );
+  assert.equal(feed.routes.length, 20);
+  assert.equal(feed.routes.every((route) => route.seller === "SameDayDesk"), true);
+  assert.equal(feed.routes.every((route) => route.origin === "https://agents.samedaydesk.com"), true);
+  assert.equal(feed.routes.some((route) => route.registryStatus === "finding"), false);
+  assert.equal(feed.routes.every((route) => route.lastVerified && route.contractHash), true);
+  assert.equal(feedContainsOnlyCurrentEvidence(feed), true);
+  assert.equal(feedMatchesCurrentCrawl(feed), true);
+  assert.equal(verifiedRowsHaveCompleteEvidence(feed), true);
   const serialized = JSON.parse(JSON.stringify(feed));
   assert.deepEqual(validateJsonSchema(serialized, loadVerifiedSchema()), []);
   validateVerifiedFeed(feed);
   const banned = JSON.stringify(feed).toLowerCase();
-  assert.doesNotMatch(banned, /"demand"|revenue/);
+  assert.doesNotMatch(banned, /"demand"|revenue|repair_brief/);
 });
 
-test("writeVerifiedFeed emits schema-valid JSON beside the committed schema", () => {
+test("writeVerifiedFeed emits the exact schema-valid committed candidate", () => {
   const dir = mkdtempSync(path.join(tmpdir(), "verified-feed-"));
   const out = path.join(dir, "verified.json");
   try {
@@ -129,7 +168,9 @@ test("writeVerifiedFeed emits schema-valid JSON beside the committed schema", ()
     assert.equal(result.status, 0, result.stderr || result.stdout);
     const feed = JSON.parse(readFileSync(out, "utf8"));
     assert.deepEqual(validateJsonSchema(feed, loadVerifiedSchema()), []);
-    assert.equal(feedIncludesEveryGreenRoute(feed), true);
+    assert.equal(feedContainsOnlyCurrentEvidence(feed), true);
+    assert.equal(feedMatchesCurrentCrawl(feed), true);
+    assert.equal(verifiedRowsHaveCompleteEvidence(feed), true);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

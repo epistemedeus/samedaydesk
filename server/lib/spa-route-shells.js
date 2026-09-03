@@ -103,15 +103,15 @@ export const SPA_ROUTE_SHELLS = Object.freeze([
     path: "/x402/verified",
     title: "Inspected x402 routes | SameDayDesk",
     description:
-      "Build-time inspection list of unpaid 402 terms, last check time, contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree.",
+      "Build-time inspection list of current SameDayDesk unpaid 402 evidence, including an OpenAPI operation observation and matching fresh CDP Bazaar evidence.",
     canonical: `${SITE_ORIGIN}/x402/verified`,
     crawlerHtml: `
       <h1>Inspected routes, not a certificate</h1>
       <p>
-        Build-time list of routes from the existing seller-conformance crawl and repair-brief
-        registry. Each row records seller, route, unpaid 402 price and network, last check time,
-        contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row
-        agree. The badge is verified, drift, or unverified.
+        Build-time list of current SameDayDesk routes from the existing seller-conformance crawl.
+        Each row has a live unpaid 402 check and contract hash. It records whether the operation was
+        observed in OpenAPI and whether a matching CDP Bazaar row was observed within seven days
+        of the crawl. The badge is verified, drift, or unverified.
       </p>
       <p>
         Owner QA is labeled internal. This page is inspection evidence. It is not a product,
