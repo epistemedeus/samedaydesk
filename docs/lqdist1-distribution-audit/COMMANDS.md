@@ -1,6 +1,18 @@
-# LQDIST1 exact unpaid replay commands
+# Exact unpaid replay commands
 
 Scratch only. Do not commit `preflight-x402` or the Agent402 clone. Never send `PAYMENT-SIGNATURE`, `X-PAYMENT`, or a wallet.
+
+This is not 25 independent replays on every surface. What Agents Buy preflights 3 URLs then inherits host CLEAR. AgentCash `check()` is not run on all 25. `followup-probes.json` has 9 results.
+
+## Rebuild the table from committed evidence (offline)
+
+```bash
+node tools/lqdist1-distribution-audit/rebuild-from-evidence.mjs --write
+# or:
+npm run lqdist1:rebuild
+```
+
+Reads `docs/lqdist1-distribution-audit/evidence/` and rewrites `per-route-table.json`, `evidence/summary.json`, and `tools/lqdist1-distribution-audit/catalog-projection.json`. No live buyer-surface calls.
 
 ## Scratch install
 
@@ -59,7 +71,7 @@ curl -sS https://whatagentsbuy.com/api/preflight.json \
 
 Bounded output: [`evidence/wab-host.json`](evidence/wab-host.json).
 
-Host verdict: `light=green`, `verdict=CLEAR`, `confidence=verified`, `score=100`, `receipts=1`. The package extracts the host, so every SameDayDesk route inherits this CLEAR.
+Host verdict: `light=green`, `verdict=CLEAR`, `confidence=verified`, `score=100`, `receipts=1`. The package extracts the host, so every SameDayDesk route inherits this CLEAR. The three URLs above are the only What Agents Buy preflights in this audit; the other 22 rows are inherited, not independently preflighted.
 
 ## 3. Agent402 inclusion / health
 
@@ -93,7 +105,7 @@ npx --yes @agentcash/discovery@1.7.5 check https://agents.samedaydesk.com/securi
 
 Bounded output: [`evidence/agentcash-discover-bounded.json`](evidence/agentcash-discover-bounded.json).
 
-`discover` found the origin, listed all 25 paid operations, and emitted no OpenAPI/L2 warnings.
+`discover` found the origin, listed all 25 paid operations, and emitted no OpenAPI/L2 warnings. `check()` is not run on all 25; the commands above check `/extract` and `/security/wallet-policy-conformance` only.
 
 ## 5. Unpaid 402 term probes (no payment)
 
@@ -129,10 +141,11 @@ curl -sS -D - -X POST https://agents.samedaydesk.com/security/stateful-wallet-po
   -d '{"profileId":"probe","provider":"probe","network":"eip155:8453","protocol":"x402","observations":[{"case":"first_within_cap","actual":"allowed","enforcementClass":"none"}]}'
 ```
 
-Follow-up bounded results: [`evidence/followup-probes.json`](evidence/followup-probes.json).
+Follow-up bounded results: [`evidence/followup-probes.json`](evidence/followup-probes.json) (9 results). These 9 unpaid probes are the documented live 402/400 curls. The table does not treat the other 16 routes as independently probed.
 
 ## Offline verify
 
 ```bash
 npm run test:lqdist1
+npm run lqdist1:rebuild
 ```

@@ -1,8 +1,10 @@
-# LQDIST1 — unpaid three-surface distribution audit
+# Unpaid three-surface distribution audit
 
-Task LQDIST1 (batch LQ01). One branch. No payment. No price, payTo, facilitator, network, authorization, or settlement change. No new product.
+One branch. No payment. No price, payTo, facilitator, network, authorization, or settlement change. No new product.
 
-Canonical paid catalog is the public SameDayDesk machine gateway at `https://agents.samedaydesk.com`. This marketing repository does not host those handlers. This audit enumerates the catalog, replays three free buyer surfaces, and records one of `CLEAR`, `HOLD`, `ABORT`, `absent`, or `unverified` per surface per route.
+Canonical paid catalog is the public SameDayDesk machine gateway at `https://agents.samedaydesk.com`. This marketing repository does not host those handlers. This audit enumerates the catalog, records three free buyer surfaces, and records one of `CLEAR`, `HOLD`, `ABORT`, `absent`, or `unverified` per surface per route.
+
+This is **not** 25 independent replays on every surface. What Agents Buy preflights 3 URLs then inherits host CLEAR for all 25. Agent402 uses one seller snapshot (`paidToolCount` 25, one `priceConflict`). AgentCash `discover` lists 25 paid endpoints; `check()` is not run on all 25. `followup-probes.json` has 9 unpaid results. Rebuild the table from that evidence with `npm run lqdist1:rebuild`.
 
 ## Identity
 
@@ -12,7 +14,7 @@ Canonical paid catalog is the public SameDayDesk machine gateway at `https://age
 | OpenAPI | `GET /openapi.json` version `1.23.40` |
 | Observed | 2026-09-03T10:52:00Z |
 | Canonical products | 22 |
-| Paid operations replayed | 25 (22 products; GET+POST on two paths; plus one Circle Gateway alternate) |
+| Paid operations enumerated | 25 (22 products; GET+POST on two paths; plus one Circle Gateway alternate) |
 
 Per-route machine table: [`per-route-table.json`](per-route-table.json).
 
@@ -68,11 +70,11 @@ AgentCash `discover` returned `found:true`, `trustTier:origin_hosted`, 25 paid e
 
 `client/src/pages/Mcp.tsx` lists the same 22 MCP tool names and numeric prices as the live OpenAPI paid products. No marketing-price or operation-id drift was reproduced here. GET+POST workflow variants share one MCP tool name, matching the 22-product claim. The Circle Gateway path is documented as an alternate, not a twenty-third dual-rail product.
 
-No handler, OpenAPI document, or Bazaar row lives in this repository, so the two HOLDs were **not** patched here.
+No handler, OpenAPI document, or Bazaar row lives in this repository, so the three HOLD rows were **not** patched here.
 
 ## Deviations (reproduced, not patched here)
 
-1. **GET /read Agent402 HOLD.** Live unpaid 402 and OpenAPI price `0.005` (atomic `5000`). Agent402 reports `priceConflict` with Bazaar `0.05`. Changing the live price is forbidden. Bazaar rematerialization is GB06 PR 19; this branch did not touch it.
+1. **GET /read Agent402 HOLD.** Live unpaid 402 and OpenAPI price `0.005` (atomic `5000`). Agent402 reports `priceConflict` with Bazaar `0.05`. Changing the live price is forbidden. This branch did not rematerialize the Bazaar row.
 2. **Wallet POST AgentCash HOLD.** `POST /security/wallet-policy-conformance` and `POST /security/stateful-wallet-policy-conformance` validate `observations` before the unpaid 402 when the body is `{}`. AgentCash `check()` therefore reported `authMode: unprotected`. A schema-valid body returns 402 with amount `10000`. That is live-gateway request-order behavior, not a file in this repo. AgentCash's own docs name this failure `Expected 402, got 400`.
 
 ## Unresolved / next
@@ -83,4 +85,4 @@ No handler, OpenAPI document, or Bazaar row lives in this repository, so the two
 
 ## Source changes
 
-This PR adds the audit table, replay commands, bounded evidence, and an offline test that the 22-product projection and per-route three-surface results stay complete. No product, price, payTo, facilitator, network, authorization, or settlement behavior was changed.
+This PR adds the audit table, replay commands, bounded evidence, a rebuild command that reconstructs the table from evidence, and an offline test that summary, table, Agent402, and follow-up probes stay consistent. No product, price, payTo, facilitator, network, authorization, or settlement behavior was changed.

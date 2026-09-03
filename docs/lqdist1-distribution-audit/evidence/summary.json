@@ -1,8 +1,9 @@
 {
-  "observedAt": "2026-09-03T10:50:09.060Z",
+  "observedAt": "2026-09-03T10:52:00Z",
   "origin": "https://agents.samedaydesk.com",
   "routeCount": 25,
-  "canonicalCount": 24,
+  "canonicalCount": 22,
+  "canonicalOperationCount": 24,
   "alternateCount": 1,
   "products": [
     "agent_discoverability_audit",
@@ -37,57 +38,39 @@
       "HOLD": 1
     },
     "agentcash": {
-      "CLEAR": 19,
-      "HOLD": 6
+      "CLEAR": 23,
+      "HOLD": 2
     }
   },
   "holds": [
-    "GET /commerce/contract-qualified-search",
-    "GET /distribution/agent-discoverability-audit",
-    "GET /gateway/commerce/payment-offer-preflight",
     "GET /read",
-    "POST /security/stateful-wallet-policy-conformance",
     "POST /security/wallet-policy-conformance",
-    "POST /work/opportunity-preflight"
+    "POST /security/stateful-wallet-policy-conformance"
   ],
   "aborts": [],
   "absent": [],
-  "unpaidMismatch": [
-    {
-      "id": "GET /commerce/contract-qualified-search",
-      "openapi": "0.01",
-      "liveAmount": null,
-      "status": 400
+  "unpaidMismatch": [],
+  "coverage": {
+    "what_agents_buy": {
+      "independentPreflights": 3,
+      "preflightUrls": [
+        "https://agents.samedaydesk.com/extract",
+        "https://agents.samedaydesk.com/read",
+        "https://agents.samedaydesk.com/security/wallet-policy-conformance"
+      ],
+      "inheritedHostClear": 25,
+      "hostScoped": true,
+      "host": "agents.samedaydesk.com",
+      "hostVerdict": "CLEAR"
     },
-    {
-      "id": "GET /distribution/agent-discoverability-audit",
-      "openapi": "0.05",
-      "liveAmount": null,
-      "status": 400
+    "agent402": {
+      "sellerSnapshotPaidTools": 25,
+      "priceConflictHolds": 1
     },
-    {
-      "id": "GET /gateway/commerce/payment-offer-preflight",
-      "openapi": "0.005",
-      "liveAmount": null,
-      "status": 402
-    },
-    {
-      "id": "POST /security/stateful-wallet-policy-conformance",
-      "openapi": "0.01",
-      "liveAmount": null,
-      "status": 400
-    },
-    {
-      "id": "POST /security/wallet-policy-conformance",
-      "openapi": "0.01",
-      "liveAmount": null,
-      "status": 400
-    },
-    {
-      "id": "POST /work/opportunity-preflight",
-      "openapi": "0.05",
-      "liveAmount": null,
-      "status": 400
+    "agentcash": {
+      "discoverPaidEndpoints": 25,
+      "checkNotRunOnAll25": true,
+      "followupProbes": 9
     }
-  ]
+  }
 }
