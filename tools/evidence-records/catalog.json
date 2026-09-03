@@ -16,6 +16,7 @@
     "operator_validation",
     "incentivized_trial"
   ],
+  "buyerClasses": ["independent", "owner", "sponsored", "unknown"],
   "requiredProhibitedInferences": [
     "cross_source_join_without_exact_key",
     "sum_across_authority_classes",
@@ -99,6 +100,24 @@
       "providerId": "incentivized_trial_program",
       "defaultAuthorityClass": "seller_observed",
       "defaultCompleteness": "complete",
+      "extraProhibitedInferences": ["local_observation_is_provider_billing"]
+    },
+    "external_work_payout": {
+      "providerId": "gofrantic",
+      "defaultAuthorityClass": "independently_reconciled",
+      "defaultCompleteness": "complete",
+      "extraProhibitedInferences": ["chain_transfer_is_route_attribution"]
+    },
+    "buyer_attested_receipt": {
+      "providerId": "what_agents_buy",
+      "defaultAuthorityClass": "provider_returned",
+      "defaultCompleteness": "truncated",
+      "extraProhibitedInferences": ["provider_response_is_chain_settlement"]
+    },
+    "seller_ledger_line": {
+      "providerId": "seller_ledger",
+      "defaultAuthorityClass": "seller_observed",
+      "defaultCompleteness": "unknown",
       "extraProhibitedInferences": ["local_observation_is_provider_billing"]
     }
   }

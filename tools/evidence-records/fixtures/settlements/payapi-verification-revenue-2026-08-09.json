@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.v1",
+  "recordId": "payapi-verification-revenue-2026-08-09",
+  "sourceKind": "x402_facilitator_settlement",
+  "producer": {
+    "id": "coinbase_cdp_facilitator",
+    "providerId": "coinbase_cdp_facilitator",
+    "adapterId": "cdp_facilitator_settle_adapter",
+    "observedSurface": "x402 production facilitator settlement for GET /extract listing verification"
+  },
+  "scope": {
+    "providerId": "coinbase_cdp_facilitator",
+    "population": "facilitator_returned_settlements",
+    "joinKeys": ["transaction_hash"]
+  },
+  "observationWindow": {
+    "start": "2026-08-09T12:13:47.000Z",
+    "end": "2026-08-09T12:13:48.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "truncated",
+  "authorityClass": "independently_reconciled",
+  "unknownWhenAbsent": [
+    "per_tx_facilitator_url",
+    "whether_the_purchase_is_unsolicited_demand"
+  ],
+  "prohibitedInferences": [
+    "cross_source_join_without_exact_key",
+    "sum_across_authority_classes",
+    "organic_label_for_controlled_or_incentivized_traffic",
+    "collapsed_provider_scope",
+    "provider_response_is_chain_settlement",
+    "chain_transfer_is_route_attribution"
+  ],
+  "settlement": {
+    "operationId": "payapi-verification-revenue-2026-08-09",
+    "amountUsdc": "0.050",
+    "buyerClass": "unknown",
+    "validDeliveryStatus": "seller_http_200_and_listing_marked_x402_verified",
+    "transaction": "0x087627d4163b254a6ae19d58d5f9827766041c5ca468d303f0060dcd748ab4d1",
+    "facilitatorOrPayoutRef": "x402_cdp_production_no_per_tx_url"
+  }
+}

@@ -37,7 +37,10 @@
         "x402_facilitator_settlement",
         "stripe_event",
         "operator_validation",
-        "incentivized_trial"
+        "incentivized_trial",
+        "external_work_payout",
+        "buyer_attested_receipt",
+        "seller_ledger_line"
       ]
     },
     "producer": {
@@ -181,7 +184,10 @@
               "x402_facilitator_settlement",
               "stripe_event",
               "operator_validation",
-              "incentivized_trial"
+              "incentivized_trial",
+              "external_work_payout",
+              "buyer_attested_receipt",
+              "seller_ledger_line"
             ]
           },
           "exactKey": {
@@ -254,6 +260,39 @@
             "operator_validation",
             "incentivized_trial"
           ]
+        }
+      }
+    },
+    "settlement": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Optional banked-settlement facts. Absent on source-kind examples; required for reconcileable settlement observations.",
+      "required": ["operationId", "amountUsdc", "buyerClass", "validDeliveryStatus"],
+      "properties": {
+        "operationId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{2,95}$"
+        },
+        "amountUsdc": {
+          "type": "string",
+          "pattern": "^(?:0|[1-9][0-9]{0,15})(?:\\.[0-9]{1,8})?$"
+        },
+        "buyerClass": {
+          "type": "string",
+          "enum": ["independent", "owner", "sponsored", "unknown"]
+        },
+        "validDeliveryStatus": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{1,95}$"
+        },
+        "transaction": {
+          "type": "string",
+          "pattern": "^0x[a-f0-9]{64}$"
+        },
+        "facilitatorOrPayoutRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
         }
       }
     }
