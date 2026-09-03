@@ -47,7 +47,19 @@ for raw in sys.stdin:
 const CMD_EXTRACT_BODY = `curl -sS '${EXTRACT_URL}' \\
   | jq '{x402Version, error, resourceUrl: .resource.url, mimeType: .resource.mimeType, scheme: .accepts[0].scheme, extensionKeys: (.extensions|keys), bazaarExampleRequired: .extensions.bazaar.schema.properties.output.properties.example.required, bazaarExampleKeys: (.extensions.bazaar.info.output.example|keys)}'`;
 
+const CMD_PACK_EVIDENCE = `cd packages/buyer-evidence && npm pack
+# then npm install the tarball in a separate project; save usage as .mjs`;
+
 const CMD_LOAD_FIXTURES = `node --input-type=module -e '
+import { loadCatalog, loadRuntime, verify } from "@samedaydesk/buyer-evidence";
+const catalog = loadCatalog();
+const agent402 = loadRuntime("agent402");
+const coinbase = loadRuntime("coinbase-x402");
+console.log(catalog.route.path, Object.keys(agent402.states), Object.keys(coinbase.states), verify(agent402.states.contract, catalog));
+'`;
+
+const CMD_INSTALL_THEN_IN_TREE = `npm install
+node --input-type=module -e '
 import { loadCatalog, loadRuntime } from "./tools/buyer-runtimes/lib.mjs";
 const catalog = loadCatalog();
 const agent402 = loadRuntime("agent402");
@@ -311,28 +323,41 @@ export default function BuyerRuntime() {
           </p>
           <ul className={styles.list}>
             <li>
-              Shared pin: <code>fixtures/buyer-runtimes/catalog.json</code>
+              Shared pin: <code>packages/buyer-evidence/fixtures/catalog.json</code>
             </li>
             <li>
-              Agent402: <code>fixtures/buyer-runtimes/agent402/sources.json</code> and{" "}
-              <code>fixtures/buyer-runtimes/agent402/states/{"{discover,construct,contract,authorize-ready,stop}"}.json</code>
+              Agent402: <code>packages/buyer-evidence/fixtures/agent402/sources.json</code> and{" "}
+              <code>packages/buyer-evidence/fixtures/agent402/states/{"{discover,construct,contract,authorize-ready,stop}"}.json</code>
             </li>
             <li>
-              Coinbase x402 client: <code>fixtures/buyer-runtimes/coinbase-x402/sources.json</code>{" "}
-              and the same five state files under <code>fixtures/buyer-runtimes/coinbase-x402/states/</code>
+              Coinbase x402 client: <code>packages/buyer-evidence/fixtures/coinbase-x402/sources.json</code>{" "}
+              and the same five state files under{" "}
+              <code>packages/buyer-evidence/fixtures/coinbase-x402/states/</code>
             </li>
             <li>
-              Loader and checks: <code>tools/buyer-runtimes/lib.mjs</code>,{" "}
+              Packed loader: <code>@samedaydesk/buyer-evidence</code>. In-tree re-export:{" "}
+              <code>tools/buyer-runtimes/lib.mjs</code>, checks:{" "}
               <code>tools/buyer-runtimes/test.mjs</code>, <code>npm run test:buyer-runtimes</code>
             </li>
           </ul>
           <p className={styles.prose}>
-            From the repository root, after those files are present:
+            The packable module is <code>@samedaydesk/buyer-evidence</code>.{" "}
+            <code>fixtures/buyer-runtimes</code> is a symlink to{" "}
+            <code>packages/buyer-evidence/fixtures/</code>. Pack that folder only, then install the
+            tarball in a separate project and save usage as <code>.mjs</code>:
           </p>
           <div className={styles.commands}>
             <div>
-              <span>Load catalog and both runtimes</span>
+              <span>Pack the evidence module</span>
+              <pre><code>{CMD_PACK_EVIDENCE}</code></pre>
+            </div>
+            <div>
+              <span>Load catalog and both runtimes from the packed module</span>
               <pre><code>{CMD_LOAD_FIXTURES}</code></pre>
+            </div>
+            <div>
+              <span>Clone-root install before the in-tree re-export</span>
+              <pre><code>{CMD_INSTALL_THEN_IN_TREE}</code></pre>
             </div>
             <div>
               <span>Run the unpaid replay checks</span>
@@ -340,11 +365,14 @@ export default function BuyerRuntime() {
             </div>
           </div>
           <p className={styles.prose}>
-            <code>loadCatalog()</code> reads <code>fixtures/buyer-runtimes/catalog.json</code>.{" "}
+            <code>loadCatalog()</code> reads{" "}
+            <code>packages/buyer-evidence/fixtures/catalog.json</code>.{" "}
             <code>loadRuntime(&quot;agent402&quot;)</code> and{" "}
             <code>loadRuntime(&quot;coinbase-x402&quot;)</code> each return <code>sources</code> plus
-            the five state objects. Set <code>SKIP_LIVE_BUYER_REPLAY=1</code> to skip live unpaid
-            probes and keep only the committed pins.
+            the five state objects. On a clone that includes the evidence package, run{" "}
+            <code>npm install</code> at the repository root before importing{" "}
+            <code>tools/buyer-runtimes/lib.mjs</code>. Set <code>SKIP_LIVE_BUYER_REPLAY=1</code> to
+            skip live unpaid probes and keep only the committed pins.
           </p>
         </section>
 
@@ -395,7 +423,7 @@ export default function BuyerRuntime() {
               </li>
             </ul>
             <p>
-              Fixture citations: <code>fixtures/buyer-runtimes/agent402/sources.json</code>.
+              Fixture citations: <code>packages/buyer-evidence/fixtures/agent402/sources.json</code>.
             </p>
           </article>
 
@@ -442,7 +470,8 @@ export default function BuyerRuntime() {
               </li>
             </ul>
             <p>
-              Fixture citations: <code>fixtures/buyer-runtimes/coinbase-x402/sources.json</code>.
+              Fixture citations:{" "}
+              <code>packages/buyer-evidence/fixtures/coinbase-x402/sources.json</code>.
             </p>
           </article>
 
