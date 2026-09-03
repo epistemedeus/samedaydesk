@@ -1,0 +1,229 @@
+.wrap {
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding: clamp(8rem, 14vw, 11rem) var(--space-s) var(--space-xl);
+}
+
+.hero {
+  max-width: 860px;
+  padding-bottom: var(--space-xl);
+}
+
+.h1 {
+  max-width: 16ch;
+  margin-top: var(--space-xs);
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 7rem);
+  letter-spacing: -0.055em;
+}
+
+.lead {
+  max-width: 66ch;
+  margin-top: var(--space-m);
+  color: var(--ink-dim);
+  font-size: var(--step-1);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: var(--space-m);
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--line-2);
+  border-radius: 9px;
+  font-weight: 650;
+}
+
+.primary {
+  border-color: var(--lime);
+  background: var(--lime);
+  color: var(--lime-ink);
+}
+
+.secondary:hover {
+  border-color: var(--lime);
+}
+
+.section,
+.note {
+  border-top: 1px solid var(--line-1);
+  padding-block: var(--space-l);
+}
+
+.sectionHead {
+  display: grid;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-m);
+}
+
+.section h2,
+.note h2,
+.runtime h3 {
+  max-width: 22ch;
+  font-size: var(--step-3);
+}
+
+.runtime h3 {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--step-2);
+}
+
+.prose,
+.lead code,
+.prose code,
+.list code,
+.runtime p {
+  overflow-wrap: anywhere;
+}
+
+.prose {
+  max-width: 66ch;
+  margin-top: var(--space-s);
+  color: var(--ink-dim);
+}
+
+.list {
+  display: grid;
+  gap: 0.55rem;
+  max-width: 72ch;
+  margin: var(--space-s) 0 0;
+  padding-left: 1.25rem;
+  color: var(--ink-dim);
+}
+
+.list li::marker {
+  color: var(--lime);
+}
+
+.tableWrap {
+  overflow-x: auto;
+  margin-top: var(--space-m);
+}
+
+.tableWrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--step--1);
+}
+
+.tableWrap th,
+.tableWrap td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.7rem 0.75rem 0.7rem 0;
+  border-bottom: 1px solid var(--line-1);
+}
+
+.tableWrap th {
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tableWrap a {
+  color: var(--lime);
+  font-weight: 650;
+}
+
+.commands {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: var(--space-m);
+}
+
+.commands div {
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--line-1);
+  border-radius: 9px;
+}
+
+.commands span {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.commands pre {
+  margin: 0;
+  overflow-x: auto;
+}
+
+.commands code {
+  display: block;
+  color: var(--lime);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  white-space: pre;
+}
+
+.commands p {
+  margin: 0.65rem 0 0;
+  color: var(--ink-dim);
+  font-size: var(--step--1);
+}
+
+.commands a {
+  color: var(--lime);
+  font-weight: 650;
+}
+
+.runtime {
+  margin-top: var(--space-m);
+  padding: var(--space-m);
+  border: 1px solid var(--line-1);
+  border-radius: 12px;
+}
+
+.runtime p {
+  max-width: 72ch;
+  color: var(--ink-dim);
+}
+
+.note {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: var(--space-l);
+}
+
+.note > p {
+  max-width: 60ch;
+  margin-top: var(--space-s);
+  color: var(--ink-dim);
+}
+
+.inlineLink {
+  color: var(--lime);
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.inlineLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 720px) {
+  .note {
+    grid-template-columns: 1fr;
+  }
+
+  .commands code {
+    white-space: pre-wrap;
+  }
+}

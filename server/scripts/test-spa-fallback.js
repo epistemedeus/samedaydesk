@@ -21,6 +21,7 @@ test("SPA history authority is the explicit App.tsx list, not any extensionless 
     "/tools/ai-readiness",
     "/x402",
     "/x402/seller-conformance",
+    "/x402/buyer-runtime",
     "/for-agents",
     "/login",
     "/signup",

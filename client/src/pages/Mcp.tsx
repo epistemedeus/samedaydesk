@@ -306,6 +306,9 @@ export default function Mcp() {
               <a className={styles.secondary} href="/x402/seller-conformance">
                 Read the seller-conformance proof
               </a>
+              <a className={styles.secondary} href="/x402/buyer-runtime">
+                Read the buyer-runtime guide (draft)
+              </a>
             </div>
           </div>
           <div className={styles.offerCard}>
@@ -429,6 +432,15 @@ export default function Mcp() {
                 onClick={() => trackAction("read_sdk_docs", "connect")}
               >
                 samedaydesk.com/docs/x402-sdk/
+              </a>
+            </div>
+            <div>
+              <span>Buyer runtime integration (draft)</span>
+              <a
+                href="/x402/buyer-runtime"
+                onClick={() => trackAction("read_buyer_runtime_guide", "connect")}
+              >
+                samedaydesk.com/x402/buyer-runtime
               </a>
             </div>
           </div>

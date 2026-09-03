@@ -16,6 +16,7 @@ const Checkout = lazy(() => import("./pages/Checkout"));
 const AiReadiness = lazy(() => import("./pages/AiReadiness"));
 const Mcp = lazy(() => import("./pages/Mcp"));
 const SellerConformance = lazy(() => import("./pages/SellerConformance"));
+const BuyerRuntime = lazy(() => import("./pages/BuyerRuntime"));
 
 export default function App() {
   useEffect(() => {
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/tools/ai-readiness" element={<AiReadiness />} />
           <Route path="/x402" element={<Mcp />} />
           <Route path="/x402/seller-conformance" element={<SellerConformance />} />
+          <Route path="/x402/buyer-runtime" element={<BuyerRuntime />} />
           <Route path="/for-agents" element={<Mcp />} />
           <Route path="/login" element={<Auth mode="login" />} />
           <Route path="/signup" element={<Auth mode="signup" />} />

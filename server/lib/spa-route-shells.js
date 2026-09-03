@@ -15,7 +15,7 @@ const PUBLIC_SHELLS = [
     path: "/for-agents",
     title: "Agent payment infrastructure | SameDayDesk",
     description: "Connect agents to SameDayDesk machine services through documented x402, MPP, MCP, and HTTP interfaces.",
-    crawlerHtml: "<h1>SameDayDesk interfaces for agents</h1><p>Discover the live machine catalog, inspect payment requirements, and call documented services through the agent gateway.</p>",
+    crawlerHtml: "<h1>SameDayDesk interfaces for agents</h1><p>Discover the live machine catalog, inspect payment requirements, and call documented services through the agent gateway.</p><p><a href=\"https://samedaydesk.com/x402/buyer-runtime\">Buyer runtime integration (draft)</a></p>",
   },
   {
     path: "/terms",
@@ -69,6 +69,7 @@ export const SPA_ROUTE_SHELLS = Object.freeze([
       <ul>
         <li><a href="https://agents.samedaydesk.com/.well-known/x402">x402 resource manifest</a></li>
         <li><a href="https://samedaydesk.com/x402/seller-conformance">Seller conformance proof</a></li>
+        <li><a href="https://samedaydesk.com/x402/buyer-runtime">Buyer runtime integration (draft)</a></li>
         <li><a href="https://samedaydesk.com/docs/x402-sdk/">x402 SDK integration reference</a></li>
       </ul>
     `,
@@ -93,6 +94,29 @@ export const SPA_ROUTE_SHELLS = Object.freeze([
       </p>
       <ul>
         <li><a href="https://samedaydesk.com/research/agent402-seller-integrity-validation-2026-08-29.json">Agent402 validation receipt</a></li>
+        <li><a href="https://samedaydesk.com/x402">Agent payment infrastructure</a></li>
+      </ul>
+    `,
+  }),
+  Object.freeze({
+    path: "/x402/buyer-runtime",
+    title: "Buyer runtime integration (draft) | SameDayDesk",
+    description:
+      "Draft guide for wiring a buyer runtime to SameDayDesk paid routes: live discovery entry points, response-contract fields a runtime can verify, unpaid replay fixtures, and existing seams in Agent402, the Coinbase x402 client, and the x402 Bazaar row filter.",
+    canonical: `${SITE_ORIGIN}/x402/buyer-runtime`,
+    crawlerHtml: `
+      <h1>Wire a buyer runtime to SameDayDesk paid routes</h1>
+      <p>
+        Draft copy. Discover live SameDayDesk paid routes from the origin x402 manifest and
+        OpenAPI document, plus the Agent402 seller index and AgentCash OpenAPI discovery CLI.
+        Verify unpaid 402 contract fields on GET /extract. Load the unpaid replay fixtures.
+        Attach at existing Agent402, Coinbase x402 client, and x402 Bazaar filter seams.
+        Payment terms stay on the live manifest.
+      </p>
+      <ul>
+        <li><a href="https://agents.samedaydesk.com/.well-known/x402">x402 resource manifest</a></li>
+        <li><a href="https://agents.samedaydesk.com/openapi.json">OpenAPI document</a></li>
+        <li><a href="https://github.com/epistemedeus/samedaydesk/pull/23">Unpaid replay fixtures</a></li>
         <li><a href="https://samedaydesk.com/x402">Agent payment infrastructure</a></li>
       </ul>
     `,
