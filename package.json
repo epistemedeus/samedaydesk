@@ -18,6 +18,7 @@
     "test:pulse": "node --test server/scripts/test-pulse-events.js server/scripts/test-pulse-durable-store.js server/scripts/test-pulse-postgres-real.js",
     "test:taskmarket": "node --test server/scripts/test-taskmarket-integration.js",
     "test:mcp": "node --test server/scripts/test-mcp-protocol-negotiation.js",
+    "test:resource-aliases": "node --test server/scripts/test-resource-aliases.js",
     "test:spa-fallback": "node --test server/scripts/test-spa-fallback.js",
     "test:spa-route-shells": "node --test server/scripts/test-spa-route-shells.js",
     "test:portfolio-discovery": "node --test tools/portfolio-discovery/test.mjs tools/portfolio-discovery/search-readiness.test.mjs",

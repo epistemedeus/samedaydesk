@@ -32,6 +32,7 @@ function requestPathname(pathname) {
 export function isMachineResourcePath(pathname) {
   const pathOnly = requestPathname(pathname);
   if (!pathOnly) return true;
+  if (pathOnly === "/listings" || pathOnly.startsWith("/listings/")) return true;
   if (pathOnly === "/.well-known" || pathOnly.startsWith("/.well-known/")) return true;
   const segments = pathOnly.split("/").filter(Boolean);
   const last = segments[segments.length - 1] || "";

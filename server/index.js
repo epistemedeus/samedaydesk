@@ -18,6 +18,7 @@ import resendWebhookRouter from "./routes/resend-webhook.js";
 import pulseRouter from "./routes/pulse.js";
 import mcpRouter from "./routes/mcp.js";
 import { pulseMiddleware } from "./lib/pulse.js";
+import { mountListingCatalog, mountResourceAliases } from "./lib/resource-aliases.js";
 import { mountProductionClient } from "./lib/spa-client.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -92,6 +93,15 @@ app.use("/scan", scanRouter);
 
 // Remote (Streamable HTTP) MCP server at /mcp (before the SPA fallback).
 app.use("/mcp", mcpRouter);
+
+// Per-surface listing aliases reuse the same handlers as the canonical
+// resources. Mounted before the SPA fallback and before the /listings 404.
+mountResourceAliases(app, {
+  mcp: mcpRouter,
+  scan: scanRouter,
+  tools: toolsRouter,
+});
+mountListingCatalog(app);
 
 // Domain-ownership proof for the MCP registry (lets us list the remote MCP
 // server under the com.samedaydesk namespace).

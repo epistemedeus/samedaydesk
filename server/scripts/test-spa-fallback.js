@@ -49,6 +49,9 @@ test("SPA history authority is the explicit App.tsx list, not any extensionless 
   assert.equal(isMachineResourcePath("/llms.txt"), true);
   assert.equal(isMachineResourcePath("/sitemap.xml"), true);
   assert.equal(isMachineResourcePath("/docs/x402-sdk/llms.txt"), true);
+  assert.equal(isMachineResourcePath("/listings"), true);
+  assert.equal(isMachineResourcePath("/listings/bazaar/mcp"), true);
+  assert.equal(isSpaHistoryPath("/listings/bazaar/mcp"), false);
   assert.equal(isSpaHistoryPath("/.well-known/x402"), false);
   assert.equal(isSpaHistoryPath("/agents.json"), false);
 });
