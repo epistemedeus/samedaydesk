@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.catalog.v1",
+  "recordSchemaVersion": "samedaydesk.evidence-record.v1",
+  "completeness": ["complete", "sampled", "truncated", "unknown"],
+  "authorityClasses": [
+    "seller_observed",
+    "provider_returned",
+    "independently_reconciled",
+    "provider_authoritative"
+  ],
+  "acquisitionLabels": [
+    "unclassified",
+    "organic",
+    "referral",
+    "direct",
+    "operator_validation",
+    "incentivized_trial"
+  ],
+  "buyerClasses": ["independent", "owner", "sponsored", "unknown"],
+  "requiredProhibitedInferences": [
+    "cross_source_join_without_exact_key",
+    "sum_across_authority_classes",
+    "organic_label_for_controlled_or_incentivized_traffic",
+    "collapsed_provider_scope"
+  ],
+  "prohibitedInferences": [
+    "cross_source_join_without_exact_key",
+    "sum_across_authority_classes",
+    "organic_label_for_controlled_or_incentivized_traffic",
+    "collapsed_provider_scope",
+    "analytics_count_is_independent_demand",
+    "search_impression_is_visit",
+    "indexnow_receipt_is_indexing",
+    "catalog_presence_is_demand",
+    "provider_response_is_chain_settlement",
+    "chain_transfer_is_route_attribution",
+    "stripe_event_is_onchain_settlement",
+    "local_observation_is_provider_billing"
+  ],
+  "controlledSourceKinds": ["operator_validation", "incentivized_trial"],
+  "sources": {
+    "cloudflare_analytics": {
+      "providerId": "cloudflare",
+      "defaultAuthorityClass": "provider_returned",
+      "defaultCompleteness": "sampled",
+      "extraProhibitedInferences": ["analytics_count_is_independent_demand"]
+    },
+    "hosting_analytics": {
+      "providerId": "hostinger",
+      "defaultAuthorityClass": "provider_returned",
+      "defaultCompleteness": "unknown",
+      "extraProhibitedInferences": ["analytics_count_is_independent_demand"]
+    },
+    "indexnow_receipt": {
+      "providerId": "indexnow",
+      "defaultAuthorityClass": "provider_returned",
+      "defaultCompleteness": "complete",
+      "extraProhibitedInferences": ["indexnow_receipt_is_indexing"]
+    },
+    "search_console": {
+      "providerId": "google_search_console",
+      "defaultAuthorityClass": "provider_returned",
+      "defaultCompleteness": "truncated",
+      "extraProhibitedInferences": ["search_impression_is_visit"]
+    },
+    "bazaar_listing": {
+      "providerId": "coinbase_bazaar",
+      "defaultAuthorityClass": "provider_returned",
+      "defaultCompleteness": "sampled",
+      "extraProhibitedInferences": ["catalog_presence_is_demand"]
+    },
+    "registry_listing": {
+      "providerId": "a2a_registry",
+      "defaultAuthorityClass": "provider_returned",
+      "defaultCompleteness": "complete",
+      "extraProhibitedInferences": ["catalog_presence_is_demand"]
+    },
+    "x402_facilitator_settlement": {
+      "providerId": "coinbase_cdp_facilitator",
+      "defaultAuthorityClass": "provider_returned",
+      "defaultCompleteness": "truncated",
+      "extraProhibitedInferences": [
+        "provider_response_is_chain_settlement",
+        "chain_transfer_is_route_attribution"
+      ]
+    },
+    "stripe_event": {
+      "providerId": "stripe",
+      "defaultAuthorityClass": "provider_authoritative",
+      "defaultCompleteness": "truncated",
+      "extraProhibitedInferences": ["stripe_event_is_onchain_settlement"]
+    },
+    "operator_validation": {
+      "providerId": "operator_controlled",
+      "defaultAuthorityClass": "seller_observed",
+      "defaultCompleteness": "complete",
+      "extraProhibitedInferences": ["local_observation_is_provider_billing"]
+    },
+    "incentivized_trial": {
+      "providerId": "incentivized_trial_program",
+      "defaultAuthorityClass": "seller_observed",
+      "defaultCompleteness": "complete",
+      "extraProhibitedInferences": ["local_observation_is_provider_billing"]
+    },
+    "external_work_payout": {
+      "providerId": "gofrantic",
+      "defaultAuthorityClass": "independently_reconciled",
+      "defaultCompleteness": "complete",
+      "extraProhibitedInferences": ["chain_transfer_is_route_attribution"]
+    },
+    "buyer_attested_receipt": {
+      "providerId": "what_agents_buy",
+      "defaultAuthorityClass": "provider_returned",
+      "defaultCompleteness": "truncated",
+      "extraProhibitedInferences": ["provider_response_is_chain_settlement"]
+    },
+    "seller_ledger_line": {
+      "providerId": "seller_ledger",
+      "defaultAuthorityClass": "seller_observed",
+      "defaultCompleteness": "unknown",
+      "extraProhibitedInferences": ["local_observation_is_provider_billing"]
+    }
+  }
+}

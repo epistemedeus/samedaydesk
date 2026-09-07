@@ -1,0 +1,107 @@
+{
+  "gblin.digital": {
+    "status": 200,
+    "body": {
+      "partialResults": false,
+      "resources": [
+        {
+          "resource": "https://gblin.digital/api/x402/attestation",
+          "type": "http",
+          "x402Version": 2,
+          "description": "EIP-712-signed risk attestation",
+          "accepts": [
+            {
+              "scheme": "exact",
+              "network": "eip155:8453",
+              "amount": "3000",
+              "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+              "payTo": "0x0ebA5d314F4f5Dcb7A094953Fa9311a45172dd1B"
+            }
+          ],
+          "lastUpdated": "2026-08-30T16:48:56.745Z",
+          "quality": { "l30DaysTotalCalls": 9 },
+          "extensions": {
+            "bazaar": {
+              "info": {
+                "output": { "type": "json" }
+              },
+              "schema": {
+                "properties": {
+                  "output": {
+                    "required": ["type"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "api.loyalspark.online": {
+    "status": 200,
+    "body": {
+      "partialResults": true,
+      "resources": [
+        {
+          "resource": "https://api.loyalspark.online/x402-gateway/balance",
+          "type": "http",
+          "x402Version": 2,
+          "description": "LoyalSpark merchant balance",
+          "accepts": [{ "scheme": "exact", "amount": "1000" }]
+        }
+      ]
+    }
+  },
+  "api.loyalspark.online/x402-gateway": {
+    "status": 200,
+    "body": {
+      "partialResults": false,
+      "resources": [
+        {
+          "resource": "https://api.loyalspark.online/x402-gateway/balance",
+          "type": "http",
+          "x402Version": 2,
+          "description": "LoyalSpark merchant balance",
+          "accepts": [{ "scheme": "exact", "amount": "1000" }]
+        },
+        {
+          "resource": "https://api.loyalspark.online/x402-gateway/offers",
+          "type": "http",
+          "x402Version": 2,
+          "description": "LoyalSpark offers",
+          "accepts": [{ "scheme": "exact", "amount": "1000" }]
+        }
+      ]
+    }
+  },
+  "palmyr.ai": { "status": 200, "body": { "partialResults": false, "resources": [] } },
+  "official-fx-reference.vercel.app": { "status": 200, "body": { "partialResults": false, "resources": [] } },
+  "ArgonautWorks": { "status": 200, "body": { "partialResults": false, "resources": [] } },
+  "api.agentservices.to": { "status": 200, "body": { "partialResults": false, "resources": [] } },
+  "agentservices.to": { "status": 200, "body": { "partialResults": false, "resources": [] } },
+  "the-stall.intuitek.ai": { "status": 200, "body": { "partialResults": false, "resources": [] } },
+  "dartapi.ljaysk.com": { "status": 200, "body": { "partialResults": false, "resources": [] } },
+  "KR-DART": { "status": 200, "body": { "partialResults": false, "resources": [] } },
+  "402.com.tr": { "status": 200, "body": { "partialResults": false, "resources": [] } },
+  "402.com.tr/api/x402": { "status": 200, "body": { "partialResults": false, "resources": [] } },
+  "api.greyridgesignals.ai": { "status": 200, "body": { "partialResults": false, "resources": [] } },
+  "x402-data-api.sigrunner.workers.dev": { "status": 200, "body": { "partialResults": false, "resources": [] } },
+  "agenttoll.app": { "status": 200, "body": { "partialResults": false, "resources": [] } },
+  "agenttoll.dev": { "status": 200, "body": { "partialResults": false, "resources": [] } },
+  "agents.samedaydesk.com": {
+    "status": 200,
+    "body": {
+      "partialResults": false,
+      "resources": [
+        {
+          "resource": "https://agents.samedaydesk.com/extract",
+          "type": "http",
+          "x402Version": 2,
+          "description": "Extract a public page",
+          "accepts": [{ "scheme": "exact", "amount": "10000" }]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "observedAt": "2026-09-03T10:52:00Z",
+  "note": "OpenAPI-example and empty-body unpaid probes after the first replay. No payment headers.",
+  "results": [
+    {
+      "id": "GET /commerce/contract-qualified-search",
+      "input": "OpenAPI examples query+requiredPaths",
+      "status": 402,
+      "amount": "10000"
+    },
+    {
+      "id": "GET /distribution/agent-discoverability-audit",
+      "input": "OpenAPI examples origin+intent",
+      "status": 402,
+      "amount": "50000"
+    },
+    {
+      "id": "GET /gateway/commerce/payment-offer-preflight",
+      "input": "OpenAPI example url",
+      "status": 402,
+      "amount": "5000",
+      "terms_in": "payment-required header"
+    },
+    {
+      "id": "POST /work/opportunity-preflight",
+      "input": "{}",
+      "status": 402,
+      "amount": "50000"
+    },
+    {
+      "id": "POST /commerce/payment-offer-preflight",
+      "input": "{}",
+      "status": 402,
+      "amount": "5000"
+    },
+    {
+      "id": "POST /security/wallet-policy-conformance",
+      "input": "{}",
+      "status": 400,
+      "error": "observations must contain 1-16 standardized cases"
+    },
+    {
+      "id": "POST /security/stateful-wallet-policy-conformance",
+      "input": "{}",
+      "status": 400,
+      "error": "observations must contain 1-7 standardized stateful cases"
+    },
+    {
+      "id": "POST /security/wallet-policy-conformance",
+      "input": "schema-valid observations",
+      "status": 402
+    },
+    {
+      "id": "POST /security/stateful-wallet-policy-conformance",
+      "input": "schema-valid observations",
+      "status": 402
+    }
+  ]
+}

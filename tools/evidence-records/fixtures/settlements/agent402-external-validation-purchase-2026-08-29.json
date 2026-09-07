@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.v1",
+  "recordId": "agent402-external-validation-purchase-2026-08-29",
+  "sourceKind": "x402_facilitator_settlement",
+  "producer": {
+    "id": "coinbase_cdp_facilitator",
+    "providerId": "coinbase_cdp_facilitator",
+    "adapterId": "cdp_facilitator_settle_adapter",
+    "observedSurface": "x402 v2 Coinbase CDP settlement for GET /commerce/seller-integrity-audit"
+  },
+  "scope": {
+    "providerId": "coinbase_cdp_facilitator",
+    "population": "facilitator_returned_settlements",
+    "joinKeys": ["transaction_hash"]
+  },
+  "observationWindow": {
+    "start": "2026-08-29T20:31:18.000Z",
+    "end": "2026-08-29T20:31:19.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "truncated",
+  "authorityClass": "independently_reconciled",
+  "unknownWhenAbsent": [
+    "buyer_owned_output_enforcement",
+    "smoke_expect_value"
+  ],
+  "prohibitedInferences": [
+    "cross_source_join_without_exact_key",
+    "sum_across_authority_classes",
+    "organic_label_for_controlled_or_incentivized_traffic",
+    "collapsed_provider_scope",
+    "provider_response_is_chain_settlement",
+    "chain_transfer_is_route_attribution"
+  ],
+  "settlement": {
+    "operationId": "agent402-external-validation-purchase-2026-08-29",
+    "amountUsdc": "0.010",
+    "buyerClass": "unknown",
+    "validDeliveryStatus": "seller_http_200_repair_required_no_buyer_owned_output_enforcement",
+    "transaction": "0x2916cfe2c5200fca2a21f8b854fe963ef70d4ed90d59c7444cef16dd21056ef7",
+    "facilitatorOrPayoutRef": "x402_v2_coinbase_cdp"
+  }
+}

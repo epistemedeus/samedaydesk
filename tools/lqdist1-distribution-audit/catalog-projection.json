@@ -1,0 +1,139 @@
+{
+  "origin": "https://agents.samedaydesk.com",
+  "openapiVersion": "1.23.40",
+  "note": "Generated from per-route-table.json. Twenty-two canonical paid products. GET+POST workflow variants share one product. The Circle Gateway path is an alternate, not a twenty-third dual-rail product.",
+  "products": [
+    {
+      "name": "extract",
+      "path": "/extract",
+      "operationId": "extractUrl",
+      "priceUsd": "0.005"
+    },
+    {
+      "name": "read",
+      "path": "/read",
+      "operationId": "readUrlAsMarkdown",
+      "priceUsd": "0.005"
+    },
+    {
+      "name": "scan",
+      "path": "/scan",
+      "operationId": "scanRepositoryRisk",
+      "priceUsd": "0.2"
+    },
+    {
+      "name": "schemaforge",
+      "path": "/schemaforge",
+      "operationId": "generateStructuredData",
+      "priceUsd": "0.25"
+    },
+    {
+      "name": "enrich",
+      "path": "/enrich",
+      "operationId": "enrichCompany",
+      "priceUsd": "0.05"
+    },
+    {
+      "name": "wallet_enrich",
+      "path": "/wallet-enrich",
+      "operationId": "enrichWallet",
+      "priceUsd": "0.05"
+    },
+    {
+      "name": "deep_audit",
+      "path": "/deep-audit",
+      "operationId": "auditAiSearchReadiness",
+      "priceUsd": "0.25"
+    },
+    {
+      "name": "morpho_position",
+      "path": "/defi/morpho-position",
+      "operationId": "inspectMorphoPosition",
+      "priceUsd": "0.02"
+    },
+    {
+      "name": "morpho_protection",
+      "path": "/defi/morpho-protection",
+      "operationId": "planMorphoProtection",
+      "priceUsd": "0.1"
+    },
+    {
+      "name": "morpho_market_underwrite",
+      "path": "/defi/morpho-market-underwrite",
+      "operationId": "underwriteMorphoMarket",
+      "priceUsd": "0.25"
+    },
+    {
+      "name": "morpho_preliquidation_replay",
+      "path": "/defi/morpho-preliquidation-replay",
+      "operationId": "replayMorphoPreLiquidation",
+      "priceUsd": "0.1"
+    },
+    {
+      "name": "opportunity_preflight",
+      "path": "/work/opportunity-preflight",
+      "operationId": "preflightAgentOpportunity",
+      "priceUsd": "0.05"
+    },
+    {
+      "name": "agent_discoverability_audit",
+      "path": "/distribution/agent-discoverability-audit",
+      "operationId": "auditAgentDiscoverability",
+      "priceUsd": "0.05"
+    },
+    {
+      "name": "payment_offer_preflight",
+      "path": "/commerce/payment-offer-preflight",
+      "operationId": "preflightPaymentOffer",
+      "priceUsd": "0.005"
+    },
+    {
+      "name": "settlement_proof",
+      "path": "/commerce/settlement-proof",
+      "operationId": "verifyBaseUsdcSettlement",
+      "priceUsd": "0.005"
+    },
+    {
+      "name": "transaction_receipt",
+      "path": "/chain/transaction-receipt",
+      "operationId": "getTransactionReceipt",
+      "priceUsd": "0.002"
+    },
+    {
+      "name": "solana_transaction_receipt",
+      "path": "/chain/solana-transaction-receipt",
+      "operationId": "getSolanaTransactionReceipt",
+      "priceUsd": "0.002"
+    },
+    {
+      "name": "wallet_policy_conformance",
+      "path": "/security/wallet-policy-conformance",
+      "operationId": "evaluateWalletPolicyConformance",
+      "priceUsd": "0.01"
+    },
+    {
+      "name": "stateful_wallet_policy_conformance",
+      "path": "/security/stateful-wallet-policy-conformance",
+      "operationId": "evaluateStatefulWalletPolicyConformance",
+      "priceUsd": "0.01"
+    },
+    {
+      "name": "seller_integrity_audit",
+      "path": "/commerce/seller-integrity-audit",
+      "operationId": "auditSellerIntegrity",
+      "priceUsd": "0.01"
+    },
+    {
+      "name": "contract_qualified_search",
+      "path": "/commerce/contract-qualified-search",
+      "operationId": "searchContractQualifiedServices",
+      "priceUsd": "0.01"
+    },
+    {
+      "name": "agent_surface_budget_audit",
+      "path": "/distribution/agent-surface-budget-audit",
+      "operationId": "auditAgentSurfaceBudget",
+      "priceUsd": "0.01"
+    }
+  ]
+}

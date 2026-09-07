@@ -1,0 +1,576 @@
+{
+  "schemaVersion": 3,
+  "schema": "samedaydesk.bazaar-observation.v3",
+  "observedAt": "2026-09-03T09:54:04.798Z",
+  "captureSource": "live",
+  "sources": {
+    "cdp-discovery": {
+      "endpoint": "https://api.cdp.coinbase.com/platform/v2/x402/discovery/search",
+      "sellerCount": 11,
+      "routeCount": 129,
+      "sellers": {
+        "402-com-tr": {
+          "id": "402-com-tr",
+          "name": "402.com.tr",
+          "hosts": [
+            "402.com.tr"
+          ],
+          "queries": [
+            "402.com.tr",
+            "402.com.tr/api/x402",
+            "402.com.tr/api"
+          ],
+          "partial": true,
+          "rowCount": 25,
+          "routes": {
+            "https://402.com.tr/api/x402/ai-summarize": {
+              "digest": "ba9fa3e8c6fc59e459b835b6d54ff14ebf64ed2da144bab52c188973a3079d3b"
+            },
+            "https://402.com.tr/api/x402/ai-translate": {
+              "digest": "bea3e4e9f323ff8cf40d05b2221587c439daff52f4285bb0ffcfd8aa4bcab91f"
+            },
+            "https://402.com.tr/api/x402/basename": {
+              "digest": "ba1c809885ea9ad2ba1559497cf6705ad625ed2c004d797f776bf49efb6eb77f"
+            },
+            "https://402.com.tr/api/x402/basename-profile": {
+              "digest": "f9d5f1901fd8b8751d61c4ee505cede87781d46eea3c9ed46c5b75a5053c7d9d"
+            },
+            "https://402.com.tr/api/x402/business-days": {
+              "digest": "2d34c91f2675f47b1de471f6a5e218cfc00b2c1397a9a16f49de4ed9ac99d945"
+            },
+            "https://402.com.tr/api/x402/buy-credits": {
+              "digest": "935399ab5f699f8a8eb62ac9a5d3f58b56cd1fcb7bcb7379c47d8503c225882f"
+            },
+            "https://402.com.tr/api/x402/company-lei": {
+              "digest": "f46cd6f59b17c7f36ee6f5429308b68e1008bd58f0e0f300fa9bba982b9dcc19"
+            },
+            "https://402.com.tr/api/x402/compliance-check": {
+              "digest": "08edcfd5fcc010cb362afd4d848a28329cbff6d7d6e8d3fc2552cba4c6e95624"
+            },
+            "https://402.com.tr/api/x402/contract-abi": {
+              "digest": "5dd780f98be4d13ce64c074114b51c42dfa113bf912b7e5eed0840e0140297af"
+            },
+            "https://402.com.tr/api/x402/counterparty-check": {
+              "digest": "36d6f8b913ff065ea3e9c729d38653384ba8235c1ddd9577eac7ccb34a78d8d0"
+            },
+            "https://402.com.tr/api/x402/domain-check": {
+              "digest": "b5c053e4e1077e7f11d40e94c42b60bbd698eb8dbc117291f45fa6ed5c884dbc"
+            },
+            "https://402.com.tr/api/x402/email-verify": {
+              "digest": "e0b21e74f59e391de9b3b36257e1704812600ffce20840f818685b79b72efeb9"
+            },
+            "https://402.com.tr/api/x402/file-publish": {
+              "digest": "1eb2b7670d3b651226ba9d9f0666328c047c896cac61d2874fd0c21b66815312"
+            },
+            "https://402.com.tr/api/x402/file-slot": {
+              "digest": "d9f1bf52884cb0a0dcf6cd555b12b05fb4a9ebc64ca98dac22dfa2ab7110a99b"
+            },
+            "https://402.com.tr/api/x402/inflation-adjust": {
+              "digest": "ab241450c8f61c10d4db2e6ffe9d38b71f530a0e94bf7ffadf8f9c8f306cdf1b"
+            },
+            "https://402.com.tr/api/x402/phone-check": {
+              "digest": "a66c110433c7b7e6374993f4da702531d42709b6a4f7c945307b01368c7f7c8b"
+            },
+            "https://402.com.tr/api/x402/sanctions": {
+              "digest": "f6d40819af5a2f0d6f4d8b02e93ace49e3bf9e03876b8a69b36b4e3523822123"
+            },
+            "https://402.com.tr/api/x402/sanctions-batch": {
+              "digest": "403880ff0a0846f2f12fa922d54d32d647163cb95b67b0d13d1d7181666f9c3e"
+            },
+            "https://402.com.tr/api/x402/secure-token": {
+              "digest": "07840b938a223b1e8b26670742b1dcaacb6765385e538d775dd7d096f3b2cc78"
+            },
+            "https://402.com.tr/api/x402/token-compare": {
+              "digest": "b8513f344de6cd470028cffb1ab45bb933e214b4752befaf561c142155baaa1a"
+            },
+            "https://402.com.tr/api/x402/token-momentum": {
+              "digest": "bb214b507ee54cab84b3a2c1cd84b2370ed162ed8ccb16634913623fd39de501"
+            },
+            "https://402.com.tr/api/x402/token-price": {
+              "digest": "033ece020ad1f14a5e0662aa9ae5651c947dd89e269f00e36025b6ebb093a4d8"
+            },
+            "https://402.com.tr/api/x402/tx-decode": {
+              "digest": "2adbc4bc1039aa16270066730fb9ea66c801a8f05baa8e196ed544c8835800d2"
+            },
+            "https://402.com.tr/api/x402/url-extract": {
+              "digest": "8cbddb53cbf1df5df5e0e2275dd8f9dfee6b01df3976095459753731d1c39dce"
+            },
+            "https://402.com.tr/api/x402/web-search": {
+              "digest": "7aa3bd45d3f8c0dfbf2b734a146fb7528dc5ea64bf7a66126f50989952ee10d4"
+            }
+          }
+        },
+        "agentservices": {
+          "id": "agentservices",
+          "name": "AgentServices",
+          "hosts": [
+            "api.agentservices.to",
+            "agentservices.to"
+          ],
+          "queries": [
+            "api.agentservices.to",
+            "agentservices.to"
+          ],
+          "partial": false,
+          "rowCount": 3,
+          "routes": {
+            "https://agentservices.to/v1/indicators/eth": {
+              "digest": "ba24c1546d2599b44108c909b4a6edc4dddd1d0b1907240cc1b176ea9ebab736"
+            },
+            "https://api.agentservices.to/v1/fx": {
+              "digest": "1314e65290cbbd9028c9d58a4a6cfdcd6ad38ca3904538eda3c650b06a03c93f"
+            },
+            "https://api.agentservices.to/v1/search": {
+              "digest": "f0514747dae1ac398b152d8d7e421c83aa049af5ad5304dc7148bcb7c4d80a82"
+            }
+          }
+        },
+        "agenttoll": {
+          "id": "agenttoll",
+          "name": "AgentToll",
+          "hosts": [
+            "agenttoll.app",
+            "agenttoll.dev"
+          ],
+          "queries": [
+            "agenttoll.app",
+            "agenttoll.dev"
+          ],
+          "partial": false,
+          "rowCount": 14,
+          "routes": {
+            "https://agenttoll.app/api/base/address/:address": {
+              "digest": "bf8b3b946bd0f2caba407ca926b5a55911bd9980ce16581f3fa95acfeefeacde"
+            },
+            "https://agenttoll.app/api/base/name/:address": {
+              "digest": "c3fc71748b6ce3edb79c59f49bc22d714c0f55ef6bd0002a33734f6393f88683"
+            },
+            "https://agenttoll.app/api/base/name/:nameOrAddress": {
+              "digest": "b38590497ca268843d1761c69eedcf95eafeb2ac18a7b4b181f3977377a7d202"
+            },
+            "https://agenttoll.app/api/base/name/agenttoll": {
+              "digest": "ff33e3c05354f8b499ab5c7a07050093d59e16edac9ffecbee4e1e0c8bb45d37"
+            },
+            "https://agenttoll.app/api/base/name/jesse.base.eth": {
+              "digest": "f8dfadf5ca7579d47a90c1cf95e617ee71cc55085a04675ed6290e32d8f365af"
+            },
+            "https://agenttoll.app/api/base/radar": {
+              "digest": "993db5e05564a21a7364ad10a1db5faeca86ecbb5364effd0985ccba15fd1ad4"
+            },
+            "https://agenttoll.app/api/base/scout": {
+              "digest": "f976cf8952e2ccb49a13d6bb75b4fd1dd93da409e1682361d081ed71009b9884"
+            },
+            "https://agenttoll.app/api/base/token/:address": {
+              "digest": "9a14cb33f9c7f7d405939536f8a97d019a77eb3a7caea4ddbc5956eb6308e133"
+            },
+            "https://agenttoll.app/api/brief": {
+              "digest": "3b8ac5a00426b4e75e95090de8ff57385edfce9cfa1b773152625dec65e4db58"
+            },
+            "https://agenttoll.app/api/gas": {
+              "digest": "394ab7202518df385290f7b5237c9e351b4379a8d2adb8abc00fb218148eaec4"
+            },
+            "https://agenttoll.app/api/price/:symbol": {
+              "digest": "11744c5a5c5e65a7c07fc6a957a633e5c4f7f69f663e9508689e9f10d47de3b2"
+            },
+            "https://agenttoll.app/api/trending": {
+              "digest": "08549e88a2df4075c2e631f3bd0d22505458751dc5430ac05af2262e2e46c52d"
+            },
+            "https://agenttoll.app/api/watch/address/:address": {
+              "digest": "85ed1155f07f29bf2e4a907506576350848622eb8049f971d0206b9ae7864cc9"
+            },
+            "https://agenttoll.app/api/watch/radar": {
+              "digest": "777ae4bbc749f320dadfb6b2965da121ed51e7af7f1cc6bde46286db720c8669"
+            }
+          }
+        },
+        "argonautworks": {
+          "id": "argonautworks",
+          "name": "ArgonautWorks",
+          "hosts": [
+            "official-fx-reference.vercel.app"
+          ],
+          "queries": [
+            "official-fx-reference.vercel.app",
+            "ArgonautWorks"
+          ],
+          "partial": false,
+          "rowCount": 0,
+          "routes": {}
+        },
+        "gblin": {
+          "id": "gblin",
+          "name": "GBLIN",
+          "hosts": [
+            "gblin.digital"
+          ],
+          "queries": [
+            "gblin.digital"
+          ],
+          "partial": false,
+          "rowCount": 9,
+          "routes": {
+            "https://gblin.digital/api/x402/attestation": {
+              "digest": "cbf01ae096635597c62e7f74326537ad589bbdcf248e9d64e77969b294071275"
+            },
+            "https://gblin.digital/api/x402/catalog": {
+              "digest": "a0199b97147b332d11faa0b609caaab03fd4eba4df42418b5adc8425792e9d17"
+            },
+            "https://gblin.digital/api/x402/governance": {
+              "digest": "edb8c84a95138144982be907386e9fd59cab55a1064526c0e216e25aad4e5f4d"
+            },
+            "https://gblin.digital/api/x402/health": {
+              "digest": "8dee42798627c8abd00775e785228692ec3667078104d26d1a21961814f6f516"
+            },
+            "https://gblin.digital/api/x402/invest": {
+              "digest": "75734ce5b18fb402b8c17877ffbfb4422c2eaae8fa3ede2277dd9f48de86164e"
+            },
+            "https://gblin.digital/api/x402/jit": {
+              "digest": "d2268cb476e7b4f5aab750d90945c24bf6eb0a2932edb2b45dc7fcfe8ee568a6"
+            },
+            "https://gblin.digital/api/x402/quote": {
+              "digest": "9eae31b697b52bf6805fc3d2d4724647d95f327528cf01c8aabb60509d3a9bfb"
+            },
+            "https://gblin.digital/api/x402/seal": {
+              "digest": "3a3258be5bf11c1ac836046438c0588a7c0d705cfde584a6c3be03f7b0871bf7"
+            },
+            "https://gblin.digital/api/x402/treasury-state": {
+              "digest": "6cfae0aaa9d7287fcfc6066d39d452b5ffd9a2544dfe6cf89d88d5b5a3b6f462"
+            }
+          }
+        },
+        "grey-ridge": {
+          "id": "grey-ridge",
+          "name": "Grey Ridge",
+          "hosts": [
+            "api.greyridgesignals.ai",
+            "x402-data-api.sigrunner.workers.dev"
+          ],
+          "queries": [
+            "api.greyridgesignals.ai",
+            "x402-data-api.sigrunner.workers.dev"
+          ],
+          "partial": false,
+          "rowCount": 21,
+          "routes": {
+            "https://api.greyridgesignals.ai/chain/balance": {
+              "digest": "60dca3d65e9170698c066357ac7bcdd468f33521aa8f61d62a3802fabd4dd4e4"
+            },
+            "https://api.greyridgesignals.ai/chain/block-number": {
+              "digest": "83381444cbcdc568c02c582cd27526a5ea3c6f4e76335a2e3e36e69066f77edd"
+            },
+            "https://api.greyridgesignals.ai/chain/code": {
+              "digest": "8261bbf0bb421549123a8631cdabeb58ce6c8f9f1c49adbf169ae132160c97f9"
+            },
+            "https://api.greyridgesignals.ai/chain/gas-price": {
+              "digest": "4bc4976bf763928a5f7ac553ec8e71ff04b0fc189ec4dadf6a552d6c5edf58ee"
+            },
+            "https://api.greyridgesignals.ai/chain/receipt": {
+              "digest": "38837ed63211b8a735a9e778f1301590b596a01ff776a82a3764b8036dfd1317"
+            },
+            "https://api.greyridgesignals.ai/chain/token-balance": {
+              "digest": "c025b46f100ab2fd96259a1225e6a360c4aebe5592037667ddae1d1567ea553e"
+            },
+            "https://api.greyridgesignals.ai/chain/token-security": {
+              "digest": "11382e416f3653e0f6e7874bbf93923f5f488e243d5016855152f13c6ab8c970"
+            },
+            "https://api.greyridgesignals.ai/chain/tx": {
+              "digest": "17a765388f62bed9f1f85bcd2916b196f15896352decf40ddac4a48ca15c0777"
+            },
+            "https://api.greyridgesignals.ai/chain/wallet": {
+              "digest": "f8854c301b03bb06afcca5ece5553e8165d2f3cf6122bbb890cf1f87fb09d926"
+            },
+            "https://api.greyridgesignals.ai/crypto/prices": {
+              "digest": "1ff0b9d3448116d5253105d0c7ea83110c13f3c0fe659703fec1a525a960064e"
+            },
+            "https://api.greyridgesignals.ai/defi/yields": {
+              "digest": "a6db973dda424799160423d7bba51dd72cfa9cfda24dd597d6292985cad84793"
+            },
+            "https://api.greyridgesignals.ai/pm/markets": {
+              "digest": "33b1fab75d34eac3bdc54e419950b3efd6695a4e0f8c90edb748fcf2007413c4"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/chain/balance": {
+              "digest": "60dca3d65e9170698c066357ac7bcdd468f33521aa8f61d62a3802fabd4dd4e4"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/chain/block-number": {
+              "digest": "83381444cbcdc568c02c582cd27526a5ea3c6f4e76335a2e3e36e69066f77edd"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/chain/code": {
+              "digest": "8261bbf0bb421549123a8631cdabeb58ce6c8f9f1c49adbf169ae132160c97f9"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/chain/receipt": {
+              "digest": "38837ed63211b8a735a9e778f1301590b596a01ff776a82a3764b8036dfd1317"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/chain/token-balance": {
+              "digest": "c025b46f100ab2fd96259a1225e6a360c4aebe5592037667ddae1d1567ea553e"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/chain/token-security": {
+              "digest": "11382e416f3653e0f6e7874bbf93923f5f488e243d5016855152f13c6ab8c970"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/chain/tx": {
+              "digest": "17a765388f62bed9f1f85bcd2916b196f15896352decf40ddac4a48ca15c0777"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/chain/wallet": {
+              "digest": "f8854c301b03bb06afcca5ece5553e8165d2f3cf6122bbb890cf1f87fb09d926"
+            },
+            "https://x402-data-api.sigrunner.workers.dev/crypto/prices": {
+              "digest": "7d8265c77cff0e25de6677e2faaca3851100f08fbab69ccb4d18ac81d46ac27d"
+            }
+          }
+        },
+        "kr-dart": {
+          "id": "kr-dart",
+          "name": "KR-DART",
+          "hosts": [
+            "dartapi.ljaysk.com"
+          ],
+          "queries": [
+            "dartapi.ljaysk.com",
+            "KR-DART"
+          ],
+          "partial": false,
+          "rowCount": 3,
+          "routes": {
+            "https://dartapi.ljaysk.com/v1/awards": {
+              "digest": "73882d3f6c2a92bb747a4f2e8ba8ab086d02e2fdfc31d3d5271eab1ee5ba08ac"
+            },
+            "https://dartapi.ljaysk.com/v1/bids": {
+              "digest": "598371e523eb68da48796717cf339df382fab6cb6eab3e8dcbc3e366039ddca2"
+            },
+            "https://dartapi.ljaysk.com/v1/events": {
+              "digest": "538103453ade4431b6af42a310a3a7118257ce2cf2cd0e4f7d8b13759a6e8bea"
+            }
+          }
+        },
+        "loyalspark": {
+          "id": "loyalspark",
+          "name": "LoyalSpark",
+          "hosts": [
+            "api.loyalspark.online"
+          ],
+          "queries": [
+            "api.loyalspark.online",
+            "api.loyalspark.online/x402-gateway",
+            "api.loyalspark.online/x402-gateway/balance",
+            "api.loyalspark.online/x402-gateway/recipient-api",
+            "api.loyalspark.online/x402-gateway/analytics",
+            "api.loyalspark.online/x402-gateway/offers",
+            "api.loyalspark.online/x402-gateway/customers",
+            "api.loyalspark.online/x402-gateway/rewards",
+            "api.loyalspark.online/x402-gateway/earn",
+            "api.loyalspark.online/x402-gateway/programs",
+            "api.loyalspark.online/x402-gateway/vouchers",
+            "api.loyalspark.online/x402-gateway/transfer"
+          ],
+          "partial": true,
+          "rowCount": 26,
+          "routes": {
+            "https://api.loyalspark.online/x402-gateway/activate-program": {
+              "digest": "d148c36580629178c50499bd275b7c688bda8122872c634c3fb25d251131edf2"
+            },
+            "https://api.loyalspark.online/x402-gateway/analytics": {
+              "digest": "3ec65c9e2cd63ae00ec236ce6cc779570c8ecd435e2759e2b3d3467f7ace5cd9"
+            },
+            "https://api.loyalspark.online/x402-gateway/balance": {
+              "digest": "a405134240ba4de2d25572b6a5e5e3c9115a3c58482920fa5c2156c19f60458e"
+            },
+            "https://api.loyalspark.online/x402-gateway/customers": {
+              "digest": "881b11b0a8d0c1e55ad5725f1eca38d5a5f4f1228236ea432fdbc6c37df497a7"
+            },
+            "https://api.loyalspark.online/x402-gateway/earn": {
+              "digest": "dbb52eda7073c3177157a578e17577c3724e4c49ce128935b0a48ebfd0cbdb87"
+            },
+            "https://api.loyalspark.online/x402-gateway/merchant-profile": {
+              "digest": "37e33a8f7b13b7f35cbb07c3c0c4a2c4082776d067b81f1643f0eab872febffc"
+            },
+            "https://api.loyalspark.online/x402-gateway/mint": {
+              "digest": "d4a27215946fcfb2b575e863f5db90b8cb031e4123f0f7d44c82057153ea8f6f"
+            },
+            "https://api.loyalspark.online/x402-gateway/offers": {
+              "digest": "818a1af47c17f33be85e489fd7526e01438166c17c4a04984f2b4e2810578c31"
+            },
+            "https://api.loyalspark.online/x402-gateway/program-status": {
+              "digest": "1c44789104faf29ac32a2d4f8fc7ed586d7e66ceb541b208c18fa312da3500e2"
+            },
+            "https://api.loyalspark.online/x402-gateway/programs": {
+              "digest": "1b6ceb95de961758dc1a104dedd69c2bd3a02dd63dac71e0c36cd399cb4ea34d"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/accept-offer": {
+              "digest": "8917156ef699103167cbe6f78897b861aeafd4b7d03cabc307cea6ac6febf357"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/balance": {
+              "digest": "aefa5bfcec235dc646aa998824c3021a9afe545e90eacaf86e4c5ee9194db470"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/balances": {
+              "digest": "07c097aa6f90be138d853e21de33a5434267c64c8e713483871201a9c9097f7b"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/cancel-offer": {
+              "digest": "91c70dc6ecd208c01933a15eca8e73525238299460f0af4b64d8bebdaf4b397a"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/offers": {
+              "digest": "bf1d3fe76c788dbb777bb6929d20bb348475c06c51843b61e8cd41181666f037"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/prepare-transfer": {
+              "digest": "a2a872efe84cafe296fbc218aa8efe5ce103a54184a41efd6297b6390eb7c61f"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/redeem-reward": {
+              "digest": "0c23f4ae40739a48909e6cb9830886616129b5936ea6c8db32ed5f9d857c5b2b"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/rewards": {
+              "digest": "476ade4b22c22edea60919b67e00a6fa5bfc4c9d3d4c563b923d90261c8083d9"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/vouchers": {
+              "digest": "4eb84cbac330836743a97ab46b52b17a296ade92f40546937bec9df25c01af26"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/workflow/prepare-reward-redemption": {
+              "digest": "8fd2f4108814282685a0b77f5162c83f7cbd263ee47aeb23275498c769c942ae"
+            },
+            "https://api.loyalspark.online/x402-gateway/recipient-api/workflow/reward-status": {
+              "digest": "67e5b20ba297db750c6e7bf5ea952972fc70d7226801611c8360960d12121091"
+            },
+            "https://api.loyalspark.online/x402-gateway/register-program": {
+              "digest": "674fda3cf268750ccff61832ba9e7e526c3485a7ca6c6223553ba64ce7246625"
+            },
+            "https://api.loyalspark.online/x402-gateway/rewards": {
+              "digest": "dfc84089c988ab431454fd178f14f92fbb8b22e1f0ff8af2b1bc4af8e7d48ac3"
+            },
+            "https://api.loyalspark.online/x402-gateway/transfer": {
+              "digest": "05998144c57951c741e8fa8a15c4e19205c662fd743e65054c659ac43a3c83a9"
+            },
+            "https://api.loyalspark.online/x402-gateway/update-program-config": {
+              "digest": "6bed2ac86fd9e993a8d6db23549b14b529b17d968ee1574ca9a2dab003a37699"
+            },
+            "https://api.loyalspark.online/x402-gateway/vouchers": {
+              "digest": "33aef4887d40f84f6efb2896bbe046a1a8a23fb5469e11525a134d9e5a31baa7"
+            }
+          }
+        },
+        "palmyr": {
+          "id": "palmyr",
+          "name": "Palmyr",
+          "hosts": [
+            "palmyr.ai"
+          ],
+          "queries": [
+            "palmyr.ai"
+          ],
+          "partial": false,
+          "rowCount": 19,
+          "routes": {
+            "https://palmyr.ai/cards": {
+              "digest": "63175d7bbd6ef3679fb7e58b5a0c0cfddf479167ada1067200f6f9b4ed141fdb"
+            },
+            "https://palmyr.ai/cards/:id": {
+              "digest": "7c5ff45d91f7986be990f0325aef266fe803ea4546a8745c24f564ea98056c18"
+            },
+            "https://palmyr.ai/cards/:id/refresh": {
+              "digest": "ee870705041115a6770e06feb558b91775ea32cac37be1b896bdcfaf3d1dd67f"
+            },
+            "https://palmyr.ai/cards/buy": {
+              "digest": "2ac9878e3cfc6f6c6a1562366cd9f5f8ef042ff93df774332e2b26c4ecd49b99"
+            },
+            "https://palmyr.ai/email/inboxes": {
+              "digest": "8f3f4a655ec67388c567de7b0b4ce0576820266e4c6a661864d45156cff77454"
+            },
+            "https://palmyr.ai/email/inboxes/:id/send": {
+              "digest": "3171ed5fd7eb3ccfbc0d0208df41b7dbc2446b7a4f5b40d793cf35d1b636c59d"
+            },
+            "https://palmyr.ai/email/temp": {
+              "digest": "e503afb37c0ed4a64aefea810532d7e3f1bb6328bc5436dfc75de777225392ad"
+            },
+            "https://palmyr.ai/phone/numbers": {
+              "digest": "f1d46408a542d7df1f5b37f02a387e36a9e8304d732f7acf9ec3864387499dff"
+            },
+            "https://palmyr.ai/phone/numbers/:id/call": {
+              "digest": "7619862be36359b3eb1a187ccbf6bfcd5c36ee8beba6a04f5a08aaf2bb6f260f"
+            },
+            "https://palmyr.ai/phone/numbers/:id/messages": {
+              "digest": "8e623d191d7517426577a07edcbdee15d8259095c7ba20c373188eaa3ee84b9f"
+            },
+            "https://palmyr.ai/phone/numbers/:id/wait-otp": {
+              "digest": "6f3695952f23c5d6ba5740e2b2d96b28c466bc9bfc42026bc21728c8cb4d400b"
+            },
+            "https://palmyr.ai/phone/temp": {
+              "digest": "a431f62550fcf663678553a3cf4828f72dc27fafc6cd02eb267c606483de51aa"
+            },
+            "https://palmyr.ai/social/twitter/buy": {
+              "digest": "f6fdc9a1b39e6502ee5b99ad7cf36094d1b95fdfd5517c4e1dd0eabd5f7bf99d"
+            },
+            "https://palmyr.ai/social/twitter/list-my-tweets": {
+              "digest": "8ec3bf0f7133212ef979d3c9e9b5556288617d25f2b1a3487ec6c2b080e9f174"
+            },
+            "https://palmyr.ai/social/twitter/pool/mine": {
+              "digest": "7c6de6b594dadd7a26f333febcff734890a8a6b8907a541d6e4b829d299ad0f9"
+            },
+            "https://palmyr.ai/social/twitter/profile": {
+              "digest": "b185ee7c8658be84b5bbec27b904583ffa6f2f85c565addd224d29180c10fe4e"
+            },
+            "https://palmyr.ai/social/twitter/registered/mine": {
+              "digest": "ebf5da9a84d0d65690e4696302116c2b26468d21882bfd0ccbb78ab88a013302"
+            },
+            "https://palmyr.ai/social/twitter/username": {
+              "digest": "8bb2d71fe49e5ab4e16174309291680ece7cbe9b8935ff75d44b3cdd82df8242"
+            },
+            "https://palmyr.ai/x/accounts/mine": {
+              "digest": "7219be448032759f97fa59b1538a89364cd5b57914a80be293d8b7ba0c8f9b73"
+            }
+          }
+        },
+        "samedaydesk": {
+          "id": "samedaydesk",
+          "name": "SameDayDesk",
+          "hosts": [
+            "agents.samedaydesk.com"
+          ],
+          "queries": [
+            "agents.samedaydesk.com"
+          ],
+          "partial": false,
+          "rowCount": 8,
+          "routes": {
+            "https://agents.samedaydesk.com/deep-audit": {
+              "digest": "1347a5d010209bb86fdc0b50c4ab5d7e8a81d74c32fab396c21e8ea17f29f442"
+            },
+            "https://agents.samedaydesk.com/defi/morpho-position": {
+              "digest": "6653ecd60fc9b4b7a721b52c01a17de337f6b8819533b6828d5ccf6f3d201e00"
+            },
+            "https://agents.samedaydesk.com/enrich": {
+              "digest": "f0f32b1a5378cfea8fbf79ede63667acbb6bceb227a69a58ffa3cc1f31d71623"
+            },
+            "https://agents.samedaydesk.com/extract": {
+              "digest": "04c1554d7a4471803f05781245df70cb0ae3dc73b9df78c555c7324c3b1ca60e"
+            },
+            "https://agents.samedaydesk.com/read": {
+              "digest": "f5f901894aefbda4336df5aee716084218fa3e6eda9da5558e572b7c77d999fd"
+            },
+            "https://agents.samedaydesk.com/scan": {
+              "digest": "de0452675f6b3954d0da0e805f196e183ad50f22332231a2a873d17792938db6"
+            },
+            "https://agents.samedaydesk.com/schemaforge": {
+              "digest": "e4a146c2290e1b1466cf78892be91966231cc664bc66a2a8ed50f2b63e4941c3"
+            },
+            "https://agents.samedaydesk.com/wallet-enrich": {
+              "digest": "d2aba405138b518f301827fe46a6a97af39b696020e0c6cda1b1378eefa46c57"
+            }
+          }
+        },
+        "the-stall": {
+          "id": "the-stall",
+          "name": "The Stall",
+          "hosts": [
+            "the-stall.intuitek.ai"
+          ],
+          "queries": [
+            "the-stall.intuitek.ai"
+          ],
+          "partial": false,
+          "rowCount": 1,
+          "routes": {
+            "https://the-stall.intuitek.ai/cap/earnings-calendar": {
+              "digest": "bd8cd32a601145cc29e2e2dabd670f5a86109786634575f77dc686ec1e9719f8"
+            }
+          }
+        }
+      }
+    }
+  }
+}

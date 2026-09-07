@@ -69,6 +69,7 @@ export const SPA_ROUTE_SHELLS = Object.freeze([
       <ul>
         <li><a href="https://agents.samedaydesk.com/.well-known/x402">x402 resource manifest</a></li>
         <li><a href="https://samedaydesk.com/x402/seller-conformance">Seller conformance proof</a></li>
+        <li><a href="https://samedaydesk.com/x402/verified">Inspected x402 route list</a></li>
         <li><a href="https://samedaydesk.com/docs/x402-sdk/">x402 SDK integration reference</a></li>
       </ul>
     `,
@@ -93,7 +94,33 @@ export const SPA_ROUTE_SHELLS = Object.freeze([
       </p>
       <ul>
         <li><a href="https://samedaydesk.com/research/agent402-seller-integrity-validation-2026-08-29.json">Agent402 validation receipt</a></li>
+        <li><a href="https://samedaydesk.com/x402/verified">Inspected x402 route list</a></li>
         <li><a href="https://samedaydesk.com/x402">Agent payment infrastructure</a></li>
+      </ul>
+    `,
+  }),
+  Object.freeze({
+    path: "/x402/verified",
+    title: "Inspected x402 routes | SameDayDesk",
+    description:
+      "Build-time inspection list of current SameDayDesk unpaid 402 evidence, including an OpenAPI operation observation and matching fresh CDP Bazaar evidence.",
+    canonical: `${SITE_ORIGIN}/x402/verified`,
+    crawlerHtml: `
+      <h1>Inspected routes, not a certificate</h1>
+      <p>
+        Build-time list of current SameDayDesk routes from the existing seller-conformance crawl.
+        Each row has a live unpaid 402 check and contract hash. It records whether the operation was
+        observed in OpenAPI and whether a matching CDP Bazaar row was observed within seven days
+        of the crawl. The badge is verified, drift, or unverified.
+      </p>
+      <p>
+        Owner QA is labeled internal. This page is inspection evidence. It is not a product,
+        guarantee, or runtime monitor.
+      </p>
+      <ul>
+        <li><a href="https://samedaydesk.com/x402/verified.json">Machine-readable feed</a></li>
+        <li><a href="https://samedaydesk.com/x402/verified.schema.json">Feed schema</a></li>
+        <li><a href="https://samedaydesk.com/x402/seller-conformance">Seller conformance proof</a></li>
       </ul>
     `,
   }),

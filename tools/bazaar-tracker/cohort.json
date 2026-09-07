@@ -1,0 +1,74 @@
+{
+  "endpoint": "https://api.cdp.coinbase.com/platform/v2/x402/discovery/search",
+  "userAgent": "samedaydesk-bazaar-tracker/1.0",
+  "timeoutMs": 20000,
+  "maxQueriesPerSeller": 12,
+  "sellers": [
+    {
+      "id": "gblin",
+      "name": "GBLIN",
+      "hosts": ["gblin.digital"],
+      "queries": ["gblin.digital"]
+    },
+    {
+      "id": "loyalspark",
+      "name": "LoyalSpark",
+      "hosts": ["api.loyalspark.online"],
+      "queries": ["api.loyalspark.online", "api.loyalspark.online/x402-gateway"]
+    },
+    {
+      "id": "palmyr",
+      "name": "Palmyr",
+      "hosts": ["palmyr.ai"],
+      "queries": ["palmyr.ai"]
+    },
+    {
+      "id": "argonautworks",
+      "name": "ArgonautWorks",
+      "hosts": ["official-fx-reference.vercel.app"],
+      "queries": ["official-fx-reference.vercel.app", "ArgonautWorks"]
+    },
+    {
+      "id": "agentservices",
+      "name": "AgentServices",
+      "hosts": ["api.agentservices.to", "agentservices.to"],
+      "queries": ["api.agentservices.to", "agentservices.to"]
+    },
+    {
+      "id": "the-stall",
+      "name": "The Stall",
+      "hosts": ["the-stall.intuitek.ai"],
+      "queries": ["the-stall.intuitek.ai"]
+    },
+    {
+      "id": "kr-dart",
+      "name": "KR-DART",
+      "hosts": ["dartapi.ljaysk.com"],
+      "queries": ["dartapi.ljaysk.com", "KR-DART"]
+    },
+    {
+      "id": "402-com-tr",
+      "name": "402.com.tr",
+      "hosts": ["402.com.tr"],
+      "queries": ["402.com.tr", "402.com.tr/api/x402"]
+    },
+    {
+      "id": "grey-ridge",
+      "name": "Grey Ridge",
+      "hosts": ["api.greyridgesignals.ai", "x402-data-api.sigrunner.workers.dev"],
+      "queries": ["api.greyridgesignals.ai", "x402-data-api.sigrunner.workers.dev"]
+    },
+    {
+      "id": "agenttoll",
+      "name": "AgentToll",
+      "hosts": ["agenttoll.app", "agenttoll.dev"],
+      "queries": ["agenttoll.app", "agenttoll.dev"]
+    },
+    {
+      "id": "samedaydesk",
+      "name": "SameDayDesk",
+      "hosts": ["agents.samedaydesk.com"],
+      "queries": ["agents.samedaydesk.com"]
+    }
+  ]
+}

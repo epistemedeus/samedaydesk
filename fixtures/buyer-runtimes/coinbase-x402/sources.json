@@ -1,0 +1,93 @@
+{
+  "runtime": "coinbase-x402",
+  "label": "Coinbase x402 client (@x402/fetch + @x402/core x402Client)",
+  "repository": "https://github.com/x402-foundation/x402",
+  "relatedRuntime": {
+    "label": "Coinbase AgentKit x402 action provider",
+    "repository": "https://github.com/coinbase/agentkit",
+    "head": "b2190a6fb8dd09866c742ad24fa1d3fab58516b5",
+    "headDate": "2026-09-02T15:18:40Z",
+    "note": "AgentKit discover_x402_services pages a facilitator /discovery/resources feed and make_http_request parses PAYMENT-REQUIRED the same way. This replay pins the library AgentKit wraps."
+  },
+  "retrieved": {
+    "date": "2026-09-03",
+    "head": "626df07ebc997473d8a35712a610067b0ea12a1f",
+    "headDate": "2026-09-03T07:02:07Z",
+    "headMessage": "fix(stellar): include feeBumpSigner in facilitator-safety checks (#3336)"
+  },
+  "maintenance": {
+    "window": "2026-08-04/2026-09-03",
+    "evidence": "x402-foundation/x402 commits through 2026-09-03 (626df07e). coinbase/agentkit commits on 2026-09-02 (b2190a6f) and 2026-08-19."
+  },
+  "packages": {
+    "@x402/fetch": "2.24.0"
+  },
+  "citations": [
+    {
+      "file": "typescript/packages/http/fetch/src/index.ts",
+      "lines": "40-54",
+      "sha": "626df07ebc997473d8a35712a610067b0ea12a1f",
+      "state": "construct",
+      "quote": "wrapFetchWithPayment clones the caller Request and fetch(request) first, with no payment header."
+    },
+    {
+      "file": "typescript/packages/http/fetch/src/index.ts",
+      "lines": "52-78",
+      "sha": "626df07ebc997473d8a35712a610067b0ea12a1f",
+      "state": "contract",
+      "quote": "If status !== 402 return. Else parse body JSON and httpClient.getPaymentRequiredResponse(getHeader, body)."
+    },
+    {
+      "file": "typescript/packages/core/src/http/x402HTTPClient.ts",
+      "lines": "117-138",
+      "sha": "626df07ebc997473d8a35712a610067b0ea12a1f",
+      "state": "contract",
+      "quote": "v2: decode PAYMENT-REQUIRED header. v1: body.x402Version === 1. Else throw Invalid payment required response."
+    },
+    {
+      "file": "typescript/packages/core/src/client/x402Client.ts",
+      "lines": "463-519",
+      "sha": "626df07ebc997473d8a35712a610067b0ea12a1f",
+      "state": "authorize-ready",
+      "quote": "createPaymentPayload selects accepts, requires a registered scheme+network client, then schemeNetworkClient.createPaymentPayload(x402Version, requirements, { extensions })."
+    },
+    {
+      "file": "typescript/packages/core/src/client/x402Client.ts",
+      "lines": "696-766",
+      "sha": "626df07ebc997473d8a35712a610067b0ea12a1f",
+      "state": "authorize-ready",
+      "quote": "selectPaymentRequirements filters by registered network/scheme, extra.paymentFlow, spend controls, then prefers authorization."
+    },
+    {
+      "file": "typescript/packages/core/src/client/x402Client.ts",
+      "lines": "787-790",
+      "sha": "626df07ebc997473d8a35712a610067b0ea12a1f",
+      "state": "authorize-ready",
+      "quote": "v1 amount field is maxAmountRequired; v2 amount field is requirement.amount."
+    },
+    {
+      "file": "typescript/agentkit/src/action-providers/x402/utils.ts",
+      "repository": "coinbase/agentkit",
+      "lines": "97-137",
+      "sha": "b2190a6fb8dd09866c742ad24fa1d3fab58516b5",
+      "state": "discover",
+      "quote": "fetchAllDiscoveryResources paginates discoveryUrl with limit/offset and reads data.resources ?? data.items."
+    },
+    {
+      "file": "typescript/agentkit/src/action-providers/x402/x402ActionProvider.ts",
+      "repository": "coinbase/agentkit",
+      "lines": "80-114",
+      "sha": "b2190a6fb8dd09866c742ad24fa1d3fab58516b5",
+      "state": "discover",
+      "quote": "discoverX402Services uses resolvedUrl + \"/discovery/resources\" (Coinbase Bazaar by default)."
+    },
+    {
+      "file": "typescript/agentkit/src/action-providers/x402/x402ActionProvider.ts",
+      "repository": "coinbase/agentkit",
+      "lines": "255-285",
+      "sha": "b2190a6fb8dd09866c742ad24fa1d3fab58516b5",
+      "state": "contract",
+      "quote": "make_http_request reads payment-required via JSON.parse(atob(...)).accepts, else body.accepts; keeps scheme, network, asset, maxAmountRequired, amount, payTo."
+    }
+  ]
+}

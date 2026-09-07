@@ -1,0 +1,23 @@
+{
+  "pullRequest": "https://github.com/epistemedeus/samedaydesk/pull/18",
+  "commit": "9878240b26de3d1967e24e108f1e59ca50ca1b09",
+  "branch": "gb07-per-surface-resource-aliases",
+  "files": {
+    "settlementReceipt": "settlement-receipt.js",
+    "resourceAliases": "resource-aliases.js",
+    "testResourceAliases": "test-resource-aliases.js"
+  },
+  "runtimeImportPathspecs": [
+    "server/index.js",
+    "server/routes",
+    "server/lib/fulfill.js",
+    "server/lib/notify.js",
+    "server/lib/mcp.js",
+    "server/routes/mcp.js",
+    "server/routes/scan.js",
+    "server/routes/tools.js",
+    "server/routes/checkout.js"
+  ],
+  "runtimeImportHits": [],
+  "testOnlyImportPath": "server/scripts/test-resource-aliases.js"
+}

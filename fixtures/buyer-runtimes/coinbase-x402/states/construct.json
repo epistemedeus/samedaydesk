@@ -1,0 +1,27 @@
+{
+  "state": "construct",
+  "provenance": "derived-from-source",
+  "source": {
+    "file": "typescript/packages/http/fetch/src/index.ts",
+    "lines": "40-54",
+    "function": "wrapFetchWithPayment"
+  },
+  "note": "The wrapper issues the caller's Request unchanged. Payment headers are added only after a 402 is parsed. AgentKit make_http_request does the same unpaid fetch first (x402ActionProvider.ts:223-228).",
+  "request": {
+    "method": "GET",
+    "url": "https://agents.samedaydesk.com/extract?url=https://example.com",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "forbiddenHeaders": [
+    "PAYMENT-SIGNATURE",
+    "X-PAYMENT",
+    "Authorization"
+  ],
+  "mustNotInclude": [
+    "privateKey",
+    "BUYER_PRIVATE_KEY",
+    "AGENT_KEY"
+  ]
+}

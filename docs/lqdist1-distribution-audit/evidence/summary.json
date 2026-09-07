@@ -1,0 +1,76 @@
+{
+  "observedAt": "2026-09-03T10:52:00Z",
+  "origin": "https://agents.samedaydesk.com",
+  "routeCount": 25,
+  "canonicalCount": 22,
+  "canonicalOperationCount": 24,
+  "alternateCount": 1,
+  "products": [
+    "agent_discoverability_audit",
+    "agent_surface_budget_audit",
+    "contract_qualified_search",
+    "deep_audit",
+    "enrich",
+    "extract",
+    "morpho_market_underwrite",
+    "morpho_position",
+    "morpho_preliquidation_replay",
+    "morpho_protection",
+    "opportunity_preflight",
+    "payment_offer_preflight",
+    "read",
+    "scan",
+    "schemaforge",
+    "seller_integrity_audit",
+    "settlement_proof",
+    "solana_transaction_receipt",
+    "stateful_wallet_policy_conformance",
+    "transaction_receipt",
+    "wallet_enrich",
+    "wallet_policy_conformance"
+  ],
+  "tallies": {
+    "what_agents_buy": {
+      "CLEAR": 25
+    },
+    "agent402": {
+      "CLEAR": 24,
+      "HOLD": 1
+    },
+    "agentcash": {
+      "CLEAR": 23,
+      "HOLD": 2
+    }
+  },
+  "holds": [
+    "GET /read",
+    "POST /security/wallet-policy-conformance",
+    "POST /security/stateful-wallet-policy-conformance"
+  ],
+  "aborts": [],
+  "absent": [],
+  "unpaidMismatch": [],
+  "coverage": {
+    "what_agents_buy": {
+      "independentPreflights": 3,
+      "preflightUrls": [
+        "https://agents.samedaydesk.com/extract",
+        "https://agents.samedaydesk.com/read",
+        "https://agents.samedaydesk.com/security/wallet-policy-conformance"
+      ],
+      "inheritedHostClear": 25,
+      "hostScoped": true,
+      "host": "agents.samedaydesk.com",
+      "hostVerdict": "CLEAR"
+    },
+    "agent402": {
+      "sellerSnapshotPaidTools": 25,
+      "priceConflictHolds": 1
+    },
+    "agentcash": {
+      "discoverPaidEndpoints": 25,
+      "checkNotRunOnAll25": true,
+      "followupProbes": 9
+    }
+  }
+}

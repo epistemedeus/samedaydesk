@@ -1,0 +1,454 @@
+{
+  "origin": "https://agents.samedaydesk.com",
+  "observedAt": "2026-09-03T10:52:00Z",
+  "openapiVersion": "1.23.40",
+  "surfaces": {
+    "what_agents_buy": "preflight-x402@0.2.0 host row from /api/preflight.json; 3 URLs preflighted, host CLEAR inherited by all 25",
+    "agent402": "live GET https://agent402.tools/api/index?seller=agents.samedaydesk.com; HOLD on priceConflict",
+    "agentcash": "npx @agentcash/discovery@1.7.5 discover on public /openapi.json; check() not run on all 25; follow-up probes cover 9 results"
+  },
+  "vocab": [
+    "CLEAR",
+    "HOLD",
+    "ABORT",
+    "absent",
+    "unverified"
+  ],
+  "canonicalProductCount": 22,
+  "paidOperationCount": 25,
+  "circleGatewayAlternate": "GET /gateway/commerce/payment-offer-preflight",
+  "coverage": {
+    "what_agents_buy": {
+      "independentPreflights": 3,
+      "preflightUrls": [
+        "https://agents.samedaydesk.com/extract",
+        "https://agents.samedaydesk.com/read",
+        "https://agents.samedaydesk.com/security/wallet-policy-conformance"
+      ],
+      "inheritedHostClear": 25,
+      "hostScoped": true,
+      "host": "agents.samedaydesk.com",
+      "hostVerdict": "CLEAR"
+    },
+    "agent402": {
+      "sellerSnapshotPaidTools": 25,
+      "priceConflictHolds": 1
+    },
+    "agentcash": {
+      "discoverPaidEndpoints": 25,
+      "checkNotRunOnAll25": true,
+      "followupProbes": 9
+    }
+  },
+  "rows": [
+    {
+      "id": "GET /extract",
+      "product": "extract",
+      "class": "canonical",
+      "operationId": "extractUrl",
+      "openapiPriceUsd": "0.005",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "GET /read",
+      "product": "read",
+      "class": "canonical",
+      "operationId": "readUrlAsMarkdown",
+      "openapiPriceUsd": "0.005",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "HOLD",
+      "agentcash": "CLEAR",
+      "notes": "Agent402 priceConflict: bazaar 0.05 vs origin/live 0.005. Live unpaid 402 amount matches OpenAPI when probed. Price not changed."
+    },
+    {
+      "id": "GET /scan",
+      "product": "scan",
+      "class": "canonical",
+      "operationId": "scanRepositoryRisk",
+      "openapiPriceUsd": "0.2",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "GET /schemaforge",
+      "product": "schemaforge",
+      "class": "canonical",
+      "operationId": "generateStructuredData",
+      "openapiPriceUsd": "0.25",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "GET /enrich",
+      "product": "enrich",
+      "class": "canonical",
+      "operationId": "enrichCompany",
+      "openapiPriceUsd": "0.05",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "GET /wallet-enrich",
+      "product": "wallet_enrich",
+      "class": "canonical",
+      "operationId": "enrichWallet",
+      "openapiPriceUsd": "0.05",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "GET /deep-audit",
+      "product": "deep_audit",
+      "class": "canonical",
+      "operationId": "auditAiSearchReadiness",
+      "openapiPriceUsd": "0.25",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "GET /defi/morpho-position",
+      "product": "morpho_position",
+      "class": "canonical",
+      "operationId": "inspectMorphoPosition",
+      "openapiPriceUsd": "0.02",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "GET /defi/morpho-protection",
+      "product": "morpho_protection",
+      "class": "canonical",
+      "operationId": "planMorphoProtection",
+      "openapiPriceUsd": "0.1",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "GET /defi/morpho-market-underwrite",
+      "product": "morpho_market_underwrite",
+      "class": "canonical",
+      "operationId": "underwriteMorphoMarket",
+      "openapiPriceUsd": "0.25",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "GET /defi/morpho-preliquidation-replay",
+      "product": "morpho_preliquidation_replay",
+      "class": "canonical",
+      "operationId": "replayMorphoPreLiquidation",
+      "openapiPriceUsd": "0.1",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "GET /work/opportunity-preflight",
+      "product": "opportunity_preflight",
+      "class": "canonical",
+      "operationId": "preflightAgentOpportunity",
+      "openapiPriceUsd": "0.05",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "POST /work/opportunity-preflight",
+      "product": "opportunity_preflight",
+      "class": "canonical",
+      "operationId": "preflightAgentOpportunityForWorkflow",
+      "openapiPriceUsd": "0.05",
+      "unpaid402": {
+        "status": 402,
+        "amount": "50000",
+        "termsMatchOpenApi": true,
+        "probeSource": "followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR",
+      "notes": "`{}` reaches 402."
+    },
+    {
+      "id": "GET /distribution/agent-discoverability-audit",
+      "product": "agent_discoverability_audit",
+      "class": "canonical",
+      "operationId": "auditAgentDiscoverability",
+      "openapiPriceUsd": "0.05",
+      "unpaid402": {
+        "status": 402,
+        "amount": "50000",
+        "termsMatchOpenApi": true,
+        "probeSource": "followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR",
+      "notes": "OpenAPI example intent (>=20 chars) is required to reach 402. Shorter probes return 400 without a challenge."
+    },
+    {
+      "id": "GET /commerce/payment-offer-preflight",
+      "product": "payment_offer_preflight",
+      "class": "canonical",
+      "operationId": "preflightPaymentOffer",
+      "openapiPriceUsd": "0.005",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "POST /commerce/payment-offer-preflight",
+      "product": "payment_offer_preflight",
+      "class": "canonical",
+      "operationId": "preflightPaymentOfferForWorkflow",
+      "openapiPriceUsd": "0.005",
+      "unpaid402": {
+        "status": 402,
+        "amount": "5000",
+        "termsMatchOpenApi": true,
+        "probeSource": "followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "GET /commerce/settlement-proof",
+      "product": "settlement_proof",
+      "class": "canonical",
+      "operationId": "verifyBaseUsdcSettlement",
+      "openapiPriceUsd": "0.005",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "GET /chain/transaction-receipt",
+      "product": "transaction_receipt",
+      "class": "canonical",
+      "operationId": "getTransactionReceipt",
+      "openapiPriceUsd": "0.002",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "GET /chain/solana-transaction-receipt",
+      "product": "solana_transaction_receipt",
+      "class": "canonical",
+      "operationId": "getSolanaTransactionReceipt",
+      "openapiPriceUsd": "0.002",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "POST /security/wallet-policy-conformance",
+      "product": "wallet_policy_conformance",
+      "class": "canonical",
+      "operationId": "evaluateWalletPolicyConformance",
+      "openapiPriceUsd": "0.01",
+      "unpaid402": {
+        "status": 402,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "followup-probes",
+        "emptyProbeStatus": 400
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "HOLD",
+      "notes": "OpenAPI discovery lists the op as paid. Empty {} probe returns 400 before 402 (observations must contain 1-16 standardized cases). Schema-valid body returns 402. Live gateway, not this repo."
+    },
+    {
+      "id": "POST /security/stateful-wallet-policy-conformance",
+      "product": "stateful_wallet_policy_conformance",
+      "class": "canonical",
+      "operationId": "evaluateStatefulWalletPolicyConformance",
+      "openapiPriceUsd": "0.01",
+      "unpaid402": {
+        "status": 402,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "followup-probes",
+        "emptyProbeStatus": 400
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "HOLD",
+      "notes": "OpenAPI discovery lists the op as paid. Empty {} probe returns 400 before 402 (observations must contain 1-7 standardized stateful cases). Schema-valid body returns 402. Live gateway, not this repo."
+    },
+    {
+      "id": "GET /commerce/seller-integrity-audit",
+      "product": "seller_integrity_audit",
+      "class": "canonical",
+      "operationId": "auditSellerIntegrity",
+      "openapiPriceUsd": "0.01",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "GET /commerce/contract-qualified-search",
+      "product": "contract_qualified_search",
+      "class": "canonical",
+      "operationId": "searchContractQualifiedServices",
+      "openapiPriceUsd": "0.01",
+      "unpaid402": {
+        "status": 402,
+        "amount": "10000",
+        "termsMatchOpenApi": true,
+        "probeSource": "followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR",
+      "notes": "OpenAPI example query (>=10 chars) is required to reach 402."
+    },
+    {
+      "id": "GET /distribution/agent-surface-budget-audit",
+      "product": "agent_surface_budget_audit",
+      "class": "canonical",
+      "operationId": "auditAgentSurfaceBudget",
+      "openapiPriceUsd": "0.01",
+      "unpaid402": {
+        "status": null,
+        "amount": null,
+        "termsMatchOpenApi": null,
+        "probeSource": "not-in-followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR"
+    },
+    {
+      "id": "GET /gateway/commerce/payment-offer-preflight",
+      "product": "payment_offer_preflight_circle_gateway",
+      "class": "circle_gateway_alternate",
+      "operationId": "preflightPaymentOfferWithCircleGateway",
+      "openapiPriceUsd": "0.005",
+      "unpaid402": {
+        "status": 402,
+        "amount": "5000",
+        "termsMatchOpenApi": true,
+        "probeSource": "followup-probes"
+      },
+      "what_agents_buy": "CLEAR",
+      "agent402": "CLEAR",
+      "agentcash": "CLEAR",
+      "notes": "x402-only Circle Gateway alternate, not a 23rd dual-rail product. Terms are in the payment-required header."
+    }
+  ]
+}

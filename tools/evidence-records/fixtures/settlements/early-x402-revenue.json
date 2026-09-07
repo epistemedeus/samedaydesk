@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.v1",
+  "recordId": "early-x402-revenue",
+  "sourceKind": "seller_ledger_line",
+  "producer": {
+    "id": "seller_return_ledger",
+    "providerId": "seller_ledger",
+    "adapterId": "seller_ledger_adapter",
+    "observedSurface": "Return-ledger aggregate Early x402 calls with transaction null"
+  },
+  "scope": {
+    "providerId": "seller_ledger",
+    "population": "return_ledger_lines",
+    "joinKeys": ["operation_id"]
+  },
+  "observationWindow": {
+    "start": "2026-06-24T00:00:00.000Z",
+    "end": "2026-06-25T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "unknown",
+  "authorityClass": "seller_observed",
+  "unknownWhenAbsent": [
+    "per_operation_settlement_hash",
+    "route",
+    "facilitator_reference",
+    "delivery_pointer"
+  ],
+  "prohibitedInferences": [
+    "cross_source_join_without_exact_key",
+    "sum_across_authority_classes",
+    "organic_label_for_controlled_or_incentivized_traffic",
+    "collapsed_provider_scope",
+    "local_observation_is_provider_billing"
+  ],
+  "settlement": {
+    "operationId": "early-x402-revenue",
+    "amountUsdc": "0.040",
+    "buyerClass": "unknown",
+    "validDeliveryStatus": "unknown"
+  }
+}

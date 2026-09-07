@@ -1,0 +1,83 @@
+{
+  "runtime": "agent402",
+  "label": "Agent402 router plus verified seller index",
+  "repository": "https://github.com/MikeyPetrillo/Agent402",
+  "retrieved": {
+    "date": "2026-09-03",
+    "head": "2d163e03cd524cdfb8fa8cb2a96906d3cfafe2b6",
+    "headDate": "2026-09-03T15:03:33Z",
+    "headMessage": "Merge pull request #1203 from MikeyPetrillo/claude/sweet-brown-i99jl3"
+  },
+  "maintenance": {
+    "window": "2026-08-04/2026-09-03",
+    "evidence": "Multiple commits on 2026-09-03 including 2d163e03. Repository pushed_at 2026-09-03T15:03:34Z."
+  },
+  "packages": {
+    "agent402-client": "0.8.3"
+  },
+  "citations": [
+    {
+      "file": "client/index.js",
+      "lines": "161-166",
+      "sha": "2d163e03cd524cdfb8fa8cb2a96906d3cfafe2b6",
+      "state": "discover",
+      "quote": "async find(task, { k = 5 } = {}) { const r = await this.f(`${this.baseUrl}/api/find?q=...`) — host catalog only."
+    },
+    {
+      "file": "client/index.js",
+      "lines": "168-196",
+      "sha": "2d163e03cd524cdfb8fa8cb2a96906d3cfafe2b6",
+      "state": "discover",
+      "quote": "async route(task, { k = 5, include = \"all\", network } = {}) { ... `${this.baseUrl}/api/route?${qs}` } — cross-seller Smart Order Router; free; no wallet."
+    },
+    {
+      "file": "src/x402-index.js",
+      "lines": "3600-3651",
+      "sha": "2d163e03cd524cdfb8fa8cb2a96906d3cfafe2b6",
+      "state": "discover",
+      "quote": "export function sellerDetail(originOrHost) returns origin, health, routable, networks, paywall, payToByNetwork, tools[].route/price/responseContract."
+    },
+    {
+      "file": "src/x402-buyer.js",
+      "lines": "408-428",
+      "sha": "2d163e03cd524cdfb8fa8cb2a96906d3cfafe2b6",
+      "state": "construct",
+      "quote": "bare = await fetch(url, reqInit) with Accept: application/json. A 200 means free. Only a 402 triggers a payment."
+    },
+    {
+      "file": "src/x402-buyer.js",
+      "lines": "430-444",
+      "sha": "2d163e03cd524cdfb8fa8cb2a96906d3cfafe2b6",
+      "state": "contract",
+      "quote": "paymentRequired = http.getPaymentRequiredResponse(...); payable = pickPayableAccept(paymentRequired.accepts, chain); quotedAtomic = payable.amount ?? payable.maxAmountRequired."
+    },
+    {
+      "file": "src/x402-buyer.js",
+      "lines": "54-65",
+      "sha": "2d163e03cd524cdfb8fa8cb2a96906d3cfafe2b6",
+      "state": "authorize-ready",
+      "quote": "pickPayableAccept requires network in {eip155:8453, base, base-mainnet}, scheme exact, asset Circle USDC on Base."
+    },
+    {
+      "file": "client/index.js",
+      "lines": "553-570",
+      "sha": "2d163e03cd524cdfb8fa8cb2a96906d3cfafe2b6",
+      "state": "authorize-ready",
+      "quote": "parse402Usd reads accepts[].maxAmountRequired / 10^decimals (default 6) before any wallet fetch signs."
+    },
+    {
+      "file": "client/index.js",
+      "lines": "655-697",
+      "sha": "2d163e03cd524cdfb8fa8cb2a96906d3cfafe2b6",
+      "state": "authorize-ready",
+      "quote": "withNetworkPreference and withPayeeAllowlist wrap createPaymentPayload and throw before a signature exists."
+    },
+    {
+      "file": "src/x402-buyer.js",
+      "lines": "76-81",
+      "sha": "2d163e03cd524cdfb8fa8cb2a96906d3cfafe2b6",
+      "state": "stop",
+      "quote": "getUpstreamBuyer throws 503 when X402_UPSTREAM_BUYER_KEY is unset — this path cannot run without a funded spending wallet."
+    }
+  ]
+}

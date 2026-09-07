@@ -1,0 +1,300 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://samedaydesk.com/schema/evidence-record.v1.json",
+  "title": "Traffic and settlement evidence record",
+  "description": "One typed observation from exactly one producer and one provider scope. Shape only; authority policy is enforced by the validator.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordId",
+    "sourceKind",
+    "producer",
+    "scope",
+    "observationWindow",
+    "completeness",
+    "authorityClass",
+    "unknownWhenAbsent",
+    "prohibitedInferences"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "samedaydesk.evidence-record.v1"
+    },
+    "recordId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{2,95}$"
+    },
+    "sourceKind": {
+      "type": "string",
+      "enum": [
+        "cloudflare_analytics",
+        "hosting_analytics",
+        "indexnow_receipt",
+        "search_console",
+        "bazaar_listing",
+        "registry_listing",
+        "x402_facilitator_settlement",
+        "stripe_event",
+        "operator_validation",
+        "incentivized_trial",
+        "external_work_payout",
+        "buyer_attested_receipt",
+        "seller_ledger_line"
+      ]
+    },
+    "producer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "providerId", "adapterId", "observedSurface"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{1,63}$"
+        },
+        "providerId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{1,63}$",
+          "description": "Exactly one provider. Two provider tokens in one field are invalid."
+        },
+        "adapterId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{1,63}$"
+        },
+        "observedSurface": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["providerId", "population", "joinKeys"],
+      "properties": {
+        "providerId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{1,63}$",
+          "description": "Must equal producer.providerId. A second provider here is a collapsed scope."
+        },
+        "population": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{1,95}$"
+        },
+        "joinKeys": {
+          "type": "array",
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,63}$"
+          }
+        },
+        "host": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9.-]{0,253}$"
+        }
+      }
+    },
+    "observationWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end", "reportingDelaySeconds"],
+      "properties": {
+        "start": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$"
+        },
+        "end": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$"
+        },
+        "reportingDelaySeconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 31536000
+        }
+      }
+    },
+    "completeness": {
+      "type": "string",
+      "enum": ["complete", "sampled", "truncated", "unknown"]
+    },
+    "authorityClass": {
+      "type": "string",
+      "enum": [
+        "seller_observed",
+        "provider_returned",
+        "independently_reconciled",
+        "provider_authoritative"
+      ]
+    },
+    "unknownWhenAbsent": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      }
+    },
+    "prohibitedInferences": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 16,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "cross_source_join_without_exact_key",
+          "sum_across_authority_classes",
+          "organic_label_for_controlled_or_incentivized_traffic",
+          "collapsed_provider_scope",
+          "analytics_count_is_independent_demand",
+          "search_impression_is_visit",
+          "indexnow_receipt_is_indexing",
+          "catalog_presence_is_demand",
+          "provider_response_is_chain_settlement",
+          "chain_transfer_is_route_attribution",
+          "stripe_event_is_onchain_settlement",
+          "local_observation_is_provider_billing"
+        ]
+      }
+    },
+    "joins": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["otherSourceKind"],
+        "properties": {
+          "otherSourceKind": {
+            "type": "string",
+            "enum": [
+              "cloudflare_analytics",
+              "hosting_analytics",
+              "indexnow_receipt",
+              "search_console",
+              "bazaar_listing",
+              "registry_listing",
+              "x402_facilitator_settlement",
+              "stripe_event",
+              "operator_validation",
+              "incentivized_trial",
+              "external_work_payout",
+              "buyer_attested_receipt",
+              "seller_ledger_line"
+            ]
+          },
+          "exactKey": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,63}$"
+          },
+          "exactValue": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        }
+      }
+    },
+    "aggregates": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["metricId", "parts"],
+        "properties": {
+          "metricId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,63}$"
+          },
+          "parts": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 16,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["recordId", "authorityClass", "value"],
+              "properties": {
+                "recordId": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_-]{2,95}$"
+                },
+                "authorityClass": {
+                  "type": "string",
+                  "enum": [
+                    "seller_observed",
+                    "provider_returned",
+                    "independently_reconciled",
+                    "provider_authoritative"
+                  ]
+                },
+                "value": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9][0-9]{0,15})(?:\\.[0-9]{1,8})?$"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "acquisition": {
+          "type": "string",
+          "enum": [
+            "unclassified",
+            "organic",
+            "referral",
+            "direct",
+            "operator_validation",
+            "incentivized_trial"
+          ]
+        }
+      }
+    },
+    "settlement": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Optional banked-settlement facts. Absent on source-kind examples; required for reconcileable settlement observations.",
+      "required": ["operationId", "amountUsdc", "buyerClass", "validDeliveryStatus"],
+      "properties": {
+        "operationId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{2,95}$"
+        },
+        "amountUsdc": {
+          "type": "string",
+          "pattern": "^(?:0|[1-9][0-9]{0,15})(?:\\.[0-9]{1,8})?$"
+        },
+        "buyerClass": {
+          "type": "string",
+          "enum": ["independent", "owner", "sponsored", "unknown"]
+        },
+        "validDeliveryStatus": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{1,95}$"
+        },
+        "transaction": {
+          "type": "string",
+          "pattern": "^0x[a-f0-9]{64}$"
+        },
+        "facilitatorOrPayoutRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        }
+      }
+    }
+  }
+}

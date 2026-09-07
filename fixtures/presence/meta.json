@@ -1,0 +1,15 @@
+{
+  "capturedAt": "2026-09-03T17:03:44Z",
+  "mode": "public-read",
+  "origin": "https://agents.samedaydesk.com",
+  "notes": "Live public GETs and unpaid initialize/search. No writes.",
+  "files": {
+    "catalog/openapi.json": "OpenAPI 1.23.40 catalog extract (x-payment-info kept; response bodies dropped)",
+    "catalog/x402.json": "Origin /.well-known/x402.json v2, 23 items",
+    "listings/bazaar-merchant.json": "CDP merchant discovery for catalog payTo, 10 resources",
+    "listings/mpp-services.json": "mpp.dev/api/services v1, 142 services, identifying fields",
+    "listings/mcp-registry.json": "registry search io.github.epistemedeus/x402-data-gateway latest",
+    "listings/mcp-initialize.json": "MCP initialize serverInfo from origin /mcp",
+    "listings/agentverse-search.json": "POST /v1/search/agents search_text=samedaydesk"
+  }
+}

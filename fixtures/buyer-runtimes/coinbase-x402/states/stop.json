@@ -1,0 +1,23 @@
+{
+  "state": "stop",
+  "provenance": "derived-from-source",
+  "source": {
+    "file": "typescript/packages/http/fetch/src/index.ts",
+    "lines": "95-123",
+    "quote": "paymentPayload = await client.createPaymentPayload(paymentRequired) then encode PAYMENT-SIGNATURE and retry. That step needs a registered signer."
+  },
+  "reason": "no wallet",
+  "recorded": "Replay ends after authorize-ready. No ExactEvmScheme signer is registered, no payment payload is created, no PAYMENT-SIGNATURE is sent, no settlement is requested.",
+  "paidContinuationWouldNeed": [
+    "A funded EVM account with USDC on Base (eip155:8453).",
+    "x402Client.register('eip155:8453', new ExactEvmScheme(signer)) or registerExactEvmScheme(client, { signer }).",
+    "createPaymentPayload over the selected accept (scheme exact, network eip155:8453, payTo, amount 5000, asset Circle USDC, extra.name/version).",
+    "Retry the same GET with the v2 PAYMENT-SIGNATURE header (AgentKit: retry_http_request_with_x402).",
+    "Facilitator verify/settle of 5000 atomic USDC to 0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee."
+  ],
+  "mustNotRun": [
+    "wrapFetchWithPayment payment retry",
+    "AgentKit retry_http_request_with_x402",
+    "any facilitator /verify or /settle call"
+  ]
+}

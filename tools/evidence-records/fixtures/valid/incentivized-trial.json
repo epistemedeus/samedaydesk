@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.v1",
+  "recordId": "evr_incentivized_trial_20260901",
+  "sourceKind": "incentivized_trial",
+  "producer": {
+    "id": "disclosed_trial_cohort",
+    "providerId": "incentivized_trial_program",
+    "adapterId": "incentivized_trial_adapter",
+    "observedSurface": "Disclosed trial cohort request log"
+  },
+  "scope": {
+    "providerId": "incentivized_trial_program",
+    "population": "trial_cohort_requests",
+    "joinKeys": ["trial_id"]
+  },
+  "observationWindow": {
+    "start": "2026-09-01T00:00:00.000Z",
+    "end": "2026-09-08T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "complete",
+  "authorityClass": "seller_observed",
+  "unknownWhenAbsent": [
+    "whether_trial_callers_would_pay_without_the_trial",
+    "traffic_outside_the_disclosed_cohort"
+  ],
+  "prohibitedInferences": [
+    "cross_source_join_without_exact_key",
+    "sum_across_authority_classes",
+    "organic_label_for_controlled_or_incentivized_traffic",
+    "collapsed_provider_scope",
+    "local_observation_is_provider_billing"
+  ],
+  "labels": {
+    "acquisition": "incentivized_trial"
+  }
+}

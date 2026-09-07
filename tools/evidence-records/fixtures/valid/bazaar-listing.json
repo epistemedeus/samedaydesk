@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.v1",
+  "recordId": "evr_bazaar_listing_20260901",
+  "sourceKind": "bazaar_listing",
+  "producer": {
+    "id": "coinbase_bazaar",
+    "providerId": "coinbase_bazaar",
+    "adapterId": "bazaar_listing_adapter",
+    "observedSurface": "Coinbase Bazaar listing snapshot"
+  },
+  "scope": {
+    "providerId": "coinbase_bazaar",
+    "population": "listed_resources_for_merchant",
+    "joinKeys": ["resource_url"]
+  },
+  "observationWindow": {
+    "start": "2026-09-01T00:00:00.000Z",
+    "end": "2026-09-02T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "sampled",
+  "authorityClass": "provider_returned",
+  "unknownWhenAbsent": [
+    "listings_not_returned_in_this_snapshot",
+    "buyer_demand_for_listed_resources"
+  ],
+  "prohibitedInferences": [
+    "cross_source_join_without_exact_key",
+    "sum_across_authority_classes",
+    "organic_label_for_controlled_or_incentivized_traffic",
+    "collapsed_provider_scope",
+    "catalog_presence_is_demand"
+  ]
+}

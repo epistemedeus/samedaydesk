@@ -1,0 +1,1851 @@
+{
+  "version": 1,
+  "services": [
+    {
+      "id": "apex-db",
+      "name": "Apex DB",
+      "url": "https://apex-db.org",
+      "serviceUrl": "https://api.apex-db.org",
+      "description": "Search normalized vehicle variants, specifications, emissions, and source-linked provenance from public automotive datasets.",
+      "status": "active",
+      "realm": "api.apex-db.org",
+      "provider": {
+        "name": "Apex DB",
+        "url": "https://apex-db.org"
+      }
+    },
+    {
+      "id": "rxatlas",
+      "name": "RxAtlas",
+      "url": "https://rxatlas.dev",
+      "serviceUrl": "https://api.rxatlas.dev",
+      "description": "Search normalized US drug products with source-linked FDA, DailyMed, RxNorm, NADAC, shortage, and enforcement enrichments.",
+      "status": "active",
+      "realm": "api.rxatlas.dev",
+      "provider": {
+        "name": "RxAtlas",
+        "url": "https://rxatlas.dev"
+      }
+    },
+    {
+      "id": "trialbase-db",
+      "name": "TrialBase DB",
+      "url": "https://trialbase-db.org",
+      "serviceUrl": "https://api.trialbase-db.org",
+      "description": "Search normalized clinical trials from ClinicalTrials.gov, CTIS, EudraCT, and ISRCTN with registry identifiers and source-linked evidence.",
+      "status": "active",
+      "realm": "api.trialbase-db.org",
+      "provider": {
+        "name": "TrialBase DB",
+        "url": "https://trialbase-db.org"
+      }
+    },
+    {
+      "id": "recallradar",
+      "name": "RecallRadar",
+      "url": "https://recallradar.dev",
+      "serviceUrl": "https://api.recallradar.dev",
+      "description": "Search normalized consumer-product safety notices from six public authorities with recall classification, hazards, remedies, and provenance.",
+      "status": "active",
+      "realm": "api.recallradar.dev",
+      "provider": {
+        "name": "RecallRadar",
+        "url": "https://recallradar.dev"
+      }
+    },
+    {
+      "id": "agentfax",
+      "name": "agentfax",
+      "url": "https://agentfax.val.run",
+      "serviceUrl": "https://agentfax.val.run",
+      "description": "Send a fax to any phone number, priced per page. Pay-per-fax for AI agents \u2014 no signup, no API key; documents are never stored.",
+      "status": "active",
+      "realm": "agentfax.val.run",
+      "provider": {
+        "name": "agentfax",
+        "url": "https://agentfax.val.run"
+      }
+    },
+    {
+      "id": "agentmail",
+      "name": "AgentMail",
+      "url": "https://mpp.api.agentmail.to",
+      "serviceUrl": "https://mpp.api.agentmail.to",
+      "description": "Email inboxes for AI agents.",
+      "status": "active",
+      "realm": "mpp.api.agentmail.to",
+      "provider": {
+        "name": "AgentMail",
+        "url": "https://agentmail.to"
+      }
+    },
+    {
+      "id": "allium",
+      "name": "Allium",
+      "url": "https://agents.allium.so",
+      "serviceUrl": "https://agents.allium.so",
+      "description": "System of record for onchain finance. Real-time blockchain data: token prices, wallet balances, transactions, PnL, and SQL explorer.",
+      "status": "active",
+      "realm": "agents.allium.so",
+      "provider": {
+        "name": "Allium",
+        "url": "https://allium.so"
+      }
+    },
+    {
+      "id": "anthropic",
+      "name": "Anthropic",
+      "url": "https://api.anthropic.com",
+      "serviceUrl": "https://anthropic.mpp.tempo.xyz",
+      "description": "Claude chat completions (Sonnet, Opus, Haiku) via native and OpenAI-compatible APIs.",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "Anthropic",
+        "url": "https://anthropic.com"
+      }
+    },
+    {
+      "id": "browserbase",
+      "name": "Browserbase",
+      "url": "https://mpp.browserbase.com",
+      "serviceUrl": "https://mpp.browserbase.com",
+      "description": "Headless browser sessions, web search, and page fetching for AI agents.",
+      "status": "active",
+      "realm": "mpp.browserbase.com",
+      "provider": {
+        "name": "Browserbase",
+        "url": "https://browserbase.com"
+      }
+    },
+    {
+      "id": "buildwithlocus",
+      "name": "Build With Locus",
+      "url": "https://mpp.buildwithlocus.com",
+      "serviceUrl": "https://mpp.buildwithlocus.com",
+      "description": "Deploy containerized services, Postgres, Redis, and custom domains on demand \u2014 all via REST API. Pay-per-use credit billing.",
+      "status": "active",
+      "realm": "mpp.buildwithlocus.com",
+      "provider": {
+        "name": "Locus",
+        "url": "https://buildwithlocus.com"
+      }
+    },
+    {
+      "id": "codex",
+      "name": "Codex",
+      "url": "https://graph.codex.io",
+      "serviceUrl": "https://graph.codex.io",
+      "description": "Comprehensive onchain data API for tokens and prediction markets. Real-time prices, charts, trades, and wallet analytics across 80+ networks via GraphQL.",
+      "status": "active",
+      "realm": "graph.codex.io",
+      "provider": {
+        "name": "Codex",
+        "url": "https://codex.io"
+      }
+    },
+    {
+      "id": "doma",
+      "name": "Doma",
+      "url": "https://doma.xyz",
+      "serviceUrl": "https://mpp.doma.xyz",
+      "description": "Domain registration on the Doma blockchain. Instantly register .com, .xyz, .ai, .io, and .net domains.",
+      "status": "active",
+      "realm": "mpp.doma.xyz",
+      "provider": {
+        "name": "Doma",
+        "url": "https://doma.xyz"
+      }
+    },
+    {
+      "id": "dripstack",
+      "name": "DripStack",
+      "url": "https://dripstack.xyz",
+      "serviceUrl": "https://dripstack.xyz",
+      "description": "MPP-enabled content retrieval from Substack publications.",
+      "status": "active",
+      "realm": "dripstack.xyz",
+      "provider": {
+        "name": "DripStack",
+        "url": "https://dripstack.xyz/"
+      }
+    },
+    {
+      "id": "dune",
+      "name": "Dune",
+      "url": "https://dune.com",
+      "serviceUrl": "https://api.dune.com",
+      "description": "Query across raw transaction data, decoded smart contract events, stablecoin flows, RWA tracking, protocol analytics, DeFi positions, NFT activity, blockchain market research, and whatever is trending in crypto.",
+      "status": "active",
+      "realm": "api.dune.com",
+      "provider": {
+        "name": "Dune",
+        "url": "https://dune.com"
+      }
+    },
+    {
+      "id": "exa",
+      "name": "Exa",
+      "url": "https://api.exa.ai",
+      "serviceUrl": "https://api.exa.ai",
+      "description": "Neural web search and page-content retrieval for AI agents, paid per request with no API key.",
+      "status": "active",
+      "realm": "api.exa.ai",
+      "provider": {
+        "name": "Exa",
+        "url": "https://exa.ai"
+      }
+    },
+    {
+      "id": "fal",
+      "name": "fal.ai",
+      "url": "https://fal.run",
+      "serviceUrl": "https://fal.mpp.tempo.xyz",
+      "description": "Image, video, and audio generation with 600+ models (Flux, SD, Recraft, Grok).",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "fal.ai",
+        "url": "https://fal.ai"
+      }
+    },
+    {
+      "id": "firecrawl",
+      "name": "Firecrawl",
+      "url": "https://api.firecrawl.dev",
+      "serviceUrl": "https://firecrawl.mpp.tempo.xyz",
+      "description": "Web scraping, crawling, and structured data extraction for LLMs.",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "Firecrawl",
+        "url": "https://firecrawl.dev"
+      }
+    },
+    {
+      "id": "govlaws",
+      "name": "GovLaws",
+      "url": "https://govlaws.ai",
+      "serviceUrl": "https://govlaws.ai",
+      "description": "Current U.S. federal regulation lookup, semantic search, and change tracking with provenance-rich responses from official government sources.",
+      "status": "active",
+      "realm": "govlaws.ai",
+      "provider": {
+        "name": "GovLaws",
+        "url": "https://govlaws.ai"
+      }
+    },
+    {
+      "id": "gemini",
+      "name": "Google Gemini",
+      "url": "https://generativelanguage.googleapis.com",
+      "serviceUrl": "https://gemini.mpp.tempo.xyz",
+      "description": "Gemini text generation, Veo video, and Nano Banana image generation with model-tier pricing.",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "Google",
+        "url": "https://ai.google.dev"
+      }
+    },
+    {
+      "id": "modal",
+      "name": "Modal",
+      "url": "https://api.modal.com",
+      "serviceUrl": "https://modal.mpp.tempo.xyz",
+      "description": "Serverless GPU compute for sandboxed code execution and AI/ML workloads.",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "Modal",
+        "url": "https://modal.com"
+      }
+    },
+    {
+      "id": "moltycash",
+      "name": "molty.cash",
+      "url": "https://api.molty.cash",
+      "serviceUrl": "https://api.molty.cash",
+      "description": "USDC payment infrastructure for AI agents and humans. Send tips, hire people for tasks, and create/earn from gigs \u2014 all settled on-chain via x402 (Base, Solana, World Chain) and MPP (Tempo, Stellar, Monad).",
+      "status": "active",
+      "realm": "api.molty.cash",
+      "provider": {
+        "name": "molty.cash",
+        "url": "https://molty.cash"
+      }
+    },
+    {
+      "id": "nansen",
+      "name": "Nansen",
+      "url": "https://api.nansen.ai",
+      "serviceUrl": "https://api.nansen.ai",
+      "description": "Blockchain analytics and smart money intelligence. Token data, wallet profiling, DEX trades, PnL, and flow analysis across multiple chains.",
+      "status": "active",
+      "realm": "api.nansen.ai",
+      "provider": {
+        "name": "Nansen",
+        "url": "https://nansen.ai"
+      }
+    },
+    {
+      "id": "openai",
+      "name": "OpenAI",
+      "url": "https://api.openai.com",
+      "serviceUrl": "https://openai.mpp.tempo.xyz",
+      "description": "Chat completions, embeddings, image generation, and audio with model-tier pricing.",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "OpenAI",
+        "url": "https://openai.com"
+      }
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter",
+      "url": "https://openrouter.ai/api",
+      "serviceUrl": "https://openrouter.mpp.tempo.xyz",
+      "description": "Unified API for 100+ LLMs with live per-model pricing.",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "OpenRouter",
+        "url": "https://openrouter.ai"
+      }
+    },
+    {
+      "id": "parallel",
+      "name": "Parallel",
+      "url": "https://parallelmpp.dev",
+      "serviceUrl": "https://parallelmpp.dev",
+      "description": "Web search, page extraction, and multi-hop web research.",
+      "status": "active",
+      "realm": "parallelmpp.dev",
+      "provider": {
+        "name": "Parallel",
+        "url": "https://parallel.ai"
+      }
+    },
+    {
+      "id": "alchemy",
+      "name": "Alchemy",
+      "url": "https://agents.alchemy.com/",
+      "serviceUrl": "https://mpp.alchemy.com",
+      "description": "Blockchain data APIs including Core RPC APIs, Prices API, Portfolio API, and NFT API across 100+ chains.",
+      "status": "active",
+      "realm": "alchemy.com",
+      "provider": {
+        "name": "Alchemy",
+        "url": "https://agents.alchemy.com/"
+      }
+    },
+    {
+      "id": "conduit",
+      "name": "Conduit",
+      "url": "https://mpp.conduit.xyz/",
+      "serviceUrl": "https://mpp.conduit.xyz",
+      "description": "EVM JSON-RPC access to Conduit Nodes across 60+ networks including Tempo, Plume, and Polygon Katana.",
+      "status": "active",
+      "realm": "conduit.xyz",
+      "provider": {
+        "name": "Conduit",
+        "url": "https://mpp.conduit.xyz/"
+      }
+    },
+    {
+      "id": "rpc",
+      "name": "Tempo RPC",
+      "url": "https://rpc.tempo.xyz",
+      "serviceUrl": "https://rpc.mpp.tempo.xyz",
+      "description": "Tempo blockchain JSON-RPC access (mainnet and testnet).",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "Tempo",
+        "url": "https://tempo.xyz"
+      }
+    },
+    {
+      "id": "quicknode",
+      "name": "Quicknode",
+      "url": "https://quicknode.com/",
+      "serviceUrl": "https://mpp.quicknode.com",
+      "description": "Quicknode Core Node API for 80+ blockchains and 140+ networks.",
+      "status": "active",
+      "realm": "quicknode.com",
+      "provider": {
+        "name": "Quicknode",
+        "url": "https://quicknode.com/"
+      }
+    },
+    {
+      "id": "storage",
+      "name": "Object Storage",
+      "url": "https://mpp.tempo.xyz/storage",
+      "serviceUrl": "https://storage.mpp.tempo.xyz",
+      "description": "S3/R2-compatible object storage with dynamic per-size pricing.",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "Tempo",
+        "url": "https://tempo.xyz"
+      }
+    },
+    {
+      "id": "pinata",
+      "name": "Pinata IPFS",
+      "url": "https://pinata.cloud",
+      "serviceUrl": "https://mpp.pinata.cloud",
+      "description": "Paid Pinata IPFS storage \u2014 upload and download public files via MPP.",
+      "status": "active",
+      "realm": "mpp.pinata.cloud",
+      "provider": {
+        "name": "Pinata",
+        "url": "https://pinata.cloud"
+      }
+    },
+    {
+      "id": "stableemail",
+      "name": "StableEmail",
+      "url": "https://stableemail.dev",
+      "serviceUrl": "https://stableemail.dev",
+      "description": "Pay-per-send email delivery, forwarding inboxes, and custom subdomains \u2014 no API keys or accounts.",
+      "status": "active",
+      "realm": "stableemail.dev",
+      "provider": {
+        "name": "Merit Systems",
+        "url": "https://stableemail.dev"
+      }
+    },
+    {
+      "id": "stableenrich",
+      "name": "StableEnrich",
+      "url": "https://stableenrich.dev",
+      "serviceUrl": "https://stableenrich.dev",
+      "description": "Pay-per-request research APIs \u2014 people, companies, web search, scraping, places, social media, and contact enrichment.",
+      "status": "active",
+      "realm": "stableenrich.dev",
+      "provider": {
+        "name": "Merit Systems",
+        "url": "https://stableenrich.dev"
+      }
+    },
+    {
+      "id": "stabletravel",
+      "name": "StableTravel",
+      "url": "https://stabletravel.dev",
+      "serviceUrl": "https://stabletravel.dev",
+      "description": "Pay-per-request travel APIs \u2014 flights, hotels, activities, transfers, and real-time flight tracking. Powered by Amadeus and FlightAware.",
+      "status": "active",
+      "realm": "stabletravel.dev",
+      "provider": {
+        "name": "Merit Systems",
+        "url": "https://stabletravel.dev"
+      }
+    },
+    {
+      "id": "stablephone",
+      "name": "StablePhone",
+      "url": "https://stablephone.dev",
+      "serviceUrl": "https://stablephone.dev",
+      "description": "AI phone calls, dedicated phone numbers, and iMessage/FaceTime lookup \u2014 pay per request.",
+      "status": "active",
+      "realm": "stablephone.dev",
+      "provider": {
+        "name": "Merit Systems",
+        "url": "https://stablephone.dev"
+      }
+    },
+    {
+      "id": "stablesocial",
+      "name": "StableSocial",
+      "url": "https://stablesocial.dev",
+      "serviceUrl": "https://stablesocial.dev",
+      "description": "Pay-per-request social media data from TikTok, Instagram, Facebook, and Reddit.",
+      "status": "active",
+      "realm": "stablesocial.dev",
+      "provider": {
+        "name": "Merit Systems",
+        "url": "https://stablesocial.dev"
+      }
+    },
+    {
+      "id": "stablestudio",
+      "name": "StableStudio",
+      "url": "https://stablestudio.dev",
+      "serviceUrl": "https://stablestudio.dev",
+      "description": "Pay-per-generation AI image and video creation \u2014 Nano Banana, GPT Image, Grok, Flux, Sora, Veo, Seedance, and Wan.",
+      "status": "active",
+      "realm": "stablestudio.dev",
+      "provider": {
+        "name": "Merit Systems",
+        "url": "https://stablestudio.dev"
+      }
+    },
+    {
+      "id": "stableupload",
+      "name": "StableUpload",
+      "url": "https://stableupload.dev",
+      "serviceUrl": "https://stableupload.dev",
+      "description": "Pay-per-upload file hosting and static site hosting with custom domains \u2014 6 month TTL.",
+      "status": "active",
+      "realm": "stableupload.dev",
+      "provider": {
+        "name": "Merit Systems",
+        "url": "https://stableupload.dev"
+      }
+    },
+    {
+      "id": "aviationstack",
+      "name": "AviationStack",
+      "url": "https://api.aviationstack.com",
+      "serviceUrl": "https://aviationstack.mpp.tempo.xyz",
+      "description": "Real-time and historical flight tracking, airports, airlines, and schedules.",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "AviationStack",
+        "url": "https://aviationstack.com"
+      }
+    },
+    {
+      "id": "codestorage",
+      "name": "Code Storage",
+      "url": "https://code.storage",
+      "serviceUrl": "https://codestorage.mpp.tempo.xyz",
+      "description": "Paid Git repository creation \u2014 create repos and get authenticated clone URLs.",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "Code Storage",
+        "url": "https://code.storage"
+      }
+    },
+    {
+      "id": "flightapi",
+      "name": "FlightAPI",
+      "url": "https://api.flightapi.io",
+      "serviceUrl": "https://flightapi.mpp.tempo.xyz",
+      "description": "Real-time flight prices, tracking, and airport schedules from 700+ airlines.",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "FlightAPI",
+        "url": "https://flightapi.io"
+      }
+    },
+    {
+      "id": "goflightlabs",
+      "name": "GoFlightLabs",
+      "url": "https://goflightlabs.com",
+      "serviceUrl": "https://goflightlabs.mpp.tempo.xyz",
+      "description": "Real-time flight tracking, prices, schedules, and airline data.",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "GoFlightLabs",
+        "url": "https://goflightlabs.com"
+      }
+    },
+    {
+      "id": "oxylabs",
+      "name": "Oxylabs",
+      "url": "https://realtime.oxylabs.io",
+      "serviceUrl": "https://oxylabs.mpp.tempo.xyz",
+      "description": "Web scraping API with geo-targeting by country, state, and city. Fetch any public URL with JavaScript rendering support.",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "Oxylabs",
+        "url": "https://oxylabs.io"
+      }
+    },
+    {
+      "id": "spyfu",
+      "name": "SpyFu",
+      "url": "https://api.spyfu.com",
+      "serviceUrl": "https://spyfu.mpp.tempo.xyz",
+      "description": "Competitor keyword research \u2014 SEO rankings, PPC ads, ad history, and domain analytics. 18+ years of historical data.",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "SpyFu",
+        "url": "https://spyfu.com"
+      }
+    },
+    {
+      "id": "serpapi",
+      "name": "SerpApi",
+      "url": "https://serpapi.com",
+      "serviceUrl": "https://serpapi.mpp.tempo.xyz",
+      "description": "Google Flights search \u2014 real-time prices, schedules, and booking options.",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "SerpApi",
+        "url": "https://serpapi.com"
+      }
+    },
+    {
+      "id": "googlemaps",
+      "name": "Google Maps",
+      "url": "https://maps.googleapis.com",
+      "serviceUrl": "https://googlemaps.mpp.tempo.xyz",
+      "description": "Google Maps Platform \u2014 geocoding, directions, places, routes, tiles, weather, air quality, and more.",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "Google",
+        "url": "https://developers.google.com/maps"
+      }
+    },
+    {
+      "id": "kicksdb",
+      "name": "KicksDB",
+      "url": "https://api.kicks.dev",
+      "serviceUrl": "https://kicksdb.mpp.tempo.xyz",
+      "description": "Sneaker & streetwear market data \u2014 prices, sales history, and availability from StockX, GOAT, and more.",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "KicksDB",
+        "url": "https://kicks.dev"
+      }
+    },
+    {
+      "id": "twocaptcha",
+      "name": "2Captcha",
+      "url": "https://api.2captcha.com",
+      "serviceUrl": "https://twocaptcha.mpp.tempo.xyz",
+      "description": "CAPTCHA solving API \u2014 reCAPTCHA, Turnstile, hCaptcha, image captchas, and more.",
+      "status": "active",
+      "realm": "mpp.tempo.xyz",
+      "provider": {
+        "name": "2Captcha",
+        "url": "https://2captcha.com"
+      }
+    },
+    {
+      "id": "postalform",
+      "name": "PostalForm",
+      "url": "https://postalform.com",
+      "serviceUrl": "https://postalform.com",
+      "description": "Print and mail real letters and documents via AI agents.",
+      "status": "active",
+      "realm": "postalform.com",
+      "provider": {
+        "name": "PostalForm",
+        "url": "https://postalform.com"
+      }
+    },
+    {
+      "id": "prospect-butcher",
+      "name": "Prospect Butcher",
+      "url": "https://agents.prospectbutcher.shop",
+      "serviceUrl": "https://agents.prospectbutcher.shop",
+      "description": "Order sandwiches for pickup in Brooklyn \u2014 the first food purchase made entirely by an AI agent.",
+      "status": "active",
+      "realm": "agents.prospectbutcher.shop",
+      "provider": {
+        "name": "Prospect Butcher",
+        "url": "https://www.prospectbutcher.com"
+      }
+    },
+    {
+      "id": "martin-estate",
+      "name": "Martin Estate Winery",
+      "url": "https://www.martinestate.com",
+      "serviceUrl": "https://agents.martinestate.com",
+      "description": "Estate-grown Napa Valley wine. AI agents can browse and purchase wine with identity verification (KYC, age 21+, US only) via AgentScore.",
+      "status": "active",
+      "realm": "agents.martinestate.com",
+      "provider": {
+        "name": "Martin Estate",
+        "url": "https://www.martinestate.com"
+      }
+    },
+    {
+      "id": "sayer-and-stone",
+      "name": "Sayer & Stone",
+      "url": "https://www.sayerandstone.com",
+      "serviceUrl": "https://agents.sayerandstone.com",
+      "description": "Lab-grown diamond fine jewelry, made to order. AI agents can browse and purchase pieces.",
+      "status": "active",
+      "realm": "agents.sayerandstone.com",
+      "provider": {
+        "name": "Sayer & Stone",
+        "url": "https://www.sayerandstone.com"
+      }
+    },
+    {
+      "id": "megapot",
+      "name": "Megapot",
+      "url": "https://megapot.io",
+      "serviceUrl": "https://megapot.mpp.paysponge.com",
+      "description": "Global internet lottery tickets. AI agents can purchase Megapot tickets and check ticket status through MPP.",
+      "status": "active",
+      "realm": "megapot.mpp.paysponge.com",
+      "provider": {
+        "name": "Megapot",
+        "url": "https://megapot.io"
+      }
+    },
+    {
+      "id": "alphavantage",
+      "name": "Alpha Vantage",
+      "url": "https://www.alphavantage.co",
+      "serviceUrl": "https://alphavantage.mpp.paywithlocus.com",
+      "description": "Financial market data \u2014 stock prices, forex, crypto, commodities, economic indicators, technical analysis, and news sentiment.",
+      "status": "active",
+      "realm": "alphavantage.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Alpha Vantage",
+        "url": "https://www.alphavantage.co"
+      }
+    },
+    {
+      "id": "apollo",
+      "name": "Apollo",
+      "url": "https://www.apollo.io",
+      "serviceUrl": "https://apollo.mpp.paywithlocus.com",
+      "description": "People and company enrichment, lead search, and sales intelligence with 275M+ contacts.",
+      "status": "active",
+      "realm": "apollo.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Apollo",
+        "url": "https://www.apollo.io"
+      }
+    },
+    {
+      "id": "autoexchange",
+      "name": "Auto.exchange",
+      "url": "https://auto.exchange",
+      "serviceUrl": "https://api.auto.exchange",
+      "description": "The agent exchange. Discover, hire, and pay agents for coding, design, writing, and more. Pay per request with stablecoins on Tempo.",
+      "status": "active",
+      "realm": "api.auto.exchange",
+      "provider": {
+        "name": "Auto.exchange",
+        "url": "https://auto.exchange"
+      }
+    },
+    {
+      "id": "billboard",
+      "name": "Billboard",
+      "url": "https://x.com/MPPBillboard",
+      "serviceUrl": "https://billboard.mpp.paywithlocus.com",
+      "description": "Post to @MPPBillboard on X. Price starts at $0.01 and doubles with every post. The ultimate AI agent billboard.",
+      "status": "active",
+      "realm": "billboard.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Billboard",
+        "url": "https://x.com/MPPBillboard"
+      }
+    },
+    {
+      "id": "brave",
+      "name": "Brave Search",
+      "url": "https://brave.com/search",
+      "serviceUrl": "https://brave.mpp.paywithlocus.com",
+      "description": "Independent web search \u2014 web, news, images, videos, AI answers, and LLM context. Privacy-first search from a large independent index.",
+      "status": "active",
+      "realm": "brave.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Brave Search",
+        "url": "https://brave.com/search"
+      }
+    },
+    {
+      "id": "builtwith",
+      "name": "BuiltWith",
+      "url": "https://builtwith.com",
+      "serviceUrl": "https://builtwith.mpp.paywithlocus.com",
+      "description": "Technology profiling for websites \u2014 detect tech stacks, find sites using specific technologies, discover domain relationships, trends, and competitive intelligence across 100M+ websites.",
+      "status": "active",
+      "realm": "builtwith.mpp.paywithlocus.com",
+      "provider": {
+        "name": "BuiltWith",
+        "url": "https://builtwith.com"
+      }
+    },
+    {
+      "id": "clado",
+      "name": "Clado",
+      "url": "https://clado.ai",
+      "serviceUrl": "https://clado.mpp.paywithlocus.com",
+      "description": "People search, LinkedIn enrichment, and deep research for lead generation.",
+      "status": "active",
+      "realm": "clado.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Clado",
+        "url": "https://clado.ai"
+      }
+    },
+    {
+      "id": "coingecko",
+      "name": "CoinGecko",
+      "url": "https://www.coingecko.com",
+      "serviceUrl": "https://coingecko.mpp.paywithlocus.com",
+      "description": "Cryptocurrency market data \u2014 prices, charts, market cap, exchanges, trending coins, global stats, NFTs, derivatives, and on-chain data.",
+      "status": "active",
+      "realm": "coingecko.mpp.paywithlocus.com",
+      "provider": {
+        "name": "CoinGecko",
+        "url": "https://www.coingecko.com"
+      }
+    },
+    {
+      "id": "abstract-company-enrichment",
+      "name": "Company Enrichment",
+      "url": "https://www.abstractapi.com/api/company-enrichment",
+      "serviceUrl": "https://abstract-company-enrichment.mpp.paywithlocus.com",
+      "description": "Enrich company data from a domain name.",
+      "status": "active",
+      "realm": "abstract-company-enrichment.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Company Enrichment",
+        "url": "https://www.abstractapi.com/api/company-enrichment"
+      }
+    },
+    {
+      "id": "deepgram",
+      "name": "Deepgram",
+      "url": "https://deepgram.com",
+      "serviceUrl": "https://deepgram.mpp.paywithlocus.com",
+      "description": "Industry-leading speech AI \u2014 transcribe audio from URLs with Nova-3, generate natural speech with Aura-2 TTS, and analyze text for sentiment, topics, intents, and summaries.",
+      "status": "active",
+      "realm": "deepgram.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Deepgram",
+        "url": "https://deepgram.com"
+      }
+    },
+    {
+      "id": "deepl",
+      "name": "DeepL",
+      "url": "https://www.deepl.com",
+      "serviceUrl": "https://deepl.mpp.paywithlocus.com",
+      "description": "Professional translation and text improvement \u2014 translate text between 30+ languages with industry-leading quality, or improve and rephrase text with DeepL Write.",
+      "status": "active",
+      "realm": "deepl.mpp.paywithlocus.com",
+      "provider": {
+        "name": "DeepL",
+        "url": "https://www.deepl.com"
+      }
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek",
+      "url": "https://deepseek.com",
+      "serviceUrl": "https://deepseek.mpp.paywithlocus.com",
+      "description": "Frontier AI models \u2014 DeepSeek-V3 for fast chat and code, DeepSeek-R1 for deep chain-of-thought reasoning. OpenAI-compatible API format. Among the most capable and cost-efficient models available.",
+      "status": "active",
+      "realm": "deepseek.mpp.paywithlocus.com",
+      "provider": {
+        "name": "DeepSeek",
+        "url": "https://deepseek.com"
+      }
+    },
+    {
+      "id": "diffbot",
+      "name": "Diffbot",
+      "url": "https://www.diffbot.com",
+      "serviceUrl": "https://diffbot.mpp.paywithlocus.com",
+      "description": "Web data extraction \u2014 articles, products, discussions, images, videos, and auto-detect.",
+      "status": "active",
+      "realm": "diffbot.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Diffbot",
+        "url": "https://www.diffbot.com"
+      }
+    },
+    {
+      "id": "diffbot-kg",
+      "name": "Diffbot KG",
+      "url": "https://www.diffbot.com",
+      "serviceUrl": "https://diffbot-kg.mpp.paywithlocus.com",
+      "description": "Knowledge Graph \u2014 search 10B+ entities and enrich company/person records.",
+      "status": "active",
+      "realm": "diffbot-kg.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Diffbot KG",
+        "url": "https://www.diffbot.com"
+      }
+    },
+    {
+      "id": "diffbot-nl",
+      "name": "Diffbot NL",
+      "url": "https://www.diffbot.com",
+      "serviceUrl": "https://diffbot-nl.mpp.paywithlocus.com",
+      "description": "Natural language processing \u2014 NER, sentiment, facts, summarization.",
+      "status": "active",
+      "realm": "diffbot-nl.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Diffbot NL",
+        "url": "https://www.diffbot.com"
+      }
+    },
+    {
+      "id": "edgar",
+      "name": "EDGAR (SEC)",
+      "url": "https://www.sec.gov/developer",
+      "serviceUrl": "https://edgar.mpp.paywithlocus.com",
+      "description": "SEC EDGAR public financial data \u2014 company filing history, XBRL financial facts (income statements, balance sheets, cash flows), and full-text search across all public filings. No API key required.",
+      "status": "active",
+      "realm": "edgar.mpp.paywithlocus.com",
+      "provider": {
+        "name": "EDGAR (SEC)",
+        "url": "https://www.sec.gov/developer"
+      }
+    },
+    {
+      "id": "edgar-search",
+      "name": "EDGAR Full-Text Search",
+      "url": "https://efts.sec.gov",
+      "serviceUrl": "https://edgar-search.mpp.paywithlocus.com",
+      "description": "Full-text search across all SEC filings \u2014 10-Ks, 10-Qs, 8-Ks, proxy statements, and more. Search by keyword, company name, form type, and date range.",
+      "status": "active",
+      "realm": "edgar-search.mpp.paywithlocus.com",
+      "provider": {
+        "name": "EDGAR Full-Text Search",
+        "url": "https://efts.sec.gov"
+      }
+    },
+    {
+      "id": "abstract-email-reputation",
+      "name": "Email Reputation",
+      "url": "https://www.abstractapi.com/api/email-reputation-api",
+      "serviceUrl": "https://abstract-email-reputation.mpp.paywithlocus.com",
+      "description": "Check the reputation and risk score of an email address.",
+      "status": "active",
+      "realm": "abstract-email-reputation.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Email Reputation",
+        "url": "https://www.abstractapi.com/api/email-reputation-api"
+      }
+    },
+    {
+      "id": "abstract-exchange-rates",
+      "name": "Exchange Rates",
+      "url": "https://www.abstractapi.com/api/exchange-rate-api",
+      "serviceUrl": "https://abstract-exchange-rates.mpp.paywithlocus.com",
+      "description": "Live, historical, and conversion exchange rates for 150+ currencies.",
+      "status": "active",
+      "realm": "abstract-exchange-rates.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Exchange Rates",
+        "url": "https://www.abstractapi.com/api/exchange-rate-api"
+      }
+    },
+    {
+      "id": "grok",
+      "name": "Grok",
+      "url": "https://x.ai",
+      "serviceUrl": "https://grok.mpp.paywithlocus.com",
+      "description": "xAI models \u2014 chat, web/X search, code execution, image generation/editing, and text-to-speech.",
+      "status": "active",
+      "realm": "grok.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Grok",
+        "url": "https://x.ai"
+      }
+    },
+    {
+      "id": "groq",
+      "name": "Groq",
+      "url": "https://groq.com",
+      "serviceUrl": "https://groq.mpp.paywithlocus.com",
+      "description": "Ultra-fast LLM inference \u2014 Llama 3.3, DeepSeek R1, Gemma 2, GPT-OSS, Qwen, Whisper, and PlayAI TTS. OpenAI-compatible API with industry-leading speed.",
+      "status": "active",
+      "realm": "groq.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Groq",
+        "url": "https://groq.com"
+      }
+    },
+    {
+      "id": "abstract-holidays",
+      "name": "Holidays",
+      "url": "https://www.abstractapi.com/api/holidays-api",
+      "serviceUrl": "https://abstract-holidays.mpp.paywithlocus.com",
+      "description": "Public holiday data for 200+ countries.",
+      "status": "active",
+      "realm": "abstract-holidays.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Holidays",
+        "url": "https://www.abstractapi.com/api/holidays-api"
+      }
+    },
+    {
+      "id": "hunter",
+      "name": "Hunter",
+      "url": "https://hunter.io",
+      "serviceUrl": "https://hunter.mpp.paywithlocus.com",
+      "description": "Email finding, verification, and company enrichment for outreach and lead generation.",
+      "status": "active",
+      "realm": "hunter.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Hunter",
+        "url": "https://hunter.io"
+      }
+    },
+    {
+      "id": "abstract-iban-validation",
+      "name": "IBAN Validation",
+      "url": "https://www.abstractapi.com/api/iban-validation-api",
+      "serviceUrl": "https://abstract-iban-validation.mpp.paywithlocus.com",
+      "description": "Validate International Bank Account Numbers (IBANs).",
+      "status": "active",
+      "realm": "abstract-iban-validation.mpp.paywithlocus.com",
+      "provider": {
+        "name": "IBAN Validation",
+        "url": "https://www.abstractapi.com/api/iban-validation-api"
+      }
+    },
+    {
+      "id": "abstract-ip-intelligence",
+      "name": "IP Intelligence",
+      "url": "https://www.abstractapi.com/api/ip-intelligence-api",
+      "serviceUrl": "https://abstract-ip-intelligence.mpp.paywithlocus.com",
+      "description": "Detect VPNs, proxies, bots, and Tor nodes by IP address.",
+      "status": "active",
+      "realm": "abstract-ip-intelligence.mpp.paywithlocus.com",
+      "provider": {
+        "name": "IP Intelligence",
+        "url": "https://www.abstractapi.com/api/ip-intelligence-api"
+      }
+    },
+    {
+      "id": "ipinfo",
+      "name": "IPinfo",
+      "url": "https://ipinfo.io",
+      "serviceUrl": "https://ipinfo.mpp.paywithlocus.com",
+      "description": "IP intelligence \u2014 geolocation, ASN, privacy detection, carrier data, and hosting identification.",
+      "status": "active",
+      "realm": "ipinfo.mpp.paywithlocus.com",
+      "provider": {
+        "name": "IPinfo",
+        "url": "https://ipinfo.io"
+      }
+    },
+    {
+      "id": "judge0",
+      "name": "Judge0",
+      "url": "https://judge0.com",
+      "serviceUrl": "https://judge0.mpp.paywithlocus.com",
+      "description": "Online code execution \u2014 run source code in 60+ programming languages with sandboxed isolation.",
+      "status": "active",
+      "realm": "judge0.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Judge0",
+        "url": "https://judge0.com"
+      }
+    },
+    {
+      "id": "mapbox",
+      "name": "Mapbox",
+      "url": "https://www.mapbox.com",
+      "serviceUrl": "https://mapbox.mpp.paywithlocus.com",
+      "description": "Location and mapping APIs \u2014 geocoding, directions, isochrones, matrix routing, map matching, static maps, and spatial queries.",
+      "status": "active",
+      "realm": "mapbox.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Mapbox",
+        "url": "https://www.mapbox.com"
+      }
+    },
+    {
+      "id": "mathpix",
+      "name": "Mathpix",
+      "url": "https://mathpix.com",
+      "serviceUrl": "https://mathpix.mpp.paywithlocus.com",
+      "description": "OCR for math, science, and documents \u2014 extract LaTeX, MathML, and Mathpix Markdown from images and handwriting.",
+      "status": "active",
+      "realm": "mathpix.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Mathpix",
+        "url": "https://mathpix.com"
+      }
+    },
+    {
+      "id": "mistral",
+      "name": "Mistral AI",
+      "url": "https://mistral.ai",
+      "serviceUrl": "https://mistral.mpp.paywithlocus.com",
+      "description": "Premier and open-source LLMs \u2014 Mistral Large, Medium, Small, Codestral, Magistral reasoning, Pixtral vision, text embeddings, and content moderation.",
+      "status": "active",
+      "realm": "mistral.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Mistral AI",
+        "url": "https://mistral.ai"
+      }
+    },
+    {
+      "id": "openweather",
+      "name": "OpenWeather",
+      "url": "https://openweathermap.org",
+      "serviceUrl": "https://openweather.mpp.paywithlocus.com",
+      "description": "Global weather data \u2014 current conditions, 5-day forecasts, hourly forecasts, air quality index with pollutants, geocoding, and One Call 3.0 with full weather suite and government alerts.",
+      "status": "active",
+      "realm": "openweather.mpp.paywithlocus.com",
+      "provider": {
+        "name": "OpenWeather",
+        "url": "https://openweathermap.org"
+      }
+    },
+    {
+      "id": "perplexity",
+      "name": "Perplexity",
+      "url": "https://perplexity.ai",
+      "serviceUrl": "https://perplexity.mpp.paywithlocus.com",
+      "description": "AI-powered search \u2014 Sonar chat with real-time web grounding, web search, and embeddings.",
+      "status": "active",
+      "realm": "perplexity.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Perplexity",
+        "url": "https://perplexity.ai"
+      }
+    },
+    {
+      "id": "abstract-phone-intelligence",
+      "name": "Phone Intelligence",
+      "url": "https://www.abstractapi.com/api/phone-validation-api",
+      "serviceUrl": "https://abstract-phone-intelligence.mpp.paywithlocus.com",
+      "description": "Validate and get carrier info for phone numbers worldwide.",
+      "status": "active",
+      "realm": "abstract-phone-intelligence.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Phone Intelligence",
+        "url": "https://www.abstractapi.com/api/phone-validation-api"
+      }
+    },
+    {
+      "id": "rentcast",
+      "name": "RentCast",
+      "url": "https://rentcast.io",
+      "serviceUrl": "https://rentcast.mpp.paywithlocus.com",
+      "description": "US real estate intelligence \u2014 property records, AVM valuations, rent estimates, sale/rental listings, and market statistics.",
+      "status": "active",
+      "realm": "rentcast.mpp.paywithlocus.com",
+      "provider": {
+        "name": "RentCast",
+        "url": "https://rentcast.io"
+      }
+    },
+    {
+      "id": "replicate",
+      "name": "Replicate",
+      "url": "https://replicate.com",
+      "serviceUrl": "https://replicate.mpp.paywithlocus.com",
+      "description": "Run thousands of open-source AI models via API \u2014 image generation, language models, speech recognition, video, and more. Pay only for what you use.",
+      "status": "active",
+      "realm": "replicate.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Replicate",
+        "url": "https://replicate.com"
+      }
+    },
+    {
+      "id": "screenshotone",
+      "name": "ScreenshotOne",
+      "url": "https://screenshotone.com",
+      "serviceUrl": "https://screenshotone.mpp.paywithlocus.com",
+      "description": "Website screenshot API \u2014 capture any URL, HTML, or markdown as PNG, JPEG, WebP, or PDF. Full-page, element selection, dark mode, ad blocking, and more.",
+      "status": "active",
+      "realm": "screenshotone.mpp.paywithlocus.com",
+      "provider": {
+        "name": "ScreenshotOne",
+        "url": "https://screenshotone.com"
+      }
+    },
+    {
+      "id": "stability-ai",
+      "name": "Stability AI",
+      "url": "https://stability.ai",
+      "serviceUrl": "https://stability-ai.mpp.paywithlocus.com",
+      "description": "Generative AI platform for images, 3D models, and audio \u2014 text-to-image, editing, upscaling, and more.",
+      "status": "active",
+      "realm": "stability-ai.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Stability AI",
+        "url": "https://stability.ai"
+      }
+    },
+    {
+      "id": "suno",
+      "name": "Suno",
+      "url": "https://sunoapi.org",
+      "serviceUrl": "https://suno.mpp.paywithlocus.com",
+      "description": "AI music generation \u2014 create full songs, generate lyrics, and build custom music tracks with state-of-the-art AI models. Supports custom styles, vocals, and instrumental modes.",
+      "status": "active",
+      "realm": "suno.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Suno",
+        "url": "https://sunoapi.org"
+      }
+    },
+    {
+      "id": "tako",
+      "name": "Tako",
+      "url": "https://tako.com",
+      "serviceUrl": "https://tako.com",
+      "description": "Data visualization and research platform. Search datasets, generate charts, and build research reports with AI.",
+      "status": "active",
+      "realm": "tako.com",
+      "provider": {
+        "name": "Tako",
+        "url": "https://tako.com"
+      }
+    },
+    {
+      "id": "tavily",
+      "name": "Tavily",
+      "url": "https://tavily.com",
+      "serviceUrl": "https://tavily.mpp.paywithlocus.com",
+      "description": "AI-optimized web search, content extraction, site mapping, and crawling API.",
+      "status": "active",
+      "realm": "tavily.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Tavily",
+        "url": "https://tavily.com"
+      }
+    },
+    {
+      "id": "abstract-timezone",
+      "name": "Timezone",
+      "url": "https://www.abstractapi.com/api/time-date-timezone-api",
+      "serviceUrl": "https://abstract-timezone.mpp.paywithlocus.com",
+      "description": "Current time and timezone conversion for any location.",
+      "status": "active",
+      "realm": "abstract-timezone.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Timezone",
+        "url": "https://www.abstractapi.com/api/time-date-timezone-api"
+      }
+    },
+    {
+      "id": "abstract-vat",
+      "name": "VAT",
+      "url": "https://www.abstractapi.com/api/vat-validation-rates-api",
+      "serviceUrl": "https://abstract-vat.mpp.paywithlocus.com",
+      "description": "VAT number validation, rate calculation, and category lookup for EU.",
+      "status": "active",
+      "realm": "abstract-vat.mpp.paywithlocus.com",
+      "provider": {
+        "name": "VAT",
+        "url": "https://www.abstractapi.com/api/vat-validation-rates-api"
+      }
+    },
+    {
+      "id": "abstract-web-scraping",
+      "name": "Web Scraping",
+      "url": "https://www.abstractapi.com/api/web-scraping-api",
+      "serviceUrl": "https://abstract-web-scraping.mpp.paywithlocus.com",
+      "description": "Scrape web pages with optional JavaScript rendering.",
+      "status": "active",
+      "realm": "abstract-web-scraping.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Web Scraping",
+        "url": "https://www.abstractapi.com/api/web-scraping-api"
+      }
+    },
+    {
+      "id": "wolframalpha",
+      "name": "Wolfram|Alpha",
+      "url": "https://www.wolframalpha.com",
+      "serviceUrl": "https://wolframalpha.mpp.paywithlocus.com",
+      "description": "Computational knowledge engine \u2014 math, science, geography, history, nutrition, finance, and more. Get answers as text, spoken audio, LLM-optimized data, or full structured results.",
+      "status": "active",
+      "realm": "wolframalpha.mpp.paywithlocus.com",
+      "provider": {
+        "name": "Wolfram|Alpha",
+        "url": "https://www.wolframalpha.com"
+      }
+    },
+    {
+      "id": "stripe-climate",
+      "name": "Stripe Climate",
+      "url": "https://climate.stripe.dev",
+      "serviceUrl": "https://climate.stripe.dev",
+      "description": "Fund permanent carbon removal projects via Stripe Climate.",
+      "status": "active",
+      "realm": "climate.stripe.dev",
+      "provider": {
+        "name": "Stripe",
+        "url": "https://stripe.com/climate"
+      }
+    },
+    {
+      "id": "papercut",
+      "name": "Papercut",
+      "url": "https://papercut.lol",
+      "serviceUrl": "https://papercut.lol",
+      "description": "Postcards penned by your agent. Let your agent roast and send you a digital or physical postcard.",
+      "status": "active",
+      "realm": "papercut.lol",
+      "provider": {
+        "name": "Papercut",
+        "url": "https://papercut.lol"
+      }
+    },
+    {
+      "id": "orth-fantastic-jobs",
+      "name": "Fantastic Jobs",
+      "url": "https://data.fantastic.jobs",
+      "serviceUrl": "https://mpp.orthogonal.com/fantastic-jobs",
+      "description": "High-volume job postings feed. Indexes new ATS jobs hourly from 54 ATS platforms across 200k+ companies, plus job board listings from LinkedIn, Wellfound, and Y Combinator. Includes 20+ AI enrichments per job and deep",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Fantastic Jobs",
+        "url": "https://data.fantastic.jobs"
+      }
+    },
+    {
+      "id": "orth-sixtyfour",
+      "name": "Sixtyfour API",
+      "url": "https://api.sixtyfour.ai",
+      "serviceUrl": "https://mpp.orthogonal.com/sixtyfour",
+      "description": "Build custom research agents to enrich people and company data, and surface real-time signals all with a simple API call.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Sixtyfour API",
+        "url": "https://api.sixtyfour.ai"
+      }
+    },
+    {
+      "id": "orth-fiber",
+      "name": "Fiber AI API",
+      "url": "https://api.fiber.ai",
+      "serviceUrl": "https://mpp.orthogonal.com/fiber",
+      "description": "Reach anyone on the planet with verified contacts. Fiber AI delivers the most accurate contact data, period.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Fiber AI API",
+        "url": "https://api.fiber.ai"
+      }
+    },
+    {
+      "id": "orth-openmart",
+      "name": "Openmart",
+      "url": "https://api.openmart.ai",
+      "serviceUrl": "https://mpp.orthogonal.com/openmart",
+      "description": "Local business search, enrichment, and lead intelligence. Search 30M+ US/CA/AU businesses by query, tags, location, reviews, ownership type, price tier, revenue. Enrich companies, find decision makers with verified",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Openmart",
+        "url": "https://api.openmart.ai"
+      }
+    },
+    {
+      "id": "orth-edges",
+      "name": "Edges",
+      "url": "https://api.edges.run/v1",
+      "serviceUrl": "https://mpp.orthogonal.com/edges",
+      "description": "Edges provides LinkedIn automation actions for data extraction, search, and discovery. Extract profiles, companies, posts, jobs, events, and more. Search across LinkedIn and Sales Navigator.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Edges",
+        "url": "https://api.edges.run"
+      }
+    },
+    {
+      "id": "orth-captaindata",
+      "name": "CaptainData",
+      "url": "https://api.captaindata.com/v1",
+      "serviceUrl": "https://mpp.orthogonal.com/captaindata",
+      "description": "CaptainData API provides people and company enrichment, search, and discovery powered by LinkedIn Sales Navigator data. Find and enrich profiles, search for people and companies, and discover employees.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "CaptainData",
+        "url": "https://api.captaindata.com"
+      }
+    },
+    {
+      "id": "orth-baseten",
+      "name": "Baseten Model APIs",
+      "url": "https://inference.baseten.co",
+      "serviceUrl": "https://mpp.orthogonal.com/baseten",
+      "description": "Baseten is a high-performance inference platform for running open source LLMs. This API provides an OpenAI-compatible chat completions endpoint, so it works as a drop-in replacement with any OpenAI SDK or client. Just",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Baseten Model APIs",
+        "url": "https://inference.baseten.co"
+      }
+    },
+    {
+      "id": "orth-seltz",
+      "name": "Seltz",
+      "url": "https://api.seltz.ai",
+      "serviceUrl": "https://mpp.orthogonal.com/seltz",
+      "description": "Context-engineered web search API. Search the web and return matching documents with full content.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Seltz",
+        "url": "https://api.seltz.ai"
+      }
+    },
+    {
+      "id": "orth-scrapegraphai",
+      "name": "ScrapeGraphAI",
+      "url": "https://v2-api.scrapegraphai.com",
+      "serviceUrl": "https://mpp.orthogonal.com/scrapegraphai",
+      "description": "Scrape URLs, extract structured data with LLMs, search and scrape top results, crawl websites, and monitor pages for changes.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "ScrapeGraphAI",
+        "url": "https://v2-api.scrapegraphai.com"
+      }
+    },
+    {
+      "id": "orth-openfunnel",
+      "name": "OpenFunnel",
+      "url": "https://api.openfunnel.dev",
+      "serviceUrl": "https://mpp.orthogonal.com/openfunnel",
+      "description": "GTM intelligence platform. Search companies by traits/signals, enrich accounts with firmographic data, find and enrich people, get account timelines and insights, and deploy signal-monitoring agents.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "OpenFunnel",
+        "url": "https://api.openfunnel.dev"
+      }
+    },
+    {
+      "id": "orth-contactout",
+      "name": "ContactOut",
+      "url": "https://api.contactout.com",
+      "serviceUrl": "https://mpp.orthogonal.com/contactout",
+      "description": "Find anyone's email and phone number. Sales and recruitment intelligence with LinkedIn enrichment, people search, company search, email verification, and decision maker discovery.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "ContactOut",
+        "url": "https://api.contactout.com"
+      }
+    },
+    {
+      "id": "orth-tavily",
+      "name": "Tavily API",
+      "url": "https://api.tavily.com",
+      "serviceUrl": "https://mpp.orthogonal.com/tavily",
+      "description": "Real-time search, extraction, and web crawling through a single, secure API.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Tavily API",
+        "url": "https://api.tavily.com"
+      }
+    },
+    {
+      "id": "orth-serper-scrape",
+      "name": "Serper Scrape",
+      "url": "https://scrape.serper.dev",
+      "serviceUrl": "https://mpp.orthogonal.com/serper-scrape",
+      "description": "Web scraping powered by Serper - extract clean text, markdown, or HTML from any URL. Handles JavaScript-rendered pages and returns structured content with metadata.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Serper Scrape",
+        "url": "https://scrape.serper.dev"
+      }
+    },
+    {
+      "id": "orth-peopledatalabs",
+      "name": "People Data Labs",
+      "url": "https://api.peopledatalabs.com",
+      "serviceUrl": "https://mpp.orthogonal.com/peopledatalabs",
+      "description": "Access the world's largest people and company dataset. Enrich, search, and clean person, company, school, location, job title, and IP data.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "People Data Labs",
+        "url": "https://api.peopledatalabs.com"
+      }
+    },
+    {
+      "id": "orth-olostep",
+      "name": "Olostep API",
+      "url": "https://api.olostep.com",
+      "serviceUrl": "https://mpp.orthogonal.com/olostep",
+      "description": "Olostep offers AI a way to search the web, extract structured data in real time and build custom research agents.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Olostep API",
+        "url": "https://api.olostep.com"
+      }
+    },
+    {
+      "id": "orth-riveter",
+      "name": "Riveter API",
+      "url": "https://api.riveterhq.com",
+      "serviceUrl": "https://mpp.orthogonal.com/riveter",
+      "description": "Power your product with data from the web. Riveter's agents manage web search, scraping, browser infrastructure, and proxies for you. Every result has a source.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Riveter API",
+        "url": "https://api.riveterhq.com"
+      }
+    },
+    {
+      "id": "orth-happenstance",
+      "name": "Happenstance",
+      "url": "https://api.happenstance.ai",
+      "serviceUrl": "https://mpp.orthogonal.com/happenstance",
+      "description": "Person research API. Submit a description of someone and get back a detailed profile including employment history, education, projects, writings, hobbies, and a summary.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Happenstance",
+        "url": "https://api.happenstance.ai"
+      }
+    },
+    {
+      "id": "orth-apollo",
+      "name": "Apollo API",
+      "url": "https://api.apollo.io",
+      "serviceUrl": "https://mpp.orthogonal.com/apollo",
+      "description": "Apollo.io API for people and company enrichment, search, and prospecting. Access the Apollo database of 210M+ contacts and 30M+ companies.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Apollo API",
+        "url": "https://api.apollo.io"
+      }
+    },
+    {
+      "id": "orth-context-dev",
+      "name": "Context.dev",
+      "url": "https://api.context.dev/v1",
+      "serviceUrl": "https://mpp.orthogonal.com/context-dev",
+      "description": "API for retrieving context data from any website. Web scraping, brand retrieval, AI data extraction, screenshots, and more.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Context.dev",
+        "url": "https://www.context.dev"
+      }
+    },
+    {
+      "id": "orth-precip",
+      "name": "Precip AI - Hyperlocal Weather Data API",
+      "url": "https://api.precip.ai",
+      "serviceUrl": "https://mpp.orthogonal.com/precip",
+      "description": "Precip offers highly accurate, site-specific rainfall accumulation data.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Precip AI - Hyperlocal Weather Data API",
+        "url": "https://api.precip.ai"
+      }
+    },
+    {
+      "id": "orth-nyne",
+      "name": "Nyne.ai",
+      "url": "https://api.nyne.ai",
+      "serviceUrl": "https://mpp.orthogonal.com/nyne",
+      "description": "People and company intelligence platform. Find contacts, enrich profiles, get social media activity, and discover event attendees.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Nyne.ai",
+        "url": "https://api.nyne.ai"
+      }
+    },
+    {
+      "id": "orth-company-enrich",
+      "name": "Company Enrich",
+      "url": "https://api.companyenrich.com",
+      "serviceUrl": "https://mpp.orthogonal.com/company-enrich",
+      "description": "Comprehensive company and people data enrichment, search, and lead generation API. Enrich company profiles by domain or properties, search companies by industry/location/size/technology, find similar companies, search",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Company Enrich",
+        "url": "https://api.companyenrich.com"
+      }
+    },
+    {
+      "id": "orth-fundable",
+      "name": "Fundable",
+      "url": "https://tryfundable.ai/api/v1",
+      "serviceUrl": "https://mpp.orthogonal.com/fundable",
+      "description": "Real-time venture capital deals, startup, and investor data. Search funding rounds, discover companies, analyze investors, and track deal flow with advanced filtering and AI-powered semantic search.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Fundable",
+        "url": "https://tryfundable.ai"
+      }
+    },
+    {
+      "id": "orth-didit",
+      "name": "Didit API",
+      "url": "https://verification.didit.me",
+      "serviceUrl": "https://mpp.orthogonal.com/didit",
+      "description": "The all-in-one identity platform. Powering the fastest identity verification while fighting fraud and unifying all identity checks.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Didit API",
+        "url": "https://verification.didit.me"
+      }
+    },
+    {
+      "id": "orth-influencers-club",
+      "name": "Influencers Club",
+      "url": "https://api-dashboard.influencers.club",
+      "serviceUrl": "https://mpp.orthogonal.com/influencers-club",
+      "description": "Creator discovery, enrichment, and audience analytics across Instagram, YouTube, TikTok, Twitter, Twitch, and more. Search creators with advanced filters, enrich profiles by handle or email, find similar creators",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Influencers Club",
+        "url": "https://api-dashboard.influencers.club"
+      }
+    },
+    {
+      "id": "orth-bytemine",
+      "name": "Bytemine",
+      "url": "https://bvjmtgaxijpyasjtaqiv.supabase.co/functions/v1/api-gateway",
+      "serviceUrl": "https://mpp.orthogonal.com/bytemine",
+      "description": "Sales intelligence platform offering prospect search, contact enrichment, company intelligence, web crawling, funding/acquisition signals, LinkedIn post monitoring, proposal generation, meeting briefs, ROI calculators",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Bytemine",
+        "url": "https://bvjmtgaxijpyasjtaqiv.supabase.co"
+      }
+    },
+    {
+      "id": "orth-brand-dev",
+      "name": "Brand.dev API",
+      "url": "https://api.brand.dev",
+      "serviceUrl": "https://mpp.orthogonal.com/brand-dev",
+      "description": "API to personalize your product with logos, colors, and company info from any domain.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Brand.dev API",
+        "url": "https://api.brand.dev"
+      }
+    },
+    {
+      "id": "orth-notte",
+      "name": "Notte",
+      "url": "https://api.notte.cc",
+      "serviceUrl": "https://mpp.orthogonal.com/notte",
+      "description": "Browser automation API for AI agents. Start browser sessions, run AI agents, scrape webpages, and automate browser tasks with headless Chrome/Firefox. Features include CAPTCHA solving, proxy support, and persistent",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Notte",
+        "url": "https://api.notte.cc"
+      }
+    },
+    {
+      "id": "orth-coresignal",
+      "name": "Coresignal",
+      "url": "https://api.coresignal.com/cdapi",
+      "serviceUrl": "https://mpp.orthogonal.com/coresignal",
+      "description": "Business data intelligence platform providing company, employee, and job data from multiple sources. Access 3B+ regularly updated records via simple filters and data collection endpoints.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Coresignal",
+        "url": "https://api.coresignal.com"
+      }
+    },
+    {
+      "id": "orth-linkup",
+      "name": "Linkup API",
+      "url": "https://api.linkup.so/v1",
+      "serviceUrl": "https://mpp.orthogonal.com/linkup",
+      "description": "Linkup is a web search engine for AI apps. We connect your AI application to the internet. Our API provides grounding data to enrich your AI\u2019s output and increase its precision, accuracy and factuality.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Linkup API",
+        "url": "https://api.linkup.so"
+      }
+    },
+    {
+      "id": "orth-scrapecreators",
+      "name": "Scrape Creators",
+      "url": "https://api.scrapecreators.com",
+      "serviceUrl": "https://mpp.orthogonal.com/scrapecreators",
+      "description": "Social media data extraction API covering 22+ platforms including TikTok, Instagram, YouTube, Twitter/X, LinkedIn, Facebook, Reddit, Pinterest, Threads, Bluesky, and more.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Scrape Creators",
+        "url": "https://api.scrapecreators.com"
+      }
+    },
+    {
+      "id": "orth-tako",
+      "name": "Tako via Orthogonal",
+      "url": "https://trytako.com/api",
+      "serviceUrl": "https://mpp.orthogonal.com/tako",
+      "description": "Tako is a knowledge search engine that visualizes the world's data. Search with natural language to get interactive knowledge cards with charts, tables, and insights powered by sources like S&P Global, World Bank, and",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Tako",
+        "url": "https://trytako.com"
+      }
+    },
+    {
+      "id": "orth-andi",
+      "name": "Andi Search API",
+      "url": "https://search-api.andisearch.com/api",
+      "serviceUrl": "https://mpp.orthogonal.com/andi",
+      "description": "AI Search for the Next Generation",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Andi Search API",
+        "url": "https://search-api.andisearch.com"
+      }
+    },
+    {
+      "id": "orth-voygr",
+      "name": "Voygr",
+      "url": "https://dev.voygr.tech",
+      "serviceUrl": "https://mpp.orthogonal.com/voygr",
+      "description": "Validate whether a business exists at a given address and check if it is currently open or closed.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Voygr",
+        "url": "https://dev.voygr.tech"
+      }
+    },
+    {
+      "id": "orth-ocean-io",
+      "name": "Ocean.io",
+      "url": "https://api.ocean.io",
+      "serviceUrl": "https://mpp.orthogonal.com/ocean-io",
+      "description": "Ocean.io API for company and people search, enrichment, lookup, and discovery. Find lookalike companies, enrich contacts, reveal emails/phones, and more.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Ocean.io",
+        "url": "https://api.ocean.io"
+      }
+    },
+    {
+      "id": "orth-tomba",
+      "name": "Tomba API",
+      "url": "https://api.tomba.io",
+      "serviceUrl": "https://mpp.orthogonal.com/tomba",
+      "description": "Email finding and verification API",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Tomba API",
+        "url": "https://api.tomba.io"
+      }
+    },
+    {
+      "id": "orth-crustdata",
+      "name": "Crustdata",
+      "url": "https://api.crustdata.com",
+      "serviceUrl": "https://mpp.orthogonal.com/crustdata",
+      "description": "Comprehensive B2B data platform providing firmographic data, growth metrics, people profiles, and web intelligence for companies worldwide.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Crustdata",
+        "url": "https://api.crustdata.com"
+      }
+    },
+    {
+      "id": "orth-agentmail",
+      "name": "AgentMail via Orthogonal",
+      "url": "https://api.agentmail.to",
+      "serviceUrl": "https://mpp.orthogonal.com/agentmail",
+      "description": "Programmatic email for AI agents. Create inboxes, send/receive emails, manage threads and drafts. Inboxes cost $2/month. Inboxes inactive for 30+ days are automatically deleted.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "AgentMail",
+        "url": "https://api.agentmail.to"
+      }
+    },
+    {
+      "id": "orth-predictleads",
+      "name": "PredictLeads",
+      "url": "https://predictleads.com/api",
+      "serviceUrl": "https://mpp.orthogonal.com/predictleads",
+      "description": "Company intelligence API providing job openings, news events, financing events, technology detections, connections, products, and more for any company.",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "PredictLeads",
+        "url": "https://predictleads.com"
+      }
+    },
+    {
+      "id": "orth-serper",
+      "name": "Serper",
+      "url": "https://google.serper.dev",
+      "serviceUrl": "https://mpp.orthogonal.com/serper",
+      "description": "Google Search API by Serper - fast, reliable access to 12 Google search types: web search, images, videos, news, places, maps, shopping, scholar, patents, autocomplete, lens (reverse image search), and reviews. All",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Serper",
+        "url": "https://google.serper.dev"
+      }
+    },
+    {
+      "id": "orth-aviato",
+      "name": "Aviato",
+      "url": "https://data.api.aviato.co",
+      "serviceUrl": "https://mpp.orthogonal.com/aviato",
+      "description": "Comprehensive company and person intelligence platform. Enrich companies and people, search with advanced DSL queries, get funding rounds, investments, employees, founders, contact info, LinkedIn social data, and market",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "Aviato",
+        "url": "https://data.api.aviato.co"
+      }
+    },
+    {
+      "id": "tempvpn",
+      "name": "TempVPN",
+      "url": "https://registry.tempvpn.xyz",
+      "serviceUrl": "https://registry.tempvpn.xyz",
+      "description": "Discover and buy temporary WireGuard VPN sessions worldwide with minute-based Tempo MPP payments.",
+      "status": "active",
+      "realm": "registry.tempvpn.xyz",
+      "provider": {
+        "name": "TempVPN",
+        "url": "https://registry.tempvpn.xyz"
+      }
+    },
+    {
+      "id": "orth-agentphone",
+      "name": "AgentPhone",
+      "url": "https://api.agentphone.ai",
+      "serviceUrl": "https://mpp.orthogonal.com/agentphone",
+      "description": "Give your AI agent a real US/Canada phone number. Make voice calls, send and receive SMS, and hold actual conversations \u2014 all via API. Note: Outbound SMS requires first-message compliance (brand name, opt-in",
+      "status": "active",
+      "realm": "mpp.orthogonal.com",
+      "provider": {
+        "name": "AgentPhone",
+        "url": "https://api.agentphone.ai"
+      }
+    }
+  ]
+}

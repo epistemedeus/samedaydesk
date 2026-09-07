@@ -13,6 +13,7 @@ export const SPA_HISTORY_ROUTES = Object.freeze([
   "/tools/ai-readiness",
   "/x402",
   "/x402/seller-conformance",
+  "/x402/verified",
   "/for-agents",
   "/login",
   "/signup",

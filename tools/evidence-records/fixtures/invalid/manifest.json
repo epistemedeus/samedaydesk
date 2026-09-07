@@ -1,0 +1,14 @@
+{
+  "collapsed-provider-scope.json": {
+    "code": "collapsed_provider_scope"
+  },
+  "cross-source-join-without-exact-key.json": {
+    "code": "cross_source_join_without_exact_key"
+  },
+  "sum-across-authority-classes.json": {
+    "code": "sum_across_authority_classes"
+  },
+  "organic-label-for-controlled-traffic.json": {
+    "code": "organic_label_for_controlled_or_incentivized_traffic"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.v1",
+  "recordId": "what-agents-buy-independent-benchmark-2026-08-30",
+  "sourceKind": "buyer_attested_receipt",
+  "producer": {
+    "id": "what_agents_buy_receipt",
+    "providerId": "what_agents_buy",
+    "adapterId": "what_agents_buy_receipt_adapter",
+    "observedSurface": "What Agents Buy receipt wab_c2964c433918bea3 verdict delivered"
+  },
+  "scope": {
+    "providerId": "what_agents_buy",
+    "population": "delivered_buyer_receipts",
+    "joinKeys": ["receipt_id", "transaction_hash"],
+    "host": "whatagentsbuy.com"
+  },
+  "observationWindow": {
+    "start": "2026-08-30T00:00:00.000Z",
+    "end": "2026-08-31T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "truncated",
+  "authorityClass": "independently_reconciled",
+  "unknownWhenAbsent": [
+    "raw_response_bytes_when_raw_ref_is_null",
+    "bound_facilitator_observation"
+  ],
+  "prohibitedInferences": [
+    "cross_source_join_without_exact_key",
+    "sum_across_authority_classes",
+    "organic_label_for_controlled_or_incentivized_traffic",
+    "collapsed_provider_scope",
+    "provider_response_is_chain_settlement"
+  ],
+  "settlement": {
+    "operationId": "what-agents-buy-independent-benchmark-2026-08-30",
+    "amountUsdc": "0.005",
+    "buyerClass": "independent",
+    "validDeliveryStatus": "buyer_attested_delivered_six_fields_raw_ref_null",
+    "transaction": "0x547f4aec137810f154d4f9a550ab4a54945bde292cd4214e073d2db651fa39d2",
+    "facilitatorOrPayoutRef": "receipt_label_not_bound_facilitator_evidence"
+  }
+}

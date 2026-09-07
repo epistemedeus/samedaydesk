@@ -31,3 +31,7 @@ test-results/
 # supabase local
 supabase/.temp/
 supabase/.branches/
+
+# Full CDP Bazaar discovery snapshots stay local. Git tracks only the compact
+# per-route observation record and changelog under data/bazaar-tracker/.
+data/bazaar-tracker/snapshots/

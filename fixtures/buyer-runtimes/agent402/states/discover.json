@@ -1,0 +1,105 @@
+{
+  "state": "discover",
+  "provenance": "derived-from-source + observed-locally",
+  "note": "Agent402 does not find SameDayDesk through client.find() (that searches only the Agent402 host catalog). A buyer reaches SameDayDesk through the verified seller index and the Smart Order Router, both unpaid.",
+  "surfaces": [
+    {
+      "name": "verified_seller_index",
+      "source": {
+        "file": "src/x402-index.js",
+        "lines": "3600-3651",
+        "export": "sellerDetail"
+      },
+      "request": {
+        "method": "GET",
+        "url": "https://agent402.tools/api/index?seller=agents.samedaydesk.com",
+        "headers": { "Accept": "application/json" }
+      },
+      "fieldsRead": [
+        "origin",
+        "health",
+        "routable",
+        "networks",
+        "payToByNetwork",
+        "discoveryPath",
+        "tools[].method",
+        "tools[].route",
+        "tools[].slug",
+        "tools[].price",
+        "tools[].paid",
+        "tools[].networks",
+        "tools[].requestContract.required",
+        "tools[].responseContract.guaranteedPaths"
+      ],
+      "observed": {
+        "origin": "https://agents.samedaydesk.com",
+        "health": 1,
+        "routable": true,
+        "discoveryPath": "/.well-known/x402",
+        "networks": ["eip155:8453"],
+        "payToByNetwork": {
+          "eip155:8453": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+        },
+        "paidToolCount": 25,
+        "extract": {
+          "method": "GET",
+          "route": "/extract",
+          "slug": "extractUrl",
+          "price": 0.005,
+          "paid": true,
+          "networks": ["eip155:8453"],
+          "requestContract": {
+            "state": "declared",
+            "source": "seller_openapi",
+            "required": { "query": ["url"] }
+          },
+          "responseContract": {
+            "state": "declared",
+            "source": "seller_openapi",
+            "guaranteedPaths": ["ok", "title", "url"]
+          }
+        }
+      }
+    },
+    {
+      "name": "smart_order_router",
+      "source": {
+        "file": "client/index.js",
+        "lines": "168-196",
+        "method": "Agent402.route"
+      },
+      "request": {
+        "method": "GET",
+        "url": "https://agent402.tools/api/route?q=SameDayDesk+extract+JSON-LD+AI-readiness&k=5&include=external",
+        "headers": { "Accept": "application/json" }
+      },
+      "fieldsRead": [
+        "results[].seller",
+        "results[].slug",
+        "results[].method",
+        "results[].route",
+        "results[].url",
+        "results[].priceUsd",
+        "results[].networks",
+        "results[].bazaar.payTos",
+        "results[].responseContract.guaranteedPaths",
+        "results[].requestContract.required"
+      ],
+      "observed": {
+        "firstResult": {
+          "seller": "https://agents.samedaydesk.com",
+          "slug": "extractUrl",
+          "method": "GET",
+          "route": "/extract",
+          "url": "https://agents.samedaydesk.com/extract",
+          "priceUsd": 0.005,
+          "payable": "x402",
+          "networks": ["eip155:8453"],
+          "bazaarPayTos": ["0x8904df3de6dfee6a7c8cc38619d2f17806213cee"],
+          "guaranteedPaths": ["ok", "title", "url"],
+          "requiredQuery": ["url"]
+        }
+      }
+    }
+  ]
+}

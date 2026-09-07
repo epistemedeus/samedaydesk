@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.v1",
+  "recordId": "evr_search_console_20260901",
+  "sourceKind": "search_console",
+  "producer": {
+    "id": "google_search_console",
+    "providerId": "google_search_console",
+    "adapterId": "gsc_search_analytics_adapter",
+    "observedSurface": "Google Search Console search analytics"
+  },
+  "scope": {
+    "providerId": "google_search_console",
+    "population": "search_impressions_for_declared_host",
+    "joinKeys": ["page_url"],
+    "host": "samedaydesk.com"
+  },
+  "observationWindow": {
+    "start": "2026-09-01T00:00:00.000Z",
+    "end": "2026-09-02T00:00:00.000Z",
+    "reportingDelaySeconds": 172800
+  },
+  "completeness": "truncated",
+  "authorityClass": "provider_returned",
+  "unknownWhenAbsent": [
+    "queries_below_privacy_threshold",
+    "impressions_outside_this_property"
+  ],
+  "prohibitedInferences": [
+    "cross_source_join_without_exact_key",
+    "sum_across_authority_classes",
+    "organic_label_for_controlled_or_incentivized_traffic",
+    "collapsed_provider_scope",
+    "search_impression_is_visit"
+  ]
+}

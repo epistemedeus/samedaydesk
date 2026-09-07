@@ -1,0 +1,108 @@
+{
+  "state": "discover",
+  "provenance": "derived-from-source + observed-locally",
+  "note": "The Coinbase x402 client reaches a seller by URL. Discovery of that URL is the Bazaar resource feed (AgentKit discover_x402_services) or the seller OpenAPI / .well-known/x402 document. wrapFetchWithPayment itself does not search; it is given the URL.",
+  "surfaces": [
+    {
+      "name": "bazaar_search",
+      "source": {
+        "file": "typescript/agentkit/src/action-providers/x402/utils.ts",
+        "lines": "97-137",
+        "repository": "coinbase/agentkit",
+        "also": "x402ActionProvider.ts:80-114 discoverX402Services → facilitator /discovery/resources"
+      },
+      "request": {
+        "method": "GET",
+        "url": "https://api.cdp.coinbase.com/platform/v2/x402/discovery/search?query=samedaydesk&limit=10",
+        "headers": { "Accept": "application/json" }
+      },
+      "fieldsRead": [
+        "resources[].resource",
+        "resources[].serviceName",
+        "resources[].x402Version",
+        "resources[].accepts[].scheme",
+        "resources[].accepts[].network",
+        "resources[].accepts[].payTo",
+        "resources[].accepts[].amount",
+        "resources[].accepts[].asset",
+        "resources[].accepts[].extra",
+        "resources[].extensions.bazaar.schema.properties.output"
+      ],
+      "observed": {
+        "resource": "https://agents.samedaydesk.com/extract",
+        "serviceName": "SameDayDesk",
+        "x402Version": 2,
+        "accepts0": {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "amount": "5000",
+          "extra": { "name": "USD Coin", "version": "2" },
+          "maxTimeoutSeconds": 300
+        },
+        "bazaarOutputRequired": ["ok", "url", "title"]
+      }
+    },
+    {
+      "name": "seller_well_known_x402",
+      "source": {
+        "note": "Direct URL alternative: the same fields the Bazaar row copies from the seller manifest."
+      },
+      "request": {
+        "method": "GET",
+        "url": "https://agents.samedaydesk.com/.well-known/x402",
+        "headers": { "Accept": "application/json" }
+      },
+      "fieldsRead": [
+        "items[].resource.routeTemplate",
+        "items[].resource.url",
+        "items[].request.method",
+        "items[].request.example.queryParams",
+        "items[].accepts[].scheme",
+        "items[].accepts[].network",
+        "items[].accepts[].payTo",
+        "items[].accepts[].amount",
+        "items[].accepts[].asset",
+        "items[].accepts[].extra"
+      ],
+      "observed": {
+        "routeTemplate": "/extract",
+        "requestMethod": "GET",
+        "exampleQuery": { "url": "https://example.com" },
+        "accepts0": {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "amount": "5000",
+          "extra": { "name": "USD Coin", "version": "2" }
+        }
+      }
+    },
+    {
+      "name": "seller_openapi",
+      "request": {
+        "method": "GET",
+        "url": "https://agents.samedaydesk.com/openapi.json",
+        "headers": { "Accept": "application/json" }
+      },
+      "fieldsRead": [
+        "info.version",
+        "paths./extract.get.operationId",
+        "paths./extract.get.x-payment-info.price",
+        "paths./extract.get.x-payment-info.protocols[].x402"
+      ],
+      "observed": {
+        "infoVersion": "1.23.40",
+        "operationId": "extractUrl",
+        "price": { "amount": "0.005", "currency": "USD", "mode": "fixed" },
+        "x402": {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+        }
+      }
+    }
+  ]
+}
