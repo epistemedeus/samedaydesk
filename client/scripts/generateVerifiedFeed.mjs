@@ -146,20 +146,24 @@ export function generateVerifiedFeed(generatedAt = crawl.checkedAt, source = cra
   };
 }
 
-export function feedContainsOnlyCurrentEvidence(feed, asOf = feed?.generatedAt) {
+export function feedContainsOnlyCurrentEvidence(feed, asOf = feed?.generatedAt, source = crawl) {
   if (!feed || !Array.isArray(feed.routes)) return false;
   const sourceByKey = new Map(
-    crawl.routes.map((route) => [`${route.method} ${route.origin}${route.route}`, route]),
+    (source.routes || []).map((route) => [`${route.method} ${route.origin}${route.route}`, route]),
   );
   return feed.routes.every((row) => {
-    const source = sourceByKey.get(`${row.method} ${row.origin}${row.route}`);
-    return Boolean(source && hasLiveContractEvidence(source, asOf));
+    const matched = sourceByKey.get(`${row.method} ${row.origin}${row.route}`);
+    return Boolean(matched && hasLiveContractEvidence(matched, asOf));
   });
 }
 
-export function feedMatchesCurrentCrawl(feed) {
+export function feedMatchesSourceCrawl(feed, source = crawl) {
   if (!feed || typeof feed.generatedAt !== "string") return false;
-  return JSON.stringify(feed) === JSON.stringify(generateVerifiedFeed(feed.generatedAt));
+  return JSON.stringify(feed) === JSON.stringify(generateVerifiedFeed(feed.generatedAt, source));
+}
+
+export function feedMatchesCurrentCrawl(feed) {
+  return feedMatchesSourceCrawl(feed, crawl);
 }
 
 export function verifiedRowsHaveCompleteEvidence(feed) {
@@ -178,10 +182,14 @@ export function verifiedRowsHaveCompleteEvidence(feed) {
     );
 }
 
-export function feedRejectsForeignMalformedAndUnchecked(feed, asOf = feed?.generatedAt) {
-  if (!feed || !Array.isArray(feed.routes) || !Array.isArray(crawl.findings)) return false;
+export function feedRejectsForeignMalformedAndUnchecked(
+  feed,
+  asOf = feed?.generatedAt,
+  source = crawl,
+) {
+  if (!feed || !Array.isArray(feed.routes) || !Array.isArray(source.findings)) return false;
   const findingKeys = new Set(
-    crawl.findings.map((item) => `${item.method} ${item.origin}${item.route}`),
+    source.findings.map((item) => `${item.method} ${item.origin}${item.route}`),
   );
   return feed.routes.every((row) => {
     const live =

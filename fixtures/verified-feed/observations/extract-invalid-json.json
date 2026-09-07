@@ -1,0 +1,5 @@
+{
+  "route": "/extract",
+  "kind": "invalid_json",
+  "detail": "body_not_json"
+}

