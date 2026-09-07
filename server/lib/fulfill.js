@@ -22,7 +22,7 @@ export async function fulfillFromIntent(intent, { sb = supabaseAdmin() } = {}) {
   if (!uid) return { ok: false, reason: "no_uid" }; // e.g. an operator Payment Link w/o an account
 
   const pricing = trustPricingFromMetadata(meta);
-  const orderId = orderIdForPaymentIntent(intent);
+  let orderId = orderIdForPaymentIntent(intent);
 
   // Pull the user's intake draft (details + uploaded file path), if any.
   let draft = null;
@@ -52,10 +52,19 @@ export async function fulfillFromIntent(intent, { sb = supabaseAdmin() } = {}) {
           payment_attempt_id: meta.payment_attempt_id || null,
         },
       },
-      { onConflict: "id", ignoreDuplicates: true },
+      { onConflict: "stripe_payment_intent", ignoreDuplicates: true },
     )
     .select("id");
   if (error) throw error;
+  const isNew = Array.isArray(inserted) && inserted.length > 0;
+  if (!isNew) {
+    // A pre-migration order may have this PI under order_{uid}_{offer}.
+    // Return its real identity rather than fabricating a nonexistent new ID.
+    const { data: existing, error: lookupError } = await sb.from("orders")
+      .select("id").eq("stripe_payment_intent", intent.id).single();
+    if (lookupError) throw lookupError;
+    orderId = existing.id;
+  }
 
   // Flip the user to paid (server-managed field; clients can't write it).
   await sb.from("profiles").update({ payment_status: "paid" }).eq("id", uid);
@@ -71,7 +80,6 @@ export async function fulfillFromIntent(intent, { sb = supabaseAdmin() } = {}) {
     }
   }
 
-  const isNew = Array.isArray(inserted) && inserted.length > 0;
   if (isNew) {
     // best-effort; never fail fulfillment on a notification error
     sendReceipt({ to: intent.receipt_email || meta.email, label: pricing.label, amount: intent.amount ?? pricing.amount, orderId }).catch(() => {});

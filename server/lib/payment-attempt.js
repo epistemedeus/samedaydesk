@@ -5,7 +5,7 @@
 // (remount, network uncertainty, double submit) reuse one Stripe idempotency
 // key and PaymentIntent. After success or cancellation, a later checkout opens
 // a new attempt. Immutable offer facts are bound to the attempt; changing them
-// also opens a new attempt.
+// require resolving the existing purchase before a new attempt is admitted.
 import { createHash } from "node:crypto";
 import { getOffer, CURRENCY } from "../pricing.js";
 import {
@@ -78,20 +78,19 @@ export async function markPaymentAttemptCanceled({
   return markAttempt(store, attemptId, { status: PAYMENT_ATTEMPT_STATUS.CANCELED });
 }
 
-async function loadOwnedOpenAttempt(store, { uid, offerSlug, factsHash, paymentAttemptId }) {
+async function loadOwnedOpenAttempt(store, { uid, offerSlug, paymentAttemptId }) {
   if (paymentAttemptId) {
     const byId = await store.getById(paymentAttemptId);
     if (
       byId
       && byId.user_id === uid
       && byId.offer === offerSlug
-      && byId.facts_hash === factsHash
       && byId.status === PAYMENT_ATTEMPT_STATUS.OPEN
     ) {
       return byId;
     }
   }
-  return store.findOpenByFacts({ userId: uid, offer: offerSlug, factsHash });
+  return store.findOpenByOffer({ userId: uid, offer: offerSlug });
 }
 
 async function resolveReusableIntent(stripeClient, attempt) {
@@ -107,7 +106,8 @@ async function resolveReusableIntent(stripeClient, attempt) {
     // Unknown/non-terminal: keep the same attempt identity (do not mint a fresh charge).
     return { reusable: true, intent };
   } catch {
-    // Retrieve failed: keep attempt identity and allow idempotent recreate with same key.
+    // A known PI must only be retrieved. Stripe's create idempotency retention
+    // is bounded, so even the same key could create a second PI on a later day.
     return { reusable: false, intent: null, retrieveFailed: true };
   }
 }
@@ -149,6 +149,9 @@ export async function createOfferPaymentIntent({
   if (attempt) {
     const resolved = await resolveReusableIntent(stripeClient, attempt);
     if (resolved.reusable && resolved.intent) {
+      if (attempt.facts_hash !== factsHash) {
+        return { ok: false, status: 409, error: "An existing payment has different purchase facts. Resolve or cancel it before starting a changed purchase." };
+      }
       return {
         ok: true,
         intent: resolved.intent,
@@ -169,7 +172,7 @@ export async function createOfferPaymentIntent({
       await markPaymentAttemptCanceled({ store, attemptId: attempt.id });
       attempt = null;
     } else if (resolved.retrieveFailed && attempt.stripe_payment_intent) {
-      // Keep the row; fall through to idempotent create with the same attempt id.
+      return { ok: false, status: 503, error: "Payment status is temporarily unavailable. Retry this purchase later; no new payment was created." };
     } else if (!attempt.stripe_payment_intent) {
       // Open row never got a PI — reuse the attempt id below.
     } else {
@@ -188,25 +191,41 @@ export async function createOfferPaymentIntent({
       status: PAYMENT_ATTEMPT_STATUS.OPEN,
       stripe_payment_intent: null,
       facts_hash: factsHash,
+      stripe_create_params: {
+        amount: offer.amount,
+        currency: CURRENCY,
+        receipt_email: email,
+        description: `SameDayDesk · ${offer.label}`,
+        metadata: {
+          uid,
+          offer: offerSlug,
+          amount: String(offer.amount),
+          label: offer.label,
+          upload_path: normalizedUpload,
+        },
+        automatic_payment_methods: { enabled: true },
+      },
     });
   }
 
+  if (attempt.facts_hash !== factsHash) {
+    return { ok: false, status: 409, error: "An unresolved payment has different purchase facts. Resolve it before starting a changed purchase." };
+  }
+  // A create may have succeeded upstream while its response/save was lost.
+  // After a conservative retry window, quarantine instead of reusing an expired
+  // Stripe key. Keep the row open so later requests cannot silently bypass it.
+  const ageMs = Date.now() - Date.parse(attempt.created_at);
+  if (!attempt.stripe_create_params || !Number.isFinite(ageMs) || ageMs >= 23 * 60 * 60 * 1000) {
+    return { ok: false, status: 409, error: "This unresolved payment needs reconciliation before checkout can continue. No new payment was created." };
+  }
   const idempotencyKey = buildPaymentAttemptIdempotencyKey({ attemptId: attempt.id });
   const intent = await stripeClient.paymentIntents.create(
     {
-      amount: offer.amount,
-      currency: CURRENCY,
-      receipt_email: email,
-      description: `SameDayDesk · ${offer.label}`,
+      ...attempt.stripe_create_params,
       metadata: {
-        uid,
-        offer: offerSlug,
-        amount: String(offer.amount),
-        label: offer.label,
-        upload_path: normalizedUpload,
+        ...attempt.stripe_create_params.metadata,
         payment_attempt_id: attempt.id,
       },
-      automatic_payment_methods: { enabled: true },
     },
     { idempotencyKey },
   );

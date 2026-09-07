@@ -13,13 +13,12 @@ export function createMemoryPaymentAttemptStore() {
     async getById(id) {
       return rows.get(id) || null;
     },
-    async findOpenByFacts({ userId, offer, factsHash }) {
+    async findOpenByOffer({ userId, offer }) {
       let best = null;
       for (const row of rows.values()) {
         if (
           row.user_id === userId
           && row.offer === offer
-          && row.facts_hash === factsHash
           && row.status === OPEN
         ) {
           if (!best || row.updated_at > best.updated_at) best = row;
@@ -28,6 +27,12 @@ export function createMemoryPaymentAttemptStore() {
       return best ? { ...best } : null;
     },
     async insert(row) {
+      // Match the database's one-open-purchase-per-user/offer constraint.
+      for (const existing of rows.values()) {
+        if (existing.user_id === row.user_id && existing.offer === row.offer && existing.status === OPEN) {
+          return { ...existing };
+        }
+      }
       const now = new Date().toISOString();
       const saved = {
         ...row,
@@ -62,13 +67,12 @@ export function createSupabasePaymentAttemptStore(getAdmin = supabaseAdmin) {
       if (error) throw error;
       return data || null;
     },
-    async findOpenByFacts({ userId, offer, factsHash }) {
+    async findOpenByOffer({ userId, offer }) {
       const { data, error } = await getAdmin()
         .from("payment_attempts")
         .select("*")
         .eq("user_id", userId)
         .eq("offer", offer)
-        .eq("facts_hash", factsHash)
         .eq("status", OPEN)
         .order("updated_at", { ascending: false })
         .limit(1)
@@ -82,6 +86,11 @@ export function createSupabasePaymentAttemptStore(getAdmin = supabaseAdmin) {
         .insert(row)
         .select("*")
         .single();
+      if (error?.code === "23505") {
+        // Another request/process won admission. Never mint a second Stripe key.
+        const existing = await this.findOpenByOffer({ userId: row.user_id, offer: row.offer });
+        if (existing) return existing;
+      }
       if (error) throw error;
       return data;
     },

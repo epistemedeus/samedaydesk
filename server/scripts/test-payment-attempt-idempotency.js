@@ -91,10 +91,15 @@ function memoryFulfillDb() {
       }
       if (table === "orders") {
         return {
+          select() {
+            return { eq: (_column, pi) => ({ single: async () => ({
+              data: [...orders.values()].find(row => row.stripe_payment_intent === pi), error: null,
+            }) }) };
+          },
           upsert(row, { onConflict, ignoreDuplicates } = {}) {
-            assert.equal(onConflict, "id");
+            assert.equal(onConflict, "stripe_payment_intent");
             assert.equal(ignoreDuplicates, true);
-            const existed = orders.has(row.id);
+            const existed = [...orders.values()].some(existing => existing.stripe_payment_intent === row.stripe_payment_intent);
             if (!existed) orders.set(row.id, { ...row });
             const inserted = existed ? [] : [{ id: row.id }];
             return {
@@ -167,7 +172,7 @@ test("create retry with same attempt identity reuses one PaymentIntent", async (
   assert.equal(first.intent.metadata.payment_attempt_id, first.attemptId);
 });
 
-test("unknown retrieve keeps the same attempt identity for idempotent recreate", async () => {
+test("unknown retrieve preserves the attempt without reissuing Stripe create", async () => {
   const store = createMemoryPaymentAttemptStore();
   let createCount = 0;
   const stripeClient = {
@@ -210,9 +215,61 @@ test("unknown retrieve keeps the same attempt identity for idempotent recreate",
     paymentAttemptId: first.attemptId,
   });
 
-  assert.equal(second.attemptId, first.attemptId);
-  assert.equal(second.idempotencyKey, first.idempotencyKey);
-  assert.equal(createCount, 2);
+  assert.equal(second.ok, false);
+  assert.equal(second.status, 503);
+  assert.equal((await store.getById(first.attemptId)).stripe_payment_intent, first.intent.id);
+  assert.equal(createCount, 1);
+});
+
+test("concurrent initial creates converge on one durable attempt and PI", async () => {
+  const store = createMemoryPaymentAttemptStore();
+  const stripeClient = fakeStripe();
+  const results = await Promise.all(Array.from({ length: 10 }, () => createOfferPaymentIntent({
+    stripeClient, store, uid: "race", email: "race@example.test", offerSlug: "agent_mcp_server",
+  })));
+  assert.ok(results.every(result => result.ok));
+  assert.equal(new Set(results.map(result => result.attemptId)).size, 1);
+  assert.equal(new Set(results.map(result => result.intent.id)).size, 1);
+  assert.equal(new Set(stripeClient.creates.map(call => call.options.idempotencyKey)).size, 1);
+  assert.match(MIGRATION, /unique index[^;]+\(user_id, offer\) where status = 'open'/s);
+});
+
+test("lost create response retries immutable parameters and quarantines after retention window", async () => {
+  const store = createMemoryPaymentAttemptStore();
+  const stripeClient = fakeStripe();
+  const args = { stripeClient, store, uid: "lost", email: "first@example.test", offerSlug: "agent_mcp_server" };
+  const originalCreate = stripeClient.paymentIntents.create;
+  let firstCall = true;
+  stripeClient.paymentIntents.create = async (...params) => {
+    const intent = await originalCreate(...params);
+    if (firstCall) { firstCall = false; throw new Error("response lost"); }
+    return intent;
+  };
+  await assert.rejects(createOfferPaymentIntent(args), /response lost/);
+  const recovered = await createOfferPaymentIntent({ ...args, email: "changed@example.test" });
+  assert.equal(recovered.ok, true);
+  assert.deepEqual(stripeClient.creates[0].params, stripeClient.creates[1].params);
+  await store.update(recovered.attemptId, {
+    stripe_payment_intent: null,
+    created_at: new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString(),
+  });
+  const quarantined = await createOfferPaymentIntent(args);
+  assert.equal(quarantined.status, 409);
+  assert.equal(stripeClient.creates.length, 2);
+  const changed = await createOfferPaymentIntent({ ...args, uploadPath: "new-file" });
+  assert.equal(changed.status, 409);
+  assert.equal(stripeClient.creates.length, 2);
+});
+
+test("changed facts cannot bypass an open payment", async () => {
+  const store = createMemoryPaymentAttemptStore();
+  const stripeClient = fakeStripe();
+  const args = { stripeClient, store, uid: "facts", email: "buyer@example.test", offerSlug: "agent_mcp_server" };
+  const first = await createOfferPaymentIntent(args);
+  const changed = await createOfferPaymentIntent({ ...args, uploadPath: "different-input.pdf" });
+  assert.equal(first.ok, true);
+  assert.equal(changed.status, 409);
+  assert.equal(stripeClient.creates.length, 1);
 });
 
 test("after success a second checkout opens a new PI; canceled then new also works", async () => {
@@ -334,6 +391,20 @@ test("fulfill uses payment identity; duplicate webhook is one order; second PI i
   const legacyId = legacyOrderIdForUidOffer("user_f", "agent_mcp_server");
   assert.equal(legacyId, "order_user_f_agent_mcp_server");
   assert.notEqual(legacyId, first.orderId);
+});
+
+test("legacy same-payment webhook returns the original order without duplicate fulfillment", async () => {
+  const sb = memoryFulfillDb();
+  const legacyId = legacyOrderIdForUidOffer("legacy_user", "agent_mcp_server");
+  sb.orders.set(legacyId, { id: legacyId, stripe_payment_intent: "pi_old", status: "delivered" });
+  const result = await fulfillFromIntent({
+    id: "pi_old", amount: 34900, currency: "usd",
+    metadata: { uid: "legacy_user", offer: "agent_mcp_server", amount: "34900" },
+  }, { sb });
+  assert.equal(result.orderId, legacyId);
+  assert.equal(result.isNew, false);
+  assert.equal(sb.orders.size, 1);
+  assert.equal(sb.orders.get(legacyId).status, "delivered");
 });
 
 test("checkout route and client support attempt round-trip and human return navigation", () => {

@@ -11,6 +11,7 @@ create table if not exists public.payment_attempts (
   status                text not null default 'open',
   stripe_payment_intent text,
   facts_hash            text not null,
+  stripe_create_params  jsonb not null,
   created_at            timestamptz not null default now(),
   updated_at            timestamptz not null default now(),
   constraint payment_attempts_status_check
@@ -26,6 +27,10 @@ create index if not exists payment_attempts_user_offer_idx
 create index if not exists payment_attempts_open_lookup_idx
   on public.payment_attempts (user_id, offer, status, facts_hash);
 
+-- Admission is atomic across Express processes. Changed facts cannot bypass an
+-- unresolved payment by occupying a different facts hash.
+create unique index if not exists payment_attempts_one_open_uidx
+  on public.payment_attempts (user_id, offer) where status = 'open';
+
 create unique index if not exists orders_stripe_payment_intent_uidx
-  on public.orders (stripe_payment_intent)
-  where stripe_payment_intent is not null;
+  on public.orders (stripe_payment_intent);
