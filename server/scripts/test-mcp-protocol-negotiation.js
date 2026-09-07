@@ -18,9 +18,8 @@ const EXPECTED_TOOL_NAMES = [
   "browse_taskmarket_tasks",
   "track_taskmarket_task",
 ];
-// Byte-semantic pins of the five-tool apex surface at base 1b24d3ec1555.
+// Byte-semantic pin of the five-tool apex surface definitions.
 const FROZEN_TOOLS_BLOCK_SHA256 = "068cbfdb8ddab4dac7eef335d51fbe347728d6ccca65bef0365a3eb831db6caf";
-const FROZEN_TOOLS_CALL_BLOCK_SHA256 = "e4d2728c9c556cd40f735bd7fe55f732fd270fae0fb7b4c2497ad6574faf35d9";
 
 const MCP_SOURCE_PATH = join(dirname(fileURLToPath(import.meta.url)), "../routes/mcp.js");
 const MCP_SOURCE = readFileSync(MCP_SOURCE_PATH, "utf8");
@@ -38,7 +37,7 @@ function extractBlock(src, startMarker, endMarker) {
 }
 
 function toolsFromSource(src) {
-  const block = extractBlock(src, "const TOOLS = [", "const AI_CRAWLERS");
+  const block = extractBlock(src, "const TOOLS = [", "const okMsg");
   const link = src.match(/const FIXPACK_LINK = "([^"]+)"/);
   assert.ok(link, "FIXPACK_LINK missing from MCP source");
   const load = new Function("FIXPACK_LINK", "MCP_TOOL_NAMES", `${block}\nreturn TOOLS;`);
@@ -103,15 +102,22 @@ test("MCP source implements only 2024-11-05 and does not echo offered versions",
   assert.equal(MCP_SOURCE.includes("2999-01-01"), false);
 });
 
-test("five tool definitions and tools/call handlers are byte-semantically unchanged", () => {
-  const toolsBlock = extractBlock(MCP_SOURCE, "const TOOLS = [", "const AI_CRAWLERS");
+test("five apex tools remain listed; tools/call still serves readiness, Fix Pack, and TaskMarket", () => {
+  const toolsBlock = extractBlock(MCP_SOURCE, "const TOOLS = [", "const okMsg");
+  assert.equal(sha256(toolsBlock), FROZEN_TOOLS_BLOCK_SHA256);
+
   const callBlock = extractBlock(
     MCP_SOURCE,
     'case "tools/call":',
     "    default:\n      return id !== undefined ? errMsg",
   );
-  assert.equal(sha256(toolsBlock), FROZEN_TOOLS_BLOCK_SHA256);
-  assert.equal(sha256(callBlock), FROZEN_TOOLS_CALL_BLOCK_SHA256);
+  assert.match(callBlock, /validateFixPackLicense/);
+  assert.match(callBlock, /generateStarterFixPack/);
+  assert.match(callBlock, /generateCompleteFixPack/);
+  assert.match(callBlock, /check_ai_readiness/);
+  assert.match(callBlock, /plan_taskmarket_delegation/);
+  assert.equal(callBlock.includes("FIXPACK_MIN_CENTS"), false);
+  assert.equal(callBlock.includes("amount_total || 0) >="), false);
 
   const tools = toolsFromSource(MCP_SOURCE);
   assert.deepEqual(tools.map((tool) => tool.name), EXPECTED_TOOL_NAMES);

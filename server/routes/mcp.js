@@ -7,24 +7,34 @@
 // Stripe checkout-session license, so a developer can buy + receive the full Fix
 // Pack from inside their AI client. The purchase happens at the Payment Link
 // (standard Stripe); this just validates + delivers, with a graceful fallback.
+// License authority is a bearer checkout-session id bound to the merchant Fix Pack
+// Payment Link / product — not an amount-only threshold and not a customer login.
 import { Router } from "express";
-import dns from "node:dns/promises";
-import net from "node:net";
 import { runCheck } from "./tools.js";
-import { stripe, isStripeConfigured } from "../lib/stripe.js";
 import {
   browseTaskMarketTasks,
   buildTaskMarketDelegationPlan,
   trackTaskMarketTask,
 } from "../lib/taskmarket.js";
 import { MCP_TOOL_NAMES } from "../lib/mcp-tool-inventory.js";
+import {
+  FIXPACK_MCP_BUY_URL,
+  validateFixPackLicense,
+} from "../lib/fixpack-license.js";
+import {
+  generateCompleteFixPack,
+  generateStarterFixPack,
+} from "../lib/fixpack-artifact.js";
 
 const router = Router();
 
 const PROTOCOL_VERSION = "2024-11-05";
 const SERVER_INFO = { name: "samedaydesk-agent-tools", version: "1.2.0" };
+// String literal kept for MCP protocol gate tooling; must match FIXPACK_MCP_BUY_URL.
 const FIXPACK_LINK = "https://buy.stripe.com/8x24gA0xA9DF9dd13YeZ20h"; // $39 instant Fix Pack
-const FIXPACK_MIN_CENTS = 3900;
+if (FIXPACK_LINK !== FIXPACK_MCP_BUY_URL) {
+  throw new Error("FIXPACK_LINK must stay aligned with FIXPACK_MCP_BUY_URL");
+}
 
 export const TOOLS = [
   {
@@ -110,111 +120,8 @@ export const TOOLS = [
   },
 ];
 
-const AI_CRAWLERS = [
-  "GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-User",
-  "PerplexityBot", "Perplexity-User", "Google-Extended", "Applebot-Extended", "CCBot",
-];
-
 const okMsg = (id, result) => ({ jsonrpc: "2.0", id, result });
 const errMsg = (id, code, message) => ({ jsonrpc: "2.0", id, error: { code, message } });
-
-// ---- SSRF-guarded fetch + analysis (URL is user-provided) -------------------
-function isPrivateIp(ip) {
-  if (net.isIPv4(ip)) {
-    const [a, b] = ip.split(".").map(Number);
-    return a === 10 || a === 127 || a === 0 || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 169 && b === 254) || (a === 100 && b >= 64 && b <= 127);
-  }
-  if (net.isIPv6(ip)) { const v = ip.toLowerCase(); return v === "::1" || v.startsWith("fc") || v.startsWith("fd") || v.startsWith("fe80") || v.startsWith("::ffff:"); }
-  return true;
-}
-function normalizeUrl(raw) {
-  let s = String(raw || "").trim();
-  if (!s) throw new Error("Provide a url, e.g. example.com");
-  if (!/^https?:\/\//i.test(s)) s = "https://" + s;
-  const u = new URL(s);
-  if (!u.hostname.includes(".")) throw new Error("Enter a full domain, e.g. example.com");
-  return u;
-}
-async function assertPublic(hostname) {
-  if (net.isIP(hostname)) { if (isPrivateIp(hostname)) throw new Error("Not a public host"); return; }
-  const addrs = await dns.lookup(hostname, { all: true });
-  if (!addrs.length || addrs.some((a) => isPrivateIp(a.address))) throw new Error("Not a public host");
-}
-async function fetchText(url) {
-  const c = new AbortController(); const t = setTimeout(() => c.abort(), 10000);
-  try {
-    const r = await fetch(url, { signal: c.signal, redirect: "follow", headers: { "User-Agent": "SameDayDeskBot/1.0 (+https://samedaydesk.com)" } });
-    const buf = Buffer.from((await r.arrayBuffer()).slice(0, 3_000_000));
-    return { finalUrl: r.url, body: buf.toString("utf8") };
-  } finally { clearTimeout(t); }
-}
-const attr = (tag, n) => { const m = tag.match(new RegExp(n + '\\s*=\\s*["\']([^"\']*)["\']', "i")); return m ? m[1].trim() : null; };
-function analyze(html) {
-  const o = { title: null, description: null, og: 0, h1: null, links: [] };
-  if (!html) return o;
-  const tm = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i); if (tm) o.title = tm[1].replace(/\s+/g, " ").trim();
-  const hm = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i); if (hm) o.h1 = hm[1].replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
-  for (const tag of html.match(/<meta[^>]+>/gi) || []) {
-    if ((attr(tag, "name") || "").toLowerCase() === "description") o.description = attr(tag, "content");
-    if ((attr(tag, "property") || "").toLowerCase().startsWith("og:")) o.og++;
-  }
-  for (const a of html.match(/href\s*=\s*["']([^"'#?]+)["']/gi) || []) {
-    const m = a.match(/["']([^"']+)["']/); if (m && /^\/[a-z]/i.test(m[1])) o.links.push(m[1]);
-  }
-  return o;
-}
-
-async function generateCompleteFixPack(rawUrl) {
-  const u = normalizeUrl(rawUrl);
-  await assertPublic(u.hostname);
-  const page = await fetchText(u.toString());
-  const origin = new URL(page.finalUrl || u.toString()).origin;
-  const host = new URL(origin).hostname.replace(/^www\./, "");
-  const a = analyze(page.body);
-  const name = (a.title ? a.title.split(/[|\-–—:]/)[0].trim() : host).slice(0, 60) || host;
-  const desc = (a.description && a.description.length >= 40 ? a.description : a.h1 || `${name} — see ${host}.`).slice(0, 300);
-
-  const orgLd = { "@context": "https://schema.org", "@type": "Organization", name, url: origin, description: desc, logo: `${origin}/logo.png` };
-  const faqLd = {
-    "@context": "https://schema.org", "@type": "FAQPage",
-    mainEntity: [
-      { "@type": "Question", name: `What does ${name} do?`, acceptedAnswer: { "@type": "Answer", text: desc } },
-      { "@type": "Question", name: `Where is ${name} located / what area does it serve?`, acceptedAnswer: { "@type": "Answer", text: "REPLACE with your address or service area." } },
-      { "@type": "Question", name: `How do I contact ${name}?`, acceptedAnswer: { "@type": "Answer", text: "REPLACE with phone, email, or contact page." } },
-    ],
-  };
-  const robots = ["# AI search engines + crawlers welcome", "User-agent: *", "Allow: /", "", ...AI_CRAWLERS.flatMap((ua) => [`User-agent: ${ua}`, "Allow: /", ""]), `Sitemap: ${origin}/sitemap.xml`, ""].join("\n");
-  const urls = [...new Set([origin + "/", ...a.links.slice(0, 30).map((l) => origin + l)])].slice(0, 25);
-  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` + urls.map((x) => `  <url><loc>${x}</loc></url>`).join("\n") + `\n</urlset>\n`;
-  const titleRec = a.title && a.title.length >= 15 && a.title.length <= 65 ? `Title OK (${a.title.length} chars).` : `Use a 15-65 char title, e.g. "${name} — ${(a.h1 || "what you do, where").slice(0, 40)}".`;
-  const descRec = a.description && a.description.length >= 70 && a.description.length <= 165 ? `Meta description OK (${a.description.length} chars).` : `Add a 70-165 char meta description, e.g. "${desc.slice(0, 150)}".`;
-  const ogRec = a.og >= 3 ? `Open Graph present (${a.og} tags).` : `Add og:title/og:description/og:url/og:image/og:type.`;
-
-  return [
-    `# AI-Readiness Fix Pack — ${host}`,
-    "Paste the JSON-LD into your homepage <head>, replace /robots.txt, upload /sitemap.xml (submit it in Bing Webmaster Tools). Replace any REPLACE placeholders.",
-    "",
-    "## 1. Organization JSON-LD",
-    '<script type="application/ld+json">', JSON.stringify(orgLd, null, 2), "</script>",
-    "## 2. FAQPage JSON-LD",
-    '<script type="application/ld+json">', JSON.stringify(faqLd, null, 2), "</script>",
-    "## 3. robots.txt", robots,
-    "## 4. sitemap.xml", sitemap,
-    "## 5. Title / meta / Open Graph", `- ${titleRec}`, `- ${descRec}`, `- ${ogRec}`,
-    "", `Verify after deploying: https://samedaydesk.com/scan?url=${host}`,
-  ].join("\n");
-}
-
-async function validateLicense(license) {
-  const id = String(license || "").trim();
-  if (!isStripeConfigured() || !/^cs_/.test(id)) return false;
-  try {
-    const s = await stripe.checkout.sessions.retrieve(id);
-    return s && s.payment_status === "paid" && (s.amount_total || 0) >= FIXPACK_MIN_CENTS;
-  } catch {
-    return false;
-  }
-}
 
 function formatReport(r) {
   const lines = [`AI Readiness for ${r.url}`, `Score: ${r.score}/100   Grade: ${r.grade}`, ""];
@@ -271,11 +178,17 @@ async function handle(msg) {
 
       if (name === "generate_complete_fix_pack") {
         const license = params?.arguments?.license;
-        const paid = await validateLicense(license);
+        const paid = await validateFixPackLicense(license);
         if (!paid) {
           let starter = "";
-          try { starter = "\n\nMeanwhile, here's a free starter (Organization JSON-LD + AI-crawler robots.txt). The paid Fix Pack adds the full FAQ, sitemap, and meta/OG, tailored:\n\n" + (await generateCompleteFixPack(url)); } catch { /* ignore */ }
-          const why = license ? "That license code couldn't be verified as a paid Fix Pack (if you just paid, wait ~30s and retry, or contact help@samedaydesk.com)." : "No license provided.";
+          try {
+            starter =
+              "\n\nMeanwhile, here's a free starter (Organization JSON-LD + AI-crawler robots.txt). The paid Fix Pack adds the full FAQ, sitemap, and meta/OG, tailored:\n\n"
+              + (await generateStarterFixPack(url));
+          } catch { /* ignore */ }
+          const why = license
+            ? "That license code couldn't be verified as a paid Fix Pack (if you just paid, wait ~30s and retry, or contact help@samedaydesk.com)."
+            : "No license provided.";
           return okMsg(id, {
             content: [{ type: "text", text: `${why}\n\nTo get the complete Fix Pack: buy at ${FIXPACK_LINK} ($39). After paying you'll see your license code; call this tool again with url + that license.${starter}` }],
             isError: true,
