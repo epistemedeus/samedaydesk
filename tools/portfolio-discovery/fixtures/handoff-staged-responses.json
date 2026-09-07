@@ -1,0 +1,21 @@
+{
+  "responses": {
+    "https://handoff.example.test": {
+      "/": {
+        "status": 200,
+        "contentType": "text/html; charset=utf-8",
+        "body": "<!doctype html><html><head><link rel=\"canonical\" href=\"https://handoff.example.test/\" /><title>Staged handoff fixture</title></head><body>Staged</body></html>"
+      },
+      "/openapi.json": {
+        "status": 200,
+        "contentType": "application/json",
+        "body": "{\"openapi\":\"3.1.0\",\"info\":{\"title\":\"Fixture correspondence\",\"version\":\"0\"},\"paths\":{\"/v1/projects\":{\"get\":{\"summary\":\"Read a project\"}}}}"
+      },
+      "/review/demo": {
+        "status": 200,
+        "contentType": "text/html; charset=utf-8",
+        "body": "<!doctype html><html><head><link rel=\"canonical\" href=\"https://handoff.example.test/review/demo\" /><title>Human review</title></head><body>Review demo. GET does not approve.</body></html>"
+      }
+    }
+  }
+}
