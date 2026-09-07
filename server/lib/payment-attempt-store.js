@@ -53,11 +53,27 @@ export function createMemoryPaymentAttemptStore() {
       rows.set(id, saved);
       return { ...saved };
     },
+    async freezeIntake(id, userId, snapshot, hash) {
+      const row = rows.get(id);
+      if (!row || row.user_id !== userId) return null;
+      if (row.status === OPEN && !row.intake_snapshot) {
+        return this.update(id, { intake_snapshot: snapshot, intake_hash: hash });
+      }
+      return { ...row };
+    },
   };
 }
 
 export function createSupabasePaymentAttemptStore(getAdmin = supabaseAdmin) {
   return {
+    async freezeIntake(id, userId, snapshot, hash) {
+      const { data, error } = await getAdmin().from("payment_attempts")
+        .update({ intake_snapshot: snapshot, intake_hash: hash, updated_at: new Date().toISOString() })
+        .eq("id", id).eq("user_id", userId).eq("status", OPEN)
+        .is("intake_snapshot", null).select("*").maybeSingle();
+      if (error) throw error;
+      return data || this.getById(id);
+    },
     async getById(id) {
       const { data, error } = await getAdmin()
         .from("payment_attempts")

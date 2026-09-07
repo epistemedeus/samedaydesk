@@ -12,6 +12,8 @@ create table if not exists public.payment_attempts (
   stripe_payment_intent text,
   facts_hash            text not null,
   stripe_create_params  jsonb not null,
+  intake_snapshot       jsonb,
+  intake_hash           text,
   created_at            timestamptz not null default now(),
   updated_at            timestamptz not null default now(),
   constraint payment_attempts_status_check

@@ -53,7 +53,7 @@ export default function Dashboard() {
                     <span className="mono">${(o.amount / 100).toFixed(0)}</span> · {new Date(o.created_at).toLocaleDateString()}
                   </p>
                 </div>
-                <span className={styles.status}>{o.status}</span>
+                <span className={styles.status}>{o.status === "intake_required" ? "Paid · task intake needs review. Contact support before delivery." : o.status}</span>
               </li>
             ))}
           </ul>

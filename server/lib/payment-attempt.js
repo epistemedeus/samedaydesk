@@ -159,6 +159,7 @@ export async function createOfferPaymentIntent({
         attemptId: attempt.id,
         idempotencyKey: buildPaymentAttemptIdempotencyKey({ attemptId: attempt.id }),
         resumed: true,
+        intakeSnapshot: attempt.intake_snapshot || null,
       };
     }
     if (resolved.terminal === "succeeded") {
@@ -239,5 +240,40 @@ export async function createOfferPaymentIntent({
     attemptId: attempt.id,
     idempotencyKey,
     resumed: false,
+    intakeSnapshot: attempt.intake_snapshot || null,
   };
+}
+
+/** Freeze task content immediately before human Stripe confirmation. */
+export async function preparePaymentIntake({
+  stripeClient, uid, paymentAttemptId, intake,
+  store = paymentAttemptStoreDeps.getStore(),
+} = {}) {
+  const attempt = paymentAttemptId && await store.getById(paymentAttemptId);
+  if (!attempt || attempt.user_id !== uid) return { ok: false, status: 404, error: "Payment attempt not found" };
+  const details = typeof intake?.details === "string" ? intake.details : "";
+  const uploadPath = typeof intake?.uploadPath === "string" ? intake.uploadPath : "";
+  if (details.length > 10000 || uploadPath.length > 1024 || (uploadPath &&
+    (!uploadPath.startsWith(`${uid}/`) || uploadPath.split("/").some(part => part === ".." || part === ".")))) {
+    return { ok: false, status: 400, error: "Invalid task text or upload path" };
+  }
+  const snapshot = { details, uploadPath };
+  const hash = createHash("sha256").update(JSON.stringify(snapshot)).digest("hex");
+  if (attempt.intake_snapshot && attempt.intake_hash !== hash) {
+    return { ok: false, status: 409, error: "This payment is already frozen for a different task. Review the original task or resolve/cancel this payment before starting a new purchase." };
+  }
+  if (attempt.status !== PAYMENT_ATTEMPT_STATUS.OPEN || !attempt.stripe_payment_intent) {
+    return { ok: false, status: 409, error: "This payment cannot accept task changes. Review its payment status before continuing." };
+  }
+  let intent;
+  try { intent = await stripeClient.paymentIntents.retrieve(attempt.stripe_payment_intent); }
+  catch { return { ok: false, status: 503, error: "Payment status unavailable. Your payment was not confirmed; retry later." }; }
+  if (!["requires_payment_method", "requires_confirmation", "requires_action"].includes(intent?.status)) {
+    return { ok: false, status: 409, error: "Payment is already processing or closed. Review its status before continuing." };
+  }
+  const saved = await store.freezeIntake(attempt.id, uid, snapshot, hash);
+  if (!saved || saved.user_id !== uid || saved.intake_hash !== hash) {
+    return { ok: false, status: 409, error: "Task or payment changed concurrently. Reload and review before paying." };
+  }
+  return { ok: true, intakeSnapshot: saved.intake_snapshot };
 }

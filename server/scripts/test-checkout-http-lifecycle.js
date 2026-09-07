@@ -6,11 +6,13 @@ import { SignJWT } from "jose";
 // Real Express auth/checkout/verify/webhook paths; all provider I/O is local.
 test("authenticated HTTP checkout races, repeat purchases, uncertain retrieval and legacy webhook replay", async (t) => {
   const orders = new Map();
+  let draftReads = 0;
+  let currentDraft = { data: { details: "Later task B" }, upload_path: "later-task.pdf" };
   const provider = express();
   provider.use(express.json());
   provider.get("/auth/v1/.well-known/jwks.json", (_req, res) => res.json({ keys: [] }));
   provider.all("/rest/v1/:table", (req, res) => {
-    if (req.params.table === "drafts") return res.json(null);
+    if (req.params.table === "drafts") { draftReads++; return res.json(currentDraft); }
     if (req.params.table === "profiles") return res.json([]);
     assert.equal(req.params.table, "orders");
     if (req.method === "POST") {
@@ -88,15 +90,32 @@ test("authenticated HTTP checkout races, repeat purchases, uncertain retrieval a
   assert.equal((await create({ payment_attempt_id: first.paymentAttemptId })).status, 503);
   assert.equal(calls, callsBefore);
   retrieveFails = false;
+  const freeze = intake => post("/api/checkout/prepare-payment", { payment_attempt_id: first.paymentAttemptId, intake });
+  const taskA = { details: "Original task A", uploadPath: "00000000-0000-0000-0000-000000000001/task-a.pdf" };
+  assert.equal((await freeze({ ...taskA, uploadPath: "another-user/private.pdf" })).status, 400);
+  assert.equal((await freeze(taskA)).status, 200);
+  assert.equal((await freeze({ ...taskA, details: "Changed task cannot silently pay task A" })).status, 409);
+  assert.equal((await freeze(taskA)).status, 200);
+  const resumed = await create({ payment_attempt_id: first.paymentAttemptId });
+  assert.deepEqual(resumed.body.intakeSnapshot, taskA);
   intents.get(first.paymentIntentId).status = "succeeded";
   const verified = await post("/api/checkout/verify", { paymentIntentId: first.paymentIntentId });
   assert.equal(verified.status, 200);
   assert.equal(orders.size, 1);
+  assert.deepEqual(orders.get(first.paymentIntentId).meta.intake, { details: taskA.details });
+  assert.equal(orders.get(first.paymentIntentId).upload_path, taskA.uploadPath);
+  assert.equal(draftReads, 0, "attempt purchases must never load mutable same-offer drafts");
   const second = await create({});
   assert.equal(second.status, 200);
   assert.notEqual(second.body.paymentIntentId, first.paymentIntentId);
   intents.get(second.body.paymentIntentId).status = "succeeded";
-  assert.equal((await post("/api/checkout/verify", { paymentIntentId: second.body.paymentIntentId })).status, 200);
+  // Simulate a client bypassing prepare. Its paid outcome is visible, not dropped.
+  const unprepared = await post("/api/checkout/verify", { paymentIntentId: second.body.paymentIntentId });
+  assert.equal(unprepared.status, 200);
+  assert.equal(unprepared.body.fulfillmentPending, true);
+  assert.equal(orders.get(second.body.paymentIntentId).status, "intake_required");
+  assert.equal(orders.get(second.body.paymentIntentId).meta.intake, null);
+  assert.equal(orders.get(second.body.paymentIntentId).upload_path, null);
   assert.equal(orders.size, 2);
 
   // Actual Stripe signature verification and HTTP webhook reach real fulfillment.
@@ -114,4 +133,5 @@ test("authenticated HTTP checkout races, repeat purchases, uncertain retrieval a
   assert.equal((await deliver(legacy)).status, 200);
   assert.equal(orders.size, 3);
   assert.equal(orders.get(legacy.id).status, "delivered");
+  assert.ok(draftReads > 0, "only untagged pre-migration payments retain legacy draft behavior");
 });

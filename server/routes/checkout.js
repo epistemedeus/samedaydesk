@@ -3,7 +3,7 @@ import { requireAuth, requireVerifiedEmail } from "../middleware/auth.js";
 import { stripe, isStripeConfigured } from "../lib/stripe.js";
 import { fulfillFromIntent } from "../lib/fulfill.js";
 import { createSellerRepairCheckoutSession } from "../lib/seller-repair-checkout.js";
-import { createOfferPaymentIntent } from "../lib/payment-attempt.js";
+import { createOfferPaymentIntent, preparePaymentIntake } from "../lib/payment-attempt.js";
 
 const router = Router();
 
@@ -35,10 +35,26 @@ router.post("/create-payment-intent", requireAuth, requireVerifiedEmail, async (
       paymentAttemptId: attemptId,
       amount: offer.amount,
       label: offer.label,
+      intakeSnapshot: result.intakeSnapshot || null,
     });
   } catch (e) {
     console.error("[checkout] create-payment-intent", e?.message);
     res.status(502).json({ error: "Could not start checkout" });
+  }
+});
+
+router.post("/prepare-payment", requireAuth, requireVerifiedEmail, async (req, res) => {
+  if (!isStripeConfigured()) return res.status(503).json({ error: "Payments not configured" });
+  try {
+    const result = await preparePaymentIntake({
+      stripeClient: stripe, uid: req.uid,
+      paymentAttemptId: req.body?.payment_attempt_id, intake: req.body?.intake,
+    });
+    if (!result.ok) return res.status(result.status).json({ error: result.error });
+    return res.json({ prepared: true, intakeSnapshot: result.intakeSnapshot });
+  } catch (error) {
+    console.error("[checkout] prepare-payment", error?.message);
+    return res.status(502).json({ error: "Could not freeze your task. Payment has not been confirmed." });
   }
 });
 
@@ -52,7 +68,9 @@ router.post("/verify", requireAuth, requireVerifiedEmail, async (req, res) => {
     if (intent.metadata?.uid !== req.uid) return res.status(403).json({ error: "Not your payment" });
     if (intent.status !== "succeeded") return res.json({ verified: false, status: intent.status });
     const result = await fulfillFromIntent(intent);
-    res.json({ verified: true, orderId: result.orderId });
+    res.json({ verified: true, orderId: result.orderId, fulfillmentPending: result.fulfillmentPending,
+      ...(result.fulfillmentPending ? { reason: "Payment received; task intake needs reconciliation. Contact support before delivery." } : {}),
+    });
   } catch (e) {
     console.error("[checkout] verify", e?.message);
     res.status(502).json({ error: "Could not verify payment" });

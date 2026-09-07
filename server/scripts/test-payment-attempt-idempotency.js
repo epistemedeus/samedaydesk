@@ -9,6 +9,7 @@ import {
   createOfferPaymentIntent,
   hashPaymentAttemptFacts,
   markPaymentAttemptSucceeded,
+  preparePaymentIntake,
 } from "../lib/payment-attempt.js";
 import { createMemoryPaymentAttemptStore } from "../lib/payment-attempt-store.js";
 import { getOffer, CURRENCY } from "../pricing.js";
@@ -272,6 +273,20 @@ test("changed facts cannot bypass an open payment", async () => {
   assert.equal(stripeClient.creates.length, 1);
 });
 
+test("concurrent task freezes accept only one exact snapshot and reject a wrong owner", async () => {
+  const store = createMemoryPaymentAttemptStore();
+  const stripeClient = fakeStripe();
+  const args = { stripeClient, store, uid: "task-owner", email: "buyer@example.test", offerSlug: "agent_mcp_server" };
+  const created = await createOfferPaymentIntent(args);
+  const prep = { stripeClient, store, uid: args.uid, paymentAttemptId: created.attemptId };
+  assert.equal((await preparePaymentIntake({ ...prep, uid: "intruder", intake: { details: "wrong owner" } })).status, 404);
+  const results = await Promise.all(["task A", "task B"].map(details => preparePaymentIntake({ ...prep, intake: { details } })));
+  assert.equal(results.filter(result => result.ok).length, 1);
+  assert.equal(results.filter(result => result.status === 409).length, 1);
+  const saved = await store.getById(created.attemptId);
+  assert.equal(saved.intake_snapshot.details, results.find(result => result.ok).intakeSnapshot.details);
+});
+
 test("after success a second checkout opens a new PI; canceled then new also works", async () => {
   const store = createMemoryPaymentAttemptStore();
   const intents = new Map();
@@ -420,4 +435,7 @@ test("checkout route and client support attempt round-trip and human return navi
   assert.match(CLIENT_CHECKOUT, /sessionStorage\.setItem/);
   assert.match(CLIENT_CHECKOUT, /sessionStorage\.removeItem/);
   assert.match(CLIENT_CHECKOUT, /navigate\("\/dashboard\?paid=1"/);
+  assert.ok(CLIENT_CHECKOUT.indexOf('/api/checkout/prepare-payment') < CLIENT_CHECKOUT.indexOf('await stripe.confirmPayment'));
+  assert.match(CLIENT_CHECKOUT, /if \(!prepared\.ok \|\| !result\.prepared\) throw/);
+  assert.match(CLIENT_CHECKOUT, /Payment was not confirmed\.[\s\S]+?setBusy\(false\);\s+return;/);
 });
