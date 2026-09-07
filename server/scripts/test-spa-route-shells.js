@@ -43,6 +43,22 @@ const BUNDLE_SRC = "/assets/index-8f3a1b2c.js";
 const BUNDLE_CSS = "/assets/index-8f3a1b2c.css";
 const HOME_H1 = "SameDayDesk: make your service ready for agents";
 
+test("sitemap lists canonical documentation introductions, not their duplicate directory indexes", () => {
+  const publicDir = join(here, "../../client/public");
+  const sitemap = readFileSync(join(publicDir, "sitemap.xml"), "utf8");
+  const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+  for (const directory of ["docs/x402-sdk", "docs-lab/gopherjs"]) {
+    const alias = `https://samedaydesk.com/${directory}/`;
+    const index = inspectHtmlShell(readFileSync(join(publicDir, directory, "index.html"), "utf8"));
+    assert.notEqual(index.canonical, alias, directory);
+    assert.equal(new URL(index.canonical).origin, "https://samedaydesk.com");
+    assert.ok(locations.includes(index.canonical), `${directory}: canonical URL missing from sitemap`);
+    assert.equal(locations.includes(alias), false, `${directory}: duplicate alias listed in sitemap`);
+    const target = inspectHtmlShell(readFileSync(join(publicDir, new URL(index.canonical).pathname), "utf8"));
+    assert.equal(target.canonical, index.canonical, `${directory}: canonical target must self-canonicalize`);
+  }
+});
+
 function asBuiltIndex(source = SOURCE_INDEX) {
   assert.match(source, /<script type="module" src="\/src\/main\.tsx"><\/script>/);
   return source.replace(
