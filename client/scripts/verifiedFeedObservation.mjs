@@ -146,8 +146,8 @@ export function parseUnpaid402Payload({ status, headers, bodyText }) {
   const outputExampleKeys = Object.keys(example || {}).sort();
   const unpaid402OutputSchemaPresent =
     Boolean(body?.extensions?.bazaar?.schema) ||
-    Boolean(accept?.outputSchema) ||
-    outputExampleKeys.length > 0;
+    Boolean(accept?.outputSchema?.properties || accept?.outputSchema?.type ||
+      accept?.outputSchema?.output?.properties || accept?.outputSchema?.output?.type);
   const contractHash = hashContract({
     amount,
     asset,
@@ -173,12 +173,40 @@ export function parseUnpaid402Payload({ status, headers, bodyText }) {
 }
 
 export async function readBoundedBody(response, maxBytes = DEFAULT_MAX_BYTES) {
-  if (typeof response.arrayBuffer === "function") {
-    const buffer = Buffer.from(await response.arrayBuffer());
-    if (buffer.length > maxBytes) {
-      return { ok: false, failure: { kind: "too_large", detail: `bytes_${buffer.length}` } };
+  if (!Number.isSafeInteger(maxBytes) || maxBytes < 1) {
+    throw new Error("maxBytes must be a positive safe integer");
+  }
+  const reader = response.body?.getReader?.();
+  if (reader) {
+    let bytes = 0;
+    const chunks = [];
+    try {
+      const declared = Number(headerGet(response.headers, "content-length"));
+      if (Number.isFinite(declared) && declared > maxBytes) {
+        void reader.cancel().catch(() => {});
+        return { ok: false, failure: { kind: "too_large", detail: "declared_body_limit" } };
+      }
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        bytes += value.byteLength;
+        if (bytes > maxBytes) {
+          void reader.cancel().catch(() => {});
+          return { ok: false, failure: { kind: "too_large", detail: "stream_body_limit" } };
+        }
+        chunks.push(value);
+      }
+      return { ok: true, bodyText: Buffer.concat(chunks, bytes).toString("utf8") };
+    } catch (error) {
+      void reader.cancel().catch(() => {});
+      const kind = error?.name === "TimeoutError" || error?.name === "AbortError" ? "timeout" : "network";
+      return { ok: false, failure: { kind, detail: "response_body_read_failed" } };
+    } finally {
+      reader.releaseLock();
     }
-    return { ok: true, bodyText: buffer.toString("utf8") };
+  }
+  if (response.body != null && typeof response.body !== "string") {
+    return { ok: false, failure: { kind: "network", detail: "unreadable_response_body" } };
   }
   const bodyText = String(response.body ?? "");
   const bytes = Buffer.byteLength(bodyText, "utf8");

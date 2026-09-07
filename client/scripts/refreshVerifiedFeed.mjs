@@ -199,15 +199,21 @@ export async function refreshVerifiedFeed(options = {}) {
 }
 
 export function writeRefreshArtifacts(result, { writeFeed = true } = {}) {
+  if (path.resolve(result.feedOut) === path.resolve(PRODUCTION_FEED) ||
+      path.resolve(result.observationsOut) === path.resolve(PRODUCTION_FEED)) {
+    throw new Error("refusing to overwrite production verified.json");
+  }
+  // Fixtures exercise generation in memory, never become a publishable file.
+  const publishable = result.report.mode === "live" && result.feedValid;
   mkdirSync(path.dirname(result.observationsOut), { recursive: true });
   writeFileSync(result.observationsOut, `${JSON.stringify(result.report, null, 2)}\n`);
-  if (writeFeed && result.feedValid) {
+  if (writeFeed && publishable) {
     mkdirSync(path.dirname(result.feedOut), { recursive: true });
     writeFileSync(result.feedOut, `${JSON.stringify(result.feed, null, 2)}\n`);
   }
   return {
     observationsOut: result.observationsOut,
-    feedOut: writeFeed && result.feedValid ? result.feedOut : null,
+    feedOut: writeFeed && publishable ? result.feedOut : null,
     feedValid: result.feedValid,
     routeCount: result.feed.routes.length,
     counts: result.report.counts,
@@ -233,7 +239,7 @@ async function main(argv = process.argv.slice(2)) {
     process.stdout.write(`[verified-feed-refresh] candidate feed ${written.feedOut}\n`);
   } else if (args.writeFeed) {
     process.stdout.write(
-      "[verified-feed-refresh] no schema-valid candidate feed (zero current live rows)\n",
+      "[verified-feed-refresh] no publishable feed (requires live mode and current valid rows)\n",
     );
   }
   // Prove production path untouched when it already exists.

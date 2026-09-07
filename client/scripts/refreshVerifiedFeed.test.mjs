@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
@@ -27,12 +27,45 @@ import {
   observationFromPriorEvidence,
   observeProbe,
   parseUnpaid402Payload,
+  readBoundedBody,
 } from "./verifiedFeedObservation.mjs";
 import { refreshVerifiedFeed, writeRefreshArtifacts, PRODUCTION_FEED } from "./refreshVerifiedFeed.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const AS_OF_FRESH = "2026-09-03T12:00:00.000Z";
 const AS_OF_STALE = "2026-09-07T17:00:00.000Z";
+
+test("body ceiling cancels a stream before consuming its remaining chunks", async () => {
+  let reads = 0;
+  let cancelled = false;
+  const body = new ReadableStream({
+    pull(controller) { reads++; controller.enqueue(new Uint8Array(16)); },
+    cancel() { cancelled = true; },
+  }, { highWaterMark: 0 });
+  const result = await readBoundedBody(new Response(body), 20);
+  assert.equal(result.failure.kind, "too_large");
+  assert.equal(reads, 2);
+  assert.equal(cancelled, true);
+});
+
+test("body read failure is a failed observation rather than a rejected wave", async () => {
+  const probe = extractProbe();
+  const response = new Response(new ReadableStream({
+    pull(controller) { controller.error(new DOMException("timeout", "TimeoutError")); },
+  }), { status: 402 });
+  const result = await observeProbe(probe, AS_OF_STALE, { fetchImpl: async () => response });
+  assert.equal(result.status, "failed");
+  assert.equal(result.failure.kind, "timeout");
+});
+
+test("example-only output is not an output schema", () => {
+  const fixture = currentExtractFixture();
+  delete fixture.body.extensions;
+  fixture.body.accepts[0].outputSchema = { output: { example: { ok: true } } };
+  const result = parseUnpaid402Payload({ status: 402, bodyText: JSON.stringify(fixture.body) });
+  assert.equal(result.ok, true);
+  assert.equal(result.observation.unpaid402OutputSchemaPresent, false);
+});
 
 function extractProbe() {
   return loadAllowlistedProbeUrls().find((row) => row.route === "/extract");
@@ -189,9 +222,10 @@ test("current fixture observation can mint a schema-valid candidate without touc
     result.feedOut = path.join(dir, "verified.candidate.json");
     result.observationsOut = path.join(dir, "verified.observations.json");
     const written = writeRefreshArtifacts(result);
-    assert.ok(written.feedOut);
+    assert.equal(written.feedOut, null);
+    assert.equal(existsSync(result.feedOut), false);
     assert.equal(readFileSync(PRODUCTION_FEED, "utf8"), productionBefore);
-    assert.notEqual(path.resolve(written.feedOut), path.resolve(PRODUCTION_FEED));
+    assert.throws(() => writeRefreshArtifacts({ ...result, observationsOut: PRODUCTION_FEED }), /refusing/);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
@@ -214,7 +248,7 @@ test("refresh refuses production overwrite and rejects secret-like payloads", as
   );
 });
 
-test("CLI fixture refresh writes candidate + observations and leaves production unchanged", () => {
+test("CLI fixtures write observations but cannot produce a publishable feed", () => {
   const dir = mkdtempSync(path.join(tmpdir(), "verified-cli-"));
   const feedOut = path.join(dir, "verified.candidate.json");
   const obsOut = path.join(dir, "verified.observations.json");
@@ -237,12 +271,11 @@ test("CLI fixture refresh writes candidate + observations and leaves production 
       { encoding: "utf8" },
     );
     assert.equal(result.status, 0, result.stderr || result.stdout);
-    const feed = JSON.parse(readFileSync(feedOut, "utf8"));
+    assert.equal(existsSync(feedOut), false);
     const report = JSON.parse(readFileSync(obsOut, "utf8"));
-    assert.equal(feed.routes[0].route, "/extract");
     assert.equal(report.observations.find((row) => row.route === "/extract").status, "current");
     assert.equal(readFileSync(PRODUCTION_FEED, "utf8"), productionBefore);
-    assert.match(result.stdout, /candidate feed/);
+    assert.match(result.stdout, /no publishable feed/);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

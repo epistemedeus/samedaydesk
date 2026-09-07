@@ -7,14 +7,17 @@ seller-conformance crawl. Inspection evidence only. Not a certificate.
 ## Operator refresh (publish candidate)
 
 Manual, no cron. Reuses the existing allowlisted SameDayDesk example URLs and
-validation modules. Writes an observation report plus a separate candidate feed;
+validation modules. Live mode writes an observation report plus a separate candidate feed;
 it never replaces production `verified.json` until final review.
 
 ```bash
 npm run verified-feed:refresh -- --fixtures --fixture extract-current --as-of 2026-09-03T12:00:00.000Z
 ```
 
-Optional one-route read-only live check (no wallet, no credentials, no payment):
+The fixture command is a synthetic test: it writes an explicitly fixture-mode
+observation report, never a publishable feed file. Generation remains testable
+in memory. To produce a candidate, run a one-route read-only live check (no
+wallet, no credentials, no payment):
 
 ```bash
 npm run verified-feed:refresh -- --live --live-route-limit 1
@@ -23,7 +26,7 @@ npm run verified-feed:refresh -- --live --live-route-limit 1
 Default outputs:
 
 - `client/tmp/x402/verified.observations.json`
-- `client/tmp/x402/verified.candidate.json` (only when at least one current row validates)
+- `client/tmp/x402/verified.candidate.json` (live mode only, when at least one current row validates)
 
 ### Evidence semantics
 
