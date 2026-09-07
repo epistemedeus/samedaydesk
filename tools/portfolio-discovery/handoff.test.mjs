@@ -5,7 +5,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
-import { catalogRequestUrls, createFixtureFetch, loadCatalog } from "./lib.mjs";
+import { catalogRequestUrls, createFixtureFetch, liveFetch, loadCatalog } from "./lib.mjs";
 import {
   FINDING_CODES,
   HANDOFF_CHECK_IDS,
@@ -193,11 +193,14 @@ test("secret in handoff query is a finding, not a score", async () => {
       inputs: { title: "Demo project", summary: "Fixture correspondence" },
     },
   });
-  const report = await runAgentHandoff(catalogWith, createFixtureFetch(healthyDeclaredFixture()));
+  const { fetchImpl, calls } = trackingFetch(healthyDeclaredFixture());
+  const report = await runAgentHandoff(catalogWith, fetchImpl);
   assert.equal(report.ok, false);
   assert.equal(findingCodes(report).includes("secret_in_query"), true);
   assert.match(check(report, primary.id, "handoff_query_secrets").detail, /secret_in_query:token/);
   assert.equal(report.findings.some((row) => String(row.detail).includes("secret-value")), false);
+  assert.equal(JSON.stringify(report).includes("secret-value"), false);
+  assert.equal(calls.some((url) => url.includes("secret-value")), false);
   assertClaimsUnobserved(report);
 });
 
@@ -205,6 +208,115 @@ test("JWT-shaped query value is treated as a secret", () => {
   const jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIn0.abc";
   assert.deepEqual(secretQueryHits(`${primaryOrigin}/review/demo?state=${jwt}`, primaryOrigin), ["state"]);
   assert.deepEqual(secretQueryHits(`${primaryOrigin}/review/demo`, primaryOrigin), []);
+});
+
+test("URL credentials are neither fetched nor exposed anywhere in the report", async () => {
+  const credentialUrl = `${primaryOrigin.replace("https://", "https://private-user:private-password@")}\/review/demo`;
+  const catalogWith = withHandoff({
+    availability: "observed", method: "GET",
+    humanReviewUrlTemplate: credentialUrl,
+    machineGuide: credentialUrl,
+    example: { url: credentialUrl },
+  });
+  const { fetchImpl, calls } = trackingFetch(healthy);
+  const report = await runAgentHandoff(catalogWith, fetchImpl);
+  assert.equal(report.ok, false);
+  assert.equal(calls.some((url) => url.includes("private-")), false);
+  assert.equal(JSON.stringify(report).includes("private-"), false);
+});
+
+test("benign query values are omitted from all report URL fields", async () => {
+  const url = `${primaryOrigin}/review/demo?locale=private-locale#private-fragment`;
+  const catalogWith = withHandoff({
+    availability: "observed", method: "GET", humanReviewUrlTemplate: url,
+    example: { url },
+  });
+  const report = await runAgentHandoff(catalogWith, createFixtureFetch(healthy));
+  const text = JSON.stringify(report);
+  assert.equal(text.includes("private-locale"), false);
+  assert.equal(text.includes("private-fragment"), false);
+  assert.equal(text.includes("locale="), true);
+});
+
+test("slashless relative URL findings redact secret values too", async () => {
+  const catalogWith = withHandoff({
+    availability: "observed", method: "GET",
+    humanReviewUrlTemplate: "review/demo?token=private-token",
+    example: { url: "review/demo?token=private-token" },
+  });
+  const { fetchImpl, calls } = trackingFetch(healthy);
+  const report = await runAgentHandoff(catalogWith, fetchImpl);
+  assert.equal(findingCodes(report).includes("secret_in_query"), true);
+  assert.equal(JSON.stringify(report).includes("private-token"), false);
+  assert.equal(calls.some((url) => url.includes("private-token")), false);
+});
+
+test("unsupported or undeclared review method never fetches the example", async () => {
+  for (const method of ["POST", undefined]) {
+    const catalogWith = withHandoff({
+      availability: "proposed", method,
+      humanReviewUrlTemplate: `${primaryOrigin}/review/{projectId}`,
+      example: { url: `${primaryOrigin}/review/demo` },
+    });
+    const { fetchImpl, calls } = trackingFetch(healthy);
+    await runAgentHandoff(catalogWith, fetchImpl);
+    assert.equal(calls.includes(`${primaryOrigin}/review/demo`), false);
+  }
+});
+
+test("an unrelated readable example cannot verify the review URL template", async () => {
+  const catalogWith = withHandoff({
+    availability: "observed", method: "GET",
+    humanReviewUrlTemplate: `${primaryOrigin}/approval/{projectId}`,
+    example: { url: `${primaryOrigin}/review/demo` },
+  });
+  const report = await runAgentHandoff(catalogWith, createFixtureFetch(healthyDeclaredFixture()));
+  assert.equal(report.ok, false);
+  assert.equal(check(report, primary.id, "handoff_human_review").detail, "example_template_mismatch");
+});
+
+test("colon-style review templates still match concrete examples", async () => {
+  const catalogWith = withHandoff({
+    availability: "observed", method: "GET",
+    humanReviewUrlTemplate: `${primaryOrigin}/review/:projectId`,
+    example: { url: `${primaryOrigin}/review/demo` },
+  });
+  const report = await runAgentHandoff(catalogWith, createFixtureFetch(healthyDeclaredFixture()));
+  assert.equal(check(report, primary.id, "handoff_human_review").status, "ok");
+});
+
+test("redirect credential and query values never enter the report", async () => {
+  const catalogWith = withHandoff({
+    availability: "observed", method: "GET", machineGuide: `${primaryOrigin}/openapi.json`,
+  });
+  const fixture = overlayPaths(primaryOrigin, {
+    "/openapi.json": {
+      status: 302, body: "", url: "https://private-user:private-password@example.net/guide?token=private-token",
+    },
+  });
+  const report = await runAgentHandoff(catalogWith, createFixtureFetch(fixture));
+  assert.equal(findingCodes(report).includes("foreign_url"), true);
+  assert.equal(JSON.stringify(report).includes("private-"), false);
+});
+
+test("manual live GET reports but does not follow a foreign redirect", async () => {
+  const originalFetch = globalThis.fetch;
+  const calls = [];
+  globalThis.fetch = async (url, options) => {
+    calls.push({ url, options });
+    assert.equal(options.redirect, "manual");
+    return new Response("", { status: 302, headers: { location: "https://example.net/private" } });
+  };
+  try {
+    const response = await liveFetch(`${primaryOrigin}/openapi.json`, { redirect: "manual" });
+    assert.equal(response.url, "https://example.net/private");
+    assert.equal(response.status, 302);
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0].options.method, "GET");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+  assert.match(readFileSync(cli, "utf8"), /mode === "agent-handoff" \? "manual" : "follow"/);
 });
 
 test("broken exact review link is a finding", async () => {

@@ -68,7 +68,11 @@ if (values.handoff) {
   catalog = mergeHandoffOverlay(catalog, JSON.parse(readFileSync(values.handoff, "utf8")));
 }
 const fetchImpl = values.live
-  ? (url) => liveFetch(url, { timeoutMs: catalog.timeoutMs, userAgent: catalog.userAgent })
+  ? (url) => liveFetch(url, {
+    timeoutMs: catalog.timeoutMs,
+    userAgent: catalog.userAgent,
+    redirect: mode === "agent-handoff" ? "manual" : "follow",
+  })
   : createFixtureFetch(JSON.parse(readFileSync(values.fixture, "utf8")));
 
 const report = mode === "search-readiness"

@@ -104,6 +104,9 @@ export function resolveDeclaredUrl(urlLike, origin) {
   const base = origin.endsWith("/") ? origin : `${origin}/`;
   try {
     const url = new URL(fillUrlPlaceholders(raw), base);
+    if (url.username || url.password) {
+      return { ok: false, detail: "url_credentials_forbidden" };
+    }
     if (url.protocol !== "https:") {
       return { ok: false, href: url.href, detail: "insecure_url", url };
     }
@@ -217,10 +220,12 @@ export function handoffProbeUrls(site) {
     if (!urlLike || hasUnfilledPlaceholder(urlLike)) return;
     const resolved = resolveDeclaredUrl(urlLike, site.origin);
     if (!resolved.ok || !resolved.href) return;
+    if (secretQueryHits(urlLike, site.origin).length) return;
     urls.push(resolved.href);
   };
   add(spec.machineGuide);
-  if (spec.example && spec.example.url) add(spec.example.url);
+  if (String(spec.method || "").trim().toUpperCase() === SUPPORTED_REVIEW_METHOD
+      && spec.example && spec.example.url) add(spec.example.url);
   return [...new Set(urls)];
 }
 
@@ -238,7 +243,7 @@ function fetchedSurface(site, url, rec) {
     return {
       status: "missing",
       httpStatus: rec?.status || 0,
-      detail: `unreachable:${rec?.error || "no_response"}`,
+      detail: rec?.error === "timeout" ? "unreachable:timeout" : "unreachable:no_response",
       finding: "broken_exact_link",
     };
   }
@@ -249,7 +254,7 @@ function fetchedSurface(site, url, rec) {
       status: "invalid",
       httpStatus: rec.status || 0,
       finalUrl: authority.finalUrl,
-      detail: authority.detail,
+      detail: String(authority.detail || "redirect_invalid").split(":")[0],
       finding: foreign ? "foreign_url" : "broken_exact_link",
     };
   }
@@ -437,6 +442,17 @@ function evaluateHumanReview(site, spec, responses, availability) {
     });
     return applyAvailability(row, availability);
   }
+  const template = new URL(spec.humanReviewUrlTemplate, site.origin).href;
+  const pattern = template.split(/(%7B[^%]+%7D|\{[^}]+\}|(?<=\/)\:[A-Za-z][A-Za-z0-9_]*)/i)
+    .map((part, index) => index % 2 ? "[^/?#&=]+" : part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .join("");
+  if (!new RegExp(`^${pattern}$`).test(exampleResolved.href)) {
+    return result("handoff_human_review", "handoff_human_review", "invalid", {
+      url: exampleResolved.href,
+      detail: "example_template_mismatch",
+      finding: "broken_exact_link",
+    });
+  }
   const rec = responseAt(responses, exampleResolved.href);
   const fetched = fetchedSurface(site, exampleResolved.href, rec);
   const row = result("handoff_human_review", "handoff_human_review", fetched.status, {
@@ -575,13 +591,39 @@ export function evaluateHandoffSite(site, responses) {
   const requiredInputs = evaluateRequiredInputs(spec, availability);
   const availabilityCheck = evaluateAvailability(spec, [humanReview, machineGuide]);
 
-  const checks = [origin, humanReview, method, availabilityCheck, machineGuide, requiredInputs, secrets];
+  const checks = redactReport([origin, humanReview, method, availabilityCheck, machineGuide, requiredInputs, secrets]);
   const findings = [];
   for (const check of checks) {
     const row = findingRow(check);
     if (row) findings.push({ ...row, siteId: site.id });
   }
   return { checks, findings };
+}
+
+// Report URL structure and query names, never credentials or query/fragment values.
+function redactReport(value, field) {
+  if (Array.isArray(value)) return value.map((item) => redactReport(item));
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, redactReport(item, key)]));
+  }
+  if (typeof value !== "string") return value;
+  const redactUrl = (raw) => {
+    try {
+      const relative = raw.startsWith("/");
+      const url = new URL(raw, "https://redaction.invalid");
+      if (!url.username && !url.password && !url.search && !url.hash) return raw;
+      url.username = "";
+      url.password = "";
+      for (const key of [...url.searchParams.keys()]) url.searchParams.set(key, "[redacted]");
+      url.hash = "";
+      return relative ? `${url.pathname}${url.search}` : url.href;
+    } catch {
+      return "[invalid URL redacted]";
+    }
+  };
+  if (["url", "finalUrl", "origin", "declaredOrigin"].includes(field)
+      || /^(?:https?:\/\/|\/)/i.test(value)) return redactUrl(value);
+  return value.replace(/https?:\/\/[^\s]+/gi, redactUrl);
 }
 
 export async function runAgentHandoff(catalog, fetchImpl) {
@@ -611,7 +653,7 @@ export async function runAgentHandoff(catalog, fetchImpl) {
   for (const site of sites) {
     for (const key of Object.keys(totals)) totals[key] += site.counts[key];
   }
-  return {
+  return redactReport({
     ok: totals.missing === 0 && totals.invalid === 0,
     mode: "agent-handoff",
     handoffClaims: { ...HANDOFF_CLAIMS },
@@ -619,5 +661,5 @@ export async function runAgentHandoff(catalog, fetchImpl) {
     totals,
     findings,
     sites,
-  };
+  });
 }

@@ -91,6 +91,12 @@ Receipt statuses stay `ok`, `missing`, `invalid`, `not_applicable`. Redirect
 authority matches search-readiness: foreign final origin, homepage fallback, and
 path drift cannot be `ok`.
 
+Live handoff mode does not follow redirects. It records the redirect target for
+authority checks without requesting it. Credential-bearing URLs and recognized
+secret-query URLs are not probed; reports omit URL credentials, fragments and
+all query values. Review examples require an explicit GET method and must match
+the declared URL template, so an unrelated readable page cannot verify it.
+
 ## What a 200 does not prove
 
 Always `not_observed` in this mode:
