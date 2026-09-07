@@ -1,0 +1,5 @@
+{
+  "route": "/extract",
+  "kind": "timeout",
+  "detail": "fixture_timeout"
+}

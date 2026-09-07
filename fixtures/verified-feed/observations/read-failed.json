@@ -1,0 +1,6 @@
+{
+  "route": "/read",
+  "kind": "failed",
+  "failureKind": "http_status",
+  "detail": "status_500"
+}
