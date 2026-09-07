@@ -1,0 +1,22 @@
+{
+  "sites": [
+    {
+      "id": "samedaydesk",
+      "handoff": {
+        "origin": "https://samedaydesk.com",
+        "availability": "observed",
+        "method": "GET",
+        "humanReviewUrlTemplate": "https://samedaydesk.com/review/{projectId}",
+        "machineGuide": "https://samedaydesk.com/openapi.json",
+        "requiredInputs": ["title", "summary"],
+        "example": {
+          "url": "https://samedaydesk.com/review/demo",
+          "inputs": {
+            "title": "Demo project",
+            "summary": "Fixture correspondence"
+          }
+        }
+      }
+    }
+  ]
+}

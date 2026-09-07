@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "userAgent": "samedaydesk-portfolio-discovery/1.0",
+  "timeoutMs": 15000,
+  "sites": [
+    {
+      "id": "staged-handoff",
+      "origin": "https://handoff.example.test",
+      "role": "experiment_trust_lab",
+      "label": "Staged handoff fixture",
+      "identity": {
+        "organizationName": "Staged"
+      },
+      "homeFingerprint": {
+        "canonical": "https://handoff.example.test/",
+        "titleIncludes": "Staged"
+      },
+      "handoff": {
+        "origin": "https://handoff.example.test",
+        "availability": "observed",
+        "method": "GET",
+        "humanReviewUrlTemplate": "https://handoff.example.test/review/{projectId}",
+        "machineGuide": "https://handoff.example.test/openapi.json",
+        "requiredInputs": ["title", "summary"],
+        "example": {
+          "url": "https://handoff.example.test/review/demo",
+          "inputs": {
+            "title": "Demo project",
+            "summary": "Fixture correspondence"
+          }
+        }
+      },
+      "checks": [
+        {
+          "id": "home",
+          "kind": "document",
+          "path": "/",
+          "expect": {
+            "status": 200,
+            "contentTypePrefix": "text/html",
+            "canonical": "https://handoff.example.test/"
+          }
+        }
+      ]
+    }
+  ]
+}

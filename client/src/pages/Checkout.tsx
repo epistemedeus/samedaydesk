@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, type FormEvent } from "react";
+import { useEffect, useState, useMemo, type FormEvent, type Dispatch, type SetStateAction } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import type { Appearance } from "@stripe/stripe-js";
@@ -9,6 +9,8 @@ import { useTheme, type Theme } from "../lib/theme";
 import { ALL_OFFERS } from "../lib/services";
 import { track } from "../lib/posthog";
 import styles from "./Checkout.module.css";
+
+type IntakeInput = { details: string; uploadPath: string };
 
 // The Stripe Payment Element renders in its own iframe, so it can't read our CSS tokens.
 // We hand it an appearance that matches the active theme: the dark "Engineered Speed" night
@@ -59,13 +61,34 @@ export default function Checkout() {
   const appearance = useMemo(() => appearanceFor(theme), [theme]);
 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [paymentAttemptId, setPaymentAttemptId] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [intake, setIntake] = useState<IntakeInput>({ details: "", uploadPath: "" });
+  const [intakeBusy, setIntakeBusy] = useState(false);
+  const [paymentBusy, setPaymentBusy] = useState(false);
+  const [intakeFrozen, setIntakeFrozen] = useState(false);
 
   useEffect(() => {
     let active = true;
+    setClientSecret(null);
+    setPaymentAttemptId(null);
+    setErr(null);
+    setIntake({ details: "", uploadPath: "" });
+    setIntakeFrozen(false);
+    const storageKey = `sdd:payment-attempt:${slug}`;
+    let rememberedAttemptId: string | null = null;
+    try {
+      rememberedAttemptId = sessionStorage.getItem(storageKey);
+    } catch {
+      rememberedAttemptId = null;
+    }
+
+    const body: Record<string, string> = { offer: slug };
+    if (rememberedAttemptId) body.payment_attempt_id = rememberedAttemptId;
+
     authedFetch("/api/checkout/create-payment-intent", {
       method: "POST",
-      body: JSON.stringify({ offer: slug }),
+      body: JSON.stringify(body),
     })
       .then(async (r) => {
         const d = await r.json();
@@ -75,13 +98,25 @@ export default function Checkout() {
       .then((d) => {
         if (!active) return;
         setClientSecret(d.clientSecret);
+        if (d.intakeSnapshot) {
+          setIntake(d.intakeSnapshot);
+          setIntakeFrozen(true);
+        }
+        if (typeof d.paymentAttemptId === "string" && d.paymentAttemptId) {
+          setPaymentAttemptId(d.paymentAttemptId);
+          try {
+            sessionStorage.setItem(storageKey, d.paymentAttemptId);
+          } catch {
+            /* ignore quota / private mode */
+          }
+        }
         track("checkout_started", { offer: slug, price: offer.price });
       })
       .catch((e) => active && setErr(e.message));
     return () => {
       active = false;
     };
-  }, [slug, offer.price]);
+  }, [slug, offer.price, user?.id]);
 
   return (
     <main className={styles.wrap}>
@@ -105,13 +140,16 @@ export default function Checkout() {
         </aside>
 
         <section className={styles.pay}>
-          <Intake uid={user?.id} offer={slug} hint={offer.intake} />
+          <Intake uid={user?.id} offer={slug} hint={offer.intake} intake={intake} setIntake={setIntake}
+            busy={intakeBusy} setBusy={setIntakeBusy} disabled={paymentBusy || intakeFrozen} />
+          {intakeFrozen && <p>Your task is frozen for this payment. Payment retries use this exact text and file.</p>}
 
           <h2 className={styles.payHead}>Payment</h2>
           {err && <p className={styles.error} role="alert">{err}</p>}
           {clientSecret ? (
             <Elements stripe={getStripe()} options={{ clientSecret, appearance }}>
-              <PayForm />
+              <PayForm offerSlug={slug} paymentAttemptId={paymentAttemptId} intake={intake}
+                intakeBusy={intakeBusy} busy={paymentBusy} setBusy={setPaymentBusy} onPrepared={() => setIntakeFrozen(true)} />
             </Elements>
           ) : !err ? (
             <p className={styles.loading}>Preparing secure checkout…</p>
@@ -123,14 +161,17 @@ export default function Checkout() {
   );
 }
 
-function Intake({ uid, offer, hint }: { uid?: string; offer: string; hint?: { label: string; placeholder: string; accept: string } }) {
+function Intake({ uid, offer, hint, intake, setIntake, busy, setBusy, disabled }: {
+  uid?: string; offer: string; hint?: { label: string; placeholder: string; accept: string };
+  intake: IntakeInput; setIntake: Dispatch<SetStateAction<IntakeInput>>;
+  busy: boolean; setBusy: (value: boolean) => void; disabled: boolean;
+}) {
   const label = hint?.label ?? "Target role, job link, or what you need";
   const placeholder = hint?.placeholder ?? "e.g. Senior Customer Success role at a B2B SaaS, here's the posting: …";
   const accept = hint?.accept ?? ".pdf,.doc,.docx,image/*";
-  const [details, setDetails] = useState("");
+  const details = intake.details;
   const [uploadName, setUploadName] = useState<string | null>(null);
   const [uploadErr, setUploadErr] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
 
   async function saveDraft(extra: Record<string, unknown> = {}) {
     const sb = await getSupabase();
@@ -153,6 +194,7 @@ function Intake({ uid, offer, hint }: { uid?: string; offer: string; hint?: { la
       const { error } = await sb.storage.from("intake-uploads").upload(path, file, { upsert: false });
       if (error) throw error;
       setUploadName(file.name);
+      setIntake(previous => ({ ...previous, uploadPath: path }));
       await saveDraft({ upload_path: path });
     } catch (e) {
       setUploadErr(e instanceof Error ? e.message : "Upload failed");
@@ -169,32 +211,48 @@ function Intake({ uid, offer, hint }: { uid?: string; offer: string; hint?: { la
         <textarea
           rows={3}
           value={details}
-          onChange={(e) => setDetails(e.target.value)}
+          onChange={(e) => setIntake(previous => ({ ...previous, details: e.target.value }))}
           onBlur={() => saveDraft()}
           placeholder={placeholder}
+          disabled={disabled}
+          maxLength={10000}
         />
       </label>
       <label className={styles.upload}>
-        <input type="file" accept={accept} onChange={(e) => onFile(e.target.files?.[0])} disabled={busy} />
-        <span>{busy ? "Uploading…" : uploadName ? `✓ ${uploadName}` : "Attach your current file (optional)"}</span>
+        <input type="file" accept={accept} onChange={(e) => onFile(e.target.files?.[0])} disabled={busy || disabled} />
+        <span>{busy ? "Uploading…" : uploadName ? `✓ ${uploadName}` : intake.uploadPath ? "✓ Saved attachment" : "Attach your current file (optional)"}</span>
       </label>
       {uploadErr && <p className={styles.error}>{uploadErr}</p>}
     </div>
   );
 }
 
-function PayForm() {
+function PayForm({ offerSlug, paymentAttemptId, intake, intakeBusy, busy, setBusy, onPrepared }: {
+  offerSlug: string; paymentAttemptId: string | null; intake: IntakeInput; intakeBusy: boolean;
+  busy: boolean; setBusy: (value: boolean) => void; onPrepared: () => void;
+}) {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
-  const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
-    if (!stripe || !elements) return;
+    if (!stripe || !elements || !paymentAttemptId || intakeBusy) return;
     setBusy(true);
     setErr(null);
+    try {
+      const prepared = await authedFetch("/api/checkout/prepare-payment", {
+        method: "POST", body: JSON.stringify({ payment_attempt_id: paymentAttemptId, intake }),
+      });
+      const result = await prepared.json();
+      if (!prepared.ok || !result.prepared) throw new Error(result.error || "Could not freeze your task. Payment was not confirmed.");
+      onPrepared();
+    } catch (error) {
+      setErr(error instanceof Error ? error.message : "Could not freeze your task. Payment was not confirmed.");
+      setBusy(false);
+      return;
+    }
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: { return_url: `${window.location.origin}/dashboard?paid=1` },
@@ -206,7 +264,12 @@ function PayForm() {
       return;
     }
     if (paymentIntent && ["succeeded", "processing"].includes(paymentIntent.status)) {
-      track("payment_succeeded", { paymentIntentId: paymentIntent.id });
+      track("payment_succeeded", { paymentIntentId: paymentIntent.id, paymentAttemptId });
+      try {
+        sessionStorage.removeItem(`sdd:payment-attempt:${offerSlug}`);
+      } catch {
+        /* ignore */
+      }
       await authedFetch("/api/checkout/verify", {
         method: "POST",
         body: JSON.stringify({ paymentIntentId: paymentIntent.id }),
@@ -221,7 +284,7 @@ function PayForm() {
     <form onSubmit={submit} className={styles.payForm}>
       <PaymentElement options={{ layout: "tabs" }} />
       {err && <p className={styles.error} role="alert">{err}</p>}
-      <button className={styles.payBtn} type="submit" disabled={!stripe || busy}>
+      <button className={styles.payBtn} type="submit" disabled={!stripe || busy || intakeBusy || !paymentAttemptId}>
         {busy ? "Processing…" : "Pay & send my task"}
       </button>
     </form>

@@ -1,40 +1,60 @@
 import { Router } from "express";
 import { requireAuth, requireVerifiedEmail } from "../middleware/auth.js";
 import { stripe, isStripeConfigured } from "../lib/stripe.js";
-import { getOffer, CURRENCY } from "../pricing.js";
 import { fulfillFromIntent } from "../lib/fulfill.js";
 import { createSellerRepairCheckoutSession } from "../lib/seller-repair-checkout.js";
+import { createOfferPaymentIntent, preparePaymentIntake } from "../lib/payment-attempt.js";
 
 const router = Router();
 
 // Server-authoritative PaymentIntent. The client sends an offer SLUG only — the amount is
 // computed here and stamped into metadata, which fulfillment reads back (never the client).
+// Duplicate creates for the same server-owned payment_attempt_id reuse one Stripe idempotency key.
 router.post("/create-payment-intent", requireAuth, requireVerifiedEmail, async (req, res) => {
   if (!isStripeConfigured()) return res.status(503).json({ error: "Payments not configured" });
   const slug = req.body?.offer;
   const uploadPath = typeof req.body?.upload_path === "string" ? req.body.upload_path : "";
-  const offer = getOffer(slug);
-  if (!offer) return res.status(400).json({ error: "Unknown offer" });
+  const paymentAttemptId = typeof req.body?.payment_attempt_id === "string"
+    ? req.body.payment_attempt_id.trim()
+    : null;
 
   try {
-    const intent = await stripe.paymentIntents.create({
-      amount: offer.amount,
-      currency: CURRENCY,
-      receipt_email: req.userEmail,
-      description: `SameDayDesk · ${offer.label}`,
-      metadata: {
-        uid: req.uid,
-        offer: slug,
-        amount: String(offer.amount),
-        label: offer.label,
-        upload_path: uploadPath,
-      },
-      automatic_payment_methods: { enabled: true },
+    const result = await createOfferPaymentIntent({
+      stripeClient: stripe,
+      uid: req.uid,
+      email: req.userEmail,
+      offerSlug: slug,
+      uploadPath,
+      paymentAttemptId: paymentAttemptId || null,
     });
-    res.json({ clientSecret: intent.client_secret, paymentIntentId: intent.id, amount: offer.amount, label: offer.label });
+    if (!result.ok) return res.status(result.status).json({ error: result.error });
+    const { intent, offer, attemptId } = result;
+    res.json({
+      clientSecret: intent.client_secret,
+      paymentIntentId: intent.id,
+      paymentAttemptId: attemptId,
+      amount: offer.amount,
+      label: offer.label,
+      intakeSnapshot: result.intakeSnapshot || null,
+    });
   } catch (e) {
     console.error("[checkout] create-payment-intent", e?.message);
     res.status(502).json({ error: "Could not start checkout" });
+  }
+});
+
+router.post("/prepare-payment", requireAuth, requireVerifiedEmail, async (req, res) => {
+  if (!isStripeConfigured()) return res.status(503).json({ error: "Payments not configured" });
+  try {
+    const result = await preparePaymentIntake({
+      stripeClient: stripe, uid: req.uid,
+      paymentAttemptId: req.body?.payment_attempt_id, intake: req.body?.intake,
+    });
+    if (!result.ok) return res.status(result.status).json({ error: result.error });
+    return res.json({ prepared: true, intakeSnapshot: result.intakeSnapshot });
+  } catch (error) {
+    console.error("[checkout] prepare-payment", error?.message);
+    return res.status(502).json({ error: "Could not freeze your task. Payment has not been confirmed." });
   }
 });
 
@@ -48,7 +68,9 @@ router.post("/verify", requireAuth, requireVerifiedEmail, async (req, res) => {
     if (intent.metadata?.uid !== req.uid) return res.status(403).json({ error: "Not your payment" });
     if (intent.status !== "succeeded") return res.json({ verified: false, status: intent.status });
     const result = await fulfillFromIntent(intent);
-    res.json({ verified: true, orderId: result.orderId });
+    res.json({ verified: true, orderId: result.orderId, fulfillmentPending: result.fulfillmentPending,
+      ...(result.fulfillmentPending ? { reason: "Payment received; task intake needs reconciliation. Contact support before delivery." } : {}),
+    });
   } catch (e) {
     console.error("[checkout] verify", e?.message);
     res.status(502).json({ error: "Could not verify payment" });
