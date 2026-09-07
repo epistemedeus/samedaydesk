@@ -467,13 +467,13 @@ export async function collectResponses(catalog, fetchImpl) {
   return responses;
 }
 
-export async function liveFetch(url, { timeoutMs = 15000, userAgent = "samedaydesk-portfolio-discovery/1.0" } = {}) {
+export async function liveFetch(url, { timeoutMs = 15000, userAgent = "samedaydesk-portfolio-discovery/1.0", redirect = "follow" } = {}) {
   const ac = new AbortController();
   const timer = setTimeout(() => ac.abort(), timeoutMs);
   try {
     const res = await fetch(url, {
       method: "GET",
-      redirect: "follow",
+      redirect,
       signal: ac.signal,
       headers: { "user-agent": userAgent, accept: "*/*" },
     });
@@ -481,7 +481,9 @@ export async function liveFetch(url, { timeoutMs = 15000, userAgent = "samedayde
       status: res.status,
       headers: { "content-type": res.headers.get("content-type") || "" },
       body: await res.text(),
-      url: res.url,
+      url: redirect === "manual" && res.status >= 300 && res.status < 400 && res.headers.get("location")
+        ? new URL(res.headers.get("location"), url).href
+        : res.url,
     };
   } catch (error) {
     return { status: 0, headers: {}, body: "", url, error: error.name === "AbortError" ? "timeout" : error.message };
