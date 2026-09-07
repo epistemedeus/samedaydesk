@@ -25,9 +25,12 @@ export const TRUSTED_FIXPACK_BUY_URLS = Object.freeze([
   FIXPACK_HUMAN_BUY_URL,
 ]);
 
-const STRIPE_PAYMENT_LINK_ID_RE = /^plink_[A-Za-z0-9]+$/;
-const STRIPE_PRODUCT_ID_RE = /^prod_[A-Za-z0-9]+$/;
+const STRIPE_PAYMENT_LINK_ID_RE = /^plink_[A-Za-z0-9_]+$/;
+const STRIPE_PRODUCT_ID_RE = /^prod_[A-Za-z0-9_]+$/;
 const CHECKOUT_SESSION_ID_RE = /^cs_[A-Za-z0-9_]+$/;
+
+/** Positive URL lookups may be reused; negative/misses expire so transient Stripe failures recover. */
+export const PAYMENT_LINK_NEGATIVE_CACHE_TTL_MS = 30_000;
 
 const paymentLinkUrlCache = new Map();
 
@@ -35,7 +38,33 @@ const paymentLinkUrlCache = new Map();
 export const fixPackLicenseDeps = {
   getStripe: () => stripe,
   isConfigured: isStripeConfigured,
+  now: () => Date.now(),
 };
+
+export function clearPaymentLinkUrlCache() {
+  paymentLinkUrlCache.clear();
+}
+
+function readCachedPaymentLinkUrl(paymentLinkId) {
+  const entry = paymentLinkUrlCache.get(paymentLinkId);
+  if (!entry) return { hit: false };
+  if (entry.expiresAt != null && fixPackLicenseDeps.now() >= entry.expiresAt) {
+    paymentLinkUrlCache.delete(paymentLinkId);
+    return { hit: false };
+  }
+  return { hit: true, url: entry.url };
+}
+
+function writeCachedPaymentLinkUrl(paymentLinkId, url) {
+  if (url) {
+    paymentLinkUrlCache.set(paymentLinkId, { url, expiresAt: null });
+    return;
+  }
+  paymentLinkUrlCache.set(paymentLinkId, {
+    url: null,
+    expiresAt: fixPackLicenseDeps.now() + PAYMENT_LINK_NEGATIVE_CACHE_TTL_MS,
+  });
+}
 
 export function normalizeBuyUrl(url) {
   try {
@@ -136,14 +165,20 @@ export function sessionMatchesTrustedFixPackIds(
 
 export async function resolvePaymentLinkBuyUrl(paymentLinkId, stripeClient = fixPackLicenseDeps.getStripe()) {
   if (!paymentLinkId || !stripeClient) return null;
-  if (paymentLinkUrlCache.has(paymentLinkId)) return paymentLinkUrlCache.get(paymentLinkId);
+  const cached = readCachedPaymentLinkUrl(paymentLinkId);
+  if (cached.hit) return cached.url;
   try {
     const link = await stripeClient.paymentLinks.retrieve(paymentLinkId);
     const url = normalizeBuyUrl(link?.url);
-    paymentLinkUrlCache.set(paymentLinkId, url || null);
-    return url || null;
+    if (url) {
+      writeCachedPaymentLinkUrl(paymentLinkId, url);
+      return url;
+    }
+    // Empty URL is a miss with bounded negative TTL — not a permanent denial.
+    writeCachedPaymentLinkUrl(paymentLinkId, null);
+    return null;
   } catch {
-    paymentLinkUrlCache.set(paymentLinkId, null);
+    // Transient Stripe/network failures must not poison the cache forever.
     return null;
   }
 }

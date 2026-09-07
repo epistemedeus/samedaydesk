@@ -10,9 +10,12 @@ import {
   FIXPACK_MCP_BUY_URL,
   FIXPACK_OFFER_SLUG,
   FIXPACK_PAYMENT_LINK_IDS_ENV,
+  PAYMENT_LINK_NEGATIVE_CACHE_TTL_MS,
+  clearPaymentLinkUrlCache,
   configuredFixPackPaymentLinkIds,
   fixPackLicenseDeps,
   paymentLinkIdFromSession,
+  resolvePaymentLinkBuyUrl,
   sessionEntitlesFixPack,
   sessionHasExactFixPackPaidState,
   sessionMatchesTrustedFixPackIds,
@@ -84,6 +87,7 @@ before(async () => {
   originalDeps = {
     getStripe: fixPackLicenseDeps.getStripe,
     isConfigured: fixPackLicenseDeps.isConfigured,
+    now: fixPackLicenseDeps.now,
   };
   globalThis.fetch = async (url, init) => {
     const href = typeof url === "string" ? url : String(url?.url || url);
@@ -108,12 +112,16 @@ before(async () => {
 beforeEach(() => {
   fixPackLicenseDeps.getStripe = originalDeps.getStripe;
   fixPackLicenseDeps.isConfigured = originalDeps.isConfigured;
+  fixPackLicenseDeps.now = () => Date.now();
+  clearPaymentLinkUrlCache();
 });
 
 after(async () => {
   globalThis.fetch = originalFetch;
   fixPackLicenseDeps.getStripe = originalDeps.getStripe;
   fixPackLicenseDeps.isConfigured = originalDeps.isConfigured;
+  fixPackLicenseDeps.now = originalDeps.now;
+  clearPaymentLinkUrlCache();
   if (!server) return;
   await new Promise((resolve, reject) => server.close((err) => (err ? reject(err) : resolve())));
 });
@@ -309,4 +317,73 @@ test("MCP route still lists free readiness and TaskMarket tools", async () => {
     "browse_taskmarket_tasks",
     "track_taskmarket_task",
   ]);
+});
+
+test("transient Payment Link lookup failure recovers without process restart", async () => {
+  let retrieves = 0;
+  const stripeClient = {
+    paymentLinks: {
+      retrieve: async (id) => {
+        retrieves += 1;
+        assert.equal(id, "plink_transient");
+        if (retrieves === 1) throw new Error("stripe 503");
+        return { url: FIXPACK_MCP_BUY_URL };
+      },
+    },
+  };
+
+  const first = await resolvePaymentLinkBuyUrl("plink_transient", stripeClient);
+  assert.equal(first, null);
+  const second = await resolvePaymentLinkBuyUrl("plink_transient", stripeClient);
+  assert.equal(second, FIXPACK_MCP_BUY_URL);
+  assert.equal(retrieves, 2);
+
+  // Positive hit is cached; empty miss uses bounded negative TTL only.
+  const third = await resolvePaymentLinkBuyUrl("plink_transient", stripeClient);
+  assert.equal(third, FIXPACK_MCP_BUY_URL);
+  assert.equal(retrieves, 2);
+
+  let emptyRetrieves = 0;
+  const emptyClient = {
+    paymentLinks: {
+      retrieve: async () => {
+        emptyRetrieves += 1;
+        return { url: "" };
+      },
+    },
+  };
+  let clock = 1_000_000;
+  fixPackLicenseDeps.now = () => clock;
+  assert.equal(await resolvePaymentLinkBuyUrl("plink_empty", emptyClient), null);
+  assert.equal(await resolvePaymentLinkBuyUrl("plink_empty", emptyClient), null);
+  assert.equal(emptyRetrieves, 1);
+  clock += PAYMENT_LINK_NEGATIVE_CACHE_TTL_MS + 1;
+  assert.equal(await resolvePaymentLinkBuyUrl("plink_empty", emptyClient), null);
+  assert.equal(emptyRetrieves, 2);
+
+  // Fail-once then succeed entitles a legitimate license on the next MCP call.
+  retrieves = 0;
+  fixPackLicenseDeps.isConfigured = () => true;
+  fixPackLicenseDeps.getStripe = () => ({
+    checkout: {
+      sessions: {
+        retrieve: async () => paidSession({
+          id: "cs_test_recover",
+          payment_link: "plink_transient_recover",
+        }),
+      },
+    },
+    paymentLinks: {
+      retrieve: async () => {
+        retrieves += 1;
+        if (retrieves === 1) throw new Error("stripe blip");
+        return { url: FIXPACK_HUMAN_BUY_URL };
+      },
+    },
+  });
+  const denied = await callFixPack({ license: "cs_test_recover" });
+  assert.equal(denied.json.result.isError, true);
+  const allowed = await callFixPack({ license: "cs_test_recover" });
+  assert.equal(allowed.json.result.isError, undefined);
+  assert.equal(completeContainsFullSections(allowed.text), true);
 });

@@ -59,13 +59,25 @@ export default function Checkout() {
   const appearance = useMemo(() => appearanceFor(theme), [theme]);
 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [paymentAttemptId, setPaymentAttemptId] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
+    const storageKey = `sdd:payment-attempt:${slug}`;
+    let rememberedAttemptId: string | null = null;
+    try {
+      rememberedAttemptId = sessionStorage.getItem(storageKey);
+    } catch {
+      rememberedAttemptId = null;
+    }
+
+    const body: Record<string, string> = { offer: slug };
+    if (rememberedAttemptId) body.payment_attempt_id = rememberedAttemptId;
+
     authedFetch("/api/checkout/create-payment-intent", {
       method: "POST",
-      body: JSON.stringify({ offer: slug }),
+      body: JSON.stringify(body),
     })
       .then(async (r) => {
         const d = await r.json();
@@ -75,6 +87,14 @@ export default function Checkout() {
       .then((d) => {
         if (!active) return;
         setClientSecret(d.clientSecret);
+        if (typeof d.paymentAttemptId === "string" && d.paymentAttemptId) {
+          setPaymentAttemptId(d.paymentAttemptId);
+          try {
+            sessionStorage.setItem(storageKey, d.paymentAttemptId);
+          } catch {
+            /* ignore quota / private mode */
+          }
+        }
         track("checkout_started", { offer: slug, price: offer.price });
       })
       .catch((e) => active && setErr(e.message));
@@ -111,7 +131,7 @@ export default function Checkout() {
           {err && <p className={styles.error} role="alert">{err}</p>}
           {clientSecret ? (
             <Elements stripe={getStripe()} options={{ clientSecret, appearance }}>
-              <PayForm />
+              <PayForm offerSlug={slug} paymentAttemptId={paymentAttemptId} />
             </Elements>
           ) : !err ? (
             <p className={styles.loading}>Preparing secure checkout…</p>
@@ -183,7 +203,7 @@ function Intake({ uid, offer, hint }: { uid?: string; offer: string; hint?: { la
   );
 }
 
-function PayForm() {
+function PayForm({ offerSlug, paymentAttemptId }: { offerSlug: string; paymentAttemptId: string | null }) {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -206,7 +226,12 @@ function PayForm() {
       return;
     }
     if (paymentIntent && ["succeeded", "processing"].includes(paymentIntent.status)) {
-      track("payment_succeeded", { paymentIntentId: paymentIntent.id });
+      track("payment_succeeded", { paymentIntentId: paymentIntent.id, paymentAttemptId });
+      try {
+        sessionStorage.removeItem(`sdd:payment-attempt:${offerSlug}`);
+      } catch {
+        /* ignore */
+      }
       await authedFetch("/api/checkout/verify", {
         method: "POST",
         body: JSON.stringify({ paymentIntentId: paymentIntent.id }),

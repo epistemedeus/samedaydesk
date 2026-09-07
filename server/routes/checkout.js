@@ -9,11 +9,14 @@ const router = Router();
 
 // Server-authoritative PaymentIntent. The client sends an offer SLUG only — the amount is
 // computed here and stamped into metadata, which fulfillment reads back (never the client).
-// Duplicate creates with the same immutable purchase facts reuse one Stripe idempotency key.
+// Duplicate creates for the same server-owned payment_attempt_id reuse one Stripe idempotency key.
 router.post("/create-payment-intent", requireAuth, requireVerifiedEmail, async (req, res) => {
   if (!isStripeConfigured()) return res.status(503).json({ error: "Payments not configured" });
   const slug = req.body?.offer;
   const uploadPath = typeof req.body?.upload_path === "string" ? req.body.upload_path : "";
+  const paymentAttemptId = typeof req.body?.payment_attempt_id === "string"
+    ? req.body.payment_attempt_id.trim()
+    : null;
 
   try {
     const result = await createOfferPaymentIntent({
@@ -22,12 +25,14 @@ router.post("/create-payment-intent", requireAuth, requireVerifiedEmail, async (
       email: req.userEmail,
       offerSlug: slug,
       uploadPath,
+      paymentAttemptId: paymentAttemptId || null,
     });
     if (!result.ok) return res.status(result.status).json({ error: result.error });
-    const { intent, offer } = result;
+    const { intent, offer, attemptId } = result;
     res.json({
       clientSecret: intent.client_secret,
       paymentIntentId: intent.id,
+      paymentAttemptId: attemptId,
       amount: offer.amount,
       label: offer.label,
     });

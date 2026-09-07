@@ -1,18 +1,28 @@
 // Idempotent fulfillment. Safe to run twice (webhook + verify-on-return + Stripe retries
-// all call it). The order id is deterministic and ON CONFLICT DO NOTHING makes the insert
-// atomic. The server re-validates pricing from Stripe metadata — never trusts the client.
+// all call it). New orders key off the PaymentIntent id so a second settled purchase
+// gets its own delivery row; two webhooks for the SAME payment still produce one order.
+// Legacy rows keyed as order_{uid}_{offer} remain readable and are not rewritten.
 import { supabaseAdmin } from "./supabase-admin.js";
 import { trustPricingFromMetadata } from "../pricing.js";
 import { sendReceipt } from "./notify.js";
+import { markPaymentAttemptSucceeded } from "./payment-attempt.js";
 
-export async function fulfillFromIntent(intent) {
+export function orderIdForPaymentIntent(intent) {
+  if (!intent?.id) throw new Error("payment intent id required for order identity");
+  return `order_${intent.id}`;
+}
+
+export function legacyOrderIdForUidOffer(uid, offer) {
+  return `order_${uid}_${offer}`;
+}
+
+export async function fulfillFromIntent(intent, { sb = supabaseAdmin() } = {}) {
   const meta = intent.metadata || {};
   const uid = meta.uid;
   if (!uid) return { ok: false, reason: "no_uid" }; // e.g. an operator Payment Link w/o an account
 
   const pricing = trustPricingFromMetadata(meta);
-  const orderId = `order_${uid}_${meta.offer || intent.id}`;
-  const sb = supabaseAdmin();
+  const orderId = orderIdForPaymentIntent(intent);
 
   // Pull the user's intake draft (details + uploaded file path), if any.
   let draft = null;
@@ -21,7 +31,8 @@ export async function fulfillFromIntent(intent) {
     draft = data;
   }
 
-  // Atomic insert-if-absent (deterministic id + ON CONFLICT DO NOTHING).
+  // Atomic insert-if-absent (PI-based id + ON CONFLICT DO NOTHING).
+  // Unique index on stripe_payment_intent also collapses duplicate inserts.
   const { data: inserted, error } = await sb
     .from("orders")
     .upsert(
@@ -35,7 +46,11 @@ export async function fulfillFromIntent(intent) {
         status: "received",
         stripe_payment_intent: intent.id,
         upload_path: draft?.upload_path || meta.upload_path || null,
-        meta: { receipt_email: intent.receipt_email || null, intake: draft?.data || null },
+        meta: {
+          receipt_email: intent.receipt_email || null,
+          intake: draft?.data || null,
+          payment_attempt_id: meta.payment_attempt_id || null,
+        },
       },
       { onConflict: "id", ignoreDuplicates: true },
     )
@@ -44,6 +59,17 @@ export async function fulfillFromIntent(intent) {
 
   // Flip the user to paid (server-managed field; clients can't write it).
   await sb.from("profiles").update({ payment_status: "paid" }).eq("id", uid);
+
+  if (meta.payment_attempt_id) {
+    try {
+      await markPaymentAttemptSucceeded({
+        attemptId: meta.payment_attempt_id,
+        paymentIntentId: intent.id,
+      });
+    } catch (e) {
+      console.error("[fulfill] payment_attempt update", e?.message);
+    }
+  }
 
   const isNew = Array.isArray(inserted) && inserted.length > 0;
   if (isNew) {
