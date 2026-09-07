@@ -24,6 +24,9 @@ import { validateJsonSchema } from "./validateJsonSchema.mjs";
 import { loadVerifiedSchema, validateVerifiedFeed } from "./verifiedFeedValidation.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
+// Fixed window where committed /extract Bazaar lastUpdated remains inside the seven-day bound.
+// Do not use crawl.checkedAt here: a later live refresh may advance checkedAt without freshening Bazaar.
+const BAZAAR_FRESH_AS_OF = "2026-09-03T09:55:27Z";
 
 test("formats unpaid 402 atomic USDC amounts from the crawl", () => {
   assert.equal(formatAtomicUsdc("5000"), "0.005 USDC");
@@ -48,13 +51,13 @@ test("badge requires live OpenAPI, unpaid 402, matching Bazaar, and fresh Bazaar
 test("Bazaar agreement binds resource, seller, terms, output, and freshness", () => {
   const extract = crawl.routes.find((route) => route.route === "/extract");
   assert.ok(extract);
-  assert.deepEqual(bazaarAgrees(extract), {
+  assert.deepEqual(bazaarAgrees(extract, BAZAAR_FRESH_AS_OF), {
     agrees: true,
     conflict: false,
     fresh: true,
     observedAt: "2026-08-30T15:18:51.498Z",
   });
-  assert.deepEqual(bazaarAgrees({ ...extract, cdpBazaar: null }), {
+  assert.deepEqual(bazaarAgrees({ ...extract, cdpBazaar: null }, BAZAAR_FRESH_AS_OF), {
     agrees: false,
     conflict: false,
     fresh: false,
@@ -64,19 +67,19 @@ test("Bazaar agreement binds resource, seller, terms, output, and freshness", ()
     ...extract,
     cdpBazaar: { ...extract.cdpBazaar, resource: "https://seller.example/extract" },
   };
-  assert.equal(bazaarAgrees(foreign).conflict, true);
-  assert.equal(bazaarAgrees(foreign).agrees, false);
+  assert.equal(bazaarAgrees(foreign, BAZAAR_FRESH_AS_OF).conflict, true);
+  assert.equal(bazaarAgrees(foreign, BAZAAR_FRESH_AS_OF).agrees, false);
   const stale = {
     ...extract,
     cdpBazaar: { ...extract.cdpBazaar, lastUpdated: "2026-08-20T09:55:27Z" },
   };
-  assert.equal(bazaarAgrees(stale).agrees, true);
-  assert.equal(bazaarAgrees(stale).fresh, false);
+  assert.equal(bazaarAgrees(stale, BAZAAR_FRESH_AS_OF).agrees, true);
+  assert.equal(bazaarAgrees(stale, BAZAAR_FRESH_AS_OF).fresh, false);
   const malformed = {
     ...extract,
     cdpBazaar: { ...extract.cdpBazaar, lastUpdated: "not-a-time", outputExampleKeys: {} },
   };
-  assert.deepEqual(bazaarAgrees(malformed), {
+  assert.deepEqual(bazaarAgrees(malformed, BAZAAR_FRESH_AS_OF), {
     agrees: false,
     conflict: true,
     fresh: false,
@@ -86,7 +89,8 @@ test("Bazaar agreement binds resource, seller, terms, output, and freshness", ()
 
 test("current SameDayDesk crawl route preserves exact observed evidence", () => {
   const source = crawl.routes.find((route) => route.route === "/extract");
-  const extract = routeFromCrawl(source);
+  const freshSource = { ...source, lastVerified: BAZAAR_FRESH_AS_OF };
+  const extract = routeFromCrawl(freshSource, BAZAAR_FRESH_AS_OF);
   assert.ok(extract);
   assert.equal(extract.seller, "SameDayDesk");
   assert.equal(extract.route, "/extract");
@@ -103,6 +107,24 @@ test("current SameDayDesk crawl route preserves exact observed evidence", () => 
     cdpBazaarFresh: true,
   });
   assert.equal(extract.badge, "verified");
+});
+
+test("aged Bazaar evidence at crawl checkedAt demotes verified without rewriting bazaarObservedAt", () => {
+  const source = crawl.routes.find((route) => route.route === "/extract");
+  assert.ok(source?.cdpBazaar?.lastUpdated);
+  assert.equal(source.cdpBazaar.lastUpdated, "2026-08-30T15:18:51.498Z");
+  const agreement = bazaarAgrees(source, crawl.checkedAt);
+  assert.equal(agreement.agrees, true);
+  assert.equal(agreement.observedAt, "2026-08-30T15:18:51.498Z");
+  const ageMs = Date.parse(crawl.checkedAt) - Date.parse(source.cdpBazaar.lastUpdated);
+  if (ageMs > BAZAAR_FRESHNESS_MS) {
+    assert.equal(agreement.fresh, false);
+    const row = routeFromCrawl(source, crawl.checkedAt);
+    assert.ok(row);
+    assert.equal(row.bazaarObservedAt, "2026-08-30T15:18:51.498Z");
+    assert.equal(row.agreement.cdpBazaarFresh, false);
+    assert.equal(row.badge, "unverified");
+  }
 });
 
 test("foreign, unchecked, and non-live source routes cannot enter the feed", () => {

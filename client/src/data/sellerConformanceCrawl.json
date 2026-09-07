@@ -1,6 +1,6 @@
 {
   "schemaVersion": "samedaydesk.seller-conformance-crawl.v1",
-  "checkedAt": "2026-09-03T09:55:27Z",
+  "checkedAt": "2026-09-07T18:50:05.000Z",
   "sources": [
     "https://agents.samedaydesk.com/.well-known/x402",
     "https://agents.samedaydesk.com/openapi.json",
@@ -11,7 +11,8 @@
   "limitations": [
     "POST routes were not transmitted. Their unpaid 402 output schema is therefore unmarked.",
     "CDP Bazaar search returned three SameDayDesk-named rows. Absence of a row is incomplete discovery, not a payment-integrity failure.",
-    "This crawl is inspection evidence. It is not a certificate or settlement proof."
+    "This crawl is inspection evidence. It is not a certificate or settlement proof.",
+    "Candidate crawl from operator-triggered verified-feed refresh. Current unpaid-402 claims require a successful observation at checkedAt. Failed, unknown, or unrechecked routes keep lastObservation only on the observation report."
   ],
   "greenRouteCount": 22,
   "routes": [
@@ -22,7 +23,7 @@
       "route": "/extract",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "5000",
         "network": "eip155:8453",
@@ -39,7 +40,7 @@
         "title",
         "url"
       ],
-      "contractHash": "7465c0cee5802a94db4a2aa79b6e3bef2033a67dd8a3b6bf76234aaf65ee8712",
+      "contractHash": "cb6d753206553fe87c1158a4e557d4c7deeef865d41f545ec0458a757dbf3438",
       "cdpBazaar": {
         "resource": "https://agents.samedaydesk.com/extract",
         "serviceName": "SameDayDesk",
@@ -64,7 +65,7 @@
       "route": "/read",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "5000",
         "network": "eip155:8453",
@@ -80,7 +81,7 @@
         "url",
         "wordCount"
       ],
-      "contractHash": "e78518fa86c54ea5ec05811a163080b4ad29a70eaca037f587deb166e83baed5",
+      "contractHash": "ed6b0ff5ebd82f90cc4e4ae6a9ac2e22eadbb8d68dd00c85563bea3085ff5ac5",
       "cdpBazaar": null
     },
     {
@@ -90,7 +91,7 @@
       "route": "/scan",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "200000",
         "network": "eip155:8453",
@@ -107,7 +108,7 @@
         "risk",
         "summary"
       ],
-      "contractHash": "b6ec3d17df5d9fc05be37185d8de0c9f69c9da1dc1e402f0765e6b31da2b8ee6",
+      "contractHash": "8f5818611d445f3bf278126f34f6cf13172b7ebcce167bfcc9a38998eb5938e7",
       "cdpBazaar": null
     },
     {
@@ -117,7 +118,7 @@
       "route": "/schemaforge",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "250000",
         "network": "eip155:8453",
@@ -134,7 +135,7 @@
         "site",
         "vertical"
       ],
-      "contractHash": "93b6ddc53034afb66457fedffa39cbe204db85b6a4e3d6c625ccb0a7bd9e0987",
+      "contractHash": "314fd3ac62acc3d8db52c95bf748205b80cf6acad10eff6eb6411f975454a748",
       "cdpBazaar": null
     },
     {
@@ -144,7 +145,7 @@
       "route": "/enrich",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "50000",
         "network": "eip155:8453",
@@ -163,7 +164,7 @@
         "social",
         "tech"
       ],
-      "contractHash": "b6820be9b75796be7f4b8ca2487a4235521ae8d11a3ee6d3378ec9cd09dbadc5",
+      "contractHash": "68e1aeca3465a1d6652cfd113432e8d7d9e6a975abe60c2696d37fecf6124e24",
       "cdpBazaar": null
     },
     {
@@ -173,7 +174,7 @@
       "route": "/wallet-enrich",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "50000",
         "network": "eip155:8453",
@@ -193,7 +194,7 @@
         "tokenHoldings",
         "type"
       ],
-      "contractHash": "b99502a980a102af14fb5a8974cccff2cd1dbf97b1fb12152e80ebc8fb909740",
+      "contractHash": "0608b267fe17a458ca99de0ad47e9135ae2bbbac261f837d3c474434c5934ca6",
       "cdpBazaar": null
     },
     {
@@ -203,7 +204,7 @@
       "route": "/deep-audit",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "250000",
         "network": "eip155:8453",
@@ -219,7 +220,7 @@
         "product",
         "summary"
       ],
-      "contractHash": "382acb7f2c72de374d02d573e1e0c07433796ad65e7c27880d6839e586658e25",
+      "contractHash": "4a2670f93afb3655ed83efafbc4010d138e3fd869a54bb20718594d74b196849",
       "cdpBazaar": null
     },
     {
@@ -229,7 +230,7 @@
       "route": "/defi/morpho-position",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "20000",
         "network": "eip155:8453",
@@ -247,7 +248,7 @@
         "positions",
         "source"
       ],
-      "contractHash": "8141a5d0f8aa01e1e7d0a0ccb621546c6b19193f4cf30474febc55cab7d10cc1",
+      "contractHash": "ca03143fed60b97c81c2a463df738db66ee8cbd7d86011fc0d6ffb5f92238649",
       "cdpBazaar": {
         "resource": "https://agents.samedaydesk.com/defi/morpho-position",
         "serviceName": "SameDayDesk",
@@ -273,7 +274,7 @@
       "route": "/defi/morpho-protection",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "100000",
         "network": "eip155:8453",
@@ -294,7 +295,7 @@
         "quotes",
         "unverifiedCount"
       ],
-      "contractHash": "4fa44c1314563279698789905180e445a4d5bb8948f380930396e9230b0071da",
+      "contractHash": "b87555e08e39d18ff73a4758f314469d65665c690e5a4f7416c57784a5e5362a",
       "cdpBazaar": null
     },
     {
@@ -304,7 +305,7 @@
       "route": "/defi/morpho-market-underwrite",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "250000",
         "network": "eip155:8453",
@@ -324,7 +325,7 @@
         "product",
         "verification"
       ],
-      "contractHash": "b527834b38b2c3543556448dc2ac9240a35ef17f2115e0dd48a14930b78b82f4",
+      "contractHash": "2c94fbcb7e6e8cb8ef079986e662ce35b242f4a3513c53e2d06739c9fe7c7243",
       "cdpBazaar": null
     },
     {
@@ -334,7 +335,7 @@
       "route": "/defi/morpho-preliquidation-replay",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "100000",
         "network": "eip155:8453",
@@ -353,7 +354,7 @@
         "transaction",
         "verification"
       ],
-      "contractHash": "623b8a4e31f1e94e315f64094678d0549c332aecd873c93fc584460502fab73f",
+      "contractHash": "e970aecd9181eeb581d8cade1c5dfd267a61cf984e2c70e74fa39d27bf830863",
       "cdpBazaar": null
     },
     {
@@ -363,7 +364,7 @@
       "route": "/work/opportunity-preflight",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "50000",
         "network": "eip155:8453",
@@ -383,7 +384,7 @@
         "product",
         "version"
       ],
-      "contractHash": "c7471ba1e7a12596038fed0498ac1c9fa0003507591af568d3646554df739fd5",
+      "contractHash": "9d50c61b73f175412b2a9ec32b87c71170d704cc9ed30751b581fb2160eeec9f",
       "cdpBazaar": null
     },
     {
@@ -393,7 +394,7 @@
       "route": "/distribution/agent-discoverability-audit",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "50000",
         "network": "eip155:8453",
@@ -417,7 +418,7 @@
         "summary",
         "version"
       ],
-      "contractHash": "5e73a3ba9343f418e20fb23e674cbb619ad07e650e59629b1f03484d2d9c44a7",
+      "contractHash": "613032745d5ac81ecd178c1565ada3e0ae47c0ecceac710fe3d7bbb99f003bea",
       "cdpBazaar": null
     },
     {
@@ -427,7 +428,7 @@
       "route": "/commerce/payment-offer-preflight",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "5000",
         "network": "eip155:8453",
@@ -453,7 +454,7 @@
         "target",
         "version"
       ],
-      "contractHash": "f48f9711fa9753fecd48b5106b209e6b87551a82de11b6f9fcdeaa47d68f32f3",
+      "contractHash": "899b18114f4688955864017f601ec0ac68a107d82e193cedf88edf7cc8fb47e2",
       "cdpBazaar": null
     },
     {
@@ -463,7 +464,7 @@
       "route": "/commerce/settlement-proof",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "5000",
         "network": "eip155:8453",
@@ -486,7 +487,7 @@
         "transaction",
         "version"
       ],
-      "contractHash": "234c57b345bc1d77a8e17b7650b7620672e67056989fd6b5672d520c1c6e2a8e",
+      "contractHash": "e5fbcb5eecc9e00fa56b8f1dca31e3e10a7e3f2abac12d98624f40e30efc2fee",
       "cdpBazaar": null
     },
     {
@@ -496,7 +497,7 @@
       "route": "/chain/transaction-receipt",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "2000",
         "network": "eip155:8453",
@@ -520,7 +521,7 @@
         "transfers",
         "version"
       ],
-      "contractHash": "e3497f6bc375ad2475dc42790625049bcd54626d0e0ae4eea6459ae37ca30f2b",
+      "contractHash": "03d817413987b2b7c49bcbb0902660cbe6605f6a38962c37e865d151cdaa47ff",
       "cdpBazaar": null
     },
     {
@@ -530,7 +531,7 @@
       "route": "/chain/solana-transaction-receipt",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "2000",
         "network": "eip155:8453",
@@ -555,7 +556,7 @@
         "verification",
         "version"
       ],
-      "contractHash": "d39727980b3a12a9f50b940a7a655fcead8c6473809383881ae1154019873909",
+      "contractHash": "fedc9cedb4cd9d620a5084f2d416abfeb41d4bf6dc2a7f16199e335df0a607d1",
       "cdpBazaar": null
     },
     {
@@ -605,7 +606,7 @@
       "route": "/commerce/seller-integrity-audit",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "10000",
         "network": "eip155:8453",
@@ -615,7 +616,7 @@
       "openapiPresent": true,
       "unpaid402OutputSchemaPresent": true,
       "outputExampleKeys": [],
-      "contractHash": "f912ec72a74c58a2ccc21df7439b096bde11304072c4d018af822787df27d149",
+      "contractHash": "0c85854827f19936e5ed41c25d69c6d8af6072206d846d028670baf5d10d2a13",
       "cdpBazaar": null
     },
     {
@@ -625,7 +626,7 @@
       "route": "/commerce/contract-qualified-search",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "10000",
         "network": "eip155:8453",
@@ -646,7 +647,7 @@
         "sources",
         "version"
       ],
-      "contractHash": "720eae674ad34d5ee146eefbc98bec1e500cd5518328e024fcb7c6c95692a7bc",
+      "contractHash": "ed5249b089c8ecbcea50f958aefd763f4ec1d5c245b306f4559a08a16c792192",
       "cdpBazaar": null
     },
     {
@@ -656,7 +657,7 @@
       "route": "/distribution/agent-surface-budget-audit",
       "method": "GET",
       "registryStatus": "green",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": "2026-09-07T18:50:05.000Z",
       "unpaid402": {
         "amount": "10000",
         "network": "eip155:8453",
@@ -677,7 +678,7 @@
         "request",
         "version"
       ],
-      "contractHash": "c3a77b2af7da40e07794c1c26f5ca60bf2d64751df11da92176295bd81ce86d8",
+      "contractHash": "6db9e2f3fa54867cb7a701b6fd1c23ac49a3769062f4f9a660c0fa707ac6ea6e",
       "cdpBazaar": null
     },
     {
@@ -687,7 +688,7 @@
       "route": "/gateway/commerce/payment-offer-preflight",
       "method": "GET",
       "registryStatus": "alternate",
-      "lastVerified": "2026-09-03T09:55:27Z",
+      "lastVerified": null,
       "unpaid402": {
         "amount": "5000",
         "network": "eip155:8453",
