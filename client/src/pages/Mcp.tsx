@@ -1,7 +1,9 @@
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import { track } from "../lib/posthog";
+import { applyMachineMetadata, FOR_AGENTS_PATH, X402_SHELL } from "../data/machineEntry.mjs";
 import styles from "./Mcp.module.css";
 
 const SMITHERY_URL = "https://smithery.ai/servers/epistemedeus/x402-data-gateway";
@@ -9,7 +11,6 @@ const GATEWAY_URL = "https://agents.samedaydesk.com";
 const DEMO_URL = "https://youtu.be/QTsTs_ZjwNo";
 const TASKMARKET_URL = "https://taskmarket.dev";
 const TASKMARKET_SOURCE = "https://github.com/epistemedeus/samedaydesk/blob/main/TASKMARKET-INTEGRATION.md";
-const MANIFEST_URL = `${GATEWAY_URL}/.well-known/x402`;
 
 const tools = [
   {
@@ -156,14 +157,7 @@ function MachineName({ name }: { name: string }) {
 
 export default function Mcp() {
   useEffect(() => {
-    const previousTitle = document.title;
-    document.title = "Agent Payment Infrastructure: x402 and MPP | SameDayDesk";
-    const meta = document.querySelector('meta[name="description"]');
-    const previousDescription = meta?.getAttribute("content") ?? null;
-    meta?.setAttribute(
-      "content",
-      "Twenty-two pay-per-call machine tools accepting both x402 and native MPP on Base, plus one alternate x402-only Circle Gateway route.",
-    );
+    const restoreMetadata = applyMachineMetadata(document, X402_SHELL);
 
     const params = new URLSearchParams(window.location.search);
     const referrerHost = (() => {
@@ -181,10 +175,7 @@ export default function Mcp() {
       campaign: params.get("utm_campaign") || undefined,
     });
 
-    return () => {
-      document.title = previousTitle;
-      if (previousDescription !== null) meta?.setAttribute("content", previousDescription);
-    };
+    return restoreMetadata;
   }, []);
 
   function trackAction(action: string, location: string) {
@@ -201,20 +192,22 @@ export default function Mcp() {
             Agents discover a service, call it, <span className="lime">pay, and continue</span>
           </h1>
           <p className={styles.lead}>
-            Twenty-two deterministic tools for discovery, purchase safety, settlement evidence, security, research,
-            and DeFi decisions. No API key, subscription, or account is required. Every canonical paid action accepts
-            either x402 or native MPP, settles the same exact Base USDC amount, and returns a machine-readable result.
+            SameDayDesk machine services settle exact Base USDC through x402 or native MPP. No API
+            key, subscription, or account is required. Live catalogs are authoritative; this page does
+            not freeze a tool count. Two complete jobs start at{" "}
+            <Link className={styles.inlineLink} to={FOR_AGENTS_PATH}>
+              /for-agents
+            </Link>
+            : paid bounded extraction, then free offline comparison of already-held observations.
           </p>
           <div className={styles.actions}>
-            <a
+            <Link
               className={styles.primary}
-              href={SMITHERY_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackAction("open_smithery", "hero")}
+              to={FOR_AGENTS_PATH}
+              onClick={() => trackAction("open_for_agents", "hero")}
             >
-              Open in Smithery →
-            </a>
+              Two practical jobs →
+            </Link>
             <a
               className={styles.secondary}
               href="https://github.com/epistemedeus/x402-url-extractor"
@@ -255,7 +248,7 @@ export default function Mcp() {
         <section className={styles.section} aria-labelledby="tools-title">
           <div className={styles.sectionHead}>
             <p className="eyebrow">Available tools</p>
-            <h2 id="tools-title">Twenty-two focused calls, from $0.002</h2>
+            <h2 id="tools-title">Named calls, from $0.002. Live inventory is authoritative.</h2>
           </div>
           <div className={styles.grid}>
             {tools.map((tool) => (
@@ -331,23 +324,22 @@ export default function Mcp() {
         <section className={styles.marketEvidence} aria-labelledby="evidence-title">
           <div>
             <p className="eyebrow">Live storefront contract</p>
-            <h2 id="evidence-title">Twenty-two canonical actions. Two payment protocols.</h2>
+            <h2 id="evidence-title">Live catalogs, not a frozen count.</h2>
           </div>
           <div>
             <p>
-              The live catalog, x402 manifest, MPP OpenAPI, MCP tools, and A2A card describe the same twenty-two
-              canonical actions. The x402 manifest also carries one Circle Gateway alternate for payment preflight;
-              it is an alternate access path, not a twenty-third dual-rail product.
+              The live HTTP catalog, x402 manifest, health readout, OpenAPI, MCP tools, and A2A card
+              are the current inventories. A Circle Gateway alternate exists for payment preflight; it is
+              an access path, not a separate product family. Discovery is not authorization, settlement,
+              demand, or revenue.
             </p>
-            <a
+            <Link
               className={styles.inlineLink}
-              href={MANIFEST_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackAction("inspect_manifest", "market_evidence")}
+              to={FOR_AGENTS_PATH}
+              onClick={() => trackAction("open_for_agents", "market_evidence")}
             >
-              Inspect the live manifest →
-            </a>
+              Start with the two practical jobs →
+            </Link>
           </div>
         </section>
 
@@ -402,7 +394,8 @@ export default function Mcp() {
             <h2 id="connect-title">Use Smithery or connect directly</h2>
             <p>
               Smithery provides a managed connection. MCP clients that support Streamable HTTP can
-              connect to the durable public endpoint directly and discover all twenty-two current tools.
+              connect to the durable public endpoint directly and discover the current paid tools from
+              the live MCP inventory.
             </p>
           </div>
           <div className={styles.commands}>

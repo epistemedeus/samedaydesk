@@ -1,8 +1,11 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { FOR_AGENTS_SHELL, X402_SHELL } from "../../client/src/data/machineEntry.mjs";
 
 // Exact public SPA paths that must return their own crawler-readable HTML.
 // Add a route by appending one catalog object; do not hand-write a full HTML document.
+// /for-agents and /x402 copy lives in client/src/data/machineEntry.mjs so React pages
+// cannot drift from the initial HTML.
 export const ROUTE_SHELL_DIR = "route-shells";
 export const SITE_ORIGIN = "https://samedaydesk.com";
 export const HOME_TITLE = "SameDayDesk: agent commerce, built and shipped";
@@ -12,10 +15,10 @@ export const HOME_DESCRIPTION =
 
 const PUBLIC_SHELLS = [
   {
-    path: "/for-agents",
-    title: "Agent payment infrastructure | SameDayDesk",
-    description: "Connect agents to SameDayDesk machine services through documented x402, MPP, MCP, and HTTP interfaces.",
-    crawlerHtml: "<h1>SameDayDesk interfaces for agents</h1><p>Discover the live machine catalog, inspect payment requirements, and call documented services through the agent gateway.</p>",
+    path: FOR_AGENTS_SHELL.path,
+    title: FOR_AGENTS_SHELL.title,
+    description: FOR_AGENTS_SHELL.description,
+    crawlerHtml: FOR_AGENTS_SHELL.crawlerHtml,
   },
   {
     path: "/terms",
@@ -47,32 +50,11 @@ const ACCOUNT_SHELLS = [
 
 export const SPA_ROUTE_SHELLS = Object.freeze([
   Object.freeze({
-    path: "/x402",
-    title: "Agent Payment Infrastructure: x402 and MPP | SameDayDesk",
-    description:
-      "Twenty-two pay-per-call machine tools accepting both x402 and native MPP on Base, plus one alternate x402-only Circle Gateway route.",
-    canonical: `${SITE_ORIGIN}/x402`,
-    crawlerHtml: `
-      <h1>Agents discover a service, call it, pay, and continue</h1>
-      <p>
-        Twenty-two deterministic tools for discovery, purchase safety, settlement evidence, security,
-        research, and DeFi decisions. No API key, subscription, or account is required. Every canonical
-        paid action accepts either x402 or native MPP, settles the same exact Base USDC amount, and
-        returns a machine-readable result.
-      </p>
-      <p>
-        The live catalog, x402 manifest, MPP OpenAPI, MCP tools, and A2A card describe the same
-        twenty-two canonical actions. One Circle Gateway alternate exists for payment preflight; it is
-        an alternate access path, not a twenty-third dual-rail product. Discovery is not authorization,
-        settlement, demand, or revenue.
-      </p>
-      <ul>
-        <li><a href="https://agents.samedaydesk.com/.well-known/x402">x402 resource manifest</a></li>
-        <li><a href="https://samedaydesk.com/x402/seller-conformance">Seller conformance proof</a></li>
-        <li><a href="https://samedaydesk.com/x402/verified">Inspected x402 route list</a></li>
-        <li><a href="https://samedaydesk.com/docs/x402-sdk/">x402 SDK integration reference</a></li>
-      </ul>
-    `,
+    path: X402_SHELL.path,
+    title: X402_SHELL.title,
+    description: X402_SHELL.description,
+    canonical: X402_SHELL.canonical,
+    crawlerHtml: X402_SHELL.crawlerHtml,
   }),
   Object.freeze({
     path: "/x402/seller-conformance",
