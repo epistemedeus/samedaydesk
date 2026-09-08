@@ -23,9 +23,11 @@ import {
 import {
   applyMachineMetadata,
   COMPARE_QUICKSTART,
+  EXPLICIT_RECORD_SKILL,
   FOR_AGENTS_SHELL,
   MERCHANT_PIN,
   OBSERVE_QUICKSTART,
+  RECORD_QUICKSTART,
   X402_SHELL,
 } from "../../client/src/data/machineEntry.mjs";
 
@@ -217,6 +219,9 @@ test("for-agents shell, React route, and machineEntry share one copy authority",
   assert.match(route.crawlerHtml, /0\.01 USDC/);
   assert.equal(route.crawlerHtml.includes(OBSERVE_QUICKSTART), true);
   assert.equal(route.crawlerHtml.includes(COMPARE_QUICKSTART), true);
+  assert.equal(route.crawlerHtml.includes(RECORD_QUICKSTART), true);
+  assert.equal(route.crawlerHtml.includes(EXPLICIT_RECORD_SKILL), true);
+  assert.match(route.crawlerHtml, /fixtures\/record\/required-sku\/mapping.json/);
   assert.equal(route.crawlerHtml.includes(MERCHANT_PIN), true);
   assert.match(route.crawlerHtml, /npm ci/);
   assert.match(route.crawlerHtml, /npm start/);
@@ -232,12 +237,17 @@ test("for-agents shell, React route, and machineEntry share one copy authority",
   assert.equal(app.includes('path="/for-agents" element={<Mcp />}'), false);
   const react = readFileSync(join(here, "../../client/src/pages/ForAgents.tsx"), "utf8");
   for (const copy of [route.crawlerHtml, react]) {
-    assert.match(copy, /Node.js 22 or newer/);
+    assert.match(copy, /Node.js 22\.x/);
+    assert.match(copy, /organization\/contact examples/);
+    assert.match(copy, /missing .*sku.*email.*optional/s);
+    assert.match(copy, /required-field\s+example/);
+    assert.match(copy, /writes.*three artifacts.*exits 1/s);
     assert.match(copy, /against the live merchant, not an offline fixture/);
     assert.match(copy, /fixtures\/authorization-batch.json/);
     assert.match(copy, /Reconcile an unknown payment outcome instead of automatically retrying/);
     assert.doesNotMatch(copy, /untrusted until you reconcile|No-key fixture quickstart/);
   }
+  assert.match(route.crawlerHtml, /node --version # must report v22\.x/);
 });
 
 test("client metadata transitions match route shells and restore prior attributes", () => {

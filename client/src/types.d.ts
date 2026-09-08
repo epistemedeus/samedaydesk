@@ -11,9 +11,11 @@ declare module "../data/machineEntry.mjs" {
   export const MERCHANT_PIN: string;
   export const CUSTOMER_EXAMPLE_VERSION: string;
   export const CUSTOMER_EXAMPLE_DIR: string;
+  export const EXPLICIT_RECORD_SKILL: string;
   export const LIVE_INVENTORY: ReadonlyArray<{ readonly label: string; readonly href: string }>;
   export const OBSERVE_QUICKSTART: string;
   export const COMPARE_QUICKSTART: string;
+  export const RECORD_QUICKSTART: string;
   export const FOR_AGENTS_PATH: string;
   export const FOR_AGENTS_TITLE: string;
   export const FOR_AGENTS_DESCRIPTION: string;

@@ -5,9 +5,11 @@
 export const SITE_ORIGIN = "https://samedaydesk.com";
 export const GATEWAY_ORIGIN = "https://agents.samedaydesk.com";
 export const MERCHANT_REPO = "https://github.com/epistemedeus/x402-url-extractor";
-export const MERCHANT_PIN = "e0daf4d9a9e775a8180ae0aa9bee351c10b850c8";
+export const MERCHANT_PIN = "ef46e2b5213b9436e5cc4339a159c8ae837db880";
 export const CUSTOMER_EXAMPLE_VERSION = "0.2.3";
 export const CUSTOMER_EXAMPLE_DIR = "examples/customer-x402";
+export const EXPLICIT_RECORD_SKILL =
+  `${MERCHANT_REPO}/blob/${MERCHANT_PIN}/plugins/samedaydesk-extract/skills/explicit-record/SKILL.md`;
 
 export const LIVE_INVENTORY = Object.freeze([
   Object.freeze({
@@ -41,6 +43,7 @@ export const OBSERVE_QUICKSTART = [
   "cd x402-url-extractor",
   `git checkout ${MERCHANT_PIN}`,
   `cd ${CUSTOMER_EXAMPLE_DIR}`,
+  "node --version # must report v22.x",
   "npm ci",
   "npm start",
 ].join("\n");
@@ -54,10 +57,18 @@ export const COMPARE_QUICKSTART = [
   "  --format text",
 ].join("\n");
 
+export const RECORD_QUICKSTART = [
+  "npm run record -- \\",
+  "  --input ./fixtures/record/product-jsonld/delivery/extract-batch.json \\",
+  "  --mapping ./fixtures/record/required-sku/mapping.json \\",
+  "  --schema ./fixtures/record/required-sku/schema.json \\",
+  "  --out /tmp/samedaydesk-record-required-sku",
+].join("\n");
+
 export const FOR_AGENTS_PATH = "/for-agents";
-export const FOR_AGENTS_TITLE = "Two practical agent jobs | SameDayDesk";
+export const FOR_AGENTS_TITLE = "Practical agent jobs | SameDayDesk";
 export const FOR_AGENTS_DESCRIPTION =
-  "Obtain a bounded SameDayDesk batch extraction, then compare explicit fields from two already-held observations. Paid freshness and free offline comparison stay distinct.";
+  "Obtain bounded observations, compare selected fields, or map held JSON into buyer records. Paid acquisition and two offline jobs stay distinct.";
 export const FOR_AGENTS_CANONICAL = `${SITE_ORIGIN}${FOR_AGENTS_PATH}`;
 
 export const X402_PATH = "/x402";
@@ -99,7 +110,7 @@ function inventoryListHtml() {
 }
 
 export const FOR_AGENTS_CRAWLER_HTML = `
-      <h1>Two jobs: obtain observations, then compare named fields</h1>
+      <h1>Obtain observations or use either offline job</h1>
       <p>
         SameDayDesk sells a bounded <code>POST /extract/batch</code> attempt: one to five public HTTPS
         URLs, caller-selected fields, 0.01 USDC. A later comparison of two already-held JSON
@@ -116,7 +127,7 @@ export const FOR_AGENTS_CRAWLER_HTML = `
       <p>
         Public customer example ${CUSTOMER_EXAMPLE_VERSION} at
         <a href="${MERCHANT_REPO}/tree/${MERCHANT_PIN}/${CUSTOMER_EXAMPLE_DIR}">${MERCHANT_REPO}/tree/${MERCHANT_PIN}/${CUSTOMER_EXAMPLE_DIR}</a>.
-        Requires Node.js 22 or newer and a full Git checkout, not a packed tarball.
+        Requires Node.js 22.x and a full Git checkout, not a packed tarball.
         Default commands are unpaid preflight against the live merchant, not an offline fixture. They
         sign nothing. Inspect and edit <code>fixtures/authorization-batch.json</code> yourself before any <code>--approve</code>
         purchase. Optional attempt receipt and read-only reconcile are separate.
@@ -136,6 +147,17 @@ export const FOR_AGENTS_CRAWLER_HTML = `
         source URL are order, not content change. Fixture output is owner proof, not buyer demand.
       </p>
       <pre><code>${COMPARE_QUICKSTART}</code></pre>
+      <h2>Job 3. Map already-held JSON into buyer records</h2>
+      <p>
+        From the same pinned checkout and directory, the explicit-record CLI maps only buyer-named
+        JSON Pointers and validates the result against the buyer's local JSON Schema. It does not
+        fetch or infer. In the product and organization/contact examples, missing <code>sku</code>
+        and <code>email</code> are optional. The command below is a separate truthful required-field
+        example: it keeps one usable product record, labels the row missing required <code>sku</code>
+        invalid, accounts for the failed source row, writes all three artifacts, and exits 1.
+        <a href="${EXPLICIT_RECORD_SKILL}">Read the pinned explicit-record workflow</a>.
+      </p>
+      <pre><code>${RECORD_QUICKSTART}</code></pre>
       <h2>Live merchant inventory</h2>
       <ul>
         ${inventoryListHtml()}
@@ -153,13 +175,14 @@ export const X402_CRAWLER_HTML = `
         demand, or revenue. Live catalogs are authoritative; this page does not freeze a tool count.
       </p>
       <p>
-        Two complete jobs live on
+        Three complete jobs live on
         <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>:
-        paid bounded <code>POST /extract/batch</code> observations, then free offline comparison of
-        two already-held observations. Other named calls remain on the live inventory.
+        paid bounded <code>POST /extract/batch</code> observations, plus free offline comparison and
+        explicit buyer-record mapping for already-held observations. Other named calls remain on
+        the live inventory.
       </p>
       <ul>
-        <li><a href="${FOR_AGENTS_CANONICAL}">Two practical agent jobs</a></li>
+        <li><a href="${FOR_AGENTS_CANONICAL}">Practical agent jobs</a></li>
         ${inventoryListHtml()}
         <li><a href="${SITE_ORIGIN}/x402/seller-conformance">Seller conformance proof</a></li>
         <li><a href="${SITE_ORIGIN}/x402/verified">Inspected x402 route list</a></li>

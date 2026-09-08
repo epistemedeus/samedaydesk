@@ -7,6 +7,7 @@ import {
   COMPARE_QUICKSTART,
   CUSTOMER_EXAMPLE_DIR,
   CUSTOMER_EXAMPLE_VERSION,
+  EXPLICIT_RECORD_SKILL,
   applyMachineMetadata,
   FOR_AGENTS_SHELL,
   GATEWAY_ORIGIN,
@@ -14,6 +15,7 @@ import {
   MERCHANT_PIN,
   MERCHANT_REPO,
   OBSERVE_QUICKSTART,
+  RECORD_QUICKSTART,
 } from "../data/machineEntry.mjs";
 import styles from "./Mcp.module.css";
 
@@ -29,9 +31,9 @@ export default function ForAgents() {
       <Nav />
       <main id="main" className={styles.wrap}>
         <header className={styles.hero}>
-          <p className="eyebrow">Machine jobs · extract, then compare</p>
+          <p className="eyebrow">Machine jobs · acquire or work offline</p>
           <h1 className={styles.jobH1}>
-            Obtain observations, then compare the <span className="lime">fields you named</span>
+            Obtain observations or use either <span className="lime">offline job</span>
           </h1>
           <p className={styles.lead}>
             SameDayDesk sells a bounded <code>POST /extract/batch</code> attempt: one to five public
@@ -60,7 +62,7 @@ export default function ForAgents() {
             >
               {MERCHANT_REPO}/tree/{MERCHANT_PIN}/{CUSTOMER_EXAMPLE_DIR}
             </a>
-            . Requires Node.js 22 or newer and a full Git checkout, not a packed tarball.
+            . Requires Node.js 22.x and a full Git checkout, not a packed tarball.
             Default commands are unpaid preflight against the live merchant, not an offline fixture. They
             sign nothing. Inspect and edit <code>fixtures/authorization-batch.json</code> yourself before any{" "}
             <code>--approve</code> purchase. Optional attempt receipt and read-only reconcile are
@@ -69,7 +71,8 @@ export default function ForAgents() {
           </p>
           <ol className={styles.flow}>
             <li>Clone the public merchant and check out the pinned commit.</li>
-            <li>Run <code>npm ci</code> then <code>npm start</code> for unpaid batch preflight.</li>
+            <li>Verify <code>node --version</code> reports v22.x, then run <code>npm ci</code>.</li>
+            <li>Run <code>npm start</code> for unpaid batch preflight.</li>
             <li>Inspect and edit the authorization file. Installation still has no payment authority.</li>
             <li>Purchase only with an explicit <code>--approve</code> and a wallet you inject.</li>
             <li>Keep failed, partial, and missing rows. They are not a refund.</li>
@@ -101,6 +104,32 @@ export default function ForAgents() {
             <div>
               <span>Copyable fixture comparison</span>
               <pre className={styles.jobPre}><code>{COMPARE_QUICKSTART}</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section className={styles.section} aria-labelledby="record-title">
+          <div className={styles.sectionHead}>
+            <p className="eyebrow">Job 3 · free offline records</p>
+            <h2 id="record-title">Map already-held JSON into buyer records</h2>
+          </div>
+          <p className={styles.jobCopy}>
+            From the same pinned checkout and directory, the explicit-record CLI maps only
+            buyer-named JSON Pointers and validates the result against the buyer&apos;s local JSON
+            Schema. It does not fetch or infer. In the product and organization/contact examples,
+            missing <code>sku</code> and <code>email</code> are optional. The command below is a
+            separate truthful required-field example: it keeps one usable product record, labels the
+            row missing required <code>sku</code> invalid, accounts for the failed source row, writes
+            all three artifacts, and exits 1.{" "}
+            <a className={styles.inlineLink} href={EXPLICIT_RECORD_SKILL}>
+              Read the pinned explicit-record workflow
+            </a>
+            .
+          </p>
+          <div className={styles.commands}>
+            <div>
+              <span>Copyable required-field example</span>
+              <pre className={styles.jobPre}><code>{RECORD_QUICKSTART}</code></pre>
             </div>
           </div>
         </section>
