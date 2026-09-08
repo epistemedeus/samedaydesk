@@ -20,6 +20,14 @@ import {
   inspectHtmlShell,
   writeRouteShells,
 } from "../lib/spa-route-shells.js";
+import {
+  applyMachineMetadata,
+  COMPARE_QUICKSTART,
+  FOR_AGENTS_SHELL,
+  MERCHANT_PIN,
+  OBSERVE_QUICKSTART,
+  X402_SHELL,
+} from "../../client/src/data/machineEntry.mjs";
 
 const DECLARED_REACT_ROUTES = Object.freeze([
   "/",
@@ -188,9 +196,94 @@ test("apex machine documentation separates free and paid MCP and keeps homepage 
   assert.match(LLMS_TXT, /Free apex MCP readiness surface/);
   assert.match(LLMS_TXT, /https:\/\/agents\.samedaydesk\.com\/mcp/);
   assert.match(LLMS_TXT, /GET https:\/\/agents\.samedaydesk\.com\/extract\?url=https:\/\/example\.com/);
+  assert.match(LLMS_TXT, /POST https:\/\/agents\.samedaydesk\.com\/extract\/batch/);
+  assert.match(LLMS_TXT, /https:\/\/samedaydesk\.com\/for-agents/);
+  assert.match(LLMS_TXT, /offline comparison/);
+  assert.equal(LLMS_TXT.includes("Twenty-two canonical"), false);
   for (const sku of ["Agent Workflow Integration", "Agent-Ready MCP Server", "Agent Commerce Storefront"]) {
     assert.match(LLMS_TXT, new RegExp(sku));
   }
+});
+
+test("for-agents shell, React route, and machineEntry share one copy authority", () => {
+  const route = SPA_ROUTE_SHELLS.find((item) => item.path === "/for-agents");
+  assert.equal(route.title, FOR_AGENTS_SHELL.title);
+  assert.equal(route.description, FOR_AGENTS_SHELL.description);
+  assert.equal(route.canonical, FOR_AGENTS_SHELL.canonical);
+  assert.equal(route.crawlerHtml, FOR_AGENTS_SHELL.crawlerHtml);
+  assert.equal(SPA_ROUTE_SHELLS[0].title, X402_SHELL.title);
+  assert.equal(SPA_ROUTE_SHELLS[0].description, X402_SHELL.description);
+  assert.match(route.crawlerHtml, /POST \/extract\/batch/);
+  assert.match(route.crawlerHtml, /0\.01 USDC/);
+  assert.equal(route.crawlerHtml.includes(OBSERVE_QUICKSTART), true);
+  assert.equal(route.crawlerHtml.includes(COMPARE_QUICKSTART), true);
+  assert.equal(route.crawlerHtml.includes(MERCHANT_PIN), true);
+  assert.match(route.crawlerHtml, /npm ci/);
+  assert.match(route.crawlerHtml, /npm start/);
+  assert.match(route.crawlerHtml, /page-change/);
+  assert.match(route.crawlerHtml, /coverage unknown/);
+  assert.match(route.crawlerHtml, /charged: true/);
+  assert.match(route.crawlerHtml, /https:\/\/agents\.samedaydesk\.com\/api\/actions/);
+  assert.match(route.crawlerHtml, /https:\/\/agents\.samedaydesk\.com\/healthz/);
+  assert.equal(route.crawlerHtml.includes("Twenty-two"), false);
+  assert.equal(route.crawlerHtml.includes("hasOfferCatalog"), false);
+  const app = readFileSync(join(here, "../../client/src/App.tsx"), "utf8");
+  assert.match(app, /path="\/for-agents" element=\{<ForAgents \/>\}/);
+  assert.equal(app.includes('path="/for-agents" element={<Mcp />}'), false);
+  const react = readFileSync(join(here, "../../client/src/pages/ForAgents.tsx"), "utf8");
+  for (const copy of [route.crawlerHtml, react]) {
+    assert.match(copy, /Node.js 22 or newer/);
+    assert.match(copy, /against the live merchant, not an offline fixture/);
+    assert.match(copy, /fixtures\/authorization-batch.json/);
+    assert.match(copy, /Reconcile an unknown payment outcome instead of automatically retrying/);
+    assert.doesNotMatch(copy, /untrusted until you reconcile|No-key fixture quickstart/);
+  }
+});
+
+test("client metadata transitions match route shells and restore prior attributes", () => {
+  const elements = new Map();
+  const document = {
+    title: HOME_TITLE,
+    querySelector(selector) {
+      if (!elements.has(selector)) {
+        const attributes = new Map();
+        elements.set(selector, {
+          getAttribute: (name) => attributes.get(name) ?? null,
+          setAttribute: (name, value) => attributes.set(name, value),
+          removeAttribute: (name) => attributes.delete(name),
+        });
+      }
+      return elements.get(selector);
+    },
+  };
+  for (const shell of [FOR_AGENTS_SHELL, X402_SHELL, FOR_AGENTS_SHELL]) {
+    const restore = applyMachineMetadata(document, shell);
+    assert.equal(document.title, shell.title);
+    for (const [selector, attribute, value] of [
+      ['link[rel="canonical"]', 'href', shell.canonical],
+      ['meta[property="og:url"]', 'content', shell.canonical],
+      ['meta[property="og:title"]', 'content', shell.title],
+      ['meta[name="twitter:title"]', 'content', shell.title],
+      ['meta[name="description"]', 'content', shell.description],
+      ['meta[property="og:description"]', 'content', shell.description],
+      ['meta[name="twitter:description"]', 'content', shell.description],
+    ]) assert.equal(document.querySelector(selector).getAttribute(attribute), value);
+    restore();
+    assert.equal(document.title, HOME_TITLE);
+    assert.equal(document.querySelector('link[rel="canonical"]').getAttribute('href'), null);
+  }
+  for (const [page, shell] of [['ForAgents', 'FOR_AGENTS_SHELL'], ['Mcp', 'X402_SHELL']]) {
+    const source = readFileSync(join(here, `../../client/src/pages/${page}.tsx`), 'utf8');
+    assert.ok(source.includes(`applyMachineMetadata(document, ${shell})`));
+  }
+});
+
+test("sitemap lists /for-agents once with the existing /x402 loc", () => {
+  const sitemap = readFileSync(join(here, "../../client/public/sitemap.xml"), "utf8");
+  const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+  assert.equal(locations.filter((loc) => loc === "https://samedaydesk.com/for-agents").length, 1);
+  assert.equal(locations.includes("https://samedaydesk.com/x402"), true);
+  assert.equal(locations.includes("https://samedaydesk.com/"), true);
 });
 
 test("generator derives route shells from the built index.html without rewriting the homepage", (t) => {
@@ -216,7 +309,19 @@ test("generator derives route shells from the built index.html without rewriting
 
   const x402 = inspectHtmlShell(readFileSync(join(dist, written[0].relativeFile), "utf8"));
   assert.equal(x402.title, SPA_ROUTE_SHELLS[0].title);
-  assert.match(x402.noscript, /Twenty-two deterministic tools/);
+  assert.match(x402.noscript, /Live catalogs are authoritative/);
+  assert.match(x402.noscript, /for-agents/);
+  const forAgents = written.find((entry) => entry.path === "/for-agents");
+  const forAgentsHtml = inspectHtmlShell(readFileSync(join(dist, forAgents.relativeFile), "utf8"));
+  assert.equal(forAgentsHtml.title, FOR_AGENTS_SHELL.title);
+  assert.equal(forAgentsHtml.canonical, FOR_AGENTS_SHELL.canonical);
+  assert.match(forAgentsHtml.noscript, /Job 1\. Obtain bounded extracted observations/);
+  assert.match(forAgentsHtml.noscript, /Job 2\. Compare explicit fields from two already-held observations/);
+  assert.equal(forAgentsHtml.noscript.includes(OBSERVE_QUICKSTART), true);
+  assert.equal(forAgentsHtml.noscript.includes(COMPARE_QUICKSTART), true);
+  assert.equal(forAgentsHtml.jsonLdRaw.join("").includes("Offer"), false);
+  assert.equal(forAgentsHtml.jsonLdRaw.join("").includes("FAQPage"), false);
+  assert.equal(forAgentsHtml.jsonLdRaw.join("").includes("Review"), false);
   const seller = inspectHtmlShell(readFileSync(join(dist, written[1].relativeFile), "utf8"));
   assert.match(seller.noscript, /not a product, certificate, or runtime monitor/);
   const verified = inspectHtmlShell(readFileSync(join(dist, written[2].relativeFile), "utf8"));

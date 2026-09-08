@@ -15,17 +15,19 @@
 ## Agent interfaces
 
 - [Free apex MCP readiness surface](https://samedaydesk.com/mcp): Streamable HTTP MCP interface for the free AI-readiness checker. This is separate from the paid gateway.
-- [Paid machine gateway MCP](https://agents.samedaydesk.com/mcp): Paid MCP tools from the canonical SameDayDesk machine gateway.
-- First paid HTTP example: `GET https://agents.samedaydesk.com/extract?url=https://example.com`.
+- [Paid machine gateway MCP](https://agents.samedaydesk.com/mcp): Paid MCP tools from the canonical SameDayDesk machine gateway. Live MCP inventory is authoritative.
+- Practical paid job: `POST https://agents.samedaydesk.com/extract/batch` (1 to 5 public HTTPS URLs, 0.01 USDC bounded attempt). Backward-compatible `GET https://agents.samedaydesk.com/extract?url=https://example.com` remains available.
+- [Two practical agent jobs](https://samedaydesk.com/for-agents): Obtain a bounded batch extraction, then compare explicit fields from two already-held observations. Paid freshness and free offline comparison stay distinct. Copyable no-key fixture commands are in the initial HTML.
+- [Agent payment infrastructure](https://samedaydesk.com/x402): Human storefront for other named machine services. Live HTTP, x402, health, OpenAPI, and MCP inventories are authoritative; this file does not freeze a route count.
 - [Seller conformance proof](https://samedaydesk.com/x402/seller-conformance): a human-auditable seller-conformance proof page, not a product or certificate.
 - [Inspected x402 route list](https://samedaydesk.com/x402/verified): build-time inspection feed of unpaid 402 terms, last check time, contract hash, and OpenAPI / 402 schema / CDP Bazaar agreement.
 - [Agent402 validation receipt](https://samedaydesk.com/research/agent402-seller-integrity-validation-2026-08-29.json): One recruited, non-organic external-runtime settlement and delivered result; no buyer-owned output enforcement, unsolicited demand, repeat use, or repair sale.
-- [Agent payment infrastructure](https://samedaydesk.com/for-agents): Twenty-two canonical pay-per-call actions accepting both x402 and native MPP, plus seller inspection, settlement evidence, live prices, source, and connection instructions.
 - [x402 SDK integration reference](https://samedaydesk.com/docs/x402-sdk/): Sourcey-generated Go API reference plus production integration notes for the SDK family used by the live gateway.
 - [x402 data gateway on Smithery](https://smithery.ai/servers/epistemedeus/x402-data-gateway): Managed MCP connection to the current tool surface.
-- [x402 service health](https://agents.samedaydesk.com/healthz): Live health and pricing for the SameDayDesk agent data gateway.
-- [x402 resource manifest](https://agents.samedaydesk.com/.well-known/x402): Twenty-two canonical paid actions on Base mainnet using USDC, plus one Circle x402-only alternate access path.
+- [x402 resource manifest](https://agents.samedaydesk.com/.well-known/x402): Live paid x402 inventory on Base mainnet using USDC, plus any labeled alternate access path. The manifest is authoritative; this file does not copy a count.
 - [x402 gateway llms.txt](https://agents.samedaydesk.com/llms.txt): Endpoint descriptions, callable examples, and payment instructions.
+- [x402 service health](https://agents.samedaydesk.com/healthz): Live health, prices, and protocol route counts for the SameDayDesk agent data gateway.
+- [HTTP action catalog](https://agents.samedaydesk.com/api/actions): Live paid HTTP actions.
 
 ## Public work
 
@@ -58,4 +60,4 @@ SameDayDesk is the operating merchant and case-study surface of Neomorphic LLC. 
 - [EIN.LLC](https://ein.llc/): US LLC formation and EIN activation.
 - [Neomorphic.io](https://neomorphic.io/): public experiment and machine-commerce trust lab.
 
-Last updated: 2026-09-03
+Last updated: 2026-09-08
