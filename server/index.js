@@ -17,6 +17,7 @@ import stripeWebhookRouter from "./routes/stripe-webhook.js";
 import resendWebhookRouter from "./routes/resend-webhook.js";
 import pulseRouter from "./routes/pulse.js";
 import mcpRouter from "./routes/mcp.js";
+import marketObservationsRouter from "./routes/market-observations.js";
 import { pulseMiddleware } from "./lib/pulse.js";
 import { mountProductionClient } from "./lib/spa-client.js";
 
@@ -83,6 +84,7 @@ app.use("/api/checkout", checkoutRouter);
 app.use("/api/uploads", uploadsRouter);
 app.use("/api/stripe", stripeWebhookRouter);
 app.use("/api/webhooks/resend", resendWebhookRouter);
+app.use("/api/market-observations", marketObservationsRouter);
 
 // Unknown /api route → JSON 404 (never fall through to the SPA shell).
 app.use("/api", (_req, res) => res.status(404).json({ error: "Not found" }));
