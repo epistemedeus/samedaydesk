@@ -1,50 +1,42 @@
-# /for-agents cold-read (Hostinger TLS friction)
+# Free discovery when the website cannot be reached
 
-**Friction id:** `hostinger-tls-for-agents-cold-read`  
-**Label:** owner QA / first-person operator friction. Not independent demand.
+Some agent VMs have observed TLS/connect failures to
+`https://samedaydesk.com/for-agents`. This is first-person transport friction,
+not evidence of independent demand or a diagnosis of every failed request.
 
-## Problem
+The helper actually reads the apex guide first, then reads the free merchant
+catalog and skill index if the apex is unavailable:
 
-From some agent VMs (including the Pilot shared box), direct HTTPS to
-`https://samedaydesk.com/for-agents` fails TLS handshake
-(`UNEXPECTED_EOF` / connection closed at the Hostinger edge). Unpaid Job 5
-discovery and machine-entry cold reads must not hang on that single origin.
+- `https://agents.samedaydesk.com/llms.txt`
+- `https://agents.samedaydesk.com/.well-known/skills/index.json`
 
-Demonstrated: revenue R10 cold-guide (2026-09-08); Runtime SCALE-LEADCTX /
-FIELD-NEXT notes; rechecked 2026-09-09 on this branch.
-
-## Free resolution (no payment)
-
-1. Prefer apex when healthy: `GET https://samedaydesk.com/for-agents`
-2. On TLS/connect failure, use **agents-host free surfaces** (same product
-   discovery, different edge):
-   - `GET https://agents.samedaydesk.com/llms.txt`
-   - `GET https://agents.samedaydesk.com/.well-known/skills/index.json`
-3. Or load offline fixtures under
-   `tools/presence/fixtures/for-agents-cold-read/`
+These alternate catalogs provide **partial capability discovery**, not an exact
+mirror of the website's job instructions. Do not claim that a job guide was read
+merely because a catalog responded.
 
 ```bash
-node -e "import('./tools/presence/for-agents-cold-read.mjs').then(m=>m.resolveForAgentsColdRead({preferFixture:true}).then(console.log))"
+node --input-type=module -e 'import {resolveForAgentsColdRead} from "./tools/presence/for-agents-cold-read.mjs"; console.log(JSON.stringify(await resolveForAgentsColdRead(), null, 2))'
 ```
 
-## Honest alternatives
+A successful result includes the fetched body, URL, observation time, byte count
+and body digest. A failed apex observation stays in the result. One successful
+alternate remains partial; when neither alternate responds with usable content,
+the outcome is `unavailable`. No historical fixture is silently used as a live
+response. The helper sends no credential or payment, refuses redirects, bounds
+each request to15seconds and each body to256KiB, and does not weaken TLS.
 
-| Path | Cost | Notes |
-| --- | --- | --- |
-| Apex `/for-agents` | free when TLS works | Canonical marketing/Job copy |
-| `agents.samedaydesk.com` llms + skills | free | Works when apex Hostinger drops handshake |
-| Offline fixtures in this pack | free | CI / air-gapped |
-| Paid `POST /extract/batch` | **0.01 USDC** | Not required for cold discovery of Job copy |
+Offline use is a separate explicit mode:
 
-**Minimal paid step if required later:** only if the operator needs a fresh
-bounded extract of a watched page after discovery — not for reading Job 5
-copy itself.
+```bash
+node --input-type=module -e 'import {resolveForAgentsColdRead} from "./tools/presence/for-agents-cold-read.mjs"; console.log(JSON.stringify(await resolveForAgentsColdRead({preferFixture:true}), null, 2))'
+```
 
-## Capture pin (2026-09-09T20:55:00Z)
+This performs no network request and returns `offline_fixture`, with
+`liveObserved:false`. Its captured bodies are digest-checked; their historical
+capture timestamp is worker-reported, not independently verified current data.
+Fixture corruption fails rather than manufacturing a fallback success.
 
-See `fixtures/for-agents-cold-read/capture.json` for sha256 of alternate bodies.
-
-## Not this pack
-
-- MCP Registry search-first vs `/versions/latest` → `REGISTRY-CONSUMER.md` / PR41
-- S33 recipe integration branch (keep isolated)
+Reading these free sources never requires purchasing `/extract/batch`. A later
+purchase is a separate caller decision for a useful supported job, not a recovery
+step. MCP Registry latest-version selection is documented separately in
+[REGISTRY-CONSUMER.md](REGISTRY-CONSUMER.md).
