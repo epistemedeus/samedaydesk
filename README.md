@@ -1,8 +1,8 @@
 # SameDayDesk (public entry)
 
-Public helpers for **free discovery** and **offline result reuse**. Node **22.x**. No `npm install` required for the commands below — they are plain ESM under `tools/`.
+Public helpers for **free discovery** and **offline result reuse**. Node **22.x**. The commands below use plain ESM under `tools/`; no `npm install` is required.
 
-This root README is the stranger entrypoint. Helpers already lived under `tools/presence/` and `tools/result-reuse/`; start here, then open the linked docs.
+Start with the examples below, then open the helper documentation for options and error handling.
 
 ## Docs (in-repo)
 
@@ -22,13 +22,13 @@ Live free catalogs (no pay): `https://agents.samedaydesk.com/llms.txt` and `http
 | Live cold-read | free HTTP only | none | default resolve → often `alternate_live` when apex fails |
 | Result-reuse preview/export | none (local JSON) | none | fixtures + `--opt-in` to write |
 
-Purchasing extract/batch or other paid routes is a separate caller decision — never required for these helpers.
+These helpers do not require a purchase. Paid extract/batch routes are separate.
 
 ## Exact commands (clean checkout)
 
 From the repository root (no install):
 
-### 1. Cold-read — offline fixture (no network)
+### 1. Offline cold-read (no network)
 
 ```bash
 node --input-type=module -e 'import {resolveForAgentsColdRead} from "./tools/presence/for-agents-cold-read.mjs"; console.log(JSON.stringify(await resolveForAgentsColdRead({preferFixture:true}), null, 2))'
@@ -36,7 +36,7 @@ node --input-type=module -e 'import {resolveForAgentsColdRead} from "./tools/pre
 
 Expected: `outcome: "offline_fixture"`, `paid: false`, `liveObserved: false`.
 
-### 2. Cold-read — live (free HTTP only; optional)
+### 2. Live cold-read (free HTTP only; optional)
 
 ```bash
 node --input-type=module -e 'import {resolveForAgentsColdRead} from "./tools/presence/for-agents-cold-read.mjs"; console.log(JSON.stringify(await resolveForAgentsColdRead(), null, 2))'
@@ -44,9 +44,10 @@ node --input-type=module -e 'import {resolveForAgentsColdRead} from "./tools/pre
 
 Expected when apex transport fails but agents.* respond: `outcome: "alternate_live"`, `paid: false`.
 
-### 3. Result-reuse — preview + export on in-repo fixtures
+### 3. Result-reuse preview and export on in-repo fixtures
 
 ```bash
+PILOT_EXAMPLE_DIR="$(mktemp -d)"
 NOW="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 node tools/result-reuse/cli.mjs preview \
   --input tools/result-reuse/fixtures/accepted-page-change.json \
@@ -55,17 +56,20 @@ node tools/result-reuse/cli.mjs preview \
 node tools/result-reuse/cli.mjs export \
   --input tools/result-reuse/fixtures/accepted-page-change.json \
   --task-id vendor-watch --subject vendor-page-result --sequence 1 --clock "$NOW" \
-  --opt-in --out /tmp/reuse-observation.json
+  --opt-in --out "$PILOT_EXAMPLE_DIR/reuse-observation.json"
+printf 'Saved example in %s\n' "$PILOT_EXAMPLE_DIR"
 ```
 
 Record-kind fixture:
 
 ```bash
+PILOT_EXAMPLE_DIR="$(mktemp -d)"
 NOW="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 node tools/result-reuse/cli.mjs export \
   --input tools/result-reuse/fixtures/accepted-record-report.json \
   --task-id vendor-watch --subject record-export --sequence 1 --clock "$NOW" \
-  --opt-in --out /tmp/reuse-record-observation.json
+  --opt-in --out "$PILOT_EXAMPLE_DIR/reuse-record-observation.json"
+printf 'Saved example in %s\n' "$PILOT_EXAMPLE_DIR"
 ```
 
 Expected written observation: `schema: "neomorphic.task-memory.observation.v1"`; export requires `--opt-in` plus caller clock/task/subject/sequence.
@@ -77,7 +81,3 @@ npm run test:public-entry
 ```
 
 That script runs the offline cold-read and fixture export commands cited above (no network, no payment). Existing focused suites: `npm run test:presence`, `npm run test:result-reuse`.
-
-## Out of scope here
-
-This README does not change homepage/payment routes or turn the root into another Node package. Product app, checkout, and paid MCP purchase flows remain elsewhere in the tree.

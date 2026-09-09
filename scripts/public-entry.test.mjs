@@ -63,14 +63,15 @@ test("cited result-reuse page-change export writes neomorphic observation", () =
       b.includes("accepted-page-change.json") &&
       b.includes("export") &&
       b.includes("--opt-in") &&
-      b.includes("/tmp/reuse-observation.json"),
+      b.includes("$PILOT_EXAMPLE_DIR/reuse-observation.json"),
   );
   assert.ok(pageBlock, "README must cite page-change export bash block");
 
   const dir = mkdtempSync(join(tmpdir(), "sdd-public-entry-"));
   const out = join(dir, "reuse-observation.json");
-  // Rewrite only the documented /tmp out path to a disposable temp file.
-  const script = pageBlock.replaceAll("/tmp/reuse-observation.json", out);
+  // Keep the literal example; replace only its fresh-directory allocation.
+  assert.ok(pageBlock.includes('PILOT_EXAMPLE_DIR="$(mktemp -d)"'));
+  const script = pageBlock.replace('PILOT_EXAMPLE_DIR="$(mktemp -d)"', `PILOT_EXAMPLE_DIR=${JSON.stringify(dir)}`);
   try {
     const r = bash(script);
     assert.equal(r.status, 0, r.stderr || r.stdout);
@@ -90,13 +91,14 @@ test("cited result-reuse record export writes neomorphic observation", () => {
     (b) =>
       b.includes("accepted-record-report.json") &&
       b.includes("--opt-in") &&
-      b.includes("/tmp/reuse-record-observation.json"),
+      b.includes("$PILOT_EXAMPLE_DIR/reuse-record-observation.json"),
   );
   assert.ok(recordBlock, "README must cite record-export bash block");
 
   const dir = mkdtempSync(join(tmpdir(), "sdd-public-entry-rec-"));
   const out = join(dir, "reuse-record-observation.json");
-  const script = recordBlock.replaceAll("/tmp/reuse-record-observation.json", out);
+  assert.ok(recordBlock.includes('PILOT_EXAMPLE_DIR="$(mktemp -d)"'));
+  const script = recordBlock.replace('PILOT_EXAMPLE_DIR="$(mktemp -d)"', `PILOT_EXAMPLE_DIR=${JSON.stringify(dir)}`);
   try {
     const r = bash(script);
     assert.equal(r.status, 0, r.stderr || r.stdout);
