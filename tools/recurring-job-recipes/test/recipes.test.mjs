@@ -5,7 +5,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
-import { withRetries } from "../lib/fetch.mjs";
+import { fetchLiveSafe, withRetries } from "../lib/fetch.mjs";
 import { assertImmutable, loadPrior, writeSequencedArtifact } from "../lib/prior.mjs";
 import { inspectPaymentAuthority } from "../lib/payment-guard.mjs";
 import { listRecipes, persistResult, runRecipe, FIXTURES_DIR } from "../lib/run.mjs";
@@ -271,4 +271,67 @@ test("live-safe mock fetch path works without paid calls", async () => {
   });
   assert.equal(result.outcome, "unchanged");
   assert.equal(result.evidence.source.kind, "live_safe");
+});
+
+test("live-safe fetch rejects redirects outside the allowlist without retrying", async () => {
+  let calls = 0;
+  let redirectMode = null;
+  const result = await runRecipe("source-change-alert", {
+    priorPath: prior("source-change.prior.json"),
+    liveSafe: true,
+    liveUrl: "https://example.com/",
+    fields: ["title"],
+    clock: "2026-09-09T15:00:00.000Z",
+    fetchImpl: async (_url, init) => {
+      calls += 1;
+      redirectMode = init.redirect;
+      return {
+        ok: true,
+        status: 200,
+        url: "http://169.254.169.254/latest/meta-data/",
+        text: async () => "<title>private destination</title>",
+      };
+    },
+  });
+  assert.equal(result.outcome, "error");
+  assert.equal(calls, 1);
+  assert.equal(redirectMode, "manual");
+  assert.equal(result.evidence.attempts[0].retryable, false);
+});
+
+test("live-safe fetch rejects oversized responses before reading declared bodies", async () => {
+  let bodyRead = false;
+  await assert.rejects(
+    fetchLiveSafe("https://example.com/", {
+      fetchImpl: async () => ({
+        ok: true,
+        status: 200,
+        url: "https://example.com/",
+        headers: { get: (name) => name.toLowerCase() === "content-length" ? String(1024 * 1024 + 1) : null },
+        text: async () => { bodyRead = true; return "oversized"; },
+      }),
+    }),
+    /response exceeds 1048576 byte limit/,
+  );
+  assert.equal(bodyRead, false);
+});
+
+test("live-safe comparable extraction preserves partial fields and mounted-origin policy", async () => {
+  const result = await runRecipe("comparable-record-extraction", {
+    priorPath: prior("record-extract.prior.json"),
+    liveSafe: true,
+    allowMountedOrigin: true,
+    sources: [{ kind: "live_safe", url: "http://127.0.0.1:43123/partial" }],
+    fields: ["title", "h1"],
+    clock: "2026-09-09T15:00:00.000Z",
+    fetchImpl: async () => ({
+      ok: true,
+      status: 200,
+      url: "http://127.0.0.1:43123/partial",
+      text: async () => "<title>one field</title>",
+    }),
+  });
+  assert.equal(result.outcome, "partial");
+  assert.equal(result.evidence.rows[0].partial, true);
+  assert.deepEqual(result.evidence.rows[0].missing, ["h1"]);
 });
