@@ -90,11 +90,34 @@ async function readBoundedText(response, maxBytes = MAX_LIVE_RESPONSE_BYTES) {
   return { text, bytes };
 }
 
-export async function fetchLiveSafe(
+export async function fetchLiveSafe(url, { allowMountedOrigin = false, ...options } = {}) {
+  return fetchBoundedGet(url, {
+    ...options,
+    isAllowedUrl: (candidate) => isAllowedLiveUrl(candidate, allowMountedOrigin),
+  });
+}
+
+// Explicit source/probe targets reuse the S25 transport bounds. Never retry.
+export async function fetchPublicSafe(url, options = {}) {
+  try {
+    const parsed = new URL(url);
+    if (!["http:", "https:"].includes(parsed.protocol) || parsed.username || parsed.password
+      || parsed.hash || String(url).length > 4096 || /[\s\\]/.test(String(url))) {
+      throw livePolicyError("public source requires a credential-free HTTP(S) URL");
+    }
+    return await fetchBoundedGet(url, { ...options, isAllowedUrl: (candidate) => candidate === url });
+  } catch (error) {
+    error.retryable = false;
+    throw error;
+  }
+}
+
+async function fetchBoundedGet(
   url,
-  { fetchImpl = globalThis.fetch, timeoutMs = 8_000, allowMountedOrigin = false } = {},
+  { fetchImpl = globalThis.fetch, timeoutMs = 8_000, isAllowedUrl,
+    headers = { accept: "text/html,application/xhtml+xml;q=0.9,*/*;q=0.1" } } = {},
 ) {
-  if (!isAllowedLiveUrl(url, allowMountedOrigin)) {
+  if (!isAllowedUrl(url)) {
     throw livePolicyError(`live-safe allowlist rejected url: ${url}`);
   }
   const controller = new AbortController();
@@ -104,13 +127,13 @@ export async function fetchLiveSafe(
       method: "GET",
       redirect: "manual",
       signal: controller.signal,
-      headers: { accept: "text/html,application/xhtml+xml;q=0.9,*/*;q=0.1" },
+      headers,
     });
     if (response.status >= 300 && response.status < 400) {
       throw livePolicyError("live-safe redirects are not followed");
     }
     const finalUrl = response.url || url;
-    if (!isAllowedLiveUrl(finalUrl, allowMountedOrigin)) {
+    if (!isAllowedUrl(finalUrl)) {
       throw livePolicyError(`live-safe allowlist rejected final url: ${finalUrl}`);
     }
     const { text, bytes } = await readBoundedText(response);
@@ -118,6 +141,7 @@ export async function fetchLiveSafe(
       url,
       finalUrl,
       status: response.status,
+      headers: response.headers,
       ok: response.ok,
       text,
       bytes,

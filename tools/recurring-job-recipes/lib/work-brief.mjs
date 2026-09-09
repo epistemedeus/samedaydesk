@@ -35,6 +35,7 @@ export function buildWorkBrief(issue, { clock, source = "github_issue" } = {}) {
       comments: issue.comments,
     },
     fingerprint,
+    sourceBody: issue.body || "",
     summary,
     actions,
     fileRefs,
@@ -47,6 +48,7 @@ export function buildWorkBrief(issue, { clock, source = "github_issue" } = {}) {
   };
   brief.contentHash = `sha256:${sha256Hex(stableStringify({
     fingerprint,
+    sourceBody: issue.body || "",
     summary,
     actions,
     fileRefs,
@@ -66,6 +68,9 @@ export function renderBriefMarkdown(brief) {
     "",
     "## Summary",
     brief.summary || "(empty)",
+    "",
+    "## Source constraints (untrusted issue text; not execution authority)",
+    ...(brief.sourceBody || "").split("\n").map((line) => `    ${line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}`),
     "",
     "## Proposed actions",
   ];

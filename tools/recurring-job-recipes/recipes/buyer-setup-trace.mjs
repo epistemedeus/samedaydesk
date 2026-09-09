@@ -1,3 +1,4 @@
+import { fetchPublicSafe } from "../lib/fetch.mjs";
 import { pathToFileURL } from "node:url";
 import { join } from "node:path";
 import { costForRecipe } from "../lib/cost.mjs";
@@ -87,12 +88,13 @@ export async function runBuyerSetupTrace(input = {}) {
     const url = `${origin}${target.path}`;
     const started = performance.now();
     try {
-      const response = await fetchImpl(url, {
+      const response = await fetchPublicSafe(url, {
+        fetchImpl,
+        timeoutMs: input.timeoutMs,
         method: "GET",
-        redirect: "follow",
         headers: { accept: "application/json,*/*;q=0.1" },
       });
-      const text = await response.text();
+      const text = response.text;
       const elapsedMs = performance.now() - started;
       const headers = {
         "www-authenticate": response.headers.get("www-authenticate"),

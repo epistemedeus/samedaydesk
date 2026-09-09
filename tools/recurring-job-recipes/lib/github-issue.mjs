@@ -1,3 +1,6 @@
+import { fetchPublicSafe } from "./fetch.mjs";
+import { sha256Hex } from "./hash.mjs";
+
 /**
  * Public GitHub issue fetch (read-only). No write, no payment.
  */
@@ -34,9 +37,10 @@ export function parseIssueRef(input) {
   return null;
 }
 
-export async function fetchPublicIssue(ref, { fetchImpl = globalThis.fetch, token = null } = {}) {
+export async function fetchPublicIssue(ref, { fetchImpl = globalThis.fetch, token = null, timeoutMs = 8_000 } = {}) {
   const parsed = parseIssueRef(ref);
-  if (!parsed?.owner || !parsed?.repo || !parsed?.number) {
+  if (!parsed?.owner || !parsed?.repo || !Number.isSafeInteger(parsed.number) || parsed.number < 1
+    || !/^[A-Za-z0-9_-]+$/.test(parsed.owner) || !/^[A-Za-z0-9_.-]+$/.test(parsed.repo)) {
     return { ok: false, error: { code: "invalid_issue_ref", message: "supply owner/repo#n or github issue URL" } };
   }
   const apiUrl = `https://api.github.com/repos/${parsed.owner}/${parsed.repo}/issues/${parsed.number}`;
@@ -47,8 +51,13 @@ export async function fetchPublicIssue(ref, { fetchImpl = globalThis.fetch, toke
   };
   if (token) headers.authorization = `Bearer ${token}`;
   const started = performance.now();
-  const response = await fetchImpl(apiUrl, { method: "GET", headers, redirect: "follow" });
-  const text = await response.text();
+  let response;
+  try {
+    response = await fetchPublicSafe(apiUrl, { fetchImpl, headers, timeoutMs });
+  } catch (error) {
+    return { ok: false, error: { code: error.name === "AbortError" ? "timed_out" : "github_fetch_error", message: error.message, retryable: false } };
+  }
+  const text = response.text;
   const elapsedMs = performance.now() - started;
   if (!response.ok) {
     return {
@@ -70,6 +79,9 @@ export async function fetchPublicIssue(ref, { fetchImpl = globalThis.fetch, toke
       error: { code: "invalid_json", message: "GitHub API returned non-JSON" },
       transport: { apiUrl, status: response.status, bytes: Buffer.byteLength(text), elapsedMs },
     };
+  }
+  if (!body || typeof body !== "object" || Array.isArray(body) || body.number !== parsed.number) {
+    return { ok: false, error: { code: "invalid_issue_body", message: "response must identify the requested issue", retryable: false } };
   }
   return {
     ok: true,
@@ -105,6 +117,10 @@ export function normalizeIssue(body, parsed) {
 
 export function issueFingerprint(issue) {
   return {
+    owner: issue.owner,
+    repo: issue.repo,
+    url: issue.url,
+    bodySha256: sha256Hex(issue.body || ""),
     number: issue.number,
     state: issue.state,
     title: issue.title,

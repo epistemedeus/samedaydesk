@@ -1,3 +1,4 @@
+import { createServer } from "node:http";
 import assert from "node:assert/strict";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -29,7 +30,7 @@ test("lists five recipes including issue-to-work-brief and buyer-setup-trace", (
   assert.ok(ids.includes("buyer-setup-trace"));
 });
 
-test("issue-to-work-brief unchanged against immutable prior fixture", async () => {
+test("issue-to-work-brief upgrades a legacy fingerprint without rewriting its immutable prior", async () => {
   const result = await runRecipe("issue-to-work-brief", {
     priorPath: priors("issue-brief.prior.json"),
     issueFixturePath: issues("samedaydesk-1.json"),
@@ -37,7 +38,7 @@ test("issue-to-work-brief unchanged against immutable prior fixture", async () =
     clock: "2026-09-09T16:00:00.000Z",
     horizonHours: 9000,
   });
-  assert.equal(result.outcome, "unchanged");
+  assert.equal(result.outcome, "changed");
   assert.equal(result.ok, true);
   assert.ok(result.evidence.brief.schema === "samedaydesk.work-brief.v1");
   assert.ok(result.evidence.markdown.includes("Work brief:"));
@@ -123,11 +124,18 @@ test("source-change-alert incremental baseline write leaves prior untouched", as
   }
 });
 
-test("buyer-setup-trace live free inspection never signs or claims wallet ownership", { skip: skipMerchant, timeout: 60_000 }, async () => {
+test("buyer-setup-trace loopback inspection never signs or claims wallet ownership", { skip: skipMerchant, timeout: 60_000 }, async (t) => {
+  const server = createServer((req, res) => {
+    res.setHeader("content-type", "application/json");
+    res.statusCode = req.url.startsWith("/extract?") ? 402 : 200;
+    res.end(JSON.stringify({ ok: true, fixture: true }));
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  t.after(() => new Promise((resolve) => server.close(resolve)));
   const result = await runRecipe("buyer-setup-trace", {
     scheduleHint: "once",
     clock: "2026-09-09T16:00:00.000Z",
-    gatewayOrigin: "https://agents.samedaydesk.com",
+    gatewayOrigin: `http://127.0.0.1:${server.address().port}`,
   });
   assert.ok(result.outcome === "unchanged" || result.outcome === "partial");
   assert.equal(result.evidence.claims.paymentSigned, false);

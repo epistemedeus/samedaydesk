@@ -1,3 +1,4 @@
+import { fetchPublicSafe } from "../lib/fetch.mjs";
 import { costForRecipe } from "../lib/cost.mjs";
 import { sha256Hex, stableStringify } from "../lib/hash.mjs";
 import { inspectPaymentAuthority } from "../lib/payment-guard.mjs";
@@ -59,7 +60,7 @@ export async function runIssueToWorkBrief(input = {}) {
   const observation = await observeIssue(input);
   if (!observation.ok) {
     return result({
-      outcome: observation.partial ? "partial" : "error",
+      outcome: observation.partial ? "partial" : observation.evidence?.code === "timed_out" ? "timed_out" : "error",
       clock,
       scheduleHint,
       prior: summarizePrior(priorLoad),
@@ -73,7 +74,7 @@ export async function runIssueToWorkBrief(input = {}) {
 
   const brief = buildWorkBrief(observation.issue, { clock, source: observation.source });
   const markdown = renderBriefMarkdown(brief);
-  const priorFinger = priorLoad.prior.payload?.fingerprint || priorLoad.prior.payload?.issue?.fingerprint || null;
+  const priorFinger = priorLoad.prior.payload?.fingerprint || priorLoad.prior.payload?.evidence?.fingerprint || priorLoad.prior.payload?.issue?.fingerprint || null;
   const currentFinger = brief.fingerprint;
   const changed =
     priorFinger == null
@@ -154,7 +155,8 @@ async function observeIssue(input) {
 
   const primary = await fetchPublicIssue(ref, {
     fetchImpl: input.fetchImpl,
-    token: input.githubToken || process.env.GITHUB_TOKEN || null,
+    token: input.githubToken || null,
+    timeoutMs: input.timeoutMs,
   });
   if (!primary.ok) {
     return {
@@ -173,12 +175,13 @@ async function observeIssue(input) {
   if (input.docsUrl) {
     try {
       const started = performance.now();
-      const response = await (input.fetchImpl || fetch)(input.docsUrl, {
+      const response = await fetchPublicSafe(input.docsUrl, {
+        fetchImpl: input.fetchImpl,
+        timeoutMs: input.timeoutMs,
         method: "GET",
         headers: { accept: "text/plain,text/markdown,*/*;q=0.1" },
-        redirect: "follow",
       });
-      const text = await response.text();
+      const text = response.text;
       docs = {
         url: input.docsUrl,
         status: response.status,
