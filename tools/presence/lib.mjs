@@ -22,6 +22,8 @@ export const BAZAAR_WRITE_URL = "https://api.cdp.coinbase.com/platform/v2/x402/d
 export const BAZAAR_API_ORIGIN = "https://api.cdp.coinbase.com";
 export const MPP_CATALOG_URL = "https://mpp.dev/api/services";
 export const MPP_WRITE_URL = "https://mpp.dev/api/services";
+// version=latest is required. Unfiltered search first hit is historical Railway 1.0.0.
+// See REGISTRY-CONSUMER.md and GET .../servers/{name}/versions/latest.
 export const MCP_REGISTRY_SEARCH =
   "https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.epistemedeus%2Fx402-data-gateway&version=latest";
 export const MCP_REGISTRY_PUBLISH = "https://registry.modelcontextprotocol.io/v0.1/publish";

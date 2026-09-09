@@ -37,7 +37,7 @@
     "lqdist1:rebuild": "node tools/lqdist1-distribution-audit/rebuild-from-evidence.mjs --write",
     "test:buyer-runtimes": "node --test tools/buyer-runtimes/test.mjs",
     "presence:refresh": "node tools/presence/refresh.mjs",
-    "test:presence": "node --test tools/presence/test.mjs",
+    "test:presence": "node --test tools/presence/test.mjs tools/presence/registry-consumer.test.mjs",
     "bazaar-tracker": "node tools/bazaar-tracker/cli.mjs",
     "bazaar-tracker:readback": "node tools/bazaar-tracker/cli.mjs --readback",
     "test:bazaar-tracker": "node --test tools/bazaar-tracker/test.mjs tools/lqtrack1/replay-pr18-disposition.test.mjs",

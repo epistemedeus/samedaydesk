@@ -1,0 +1,67 @@
+{
+  "id": "BOT-DELIVERY-0909",
+  "kind": "mcp-registry-consumer-snapshot",
+  "capturedAt": "2026-09-09T19:43:00Z",
+  "mode": "public-read",
+  "note": "Pinned live HTTP snapshot for consumer-resolution regression. Not demand, not a publish, not a claim that any recipe or buyer setup is fully deployed. Version may advance after this capture.",
+  "serverName": "io.github.epistemedeus/x402-data-gateway",
+  "registryOrigin": "https://registry.modelcontextprotocol.io",
+  "openapi": {
+    "url": "https://registry.modelcontextprotocol.io/openapi.json",
+    "openapiVersion": "3.1.0",
+    "infoTitle": "Official MCP Registry",
+    "sha256": "905b7d59f72e7278c99dab5131e323f7b90014ab93320064c33e23d913993f89",
+    "citations": [
+      {
+        "path": "/v0.1/servers",
+        "param": "version",
+        "in": "query",
+        "description": "Filter by version ('latest' for latest version, or an exact version like '1.2.3')"
+      },
+      {
+        "path": "/v0.1/servers/{serverName}/versions/{version}",
+        "description": "Get detailed information about a specific version of an MCP server. Use the special version 'latest' to get the latest version."
+      }
+    ]
+  },
+  "docs": [
+    "https://github.com/modelcontextprotocol/registry/tree/main/docs",
+    "https://github.com/modelcontextprotocol/registry/blob/main/docs/reference/api/official-registry-api.md",
+    "https://github.com/modelcontextprotocol/registry/blob/main/docs/modelcontextprotocol-io/versioning.mdx"
+  ],
+  "bodies": {
+    "search-unfiltered.json": {
+      "url": "https://registry.modelcontextprotocol.io/v0.1/servers?search=x402-data-gateway",
+      "sha256": "4a6e5a825a8c443786d9c748877a41f5d129379900f61acc9464914bd44675b9",
+      "httpStatus": 200
+    },
+    "search-version-latest.json": {
+      "url": "https://registry.modelcontextprotocol.io/v0.1/servers?search=x402-data-gateway&version=latest",
+      "sha256": "98d228b46b1db2d611c81b1b224f834c9dae1b9bf438b14618097c3e45312731",
+      "httpStatus": 200
+    },
+    "versions-latest.json": {
+      "url": "https://registry.modelcontextprotocol.io/v0.1/servers/io.github.epistemedeus%2Fx402-data-gateway/versions/latest",
+      "sha256": "d9d9ad0bd8bd252750467101fed3208ae17b0ed6727afe47f1f0421662cd86a6",
+      "httpStatus": 200
+    }
+  },
+  "pinnedNaiveFirstHit": {
+    "version": "1.0.0",
+    "remote": "https://x402-url-extractor-production.up.railway.app/mcp",
+    "isLatest": false,
+    "updatedAt": "2026-06-25T01:44:07.877618Z",
+    "websiteUrl": "https://x402-url-extractor-production.up.railway.app/",
+    "metadata": {
+      "count": 30,
+      "nextCursor": "io.github.epistemedeus/x402-data-gateway:1.11.5"
+    }
+  },
+  "pinnedLatest": {
+    "version": "1.23.45",
+    "remote": "https://agents.samedaydesk.com/mcp",
+    "isLatest": true,
+    "updatedAt": "2026-09-08T05:09:17.289155Z",
+    "websiteUrl": "https://agents.samedaydesk.com/"
+  }
+}
