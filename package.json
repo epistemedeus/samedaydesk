@@ -25,6 +25,7 @@
     "test:spa-fallback": "node --test server/scripts/test-spa-fallback.js",
     "test:spa-route-shells": "node --test server/scripts/test-spa-route-shells.js",
     "test:result-reuse": "node --test tools/result-reuse/test/export.test.mjs",
+    "test:public-entry": "node --test scripts/public-entry.test.mjs",
     "test:portfolio-discovery": "node --test tools/portfolio-discovery/test.mjs tools/portfolio-discovery/search-readiness.test.mjs tools/portfolio-discovery/handoff.test.mjs",
     "test:evidence-records": "node --test tools/evidence-records/validate.test.mjs",
     "test:evidence-reconcile": "node --test tools/evidence/reconcile.test.mjs",
