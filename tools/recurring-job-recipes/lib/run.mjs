@@ -8,6 +8,8 @@ import {
   META as RECORD_META,
 } from "../recipes/comparable-record-extraction.mjs";
 import { runVerificationReconcile, META as VERIFY_META } from "../recipes/verification-reconcile.mjs";
+import { runIssueToWorkBrief, META as ISSUE_META } from "../recipes/issue-to-work-brief.mjs";
+import { runBuyerSetupTrace, META as BUYER_META } from "../recipes/buyer-setup-trace.mjs";
 import { sha256Hex, stableStringify } from "./hash.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -26,6 +28,14 @@ export const RECIPES = Object.freeze({
   "verification-reconcile": {
     meta: VERIFY_META,
     run: runVerificationReconcile,
+  },
+  "issue-to-work-brief": {
+    meta: ISSUE_META,
+    run: runIssueToWorkBrief,
+  },
+  "buyer-setup-trace": {
+    meta: BUYER_META,
+    run: runBuyerSetupTrace,
   },
 });
 

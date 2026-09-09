@@ -104,20 +104,26 @@ export const REUSE_QUICKSTART = [
 ].join("\n");
 
 export const RECURRING_QUICKSTART = [
-  "# Required operator fields: --prior, --schedule, --clock; plus --fields and one of --current-fixture | --live-safe | --sources | --candidate",
+  "# Required: --prior, --schedule, --clock, --fields; plus one of --current-fixture | --live-safe | --sources | --candidate | --issue-url | --issue-fixture",
   "node tools/recurring-job-recipes/cli.mjs --list",
   "node tools/recurring-job-recipes/cli.mjs --recipe source-change-alert \\",
   "  --prior tools/recurring-job-recipes/fixtures/priors/source-change.prior.json \\",
   "  --current-fixture tools/recurring-job-recipes/fixtures/current/example-unchanged.json \\",
-  "  --fields title --schedule daily --clock 2026-09-09T15:00:00.000Z --horizon 168",
-  "node tools/recurring-job-recipes/cli.mjs --recipe comparable-record-extraction \\",
-  "  --prior tools/recurring-job-recipes/fixtures/priors/record-extract.prior.json \\",
-  "  --sources tools/recurring-job-recipes/fixtures/pages/example-a.html,tools/recurring-job-recipes/fixtures/pages/example-b-partial.html \\",
-  "  --fields title,h1 --schedule weekly --clock 2026-09-09T15:00:00.000Z",
-  "node tools/recurring-job-recipes/cli.mjs --recipe verification-reconcile \\",
-  "  --prior tools/recurring-job-recipes/fixtures/priors/verify.prior.json \\",
-  "  --candidate tools/recurring-job-recipes/fixtures/current/verify-candidate-unchanged.json \\",
-  "  --schedule daily --clock 2026-09-09T15:00:00.000Z",
+  "  --fields title --schedule daily --clock 2026-09-09T16:00:00.000Z --horizon 168",
+  "node tools/recurring-job-recipes/cli.mjs --recipe issue-to-work-brief \\",
+  "  --prior tools/recurring-job-recipes/fixtures/priors/issue-brief.prior.json \\",
+  "  --issue-url https://github.com/epistemedeus/samedaydesk/issues/1 \\",
+  "  --schedule weekly --clock 2026-09-09T16:00:00.000Z",
+  "node tools/recurring-job-recipes/cli.mjs --recipe buyer-setup-trace \\",
+  "  --schedule once --clock 2026-09-09T16:00:00.000Z",
+].join("\n");
+
+export const BUYER_SETUP_QUICKSTART = [
+  "# Live free inspection only. Stops at unpaid 402. Never signs. Never infers wallet ownership from payTo.",
+  "export MERCHANT_INPUT_ROOT=/path/to/x402-url-extractor  # pin f9dd59ae",
+  "node tools/recurring-job-recipes/cli.mjs --recipe buyer-setup-trace \\",
+  "  --schedule once --clock \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" \\",
+  "  --gateway-origin https://agents.samedaydesk.com",
 ].join("\n");
 
 export const FOR_AGENTS_PATH = "/for-agents";
@@ -229,24 +235,29 @@ export const FOR_AGENTS_CRAWLER_HTML = `
         Later task-memory import is a separate step.
       </p>
       <pre><code>${REUSE_QUICKSTART}</code></pre>
-      <h2>Job 5. Recurring page and record recipes</h2>
+      <h2>Job 5. Recurring page, issue, and buyer-setup recipes</h2>
       <p>
         From a SameDayDesk checkout, run one-shot recurring recipes against an immutable prior.
-        Operator supplies <code>--prior</code>, <code>--schedule</code>, <code>--clock</code>,
-        explicit <code>--fields</code>, and one observation source (<code>--current-fixture</code>,
-        <code>--sources</code>, or <code>--candidate</code>). Outcomes are unchanged, changed,
-        partial, stale baseline, timed out, or error. Priors are never overwritten; write a new
-        sequenced artifact after review. C31 page-change reports use
+        Operator supplies <code>--prior</code> (where required), <code>--schedule</code>,
+        <code>--clock</code>, and an observation source. Primary developer-agent workflows are
+        <code>source-change-alert</code> and <code>issue-to-work-brief</code>. Outcomes are
+        unchanged, changed, partial, stale baseline, timed out, or error. Priors are never
+        overwritten; write a new sequenced artifact after review. C31 page-change reports use
         <code>pilot/page-change-brief/v1</code> at
         <a href="${RECURRING_MERCHANT_CONTRACTS.C31.route}">${RECURRING_MERCHANT_CONTRACTS.C31.route}</a>.
         C34 extract-batch records use <code>${RECURRING_MERCHANT_CONTRACTS.C34.schemaVersion}</code>
         with skills at
         <a href="${RECURRING_MERCHANT_CONTRACTS.C34.skillsIndex}">${RECURRING_MERCHANT_CONTRACTS.C34.skillsIndex}</a>.
-        Payment receipts are never automatically replayed. Offline runs avoid merchant charges; operator
-        CPU and network remain costs_unknown. Listed batch price 0.01 USDC is not invoked here.
-        No cron or always-on service is started.
+        <code>buyer-setup-trace</code> is live free inspection of the AgentCash/x402 runtime and
+        stops at unpaid 402 without signing or inferring wallet ownership from addresses.
+        Payment receipts are never automatically replayed.
+        Optional local Neomorphic observation export stays filesystem-local when shared mode is
+        undeployed. Offline runs avoid merchant charges; operator CPU and network remain
+        costs_unknown. Listed batch price 0.01 USDC is not invoked here. No cron is installed.
+        Owner QA issues are not demand.
       </p>
       <pre><code>${RECURRING_QUICKSTART}</code></pre>
+      <pre><code>${BUYER_SETUP_QUICKSTART}</code></pre>
       <h2>Live merchant inventory</h2>
       <ul>
         ${inventoryListHtml()}

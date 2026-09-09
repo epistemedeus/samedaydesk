@@ -24,9 +24,9 @@ function page(name) {
   return join(FIXTURES_DIR, "pages", name);
 }
 
-test("lists three runnable recipes with user benefit and operator inputs", () => {
+test("lists five runnable recipes with user benefit and operator inputs", () => {
   const recipes = listRecipes();
-  assert.equal(recipes.length, 3);
+  assert.equal(recipes.length, 5);
   for (const recipe of recipes) {
     assert.ok(recipe.recipeId);
     assert.ok(recipe.userBenefit.length > 20);

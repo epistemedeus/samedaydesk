@@ -59,6 +59,18 @@ export function costForRecipe(recipeId) {
       related: [COST_NOTES.paidExtractBatch],
     };
   }
+  if (recipeId === "issue-to-work-brief") {
+    return {
+      primary: COST_NOTES.freeLiveFetch,
+      related: [COST_NOTES.offlineCompare],
+    };
+  }
+  if (recipeId === "buyer-setup-trace") {
+    return {
+      primary: COST_NOTES.freeLiveFetch,
+      related: [COST_NOTES.paidExtractBatch],
+    };
+  }
   return {
     primary: COST_NOTES.offlineCompare,
     related: [COST_NOTES.freeLiveFetch, COST_NOTES.paidExtractBatch],
