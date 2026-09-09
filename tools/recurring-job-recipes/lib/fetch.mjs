@@ -43,31 +43,84 @@ function isMountedOrigin(url) {
   return /^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?\//.test(String(url));
 }
 
+const MAX_LIVE_RESPONSE_BYTES = 1024 * 1024;
+
+function livePolicyError(message) {
+  const error = new Error(message);
+  error.retryable = false;
+  return error;
+}
+
+function isAllowedLiveUrl(url, allowMountedOrigin) {
+  return url === "https://example.com/"
+    || url === "https://example.com"
+    || (allowMountedOrigin && isMountedOrigin(url));
+}
+
+async function readBoundedText(response, maxBytes = MAX_LIVE_RESPONSE_BYTES) {
+  const declared = Number(response.headers?.get?.("content-length"));
+  if (Number.isFinite(declared) && declared > maxBytes) {
+    throw livePolicyError(`live-safe response exceeds ${maxBytes} byte limit`);
+  }
+  if (response.body?.getReader) {
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let bytes = 0;
+    let text = "";
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        bytes += value.byteLength;
+        if (bytes > maxBytes) {
+          await reader.cancel().catch(() => {});
+          throw livePolicyError(`live-safe response exceeds ${maxBytes} byte limit`);
+        }
+        text += decoder.decode(value, { stream: true });
+      }
+      text += decoder.decode();
+      return { text, bytes };
+    } finally {
+      reader.releaseLock?.();
+    }
+  }
+  const text = await response.text();
+  const bytes = Buffer.byteLength(text);
+  if (bytes > maxBytes) throw livePolicyError(`live-safe response exceeds ${maxBytes} byte limit`);
+  return { text, bytes };
+}
+
 export async function fetchLiveSafe(
   url,
   { fetchImpl = globalThis.fetch, timeoutMs = 8_000, allowMountedOrigin = false } = {},
 ) {
-  const allowed = new Set(["https://example.com/", "https://example.com"]);
-  if (!allowed.has(url) && !(allowMountedOrigin && isMountedOrigin(url))) {
-    throw new Error(`live-safe allowlist rejected url: ${url}`);
+  if (!isAllowedLiveUrl(url, allowMountedOrigin)) {
+    throw livePolicyError(`live-safe allowlist rejected url: ${url}`);
   }
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const response = await fetchImpl(url, {
       method: "GET",
-      redirect: "follow",
+      redirect: "manual",
       signal: controller.signal,
       headers: { accept: "text/html,application/xhtml+xml;q=0.9,*/*;q=0.1" },
     });
-    const text = await response.text();
+    if (response.status >= 300 && response.status < 400) {
+      throw livePolicyError("live-safe redirects are not followed");
+    }
+    const finalUrl = response.url || url;
+    if (!isAllowedLiveUrl(finalUrl, allowMountedOrigin)) {
+      throw livePolicyError(`live-safe allowlist rejected final url: ${finalUrl}`);
+    }
+    const { text, bytes } = await readBoundedText(response);
     return {
       url,
-      finalUrl: response.url || url,
+      finalUrl,
       status: response.status,
       ok: response.ok,
       text,
-      bytes: Buffer.byteLength(text),
+      bytes,
     };
   } finally {
     clearTimeout(timer);
