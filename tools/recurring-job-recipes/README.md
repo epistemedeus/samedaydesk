@@ -55,7 +55,7 @@ node tools/recurring-job-recipes/cli.mjs --recipe verification-reconcile \
   --candidate tools/recurring-job-recipes/fixtures/current/verify-candidate-unchanged.json \
   --schedule daily --clock 2026-09-09T15:00:00.000Z
 
-# Free live source when safe (example.com only). Not zero marginal cost.
+# Free live source when safe (example.com only, no redirects, 1 MiB response cap). Not zero marginal cost.
 node tools/recurring-job-recipes/cli.mjs --recipe source-change-alert \
   --prior tools/recurring-job-recipes/fixtures/priors/source-change.prior.json \
   --live-safe --live-url https://example.com/ \
