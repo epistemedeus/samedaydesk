@@ -16,6 +16,7 @@ import {
   MERCHANT_REPO,
   OBSERVE_QUICKSTART,
   RECORD_QUICKSTART,
+  REUSE_QUICKSTART,
 } from "../data/machineEntry.mjs";
 import styles from "./Mcp.module.css";
 
@@ -33,7 +34,7 @@ export default function ForAgents() {
         <header className={styles.hero}>
           <p className="eyebrow">Machine jobs · acquire or work offline</p>
           <h1 className={styles.jobH1}>
-            Obtain observations or use either <span className="lime">offline job</span>
+            Obtain observations, use offline jobs, or <span className="lime">opt-in reuse</span>
           </h1>
           <p className={styles.lead}>
             SameDayDesk sells a bounded <code>POST /extract/batch</code> attempt: one to five public
@@ -45,7 +46,8 @@ export default function ForAgents() {
             Current paid HTTP and MCP inventories live on the merchant. This page does not freeze a
             route count. Failed, partial, and missing rows stay visible. Observation freshness is unknown
             unless you supply a clock and a horizon. <code>charged: true</code> is not useful output.
-            Current source labels are untrusted, not buyer proof.
+            Current source labels are untrusted, not buyer proof. Purchasing never requires publishing
+            or referrals.
           </p>
         </header>
 
@@ -134,6 +136,31 @@ export default function ForAgents() {
           </div>
         </section>
 
+        <section className={styles.section} aria-labelledby="reuse-title">
+          <div className={styles.sectionHead}>
+            <p className="eyebrow">Job 4 · opt-in reuse</p>
+            <h2 id="reuse-title">Export a reviewed reuse reference from an already produced result</h2>
+          </div>
+          <p className={styles.jobCopy}>
+            From a SameDayDesk checkout, preview exactly which fields would be copied into a{" "}
+            <code>neomorphic.task-memory.observation.v1</code> reference, then write only with{" "}
+            <code>--opt-in</code>. The helper does not fetch or pay. Default page-change and record
+            outputs stay intact. The projection uses a reviewed allowlist, not a harmlessness guarantee.
+            A schema-valid export is user-selected unverified evidence, never automatic public-safe
+            certification. Private source text, authorization, receipt secrets, and legal or customer
+            identifiers are omitted and cannot be selected. Failed and incomplete rows remain visible.
+            The caller supplies stable task, subject, revision sequence, and current UTC clock values;
+            the helper does not invent them. If an original evidence URL is missing, the export labels
+            the recipe URL as a locator rather than evidence. Later task-memory import is a separate step.
+          </p>
+          <div className={styles.commands}>
+            <div>
+              <span>Preview, then opt-in write</span>
+              <pre className={styles.jobPre}><code>{REUSE_QUICKSTART}</code></pre>
+            </div>
+          </div>
+        </section>
+
         <section className={styles.sellerOffer} aria-labelledby="inventory-title">
           <div>
             <p className="eyebrow">Live merchant inventory</p>
@@ -163,6 +190,8 @@ export default function ForAgents() {
               <li>charged: true is not useful output</li>
               <li>Source labels remain caller-declared, not independent buyer proof</li>
               <li>No keys, secret URLs, or target fetch on this page</li>
+              <li>Purchasing never requires publishing</li>
+              <li>Schema-valid export is not public-safe certification</li>
             </ul>
           </div>
         </section>

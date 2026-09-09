@@ -1,0 +1,13 @@
+{
+  "schema": "pilot.task-commons.page-change-result.v1",
+  "publicSafe": true,
+  "url": "https://example.com/",
+  "status": 200,
+  "fetchedAt": "2026-09-09T08:00:00.000Z",
+  "contentHash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "bytes": 512,
+  "title": "Example Domain",
+  "credentials": false,
+  "liveParticipant": false,
+  "payment": false
+}
