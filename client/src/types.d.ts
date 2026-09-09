@@ -18,6 +18,7 @@ declare module "../data/machineEntry.mjs" {
   export const RECORD_QUICKSTART: string;
   export const REUSE_QUICKSTART: string;
   export const RECURRING_QUICKSTART: string;
+  export const BUYER_SETUP_QUICKSTART: string;
   export const FOR_AGENTS_PATH: string;
   export const FOR_AGENTS_TITLE: string;
   export const FOR_AGENTS_DESCRIPTION: string;

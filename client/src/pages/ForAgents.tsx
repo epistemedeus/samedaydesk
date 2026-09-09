@@ -18,6 +18,7 @@ import {
   RECORD_QUICKSTART,
   REUSE_QUICKSTART,
   RECURRING_QUICKSTART,
+  BUYER_SETUP_QUICKSTART,
 } from "../data/machineEntry.mjs";
 import styles from "./Mcp.module.css";
 
@@ -165,24 +166,29 @@ export default function ForAgents() {
         <section className={styles.section} aria-labelledby="recurring-title">
           <div className={styles.sectionHead}>
             <p className="eyebrow">Job 5 · recurring recipes</p>
-            <h2 id="recurring-title">Run one-shot page and record jobs against an immutable prior</h2>
+            <h2 id="recurring-title">Run one-shot page, issue, and buyer-setup jobs against an immutable prior</h2>
           </div>
           <p className={styles.jobCopy}>
-            From a SameDayDesk checkout, run <code>source-change-alert</code>,{" "}
-            <code>comparable-record-extraction</code>, or <code>verification-reconcile</code>.
-            You supply sources, fields, schedule hint, clock, and an optional freshness horizon.
-            Outcomes are unchanged, changed, partial, stale baseline, or error. Priors stay
-            immutable; write a new sequenced artifact after review. Partial and failed rows stay
-            visible. Payment receipts are never automatically replayed. Offline fixture dry-runs
-            do not call the merchant. Optional <code>--live-safe</code> may fetch only{" "}
-            <code>https://example.com/</code> and still uses operator network and CPU. The sourced
-            0.01 USDC batch price on this page is not invoked by these recipes. No cron or
-            always-on service is started.
+            From a SameDayDesk checkout, run <code>source-change-alert</code> or{" "}
+            <code>issue-to-work-brief</code> as developer-agent workflows, plus optional{" "}
+            <code>buyer-setup-trace</code> for free AgentCash/x402 inspection.
+            You supply schedule hint, clock, and sources. Outcomes are unchanged, changed,
+            partial, stale baseline, timed out, or error. Priors stay immutable; write a new
+            sequenced artifact after review. Partial and failed rows stay visible. Payment
+            receipts are never automatically replayed. <code>buyer-setup-trace</code> stops at
+            unpaid 402 and never infers wallet ownership from addresses. Optional local
+            Neomorphic observation export stays filesystem-local when shared mode is undeployed.
+            Offline fixture dry-runs do not call the merchant. No cron is installed. Owner QA
+            is not demand.
           </p>
           <div className={styles.commands}>
             <div>
-              <span>Fixture dry-runs for the three recipes</span>
+              <span>One-run commands (schedule-neutral; see specs/*.recipe.json)</span>
               <pre className={styles.jobPre}><code>{RECURRING_QUICKSTART}</code></pre>
+            </div>
+            <div>
+              <span>Buyer-setup free inspection</span>
+              <pre className={styles.jobPre}><code>{BUYER_SETUP_QUICKSTART}</code></pre>
             </div>
           </div>
         </section>

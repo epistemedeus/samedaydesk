@@ -24,9 +24,15 @@ function page(name) {
   return join(FIXTURES_DIR, "pages", name);
 }
 
-test("lists three runnable recipes with user benefit and operator inputs", () => {
+test("lists five runnable recipes with user benefit and operator inputs", () => {
   const recipes = listRecipes();
-  assert.equal(recipes.length, 3);
+  assert.equal(recipes.length, 5);
+  const ids = recipes.map((recipe) => recipe.recipeId);
+  assert.ok(ids.includes("source-change-alert"));
+  assert.ok(ids.includes("comparable-record-extraction"));
+  assert.ok(ids.includes("verification-reconcile"));
+  assert.ok(ids.includes("issue-to-work-brief"));
+  assert.ok(ids.includes("buyer-setup-trace"));
   for (const recipe of recipes) {
     assert.ok(recipe.recipeId);
     assert.ok(recipe.userBenefit.length > 20);
@@ -229,6 +235,8 @@ test("CLI dry-run fixtures exit 0 for unchanged and list recipes", () => {
   assert.match(list.stdout, /source-change-alert/);
   assert.match(list.stdout, /comparable-record-extraction/);
   assert.match(list.stdout, /verification-reconcile/);
+  assert.match(list.stdout, /issue-to-work-brief/);
+  assert.match(list.stdout, /buyer-setup-trace/);
 
   const run = spawnSync(
     process.execPath,
@@ -314,6 +322,21 @@ test("live-safe fetch rejects oversized responses before reading declared bodies
     /response exceeds 1048576 byte limit/,
   );
   assert.equal(bodyRead, false);
+});
+
+test("issue-to-work-brief fixture dry-run is unchanged against the immutable prior", async () => {
+  const result = await runRecipe("issue-to-work-brief", {
+    priorPath: prior("issue-brief.prior.json"),
+    issueFixturePath: join(FIXTURES_DIR, "issues", "samedaydesk-1.json"),
+    scheduleHint: "weekly",
+    clock: "2026-09-09T16:00:00.000Z",
+    horizonHours: 9000,
+  });
+  assert.equal(result.outcome, "unchanged");
+  assert.equal(result.ok, true);
+  assert.equal(result.evidence.brief.schema, "samedaydesk.work-brief.v1");
+  assert.equal(result.evidence.claims.notDemand, true);
+  assert.equal(result.payment.replayBlocked, true);
 });
 
 test("live-safe comparable extraction preserves partial fields and mounted-origin policy", async () => {

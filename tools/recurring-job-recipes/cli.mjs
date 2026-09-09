@@ -3,6 +3,8 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import { listRecipes, persistResult, runRecipe } from "./lib/run.mjs";
+import { exportLocalNeomorphicImport, previewLocalNeomorphicImport } from "./neomorphic-import/local.mjs";
+import { writeFileSync } from "node:fs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -23,10 +25,21 @@ const { values, positionals } = parseArgs({
     "live-safe": { type: "boolean", default: false },
     "live-url": { type: "string" },
     "mounted-origin": { type: "boolean", default: false },
+    "issue-url": { type: "string" },
+    "issue-fixture": { type: "string" },
+    "docs-url": { type: "string" },
+    "gateway-origin": { type: "string" },
     retries: { type: "string", default: "2" },
     "out-dir": { type: "string" },
     "write-artifact": { type: "boolean", default: false },
     "replay-payment": { type: "boolean", default: false },
+    "neomorphic-preview": { type: "boolean", default: false },
+    "neomorphic-export": { type: "boolean", default: false },
+    "task-id": { type: "string" },
+    subject: { type: "string" },
+    sequence: { type: "string" },
+    "opt-in": { type: "boolean", default: false },
+    "import-out": { type: "string" },
     pretty: { type: "boolean", default: true },
   },
 });
@@ -46,6 +59,10 @@ const input = {
   priorPath: values.prior ? resolve(values.prior) : undefined,
   candidatePath: values.candidate ? resolve(values.candidate) : undefined,
   currentFixturePath: values["current-fixture"] ? resolve(values["current-fixture"]) : undefined,
+  issueUrl: values["issue-url"],
+  issueFixturePath: values["issue-fixture"] ? resolve(values["issue-fixture"]) : undefined,
+  docsUrl: values["docs-url"],
+  gatewayOrigin: values["gateway-origin"],
   fields: String(values.fields || "title")
     .split(",")
     .map((item) => item.trim())
@@ -75,39 +92,54 @@ const persisted = persistResult(result, {
   writeArtifact: values["write-artifact"],
 });
 
-const output = { ...result, persisted };
+let neomorphic = null;
+if (values["neomorphic-preview"] || values["neomorphic-export"]) {
+  const options = {
+    taskId: values["task-id"] || `recipe-${recipeId}`,
+    subject: values.subject || recipeId,
+    sequence: Number(values.sequence || (result.prior?.sequence || 0) + 1),
+    clock: result.clock || input.clock,
+    optIn: values["opt-in"],
+  };
+  if (values["neomorphic-export"]) {
+    neomorphic = exportLocalNeomorphicImport(result, options);
+    if (neomorphic.ok && values["import-out"]) {
+      writeFileSync(resolve(values["import-out"]), `${JSON.stringify(neomorphic.observation, null, 2)}\n`);
+    }
+  } else {
+    neomorphic = previewLocalNeomorphicImport(result, options);
+  }
+}
+
+const output = { ...result, persisted, neomorphic };
 process.stdout.write(`${values.pretty ? JSON.stringify(output, null, 2) : JSON.stringify(output)}\n`);
 process.exit(result.ok || result.outcome === "stale_baseline" ? 0 : 1);
 
 function usage() {
   return `SameDayDesk recurring job recipes (one-shot; no cron, no daemon, no purchase).
 
-Recipes reuse accepted page-change and structured-record contracts offline.
-Operator supplies input and schedule. Priors are immutable. Partial and error
-rows stay visible. Payment is never automatically replayed.
+Recipes: source-change-alert, comparable-record-extraction, verification-reconcile,
+issue-to-work-brief, buyer-setup-trace.
 
 Usage:
   node tools/recurring-job-recipes/cli.mjs --list
   node tools/recurring-job-recipes/cli.mjs --recipe source-change-alert \\
     --prior ${rel("fixtures/priors/source-change.prior.json")} \\
     --current-fixture ${rel("fixtures/current/example-unchanged.json")} \\
-    --schedule daily --clock 2026-09-09T15:00:00.000Z --horizon 168
-  node tools/recurring-job-recipes/cli.mjs --recipe comparable-record-extraction \\
-    --prior ${rel("fixtures/priors/record-extract.prior.json")} \\
-    --sources ${rel("fixtures/pages/example-a.html")},${rel("fixtures/pages/example-b-partial.html")} \\
-    --fields title,h1 --schedule weekly --clock 2026-09-09T15:00:00.000Z
-  node tools/recurring-job-recipes/cli.mjs --recipe verification-reconcile \\
-    --prior ${rel("fixtures/priors/verify.prior.json")} \\
-    --candidate ${rel("fixtures/current/verify-candidate-unchanged.json")} \\
-    --schedule daily --clock 2026-09-09T15:00:00.000Z
+    --fields title --schedule daily --clock 2026-09-09T16:00:00.000Z --horizon 168
+  node tools/recurring-job-recipes/cli.mjs --recipe issue-to-work-brief \\
+    --prior ${rel("fixtures/priors/issue-brief.prior.json")} \\
+    --issue-fixture ${rel("fixtures/issues/samedaydesk-1.json")} \\
+    --schedule weekly --clock 2026-09-09T16:00:00.000Z
+  node tools/recurring-job-recipes/cli.mjs --recipe buyer-setup-trace \\
+    --schedule once --clock "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
-Safe live dry-run (free public HTML only; still not zero marginal cost):
-  node tools/recurring-job-recipes/cli.mjs --recipe source-change-alert \\
-    --prior ${rel("fixtures/priors/source-change.prior.json")} \\
-    --live-safe --live-url https://example.com/ \\
-    --fields title --schedule daily --clock "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+Optional local Neomorphic observation (shared mode undeployed, not fabricated):
+  ... --neomorphic-preview --task-id owner-qa --subject issue-1 --sequence 1
+  ... --neomorphic-export --opt-in --import-out /tmp/observation.json --task-id owner-qa --subject issue-1 --sequence 1
 
-Does not deploy, purchase, or start an always-on service.`;
+Schedule-neutral specs: tools/recurring-job-recipes/specs/*.recipe.json
+Does not install cron, deploy, purchase, or start an always-on service.`;
 }
 
 function rel(path) {

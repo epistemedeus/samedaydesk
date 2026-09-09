@@ -1,0 +1,26 @@
+{
+  "schema": "samedaydesk.recurring-job-prior.v1",
+  "recipeId": "issue-to-work-brief",
+  "createdAt": "2026-08-05T22:13:42.000Z",
+  "sequence": 1,
+  "immutable": true,
+  "sha256": "issue-prior-s1",
+  "payload": {
+    "fingerprint": {
+      "number": 1,
+      "state": "open",
+      "title": "Every unknown path returns 200, and /tools/ai-readiness is canonicalised to the homepage",
+      "labels": [],
+      "updatedAt": "2026-08-05T22:13:42Z",
+      "bodyBytes": 5267
+    },
+    "issue": {
+      "number": 1,
+      "url": "https://github.com/epistemedeus/samedaydesk/issues/1",
+      "title": "Every unknown path returns 200, and /tools/ai-readiness is canonicalised to the homepage"
+    }
+  },
+  "payment": {
+    "attempted": false
+  }
+}

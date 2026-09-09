@@ -238,7 +238,7 @@ test("for-agents shell, React route, and machineEntry share one copy authority",
   assert.match(route.crawlerHtml, /https:\/\/agents\.samedaydesk\.com\/api\/actions/);
   assert.match(route.crawlerHtml, /https:\/\/agents\.samedaydesk\.com\/healthz/);
   assert.match(route.crawlerHtml, /Job 4\. Opt-in reuse of an already produced result/);
-  assert.match(route.crawlerHtml, /Job 5\. Recurring page and record recipes/);
+  assert.match(route.crawlerHtml, /Job 5\. Recurring page, issue, and buyer-setup recipes/);
   assert.match(route.crawlerHtml, /immutable prior/);
   assert.match(route.crawlerHtml, /never automatically replayed/);
   assert.match(route.crawlerHtml, /Purchasing never requires publishing/);
@@ -346,7 +346,7 @@ test("generator derives route shells from the built index.html without rewriting
   assert.match(forAgentsHtml.noscript, /Job 2\. Compare explicit fields from two already-held observations/);
   assert.match(forAgentsHtml.noscript, /Job 3\. Map already-held JSON into buyer records/);
   assert.match(forAgentsHtml.noscript, /Job 4\. Opt-in reuse of an already produced result/);
-  assert.match(forAgentsHtml.noscript, /Job 5\. Recurring page and record recipes/);
+  assert.match(forAgentsHtml.noscript, /Job 5\. Recurring page, issue, and buyer-setup recipes/);
   assert.equal(forAgentsHtml.noscript.includes(REUSE_QUICKSTART), true);
   assert.equal(forAgentsHtml.noscript.includes(RECURRING_QUICKSTART), true);
   assert.equal(forAgentsHtml.noscript.includes(OBSERVE_QUICKSTART), true);

@@ -9,6 +9,8 @@ a new protocol, cron daemon, marketplace, or payment engine.
 | `source-change-alert` | Know when selected fields on a watched public page change since an immutable prior |
 | `comparable-record-extraction` | Recurringly extract the same comparable fields from 1-5 sources and keep partial rows visible |
 | `verification-reconcile` | Verify a later observation against the prior, or stop when a payment would be auto-replayed |
+| `issue-to-work-brief` | Turn a public GitHub issue into a direct-use work brief and detect fingerprint changes since an immutable prior |
+| `buyer-setup-trace` | Live free AgentCash/x402 inspection that stops at unpaid 402 without signing or inferring wallet ownership |
 
 Operator supplies the input list, schedule hint, clock, and optional freshness
 horizon. The pack never invents those values and never starts an always-on
