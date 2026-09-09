@@ -16,9 +16,12 @@ export function adaptRecipeResultForReuse(result) {
   if (!result || typeof result !== "object") {
     return { ok: false, message: "result must be an object" };
   }
+  const report = result.report && typeof result.report === "object" ? result.report : result;
   if (
     result.schema === "pilot/page-change-brief/v1" ||
+    report.schema === "pilot/page-change-brief/v1" ||
     result.product === "samedaydesk-extract-batch" ||
+    result.schemaVersion === "samedaydesk.extract-batch.v0" ||
     result.schema === "pilot.task-commons.page-change-result.v1"
   ) {
     return { ok: true, input: result, adapted: false };
