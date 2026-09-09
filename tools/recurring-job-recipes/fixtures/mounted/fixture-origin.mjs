@@ -1,11 +1,10 @@
-import express from "express";
 import { readFileSync } from "node:fs";
 import { createServer as createNetServer } from "node:net";
 import { createServer } from "node:http";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { CONTRACTS, GATEWAY_ORIGIN, MERCHANT_INPUT_PIN } from "../../vendor/merchant-contracts.mjs";
-import { requireMerchantRoot } from "../../vendor/resolve-merchant-root.mjs";
+import { createMerchantRequire, requireMerchantRoot } from "../../vendor/resolve-merchant-root.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const packageRoot = join(here, "..", "..");
@@ -24,6 +23,7 @@ function unusedPort() {
 
 export async function createFixtureOrigin({ port: requestedPort, enablePageChange = true, enableSkills = true } = {}) {
   const merchantRoot = requireMerchantRoot();
+  const express = createMerchantRequire(merchantRoot)("express");
   const port = requestedPort ?? (await unusedPort());
   const base = `http://127.0.0.1:${port}`;
   const app = express();
@@ -75,7 +75,10 @@ export async function createFixtureOrigin({ port: requestedPort, enablePageChang
     routes: {
       pageChange: `${base}${CONTRACTS.C31.routes.compare}`,
       pageChangeHealth: `${base}${CONTRACTS.C31.routes.health}`,
+      pageChangeOpenapi: `${base}${CONTRACTS.C31.routes.openapi}`,
       skillsIndex: `${base}${CONTRACTS.C34.routes.skillsIndex}`,
+      pageChangeSkill: `${base}${CONTRACTS.C34.routes.pageChangeSkill}`,
+      explicitRecordSkill: `${base}${CONTRACTS.C34.routes.explicitRecordSkill}`,
       fixturePage: `${base}/fixture/pages/example-a.html`,
     },
     close: () =>

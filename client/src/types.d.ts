@@ -9,7 +9,28 @@ declare module "../data/machineEntry.mjs" {
   export const GATEWAY_ORIGIN: string;
   export const MERCHANT_REPO: string;
   export const MERCHANT_PIN: string;
+  export const MERCHANT_INPUT_PIN: string;
+  export const MERCHANT_INPUT_SHORT: string;
   export const CUSTOMER_EXAMPLE_VERSION: string;
+  export const RECURRING_MERCHANT_CONTRACTS: {
+    readonly C31: {
+      readonly label: string;
+      readonly reportSchema: string;
+      readonly httpProduct: string;
+      readonly httpSchema: string;
+      readonly route: string;
+      readonly health: string;
+      readonly openapi: string;
+      readonly requiredFields: readonly string[];
+    };
+    readonly C34: {
+      readonly label: string;
+      readonly product: string;
+      readonly schemaVersion: string;
+      readonly skillsIndex: string;
+      readonly requiredTopFields: readonly string[];
+    };
+  };
   export const CUSTOMER_EXAMPLE_DIR: string;
   export const EXPLICIT_RECORD_SKILL: string;
   export const LIVE_INVENTORY: ReadonlyArray<{ readonly label: string; readonly href: string }>;

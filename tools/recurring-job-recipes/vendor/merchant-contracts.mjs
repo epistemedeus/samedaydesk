@@ -48,6 +48,7 @@ export const CONTRACTS = Object.freeze({
     liveRoutes: Object.freeze({
       skillsIndex: `${GATEWAY_ORIGIN}/.well-known/skills/index.json`,
       pageChangeSkill: `${GATEWAY_ORIGIN}/.well-known/skills/page-change/SKILL.md`,
+      explicitRecordSkill: `${GATEWAY_ORIGIN}/.well-known/skills/explicit-record/SKILL.md`,
     }),
     requiredTopFields: Object.freeze([
       "ok",
@@ -78,5 +79,29 @@ export function discoveryLinks(origin = GATEWAY_ORIGIN) {
     Object.freeze({ contract: "C31", label: "Page-change OpenAPI", href: `${origin}${CONTRACTS.C31.routes.openapi}` }),
     Object.freeze({ contract: "C34", label: "Well-known skills index", href: `${origin}${CONTRACTS.C34.routes.skillsIndex}` }),
     Object.freeze({ contract: "C34", label: "Page-change skill", href: `${origin}${CONTRACTS.C34.routes.pageChangeSkill}` }),
+    Object.freeze({ contract: "C34", label: "Explicit-record skill", href: `${origin}${CONTRACTS.C34.routes.explicitRecordSkill}` }),
   ]);
+}
+
+/** Slice published by /for-agents. Tests require machineEntry to match this object. */
+export function publishedClientContracts(origin = GATEWAY_ORIGIN) {
+  return Object.freeze({
+    C31: Object.freeze({
+      label: CONTRACTS.C31.label,
+      reportSchema: CONTRACTS.C31.reportSchema,
+      httpProduct: CONTRACTS.C31.httpProduct,
+      httpSchema: CONTRACTS.C31.httpSchema,
+      route: `${origin}${CONTRACTS.C31.routes.compare}`,
+      health: `${origin}${CONTRACTS.C31.routes.health}`,
+      openapi: `${origin}${CONTRACTS.C31.routes.openapi}`,
+      requiredFields: CONTRACTS.C31.requiredFields,
+    }),
+    C34: Object.freeze({
+      label: CONTRACTS.C34.label,
+      product: CONTRACTS.C34.product,
+      schemaVersion: CONTRACTS.C34.schemaVersion,
+      skillsIndex: `${origin}${CONTRACTS.C34.routes.skillsIndex}`,
+      requiredTopFields: CONTRACTS.C34.requiredTopFields,
+    }),
+  });
 }

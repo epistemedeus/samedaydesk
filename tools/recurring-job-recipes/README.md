@@ -25,16 +25,26 @@ service.
 
 ## Merchant contracts (input only)
 
-Recipes align with merchant output at
-[`epistemedeus/x402-url-extractor@f9dd59ae`](https://github.com/epistemedeus/x402-url-extractor/commit/f9dd59aeeb200881bc1313ed846ba002e7081258):
+Recipes and `/for-agents` publish the same C31/C34 slice (`vendor/merchant-contracts.mjs`
+and `client/src/data/machineEntry.mjs`). Public master pin:
+[`epistemedeus/x402-url-extractor@f9dd59ae`](https://github.com/epistemedeus/x402-url-extractor/commit/f9dd59aeeb200881bc1313ed846ba002e7081258).
+A local descendant checkout is enough when `package.json` `name` is `x402-merchant`.
 
 | Contract | Meaning | Discoverable route |
 | --- | --- | --- |
 | C31 | Page-change compare (`pilot/page-change-brief/v1`) | `POST /recipes/page-change` |
 | C34 | Extract-batch record (`samedaydesk.extract-batch.v0`) + skills | `GET /.well-known/skills/index.json` |
 
-Set `MERCHANT_INPUT_ROOT` to a checkout of that commit for mounted E2E and official CLI bridges.
-Fixture copies live under `fixtures/merchant/`.
+Resolve the merchant root without network spend, in order:
+
+1. `MERCHANT_INPUT_ROOT` if it is a valid `x402-merchant` tree
+2. `/tmp/merchant-input/x402-url-extractor`
+3. `samedaydesk/vendor/x402-url-extractor`
+4. sibling `../x402-url-extractor` (S33 compose layout)
+
+Mounted HTTP and official CLI bridges load `express` / `ajv` from that tree's
+`node_modules` via `createMerchantRequire`. Do not `npm ci` a remote copy for
+these tests. Fixture copies live under `fixtures/merchant/`.
 
 ## Run
 

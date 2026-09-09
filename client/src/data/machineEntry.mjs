@@ -14,12 +14,16 @@ export const RECURRING_MERCHANT_CONTRACTS = Object.freeze({
   C31: Object.freeze({
     label: "page-change compare",
     reportSchema: "pilot/page-change-brief/v1",
+    httpProduct: "samedaydesk-page-change-http",
+    httpSchema: "samedaydesk.page-change-http.v0",
     route: `${GATEWAY_ORIGIN}/recipes/page-change`,
     health: `${GATEWAY_ORIGIN}/recipes/page-change/health`,
+    openapi: `${GATEWAY_ORIGIN}/recipes/page-change/openapi.json`,
     requiredFields: Object.freeze(["before", "after", "fields"]),
   }),
   C34: Object.freeze({
     label: "extract-batch record + skills discovery",
+    product: "samedaydesk-extract-batch",
     schemaVersion: "samedaydesk.extract-batch.v0",
     skillsIndex: `${GATEWAY_ORIGIN}/.well-known/skills/index.json`,
     requiredTopFields: Object.freeze([
@@ -29,9 +33,13 @@ export const RECURRING_MERCHANT_CONTRACTS = Object.freeze({
       "quote",
       "jobId",
       "jobStatus",
+      "stopReason",
       "partial",
       "sources",
+      "accounting",
+      "costInputs",
       "charged",
+      "boundary",
     ]),
   }),
 });
@@ -120,7 +128,7 @@ export const RECURRING_QUICKSTART = [
 
 export const BUYER_SETUP_QUICKSTART = [
   "# Live free inspection only. Stops at unpaid 402. Never signs. Never infers wallet ownership from payTo.",
-  "export MERCHANT_INPUT_ROOT=/path/to/x402-url-extractor  # pin f9dd59ae",
+  `# Local merchant: sibling x402-url-extractor (name x402-merchant) or MERCHANT_INPUT_ROOT. Pin ${MERCHANT_INPUT_SHORT}. No network clone.`,
   "node tools/recurring-job-recipes/cli.mjs --recipe buyer-setup-trace \\",
   "  --schedule once --clock \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" \\",
   "  --gateway-origin https://agents.samedaydesk.com",

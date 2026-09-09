@@ -67,7 +67,7 @@ export async function runBuyerSetupTrace(input = {}) {
     steps.push({
       step: "load_buyer_policy_reference",
       result: "skipped",
-      reason: "MERCHANT_INPUT_ROOT missing",
+      reason: "merchant checkout missing",
     });
   }
 
