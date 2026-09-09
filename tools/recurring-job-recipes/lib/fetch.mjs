@@ -127,16 +127,21 @@ export async function fetchLiveSafe(
   }
 }
 
+function extractedTagText(html, tag) {
+  const match = String(html).match(new RegExp(`<${tag}[^>]*>([^<]*)</${tag}>`, "i"));
+  if (!match) return null;
+  const value = match[1].trim();
+  return value.length > 0 ? value : null;
+}
+
 export function extractComparableFields(htmlOrText, fields = ["title"]) {
   const text = String(htmlOrText ?? "");
   const out = {};
   for (const field of fields) {
     if (field === "title") {
-      const match = text.match(/<title[^>]*>([^<]*)<\/title>/i);
-      out.title = match ? match[1].trim() : null;
+      out.title = extractedTagText(text, "title");
     } else if (field === "h1") {
-      const match = text.match(/<h1[^>]*>([^<]*)<\/h1>/i);
-      out.h1 = match ? match[1].trim() : null;
+      out.h1 = extractedTagText(text, "h1");
     } else if (field === "bytes") {
       out.bytes = Buffer.byteLength(text);
     } else {
