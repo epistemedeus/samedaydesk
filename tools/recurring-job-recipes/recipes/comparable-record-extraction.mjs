@@ -167,7 +167,11 @@ async function extractOne(source, fields, input) {
     }
     const retried = await withRetries(
       async () => {
-        const page = await fetchLiveSafe(source.url, { fetchImpl: input.fetchImpl, timeoutMs: input.timeoutMs });
+        const page = await fetchLiveSafe(source.url, {
+          fetchImpl: input.fetchImpl,
+          timeoutMs: input.timeoutMs,
+          allowMountedOrigin: input.allowMountedOrigin === true,
+        });
         if (!page.ok) {
           const err = new Error(`status ${page.status}`);
           err.retryable = page.status >= 500 || page.status === 429;
@@ -191,12 +195,14 @@ async function extractOne(source, fields, input) {
       };
     }
     const fieldsOut = extractComparableFields(retried.value.text, fields);
+    const missing = fields.filter((field) => fieldsOut[field] == null);
     return {
       sourceKey: source.url,
-      status: "success",
+      status: missing.length === fields.length ? "failure" : "success",
+      partial: missing.length > 0 && missing.length < fields.length,
       fields: fieldsOut,
-      missing: fields.filter((field) => fieldsOut[field] == null),
-      error: null,
+      missing,
+      error: missing.length === fields.length ? { code: "empty_extract", message: "no selected fields found" } : null,
       attempts: retried.attempts,
       provenance: {
         transport: "live_safe",
