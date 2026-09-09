@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { assertImmutable, writeSequencedArtifact } from "./prior.mjs";
+import { writeSequencedArtifact } from "./prior.mjs";
 import { runSourceChangeAlert, META as SOURCE_CHANGE_META } from "../recipes/source-change-alert.mjs";
 import {
   runComparableRecordExtraction,
@@ -74,13 +74,7 @@ export function persistResult(result, { outDir, writeArtifact = false } = {}) {
       },
       payment: { attempted: false },
     };
-    const priorPath = result.prior?.path;
-    if (priorPath) {
-      const guard = assertImmutable(priorPath, `${stableStringify(body)}\n`);
-      if (!guard.ok) {
-        return { ok: false, reportPath, ...guard };
-      }
-    }
+    // Always write a new sequenced file. Never open or rewrite result.prior.path.
     artifact = writeSequencedArtifact(outDir, result.recipeId, sequence, body);
   }
 
