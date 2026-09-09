@@ -1,0 +1,76 @@
+# Recurring job recipes
+
+One-shot SameDayDesk recipes for useful recurring page and record work.
+They reuse accepted page-change and structured-record contracts. They are not
+a new protocol, cron daemon, marketplace, or payment engine.
+
+| Recipe | User benefit |
+| --- | --- |
+| `source-change-alert` | Know when selected fields on a watched public page change since an immutable prior |
+| `comparable-record-extraction` | Recurringly extract the same comparable fields from 1-5 sources and keep partial rows visible |
+| `verification-reconcile` | Verify a later observation against the prior, or stop when a payment would be auto-replayed |
+
+Operator supplies the input list, schedule hint, clock, and optional freshness
+horizon. The pack never invents those values and never starts an always-on
+service.
+
+## Contracts reused
+
+- `pilot.task-commons.page-change-result.v1` / `pilot/page-change-brief/v1`
+- `samedaydesk.extract-batch.v0` shaped comparable records
+- Existing evidence reconcile posture: keep classes separate, do not treat
+  `charged: true` as useful output, never automatically retry payment
+
+## Run
+
+```bash
+node tools/recurring-job-recipes/cli.mjs --list
+
+# Offline fixture dry-runs
+node tools/recurring-job-recipes/cli.mjs --recipe source-change-alert \
+  --prior tools/recurring-job-recipes/fixtures/priors/source-change.prior.json \
+  --current-fixture tools/recurring-job-recipes/fixtures/current/example-unchanged.json \
+  --schedule daily --clock 2026-09-09T15:00:00.000Z --horizon 168
+
+node tools/recurring-job-recipes/cli.mjs --recipe comparable-record-extraction \
+  --prior tools/recurring-job-recipes/fixtures/priors/record-extract.prior.json \
+  --sources tools/recurring-job-recipes/fixtures/pages/example-a.html,tools/recurring-job-recipes/fixtures/pages/example-b-partial.html \
+  --fields title,h1 --schedule weekly --clock 2026-09-09T15:00:00.000Z
+
+node tools/recurring-job-recipes/cli.mjs --recipe verification-reconcile \
+  --prior tools/recurring-job-recipes/fixtures/priors/verify.prior.json \
+  --candidate tools/recurring-job-recipes/fixtures/current/verify-candidate-unchanged.json \
+  --schedule daily --clock 2026-09-09T15:00:00.000Z
+
+# Free live source when safe (example.com only). Not zero marginal cost.
+node tools/recurring-job-recipes/cli.mjs --recipe source-change-alert \
+  --prior tools/recurring-job-recipes/fixtures/priors/source-change.prior.json \
+  --live-safe --live-url https://example.com/ \
+  --fields title --schedule daily --clock "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+npm run test:recurring-job-recipes
+```
+
+## Recovery and payment
+
+| Outcome | Recovery |
+| --- | --- |
+| `unchanged` | Keep the immutable prior; wait for the next operator-supplied run |
+| `changed` | Review evidence; write a new sequenced artifact. Do not overwrite the prior |
+| `partial` | Keep successful rows; retry only failed sources on a fresh operator run |
+| `stale_baseline` | Prior older than horizon; refresh baseline before alerting |
+| `error` | Bounded retry, then stop with error evidence |
+
+Payment receipts on a prior or candidate never become an automatic replay.
+Reconcile an unknown payment through the merchant customer example instead.
+
+## Cost notes
+
+- Sourced (as of 2026-09-09, `/for-agents`): bounded `POST /extract/batch` is
+  0.01 USDC. These recipes do not call that paid route.
+- Illustrative: offline compare uses operator CPU/disk. Free live HTML still
+  consumes network and compute. Do not promise zero marginal cost.
+
+## First-customer experiment
+
+See [FIRST-CUSTOMER-EXPERIMENT.md](./FIRST-CUSTOMER-EXPERIMENT.md).

@@ -76,6 +76,22 @@ export const REUSE_QUICKSTART = [
   "  --opt-in --out /tmp/samedaydesk-reuse-observation.json",
 ].join("\n");
 
+export const RECURRING_QUICKSTART = [
+  "node tools/recurring-job-recipes/cli.mjs --list",
+  "node tools/recurring-job-recipes/cli.mjs --recipe source-change-alert \\",
+  "  --prior tools/recurring-job-recipes/fixtures/priors/source-change.prior.json \\",
+  "  --current-fixture tools/recurring-job-recipes/fixtures/current/example-unchanged.json \\",
+  "  --schedule daily --clock 2026-09-09T15:00:00.000Z --horizon 168",
+  "node tools/recurring-job-recipes/cli.mjs --recipe comparable-record-extraction \\",
+  "  --prior tools/recurring-job-recipes/fixtures/priors/record-extract.prior.json \\",
+  "  --sources tools/recurring-job-recipes/fixtures/pages/example-a.html,tools/recurring-job-recipes/fixtures/pages/example-b-partial.html \\",
+  "  --fields title,h1 --schedule weekly --clock 2026-09-09T15:00:00.000Z",
+  "node tools/recurring-job-recipes/cli.mjs --recipe verification-reconcile \\",
+  "  --prior tools/recurring-job-recipes/fixtures/priors/verify.prior.json \\",
+  "  --candidate tools/recurring-job-recipes/fixtures/current/verify-candidate-unchanged.json \\",
+  "  --schedule daily --clock 2026-09-09T15:00:00.000Z",
+].join("\n");
+
 export const FOR_AGENTS_PATH = "/for-agents";
 export const FOR_AGENTS_TITLE = "Practical agent jobs | SameDayDesk";
 export const FOR_AGENTS_DESCRIPTION =
@@ -185,6 +201,19 @@ export const FOR_AGENTS_CRAWLER_HTML = `
         Later task-memory import is a separate step.
       </p>
       <pre><code>${REUSE_QUICKSTART}</code></pre>
+      <h2>Job 5. Recurring page and record recipes</h2>
+      <p>
+        From a SameDayDesk checkout, run one-shot recurring recipes against an immutable prior.
+        Operator supplies sources, fields, schedule hint, clock, and optional freshness horizon.
+        Outcomes are unchanged, changed, partial, stale baseline, or error. Priors are never
+        overwritten; write a new sequenced artifact after review. Partial and failed rows stay
+        visible. Payment receipts are never automatically replayed. Offline fixture dry-runs are
+        free of merchant charges; optional <code>--live-safe</code> may fetch only
+        <code>https://example.com/</code> and still consumes operator network and CPU. Sourced
+        product price for a paid freshness batch remains 0.01 USDC on this page and is not invoked
+        by these recipes. No cron or always-on service is started.
+      </p>
+      <pre><code>${RECURRING_QUICKSTART}</code></pre>
       <h2>Live merchant inventory</h2>
       <ul>
         ${inventoryListHtml()}
@@ -205,7 +234,8 @@ export const X402_CRAWLER_HTML = `
         Practical jobs live on
         <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>:
         paid bounded <code>POST /extract/batch</code> observations, free offline comparison and
-        explicit buyer-record mapping, and opt-in reuse of an already produced result.
+        explicit buyer-record mapping, opt-in reuse of an already produced result, and one-shot
+        recurring page or record recipes with immutable priors.
         Purchasing never requires publishing. Other named calls remain on the live inventory.
       </p>
       <ul>

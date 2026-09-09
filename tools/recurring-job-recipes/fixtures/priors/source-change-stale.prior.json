@@ -1,0 +1,18 @@
+{
+  "schema": "samedaydesk.recurring-job-prior.v1",
+  "recipeId": "source-change-alert",
+  "createdAt": "2026-09-01T12:00:00.000Z",
+  "sequence": 1,
+  "immutable": true,
+  "sha256": "stale-prior",
+  "payload": {
+    "url": "https://example.com/",
+    "title": "Example Domain",
+    "fields": {
+      "title": "Example Domain"
+    }
+  },
+  "payment": {
+    "attempted": false
+  }
+}
