@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "partial": true,
+  "jobStatus": "partial",
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "https://example.com/alpha",
+      "status": "success",
+      "data": {
+        "title": "Alpha"
+      }
+    },
+    {
+      "id": "item-002",
+      "source": "https://example.com/missing",
+      "status": "failure",
+      "error": {
+        "code": "missing_source",
+        "message": "source was not delivered"
+      }
+    }
+  ],
+  "authorizationId": "auth_should_not_auto_replay",
+  "charged": true,
+  "autoReplayPayment": true
+}

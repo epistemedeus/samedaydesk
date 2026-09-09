@@ -1,0 +1,8 @@
+{
+  "schema": "pilot.task-commons.page-change-result.v1",
+  "url": "https://example.com/",
+  "status": 200,
+  "title": "Example Domain",
+  "contentHash": "sha256:verify-baseline-v1",
+  "payment": false
+}

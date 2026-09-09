@@ -1,0 +1,19 @@
+{
+  "schema": "samedaydesk.recurring-job-prior.v1",
+  "recipeId": "verification-reconcile",
+  "createdAt": "2026-09-08T12:00:00.000Z",
+  "sequence": 1,
+  "immutable": true,
+  "sha256": "verify-prior",
+  "payload": {
+    "schema": "pilot.task-commons.page-change-result.v1",
+    "url": "https://example.com/",
+    "status": 200,
+    "title": "Example Domain",
+    "contentHash": "sha256:verify-baseline-v1",
+    "payment": false
+  },
+  "payment": {
+    "attempted": false
+  }
+}

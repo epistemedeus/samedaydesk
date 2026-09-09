@@ -17,6 +17,7 @@ import {
   OBSERVE_QUICKSTART,
   RECORD_QUICKSTART,
   REUSE_QUICKSTART,
+  RECURRING_QUICKSTART,
 } from "../data/machineEntry.mjs";
 import styles from "./Mcp.module.css";
 
@@ -161,6 +162,31 @@ export default function ForAgents() {
           </div>
         </section>
 
+        <section className={styles.section} aria-labelledby="recurring-title">
+          <div className={styles.sectionHead}>
+            <p className="eyebrow">Job 5 · recurring recipes</p>
+            <h2 id="recurring-title">Run one-shot page and record jobs against an immutable prior</h2>
+          </div>
+          <p className={styles.jobCopy}>
+            From a SameDayDesk checkout, run <code>source-change-alert</code>,{" "}
+            <code>comparable-record-extraction</code>, or <code>verification-reconcile</code>.
+            You supply sources, fields, schedule hint, clock, and an optional freshness horizon.
+            Outcomes are unchanged, changed, partial, stale baseline, or error. Priors stay
+            immutable; write a new sequenced artifact after review. Partial and failed rows stay
+            visible. Payment receipts are never automatically replayed. Offline fixture dry-runs
+            do not call the merchant. Optional <code>--live-safe</code> may fetch only{" "}
+            <code>https://example.com/</code> and still uses operator network and CPU. The sourced
+            0.01 USDC batch price on this page is not invoked by these recipes. No cron or
+            always-on service is started.
+          </p>
+          <div className={styles.commands}>
+            <div>
+              <span>Fixture dry-runs for the three recipes</span>
+              <pre className={styles.jobPre}><code>{RECURRING_QUICKSTART}</code></pre>
+            </div>
+          </div>
+        </section>
+
         <section className={styles.sellerOffer} aria-labelledby="inventory-title">
           <div>
             <p className="eyebrow">Live merchant inventory</p>
@@ -192,6 +218,8 @@ export default function ForAgents() {
               <li>No keys, secret URLs, or target fetch on this page</li>
               <li>Purchasing never requires publishing</li>
               <li>Schema-valid export is not public-safe certification</li>
+              <li>Recurring recipes do not overwrite immutable priors</li>
+              <li>Payment is never automatically replayed</li>
             </ul>
           </div>
         </section>
