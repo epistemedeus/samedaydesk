@@ -65,16 +65,27 @@ export const RECORD_QUICKSTART = [
   "  --out /tmp/samedaydesk-record-required-sku",
 ].join("\n");
 
+export const REUSE_QUICKSTART = [
+  'NOW="$(date -u +%Y-%m-%dT%H:%M:%SZ)"',
+  "node tools/result-reuse/cli.mjs preview \\",
+  "  --input tools/result-reuse/fixtures/accepted-page-change.json \\",
+  '  --task-id vendor-watch --subject vendor-page-result --sequence 1 --clock "$NOW"',
+  "node tools/result-reuse/cli.mjs export \\",
+  "  --input tools/result-reuse/fixtures/accepted-page-change.json \\",
+  '  --task-id vendor-watch --subject vendor-page-result --sequence 1 --clock "$NOW" \\',
+  "  --opt-in --out /tmp/samedaydesk-reuse-observation.json",
+].join("\n");
+
 export const FOR_AGENTS_PATH = "/for-agents";
 export const FOR_AGENTS_TITLE = "Practical agent jobs | SameDayDesk";
 export const FOR_AGENTS_DESCRIPTION =
-  "Obtain bounded observations, compare selected fields, or map held JSON into buyer records. Paid acquisition and two offline jobs stay distinct.";
+  "Obtain bounded observations, compare or record already-held JSON, then optionally export a reuse reference. Schema-valid export is user-selected unverified evidence. Purchasing never requires publishing.";
 export const FOR_AGENTS_CANONICAL = `${SITE_ORIGIN}${FOR_AGENTS_PATH}`;
 
 export const X402_PATH = "/x402";
 export const X402_TITLE = "Agent Payment Infrastructure: x402 and MPP | SameDayDesk";
 export const X402_DESCRIPTION =
-  "Call SameDayDesk machine services with x402 or native MPP on Base. Live HTTP, MCP, and x402 inventories are authoritative. Two practical jobs start at /for-agents.";
+  "Call SameDayDesk machine services with x402 or native MPP on Base. Live HTTP, MCP, and x402 inventories are authoritative. Practical jobs start at /for-agents.";
 export const X402_CANONICAL = `${SITE_ORIGIN}${X402_PATH}`;
 
 // Client-side navigation must update the same metadata as a direct route-shell load.
@@ -110,7 +121,7 @@ function inventoryListHtml() {
 }
 
 export const FOR_AGENTS_CRAWLER_HTML = `
-      <h1>Obtain observations or use either offline job</h1>
+      <h1>Obtain observations, use offline jobs, or opt-in reuse</h1>
       <p>
         SameDayDesk sells a bounded <code>POST /extract/batch</code> attempt: one to five public HTTPS
         URLs, caller-selected fields, 0.01 USDC. A later comparison of two already-held JSON
@@ -121,7 +132,8 @@ export const FOR_AGENTS_CRAWLER_HTML = `
         Current paid HTTP and MCP inventories live on the merchant. This page does not freeze a
         route count. Failed, partial, and missing rows stay visible. Observation freshness is unknown
         unless you supply a clock and a horizon. <code>charged: true</code> is not useful output.
-        Current source labels are untrusted, not buyer proof.
+        Current source labels are untrusted, not buyer proof. Purchasing never requires publishing
+        or referrals.
       </p>
       <h2>Job 1. Obtain bounded extracted observations</h2>
       <p>
@@ -158,6 +170,21 @@ export const FOR_AGENTS_CRAWLER_HTML = `
         <a href="${EXPLICIT_RECORD_SKILL}">Read the pinned explicit-record workflow</a>.
       </p>
       <pre><code>${RECORD_QUICKSTART}</code></pre>
+      <h2>Job 4. Opt-in reuse of an already produced result</h2>
+      <p>
+        From a SameDayDesk checkout, preview exactly which fields would be copied into a
+        <code>neomorphic.task-memory.observation.v1</code> reference, then write only with
+        <code>--opt-in</code>. The helper does not fetch or pay. Default page-change and record
+        outputs stay intact. The projection uses a reviewed allowlist, not a harmlessness guarantee.
+        A schema-valid export is user-selected unverified evidence, never automatic public-safe certification.
+        Private source text, authorization, receipt secrets, and legal or customer identifiers are
+        omitted and cannot be selected. Failed and incomplete rows remain visible. The caller supplies
+        stable task, subject, revision sequence, and current UTC clock values; the helper does not invent
+        them. If an original evidence URL is missing, the export labels the recipe URL as a locator rather
+        than evidence.
+        Later task-memory import is a separate step.
+      </p>
+      <pre><code>${REUSE_QUICKSTART}</code></pre>
       <h2>Live merchant inventory</h2>
       <ul>
         ${inventoryListHtml()}
@@ -175,11 +202,11 @@ export const X402_CRAWLER_HTML = `
         demand, or revenue. Live catalogs are authoritative; this page does not freeze a tool count.
       </p>
       <p>
-        Three complete jobs live on
+        Practical jobs live on
         <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>:
-        paid bounded <code>POST /extract/batch</code> observations, plus free offline comparison and
-        explicit buyer-record mapping for already-held observations. Other named calls remain on
-        the live inventory.
+        paid bounded <code>POST /extract/batch</code> observations, free offline comparison and
+        explicit buyer-record mapping, and opt-in reuse of an already produced result.
+        Purchasing never requires publishing. Other named calls remain on the live inventory.
       </p>
       <ul>
         <li><a href="${FOR_AGENTS_CANONICAL}">Practical agent jobs</a></li>

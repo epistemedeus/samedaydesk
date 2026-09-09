@@ -1,0 +1,31 @@
+{
+  "ok": false,
+  "status": "partial",
+  "networkUsed": false,
+  "records": [
+    {
+      "status": "success",
+      "source": "https://example.com/alpha"
+    }
+  ],
+  "invalidRecords": [
+    {
+      "status": "invalid",
+      "missing": {
+        "required": [
+          {
+            "field": "sku",
+            "pointer": "/sources/1/data/jsonLd/0/sku",
+            "reason": "missing"
+          }
+        ]
+      }
+    }
+  ],
+  "partialRecords": [
+    {
+      "status": "partial",
+      "source": "https://example.com/beta"
+    }
+  ]
+}

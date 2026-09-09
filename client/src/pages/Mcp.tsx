@@ -194,11 +194,12 @@ export default function Mcp() {
           <p className={styles.lead}>
             SameDayDesk machine services settle exact Base USDC through x402 or native MPP. No API
             key, subscription, or account is required. Live catalogs are authoritative; this page does
-            not freeze a tool count. Two complete jobs start at{" "}
+            not freeze a tool count. Practical jobs start at{" "}
             <Link className={styles.inlineLink} to={FOR_AGENTS_PATH}>
               /for-agents
             </Link>
-            : paid bounded extraction, then free offline comparison of already-held observations.
+            : paid bounded extraction, offline comparison and records, then opt-in reuse.
+            Purchasing never requires publishing.
           </p>
           <div className={styles.actions}>
             <Link
@@ -206,7 +207,7 @@ export default function Mcp() {
               to={FOR_AGENTS_PATH}
               onClick={() => trackAction("open_for_agents", "hero")}
             >
-              Two practical jobs →
+              Practical agent jobs →
             </Link>
             <a
               className={styles.secondary}
@@ -338,7 +339,7 @@ export default function Mcp() {
               to={FOR_AGENTS_PATH}
               onClick={() => trackAction("open_for_agents", "market_evidence")}
             >
-              Start with the two practical jobs →
+              Start with the practical agent jobs →
             </Link>
           </div>
         </section>

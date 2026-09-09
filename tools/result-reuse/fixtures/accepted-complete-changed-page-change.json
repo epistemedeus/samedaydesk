@@ -1,0 +1,52 @@
+{
+  "schema": "pilot/page-change-brief/v1",
+  "kind": "merchant_extract_batch",
+  "verdict": "changed",
+  "fields": ["title", "description"],
+  "claims": {
+    "noChangeProven": false,
+    "contentUnchangedProven": false,
+    "comparable": true,
+    "complete": true,
+    "current": false,
+    "fresh": false,
+    "usefulOutputProven": true,
+    "paymentImpliesUsefulOutput": false
+  },
+  "freshness": "unknown",
+  "summary": {
+    "matched": 1,
+    "missing": 0,
+    "failed": 0,
+    "unknown": 0,
+    "duplicates": 0,
+    "coverageUnknown": 0,
+    "semantic": 1,
+    "order": 0
+  },
+  "rows": {
+    "matched": [{
+      "sourceKey": "https://w5-0001.example.invalid/alpha",
+      "source": "https://w5-0001.example.invalid/alpha",
+      "before": {"id": "item-001", "status": "success"},
+      "after": {"id": "item-001", "status": "success"}
+    }],
+    "missing": [],
+    "failed": [],
+    "unknown": [],
+    "duplicates": []
+  },
+  "coverageUnknown": [],
+  "changes": [{
+    "class": "semantic",
+    "op": "replace",
+    "path": "/title",
+    "before": "Alpha v1",
+    "after": "Alpha v2",
+    "sourceKey": "https://w5-0001.example.invalid/alpha"
+  }],
+  "provenance": {
+    "acceptedMerchantFixture": "x402-url-extractor page-change compare",
+    "clock": "2026-09-08T06:05:00.000Z"
+  }
+}

@@ -28,6 +28,7 @@ import {
   MERCHANT_PIN,
   OBSERVE_QUICKSTART,
   RECORD_QUICKSTART,
+  REUSE_QUICKSTART,
   X402_SHELL,
 } from "../../client/src/data/machineEntry.mjs";
 
@@ -201,6 +202,9 @@ test("apex machine documentation separates free and paid MCP and keeps homepage 
   assert.match(LLMS_TXT, /POST https:\/\/agents\.samedaydesk\.com\/extract\/batch/);
   assert.match(LLMS_TXT, /https:\/\/samedaydesk\.com\/for-agents/);
   assert.match(LLMS_TXT, /offline comparison/);
+  assert.match(LLMS_TXT, /user-selected unverified evidence/);
+  assert.match(LLMS_TXT, /not automatic public-safe certification/);
+  assert.match(LLMS_TXT, /Purchasing never requires publishing/);
   assert.equal(LLMS_TXT.includes("Twenty-two canonical"), false);
   for (const sku of ["Agent Workflow Integration", "Agent-Ready MCP Server", "Agent Commerce Storefront"]) {
     assert.match(LLMS_TXT, new RegExp(sku));
@@ -220,6 +224,7 @@ test("for-agents shell, React route, and machineEntry share one copy authority",
   assert.equal(route.crawlerHtml.includes(OBSERVE_QUICKSTART), true);
   assert.equal(route.crawlerHtml.includes(COMPARE_QUICKSTART), true);
   assert.equal(route.crawlerHtml.includes(RECORD_QUICKSTART), true);
+  assert.equal(route.crawlerHtml.includes(REUSE_QUICKSTART), true);
   assert.equal(route.crawlerHtml.includes(EXPLICIT_RECORD_SKILL), true);
   assert.match(route.crawlerHtml, /fixtures\/record\/required-sku\/mapping.json/);
   assert.equal(route.crawlerHtml.includes(MERCHANT_PIN), true);
@@ -230,6 +235,12 @@ test("for-agents shell, React route, and machineEntry share one copy authority",
   assert.match(route.crawlerHtml, /charged: true/);
   assert.match(route.crawlerHtml, /https:\/\/agents\.samedaydesk\.com\/api\/actions/);
   assert.match(route.crawlerHtml, /https:\/\/agents\.samedaydesk\.com\/healthz/);
+  assert.match(route.crawlerHtml, /Job 4\. Opt-in reuse of an already produced result/);
+  assert.match(route.crawlerHtml, /Purchasing never requires publishing/);
+  assert.match(route.crawlerHtml, /user-selected unverified evidence/);
+  assert.match(route.crawlerHtml, /never automatic public-safe\s+certification/);
+  assert.match(route.crawlerHtml, /neomorphic\.task-memory\.observation\.v1/);
+  assert.match(route.crawlerHtml, /--opt-in/);
   assert.equal(route.crawlerHtml.includes("Twenty-two"), false);
   assert.equal(route.crawlerHtml.includes("hasOfferCatalog"), false);
   const app = readFileSync(join(here, "../../client/src/App.tsx"), "utf8");
@@ -245,6 +256,7 @@ test("for-agents shell, React route, and machineEntry share one copy authority",
     assert.match(copy, /against the live merchant, not an offline fixture/);
     assert.match(copy, /fixtures\/authorization-batch.json/);
     assert.match(copy, /Reconcile an unknown payment outcome instead of automatically retrying/);
+    assert.match(copy, /Purchasing never requires publishing/);
     assert.doesNotMatch(copy, /untrusted until you reconcile|No-key fixture quickstart/);
   }
   assert.match(route.crawlerHtml, /node --version # must report v22\.x/);
@@ -327,8 +339,12 @@ test("generator derives route shells from the built index.html without rewriting
   assert.equal(forAgentsHtml.canonical, FOR_AGENTS_SHELL.canonical);
   assert.match(forAgentsHtml.noscript, /Job 1\. Obtain bounded extracted observations/);
   assert.match(forAgentsHtml.noscript, /Job 2\. Compare explicit fields from two already-held observations/);
+  assert.match(forAgentsHtml.noscript, /Job 3\. Map already-held JSON into buyer records/);
+  assert.match(forAgentsHtml.noscript, /Job 4\. Opt-in reuse of an already produced result/);
+  assert.equal(forAgentsHtml.noscript.includes(REUSE_QUICKSTART), true);
   assert.equal(forAgentsHtml.noscript.includes(OBSERVE_QUICKSTART), true);
   assert.equal(forAgentsHtml.noscript.includes(COMPARE_QUICKSTART), true);
+  assert.equal(forAgentsHtml.noscript.includes(RECORD_QUICKSTART), true);
   assert.equal(forAgentsHtml.jsonLdRaw.join("").includes("Offer"), false);
   assert.equal(forAgentsHtml.jsonLdRaw.join("").includes("FAQPage"), false);
   assert.equal(forAgentsHtml.jsonLdRaw.join("").includes("Review"), false);
