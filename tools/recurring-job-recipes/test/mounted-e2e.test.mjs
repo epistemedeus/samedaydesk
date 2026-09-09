@@ -33,7 +33,7 @@ test("mounted merchant E2E against C31/C34 contracts", { skip: skipMounted, time
   await warmPageChangeOrigin(origin);
 
   await t.test("merchant input pin resolves", () => {
-    assert.ok(merchantRoot.endsWith("x402-url-extractor"));
+    assert.equal(JSON.parse(readFileSync(join(merchantRoot, "package.json"), "utf8")).name, "x402-merchant");
     assert.match(readFileSync(join(merchantRoot, "page-change-http.mjs"), "utf8"), /postRecipesPageChange/);
   });
 
