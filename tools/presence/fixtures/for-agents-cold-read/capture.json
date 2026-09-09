@@ -1,0 +1,29 @@
+{
+  "capturedAt": "2026-09-09T20:55:00.000Z",
+  "frictionId": "hostinger-tls-for-agents-cold-read",
+  "apexForAgentsUrl": "https://samedaydesk.com/for-agents",
+  "apexObserved": {
+    "ok": false,
+    "httpStatus": null,
+    "errorClass": "tls_unexpected_eof",
+    "curlNote": "OpenSSL unexpected eof while reading (Hostinger edge from Pilot box)"
+  },
+  "freeAlternates": [
+    {
+      "id": "agents_llms",
+      "url": "https://agents.samedaydesk.com/llms.txt",
+      "httpStatus": 200,
+      "bodyFile": "agents-llms.txt",
+      "sha256": "95f951f0b309357f01286fa4a032fdb0830e9633b323a065a1575e8204cc0b2d"
+    },
+    {
+      "id": "agents_skills_index",
+      "url": "https://agents.samedaydesk.com/.well-known/skills/index.json",
+      "httpStatus": 200,
+      "bodyFile": "skills-index.json",
+      "sha256": "a8723e38d43dac865a90392452978125c91a0e1bb58a5ff33268ba2cd4375564"
+    }
+  ],
+  "paidStep": null,
+  "notes": "Unpaid Job 5 / cold discovery must not depend solely on apex Hostinger TLS. Prefer agents.samedaydesk.com free surfaces or offline fixtures. Not demand."
+}
