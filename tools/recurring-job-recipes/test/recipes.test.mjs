@@ -49,7 +49,7 @@ test("source-change-alert reports unchanged against immutable prior", async () =
   assert.equal(result.recovery.action, "keep_prior");
   assert.equal(result.prior.immutable, true);
   assert.equal(result.payment.replayBlocked, true);
-  assert.equal(result.cost.primary.kind, "illustrative");
+  assert.equal(result.cost.primary.kind, "costs_unknown");
 });
 
 test("source-change-alert reports changed fields with review recovery", async () => {

@@ -21,6 +21,19 @@ service.
 - Existing evidence reconcile posture: keep classes separate, do not treat
   `charged: true` as useful output, never automatically retry payment
 
+## Merchant contracts (input only)
+
+Recipes align with merchant output at
+[`epistemedeus/x402-url-extractor@f9dd59ae`](https://github.com/epistemedeus/x402-url-extractor/commit/f9dd59aeeb200881bc1313ed846ba002e7081258):
+
+| Contract | Meaning | Discoverable route |
+| --- | --- | --- |
+| C31 | Page-change compare (`pilot/page-change-brief/v1`) | `POST /recipes/page-change` |
+| C34 | Extract-batch record (`samedaydesk.extract-batch.v0`) + skills | `GET /.well-known/skills/index.json` |
+
+Set `MERCHANT_INPUT_ROOT` to a checkout of that commit for mounted E2E and official CLI bridges.
+Fixture copies live under `fixtures/merchant/`.
+
 ## Run
 
 ```bash
@@ -66,10 +79,11 @@ Reconcile an unknown payment through the merchant customer example instead.
 
 ## Cost notes
 
-- Sourced (as of 2026-09-09, `/for-agents`): bounded `POST /extract/batch` is
-  0.01 USDC. These recipes do not call that paid route.
-- Illustrative: offline compare uses operator CPU/disk. Free live HTML still
-  consumes network and compute. Do not promise zero marginal cost.
+- Sourced list price (as of 2026-09-09, `/for-agents`): bounded `POST /extract/batch`
+  is 0.01 USDC. These recipes do not call that paid route.
+- Operator CPU, disk, egress, and wall time are labelled `costs_unknown`, not zero
+  and not assumed margin. Free live HTML and mounted fixture origins still consume
+  operator resources.
 
 ## First-customer experiment
 

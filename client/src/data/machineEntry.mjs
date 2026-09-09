@@ -6,8 +6,35 @@ export const SITE_ORIGIN = "https://samedaydesk.com";
 export const GATEWAY_ORIGIN = "https://agents.samedaydesk.com";
 export const MERCHANT_REPO = "https://github.com/epistemedeus/x402-url-extractor";
 export const MERCHANT_PIN = "ef46e2b5213b9436e5cc4339a159c8ae837db880";
+export const MERCHANT_INPUT_PIN = "f9dd59aeeb200881bc1313ed846ba002e7081258";
+export const MERCHANT_INPUT_SHORT = "f9dd59ae";
 export const CUSTOMER_EXAMPLE_VERSION = "0.2.3";
 export const CUSTOMER_EXAMPLE_DIR = "examples/customer-x402";
+export const RECURRING_MERCHANT_CONTRACTS = Object.freeze({
+  C31: Object.freeze({
+    label: "page-change compare",
+    reportSchema: "pilot/page-change-brief/v1",
+    route: `${GATEWAY_ORIGIN}/recipes/page-change`,
+    health: `${GATEWAY_ORIGIN}/recipes/page-change/health`,
+    requiredFields: Object.freeze(["before", "after", "fields"]),
+  }),
+  C34: Object.freeze({
+    label: "extract-batch record + skills discovery",
+    schemaVersion: "samedaydesk.extract-batch.v0",
+    skillsIndex: `${GATEWAY_ORIGIN}/.well-known/skills/index.json`,
+    requiredTopFields: Object.freeze([
+      "ok",
+      "product",
+      "schemaVersion",
+      "quote",
+      "jobId",
+      "jobStatus",
+      "partial",
+      "sources",
+      "charged",
+    ]),
+  }),
+});
 export const EXPLICIT_RECORD_SKILL =
   `${MERCHANT_REPO}/blob/${MERCHANT_PIN}/plugins/samedaydesk-extract/skills/explicit-record/SKILL.md`;
 
@@ -77,11 +104,12 @@ export const REUSE_QUICKSTART = [
 ].join("\n");
 
 export const RECURRING_QUICKSTART = [
+  "# Required operator fields: --prior, --schedule, --clock; plus --fields and one of --current-fixture | --live-safe | --sources | --candidate",
   "node tools/recurring-job-recipes/cli.mjs --list",
   "node tools/recurring-job-recipes/cli.mjs --recipe source-change-alert \\",
   "  --prior tools/recurring-job-recipes/fixtures/priors/source-change.prior.json \\",
   "  --current-fixture tools/recurring-job-recipes/fixtures/current/example-unchanged.json \\",
-  "  --schedule daily --clock 2026-09-09T15:00:00.000Z --horizon 168",
+  "  --fields title --schedule daily --clock 2026-09-09T15:00:00.000Z --horizon 168",
   "node tools/recurring-job-recipes/cli.mjs --recipe comparable-record-extraction \\",
   "  --prior tools/recurring-job-recipes/fixtures/priors/record-extract.prior.json \\",
   "  --sources tools/recurring-job-recipes/fixtures/pages/example-a.html,tools/recurring-job-recipes/fixtures/pages/example-b-partial.html \\",
@@ -204,14 +232,19 @@ export const FOR_AGENTS_CRAWLER_HTML = `
       <h2>Job 5. Recurring page and record recipes</h2>
       <p>
         From a SameDayDesk checkout, run one-shot recurring recipes against an immutable prior.
-        Operator supplies sources, fields, schedule hint, clock, and optional freshness horizon.
-        Outcomes are unchanged, changed, partial, stale baseline, or error. Priors are never
-        overwritten; write a new sequenced artifact after review. Partial and failed rows stay
-        visible. Payment receipts are never automatically replayed. Offline fixture dry-runs are
-        free of merchant charges; optional <code>--live-safe</code> may fetch only
-        <code>https://example.com/</code> and still consumes operator network and CPU. Sourced
-        product price for a paid freshness batch remains 0.01 USDC on this page and is not invoked
-        by these recipes. No cron or always-on service is started.
+        Operator supplies <code>--prior</code>, <code>--schedule</code>, <code>--clock</code>,
+        explicit <code>--fields</code>, and one observation source (<code>--current-fixture</code>,
+        <code>--sources</code>, or <code>--candidate</code>). Outcomes are unchanged, changed,
+        partial, stale baseline, timed out, or error. Priors are never overwritten; write a new
+        sequenced artifact after review. C31 page-change reports use
+        <code>pilot/page-change-brief/v1</code> at
+        <a href="${RECURRING_MERCHANT_CONTRACTS.C31.route}">${RECURRING_MERCHANT_CONTRACTS.C31.route}</a>.
+        C34 extract-batch records use <code>${RECURRING_MERCHANT_CONTRACTS.C34.schemaVersion}</code>
+        with skills at
+        <a href="${RECURRING_MERCHANT_CONTRACTS.C34.skillsIndex}">${RECURRING_MERCHANT_CONTRACTS.C34.skillsIndex}</a>.
+        Payment receipts are never automatically replayed. Offline runs avoid merchant charges; operator
+        CPU and network remain costs_unknown. Listed batch price 0.01 USDC is not invoked here.
+        No cron or always-on service is started.
       </p>
       <pre><code>${RECURRING_QUICKSTART}</code></pre>
       <h2>Live merchant inventory</h2>

@@ -22,6 +22,7 @@ const { values, positionals } = parseArgs({
     horizon: { type: "string" },
     "live-safe": { type: "boolean", default: false },
     "live-url": { type: "string" },
+    "mounted-origin": { type: "boolean", default: false },
     retries: { type: "string", default: "2" },
     "out-dir": { type: "string" },
     "write-artifact": { type: "boolean", default: false },
@@ -54,6 +55,7 @@ const input = {
   horizonHours: values.horizon != null && values.horizon !== "" ? Number(values.horizon) : null,
   liveSafe: values["live-safe"],
   liveUrl: values["live-url"] || "https://example.com/",
+  allowMountedOrigin: values["mounted-origin"],
   retries: Number(values.retries || 2),
   replayPayment: values["replay-payment"],
   sources: values.sources

@@ -145,7 +145,11 @@ async function observeCurrent(input, fields) {
   const url = input.liveUrl || "https://example.com/";
   const retried = await withRetries(
     async () => {
-      const page = await fetchLiveSafe(url, { fetchImpl: input.fetchImpl, timeoutMs: input.timeoutMs });
+      const page = await fetchLiveSafe(url, {
+        fetchImpl: input.fetchImpl,
+        timeoutMs: input.timeoutMs,
+        allowMountedOrigin: input.allowMountedOrigin === true,
+      });
       if (!page.ok) {
         const err = new Error(`live fetch status ${page.status}`);
         err.retryable = page.status >= 500 || page.status === 429;

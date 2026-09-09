@@ -39,9 +39,16 @@ export function loadFixtureSource(path) {
   return { kind: "text", path, text };
 }
 
-export async function fetchLiveSafe(url, { fetchImpl = globalThis.fetch, timeoutMs = 8_000 } = {}) {
+function isMountedOrigin(url) {
+  return /^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?\//.test(String(url));
+}
+
+export async function fetchLiveSafe(
+  url,
+  { fetchImpl = globalThis.fetch, timeoutMs = 8_000, allowMountedOrigin = false } = {},
+) {
   const allowed = new Set(["https://example.com/", "https://example.com"]);
-  if (!allowed.has(url)) {
+  if (!allowed.has(url) && !(allowMountedOrigin && isMountedOrigin(url))) {
     throw new Error(`live-safe allowlist rejected url: ${url}`);
   }
   const controller = new AbortController();

@@ -4,6 +4,7 @@ export const OUTCOMES = Object.freeze([
   "partial",
   "error",
   "stale_baseline",
+  "timed_out",
 ]);
 
 export function classifyStaleBaseline(priorCreatedAt, clock, horizonHours) {
@@ -55,6 +56,13 @@ export function recoveryPlan(outcome, detail = {}) {
         action: "refresh_baseline",
         operatorNext:
           "Prior is older than the operator horizon. Capture a fresh baseline as a new sequenced artifact before alerting on change.",
+        detail,
+      };
+    case "timed_out":
+      return {
+        action: "bounded_retry_then_stop",
+        operatorNext:
+          "The observation or compare step timed out. Keep the immutable prior and any partial evidence. Retry only on a fresh operator run. Do not replay payment while the outcome is uncertain.",
         detail,
       };
     case "error":
