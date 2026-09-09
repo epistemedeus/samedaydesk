@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -10,7 +10,11 @@ import { assertRecipeResult } from "../lib/validate.mjs";
 import { inspectPaymentAuthority } from "../lib/payment-guard.mjs";
 import { loadPrior } from "../lib/prior.mjs";
 import { CONTRACTS } from "../vendor/merchant-contracts.mjs";
-import { resolveMerchantRoot } from "../vendor/resolve-merchant-root.mjs";
+import {
+  isMerchantRoot,
+  MERCHANT_PACKAGE_NAME,
+  resolveMerchantRoot,
+} from "../vendor/resolve-merchant-root.mjs";
 import { comparePageChangeArtifacts, mapPageChangeVerdictToRecipeOutcome } from "../vendor/page-change-bridge.mjs";
 import { validateExtractBatchDocument } from "../vendor/extract-batch-bridge.mjs";
 import { createFixtureOrigin } from "../fixtures/mounted/fixture-origin.mjs";
@@ -27,14 +31,45 @@ const merchantRoot = resolveMerchantRoot();
 const skipMounted = !merchantRoot ? "merchant input checkout missing" : false;
 const customerExample = merchantRoot ? join(merchantRoot, "examples/customer-x402") : null;
 
+test("S25 merchant package contract rejects non-x402-merchant trees", () => {
+  const dir = mkdtempSync(join(tmpdir(), "sdd-not-merchant-"));
+  try {
+    mkdirSync(join(dir, "examples", "customer-x402"), { recursive: true });
+    writeFileSync(join(dir, "page-change-http.mjs"), "export function postRecipesPageChange() {}\n");
+    writeFileSync(join(dir, "examples", "customer-x402", "package.json"), `${JSON.stringify({ name: "samedaydesk-customer-x402-example" })}\n`);
+    writeFileSync(join(dir, "package.json"), `${JSON.stringify({ name: "not-the-merchant" })}\n`);
+    assert.equal(isMerchantRoot(dir), false);
+    writeFileSync(join(dir, "package.json"), `${JSON.stringify({ name: MERCHANT_PACKAGE_NAME, type: "module" })}\n`);
+    assert.equal(isMerchantRoot(dir), true);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+
+  assert.ok(merchantRoot, "S25 merchant checkout missing; expected sibling x402-url-extractor or MERCHANT_INPUT_ROOT");
+  assert.equal(JSON.parse(readFileSync(join(merchantRoot, "package.json"), "utf8")).name, MERCHANT_PACKAGE_NAME);
+});
+
 test("mounted merchant E2E against C31/C34 contracts", { skip: skipMounted, timeout: 120_000 }, async (t) => {
   const origin = await createFixtureOrigin();
   t.after(() => origin.close());
   await warmPageChangeOrigin(origin);
 
-  await t.test("merchant input pin resolves", () => {
-    assert.equal(JSON.parse(readFileSync(join(merchantRoot, "package.json"), "utf8")).name, "x402-merchant");
+  await t.test("S25 merchant package contract", () => {
+    const pkg = JSON.parse(readFileSync(join(merchantRoot, "package.json"), "utf8"));
+    assert.equal(pkg.name, MERCHANT_PACKAGE_NAME);
+    assert.equal(pkg.type, "module");
+    assert.equal(isMerchantRoot(merchantRoot), true);
     assert.match(readFileSync(join(merchantRoot, "page-change-http.mjs"), "utf8"), /postRecipesPageChange/);
+    assert.match(readFileSync(join(merchantRoot, "page-change-http.mjs"), "utf8"), /export function mountPageChangeHttp/);
+    assert.match(readFileSync(join(merchantRoot, "well-known-skills.mjs"), "utf8"), /export function mountWellKnownSkills/);
+  });
+
+  await t.test("mounted origin binds loopback only", () => {
+    assert.match(origin.base, /^http:\/\/127\.0\.0\.1:\d+$/);
+    assert.match(origin.routes.pageChange, /^http:\/\/127\.0\.0\.1:\d+\/recipes\/page-change$/);
+    assert.match(origin.routes.pageChangeHealth, /^http:\/\/127\.0\.0\.1:\d+\/recipes\/page-change\/health$/);
+    assert.match(origin.routes.skillsIndex, /^http:\/\/127\.0\.0\.1:\d+\/\.well-known\/skills\/index\.json$/);
+    assert.match(origin.routes.fixturePage, /^http:\/\/127\.0\.0\.1:\d+\/fixture\/pages\/example-a\.html$/);
   });
 
   await t.test("C31 official CLI matches mounted HTTP unchanged semantics", async () => {
