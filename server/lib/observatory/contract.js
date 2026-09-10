@@ -49,6 +49,9 @@ export const WITHHELD_CONCLUSIONS = Object.freeze([
   "profit",
   "demand",
   "organic_demand",
+  "repeat_demand",
+  "conversion_funnel",
+  "paid_demand_population",
   "revenue",
   "settlement",
   "independent_use",
@@ -91,6 +94,11 @@ export function createMetric(fields) {
     window: fields.window ?? null,
   };
   if (fields.evidenceClass) metric.evidenceClass = fields.evidenceClass;
+  if (fields.sourcePath) metric.sourcePath = fields.sourcePath;
+  if (fields.ratioAlignment) metric.ratioAlignment = fields.ratioAlignment;
+  if (fields.numeratorKey) metric.numeratorKey = fields.numeratorKey;
+  if (fields.denominatorKey) metric.denominatorKey = fields.denominatorKey;
+  if (fields.sample !== undefined) metric.sample = fields.sample;
   return metric;
 }
 
@@ -133,6 +141,7 @@ export function createEnvelope(fields) {
       : WITHHELD_CONCLUSIONS.slice(),
   };
   if (fields.rawExcerpt != null) envelope.rawExcerpt = fields.rawExcerpt;
+  if (fields.paidActivity != null) envelope.paidActivity = cloneRaw(fields.paidActivity);
   return freezeDeep(envelope);
 }
 

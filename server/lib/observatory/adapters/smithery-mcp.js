@@ -43,7 +43,41 @@ const SOURCE_WITHHELD = Object.freeze([
   ...WITHHELD_CONCLUSIONS,
   "runtime_heartbeats",
   "active_traffic",
+  "paid_demand_population",
+  "repeat_demand",
 ]);
+
+const SMITHERY_PAID_ACTIVITY = Object.freeze({
+  sourceId: "smithery_mcp",
+  available: false,
+  reason:
+    "pagination.totalCount is catalog registrations. Registry listings are not traffic, paid customers, or heartbeats. useCount is ignored.",
+  populations: Object.freeze([
+    Object.freeze({
+      id: POPULATION,
+      rawPath: "pagination.totalCount",
+      window: WINDOW,
+      notes: "Catalog registrations only. Paid-activity metrics are missing.",
+      metricKeys: Object.freeze(["registered_servers"]),
+    }),
+  ]),
+  ratios: Object.freeze([]),
+  refusedRatios: Object.freeze([
+    Object.freeze({
+      key: "registered_servers_as_paid_customers",
+      numeratorKey: "registered_servers",
+      denominatorKey: null,
+      reason: "A catalog registration count is not paid demand, traffic, or unique customers.",
+    }),
+  ]),
+  establishes: "Catalog registration count from Smithery servers pagination.totalCount.",
+  doesNotEstablish: Object.freeze([
+    "paid customers",
+    "active traffic",
+    "runtime heartbeats",
+    "repeat demand",
+  ]),
+});
 
 export const descriptor = Object.freeze({
   sourceId,
@@ -95,6 +129,7 @@ export function observe(capture, ctx = {}) {
       evidenceClass,
       rawSourceLink: upstreamUrl,
       withheldConclusions: SOURCE_WITHHELD,
+      paidActivity: SMITHERY_PAID_ACTIVITY,
     });
   }
 
@@ -199,6 +234,7 @@ function finish({ fetchedAt, picked, capture, metrics, availability, errors, war
     rawSourceLink: upstreamUrl,
     withheldConclusions: SOURCE_WITHHELD,
     rawExcerpt,
+    paidActivity: SMITHERY_PAID_ACTIVITY,
   });
 }
 

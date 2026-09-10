@@ -117,7 +117,55 @@ const SOURCE_WITHHELD = Object.freeze([
   "organic_demand_proof",
   "global_agent_traffic",
   "samedaydesk_settlement",
+  "paid_demand_population",
+  "repeat_demand",
+  "conversion_funnel",
 ]);
+
+const X402_PAID_ACTIVITY = Object.freeze({
+  sourceId: "x402stats",
+  available: false,
+  reason:
+    "x402stats snapshot has no registered-vs-paid or marketplace-vs-program split. snapshot.organicSellers and snapshot.organicVolumeUsd are provider heuristics, not paid customers.",
+  populations: Object.freeze([
+    Object.freeze({
+      id: "provider_indexed_sellers",
+      rawPath: "snapshot.sellers",
+      window: WINDOW_DEFAULT,
+      notes: "Provider-indexed sellers in the rolling window. Not unique customers or paid-demand proof.",
+      metricKeys: Object.freeze(["sellers_30d"]),
+    }),
+    Object.freeze({
+      id: "provider_heuristic_organic_sellers",
+      rawPath: "snapshot.organicSellers",
+      window: WINDOW_DEFAULT,
+      notes: "Provider heuristic. Not independently verified organic demand and not a paid-customer count.",
+      metricKeys: Object.freeze(["organic_sellers_30d"]),
+    }),
+  ]),
+  ratios: Object.freeze([]),
+  refusedRatios: Object.freeze([
+    Object.freeze({
+      key: "organicSellers_over_sellers_as_paid_conversion",
+      numeratorKey: "organic_sellers_30d",
+      denominatorKey: "sellers_30d",
+      reason: "organicSellers is a provider heuristic, not a paid-customer population aligned with indexed sellers.",
+    }),
+    Object.freeze({
+      key: "series_buyers_as_unique_humans",
+      numeratorKey: null,
+      denominatorKey: null,
+      reason: "Series buyers are not summed into snapshot metrics and are not classified as unique humans.",
+    }),
+  ]),
+  establishes: "Provider rolling-window settlement/protocol aggregates, including heuristic organic fields.",
+  doesNotEstablish: Object.freeze([
+    "a paid-customer population distinct from indexed sellers",
+    "repeat demand",
+    "unique humans",
+    "SameDayDesk settlement",
+  ]),
+});
 
 export const descriptor = Object.freeze({
   sourceId,
@@ -131,6 +179,8 @@ export const descriptor = Object.freeze({
     "global agent traffic",
     "SameDayDesk settlement",
     "cross-source totals",
+    "a paid-customer population distinct from indexed sellers",
+    "repeat demand",
   ]),
   withheldConclusions: SOURCE_WITHHELD,
   notes: "organicSellers/organicVolumeUsd are provider heuristics. Series rows are not summed into snapshot metrics.",
@@ -163,6 +213,7 @@ export function observe(capture, ctx = {}) {
       evidenceClass,
       rawSourceLink: upstreamUrl,
       withheldConclusions: SOURCE_WITHHELD,
+      paidActivity: X402_PAID_ACTIVITY,
     });
   }
 
@@ -187,6 +238,7 @@ export function observe(capture, ctx = {}) {
       rawSourceLink: upstreamUrl,
       withheldConclusions: SOURCE_WITHHELD,
       rawExcerpt: boundRawExcerpt(capture.body ?? capture.rawText),
+      paidActivity: X402_PAID_ACTIVITY,
     });
   }
 
@@ -276,6 +328,7 @@ export function observe(capture, ctx = {}) {
     rawSourceLink: upstreamUrl,
     withheldConclusions: SOURCE_WITHHELD,
     rawExcerpt: boundRawExcerpt(body),
+    paidActivity: X402_PAID_ACTIVITY,
   });
 }
 
@@ -295,6 +348,6 @@ function coverageFor(windowLabel) {
     kind: "provider_rolling_window",
     population: POPULATION,
     window: windowLabel,
-    notes: "Provider rolling-window aggregates. Not additive with other sources. Organic fields are heuristics.",
+    notes: "Provider rolling-window aggregates. Not additive with other sources. Organic fields are heuristics. No registered-vs-paid population is present.",
   });
 }
