@@ -7,7 +7,7 @@ Date: 2026-09-10. Owner: Pilot Market Distribution R2 (`32d5b452`).
 - Repository: `epistemedeus/samedaydesk`
 - Branch: `codex/r2-distribution-03-20260910`
 - Pin: `2b80f38a4e5ec5f080d1764de7c539af63190012`
-- Local commit (feature): see progress JSON / `git rev-parse HEAD`
+- Local commit (feature): `31d0b8c6a8c8226ae337c7029a01d3e9d9fa8ca4`
 - Worktree: `/workspace/pilot/worktrees/r2-distribution-03-20260910`
 - Scope: `experiments/scale-r2-20260910/distribution/03`
 
@@ -25,6 +25,10 @@ Date: 2026-09-10. Owner: Pilot Market Distribution R2 (`32d5b452`).
 - `package.json` — `test:r2-distribution-03` (isolated)
 
 ## Tests (this VM)
+
+- `npm run test:r2-distribution-03`: **8 pass / 0 fail**
+  (positive Grexal+Agensi, negative/forbidden, partial missing cmds, unavailable, no_users, unavailable≠no_users, collapsed reject, required statuses)
+- `node .../src/cli.mjs demo`: ready + draft_private/pending_review + distinct unavailable/no_users
 
 ```sh
 npm run test:r2-distribution-03
