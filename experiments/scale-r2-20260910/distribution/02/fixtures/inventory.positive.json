@@ -1,0 +1,40 @@
+{
+  "schema": "pilot.r2.distribution.agensi_staging_inventory.v1",
+  "cite": "BOT-S131-PRODUCT-POLISH-0910",
+  "provider": "agensi",
+  "skill": {
+    "name": "Offline Package Provenance Check",
+    "pricingType": "free",
+    "skillMdName": "offline-package-provenance",
+    "zipFileName": "offline-package-provenance.zip",
+    "version": "1.0"
+  },
+  "evidence": {
+    "demoPath": "/workspace/pilot/receipts/scale-bot-0909/bot-s131-polish-0910/task-exchange/DEMO.md",
+    "terminalPath": "/workspace/pilot/receipts/scale-bot-0909/bot-s131-polish-0910/task-exchange/TERMINAL.md",
+    "fieldValuesPath": "/workspace/pilot/receipts/scale-bot-0909/bot-s131-polish-0910/task-exchange/FIELD-VALUES.json",
+    "zipReceiptPath": "/workspace/pilot/receipts/scale-bot-0909/bot-s131-polish-0910/task-exchange/offline-package-provenance.zip",
+    "zipSha256": "7d27bdec35d16e0faf62909e14e0e65a4dcece758aaf50d3c2c3dace7bbcfbeb",
+    "polishedCheckout": "/workspace/pilot/tmp/s131-agensi-polish-0910/",
+    "preservePackagePath": "/workspace/pilot/tmp/s124-root-0910.dYRsYW/agensi/package",
+    "branchTip": "8d677a68e320cc34050d533613530d3397cae630",
+    "receiptRefs": [
+      "/workspace/pilot/receipts/scale-bot-0909/bot-s131-polish-0910/task-exchange/TERMINAL.md",
+      "/workspace/pilot/receipts/scale-bot-0909/bot-s131-polish-0910/task-exchange/RESULT.md",
+      "/workspace/pilot/receipts/scale-bot-0909/bot-s131-polish-0910/task-exchange/DEMO.md",
+      "/workspace/pilot/receipts/scale-bot-0909/bot-s131-polish-0910/task-exchange/FIELD-VALUES.json"
+    ]
+  },
+  "providerReview": {
+    "status": "PendingReview",
+    "resubmit": false,
+    "note": "S131 already PendingReview; Root owns next provider-review event"
+  },
+  "audienceCapture": {
+    "status": "captured",
+    "users": null,
+    "installs": null,
+    "runs": null,
+    "reason": "synthetic fixture; live install counts not invented"
+  }
+}

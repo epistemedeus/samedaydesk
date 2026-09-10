@@ -1,0 +1,22 @@
+{
+  "schema": "pilot.r2.distribution.agensi_staging_inventory.v1",
+  "cite": "bad",
+  "provider": "agensi",
+  "skill": {
+    "name": "x",
+    "pricingType": "free",
+    "skillMdName": "x"
+  },
+  "evidence": {
+    "receiptRefs": ["x"]
+  },
+  "providerReview": {
+    "status": "PendingReview",
+    "resubmit": false
+  },
+  "audienceCapture": {
+    "status": "captured"
+  },
+  "revenue": 10,
+  "buyerCount": 3
+}

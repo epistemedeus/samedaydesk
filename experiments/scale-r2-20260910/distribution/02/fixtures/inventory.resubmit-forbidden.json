@@ -1,0 +1,27 @@
+{
+  "schema": "pilot.r2.distribution.agensi_staging_inventory.v1",
+  "cite": "BOT-S131-PRODUCT-POLISH-0910",
+  "provider": "agensi",
+  "skill": {
+    "name": "Offline Package Provenance Check",
+    "pricingType": "free",
+    "skillMdName": "offline-package-provenance",
+    "zipFileName": "offline-package-provenance.zip"
+  },
+  "evidence": {
+    "demoPath": "/workspace/pilot/receipts/scale-bot-0909/bot-s131-polish-0910/task-exchange/DEMO.md",
+    "terminalPath": "/workspace/pilot/receipts/scale-bot-0909/bot-s131-polish-0910/task-exchange/TERMINAL.md",
+    "zipSha256": "7d27bdec35d16e0faf62909e14e0e65a4dcece758aaf50d3c2c3dace7bbcfbeb",
+    "receiptRefs": [
+      "/workspace/pilot/receipts/scale-bot-0909/bot-s131-polish-0910/task-exchange/TERMINAL.md"
+    ]
+  },
+  "providerReview": {
+    "status": "PendingReview",
+    "resubmit": true
+  },
+  "audienceCapture": {
+    "status": "captured",
+    "users": null
+  }
+}
