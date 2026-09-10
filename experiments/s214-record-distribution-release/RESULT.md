@@ -74,3 +74,12 @@ Discovery, receipts, and `machineEntry` / `distributionRepairKit.json` match tho
 ## Remaining release limits
 
 Pulse PG17 still absent on this VM (not re-run). Recurring merchant-input `express` env gap not part of this product surface. No production acquisition claim. Root still owns merge/deploy.
+
+## Cursor collection
+
+Independent Node 22 re-verify: s134 42/42 · s163 7/7 · s176 27/27 · s185 20/20 · caller-both-kits 2/2; hosted-startup 4/4; spa route-shells + fallback pass. Clean-consumer re-check on current committed kits outside checkout: F1 `missing-input`, F2 nested next-run refuse (alias/exclusive), F3 structured refuse including `{rows:"nope"}`, fixtureDerived visible downstream. Pulse ownership empty vs `origin/main` (PG not re-run).
+
+Capacity at collection boundary (existing VM/process observation, not a new timer): Cursor collector and Heavy parent are distinct OS processes on the same 4-CPU VM (~10.7 GiB MemAvailable, load ~0.1–0.2). Orchestration prompt/resume forest removed from the product tree; compact `native-cells/receipts/final.json` retained.
+
+PR: `gh pr create` returned GraphQL `Resource not accessible by integration`. Feature PR was registered via Cursor ManagePullRequest for user approval (compare URL is not a PR). Cash $0. No merge/deploy.
+

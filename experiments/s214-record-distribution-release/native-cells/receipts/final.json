@@ -28,5 +28,45 @@
     }
   },
   "cleanConsumerCommittedKits": "pass (6a7b5b688584 pair, no rebuild during that gate)",
-  "browser320": "/tmp/tmp.6S0hIdosDD"
+  "browser320": "/tmp/tmp.6S0hIdosDD",
+  "capacityBoundary": {
+    "at": "2026-09-10T15:35:59Z",
+    "boundary": "S214-cursor-collection",
+    "vm": {
+      "hostname": "cursor",
+      "nproc": 4,
+      "MemTotalKb": 16398384,
+      "MemAvailableKb": 10761680,
+      "loadavg": [
+        0.0,
+        0.08740234375,
+        0.076171875
+      ]
+    },
+    "processes": {
+      "cursorCollectorPid": 202184,
+      "heavyParentPid": 195025
+    },
+    "distinction": "Cursor transport/Git/collection vs native Heavy parent (separate OS process, same VM)"
+  },
+  "cursorIndependentVerify": {
+    "node": "v22.22.2",
+    "suites": {
+      "s134": "42/42",
+      "s163": "7/7",
+      "s176": "27/27",
+      "s185": "20/20",
+      "callerBothKits": "2/2"
+    },
+    "hostedStartup": "4/4",
+    "spaRouteShells": "9/9",
+    "spaFallback": "2/2",
+    "cleanConsumerPostRebuildKits": "pass (current committed kits outside checkout)",
+    "F1": "missing-input",
+    "F2": "next-run nested refuse (alias/exclusive)",
+    "F3": "structured refuse null/scalar/{rows:string}",
+    "fixtureDerived": "visible on joined acquisitions + fixture_derived_acquisition gap",
+    "pulseVsMain": "identical (pulse.js/routes empty diff)",
+    "pr": "gh createPullRequest 403; ManagePullRequest registered for user approval"
+  }
 }
