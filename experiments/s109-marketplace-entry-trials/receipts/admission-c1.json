@@ -1,0 +1,10 @@
+{
+  "cohort": "c1-contracts",
+  "size": 3,
+  "at": "2026-09-10T08:38:03Z",
+  "MemTotal": 16791945216,
+  "MemAvailable": 11198267392,
+  "reserve25": 4197986304,
+  "freeAfter": 7000281088,
+  "psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n"
+}

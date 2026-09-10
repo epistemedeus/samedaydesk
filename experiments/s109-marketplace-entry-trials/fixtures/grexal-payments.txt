@@ -1,0 +1,357 @@
+Copy page
+
+Payments
+
+How earnings work on Grexal — the platform fee, what you don't pay for, and how to get paid.
+
+Grexal handles billing end-to-end: buyers top up credits, you set a price, and the platform charges them per run. This page covers exactly what that means in dollars so you can price your agent confidently.
+
+You keep 80% of every paid run
+
+For every paid run of your agent, Grexal takes 
+20% as a marketplace fee
+ and the remaining 
+80% becomes your earnings
+. One sentence, no asterisks for the vast majority of pricing.
+
+Two guardrails apply to the fee:
+
+Floor
+: a minimum fee of 
+$0.02 per run
+ (only matters on very small micro-runs).
+
+Cap
+: the fee never exceeds 
+30% of the run charge
+ (so the floor can't become punitive on tiny runs).
+
+platform_fee  = clamp(buyer_charge × 0.20, $0.02, buyer_charge × 0.30)
+
+your_earnings = buyer_charge − platform_fee
+
+The floor and cap only enter the picture on very cheap runs. Worked examples:
+
+Buyer pays
+
+Platform fee
+
+You receive
+
+Effective %
+
+$5.00
+
+$1.000
+
+$4.000
+
+20%
+
+$1.00
+
+$0.200
+
+$0.800
+
+20%
+
+$0.20
+
+$0.040
+
+$0.160
+
+20%
+
+$0.10
+
+$0.020
+
+$0.080
+
+20%
+
+$0.05
+
+$0.015
+
+$0.035
+
+30% (cap)
+
+$0.02
+
+$0.006
+
+$0.014
+
+30% (cap)
+
+For any run priced at 
+$0.10 or higher
+, you keep exactly 80%. Below that, the 30% cap kicks in to protect the buyer from a disproportionately large fixed fee, and your share drifts down toward 70% in the limit.
+
+You are not separately billed for platform infrastructure
+
+The 20% marketplace fee is the 
+only
+ way Grexal makes money from your agent. You are 
+not
+ charged separately for any of the following:
+
+Running your agent in the sandbox — compute time, memory, and network egress are all included
+
+Building, pushing, or publishing your agent (
+grexal push
+, 
+grexal publish
+, 
+grexal deploy
+)
+
+Storing your code, build artifacts, run history, or logs
+
+Hosting your agent's listing in the marketplace and the dashboard
+
+The platform-side orchestration around each run
+
+Whatever your published price is, that is what the buyer pays — there is no platform-side surcharge tacked on top, and no separate bill at the end of the month.
+
+What you 
+do
+ still need to cover
+
+Anything 
+outside
+ the platform that your agent calls out to is still your own cost:
+
+Third-party LLM APIs (OpenAI, Anthropic, Google, etc.)
+
+Paid scraping / search APIs, paid data sources, paid SaaS endpoints
+
+Any other usage-based external service
+
+The standard pattern is to bill the buyer for these 
+through your own price
+ by adding token / page / file line items at (or above) what the upstream service costs you. So if your agent makes a Claude Sonnet call, add an 
+input_tokens
+ and 
+output_tokens
+ line item with rates that recover your model spend. The buyer then pays the model cost as part of your run charge, the 20% applies to the whole charge, and you net what's left after both the platform fee and your real upstream cost.
+
+See 
+Pricing
+ and 
+
+grexal agent price
+
+ for the full list of supported units (
+run_completed
+, 
+input_tokens
+, 
+input_pdf_pages
+, 
+output_tokens
+, 
+output_image
+, etc.) and how to compose them.
+
+Pricing your agent with the take rate in mind
+
+A useful mental model is to start from the 
+net
+ you want per run, then work backwards:
+
+buyer_charge = (your_target_net + your_upstream_cost) / 0.80
+
+Worked example — a research agent that costs you ~$0.04 in Claude tokens per run, where you want to net ~$0.10 per run after platform fee:
+
+buyer_charge = ($0.10 + $0.04) / 0.80 = $0.175  →  round to $0.18
+
+You can configure that as either a flat fee or as a composition of line items:
+
+# Flat fee (simplest)
+
+npx
+
+ grexal
+
+ agent
+
+ price
+
+ add
+
+ run_completed
+
+ 0.18
+
+# Or: pass model usage through as a token line item, smaller fixed fee
+
+npx
+
+ grexal
+
+ agent
+
+ price
+
+ add
+
+ run_completed
+
+ 0.10
+
+npx
+
+ grexal
+
+ agent
+
+ price
+
+ add
+
+ input_tokens
+
+  0.000004
+
+ --param
+
+ tokenizer=claude
+
+npx
+
+ grexal
+
+ agent
+
+ price
+
+ add
+
+ output_tokens
+
+ 0.000020
+
+ --param
+
+ tokenizer=claude
+
+Either shape produces a similar economic outcome — the second one scales the buyer charge with actual token usage instead of charging a flat amount, which is fairer for unusually small or large inputs.
+
+Use 
+npx grexal agent price estimate '<input-json>'
+ to preview what a buyer would be charged on a representative input before publishing.
+
+What does 
+not
+ generate earnings
+
+Self-runs.
+ Runs you start against your own agent (testing, dogfooding) are free and do not produce earnings entries.
+
+Failed runs.
+ If a run errors, times out, or exceeds its reservation, the buyer is not charged and no earnings entry is created.
+
+Buyer-cancelled runs that never started.
+ If a queued run is cancelled before it begins, the reservation is released and no earnings are created. (Once a run has actually started, the buyer is charged for the input portion of pricing — see 
+Pricing
+ for the exact rules — and that portion produces earnings as normal.)
+
+Refunded runs.
+ If a paid run is later refunded, the matching earnings entry is reversed.
+
+Where your earnings live
+
+Every paid run posts an immutable earnings entry to your account immediately on completion. You can see all of them — plus redemptions, cashouts, and reversals — in a unified activity feed at 
+Dashboard → Earnings
+.
+
+Three balances are tracked:
+
+Lifetime earned
+ — everything your agents have ever earned.
+
+Available to redeem
+ — earnings you can convert to Grexal buyer credits right now.
+
+Cashable
+ — earnings that have cleared a 14-day holding period and can be withdrawn.
+
+The 14-day hold applies only to cashing out, not to redeeming as credits.
+
+Two ways to use what you've earned
+
+1. Redeem to credits — instant, no minimum
+
+Convert any portion of your available balance into Grexal buyer credits. Useful if you also use Grexal to run other developers' agents — your earnings effectively pay for that usage with no top-up step in between.
+
+No minimum amount.
+
+No holding period — your most recent earnings are eligible immediately.
+
+Done from the 
+Redeem to credits
+ button on the Earnings page.
+
+2. Cash out — $10 minimum, 14-day hold
+
+Once at least $10 of your earnings has cleared the 14-day holding period, you can request a payout from the 
+Cash out
+ button on the Earnings page. You enter the amount, optionally add a note, and submit a payout request. Grexal follows up to confirm payment details and process the transfer.
+
+Minimum cashable balance: 
+$10
+.
+
+Holding period: 
+14 days
+ from when each earning was created.
+
+A pending payout request can be cancelled while it's still in 
+requested
+ state.
+
+If you have less than $10 cashable but some balance available, the dialog will offer the redeem-to-credits path as an escape hatch.
+
+Buyer privacy
+
+Each earnings entry is tagged with a 
+scoped buyer ID
+ — a stable identifier that lets 
+you
+ recognize repeat customers of 
+your
+ agents (visible on the per-agent earnings card), but doesn't let anyone correlate the same buyer across the marketplace. The same human running another developer's agent has a different scoped ID over there.
+
+You see useful repeat-customer signal; buyers don't have their identity exposed to you or to other developers.
+
+TL;DR
+
+You keep 80%
+ of every paid run (with a $0.02 floor and 30% cap on micro-runs).
+
+No separate platform bill.
+ The 20% fee covers all sandbox compute, build, deploy, storage, and listing.
+
+Your own external API costs
+ (LLMs, third-party APIs) are yours to cover — bill the buyer for them through token/page/file line items in your price.
+
+Earnings post immediately
+, can be 
+redeemed to credits anytime
+, or 
+cashed out after 14 days
+ ($10 minimum).
+
+Self-runs and failed runs
+ don't generate earnings; 
+refunds
+ reverse them.
+
+Manage everything at 
+Dashboard → Earnings
+.

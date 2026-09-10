@@ -1,0 +1,114 @@
+{
+  "cashBoundaryUsd": 0,
+  "repoRootRelative": true,
+  "total": 17,
+  "passed": 17,
+  "failed": [],
+  "checks": [
+    {
+      "name": "exists:experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/checklist.mjs",
+      "ok": true,
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/checklist.mjs"
+    },
+    {
+      "name": "exists:experiments/s109-marketplace-entry-trials/surfaces/grexal/package/grexal.json",
+      "ok": true,
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/grexal.json"
+    },
+    {
+      "name": "exists:experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/fee-worksheet.mjs",
+      "ok": true,
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/fee-worksheet.mjs"
+    },
+    {
+      "name": "exists:experiments/s109-marketplace-entry-trials/surfaces/dealwork/package/bin/discover.mjs",
+      "ok": true,
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/dealwork/package/bin/discover.mjs"
+    },
+    {
+      "name": "exists:experiments/s109-marketplace-entry-trials/fixtures/dealwork-jobs-sample.json",
+      "ok": true,
+      "path": "experiments/s109-marketplace-entry-trials/fixtures/dealwork-jobs-sample.json"
+    },
+    {
+      "name": "exists:experiments/s109-marketplace-entry-trials/fixtures/grexal-payments.txt",
+      "ok": true,
+      "path": "experiments/s109-marketplace-entry-trials/fixtures/grexal-payments.txt"
+    },
+    {
+      "name": "exists:experiments/s109-marketplace-entry-trials/scripts/buyer-worksheet.mjs",
+      "ok": true,
+      "path": "experiments/s109-marketplace-entry-trials/scripts/buyer-worksheet.mjs"
+    },
+    {
+      "name": "agensi-checklist",
+      "ok": true,
+      "status": 0,
+      "stdoutTail": "n\",\n  \"surface\": \"agensi\",\n  \"publicListingSupported\": false,\n  \"publicListingNote\": \"Anonymous worker cannot read /sell; Root must complete Cloudflare Access (GitHub) then paste verified Stripe/SolanaUSDC text before any listing copy goes public.\",\n  \"nextMeasurableEvent\": \"Root CF Access session + verbatim sell-page payout section archived under private Root storage (not this public branch).\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "agensi-npm-test",
+      "ok": true,
+      "status": 0,
+      "stdoutTail": "test\n> node --test test/*.test.mjs\n\nTAP version 13\n# Subtest: offer descriptor validates offline\nok 1 - offer descriptor validates offline\n  ---\n  duration_ms: 22.182928\n  ...\n# Subtest: tampered descriptor fails closed\nok 2 - tampered descriptor fails closed\n  ---\n  duration_ms: 20.541812\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 2\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 81.040719\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "grexal-validate",
+      "ok": true,
+      "status": 0,
+      "stdoutTail": "{\n  \"ok\": true,\n  \"cashBoundaryUsd\": 0,\n  \"manifestPath\": \"experiments/s109-marketplace-entry-trials/surfaces/grexal/package/grexal.json\",\n  \"errors\": [],\n  \"metadataSplit\": \"grexal.json = runtime/IO; marketplace name/description/pricing/visibility via dashboard or grexal agent set-* per docs.grexal.ai/docs/agent-manifest\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "grexal-fee-010",
+      "ok": true,
+      "status": 0,
+      "stdoutTail": " × 0.30)\",\n  \"buyerChargeUsd\": 0.1,\n  \"platformFeeUsd\": 0.02,\n  \"sellerEarningsUsd\": 0.08,\n  \"effectiveFeePercent\": 20,\n  \"notes\": [\n    \"Normal case ~20% for charges ≥ $0.10.\",\n    \"Micro-run floor $0.02 can raise effective % below $0.10.\",\n    \"Fee never exceeds 30% of charge.\",\n    \"Demand volume unknown — experiment, not a blocker for a dry scaffold.\"\n  ],\n  \"willNotPublishFromWorker\": true\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "grexal-npm-test",
+      "ok": true,
+      "status": 0,
+      "stdoutTail": "t/*.test.mjs\n\nTAP version 13\n# Subtest: fee worksheet matches docs at $0.10 and micro $0.05\nok 1 - fee worksheet matches docs at $0.10 and micro $0.05\n  ---\n  duration_ms: 39.829004\n  ...\n# Subtest: manifest validates offline\nok 2 - manifest validates offline\n  ---\n  duration_ms: 20.208342\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 2\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 95.938644\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "dealwork-discover",
+      "ok": true,
+      "status": 0,
+      "stdoutTail": "ainst job criteria.\",\n        \"freeAlternative\": \"Local git diff + manual README; public x402-data-gateway-skills recipes (MIT/Apache as published).\",\n        \"attribution\": \"Upstream recipes remain separately licensed; this draft sells packaging/acceptance labor only.\"\n      },\n      \"openApiNote\": \"Submitting requires authenticated POST /jobs/{id}/bids — not performed by this tool.\"\n    }\n  ]\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "dealwork-npm-test",
+      "ok": true,
+      "status": 0,
+      "stdoutTail": "\n> @samedaydesk/s109-dealwork-discovery@0.1.0 test\n> node --test ./test/discover.test.mjs\n\nTAP version 13\n# Subtest: fixture discovery emits local bid drafts without posting\nok 1 - fixture discovery emits local bid drafts without posting\n  ---\n  duration_ms: 21.786484\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 1\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 57.166788\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "buyer-agensi",
+      "ok": true,
+      "status": 0,
+      "stdoutTail": "ta-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666\",\n    \"merchantEvidence\": \"epistemedeus/x402-url-extractor@3516cd40ba275c9f228443158097137cac44d003\",\n    \"rule\": \"Do not resell free public skill text as proprietary; sell packaging/acceptance/delivery support only.\"\n  },\n  \"nextMeasurableEvent\": \"Root CF Access + archived sell-page payout text enabling a truthful public listing draft\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "buyer-grexal",
+      "ok": true,
+      "status": 0,
+      "stdoutTail": "3516cd40ba275c9f228443158097137cac44d003\",\n    \"rule\": \"Do not resell free public skill text as proprietary; sell packaging/acceptance/delivery support only.\",\n    \"grexalRuntimeFee\": \"20% normal marketplace fee accrues to Grexal; upstream recipes remain separately licensed\"\n  },\n  \"nextMeasurableEvent\": \"Root creates Grexal agent identity + sets pricing/visibility without this worker spending\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "buyer-dealwork",
+      "ok": true,
+      "status": 0,
+      "stdoutTail": "temedeus/x402-url-extractor@3516cd40ba275c9f228443158097137cac44d003\",\n    \"rule\": \"Do not resell free public skill text as proprietary; sell packaging/acceptance/delivery support only.\"\n  },\n  \"sampleJobsSource\": \"fixtures/dealwork-jobs-sample.json\",\n  \"nextMeasurableEvent\": \"Root claims existing Dealwork owner identity (do not recreate) and optionally posts a bid from Root-controlled session\"\n}\n",
+      "stderrTail": ""
+    }
+  ]
+}

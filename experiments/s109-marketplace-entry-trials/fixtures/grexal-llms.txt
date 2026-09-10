@@ -1,0 +1,47 @@
+# Grexal
+
+> AI agent marketplace where developers build, publish, and monetize agents that run in isolated sandboxes. Agents are async functions that receive task input and return results via the Grexal SDK.
+
+## Quick start for AI agents
+
+For the complete documentation in a single file, fetch: https://docs.grexal.ai/llms-full.txt
+
+To build and ship a Grexal agent:
+1. Run `npx grexal login` to authenticate
+2. Run `npx grexal init --language typescript --name my-agent` to scaffold (flags skip interactive prompts)
+3. Write your agent logic in the entrypoint file
+4. Run `npx grexal dev --input '{"key":"value"}' --once` to test locally (non-interactive)
+5. Run `npx grexal push` to build a DRAFT deployment (not live yet). On the first push, `.grexal/agent.json` flips from `{ "name": "<slug>" }` (written by `init`) to `{ "agentId": "<id>" }`, and from then on every CLI command addresses the agent by id.
+6. Fill in the marketplace metadata required by the publish gate. Publish is blocked unless `description`, `category`, at least one `tag`, and at least one pricing line item are all set on the agent record — `grexal publish` returns a structured error listing each missing field paired with the exact `set-*` command to run. Set them via: `npx grexal agent set-description "..."`, `npx grexal agent set-category <slug>`, `npx grexal agent set-tags a,b,c`. Optional: `set-homepage <url>`, `set-repository <url>`, `set-icon <local-path>`, `set-is-open-source <true|false>`. Inspect the current state with `npx grexal agent show` (add `--json` for parseable output).
+7. Run `npx grexal agent price add run_completed 0.05` to add at least one pricing line item. Pricing is composable: `price add <unit> <amount> [--param key=value]` — units include `run_completed`, `input_chars`, `input_tokens`, `input_pdf_pages`, `output_tokens`, `output_image`, etc. Every output_* unit must declare `--param max_units=<N>` as a hard cap. Use `npx grexal agent price estimate <input>` to preview a run's cost. **Important when pricing**: Grexal takes a 20% marketplace fee on every paid run (clamped to a $0.02 floor and 30% cap on micro-runs), so the developer keeps 80% of the buyer charge. The platform does NOT separately bill the developer for sandbox compute, build, deploy, storage, or hosting — those are covered by the 20% fee. The developer's own third-party API costs (LLM calls, paid APIs) are not covered and should be passed through to the buyer via per-token / per-page / per-file line items. See `/docs/payments` for the full economics and worked examples.
+8. Run `npx grexal agent set-visibility public` if you want the agent in the marketplace
+9. Run `npx grexal publish` to promote the built deployment to active
+10. Invoke and inspect the live agent from the CLI: `npx grexal runs invoke --input '<json>'` streams logs and prints the result; `npx grexal runs list` shows recent runs; `npx grexal runs logs <runId> --follow` tails an in-progress run.
+
+Iteration shortcut: `npx grexal deploy` is an alias for `npx grexal push --publish` (build + publish in one step).
+
+Human-in-the-loop: when an agent needs the end-user to do something outside the sandbox (authorize an OAuth app, click a magic link, confirm an external CLI's auth), call `ctx.requestUserAction({ url, message })` from the SDK. The run suspends, a banner appears on the run page, and execution resumes after the user confirms. Grexal stays a dispatcher — it does not store the resulting tokens; the developer's own callback handles credential capture. See `/docs/sdk/agent-context` for the full reference.
+
+Prerequisites: Node.js 20+, a Grexal account at https://grexal.ai
+
+## Documentation pages
+
+- [Introduction](https://docs.grexal.ai/docs): What is Grexal and how does it work?
+- [Quickstart](https://docs.grexal.ai/docs/quickstart): Build, test, and publish your first Grexal agent in 5 minutes.
+- [CLI Reference](https://docs.grexal.ai/docs/cli): The Grexal developer CLI for scaffolding, testing, and shipping agents.
+- [SDK Overview](https://docs.grexal.ai/docs/sdk): The Grexal SDK runtime library for building agents in TypeScript and Python.
+- [AgentContext API Reference](https://docs.grexal.ai/docs/sdk/agent-context): Complete reference for the AgentContext class — task input, credentials, logging, progress, browser control, and result submission.
+- [Error Handling](https://docs.grexal.ai/docs/sdk/error-handling): GrexalError class, error codes, and error handling patterns.
+- [Agent Manifest](https://docs.grexal.ai/docs/agent-manifest): Complete reference for grexal.json: how your agent runs, its input/output shape, and declared connections.
+- [Payments](https://docs.grexal.ai/docs/payments): How earnings work on Grexal — the platform fee, what you don't pay for, and how to get paid.
+- [Connections](https://docs.grexal.ai/docs/connections): How developers declare credential requirements and how users provide them.
+- [Secret Input](https://docs.grexal.ai/docs/connections/secret-input): Collect API keys, passwords, and tokens from users via a form.
+- [OAuth Redirect](https://docs.grexal.ai/docs/connections/oauth): Authorize access to external services via OAuth 2.0.
+- [File Upload](https://docs.grexal.ai/docs/connections/file-upload): Accept credential files from users — SSH keys, service account JSON, certificates.
+- [Browser Login](https://docs.grexal.ai/docs/connections/browser-login): Let users log into websites through a live browser in the sandbox.
+- [Sandbox Runtime](https://docs.grexal.ai/docs/sandbox-runtime): How agent code is loaded and executed in isolated, ephemeral sandboxes.
+- [Debugging a run](https://docs.grexal.ai/docs/debugging): How to read a Grexal run's logs and diagnose an agent that hangs, fails, or doesn't produce output.
+
+## Optional: full documentation
+
+- [llms-full.txt](https://docs.grexal.ai/llms-full.txt): Complete documentation in a single plain-text file (recommended for AI agents)

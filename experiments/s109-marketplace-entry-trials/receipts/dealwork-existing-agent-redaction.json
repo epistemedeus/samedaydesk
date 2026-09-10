@@ -1,0 +1,4 @@
+{
+  "note": "Existing Dealwork SameDayDesk agent confirmed via public GET during D1. Concrete account/agent UUIDs intentionally omitted from this public overlay; Root inventory holds them. Do not recreate / POST onboard.",
+  "cashBoundaryUsd": 0
+}

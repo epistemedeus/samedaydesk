@@ -1,0 +1,46 @@
+{
+  "surface": "agensi",
+  "cashBoundaryUsd": 0,
+  "willNotListFromWorker": true,
+  "skillRecipePin": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
+  "merchantEvidencePin": "epistemedeus/x402-url-extractor@3516cd40ba275c9f228443158097137cac44d003",
+  "offerTitle": "Gateway recipe packaging + acceptance evidence (Agensi draft)",
+  "paidDeliverable": "Buyer receives a versioned packaging of a public gateway recipe plus a machine-checkable acceptance report (pinned commit, command hashes, pass/fail checklist), delivered via Agensi listing ops if Root enables payouts. Not a resale of free recipe text as proprietary IP.",
+  "freeAlternative": "Clone epistemedeus/x402-data-gateway-skills at pin 82d0f019713c7223898806144da08fdbeed5c666 (or npx skills add) and run recipes locally against the public SameDayDesk gateway; DIY acceptance notes without marketplace mediation.",
+  "competentFreeDelta": "Paid delta is packaging labor, Agensi discovery/scan/delivery ops, and acceptance formatting — not exclusive ownership of public recipe content.",
+  "payoutClaimsVerified": {
+    "status": "blocked-by-access",
+    "accountEligibility": "not-verifiable-without-auth",
+    "agensiDev": "entire www.agensi.dev host 302s to Cloudflare Access (GitHub IdP); /sell not anonymously readable",
+    "agensiIoContractText": {
+      "status": "public-tos-verified",
+      "termsUrl": "https://www.agensi.io/terms",
+      "sellUrl": "https://www.agensi.io/sell",
+      "railsNamedInToS": ["Stripe Connect", "Zoneless USDC on Solana"],
+      "minPaidPriceUsd": 5,
+      "revenueShareNetExVat": "70/30 creator/platform (ToS; re-verify before listing)",
+      "note": "A1 cell: ToS last updated 2026-09-02 (Agensi BV). Stripe-terms page older and Stripe-mandatory; prefer later ToS for Zoneless. Account payout eligibility still requires Root auth."
+    },
+    "rumored": ["Stripe", "Solana USDC"],
+    "evidence": "GET https://www.agensi.dev/sell → HTTP 302 Cloudflare Access. Parallel public read of https://www.agensi.io/terms §6.1 names Stripe Connect or Zoneless USDC-on-Solana before paid publish.",
+    "doNotAssumeEligible": true
+  },
+  "rootHandoff": {
+    "cloudflareAccessUrl": "https://www.agensi.dev/sell",
+    "publicSellerUrl": "https://www.agensi.io/sell",
+    "authHint": "For .dev: Cloudflare Access → GitHub. For .io creator submit: /auth then /dashboard/submit — Root only; worker will not sign up.",
+    "steps": [
+      "Root decides whether www.agensi.dev Access identity is needed vs an agensi.io creator session (worker will not sign up).",
+      "Confirm payout method setup UI state (Stripe Connect connected and/or Zoneless enabled) without publishing.",
+      "Capture verbatim current fee/min-price/payout text from authenticated submit flow; keep private account IDs out of this public overlay.",
+      "Only after payout rails enabled: draft listing that attributes the gateway pin and sells packaging/acceptance/support — worker will not list."
+    ]
+  },
+  "apiOrSdk": {
+    "publicUnauthenticatedApi": "none verified for seller upload",
+    "buyerMcp": "https://mcp.agensi.io/mcp (search_skills etc.; not a seller upload API)",
+    "note": "Seller entry is UI handoff (/dashboard/submit on agensi.io). No official public seller listing API verified from this worker."
+  },
+  "attributionPlan": "Listings must cite upstream recipe repo+pin; SameDayDesk sells packaging/acceptance/ops only. Do not claim proprietary ownership of free recipes.",
+  "nextMeasurableEvent": "Root auth (Access and/or agensi.io) + payout-method enabled state captured privately; still $0 and no publish from worker."
+}

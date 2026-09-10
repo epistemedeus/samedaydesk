@@ -1,0 +1,5 @@
+native-cells/logs/*
+!native-cells/logs/README.md
+**/.s109-grexal-dry-out/
+**/node_modules/
+**/*.stderr

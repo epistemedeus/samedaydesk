@@ -1,0 +1,455 @@
+{
+  "cell": "A1-agensi-contract",
+  "observedAt": "2026-09-10T08:42:51Z",
+  "cashBoundaryUsd": 0,
+  "actionsNotTaken": [
+    "no signup",
+    "no GitHub OAuth through Cloudflare Access",
+    "no email/Google sign-in on agensi.io",
+    "no listing",
+    "no purchase",
+    "no payout onboarding",
+    "no email to info@agensi.io"
+  ],
+  "newFact": "www.agensi.dev is not a public seller surface: the entire host (including /, /sell, /api, /mcp, /terms) 302s unauthenticated clients to Cloudflare Access team mlehman-899.cloudflareaccess.com with a single IdP labeled 'GitHub ・ GitHub' (OAuth authorize client_id Ov23liDyjGUvNI6tlI7S). Apex agensi.dev returns Cloudflare 522. The currently verifiable Agensi seller/runtime contract lives on www.agensi.io (no Access wall). ToS last updated 2026-09-02 (Agensi BV, Netherlands) states paid listing requires an account plus Stripe Connect or Zoneless USDC-on-Solana, min paid price $5.00, 70/30 of net ex-VAT, ZIP+SKILL.md, 8-point scan then human review. Stripe-terms (last updated 2026-06-24) still say Stripe Connect is mandatory and do not mention Zoneless; treat ToS 6.1/7.3 as the later text. No public seller listing API or npm SDK. Buyer MCP at https://mcp.agensi.io/mcp initializes unauthenticated (server name agensi v1.1.0) and search_skills/get_skill/list_categories/get_popular/get_creator require no auth; paid install needs OAuth/API key + credits. GET /api/install/<slug> is a real JSON/zip edge function (free code-reviewer -> 200 application/zip; paid keyword-research -> 403 purchase URL). This cell did not authenticate, so Stripe/Zoneless account-level eligibility is contract-text only, not an enabled-payout proof.",
+  "observedPath": "CLI/HTTP from this worker, no browser login. 1) Probe https://www.agensi.dev and /sell with curl: HTTP/2 302 Location https://mlehman-899.cloudflareaccess.com/cdn-cgi/access/login/www.agensi.dev?... ; follow -> HTML title 'Sign in ・ Cloudflare Access', button 'Sign in with: GitHub ・ GitHub', data-idp=GitHub. robots.txt on .dev is Cloudflare-managed Content-Signal text (200) and is not origin contract. 2) Parallel probe https://www.agensi.io: public homepage, /sell, /terms, /stripe-terms, /about, /pricing, /mcp, /docs/mcp-setup, /learn/*, /auth, /dashboard/submit (SSR shell, noindex), llms.txt, sitemap.xml all 200 without Access. 3) Read ToS §6–7, Stripe Payment Terms, /sell copy, MCP initialize + tools/list + search_skills. 4) gh api pin epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666 (public, no LICENSE file). Stop before any account creation.",
+  "publicUrls": {
+    "primaryHostNotedByTask": "https://www.agensi.dev",
+    "productionMarketplace": "https://www.agensi.io",
+    "reachableWithoutAuth": [
+      {
+        "url": "https://www.agensi.io/",
+        "http": 200,
+        "note": "Public storefront. Copy: 'Payouts via Stripe, or USDC on Solana through Zoneless.' MCP URL https://mcp.agensi.io/mcp. Claims 5,000+ skills / 6,000+ users / 400+ creators."
+      },
+      {
+        "url": "https://www.agensi.io/sell",
+        "http": 200,
+        "title": "How to Make Money With AI: Sell Agent Skills | Agensi",
+        "note": "Public creator marketing. ZIP+SKILL.md, 8-point scan + AI + human 24-48h, 70/30, Stripe or USDC via Zoneless, merchant of record, min examples include $29/$5 economics, free to list."
+      },
+      {
+        "url": "https://www.agensi.io/terms",
+        "http": 200,
+        "title": "Terms of Service | Agensi",
+        "note": "Effective 2026-03-02, last updated 2026-09-02. Binding seller contract."
+      },
+      {
+        "url": "https://www.agensi.io/stripe-terms",
+        "http": 200,
+        "note": "Effective 2026-03-12, last updated 2026-06-24. Stripe Connect 70/30; older than ToS on USDC."
+      },
+      {
+        "url": "https://www.agensi.io/about",
+        "http": 200,
+        "note": "Creators keep 70%. Payouts via Stripe or USDC. MCP shopping."
+      },
+      {
+        "url": "https://www.agensi.io/pricing",
+        "http": 200,
+        "note": "Buyer credits: 1 credit=$0.20 base; Starter $9/mo 50 credits; Pro $19/mo 120 credits. Connecting MCP is free."
+      },
+      {
+        "url": "https://www.agensi.io/learn/how-to-sell-skills-on-agensi",
+        "http": 200,
+        "note": "Creator guide: account + Stripe Connect + zip SKILL.md + Creator Dashboard Submit a Skill. Mentions free listings. Payouts via Stripe weekly (does not mention Zoneless)."
+      },
+      {
+        "url": "https://www.agensi.io/learn/how-agensi-payouts-work-stripe-connect",
+        "http": 200,
+        "note": "Article body: 'Agensi uses Stripe Connect for all creator payouts. You keep 70%...'. Hub teaser still says '80/20 revenue share on sales, 70/30 on Pro subscriptions' — stale vs ToS 70/30 for all sales. No USDC in article body."
+      },
+      {
+        "url": "https://www.agensi.io/learn/how-agensi-security-scan-works",
+        "http": 200,
+        "note": "Eight checks: prompt injection, data exfiltration, dangerous commands, hardcoded secrets, obfuscation, suspicious network access, zip structure, SKILL.md validity."
+      },
+      {
+        "url": "https://www.agensi.io/learn/skill-md-creator-checklist",
+        "http": 200,
+        "note": "Zip = single top-level folder named after skill, SKILL.md at that folder root."
+      },
+      {
+        "url": "https://www.agensi.io/auth",
+        "http": 200,
+        "title": "Sign in | Agensi",
+        "note": "Public login UI (not Access). Email+password, 'Email me a 6-digit code', Continue with Google, Sign up. No GitHub button on this page."
+      },
+      {
+        "url": "https://www.agensi.io/dashboard",
+        "http": 200,
+        "note": "SSR shell title Dashboard | Agensi, robots noindex,nofollow. Almost no body text without JS/auth. Accept:application/json -> 500 {\"error\":\"Only HTML requests are supported here\"}."
+      },
+      {
+        "url": "https://www.agensi.io/dashboard/submit",
+        "http": 200,
+        "title": "Submit a Skill | Agensi",
+        "note": "Public GET of SPA shell (noindex). Upload form not present in SSR text; listing still requires account. llms.txt 'Sell a Skill' URL /submit is 404."
+      },
+      {
+        "url": "https://www.agensi.io/mcp",
+        "http": 200,
+        "note": "Buyer MCP docs. 'https://mcp.agensi.io/mcp' Streamable HTTP. Free to connect/search; paid install via Stripe checkout or credits."
+      },
+      {
+        "url": "https://www.agensi.io/docs/mcp-setup",
+        "http": 200,
+        "note": "Paste https://mcp.agensi.io/mcp. No API key to search. Sign-in window on first paid install."
+      },
+      {
+        "url": "https://www.agensi.io/llms.txt",
+        "http": 200,
+        "note": "Machine index. Stale vs ToS: 'paid skills are one-time purchases with no subscriptions'; live /sell and ToS include subscription skills. Sell URL listed as /submit (404)."
+      },
+      {
+        "url": "https://www.agensi.io/llms-full.txt",
+        "http": 200,
+        "note": "Dynamic catalog index (~328KB). Hundreds of Free listings (e.g. code-reviewer, skill-creator)."
+      },
+      {
+        "url": "https://www.agensi.io/robots.txt",
+        "http": 200,
+        "note": "Allow /; Allow /dashboard/submit; Disallow /admin /dashboard /auth /api/ /download/ /skill/. Sitemap https://www.agensi.io/sitemap.xml"
+      },
+      {
+        "url": "https://www.agensi.io/sitemap.xml",
+        "http": 200,
+        "note": "Index lastmod 2026-09-10 for skills/creators/bundles/pages; learn lastmod 2026-09-02."
+      },
+      {
+        "url": "https://www.agensi.io/api/install/code-reviewer",
+        "http": 200,
+        "contentType": "application/zip",
+        "note": "Public free-skill install. Headers: x-served-by supabase-edge-runtime; content-disposition attachment; filename=code-reviewer.zip; x-skill-version 1.0; CORS *."
+      },
+      {
+        "url": "https://www.agensi.io/api/install/keyword-research",
+        "http": 403,
+        "body": "{\"error\":\"This is a paid skill. Purchase it at https://www.agensi.io/skills/keyword-research to get install access.\"}"
+      },
+      {
+        "url": "https://www.agensi.io/api/install",
+        "http": 400,
+        "body": "{\"error\":\"Invalid skill slug\"}"
+      },
+      {
+        "url": "https://mcp.agensi.io/mcp",
+        "http": "GET 405 / POST initialize 200",
+        "note": "GET -> {\"error\":\"Method Not Allowed. Use POST for MCP requests.\"}. POST initialize (no auth) -> protocolVersion 2025-03-26, serverInfo.name=agensi, version=1.1.0, tools.listChanged. Hosted on Railway (server: railway-hikari)."
+      },
+      {
+        "url": "https://www.agensi.dev/robots.txt",
+        "http": 200,
+        "note": "Cloudflare-managed Content-Signal robots, not Agensi origin docs. Still emits Access Location header."
+      }
+    ],
+    "behindCloudflareAccess": [
+      {
+        "url": "https://www.agensi.dev/",
+        "httpNofollow": 302,
+        "locationHost": "mlehman-899.cloudflareaccess.com",
+        "followedTitle": "Sign in ・ Cloudflare Access"
+      },
+      {
+        "url": "https://www.agensi.dev/sell",
+        "httpNofollow": 302,
+        "idp": "GitHub only",
+        "note": "Task-named sell path. Access login, not a public creator form."
+      },
+      {
+        "url": "https://www.agensi.dev/sell/",
+        "httpNofollow": 302
+      },
+      {
+        "url": "https://www.agensi.dev/creator",
+        "httpNofollow": 302
+      },
+      {
+        "url": "https://www.agensi.dev/dashboard",
+        "httpNofollow": 302
+      },
+      {
+        "url": "https://www.agensi.dev/login",
+        "httpNofollow": 302
+      },
+      {
+        "url": "https://www.agensi.dev/signup",
+        "httpNofollow": 302
+      },
+      {
+        "url": "https://www.agensi.dev/terms",
+        "httpNofollow": 302
+      },
+      {
+        "url": "https://www.agensi.dev/about",
+        "httpNofollow": 302
+      },
+      {
+        "url": "https://www.agensi.dev/docs",
+        "httpNofollow": 302
+      },
+      {
+        "url": "https://www.agensi.dev/api",
+        "httpNofollow": 302
+      },
+      {
+        "url": "https://www.agensi.dev/mcp",
+        "httpNofollow": 302
+      },
+      {
+        "url": "https://www.agensi.dev/sitemap.xml",
+        "httpNofollow": 302
+      }
+    ],
+    "deadOrNoDns": [
+      {
+        "url": "https://agensi.dev/",
+        "http": 522,
+        "note": "Cloudflare origin timeout. Same CF IPs as www."
+      },
+      {
+        "url": "https://api.agensi.io/",
+        "dns": "NXDOMAIN"
+      },
+      {
+        "url": "https://docs.agensi.io/",
+        "dns": "NXDOMAIN"
+      },
+      {
+        "url": "https://api.agensi.dev/",
+        "dns": "NXDOMAIN"
+      },
+      {
+        "url": "https://docs.agensi.dev/",
+        "dns": "NXDOMAIN"
+      },
+      {
+        "url": "https://mcp.agensi.dev/",
+        "dns": "NXDOMAIN"
+      },
+      {
+        "url": "https://www.agensi.io/submit",
+        "http": 404,
+        "note": "llms.txt advertised sell URL; actual public pages are /sell and /dashboard/submit."
+      },
+      {
+        "url": "https://www.agensi.io/login",
+        "http": 404,
+        "note": "Use /auth."
+      },
+      {
+        "url": "https://www.agensi.io/signup",
+        "http": 404
+      },
+      {
+        "url": "https://www.agensi.io/docs",
+        "http": 404
+      },
+      {
+        "url": "https://www.agensi.io/openapi.json",
+        "http": 404
+      },
+      {
+        "url": "https://www.agensi.io/api",
+        "http": 404,
+        "note": "HTML 404 page, not a catalog API root."
+      },
+      {
+        "url": "https://www.agensi.io/api/skills",
+        "http": 404,
+        "note": "POST without auth also HTML 404. No public seller create endpoint found."
+      }
+    ]
+  },
+  "payoutClaimsVerified": {
+    "stripeSellerPayout": {
+      "status": "contract-text-verified-on-agensi.io",
+      "accountEligibility": "not-verifiable-without-auth",
+      "agensiDev": "blocked-by-Access",
+      "primaryQuote": "To list a skill for sale, you must create an account and set up a payout method. You may either connect a Stripe account via Stripe Connect, or onboard with Zoneless, our stablecoin payout partner, to receive payouts in USDC on Solana. ... You may not publish a paid skill until one of these payout methods is set up and enabled.",
+      "primarySource": "https://www.agensi.io/terms §6.1 (last updated 2026-09-02)",
+      "supportingQuotes": [
+        {
+          "source": "https://www.agensi.io/terms §7.2",
+          "text": "Payouts are processed via Stripe Connect. Direct purchase payouts are processed according to Stripe's standard payout schedule. Credit install earnings are aggregated monthly and transferred to your Stripe Connect account."
+        },
+        {
+          "source": "https://www.agensi.io/stripe-terms (last updated 2026-06-24)",
+          "text": "To sell skills on Agensi, you must connect a Stripe account via Stripe Connect. ... 70% is paid to the creator's connected Stripe account. 30% is retained by Agensi as a platform fee (all-inclusive, covers payment processing). ... For a $5.00 skill purchase (minimum price)."
+        },
+        {
+          "source": "https://www.agensi.io/learn/how-agensi-payouts-work-stripe-connect",
+          "text": "Agensi uses Stripe Connect for all creator payouts. You keep 70% of every skill sale. Payouts go directly to your bank account through Stripe's standard payout schedule (typically 2-7 business days depending on your country)."
+        }
+      ],
+      "staleness": "stripe-terms and the payouts learn article still describe Stripe as the only rail. ToS §6.1 (2026-09-02) adds Zoneless USDC as an alternative and says Stripe Connect takes precedence if both are active. Hub blurb still advertises 80/20; article body and ToS are 70/30."
+    },
+    "solanaUsdcSellerPayout": {
+      "status": "contract-text-verified-on-agensi.io",
+      "accountEligibility": "not-verifiable-without-auth",
+      "agensiDev": "blocked-by-Access",
+      "primaryQuote": "Creators who select USDC (Solana) payouts are paid through Zoneless rather than through Stripe. Earnings accrue as a pending balance in your Creator dashboard as sales settle. Each amount becomes payable 72 hours after the underlying transaction settles, and Agensi releases it to your Zoneless account and on to your payout wallet automatically at the next payout run after that 72-hour period. Payout runs happen multiple times per day.",
+      "primarySource": "https://www.agensi.io/terms §7.3",
+      "supportingQuotes": [
+        {
+          "source": "https://www.agensi.io/terms §7.4",
+          "text": "USDC payouts are sent as USDC on the Solana network, via Zoneless, to the payout wallet on file with your Zoneless account. ... Payout amounts are denominated in US dollars and sent 1:1 in USDC."
+        },
+        {
+          "source": "https://www.agensi.io/sell",
+          "text": "Payouts reach you through Stripe or as USDC on Solana through Zoneless."
+        },
+        {
+          "source": "https://www.agensi.io/",
+          "text": "Payouts via Stripe, or USDC on Solana through Zoneless. No hidden fees."
+        }
+      ],
+      "notVerified": "No public API returns a live Zoneless onboarding URL, wallet-verification status, or a Solana payout tx. Zoneless-hosted onboarding page is behind creator auth. This cell did not open it."
+    },
+    "feesAndGates": {
+      "creatorShare": "70% of net sale price excluding VAT/sales tax",
+      "platformFee": "30% all-in; ToS: 'Creators are never charged additional processing fees.'",
+      "minPaidPriceUsd": 5.0,
+      "creditCost": "dollar price × 5 (ToS §6.4; $5 skill = 25 credits)",
+      "freeListings": "Allowed. ToS: 'Free skills do not cost credits'. /sell: 'Free to list'. Paid publish blocked until a payout method is enabled.",
+      "reviewSlaPublic": "usually within 24-48 hours ( /sell and how-to-sell guide )",
+      "merchantOfRecord": "Agensi BV; self-billing invoices to creators (ToS §7.5)"
+    }
+  },
+  "apiOrUiHandoff": {
+    "publicSellerApi": false,
+    "publicSellerSdk": false,
+    "npmSearchAgensi": "no official @agensi seller package in top npm search; unrelated agent-skill-trust-check only",
+    "buyerRuntimePresent": {
+      "mcp": {
+        "url": "https://mcp.agensi.io/mcp",
+        "transport": "Streamable HTTP (POST). GET /sse wants Accept: text/event-stream",
+        "unauthenticatedToolsObserved": [
+          "search_skills",
+          "get_skill (free SKILL.md; paid returns requires_credits / Stripe checkout)",
+          "list_categories",
+          "get_popular",
+          "get_creator"
+        ],
+        "authenticatedToolsDocumented": [
+          "my_purchases (OAuth or API key)",
+          "get_skill confirm=true spends credits"
+        ],
+        "sellerUploadTool": "not present in tools/list dump",
+        "searchForSameDayDeskPin": "tools/call search_skills query 'samedaydesk x402 data gateway' returned unrelated paid listings (x402-attack-surface-gate, arweave-gateway-setup, agent-api-gateway). Pin skills are not in the public Agensi catalog from this unauthenticated call."
+      },
+      "installHttp": "GET https://www.agensi.io/api/install/<slug> (Supabase edge). Free zip; paid 403 JSON. robots.txt Disallow: /api/"
+    },
+    "uiHandoffRootMustPerform": {
+      "doNotDoInThisCell": true,
+      "ifUsingTaskHostAgensiDev": [
+        "Open https://www.agensi.dev/sell",
+        "Complete Cloudflare Access 'Sign in with GitHub' against mlehman-899.cloudflareaccess.com (OAuth client_id Ov23liDyjGUvNI6tlI7S)",
+        "Capture the post-Access origin: seller dashboard vs unrelated private app. Unknown from this cell."
+      ],
+      "ifUsingProductionAgensiIo": [
+        "Open https://www.agensi.io/auth (email/password, email 6-digit code, or Continue with Google). Not GitHub.",
+        "Create a $0 account. Do not buy credits.",
+        "In Creator dashboard, connect Stripe Connect and/or Zoneless USDC (ToS: Stripe wins if both active). Paid listing blocked until one is enabled.",
+        "Package skill as zip: one top-level folder, SKILL.md with YAML name+description at that folder root.",
+        "Open https://www.agensi.io/dashboard/submit (or in-app 'Submit a Skill'), upload zip, set free or paid >= $5, tags, listing copy, MCP discoverable toggle (default on).",
+        "Wait automated 8-point scan + AI + human review (public copy: 24-48h).",
+        "Do not list the public pin as proprietary original work unless Root is the rights holder and the listing discloses the GitHub source."
+      ]
+    }
+  },
+  "freeAlternative": "Install and run the public SameDayDesk gateway recipe pack at epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666 (public GitHub, 0 stars, no LICENSE file in tree). README install: `npx skills add epistemedeus/x402-data-gateway-skills --all --yes` (or `--skill <name>`). Sixteen skill directories including samedaydesk-machine-commerce, web-extract, payment-offer-preflight, settlement-proof, wallet-policy-safety. Canonical unpaid/paid HTTP gateway is https://agents.samedaydesk.com (OpenAPI, /.well-known/x402, /api/actions, MCP POST /mcp). Skills are credential-free discovery/preflight; they stop before wallet access or paid replay. Offline recipe tests exist under tests/recipes. This is a complete free distribution path: clone/npx + direct x402/MPP to the live gateway. No Agensi account, scan, or 30% fee.",
+  "paidDelta": "Agensi paid listing does not add a new SameDayDesk HTTP action. Delta vs the free pin is marketplace ops: discovery on agensi.io + MCP search_skills, 8-point security badge, buyer-fingerprinted zip delivery, merchant-of-record tax/VAT, Stripe bank or Zoneless Solana USDC payouts at 70/30 of net, optional skill subscriptions, 24-48h review, min $5 if priced. Catalog search from this cell did not already contain the pin. ToS §6.3 requires original authorship or distribution rights and an accurate listing; relabeling the public pin as exclusive paid IP would fail that warranty. Competent paid deliverable, if Root is the rights holder, is a SameDayDesk-attributed SKILL.md zip that points at the pin SHA, does not claim proprietary ownership of the free recipes, priced free (reputation) or >=$5 for packaging/support/ops — not for reselling public recipes. Network-calling skills may extra-fail scan check 6 (suspicious network access) because the recipes instruct live HTTPS to agents.samedaydesk.com.",
+  "nextMeasurableEvent": "Authenticated capture, still $0: (A) GitHub Access login on https://www.agensi.dev/sell and save post-login status/title/body proving whether origin is Agensi seller UI; and/or (B) agensi.io /auth account with no purchase, then screenshot or HTML of /dashboard/submit plus payout-method state (Stripe connected true/false, Zoneless enabled true/false). Success predicate: HTTP 200 creator submit form after session cookie, quoting enabled payout rails. Failure predicate: Access deny, Agensi reject, or paid-publish blocked with ToS 6.1 quote. This cell must not perform A or B.",
+  "sources": [
+    {
+      "url": "https://www.agensi.dev/sell",
+      "retrieved": "2026-09-10T08:40:13Z",
+      "httpNofollow": 302,
+      "note": "Cloudflare Access GitHub IdP. Team host mlehman-899.cloudflareaccess.com. Access kid a6751de448d4c74b6816fae20aebc09a22562b1bb5c77eff4e3d5bf33dd98fec."
+    },
+    {
+      "url": "https://agensi.dev/",
+      "retrieved": "2026-09-10T08:41:48Z",
+      "http": 522
+    },
+    {
+      "url": "https://www.agensi.io/terms",
+      "retrieved": "2026-09-10T08:41:00Z",
+      "http": 200,
+      "note": "Last updated 2026-09-02. §§6.1–7.5 payouts, $5 min, 70/30, ZIP+SKILL.md, Zoneless USDC."
+    },
+    {
+      "url": "https://www.agensi.io/stripe-terms",
+      "retrieved": "2026-09-10T08:41:00Z",
+      "http": 200,
+      "note": "Last updated 2026-06-24. Stripe-only creator language."
+    },
+    {
+      "url": "https://www.agensi.io/sell",
+      "retrieved": "2026-09-10T08:41:00Z",
+      "http": 200
+    },
+    {
+      "url": "https://www.agensi.io/",
+      "retrieved": "2026-09-10T08:41:00Z",
+      "http": 200
+    },
+    {
+      "url": "https://www.agensi.io/about",
+      "retrieved": "2026-09-10T08:41:00Z",
+      "http": 200
+    },
+    {
+      "url": "https://www.agensi.io/auth",
+      "retrieved": "2026-09-10T08:41:35Z",
+      "http": 200
+    },
+    {
+      "url": "https://www.agensi.io/llms.txt",
+      "retrieved": "2026-09-10T08:41:35Z",
+      "http": 200
+    },
+    {
+      "url": "https://www.agensi.io/robots.txt",
+      "retrieved": "2026-09-10T08:40:13Z",
+      "http": 200
+    },
+    {
+      "url": "https://mcp.agensi.io/mcp",
+      "retrieved": "2026-09-10T08:42:51Z",
+      "note": "POST initialize 200 agensi v1.1.0; tools/list via SSE; search_skills called."
+    },
+    {
+      "url": "https://www.agensi.io/api/install/code-reviewer",
+      "retrieved": "2026-09-10T08:42:51Z",
+      "http": 200,
+      "contentType": "application/zip"
+    },
+    {
+      "url": "https://www.agensi.io/api/install/keyword-research",
+      "retrieved": "2026-09-10T08:40:30Z",
+      "http": 403
+    },
+    {
+      "url": "https://www.agensi.io/learn/how-to-sell-skills-on-agensi",
+      "retrieved": "2026-09-10T08:41:00Z",
+      "http": 200
+    },
+    {
+      "url": "https://www.agensi.io/learn/how-agensi-payouts-work-stripe-connect",
+      "retrieved": "2026-09-10T08:43:30Z",
+      "http": 200
+    },
+    {
+      "url": "https://www.agensi.io/learn/how-agensi-security-scan-works",
+      "retrieved": "2026-09-10T08:43:30Z",
+      "http": 200
+    },
+    {
+      "url": "https://github.com/epistemedeus/x402-data-gateway-skills/commit/82d0f019713c7223898806144da08fdbeed5c666",
+      "retrieved": "2026-09-10T08:40:20Z",
+      "note": "Public pin. Merge of PR #2. No LICENSE file. README install via npx skills add."
+    }
+  ]
+}

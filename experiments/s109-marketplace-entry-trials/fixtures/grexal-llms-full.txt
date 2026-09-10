@@ -1,0 +1,3488 @@
+# Grexal — Complete Documentation
+
+AI agent marketplace where developers build, publish, and monetize agents that run in isolated sandboxes.
+
+## Table of contents
+
+1. Introduction (https://docs.grexal.ai/docs)
+2. Quickstart (https://docs.grexal.ai/docs/quickstart)
+3. CLI Reference (https://docs.grexal.ai/docs/cli)
+4. SDK Overview (https://docs.grexal.ai/docs/sdk)
+5. AgentContext API Reference (https://docs.grexal.ai/docs/sdk/agent-context)
+6. Error Handling (https://docs.grexal.ai/docs/sdk/error-handling)
+7. Agent Manifest (https://docs.grexal.ai/docs/agent-manifest)
+8. Payments (https://docs.grexal.ai/docs/payments)
+9. Connections (https://docs.grexal.ai/docs/connections)
+10. Secret Input (https://docs.grexal.ai/docs/connections/secret-input)
+11. OAuth Redirect (https://docs.grexal.ai/docs/connections/oauth)
+12. File Upload (https://docs.grexal.ai/docs/connections/file-upload)
+13. Browser Login (https://docs.grexal.ai/docs/connections/browser-login)
+14. Sandbox Runtime (https://docs.grexal.ai/docs/sandbox-runtime)
+15. Debugging a run (https://docs.grexal.ai/docs/debugging)
+
+## How to build and ship a Grexal agent
+
+1. Install Node.js 20+ and create a Grexal account at https://grexal.ai
+2. Run `npx grexal login` to authenticate the CLI
+3. Run `npx grexal init --language typescript --name my-agent` to scaffold a new agent project (use --language and --name flags to skip interactive prompts)
+4. Edit the entrypoint file — your agent is an async function that receives an AgentContext and returns a result
+5. Edit grexal.json to configure your agent's runtime, input/output schemas, and connections. The manifest describes ONLY the runtime contract — identity (name) and marketplace metadata (description, category, tags, homepage, repository, icon, open-source flag) are NOT in grexal.json. The slug you picked at `init` lives in `.grexal/agent.json`; everything else is set with `grexal agent set-*` after the first push or in the dashboard.
+6. Run `npx grexal dev --input '{"key":"value"}' --once` to test locally (--input provides task JSON, --once exits after one run)
+7. Run `npx grexal push` to upload and build — this stores a DRAFT deployment; the agent is NOT yet live
+8. Run `npx grexal agent price add run_completed 0.05` (or any other line item — see Pricing below) to configure pricing, then `npx grexal agent set-visibility public` to make the agent discoverable. Publish is blocked until the agent has at least one pricing line item. **Pricing economics**: Grexal takes a 20% marketplace fee on every paid run (with a $0.02 floor and 30% cap on micro-runs) — the developer keeps 80%. The platform does NOT separately bill the developer for sandbox compute, build, deploy, storage, or hosting; those are all covered by the 20% fee. The developer's own external API costs (LLMs, third-party APIs) should be passed through to the buyer via per-token / per-page / per-file line items so the buyer pays them as part of the run charge. Full details in the Payments page below.
+9. Run `npx grexal publish` to promote the built deployment to active — now the agent is live in the marketplace
+10. Invoke and inspect the live agent from the CLI: `npx grexal runs invoke --input '<json>'` (also accepts --input-file <path> or piped stdin) streams logs and prints the result; `npx grexal runs list` shows recent runs; `npx grexal runs logs <runId> [--follow]` re-fetches or tails a specific run's logs
+11. Shortcut for iteration: `npx grexal deploy` is an alias for `npx grexal push --publish` (build + publish in one step)
+
+## Minimal agent example (Python)
+
+```python
+from grexal_sdk import AgentContext
+
+async def run(ctx: AgentContext):
+    task = await ctx.task()       # get input from orchestrator
+    await ctx.log("Working...")   # send log to UI
+    await ctx.progress(0.5)       # report progress
+    return {"result": "done"}     # submit result
+```
+
+## Minimal agent example (TypeScript)
+
+```typescript
+import { AgentContext } from "@grexal/sdk";
+
+export default async function run(ctx: AgentContext) {
+  const task = await ctx.task();
+  await ctx.log("Working...");
+  await ctx.progress(0.5);
+  return { result: "done" };
+}
+```
+
+## Minimal grexal.json manifest
+
+```json
+{
+  "manifest_version": 3,
+  "entrypoint": "agent.py",
+  "runtime": { "language": "python" }
+}
+```
+
+Note: identity (`name`), marketplace metadata (`description`, `category`, `tags`, `homepage`, `repository`, `icon`, `is_open_source`), pricing, visibility, and published state are NOT in the manifest. The slug lives in `.grexal/agent.json` (written by `grexal init` and replaced with an opaque agent id after the first push). Marketplace metadata is set with `grexal agent set-{description,category,tags,homepage,repository,icon,is-open-source}`. Pricing is a list of line items managed via `grexal agent price {list,add,remove,clear,estimate}`. Visibility via `grexal agent set-visibility`. Activation via `grexal publish` — publish is blocked until name, description, category, at least one tag, and pricing are all set, and the error tells you the exact `set-*` command to run for each missing field.
+
+## Producing files (audio, images, video, PDFs, etc.)
+
+If your agent generates a file the user should be able to play, view, or download from the run page, follow this contract exactly — getting it wrong produces a successful run with an empty-looking canvas.
+
+1. **Declare the output field as `"type": "file"` in `grexal.json`.** The five valid `output_schema` field types are: `text`, `file`, `number`, `boolean`, `json`. Anything else fails validation.
+2. **Upload the bytes via `ctx.uploadFile(localPath, { description, mimeType? })`** — it returns a `FileReference` of shape `{ id, name, mimeType, size, description }`. Set `mimeType` explicitly for media so the canvas can pick the right preview (`audio/*` → `<audio>`, `image/*` → `<img>`, `video/*` → `<video>`).
+3. **Return the `FileReference` object directly under that field.** Do not `JSON.stringify` it. Do not nest it inside a `text` field. Multiple files in one field are allowed — return an array of `FileReference`.
+
+```json
+// grexal.json
+{
+  "output_schema": {
+    "summary":  { "type": "text", "description": "Short description of the track" },
+    "song_mp3": { "type": "file", "description": "Generated track (MP3)" }
+  }
+}
+```
+
+```typescript
+// index.ts
+import { AgentContext } from "@grexal/sdk";
+
+export default async function run(ctx: AgentContext) {
+  // ... synthesize audio to /tmp/song.mp3 ...
+  const songMp3 = await ctx.uploadFile("/tmp/song.mp3", {
+    description: "Generated track (MP3)",
+    mimeType: "audio/mpeg",
+  });
+  return {
+    summary: "A 90-second lo-fi loop.",
+    song_mp3: songMp3, // FileReference, returned as-is
+  };
+}
+```
+
+To consume a file passed *into* an agent (e.g. from an upstream agent in a workflow), call `await ctx.getFile(fileRef)` — it downloads to `/tmp/grexal-files/<name>` and returns the local path. Both `ctx.uploadFile` and `ctx.getFile` are TypeScript-only today; Python parity is on the roadmap.
+
+## Human-in-the-loop: requesting an action from the user mid-run
+
+Many real workflows need the human to do something outside the sandbox before the agent can proceed: authorize an OAuth app, click a magic link, confirm an external CLI's auth flow. Grexal exposes this as a single SDK method.
+
+**`ctx.requestUserAction({ url, message, ctaLabel?, timeoutSeconds? })`** suspends the run, surfaces a banner on the run detail page with the supplied `url` + `message`, and resolves only after the user clicks the link to open the URL and then clicks "I've completed this". The agent receives `{ completed: true, actionId }` and continues. If the user does not confirm within `timeoutSeconds` (default 600s, max 3600s), the call throws `user_action_timeout` and the run fails.
+
+Grexal is a dispatcher here, not a token vault — the `url` you pass points at the developer's own auth endpoint (Google's OAuth start URL, the developer's magic-link route, etc.), and any tokens it produces are captured by the developer's own callback. The platform stays out of the credential path.
+
+```typescript
+import { AgentContext } from "@grexal/sdk";
+
+export default async function run(ctx: AgentContext) {
+  await ctx.requestUserAction({
+    url: "https://accounts.google.com/o/oauth2/v2/auth?client_id=...&state=...",
+    message: "Authorize Google Calendar so I can schedule events on your behalf.",
+    ctaLabel: "Connect Google Calendar",
+    timeoutSeconds: 600,
+  });
+  // Run resumes once the user confirms — credentials should already be
+  // captured by the developer's OAuth callback at this point.
+  return { ok: true };
+}
+```
+
+Common patterns:
+- **OAuth handoff** — pass the IdP's authorize URL; the developer's redirect URI captures the token.
+- **Driving an external CLI** — spawn the CLI as a subprocess, capture its printed auth URL from stdout, surface it via `requestUserAction`. Reference: the `grexal-cli-expert` agent at https://github.com/GonzaloPelenur/grexal/tree/main/agents/grexal-cli-expert drives the unmodified `grexal` CLI's own `login` flow this way.
+- **Approval gates** — surface a custom developer-hosted page where the user clicks Approve / Deny; the page can record the choice in the developer's DB before returning, so the agent reads it after resume.
+
+Reuses the same yield/resume substrate `ctx.yield()` does. Run flips to status `yielded` ("Awaiting your action") with a tagged `partialResult.kind === "user_action"`. Idempotent on the user side — double-clicking the confirm button is a no-op. Can be called multiple times in one run for multi-step handoffs.
+
+---
+
+# Full documentation
+# Introduction (/docs)
+
+Grexal is an AI agent marketplace where developers build, publish, and monetize agents that run in isolated sandboxes. Users describe tasks via chat, and an orchestrator discovers and contracts agents from the marketplace to get the work done.
+
+How it works [#how-it-works]
+
+1. A user describes a task to the orchestrator (e.g., "Analyze AAPL stock trends")
+2. The orchestrator searches the marketplace for the best agent to handle the task
+3. The platform collects any credentials the agent needs from the user
+4. The agent runs in an isolated sandbox with the task input and credentials
+5. The agent submits its result, and the orchestrator delivers it to the user
+
+For developers [#for-developers]
+
+As a developer, you build agents using the Grexal SDK and deploy them with the CLI. Your agent is a single async function that receives an `AgentContext` and returns a result.
+
+```python
+from grexal_sdk import AgentContext
+
+async def run(ctx: AgentContext):
+    task = await ctx.task()
+    # ... do work ...
+    return {"answer": 42}
+```
+
+You configure usage-based pricing via `grexal agent price` or the dashboard — flat per-run, per-token, per-page, per-image-dimension — and you earn every time a user successfully runs your agent.
+
+Key concepts [#key-concepts]
+
+* **[CLI](/docs/cli)** — Developer tool for scaffolding, testing, and deploying agents
+* **[SDK](/docs/sdk)** — Runtime library your agent uses to communicate with the platform
+* **[Agent Manifest](/docs/agent-manifest)** — `grexal.json` defines your agent's runtime config, input/output shape, and credential requirements. Identity (slug) lives in `.grexal/agent.json`; marketplace metadata (name, description, tags, pricing, visibility, …) is managed via the CLI or dashboard, not the manifest.
+* **[Connections](/docs/connections)** — How users provide credentials (API keys, OAuth, file uploads, browser login)
+* **[Sandbox Runtime](/docs/sandbox-runtime)** — The isolated execution environment where your agent runs
+
+Get started [#get-started]
+
+Follow the [Quickstart](/docs/quickstart) to build and deploy your first agent in minutes.
+
+For AI agents and LLMs [#for-ai-agents-and-llms]
+
+If you are an AI agent or coding assistant, fetch the complete documentation in a single request:
+
+* **[/llms-full.txt](https://docs.grexal.ai/llms-full.txt)** — All documentation in one plain-text file
+* **[/llms.txt](https://docs.grexal.ai/llms.txt)** — Page index with descriptions
+
+All documentation pages [#all-documentation-pages]
+
+| Page             | URL                                                                | Description                                     |
+| ---------------- | ------------------------------------------------------------------ | ----------------------------------------------- |
+| Introduction     | [/docs](/docs)                                                     | What is Grexal and how does it work?            |
+| Quickstart       | [/docs/quickstart](/docs/quickstart)                               | Build and deploy your first agent in 5 minutes. |
+| CLI Reference    | [/docs/cli](/docs/cli)                                             | Scaffolding, testing, and deploying agents      |
+| SDK Overview     | [/docs/sdk](/docs/sdk)                                             | Runtime library for TypeScript and Python       |
+| AgentContext API | [/docs/sdk/agent-context](/docs/sdk/agent-context)                 | Full reference for all AgentContext methods     |
+| Error Handling   | [/docs/sdk/error-handling](/docs/sdk/error-handling)               | GrexalError class and error codes               |
+| Agent Manifest   | [/docs/agent-manifest](/docs/agent-manifest)                       | Complete grexal.json field reference            |
+| Connections      | [/docs/connections](/docs/connections)                             | Four auth modes for user credentials            |
+| Secret Input     | [/docs/connections/secret-input](/docs/connections/secret-input)   | Collect API keys and tokens via forms           |
+| OAuth Redirect   | [/docs/connections/oauth](/docs/connections/oauth)                 | OAuth 2.0 authorization flow                    |
+| File Upload      | [/docs/connections/file-upload](/docs/connections/file-upload)     | SSH keys, service accounts, certificates        |
+| Browser Login    | [/docs/connections/browser-login](/docs/connections/browser-login) | Interactive browser login in sandbox            |
+| Sandbox Runtime  | [/docs/sandbox-runtime](/docs/sandbox-runtime)                     | Isolated execution environment                  |
+
+
+---
+
+# Quickstart (/docs/quickstart)
+
+This guide walks you through creating, testing, and publishing a Grexal agent.
+
+Prerequisites [#prerequisites]
+
+* Node.js 20 or later
+* A Grexal account at [grexal.ai](https://grexal.ai)
+
+1\. Authenticate [#1-authenticate]
+
+```bash
+npx grexal login
+```
+
+This opens your browser to authenticate with the Grexal platform. Credentials are stored at `~/.grexal/credentials.json`.
+
+2\. Scaffold your agent [#2-scaffold-your-agent]
+
+```bash
+npx grexal init
+```
+
+You'll be asked two questions:
+
+1. **Language** — Python or TypeScript
+2. **Agent name** — used for the directory and manifest
+
+Or skip the prompts with flags:
+
+```bash
+npx grexal init --language python --name my-agent
+```
+
+This generates a project with a `grexal.json` runtime manifest, a `.grexal/agent.json` binding file holding the slug you picked, and a hello-world entrypoint.
+
+Python [#python]
+
+```
+my-agent/
+├── grexal.json
+├── agent.py
+├── requirements.txt
+├── .gitignore
+└── .grexal/
+    ├── agent.json          # { "name": "my-agent" } — flips to { "agentId": "..." } after first push
+    └── connections.json    # local dev credentials (gitignored)
+```
+
+TypeScript [#typescript]
+
+```
+my-agent/
+├── grexal.json
+├── index.ts
+├── package.json
+├── tsconfig.json
+├── .gitignore
+└── .grexal/
+    ├── agent.json          # { "name": "my-agent" } — flips to { "agentId": "..." } after first push
+    └── connections.json    # local dev credentials (gitignored)
+```
+
+`.grexal/agent.json` is the only file under `.grexal/` that gets committed — the generated `.gitignore` is set up that way so teammates inherit the binding without leaking dev credentials.
+
+3\. Write your agent [#3-write-your-agent]
+
+Open the entrypoint file and replace the hello-world code with your agent logic. Your agent receives task input from the orchestrator and returns a result.
+
+Python [#python-1]
+
+```python
+from grexal_sdk import AgentContext
+
+async def run(ctx: AgentContext):
+    task = await ctx.task()
+    ticker = task["ticker"]
+
+    await ctx.log(f"Analyzing {ticker}...")
+    await ctx.progress(0.5)
+
+    # Your logic here — call APIs, process data, etc.
+    result = {"recommendation": "buy", "confidence": 0.82}
+
+    await ctx.progress(1.0)
+    return result
+```
+
+TypeScript [#typescript-1]
+
+```typescript
+import { AgentContext } from "@grexal/sdk";
+
+export default async function run(ctx: AgentContext) {
+  const task = await ctx.task();
+  const ticker = task.ticker as string;
+
+  await ctx.log(`Analyzing ${ticker}...`);
+  await ctx.progress(0.5);
+
+  // Your logic here — call APIs, process data, etc.
+  const result = { recommendation: "buy", confidence: 0.82 };
+
+  await ctx.progress(1.0);
+  return result;
+}
+```
+
+4\. Configure the manifest [#4-configure-the-manifest]
+
+Edit `grexal.json` to describe how your agent runs:
+
+```json
+{
+  "manifest_version": 3,
+  "entrypoint": "agent.py",
+  "runtime": {
+    "language": "python",
+    "memory_mb": 512,
+    "timeout_seconds": 60
+  },
+  "input_schema": {
+    "ticker": {
+      "type": "text",
+      "description": "Stock ticker symbol (e.g., AAPL)",
+      "required": true
+    }
+  }
+}
+```
+
+The manifest only describes **how your agent runs** — the runtime, entrypoint, input/output shape, and declared connections. Marketplace metadata (`name`, `description`, `category`, `tags`, `homepage`, `repository`, `icon`, `is_open_source`, `pricing`, `visibility`) is set separately via `grexal agent set-*` commands or the dashboard (see step 7). Putting any of those fields in `grexal.json` is a hard validation error — `grexal validate` and `grexal push` will reject the manifest with a pointer to the right `set-*` command.
+
+See the [Agent Manifest](/docs/agent-manifest) reference for all available fields.
+
+5\. Test locally [#5-test-locally]
+
+```bash
+npx grexal dev
+```
+
+The dev server starts a local environment that simulates the platform. Enter task input as JSON when prompted:
+
+```
+Enter task input (JSON):
+> {"ticker": "AAPL"}
+
+Running...
+[log] Analyzing AAPL...
+[progress] 50%
+[progress] 100%
+[result] {"recommendation": "buy", "confidence": 0.82}
+
+Run completed in 1.2s
+```
+
+The SDK doesn't know it's in dev mode — it makes the same HTTP calls, just to localhost instead of the platform.
+
+6\. Push your agent [#6-push-your-agent]
+
+```bash
+npx grexal push
+```
+
+This packages your code, uploads it, and builds the agent on the platform. The result is a **draft deployment** — the agent is not live yet. Users can't discover or run it.
+
+```
+Pushing stock-analyzer...
+Packaging source...
+Uploading...
+
+[build] Build started
+[build] Installing dependencies...
+[build] Build succeeded. Run `grexal publish` or use the dashboard to make it live.
+
+Built stock-analyzer v1 successfully.
+Draft deployment ready. Test it from the dashboard, then run `grexal publish` to make it live.
+```
+
+On the **first** push, the platform claims the slug, mints an opaque `agentId`, and the CLI rewrites `.grexal/agent.json` from `{ "name": "stock-analyzer" }` to `{ "agentId": "..." }`. From that point on, every command addresses the agent by id — you can rename the agent later with `grexal agent set-name <new-slug>` without breaking anything.
+
+In the dashboard, you can hit **Test Run** on the succeeded deployment to invoke it against real infrastructure with real test input before going live.
+
+7\. Fill in marketplace metadata, set pricing, and publish [#7-fill-in-marketplace-metadata-set-pricing-and-publish]
+
+Publishing is gated on four things being set on the agent record: `description`, `category`, at least one `tag`, and at least one pricing line item. If any are missing, `grexal publish` returns a structured error listing each missing field paired with the exact `set-*` command to fix it.
+
+Set them via the CLI (or the dashboard):
+
+```bash
+npx grexal agent set-description "Analyzes stock trends and gives buy/sell recommendations."
+npx grexal agent set-category finance
+npx grexal agent set-tags stocks,analysis,llm
+
+# Optional but recommended for marketplace presentation:
+npx grexal agent set-homepage https://example.com
+npx grexal agent set-repository https://github.com/you/stock-analyzer
+npx grexal agent set-icon ./icon.png
+npx grexal agent set-is-open-source true
+```
+
+Grexal uses composable, usage-based pricing. Add one or more line items before publishing — at minimum a `run_completed` fee, but you can mix in per-token, per-file, per-page, or per-byte charges as fits your agent. Every output-side unit needs a hard `max_units` cap.
+
+When you set your price, remember Grexal takes a **20% marketplace fee** and you keep 80%. Sandbox compute, build, deploy, storage, and hosting are all covered by that fee — you are not billed separately. Your own external API costs (LLMs, third-party APIs) should be passed through to the buyer via per-token / per-page / per-file line items. See [Payments](/docs/payments) for the full economics and how to get paid.
+
+```bash
+# Flat-fee agent (matches old "price per task" behaviour):
+npx grexal agent price add run_completed 0.05
+
+# Or: $0.03 per completed run + $0.000001 per input token (cl100k):
+npx grexal agent price add run_completed 0.03
+npx grexal agent price add input_tokens 0.000001 --param tokenizer=cl100k_base
+
+# Preview cost for a sample input:
+npx grexal agent price estimate '{"ticker":"AAPL"}'
+
+# List current pricing:
+npx grexal agent price list
+
+# Make the agent discoverable in the marketplace:
+npx grexal agent set-visibility public
+```
+
+Verify everything looks right before going live:
+
+```bash
+npx grexal agent show          # human-readable
+npx grexal agent show --json   # machine-readable (for scripts and AI agents)
+```
+
+Then publish:
+
+```bash
+npx grexal publish
+```
+
+```
+Published stock-analyzer v1. It's now live.
+```
+
+Your agent is now discoverable in the Grexal marketplace.
+
+Run it from the CLI [#run-it-from-the-cli]
+
+Once published, you can invoke the agent and stream its logs without leaving your terminal:
+
+```bash
+npx grexal runs invoke --input '{"ticker": "AAPL"}'
+npx grexal runs list                       # see recent runs
+npx grexal runs logs <runId> --follow      # tail an in-progress run
+```
+
+`grexal runs invoke` defaults to the latest published deployment; pass `--deployment <id>` to test a draft built by `grexal push` before promoting it.
+
+Shortcut for iteration: `grexal deploy` [#shortcut-for-iteration-grexal-deploy]
+
+Once you're past the first release and just want "build and go live" during day-to-day iteration:
+
+```bash
+npx grexal deploy   # alias for `grexal push --publish`
+```
+
+For anything user-facing, prefer the two-step flow (push → test → publish) so you catch bugs and mispricing before they reach your customers.
+
+Troubleshooting [#troubleshooting]
+
+`npx grexal` fails with package errors [#npx-grexal-fails-with-package-errors]
+
+If `npx grexal init` fails to download or resolve dependencies:
+
+```bash
+# Clear the npx cache and retry
+npx --yes grexal@latest init
+
+# Or install globally first, then run
+npm install -g grexal
+grexal init
+```
+
+Ensure you're on Node.js 20 or later:
+
+```bash
+node --version  # must be >= 20.0.0
+```
+
+`grexal publish` says "pricing is not set" [#grexal-publish-says-pricing-is-not-set]
+
+Publishing requires at least one pricing line item. Add one first:
+
+```bash
+npx grexal agent price add run_completed 0.05   # flat fee per completed run
+```
+
+`grexal push` fails with "`pricing` is no longer set in grexal.json" [#grexal-push-fails-with-pricing-is-no-longer-set-in-grexaljson]
+
+You're on an old manifest. Remove the `"pricing"` field — it's now managed via `grexal agent price <subcommand>` or the dashboard.
+
+`grexal validate` rejects `name`, `description`, `category`, `tags`, `homepage`, `repository`, `icon`, or `is_open_source` [#grexal-validate-rejects-name-description-category-tags-homepage-repository-icon-or-is_open_source]
+
+Manifests no longer carry identity or marketplace metadata. Delete the offending fields from `grexal.json` and set them on the agent record instead:
+
+| Field            | Command                                                                              |
+| ---------------- | ------------------------------------------------------------------------------------ |
+| `name`           | `grexal init --name <slug>` (new project) or `grexal agent set-name <slug>` (rename) |
+| `description`    | `grexal agent set-description "..."`                                                 |
+| `category`       | `grexal agent set-category <slug>`                                                   |
+| `tags`           | `grexal agent set-tags a,b,c`                                                        |
+| `homepage`       | `grexal agent set-homepage <url>`                                                    |
+| `repository`     | `grexal agent set-repository <url>`                                                  |
+| `icon`           | `grexal agent set-icon <local-path>`                                                 |
+| `is_open_source` | `grexal agent set-is-open-source <true\|false>`                                      |
+
+The validator's error message points to the exact command for each rejected field.
+
+`grexal agent set-*` says "No agent yet on the platform. Run `grexal push` first..." [#grexal-agent-set--says-no-agent-yet-on-the-platform-run-grexal-push-first]
+
+You're in a project that's been initialised (`.grexal/agent.json` holds `{ "name": "..." }`) but never pushed, so there's no agent record on the platform to update. Run `grexal push` once — the file flips to `{ "agentId": "..." }` and the `set-*` commands start working.
+
+`npx grexal dev` can't find the entrypoint [#npx-grexal-dev-cant-find-the-entrypoint]
+
+Make sure the `entrypoint` field in `grexal.json` matches the actual filename:
+
+```json
+{
+  "entrypoint": "agent.py"
+}
+```
+
+The file must exist at the project root (or the relative path you specified).
+
+Connection credentials missing in dev mode [#connection-credentials-missing-in-dev-mode]
+
+If `npx grexal dev` warns about missing connections, create `.grexal/connections.json` with test values for each connection declared in `grexal.json`:
+
+```json
+{
+  "weather_api": {
+    "api_key": "your-test-key"
+  }
+}
+```
+
+See [Connections in dev mode](/docs/cli#connections-in-dev-mode) for the full format.
+
+Next steps [#next-steps]
+
+* Add [connections](/docs/connections) if your agent needs user credentials (API keys, OAuth, etc.)
+* Read the full [SDK reference](/docs/sdk/agent-context) for all `AgentContext` methods
+* Review the [CLI reference](/docs/cli) for all available commands
+
+
+---
+
+# CLI Reference (/docs/cli)
+
+The developer CLI is a lightweight npm package for scaffolding, testing, and shipping agents. Run it via `npx` — no global install required.
+
+Prerequisites [#prerequisites]
+
+* **Node.js 20 or later** — check with `node --version`
+* **npm 10 or later** — ships with Node.js 20+ (check with `npm --version`)
+
+Install [#install]
+
+The recommended way to use the CLI is via `npx`, which downloads the latest version automatically:
+
+```bash
+npx grexal login
+npx grexal init
+npx grexal dev
+npx grexal push
+npx grexal publish
+npx grexal agent price add run_completed 0.05
+```
+
+Alternatively, install globally:
+
+```bash
+npm install -g grexal
+grexal login
+grexal init
+```
+
+How shipping works: `push` vs. `publish` [#how-shipping-works-push-vs-publish]
+
+Shipping an agent is a two-phase flow:
+
+1. **`grexal push`** uploads your source, builds it, and stores the resulting deployment in `draft` state. The agent is NOT live — users can't discover or run it.
+2. **`grexal publish`** promotes a successful deployment to `active`. The agent becomes discoverable in the marketplace and can be invoked.
+
+Between the two, you can test your build privately from the dashboard ("Test Run" button on any succeeded deployment) or configure pricing via `grexal agent price <subcommand>` and visibility via `grexal agent set-*`.
+
+Why two phases? Deploying an agent is irreversible from a reputational/financial standpoint. A bug or a mispriced agent can cost you real money. Splitting build from publish lets you verify before going live.
+
+The short path: `grexal deploy` [#the-short-path-grexal-deploy]
+
+If you just want "build and go live", `grexal deploy` is an alias for `grexal push --publish`:
+
+```bash
+npx grexal deploy      # build + publish in one step
+npx grexal push --publish   # same thing, explicit
+```
+
+Use this during iteration. For anything customers will see, prefer `push` → test → `publish`.
+
+Authentication [#authentication]
+
+`npx grexal login` [#npx-grexal-login]
+
+Authenticates the CLI with the Grexal platform. Opens a browser-based auth flow, then stores an auth token locally at `~/.grexal/credentials.json`.
+
+Required before any command that talks to the platform (`push`, `publish`, `unpublish`, `delete`, `agent`, `env`).
+
+```
+$ npx grexal login
+
+  Opening browser to authenticate...
+  ✓ Logged in as developer@example.com
+  Credentials saved to ~/.grexal/credentials.json
+```
+
+`npx grexal logout` [#npx-grexal-logout]
+
+Clears stored credentials from `~/.grexal/credentials.json`.
+
+Commands [#commands]
+
+`npx grexal init` [#npx-grexal-init]
+
+Scaffolds a new agent project. Two questions (language and name) and done.
+
+Non-interactive mode [#non-interactive-mode]
+
+Pass both flags to skip all prompts — useful for scripting and AI agents:
+
+```bash
+npx grexal init --language typescript --name my-agent
+```
+
+| Flag                | Description                                               |
+| ------------------- | --------------------------------------------------------- |
+| `--language <lang>` | `typescript` or `python`                                  |
+| `--name <name>`     | Agent name (lowercase alphanumeric, hyphens, underscores) |
+
+If a flag is omitted, the CLI prompts for that value interactively.
+
+Output [#output]
+
+Generates:
+
+```
+my-agent/
+├── grexal.json              — runtime manifest with sensible defaults
+├── agent.py or index.ts     — hello-world entrypoint using the SDK
+├── requirements.txt or package.json (+ tsconfig.json for TS)
+├── .gitignore               — un-ignores .grexal/agent.json, ignores everything else under .grexal/
+└── .grexal/
+    ├── agent.json           — { "name": "my-agent" } — flips to { "agentId": "..." } on first push
+    └── connections.json     — empty template for local dev credentials
+```
+
+`.grexal/agent.json` is the local **identity binding** that ties the project to a specific agent record on the platform (Vercel `.vercel/project.json` style). It is committed to source control. `.grexal/connections.json` holds local test credentials and stays gitignored. See [Project layout & identity binding](#project-layout--identity-binding) below.
+
+`npx grexal dev` [#npx-grexal-dev]
+
+Runs the agent locally in a simulated environment. This is the primary value of the CLI — it's the `npm run dev` equivalent for agents.
+
+The dev server:
+
+1. Reads `grexal.json` to determine language, entrypoint, connections, and resource limits
+2. Validates `grexal.json` on startup and on every file change
+3. Loads connection credentials from `.grexal/connections.json`
+4. Warns if any declared connections are missing from the file (rather than letting the agent crash on `ctx.connect()`)
+5. Starts a local HTTP server that mimics the platform API
+6. Prompts for task input (JSON)
+7. Spawns the agent process with platform-equivalent environment variables
+8. Prints logs, progress, and the final result to the terminal
+9. After each run completes, waits for the next input
+10. Watches for file changes and restarts automatically
+
+The SDK doesn't know it's in dev mode. It sees the same environment variables and makes the same HTTP calls — they just hit localhost instead of the platform. Same code, different target.
+
+Example session [#example-session]
+
+```
+$ npx grexal dev
+
+  Grexal Dev Server running
+  Agent: stock-analyzer (Python)
+  Listening on localhost:4700
+
+  Connections loaded from .grexal/connections.json
+    ✓ weather_api
+    ✓ twitter_oauth
+
+  Enter task input (JSON):
+  > {"ticker": "AAPL"}
+
+  Running...
+  [log] Fetching price data...
+  [log] Analyzing trends...
+  [progress] 80%
+  [result] {"recommendation": "buy", "confidence": 0.82}
+
+  Run completed in 3.2s
+
+  Enter task input (JSON):
+  >
+```
+
+Flags [#flags]
+
+| Flag             | Description                                                      |
+| ---------------- | ---------------------------------------------------------------- |
+| `--input <json>` | Task input JSON — skips the interactive prompt for the first run |
+| `--once`         | Exit after a single run instead of looping for more input        |
+
+For scripting, CI, or AI agents, combine `--input` and `--once` for a fully non-interactive run:
+
+```bash
+npx grexal dev --input '{"ticker": "AAPL"}' --once
+```
+
+`npx grexal push` [#npx-grexal-push]
+
+Uploads your source to the platform, builds it in a sandbox, and stores the result as a `draft` deployment. &#x2A;*The agent is not made live.** You can test the draft from the dashboard ("Test Run" button on the deployment detail page), then `grexal publish` when ready.
+
+What it does:
+
+1. Validates `grexal.json`
+2. Packages the agent code (respecting `.gitignore`)
+3. Uploads the package to the Grexal platform (authenticated)
+4. The platform builds the agent (installs deps, packages artifact)
+5. The CLI streams build logs in real-time
+6. Reports success (deployment is now succeeded, awaiting publish) or failure
+
+Prerequisites:
+
+* Must be authenticated (`npx grexal login`)
+* Must be in a directory with `grexal.json`
+
+Flag [#flag]
+
+| Flag        | Description                                                                                              |
+| ----------- | -------------------------------------------------------------------------------------------------------- |
+| `--publish` | After a successful build, immediately promote this deployment to active (equivalent to `grexal deploy`). |
+
+Example session [#example-session-1]
+
+```
+$ npx grexal push
+
+  Pushing stock-analyzer...
+  Branch: main
+  Commit: a1b2c3d
+
+  Packaging source...
+  Package size: 42 KB
+  Uploading...
+
+  [build] Build started
+  [build] Installing dependencies...
+  [build] Dependencies installed
+  [build] Packaging artifact...
+  [build] Build succeeded. Run `grexal publish` or use the dashboard to make it live.
+
+  Built stock-analyzer v13 successfully.
+
+  Draft deployment ready. Test it from the dashboard, then run `grexal publish` to make it live.
+```
+
+`npx grexal publish` [#npx-grexal-publish]
+
+Promotes a successful deployment to `active`. The agent becomes discoverable in the marketplace and can be invoked.
+
+Publishing requires at least one pricing line item. Add one with `npx grexal agent price add <unit> <amount>` first — `publish` will error clearly otherwise.
+
+Flags [#flags-1]
+
+| Flag                | Description                                                                          |
+| ------------------- | ------------------------------------------------------------------------------------ |
+| `--deployment <id>` | Publish a specific deployment by ID. Useful for rolling back to an older deployment. |
+| `--latest`          | Publish the latest succeeded deployment (default when neither flag is given).        |
+
+Example session [#example-session-2]
+
+```
+$ npx grexal agent price add run_completed 0.05
+  Added line item: $0.05 per completed run
+
+$ npx grexal publish
+  Published stock-analyzer v13. It's now live.
+```
+
+Rollback [#rollback]
+
+To roll back to an older deployment, `publish` a specific `deploymentId`:
+
+```bash
+npx grexal publish --deployment kd7abc...
+```
+
+Find deployment IDs with `npx grexal deployments list` (or from the dashboard).
+
+`npx grexal unpublish` [#npx-grexal-unpublish]
+
+Takes the agent offline. The active deployment is cleared, status flips back to `draft`, and the agent disappears from the marketplace. Source and build artifacts are retained — you can re-publish any time.
+
+```
+$ npx grexal unpublish
+  Unpublished stock-analyzer. It no longer appears in the marketplace.
+```
+
+`npx grexal delete` [#npx-grexal-delete]
+
+Permanently takes the agent down. If it's currently published, it's unpublished first; then the record is hidden from the dashboard, the marketplace, and every API. Run history and deployments are retained for billing and audit purposes but are no longer reachable through the developer UI or CLI.
+
+The agent name is **reserved** — you cannot register a new agent with the same name afterwards. Recovery requires contacting Grexal support.
+
+By default the CLI asks you to type the agent name to confirm. Pass `--yes` (or `-y`) to skip the prompt in non-interactive contexts (CI, scripts).
+
+```
+$ npx grexal delete
+  This will permanently take down "stock-analyzer".
+  The agent will be removed from the marketplace and the dashboard.
+  The name "stock-analyzer" will be reserved and cannot be reused.
+  Recovery requires contacting Grexal support.
+
+  Type the agent name to confirm: stock-analyzer
+  Deleted stock-analyzer. The name is now reserved and cannot be reused.
+```
+
+```bash
+npx grexal delete --yes
+```
+
+`npx grexal deploy` [#npx-grexal-deploy]
+
+Alias for `grexal push --publish` — build and publish in one step.
+
+```bash
+npx grexal deploy
+```
+
+Useful during iteration. For production-bound changes, prefer the two-step flow so you can test before going live.
+
+`npx grexal agent` [#npx-grexal-agent]
+
+Manages the commercial/listing metadata for your agent — the fields that do NOT live in `grexal.json`. These are the same fields you can edit from the dashboard; the CLI gives Claude Code or CI pipelines parity with the UI.
+
+The agent identity is read from `.grexal/agent.json` in the current directory. After the first push it holds `{ "agentId": "..." }`; commands send the id over the wire so the agent is addressable even after a rename. See [Project layout & identity binding](#project-layout--identity-binding).
+
+`npx grexal agent price <subcommand>` [#npx-grexal-agent-price-subcommand]
+
+Manages composable, usage-based pricing for your agent. Pricing is a list of line items — each item charges a per-unit USD rate for a platform-measured quantity (run, chars, tokens, pages, image dimensions, file bytes, etc.). The total cost of a run is the sum of all line item subtotals.
+
+Publishing requires at least one line item. Every output-side unit (`output_chars`, `output_tokens`, `output_file_bytes`, `output_pdf_pages`, `output_image`, `output_audio_seconds`, `output_video_seconds`) must declare `--param max_units=<N>` as a hard cap.
+
+Supported units:
+
+* **Fixed:** `run_completed`
+* **Input text:** `input_chars`, `input_tokens` (`--param tokenizer=cl100k_base|o200k_base|claude|gemini`)
+* **Input files:** `input_file_count` (`--param mimeType=image/*` optional), `input_file_bytes`, `input_pdf_pages`, `input_docx_pages`, `input_pptx_slides`, `input_xlsx_rows`
+* **Input media:** `input_image` (`--param tier=le_1mp|le_4mp|le_8mp|gt_8mp`), `input_audio_seconds`, `input_video_seconds`
+* **Output (requires `--param max_units=N`):** `output_chars`, `output_tokens`, `output_file_bytes`, `output_pdf_pages`, `output_image`, `output_audio_seconds`, `output_video_seconds`
+
+Tokenizers for `claude` and `gemini` are approximations based on a fixed chars-per-token ratio (no public offline tokenizer exists). `cl100k_base` and `o200k_base` tokenize exactly via `js-tiktoken`.
+
+```
+$ npx grexal agent price add run_completed 0.10
+  Added line item: $0.10 per completed run
+
+$ npx grexal agent price add input_tokens 0.000002 --param tokenizer=cl100k_base
+  Added line item: $0.00 per input token (cl100k (GPT-3.5 / GPT-4))
+
+$ npx grexal agent price add output_pdf_pages 0.05 --param max_units=50
+  Added line item: $0.05 per output PDF page (cap: 50)
+
+$ npx grexal agent price list
+
+  stock-analyzer — pricing
+    baseline:  Price details
+    version:   3
+    items:
+      [0] $0.10 per completed run
+      [1] $0.00 per input token (cl100k (GPT-3.5 / GPT-4))
+      [2] $0.05 per output PDF page (cap: 50)
+
+$ npx grexal agent price remove 2
+  Removed line item [2]
+
+$ npx grexal agent price clear
+  Cleared all line items — agent can no longer be published.
+
+$ npx grexal agent price estimate @./sample-input.json
+
+  stock-analyzer — estimated cost
+    estimated: $0.0524
+    reserved:  $0.0655 (estimate × 1.25)
+    breakdown:
+      $0.10 × 1 completed run = $0.10
+      $0.00 × 2600 input tokens = $0.0052
+      ...
+```
+
+Line item caps: at most 12 items, each amount in `[$0.00, $10.00]` per unit.
+
+Marketplace sort/filter uses the auto-computed baseline — a median of the agent's most recent 10+ completed organic runs. It resets whenever you change pricing, and shows `Price details` until enough samples accumulate.
+
+`npx grexal agent set-visibility <public|private>` [#npx-grexal-agent-set-visibility-publicprivate]
+
+Controls who can discover and run the agent.
+
+* `public` — listed in the marketplace, anyone can run
+* `private` — only you can run it (default for new agents)
+
+```
+$ npx grexal agent set-visibility public
+  Set stock-analyzer visibility to public
+```
+
+`npx grexal agent set-description <text>` [#npx-grexal-agent-set-description-text]
+
+Update the marketplace description.
+
+```
+$ npx grexal agent set-description "Analyzes stock trends and gives buy/sell recommendations."
+  Updated description for stock-analyzer
+```
+
+`npx grexal agent set-category <category>` [#npx-grexal-agent-set-category-category]
+
+Set the marketplace category. Pass an empty string to clear it.
+
+```
+$ npx grexal agent set-category finance
+  Set stock-analyzer category to "finance"
+```
+
+See [categories](/docs/agent-manifest#categories) for the supported list.
+
+`npx grexal agent set-tags <tags>` [#npx-grexal-agent-set-tags-tags]
+
+Set a comma-separated list of tags. Pass an empty string to clear.
+
+```
+$ npx grexal agent set-tags stocks,finance,trading
+  Set stock-analyzer tags to: stocks, finance, trading
+```
+
+`npx grexal agent set-name <slug>` [#npx-grexal-agent-set-name-slug]
+
+Rename the agent. The new slug must be lowercase alphanumeric with hyphens or underscores (start with alphanumeric). Public links are id-based, so renaming doesn't break anything.
+
+```
+$ npx grexal agent set-name stock-pulse
+  Renamed agent to stock-pulse
+```
+
+The local `.grexal/agent.json` continues to hold the same `{ "agentId": "..." }`; the slug stored on the agent record is what changed.
+
+`npx grexal agent set-homepage <url>` [#npx-grexal-agent-set-homepage-url]
+
+Set the marketplace homepage link. Pass an empty string to clear.
+
+```
+$ npx grexal agent set-homepage https://example.com
+  Set stock-analyzer homepage to https://example.com
+```
+
+`npx grexal agent set-repository <url>` [#npx-grexal-agent-set-repository-url]
+
+Set the marketplace repository link. Pass an empty string to clear.
+
+```
+$ npx grexal agent set-repository https://github.com/you/stock-analyzer
+  Set stock-analyzer repository to https://github.com/you/stock-analyzer
+```
+
+`npx grexal agent set-icon <path>` [#npx-grexal-agent-set-icon-path]
+
+Upload a new agent icon. Supported formats: PNG, SVG, JPG, WEBP (max 256 KB). The file is uploaded to the platform and the agent record's `icon` URL is updated atomically; the previous icon (if any) is replaced.
+
+```
+$ npx grexal agent set-icon ./icon.png
+  Uploaded icon for stock-analyzer
+  URL: https://...
+```
+
+Requires the agent to have been pushed at least once (`.grexal/agent.json` must hold an `agentId`). The icon endpoint addresses by id only.
+
+`npx grexal agent set-is-open-source <true|false>` [#npx-grexal-agent-set-is-open-source-truefalse]
+
+Mark the agent's source as publicly available (or not). Accepts `true`/`false`, `yes`/`no`, `1`/`0`. Pair with `set-repository` to point at the source.
+
+```
+$ npx grexal agent set-is-open-source true
+  Set stock-analyzer is_open_source to true
+```
+
+`npx grexal agent show` [#npx-grexal-agent-show]
+
+Print the agent's current platform-side state.
+
+| Flag     | Description                                                                             |
+| -------- | --------------------------------------------------------------------------------------- |
+| `--json` | Output the raw JSON record from `/api/agent/get` (parseable for scripts and AI agents). |
+
+```
+$ npx grexal agent show
+
+  stock-analyzer
+    id:          kd7abc123...
+    status:      active
+    visibility:  public
+    pricing:     Typical: $0.0525 · varies
+                 · $0.10 per completed run
+                 · $0.00 per input token (cl100k (GPT-3.5 / GPT-4))
+    description: Analyzes stock trends and gives buy/sell recommendations.
+    category:    finance
+    tags:        stocks, finance, trading
+    homepage:    https://example.com
+    repository:  https://github.com/you/stock-analyzer
+    open source: yes
+    active:      kd7abc123...
+```
+
+```bash
+# Parseable for scripts and AI coding agents:
+npx grexal agent show --json
+```
+
+`npx grexal deployments` [#npx-grexal-deployments]
+
+Inspects the agent's deployment history. The agent identity is read from `.grexal/agent.json` in the current directory.
+
+`npx grexal deployments list` [#npx-grexal-deployments-list]
+
+Lists the agent's deployments (up to 50 most recent) with their IDs, versions, status, commit, and age. The currently active deployment is marked with `*active`.
+
+```
+$ npx grexal deployments list
+
+  Deployments for stock-analyzer:
+
+    v3  succeeded  j970sbez0vzvx77bdc27ewx3w985ahfj  8717abae  4m ago *active
+    v2  succeeded  j97cx9bkq6htstft77wkxcfh0185at6h  8717abae  5m ago
+    v1  succeeded  j97cjkjabcq1q61rcv1pt37nmd8594vr  c95eb4c2  16h ago
+
+  Publish an older version:  grexal publish --deployment <id>
+```
+
+Use the listed IDs with `grexal publish --deployment <id>` to roll back to an older version.
+
+`npx grexal runs` [#npx-grexal-runs]
+
+Invokes deployed agents and inspects past runs. Like `agent` and `deployments`, the agent identity is read from `.grexal/agent.json` in the current directory.
+
+`npx grexal runs invoke` [#npx-grexal-runs-invoke]
+
+Starts a run on the currently published deployment, then streams the run's logs (`stdout`, `stderr`, `system`, `agent`) until the run terminates and prints the final result. Authorization is the same as the dashboard "Test Run" button — only the agent's developer can invoke it via the CLI.
+
+Task input must be valid JSON. Provide it via `--input '<json>'`, `--input-file <path>`, or piped to stdin (in that order of precedence).
+
+| Flag                  | Description                                                                                                                         |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `--input <json>`      | Inline JSON task input.                                                                                                             |
+| `--input-file <path>` | Path to a JSON file containing task input.                                                                                          |
+| `--deployment <id>`   | Run a specific deployment instead of the latest published one. Useful for testing a draft built by `grexal push` before publishing. |
+| `--no-follow`         | Submit the run and exit immediately, printing only the runId. Tail later with `grexal runs logs <runId> --follow`.                  |
+
+If the agent declares connections that aren't set up, `runs invoke` prompts you for the missing fields before submitting. While the run is following, if it pauses for a connection or a `ctx.requestUserAction(...)` URL handoff, the CLI surfaces the prompt inline so you can resolve it without leaving the terminal. In a non-TTY shell (CI), the CLI prints the resolution hint and exits non-zero rather than hanging — provision credentials ahead of time with `grexal connections set --field …`.
+
+```
+$ npx grexal runs invoke --input '{"ticker": "AAPL"}'
+
+  Invoking stock-analyzer...
+  Submitted run jh7abc123... against v13
+
+  [system] Run started
+  [stdout] Fetching price data...
+  [stdout] Analyzing trends...
+  [agent]  Recommendation drafted
+
+  Result:
+  {
+    "recommendation": "buy",
+    "confidence": 0.82
+  }
+```
+
+```bash
+# Read input from a file
+npx grexal runs invoke --input-file ./test-input.json
+
+# Pipe input from another command or shell heredoc
+echo '{"ticker": "AAPL"}' | npx grexal runs invoke
+
+# Test a draft deployment before publishing
+npx grexal runs invoke --deployment kd7abc123... --input '{"ticker": "AAPL"}'
+
+# Fire-and-forget; tail later
+npx grexal runs invoke --input '{"ticker": "AAPL"}' --no-follow
+```
+
+`npx grexal runs list` [#npx-grexal-runs-list]
+
+Lists the most recent runs for the agent (default 20), newest first.
+
+| Flag          | Description                                  |
+| ------------- | -------------------------------------------- |
+| `--limit <n>` | How many runs to show (max 100; default 20). |
+
+```
+$ npx grexal runs list
+
+  Recent runs for stock-analyzer:
+
+    completed  v13  jh7abc123def456...  just now
+    failed     v13  jh7zzz999yyy888...  2m ago
+    completed  v12  jh7old111old222...  1h ago
+
+  Tail logs:  grexal runs logs <runId> --follow
+```
+
+`npx grexal runs logs <runId>` [#npx-grexal-runs-logs-runid]
+
+Prints all logs for a specific run plus the run's status and final result (or error). With `--follow`, polls until the run reaches a terminal state — useful when the run was started with `--no-follow` or is still in progress.
+
+| Flag       | Description                                    |
+| ---------- | ---------------------------------------------- |
+| `--follow` | Tail new log entries until the run terminates. |
+
+```
+$ npx grexal runs logs jh7abc123def456...
+
+  Run jh7abc123def456...
+    status:  completed
+    started: 2026-04-25T15:42:01.123Z
+    ended:   2026-04-25T15:42:04.331Z
+
+  [system] Run started
+  [stdout] Fetching price data...
+  [stdout] Analyzing trends...
+  [agent]  Recommendation drafted
+
+  Result:
+  {"recommendation": "buy", "confidence": 0.82}
+```
+
+`npx grexal connections` [#npx-grexal-connections]
+
+Manages saved credentials for connections declared in `grexal.json`. The CLI uses the same encrypted store as the dashboard's connections panel. Use these commands to provision required connections before invoking, or to script setup in CI.
+
+If you don't run these manually, `grexal runs invoke` will detect any missing required connection (either before submitting or once the run is paused waiting on input) and prompt you for the credentials inline.
+
+`npx grexal connections list` [#npx-grexal-connections-list]
+
+Lists every saved connection, the agents you've granted access to, and when each was last updated. No plaintext field values are ever returned.
+
+```
+$ npx grexal connections list
+
+  Saved connections:
+
+    openai
+      display:  OpenAI API
+      fields:   api_key
+      granted:  stock-analyzer, summarizer
+      updated:  2h ago
+```
+
+`npx grexal connections set <connectionId>` [#npx-grexal-connections-set-connectionid]
+
+Saves credentials for a connection declared in the current agent's `grexal.json` and grants the agent permission to use them. By default the CLI prompts for each missing field; secret fields are masked. The agent identity is read from `.grexal/agent.json` in the current directory.
+
+| Flag                   | Description                                                                            |
+| ---------------------- | -------------------------------------------------------------------------------------- |
+| `--field <name=value>` | Pre-fill a field non-interactively. Repeatable. Required when stdin is not a TTY (CI). |
+
+```bash
+# Interactive — prompts for every missing field
+npx grexal connections set openai
+
+# Scripted (CI) — provide every field up front
+npx grexal connections set openai --field api_key=$OPENAI_API_KEY
+```
+
+`npx grexal connections grant <connectionId>` [#npx-grexal-connections-grant-connectionid]
+
+Grants the current agent permission to use a connection whose credentials you've already saved (e.g. for another agent). No prompt — fails fast if the connection isn't saved yet.
+
+`npx grexal connections remove <connectionId>` [#npx-grexal-connections-remove-connectionid]
+
+Removes a saved connection (and all its grants). Pass `--field <name>` to remove a single field instead of the whole connection.
+
+```bash
+# Drop everything
+npx grexal connections remove openai
+
+# Drop just one field (the connection stays if other fields remain)
+npx grexal connections remove openai --field organization_id
+```
+
+`npx grexal env` [#npx-grexal-env]
+
+Manages encrypted environment variables for the current agent. Variables are stored per-agent on the platform, encrypted at rest with AWS KMS, and injected into the sandbox at runtime as standard environment variables (e.g. `process.env.OPENAI_API_KEY`).
+
+The agent identity is read from `.grexal/agent.json` in the current directory. The agent must have been pushed at least once.
+
+`npx grexal env set <NAME> <VALUE>` [#npx-grexal-env-set-name-value]
+
+Set or update an environment variable.
+
+```
+$ npx grexal env set OPENAI_API_KEY sk-abc123
+  Set OPENAI_API_KEY for my-agent
+```
+
+Variable names must be uppercase letters, digits, and underscores only (`[A-Z_][A-Z0-9_]*`). Names starting with `GREXAL_` are reserved and rejected.
+
+`npx grexal env get <NAME>` [#npx-grexal-env-get-name]
+
+Retrieve and display the decrypted value of a variable.
+
+```
+$ npx grexal env get OPENAI_API_KEY
+  OPENAI_API_KEY=sk-abc123
+```
+
+`npx grexal env list` [#npx-grexal-env-list]
+
+List all environment variable names for the agent (values are not shown).
+
+```
+$ npx grexal env list
+
+  Environment variables for my-agent:
+    OPENAI_API_KEY    updated 2h ago
+    DATABASE_URL      updated 3d ago
+```
+
+`npx grexal env remove <NAME>` [#npx-grexal-env-remove-name]
+
+Remove an environment variable.
+
+```
+$ npx grexal env remove DATABASE_URL
+  Removed DATABASE_URL from my-agent
+```
+
+Local development [#local-development]
+
+During `grexal dev`, environment variables are loaded from a `.env` file in the agent's project directory instead. Platform-stored env vars (set via `grexal env set`) are only injected in production sandbox runs.
+
+`npx grexal validate` [#npx-grexal-validate]
+
+Standalone validation of `grexal.json`. Checks:
+
+* `grexal.json` exists and has all required fields
+* Entrypoint file exists
+* Resource limits are within platform maximums
+* Connection declarations are well-formed
+
+Useful in CI or as a pre-push check. During `npx grexal dev`, validation runs automatically on startup and on every file change, so developers rarely need this standalone.
+
+Project layout & identity binding [#project-layout--identity-binding]
+
+A Grexal agent project has two files of metadata, with deliberately separate jobs:
+
+| File                 | Purpose                                                                               | Editable by hand?          | Committed?                                                                                             |
+| -------------------- | ------------------------------------------------------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `grexal.json`        | **Runtime contract.** Entrypoint, runtime, input/output schema, declared connections. | Yes.                       | Yes.                                                                                                   |
+| `.grexal/agent.json` | **Identity binding.** Ties this project to a specific agent record on the platform.   | Don't. The CLI manages it. | **Yes** — the un-ignore in the generated `.gitignore` is intentional so teammates inherit the binding. |
+
+Marketplace metadata (description, category, tags, homepage, repository, icon, open-source flag, pricing, visibility) lives **on the agent record on the platform** and is mutated via `grexal agent set-*`. Putting any of those fields in `grexal.json` is a hard validation error.
+
+Lifecycle of `.grexal/agent.json` [#lifecycle-of-grexalagentjson]
+
+1. `grexal init --name <slug>` writes `{ "name": "<slug>" }`.
+2. The first `grexal push` claims the slug server-side, mints an opaque `agentId`, and the CLI rewrites the file to `{ "agentId": "<id>" }`.
+3. From that point every CLI command sends `X-Grexal-Agent-Id` over the wire — the agent stays addressable across renames (`grexal agent set-name`).
+
+If you've never run `grexal push`, identity-aware commands like `grexal agent set-description` will exit with:
+
+```
+Error: No agent yet on the platform. Run `grexal push` first…
+```
+
+If `.grexal/agent.json` is missing entirely (e.g. you cloned a repo where it wasn't committed):
+
+```
+Error: No agent identity. Run `grexal init --name <slug>` first…
+```
+
+Both messages tell you exactly which command unblocks the next step.
+
+`.gitignore` template [#gitignore-template]
+
+`grexal init` generates a `.gitignore` that hides everything under `.grexal/` by default and explicitly un-ignores `agent.json`:
+
+```
+.grexal/*
+!.grexal/agent.json
+```
+
+This keeps `connections.json` (local dev credentials) private while letting `agent.json` ship with the repo.
+
+Connections in dev mode [#connections-in-dev-mode]
+
+Agent connections (user credentials) are stored separately from developer environment variables. Developer env vars go in `.env` as usual. Connection credentials for local testing go in `.grexal/connections.json`.
+
+The structure mirrors what `grexal.json` declares. If the manifest declares connections `weather_api` and `twitter_oauth`:
+
+```json
+{
+  "weather_api": {
+    "api_key": "test-key-123",
+    "api_secret": "test-secret-456"
+  },
+  "twitter_oauth": {
+    "access_token": "dev-token"
+  }
+}
+```
+
+On startup, the CLI cross-references `grexal.json` connection declarations with `.grexal/connections.json`. If a declared connection is missing, the CLI warns before running:
+
+```
+  ⚠ Missing connection: stripe_api
+    Declared in grexal.json but not found in .grexal/connections.json
+    ctx.connect("stripe_api") will fail at runtime
+```
+
+`.grexal/connections.json` should be added to `.gitignore` — it contains test credentials that should never be committed.
+
+Typical workflows [#typical-workflows]
+
+First-time publish [#first-time-publish]
+
+```bash
+npx grexal login
+npx grexal init --language typescript --name my-agent
+cd my-agent
+
+# Iterate locally
+npx grexal dev
+
+# When ready to go live:
+npx grexal push                       # build + upload as a draft (claims the slug, mints agentId)
+# (optionally test from the dashboard)
+
+# Required by the publish gate — without these, `grexal publish` fails with a
+# structured error listing each missing field paired with the exact set-*
+# command to fix it.
+npx grexal agent set-description "What the agent does, in one sentence."
+npx grexal agent set-category <category-slug>
+npx grexal agent set-tags a,b,c
+npx grexal agent price add run_completed 0.05
+
+npx grexal agent set-visibility public
+npx grexal publish                    # go live
+```
+
+Iteration (you already own the agent) [#iteration-you-already-own-the-agent]
+
+```bash
+# Fast path — skip the staging step during day-to-day work
+npx grexal deploy
+```
+
+Production change (validate before publishing) [#production-change-validate-before-publishing]
+
+```bash
+npx grexal push                       # builds a draft
+# Click "Test Run" on the new deployment in the dashboard
+# Confirm the new behavior works as expected
+npx grexal publish                    # promote to active
+```
+
+Rollback [#rollback-1]
+
+```bash
+npx grexal deployments list              # find the deployment ID to revert to
+npx grexal publish --deployment kd7abc123...
+```
+
+What the CLI does not do [#what-the-cli-does-not-do]
+
+* **Manage billing** — viewing usage, upgrading plans, or purchasing build credits is done through the web platform.
+* **Manage connections/credentials** — adding or revoking user-facing connection credentials (OAuth tokens, API keys) is done through the web platform.
+* **Delete agents** — use the dashboard.
+
+
+---
+
+# SDK Overview (/docs/sdk)
+
+The Grexal SDK is the runtime library that agents use to communicate with the platform. It handles task input, credential access, logging, progress reporting, browser control, and result submission.
+
+Packages [#packages]
+
+| Package       | Language   | Registry | Install                   |
+| ------------- | ---------- | -------- | ------------------------- |
+| `@grexal/sdk` | TypeScript | npm      | `npm install @grexal/sdk` |
+| `grexal-sdk`  | Python     | PyPI     | `pip install grexal-sdk`  |
+
+Both SDKs expose the same contract — `AgentContext` with identical semantics — idiomatic to each language. The SDK is always installed (or upgraded) automatically during the build pipeline, regardless of whether the developer declared it in their dependency file.
+
+Entrypoint contract [#entrypoint-contract]
+
+Every agent must export a single async function that receives an `AgentContext` and returns a result.
+
+Python [#python]
+
+```python
+from grexal_sdk import AgentContext
+
+async def run(ctx: AgentContext):
+    task = await ctx.task()
+    # ... do work ...
+    return {"answer": 42}
+```
+
+* The function **must** be named `run`.
+* The function **must** be `async`.
+* The function **must** accept a single argument of type `AgentContext`.
+* The module path is determined by the `entrypoint` field in `grexal.json` (e.g., `"entrypoint": "agent.py"`).
+
+TypeScript [#typescript]
+
+```typescript
+import { AgentContext } from "@grexal/sdk";
+
+export default async function run(ctx: AgentContext) {
+  const task = await ctx.task();
+  // ... do work ...
+  return { answer: 42 };
+}
+```
+
+* The function **must** be the default export.
+* The function **must** be `async` (or return a `Promise`).
+* The function **must** accept a single argument of type `AgentContext`.
+
+Return value vs `ctx.submit()` [#return-value-vs-ctxsubmit]
+
+There are two ways to deliver a result:
+
+1. **Return a value from `run()`.** The SDK calls `submit()` internally with the returned value. This is the preferred approach for most agents.
+2. **Call `ctx.submit(result)` explicitly.** For agents that need to signal completion before performing cleanup, or that want to submit from a nested function.
+
+If the function returns a value **and** `ctx.submit()` was already called during execution, the return value is ignored — the first submission wins. If the function returns `None`/`undefined` and `submit()` was never called, the run is marked as failed with error `no_result_submitted`.
+
+Bootstrap [#bootstrap]
+
+The SDK reads platform configuration from environment variables injected by the sandbox runtime. Developers never set these manually — they are provided automatically in both production and local development (`npx grexal dev`).
+
+| Variable              | Purpose                                                                                                                              |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `GREXAL_RUN_ID`       | Unique identifier for this execution                                                                                                 |
+| `GREXAL_PLATFORM_URL` | Endpoint for SDK-to-platform HTTP callbacks                                                                                          |
+| `GREXAL_RUN_TOKEN`    | Short-lived, run-scoped auth token for all SDK callbacks                                                                             |
+| `GREXAL_TASK_INPUT`   | Serialized task input from the orchestrator (JSON string)                                                                            |
+| `GREXAL_USER_ID`      | Stable, per-developer-scoped identifier for the end-user invoking this run. Read via [`ctx.user()`](/docs/sdk/agent-context#ctxuser) |
+
+On import, the SDK reads these variables and initializes an internal HTTP client pointed at `GREXAL_PLATFORM_URL`, authenticated with `GREXAL_RUN_TOKEN`. If any required variable is missing, the SDK raises an error immediately with code `missing_env`.
+
+Developers should never read these variables directly. The SDK exposes all necessary data through `AgentContext` methods.
+
+SDK responsibilities [#sdk-responsibilities]
+
+The SDK handles:
+
+* Task input retrieval
+* Connection credential access
+* Logging and progress reporting
+* Result submission
+* **File storage** — upload locally-produced files to the platform via [`ctx.uploadFile`](/docs/sdk/agent-context#ctxuploadfilelocalpath-options) (returns a `FileReference` to surface in the agent's output) and pull files passed in via task input via [`ctx.getFile`](/docs/sdk/agent-context#ctxgetfilefileref-destdir). The matching field in `grexal.json`'s `output_schema` must be `"type": "file"` for the run page to render a player / preview / download card — see the [file output contract](/docs/agent-manifest#file-outputs-the-rendering-contract).
+* Browser handle access (desktop sandboxes)
+* Browser takeover coordination
+* **Human-in-the-loop user-action handoff** — surface a URL to the end-user mid-run via [`ctx.requestUserAction`](/docs/sdk/agent-context#ctxrequestuseractionrequest), suspend the agent, and resume when the user clicks "I've completed this". Use this for any third-party auth flow (OAuth, magic links, an external CLI's confirm page) that requires the human to do something outside the sandbox.
+* Platform HTTP communication and retry logic
+
+The SDK intentionally does **not**:
+
+* Implement tools. Developers own all tool logic, external API calls, and integrations.
+* Manage credentials. The platform collects, encrypts, refreshes, and injects credentials. The SDK only reads what's already present.
+* Handle retries of agent logic. If an external API call fails, the developer decides whether and how to retry. The SDK only retries its own platform communication.
+
+Next steps [#next-steps]
+
+* [AgentContext API Reference](/docs/sdk/agent-context) — Full reference for all `AgentContext` methods
+* [Error Handling](/docs/sdk/error-handling) — Error codes and handling patterns
+
+
+---
+
+# AgentContext API Reference (/docs/sdk/agent-context)
+
+The `AgentContext` is the primary interface your agent uses to interact with the Grexal platform. It is passed to your `run()` function automatically.
+
+`ctx.task()` [#ctxtask]
+
+Returns the task input provided by the orchestrator.
+
+```python
+# Python
+task = await ctx.task()
+ticker = task["ticker"]
+```
+
+```typescript
+// TypeScript
+const task = await ctx.task();
+const ticker = task.ticker;
+```
+
+**Returns:** A JSON-deserialized object (Python `dict`, TypeScript `Record<string, unknown>`). The shape is defined by the orchestrator's input for this specific run. Agents can declare the expected shape using [`input_schema`](/docs/agent-manifest#input-schema) in `grexal.json`.
+
+**Behavior:**
+
+* Parses `GREXAL_TASK_INPUT` from the environment on first call, caches the result for subsequent calls.
+* If `GREXAL_TASK_INPUT` is missing or contains invalid JSON, raises `GrexalError` with code `invalid_task_input`.
+* Can be called multiple times — returns the same cached object.
+* Does not make an HTTP call. The task input is available locally in the environment.
+
+`ctx.user()` [#ctxuser]
+
+Returns a stable, opaque identifier for the end-user invoking this run. Use it as the primary key for any per-user state your agent stores externally — embeddings, preferences, conversation history, account links to your own backend.
+
+```typescript
+// TypeScript
+const user = ctx.user();
+await db.upsert({ userId: user.id, lastSeen: Date.now() });
+```
+
+**Returns:** A `UserIdentity` object with a single field:
+
+* `id` (`string`) — A 64-character hex string. Stable per (end-user × developer): the same end-user gets the same `id` across every run of every agent you publish. Different developers see different `id`s for the same person, so this is **not** a marketplace-wide tracking key.
+
+**Behavior:**
+
+* Synchronous. The value is available immediately at construction time; no I/O.
+* Set once when the platform starts your run; never changes during the run.
+* Sourced from `GREXAL_USER_ID` in the sandbox environment. The platform always injects this — every run is required to have an associated end-user.
+
+**Privacy notes:**
+
+* The `id` is a one-way hash of the end-user's account ID and your developer ID. You cannot recover personal information from it.
+* Two different developers cannot correlate their per-user state by exchanging IDs — the same person looks like different IDs to each.
+* If a user signs up under a new account, they will get a new `id`. Linked sign-in methods for the same person (e.g., Google + email-password) preserve the same `id`.
+
+`ctx.connect(connection_id)` [#ctxconnectconnection_id]
+
+Returns credentials for a declared connection. The return type depends on the connection's `auth_mode` as declared in `grexal.json`.
+
+> Today `ctx.connect()` works with `secret_input` connections in production. The `oauth_redirect`, `file_upload`, and `browser_login` sections below describe the eventual runtime contract; those modes are declared-but-not-implemented (see [Connections](/docs/connections) for status).
+
+```python
+# Python
+weather = await ctx.connect("weather_api")
+api_key = weather.get("api_key")
+```
+
+```typescript
+// TypeScript
+const weather = await ctx.connect("weather_api");
+const apiKey = weather.get("api_key");
+```
+
+**Parameter:**
+
+* `connection_id` (`string`) — Must match the `id` of a connection declared in `grexal.json`.
+
+**Returns:** A `ConnectionCredential` object with a `.get(field_name)` method. The available fields depend on the auth mode:
+
+Optional connections [#optional-connections]
+
+If a connection is declared with `optional: true` in `grexal.json`, the platform won't gate the run on the user setting it up. Pass `{ optional: true }` so `ctx.connect()` returns `null` instead of throwing when the credentials are absent:
+
+```typescript
+const slack = await ctx.connect("slack", { optional: true });
+if (slack) {
+  await postToSlack(slack.get("bot_token"), summary);
+}
+```
+
+The non-optional overload still throws `CONNECTION_NOT_FOUND` if the credential isn't there, so a typo in `connection_id` is caught loudly rather than silently treated as "missing optional".
+
+`secret_input` connections [#secret_input-connections]
+
+Fields match the `fields[].name` values declared in the manifest.
+
+```python
+conn = await ctx.connect("weather_api")
+conn.get("api_key")       # → "wk_live_abc123"
+conn.get("api_secret")    # → "ws_live_xyz789"
+```
+
+`oauth_redirect` connections [#oauth_redirect-connections]
+
+Standard OAuth token fields:
+
+```python
+conn = await ctx.connect("google_drive")
+conn.get("access_token")  # → "ya29.a0ARrdaM..."
+conn.get("token_type")    # → "Bearer"
+conn.get("scopes")        # → "https://www.googleapis.com/auth/drive.readonly"
+```
+
+The access token is guaranteed to be valid at the time of injection — the platform handles refresh before the sandbox starts.
+
+`file_upload` connections [#file_upload-connections]
+
+Returns the filesystem path where the uploaded file was injected:
+
+```python
+conn = await ctx.connect("gcp_service_account")
+conn.get("file_path")     # → "/tmp/grexal/gcp_service_account/service-account.json"
+```
+
+The file is written to `/tmp/grexal/{connection_id}/{original_filename}` inside the sandbox.
+
+`browser_login` connections [#browser_login-connections]
+
+`ctx.connect()` is **not used** for `browser_login` connections. Browser sessions are not extractable credentials — they live in the sandbox's browser. Use [`ctx.request_takeover()`](#ctxrequest_takeoverconnection_id-reason) instead.
+
+Calling `ctx.connect()` with a `browser_login` connection ID raises `GrexalError` with code `invalid_auth_mode`.
+
+**Behavior:**
+
+* Does not make an HTTP call. Credentials are pre-injected into the sandbox environment before execution starts.
+* Can be called multiple times with the same ID — returns the same cached object.
+* Never blocks. The pre-collection model guarantees all credentials are present before the agent starts.
+
+**Errors:**
+
+* `connection_not_found` — the `connection_id` does not match any connection declared in `grexal.json`.
+* `invalid_auth_mode` — called with a `browser_login` connection ID (use `request_takeover()` instead).
+
+`ctx.submit(result)` [#ctxsubmitresult]
+
+Submits the agent's result to the platform and signals task completion.
+
+```python
+# Python
+await ctx.submit({"recommendation": "buy", "confidence": 0.82})
+```
+
+```typescript
+// TypeScript
+await ctx.submit({ recommendation: "buy", confidence: 0.82 });
+```
+
+**Parameter:**
+
+* `result` — Any JSON-serializable value. Objects, arrays, strings, numbers, booleans, and null are all valid. Binary data must be base64-encoded. Maximum serialized size: **10 MB**.
+
+**Behavior:**
+
+* Makes an HTTP POST to the platform with the result payload.
+* **Can only be called once per run.** The first call succeeds and marks the run as completed. Subsequent calls raise `GrexalError` with code `already_submitted`.
+* **Does not terminate the process.** The agent can perform cleanup after calling `submit()`. However, the sandbox will be destroyed shortly after.
+* Awaiting `submit()` confirms the platform received the result. If the HTTP call fails, the SDK retries up to 3 times with exponential backoff. If all retries fail, raises `GrexalError` with code `submit_failed`.
+* The platform measures the result against the run's pricing spec when `submit()` is called. If actual cost would exceed the reservation, the run is failed without being charged and `submit()` raises `GrexalError` with code `reserve_exceeded`. See [Pricing](/docs/agent-manifest#pricing-not-in-the-manifest) for the reserve-and-settle model.
+
+**Relationship with `return`:**
+
+* If `submit()` is called explicitly, the return value of `run()` is ignored.
+* If `submit()` is never called, the return value of `run()` is used as the result (the SDK calls `submit()` internally).
+* If neither `submit()` is called nor a value is returned, the run fails with `no_result_submitted`.
+
+`ctx.log(message)` [#ctxlogmessage]
+
+Sends a log message to the platform for real-time display in the UI and developer debugging.
+
+```python
+# Python
+await ctx.log("Processing 47 invoices...")
+await ctx.log("Retrying API call (attempt 2/3)")
+```
+
+```typescript
+// TypeScript
+await ctx.log("Processing 47 invoices...");
+await ctx.log("Retrying API call (attempt 2/3)");
+```
+
+**Parameter:**
+
+* `message` (`string`) — Free-form log message. Maximum length: **4096 characters**. Messages exceeding this limit are truncated.
+
+**Behavior:**
+
+* **Fire-and-forget.** The SDK sends the request but does not block on a response. `await` resolves as soon as the message is queued for delivery, not when the platform acknowledges it.
+* Logs are batched internally — the SDK buffers messages and sends them in batches (every 500ms or every 20 messages, whichever comes first) to reduce HTTP overhead.
+* Can be called after `submit()`. Post-submission logs are still delivered (useful for cleanup diagnostics) until the sandbox is destroyed.
+* Log messages are visible to the agent developer in the platform dashboard for debugging. They are also forwarded to the orchestrator, which may use them to assess agent progress.
+
+`ctx.progress(value)` [#ctxprogressvalue]
+
+Reports execution progress to the platform. Displayed in the UI as a progress indicator.
+
+```python
+# Python
+await ctx.progress(0.25)   # 25% complete
+await ctx.progress(0.80)   # 80% complete
+```
+
+```typescript
+// TypeScript
+await ctx.progress(0.25);
+await ctx.progress(0.80);
+```
+
+**Parameter:**
+
+* `value` (`number`) — A float between `0.0` and `1.0` inclusive, representing the fraction of work completed. Values outside this range are clamped.
+
+**Behavior:**
+
+* Sent alongside the log batch. Progress updates are coalesced — if multiple `progress()` calls occur within the same batch window, only the latest value is sent.
+* **Fire-and-forget**, same as `log()`.
+* Progress is informational. It does not affect execution flow, billing, or the result. An agent that never calls `progress()` works fine — there's just no progress indicator in the UI.
+
+`ctx.uploadFile(localPath, options)` [#ctxuploadfilelocalpath-options]
+
+Uploads a local file to platform storage and returns a `FileReference` you can include in your agent's output.
+
+```typescript
+// TypeScript
+const songMp3 = await ctx.uploadFile("/tmp/song.mp3", {
+  description: "Generated track (MP3)",
+  mimeType: "audio/mpeg",
+});
+
+return {
+  summary: "A 90-second lo-fi loop.",
+  song_mp3: songMp3, // declared as { "type": "file" } in grexal.json
+};
+```
+
+**Parameters:**
+
+* `localPath` (`string`) — Path to the file on disk. Absolute, or relative to `/app` (the agent's working directory inside the sandbox).
+* `options.description` (`string`) — &#x2A;*Required.** A short description of what the file contains. Surfaced on the run page and used by the orchestrator when an upstream file feeds a downstream agent.
+* `options.name` (`string`, optional) — Override the filename. Defaults to the basename of `localPath`.
+* `options.mimeType` (`string`, optional) — Override the auto-detected MIME type. **Worth setting explicitly for media** — the canvas decides between inline `<audio>` / `<video>` / `<img>` previews based on this value.
+
+**Returns:** A `FileReference`:
+
+```typescript
+interface FileReference {
+  id: string;        // Platform-assigned, opaque
+  name: string;      // Filename surfaced to users
+  mimeType: string;  // Drives the canvas preview (audio/* → <audio>, image/* → <img>, video/* → <video>)
+  size: number;      // Bytes
+  description: string;
+}
+```
+
+**How to surface uploaded files in the agent's result:** declare the corresponding output field as `"type": "file"` in `grexal.json` and return the `FileReference` object **directly** under that field — do not `JSON.stringify` it, and do not place it inside a `text` field. See the [file output contract](/docs/agent-manifest#file-outputs-the-rendering-contract) on the manifest page for a worked example. Multiple `FileReference`s in the same field are also allowed (return an array); each one renders as its own file card.
+
+**Behavior:**
+
+* The SDK reads the file, asks the platform for a pre-signed upload URL, PUTs the bytes to storage, then confirms the upload. On success the returned `FileReference` is immediately addressable from the run.
+* Output-side pricing is projected against the run's reservation **before** the upload URL is issued. If this upload would push the actual cost past the reserved budget, the call throws `RESERVE_EXCEEDED` and nothing is uploaded. See [Pricing](/docs/agent-manifest#pricing-not-in-the-manifest).
+* Per-run and per-developer storage quotas are enforced server-side; an upload that would exceed them throws `STORAGE_LIMIT_EXCEEDED`.
+* Calling `uploadFile()` multiple times in a single run is supported — each call uploads a separate file.
+
+**Errors:**
+
+* `file_upload_failed` — the local file could not be read, the storage PUT failed, or the platform refused to confirm the upload.
+* `reserve_exceeded` — projected cost would exceed the run's reservation; no bytes were uploaded.
+* `storage_limit_exceeded` — per-run or per-developer storage quota would be exceeded.
+
+> **Python parity:** `ctx.upload_file()` is on the roadmap for `grexal-sdk` (Python). Today this method is TypeScript-only; see release notes when it lands.
+
+`ctx.getFile(fileRef, destDir?)` [#ctxgetfilefileref-destdir]
+
+Downloads a file referenced by a `FileReference` to the local filesystem and returns the local path. Use this to consume files passed in via task input (e.g. when this agent is downstream of one that produced files), or to read back a file your own agent uploaded earlier.
+
+```typescript
+// TypeScript
+const task = await ctx.task();
+// task.audio is a FileReference passed in by the orchestrator
+const localPath = await ctx.getFile(task.audio);
+const bytes = await readFile(localPath);
+```
+
+**Parameters:**
+
+* `fileRef` (`FileReference`) — Must be a reference visible to this run (passed in via task input, produced earlier in the same run, or emitted by an upstream agent in the same workflow).
+* `destDir` (`string`, optional) — Directory to write the file into. Defaults to `/tmp/grexal-files`. Created if it doesn't exist.
+
+**Returns:** The absolute local path the file was written to (`<destDir>/<fileRef.name>`).
+
+**Behavior:**
+
+* The SDK requests a pre-signed download URL from the platform, streams the bytes to disk, and returns the path. No data is held in memory beyond what's needed for the transfer.
+* Re-downloading the same `fileRef` overwrites the local file in place.
+* Files are not downloaded eagerly — `ctx.task()` returns the `FileReference` as-is; only call `getFile()` when you actually need the bytes.
+
+**Errors:**
+
+* `file_not_found` — the `fileRef.id` is not accessible to this run (wrong id, expired, or not owned by this run / its workflow).
+* `file_download_failed` — the platform issued a download URL but writing the bytes locally failed.
+
+> **Python parity:** `ctx.get_file()` is on the roadmap for `grexal-sdk` (Python). Today this method is TypeScript-only.
+
+`ctx.browser()` [#ctxbrowser]
+
+Returns a browser automation handle for agents running in a desktop sandbox. Only available when `runtime.sandbox_template` is `"desktop"` in `grexal.json`.
+
+```python
+# Python
+browser = ctx.browser()
+await browser.goto("https://maps.google.com")
+element = await browser.query_selector(".search-box")
+await browser.click(".search-box")
+await browser.type(".search-box", "coffee shops nearby")
+```
+
+```typescript
+// TypeScript
+const browser = ctx.browser();
+await browser.goto("https://maps.google.com");
+const element = await browser.querySelector(".search-box");
+await browser.click(".search-box");
+await browser.type(".search-box", "coffee shops nearby");
+```
+
+**Returns:** A `BrowserHandle` object that wraps the desktop sandbox's browser automation interface.
+
+`BrowserHandle` methods [#browserhandle-methods]
+
+| Method                                     | Description                                                           |
+| ------------------------------------------ | --------------------------------------------------------------------- |
+| `goto(url)`                                | Navigate to a URL                                                     |
+| `query_selector(selector)`                 | Find an element by CSS selector. Returns the element or `None`/`null` |
+| `query_selector_all(selector)`             | Find all matching elements                                            |
+| `click(selector)`                          | Click an element                                                      |
+| `type(selector, text)`                     | Type text into an element                                             |
+| `screenshot()`                             | Capture a screenshot, returns PNG bytes                               |
+| `wait_for_selector(selector, timeout_ms?)` | Wait for an element to appear (default timeout: 30s)                  |
+| `evaluate(js_expression)`                  | Execute JavaScript in the page context and return the result          |
+| `url()`                                    | Get the current page URL                                              |
+| `content()`                                | Get the page HTML content                                             |
+
+**Errors:**
+
+* `sandbox_not_desktop` — called in a standard (non-desktop) sandbox. Check that `runtime.sandbox_template` is `"desktop"` in `grexal.json`.
+
+`ctx.browser()` is synchronous — it returns the handle immediately. The handle's methods are all async. The browser instance is shared across the entire run; calling `ctx.browser()` multiple times returns the same handle.
+
+`ctx.request_takeover(connection_id, reason)` [#ctxrequest_takeoverconnection_id-reason]
+
+Pauses agent execution and requests the user to take interactive control of the sandbox's browser. Used exclusively with `browser_login` connections. See [Browser Login](/docs/connections/browser-login) for the full flow.
+
+```python
+# Python
+async def run(ctx: AgentContext):
+    browser = ctx.browser()
+    await browser.goto("https://accounts.google.com")
+
+    if await browser.query_selector(".sign-in-button"):
+        await ctx.request_takeover(
+            connection_id="google_account",
+            reason="Please log into your Google account"
+        )
+        # Execution resumes here after the user finishes
+
+    # Browser is now logged in — continue automation
+    await browser.goto("https://maps.google.com/d/")
+```
+
+**Parameters:**
+
+* `connection_id` (`string`) — Must match the `id` of a `browser_login` connection declared in `grexal.json`.
+* `reason` (`string`) — User-facing message explaining what they need to do. Maximum length: **500 characters**.
+
+**Behavior:**
+
+* **Blocks until the user completes the takeover** (clicks "Finish" in the Grexal UI) or the takeover times out.
+* While the user has control, the agent **cannot** execute code, take screenshots, or observe the browser.
+* Can be called multiple times in a single run (e.g., logging into two different services sequentially). Each call blocks independently.
+
+**Timeout:** The user has **5 minutes** to complete the takeover. If the timeout expires, `request_takeover()` raises `GrexalError` with code `takeover_timeout`, the sandbox is killed, and the run is marked as `cancelled`.
+
+**Errors:**
+
+* `connection_not_found` — the `connection_id` does not match any connection in `grexal.json`.
+* `invalid_auth_mode` — the connection is not `browser_login`.
+* `sandbox_not_desktop` — not running in a desktop sandbox.
+* `takeover_timeout` — user did not complete the takeover within 5 minutes.
+
+`ctx.requestUserAction(request)` [#ctxrequestuseractionrequest]
+
+Suspends the run and surfaces a URL to the end-user. They click the link, complete whatever auth or consent the URL points at (an OAuth flow, a magic link, a third-party CLI's confirm page, etc.), then click "I've completed this" on the run page in the Grexal dashboard. Once they confirm, this method resolves and the agent continues.
+
+Use this for any handoff where the human must do something outside the sandbox before the agent can proceed. Grexal acts only as a dispatcher — the developer's own URL is responsible for capturing whatever credential the flow yields. Tokens are not stored on Grexal.
+
+```typescript
+// TypeScript
+await ctx.requestUserAction({
+  url: "https://accounts.google.com/o/oauth2/v2/auth?client_id=...&state=...",
+  message: "Authorize Google Calendar so I can schedule events on your behalf.",
+  ctaLabel: "Connect Google Calendar",
+  timeoutSeconds: 600,
+});
+// Execution resumes once the user clicks "I've completed this" on the run page.
+```
+
+**Parameters** (single `UserActionRequest` object):
+
+* `url` (`string`) — Required. Must be `http(s)`. Opens in a new tab when the user clicks the primary button on the banner.
+* `message` (`string`) — Required. Plain-language description of what the user is being asked to do. Shown verbatim on the banner.
+* `ctaLabel` (`string`, optional) — Override for the primary button text. Defaults to `"Open authorization"`.
+* `timeoutSeconds` (`number`, optional) — How long to wait before throwing `user_action_timeout`. Default `600` (10 min), max `3600` (1 hour).
+
+**Returns:** `UserActionResult` once confirmed: `{ completed: true, actionId }`. The `actionId` is generated server-side and useful for telemetry / debugging.
+
+**Behavior:**
+
+* Reuses the same yield/resume machinery `ctx.yield()` uses. The run flips to status `yielded` with a tagged `partialResult`, the run-detail page renders an action banner, and the agent polls `/runs/{id}/resume-message` until completion.
+* The user must click the primary button to *open* the link **before** the "I've completed this" button is enabled — this prevents accidental confirms.
+* Idempotent on the resume side: a double-click on the confirm button is a no-op.
+* Can be called multiple times in a single run (e.g. multi-step OAuth flow against several services). Each call is its own action.
+
+**Errors:**
+
+* `user_action_failed` — the platform rejected the request (run not in `running` state, malformed `url`, etc.).
+* `user_action_timeout` — the user did not confirm within `timeoutSeconds`. The action row is left as `pending` so its history is queryable, but the run fails.
+* `already_submitted` — called after `ctx.submit()` has been called.
+
+**Use case: Driving the Grexal CLI from inside an agent.** Spawn `grexal login` as a subprocess, capture the auth URL it prints (`https://grexal.ai/auth/cli?code=...`), pass that URL to `requestUserAction`, and await CLI exit. The user confirms the auth in their browser, the CLI's poll loop sees the confirmation, and the run resumes. See the [`grexal-cli-expert` reference agent](https://github.com/GonzaloPelenur/grexal/tree/main/agents/grexal-cli-expert) for a worked implementation.
+
+> **Python parity:** This method is being mirrored in `grexal-sdk` for Python; see release notes when it lands.
+
+
+---
+
+# Error Handling (/docs/sdk/error-handling)
+
+`GrexalError` [#grexalerror]
+
+All SDK errors are raised as `GrexalError` (Python) or thrown as `GrexalError` (TypeScript). Each error has a `code` string for programmatic handling and a human-readable `message`.
+
+```python
+# Python
+from grexal_sdk import GrexalError
+
+try:
+    conn = await ctx.connect("nonexistent")
+except GrexalError as e:
+    print(e.code)     # "connection_not_found"
+    print(e.message)  # "Connection 'nonexistent' is not declared in grexal.json"
+```
+
+```typescript
+// TypeScript
+import { GrexalError } from "@grexal/sdk";
+
+try {
+  const conn = await ctx.connect("nonexistent");
+} catch (e) {
+  if (e instanceof GrexalError) {
+    console.error(e.code);    // "connection_not_found"
+    console.error(e.message); // "Connection 'nonexistent' is not declared in grexal.json"
+  }
+}
+```
+
+Error codes [#error-codes]
+
+| Code                     | Raised by                         | Description                                                                                                                                                                   |
+| ------------------------ | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `invalid_task_input`     | `task()`                          | `GREXAL_TASK_INPUT` is missing or not valid JSON                                                                                                                              |
+| `connection_not_found`   | `connect()`, `request_takeover()` | Connection ID not declared in `grexal.json`                                                                                                                                   |
+| `invalid_auth_mode`      | `connect()`, `request_takeover()` | Wrong method for this auth mode (e.g., `connect()` on a `browser_login`)                                                                                                      |
+| `already_submitted`      | `submit()`                        | `submit()` was already called in this run                                                                                                                                     |
+| `submit_failed`          | `submit()`                        | Platform did not acknowledge the result after retries                                                                                                                         |
+| `payload_too_large`      | `submit()`                        | Serialized result exceeds 10 MB                                                                                                                                               |
+| `reserve_exceeded`       | `submit()`, `uploadFile()`        | Result or upload would push actual cost past the run's reserved budget. The run fails without being charged. See [Pricing](/docs/agent-manifest#pricing-not-in-the-manifest). |
+| `yield_failed`           | `yield()`                         | Platform rejected the partial result, or no resume message arrived within 5 minutes                                                                                           |
+| `user_action_failed`     | `requestUserAction()`             | Platform rejected the request — invalid URL, run not in `running` state, etc.                                                                                                 |
+| `user_action_timeout`    | `requestUserAction()`             | User did not click "I've completed this" within `timeoutSeconds`. The run fails.                                                                                              |
+| `file_upload_failed`     | `uploadFile()`                    | Could not read the local file, the storage PUT failed, or the platform refused to confirm the upload                                                                          |
+| `file_download_failed`   | `getFile()`                       | The platform returned a download URL but writing the bytes to the local destination failed                                                                                    |
+| `file_not_found`         | `getFile()`                       | File reference is not accessible — wrong id, expired, or not owned by this run                                                                                                |
+| `storage_limit_exceeded` | `uploadFile()`                    | Per-run or per-developer storage quota would be exceeded by this upload                                                                                                       |
+| `sandbox_not_desktop`    | `browser()`, `request_takeover()` | Desktop sandbox required but not configured                                                                                                                                   |
+| `takeover_timeout`       | `request_takeover()`              | User did not complete browser takeover within 5 minutes                                                                                                                       |
+| `missing_env`            | SDK initialization                | A required platform environment variable is missing                                                                                                                           |
+
+Unhandled exceptions [#unhandled-exceptions]
+
+If the agent throws an unhandled exception (or the process crashes), the sandbox captures stderr and the exit code. The run is marked as `failed` on the platform with the error message extracted from the last stderr output.
+
+There is no `ctx.fail()` method — to explicitly fail a run, raise/throw an exception. The platform treats any non-zero exit without a prior `submit()` call as a failure.
+
+Versioning [#versioning]
+
+Both packages (`@grexal/sdk` and `grexal-sdk`) follow [semantic versioning](https://semver.org/):
+
+* **Major** — breaking changes to the `AgentContext` API (method signatures, return types, error codes)
+* **Minor** — new methods or fields added to `AgentContext` (backward-compatible)
+* **Patch** — bug fixes, performance improvements, internal changes
+
+The build pipeline always installs the latest SDK version. If a new major version introduces breaking changes, agents pinning the old major version in their dependency file will continue to work — the build respects explicit version constraints. Agents without a version pin get the latest.
+
+
+---
+
+# Agent Manifest (/docs/agent-manifest)
+
+The agent manifest (`grexal.json`) describes **how your agent runs**: its entrypoint, runtime, input/output schemas, and declared connections.
+
+It does **not** describe identity or marketplace metadata — name, description, category, tags, homepage, repository, icon, open-source flag, pricing, and visibility are all set via `grexal agent set-*` (or in the dashboard) so changing them doesn't require a code change. The local binding to a specific agent record lives in `.grexal/agent.json`. See [What is not in the manifest](#what-is-not-in-the-manifest).
+
+Minimal example [#minimal-example]
+
+The simplest possible agent manifest:
+
+```json
+{
+  "manifest_version": 3,
+  "entrypoint": "agent.py",
+  "runtime": {
+    "language": "python"
+  }
+}
+```
+
+This is enough to build. All runtime resource fields default to sensible values. Run `grexal init --name <slug>` to scaffold a project — it writes the manifest plus `.grexal/agent.json` with your chosen slug.
+
+Full example [#full-example]
+
+A manifest using every supported field:
+
+```json
+{
+  "manifest_version": 3,
+  "entrypoint": "agent.py",
+  "runtime": {
+    "language": "python",
+    "memory_mb": 2048,
+    "timeout_seconds": 600,
+    "cpu": 4
+  },
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "location": {
+        "type": "string",
+        "description": "City or coordinates to get the forecast for"
+      },
+      "days": {
+        "type": "number",
+        "description": "Number of forecast days (1-14)"
+      }
+    },
+    "required": ["location"]
+  },
+  "connections": [
+    {
+      "id": "weather_api",
+      "display_name": "Weather Service",
+      "auth_mode": "secret_input",
+      "fields": [
+        { "name": "api_key", "label": "API Key", "secret": true },
+        { "name": "api_secret", "label": "API Secret", "secret": true }
+      ],
+      "delivery": "runtime_object"
+    },
+    {
+      "id": "google_drive",
+      "display_name": "Google Drive",
+      "auth_mode": "oauth_redirect",
+      "provider": {
+        "auth_url": "https://accounts.google.com/o/oauth2/v2/auth",
+        "token_url": "https://oauth2.googleapis.com/token",
+        "scopes": ["https://www.googleapis.com/auth/drive.readonly"]
+      }
+    },
+    {
+      "id": "gcp_service_account",
+      "display_name": "GCP Service Account",
+      "auth_mode": "file_upload",
+      "accepted_extensions": [".json"],
+      "max_size_bytes": 65536,
+      "description": "Upload your GCP service account key file (JSON format)"
+    },
+    {
+      "id": "google_account",
+      "display_name": "Google Account",
+      "auth_mode": "browser_login",
+      "login_url": "https://accounts.google.com"
+    }
+  ]
+}
+```
+
+Field reference [#field-reference]
+
+Top-level fields [#top-level-fields]
+
+| Field              | Type       | Required | Default | Description                                                                           |
+| ------------------ | ---------- | -------- | ------- | ------------------------------------------------------------------------------------- |
+| `manifest_version` | `number`   | No       | `3`     | Schema version. Versions `1`, `2`, and `3` are accepted; new projects should use `3`. |
+| `entrypoint`       | `string`   | **Yes**  | —       | Path to the entry file relative to the project root.                                  |
+| `runtime`          | `object`   | **Yes**  | —       | Runtime configuration. See [Runtime](#runtime).                                       |
+| `input_schema`     | `object`   | No       | —       | Schema describing expected task input. See [Input Schema](#input-schema).             |
+| `output_schema`    | `object`   | No       | —       | Schema describing the shape of results the agent submits.                             |
+| `connections`      | `object[]` | No       | `[]`    | Credential requirements. See [Connections](#connections).                             |
+
+The fields `name`, `description`, `category`, `tags`, `homepage`, `repository`, `icon`, and `is_open_source` are **not** part of the manifest. The CLI rejects them with a pointer to the corresponding `grexal agent set-*` command. They live on the agent record on the platform and are settable from the CLI or dashboard at any time.
+
+Identity binding (`.grexal/agent.json`) [#identity-binding-grexalagentjson]
+
+`grexal init --name <slug>` writes `.grexal/agent.json` with your chosen slug:
+
+```json
+{ "name": "acme-summarizer" }
+```
+
+On the first `grexal push`, the platform claims the slug and returns a server-issued opaque agent id. The CLI swaps the file contents to:
+
+```json
+{ "agentId": "ag_..." }
+```
+
+From that point, every CLI command addresses the agent by id. The slug is just metadata on the agent record and can be changed at any time with `grexal agent set-name <slug>` — public links are id-based, so renaming doesn't break them.
+
+`.grexal/agent.json` is committed to source control (it contains no secrets and teammates pushing from the same repo need it). `.grexal/connections.json` stays gitignored.
+
+Setting marketplace metadata [#setting-marketplace-metadata]
+
+After the first push, set marketplace metadata via the CLI or dashboard:
+
+```bash
+npx grexal agent set-description "Summarizes documents into a tight bulleted brief"
+npx grexal agent set-category research
+npx grexal agent set-tags summarization,llm
+npx grexal agent set-homepage https://example.com
+npx grexal agent set-repository https://github.com/you/your-agent
+npx grexal agent set-icon ./icon.png
+npx grexal agent set-is-open-source true
+```
+
+`grexal publish` requires a non-empty description, category, and at least one tag (plus pricing) — it returns the exact `set-*` command for any missing field.
+
+Validation constraints [#validation-constraints]
+
+| Field        | Constraint                                                                                                                 |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `entrypoint` | File must exist in the project. Extension must match `runtime.language` (`.py` for Python, `.ts` or `.js` for TypeScript). |
+
+Runtime [#runtime]
+
+| Field              | Type     | Required | Default      | Constraints                                                                                                                                                                                                                                                                                                    |
+| ------------------ | -------- | -------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `language`         | `string` | **Yes**  | —            | `"python"` or `"typescript"`                                                                                                                                                                                                                                                                                   |
+| `memory_mb`        | `number` | No       | `512`        | 512 - 8192 (8 GB). Must be an even number.                                                                                                                                                                                                                                                                     |
+| `timeout_seconds`  | `number` | No       | `300`        | 10 - 86400 (24 hours). The platform schedules a watchdog at `timeout_seconds + 60s` (60s grace for log flushing). At that point the sandbox is killed, the run is marked `failed`, and `Run exceeded timeout_seconds (N) — sandbox killed` is appended to the run log. Capped by a 65-minute platform ceiling. |
+| `cpu`              | `number` | No       | `2`          | 1, 2, 4, or 8 vCPUs                                                                                                                                                                                                                                                                                            |
+| `sandbox_template` | `string` | No       | `"standard"` | `"standard"` or `"desktop"`                                                                                                                                                                                                                                                                                    |
+
+`sandbox_template` [#sandbox_template]
+
+* **`standard`** — lightweight sandbox with no GUI. Suitable for most agents.
+* **`desktop`** — full Linux desktop with a browser. Required when any connection uses `auth_mode: "browser_login"`. Desktop sandboxes consume more resources — `memory_mb` should be at least 4096 and `cpu` at least 2.
+
+If any connection declares `auth_mode: "browser_login"` and `sandbox_template` is not `"desktop"`, validation fails.
+
+Pricing (not in the manifest) [#pricing-not-in-the-manifest]
+
+Pricing is **not** a manifest field. It's a list of composable line items — each one charges per-unit for a platform-measured quantity. Pricing is managed via the CLI or the dashboard and takes effect immediately — no push required.
+
+```bash
+npx grexal agent price add run_completed 0.05
+npx grexal agent price add input_tokens 0.000002 --param tokenizer=cl100k_base
+npx grexal agent price add output_pdf_pages 0.03 --param max_units=25
+npx grexal agent price list
+```
+
+Each line item's `amount` is in `[$0.00, $10.00]` per unit; at most 12 items per agent. Every output-side unit must declare `max_units` — a hard cap enforced mid-run so a buggy agent cannot blow past the buyer's reservation.
+
+The total cost of a run is the sum of all line item subtotals.
+
+**When buyers are charged:**
+
+| Outcome                                                                                   | What the buyer pays                                                                                                                                                                    |
+| ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Run completes successfully                                                                | Full cost — every line item, including any output the run produced.                                                                                                                    |
+| Run fails (error, timeout, reserve overflow)                                              | Nothing. The reservation is released.                                                                                                                                                  |
+| Buyer cancels an in-flight run, or fails to respond to an input request before it expires | `run_completed` (if priced) plus every input line item. The buyer is treated as having received the run, so they pay the fixed and input portions even though the agent didn't finish. |
+| Buyer cancels a run that hasn't started yet (still queued — sandbox never booted)         | Nothing. The reservation is released. This also covers workflow cancels where some child agents were still waiting on upstream nodes when the workflow was cancelled.                  |
+| You (the developer) cancel a buyer's in-flight run                                        | Nothing. The reservation is released.                                                                                                                                                  |
+
+The buyer-cancel rule exists so that repeatedly starting and abandoning a run — whether by clicking cancel or by ignoring an input request — can't drain you of compute cost without paying for the input you already processed. The premise is "you made the developer spend money, you pay" — so a run that never actually started is always free. If your pricing is purely output-based and the run hasn't produced any output yet, a buyer-cancel currently charges $0 — that's expected.
+
+**Budget enforcement:** At run start, the platform computes an estimate from the input and reserves `estimate × 1.25` against the buyer's balance. The reserve is the hard per-run cap — if the run would exceed it, `ctx.submit()` / `ctx.uploadFile()` throw `RESERVE_EXCEEDED` and the run fails without being charged. On completion (or buyer-cancel), the actual cost is settled and the remainder released.
+
+**Tokenizers:** `cl100k_base` (GPT-3.5 / GPT-4) and `o200k_base` (GPT-4o) tokenize exactly via js-tiktoken. `claude` and `gemini` approximate via a fixed chars-per-token ratio — there's no public offline tokenizer for those.
+
+**Marketplace baseline:** Each agent's card shows a "Typical: $X.XX · varies" label once 10+ organic completed runs have accumulated. Below the threshold: "Price details". Hovering the label in the dashboard reveals the per-unit breakdown. Baseline resets on any pricing change.
+
+At least one line item is required before you can `grexal publish` — the publish step errors clearly if pricing isn't configured.
+
+**Earnings:** Grexal takes a **20% marketplace fee** on every paid run (with a $0.02 floor and 30% cap on micro-runs); you keep the remaining 80%. There is no separate platform bill for sandbox compute, build, deploy, storage, or hosting — those are all covered by the fee. Your own external API costs (LLMs, third-party APIs) should be priced into your line items so the buyer pays them through your run charge. See [Payments](/docs/payments) for the full economics, worked examples, and how to redeem or cash out earnings.
+
+Input schema [#input-schema]
+
+Declares the expected shape of the task input your agent receives via `ctx.task()`. This is optional but recommended — the platform uses it to generate helpful input forms in the dashboard and to validate input at runtime.
+
+The schema follows a subset of [JSON Schema](https://json-schema.org/):
+
+| Field                      | Type       | Required | Description                                                             |
+| -------------------------- | ---------- | -------- | ----------------------------------------------------------------------- |
+| `type`                     | `string`   | **Yes**  | Must be `"object"`.                                                     |
+| `properties`               | `object`   | No       | Map of property names to their type definitions. Maximum 50 properties. |
+| `properties.*.type`        | `string`   | **Yes**  | `"string"`, `"number"`, `"boolean"`, `"array"`, or `"object"`           |
+| `properties.*.description` | `string`   | No       | Human-readable description. Maximum 500 characters.                     |
+| `required`                 | `string[]` | No       | List of required property names. Each must exist in `properties`.       |
+
+Example [#example]
+
+```json
+{
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "ticker": {
+        "type": "string",
+        "description": "Stock ticker symbol (e.g., AAPL)"
+      },
+      "period_days": {
+        "type": "number",
+        "description": "Analysis lookback period in days"
+      },
+      "include_news": {
+        "type": "boolean",
+        "description": "Whether to include recent news in the analysis"
+      }
+    },
+    "required": ["ticker"]
+  }
+}
+```
+
+When an agent declares `input_schema`, the dashboard's manual run dialog uses it to:
+
+* Pre-fill a JSON template with the declared properties
+* Show property descriptions as guidance
+* Indicate which fields are required
+
+Agents without `input_schema` still work — the input is simply a freeform JSON object.
+
+Output schema [#output-schema]
+
+Declares the shape of the result your agent returns from `run()` (or passes to `ctx.submit()`). Like `input_schema`, this is optional but recommended — the platform uses it to render the result on the run page and to decide which fields are file attachments versus inline data.
+
+`output_schema` is a flat map of field names to typed properties:
+
+```json
+{
+  "output_schema": {
+    "summary":  { "type": "text",   "description": "Plain-language description of what was produced" },
+    "song_mp3": { "type": "file",   "description": "Generated track (MP3)" },
+    "duration": { "type": "number", "description": "Track duration in seconds" }
+  }
+}
+```
+
+Field types [#field-types]
+
+The platform understands exactly five types. Anything outside this set is a validation error.
+
+| `type`    | What the field carries                                                                                      | How the platform renders it on the run page                                                                                                                                                         |
+| --------- | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `text`    | A string. Multi-line is fine.                                                                               | Plain text block. Long values are scrollable.                                                                                                                                                       |
+| `number`  | A JSON number.                                                                                              | Inline scalar.                                                                                                                                                                                      |
+| `boolean` | `true` or `false`.                                                                                          | Inline scalar.                                                                                                                                                                                      |
+| `json`    | Any JSON-serializable value (object, array, scalar). Use this when the shape varies.                        | Pretty-printed JSON viewer.                                                                                                                                                                         |
+| `file`    | A `FileReference` returned from `ctx.uploadFile()`. &#x2A;*Return the object as-is — do not stringify it.** | A standalone file card on the canvas. If `mimeType` starts with `image/`, an inline preview; `audio/`, an inline `<audio>` player; `video/`, an inline `<video>` player. Otherwise a download link. |
+
+A `file` field can also be an array of `FileReference` objects — each one renders as its own file card.
+
+File outputs: the rendering contract [#file-outputs-the-rendering-contract]
+
+This is the single most load-bearing rule for any agent that produces media:
+
+1. **Declare the field as `"type": "file"` in `output_schema`.**
+2. **Upload the bytes via `ctx.uploadFile()`** ([reference](/docs/sdk/agent-context#ctxuploadfilelocalpath-options)) — it returns a `FileReference` with shape `{ id, name, mimeType, size, description }`.
+3. **Return that `FileReference` object directly under the field name.** Do not `JSON.stringify` it. Do not nest it inside a `text` field.
+
+Worked example — an agent that produces an audio track:
+
+```json
+// grexal.json
+{
+  "output_schema": {
+    "summary":  { "type": "text", "description": "Short description of the track" },
+    "song_mp3": { "type": "file", "description": "Generated track (MP3)" },
+    "song_wav": { "type": "file", "description": "Generated track (WAV)" }
+  }
+}
+```
+
+```typescript
+// index.ts
+export default async function run(ctx: AgentContext) {
+  // ... synthesize the audio to /tmp/song.mp3 and /tmp/song.wav ...
+
+  const mp3 = await ctx.uploadFile("/tmp/song.mp3", {
+    description: "Generated track (MP3)",
+    mimeType: "audio/mpeg",
+  });
+  const wav = await ctx.uploadFile("/tmp/song.wav", {
+    description: "Generated track (WAV)",
+    mimeType: "audio/wav",
+  });
+
+  return {
+    summary: "A 90-second lo-fi loop in C minor.",
+    song_mp3: mp3,   // <- FileReference, returned as-is
+    song_wav: wav,
+  };
+}
+```
+
+The run page detects the audio MIME types and shows two playable cards.
+
+Common mistake: `text` + JSON-stringified files [#common-mistake-text--json-stringified-files]
+
+Declaring a file field as `"type": "text"` and stringifying a list of `FileReference` objects into it produces a successful run, an empty-looking canvas, and no playable preview — the renderer only inspects raw values. Always use `"type": "file"` and return the `FileReference` directly.
+
+Validation rules [#validation-rules]
+
+| Field                      | Constraint                                                                                                                                                              |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| field name                 | Up to 50 fields. Each name 1-64 characters, alphanumeric / `_` / `-`.                                                                                                   |
+| `properties.*.type`        | Must be one of `text`, `file`, `number`, `boolean`, `json`.                                                                                                             |
+| `properties.*.description` | Optional. Maximum 500 characters.                                                                                                                                       |
+| `properties.*.accept`      | Optional, only valid when `type` is `"file"`. Array of MIME-type globs (e.g. `["audio/*"]`) used to filter user uploads — has no effect on agent-produced output files. |
+
+The same flat typed-map form (`{ "fieldName": { "type": ..., ... } }`) is also accepted for `input_schema`. The legacy `{ "type": "object", "properties": { ... } }` JSON-Schema form documented above continues to work for `input_schema` for backward compatibility.
+
+Connections [#connections]
+
+Each entry in the `connections` array declares a credential the agent needs from the user. See [Connections](/docs/connections) for detailed guides on each auth mode.
+
+Shared fields (all auth modes) [#shared-fields-all-auth-modes]
+
+| Field          | Type      | Required | Description                                                                                                                                                                                                             |
+| -------------- | --------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`           | `string`  | **Yes**  | Unique identifier within this manifest. Used in `ctx.connect(id)` calls.                                                                                                                                                |
+| `display_name` | `string`  | **Yes**  | User-facing name shown in credential prompts.                                                                                                                                                                           |
+| `auth_mode`    | `string`  | **Yes**  | One of: `"secret_input"`, `"oauth_redirect"`, `"file_upload"`, `"browser_login"`                                                                                                                                        |
+| `optional`     | `boolean` | No       | When `true`, runs are not blocked if the user hasn't set this connection up. The agent must check availability with `await ctx.connect(id, { optional: true })` (returns `null` when missing) and branch on the result. |
+
+`secret_input` [#secret_input]
+
+| Field             | Type       | Required    | Default            | Description                                                                  |
+| ----------------- | ---------- | ----------- | ------------------ | ---------------------------------------------------------------------------- |
+| `fields`          | `object[]` | **Yes**     | —                  | Form fields to collect from the user.                                        |
+| `fields[].name`   | `string`   | **Yes**     | —                  | Field key. Used in `conn.get(name)`.                                         |
+| `fields[].label`  | `string`   | **Yes**     | —                  | User-facing label shown in the form.                                         |
+| `fields[].secret` | `boolean`  | No          | `true`             | Whether to mask the input.                                                   |
+| `delivery`        | `string`   | No          | `"runtime_object"` | `"runtime_object"`, `"env_vars"`, or `"file"`                                |
+| `env_map`         | `object`   | Conditional | —                  | Required when `delivery` is `"env_vars"`. Maps field names to env var names. |
+
+`oauth_redirect` [#oauth_redirect]
+
+| Field                | Type       | Required | Description                         |
+| -------------------- | ---------- | -------- | ----------------------------------- |
+| `provider.auth_url`  | `string`   | **Yes**  | Provider's authorization endpoint.  |
+| `provider.token_url` | `string`   | **Yes**  | Provider's token exchange endpoint. |
+| `provider.scopes`    | `string[]` | **Yes**  | OAuth scopes to request.            |
+
+Delivery is always `runtime_object`. OAuth client credentials (client ID, client secret) are provided through the Grexal dashboard, not in the manifest.
+
+`file_upload` [#file_upload]
+
+| Field                 | Type       | Required | Default | Description                                          |
+| --------------------- | ---------- | -------- | ------- | ---------------------------------------------------- |
+| `accepted_extensions` | `string[]` | No       | —       | Allowed file extensions (e.g., `[".json", ".pem"]`). |
+| `max_size_bytes`      | `number`   | No       | `65536` | Maximum file size. Platform max: 1,048,576 (1 MB).   |
+| `description`         | `string`   | No       | —       | Instructions shown in the upload prompt.             |
+
+Delivery is always file injection to `/tmp/grexal/{connection_id}/{filename}`.
+
+`browser_login` [#browser_login]
+
+| Field       | Type     | Required | Description                                                                  |
+| ----------- | -------- | -------- | ---------------------------------------------------------------------------- |
+| `login_url` | `string` | No       | The URL the user will log into. Informational — shown in the consent prompt. |
+
+Requires `runtime.sandbox_template` to be `"desktop"`.
+
+Delivery modes [#delivery-modes]
+
+Delivery modes control how `secret_input` credentials reach the agent. Other auth modes have fixed delivery.
+
+| Mode             | Available for  | Description                                                       |
+| ---------------- | -------------- | ----------------------------------------------------------------- |
+| `runtime_object` | `secret_input` | Default. Accessed via `ctx.connect(id).get(field_name)`.          |
+| `env_vars`       | `secret_input` | Injected as environment variables. Requires `env_map`.            |
+| `file`           | `secret_input` | Written to `/tmp/grexal/{connection_id}.json` inside the sandbox. |
+
+Categories [#categories]
+
+| Category        | Description                                               |
+| --------------- | --------------------------------------------------------- |
+| `finance`       | Trading, portfolio management, invoicing, accounting      |
+| `productivity`  | Email, calendar, documents, spreadsheets, task management |
+| `data`          | Extraction, transformation, analysis, visualization       |
+| `communication` | Messaging, social media, notifications, outreach          |
+| `development`   | Code generation, testing, deployment, monitoring          |
+| `research`      | Web search, summarization, competitive analysis           |
+| `media`         | Image, video, audio processing and generation             |
+| `commerce`      | E-commerce, pricing, inventory, order management          |
+| `travel`        | Flights, hotels, car rental, itinerary planning           |
+| `other`         | Anything that doesn't fit the above                       |
+
+What is not in the manifest [#what-is-not-in-the-manifest]
+
+Identity, marketplace metadata, and operational settings all live on the platform (or `.grexal/agent.json` for the local identity binding), not in `grexal.json`:
+
+| Setting                              | Where it lives                                                                      | Why not in the manifest                                                                                                                            |
+| ------------------------------------ | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Agent slug** (`name`)              | `.grexal/agent.json` (local) + agent record (server)                                | Set with `grexal init --name <slug>`; rename later with `grexal agent set-name <slug>`. Public links are id-based, so renaming doesn't break them. |
+| **Description**                      | `grexal agent set-description "..."` / Dashboard                                    | Marketing copy shouldn't require a code change.                                                                                                    |
+| **Category**                         | `grexal agent set-category <slug>` / Dashboard                                      | Same.                                                                                                                                              |
+| **Tags**                             | `grexal agent set-tags <a,b,c>` / Dashboard                                         | Same.                                                                                                                                              |
+| **Homepage / repository links**      | `grexal agent set-homepage <url>` / `grexal agent set-repository <url>` / Dashboard | External pointers, not code.                                                                                                                       |
+| **Icon**                             | `grexal agent set-icon <local-path>` / Dashboard                                    | Uploaded once, swappable any time.                                                                                                                 |
+| **Open-source flag**                 | `grexal agent set-is-open-source <true\|false>` / Dashboard                         | Toggle without redeploying.                                                                                                                        |
+| **Pricing (line items, baseline)**   | `grexal agent price add\|remove\|clear` / Dashboard                                 | Pricing is a commercial decision and shouldn't change on every code push. Pricing mistakes cost real money.                                        |
+| **Visibility** (public / private)    | `grexal agent set-visibility` / Dashboard                                           | Access control shouldn't flip on a redeploy.                                                                                                       |
+| **Published state** (draft / active) | `grexal publish` / `grexal unpublish` / Dashboard                                   | Going live is an explicit, intentional act.                                                                                                        |
+| **OAuth client credentials**         | Dashboard                                                                           | These are secrets that should never be in a file committed to a repo.                                                                              |
+| **Developer environment variables**  | `grexal env` / Dashboard                                                            | The developer's operational secrets (LLM keys, database URLs).                                                                                     |
+| **Payout settings**                  | Dashboard (Stripe Connect)                                                          | Bank account, payout schedule, tax information.                                                                                                    |
+
+The principle: &#x2A;*the manifest describes how to run the code; the agent record describes who runs it and how it shows up to buyers.** If changing a field should NOT require a code change, it's not in the manifest.
+
+The CLI rejects identity and marketplace fields if they appear in `grexal.json`, with a pointer to the corresponding `grexal agent set-*` command — so a stale template can never silently desync from the platform record.
+
+Validation [#validation]
+
+The manifest is validated at three points:
+
+1\. `npx grexal dev` (local development) [#1-npx-grexal-dev-local-development]
+
+Validated on startup and on every file change. Catches structural errors before pushing.
+
+2\. `npx grexal validate` (standalone check) [#2-npx-grexal-validate-standalone-check]
+
+Same validation as `npx grexal dev` startup. Useful in CI or as a pre-push hook.
+
+3\. `npx grexal push` (build pipeline) [#3-npx-grexal-push-build-pipeline]
+
+Full validation inside the build sandbox. This is the authoritative check. Additional checks at build time:
+
+* OAuth connections have corresponding connection config in the dashboard
+* If `browser_login` is declared, `sandbox_template` is `"desktop"`
+* Entrypoint file extension matches declared language
+* Resource limits are within platform maximums
+
+Error format [#error-format]
+
+```
+Validation failed:
+
+  runtime.memory_mb — exceeds platform maximum (8192 MB)
+  connections[0].id — invalid characters: must match ^[a-z][a-z0-9_]*$
+  connections[1].fields — missing required field for secret_input connection
+  entrypoint — file "agent.py" not found in project
+```
+
+Manifest snapshot [#manifest-snapshot]
+
+When an agent is pushed, the build pipeline stores a frozen copy of `grexal.json` on the deployment record. This snapshot is what the platform uses at runtime to interpret task input and route connections — not the live file.
+
+What's in the snapshot: `name`, `entrypoint`, `runtime`, `input_schema`, `output_schema`, and `connections`. Commercial metadata (pricing, visibility, description, etc.) is on the agent record itself, not the snapshot — it is updated via `grexal agent price` / `grexal agent set-*` or the dashboard and takes effect immediately without a rebuild.
+
+This means:
+
+* Rolling back to a previous deployment (`grexal publish --deployment <id>`) restores that build's code and connections — but pricing, visibility, and description stay at their current values.
+* Editing `grexal.json` locally has no effect until the next `grexal push`.
+* Editing pricing or description in the dashboard has no effect on already-pushed builds until you `grexal publish` to promote (or the change applies immediately to the currently active deployment).
+
+
+---
+
+# Payments (/docs/payments)
+
+Grexal handles billing end-to-end: buyers top up credits, you set a price, and the platform charges them per run. This page covers exactly what that means in dollars so you can price your agent confidently.
+
+You keep 80% of every paid run [#you-keep-80-of-every-paid-run]
+
+For every paid run of your agent, Grexal takes **20% as a marketplace fee** and the remaining **80% becomes your earnings**. One sentence, no asterisks for the vast majority of pricing.
+
+Two guardrails apply to the fee:
+
+* **Floor*&#x2A;: a minimum fee of **$0.02 per run** (only matters on very small micro-runs).
+* **Cap**: the fee never exceeds **30% of the run charge** (so the floor can't become punitive on tiny runs).
+
+```
+platform_fee  = clamp(buyer_charge × 0.20, $0.02, buyer_charge × 0.30)
+your_earnings = buyer_charge − platform_fee
+```
+
+The floor and cap only enter the picture on very cheap runs. Worked examples:
+
+| Buyer pays | Platform fee | You receive | Effective % |
+| ---------- | ------------ | ----------- | ----------- |
+| $5.00      | $1.000       | $4.000      | 20%         |
+| $1.00      | $0.200       | $0.800      | 20%         |
+| $0.20      | $0.040       | $0.160      | 20%         |
+| $0.10      | $0.020       | $0.080      | 20%         |
+| $0.05      | $0.015       | $0.035      | 30% (cap)   |
+| $0.02      | $0.006       | $0.014      | 30% (cap)   |
+
+For any run priced at **$0.10 or higher**, you keep exactly 80%. Below that, the 30% cap kicks in to protect the buyer from a disproportionately large fixed fee, and your share drifts down toward 70% in the limit.
+
+You are not separately billed for platform infrastructure [#you-are-not-separately-billed-for-platform-infrastructure]
+
+The 20% marketplace fee is the *only* way Grexal makes money from your agent. You are **not** charged separately for any of the following:
+
+* Running your agent in the sandbox — compute time, memory, and network egress are all included
+* Building, pushing, or publishing your agent (`grexal push`, `grexal publish`, `grexal deploy`)
+* Storing your code, build artifacts, run history, or logs
+* Hosting your agent's listing in the marketplace and the dashboard
+* The platform-side orchestration around each run
+
+Whatever your published price is, that is what the buyer pays — there is no platform-side surcharge tacked on top, and no separate bill at the end of the month.
+
+What you *do* still need to cover [#what-you-do-still-need-to-cover]
+
+Anything **outside** the platform that your agent calls out to is still your own cost:
+
+* Third-party LLM APIs (OpenAI, Anthropic, Google, etc.)
+* Paid scraping / search APIs, paid data sources, paid SaaS endpoints
+* Any other usage-based external service
+
+The standard pattern is to bill the buyer for these **through your own price** by adding token / page / file line items at (or above) what the upstream service costs you. So if your agent makes a Claude Sonnet call, add an `input_tokens` and `output_tokens` line item with rates that recover your model spend. The buyer then pays the model cost as part of your run charge, the 20% applies to the whole charge, and you net what's left after both the platform fee and your real upstream cost.
+
+See [Pricing](/docs/agent-manifest#pricing-not-in-the-manifest) and [`grexal agent price`](/docs/cli#npx-grexal-agent-price-subcommand) for the full list of supported units (`run_completed`, `input_tokens`, `input_pdf_pages`, `output_tokens`, `output_image`, etc.) and how to compose them.
+
+Pricing your agent with the take rate in mind [#pricing-your-agent-with-the-take-rate-in-mind]
+
+A useful mental model is to start from the *net* you want per run, then work backwards:
+
+```
+buyer_charge = (your_target_net + your_upstream_cost) / 0.80
+```
+
+Worked example — a research agent that costs you \~$0.04 in Claude tokens per run, where you want to net \~$0.10 per run after platform fee:
+
+```
+buyer_charge = ($0.10 + $0.04) / 0.80 = $0.175  →  round to $0.18
+```
+
+You can configure that as either a flat fee or as a composition of line items:
+
+```bash
+# Flat fee (simplest)
+npx grexal agent price add run_completed 0.18
+
+# Or: pass model usage through as a token line item, smaller fixed fee
+npx grexal agent price add run_completed 0.10
+npx grexal agent price add input_tokens  0.000004 --param tokenizer=claude
+npx grexal agent price add output_tokens 0.000020 --param tokenizer=claude
+```
+
+Either shape produces a similar economic outcome — the second one scales the buyer charge with actual token usage instead of charging a flat amount, which is fairer for unusually small or large inputs.
+
+Use `npx grexal agent price estimate '<input-json>'` to preview what a buyer would be charged on a representative input before publishing.
+
+What does *not* generate earnings [#what-does-not-generate-earnings]
+
+* **Self-runs.** Runs you start against your own agent (testing, dogfooding) are free and do not produce earnings entries.
+* **Failed runs.** If a run errors, times out, or exceeds its reservation, the buyer is not charged and no earnings entry is created.
+* **Buyer-cancelled runs that never started.** If a queued run is cancelled before it begins, the reservation is released and no earnings are created. (Once a run has actually started, the buyer is charged for the input portion of pricing — see [Pricing](/docs/agent-manifest#pricing-not-in-the-manifest) for the exact rules — and that portion produces earnings as normal.)
+* **Refunded runs.** If a paid run is later refunded, the matching earnings entry is reversed.
+
+Where your earnings live [#where-your-earnings-live]
+
+Every paid run posts an immutable earnings entry to your account immediately on completion. You can see all of them — plus redemptions, cashouts, and reversals — in a unified activity feed at **Dashboard → Earnings**.
+
+Three balances are tracked:
+
+* **Lifetime earned** — everything your agents have ever earned.
+* **Available to redeem** — earnings you can convert to Grexal buyer credits right now.
+* **Cashable** — earnings that have cleared a 14-day holding period and can be withdrawn.
+
+The 14-day hold applies only to cashing out, not to redeeming as credits.
+
+Two ways to use what you've earned [#two-ways-to-use-what-youve-earned]
+
+1\. Redeem to credits — instant, no minimum [#1-redeem-to-credits--instant-no-minimum]
+
+Convert any portion of your available balance into Grexal buyer credits. Useful if you also use Grexal to run other developers' agents — your earnings effectively pay for that usage with no top-up step in between.
+
+* No minimum amount.
+* No holding period — your most recent earnings are eligible immediately.
+* Done from the **Redeem to credits** button on the Earnings page.
+
+2\. Cash out — $10 minimum, 14-day hold [#2-cash-out--10-minimum-14-day-hold]
+
+Once at least $10 of your earnings has cleared the 14-day holding period, you can request a payout from the **Cash out** button on the Earnings page. You enter the amount, optionally add a note, and submit a payout request. Grexal follows up to confirm payment details and process the transfer.
+
+* Minimum cashable balance: **$10**.
+* Holding period: **14 days** from when each earning was created.
+* A pending payout request can be cancelled while it's still in `requested` state.
+
+If you have less than $10 cashable but some balance available, the dialog will offer the redeem-to-credits path as an escape hatch.
+
+Buyer privacy [#buyer-privacy]
+
+Each earnings entry is tagged with a **scoped buyer ID** — a stable identifier that lets *you* recognize repeat customers of *your* agents (visible on the per-agent earnings card), but doesn't let anyone correlate the same buyer across the marketplace. The same human running another developer's agent has a different scoped ID over there.
+
+You see useful repeat-customer signal; buyers don't have their identity exposed to you or to other developers.
+
+TL;DR [#tldr]
+
+* **You keep 80%** of every paid run (with a $0.02 floor and 30% cap on micro-runs).
+* **No separate platform bill.** The 20% fee covers all sandbox compute, build, deploy, storage, and listing.
+* **Your own external API costs** (LLMs, third-party APIs) are yours to cover — bill the buyer for them through token/page/file line items in your price.
+* **Earnings post immediately**, can be **redeemed to credits anytime**, or **cashed out after 14 days** ($10 minimum).
+* **Self-runs and failed runs** don't generate earnings; **refunds** reverse them.
+* Manage everything at **Dashboard → Earnings**.
+
+
+---
+
+# Connections (/docs/connections)
+
+A connection is a user credential that an agent needs to access an external service. You declare connections in `grexal.json`. The platform collects credentials from the user and makes them available to your agent at runtime.
+
+Connections are the **user's** secrets — their API keys, their OAuth tokens, their login sessions. They are distinct from developer environment variables, which are **your** operational secrets (your LLM keys, your database URLs).
+
+Auth modes [#auth-modes]
+
+| Mode                                             | Status              | What the user provides                  | How it reaches the agent               |
+| ------------------------------------------------ | ------------------- | --------------------------------------- | -------------------------------------- |
+| [Secret Input](/docs/connections/secret-input)   | **Supported**       | API keys, passwords, tokens via a form  | `ctx.connect()`                        |
+| [OAuth Redirect](/docs/connections/oauth)        | Not yet implemented | Authorization via OAuth flow            | `ctx.connect()` (access token)         |
+| [File Upload](/docs/connections/file-upload)     | Not yet implemented | A config file, key file, or certificate | File at `/tmp/grexal/{connection_id}/` |
+| [Browser Login](/docs/connections/browser-login) | Not yet implemented | Interactive login in a live browser     | Session lives in the sandbox's browser |
+
+Only `secret_input` is live today. Agents that declare `oauth_redirect`, `file_upload`, or `browser_login` will still deploy, but the platform will refuse to run them with a clear error in the Run dialog until those modes ship.
+
+Secret Input lifecycle [#secret-input-lifecycle]
+
+Credentials are **per-user and reusable across agents**: you enter your Vercel AI Gateway key once, and any agent that declares a `vercel_ai_gateway` connection can request access. Each agent needs an explicit per-user grant before it can read the credential — think of it like OAuth's "allow this app" step, but for stored keys.
+
+```
+User clicks Run on an agent
+    ↓
+Run dialog reads the agent's declared connections
+    ↓
+For each connection:
+  Is a credential with this connectionId saved for the user?
+    ├── No → show fields, user enters values, auto-grant this agent on save
+    ├── Yes, and this agent already has a grant → ready
+    └── Yes, but no grant for this agent → show consent prompt
+    ↓
+All connections ready → run starts → sandbox receives GREXAL_CONNECTIONS env
+```
+
+Users can review and revoke grants, overwrite field values, or delete entire connections from [`/dashboard/connections`](https://grexal.dev/dashboard/connections).
+
+Runtime contract [#runtime-contract]
+
+Inside the sandbox the SDK reads credentials from the `GREXAL_CONNECTIONS` env var, which is a JSON object of the shape:
+
+```json
+{
+  "<connection_id>": {
+    "<field_name>": "<plaintext_value>"
+  }
+}
+```
+
+Your agent code never touches the env var directly — call `ctx.connect(connectionId)` and then `.get(fieldName)`.
+
+Local development [#local-development]
+
+For local testing with `npx grexal dev`, connection credentials live in `.grexal/connections.json` in the agent directory. See [secret\_input](/docs/connections/secret-input) for the file format.
+
+
+---
+
+# Secret Input (/docs/connections/secret-input)
+
+The simplest auth mode. You declare form fields, the user fills them in, and the values are encrypted and stored (envelope encryption via AWS KMS — the platform never sees plaintext after the initial write).
+
+Manifest declaration [#manifest-declaration]
+
+```json
+{
+  "connections": [
+    {
+      "id": "weather_api",
+      "display_name": "Weather Service",
+      "auth_mode": "secret_input",
+      "fields": [
+        { "name": "api_key", "label": "API Key", "secret": true },
+        { "name": "api_secret", "label": "API Secret", "secret": true }
+      ]
+    }
+  ]
+}
+```
+
+User experience [#user-experience]
+
+When a user opens the Run dialog for an agent that declares a connection they haven't set up, the dialog shows a card with the declared fields:
+
+```
+┌─────────────────────────────────────────────────┐
+│  Weather Service                                │
+│  This agent needs your credentials.             │
+│                                                 │
+│  API Key     [•••••••••••••••••]                │
+│  API Secret  [•••••••••••••••••]                │
+│                                                 │
+│                           [Save & allow]        │
+└─────────────────────────────────────────────────┘
+```
+
+Credentials are **per-user, reusable across agents**: the second agent that declares the same `id` will see a lightweight consent prompt instead of a new form:
+
+```
+┌─────────────────────────────────────────────────┐
+│  Weather Service                                │
+│  You already have credentials saved.            │
+│  Allow this agent to use them?                  │
+│                                                 │
+│                                     [Allow]    │
+└─────────────────────────────────────────────────┘
+```
+
+Users manage stored credentials (including per-agent grants) at `/dashboard/connections`.
+
+Agent code [#agent-code]
+
+```ts
+export default async function run(ctx: AgentContext) {
+  const weather = await ctx.connect("weather_api");
+  const apiKey = weather.get("api_key");
+  const apiSecret = weather.get("api_secret");
+}
+```
+
+```python
+async def run(ctx: AgentContext):
+    weather = await ctx.connect("weather_api")
+    api_key = weather.get("api_key")
+    api_secret = weather.get("api_secret")
+```
+
+`ctx.connect()` never blocks — the pre-collection model guarantees the values are present in `GREXAL_CONNECTIONS` before the sandbox starts.
+
+Runtime delivery [#runtime-delivery]
+
+Credentials are delivered to the sandbox via the `GREXAL_CONNECTIONS` env var:
+
+```json
+{
+  "weather_api": {
+    "api_key": "...",
+    "api_secret": "..."
+  }
+}
+```
+
+The SDK parses this lazily on the first `ctx.connect()` call; you never need to read it directly. Alternative delivery modes (`env_vars`, `file`) are reserved for future releases and are not yet implemented — agents must use the default `runtime_object` delivery.
+
+Local development [#local-development]
+
+`npx grexal dev` reads credentials from `.grexal/connections.json` in the agent directory. Format:
+
+```json
+{
+  "weather_api": {
+    "api_key": "dev-key",
+    "api_secret": "dev-secret"
+  }
+}
+```
+
+The file is git-ignored by default. No consent flow in dev — any connection present in the file is available to `ctx.connect()`.
+
+Field reference [#field-reference]
+
+| Field             | Type       | Required | Default | Description                                                                                                   |
+| ----------------- | ---------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------- |
+| `id`              | `string`   | **Yes**  | —       | Connection identifier. Matches the argument to `ctx.connect()`. Must match `^[a-z][a-z0-9_]*$`, max 64 chars. |
+| `display_name`    | `string`   | **Yes**  | —       | User-facing label shown in the Run dialog.                                                                    |
+| `auth_mode`       | `string`   | **Yes**  | —       | Must be `"secret_input"`.                                                                                     |
+| `fields`          | `object[]` | **Yes**  | —       | Form fields to collect. At least 1, at most 20.                                                               |
+| `fields[].name`   | `string`   | **Yes**  | —       | Field key. Used in `conn.get(name)`. Must match `^[a-z][a-z0-9_]*$`.                                          |
+| `fields[].label`  | `string`   | **Yes**  | —       | User-facing label shown in the form.                                                                          |
+| `fields[].secret` | `boolean`  | No       | `true`  | Whether to mask the input.                                                                                    |
+
+
+---
+
+# OAuth Redirect (/docs/connections/oauth)
+
+> **Status: Not yet implemented.** You can declare `oauth_redirect` connections in `grexal.json` and the CLI will accept them, but the platform currently refuses to run any agent that declares one. The reference below is kept for contract stability — agents written to this spec today will work unchanged once the mode ships. For now, use [`secret_input`](/docs/connections/secret-input).
+
+For services that support OAuth 2.0 (Google, Twitter, GitHub, Slack, etc.). You register your own OAuth app with the provider and provide the client credentials to the platform through the Grexal dashboard.
+
+Why you register your own OAuth app [#why-you-register-your-own-oauth-app]
+
+Grexal does not maintain a master OAuth app per provider. Each developer registers their own:
+
+* **Scope control** — your OAuth app requests only the scopes your agent needs
+* **Rate limit isolation** — per-client-ID rate limits don't collide across agents
+* **Provider ToS compliance** — OAuth providers prohibit sharing credentials across unrelated apps
+* **Liability isolation** — one bad agent can't get every agent's OAuth access revoked
+
+Manifest declaration [#manifest-declaration]
+
+```json
+{
+  "connections": [
+    {
+      "id": "google_drive",
+      "display_name": "Google Drive",
+      "auth_mode": "oauth_redirect",
+      "provider": {
+        "auth_url": "https://accounts.google.com/o/oauth2/v2/auth",
+        "token_url": "https://oauth2.googleapis.com/token",
+        "scopes": ["https://www.googleapis.com/auth/drive.readonly"]
+      }
+    }
+  ]
+}
+```
+
+The `provider` block tells the platform how to run the OAuth flow. The client ID and client secret are provided separately through the Grexal dashboard — not in `grexal.json`.
+
+Dashboard setup [#dashboard-setup]
+
+In the Grexal dashboard, under the agent's settings:
+
+```
+Connection Config: google_drive
+  Client ID:     [________________________________]
+  Client Secret: [________________________________]
+```
+
+These are encrypted and stored by the platform. They are used exclusively for:
+
+1. Initiating the OAuth redirect during pre-collection
+2. Exchanging the auth code for tokens
+3. Refreshing expired tokens
+
+Your agent code never sees the client ID or client secret.
+
+User experience [#user-experience]
+
+During pre-collection:
+
+```
+┌─────────────────────────────────────────────────┐
+│  Drive Organizer needs access to your            │
+│  Google Drive (read-only).                       │
+│                                                  │
+│  [Connect Google Drive]                          │
+└─────────────────────────────────────────────────┘
+```
+
+Clicking the button redirects the user to Google's auth page (using your client ID and declared scopes). After the user grants access, the platform exchanges the auth code for tokens and stores them in the vault.
+
+The OAuth flow [#the-oauth-flow]
+
+```
+User clicks "Connect Google Drive"
+    ↓
+Platform reads your OAuth connection config (client ID, client secret)
+    ↓
+Redirects user to provider's auth_url with client ID + scopes
+    ↓
+User authenticates with provider, grants access
+    ↓
+Provider redirects to Grexal callback with auth code
+    ↓
+Platform exchanges auth code at token_url using client credentials
+    ↓
+Receives { access_token, refresh_token, expires_in }
+    ↓
+Encrypts and stores in vault (scoped to user + agent)
+    ↓
+Pre-collection complete → proceed to sandbox creation
+```
+
+Token refresh [#token-refresh]
+
+The platform handles token refresh transparently at pre-collection time. If the access token is expired or near-expiry, the platform uses your client credentials and the user's refresh token to get a new access token before injecting it into the sandbox.
+
+Agent code [#agent-code]
+
+```python
+async def run(ctx: AgentContext):
+    google = await ctx.connect("google_drive")
+    access_token = google.get("access_token")
+
+    # Use the token to call Google Drive API
+    headers = {"Authorization": f"Bearer {access_token}"}
+```
+
+The agent receives a valid access token. It never deals with refresh logic, client credentials, or auth codes.
+
+Delivery [#delivery]
+
+OAuth credentials are always delivered via `runtime_object` (`ctx.connect()`). Injecting OAuth tokens as env vars is not supported — tokens contain multiple fields (access token, token type, scopes) and may be refreshed, making env var mapping fragile.
+
+Field reference [#field-reference]
+
+| Field                | Type       | Required | Description                                 |
+| -------------------- | ---------- | -------- | ------------------------------------------- |
+| `provider`           | `object`   | **Yes**  | OAuth provider configuration.               |
+| `provider.auth_url`  | `string`   | **Yes**  | Provider's authorization endpoint (HTTPS).  |
+| `provider.token_url` | `string`   | **Yes**  | Provider's token exchange endpoint (HTTPS). |
+| `provider.scopes`    | `string[]` | **Yes**  | OAuth scopes to request (at least 1).       |
+
+
+---
+
+# File Upload (/docs/connections/file-upload)
+
+> **Status: Not yet implemented.** You can declare `file_upload` connections in `grexal.json` and the CLI will accept them, but the platform currently refuses to run any agent that declares one. The reference below is kept for contract stability — agents written to this spec today will work unchanged once the mode ships. For now, use [`secret_input`](/docs/connections/secret-input) and paste the file contents into a text field.
+
+For credentials that are files: SSH keys, service account JSON files, TLS certificates, configuration files.
+
+Manifest declaration [#manifest-declaration]
+
+```json
+{
+  "connections": [
+    {
+      "id": "gcp_service_account",
+      "display_name": "GCP Service Account",
+      "auth_mode": "file_upload",
+      "accepted_extensions": [".json"],
+      "max_size_bytes": 65536,
+      "description": "Upload your GCP service account key file (JSON format)"
+    }
+  ]
+}
+```
+
+User experience [#user-experience]
+
+```
+┌─────────────────────────────────────────────────┐
+│  GCP Analyzer needs your GCP Service Account     │
+│  key file.                                       │
+│  Upload your GCP service account key file        │
+│  (JSON format).                                  │
+│                                                  │
+│  [Choose file]  (.json, max 64 KB)               │
+└─────────────────────────────────────────────────┘
+```
+
+Storage [#storage]
+
+The file contents are encrypted and stored in the vault as a base64-encoded blob. The file metadata (original filename, size, MIME type) is stored alongside.
+
+Delivery [#delivery]
+
+File credentials are always delivered via file injection. At sandbox creation, the platform writes the decrypted file to `/tmp/grexal/{connection_id}/{original_filename}`.
+
+Agent code [#agent-code]
+
+```python
+async def run(ctx: AgentContext):
+    sa_file = await ctx.connect("gcp_service_account")
+    file_path = sa_file.get("file_path")
+    # → /tmp/grexal/gcp_service_account/service-account.json
+
+    from google.cloud import storage
+    client = storage.Client.from_service_account_json(file_path)
+```
+
+Field reference [#field-reference]
+
+| Field                 | Type       | Required | Default         | Description                                                       |
+| --------------------- | ---------- | -------- | --------------- | ----------------------------------------------------------------- |
+| `accepted_extensions` | `string[]` | No       | —               | Allowed file extensions. Must start with a dot (e.g., `".json"`). |
+| `max_size_bytes`      | `number`   | No       | `65536` (64 KB) | Maximum file size. Platform max: 1,048,576 (1 MB).                |
+| `description`         | `string`   | No       | —               | Instructions shown to the user in the upload prompt.              |
+
+
+---
+
+# Browser Login (/docs/connections/browser-login)
+
+> **Status: Not yet implemented.** You can declare `browser_login` connections in `grexal.json` and the CLI will accept them, but the platform currently refuses to run any agent that declares one (the desktop sandbox + VNC takeover infrastructure it needs hasn't shipped). The reference below is kept for contract stability. For now, use [`secret_input`](/docs/connections/secret-input) and have the user paste session cookies.
+
+For services that have no API and no OAuth — the user logs in through a browser and the agent operates the browser with the resulting session. This is the most complex auth mode and the only one that does **not** use pre-collection.
+
+How it's different [#how-its-different]
+
+The other three auth modes extract a credential (keys, tokens, files), store it in the vault, and inject it into the sandbox. Browser login doesn't extract anything. The session lives in the browser inside the sandbox — the cookies, localStorage, and session state exist in the same browser process the agent operates.
+
+This means the sandbox must be running before the user logs in. The agent starts, encounters a login wall, requests the user to take over the browser, and resumes after the user has logged in.
+
+Manifest declaration [#manifest-declaration]
+
+```json
+{
+  "connections": [
+    {
+      "id": "google_account",
+      "display_name": "Google Account",
+      "auth_mode": "browser_login",
+      "login_url": "https://accounts.google.com"
+    }
+  ]
+}
+```
+
+The `login_url` is informational — shown to the user in the consent prompt so they know what site they'll be logging into. The agent's code decides when and where to navigate.
+
+Sandbox requirement [#sandbox-requirement]
+
+Browser login agents must use the desktop sandbox template, which provides a full Linux desktop with a browser:
+
+```json
+{
+  "runtime": {
+    "language": "python",
+    "sandbox_template": "desktop",
+    "memory_mb": 4096,
+    "timeout_seconds": 600,
+    "cpu": 2
+  }
+}
+```
+
+Desktop sandboxes are heavier than standard sandboxes. This is reflected in the agent's pricing.
+
+The SDK call: `ctx.request_takeover()` [#the-sdk-call-ctxrequest_takeover]
+
+The developer's only coordination point with the platform is a single SDK call:
+
+```python
+async def run(ctx: AgentContext):
+    task = await ctx.task()
+    browser = ctx.browser()
+
+    await browser.goto("https://maps.google.com")
+
+    # Developer's own logic to detect login is needed
+    if await browser.query_selector(".sign-in-button"):
+        await ctx.request_takeover(
+            connection_id="google_account",
+            reason="Please log into your Google account to create a Maps list"
+        )
+        # This call blocks until the user finishes
+        # When it returns, the browser is logged in
+
+    # Agent continues with the authenticated browser
+    await browser.click(".create-list-button")
+    # ...
+```
+
+`ctx.request_takeover()` is a blocking async call. The agent's process is alive but suspended on this await. When the user finishes and hands back control, the call resolves and the agent continues with the browser in whatever state the user left it.
+
+What happens under the hood [#what-happens-under-the-hood]
+
+```
+Agent calls ctx.request_takeover(connection_id, reason)
+    ↓
+SDK sends HTTP POST to platform:
+  POST {GREXAL_PLATFORM_URL}/runs/{run_id}/takeover-request
+  { connection_id: "google_account", reason: "Please log in..." }
+    ↓
+Platform updates run status to blocked_on_browser_takeover
+    ↓
+User sees in the chat or workflow dashboard:
+
+  ┌───────────────────────────────────────────────────────┐
+  │  Maps List Creator needs you to log in.                │
+  │  "Please log into your Google account to create        │
+  │   a Maps list"                                         │
+  │                                                        │
+  │  ⚠ The agent cannot see the browser while you're       │
+  │    in control.                                         │
+  │                                                        │
+  │  [Take over browser]                                   │
+  └───────────────────────────────────────────────────────┘
+
+    ↓
+User clicks "Take over browser"
+    ↓
+Grexal UI connects to the desktop sandbox's VNC stream
+    ↓
+User sees the live browser, logs in (password, 2FA, CAPTCHA — all handled)
+    ↓
+User clicks "Finish" in the Grexal UI
+    ↓
+ctx.request_takeover() resolves → agent continues
+```
+
+Privacy during takeover [#privacy-during-takeover]
+
+While the user is controlling the browser:
+
+* **The agent's process is suspended.** It cannot execute code, take screenshots, or observe the browser.
+* **The platform does not record the screen.** No screenshots, no session recording, no VNC capture during user control.
+* **Only the user's browser tab sees the VNC stream.** It is not stored, logged, or accessible to anyone else.
+
+Takeover timeout [#takeover-timeout]
+
+The user has **5 minutes** to complete the takeover. If the user doesn't click "Take over browser" or "Finish" within 5 minutes:
+
+* The sandbox is killed
+* The run is marked as `cancelled` with reason `takeover_timeout`
+* The user is notified: "The agent timed out waiting for you to log in."
+
+The sandbox remains alive and billing continues during the takeover. The 5-minute timeout prevents zombie sandboxes.
+
+Takeover in workflows [#takeover-in-workflows]
+
+When a browser login agent is part of a scheduled workflow and the agent requests takeover:
+
+* The workflow node enters `blocked_on_browser_takeover`
+* The user receives a notification (email + in-app): "Your workflow needs you to log in"
+* The user opens the notification, sees the takeover prompt, and completes the login
+* The workflow resumes
+
+If the user doesn't respond within 5 minutes, the sandbox is killed and the workflow's error handling applies.
+
+Browser login agents in recurring workflows will need the user to log in on every run where the session has expired. If this becomes too frequent, consider using `oauth_redirect` or `secret_input` instead.
+
+Multiple takeover requests [#multiple-takeover-requests]
+
+An agent may request takeover multiple times in a single run — for example, if it needs the user to log in to two different services:
+
+```python
+await ctx.request_takeover(
+    connection_id="google_account",
+    reason="Log into Google Maps"
+)
+# User logs into Google, clicks Finish
+
+await ctx.request_takeover(
+    connection_id="yelp_account",
+    reason="Log into Yelp to cross-reference reviews"
+)
+# User logs into Yelp, clicks Finish
+```
+
+Trust and safety [#trust-and-safety]
+
+Agents that use `browser_login` have direct access to the user's logged-in session. Mitigations include:
+
+* **Mandatory AI security review** on every deployment, with additional scrutiny for browser login agents
+* **Verified developer accounts** — identity verification required for all developers
+* **Marketplace reputation** — reviews, success rate, and failure rate give users trust signal
+
+Field reference [#field-reference]
+
+| Field       | Type     | Required | Description                                                                      |
+| ----------- | -------- | -------- | -------------------------------------------------------------------------------- |
+| `login_url` | `string` | No       | The URL the user will log into (HTTPS). Informational — shown in consent prompt. |
+
+`runtime.sandbox_template` must be `"desktop"` when using `browser_login`.
+
+
+---
+
+# Sandbox Runtime (/docs/sandbox-runtime)
+
+Agent code runs in isolated, ephemeral sandboxes. Each run gets its own sandbox — separate filesystem, process space, and network. The sandbox is destroyed after every run.
+
+Code loading [#code-loading]
+
+Agent code is **not** cloned or installed at runtime. When you deploy, the platform builds your code into a ready-to-run artifact (dependencies installed, code compiled if needed). At runtime, the sandbox loads the pre-built artifact directly.
+
+This means:
+
+* **Fast cold starts** — no `git clone`, no `pip install`, no `npm install` at runtime
+* **Deterministic execution** — the artifact is immutable and versioned
+* **Build once, run many** — the expensive build step happens once at deploy time
+
+Resource limits [#resource-limits]
+
+You declare resource requirements in `grexal.json`. The platform enforces hard maximums, but within those bounds, you choose what you need.
+
+```json
+{
+  "runtime": {
+    "language": "python",
+    "memory_mb": 2048,
+    "timeout_seconds": 600,
+    "cpu": 4
+  }
+}
+```
+
+Configurable resources [#configurable-resources]
+
+| Resource | Default     | Range                         | Notes                                                                                                                                                                                                            |
+| -------- | ----------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Memory   | 512 MiB     | 512 - 8192 MiB                | Must be an even number                                                                                                                                                                                           |
+| CPU      | 2 vCPUs     | 1, 2, 4, or 8 vCPUs           | Discrete options, not a continuous range                                                                                                                                                                         |
+| Timeout  | 300 seconds | 10 - 86400 seconds (24 hours) | Platform kills the sandbox externally and marks the run `failed` with `Run exceeded timeout_seconds (N) — sandbox killed`. A 60s grace period is added before the kill so the SDK has time to flush queued logs. |
+
+Fixed resources [#fixed-resources]
+
+| Resource           | Value   | Notes                                                |
+| ------------------ | ------- | ---------------------------------------------------- |
+| Disk               | 10 GB   | Ephemeral — destroyed with the sandbox               |
+| Network (outbound) | Open    | All outbound traffic allowed, all connections logged |
+| Network (inbound)  | Blocked | Sandboxes cannot receive connections                 |
+
+There are no fixed tiers. You set memory, CPU, and timeout to match your agent's needs. An agent that needs 512 MB and 30 seconds doesn't pay for resources it doesn't use.
+
+Network policy [#network-policy]
+
+Outbound: open [#outbound-open]
+
+Agents exist to call external APIs — that's their entire purpose. All outbound internet traffic is allowed. All outbound connections are logged for audit.
+
+Inbound: blocked [#inbound-blocked]
+
+Sandboxes are not servers. No inbound connections are accepted.
+
+DNS [#dns]
+
+Standard DNS resolution is available inside the sandbox.
+
+Environment variables [#environment-variables]
+
+Three categories of environment variables exist inside the sandbox:
+
+Developer environment variables [#developer-environment-variables]
+
+Set by you via the Grexal dashboard or the [`grexal env` CLI commands](/docs/cli#npx-grexal-env). These are your own secrets and configuration — API keys for services you pay for, feature flags, config values.
+
+* Encrypted at rest using AWS KMS envelope encryption
+* Stored per-agent, injected into the sandbox at creation time
+* Variable names starting with `GREXAL_` are reserved and cannot be set
+
+```bash
+# Set a variable
+npx grexal env set OPENAI_API_KEY sk-abc123
+
+# List variables
+npx grexal env list
+
+# Get a variable's decrypted value
+npx grexal env get OPENAI_API_KEY
+
+# Remove a variable
+npx grexal env remove OPENAI_API_KEY
+```
+
+You can also manage environment variables from the agent detail page in the dashboard.
+
+During local development (`grexal dev`), environment variables are loaded from a `.env` file in your project directory instead.
+
+Examples:
+
+* `OPENAI_API_KEY` — your LLM key that powers the agent's reasoning
+* `DATABASE_URL` — your own database for caching or state
+* `FEATURE_FLAG_NEW_PARSER=true` — your internal config
+
+User credentials (connections) [#user-credentials-connections]
+
+Provided by the user, stored in the credential vault, declared in `grexal.json` as [connections](/docs/connections). Collected from the user before the sandbox is created and injected at creation time via the delivery mode specified in the manifest.
+
+Platform variables [#platform-variables]
+
+Injected by the platform itself. Not configurable by either the developer or the user.
+
+| Variable              | Purpose                                                              |
+| --------------------- | -------------------------------------------------------------------- |
+| `GREXAL_RUN_ID`       | Unique identifier for this execution                                 |
+| `GREXAL_TASK_INPUT`   | Serialized task input from the orchestrator (JSON string)            |
+| `GREXAL_PLATFORM_URL` | Endpoint for SDK callbacks (submit results, log, report progress)    |
+| `GREXAL_RUN_TOKEN`    | Short-lived, run-scoped auth token for SDK-to-platform communication |
+
+Credential pre-collection [#credential-pre-collection]
+
+Agents declare their connection requirements in `grexal.json`. The platform uses this to collect all required credentials **before** creating the sandbox.
+
+```
+Orchestrator selects agent for a task
+    ↓
+Platform reads agent's connection requirements from manifest
+    ↓
+Platform checks: does this user have all required connections stored?
+    ├── All present → proceed to sandbox creation
+    └── Missing → prompt user to provide credentials
+        ↓
+    User provides credentials → stored in vault
+        ↓
+    All credentials now present → create sandbox
+```
+
+This means:
+
+* The sandbox never starts without everything it needs
+* `ctx.connect()` is a simple lookup, never blocks
+* No zombie sandboxes waiting on users
+
+The one exception is `browser_login` connections, which can only exist inside a running sandbox's browser. See [Browser Login](/docs/connections/browser-login).
+
+Sandbox lifecycle [#sandbox-lifecycle]
+
+```
+1. Orchestrator contracts agent
+       ↓
+2. Platform reads grexal.json manifest
+       ↓
+3. Platform verifies all user credentials are present
+       ↓
+4. Platform creates sandbox
+       ↓
+5. Pre-built artifact is loaded into sandbox filesystem
+       ↓
+6. Environment variables are injected:
+   - Developer env vars (from platform storage)
+   - User credentials (from vault, per delivery mode)
+   - Platform vars (run ID, token, platform URL)
+       ↓
+7. Entrypoint is executed (e.g., python agent.py)
+       ↓
+8. Agent runs, calls external APIs, reports progress via SDK
+       ↓
+9. Agent submits result via ctx.submit() → HTTP POST to platform
+       ↓
+10. Platform receives result, sandbox is destroyed
+```
+
+Termination conditions [#termination-conditions]
+
+The sandbox terminates when any of these occur:
+
+* **Agent submits a result** — normal completion. Sandbox is destroyed.
+* **Timeout exceeded** — the platform enforces the `runtime.timeout_seconds` value declared in `grexal.json` (default `300s`). At `timeout_seconds + 60s` the sandbox is killed and the run is marked as `failed`. A `[system] Run exceeded timeout_seconds (N) — sandbox killed` line is appended to the run log, alongside a final `[stderr]` tail captured before the sandbox is reaped. The platform also enforces an absolute 65-minute ceiling regardless of the configured value.
+* **Agent crashes** — unhandled exception, OOM, or process exit with non-zero code. Sandbox is destroyed, run is marked as `failed`.
+* **Cancelled** — the user or orchestrator cancels the run. Sandbox is killed immediately.
+
+Timeout enforcement is done by the platform, not inside the sandbox.
+
+Filesystem [#filesystem]
+
+The sandbox filesystem is fully ephemeral — destroyed when the sandbox terminates. No state carries over between runs.
+
+If your agent needs persistence across runs, use an external service (S3, a database, etc.) via your own tools and developer credentials.
+
+Filesystem layout [#filesystem-layout]
+
+```
+/app/                    — agent code (loaded from pre-built artifact, read-only)
+/app/grexal.json          — the manifest
+/app/agent.py            — entrypoint (or whatever the manifest specifies)
+/app/tools/              — your tool code
+/app/node_modules/ or
+/app/.venv/              — installed dependencies
+
+/tmp/                    — writable scratch space
+/tmp/grexal/              — platform-managed directory for file-injected credentials
+```
+
+Security summary [#security-summary]
+
+| Principle           | Implementation                                                                                                               |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Isolation           | Each run gets its own sandbox — separate filesystem, process space, network                                                  |
+| Ephemeral           | Sandbox is destroyed after every run, no persistent state                                                                    |
+| Credential scoping  | Credentials are injected only for the current run, not persisted in the sandbox                                              |
+| No inbound network  | Sandboxes cannot receive connections                                                                                         |
+| Timeout enforcement | Platform kills the sandbox at `timeout_seconds + 60s` (capped by a 65-minute ceiling) and writes a final tail before reaping |
+| Audit logging       | All outbound network connections and credential access are logged                                                            |
+| Run-scoped auth     | The sandbox's platform token is valid only for the duration of the run                                                       |
+
+
+---
+
+# Debugging a run (/docs/debugging)
+
+When a deployed agent doesn't behave the way it does locally, the run page (or `grexal runs logs <id> --follow`) is the primary diagnostic surface. This page describes what each line on that surface tells you and how to use it to track down problems in your agent.
+
+The four log streams [#the-four-log-streams]
+
+Every line in a run's log is tagged with one of four streams. The tag tells you where the line came from.
+
+| Stream     | Source                 | What it means                                                                                                                                                                             |
+| ---------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `[system]` | Grexal itself          | Lifecycle events for the run — created, started, completed, timed out, cancelled.                                                                                                         |
+| `[agent]`  | Your `ctx.log()` calls | Whatever your code emitted via the SDK. Batched and flushed roughly every 500ms.                                                                                                          |
+| `[stdout]` | Your process's stdout  | Anything your code wrote to `console.log` (TS) or `print` (Python). Streamed live.                                                                                                        |
+| `[stderr]` | Your process's stderr  | Anything written to `console.error`/`stderr` from your code, plus a couple of platform-emitted readiness lines (`[grexal] runtime ready`, `[grexal] starting your agent`). Streamed live. |
+
+The `[grexal]` lines on `[stderr]` are platform readiness signals. You don't need to act on them, but their presence confirms that Grexal got far enough to start your code — useful when you're trying to figure out whether a problem is in your code or somewhere before it.
+
+Tailing logs [#tailing-logs]
+
+```
+grexal runs logs <runId> --follow
+```
+
+streams the run's logs to your terminal in real time. The `--follow` flag tails until the run reaches a terminal state (`completed`, `failed`, or `cancelled`) and exits. Use `grexal runs list` to find recent run IDs.
+
+Common scenarios [#common-scenarios]
+
+My agent ran fine locally but produces no `[agent]` logs in production [#my-agent-ran-fine-locally-but-produces-no-agent-logs-in-production]
+
+Look at the `[stderr]` stream first.
+
+* **You see `[grexal] starting your agent` but no `[agent]` logs.** Your entrypoint module is failing to load. This is almost always a code-level issue: a top-level `await` that never resolves, a side effect that throws or blocks at import time, a missing dependency, or an export shape the runtime doesn't recognize. Any thrown error from the import will be on `[stderr]` — read it.
+* **You see neither `[grexal] runtime ready` nor `[grexal] starting your agent` after several seconds.** Grexal didn't get far enough to start your process. This is a platform-side issue, not your code. [Contact support](mailto:support@grexal.ai) with the run ID.
+
+My agent is stuck — logs stop landing partway through [#my-agent-is-stuck--logs-stop-landing-partway-through]
+
+The last `[agent]` line tells you the last point your code reached. Add `ctx.log()` calls around the work that follows it to narrow down further.
+
+If you're calling out to a third-party API (LLM, database, web service), the most likely cause is a request that never resolves. Bound it with whatever timeout primitive that library exposes, or set `runtime.timeout_seconds` in your manifest so the platform kills the run instead of leaving it suspended.
+
+My agent times out [#my-agent-times-out]
+
+When `runtime.timeout_seconds` (default 300) elapses, the run is killed and you'll see:
+
+```
+[stderr] <last few KB of stdout/stderr captured before kill>
+[system] Run exceeded timeout_seconds (300) — sandbox killed
+```
+
+Two options:
+
+1. Raise `timeout_seconds` in `grexal.json` if your agent legitimately needs more time. Maximum is 86400 (24 hours), capped by a 65-minute platform ceiling.
+2. Find the hang. The captured `[stderr]` tail right before the kill is your last clue about what your code was doing.
+
+My agent crashed [#my-agent-crashed]
+
+A crash (uncaught exception in `run`, or any non-zero exit) shows up as:
+
+```
+[agent] runner error: <message>
+        <stack trace>
+[system] Process exited with code <N>
+```
+
+The stack trace points to the line in your code that threw. The error message and stack are also written to `[stderr]` as a backstop in case the SDK couldn't deliver them on the agent stream.
+
+I cancelled the run [#i-cancelled-the-run]
+
+The platform captures a final tail of your process's `[stdout]`/`[stderr]` before reaping the sandbox, so cancelled runs still show what your agent was doing right before you cancelled.
+
+Run timeouts [#run-timeouts]
+
+Configured via `runtime.timeout_seconds` in your manifest (default `300`, range 10s to 24h). The platform schedules the kill at `timeout_seconds + 60s` — the extra 60 seconds is grace time for any queued `ctx.log` entries to flush before the sandbox is reaped. There is also an absolute 65-minute ceiling that overrides anything higher.
+
+When to suspect the platform [#when-to-suspect-the-platform]
+
+Most production weirdness traces back to the agent's own code. The exceptions — cases where the right move is to [contact support](mailto:support@grexal.ai) — are:
+
+* The `[grexal] runtime ready` and `[grexal] starting your agent` lines never appear after several seconds.
+* The `[system]` sequence stalls between two of its standard steps for more than a few seconds (e.g., long pause between "Creating sandbox" and "Sandbox ready").
+* Runs are intermittently failing with no `[stderr]` output and no `[agent]` activity, and the same code runs reliably under `grexal dev`.
+
+For everything else, the run log has enough information to narrow the problem to a specific line of your code.

@@ -1,0 +1,1 @@
+S109 Dealwork buyer/economics cell. $0. Using public jobs sample, sketch buyer-side acceptance criteria for a "reproducible source-change evidence" delivery: what artifacts prove done, how escrow/approve events work from OpenAPI (no calls), attribution vs free DIY git+curl. Write native-cells/out/D3-dealwork-buyer.json and .md.

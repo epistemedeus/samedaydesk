@@ -1,0 +1,47 @@
+{
+  "cohort": "c1-contracts",
+  "endedAt": "2026-09-10T08:48:52.497274Z",
+  "cells": [
+    {
+      "log": "A1-agensi-contract.jsonl",
+      "sessionId": "01a08a77-8638-7da1-bb34-a230ad54b92f",
+      "eventCount": 39,
+      "logMtime": "2026-09-10T08:47:24.603849Z",
+      "logBytes": 1124176,
+      "lastType": "result"
+    },
+    {
+      "log": "D1-dealwork-contract.jsonl",
+      "sessionId": "01a08a77-8644-7710-b032-10197920df24",
+      "eventCount": 31,
+      "logMtime": "2026-09-10T08:46:10.556119Z",
+      "logBytes": 1142853,
+      "lastType": "result"
+    },
+    {
+      "log": "G1-grexal-contract.jsonl",
+      "sessionId": "01a08a77-8638-7163-a28c-fe8bc3ed4cde",
+      "eventCount": 39,
+      "logMtime": "2026-09-10T08:43:11.284760Z",
+      "logBytes": 1056383,
+      "lastType": "result"
+    }
+  ],
+  "outs": [
+    "A1-agensi-contract.json",
+    "A1-agensi-contract.md",
+    "D1-dealwork-contract.json",
+    "D1-dealwork-contract.md",
+    "G1-grexal-contract.json",
+    "G1-grexal-contract.md"
+  ],
+  "memory": {
+    "MemAvailable": null,
+    "psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+    "cgroupPeak": null,
+    "MemTotal:": 16791945216,
+    "MemAvailable:": 11181240320
+  },
+  "cashBoundaryUsd": 0,
+  "concurrencyNote": "3 parallel Heavy cells; sequential cohorts measure concurrency only within cohort"
+}

@@ -1,0 +1,2080 @@
+Copy page
+
+Agent Manifest
+
+Complete reference for grexal.json: how your agent runs, its input/output shape, and declared connections.
+
+The agent manifest (
+grexal.json
+) describes 
+how your agent runs
+: its entrypoint, runtime, input/output schemas, and declared connections.
+
+It does 
+not
+ describe identity or marketplace metadata — name, description, category, tags, homepage, repository, icon, open-source flag, pricing, and visibility are all set via 
+grexal agent set-*
+ (or in the dashboard) so changing them doesn't require a code change. The local binding to a specific agent record lives in 
+.grexal/agent.json
+. See 
+What is not in the manifest
+.
+
+Minimal example
+
+The simplest possible agent manifest:
+
+{
+
+  "manifest_version"
+
+: 
+
+3
+
+,
+
+  "entrypoint"
+
+: 
+
+"agent.py"
+
+,
+
+  "runtime"
+
+: {
+
+    "language"
+
+: 
+
+"python"
+
+  }
+
+}
+
+This is enough to build. All runtime resource fields default to sensible values. Run 
+grexal init --name <slug>
+ to scaffold a project — it writes the manifest plus 
+.grexal/agent.json
+ with your chosen slug.
+
+Full example
+
+A manifest using every supported field:
+
+{
+
+  "manifest_version"
+
+: 
+
+3
+
+,
+
+  "entrypoint"
+
+: 
+
+"agent.py"
+
+,
+
+  "runtime"
+
+: {
+
+    "language"
+
+: 
+
+"python"
+
+,
+
+    "memory_mb"
+
+: 
+
+2048
+
+,
+
+    "timeout_seconds"
+
+: 
+
+600
+
+,
+
+    "cpu"
+
+: 
+
+4
+
+  },
+
+  "input_schema"
+
+: {
+
+    "type"
+
+: 
+
+"object"
+
+,
+
+    "properties"
+
+: {
+
+      "location"
+
+: {
+
+        "type"
+
+: 
+
+"string"
+
+,
+
+        "description"
+
+: 
+
+"City or coordinates to get the forecast for"
+
+      },
+
+      "days"
+
+: {
+
+        "type"
+
+: 
+
+"number"
+
+,
+
+        "description"
+
+: 
+
+"Number of forecast days (1-14)"
+
+      }
+
+    },
+
+    "required"
+
+: [
+
+"location"
+
+]
+
+  },
+
+  "connections"
+
+: [
+
+    {
+
+      "id"
+
+: 
+
+"weather_api"
+
+,
+
+      "display_name"
+
+: 
+
+"Weather Service"
+
+,
+
+      "auth_mode"
+
+: 
+
+"secret_input"
+
+,
+
+      "fields"
+
+: [
+
+        { 
+
+"name"
+
+: 
+
+"api_key"
+
+, 
+
+"label"
+
+: 
+
+"API Key"
+
+, 
+
+"secret"
+
+: 
+
+true
+
+ },
+
+        { 
+
+"name"
+
+: 
+
+"api_secret"
+
+, 
+
+"label"
+
+: 
+
+"API Secret"
+
+, 
+
+"secret"
+
+: 
+
+true
+
+ }
+
+      ],
+
+      "delivery"
+
+: 
+
+"runtime_object"
+
+    },
+
+    {
+
+      "id"
+
+: 
+
+"google_drive"
+
+,
+
+      "display_name"
+
+: 
+
+"Google Drive"
+
+,
+
+      "auth_mode"
+
+: 
+
+"oauth_redirect"
+
+,
+
+      "provider"
+
+: {
+
+        "auth_url"
+
+: 
+
+"https://accounts.google.com/o/oauth2/v2/auth"
+
+,
+
+        "token_url"
+
+: 
+
+"https://oauth2.googleapis.com/token"
+
+,
+
+        "scopes"
+
+: [
+
+"https://www.googleapis.com/auth/drive.readonly"
+
+]
+
+      }
+
+    },
+
+    {
+
+      "id"
+
+: 
+
+"gcp_service_account"
+
+,
+
+      "display_name"
+
+: 
+
+"GCP Service Account"
+
+,
+
+      "auth_mode"
+
+: 
+
+"file_upload"
+
+,
+
+      "accepted_extensions"
+
+: [
+
+".json"
+
+],
+
+      "max_size_bytes"
+
+: 
+
+65536
+
+,
+
+      "description"
+
+: 
+
+"Upload your GCP service account key file (JSON format)"
+
+    },
+
+    {
+
+      "id"
+
+: 
+
+"google_account"
+
+,
+
+      "display_name"
+
+: 
+
+"Google Account"
+
+,
+
+      "auth_mode"
+
+: 
+
+"browser_login"
+
+,
+
+      "login_url"
+
+: 
+
+"https://accounts.google.com"
+
+    }
+
+  ]
+
+}
+
+Field reference
+
+Top-level fields
+
+Field
+
+Type
+
+Required
+
+Default
+
+Description
+
+manifest_version
+
+number
+
+No
+
+3
+
+Schema version. Versions 
+1
+, 
+2
+, and 
+3
+ are accepted; new projects should use 
+3
+.
+
+entrypoint
+
+string
+
+Yes
+
+—
+
+Path to the entry file relative to the project root.
+
+runtime
+
+object
+
+Yes
+
+—
+
+Runtime configuration. See 
+Runtime
+.
+
+input_schema
+
+object
+
+No
+
+—
+
+Schema describing expected task input. See 
+Input Schema
+.
+
+output_schema
+
+object
+
+No
+
+—
+
+Schema describing the shape of results the agent submits.
+
+connections
+
+object[]
+
+No
+
+[]
+
+Credential requirements. See 
+Connections
+.
+
+The fields 
+name
+, 
+description
+, 
+category
+, 
+tags
+, 
+homepage
+, 
+repository
+, 
+icon
+, and 
+is_open_source
+ are 
+not
+ part of the manifest. The CLI rejects them with a pointer to the corresponding 
+grexal agent set-*
+ command. They live on the agent record on the platform and are settable from the CLI or dashboard at any time.
+
+Identity binding (
+.grexal/agent.json
+)
+
+grexal init --name <slug>
+ writes 
+.grexal/agent.json
+ with your chosen slug:
+
+{ 
+
+"name"
+
+: 
+
+"acme-summarizer"
+
+ }
+
+On the first 
+grexal push
+, the platform claims the slug and returns a server-issued opaque agent id. The CLI swaps the file contents to:
+
+{ 
+
+"agentId"
+
+: 
+
+"ag_..."
+
+ }
+
+From that point, every CLI command addresses the agent by id. The slug is just metadata on the agent record and can be changed at any time with 
+grexal agent set-name <slug>
+ — public links are id-based, so renaming doesn't break them.
+
+.grexal/agent.json
+ is committed to source control (it contains no secrets and teammates pushing from the same repo need it). 
+.grexal/connections.json
+ stays gitignored.
+
+Setting marketplace metadata
+
+After the first push, set marketplace metadata via the CLI or dashboard:
+
+npx
+
+ grexal
+
+ agent
+
+ set-description
+
+ "Summarizes documents into a tight bulleted brief"
+
+npx
+
+ grexal
+
+ agent
+
+ set-category
+
+ research
+
+npx
+
+ grexal
+
+ agent
+
+ set-tags
+
+ summarization,llm
+
+npx
+
+ grexal
+
+ agent
+
+ set-homepage
+
+ https://example.com
+
+npx
+
+ grexal
+
+ agent
+
+ set-repository
+
+ https://github.com/you/your-agent
+
+npx
+
+ grexal
+
+ agent
+
+ set-icon
+
+ ./icon.png
+
+npx
+
+ grexal
+
+ agent
+
+ set-is-open-source
+
+ true
+
+grexal publish
+ requires a non-empty description, category, and at least one tag (plus pricing) — it returns the exact 
+set-*
+ command for any missing field.
+
+Validation constraints
+
+Field
+
+Constraint
+
+entrypoint
+
+File must exist in the project. Extension must match 
+runtime.language
+ (
+.py
+ for Python, 
+.ts
+ or 
+.js
+ for TypeScript).
+
+Runtime
+
+Field
+
+Type
+
+Required
+
+Default
+
+Constraints
+
+language
+
+string
+
+Yes
+
+—
+
+"python"
+ or 
+"typescript"
+
+memory_mb
+
+number
+
+No
+
+512
+
+512 - 8192 (8 GB). Must be an even number.
+
+timeout_seconds
+
+number
+
+No
+
+300
+
+10 - 86400 (24 hours). The platform schedules a watchdog at 
+timeout_seconds + 60s
+ (60s grace for log flushing). At that point the sandbox is killed, the run is marked 
+failed
+, and 
+Run exceeded timeout_seconds (N) — sandbox killed
+ is appended to the run log. Capped by a 65-minute platform ceiling.
+
+cpu
+
+number
+
+No
+
+2
+
+1, 2, 4, or 8 vCPUs
+
+sandbox_template
+
+string
+
+No
+
+"standard"
+
+"standard"
+ or 
+"desktop"
+
+sandbox_template
+
+standard
+
+ — lightweight sandbox with no GUI. Suitable for most agents.
+
+desktop
+
+ — full Linux desktop with a browser. Required when any connection uses 
+auth_mode: "browser_login"
+. Desktop sandboxes consume more resources — 
+memory_mb
+ should be at least 4096 and 
+cpu
+ at least 2.
+
+If any connection declares 
+auth_mode: "browser_login"
+ and 
+sandbox_template
+ is not 
+"desktop"
+, validation fails.
+
+Pricing (not in the manifest)
+
+Pricing is 
+not
+ a manifest field. It's a list of composable line items — each one charges per-unit for a platform-measured quantity. Pricing is managed via the CLI or the dashboard and takes effect immediately — no push required.
+
+npx
+
+ grexal
+
+ agent
+
+ price
+
+ add
+
+ run_completed
+
+ 0.05
+
+npx
+
+ grexal
+
+ agent
+
+ price
+
+ add
+
+ input_tokens
+
+ 0.000002
+
+ --param
+
+ tokenizer=cl100k_base
+
+npx
+
+ grexal
+
+ agent
+
+ price
+
+ add
+
+ output_pdf_pages
+
+ 0.03
+
+ --param
+
+ max_units=
+
+25
+
+npx
+
+ grexal
+
+ agent
+
+ price
+
+ list
+
+Each line item's 
+amount
+ is in 
+[$0.00, $10.00]
+ per unit; at most 12 items per agent. Every output-side unit must declare 
+max_units
+ — a hard cap enforced mid-run so a buggy agent cannot blow past the buyer's reservation.
+
+The total cost of a run is the sum of all line item subtotals.
+
+When buyers are charged:
+
+Outcome
+
+What the buyer pays
+
+Run completes successfully
+
+Full cost — every line item, including any output the run produced.
+
+Run fails (error, timeout, reserve overflow)
+
+Nothing. The reservation is released.
+
+Buyer cancels an in-flight run, or fails to respond to an input request before it expires
+
+run_completed
+ (if priced) plus every input line item. The buyer is treated as having received the run, so they pay the fixed and input portions even though the agent didn't finish.
+
+Buyer cancels a run that hasn't started yet (still queued — sandbox never booted)
+
+Nothing. The reservation is released. This also covers workflow cancels where some child agents were still waiting on upstream nodes when the workflow was cancelled.
+
+You (the developer) cancel a buyer's in-flight run
+
+Nothing. The reservation is released.
+
+The buyer-cancel rule exists so that repeatedly starting and abandoning a run — whether by clicking cancel or by ignoring an input request — can't drain you of compute cost without paying for the input you already processed. The premise is "you made the developer spend money, you pay" — so a run that never actually started is always free. If your pricing is purely output-based and the run hasn't produced any output yet, a buyer-cancel currently charges $0 — that's expected.
+
+Budget enforcement:
+ At run start, the platform computes an estimate from the input and reserves 
+estimate × 1.25
+ against the buyer's balance. The reserve is the hard per-run cap — if the run would exceed it, 
+ctx.submit()
+ / 
+ctx.uploadFile()
+ throw 
+RESERVE_EXCEEDED
+ and the run fails without being charged. On completion (or buyer-cancel), the actual cost is settled and the remainder released.
+
+Tokenizers:
+ 
+cl100k_base
+ (GPT-3.5 / GPT-4) and 
+o200k_base
+ (GPT-4o) tokenize exactly via js-tiktoken. 
+claude
+ and 
+gemini
+ approximate via a fixed chars-per-token ratio — there's no public offline tokenizer for those.
+
+Marketplace baseline:
+ Each agent's card shows a "Typical: $X.XX · varies" label once 10+ organic completed runs have accumulated. Below the threshold: "Price details". Hovering the label in the dashboard reveals the per-unit breakdown. Baseline resets on any pricing change.
+
+At least one line item is required before you can 
+grexal publish
+ — the publish step errors clearly if pricing isn't configured.
+
+Earnings:
+ Grexal takes a 
+20% marketplace fee
+ on every paid run (with a $0.02 floor and 30% cap on micro-runs); you keep the remaining 80%. There is no separate platform bill for sandbox compute, build, deploy, storage, or hosting — those are all covered by the fee. Your own external API costs (LLMs, third-party APIs) should be priced into your line items so the buyer pays them through your run charge. See 
+Payments
+ for the full economics, worked examples, and how to redeem or cash out earnings.
+
+Input schema
+
+Declares the expected shape of the task input your agent receives via 
+ctx.task()
+. This is optional but recommended — the platform uses it to generate helpful input forms in the dashboard and to validate input at runtime.
+
+The schema follows a subset of 
+JSON Schema
+:
+
+Field
+
+Type
+
+Required
+
+Description
+
+type
+
+string
+
+Yes
+
+Must be 
+"object"
+.
+
+properties
+
+object
+
+No
+
+Map of property names to their type definitions. Maximum 50 properties.
+
+properties.*.type
+
+string
+
+Yes
+
+"string"
+, 
+"number"
+, 
+"boolean"
+, 
+"array"
+, or 
+"object"
+
+properties.*.description
+
+string
+
+No
+
+Human-readable description. Maximum 500 characters.
+
+required
+
+string[]
+
+No
+
+List of required property names. Each must exist in 
+properties
+.
+
+Example
+
+{
+
+  "input_schema"
+
+: {
+
+    "type"
+
+: 
+
+"object"
+
+,
+
+    "properties"
+
+: {
+
+      "ticker"
+
+: {
+
+        "type"
+
+: 
+
+"string"
+
+,
+
+        "description"
+
+: 
+
+"Stock ticker symbol (e.g., AAPL)"
+
+      },
+
+      "period_days"
+
+: {
+
+        "type"
+
+: 
+
+"number"
+
+,
+
+        "description"
+
+: 
+
+"Analysis lookback period in days"
+
+      },
+
+      "include_news"
+
+: {
+
+        "type"
+
+: 
+
+"boolean"
+
+,
+
+        "description"
+
+: 
+
+"Whether to include recent news in the analysis"
+
+      }
+
+    },
+
+    "required"
+
+: [
+
+"ticker"
+
+]
+
+  }
+
+}
+
+When an agent declares 
+input_schema
+, the dashboard's manual run dialog uses it to:
+
+Pre-fill a JSON template with the declared properties
+
+Show property descriptions as guidance
+
+Indicate which fields are required
+
+Agents without 
+input_schema
+ still work — the input is simply a freeform JSON object.
+
+Output schema
+
+Declares the shape of the result your agent returns from 
+run()
+ (or passes to 
+ctx.submit()
+). Like 
+input_schema
+, this is optional but recommended — the platform uses it to render the result on the run page and to decide which fields are file attachments versus inline data.
+
+output_schema
+ is a flat map of field names to typed properties:
+
+{
+
+  "output_schema"
+
+: {
+
+    "summary"
+
+:  { 
+
+"type"
+
+: 
+
+"text"
+
+,   
+
+"description"
+
+: 
+
+"Plain-language description of what was produced"
+
+ },
+
+    "song_mp3"
+
+: { 
+
+"type"
+
+: 
+
+"file"
+
+,   
+
+"description"
+
+: 
+
+"Generated track (MP3)"
+
+ },
+
+    "duration"
+
+: { 
+
+"type"
+
+: 
+
+"number"
+
+, 
+
+"description"
+
+: 
+
+"Track duration in seconds"
+
+ }
+
+  }
+
+}
+
+Field types
+
+The platform understands exactly five types. Anything outside this set is a validation error.
+
+type
+
+What the field carries
+
+How the platform renders it on the run page
+
+text
+
+A string. Multi-line is fine.
+
+Plain text block. Long values are scrollable.
+
+number
+
+A JSON number.
+
+Inline scalar.
+
+boolean
+
+true
+ or 
+false
+.
+
+Inline scalar.
+
+json
+
+Any JSON-serializable value (object, array, scalar). Use this when the shape varies.
+
+Pretty-printed JSON viewer.
+
+file
+
+A 
+FileReference
+ returned from 
+ctx.uploadFile()
+. 
+Return the object as-is — do not stringify it.
+
+A standalone file card on the canvas. If 
+mimeType
+ starts with 
+image/
+, an inline preview; 
+audio/
+, an inline 
+<audio>
+ player; 
+video/
+, an inline 
+<video>
+ player. Otherwise a download link.
+
+A 
+file
+ field can also be an array of 
+FileReference
+ objects — each one renders as its own file card.
+
+File outputs: the rendering contract
+
+This is the single most load-bearing rule for any agent that produces media:
+
+Declare the field as 
+"type": "file"
+ in 
+output_schema
+.
+
+Upload the bytes via 
+ctx.uploadFile()
+
+ (
+reference
+) — it returns a 
+FileReference
+ with shape 
+{ id, name, mimeType, size, description }
+.
+
+Return that 
+FileReference
+ object directly under the field name.
+ Do not 
+JSON.stringify
+ it. Do not nest it inside a 
+text
+ field.
+
+Worked example — an agent that produces an audio track:
+
+// grexal.json
+
+{
+
+  "output_schema"
+
+: {
+
+    "summary"
+
+:  { 
+
+"type"
+
+: 
+
+"text"
+
+, 
+
+"description"
+
+: 
+
+"Short description of the track"
+
+ },
+
+    "song_mp3"
+
+: { 
+
+"type"
+
+: 
+
+"file"
+
+, 
+
+"description"
+
+: 
+
+"Generated track (MP3)"
+
+ },
+
+    "song_wav"
+
+: { 
+
+"type"
+
+: 
+
+"file"
+
+, 
+
+"description"
+
+: 
+
+"Generated track (WAV)"
+
+ }
+
+  }
+
+}
+
+// index.ts
+
+export
+
+ default
+
+ async
+
+ function
+
+ run
+
+(
+
+ctx
+
+:
+
+ AgentContext
+
+) {
+
+  // ... synthesize the audio to /tmp/song.mp3 and /tmp/song.wav ...
+
+  const
+
+ mp3
+
+ =
+
+ await
+
+ ctx.
+
+uploadFile
+
+(
+
+"/tmp/song.mp3"
+
+, {
+
+    description: 
+
+"Generated track (MP3)"
+
+,
+
+    mimeType: 
+
+"audio/mpeg"
+
+,
+
+  });
+
+  const
+
+ wav
+
+ =
+
+ await
+
+ ctx.
+
+uploadFile
+
+(
+
+"/tmp/song.wav"
+
+, {
+
+    description: 
+
+"Generated track (WAV)"
+
+,
+
+    mimeType: 
+
+"audio/wav"
+
+,
+
+  });
+
+  return
+
+ {
+
+    summary: 
+
+"A 90-second lo-fi loop in C minor."
+
+,
+
+    song_mp3: mp3,   
+
+// <- FileReference, returned as-is
+
+    song_wav: wav,
+
+  };
+
+}
+
+The run page detects the audio MIME types and shows two playable cards.
+
+Common mistake: 
+text
+ + JSON-stringified files
+
+Declaring a file field as 
+"type": "text"
+ and stringifying a list of 
+FileReference
+ objects into it produces a successful run, an empty-looking canvas, and no playable preview — the renderer only inspects raw values. Always use 
+"type": "file"
+ and return the 
+FileReference
+ directly.
+
+Validation rules
+
+Field
+
+Constraint
+
+field name
+
+Up to 50 fields. Each name 1-64 characters, alphanumeric / 
+_
+ / 
+-
+.
+
+properties.*.type
+
+Must be one of 
+text
+, 
+file
+, 
+number
+, 
+boolean
+, 
+json
+.
+
+properties.*.description
+
+Optional. Maximum 500 characters.
+
+properties.*.accept
+
+Optional, only valid when 
+type
+ is 
+"file"
+. Array of MIME-type globs (e.g. 
+["audio/*"]
+) used to filter user uploads — has no effect on agent-produced output files.
+
+The same flat typed-map form (
+{ "fieldName": { "type": ..., ... } }
+) is also accepted for 
+input_schema
+. The legacy 
+{ "type": "object", "properties": { ... } }
+ JSON-Schema form documented above continues to work for 
+input_schema
+ for backward compatibility.
+
+Connections
+
+Each entry in the 
+connections
+ array declares a credential the agent needs from the user. See 
+Connections
+ for detailed guides on each auth mode.
+
+Shared fields (all auth modes)
+
+Field
+
+Type
+
+Required
+
+Description
+
+id
+
+string
+
+Yes
+
+Unique identifier within this manifest. Used in 
+ctx.connect(id)
+ calls.
+
+display_name
+
+string
+
+Yes
+
+User-facing name shown in credential prompts.
+
+auth_mode
+
+string
+
+Yes
+
+One of: 
+"secret_input"
+, 
+"oauth_redirect"
+, 
+"file_upload"
+, 
+"browser_login"
+
+optional
+
+boolean
+
+No
+
+When 
+true
+, runs are not blocked if the user hasn't set this connection up. The agent must check availability with 
+await ctx.connect(id, { optional: true })
+ (returns 
+null
+ when missing) and branch on the result.
+
+secret_input
+
+Field
+
+Type
+
+Required
+
+Default
+
+Description
+
+fields
+
+object[]
+
+Yes
+
+—
+
+Form fields to collect from the user.
+
+fields[].name
+
+string
+
+Yes
+
+—
+
+Field key. Used in 
+conn.get(name)
+.
+
+fields[].label
+
+string
+
+Yes
+
+—
+
+User-facing label shown in the form.
+
+fields[].secret
+
+boolean
+
+No
+
+true
+
+Whether to mask the input.
+
+delivery
+
+string
+
+No
+
+"runtime_object"
+
+"runtime_object"
+, 
+"env_vars"
+, or 
+"file"
+
+env_map
+
+object
+
+Conditional
+
+—
+
+Required when 
+delivery
+ is 
+"env_vars"
+. Maps field names to env var names.
+
+oauth_redirect
+
+Field
+
+Type
+
+Required
+
+Description
+
+provider.auth_url
+
+string
+
+Yes
+
+Provider's authorization endpoint.
+
+provider.token_url
+
+string
+
+Yes
+
+Provider's token exchange endpoint.
+
+provider.scopes
+
+string[]
+
+Yes
+
+OAuth scopes to request.
+
+Delivery is always 
+runtime_object
+. OAuth client credentials (client ID, client secret) are provided through the Grexal dashboard, not in the manifest.
+
+file_upload
+
+Field
+
+Type
+
+Required
+
+Default
+
+Description
+
+accepted_extensions
+
+string[]
+
+No
+
+—
+
+Allowed file extensions (e.g., 
+[".json", ".pem"]
+).
+
+max_size_bytes
+
+number
+
+No
+
+65536
+
+Maximum file size. Platform max: 1,048,576 (1 MB).
+
+description
+
+string
+
+No
+
+—
+
+Instructions shown in the upload prompt.
+
+Delivery is always file injection to 
+/tmp/grexal/{connection_id}/{filename}
+.
+
+browser_login
+
+Field
+
+Type
+
+Required
+
+Description
+
+login_url
+
+string
+
+No
+
+The URL the user will log into. Informational — shown in the consent prompt.
+
+Requires 
+runtime.sandbox_template
+ to be 
+"desktop"
+.
+
+Delivery modes
+
+Delivery modes control how 
+secret_input
+ credentials reach the agent. Other auth modes have fixed delivery.
+
+Mode
+
+Available for
+
+Description
+
+runtime_object
+
+secret_input
+
+Default. Accessed via 
+ctx.connect(id).get(field_name)
+.
+
+env_vars
+
+secret_input
+
+Injected as environment variables. Requires 
+env_map
+.
+
+file
+
+secret_input
+
+Written to 
+/tmp/grexal/{connection_id}.json
+ inside the sandbox.
+
+Categories
+
+Category
+
+Description
+
+finance
+
+Trading, portfolio management, invoicing, accounting
+
+productivity
+
+Email, calendar, documents, spreadsheets, task management
+
+data
+
+Extraction, transformation, analysis, visualization
+
+communication
+
+Messaging, social media, notifications, outreach
+
+development
+
+Code generation, testing, deployment, monitoring
+
+research
+
+Web search, summarization, competitive analysis
+
+media
+
+Image, video, audio processing and generation
+
+commerce
+
+E-commerce, pricing, inventory, order management
+
+travel
+
+Flights, hotels, car rental, itinerary planning
+
+other
+
+Anything that doesn't fit the above
+
+What is not in the manifest
+
+Identity, marketplace metadata, and operational settings all live on the platform (or 
+.grexal/agent.json
+ for the local identity binding), not in 
+grexal.json
+:
+
+Setting
+
+Where it lives
+
+Why not in the manifest
+
+Agent slug
+ (
+name
+)
+
+.grexal/agent.json
+ (local) + agent record (server)
+
+Set with 
+grexal init --name <slug>
+; rename later with 
+grexal agent set-name <slug>
+. Public links are id-based, so renaming doesn't break them.
+
+Description
+
+grexal agent set-description "..."
+ / Dashboard
+
+Marketing copy shouldn't require a code change.
+
+Category
+
+grexal agent set-category <slug>
+ / Dashboard
+
+Same.
+
+Tags
+
+grexal agent set-tags <a,b,c>
+ / Dashboard
+
+Same.
+
+Homepage / repository links
+
+grexal agent set-homepage <url>
+ / 
+grexal agent set-repository <url>
+ / Dashboard
+
+External pointers, not code.
+
+Icon
+
+grexal agent set-icon <local-path>
+ / Dashboard
+
+Uploaded once, swappable any time.
+
+Open-source flag
+
+grexal agent set-is-open-source <true|false>
+ / Dashboard
+
+Toggle without redeploying.
+
+Pricing (line items, baseline)
+
+grexal agent price add|remove|clear
+ / Dashboard
+
+Pricing is a commercial decision and shouldn't change on every code push. Pricing mistakes cost real money.
+
+Visibility
+ (public / private)
+
+grexal agent set-visibility
+ / Dashboard
+
+Access control shouldn't flip on a redeploy.
+
+Published state
+ (draft / active)
+
+grexal publish
+ / 
+grexal unpublish
+ / Dashboard
+
+Going live is an explicit, intentional act.
+
+OAuth client credentials
+
+Dashboard
+
+These are secrets that should never be in a file committed to a repo.
+
+Developer environment variables
+
+grexal env
+ / Dashboard
+
+The developer's operational secrets (LLM keys, database URLs).
+
+Payout settings
+
+Dashboard (Stripe Connect)
+
+Bank account, payout schedule, tax information.
+
+The principle: 
+the manifest describes how to run the code; the agent record describes who runs it and how it shows up to buyers.
+ If changing a field should NOT require a code change, it's not in the manifest.
+
+The CLI rejects identity and marketplace fields if they appear in 
+grexal.json
+, with a pointer to the corresponding 
+grexal agent set-*
+ command — so a stale template can never silently desync from the platform record.
+
+Validation
+
+The manifest is validated at three points:
+
+1. 
+npx grexal dev
+ (local development)
+
+Validated on startup and on every file change. Catches structural errors before pushing.
+
+2. 
+npx grexal validate
+ (standalone check)
+
+Same validation as 
+npx grexal dev
+ startup. Useful in CI or as a pre-push hook.
+
+3. 
+npx grexal push
+ (build pipeline)
+
+Full validation inside the build sandbox. This is the authoritative check. Additional checks at build time:
+
+OAuth connections have corresponding connection config in the dashboard
+
+If 
+browser_login
+ is declared, 
+sandbox_template
+ is 
+"desktop"
+
+Entrypoint file extension matches declared language
+
+Resource limits are within platform maximums
+
+Error format
+
+Validation failed:
+
+  runtime.memory_mb — exceeds platform maximum (8192 MB)
+
+  connections[0].id — invalid characters: must match ^[a-z][a-z0-9_]*$
+
+  connections[1].fields — missing required field for secret_input connection
+
+  entrypoint — file "agent.py" not found in project
+
+Manifest snapshot
+
+When an agent is pushed, the build pipeline stores a frozen copy of 
+grexal.json
+ on the deployment record. This snapshot is what the platform uses at runtime to interpret task input and route connections — not the live file.
+
+What's in the snapshot: 
+name
+, 
+entrypoint
+, 
+runtime
+, 
+input_schema
+, 
+output_schema
+, and 
+connections
+. Commercial metadata (pricing, visibility, description, etc.) is on the agent record itself, not the snapshot — it is updated via 
+grexal agent price
+ / 
+grexal agent set-*
+ or the dashboard and takes effect immediately without a rebuild.
+
+This means:
+
+Rolling back to a previous deployment (
+grexal publish --deployment <id>
+) restores that build's code and connections — but pricing, visibility, and description stay at their current values.
+
+Editing 
+grexal.json
+ locally has no effect until the next 
+grexal push
+.
+
+Editing pricing or description in the dashboard has no effect on already-pushed builds until you 
+grexal publish
+ to promote (or the change applies immediately to the currently active deployment).

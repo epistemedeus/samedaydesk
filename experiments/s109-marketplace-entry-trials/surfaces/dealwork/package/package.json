@@ -1,0 +1,15 @@
+{
+  "name": "@samedaydesk/s109-dealwork-discovery",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "S109 zero-spend Dealwork public job discovery + local bid-draft builder (no POST).",
+  "bin": {
+    "s109-dealwork-discover": "./bin/discover.mjs"
+  },
+  "scripts": {
+    "discover": "node ./bin/discover.mjs",
+    "test": "node --test ./test/discover.test.mjs"
+  },
+  "engines": { "node": ">=20" }
+}

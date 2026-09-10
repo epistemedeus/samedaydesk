@@ -1,0 +1,320 @@
+{
+  "cell": "G1-grexal-contract",
+  "cohort": "c1-contracts",
+  "surface": "grexal",
+  "asOf": "2026-09-10",
+  "cashBoundary": {
+    "usd": 0,
+    "didNot": [
+      "npx grexal login",
+      "account signup at grexal.ai",
+      "grexal push / publish / deploy / delete",
+      "grexal agent set-* / price add",
+      "buyer credit top-up",
+      "cashout or Stripe Connect"
+    ]
+  },
+  "packagesObserved": {
+    "cli": {
+      "name": "grexal",
+      "version": "0.4.1",
+      "npmDistTagLatest": "0.4.1",
+      "published": "2026-05-03T17:14:43.312Z",
+      "tarball": "https://registry.npmjs.org/grexal/-/grexal-0.4.1.tgz",
+      "description": "Grexal CLI for building and deploying agents",
+      "bin": "dist/index.js",
+      "runtimeDependencies": {
+        "@grexal/sdk": "^0.0.2",
+        "commander": "^14.0.3",
+        "chokidar": "^5.0.0",
+        "tsx": "^4.21.0"
+      },
+      "defaultApiUrlInBundle": "https://impartial-sockeye-413.convex.site",
+      "defaultWebUrlInBundle": "https://grexal.ai",
+      "credentialsPath": "~/.grexal/credentials.json"
+    },
+    "sdk": {
+      "name": "@grexal/sdk",
+      "version": "0.1.1",
+      "npmDistTagLatest": "0.1.1",
+      "published": "2026-05-01T00:51:43.118Z",
+      "tarball": "https://registry.npmjs.org/@grexal/sdk/-/sdk-0.1.1.tgz",
+      "note": "TypeScript agent scaffold from grexal@0.4.1 init writes \"@grexal/sdk\": \"latest\" (currently 0.1.1). The CLI package itself still depends on @grexal/sdk ^0.0.2 for its bundled runtime, which is a version skew, not a seller-fee change."
+    }
+  },
+  "newFact": "CURRENT Grexal seller/runtime contract (docs.grexal.ai + grexal@0.4.1): paid-run take rate is platform_fee = clamp(buyer_charge × 0.20, $0.02, buyer_charge × 0.30); seller keeps the remainder (exactly 80% at ≥ $0.10). Sandbox compute, build, deploy, storage, and listing are covered by that fee; third-party LLM/API spend is not. Runtime contract lives in grexal.json (manifest_version 3: entrypoint, runtime, input/output schema, connections). Identity slug starts in .grexal/agent.json as {name} and becomes {agentId} only after first push. Marketplace metadata, pricing, and visibility are NOT in the manifest — grexal validate rejects name/description/category/tags/homepage/repository/icon/is_open_source/pricing and points at grexal agent set-* / grexal agent price. Dry local entry does not require login: npx grexal@0.4.1 init --language typescript --name <slug> writes files only; validate and dev stay on localhost:4700. Login is required before any platform mutation (push/publish/deploy/agent/env/runs/connections). Unknown buyer demand is an experiment, not a Stage-1 blocker — the next cheap measurement is a local scaffold + grexal.json, not a live listing.",
+  "observedPath": "Read live https://docs.grexal.ai/llms.txt, /llms-full.txt, /docs/payments, /docs/agent-manifest, /docs/quickstart, /docs/cli. Cross-checked experiment fixtures grexal-llms.txt / grexal-llms-full.txt / grexal-payments.txt / grexal-agent-manifest.txt (same fee formula and split). Fetched npm registry metadata for grexal@0.4.1 (latest) and @grexal/sdk@0.1.1 (latest). Unpacked grexal-0.4.1.tgz and confirmed runInit/runValidate/runDev do not call requireAuth(); requireAuth() gates push/publish/unpublish/delete/agent/env/runs/connections. Did not execute login, init, push, publish, or any authenticated CLI. Did not create a Grexal account.",
+  "feeModel": {
+    "primaryCitation": "https://docs.grexal.ai/docs/payments",
+    "alsoCitedIn": [
+      "https://docs.grexal.ai/llms.txt (step 7)",
+      "https://docs.grexal.ai/docs/quickstart",
+      "https://docs.grexal.ai/docs/agent-manifest (Pricing, not in the manifest)"
+    ],
+    "formula": "platform_fee = clamp(buyer_charge × 0.20, 0.02, buyer_charge × 0.30); your_earnings = buyer_charge − platform_fee",
+    "rate": 0.2,
+    "sellerKeepNominal": 0.8,
+    "floorUsd": 0.02,
+    "capRate": 0.3,
+    "nominal80PercentAtOrAboveUsd": 0.1,
+    "proseFromPrimary": "For every paid run of your agent, Grexal takes 20% as a marketplace fee and the remaining 80% becomes your earnings. Floor: a minimum fee of $0.02 per run. Cap: the fee never exceeds 30% of the run charge. For any run priced at $0.10 or higher, you keep exactly 80%. Below that, the 30% cap kicks in.",
+    "workedExamplesFromPrimary": [
+      { "buyerPays": 5.0, "platformFee": 1.0, "sellerReceives": 4.0, "effectivePct": 0.2 },
+      { "buyerPays": 1.0, "platformFee": 0.2, "sellerReceives": 0.8, "effectivePct": 0.2 },
+      { "buyerPays": 0.2, "platformFee": 0.04, "sellerReceives": 0.16, "effectivePct": 0.2 },
+      { "buyerPays": 0.1, "platformFee": 0.02, "sellerReceives": 0.08, "effectivePct": 0.2 },
+      { "buyerPays": 0.05, "platformFee": 0.015, "sellerReceives": 0.035, "effectivePct": 0.3, "note": "cap" },
+      { "buyerPays": 0.02, "platformFee": 0.006, "sellerReceives": 0.014, "effectivePct": 0.3, "note": "cap" }
+    ],
+    "derivedFloorBandUsd": {
+      "note": "Arithmetic of the published clamp, not a separate docs table row: floor $0.02 binds when 20% < $0.02 and 30% of charge still ≥ $0.02, i.e. about $0.0667 ≤ charge < $0.10 (example: $0.08 → fee $0.02 = 25%). Below ~$0.0667 the 30% cap binds.",
+      "floorBindsFromUsd": 0.0666666667,
+      "floorBindsUntilUsd": 0.1
+    },
+    "coveredByFee": [
+      "sandbox compute, memory, network egress",
+      "build / push / publish / deploy",
+      "storage of code, artifacts, run history, logs",
+      "marketplace listing and dashboard hosting",
+      "platform-side run orchestration"
+    ],
+    "notCoveredByFee": [
+      "seller third-party LLM APIs",
+      "paid scraping/search/SaaS endpoints",
+      "any other usage-based external service"
+    ],
+    "pricingBacksolve": "buyer_charge = (your_target_net + your_upstream_cost) / 0.80",
+    "docsWorkedBacksolve": {
+      "targetNet": 0.1,
+      "upstreamCost": 0.04,
+      "raw": 0.175,
+      "rounded": 0.18
+    },
+    "noEarningsFor": [
+      "self-runs (developer testing/dogfooding)",
+      "failed / timed-out / reserve-exceeded runs",
+      "buyer-cancelled runs that never started",
+      "refunded runs (earnings reversed)"
+    ],
+    "payout": {
+      "earningsPost": "immediately on paid-run completion",
+      "redeemToCredits": "instant, no minimum, no hold",
+      "cashOut": {
+        "minimumUsd": 10,
+        "holdDays": 14,
+        "path": "Dashboard → Earnings → Cash out"
+      }
+    },
+    "lineItems": {
+      "notInManifest": true,
+      "cli": "npx grexal agent price add <unit> <amount> [--param key=value]",
+      "amountRangeUsdPerUnit": [0.0, 10.0],
+      "maxItems": 12,
+      "outputUnitsRequireMaxUnits": true,
+      "reserveMultiplier": 1.25,
+      "publishRequiresAtLeastOne": true
+    },
+    "buyerPaysListedPrice": true,
+    "noSeparateInfrastructureBill": true
+  },
+  "manifestVsDashboard": {
+    "runtimeManifestFile": "grexal.json",
+    "identityBindingFile": ".grexal/agent.json",
+    "localDevCredentialsFile": ".grexal/connections.json",
+    "manifestContains": [
+      "manifest_version (default 3; 1/2/3 accepted)",
+      "entrypoint (required)",
+      "runtime.language python|typescript (required)",
+      "runtime.memory_mb 512-8192 even, default 512",
+      "runtime.timeout_seconds 10-86400, default 300, 65-minute platform ceiling",
+      "runtime.cpu 1|2|4|8, default 2",
+      "runtime.sandbox_template standard|desktop",
+      "input_schema",
+      "output_schema",
+      "connections[]"
+    ],
+    "rejectedIfPresentInGrexalJson": {
+      "name": "grexal init --name <slug> or grexal agent set-name <slug>",
+      "description": "grexal agent set-description \"...\"",
+      "category": "grexal agent set-category <slug>",
+      "tags": "grexal agent set-tags a,b,c",
+      "homepage": "grexal agent set-homepage <url>",
+      "repository": "grexal agent set-repository <url>",
+      "icon": "grexal agent set-icon <local-path>",
+      "is_open_source": "grexal agent set-is-open-source <true|false>",
+      "pricing": "grexal agent price add|remove|clear (CLI 0.4.1 reject message still says set-price; live command is price add)"
+    },
+    "dashboardOrSetStarAfterFirstPush": [
+      "set-description",
+      "set-category",
+      "set-tags",
+      "set-homepage",
+      "set-repository",
+      "set-icon",
+      "set-is-open-source",
+      "set-name",
+      "set-visibility public|private",
+      "price add|list|remove|clear|estimate",
+      "publish / unpublish"
+    ],
+    "identityLifecycle": [
+      "init writes .grexal/agent.json { \"name\": \"<slug>\" }",
+      "first push claims slug, mints opaque agentId, rewrites file to { \"agentId\": \"ag_...\" }",
+      "later CLI commands address the agent by id; set-name changes the slug without breaking id-based public links"
+    ],
+    "publishGate": [
+      "description",
+      "category",
+      "at least one tag",
+      "at least one pricing line item"
+    ],
+    "initTemplateSchemaShape": "grexal@0.4.1 init writes flattened typed fields (type text|file|number|boolean|json), not JSON-Schema {type:object,properties}. Validator accepts both v1 JSON-Schema objects and typed maps.",
+    "principle": "The manifest describes how to run the code; the agent record describes who runs it and how it shows up to buyers."
+  },
+  "entryCommands": {
+    "cashSafeDryLocal": [
+      "node --version  # need >= 20",
+      "npx --yes grexal@0.4.1 --help",
+      "npx --yes grexal@0.4.1 init --language typescript --name <slug>",
+      "cd <slug>",
+      "npx --yes grexal@0.4.1 validate",
+      "npm install  # optional; pulls @grexal/sdk@latest (0.1.1); npm registry only, no Grexal account",
+      "npx --yes grexal@0.4.1 dev --input '{\"query\":\"dry-run\"}' --once"
+    ],
+    "pythonVariant": [
+      "npx --yes grexal@0.4.1 init --language python --name <slug>",
+      "cd <slug>",
+      "npx --yes grexal@0.4.1 validate",
+      "npx --yes grexal@0.4.1 dev --input '{\"query\":\"dry-run\"}' --once"
+    ],
+    "initWrites": {
+      "typescript": [
+        "grexal.json",
+        "index.ts",
+        "package.json",
+        "tsconfig.json",
+        ".gitignore",
+        ".grexal/agent.json",
+        ".grexal/connections.json"
+      ],
+      "python": [
+        "grexal.json",
+        "agent.py",
+        "requirements.txt",
+        ".gitignore",
+        ".grexal/agent.json",
+        ".grexal/connections.json"
+      ]
+    },
+    "doNotRunOnThisWorker": [
+      "npx grexal login",
+      "npx grexal push",
+      "npx grexal publish",
+      "npx grexal deploy",
+      "npx grexal push --publish",
+      "npx grexal agent set-*",
+      "npx grexal agent price add ...",
+      "npx grexal runs invoke ...",
+      "npx grexal delete"
+    ],
+    "notes": [
+      "CLI docs: login is required before commands that talk to the platform (push, publish, unpublish, delete, agent, env). grexal@0.4.1 also requireAuth() on runs and connections.",
+      "init/validate/dev do not call requireAuth() in grexal@0.4.1 dist/index.js; init only mkdir/writeFile in cwd.",
+      "Non-TTY init requires both --language and --name.",
+      "npm README on grexal@0.4.1 is stale versus current docs: README still presents `grexal deploy` as a single go-live step. Live docs and the 0.4.1 binary treat deploy as alias of push --publish, with push leaving a DRAFT.",
+      "This cell documents commands only and did not execute init/dev/login."
+    ]
+  },
+  "authGate": {
+    "accountPrerequisiteInDocs": "A Grexal account at https://grexal.ai plus Node.js 20+",
+    "cliLogin": "npx grexal login — browser device-code flow; stores {token,email} at ~/.grexal/credentials.json",
+    "loginCreatesPlatformSession": true,
+    "skippedHereBecause": "Cash boundary $0 and no signup. Login talks to GREXAL_API_URL (bundle default https://impartial-sockeye-413.convex.site) POST /api/cli/auth/code and can complete account linking at https://grexal.ai/auth/cli?code=...",
+    "unauthenticatedLocal": [
+      "init",
+      "validate",
+      "dev",
+      "--help",
+      "logout (no-op if no creds)"
+    ],
+    "requiresAuthAndUsuallyFirstPush": [
+      "push (first push claims slug / mints agentId; not live)",
+      "publish / unpublish / deploy / delete",
+      "agent set-* / agent show / agent price *",
+      "deployments list",
+      "runs invoke|list|logs",
+      "connections set|list|grant|remove",
+      "env set|get|list|remove"
+    ],
+    "setStarBeforePushError": "Error: No agent yet on the platform. Run `grexal push` first…",
+    "missingIdentityError": "Error: No agent identity. Run `grexal init --name <slug>` first…",
+    "spendRiskAfterAuth": [
+      "push/publish themselves are documented as not separately billed",
+      "buyer runs after publish are charged listed price; seller is not billed sandbox compute",
+      "self-runs of your own agent are free and produce no earnings",
+      "external LLM calls inside the agent still cost the seller unless priced through",
+      "this worker still must not login/signup: account creation is out of cash/signup boundary even if CLI is free"
+    ]
+  },
+  "unknownDemand": {
+    "status": "unknown",
+    "note": "Grexal buyer volume, orchestrator routing share, and whether a SameDayDesk-class evidence packager would be contracted are not observable without a public listing and paid runs. That unknown is an experiment, not a Stage-1 blocker. Contract + dry local scaffold are sufficient to proceed; do not wait for demand proof before G2 packaging.",
+    "blocker": false
+  },
+  "nextMeasurableEvent": "G2: vendor a manifest_version 3 grexal.json plus local identity stub under surfaces/grexal/package (no login/push). Optional cheap check: run `npx --yes grexal@0.4.1 init --language typescript --name <scratch-slug>` in /tmp then `npx grexal@0.4.1 validate` — still $0, still no account. Do not treat unknown marketplace demand as a stop. G3 then worksheets $0.18 and $0.05 through the published clamp without placing a paid run.",
+  "sources": [
+    {
+      "url": "https://docs.grexal.ai/docs/payments",
+      "retrieved": "2026-09-10",
+      "role": "primary fee formula, floor, cap, worked table, payout rules"
+    },
+    {
+      "url": "https://docs.grexal.ai/llms.txt",
+      "retrieved": "2026-09-10",
+      "role": "shipping index; 20% fee with $0.02 floor and 30% cap; set-* publish gate; local dev command"
+    },
+    {
+      "url": "https://docs.grexal.ai/llms-full.txt",
+      "retrieved": "2026-09-10",
+      "role": "full current contract: quickstart, CLI, manifest split, payments, auth scope"
+    },
+    {
+      "url": "https://docs.grexal.ai/docs/agent-manifest",
+      "retrieved": "2026-09-10",
+      "role": "grexal.json runtime fields vs dashboard/set-* metadata; pricing not in manifest"
+    },
+    {
+      "url": "https://docs.grexal.ai/docs/quickstart",
+      "retrieved": "2026-09-10",
+      "role": "init/dev/push/publish sequence; publish gate fields; local test without going live"
+    },
+    {
+      "url": "https://docs.grexal.ai/docs/cli",
+      "retrieved": "2026-09-10",
+      "role": "login required only for platform commands; init/dev/validate local; deploy = push --publish"
+    },
+    {
+      "url": "https://registry.npmjs.org/grexal/0.4.1",
+      "retrieved": "2026-09-10",
+      "role": "CLI package metadata; latest 0.4.1"
+    },
+    {
+      "url": "https://registry.npmjs.org/grexal/-/grexal-0.4.1.tgz",
+      "retrieved": "2026-09-10",
+      "role": "unpacked dist/index.js: requireAuth vs init/validate/dev; REJECTED_FIELDS; init templates"
+    },
+    {
+      "url": "https://registry.npmjs.org/@grexal/sdk/0.1.1",
+      "retrieved": "2026-09-10",
+      "role": "TypeScript SDK latest 0.1.1; AgentContext surface"
+    },
+    {
+      "path": "/workspace/experiments/s109-marketplace-entry-trials/fixtures/grexal-payments.txt",
+      "role": "local snapshot of payments page; matches live formula"
+    },
+    {
+      "path": "/workspace/experiments/s109-marketplace-entry-trials/fixtures/grexal-agent-manifest.txt",
+      "role": "local snapshot of manifest split"
+    }
+  ]
+}

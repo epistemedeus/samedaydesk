@@ -1,0 +1,8 @@
+{
+  "cohort": "c2-packages",
+  "size": 3,
+  "at": "2026-09-10T08:48:52.526728Z",
+  "MemTotal:": 16791945216,
+  "MemAvailable:": 11173412864,
+  "psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n"
+}

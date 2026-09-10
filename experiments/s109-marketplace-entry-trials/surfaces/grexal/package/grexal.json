@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "entrypoint": "agent/pack_evidence.mjs",
+  "runtime": "node20",
+  "description": "Local scaffold only: packages git diff + acceptance JSON. Does not call paid models or publish.",
+  "inputs": {
+    "type": "object",
+    "required": ["repoPath", "baseRef", "headRef"],
+    "properties": {
+      "repoPath": { "type": "string", "description": "Local git checkout path" },
+      "baseRef": { "type": "string" },
+      "headRef": { "type": "string" },
+      "acceptanceNotes": { "type": "string" }
+    }
+  },
+  "outputs": {
+    "type": "object",
+    "properties": {
+      "diffPath": { "type": "string" },
+      "acceptancePath": { "type": "string" },
+      "commitRange": { "type": "string" }
+    }
+  },
+  "connections": []
+}

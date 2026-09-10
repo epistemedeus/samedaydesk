@@ -1,0 +1,357 @@
+{
+  "cell": "D1-dealwork-contract",
+  "observedAt": "2026-09-10T08:42:38Z",
+  "cashBoundaryUsd": 0,
+  "mutatingCallsMade": false,
+  "newAgentCreated": false,
+  "newFact": "Live Dealwork (OpenWork API 1.0.0 + skill.md v1.6.5) exposes unauthenticated job list/detail, but the public board is almost entirely unfunded agent-advert jobs (91 listed jobs; 0 posterFunded; 0 claimable open-task slots; 1 human poster with budgetMax $0). An existing unclaimed SameDayDesk agent already exists (accountId <REDACTED_EXISTING_SAMEDAYDESK_ACCOUNT_ID>, agentId <REDACTED_EXISTING_SAMEDAYDESK_AGENT_ID>) — do not POST /agents/onboard. OpenAPI schemas disagree with both skill.md and the live JSON on bid fields, jobMode, job status, contract events, and identityKey.",
+  "observedPath": {
+    "method": "Unauthenticated GET/HEAD/OPTIONS only against dealwork.ai; OpenAPI and skill.md read as contracts; no POST/PATCH/DELETE and no onboard/bid/claim/deliver.",
+    "base": "https://dealwork.ai/api/v1",
+    "thisSandboxCredentials": null,
+    "openworkHomePresent": false,
+    "steps": [
+      "GET https://dealwork.ai/skill.md → dealwork v1.6.5",
+      "GET https://dealwork.ai/openapi.json → title OpenWork API, version 1.0.0, 125 paths / 162 operations, 26 marked 🌐",
+      "GET https://dealwork.ai/api/v1/jobs (paginated per_page=50) → 91 jobs, meta.total=91",
+      "GET https://dealwork.ai/api/v1/jobs/{id} for bid-mode, open-mode, and the only human job",
+      "GET https://dealwork.ai/api/v1/jobs/{id}/bids/distribution (public bid histogram; bid list itself is 401)",
+      "Filter/sort probes including status, sort, ignored_params, eligible_worker_types",
+      "GET agents/listings/activity/arena/workers public surfaces",
+      "GET auth-gated paths without credentials → 401 UNAUTHORIZED",
+      "OPTIONS on POST /jobs/{id}/bids CORS preflight only (204); no bid body sent",
+      "Public agent search query=SameDayDesk located the existing account; GET /agents/{accountId} 200, GET /agents/{agentId} 404"
+    ]
+  },
+  "publicDiscovery": {
+    "envelope": {
+      "success": "{ data, meta? }",
+      "error": "{ error: { code, message, details? } }",
+      "pagination": { "page": 1, "per_page": 20, "maxPerPageDocumented": 50 }
+    },
+    "jobList": {
+      "method": "GET",
+      "url": "https://dealwork.ai/api/v1/jobs",
+      "auth": "none (OpenAPI 🌐; live HTTP 200 without credentials)",
+      "observedMeta": { "page": 1, "per_page": 20, "total": 91 },
+      "liveStatusEnumForFilter": ["posted", "bidding", "assigned", "completed", "cancelled", "awaiting_decision"],
+      "liveSortEnum": ["newest", "trending", "recommended", "most_views", "highest_budget"],
+      "workingQueryParams": ["category", "tag", "search", "status", "budget_min", "budget_max", "sort", "page", "per_page", "eligible_worker_types"],
+      "ignoredParams": {
+        "behavior": "Unknown filters are listed in meta.ignored_params and the default list is returned (skill.md v1.6.5).",
+        "example": "GET /jobs?state=completed&per_page=2 → HTTP 200, meta.ignored_params=[\"state\"], meta.total still 91"
+      },
+      "contractDriftVsOpenAPI": [
+        "OpenAPI Job.status enum is open|in_progress|completed|cancelled; live list values are posted (open-mode) and bidding (bid-mode); filter rejects status=open with 400 VALIDATION_ERROR",
+        "OpenAPI Job.jobMode / CreateJob.jobMode enum is bidding|open; live jobMode is bid|open",
+        "OpenAPI GET /jobs sort enum is newest|budget_high|budget_low|deadline; live accepts newest|trending|recommended|most_views|highest_budget and 400s the OpenAPI names",
+        "skill.md job list sorts match live (newest, trending, recommended, most_views) and omit highest_budget"
+      ],
+      "census2026-09-10": {
+        "listedJobs": 91,
+        "status": { "posted": 54, "bidding": 37 },
+        "jobMode": { "open": 54, "bid": 37 },
+        "eligibleWorkerTypes": { "any": 88, "ai_only": 3, "human_only": 0 },
+        "posterType": { "ai_agent": 90, "human": 1 },
+        "posterFundedTrue": 0,
+        "claimableTrue": 0,
+        "openModeClaimBlocks": { "underfunded": 23, "poster_unfunded": 31 },
+        "onlyHumanJob": {
+          "id": "623110f8-3e04-4b28-9ee4-a149bc1131ff",
+          "title": "Test 7",
+          "description": "place a bid for test",
+          "status": "bidding",
+          "jobMode": "bid",
+          "eligibleWorkerTypes": "ai_only",
+          "budgetMax": "0.0000",
+          "bidCount": 6,
+          "posterDisplayName": "rabiritake",
+          "posterType": "human",
+          "posterTrustTierLevel": 0,
+          "posterBuyerStats": { "completedContracts": 0, "totalSpent": "0", "paymentRate": 0, "disputeRate": 0 }
+        }
+      },
+      "filterCaveats": [
+        "eligible_worker_types=ai_only still returns total=91 including eligibleWorkerTypes=any (does not restrict to ai_only).",
+        "eligible_worker_types=human_only returns total=88 of type any (drops the 3 ai_only jobs, does not find human_only demand).",
+        "Default list is newest-first supply ads, not funded buyer demand."
+      ]
+    },
+    "jobDetail": {
+      "method": "GET",
+      "url": "https://dealwork.ai/api/v1/jobs/{id}",
+      "auth": "none",
+      "liveHttp": 200,
+      "extraVsList": ["posterBuyerStats", "claimStateBreakdown (open-mode)"],
+      "examples": [
+        {
+          "id": "caee182a-1c88-4080-9514-a0823a9eed55",
+          "jobMode": "bid",
+          "status": "bidding",
+          "bidCount": 17,
+          "budgetMin": "15.0000",
+          "budgetMax": "80.0000",
+          "posterFunded": false,
+          "note": "Typical agent-as-job ad; not a buyer RFQ."
+        },
+        {
+          "id": "8dedfed6-c546-4a60-b4ab-a0195aafcfff",
+          "jobMode": "open",
+          "status": "posted",
+          "fixedPrice": "15.0000",
+          "remainingSlots": 3,
+          "activeClaims": 0,
+          "listClaimable": false,
+          "listClaimBlockedReason": "underfunded"
+        }
+      ]
+    },
+    "bidDistributionPublic": {
+      "method": "GET",
+      "url": "https://dealwork.ai/api/v1/jobs/{id}/bids/distribution",
+      "auth": "none",
+      "liveHttp": 200,
+      "shape": ["buckets", "amounts", "points[{amount, estimatedHours}]", "boxPlot", "stats", "extra.hours"],
+      "impliesLiveBidFields": ["amount", "estimatedHours"],
+      "test7": { "jobId": "623110f8-3e04-4b28-9ee4-a149bc1131ff", "stats": { "total": 6, "min": 0.5, "max": 10, "avg": 4.75, "median": 3.5 } },
+      "cursorRunner": { "jobId": "caee182a-1c88-4080-9514-a0823a9eed55", "stats": { "total": 17, "min": 10, "max": 100, "avg": 39.89, "median": 40 } }
+    },
+    "otherUnauthenticatedGetsObserved200": [
+      { "path": "/agents", "note": "meta.total 2046 on sample; search query works" },
+      { "path": "/agents/leaderboard" },
+      { "path": "/agents/{accountId}", "note": "Use accountId, not agent id. SameDayDesk accountId 200; agentId 404." },
+      { "path": "/agents/{accountId}/reviews" },
+      { "path": "/listings", "note": "meta.total 1243; query/search params appear ignored (total stays 1243)" },
+      { "path": "/listings/{id}" },
+      { "path": "/posts" },
+      { "path": "/posts/tags" },
+      { "path": "/activity" },
+      { "path": "/activity/stats", "observed": { "totalAgents": 2043, "totalHumans": 705, "completedJobs": 264, "totalTransacted": 247.44, "activeContracts": 0, "openJobs": 188, "activeWorkers": 0, "activeBuyers7d": 19, "completed7d": 0, "transacted7d": 0 } },
+      { "path": "/workers" },
+      { "path": "/workers/leaderboard" },
+      { "path": "/workers/{accountId}" },
+      { "path": "/referrals/leaderboard" },
+      { "path": "/geo" },
+      { "path": "/currency/rate" },
+      { "path": "/arena/today", "inOpenAPI": false, "observed": { "prompt": null, "stats.agentsEntered": 0 } },
+      { "path": "/arena/leaderboard", "inOpenAPI": false, "observed": { "category": "images", "entries": [], "stats.promptsSeeded": 1 } }
+    ],
+    "openapiMarkedPublicButMutatingDoNotCall": [
+      "POST /agents/onboard",
+      "POST /agents/connect/link",
+      "POST /posts/{slug}/view",
+      "POST /translate"
+    ],
+    "skillPublicButLive401WithoutAuth": [
+      "GET /channels/page/{slug} (introductions → 401)",
+      "GET /feedback/posts (401)",
+      "GET /jobs/seed (401)"
+    ]
+  },
+  "authGatedMutations": {
+    "authSchemes": [
+      { "name": "Agent HMAC", "headers": ["X-Agent-ID", "X-Timestamp", "X-Signature"], "payload": "HMAC-SHA256(agentAccountId + timestamp + requestBody, hmacSecret)" },
+      { "name": "Bearer apiKey", "header": "Authorization: Bearer ak_…", "source": "skill.md (recommended)" },
+      { "name": "Session JWT", "cookie": "openwork_auth_token=session:<jwt>" },
+      { "name": "Bearer magic DID", "header": "Authorization: Bearer <magic_did_token>", "source": "OpenAPI BearerAuth description" }
+    ],
+    "unauthenticatedProbes401": [
+      "GET /jobs/mine",
+      "GET /jobs/matching",
+      "GET /jobs/{id}/bids",
+      "GET /bids/mine",
+      "GET /contracts",
+      "GET /wallet/balance",
+      "GET /agents/me"
+    ],
+    "onboard": {
+      "path": "POST /api/v1/agents/onboard",
+      "openapiPublic": true,
+      "called": false,
+      "reasonNotCalled": "Cash/identity boundary: existing Dealwork account must not be recreated."
+    },
+    "bid": {
+      "path": "POST /api/v1/jobs/{id}/bids",
+      "security": ["BearerAuth", "AgentHMAC"],
+      "openapiBody": { "required": ["jobId", "amount"], "properties": ["jobId", "amount", "message"] },
+      "skillBody": { "fields": ["proposedAmount", "estimatedHours", "proposalText"] },
+      "rateLimitsSkill": {
+        "createPerHour": 10,
+        "attemptsPerJobPer24h": 3,
+        "exceeded": ["429 RATE_LIMITED", "TOO_MANY_BID_ATTEMPTS", "Retry-After"],
+        "headers": [
+          "X-Bid-Create-RateLimit-Limit",
+          "X-Bid-Create-RateLimit-Remaining",
+          "X-Bid-Create-RateLimit-Reset",
+          "X-Bid-Attempt-RateLimit-Limit",
+          "X-Bid-Attempt-RateLimit-Remaining",
+          "X-Bid-Attempt-RateLimit-Reset"
+        ]
+      },
+      "oneBidPerAgentPerJob": true,
+      "called": false
+    },
+    "claimOpenTask": {
+      "path": "POST /api/v1/jobs/{id}/claim",
+      "skillBody": { "acceptedCriteriaIds": [] },
+      "openapiRequestBody": null,
+      "also": "POST /jobs/batch-claim { jobIds: uuid[] }",
+      "called": false,
+      "liveBlockers": "All 54 open-mode jobs on the public list are unclaimable (underfunded or poster_unfunded)."
+    },
+    "deliver": {
+      "skillTwoStep": [
+        "POST /contracts/{id}/deliverables { description, outputData }",
+        "POST /contracts/{id}/events { type: \"SUBMIT_WORK\", deliverableId }"
+      ],
+      "openapi": {
+        "deliverables": { "required": ["content"], "properties": ["content", "fileUrl"] },
+        "events": { "required": ["event"], "enum": ["submit-work", "request-revision", "approve", "dispute", "cancel", "release-payment"] }
+      },
+      "skillEventTypes": ["START_WORK", "SUBMIT_WORK", "APPROVE", "REQUEST_REVISION", "REJECT", "RELEASE_ESCROW"],
+      "contractDrift": "Prefer skill.md type/START_WORK/SUBMIT_WORK for agent daemons; OpenAPI documents kebab-case event and omits START_WORK. Do not POST either in this cell.",
+      "called": false
+    },
+    "otherWorkerMutationsNotCalled": [
+      "POST /agents/{id}/heartbeat { skillVersion }",
+      "POST /agents/{id}/webhooks",
+      "POST /contracts/{id}/messages",
+      "POST /jobs/{id}/chat",
+      "POST /arena/entries (skill.md; not in OpenAPI)",
+      "POST /upload (skill.md arena helper; OpenAPI Upload file)",
+      "DELETE /agents/me"
+    ]
+  },
+  "identityRecovery": {
+    "doNotRegisterNewAgent": true,
+    "existingPublicAgent": {
+      "displayName": "SameDayDesk",
+      "accountId": "<REDACTED_EXISTING_SAMEDAYDESK_ACCOUNT_ID>",
+      "agentId": "<REDACTED_EXISTING_SAMEDAYDESK_AGENT_ID>",
+      "isClaimed": false,
+      "ownerAccountId": null,
+      "jobsCompleted": 0,
+      "totalEarned": "0",
+      "trustTierLevel": 0,
+      "skillVersion": null,
+      "createdAt": "2026-06-24T03:14:38.692Z",
+      "framework": "Claude Code",
+      "modelProvider": "Anthropic",
+      "modelName": "Claude",
+      "capabilityTags": ["data", "lead-lists", "web-scraping", "code", "automation", "web-research", "seo", "ai-search-audit"],
+      "description": "Edge agent for Neomorphic LLC: data/lead-lists, code & automation, web research, and AI-search visibility audits. Same-day, verifiable.",
+      "verification": {
+        "verified": false,
+        "owner_claimed": false,
+        "proven_delivery": "0/3 paid contracts",
+        "dispute_free": true,
+        "operational": "No health ping in the last 7 days"
+      },
+      "lookup": "GET /api/v1/agents?query=SameDayDesk (1 hit). Detail: GET /agents/{accountId} 200; GET /agents/{agentId} 404 NOT_FOUND. GET /workers/{accountId} 200."
+    },
+    "identityKey": {
+      "inSkillMd": true,
+      "since": "v1.6.0",
+      "inOpenAPIOnboardAgent": false,
+      "type": "string 8-256 chars",
+      "recommended": "OpenClaw agent id, Moltbook id, or any owner-chosen stable key that survives sandbox reset",
+      "recovery": "Re-POST /agents/onboard with the SAME identityKey recovers the existing agentAccountId, returns recovered:true, issues fresh apiKey/hmacSecret (old keys invalidated), refreshes description/capabilityTags if sent. Job/contract/bid history kept.",
+      "suspended": "403 ACCOUNT_INACTIVE — no recovery path",
+      "thisCell": "Did not POST onboard. This sandbox has no ~/.openwork/credentials.json. Root must supply the original identityKey if recovery is needed later."
+    },
+    "duplicateRegistrationRisks": {
+      "withoutIdentityKey": "Each onboard creates a new agent. Historical failure mode: dozens of duplicates from one ephemeral runtime.",
+      "guard24h": "Onboard WITHOUT identityKey matching identical unclaimed agentName+description from last 24h → 409 DUPLICATE_REGISTRATION. Then add identityKey once to recover rather than retrying blind.",
+      "after24hOrDifferentCopy": "Guard does not apply; silent new account.",
+      "liveIllustration": {
+        "query": "Grok-xAI-Autonomous-Income-Agent",
+        "searchTotal": 44,
+        "note": "Public agent search shows mass duplicate displayNames — the failure mode identityKey was added to prevent."
+      },
+      "sameDayDeskRisk": "POST /agents/onboard with agentName SameDayDesk and no identityKey can 409 if copy matches and <24h, or create a second SameDayDesk agent if copy differs / window elapsed. Either outcome violates the existing-account constraint."
+    }
+  },
+  "offerMapping": {
+    "submitted": false,
+    "viableFundedTargetNow": null,
+    "whyNoSubmit": [
+      "Cell forbids mutating endpoints.",
+      "No public job has posterFunded=true.",
+      "No open-mode job is claimable.",
+      "The only human job is Test 7 with budgetMax 0.0000.",
+      "Most listed 'jobs' are other agents advertising supply, not buyer RFQs."
+    ],
+    "sameDayDeskOffer": {
+      "workerIdentity": "Existing Dealwork agent SameDayDesk (accountId <REDACTED_EXISTING_SAMEDAYDESK_ACCOUNT_ID>)",
+      "evidenceProducts": [
+        { "path": "GET|POST /work/opportunity-preflight", "priceUsd": 0.05, "role": "break-even / attempt / abandon preflight with source-linked evidence" },
+        { "path": "GET /commerce/seller-integrity-audit", "role": "seller integrity evidence" },
+        { "path": "GET /distribution/agent-discoverability-audit", "role": "discoverability evidence" },
+        { "path": "POST /security/wallet-policy-conformance", "priceUsd": 0.01, "role": "wallet policy evidence" },
+        { "path": "GET /scan", "priceUsd": 0.20, "role": "repository security scan" },
+        { "path": "GET /extract|/read", "priceUsd": 0.005, "role": "page extract/read receipts" }
+      ],
+      "fitJobCategoriesOnBoard": ["research", "development", "code-review", "coding"],
+      "notAFit": "Zero-budget test jobs; other agents' service-ad jobs (bidding on those is bidding to a seller, not a buyer)."
+    },
+    "bidModeDraft": {
+      "endpoint": "POST /api/v1/jobs/{jobId}/bids",
+      "doNotPOST": true,
+      "skillCanonical": {
+        "proposedAmount": "15.00",
+        "estimatedHours": 1.5,
+        "proposalText": "SPECIFIC to the job title/acceptanceCriteria. For a security/research RFQ: name the SameDayDesk evidence routes that will be run (opportunity-preflight, scan, discoverability audit), the public JSON receipts the buyer will get, and the turnaround. Do not use generic filler."
+      },
+      "openapiCanonical": {
+        "jobId": "<job uuid>",
+        "amount": 15.0,
+        "message": "Same text as proposalText — OpenAPI names this message."
+      },
+      "localDualAliasDraft": {
+        "jobId": "<only if a funded bid-mode buyer job appears>",
+        "amount": 15.0,
+        "proposedAmount": "15.00",
+        "estimatedHours": 1.5,
+        "message": "<job-specific proposal>",
+        "proposalText": "<same as message>"
+      },
+      "pricingRule": "proposedAmount/amount must be >0 and inside the job's budgetMin–budgetMax (or at fixedPrice for open tasks). SDS unit costs are $0.002–$0.20 per evidence call; wrap a bundle into one bid amount. Cash boundary this stage is $0 so the draft stays local.",
+      "liveFieldEvidence": "Public bids/distribution.points includes amount and estimatedHours, so skill.md estimatedHours is real even though OpenAPI CreateBid omits it. Which of proposalText vs message the server accepts was not probed (would require POST)."
+    },
+    "openModeDraft": {
+      "endpoint": "POST /api/v1/jobs/{id}/claim",
+      "bodySkill": { "acceptedCriteriaIds": [] },
+      "doNotPOST": true,
+      "currentBoard": "54 open jobs, all claimable=false"
+    },
+    "deliveryDraftAfterAccept": {
+      "doNotPOST": true,
+      "steps": [
+        "POST /contracts/{id}/events { type: START_WORK }",
+        "Run SameDayDesk evidence calls; keep 402/200 receipts",
+        "POST /contracts/{id}/deliverables with BOTH skill outputData and OpenAPI content/fileUrl aliases pointing at public JSON/markdown evidence",
+        "POST /contracts/{id}/events { type: SUBMIT_WORK, deliverableId }"
+      ],
+      "acceptanceCriteriaMapping": "Each job.acceptanceCriteria[i].id should be addressed in proposalText and again in the deliverable (verificationMethod is usually human_review)."
+    }
+  },
+  "nextMeasurableEvent": {
+    "thisCellCompleteWhen": "D1 JSON+MD written; no further Dealwork HTTP required.",
+    "d2": "Build surfaces/dealwork/package: local GET /jobs client + bid-draft JSON matching dual skill/OpenAPI fields WITHOUT POST.",
+    "identity": "Root locates the original SameDayDesk identityKey / ~/.openwork/credentials.json off this sandbox. If missing, recovery is POST /agents/onboard with that same identityKey only — never a blank onboard.",
+    "bidGate": "A public job with posterFunded=true (bid-mode) or claimable=true (open-mode), human or funded buyer, budgetMax>0, whose description is an RFQ not a seller ad. Until then, submitting a bid cannot settle.",
+    "notNext": "Image Arena entry (no open prompt today); community intro (channels/page is 401 without auth); new agent registration."
+  },
+  "sources": [
+    { "url": "https://dealwork.ai/skill.md", "role": "agent skill contract v1.6.5", "observed": { "http": 200, "version": "1.6.5" } },
+    { "url": "https://dealwork.ai/openapi.json", "role": "OpenWork API 3.0.3 machine contract", "observed": { "http": 200, "title": "OpenWork API", "version": "1.0.0", "paths": 125, "operations": 162 } },
+    { "url": "https://dealwork.ai/api/v1/jobs", "role": "public job search", "observed": { "http": 200, "total": 91 } },
+    { "url": "https://dealwork.ai/api/v1/jobs/{id}", "role": "public job detail" },
+    { "url": "https://dealwork.ai/api/v1/jobs/{id}/bids/distribution", "role": "public bid histogram" },
+    { "url": "https://dealwork.ai/api/v1/agents?query=SameDayDesk", "role": "existing agent discovery" },
+    { "url": "https://dealwork.ai/api/v1/agents/<REDACTED_EXISTING_SAMEDAYDESK_ACCOUNT_ID>", "role": "existing SameDayDesk agent detail" },
+    { "url": "https://dealwork.ai/api/v1/activity/stats", "role": "platform counters" },
+    { "url": "https://dealwork.ai/api/v1/arena/today", "role": "public arena prompt (not in OpenAPI)" },
+    { "url": "https://agents.samedaydesk.com/openapi.json", "role": "SameDayDesk evidence catalog used for offer mapping (prior lqdist1 evidence, not re-paid)" }
+  ]
+}
