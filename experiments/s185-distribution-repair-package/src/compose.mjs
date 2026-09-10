@@ -179,6 +179,24 @@ function rebindOutputs(useful, identity, at) {
   });
 }
 
+/**
+ * DIST08 summarizeAcquisition drops fixtureDerived. Re-attach so joined
+ * activations cannot appear as observed live clicks.
+ */
+function retainFixtureDerived(diagnosis, acquisition) {
+  if (!diagnosis || !Array.isArray(diagnosis.joined)) return diagnosis;
+  const byId = new Map((acquisition || []).map((a) => [a.id, a]));
+  diagnosis.joined = diagnosis.joined.map((j) => {
+    const src = byId.get(j.acquisitionId);
+    if (!src || src.fixtureDerived !== true || !j.acquisition) return j;
+    return {
+      ...j,
+      acquisition: { ...j.acquisition, fixtureDerived: true },
+    };
+  });
+  return diagnosis;
+}
+
 function matchingFromDiagnosis(diagnosis, compatible) {
   const joined = diagnosis?.joined || [];
   const unjoined = diagnosis?.unjoined || [];
@@ -415,7 +433,7 @@ export async function diagnoseDistributionRepair(input, options = {}) {
         assertNoInventedConversion(diagnosis);
         assertUnknownsDefault(diagnosis);
       }
-      diagnosis = scrubValue(diagnosis);
+      diagnosis = retainFixtureDerived(scrubValue(diagnosis), acquisition);
     } catch (err) {
       const result = malformedResult(err.message, { code: err.code || "invalid_input", details: err.details }, generatedAt);
       result.feed = summarizeFeed(feed);

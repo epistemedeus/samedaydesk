@@ -141,6 +141,14 @@ test("real before/after route correction for /docs redirected", async () => {
     "update_listed_route_or_redirect_target",
   );
   assert.equal(result.repair.beforeAfter.after.confidence, "high");
+  assert.ok(result.gaps.some((g) => g.code === "fixture_derived_acquisition"));
+  const activated = (result.diagnosis.joined || []).filter(
+    (j) => j.acquisition?.kind === "linkActivated",
+  );
+  assert.ok(activated.length >= 1);
+  for (const j of activated) {
+    assert.equal(j.acquisition.fixtureDerived, true);
+  }
   const docs = result.feed.repairRecommendations.find((r) => r.routeKey === "/docs");
   assert.equal(docs.delta, "redirected");
   assert.equal(docs.recommendation, "update_listed_route_or_redirect_target");

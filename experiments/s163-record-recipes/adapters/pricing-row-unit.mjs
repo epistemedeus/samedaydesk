@@ -32,9 +32,13 @@ export function preparePricingTable(input, label = 'pricing') {
       }
     }
   }
-  if (typeof obj === 'object' && obj.rows == null && obj.items == null && !Array.isArray(obj)) {
-    // allow {source,citations,rows}
-    if (!obj.rows) return refuse('unsupported-pricing-shape', 'Object must include rows[]', { keys: Object.keys(obj) });
+  if (obj == null || (typeof obj !== 'object')) {
+    return refuse('unsupported-pricing-shape', `${label} must be a JSON array or {rows|items:[...]}`, {
+      got: obj === null ? 'null' : typeof obj,
+    });
+  }
+  if (!Array.isArray(obj) && obj.rows == null && obj.items == null) {
+    return refuse('unsupported-pricing-shape', 'Object must include rows[]', { keys: Object.keys(obj) });
   }
   const rows = Array.isArray(obj) ? obj : obj.rows || obj.items || [];
   if (!rows.length) return refuse('empty-pricing-rows', `${label} has zero rows`);

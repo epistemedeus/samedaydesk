@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { preparePricingTable } from '../adapters/pricing-row-unit.mjs';
@@ -46,6 +47,29 @@ test('openapi used-ops pin loads and CLI matches expected unchanged count', () =
   });
   assert.equal(man.parser, 's134-openapi-impact');
   assert.equal(man.coverage.scope, 'used-operations-only');
+});
+
+test('pricing JSON null and scalars structured-refuse without throw', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 's206-price-shape-'));
+  const cases = [
+    ['null.json', 'null\n', 'null'],
+    ['str.json', '"x"\n', 'string'],
+    ['num.json', '7\n', 'number'],
+    ['bool.json', 'true\n', 'boolean'],
+  ];
+  for (const [name, body] of cases) {
+    const p = path.join(tmp, name);
+    fs.writeFileSync(p, body);
+    const prep = preparePricingTable(p, 'before');
+    assert.equal(prep.ok, false, name);
+    assert.equal(prep.refused, true, name);
+    assert.equal(prep.code, 'unsupported-pricing-shape', name);
+  }
+  const valid = preparePricingTable(
+    path.join(pkg, 'sources/pricing/public-model-rows/before.json'),
+  );
+  assert.equal(valid.ok, true);
+  assert.ok(valid.table.rows.length >= 1);
 });
 
 test('pricing unit case change and HTML refuse', () => {

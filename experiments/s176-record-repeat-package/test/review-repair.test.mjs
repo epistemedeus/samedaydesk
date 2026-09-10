@@ -296,3 +296,22 @@ test('F5: capture larger than documented limit is refused before a full useful p
   assert.equal(r.prep.code, 'capture-too-large');
   assert.equal(r.prep.evidence.limit, MAX_CAPTURE_BYTES);
 });
+
+test('F3: JSON null/scalar pricing files structured-refuse (no throw)', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 's206-f3-'));
+  const after = path.join(S163, 'sources/pricing/public-model-rows/before.json');
+  for (const [name, body] of [
+    ['null.json', 'null\n'],
+    ['str.json', '"x"\n'],
+    ['num.json', '7\n'],
+    ['bool.json', 'true\n'],
+  ]) {
+    const before = path.join(tmp, name);
+    fs.writeFileSync(before, body);
+    const r = run(['run', '--family', 'pricing-row-unit', '--before', before, '--after', after], tmp);
+    assert.equal(r.status, 0, r.stderr || r.stdout);
+    const out = parse(r.stdout);
+    assert.equal(out.refused, true, name);
+    assert.equal(out.prep.code, 'unsupported-pricing-shape', name);
+  }
+});
