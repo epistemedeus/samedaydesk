@@ -38,7 +38,7 @@ function emit(obj, code = 0) {
 }
 
 function help() {
-  process.stdout.write(`distribution-repair — SameDayDesk S185 shared CLI
+  process.stdout.write(`distribution-repair - SameDayDesk offline listing diagnosis CLI
 
 Commands:
   schema
@@ -49,8 +49,8 @@ Commands:
 
 Caller supplies discovery/listing snapshots + baseline/current route pair.
 Identity is provider / jobRef / sharedEvidenceId (never a filename).
-Incomplete captures cannot prove global removal. Not lost-customer proof.
-Free offline diagnosis; priced execution is not invoked. Not a production acquisition.
+Incomplete captures cannot prove global removal.
+Free offline diagnosis on local files; priced execution is not started by this CLI.
 `);
 }
 

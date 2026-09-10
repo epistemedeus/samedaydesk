@@ -37,8 +37,8 @@ test(
     const distributionRepair = report.pages.find((page) => page.id === "distribution-repair");
     assert.ok(recordRepeat, "record-repeat page missing");
     assert.ok(distributionRepair, "distribution-repair page missing");
-    assert.match(recordRepeat.h1 || "", /portable offline package/i);
-    assert.match(distributionRepair.h1 || "", /portable diagnosis package/i);
+    assert.match(recordRepeat.h1 || "", /Compare OpenAPI ops, price rows, keyed CSV, and feeds/i);
+    assert.match(distributionRepair.h1 || "", /Diagnose why a listed tool cannot run from/i);
 
     assert.equal(forAgents.innerWidth, 390);
     assert.equal(recordRepeat.innerWidth, 390);

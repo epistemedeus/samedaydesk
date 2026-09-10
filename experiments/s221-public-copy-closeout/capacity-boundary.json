@@ -1,0 +1,26 @@
+{
+  "at": "2026-09-10T16:06:30Z",
+  "boundary": "S221-closeout",
+  "nativeSession": "01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5",
+  "model": "grok-4.6",
+  "effort": "xhigh",
+  "vm": {
+    "hostname": "cursor",
+    "nproc": 4,
+    "MemTotalKb": 16398384,
+    "MemAvailableKb": 10751900,
+    "loadavg": [
+      1.23583984375,
+      1.0537109375,
+      0.67529296875
+    ]
+  },
+  "processes": {
+    "cursorPid": 208744,
+    "heavyParent": {
+      "pid": 195025,
+      "cmd": "/home/ubuntu/.grok/bin/grok --resume 01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5 --cwd /workspace --model grok-4.6 --reasoning-"
+    }
+  },
+  "distinction": "Cursor Git/export/gates vs native Heavy parent session (separate OS process when present; same VM)"
+}

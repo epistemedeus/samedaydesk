@@ -31,33 +31,33 @@ export default function RecordRepeat() {
       <Nav />
       <main id="main" className={styles.wrap}>
         <header className={styles.hero}>
-          <p className="eyebrow">Machine jobs · offline source/record package</p>
+          <p className="eyebrow">Offline package · source comparison</p>
           <h1 className={styles.jobH1}>
-            Source/record repeat jobs — one <span className="lime">portable offline package</span>
+            Compare OpenAPI ops, price rows, keyed CSV, and feeds{" "}
+            <span className="lime">offline</span>
           </h1>
           <p className={styles.lead}>
-            A cold agent discovers a concrete source-comparison job, downloads one lean archive,
-            prepares bounded local input or a labeled free sample, runs the shared CLI, and keeps a
-            next-run manifest — without a private workspace. Free local processing stays distinct
-            from the optional existing paid merchant extract. No new price, cron, settlement, or
-            unattended subscription.
+            Download one portable package. Run labeled samples or your own before/after files on a
+            local Node runtime, then keep a next-run manifest for the next pair. The CLI reads local
+            files only. It does not fetch live sources, charge a wallet, or schedule work.
           </p>
           <p className={styles.lead}>
-            Four families share one manifest/CLI pattern: OpenAPI used-operation impact, curated
-            pricing row/unit change, keyed CSV drift, and RSS/Atom correction briefs. Unsupported HTML
-            and missing identity/units stay explicit. Bot record kit paths stay out of scope.
+            Four jobs share one CLI: OpenAPI used-operation impact, curated price/unit row changes,
+            keyed CSV drift, and RSS/Atom correction briefs. Unsupported HTML and missing identity or
+            units stay explicit in the result.
           </p>
         </header>
 
         <section className={styles.section} aria-labelledby="acquire-title">
           <div className={styles.sectionHead}>
-            <p className="eyebrow">Acquire · lean archive</p>
+            <p className="eyebrow">Acquire</p>
             <h2 id="acquire-title">Download the portable package</h2>
           </div>
           <p className={styles.jobCopy}>
             Archive <code>{RECORD_REPEAT_ARCHIVE}</code> ({RECORD_REPEAT_ARCHIVE_BYTES} bytes). sha256{" "}
-            <code>{RECORD_REPEAT_ARCHIVE_SHA256}</code>. Parser tip <code>{RECORD_REPEAT_PARSER_PIN}</code>.
-            Recipe tip <code>{RECORD_REPEAT_RECIPE_PIN}</code>. Machine discovery:{" "}
+            <code>{RECORD_REPEAT_ARCHIVE_SHA256}</code>. Parser pin{" "}
+            <code>{RECORD_REPEAT_PARSER_PIN}</code>. Recipe pin <code>{RECORD_REPEAT_RECIPE_PIN}</code>.
+            Machine discovery:{" "}
             <a className={styles.inlineLink} href={`${SITE_ORIGIN}${RECORD_REPEAT_DISCOVERY}`}>
               {SITE_ORIGIN}
               {RECORD_REPEAT_DISCOVERY}
@@ -76,38 +76,39 @@ export default function RecordRepeat() {
 
         <section className={styles.section} aria-labelledby="families-title">
           <div className={styles.sectionHead}>
-            <p className="eyebrow">Families · one shared CLI</p>
-            <h2 id="families-title">Four coherent source families</h2>
+            <p className="eyebrow">Jobs</p>
+            <h2 id="families-title">Four source comparisons, one CLI</h2>
           </div>
           <p className={styles.jobCopy}>
-            <code>node bin/record-repeat.mjs</code> dispatches to the existing S134 parsers. No second
-            parser engine. Synthetic fixtures stay labeled. Observed no-change on a real pair is valid.
+            <code>node bin/record-repeat.mjs</code> routes each job to the pinned parsers in the
+            archive. Labeled samples are marked as samples. Observed no-change on a real pair is a
+            valid result.
           </p>
           <ol className={styles.flow}>
             <li>
-              <strong>OpenAPI used-ops</strong> — pinned operations only; out-of-pin webhook edits stay
+              <strong>OpenAPI used-ops.</strong> Pinned operations only; out-of-pin webhook edits stay
               out of scope.
             </li>
             <li>
-              <strong>Pricing row/unit</strong> — curated rows with units; HTML extraction refused.
+              <strong>Price row/unit.</strong> Curated rows with units; HTML extraction is refused.
             </li>
             <li>
-              <strong>Keyed CSV</strong> — key required; duplicate keys block definitive counts;
-              empty≠missing.
+              <strong>Keyed CSV.</strong> A key is required; duplicate keys block definitive counts;
+              empty is not missing.
             </li>
             <li>
-              <strong>RSS/Atom</strong> — corrections/dedup; non-feed HTML refused.
+              <strong>RSS/Atom.</strong> Corrections and dedup; non-feed HTML is refused.
             </li>
           </ol>
           <div className={styles.commands}>
             <div>
-              <span>Literal first-use samples</span>
+              <span>Labeled samples (not live caller input)</span>
               <pre className={styles.jobPre}>
                 <code>{RECORD_REPEAT_FIRST_USE}</code>
               </pre>
             </div>
             <div>
-              <span>Repeat use via next-run manifest</span>
+              <span>Repeat with a next-run manifest (sample paths shown)</span>
               <pre className={styles.jobPre}>
                 <code>{RECORD_REPEAT_REPEAT_USE}</code>
               </pre>
@@ -117,16 +118,19 @@ export default function RecordRepeat() {
 
         <section className={styles.sellerOffer} aria-labelledby="boundary-title">
           <div>
-            <p className="eyebrow">Boundary</p>
-            <h2 id="boundary-title">Free offline vs optional paid extract</h2>
+            <p className="eyebrow">Scope</p>
+            <h2 id="boundary-title">What this package runs</h2>
             <p>
-              This package compares already-held local artifacts. It does not fetch, charge, sign, or
-              schedule. The existing paid merchant extract remains optional and separate. Practical paid
-              observation commands stay on{" "}
+              Offline comparison of files you already have (or the labeled samples above). Optional
+              paid merchant extract on{" "}
               <Link className={styles.inlineLink} to="/for-agents">
                 /for-agents
-              </Link>
-              . Homepage identity and design are unchanged.
+              </Link>{" "}
+              stays a separate product and is not started by this CLI.
+            </p>
+            <p>
+              Material limit: unsupported HTML and missing identity or units are refused, not invented
+              into rows.
             </p>
             <div className={styles.actions}>
               <Link className={styles.primary} to="/for-agents">
@@ -139,20 +143,6 @@ export default function RecordRepeat() {
                 Discovery JSON
               </a>
             </div>
-          </div>
-          <div className={styles.offerCard}>
-            <span>Honesty contract</span>
-            <ul>
-              <li>Free offline processing is not paid extract</li>
-              <li>Unsupported HTML is refused, not scraped into rows</li>
-              <li>Missing identity/units stay explicit</li>
-              <li>Partial and blocked modes stay visible</li>
-              <li>Synthetic fixtures stay labeled</li>
-              <li>No new pricing, demand, settlement, or unattended subscription</li>
-              <li>No server cron</li>
-              <li>Bot record kit / native05..08 stay out of scope</li>
-              <li>No private paths, secrets, or transcripts in the archive</li>
-            </ul>
           </div>
         </section>
       </main>

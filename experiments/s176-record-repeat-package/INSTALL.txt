@@ -1,55 +1,47 @@
-SameDayDesk record-repeat lean acquisition package
-==================================================
+SameDayDesk record-repeat package
+=================================
 
-Required runtime: Node.js 20+ (22.x preferred; owning-repo suite uses 22)
+Required runtime: Node.js 20+ (22.x preferred)
 Parser pin: 65ce1867f1b4339cc708bfb72a7d9a5942785632
 Recipe pin: a022eb6352156dcdcdf2f8730931f5891bd01436
 
-This archive is anonymous public packaging of the four source/record repeat-job
-families. It is not a new parser engine, paid route, cron, or marketplace listing.
+Offline comparisons of local before/after artifacts for:
+  - OpenAPI used operations
+  - Price/unit rows
+  - Keyed CSV
+  - RSS/Atom feeds
 
-Captures and next-run manifests are capped at 8388608 bytes (8 MiB). Parser
-child processes time out after 30000 ms. Identity is never a filename.
+The CLI reads local files only. It does not fetch, charge, sign, or schedule.
+Unsupported HTML and missing identity or units are refused, not invented.
 
-1) Unpack outside any private workspace
+1) Unpack
 
   mkdir -p /tmp && tar -xzf record-repeat-job-*.tar.gz -C /tmp
   cd /tmp/record-repeat-job
 
   # Do not run npm ci at this archive root: there is no root lockfile.
-  # Parser dependencies are already vendored at vendor/s134-record-jobs
-  # (including node_modules from the pack step).
+  # Parser dependencies are already vendored.
 
-2) List families and free samples
+2) Labeled samples (not live caller input)
 
-  node bin/record-repeat.mjs list
-  node bin/record-repeat.mjs sample --list
-
-3) First use — free labeled samples (offline; no network)
-
-  node bin/record-repeat.mjs sample --family openapi-used-ops
-  node bin/record-repeat.mjs sample --family pricing-row-unit
-  node bin/record-repeat.mjs sample --family csv-keyed-drift
-  node bin/record-repeat.mjs sample --family rss-atom-brief
-
-4) Partial / unsupported honesty
-
+  node bin/record-repeat.mjs sample --all
+  node bin/record-repeat.mjs sample --recipe R-OPENAPI-PIN-IMPACT
+  node bin/record-repeat.mjs sample --recipe R-PRICE-UNIT-CASE
+  node bin/record-repeat.mjs sample --recipe R-CSV-KEYED-CHANGE
+  node bin/record-repeat.mjs sample --recipe R-FEED-LIVE-NOCHANGE
   node bin/record-repeat.mjs sample --recipe R-PRICE-REFUSE-HTML
-  # exit 0 / prints refused:true — HTML is not synthesized into rows
 
-5) Caller-supplied inputs + next-run manifest (repeat without private workspace)
+3) Caller-supplied inputs + next-run manifest
 
   node bin/record-repeat.mjs run --family openapi-used-ops \
     --before ./my/before.yaml --after ./my/after.yaml --used ./my/used.json \
     --write-next-run ./out/next-run.json
 
   node bin/record-repeat.mjs run --from-next-run ./out/next-run.json \
-    --before ./my/before2.yaml --after ./my/after2.yaml
+    --before ./my/before2.yaml --after ./my/after2.yaml --used ./my/used2.json
 
-6) Packed tests (optional)
+4) Optional tests
 
   npm test
-  # uses vendored parsers; does not require a root npm ci or private next-run/ manifests
 
-Paid merchant extract (optional, existing) is a separate product. This package
-does not charge, sign, subscribe, or schedule fetches.
+Optional paid merchant extract is a separate product and is not started by this CLI.

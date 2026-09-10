@@ -38,17 +38,16 @@ const PAGE_SPECS = Object.freeze([
     id: "record-repeat",
     path: "/for-agents/record-repeat",
     screenshot: "record-repeat-mobile.png",
-    expect: {
-      titleIncludes: "Source/record repeat jobs",
-      h1Includes: "portable offline package",
-      bodyIncludes: [
+        expect: {
+      titleIncludes: "Compare OpenAPI, prices, keyed CSV, and feeds offline",
+      h1Includes: "Compare OpenAPI ops, price rows, keyed CSV, and feeds",
+            bodyIncludes: [
         "/kit/record-repeat-job-",
         "sha256",
-        "Free local processing",
+        "labeled samples",
         "Unsupported HTML",
         "/discovery/record-repeat.json",
-        "R-OPENAPI-PIN-IMPACT",
-        "optional existing paid",
+        "Download archive",
       ],
     },
     layout: "mobile-nav",
@@ -57,15 +56,16 @@ const PAGE_SPECS = Object.freeze([
     id: "distribution-repair",
     path: "/for-agents/distribution-repair",
     screenshot: "distribution-repair-mobile.png",
-    expect: {
-      titleIncludes: "Distribution repair diagnosis",
-      h1Includes: "portable diagnosis package",
-      bodyIncludes: [
-        "Record04",
+        expect: {
+      titleIncludes: "Diagnose why a listed tool cannot run",
+      h1Includes: "Diagnose why a listed tool cannot run from",
+            bodyIncludes: [
+        "/kit/distribution-repair-",
+        "sha256",
         "provider",
         "jobRef",
         "sharedEvidenceId",
-        "not a production acquisition",
+        "Incomplete captures",
         "Download archive",
       ],
     },

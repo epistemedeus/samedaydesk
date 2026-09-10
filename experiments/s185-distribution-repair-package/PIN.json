@@ -1,7 +1,6 @@
 {
   "schema": "samedaydesk.package-pin.v1",
   "packageId": "distribution-repair",
-  "session": "s185",
   "branch": "codex/s185-distribution-repair-package-20260910",
   "sourceRepo": "epistemedeus/samedaydesk",
   "semanticsTip": "6a7b5b6885842b78c40ecbef1c63570d7987fbe7",
@@ -14,6 +13,6 @@
   "s176Frozen": "f3d55e54a7b3c548943312443f9f066652d83980",
   "nodeEngines": ">=20",
   "cashUsd": 0,
-  "productionAcquisition": false,
-  "notes": "Composes Record04 feed + DIST08 diagnosis + NL06 repair join. First-use adapter held (boundaries only). Grexal is not a universal adapter. No new price/cron/subscription."
+  "notes": "Composes listing-record, route-record, distribution diagnose, and join pins. First-use adapter held. Free offline diagnosis; priced execution not started.",
+  "invokesPricedExecution": false
 }

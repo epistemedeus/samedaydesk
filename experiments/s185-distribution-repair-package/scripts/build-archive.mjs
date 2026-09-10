@@ -23,9 +23,9 @@ const REPO = join(PKG, "../..");
 const pinPath = join(PKG, "PIN.json");
 const pin = JSON.parse(readFileSync(pinPath, "utf8"));
 const tip =
-  spawnSync("git", ["rev-parse", "HEAD"], { cwd: REPO, encoding: "utf8" }).stdout.trim() ||
-  "uncommitted";
-pin.semanticsTip = tip;
+  (process.env.SEMANTICS_TIP || '').trim() ||
+  spawnSync('git', ['rev-parse', 'HEAD'], { cwd: REPO, encoding: 'utf8' }).stdout.trim() ||
+  'uncommitted';
 writeFileSync(pinPath, `${JSON.stringify(pin, null, 2)}\n`);
 
 const stagingRoot = join(PKG, ".staging");
@@ -101,7 +101,7 @@ const archivePkg = {
   type: "module",
   engines: { node: ">=20" },
   description:
-    "Portable distribution-repair kit: caller snapshots in, Record04/DIST08/NL06 diagnosis and owner repair guidance out. Free offline; not a production acquisition.",
+    "Portable distribution-repair kit: caller snapshots in, Record04/DIST08/NL06 diagnosis and owner repair guidance out. Free offline; offline local-files diagnosis.",
   bin: { "distribution-repair": "./bin/distribution-repair.mjs" },
   scripts: {
     test: "node --test test/*.test.mjs",
@@ -131,6 +131,7 @@ const receipt = {
     nl06: pin.nl06,
   },
   builtAt: new Date().toISOString(),
+  invokesPricedExecution: false,
   productionAcquisition: false,
 };
 writeFileSync(join(outDir, "archive.sha256.json"), `${JSON.stringify(receipt, null, 2)}\n`);
@@ -144,10 +145,10 @@ cpSync(join(outDir, "archive.sha256.json"), join(publicKit, "distribution-repair
 const discovery = {
   schema: "samedaydesk.acquisition-discovery.v1",
   packageId: "distribution-repair",
-  title: "Distribution-repair diagnosis package",
-  session: "s185",
+  title: "Offline diagnosis for listed tools that cannot run",
+  summary: "Join caller listing snapshots with a baseline/current route pair into an explainable diagnosis and owner repair guidance. Incomplete captures cannot prove global removal.",
   page: "https://samedaydesk.com/for-agents/distribution-repair",
-  productionAcquisition: false,
+  invokesPricedExecution: false,
   archive: {
     path: `/kit/${archiveName}`,
     url: `https://samedaydesk.com/kit/${archiveName}`,
@@ -162,8 +163,8 @@ const discovery = {
     firstUseHeld: "ea2938cfa68dadbe20a9d5ec096f315e59f4cdbe",
     semanticsTip: tip,
   },
-  freeOffline: true,
-  paidValueClaim: false,
+  runsOffline: true,
+  invokesPricedExecution: false,
   coldStart: [
     `curl -fsSL -o distribution-repair.tar.gz https://samedaydesk.com/kit/${archiveName}`,
     "mkdir -p /tmp && tar -xzf distribution-repair.tar.gz -C /tmp",

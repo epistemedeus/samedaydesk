@@ -1,7 +1,6 @@
 {
   "schema": "samedaydesk.package-pin.v1",
   "packageId": "record-repeat-job",
-  "session": "s176",
   "branch": "codex/s176-record-repeat-package-20260910",
   "sourceRepo": "epistemedeus/samedaydesk",
   "semanticsTip": "b663e53771a325d439f24a2a2ccdc94e5250a352",
@@ -9,5 +8,5 @@
   "recipePin": "a022eb6352156dcdcdf2f8730931f5891bd01436",
   "nodeEngines": ">=20",
   "cashUsd": 0,
-  "notes": "Composes product paths from S154 parser tip and S163 recipe tip. Bot record kit out of scope. Free offline compare; no new pricing/cron/subscription."
+  "notes": "Composes product paths from pinned parsers and recipes. Free offline compare; optional paid extract is separate."
 }

@@ -100,7 +100,7 @@ function emit(obj, code = 0) {
 }
 
 function help() {
-  process.stdout.write(`record-repeat — SameDayDesk S176 shared acquisition CLI
+  process.stdout.write(`record-repeat - SameDayDesk offline source comparison CLI
 
 Commands:
   list
@@ -112,9 +112,8 @@ Commands:
 Families: ${Object.keys(FAMILIES).join(', ')}
 
 Free offline processing of local artifacts. Optional existing paid merchant extract is separate.
-Unsupported HTML / missing identity / missing units stay explicit — never synthesized.
+Unsupported HTML / missing identity / missing units stay explicit; never synthesized.
 Capture/manifest reads are capped at ${MAX_CAPTURE_BYTES} bytes. Parser child timeout ${PARSER_TIMEOUT_MS}ms.
-Bot Record cell ids native05..08 are out of scope.
 `);
 }
 

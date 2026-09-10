@@ -32,28 +32,28 @@ export default function DistributionRepair() {
       <Nav />
       <main id="main" className={styles.wrap}>
         <header className={styles.hero}>
-          <p className="eyebrow">Machine jobs · offline distribution repair</p>
+          <p className="eyebrow">Offline package · listing diagnosis</p>
           <h1 className={styles.jobH1}>
-            Why a listed tool cannot run — one <span className="lime">portable diagnosis package</span>
+            Diagnose why a listed tool cannot run from{" "}
+            <span className="lime">your snapshots</span>
           </h1>
           <p className={styles.lead}>
-            An operator supplies source-bound discovery/listing snapshots and a baseline/current
-            route pair. The shared CLI reuses Record04, DIST08, and NL06 and returns an explainable
-            diagnosis plus owner repair guidance. Incomplete captures cannot prove global removal.
-            This is not lost-customer proof, not priced execution, and not a production acquisition.
+            Supply discovery/listing snapshots and a baseline/current route pair. The offline CLI
+            returns an explainable diagnosis and owner repair guidance. It runs only on the files you
+            pass (or labeled samples). It does not call priced endpoints or change a live listing.
           </p>
         </header>
 
         <section className={styles.section} aria-labelledby="acquire-title">
           <div className={styles.sectionHead}>
-            <p className="eyebrow">Acquire · lean archive</p>
+            <p className="eyebrow">Acquire</p>
             <h2 id="acquire-title">Download the portable package</h2>
           </div>
           <p className={styles.jobCopy}>
             Archive <code>{DISTRIBUTION_REPAIR_ARCHIVE}</code> ({DISTRIBUTION_REPAIR_ARCHIVE_BYTES}{" "}
-            bytes). sha256 <code>{DISTRIBUTION_REPAIR_ARCHIVE_SHA256}</code>. Record04{" "}
-            <code>{DISTRIBUTION_REPAIR_RECORD04_PIN}</code>. DIST08{" "}
-            <code>{DISTRIBUTION_REPAIR_DIST08_PIN}</code>. NL06{" "}
+            bytes). sha256 <code>{DISTRIBUTION_REPAIR_ARCHIVE_SHA256}</code>. Source pins{" "}
+            <code>{DISTRIBUTION_REPAIR_RECORD04_PIN}</code>,{" "}
+            <code>{DISTRIBUTION_REPAIR_DIST08_PIN}</code>,{" "}
             <code>{DISTRIBUTION_REPAIR_NL06_PIN}</code>. Machine discovery:{" "}
             <a className={styles.inlineLink} href={`${SITE_ORIGIN}${DISTRIBUTION_REPAIR_DISCOVERY}`}>
               {SITE_ORIGIN}
@@ -73,17 +73,17 @@ export default function DistributionRepair() {
 
         <section className={styles.section} aria-labelledby="use-title">
           <div className={styles.sectionHead}>
-            <p className="eyebrow">Use · caller snapshots</p>
-            <h2 id="use-title">Identity-bound diagnosis, not a filename join</h2>
+            <p className="eyebrow">Use</p>
+            <h2 id="use-title">Join by provider identity, not by filename</h2>
           </div>
           <p className={styles.jobCopy}>
-            <code>node bin/distribution-repair.mjs</code> dispatches to the vendored modules. Missing
-            identity stays <code>unknown</code>. Unrelated sources stay unjoined. A content-preserving
-            rename does not change the diagnosis. Grexal is never inferred as a universal adapter.
+            <code>node bin/distribution-repair.mjs</code> joins on provider / jobRef /
+            sharedEvidenceId. Missing identity stays <code>unknown</code>. Unrelated sources stay
+            unjoined. Renaming a file without changing content does not change the diagnosis.
           </p>
           <div className={styles.commands}>
             <div>
-              <span>Caller-supplied inputs</span>
+              <span>Caller-shaped inputs (examples/caller)</span>
               <pre className={styles.jobPre}>
                 <code>{DISTRIBUTION_REPAIR_FIRST_USE}</code>
               </pre>
@@ -99,15 +99,18 @@ export default function DistributionRepair() {
 
         <section className={styles.sellerOffer} aria-labelledby="boundary-title">
           <div>
-            <p className="eyebrow">Boundary</p>
-            <h2 id="boundary-title">Free diagnosis vs priced execution</h2>
+            <p className="eyebrow">Scope</p>
+            <h2 id="boundary-title">What this package runs</h2>
             <p>
-              This package compares already-held snapshots. It does not fetch, charge, sign, or
-              mutate a live listing. Practical paid observation commands stay on{" "}
+              Offline diagnosis of already-held snapshots. Paid observation commands stay on{" "}
               <Link className={styles.inlineLink} to="/for-agents">
                 /for-agents
-              </Link>
-              . Homepage identity and design are unchanged. Root still owns publication.
+              </Link>{" "}
+              and are not started here. Repair output is owner guidance, not proof of lost customers
+              or revenue.
+            </p>
+            <p>
+              Material limit: incomplete captures cannot prove a listing was removed everywhere.
             </p>
             <div className={styles.actions}>
               <Link className={styles.primary} to="/for-agents">
@@ -120,19 +123,6 @@ export default function DistributionRepair() {
                 Discovery JSON
               </a>
             </div>
-          </div>
-          <div className={styles.offerCard}>
-            <span>Honesty contract</span>
-            <ul>
-              <li>Free offline diagnosis is not priced execution</li>
-              <li>Incomplete catalog/current cannot prove global removal</li>
-              <li>Missing identity stays unknown/partial</li>
-              <li>Unrelated sources do not join</li>
-              <li>Repair is owner guidance, not lost-customer proof</li>
-              <li>No Grexal-universal adapter</li>
-              <li>No new pricing, cron, or subscription</li>
-              <li>No production acquisition claim before Root release</li>
-            </ul>
           </div>
         </section>
       </main>

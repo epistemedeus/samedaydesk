@@ -23,9 +23,9 @@ const S163 = join(REPO, 'experiments/s163-record-recipes');
 const pinPath = join(PKG, 'PIN.json');
 const pin = JSON.parse(readFileSync(pinPath, 'utf8'));
 const tip =
+  (process.env.SEMANTICS_TIP || '').trim() ||
   spawnSync('git', ['rev-parse', 'HEAD'], { cwd: REPO, encoding: 'utf8' }).stdout.trim() ||
   'uncommitted';
-pin.semanticsTip = tip;
 writeFileSync(pinPath, `${JSON.stringify(pin, null, 2)}\n`);
 
 const stagingRoot = join(PKG, '.staging');
@@ -171,8 +171,8 @@ cpSync(join(outDir, 'archive.sha256.json'), join(publicKit, 'record-repeat-archi
 const discovery = {
   schema: 'samedaydesk.acquisition-discovery.v1',
   packageId: 'record-repeat-job',
-  title: 'Source/record repeat-job acquisition package',
-  session: 's176',
+  title: 'Offline OpenAPI, price-row, keyed CSV, and feed comparison package',
+  summary: 'Compare local before/after OpenAPI used operations, price/unit rows, keyed CSV, and RSS/Atom feeds. Labeled samples and next-run manifests included. Does not fetch, charge, or schedule.',
   page: 'https://samedaydesk.com/for-agents/record-repeat',
   archive: {
     path: `/kit/${archiveName}`,
@@ -186,15 +186,15 @@ const discovery = {
     semanticsTip: tip,
   },
   families: ['openapi-used-ops', 'pricing-row-unit', 'csv-keyed-drift', 'rss-atom-brief'],
-  freeOffline: true,
-  paidValueClaim: false,
+  runsOffline: true,
+  invokesPricedExecution: false,
   coldStart: [
     `curl -fsSL -o record-repeat-job.tar.gz https://samedaydesk.com/kit/${archiveName}`,
     'mkdir -p /tmp && tar -xzf record-repeat-job.tar.gz -C /tmp',
     'cd /tmp/record-repeat-job',
     'node bin/record-repeat.mjs sample --all',
   ],
-  botRecordKit: 'out-of-scope',
+  materialLimit: 'Unsupported HTML and missing identity or units are refused, not invented.',
 };
 mkdirSync(join(REPO, 'client/public/discovery'), { recursive: true });
 writeFileSync(
