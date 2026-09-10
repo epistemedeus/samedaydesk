@@ -1,0 +1,25 @@
+{
+  "admission": {
+    "phase": "admission",
+    "ts": "2026-09-10T02:16:53Z",
+    "memory_current": 2269073408,
+    "memory_peak": 2340790272,
+    "memory_events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+    "available_memory": 11359477760,
+    "reserve_25pct": 2839869440,
+    "effective_budget": 8519608320,
+    "disk_free_pct": 97.16,
+    "oom": 0
+  },
+  "completion": {
+    "err": "[Errno 2] No such file or directory: '/sys/fs/cgroup/memory/memory.usage_in_bytes'",
+    "available": 11365523456,
+    "total": 16791945216,
+    "reserve_25pct": 4197986304,
+    "effective": 11365523456,
+    "oom_kill": 0,
+    "ts": "2026-09-10T02:28:22Z",
+    "note": "PIDs are not requests; no exact-marker probes; children of consumer/tests exited"
+  }
+}

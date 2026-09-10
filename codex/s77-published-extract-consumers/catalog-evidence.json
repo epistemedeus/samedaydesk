@@ -1,0 +1,166 @@
+{
+  "live_origin": "https://agents.samedaydesk.com",
+  "http_actions_count": 23,
+  "http_action_keys": [
+    {
+      "name": "extract",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/extract"
+    },
+    {
+      "name": "read",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/read"
+    },
+    {
+      "name": "scan",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/scan"
+    },
+    {
+      "name": "schemaforge",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/schemaforge"
+    },
+    {
+      "name": "enrich",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/enrich"
+    },
+    {
+      "name": "wallet-enrich",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/wallet-enrich"
+    },
+    {
+      "name": "deep-audit",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/deep-audit"
+    },
+    {
+      "name": "defi_morpho-position",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/defi/morpho-position"
+    },
+    {
+      "name": "defi_morpho-protection",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/defi/morpho-protection"
+    },
+    {
+      "name": "defi_morpho-market-underwrite",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/defi/morpho-market-underwrite"
+    },
+    {
+      "name": "defi_morpho-preliquidation-replay",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/defi/morpho-preliquidation-replay"
+    },
+    {
+      "name": "work_opportunity-preflight",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/work/opportunity-preflight"
+    },
+    {
+      "name": "distribution_agent-discoverability-audit",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/distribution/agent-discoverability-audit"
+    },
+    {
+      "name": "commerce_payment-offer-preflight",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/commerce/payment-offer-preflight"
+    },
+    {
+      "name": "commerce_settlement-proof",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/commerce/settlement-proof"
+    },
+    {
+      "name": "chain_transaction-receipt",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/chain/transaction-receipt"
+    },
+    {
+      "name": "chain_solana-transaction-receipt",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/chain/solana-transaction-receipt"
+    },
+    {
+      "name": "security_wallet-policy-conformance",
+      "method": "POST",
+      "url": "https://agents.samedaydesk.com/security/wallet-policy-conformance"
+    },
+    {
+      "name": "security_stateful-wallet-policy-conformance",
+      "method": "POST",
+      "url": "https://agents.samedaydesk.com/security/stateful-wallet-policy-conformance"
+    },
+    {
+      "name": "commerce_seller-integrity-audit",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/commerce/seller-integrity-audit"
+    },
+    {
+      "name": "commerce_contract-qualified-search",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/commerce/contract-qualified-search"
+    },
+    {
+      "name": "distribution_agent-surface-budget-audit",
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/distribution/agent-surface-budget-audit"
+    },
+    {
+      "name": "extract_batch",
+      "method": "POST",
+      "url": "https://agents.samedaydesk.com/extract/batch"
+    }
+  ],
+  "mcp_tools_count": 23,
+  "mcp_typed_output_schema_count": 13,
+  "mcp_typed_names": [
+    "extract",
+    "extract_batch",
+    "read",
+    "scan",
+    "morpho_protection",
+    "morpho_preliquidation_replay",
+    "opportunity_preflight",
+    "payment_offer_preflight",
+    "contract_qualified_search",
+    "agent_surface_budget_audit",
+    "settlement_proof",
+    "wallet_policy_conformance",
+    "stateful_wallet_policy_conformance"
+  ],
+  "mcp_tool_names": [
+    "extract",
+    "extract_batch",
+    "read",
+    "scan",
+    "schemaforge",
+    "enrich",
+    "wallet_enrich",
+    "deep_audit",
+    "morpho_position",
+    "morpho_protection",
+    "morpho_market_underwrite",
+    "morpho_preliquidation_replay",
+    "opportunity_preflight",
+    "agent_discoverability_audit",
+    "payment_offer_preflight",
+    "seller_integrity_audit",
+    "contract_qualified_search",
+    "agent_surface_budget_audit",
+    "settlement_proof",
+    "transaction_receipt",
+    "solana_transaction_receipt",
+    "wallet_policy_conformance",
+    "stateful_wallet_policy_conformance"
+  ],
+  "inventories_note": "HTTP /api/actions and MCP tools/list are separate surfaces. Counts matched at observation (23/23) with 13 typed MCP output schemas; do not rewrite HTTP docs from the MCP label alone.",
+  "merchant_commit": "4910f83bd2be1e38667f1a3cfa23c70fcff6b0c1",
+  "skills_public_tag": "v0.8.0"
+}

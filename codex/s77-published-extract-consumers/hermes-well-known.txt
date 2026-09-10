@@ -1,0 +1,48 @@
+{
+  "adapter": "tools.skills_hub_sources.WellKnownSkillSource",
+  "attempted_commands": [
+    "hermes skills search https://agents.samedaydesk.com --source well-known",
+    "hermes skills inspect well-known:https://agents.samedaydesk.com/.well-known/skills/web-extract",
+    "hermes skills install well-known:https://agents.samedaydesk.com/.well-known/skills/web-extract --yes"
+  ],
+  "boundary": null,
+  "cli_not_imported": "hermes_cli.skills_hub",
+  "fetch_files": [
+    "SKILL.md"
+  ],
+  "force": false,
+  "hermes_home": "/tmp/s77-hermes-wk.6eE8sL",
+  "identifier": "well-known:https://agents.samedaydesk.com/.well-known/skills/web-extract",
+  "index_url": "https://agents.samedaydesk.com/.well-known/skills/index.json",
+  "inspect": {
+    "description": "Read credential-free public webpages as structured JSON or clean LLM-ready Markdown. Use GET /extract for one public HTTPS page, one bounded POST /extract/batch for 2\u20135 caller-supplied public HTTPS URLs with explicit desired fields, or GET /read for Markdown. A caller may explicitly request a one-item batch. Do not use for authenticated or private-network content.",
+    "identifier": "well-known:https://agents.samedaydesk.com/.well-known/skills/web-extract",
+    "name": "web-extract",
+    "source": "well-known"
+  },
+  "install": "tools.skills_hub_install.quarantine_bundle+install_from_quarantine",
+  "install_error": null,
+  "installed": true,
+  "loopback_or_local_host": false,
+  "mocked_origin": false,
+  "model_execution": false,
+  "official_is_safe_url": true,
+  "ok": true,
+  "origin": "https://agents.samedaydesk.com",
+  "payment_executed": false,
+  "postdeploy_commands": [
+    "hermes skills search https://agents.samedaydesk.com --source well-known",
+    "hermes skills inspect well-known:https://agents.samedaydesk.com/.well-known/skills/web-extract",
+    "hermes skills inspect well-known:https://agents.samedaydesk.com/.well-known/skills/page-change",
+    "hermes skills inspect well-known:https://agents.samedaydesk.com/.well-known/skills/explicit-record",
+    "hermes skills install well-known:https://agents.samedaydesk.com/.well-known/skills/web-extract --yes"
+  ],
+  "private_url_bypass": false,
+  "search_count": 3,
+  "search_names": [
+    "web-extract",
+    "page-change",
+    "explicit-record"
+  ]
+}
+EXIT:0

@@ -1,0 +1,45 @@
+{
+  "selected": {
+    "skill_installation": "epistemedeus/x402-data-gateway-skills@web-extract (or live well-known web-extract)",
+    "model_selection": "orthogonal; not implied by skill install",
+    "catalog_preflight_skill": "samedaydesk-machine-commerce",
+    "paid_skill": "web-extract",
+    "free_execution": "unpaid challenge + direct fetch brief only",
+    "payment": "not authorized in this consumer"
+  },
+  "unpaid_extract_preflight": {
+    "request": {
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com%2F"
+    },
+    "http_status": 402,
+    "payment_required_header": "present",
+    "www_authenticate": "present",
+    "body_keys": [
+      "x402Version",
+      "error",
+      "resource",
+      "accepts",
+      "extensions"
+    ],
+    "interpretation": "honest_unpaid_402_no_execution",
+    "payment_attempted": false,
+    "wallet_touched": false
+  },
+  "direct_fetch_brief": {
+    "mode": "direct_fetch_brief",
+    "status": 200,
+    "finalUrl": "https://example.com/",
+    "title": "Example Domain",
+    "text_excerpt": "Example Domain Example Domain This domain is for use in documentation examples without needing permission. Avoid use in operations. Learn more",
+    "limits": "no SSRF guardrails, no payment, no structured capture fields, HTML only"
+  },
+  "comparison": {
+    "same_target": "https://example.com/",
+    "paid_path": "selected web-extract /extract; stopped at unpaid 402 without execution",
+    "direct_path": "plain HTTPS GET produced a weak HTML title/excerpt brief",
+    "invented_token_or_time_win": false,
+    "useful_bounded_output": "recognized unpaid 402; direct brief only"
+  },
+  "observed_at_utc": "2026-09-10T02:26:55.768Z"
+}

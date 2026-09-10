@@ -1,0 +1,46 @@
+{
+  "hermes_home": "/tmp/s77-hermes-isolated2.Rsv3Nh",
+  "index_root": "/tmp/s77-hermes-isolated2.Rsv3Nh/skills",
+  "mode": "drop_in",
+  "model_execution": false,
+  "ok": true,
+  "payment_executed": false,
+  "project_skills_dirs": [],
+  "skills": {
+    "explicit-record": {
+      "body_bytes": 4389,
+      "community_install_allowed_without_force": true,
+      "community_install_reason": "Allowed (community source, safe verdict)",
+      "description": "Project already-held SameDayDesk GET /extract or POST /extract/batch JSON into buyer-named records using explicit JSON Pointers and a local JSON Schema. Use when the caller already has observation JSON plus mapping and schema files. Do not fetch, pay, infer entities, or treat payment as useful output. Partial, missing, ambiguous, and invalid outcomes stay explicit.",
+      "path": "/tmp/s77-hermes-isolated2.Rsv3Nh/skills/explicit-record/SKILL.md",
+      "prompt_description": "Project already-held SameDayDesk GET /extract or POST /ex...",
+      "prompt_truncated": true,
+      "scan_findings": [],
+      "scan_verdict": "safe"
+    },
+    "page-change": {
+      "body_bytes": 3622,
+      "community_install_allowed_without_force": true,
+      "community_install_reason": "Allowed (community source, safe verdict)",
+      "description": "Offline compare of two extract-batch JSON field snapshots. Use when the caller already has two delivered POST /extract/batch JSON files and wants selected-field diffs without fetching, paying, retrying, or scheduling. Do not use to purchase a second observation.",
+      "path": "/tmp/s77-hermes-isolated2.Rsv3Nh/skills/page-change/SKILL.md",
+      "prompt_description": "Offline compare of two extract-batch JSON field snapshots...",
+      "prompt_truncated": true,
+      "scan_findings": [],
+      "scan_verdict": "safe"
+    },
+    "web-extract": {
+      "body_bytes": 2915,
+      "community_install_allowed_without_force": true,
+      "community_install_reason": "Allowed (community source, safe verdict)",
+      "description": "Read credential-free public webpages as structured JSON or clean LLM-ready Markdown. Use GET /extract for one public HTTPS page, one bounded POST /extract/batch for 2\u20135 caller-supplied public HTTPS URLs with explicit desired fields, or GET /read for Markdown. A caller may explicitly request a one-item batch. Do not use for authenticated or private-network content.",
+      "path": "/tmp/s77-hermes-isolated2.Rsv3Nh/skills/web-extract/SKILL.md",
+      "prompt_description": "Read credential-free public webpages as structured JSON o...",
+      "prompt_truncated": true,
+      "scan_findings": [],
+      "scan_verdict": "safe"
+    }
+  },
+  "skills_dir": "/tmp/s77-hermes-isolated2.Rsv3Nh/skills",
+  "untrusted_project_skills": null
+}

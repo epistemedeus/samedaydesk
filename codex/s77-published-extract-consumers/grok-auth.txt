@@ -1,0 +1,14 @@
+S77 Grok native auth status
+===========================
+observed_at_utc: 2026-09-10T02:20:00Z
+cursor_vm_note: Do not assume Cursor model IDs equal GrokVM (grok-4.6-build vs grok-4.6).
+cli_search: no grok/xai/hermes-grok binary on PATH; no ~/.xai or ~/.grok credentials in persistent home.
+npm: package name "grok-cli" (1.0.5) is an unrelated anthropic-proxy wrapper — NOT official xAI GrokVM CLI.
+cursor_cache: found .grok-plugin under cursor-public plugins cache only (not a native CLI).
+action: continue source acquisition + skills consumer integration with Cursor deterministic control.
+device_login: NOT STARTED — no verified native Grok CLI entrypoint / persistent profile located.
+needed_from_root: confirm which persistent Grok CLI binary/profile this VM should use
+  (path or install URL), then provide device code authorization if prompted.
+  Supported device-login URL/code: unavailable until native CLI entrypoint is identified.
+implementation_note: S77 proceeds with Cursor for control/throughput; native Heavy consumer path
+  uses published skill preflight (unpaid 402) without inventing Grok token spend.
