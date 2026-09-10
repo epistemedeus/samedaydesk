@@ -27,6 +27,10 @@ const { values, positionals } = parseArgs({
     "mounted-origin": { type: "boolean", default: false },
     "issue-url": { type: "string" },
     "issue-fixture": { type: "string" },
+    "evidence-fixture": { type: "string" },
+    "max-comment-pages": { type: "string" },
+    "per-page": { type: "string" },
+    "github-token": { type: "string" },
     "docs-url": { type: "string" },
     "gateway-origin": { type: "string" },
     retries: { type: "string", default: "2" },
@@ -61,6 +65,10 @@ const input = {
   currentFixturePath: values["current-fixture"] ? resolve(values["current-fixture"]) : undefined,
   issueUrl: values["issue-url"],
   issueFixturePath: values["issue-fixture"] ? resolve(values["issue-fixture"]) : undefined,
+  evidenceFixturePath: values["evidence-fixture"] ? resolve(values["evidence-fixture"]) : undefined,
+  maxCommentPages: values["max-comment-pages"] != null && values["max-comment-pages"] !== "" ? Number(values["max-comment-pages"]) : undefined,
+  perPage: values["per-page"] != null && values["per-page"] !== "" ? Number(values["per-page"]) : undefined,
+  githubToken: values["github-token"] || null,
   docsUrl: values["docs-url"],
   gatewayOrigin: values["gateway-origin"],
   fields: String(values.fields || "title")
@@ -119,7 +127,7 @@ function usage() {
   return `SameDayDesk recurring job recipes (one-shot; no cron, no daemon, no purchase).
 
 Recipes: source-change-alert, comparable-record-extraction, verification-reconcile,
-issue-to-work-brief, buyer-setup-trace.
+issue-to-work-brief, issue-evidence, buyer-setup-trace.
 
 Usage:
   node tools/recurring-job-recipes/cli.mjs --list

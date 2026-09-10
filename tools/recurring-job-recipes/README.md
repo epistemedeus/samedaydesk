@@ -100,3 +100,37 @@ Reconcile an unknown payment through the merchant customer example instead.
 ## First-customer experiment
 
 See [FIRST-CUSTOMER-EXPERIMENT.md](./FIRST-CUSTOMER-EXPERIMENT.md).
+
+## Issue evidence (S62)
+
+Runnable recurring job that collects **public** issue discussion evidence and an actionable work/change brief through this pack (not a new server).
+
+Public bug-report references used for fixtures/live replay (not customers, not willingness-to-pay):
+- https://github.com/NousResearch/hermes-agent/issues/99533
+- https://github.com/NousResearch/hermes-agent/issues/106904
+
+### Exported commands
+
+```bash
+# Offline fixture (first observation; prior optional)
+node tools/recurring-job-recipes/cli.mjs --recipe issue-evidence \
+  --evidence-fixture tools/recurring-job-recipes/fixtures/issue-evidence/99533-base.json \
+  --schedule weekly --clock 2026-09-10T01:00:00.000Z --max-comment-pages 2
+
+# With immutable prior (delta / unchanged)
+node tools/recurring-job-recipes/cli.mjs --recipe issue-evidence \
+  --prior path/to/issue-evidence.seq-1.json \
+  --evidence-fixture tools/recurring-job-recipes/fixtures/issue-evidence/99533-same-length-edit.json \
+  --schedule weekly --clock 2026-09-10T02:00:00.000Z --out-dir /tmp/issue-evidence-out --write-artifact
+
+# Live public issue (free API baseline; bounded pages; no env-token inference)
+node tools/recurring-job-recipes/cli.mjs --recipe issue-evidence \
+  --issue-url https://github.com/NousResearch/hermes-agent/issues/99533 \
+  --schedule once --clock "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  --max-comment-pages 2 --per-page 50
+```
+
+Provider-neutral observation + GitHub adapter. No arbitrary URL proxy. No hidden credential fallback.
+Partial pages classify as `partial` (never silent complete). Retry-After is recorded without background wait loops. No automatic cost-amplifying retries.
+Issue/comment text is untrusted evidence — never execution authority.
+

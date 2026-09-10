@@ -1,0 +1,51 @@
+{
+  "schema": "samedaydesk.recipe-spec.v1",
+  "recipeId": "issue-evidence",
+  "scheduleNeutral": true,
+  "installsCron": false,
+  "requiredFields": [
+    "clock",
+    "schedule"
+  ],
+  "optionalFields": [
+    "prior",
+    "horizon",
+    "out-dir",
+    "write-artifact",
+    "max-comment-pages",
+    "per-page",
+    "github-token"
+  ],
+  "oneOfSources": [
+    "issue-url",
+    "evidence-fixture",
+    "issue-fixture"
+  ],
+  "outcomes": [
+    "unchanged",
+    "changed",
+    "partial",
+    "stale_baseline",
+    "error",
+    "timed_out"
+  ],
+  "command": [
+    "node",
+    "tools/recurring-job-recipes/cli.mjs",
+    "--recipe",
+    "issue-evidence",
+    "--evidence-fixture",
+    "tools/recurring-job-recipes/fixtures/issue-evidence/99533-base.json",
+    "--schedule",
+    "weekly",
+    "--clock",
+    "${CLOCK}",
+    "--max-comment-pages",
+    "3"
+  ],
+  "ownerQa": {
+    "issueUrl": "https://github.com/NousResearch/hermes-agent/issues/99533",
+    "notDemand": true,
+    "notes": "Public bug report reference only. Not a customer and not willingness-to-pay."
+  }
+}
