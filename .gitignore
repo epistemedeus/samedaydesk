@@ -2,9 +2,10 @@
 node_modules/
 client/node_modules/
 
-# build output
+# build output (root/client only; vendored correspondence dist is committed)
 client/dist/
-dist/
+/dist/
+vendor/**/node_modules/
 
 # env / secrets — NEVER commit
 .env

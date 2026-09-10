@@ -1,0 +1,29 @@
+{
+  "name": "@neomorphic/correspondence",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bounded project correspondence HTTP service for Neomorphic closed-pilot trials.",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "start": "node dist/index.js",
+    "migrate": "node dist/migrate.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "pg": "^8.23.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^22.17.2",
+    "@types/pg": "^8.15.5",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2"
+  }
+}

@@ -4,7 +4,7 @@
 // shells before static; history fallback last.
 import express from "express";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 import healthRouter from "./routes/health.js";
 import authRouter from "./routes/auth.js";
@@ -19,6 +19,7 @@ import pulseRouter from "./routes/pulse.js";
 import mcpRouter from "./routes/mcp.js";
 import { pulseMiddleware } from "./lib/pulse.js";
 import { mountProductionClient } from "./lib/spa-client.js";
+import { mountCorrespondence } from "./lib/correspondence-mount.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === "production";
@@ -26,6 +27,7 @@ const CLIENT_DIST = process.env.SAMEDAYDESK_CLIENT_DIST
   ? path.resolve(process.env.SAMEDAYDESK_CLIENT_DIST)
   : path.resolve(__dirname, "../client/dist");
 
+export function createSdsApp(options = {}) {
 const app = express();
 app.disable("x-powered-by");
 
@@ -65,6 +67,12 @@ function captureRaw(req, _res, next) {
 }
 app.use("/api/stripe/webhook", express.raw({ type: "application/json" }), captureRaw);
 app.use("/api/webhooks/resend", express.raw({ type: "application/json" }), captureRaw);
+
+// 1b) Optional correspondence mount. Own JSON/CORS/trust-proxy; must not
+//     inherit the 1mb SDS parser or host-global CORS. Unconfigured = no-op
+//     besides a truthful disabled healthz under the prefix.
+const correspondence = mountCorrespondence(app, options.correspondence || {});
+app.set("s51Correspondence", correspondence);
 
 // 2) Everything else parses JSON normally.
 app.use(express.json({ limit: "1mb" }));
@@ -111,7 +119,15 @@ if (isProd) {
   mountProductionClient(app, CLIENT_DIST);
 }
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`[samedaydesk] listening on :${PORT}  (${isProd ? "production" : "development"})`);
-});
+return app;
+}
+
+const isDirectRun =
+  process.argv[1] != null && import.meta.url === pathToFileURL(process.argv[1]).href;
+if (isDirectRun) {
+  const app = createSdsApp();
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`[samedaydesk] listening on :${PORT}  (${isProd ? "production" : "development"})`);
+  });
+}
