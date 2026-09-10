@@ -14,5 +14,7 @@
     "s134Locked": "41/41"
   },
   "demoAllExit": 0,
-  "cashUsd": 0
+  "cashUsd": 0,
+  "amendedHead": "7bdecc7580443a3e208ef129bb2876c8d68bf864",
+  "owningRepo": "epistemedeus/samedaydesk"
 }

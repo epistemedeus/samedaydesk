@@ -2,6 +2,8 @@
 
 Cash **$0**. No new review fleet. No merge/deploy. Root-authoritative finding on S147 tip `f9b9701…`; owner reproduced and fixed.
 
+| **amendedHead** |  |
+
 ## Timing
 
 | Field | Value |
