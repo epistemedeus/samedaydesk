@@ -1,0 +1,18 @@
+{
+  "live1.json": {
+    "ok": true,
+    "outcome": "changed",
+    "completeness": "complete",
+    "issueState": "open",
+    "commentCount": 2,
+    "issueUrl": "https://github.com/NousResearch/hermes-agent/issues/99533"
+  },
+  "live2.json": {
+    "ok": true,
+    "outcome": "unchanged",
+    "completeness": "complete",
+    "issueState": "open",
+    "commentCount": 2,
+    "issueUrl": "https://github.com/NousResearch/hermes-agent/issues/99533"
+  }
+}

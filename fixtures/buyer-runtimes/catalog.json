@@ -42,6 +42,12 @@
       "payment-identifier"
     ]
   },
+  "publishedExtractContract": {
+    "sourceCommit": "4910f83bd2be1e38667f1a3cfa23c70fcff6b0c1",
+    "schemaUrl": "https://agents.samedaydesk.com/openapi.json",
+    "outputGuaranteedPaths": ["finalUrl", "ok", "requestedUrl", "sourceOk", "status", "title", "url"],
+    "note": "Current declared OpenAPI/index contract. Earlier observed runtime fixtures and Bazaar challenge expectations retain their historical provenance."
+  },
   "volatileOmitted": [
     "extensions.offer-receipt.info.offers[].payload.validUntil",
     "extensions.offer-receipt.info.offers[].signature",

@@ -36,7 +36,29 @@ This performs no network request and returns `offline_fixture`, with
 capture timestamp is worker-reported, not independently verified current data.
 Fixture corruption fails rather than manufacturing a fallback success.
 
+Task-to-offer selection is a separate step. The alternate catalogs do **not** say
+which existing artifact fits a job. In particular:
+
+- Paid `/extract` / `/extract/batch` is bounded HTML/JSON **without JavaScript
+  rendering**. It is **not** a complete GitHub issue discussion (body + comments).
+- Task-kit composition processes supplied evidence; it does not acquire complete comments.
+- The MoltJobs SDK download runs a disposable local rehearsal and refuses `--live`.
+  The hosted trial page builds a brief locally in the browser, not in a hosted job runner.
+
+Use the top-level router and matrix:
+
+- [tools/offer-routing/README.md](../offer-routing/README.md)
+- [tools/offer-routing/capability-limits-matrix.json](../offer-routing/capability-limits-matrix.json)
+
+```bash
+node tools/offer-routing/route-job.mjs tools/offer-routing/fixtures/complete-issue-discussion.job.json
+```
+
+The complete-discussion example exits 2 with a missing acquisition capability;
+no pending issue-evidence pack is claimed published.
+
 Reading these free sources never requires purchasing `/extract/batch`. A later
 purchase is a separate caller decision for a useful supported job, not a recovery
 step. MCP Registry latest-version selection is documented separately in
 [REGISTRY-CONSUMER.md](REGISTRY-CONSUMER.md).
+

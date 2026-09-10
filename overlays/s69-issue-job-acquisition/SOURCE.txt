@@ -1,0 +1,6 @@
+issue-evidence-job lean acquisition package
+session: s75
+semanticsTip: 063d04c3828e197bff32f3aa69a54170982a39a5
+inputBase: c295af075c86ab28fea075633e95934a776d006c
+recipe: issue-evidence
+composed from: reviewed S71 issue-evidence + S69 acquisition overlay

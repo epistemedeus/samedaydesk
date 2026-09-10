@@ -2,9 +2,10 @@
 node_modules/
 client/node_modules/
 
-# build output
+# build output (root/client only; vendored correspondence dist is committed)
 client/dist/
-dist/
+/dist/
+vendor/**/node_modules/
 
 # env / secrets — NEVER commit
 .env
@@ -35,6 +36,10 @@ supabase/.branches/
 # Full CDP Bazaar discovery snapshots stay local. Git tracks only the compact
 # per-route observation record and changelog under data/bazaar-tracker/.
 data/bazaar-tracker/snapshots/
+
+# Recurring recipe runtime outputs stay local; fixtures remain tracked.
+tools/recurring-job-recipes/artifacts/**
+!tools/recurring-job-recipes/artifacts/.gitkeep
 
 # Verified-feed refresh candidates stay local until review.
 client/tmp/

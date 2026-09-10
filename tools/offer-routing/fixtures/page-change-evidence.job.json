@@ -1,0 +1,9 @@
+{
+  "schema": "pilot.bot-first-use.job-brief.v1",
+  "citation": "BOT-FIRST-USE-0910",
+  "jobId": "bot-first-use-0910-fixture-page-change-evidence",
+  "inventedLocalFixture": true,
+  "type": "page_change_evidence",
+  "title": "Compare selected fields across two already-held extract-batch snapshots",
+  "constraints": ["no_payment", "offline_preferred"]
+}

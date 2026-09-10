@@ -1,0 +1,21 @@
+{
+  "schema": "samedaydesk.recurring-job-prior.v1",
+  "recipeId": "source-change-alert",
+  "createdAt": "2026-09-08T12:00:00.000Z",
+  "sequence": 1,
+  "immutable": true,
+  "sha256": "paid-prior",
+  "payload": {
+    "url": "https://example.com/",
+    "title": "Example Domain",
+    "fields": {
+      "title": "Example Domain"
+    }
+  },
+  "payment": {
+    "attempted": true,
+    "receiptId": "rcpt_fixture_do_not_replay",
+    "authorizationId": "auth_fixture_do_not_replay",
+    "charged": true
+  }
+}

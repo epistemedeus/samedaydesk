@@ -26,6 +26,20 @@ export const FORBIDDEN_KEYS = Object.freeze([
   "settlementtx",
   "facilitator",
   "paymentproof",
+  "payment",
+  "payments",
+  "receiptid",
+  "authorizationid",
+  "paymentsignature",
+  "xpayment",
+  "xpaymentresponse",
+  "paymentpayload",
+  "paymentheader",
+  "clientsecret",
+  "stripekey",
+  "secretkey",
+  "accesskey",
+  "walletid",
   "email",
   "emails",
   "phone",
@@ -56,6 +70,13 @@ export const CREDENTIAL_PATTERNS = Object.freeze([
   /CORRESPONDENCE_ADMIN_TOKEN\s*=/,
   /0x[a-fA-F0-9]{64}/,
   /CUSTOMER_X402_PRIVATE_KEY/,
+  /PAYMENT-SIGNATURE/i,
+  /X-PAYMENT(?:-RESPONSE)?\s*:/i,
+  /-----BEGIN [A-Z ]*PRIVATE KEY-----/,
+  /\bsk_(?:live|test)_[A-Za-z0-9]+/,
+  /\bpk_(?:live|test)_[A-Za-z0-9]+/,
+  /\brk_(?:live|test)_[A-Za-z0-9]+/,
+  /\bwhsec_[A-Za-z0-9]+/,
 ]);
 
 export const DEFAULT_INCLUDE = Object.freeze([
@@ -111,6 +132,11 @@ export function isForbiddenKey(key) {
 export function credentialHits(text) {
   if (typeof text !== "string" || text === "") return [];
   return CREDENTIAL_PATTERNS.filter((pattern) => pattern.test(text)).map((pattern) => pattern.source);
+}
+
+export function exportContainsCredentialShape(value) {
+  const blob = typeof value === "string" ? value : JSON.stringify(value);
+  return credentialHits(blob);
 }
 
 export function looksLikeFilesystemPath(value) {

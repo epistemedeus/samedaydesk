@@ -1,0 +1,9 @@
+{
+  "schema": "pilot.bot-first-use.job-brief.v1",
+  "citation": "BOT-FIRST-USE-0910",
+  "jobId": "bot-first-use-0910-fixture-cross-workspace-correction",
+  "inventedLocalFixture": true,
+  "type": "cross_workspace_correction",
+  "title": "Correct an immutable prior when the public issue source version changes",
+  "constraints": ["no_payment", "offline_preferred"]
+}

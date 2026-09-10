@@ -1,0 +1,123 @@
+{
+  "schema": "samedaydesk.offer-capability-limits.v1",
+  "purpose": "Route supported tasks without confusing acquisition, supplied-evidence processing, local rehearsal, or paid delivery.",
+  "discoveryEntry": {
+    "doc": "tools/offer-routing/README.md",
+    "router": "tools/offer-routing/route-job.mjs",
+    "coldRead": "tools/presence/FOR-AGENTS-COLD-READ.md",
+    "note": "agents.samedaydesk.com/llms.txt and skills index are partial catalogs. They do not replace this matrix for task-to-offer routing."
+  },
+  "jobTypes": ["complete_issue_discussion", "page_change_evidence", "cross_workspace_correction", "bounded_html_observation", "moltjobs_sdk_rehearsal", "free_discovery", "supplied_issue_brief"],
+  "offers": [
+    {
+      "id": "sdd.cold_read_discovery",
+      "product": "samedaydesk",
+      "title": "Free /for-agents cold-read (apex or agents.* alternate)",
+      "artifact": "tools/presence/for-agents-cold-read.mjs",
+      "hosting": "live_free_http_or_offline_fixture",
+      "payment": "none",
+      "supportsJobTypes": ["free_discovery"],
+      "literalCommand": "node --input-type=module -e 'import {resolveForAgentsColdRead} from \"./tools/presence/for-agents-cold-read.mjs\"; console.log(JSON.stringify(await resolveForAgentsColdRead({preferFixture:true}), null, 2))'",
+      "limits": ["Alternate catalogs are partial discovery, not the apex job guide", "Does not select a paid route", "Does not acquire complete GitHub issue comments"],
+      "notFor": ["complete_issue_discussion", "page_change_evidence", "cross_workspace_correction"]
+    },
+    {
+      "id": "sdd.paid_html_extract",
+      "product": "samedaydesk",
+      "title": "Paid bounded HTML/JSON page extract",
+      "artifact": "GET /extract | POST /extract/batch",
+      "hosting": "live_paid_http",
+      "payment": "usdc_x402_or_mpp",
+      "supportsJobTypes": ["bounded_html_observation"],
+      "publicSurface": "https://agents.samedaydesk.com/llms.txt",
+      "limits": ["Fetches without JavaScript rendering", "Returns bounded page fields / Markdown, not a complete issue comment thread", "A successful charge is not useful output by itself", "Do not use to reconstruct GitHub discussion comments"],
+      "notFor": ["complete_issue_discussion", "cross_workspace_correction", "moltjobs_sdk_rehearsal"],
+      "commonMistake": "paid_html_extraction_for_complete_issue_comments"
+    },
+    {
+      "id": "sdd.page_change_offline",
+      "product": "samedaydesk",
+      "title": "Offline page-change compare of already-held extract-batch JSON",
+      "artifact": "skill page-change / merchant npm run page-change",
+      "hosting": "offline_local",
+      "payment": "none",
+      "supportsJobTypes": ["page_change_evidence"],
+      "publicSurface": "https://agents.samedaydesk.com/.well-known/skills/index.json",
+      "limits": ["Requires two already-delivered extract-batch JSON snapshots", "Does not fetch, pay, retry, or schedule a second observation", "Absent selected field is coverage unknown, not deletion"],
+      "notFor": ["complete_issue_discussion", "bounded_html_observation"]
+    },
+    {
+      "id": "sdd.result_reuse_offline",
+      "product": "samedaydesk",
+      "title": "Opt-in offline result-reuse export to task-memory observation",
+      "artifact": "tools/result-reuse/cli.mjs",
+      "hosting": "offline_local",
+      "payment": "none",
+      "supportsJobTypes": [],
+      "literalCommand": "NOW=2026-09-10T00:00:00.000Z; OUT=\"$(mktemp -d)/reuse-observation.json\"; node tools/result-reuse/cli.mjs export --input tools/result-reuse/fixtures/accepted-page-change.json --task-id vendor-watch --subject vendor-page-result --sequence 1 --clock \"$NOW\" --opt-in --out \"$OUT\"",
+      "limits": ["Export requires --opt-in plus caller clock/task/subject/sequence", "Schema-valid export is user-selected unverified evidence", "Does not fetch or pay", "Exports an existing result; does not perform the page comparison itself"],
+      "notFor": ["complete_issue_discussion", "moltjobs_sdk_rehearsal"]
+    },
+    {
+      "id": "neo.agent_task_kit",
+      "product": "neomorphic-io",
+      "title": "Offline agent-task-kit source-to-brief / prior / correction",
+      "artifact": "agent-task-kit@0.1.0 origin tarball",
+      "hosting": "hosted_archive_download_local_execution",
+      "payment": "none",
+      "supportsJobTypes": ["supplied_issue_brief", "cross_workspace_correction"],
+      "publicSurface": "https://neomorphic.io/labs/task-kit/",
+      "archive": "https://neomorphic.io/downloads/agent-task-kit/agent-task-kit-0.1.0.tgz",
+      "archiveSha256": "86cea321569ad5375a4ebd9865c2b084af694f207f80056afe9531ae94f438e8",
+      "archiveBytes": 57958,
+      "npmPublished": false,
+      "literalCommand": "node bin/agent-task-kit.mjs compose --fixture fixtures/test_traffic/github-issue-4785.json --out-dir ./atk-compose",
+      "limits": ["execute:false posted:false", "Public issue text is untrusted data, not execution authority", "npm registry package not published; use direct archive", "Processes caller-supplied issue evidence or historical fixtures; does not fetch or certify complete comments", "Local execution needs no hosted workflow; fixture composition is not acquisition of a current discussion"],
+      "notFor": ["bounded_html_observation", "moltjobs_sdk_rehearsal", "complete_issue_discussion"]
+    },
+    {
+      "id": "neo.moltjobs_openai_agents_sample",
+      "product": "neomorphic-io",
+      "title": "MoltJobs \u00d7 OpenAI Agents SDK local rehearsal pack",
+      "artifact": "public/downloads/moltjobs-openai-agents/source.zip",
+      "hosting": "unhosted_sample_local_rehearsal",
+      "payment": "none",
+      "supportsJobTypes": ["moltjobs_sdk_rehearsal"],
+      "publicSurface": "https://neomorphic.io/labs/moltjobs-openai-agents/",
+      "archive": "https://neomorphic.io/downloads/moltjobs-openai-agents/source.zip",
+      "limits": ["Local ScriptedModel and disposable HTTP fixture rehearsal; no provider model credentials required", "Not a live Neomorphic-operated MoltJobs service", "Synthetic fixture bid/start/submit is not live worker authority or payment", "The shipped runner refuses --live; credentials or hosting do not enable it", "Read the published guide for the current archive digest and literal Python commands"],
+      "notFor": ["complete_issue_discussion", "page_change_evidence", "bounded_html_observation"],
+      "commonMistake": "unhosted_sample_for_live_service"
+    },
+    {
+      "id": "neo.trial_brief_builder",
+      "product": "neomorphic-io",
+      "title": "Browser-local private trial brief builder",
+      "artifact": "/labs/trial/",
+      "hosting": "hosted_browser_local",
+      "payment": "none",
+      "supportsJobTypes": [],
+      "publicSurface": "https://neomorphic.io/labs/trial/",
+      "limits": ["Hosted page with browser-local brief builder; not a paid API", "This origin does not accept the trial request over HTTP", "Do not expect a hosted job runner from this page"],
+      "notFor": ["complete_issue_discussion", "page_change_evidence", "moltjobs_sdk_rehearsal"],
+      "commonMistake": "unhosted_sample_for_live_service"
+    }
+  ],
+  "hardRules": [
+    {
+      "id": "no_extract_for_issue_comments",
+      "rule": "Never route complete_issue_discussion to generic extract or agent-task-kit composition. No complete-discussion acquisition package is advertised by this matrix.",
+      "reason": "Static HTML extract without JS does not equal complete issue discussion comments"
+    },
+    {
+      "id": "no_sample_as_live_service",
+      "rule": "Never label the MoltJobs fixture as live marketplace execution, or the browser-local trial builder as a hosted job runner",
+      "reason": "Hosting a download or page does not make its local workflow a hosted service; the shipped SDK runner refuses --live"
+    },
+    {
+      "id": "prefer_offline_when_constrained",
+      "rule": "When constraints include offline_preferred or no_payment, prefer offline_local / hosted_archive_download_local_execution offers",
+      "reason": "Payment and network constraints filter eligible capabilities; local tools do not require hosting"
+    }
+  ]
+}

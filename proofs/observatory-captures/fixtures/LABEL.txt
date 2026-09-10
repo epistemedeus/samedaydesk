@@ -1,0 +1,2 @@
+fixtures — synthetic observatory envelopes for CLI tests and examples.
+Not live evidence. Live captures belong under proofs/live with label=live.

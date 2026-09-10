@@ -1,0 +1,11 @@
+{
+  "type": "supplied_issue_brief",
+  "inventedLocalFixture": true,
+  "constraints": [
+    "no_payment",
+    "offline_only"
+  ],
+  "acceptance": [
+    "Compose a historical fixture only; current comment completeness is not established"
+  ]
+}

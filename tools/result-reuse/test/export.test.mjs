@@ -84,6 +84,92 @@ test("omission defaults strip credential strings without echoing them", () => {
   assert.ok(preview.omitted.some((item) => item.reason === "credential_shape"));
 });
 
+const PAYMENT_SECRETS = Object.freeze({
+  // Constructed so GitHub push protection does not treat fixtures as live secrets.
+  stripeLive: ["sk", "_live_", "51ExportBoundaryLeakAAAA"].join(""),
+  stripePublishable: ["pk", "_test_", "51ExportBoundaryLeakBBBB"].join(""),
+  webhook: ["whsec", "_exportBoundaryLeakCCCC"].join(""),
+  paySig: "PAYMENT-SIGNATURE: eyJhbGciOiJleHBvcnQtYm91bmRhcnkifQ",
+  xpay: "X-PAYMENT: eyJ4NDAyIjoiZXhwb3J0LWJvdW5kYXJ5In0",
+  pem: "-----BEGIN PRIVATE KEY-----\nMIIExportBoundaryLeak\n-----END PRIVATE KEY-----",
+  receipt: "rcpt_export_boundary_do_not_emit",
+  authorization: "auth_export_boundary_do_not_emit",
+});
+
+function assertNoPaymentSecrets(value) {
+  const blob = JSON.stringify(value);
+  for (const secret of Object.values(PAYMENT_SECRETS)) {
+    assert.equal(blob.includes(secret), false, `export echoed ${secret.slice(0, 24)}`);
+  }
+  assert.equal(blob.includes("sk_live_"), false);
+  assert.equal(blob.includes("whsec_"), false);
+  assert.equal(blob.includes("BEGIN PRIVATE KEY"), false);
+  assert.equal(/PAYMENT-SIGNATURE/i.test(blob), false);
+  assert.equal(/X-PAYMENT\s*:/i.test(blob), false);
+}
+
+test("preview omits nested payment credentials and does not echo them", () => {
+  const input = load("accepted-page-change.json");
+  input.report.claims.payment = {
+    receiptId: PAYMENT_SECRETS.receipt,
+    authorizationId: PAYMENT_SECRETS.authorization,
+    stripeKey: PAYMENT_SECRETS.stripeLive,
+    "PAYMENT-SIGNATURE": PAYMENT_SECRETS.paySig,
+    "X-PAYMENT": PAYMENT_SECRETS.xpay,
+    privateKey: PAYMENT_SECRETS.pem,
+  };
+  input.report.summary.note = PAYMENT_SECRETS.stripeLive;
+  input.report.verdict = PAYMENT_SECRETS.paySig;
+  input.report.freshness = PAYMENT_SECRETS.xpay;
+  const preview = previewReuse(input, options("payment-claims"));
+  assert.equal(preview.ok, true, preview.message);
+  assert.equal(preview.observation.execute, false);
+  assert.equal(preview.observation.payload.claims.payment, undefined);
+  assert.equal(preview.observation.payload.payment, undefined);
+  assert.equal(preview.observation.payload.claims.paymentImpliesUsefulOutput, false);
+  assert.equal(preview.observation.payload.verdict, "[omitted]");
+  assert.equal(preview.observation.payload.freshness, "[omitted]");
+  assert.ok(preview.omitted.some((item) => item.reason === "forbidden_key"));
+  assert.ok(preview.omitted.some((item) => item.reason === "credential_shape"));
+  assertNoPaymentSecrets(preview);
+});
+
+test("extract-batch titles and opt-in export files strip Stripe and PEM material", () => {
+  const input = load("accepted-extract-batch.json");
+  input.sources[0].data.title = `Buy now ${PAYMENT_SECRETS.stripeLive}`;
+  input.sources[0].data.description = PAYMENT_SECRETS.pem;
+  input.authorizationId = PAYMENT_SECRETS.authorization;
+  input.receiptId = PAYMENT_SECRETS.receipt;
+  input.payment = {
+    attempted: true,
+    receiptId: PAYMENT_SECRETS.receipt,
+    authorizationId: PAYMENT_SECRETS.authorization,
+    charged: true,
+  };
+  const preview = previewReuse(input, options("batch-pay", { select: ["title", "description"] }));
+  assert.equal(preview.ok, true, preview.message);
+  assert.equal(preview.observation.execute, false);
+  assert.equal(preview.observation.payload.payment, undefined);
+  assert.equal(preview.observation.payload.authorizationId, undefined);
+  assert.equal(preview.observation.payload.charged, undefined);
+  assert.equal(preview.observation.payload.sources[0].title, "[omitted]");
+  assert.equal(preview.observation.payload.sources[0].description, "[omitted]");
+  assertNoPaymentSecrets(preview);
+
+  const written = exportReuse(input, options("batch-pay", { select: ["title", "description"], optIn: true }));
+  assert.equal(written.ok, true, written.message);
+  assert.equal(written.mode, "export");
+  assertNoPaymentSecrets(written.observation);
+});
+
+test("selecting payment or receipt fields is refused", () => {
+  for (const key of ["payment", "authorization", "receipt", "charged", "privateKey"]) {
+    const denied = previewReuse(load("accepted-page-change.json"), options("denied-pay", { select: [key] }));
+    assert.equal(denied.ok, false, key);
+    assert.match(denied.message, /forbidden/);
+  }
+});
+
 test("hostile javascript URLs and HTML are omitted; recipe URI remains http(s)", () => {
   const preview = previewReuse(load("hostile-urls-html.json"), options("hostile", {
     select: ["title", "description"],

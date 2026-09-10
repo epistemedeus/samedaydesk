@@ -1,0 +1,30 @@
+{
+  "provider": "github",
+  "completeness": "partial",
+  "issue": null,
+  "comments": [],
+  "pages": [
+    {
+      "page": 1,
+      "retrievalStatus": "rate_limited",
+      "count": 0,
+      "retryAfter": {
+        "seconds": 30,
+        "raw": "30"
+      }
+    }
+  ],
+  "sources": [
+    {
+      "kind": "issue",
+      "url": "https://api.github.com/repos/NousResearch/hermes-agent/issues/99533",
+      "retrievalStatus": "rate_limited",
+      "note": "http_429"
+    }
+  ],
+  "transport": {
+    "issue": {
+      "status": 429
+    }
+  }
+}

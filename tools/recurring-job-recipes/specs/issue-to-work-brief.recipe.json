@@ -1,0 +1,31 @@
+{
+  "schema": "samedaydesk.recipe-spec.v1",
+  "recipeId": "issue-to-work-brief",
+  "scheduleNeutral": true,
+  "installsCron": false,
+  "requiredFields": ["prior", "clock", "schedule"],
+  "oneOfSources": ["issue-url", "issue-fixture"],
+  "optionalFields": ["docs-url", "horizon", "out-dir", "write-artifact", "neomorphic-preview"],
+  "outcomes": ["unchanged", "changed", "partial", "stale_baseline", "error"],
+  "command": [
+    "node",
+    "tools/recurring-job-recipes/cli.mjs",
+    "--recipe",
+    "issue-to-work-brief",
+    "--prior",
+    "tools/recurring-job-recipes/fixtures/priors/issue-brief.prior.json",
+    "--issue-url",
+    "https://github.com/epistemedeus/samedaydesk/issues/1",
+    "--schedule",
+    "weekly",
+    "--clock",
+    "${CLOCK}",
+    "--horizon",
+    "336"
+  ],
+  "ownerQa": {
+    "issueUrl": "https://github.com/epistemedeus/samedaydesk/issues/1",
+    "notDemand": true
+  },
+  "notes": "Public GitHub issue read-only. Owner QA only. Do not promote fixture or issue activity as demand."
+}
