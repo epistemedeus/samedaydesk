@@ -5,8 +5,9 @@
 | Item | Value |
 |---|---|
 | Branch | `codex/s163-record-source-recipes-20260910` |
+| Git tip | `6ed2f1ab891c53d0558be4eeeb1b06990e2c02b8` |
 | Scope | `experiments/s163-record-recipes` only |
-| S134/S154 pin | `65ce1867f1b4339cc708bfb72a7d9a5942785632` |
+| S134/S154 pin | `65ce1867f1b4339cc708bfb72a7d9a5942785632`
 | Owning repo | epistemedeus/samedaydesk |
 | Cash | $0 |
 
