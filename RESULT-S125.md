@@ -2,7 +2,7 @@
 
 ## Root-cause proof (PG 17)
 
-1. Migration `supabase/migrations/0003_pulse_mcp_tool_demand.sql` requires wire form  
+1. Migration `supabase/migrations/0003_pulse_mcp_tool_demand.sql` requires wire form
    `^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$` inside `pulse_validate_delta`.
 2. After a successful apply, `pulse_read_snapshot` returns the column as **timestamptz in jsonb**, which PostgreSQL serializes as e.g. `2026-09-02T12:00:00+00:00` (no `.mmmZ`).
 3. Producer path: every `emptyDelta(mcpToolCallsObservedFrom)` embeds the module boundary; after hydrate from snapshot that boundary becomes the PG echo form.

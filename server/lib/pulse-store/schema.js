@@ -102,12 +102,14 @@ export function canonicalizeMcpToolCallsObservedFrom(value) {
   if (typeof value !== "string" || value.length === 0 || value.length > 64) {
     throw new Error("pulse_invalid_field:mcpToolCallsObservedFrom");
   }
-  if (MCP_TOOL_OBSERVED_FROM_WIRE_RE.test(value)) return value;
   const ms = Date.parse(value);
   if (!Number.isFinite(ms)) {
     throw new Error("pulse_invalid_field:mcpToolCallsObservedFrom");
   }
   const out = new Date(ms).toISOString();
+  if (MCP_TOOL_OBSERVED_FROM_WIRE_RE.test(value) && out !== value) {
+    throw new Error("pulse_invalid_field:mcpToolCallsObservedFrom");
+  }
   if (!MCP_TOOL_OBSERVED_FROM_WIRE_RE.test(out)) {
     throw new Error("pulse_invalid_field:mcpToolCallsObservedFrom");
   }

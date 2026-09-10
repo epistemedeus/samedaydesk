@@ -348,7 +348,7 @@ test("real PostgreSQL: existing seven-call row gains only a later name boundary"
   assert.equal(boundaryAfter, boundaryBefore, "migration replay must preserve its first boundary");
 });
 
-test("S125 live rejection shape: PG echoes +00:00; wire .mmmZ required; JS canonicalize repairs", { timeout: 120_000 }, (t) => {
+test("S125 SQL format gate: PG echoes +00:00; wire .mmmZ required", { timeout: 120_000 }, (t) => {
   requirePostgresBinaries();
   const cluster = startDisposableCluster();
   t.after(() => cluster.stop());
@@ -413,4 +413,3 @@ BEGIN
 END $$;
 `);
 });
-
