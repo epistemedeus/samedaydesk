@@ -1,0 +1,66 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-rss-atom-brief",
+  "inputs": {
+    "before": "/workspace/experiments/s147-record-jobs-chat-amend/repros/f5/before.xml",
+    "after": "/workspace/experiments/s147-record-jobs-chat-amend/repros/f5/after.xml"
+  },
+  "report": {
+    "module": "rss-atom-brief",
+    "ok": true,
+    "comparable": true,
+    "comparisonStatus": "comparable",
+    "beforeKind": "rss",
+    "afterKind": "rss",
+    "added": [],
+    "removed": [],
+    "corrected": [
+      {
+        "key": "urn:x",
+        "changes": [
+          {
+            "field": "description",
+            "before": "Old body",
+            "after": "Corrected body"
+          }
+        ]
+      }
+    ],
+    "conflicting": [],
+    "unchangedCount": 0,
+    "metadataUnchangedCount": 0,
+    "coverage": {
+      "comparedFields": [
+        "title",
+        "link",
+        "updated",
+        "description",
+        "content"
+      ],
+      "note": "Compares title/link/updated plus bounded description/content text when present. Not a full RSS/Atom standards engine."
+    },
+    "dedupBrief": {
+      "beforeRawCount": 1,
+      "afterRawCount": 1,
+      "beforeUniqueKeys": 1,
+      "afterUniqueKeys": 1,
+      "beforeDuplicateKeys": 0,
+      "afterDuplicateKeys": 0,
+      "uniqueCountDelta": 0
+    },
+    "truncated": false,
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Briefs item add/remove/title-link-updated-description/content corrections and dedup-key counts over supplied XML. Does not poll feeds, push alerts, or assert content authenticity."
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-rss-atom-brief",
+  "inputs": {
+    "before": "/workspace/experiments/s147-record-jobs-chat-amend/repros/f4/before.xml",
+    "after": "/workspace/experiments/s147-record-jobs-chat-amend/repros/f4/after.xml"
+  },
+  "report": {
+    "module": "rss-atom-brief",
+    "ok": true,
+    "comparable": true,
+    "comparisonStatus": "comparable",
+    "beforeKind": "rss",
+    "afterKind": "rss",
+    "added": [],
+    "removed": [],
+    "corrected": [],
+    "conflicting": [
+      {
+        "key": "urn:x",
+        "reason": "duplicate-identity-ambiguous",
+        "beforeCandidates": [
+          {
+            "id": "urn:x",
+            "guid": "urn:x",
+            "link": null,
+            "title": "old",
+            "updated": null,
+            "description": null,
+            "content": null
+          },
+          {
+            "id": "urn:x",
+            "guid": "urn:x",
+            "link": null,
+            "title": "stable",
+            "updated": null,
+            "description": null,
+            "content": null
+          }
+        ],
+        "afterCandidates": [
+          {
+            "id": "urn:x",
+            "guid": "urn:x",
+            "link": null,
+            "title": "new",
+            "updated": null,
+            "description": null,
+            "content": null
+          },
+          {
+            "id": "urn:x",
+            "guid": "urn:x",
+            "link": null,
+            "title": "stable",
+            "updated": null,
+            "description": null,
+            "content": null
+          }
+        ],
+        "note": "Multiple distinct records share this identity key; refusing definitive changed/unchanged."
+      }
+    ],
+    "unchangedCount": 0,
+    "metadataUnchangedCount": 0,
+    "coverage": {
+      "comparedFields": [
+        "title",
+        "link",
+        "updated",
+        "description",
+        "content"
+      ],
+      "note": "Compares title/link/updated plus bounded description/content text when present. Not a full RSS/Atom standards engine."
+    },
+    "dedupBrief": {
+      "beforeRawCount": 2,
+      "afterRawCount": 2,
+      "beforeUniqueKeys": 1,
+      "afterUniqueKeys": 1,
+      "beforeDuplicateKeys": 1,
+      "afterDuplicateKeys": 1,
+      "uniqueCountDelta": 0
+    },
+    "truncated": false,
+    "uncertainties": [
+      {
+        "code": "duplicates-before",
+        "detail": "Duplicate identity keys in before; differing candidates stay ambiguous",
+        "evidence": {
+          "count": 1,
+          "keys": [
+            "urn:x"
+          ]
+        }
+      },
+      {
+        "code": "duplicates-after",
+        "detail": "Duplicate identity keys in after; differing candidates stay ambiguous",
+        "evidence": {
+          "count": 1,
+          "keys": [
+            "urn:x"
+          ]
+        }
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Briefs item add/remove/title-link-updated-description/content corrections and dedup-key counts over supplied XML. Does not poll feeds, push alerts, or assert content authenticity."
+  }
+}

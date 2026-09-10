@@ -1,0 +1,75 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-openapi-impact",
+  "inputs": {
+    "before": "/workspace/experiments/s147-record-jobs-chat-amend/repros/f1/before.json",
+    "after": "/workspace/experiments/s147-record-jobs-chat-amend/repros/f1/after-param-required.json",
+    "used": "/workspace/experiments/s147-record-jobs-chat-amend/repros/f1/used-get.json"
+  },
+  "report": {
+    "module": "openapi-impact",
+    "ok": true,
+    "scope": "used-operations-only",
+    "usedOperationCount": 1,
+    "impact": {
+      "added": [],
+      "removed": [],
+      "changed": [
+        {
+          "key": "GET /x",
+          "fieldChanges": [
+            {
+              "field": "parameters",
+              "before": [
+                {
+                  "name": "q",
+                  "in": "query",
+                  "required": false,
+                  "schema": {
+                    "kind": "inline",
+                    "type": "string",
+                    "format": null,
+                    "enum": null,
+                    "required": null
+                  },
+                  "ref": "#/components/parameters/Q"
+                }
+              ],
+              "after": [
+                {
+                  "name": "q",
+                  "in": "query",
+                  "required": true,
+                  "schema": {
+                    "kind": "inline",
+                    "type": "string",
+                    "format": null,
+                    "enum": null,
+                    "required": null
+                  },
+                  "ref": "#/components/parameters/Q"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "unchanged": [],
+      "conflicting": [],
+      "unknowns": []
+    },
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Reports added/removed/changed fields for buyer-used operations only. Does not call the API, apply patches, or assert production breakage."
+  }
+}

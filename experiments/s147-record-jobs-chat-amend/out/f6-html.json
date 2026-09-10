@@ -1,0 +1,63 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-rss-atom-brief",
+  "inputs": {
+    "before": "/workspace/experiments/s147-record-jobs-chat-amend/repros/f6/before.xml",
+    "after": "/workspace/experiments/s147-record-jobs-chat-amend/repros/f6/html.xml"
+  },
+  "report": {
+    "module": "rss-atom-brief",
+    "ok": true,
+    "comparable": false,
+    "comparisonStatus": "indeterminate",
+    "beforeKind": "rss",
+    "afterKind": "unknown",
+    "added": [],
+    "removed": [],
+    "corrected": [],
+    "conflicting": [],
+    "unchangedCount": 0,
+    "metadataUnchangedCount": 0,
+    "coverage": {
+      "comparedFields": [],
+      "note": "No definitive add/remove/correct counts because one or both inputs are not recognizable feed snapshots."
+    },
+    "dedupBrief": {
+      "beforeRawCount": 1,
+      "afterRawCount": 0,
+      "beforeUniqueKeys": 0,
+      "afterUniqueKeys": 0,
+      "beforeDuplicateKeys": 0,
+      "afterDuplicateKeys": 0,
+      "uniqueCountDelta": 0
+    },
+    "truncated": false,
+    "uncertainties": [
+      {
+        "code": "unknown-feed-kind",
+        "detail": "Not recognized as RSS channel or Atom feed",
+        "evidence": {}
+      },
+      {
+        "code": "incomparable-feed-snapshot",
+        "detail": "Comparison gated: before kind=rss, after kind=unknown. Empty or non-feed input is not treated as a zero-item feed.",
+        "evidence": {
+          "beforeKind": "rss",
+          "afterKind": "unknown"
+        }
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Indeterminate feed comparison: unavailable/empty/non-feed input does not authorize definitive removals or unchanged counts."
+  }
+}

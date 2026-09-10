@@ -220,6 +220,9 @@ test('rss empty', () => {
   const report = compareFeeds(read('rss/empty/before.xml'), read('rss/empty/after.xml'));
   assert.equal(report.ok, true);
   assert.ok(report.uncertainties.some((u) => u.code === 'empty-feed'));
+  assert.equal(report.comparisonStatus, 'indeterminate');
+  assert.equal(report.removed.length, 0);
+  assert.equal(report.unchangedCount, 0);
 });
 
 test('rss partial unidentifiable item', () => {
@@ -232,12 +235,16 @@ test('rss conflicting duplicates', () => {
   const report = compareFeeds(read('rss/conflicting/before.xml'), read('rss/conflicting/after.xml'));
   assert.equal(report.ok, true);
   assert.ok(report.uncertainties.some((u) => u.code === 'duplicates-before'));
+  assert.ok(report.conflicting.length >= 1);
+  assert.equal(report.unchangedCount, 0);
 });
 
 test('rss unknown non-feed', () => {
   const report = compareFeeds(read('rss/unknown/before.xml'), read('rss/unknown/after.xml'));
   assert.equal(report.ok, true);
   assert.ok(report.uncertainties.some((u) => u.code === 'unknown-feed-kind'));
+  assert.equal(report.comparisonStatus, 'indeterminate');
+  assert.equal(report.removed.length, 0);
 });
 
 test('no module claims paid value', () => {
@@ -326,4 +333,149 @@ test('s142 gate: rss exposes missing-item-id and date-ambiguity', () => {
   assert.ok(codes.includes('missing-item-id'));
   assert.ok(codes.includes('date-ambiguity'));
   assert.ok((report.corrected || []).length >= 1);
+});
+
+
+test('s147 F1: local $ref param required + enum + requestBody.required + response schema not false-unchanged', () => {
+  const base = {
+    openapi: '3.0.3',
+    info: { title: 'F', version: '1' },
+    security: [],
+    paths: {
+      '/x': {
+        get: {
+          parameters: [{ $ref: '#/components/parameters/Q' }],
+          responses: { '200': { description: 'ok' } },
+        },
+      },
+    },
+    components: {
+      parameters: { Q: { name: 'q', in: 'query', required: false, schema: { type: 'string' } } },
+      securitySchemes: { k: { type: 'apiKey', in: 'header', name: 'X-Key' } },
+    },
+  };
+  const afterReq = structuredClone(base);
+  afterReq.components.parameters.Q.required = true;
+  let report = compareOpenApiImpact({
+    beforeText: JSON.stringify(base),
+    afterText: JSON.stringify(afterReq),
+    usedSpec: { operations: [{ method: 'get', path: '/x' }] },
+  });
+  assert.equal(report.impact.unchanged.length, 0);
+  assert.ok(report.impact.changed.some((c) => c.fieldChanges.some((f) => f.field === 'parameters')));
+
+  const inl = structuredClone(base);
+  inl.paths['/x'].get.parameters = [{ name: 'q', in: 'query', schema: { type: 'string', enum: ['a', 'b'] } }];
+  const inl2 = structuredClone(inl);
+  inl2.paths['/x'].get.parameters[0].schema.enum = ['a'];
+  report = compareOpenApiImpact({
+    beforeText: JSON.stringify(inl),
+    afterText: JSON.stringify(inl2),
+    usedSpec: { operations: [{ method: 'get', path: '/x' }] },
+  });
+  assert.equal(report.impact.unchanged.length, 0);
+
+  const rb = {
+    openapi: '3.0.3',
+    info: { title: 'F', version: '1' },
+    paths: {
+      '/x': {
+        post: {
+          requestBody: { required: false, content: { 'application/json': { schema: { type: 'object' } } } },
+          responses: { '200': { description: 'ok' } },
+        },
+      },
+    },
+  };
+  const rb2 = structuredClone(rb);
+  rb2.paths['/x'].post.requestBody.required = true;
+  report = compareOpenApiImpact({
+    beforeText: JSON.stringify(rb),
+    afterText: JSON.stringify(rb2),
+    usedSpec: { operations: [{ method: 'post', path: '/x' }] },
+  });
+  assert.equal(report.impact.unchanged.length, 0);
+  assert.ok(report.impact.changed.some((c) => c.fieldChanges.some((f) => f.field === 'requestBody')));
+
+  const rs = structuredClone(base);
+  rs.paths['/x'].get.parameters = [];
+  rs.paths['/x'].get.responses = {
+    '200': {
+      description: 'ok',
+      content: { 'application/json': { schema: { type: 'object', properties: { a: { type: 'string' } } } } },
+    },
+  };
+  const rs2 = structuredClone(rs);
+  rs2.paths['/x'].get.responses['200'].content['application/json'].schema.properties = { a: { type: 'integer' } };
+  report = compareOpenApiImpact({
+    beforeText: JSON.stringify(rs),
+    afterText: JSON.stringify(rs2),
+    usedSpec: { operations: [{ method: 'get', path: '/x' }] },
+  });
+  assert.equal(report.impact.unchanged.length, 0);
+  assert.ok(report.impact.changed.some((c) => c.fieldChanges.some((f) => f.field === 'responses')));
+});
+
+test('s147 F2: USD/GB vs USD/Gb are not unchanged', () => {
+  const report = comparePricingTables(
+    [{ field: 'egress', value: 1, unit: 'USD/GB' }],
+    [{ field: 'egress', value: 1, unit: 'USD/Gb' }],
+  );
+  assert.equal(report.unchanged.length, 0);
+  assert.ok(report.unitChanges.length >= 1 || report.conflicting.some((c) => String(c.reason).includes('unit')));
+});
+
+test('s147 F3: duplicate headers / width overflow / short row do not invent schema removals', () => {
+  let report = compareCsvDrift('id,v,v\nx,A,Z\n', 'id,v,v\nx,B,Z\n', { keyColumns: ['id'] });
+  assert.deepEqual(report.schema.beforeHeaders, ['id', 'v', 'v']);
+  assert.ok(String(report.rowDrift.mode).includes('duplicate-header'));
+  assert.equal(report.rowDrift.changedCount ?? 0, 0);
+
+  report = compareCsvDrift('id,v\nx,A,old\n', 'id,v\nx,A,new\n', { keyColumns: ['id'] });
+  assert.equal(report.schema.columnsRemoved.length, 0);
+  assert.ok((report.rowDrift.changedCount ?? report.rowDrift.changed?.length ?? 0) >= 1);
+
+  report = compareCsvDrift('id,v\nx,A\n', 'id,v\nx\n', { keyColumns: ['id'] });
+  assert.equal(report.schema.columnsRemoved.length, 0);
+  assert.ok(report.rowDrift.changed.some((c) => c.fields.some((f) => f.column === 'v')));
+});
+
+test('s147 F4: feed duplicate identities are conflicting not unchanged', () => {
+  const before = `<?xml version="1.0"?><rss version="2.0"><channel><title>F</title>
+<item><guid>urn:x</guid><title>old</title></item>
+<item><guid>urn:x</guid><title>stable</title></item>
+</channel></rss>`;
+  const after = `<?xml version="1.0"?><rss version="2.0"><channel><title>F</title>
+<item><guid>urn:x</guid><title>new</title></item>
+<item><guid>urn:x</guid><title>stable</title></item>
+</channel></rss>`;
+  const report = compareFeeds(before, after);
+  assert.equal(report.unchangedCount, 0);
+  assert.ok(report.conflicting.length >= 1);
+});
+
+test('s147 F5: description-only body edit is corrected with coverage', () => {
+  const before = `<?xml version="1.0"?><rss version="2.0"><channel><title>F</title><link>https://example.invalid/</link><description>F</description>
+<item><guid isPermaLink="false">urn:x</guid><title>T</title><description>Old body</description></item>
+</channel></rss>`;
+  const after = before.replace('Old body', 'Corrected body');
+  const report = compareFeeds(before, after);
+  assert.equal(report.unchangedCount, 0);
+  assert.ok(report.corrected.some((c) => c.changes.some((ch) => ch.field === 'description')));
+  assert.ok(report.coverage?.comparedFields?.includes('description'));
+});
+
+test('s147 F6: empty/non-feed after is indeterminate without removals; valid empty feed can remove', () => {
+  const before = `<?xml version="1.0"?><rss version="2.0"><channel><title>F</title>
+<item><guid>urn:x</guid><title>T</title><description>Body</description></item>
+</channel></rss>`;
+  let report = compareFeeds(before, '');
+  assert.equal(report.comparisonStatus, 'indeterminate');
+  assert.equal(report.removed.length, 0);
+  report = compareFeeds(before, '<html><body>Unavailable</body></html>');
+  assert.equal(report.comparisonStatus, 'indeterminate');
+  assert.equal(report.removed.length, 0);
+  report = compareFeeds(before, `<?xml version="1.0"?><rss version="2.0"><channel><title>F</title></channel></rss>`);
+  assert.equal(report.comparisonStatus, 'comparable');
+  assert.ok(report.removed.some((r) => r.key === 'urn:x'));
 });

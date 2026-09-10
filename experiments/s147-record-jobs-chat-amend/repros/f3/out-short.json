@@ -1,0 +1,59 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-csv-drift",
+  "inputs": {
+    "before": "/tmp/s147-repro/f3/short-before.csv",
+    "after": "/tmp/s147-repro/f3/short-after.csv",
+    "keyColumns": [
+      "id"
+    ]
+  },
+  "report": {
+    "module": "csv-drift",
+    "ok": true,
+    "schema": {
+      "beforeHeaders": [
+        "id",
+        "v"
+      ],
+      "afterHeaders": [
+        "id"
+      ],
+      "columnsAdded": [],
+      "columnsRemoved": [
+        "v"
+      ],
+      "columnsReordered": false,
+      "columnsShared": [
+        "id"
+      ]
+    },
+    "rowDrift": {
+      "mode": "keyed",
+      "keyColumns": [
+        "id"
+      ],
+      "addedCount": 0,
+      "removedCount": 0,
+      "changedCount": 0,
+      "added": [],
+      "removed": [],
+      "changed": [],
+      "truncated": false
+    },
+    "missingCellRate": 0,
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Reports schema column add/remove/reorder and keyed row deltas when keys are supplied. Without keys, only row-count delta is stated (identity unknown). Not a warehouse migration plan."
+  }
+}

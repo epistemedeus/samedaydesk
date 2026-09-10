@@ -1,0 +1,55 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-openapi-impact",
+  "inputs": {
+    "before": "/tmp/s147-repro/f1/before.json",
+    "after": "/tmp/s147-repro/f1/after-security.json",
+    "used": "/tmp/s147-repro/f1/used-get.json"
+  },
+  "report": {
+    "module": "openapi-impact",
+    "ok": true,
+    "scope": "used-operations-only",
+    "usedOperationCount": 1,
+    "impact": {
+      "added": [],
+      "removed": [],
+      "changed": [
+        {
+          "key": "GET /x",
+          "fieldChanges": [
+            {
+              "field": "security",
+              "before": {
+                "inherited": true,
+                "requirements": []
+              },
+              "after": {
+                "inherited": true,
+                "requirements": [
+                  "k:[]"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "unchanged": [],
+      "conflicting": [],
+      "unknowns": []
+    },
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Reports added/removed/changed fields for buyer-used operations only. Does not call the API, apply patches, or assert production breakage."
+  }
+}

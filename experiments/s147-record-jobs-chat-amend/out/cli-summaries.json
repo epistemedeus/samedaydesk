@@ -1,0 +1,226 @@
+{
+  "f1-param-required": {
+    "unchanged": [],
+    "changedFields": [
+      "parameters"
+    ]
+  },
+  "f1-security": {
+    "unchanged": [],
+    "changedFields": [
+      "security"
+    ]
+  },
+  "f2-units": {
+    "unchanged": [],
+    "unitChanges": [
+      {
+        "fieldKey": "egress",
+        "beforeUnit": "USD/GB",
+        "afterUnit": "USD/Gb",
+        "numericComparison": "not-applicable-across-units",
+        "beforeValueRaw": 1,
+        "afterValueRaw": 1
+      }
+    ],
+    "conflicting": [
+      "cross-unit-incomparable"
+    ]
+  },
+  "f3-dup-headers": {
+    "mode": "duplicate-headers-blocked",
+    "headers": [
+      "id",
+      "v",
+      "v"
+    ],
+    "changed": null,
+    "columnsRemoved": []
+  },
+  "f3-wide": {
+    "mode": "keyed",
+    "headers": [
+      "id",
+      "v"
+    ],
+    "changed": [
+      {
+        "key": "\"x\"",
+        "fields": [
+          {
+            "column": "__extraFields",
+            "before": [
+              "old"
+            ],
+            "after": [
+              "new"
+            ]
+          }
+        ]
+      }
+    ],
+    "columnsRemoved": []
+  },
+  "f3-short": {
+    "mode": "keyed",
+    "headers": [
+      "id",
+      "v"
+    ],
+    "changed": [
+      {
+        "key": "\"x\"",
+        "fields": [
+          {
+            "column": "v",
+            "before": "A",
+            "after": null
+          },
+          {
+            "column": "__rowWidth",
+            "before": {
+              "short": false,
+              "missingFieldCount": 0
+            },
+            "after": {
+              "short": true,
+              "missingFieldCount": 1
+            }
+          }
+        ]
+      }
+    ],
+    "columnsRemoved": []
+  },
+  "f4-csv": {
+    "mode": "duplicate-keys-blocked",
+    "headers": [
+      "id",
+      "v"
+    ],
+    "changed": null,
+    "columnsRemoved": []
+  },
+  "f4-feed": {
+    "comparisonStatus": "comparable",
+    "unchangedCount": 0,
+    "removed": [],
+    "corrected": [],
+    "conflicting": [
+      {
+        "key": "urn:x",
+        "reason": "duplicate-identity-ambiguous",
+        "beforeCandidates": [
+          {
+            "id": "urn:x",
+            "guid": "urn:x",
+            "link": null,
+            "title": "old",
+            "updated": null,
+            "description": null,
+            "content": null
+          },
+          {
+            "id": "urn:x",
+            "guid": "urn:x",
+            "link": null,
+            "title": "stable",
+            "updated": null,
+            "description": null,
+            "content": null
+          }
+        ],
+        "afterCandidates": [
+          {
+            "id": "urn:x",
+            "guid": "urn:x",
+            "link": null,
+            "title": "new",
+            "updated": null,
+            "description": null,
+            "content": null
+          },
+          {
+            "id": "urn:x",
+            "guid": "urn:x",
+            "link": null,
+            "title": "stable",
+            "updated": null,
+            "description": null,
+            "content": null
+          }
+        ],
+        "note": "Multiple distinct records share this identity key; refusing definitive changed/unchanged."
+      }
+    ],
+    "coverage": {
+      "comparedFields": [
+        "title",
+        "link",
+        "updated",
+        "description",
+        "content"
+      ],
+      "note": "Compares title/link/updated plus bounded description/content text when present. Not a full RSS/Atom standards engine."
+    }
+  },
+  "f5-body": {
+    "comparisonStatus": "comparable",
+    "unchangedCount": 0,
+    "removed": [],
+    "corrected": [
+      {
+        "key": "urn:x",
+        "changes": [
+          {
+            "field": "description",
+            "before": "Old body",
+            "after": "Corrected body"
+          }
+        ]
+      }
+    ],
+    "conflicting": [],
+    "coverage": {
+      "comparedFields": [
+        "title",
+        "link",
+        "updated",
+        "description",
+        "content"
+      ],
+      "note": "Compares title/link/updated plus bounded description/content text when present. Not a full RSS/Atom standards engine."
+    }
+  },
+  "f6-empty": {
+    "comparisonStatus": "indeterminate",
+    "unchangedCount": 0,
+    "removed": [],
+    "afterKind": "empty"
+  },
+  "f6-html": {
+    "comparisonStatus": "indeterminate",
+    "unchangedCount": 0,
+    "removed": [],
+    "afterKind": "unknown"
+  },
+  "f6-valid-empty": {
+    "comparisonStatus": "comparable",
+    "unchangedCount": 0,
+    "removed": [
+      {
+        "key": "urn:x",
+        "item": {
+          "id": "urn:x",
+          "guid": "urn:x",
+          "link": null,
+          "title": "T",
+          "updated": null,
+          "description": "Body",
+          "content": null
+        }
+      }
+    ],
+    "afterKind": "rss"
+  }
+}

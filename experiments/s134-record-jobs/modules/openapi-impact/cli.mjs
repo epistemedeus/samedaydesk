@@ -46,59 +46,152 @@ function opKey(method, p) {
 export function indexOperations(doc) {
   const map = new Map();
   const paths = doc?.paths && typeof doc.paths === 'object' ? doc.paths : {};
+  const uncertainties = [];
   for (const [p, item] of Object.entries(paths)) {
     if (!item || typeof item !== 'object') continue;
     for (const m of METHODS) {
       if (item[m] && typeof item[m] === 'object') {
         const op = item[m];
         const key = opKey(m, p);
+        const paramSum = summarizeParams([...(item.parameters || []), ...(op.parameters || [])], doc, uncertainties, key);
+        const rb = summarizeRequestBody(op.requestBody, doc, uncertainties, key);
+        const respSum = summarizeResponses(op.responses || {}, doc, uncertainties, key);
         map.set(key, {
           key,
           method: m.toUpperCase(),
           path: p,
           operationId: op.operationId || null,
           summary: op.summary || null,
-          parameters: summarizeParams([...(item.parameters || []), ...(op.parameters || [])]),
-          requestBody: Boolean(op.requestBody),
-          requestBodyRef: extractRequestBodyRef(op.requestBody),
-          responses: summarizeResponses(op.responses || {}),
+          parameters: paramSum.parameters,
+          requestBody: rb,
+          responses: respSum.responses,
           security: summarizeSecurity(op.security, doc.security),
           deprecated: Boolean(op.deprecated),
+          assessmentGaps: [...new Set([...(paramSum.gaps || []), ...(rb.gaps || []), ...(respSum.gaps || [])])],
         });
       }
     }
   }
+  map._indexUncertainties = uncertainties;
   return map;
 }
 
-function summarizeParams(params) {
-  if (!Array.isArray(params)) return [];
+function isLocalRef(ref) {
+  return typeof ref === 'string' && ref.startsWith('#/');
+}
+
+function resolveLocalRef(doc, ref, uncertainties, opKey, gapSink) {
+  if (!isLocalRef(ref)) {
+    const gap = `remote-or-opaque-ref:${ref}`;
+    gapSink.push(gap);
+    uncertainties.push(
+      uncertainty('unresolved-ref', `Cannot fetch/resolve non-local $ref under used op ${opKey}`, {
+        opKey,
+        ref,
+      }),
+    );
+    return { ok: false, ref, value: null };
+  }
+  const parts = ref.slice(2).split('/');
+  let cur = doc;
+  for (const part of parts) {
+    const key = part.replace(/~1/g, '/').replace(/~0/g, '~');
+    if (!cur || typeof cur !== 'object' || !(key in cur)) {
+      const gap = `missing-local-ref:${ref}`;
+      gapSink.push(gap);
+      uncertainties.push(
+        uncertainty('missing-local-ref', `Local $ref not found: ${ref}`, { opKey, ref }),
+      );
+      return { ok: false, ref, value: null };
+    }
+    cur = cur[key];
+  }
+  return { ok: true, ref, value: cur };
+}
+
+function schemaFingerprint(schema, doc, uncertainties, opKey, gapSink, depth = 0) {
+  if (!schema || typeof schema !== 'object') return { kind: 'absent' };
+  if (schema.$ref) {
+    if (!isLocalRef(schema.$ref)) {
+      gapSink.push(`schema-remote-ref:${schema.$ref}`);
+      uncertainties.push(
+        uncertainty('unresolved-ref', `Schema $ref not locally resolved under ${opKey}`, {
+          opKey,
+          ref: schema.$ref,
+        }),
+      );
+      return { kind: 'unresolved-ref', ref: schema.$ref };
+    }
+    if (depth > 3) return { kind: 'ref', ref: schema.$ref, truncated: true };
+    const resolved = resolveLocalRef(doc, schema.$ref, uncertainties, opKey, gapSink);
+    if (!resolved.ok) return { kind: 'missing-ref', ref: schema.$ref };
+    return {
+      kind: 'ref',
+      ref: schema.$ref,
+      target: schemaFingerprint(resolved.value, doc, uncertainties, opKey, gapSink, depth + 1),
+    };
+  }
+  const fp = {
+    kind: 'inline',
+    type: schema.type || null,
+    format: schema.format || null,
+    enum: Array.isArray(schema.enum) ? [...schema.enum].map((x) => JSON.stringify(x)).sort() : null,
+    required: Array.isArray(schema.required) ? [...schema.required].map(String).sort() : null,
+  };
+  if (schema.properties && typeof schema.properties === 'object' && depth < 2) {
+    fp.properties = {};
+    for (const name of Object.keys(schema.properties).sort()) {
+      const prop = schema.properties[name];
+      fp.properties[name] = {
+        type: prop?.type || null,
+        format: prop?.format || null,
+        ref: prop?.$ref || null,
+        enum: Array.isArray(prop?.enum) ? [...prop.enum].map((x) => JSON.stringify(x)).sort() : null,
+      };
+    }
+  }
+  return fp;
+}
+
+function summarizeParams(params, doc, uncertainties, opKey) {
+  const gaps = [];
+  if (!Array.isArray(params)) return { parameters: [], gaps };
   const byKey = new Map();
   for (const p of params) {
     if (!p || typeof p !== 'object') continue;
+    let param = p;
+    let ref = null;
     if (p.$ref) {
-      byKey.set(`ref:${p.$ref}`, {
-        name: null,
-        in: null,
-        required: false,
-        schemaType: null,
-        ref: p.$ref,
-      });
-      continue;
+      ref = p.$ref;
+      const resolved = resolveLocalRef(doc, p.$ref, uncertainties, opKey, gaps);
+      if (!resolved.ok) {
+        byKey.set(`ref:${p.$ref}`, {
+          name: null,
+          in: null,
+          required: null,
+          schema: { kind: 'unresolved-ref', ref: p.$ref },
+          ref: p.$ref,
+        });
+        continue;
+      }
+      param = resolved.value;
     }
-    const name = p.name || null;
-    const loc = p.in || null;
+    const name = param.name || null;
+    const loc = param.in || null;
     byKey.set(`${loc}:${name}`, {
       name,
       in: loc,
-      required: Boolean(p.required),
-      schemaType: p.schema?.type || p.type || null,
-      ref: p.schema?.$ref || null,
+      required: Boolean(param.required),
+      schema: schemaFingerprint(param.schema || (param.type ? { type: param.type } : null), doc, uncertainties, opKey, gaps),
+      ref,
     });
   }
-  return [...byKey.values()].sort((a, b) =>
-    `${a.ref || ''}:${a.in}:${a.name}`.localeCompare(`${b.ref || ''}:${b.in}:${b.name}`),
-  );
+  return {
+    parameters: [...byKey.values()].sort((a, b) =>
+      `${a.ref || ''}:${a.in}:${a.name}`.localeCompare(`${b.ref || ''}:${b.in}:${b.name}`),
+    ),
+    gaps,
+  };
 }
 
 function summarizeSecurity(opSecurity, docSecurity) {
@@ -120,35 +213,63 @@ function summarizeSecurity(opSecurity, docSecurity) {
   return { inherited, requirements: requirements.sort() };
 }
 
-function extractRequestBodyRef(rb) {
-  if (!rb || typeof rb !== 'object') return null;
-  if (rb.$ref) return rb.$ref;
-  const content = rb.content && typeof rb.content === 'object' ? rb.content : {};
-  const refs = [];
-  for (const mt of Object.keys(content).sort()) {
-    const schema = content[mt]?.schema;
-    if (schema?.$ref) refs.push(`${mt}:${schema.$ref}`);
+function summarizeRequestBody(rb, doc, uncertainties, opKey) {
+  const gaps = [];
+  if (!rb || typeof rb !== 'object') {
+    return { present: false, required: false, schema: null, gaps };
   }
-  return refs.length ? refs.join('|') : null;
+  if (rb.$ref) {
+    const resolved = resolveLocalRef(doc, rb.$ref, uncertainties, opKey, gaps);
+    if (!resolved.ok) {
+      return { present: true, required: null, schema: { kind: 'unresolved-ref', ref: rb.$ref }, gaps };
+    }
+    return summarizeRequestBody(resolved.value, doc, uncertainties, opKey);
+  }
+  const content = rb.content && typeof rb.content === 'object' ? rb.content : {};
+  const schemas = {};
+  for (const mt of Object.keys(content).sort()) {
+    schemas[mt] = schemaFingerprint(content[mt]?.schema, doc, uncertainties, opKey, gaps);
+  }
+  return {
+    present: true,
+    required: Boolean(rb.required),
+    schemas,
+    gaps,
+  };
 }
 
-function summarizeResponses(responses) {
+function summarizeResponses(responses, doc, uncertainties, opKey) {
+  const gaps = [];
   const out = [];
   for (const code of Object.keys(responses || {}).sort()) {
     const r = responses[code];
-    let ref = null;
-    const schemaRefs = [];
-    if (r && typeof r === 'object') {
-      if (r.$ref) ref = r.$ref;
-      const content = r.content && typeof r.content === 'object' ? r.content : {};
-      for (const mt of Object.keys(content).sort()) {
-        const schema = content[mt]?.schema;
-        if (schema?.$ref) schemaRefs.push(`${mt}:${schema.$ref}`);
-      }
+    if (!r || typeof r !== 'object') {
+      out.push({ code, schema: { kind: 'absent' } });
+      continue;
     }
-    out.push({ code, ref, schemaRefs });
+    if (r.$ref) {
+      const resolved = resolveLocalRef(doc, r.$ref, uncertainties, opKey, gaps);
+      if (!resolved.ok) {
+        out.push({ code, schema: { kind: 'unresolved-ref', ref: r.$ref } });
+        continue;
+      }
+      // treat resolved response object
+      const content = resolved.value.content && typeof resolved.value.content === 'object' ? resolved.value.content : {};
+      const schemas = {};
+      for (const mt of Object.keys(content).sort()) {
+        schemas[mt] = schemaFingerprint(content[mt]?.schema, doc, uncertainties, opKey, gaps);
+      }
+      out.push({ code, ref: r.$ref, schemas });
+      continue;
+    }
+    const content = r.content && typeof r.content === 'object' ? r.content : {};
+    const schemas = {};
+    for (const mt of Object.keys(content).sort()) {
+      schemas[mt] = schemaFingerprint(content[mt]?.schema, doc, uncertainties, opKey, gaps);
+    }
+    out.push({ code, ref: null, schemas });
   }
-  return out;
+  return { responses: out, gaps };
 }
 
 export function resolveUsed(usedSpec, beforeMap, afterMap) {
@@ -190,7 +311,7 @@ export function resolveUsed(usedSpec, beforeMap, afterMap) {
 }
 
 function paramSig(p) {
-  return `${p.in}|${p.name}|${p.required}|${p.schemaType}|${p.ref || ''}`;
+  return `${p.in}|${p.name}|${p.required}|${JSON.stringify(p.schema || null)}|${p.ref || ''}`;
 }
 
 function securitySig(s) {
@@ -228,7 +349,7 @@ export function diffUsedOps(beforeMap, afterMap, usedKeys) {
     if (b.deprecated !== a.deprecated) {
       fieldChanges.push({ field: 'deprecated', before: b.deprecated, after: a.deprecated });
     }
-    if (b.requestBody !== a.requestBody) {
+    if (JSON.stringify(b.requestBody) !== JSON.stringify(a.requestBody)) {
       fieldChanges.push({ field: 'requestBody', before: b.requestBody, after: a.requestBody });
     }
     if (responsesSig(b.responses) !== responsesSig(a.responses)) {
@@ -237,16 +358,21 @@ export function diffUsedOps(beforeMap, afterMap, usedKeys) {
     if (b.operationId !== a.operationId) {
       fieldChanges.push({ field: 'operationId', before: b.operationId, after: a.operationId });
     }
-    if ((b.requestBodyRef || null) !== (a.requestBodyRef || null)) {
-      fieldChanges.push({ field: 'requestBodyRef', before: b.requestBodyRef, after: a.requestBodyRef });
-    }
     if (securitySig(b.security) !== securitySig(a.security)) {
       fieldChanges.push({ field: 'security', before: b.security, after: a.security });
     }
     const bp = b.parameters.map(paramSig).join(';');
     const ap = a.parameters.map(paramSig).join(';');
     if (bp !== ap) fieldChanges.push({ field: 'parameters', before: b.parameters, after: a.parameters });
-    if (fieldChanges.length === 0) unchanged.push({ key });
+    const gaps = [...new Set([...(b.assessmentGaps || []), ...(a.assessmentGaps || [])])];
+    if (fieldChanges.length === 0 && gaps.length) {
+      unknowns.push({
+        key,
+        reason: 'assessment-gaps',
+        gaps,
+        note: 'Unexamined or unresolved dimensions present; refusing unqualified unchanged.',
+      });
+    } else if (fieldChanges.length === 0) unchanged.push({ key });
     else {
       if (
         b.operationId &&
@@ -279,6 +405,7 @@ export function compareOpenApiImpact({ beforeText, afterText, usedSpec }) {
   }
   const beforeMap = indexOperations(before.doc);
   const afterMap = indexOperations(after.doc);
+  uncertainties.push(...(beforeMap._indexUncertainties || []), ...(afterMap._indexUncertainties || []));
   const { resolved, uncertainties: u2 } = resolveUsed(usedSpec, beforeMap, afterMap);
   uncertainties.push(...u2);
   const usedKeys = [...new Set(resolved.map((r) => r.key))];

@@ -1,0 +1,74 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-pricing-table-change",
+  "inputs": {
+    "before": "/workspace/experiments/s147-record-jobs-chat-amend/repros/f2/before.json",
+    "after": "/workspace/experiments/s147-record-jobs-chat-amend/repros/f2/after.json"
+  },
+  "report": {
+    "module": "pricing-table-change",
+    "ok": true,
+    "counts": {
+      "beforeRows": 1,
+      "afterRows": 1,
+      "added": 0,
+      "removed": 0,
+      "fieldChanges": 0,
+      "unitChanges": 1,
+      "conflicting": 1,
+      "unchanged": 0
+    },
+    "added": [],
+    "removed": [],
+    "fieldChanges": [],
+    "unitChanges": [
+      {
+        "fieldKey": "egress",
+        "beforeUnit": "USD/GB",
+        "afterUnit": "USD/Gb",
+        "numericComparison": "not-applicable-across-units",
+        "beforeValueRaw": 1,
+        "afterValueRaw": 1
+      }
+    ],
+    "conflicting": [
+      {
+        "fieldKey": "egress",
+        "reason": "cross-unit-incomparable",
+        "before": {
+          "value": 1,
+          "unit": "USD/GB"
+        },
+        "after": {
+          "value": 1,
+          "unit": "USD/Gb"
+        },
+        "note": "Units differ; numeric values are not compared and are not asserted equal or changed."
+      }
+    ],
+    "unchanged": [],
+    "uncertainties": [
+      {
+        "code": "cross-unit",
+        "detail": "field egress units differ; no conversion table supplied",
+        "evidence": {
+          "fieldKey": "egress",
+          "beforeUnit": "USD/GB",
+          "afterUnit": "USD/Gb"
+        }
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Emits field/unit deltas over supplied extracted rows. Does not scrape live pages, convert currencies, or assert SKU truth."
+  }
+}

@@ -18,52 +18,141 @@ export function parseCsvFile(text, label, { columns = true, relax = true } = {})
       headers: [],
       rows: [],
       uncertainties: [uncertainty('empty-csv', `${label} is empty`)],
+      parseStatus: 'empty',
     };
   }
   try {
-    const records = parseCsv(raw, {
-      columns,
+    // Always capture the raw header record BEFORE object mapping so duplicate
+    // column names and width mismatches are visible (csv-parse object mode
+    // otherwise keeps only the last duplicate header value).
+    const matrix = parseCsv(raw, {
+      columns: false,
       skip_empty_lines: true,
-      relax_column_count: relax,
+      relax_column_count: true,
       trim: true,
       bom: true,
     });
-    if (!Array.isArray(records)) {
-      return { ok: false, error: 'unexpected-parse-result', label, headers: [], rows: [], uncertainties };
+    if (!Array.isArray(matrix) || matrix.length === 0) {
+      return {
+        ok: true,
+        label,
+        headers: [],
+        rows: [],
+        uncertainties: [uncertainty('empty-csv', `${label} has no records`)],
+        parseStatus: 'empty',
+      };
     }
-    let headers = [];
-    let rows = [];
-    if (columns) {
-      if (records.length === 0) {
-        // header-only or empty body: re-parse header line
-        const firstLine = raw.split(/\r?\n/).find((l) => l.trim());
-        headers = firstLine
-          ? parseCsv(firstLine, { columns: false, trim: true, bom: true })[0] || []
-          : [];
-        if (headers.length) uncertainties.push(uncertainty('header-only', `${label} has headers but no data rows`));
-      } else {
-        headers = Object.keys(records[0]);
-        rows = records;
-        // detect blank header names
-        for (const [i, h] of headers.entries()) {
-          if (h == null || String(h).trim() === '') {
-            uncertainties.push(uncertainty('blank-header', `blank header at index ${i}`, { index: i }));
-          }
-        }
-        // duplicate headers
-        const seen = new Map();
-        for (const h of headers) {
-          seen.set(h, (seen.get(h) || 0) + 1);
-        }
-        for (const [h, n] of seen) {
-          if (n > 1) uncertainties.push(uncertainty('duplicate-header', `header "${h}" appears ${n} times`, { header: h, count: n }));
-        }
+    const headerRecord = matrix[0].map((h) => (h == null ? '' : String(h)));
+    const dataRecords = matrix.slice(1);
+
+    // Duplicate headers: refuse object collapse; keep positional evidence.
+    const headerCounts = new Map();
+    for (const h of headerRecord) headerCounts.set(h, (headerCounts.get(h) || 0) + 1);
+    const duplicateHeaders = [...headerCounts.entries()].filter(([, n]) => n > 1).map(([h, n]) => ({ header: h, count: n }));
+    for (const [i, h] of headerRecord.entries()) {
+      if (h == null || String(h).trim() === '') {
+        uncertainties.push(uncertainty('blank-header', `blank header at index ${i}`, { index: i }));
       }
-    } else {
-      rows = records;
-      headers = records[0] ? records[0].map((_, i) => String(i)) : [];
     }
-    return { ok: true, label, headers, rows, uncertainties };
+    if (duplicateHeaders.length) {
+      uncertainties.push(
+        uncertainty('duplicate-header', 'Duplicate header names in CSV; positional compare only (object mapping would drop earlier values)', {
+          duplicates: duplicateHeaders,
+        }),
+      );
+    }
+
+    // Width checks against the actual header record (not first object keys).
+    const expectedWidth = headerRecord.length;
+    const ragged = [];
+    for (const [i, rec] of dataRecords.entries()) {
+      if (rec.length !== expectedWidth) {
+        ragged.push({ rowIndex: i, width: rec.length, expectedWidth });
+      }
+    }
+    if (ragged.length) {
+      uncertainties.push(
+        uncertainty('inconsistent-row-width', `${label} has rows whose field count differs from header width ${expectedWidth}`, {
+          expectedWidth,
+          examples: ragged.slice(0, 10),
+          count: ragged.length,
+        }),
+      );
+    }
+
+    if (!columns) {
+      return {
+        ok: true,
+        label,
+        headers: headerRecord.map((_, i) => String(i)),
+        rows: dataRecords,
+        headerRecord,
+        uncertainties,
+        parseStatus: duplicateHeaders.length || ragged.length ? 'partial' : 'ok',
+      };
+    }
+
+    // Build row objects with positional disambiguation for duplicate headers.
+    const nameCounts = new Map();
+    const objectKeys = headerRecord.map((h) => {
+      const n = (nameCounts.get(h) || 0) + 1;
+      nameCounts.set(h, n);
+      if (headerCounts.get(h) > 1) return n === 1 ? h : `${h}__${n}`;
+      return h;
+    });
+
+    if (duplicateHeaders.length) {
+      // Do not pretend unique named columns; expose positional rows for evidence.
+      return {
+        ok: true,
+        label,
+        headers: objectKeys,
+        headerRecord,
+        rows: dataRecords.map((rec) => {
+          const obj = {};
+          for (let i = 0; i < objectKeys.length; i++) {
+            obj[objectKeys[i]] = i < rec.length ? rec[i] : null;
+            if (i >= rec.length) obj.__shortRow = true;
+          }
+          if (rec.length > objectKeys.length) {
+            obj.__extraFields = rec.slice(objectKeys.length);
+          }
+          return obj;
+        }),
+        uncertainties,
+        parseStatus: 'duplicate-headers',
+        duplicateHeaders,
+      };
+    }
+
+    const rows = dataRecords.map((rec, idx) => {
+      const obj = {};
+      for (let i = 0; i < objectKeys.length; i++) {
+        obj[objectKeys[i]] = i < rec.length ? rec[i] : null;
+      }
+      if (rec.length < objectKeys.length) {
+        obj.__shortRow = true;
+        obj.__missingFieldCount = objectKeys.length - rec.length;
+      }
+      if (rec.length > objectKeys.length) {
+        obj.__extraFields = rec.slice(objectKeys.length);
+      }
+      return obj;
+    });
+
+    if (rows.length === 0) {
+      uncertainties.push(uncertainty('header-only', `${label} has headers but no data rows`));
+    }
+
+    return {
+      ok: true,
+      label,
+      headers: objectKeys,
+      headerRecord,
+      rows,
+      uncertainties,
+      parseStatus: ragged.length ? 'partial-widths' : 'ok',
+    };
   } catch (e) {
     return {
       ok: false,
@@ -73,6 +162,7 @@ export function parseCsvFile(text, label, { columns = true, relax = true } = {})
       headers: [],
       rows: [],
       uncertainties,
+      parseStatus: 'error',
     };
   }
 }
@@ -98,8 +188,9 @@ export function compareCsvDrift(beforeText, afterText, opts = {}) {
     };
   }
 
-  const beforeHeaders = before.headers;
-  const afterHeaders = after.headers;
+  // Prefer raw header records for schema drift so short data rows cannot invent column removals.
+  const beforeHeaders = before.headerRecord || before.headers;
+  const afterHeaders = after.headerRecord || after.headers;
   const beforeSet = new Set(beforeHeaders);
   const afterSet = new Set(afterHeaders);
   const columnsAdded = afterHeaders.filter((h) => !beforeSet.has(h));
@@ -109,6 +200,26 @@ export function compareCsvDrift(beforeText, afterText, opts = {}) {
     columnsShared.length === beforeHeaders.length &&
     columnsShared.length === afterHeaders.length &&
     beforeHeaders.join('\0') !== afterHeaders.join('\0');
+  if (before.parseStatus === 'duplicate-headers' || after.parseStatus === 'duplicate-headers') {
+    uncertainties.push(
+      uncertainty(
+        'duplicate-header-blocks-named-compare',
+        'Duplicate headers present; named column identity is ambiguous. Schema uses positional header records.',
+      ),
+    );
+  }
+  // Short/wide rows are row-level partials, not schema changes.
+  const shortOrWide =
+    before.rows.some((r) => r && (r.__shortRow || r.__extraFields)) ||
+    after.rows.some((r) => r && (r.__shortRow || r.__extraFields));
+  if (shortOrWide) {
+    uncertainties.push(
+      uncertainty(
+        'row-width-partial',
+        'One or more data rows differ in width from the header record; treated as partial rows, not schema column add/remove.',
+      ),
+    );
+  }
 
   // Keyed row drift when keys provided and present in both
   let rowDrift = { mode: 'unkeyed-count-only', added: null, removed: null, changed: null };
@@ -134,6 +245,14 @@ export function compareCsvDrift(beforeText, afterText, opts = {}) {
         }),
       );
       rowDrift = { mode: 'keys-unavailable', missingKeys };
+    } else if (before.parseStatus === 'duplicate-headers' || after.parseStatus === 'duplicate-headers') {
+      rowDrift = {
+        mode: 'duplicate-headers-blocked',
+        keyColumns,
+        note: 'Refusing keyed compare: duplicate headers would drop earlier column values under object mapping.',
+        beforeParseStatus: before.parseStatus,
+        afterParseStatus: after.parseStatus,
+      };
     } else {
       const bMap = new Map();
       const aMap = new Map();
@@ -185,9 +304,25 @@ export function compareCsvDrift(beforeText, afterText, opts = {}) {
             const br = bMap.get(k);
             const fields = [];
             for (const col of columnsShared) {
+              if (col.startsWith('__')) continue;
               if (JSON.stringify(br[col] ?? null) !== JSON.stringify(row[col] ?? null)) {
                 fields.push({ column: col, before: br[col] ?? null, after: row[col] ?? null });
               }
+            }
+            // Preserve evidence from width overflow that object mapping would discard.
+            const bExtra = br.__extraFields ?? null;
+            const aExtra = row.__extraFields ?? null;
+            if (JSON.stringify(bExtra) !== JSON.stringify(aExtra)) {
+              fields.push({ column: '__extraFields', before: bExtra, after: aExtra });
+            }
+            const bShort = Boolean(br.__shortRow);
+            const aShort = Boolean(row.__shortRow);
+            if (bShort !== aShort || (br.__missingFieldCount || 0) !== (row.__missingFieldCount || 0)) {
+              fields.push({
+                column: '__rowWidth',
+                before: { short: bShort, missingFieldCount: br.__missingFieldCount || 0 },
+                after: { short: aShort, missingFieldCount: row.__missingFieldCount || 0 },
+              });
             }
             if (fields.length) changed.push({ key: k, fields });
           }
@@ -234,6 +369,7 @@ export function compareCsvDrift(beforeText, afterText, opts = {}) {
   const hasSchemaDrift = columnsAdded.length + columnsRemoved.length > 0 || columnsReordered;
   const hasRowSignal =
     rowDrift.mode === 'duplicate-keys-blocked' ||
+    rowDrift.mode === 'duplicate-headers-blocked' ||
     (rowDrift.mode === 'keyed' &&
       (rowDrift.addedCount > 0 || rowDrift.removedCount > 0 || rowDrift.changedCount > 0)) ||
     (rowDrift.mode === 'unkeyed-count-only' && rowDrift.rowCountDelta !== 0);

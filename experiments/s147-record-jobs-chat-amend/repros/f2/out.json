@@ -1,0 +1,45 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-pricing-table-change",
+  "inputs": {
+    "before": "/tmp/s147-repro/f2/before.json",
+    "after": "/tmp/s147-repro/f2/after.json"
+  },
+  "report": {
+    "module": "pricing-table-change",
+    "ok": true,
+    "counts": {
+      "beforeRows": 1,
+      "afterRows": 1,
+      "added": 0,
+      "removed": 0,
+      "fieldChanges": 0,
+      "unitChanges": 0,
+      "conflicting": 0,
+      "unchanged": 1
+    },
+    "added": [],
+    "removed": [],
+    "fieldChanges": [],
+    "unitChanges": [],
+    "conflicting": [],
+    "unchanged": [
+      {
+        "fieldKey": "egress"
+      }
+    ],
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "No field/unit deltas (or only empty/unknown inputs). Still not a marketplace price proof."
+  }
+}

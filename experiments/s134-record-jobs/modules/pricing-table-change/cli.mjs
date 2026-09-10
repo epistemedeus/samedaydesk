@@ -9,8 +9,10 @@ import { fileURLToPath } from 'node:url';
 import { emit, parseArgs, uncertainty, FREE_BASELINE, stableSort } from '../../lib/common.mjs';
 
 function normalizeUnit(u) {
+  // Preserve case: USD/GB and USD/Gb are not equivalent. Only trim whitespace.
+  // No silent alias folding / case-folding without an explicit equivalence table.
   if (u == null || u === '') return null;
-  return String(u).trim().toLowerCase();
+  return String(u).trim();
 }
 
 function normalizeField(f) {

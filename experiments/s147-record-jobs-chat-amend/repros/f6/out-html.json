@@ -1,0 +1,59 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-rss-atom-brief",
+  "inputs": {
+    "before": "/tmp/s147-repro/f6/before.xml",
+    "after": "/tmp/s147-repro/f6/html.xml"
+  },
+  "report": {
+    "module": "rss-atom-brief",
+    "ok": true,
+    "beforeKind": "rss",
+    "afterKind": "unknown",
+    "added": [],
+    "removed": [
+      {
+        "key": "urn:x",
+        "item": {
+          "id": "urn:x",
+          "guid": "urn:x",
+          "link": null,
+          "title": "T",
+          "updated": null
+        }
+      }
+    ],
+    "corrected": [],
+    "conflicting": [],
+    "unchangedCount": 0,
+    "dedupBrief": {
+      "beforeRawCount": 1,
+      "afterRawCount": 0,
+      "beforeUniqueKeys": 1,
+      "afterUniqueKeys": 0,
+      "beforeDuplicateKeys": 0,
+      "afterDuplicateKeys": 0,
+      "uniqueCountDelta": -1
+    },
+    "truncated": false,
+    "uncertainties": [
+      {
+        "code": "unknown-feed-kind",
+        "detail": "Not recognized as RSS channel or Atom feed",
+        "evidence": {}
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Briefs item add/remove/title-link-updated corrections and dedup-key counts over supplied XML. Does not poll feeds, push alerts, or assert content authenticity."
+  }
+}

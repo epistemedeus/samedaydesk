@@ -86,12 +86,16 @@ function normalizeItem(it, kind, idx, uncertainties, label = 'feed') {
   let link = null;
   let title = null;
   let updated = null;
+  let description = null;
+  let content = null;
   if (kind === 'rss') {
     title = textOf(it.title);
     link = textOf(it.link);
     guid = textOf(it.guid);
     id = guid || link || null;
     updated = textOf(it.pubDate) || textOf(it['dc:date']) || null;
+    description = textOf(it.description);
+    content = textOf(it['content:encoded']) || textOf(it.content) || null;
   } else {
     title = textOf(it.title);
     id = textOf(it.id);
@@ -100,6 +104,9 @@ function normalizeItem(it, kind, idx, uncertainties, label = 'feed') {
     const alt = links.find((l) => !l['@_rel'] || l['@_rel'] === 'alternate') || links[0];
     link = textOf(alt) || (alt && alt['@_href']) || null;
     guid = id;
+    // Atom body: content / summary (bounded text only; no HTML interpretation engine)
+    content = textOf(it.content);
+    description = textOf(it.summary);
   }
   if (!id && !link && !title) {
     // Empty-string title (e.g. <title></title>) is not an identity.
@@ -138,9 +145,11 @@ function normalizeItem(it, kind, idx, uncertainties, label = 'feed') {
     link,
     title,
     updated,
+    description,
+    content,
     dateInfo,
     fingerprint,
-    raw: { title, link, id, guid, updated },
+    raw: { title, link, id, guid, updated, description, content },
   };
 }
 
@@ -190,25 +199,71 @@ export function compareFeeds(beforeXml, afterXml) {
     );
   }
 
-  const bMap = new Map();
-  const aMap = new Map();
-  const bDup = [];
-  const aDup = [];
-  for (const it of before.items) {
-    const k = dedupKey(it);
-    if (bMap.has(k)) bDup.push(k);
-    bMap.set(k, it);
+  const comparableKinds = new Set(['rss', 'atom']);
+  const beforeComparable = comparableKinds.has(before.kind);
+  const afterComparable = comparableKinds.has(after.kind);
+  // F6: empty/non-feed inputs are not empty snapshots for definitive removals.
+  if (!beforeComparable || !afterComparable) {
+    uncertainties.push(
+      uncertainty(
+        'incomparable-feed-snapshot',
+        `Comparison gated: before kind=${before.kind}, after kind=${after.kind}. Empty or non-feed input is not treated as a zero-item feed.`,
+        { beforeKind: before.kind, afterKind: after.kind },
+      ),
+    );
+    return {
+      module: 'rss-atom-brief',
+      ok: true,
+      comparable: false,
+      comparisonStatus: 'indeterminate',
+      beforeKind: before.kind,
+      afterKind: after.kind,
+      added: [],
+      removed: [],
+      corrected: [],
+      conflicting: [],
+      unchangedCount: 0,
+      metadataUnchangedCount: 0,
+      coverage: {
+        comparedFields: [],
+        note: 'No definitive add/remove/correct counts because one or both inputs are not recognizable feed snapshots.',
+      },
+      dedupBrief: {
+        beforeRawCount: before.items.length,
+        afterRawCount: after.items.length,
+        beforeUniqueKeys: 0,
+        afterUniqueKeys: 0,
+        beforeDuplicateKeys: 0,
+        afterDuplicateKeys: 0,
+        uniqueCountDelta: 0,
+      },
+      truncated: false,
+      uncertainties,
+      freeBaseline: FREE_BASELINE,
+      differenceInDeliveredOutput:
+        'Indeterminate feed comparison: unavailable/empty/non-feed input does not authorize definitive removals or unchanged counts.',
+    };
   }
-  for (const it of after.items) {
-    const k = dedupKey(it);
-    if (aMap.has(k)) aDup.push(k);
-    aMap.set(k, it);
+
+  // Group by identity key; do not last-write-wins (F4).
+  function groupByKey(items) {
+    const map = new Map();
+    for (const it of items) {
+      const k = dedupKey(it);
+      if (!map.has(k)) map.set(k, []);
+      map.get(k).push(it);
+    }
+    return map;
   }
+  const bGroups = groupByKey(before.items);
+  const aGroups = groupByKey(after.items);
+  const bDup = [...bGroups.entries()].filter(([, list]) => list.length > 1).map(([k]) => k);
+  const aDup = [...aGroups.entries()].filter(([, list]) => list.length > 1).map(([k]) => k);
   if (bDup.length) {
-    uncertainties.push(uncertainty('duplicates-before', 'Duplicate identity keys in before', { count: bDup.length, keys: bDup.slice(0, 10) }));
+    uncertainties.push(uncertainty('duplicates-before', 'Duplicate identity keys in before; differing candidates stay ambiguous', { count: bDup.length, keys: bDup.slice(0, 10) }));
   }
   if (aDup.length) {
-    uncertainties.push(uncertainty('duplicates-after', 'Duplicate identity keys in after', { count: aDup.length, keys: aDup.slice(0, 10) }));
+    uncertainties.push(uncertainty('duplicates-after', 'Duplicate identity keys in after; differing candidates stay ambiguous', { count: aDup.length, keys: aDup.slice(0, 10) }));
   }
 
   const added = [];
@@ -216,57 +271,116 @@ export function compareFeeds(beforeXml, afterXml) {
   const corrected = [];
   const unchanged = [];
   const conflicting = [];
+  const comparedFields = ['title', 'link', 'updated', 'description', 'content'];
 
-  for (const [k, it] of aMap) {
-    if (!bMap.has(k)) added.push({ key: k, item: summarize(it) });
-    else {
-      const prev = bMap.get(k);
-      const changes = [];
-      if ((prev.title || null) !== (it.title || null)) changes.push({ field: 'title', before: prev.title, after: it.title });
-      if ((prev.link || null) !== (it.link || null)) changes.push({ field: 'link', before: prev.link, after: it.link });
-      if ((prev.updated || null) !== (it.updated || null)) {
-        const beforeAmb = prev.dateInfo?.ambiguous || classifyDate(prev.updated).ambiguous;
-        const afterAmb = it.dateInfo?.ambiguous || classifyDate(it.updated).ambiguous;
-        if (beforeAmb || afterAmb) {
-          changes.push({
-            field: 'updated',
+  function itemSig(it) {
+    return JSON.stringify({
+      title: it.title || null,
+      link: it.link || null,
+      updated: it.updated || null,
+      description: it.description || null,
+      content: it.content || null,
+      id: it.id || null,
+      guid: it.guid || null,
+    });
+  }
+
+  function collapseExact(list) {
+    const uniq = [];
+    const seen = new Set();
+    for (const it of list) {
+      const s = itemSig(it);
+      if (!seen.has(s)) {
+        seen.add(s);
+        uniq.push(it);
+      }
+    }
+    return uniq;
+  }
+
+  const allKeys = new Set([...bGroups.keys(), ...aGroups.keys()]);
+  for (const k of [...allKeys].sort()) {
+    const bList = collapseExact(bGroups.get(k) || []);
+    const aList = collapseExact(aGroups.get(k) || []);
+    if (bList.length === 0 && aList.length === 1) {
+      added.push({ key: k, item: summarize(aList[0]) });
+      continue;
+    }
+    if (bList.length === 1 && aList.length === 0) {
+      removed.push({ key: k, item: summarize(bList[0]) });
+      continue;
+    }
+    if (bList.length === 0 && aList.length === 0) continue;
+    if (bList.length > 1 || aList.length > 1) {
+      conflicting.push({
+        key: k,
+        reason: 'duplicate-identity-ambiguous',
+        beforeCandidates: bList.map(summarize),
+        afterCandidates: aList.map(summarize),
+        note: 'Multiple distinct records share this identity key; refusing definitive changed/unchanged.',
+      });
+      continue;
+    }
+    const prev = bList[0];
+    const it = aList[0];
+    const changes = [];
+    if ((prev.title || null) !== (it.title || null)) changes.push({ field: 'title', before: prev.title, after: it.title });
+    if ((prev.link || null) !== (it.link || null)) changes.push({ field: 'link', before: prev.link, after: it.link });
+    if ((prev.description || null) !== (it.description || null)) {
+      changes.push({ field: 'description', before: prev.description, after: it.description });
+    }
+    if ((prev.content || null) !== (it.content || null)) {
+      changes.push({ field: 'content', before: prev.content, after: it.content });
+    }
+    if ((prev.updated || null) !== (it.updated || null)) {
+      const beforeAmb = prev.dateInfo?.ambiguous || classifyDate(prev.updated).ambiguous;
+      const afterAmb = it.dateInfo?.ambiguous || classifyDate(it.updated).ambiguous;
+      if (beforeAmb || afterAmb) {
+        changes.push({
+          field: 'updated',
+          before: prev.updated,
+          after: it.updated,
+          ambiguity: true,
+          note: 'date token(s) ambiguous or unparseable; correction recorded without asserting chronological order',
+        });
+        uncertainties.push(
+          uncertainty('date-ambiguity-correction', `item ${k} updated field changed with ambiguous date(s)`, {
+            key: k,
             before: prev.updated,
             after: it.updated,
-            ambiguity: true,
-            note: 'date token(s) ambiguous or unparseable; correction recorded without asserting chronological order',
-          });
-          uncertainties.push(
-            uncertainty('date-ambiguity-correction', `item ${k} updated field changed with ambiguous date(s)`, {
-              key: k,
-              before: prev.updated,
-              after: it.updated,
-            }),
-          );
-        } else {
-          changes.push({ field: 'updated', before: prev.updated, after: it.updated });
-        }
+          }),
+        );
+      } else {
+        changes.push({ field: 'updated', before: prev.updated, after: it.updated });
       }
-      if ((prev.id || null) !== (it.id || null) && (prev.guid || null) !== (it.guid || null)) {
-        // same dedup key but id/guid representation shifted
-        conflicting.push({ key: k, note: 'identity fields disagree under shared dedup key', before: summarize(prev), after: summarize(it) });
-      }
-      if (changes.length) corrected.push({ key: k, changes });
-      else unchanged.push({ key: k });
     }
-  }
-  for (const [k, it] of bMap) {
-    if (!aMap.has(k)) removed.push({ key: k, item: summarize(it) });
+    if ((prev.id || null) !== (it.id || null) && (prev.guid || null) !== (it.guid || null)) {
+      conflicting.push({
+        key: k,
+        note: 'identity fields disagree under shared dedup key',
+        before: summarize(prev),
+        after: summarize(it),
+      });
+    }
+    // Title-only identity is weak: do not treat as strong unique identity when both lack id/guid/link
+    const weakIdentity = !prev.id && !prev.guid && !prev.link && !it.id && !it.guid && !it.link;
+    if (weakIdentity && changes.length === 0) {
+      uncertainties.push(
+        uncertainty('weak-title-only-identity', `item ${k} matched on title only; identity not unique`, { key: k }),
+      );
+    }
+    if (changes.length) corrected.push({ key: k, changes });
+    else unchanged.push({ key: k });
   }
 
-  // Dedup change brief: how many unique keys vs raw item counts
   const dedupBrief = {
     beforeRawCount: before.items.length,
     afterRawCount: after.items.length,
-    beforeUniqueKeys: bMap.size,
-    afterUniqueKeys: aMap.size,
+    beforeUniqueKeys: bGroups.size,
+    afterUniqueKeys: aGroups.size,
     beforeDuplicateKeys: bDup.length,
     afterDuplicateKeys: aDup.length,
-    uniqueCountDelta: aMap.size - bMap.size,
+    uniqueCountDelta: aGroups.size - bGroups.size,
   };
 
   const hasSignal =
@@ -277,6 +391,8 @@ export function compareFeeds(beforeXml, afterXml) {
   return {
     module: 'rss-atom-brief',
     ok: true,
+    comparable: true,
+    comparisonStatus: 'comparable',
     beforeKind: before.kind,
     afterKind: after.kind,
     added: stableSort(added, (x) => x.key).slice(0, 100),
@@ -284,18 +400,31 @@ export function compareFeeds(beforeXml, afterXml) {
     corrected: stableSort(corrected, (x) => x.key).slice(0, 100),
     conflicting: stableSort(conflicting, (x) => x.key).slice(0, 50),
     unchangedCount: unchanged.length,
+    metadataUnchangedCount: unchanged.length,
+    coverage: {
+      comparedFields,
+      note: 'Compares title/link/updated plus bounded description/content text when present. Not a full RSS/Atom standards engine.',
+    },
     dedupBrief,
     truncated: added.length > 100 || removed.length > 100 || corrected.length > 100,
     uncertainties,
     freeBaseline: FREE_BASELINE,
     differenceInDeliveredOutput: hasSignal
-      ? 'Briefs item add/remove/title-link-updated corrections and dedup-key counts over supplied XML. Does not poll feeds, push alerts, or assert content authenticity.'
-      : 'No correction/dedup signal (or empty feeds). Still not a monitoring product.',
+      ? 'Briefs item add/remove/title-link-updated-description/content corrections and dedup-key counts over supplied XML. Does not poll feeds, push alerts, or assert content authenticity.'
+      : 'No correction/dedup signal on comparable feed snapshots. Still not a monitoring product.',
   };
 }
 
 function summarize(it) {
-  return { id: it.id, guid: it.guid, link: it.link, title: it.title, updated: it.updated };
+  return {
+    id: it.id,
+    guid: it.guid,
+    link: it.link,
+    title: it.title,
+    updated: it.updated,
+    description: it.description ?? null,
+    content: it.content ?? null,
+  };
 }
 
 export function main(argv = process.argv.slice(2)) {

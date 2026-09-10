@@ -1,0 +1,42 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-rss-atom-brief",
+  "inputs": {
+    "before": "/tmp/s147-repro/f5/before.xml",
+    "after": "/tmp/s147-repro/f5/after.xml"
+  },
+  "report": {
+    "module": "rss-atom-brief",
+    "ok": true,
+    "beforeKind": "rss",
+    "afterKind": "rss",
+    "added": [],
+    "removed": [],
+    "corrected": [],
+    "conflicting": [],
+    "unchangedCount": 1,
+    "dedupBrief": {
+      "beforeRawCount": 1,
+      "afterRawCount": 1,
+      "beforeUniqueKeys": 1,
+      "afterUniqueKeys": 1,
+      "beforeDuplicateKeys": 0,
+      "afterDuplicateKeys": 0,
+      "uniqueCountDelta": 0
+    },
+    "truncated": false,
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "No correction/dedup signal (or empty feeds). Still not a monitoring product."
+  }
+}

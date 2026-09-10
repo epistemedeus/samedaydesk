@@ -1,0 +1,6 @@
+{
+  "name": "@samedaydesk/s147-record-jobs-chat-amend",
+  "private": true,
+  "version": "0.1.0",
+  "description": "S147 owner dispositions + CLI receipts for chat advisory amend of S134/S142"
+}

@@ -92,3 +92,7 @@ Applied on branch `codex/s142-record-jobs-final-20260910` without duplicating S1
 - RSS: `missing-item-id` + `date-ambiguity` exposed
 
 Regressions: +4 tests (32/32). Consumer verification lives in `experiments/s142-record-jobs-final/`.
+
+## S147 chat-advisory amend
+
+Branch `codex/s147-record-jobs-chat-amend-20260910` preserves S142 gates and closes remaining F1–F6 cases (local-ref/schema OpenAPI coverage, unit case preservation, CSV header/width evidence, feed duplicate ambiguity, body coverage, non-feed indeterminate). Receipt: `experiments/s147-record-jobs-chat-amend/RESULT.md`.

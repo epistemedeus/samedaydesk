@@ -1,0 +1,82 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-csv-drift",
+  "inputs": {
+    "before": "/workspace/experiments/s147-record-jobs-chat-amend/repros/f4/before.csv",
+    "after": "/workspace/experiments/s147-record-jobs-chat-amend/repros/f4/after.csv",
+    "keyColumns": [
+      "id"
+    ]
+  },
+  "report": {
+    "module": "csv-drift",
+    "ok": true,
+    "schema": {
+      "beforeHeaders": [
+        "id",
+        "v"
+      ],
+      "afterHeaders": [
+        "id",
+        "v"
+      ],
+      "columnsAdded": [],
+      "columnsRemoved": [],
+      "columnsReordered": false,
+      "columnsShared": [
+        "id",
+        "v"
+      ]
+    },
+    "rowDrift": {
+      "mode": "duplicate-keys-blocked",
+      "keyColumns": [
+        "id"
+      ],
+      "duplicateKeysBefore": [
+        "\"x\""
+      ],
+      "duplicateKeysAfter": [
+        "\"x\""
+      ],
+      "beforeRowCount": 2,
+      "afterRowCount": 2,
+      "note": "Refusing keyed add/remove/change: duplicate keys would silently overwrite rows."
+    },
+    "missingCellRate": 0,
+    "uncertainties": [
+      {
+        "code": "duplicate-keys-before",
+        "detail": "Duplicate key rows in before; keyed compare blocked to avoid silent last-wins overwrite",
+        "evidence": {
+          "count": 1,
+          "keys": [
+            "\"x\""
+          ]
+        }
+      },
+      {
+        "code": "duplicate-keys-after",
+        "detail": "Duplicate key rows in after; keyed compare blocked to avoid silent last-wins overwrite",
+        "evidence": {
+          "count": 1,
+          "keys": [
+            "\"x\""
+          ]
+        }
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Reports schema column add/remove/reorder and keyed row deltas when keys are supplied. Without keys, only row-count delta is stated (identity unknown). Not a warehouse migration plan."
+  }
+}

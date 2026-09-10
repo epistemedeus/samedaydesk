@@ -1,0 +1,88 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-csv-drift",
+  "inputs": {
+    "before": "/workspace/experiments/s147-record-jobs-chat-amend/repros/f3/dup-before.csv",
+    "after": "/workspace/experiments/s147-record-jobs-chat-amend/repros/f3/dup-after.csv",
+    "keyColumns": [
+      "id"
+    ]
+  },
+  "report": {
+    "module": "csv-drift",
+    "ok": true,
+    "schema": {
+      "beforeHeaders": [
+        "id",
+        "v",
+        "v"
+      ],
+      "afterHeaders": [
+        "id",
+        "v",
+        "v"
+      ],
+      "columnsAdded": [],
+      "columnsRemoved": [],
+      "columnsReordered": false,
+      "columnsShared": [
+        "id",
+        "v",
+        "v"
+      ]
+    },
+    "rowDrift": {
+      "mode": "duplicate-headers-blocked",
+      "keyColumns": [
+        "id"
+      ],
+      "note": "Refusing keyed compare: duplicate headers would drop earlier column values under object mapping.",
+      "beforeParseStatus": "duplicate-headers",
+      "afterParseStatus": "duplicate-headers"
+    },
+    "missingCellRate": 0,
+    "uncertainties": [
+      {
+        "code": "duplicate-header",
+        "detail": "Duplicate header names in CSV; positional compare only (object mapping would drop earlier values)",
+        "evidence": {
+          "duplicates": [
+            {
+              "header": "v",
+              "count": 2
+            }
+          ]
+        }
+      },
+      {
+        "code": "duplicate-header",
+        "detail": "Duplicate header names in CSV; positional compare only (object mapping would drop earlier values)",
+        "evidence": {
+          "duplicates": [
+            {
+              "header": "v",
+              "count": 2
+            }
+          ]
+        }
+      },
+      {
+        "code": "duplicate-header-blocks-named-compare",
+        "detail": "Duplicate headers present; named column identity is ambiguous. Schema uses positional header records.",
+        "evidence": {}
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Reports schema column add/remove/reorder and keyed row deltas when keys are supplied. Without keys, only row-count delta is stated (identity unknown). Not a warehouse migration plan."
+  }
+}
