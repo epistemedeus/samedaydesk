@@ -7,7 +7,7 @@ Date: 2026-09-10. Owner: Pilot Market Distribution R2 (`32d5b452`).
 - Repository: `epistemedeus/samedaydesk`
 - Branch: `codex/r2-distribution-07-20260910`
 - Pin: `2b80f38a4e5ec5f080d1764de7c539af63190012`
-- Local commit (feature): `TIP_PLACEHOLDER`
+- Local commit (feature): `1d4cc224be759a2a6d280a8c6aeebafa1e42e251`
 - Worktree: `/workspace/pilot/worktrees/r2-distribution-07-20260910`
 - Scope: `experiments/scale-r2-20260910/distribution/07`
 - Remote: pushed `origin/codex/r2-distribution-07-20260910`
@@ -31,7 +31,7 @@ Date: 2026-09-10. Owner: Pilot Market Distribution R2 (`32d5b452`).
 
 ## Tests (this VM)
 
-- `npm run test:r2-distribution-07`: **TESTS_PLACEHOLDER**
+- `npm run test:r2-distribution-07`: **15 pass / 0 fail**
   (positive ready_handoff, kill-has-fix, kill-resolved, negative malformed, partial blocked_missing_input, unavailable, no_users, unavailable≠no_users, validate rejects revenue claim / smuggled kill commands / collapsed labels)
 - `node .../src/cli.mjs demo`: ready handoff for unresolved request; kill path empty commands; Grexal S149 hints (0.02 pricing ≠ revenue); distinct unavailable/no_users
 
