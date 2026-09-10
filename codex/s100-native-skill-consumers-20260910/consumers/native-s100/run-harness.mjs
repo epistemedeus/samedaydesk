@@ -8,12 +8,39 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const argv = process.argv.slice(2);
+if (argv.includes('--verify-only') || argv.includes('--verify-only')) {
+  // Offline acceptance against sanitized artifacts. Never launches models.
+  const { spawnSync } = await import('node:child_process');
+  const forwarded = argv.filter((a) => a !== '--verify-only' && a !== '--verify-only');
+  const result = spawnSync(process.execPath, [path.join(__dirname, 'verify-only.mjs'), ...forwarded], {
+    stdio: 'inherit',
+    env: process.env,
+  });
+  process.exit(result.status ?? 1);
+}
+if (argv.includes('--help') || argv.includes('-h')) {
+  console.log(`S100 native harness
+
+Offline (default for Root handoff acceptance):
+  node consumers/native-s100/run-harness.mjs --verify-only
+  node consumers/native-s100/verify-only.mjs
+
+Local model re-execution (optional; not required to verify S100 evidence):
+  S100_SKILLS_ROOT=... S100_MERCHANT_DIR=... S100_STATUS_DIR=... \\
+    node consumers/native-s100/run-harness.mjs [case-id ...]
+
+--verify-only never launches models, opens network, signs, or calls paid gateways.
+`);
+  process.exit(0);
+}
+
 const SKILLS_ROOT = process.env.S100_SKILLS_ROOT
   ? path.resolve(process.env.S100_SKILLS_ROOT)
   : path.resolve(__dirname, '../..');
 const STATUS = process.env.S100_STATUS_DIR || '/tmp/s100-status';
 const casesDoc = JSON.parse(fs.readFileSync(path.join(__dirname, 'cases.json'), 'utf8'));
-const selected = process.argv.slice(2);
+const selected = argv.filter((a) => !a.startsWith('--'));
 const toRun = selected.length
   ? casesDoc.cases.filter((c) => selected.includes(c.id))
   : casesDoc.cases;
@@ -104,7 +131,7 @@ function launchCase(spec) {
     env: {
       ...process.env,
       PATH: `/home/ubuntu/.grok/bin:${process.env.PATH || ''}`,
-      S100_MERCHANT_DIR: '/tmp/s100-work/merchant',
+      S100_MERCHANT_DIR: process.env.S100_MERCHANT_DIR || '',
       S100_CASE_ID: spec.id,
     },
   });

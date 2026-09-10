@@ -1,0 +1,329 @@
+{
+  "title": "S100 native run provenance (compact)",
+  "skillsPin": "82d0f019713c7223898806144da08fdbeed5c666",
+  "merchantPin": "8104629651fb31ea9fd4873de0017fa36b8bb0da",
+  "model": "grok-4.6",
+  "reasoningEffort": "xhigh",
+  "noRawTranscripts": true,
+  "noPrivatePrompts": true,
+  "sequentialCohorts": {
+    "description": "Three sequential cohorts. Not 16-way concurrent. Peak process counts are per-cohort overlap, not a permanent ceiling.",
+    "cohorts": [
+      {
+        "id": "c1",
+        "launched": 9,
+        "peakGrokModelProcs": 11,
+        "startedAfter": "cold start"
+      },
+      {
+        "id": "c2",
+        "launched": 3,
+        "peakGrokModelProcs": 3,
+        "startedAfter": "c1 completion"
+      },
+      {
+        "id": "c3",
+        "launched": 4,
+        "peakGrokModelProcs": 4,
+        "startedAfter": "c2 completion"
+      }
+    ],
+    "totalAcceptedConsumers": 16
+  },
+  "cohorts": [
+    {
+      "id": "c1",
+      "caseCount": 9,
+      "caseIds": [
+        "catalog-purchase-intent",
+        "company-enrich-owner-qa",
+        "contract-search-secret-refuse",
+        "extract-402-stop",
+        "payment-offer-preflight-live",
+        "repo-scan-owner-qa",
+        "schema-generate-owner-qa",
+        "settlement-proof-owner-qa",
+        "wallet-policy-free-path"
+      ],
+      "window": {
+        "startedAt": "2026-09-10T07:49:48.494Z",
+        "finishedAt": "2026-09-10T07:54:34.062Z"
+      },
+      "peakGrokModelProcs": 11,
+      "startedAfter": "cold start",
+      "memorySamples": [
+        {
+          "kind": "cohort_start",
+          "at": "2026-09-10T07:49:48.493Z",
+          "MemTotal": 16791945216,
+          "MemAvailable": 11194241024,
+          "reserve25": 4197986304,
+          "freeAfterReserve": 6996254720,
+          "psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "size": 9,
+          "caseIds": [
+            "catalog-purchase-intent",
+            "extract-402-stop",
+            "payment-offer-preflight-live",
+            "company-enrich-owner-qa",
+            "contract-search-secret-refuse",
+            "repo-scan-owner-qa",
+            "schema-generate-owner-qa",
+            "settlement-proof-owner-qa",
+            "wallet-policy-free-path"
+          ]
+        },
+        {
+          "kind": "peak_sample",
+          "at": "2026-09-10T07:50:26Z",
+          "MemTotal": 16791945216,
+          "MemAvailable": 10743504896,
+          "grokModelProcs": 11,
+          "jsonlBytes": {
+            "extract-402-stop.jsonl": 280971,
+            "company-enrich-owner-qa.jsonl": 164643,
+            "settlement-proof-owner-qa.jsonl": 220476,
+            "catalog-purchase-intent.jsonl": 306538,
+            "repo-scan-owner-qa.jsonl": 170225,
+            "wallet-policy-free-path.jsonl": 280234,
+            "schema-generate-owner-qa.jsonl": 202466,
+            "payment-offer-preflight-live.jsonl": 180823,
+            "contract-search-secret-refuse.jsonl": 230210
+          }
+        }
+      ],
+      "cases": [
+        {
+          "id": "catalog-purchase-intent",
+          "sessionId": "01a08a4b-5859-77a1-ba2a-04cee4cdc5d0",
+          "pid": 25775,
+          "startedAt": "2026-09-10T07:49:48.494Z",
+          "finishedAt": "2026-09-10T07:52:35.993Z",
+          "latencyMs": 167499,
+          "exitCode": 0,
+          "acceptanceOk": true
+        },
+        {
+          "id": "company-enrich-owner-qa",
+          "sessionId": "01a08a4b-5863-7202-8a52-df08e81fbf58",
+          "pid": 25778,
+          "startedAt": "2026-09-10T07:49:48.500Z",
+          "finishedAt": "2026-09-10T07:51:28.115Z",
+          "latencyMs": 99615,
+          "exitCode": 0,
+          "acceptanceOk": true
+        },
+        {
+          "id": "contract-search-secret-refuse",
+          "sessionId": "01a08a4b-5880-7b00-acdf-302c1287703b",
+          "pid": 25779,
+          "startedAt": "2026-09-10T07:49:48.505Z",
+          "finishedAt": "2026-09-10T07:50:39.918Z",
+          "latencyMs": 51413,
+          "exitCode": 0,
+          "acceptanceOk": true
+        },
+        {
+          "id": "extract-402-stop",
+          "sessionId": "01a08a4b-5885-7752-aff8-ee14df6bd0df",
+          "pid": 25776,
+          "startedAt": "2026-09-10T07:49:48.496Z",
+          "finishedAt": "2026-09-10T07:51:30.113Z",
+          "latencyMs": 101617,
+          "exitCode": 0,
+          "acceptanceOk": true
+        },
+        {
+          "id": "payment-offer-preflight-live",
+          "sessionId": "01a08a4b-5852-7c93-8430-53ad95731bab",
+          "pid": 25777,
+          "startedAt": "2026-09-10T07:49:48.498Z",
+          "finishedAt": "2026-09-10T07:54:34.062Z",
+          "latencyMs": 285564,
+          "exitCode": 0,
+          "acceptanceOk": true
+        },
+        {
+          "id": "repo-scan-owner-qa",
+          "sessionId": "01a08a4b-58b5-7852-a3ec-a2330913c0bb",
+          "pid": 25780,
+          "startedAt": "2026-09-10T07:49:48.506Z",
+          "finishedAt": "2026-09-10T07:51:39.674Z",
+          "latencyMs": 111168,
+          "exitCode": 0,
+          "acceptanceOk": true
+        },
+        {
+          "id": "schema-generate-owner-qa",
+          "sessionId": "01a08a4b-58a4-73e0-9120-170bb0a3d27c",
+          "pid": 25781,
+          "startedAt": "2026-09-10T07:49:48.512Z",
+          "finishedAt": "2026-09-10T07:51:38.515Z",
+          "latencyMs": 110003,
+          "exitCode": 0,
+          "acceptanceOk": true
+        },
+        {
+          "id": "settlement-proof-owner-qa",
+          "sessionId": "01a08a4b-5893-7bb1-8aeb-84c6d60da3db",
+          "pid": 25782,
+          "startedAt": "2026-09-10T07:49:48.520Z",
+          "finishedAt": "2026-09-10T07:52:31.279Z",
+          "latencyMs": 162759,
+          "exitCode": 0,
+          "acceptanceOk": true
+        },
+        {
+          "id": "wallet-policy-free-path",
+          "sessionId": "01a08a4b-588c-7dc3-b0da-9ba003702721",
+          "pid": 25784,
+          "startedAt": "2026-09-10T07:49:48.525Z",
+          "finishedAt": "2026-09-10T07:51:01.710Z",
+          "latencyMs": 73185,
+          "exitCode": 0,
+          "acceptanceOk": true
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "caseCount": 3,
+      "caseIds": [
+        "opportunity-preflight-402-stop",
+        "transaction-receipt-owner-qa",
+        "wallet-enrich-owner-qa"
+      ],
+      "window": {
+        "startedAt": "2026-09-10T08:01:59.585Z",
+        "finishedAt": "2026-09-10T08:04:23.972Z"
+      },
+      "peakGrokModelProcs": 3,
+      "startedAfter": "c1 completion",
+      "memorySamples": [
+        {
+          "kind": "cohort_start",
+          "at": "2026-09-10T08:01:59.583Z",
+          "MemTotal": 16791945216,
+          "MemAvailable": 11181273088,
+          "reserve25": 4197986304,
+          "freeAfterReserve": 6983286784,
+          "psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "size": 3,
+          "caseIds": [
+            "transaction-receipt-owner-qa",
+            "wallet-enrich-owner-qa",
+            "opportunity-preflight-402-stop"
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "id": "opportunity-preflight-402-stop",
+          "sessionId": "01a08a56-7f65-70f2-8256-f7e62a846618",
+          "pid": 40063,
+          "startedAt": "2026-09-10T08:01:59.588Z",
+          "finishedAt": "2026-09-10T08:04:23.972Z",
+          "latencyMs": 144384,
+          "exitCode": 0,
+          "acceptanceOk": true
+        },
+        {
+          "id": "transaction-receipt-owner-qa",
+          "sessionId": "01a08a56-7f56-7850-ae16-d6b1dc3ce011",
+          "pid": 40061,
+          "startedAt": "2026-09-10T08:01:59.585Z",
+          "finishedAt": "2026-09-10T08:03:43.657Z",
+          "latencyMs": 104072,
+          "exitCode": 0,
+          "acceptanceOk": true
+        },
+        {
+          "id": "wallet-enrich-owner-qa",
+          "sessionId": "01a08a56-7f59-7eb2-85b0-86b9a48d5a8d",
+          "pid": 40062,
+          "startedAt": "2026-09-10T08:01:59.587Z",
+          "finishedAt": "2026-09-10T08:04:20.253Z",
+          "latencyMs": 140666,
+          "exitCode": 0,
+          "acceptanceOk": true
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "caseCount": 4,
+      "caseIds": [
+        "agent-discoverability-402-stop",
+        "agent-surface-budget-402-stop",
+        "deep-audit-402-stop",
+        "morpho-risk-402-stop"
+      ],
+      "window": {
+        "startedAt": "2026-09-10T08:05:23.235Z",
+        "finishedAt": "2026-09-10T08:09:36.118Z"
+      },
+      "peakGrokModelProcs": 4,
+      "startedAfter": "c2 completion",
+      "memorySamples": [
+        {
+          "kind": "cohort_start",
+          "at": "2026-09-10T08:05:23.234Z",
+          "MemTotal": 16791945216,
+          "MemAvailable": 11192467456,
+          "reserve25": 4197986304,
+          "freeAfterReserve": 6994481152,
+          "psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "size": 4,
+          "caseIds": [
+            "agent-discoverability-402-stop",
+            "agent-surface-budget-402-stop",
+            "deep-audit-402-stop",
+            "morpho-risk-402-stop"
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "id": "agent-discoverability-402-stop",
+          "sessionId": "01a08a59-9ad9-7e12-8036-e1ff9554d7bc",
+          "pid": 43766,
+          "startedAt": "2026-09-10T08:05:23.235Z",
+          "finishedAt": "2026-09-10T08:06:43.746Z",
+          "latencyMs": 80511,
+          "exitCode": 0,
+          "acceptanceOk": true
+        },
+        {
+          "id": "agent-surface-budget-402-stop",
+          "sessionId": "01a08a59-9ada-79a3-88cd-cb294e1f3679",
+          "pid": 43767,
+          "startedAt": "2026-09-10T08:05:23.237Z",
+          "finishedAt": "2026-09-10T08:06:55.133Z",
+          "latencyMs": 91896,
+          "exitCode": 0,
+          "acceptanceOk": true
+        },
+        {
+          "id": "deep-audit-402-stop",
+          "sessionId": "01a08a59-9ae3-7873-a2c1-60570bb418b6",
+          "pid": 43768,
+          "startedAt": "2026-09-10T08:05:23.239Z",
+          "finishedAt": "2026-09-10T08:09:36.118Z",
+          "latencyMs": 252879,
+          "exitCode": 0,
+          "acceptanceOk": true
+        },
+        {
+          "id": "morpho-risk-402-stop",
+          "sessionId": "01a08a59-9ae9-7ef2-8515-dc693bc45a70",
+          "pid": 43769,
+          "startedAt": "2026-09-10T08:05:23.240Z",
+          "finishedAt": "2026-09-10T08:07:06.052Z",
+          "latencyMs": 102812,
+          "exitCode": 0,
+          "acceptanceOk": true
+        }
+      ]
+    }
+  ]
+}

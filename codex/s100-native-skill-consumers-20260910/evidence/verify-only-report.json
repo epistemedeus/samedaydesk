@@ -1,0 +1,201 @@
+{
+  "mode": "verify-only",
+  "verifiedAt": "2026-09-10T08:26:09.438Z",
+  "packageRoot": "/workspace/codex/s100-native-skill-consumers-20260910",
+  "artifactsDir": "/workspace/codex/s100-native-skill-consumers-20260910/evidence/sanitized-artifacts",
+  "skillsPin": "82d0f019713c7223898806144da08fdbeed5c666",
+  "merchantPin": "8104629651fb31ea9fd4873de0017fa36b8bb0da",
+  "network": false,
+  "models": false,
+  "signing": false,
+  "paidGateways": false,
+  "caseCount": 16,
+  "acceptedCount": 16,
+  "failed": [],
+  "results": [
+    {
+      "id": "catalog-purchase-intent",
+      "family": "catalog_discovery",
+      "skill": "samedaydesk-machine-commerce",
+      "exitCode": 0,
+      "ok": true,
+      "failures": [],
+      "notes": [
+        "no transcript present; artifact-only acceptance",
+        "challenge fields present amount=5000 network=eip155:8453"
+      ]
+    },
+    {
+      "id": "extract-402-stop",
+      "family": "payment_required_stop",
+      "skill": "web-extract",
+      "exitCode": 0,
+      "ok": true,
+      "failures": [],
+      "notes": [
+        "no transcript present; artifact-only acceptance",
+        "challenge fields present amount=5000 network=eip155:8453"
+      ]
+    },
+    {
+      "id": "payment-offer-preflight-live",
+      "family": "offer_preflight",
+      "skill": "payment-offer-preflight",
+      "exitCode": 0,
+      "ok": true,
+      "failures": [],
+      "notes": [
+        "no transcript present; artifact-only acceptance",
+        "challenge fields present amount=5000 network=eip155:8453"
+      ]
+    },
+    {
+      "id": "company-enrich-owner-qa",
+      "family": "company_enrich",
+      "skill": "company-enrich",
+      "exitCode": 0,
+      "ok": true,
+      "failures": [],
+      "notes": [
+        "no transcript present; artifact-only acceptance"
+      ]
+    },
+    {
+      "id": "contract-search-secret-refuse",
+      "family": "contract_search_refusal",
+      "skill": "contract-qualified-search",
+      "exitCode": 0,
+      "ok": true,
+      "failures": [],
+      "notes": [
+        "no transcript present; artifact-only acceptance"
+      ]
+    },
+    {
+      "id": "repo-scan-owner-qa",
+      "family": "repo_security_scan",
+      "skill": "repo-security-scan",
+      "exitCode": 0,
+      "ok": true,
+      "failures": [],
+      "notes": [
+        "no transcript present; artifact-only acceptance"
+      ]
+    },
+    {
+      "id": "schema-generate-owner-qa",
+      "family": "schema_generate",
+      "skill": "schema-generate",
+      "exitCode": 0,
+      "ok": true,
+      "failures": [],
+      "notes": [
+        "no transcript present; artifact-only acceptance"
+      ]
+    },
+    {
+      "id": "settlement-proof-owner-qa",
+      "family": "settlement_proof",
+      "skill": "settlement-proof",
+      "exitCode": 0,
+      "ok": true,
+      "failures": [],
+      "notes": [
+        "no transcript present; artifact-only acceptance"
+      ]
+    },
+    {
+      "id": "wallet-policy-free-path",
+      "family": "wallet_policy_safety",
+      "skill": "wallet-policy-safety",
+      "exitCode": 0,
+      "ok": true,
+      "failures": [],
+      "notes": [
+        "no transcript present; artifact-only acceptance"
+      ]
+    },
+    {
+      "id": "transaction-receipt-owner-qa",
+      "family": "transaction_receipt",
+      "skill": "transaction-receipt",
+      "exitCode": 0,
+      "ok": true,
+      "failures": [],
+      "notes": [
+        "no transcript present; artifact-only acceptance"
+      ]
+    },
+    {
+      "id": "wallet-enrich-owner-qa",
+      "family": "wallet_enrich",
+      "skill": "wallet-enrich",
+      "exitCode": 0,
+      "ok": true,
+      "failures": [],
+      "notes": [
+        "no transcript present; artifact-only acceptance"
+      ]
+    },
+    {
+      "id": "opportunity-preflight-402-stop",
+      "family": "payment_required_stop",
+      "skill": "opportunity-preflight",
+      "exitCode": 0,
+      "ok": true,
+      "failures": [],
+      "notes": [
+        "no transcript present; artifact-only acceptance",
+        "challenge fields present amount=50000 network=eip155:8453"
+      ]
+    },
+    {
+      "id": "agent-discoverability-402-stop",
+      "family": "payment_required_stop",
+      "skill": "agent-discoverability-audit",
+      "exitCode": 0,
+      "ok": true,
+      "failures": [],
+      "notes": [
+        "no transcript present; artifact-only acceptance",
+        "challenge fields present amount=50000 network=eip155:8453"
+      ]
+    },
+    {
+      "id": "agent-surface-budget-402-stop",
+      "family": "payment_required_stop",
+      "skill": "agent-surface-budget-audit",
+      "exitCode": 0,
+      "ok": true,
+      "failures": [],
+      "notes": [
+        "no transcript present; artifact-only acceptance",
+        "challenge fields present amount=10000 network=eip155:8453"
+      ]
+    },
+    {
+      "id": "deep-audit-402-stop",
+      "family": "payment_required_stop",
+      "skill": "deep-audit",
+      "exitCode": 0,
+      "ok": true,
+      "failures": [],
+      "notes": [
+        "no transcript present; artifact-only acceptance",
+        "challenge fields present amount=250000 network=eip155:8453"
+      ]
+    },
+    {
+      "id": "morpho-risk-402-stop",
+      "family": "payment_required_stop",
+      "skill": "morpho-risk",
+      "exitCode": 0,
+      "ok": true,
+      "failures": [],
+      "notes": [
+        "no transcript present; artifact-only acceptance",
+        "challenge fields present amount=20000 network=eip155:8453"
+      ]
+    }
+  ]
+}
