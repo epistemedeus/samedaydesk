@@ -70,6 +70,13 @@ test('pricing JSON null and scalars structured-refuse without throw', () => {
   );
   assert.equal(valid.ok, true);
   assert.ok(valid.table.rows.length >= 1);
+
+  const wrongRows = path.join(tmp, 'rows-str.json');
+  fs.writeFileSync(wrongRows, `${JSON.stringify({ rows: 'nope' })}\n`);
+  const badRows = preparePricingTable(wrongRows, 'before');
+  assert.equal(badRows.ok, false);
+  assert.equal(badRows.refused, true);
+  assert.equal(badRows.code, 'unsupported-pricing-shape');
 });
 
 test('pricing unit case change and HTML refuse', () => {

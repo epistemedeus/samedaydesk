@@ -307,9 +307,9 @@ export const RECORD_REPEAT_TITLE = "Source/record repeat jobs | SameDayDesk";
 export const RECORD_REPEAT_DESCRIPTION =
   "Download one portable offline package for OpenAPI used-ops, pricing row/unit, keyed CSV, and RSS/Atom repeat comparisons. Free local samples and next-run manifests; optional existing paid extract stays separate. Unsupported HTML and missing identity/units stay explicit.";
 export const RECORD_REPEAT_CANONICAL = `${SITE_ORIGIN}${RECORD_REPEAT_PATH}`;
-export const RECORD_REPEAT_ARCHIVE = "/kit/record-repeat-job-6a7b5b688584.tar.gz";
-export const RECORD_REPEAT_ARCHIVE_SHA256 = "27f7bc0175e23820019a360c7561e43dfa50cff90a453eb2cafe01b5b595bcb0";
-export const RECORD_REPEAT_ARCHIVE_BYTES = 1253961;
+export const RECORD_REPEAT_ARCHIVE = "/kit/record-repeat-job-b663e53771a3.tar.gz";
+export const RECORD_REPEAT_ARCHIVE_SHA256 = "b2b6ba99096f1beed0de23351ba78427f3b6906e13cdc1732426b3d813979279";
+export const RECORD_REPEAT_ARCHIVE_BYTES = 1253977;
 export const RECORD_REPEAT_PARSER_PIN = "65ce1867f1b4339cc708bfb72a7d9a5942785632";
 export const RECORD_REPEAT_RECIPE_PIN = "a022eb6352156dcdcdf2f8730931f5891bd01436";
 export const RECORD_REPEAT_DISCOVERY = "/discovery/record-repeat.json";

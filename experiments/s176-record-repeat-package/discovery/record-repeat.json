@@ -5,15 +5,15 @@
   "session": "s176",
   "page": "https://samedaydesk.com/for-agents/record-repeat",
   "archive": {
-    "path": "/kit/record-repeat-job-6a7b5b688584.tar.gz",
-    "url": "https://samedaydesk.com/kit/record-repeat-job-6a7b5b688584.tar.gz",
-    "sha256": "27f7bc0175e23820019a360c7561e43dfa50cff90a453eb2cafe01b5b595bcb0",
-    "bytes": 1253961
+    "path": "/kit/record-repeat-job-b663e53771a3.tar.gz",
+    "url": "https://samedaydesk.com/kit/record-repeat-job-b663e53771a3.tar.gz",
+    "sha256": "b2b6ba99096f1beed0de23351ba78427f3b6906e13cdc1732426b3d813979279",
+    "bytes": 1253977
   },
   "pins": {
     "parser": "65ce1867f1b4339cc708bfb72a7d9a5942785632",
     "recipes": "a022eb6352156dcdcdf2f8730931f5891bd01436",
-    "semanticsTip": "6a7b5b6885842b78c40ecbef1c63570d7987fbe7"
+    "semanticsTip": "b663e53771a325d439f24a2a2ccdc94e5250a352"
   },
   "families": [
     "openapi-used-ops",
@@ -24,7 +24,7 @@
   "freeOffline": true,
   "paidValueClaim": false,
   "coldStart": [
-    "curl -fsSL -o record-repeat-job.tar.gz https://samedaydesk.com/kit/record-repeat-job-6a7b5b688584.tar.gz",
+    "curl -fsSL -o record-repeat-job.tar.gz https://samedaydesk.com/kit/record-repeat-job-b663e53771a3.tar.gz",
     "mkdir -p /tmp && tar -xzf record-repeat-job.tar.gz -C /tmp",
     "cd /tmp/record-repeat-job",
     "node bin/record-repeat.mjs sample --all"

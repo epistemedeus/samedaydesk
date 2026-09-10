@@ -41,6 +41,11 @@ export function preparePricingTable(input, label = 'pricing') {
     return refuse('unsupported-pricing-shape', 'Object must include rows[]', { keys: Object.keys(obj) });
   }
   const rows = Array.isArray(obj) ? obj : obj.rows || obj.items || [];
+  if (!Array.isArray(rows)) {
+    return refuse('unsupported-pricing-shape', `${label} rows/items must be an array`, {
+      got: rows === null ? 'null' : typeof rows,
+    });
+  }
   if (!rows.length) return refuse('empty-pricing-rows', `${label} has zero rows`);
   for (const [i, r] of rows.entries()) {
     const miss = requireFields(r, ['field', 'value'], `row ${i}`);

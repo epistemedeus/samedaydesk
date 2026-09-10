@@ -1,0 +1,16 @@
+{
+  "schema": "samedaydesk.native-parent-resume.v1",
+  "milestone": "S214",
+  "sessionId": "01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5",
+  "model": "grok-4.6",
+  "effort": "xhigh",
+  "resumedAt": "2026-09-10T15:24:30.895Z",
+  "branch": "codex/s214-record-distribution-release-20260910",
+  "compositionHead": "b663e53771a325d439f24a2a2ccdc94e5250a352",
+  "s206Terminal": "0f9771cff46c939f0e191bf80b7716feff4e62eb",
+  "s206Product": "dcc78f31097b3d3a6e23778c5fe77b5af4cc88b1",
+  "baseMain": "2b80f38a4e5ec5f080d1764de7c539af63190012",
+  "node": "v22.22.2",
+  "cashUsd": 0,
+  "productionAcquisition": false
+}
