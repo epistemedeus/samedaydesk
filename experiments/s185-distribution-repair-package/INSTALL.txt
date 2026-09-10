@@ -1,0 +1,41 @@
+SameDayDesk distribution-repair package
+=======================================
+
+Required runtime: Node.js 20+ (22.x preferred)
+Source pins:
+  0e703bd4682894df4e1d25c61b594cac49f2463c
+  a7e2cd7a2223e2aa7e7e09eebf3695aba4731205
+  ea000772cdbd6d5df7174369dcef9aa2270e5723
+  76c0732b241beaa569f05a7394fdbf49604ffb66
+
+Offline diagnosis from caller listing snapshots plus a baseline/current route pair.
+Returns an explainable diagnosis and owner repair guidance.
+The CLI runs on local files only. It does not call priced endpoints or change live listings.
+Incomplete captures cannot prove a listing was removed everywhere.
+
+1) Unpack
+
+  mkdir -p /tmp && tar -xzf distribution-repair-*.tar.gz -C /tmp
+  cd /tmp/distribution-repair
+
+2) Schema + labeled samples (offline)
+
+  node bin/distribution-repair.mjs schema
+  node bin/distribution-repair.mjs sample --positive
+  node bin/distribution-repair.mjs sample --partial
+  node bin/distribution-repair.mjs sample --mismatch
+
+3) Caller-supplied snapshots
+
+  node bin/distribution-repair.mjs diagnose ./examples/caller/alpha.json
+  node bin/distribution-repair.mjs diagnose ./examples/caller/beta.json
+
+4) Repeat after a route correction
+
+  node bin/distribution-repair.mjs diagnose ./examples/positive.json \
+    --write-next-run ./next-run.json
+  node bin/distribution-repair.mjs diagnose \
+    ./examples/next-run/input-after-docs-fix.json
+
+Identity is provider / jobRef / sharedEvidenceId, never a filename.
+Repair output is owner guidance, not proof of lost customers or revenue.

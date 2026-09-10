@@ -1,0 +1,47 @@
+SameDayDesk record-repeat package
+=================================
+
+Required runtime: Node.js 20+ (22.x preferred)
+Parser pin: 65ce1867f1b4339cc708bfb72a7d9a5942785632
+Recipe pin: a022eb6352156dcdcdf2f8730931f5891bd01436
+
+Offline comparisons of local before/after artifacts for:
+  - OpenAPI used operations
+  - Price/unit rows
+  - Keyed CSV
+  - RSS/Atom feeds
+
+The CLI reads local files only. It does not fetch, charge, sign, or schedule.
+Unsupported HTML and missing identity or units are refused, not invented.
+
+1) Unpack
+
+  mkdir -p /tmp && tar -xzf record-repeat-job-*.tar.gz -C /tmp
+  cd /tmp/record-repeat-job
+
+  # Do not run npm ci at this archive root: there is no root lockfile.
+  # Parser dependencies are already vendored.
+
+2) Labeled samples (not live caller input)
+
+  node bin/record-repeat.mjs sample --all
+  node bin/record-repeat.mjs sample --recipe R-OPENAPI-PIN-IMPACT
+  node bin/record-repeat.mjs sample --recipe R-PRICE-UNIT-CASE
+  node bin/record-repeat.mjs sample --recipe R-CSV-KEYED-CHANGE
+  node bin/record-repeat.mjs sample --recipe R-FEED-LIVE-NOCHANGE
+  node bin/record-repeat.mjs sample --recipe R-PRICE-REFUSE-HTML
+
+3) Caller-supplied inputs + next-run manifest
+
+  node bin/record-repeat.mjs run --family openapi-used-ops \
+    --before ./my/before.yaml --after ./my/after.yaml --used ./my/used.json \
+    --write-next-run ./out/next-run.json
+
+  node bin/record-repeat.mjs run --from-next-run ./out/next-run.json \
+    --before ./my/before2.yaml --after ./my/after2.yaml --used ./my/used2.json
+
+4) Optional tests
+
+  npm test
+
+Optional paid merchant extract is a separate product and is not started by this CLI.

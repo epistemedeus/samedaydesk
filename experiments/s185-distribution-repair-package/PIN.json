@@ -1,0 +1,18 @@
+{
+  "schema": "samedaydesk.package-pin.v1",
+  "packageId": "distribution-repair",
+  "branch": "codex/s185-distribution-repair-package-20260910",
+  "sourceRepo": "epistemedeus/samedaydesk",
+  "semanticsTip": "6a7b5b6885842b78c40ecbef1c63570d7987fbe7",
+  "record04": "0e703bd4682894df4e1d25c61b594cac49f2463c",
+  "record04ExportBase": "8b8e44376e9414f540483a526b048beb9e4dc370",
+  "record05": "a7e2cd7a2223e2aa7e7e09eebf3695aba4731205",
+  "dist08": "ea000772cdbd6d5df7174369dcef9aa2270e5723",
+  "nl06": "76c0732b241beaa569f05a7394fdbf49604ffb66",
+  "firstUseHeld": "ea2938cfa68dadbe20a9d5ec096f315e59f4cdbe",
+  "s176Frozen": "f3d55e54a7b3c548943312443f9f066652d83980",
+  "nodeEngines": ">=20",
+  "cashUsd": 0,
+  "notes": "Composes listing-record, route-record, distribution diagnose, and join pins. First-use adapter held. Free offline diagnosis; priced execution not started.",
+  "invokesPricedExecution": false
+}

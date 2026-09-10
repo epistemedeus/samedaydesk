@@ -61,3 +61,6 @@ SameDayDesk is the operating merchant and case-study surface of Neomorphic LLC. 
 - [Neomorphic.io](https://neomorphic.io/): public experiment and machine-commerce trust lab.
 
 Last updated: 2026-09-09
+- [Source/record repeat jobs](https://samedaydesk.com/for-agents/record-repeat): One portable offline package for OpenAPI used-ops, pricing row/unit, keyed CSV, and RSS/Atom comparisons. Machine discovery at https://samedaydesk.com/discovery/record-repeat.json. Free local samples; optional existing paid extract stays separate.
+Last updated: 2026-09-10
+- [Distribution repair diagnosis (lab)](https://samedaydesk.com/for-agents/distribution-repair): Portable offline package that maps caller listing snapshots and a baseline/current route pair into diagnosis and owner repair guidance. Incomplete captures cannot prove global removal. Not a production acquisition. Machine discovery: https://samedaydesk.com/discovery/distribution-repair.json.

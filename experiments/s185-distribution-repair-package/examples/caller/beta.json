@@ -1,0 +1,82 @@
+{
+  "schema": "pilot.s185.distribution_repair_input.v1",
+  "inputId": "caller-beta-api-redirect",
+  "clock": "2026-09-10T20:15:00.000Z",
+  "identity": {
+    "provider": "agensi",
+    "jobRef": "operator-beta-20260910",
+    "sharedEvidenceId": "operator-beta-20260910",
+    "sourceTag": "catalog"
+  },
+  "discovery": {
+    "captureStatus": "ok",
+    "catalogComplete": true,
+    "listing": {
+      "url": "https://example.test/listing/operator-beta",
+      "agentId": "agent-beta",
+      "listingStatus": "PendingReview",
+      "freeVsPriced": "discovery_free_run_priced"
+    }
+  },
+  "record": {
+    "routeRegressionInput": {
+      "schema": "x402.r2.record.route_regression_input.v1",
+      "reportId": "caller-beta-route-pair",
+      "feedId": "caller-beta-feed",
+      "title": "Caller beta API snapshot pair",
+      "demo": false,
+      "sourceLabel": "caller-supplied",
+      "baseline": {
+        "label": "beta-baseline",
+        "capturedAt": "2026-09-01T00:00:00.000Z",
+        "routes": [
+          {
+            "path": "/api/health",
+            "url": "https://beta.example.test/api/health",
+            "status": 200,
+            "finalUrl": "https://beta.example.test/api/health",
+            "accessibility": "ok",
+            "title": "Health"
+          },
+          {
+            "path": "/api/v1",
+            "url": "https://beta.example.test/api/v1",
+            "status": 200,
+            "finalUrl": "https://beta.example.test/api/v1",
+            "accessibility": "ok",
+            "title": "API v1"
+          }
+        ]
+      },
+      "current": {
+        "label": "beta-current",
+        "capturedAt": "2026-09-10T00:00:00.000Z",
+        "captureIncomplete": false,
+        "coverageComplete": true,
+        "routes": [
+          {
+            "path": "/api/health",
+            "url": "https://beta.example.test/api/health",
+            "status": 200,
+            "finalUrl": "https://beta.example.test/api/health",
+            "accessibility": "ok",
+            "title": "Health"
+          },
+          {
+            "path": "/api/v1",
+            "url": "https://beta.example.test/api/v1",
+            "status": 301,
+            "finalUrl": "https://beta.example.test/api/v2",
+            "redirectLocation": "https://beta.example.test/api/v2",
+            "accessibility": "ok",
+            "title": "API v1 redirect"
+          }
+        ]
+      }
+    }
+  },
+  "callerProvenance": {
+    "suppliedBy": "operator",
+    "syntheticFixture": true
+  }
+}

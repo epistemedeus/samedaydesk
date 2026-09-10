@@ -163,6 +163,38 @@ export default function ForAgents() {
           </div>
         </section>
 
+        <section className={styles.section} aria-labelledby="record-repeat-title">
+          <div className={styles.sectionHead}>
+            <p className="eyebrow">Offline package · source/record repeat</p>
+            <h2 id="record-repeat-title">Compare OpenAPI, pricing rows, keyed CSV, or feeds offline</h2>
+          </div>
+          <p className={styles.jobCopy}>
+            Download one portable archive for four source/record families. Free labeled samples and
+            next-run manifests run locally. Unsupported HTML and missing identity/units stay explicit.
+            Optional existing paid extract stays separate. Details and cold-start commands:{" "}
+            <Link className={styles.inlineLink} to="/for-agents/record-repeat">
+              /for-agents/record-repeat
+            </Link>
+            .
+          </p>
+        </section>
+
+        <section className={styles.section} aria-labelledby="distribution-repair-title">
+          <div className={styles.sectionHead}>
+            <p className="eyebrow">Offline package · distribution repair</p>
+            <h2 id="distribution-repair-title">Diagnose a listed tool that cannot be acquired or run</h2>
+          </div>
+          <p className={styles.jobCopy}>
+            Download one portable archive that joins caller listing snapshots with a supplied
+            baseline/current route pair. Incomplete captures stay explicit. Repair output is owner
+            guidance, not lost-customer proof. Details and cold-start commands:{" "}
+            <Link className={styles.inlineLink} to="/for-agents/distribution-repair">
+              /for-agents/distribution-repair
+            </Link>
+            .
+          </p>
+        </section>
+
         <section className={styles.section} aria-labelledby="recurring-title">
           <div className={styles.sectionHead}>
             <p className="eyebrow">Job 5 · recurring recipes</p>

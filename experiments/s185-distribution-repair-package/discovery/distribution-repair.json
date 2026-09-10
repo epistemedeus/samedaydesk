@@ -1,0 +1,31 @@
+{
+  "schema": "samedaydesk.acquisition-discovery.v1",
+  "packageId": "distribution-repair",
+  "title": "Offline diagnosis for listed tools that cannot run",
+  "summary": "Join caller listing snapshots with a baseline/current route pair into an explainable diagnosis and owner repair guidance. Incomplete captures cannot prove global removal.",
+  "page": "https://samedaydesk.com/for-agents/distribution-repair",
+  "invokesPricedExecution": false,
+  "archive": {
+    "path": "/kit/distribution-repair-ab84d79b0272.tar.gz",
+    "url": "https://samedaydesk.com/kit/distribution-repair-ab84d79b0272.tar.gz",
+    "sha256": "64a97dab335aa82d80d9e4384ef8ec89d0bc0920aa844a19b4c2534ad5be5c13",
+    "bytes": 76599
+  },
+  "pins": {
+    "record04": "0e703bd4682894df4e1d25c61b594cac49f2463c",
+    "record05": "a7e2cd7a2223e2aa7e7e09eebf3695aba4731205",
+    "dist08": "ea000772cdbd6d5df7174369dcef9aa2270e5723",
+    "nl06": "76c0732b241beaa569f05a7394fdbf49604ffb66",
+    "firstUseHeld": "ea2938cfa68dadbe20a9d5ec096f315e59f4cdbe",
+    "semanticsTip": "ab84d79b02726af87131751ac9e11c54c353d5f3"
+  },
+  "runsOffline": true,
+  "coldStart": [
+    "curl -fsSL -o distribution-repair.tar.gz https://samedaydesk.com/kit/distribution-repair-ab84d79b0272.tar.gz",
+    "mkdir -p /tmp && tar -xzf distribution-repair.tar.gz -C /tmp",
+    "cd /tmp/distribution-repair",
+    "node bin/distribution-repair.mjs sample --positive"
+  ],
+  "productionAcquisition": false,
+  "materialLimit": "Incomplete captures cannot prove a listing was removed everywhere."
+}

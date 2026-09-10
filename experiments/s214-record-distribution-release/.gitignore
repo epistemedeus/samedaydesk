@@ -1,0 +1,4 @@
+native-cells/logs/
+native-cells/prompts/
+native-cells/receipts/parent.pid
+native-cells/receipts/parent-resume.json

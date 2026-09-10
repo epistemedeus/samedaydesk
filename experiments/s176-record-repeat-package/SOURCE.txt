@@ -1,0 +1,22 @@
+SameDayDesk record-repeat package
+=================================
+
+Owning repo: epistemedeus/samedaydesk
+Parser pin: 65ce1867f1b4339cc708bfb72a7d9a5942785632
+Recipe pin: a022eb6352156dcdcdf2f8730931f5891bd01436
+
+Product paths composed from those pins:
+- experiments/s134-record-jobs/{lib,modules,fixtures,package.json,package-lock.json}
+- experiments/s163-record-recipes/{adapters,recipes,sources,registry,fixtures}
+
+Not included:
+- Bot record kit paths
+- Private workspace paths, secrets, transcripts
+- Live network fetches during CLI runs
+
+Source families and licenses are declared per SOURCE.json / SYNTHETIC.json under
+vendor/s163-record-recipes/sources/**. Synthetic pairs stay labeled. Unsupported
+HTML pricing extraction is refused, not invented. Missing identity/units stay explicit.
+
+This package processes local caller-supplied or sample artifacts. Optional paid
+merchant extract is a separate product and is not started here.

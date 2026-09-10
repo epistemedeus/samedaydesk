@@ -1,0 +1,33 @@
+{
+  "id": "R-PRICE-UNIT-CASE",
+  "family": "pricing-row-unit",
+  "title": "Selected model-row unit string change without cost claims",
+  "parser": "s134-pricing-table-change",
+  "primarySource": {
+    "label": "curated-public-model-pricing-rows",
+    "extraction": "curated-json-not-html-scrape",
+    "citations": [
+      "https://openai.com/api/pricing/",
+      "https://docs.x.ai/docs/models"
+    ],
+    "synthetic": false,
+    "metaFile": "sources/pricing/public-model-rows/SOURCE.json",
+    "note": "Curated field/value/unit rows from public docs. Not a live HTML scrape."
+  },
+  "inputs": {
+    "before": "sources/pricing/public-model-rows/before.json",
+    "after": "sources/pricing/public-model-rows/after-unit-case.json"
+  },
+  "subjobs": [
+    "Select model/service rows of interest.",
+    "Detect unit-string change (USD/1M-tokens vs USD/1M-Tokens) without case-fold aliasing.",
+    "Refuse total-cost / ROI narration."
+  ],
+  "cliExample": "node ../s134-record-jobs/modules/pricing-table-change/cli.mjs --before sources/pricing/public-model-rows/before.json --after sources/pricing/public-model-rows/after-unit-case.json",
+  "expectedFixture": "fixtures/expected/pricing-unit-case.json",
+  "expectedSummary": {
+    "unitChanges": 1,
+    "fieldKey": "grok-4.6-input",
+    "numericComparison": "not-applicable-across-units"
+  }
+}

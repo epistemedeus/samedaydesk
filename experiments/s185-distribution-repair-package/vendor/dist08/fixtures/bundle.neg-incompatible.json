@@ -1,0 +1,35 @@
+{
+  "schema": "pilot.r2.distribution.conversion_bundle.v1",
+  "cite": "negative: incompatible provider/sourceTag — must unjoin, not invent conversion",
+  "captureStatus": "ok",
+  "reason": "grexal acquisition cannot join agensi output without shared jobRef/sharedEvidenceId",
+  "acquisitionEvidence": [
+    {
+      "id": "acq-grexal-only",
+      "kind": "linkActivated",
+      "sourceTag": "grexal",
+      "provider": "grexal",
+      "linkId": "grexal-s124-entry",
+      "at": "2026-09-10T18:51:00.000Z",
+      "evidenceRef": "experiments/scale-r2-20260910/distribution/04"
+    }
+  ],
+  "usefulOutputEvidence": [
+    {
+      "id": "out-agensi-reviewed",
+      "kind": "reviewed",
+      "provider": "agensi",
+      "at": "2026-09-10T12:00:00.000Z",
+      "evidenceRef": "/workspace/pilot/receipts/scale-bot-0909/bot-s131-polish-0910/task-exchange/TERMINAL.md",
+      "note": "Agensi PendingReview — incompatible with grexal-only acquisition"
+    },
+    {
+      "id": "out-agensi-install-zero-path",
+      "kind": "run",
+      "provider": "agensi",
+      "at": "2026-09-10T12:01:00.000Z",
+      "evidenceRef": "/workspace/pilot/receipts/scale-bot-0909/r2-team/receipts-grexal-s149.json",
+      "note": "synthetic incompatible run on agensi provider for unjoin test (not a claimed install)"
+    }
+  ]
+}

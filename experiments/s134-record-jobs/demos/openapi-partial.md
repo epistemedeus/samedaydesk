@@ -1,0 +1,1 @@
+`node modules/openapi-impact/cli.mjs --before fixtures/openapi/partial/before.json --after fixtures/openapi/partial/after.json --used fixtures/openapi/partial/used.json` — local partial replay; `impact.removed` includes `GET /v1/items/{id}` (`paidValueClaim: false`).

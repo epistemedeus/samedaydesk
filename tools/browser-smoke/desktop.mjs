@@ -35,6 +35,43 @@ const PAGE_SPECS = Object.freeze([
     layout: "desktop-nav",
   },
   {
+    id: "record-repeat",
+    path: "/for-agents/record-repeat",
+    screenshot: "record-repeat-desktop.png",
+        expect: {
+      titleIncludes: "Compare OpenAPI, prices, keyed CSV, and feeds offline",
+      h1Includes: "Compare OpenAPI ops, price rows, keyed CSV, and feeds",
+            bodyIncludes: [
+        "/kit/record-repeat-job-",
+        "sha256",
+        "labeled samples",
+        "Unsupported HTML",
+        "/discovery/record-repeat.json",
+        "Download archive",
+      ],
+    },
+    layout: "desktop-nav",
+  },
+  {
+    id: "distribution-repair",
+    path: "/for-agents/distribution-repair",
+    screenshot: "distribution-repair-desktop.png",
+        expect: {
+      titleIncludes: "Diagnose why a listed tool cannot run",
+      h1Includes: "Diagnose why a listed tool cannot run from",
+            bodyIncludes: [
+        "/kit/distribution-repair-",
+        "sha256",
+        "provider",
+        "jobRef",
+        "sharedEvidenceId",
+        "Incomplete captures",
+        "Download archive",
+      ],
+    },
+    layout: "desktop-nav",
+  },
+  {
     id: "x402",
     path: "/x402",
     screenshot: "x402-desktop.png",

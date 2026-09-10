@@ -1,0 +1,4 @@
+<?xml version="1.0"?><rss version="2.0"><channel><title>D</title>
+<item><guid>urn:dup</guid><title>First</title><link>https://example.test/d1</link></item>
+<item><guid>urn:dup</guid><title>Second</title><link>https://example.test/d2</link></item>
+</channel></rss>

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<rss version="2.0"><channel>
+<title>Demo</title>
+<item><guid>urn:1</guid><title>Alpha (corrected)</title><link>https://example.test/a</link><pubDate>Mon, 01 Jan 2024 00:00:00 GMT</pubDate></item>
+<item><guid>urn:3</guid><title>Gamma</title><link>https://example.test/c</link><pubDate>Wed, 03 Jan 2024 00:00:00 GMT</pubDate></item>
+</channel></rss>

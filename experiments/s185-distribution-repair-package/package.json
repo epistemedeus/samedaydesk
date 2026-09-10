@@ -1,0 +1,20 @@
+{
+  "name": "@samedaydesk/s185-distribution-repair-package",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Portable distribution-repair acquisition package. Reuses Record04/Record05/DIST08/NL06. Free offline diagnosis; not a production acquisition.",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "distribution-repair": "./bin/distribution-repair.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "test:pins": "node --test test/pin-suites.test.mjs",
+    "test:acquisition": "node --test test/acquisition.test.mjs",
+    "build:archive": "node scripts/build-archive.mjs",
+    "sample": "node bin/distribution-repair.mjs sample --positive"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-openapi-impact",
+  "inputs": {
+    "before": "/workspace/experiments/s163-record-recipes/sources/openapi/museum/before.yaml",
+    "after": "/workspace/experiments/s163-record-recipes/sources/openapi/museum/after.yaml",
+    "used": "/workspace/experiments/s163-record-recipes/sources/openapi/museum/used-ops.pin.json"
+  },
+  "report": {
+    "module": "openapi-impact",
+    "ok": true,
+    "scope": "used-operations-only",
+    "usedOperationCount": 5,
+    "impact": {
+      "added": [],
+      "removed": [],
+      "changed": [],
+      "unchanged": [
+        {
+          "key": "GET /museum-hours"
+        },
+        {
+          "key": "GET /special-events/{eventId}"
+        },
+        {
+          "key": "PATCH /special-events/{eventId}"
+        },
+        {
+          "key": "DELETE /special-events/{eventId}"
+        },
+        {
+          "key": "GET /tickets/{ticketId}/qr"
+        }
+      ],
+      "conflicting": [],
+      "unknowns": []
+    },
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "No used-operation structural deltas detected (or used list empty/unknown). Still not a runtime compatibility proof."
+  }
+}
