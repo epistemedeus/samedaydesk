@@ -1,0 +1,204 @@
+{
+  "ok": true,
+  "paid": false,
+  "signed": false,
+  "stoppedOn402": true,
+  "httpStatus": 402,
+  "checkedAt": "2026-09-10T07:51:34Z",
+  "sourceHeader": "agent-skills-v1",
+  "productAttempted": "samedaydesk-payment-offer-preflight",
+  "openapiVersionObserved": "1.23.46",
+  "catalogSchema": "samedaydesk.machine-actions.v2",
+  "stopReason": "hosted_preflight_http_402",
+  "decision": null,
+  "note": "Hosted GET /commerce/payment-offer-preflight itself returned HTTP 402. Stopped without signing or paying. This is not a paid extract record and does not authorize payment to the inspected target.",
+  "target": {
+    "method": "GET",
+    "url": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com%2F",
+    "inspected": false,
+    "httpStatus": null,
+    "reason": "hosted SameDayDesk preflight requires payment; target extract URL was not fetched"
+  },
+  "hostedPreflight": {
+    "method": "GET",
+    "url": "https://agents.samedaydesk.com/commerce/payment-offer-preflight?url=https%3a%2f%2fagents.samedaydesk.com%2fextract%3furl%3dhttps%253A%252F%252Fexample.com%252F",
+    "requestedUrl": "https://agents.samedaydesk.com/commerce/payment-offer-preflight?url=https%3A%2F%2Fagents.samedaydesk.com%2Fextract%3Furl%3Dhttps%253A%252F%252Fexample.com%252F",
+    "httpStatus": 402,
+    "redirectsFollowed": 0,
+    "contentType": "application/json; charset=\"utf-8\"",
+    "date": "Thu, 10 Sep 2026 07:51:34 +0000"
+  },
+  "resource": "https://agents.samedaydesk.com/commerce/payment-offer-preflight?url=https%3a%2f%2fagents.samedaydesk.com%2fextract%3furl%3dhttps%253A%252F%252Fexample.com%252F",
+  "amount": "5000",
+  "amountUsd": 0.005,
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "assetName": "USD Coin",
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "protocols": [
+    "x402",
+    "mpp"
+  ],
+  "challenge": {
+    "httpStatus": 402,
+    "x402Version": 2,
+    "error": "Payment required",
+    "resource": "https://agents.samedaydesk.com/commerce/payment-offer-preflight?url=https%3a%2f%2fagents.samedaydesk.com%2fextract%3furl%3dhttps%253A%252F%252Fexample.com%252F",
+    "scheme": "exact",
+    "network": "eip155:8453",
+    "amount": "5000",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "maxTimeoutSeconds": 300,
+    "mpp": {
+      "id": "N2qwMd-AcGiFc5S20x6BWac3rSZSgsfbtbEqncBE8tc",
+      "realm": "agents.samedaydesk.com",
+      "method": "evm",
+      "intent": "charge",
+      "expires": "2026-09-10T07:56:34.602Z",
+      "amount": "5000",
+      "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "recipient": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "chainId": 8453,
+      "decimals": 6,
+      "credentialTypes": [
+        "authorization"
+      ],
+      "opaqueScope": {
+        "_mppx_scope": "GET /commerce/payment-offer-preflight?url=https%3A%2F%2Fagents.samedaydesk.com%2Fextract%3Furl%3Dhttps%253A%252F%252Fexample.com%252F"
+      }
+    }
+  },
+  "accepts": [
+    {
+      "scheme": "exact",
+      "network": "eip155:8453",
+      "amount": "5000",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300
+    }
+  ],
+  "offers": [
+    {
+      "protocol": "x402",
+      "role": "hosted_preflight_challenge",
+      "scheme": "exact",
+      "intent": "exact",
+      "network": "eip155:8453",
+      "amountAtomic": "5000",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "valid": true
+    },
+    {
+      "protocol": "mpp",
+      "role": "hosted_preflight_challenge",
+      "method": "evm",
+      "intent": "charge",
+      "network": "eip155:8453",
+      "chainId": 8453,
+      "amountAtomic": "5000",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "realm": "agents.samedaydesk.com",
+      "expiresAt": "2026-09-10T07:56:34.602Z",
+      "valid": true
+    }
+  ],
+  "parity": {
+    "compared": true,
+    "consistent": true,
+    "driftFields": [],
+    "scope": "hosted_preflight_x402_vs_mpp_vs_catalog"
+  },
+  "catalogCoherence": [
+    {
+      "source": "https://agents.samedaydesk.com/api/actions",
+      "action": "commerce_payment-offer-preflight",
+      "catalogPriceAtomicUsdc": "5000",
+      "catalogPriceUsdc": 0.005,
+      "catalogNetwork": "eip155:8453",
+      "catalogPayTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "liveAmountAtomic": "5000",
+      "liveNetwork": "eip155:8453",
+      "livePayTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "liveAsset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "matched": true
+    }
+  ],
+  "findings": [
+    "hosted_preflight_http_402",
+    "target_extract_not_inspected",
+    "no_payment_sent",
+    "no_signature_created"
+  ],
+  "verification": {
+    "completeResourceIsHostedPreflight": true,
+    "amountAtomic5000": true,
+    "networkBaseEip1558453": true,
+    "canonicalBaseUsdc": true,
+    "recipientMatchesCatalogPayTo": true,
+    "x402SchemeExact": true,
+    "mppEvmCharge": true,
+    "mppRealmAgentsSamedaydeskCom": true,
+    "x402AndMppEconomicsMatch": true,
+    "openapiHostedPriceUsd": "0.005",
+    "catalogHostedPriceAtomic": "5000"
+  },
+  "boundary": {
+    "credentialsUsed": false,
+    "paymentSigned": false,
+    "paymentSent": false,
+    "targetPaymentSent": false,
+    "targetResponseBodyRead": false,
+    "openApiDocumentRead": true,
+    "catalogRead": true,
+    "redirectsFollowed": false,
+    "hostedChallengeBodyRead": true,
+    "statement": "Unpaid discovery plus one unpaid HTTP 402 on the hosted preflight. No credential, no payment signature, no payment sent, no redirect followed, and the extract target response body was not read."
+  },
+  "discovery": {
+    "openapi": "https://agents.samedaydesk.com/openapi.json",
+    "catalog": "https://agents.samedaydesk.com/api/actions",
+    "operationId": "preflightPaymentOffer",
+    "hostedRoute": "GET /commerce/payment-offer-preflight",
+    "xPaymentInfo": {
+      "price": {
+        "amount": "0.005",
+        "currency": "USD",
+        "mode": "fixed"
+      },
+      "protocols": [
+        {
+          "x402": {
+            "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+            "network": "eip155:8453",
+            "scheme": "exact"
+          }
+        },
+        {
+          "mpp": {
+            "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+            "intent": "charge",
+            "method": "evm",
+            "network": "eip155:8453"
+          }
+        }
+      ]
+    }
+  },
+  "sellerOfferReceiptObserved": {
+    "format": "eip712",
+    "acceptIndex": 0,
+    "resourceUrl": "https://agents.samedaydesk.com/commerce/payment-offer-preflight?url=https%3a%2f%2fagents.samedaydesk.com%2fextract%3furl%3dhttps%253A%252F%252Fexample.com%252F",
+    "scheme": "exact",
+    "network": "eip155:8453",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "amount": "5000",
+    "validUntil": 1789026994,
+    "signaturePresent": true,
+    "callerDidNotSign": true
+  }
+}

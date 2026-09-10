@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "caseId": "morpho-risk-402-stop",
+  "family": "payment_required_stop",
+  "skill": "morpho-risk",
+  "expect": "correct_stop",
+  "failures": [],
+  "notes": [
+    "challenge fields present amount=20000 network=eip155:8453"
+  ],
+  "artifactPath": "/tmp/s100-status-c3/cases/morpho-risk-402-stop/artifact/stop-report.json"
+}

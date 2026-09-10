@@ -1,0 +1,178 @@
+{
+  "ownerQa": true,
+  "label": "owner-qa-deterministic-fixture",
+  "paid": false,
+  "signed": false,
+  "ok": true,
+  "command": "schema-generate",
+  "bundle": {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": [
+          "MedicalBusiness",
+          "HealthAndBeautyBusiness"
+        ],
+        "@id": "https://clinic.example/#business",
+        "name": "Austin Clinic",
+        "url": "https://clinic.example",
+        "image": "{{IMAGE_URL}}",
+        "telephone": "{{PHONE_E164}}",
+        "priceRange": "$$",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "{{STREET}}",
+          "addressLocality": "Austin",
+          "addressRegion": "{{STATE}}",
+          "postalCode": "{{ZIP}}",
+          "addressCountry": "US"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": "{{LAT}}",
+          "longitude": "{{LNG}}"
+        },
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday"
+            ],
+            "opens": "{{OPEN_HH:MM}}",
+            "closes": "{{CLOSE_HH:MM}}"
+          }
+        ],
+        "sameAs": [
+          "{{GOOGLE_BUSINESS_PROFILE_URL}}",
+          "{{INSTAGRAM_URL}}",
+          "{{YELP_URL}}"
+        ],
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "{{AVG_RATING_e.g_4.9}}",
+          "reviewCount": "{{NUMBER_OF_REVIEWS}}"
+        },
+        "review": [
+          {
+            "@type": "Review",
+            "reviewRating": {
+              "@type": "Rating",
+              "ratingValue": "{{5}}",
+              "bestRating": "5"
+            },
+            "author": {
+              "@type": "Person",
+              "name": "{{REVIEWER_NAME}}"
+            },
+            "reviewBody": "{{REAL_REVIEW_TEXT}}"
+          }
+        ],
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Med spa / aesthetic clinic services",
+          "itemListElement": [
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "Service",
+                "name": "Botox",
+                "areaServed": "Austin"
+              }
+            },
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "Service",
+                "name": "Dermal Fillers",
+                "areaServed": "Austin"
+              }
+            },
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "Service",
+                "name": "Laser Hair Removal",
+                "areaServed": "Austin"
+              }
+            },
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "Service",
+                "name": "Microneedling",
+                "areaServed": "Austin"
+              }
+            },
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "Service",
+                "name": "Chemical Peel",
+                "areaServed": "Austin"
+              }
+            },
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "Service",
+                "name": "HydraFacial",
+                "areaServed": "Austin"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://clinic.example/#website",
+        "url": "https://clinic.example",
+        "name": "Austin Clinic",
+        "publisher": {
+          "@id": "https://clinic.example/#business"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://clinic.example/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How much does Botox cost here?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Botox is priced per unit; most treatments range from $10\u2013$18 per unit. Book a consultation for an exact quote based on the areas you want treated."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Who performs the injections?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "All injectable treatments are performed by licensed medical professionals (a nurse injector, physician assistant, or supervising physician)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do you offer free consultations?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. We offer a complimentary consultation to build a personalized treatment plan before any procedure."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How long do dermal filler results last?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Most dermal fillers last 6\u201318 months depending on the product and treatment area."
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

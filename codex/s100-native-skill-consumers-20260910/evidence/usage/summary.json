@@ -1,0 +1,19 @@
+{
+  "weeklySlashUsage": "UNAVAILABLE_NONINTERACTIVE_TUI",
+  "weeklySlashNote": "grok /usage requires interactive TUI; headless sessions return os error 6 / USAGE_UNAVAILABLE",
+  "subscriptionSessionsAggregated": {
+    "inputTokens": 6516577,
+    "outputTokens": 101171,
+    "cachedReadTokens": 4688128,
+    "reasoningTokens": 59045,
+    "totalTokens": 6617748,
+    "modelCalls": 148,
+    "costUsdTicks": 11233579600
+  },
+  "costUsdApproxSubscriptionAccounting": 1.12335796,
+  "sessionCount": 16,
+  "model": "grok-4.6",
+  "reasoningEffort": "xhigh",
+  "apiKeyCharges": 0,
+  "paidGatewayCalls": 0
+}

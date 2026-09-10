@@ -1,0 +1,70 @@
+{
+  "ownerQa": true,
+  "label": "owner-qa-deterministic-fixture",
+  "paid": false,
+  "signed": false,
+  "ok": true,
+  "command": "company-enrich",
+  "domain": "acme.example",
+  "result": {
+    "ok": true,
+    "domain": "acme.example",
+    "url": "https://acme.example/",
+    "fetchedAt": "2026-09-10T07:50:21.461Z",
+    "company": {
+      "name": "Acme Robotics",
+      "legalName": null,
+      "description": "Public company and contact evidence for agents.",
+      "logo": null,
+      "foundingDate": null,
+      "keywords": [
+        "acme",
+        "robotics",
+        "public",
+        "company",
+        "evidence",
+        "agents"
+      ],
+      "keywordsSource": "derived"
+    },
+    "contact": {
+      "emails": [
+        "hello@acme.example"
+      ],
+      "phones": [
+        "+1-555-0100"
+      ],
+      "address": null
+    },
+    "social": {
+      "github": "https://github.com/acme"
+    },
+    "tech": [],
+    "dns": {
+      "host": "acme.example",
+      "a": [
+        "93.184.216.34"
+      ],
+      "mx": [
+        "mail.acme.example"
+      ],
+      "ns": [
+        "ns1.acme.example"
+      ],
+      "hasSPF": true,
+      "hasDMARC": false,
+      "emailInfra": true
+    },
+    "aiReadiness": {
+      "hasJsonLd": true,
+      "schemaTypes": [
+        "Organization"
+      ],
+      "hasOpenGraph": false,
+      "hasRobotsTxt": true,
+      "hasSitemap": true,
+      "hasLlmsTxt": true,
+      "score": 84
+    }
+  }
+}

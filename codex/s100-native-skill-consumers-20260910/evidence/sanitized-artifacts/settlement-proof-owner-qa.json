@@ -1,0 +1,138 @@
+{
+  "ownerQa": true,
+  "label": "owner-qa-deterministic-fixture",
+  "paid": false,
+  "signed": false,
+  "livePaid": false,
+  "product": "samedaydesk-base-usdc-settlement-proof",
+  "skill": "settlement-proof",
+  "route": "GET /commerce/settlement-proof",
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "verified": {
+    "ownerQa": true,
+    "label": "owner-qa-deterministic-fixture",
+    "paid": false,
+    "signed": false,
+    "ok": true,
+    "command": "settlement-proof",
+    "result": {
+      "ok": true,
+      "product": "samedaydesk-base-usdc-settlement-proof",
+      "version": "1.0.0",
+      "checkedAt": "2026-08-11T08:30:00.000Z",
+      "decision": "verified",
+      "request": {
+        "transactionHash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "recipient": "0x2222222222222222222222222222222222222222",
+        "amountAtomic": "5000",
+        "payer": "0x1111111111111111111111111111111111111111"
+      },
+      "chain": {
+        "id": 8453,
+        "name": "Base mainnet",
+        "network": "eip155:8453"
+      },
+      "asset": {
+        "address": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "symbol": "USDC",
+        "decimals": 6
+      },
+      "transaction": {
+        "hash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "status": "success",
+        "blockNumber": "49823378",
+        "blockTimestamp": "2026-08-10T08:35:03.000Z"
+      },
+      "settlement": {
+        "verified": true,
+        "exactTransferCount": 1,
+        "recipientTransferCount": 1,
+        "observed": {
+          "payer": "0x1111111111111111111111111111111111111111",
+          "recipient": "0x2222222222222222222222222222222222222222",
+          "amountAtomic": "5000",
+          "amountUsdc": "0.005"
+        }
+      },
+      "findings": [],
+      "boundary": {
+        "source": "public Base mainnet receipt and logs",
+        "privateLedgerRead": false,
+        "auditedTransactionModified": false,
+        "walletAccessed": false,
+        "executionAuthorized": false
+      }
+    }
+  },
+  "malformed": {
+    "ownerQa": true,
+    "label": "owner-qa-deterministic-fixture",
+    "paid": false,
+    "signed": false,
+    "ok": true,
+    "command": "settlement-proof",
+    "refused": true,
+    "reason": "transactionHash must be a 32-byte 0x-prefixed transaction hash"
+  },
+  "interpretation": {
+    "acceptDecisionVerified": true,
+    "decision": "verified",
+    "settlementVerified": true,
+    "findingsEmpty": true,
+    "receiptSuccessful": true,
+    "exactCanonicalUsdcTransferCount": 1,
+    "payerMatchedWhenSupplied": true,
+    "blockNumber": "49823378",
+    "blockTimestamp": "2026-08-10T08:35:03.000Z",
+    "observedExactTransfer": {
+      "payer": "0x1111111111111111111111111111111111111111",
+      "recipient": "0x2222222222222222222222222222222222222222",
+      "amountAtomic": "5000",
+      "amountUsdc": "0.005"
+    },
+    "findings": [],
+    "paymentReceiptForThisProductCall": null,
+    "boundary": {
+      "source": "public Base mainnet receipt and logs",
+      "privateLedgerRead": false,
+      "auditedTransactionModified": false,
+      "walletAccessed": false,
+      "executionAuthorized": false
+    },
+    "notInferred": [
+      "service delivery",
+      "buyer intent",
+      "revenue ownership",
+      "accounting correctness beyond the exact on-chain transfer this result verifies",
+      "authorization to pay for another product call",
+      "merchant-ledger authority"
+    ],
+    "malformedRefusal": {
+      "refused": true,
+      "reason": "transactionHash must be a 32-byte 0x-prefixed transaction hash",
+      "codeHint": "invalid_transaction_hash"
+    }
+  },
+  "unpaidLiveStop": {
+    "httpStatus": 402,
+    "paid": false,
+    "signed": false,
+    "stoppedBeforePayment": true,
+    "challengeValidated": true,
+    "resource": "https://agents.samedaydesk.com/commerce/settlement-proof?amountAtomic=5000&payer=0x990CC4f469dfe854c16C601c7B8eE6534B267f17&recipient=0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee&transactionHash=0xcfcbb367fecf27052db9ca855e5146e99cacbce1cab94f20f9f95a74170a8987",
+    "amount": "5000",
+    "network": "eip155:8453",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "scheme": "exact",
+    "x402Version": 2,
+    "openapi": {
+      "url": "https://agents.samedaydesk.com/openapi.json",
+      "operationId": "verifyBaseUsdcSettlement",
+      "price": "$0.005 USDC",
+      "priceAtomic": "5000"
+    },
+    "note": "Unpaid discovery plus one HTTP 402 challenge only. Paid endpoints and signing are disabled; no live settlement-proof payment was sent."
+  }
+}

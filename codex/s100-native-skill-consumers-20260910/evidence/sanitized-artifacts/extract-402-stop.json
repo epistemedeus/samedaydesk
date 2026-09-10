@@ -1,0 +1,55 @@
+{
+  "ok": false,
+  "stopped": true,
+  "paid": false,
+  "paymentAttempted": false,
+  "signingAttempted": false,
+  "httpStatus": 402,
+  "method": "GET",
+  "resource": "https://agents.samedaydesk.com/extract?url=https%3a%2f%2fexample.com%2f",
+  "amount": "5000",
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "scheme": "exact",
+  "error": "Payment required",
+  "x402Version": 2,
+  "reason": "HTTP 402 Payment Required. Caller authorization for x402 v2 or MPP evm/charge is not present; paid endpoints and signing are disabled. Stopped without paying or inventing a paid extract body.",
+  "verification": {
+    "completeResourcePresent": true,
+    "resourceBindsExampleCom": true,
+    "amountAtomic": "5000",
+    "amountMatchesOpenApi005Usdc": true,
+    "networkIsBase": true,
+    "assetIsBaseUsdc": true,
+    "payToPresent": true,
+    "mppCrossCheck": {
+      "amount": "5000",
+      "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "chainId": 8453,
+      "recipient": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "matchesX402": true
+    }
+  },
+  "request": {
+    "url": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com%2F",
+    "headers": {
+      "Accept": "application/json",
+      "X-SameDayDesk-Agent-Source": "agent-skills-v1"
+    },
+    "paymentHeadersSent": false
+  },
+  "challenge": {
+    "httpStatus": 402,
+    "resource": "https://agents.samedaydesk.com/extract?url=https%3a%2f%2fexample.com%2f",
+    "amount": "5000",
+    "network": "eip155:8453",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "maxTimeoutSeconds": 300,
+    "extra": {
+      "name": "USD Coin",
+      "version": "2"
+    }
+  }
+}

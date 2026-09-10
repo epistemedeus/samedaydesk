@@ -1,0 +1,222 @@
+{
+  "ownerQa": true,
+  "label": "owner-qa-deterministic-fixture",
+  "paid": false,
+  "signed": false,
+  "ok": true,
+  "command": "wallet-policy",
+  "freePath": true,
+  "localEvaluatorCompleted": true,
+  "paidSameDayDeskUsed": false,
+  "note": "Local matrix completed exact-action conformance. Paid SameDayDesk was not used.",
+  "decision": "conformant",
+  "freePathRun": {
+    "ownerQa": true,
+    "label": "owner-qa-deterministic-fixture",
+    "paid": false,
+    "signed": false,
+    "ok": true,
+    "command": "wallet-policy",
+    "freePath": true,
+    "result": {
+      "schemaVersion": "samedaydesk.wallet-policy-conformance.v1",
+      "standardSchemaVersion": "agent-payment-policy.wallet-policy-observation-report.v1",
+      "product": "samedaydesk-wallet-policy-conformance",
+      "evaluatedAt": "2026-09-10T07:50:51.116Z",
+      "profile": {
+        "profileId": "lab-profile",
+        "provider": "Privy",
+        "network": "solana:mainnet",
+        "protocol": "x402"
+      },
+      "decision": "conformant",
+      "complete": true,
+      "exactShapePassed": true,
+      "results": [
+        {
+          "case": "intended",
+          "actual": "allowed",
+          "denialClass": "none",
+          "code": "signed",
+          "expected": "allow",
+          "control": null,
+          "required": true,
+          "expectationMet": true,
+          "providerNativeVerified": false,
+          "finding": "expected_behavior"
+        },
+        {
+          "case": "missing_authorization",
+          "actual": "denied",
+          "denialClass": "policy",
+          "code": "policy_violation",
+          "expected": "deny",
+          "control": "authorization",
+          "required": true,
+          "expectationMet": true,
+          "providerNativeVerified": true,
+          "finding": "expected_behavior"
+        },
+        {
+          "case": "wrong_operation",
+          "actual": "denied",
+          "denialClass": "policy",
+          "code": "policy_violation",
+          "expected": "deny",
+          "control": "operation",
+          "required": true,
+          "expectationMet": true,
+          "providerNativeVerified": true,
+          "finding": "expected_behavior"
+        },
+        {
+          "case": "duplicate_approved_action",
+          "actual": "denied",
+          "denialClass": "policy",
+          "code": "policy_violation",
+          "expected": "deny",
+          "control": "execution_shape",
+          "required": true,
+          "expectationMet": true,
+          "providerNativeVerified": true,
+          "finding": "expected_behavior"
+        },
+        {
+          "case": "wrong_chain",
+          "actual": "denied",
+          "denialClass": "policy",
+          "code": "policy_violation",
+          "expected": "deny",
+          "control": "chain",
+          "required": true,
+          "expectationMet": true,
+          "providerNativeVerified": true,
+          "finding": "expected_behavior"
+        },
+        {
+          "case": "wrong_token_contract_or_program",
+          "actual": "denied",
+          "denialClass": "policy",
+          "code": "policy_violation",
+          "expected": "deny",
+          "control": "token_contract",
+          "required": true,
+          "expectationMet": true,
+          "providerNativeVerified": true,
+          "finding": "expected_behavior"
+        },
+        {
+          "case": "wrong_recipient",
+          "actual": "denied",
+          "denialClass": "policy",
+          "code": "policy_violation",
+          "expected": "deny",
+          "control": "recipient",
+          "required": true,
+          "expectationMet": true,
+          "providerNativeVerified": true,
+          "finding": "expected_behavior"
+        },
+        {
+          "case": "wrong_amount",
+          "actual": "denied",
+          "denialClass": "policy",
+          "code": "policy_violation",
+          "expected": "deny",
+          "control": "amount",
+          "required": true,
+          "expectationMet": true,
+          "providerNativeVerified": true,
+          "finding": "expected_behavior"
+        },
+        {
+          "case": "wrong_function_or_instruction",
+          "actual": "denied",
+          "denialClass": "policy",
+          "code": "policy_violation",
+          "expected": "deny",
+          "control": "function",
+          "required": true,
+          "expectationMet": true,
+          "providerNativeVerified": true,
+          "finding": "expected_behavior"
+        },
+        {
+          "case": "wrong_route_or_offer",
+          "actual": "denied",
+          "denialClass": "policy",
+          "code": "policy_violation",
+          "expected": "deny",
+          "control": "route_lock",
+          "required": true,
+          "expectationMet": true,
+          "providerNativeVerified": true,
+          "finding": "expected_behavior"
+        },
+        {
+          "case": "changed_protocol_challenge",
+          "actual": "denied",
+          "denialClass": "policy",
+          "code": "policy_violation",
+          "expected": "deny",
+          "control": "protocol_challenge",
+          "required": true,
+          "expectationMet": true,
+          "providerNativeVerified": true,
+          "finding": "expected_behavior"
+        },
+        {
+          "case": "replay_or_reuse",
+          "actual": "denied",
+          "denialClass": "policy",
+          "code": "policy_violation",
+          "expected": "deny",
+          "control": "replay",
+          "required": true,
+          "expectationMet": true,
+          "providerNativeVerified": true,
+          "finding": "expected_behavior"
+        }
+      ],
+      "providerNativeVerified": [
+        "authorization",
+        "operation",
+        "execution_shape",
+        "chain",
+        "token_contract",
+        "recipient",
+        "amount",
+        "function",
+        "route_lock",
+        "protocol_challenge",
+        "replay"
+      ],
+      "providerNativeUnverified": [],
+      "notEvaluatedByWalletPolicy": [
+        "output_contract",
+        "receipt",
+        "balance_reconciliation"
+      ],
+      "missingRequiredCases": [],
+      "unsafeCases": [],
+      "inconclusiveCases": [],
+      "boundary": {
+        "credentialsAccepted": false,
+        "walletAccessed": false,
+        "signatureVerified": false,
+        "transactionBroadcast": false,
+        "statement": "Evaluates caller-supplied standardized observations. It does not independently execute or verify provider policy tests."
+      }
+    }
+  },
+  "secretRefusal": {
+    "ownerQa": true,
+    "label": "owner-qa-deterministic-fixture",
+    "paid": false,
+    "signed": false,
+    "ok": true,
+    "command": "wallet-policy",
+    "refused": true,
+    "reason": "observations[0] contains unsupported fields: privateKey"
+  }
+}

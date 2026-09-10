@@ -1,0 +1,1 @@
+{"ok":true,"caseId":"extract-402-stop","family":"payment_required_stop","skill":"web-extract","expect":"correct_stop","failures":[],"notes":["challenge fields present amount=5000 network=eip155:8453"],"artifactPath":"/tmp/s100-status/cases/extract-402-stop/artifact/stop-report.json"}

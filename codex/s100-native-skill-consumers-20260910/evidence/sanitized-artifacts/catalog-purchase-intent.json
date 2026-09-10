@@ -1,0 +1,243 @@
+{
+  "kind": "verified_non_spending_purchase_intent",
+  "pointInTime": true,
+  "permissionToSpend": false,
+  "receipt": false,
+  "paidServiceRan": false,
+  "action": "extract",
+  "operation": "extractUrl",
+  "method": "GET",
+  "url": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com%2F",
+  "resolvedUrl": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com%2F",
+  "resource": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com%2F",
+  "protocol": "x402",
+  "amount": "5000",
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "recipient": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "expiresAt": "2026-09-10T07:55:42.162Z",
+  "httpStatus": 402,
+  "paid": false,
+  "credentialsUsed": false,
+  "paymentSigned": false,
+  "paymentSent": false,
+  "paymentAttempted": false,
+  "walletAccessed": false,
+  "stoppedBeforePayment": true,
+  "intent": {
+    "method": "GET",
+    "url": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com%2F",
+    "resolvedUrl": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com%2F",
+    "operation": "extractUrl",
+    "route": "/extract",
+    "query": {
+      "url": "https://example.com/"
+    },
+    "body": null,
+    "protocol": "x402",
+    "protocolVersion": 2,
+    "scheme": "exact",
+    "amount": "5000",
+    "amountAtomic": "5000",
+    "network": "eip155:8453",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "assetSymbol": "USDC",
+    "assetDecimals": 6,
+    "recipient": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "expiresAt": "2026-09-10T07:55:42.162Z",
+    "maxTimeoutSeconds": 300,
+    "outputExpectations": {
+      "mimeType": "application/json",
+      "httpStatus": 200,
+      "note": "Merchant HTTP 200 is delivery after payment, not source success or settlement proof. Envelope ok labels the produced record, not verified settlement or source completeness.",
+      "requiredFields": [
+        "ok",
+        "url",
+        "title",
+        "status",
+        "sourceOk",
+        "requestedUrl",
+        "finalUrl"
+      ],
+      "inspectAlso": [
+        "error",
+        "capture",
+        "status",
+        "sourceOk",
+        "requestedUrl",
+        "finalUrl"
+      ],
+      "sourceOkMeaning": "2xx source HTTP status after no-JS capture, not necessarily useful content or a complete page.",
+      "capture": {
+        "method": "http-get-no-javascript",
+        "javascriptExecuted": false,
+        "textIsNotFullPage": true
+      }
+    }
+  },
+  "purchaseIntent": {
+    "method": "GET",
+    "url": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com%2F",
+    "resolvedUrl": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com%2F",
+    "operation": "extractUrl",
+    "route": "/extract",
+    "query": {
+      "url": "https://example.com/"
+    },
+    "body": null,
+    "protocol": "x402",
+    "protocolVersion": 2,
+    "scheme": "exact",
+    "amount": "5000",
+    "amountAtomic": "5000",
+    "network": "eip155:8453",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "assetSymbol": "USDC",
+    "assetDecimals": 6,
+    "recipient": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "expiresAt": "2026-09-10T07:55:42.162Z",
+    "maxTimeoutSeconds": 300,
+    "outputExpectations": {
+      "mimeType": "application/json",
+      "httpStatus": 200,
+      "note": "Merchant HTTP 200 is delivery after payment, not source success or settlement proof. Envelope ok labels the produced record, not verified settlement or source completeness.",
+      "requiredFields": [
+        "ok",
+        "url",
+        "title",
+        "status",
+        "sourceOk",
+        "requestedUrl",
+        "finalUrl"
+      ],
+      "inspectAlso": [
+        "error",
+        "capture",
+        "status",
+        "sourceOk",
+        "requestedUrl",
+        "finalUrl"
+      ],
+      "sourceOkMeaning": "2xx source HTTP status after no-JS capture, not necessarily useful content or a complete page.",
+      "capture": {
+        "method": "http-get-no-javascript",
+        "javascriptExecuted": false,
+        "textIsNotFullPage": true
+      }
+    }
+  },
+  "challenge": {
+    "httpStatus": 402,
+    "observedAt": "2026-09-10T07:50:42.000Z",
+    "x402Version": 2,
+    "error": "Payment required",
+    "resource": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com%2F",
+    "amount": "5000",
+    "network": "eip155:8453",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "expiresAt": "2026-09-10T07:55:42.162Z",
+    "scheme": "exact",
+    "maxTimeoutSeconds": 300
+  },
+  "accepts": [
+    {
+      "protocol": "x402",
+      "version": 2,
+      "scheme": "exact",
+      "network": "eip155:8453",
+      "amount": "5000",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "selected": true
+    }
+  ],
+  "compatibleOfferNotSelected": {
+    "protocol": "mpp",
+    "method": "evm",
+    "intent": "charge",
+    "network": "eip155:8453",
+    "chainId": 8453,
+    "amount": "5000",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "recipient": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "expiresAt": "2026-09-10T07:55:42.162Z",
+    "selected": false
+  },
+  "verification": {
+    "resourceMatchesOperation": true,
+    "requiredQueryPresent": true,
+    "targetHttps": true,
+    "noCredentialLikeQuery": true,
+    "noUnresolvedRouteParams": true,
+    "noCrossOriginRedirect": true,
+    "networkIsBase": true,
+    "assetIsCanonicalBaseUsdc": true,
+    "amountFromLiveChallenge": true,
+    "recipientFromLiveChallenge": true,
+    "challengeExpired": false,
+    "runtimeMatchesCatalogAmount": true,
+    "runtimeMatchesCatalogPayTo": true,
+    "runtimeMatchesSelectedOperation": true
+  },
+  "discovery": {
+    "origin": "https://agents.samedaydesk.com",
+    "catalogUrl": "https://agents.samedaydesk.com/api/actions",
+    "openApiUrl": "https://agents.samedaydesk.com/openapi.json",
+    "openApiVersion": "1.23.46",
+    "catalogSchema": "samedaydesk.machine-actions.v2",
+    "paidActionCount": 23,
+    "selectedAction": {
+      "name": "extract",
+      "method": "GET",
+      "route": "/extract",
+      "requiredQuery": [
+        "url"
+      ],
+      "catalogPriceAtomicUsdc": "5000",
+      "catalogPayTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+    },
+    "unpaidChallengeUrl": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com%2F",
+    "agentSourceHeaderSent": "agent-skills-v1"
+  },
+  "outputExpectations": {
+    "mimeType": "application/json",
+    "httpStatus": 200,
+    "note": "Merchant HTTP 200 is delivery after payment, not source success or settlement proof. Envelope ok labels the produced record, not verified settlement or source completeness.",
+    "requiredFields": [
+      "ok",
+      "url",
+      "title",
+      "status",
+      "sourceOk",
+      "requestedUrl",
+      "finalUrl"
+    ],
+    "inspectAlso": [
+      "error",
+      "capture",
+      "status",
+      "sourceOk",
+      "requestedUrl",
+      "finalUrl"
+    ],
+    "sourceOkMeaning": "2xx source HTTP status after no-JS capture, not necessarily useful content or a complete page.",
+    "capture": {
+      "method": "http-get-no-javascript",
+      "javascriptExecuted": false,
+      "textIsNotFullPage": true
+    }
+  },
+  "boundary": {
+    "credentialsUsed": false,
+    "paymentSigned": false,
+    "paymentSent": false,
+    "paidReplay": false,
+    "opaqueServerStateIncluded": false,
+    "rawAuthorizationHeadersIncluded": false,
+    "statement": "Purchase intent is point-in-time unpaid 402 evidence. It is not permission to spend, not a receipt, and not a claim that paid extract ran. Hand to a separately authorized payment executor."
+  }
+}

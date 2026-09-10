@@ -1,0 +1,146 @@
+{
+  "ownerQa": true,
+  "label": "owner-qa-deterministic-fixture",
+  "paid": false,
+  "signed": false,
+  "skill": "transaction-receipt",
+  "product": "samedaydesk-transaction-receipt",
+  "livePaidCall": false,
+  "liveChainDataInvented": false,
+  "command": "transaction-receipt",
+  "foundReceipt": {
+    "ownerQa": true,
+    "label": "owner-qa-deterministic-fixture",
+    "paid": false,
+    "signed": false,
+    "ok": true,
+    "command": "transaction-receipt",
+    "result": {
+      "ok": true,
+      "product": "samedaydesk-transaction-receipt",
+      "version": "1.0.0",
+      "checkedAt": "2026-08-11T08:30:00.000Z",
+      "decision": "found",
+      "request": {
+        "transactionHash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "network": "base"
+      },
+      "chain": {
+        "id": 8453,
+        "name": "Base mainnet",
+        "network": "eip155:8453"
+      },
+      "transaction": {
+        "hash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "status": "success",
+        "blockNumber": "50",
+        "blockHash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+        "blockTimestamp": "2026-08-10T08:35:03.000Z",
+        "transactionIndex": "3",
+        "from": "0x1111111111111111111111111111111111111111",
+        "to": "0x2222222222222222222222222222222222222222",
+        "contractAddress": null,
+        "type": "eip1559",
+        "gasUsedAtomic": "21000",
+        "effectiveGasPriceWei": "2000000000",
+        "transactionFeeWei": "42000000000000"
+      },
+      "receipt": {
+        "found": true,
+        "logCount": 1,
+        "decodedTransferCount": 1,
+        "canonicalUsdcTransferCount": 1,
+        "transfersTruncated": false
+      },
+      "transfers": [
+        {
+          "token": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "from": "0x1111111111111111111111111111111111111111",
+          "to": "0x2222222222222222222222222222222222222222",
+          "amountAtomic": "5000",
+          "canonicalUsdc": true,
+          "amountUsdc": "0.005",
+          "logIndex": "1"
+        }
+      ],
+      "canonicalUsdcTransfers": [
+        {
+          "token": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "from": "0x1111111111111111111111111111111111111111",
+          "to": "0x2222222222222222222222222222222222222222",
+          "amountAtomic": "5000",
+          "canonicalUsdc": true,
+          "amountUsdc": "0.005",
+          "logIndex": "1"
+        }
+      ],
+      "findings": [],
+      "boundary": {
+        "source": "bounded public Base mainnet receipt and block RPC",
+        "rawLogsReturned": false,
+        "privateLedgerRead": false,
+        "walletAccessed": false,
+        "transactionSigned": false,
+        "transactionBroadcast": false,
+        "transactionModified": false
+      }
+    }
+  },
+  "unsupportedNetworkRefusal": {
+    "ownerQa": true,
+    "label": "owner-qa-deterministic-fixture",
+    "paid": false,
+    "signed": false,
+    "ok": true,
+    "command": "transaction-receipt",
+    "refused": true,
+    "reason": "network must be base or ethereum"
+  },
+  "unpaidDiscovery": {
+    "openapi": {
+      "url": "https://agents.samedaydesk.com/openapi.json",
+      "httpStatus": 200,
+      "operationId": "getTransactionReceipt",
+      "path": "/chain/transaction-receipt",
+      "method": "GET",
+      "priceUsdc": "0.002",
+      "paymentNetwork": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "gatewayVersion": "1.23.46"
+    },
+    "http402Challenge": {
+      "stoppedOn402": true,
+      "paid": false,
+      "signed": false,
+      "httpStatus": 402,
+      "resource": "https://agents.samedaydesk.com/chain/transaction-receipt?network=base&transactionHash=0xcfcbb367fecf27052db9ca855e5146e99cacbce1cab94f20f9f95a74170a8987",
+      "amount": "2000",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "scheme": "exact",
+      "note": "Unpaid challenge only. Did not retry with payment. Challenge example body is not used as live receipt evidence."
+    }
+  },
+  "interpretation": {
+    "found": "owner-qa-deterministic-fixture public mined receipt was normalized; read status, block identity/time, gas, fee, decoded transfers, findings.",
+    "unsupportedNetwork": "network 'arbitrum' refused before payment; network must be base or ethereum.",
+    "canonicalUsdcTransfers": "decoded transfer evidence only; not settlement-claim verification (use settlement-proof).",
+    "boundary": {
+      "source": "bounded public Base mainnet receipt and block RPC",
+      "rawLogsReturned": false,
+      "privateLedgerRead": false,
+      "walletAccessed": false,
+      "transactionSigned": false,
+      "transactionBroadcast": false,
+      "transactionModified": false
+    },
+    "notProofOf": [
+      "service delivery",
+      "buyer intent",
+      "revenue ownership",
+      "business-accounting correctness",
+      "settlement-claim verification"
+    ]
+  }
+}

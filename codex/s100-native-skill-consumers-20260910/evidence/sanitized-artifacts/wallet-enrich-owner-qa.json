@@ -1,0 +1,119 @@
+{
+  "ownerQa": true,
+  "label": "owner-qa-deterministic-fixture",
+  "paid": false,
+  "signed": false,
+  "ok": true,
+  "skill": "wallet-enrich",
+  "route": "GET /wallet-enrich",
+  "gateway": "https://agents.samedaydesk.com",
+  "sourceHeader": "X-SameDayDesk-Agent-Source: agent-skills-v1",
+  "note": "EOA snapshot and invalid-address refusal are owner-qa-deterministic-fixture outputs from mocked Base RPC. They are not live balances. Curated-token absence does not prove every token balance is zero. Activity does not establish ownership or safety.",
+  "eoaSnapshot": {
+    "ownerQa": true,
+    "label": "owner-qa-deterministic-fixture",
+    "paid": false,
+    "signed": false,
+    "ok": true,
+    "command": "wallet-enrich",
+    "result": {
+      "ok": true,
+      "address": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "basename": null,
+      "network": "base-mainnet (eip155:8453)",
+      "fetchedAt": "2026-09-10T08:02:57.073Z",
+      "type": "eoa",
+      "native": {
+        "symbol": "ETH",
+        "balance": "1",
+        "balanceWei": "1000000000000000000"
+      },
+      "activity": {
+        "outboundTxCount": 4,
+        "hasActivity": true
+      },
+      "tokenHoldings": [],
+      "holdingsSummary": {
+        "distinctTokens": 0,
+        "stablecoinUnits": 0,
+        "hasStablecoins": false,
+        "note": "Holdings cover a curated set of major Base tokens; absence here does not prove zero balance of other tokens."
+      },
+      "profile": "active-eoa"
+    }
+  },
+  "invalidAddressRefusal": {
+    "ownerQa": true,
+    "label": "owner-qa-deterministic-fixture",
+    "paid": false,
+    "signed": false,
+    "ok": true,
+    "command": "wallet-enrich",
+    "refused": true,
+    "reason": "invalid address: expected a 0x-prefixed 40-hex EVM address (e.g. 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913)"
+  },
+  "unpaidDiscovery": {
+    "paid": false,
+    "openapi": {
+      "url": "https://agents.samedaydesk.com/openapi.json",
+      "httpStatus": 200,
+      "operationId": "enrichWallet",
+      "price": {
+        "amount": "0.05",
+        "currency": "USD",
+        "mode": "fixed"
+      },
+      "x402": {
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "scheme": "exact"
+      },
+      "mpp": {
+        "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "intent": "charge",
+        "method": "evm",
+        "network": "eip155:8453"
+      },
+      "responseFields": [
+        "type",
+        "native",
+        "tokenHoldings",
+        "contract",
+        "activity",
+        "profile"
+      ]
+    },
+    "catalog": {
+      "url": "https://agents.samedaydesk.com/api/actions",
+      "httpStatus": 200,
+      "action": "wallet-enrich",
+      "method": "GET",
+      "priceAtomicUsdc": "50000",
+      "priceUsdc": 0.05,
+      "network": "eip155:8453",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+    }
+  },
+  "unpaidChallenge": {
+    "paid": false,
+    "signed": false,
+    "stoppedOn402": true,
+    "httpStatus": 402,
+    "url": "https://agents.samedaydesk.com/wallet-enrich?address=0x1111111111111111111111111111111111111111",
+    "resource": "https://agents.samedaydesk.com/wallet-enrich?address=0x1111111111111111111111111111111111111111",
+    "amount": "50000",
+    "network": "eip155:8453",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "assetName": "USD Coin",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "scheme": "exact",
+    "x402Version": 2,
+    "verified": {
+      "completeResource": true,
+      "amount": true,
+      "networkEip1558453": true,
+      "canonicalBaseUsdc": true,
+      "recipient": true
+    }
+  }
+}

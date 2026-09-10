@@ -1,0 +1,1 @@
+{"ok":true,"caseId":"catalog-purchase-intent","family":"catalog_discovery","skill":"samedaydesk-machine-commerce","expect":"usable_artifact","failures":[],"notes":["challenge fields present amount=5000 network=eip155:8453"],"artifactPath":"/tmp/s100-status/cases/catalog-purchase-intent/artifact/purchase-intent.json"}

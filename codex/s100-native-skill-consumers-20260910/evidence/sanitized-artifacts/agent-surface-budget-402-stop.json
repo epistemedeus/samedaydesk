@@ -1,0 +1,38 @@
+{
+  "httpStatus": 402,
+  "resource": "https://agents.samedaydesk.com/distribution/agent-surface-budget-audit?origin=https://example.com",
+  "amount": "10000",
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "paid": false,
+  "credentialsUsed": false,
+  "paymentSigned": false,
+  "paymentSent": false,
+  "stoppedOn402": true,
+  "selectedOffer": {
+    "protocol": "x402",
+    "x402Version": 2,
+    "scheme": "exact",
+    "intent": "exact"
+  },
+  "frozen": {
+    "origin": "https://example.com",
+    "mcpPath": "/mcp",
+    "openApiPath": "/openapi.json",
+    "mcpBudgetBytes": 65536,
+    "openApiBudgetBytes": 524288,
+    "method": "GET",
+    "url": "https://agents.samedaydesk.com/distribution/agent-surface-budget-audit?origin=https://example.com",
+    "protocol": "x402",
+    "amount": "10000",
+    "network": "eip155:8453",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "recipient": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "expiry": {
+      "maxTimeoutSeconds": 300,
+      "mppExpiresAt": "2026-09-10T08:11:05.114Z",
+      "x402ValidUntil": 1789027865
+    }
+  }
+}

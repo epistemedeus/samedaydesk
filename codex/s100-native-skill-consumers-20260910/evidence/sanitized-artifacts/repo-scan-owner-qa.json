@@ -1,0 +1,109 @@
+{
+  "ownerQa": true,
+  "label": "owner-qa-deterministic-fixture",
+  "paid": false,
+  "signed": false,
+  "ok": true,
+  "command": "repo-scan",
+  "product": "samedaydesk-repo-security-scan",
+  "source": "owner-qa-deterministic-fixture",
+  "repo": "acme/agent-tool",
+  "risk": "dangerous",
+  "filesScanned": 2,
+  "summary": "DANGER: 1 high-severity finding(s) (exfil/obfuscation). Do NOT install/run without manual review.",
+  "findings": [
+    {
+      "file": "exfil.js",
+      "severity": "danger",
+      "why": "exfil sink: webhook\\.site"
+    },
+    {
+      "file": "package.json",
+      "severity": "warn",
+      "why": "install/runtime network exec: curl[^\\n|]*\\|\\s*(sudo\\s+)?(ba)?sh"
+    }
+  ],
+  "result": {
+    "ok": true,
+    "repo": "acme/agent-tool",
+    "branch": "main",
+    "filesScanned": 2,
+    "risk": "dangerous",
+    "summary": "DANGER: 1 high-severity finding(s) (exfil/obfuscation). Do NOT install/run without manual review.",
+    "findings": [
+      {
+        "file": "exfil.js",
+        "severity": "danger",
+        "why": "exfil sink: webhook\\.site"
+      },
+      {
+        "file": "package.json",
+        "severity": "warn",
+        "why": "install/runtime network exec: curl[^\\n|]*\\|\\s*(sudo\\s+)?(ba)?sh"
+      }
+    ],
+    "disclaimer": "Static heuristic triage of a public repo. Absence of findings is not proof of safety; presence is not proof of malice. For high-stakes decisions, get a manual review.",
+    "scannedAt": "2026-09-10T07:50:47.710Z"
+  },
+  "boundary": {
+    "scannerNeverRunsTarget": true,
+    "staticScanIsNotPermissionToExecute": true,
+    "cleanResultIsNotPermissionToExecute": true,
+    "reviewSeparately": [
+      "relevant code",
+      "dependencies",
+      "release provenance",
+      "runtime permissions"
+    ],
+    "note": "This is one static evidence layer. A static scan is not permission to execute the repo. Review relevant code, dependencies, release provenance, and runtime permissions separately before executing an untrusted project."
+  },
+  "liveDiscovery": {
+    "paid": false,
+    "signed": false,
+    "openapi": {
+      "url": "https://agents.samedaydesk.com/openapi.json",
+      "operationId": "scanRepositoryRisk",
+      "method": "GET",
+      "path": "/scan",
+      "declaredPriceUsd": "0.2",
+      "declaredNetwork": "eip155:8453",
+      "declaredAsset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+    },
+    "catalog": {
+      "url": "https://agents.samedaydesk.com/api/actions",
+      "action": "scan",
+      "route": "/scan",
+      "priceAtomicUsdc": "200000",
+      "priceUsdc": 0.2
+    },
+    "unpaid402Challenge": {
+      "stoppedOn402": true,
+      "httpStatus": 402,
+      "sourceHeader": "X-SameDayDesk-Agent-Source: agent-skills-v1",
+      "resource": "https://agents.samedaydesk.com/scan?repo=acme/agent-tool",
+      "amount": "200000",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "scheme": "exact",
+      "x402Version": 2,
+      "mpp": {
+        "method": "evm",
+        "intent": "charge",
+        "recipient": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+        "amount": "200000",
+        "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "chainId": 8453
+      },
+      "verified": {
+        "completeResource": true,
+        "amount": true,
+        "baseNetwork": true,
+        "baseUsdcAsset": true,
+        "recipient": true
+      },
+      "paymentSent": false,
+      "note": "Caller authorization to pay was not granted. Paid endpoints and signing are disabled. Stopped after the unpaid 402 challenge."
+    }
+  }
+}

@@ -1,0 +1,1 @@
+{"ok":true,"caseId":"opportunity-preflight-402-stop","family":"payment_required_stop","skill":"opportunity-preflight","expect":"correct_stop","failures":[],"notes":["challenge fields present amount=50000 network=eip155:8453"],"artifactPath":"/tmp/s100-status-c2/cases/opportunity-preflight-402-stop/artifact/stop-report.json"}

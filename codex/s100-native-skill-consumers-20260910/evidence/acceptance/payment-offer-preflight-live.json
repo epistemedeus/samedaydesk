@@ -1,0 +1,1 @@
+{"ok":true,"caseId":"payment-offer-preflight-live","family":"offer_preflight","skill":"payment-offer-preflight","expect":"usable_or_stop","failures":[],"notes":["challenge fields present amount=5000 network=eip155:8453"],"artifactPath":"/tmp/s100-status/cases/payment-offer-preflight-live/artifact/offer-preflight.json"}

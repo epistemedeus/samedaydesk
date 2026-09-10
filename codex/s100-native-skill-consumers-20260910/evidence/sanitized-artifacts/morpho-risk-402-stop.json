@@ -1,0 +1,47 @@
+{
+  "httpStatus": 402,
+  "resource": "https://agents.samedaydesk.com/defi/morpho-position?address=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913&shocks=10",
+  "amount": "20000",
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "paid": false,
+  "stoppedOn402": true,
+  "paymentSigned": false,
+  "paymentSent": false,
+  "operationId": "inspectMorphoPosition",
+  "openapiPrice": {
+    "amount": "0.02",
+    "currency": "USD",
+    "mode": "fixed",
+    "atomicAmount": "20000",
+    "decimals": 6
+  },
+  "verification": {
+    "completeResource": true,
+    "amountMatchesOpenApi": true,
+    "networkIsBase": true,
+    "assetIsBaseUsdc": true,
+    "recipientPresent": true,
+    "x402MppParity": true,
+    "assetName": "USD Coin"
+  },
+  "accepts": [
+    {
+      "scheme": "exact",
+      "network": "eip155:8453",
+      "amount": "20000",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+    }
+  ],
+  "mpp": {
+    "method": "evm",
+    "intent": "charge",
+    "amount": "20000",
+    "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "chainId": 8453,
+    "recipient": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+  },
+  "boundary": "HTTP 402 challenge only. No payment, signature, or replay. Point-in-time public payment terms, not transaction authorization, a Morpho position snapshot, a solvency guarantee, or an instruction to open, close, or resize a position."
+}
