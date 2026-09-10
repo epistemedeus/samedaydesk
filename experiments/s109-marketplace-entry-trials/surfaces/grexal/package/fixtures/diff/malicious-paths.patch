@@ -1,0 +1,12 @@
+diff --git a/../../etc/passwd b/../../etc/passwd
+--- a/../../etc/passwd
++++ b/../../etc/passwd
+@@ -1 +1 @@
+-x
++y
+diff --git a/safe.txt b/safe.txt
+--- a/safe.txt
++++ b/safe.txt
+@@ -1 +1 @@
+-a
++b

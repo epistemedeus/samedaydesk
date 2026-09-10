@@ -1,0 +1,95 @@
+{
+  "manifest_version": 3,
+  "entrypoint": "agent/pack_evidence.js",
+  "runtime": {
+    "language": "typescript",
+    "memory_mb": 512,
+    "timeout_seconds": 120,
+    "cpu": 1,
+    "sandbox_template": "standard"
+  },
+  "input_schema": {
+    "repoPath": {
+      "type": "text",
+      "description": "Local git checkout to diff. Optional when unifiedDiff is supplied. Dry-run only; sandbox may not contain the buyer's repo.",
+      "required": false
+    },
+    "unifiedDiff": {
+      "type": "text",
+      "description": "Precomputed unified diff text. Use this when the agent should not run git.",
+      "required": false
+    },
+    "baseRef": {
+      "type": "text",
+      "description": "Git base ref (default HEAD~1 when repoPath is used).",
+      "required": false
+    },
+    "headRef": {
+      "type": "text",
+      "description": "Git head ref (default HEAD when repoPath is used).",
+      "required": false
+    },
+    "acceptanceNotes": {
+      "type": "text",
+      "description": "Human or machine notes that belong in the acceptance report.",
+      "required": false
+    },
+    "rangeOp": {
+      "type": "text",
+      "description": "... (merge-base) or .. (endpoint trees); defaults to ...",
+      "required": false
+    },
+    "buyerCriteria": {
+      "type": "json",
+      "description": "Array of local checks; no execution or buyer authority",
+      "required": false
+    },
+    "maxDiffBytes": {
+      "type": "number",
+      "description": "Positive integer byte limit, maximum 5242880",
+      "required": false
+    }
+  },
+  "output_schema": {
+    "summary": {
+      "type": "text",
+      "description": "One-line packaging result. Always notes paidModelCalls=0."
+    },
+    "commitRange": {
+      "type": "text",
+      "description": "Requested range label; acceptanceReport states whether Git ran and dot semantics"
+    },
+    "diffBytes": {
+      "type": "number",
+      "description": "Byte length of the captured unified diff."
+    },
+    "paidModelCalls": {
+      "type": "number",
+      "description": "Always 0. This agent does not call paid models."
+    },
+    "acceptanceReport": {
+      "type": "json",
+      "description": "Machine-readable acceptance report (checks, notes, cash boundary)."
+    },
+    "evidencePack": {
+      "type": "json",
+      "description": "Combined pack: unified diff text plus acceptance report."
+    },
+    "structuralChecksPass": {
+      "type": "boolean",
+      "description": "Local structural checks only, never buyer acceptance"
+    },
+    "gitApplyVerified": {
+      "type": "boolean",
+      "description": "Always false; no apply execution"
+    },
+    "buyerAcceptanceVerified": {
+      "type": "boolean",
+      "description": "Always false; no buyer authority"
+    },
+    "grexalPaidExecution": {
+      "type": "boolean",
+      "description": "Always false; no paid execution evidence"
+    }
+  }
+}

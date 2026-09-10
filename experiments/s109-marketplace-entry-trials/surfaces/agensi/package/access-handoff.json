@@ -1,0 +1,41 @@
+{
+  "surface": "agensi",
+  "actor": "root",
+  "workerMustNotAuthenticate": true,
+  "skillRecipePin": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
+  "officialSellerAuthUrl": "https://www.agensi.io/auth",
+  "publicSellerUrl": "https://www.agensi.io/sell",
+  "mcpUrl": "https://mcp.agensi.io/mcp",
+  "doNotEnterCloudflareAccess": true,
+  "cloudflareAccessUrl": "https://www.agensi.dev/sell",
+  "primaryTaskHost": {
+    "url": "https://www.agensi.dev/sell",
+    "role": "unrelated-do-not-enter",
+    "gate": "Cloudflare Access",
+    "teamHost": "mlehman-899.cloudflareaccess.com",
+    "idp": "GitHub",
+    "oauthClientIdObserved": "observed-only-not-a-secret",
+    "anonymousResult": "HTTP 302 to Cloudflare Access. This Access tenant is NOT the Agensi seller surface. Do not enter from this worker. Official seller: https://www.agensi.io/auth and https://www.agensi.io/sell."
+  },
+  "alternatePublicMarketplace": {
+    "authUrl": "https://www.agensi.io/auth",
+    "submitUrl": "https://www.agensi.io/dashboard/submit",
+    "idpNote": "OFFICIAL Agensi seller entry: www.agensi.io/auth (email/password, email code, or Google). MCP: https://mcp.agensi.io/mcp. Do not confuse with www.agensi.dev Cloudflare Access."
+  },
+  "steps": [
+    "Use the existing creator session at https://www.agensi.io/auth; this package never authenticates.",
+    "Do not enter www.agensi.dev Cloudflare Access; it is unrelated to this submission.",
+    "Run npm test and npm run build:zip locally.",
+    "Open https://www.agensi.io/dashboard/submit, choose Free and the name Offline Package Provenance Check. Payout setup is not required for Free.",
+    "Upload dist/offline-package-provenance.zip (under 50 MB), then supply the complete prompt/output in DEMO.md. Review is stated as 24\u201348 hours, not guaranteed acceptance.",
+    "Reference epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666 as separate upstream source only; no recipe bytes are included. Check paid payout eligibility only if separately choosing a paid listing later."
+  ],
+  "doNotPasteIntoOverlay": [
+    "Cloudflare Access JWTs",
+    "Agensi session cookies",
+    "payout account identifiers",
+    "MCP credit-spending confirmations"
+  ],
+  "successPredicate": "Operator submits Free with ZIP and complete demo; review outcome remains unknown. The local tools do not submit.",
+  "failurePredicate": "Worker completes www.agensi.dev Access login, lists a skill, spends MCP credits, or claims ownership of free recipes."
+}

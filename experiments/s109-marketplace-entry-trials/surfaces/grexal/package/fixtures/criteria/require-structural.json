@@ -1,0 +1,6 @@
+[
+  {"id": "structural", "type": "requireStructuralPass"},
+  {"id": "no-trunc", "type": "forbidTruncated"},
+  {"id": "paths", "type": "forbidUnsafePaths"},
+  {"id": "human-review", "type": "noteOnly", "value": "buyer must visually confirm intent"}
+]

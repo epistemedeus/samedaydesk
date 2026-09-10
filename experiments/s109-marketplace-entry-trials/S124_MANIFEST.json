@@ -1,0 +1,251 @@
+{
+  "source": "7c57db4842e9bea6b4d8f45aff997fbe16aeca03",
+  "parent": "40da1745f73df5e66752ec761b9755921c35febd",
+  "files": [
+    {
+      "path": "experiments/s109-marketplace-entry-trials/releases/offline-package-provenance.zip",
+      "bytes": 35195,
+      "sha256": "4054915e120e75d70c1e589ccbf184dc4cf341d2a00be48e74ed83f8a505b375"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/releases/samedaydesk-s109-agensi-listing-checklist-0.1.0.tgz",
+      "bytes": 24174,
+      "sha256": "7a950d50fcca5f2f85b36f3ec5576eb91dfdb41d264b3cd858505b09bd1d6368"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/releases/samedaydesk-s109-grexal-evidence-agent-scaffold-0.1.0.tgz",
+      "bytes": 28651,
+      "sha256": "3da59ebdf6398e3471596cb447309040e7a3058e5e51d7321991f3bc1963cda3"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/DEMO.md",
+      "bytes": 2146,
+      "sha256": "e785e0aa65b2e330da4c91146c4c96d404eac56055179e0b9966197a5020417f"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/LICENSE",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/PROVENANCE.md",
+      "bytes": 913,
+      "sha256": "1f14533ffd1b0af298dedb277451d9c3e5ccc3057196eb632c2cd592967ae8ee"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/README.md",
+      "bytes": 2455,
+      "sha256": "faba1234f68c25f1930df138241402b75baa5efa6333d6352ae77a608a94b54f"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/SKILL.md",
+      "bytes": 1941,
+      "sha256": "8b846a14b51f74f03a914dfef93e5848a68522d0037bca590ca98840fcdc342f"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/access-handoff.json",
+      "bytes": 2535,
+      "sha256": "90fc039d79226a3f32bc26f50fadc067626ffe44be98590145d53c2f2b4725bb"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/build-skill-zip.py",
+      "bytes": 1837,
+      "sha256": "c2e74f276016aa26ea6587d01ff002f944aec58b6c688f3de8c422d4edded2de"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/checklist.mjs",
+      "bytes": 1160,
+      "sha256": "f76ea5673980c7c93c3c44772c4d5464f4f07a053f251b42dddd0d4403fba759"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/provenance.mjs",
+      "bytes": 5355,
+      "sha256": "a95399fb4b631b75720c8bce68bd20ce010f74e215930b911ab7a77468502f09"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/validate-descriptor.mjs",
+      "bytes": 1352,
+      "sha256": "9a84988333f919926b22898e178f9aa414606f017efa42ec7319f823de568b44"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/fixtures/free/README.md",
+      "bytes": 12,
+      "sha256": "2ba0625c5e97dd086967b168f4fb81b4debef580bbcadc3eeb4cabad90101a67"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/fixtures/free/SKILL.md",
+      "bytes": 18,
+      "sha256": "7aa5e5674cc18c93d1c74a684da31fb5d3ef57b2ce95c292b82681eefe30788c"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/fixtures/paid/ACCEPTANCE.md",
+      "bytes": 28,
+      "sha256": "69651a75aab34752ce452c809a374e9a0e2ae81c53270591dd02d71e69459f66"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/fixtures/paid/DELIVERY.md",
+      "bytes": 19,
+      "sha256": "34c87fa21b7cc297cca33a6cfd9de32abe4ca77d90f922b0f5d61afc5293d100"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/fixtures/paid/SKILL.md",
+      "bytes": 18,
+      "sha256": "7aa5e5674cc18c93d1c74a684da31fb5d3ef57b2ce95c292b82681eefe30788c"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/lib/json-schema.mjs",
+      "bytes": 10648,
+      "sha256": "ef72c1997622d1574ca38d1020d28c88e706638e08d861fecd3953a13eb3ea99"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/lib/validate-package.mjs",
+      "bytes": 10291,
+      "sha256": "301bb3e3f084eab955c730fc724c4de4c45338830c3ad172ffbaa2817c80c3ac"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/listing-checklist.json",
+      "bytes": 6241,
+      "sha256": "c33797e67d9de1d03b5d9b8c17d325ab1ad76513e42ac973ef64a4973c2268dc"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/offer-descriptor.json",
+      "bytes": 5432,
+      "sha256": "7a725e9494df65442ae04f55c33d37a6662d78ad42f03d5afc0fb292d95a2929"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/offer-descriptor.schema.json",
+      "bytes": 11494,
+      "sha256": "7fc0909d6899c25ff67ef62f2147015a9d32d4e6ceddc5a2b7a3f11e80c1dc7b"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/package.json",
+      "bytes": 1045,
+      "sha256": "511cee803fce7f6e912a7eb15571a6ba6f98d5404d260d0fa1b98504e9667b8d"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/test/checklist.test.mjs",
+      "bytes": 1436,
+      "sha256": "efca0874c124ce18b2f9e24a17290cf90ca43bb2f93de08613d2abce6e3f7604"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/test/provenance.test.mjs",
+      "bytes": 1951,
+      "sha256": "0b9172710526d2fee41ca57a832ad3275966302d48031584b4cfd03dc6406f06"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/test/release.test.mjs",
+      "bytes": 4286,
+      "sha256": "1d4aac7f606b8b58d9c680adfa1a33763dbbae4a5c37b69e60d32d04001d4719"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/test/validate.test.mjs",
+      "bytes": 6097,
+      "sha256": "229001a1ef6f053c74468c24a3712d77f43c343658a412a669597445c4b38c90"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/.gitignore",
+      "bytes": 292,
+      "sha256": "d4ea4bc3a52bbddca15ba658842f094fd9ef2c6501380f8447d6f6608590a8bb"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/.grexal/agent.json",
+      "bytes": 51,
+      "sha256": "82fa7aa11ffad0833b33b3aba1659423be38a1d98924ed88c4432aebd03824b0"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/LICENSE",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/README.md",
+      "bytes": 4026,
+      "sha256": "2d7052655f8578afbd22d60db41f7a9d057adbdecae072f7d2b162c006e960ea"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js",
+      "bytes": 13320,
+      "sha256": "7be24a319be6b9b885a12fc0a69aea542d3ef48ac8b9262dd8f3ab2e688feb8a"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/fee-worksheet.mjs",
+      "bytes": 7482,
+      "sha256": "91dfad134701f04942125612ad2ec5e128faca9a34a3dea7eda5f8a21518b12f"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/validate-manifest.mjs",
+      "bytes": 11083,
+      "sha256": "e74360125153e44ae4d7fc9ad385810b4db9c7b9de1c2b663e051c96032771f8"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/fixtures/criteria/require-structural.json",
+      "bytes": 250,
+      "sha256": "4140789690eeaccd5b603d764d340b847753128a7e5e6cb505c61561a13a952a"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/fixtures/diff/malicious-paths.patch",
+      "bytes": 194,
+      "sha256": "41057314968617d321bd92ab0418dadadc1ebc3d742dc46d259f259588c7c3a9"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/fixtures/diff/rename-binary-nonewline.patch",
+      "bytes": 346,
+      "sha256": "709ae7913c731fb3a8bd1ee299c50e99a76efd02e319cb76941786ea12ea224a"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/fixtures/diff/simple.patch",
+      "bytes": 129,
+      "sha256": "910f96a535482f10240f29bf2d363dd17f8d61be16611014feb3d1e596ce5b26"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/fixtures/diff/truncated.patch",
+      "bytes": 122,
+      "sha256": "9c0dba6f1a5bd58925c9819dabe0905e0c057325aec3c040c4a28327b8d16a24"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/grexal.json",
+      "bytes": 2862,
+      "sha256": "b844c039050062362bb36742b6118ef4ec1a40f11805f42a459158b265ef62c3"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/lib/diff_analysis.js",
+      "bytes": 13633,
+      "sha256": "6c50d176ac7215bd1adc4cc4f70a51316f928bd77df8a4fe9a81a1c4f2f8794a"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/package.json",
+      "bytes": 1047,
+      "sha256": "9a91d3ef0864779582a3d1142f65b9e9446bfcdf49d5a293aa6d2831bff6711f"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/test/diff_analysis.test.mjs",
+      "bytes": 10648,
+      "sha256": "977da2f3374f76b7551d49215209602e6689634a9708a9df0cfb26cf5e2cc849"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/test/fee_edges.test.mjs",
+      "bytes": 5263,
+      "sha256": "fe00e6cf4cfd26b0e3ad95e06403e41085191ac8ab2a6f833bc6a66480b450b8"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/test/release.test.mjs",
+      "bytes": 4856,
+      "sha256": "1cde3ade9b970a291cc7405a665b05ccdc6827bb0980a33c35119865685e023a"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/test/scaffold.test.mjs",
+      "bytes": 6311,
+      "sha256": "07b294deae0daef0254f42026d018b458b82e906414b992ad5e7781d2ff7e957"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/worksheets/price-estimate.json",
+      "bytes": 8896,
+      "sha256": "432616377e901e6870b75ee9e3c6b6086a653bbd1d6c11b8c6491b3654c2e147"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/worksheets/price-estimate.md",
+      "bytes": 3041,
+      "sha256": "9bade70bd31cb558ffca379e1d7658e97a30da791f14dc8b307c0be3aa1fc2cf"
+    }
+  ]
+}

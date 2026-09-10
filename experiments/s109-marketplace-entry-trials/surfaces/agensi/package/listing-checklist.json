@@ -1,0 +1,133 @@
+{
+  "surface": "agensi",
+  "cashBoundaryUsd": 0,
+  "willNotListFromWorker": true,
+  "skillRecipePin": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
+  "sourceContractCell": "A1-agensi-contract",
+  "items": [
+    {
+      "id": "cash-boundary",
+      "title": "Keep cash at $0; do not list from this worker",
+      "status": "worker-forbidden",
+      "actor": "worker",
+      "workerMustNotPerform": true,
+      "detail": "The local package builds and validates at $0. The operator may separately submit as Free; no payout setup is required for Free. No upload or publication occurs from these tools."
+    },
+    {
+      "id": "host-split",
+      "title": "Treat www.agensi.dev and www.agensi.io as different hosts",
+      "status": "known-from-public-contract",
+      "actor": "package",
+      "urls": [
+        "https://www.agensi.dev/sell",
+        "https://www.agensi.io/sell"
+      ],
+      "detail": "A1: entire www.agensi.dev host (including /sell) 302s unauthenticated clients to Cloudflare Access. The currently verifiable seller contract is on www.agensi.io (no Access wall). Apex agensi.dev was Cloudflare 522."
+    },
+    {
+      "id": "no-seller-api",
+      "title": "No public seller listing API or npm SDK",
+      "status": "known-from-public-contract",
+      "actor": "package",
+      "detail": "A1 found no public seller create API, OpenAPI, or official seller SDK. POST /api/skills is HTML 404. Entry is UI handoff only (/dashboard/submit on agensi.io). Buyer MCP at https://mcp.agensi.io/mcp is not a seller upload API."
+    },
+    {
+      "id": "official-io-hosts",
+      "title": "Official Agensi hosts are www.agensi.io (auth/sell) and mcp.agensi.io",
+      "status": "known-from-public-contract",
+      "actor": "package",
+      "workerMustNotPerform": true,
+      "urls": [
+        "https://www.agensi.io/auth",
+        "https://www.agensi.io/sell",
+        "https://mcp.agensi.io/mcp"
+      ],
+      "detail": "Official seller entry is www.agensi.io/auth and /sell. Buyer MCP is https://mcp.agensi.io/mcp (initialize unauthenticated; never get_skill confirm=true). www.agensi.dev Cloudflare Access is an unrelated tenant, not a seller path; do not enter from this worker."
+    },
+    {
+      "id": "io-account",
+      "title": "Root agensi.io creator session (official seller entry; not www.agensi.dev Access)",
+      "status": "blocked-pending-root",
+      "actor": "root",
+      "workerMustNotPerform": true,
+      "urls": [
+        "https://www.agensi.io/auth",
+        "https://www.agensi.io/dashboard/submit"
+      ],
+      "detail": "Use the existing creator session at https://www.agensi.io/dashboard/submit. No new account or credential discovery is needed."
+    },
+    {
+      "id": "payout-rails",
+      "title": "Enable Stripe Connect and/or Zoneless USDC-on-Solana before paid publish",
+      "status": "blocked-pending-root",
+      "actor": "root",
+      "workerMustNotPerform": true,
+      "minPaidPriceUsd": 5,
+      "urls": [
+        "https://www.agensi.io/terms"
+      ],
+      "detail": "ToS \u00a76.1 (last updated 2026-09-02): paid skill publish is blocked until a payout method is set up and enabled. Rails named in ToS: Stripe Connect or Zoneless USDC on Solana. Account-level eligibility is not verifiable without auth. Do not assume this worker is eligible."
+    },
+    {
+      "id": "price-gate",
+      "title": "Paid price at least $5.00, or list free",
+      "status": "known-from-public-contract",
+      "actor": "root",
+      "minPaidPriceUsd": 5,
+      "detail": "ToS: minimum price for paid skills is $5.00. Creator share 70% of net ex-VAT; platform 30% all-in. Free listings are allowed and do not cost credits. This draft is not published at either price."
+    },
+    {
+      "id": "zip-skill-md",
+      "title": "Build ZIP locally; operator submits Free",
+      "status": "encoded",
+      "actor": "package",
+      "workerMustNotPerform": false,
+      "detail": "Run npm run build:zip. Upload the ZIP containing one skill folder with SKILL.md, at most 50 MB. Name at most 60 characters. Supply the full real prompt and output from DEMO.md. Submission/review remains an operator action."
+    },
+    {
+      "id": "attribution-no-proprietary",
+      "title": "Cite the public pin; do not claim proprietary ownership of free recipes",
+      "status": "encoded",
+      "actor": "package",
+      "detail": "PROVENANCE.md attributes the separate public source pin. The helper and fixtures are original; no upstream recipes are redistributed or sold as proprietary."
+    },
+    {
+      "id": "scan-8-point",
+      "title": "Expect the 8-point automated scan plus human review",
+      "status": "known-from-public-contract",
+      "actor": "root",
+      "checks": [
+        "prompt injection",
+        "data exfiltration",
+        "dangerous commands",
+        "hardcoded secrets",
+        "obfuscation",
+        "suspicious network access",
+        "zip structure",
+        "SKILL.md validity"
+      ],
+      "detail": "Public copy: automated 8-point scan, then AI + human review, usually 24\u201348 hours. MCP discoverable toggle defaults on."
+    },
+    {
+      "id": "network-scan-risk",
+      "title": "Disclose offline filesystem-only behavior",
+      "status": "risk-noted",
+      "actor": "package",
+      "detail": "This shipped skill only reads explicitly supplied local directories. It makes no network calls and does not execute their contents. Referenced upstream gateway recipes are not bundled."
+    },
+    {
+      "id": "tos-6-3-rights",
+      "title": "Warrant distribution rights; keep listing copy accurate",
+      "status": "known-from-public-contract",
+      "actor": "root",
+      "detail": "Confirm distribution rights and accurate copy before submission. Free price does not confer rights to someone else's recipe."
+    },
+    {
+      "id": "private-ids-out-of-overlay",
+      "title": "Keep private account IDs out of this public overlay",
+      "status": "enforced-in-package",
+      "actor": "package",
+      "detail": "Cloudflare session cookies, GitHub OAuth tokens, Stripe account IDs, bank last-fours, and Solana payout wallets must not be added to these files. Access handoff records the steps, not the secrets."
+    }
+  ]
+}

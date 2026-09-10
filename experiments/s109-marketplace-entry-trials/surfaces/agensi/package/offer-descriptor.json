@@ -1,0 +1,100 @@
+{
+  "surface": "agensi",
+  "providerNeutral": true,
+  "cashBoundaryUsd": 0,
+  "willNotListFromWorker": true,
+  "schemaPath": "./offer-descriptor.schema.json",
+  "listingChecklistPath": "./listing-checklist.json",
+  "accessHandoffPath": "./access-handoff.json",
+  "listingChecklistSummary": [
+    "cash-boundary",
+    "host-split",
+    "no-seller-api",
+    "official-io-hosts",
+    "io-account",
+    "payout-rails",
+    "price-gate",
+    "zip-skill-md",
+    "attribution-no-proprietary",
+    "scan-8-point",
+    "network-scan-risk",
+    "tos-6-3-rights",
+    "private-ids-out-of-overlay"
+  ],
+  "skillRecipePin": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
+  "merchantEvidencePin": "epistemedeus/x402-url-extractor@3516cd40ba275c9f228443158097137cac44d003",
+  "neoTaskKitPin": {
+    "requested": "274bec996ac744573cca428b0de7cd3ec1d146cb",
+    "status": "not-found-on-searched-epistemedeus-repos",
+    "action": "omit-from-offers-until-root-identifies-repo"
+  },
+  "offerTitle": "Offline Package Provenance Check",
+  "paidDeliverable": "Free original offline file comparison helper with SKILL.md, reproducible synthetic demo and Apache-2.0 helper source. No upstream recipe bytes are redistributed. A file delta is not proof of useful work, rights, payment or buyer acceptance.",
+  "freeAlternative": "Use the included CLI directly for free. Referenced gateway recipes are separate source material at epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666. Their runtime services may have independent payment boundaries.",
+  "competentFreeDelta": "This skill is free. It compares supplied local directories; it neither installs gateway recipes nor calls a marketplace.",
+  "ownershipClaim": {
+    "claimsProprietaryOwnershipOfFreeRecipes": false,
+    "statement": "This package does not claim proprietary ownership of free public recipes. Upstream is referenced at epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666 only; no upstream recipe bytes are included. The shipped helper and synthetic fixtures are original source."
+  },
+  "referencedPublicRecipes": [
+    "samedaydesk-machine-commerce",
+    "company-enrich",
+    "wallet-enrich",
+    "web-extract",
+    "repo-security-scan",
+    "schema-generate",
+    "deep-audit",
+    "morpho-risk",
+    "opportunity-preflight",
+    "agent-discoverability-audit",
+    "payment-offer-preflight",
+    "contract-qualified-search",
+    "agent-surface-budget-audit",
+    "settlement-proof",
+    "transaction-receipt",
+    "wallet-policy-safety"
+  ],
+  "recipeSource": {
+    "htmlUrl": "https://github.com/epistemedeus/x402-data-gateway-skills/tree/82d0f019713c7223898806144da08fdbeed5c666",
+    "commitUrl": "https://github.com/epistemedeus/x402-data-gateway-skills/commit/82d0f019713c7223898806144da08fdbeed5c666",
+    "install": "git clone https://github.com/epistemedeus/x402-data-gateway-skills.git\ncd x402-data-gateway-skills\ngit checkout --detach 82d0f019713c7223898806144da08fdbeed5c666",
+    "licenseFilePresentAtPin": false,
+    "canonicalGateway": "https://agents.samedaydesk.com"
+  },
+  "payoutClaimsVerified": {
+    "status": "account-eligibility-not-verifiable-without-auth",
+    "accountEligibility": "not-verifiable-without-auth",
+    "agensiDev": "blocked-by-access",
+    "agensiIoContractText": {
+      "status": "public-tos-verified",
+      "termsUrl": "https://www.agensi.io/terms",
+      "sellUrl": "https://www.agensi.io/sell",
+      "railsNamedInToS": [
+        "Stripe Connect",
+        "Zoneless USDC on Solana"
+      ],
+      "minPaidPriceUsd": 5,
+      "revenueShareNetExVat": "70/30 creator/platform (ToS; re-verify before listing)",
+      "note": "Paid terms captured 2026-09-10, not proof of account payout eligibility. Free submission does not require payout setup."
+    },
+    "doNotAssumeEligible": true
+  },
+  "rootHandoff": {
+    "officialSellerAuthUrl": "https://www.agensi.io/auth",
+    "publicSellerUrl": "https://www.agensi.io/sell",
+    "mcpUrl": "https://mcp.agensi.io/mcp",
+    "cloudflareAccessUrl": "https://www.agensi.dev/sell",
+    "fullStepsPath": "./access-handoff.json",
+    "idp": "email/password, email code, or Google on www.agensi.io/auth \u2014 not GitHub",
+    "unrelatedAccessTenant": "www.agensi.dev Cloudflare Access (GitHub IdP, mlehman-899.cloudflareaccess.com) is not the Agensi seller surface; do not enter from this worker.",
+    "authHint": "OFFICIAL Agensi seller auth/sell: https://www.agensi.io/auth and https://www.agensi.io/sell; MCP https://mcp.agensi.io/mcp. www.agensi.dev Cloudflare Access (GitHub IdP) is unrelated \u2014 do not enter from worker. See access-handoff.json."
+  },
+  "apiOrSdk": {
+    "publicUnauthenticatedSellerApi": false,
+    "publicSellerSdk": false,
+    "buyerMcp": "https://mcp.agensi.io/mcp (search_skills etc.; not a seller upload API)",
+    "note": "Seller entry is UI handoff (/dashboard/submit on agensi.io). No official public seller listing API verified from this worker. This package has no Agensi SDK dependency."
+  },
+  "attributionPlan": "PROVENANCE.md distinguishes original helper code and synthetic fixtures from referenced upstream recipes. No proprietary claim on those recipes.",
+  "nextMeasurableEvent": "Use the existing creator session to submit the generated ZIP as Free with DEMO.md. No payout setup is required for Free. Listing and review have not been performed by this package."
+}

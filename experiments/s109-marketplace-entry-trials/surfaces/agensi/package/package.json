@@ -1,0 +1,41 @@
+{
+  "name": "@samedaydesk/s109-agensi-listing-checklist",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Offline source evidence helper. No authentication, payment or publication.",
+  "type": "module",
+  "bin": {
+    "s109-agensi-checklist": "./bin/checklist.mjs",
+    "s109-agensi-validate": "./bin/validate-descriptor.mjs",
+    "s109-agensi-provenance": "./bin/provenance.mjs"
+  },
+  "scripts": {
+    "validate": "node ./bin/validate-descriptor.mjs",
+    "checklist": "node ./bin/checklist.mjs",
+    "provenance": "node ./bin/provenance.mjs",
+    "test": "node --test test/*.test.mjs",
+    "build:zip": "python3 bin/build-skill-zip.py"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "Apache-2.0",
+  "files": [
+    "agent",
+    "bin",
+    "lib",
+    "test",
+    "fixtures",
+    "README.md",
+    "LICENSE",
+    "grexal.json",
+    "offer-descriptor.json",
+    "offer-descriptor.schema.json",
+    "listing-checklist.json",
+    "access-handoff.json",
+    "SKILL.md",
+    "DEMO.md",
+    "PROVENANCE.md",
+    "worksheets"
+  ]
+}

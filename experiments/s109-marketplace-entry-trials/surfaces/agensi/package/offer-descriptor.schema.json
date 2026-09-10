@@ -1,0 +1,319 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://samedaydesk.local/s109/agensi/offer-descriptor.schema.json",
+  "$comment": "Local schema only. Validators MUST NOT fetch $schema / $id. Network $ref is a hard error.",
+  "title": "S109 Agensi provider-neutral listing package",
+  "$ref": "#/$defs/offerDescriptor",
+  "$defs": {
+    "pin": {
+      "const": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666"
+    },
+    "surface": { "const": "agensi" },
+    "offerDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "surface",
+        "providerNeutral",
+        "cashBoundaryUsd",
+        "willNotListFromWorker",
+        "schemaPath",
+        "listingChecklistPath",
+        "accessHandoffPath",
+        "listingChecklistSummary",
+        "skillRecipePin",
+        "offerTitle",
+        "paidDeliverable",
+        "freeAlternative",
+        "competentFreeDelta",
+        "ownershipClaim",
+        "referencedPublicRecipes",
+        "recipeSource",
+        "payoutClaimsVerified",
+        "rootHandoff",
+        "apiOrSdk",
+        "attributionPlan",
+        "nextMeasurableEvent"
+      ],
+      "properties": {
+        "surface": { "$ref": "#/$defs/surface" },
+        "providerNeutral": { "const": true },
+        "cashBoundaryUsd": { "const": 0 },
+        "willNotListFromWorker": { "const": true },
+        "schemaPath": { "const": "./offer-descriptor.schema.json" },
+        "listingChecklistPath": { "const": "./listing-checklist.json" },
+        "accessHandoffPath": { "const": "./access-handoff.json" },
+        "listingChecklistSummary": {
+          "type": "array",
+          "minItems": 8,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 3 }
+        },
+        "skillRecipePin": { "$ref": "#/$defs/pin" },
+        "merchantEvidencePin": {
+          "type": "string",
+          "minLength": 20
+        },
+        "neoTaskKitPin": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["requested", "status", "action"],
+          "properties": {
+            "requested": { "type": "string" },
+            "status": { "const": "not-found-on-searched-epistemedeus-repos" },
+            "action": { "const": "omit-from-offers-until-root-identifies-repo" }
+          }
+        },
+        "offerTitle": { "type": "string", "minLength": 16, "maxLength": 60 },
+        "paidDeliverable": { "type": "string", "minLength": 40 },
+        "freeAlternative": { "type": "string", "minLength": 40 },
+        "competentFreeDelta": { "type": "string", "minLength": 40 },
+        "ownershipClaim": { "$ref": "#/$defs/ownershipClaim" },
+        "referencedPublicRecipes": {
+          "type": "array",
+          "minItems": 16,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 3 }
+        },
+        "recipeSource": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "htmlUrl",
+            "commitUrl",
+            "install",
+            "licenseFilePresentAtPin",
+            "canonicalGateway"
+          ],
+          "properties": {
+            "htmlUrl": { "type": "string", "format": "uri" },
+            "commitUrl": { "type": "string", "format": "uri" },
+            "install": { "type": "string", "minLength": 10 },
+            "licenseFilePresentAtPin": { "const": false },
+            "canonicalGateway": { "const": "https://agents.samedaydesk.com" }
+          }
+        },
+        "payoutClaimsVerified": { "$ref": "#/$defs/payoutClaimsVerified" },
+        "rootHandoff": { "$ref": "#/$defs/rootHandoffSummary" },
+        "apiOrSdk": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["publicUnauthenticatedSellerApi", "buyerMcp", "note"],
+          "properties": {
+            "publicUnauthenticatedSellerApi": { "const": false },
+            "publicSellerSdk": { "const": false },
+            "buyerMcp": { "type": "string", "minLength": 12 },
+            "note": { "type": "string", "minLength": 20 }
+          }
+        },
+        "attributionPlan": { "type": "string", "minLength": 40 },
+        "nextMeasurableEvent": { "type": "string", "minLength": 20 }
+      }
+    },
+    "ownershipClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claimsProprietaryOwnershipOfFreeRecipes", "statement"],
+      "properties": {
+        "claimsProprietaryOwnershipOfFreeRecipes": { "const": false },
+        "statement": {
+          "type": "string",
+          "minLength": 80,
+          "pattern": "does not claim proprietary ownership of (the )?free (public )?recipes"
+        }
+      }
+    },
+    "payoutClaimsVerified": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "accountEligibility",
+        "agensiDev",
+        "agensiIoContractText",
+        "doNotAssumeEligible"
+      ],
+      "properties": {
+        "status": { "const": "account-eligibility-not-verifiable-without-auth" },
+        "accountEligibility": { "const": "not-verifiable-without-auth" },
+        "agensiDev": { "const": "blocked-by-access" },
+        "agensiIoContractText": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "termsUrl",
+            "sellUrl",
+            "railsNamedInToS",
+            "minPaidPriceUsd",
+            "revenueShareNetExVat",
+            "note"
+          ],
+          "properties": {
+            "status": { "const": "public-tos-verified" },
+            "termsUrl": { "const": "https://www.agensi.io/terms" },
+            "sellUrl": { "const": "https://www.agensi.io/sell" },
+            "railsNamedInToS": {
+              "type": "array",
+              "minItems": 2,
+              "items": { "type": "string" }
+            },
+            "minPaidPriceUsd": { "const": 5 },
+            "revenueShareNetExVat": { "type": "string", "minLength": 8 },
+            "note": { "type": "string", "minLength": 20 }
+          }
+        },
+        "doNotAssumeEligible": { "const": true }
+      }
+    },
+    "rootHandoffSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "officialSellerAuthUrl",
+        "publicSellerUrl",
+        "mcpUrl",
+        "cloudflareAccessUrl",
+        "authHint",
+        "fullStepsPath",
+        "idp",
+        "unrelatedAccessTenant"
+      ],
+      "properties": {
+        "officialSellerAuthUrl": { "const": "https://www.agensi.io/auth" },
+        "publicSellerUrl": { "const": "https://www.agensi.io/sell" },
+        "mcpUrl": { "const": "https://mcp.agensi.io/mcp" },
+        "cloudflareAccessUrl": { "const": "https://www.agensi.dev/sell" },
+        "authHint": { "type": "string", "minLength": 20 },
+        "fullStepsPath": { "const": "./access-handoff.json" },
+        "idp": { "type": "string", "minLength": 12 },
+        "unrelatedAccessTenant": { "type": "string", "minLength": 20 },
+        "accessTeamHost": { "const": "mlehman-899.cloudflareaccess.com" }
+      }
+    },
+    "listingChecklist": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "surface",
+        "cashBoundaryUsd",
+        "willNotListFromWorker",
+        "skillRecipePin",
+        "sourceContractCell",
+        "items"
+      ],
+      "properties": {
+        "surface": { "$ref": "#/$defs/surface" },
+        "cashBoundaryUsd": { "const": 0 },
+        "willNotListFromWorker": { "const": true },
+        "skillRecipePin": { "$ref": "#/$defs/pin" },
+        "sourceContractCell": { "const": "A1-agensi-contract" },
+        "items": {
+          "type": "array",
+          "minItems": 8,
+          "items": { "$ref": "#/$defs/checklistItem" }
+        }
+      }
+    },
+    "checklistItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "status", "actor", "detail"],
+      "properties": {
+        "id": { "type": "string", "minLength": 3 },
+        "title": { "type": "string", "minLength": 8 },
+        "status": {
+          "enum": [
+            "encoded",
+            "enforced-in-package",
+            "known-from-public-contract",
+            "blocked-pending-root",
+            "worker-forbidden",
+            "risk-noted"
+          ]
+        },
+        "actor": { "enum": ["worker", "root", "package"] },
+        "detail": { "type": "string", "minLength": 12 },
+        "workerMustNotPerform": { "type": "boolean" },
+        "checks": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 4 }
+        },
+        "minPaidPriceUsd": { "type": "number", "minimum": 0 },
+        "urls": {
+          "type": "array",
+          "items": { "type": "string", "format": "uri" }
+        }
+      }
+    },
+    "accessHandoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "surface",
+        "actor",
+        "workerMustNotAuthenticate",
+        "skillRecipePin",
+        "officialSellerAuthUrl",
+        "mcpUrl",
+        "doNotEnterCloudflareAccess",
+        "cloudflareAccessUrl",
+        "publicSellerUrl",
+        "primaryTaskHost",
+        "alternatePublicMarketplace",
+        "steps",
+        "doNotPasteIntoOverlay",
+        "successPredicate",
+        "failurePredicate"
+      ],
+      "properties": {
+        "surface": { "$ref": "#/$defs/surface" },
+        "actor": { "const": "root" },
+        "workerMustNotAuthenticate": { "const": true },
+        "skillRecipePin": { "$ref": "#/$defs/pin" },
+        "officialSellerAuthUrl": { "const": "https://www.agensi.io/auth" },
+        "mcpUrl": { "const": "https://mcp.agensi.io/mcp" },
+        "doNotEnterCloudflareAccess": { "const": true },
+        "cloudflareAccessUrl": { "const": "https://www.agensi.dev/sell" },
+        "publicSellerUrl": { "const": "https://www.agensi.io/sell" },
+        "primaryTaskHost": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["url", "role", "gate", "teamHost", "idp", "anonymousResult"],
+          "properties": {
+            "url": { "const": "https://www.agensi.dev/sell" },
+            "role": { "const": "unrelated-do-not-enter" },
+            "gate": { "const": "Cloudflare Access" },
+            "teamHost": { "const": "mlehman-899.cloudflareaccess.com" },
+            "idp": { "const": "GitHub" },
+            "oauthClientIdObserved": { "type": "string" },
+            "anonymousResult": { "type": "string", "minLength": 12 }
+          }
+        },
+        "alternatePublicMarketplace": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["authUrl", "submitUrl", "idpNote"],
+          "properties": {
+            "authUrl": { "const": "https://www.agensi.io/auth" },
+            "submitUrl": { "const": "https://www.agensi.io/dashboard/submit" },
+            "idpNote": { "type": "string", "minLength": 12 }
+          }
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 6,
+          "items": { "type": "string", "minLength": 24 }
+        },
+        "doNotPasteIntoOverlay": {
+          "type": "array",
+          "minItems": 3,
+          "items": { "type": "string", "minLength": 4 }
+        },
+        "successPredicate": { "type": "string", "minLength": 20 },
+        "failurePredicate": { "type": "string", "minLength": 20 }
+      }
+    }
+  }
+}
