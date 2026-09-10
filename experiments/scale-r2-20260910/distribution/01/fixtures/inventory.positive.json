@@ -1,0 +1,51 @@
+{
+  "schema": "pilot.r2.distribution.grexal_staging_inventory.v1",
+  "cite": "BOT-S124-ACTIVATE-0910",
+  "provider": "grexal",
+  "draft": {
+    "slug": "samedaydesk-source-change-evidence",
+    "agentId": "agentId_REDACTED",
+    "status": "draft",
+    "visibility": "private",
+    "pricing": "unset",
+    "deployment": {
+      "version": 1,
+      "state": "succeeded",
+      "deploymentId": "deploymentId_REDACTED"
+    }
+  },
+  "evidence": {
+    "preserveTip": "53dbb7adde7dfe89f4dc1fb5efe380389b4e420d",
+    "preserveBranch": "codex/s124-market-packages-final-20260910",
+    "preservePackagePath": "/workspace/pilot/tmp/s124-root-0910.dYRsYW/grexal/package",
+    "stagingPath": "/workspace/pilot/tmp/s124-activate-staging-0910/",
+    "terminalPath": "/workspace/pilot/receipts/scale-bot-0909/bot-s124-activation-0910/runtime/TERMINAL.md",
+    "costVerifyPath": "/workspace/pilot/receipts/scale-bot-0909/bot-s124-activation-0910/runtime/COST-VERIFY.md",
+    "receiptRefs": [
+      "/workspace/pilot/receipts/scale-bot-0909/bot-s124-activation-0910/receipts/push.txt",
+      "/workspace/pilot/receipts/scale-bot-0909/bot-s124-activation-0910/receipts/validate.txt",
+      "/workspace/pilot/receipts/scale-bot-0909/bot-s124-activation-0910/receipts/agent-show-final.txt",
+      "/workspace/pilot/receipts/scale-bot-0909/bot-s124-activation-0910/receipts/sandbox-invoke-positive.txt",
+      "/workspace/pilot/receipts/scale-bot-0909/bot-s124-activation-0910/receipts/local-npm-test-after-restore.txt"
+    ]
+  },
+  "priceRecommendation": {
+    "unit": "run_completed",
+    "amountUsd": 0.1,
+    "amountMicros": 100000,
+    "paidModelCalls": 0,
+    "applied": false,
+    "sourceWorksheet": "/workspace/pilot/tmp/s124-root-0910.dYRsYW/grexal/package/worksheets/price-estimate.json"
+  },
+  "audienceCapture": {
+    "status": "captured",
+    "users": null,
+    "installs": null,
+    "runs": null,
+    "reason": "synthetic fixture: capture path ok; live counts not invented"
+  },
+  "publicDiscovery": {
+    "readyChecklistOnly": true,
+    "visibilityNote": "draft remains private until Root acts"
+  }
+}

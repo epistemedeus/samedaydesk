@@ -1,0 +1,24 @@
+{
+  "schema": "pilot.r2.distribution.grexal_staging_inventory.v1",
+  "cite": "bad",
+  "provider": "grexal",
+  "draft": {
+    "slug": "x",
+    "status": "draft",
+    "visibility": "private",
+    "pricing": "unset"
+  },
+  "evidence": {
+    "receiptRefs": ["x"]
+  },
+  "priceRecommendation": {
+    "unit": "run_completed",
+    "amountUsd": 0.1,
+    "amountMicros": 100000
+  },
+  "audienceCapture": {
+    "status": "captured"
+  },
+  "revenue": 99.5,
+  "buyerCount": 12
+}

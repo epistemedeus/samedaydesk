@@ -1,0 +1,34 @@
+{
+  "schema": "pilot.r2.distribution.grexal_staging_inventory.v1",
+  "cite": "BOT-S124-ACTIVATE-0910",
+  "provider": "grexal",
+  "draft": {
+    "slug": "samedaydesk-source-change-evidence",
+    "agentId": "agentId_REDACTED",
+    "status": "draft",
+    "visibility": "private",
+    "pricing": "unset",
+    "deployment": {
+      "version": 1,
+      "state": "succeeded",
+      "deploymentId": "deploymentId_REDACTED"
+    }
+  },
+  "evidence": {
+    "preserveTip": "53dbb7adde7dfe89f4dc1fb5efe380389b4e420d",
+    "terminalPath": "/workspace/pilot/receipts/scale-bot-0909/bot-s124-activation-0910/runtime/TERMINAL.md",
+    "receiptRefs": [
+      "/workspace/pilot/receipts/scale-bot-0909/bot-s124-activation-0910/receipts/push.txt"
+    ]
+  },
+  "priceRecommendation": {
+    "unit": "run_completed",
+    "amountUsd": 0.1,
+    "amountMicros": 100000,
+    "applied": false
+  },
+  "audienceCapture": {
+    "status": "unavailable",
+    "reason": "provider metrics endpoint not readable in this offline staging kit"
+  }
+}
