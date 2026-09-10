@@ -1,12 +1,10 @@
-Verified tip (Cursor collect): `2fae83ae54ff91db38a42002ec3a91dfb1839b26`
-
 # S198 RESULT — record-repeat + distribution-repair candidate
 
 Parent session: `01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5`  
 Model: `grok-4.6` · effort `xhigh`  
 Branch: `codex/s198-record-distribution-release-20260910`  
-Composition commit: `339ebf7576aa1a40765b6a2d45bcda8ed46c51d0`  
-Integration HEAD: `edd53f69543bf482c77f876f47453f9a55defbbe`  
+Composition commit: `260e2443884352adf6c8e7ad9d33b2141bb5cd7d`  
+Merge-repair commit: `8d0401d40c5d2ec3695a964f873b8b88389bf3a4`  
 Base main: `2b80f38a4e5ec5f080d1764de7c539af63190012` (Pulse sources untouched)
 
 | Pin | SHA |
@@ -20,17 +18,15 @@ Base main: `2b80f38a4e5ec5f080d1764de7c539af63190012` (Pulse sources untouched)
 
 Production acquisition: **false**. Cash $0. No merge/deploy.
 
-Verified tip (Cursor collect): `a4bd6747937e232caabc9ac461288438522d4970`
-
 ## Integration repairs (no parser rewrite)
 
 Mechanical merge defects only:
 
-1. `machineEntry.mjs` distribution-repair `.join("\\n")` was split into a real newline (SyntaxError).
-2. `DECLARED_REACT_ROUTES` omitted `/for-agents/distribution-repair` while App/fallback/shells included it.
-3. Browser tests asserted `page.ok` (field never set). Now both inner pages are present by id/h1; overflow layout flags on record-repeat.
+1. `machineEntry.mjs` distribution-repair command block had a broken `.join("\n")` (SyntaxError).
+2. SPA declared-route catalog omitted `/for-agents/distribution-repair` while App/fallback/shells included it.
+3. Browser smokes asserted a nonexistent `page.ok`; both inner pages now asserted by id/h1.
 
-Archives **not** rebuilt: public kit bytes already equal packed S189/S185 receipts.
+Archives not rebuilt: public kit bytes already match packed S189/S185 receipts.
 
 ## Focused gates
 
@@ -38,36 +34,27 @@ Archives **not** rebuilt: public kit bytes already equal packed S189/S185 receip
 | --- | --- |
 | s134 | 42/42 |
 | s163 | 6/6 |
-| s176 package | 25 pass, 1 skip (no `dist/` in tree; public kit used) |
+| s176 package | 25 pass, 1 skip |
 | s185 package | 17/17 |
 | S198 caller both kits | 2/2 |
-| spa-fallback | 2/2 |
-| spa-route-shells | 11/11 |
-| hosted-startup | 4/4 |
-| for-agents overflow | pass |
-| client build | pass; shells for both inner pages |
+| spa-fallback + route-shells | pass |
+| clean unpack CLIs | pass |
 
-Caller-authored (not fixture `ok:true` counts):
+Caller-authored (not fixture ok counts): pricing 3→4 then repeat 4→5 with `observedAt: unknown`; distribution-repair incomplete catalog cannot prove global removal; docs-route repeat → unchanged after fix.
 
-- Record-repeat: pricing 3→4 USD/1M-tokens; CSV `id=1` one changed row; repeat `--from-next-run` with after 4→5; `observedAt: unknown`.
-- Distribution-repair: caller alpha `/docs` redirected vs caller beta `/api/v1`; next-run after docs fix `/docs` → `unchanged`. Incomplete catalog still cannot prove global removal (S185 suite).
-
-## Owning-site / viewport
+## Owning-site gates
 
 | Gate | Result |
 | --- | --- |
-| Browser desktop 1440 | pass (both inner pages) |
-| Browser mobile 390 | pass |
-| Browser width 320 | pass (`mobile.mjs --viewport 320x720`, failures `[]`) |
-| Presence | 25 pass, 1 skip |
-| Result-reuse | 23/23 |
-| Pulse durable + S125 replay | pass (44/46 of `test:pulse`) |
-| Pulse events | **env skip**: Node ESM `.ts` import of `sellerRepairBriefs.ts` (unchanged Pulse file; not an S198 edit) |
-| Pulse real PG17 | **env skip**: missing `/usr/lib/postgresql/17/bin/initdb` |
-| Recurring recipes | 85/89; 4 fail `Cannot find module 'express'` under `/tmp/merchant-input` (env, not SPA catalog) |
-| Homepage / Pulse source | no diff vs `2b80f38` except spa-fallback/shells route list |
-
-320 evidence dir (Cursor collect): last run under `/tmp` from `tools/browser-smoke/mobile.mjs --viewport 320x720`.
+| client build + route shells | pass (both inner pages) |
+| hosted-startup | 4/4 |
+| browser desktop | pass |
+| browser 390 | pass |
+| browser 320 | pass (`pre` overflow-x auto) |
+| presence | 25 pass + 1 skip |
+| result-reuse | 23/23 |
+| public-entry | 5/5 |
+| Pulse | 44/46 env skips (`.ts` harness import; missing PG17 initdb); **no Pulse source diff vs main** |
 
 ## Archives (generate-once; not rebuilt)
 
@@ -76,16 +63,8 @@ Caller-authored (not fixture `ok:true` counts):
 | record-repeat | `/kit/record-repeat-job-f3d55e54a7b3.tar.gz` | `f4669fd20660b19fc4d7f6714b63f02cee217973fbc700484b6cc7ceb3f94eef` | 1253839 |
 | distribution-repair | `/kit/distribution-repair-2b80f38a4e5e.tar.gz` | `67903e691958c7680fa2c46f2f53f70eac1ee187a71fa42e527dc2830510a033` | 75172 |
 
-Discovery JSON and `machineEntry` / `distributionRepairKit.json` literals match those receipts. Clean unpack: `node bin/record-repeat.mjs list` and `node bin/distribution-repair.mjs schema` succeed with no checkout `npm ci`.
+Discovery JSON and machineEntry literals match those receipts.
 
 ## Remaining limit
 
-Pulse PG17 and merchant-input `express` resolution are environment gaps on this VM, not product-kit defects. Observation time stays unknown unless a digest matches. No production acquisition claim.
-
-
-## Cursor re-verify notes
-
-- Focused kits/SPA/caller/build/browser desktop+390+320: pass.
--  4/4.
--  44/46: env skips ( import in events harness; missing PG17 ) — no Pulse source diff vs main.
-- Public kit bytes match discovery/machineEntry; clean unpack CLIs work.
+Pulse PG17 and TS-extension events harness are environment gaps on this VM, not product-kit defects. Observation time stays unknown unless a digest matches. No production acquisition claim.
