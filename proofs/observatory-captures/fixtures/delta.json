@@ -1,0 +1,299 @@
+{
+  "schemaVersion": "pilot.external-observatory.delta.v1",
+  "a": {
+    "path": "/tmp/s49-sds/proofs/observatory-captures/fixtures/20260909T230000Z",
+    "captureId": "20260909T230000Z",
+    "fetchedAt": "2026-09-09T23:00:00.000Z",
+    "label": "fixture",
+    "evidenceClass": "fixture"
+  },
+  "b": {
+    "path": "/tmp/s49-sds/proofs/observatory-captures/fixtures/20260909T230500Z",
+    "captureId": "20260909T230500Z",
+    "fetchedAt": "2026-09-09T23:05:00.000Z",
+    "label": "fixture",
+    "evidenceClass": "fixture"
+  },
+  "observerIntervalMs": 300000,
+  "providerCadenceKnown": false,
+  "windowPresent": true,
+  "continuity": {
+    "invented": false,
+    "reason": "cadence_unknown"
+  },
+  "growth": {
+    "invented": false,
+    "trafficGrowth": null,
+    "percentChange": null,
+    "charts": []
+  },
+  "withheldConclusions": [
+    "agent_traffic",
+    "customers",
+    "unique_customers",
+    "profit",
+    "demand",
+    "organic_demand",
+    "revenue",
+    "settlement",
+    "independent_use",
+    "cross_source_total",
+    "runtime_heartbeats",
+    "active_traffic",
+    "traffic_growth",
+    "continuity",
+    "growth_rate",
+    "percent_change_as_growth",
+    "cross_source_sum"
+  ],
+  "sources": [
+    {
+      "sourceId": "moltjobs",
+      "status": "compared",
+      "availability": {
+        "prior": "ok",
+        "next": "ok"
+      },
+      "providerTimestampState": {
+        "prior": "ok",
+        "next": "ok"
+      },
+      "providerTimestamp": {
+        "prior": "2026-09-09T22:55:00.000Z",
+        "next": "2026-09-09T23:04:00.000Z"
+      },
+      "fetchedAt": {
+        "prior": "2026-09-09T23:00:00.000Z",
+        "next": "2026-09-09T23:05:00.000Z"
+      },
+      "cadence": {
+        "known": false,
+        "reason": "cadence_unknown",
+        "windowPresent": true,
+        "priorWindows": [
+          "unspecified_provider_snapshot"
+        ],
+        "nextWindows": [
+          "unspecified_provider_snapshot"
+        ],
+        "inventedContinuity": false,
+        "inventedGrowthRate": false
+      },
+      "metrics": {
+        "added": [],
+        "removed": [],
+        "changed": [
+          {
+            "key": "completionRatio",
+            "prior": {
+              "key": "completionRatio",
+              "value": "4/12",
+              "unit": "ratio",
+              "state": "ok",
+              "definition": "Derived completedCount/jobCount when both are ok on the same window.",
+              "population": "moltjobs_work_market",
+              "window": "unspecified_provider_snapshot"
+            },
+            "next": {
+              "key": "completionRatio",
+              "value": "4/15",
+              "unit": "ratio",
+              "state": "ok",
+              "definition": "Derived completedCount/jobCount when both are ok on the same window.",
+              "population": "moltjobs_work_market",
+              "window": "unspecified_provider_snapshot"
+            },
+            "definitionChanged": false,
+            "comparable": true
+          },
+          {
+            "key": "jobCount",
+            "prior": {
+              "key": "jobCount",
+              "value": 12,
+              "unit": "count",
+              "state": "ok",
+              "definition": "Provider-reported totalJobs mapped to jobCount. Work-market snapshot, not traffic.",
+              "population": "moltjobs_work_market",
+              "window": "unspecified_provider_snapshot"
+            },
+            "next": {
+              "key": "jobCount",
+              "value": 15,
+              "unit": "count",
+              "state": "ok",
+              "definition": "Provider-reported totalJobs mapped to jobCount. Work-market snapshot, not traffic.",
+              "population": "moltjobs_work_market",
+              "window": "unspecified_provider_snapshot"
+            },
+            "definitionChanged": false,
+            "comparable": true
+          }
+        ],
+        "unchanged": [
+          {
+            "key": "avgCompletionTimeMs"
+          },
+          {
+            "key": "avgTimeToFillMs"
+          },
+          {
+            "key": "completedCount"
+          },
+          {
+            "key": "completionSampleSize"
+          },
+          {
+            "key": "disputeRate"
+          },
+          {
+            "key": "escrowDeposits"
+          },
+          {
+            "key": "escrowToVolumeRatio"
+          },
+          {
+            "key": "medianCompletionTimeMs"
+          },
+          {
+            "key": "medianTimeToFillMs"
+          },
+          {
+            "key": "registeredAgents"
+          },
+          {
+            "key": "volumeUsdc"
+          }
+        ],
+        "definitionChanged": []
+      },
+      "warnings": [
+        {
+          "code": "cadence_unknown",
+          "message": "cadence unknown; not inventing continuity or growth rates"
+        }
+      ]
+    },
+    {
+      "sourceId": "smithery_mcp",
+      "status": "compared",
+      "availability": {
+        "prior": "ok",
+        "next": "ok"
+      },
+      "providerTimestampState": {
+        "prior": "missing",
+        "next": "missing"
+      },
+      "providerTimestamp": {
+        "prior": null,
+        "next": null
+      },
+      "fetchedAt": {
+        "prior": "2026-09-09T23:00:00.000Z",
+        "next": "2026-09-09T23:05:00.000Z"
+      },
+      "cadence": {
+        "known": false,
+        "reason": "cadence_unknown",
+        "windowPresent": true,
+        "priorWindows": [
+          "catalog_snapshot"
+        ],
+        "nextWindows": [
+          "catalog_snapshot"
+        ],
+        "inventedContinuity": false,
+        "inventedGrowthRate": false
+      },
+      "metrics": {
+        "added": [],
+        "removed": [],
+        "changed": [],
+        "unchanged": [
+          {
+            "key": "registered_servers"
+          }
+        ],
+        "definitionChanged": []
+      },
+      "warnings": [
+        {
+          "code": "cadence_unknown",
+          "message": "cadence unknown; not inventing continuity or growth rates"
+        }
+      ]
+    },
+    {
+      "sourceId": "x402stats",
+      "status": "compared",
+      "availability": {
+        "prior": "ok",
+        "next": "ok"
+      },
+      "providerTimestampState": {
+        "prior": "ok",
+        "next": "ok"
+      },
+      "providerTimestamp": {
+        "prior": "2026-09-09T22:50:00.000Z",
+        "next": "2026-09-09T22:50:00.000Z"
+      },
+      "fetchedAt": {
+        "prior": "2026-09-09T23:00:00.000Z",
+        "next": "2026-09-09T23:05:00.000Z"
+      },
+      "cadence": {
+        "known": false,
+        "reason": "cadence_unknown",
+        "windowPresent": true,
+        "priorWindows": [
+          "30d"
+        ],
+        "nextWindows": [
+          "30d"
+        ],
+        "inventedContinuity": false,
+        "inventedGrowthRate": false
+      },
+      "metrics": {
+        "added": [],
+        "removed": [],
+        "changed": [],
+        "unchanged": [
+          {
+            "key": "avg_payment_usd_30d"
+          },
+          {
+            "key": "median_seller_revenue_usd_30d"
+          },
+          {
+            "key": "organic_sellers_30d"
+          },
+          {
+            "key": "organic_volume_usd_30d"
+          },
+          {
+            "key": "sellers_30d"
+          },
+          {
+            "key": "top10_volume_share_30d"
+          },
+          {
+            "key": "volume_usd_30d"
+          },
+          {
+            "key": "window_days"
+          }
+        ],
+        "definitionChanged": []
+      },
+      "warnings": [
+        {
+          "code": "cadence_unknown",
+          "message": "cadence unknown; not inventing continuity or growth rates"
+        }
+      ]
+    }
+  ]
+}

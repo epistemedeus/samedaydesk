@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "pilot.external-observatory.v1",
+  "sourceId": "x402stats",
+  "sourceKind": "settlement",
+  "upstreamUrl": "https://x402stats.io/api/stats",
+  "fetchedAt": "2026-09-09T23:05:00.000Z",
+  "providerTimestamp": "2026-09-09T22:50:00.000Z",
+  "providerTimestampState": "ok",
+  "availability": "ok",
+  "httpStatus": 200,
+  "cache": {
+    "hit": false,
+    "ageMs": 0,
+    "stale": false,
+    "ttlMs": 30000,
+    "fetchedAt": "2026-09-09T23:05:00.000Z"
+  },
+  "metrics": [
+    {
+      "key": "sellers_30d",
+      "value": 40,
+      "unit": "count",
+      "state": "ok",
+      "definition": "Provider-indexed sellers in the rolling window. Not unique customers.",
+      "population": "provider_indexed_sellers",
+      "window": "30d",
+      "evidenceClass": "provider_reported_aggregate"
+    },
+    {
+      "key": "volume_usd_30d",
+      "value": "100.00",
+      "unit": "USD",
+      "state": "ok",
+      "definition": "Provider-reported volume USD in the rolling window. Not SameDayDesk revenue.",
+      "population": "provider_indexed_volume",
+      "window": "30d",
+      "evidenceClass": "provider_reported_aggregate"
+    },
+    {
+      "key": "organic_sellers_30d",
+      "value": 2,
+      "unit": "count",
+      "state": "ok",
+      "definition": "Provider heuristic organic seller count. Not unique customers or organic demand proof.",
+      "population": "provider_heuristic_organic_sellers",
+      "window": "30d",
+      "evidenceClass": "provider_heuristic"
+    },
+    {
+      "key": "organic_volume_usd_30d",
+      "value": "1.00",
+      "unit": "USD",
+      "state": "ok",
+      "definition": "Provider heuristic organic volume USD. Not organic demand proof. Do not sum with other sources.",
+      "population": "provider_heuristic_organic_volume",
+      "window": "30d",
+      "evidenceClass": "provider_heuristic"
+    },
+    {
+      "key": "avg_payment_usd_30d",
+      "value": "2.50",
+      "unit": "USD",
+      "state": "ok",
+      "definition": "Provider-reported average payment USD in the rolling window.",
+      "population": "provider_indexed_protocol_activity",
+      "window": "30d",
+      "evidenceClass": "provider_reported_aggregate"
+    },
+    {
+      "key": "median_seller_revenue_usd_30d",
+      "value": "3.00",
+      "unit": "USD",
+      "state": "ok",
+      "definition": "Provider-reported median seller revenue USD in the rolling window.",
+      "population": "provider_indexed_sellers",
+      "window": "30d",
+      "evidenceClass": "provider_reported_aggregate"
+    },
+    {
+      "key": "top10_volume_share_30d",
+      "value": "0.4",
+      "unit": "ratio",
+      "state": "ok",
+      "definition": "Provider-reported share of volume attributed to the top 10 sellers in the window.",
+      "population": "provider_indexed_protocol_activity",
+      "window": "30d",
+      "evidenceClass": "provider_reported_aggregate"
+    },
+    {
+      "key": "window_days",
+      "value": 30,
+      "unit": "days",
+      "state": "ok",
+      "definition": "Provider-declared rolling window length in days.",
+      "population": "provider_indexed_protocol_activity",
+      "window": "30d",
+      "evidenceClass": "provider_reported_aggregate"
+    }
+  ],
+  "coverage": {
+    "kind": "provider_rolling_window",
+    "complete": false,
+    "additivity": "not_additive",
+    "population": "provider_indexed_protocol_activity",
+    "window": "30d",
+    "notes": "Provider rolling-window aggregates. Not additive with other sources. Organic fields are heuristics."
+  },
+  "errors": [],
+  "warnings": [
+    {
+      "code": "provider_heuristic",
+      "message": "organicSellers and organicVolumeUsd are provider heuristics, not unique customers or organic demand proof"
+    }
+  ],
+  "evidenceClass": "provider_reported_onchain_aggregate",
+  "rawSourceLink": "https://x402stats.io/api/stats",
+  "withheldConclusions": [
+    "agent_traffic",
+    "customers",
+    "unique_customers",
+    "profit",
+    "demand",
+    "organic_demand",
+    "revenue",
+    "settlement",
+    "independent_use",
+    "cross_source_total",
+    "runtime_heartbeats",
+    "active_traffic",
+    "organic_demand_proof",
+    "global_agent_traffic",
+    "samedaydesk_settlement"
+  ],
+  "rawExcerpt": "{\"updatedAt\":\"2026-09-09T22:50:00.000Z\",\"snapshot\":{\"computedAt\":\"2026-09-09T22:50:00.000Z\",\"sellers\":40,\"volumeUsd\":\"100.00\",\"organicSellers\":2,\"organicVolumeUsd\":\"1.00\",\"avgPaymentUsd\":\"2.50\",\"medianSellerRevenueUsd\":\"3.00\",\"top10VolumeShare\":\"0.4\",\"windowDays\":30}}"
+}

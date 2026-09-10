@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "pilot.external-observatory.capture.v1",
+  "captureId": "20260909T230000Z",
+  "fetchedAt": "2026-09-09T23:00:00.000Z",
+  "label": "fixture",
+  "evidenceClass": "fixture",
+  "polling": false,
+  "heartbeat": false,
+  "database": false,
+  "sourceCount": 3,
+  "sources": [
+    {
+      "sourceId": "moltjobs",
+      "sourceKind": "work_market",
+      "file": "moltjobs.json",
+      "availability": "ok",
+      "httpStatus": 200,
+      "providerTimestamp": "2026-09-09T22:55:00.000Z",
+      "providerTimestampState": "ok"
+    },
+    {
+      "sourceId": "x402stats",
+      "sourceKind": "settlement",
+      "file": "x402stats.json",
+      "availability": "ok",
+      "httpStatus": 200,
+      "providerTimestamp": "2026-09-09T22:50:00.000Z",
+      "providerTimestampState": "ok"
+    },
+    {
+      "sourceId": "smithery_mcp",
+      "sourceKind": "capability_discovery",
+      "file": "smithery_mcp.json",
+      "availability": "ok",
+      "httpStatus": 200,
+      "providerTimestamp": null,
+      "providerTimestampState": "missing"
+    }
+  ]
+}
