@@ -1,3 +1,5 @@
+Verified tip (Cursor collect): `2fae83ae54ff91db38a42002ec3a91dfb1839b26`
+
 # S198 RESULT — record-repeat + distribution-repair candidate
 
 Parent session: `01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5`  
