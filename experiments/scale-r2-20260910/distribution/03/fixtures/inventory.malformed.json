@@ -1,0 +1,24 @@
+{
+  "schema": "pilot.r2.distribution.portable_catalog_inventory.v1",
+  "cite": "malformed-fixture",
+  "buyerCount": 99,
+  "revenue": 1000,
+  "packages": [
+    {
+      "id": "bad",
+      "sourceRepo": "x",
+      "sourcePin": "y",
+      "sourcePath": "/tmp",
+      "kind": "other",
+      "installCommands": [
+        {
+          "command": "npm test",
+          "observed": false
+        }
+      ],
+      "availability": {
+        "status": "available_local"
+      }
+    }
+  ]
+}

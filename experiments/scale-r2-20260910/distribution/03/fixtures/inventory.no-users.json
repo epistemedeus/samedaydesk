@@ -1,0 +1,26 @@
+{
+  "schema": "pilot.r2.distribution.portable_catalog_inventory.v1",
+  "cite": "no-users-fixture",
+  "packages": [
+    {
+      "id": "capture-zero-users-example",
+      "sourceRepo": "epistemedeus/samedaydesk",
+      "sourcePin": "8d677a68e320cc34050d533613530d3397cae630",
+      "sourcePath": "/workspace/pilot/tmp/s131-agensi-polish-0910/repo/experiments/s109-marketplace-entry-trials/surfaces/agensi/package/",
+      "kind": "agensi_free_skill",
+      "installCommands": [
+        {
+          "command": "node bin/provenance.mjs --baselineDir fixtures/free --candidateDir fixtures/paid",
+          "observed": true
+        }
+      ],
+      "availability": {
+        "status": "no_users",
+        "users": 0,
+        "installs": 0,
+        "runs": 0,
+        "reason": "synthetic: capture succeeded with zero users (distinct from unavailable)"
+      }
+    }
+  ]
+}

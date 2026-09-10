@@ -1,0 +1,18 @@
+{
+  "schema": "pilot.r2.distribution.portable_catalog_inventory.v1",
+  "cite": "partial-fixture",
+  "packages": [
+    {
+      "id": "grexal-partial-missing-cmds",
+      "sourceRepo": "epistemedeus/samedaydesk",
+      "sourcePin": "53dbb7adde7dfe89f4dc1fb5efe380389b4e420d",
+      "sourcePath": "/workspace/pilot/tmp/s124-root-0910.dYRsYW/grexal/package",
+      "kind": "grexal_agent_package",
+      "installCommands": [],
+      "availability": {
+        "status": "draft_private",
+        "reason": "partial: installCommands empty \u2014 catalog marks missingInputs"
+      }
+    }
+  ]
+}
