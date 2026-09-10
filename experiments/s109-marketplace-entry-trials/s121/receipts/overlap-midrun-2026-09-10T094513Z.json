@@ -1,0 +1,15 @@
+{
+  "asOf": "2026-09-10T09:45:13Z",
+  "aliveGrokCount": 5,
+  "pids": [
+    "75009",
+    "75011",
+    "75012",
+    "75013",
+    "75014"
+  ],
+  "MemAvailable_kB": 10682224,
+  "MemAvailable_GiB": 10.187,
+  "psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+  "note": "mid-run snapshot while remaining cells still alive; not peak-start"
+}

@@ -44,12 +44,13 @@ const worksheets = {
     buyerCannotVerifyYet: [
       'Stripe eligibility',
       'Solana USDC eligibility',
-      'Live listing contents behind Cloudflare Access',
+      'Account payout-method enabled state (requires Root www.agensi.io session)',
     ],
     freeAlternative: 'Direct use of public x402-data-gateway-skills recipes + DIY acceptance notes',
-    paidDelta: 'Packaging, acceptance checklist, and delivery support against marketplace criteria',
+    paidDelta: 'Local packaging/acceptance overlay (provenance.mjs packagingDeltaFiles); not an Agensi listing or paid MCP unlock',
     attributionPlan: commonAttribution,
-    nextMeasurableEvent: 'Root CF Access + archived sell-page payout text enabling a truthful public listing draft',
+    nextMeasurableEvent:
+      'Root auth on www.agensi.io plus archived sell-page payout-method state; still $0. Do not use www.agensi.dev Access as seller entry.',
   },
   grexal: {
     surface: 'grexal',

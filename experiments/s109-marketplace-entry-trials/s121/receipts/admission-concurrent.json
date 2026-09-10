@@ -1,0 +1,28 @@
+{
+  "at": "2026-09-10T09:33:52.670Z",
+  "cashBoundaryUsd": 0,
+  "requestedConcurrent": 9,
+  "probeRssBudgetBytes": 209715200,
+  "maxByHeadroomEstimate": 33,
+  "decision": "launch_all_requested_measure_actual",
+  "note": "Headroom estimate allows 33 ≥ 9.",
+  "s109SequentialReason": "S109 used three sequential role cohorts (contracts→packages→buyers) of size 3 by parent orchestration choice despite MemAvailable≈10–11Gi and PSI=0 — not a platform-enforced max concurrency of 3.",
+  "memory": {
+    "MemTotal": 16791945216,
+    "MemAvailable": 11177910272,
+    "reserve25": 4197986304,
+    "headroom": 6979923968
+  },
+  "psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+  "cells": [
+    "C1-diff-semantics",
+    "C2-truncated-evidence",
+    "C3-rename-binary-nonewline",
+    "C4-malicious-oversized",
+    "C5-grexal-validate-runtime",
+    "C6-fee-edge-units",
+    "C7-artifact-archive-install",
+    "C8-agensi-paid-vs-free",
+    "C9-buyer-criterion-binding"
+  ]
+}

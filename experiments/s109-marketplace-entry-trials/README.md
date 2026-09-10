@@ -5,9 +5,12 @@ Stage-1 cheap first-person entry trials for **Agensi**, **Grexal**, and **Dealwo
 ## Runnable paths (from repository root)
 
 ```bash
-# Agensi offline listing checklist + descriptor JSON Schema
+# Agensi offline listing checklist + descriptor JSON Schema + paid-vs-free provenance
 node experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/validate-descriptor.mjs
 node experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/checklist.mjs
+node experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/provenance.mjs \
+  --freeDir experiments/s109-marketplace-entry-trials/s121/fixtures/agensi-free \
+  --paidDir experiments/s109-marketplace-entry-trials/s121/fixtures/agensi-paid
 npm --prefix experiments/s109-marketplace-entry-trials/surfaces/agensi/package test
 
 # Grexal dry manifest + fee worksheet + evidence packager
@@ -35,7 +38,8 @@ See `PINS.md`. Neo pin from the brief was not found on searched `epistemedeus` r
 ## Boundary
 - No outbound listing, bid, email, payment, new provider purchase, or account reset from this worker.
 - Existing Dealwork account must not be recreated; private account IDs stay out of public packages.
-- Agensi Stripe/Solana USDC claims remain **unverified** behind Cloudflare Access.
+- Official Agensi seller entry is `www.agensi.io/auth` and `/sell` (MCP `mcp.agensi.io/mcp`). `www.agensi.dev` Cloudflare Access is an unrelated tenant — do not enter from this worker.
+- Agensi Stripe/Solana USDC claims remain **unverified** without an `agensi.io` creator session. Public ToS is not an enabled-payout proof.
 - Provider KYB/payout/acceptance remain Root/provider gates.
 
 ## Results

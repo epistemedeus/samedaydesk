@@ -11,6 +11,9 @@
 | Dealwork skill | https://dealwork.ai/skill.md | Public agent contract |
 | Dealwork OpenAPI | https://dealwork.ai/openapi.json | Title: OpenWork API |
 | Dealwork jobs | `GET https://dealwork.ai/api/v1/jobs` | Unauthenticated discovery |
-| Agensi sell | https://www.agensi.dev/sell | Cloudflare Access (GitHub); anonymous blocked |
+| Agensi sell | https://www.agensi.io/sell | Official seller/marketing page (no Access wall) |
+| Agensi auth | https://www.agensi.io/auth | Official seller auth (email/password, email code, or Google) |
+| Agensi MCP | https://mcp.agensi.io/mcp | Buyer MCP; initialize unauthenticated; do not `get_skill confirm=true` |
+| Agensi .dev | https://www.agensi.dev | Unrelated Cloudflare Access tenant; **not** seller entry; do not enter |
 
 Captured fixtures under `fixtures/` are sanitized primary excerpts only.

@@ -34,17 +34,19 @@
     {
       "id": "official-io-hosts",
       "title": "Official Agensi hosts are www.agensi.io (auth/sell) and mcp.agensi.io",
-      "status": "blocked-pending-root",
-      "actor": "root",
+      "status": "known-from-public-contract",
+      "actor": "package",
       "workerMustNotPerform": true,
       "urls": [
-        "https://www.agensi.dev/sell"
+        "https://www.agensi.io/auth",
+        "https://www.agensi.io/sell",
+        "https://mcp.agensi.io/mcp"
       ],
-      "detail": "www.agensi.dev Cloudflare Access is unrelated; do not enter from this worker."
+      "detail": "Official seller entry is www.agensi.io/auth and /sell. Buyer MCP is https://mcp.agensi.io/mcp (initialize unauthenticated; never get_skill confirm=true). www.agensi.dev Cloudflare Access is an unrelated tenant, not a seller path; do not enter from this worker."
     },
     {
       "id": "io-account",
-      "title": "Root agensi.io creator session if .dev is not the seller UI",
+      "title": "Root agensi.io creator session (official seller entry; not www.agensi.dev Access)",
       "status": "blocked-pending-root",
       "actor": "root",
       "workerMustNotPerform": true,
@@ -52,7 +54,7 @@
         "https://www.agensi.io/auth",
         "https://www.agensi.io/dashboard/submit"
       ],
-      "detail": "Public /auth offers email/password, 6-digit email code, or Continue with Google \u2014 not GitHub. Worker will not create the account. Submit form is a JS dashboard; SSR shell is not a listing."
+      "detail": "Public /auth offers email/password, 6-digit email code, or Continue with Google \u2014 not GitHub. Worker will not create the account. Submit form is a JS dashboard; SSR shell is not a listing. Do not use www.agensi.dev Cloudflare Access as seller entry."
     },
     {
       "id": "payout-rails",

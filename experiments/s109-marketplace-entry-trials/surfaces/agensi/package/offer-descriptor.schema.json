@@ -171,18 +171,24 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "cloudflareAccessUrl",
+        "officialSellerAuthUrl",
         "publicSellerUrl",
+        "mcpUrl",
+        "cloudflareAccessUrl",
         "authHint",
         "fullStepsPath",
-        "idp"
+        "idp",
+        "unrelatedAccessTenant"
       ],
       "properties": {
-        "cloudflareAccessUrl": { "const": "https://www.agensi.dev/sell" },
+        "officialSellerAuthUrl": { "const": "https://www.agensi.io/auth" },
         "publicSellerUrl": { "const": "https://www.agensi.io/sell" },
+        "mcpUrl": { "const": "https://mcp.agensi.io/mcp" },
+        "cloudflareAccessUrl": { "const": "https://www.agensi.dev/sell" },
         "authHint": { "type": "string", "minLength": 20 },
         "fullStepsPath": { "const": "./access-handoff.json" },
-        "idp": { "const": "GitHub" },
+        "idp": { "type": "string", "minLength": 12 },
+        "unrelatedAccessTenant": { "type": "string", "minLength": 20 },
         "accessTeamHost": { "const": "mlehman-899.cloudflareaccess.com" }
       }
     },
@@ -249,6 +255,9 @@
         "actor",
         "workerMustNotAuthenticate",
         "skillRecipePin",
+        "officialSellerAuthUrl",
+        "mcpUrl",
+        "doNotEnterCloudflareAccess",
         "cloudflareAccessUrl",
         "publicSellerUrl",
         "primaryTaskHost",
@@ -263,14 +272,18 @@
         "actor": { "const": "root" },
         "workerMustNotAuthenticate": { "const": true },
         "skillRecipePin": { "$ref": "#/$defs/pin" },
+        "officialSellerAuthUrl": { "const": "https://www.agensi.io/auth" },
+        "mcpUrl": { "const": "https://mcp.agensi.io/mcp" },
+        "doNotEnterCloudflareAccess": { "const": true },
         "cloudflareAccessUrl": { "const": "https://www.agensi.dev/sell" },
         "publicSellerUrl": { "const": "https://www.agensi.io/sell" },
         "primaryTaskHost": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["url", "gate", "teamHost", "idp", "anonymousResult"],
+          "required": ["url", "role", "gate", "teamHost", "idp", "anonymousResult"],
           "properties": {
             "url": { "const": "https://www.agensi.dev/sell" },
+            "role": { "const": "unrelated-do-not-enter" },
             "gate": { "const": "Cloudflare Access" },
             "teamHost": { "const": "mlehman-899.cloudflareaccess.com" },
             "idp": { "const": "GitHub" },

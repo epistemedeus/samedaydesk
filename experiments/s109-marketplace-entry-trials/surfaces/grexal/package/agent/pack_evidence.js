@@ -6,17 +6,44 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 import {
   analyzeUnifiedDiff,
   bindBuyerCriteria,
+  packagerNonClaims,
   DEFAULT_MAX_DIFF_BYTES,
 } from '../lib/diff_analysis.js';
 
 export const PAID_MODEL_CALLS = 0;
 export const AGENT_SLUG = 'samedaydesk-source-change-evidence';
 export const GREXAL_PAID_EXECUTION = false;
+export const DEFAULT_RANGE_OP = '...';
+
+/**
+ * git diff A..B  = git diff A B (direct endpoint trees).
+ * git diff A...B = git diff $(git merge-base A B) B.
+ * These are not interchangeable; unknown values must not be coerced to '...'.
+ */
+export function normalizeRangeOp(rangeOp) {
+  if (rangeOp == null || rangeOp === '' || rangeOp === true) return DEFAULT_RANGE_OP;
+  if (rangeOp === '...' || rangeOp === '..') return rangeOp;
+  throw new Error(
+    `rangeOp must be '...' or '..' (got ${JSON.stringify(rangeOp)}). git diff A...B is merge-base(A,B)..B; git diff A..B is direct A vs B. They are not interchangeable.`,
+  );
+}
+
+export function describeRangeSemantics({ rangeOp, gitInvoked }) {
+  const gitMeaning =
+    rangeOp === '...'
+      ? 'git three-dot: merge-base(base,head)..head (not a literal two-endpoint patch of base→head)'
+      : 'git two-dot: direct base..head';
+  if (!gitInvoked) {
+    return `supplied unifiedDiff; git was not invoked so rangeOp ${rangeOp} was not executed. ${gitMeaning}`;
+  }
+  return gitMeaning;
+}
 
 function parseArgs(argv) {
   const out = { _: [] };
@@ -57,7 +84,7 @@ function runGitDiff(repoPath, baseRef, headRef, rangeOp) {
 export function packEvidence(input = {}) {
   const baseRef = input.baseRef || 'HEAD~1';
   const headRef = input.headRef || 'HEAD';
-  const rangeOp = input.rangeOp === '..' ? '..' : '...';
+  const rangeOp = normalizeRangeOp(input.rangeOp);
   const acceptanceNotes = input.acceptanceNotes || 'dry local structural packaging';
   const repoPath = input.repoPath || null;
   const maxDiffBytes = Number(input.maxDiffBytes || DEFAULT_MAX_DIFF_BYTES);
@@ -70,7 +97,9 @@ export function packEvidence(input = {}) {
   }
 
   const analysis = analyzeUnifiedDiff(diffText, { maxDiffBytes });
+  const gitInvoked = Boolean(git);
   const commitRange = git?.range || `${baseRef}${rangeOp}${headRef}`;
+  const rangeSemantics = describeRangeSemantics({ rangeOp, gitInvoked });
 
   const checks = [
     {
@@ -124,7 +153,7 @@ export function packEvidence(input = {}) {
     checks.push({
       id: 'diff-source-supplied',
       pass: true,
-      detail: 'used supplied unifiedDiff (git not invoked)',
+      detail: `used supplied unifiedDiff (git not invoked); rangeOp ${rangeOp} is a label only`,
     });
   } else {
     checks.push({
@@ -139,6 +168,7 @@ export function packEvidence(input = {}) {
     analysis,
     structuralChecksPass,
   });
+  const nonClaims = packagerNonClaims(buyerBinding);
 
   const acceptanceReport = {
     cashBoundaryUsd: 0,
@@ -146,10 +176,8 @@ export function packEvidence(input = {}) {
     role: 'source-change-evidence-packager',
     commitRange,
     rangeOp,
-    rangeSemantics:
-      rangeOp === '...'
-        ? 'git three-dot: merge-base(base,head)..head (not a literal two-endpoint patch of base→head)'
-        : 'git two-dot: direct base..head',
+    rangeSemantics,
+    gitRangeExecuted: gitInvoked,
     diffBytes: analysis.bytes,
     fileCount: analysis.fileCount,
     renameDetected: analysis.sawRename,
@@ -165,11 +193,14 @@ export function packEvidence(input = {}) {
     grexalPaidExecution: GREXAL_PAID_EXECUTION,
     checks,
     structuralChecksPass,
-    gitApplyVerified: false,
-    buyerAcceptanceVerified: false,
-    bidFundingVerified: false,
+    gitApplyVerified: nonClaims.gitApplyVerified,
+    buyerAcceptanceVerified: nonClaims.buyerAcceptanceVerified,
+    bidFundingVerified: nonClaims.bidFundingVerified,
+    escrowApproval: nonClaims.escrowApproval,
     buyerCriteria: buyerBinding,
+    // Structural alias only. Do not treat as buyer/escrow acceptance.
     allChecksPass: structuralChecksPass,
+    allChecksPassScope: 'structural-packaging-checks-only',
   };
 
   const summary = `Packaged ${analysis.bytes}B / ${analysis.fileCount} files for ${commitRange}; structuralPass=${structuralChecksPass}; paidModelCalls=0; grexalPaidExecution=false; gitApplyVerified=false; buyerAcceptanceVerified=false`;
@@ -181,9 +212,14 @@ export function packEvidence(input = {}) {
     paidModelCalls: PAID_MODEL_CALLS,
     grexalPaidExecution: GREXAL_PAID_EXECUTION,
     structuralChecksPass,
+    gitApplyVerified: nonClaims.gitApplyVerified,
+    buyerAcceptanceVerified: nonClaims.buyerAcceptanceVerified,
     acceptanceReport,
     evidencePack: {
-      unifiedDiff: diffText,
+      // Omit full text when over the size limit so stdout/JSON stays parseable.
+      unifiedDiff: analysis.exceedsMaxBytes ? null : diffText,
+      unifiedDiffOmitted: Boolean(analysis.exceedsMaxBytes),
+      unifiedDiffSha256: createHash('sha256').update(diffText, 'utf8').digest('hex'),
       acceptance: acceptanceReport,
       analysis,
     },
@@ -208,7 +244,7 @@ function printHelp() {
   --repoPath <dir>           Git checkout to diff
   --baseRef <ref>            Default HEAD~1
   --headRef <ref>            Default HEAD
-  --rangeOp '...'|'..'       Default '...'; three-dot ≠ two-dot
+  --rangeOp '...'|'..'       Default '...'. git diff A...B ≡ merge-base(A,B)..B; A..B is direct endpoint diff. Not interchangeable; other values are rejected.
   --unifiedDiffFile <path>   Read a precomputed unified diff instead of running git
   --buyerCriteriaFile <path> JSON array of local criteria bindings (not escrow)
   --maxDiffBytes <n>         Default ${DEFAULT_MAX_DIFF_BYTES}
@@ -256,7 +292,14 @@ async function main(argv) {
     fs.mkdirSync(outDir, { recursive: true });
     const diffPath = path.join(outDir, 'changes.diff');
     const acceptancePath = path.join(outDir, 'acceptance.json');
-    fs.writeFileSync(diffPath, result.evidencePack.unifiedDiff);
+    if (result.evidencePack.unifiedDiff == null) {
+      fs.writeFileSync(
+        diffPath,
+        `# omitted: exceeds maxDiffBytes; sha256=${result.evidencePack.unifiedDiffSha256}\n`,
+      );
+    } else {
+      fs.writeFileSync(diffPath, result.evidencePack.unifiedDiff);
+    }
     fs.writeFileSync(acceptancePath, `${JSON.stringify(result.acceptanceReport, null, 2)}\n`);
     process.stdout.write(
       `${JSON.stringify(
@@ -268,6 +311,7 @@ async function main(argv) {
           paidModelCalls: result.paidModelCalls,
           grexalPaidExecution: false,
           structuralChecksPass: result.structuralChecksPass,
+          unifiedDiffOmitted: result.evidencePack.unifiedDiffOmitted,
           gitApplyVerified: false,
           buyerAcceptanceVerified: false,
           cashBoundaryUsd: 0,

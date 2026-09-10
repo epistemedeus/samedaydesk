@@ -3,15 +3,19 @@
   "actor": "root",
   "workerMustNotAuthenticate": true,
   "skillRecipePin": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
-  "cloudflareAccessUrl": "https://www.agensi.dev/sell",
+  "officialSellerAuthUrl": "https://www.agensi.io/auth",
   "publicSellerUrl": "https://www.agensi.io/sell",
+  "mcpUrl": "https://mcp.agensi.io/mcp",
+  "doNotEnterCloudflareAccess": true,
+  "cloudflareAccessUrl": "https://www.agensi.dev/sell",
   "primaryTaskHost": {
     "url": "https://www.agensi.dev/sell",
+    "role": "unrelated-do-not-enter",
     "gate": "Cloudflare Access",
     "teamHost": "mlehman-899.cloudflareaccess.com",
     "idp": "GitHub",
     "oauthClientIdObserved": "observed-only-not-a-secret",
-    "anonymousResult": "HTTP 302 to Cloudflare Access. CORRECTION: this Access tenant is NOT the Agensi seller surface; do not enter from worker. Use www.agensi.io/auth and /sell instead."
+    "anonymousResult": "HTTP 302 to Cloudflare Access. This Access tenant is NOT the Agensi seller surface. Do not enter from this worker. Official seller: https://www.agensi.io/auth and https://www.agensi.io/sell."
   },
   "alternatePublicMarketplace": {
     "authUrl": "https://www.agensi.io/auth",
@@ -19,12 +23,12 @@
     "idpNote": "OFFICIAL Agensi seller entry: www.agensi.io/auth (email/password, email code, or Google). MCP: https://mcp.agensi.io/mcp. Do not confuse with www.agensi.dev Cloudflare Access."
   },
   "steps": [
-    "CORRECTION: Official Agensi seller entry is https://www.agensi.io/auth and https://www.agensi.io/sell \u2014 not www.agensi.dev.",
-    "Root may observe https://www.agensi.dev/sell Cloudflare Access only to confirm it is an unrelated tenant; do not complete Access login from this worker.",
+    "Official Agensi seller entry is https://www.agensi.io/auth and https://www.agensi.io/sell — not www.agensi.dev.",
+    "Do not treat https://www.agensi.dev Cloudflare Access as seller entry; do not complete Access login from this worker.",
     "Root signs in at https://www.agensi.io/auth (email/password, email code, or Google). Worker will not authenticate.",
     "Open https://www.agensi.io/sell / creator submit UI and capture verbatim payout rails, min price, and fee split without publishing.",
-    "Optional read-only MCP at https://mcp.agensi.io/mcp (search_skills). Never call get_skill with confirm=true (spends credits).",
-    "If Root later lists, attribute pin epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666 and sell packaging/acceptance/ops only \u2014 no proprietary claim on free recipes. Worker will not list."
+    "Optional read-only MCP initialize at https://mcp.agensi.io/mcp. Never call get_skill with confirm=true (spends credits).",
+    "If Root later lists, attribute pin epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666 and sell packaging/acceptance/ops only — no proprietary claim on free recipes. Worker will not list. Local provenance.mjs is not an Agensi paid run."
   ],
   "doNotPasteIntoOverlay": [
     "Cloudflare Access JWTs",

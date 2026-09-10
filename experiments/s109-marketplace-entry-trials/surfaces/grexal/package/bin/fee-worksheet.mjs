@@ -8,38 +8,87 @@
  * buyer_charge = target_net / 0.80  (then round).
  *
  * Does not call grexal agent price estimate (auth + first push required).
+ *
+ * Exact units: 1 USD = 1_000_000 micros. Binding is decided on integer micros
+ * (equivalent to the float clamp for every integer-micro charge):
+ *   cap-30pct   when 30% of charge < $0.02  (micros <= 66666)
+ *   floor-0.02  when 20% of charge < $0.02 and cap does not bind (66667..99999)
+ *   nominal-20pct when charge >= $0.10 (micros >= 100000)
  */
 const SOURCE = 'https://docs.grexal.ai/docs/payments';
 const FORMULA = 'platform_fee = clamp(buyer_charge × 0.20, $0.02, buyer_charge × 0.30)';
+const MICROS_PER_USD = 1_000_000;
+const FLOOR_USD = 0.02;
+const FLOOR_MICROS = 20_000;
+const RATE = 0.2;
+const CAP_RATE = 0.3;
 
 function clamp(n, lo, hi) {
   return Math.min(Math.max(n, lo), hi);
 }
 
-export function usdFromMicros(micros) {
-  if (!Number.isInteger(micros) || micros < 0) throw new Error(`invalid micros: ${micros}`);
-  return micros / 1_000_000;
+/** Parse a non-negative safe integer, including argv decimal-digit strings. */
+export function parseMicros(value) {
+  if (typeof value === 'number') {
+    if (!Number.isInteger(value) || value < 0 || !Number.isSafeInteger(value)) {
+      throw new Error(`invalid micros: ${value}`);
+    }
+    return value;
+  }
+  if (typeof value === 'string') {
+    if (!/^(0|[1-9][0-9]*)$/.test(value)) {
+      throw new Error(`invalid micros: ${value}`);
+    }
+    const n = Number(value);
+    if (!Number.isSafeInteger(n)) {
+      throw new Error(`invalid micros: ${value}`);
+    }
+    return n;
+  }
+  throw new Error(`invalid micros: ${value}`);
 }
 
-export function worksheetRow(charge) {
+export function usdFromMicros(micros) {
+  return parseMicros(micros) / MICROS_PER_USD;
+}
+
+export function microsFromUsd(usd) {
+  if (!Number.isFinite(usd) || usd < 0) {
+    throw new Error(`invalid buyer_charge: ${usd}`);
+  }
+  return Math.round(usd * MICROS_PER_USD);
+}
+
+/**
+ * Integer-micro binding for clamp(charge×0.20, $0.02, charge×0.30).
+ * 30% < $0.02  <=>  3*micros < 200_000  <=>  micros <= 66666
+ * 20% < $0.02  <=>  2*micros < 200_000  <=>  micros <  100000
+ */
+export function bindingFromChargeMicros(chargeMicros) {
+  const m = parseMicros(chargeMicros);
+  if (m === 0) return 'zero';
+  if (m * 3 < FLOOR_MICROS * 10) return 'cap-30pct';
+  if (m * 2 < FLOOR_MICROS * 10) return 'floor-0.02';
+  return 'nominal-20pct';
+}
+
+export function worksheetRow(charge, opts = {}) {
   if (!Number.isFinite(charge) || charge < 0) {
     throw new Error(`invalid buyer_charge: ${charge}`);
   }
-  const twenty = charge * 0.2;
-  const cap = charge * 0.3;
-  const floor = 0.02;
+  const twenty = charge * RATE;
+  const cap = charge * CAP_RATE;
+  const floor = FLOOR_USD;
   const platformFee = charge === 0 ? 0 : clamp(twenty, floor, cap);
   const earnings = charge - platformFee;
   const effectivePct = charge === 0 ? null : (platformFee / charge) * 100;
-  let binding = 'nominal-20pct';
-  if (charge === 0) binding = 'zero';
-  else if (cap < floor) binding = 'cap-30pct';
-  else if (twenty < floor) binding = 'floor-0.02';
-  else if (twenty > cap) binding = 'cap-30pct';
-  else binding = 'nominal-20pct';
+  const chargeMicros =
+    opts.chargeMicros != null ? parseMicros(opts.chargeMicros) : microsFromUsd(charge);
+  const binding = bindingFromChargeMicros(chargeMicros);
 
   return {
     buyerChargeUsd: charge,
+    buyerChargeMicros: chargeMicros,
     twentyPercentUsd: Number(twenty.toFixed(4)),
     floorUsd: floor,
     capUsd: Number(cap.toFixed(4)),
@@ -65,51 +114,68 @@ const THIS_AGENT_ZERO_LLM_BACKSOLVE = {
   },
 };
 
-function buildTable(charges) {
-  return charges.map(worksheetRow);
+function buildTable(charges, microsByIndex = null) {
+  return charges.map((c, i) =>
+    worksheetRow(c, microsByIndex ? { chargeMicros: microsByIndex[i] } : {}),
+  );
 }
 
 function main() {
   const argv = process.argv.slice(2);
   if (argv[0] === '--help' || argv[0] === '-h') {
-    process.stdout.write(`Usage: fee-worksheet.mjs [buyer_charge_usd]
+    process.stdout.write(`Usage: fee-worksheet.mjs [buyer_charge_usd...]
        fee-worksheet.mjs --table
-       fee-worksheet.mjs 0.10 0.18 0.05
+       fee-worksheet.mjs --micros 50000 66667 80000 100000
+       fee-worksheet.mjs 0.05 0.066667 0.08 0.10
 
-Offline docs.grexal.ai/docs/payments clamp. No auth, no spend.
+Offline docs.grexal.ai/docs/payments clamp. 1 USD = 1e6 micros. No auth, no spend.
 `);
     process.exit(0);
   }
 
   let tableMode = argv[0] === '--table' || argv.length === 0;
   let charges;
-  if (argv[0] === '--micros') {
-    tableMode = false;
-    charges = argv.slice(1).map((x) => usdFromMicros(Number(x)));
-  } else if (tableMode) {
-    charges = [...DOCS_TABLE, FLOOR_BAND_EXAMPLE, 0.18];
-  } else {
-    charges = argv.map(Number);
+  let microsList = null;
+  try {
+    if (argv[0] === '--micros') {
+      tableMode = false;
+      microsList = argv.slice(1).map(parseMicros);
+      charges = microsList.map(usdFromMicros);
+    } else if (tableMode) {
+      charges = [...DOCS_TABLE, FLOOR_BAND_EXAMPLE, 0.18];
+    } else {
+      charges = argv.map(Number);
+    }
+  } catch (e) {
+    console.error(JSON.stringify({ ok: false, error: String(e && e.message ? e.message : e) }));
+    process.exit(1);
   }
 
   for (const c of charges) {
     if (!Number.isFinite(c) || c < 0) {
-      console.error(JSON.stringify({ ok: false, error: 'usage: fee-worksheet.mjs <buyer_charge_usd> | --table' }));
+      console.error(
+        JSON.stringify({
+          ok: false,
+          error: 'usage: fee-worksheet.mjs <buyer_charge_usd...> | --table | --micros <int...>',
+        }),
+      );
       process.exit(1);
     }
   }
 
-  const rows = buildTable(charges);
+  const rows = buildTable(charges, microsList);
   const out = {
     ok: true,
     cashBoundaryUsd: 0,
     source: `${SOURCE} (captured 2026-09-10)`,
     formula: FORMULA,
     sellerKeepNominal: 0.8,
+    microsPerUsd: MICROS_PER_USD,
     notes: [
       'Normal case ~20% for charges ≥ $0.10.',
       'Micro-run floor $0.02 binds when 20% < $0.02 and 30% of charge still ≥ $0.02 (~$0.0667 ≤ charge < $0.10).',
       'Below ~$0.0667 the 30% cap binds (docs $0.05 and $0.02 rows).',
+      'Exact units: 1 USD = 1_000_000 micros. Floor/cap crossover is 0.02/0.30 = 1/15 USD ≈ 66666.6̅ micros; 66667 is the first integer micro in the floor band.',
       'Sandbox compute/build/deploy/storage/listing are covered by the fee; third-party LLM/API spend is not.',
       'This agent has paidModelCalls=0, so do not copy the docs $0.18 Claude backsolve as the list price.',
       'Pricing line items are NOT in grexal.json. grexal agent price add requires login + first push — not run here.',

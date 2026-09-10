@@ -29,9 +29,9 @@
     "action": "omit-from-offers-until-root-identifies-repo"
   },
   "offerTitle": "Gateway recipe packaging + acceptance evidence (Agensi draft \u2014 not listed)",
-  "paidDeliverable": "If Root later enables payouts and lists, the buyer would receive a versioned packaging of the public gateway recipes plus a machine-checkable acceptance report (pinned commit, command hashes, pass/fail checklist) delivered through Agensi listing ops. This is packaging labor, discovery/scan/delivery ops, and acceptance formatting \u2014 not a resale of free recipe text as proprietary IP, and not a new SameDayDesk HTTP action.",
+  "paidDeliverable": "Implemented local behavior only: provenance.mjs hashes a free recipe tree against a paid packaging directory and reports packagingDeltaFiles (paid-only + modified files such as ACCEPTANCE.md and DELIVERY.md in the S121 fixtures) with claimsProprietaryOwnershipOfFreeRecipes=false. Identical free bytes (SKILL.md in those fixtures) stay attributed upstream. This is packaging/acceptance/ops overlay formatting \u2014 not an Agensi listing, not a paid MCP unlock, not buyer escrow acceptance, and not a new SameDayDesk HTTP action.",
   "freeAlternative": "Clone epistemedeus/x402-data-gateway-skills at pin 82d0f019713c7223898806144da08fdbeed5c666 (or `npx skills add epistemedeus/x402-data-gateway-skills --all --yes`) and run the public recipes locally against https://agents.samedaydesk.com. Offline recipe tests live under tests/recipes upstream. No Agensi account, scan, or 30% fee.",
-  "competentFreeDelta": "Paid delta is packaging labor, Agensi discovery/scan/delivery ops, merchant-of-record tax handling, and acceptance formatting. It is not exclusive ownership of public recipe content and does not add a new gateway route.",
+  "competentFreeDelta": "The local paid-vs-free delta is extra packaging/acceptance/ops files over the public recipe bytes. It is not exclusive ownership of public recipe content, not a live Agensi catalog entry, and does not add a new gateway route. Local packager output is not a provider paid run.",
   "ownershipClaim": {
     "claimsProprietaryOwnershipOfFreeRecipes": false,
     "statement": "This draft does not claim proprietary ownership of the free public recipes at epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666. Those files remain upstream public recipes (no LICENSE file in the pinned tree). SameDayDesk may, if Root later lists, sell packaging, acceptance formatting, and marketplace ops only."
@@ -80,10 +80,13 @@
     "doNotAssumeEligible": true
   },
   "rootHandoff": {
-    "cloudflareAccessUrl": "https://www.agensi.dev/sell",
+    "officialSellerAuthUrl": "https://www.agensi.io/auth",
     "publicSellerUrl": "https://www.agensi.io/sell",
+    "mcpUrl": "https://mcp.agensi.io/mcp",
+    "cloudflareAccessUrl": "https://www.agensi.dev/sell",
     "fullStepsPath": "./access-handoff.json",
-    "idp": "GitHub",
+    "idp": "email/password, email code, or Google on www.agensi.io/auth \u2014 not GitHub",
+    "unrelatedAccessTenant": "www.agensi.dev Cloudflare Access (GitHub IdP, mlehman-899.cloudflareaccess.com) is not the Agensi seller surface; do not enter from this worker.",
     "authHint": "OFFICIAL Agensi seller auth/sell: https://www.agensi.io/auth and https://www.agensi.io/sell; MCP https://mcp.agensi.io/mcp. www.agensi.dev Cloudflare Access (GitHub IdP) is unrelated \u2014 do not enter from worker. See access-handoff.json."
   },
   "apiOrSdk": {

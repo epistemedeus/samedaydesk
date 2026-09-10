@@ -1,0 +1,235 @@
+{
+  "cell": "C4-malicious-oversized",
+  "cohort": "s121-consumers",
+  "surface": "grexal",
+  "asOf": "2026-09-10T09:42:47Z",
+  "cashBoundaryUsd": 0,
+  "newFact": "Local pack_evidence.js rejects both C4 fixtures without git, network, or Grexal. malicious-paths.patch (194B, two files) fails check no-unsafe-paths: unsafePaths=[\"../../etc/passwd\"] from `diff --git a/../../etc/passwd b/../../etc/passwd` (plus the matching ---/+++ headers); structuralChecksPass=false; CLI exit 2. oversized.patch (2000183B, one file huge.txt) with --maxDiffBytes 100000 fails check diff-size-limit (detail bytes=2000183 max=100000, exceedsMaxBytes=true); structuralChecksPass=false; CLI exit 2. Default DEFAULT_MAX_DIFF_BYTES=5242880 still accepts the 2MiB fixture — the size-limit failure is the 100000-byte cap, not the 5MiB default. Pre-patch, quoted `diff --git \"a/../../etc/passwd\"`, +++-only traversal with a safe git header, backslash `..\\..\\etc\\passwd`, and unprefixed `diff --git ../../etc/passwd` were accepted (structuralChecksPass=true, unsafePaths=[]). Analyzer now parses quoted git tokens, ---/+++ and rename/copy headers before the first hunk, normalizes backslash to slash, unique-ifies unsafePaths, and treats /dev/null as not unsafe. Tests added for the 100000-byte cap and those encodings. gitApplyVerified=false; grexalPaidExecution=false; paidModelCalls=0; buyerAcceptanceVerified=false. Local packager run is not a Grexal paid execution, git-apply proof, or buyer escrow acceptance.",
+  "observedPath": "Read both fixtures (did not dump oversized.patch into logs). Ran pack_evidence.js --unifiedDiffFile on malicious-paths.patch with --stdout-only (exit 2) and on oversized.patch with --maxDiffBytes 100000 --outDir under s121/out (exit 2; deleted the 2MiB changes.diff copy). Did not use repo-root .s121-grexal-dry-out. Probed extra encodings via packEvidence() API: quoted/+++/backslash/unprefixed were accepted before the analyzer patch and fail closed after. Re-ran npm --prefix surfaces/grexal/package test: 24/24 pass including existing 'malicious paths fail' plus new oversized and encoding tests. Did not git-apply either fixture. Did not login/push/publish/runs invoke. Network unused.",
+  "beforeAfter": {
+    "packagerFix": "lib/diff_analysis.js path collection + two unit tests. Size-limit check already existed; extra traversal encodings did not.",
+    "before": {
+      "maliciousPathsFixture": {
+        "input": "experiments/s109-marketplace-entry-trials/s121/fixtures/diff/malicious-paths.patch",
+        "diffBytes": 194,
+        "fileCount": 2,
+        "structuralChecksPass": false,
+        "cliExitCode": 2,
+        "noUnsafePathsCheck": {
+          "id": "no-unsafe-paths",
+          "pass": false,
+          "detail": "unsafePaths=[\"../../etc/passwd\",\"../../etc/passwd\"]"
+        },
+        "unsafePaths": ["../../etc/passwd", "../../etc/passwd"],
+        "note": "Supplied fixture already failed closed. aPath/bPath duplicates before unique-ify."
+      },
+      "oversizedFixtureAt100000": {
+        "input": "experiments/s109-marketplace-entry-trials/s121/fixtures/diff/oversized.patch",
+        "diffBytes": 2000183,
+        "fileCount": 1,
+        "maxDiffBytes": 100000,
+        "structuralChecksPass": false,
+        "cliExitCode": 2,
+        "diffSizeLimitCheck": {
+          "id": "diff-size-limit",
+          "pass": false,
+          "detail": "bytes=2000183 max=100000"
+        },
+        "exceedsMaxBytes": true,
+        "note": "Supplied fixture already failed closed when --maxDiffBytes 100000 was set."
+      },
+      "oversizedFixtureDefault5MiB": {
+        "maxDiffBytes": 5242880,
+        "structuralChecksPass": true,
+        "diffSizeLimitCheck": {
+          "id": "diff-size-limit",
+          "pass": true,
+          "detail": "bytes=2000183 max=5242880"
+        },
+        "note": "Default cap is 5MiB. Task requires --maxDiffBytes 100000; without that flag the 2MiB fixture is not a size-limit failure."
+      },
+      "extraEncodingsAccepted": {
+        "quotedGitHeader": { "structuralChecksPass": true, "unsafePaths": [], "aPath": null, "bPath": null },
+        "plusPlusOnlyTraversal": { "structuralChecksPass": true, "unsafePaths": [], "aPath": "safe.txt", "bPath": "safe.txt" },
+        "backslashTraversal": { "structuralChecksPass": true, "unsafePaths": [], "aPath": "..\\..\\etc\\passwd", "bPath": "..\\..\\etc\\passwd" },
+        "unprefixedDiffGit": { "structuralChecksPass": true, "unsafePaths": [], "aPath": null, "bPath": null }
+      }
+    },
+    "after": {
+      "maliciousPathsFixture": {
+        "structuralChecksPass": false,
+        "cliExitCode": 2,
+        "unsafePaths": ["../../etc/passwd"],
+        "noUnsafePathsCheck": {
+          "id": "no-unsafe-paths",
+          "pass": false,
+          "detail": "unsafePaths=[\"../../etc/passwd\"]"
+        }
+      },
+      "oversizedFixtureAt100000": {
+        "structuralChecksPass": false,
+        "cliExitCode": 2,
+        "diffBytes": 2000183,
+        "maxDiffBytes": 100000,
+        "exceedsMaxBytes": true,
+        "diffSizeLimitCheck": {
+          "id": "diff-size-limit",
+          "pass": false,
+          "detail": "bytes=2000183 max=100000"
+        }
+      },
+      "extraEncodingsRejected": {
+        "quotedGitHeader": { "structuralChecksPass": false, "unsafePaths": ["../../etc/passwd"], "aPath": "../../etc/passwd", "bPath": "../../etc/passwd" },
+        "plusPlusOnlyTraversal": { "structuralChecksPass": false, "unsafePaths": ["../../etc/passwd"], "aPath": "safe.txt", "bPath": "safe.txt" },
+        "backslashTraversal": { "structuralChecksPass": false, "unsafePaths": ["../../etc/passwd"] },
+        "unprefixedDiffGit": { "structuralChecksPass": false, "unsafePaths": ["../../etc/passwd"], "aPath": "../../etc/passwd", "bPath": "../../etc/passwd" },
+        "renameToTraversal": { "structuralChecksPass": false, "unsafePaths": ["../../etc/shadow"] },
+        "devNullNewFileStillSafe": { "structuralChecksPass": true, "unsafePaths": [] }
+      },
+      "paidModelCalls": 0,
+      "grexalPaidExecution": false,
+      "gitApplyVerified": false,
+      "buyerAcceptanceVerified": false
+    }
+  },
+  "sourcePatchPaths": [
+    "experiments/s109-marketplace-entry-trials/s121/fixtures/diff/malicious-paths.patch",
+    "experiments/s109-marketplace-entry-trials/s121/fixtures/diff/oversized.patch"
+  ],
+  "packagerFixesApplied": [
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/lib/diff_analysis.js",
+      "role": "quoted diff --git tokens; ---/+++ and rename/copy paths before first hunk; backslash-normalized .. traversal; /dev/null whitelist; unique unsafePaths"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/test/diff_analysis.test.mjs",
+      "role": "oversized fixture at maxDiffBytes 100000; quoted/+++/backslash/unprefixed/rename-to encodings; /dev/null add still passes"
+    }
+  ],
+  "fixturePaths": {
+    "malicious": "experiments/s109-marketplace-entry-trials/s121/fixtures/diff/malicious-paths.patch",
+    "oversized": "experiments/s109-marketplace-entry-trials/s121/fixtures/diff/oversized.patch"
+  },
+  "tool": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js",
+  "analyzer": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/lib/diff_analysis.js",
+  "commandsRun": [
+    {
+      "cmd": "node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js --unifiedDiffFile experiments/s109-marketplace-entry-trials/s121/fixtures/diff/malicious-paths.patch --stdout-only",
+      "cwd": "/workspace",
+      "exitCode": 2,
+      "note": "exit 2 is the packager's structural-fail status (no-unsafe-paths). Not a crash. --stdout-only; no repo-root .s121-grexal-dry-out write."
+    },
+    {
+      "cmd": "node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js --unifiedDiffFile experiments/s109-marketplace-entry-trials/s121/fixtures/diff/oversized.patch --maxDiffBytes 100000 --outDir experiments/s109-marketplace-entry-trials/s121/out/_c4-cli-ovr --acceptanceNotes 'C4 oversized CLI 100000'",
+      "cwd": "/workspace",
+      "exitCode": 2,
+      "note": "exit 2 is diff-size-limit. --stdout-only was avoided because evidencePack.unifiedDiff is 2000183B and JSON.stringify of that blob is not the acceptance record. Wrote acceptance.json under the experiment tree, then deleted changes.diff."
+    },
+    {
+      "cmd": "node --input-type=module (packEvidence API on both fixtures + extra encodings; maxDiffBytes 100000 on oversized)",
+      "cwd": "/workspace",
+      "exitCode": 0,
+      "note": "Used to slim results without serializing the 2MiB unifiedDiff. Confirmed default 5MiB still passes oversized.patch."
+    },
+    {
+      "cmd": "npm --prefix experiments/s109-marketplace-entry-trials/surfaces/grexal/package test",
+      "cwd": "/workspace",
+      "exitCode": 0,
+      "note": "24/24 pass after analyzer patch (C1/C6/C9 tests included), including 'malicious paths fail', 'oversized fixture fails size limit at maxDiffBytes 100000', and 'quoted, +++-only, backslash, and unprefixed path traversal fail closed'."
+    }
+  ],
+  "structuralPass": false,
+  "structuralChecksPass": {
+    "maliciousPaths": false,
+    "oversizedAt100000": false,
+    "oversizedAtDefault5MiB": true
+  },
+  "gitApplyVerified": false,
+  "gitApplyAttempted": false,
+  "grexalPaidExecution": false,
+  "paidModelCalls": 0,
+  "buyerAcceptanceVerified": false,
+  "bidFundingVerified": false,
+  "localPackagerIsNotProviderPaidRun": true,
+  "maliciousPaths": {
+    "diffBytes": 194,
+    "fileCount": 2,
+    "files": [
+      { "aPath": "../../etc/passwd", "bPath": "../../etc/passwd", "status": "modify" },
+      { "aPath": "safe.txt", "bPath": "safe.txt", "status": "modify" }
+    ],
+    "unsafePaths": ["../../etc/passwd"],
+    "checks": {
+      "diff-nonempty": { "pass": true, "detail": "diffBytes=194" },
+      "diff-size-limit": { "pass": true, "detail": "bytes=194 max=5242880" },
+      "no-unsafe-paths": { "pass": false, "detail": "unsafePaths=[\"../../etc/passwd\"]" },
+      "not-truncated": { "pass": true },
+      "diff-source-supplied": { "pass": true, "detail": "used supplied unifiedDiff (git not invoked); rangeOp ... is a label only" }
+    },
+    "gitRangeExecuted": false,
+    "cliExitCode": 2
+  },
+  "oversized": {
+    "diffBytes": 2000183,
+    "fileCount": 1,
+    "files": [{ "aPath": "huge.txt", "bPath": "huge.txt", "status": "modify" }],
+    "maxDiffBytesRequested": 100000,
+    "defaultMaxDiffBytes": 5242880,
+    "exceedsMaxBytesAt100000": true,
+    "exceedsMaxBytesAtDefault": false,
+    "unsafePaths": [],
+    "truncatedSuspected": false,
+    "checksAt100000": {
+      "diff-nonempty": { "pass": true, "detail": "diffBytes=2000183" },
+      "diff-size-limit": { "pass": false, "detail": "bytes=2000183 max=100000" },
+      "no-unsafe-paths": { "pass": true },
+      "not-truncated": { "pass": true },
+      "diff-source-supplied": { "pass": true }
+    },
+    "gitRangeExecuted": false,
+    "cliExitCode": 2,
+    "unifiedDiffOmittedFromThisJson": true
+  },
+  "existingTests": {
+    "file": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/test/diff_analysis.test.mjs",
+    "alreadyPresent": ["malicious paths fail"],
+    "addedThisCell": [
+      "oversized fixture fails size limit at maxDiffBytes 100000",
+      "quoted, +++-only, backslash, and unprefixed path traversal fail closed"
+    ],
+    "pass": true
+  },
+  "claims": {
+    "gitApplyVerified": false,
+    "grexalPaidExecution": false,
+    "buyerAcceptanceVerified": false,
+    "bidFundingVerified": false,
+    "buyerEscrowAcceptance": false,
+    "paidModelCalls": 0,
+    "localPackagerIsProviderPaidRun": false,
+    "structuralChecksPassMalicious": false,
+    "structuralChecksPassOversizedAt100000": false,
+    "note": "JSON labels from the local packager are not git-apply success, Grexal paid execution, or buyer escrow acceptance. Unsafe-path and size-limit flags are text-of-diff / byte-length facts only."
+  },
+  "cashBoundary": {
+    "usd": 0,
+    "didNot": [
+      "git apply / git am of either fixture",
+      "npx grexal login / push / publish / deploy / runs invoke",
+      "account signup, passwords, Cloudflare Access UI automation",
+      "public listing, bid, payment, or PR to outsiders/default branch",
+      "buyer escrow / marketplace acceptance",
+      "paid model / LLM API calls",
+      "writes outside experiments/s109-marketplace-entry-trials/"
+    ]
+  },
+  "sessionNotes": [
+    "S121 C4 consumer. Cash boundary $0.",
+    "Supplied fixtures already failed the intended checks (unsafe path; size limit at 100000). Extra git-header encodings still accepted traversal, so analyzer + tests were patched.",
+    "Did not treat CLI --stdout-only of oversized.patch as a parseable acceptance record; that JSON embeds the 2MiB unifiedDiff. Used --outDir under s121/out and packEvidence() API instead.",
+    "Did not git-apply. gitApplyVerified stayed false.",
+    "Did not login, push, publish, or invoke Grexal runs. grexalPaidExecution=false. Local packager ≠ provider paid run.",
+    "Did not treat structuralChecksPass as buyer acceptance. buyerAcceptanceVerified=false.",
+    "Network not used. Changes under experiments/s109-marketplace-entry-trials/ only."
+  ]
+}

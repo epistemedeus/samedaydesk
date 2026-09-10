@@ -1,0 +1,119 @@
+{
+  "cell": "C2-truncated-evidence",
+  "cohort": "s121-consumers",
+  "surface": "grexal",
+  "asOf": "2026-09-10T09:37:46Z",
+  "cashBoundaryUsd": 0,
+  "newFact": "Local pack_evidence.js --unifiedDiffFile on s121/fixtures/diff/truncated.patch (122B, one file big.txt, hunk @@ -1,5 +1,5 @@ with only context/change lines line1 / -line2 / +line2changed / line3 then an explicit [truncated] marker) reports structuralChecksPass=false and truncatedSuspected=true. Analyzer: looksTruncated=true and truncatedHunk=true (remaining hunk counts expectedOld=2 expectedNew=2 at EOF; marker regex /\\[truncated\\]|<<<TRUNCATED>>>|\\.\\.\\.\\s*truncated/i also matches). Check id=not-truncated pass=false. CLI exit 2. Detector already present in lib/diff_analysis.js; no packager patch applied. gitApplyVerified=false; grexalPaidExecution=false; paidModelCalls=0; buyerAcceptanceVerified=false; bidFundingVerified=false. Local packager run is not a Grexal paid execution, git-apply proof, or buyer escrow acceptance.",
+  "observedPath": "Read truncated.patch; ran node surfaces/grexal/package/agent/pack_evidence.js --unifiedDiffFile <fixture> --stdout-only (no git, no network, no outDir write). Confirmed acceptanceReport.structuralChecksPass=false, acceptanceReport.truncatedSuspected=true, analysis.truncatedHunk=true, analysis.looksTruncated=true, gitStatus=null. Existing test 'truncated fixture fails structural truncation check' already asserts looksTruncated||truncatedHunk and structuralChecksPass=false plus gitApplyVerified=false. npm --prefix surfaces/grexal/package test: 13/13 pass. Did not patch lib/diff_analysis.js or pack_evidence.js. Did not git-apply the fixture. Did not login/push/publish/runs invoke.",
+  "beforeAfter": {
+    "packagerFix": "none — task-2 gate not taken because truncation was already detected",
+    "before": {
+      "input": "experiments/s109-marketplace-entry-trials/s121/fixtures/diff/truncated.patch",
+      "diffBytes": 122,
+      "hunkHeader": "@@ -1,5 +1,5 @@",
+      "hunkBodyLinesObserved": [
+        " line1",
+        "-line2",
+        "+line2changed",
+        " line3",
+        "[truncated]"
+      ],
+      "hunkCountsDeclared": { "old": 5, "new": 5 },
+      "hunkCountsConsumed": { "old": 3, "new": 3 },
+      "hunkCountsRemainingAtEof": { "expectedOld": 2, "expectedNew": 2 },
+      "explicitTruncationMarker": "[truncated]",
+      "gitInvoked": false
+    },
+    "after": {
+      "structuralChecksPass": false,
+      "truncatedSuspected": true,
+      "looksTruncated": true,
+      "truncatedHunk": true,
+      "notTruncatedCheck": {
+        "id": "not-truncated",
+        "pass": false,
+        "detail": "looksTruncated=true truncatedHunk=true"
+      },
+      "cliExitCode": 2,
+      "paidModelCalls": 0,
+      "grexalPaidExecution": false,
+      "gitApplyVerified": false,
+      "buyerAcceptanceVerified": false
+    }
+  },
+  "sourcePatchPaths": [
+    "experiments/s109-marketplace-entry-trials/s121/fixtures/diff/truncated.patch"
+  ],
+  "packagerFixesApplied": [],
+  "fixturePath": "experiments/s109-marketplace-entry-trials/s121/fixtures/diff/truncated.patch",
+  "commandsRun": [
+    {
+      "cmd": "node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js --unifiedDiffFile experiments/s109-marketplace-entry-trials/s121/fixtures/diff/truncated.patch --stdout-only",
+      "cwd": "/workspace",
+      "exitCode": 2,
+      "note": "exit 2 is the packager's structural-fail status (not-truncated check). Not a crash. --stdout-only; no .s121-grexal-dry-out write."
+    },
+    {
+      "cmd": "npm --prefix experiments/s109-marketplace-entry-trials/surfaces/grexal/package test",
+      "cwd": "/workspace",
+      "exitCode": 0,
+      "note": "13/13 pass including 'truncated fixture fails structural truncation check'"
+    }
+  ],
+  "structuralChecksPass": false,
+  "truncatedSuspected": true,
+  "analysis": {
+    "bytes": 122,
+    "fileCount": 1,
+    "files": [{ "aPath": "big.txt", "bPath": "big.txt", "status": "modify" }],
+    "truncatedHunk": true,
+    "looksTruncated": true,
+    "unsafePaths": [],
+    "sawRename": false,
+    "sawBinary": false,
+    "sawNoNewline": false,
+    "detector": {
+      "incompleteHunkCounts": true,
+      "explicitTruncatedMarker": true,
+      "markerRegex": "\\[truncated\\]|<<<TRUNCATED>>>|\\.\\.\\.\\s*truncated",
+      "implementedIn": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/lib/diff_analysis.js",
+      "wiredAs": "acceptanceReport.truncatedSuspected = analysis.looksTruncated || analysis.truncatedHunk; checks[not-truncated].pass = !looksTruncated && !truncatedHunk"
+    }
+  },
+  "existingTest": {
+    "file": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/test/diff_analysis.test.mjs",
+    "name": "truncated fixture fails structural truncation check",
+    "asserts": [
+      "analyzeUnifiedDiff(truncated.patch).looksTruncated || truncatedHunk === true",
+      "packEvidence({unifiedDiff}).structuralChecksPass === false",
+      "acceptanceReport.gitApplyVerified === false"
+    ],
+    "pass": true,
+    "addedThisCell": false
+  },
+  "claims": {
+    "gitApplyVerified": false,
+    "grexalPaidExecution": false,
+    "buyerAcceptanceVerified": false,
+    "bidFundingVerified": false,
+    "buyerEscrowAcceptance": false,
+    "paidModelCalls": 0,
+    "localPackagerIsProviderPaidRun": false,
+    "structuralChecksPass": false,
+    "truncatedSuspected": true,
+    "note": "JSON labels from the local packager are not git-apply success, Grexal paid execution, or buyer escrow acceptance. Incomplete hunk counts + [truncated] marker are text-of-diff facts only."
+  },
+  "cashBoundary": {
+    "usd": 0,
+    "didNot": [
+      "git apply of the truncated fixture",
+      "npx grexal login / push / publish / deploy / runs invoke",
+      "account signup, passwords, Cloudflare Access UI automation",
+      "public listing, bid, payment, or PR to outsiders/default branch",
+      "buyer escrow / marketplace acceptance",
+      "paid model / LLM API calls"
+    ]
+  },
+  "sessionNotes": "S121 C2 consumer. Truncation detection already landed in parent commit f2ceafc (incomplete remaining hunk counts at EOF/next-hunk/next-file, plus explicit [truncated] marker). Dual signal both fire on this fixture. Did not edit shared packager files (C1/C3/C4/C9 also concurrent). Did not write packager outDir. Network unused."
+}

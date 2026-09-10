@@ -1,0 +1,131 @@
+{
+  "cell": "C3-rename-binary-nonewline",
+  "asOf": "2026-09-10T09:37:15Z",
+  "cashBoundaryUsd": 0,
+  "newFact": "Local pack_evidence.js on s121/fixtures/diff/rename-binary-nonewline.patch (346B, 3 files, supplied unifiedDiff; git not invoked) sets acceptanceReport.renameDetected=true, binaryDetected=true, noNewlineMarkers=true from the patch text: `rename from`/`rename to`, `Binary files /dev/null and b/data.bin differ`, and `\\ No newline at end of file`. Per-file analysis is rename old-name.txt→new-name.txt, add binary data.bin, modify note.txt with 1 no-newline marker. gitApplyVerified remains false — these are labels on the supplied unifiedDiff, not proof the patch applies. grexalPaidExecution=false; paidModelCalls=0; buyerAcceptanceVerified=false. Local packager ≠ provider paid run. No patch to diff_analysis.js: the existing detector already matched; npm test includes `rename/binary/nonewline detected` (13/13 pass).",
+  "commandsRun": [
+    {
+      "command": "node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js --unifiedDiffFile experiments/s109-marketplace-entry-trials/s121/fixtures/diff/rename-binary-nonewline.patch --stdout-only --acceptanceNotes 'C3 local structural packaging; not git-apply'",
+      "exitCode": 0,
+      "cwd": "/workspace",
+      "role": "primary-fixture"
+    },
+    {
+      "command": "npm --prefix experiments/s109-marketplace-entry-trials/surfaces/grexal/package test",
+      "exitCode": 0,
+      "cwd": "/workspace",
+      "tests": "13/13 pass, including rename/binary/nonewline detected"
+    },
+    {
+      "command": "git -C /tmp/s121-c3-git diff --no-ext-diff --find-renames HEAD~1 HEAD  (disposable repo; then pack_evidence.js --repoPath /tmp/s121-c3-git --baseRef HEAD~1 --headRef HEAD --rangeOp '..' --stdout-only)",
+      "exitCode": 0,
+      "role": "git-native-marker-comparison-not-git-apply",
+      "gitVersion": "2.43.0"
+    }
+  ],
+  "sourcePatchPaths": [],
+  "codePatchRequired": false,
+  "codePatchReason": "No marker missed. lib/diff_analysis.js already sets sawRename on `rename from `/`rename to `, sawBinary on `Binary files ` or exact `GIT binary patch`, sawNoNewline on `\\ No newline at end of file`. pack_evidence maps those to renameDetected/binaryDetected/noNewlineMarkers booleans.",
+  "fixturePath": "experiments/s109-marketplace-entry-trials/s121/fixtures/diff/rename-binary-nonewline.patch",
+  "tool": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js",
+  "analyzer": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/lib/diff_analysis.js",
+  "structuralPass": true,
+  "structuralChecksPass": true,
+  "gitApplyVerified": false,
+  "gitApplyAttempted": false,
+  "grexalPaidExecution": false,
+  "paidModelCalls": 0,
+  "buyerAcceptanceVerified": false,
+  "bidFundingVerified": false,
+  "localPackagerIsNotProviderPaidRun": true,
+  "renameDetected": true,
+  "binaryDetected": true,
+  "noNewlineMarkers": true,
+  "copyDetected": false,
+  "truncatedSuspected": false,
+  "diffBytes": 346,
+  "fileCount": 3,
+  "files": [
+    {
+      "aPath": "old-name.txt",
+      "bPath": "new-name.txt",
+      "status": "rename",
+      "binary": false,
+      "rename": true,
+      "copy": false,
+      "noNewlineMarkers": 0
+    },
+    {
+      "aPath": "data.bin",
+      "bPath": "data.bin",
+      "status": "add",
+      "binary": true,
+      "rename": false,
+      "copy": false,
+      "noNewlineMarkers": 0
+    },
+    {
+      "aPath": "note.txt",
+      "bPath": "note.txt",
+      "status": "modify",
+      "binary": false,
+      "rename": false,
+      "copy": false,
+      "noNewlineMarkers": 1
+    }
+  ],
+  "fixtureMarkers": {
+    "renameLines": ["rename from old-name.txt", "rename to new-name.txt"],
+    "binaryLine": "Binary files /dev/null and b/data.bin differ",
+    "noNewlineLine": "\\ No newline at end of file",
+    "trailingNewlineOnFixtureFile": true
+  },
+  "gitNativeComparison": {
+    "repo": "/tmp/s121-c3-git",
+    "notGitApply": true,
+    "gitVersion": "2.43.0",
+    "defaultDiffMarkersMatchFixture": {
+      "renameFromTo": true,
+      "similarityIndex100": true,
+      "binaryFilesDiffer": true,
+      "noNewlineAtEndOfFile": true
+    },
+    "packEvidenceOnGitNativeTwoDotRange": {
+      "commitRange": "HEAD~1..HEAD",
+      "rangeOp": "..",
+      "renameDetected": true,
+      "binaryDetected": true,
+      "noNewlineMarkers": true,
+      "gitApplyVerified": false,
+      "grexalPaidExecution": false,
+      "noteTxtNoNewlineMarkers": 2
+    },
+    "gitBinaryPatchFormAlsoDetected": {
+      "command": "git diff --no-ext-diff --find-renames --binary HEAD~1 HEAD | pack_evidence --unifiedDiffFile",
+      "containsGitBinaryPatch": true,
+      "binaryDetected": true,
+      "renameDetected": true,
+      "noNewlineMarkers": true,
+      "gitApplyVerified": false
+    }
+  },
+  "claims": {
+    "gitApplyVerified": false,
+    "grexalPaidExecution": false,
+    "buyerAcceptanceVerified": false,
+    "bidFundingVerified": false,
+    "paidModelCalls": 0,
+    "cashBoundaryUsd": 0,
+    "note": "Do not treat JSON labels as git-apply success, Grexal paid execution, or buyer escrow acceptance. Local packager run only."
+  },
+  "sessionNotes": [
+    "Cash boundary $0. No accounts, passwords, Cloudflare Access automation, public listing, bid, payment, or PR to outsiders/default branch.",
+    "Primary input was the supplied fixture via --unifiedDiffFile; pack_evidence recorded check diff-source-supplied (git not invoked on the fixture).",
+    "Did not run git apply / git am on the fixture or on git-native output. gitApplyVerified is hard-false in pack_evidence and stayed false.",
+    "Did not login, push, publish, or invoke Grexal runs. grexalPaidExecution=false. Local packager ≠ provider paid run.",
+    "Did not treat structuralChecksPass=true as buyer acceptance. buyerAcceptanceVerified=false; no buyerCriteria file supplied.",
+    "No edit to diff_analysis.js or tests: markers were not missed. Existing unit test already asserts the three booleans true on this fixture.",
+    "Disposable /tmp/s121-c3-git was used only to show git 2.43.0 emits the same marker strings the fixture contains; tear-down not required.",
+    "Network not used. Changes under experiments/s109-marketplace-entry-trials/ only (this result JSON)."
+  ]
+}

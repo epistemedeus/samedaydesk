@@ -7,6 +7,96 @@ export const DEFAULT_MAX_DIFF_BYTES = 5 * 1024 * 1024;
 
 const TRAVERSAL = /(^|\/)\.\.(\/|$)/;
 
+/** Unquote a git C-style path token. Labels only — not git-apply. */
+export function unquoteGitPath(raw) {
+  if (raw == null) return raw;
+  let p = String(raw);
+  if (p.endsWith('\r')) p = p.slice(0, -1);
+  if (p.length >= 2 && p.startsWith('"') && p.endsWith('"')) {
+    p = p.slice(1, -1).replace(/\\([\\nrt"])/g, (_, c) => {
+      if (c === 'n') return '\n';
+      if (c === 't') return '\t';
+      return c;
+    });
+  }
+  return p;
+}
+
+/** Strip one git a/ or b/ prefix (slash or backslash). */
+export function stripDiffPrefix(p) {
+  if (!p) return p;
+  if (p.startsWith('a/') || p.startsWith('b/')) return p.slice(2);
+  if (p.startsWith('a\\') || p.startsWith('b\\')) return p.slice(2);
+  return p;
+}
+
+function isDevNullPath(normalized) {
+  return normalized === '/dev/null' || normalized === 'dev/null';
+}
+
+/**
+ * Absolute, NUL, or .. traversal (slash or backslash). `/dev/null` is not unsafe.
+ */
+export function isUnsafePath(p) {
+  if (p == null || p === '') return false;
+  const raw = unquoteGitPath(p);
+  if (raw.includes('\0')) return true;
+  const stripped = stripDiffPrefix(raw);
+  for (const c of [raw, stripped]) {
+    const n = c.replace(/\\/g, '/');
+    if (isDevNullPath(n)) continue;
+    if (n.startsWith('/') || TRAVERSAL.test(n)) return true;
+  }
+  return false;
+}
+
+function displayUnsafePath(p) {
+  return stripDiffPrefix(unquoteGitPath(p)).replace(/\\/g, '/');
+}
+
+/** Split `diff --git` operands; supports quoted tokens and missing a/b prefixes. */
+export function splitDiffGitPaths(line) {
+  const prefix = 'diff --git ';
+  if (!line.startsWith(prefix)) return [];
+  const rest = line.endsWith('\r') ? line.slice(prefix.length, -1) : line.slice(prefix.length);
+  const tokens = [];
+  let i = 0;
+  while (i < rest.length && tokens.length < 2) {
+    while (i < rest.length && rest[i] === ' ') i += 1;
+    if (i >= rest.length) break;
+    if (rest[i] === '"') {
+      let j = i + 1;
+      let closed = false;
+      while (j < rest.length) {
+        if (rest[j] === '\\' && j + 1 < rest.length) {
+          j += 2;
+          continue;
+        }
+        if (rest[j] === '"') {
+          closed = true;
+          j += 1;
+          break;
+        }
+        j += 1;
+      }
+      tokens.push(unquoteGitPath(rest.slice(i, closed ? j : rest.length)));
+      i = j;
+    } else {
+      let j = i;
+      while (j < rest.length && rest[j] !== ' ') j += 1;
+      tokens.push(unquoteGitPath(rest.slice(i, j)));
+      i = j;
+    }
+  }
+  return tokens;
+}
+
+function parseExtendedHeaderPath(line) {
+  const rest = line.startsWith('--- ') || line.startsWith('+++ ') ? line.slice(4) : line;
+  const tab = rest.indexOf('\t');
+  return unquoteGitPath(tab >= 0 ? rest.slice(0, tab) : rest);
+}
+
 /**
  * @param {string} diffText
  * @param {{ maxDiffBytes?: number }} [opts]
@@ -29,6 +119,12 @@ export function analyzeUnifiedDiff(diffText, opts = {}) {
   let sawNoNewline = false;
   const unsafePaths = [];
 
+  const noteUnsafe = (p) => {
+    if (!isUnsafePath(p)) return;
+    const shown = displayUnsafePath(p);
+    if (!unsafePaths.includes(shown)) unsafePaths.push(shown);
+  };
+
   const pushCurrent = () => {
     if (current) files.push(current);
     current = null;
@@ -44,16 +140,21 @@ export function analyzeUnifiedDiff(diffText, opts = {}) {
     if (line.startsWith('diff --git ')) {
       if (hunkOpen && (expectedOld > 0 || expectedNew > 0)) truncatedHunk = true;
       pushCurrent();
-      const m = line.match(/^diff --git a\/(.*?) b\/(.*)$/);
+      const tokens = splitDiffGitPaths(line);
+      const fallback = line.match(/^diff --git a\/(.*?) b\/(.*)$/);
+      const aRaw = tokens[0] ?? (fallback ? `a/${fallback[1]}` : null);
+      const bRaw = tokens[1] ?? (fallback ? `b/${fallback[2]}` : null);
       current = {
-        aPath: m ? m[1] : null,
-        bPath: m ? m[2] : null,
+        aPath: aRaw != null ? stripDiffPrefix(unquoteGitPath(aRaw)) : null,
+        bPath: bRaw != null ? stripDiffPrefix(unquoteGitPath(bRaw)) : null,
         status: 'modify',
         binary: false,
         rename: false,
         copy: false,
         noNewlineMarkers: 0,
       };
+      noteUnsafe(aRaw);
+      noteUnsafe(bRaw);
       continue;
     }
     if (!current) continue;
@@ -62,11 +163,17 @@ export function analyzeUnifiedDiff(diffText, opts = {}) {
       current.rename = true;
       current.status = 'rename';
       sawRename = true;
+      if (!hunkOpen) {
+        noteUnsafe(line.startsWith('rename from ') ? line.slice(12) : line.slice(10));
+      }
     }
     if (line.startsWith('copy from ') || line.startsWith('copy to ')) {
       current.copy = true;
       current.status = 'copy';
       sawCopy = true;
+      if (!hunkOpen) {
+        noteUnsafe(line.startsWith('copy from ') ? line.slice(10) : line.slice(8));
+      }
     }
     if (line.startsWith('new file mode')) current.status = 'add';
     if (line.startsWith('deleted file mode')) current.status = 'delete';
@@ -77,6 +184,10 @@ export function analyzeUnifiedDiff(diffText, opts = {}) {
     if (line.startsWith('\\ No newline at end of file')) {
       current.noNewlineMarkers += 1;
       sawNoNewline = true;
+    }
+
+    if (!hunkOpen && (line.startsWith('--- ') || line.startsWith('+++ '))) {
+      noteUnsafe(parseExtendedHeaderPath(line));
     }
 
     const hunk = line.match(/^@@\s+-([0-9]+)(?:,([0-9]+))?\s+\+([0-9]+)(?:,([0-9]+))?\s@@/);
@@ -111,12 +222,8 @@ export function analyzeUnifiedDiff(diffText, opts = {}) {
   pushCurrent();
 
   for (const f of files) {
-    for (const p of [f.aPath, f.bPath]) {
-      if (!p) continue;
-      if (p.startsWith('/') || TRAVERSAL.test(p) || p.includes('\0')) {
-        unsafePaths.push(p);
-      }
-    }
+    noteUnsafe(f.aPath);
+    noteUnsafe(f.bPath);
   }
 
   const looksTruncated =
@@ -145,17 +252,54 @@ export function analyzeUnifiedDiff(diffText, opts = {}) {
 }
 
 /**
+ * Escrow/apply non-claims for the local packager.
+ * Local criterion math (including a fully satisfied binding) must never promote these.
+ * bindingKind 'local' means documented local math — not marketplace escrow.
+ */
+export function packagerNonClaims(binding = {}) {
+  const provided = binding.buyerCriteriaProvided === true;
+  return {
+    gitApplyVerified: false,
+    buyerAcceptanceVerified: false,
+    bidFundingVerified: false,
+    escrowApproval: false,
+    bindingKind: provided ? 'local' : 'none',
+    localBindingSatisfied: provided ? binding.buyerCriteriaSatisfied === true : null,
+    localBindingIsNotEscrow: true,
+  };
+}
+
+function localBindingEnvelope({ provided, satisfied, results, note }) {
+  const nonClaims = packagerNonClaims({
+    buyerCriteriaProvided: provided,
+    buyerCriteriaSatisfied: satisfied,
+  });
+  return {
+    buyerCriteriaProvided: provided,
+    buyerCriteriaSatisfied: satisfied,
+    bindingKind: nonClaims.bindingKind,
+    escrowApproval: nonClaims.escrowApproval,
+    buyerAcceptanceVerified: nonClaims.buyerAcceptanceVerified,
+    localBindingSatisfied: nonClaims.localBindingSatisfied,
+    localBindingIsNotEscrow: nonClaims.localBindingIsNotEscrow,
+    note,
+    results,
+  };
+}
+
+/**
  * Evaluate optional buyer criteria against analysis + packaging checks.
  * Returning pass/fail here is criterion-binding math only — not marketplace escrow approval.
+ * buyerCriteriaSatisfied / localBindingSatisfied must not be copied onto buyerAcceptanceVerified.
  */
 export function bindBuyerCriteria(criteria, ctx) {
   if (!Array.isArray(criteria) || criteria.length === 0) {
-    return {
-      buyerCriteriaProvided: false,
-      buyerCriteriaSatisfied: null,
-      note: 'No buyerCriteria supplied. structuralChecksPass≠buyer acceptance.',
+    return localBindingEnvelope({
+      provided: false,
+      satisfied: null,
       results: [],
-    };
+      note: 'No buyerCriteria supplied. structuralChecksPass≠buyer acceptance. allChecksPass is structural-only.',
+    });
   }
   const results = criteria.map((c) => {
     const id = c.id || c.check || 'unnamed';
@@ -184,18 +328,29 @@ export function bindBuyerCriteria(criteria, ctx) {
         break;
       case 'noteOnly':
         pass = false;
-        detail = 'noteOnly criteria never auto-pass; human/buyer must decide';
+        detail = c.value
+          ? `noteOnly never auto-pass (${c.value}); human/buyer must decide`
+          : 'noteOnly criteria never auto-pass; human/buyer must decide';
         break;
       default:
         pass = false;
         detail = `unknown criterion type ${c.type}; treated as not satisfied`;
     }
-    return { id, type: c.type, pass, detail, buyerAcceptanceVerified: false };
+    return {
+      id,
+      type: c.type,
+      pass,
+      detail,
+      buyerAcceptanceVerified: false,
+      bindingKind: 'local',
+      escrowApproval: false,
+    };
   });
-  return {
-    buyerCriteriaProvided: true,
-    buyerCriteriaSatisfied: results.every((r) => r.pass),
-    note: 'Criterion binding is local math on the artifact. It is not escrow approval, git-apply success, or Grexal paid execution.',
+  const satisfied = results.every((r) => r.pass);
+  return localBindingEnvelope({
+    provided: true,
+    satisfied,
     results,
-  };
+    note: 'Criterion binding is local math on the artifact. localBindingSatisfied is not escrow approval, git-apply success, or Grexal paid execution. Do not copy it onto buyerAcceptanceVerified.',
+  });
 }

@@ -1,0 +1,203 @@
+{
+  "cell": "C5-grexal-validate-runtime",
+  "cohort": "s121-consumers",
+  "surface": "grexal",
+  "asOf": "2026-09-10T09:40:18Z",
+  "cashBoundaryUsd": 0,
+  "newFact": "Actual npx --yes grexal@0.4.1 validate from surfaces/grexal/package printed \"Manifest valid ✓\" and exited 0. npm package grexal@0.4.1 (npx cache ~/.npm/_npx/6bbd9fd11c48856a); the same binary's --version flag is 0.1.0 (known CLI/package skew, not a second product). No login, no ~/.grexal credentials file, no push/publish/runs invoke. Local pack_evidence.js --unifiedDiffFile on s121/fixtures/diff/simple.patch (129B, hello.txt) exited 0 with grexalPaidExecution=false, paidModelCalls=0, gitApplyVerified=false, buyerAcceptanceVerified=false, structuralChecksPass=true. Local packager ≠ provider paid run. grexal.json was not edited: official 0.4.1 validator accepted the existing manifest_version 3 typed maps (sha256 7440dfacada0bd06ef16e27d51a943c0be4117ec170a16b31c11027a480b637c). Rejected marketplace fields name/description/category/tags/homepage/repository/icon/is_open_source/pricing/visibility remain absent.",
+  "observedPath": "From experiments/s109-marketplace-entry-trials/surfaces/grexal/package ran the pinned official CLI `npx --yes grexal@0.4.1 validate` (no login/push/publish). Captured stdout/stderr/exit. Then ran local entrypoint `node agent/pack_evidence.js --unifiedDiffFile ../../../s121/fixtures/diff/simple.patch --stdout-only` with acceptanceNotes stating grexalPaidExecution=false; pack_evidence.js hard-codes GREXAL_PAID_EXECUTION=false. Confirmed ~/.grexal still absent after both CLI invocations. Did not treat structuralChecksPass=true as git-apply, escrow, or a Grexal paid sandbox run. Did not modify grexal.json (no 0.4.1 schema mismatch). Did not add dashboard metadata fields.",
+  "pin": {
+    "npm": "grexal@0.4.1",
+    "docsManifest": "https://docs.grexal.ai/docs/agent-manifest",
+    "docsPayments": "https://docs.grexal.ai/docs/payments",
+    "experimentPinFile": "experiments/s109-marketplace-entry-trials/PINS.md"
+  },
+  "commandsRun": [
+    {
+      "command": "npx --yes grexal@0.4.1 validate",
+      "cwd": "/workspace/experiments/s109-marketplace-entry-trials/surfaces/grexal/package",
+      "startedAt": "2026-09-10T09:38:45Z",
+      "endedAt": "2026-09-10T09:38:45Z",
+      "exitCode": 0,
+      "stdout": "  Manifest valid ✓\n",
+      "stderr": "(node:85513) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:85527) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "stdoutBytes": 21,
+      "stderrBytes": 328,
+      "role": "official-cli-validate",
+      "npxInvoked": true,
+      "npmPackageResolved": {
+        "name": "grexal",
+        "version": "0.4.1",
+        "packageJson": "/home/ubuntu/.npm/_npx/6bbd9fd11c48856a/node_modules/grexal/package.json",
+        "bin": "/home/ubuntu/.npm/_npx/6bbd9fd11c48856a/node_modules/.bin/grexal"
+      },
+      "node": "v22.14.0",
+      "npm": "10.9.7",
+      "npxPath": "/exec-daemon/npx",
+      "note": "stderr is Node NO_COLOR vs FORCE_COLOR warnings from npx wrapper + child (pids 85513, 85527), not a grexal.json schema error. Success text is exactly two spaces + 'Manifest valid ✓' + newline from grexal@0.4.1 runValidate."
+    },
+    {
+      "command": "npx --yes grexal@0.4.1 --version",
+      "cwd": "/workspace/experiments/s109-marketplace-entry-trials/surfaces/grexal/package",
+      "startedAt": "2026-09-10T09:40:18Z",
+      "endedAt": "2026-09-10T09:40:18Z",
+      "exitCode": 0,
+      "stdout": "0.1.0\n",
+      "stderr": "(node:86637) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:86651) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "stdoutBytes": 6,
+      "stderrBytes": 328,
+      "role": "official-cli-version-flag",
+      "note": "Same npx grexal@0.4.1 install. Commander program.version is 0.1.0 while package.json version is 0.4.1. Not a login, push, publish, or paid run."
+    },
+    {
+      "command": "node agent/pack_evidence.js --unifiedDiffFile ../../../s121/fixtures/diff/simple.patch --stdout-only --acceptanceNotes 's121 C5 local packager only; grexalPaidExecution=false'",
+      "cwd": "/workspace/experiments/s109-marketplace-entry-trials/surfaces/grexal/package",
+      "startedAt": "2026-09-10T09:38:45Z",
+      "endedAt": "2026-09-10T09:38:45Z",
+      "exitCode": 0,
+      "stderr": "",
+      "stdoutBytes": 5942,
+      "stderrBytes": 0,
+      "role": "local-entrypoint-pack-evidence",
+      "grexalPaidExecution": false,
+      "note": "Local Node entrypoint only. GREXAL_PAID_EXECUTION is hardcoded false in pack_evidence.js. git was not invoked (supplied unifiedDiff). --stdout-only; no .s121-grexal-dry-out write. Exit 0 is structural pass of the local packager, not Grexal sandbox success."
+    }
+  ],
+  "sourcePatchPaths": [
+    "experiments/s109-marketplace-entry-trials/s121/fixtures/diff/simple.patch"
+  ],
+  "fixturePath": "experiments/s109-marketplace-entry-trials/s121/fixtures/diff/simple.patch",
+  "fixtureSha256": "910f96a535482f10240f29bf2d363dd17f8d61be16611014feb3d1e596ce5b26",
+  "packageRoot": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package",
+  "manifestPath": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/grexal.json",
+  "manifestSha256": "7440dfacada0bd06ef16e27d51a943c0be4117ec170a16b31c11027a480b637c",
+  "manifestFixed": false,
+  "manifestFixesApplied": [],
+  "manifestFixReason": "Official grexal@0.4.1 validate exited 0 with 'Manifest valid ✓'. No schema mismatch to repair. Did not add rejected marketplace metadata fields.",
+  "officialValidate": {
+    "ok": true,
+    "npxInvoked": true,
+    "command": "npx --yes grexal@0.4.1 validate",
+    "cwd": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package",
+    "exitCode": 0,
+    "printed": "  Manifest valid ✓",
+    "npmPackageVersion": "0.4.1",
+    "cliVersionFlag": "0.1.0",
+    "credentialsWritten": false,
+    "credentialsPath": "~/.grexal/credentials.json",
+    "homeDirExistedAfter": false,
+    "login": false,
+    "push": false,
+    "publish": false,
+    "deploy": false,
+    "runsInvoke": false,
+    "thisIsNotAProviderPaidRun": true,
+    "g2Comparison": "G2 recorded unpacked-tarball validate and explicitly npxInvoked=false. This cell invoked npx grexal@0.4.1 validate on the same vendored grexal.json."
+  },
+  "identityStub": {
+    "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/.grexal/agent.json",
+    "contents": { "name": "samedaydesk-source-change-evidence" },
+    "agentId": null,
+    "note": "Pre-push form {name}. agentId is minted on first grexal push, which this cell did not run."
+  },
+  "manifest": {
+    "manifest_version": 3,
+    "entrypoint": "agent/pack_evidence.js",
+    "runtimeLanguage": "typescript",
+    "schemaShape": "flattened typed maps (text|number|json), not v1 JSON-Schema {type:object,properties}",
+    "omittedDashboardFields": [
+      "name",
+      "description",
+      "category",
+      "tags",
+      "homepage",
+      "repository",
+      "icon",
+      "is_open_source",
+      "pricing",
+      "visibility"
+    ]
+  },
+  "localPack": {
+    "tool": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js",
+    "input": "supplied unifiedDiff from simple.patch (git not invoked)",
+    "commitRangeLabel": "HEAD~1...HEAD",
+    "rangeOp": "...",
+    "rangeSemanticsNote": "Default three-dot label only; no repoPath, so git diff was not run. Not a git-apply of the fixture.",
+    "diffBytes": 129,
+    "fileCount": 1,
+    "files": [{ "aPath": "hello.txt", "bPath": "hello.txt", "status": "modify" }],
+    "summary": "Packaged 129B / 1 files for HEAD~1...HEAD; structuralPass=true; paidModelCalls=0; grexalPaidExecution=false; gitApplyVerified=false; buyerAcceptanceVerified=false",
+    "structuralChecksPass": true,
+    "paidModelCalls": 0,
+    "grexalPaidExecution": false,
+    "gitApplyVerified": false,
+    "buyerAcceptanceVerified": false,
+    "bidFundingVerified": false,
+    "cashBoundaryUsd": 0,
+    "gitStatus": null,
+    "checks": [
+      { "id": "diff-nonempty", "pass": true, "detail": "diffBytes=129" },
+      { "id": "diff-size-limit", "pass": true, "detail": "bytes=129 max=5242880" },
+      { "id": "no-unsafe-paths", "pass": true, "detail": "no absolute/traversal/NUL paths in diff headers" },
+      { "id": "not-truncated", "pass": true, "detail": "looksTruncated=false truncatedHunk=false" },
+      { "id": "no-paid-model-calls", "pass": true, "detail": "this agent never calls a paid model" },
+      { "id": "cash-boundary", "pass": true, "detail": "cashBoundaryUsd=0; no grexal login/push/publish/paid invoke" },
+      {
+        "id": "not-grexal-paid-execution",
+        "pass": true,
+        "detail": "Local packager run only. GREXAL_PAID_EXECUTION=false. Do not label this a provider paid run."
+      },
+      { "id": "diff-source-supplied", "pass": true, "detail": "used supplied unifiedDiff (git not invoked)" }
+    ]
+  },
+  "structuralPass": true,
+  "structuralChecksPass": true,
+  "gitApplyVerified": false,
+  "gitApplyAttempted": false,
+  "grexalPaidExecution": false,
+  "paidModelCalls": 0,
+  "buyerAcceptanceVerified": false,
+  "bidFundingVerified": false,
+  "localPackagerIsNotProviderPaidRun": true,
+  "claims": {
+    "gitApplyVerified": false,
+    "grexalPaidExecution": false,
+    "buyerAcceptanceVerified": false,
+    "bidFundingVerified": false,
+    "buyerEscrowAcceptance": false,
+    "paidModelCalls": 0,
+    "cashBoundaryUsd": 0,
+    "officialValidateExit0": true,
+    "npxGrexalValidateInvoked": true,
+    "localPackagerIsProviderPaidRun": false,
+    "note": "Do not treat JSON labels as git-apply success, Grexal paid execution, or buyer escrow acceptance. npx grexal@0.4.1 validate is an offline manifest check. pack_evidence.js is a local packager. Neither is a provider paid run."
+  },
+  "cashBoundary": {
+    "usd": 0,
+    "didNot": [
+      "npx grexal login",
+      "account signup at grexal.ai",
+      "passwords or Cloudflare Access UI automation",
+      "grexal push / publish / deploy / delete",
+      "grexal init (would write a new project)",
+      "grexal agent set-* / price add / price estimate",
+      "grexal runs invoke",
+      "buyer credit top-up",
+      "public listing, bid, payment, or PR to outsiders/default branch",
+      "git apply of simple.patch",
+      "paid model / LLM API calls"
+    ]
+  },
+  "sessionNotes": [
+    "S121 consumer C5. Cash boundary $0.",
+    "Required command 1: npx --yes grexal@0.4.1 validate from the package directory. Exit 0. stdout '  Manifest valid ✓\\n'.",
+    "Required command 2: local pack_evidence on fixtures/diff/simple.patch. Exit 0. grexalPaidExecution=false explicitly (constant + acceptanceNotes + this result).",
+    "Task 3 not taken: no real schema mismatch vs grexal@0.4.1; grexal.json unchanged.",
+    "CLI --version 0.1.0 vs npm grexal@0.4.1 is the same skew G1/G2 documented from the unpacked tarball; confirmed here via npx.",
+    "Did not claim git-apply success, Grexal paid execution, or buyer escrow acceptance.",
+    "Local packager ≠ provider paid run.",
+    "Network: only the already-pinned npm grexal@0.4.1 install path (npx). No Grexal API. No docs refetch required to complete validate.",
+    "Changes under experiments/s109-marketplace-entry-trials/ only (this result JSON). Did not edit grexal.json or concurrent packager files."
+  ]
+}

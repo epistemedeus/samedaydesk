@@ -1,0 +1,102 @@
+{
+  "cell": "C1-diff-semantics",
+  "asOf": "2026-09-10T09:39:44Z",
+  "cashBoundaryUsd": 0,
+  "newFact": "pack_evidence default --rangeOp is documented and implemented as git three-dot '...'. On a real diverged history (/tmp/s121-c1-git, git 2.43.0) three-dot ≠ two-dot: git diff main...feature ≡ git diff $(git merge-base main feature) feature (only +feature-only, 127B) while git diff main..feature ≡ git diff main feature (swap -main-only/+feature-only, 140B). Official git-diff: A..B is synonymous with git diff A B (endpoint trees); A...B is merge-base(A,B)..B. Diff range notation is not gitrevisions commit-range meaning. Bug: supplied unifiedDiffFile still labeled rangeSemantics as executed git three-dot (commitRange HEAD~1...HEAD) even though git was not invoked; unknown rangeOp values (e.g. '....') were silently coerced to '...'. Minimal fix in pack_evidence.js: reject unknown rangeOp; rangeSemantics states git-not-invoked for supplied diffs; gitRangeExecuted boolean. Unit assertions added. Fixture simple.patch structuralChecksPass=true (129B, 1 file). gitApplyVerified=false; grexalPaidExecution=false; local packager ≠ provider paid run.",
+  "commandsRun": [
+    "node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js --help",
+    "node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js --unifiedDiffFile experiments/s109-marketplace-entry-trials/s121/fixtures/diff/simple.patch --stdout-only --acceptanceNotes 'C1 default rangeOp'",
+    "node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js --unifiedDiffFile experiments/s109-marketplace-entry-trials/s121/fixtures/diff/simple.patch --rangeOp '...' --stdout-only",
+    "node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js --unifiedDiffFile experiments/s109-marketplace-entry-trials/s121/fixtures/diff/simple.patch --rangeOp '..' --stdout-only",
+    "git -C /tmp/s121-c1-git init -b main; diverge main vs feature from a shared base",
+    "git -C /tmp/s121-c1-git merge-base main feature",
+    "git -C /tmp/s121-c1-git diff --no-ext-diff main..feature",
+    "git -C /tmp/s121-c1-git diff --no-ext-diff main...feature",
+    "git -C /tmp/s121-c1-git diff --no-ext-diff $(git -C /tmp/s121-c1-git merge-base main feature) feature",
+    "git -C /tmp/s121-c1-git diff --no-ext-diff main feature",
+    "node .../pack_evidence.js --repoPath /tmp/s121-c1-git --baseRef main --headRef feature --rangeOp '..' --stdout-only",
+    "node .../pack_evidence.js --repoPath /tmp/s121-c1-git --baseRef main --headRef feature --rangeOp '...' --stdout-only",
+    "node .../pack_evidence.js --repoPath /tmp/s121-c1-git --baseRef main --headRef feature --stdout-only",
+    "node .../pack_evidence.js --repoPath /tmp/s121-c1-git --baseRef main --headRef feature --rangeOp '....' --stdout-only",
+    "node --test test/*.test.mjs  (cwd surfaces/grexal/package; 16 pass / 0 fail)"
+  ],
+  "sourcePatchPaths": [
+    "experiments/s109-marketplace-entry-trials/s121/fixtures/diff/simple.patch",
+    "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js",
+    "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/test/diff_analysis.test.mjs"
+  ],
+  "structuralPass": true,
+  "gitApplyVerified": false,
+  "grexalPaidExecution": false,
+  "sessionNotes": {
+    "cashBoundary": "USD 0. No accounts, Grexal login/push/publish/runs invoke, listing, bid, payment, git-apply, or PR.",
+    "network": "Fetched official git-diff docs only (https://git-scm.com/docs/git-diff). Local manpages absent. Fixture + local git/node otherwise.",
+    "gitVersion": "2.43.0",
+    "officialGitDiff": {
+      "url": "https://git-scm.com/docs/git-diff",
+      "twoDot": "git diff A..B is synonymous with git diff A B: changes between two arbitrary commits (endpoint trees).",
+      "threeDot": "git diff A...B views changes on the branch containing and up to B starting at a common ancestor. Equivalent to git diff $(git merge-base A B) B.",
+      "notGitrevisionsRanges": "git-diff range notations do not mean the commit ranges defined in gitrevisions (log A..B = reachable from B not A; log A...B = symmetric difference)."
+    },
+    "documentedDefault": {
+      "cliHelpBefore": "--rangeOp '...'|'..'       Default '...'; three-dot ≠ two-dot",
+      "cliHelpAfter": "--rangeOp '...'|'..'       Default '...'. git diff A...B ≡ merge-base(A,B)..B; A..B is direct endpoint diff. Not interchangeable; other values are rejected.",
+      "codeDefault": "normalizeRangeOp(undefined|null|''|true) → '...'"
+    },
+    "fixturePack": {
+      "path": "experiments/s109-marketplace-entry-trials/s121/fixtures/diff/simple.patch",
+      "sha256": "910f96a535482f10240f29bf2d363dd17f8d61be16611014feb3d1e596ce5b26",
+      "diffBytes": 129,
+      "fileCount": 1,
+      "structuralChecksPass": true,
+      "beforeMislabel": "rangeOp='...', rangeSemantics claimed executed git three-dot merge-base, commitRange='HEAD~1...HEAD', gitStatus=null, check diff-source-supplied said git not invoked — contradictory.",
+      "afterLabel": "rangeSemantics='supplied unifiedDiff; git was not invoked so rangeOp ... was not executed. git three-dot: merge-base(base,head)..head (not a literal two-endpoint patch of base→head)'; gitRangeExecuted=false"
+    },
+    "disposableRepo": {
+      "path": "/tmp/s121-c1-git",
+      "graph": "* feature d927088 feature-only; * main 654cf68 main-only; both from base 38151b8",
+      "mergeBase": "38151b8531d3adab00f96734b03e1a7d73559304",
+      "twoDot": {
+        "range": "main..feature",
+        "bytes": 140,
+        "sha256": "cf0a5c9226c914a5d7f7ab891bfbc63c5bb4e21943b89fe2930eb573622800bf",
+        "hunk": "@@ -1,2 +1,2 @@ base / -main-only / +feature-only"
+      },
+      "threeDot": {
+        "range": "main...feature",
+        "bytes": 127,
+        "sha256": "0274ae5a4bcb9275a507e96750c1a3e5046f21b98f91104e1445f41c63ea986d",
+        "hunk": "@@ -1 +1,2 @@ base / +feature-only",
+        "matchesMergeBaseToHead": true
+      },
+      "defaultRangeOpMatchesThreeDot": true,
+      "twoDotEqualsThreeDot": false
+    },
+    "bugsFixed": [
+      "Supplied unifiedDiff was labeled with executed git three-dot merge-base semantics.",
+      "input.rangeOp === '..' ? '..' : '...' silently coerced any other value (including '....') to three-dot."
+    ],
+    "notBugs": [
+      "When git is actually invoked, pack_evidence already passed the chosen rangeOp through to git diff and produced different trees on a merge-base case."
+    ],
+    "tests": {
+      "command": "node --test test/*.test.mjs",
+      "cwd": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package",
+      "c1AssertionsPassed": true,
+      "failed": 0,
+      "newAssertions": [
+        "rangeOp default is three-dot; unknown values are rejected not coerced",
+        "supplied unifiedDiff does not claim executed git three-dot semantics",
+        "two-dot and three-dot are not equated on a diverged merge-base"
+      ],
+      "note": "C1 added those three tests. Concurrent S121 cells also edited this package (C9 buyer-binding helpers). Last C1 re-run of test/diff_analysis.test.mjs + test/scaffold.test.mjs: 17 pass / 0 fail, including the three C1 assertions."
+    },
+    "nonClaims": {
+      "gitApplyVerified": false,
+      "grexalPaidExecution": false,
+      "buyerAcceptanceVerified": false,
+      "bidFundingVerified": false,
+      "note": "JSON labels and structuralChecksPass are local packaging math. They are not git-apply success, Grexal paid execution, or buyer escrow acceptance."
+    }
+  }
+}

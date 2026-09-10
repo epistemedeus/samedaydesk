@@ -1,0 +1,11 @@
+{
+  "at": "2026-09-10T09:33:52.689Z",
+  "count": 9,
+  "memory": {
+    "MemTotal": 16791945216,
+    "MemAvailable": 11148206080,
+    "reserve25": 4197986304,
+    "headroom": 6950219776
+  },
+  "psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n"
+}

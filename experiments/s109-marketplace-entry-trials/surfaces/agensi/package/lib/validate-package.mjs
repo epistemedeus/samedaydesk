@@ -146,10 +146,10 @@ export function validateAgensiPackage(pkgDir, options = {}) {
       actor: i.actor,
     })),
     publicListingNote:
-      'Anonymous worker cannot list. OFFICIAL Agensi seller entry is www.agensi.io/auth and /sell (MCP: mcp.agensi.io/mcp). www.agensi.dev Cloudflare Access is an unrelated tenant — do not enter from this worker. Root pastes verified payout-method state privately before any listing copy. This package will not list.',
+      'Anonymous worker cannot list. OFFICIAL Agensi seller entry is www.agensi.io/auth and /sell (MCP: mcp.agensi.io/mcp). www.agensi.dev Cloudflare Access is an unrelated tenant — do not enter from this worker. Root pastes verified payout-method state privately before any listing copy. This package will not list. Local provenance.mjs is not an Agensi paid run.',
     nextMeasurableEvent:
       descriptor.nextMeasurableEvent ||
-      'Root CF Access session + paste of sell-page payout section',
+      'Root auth on www.agensi.io plus payout-method enabled state captured privately; still $0 and no publish from this worker. Do not use www.agensi.dev Access as seller entry.',
     authenticatedStepNeeded: true,
     errors,
   };
@@ -210,6 +210,13 @@ function semanticChecks(errors, descriptor, checklist, handoff) {
     }
   }
 
+  if (descriptor.rootHandoff?.officialSellerAuthUrl !== 'https://www.agensi.io/auth') {
+    errors.push('rootHandoff.officialSellerAuthUrl must be https://www.agensi.io/auth');
+  }
+  if (descriptor.rootHandoff?.publicSellerUrl !== 'https://www.agensi.io/sell') {
+    errors.push('rootHandoff.publicSellerUrl must be https://www.agensi.io/sell');
+  }
+
   if (handoff) {
     if (handoff.cloudflareAccessUrl !== descriptor.rootHandoff?.cloudflareAccessUrl) {
       errors.push('access-handoff cloudflareAccessUrl must match descriptor.rootHandoff');
@@ -226,6 +233,21 @@ function semanticChecks(errors, descriptor, checklist, handoff) {
     const blob = handoff.steps.join('\n');
     if (!/Cloudflare Access/i.test(blob)) {
       errors.push('access-handoff steps must mention Cloudflare Access');
+    }
+    if (!/www\.agensi\.io\/auth/.test(blob)) {
+      errors.push('access-handoff steps must cite official www.agensi.io/auth seller entry');
+    }
+    if (!/do not (complete Access login|enter)/i.test(blob) && !/not www\.agensi\.dev/i.test(blob)) {
+      errors.push('access-handoff steps must forbid treating www.agensi.dev Access as seller entry');
+    }
+    if (handoff.doNotEnterCloudflareAccess !== true) {
+      errors.push('access-handoff doNotEnterCloudflareAccess must be true');
+    }
+    if (handoff.officialSellerAuthUrl !== 'https://www.agensi.io/auth') {
+      errors.push('access-handoff officialSellerAuthUrl must be https://www.agensi.io/auth');
+    }
+    if (handoff.primaryTaskHost?.role !== 'unrelated-do-not-enter') {
+      errors.push('access-handoff primaryTaskHost.role must be unrelated-do-not-enter');
     }
     if (!blob.includes(PIN_SHA)) {
       errors.push('access-handoff steps must cite the gateway pin SHA');

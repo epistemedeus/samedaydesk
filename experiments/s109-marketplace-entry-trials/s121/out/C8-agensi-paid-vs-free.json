@@ -1,0 +1,190 @@
+{
+  "cell": "C8-agensi-paid-vs-free",
+  "cohort": "s121-consumers",
+  "surface": "agensi",
+  "observedAt": "2026-09-10T09:44:19Z",
+  "cashBoundaryUsd": 0,
+  "listed": false,
+  "authenticated": false,
+  "listingPerformed": false,
+  "mcpPaidUnlockPerformed": false,
+  "gitApplyVerified": false,
+  "grexalPaidExecution": false,
+  "buyerEscrowAcceptance": false,
+  "buyerAcceptanceVerified": false,
+  "localPackagerIsNotProviderPaidRun": true,
+  "publicListingSupported": false,
+  "claimsProprietaryOwnershipOfFreeRecipes": false,
+  "exclusivityClaim": false,
+  "newFact": "Local provenance.mjs comparing s121/fixtures/agensi-free vs s121/fixtures/agensi-paid reports packagingDeltaFiles=['ACCEPTANCE.md','DELIVERY.md'] (paid-only overlay), identical SKILL.md (sha256 7aa5e5674cc18c93d1c74a684da31fb5d3ef57b2ce95c292b82681eefe30788c), freeOnly README.md, modified=0, claimsProprietaryOwnershipOfFreeRecipes=false, listingPerformed=false, mcpPaidUnlockPerformed=false. Official Agensi seller entry is https://www.agensi.io/auth and https://www.agensi.io/sell; buyer MCP is https://mcp.agensi.io/mcp. https://www.agensi.dev Cloudflare Access is an unrelated tenant, not a seller path — this cell did not enter that Access tenant. Anonymous GET https://www.agensi.io/sell HTTP/2 200 title 'How to Make Money With AI: Sell Agent Skills | Agensi'. POST https://mcp.agensi.io/mcp initialize HTTP/2 200 serverInfo.name=agensi version=1.1.0 protocolVersion 2025-03-26. Did not call get_skill (including confirm=true). Living S109 guidance now names .io as seller entry and Access as do-not-enter. npm --prefix surfaces/agensi/package test: 15 pass / 0 fail. Local packager output is not an Agensi listing, paid MCP unlock, git-apply success, Grexal paid execution, or buyer escrow acceptance.",
+  "listingDescription": "Implemented local packaging/provenance only: node surfaces/agensi/package/bin/provenance.mjs hashes a free recipe tree against a paid packaging directory and reports packagingDeltaFiles (paid-only + modified). On the S121 fixtures that delta is ACCEPTANCE.md and DELIVERY.md; SKILL.md is byte-identical to the free recipe and is not claimed as proprietary. claimsProprietaryOwnershipOfFreeRecipes is false by construction. This overlay does not list on Agensi, does not unlock paid MCP skills, and does not assert catalog presence, review pass, payout eligibility, git-apply success, Grexal paid execution, or buyer escrow acceptance. Local packager ≠ provider paid run.",
+  "packagingDeltaFiles": [
+    "ACCEPTANCE.md",
+    "DELIVERY.md"
+  ],
+  "identicalFiles": [
+    "SKILL.md"
+  ],
+  "freeOnlyFiles": [
+    "README.md"
+  ],
+  "sourceFixturePaths": [
+    "experiments/s109-marketplace-entry-trials/s121/fixtures/agensi-free",
+    "experiments/s109-marketplace-entry-trials/s121/fixtures/agensi-paid"
+  ],
+  "skillRecipePin": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
+  "officialHosts": {
+    "auth": "https://www.agensi.io/auth",
+    "sell": "https://www.agensi.io/sell",
+    "mcp": "https://mcp.agensi.io/mcp"
+  },
+  "unrelatedHostDoNotEnter": {
+    "host": "https://www.agensi.dev",
+    "note": "Cloudflare Access tenant; not the Agensi seller surface. This cell did not GET that host and did not attempt Access login."
+  },
+  "provenance": {
+    "command": "node experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/provenance.mjs --freeDir experiments/s109-marketplace-entry-trials/s121/fixtures/agensi-free --paidDir experiments/s109-marketplace-entry-trials/s121/fixtures/agensi-paid --skillRecipePin epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
+    "exitCode": 0,
+    "counts": {
+      "freeFiles": 2,
+      "paidFiles": 3,
+      "identical": 1,
+      "modified": 0,
+      "paidOnly": 2,
+      "freeOnly": 1
+    },
+    "packagingDeltaFiles": [
+      "ACCEPTANCE.md",
+      "DELIVERY.md"
+    ],
+    "identicalSample": [
+      "SKILL.md"
+    ],
+    "paidDeliverableIs": "packaging/acceptance/ops delta over public free recipes — not exclusive ownership of free recipe bytes",
+    "freeAlternativeIs": "clone/use the public pin directly without Agensi",
+    "claimsProprietaryOwnershipOfFreeRecipes": false,
+    "licenseClaim": "unknown-unless-present-in-tree",
+    "listingPerformed": false,
+    "mcpPaidUnlockPerformed": false
+  },
+  "fixtureHashes": {
+    "agensi-free/README.md": "2ba0625c5e97dd086967b168f4fb81b4debef580bbcadc3eeb4cabad90101a67",
+    "agensi-free/SKILL.md": "7aa5e5674cc18c93d1c74a684da31fb5d3ef57b2ce95c292b82681eefe30788c",
+    "agensi-paid/SKILL.md": "7aa5e5674cc18c93d1c74a684da31fb5d3ef57b2ce95c292b82681eefe30788c",
+    "agensi-paid/ACCEPTANCE.md": "69651a75aab34752ce452c809a374e9a0e2ae81c53270591dd02d71e69459f66",
+    "agensi-paid/DELIVERY.md": "34c87fa21b7cc297cca33a6cfd9de32abe4ca77d90f922b0f5d61afc5293d100"
+  },
+  "anonymousHttp": {
+    "sell": {
+      "url": "https://www.agensi.io/sell",
+      "method": "GET",
+      "http": "HTTP/2 200",
+      "title": "How to Make Money With AI: Sell Agent Skills | Agensi",
+      "authenticated": false,
+      "note": "Public marketing HTML. Not an enabled-payout proof and not a listing."
+    },
+    "mcpInitialize": {
+      "url": "https://mcp.agensi.io/mcp",
+      "method": "POST",
+      "rpcMethod": "initialize",
+      "http": "HTTP/2 200",
+      "protocolVersion": "2025-03-26",
+      "serverInfo": {
+        "name": "agensi",
+        "version": "1.1.0"
+      },
+      "capabilities": {
+        "tools": {
+          "listChanged": true
+        }
+      },
+      "get_skill_called": false,
+      "get_skill_confirm": false,
+      "note": "Initialize only. Did not call tools/call, search_skills, or get_skill."
+    }
+  },
+  "commandsRun": [
+    {
+      "command": "node experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/provenance.mjs --freeDir experiments/s109-marketplace-entry-trials/s121/fixtures/agensi-free --paidDir experiments/s109-marketplace-entry-trials/s121/fixtures/agensi-paid --skillRecipePin epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
+      "exitCode": 0
+    },
+    {
+      "command": "curl --max-redirs 0 GET https://www.agensi.io/sell",
+      "exitCode": 0,
+      "http": "HTTP/2 200"
+    },
+    {
+      "command": "curl POST https://mcp.agensi.io/mcp method=initialize protocolVersion=2025-03-26 (no tools/call)",
+      "exitCode": 0,
+      "http": "HTTP/2 200"
+    },
+    {
+      "command": "node experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/validate-descriptor.mjs",
+      "exitCode": 0,
+      "ok": true,
+      "claimsProprietaryOwnershipOfFreeRecipes": false,
+      "publicListingSupported": false,
+      "networkCalls": 0
+    },
+    {
+      "command": "npm --prefix experiments/s109-marketplace-entry-trials/surfaces/agensi/package test",
+      "exitCode": 0,
+      "tests": "15 pass / 0 fail"
+    },
+    {
+      "command": "node experiments/s109-marketplace-entry-trials/scripts/buyer-worksheet.mjs agensi",
+      "exitCode": 0
+    }
+  ],
+  "correctedGuidance": [
+    "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/access-handoff.json",
+    "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/offer-descriptor.json",
+    "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/README.md",
+    "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/offer-descriptor.schema.json",
+    "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/listing-checklist.json",
+    "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/lib/validate-package.mjs",
+    "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/package.json",
+    "experiments/s109-marketplace-entry-trials/PINS.md",
+    "experiments/s109-marketplace-entry-trials/README.md",
+    "experiments/s109-marketplace-entry-trials/RESULT.md",
+    "experiments/s109-marketplace-entry-trials/scripts/buyer-worksheet.mjs"
+  ],
+  "guidanceCorrection": {
+    "officialSellerEntry": [
+      "https://www.agensi.io/auth",
+      "https://www.agensi.io/sell"
+    ],
+    "officialMcp": "https://mcp.agensi.io/mcp",
+    "notSellerEntry": "https://www.agensi.dev Cloudflare Access (GitHub IdP) is an unrelated tenant; primaryTaskHost.role=unrelated-do-not-enter; doNotEnterCloudflareAccess=true",
+    "nativeCellsOutLeftAsHistorical": true
+  },
+  "validation": {
+    "ok": true,
+    "offline": true,
+    "networkCallsFromValidator": 0,
+    "npmTest": "15 pass / 0 fail",
+    "listingChecklistItems": 13,
+    "accessHandoffSteps": 6,
+    "referencedPublicRecipes": 16
+  },
+  "actionsNotTaken": [
+    "no Cloudflare Access / GitHub OAuth on www.agensi.dev",
+    "no GET https://www.agensi.dev",
+    "no agensi.io signup or password",
+    "no listing, ZIP upload, or publish",
+    "no Stripe Connect or Zoneless onboarding",
+    "no purchase, credits, or get_skill confirm=true",
+    "no PR to outsiders/default branch",
+    "no git apply of packaging files",
+    "no Grexal paid execution",
+    "no buyer escrow acceptance"
+  ],
+  "observedPath": "Offline first: ran provenance.mjs on supplied fixtures (delta ACCEPTANCE.md + DELIVERY.md; claimsProprietaryOwnershipOfFreeRecipes=false). Corrected living S109 guidance so official seller entry is www.agensi.io/auth and /sell and www.agensi.dev Access is unrelated-do-not-enter. Revalidated descriptor+schema offline; npm test 15/15. Optional $0 public HTTP only: GET www.agensi.io/sell (200) and POST mcp.agensi.io/mcp initialize (agensi v1.1.0). Did not authenticate, list, call get_skill, or enter Access.",
+  "unknowns": [
+    "Account payout eligibility on Agensi is unknown without Root auth on www.agensi.io",
+    "Whether a given listing would pass Agensi review is unknown",
+    "Presence/absence of LICENSE in the upstream pin must be rechecked at pin SHA; this cell used local fixtures, not a fresh pin checkout"
+  ],
+  "nextMeasurableEvent": "Root auth on www.agensi.io plus payout-method enabled state captured privately; still $0 and no publish from this worker. Do not use www.agensi.dev Access as seller entry.",
+  "sessionNotes": "Cash $0. JSON labels from provenance.mjs (listingPerformed=false, mcpPaidUnlockPerformed=false) are not evidence of a provider paid run. Do not treat gitApplyVerified, grexalPaidExecution, or buyer escrow as true. Historical native-cells/out A1–A3 files were left unchanged as prior-cell records."
+}

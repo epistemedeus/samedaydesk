@@ -1,0 +1,159 @@
+{
+  "cell": "C9-buyer-criterion-binding",
+  "asOf": "2026-09-10T09:44:24Z",
+  "cashBoundaryUsd": 0,
+  "emphasis": "syntactically valid ≠ work accepted",
+  "newFact": "A structurally valid simple.patch (129B, 1 file, structuralChecksPass=true, CLI exit 0) still fails buyerCriteria when s121/fixtures/criteria/require-structural.json includes a noteOnly human-review row. Machine rows structural/no-trunc/paths pass; human-review pass=false, so buyerCriteriaSatisfied=false and localBindingSatisfied=false. structuralChecksPass true does not imply buyerAcceptanceVerified true. allChecksPass remains a structural-only alias (allChecksPassScope=structural-packaging-checks-only) and is not escrow. Even when every machine-checkable criterion passes (localBindingSatisfied=true, bindingKind=local), buyerAcceptanceVerified stays false and escrowApproval stays false. Local packager ≠ provider paid run; JSON labels are not buyer escrow acceptance.",
+  "observedPath": "Local node pack_evidence.js --unifiedDiffFile simple.patch --buyerCriteriaFile require-structural.json --stdout-only. No git apply, no Grexal login/push/publish/runs invoke, no bid, no payment, no PR. npm --prefix surfaces/grexal/package test: 20 pass / 0 fail after the labeling patch.",
+  "commandsRun": [
+    {
+      "cmd": "node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js --unifiedDiffFile experiments/s109-marketplace-entry-trials/s121/fixtures/diff/simple.patch --buyerCriteriaFile experiments/s109-marketplace-entry-trials/s121/fixtures/criteria/require-structural.json --stdout-only --acceptanceNotes 'C9 buyer-criterion binding: local math only, not escrow'",
+      "exitCode": 0,
+      "note": "Exit 0 is structural packaging success only. It is not buyer acceptance, git-apply, or Grexal paid execution."
+    },
+    {
+      "cmd": "node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js --unifiedDiffFile experiments/s109-marketplace-entry-trials/s121/fixtures/diff/simple.patch --stdout-only",
+      "exitCode": 0,
+      "note": "No buyerCriteriaFile: buyerCriteriaSatisfied=null, bindingKind=none, buyerAcceptanceVerified=false."
+    },
+    {
+      "cmd": "node --test test/diff_analysis.test.mjs test/scaffold.test.mjs test/fee_edges.test.mjs",
+      "cwd": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package",
+      "exitCode": 0,
+      "tests": { "pass": 20, "fail": 0 }
+    }
+  ],
+  "sourcePatchPaths": [
+    "experiments/s109-marketplace-entry-trials/s121/fixtures/diff/simple.patch",
+    "experiments/s109-marketplace-entry-trials/s121/fixtures/criteria/require-structural.json"
+  ],
+  "sourcePatchHashes": {
+    "simple.patch": {
+      "sha256": "910f96a535482f10240f29bf2d363dd17f8d61be16611014feb3d1e596ce5b26",
+      "bytes": 129
+    },
+    "require-structural.json": {
+      "sha256": "4140789690eeaccd5b603d764d340b847753128a7e5e6cb505c61561a13a952a"
+    }
+  },
+  "structuralChecksPass": true,
+  "structuralPass": true,
+  "allChecksPass": true,
+  "allChecksPassScope": "structural-packaging-checks-only",
+  "buyerCriteriaProvided": true,
+  "buyerCriteriaSatisfied": false,
+  "localBindingSatisfied": false,
+  "bindingKind": "local",
+  "escrowApproval": false,
+  "buyerAcceptanceVerified": false,
+  "gitApplyVerified": false,
+  "grexalPaidExecution": false,
+  "bidFundingVerified": false,
+  "paidModelCalls": 0,
+  "localPackagerIsNotProviderPaidRun": true,
+  "jsonLabelsAreNotEscrow": true,
+  "syntacticallyValidDoesNotMeanWorkAccepted": true,
+  "flagsDoNotCollapse": {
+    "structuralChecksPass": true,
+    "allChecksPass": true,
+    "allChecksPassScope": "structural-packaging-checks-only",
+    "buyerCriteriaSatisfied": false,
+    "localBindingSatisfied": false,
+    "buyerAcceptanceVerified": false,
+    "escrowApproval": false,
+    "gitApplyVerified": false,
+    "note": "allChecksPass aliases structuralChecksPass only. It must not be read as buyerAcceptanceVerified. buyerCriteriaSatisfied/localBindingSatisfied must not be copied onto buyerAcceptanceVerified."
+  },
+  "criterionResults": [
+    {
+      "id": "structural",
+      "type": "requireStructuralPass",
+      "pass": true,
+      "detail": "structuralChecksPass=true",
+      "buyerAcceptanceVerified": false,
+      "bindingKind": "local",
+      "escrowApproval": false
+    },
+    {
+      "id": "no-trunc",
+      "type": "forbidTruncated",
+      "pass": true,
+      "detail": "looksTruncated=false",
+      "buyerAcceptanceVerified": false,
+      "bindingKind": "local",
+      "escrowApproval": false
+    },
+    {
+      "id": "paths",
+      "type": "forbidUnsafePaths",
+      "pass": true,
+      "detail": "unsafe=0",
+      "buyerAcceptanceVerified": false,
+      "bindingKind": "local",
+      "escrowApproval": false
+    },
+    {
+      "id": "human-review",
+      "type": "noteOnly",
+      "pass": false,
+      "detail": "noteOnly never auto-pass (buyer must visually confirm intent); human/buyer must decide",
+      "buyerAcceptanceVerified": false,
+      "bindingKind": "local",
+      "escrowApproval": false
+    }
+  ],
+  "contrastMachineOnlyLocalBinding": {
+    "note": "Same simple.patch with only requireStructuralPass + forbidTruncated + forbidUnsafePaths (no noteOnly). Local math can be fully satisfied and still is not escrow.",
+    "structuralChecksPass": true,
+    "buyerCriteriaSatisfied": true,
+    "localBindingSatisfied": true,
+    "bindingKind": "local",
+    "escrowApproval": false,
+    "buyerAcceptanceVerified": false,
+    "gitApplyVerified": false
+  },
+  "contrastNoCriteria": {
+    "structuralChecksPass": true,
+    "buyerCriteriaSatisfied": null,
+    "bindingKind": "none",
+    "buyerAcceptanceVerified": false,
+    "allChecksPassScope": "structural-packaging-checks-only"
+  },
+  "packagerExcerpt": {
+    "summary": "Packaged 129B / 1 files for HEAD~1...HEAD; structuralPass=true; paidModelCalls=0; grexalPaidExecution=false; gitApplyVerified=false; buyerAcceptanceVerified=false",
+    "commitRange": "HEAD~1...HEAD",
+    "diffBytes": 129,
+    "fileCount": 1,
+    "paidModelCalls": 0,
+    "grexalPaidExecution": false,
+    "cliExitCode": 0,
+    "cliExitMeans": "structural packaging checks passed; not buyer/escrow acceptance"
+  },
+  "patchApplied": {
+    "needed": true,
+    "reason": "buyerAcceptanceVerified was already hardcoded false, but flags still collapsed for readers: allChecksPass silently aliased structuralChecksPass, and stdout-only JSON omitted top-level buyerAcceptanceVerified (only nested). bindBuyerCriteria did not label the envelope as local binding vs escrow.",
+    "files": [
+      "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/lib/diff_analysis.js",
+      "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js",
+      "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/test/diff_analysis.test.mjs",
+      "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/README.md"
+    ],
+    "behavior": [
+      "noteOnly never auto-passes (includes criterion value in detail).",
+      "packagerNonClaims() always returns buyerAcceptanceVerified=false, gitApplyVerified=false, escrowApproval=false.",
+      "Satisfied local machine criteria set localBindingSatisfied=true with bindingKind=local; they are not copied onto buyerAcceptanceVerified.",
+      "allChecksPass kept as structural-only alias with allChecksPassScope=structural-packaging-checks-only.",
+      "packEvidence return now surfaces gitApplyVerified and buyerAcceptanceVerified next to structuralChecksPass."
+    ]
+  },
+  "didNot": [
+    "git apply / claim gitApplyVerified",
+    "Grexal login, push, publish, price add, runs invoke",
+    "buyer credit top-up or paid model calls",
+    "public listing, bid, payment",
+    "PR to outsiders or default branch",
+    "Cloudflare Access / account / password",
+    "treat localBindingSatisfied or allChecksPass as escrow"
+  ],
+  "sessionNotes": "C9 buyer-criterion binding on supplied fixtures only. simple.patch is a well-formed one-hunk text diff; require-structural.json adds a noteOnly human-review gate. Demonstrates syntactically valid ≠ work accepted. Cash boundary $0. Local packager is not a Grexal paid execution."
+}

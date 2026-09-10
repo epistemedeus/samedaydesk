@@ -1,0 +1,331 @@
+{
+  "cell": "C7-artifact-archive-install",
+  "cohort": "s121-consumers",
+  "surface": "grexal",
+  "asOf": "2026-09-10T09:46:39Z",
+  "cashBoundaryUsd": 0,
+  "cashBoundary": {
+    "usd": 0,
+    "didNot": [
+      "npx grexal login",
+      "npx --yes grexal@0.4.1 validate (this cell; C5 owns official CLI)",
+      "account signup at grexal.ai",
+      "grexal push / publish / deploy / delete / runs invoke",
+      "grexal agent set-* / price add / price estimate",
+      "buyer credit top-up",
+      "paid model / LLM API calls",
+      "public listing / bid / payment",
+      "Cloudflare Access UI",
+      "PR to outsiders or default branch",
+      "git apply of fixtures"
+    ]
+  },
+  "newFact": "A tar of only surfaces/grexal/package (21 entries including hidden .grexal/agent.json; sha256 6a453db4213ddf117b7d4fccf639329be7891b89d314f7319de55673d67a6c60) extracts and runs with no npm install (package.json has zero dependencies). From that clean extract, README-as-written monorepo paths ../../../s121/fixtures/... ENOENT. Offline node bin/validate-manifest.mjs and node bin/fee-worksheet.mjs 0.05 0.08 0.10 plus --micros 50000 80000 100000 exit 0 with no fixtures. pack_evidence against supplied s121/fixtures (absolute / $S121_FIXTURES) exits 0: structuralChecksPass=true, gitApplyVerified=false, grexalPaidExecution=false, buyerAcceptanceVerified=false, paidModelCalls=0, cashBoundaryUsd=0. require-structural.json binding is local math (buyerCriteriaSatisfied=false because noteOnly never auto-passes) \u2014 not escrow. npm test from the extract is 24/24 only when S121_FIXTURES points at supplied s121/fixtures; bare extract is 16 pass / 8 fail (fixture tests ENOENT at /tmp/s121/fixtures/diff). README patched to $S121_FIXTURES; test/diff_analysis.test.mjs now resolves S121_FIXTURES then the in-tree relative path. npx grexal was not invoked here. Local packager \u2260 provider paid run. Cash $0.",
+  "observedPath": "Copied only experiments/s109-marketplace-entry-trials/surfaces/grexal/package via tar (not the rest of the S109 tree). Extracted to /tmp/s121-c7-archive-v3/extract/package. Ran README bins/flags from that cwd. First trial used stale relative fixture paths (fail). Patched README + fixture resolver. Re-packed and re-ran with S121_FIXTURES set to the supplied experiment fixtures. Did not treat structuralChecksPass or allChecksPass as git-apply, escrow, or Grexal paid execution. Did not run npx grexal@0.4.1 validate (optional README line; C5 already recorded official CLI).",
+  "gitApplyVerified": false,
+  "grexalPaidExecution": false,
+  "buyerAcceptanceVerified": false,
+  "localPackagerNotProviderPaidRun": true,
+  "npxGrexalInvoked": false,
+  "structuralPass": true,
+  "structuralPassScope": "local pack_evidence on supplied simple.patch from clean extract; not git-apply and not provider paid run",
+  "packageRoot": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package",
+  "node": "v22.14.0",
+  "npm": "10.9.7",
+  "archive": {
+    "method": "tar czf of directory name package (includes hidden .grexal)",
+    "source": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package",
+    "tarPath": "/tmp/s121-c7-archive-v3/s109-grexal-package.tgz",
+    "sha256": "6a453db4213ddf117b7d4fccf639329be7891b89d314f7319de55673d67a6c60",
+    "extractDir": "/tmp/s121-c7-archive-v3/extract/package",
+    "entryCount": 21,
+    "includedDotfiles": [
+      ".gitignore",
+      ".grexal/agent.json"
+    ],
+    "npmInstall": false,
+    "dependenciesInPackageJson": 0,
+    "createCommand": "tar -C /workspace/experiments/s109-marketplace-entry-trials/surfaces/grexal -czf /tmp/s121-c7-archive-v3/s109-grexal-package.tgz package",
+    "extractCommand": "tar -C /tmp/s121-c7-archive-v3/extract -xzf /tmp/s121-c7-archive-v3/s109-grexal-package.tgz",
+    "entries": [
+      "package/",
+      "package/agent/",
+      "package/agent/pack_evidence.js",
+      "package/bin/",
+      "package/bin/fee-worksheet.mjs",
+      "package/bin/validate-manifest.mjs",
+      "package/.gitignore",
+      "package/.grexal/",
+      "package/.grexal/agent.json",
+      "package/grexal.json",
+      "package/lib/",
+      "package/lib/diff_analysis.js",
+      "package/package.json",
+      "package/README.md",
+      "package/test/",
+      "package/test/diff_analysis.test.mjs",
+      "package/test/fee_edges.test.mjs",
+      "package/test/scaffold.test.mjs",
+      "package/worksheets/",
+      "package/worksheets/price-estimate.json",
+      "package/worksheets/price-estimate.md"
+    ]
+  },
+  "readmePatched": true,
+  "readmePatch": {
+    "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/README.md",
+    "reason": "Bin paths and flags were already correct (bin/validate-manifest.mjs, bin/fee-worksheet.mjs, agent/pack_evidence.js, --micros, --unifiedDiffFile, --buyerCriteriaFile, --stdout-only). Fixture arguments ../../../s121/fixtures/... only resolve when cwd is surfaces/grexal/package in the S109 tree. From a package-only extract they ENOENT. Replaced those paths with $S121_FIXTURES/... and documented that fixtures are not in the tarball.",
+    "companionTestPatch": {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/test/diff_analysis.test.mjs",
+      "reason": "npm test fixture cases hardcoded ../../../../s121/fixtures/diff. Added resolveDiffFixtures() that prefers S121_FIXTURES (dir containing diff/simple.patch) then the in-tree relative path. In-tree npm test without env still 24/24."
+    }
+  },
+  "staleReadmeTrial": {
+    "workdir": "/tmp/s121-c7-archive",
+    "tarSha256": "4ef6442e5be29d2a4ac22d044bb39c52aec12d20630e18359900209761f28e77",
+    "cwd": "/tmp/s121-c7-archive/extract/package",
+    "at": "2026-09-10T09:39:51Z",
+    "note": "First clean-extract run against README before the $S121_FIXTURES patch. Bins/flags were not stale; fixture relative paths were.",
+    "results": [
+      {
+        "command": "npm test",
+        "exitCode": 1,
+        "pass": false,
+        "tests": 16,
+        "passed": 11,
+        "failed": 5,
+        "error": "ENOENT /tmp/s121/fixtures/diff/*.patch"
+      },
+      {
+        "command": "node bin/validate-manifest.mjs",
+        "exitCode": 0,
+        "pass": true
+      },
+      {
+        "command": "node bin/fee-worksheet.mjs 0.05 0.08 0.10",
+        "exitCode": 0,
+        "pass": true
+      },
+      {
+        "command": "node bin/fee-worksheet.mjs --micros 50000 80000 100000",
+        "exitCode": 0,
+        "pass": true
+      },
+      {
+        "command": "node agent/pack_evidence.js --unifiedDiffFile ../../../s121/fixtures/diff/simple.patch --stdout-only",
+        "exitCode": 1,
+        "pass": false,
+        "stderr": "{\"ok\":false,\"error\":\"ENOENT: no such file or directory, open '../../../s121/fixtures/diff/simple.patch'\",\"cashBoundaryUsd\":0}"
+      },
+      {
+        "command": "node agent/pack_evidence.js --unifiedDiffFile ../../../s121/fixtures/diff/simple.patch --buyerCriteriaFile ../../../s121/fixtures/criteria/require-structural.json --stdout-only",
+        "exitCode": 1,
+        "pass": false
+      },
+      {
+        "command": "node agent/pack_evidence.js --unifiedDiffFile <absolute supplied simple.patch> --stdout-only",
+        "exitCode": 0,
+        "pass": true,
+        "note": "same extract; fixtures supplied outside the tar"
+      }
+    ]
+  },
+  "commandsRun": [
+    {
+      "role": "archive-create",
+      "command": "tar -C /workspace/experiments/s109-marketplace-entry-trials/surfaces/grexal -czf /tmp/s121-c7-archive-v3/s109-grexal-package.tgz package",
+      "cwd": "/workspace",
+      "exitCode": 0,
+      "pass": true,
+      "startedAt": "2026-09-10T09:46:38Z",
+      "endedAt": "2026-09-10T09:46:38Z"
+    },
+    {
+      "role": "archive-extract",
+      "command": "tar -C /tmp/s121-c7-archive-v3/extract -xzf /tmp/s121-c7-archive-v3/s109-grexal-package.tgz",
+      "cwd": "/tmp/s121-c7-archive-v3",
+      "exitCode": 0,
+      "pass": true,
+      "startedAt": "2026-09-10T09:46:38Z",
+      "endedAt": "2026-09-10T09:46:38Z"
+    },
+    {
+      "role": "validate-manifest",
+      "command": "node bin/validate-manifest.mjs",
+      "cwd": "/tmp/s121-c7-archive-v3/extract/package",
+      "exitCode": 0,
+      "pass": true,
+      "startedAt": "2026-09-10T09:46:38Z",
+      "endedAt": "2026-09-10T09:46:38Z",
+      "stdoutBytes": 959,
+      "note": "Offline local validator. grexal.json manifest_version 3, entrypoint agent/pack_evidence.js, runtimeLanguage typescript, identityStub {name} only. cashBoundaryUsd=0. Not official npx grexal validate."
+    },
+    {
+      "role": "fee-worksheet-usd",
+      "command": "node bin/fee-worksheet.mjs 0.05 0.08 0.10",
+      "cwd": "/tmp/s121-c7-archive-v3/extract/package",
+      "exitCode": 0,
+      "pass": true,
+      "startedAt": "2026-09-10T09:46:38Z",
+      "endedAt": "2026-09-10T09:46:38Z",
+      "stdoutBytes": 4255,
+      "rows": [
+        {
+          "buyerChargeUsd": 0.05,
+          "platformFeeUsd": 0.015,
+          "sellerEarningsUsd": 0.035,
+          "binding": "cap-30pct"
+        },
+        {
+          "buyerChargeUsd": 0.08,
+          "platformFeeUsd": 0.02,
+          "sellerEarningsUsd": 0.06,
+          "binding": "floor-0.02"
+        },
+        {
+          "buyerChargeUsd": 0.1,
+          "platformFeeUsd": 0.02,
+          "sellerEarningsUsd": 0.08,
+          "binding": "nominal-20pct"
+        }
+      ],
+      "note": "Local docs-formula worksheet. No spend. Not grexal agent price estimate."
+    },
+    {
+      "role": "fee-worksheet-micros",
+      "command": "node bin/fee-worksheet.mjs --micros 50000 80000 100000",
+      "cwd": "/tmp/s121-c7-archive-v3/extract/package",
+      "exitCode": 0,
+      "pass": true,
+      "startedAt": "2026-09-10T09:46:38Z",
+      "endedAt": "2026-09-10T09:46:38Z",
+      "stdoutBytes": 4255,
+      "note": "Same three rows as USD argv. --micros flag matches README."
+    },
+    {
+      "role": "pack-evidence-simple",
+      "command": "node agent/pack_evidence.js --unifiedDiffFile \"$S121_FIXTURES/diff/simple.patch\" --stdout-only",
+      "commandExpanded": "node agent/pack_evidence.js --unifiedDiffFile /workspace/experiments/s109-marketplace-entry-trials/s121/fixtures/diff/simple.patch --stdout-only",
+      "cwd": "/tmp/s121-c7-archive-v3/extract/package",
+      "env": {
+        "S121_FIXTURES": "/workspace/experiments/s109-marketplace-entry-trials/s121/fixtures"
+      },
+      "exitCode": 0,
+      "pass": true,
+      "startedAt": "2026-09-10T09:46:38Z",
+      "endedAt": "2026-09-10T09:46:38Z",
+      "stdoutBytes": 6633,
+      "structuralChecksPass": true,
+      "gitApplyVerified": false,
+      "grexalPaidExecution": false,
+      "buyerAcceptanceVerified": false,
+      "paidModelCalls": 0,
+      "cashBoundaryUsd": 0,
+      "diffBytes": 129,
+      "summary": "Packaged 129B / 1 files for HEAD~1...HEAD; structuralPass=true; paidModelCalls=0; grexalPaidExecution=false; gitApplyVerified=false; buyerAcceptanceVerified=false",
+      "note": "Supplied unifiedDiff; git was not invoked. Local packager \u2260 provider paid run."
+    },
+    {
+      "role": "pack-evidence-buyer-criteria",
+      "command": "node agent/pack_evidence.js --unifiedDiffFile \"$S121_FIXTURES/diff/simple.patch\" --buyerCriteriaFile \"$S121_FIXTURES/criteria/require-structural.json\" --stdout-only",
+      "commandExpanded": "node agent/pack_evidence.js --unifiedDiffFile /workspace/experiments/s109-marketplace-entry-trials/s121/fixtures/diff/simple.patch --buyerCriteriaFile /workspace/experiments/s109-marketplace-entry-trials/s121/fixtures/criteria/require-structural.json --stdout-only",
+      "cwd": "/tmp/s121-c7-archive-v3/extract/package",
+      "env": {
+        "S121_FIXTURES": "/workspace/experiments/s109-marketplace-entry-trials/s121/fixtures"
+      },
+      "exitCode": 0,
+      "pass": true,
+      "startedAt": "2026-09-10T09:46:38Z",
+      "endedAt": "2026-09-10T09:46:38Z",
+      "stdoutBytes": 9145,
+      "structuralChecksPass": true,
+      "gitApplyVerified": false,
+      "grexalPaidExecution": false,
+      "buyerAcceptanceVerified": false,
+      "buyerCriteriaSatisfied": false,
+      "bindingKind": "local",
+      "paidModelCalls": 0,
+      "cashBoundaryUsd": 0,
+      "note": "noteOnly human-review criterion never auto-passes. Local binding \u2260 escrow."
+    },
+    {
+      "role": "npm-test-with-supplied-fixtures",
+      "command": "S121_FIXTURES=\"$S121_FIXTURES\" npm test",
+      "commandExpanded": "S121_FIXTURES=/workspace/experiments/s109-marketplace-entry-trials/s121/fixtures npm test",
+      "cwd": "/tmp/s121-c7-archive-v3/extract/package",
+      "env": {
+        "S121_FIXTURES": "/workspace/experiments/s109-marketplace-entry-trials/s121/fixtures"
+      },
+      "exitCode": 0,
+      "pass": true,
+      "startedAt": "2026-09-10T09:46:38Z",
+      "endedAt": "2026-09-10T09:46:39Z",
+      "tests": 24,
+      "passed": 24,
+      "failed": 0,
+      "note": "Patched README command. Requires S121_FIXTURES from a package-only extract."
+    },
+    {
+      "role": "npm-test-bare-extract",
+      "command": "npm test",
+      "cwd": "/tmp/s121-c7-archive-v3/extract/package",
+      "exitCode": 1,
+      "pass": false,
+      "startedAt": "2026-09-10T09:46:39Z",
+      "endedAt": "2026-09-10T09:46:39Z",
+      "tests": 24,
+      "passed": 16,
+      "failed": 8,
+      "note": "Bare extract without S121_FIXTURES. Self-contained tests pass; 8 fixture tests ENOENT. Documented so archive install is not overclaimed."
+    }
+  ],
+  "passFail": {
+    "fromCleanArchiveWithSuppliedFixtures": {
+      "validate-manifest": true,
+      "fee-worksheet-usd": true,
+      "fee-worksheet-micros": true,
+      "pack-evidence-simple": true,
+      "pack-evidence-buyer-criteria": true,
+      "npm-test": true
+    },
+    "fromCleanArchiveReadmeRelativeFixturePaths": {
+      "pack-evidence-simple": false,
+      "pack-evidence-buyer-criteria": false,
+      "npm-test-without-S121_FIXTURES": false
+    },
+    "inTreeWithoutEnv": {
+      "npm-test": true,
+      "tests": 24,
+      "passed": 24,
+      "failed": 0,
+      "note": "surfaces/grexal/package in the S109 tree; relative ../../../../s121/fixtures/diff still resolves"
+    }
+  },
+  "sourcePatchPaths": [
+    "experiments/s109-marketplace-entry-trials/s121/fixtures/diff/simple.patch",
+    "experiments/s109-marketplace-entry-trials/s121/fixtures/criteria/require-structural.json",
+    "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/README.md",
+    "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/test/diff_analysis.test.mjs"
+  ],
+  "fixtureSha256": {
+    "simple.patch": "910f96a535482f10240f29bf2d363dd17f8d61be16611014feb3d1e596ce5b26",
+    "require-structural.json": "4140789690eeaccd5b603d764d340b847753128a7e5e6cb505c61561a13a952a"
+  },
+  "manifestSha256": "7440dfacada0bd06ef16e27d51a943c0be4117ec170a16b31c11027a480b637c",
+  "officialNpxValidate": {
+    "npxInvoked": false,
+    "reason": "C7 is local archive install. Official grexal@0.4.1 validate is C5. README still lists it as optional/no-auth. This cell did not download or execute the CLI. Local packager \u2260 provider paid run."
+  },
+  "sessionNotes": {
+    "cashBoundary": "USD 0. No accounts, passwords, Cloudflare Access, listing, bid, payment, or PR to outsiders/default branch.",
+    "network": "None this cell. Fixtures and local node only. Did not re-fetch docs. Did not npx grexal.",
+    "hiddenFiles": "tar of the package directory includes .grexal/agent.json (identity stub {name} only, no agentId). cp without -a would drop it and break the identity-stub test.",
+    "notClaims": [
+      "git-apply success",
+      "Grexal paid execution",
+      "buyer escrow acceptance",
+      "official CLI validate from this cell",
+      "customer demand / volume"
+    ]
+  }
+}

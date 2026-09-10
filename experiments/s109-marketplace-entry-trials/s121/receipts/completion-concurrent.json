@@ -1,0 +1,96 @@
+{
+  "at": "2026-09-10T09:49:46.322Z",
+  "cashBoundaryUsd": 0,
+  "launched": 9,
+  "stillOverlappingAtStart": 9,
+  "memoryAtCompletion": {
+    "MemTotal": 16791945216,
+    "MemAvailable": 11156291584,
+    "reserve25": 4197986304,
+    "headroom": 6958305280
+  },
+  "psiAtCompletion": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+  "cells": [
+    {
+      "cell": "C1-diff-semantics",
+      "pid": 75006,
+      "startedAt": "2026-09-10T09:33:52.670Z",
+      "endedAt": "2026-09-10T09:42:44.231Z",
+      "exitCode": 0,
+      "sessionId": "01a08aaa-9fb2-73f0-ac7f-0dd2070ab73e",
+      "outExists": true
+    },
+    {
+      "cell": "C2-truncated-evidence",
+      "pid": 75007,
+      "startedAt": "2026-09-10T09:33:52.671Z",
+      "endedAt": "2026-09-10T09:39:13.555Z",
+      "exitCode": 0,
+      "sessionId": "01a08aaa-9f7a-7ad0-b01f-9d1135aa6576",
+      "outExists": true
+    },
+    {
+      "cell": "C3-rename-binary-nonewline",
+      "pid": 75008,
+      "startedAt": "2026-09-10T09:33:52.672Z",
+      "endedAt": "2026-09-10T09:38:16.262Z",
+      "exitCode": 0,
+      "sessionId": "01a08aaa-9f94-7e73-bbe1-1dbef388b58b",
+      "outExists": true
+    },
+    {
+      "cell": "C4-malicious-oversized",
+      "pid": 75009,
+      "startedAt": "2026-09-10T09:33:52.673Z",
+      "endedAt": "2026-09-10T09:45:26.239Z",
+      "exitCode": 0,
+      "sessionId": "01a08aaa-9ff5-7f22-96b0-3370e5d33c06",
+      "outExists": true
+    },
+    {
+      "cell": "C5-grexal-validate-runtime",
+      "pid": 75010,
+      "startedAt": "2026-09-10T09:33:52.674Z",
+      "endedAt": "2026-09-10T09:42:54.432Z",
+      "exitCode": 0,
+      "sessionId": "01a08aaa-9fce-7d01-989c-5008cba6c2ed",
+      "outExists": true
+    },
+    {
+      "cell": "C6-fee-edge-units",
+      "pid": 75011,
+      "startedAt": "2026-09-10T09:33:52.674Z",
+      "endedAt": "2026-09-10T09:45:29.792Z",
+      "exitCode": 0,
+      "sessionId": "01a08aaa-9fa0-7b51-b8ba-4ca9f0fc2434",
+      "outExists": true
+    },
+    {
+      "cell": "C7-artifact-archive-install",
+      "pid": 75012,
+      "startedAt": "2026-09-10T09:33:52.676Z",
+      "endedAt": "2026-09-10T09:49:46.315Z",
+      "exitCode": 0,
+      "sessionId": "01a08aaa-9fbf-7043-8b49-bcc7b0d6b306",
+      "outExists": true
+    },
+    {
+      "cell": "C8-agensi-paid-vs-free",
+      "pid": 75013,
+      "startedAt": "2026-09-10T09:33:52.684Z",
+      "endedAt": "2026-09-10T09:46:41.900Z",
+      "exitCode": 0,
+      "sessionId": "01a08aaa-9fee-7270-be44-4898491f270f",
+      "outExists": true
+    },
+    {
+      "cell": "C9-buyer-criterion-binding",
+      "pid": 75014,
+      "startedAt": "2026-09-10T09:33:52.689Z",
+      "endedAt": "2026-09-10T09:46:20.627Z",
+      "exitCode": 0,
+      "sessionId": "01a08aaa-9fec-70a2-a333-e34d291c6d63",
+      "outExists": true
+    }
+  ]
+}

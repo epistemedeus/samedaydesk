@@ -1,0 +1,215 @@
+{
+  "cell": "C6-fee-edge-units",
+  "cohort": "s121-consumers",
+  "surface": "grexal",
+  "asOf": "2026-09-10T09:44:10Z",
+  "cashBoundaryUsd": 0,
+  "tool": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/fee-worksheet.mjs",
+  "primaryCitation": "https://docs.grexal.ai/docs/payments",
+  "formula": "platform_fee = clamp(buyer_charge × 0.20, $0.02, buyer_charge × 0.30); your_earnings = buyer_charge − platform_fee",
+  "clampImplementation": "Math.min(Math.max(buyer_charge * 0.20, 0.02), buyer_charge * 0.30) with binding labels from integer micros",
+  "microsPerUsd": 1000000,
+  "newFact": "Per-run Grexal platform_fee = clamp(charge×0.20, $0.02, charge×0.30) on the C6 unit edges is: $0.05 → fee $0.015 binding cap-30pct; $0.066667 (66667 micros, first integer micro in the floor band) → fee $0.02 binding floor-0.02; $0.08 → fee $0.02 binding floor-0.02; $0.10 → fee $0.02 binding nominal-20pct. Dollar argv and --micros 50000 66667 80000 100000 produce the same fee and binding. Exact crossover is 0.02/0.30 = 1/15 USD ≈ 66666.6̅ micros: 66666 still cap-30pct, 66667 floor-0.02; 99999 still floor, 100000 nominal. This is local worksheet math from published docs, not a Grexal paid run, buyer escrow acceptance, or a demand forecast.",
+  "observedPath": "Re-fetched https://docs.grexal.ai/docs/payments (formula, $0.02 floor, 30% cap, worked table). Cross-checked fixtures/grexal-payments.txt (same formula and $0.05/$0.10 rows). Ran node surfaces/grexal/package/bin/fee-worksheet.mjs 0.05 0.066667 0.08 0.10 and --micros 50000 66667 80000 100000. Pre-patch labels already matched clamp; micros path used Number(argv) then dropped the integer, --help omitted --micros, and fee_edges.test.mjs did not lock 0.066667/66667. Patched fee-worksheet.mjs + fee_edges.test.mjs for integer-micro parse/binding and C6 coverage. npm --prefix surfaces/grexal/package test 24/24. ~/.grexal absent. Did not login, push, publish, price add, runs invoke, or top up credits. No customer volume invented.",
+  "table": [
+    {
+      "input": { "kind": "usd", "buyerChargeUsd": 0.05 },
+      "buyerChargeUsd": 0.05,
+      "buyerChargeMicros": 50000,
+      "twentyPercentUsd": 0.01,
+      "floorUsd": 0.02,
+      "capUsd": 0.015,
+      "platformFeeUsd": 0.015,
+      "sellerEarningsUsd": 0.035,
+      "effectiveFeePercent": 30,
+      "binding": "cap-30pct",
+      "note": "Docs micro-run row. 20%=$0.01 < floor $0.02 but cap $0.015 < floor, so clamp yields $0.015 (30%). Unconstrained floor would have been $0.02 = 40%."
+    },
+    {
+      "input": { "kind": "usd", "buyerChargeUsd": 0.066667 },
+      "buyerChargeUsd": 0.066667,
+      "buyerChargeMicros": 66667,
+      "twentyPercentUsd": 0.0133,
+      "twentyPercentExactUsd": 0.0133334,
+      "floorUsd": 0.02,
+      "capUsd": 0.02,
+      "capExactUsd": 0.0200001,
+      "platformFeeUsd": 0.02,
+      "sellerEarningsUsd": 0.0467,
+      "effectiveFeePercent": 30,
+      "binding": "floor-0.02",
+      "note": "Floor boundary. 66667 micros is the nearest integer micro to 1/15 USD (0.02/0.30), on the floor side. 20% < $0.02 and 30% = $0.0200001 ≥ $0.02, so floor binds at $0.02. 4-decimal display rounds cap 0.0200001 → 0.02; effectiveFeePercent toFixed(2) is 30 because 0.02/0.066667 ≈ 29.99985%. Binding is floor, not cap."
+    },
+    {
+      "input": { "kind": "usd", "buyerChargeUsd": 0.08 },
+      "buyerChargeUsd": 0.08,
+      "buyerChargeMicros": 80000,
+      "twentyPercentUsd": 0.016,
+      "floorUsd": 0.02,
+      "capUsd": 0.024,
+      "platformFeeUsd": 0.02,
+      "sellerEarningsUsd": 0.06,
+      "effectiveFeePercent": 25,
+      "binding": "floor-0.02",
+      "note": "Derived floor-band example (not a docs table row). 20%=$0.016 < $0.02 ≤ cap $0.024."
+    },
+    {
+      "input": { "kind": "usd", "buyerChargeUsd": 0.1 },
+      "buyerChargeUsd": 0.1,
+      "buyerChargeMicros": 100000,
+      "twentyPercentUsd": 0.02,
+      "floorUsd": 0.02,
+      "capUsd": 0.03,
+      "platformFeeUsd": 0.02,
+      "sellerEarningsUsd": 0.08,
+      "effectiveFeePercent": 20,
+      "binding": "nominal-20pct",
+      "note": "Docs $0.10 row. 20% = floor = $0.02; seller keeps exactly 80%. IEEE 20% is 0.020000000000000004; toFixed(4) is 0.02."
+    },
+    {
+      "input": { "kind": "micros", "buyerChargeMicros": 50000 },
+      "buyerChargeUsd": 0.05,
+      "buyerChargeMicros": 50000,
+      "platformFeeUsd": 0.015,
+      "sellerEarningsUsd": 0.035,
+      "effectiveFeePercent": 30,
+      "binding": "cap-30pct"
+    },
+    {
+      "input": { "kind": "micros", "buyerChargeMicros": 66667 },
+      "buyerChargeUsd": 0.066667,
+      "buyerChargeMicros": 66667,
+      "platformFeeUsd": 0.02,
+      "sellerEarningsUsd": 0.0467,
+      "effectiveFeePercent": 30,
+      "binding": "floor-0.02"
+    },
+    {
+      "input": { "kind": "micros", "buyerChargeMicros": 80000 },
+      "buyerChargeUsd": 0.08,
+      "buyerChargeMicros": 80000,
+      "platformFeeUsd": 0.02,
+      "sellerEarningsUsd": 0.06,
+      "effectiveFeePercent": 25,
+      "binding": "floor-0.02"
+    },
+    {
+      "input": { "kind": "micros", "buyerChargeMicros": 100000 },
+      "buyerChargeUsd": 0.1,
+      "buyerChargeMicros": 100000,
+      "platformFeeUsd": 0.02,
+      "sellerEarningsUsd": 0.08,
+      "effectiveFeePercent": 20,
+      "binding": "nominal-20pct"
+    }
+  ],
+  "chargeToFeeToBinding": [
+    { "chargeUsd": 0.05, "chargeMicros": 50000, "feeUsd": 0.015, "binding": "cap-30pct" },
+    { "chargeUsd": 0.066667, "chargeMicros": 66667, "feeUsd": 0.02, "binding": "floor-0.02" },
+    { "chargeUsd": 0.08, "chargeMicros": 80000, "feeUsd": 0.02, "binding": "floor-0.02" },
+    { "chargeUsd": 0.1, "chargeMicros": 100000, "feeUsd": 0.02, "binding": "nominal-20pct" }
+  ],
+  "integerMicroCrossover": {
+    "note": "Arithmetic of the published clamp on integer micros. Not a docs table row and not customer volume.",
+    "floorCapCrossoverUsd": 0.06666666666666667,
+    "floorCapCrossoverExact": "0.02/0.30 = 1/15 USD ≈ 66666.6 repeating micros",
+    "lastCapMicros": { "micros": 66666, "binding": "cap-30pct" },
+    "firstFloorMicros": { "micros": 66667, "binding": "floor-0.02" },
+    "lastFloorMicros": { "micros": 99999, "binding": "floor-0.02" },
+    "firstNominalMicros": { "micros": 100000, "binding": "nominal-20pct" }
+  },
+  "usdArgvMatchesMicrosArgv": true,
+  "docsWorkedTableCheck": {
+    "source": "https://docs.grexal.ai/docs/payments",
+    "fixture": "experiments/s109-marketplace-entry-trials/fixtures/grexal-payments.txt",
+    "liveMatchesFixture": true,
+    "rowsChecked": [
+      { "buyerPays": 0.1, "docsFee": 0.02, "worksheetFee": 0.02, "docsEffective": "20%", "binding": "nominal-20pct" },
+      { "buyerPays": 0.05, "docsFee": 0.015, "worksheetFee": 0.015, "docsEffective": "30% (cap)", "binding": "cap-30pct" }
+    ]
+  },
+  "commandsRun": [
+    {
+      "command": "node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/fee-worksheet.mjs 0.05 0.066667 0.08 0.10",
+      "cwd": "/workspace",
+      "exitCode": 0,
+      "role": "C6-usd-edges"
+    },
+    {
+      "command": "node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/fee-worksheet.mjs --micros 50000 66667 80000 100000",
+      "cwd": "/workspace",
+      "exitCode": 0,
+      "role": "C6-micros-edges"
+    },
+    {
+      "command": "node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/fee-worksheet.mjs --help",
+      "cwd": "/workspace",
+      "exitCode": 0,
+      "role": "usage"
+    },
+    {
+      "command": "npm --prefix experiments/s109-marketplace-entry-trials/surfaces/grexal/package test",
+      "cwd": "/workspace",
+      "exitCode": 0,
+      "note": "24/24 pass after C6 test additions (shared package; other S121 consumers also added tests this session)"
+    }
+  ],
+  "packagerFixesApplied": [
+    "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/fee-worksheet.mjs",
+    "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/test/fee_edges.test.mjs"
+  ],
+  "beforeAfter": {
+    "whyPatch": "C6 labels on the four requested edges already matched clamp, but --micros converted via Number(argv) and discarded the integer, --help omitted --micros, and tests never locked $0.066667 / 66667. Exact-units consumer needs integer micros on the row and integer-string parse.",
+    "before": {
+      "usdFromMicros": "required Number.isInteger(number); CLI did usdFromMicros(Number(x))",
+      "rowFields": ["buyerChargeUsd", "twentyPercentUsd", "floorUsd", "capUsd", "platformFeeUsd", "sellerEarningsUsd", "effectiveFeePercent", "binding"],
+      "binding": "float comparisons cap<floor / twenty<floor / twenty>cap",
+      "help": "no --micros",
+      "tests": "only 0.05 / 0.08 / 0.10 and usdFromMicros(50000)"
+    },
+    "after": {
+      "parseMicros": "non-negative safe integer or /^(0|[1-9][0-9]*)$/ string; 1 USD = 1_000_000 micros",
+      "rowAdds": ["buyerChargeMicros"],
+      "binding": "integer micros: cap if micros<=66666, floor if 66667..99999, nominal if micros>=100000 (agrees with float clamp on every integer-micro charge in 0..200000)",
+      "help": "documents --micros 50000 66667 80000 100000",
+      "tests": "C6 dollar + micros CLI parity, 66666/66667 and 99999/100000 crossovers, JSON error on non-integer micros"
+    }
+  },
+  "customerVolume": null,
+  "customerVolumeInvented": false,
+  "demandUnknown": true,
+  "gitApplyVerified": false,
+  "grexalPaidExecution": false,
+  "buyerAcceptanceVerified": false,
+  "bidFundingVerified": false,
+  "buyerEscrowAcceptance": false,
+  "paidModelCalls": 0,
+  "localPackagerIsNotProviderPaidRun": true,
+  "localPackagerIsProviderPaidRun": false,
+  "willNotPublishFromWorker": true,
+  "willNotCallPriceEstimateCli": true,
+  "claims": {
+    "gitApplyVerified": false,
+    "grexalPaidExecution": false,
+    "buyerEscrowAcceptance": false,
+    "paidModelCalls": 0,
+    "localPackagerIsProviderPaidRun": false,
+    "customerVolumeInvented": false,
+    "note": "JSON labels from the local fee worksheet are not Grexal paid execution, git-apply success, or buyer escrow acceptance. Local packager ≠ provider paid run. No list price was applied (grexal agent price add not run)."
+  },
+  "cashBoundary": {
+    "usd": 0,
+    "didNot": [
+      "npx grexal login",
+      "account signup at grexal.ai",
+      "passwords / Cloudflare Access UI automation",
+      "grexal push / publish / deploy / delete",
+      "grexal agent set-* / price add / price estimate",
+      "grexal runs invoke",
+      "buyer credit top-up / cashout",
+      "public listing, bid, payment, or PR to outsiders/default branch",
+      "invented customer volume or demand forecast"
+    ]
+  },
+  "sessionNotes": "S121 consumer C6. Live payments docs re-fetched; formula unchanged from fixtures/grexal-payments.txt and G1/G3. Binding on requested edges was already correct vs clamp; patch is exact-units (integer micros) plus tests for the floor-boundary micro 66667. Did not treat thisAgentBacksolve $0.10 as a published price. Did not edit README (C7 owns archive/README). Did not invent run counts."
+}
