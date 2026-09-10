@@ -11,7 +11,7 @@ Cash boundary: **$0**. No paid fetch/LLM/notifications. No deploy/default merge/
 | fast-xml-parser | `^5.11.1` (MIT) |
 | Merchant context | `epistemedeus/x402-url-extractor@1a23b648` MIT — context only, not re-wrapped |
 | S122 merchant `c0255ac` | **unresolved** in this checkout |
-| Native model | `grok-4.6`` + `--reasoning-effort xhigh` (subscription display SuperGrok Heavy) |
+| Native model | `grok-4.6` + `--reasoning-effort xhigh` (subscription display SuperGrok Heavy) |
 | Subagent depth | docs max **1** (no grandchildren) — verified |
 | Concurrent child ceiling | catalog `null` (**unknown**); user-reported 64 **unverified**; measured overlap lower bound **≥24** |
 
