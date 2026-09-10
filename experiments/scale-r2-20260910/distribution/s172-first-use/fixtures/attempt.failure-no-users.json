@@ -1,0 +1,7 @@
+{
+  "kind": "discovery",
+  "ok": false,
+  "captureStatus": "no_users",
+  "reason": "capture ok; zero marketplace users observed",
+  "paidInvokeExecuted": false
+}

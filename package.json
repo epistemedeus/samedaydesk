@@ -61,7 +61,8 @@
     "test:bazaar-tracker": "node --test tools/bazaar-tracker/test.mjs tools/lqtrack1/replay-pr18-disposition.test.mjs",
     "replay:pr18": "node tools/lqtrack1/replay-pr18-disposition.mjs",
     "test:r2-distribution-03": "node --test experiments/scale-r2-20260910/distribution/03/tests/*.test.mjs",
-    "test:nl-distribution-03": "node --test experiments/scale-r2-20260910/distribution/nl-03-catalog/tests/*.test.mjs"
+    "test:nl-distribution-03": "node --test experiments/scale-r2-20260910/distribution/nl-03-catalog/tests/*.test.mjs",
+    "test:r2-distribution-s172": "node --test experiments/scale-r2-20260910/distribution/s172-first-use/tests/*.test.mjs"
   },
   "dependencies": {
     "@neomorphic/correspondence": "file:./vendor/neomorphic-correspondence",
@@ -77,4 +78,3 @@
     "concurrently": "^10.0.3"
   }
 }
-

@@ -1,0 +1,7 @@
+{
+  "kind": "discovery",
+  "ok": false,
+  "captureStatus": "unavailable",
+  "reason": "listing HTTP non-200 or route unmatched",
+  "paidInvokeExecuted": false
+}

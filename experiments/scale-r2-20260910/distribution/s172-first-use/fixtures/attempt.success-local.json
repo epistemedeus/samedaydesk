@@ -1,0 +1,5 @@
+{
+  "kind": "local_offline",
+  "ok": true,
+  "commands": ["npm test", "node agent/pack_evidence.js --unifiedDiffFile fixtures/diff/simple.patch --stdout-only"]
+}
