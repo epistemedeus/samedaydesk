@@ -4,6 +4,7 @@ Parent session: `01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5`
 Model: `grok-4.6` · effort `xhigh`  
 Branch: `codex/s198-record-distribution-release-20260910`  
 Composition commit: `339ebf7576aa1a40765b6a2d45bcda8ed46c51d0`  
+Integration HEAD: `edd53f69543bf482c77f876f47453f9a55defbbe`  
 Base main: `2b80f38a4e5ec5f080d1764de7c539af63190012` (Pulse sources untouched)
 
 | Pin | SHA |
