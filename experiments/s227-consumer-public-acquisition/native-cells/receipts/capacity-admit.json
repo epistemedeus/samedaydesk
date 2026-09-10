@@ -1,0 +1,22 @@
+{
+  "phase": "s227_admit_heavy_working",
+  "ts": "2026-09-10T16:29:14Z",
+  "active_native_workers": 2,
+  "workers": [
+    {
+      "pid": "209732",
+      "rss_kB": 141568,
+      "cmd": "agent --always-approve --model grok-4.6 --reasoning-effort xhigh --resume 01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5 --prompt-file /workspace/experiments/s227-consumer-public-acquisition/native-cells/prompt"
+    },
+    {
+      "pid": "210704",
+      "rss_kB": 8848,
+      "cmd": "/bin/bash -O extglob -c snap=$(command cat <&3) && builtin shopt -s extglob && builtin eval -- \"$snap\" && { builtin set +u 2>/dev/null || true; builtin eval \"${__CURSOR_SANDBOX_ENV_RESTORE:-}\" 2>/dev/"
+    }
+  ],
+  "MemAvailable_kB": 10808220,
+  "MemTotal_kB": 16398384,
+  "MemFree_kB": 5926744,
+  "cgroup": {},
+  "workload": "Heavy parent resumed on S227; Cursor collector idle on product edits"
+}

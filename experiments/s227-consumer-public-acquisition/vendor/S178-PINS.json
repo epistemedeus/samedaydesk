@@ -1,0 +1,70 @@
+{
+  "schema": "s178.consumer-repeat.pins.v1",
+  "branch": "codex/s178-consumer-repeat-package-20260910",
+  "base": {
+    "ref": "origin/master",
+    "sha": "a20c6e2d8cd716498dfe1c8d0f34985039df64cc"
+  },
+  "preservedFrozen": {
+    "label": "S174 consumer final CLI fix (for 6Pro / S179 review)",
+    "branch": "codex/s174-consumer-final-cli-fix-20260910",
+    "sha": "3876fced28e9c9fc4411695eee2f0f275edc63f7",
+    "note": "Do not rewrite this tip; S178 is a fresh branch off current default."
+  },
+  "composedFrom": [
+    {
+      "id": "S174-01-06-kit",
+      "sha": "3876fced28e9c9fc4411695eee2f0f275edc63f7",
+      "paths": [
+        "experiments/s137-consumer-evidence-jobs",
+        "experiments/s153-consumer-distribution-gates"
+      ]
+    },
+    {
+      "id": "R2-CONSUMER-JOBS-07",
+      "branch": "codex/r2-consumer-jobs-07-20260910",
+      "sha": "b1b0db112985ee06b625ef1bef8c8770e336ce25",
+      "path": "experiments/scale-r2-20260910/consumer_jobs/07"
+    },
+    {
+      "id": "R2-CONSUMER-JOBS-08",
+      "branch": "codex/r2-consumer-jobs-08-20260910",
+      "sha": "6d1376c8f1561114bf632bd437d54343b7d1894c",
+      "path": "experiments/scale-r2-20260910/consumer_jobs/08"
+    },
+    {
+      "id": "S170-recheck-compose",
+      "branch": "codex/r2-consumer-s170-s153-recheck-20260910",
+      "sha": "c36eff932c983d9ad06cd6d6e5ea8466f457c1e4",
+      "path": "experiments/scale-r2-20260910/consumer_jobs/compose"
+    }
+  ],
+  "kit": {
+    "tarball": "dist/s178-consumer-repeat-kit.tgz",
+    "rebuiltOn": "S220"
+  },
+  "nonClaims": [
+    "No fabricated live sources or customers",
+    "No implicit network or paid execution",
+    "No release claims or new payments engine",
+    "Existing paid endpoint semantics and prices unchanged",
+    "SameDayDesk site pages remain S176-owned (separate repo)"
+  ],
+  "reviewedSource": {
+    "sha": "361460288e96d43da2f215e158fad96745507fde",
+    "input": "778d8ef5c6694b21e71a52b78e9181adeb88cfa4",
+    "branch": "codex/s220-consumer-package-final-20260910",
+    "scope": "S211 normalization preserved; installed provenance checks, explicit fixture split and complete CLI output"
+  },
+  "packagingSource": {
+    "sha": "361460288e96d43da2f215e158fad96745507fde",
+    "input": "778d8ef5c6694b21e71a52b78e9181adeb88cfa4",
+    "scope": "consumer package/test and first-use repairs"
+  },
+  "priorReviewedSource": {
+    "sha": "d998f11c173ac719043d6351f46e56f48d0f1bb6",
+    "input": "d9553e2fd81ff62e7a30d23a3c5166ca2d923ed9",
+    "branch": "codex/s211-consumer-validation-final-20260910",
+    "scope": "release-brief schema, transform, runners and boundary regression; archive pins and bytes recorded separately"
+  }
+}

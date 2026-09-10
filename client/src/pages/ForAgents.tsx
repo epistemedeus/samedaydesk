@@ -195,6 +195,24 @@ export default function ForAgents() {
           </p>
         </section>
 
+        <section className={styles.section} aria-labelledby="consumer-repeat-title">
+          <div className={styles.sectionHead}>
+            <p className="eyebrow">Offline package · consumer evidence</p>
+            <h2 id="consumer-repeat-title">Run local evidence jobs from a portable package</h2>
+          </div>
+          <p className={styles.jobCopy}>
+            Download one portable archive for local evidence jobs (release brief, table
+            reconcile, procurement brief, and related checks). Verify size and sha256 before
+            extract. Labeled samples and caller files run offline. You must supply an operator
+            clock. Local provenance is not an independent attestation. Details and cold-start
+            commands:{" "}
+            <Link className={styles.inlineLink} to="/for-agents/consumer-repeat">
+              /for-agents/consumer-repeat
+            </Link>
+            .
+          </p>
+        </section>
+
         <section className={styles.section} aria-labelledby="recurring-title">
           <div className={styles.sectionHead}>
             <p className="eyebrow">Job 5 · recurring recipes</p>

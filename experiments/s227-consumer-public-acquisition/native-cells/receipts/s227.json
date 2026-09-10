@@ -1,0 +1,82 @@
+{
+  "schema": "samedaydesk.s227.receipts.v1",
+  "nativeSession": "01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5",
+  "model": "grok-4.6",
+  "effort": "xhigh",
+  "node": "v22.22.2",
+  "branch": "codex/s227-consumer-public-acquisition-20260910",
+  "base": "f357508d25d30c5e9a3af9b44644c8e4d97bcd10",
+  "merchantSource": {
+    "repo": "epistemedeus/x402-url-extractor",
+    "commit": "e7a53c48a2db5393e1e340e5d43143547f79dbd7"
+  },
+  "cashUsd": 0,
+  "productionAcquisition": false,
+  "archiveRebuilt": false,
+  "route": "/for-agents/consumer-repeat",
+  "archive": {
+    "path": "/kit/s178-consumer-repeat-kit.tgz",
+    "bytes": 718948,
+    "sha256": "04e9b6f382eedd91ae27b0d0faa68abbee7c26a1f06f52e415cb5a5884dfe05d",
+    "packageId": "s178-consumer-repeat-kit",
+    "reviewedSource": "361460288e96d43da2f215e158fad96745507fde"
+  },
+  "vendorReferenceOnly": {
+    "path": "experiments/s227-consumer-public-acquisition/vendor/s137-consumer-evidence-kit.tgz",
+    "bytes": 214024,
+    "sha256": "9ad8fd3a8a9d9794b939d93af594c86e420fae33726e177257ff7251b2fa1e58"
+  },
+  "gates": {
+    "s227_obtain_and_discovery": "10/10",
+    "client_build": "pass",
+    "spa_fallback": "2/2",
+    "spa_route_shells": "9/9",
+    "hosted_startup": "4/4",
+    "overflow": "pass",
+    "browser_desktop_1440": "pass",
+    "browser_mobile_390": "pass",
+    "browser_width_320": "pass",
+    "width_320_evidence": "/tmp/tmp.Dryfn85dMe"
+  },
+  "s221": {
+    "carryForwardUnchanged": [
+      "pulse vs origin/main empty; PG not re-run",
+      "homepage / prices / payment / checkout",
+      "record-repeat and distribution-repair pages/kits/discovery/receipts",
+      "s134/s163/s176/s185 kit suites"
+    ],
+    "reExecutedBecauseRuntimeChanged": [
+      "client build",
+      "spa-fallback",
+      "spa-route-shells",
+      "hosted-startup",
+      "overflow",
+      "browser 1440/390/320"
+    ]
+  },
+  "capacity": {
+    "admit": "2026-09-10T16:29:14Z",
+    "complete": "2026-09-10T16:45:52Z",
+    "elapsedFromAdmitS": 1012,
+    "activeNativeWorkers": 1,
+    "workers": [
+      {
+        "pid": 209732,
+        "rss_kB": 156008,
+        "cmd": "agent --always-approve --model grok-4.6 --reasoning-effort xhigh --resume 01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5"
+      }
+    ],
+    "nproc": 4,
+    "MemTotal_kB": 16398384,
+    "MemAvailable_kB": 10803780,
+    "MemFree_kB": 5846100,
+    "loadavg": [1.0, 1.02, 1.0],
+    "distinction": "One native Heavy parent. Not a 6/12/18/24 cohort. Cursor collector is a separate OS process."
+  },
+  "nonClaims": [
+    "Local CONSUMER-PROVENANCE.json is integrity metadata, not an independent attestation",
+    "ok:true is honest completion, not a pass",
+    "A local completion is not an actual customer delivery",
+    "No invented customers, demand, hosted service, or paid tier"
+  ]
+}

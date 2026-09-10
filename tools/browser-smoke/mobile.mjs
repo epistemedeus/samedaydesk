@@ -72,6 +72,25 @@ const PAGE_SPECS = Object.freeze([
     layout: "mobile-nav",
   },
   {
+    id: "consumer-repeat",
+    path: "/for-agents/consumer-repeat",
+    screenshot: "consumer-repeat-mobile.png",
+    expect: {
+      titleIncludes: "Run local consumer evidence jobs offline",
+      h1Includes: "Run local evidence jobs from a portable package",
+      bodyIncludes: [
+        "/kit/s178-consumer-repeat-kit.tgz",
+        "sha256",
+        "718948",
+        "labeled samples",
+        "/discovery/consumer-repeat.json",
+        "Download archive",
+        "operator clock",
+      ],
+    },
+    layout: "mobile-nav",
+  },
+  {
     id: "x402",
     path: "/x402",
     screenshot: "x402-mobile.png",
