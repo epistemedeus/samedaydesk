@@ -1,0 +1,19 @@
+{
+  "session": "s176",
+  "admitted": [
+    "S176-N01",
+    "S176-N02"
+  ],
+  "exitCodes": {
+    "S176-N01": 0,
+    "S176-N02": 0
+  },
+  "peakAlive": 2,
+  "excludes": [
+    "native05",
+    "native06",
+    "native07",
+    "native08"
+  ],
+  "notes": "Useful Heavy only; no filler; admissions preserved on completion."
+}

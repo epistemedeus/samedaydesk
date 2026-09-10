@@ -1,6 +1,7 @@
 # S176 RESULT — source/record repeat-job acquisition package
 
 Branch: `codex/s176-record-repeat-package-20260910`
+Head: `faa7fb281bccb2a1d255be0e973742d49b8a765e`
 Parser pin (S154 tip): `65ce1867f1b4339cc708bfb72a7d9a5942785632`
 Recipe pin (S163 tip): `a022eb6352156dcdcdf2f8730931f5891bd01436`
 Bot record kit: out of scope (not fetched/rewritten)
