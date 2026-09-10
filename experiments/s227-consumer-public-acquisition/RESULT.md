@@ -57,3 +57,27 @@ Re-executed because SPA/runtime lists gained a route: client build, spa-fallback
 
 ## Remaining limits
 No production acquisition claim. `gh pr create` may fail on GitHub App token (S214 GraphQL permission). Root owns merge/deploy.
+
+
+## S239 — public cold-start repair (Cursor Auto after Heavy 402)
+
+Native Heavy session `01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5` hit Grok Build 402 (balance exhausted) at handoff. Checkpoint: `native-cells/receipts/s239-quota-checkpoint.json`. Cursor Auto completed this authorized small repair without reset/overage.
+
+### Defects fixed
+1. One authoritative `buildConsumerRepeatColdStart()` in `machineEntry.mjs` drives discovery JSON, page `<pre>`, and crawler HTML. Python verify uses argv (no JSON `\"` hazard). Decoded discovery text equals `CONSUMER_REPEAT_COLD_START`.
+2. Cold start is one portable shell function: fresh `mktemp -d`, explicit `|| return 1` (not `set -e` alone), curl `--max-time 60`, verify before extract, cleanup workdir on failure, prints kit path; caller commands keep `$PWD/...` paths.
+3. New `test/literal-cold-start.test.mjs` executes literal decoded commands from discovery JSON **and** crawler HTML: wrong status/size/digest, shell conditional refusal, positive path with two callers + changed-input repeat. Existing obtain-kit helper tests remain; they are not a substitute.
+
+### Gates executed
+| Gate | Result |
+| --- | --- |
+| experiment tests (literal + obtain + discovery) | 16/16 |
+| `npm run build` (Node v22.22.2) | pass |
+| spa-fallback | 2/2 |
+| spa-route-shells | 9/9 |
+| hosted-startup | 4/4 |
+| browser desktop 1440 | pass |
+| browser mobile 390 | pass |
+| browser width 320 | pass (`mobile.mjs --viewport 320x568`) |
+
+Archive unchanged: 718948 bytes / sha256 `04e9b6f382eedd91ae27b0d0faa68abbee7c26a1f06f52e415cb5a5884dfe05d` (matches 718948 / `04e9b6f382eedd91ae27b0d0faa68abbee7c26a1f06f52e415cb5a5884dfe05d`). Homepage/payment/Pulse/S221 record+distribution untouched. No merge/deploy.

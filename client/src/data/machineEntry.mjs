@@ -461,29 +461,54 @@ export const CONSUMER_REPEAT_SOURCE_COMMIT = CONSUMER_REPEAT_KIT.sourceCommit;
 export const CONSUMER_REPEAT_REVIEWED_SOURCE = CONSUMER_REPEAT_KIT.reviewedSource;
 export const CONSUMER_REPEAT_PACKAGE_ID = CONSUMER_REPEAT_KIT.packageId;
 
-export const CONSUMER_REPEAT_COLD_START = [
-  `curl -fsSL -o s178-consumer-repeat-kit.tgz ${SITE_ORIGIN}${CONSUMER_REPEAT_ARCHIVE}`,
-  `python3 -c "import hashlib,pathlib; p=pathlib.Path('s178-consumer-repeat-kit.tgz'); b=p.read_bytes(); assert len(b)==${CONSUMER_REPEAT_ARCHIVE_BYTES}, len(b); h=hashlib.sha256(b).hexdigest(); assert h=='${CONSUMER_REPEAT_ARCHIVE_SHA256}', h"`,
-  "mkdir -p /tmp && tar -xzf s178-consumer-repeat-kit.tgz -C /tmp",
-  "cd /tmp/s178-consumer-repeat-kit",
-  "node bin/s178-cli.mjs list",
-].join("\n");
+export function buildConsumerRepeatColdStart({
+  siteOrigin = SITE_ORIGIN,
+  archivePath = CONSUMER_REPEAT_ARCHIVE,
+  bytes = CONSUMER_REPEAT_ARCHIVE_BYTES,
+  sha256 = CONSUMER_REPEAT_ARCHIVE_SHA256,
+} = {}) {
+  const tgzName = "s178-consumer-repeat-kit.tgz";
+  const rootName = "s178-consumer-repeat-kit";
+  const cli = "bin/s178-cli.mjs";
+  return [
+    "s178_consumer_repeat_acquire() {",
+    "  local origin=\"${S178_CONSUMER_REPEAT_ORIGIN:-${1:-" + siteOrigin + "}}\"",
+    "  local bytes=" + String(bytes),
+    "  local sha=" + sha256,
+    "  local work tgz root",
+    "  work=$(mktemp -d \"${TMPDIR:-/tmp}/s178-consumer-repeat.XXXXXX\") || return 1",
+    "  tgz=\"\$work/" + tgzName + "\"",
+    "  root=\"\$work/" + rootName + "\"",
+    "  curl -fsSL --max-time 60 -o \"\$tgz\" \"\$origin" + archivePath + "\" || { rm -rf \"\$work\"; return 1; }",
+    "  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); assert len(b)==int(sys.argv[2]), len(b); h=hashlib.sha256(b).hexdigest(); assert h==sys.argv[3], h' \"\$tgz\" \"\$bytes\" \"\$sha\" || { rm -rf \"\$work\"; return 1; }",
+    "  tar -xzf \"\$tgz\" -C \"\$work\" || { rm -rf \"\$work\"; return 1; }",
+    "  [ -f \"\$root/" + cli + "\" ] || { rm -rf \"\$work\"; return 1; }",
+    "  (cd \"\$root\" && node " + cli + " list) || { rm -rf \"\$work\"; return 1; }",
+    "  printf '%s\\n' \"\$root\"",
+    "  return 0",
+    "}",
+    "kit=$(s178_consumer_repeat_acquire) || exit 1",
+    "printf '%s\\n' \"\$kit\"",
+  ].join("\n");
+}
+
+export const CONSUMER_REPEAT_COLD_START = buildConsumerRepeatColdStart();
 
 export const CONSUMER_REPEAT_FIRST_USE = [
-  "node bin/s178-cli.mjs list",
-  "node bin/s178-cli.mjs example release-brief --kind conflict",
-  "node bin/s178-cli.mjs run 07 --clock 2026-09-10T18:00:00.000Z",
-  "node bin/s178-cli.mjs run release-brief --clock 2026-09-10T18:00:00.000Z",
+  "node \"$kit/bin/s178-cli.mjs\" list",
+  "node \"$kit/bin/s178-cli.mjs\" example release-brief --kind conflict",
+  "node \"$kit/bin/s178-cli.mjs\" run 07 --clock 2026-09-10T18:00:00.000Z",
+  "node \"$kit/bin/s178-cli.mjs\" run release-brief --clock 2026-09-10T18:00:00.000Z",
 ].join("\n");
 
 export const CONSUMER_REPEAT_CALLER_USE = [
-  "node bin/s178-cli.mjs run 07 --in ./caller-a.json --clock 2026-09-10T18:00:00.000Z",
-  "node bin/s178-cli.mjs run release-brief --in ./caller-b.json --clock 2026-09-10T18:00:00.000Z",
+  "node \"$kit/bin/s178-cli.mjs\" run 07 --in \"$PWD/caller-a.json\" --clock 2026-09-10T18:00:00.000Z",
+  "node \"$kit/bin/s178-cli.mjs\" run release-brief --in \"$PWD/caller-b.json\" --clock 2026-09-10T18:00:00.000Z",
 ].join("\n");
 
 export const CONSUMER_REPEAT_REPEAT_USE = [
-  "node bin/s178-cli.mjs run release-brief --in ./caller-partial.json --clock 2026-09-10T18:00:00.000Z > ./repeat-note.json",
-  "node bin/s178-cli.mjs run release-brief --in ./caller-reconciled.json --clock 2026-09-10T18:00:00.000Z",
+  "node \"$kit/bin/s178-cli.mjs\" run release-brief --in \"$PWD/caller-partial.json\" --clock 2026-09-10T18:00:00.000Z > \"$PWD/repeat-note.json\"",
+  "node \"$kit/bin/s178-cli.mjs\" run release-brief --in \"$PWD/caller-reconciled.json\" --clock 2026-09-10T18:00:00.000Z",
 ].join("\n");
 
 export const CONSUMER_REPEAT_CRAWLER_HTML = `

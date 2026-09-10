@@ -31,13 +31,7 @@
   "runsOffline": true,
   "freeOffline": true,
   "paidValueClaim": false,
-  "coldStart": [
-    "curl -fsSL -o s178-consumer-repeat-kit.tgz https://samedaydesk.com/kit/s178-consumer-repeat-kit.tgz",
-    "python3 -c \"import hashlib,pathlib; p=pathlib.Path('s178-consumer-repeat-kit.tgz'); b=p.read_bytes(); assert len(b)==718948, len(b); h=hashlib.sha256(b).hexdigest(); assert h=='04e9b6f382eedd91ae27b0d0faa68abbee7c26a1f06f52e415cb5a5884dfe05d', h\"",
-    "mkdir -p /tmp && tar -xzf s178-consumer-repeat-kit.tgz -C /tmp",
-    "cd /tmp/s178-consumer-repeat-kit",
-    "node bin/s178-cli.mjs list"
-  ],
+  "coldStart": "s178_consumer_repeat_acquire() {\n  local origin=\"${S178_CONSUMER_REPEAT_ORIGIN:-${1:-https://samedaydesk.com}}\"\n  local bytes=718948\n  local sha=04e9b6f382eedd91ae27b0d0faa68abbee7c26a1f06f52e415cb5a5884dfe05d\n  local work tgz root\n  work=$(mktemp -d \"${TMPDIR:-/tmp}/s178-consumer-repeat.XXXXXX\") || return 1\n  tgz=\"$work/s178-consumer-repeat-kit.tgz\"\n  root=\"$work/s178-consumer-repeat-kit\"\n  curl -fsSL --max-time 60 -o \"$tgz\" \"$origin/kit/s178-consumer-repeat-kit.tgz\" || { rm -rf \"$work\"; return 1; }\n  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); assert len(b)==int(sys.argv[2]), len(b); h=hashlib.sha256(b).hexdigest(); assert h==sys.argv[3], h' \"$tgz\" \"$bytes\" \"$sha\" || { rm -rf \"$work\"; return 1; }\n  tar -xzf \"$tgz\" -C \"$work\" || { rm -rf \"$work\"; return 1; }\n  [ -f \"$root/bin/s178-cli.mjs\" ] || { rm -rf \"$work\"; return 1; }\n  (cd \"$root\" && node bin/s178-cli.mjs list) || { rm -rf \"$work\"; return 1; }\n  printf '%s\\n' \"$root\"\n  return 0\n}\nkit=$(s178_consumer_repeat_acquire) || exit 1\nprintf '%s\\n' \"$kit\"",
   "materialLimit": "You must supply an operator clock. Local provenance files are integrity metadata, not an independent attestation, and ok:true is honest completion rather than a pass.",
   "note": "Exact committed merchant archive bytes. Local CONSUMER-PROVENANCE.json is integrity metadata, not an independent attestation. ok:true is honest completion, not a pass claim."
 }

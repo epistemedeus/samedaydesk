@@ -96,6 +96,18 @@ test("route, shell, App, llms, sitemap, and download path are wired", () => {
   assert.match(llms, /https:\/\/samedaydesk\.com\/discovery\/consumer-repeat\.json/);
   const sitemap = readFileSync(SITEMAP, "utf8");
   assert.match(sitemap, /https:\/\/samedaydesk\.com\/for-agents\/consumer-repeat/);
+  {
+    const discoveryDoc = JSON.parse(readFileSync(DISCOVERY, "utf8"));
+    const servedCold =
+      typeof discoveryDoc.coldStart === "string"
+        ? discoveryDoc.coldStart
+        : discoveryDoc.coldStart.join("\n");
+    assert.equal(servedCold, CONSUMER_REPEAT_COLD_START);
+    assert.equal(servedCold.includes('\\"'), false);
+    assert.match(servedCold, /mktemp -d/);
+    assert.match(servedCold, /--max-time 60/);
+    assert.equal(CONSUMER_REPEAT_SHELL.crawlerHtml.includes(CONSUMER_REPEAT_COLD_START), true);
+  }
   assert.match(CONSUMER_REPEAT_COLD_START, /s178-consumer-repeat-kit\.tgz/);
   assert.match(CONSUMER_REPEAT_COLD_START, new RegExp(EXPECTED_SHA));
   assert.match(CONSUMER_REPEAT_COLD_START, new RegExp(String(EXPECTED_BYTES)));
