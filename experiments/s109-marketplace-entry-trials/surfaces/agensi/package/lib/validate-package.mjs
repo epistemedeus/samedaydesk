@@ -146,7 +146,7 @@ export function validateAgensiPackage(pkgDir, options = {}) {
       actor: i.actor,
     })),
     publicListingNote:
-      'Anonymous worker cannot complete /sell; Root must finish Cloudflare Access (GitHub) on www.agensi.dev and/or an agensi.io creator session, then paste verified payout-method state before any listing copy goes public. This package will not list.',
+      'Anonymous worker cannot list. OFFICIAL Agensi seller entry is www.agensi.io/auth and /sell (MCP: mcp.agensi.io/mcp). www.agensi.dev Cloudflare Access is an unrelated tenant — do not enter from this worker. Root pastes verified payout-method state privately before any listing copy. This package will not list.',
     nextMeasurableEvent:
       descriptor.nextMeasurableEvent ||
       'Root CF Access session + paste of sell-page payout section',

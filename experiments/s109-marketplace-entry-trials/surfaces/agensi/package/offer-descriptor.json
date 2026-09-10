@@ -10,7 +10,7 @@
     "cash-boundary",
     "host-split",
     "no-seller-api",
-    "cf-access-dev",
+    "official-io-hosts",
     "io-account",
     "payout-rails",
     "price-gate",
@@ -28,8 +28,8 @@
     "status": "not-found-on-searched-epistemedeus-repos",
     "action": "omit-from-offers-until-root-identifies-repo"
   },
-  "offerTitle": "Gateway recipe packaging + acceptance evidence (Agensi draft — not listed)",
-  "paidDeliverable": "If Root later enables payouts and lists, the buyer would receive a versioned packaging of the public gateway recipes plus a machine-checkable acceptance report (pinned commit, command hashes, pass/fail checklist) delivered through Agensi listing ops. This is packaging labor, discovery/scan/delivery ops, and acceptance formatting — not a resale of free recipe text as proprietary IP, and not a new SameDayDesk HTTP action.",
+  "offerTitle": "Gateway recipe packaging + acceptance evidence (Agensi draft \u2014 not listed)",
+  "paidDeliverable": "If Root later enables payouts and lists, the buyer would receive a versioned packaging of the public gateway recipes plus a machine-checkable acceptance report (pinned commit, command hashes, pass/fail checklist) delivered through Agensi listing ops. This is packaging labor, discovery/scan/delivery ops, and acceptance formatting \u2014 not a resale of free recipe text as proprietary IP, and not a new SameDayDesk HTTP action.",
   "freeAlternative": "Clone epistemedeus/x402-data-gateway-skills at pin 82d0f019713c7223898806144da08fdbeed5c666 (or `npx skills add epistemedeus/x402-data-gateway-skills --all --yes`) and run the public recipes locally against https://agents.samedaydesk.com. Offline recipe tests live under tests/recipes upstream. No Agensi account, scan, or 30% fee.",
   "competentFreeDelta": "Paid delta is packaging labor, Agensi discovery/scan/delivery ops, merchant-of-record tax handling, and acceptance formatting. It is not exclusive ownership of public recipe content and does not add a new gateway route.",
   "ownershipClaim": {
@@ -69,20 +69,22 @@
       "status": "public-tos-verified",
       "termsUrl": "https://www.agensi.io/terms",
       "sellUrl": "https://www.agensi.io/sell",
-      "railsNamedInToS": ["Stripe Connect", "Zoneless USDC on Solana"],
+      "railsNamedInToS": [
+        "Stripe Connect",
+        "Zoneless USDC on Solana"
+      ],
       "minPaidPriceUsd": 5,
       "revenueShareNetExVat": "70/30 creator/platform (ToS; re-verify before listing)",
-      "note": "A1 cell: ToS last updated 2026-09-02 (Agensi BV). Stripe-terms page is older and Stripe-mandatory; prefer later ToS for Zoneless. Account payout eligibility still requires Root auth. This package does not assume eligibility."
+      "note": "A1 cell: ToS last updated 2026-09-02 (Agensi BV). Stripe-terms page is older and Stripe-mandatory; prefer later ToS for Zoneless. Account payout eligibility still requires Root auth. This package does not assume eligibility. Extra observed authUrl=https://www.agensi.io/auth. Extra observed mcpUrl=https://mcp.agensi.io/mcp. Extra observed sellMarketingObserved=Anonymous GET www.agensi.io/sell 200; marketing copy names Stripe or USDC-on-Solana via Zoneless and ~70% creator share. Account eligibility still unknown without Root auth.."
     },
     "doNotAssumeEligible": true
   },
   "rootHandoff": {
     "cloudflareAccessUrl": "https://www.agensi.dev/sell",
     "publicSellerUrl": "https://www.agensi.io/sell",
-    "authHint": "For .dev: Cloudflare Access → GitHub (team mlehman-899.cloudflareaccess.com). For .io creator submit: /auth then /dashboard/submit — Root only; worker will not sign up or complete Access.",
     "fullStepsPath": "./access-handoff.json",
     "idp": "GitHub",
-    "accessTeamHost": "mlehman-899.cloudflareaccess.com"
+    "authHint": "OFFICIAL Agensi seller auth/sell: https://www.agensi.io/auth and https://www.agensi.io/sell; MCP https://mcp.agensi.io/mcp. www.agensi.dev Cloudflare Access (GitHub IdP) is unrelated \u2014 do not enter from worker. See access-handoff.json."
   },
   "apiOrSdk": {
     "publicUnauthenticatedSellerApi": false,
@@ -91,5 +93,5 @@
     "note": "Seller entry is UI handoff (/dashboard/submit on agensi.io). No official public seller listing API verified from this worker. This package has no Agensi SDK dependency."
   },
   "attributionPlan": "Any future listing must cite upstream recipe repo+pin 82d0f019713c7223898806144da08fdbeed5c666. SameDayDesk sells packaging/acceptance/ops only. Do not claim proprietary ownership of free recipes.",
-  "nextMeasurableEvent": "Root auth (Cloudflare Access on .dev and/or agensi.io creator session) plus payout-method enabled state captured privately; still $0 and no publish from this worker."
+  "nextMeasurableEvent": "Root auth on www.agensi.io plus payout-method enabled state captured privately; still $0 and no publish from this worker. Do not use www.agensi.dev Access as seller entry."
 }

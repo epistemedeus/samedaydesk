@@ -1,0 +1,9 @@
+diff --git a/big.txt b/big.txt
+--- a/big.txt
++++ b/big.txt
+@@ -1,5 +1,5 @@
+ line1
+-line2
++line2changed
+ line3
+[truncated]

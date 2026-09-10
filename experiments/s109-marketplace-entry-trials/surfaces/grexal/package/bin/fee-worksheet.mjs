@@ -16,6 +16,11 @@ function clamp(n, lo, hi) {
   return Math.min(Math.max(n, lo), hi);
 }
 
+export function usdFromMicros(micros) {
+  if (!Number.isInteger(micros) || micros < 0) throw new Error(`invalid micros: ${micros}`);
+  return micros / 1_000_000;
+}
+
 export function worksheetRow(charge) {
   if (!Number.isFinite(charge) || charge < 0) {
     throw new Error(`invalid buyer_charge: ${charge}`);
@@ -76,10 +81,16 @@ Offline docs.grexal.ai/docs/payments clamp. No auth, no spend.
     process.exit(0);
   }
 
-  const tableMode = argv[0] === '--table' || argv.length === 0;
-  const charges = tableMode
-    ? [...DOCS_TABLE, FLOOR_BAND_EXAMPLE, 0.18]
-    : argv.map(Number);
+  let tableMode = argv[0] === '--table' || argv.length === 0;
+  let charges;
+  if (argv[0] === '--micros') {
+    tableMode = false;
+    charges = argv.slice(1).map((x) => usdFromMicros(Number(x)));
+  } else if (tableMode) {
+    charges = [...DOCS_TABLE, FLOOR_BAND_EXAMPLE, 0.18];
+  } else {
+    charges = argv.map(Number);
+  }
 
   for (const c of charges) {
     if (!Number.isFinite(c) || c < 0) {

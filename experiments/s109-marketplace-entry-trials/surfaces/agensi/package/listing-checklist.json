@@ -32,13 +32,15 @@
       "detail": "A1 found no public seller create API, OpenAPI, or official seller SDK. POST /api/skills is HTML 404. Entry is UI handoff only (/dashboard/submit on agensi.io). Buyer MCP at https://mcp.agensi.io/mcp is not a seller upload API."
     },
     {
-      "id": "cf-access-dev",
-      "title": "Root Cloudflare Access on the task-named .dev /sell URL",
+      "id": "official-io-hosts",
+      "title": "Official Agensi hosts are www.agensi.io (auth/sell) and mcp.agensi.io",
       "status": "blocked-pending-root",
       "actor": "root",
       "workerMustNotPerform": true,
-      "urls": ["https://www.agensi.dev/sell"],
-      "detail": "Unauthenticated GET /sell → HTTP 302 to mlehman-899.cloudflareaccess.com. Single IdP labeled GitHub. Root must complete Access in a browser they control; this worker will not."
+      "urls": [
+        "https://www.agensi.dev/sell"
+      ],
+      "detail": "www.agensi.dev Cloudflare Access is unrelated; do not enter from this worker."
     },
     {
       "id": "io-account",
@@ -50,7 +52,7 @@
         "https://www.agensi.io/auth",
         "https://www.agensi.io/dashboard/submit"
       ],
-      "detail": "Public /auth offers email/password, 6-digit email code, or Continue with Google — not GitHub. Worker will not create the account. Submit form is a JS dashboard; SSR shell is not a listing."
+      "detail": "Public /auth offers email/password, 6-digit email code, or Continue with Google \u2014 not GitHub. Worker will not create the account. Submit form is a JS dashboard; SSR shell is not a listing."
     },
     {
       "id": "payout-rails",
@@ -59,8 +61,10 @@
       "actor": "root",
       "workerMustNotPerform": true,
       "minPaidPriceUsd": 5,
-      "urls": ["https://www.agensi.io/terms"],
-      "detail": "ToS §6.1 (last updated 2026-09-02): paid skill publish is blocked until a payout method is set up and enabled. Rails named in ToS: Stripe Connect or Zoneless USDC on Solana. Account-level eligibility is not verifiable without auth. Do not assume this worker is eligible."
+      "urls": [
+        "https://www.agensi.io/terms"
+      ],
+      "detail": "ToS \u00a76.1 (last updated 2026-09-02): paid skill publish is blocked until a payout method is set up and enabled. Rails named in ToS: Stripe Connect or Zoneless USDC on Solana. Account-level eligibility is not verifiable without auth. Do not assume this worker is eligible."
     },
     {
       "id": "price-gate",
@@ -83,7 +87,7 @@
       "title": "Cite the public pin; do not claim proprietary ownership of free recipes",
       "status": "encoded",
       "actor": "package",
-      "detail": "Listings must cite epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666. ToS §6.3 requires original authorship or distribution rights and an accurate listing. Relabeling the public pin as exclusive paid IP would fail that warranty. This package sells packaging/acceptance/ops only, if Root later lists."
+      "detail": "Listings must cite epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666. ToS \u00a76.3 requires original authorship or distribution rights and an accurate listing. Relabeling the public pin as exclusive paid IP would fail that warranty. This package sells packaging/acceptance/ops only, if Root later lists."
     },
     {
       "id": "scan-8-point",
@@ -100,7 +104,7 @@
         "zip structure",
         "SKILL.md validity"
       ],
-      "detail": "Public copy: automated 8-point scan, then AI + human review, usually 24–48 hours. MCP discoverable toggle defaults on."
+      "detail": "Public copy: automated 8-point scan, then AI + human review, usually 24\u201348 hours. MCP discoverable toggle defaults on."
     },
     {
       "id": "network-scan-risk",
@@ -114,7 +118,7 @@
       "title": "Warrant distribution rights; keep listing copy accurate",
       "status": "known-from-public-contract",
       "actor": "root",
-      "detail": "ToS §6.3: original authorship or distribution rights plus an accurate listing. The pinned tree has no LICENSE file; Root must not describe the recipes as SameDayDesk-exclusive proprietary content."
+      "detail": "ToS \u00a76.3: original authorship or distribution rights plus an accurate listing. The pinned tree has no LICENSE file; Root must not describe the recipes as SameDayDesk-exclusive proprietary content."
     },
     {
       "id": "private-ids-out-of-overlay",

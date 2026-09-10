@@ -1,0 +1,15 @@
+{
+  "at": "2026-09-10T09:33:43Z",
+  "cashBoundaryUsd": 0,
+  "MemTotal": 16791945216,
+  "MemAvailable": 11175874560,
+  "reserve25": 4197986304,
+  "headroomAfterReserve": 6977888256,
+  "psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+  "measuredProbeRssBytes": 132292608,
+  "perProcessBudgetBytes": 136314880,
+  "maxConcurrentByHeadroom": 51,
+  "requestedConcurrent": 9,
+  "decision": "launch_9",
+  "s109SequentialReason": "S109 parent orchestration chose artificial role cohorts (contracts\u2192packages\u2192buyers) of size 3 despite MemAvailable\u224810\u201311Gi and PSI=0. Admission freeAfter\u22487Gi after 25% reserve with size:3. Not a platform hard-cap of 3; local scheduling decision."
+}

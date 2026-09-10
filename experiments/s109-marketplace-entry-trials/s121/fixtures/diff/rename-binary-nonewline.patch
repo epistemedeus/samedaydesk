@@ -1,0 +1,15 @@
+diff --git a/old-name.txt b/new-name.txt
+similarity index 100%
+rename from old-name.txt
+rename to new-name.txt
+diff --git a/data.bin b/data.bin
+new file mode 100644
+index 0000000..abc1234
+Binary files /dev/null and b/data.bin differ
+diff --git a/note.txt b/note.txt
+--- a/note.txt
++++ b/note.txt
+@@ -1 +1 @@
+-old
++new
+\ No newline at end of file

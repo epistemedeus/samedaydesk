@@ -102,7 +102,7 @@ test('checklist.mjs prints listing items and stays $0', () => {
   assert.equal(j.cashBoundaryUsd, 0);
   assert.equal(j.publicListingSupported, false);
   assert.ok(j.listingChecklist.some((i) => i.id === 'attribution-no-proprietary'));
-  assert.ok(j.listingChecklist.some((i) => i.id === 'cf-access-dev'));
+  assert.ok(j.listingChecklist.some((i) => i.id === 'official-io-hosts'));
 });
 
 test('npm run validate uses the package.json script', () => {

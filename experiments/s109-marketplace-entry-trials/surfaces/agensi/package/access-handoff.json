@@ -10,31 +10,28 @@
     "gate": "Cloudflare Access",
     "teamHost": "mlehman-899.cloudflareaccess.com",
     "idp": "GitHub",
-    "oauthClientIdObserved": "Ov23liDyjGUvNI6tlI7S",
-    "anonymousResult": "HTTP 302 to Cloudflare Access login HTML titled 'Sign in ・ Cloudflare Access'; button 'Sign in with: GitHub ・ GitHub'."
+    "oauthClientIdObserved": "observed-only-not-a-secret",
+    "anonymousResult": "HTTP 302 to Cloudflare Access. CORRECTION: this Access tenant is NOT the Agensi seller surface; do not enter from worker. Use www.agensi.io/auth and /sell instead."
   },
   "alternatePublicMarketplace": {
     "authUrl": "https://www.agensi.io/auth",
     "submitUrl": "https://www.agensi.io/dashboard/submit",
-    "idpNote": "agensi.io /auth is email/password, 6-digit email code, or Continue with Google. There is no GitHub button on that page. Not Cloudflare Access."
+    "idpNote": "OFFICIAL Agensi seller entry: www.agensi.io/auth (email/password, email code, or Google). MCP: https://mcp.agensi.io/mcp. Do not confuse with www.agensi.dev Cloudflare Access."
   },
   "steps": [
-    "Root opens https://www.agensi.dev/sell in a browser they control (this worker will not).",
-    "Complete Cloudflare Access using the GitHub IdP labeled 'GitHub ・ GitHub' against team host mlehman-899.cloudflareaccess.com.",
-    "After Access, capture HTTP status, page title, and enough body text to prove whether the origin is an Agensi seller UI or an unrelated private app. That origin is unknown from this worker.",
-    "Do not paste Cloudflare session cookies, CF_Authorization, or GitHub OAuth tokens into this public overlay.",
-    "If the post-Access origin is not a seller UI, use the public marketplace path: https://www.agensi.io/auth (email/password, 6-digit email code, or Google — not GitHub). Worker will not sign up.",
-    "In the creator dashboard, inspect payout-method state without publishing: Stripe Connect connected true/false, and/or Zoneless USDC-on-Solana enabled true/false.",
-    "Capture verbatim current fee, minimum-price, and payout copy from the authenticated submit flow. Keep private account IDs, bank last-fours, and payout wallets out of this overlay.",
-    "Only after a payout method is enabled may Root draft a listing that cites pin 82d0f019713c7223898806144da08fdbeed5c666 and sells packaging, acceptance formatting, and ops — not proprietary ownership of the free public recipes. This worker will not list."
+    "CORRECTION: Official Agensi seller entry is https://www.agensi.io/auth and https://www.agensi.io/sell \u2014 not www.agensi.dev.",
+    "Root may observe https://www.agensi.dev/sell Cloudflare Access only to confirm it is an unrelated tenant; do not complete Access login from this worker.",
+    "Root signs in at https://www.agensi.io/auth (email/password, email code, or Google). Worker will not authenticate.",
+    "Open https://www.agensi.io/sell / creator submit UI and capture verbatim payout rails, min price, and fee split without publishing.",
+    "Optional read-only MCP at https://mcp.agensi.io/mcp (search_skills). Never call get_skill with confirm=true (spends credits).",
+    "If Root later lists, attribute pin epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666 and sell packaging/acceptance/ops only \u2014 no proprietary claim on free recipes. Worker will not list."
   ],
   "doNotPasteIntoOverlay": [
-    "Cloudflare Access cookies / CF_Authorization",
-    "GitHub OAuth access tokens or refresh tokens",
-    "Agensi account ids or emails",
-    "Stripe Connect account ids or bank last-fours",
-    "Zoneless / Solana payout wallet addresses"
+    "Cloudflare Access JWTs",
+    "Agensi session cookies",
+    "payout account identifiers",
+    "MCP credit-spending confirmations"
   ],
-  "successPredicate": "HTTP 200 creator submit form after a Root session cookie, quoting enabled payout rails (Stripe connected and/or Zoneless enabled) without a publish.",
-  "failurePredicate": "Access deny, Agensi reject, or paid-publish blocked with ToS §6.1 quote. Worker must still not retry auth or list."
+  "successPredicate": "Root-authenticated www.agensi.io seller UI shows payout method state captured privately; still $0 and unpublished.",
+  "failurePredicate": "Worker completes www.agensi.dev Access login, lists a skill, spends MCP credits, or claims ownership of free recipes."
 }
