@@ -1,0 +1,23 @@
+{
+  "schema": "pilot.bot-first-use.job-brief.v1",
+  "citation": "BOT-FIRST-USE-0910",
+  "jobId": "bot-first-use-0910-fixture-complete-issue-discussion",
+  "inventedLocalFixture": true,
+  "leadSuppliedJobFile": null,
+  "type": "complete_issue_discussion",
+  "title": "Compose work brief from complete public GitHub issue discussion",
+  "goal": "Acquire a current public issue body and complete comment listing, with explicit partial or unknown coverage when completeness cannot be established.",
+  "acceptance": [
+    "Acquire issue and paginated comments, preserving missing/partial coverage",
+    "Do not substitute paid HTML extract or historical fixture composition"
+  ],
+  "inputs": {
+    "issueUrl": "https://github.com/modelcontextprotocol/servers/issues/4785"
+  },
+  "constraints": [
+    "no_payment",
+    "offline_preferred",
+    "no_live_bid",
+    "no_cloud_agent"
+  ]
+}

@@ -39,6 +39,7 @@
     "test:recurring-job-recipes": "node --test tools/recurring-job-recipes/test/*.test.mjs",
     "recurring-job-recipes": "node tools/recurring-job-recipes/cli.mjs",
     "recurring-job-recipes:baseline": "node tools/recurring-job-recipes/scripts/baseline-compare.mjs",
+    "test:offer-routing": "node --test tools/offer-routing/route-job.test.mjs tools/offer-routing/review.test.mjs",
     "test:portfolio-discovery": "node --test tools/portfolio-discovery/test.mjs tools/portfolio-discovery/search-readiness.test.mjs tools/portfolio-discovery/handoff.test.mjs",
     "test:evidence-records": "node --test tools/evidence-records/validate.test.mjs",
     "test:evidence-reconcile": "node --test tools/evidence/reconcile.test.mjs",
@@ -71,3 +72,4 @@
     "concurrently": "^10.0.3"
   }
 }
+

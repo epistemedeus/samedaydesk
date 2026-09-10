@@ -1,0 +1,9 @@
+{
+  "schema": "pilot.bot-first-use.job-brief.v1",
+  "citation": "BOT-FIRST-USE-0910",
+  "jobId": "bot-first-use-0910-fixture-moltjobs-rehearsal",
+  "inventedLocalFixture": true,
+  "type": "moltjobs_sdk_rehearsal",
+  "title": "Rehearse MoltJobs bid prep with OpenAI Agents SDK locally",
+  "constraints": ["no_payment", "offline_preferred", "no_live_bid"]
+}

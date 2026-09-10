@@ -31,15 +31,19 @@ function extractFencedBash(md) {
   return blocks;
 }
 
-test("root README cites presence/result-reuse docs and free vs offline modes", () => {
+test("root README cites presence/result-reuse/offer-routing docs and free vs offline modes", () => {
   const md = readFileSync(readmePath, "utf8");
   assert.match(md, /tools\/presence\/FOR-AGENTS-COLD-READ\.md/);
   assert.match(md, /tools\/presence\/REGISTRY-CONSUMER\.md/);
   assert.match(md, /tools\/result-reuse\/README\.md/);
+  assert.match(md, /tools\/offer-routing\/README\.md/);
+  assert.match(md, /capability-limits-matrix\.json/);
   assert.match(md, /preferFixture/);
   assert.match(md, /offline_fixture/);
   assert.match(md, /--opt-in/);
   assert.match(md, /test:public-entry/);
+  assert.match(md, /test:offer-routing/);
+  assert.match(md, /complete_issue_acquisition_unavailable/);
 });
 
 test("cited offline cold-read example returns offline_fixture unpaid", () => {
@@ -108,4 +112,16 @@ test("cited result-reuse record export writes neomorphic observation", () => {
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+
+test("literal complete-discussion route reports an unsupported acquisition job", () => {
+  const block = extractFencedBash(readFileSync(readmePath, "utf8")).find(b => b.includes("complete-issue-discussion.job.json"));
+  assert.ok(block);
+  const r = bash(block);
+  assert.equal(r.status, 2, r.stderr);
+  const out = JSON.parse(r.stdout);
+  assert.equal(out.selected, null);
+  assert.equal(out.ok, false);
+  assert.ok(out.warnings.includes("complete_issue_acquisition_unavailable"));
 });
