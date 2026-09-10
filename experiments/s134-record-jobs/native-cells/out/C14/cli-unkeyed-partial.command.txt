@@ -1,0 +1,1 @@
+node modules/csv-drift/cli.mjs --before fixtures/csv/partial/before.csv --after fixtures/csv/partial/after.csv

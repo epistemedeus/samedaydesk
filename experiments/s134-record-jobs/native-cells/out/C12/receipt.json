@@ -1,0 +1,80 @@
+{
+  "cell": "C12",
+  "title": "Pricing duplicate-field conflicting synthetic",
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "sessionNotes": [
+    "Authored local synthetic extracted pricing tables under native-cells/out/C12/ with duplicate fieldKey rows (exact name, case/whitespace collapse, name/key aliases).",
+    "Ran s134-pricing-table-change CLI only on those local files. No network, no LLM, no notifications, no npm marketplace (S127), no deploy/merge/accounts.",
+    "CLI handling already present: loadPricingTable emits uncertainty code duplicate-field; comparePricingTables classifies multi-row keys as conflicting reason duplicate-rows-prevent-unique-compare and does not unique-compare or emit fieldChanges.",
+    "Module source not modified.",
+    "Merchant pin epistemedeus/x402-url-extractor@1a23b648 used as context only; page-change/record not re-implemented and not invoked.",
+    "S122 merchant c0255ac: not present in this checkout; not touched; recorded unknown.",
+    "Existing fixtures/pricing/conflicting is value+unit both-changed (C08), not this duplicate-field class.",
+    "Synthetic numeric cells are table values only; not catalog/SKU/paid prices."
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node modules/pricing-table-change/cli.mjs --before native-cells/out/C12/before.json --after native-cells/out/C12/after.json",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdoutPath": "native-cells/out/C12/cli-stdout.json"
+    },
+    {
+      "cmd": "node --input-type=module (inline C12 assertions over cli-stdout.json)",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "result": "ASSERT_OK 31/31",
+      "stdoutPath": "native-cells/out/C12/assertions.json"
+    }
+  ],
+  "artifactPaths": [
+    "native-cells/out/C12/before.json",
+    "native-cells/out/C12/after.json",
+    "native-cells/out/C12/cli-stdout.json",
+    "native-cells/out/C12/assertions.json",
+    "native-cells/out/C12/receipt.json"
+  ],
+  "assertions": {
+    "allPassed": true,
+    "passed": 31,
+    "failed": 0,
+    "observed": {
+      "ok": true,
+      "paidValueClaim": false,
+      "counts": {
+        "beforeRows": 9,
+        "afterRows": 9,
+        "added": 1,
+        "removed": 0,
+        "fieldChanges": 0,
+        "unitChanges": 0,
+        "conflicting": 5,
+        "unchanged": 1
+      },
+      "conflictingFieldKeys": ["addon", "legacy", "pro", "starter", "team_plan"],
+      "conflictingReason": "duplicate-rows-prevent-unique-compare",
+      "uniqueHobbyUnchanged": true,
+      "uniqueEnterpriseAdded": true,
+      "duplicateKeysNotSilentlyDeltad": true
+    }
+  },
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff two local extracted pricing JSON files by eye or ad-hoc scripts; notice duplicate names only if inspected.",
+    "paidValueClaim": false
+  },
+  "difference": {
+    "inDeliveredOutput": "CLI groups rows by normalized fieldKey, emits duplicate-field uncertainties, and parks non-unique keys in conflicting instead of inventing a unique numeric/unit delta. Unique keys still add/unchanged as usual. Does not scrape pages, convert currencies, or assert SKU truth.",
+    "cliText": "Emits field/unit deltas over supplied extracted rows. Does not scrape live pages, convert currencies, or assert SKU truth."
+  },
+  "uncertainties": [
+    { "code": "duplicate-field", "fieldKey": "starter", "count": 2, "sides": ["before", "after"] },
+    { "code": "duplicate-field", "fieldKey": "pro", "count": 2, "sides": ["before", "after"] },
+    { "code": "duplicate-field", "fieldKey": "team_plan", "count": 2, "sides": ["before"] },
+    { "code": "duplicate-field", "fieldKey": "legacy", "count": 2, "sides": ["before"] },
+    { "code": "duplicate-field", "fieldKey": "addon", "count": 2, "sides": ["after"] },
+    { "code": "s122-merchant-c0255ac", "status": "unknown", "detail": "Unresolved in this checkout; not touched." },
+    { "code": "synthetic-input", "detail": "Rows authored for C12; not a live extract or paid catalog." }
+  ]
+}

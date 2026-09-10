@@ -1,0 +1,36 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-openapi-impact",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/openapi/negative/broken.yaml",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/openapi/empty/after.json",
+    "used": "/workspace/experiments/s134-record-jobs/fixtures/openapi/empty/used.json"
+  },
+  "report": {
+    "module": "openapi-impact",
+    "ok": false,
+    "errors": [
+      {
+        "ok": false,
+        "error": "parse-error",
+        "detail": "Flow sequence in block collection must be sufficiently indented and end with a ] at line 2, column 9:\n\npaths: [\n        ^\n",
+        "label": "before",
+        "doc": null,
+        "uncertainties": []
+      }
+    ],
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "No impact report: one or both OpenAPI documents failed local parse. Free baseline remains offline parse-only."
+  }
+}

@@ -1,0 +1,45 @@
+# Synthetic after-doc for C06: YAML parse path.
+# Adds required query param `q` on GET /v1/items vs fixtures/openapi/positive/before.json.
+# Other operations left structurally unchanged. Offline / local only.
+openapi: "3.0.3"
+info:
+  title: Demo
+  version: "1.0.0-c06"
+paths:
+  /v1/items:
+    get:
+      operationId: listItems
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ok
+  /v1/items/{id}:
+    get:
+      operationId: getItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ok
+        "404":
+          description: missing
+  /v1/admin/stats:
+    get:
+      operationId: adminStats
+      responses:
+        "200":
+          description: ok

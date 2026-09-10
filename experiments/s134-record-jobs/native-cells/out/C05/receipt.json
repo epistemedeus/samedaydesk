@@ -1,0 +1,63 @@
+{
+  "cellId": "C05",
+  "sessionNotes": [
+    "Replayed fixtures/openapi/unknown used-ops (operationId doesNotExist) through s134-openapi-impact.",
+    "CLI exit 0, report.ok true, usedOperationCount 0, impact rows empty.",
+    "Asserted uncertainties[].code === unknown-operationId; unit test 'openapi unknown operationId surfaces uncertainty' passed.",
+    "Module source unchanged: resolveUsed already emits unknown-operationId and continues without inventing a used key.",
+    "Wrote cold-consumer native-cells/out/C05/consumer-snippet.mjs importing compareOpenApiImpact; stdout is codes only (unknown-operationId).",
+    "Merchant pin epistemedeus/x402-url-extractor@1a23b648 context-only; page-change/record not re-implemented.",
+    "S122 merchant c0255ac not present in this checkout and not used.",
+    "Cash $0. No paid fetch/LLM/notifications. No remote API success claimed. No git-apply/acceptance inferred from JSON labels."
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node modules/openapi-impact/cli.mjs --before fixtures/openapi/unknown/before.json --after fixtures/openapi/unknown/after.json --used fixtures/openapi/unknown/used.json",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdoutPath": "native-cells/out/C05/unknown-impact.json"
+    },
+    {
+      "cmd": "node --test --test-name-pattern 'openapi unknown' test/modules.test.mjs",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "note": "pass 1: openapi unknown operationId surfaces uncertainty"
+    },
+    {
+      "cmd": "node native-cells/out/C05/consumer-snippet.mjs",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdoutPath": "native-cells/out/C05/consumer-codes.txt",
+      "stdout": "unknown-operationId\n"
+    }
+  ],
+  "artifactPaths": [
+    "native-cells/out/C05/receipt.json",
+    "native-cells/out/C05/consumer-snippet.mjs",
+    "native-cells/out/C05/consumer-codes.txt",
+    "native-cells/out/C05/unknown-impact.json",
+    "fixtures/openapi/unknown/before.json",
+    "fixtures/openapi/unknown/after.json",
+    "fixtures/openapi/unknown/used.json"
+  ],
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "difference": "Used-op resolver records unknown-operationId instead of silently dropping the entry or inventing a method+path. Cold-consumer imports compareOpenApiImpact and prints uncertainty codes only. Not a runtime compatibility proof, paid changelog, or remote fetch.",
+  "uncertainties": [
+    {
+      "code": "unknown-operationId",
+      "detail": "operationId not found in before/after: doesNotExist",
+      "evidence": { "operationId": "doesNotExist" },
+      "source": "fixtures/openapi/unknown/used.json via compareOpenApiImpact"
+    },
+    {
+      "code": "s122-merchant-unresolved",
+      "detail": "S122 merchant c0255ac is unresolved in this checkout; not used by C05",
+      "evidence": { "pin": "c0255ac", "touched": false }
+    }
+  ]
+}

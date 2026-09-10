@@ -1,0 +1,81 @@
+{
+  "cellId": "C19",
+  "title": "RSS positive correction/dedup brief",
+  "at": "2026-09-10T11:20:03Z",
+  "cwd": "/workspace/experiments/s134-record-jobs",
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "moduleSourceChanged": false,
+  "sessionNotes": [
+    "Replayed local fixtures/rss/positive before.xml vs after.xml through modules/rss-atom-brief/cli.mjs (fast-xml-parser, no URL fetch).",
+    "CLI exit 0. Stdout saved to native-cells/out/C19/brief.json.",
+    "Assertions from that stdout: urn:1 title Alpha → Alpha (corrected); urn:2 removed; urn:3 added (title Gamma).",
+    "beforeKind=rss afterKind=rss; report.ok=true; report.uncertainties=[].",
+    "No module/fixture edits. Merchant pin used as README/PINS context only; page-change/record not reimplemented.",
+    "S122 merchant c0255ac: git cat-file in this checkout → not a valid object; recorded unknown, not invented.",
+    "First CLI attempt from /workspace failed MODULE_NOT_FOUND; reran from experiment cwd. No paid fetch/LLM/notifications."
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node modules/rss-atom-brief/cli.mjs --before fixtures/rss/positive/before.xml --after fixtures/rss/positive/after.xml",
+      "cwd": "/workspace",
+      "exitCode": 1,
+      "note": "Wrong cwd; Cannot find module '/workspace/modules/rss-atom-brief/cli.mjs'"
+    },
+    {
+      "cmd": "node modules/rss-atom-brief/cli.mjs --before fixtures/rss/positive/before.xml --after fixtures/rss/positive/after.xml",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdoutPath": "native-cells/out/C19/brief.json"
+    },
+    {
+      "cmd": "python3 assert brief.json urn:1 title / urn:2 removed / urn:3 added",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0
+    },
+    {
+      "cmd": "git -C /workspace cat-file -t c0255ac",
+      "exitCode": 128,
+      "stderr": "fatal: Not a valid object name c0255ac"
+    }
+  ],
+  "artifactPaths": [
+    "native-cells/out/C19/brief.json",
+    "native-cells/out/C19/receipt.json",
+    "fixtures/rss/positive/before.xml",
+    "fixtures/rss/positive/after.xml",
+    "modules/rss-atom-brief/cli.mjs"
+  ],
+  "assertions": {
+    "urn1TitleCorrected": true,
+    "urn1TitleBefore": "Alpha",
+    "urn1TitleAfter": "Alpha (corrected)",
+    "urn2Removed": true,
+    "urn3Added": true,
+    "cliOk": true,
+    "paidValueClaimOnStdout": false
+  },
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "differenceInDeliveredOutput": "Structured RSS item add/remove/title-correction and dedup-key counts over two supplied XML files. Does not poll feeds, push alerts, or assert authenticity. Not a monitoring product.",
+  "merchantContextPin": "epistemedeus/x402-url-extractor@1a23b648",
+  "merchantContextUse": "reference-only-not-reimplemented",
+  "s122MerchantC0255ac": "unknown",
+  "uncertainties": [
+    {
+      "code": "s122-merchant-c0255ac-unresolved",
+      "detail": "S122 merchant c0255ac is not a git object in this checkout; treated as unknown context, not invented."
+    },
+    {
+      "code": "no-feed-authenticity",
+      "detail": "Local XML parse only. CLI does not fetch, sign, or prove item content is authentic."
+    },
+    {
+      "code": "positive-fixture-no-dup-keys",
+      "detail": "This pair has uniqueCountDelta 0 and no duplicate keys; dedup last-wins behavior was not exercised here."
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-csv-drift",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/csv/positive/before.csv",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/csv/positive/after.csv",
+    "keyColumns": []
+  },
+  "report": {
+    "module": "csv-drift",
+    "ok": true,
+    "schema": {
+      "beforeHeaders": [
+        "sku",
+        "price",
+        "currency"
+      ],
+      "afterHeaders": [
+        "sku",
+        "price",
+        "currency",
+        "tier"
+      ],
+      "columnsAdded": [
+        "tier"
+      ],
+      "columnsRemoved": [],
+      "columnsReordered": false,
+      "columnsShared": [
+        "sku",
+        "price",
+        "currency"
+      ]
+    },
+    "rowDrift": {
+      "mode": "unkeyed-count-only",
+      "beforeRowCount": 2,
+      "afterRowCount": 3,
+      "rowCountDelta": 1
+    },
+    "missingCellRate": 0,
+    "uncertainties": [
+      {
+        "code": "unkeyed-row-compare",
+        "detail": "No --key provided; row identity uncertain. Reporting row-count delta only, not per-row add/remove.",
+        "evidence": {}
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Reports schema column add/remove/reorder and keyed row deltas when keys are supplied. Without keys, only row-count delta is stated (identity unknown). Not a warehouse migration plan."
+  }
+}

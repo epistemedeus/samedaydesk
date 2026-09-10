@@ -1,0 +1,36 @@
+{
+  "cell": "C03",
+  "paidValueClaim": false,
+  "sourceChanged": false,
+  "cases": {
+    "emptyBefore": {
+      "command": "node modules/openapi-impact/cli.mjs --before fixtures/openapi/empty/before.json --after fixtures/openapi/empty/after.json --used fixtures/openapi/empty/used.json",
+      "exitCode": 2,
+      "ok": false,
+      "error": "empty-document",
+      "label": "before",
+      "stderrEmpty": true
+    },
+    "brokenYaml": {
+      "command": "node modules/openapi-impact/cli.mjs --before fixtures/openapi/negative/broken.yaml --after fixtures/openapi/positive/after.json --used fixtures/openapi/positive/used.json",
+      "exitCode": 2,
+      "ok": false,
+      "error": "parse-error",
+      "label": "before",
+      "stderrEmpty": true
+    },
+    "brokenYamlEmptyAfterUsed": {
+      "command": "node modules/openapi-impact/cli.mjs --before fixtures/openapi/negative/broken.yaml --after fixtures/openapi/empty/after.json --used fixtures/openapi/empty/used.json",
+      "exitCode": 2,
+      "ok": false,
+      "error": "parse-error",
+      "label": "before",
+      "note": "extra replay; same fail-closed as brokenYaml"
+    }
+  },
+  "unitTests": {
+    "command": "node --test --test-name-pattern 'openapi empty|openapi broken' test/modules.test.mjs",
+    "pass": 2,
+    "fail": 0
+  }
+}

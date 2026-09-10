@@ -1,0 +1,78 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-csv-drift",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/csv/conflicting/before.csv",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/csv/conflicting/after.csv",
+    "keyColumns": [
+      "sku"
+    ]
+  },
+  "report": {
+    "module": "csv-drift",
+    "ok": true,
+    "schema": {
+      "beforeHeaders": [
+        "sku",
+        "price"
+      ],
+      "afterHeaders": [
+        "sku",
+        "price"
+      ],
+      "columnsAdded": [],
+      "columnsRemoved": [],
+      "columnsReordered": false,
+      "columnsShared": [
+        "sku",
+        "price"
+      ]
+    },
+    "rowDrift": {
+      "mode": "keyed",
+      "keyColumns": [
+        "sku"
+      ],
+      "addedCount": 0,
+      "removedCount": 0,
+      "changedCount": 1,
+      "added": [],
+      "removed": [],
+      "changed": [
+        {
+          "key": "\"A\"",
+          "fields": [
+            {
+              "column": "price",
+              "before": "2",
+              "after": "3"
+            }
+          ]
+        }
+      ],
+      "truncated": false
+    },
+    "missingCellRate": 0,
+    "uncertainties": [
+      {
+        "code": "duplicate-keys-before",
+        "detail": "Duplicate key rows in before",
+        "evidence": {
+          "count": 1
+        }
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Reports schema column add/remove/reorder and keyed row deltas when keys are supplied. Without keys, only row-count delta is stated (identity unknown). Not a warehouse migration plan."
+  }
+}

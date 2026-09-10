@@ -1,0 +1,317 @@
+
+> @samedaydesk/s134-record-jobs@0.1.0 demo:all
+> npm run -s demo:openapi && npm run -s demo:pricing && npm run -s demo:csv && npm run -s demo:rss
+
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-openapi-impact",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/openapi/positive/before.json",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/openapi/positive/after.json",
+    "used": "/workspace/experiments/s134-record-jobs/fixtures/openapi/positive/used.json"
+  },
+  "report": {
+    "module": "openapi-impact",
+    "ok": true,
+    "scope": "used-operations-only",
+    "usedOperationCount": 2,
+    "impact": {
+      "added": [],
+      "removed": [],
+      "changed": [
+        {
+          "key": "GET /v1/items",
+          "fieldChanges": [
+            {
+              "field": "parameters",
+              "before": [
+                {
+                  "name": "limit",
+                  "in": "query",
+                  "required": false,
+                  "schemaType": "integer"
+                }
+              ],
+              "after": [
+                {
+                  "name": "cursor",
+                  "in": "query",
+                  "required": false,
+                  "schemaType": "string"
+                },
+                {
+                  "name": "limit",
+                  "in": "query",
+                  "required": false,
+                  "schemaType": "integer"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "GET /v1/items/{id}",
+          "fieldChanges": [
+            {
+              "field": "responses",
+              "before": [
+                "200",
+                "404"
+              ],
+              "after": [
+                "200",
+                "404",
+                "410"
+              ]
+            }
+          ]
+        }
+      ],
+      "unchanged": [],
+      "conflicting": [],
+      "unknowns": []
+    },
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Reports added/removed/changed fields for buyer-used operations only. Does not call the API, apply patches, or assert production breakage."
+  }
+}
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-pricing-table-change",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/pricing/positive/before.json",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/pricing/positive/after.json"
+  },
+  "report": {
+    "module": "pricing-table-change",
+    "ok": true,
+    "counts": {
+      "beforeRows": 2,
+      "afterRows": 3,
+      "added": 1,
+      "removed": 0,
+      "fieldChanges": 1,
+      "unitChanges": 0,
+      "conflicting": 0,
+      "unchanged": 1
+    },
+    "added": [
+      {
+        "fieldKey": "enterprise",
+        "after": {
+          "field": "enterprise",
+          "fieldKey": "enterprise",
+          "value": 99,
+          "unit": "USD/mo",
+          "unitKey": "usd/mo",
+          "raw": {
+            "field": "enterprise",
+            "value": 99,
+            "unit": "USD/mo"
+          }
+        }
+      }
+    ],
+    "removed": [],
+    "fieldChanges": [
+      {
+        "fieldKey": "starter",
+        "beforeValue": 9,
+        "afterValue": 12,
+        "unit": "USD/mo"
+      }
+    ],
+    "unitChanges": [],
+    "conflicting": [],
+    "unchanged": [
+      {
+        "fieldKey": "pro"
+      }
+    ],
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Emits field/unit deltas over supplied extracted rows. Does not scrape live pages, convert currencies, or assert SKU truth."
+  }
+}
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-csv-drift",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/csv/positive/before.csv",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/csv/positive/after.csv",
+    "keyColumns": [
+      "sku"
+    ]
+  },
+  "report": {
+    "module": "csv-drift",
+    "ok": true,
+    "schema": {
+      "beforeHeaders": [
+        "sku",
+        "price",
+        "currency"
+      ],
+      "afterHeaders": [
+        "sku",
+        "price",
+        "currency",
+        "tier"
+      ],
+      "columnsAdded": [
+        "tier"
+      ],
+      "columnsRemoved": [],
+      "columnsReordered": false,
+      "columnsShared": [
+        "sku",
+        "price",
+        "currency"
+      ]
+    },
+    "rowDrift": {
+      "mode": "keyed",
+      "keyColumns": [
+        "sku"
+      ],
+      "addedCount": 1,
+      "removedCount": 0,
+      "changedCount": 1,
+      "added": [
+        {
+          "key": "\"C\"",
+          "row": {
+            "sku": "C",
+            "price": "5",
+            "currency": "USD",
+            "tier": "basic"
+          }
+        }
+      ],
+      "removed": [],
+      "changed": [
+        {
+          "key": "\"A\"",
+          "fields": [
+            {
+              "column": "price",
+              "before": "10",
+              "after": "12"
+            }
+          ]
+        }
+      ],
+      "truncated": false
+    },
+    "missingCellRate": 0,
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Reports schema column add/remove/reorder and keyed row deltas when keys are supplied. Without keys, only row-count delta is stated (identity unknown). Not a warehouse migration plan."
+  }
+}
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-rss-atom-brief",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/rss/positive/before.xml",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/rss/positive/after.xml"
+  },
+  "report": {
+    "module": "rss-atom-brief",
+    "ok": true,
+    "beforeKind": "rss",
+    "afterKind": "rss",
+    "added": [
+      {
+        "key": "urn:3",
+        "item": {
+          "id": "urn:3",
+          "guid": "urn:3",
+          "link": "https://example.test/c",
+          "title": "Gamma",
+          "updated": "Wed, 03 Jan 2024 00:00:00 GMT"
+        }
+      }
+    ],
+    "removed": [
+      {
+        "key": "urn:2",
+        "item": {
+          "id": "urn:2",
+          "guid": "urn:2",
+          "link": "https://example.test/b",
+          "title": "Beta",
+          "updated": "Tue, 02 Jan 2024 00:00:00 GMT"
+        }
+      }
+    ],
+    "corrected": [
+      {
+        "key": "urn:1",
+        "changes": [
+          {
+            "field": "title",
+            "before": "Alpha",
+            "after": "Alpha (corrected)"
+          }
+        ]
+      }
+    ],
+    "conflicting": [],
+    "unchangedCount": 0,
+    "dedupBrief": {
+      "beforeRawCount": 2,
+      "afterRawCount": 2,
+      "beforeUniqueKeys": 2,
+      "afterUniqueKeys": 2,
+      "beforeDuplicateKeys": 0,
+      "afterDuplicateKeys": 0,
+      "uniqueCountDelta": 0
+    },
+    "truncated": false,
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Briefs item add/remove/title-link-updated corrections and dedup-key counts over supplied XML. Does not poll feeds, push alerts, or assert content authenticity."
+  }
+}

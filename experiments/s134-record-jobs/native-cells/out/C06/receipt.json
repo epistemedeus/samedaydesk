@@ -1,0 +1,55 @@
+{
+  "cellId": "C06",
+  "task": "OpenAPI YAML used-ops positive path",
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "moduleSourceChanged": false,
+  "network": false,
+  "sessionNotes": [
+    "Synthetic YAML after-doc native-cells/out/C06/after.yaml adds required query param q on GET /v1/items vs fixtures/openapi/positive/before.json; other ops left structurally unchanged.",
+    "CLI s134-openapi-impact ran offline with fixtures/openapi/positive/used.json (GET /v1/items + operationId getItem).",
+    "Confirmed parameters fieldChange on GET /v1/items only; GET /v1/items/{id} unchanged; unused /v1/admin/stats not in used-scope impact.",
+    "YAML path exercised: after-doc does not start with { so loadOpenApi uses yaml@2.9.0 parse, not JSON.parse.",
+    "Merchant pin epistemedeus/x402-url-extractor@1a23b648 context only; not re-implemented. No S127 marketplace work. No deploy/merge/accounts."
+  ],
+  "commandsRun": [
+    "node modules/openapi-impact/cli.mjs --before fixtures/openapi/positive/before.json --after native-cells/out/C06/after.yaml --used fixtures/openapi/positive/used.json"
+  ],
+  "commandExitCode": 0,
+  "confirmation": {
+    "reportOk": true,
+    "usedOperationCount": 2,
+    "parametersFieldChange": true,
+    "changedKeys": ["GET /v1/items"],
+    "unchangedKeys": ["GET /v1/items/{id}"],
+    "addedRequiredQueryParam": { "name": "q", "in": "query", "required": true, "schemaType": "string" },
+    "adminLeakedIntoUsedImpact": false
+  },
+  "artifactPaths": [
+    "native-cells/out/C06/after.yaml",
+    "native-cells/out/C06/impact.json",
+    "native-cells/out/C06/receipt.json",
+    "fixtures/openapi/positive/before.json",
+    "fixtures/openapi/positive/used.json"
+  ],
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "difference": "Used-op scoped report of added required query param q on GET /v1/items from a YAML after-doc. Does not call the API, apply patches, or assert production breakage.",
+  "uncertainties": [
+    {
+      "code": "s122-merchant-c0255ac-unresolved",
+      "detail": "S122 merchant c0255ac is unresolved in this checkout; not present as a git object here. Recorded unknown. Not touched."
+    },
+    {
+      "code": "not-runtime-compat-proof",
+      "detail": "parameters fieldChange is a local document structural delta only; required query param is not verified against a live server."
+    },
+    {
+      "code": "no-remote-ref-resolve",
+      "detail": "CLI does not fetch or resolve remote $ref; these fixtures have none."
+    }
+  ]
+}

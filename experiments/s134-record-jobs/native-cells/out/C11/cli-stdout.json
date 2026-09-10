@@ -1,0 +1,46 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-pricing-table-change",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/pricing/unknown/before.json",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/pricing/unknown/after.json"
+  },
+  "report": {
+    "module": "pricing-table-change",
+    "ok": false,
+    "errors": [
+      {
+        "ok": false,
+        "error": "unsupported-shape",
+        "label": "before",
+        "rows": [],
+        "uncertainties": [
+          {
+            "code": "unsupported-shape",
+            "detail": "Need array or {rows|items:[...]}",
+            "evidence": {}
+          }
+        ]
+      }
+    ],
+    "uncertainties": [
+      {
+        "code": "unsupported-shape",
+        "detail": "Need array or {rows|items:[...]}",
+        "evidence": {}
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "No pricing delta: input tables failed local structural load."
+  }
+}

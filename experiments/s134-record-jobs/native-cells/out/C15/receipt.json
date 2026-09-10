@@ -1,0 +1,55 @@
+{
+  "cell": "C15",
+  "title": "CSV duplicate keys conflicting",
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "sessionNotes": [
+    "Replayed local fixtures/csv/conflicting with s134-csv-drift --key sku. No module source change.",
+    "Asserted report.uncertainties contains code duplicate-keys-before (count 1). node:test 'csv conflicting duplicate keys' passed.",
+    "Identity ambiguity: sku A is duplicated in before (price 1 and 2). Map last-write-wins keeps price 2; keyed change reports 2→3. Which before row is sku A is unresolved; do not invent unique identity.",
+    "Merchant pin epistemedeus/x402-url-extractor@1a23b648 context only; not re-implemented. S122 merchant c0255ac unresolved in this checkout — not touched, recorded unknown.",
+    "No paid fetch/LLM/notifications. No npm marketplace package work. No deploy/default merge/accounts."
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node modules/csv-drift/cli.mjs --before fixtures/csv/conflicting/before.csv --after fixtures/csv/conflicting/after.csv --key sku",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0
+    },
+    {
+      "cmd": "node --test --test-name-pattern 'csv conflicting duplicate keys' test/modules.test.mjs",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "result": "pass 1"
+    }
+  ],
+  "artifactPaths": [
+    "native-cells/out/C15/receipt.json",
+    "native-cells/out/C15/cli-output.json",
+    "native-cells/out/C15/assertion.json",
+    "fixtures/csv/conflicting/before.csv",
+    "fixtures/csv/conflicting/after.csv",
+    "modules/csv-drift/cli.mjs"
+  ],
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "differenceInDeliveredOutput": "Keyed CSV drift emits explicit duplicate-keys-before uncertainty instead of silently unique-ifying sku A. Still last-write-wins for the remaining Map entry (price 2→3); identity of duplicated sku A is not resolved. Not a warehouse migration plan.",
+  "uncertainties": [
+    {
+      "code": "duplicate-keys-before",
+      "detail": "Duplicate key rows in before",
+      "evidence": { "count": 1, "key": "sku", "duplicateValue": "A" }
+    },
+    {
+      "code": "identity-ambiguity",
+      "detail": "Two before rows share sku A (prices 1 and 2). Last-write-wins Map drops price 1 from identity. Keyed 2→3 is not a unique-row match."
+    },
+    {
+      "code": "s122-merchant-c0255ac-unresolved",
+      "detail": "S122 merchant c0255ac is unresolved in this checkout; recorded unknown. Not touched this cell."
+    }
+  ]
+}

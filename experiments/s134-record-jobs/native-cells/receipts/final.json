@@ -1,0 +1,740 @@
+{
+  "at": "2026-09-10T11:23:08.759Z",
+  "elapsedMs": 282647,
+  "launchedCount": 24,
+  "completed": 24,
+  "receiptsPresent": [
+    "C01",
+    "C02",
+    "C03",
+    "C04",
+    "C05",
+    "C06",
+    "C07",
+    "C08",
+    "C09",
+    "C10",
+    "C11",
+    "C12",
+    "C13",
+    "C14",
+    "C15",
+    "C16",
+    "C17",
+    "C18",
+    "C19",
+    "C20",
+    "C21",
+    "C22",
+    "C23",
+    "C24"
+  ],
+  "cells": [
+    {
+      "cell": "C01",
+      "pid": 93717,
+      "startedAt": "2026-09-10T11:18:24.705Z",
+      "endedAt": "2026-09-10T11:20:41.230Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-530c-78b0-aa1e-8f8a584bdb20",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 11183431680,
+        "reserve25": 4197986304,
+        "headroom": 6985445376
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C02",
+      "pid": 93820,
+      "startedAt": "2026-09-10T11:18:24.857Z",
+      "endedAt": "2026-09-10T11:20:23.621Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-539a-70d3-beb4-9b712131ad42",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 11146682368,
+        "reserve25": 4197986304,
+        "headroom": 6948696064
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C03",
+      "pid": 94269,
+      "startedAt": "2026-09-10T11:18:25.009Z",
+      "endedAt": "2026-09-10T11:21:32.857Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5448-7bc0-8a92-545d58dc5c12",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 11091869696,
+        "reserve25": 4197986304,
+        "headroom": 6893883392
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C04",
+      "pid": 94713,
+      "startedAt": "2026-09-10T11:18:25.164Z",
+      "endedAt": "2026-09-10T11:20:24.674Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5530-74c1-b156-fd2eec83b2eb",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 11027353600,
+        "reserve25": 4197986304,
+        "headroom": 6829367296
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C05",
+      "pid": 95293,
+      "startedAt": "2026-09-10T11:18:25.317Z",
+      "endedAt": "2026-09-10T11:20:49.328Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-55b9-75a0-ba33-f59c72c812b1",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10976874496,
+        "reserve25": 4197986304,
+        "headroom": 6778888192
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C06",
+      "pid": 95788,
+      "startedAt": "2026-09-10T11:18:25.477Z",
+      "endedAt": "2026-09-10T11:20:26.514Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5651-7651-ad1f-f2321ec70421",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10903928832,
+        "reserve25": 4197986304,
+        "headroom": 6705942528
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C07",
+      "pid": 96381,
+      "startedAt": "2026-09-10T11:18:25.634Z",
+      "endedAt": "2026-09-10T11:20:53.078Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5726-7a01-94fe-5fbf646489cf",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10853761024,
+        "reserve25": 4197986304,
+        "headroom": 6655774720
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C08",
+      "pid": 96985,
+      "startedAt": "2026-09-10T11:18:25.796Z",
+      "endedAt": "2026-09-10T11:20:35.402Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-578d-7433-9060-bb665a80e367",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10808823808,
+        "reserve25": 4197986304,
+        "headroom": 6610837504
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C09",
+      "pid": 97522,
+      "startedAt": "2026-09-10T11:18:25.951Z",
+      "endedAt": "2026-09-10T11:21:19.439Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-587a-7851-a833-deab3a3ca593",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10727800832,
+        "reserve25": 4197986304,
+        "headroom": 6529814528
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C10",
+      "pid": 97986,
+      "startedAt": "2026-09-10T11:18:26.115Z",
+      "endedAt": "2026-09-10T11:21:22.822Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5960-7560-8907-85d5088e3e28",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10677624832,
+        "reserve25": 4197986304,
+        "headroom": 6479638528
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C11",
+      "pid": 98470,
+      "startedAt": "2026-09-10T11:18:26.283Z",
+      "endedAt": "2026-09-10T11:20:31.848Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5a3f-70e3-9f56-cd81f99f7481",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10616922112,
+        "reserve25": 4197986304,
+        "headroom": 6418935808
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C12",
+      "pid": 98919,
+      "startedAt": "2026-09-10T11:18:26.438Z",
+      "endedAt": "2026-09-10T11:21:24.361Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5a69-7be3-8152-e5b7ad5932da",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10555912192,
+        "reserve25": 4197986304,
+        "headroom": 6357925888
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C13",
+      "pid": 99353,
+      "startedAt": "2026-09-10T11:18:26.592Z",
+      "endedAt": "2026-09-10T11:21:28.674Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5bbb-7af3-9aa9-42e1a8ebaed1",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10520010752,
+        "reserve25": 4197986304,
+        "headroom": 6322024448
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C14",
+      "pid": 99801,
+      "startedAt": "2026-09-10T11:18:26.748Z",
+      "endedAt": "2026-09-10T11:20:48.997Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5c69-70d0-a30c-da262aa5ecbc",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10471976960,
+        "reserve25": 4197986304,
+        "headroom": 6273990656
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C15",
+      "pid": 100361,
+      "startedAt": "2026-09-10T11:18:26.903Z",
+      "endedAt": "2026-09-10T11:19:49.195Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5cab-7ab3-86bf-2515a269af8c",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10434179072,
+        "reserve25": 4197986304,
+        "headroom": 6236192768
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C16",
+      "pid": 101051,
+      "startedAt": "2026-09-10T11:18:27.069Z",
+      "endedAt": "2026-09-10T11:20:30.407Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5df2-73a0-ace2-d97a81a51360",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10390876160,
+        "reserve25": 4197986304,
+        "headroom": 6192889856
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C17",
+      "pid": 101443,
+      "startedAt": "2026-09-10T11:18:27.224Z",
+      "endedAt": "2026-09-10T11:20:43.060Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5e0e-7c02-a096-6bfbef405f8c",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10340442112,
+        "reserve25": 4197986304,
+        "headroom": 6142455808
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C18",
+      "pid": 101917,
+      "startedAt": "2026-09-10T11:18:27.382Z",
+      "endedAt": "2026-09-10T11:20:42.326Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5fec-7d60-9d25-e1b2f22f208f",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10276732928,
+        "reserve25": 4197986304,
+        "headroom": 6078746624
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C19",
+      "pid": 102645,
+      "startedAt": "2026-09-10T11:18:27.553Z",
+      "endedAt": "2026-09-10T11:20:37.135Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5f95-7790-9ab1-e68624570ed4",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10217709568,
+        "reserve25": 4197986304,
+        "headroom": 6019723264
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C20",
+      "pid": 103193,
+      "startedAt": "2026-09-10T11:18:27.709Z",
+      "endedAt": "2026-09-10T11:20:35.035Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5f65-7151-9289-07340d157f80",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10178490368,
+        "reserve25": 4197986304,
+        "headroom": 5980504064
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C21",
+      "pid": 103978,
+      "startedAt": "2026-09-10T11:18:27.866Z",
+      "endedAt": "2026-09-10T11:20:49.325Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-6094-7f83-b0bd-57aed6244127",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10121113600,
+        "reserve25": 4197986304,
+        "headroom": 5923127296
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C22",
+      "pid": 104695,
+      "startedAt": "2026-09-10T11:18:28.039Z",
+      "endedAt": "2026-09-10T11:21:00.619Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-6150-7d61-815b-44d9ba5ce56f",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10096926720,
+        "reserve25": 4197986304,
+        "headroom": 5898940416
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C23",
+      "pid": 105399,
+      "startedAt": "2026-09-10T11:18:28.196Z",
+      "endedAt": "2026-09-10T11:22:52.274Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-6270-70f2-935d-9f4e6786ab33",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10073571328,
+        "reserve25": 4197986304,
+        "headroom": 5875585024
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    },
+    {
+      "cell": "C24",
+      "pid": 106148,
+      "startedAt": "2026-09-10T11:18:28.373Z",
+      "endedAt": "2026-09-10T11:23:04.009Z",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-6438-7a40-b00d-7f27454f56b7",
+      "admissionMemory": {
+        "MemTotal": 16791945216,
+        "MemAvailable": 10033287168,
+        "reserve25": 4197986304,
+        "headroom": 5835300864
+      },
+      "admissionPsi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-09-10T11:18:24.705Z",
+      "type": "launch",
+      "cell": "C01",
+      "pid": 93717
+    },
+    {
+      "at": "2026-09-10T11:18:24.857Z",
+      "type": "launch",
+      "cell": "C02",
+      "pid": 93820
+    },
+    {
+      "at": "2026-09-10T11:18:25.009Z",
+      "type": "launch",
+      "cell": "C03",
+      "pid": 94269
+    },
+    {
+      "at": "2026-09-10T11:18:25.164Z",
+      "type": "launch",
+      "cell": "C04",
+      "pid": 94713
+    },
+    {
+      "at": "2026-09-10T11:18:25.317Z",
+      "type": "launch",
+      "cell": "C05",
+      "pid": 95293
+    },
+    {
+      "at": "2026-09-10T11:18:25.477Z",
+      "type": "launch",
+      "cell": "C06",
+      "pid": 95788
+    },
+    {
+      "at": "2026-09-10T11:18:25.634Z",
+      "type": "launch",
+      "cell": "C07",
+      "pid": 96381
+    },
+    {
+      "at": "2026-09-10T11:18:25.796Z",
+      "type": "launch",
+      "cell": "C08",
+      "pid": 96985
+    },
+    {
+      "at": "2026-09-10T11:18:25.951Z",
+      "type": "launch",
+      "cell": "C09",
+      "pid": 97522
+    },
+    {
+      "at": "2026-09-10T11:18:26.115Z",
+      "type": "launch",
+      "cell": "C10",
+      "pid": 97986
+    },
+    {
+      "at": "2026-09-10T11:18:26.283Z",
+      "type": "launch",
+      "cell": "C11",
+      "pid": 98470
+    },
+    {
+      "at": "2026-09-10T11:18:26.438Z",
+      "type": "launch",
+      "cell": "C12",
+      "pid": 98919
+    },
+    {
+      "at": "2026-09-10T11:18:26.592Z",
+      "type": "launch",
+      "cell": "C13",
+      "pid": 99353
+    },
+    {
+      "at": "2026-09-10T11:18:26.748Z",
+      "type": "launch",
+      "cell": "C14",
+      "pid": 99801
+    },
+    {
+      "at": "2026-09-10T11:18:26.903Z",
+      "type": "launch",
+      "cell": "C15",
+      "pid": 100361
+    },
+    {
+      "at": "2026-09-10T11:18:27.069Z",
+      "type": "launch",
+      "cell": "C16",
+      "pid": 101051
+    },
+    {
+      "at": "2026-09-10T11:18:27.224Z",
+      "type": "launch",
+      "cell": "C17",
+      "pid": 101443
+    },
+    {
+      "at": "2026-09-10T11:18:27.382Z",
+      "type": "launch",
+      "cell": "C18",
+      "pid": 101917
+    },
+    {
+      "at": "2026-09-10T11:18:27.553Z",
+      "type": "launch",
+      "cell": "C19",
+      "pid": 102645
+    },
+    {
+      "at": "2026-09-10T11:18:27.709Z",
+      "type": "launch",
+      "cell": "C20",
+      "pid": 103193
+    },
+    {
+      "at": "2026-09-10T11:18:27.866Z",
+      "type": "launch",
+      "cell": "C21",
+      "pid": 103978
+    },
+    {
+      "at": "2026-09-10T11:18:28.039Z",
+      "type": "launch",
+      "cell": "C22",
+      "pid": 104695
+    },
+    {
+      "at": "2026-09-10T11:18:28.196Z",
+      "type": "launch",
+      "cell": "C23",
+      "pid": 105399
+    },
+    {
+      "at": "2026-09-10T11:18:28.373Z",
+      "type": "launch",
+      "cell": "C24",
+      "pid": 106148
+    },
+    {
+      "at": "2026-09-10T11:19:49.195Z",
+      "type": "exit",
+      "cell": "C15",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5cab-7ab3-86bf-2515a269af8c",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:20:23.621Z",
+      "type": "exit",
+      "cell": "C02",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-539a-70d3-beb4-9b712131ad42",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:20:24.674Z",
+      "type": "exit",
+      "cell": "C04",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5530-74c1-b156-fd2eec83b2eb",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:20:26.514Z",
+      "type": "exit",
+      "cell": "C06",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5651-7651-ad1f-f2321ec70421",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:20:30.407Z",
+      "type": "exit",
+      "cell": "C16",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5df2-73a0-ace2-d97a81a51360",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:20:31.848Z",
+      "type": "exit",
+      "cell": "C11",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5a3f-70e3-9f56-cd81f99f7481",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:20:35.035Z",
+      "type": "exit",
+      "cell": "C20",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5f65-7151-9289-07340d157f80",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:20:35.402Z",
+      "type": "exit",
+      "cell": "C08",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-578d-7433-9060-bb665a80e367",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:20:37.135Z",
+      "type": "exit",
+      "cell": "C19",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5f95-7790-9ab1-e68624570ed4",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:20:41.230Z",
+      "type": "exit",
+      "cell": "C01",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-530c-78b0-aa1e-8f8a584bdb20",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:20:42.326Z",
+      "type": "exit",
+      "cell": "C18",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5fec-7d60-9d25-e1b2f22f208f",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:20:43.060Z",
+      "type": "exit",
+      "cell": "C17",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5e0e-7c02-a096-6bfbef405f8c",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:20:48.997Z",
+      "type": "exit",
+      "cell": "C14",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5c69-70d0-a30c-da262aa5ecbc",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:20:49.325Z",
+      "type": "exit",
+      "cell": "C21",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-6094-7f83-b0bd-57aed6244127",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:20:49.328Z",
+      "type": "exit",
+      "cell": "C05",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-55b9-75a0-ba33-f59c72c812b1",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:20:53.078Z",
+      "type": "exit",
+      "cell": "C07",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5726-7a01-94fe-5fbf646489cf",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:21:00.619Z",
+      "type": "exit",
+      "cell": "C22",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-6150-7d61-815b-44d9ba5ce56f",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:21:19.439Z",
+      "type": "exit",
+      "cell": "C09",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-587a-7851-a833-deab3a3ca593",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:21:22.822Z",
+      "type": "exit",
+      "cell": "C10",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5960-7560-8907-85d5088e3e28",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:21:24.361Z",
+      "type": "exit",
+      "cell": "C12",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5a69-7be3-8152-e5b7ad5932da",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:21:28.674Z",
+      "type": "exit",
+      "cell": "C13",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5bbb-7af3-9aa9-42e1a8ebaed1",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:21:32.857Z",
+      "type": "exit",
+      "cell": "C03",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-5448-7bc0-8a92-545d58dc5c12",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:22:52.274Z",
+      "type": "exit",
+      "cell": "C23",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-6270-70f2-935d-9f4e6786ab33",
+      "receiptExists": true
+    },
+    {
+      "at": "2026-09-10T11:23:04.009Z",
+      "type": "exit",
+      "cell": "C24",
+      "exitCode": 0,
+      "sessionId": "01a08b0a-6438-7a40-b00d-7f27454f56b7",
+      "receiptExists": true
+    }
+  ],
+  "memory": {
+    "MemTotal": 16791945216,
+    "MemAvailable": 11159175168,
+    "reserve25": 4197986304,
+    "headroom": 6961188864
+  },
+  "psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+  "wavesAttempted": 4
+}

@@ -1,0 +1,88 @@
+{
+  "cell": "C17",
+  "title": "CSV reorder-only fixture",
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "sessionNotes": [
+    "Replayed local fixtures/csv/unknown (before headers a,b / after headers b,a; one data row each). No module source change.",
+    "columnsReordered=true on every run. columnsAdded and columnsRemoved empty. Shared columns a,b.",
+    "Unkeyed run: key-columns-missing not emitted. Uncertainty unkeyed-row-compare. rowDrift.mode=unkeyed-count-only, rowCountDelta=0. Row equality is not claimed without keys.",
+    "--key a: column a present in both schemas, so key-columns-missing is false. Keyed added/removed/changed counts are 0. That is keyed field compare, not an unkeyed row-equality claim.",
+    "--key sku (absent on this fixture): key-columns-missing true, missingKeys=['sku'], rowDrift.mode=keys-unavailable. Reorder flag still true.",
+    "Unit test 'csv reorder-only unknown semantics still reports reorder' passed. Test comment claims key 'a' missing on after schema; observed after headers are b,a so a is present. Pass is via columnsReordered.",
+    "Merchant pin epistemedeus/x402-url-extractor@1a23b648 context only; not re-implemented. S122 merchant c0255ac unresolved in this checkout — not touched, recorded unknown.",
+    "No paid fetch/LLM/notifications. No npm marketplace package work. No deploy/default merge/accounts. No git-apply/acceptance inferred from JSON labels."
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node modules/csv-drift/cli.mjs --before fixtures/csv/unknown/before.csv --after fixtures/csv/unknown/after.csv",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdout": "native-cells/out/C17/cli-unkeyed.json"
+    },
+    {
+      "cmd": "node modules/csv-drift/cli.mjs --before fixtures/csv/unknown/before.csv --after fixtures/csv/unknown/after.csv --key a",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdout": "native-cells/out/C17/cli-keyed-a.json"
+    },
+    {
+      "cmd": "node modules/csv-drift/cli.mjs --before fixtures/csv/unknown/before.csv --after fixtures/csv/unknown/after.csv --key sku",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdout": "native-cells/out/C17/cli-keyed-sku-absent.json"
+    },
+    {
+      "cmd": "node --test --test-name-pattern 'csv reorder-only unknown semantics still reports reorder' test/modules.test.mjs",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "result": "pass 1"
+    }
+  ],
+  "artifactPaths": [
+    "native-cells/out/C17/receipt.json",
+    "native-cells/out/C17/observation.json",
+    "native-cells/out/C17/cli-unkeyed.json",
+    "native-cells/out/C17/cli-keyed-a.json",
+    "native-cells/out/C17/cli-keyed-sku-absent.json",
+    "fixtures/csv/unknown/before.csv",
+    "fixtures/csv/unknown/after.csv",
+    "modules/csv-drift/cli.mjs"
+  ],
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "differenceInDeliveredOutput": "CSV drift reports schema.columnsReordered=true for a header permutation with the same column set. Without --key it does not claim row equality (count-only + unkeyed-row-compare). key-columns-missing fires only when a requested key is absent from before/after schema, not because of the reorder itself. Not a warehouse migration plan.",
+  "recordedFlags": {
+    "columnsReordered": true,
+    "keyColumnsMissingOnNativeColumns": false,
+    "keyColumnsMissingWhenRequestedKeyAbsent": true,
+    "rowEqualityClaimedWithoutKeys": false
+  },
+  "uncertainties": [
+    {
+      "code": "unkeyed-row-compare",
+      "detail": "No --key provided; row identity uncertain. Reporting row-count delta only, not per-row add/remove. rowCountDelta=0 is not row equality.",
+      "evidence": {
+        "rowDriftMode": "unkeyed-count-only",
+        "beforeRowCount": 1,
+        "afterRowCount": 1,
+        "rowCountDelta": 0
+      }
+    },
+    {
+      "code": "key-columns-missing",
+      "detail": "Observed only on probe --key sku, which is absent from this fixture's a/b schema. Not observed for --key a.",
+      "evidence": {
+        "missingKeys": ["sku"],
+        "nativeKeyAPresentInBoth": true
+      }
+    },
+    {
+      "code": "s122-merchant-c0255ac-unresolved",
+      "detail": "S122 merchant c0255ac is unresolved in this checkout; recorded unknown. Not touched this cell."
+    }
+  ]
+}

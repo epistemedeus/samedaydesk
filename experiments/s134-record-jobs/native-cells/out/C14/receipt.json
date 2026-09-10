@@ -1,0 +1,103 @@
+{
+  "cell": "C14",
+  "title": "CSV unkeyed uncertainty",
+  "at": "2026-09-10T11:20:15Z",
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "moduleSourceChanged": false,
+  "sessionNotes": [
+    "Ran local fixtures/csv/partial before/after through s134-csv-drift with no --key.",
+    "CLI already reports uncertainty code unkeyed-row-compare and rowDrift.mode unkeyed-count-only; no source edit.",
+    "Did not invent row identities: rowDrift has only mode plus before/after counts and rowCountDelta (no added/removed/changed rows or keys).",
+    "No paid fetch/LLM/notifications; no npm marketplace (S127); no deploy/default-merge/accounts.",
+    "Merchant pin epistemedeus/x402-url-extractor@1a23b648 recorded as context only; not invoked.",
+    "S122 merchant c0255ac: not present as a git object here; recorded unknown, not invented."
+  ],
+  "commandsRun": [
+    {
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "argv": [
+        "node",
+        "modules/csv-drift/cli.mjs",
+        "--before",
+        "fixtures/csv/partial/before.csv",
+        "--after",
+        "fixtures/csv/partial/after.csv"
+      ],
+      "exitCode": 0,
+      "stdoutArtifact": "native-cells/out/C14/cli-unkeyed-partial.stdout.json",
+      "stderrArtifact": "native-cells/out/C14/cli-unkeyed-partial.stderr.txt"
+    },
+    {
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "argv": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "csv partial ragged",
+        "test/modules.test.mjs"
+      ],
+      "exitCode": 0,
+      "stdoutArtifact": "native-cells/out/C14/unit-csv-partial-unkeyed.stdout.txt",
+      "stderrArtifact": "native-cells/out/C14/unit-csv-partial-unkeyed.stderr.txt"
+    }
+  ],
+  "artifactPaths": [
+    "native-cells/out/C14/receipt.json",
+    "native-cells/out/C14/assertions.json",
+    "native-cells/out/C14/cli-unkeyed-partial.command.txt",
+    "native-cells/out/C14/cli-unkeyed-partial.stdout.json",
+    "native-cells/out/C14/cli-unkeyed-partial.stderr.txt",
+    "native-cells/out/C14/cli-unkeyed-partial.exit.txt",
+    "native-cells/out/C14/unit-csv-partial-unkeyed.stdout.txt",
+    "native-cells/out/C14/unit-csv-partial-unkeyed.stderr.txt",
+    "native-cells/out/C14/unit-csv-partial-unkeyed.exit.txt",
+    "fixtures/csv/partial/before.csv",
+    "fixtures/csv/partial/after.csv",
+    "modules/csv-drift/cli.mjs"
+  ],
+  "inputs": {
+    "before": "fixtures/csv/partial/before.csv",
+    "after": "fixtures/csv/partial/after.csv",
+    "keyColumns": []
+  },
+  "assertions": {
+    "cliExit": 0,
+    "unitTestExit": 0,
+    "rowDriftMode": "unkeyed-count-only",
+    "unkeyedRowCompareUncertainty": true,
+    "noInventedRowIdentities": true,
+    "rowDriftKeys": ["mode", "beforeRowCount", "afterRowCount", "rowCountDelta"],
+    "beforeRowCount": 2,
+    "afterRowCount": 3,
+    "rowCountDelta": 1
+  },
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "difference": "CLI states row-count delta only when --key is absent (identity unknown). Does not emit per-row add/remove/changed identities. Not a warehouse migration plan. Not paid monitoring.",
+  "uncertainties": [
+    {
+      "code": "unkeyed-row-compare",
+      "detail": "No --key provided; row identity uncertain. Reporting row-count delta only, not per-row add/remove.",
+      "evidence": {}
+    },
+    {
+      "code": "partial-cells",
+      "detail": ">22% empty cells among shared columns in after",
+      "evidence": { "missingCellRate": 0.2222222222222222 }
+    },
+    {
+      "code": "s122-merchant-c0255ac",
+      "detail": "Unresolved in this checkout (git object missing). Recorded unknown; not invented.",
+      "evidence": { "touched": false }
+    }
+  ],
+  "merchantContextPin": {
+    "ref": "epistemedeus/x402-url-extractor@1a23b648",
+    "used": false,
+    "note": "context only; page-change/record not re-implemented"
+  }
+}

@@ -1,4 +1,7 @@
-node_modules/
-native-cells/logs/
-*.stderr
 
+native-cells/logs/
+native-cells/logs/*.jsonl
+native-cells/logs/launcher.*
+native-cells/logs/*.stderr
+node_modules/
+*.stderr

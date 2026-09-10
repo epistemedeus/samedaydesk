@@ -1,0 +1,250 @@
+{
+  "cell": "C12",
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "allPassed": true,
+  "passed": 31,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "paidValueClaim-top",
+      "ok": true,
+      "detail": false
+    },
+    {
+      "id": "paidValueClaim-emit-baseline",
+      "ok": true,
+      "detail": false
+    },
+    {
+      "id": "paidValueClaim-report-baseline",
+      "ok": true,
+      "detail": false
+    },
+    {
+      "id": "cashBoundaryUsd-0",
+      "ok": true,
+      "detail": 0
+    },
+    {
+      "id": "report-ok",
+      "ok": true,
+      "detail": true
+    },
+    {
+      "id": "module-name",
+      "ok": true,
+      "detail": "pricing-table-change"
+    },
+    {
+      "id": "counts-beforeRows",
+      "ok": true,
+      "detail": 9
+    },
+    {
+      "id": "counts-afterRows",
+      "ok": true,
+      "detail": 9
+    },
+    {
+      "id": "counts-conflicting-5",
+      "ok": true,
+      "detail": 5
+    },
+    {
+      "id": "counts-added-1",
+      "ok": true,
+      "detail": 1
+    },
+    {
+      "id": "counts-removed-0",
+      "ok": true,
+      "detail": 0
+    },
+    {
+      "id": "counts-fieldChanges-0",
+      "ok": true,
+      "detail": 0
+    },
+    {
+      "id": "counts-unitChanges-0",
+      "ok": true,
+      "detail": 0
+    },
+    {
+      "id": "counts-unchanged-1",
+      "ok": true,
+      "detail": 1
+    },
+    {
+      "id": "conflicting-keys",
+      "ok": true,
+      "detail": [
+        "addon",
+        "legacy",
+        "pro",
+        "starter",
+        "team_plan"
+      ]
+    },
+    {
+      "id": "conflicting-reason-all-duplicate-rows",
+      "ok": true,
+      "detail": [
+        {
+          "fieldKey": "addon",
+          "reason": "duplicate-rows-prevent-unique-compare",
+          "beforeCount": 0,
+          "afterCount": 2
+        },
+        {
+          "fieldKey": "legacy",
+          "reason": "duplicate-rows-prevent-unique-compare",
+          "beforeCount": 2,
+          "afterCount": 0
+        },
+        {
+          "fieldKey": "pro",
+          "reason": "duplicate-rows-prevent-unique-compare",
+          "beforeCount": 2,
+          "afterCount": 2
+        },
+        {
+          "fieldKey": "starter",
+          "reason": "duplicate-rows-prevent-unique-compare",
+          "beforeCount": 2,
+          "afterCount": 2
+        },
+        {
+          "fieldKey": "team_plan",
+          "reason": "duplicate-rows-prevent-unique-compare",
+          "beforeCount": 2,
+          "afterCount": 1
+        }
+      ]
+    },
+    {
+      "id": "starter-2-2",
+      "ok": true,
+      "detail": {
+        "fieldKey": "starter",
+        "reason": "duplicate-rows-prevent-unique-compare",
+        "beforeCount": 2,
+        "afterCount": 2
+      }
+    },
+    {
+      "id": "pro-2-2",
+      "ok": true,
+      "detail": {
+        "fieldKey": "pro",
+        "reason": "duplicate-rows-prevent-unique-compare",
+        "beforeCount": 2,
+        "afterCount": 2
+      }
+    },
+    {
+      "id": "team_plan-2-1-not-unique-compare",
+      "ok": true,
+      "detail": {
+        "fieldKey": "team_plan",
+        "reason": "duplicate-rows-prevent-unique-compare",
+        "beforeCount": 2,
+        "afterCount": 1
+      }
+    },
+    {
+      "id": "legacy-2-0-not-removed",
+      "ok": true,
+      "detail": {
+        "fieldKey": "legacy",
+        "reason": "duplicate-rows-prevent-unique-compare",
+        "beforeCount": 2,
+        "afterCount": 0
+      }
+    },
+    {
+      "id": "addon-0-2-not-added",
+      "ok": true,
+      "detail": {
+        "fieldKey": "addon",
+        "reason": "duplicate-rows-prevent-unique-compare",
+        "beforeCount": 0,
+        "afterCount": 2
+      }
+    },
+    {
+      "id": "hobby-unchanged",
+      "ok": true,
+      "detail": [
+        {
+          "fieldKey": "hobby"
+        }
+      ]
+    },
+    {
+      "id": "enterprise-added-unique",
+      "ok": true,
+      "detail": [
+        "enterprise"
+      ]
+    },
+    {
+      "id": "removed-empty",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "id": "fieldChanges-empty",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "id": "unitChanges-empty",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "id": "uncertainty-code-duplicate-field",
+      "ok": true,
+      "detail": {
+        "count": 7,
+        "keys": [
+          "addon",
+          "legacy",
+          "pro",
+          "pro",
+          "starter",
+          "starter",
+          "team_plan"
+        ]
+      }
+    },
+    {
+      "id": "uncertainty-keys-cover-dup-fields",
+      "ok": true,
+      "detail": [
+        "addon",
+        "legacy",
+        "pro",
+        "starter",
+        "team_plan"
+      ]
+    },
+    {
+      "id": "no-silent-numeric-delta-on-dups",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "id": "no-currency-conversion-claimed",
+      "ok": true,
+      "detail": "no conversion fields"
+    },
+    {
+      "id": "difference-not-sku-truth",
+      "ok": true,
+      "detail": "Emits field/unit deltas over supplied extracted rows. Does not scrape live pages, convert currencies, or assert SKU truth."
+    }
+  ]
+}

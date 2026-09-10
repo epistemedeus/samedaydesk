@@ -1,0 +1,57 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-openapi-impact",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/openapi/partial/before.json",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/openapi/partial/after.json",
+    "used": "/workspace/experiments/s134-record-jobs/fixtures/openapi/partial/used.json"
+  },
+  "report": {
+    "module": "openapi-impact",
+    "ok": true,
+    "scope": "used-operations-only",
+    "usedOperationCount": 2,
+    "impact": {
+      "added": [],
+      "removed": [
+        {
+          "key": "GET /v1/items/{id}",
+          "before": {
+            "key": "GET /v1/items/{id}",
+            "method": "GET",
+            "path": "/v1/items/{id}",
+            "operationId": "getItem",
+            "summary": null,
+            "parameters": [],
+            "requestBody": false,
+            "responses": [
+              "200"
+            ],
+            "deprecated": false
+          }
+        }
+      ],
+      "changed": [],
+      "unchanged": [
+        {
+          "key": "GET /v1/items"
+        }
+      ],
+      "conflicting": [],
+      "unknowns": []
+    },
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Reports added/removed/changed fields for buyer-used operations only. Does not call the API, apply patches, or assert production breakage."
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-csv-drift",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/csv/empty/before.csv",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/csv/empty/after.csv",
+    "keyColumns": []
+  },
+  "report": {
+    "module": "csv-drift",
+    "ok": true,
+    "schema": {
+      "beforeHeaders": [],
+      "afterHeaders": [],
+      "columnsAdded": [],
+      "columnsRemoved": [],
+      "columnsReordered": false,
+      "columnsShared": []
+    },
+    "rowDrift": {
+      "mode": "unkeyed-count-only",
+      "beforeRowCount": 0,
+      "afterRowCount": 0,
+      "rowCountDelta": 0
+    },
+    "missingCellRate": null,
+    "uncertainties": [
+      {
+        "code": "empty-csv",
+        "detail": "before is empty",
+        "evidence": {}
+      },
+      {
+        "code": "empty-csv",
+        "detail": "after is empty",
+        "evidence": {}
+      },
+      {
+        "code": "unkeyed-row-compare",
+        "detail": "No --key provided; row identity uncertain. Reporting row-count delta only, not per-row add/remove.",
+        "evidence": {}
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "No schema/row drift signal (or empty inputs). Uncertainty list may still describe empty/partial/duplicate cases."
+  }
+}

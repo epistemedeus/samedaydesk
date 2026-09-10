@@ -1,0 +1,55 @@
+{
+  "at": "2026-09-10T11:18:26.592Z",
+  "wave": "wave2-plus6",
+  "cells": [
+    "C13",
+    "C14",
+    "C15",
+    "C16",
+    "C17",
+    "C18"
+  ],
+  "decision": {
+    "ok": true,
+    "reasons": [],
+    "memory": {
+      "MemTotal": 16791945216,
+      "MemAvailable": 10525429760,
+      "reserve25": 4197986304,
+      "headroom": 6327443456
+    },
+    "psiAvg10": 0,
+    "maxByHeadroom": 30,
+    "requested": 6
+  },
+  "aliveBefore": 12,
+  "action": "launch",
+  "pids": [
+    {
+      "cell": "C13",
+      "pid": 99353
+    },
+    {
+      "cell": "C14",
+      "pid": 99801
+    },
+    {
+      "cell": "C15",
+      "pid": 100361
+    },
+    {
+      "cell": "C16",
+      "pid": 101051
+    },
+    {
+      "cell": "C17",
+      "pid": 101443
+    },
+    {
+      "cell": "C18",
+      "pid": 101917
+    }
+  ],
+  "aliveAfter": 18,
+  "overlapObserved": 18
+}

@@ -1,0 +1,71 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-openapi-impact",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/openapi/positive/before.json",
+    "after": "/workspace/experiments/s134-record-jobs/native-cells/out/C06/after.yaml",
+    "used": "/workspace/experiments/s134-record-jobs/fixtures/openapi/positive/used.json"
+  },
+  "report": {
+    "module": "openapi-impact",
+    "ok": true,
+    "scope": "used-operations-only",
+    "usedOperationCount": 2,
+    "impact": {
+      "added": [],
+      "removed": [],
+      "changed": [
+        {
+          "key": "GET /v1/items",
+          "fieldChanges": [
+            {
+              "field": "parameters",
+              "before": [
+                {
+                  "name": "limit",
+                  "in": "query",
+                  "required": false,
+                  "schemaType": "integer"
+                }
+              ],
+              "after": [
+                {
+                  "name": "limit",
+                  "in": "query",
+                  "required": false,
+                  "schemaType": "integer"
+                },
+                {
+                  "name": "q",
+                  "in": "query",
+                  "required": true,
+                  "schemaType": "string"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "unchanged": [
+        {
+          "key": "GET /v1/items/{id}"
+        }
+      ],
+      "conflicting": [],
+      "unknowns": []
+    },
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Reports added/removed/changed fields for buyer-used operations only. Does not call the API, apply patches, or assert production breakage."
+  }
+}

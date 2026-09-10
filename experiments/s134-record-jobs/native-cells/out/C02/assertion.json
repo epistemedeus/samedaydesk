@@ -1,0 +1,18 @@
+{
+  "cell": "C02",
+  "assert": "impact.conflicting.length >= 1",
+  "passed": true,
+  "counts": {
+    "conflicting": 1,
+    "changed": 1,
+    "added": 0,
+    "removed": 0,
+    "unchanged": 0,
+    "unknowns": 0
+  },
+  "conflictingKeys": ["GET /v1/items"],
+  "conflictingNote": "operationId and parameters both changed",
+  "softenedIntoMereChanged": false,
+  "dualListedInChanged": true,
+  "note": "CLI dual-lists the used op in impact.changed (field deltas) and impact.conflicting (structured class). Conflicting was not collapsed into changed-only."
+}

@@ -1,0 +1,16 @@
+{
+  "synthetic": true,
+  "cell": "C12",
+  "note": "Local synthetic extracted pricing rows with duplicate fieldKeys. Not a live catalog, not a merchant scrape, not paid SKU truth.",
+  "rows": [
+    { "field": "starter", "value": 12, "unit": "USD/mo" },
+    { "field": "STARTER", "value": 12, "unit": "USD/mo" },
+    { "field": "pro", "value": 29, "unit": "USD/mo" },
+    { "key": "Pro", "value": 35, "unit": "USD/mo" },
+    { "field": "team_plan", "value": 49, "unit": "USD/mo" },
+    { "field": "hobby", "value": 0, "unit": "USD/mo" },
+    { "field": "enterprise", "value": 99, "unit": "USD/mo" },
+    { "field": "addon", "value": 3, "unit": "USD/mo" },
+    { "field": "Addon", "value": 4, "unit": "USD/mo" }
+  ]
+}

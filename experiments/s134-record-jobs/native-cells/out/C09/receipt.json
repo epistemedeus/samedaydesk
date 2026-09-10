@@ -1,0 +1,78 @@
+{
+  "cell": "C09",
+  "title": "Pricing empty + partial missing-value",
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "sessionNotes": [
+    "Ran local fixtures/pricing/empty and fixtures/pricing/partial through s134-pricing-table-change. No URL fetch, no LLM, no notifications.",
+    "Asserted empty-table (before and after zero rows) and missing-value (partial before row 1 field=pro omits value). node:test 'pricing empty tables' and 'pricing partial missing value uncertainty' both passed. Detectors were already present; no module source change.",
+    "Partial compare still lists fieldChanges.pro null→29 alongside missing-value. That is not a paid catalog price and is not treated as git-apply/acceptance. Left compare classification unchanged to avoid conflicting with sibling pricing cells.",
+    "Merchant pin epistemedeus/x402-url-extractor@1a23b648 context only; page-change/record not re-implemented. S122 merchant c0255ac unresolved in this checkout — not touched, recorded unknown."
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node modules/pricing-table-change/cli.mjs --before fixtures/pricing/empty/before.json --after fixtures/pricing/empty/after.json",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdoutPath": "native-cells/out/C09/empty.json"
+    },
+    {
+      "cmd": "node modules/pricing-table-change/cli.mjs --before fixtures/pricing/partial/before.json --after fixtures/pricing/partial/after.json",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdoutPath": "native-cells/out/C09/partial.json"
+    },
+    {
+      "cmd": "node --test --test-name-pattern 'pricing empty tables|pricing partial missing value uncertainty' test/modules.test.mjs",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "result": "pass 2",
+      "stdoutPath": "native-cells/out/C09/node-test.tap"
+    }
+  ],
+  "artifactPaths": [
+    "native-cells/out/C09/receipt.json",
+    "native-cells/out/C09/empty.json",
+    "native-cells/out/C09/partial.json",
+    "native-cells/out/C09/assertion.json",
+    "native-cells/out/C09/cli-exits.txt",
+    "native-cells/out/C09/node-test.tap",
+    "fixtures/pricing/empty/before.json",
+    "fixtures/pricing/empty/after.json",
+    "fixtures/pricing/partial/before.json",
+    "fixtures/pricing/partial/after.json",
+    "modules/pricing-table-change/cli.mjs"
+  ],
+  "moduleSourceChanged": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "differenceInDeliveredOutput": "Empty tables emit empty-table uncertainties instead of a silent no-op. Partial omitted value emits missing-value instead of inventing a price. Still not a marketplace price proof; null→29 on pro is not claimed as a real SKU delta.",
+  "uncertainties": [
+    {
+      "code": "empty-table",
+      "detail": "before has zero rows",
+      "evidence": { "fixture": "fixtures/pricing/empty/before.json" }
+    },
+    {
+      "code": "empty-table",
+      "detail": "after has zero rows",
+      "evidence": { "fixture": "fixtures/pricing/empty/after.json" }
+    },
+    {
+      "code": "missing-value",
+      "detail": "row 1 missing value",
+      "evidence": { "field": "pro", "fixture": "fixtures/pricing/partial/before.json" }
+    },
+    {
+      "code": "partial-null-to-value-still-listed-as-fieldChange",
+      "detail": "Detector missing-value fired, but compare also listed fieldChanges.pro beforeValue=null afterValue=29. Not treated as paid value. Module left unchanged (detectors were not absent)."
+    },
+    {
+      "code": "s122-merchant-c0255ac-unresolved",
+      "detail": "S122 merchant c0255ac is unresolved in this checkout; recorded unknown. Not touched this cell."
+    }
+  ]
+}

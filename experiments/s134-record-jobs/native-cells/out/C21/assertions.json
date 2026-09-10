@@ -1,0 +1,53 @@
+{
+  "cell": "C21",
+  "assertedAt": "2026-09-10T11:20:09.293Z",
+  "allPassed": true,
+  "passCount": 7,
+  "failCount": 0,
+  "assertions": [
+    {
+      "name": "empty-feed present on empty fixtures (API)",
+      "ok": true
+    },
+    {
+      "name": "unknown-feed-kind present on HTML-as-feed fixtures (API)",
+      "ok": true
+    },
+    {
+      "name": "empty CLI stdout matches empty-feed",
+      "ok": true
+    },
+    {
+      "name": "unknown CLI stdout matches unknown-feed-kind",
+      "ok": true
+    },
+    {
+      "name": "mixed empty-before + HTML-after carries both uncertainty codes",
+      "ok": true
+    },
+    {
+      "name": "no paid value on any replay",
+      "ok": true
+    },
+    {
+      "name": "no add/remove/correct signal on empty or unknown-only replays",
+      "ok": true
+    }
+  ],
+  "uncertaintyCodes": {
+    "empty": [
+      "empty-feed",
+      "empty-feed"
+    ],
+    "unknownHtmlAsFeed": [
+      "unknown-feed-kind",
+      "unknown-feed-kind"
+    ],
+    "mixedEmptyThenHtml": [
+      "empty-feed",
+      "unknown-feed-kind"
+    ]
+  },
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0
+}

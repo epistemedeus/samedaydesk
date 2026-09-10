@@ -1,0 +1,54 @@
+{
+  "cell": "C18",
+  "cellId": "C18",
+  "title": "CSV cold-consumer integration",
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "sessionNotes": [
+    "Cold-consumer run.mjs imports compareCsvDrift from modules/csv-drift/cli.mjs; no module source edited.",
+    "Inputs: local fixtures/csv/positive/before.csv and after.csv only, keyColumns sku.",
+    "Printed JSON is schema.columnsAdded and rowDrift.addedCount only.",
+    "Merchant pin epistemedeus/x402-url-extractor@1a23b648 used as public-branch context only; page-change/record not re-implemented or invoked.",
+    "S122 merchant c0255ac unresolved in this checkout; unknown if touched.",
+    "No paid fetch, LLM, notifications, npm marketplace (S127), deploy, default merge, or accounts."
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node /workspace/experiments/s134-record-jobs/native-cells/out/C18/run.mjs",
+      "cwd": "/workspace",
+      "exitCode": 0,
+      "stdout": {
+        "schema": { "columnsAdded": ["tier"] },
+        "rowDrift": { "addedCount": 1 }
+      }
+    }
+  ],
+  "artifactPaths": [
+    "native-cells/out/C18/run.mjs",
+    "native-cells/out/C18/summary.json",
+    "native-cells/out/C18/receipt.json",
+    "fixtures/csv/positive/before.csv",
+    "fixtures/csv/positive/after.csv",
+    "modules/csv-drift/cli.mjs"
+  ],
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Eyeball two local CSV files or ad-hoc diff/spreadsheet. No URL fetch, no LLM, no notifications.",
+    "paidValueClaim": false
+  },
+  "difference": "compareCsvDrift on keyed sku reports schema.columnsAdded=[tier] and rowDrift.addedCount=1 (sku C) from local positive fixtures. Not a warehouse migration plan. Not paid monitoring.",
+  "uncertainties": [
+    {
+      "code": "s122-merchant-c0255ac-unresolved",
+      "detail": "S122 merchant c0255ac is not present as a git object in this checkout; recorded unknown, not invented."
+    },
+    {
+      "code": "merchant-pin-context-only",
+      "detail": "epistemedeus/x402-url-extractor@1a23b648 not invoked; no HTTP extract or page-change replay."
+    },
+    {
+      "code": "summary-omits-other-drift",
+      "detail": "Positive fixtures also change sku A price and add column tier; this cell prints only columnsAdded and addedCount as specified."
+    }
+  ]
+}

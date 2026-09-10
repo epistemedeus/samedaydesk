@@ -63,20 +63,20 @@ export function parseFeed(xmlText, label) {
   // RSS 2.0
   if (doc?.rss?.channel) {
     const channel = doc.rss.channel;
-    const items = asArray(channel.item).map((it, idx) => normalizeItem(it, 'rss', idx, uncertainties));
+    const items = asArray(channel.item).map((it, idx) => normalizeItem(it, 'rss', idx, uncertainties, label));
     return { ok: true, label, kind: 'rss', title: textOf(channel.title), items, uncertainties };
   }
   // Atom
   if (doc?.feed) {
     const feed = doc.feed;
-    const items = asArray(feed.entry).map((it, idx) => normalizeItem(it, 'atom', idx, uncertainties));
+    const items = asArray(feed.entry).map((it, idx) => normalizeItem(it, 'atom', idx, uncertainties, label));
     return { ok: true, label, kind: 'atom', title: textOf(feed.title), items, uncertainties };
   }
   uncertainties.push(uncertainty('unknown-feed-kind', 'Not recognized as RSS channel or Atom feed'));
   return { ok: true, label, kind: 'unknown', items: [], uncertainties };
 }
 
-function normalizeItem(it, kind, idx, uncertainties) {
+function normalizeItem(it, kind, idx, uncertainties, label = 'feed') {
   if (!it || typeof it !== 'object') {
     uncertainties.push(uncertainty('malformed-item', `item ${idx} not object`, { index: idx }));
     return { index: idx, id: null, guid: null, link: null, title: null, updated: null, fingerprint: `malformed:${idx}` };
@@ -102,7 +102,14 @@ function normalizeItem(it, kind, idx, uncertainties) {
     guid = id;
   }
   if (!id && !link && !title) {
-    uncertainties.push(uncertainty('item-unidentifiable', `item ${idx} lacks id/guid/link/title`, { index: idx }));
+    // Empty-string title (e.g. <title></title>) is not an identity.
+    uncertainties.push(
+      uncertainty(
+        'item-unidentifiable',
+        `${label} item ${idx} is unidentifiable: guid/id, link, and title are all absent or empty; empty title is not an identity, so matching across feeds is unreliable`,
+        { index: idx, feed: label, kind, id, guid, link, title },
+      ),
+    );
   }
   const fingerprint = [id || '', link || '', title || ''].join('\u001f');
   return { index: idx, id, guid, link, title, updated, fingerprint, raw: { title, link, id, guid, updated } };

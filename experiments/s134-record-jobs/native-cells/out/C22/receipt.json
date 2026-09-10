@@ -1,0 +1,56 @@
+{
+  "cell": "C22",
+  "title": "RSS conflicting duplicates",
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "sessionNotes": [
+    "Replayed local fixtures/rss/conflicting through s134-rss-atom-brief. No module source change (parent integrates; sibling RSS cells also read this module).",
+    "Asserted uncertainties includes code duplicates-before (count 1, key urn:dup). Asserted dedupBrief: beforeRawCount 2, afterRawCount 1, beforeUniqueKeys 1, afterUniqueKeys 1, beforeDuplicateKeys 1, afterDuplicateKeys 0, uniqueCountDelta 0.",
+    "Identity ambiguity: two before items share guid urn:dup (titles First and Second). Map last-write-wins keeps Second; First is not compared. Corrected title/link Second→Only is last-wins, not a unique-item match. report.conflicting is empty (same guid); do not invent conflicting-class from the fixture folder name.",
+    "Merchant pin epistemedeus/x402-url-extractor@1a23b648 context only; not re-implemented. S122 merchant c0255ac unresolved in this checkout — not touched, recorded unknown.",
+    "No paid fetch/LLM/notifications. No npm marketplace package work. No deploy/default merge/accounts. node:test 'rss conflicting duplicates' passed."
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node modules/rss-atom-brief/cli.mjs --before fixtures/rss/conflicting/before.xml --after fixtures/rss/conflicting/after.xml",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdoutPath": "native-cells/out/C22/cli-output.json"
+    },
+    {
+      "cmd": "node --test --test-name-pattern 'rss conflicting duplicates' test/modules.test.mjs",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "result": "pass 1"
+    }
+  ],
+  "artifactPaths": [
+    "native-cells/out/C22/receipt.json",
+    "native-cells/out/C22/cli-output.json",
+    "native-cells/out/C22/assertion.json",
+    "fixtures/rss/conflicting/before.xml",
+    "fixtures/rss/conflicting/after.xml",
+    "modules/rss-atom-brief/cli.mjs"
+  ],
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "differenceInDeliveredOutput": "RSS brief emits explicit duplicates-before uncertainty and dedupBrief raw-vs-unique counts instead of silently unique-ifying guid urn:dup. Still last-write-wins for the remaining Map entry (title Second→Only). Does not poll feeds, push alerts, or assert content authenticity.",
+  "uncertainties": [
+    {
+      "code": "duplicates-before",
+      "detail": "Duplicate identity keys in before",
+      "evidence": { "count": 1, "keys": ["urn:dup"] }
+    },
+    {
+      "code": "identity-ambiguity",
+      "detail": "Two before items share guid urn:dup (titles First then Second). Last-write-wins Map drops First from identity. Title/link correction Second→Only is not a unique-item match."
+    },
+    {
+      "code": "s122-merchant-c0255ac-unresolved",
+      "detail": "S122 merchant c0255ac is unresolved in this checkout; recorded unknown. Not touched this cell."
+    }
+  ]
+}

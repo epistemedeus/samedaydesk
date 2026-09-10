@@ -1,0 +1,47 @@
+{
+  "cell": "C23",
+  "assertion": "item-unidentifiable",
+  "ok": true,
+  "reportOk": true,
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "beforeKind": "rss",
+  "afterKind": "rss",
+  "itemUnidentifiableCount": 1,
+  "itemUnidentifiable": [
+    {
+      "code": "item-unidentifiable",
+      "detail": "before item 0 is unidentifiable: guid/id, link, and title are all absent or empty; empty title is not an identity, so matching across feeds is unreliable",
+      "evidence": {
+        "index": 0,
+        "feed": "before",
+        "kind": "rss",
+        "id": null,
+        "guid": null,
+        "link": null,
+        "title": ""
+      }
+    }
+  ],
+  "removedKeys": [
+    "title:"
+  ],
+  "addedCount": 0,
+  "correctedCount": 0,
+  "unchangedCount": 1,
+  "dedupBrief": {
+    "beforeRawCount": 2,
+    "afterRawCount": 1,
+    "beforeUniqueKeys": 2,
+    "afterUniqueKeys": 1,
+    "beforeDuplicateKeys": 0,
+    "afterDuplicateKeys": 0,
+    "uniqueCountDelta": -1
+  },
+  "differenceInDeliveredOutput": "Briefs item add/remove/title-link-updated corrections and dedup-key counts over supplied XML. Does not poll feeds, push alerts, or assert content authenticity.",
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  }
+}

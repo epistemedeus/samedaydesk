@@ -1,0 +1,69 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-rss-atom-brief",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/rss/conflicting/before.xml",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/rss/conflicting/after.xml"
+  },
+  "report": {
+    "module": "rss-atom-brief",
+    "ok": true,
+    "beforeKind": "rss",
+    "afterKind": "rss",
+    "added": [],
+    "removed": [],
+    "corrected": [
+      {
+        "key": "urn:dup",
+        "changes": [
+          {
+            "field": "title",
+            "before": "Second",
+            "after": "Only"
+          },
+          {
+            "field": "link",
+            "before": "https://example.test/d2",
+            "after": "https://example.test/d"
+          }
+        ]
+      }
+    ],
+    "conflicting": [],
+    "unchangedCount": 0,
+    "dedupBrief": {
+      "beforeRawCount": 2,
+      "afterRawCount": 1,
+      "beforeUniqueKeys": 1,
+      "afterUniqueKeys": 1,
+      "beforeDuplicateKeys": 1,
+      "afterDuplicateKeys": 0,
+      "uniqueCountDelta": 0
+    },
+    "truncated": false,
+    "uncertainties": [
+      {
+        "code": "duplicates-before",
+        "detail": "Duplicate identity keys in before",
+        "evidence": {
+          "count": 1,
+          "keys": [
+            "urn:dup"
+          ]
+        }
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Briefs item add/remove/title-link-updated corrections and dedup-key counts over supplied XML. Does not poll feeds, push alerts, or assert content authenticity."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "at": "2026-09-10T11:18:24Z",
+  "MemTotal": 16791945216,
+  "MemAvailable": 11185504256,
+  "reserve25": 4197986304,
+  "headroom": 6987517952,
+  "headroomGiB": 6.508,
+  "estCellsAt200Mi": 33,
+  "psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+  "decision": "launch_wave0_9_then_plus_while_alive",
+  "catalog": {
+    "subagentsMaxDepthDocs": 1,
+    "subagentsMaxConcurrentCatalog": null,
+    "userReportedMaxChildrenUnverified": 64,
+    "subscriptionTierDisplay": "SuperGrok Heavy",
+    "model": "grok-4.6",
+    "reasoningEffort": "xhigh"
+  }
+}

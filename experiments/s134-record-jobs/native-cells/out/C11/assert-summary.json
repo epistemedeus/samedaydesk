@@ -1,0 +1,9 @@
+{
+  "envelopePaidValueClaim": false,
+  "reportOk": false,
+  "error": "unsupported-shape",
+  "uncertaintyCodes": [
+    "unsupported-shape"
+  ],
+  "differenceInDeliveredOutput": "No pricing delta: input tables failed local structural load."
+}

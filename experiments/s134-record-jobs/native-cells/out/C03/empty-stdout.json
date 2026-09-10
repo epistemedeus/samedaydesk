@@ -1,0 +1,35 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-openapi-impact",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/openapi/empty/before.json",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/openapi/empty/after.json",
+    "used": "/workspace/experiments/s134-record-jobs/fixtures/openapi/empty/used.json"
+  },
+  "report": {
+    "module": "openapi-impact",
+    "ok": false,
+    "errors": [
+      {
+        "ok": false,
+        "error": "empty-document",
+        "label": "before",
+        "doc": null,
+        "uncertainties": []
+      }
+    ],
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "No impact report: one or both OpenAPI documents failed local parse. Free baseline remains offline parse-only."
+  }
+}

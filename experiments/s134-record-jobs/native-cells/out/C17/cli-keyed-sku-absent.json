@@ -1,0 +1,62 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-csv-drift",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/csv/unknown/before.csv",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/csv/unknown/after.csv",
+    "keyColumns": [
+      "sku"
+    ]
+  },
+  "report": {
+    "module": "csv-drift",
+    "ok": true,
+    "schema": {
+      "beforeHeaders": [
+        "a",
+        "b"
+      ],
+      "afterHeaders": [
+        "b",
+        "a"
+      ],
+      "columnsAdded": [],
+      "columnsRemoved": [],
+      "columnsReordered": true,
+      "columnsShared": [
+        "a",
+        "b"
+      ]
+    },
+    "rowDrift": {
+      "mode": "keys-unavailable",
+      "missingKeys": [
+        "sku"
+      ]
+    },
+    "missingCellRate": 0,
+    "uncertainties": [
+      {
+        "code": "key-columns-missing",
+        "detail": "One or more key columns absent in before/after schema",
+        "evidence": {
+          "missingKeys": [
+            "sku"
+          ]
+        }
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Reports schema column add/remove/reorder and keyed row deltas when keys are supplied. Without keys, only row-count delta is stated (identity unknown). Not a warehouse migration plan."
+  }
+}

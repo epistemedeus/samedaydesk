@@ -1,0 +1,10 @@
+{
+  "schema": {
+    "columnsAdded": [
+      "tier"
+    ]
+  },
+  "rowDrift": {
+    "addedCount": 1
+  }
+}

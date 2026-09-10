@@ -1,0 +1,23 @@
+{
+  "cell": "C20",
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "cliOk": true,
+  "beforeKind": "atom",
+  "afterKind": "atom",
+  "beforeKindIsAtom": true,
+  "afterKindIsAtom": true,
+  "correctedCount": 1,
+  "linkCorrectionPresent": true,
+  "linkCorrections": [
+    {
+      "field": "link",
+      "before": "https://example.test/1",
+      "after": "https://example.test/1-new"
+    }
+  ],
+  "alsoCorrectedFields": ["updated"],
+  "correctedKeys": ["urn:a1"],
+  "moduleUncertainties": [],
+  "allPass": true
+}

@@ -1,0 +1,75 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-rss-atom-brief",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/rss/positive/before.xml",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/rss/positive/after.xml"
+  },
+  "report": {
+    "module": "rss-atom-brief",
+    "ok": true,
+    "beforeKind": "rss",
+    "afterKind": "rss",
+    "added": [
+      {
+        "key": "urn:3",
+        "item": {
+          "id": "urn:3",
+          "guid": "urn:3",
+          "link": "https://example.test/c",
+          "title": "Gamma",
+          "updated": "Wed, 03 Jan 2024 00:00:00 GMT"
+        }
+      }
+    ],
+    "removed": [
+      {
+        "key": "urn:2",
+        "item": {
+          "id": "urn:2",
+          "guid": "urn:2",
+          "link": "https://example.test/b",
+          "title": "Beta",
+          "updated": "Tue, 02 Jan 2024 00:00:00 GMT"
+        }
+      }
+    ],
+    "corrected": [
+      {
+        "key": "urn:1",
+        "changes": [
+          {
+            "field": "title",
+            "before": "Alpha",
+            "after": "Alpha (corrected)"
+          }
+        ]
+      }
+    ],
+    "conflicting": [],
+    "unchangedCount": 0,
+    "dedupBrief": {
+      "beforeRawCount": 2,
+      "afterRawCount": 2,
+      "beforeUniqueKeys": 2,
+      "afterUniqueKeys": 2,
+      "beforeDuplicateKeys": 0,
+      "afterDuplicateKeys": 0,
+      "uniqueCountDelta": 0
+    },
+    "truncated": false,
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Briefs item add/remove/title-link-updated corrections and dedup-key counts over supplied XML. Does not poll feeds, push alerts, or assert content authenticity."
+  }
+}

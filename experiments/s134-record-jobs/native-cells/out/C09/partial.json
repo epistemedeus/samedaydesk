@@ -1,0 +1,60 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-pricing-table-change",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/pricing/partial/before.json",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/pricing/partial/after.json"
+  },
+  "report": {
+    "module": "pricing-table-change",
+    "ok": true,
+    "counts": {
+      "beforeRows": 2,
+      "afterRows": 2,
+      "added": 0,
+      "removed": 0,
+      "fieldChanges": 1,
+      "unitChanges": 0,
+      "conflicting": 0,
+      "unchanged": 1
+    },
+    "added": [],
+    "removed": [],
+    "fieldChanges": [
+      {
+        "fieldKey": "pro",
+        "beforeValue": null,
+        "afterValue": 29,
+        "unit": "USD/mo"
+      }
+    ],
+    "unitChanges": [],
+    "conflicting": [],
+    "unchanged": [
+      {
+        "fieldKey": "starter"
+      }
+    ],
+    "uncertainties": [
+      {
+        "code": "missing-value",
+        "detail": "row 1 missing value",
+        "evidence": {
+          "field": "pro"
+        }
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Emits field/unit deltas over supplied extracted rows. Does not scrape live pages, convert currencies, or assert SKU truth."
+  }
+}

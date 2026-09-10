@@ -1,0 +1,27 @@
+{
+  "cell": "C15",
+  "assertion": "duplicate-keys-before",
+  "passed": true,
+  "keyColumns": ["sku"],
+  "inputs": {
+    "before": "fixtures/csv/conflicting/before.csv",
+    "after": "fixtures/csv/conflicting/after.csv"
+  },
+  "observed": {
+    "ok": true,
+    "uncertaintyCodes": ["duplicate-keys-before"],
+    "duplicateKeysBeforeCount": 1,
+    "rowDriftMode": "keyed",
+    "changedCount": 1,
+    "changedPriceLastWriteWins": { "before": "2", "after": "3", "key": "\"A\"" }
+  },
+  "identityAmbiguity": {
+    "noted": true,
+    "detail": "before.csv contains two rows with sku=A (price 1 then price 2). Keyed compare last-write-wins in a Map, so only price 2 is retained as the before identity for sku A. The price 1 row is not a distinct identity; which physical row is 'the' sku A is ambiguous. Changed 2→3 is last-wins, not a unique-row match. Do not treat the keyed delta as a resolved identity.",
+    "beforeRows": [
+      { "sku": "A", "price": "1" },
+      { "sku": "A", "price": "2" }
+    ],
+    "afterRows": [{ "sku": "A", "price": "3" }]
+  }
+}

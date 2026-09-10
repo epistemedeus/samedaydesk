@@ -1,0 +1,23 @@
+{
+  "columnsAddedIncludesTier": true,
+  "rowDriftModeKeyed": true,
+  "addedCount": 1,
+  "changedCount": 1,
+  "addedCountAtLeast1": true,
+  "changedCountAtLeast1": true,
+  "keyColumns": [
+    "sku"
+  ],
+  "inputsKeyColumns": [
+    "sku"
+  ],
+  "keyNotIgnored": true,
+  "unkeyedContrastMode": "unkeyed-count-only",
+  "unkeyedHasUnkeyedUncertainty": true,
+  "paidValueClaimTop": true,
+  "paidValueClaimReport": true,
+  "cashBoundaryUsd": true,
+  "ok": true,
+  "allPassed": true,
+  "failedKeys": []
+}

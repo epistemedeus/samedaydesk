@@ -1,0 +1,44 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-openapi-impact",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/openapi/unknown/before.json",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/openapi/unknown/after.json",
+    "used": "/workspace/experiments/s134-record-jobs/fixtures/openapi/unknown/used.json"
+  },
+  "report": {
+    "module": "openapi-impact",
+    "ok": true,
+    "scope": "used-operations-only",
+    "usedOperationCount": 0,
+    "impact": {
+      "added": [],
+      "removed": [],
+      "changed": [],
+      "unchanged": [],
+      "conflicting": [],
+      "unknowns": []
+    },
+    "uncertainties": [
+      {
+        "code": "unknown-operationId",
+        "detail": "operationId not found in before/after: doesNotExist",
+        "evidence": {
+          "operationId": "doesNotExist"
+        }
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "No used-operation structural deltas detected (or used list empty/unknown). Still not a runtime compatibility proof."
+  }
+}

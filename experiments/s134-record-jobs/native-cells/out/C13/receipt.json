@@ -1,0 +1,49 @@
+{
+  "cell": "C13",
+  "title": "CSV keyed drift positive",
+  "at": "2026-09-10T11:21:11Z",
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "moduleSourceChanged": false,
+  "keyIgnored": false,
+  "s122MerchantC0255ac": "unknown-unresolved-not-touched",
+  "merchantPinContextOnly": "epistemedeus/x402-url-extractor@1a23b648",
+  "sessionNotes": [
+    "Ran the specified local CLI on fixtures/csv/positive/{before,after}.csv with --key sku. No network, no paid fetch/LLM/notifications, no npm marketplace work, no deploy/merge/accounts.",
+    "columnsAdded includes tier. rowDrift.mode=keyed; addedCount=1 (sku C); changedCount=1 (sku A price 10→12); removedCount=0.",
+    "--key was not ignored: inputs.keyColumns=[sku] and rowDrift.keyColumns=[sku]. A local contrast run without --key produced mode=unkeyed-count-only plus unkeyed-row-compare uncertainty; that contrast was not used as a paid or identity claim.",
+    "No module source change: argv --key collection already works. Unit test 'csv positive keyed drift' passed.",
+    "S122 merchant c0255ac was not present in this checkout and was not touched (unknown). Merchant pin used as public-branch context only; page-change/record not re-implemented."
+  ],
+  "commandsRun": [
+    "node modules/csv-drift/cli.mjs --before fixtures/csv/positive/before.csv --after fixtures/csv/positive/after.csv --key sku",
+    "node modules/csv-drift/cli.mjs --before fixtures/csv/positive/before.csv --after fixtures/csv/positive/after.csv",
+    "node --test --test-name-pattern 'csv positive keyed drift' test/modules.test.mjs"
+  ],
+  "artifactPaths": [
+    "fixtures/csv/positive/before.csv",
+    "fixtures/csv/positive/after.csv",
+    "modules/csv-drift/cli.mjs",
+    "native-cells/out/C13/cli-stdout.json",
+    "native-cells/out/C13/cli-unkeyed-stdout.json",
+    "native-cells/out/C13/assertions.json",
+    "native-cells/out/C13/receipt.json"
+  ],
+  "assertions": {
+    "columnsAddedIncludesTier": true,
+    "rowDriftMode": "keyed",
+    "addedCount": 1,
+    "changedCount": 1,
+    "removedCount": 0,
+    "keyColumns": ["sku"],
+    "cliExitCodeKeyed": 0,
+    "unitTestCsvPositiveKeyedDrift": "pass"
+  },
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "difference": "Reports schema column add/remove/reorder and keyed row deltas when keys are supplied. Without keys, only row-count delta is stated (identity unknown). Not a warehouse migration plan.",
+  "uncertainties": []
+}

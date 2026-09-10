@@ -1,0 +1,58 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-rss-atom-brief",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/rss/positive/atom-before.xml",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/rss/positive/atom-after.xml"
+  },
+  "report": {
+    "module": "rss-atom-brief",
+    "ok": true,
+    "beforeKind": "atom",
+    "afterKind": "atom",
+    "added": [],
+    "removed": [],
+    "corrected": [
+      {
+        "key": "urn:a1",
+        "changes": [
+          {
+            "field": "link",
+            "before": "https://example.test/1",
+            "after": "https://example.test/1-new"
+          },
+          {
+            "field": "updated",
+            "before": "2024-01-01T00:00:00Z",
+            "after": "2024-01-02T00:00:00Z"
+          }
+        ]
+      }
+    ],
+    "conflicting": [],
+    "unchangedCount": 0,
+    "dedupBrief": {
+      "beforeRawCount": 1,
+      "afterRawCount": 1,
+      "beforeUniqueKeys": 1,
+      "afterUniqueKeys": 1,
+      "beforeDuplicateKeys": 0,
+      "afterDuplicateKeys": 0,
+      "uniqueCountDelta": 0
+    },
+    "truncated": false,
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Briefs item add/remove/title-link-updated corrections and dedup-key counts over supplied XML. Does not poll feeds, push alerts, or assert content authenticity."
+  }
+}

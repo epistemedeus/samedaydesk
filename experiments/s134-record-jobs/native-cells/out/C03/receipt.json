@@ -1,0 +1,95 @@
+{
+  "cell": "C03",
+  "title": "OpenAPI empty/broken parse fail-closed",
+  "at": "2026-09-10T11:20:28Z",
+  "cwd": "/workspace/experiments/s134-record-jobs",
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "sourceChanged": false,
+  "sessionNotes": [
+    "Local fixtures only. No network, paid fetch, LLM, notifications, marketplace, deploy, or git-apply/acceptance claims.",
+    "Empty-before and broken.yaml CLI cases both report.ok=false and exit 2. No module source change (already fail-closed via loadOpenApi + process.exit(report.ok ? 0 : 2)).",
+    "Parse failures are JSON on stdout; stderr is empty for both cases.",
+    "Merchant pin used as public context only; page-change/record not re-implemented.",
+    "S122 merchant c0255ac not present in this checkout; not touched; recorded unknown."
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node modules/openapi-impact/cli.mjs --before fixtures/openapi/empty/before.json --after fixtures/openapi/empty/after.json --used fixtures/openapi/empty/used.json",
+      "exitCode": 2
+    },
+    {
+      "cmd": "node modules/openapi-impact/cli.mjs --before fixtures/openapi/negative/broken.yaml --after fixtures/openapi/positive/after.json --used fixtures/openapi/positive/used.json",
+      "exitCode": 2
+    },
+    {
+      "cmd": "node modules/openapi-impact/cli.mjs --before fixtures/openapi/negative/broken.yaml --after fixtures/openapi/empty/after.json --used fixtures/openapi/empty/used.json",
+      "exitCode": 2,
+      "note": "extra same-fail replay"
+    },
+    {
+      "cmd": "node --test --test-name-pattern 'openapi empty|openapi broken' test/modules.test.mjs",
+      "exitCode": 0,
+      "pass": 2
+    }
+  ],
+  "assertions": {
+    "emptyBefore": { "ok": false, "exitCode": 2, "error": "empty-document", "label": "before" },
+    "brokenYaml": { "ok": false, "exitCode": 2, "error": "parse-error", "label": "before" }
+  },
+  "stdoutSnippets": {
+    "emptyBefore": "{\"paidValueClaim\":false,\"report\":{\"ok\":false,\"errors\":[{\"ok\":false,\"error\":\"empty-document\",\"label\":\"before\",\"doc\":null}]}}",
+    "brokenYaml": "{\"paidValueClaim\":false,\"report\":{\"ok\":false,\"errors\":[{\"ok\":false,\"error\":\"parse-error\",\"detail\":\"Flow sequence in block collection must be sufficiently indented and end with a ] at line 2, column 9:\",\"label\":\"before\",\"doc\":null}]}}"
+  },
+  "stderrSnippets": {
+    "emptyBefore": "",
+    "brokenYaml": ""
+  },
+  "artifactPaths": [
+    "native-cells/out/C03/receipt.json",
+    "native-cells/out/C03/assertions.json",
+    "native-cells/out/C03/empty-stdout.json",
+    "native-cells/out/C03/empty-stderr.txt",
+    "native-cells/out/C03/broken-stdout.json",
+    "native-cells/out/C03/broken-stderr.txt",
+    "native-cells/out/C03/broken-empty-after-stdout.json",
+    "native-cells/out/C03/broken-empty-after-stderr.txt",
+    "fixtures/openapi/empty/before.json",
+    "fixtures/openapi/empty/after.json",
+    "fixtures/openapi/empty/used.json",
+    "fixtures/openapi/negative/broken.yaml",
+    "fixtures/openapi/positive/after.json",
+    "fixtures/openapi/positive/used.json",
+    "modules/openapi-impact/cli.mjs"
+  ],
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "differenceInDeliveredOutput": "Structured fail-closed: empty-document / YAML parse-error set report.ok=false and CLI exit 2; no used-op impact report. Free baseline is the same offline parse, without this exit/error contract. Not a remote API or paid monitoring result.",
+  "uncertainties": [
+    {
+      "code": "s122-merchant-c0255ac-unresolved",
+      "detail": "S122 merchant c0255ac is unresolved in this checkout; unknown if it would change these local parse cases. Not touched."
+    },
+    {
+      "code": "yaml-parseDocument-toJS-ignores-errors",
+      "detail": "yaml.parse() throws on fixtures/openapi/negative/broken.yaml (CLI path). parseDocument().toJS() can still yield {openapi:'3.0.3',paths:[]} despite errors. Fail-closed here depends on using parse(), not toJS() on an errored document."
+    },
+    {
+      "code": "stderr-empty-on-parse-fail",
+      "detail": "CLI writes the fail-closed report to stdout JSON only; stderr is empty. Non-zero exit is the process-level signal."
+    },
+    {
+      "code": "merchant-pin-context-only",
+      "detail": "epistemedeus/x402-url-extractor@1a23b648 (full pin in PINS.md) not vendored or executed; no page-change/record replay."
+    }
+  ],
+  "merchantContext": {
+    "pin": "epistemedeus/x402-url-extractor@1a23b648",
+    "reimplemented": false,
+    "role": "public-branch-context-only"
+  },
+  "s122MerchantC0255ac": "unknown"
+}

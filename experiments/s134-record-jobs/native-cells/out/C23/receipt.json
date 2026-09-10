@@ -1,0 +1,84 @@
+{
+  "cell": "C23",
+  "at": "2026-09-10T11:21:52Z",
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "sessionNotes": [
+    "Replayed local fixtures/rss/partial only; no fetch, LLM, notifications, marketplace, deploy, or accounts.",
+    "CLI report.ok=true; item-unidentifiable fired for before item 0 (empty <title></title>, no guid/link).",
+    "Identifiable urn:ok item unchanged; empty-title item listed as removed under existing fallback key title: (dedupKey not changed).",
+    "Optional source change: item-unidentifiable message/evidence only (feed label; empty title is not identity). Fire condition unchanged.",
+    "Merchant pin epistemedeus/x402-url-extractor@1a23b648 is context only; page-change/record not re-implemented or fetched.",
+    "S122 merchant c0255ac not in this checkout and not touched; unknown."
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node modules/rss-atom-brief/cli.mjs --before fixtures/rss/partial/before.xml --after fixtures/rss/partial/after.xml",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "note": "pre-tweak replay; item-unidentifiable already present"
+    },
+    {
+      "cmd": "node modules/rss-atom-brief/cli.mjs --before fixtures/rss/partial/before.xml --after fixtures/rss/partial/after.xml > native-cells/out/C23/brief.json",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "note": "post-tweak stdout saved"
+    },
+    {
+      "cmd": "node --test --test-name-pattern 'rss partial unidentifiable item' test/modules.test.mjs",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0
+    },
+    {
+      "cmd": "node --test --test-name-pattern '^rss ' test/modules.test.mjs",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0
+    },
+    {
+      "cmd": "node --input-type=module (inline compareFeeds assert → native-cells/out/C23/assert.json)",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0
+    }
+  ],
+  "artifactPaths": [
+    "native-cells/out/C23/receipt.json",
+    "native-cells/out/C23/brief.json",
+    "native-cells/out/C23/assert.json",
+    "fixtures/rss/partial/before.xml",
+    "fixtures/rss/partial/after.xml",
+    "modules/rss-atom-brief/cli.mjs"
+  ],
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "difference": {
+    "inDeliveredOutput": "Briefs item add/remove/title-link-updated corrections and dedup-key counts over supplied XML. Does not poll feeds, push alerts, or assert content authenticity.",
+    "thisCell": "Partial RSS replay with explicit item-unidentifiable uncertainty. Not a monitoring product; no paid value."
+  },
+  "assertions": {
+    "item-unidentifiable": true,
+    "reportOk": true
+  },
+  "uncertainties": [
+    {
+      "code": "item-unidentifiable",
+      "source": "modules/rss-atom-brief/cli.mjs",
+      "detail": "before item 0 is unidentifiable: guid/id, link, and title are all absent or empty; empty title is not an identity, so matching across feeds is unreliable",
+      "evidence": {
+        "index": 0,
+        "feed": "before",
+        "kind": "rss",
+        "id": null,
+        "guid": null,
+        "link": null,
+        "title": ""
+      }
+    }
+  ],
+  "contextUnknown": {
+    "s122MerchantC0255ac": "unresolved-not-touched",
+    "merchantPageChangeRecord": "pin-context-only-not-executed"
+  }
+}

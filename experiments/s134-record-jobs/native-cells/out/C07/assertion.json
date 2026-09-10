@@ -1,0 +1,32 @@
+{
+  "cell": "C07",
+  "assertion": "unitChanges==1 && fieldChanges==0",
+  "passed": true,
+  "moduleSourceChanged": false,
+  "inputs": {
+    "before": "fixtures/pricing/positive/unit-before.json",
+    "after": "fixtures/pricing/positive/unit-after.json"
+  },
+  "observed": {
+    "ok": true,
+    "counts": {
+      "fieldChanges": 0,
+      "unitChanges": 1,
+      "added": 0,
+      "removed": 0,
+      "conflicting": 0,
+      "unchanged": 0
+    },
+    "unitChanges": [
+      {
+        "fieldKey": "storage",
+        "beforeUnit": "GB",
+        "afterUnit": "GiB",
+        "valueUnchanged": 10
+      }
+    ],
+    "fieldChanges": [],
+    "reportUncertainties": []
+  },
+  "classification": "unit-only (value 10 unchanged; unit string GB→GiB after trim+lowercase). Not a field/value change. No conversion table applied."
+}

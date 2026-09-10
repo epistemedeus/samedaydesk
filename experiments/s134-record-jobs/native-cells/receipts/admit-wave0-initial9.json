@@ -1,0 +1,70 @@
+{
+  "at": "2026-09-10T11:18:24.705Z",
+  "wave": "wave0-initial9",
+  "cells": [
+    "C01",
+    "C02",
+    "C03",
+    "C04",
+    "C05",
+    "C06",
+    "C07",
+    "C08",
+    "C09"
+  ],
+  "decision": {
+    "ok": true,
+    "reasons": [],
+    "memory": {
+      "MemTotal": 16791945216,
+      "MemAvailable": 11183431680,
+      "reserve25": 4197986304,
+      "headroom": 6985445376
+    },
+    "psiAvg10": 0,
+    "maxByHeadroom": 33,
+    "requested": 9
+  },
+  "aliveBefore": 0,
+  "action": "launch",
+  "pids": [
+    {
+      "cell": "C01",
+      "pid": 93717
+    },
+    {
+      "cell": "C02",
+      "pid": 93820
+    },
+    {
+      "cell": "C03",
+      "pid": 94269
+    },
+    {
+      "cell": "C04",
+      "pid": 94713
+    },
+    {
+      "cell": "C05",
+      "pid": 95293
+    },
+    {
+      "cell": "C06",
+      "pid": 95788
+    },
+    {
+      "cell": "C07",
+      "pid": 96381
+    },
+    {
+      "cell": "C08",
+      "pid": 96985
+    },
+    {
+      "cell": "C09",
+      "pid": 97522
+    }
+  ],
+  "aliveAfter": 9,
+  "overlapObserved": 9
+}

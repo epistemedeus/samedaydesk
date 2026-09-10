@@ -1,0 +1,64 @@
+{
+  "cell": "C09",
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "detectorsAbsent": false,
+  "moduleSourceChanged": false,
+  "empty": {
+    "ok": true,
+    "paidValueClaim": false,
+    "uncertaintyCodes": [
+      "empty-table",
+      "empty-table"
+    ],
+    "emptyTableCount": 2,
+    "emptyTableDetails": [
+      "after has zero rows",
+      "before has zero rows"
+    ],
+    "counts": {
+      "beforeRows": 0,
+      "afterRows": 0,
+      "added": 0,
+      "removed": 0,
+      "fieldChanges": 0,
+      "unitChanges": 0,
+      "conflicting": 0,
+      "unchanged": 0
+    },
+    "fieldChanges": [],
+    "assertEmptyTablePresent": true,
+    "assertNoFieldDeltas": true
+  },
+  "partial": {
+    "ok": true,
+    "paidValueClaim": false,
+    "uncertaintyCodes": [
+      "missing-value"
+    ],
+    "missingValueCount": 1,
+    "missingValueFields": [
+      "pro"
+    ],
+    "counts": {
+      "beforeRows": 2,
+      "afterRows": 2,
+      "added": 0,
+      "removed": 0,
+      "fieldChanges": 1,
+      "unitChanges": 0,
+      "conflicting": 0,
+      "unchanged": 1
+    },
+    "fieldChanges": [
+      {
+        "fieldKey": "pro",
+        "beforeValue": null,
+        "afterValue": 29,
+        "unit": "USD/mo"
+      }
+    ],
+    "assertMissingValuePresent": true
+  },
+  "allPass": true
+}

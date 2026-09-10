@@ -1,0 +1,86 @@
+{
+  "cell": "C08",
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "fixtures": {
+    "before": "fixtures/pricing/conflicting/before.json",
+    "after": "fixtures/pricing/conflicting/after.json",
+    "beforeRow": {
+      "field": "starter",
+      "value": 9,
+      "unit": "USD/mo"
+    },
+    "afterRow": {
+      "field": "starter",
+      "value": 900,
+      "unit": "JPY/mo"
+    }
+  },
+  "naiveNumericDeltaIfMisclassified": 891,
+  "naiveNumericDeltaEmitted": false,
+  "currencyConversionTable": null,
+  "currencyConversionTableSupplied": false,
+  "counts": {
+    "beforeRows": 1,
+    "afterRows": 1,
+    "added": 0,
+    "removed": 0,
+    "fieldChanges": 0,
+    "unitChanges": 0,
+    "conflicting": 1,
+    "unchanged": 0
+  },
+  "conflicting": [
+    {
+      "fieldKey": "starter",
+      "reason": "value-and-unit-both-changed",
+      "before": {
+        "value": 9,
+        "unit": "USD/mo"
+      },
+      "after": {
+        "value": 900,
+        "unit": "JPY/mo"
+      },
+      "note": "Cannot attribute numeric delta without a declared unit conversion; marked conflicting/unknown semantics."
+    }
+  ],
+  "fieldChanges": [],
+  "unitChanges": [],
+  "uncertainties": [
+    {
+      "code": "unit-and-value-change",
+      "detail": "field starter changed value and unit; no conversion table supplied",
+      "evidence": {
+        "fieldKey": "starter"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "cli-ok",
+      "pass": true
+    },
+    {
+      "id": "paidValueClaim-false",
+      "pass": true
+    },
+    {
+      "id": "conflicting-class",
+      "pass": true
+    },
+    {
+      "id": "not-silent-numeric-delta",
+      "pass": true
+    },
+    {
+      "id": "no-currency-conversion-table",
+      "pass": true
+    },
+    {
+      "id": "starter-before-after-preserved",
+      "pass": true
+    }
+  ],
+  "allPassed": true
+}

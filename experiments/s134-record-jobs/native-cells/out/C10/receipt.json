@@ -1,0 +1,110 @@
+{
+  "cell": "C10",
+  "cellId": "C10",
+  "at": "2026-09-10T11:20:00Z",
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "sessionNotes": "Replayed local fixtures/pricing/positive before/after through s134-pricing-table-change. Observed added=1 (enterprise), fieldChanges=1 (starter 9→12 USD/mo), unchanged=1 (pro). Also ran unit-before/unit-after read-only (unitChanges=1, fieldChanges=0; C07 owns that assertion). Wrote demos/pricing-positive.md with exact commands. No module source edits. No network, LLM, notifications, npm marketplace package work, deploy, or merchant page-change/record. Fixture numerics are synthetic labels, not paid SKU truth. Merchant pin used as context only. S122 merchant c0255ac not present in this checkout — recorded unknown, not touched.",
+  "commandsRun": [
+    {
+      "cmd": "node modules/pricing-table-change/cli.mjs --before fixtures/pricing/positive/before.json --after fixtures/pricing/positive/after.json",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdoutPath": "native-cells/out/C10/replay-field.json"
+    },
+    {
+      "cmd": "node modules/pricing-table-change/cli.mjs --before fixtures/pricing/positive/unit-before.json --after fixtures/pricing/positive/unit-after.json",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdoutPath": "native-cells/out/C10/replay-unit.json",
+      "note": "Read-only sibling under fixtures/pricing/positive/; C07 owns unit-only assertion."
+    },
+    {
+      "cmd": "npm run -s demo:pricing",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdoutPath": "native-cells/out/C10/demo-pricing.json"
+    },
+    {
+      "cmd": "node --test --test-name-pattern='pricing positive' test/modules.test.mjs",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0
+    }
+  ],
+  "artifactPaths": [
+    "demos/pricing-positive.md",
+    "native-cells/out/C10/replay-field.json",
+    "native-cells/out/C10/replay-unit.json",
+    "native-cells/out/C10/demo-pricing.json",
+    "native-cells/out/C10/replay-exit.txt",
+    "native-cells/out/C10/receipt.json",
+    "fixtures/pricing/positive/before.json",
+    "fixtures/pricing/positive/after.json",
+    "fixtures/pricing/positive/unit-before.json",
+    "fixtures/pricing/positive/unit-after.json",
+    "modules/pricing-table-change/cli.mjs"
+  ],
+  "observed": {
+    "fieldAddChange": {
+      "ok": true,
+      "paidValueClaim": false,
+      "counts": {
+        "beforeRows": 2,
+        "afterRows": 3,
+        "added": 1,
+        "removed": 0,
+        "fieldChanges": 1,
+        "unitChanges": 0,
+        "conflicting": 0,
+        "unchanged": 1
+      },
+      "addedFieldKeys": ["enterprise"],
+      "fieldChangeKeys": ["starter"],
+      "unchangedFieldKeys": ["pro"],
+      "detectorUncertainties": []
+    },
+    "unitOnlySibling": {
+      "ok": true,
+      "paidValueClaim": false,
+      "counts": { "unitChanges": 1, "fieldChanges": 0 },
+      "detectorUncertainties": []
+    },
+    "moduleSourceChanged": false
+  },
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "difference": "Emits field/unit deltas over supplied extracted rows. Does not scrape live pages, convert currencies, or assert SKU truth.",
+  "uncertainties": [
+    {
+      "code": "s122-merchant-c0255ac",
+      "status": "unknown",
+      "detail": "Unresolved in this checkout; not touched. Not treated as git-apply/acceptance."
+    },
+    {
+      "code": "synthetic-fixture-literals",
+      "detail": "starter/pro/enterprise numeric values and USD/mo units are local fixture labels, not paid catalog or live merchant extract."
+    },
+    {
+      "code": "merchant-recipes-not-invoked",
+      "detail": "epistemedeus/x402-url-extractor@1a23b648 is context-only; page-change/record not re-implemented or executed."
+    },
+    {
+      "code": "detector-uncertainties-empty",
+      "detail": "Positive add/change CLI report.uncertainties was []. Empty array is not a paid-value or remote-success claim."
+    }
+  ],
+  "pins": {
+    "merchantContextOnly": "epistemedeus/x402-url-extractor@1a23b648",
+    "s122MerchantC0255ac": "unknown"
+  },
+  "nonGoalsHonored": [
+    "no-paid-fetch",
+    "no-llm",
+    "no-notifications",
+    "no-s127-npm-marketplace-package",
+    "no-deploy-default-merge-accounts"
+  ]
+}

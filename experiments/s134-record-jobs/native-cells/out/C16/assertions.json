@@ -1,0 +1,22 @@
+{
+  "allPass": true,
+  "assertions": {
+    "reportOkTrue": true,
+    "emptyCsvPresent": true,
+    "emptyCsvBefore": true,
+    "emptyCsvAfter": true,
+    "parseBeforeOk": true,
+    "parseAfterOk": true,
+    "parseBeforeEmptyCode": true,
+    "parseAfterEmptyCode": true,
+    "paidValueClaimFalse": true,
+    "beforeBytes": 0,
+    "afterBytes": 0,
+    "uncertaintyCodes": [
+      "empty-csv",
+      "empty-csv",
+      "unkeyed-row-compare"
+    ]
+  },
+  "differenceInDeliveredOutput": "No schema/row drift signal (or empty inputs). Uncertainty list may still describe empty/partial/duplicate cases."
+}

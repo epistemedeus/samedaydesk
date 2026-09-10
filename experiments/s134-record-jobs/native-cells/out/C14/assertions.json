@@ -1,0 +1,28 @@
+{
+  "cliExit": 0,
+  "unitExit": 0,
+  "paidValueClaim": true,
+  "cashBoundaryUsd": true,
+  "keyColumnsEmpty": true,
+  "argvHadNoKeyFlag": true,
+  "reportOk": true,
+  "rowDriftModeIsUnkeyedCountOnly": true,
+  "unkeyedRowCompareUncertainty": true,
+  "partialCellsUncertainty": true,
+  "noInventedRowIdentities": true,
+  "rowDriftKeys": [
+    "mode",
+    "beforeRowCount",
+    "afterRowCount",
+    "rowCountDelta"
+  ],
+  "rowCountDelta": 1,
+  "beforeRowCount": 2,
+  "afterRowCount": 3,
+  "uncertaintyCodes": [
+    "unkeyed-row-compare",
+    "partial-cells"
+  ],
+  "allPassed": true,
+  "failed": []
+}

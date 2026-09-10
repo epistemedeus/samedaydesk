@@ -1,0 +1,59 @@
+{
+  "cell": "C20",
+  "title": "RSS Atom link correction",
+  "at": "2026-09-10T11:20:04Z",
+  "cwd": "/workspace/experiments/s134-record-jobs",
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "moduleSourceChanged": false,
+  "sessionNotes": [
+    "Replayed local Atom fixtures only: fixtures/rss/positive/atom-before.xml vs atom-after.xml.",
+    "CLI s134-rss-atom-brief exit 0. report.beforeKind=atom, afterKind=atom.",
+    "Link correction present on key urn:a1: https://example.test/1 -> https://example.test/1-new. Same entry also has updated timestamp change (2024-01-01T00:00:00Z -> 2024-01-02T00:00:00Z); identity stayed urn:a1.",
+    "Existing unit test 'rss atom link correction' passed (node --test). No module source edit; parent integrates.",
+    "Merchant pin epistemedeus/x402-url-extractor@1a23b648 used as public-branch context only; this cell did not wrap merchant HTTP or page-change/record.",
+    "S122 merchant c0255ac unresolved in this checkout; not touched; recorded unknown.",
+    "No remote fetch, LLM, notifications, npm marketplace work, deploy, or default-branch merge."
+  ],
+  "commandsRun": [
+    "node modules/rss-atom-brief/cli.mjs --before fixtures/rss/positive/atom-before.xml --after fixtures/rss/positive/atom-after.xml",
+    "node --test --test-name-pattern 'rss atom link correction' test/modules.test.mjs"
+  ],
+  "assertions": {
+    "beforeKind": "atom",
+    "afterKind": "atom",
+    "linkCorrectionPresent": true,
+    "correctedCount": 1,
+    "correctedKey": "urn:a1",
+    "cliOk": true,
+    "unitTestPass": true
+  },
+  "artifactPaths": [
+    "fixtures/rss/positive/atom-before.xml",
+    "fixtures/rss/positive/atom-after.xml",
+    "modules/rss-atom-brief/cli.mjs",
+    "test/modules.test.mjs",
+    "native-cells/out/C20/brief.json",
+    "native-cells/out/C20/assertions.json",
+    "native-cells/out/C20/receipt.json"
+  ],
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "difference": {
+    "inDeliveredOutput": "Briefs item add/remove/title-link-updated corrections and dedup-key counts over supplied XML. Does not poll feeds, push alerts, or assert content authenticity.",
+    "vsFreeBaseline": "Structured Atom kind + alternate-link correction on a stable entry id, from two local XML files. Not a monitoring product and not a paid feed-watch claim."
+  },
+  "uncertainties": [
+    {
+      "code": "s122-merchant-c0255ac-unresolved",
+      "detail": "S122 merchant c0255ac is not present as a git object here; treated as unknown context, not invented. Not used by this replay."
+    },
+    {
+      "code": "atom-link-plus-updated",
+      "detail": "Fixture after also changes <updated>; link correction is present among other field changes on the same key."
+    }
+  ]
+}

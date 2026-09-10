@@ -1,0 +1,98 @@
+{
+  "cell": "C21",
+  "title": "RSS empty + unknown HTML-as-feed",
+  "at": "2026-09-10T11:20:20Z",
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "moduleSourceChanged": false,
+  "sessionNotes": [
+    "Replayed fixtures/rss/empty (0-byte XML) and fixtures/rss/unknown (HTML documents labeled .xml) through s134-rss-atom-brief. No network, no LLM, no notifications.",
+    "Empty pair: beforeKind=empty, afterKind=empty; two empty-feed uncertainties (before XML is empty; after XML is empty). No add/remove/correct signal.",
+    "Unknown HTML-as-feed pair: beforeKind=unknown, afterKind=unknown; two unknown-feed-kind uncertainties (Not recognized as RSS channel or Atom feed). HTML parsed as XML but has neither rss.channel nor Atom feed.",
+    "Optional mixed replay (empty before + HTML after) surfaces both codes in one report; kind-mismatch is not emitted because empty/unknown kinds are excluded from that check.",
+    "node:test 'rss empty' and 'rss unknown non-feed' both passed. Module source not modified.",
+    "Merchant pin epistemedeus/x402-url-extractor@1a23b648 used as context only; page-change/record not re-implemented. S122 merchant c0255ac not touched (unresolved in this checkout).",
+    "No paid fetch, remote API success, git-apply, or marketplace package work."
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node modules/rss-atom-brief/cli.mjs --before fixtures/rss/empty/before.xml --after fixtures/rss/empty/after.xml",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdoutPath": "native-cells/out/C21/empty-brief.json"
+    },
+    {
+      "cmd": "node modules/rss-atom-brief/cli.mjs --before fixtures/rss/unknown/before.xml --after fixtures/rss/unknown/after.xml",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdoutPath": "native-cells/out/C21/unknown-brief.json"
+    },
+    {
+      "cmd": "node modules/rss-atom-brief/cli.mjs --before fixtures/rss/empty/before.xml --after fixtures/rss/unknown/after.xml",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdoutPath": "native-cells/out/C21/mixed-empty-then-html-brief.json",
+      "note": "combined empty + HTML-as-feed; not a third fixture class"
+    },
+    {
+      "cmd": "node --test --test-name-pattern='rss empty|rss unknown non-feed' test/modules.test.mjs",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "result": "2 passed (rss empty; rss unknown non-feed)"
+    }
+  ],
+  "artifactPaths": [
+    "native-cells/out/C21/receipt.json",
+    "native-cells/out/C21/empty-brief.json",
+    "native-cells/out/C21/unknown-brief.json",
+    "native-cells/out/C21/mixed-empty-then-html-brief.json",
+    "native-cells/out/C21/assertions.json",
+    "fixtures/rss/empty/before.xml",
+    "fixtures/rss/empty/after.xml",
+    "fixtures/rss/unknown/before.xml",
+    "fixtures/rss/unknown/after.xml"
+  ],
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "difference": {
+    "vsFreeBaseline": "CLI classifies empty XML as kind=empty with empty-feed uncertainty and HTML-as-feed as kind=unknown with unknown-feed-kind, instead of a silent empty diff or a false RSS/Atom brief. Still not a monitoring product.",
+    "differenceInDeliveredOutput": "No correction/dedup signal (or empty feeds). Still not a monitoring product."
+  },
+  "assertions": {
+    "emptyFeedUncertainty": true,
+    "unknownFeedKindUncertainty": true,
+    "allPassed": true,
+    "detailPath": "native-cells/out/C21/assertions.json"
+  },
+  "uncertainties": [
+    {
+      "code": "empty-feed",
+      "detail": "before XML is empty",
+      "source": "fixtures/rss/empty/before.xml"
+    },
+    {
+      "code": "empty-feed",
+      "detail": "after XML is empty",
+      "source": "fixtures/rss/empty/after.xml"
+    },
+    {
+      "code": "unknown-feed-kind",
+      "detail": "Not recognized as RSS channel or Atom feed",
+      "source": "fixtures/rss/unknown/before.xml",
+      "note": "HTML document: <html><body>not a feed</body></html>"
+    },
+    {
+      "code": "unknown-feed-kind",
+      "detail": "Not recognized as RSS channel or Atom feed",
+      "source": "fixtures/rss/unknown/after.xml",
+      "note": "HTML document: <html><body>still not</body></html>"
+    },
+    {
+      "code": "s122-merchant-c0255ac",
+      "detail": "unresolved in this checkout; not touched by C21"
+    }
+  ]
+}

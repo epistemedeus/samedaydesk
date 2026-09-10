@@ -1,0 +1,67 @@
+{
+  "at": "2026-09-10T11:18:24.704Z",
+  "waves": [
+    {
+      "name": "wave0-initial9",
+      "n": 9,
+      "cells": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C06",
+        "C07",
+        "C08",
+        "C09"
+      ]
+    },
+    {
+      "name": "wave1-plus3",
+      "n": 3,
+      "cells": [
+        "C10",
+        "C11",
+        "C12"
+      ]
+    },
+    {
+      "name": "wave2-plus6",
+      "n": 6,
+      "cells": [
+        "C13",
+        "C14",
+        "C15",
+        "C16",
+        "C17",
+        "C18"
+      ]
+    },
+    {
+      "name": "wave3-plus6",
+      "n": 6,
+      "cells": [
+        "C19",
+        "C20",
+        "C21",
+        "C22",
+        "C23",
+        "C24"
+      ]
+    }
+  ],
+  "perProcRssBytes": 209715200,
+  "psiBlockAvg10": 0.25,
+  "memory": {
+    "MemTotal": 16791945216,
+    "MemAvailable": 11183431680,
+    "reserve25": 4197986304,
+    "headroom": 6985445376
+  },
+  "psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+  "catalog": {
+    "subagentsMaxDepthDocs": 1,
+    "subagentsMaxConcurrentCatalog": null,
+    "userReportedMaxChildrenUnverified": 64
+  }
+}

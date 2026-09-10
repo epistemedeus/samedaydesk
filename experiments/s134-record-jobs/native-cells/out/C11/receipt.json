@@ -1,0 +1,78 @@
+{
+  "cell": "C11",
+  "cellId": "C11",
+  "title": "Pricing unknown shape fail-closed",
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "moduleSourceChanged": false,
+  "sessionNotes": [
+    "Replayed fixtures/pricing/unknown/{before,after}.json through s134-pricing-table-change.",
+    "before.json is {\"notRows\":true} — not array/{rows|items}; after.json is a valid one-row table.",
+    "CLI report.ok === false; process.exit 2. Error: unsupported-shape on label=before.",
+    "Unit test 'pricing unknown shape fails' passed. No module source change.",
+    "Cold-consumer native-cells/out/C11/consumer-ok.mjs imports comparePricingTables and prints report.ok only; stdout is 'false'.",
+    "Merchant pin epistemedeus/x402-url-extractor@1a23b648 used as context only; page-change/record not re-implemented.",
+    "S122 merchant c0255ac not present in this checkout; not touched; status unknown."
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node modules/pricing-table-change/cli.mjs --before fixtures/pricing/unknown/before.json --after fixtures/pricing/unknown/after.json",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 2,
+      "stdoutPath": "native-cells/out/C11/cli-stdout.json",
+      "note": "exit 2 is fail-closed when report.ok is false; JSON still emitted"
+    },
+    {
+      "cmd": "node --test --test-name-pattern 'pricing unknown shape fails' test/modules.test.mjs",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0
+    },
+    {
+      "cmd": "node native-cells/out/C11/consumer-ok.mjs",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdout": "false"
+    }
+  ],
+  "artifactPaths": [
+    "native-cells/out/C11/receipt.json",
+    "native-cells/out/C11/cli-stdout.json",
+    "native-cells/out/C11/cli-stderr.txt",
+    "native-cells/out/C11/cli-exit-code.txt",
+    "native-cells/out/C11/consumer-ok.mjs",
+    "native-cells/out/C11/consumer-ok.txt",
+    "native-cells/out/C11/assert-summary.json",
+    "fixtures/pricing/unknown/before.json",
+    "fixtures/pricing/unknown/after.json",
+    "modules/pricing-table-change/cli.mjs"
+  ],
+  "assertions": {
+    "reportOk": false,
+    "cliExitCode": 2,
+    "coldConsumerPrinted": "false",
+    "envelopePaidValueClaim": false,
+    "loadError": "unsupported-shape"
+  },
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "difference": "Fail-closed structural load: unknown before-shape yields ok=false and no invented field/unit delta. Cold-consumer prints report.ok only. Still not a marketplace price proof.",
+  "differenceInDeliveredOutput": "No pricing delta: input tables failed local structural load.",
+  "uncertainties": [
+    {
+      "code": "unsupported-shape",
+      "detail": "Need array or {rows|items:[...]}",
+      "evidence": {},
+      "source": "fixtures/pricing/unknown/before.json"
+    },
+    {
+      "code": "s122-merchant-c0255ac",
+      "detail": "Unresolved in this checkout; not touched this cell; recorded unknown.",
+      "evidence": {}
+    }
+  ],
+  "merchantPinContextOnly": "epistemedeus/x402-url-extractor@1a23b648",
+  "s122MerchantC0255ac": "unknown-unresolved-not-touched"
+}

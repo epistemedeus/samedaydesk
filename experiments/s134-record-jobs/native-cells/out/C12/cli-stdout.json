@@ -1,0 +1,149 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-pricing-table-change",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/native-cells/out/C12/before.json",
+    "after": "/workspace/experiments/s134-record-jobs/native-cells/out/C12/after.json"
+  },
+  "report": {
+    "module": "pricing-table-change",
+    "ok": true,
+    "counts": {
+      "beforeRows": 9,
+      "afterRows": 9,
+      "added": 1,
+      "removed": 0,
+      "fieldChanges": 0,
+      "unitChanges": 0,
+      "conflicting": 5,
+      "unchanged": 1
+    },
+    "added": [
+      {
+        "fieldKey": "enterprise",
+        "after": {
+          "field": "enterprise",
+          "fieldKey": "enterprise",
+          "value": 99,
+          "unit": "USD/mo",
+          "unitKey": "usd/mo",
+          "raw": {
+            "field": "enterprise",
+            "value": 99,
+            "unit": "USD/mo"
+          }
+        }
+      }
+    ],
+    "removed": [],
+    "fieldChanges": [],
+    "unitChanges": [],
+    "conflicting": [
+      {
+        "fieldKey": "addon",
+        "reason": "duplicate-rows-prevent-unique-compare",
+        "beforeCount": 0,
+        "afterCount": 2
+      },
+      {
+        "fieldKey": "legacy",
+        "reason": "duplicate-rows-prevent-unique-compare",
+        "beforeCount": 2,
+        "afterCount": 0
+      },
+      {
+        "fieldKey": "pro",
+        "reason": "duplicate-rows-prevent-unique-compare",
+        "beforeCount": 2,
+        "afterCount": 2
+      },
+      {
+        "fieldKey": "starter",
+        "reason": "duplicate-rows-prevent-unique-compare",
+        "beforeCount": 2,
+        "afterCount": 2
+      },
+      {
+        "fieldKey": "team_plan",
+        "reason": "duplicate-rows-prevent-unique-compare",
+        "beforeCount": 2,
+        "afterCount": 1
+      }
+    ],
+    "unchanged": [
+      {
+        "fieldKey": "hobby"
+      }
+    ],
+    "uncertainties": [
+      {
+        "code": "duplicate-field",
+        "detail": "multiple rows for fieldKey=starter",
+        "evidence": {
+          "fieldKey": "starter",
+          "count": 2
+        }
+      },
+      {
+        "code": "duplicate-field",
+        "detail": "multiple rows for fieldKey=pro",
+        "evidence": {
+          "fieldKey": "pro",
+          "count": 2
+        }
+      },
+      {
+        "code": "duplicate-field",
+        "detail": "multiple rows for fieldKey=team_plan",
+        "evidence": {
+          "fieldKey": "team_plan",
+          "count": 2
+        }
+      },
+      {
+        "code": "duplicate-field",
+        "detail": "multiple rows for fieldKey=legacy",
+        "evidence": {
+          "fieldKey": "legacy",
+          "count": 2
+        }
+      },
+      {
+        "code": "duplicate-field",
+        "detail": "multiple rows for fieldKey=starter",
+        "evidence": {
+          "fieldKey": "starter",
+          "count": 2
+        }
+      },
+      {
+        "code": "duplicate-field",
+        "detail": "multiple rows for fieldKey=pro",
+        "evidence": {
+          "fieldKey": "pro",
+          "count": 2
+        }
+      },
+      {
+        "code": "duplicate-field",
+        "detail": "multiple rows for fieldKey=addon",
+        "evidence": {
+          "fieldKey": "addon",
+          "count": 2
+        }
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Emits field/unit deltas over supplied extracted rows. Does not scrape live pages, convert currencies, or assert SKU truth."
+  }
+}

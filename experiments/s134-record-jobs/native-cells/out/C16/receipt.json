@@ -1,0 +1,73 @@
+{
+  "cell": "C16",
+  "task": "CSV empty inputs",
+  "at": "2026-09-10T11:22:00Z",
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "moduleSourceChanged": false,
+  "sessionNotes": [
+    "Replayed local empty CSV pair fixtures/csv/empty/{before,after}.csv (both 0 bytes).",
+    "s134-csv-drift fails soft: parseCsvFile returns ok:true plus empty-csv when trim is empty; compareCsvDrift keeps report.ok true; CLI process.exit 0.",
+    "Asserted empty-csv on both before and after, report.ok true, paidValueClaim false. node --test 'csv empty' passed.",
+    "No module source edits. Merchant pin epistemedeus/x402-url-extractor@1a23b648 used as context only; page-change/record not re-implemented.",
+    "S122 merchant c0255ac not present in this checkout and not touched — recorded unknown."
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node modules/csv-drift/cli.mjs --before fixtures/csv/empty/before.csv --after fixtures/csv/empty/after.csv",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0
+    },
+    {
+      "cmd": "node --test --test-name-pattern 'csv empty' test/modules.test.mjs",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0
+    }
+  ],
+  "artifactPaths": [
+    "native-cells/out/C16/receipt.json",
+    "native-cells/out/C16/cli-empty-pair.json",
+    "native-cells/out/C16/assertions.json",
+    "fixtures/csv/empty/before.csv",
+    "fixtures/csv/empty/after.csv",
+    "modules/csv-drift/cli.mjs"
+  ],
+  "assertions": {
+    "reportOk": true,
+    "cliExitCode": 0,
+    "emptyCsvUncertainty": true,
+    "failSoftOnEmpty": true
+  },
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "differenceInDeliveredOutput": "Empty inputs emit structured empty-csv uncertainties and keep ok true (fail soft) instead of a hard parse failure or blank diff. No schema/row drift signal; unkeyed-row-compare also listed because no --key was supplied.",
+  "uncertainties": [
+    {
+      "code": "empty-csv",
+      "detail": "before is empty",
+      "evidence": { "bytes": 0 }
+    },
+    {
+      "code": "empty-csv",
+      "detail": "after is empty",
+      "evidence": { "bytes": 0 }
+    },
+    {
+      "code": "unkeyed-row-compare",
+      "detail": "No --key provided; row identity uncertain. Reporting row-count delta only, not per-row add/remove."
+    },
+    {
+      "code": "s122-merchant-unresolved",
+      "detail": "S122 merchant c0255ac unresolved in this checkout; not touched. Status unknown."
+    }
+  ],
+  "merchantContext": {
+    "pin": "epistemedeus/x402-url-extractor@1a23b648",
+    "role": "reference-only",
+    "reimplemented": false,
+    "s122MerchantC0255ac": "unknown"
+  }
+}

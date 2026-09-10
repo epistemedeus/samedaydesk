@@ -1,0 +1,53 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-rss-atom-brief",
+  "inputs": {
+    "before": "/workspace/experiments/s134-record-jobs/fixtures/rss/empty/before.xml",
+    "after": "/workspace/experiments/s134-record-jobs/fixtures/rss/empty/after.xml"
+  },
+  "report": {
+    "module": "rss-atom-brief",
+    "ok": true,
+    "beforeKind": "empty",
+    "afterKind": "empty",
+    "added": [],
+    "removed": [],
+    "corrected": [],
+    "conflicting": [],
+    "unchangedCount": 0,
+    "dedupBrief": {
+      "beforeRawCount": 0,
+      "afterRawCount": 0,
+      "beforeUniqueKeys": 0,
+      "afterUniqueKeys": 0,
+      "beforeDuplicateKeys": 0,
+      "afterDuplicateKeys": 0,
+      "uniqueCountDelta": 0
+    },
+    "truncated": false,
+    "uncertainties": [
+      {
+        "code": "empty-feed",
+        "detail": "before XML is empty",
+        "evidence": {}
+      },
+      {
+        "code": "empty-feed",
+        "detail": "after XML is empty",
+        "evidence": {}
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "No correction/dedup signal (or empty feeds). Still not a monitoring product."
+  }
+}

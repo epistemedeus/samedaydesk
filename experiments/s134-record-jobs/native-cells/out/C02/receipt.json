@@ -1,0 +1,93 @@
+{
+  "cell": "C02",
+  "title": "OpenAPI conflicting operationId+params fixture replay",
+  "at": "2026-09-10T11:19:40Z",
+  "cwd": "/workspace/experiments/s134-record-jobs",
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "publicBranchContext": {
+    "branch": "codex/s134-record-jobs-20260910",
+    "head": "cd233a6",
+    "merchantPinContextOnly": "epistemedeus/x402-url-extractor@1a23b648",
+    "merchantRecipesReimplemented": false,
+    "s122MerchantC0255ac": "unknown-unresolved-not-touched"
+  },
+  "sessionNotes": [
+    "Replayed fixtures/openapi/conflicting/{before,after,used}.json through s134-openapi-impact CLI only. No network, no paid fetch/LLM/notifications, no npm marketplace (S127), no deploy/merge/accounts.",
+    "CLI exit 0, report.ok=true, usedOperationCount=1 (GET /v1/items via method+path in used.json).",
+    "Assert impact.conflicting.length >= 1 passed (length=1). Conflicting note: operationId listItems→listItemsV2 and query params limit→page.",
+    "Did not change module source. Conflicting remains a structured class; not softened into mere changed. Same key is dual-listed in impact.changed (fieldChanges) and impact.conflicting (class).",
+    "Merchant pin used as public-branch context only. S122 merchant c0255ac unresolved in this checkout; not touched; recorded unknown."
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node modules/openapi-impact/cli.mjs --before fixtures/openapi/conflicting/before.json --after fixtures/openapi/conflicting/after.json --used fixtures/openapi/conflicting/used.json",
+      "exitCode": 0,
+      "stdoutArtifact": "native-cells/out/C02/impact.json"
+    },
+    {
+      "cmd": "node --test --test-name-pattern 'openapi conflicting' test/modules.test.mjs",
+      "exitCode": 0,
+      "result": "ok 1 - openapi conflicting: operationId+params both change"
+    }
+  ],
+  "artifactPaths": [
+    "fixtures/openapi/conflicting/before.json",
+    "fixtures/openapi/conflicting/after.json",
+    "fixtures/openapi/conflicting/used.json",
+    "modules/openapi-impact/cli.mjs",
+    "native-cells/out/C02/impact.json",
+    "native-cells/out/C02/assertion.json",
+    "native-cells/out/C02/receipt.json"
+  ],
+  "assertion": {
+    "expr": "impact.conflicting.length >= 1",
+    "observed": 1,
+    "passed": true,
+    "softenedIntoMereChanged": false
+  },
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff two local OpenAPI files by eye or generic text/json diff. A reader can see operationId and parameters both moved, then treat the used op as a single undifferentiated 'changed' row (or miss the dual-axis conflict).",
+    "paidValueClaim": false
+  },
+  "differenceInDeliveredOutput": {
+    "vsFreeBaseline": "Structured impact.conflicting[] class when both operationId and parameters change on a buyer-used operation, plus field-level impact.changed[]. Offline yaml/json parse only; no API call, no $ref fetch, no git-apply/acceptance, no production-breakage claim.",
+    "structuredConflictingClass": {
+      "key": "GET /v1/items",
+      "note": "operationId and parameters both changed",
+      "operationId": { "before": "listItems", "after": "listItemsV2" },
+      "parameters": { "before": "query:limit", "after": "query:page" }
+    },
+    "notMereChanged": "impact.conflicting is populated and distinct. Dual-listing in changed is field inventory, not collapse of the conflicting class."
+  },
+  "uncertainties": [
+    {
+      "code": "cli-report-uncertainties-empty",
+      "detail": "compareOpenApiImpact returned uncertainties:[]; fixtures parsed as OpenAPI 3.0.3 objects with a resolvable used method+path."
+    },
+    {
+      "code": "s122-merchant-c0255ac-unknown",
+      "detail": "S122 merchant c0255ac is unresolved in this checkout; not present as a git object here; not touched; no invented application-baseline."
+    },
+    {
+      "code": "no-runtime-compat-proof",
+      "detail": "Conflicting class is local structural (operationId+params). Does not prove client breakage, wire compatibility, or remote API behavior."
+    },
+    {
+      "code": "no-remote-ref-resolve",
+      "detail": "CLI does not fetch or resolve remote $ref. These fixtures have none."
+    },
+    {
+      "code": "dual-list-changed-and-conflicting",
+      "detail": "Current CLI pushes the op to both changed and conflicting. Parent integrates; this cell did not retune exclusivity."
+    }
+  ],
+  "moduleSourceChanged": false,
+  "nonGoalsHonored": [
+    "no-paid-fetch-llm-notifications",
+    "no-s127-npm-marketplace",
+    "no-deploy-default-merge-accounts",
+    "no-invented-paid-value-or-remote-success"
+  ]
+}

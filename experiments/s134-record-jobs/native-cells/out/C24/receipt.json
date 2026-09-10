@@ -1,0 +1,105 @@
+{
+  "cell": "C24",
+  "cellId": "C24",
+  "title": "Parent-facing demo index cold-consumer",
+  "at": "2026-09-10T11:22:18Z",
+  "cwd": "/workspace/experiments/s134-record-jobs",
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "moduleSourceChanged": false,
+  "sessionNotes": [
+    "Wrote demos/INDEX.md listing npm run demo:openapi, demo:pricing, demo:csv, demo:rss (commands copied from package.json), a free-baseline sentence, and that S127 owns npm marketplace package export/import.",
+    "Ran npm run demo:all once from experiments/s134-record-jobs. Measured process exit 0. stderr empty. package.json demo:all is npm run -s demo:openapi && demo:pricing && demo:csv && demo:rss, so chain exit 0 implies each of the four inner scripts exited 0. Not four separately waited PIDs.",
+    "Stdout is four concatenated CLI JSON reports, each cashBoundaryUsd 0 and paidValueClaim false. Those JSON labels are not git-apply, acceptance, remote API success, or paid value.",
+    "No module source edits. No npm marketplace package work (S127). No paid fetch/LLM/notifications. No deploy/default merge/accounts.",
+    "Merchant pin epistemedeus/x402-url-extractor@1a23b648 is public-branch context only; page-change/record not re-implemented or invoked.",
+    "S122 merchant c0255ac unresolved in this checkout; not touched; recorded unknown."
+  ],
+  "commandsRun": [
+    {
+      "cmd": "npm run demo:all",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdoutPath": "native-cells/out/C24/demo-all.stdout",
+      "stderrPath": "native-cells/out/C24/demo-all.stderr",
+      "exitCodePath": "native-cells/out/C24/demo-all.exit",
+      "chain": "npm run -s demo:openapi && npm run -s demo:pricing && npm run -s demo:csv && npm run -s demo:rss",
+      "innerExitCodes": {
+        "demo:openapi": 0,
+        "demo:pricing": 0,
+        "demo:csv": 0,
+        "demo:rss": 0
+      },
+      "innerExitCodeBasis": "&&-chain of a single npm run demo:all; overall exit 0"
+    }
+  ],
+  "artifactPaths": [
+    "demos/INDEX.md",
+    "package.json",
+    "native-cells/out/C24/receipt.json",
+    "native-cells/out/C24/demo-all.stdout",
+    "native-cells/out/C24/demo-all.stderr",
+    "native-cells/out/C24/demo-all.exit",
+    "native-cells/out/C24/openapi-impact.json",
+    "native-cells/out/C24/pricing-table-change.json",
+    "native-cells/out/C24/csv-drift.json",
+    "native-cells/out/C24/rss-atom-brief.json",
+    "fixtures/openapi/positive/before.json",
+    "fixtures/openapi/positive/after.json",
+    "fixtures/openapi/positive/used.json",
+    "fixtures/pricing/positive/before.json",
+    "fixtures/pricing/positive/after.json",
+    "fixtures/csv/positive/before.csv",
+    "fixtures/csv/positive/after.csv",
+    "fixtures/rss/positive/before.xml",
+    "fixtures/rss/positive/after.xml"
+  ],
+  "indexCoverage": {
+    "fourDemoNpmScripts": ["demo:openapi", "demo:pricing", "demo:csv", "demo:rss"],
+    "freeBaselineSentencePresent": true,
+    "s127OwnsPackageExportStated": true,
+    "demoAllDocumented": true
+  },
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "difference": "Parent-facing index plus one local demo:all run that emits structured used-op OpenAPI, pricing field/unit, keyed CSV drift, and RSS correction+dedup JSON over fixtures. Does not npm-export a marketplace package (S127 owns that), scrape live pages, poll feeds, or claim paid monitoring value.",
+  "s127": "owns-npm-marketplace-package-export-import",
+  "merchantContext": {
+    "pin": "epistemedeus/x402-url-extractor@1a23b648",
+    "reimplemented": false,
+    "invoked": false,
+    "s122MerchantC0255ac": "unknown-unresolved-not-touched"
+  },
+  "uncertainties": [
+    {
+      "code": "s122-merchant-c0255ac-unresolved",
+      "detail": "S122 merchant c0255ac is not a git object in this checkout; not touched; treated as unknown context, not invented."
+    },
+    {
+      "code": "inner-exit-codes-from-and-chain",
+      "detail": "Four inner demo:* exit codes are implied by the && chain of one npm run demo:all (overall 0). This cell did not wait four independent child PIDs."
+    },
+    {
+      "code": "json-ok-not-acceptance",
+      "detail": "CLI stdout report.ok true and paidValueClaim false are local parser fields. They are not git-apply, marketplace acceptance, remote API success, or paid value."
+    },
+    {
+      "code": "sibling-demo-markdown",
+      "detail": "Concurrent cells wrote demos/openapi-partial.md (C04) and demos/pricing-positive.md (C10). C24 owns demos/INDEX.md only; those siblings were not verified here."
+    },
+    {
+      "code": "rss-cli-dirty-in-worktree",
+      "detail": "git status showed modules/rss-atom-brief/cli.mjs modified by another cell. C24 did not edit it. demo:rss still ran as part of demo:all and the chain exited 0."
+    }
+  ],
+  "nonGoalsHonored": [
+    "no-paid-fetch",
+    "no-llm",
+    "no-notifications",
+    "no-s127-npm-marketplace-package",
+    "no-deploy-default-merge-accounts"
+  ]
+}

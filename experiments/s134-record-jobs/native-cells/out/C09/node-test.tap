@@ -1,0 +1,24 @@
+(node:120299) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:120305) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: pricing empty tables
+ok 1 - pricing empty tables
+  ---
+  duration_ms: 1.16675
+  ...
+# Subtest: pricing partial missing value uncertainty
+ok 2 - pricing partial missing value uncertainty
+  ---
+  duration_ms: 0.278942
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 80.439771

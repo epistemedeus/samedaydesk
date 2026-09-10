@@ -1,0 +1,51 @@
+{
+  "cell": "C17",
+  "fixture": "fixtures/csv/unknown",
+  "paidValueClaim": false,
+  "fixtureBytes": {
+    "before": "a,b\n1,2\n",
+    "after": "b,a\n2,1\n"
+  },
+  "schemaObserved": {
+    "beforeHeaders": ["a", "b"],
+    "afterHeaders": ["b", "a"],
+    "columnsAdded": [],
+    "columnsRemoved": [],
+    "columnsShared": ["a", "b"],
+    "columnsReordered": true
+  },
+  "runs": {
+    "unkeyed": {
+      "columnsReordered": true,
+      "keyColumnsMissing": false,
+      "uncertaintyCodes": ["unkeyed-row-compare"],
+      "rowDriftMode": "unkeyed-count-only",
+      "rowCountDelta": 0,
+      "rowEqualityClaimed": false
+    },
+    "keyedA": {
+      "keyColumns": ["a"],
+      "columnsReordered": true,
+      "keyColumnsMissing": false,
+      "uncertaintyCodes": [],
+      "rowDriftMode": "keyed",
+      "addedCount": 0,
+      "removedCount": 0,
+      "changedCount": 0
+    },
+    "keyedSkuAbsent": {
+      "keyColumns": ["sku"],
+      "columnsReordered": true,
+      "keyColumnsMissing": true,
+      "missingKeys": ["sku"],
+      "uncertaintyCodes": ["key-columns-missing"],
+      "rowDriftMode": "keys-unavailable"
+    }
+  },
+  "unitTest": {
+    "name": "csv reorder-only unknown semantics still reports reorder",
+    "exitCode": 0,
+    "pass": true,
+    "note": "Test comment says key 'a' missing on after schema; observed after headers are b,a so 'a' is present. Assertion passed via columnsReordered."
+  }
+}

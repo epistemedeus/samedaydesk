@@ -1,0 +1,53 @@
+{
+  "cell": "C07",
+  "title": "Pricing unit-only change",
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "sessionNotes": [
+    "Replayed local fixtures/pricing/positive/unit-before.json vs unit-after.json through s134-pricing-table-change. storage value 10 unchanged; unit GB→GiB.",
+    "Asserted unitChanges==1 and fieldChanges==0. CLI counts and node:test 'pricing unit-only change' both passed. Not misclassified as field change; module source left unchanged.",
+    "normalizeUnit is trim+lowercase only. GB vs GiB are distinct unit strings (gb !== gib). No SI/IEC conversion table; numeric 10 is not rescaled.",
+    "Merchant pin epistemedeus/x402-url-extractor@1a23b648 context only; not re-implemented. S122 merchant c0255ac unresolved in this checkout — not touched, recorded unknown.",
+    "No paid fetch/LLM/notifications. No npm marketplace package work. No deploy/default merge/accounts. No git-apply/acceptance inferred from JSON labels."
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node modules/pricing-table-change/cli.mjs --before fixtures/pricing/positive/unit-before.json --after fixtures/pricing/positive/unit-after.json",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdoutPath": "native-cells/out/C07/cli-output.json"
+    },
+    {
+      "cmd": "node --test --test-name-pattern 'pricing unit-only change' test/modules.test.mjs",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "result": "pass 1",
+      "stdoutPath": "native-cells/out/C07/unit-only.test.tap"
+    }
+  ],
+  "artifactPaths": [
+    "native-cells/out/C07/receipt.json",
+    "native-cells/out/C07/cli-output.json",
+    "native-cells/out/C07/assertion.json",
+    "native-cells/out/C07/unit-only.test.tap",
+    "fixtures/pricing/positive/unit-before.json",
+    "fixtures/pricing/positive/unit-after.json",
+    "modules/pricing-table-change/cli.mjs"
+  ],
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "differenceInDeliveredOutput": "Structured unit vs field split: unit-only GB→GiB on storage is unitChanges=1 with fieldChanges=0 (value 10 unchanged). Free eyeball/diff would see a JSON key change without that class. Does not convert units, scrape pages, or assert SKU/price truth.",
+  "uncertainties": [
+    {
+      "code": "no-unit-conversion-table",
+      "detail": "GB vs GiB classified as a unit-string change only. No conversion table in this checkout; 10 is not treated as 10*10^9 vs 10*2^30 bytes. Report.uncertainties was empty for this pair."
+    },
+    {
+      "code": "s122-merchant-c0255ac-unresolved",
+      "detail": "S122 merchant c0255ac is unresolved in this checkout; recorded unknown. Not touched this cell."
+    }
+  ]
+}

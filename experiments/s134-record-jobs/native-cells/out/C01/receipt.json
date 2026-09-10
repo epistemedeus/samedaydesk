@@ -1,0 +1,79 @@
+{
+  "cellId": "C01",
+  "title": "OpenAPI used-op: assert unused admin ignored",
+  "at": "2026-09-10T11:20:09Z",
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "moduleSourceChanged": false,
+  "sessionNotes": [
+    "Ran s134-openapi-impact against local fixtures/openapi/positive/{before,after,used}.json only.",
+    "used.json lists GET /v1/items (method+path) and operationId getItem (= GET /v1/items/{id}). It does not list adminStats or /v1/admin/stats.",
+    "CLI stdout (exit 0): usedOperationCount=2; impact.changed keys are GET /v1/items (query param cursor added) and GET /v1/items/{id} (response 410 added).",
+    "Unused GET /v1/admin/stats (deprecated in after.json) is absent from all impact buckets and from the full CLI stdout string.",
+    "No module fix required; compareOpenApiImpact diffs only resolved --used keys.",
+    "Merchant pin epistemedeus/x402-url-extractor@1a23b648 used as public-branch context only; page-change/record not re-implemented.",
+    "S122 merchant c0255ac unresolved in this checkout; not touched.",
+    "No paid fetch/LLM/notifications; no npm marketplace package work; no deploy/merge/accounts."
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node modules/openapi-impact/cli.mjs --before fixtures/openapi/positive/before.json --after fixtures/openapi/positive/after.json --used fixtures/openapi/positive/used.json",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdoutPath": "native-cells/out/C01/impact.json"
+    },
+    {
+      "cmd": "node --test --test-name-pattern 'openapi positive' test/modules.test.mjs",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0
+    },
+    {
+      "cmd": "node --input-type=module assertion: used keys GET /v1/items and GET /v1/items/{id} present; /v1/admin/stats and adminStats absent from impact buckets and stdout",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "result": {
+        "pass": true,
+        "usedOperationCount": 2,
+        "keys": ["GET /v1/items", "GET /v1/items/{id}"],
+        "adminKeys": [],
+        "adminInStdout": false
+      }
+    }
+  ],
+  "artifactPaths": [
+    "native-cells/out/C01/impact.json",
+    "native-cells/out/C01/receipt.json",
+    "fixtures/openapi/positive/before.json",
+    "fixtures/openapi/positive/after.json",
+    "fixtures/openapi/positive/used.json",
+    "modules/openapi-impact/cli.mjs"
+  ],
+  "assertions": {
+    "mentionsGetItems": true,
+    "mentionsGetItemById": true,
+    "adminInUsedImpact": false,
+    "adminInCliStdout": false,
+    "cliExitCode": 0
+  },
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "differenceInDeliveredOutput": "Reports added/removed/changed fields for buyer-used operations only. Does not call the API, apply patches, or assert production breakage. Unused admin deprecation is intentionally out of scope when not listed in --used.",
+  "uncertainties": [
+    {
+      "code": "s122-merchant-c0255ac-unresolved",
+      "detail": "S122 merchant c0255ac is not present as a git object here; treated as unknown context, not invented. Not touched this cell."
+    },
+    {
+      "code": "not-runtime-compat-proof",
+      "detail": "Structural used-op field deltas only. No live API call, $ref network resolve, or production breakage claim."
+    }
+  ],
+  "merchantContext": {
+    "pin": "epistemedeus/x402-url-extractor@1a23b648",
+    "reimplemented": false,
+    "s122MerchantC0255ac": "unknown-unresolved-not-touched"
+  }
+}

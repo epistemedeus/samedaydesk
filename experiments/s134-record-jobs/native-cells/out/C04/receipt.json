@@ -1,0 +1,64 @@
+{
+  "cell": "C04",
+  "cellId": "C04",
+  "title": "OpenAPI partial used-path removal",
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "sessionNotes": [
+    "Replayed fixtures/openapi/partial/{before,after,used}.json through modules/openapi-impact/cli.mjs (cwd experiments/s134-record-jobs).",
+    "CLI exit 0; report.ok true; usedOperationCount 2; impact.removed includes GET /v1/items/{id}; GET /v1/items unchanged.",
+    "Unit test 'openapi partial: used path removed' pass 1 / fail 0.",
+    "No module source change; existing CLI already classifies used-path absence as removed.",
+    "Merchant pin epistemedeus/x402-url-extractor@1a23b648 context only; page-change/record not re-implemented.",
+    "S122 merchant c0255ac not present in this checkout; not touched; recorded unknown.",
+    "No paid fetch, LLM, notifications, npm marketplace (S127), deploy, default-branch merge, or accounts.",
+    "Do not treat this JSON as git-apply, marketplace acceptance, or remote API success."
+  ],
+  "commandsRun": [
+    {
+      "command": "node modules/openapi-impact/cli.mjs --before fixtures/openapi/partial/before.json --after fixtures/openapi/partial/after.json --used fixtures/openapi/partial/used.json",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "stdoutPath": "native-cells/out/C04/impact.json"
+    },
+    {
+      "command": "node --test --test-name-pattern 'openapi partial' test/modules.test.mjs",
+      "cwd": "/workspace/experiments/s134-record-jobs",
+      "exitCode": 0,
+      "result": "ok 1 - openapi partial: used path removed"
+    }
+  ],
+  "artifactPaths": [
+    "fixtures/openapi/partial/before.json",
+    "fixtures/openapi/partial/after.json",
+    "fixtures/openapi/partial/used.json",
+    "modules/openapi-impact/cli.mjs",
+    "native-cells/out/C04/impact.json",
+    "demos/openapi-partial.md",
+    "native-cells/out/C04/receipt.json"
+  ],
+  "assertion": {
+    "removedIncludes": "GET /v1/items/{id}",
+    "observedRemovedKeys": ["GET /v1/items/{id}"],
+    "unchangedKeys": ["GET /v1/items"],
+    "passed": true
+  },
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "difference": "Structured used-operation impact lists GET /v1/items/{id} as removed (present in before + used list, absent after). Does not call the API, apply patches, or assert production breakage.",
+  "uncertainties": [
+    {
+      "code": "s122-merchant-c0255ac-unresolved",
+      "detail": "S122 merchant c0255ac is unresolved in this checkout; not touched; treated as unknown context."
+    },
+    {
+      "code": "not-runtime-compat-proof",
+      "detail": "Removed path is a local document delta for used ops only; not a live API or client-breakage proof."
+    }
+  ],
+  "moduleSourceChanged": false,
+  "merchantPinContextOnly": "epistemedeus/x402-url-extractor@1a23b648"
+}
