@@ -220,8 +220,28 @@ test(
     const extract = (body.tools || []).find((tool) => tool.route === "/extract");
     assert.ok(extract, "extract missing from Agent402 index");
     assert.equal(extract.price, expected.priceUsd);
-    assert.deepEqual(extract.responseContract.guaranteedPaths, expected.outputGuaranteedPaths);
+    assert.deepEqual(extract.responseContract.guaranteedPaths, catalog.publishedExtractContract.outputGuaranteedPaths);
     assert.ok(body.networks.includes(expected.network));
+  },
+);
+
+test(
+  "live published extract schema exactly matches the current index contract",
+  { skip: skipLive ? "SKIP_LIVE_BUYER_REPLAY=1" : false },
+  async () => {
+    const response = await fetchWithTimeout(catalog.publishedExtractContract.schemaUrl, {
+      headers: { Accept: "application/json" },
+    });
+    assert.equal(response.status, 200);
+    const body = await response.json();
+    const schema = body.paths["/extract"].get.responses["200"].content["application/json"].schema;
+    assert.deepEqual([...schema.required].sort(), catalog.publishedExtractContract.outputGuaranteedPaths);
+    for (const path of ["requestedUrl", "finalUrl", "url", "title"]) {
+      assert.equal(schema.properties[path].type, "string", path);
+    }
+    assert.equal(schema.properties.status.type, "integer");
+    assert.equal(schema.properties.sourceOk.type, "boolean");
+    assert.equal(schema.properties.ok.type, "boolean");
   },
 );
 
