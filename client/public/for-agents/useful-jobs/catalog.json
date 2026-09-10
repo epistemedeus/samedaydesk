@@ -1,0 +1,86 @@
+{
+  "schema": "useful-jobs.catalog.v1",
+  "package": "useful-jobs",
+  "version": "1.0.0",
+  "runtime": {
+    "node": ">=22",
+    "network": "offline-first",
+    "purchaseAuthority": false,
+    "schedulerDaemon": false
+  },
+  "jobs": [
+    {
+      "id": "api-upgrade-brief",
+      "title": "API Upgrade Brief",
+      "summary": "Compare before/after OpenAPI against used-operation pins and emit an upgrade brief.",
+      "cli": ["node", "bin/useful-jobs.mjs", "run", "api-upgrade-brief"],
+      "requiredInputs": ["--before", "--after", "--used"],
+      "outputs": ["upgrade-brief.json", "upgrade-brief.md"],
+      "sampleAvailable": true,
+      "exampleFlag": "--example",
+      "freeSample": true,
+      "notes": "Fixture/sample OpenAPI only; not a runtime compatibility proof."
+    },
+    {
+      "id": "vendor-budget-impact",
+      "title": "Vendor Budget Impact",
+      "summary": "Scan curated pricing-row before/after JSON for field and unit deltas. No purchase authority.",
+      "cli": ["node", "bin/useful-jobs.mjs", "run", "vendor-budget-impact"],
+      "requiredInputs": ["--before", "--after"],
+      "outputs": ["budget-impact.json", "budget-impact.md"],
+      "sampleAvailable": true,
+      "exampleFlag": "--example",
+      "freeSample": true,
+      "notes": "Conflicting/unknown upstream evidence stays partial even without a known delta."
+    },
+    {
+      "id": "feed-agenda",
+      "title": "Feed Agenda",
+      "summary": "Turn RSS/Atom before/after deltas into an agenda JSON plus ICS.",
+      "cli": ["node", "bin/useful-jobs.mjs", "run", "feed-agenda"],
+      "requiredInputs": ["--before", "--after"],
+      "outputs": ["agenda.json", "agenda.ics"],
+      "sampleAvailable": true,
+      "exampleFlag": "--example",
+      "freeSample": true,
+      "notes": "Sample feed deltas only; not live deadlines."
+    },
+    {
+      "id": "evidence-ci-annotation",
+      "title": "Evidence CI Annotation",
+      "summary": "Format a schema-compatible evidence packet into GitHub-style CI annotations.",
+      "cli": ["node", "bin/useful-jobs.mjs", "run", "evidence-ci-annotation"],
+      "requiredInputs": ["--input"],
+      "outputs": ["annotations.json", "annotations.md"],
+      "sampleAvailable": true,
+      "exampleFlag": "--example",
+      "freeSample": true,
+      "notes": "Caller-supplied schema-compatible packets remain unattested; never treated as kit-produced trusted action."
+    },
+    {
+      "id": "listing-repair-packet",
+      "title": "Listing Repair Packet",
+      "summary": "Diagnose listing/route snapshots into a source-linked owner repair packet.",
+      "cli": ["node", "bin/useful-jobs.mjs", "run", "listing-repair-packet"],
+      "requiredInputs": ["--input"],
+      "outputs": ["repair-packet.json", "repair-packet.md"],
+      "sampleAvailable": true,
+      "exampleFlag": "--example",
+      "freeSample": true,
+      "notes": "Partial/incomplete evidence stays non-final; no global unlisting claim."
+    },
+    {
+      "id": "repeat-job-record",
+      "title": "Repeat Job Record",
+      "summary": "Build an operator-schedulable next-run record with local byte verification. Not a daemon.",
+      "cli": ["node", "bin/useful-jobs.mjs", "run", "repeat-job-record"],
+      "requiredInputs": ["--next-run"],
+      "optionalInputs": ["--input-root"],
+      "outputs": ["repeat-job.json", "repeat-job.md"],
+      "sampleAvailable": true,
+      "exampleFlag": "--example",
+      "freeSample": true,
+      "notes": "Declared digests must match local file bytes for verified identity; missing files stay informational/unverified."
+    }
+  ]
+}

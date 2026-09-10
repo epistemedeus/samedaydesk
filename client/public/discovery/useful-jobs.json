@@ -1,0 +1,49 @@
+{
+  "schema": "samedaydesk.for-agents.useful-jobs.v1",
+  "package": "useful-jobs",
+  "version": "1.0.0",
+  "title": "Offline useful jobs package",
+  "summary": "Six local Node 22 jobs over your own files: API upgrade brief, vendor budget impact, feed agenda, evidence CI annotation, listing repair packet, and repeat job record. Verify size and sha256 before extract. Samples are labeled SAMPLE and require --example. No purchase, network, or scheduler authority.",
+  "page": "https://samedaydesk.com/for-agents/useful-jobs",
+  "archiveUrl": "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz",
+  "archive": {
+    "path": "/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz",
+    "url": "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz",
+    "kitPath": "/kit/useful-jobs-1.0.0.tar.gz",
+    "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+    "bytes": 2522418
+  },
+  "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+  "bytes": 2522418,
+  "node": ">=22",
+  "offline": true,
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "jobsCatalogUrl": "https://samedaydesk.com/for-agents/useful-jobs/catalog.json",
+  "jobsOutcomesUrl": "https://samedaydesk.com/for-agents/useful-jobs/jobs-outcomes.json",
+  "pins": {
+    "sourceRepo": "epistemedeus/pilot",
+    "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+    "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+    "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+  },
+  "jobs": [
+    "api-upgrade-brief",
+    "vendor-budget-impact",
+    "feed-agenda",
+    "evidence-ci-annotation",
+    "listing-repair-packet",
+    "repeat-job-record"
+  ],
+  "install": [
+    "curl -fsSL https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz -o useful-jobs-1.0.0.tar.gz",
+    "echo '6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51  useful-jobs-1.0.0.tar.gz' | sha256sum -c -",
+    "tar -xzf useful-jobs-1.0.0.tar.gz",
+    "cd useful-jobs-1.0.0",
+    "node bin/useful-jobs.mjs list"
+  ],
+  "coldStart": "useful_jobs_acquire() {\n  local origin=\"${USEFUL_JOBS_ORIGIN:-${1:-https://samedaydesk.com}}\"\n  local bytes=2522418\n  local sha=6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51\n  local work tgz root\n  work=$(mktemp -d \"${TMPDIR:-/tmp}/useful-jobs.XXXXXX\") || return 1\n  tgz=\"$work/useful-jobs-1.0.0.tar.gz\"\n  root=\"$work/useful-jobs-1.0.0\"\n  curl -fsSL --max-time 60 -o \"$tgz\" \"$origin/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz\" || { rm -rf \"$work\"; return 1; }\n  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); n=len(b); e=int(sys.argv[2]); (n==e) or sys.exit((sys.stderr.write(\"size %s != %s\\n\" % (n, e)) or 1)); h=hashlib.sha256(b).hexdigest(); (h==sys.argv[3]) or sys.exit((sys.stderr.write(\"sha256 %s != %s\\n\" % (h, sys.argv[3])) or 1))' \"$tgz\" \"$bytes\" \"$sha\" || { rm -rf \"$work\"; return 1; }\n  tar -xzf \"$tgz\" -C \"$work\" || { rm -rf \"$work\"; return 1; }\n  [ -f \"$root/bin/useful-jobs.mjs\" ] || { rm -rf \"$work\"; return 1; }\n  (cd \"$root\" && node bin/useful-jobs.mjs list >&2) || { rm -rf \"$work\"; return 1; }\n  printf '%s\\n' \"$root\"\n  return 0\n}\nkit=$(useful_jobs_acquire) || exit 1\nprintf '%s\\n' \"$kit\"",
+  "freeOffline": true,
+  "paidHostedClaim": false,
+  "note": "Free local package. Paid hosted extract on /for-agents stays a separate product and is not started by these jobs. Schema-valid caller input is not kit-produced authority."
+}

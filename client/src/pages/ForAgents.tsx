@@ -213,6 +213,24 @@ export default function ForAgents() {
           </p>
         </section>
 
+        <section className={styles.section} aria-labelledby="useful-jobs-title">
+          <div className={styles.sectionHead}>
+            <p className="eyebrow">Offline package · useful jobs</p>
+            <h2 id="useful-jobs-title">Run six local useful jobs on files you already hold</h2>
+          </div>
+          <p className={styles.jobCopy}>
+            Download one Node 22 archive for API upgrade briefs, vendor budget impact, feed
+            agendas, evidence CI annotations, listing repair packets, and repeat job records.
+            Verify size and sha256 before extract. Labeled samples need <code>--example</code>.
+            Ordinary callers supply their own files. No purchase or scheduler authority. Details
+            and cold-start commands:{" "}
+            <Link className={styles.inlineLink} to="/for-agents/useful-jobs">
+              /for-agents/useful-jobs
+            </Link>
+            .
+          </p>
+        </section>
+
         <section className={styles.section} aria-labelledby="recurring-title">
           <div className={styles.sectionHead}>
             <p className="eyebrow">Job 5 · recurring recipes</p>
