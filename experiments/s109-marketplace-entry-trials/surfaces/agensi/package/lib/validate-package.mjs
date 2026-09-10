@@ -155,7 +155,7 @@ export function validateAgensiPackage(pkgDir, options = {}) {
       actor: i.actor,
     })),
     publicListingNote:
-      'Anonymous worker cannot list. OFFICIAL Agensi seller entry is www.agensi.io/auth and /sell (MCP: mcp.agensi.io/mcp). www.agensi.dev Cloudflare Access is an unrelated tenant — do not enter from this worker. Free submission does not require payout setup. Paid payout eligibility is a separate unknown. This package will not list. Local provenance.mjs is not an Agensi paid run.',
+      'Anonymous worker cannot list. OFFICIAL Agensi seller entry is www.agensi.io/auth and /sell (MCP: mcp.agensi.io/mcp). www.agensi.dev Cloudflare Access is an unrelated tenant - do not enter from this worker. Free submission does not require payout setup. Paid payout eligibility is a separate unknown. This package will not list. Local provenance.mjs is not an Agensi paid run.',
     nextMeasurableEvent:
       descriptor.nextMeasurableEvent ||
       'Root auth on www.agensi.io plus payout-method enabled state captured privately; still $0 and no publish from this worker. Do not use www.agensi.dev Access as seller entry.',

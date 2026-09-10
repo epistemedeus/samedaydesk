@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 /**
- * Agensi paid-delivery vs free provenance helper ($0, offline by default).
- * Compares a free public recipe pin tree to a proposed paid packaging directory.
- * Does not list, upload, authenticate, or claim exclusivity/license ownership.
+ * Offline directory provenance helper.
+ * Compares two local package directories and reports added, modified, removed,
+ * and identical files. Does not fetch, execute, authenticate, or publish.
  *
  * Usage:
- *   node bin/provenance.mjs --freeDir <pin-checkout-or-fixture> --paidDir <packaging-dir>
+ *   node bin/provenance.mjs --baselineDir <dir> --candidateDir <dir>
+ * Legacy aliases: --freeDir (baseline), --paidDir (candidate).
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -56,89 +57,81 @@ function relHashMap(root) {
   return map;
 }
 
-export function compareProvenance({ freeDir, paidDir, skillRecipePin }) {
-  const free = relHashMap(freeDir);
-  const paid = relHashMap(paidDir);
+export function compareProvenance(opts) {
+  const baselineDir = opts.baselineDir || opts.freeDir;
+  const candidateDir = opts.candidateDir || opts.paidDir;
+  const skillRecipePin = opts.skillRecipePin;
+  const baseline = relHashMap(baselineDir);
+  const candidate = relHashMap(candidateDir);
   const identical = [];
   const modified = [];
-  const paidOnly = [];
-  const freeOnly = [];
+  const candidateOnly = [];
+  const baselineOnly = [];
 
-  for (const [rel, meta] of free) {
-    if (!paid.has(rel)) freeOnly.push(rel);
-    else if (paid.get(rel).sha256 === meta.sha256) identical.push(rel);
+  for (const [rel, meta] of baseline) {
+    if (!candidate.has(rel)) baselineOnly.push(rel);
+    else if (candidate.get(rel).sha256 === meta.sha256) identical.push(rel);
     else modified.push(rel);
   }
-  for (const rel of paid.keys()) {
-    if (!free.has(rel)) paidOnly.push(rel);
+  for (const rel of candidate.keys()) {
+    if (!baseline.has(rel)) candidateOnly.push(rel);
   }
 
-  const packagingDeltaFiles = [...paidOnly, ...modified].sort();
-  const claimsProprietaryOwnershipOfFreeRecipes = false;
+  const packagingDeltaFiles = [...candidateOnly, ...modified].sort();
 
   return {
-    cashBoundaryUsd: 0,
-    surface: 'agensi',
-    officialHosts: {
-      auth: 'https://www.agensi.io/auth',
-      sell: 'https://www.agensi.io/sell',
-      mcp: 'https://mcp.agensi.io/mcp',
-    },
-    unrelatedHostDoNotEnter: {
-      host: 'https://www.agensi.dev',
-      note: 'Cloudflare Access tenant observed from this worker; not the Agensi seller surface. Do not attempt Access login from automation.',
-    },
     skillRecipePin: skillRecipePin || null,
-    inputLabels: {free: "supplied baseline", paid: "supplied candidate"},
-    excludedDirectoryNames: [".git", "node_modules"],
+    inputLabels: { baseline: 'supplied baseline', candidate: 'supplied candidate' },
+    excludedDirectoryNames: ['.git', 'node_modules'],
     counts: {
-      freeFiles: free.size,
-      paidFiles: paid.size,
+      baselineFiles: baseline.size,
+      candidateFiles: candidate.size,
       identical: identical.length,
       modified: modified.length,
-      paidOnly: paidOnly.length,
-      freeOnly: freeOnly.length,
+      candidateOnly: candidateOnly.length,
+      baselineOnly: baselineOnly.length,
     },
     packagingDeltaFiles,
     modifiedFiles: modified,
-    addedFiles: paidOnly,
-    removedFiles: freeOnly,
+    addedFiles: candidateOnly,
+    removedFiles: baselineOnly,
     sourceRevisionVerified: false,
     identicalSample: identical.slice(0, 20),
-    paidDeliverableIs: 'observed added/modified files only; not proof of useful work, rights, acceptance, or value',
-    freeAlternativeIs: 'clone/use the public pin directly without Agensi',
-    claimsProprietaryOwnershipOfFreeRecipes,
-    licenseClaim: 'unknown-unless-present-in-tree',
-    exclusivityClaim: false,
-    listingPerformed: false,
-    mcpPaidUnlockPerformed: false,
-    unknowns: [
-      'Account payout eligibility on Agensi is unknown without Root auth',
-      'Whether a given listing would pass Agensi review is unknown',
-      'Presence/absence of LICENSE in upstream pin must be rechecked at pin SHA',
-    ],
   };
 }
 
 function main(argv) {
   const args = parseArgs(argv);
-  if(Object.keys(args).some(k=>!["freeDir","paidDir","skillRecipePin"].includes(k)) || Object.values(args).some(v=>typeof v!=="string")) throw new Error("Invalid CLI options");
-  if (!args.freeDir || !args.paidDir) {
+  const allowed = ['baselineDir', 'candidateDir', 'freeDir', 'paidDir', 'skillRecipePin'];
+  if (Object.keys(args).some((k) => !allowed.includes(k)) || Object.values(args).some((v) => typeof v !== 'string')) {
+    throw new Error('Invalid CLI options');
+  }
+  const baselineDir = args.baselineDir || args.freeDir;
+  const candidateDir = args.candidateDir || args.paidDir;
+  if (!baselineDir || !candidateDir) {
     console.error(
       JSON.stringify({
         ok: false,
-        error: 'usage: provenance.mjs --freeDir <dir> --paidDir <dir> [--skillRecipePin <pin>]',
+        error:
+          'usage: provenance.mjs --baselineDir <dir> --candidateDir <dir> [--skillRecipePin <pin>] (aliases: --freeDir, --paidDir)',
       }),
     );
     process.exit(2);
   }
   const report = compareProvenance({
-    freeDir: path.resolve(args.freeDir),
-    paidDir: path.resolve(args.paidDir),
+    baselineDir: path.resolve(baselineDir),
+    candidateDir: path.resolve(candidateDir),
     skillRecipePin: args.skillRecipePin,
   });
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
 }
 
 const isMain = process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;
-if (isMain) {try {main(process.argv.slice(2));} catch {console.error(JSON.stringify({ok:false,error:'Invalid or unreadable bounded input tree',cashBoundaryUsd:0}));process.exitCode=2;}}
+if (isMain) {
+  try {
+    main(process.argv.slice(2));
+  } catch {
+    console.error(JSON.stringify({ ok: false, error: 'Invalid or unreadable bounded input tree' }));
+    process.exitCode = 2;
+  }
+}

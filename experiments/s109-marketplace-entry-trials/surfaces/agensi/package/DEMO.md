@@ -5,40 +5,31 @@ Prompt: Compare the included fixtures/free baseline and fixtures/paid candidate.
 Command, run from the extracted skill directory:
 
 ```sh
-node bin/provenance.mjs --freeDir fixtures/free --paidDir fixtures/paid
+node bin/provenance.mjs --baselineDir fixtures/free --candidateDir fixtures/paid
 ```
+
+Legacy aliases `--freeDir` / `--paidDir` are accepted for the same baseline / candidate inputs.
 
 Actual Node.js output (synthetic fixture replay; no model or platform submission):
 
 ```json
 {
-  "cashBoundaryUsd": 0,
-  "surface": "agensi",
-  "officialHosts": {
-    "auth": "https://www.agensi.io/auth",
-    "sell": "https://www.agensi.io/sell",
-    "mcp": "https://mcp.agensi.io/mcp"
-  },
-  "unrelatedHostDoNotEnter": {
-    "host": "https://www.agensi.dev",
-    "note": "Cloudflare Access tenant observed from this worker; not the Agensi seller surface. Do not attempt Access login from automation."
-  },
   "skillRecipePin": null,
   "inputLabels": {
-    "free": "supplied baseline",
-    "paid": "supplied candidate"
+    "baseline": "supplied baseline",
+    "candidate": "supplied candidate"
   },
   "excludedDirectoryNames": [
     ".git",
     "node_modules"
   ],
   "counts": {
-    "freeFiles": 2,
-    "paidFiles": 3,
+    "baselineFiles": 2,
+    "candidateFiles": 3,
     "identical": 1,
     "modified": 0,
-    "paidOnly": 2,
-    "freeOnly": 1
+    "candidateOnly": 2,
+    "baselineOnly": 1
   },
   "packagingDeltaFiles": [
     "ACCEPTANCE.md",
@@ -55,18 +46,6 @@ Actual Node.js output (synthetic fixture replay; no model or platform submission
   "sourceRevisionVerified": false,
   "identicalSample": [
     "SKILL.md"
-  ],
-  "paidDeliverableIs": "observed added/modified files only; not proof of useful work, rights, acceptance, or value",
-  "freeAlternativeIs": "clone/use the public pin directly without Agensi",
-  "claimsProprietaryOwnershipOfFreeRecipes": false,
-  "licenseClaim": "unknown-unless-present-in-tree",
-  "exclusivityClaim": false,
-  "listingPerformed": false,
-  "mcpPaidUnlockPerformed": false,
-  "unknowns": [
-    "Account payout eligibility on Agensi is unknown without Root auth",
-    "Whether a given listing would pass Agensi review is unknown",
-    "Presence/absence of LICENSE in upstream pin must be rechecked at pin SHA"
   ]
 }
 ```
