@@ -1,0 +1,35 @@
+{
+  "milestone": "S206",
+  "role": "cursor-collect",
+  "at": "2026-09-10T15:12:29Z",
+  "branch": "codex/s206-record-distribution-final-fix-20260910",
+  "tip": "5c5db3465848cc2889e9a58b0bc585d6abef9dc9",
+  "productCommit": "dcc78f31097b3d3a6e23778c5fe77b5af4cc88b1",
+  "resultCommit": "5c5db3465848cc2889e9a58b0bc585d6abef9dc9",
+  "baseS198": "6a7b5b6885842b78c40ecbef1c63570d7987fbe7",
+  "parentSession": "01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5",
+  "model": "grok-4.6",
+  "effort": "xhigh",
+  "independentVerification": {
+    "s134": "42/42",
+    "s163": "7/7",
+    "s176": "27/27",
+    "s185": "20/20",
+    "f1MissingNotBundled": true,
+    "f2OverwriteRefusedBytesPreserved": true,
+    "f3NullScalarStructuredRefuse": true,
+    "archiveDigestsMatchReceipts": true
+  },
+  "archives": {
+    "recordRepeat": {
+      "path": "client/public/kit/record-repeat-job-6a7b5b688584.tar.gz",
+      "sha256": "27f7bc0175e23820019a360c7561e43dfa50cff90a453eb2cafe01b5b595bcb0",
+      "bytes": 1253961
+    },
+    "distributionRepair": {
+      "path": "client/public/kit/distribution-repair-6a7b5b688584.tar.gz",
+      "sha256": "479e4ce53986291090e455cd26b364de04e2fe49b6c44fe484e0a57b73f74c56",
+      "bytes": 76888
+    }
+  }
+}
