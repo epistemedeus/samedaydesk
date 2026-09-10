@@ -1,0 +1,397 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "External observatory returned envelopes, snapshots and source catalog",
+  "oneOf": [
+    {
+      "$ref": "#/definitions/observation"
+    },
+    {
+      "$ref": "#/definitions/snapshot"
+    },
+    {
+      "$ref": "#/definitions/catalog"
+    }
+  ],
+  "definitions": {
+    "metric": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": [
+            "number",
+            "string",
+            "null"
+          ]
+        },
+        "state": {
+          "enum": [
+            "ok",
+            "missing",
+            "invalid",
+            "unavailable",
+            "error",
+            "nonfinite",
+            "negative",
+            "overflow",
+            "schema_drift",
+            "contradictory",
+            "source_error"
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "definition": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "population": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "window": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidenceClass": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "key",
+        "value",
+        "state",
+        "unit",
+        "definition",
+        "population",
+        "window"
+      ],
+      "additionalProperties": true,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "ok"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": [
+                  "number",
+                  "string"
+                ]
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "value": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "observation": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "pilot.external-observatory.v1"
+        },
+        "fetchedAt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sourceId": {
+          "enum": [
+            "moltjobs",
+            "x402stats",
+            "smithery_mcp"
+          ]
+        },
+        "sourceKind": {
+          "enum": [
+            "work_market",
+            "settlement",
+            "capability_discovery"
+          ]
+        },
+        "upstreamUrl": {
+          "type": "string"
+        },
+        "providerTimestamp": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "providerTimestampState": {
+          "enum": [
+            "ok",
+            "missing",
+            "stale",
+            "invalid"
+          ]
+        },
+        "availability": {
+          "enum": [
+            "ok",
+            "partial",
+            "unavailable",
+            "stale",
+            "error"
+          ]
+        },
+        "httpStatus": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "cache": {
+          "type": "object",
+          "properties": {
+            "hit": {
+              "type": "boolean"
+            },
+            "ageMs": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "stale": {
+              "type": "boolean"
+            },
+            "ttlMs": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "fetchedAt": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "hit",
+            "ageMs",
+            "stale",
+            "ttlMs",
+            "fetchedAt"
+          ],
+          "additionalProperties": true
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/metric"
+          }
+        },
+        "coverage": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string"
+            },
+            "complete": {
+              "const": false
+            },
+            "additivity": {
+              "const": "not_additive"
+            },
+            "population": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "window": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "notes": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "complete",
+            "additivity",
+            "population",
+            "window",
+            "notes"
+          ],
+          "additionalProperties": true
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "evidenceClass": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rawSourceLink": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "withheldConclusions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rawExcerpt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "fetchedAt",
+        "sourceId",
+        "sourceKind",
+        "upstreamUrl",
+        "providerTimestamp",
+        "providerTimestampState",
+        "availability",
+        "httpStatus",
+        "cache",
+        "metrics",
+        "coverage",
+        "errors",
+        "warnings",
+        "evidenceClass",
+        "rawSourceLink",
+        "withheldConclusions"
+      ],
+      "additionalProperties": true
+    },
+    "snapshot": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "pilot.external-observatory.v1"
+        },
+        "fetchedAt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "additivity": {
+          "const": "not_additive"
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/observation"
+          }
+        },
+        "documentedUnavailable": {
+          "type": "array"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "fetchedAt",
+        "additivity",
+        "observations",
+        "documentedUnavailable"
+      ],
+      "additionalProperties": true
+    },
+    "catalog": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "pilot.external-observatory.v1"
+        },
+        "additivity": {
+          "const": "not_additive"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sourceId": {
+                "type": "string"
+              },
+              "sourceKind": {
+                "type": "string"
+              },
+              "upstreamUrl": {
+                "type": "string"
+              },
+              "metricKeys": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "sourceId",
+              "sourceKind",
+              "upstreamUrl",
+              "metricKeys"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "documentedUnavailable": {
+          "type": "array"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "additivity",
+        "sources",
+        "documentedUnavailable"
+      ],
+      "additionalProperties": true
+    }
+  }
+}

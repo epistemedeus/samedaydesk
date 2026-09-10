@@ -172,7 +172,11 @@ export function observe(capture, ctx = {}) {
     availability,
     errors,
     warnings,
-    rawExcerpt: boundRawExcerpt(body),
+    rawExcerpt: boundRawExcerpt({ pagination: { totalCount: inspected.value }, servers: Array.isArray(body.servers) ? body.servers.slice(0, 1).map(row => ({
+      id: typeof row?.id === "string" ? row.id.slice(0, 160) : null,
+      qualifiedName: typeof row?.qualifiedName === "string" ? row.qualifiedName.slice(0, 160) : null,
+      displayName: typeof row?.displayName === "string" ? row.displayName.slice(0, 160) : null,
+    })) : [] }),
   });
 }
 

@@ -299,6 +299,9 @@ function resolveRedirect(currentUrl, location) {
       location: next.toString(),
     };
   }
+  if (next.username || next.password || next.pathname !== current.pathname || next.search !== current.search || next.hash) {
+    return { ok: false, code: "off_path_redirect", message: "redirect changed the fixed source path or query" };
+  }
   return { ok: true, url: next.toString() };
 }
 
@@ -333,7 +336,7 @@ function parseJsonBody(text) {
   }
 }
 
-async function readBoundedBody(response, maxBytes) {
+export async function readBoundedBody(response, maxBytes) {
   const declared = headerGet(response.headers, "content-length");
   if (declared != null && declared !== "") {
     const n = Number(declared);

@@ -8,6 +8,8 @@
  */
 
 import { mkdir, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { readBoundedBody } from "../lib/observatory/bounded-fetch.js";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -252,27 +254,34 @@ export function createHttpRegistry(base, options = {}) {
       "User-Agent": CLI_USER_AGENT,
     };
     assertNoForwardedSecrets(headers);
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), options.timeoutMs ?? 8000);
+    try {
     const response = await fetchImpl(`${root}${path}`, {
       method: "GET",
       headers,
       redirect: "manual",
       cache: "no-store",
       credentials: "omit",
+      signal: controller.signal,
     });
-    const text = await response.text();
+    const bounded = await readBoundedBody(response, options.maxBytes ?? 256 * 1024);
+    if (bounded.oversized) throw codedError("oversized_body", "bridge response exceeds byte limit");
+    const text = bounded.text;
     let body = text;
     try {
       body = text ? JSON.parse(text) : null;
     } catch {
       body = text;
     }
-    if (!response.ok) {
+    if (response.status !== 200) {
       throw codedError("http_error", `HTTP ${response.status} for ${path}`, {
         httpStatus: response.status,
         body,
       });
     }
     return body;
+    } finally { clearTimeout(timer); }
   }
 
   const api = {
@@ -288,7 +297,7 @@ export function createHttpRegistry(base, options = {}) {
         try {
           return extractObservations(await getJson(`${prefix}/snapshot`));
         } catch (error) {
-          if (error?.code !== "http_error" && error?.code !== "invalid_snapshot") throw error;
+          if (error?.code !== "http_error" || error.httpStatus !== 404) throw error;
         }
       }
       const listed = await api.listSources();
@@ -410,8 +419,8 @@ export async function collectObservations(client, options = {}) {
   if (!wanted?.length && typeof client.observeAll === "function") {
     try {
       raw = await client.observeAll({ ...options, sourceIds: wanted });
-    } catch {
-      raw = null;
+    } catch (error) {
+      raw = selected.map(row => errorEnvelope(row.sourceId, error, fetchedAt));
     }
   }
   if (!raw) {
@@ -429,11 +438,17 @@ export async function collectObservations(client, options = {}) {
   const observations = (Array.isArray(raw) ? raw : extractObservations(raw)).map((row) =>
     normalizeObservation(row, fetchedAt),
   );
-  if (wanted?.length) {
-    return observations.filter((row) => wanted.includes(row.sourceId));
-  }
   assertUniqueSourceIds(observations.map((row) => row.sourceId), "capture observations");
-  return observations;
+  for (const observation of observations) {
+    const expected = selected.find(row => row.sourceId === observation.sourceId);
+    if (!expected) throw codedError("source_identity_changed", "unrequested source in observation");
+    for (const key of ["sourceKind", "upstreamUrl"]) {
+      if (expected[key] && observation[key] && expected[key] !== observation[key])
+        throw codedError("source_identity_changed", `source ${key} changed`);
+    }
+  }
+  return selected.map(row => observations.find(item => item.sourceId === row.sourceId)
+    || errorEnvelope(row.sourceId, codedError("source_missing", "listed source omitted from snapshot"), fetchedAt));
 }
 
 export function normalizeObservation(row, fetchedAt) {
@@ -467,19 +482,25 @@ export async function writeCapture(outDir, observations, options = {}) {
   const now = options.now != null ? new Date(options.now) : new Date();
   const fetchedAt = options.fetchedAt || toIso(now);
   const captureId = options.captureId || formatCaptureId(now);
+  if (!/^[A-Za-z0-9_-]+$/.test(captureId)) throw codedError("invalid_capture_id", "captureId must be a single safe name");
   const dest = join(resolve(outDir), captureId);
-  await mkdir(dest, { recursive: true });
+  assertUniqueSourceIds(observations.map(row => row.sourceId), "capture observations");
+  observations.forEach(row => sanitizeSourceId(row.sourceId));
+  await mkdir(resolve(outDir), { recursive: true });
+  await mkdir(dest); // Exclusive reservation: prior captures are never overwritten.
 
   assertUniqueSourceIds(observations.map((row) => row.sourceId), "capture observations");
 
   const sources = [];
   for (const observation of observations) {
     const file = `${sanitizeSourceId(observation.sourceId)}.json`;
-    await writeFile(join(dest, file), `${JSON.stringify(observation, null, 2)}\n`);
+    const text = `${JSON.stringify(observation, null, 2)}\n`;
+    await writeFile(join(dest, file), text, { flag: "wx" });
     sources.push({
       sourceId: observation.sourceId,
       sourceKind: observation.sourceKind ?? null,
       file,
+      sha256: createHash("sha256").update(text).digest("hex"),
       availability: observation.availability ?? null,
       httpStatus: observation.httpStatus ?? null,
       providerTimestamp: observation.providerTimestamp ?? null,
@@ -500,7 +521,7 @@ export async function writeCapture(outDir, observations, options = {}) {
     sourceCount: sources.length,
     sources,
   };
-  await writeFile(join(dest, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
+  await writeFile(join(dest, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`, { flag: "wx" });
   return { dir: dest, manifest, observations };
 }
 
@@ -548,6 +569,7 @@ export function loadCapture(dir, { role = "capture" } = {}) {
 
   const observations = manifest.sources.map((row) => {
     const fileName = row.file || `${row.sourceId}.json`;
+    if (fileName !== `${sanitizeSourceId(row.sourceId)}.json`) throw codedError("invalid_capture", "source filename does not match sourceId");
     const filePath = join(resolved, fileName);
     if (!existsSync(filePath)) {
       return errorEnvelope(
@@ -556,7 +578,10 @@ export function loadCapture(dir, { role = "capture" } = {}) {
         manifest.fetchedAt,
       );
     }
-    const parsed = JSON.parse(readFileSync(filePath, "utf8"));
+    const text = readFileSync(filePath, "utf8");
+    if (row.sha256 && createHash("sha256").update(text).digest("hex") !== row.sha256) throw codedError("capture_changed", "source bytes differ from manifest");
+    const parsed = JSON.parse(text);
+    if (parsed.sourceId !== row.sourceId) throw codedError("source_identity_changed", "source file identity differs from manifest");
     return normalizeObservation(parsed, manifest.fetchedAt);
   });
 
@@ -677,10 +702,18 @@ export function compareCaptures(a, b) {
 
     const cadence = cadenceState(prior, next);
     if (cadence.windowPresent) anyWindowPresent = true;
+    const identityChanged = ["sourceKind", "upstreamUrl", "schemaVersion"].some(key => prior[key] !== next[key]);
     const metrics = compareMetrics(prior.metrics || [], next.metrics || []);
+    if (identityChanged || !["ok", "partial"].includes(prior.availability) || !["ok", "partial"].includes(next.availability)) {
+      for (const row of [...metrics.changed, ...metrics.added, ...metrics.removed, ...metrics.unchanged]) {
+        row.comparable = false;
+        row.reason = identityChanged ? "source_identity_changed" : "source_not_current";
+      }
+    }
     sources.push({
       sourceId,
-      status: "compared",
+      status: identityChanged ? "source_identity_changed" : "compared",
+      sourceIdentity: { prior: { sourceKind: prior.sourceKind, upstreamUrl: prior.upstreamUrl }, next: { sourceKind: next.sourceKind, upstreamUrl: next.upstreamUrl } },
       availability: { prior: prior.availability ?? null, next: next.availability ?? null },
       providerTimestampState: {
         prior: prior.providerTimestampState ?? null,
@@ -804,7 +837,7 @@ export async function runCli(argv, options = {}) {
       const text = `${JSON.stringify(result, null, 2)}\n`;
       writeOut(text);
       if (values.out) {
-        await writeFile(resolve(values.out), text);
+        await writeFile(resolve(values.out), text, { flag: "wx" });
       }
       return finish(0, stdoutChunks, stderrChunks, result);
     }
@@ -917,6 +950,7 @@ function metricValueView(metric) {
 function definitionFingerprint(metric) {
   return stableJson({
     definition: metric.definition ?? null,
+    evidenceClass: metric.evidenceClass ?? null,
     unit: metric.unit ?? null,
     population: metric.population ?? null,
     window: metric.window ?? null,

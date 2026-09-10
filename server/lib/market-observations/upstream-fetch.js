@@ -78,6 +78,7 @@ export function createUpstreamFetcher(options = {}) {
       const httpStatus = Number.isInteger(response.status) ? response.status : null;
 
       if (isRedirectStatus(httpStatus)) {
+        await response.body?.cancel?.().catch(() => {});
         const location = headerGet(response.headers, "location");
         return {
           fetchedAt,

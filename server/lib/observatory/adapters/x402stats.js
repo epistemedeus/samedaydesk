@@ -192,7 +192,7 @@ export function observe(capture, ctx = {}) {
 
   const snapshot = isPlainObject(body.snapshot) ? body.snapshot : null;
   const windowDays = snapshot ? inspectNumeric(snapshot.windowDays, "integer") : { state: "missing", value: null };
-  const windowLabel = windowDays.state === "ok" ? `${windowDays.value}d` : WINDOW_DEFAULT;
+  const windowLabel = windowDays.state === "ok" && windowDays.value > 0 ? `${windowDays.value}d` : null;
 
   const computedAt = snapshot && typeof snapshot.computedAt === "string" ? snapshot.computedAt : null;
   const updatedAt = typeof body.updatedAt === "string" ? body.updatedAt : null;
@@ -238,7 +238,7 @@ export function observe(capture, ctx = {}) {
       key: spec.key,
       value: inspected.value,
       unit: spec.unit,
-      state: inspected.state,
+      state: (spec.key === "window_days" && inspected.value === 0) || (spec.unit === "ratio" && Number(inspected.value) > 1) ? "invalid" : inspected.state,
       definition: spec.definition,
       population: spec.population,
       window: windowLabel,
@@ -286,7 +286,7 @@ function resolveAvailability({ snapshot, picked, metrics }) {
   const bad = metrics.filter((metric) => metric.state !== "ok" && metric.state !== "missing").length;
   const missing = metrics.filter((metric) => metric.state === "missing").length;
   if (okCount === 0) return "error";
-  if (bad > 0 || missing > 0) return "partial";
+  if (bad > 0 || missing > 0 || picked.state === "invalid") return "partial";
   return "ok";
 }
 
@@ -294,7 +294,7 @@ function coverageFor(windowLabel) {
   return defaultCoverage({
     kind: "provider_rolling_window",
     population: POPULATION,
-    window: windowLabel || WINDOW_DEFAULT,
+    window: windowLabel,
     notes: "Provider rolling-window aggregates. Not additive with other sources. Organic fields are heuristics.",
   });
 }
