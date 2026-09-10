@@ -1,5 +1,10 @@
 import fs from "node:fs";
-import { deltaCanonicalDigest, MAX_PENDING_FLUSHES, validateDelta } from "./schema.js";
+import {
+  canonicalizeMcpToolCallsObservedFrom,
+  deltaCanonicalDigest,
+  MAX_PENDING_FLUSHES,
+  validateDelta,
+} from "./schema.js";
 import { atomicWriteJson } from "./atomic-write.js";
 import { withWalLock } from "./wal-lock.js";
 import { defaultWalState, validateWalState } from "./wal-schema.js";
@@ -165,11 +170,12 @@ export function createFileFallbackStore(filePath, options = {}) {
         if (legacyUncertainty !== undefined) state.legacyUncertainty = legacyUncertainty;
         if (observationStartedAt !== undefined) state.observationStartedAt = observationStartedAt;
         if (mcpToolCallsObservedFrom !== undefined) {
+          const incoming = canonicalizeMcpToolCallsObservedFrom(mcpToolCallsObservedFrom);
+          const existing = state.mcpToolCallsObservedFrom
+            ? canonicalizeMcpToolCallsObservedFrom(state.mcpToolCallsObservedFrom)
+            : null;
           state.mcpToolCallsObservedFrom =
-            state.mcpToolCallsObservedFrom &&
-            Date.parse(state.mcpToolCallsObservedFrom) <= Date.parse(mcpToolCallsObservedFrom)
-              ? state.mcpToolCallsObservedFrom
-              : mcpToolCallsObservedFrom;
+            existing && Date.parse(existing) <= Date.parse(incoming) ? existing : incoming;
         }
         return { outcome: "queued", write: true, state };
       });

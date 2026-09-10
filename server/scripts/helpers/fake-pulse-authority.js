@@ -57,9 +57,17 @@ function mergeAggregate(existing, delta) {
   };
 }
 
+function echoPgTimestamptzJson(value) {
+  // Match PostgreSQL jsonb encoding of timestamptz (no fractional seconds when .000).
+  const ms = Date.parse(value);
+  if (!Number.isFinite(ms)) return value;
+  return new Date(ms).toISOString().replace(/\.000Z$/, "+00:00").replace(/Z$/, "+00:00");
+}
+
 export function createFakePulseAuthority(options = {}) {
   const observedFrom = options.mcpToolCallsObservedFrom || new Date().toISOString();
   const observationStartedAt = options.observationStartedAt;
+  const echoPgShape = options.echoPgTimestamptzJson === true;
   let aggregate = emptyAggregate(observedFrom);
   const receipts = new Map();
   const legacyImports = new Map();
@@ -95,6 +103,9 @@ export function createFakePulseAuthority(options = {}) {
           ...legacy,
           authority: "incomplete_historical_evidence",
         };
+      }
+      if (echoPgShape && typeof out.mcpToolCallsObservedFrom === "string") {
+        out.mcpToolCallsObservedFrom = echoPgTimestamptzJson(out.mcpToolCallsObservedFrom);
       }
       return out;
     },

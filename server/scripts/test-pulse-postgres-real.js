@@ -347,3 +347,70 @@ test("real PostgreSQL: existing seven-call row gains only a later name boundary"
   const boundaryAfter = psql(cluster, "SELECT mcp_tool_calls_observed_from::text FROM public.pulse_aggregate WHERE classification_schema_version=2;");
   assert.equal(boundaryAfter, boundaryBefore, "migration replay must preserve its first boundary");
 });
+
+test("S125 live rejection shape: PG echoes +00:00; wire .mmmZ required; JS canonicalize repairs", { timeout: 120_000 }, (t) => {
+  requirePostgresBinaries();
+  const cluster = startDisposableCluster();
+  t.after(() => cluster.stop());
+  applyMigration(cluster);
+
+  serviceRoleSql(cluster, `
+DO $$
+DECLARE
+  v_flush uuid := 'c0000000-0000-4000-8000-000000000001';
+  v_flush2 uuid := 'c0000000-0000-4000-8000-000000000002';
+  v_flush3 uuid := 'c0000000-0000-4000-8000-000000000003';
+  v_ok jsonb;
+  v_snap jsonb;
+  v_delta_ok jsonb := '{
+    "schemaVersion": 2, "total": 1, "humans": 1, "bots": 0, "aiCrawlers": 0,
+    "mcpSurfaceGets": 0, "mcpProtocolRequests": 0, "mcpProtocolMessages": 0,
+    "mcpProtocolByMethod": {}, "mcpToolCallsObservedFrom": "2026-09-02T12:00:00.000Z",
+    "mcpToolCallsByName": {"check_ai_readiness": 1}, "byPath": {}, "byReferer": {}, "byAiBot": {},
+    "funnel": {"home":0,"scan":0,"tools":0,"reports":0,"guides":0,"pricing":0},
+    "sellerRepair": {"briefViews":0,"scopeClicks":0,"checkoutStarts":0,"byFinding":{}}
+  }'::jsonb;
+  v_delta_bad jsonb := '{
+    "schemaVersion": 2, "total": 1, "humans": 1, "bots": 0, "aiCrawlers": 0,
+    "mcpSurfaceGets": 0, "mcpProtocolRequests": 0, "mcpProtocolMessages": 0,
+    "mcpProtocolByMethod": {}, "mcpToolCallsObservedFrom": "2026-09-02T12:00:00+00:00",
+    "mcpToolCallsByName": {}, "byPath": {}, "byReferer": {}, "byAiBot": {},
+    "funnel": {"home":0,"scan":0,"tools":0,"reports":0,"guides":0,"pricing":0},
+    "sellerRepair": {"briefViews":0,"scopeClicks":0,"checkoutStarts":0,"byFinding":{}}
+  }'::jsonb;
+BEGIN
+  v_ok := public.pulse_apply_delta(v_flush, v_delta_ok);
+  IF v_ok->>'status' <> 'applied' THEN RAISE EXCEPTION 'wire form apply failed'; END IF;
+
+  v_snap := public.pulse_read_snapshot('2026-09-01T00:00:00Z'::timestamptz, '2026-09-03T00:00:00Z'::timestamptz);
+  IF v_snap->>'mcpToolCallsObservedFrom' IS DISTINCT FROM '2026-09-02T12:00:00+00:00' THEN
+    RAISE EXCEPTION 'expected PG echo +00:00, got %', v_snap->>'mcpToolCallsObservedFrom';
+  END IF;
+
+  BEGIN
+    PERFORM public.pulse_apply_delta(v_flush2, v_delta_bad);
+    RAISE EXCEPTION 'failure-shaped +00:00 must be rejected';
+  EXCEPTION WHEN SQLSTATE '22023' THEN
+    IF SQLERRM IS DISTINCT FROM 'pulse_invalid_field:mcpToolCallsObservedFrom' THEN
+      RAISE EXCEPTION 'wrong rejection: %', SQLERRM;
+    END IF;
+  END;
+
+  v_ok := public.pulse_apply_delta(
+    v_flush3,
+    jsonb_set(v_delta_bad, '{mcpToolCallsObservedFrom}', to_jsonb('2026-09-02T12:00:00.000Z'::text))
+  );
+  IF v_ok->>'status' <> 'applied' THEN RAISE EXCEPTION 'canonicalized retry failed'; END IF;
+
+  v_ok := public.pulse_apply_delta(
+    v_flush3,
+    jsonb_set(v_delta_bad, '{mcpToolCallsObservedFrom}', to_jsonb('2026-09-02T12:00:00.000Z'::text))
+  );
+  IF v_ok->>'status' <> 'already_applied' THEN RAISE EXCEPTION 'idempotency broken'; END IF;
+
+  v_snap := public.pulse_read_snapshot('2026-09-01T00:00:00Z'::timestamptz, '2026-09-03T00:00:00Z'::timestamptz);
+  IF (v_snap->>'total')::int <> 2 THEN RAISE EXCEPTION 'totals wrong after repair path: %', v_snap->>'total'; END IF;
+END $$;
+`);
+});
+

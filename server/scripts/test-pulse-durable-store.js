@@ -12,6 +12,7 @@ import {
   emptyDelta,
   emptyFunnel,
   stableFlushIdFromDelta,
+  canonicalizeMcpToolCallsObservedFrom,
   validateDelta,
   validateLegacyObservation,
 } from "../lib/pulse-store/schema.js";
@@ -986,4 +987,72 @@ test("controller: lock retry sleeps without CPU spin and releases only its token
   assert.match(WAL_LOCK_SOURCE, /Atomics\.wait/);
   assert.doesNotMatch(WAL_LOCK_SOURCE, /while \(Date\.now\(\) </);
   assert.match(WAL_LOCK_SOURCE, /owner\?\.token === token/);
+});
+
+test("S125: canonicalize PG timestamptz echo to SQL wire .mmmZ", () => {
+  const shapes = [
+    ["2026-09-02T12:00:00+00:00", "2026-09-02T12:00:00.000Z"],
+    ["2026-09-02T12:00:00.000+00:00", "2026-09-02T12:00:00.000Z"],
+    ["2026-09-02T12:00:00Z", "2026-09-02T12:00:00.000Z"],
+    ["2026-09-02T12:00:00.000Z", "2026-09-02T12:00:00.000Z"],
+    ["2026-09-02T05:00:00-07:00", "2026-09-02T12:00:00.000Z"],
+  ];
+  for (const [input, expected] of shapes) {
+    assert.equal(canonicalizeMcpToolCallsObservedFrom(input), expected);
+  }
+  assert.throws(() => canonicalizeMcpToolCallsObservedFrom("not-a-date"), /mcpToolCallsObservedFrom/);
+});
+
+test("S125: validateDelta accepts failure-shaped +00:00 and emits wire form", () => {
+  const delta = makeDelta({
+    mcpToolCallsObservedFrom: "2026-09-02T12:00:00+00:00",
+    mcpToolCallsByName: { check_ai_readiness: 1 },
+  });
+  const validated = validateDelta(delta);
+  assert.equal(validated.mcpToolCallsObservedFrom, "2026-09-02T12:00:00.000Z");
+});
+
+test("S125: durable flush survives PG-shaped snapshot re-hydration", async () => {
+  const observedFrom = "2026-09-02T12:00:00.000Z";
+  const authority = createFakePulseAuthority({
+    mcpToolCallsObservedFrom: observedFrom,
+    echoPgTimestamptzJson: true,
+  });
+  const store = createPulseStoreFromTransport(createFakeRpcTransport(authority));
+  const flushId = newFlushId();
+  await store.flush(
+    flushId,
+    makeDelta({
+      mcpToolCallsObservedFrom: observedFrom,
+      mcpToolCallsByName: { check_ai_readiness: 1 },
+      total: 1,
+      humans: 1,
+    }),
+  );
+  const raw = await authority.readSnapshot("2026-09-01T00:00:00.000Z");
+  assert.equal(raw.mcpToolCallsObservedFrom, "2026-09-02T12:00:00+00:00");
+  const snapshot = await store.readSnapshot("2026-09-01T00:00:00.000Z");
+  assert.equal(snapshot.mcpToolCallsObservedFrom, observedFrom);
+
+  const retryId = newFlushId();
+  await store.flush(
+    retryId,
+    makeDelta({
+      mcpToolCallsObservedFrom: "2026-09-02T12:00:00+00:00",
+      total: 1,
+      humans: 1,
+    }),
+  );
+  // Idempotent replay of same flush id + canonicalized payload.
+  await store.flush(
+    retryId,
+    makeDelta({
+      mcpToolCallsObservedFrom: "2026-09-02T12:00:00+00:00",
+      total: 1,
+      humans: 1,
+    }),
+  );
+  const after = await store.readSnapshot("2026-09-01T00:00:00.000Z");
+  assert.equal(after.total, 2);
+  assert.equal(after.mcpToolCallsObservedFrom, observedFrom);
 });

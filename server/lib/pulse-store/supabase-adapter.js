@@ -1,4 +1,9 @@
-import { deltaToRpcPayload, validateDelta, validateLegacyObservation } from "./schema.js";
+import {
+  canonicalizeMcpToolCallsObservedFrom,
+  deltaToRpcPayload,
+  validateDelta,
+  validateLegacyObservation,
+} from "./schema.js";
 
 export function createSupabasePulseTransport(rpcFn) {
   return {
@@ -37,7 +42,14 @@ export function createPulseStoreFromTransport(transport, { configured = true } =
         err.code = "pulse_read_failed";
         throw err;
       }
-      return data;
+      if (!data || typeof data !== "object") return data;
+      if (data.mcpToolCallsObservedFrom == null) return data;
+      return {
+        ...data,
+        mcpToolCallsObservedFrom: canonicalizeMcpToolCallsObservedFrom(
+          data.mcpToolCallsObservedFrom,
+        ),
+      };
     },
 
     async importLegacyObservation(importKey, observation) {

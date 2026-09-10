@@ -1,5 +1,6 @@
 import {
   MAX_PENDING_FLUSHES,
+  canonicalizeMcpToolCallsObservedFrom,
   deltaCanonicalDigest,
   validateDelta,
   validateLegacyObservation,
@@ -191,8 +192,18 @@ export function validateWalState(raw) {
   if (raw.observationStartedAt != null && !isIsoTimestamp(raw.observationStartedAt)) {
     throw new Error("pulse_wal_corrupt");
   }
-  if (raw.mcpToolCallsObservedFrom != null && !isIsoTimestamp(raw.mcpToolCallsObservedFrom)) {
-    throw new Error("pulse_wal_corrupt");
+  let mcpToolCallsObservedFrom = null;
+  if (raw.mcpToolCallsObservedFrom != null) {
+    if (!isIsoTimestamp(raw.mcpToolCallsObservedFrom)) {
+      throw new Error("pulse_wal_corrupt");
+    }
+    try {
+      mcpToolCallsObservedFrom = canonicalizeMcpToolCallsObservedFrom(
+        raw.mcpToolCallsObservedFrom,
+      );
+    } catch {
+      throw new Error("pulse_wal_corrupt");
+    }
   }
   if (raw.migratedSnapshotDigest != null && !isHexDigest(raw.migratedSnapshotDigest, 64)) {
     throw new Error("pulse_wal_corrupt");
@@ -212,7 +223,7 @@ export function validateWalState(raw) {
     legacyImported: raw.legacyImported ?? false,
     legacyUncertainty,
     observationStartedAt: raw.observationStartedAt ?? null,
-    mcpToolCallsObservedFrom: raw.mcpToolCallsObservedFrom ?? null,
+    mcpToolCallsObservedFrom,
     migratedSnapshotDigest: raw.migratedSnapshotDigest ?? null,
     snapshotCorrupt: raw.snapshotCorrupt ?? false,
   };
