@@ -1,0 +1,9 @@
+{
+  "schema": "pilot.r2.distribution.acquisition_signal.v1",
+  "cite": "negative — forbidden intent fields on signal",
+  "captureStatus": "ok",
+  "buyerIntent": true,
+  "activations": [
+    { "linkId": "grexal-s124-entry", "purchaseIntent": "sure" }
+  ]
+}

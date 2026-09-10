@@ -1,0 +1,6 @@
+{
+  "schema": "pilot.r2.distribution.acquisition_signal.v1",
+  "cite": "synthetic — capture failed",
+  "captureStatus": "unavailable",
+  "reason": "event capture endpoint unavailable on this VM; do not claim zero activations"
+}

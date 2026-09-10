@@ -1,0 +1,23 @@
+{
+  "schema": "pilot.r2.distribution.acquisition_signal.v1",
+  "cite": "synthetic capture — not live traffic",
+  "captureStatus": "ok",
+  "reason": "synthetic fixture presentations + activations for tests/demo",
+  "presentations": [
+    { "linkId": "grexal-s124-entry", "at": "2026-09-10T18:50:00.000Z" },
+    { "linkId": "agensi-s131-entry", "at": "2026-09-10T18:50:01.000Z" },
+    { "linkId": "catalog-portable-entry", "at": "2026-09-10T18:50:02.000Z" }
+  ],
+  "activations": [
+    {
+      "linkId": "grexal-s124-entry",
+      "at": "2026-09-10T18:51:00.000Z",
+      "channel": "synthetic"
+    },
+    {
+      "linkId": "catalog-portable-entry",
+      "at": "2026-09-10T18:51:30.000Z",
+      "channel": "synthetic"
+    }
+  ]
+}

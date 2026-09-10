@@ -1,0 +1,10 @@
+{
+  "schema": "pilot.r2.distribution.acquisition_signal.v1",
+  "cite": "synthetic — capture ok, zero activations",
+  "captureStatus": "ok",
+  "reason": "capture succeeded; zero link activations observed",
+  "presentations": [
+    { "linkId": "grexal-s124-entry", "at": "2026-09-10T18:55:00.000Z" }
+  ],
+  "activations": []
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "pilot.r2.distribution.acquisition_entries.v1",
+  "cite": "negative fixture — forbidden intent + bad href",
+  "entries": [
+    {
+      "id": "bad-intent",
+      "label": "Must reject",
+      "href": "not-a-url",
+      "source": "grexal",
+      "buyerIntent": true,
+      "purchaseIntent": "high"
+    }
+  ]
+}

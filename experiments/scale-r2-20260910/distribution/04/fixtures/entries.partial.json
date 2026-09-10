@@ -1,0 +1,19 @@
+{
+  "schema": "pilot.r2.distribution.acquisition_entries.v1",
+  "cite": "partial fixture — missing source tag on one entry",
+  "entries": [
+    {
+      "id": "grexal-ok",
+      "label": "Grexal tagged",
+      "href": "https://example.invalid/catalog/grexal-ok",
+      "source": "grexal",
+      "opaqueTags": { "ref": "partial-ok" }
+    },
+    {
+      "id": "missing-source",
+      "label": "Missing source tag",
+      "href": "https://example.invalid/catalog/missing-source",
+      "opaqueTags": { "ref": "partial-gap" }
+    }
+  ]
+}

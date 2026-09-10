@@ -1,0 +1,59 @@
+{
+  "schema": "pilot.r2.distribution.acquisition_entries.v1",
+  "cite": "R2-DISTRIBUTION-04 + DISTRIBUTION-03 portable catalog (synthetic acquisition fixtures)",
+  "entries": [
+    {
+      "id": "grexal-s124-entry",
+      "label": "Grexal S124 source-change evidence (catalog pointer)",
+      "href": "https://example.invalid/catalog/grexal-s124-source-change-evidence",
+      "source": "grexal",
+      "opaqueTags": {
+        "campaign": "r2-dist-04-synthetic",
+        "ref": "s124-preserve"
+      },
+      "catalogRef": {
+        "distribution03": "experiments/scale-r2-20260910/distribution/03",
+        "packageId": "grexal-s124-source-change-evidence",
+        "availability": "draft_private"
+      },
+      "notes": "Synthetic fixture link target citing DISTRIBUTION-03 catalog id; no live clicks claimed."
+    },
+    {
+      "id": "agensi-s131-entry",
+      "label": "Agensi S131 offline Free skill (catalog pointer)",
+      "href": "https://example.invalid/catalog/agensi-s131-offline-package-provenance",
+      "source": "agensi",
+      "opaqueTags": {
+        "campaign": "r2-dist-04-synthetic",
+        "ref": "s131-polish"
+      },
+      "catalogRef": {
+        "distribution03": "experiments/scale-r2-20260910/distribution/03",
+        "packageId": "agensi-s131-offline-package-provenance",
+        "availability": "pending_review"
+      },
+      "notes": "Synthetic fixture; public listing not observed; no live activations claimed."
+    },
+    {
+      "id": "catalog-portable-entry",
+      "label": "Portable package catalog (DISTRIBUTION-03)",
+      "href": "/experiments/scale-r2-20260910/distribution/03/README.md",
+      "source": "catalog",
+      "opaqueTags": {
+        "campaign": "r2-dist-04-synthetic",
+        "ref": "dist-03-readme"
+      },
+      "notes": "Path-style entry; source=catalog."
+    },
+    {
+      "id": "manual-handoff-entry",
+      "label": "Manual handoff note (synthetic)",
+      "href": "https://example.invalid/manual/r2-dist-04-handoff",
+      "source": "manual",
+      "opaqueTags": {
+        "ref": "manual-fixture-01"
+      },
+      "notes": "Manual source tag fixture."
+    }
+  ]
+}
