@@ -21,6 +21,8 @@ import {
   USEFUL_JOBS_EXAMPLES,
   USEFUL_JOBS_CALLER_USE,
   USEFUL_JOBS_REPEAT_USE,
+  USEFUL_JOBS_ACQUIRE_TOOLS,
+  USEFUL_JOBS_RUNTIME,
   SITE_ORIGIN,
 } from "../data/machineEntry.mjs";
 import styles from "./Mcp.module.css";
@@ -39,20 +41,13 @@ export default function UsefulJobs() {
         <header className={styles.hero}>
           <p className="eyebrow">Offline package · useful jobs</p>
           <h1 className={styles.jobH1}>
-            Six local jobs on your files,{" "}
-            <span className="lime">no purchase authority</span>
+            Turn changing files into{" "}
+            <span className="lime">useful next steps</span>
           </h1>
           <p className={styles.lead}>
-            Download one Node 22 archive. Verify byte size and sha256, extract it, then run
-            labeled <code>--example</code> samples or your own inputs. The CLI stays offline. It
-            does not buy, schedule, or treat schema-valid input as kit-produced authority.
-          </p>
-          <p className={styles.lead}>
-            Free local package. Optional paid hosted extract on{" "}
-            <Link className={styles.inlineLink} to="/for-agents">
-              /for-agents
-            </Link>{" "}
-            is a separate product and is not started here.
+            Six offline jobs for API changes, budgets, feeds, and delivery evidence. Download
+            one archive, verify size and sha256, then run labeled <code>--example</code> samples
+            or your own files on local Node 22.
           </p>
         </header>
 
@@ -84,12 +79,16 @@ export default function UsefulJobs() {
             .
           </p>
           <p className={styles.jobCopy}>
+            Acquisition tools (download, size/sha256 check, extract):{" "}
+            <code>{USEFUL_JOBS_ACQUIRE_TOOLS.join(", ")}</code>. After extract, offline runtime is{" "}
+            <code>{USEFUL_JOBS_RUNTIME}</code>. This repository is not required.
+          </p>
+          <p className={styles.jobCopy}>
             If the size, digest, or HTTP status is wrong, do not extract and do not run the CLI.
-            First use needs Node 22 and the archive only. It does not need this repository.
           </p>
           <div className={styles.commands}>
             <div>
-              <span>Cold start (stdout is the kit path only)</span>
+              <span>Install / cold start (stdout is the kit path only)</span>
               <pre className={styles.jobPre}>
                 <code>{USEFUL_JOBS_COLD_START}</code>
               </pre>
@@ -105,7 +104,6 @@ export default function UsefulJobs() {
           <p className={styles.jobCopy}>
             <code>node bin/useful-jobs.mjs</code> routes six offline jobs. Labeled samples require
             an explicit <code>--example</code> flag. Ordinary callers must supply their own files.
-            Missing required inputs refuse closed.
           </p>
           <ol className={styles.flow}>
             <li>
@@ -119,7 +117,7 @@ export default function UsefulJobs() {
               <strong>
                 <code>vendor-budget-impact</code>.
               </strong>{" "}
-              Scan curated pricing-row JSON for field/unit deltas. No purchase authority. Inputs:{" "}
+              Scan curated pricing-row JSON for field/unit deltas. Inputs:{" "}
               <code>--before --after</code>. Outputs: <code>budget-impact.json/.md</code>.
             </li>
             <li>
@@ -182,12 +180,15 @@ export default function UsefulJobs() {
         <section className={styles.sellerOffer} aria-labelledby="boundary-title">
           <div>
             <p className="eyebrow">Scope</p>
-            <h2 id="boundary-title">What this package does not claim</h2>
+            <h2 id="boundary-title">What this package covers</h2>
             <p>
-              Missing required inputs refuse closed. Partial vendor or listing evidence stays
-              non-final. Evidence CI annotations from caller packets stay unattested. Repeat job
-              records are operator documents, not a running scheduler. Schema-valid input is not
-              kit-produced authority. No usage, revenue, or hosted-job claims.
+              Free local package only; it does not start hosted extract on{" "}
+              <Link className={styles.inlineLink} to="/for-agents">
+                /for-agents
+              </Link>
+              . Partial vendor or listing evidence stays non-final. Evidence CI annotations from
+              caller packets stay unattested. Repeat job records are operator documents, not a
+              running scheduler.
             </p>
             <div className={styles.actions}>
               <Link className={styles.primary} to="/for-agents">

@@ -560,7 +560,7 @@ export const CONSUMER_REPEAT_SHELL = Object.freeze({
 export const USEFUL_JOBS_PATH = "/for-agents/useful-jobs";
 export const USEFUL_JOBS_TITLE = "Offline useful jobs for agent callers | SameDayDesk";
 export const USEFUL_JOBS_DESCRIPTION =
-  "Download one Node 22 offline package with six local jobs: API upgrade brief, vendor budget impact, feed agenda, evidence CI annotation, listing repair packet, and repeat job record. Verify size and sha256 before extract. Samples are labeled SAMPLE. Callers supply their own files. No purchase or scheduler authority.";
+  "Six offline jobs for API changes, budgets, feeds, and delivery evidence. Acquire with bash, curl, python3, tar, and mktemp; then run on local Node 22. Verify size and sha256 before extract. Samples are labeled SAMPLE. Callers supply their own files. Free local package; not hosted execution.";
 export const USEFUL_JOBS_CANONICAL = `${SITE_ORIGIN}${USEFUL_JOBS_PATH}`;
 export const USEFUL_JOBS_ARCHIVE = USEFUL_JOBS_KIT.archive;
 export const USEFUL_JOBS_ARCHIVE_SHA256 = USEFUL_JOBS_KIT.sha256;
@@ -575,6 +575,16 @@ export const USEFUL_JOBS_REVIEWED_SOURCE = USEFUL_JOBS_KIT.reviewedSource;
 export const USEFUL_JOBS_ROOT = USEFUL_JOBS_KIT.rootName;
 export const USEFUL_JOBS_CLI = USEFUL_JOBS_KIT.cli;
 export const USEFUL_JOBS_JOB_IDS = Object.freeze([...USEFUL_JOBS_KIT.jobs]);
+/** Host tools required only to download, verify, and extract the archive. */
+export const USEFUL_JOBS_ACQUIRE_TOOLS = Object.freeze([
+  "bash",
+  "curl",
+  "python3",
+  "tar",
+  "mktemp",
+]);
+/** Runtime after extract: offline Node 22 only. */
+export const USEFUL_JOBS_RUNTIME = "Node >= 22 (offline after extract)";
 
 export function buildUsefulJobsColdStart({
   siteOrigin = SITE_ORIGIN,
@@ -608,6 +618,8 @@ export function buildUsefulJobsColdStart({
 }
 
 export const USEFUL_JOBS_COLD_START = buildUsefulJobsColdStart();
+/** Public install recipe: one self-contained cold-start invocation (single source of truth). */
+export const USEFUL_JOBS_INSTALL = Object.freeze([USEFUL_JOBS_COLD_START]);
 
 export const USEFUL_JOBS_LIST_HELP = [
   "node \"$kit/bin/useful-jobs.mjs\" list",
@@ -650,14 +662,12 @@ export const USEFUL_JOBS_REPEAT_USE = [
 export const USEFUL_JOBS_CRAWLER_HTML = `
       <h1>Offline useful jobs for agent callers</h1>
       <p>
-        SameDayDesk publishes one Node 22 offline package with six local jobs:
-        API upgrade brief, vendor budget impact, feed agenda, evidence CI annotation,
-        listing repair packet, and repeat job record. Download the archive, verify
-        size and sha256, then extract. Labeled samples require <code>--example</code>.
-        Ordinary callers must supply their own files. The CLI has no purchase authority,
-        does not start a scheduler, and does not claim kit authority for arbitrary
-        schema-valid input. Free local runs stay distinct from optional paid hosted
-        extract on <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>.
+        Turn changing files into useful next steps. SameDayDesk publishes six offline
+        jobs for API changes, budgets, feeds, and delivery evidence. Acquire the archive
+        with <code>bash</code>, <code>curl</code>, <code>python3</code>, <code>tar</code>,
+        and <code>mktemp</code>; then run on local Node 22. Labeled samples need
+        <code>--example</code>. Callers supply their own files. Free local package; it does
+        not start hosted extract on <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>.
       </p>
       <p>
         Machine discovery:
@@ -672,9 +682,11 @@ export const USEFUL_JOBS_CRAWLER_HTML = `
         <code>${USEFUL_JOBS_SOURCE_COMMIT}</code>. Archive freeze
         <code>${USEFUL_JOBS_ARCHIVE_FREEZE}</code>. Reviewed source
         <code>${USEFUL_JOBS_REVIEWED_SOURCE}</code>.
+        Acquire tools: <code>${USEFUL_JOBS_ACQUIRE_TOOLS.join(", ")}</code>.
+        Runtime after extract: <code>${USEFUL_JOBS_RUNTIME}</code>.
         <a href="${SITE_ORIGIN}${USEFUL_JOBS_ARCHIVE}">Download archive</a>.
       </p>
-      <h2>Cold start (verify before extract)</h2>
+      <h2>Install / cold start (verify before extract)</h2>
       <pre><code>${USEFUL_JOBS_COLD_START}</code></pre>
       <h2>List and help</h2>
       <pre><code>${USEFUL_JOBS_LIST_HELP}</code></pre>
@@ -685,10 +697,9 @@ export const USEFUL_JOBS_CRAWLER_HTML = `
       <h2>Changed-file repeat</h2>
       <pre><code>${USEFUL_JOBS_REPEAT_USE}</code></pre>
       <p>
-        Material limit: missing required inputs refuse closed. Digest mismatch on
-        repeat-job-record refuses. Partial vendor or listing evidence stays non-final.
-        Evidence CI annotations from caller packets stay unattested. Schema-valid
-        input is not kit-produced authority.
+        Scope: free local package only. Missing inputs or digest mismatch stop the job.
+        Partial vendor or listing evidence stays non-final. Evidence CI annotations from
+        caller packets stay unattested. This package does not run hosted extract.
       </p>
     `;
 

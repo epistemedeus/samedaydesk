@@ -17,6 +17,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import {
+  USEFUL_JOBS_ACQUIRE_TOOLS,
   USEFUL_JOBS_ARCHIVE,
   USEFUL_JOBS_ARCHIVE_BYTES,
   USEFUL_JOBS_ARCHIVE_SHA256,
@@ -25,10 +26,12 @@ import {
   USEFUL_JOBS_COLD_START,
   USEFUL_JOBS_DISCOVERY,
   USEFUL_JOBS_EXAMPLES,
+  USEFUL_JOBS_INSTALL,
   USEFUL_JOBS_JOB_IDS,
   USEFUL_JOBS_LIST_HELP,
   USEFUL_JOBS_OUTCOMES,
   USEFUL_JOBS_REPEAT_USE,
+  USEFUL_JOBS_RUNTIME,
   USEFUL_JOBS_SHELL,
 } from "../../../client/src/data/machineEntry.mjs";
 
@@ -142,6 +145,17 @@ test("discovery, catalog, outcomes, and page share one archive pin and commands"
   assert.equal(discovery.coldStart, USEFUL_JOBS_COLD_START);
   assert.equal(discovery.purchaseAuthority, false);
   assert.equal(discovery.schedulerDaemon, false);
+  assert.equal(discovery.install.length, 1);
+  assert.equal(discovery.install[0], USEFUL_JOBS_COLD_START);
+  assert.deepEqual(discovery.install, [...USEFUL_JOBS_INSTALL]);
+  assert.equal(USEFUL_JOBS_INSTALL[0], USEFUL_JOBS_COLD_START);
+  assert.equal(discovery.install.join("\n"), USEFUL_JOBS_COLD_START);
+  assert.deepEqual(discovery.acquireTools, [...USEFUL_JOBS_ACQUIRE_TOOLS]);
+  assert.equal(discovery.runtime, USEFUL_JOBS_RUNTIME);
+  assert.match(discovery.summary, /bash, curl, python3, tar, and mktemp/i);
+  assert.match(discovery.summary, /Node 22/i);
+  assert.match(discovery.note, /Acquire tools/i);
+  assert.match(discovery.note, /Node >= 22/i);
   assert.deepEqual(
     catalog.jobs.map((j) => j.id),
     JOBS,
@@ -166,7 +180,18 @@ test("discovery, catalog, outcomes, and page share one archive pin and commands"
   assert.match(page, /USEFUL_JOBS_COLD_START/);
   assert.match(page, /USEFUL_JOBS_EXAMPLES/);
   assert.match(page, /USEFUL_JOBS_CALLER_USE/);
-  assert.match(crawler, /no purchase authority/i);
+  assert.match(page, /USEFUL_JOBS_ACQUIRE_TOOLS/);
+  assert.match(page, /USEFUL_JOBS_RUNTIME/);
+  assert.match(page, /Turn changing files into/);
+  assert.match(page, /Six offline jobs for API changes, budgets, feeds, and delivery evidence/);
+  assert.match(page, /Acquisition tools/);
+  assert.match(page, /Free local package only/);
+  assert.match(crawler, /Turn changing files into useful next steps/i);
+  assert.match(crawler, /bash/);
+  assert.match(crawler, /curl/);
+  assert.match(crawler, /python3/);
+  assert.match(crawler, /Free local package/i);
+  assert.ok(!/no purchase authority/i.test(crawler));
   assert.match(crawler, new RegExp(USEFUL_JOBS_ARCHIVE_SHA256));
 });
 
@@ -436,5 +461,177 @@ test("stdout=$(useful_jobs_acquire) returns sole kit path", async () => {
   } finally {
     await srv.stop();
     rmSync(work, { recursive: true, force: true });
+  }
+});
+
+/** PATH bin with tar/node spies that log invocations; real tools fall through. */
+function makeSpyPath(logDir) {
+  const bin = join(logDir, "bin");
+  mkdirSync(bin, { recursive: true });
+  const tarLog = join(logDir, "tar.log");
+  const nodeLog = join(logDir, "node.log");
+  writeFileSync(tarLog, "");
+  writeFileSync(nodeLog, "");
+  const which = spawnSync("bash", ["-lc", "command -v tar; command -v node"], {
+    encoding: "utf8",
+  });
+  const [realTar, realNode] = String(which.stdout || "")
+    .trim()
+    .split("\n")
+    .map((s) => s.trim());
+  assert.ok(realTar && realNode, "need real tar and node on host");
+  writeFileSync(
+    join(bin, "tar"),
+    `#!/usr/bin/env bash\nprintf 'tar\\n' >> ${JSON.stringify(tarLog)}\nexec ${JSON.stringify(realTar)} "$@"\n`,
+    { mode: 0o755 },
+  );
+  writeFileSync(
+    join(bin, "node"),
+    `#!/usr/bin/env bash\nprintf 'node\\n' >> ${JSON.stringify(nodeLog)}\nexec ${JSON.stringify(realNode)} "$@"\n`,
+    { mode: 0o755 },
+  );
+  return { bin, tarLog, nodeLog };
+}
+
+/**
+ * Execute discovery.install.join('\\n') unchanged under bash if / && wrappers.
+ * Origin is injected via USEFUL_JOBS_ORIGIN for the cold-start acquire helper.
+ */
+async function runPublishedInstall(recipe, { origin, cwd, env = {}, wrap }) {
+  const body = recipe.join("\n");
+  const scriptPath = join(cwd, "published-install.sh");
+  writeFileSync(scriptPath, `${body}\n`, { mode: 0o755 });
+  let script;
+  if (wrap === "if") {
+    script = `if bash ${JSON.stringify(scriptPath)}; then echo OK; else echo FAIL; exit 1; fi`;
+  } else if (wrap === "and") {
+    script = `bash ${JSON.stringify(scriptPath)} && echo OK`;
+  } else {
+    script = `bash ${JSON.stringify(scriptPath)}`;
+  }
+  return spawnAsync("bash", ["-lc", script], {
+    cwd,
+    env: {
+      ...env,
+      USEFUL_JOBS_ORIGIN: origin,
+      TMPDIR: cwd,
+      HTTP_PROXY: "",
+      HTTPS_PROXY: "",
+      NO_PROXY: "*",
+      PATH: `${env.PATH || process.env.PATH}`,
+    },
+  });
+}
+
+test("published install recipe: good HTTP extracts and invokes node under if/&&", async () => {
+  const discovery = JSON.parse(readFileSync(discoveryPath, "utf8"));
+  const recipe = discovery.install;
+  assert.equal(recipe.length, 1);
+  assert.equal(recipe.join("\n"), USEFUL_JOBS_COLD_START);
+
+  for (const wrap of ["if", "and"]) {
+    const srv = await serveArchive();
+    const work = mkdtempSync(join(tmpdir(), `uj-inst-ok-${wrap}-`));
+    const spy = makeSpyPath(work);
+    try {
+      const r = await runPublishedInstall(recipe, {
+        origin: srv.origin,
+        cwd: work,
+        wrap,
+        env: { PATH: `${spy.bin}:${process.env.PATH}` },
+      });
+      assert.equal(r.status, 0, `${wrap}: ${r.stderr}\n${r.stdout}`);
+      const kitLine = String(r.stdout)
+        .trim()
+        .split("\n")
+        .find((l) => l.includes("useful-jobs-1.0.0"));
+      assert.ok(kitLine, `${wrap} stdout should print kit path; got ${r.stdout}`);
+      assert.ok(existsSync(join(kitLine, "bin/useful-jobs.mjs")), kitLine);
+      assert.match(readFileSync(spy.tarLog, "utf8"), /tar/);
+      assert.match(readFileSync(spy.nodeLog, "utf8"), /node/);
+    } finally {
+      await srv.stop();
+      rmSync(work, { recursive: true, force: true });
+    }
+  }
+});
+
+test("published install recipe: bad HTTP status never runs tar or node", async () => {
+  const discovery = JSON.parse(readFileSync(discoveryPath, "utf8"));
+  const recipe = discovery.install;
+  for (const wrap of ["if", "and"]) {
+    const srv = await serveArchive({ status: 503 });
+    const work = mkdtempSync(join(tmpdir(), `uj-inst-503-${wrap}-`));
+    const spy = makeSpyPath(work);
+    try {
+      const r = await runPublishedInstall(recipe, {
+        origin: srv.origin,
+        cwd: work,
+        wrap,
+        env: { PATH: `${spy.bin}:${process.env.PATH}` },
+      });
+      assert.notEqual(r.status, 0, wrap);
+      assert.equal(readFileSync(spy.tarLog, "utf8").trim(), "");
+      assert.equal(readFileSync(spy.nodeLog, "utf8").trim(), "");
+      assert.equal(readdirSync(work).filter((n) => n.startsWith("useful-jobs")).length, 0);
+    } finally {
+      await srv.stop();
+      rmSync(work, { recursive: true, force: true });
+    }
+  }
+});
+
+test("published install recipe: bad size never runs tar or node (python negative control)", async () => {
+  const discovery = JSON.parse(readFileSync(discoveryPath, "utf8"));
+  const recipe = discovery.install;
+  const short = Buffer.alloc(32, 7);
+  for (const wrap of ["if", "and"]) {
+    const srv = await serveArchive({ body: short });
+    const work = mkdtempSync(join(tmpdir(), `uj-inst-size-${wrap}-`));
+    const spy = makeSpyPath(work);
+    try {
+      const r = await runPublishedInstall(recipe, {
+        origin: srv.origin,
+        cwd: work,
+        wrap,
+        env: { PATH: `${spy.bin}:${process.env.PATH}` },
+      });
+      assert.notEqual(r.status, 0, wrap);
+      assert.match(String(r.stderr) + String(r.stdout), /size|sha256|fail|Error|Traceback|!=/i);
+      assert.equal(readFileSync(spy.tarLog, "utf8").trim(), "");
+      assert.equal(readFileSync(spy.nodeLog, "utf8").trim(), "");
+    } finally {
+      await srv.stop();
+      rmSync(work, { recursive: true, force: true });
+    }
+  }
+});
+
+test("published install recipe: same-length bad digest never runs tar or node", async () => {
+  const discovery = JSON.parse(readFileSync(discoveryPath, "utf8"));
+  const recipe = discovery.install;
+  const good = readFileSync(publicArchive);
+  const bad = Buffer.from(good);
+  bad[0] ^= 0xff;
+  assert.equal(bad.length, good.length);
+  assert.notEqual(sha256(bad), USEFUL_JOBS_ARCHIVE_SHA256);
+  for (const wrap of ["if", "and"]) {
+    const srv = await serveArchive({ body: bad });
+    const work = mkdtempSync(join(tmpdir(), `uj-inst-digest-${wrap}-`));
+    const spy = makeSpyPath(work);
+    try {
+      const r = await runPublishedInstall(recipe, {
+        origin: srv.origin,
+        cwd: work,
+        wrap,
+        env: { PATH: `${spy.bin}:${process.env.PATH}` },
+      });
+      assert.notEqual(r.status, 0, wrap);
+      assert.equal(readFileSync(spy.tarLog, "utf8").trim(), "");
+      assert.equal(readFileSync(spy.nodeLog, "utf8").trim(), "");
+    } finally {
+      await srv.stop();
+      rmSync(work, { recursive: true, force: true });
+    }
   }
 });
