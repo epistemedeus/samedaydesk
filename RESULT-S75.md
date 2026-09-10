@@ -45,3 +45,9 @@ No main merge, deploy, payment, public message, bid, or service activation. No n
 ## Export note
 
 If `epistemedeus/samedaydesk` push returns 403, exact BASE/TIP git bundle ships under EIN `handoff/s75/` with prerequisites listed.
+
+## Export (403 path taken)
+
+- SDS push to epistemedeus/samedaydesk: HTTP 403
+- EIN handoff branch: `codex/s75-issue-job-release-handoff-20260910`
+- See `handoff/s75/` on epistemedeus/ein-llc-lean for bundle + archive digest
