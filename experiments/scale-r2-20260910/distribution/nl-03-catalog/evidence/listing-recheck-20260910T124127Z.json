@@ -1,0 +1,52 @@
+{
+  "capturedAt": "2026-09-10T12:41:27.000Z",
+  "observedUrl": "https://grexal.ai/marketplace/j970cajvv6wbrmy64s2f4ajzw18e5j2q",
+  "httpStatus": 200,
+  "matchedPath": "/marketplace/[agentId]",
+  "routeParams": {
+    "agentId": "j970cajvv6wbrmy64s2f4ajzw18e5j2q"
+  },
+  "routeParamEmbeddedInSsr": true,
+  "ssrEmbedsCommercialFields": false,
+  "ssrCommercialProbes": {
+    "price_0_02": false,
+    "run_completed": false,
+    "agent_display_name_source_change": false,
+    "developer_tools": false,
+    "estimate_reserve": false
+  },
+  "note": "SSR shell is Convex client-hydrated; price/name/category not embedded in HTML. Commercial fields sourcedFrom=S149.",
+  "commercialFields": {
+    "sourcedFrom": "S149",
+    "sourcePath": "/workspace/pilot/receipts/scale-bot-0909/r2-team/receipts-grexal-s149.json",
+    "agentId": "j970cajvv6wbrmy64s2f4ajzw18e5j2q",
+    "deploymentId": "j570f14047dzpkhc0trh3fnp8s8e43sd",
+    "deploymentVersion": "v1",
+    "pricing": {
+      "version": 1,
+      "run_completed_usd": 0.02,
+      "estimate_reserve_usd": 0.025,
+      "estimateReserveIsCharge": false
+    },
+    "category": "developer-tools",
+    "tags": [
+      "code",
+      "diff",
+      "evidence",
+      "validation"
+    ],
+    "homepage": "samedaydesk.com",
+    "customerExecutionRevenuePayout": false
+  },
+  "artifacts": {
+    "html": "evidence/listing-recheck-20260910T124127Z.html",
+    "headers": "evidence/listing-recheck-20260910T124127Z.headers"
+  },
+  "paidInvokeExecuted": false,
+  "grexalLoginExecuted": false,
+  "ssrNotes": [
+    "Next.js flight payload includes route params agentId",
+    "Convex client hydrates listing body; price/name/category not in SSR HTML",
+    "Commercial fields must be sourcedFrom=S149, not invented from HTML"
+  ]
+}

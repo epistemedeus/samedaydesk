@@ -1,0 +1,14 @@
+HTTP/2 200 
+age: 0
+cache-control: private, no-cache, no-store, max-age=0, must-revalidate
+content-type: text/html; charset=utf-8
+date: Thu, 10 Sep 2026 12:41:27 GMT
+link: </_next/static/media/22a5144ee8d83bca-s.p.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/media/7d4881bb7e1bf84d-s.p.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2"
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+x-matched-path: /marketplace/[agentId]
+x-powered-by: Next.js
+x-vercel-cache: MISS
+x-vercel-id: cle1::iad1::hc9jh-1789044087489-ab3ab02e1f1b
+

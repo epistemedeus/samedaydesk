@@ -1,0 +1,24 @@
+{
+  "schema": "pilot.r2.distribution.portable_catalog_inventory.v1",
+  "cite": "unavailable-fixture",
+  "packages": [
+    {
+      "id": "capture-unavailable-example",
+      "sourceRepo": "epistemedeus/samedaydesk",
+      "sourcePin": "53dbb7adde7dfe89f4dc1fb5efe380389b4e420d",
+      "sourcePath": "/workspace/pilot/tmp/s124-root-0910.dYRsYW/grexal/package",
+      "kind": "grexal_agent_package",
+      "installCommands": [
+        {
+          "command": "npm test",
+          "observed": false,
+          "note": "recommended-not-run in unavailable fixture"
+        }
+      ],
+      "availability": {
+        "status": "unavailable",
+        "reason": "provider or capture read unavailable \u2014 do not invent users=0"
+      }
+    }
+  ]
+}
