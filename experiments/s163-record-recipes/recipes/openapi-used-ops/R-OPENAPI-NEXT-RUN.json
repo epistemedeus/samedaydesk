@@ -1,0 +1,13 @@
+{
+  "id": "R-OPENAPI-NEXT-RUN",
+  "family": "openapi-used-ops",
+  "title": "Build next-run input manifest from used-ops pin",
+  "parser": "s134-openapi-impact",
+  "dependsOn": ["R-OPENAPI-PIN-IMPACT"],
+  "subjobs": [
+    "Emit next-run manifest retaining source commits, license, used-ops pin, and coverage note.",
+    "Do not expand scope to unpinned operations silently."
+  ],
+  "adapter": "adapters/openapi-used-ops.mjs#buildNextRunManifest",
+  "demo": "demos/openapi-used-ops.mjs"
+}

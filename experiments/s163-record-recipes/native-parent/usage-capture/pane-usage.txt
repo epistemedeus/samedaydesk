@@ -1,0 +1,24 @@
+
+   codex/s163-record-source-recipes-20260910 /workspace           1.5K / 500K
+              ┌──────────────────────────────────────────── [✗] ─┐
+              │  Context usage  Usage limit  Session info        │
+              │──────────────────────────────────────────────────│
+              │  Weekly limit (SuperGrok Heavy)                  │
+              │                                                  │
+              │  ████████████████████████░░░░░░  79%             │
+              │  Resets: September 10, 18:27                     │
+              │                                                  │
+              │  Session usage: no model calls yet in this sess  │
+              │                                                  │
+  Help improve│                                                  │ut] [Opt in]
+  Off by defau│                                                  │
+  data, e.g., │                                                  │
+  debugging pu│                                                  │
+  Read Terms a│                                                  │
+              │                                                  │
+  ╭───────────│                                                  │───────────╮
+  │ ❯         │            Tab switch  |  ↑/↓ scroll             │           │
+  ╰───────────│         c copy session ID  |  Esc close          │6 (xhigh) ─╯
+              └──────────────────────────────────────────────────┘
+
+

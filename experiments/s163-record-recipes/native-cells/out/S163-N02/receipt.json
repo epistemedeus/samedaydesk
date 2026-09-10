@@ -1,0 +1,67 @@
+{
+  "cell": "S163-N02",
+  "ok": true,
+  "filesWritten": [
+    "docs/families/pricing-row-unit.md",
+    "docs/consumers/pricing-refuse-example.mjs",
+    "sources/pricing/public-model-rows/SOURCE.json",
+    "native-cells/out/S163-N02/receipt.json"
+  ],
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "costClaim": false,
+  "title": "Pricing row/unit family docs",
+  "covers": [
+    "curated-public-model-row-sources-citations-in-SOURCE.json-not-html-scrape",
+    "unit-string-USD/1M-tokens-vs-USD/1M-Tokens-must-not-case-fold",
+    "adapter-refuse-unsupported-page.html",
+    "no-total-cost-no-ROI-no-demand"
+  ],
+  "sourceCitations": [
+    "https://openai.com/api/pricing/",
+    "https://docs.x.ai/docs/models"
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node docs/consumers/pricing-refuse-example.mjs",
+      "cwd": "experiments/s163-record-recipes",
+      "exitCode": 0,
+      "observed": {
+        "ok": false,
+        "refused": true,
+        "code": "unsupported-html-extraction",
+        "paidValueClaim": false
+      }
+    },
+    {
+      "cmd": "node --test test/recipes.test.mjs",
+      "cwd": "experiments/s163-record-recipes",
+      "exitCode": 0,
+      "result": "pass 6 fail 0"
+    },
+    {
+      "cmd": "node demos/pricing-row-unit.mjs",
+      "cwd": "experiments/s163-record-recipes",
+      "exitCode": 0,
+      "observed": {
+        "htmlRefuseCode": "unsupported-html-extraction",
+        "unitChanges": 1,
+        "fieldKey": "grok-4.6-input",
+        "beforeUnit": "USD/1M-tokens",
+        "afterUnit": "USD/1M-Tokens",
+        "numericComparison": "not-applicable-across-units",
+        "fieldChanges": 0
+      }
+    }
+  ],
+  "nonClaims": [
+    "no-total-cost",
+    "no-ROI",
+    "no-demand",
+    "no-live-html-scrape",
+    "no-unit-case-fold",
+    "no-SKU-truth"
+  ],
+  "excludes": ["native05", "native06", "native07", "native08"],
+  "scope": "experiments/s163-record-recipes"
+}

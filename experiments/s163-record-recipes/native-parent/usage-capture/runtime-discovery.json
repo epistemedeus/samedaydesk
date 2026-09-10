@@ -1,0 +1,20 @@
+{
+  "origin": "https://cli-chat-proxy.grok.com/v1/models",
+  "models": [
+    {
+      "id": "grok-4.6",
+      "efforts": [],
+      "default_effort": null
+    },
+    {
+      "id": "grok-4.5",
+      "efforts": [],
+      "default_effort": null
+    }
+  ],
+  "selected": {
+    "model": "grok-4.6",
+    "effort": "xhigh",
+    "note": "from local models_cache + S134 admit spelling"
+  }
+}

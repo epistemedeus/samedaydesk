@@ -1,0 +1,48 @@
+{
+  "decision": {
+    "ok": true,
+    "reasons": [],
+    "memory": {
+      "MemTotal": 16791945216,
+      "MemAvailable": 11169640448,
+      "reserve25": 4197986304,
+      "headroom": 6971654144
+    },
+    "psiAvg10": 0,
+    "diskFree": 0.9663244792344019,
+    "maxByHeadroom": 33,
+    "runtime": {
+      "model": "grok-4.6",
+      "effort": "xhigh",
+      "catalog": [
+        {
+          "model": "grok-4.6",
+          "efforts": [
+            "xhigh",
+            "high",
+            "medium",
+            "low"
+          ],
+          "defaultEffort": "high"
+        },
+        {
+          "model": "grok-4.5",
+          "efforts": [
+            "high",
+            "medium",
+            "low"
+          ],
+          "defaultEffort": "high"
+        }
+      ]
+    }
+  },
+  "cells": [
+    "S163-N01",
+    "S163-N02",
+    "S163-N03",
+    "S163-N04",
+    "S163-N05",
+    "S163-N06"
+  ]
+}

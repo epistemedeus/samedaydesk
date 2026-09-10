@@ -1,0 +1,22 @@
+{
+  "cell": "S163-N06",
+  "ok": true,
+  "title": "Cross-family non-claims + operator checklist",
+  "filesWritten": [
+    "docs/OPERATOR.md",
+    "native-cells/out/S163-N06/receipt.json"
+  ],
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "covers": [
+    "preflight-node22",
+    "preflight-s134-pin",
+    "preflight-demos-tests",
+    "non-claim-roi",
+    "non-claim-paid-value",
+    "non-claim-ceiling-48",
+    "non-claim-merchant-package",
+    "memory-psi-admission",
+    "pointer-ASSIGNMENT.md"
+  ]
+}

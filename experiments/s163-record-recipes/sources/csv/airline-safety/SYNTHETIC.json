@@ -1,0 +1,5 @@
+{
+  "synthetic": true,
+  "derivedFrom": "airline-safety head rows",
+  "purpose": "keyed change + blank key + duplicate identity"
+}

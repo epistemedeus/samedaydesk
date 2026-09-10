@@ -1,0 +1,77 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-csv-drift",
+  "inputs": {
+    "before": "/workspace/experiments/s163-record-recipes/sources/csv/airline-safety/before.csv",
+    "after": "/workspace/experiments/s163-record-recipes/sources/csv/airline-safety/after.csv",
+    "keyColumns": [
+      "airline"
+    ]
+  },
+  "report": {
+    "module": "csv-drift",
+    "ok": true,
+    "schema": {
+      "beforeHeaders": [
+        "airline",
+        "avail_seat_km_per_week",
+        "incidents_85_99",
+        "fatal_accidents_85_99",
+        "fatalities_85_99",
+        "incidents_00_14",
+        "fatal_accidents_00_14",
+        "fatalities_00_14"
+      ],
+      "afterHeaders": [
+        "airline",
+        "avail_seat_km_per_week",
+        "incidents_85_99",
+        "fatal_accidents_85_99",
+        "fatalities_85_99",
+        "incidents_00_14",
+        "fatal_accidents_00_14",
+        "fatalities_00_14"
+      ],
+      "columnsAdded": [],
+      "columnsRemoved": [],
+      "columnsReordered": false,
+      "columnsShared": [
+        "airline",
+        "avail_seat_km_per_week",
+        "incidents_85_99",
+        "fatal_accidents_85_99",
+        "fatalities_85_99",
+        "incidents_00_14",
+        "fatal_accidents_00_14",
+        "fatalities_00_14"
+      ]
+    },
+    "rowDrift": {
+      "mode": "keyed",
+      "keyColumns": [
+        "airline"
+      ],
+      "addedCount": 0,
+      "removedCount": 0,
+      "changedCount": 0,
+      "added": [],
+      "removed": [],
+      "changed": [],
+      "truncated": false
+    },
+    "missingCellRate": 0,
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "No schema/row drift signal (or empty inputs). Uncertainty list may still describe empty/partial/duplicate cases."
+  }
+}

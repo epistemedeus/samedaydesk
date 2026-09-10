@@ -1,0 +1,25 @@
+{
+  "id": "R-CSV-REAL-NEWLINE",
+  "family": "csv-keyed-drift",
+  "title": "Real airline-safety CSV pair (newline cleanup commits)",
+  "parser": "s134-csv-drift",
+  "primarySource": {
+    "label": "fivethirtyeight-airline-safety",
+    "sourceUrl": "https://github.com/fivethirtyeight/data/tree/master/airline-safety",
+    "license": "CC0",
+    "beforeCommit": "2ced6788d427fe11049175d378ce37f5016c6a04",
+    "afterCommit": "6d880e939ad3d11d94c137c911681b3cf718fd74",
+    "synthetic": false,
+    "metaFile": "sources/csv/airline-safety/SOURCE.json"
+  },
+  "inputs": {
+    "before": "sources/csv/airline-safety/before.csv",
+    "after": "sources/csv/airline-safety/after.csv",
+    "key": "airline"
+  },
+  "expectedFixture": "fixtures/expected/csv-airline-real.json",
+  "expectedSummary": {
+    "rowDrift.changedCount": 0,
+    "note": "Real commit pair may be newline-only; observed keyed changedCount=0 is a valid no-change result."
+  }
+}

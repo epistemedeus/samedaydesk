@@ -1,0 +1,56 @@
+{
+  "cell": "S163-N05",
+  "ok": true,
+  "title": "Next-run manifest consumer example",
+  "filesWritten": [
+    "docs/consumers/next-run-manifest.md",
+    "docs/consumers/next-run-validate.mjs",
+    "native-cells/out/S163-N05/receipt.json"
+  ],
+  "paidValueClaim": false,
+  "cashBoundaryUsd": 0,
+  "schema": "s163.next-run-manifest.v1",
+  "covers": [
+    "schema-fields",
+    "reuse-pins-without-inventing-evidence",
+    "retain-checklist",
+    "validate-snippet-schema-recipeId-retain"
+  ],
+  "commandsRun": [
+    {
+      "cmd": "node docs/consumers/next-run-validate.mjs",
+      "cwd": "experiments/s163-record-recipes",
+      "exitCode": 0,
+      "observed": {
+        "ok": true,
+        "schema": "s163.next-run-manifest.v1",
+        "count": 2,
+        "recipeIds": ["R-CSV-KEYED-CHANGE", "R-OPENAPI-PIN-IMPACT"],
+        "createdFromDemos": []
+      }
+    }
+  ],
+  "manifestsValidated": [
+    {
+      "file": "next-run/R-CSV-KEYED-CHANGE.manifest.json",
+      "recipeId": "R-CSV-KEYED-CHANGE",
+      "retainSource": "adapter-prep",
+      "retain": ["keyColumns", "sourceUrl", "commit", "license", "coverage"]
+    },
+    {
+      "file": "next-run/R-OPENAPI-PIN-IMPACT.manifest.json",
+      "recipeId": "R-OPENAPI-PIN-IMPACT",
+      "retainSource": "manifest",
+      "retain": ["units", "coverage", "sourceUrl", "commit", "license"]
+    }
+  ],
+  "nonClaims": [
+    "no-invented-used-ops",
+    "no-invented-keys",
+    "no-paid-value",
+    "no-runtime-compatibility",
+    "no-live-fetch"
+  ],
+  "excludes": ["native05", "native06", "native07", "native08"],
+  "scope": "experiments/s163-record-recipes"
+}

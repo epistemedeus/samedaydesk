@@ -1,0 +1,37 @@
+{
+  "schema": "s163.next-run-manifest.v1",
+  "recipeId": "R-CSV-KEYED-CHANGE",
+  "parser": "s134-csv-drift",
+  "inputs": {
+    "before": "/workspace/experiments/s163-record-recipes/sources/csv/airline-safety/synthetic-keyed-before.csv",
+    "after": "/workspace/experiments/s163-record-recipes/sources/csv/airline-safety/synthetic-keyed-after.csv",
+    "keyColumns": [
+      "airline"
+    ]
+  },
+  "sourceMeta": {
+    "family": "csv-keyed-drift",
+    "label": "fivethirtyeight-airline-safety",
+    "sourceUrl": "https://github.com/fivethirtyeight/data/tree/master/airline-safety",
+    "license": "CC0 / public domain per FiveThirtyEight data repo",
+    "licenseUrl": "https://github.com/fivethirtyeight/data/blob/master/LICENSE",
+    "keyColumn": "airline",
+    "before": {
+      "commit": "2ced6788d427fe11049175d378ce37f5016c6a04",
+      "sha256": "800c82c2f4e4d4ef775eefac47bce3d2444af54392b9915a045150a89af0ad1b",
+      "bytes": 2265
+    },
+    "after": {
+      "commit": "6d880e939ad3d11d94c137c911681b3cf718fd74",
+      "sha256": "064300a3542fe4c3ee61aac54f55e95208a862eb11182c6ab48cc2618cbd58b3",
+      "bytes": 2265
+    },
+    "contentIdentical": false,
+    "synthetic": false
+  },
+  "uncertaintyNotes": [
+    "Blank key values are weak identities — treat as uncertainty, not silent merge.",
+    "Duplicate keys block definitive keyed counts (S142/S154 gate)."
+  ],
+  "paidValueClaim": false
+}

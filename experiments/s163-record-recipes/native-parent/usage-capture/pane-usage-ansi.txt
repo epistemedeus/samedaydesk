@@ -1,0 +1,24 @@
+
+  [2m codex/s163-record-source-recipes-20260910[0m /workspace           1.5K / 500K
+              ┌──────────────────────────────────────────── [✗] ─┐
+              │  Context usage  [1mUsage limit[0m  Session info        │
+              │──────────────────────────────────────────────────│
+              │  [1mWeekly limit (SuperGrok Heavy)[0m                  │
+              │                                                  │
+              │  ████████████████████████░░░░░░  79%             │
+              │  [2mResets: September 10, 18:27[0m                     │
+              │                                                  │
+              │  [1mSession usage: no model calls yet in this sess[0m  │
+              │                                                  │
+  Help improve│                                                  │ut] [Opt in]
+  Off by defau│                                                  │
+  data, e.g., │                                                  │
+  debugging pu│                                                  │
+  Read [4mTerms[0m a│                                                  │
+              │                                                  │
+  ╭───────────│                                                  │───────────╮
+  │ ❯         │            [1mTab[0;2m switch[0m  |  [1m↑/↓[0;2m scroll[0m             │           │
+  ╰───────────│         [1mc[0;2m copy session ID[0m  |  [1mEsc[0;2m close[0m          │[2m6 (xhigh)[0m ─╯
+              └──────────────────────────────────────────────────┘
+
+
