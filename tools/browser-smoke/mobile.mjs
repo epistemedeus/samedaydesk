@@ -35,6 +35,24 @@ const PAGE_SPECS = Object.freeze([
     layout: "mobile-nav",
   },
   {
+    id: "record-repeat",
+    path: "/for-agents/record-repeat",
+    screenshot: "record-repeat-mobile.png",
+    expect: {
+      titleIncludes: "Source/record repeat jobs",
+      h1Includes: "portable offline package",
+      bodyIncludes: [
+        "/kit/record-repeat-job-",
+        "sha256",
+        "Free local processing",
+        "Unsupported HTML",
+        "/discovery/record-repeat.json",
+        "R-OPENAPI-PIN-IMPACT",
+        "optional existing paid",
+      ],
+    },
+  },
+  {
     id: "x402",
     path: "/x402",
     screenshot: "x402-mobile.png",

@@ -299,6 +299,80 @@ export const X402_CRAWLER_HTML = `
       </ul>
     `;
 
+
+export const RECORD_REPEAT_PATH = "/for-agents/record-repeat";
+export const RECORD_REPEAT_TITLE = "Source/record repeat jobs | SameDayDesk";
+export const RECORD_REPEAT_DESCRIPTION =
+  "Download one portable offline package for OpenAPI used-ops, pricing row/unit, keyed CSV, and RSS/Atom repeat comparisons. Free local samples and next-run manifests; optional existing paid extract stays separate. Unsupported HTML and missing identity/units stay explicit.";
+export const RECORD_REPEAT_CANONICAL = `${SITE_ORIGIN}${RECORD_REPEAT_PATH}`;
+export const RECORD_REPEAT_ARCHIVE = "/kit/record-repeat-job-2b80f38a4e5e.tar.gz";
+export const RECORD_REPEAT_ARCHIVE_SHA256 = "addda45cf19dcbddbbf370b8b92d993b49b50a203c3a8a6f5f07f7a13b60eab7";
+export const RECORD_REPEAT_ARCHIVE_BYTES = 1253701;
+export const RECORD_REPEAT_PARSER_PIN = "65ce1867f1b4339cc708bfb72a7d9a5942785632";
+export const RECORD_REPEAT_RECIPE_PIN = "a022eb6352156dcdcdf2f8730931f5891bd01436";
+export const RECORD_REPEAT_DISCOVERY = "/discovery/record-repeat.json";
+
+export const RECORD_REPEAT_COLD_START = [
+  `curl -fsSL -o record-repeat-job.tar.gz ${SITE_ORIGIN}${RECORD_REPEAT_ARCHIVE}`,
+  "mkdir -p /tmp && tar -xzf record-repeat-job.tar.gz -C /tmp",
+  "cd /tmp/record-repeat-job",
+  "node bin/record-repeat.mjs sample --all",
+].join("\n");
+
+export const RECORD_REPEAT_FIRST_USE = [
+  "node bin/record-repeat.mjs sample --recipe R-OPENAPI-PIN-IMPACT",
+  "node bin/record-repeat.mjs sample --recipe R-PRICE-UNIT-CASE",
+  "node bin/record-repeat.mjs sample --recipe R-CSV-KEYED-CHANGE",
+  "node bin/record-repeat.mjs sample --recipe R-FEED-LIVE-NOCHANGE",
+  "node bin/record-repeat.mjs sample --recipe R-PRICE-REFUSE-HTML",
+].join("\n");
+
+export const RECORD_REPEAT_REPEAT_USE = [
+  "node bin/record-repeat.mjs sample --recipe R-OPENAPI-PIN-IMPACT --write-next-run ./next-run.json",
+  "node bin/record-repeat.mjs run --from-next-run ./next-run.json \\",
+  "  --before ./vendor/s163-record-recipes/sources/openapi/museum/before.yaml \\",
+  "  --after ./vendor/s163-record-recipes/sources/openapi/museum/after.yaml \\",
+  "  --used ./vendor/s163-record-recipes/sources/openapi/museum/used-ops.pin.json",
+].join("\n");
+
+export const RECORD_REPEAT_CRAWLER_HTML = `
+      <h1>Source/record repeat jobs — one portable offline package</h1>
+      <p>
+        SameDayDesk publishes a lean acquisition archive for four offline source/record
+        families: OpenAPI used-operation impact, curated pricing row/unit change, keyed CSV drift,
+        and RSS/Atom correction briefs. Parsers are pinned at
+        <code>${RECORD_REPEAT_PARSER_PIN}</code>; recipes/sources at
+        <code>${RECORD_REPEAT_RECIPE_PIN}</code>. Free local processing of samples or caller
+        artifacts is distinct from the optional existing paid merchant extract. No new price,
+        cron, settlement rail, or unattended subscription is introduced. Unsupported HTML and
+        missing identity/units stay explicit.
+      </p>
+      <p>
+        Machine discovery:
+        <a href="${SITE_ORIGIN}${RECORD_REPEAT_DISCOVERY}">${SITE_ORIGIN}${RECORD_REPEAT_DISCOVERY}</a>.
+        Archive: <a href="${SITE_ORIGIN}${RECORD_REPEAT_ARCHIVE}">${SITE_ORIGIN}${RECORD_REPEAT_ARCHIVE}</a>
+        (sha256 <code>${RECORD_REPEAT_ARCHIVE_SHA256}</code>).
+      </p>
+      <h2>Cold start</h2>
+      <pre><code>${RECORD_REPEAT_COLD_START}</code></pre>
+      <h2>First-use samples</h2>
+      <pre><code>${RECORD_REPEAT_FIRST_USE}</code></pre>
+      <h2>Repeat use via next-run manifest</h2>
+      <pre><code>${RECORD_REPEAT_REPEAT_USE}</code></pre>
+      <p>
+        Practical paid observation jobs remain on
+        <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>. Homepage identity is unchanged.
+      </p>
+    `;
+
+export const RECORD_REPEAT_SHELL = Object.freeze({
+  path: RECORD_REPEAT_PATH,
+  title: RECORD_REPEAT_TITLE,
+  description: RECORD_REPEAT_DESCRIPTION,
+  canonical: RECORD_REPEAT_CANONICAL,
+  crawlerHtml: RECORD_REPEAT_CRAWLER_HTML,
+});
+
 export const FOR_AGENTS_SHELL = Object.freeze({
   path: FOR_AGENTS_PATH,
   title: FOR_AGENTS_TITLE,

@@ -163,6 +163,23 @@ export default function ForAgents() {
           </div>
         </section>
 
+        
+        <section className={styles.section} aria-labelledby="record-repeat-title">
+          <div className={styles.sectionHead}>
+            <p className="eyebrow">Offline package · source/record repeat</p>
+            <h2 id="record-repeat-title">Compare OpenAPI, pricing rows, keyed CSV, or feeds offline</h2>
+          </div>
+          <p className={styles.jobCopy}>
+            Download one portable archive for four source/record families. Free labeled samples and
+            next-run manifests run locally. Unsupported HTML and missing identity/units stay explicit.
+            Optional existing paid extract stays separate. Details and cold-start commands:{" "}
+            <Link className={styles.inlineLink} to="/for-agents/record-repeat">
+              /for-agents/record-repeat
+            </Link>
+            .
+          </p>
+        </section>
+
         <section className={styles.section} aria-labelledby="recurring-title">
           <div className={styles.sectionHead}>
             <p className="eyebrow">Job 5 · recurring recipes</p>

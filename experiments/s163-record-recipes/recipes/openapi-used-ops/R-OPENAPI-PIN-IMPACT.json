@@ -1,0 +1,36 @@
+{
+  "id": "R-OPENAPI-PIN-IMPACT",
+  "family": "openapi-used-ops",
+  "title": "Pinned used-operation upgrade impact (museum OpenAPI)",
+  "parser": "s134-openapi-impact",
+  "primarySource": {
+    "label": "redocly-museum-openapi",
+    "repo": "https://github.com/Redocly/museum-openapi-example",
+    "license": "MIT",
+    "beforeCommit": "56d2e8f64cc05519a22e370a928bf6df8cd7ba67",
+    "afterCommit": "2770b2b2e59832d245c7b0eb0badf6568d7efb53",
+    "path": "openapi.yaml",
+    "synthetic": false,
+    "metaFile": "sources/openapi/museum/SOURCE.json"
+  },
+  "inputs": {
+    "before": "sources/openapi/museum/before.yaml",
+    "after": "sources/openapi/museum/after.yaml",
+    "used": "sources/openapi/museum/used-ops.pin.json"
+  },
+  "subjobs": [
+    "Pin a buyer-relevant used-ops list (method+path).",
+    "Run scoped impact \u2014 webhook/component edits outside the pin must not invent used-op churn.",
+    "Record observed no-change on pinned ops when that is what the pair shows."
+  ],
+  "cliExample": "node ../s134-record-jobs/modules/openapi-impact/cli.mjs --before sources/openapi/museum/before.yaml --after sources/openapi/museum/after.yaml --used sources/openapi/museum/used-ops.pin.json",
+  "expectedFixture": "fixtures/expected/openapi-museum-used.json",
+  "expectedSummary": {
+    "ok": true,
+    "usedOperationCount": 5,
+    "impact.changed": 0,
+    "impact.unchanged": 5,
+    "note": "Webhook addition in after commit is outside pinned used ops \u2014 scoped no-change is correct, not a false negative on the whole document."
+  },
+  "nextRunManifest": "next-run/R-OPENAPI-PIN-IMPACT.manifest.json"
+}

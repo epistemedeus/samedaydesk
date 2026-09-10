@@ -1,0 +1,64 @@
+{
+  "schema": "samedaydesk.lean-archive-manifest.v1",
+  "packageId": "record-repeat-job",
+  "includesFromParserPin": [
+    "experiments/s134-record-jobs/package.json",
+    "experiments/s134-record-jobs/package-lock.json",
+    "experiments/s134-record-jobs/lib/",
+    "experiments/s134-record-jobs/modules/",
+    "experiments/s134-record-jobs/fixtures/"
+  ],
+  "includesFromRecipePin": [
+    "experiments/s163-record-recipes/adapters/",
+    "experiments/s163-record-recipes/recipes/",
+    "experiments/s163-record-recipes/sources/",
+    "experiments/s163-record-recipes/registry/",
+    "experiments/s163-record-recipes/fixtures/",
+    "experiments/s163-record-recipes/demos/lib.mjs"
+  ],
+  "overlayAdds": [
+    "bin/record-repeat.mjs",
+    "package.json",
+    "PIN.json",
+    "MANIFEST.json",
+    "LICENSE",
+    "SOURCE.txt",
+    "INSTALL.txt",
+    "SKILL.md",
+    "docs/",
+    "discovery/",
+    "scripts/build-archive.mjs",
+    "test/"
+  ],
+  "excludes": [
+    "native-cells transcripts/logs",
+    "private workspace paths",
+    "secrets",
+    "Bot record kit / native05..08",
+    "bulky live Node Atom captures (synthetic correction pair retained)",
+    "new pricing / demand / settlement / unattended network subscription",
+    "server cron"
+  ],
+  "families": [
+    {
+      "id": "openapi-used-ops",
+      "parser": "s134-openapi-impact",
+      "module": "openapi-impact"
+    },
+    {
+      "id": "pricing-row-unit",
+      "parser": "s134-pricing-table-change",
+      "module": "pricing-table-change"
+    },
+    {
+      "id": "csv-keyed-drift",
+      "parser": "s134-csv-drift",
+      "module": "csv-drift"
+    },
+    {
+      "id": "rss-atom-brief",
+      "parser": "s134-rss-atom-brief",
+      "module": "rss-atom-brief"
+    }
+  ]
+}

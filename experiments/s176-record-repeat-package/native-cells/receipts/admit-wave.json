@@ -1,0 +1,45 @@
+{
+  "gate": {
+    "ok": true,
+    "reasons": [],
+    "memory": {
+      "MemTotal": 16791945216,
+      "MemAvailable": 11163095040,
+      "reserve25": 4197986304,
+      "headroom": 6965108736
+    },
+    "psiAvg10": 0,
+    "diskFree": 0.9662586401721767,
+    "maxByHeadroom": 33,
+    "runtime": {
+      "model": "grok-4.6",
+      "effort": "xhigh",
+      "catalog": [
+        {
+          "model": "grok-4.6",
+          "efforts": [
+            "xhigh",
+            "high",
+            "medium",
+            "low"
+          ],
+          "defaultEffort": "high"
+        },
+        {
+          "model": "grok-4.5",
+          "efforts": [
+            "high",
+            "medium",
+            "low"
+          ],
+          "defaultEffort": "high"
+        }
+      ]
+    }
+  },
+  "wave": [
+    "S176-N01",
+    "S176-N02"
+  ],
+  "at": "2026-09-10T13:11:35.821Z"
+}

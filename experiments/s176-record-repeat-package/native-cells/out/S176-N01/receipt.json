@@ -1,0 +1,22 @@
+{
+  "cell": "S176-N01",
+  "ok": true,
+  "findings": [
+    "Missing used-ops pin file / invalid JSON threw ENOENT/SyntaxError instead of adapter refuse (empty-used-ops-pin / invalid-used-op).",
+    "Missing OpenAPI before/after spawned s134-openapi-impact which ENOENTed; buildOpenApiCliArgs already has missing-openapi-capture.",
+    "run --from-next-run threw on missing file or invalid JSON instead of refuse.",
+    "--write-next-run without a path (boolean true) threw TypeError; directory target threw EISDIR.",
+    "Pricing/RSS next-run stored unresolved recipe-relative paths; --from-next-run did not resolve inputs relative to the manifest directory (portable replay broke).",
+    "--from-next-run --write-next-run dropped sourceMeta/retain from the prior manifest.",
+    "Missing pricing files were labeled unsupported-pricing-format (inline JSON parse of the path) instead of missing capture.",
+    "run --family did not normalize parser ids (s134-csv-drift unknown-family) while --from-next-run did.",
+    "INSTALL claimed HTML refuse exits non-zero; CLI and tests exit 0 with refused:true."
+  ],
+  "filesTouched": [
+    "bin/record-repeat.mjs",
+    "test/acquisition.test.mjs",
+    "INSTALL.txt",
+    "native-cells/out/S176-N01/receipt.json"
+  ],
+  "notes": "CLI now wraps S163 refuse/buildOpenApiCliArgs, writes structured refuse for next-run IO, resolves from-next-run paths against the manifest dir, stores resolved captures for pricing/rss, copies prior sourceMeta on rewrite. Acquisition tests 13/13. Left: HTML refuse still does not write a next-run (S163: do not synthesize pricing manifests). paidValueClaim:true on an inbound manifest is ignored; output stays false."
+}

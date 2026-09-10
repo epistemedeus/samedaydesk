@@ -1,0 +1,1 @@
+{"openapi":"3.0.3","paths":{"/v1/items":{"get":{"operationId":"listItems","parameters":[{"name":"limit","in":"query","schema":{"type":"integer"}}],"responses":{"200":{"description":"ok"}}}}}}

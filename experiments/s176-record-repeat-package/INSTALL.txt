@@ -1,0 +1,44 @@
+SameDayDesk record-repeat lean acquisition package
+==================================================
+
+Required runtime: Node.js 20+ (22.x preferred; owning-repo suite uses 22)
+Parser pin: 65ce1867f1b4339cc708bfb72a7d9a5942785632
+Recipe pin: a022eb6352156dcdcdf2f8730931f5891bd01436
+
+This archive is anonymous public packaging of the four source/record repeat-job
+families. It is not a new parser engine, paid route, cron, or marketplace listing.
+
+1) Unpack outside any private workspace
+
+  mkdir -p /tmp/record-repeat-job && tar -xzf record-repeat-job-*.tar.gz -C /tmp
+  cd /tmp/record-repeat-job
+  npm ci
+
+2) List families and free samples
+
+  node bin/record-repeat.mjs list
+  node bin/record-repeat.mjs sample --list
+
+3) First use — free labeled samples (offline; no network)
+
+  node bin/record-repeat.mjs sample --family openapi-used-ops
+  node bin/record-repeat.mjs sample --family pricing-row-unit
+  node bin/record-repeat.mjs sample --family csv-keyed-drift
+  node bin/record-repeat.mjs sample --family rss-atom-brief
+
+4) Partial / unsupported honesty
+
+  node bin/record-repeat.mjs sample --recipe R-PRICE-REFUSE-HTML
+  # exit 0 / prints refused:true — HTML is not synthesized into rows
+
+5) Caller-supplied inputs + next-run manifest (repeat without private workspace)
+
+  node bin/record-repeat.mjs run --family openapi-used-ops \
+    --before ./my/before.yaml --after ./my/after.yaml --used ./my/used.json \
+    --write-next-run ./out/next-run.json
+
+  node bin/record-repeat.mjs run --from-next-run ./out/next-run.json \
+    --before ./my/before2.yaml --after ./my/after2.yaml
+
+Paid merchant extract (optional, existing) is a separate product. This package
+does not charge, sign, subscribe, or schedule fetches.

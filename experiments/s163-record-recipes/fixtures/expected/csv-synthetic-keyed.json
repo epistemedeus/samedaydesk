@@ -1,0 +1,111 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-csv-drift",
+  "inputs": {
+    "before": "/workspace/experiments/s163-record-recipes/sources/csv/airline-safety/synthetic-keyed-before.csv",
+    "after": "/workspace/experiments/s163-record-recipes/sources/csv/airline-safety/synthetic-keyed-after.csv",
+    "keyColumns": [
+      "airline"
+    ]
+  },
+  "report": {
+    "module": "csv-drift",
+    "ok": true,
+    "schema": {
+      "beforeHeaders": [
+        "airline",
+        "avail_seat_km_per_week",
+        "incidents_85_99",
+        "fatal_accidents_85_99",
+        "fatalities_85_99",
+        "incidents_00_14",
+        "fatal_accidents_00_14",
+        "fatalities_00_14"
+      ],
+      "afterHeaders": [
+        "airline",
+        "avail_seat_km_per_week",
+        "incidents_85_99",
+        "fatal_accidents_85_99",
+        "fatalities_85_99",
+        "incidents_00_14",
+        "fatal_accidents_00_14",
+        "fatalities_00_14"
+      ],
+      "columnsAdded": [],
+      "columnsRemoved": [],
+      "columnsReordered": false,
+      "columnsShared": [
+        "airline",
+        "avail_seat_km_per_week",
+        "incidents_85_99",
+        "fatal_accidents_85_99",
+        "fatalities_85_99",
+        "incidents_00_14",
+        "fatal_accidents_00_14",
+        "fatalities_00_14"
+      ]
+    },
+    "rowDrift": {
+      "mode": "keyed",
+      "keyColumns": [
+        "airline"
+      ],
+      "addedCount": 1,
+      "removedCount": 0,
+      "changedCount": 1,
+      "added": [
+        {
+          "key": "\"\"",
+          "row": {
+            "cells": {
+              "airline": "",
+              "avail_seat_km_per_week": "100",
+              "incidents_85_99": "1",
+              "fatal_accidents_85_99": "0",
+              "fatalities_85_99": "0",
+              "incidents_00_14": "0",
+              "fatal_accidents_00_14": "0",
+              "fatalities_00_14": "0"
+            },
+            "meta": {
+              "shortRow": false,
+              "missingFieldCount": 0,
+              "extraFields": null
+            }
+          }
+        }
+      ],
+      "removed": [],
+      "changed": [
+        {
+          "key": "\"Air France\"",
+          "fields": [
+            {
+              "column": "incidents_00_14",
+              "before": "6",
+              "after": "7",
+              "beforePresence": "present",
+              "afterPresence": "present"
+            }
+          ]
+        }
+      ],
+      "truncated": false
+    },
+    "missingCellRate": 0.025,
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Reports schema column add/remove/reorder and keyed row deltas when keys are supplied. Without keys, only row-count delta is stated (identity unknown). Not a warehouse migration plan."
+  }
+}

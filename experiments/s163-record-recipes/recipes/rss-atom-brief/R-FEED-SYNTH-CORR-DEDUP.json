@@ -1,0 +1,24 @@
+{
+  "id": "R-FEED-SYNTH-CORR-DEDUP",
+  "family": "rss-atom-brief",
+  "title": "Labeled synthetic correction + dedup on Node releases Atom",
+  "parser": "s134-rss-atom-brief",
+  "primarySource": {
+    "synthetic": true,
+    "derivedFrom": "https://github.com/nodejs/node/releases.atom capture-a",
+    "metaFile": "sources/feeds/nodejs-releases/SYNTHETIC.json"
+  },
+  "inputs": {
+    "before": "sources/feeds/nodejs-releases/synthetic-correction-dedup-before.xml",
+    "after": "sources/feeds/nodejs-releases/synthetic-correction-dedup-after.xml"
+  },
+  "expectedFixture": "fixtures/expected/rss-synthetic-correction-dedup.json",
+  "expectedSummary": {
+    "corrected": 1,
+    "comparisonStatus": "comparable"
+  },
+  "subjobs": [
+    "Title correction surfaces as corrected.",
+    "Duplicate identity handling remains explicit (no silent last-write)."
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "s163.recipe-registry.v1",
+  "s134Pin": "65ce1867f1b4339cc708bfb72a7d9a5942785632",
+  "owningRepo": "epistemedeus/samedaydesk",
+  "scope": "experiments/s163-record-recipes",
+  "excludes": {
+    "botRecordNativeCells": [
+      "native05",
+      "native06",
+      "native07",
+      "native08"
+    ],
+    "note": "Bot Record owns integrated capture wrapper + native05..08 \u2014 do not duplicate."
+  },
+  "nonGoals": [
+    "timers/cron backends",
+    "subscriptions",
+    "paid network calls in demos",
+    "accounts/outbound messages",
+    "site deploy / marketplace publish",
+    "invented ROI/demand"
+  ],
+  "avoidDuplicating": [
+    "tools/recurring-job-recipes (page-change / buyer-setup \u2014 different contracts)",
+    "S127 package export/import",
+    "merchant page-change extract recipes"
+  ],
+  "families": [
+    {
+      "id": "csv-keyed-drift",
+      "parser": "s134-csv-drift",
+      "adapter": "adapters/csv-keyed.mjs",
+      "recipes": [
+        "R-CSV-DUP-IDENTITY",
+        "R-CSV-KEYED-CHANGE",
+        "R-CSV-REAL-NEWLINE"
+      ]
+    },
+    {
+      "id": "openapi-used-ops",
+      "parser": "s134-openapi-impact",
+      "adapter": "adapters/openapi-used-ops.mjs",
+      "recipes": [
+        "R-OPENAPI-NEXT-RUN",
+        "R-OPENAPI-PIN-IMPACT"
+      ]
+    },
+    {
+      "id": "pricing-row-unit",
+      "parser": "s134-pricing-table-change",
+      "adapter": "adapters/pricing-row-unit.mjs",
+      "recipes": [
+        "R-PRICE-REFUSE-HTML",
+        "R-PRICE-UNIT-CASE"
+      ]
+    },
+    {
+      "id": "rss-atom-brief",
+      "parser": "s134-rss-atom-brief",
+      "adapter": "adapters/rss-atom.mjs",
+      "recipes": [
+        "R-FEED-LIVE-NOCHANGE",
+        "R-FEED-SYNTH-CORR-DEDUP"
+      ]
+    }
+  ]
+}

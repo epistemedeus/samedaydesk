@@ -1,0 +1,19 @@
+{
+  "id": "R-CSV-DUP-IDENTITY",
+  "family": "csv-keyed-drift",
+  "title": "Preserve duplicate-identity block (no last-write-wins)",
+  "parser": "s134-csv-drift",
+  "primarySource": {
+    "synthetic": true,
+    "derivedFrom": "airline-safety head rows"
+  },
+  "inputs": {
+    "before": "sources/csv/airline-safety/synthetic-dup-before.csv",
+    "after": "sources/csv/airline-safety/synthetic-dup-after.csv",
+    "key": "airline"
+  },
+  "expectedFixture": "fixtures/expected/csv-synthetic-dup.json",
+  "expectedSummary": {
+    "rowDrift.mode": "duplicate-keys-blocked"
+  }
+}

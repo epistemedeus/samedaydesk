@@ -1,0 +1,87 @@
+{
+  "at": "2026-09-10T13:23:01.446Z",
+  "startedAt": "2026-09-10T13:11:35.821Z",
+  "runtime": {
+    "model": "grok-4.6",
+    "effort": "xhigh",
+    "catalog": [
+      {
+        "model": "grok-4.6",
+        "efforts": [
+          "xhigh",
+          "high",
+          "medium",
+          "low"
+        ],
+        "defaultEffort": "high"
+      },
+      {
+        "model": "grok-4.5",
+        "efforts": [
+          "high",
+          "medium",
+          "low"
+        ],
+        "defaultEffort": "high"
+      }
+    ]
+  },
+  "alive": 0,
+  "launched": [
+    {
+      "cell": "S176-N01",
+      "pid": 145080,
+      "startedAt": "2026-09-10T13:11:35.824Z",
+      "endedAt": "2026-09-10T13:23:00.922Z",
+      "code": 0
+    },
+    {
+      "cell": "S176-N02",
+      "pid": 145081,
+      "startedAt": "2026-09-10T13:11:35.825Z",
+      "endedAt": "2026-09-10T13:19:31.792Z",
+      "code": 0
+    }
+  ],
+  "events": [
+    {
+      "type": "launch",
+      "cell": "S176-N01",
+      "pid": 145080,
+      "at": "2026-09-10T13:11:35.824Z"
+    },
+    {
+      "type": "launch",
+      "cell": "S176-N02",
+      "pid": 145081,
+      "at": "2026-09-10T13:11:35.825Z"
+    },
+    {
+      "type": "exit",
+      "cell": "S176-N02",
+      "code": 0,
+      "at": "2026-09-10T13:19:31.792Z"
+    },
+    {
+      "type": "exit",
+      "cell": "S176-N01",
+      "code": 0,
+      "at": "2026-09-10T13:23:00.922Z"
+    }
+  ],
+  "memory": {
+    "MemTotal": 16791945216,
+    "MemAvailable": 11167178752,
+    "reserve25": 4197986304,
+    "headroom": 6969192448
+  },
+  "psiAvg10": 0,
+  "diskFreeRatio": 0.966068065301989,
+  "excludes": [
+    "native05",
+    "native06",
+    "native07",
+    "native08"
+  ],
+  "final": true
+}

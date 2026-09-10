@@ -1,0 +1,45 @@
+{
+  "schema": "s163.next-run-manifest.v1",
+  "recipeId": "R-OPENAPI-PIN-IMPACT",
+  "parser": "s134-openapi-impact",
+  "inputs": {
+    "before": "sources/openapi/museum/before.yaml",
+    "after": "sources/openapi/museum/after.yaml",
+    "used": "sources/openapi/museum/used-ops.pin.json"
+  },
+  "sourceMeta": {
+    "family": "openapi-used-ops",
+    "label": "redocly-museum-openapi",
+    "sourceUrl": "https://github.com/Redocly/museum-openapi-example",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/Redocly/museum-openapi-example/blob/main/LICENSE",
+    "before": {
+      "commit": "56d2e8f64cc05519a22e370a928bf6df8cd7ba67",
+      "path": "openapi.yaml",
+      "sha256": "a69971e692307229a08af28edc51a02eff43804f4fc9a66710ea619f6e6f498a",
+      "bytes": 23115
+    },
+    "after": {
+      "commit": "2770b2b2e59832d245c7b0eb0badf6568d7efb53",
+      "path": "openapi.yaml",
+      "sha256": "2d88e96a1860382fa86e15af892c50d95ae81d53324ac9b07aa9e6a72a8974aa",
+      "bytes": 23137
+    },
+    "retrieval": "https rawusercontent GET",
+    "contentIdentical": false,
+    "synthetic": false
+  },
+  "coverage": {
+    "scope": "used-operations-only",
+    "usedOperationCount": 5,
+    "note": "Webhook/component changes outside pinned used ops are out of scope for impact.unchanged claims."
+  },
+  "retain": [
+    "units",
+    "coverage",
+    "sourceUrl",
+    "commit",
+    "license"
+  ],
+  "paidValueClaim": false
+}

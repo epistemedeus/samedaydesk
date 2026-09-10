@@ -1,0 +1,19 @@
+{
+  "cell": "S176-N02",
+  "ok": true,
+  "findings": [
+    "Packed s163 fixtures/expected/*.json leaked /workspace/experiments/s163-record-recipes/... absolute paths (7 files).",
+    "Pack had no gate/test for MANIFEST excludes: private paths, secrets, transcripts.",
+    "Shipped acquisition.test.mjs resolved owning-tree sibling ../s163-record-recipes instead of vendor/."
+  ],
+  "filesTouched": [
+    "scripts/archive-hygiene.mjs",
+    "scripts/build-archive.mjs",
+    "test/acquisition.test.mjs",
+    "test/archive-hygiene.test.mjs",
+    "dist/record-repeat-job-2b80f38a4e5e.tar.gz",
+    "dist/archive.sha256",
+    "dist/archive.sha256.json"
+  ],
+  "notes": "Pack now rewrites those prefixes to recipe-relative paths and fails on remaining private abs paths/secrets/transcripts. Skip native-cells/next-run/.jsonl/.env. s163 next-run/R-CSV-KEYED-CHANGE.manifest.json still has abs paths in source tree; not packed. No secrets or transcripts in archive. Rebuild via existing builder also refreshed discovery/ and client/public/kit. Packed discovery json remains one-build stale vs dist sha (N04). Acquisition 8/8 pass. sha256 1120bb135c03ae148d96bf54e04e4242853752ede70b5612f435c250ac0e330e"
+}

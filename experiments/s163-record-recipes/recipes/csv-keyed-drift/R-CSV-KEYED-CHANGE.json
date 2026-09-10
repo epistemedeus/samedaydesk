@@ -1,0 +1,24 @@
+{
+  "id": "R-CSV-KEYED-CHANGE",
+  "family": "csv-keyed-drift",
+  "title": "Keyed public-dataset style change + blank-key identity",
+  "parser": "s134-csv-drift",
+  "primarySource": {
+    "label": "synthetic-derived-from-fivethirtyeight-airline-safety",
+    "synthetic": true,
+    "derivedFrom": "sources/csv/airline-safety (CC0 FiveThirtyEight data)",
+    "license": "CC0 / public domain per upstream; synthetic slice labeled",
+    "metaFile": "sources/csv/airline-safety/SYNTHETIC.json"
+  },
+  "inputs": {
+    "before": "sources/csv/airline-safety/synthetic-keyed-before.csv",
+    "after": "sources/csv/airline-safety/synthetic-keyed-after.csv",
+    "key": "airline"
+  },
+  "subjobs": [
+    "Key on airline.",
+    "Surface field change for Air France.",
+    "Blank airline row remains a weak/empty identity (added key \"\") \u2014 do not invent a key."
+  ],
+  "expectedFixture": "fixtures/expected/csv-synthetic-keyed.json"
+}
