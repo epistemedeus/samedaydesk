@@ -5,9 +5,9 @@
 | Task | NL-DISTRIBUTION-06 |
 | Branch | `codex/nl-distribution-06-join-record-20260910` |
 | Base | `ea000772cdbd6d5df7174369dcef9aa2270e5723` |
-| Tip | _(filled after commit)_ |
+| Tip | `08dc27e99f99c3f5995d9c6fb0a01ea6bc1b9727` |
 | Scope | `experiments/scale-r2-20260910/distribution/nl-06-join-record/` |
-| Tests | `npm run test:nl-distribution-06` |
+| Tests | `npm run test:nl-distribution-06` → **10/10 pass** |
 | Paid invoke | **false** |
 | CloudAgent | **false** |
 | S172 sequencing | tip `ea2938cfa68dadbe20a9d5ec096f315e59f4cdbe` already saved — **no overlap** |
