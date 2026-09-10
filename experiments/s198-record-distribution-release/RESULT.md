@@ -18,6 +18,8 @@ Base main: `2b80f38a4e5ec5f080d1764de7c539af63190012` (Pulse sources untouched)
 
 Production acquisition: **false**. Cash $0. No merge/deploy.
 
+Verified tip (Cursor collect): `a4bd6747937e232caabc9ac461288438522d4970`
+
 ## Integration repairs (no parser rewrite)
 
 Mechanical merge defects only:
