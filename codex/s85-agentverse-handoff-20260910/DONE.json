@@ -1,0 +1,88 @@
+{
+  "task": "S85 Agentverse A2A negotiation repair",
+  "branch": "codex/s85-agentverse-negotiation-20260910",
+  "merchant_base": "4910f83bd2be1e38667f1a3cfa23c70fcff6b0c1",
+  "changed_files": [
+    "integrations/agentverse-a2a/main.py",
+    "integrations/agentverse-a2a/catalog_proxy.py",
+    "integrations/agentverse-a2a/ADAPTER.md",
+    "integrations/agentverse-a2a/.gitignore",
+    "integrations/agentverse-a2a/tests/conftest.py",
+    "integrations/agentverse-a2a/tests/test_negotiation.py"
+  ],
+  "unchanged_on_purpose": [
+    "a2a-storefront.mjs",
+    "integrations/agentverse-a2a/pyproject.toml",
+    "integrations/agentverse-a2a/Dockerfile"
+  ],
+  "runtime": {
+    "python": "3.12.3",
+    "note": "Dockerfile remains python:3.13-slim; requires-python is >=3.10"
+  },
+  "sdk_versions": {
+    "a2a-sdk": "1.1.2",
+    "a2a-sdk-extra": "http-server",
+    "agentverse-sdk": "0.2.1",
+    "agentverse-sdk-extra": "a2a",
+    "httpx": "0.28.1",
+    "uvicorn": "0.35.0",
+    "starlette": "0.52.1",
+    "sse-starlette": "3.4.11",
+    "pytest": "8.4.1",
+    "pytest-asyncio": "1.1.0"
+  },
+  "pins": {
+    "changed": false,
+    "reason": "a2a-sdk 1.1.2 already implements 1.0 JSON-RPC and the 0.3 card merge. Correctness is AgentInterface.protocol_version='1.0', not a newer SDK."
+  },
+  "test_commands_and_results": [
+    {
+      "command": "cd integrations/agentverse-a2a && PYTHONPATH=/tmp/s85-pydeps:. python3 -m pytest -q",
+      "result": "23 passed (pre-parametrize source-failure); SDK inspection env"
+    },
+    {
+      "command": "python3 -m pip install --target /tmp/s85-adapter-isolated 'a2a-sdk[http-server]==1.1.2' 'agentverse-sdk[a2a]==0.2.1' 'httpx==0.28.1' 'uvicorn==0.35.0' 'pytest==8.4.1' 'pytest-asyncio==1.1.0'",
+      "result": "success; python3-venv/ensurepip unavailable so used isolated --target rather than venv"
+    },
+    {
+      "command": "cd integrations/agentverse-a2a && PYTHONPATH=/tmp/s85-adapter-isolated:. python3 -m pytest -q",
+      "result": "24 passed, 56 SDK protobuf DeprecationWarnings, 0.47s"
+    },
+    {
+      "command": "AGENTVERSE_A2A_SKIP_PRODUCTION_APP=1 PYTHONPATH=/tmp/s85-adapter-isolated:. python3 (import smoke: build_agent_card + create_app routes)",
+      "result": "import-smoke-ok; routes ['/', '/.well-known/agent-card.json', '/health']; card interface protocolVersion=1.0; no top-level 0.3"
+    }
+  ],
+  "coverage": {
+    "supported_version_1_0": "POST / SendMessage + A2A-Version 1.0 returns catalog; official a2a.client.ClientFactory against disposable uvicorn on 127.0.0.1 selects JsonRpcTransport",
+    "unsupported_version": "A2A-Version 0.3 and missing header (SDK default 0.3) return JSON-RPC error code -32009",
+    "advertised_method_path": "JSON-RPC at POST /; GET /.well-known/agent-card.json; v0.3 message/send returns -32601 Method not found",
+    "error_envelope": "jsonrpc 2.0 + id + error {code,message,data}; role=user yields -32602 Invalid params",
+    "exact_dynamic_catalog": "mocked upstream priceAtomicUsdc=42424 route=/commerce/seller-integrity-audit exampleUrl preserved",
+    "source_failure": "upstream 502 and invalid shape both return agent message catalog_temporarily_unavailable + canonicalCatalog, not a paid call",
+    "discovery_no_pay": "executor POSTs only to https://agents.samedaydesk.com/a2a/message:send with A2A-Version 1.0; no payment headers"
+  },
+  "container": {
+    "docker": "not installed in this environment",
+    "runtime_import_smoke": "done in isolated PYTHONPATH as above"
+  },
+  "first_party": {
+    "a2a-storefront.mjs": "not modified; A2A_VERSION remains 1.0",
+    "node_regressions": "not run"
+  },
+  "remaining_live_gate": {
+    "blocked_here": [
+      "no hosting deploy",
+      "no Agentverse re-registration (not required)",
+      "no paid/wallet calls"
+    ],
+    "after_deploy": "GET https://agentverse-a2a-production.up.railway.app/.well-known/agent-card.json must show supportedInterfaces[0].protocolVersion=1.0 and must not advertise top-level protocolVersion 0.3. Then SendMessage with A2A-Version 1.0 and role ROLE_USER is the live proof. Existing Agentverse registration/keys stay as-is."
+  },
+  "reproduction_summary": {
+    "live_card": "https://agentverse-a2a-production.up.railway.app/.well-known/agent-card.json advertised top-level protocolVersion 0.3, preferredTransport JSONRPC, url=public host, and supportedInterfaces without protocolVersion.",
+    "sdk_cause": "a2a-sdk 1.1.2 agent_card_to_dict() MessageToDict(card) then merges to_compat_agent_card(). When AgentInterface.protocol_version is empty, conversions.to_compat_agent_card treats it as a legacy interface and injects protocol_version=PROTOCOL_VERSION_0_3 ('0.3'). JSON-RPC handlers are @validate_version(PROTOCOL_VERSION_1_0); missing A2A-Version is read as 0.3 (a2a/utils/version_validator.py). enable_v0_3_compat defaults false, so message/send is Method not found and role=user fails lf.a2a.v1 Role parse.",
+    "local_repro_before": "AgentInterface(protocol_binding='JSONRPC', url=...) -> agent_card_to_dict protocolVersion=0.3 plus preferredTransport and url.",
+    "fix": "Set AgentInterface.protocol_version=PROTOCOL_VERSION_1_0 ('1.0'). to_compat_agent_card then has no legacy interfaces, raises VersionNotSupportedError, merge is skipped. Card advertises supportedInterfaces[0].protocolVersion=1.0 only. Official ClientFactory prefers 1.0 and uses JsonRpcTransport (SendMessage + A2A-Version 1.0 + ROLE_USER).",
+    "fieldwork": "Live SendMessage succeeded only with A2A-Version 1.0; 0.3/missing/message/send/role=user failed as recorded in /tmp/s85-status/owner/sendmessage-matrix.json"
+  }
+}

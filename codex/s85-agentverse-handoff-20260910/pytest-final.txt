@@ -1,0 +1,16 @@
+........................                                                 [100%]
+=============================== warnings summary ===============================
+tests/test_negotiation.py: 20 warnings
+  /tmp/s85-adapter-isolated/a2a/utils/proto_utils.py:303: DeprecationWarning: label() is deprecated. Use is_required() or is_repeated() instead.
+    errors = _validate_proto_required_fields_internal(msg)
+
+tests/test_negotiation.py: 26 warnings
+  /tmp/s85-adapter-isolated/a2a/utils/proto_utils.py:263: DeprecationWarning: label() is deprecated. Use is_required() or is_repeated() instead.
+    sub_errs = _validate_proto_required_fields_internal(val)
+
+tests/test_negotiation.py: 10 warnings
+  /tmp/s85-adapter-isolated/a2a/utils/proto_utils.py:272: DeprecationWarning: label() is deprecated. Use is_required() or is_repeated() instead.
+    sub_errs = _validate_proto_required_fields_internal(item)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+24 passed, 56 warnings in 0.48s

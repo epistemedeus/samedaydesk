@@ -1,0 +1,13 @@
+repo: epistemedeus/x402-url-extractor
+branch: codex/s85-agentverse-negotiation-20260910
+base: 4910f83bd2be1e38667f1a3cfa23c70fcff6b0c1
+tip: c6c772a181d5dc87e8e8a305af75eb169b506a11
+push_result: 403 Permission denied to cursor[bot]
+bundle: s85-agentverse-negotiation.bundle (requires 4910f83bd2be1e38667f1a3cfa23c70fcff6b0c1)
+apply:
+  git fetch ./s85-agentverse-negotiation.bundle c6c772a181d5dc87e8e8a305af75eb169b506a11:codex/s85-agentverse-negotiation-20260910
+  git checkout codex/s85-agentverse-negotiation-20260910
+alternate:
+  git checkout 4910f83bd2be1e38667f1a3cfa23c70fcff6b0c1 && git am ./0001-s85-agentverse-negotiation.patch
+verify:
+  cd integrations/agentverse-a2a && PYTHONPATH=<a2a-sdk[http-server]==1.1.2>:. python3 -m pytest -q
