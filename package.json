@@ -34,6 +34,8 @@
     "browser-desktop": "node tools/browser-smoke/desktop.mjs",
     "test:browser-mobile": "node --test tools/browser-smoke/mobile.test.mjs",
     "browser-mobile": "node tools/browser-smoke/mobile.mjs",
+    "test:browser-s79": "node --test tools/browser-smoke/s79-two-origin.test.mjs",
+    "browser-s79": "node tools/browser-smoke/s79-two-origin.mjs",
     "test:result-reuse": "node --test tools/result-reuse/test/export.test.mjs",
     "test:public-entry": "node --test scripts/public-entry.test.mjs",
     "test:recurring-job-recipes": "node --test tools/recurring-job-recipes/test/*.test.mjs",
