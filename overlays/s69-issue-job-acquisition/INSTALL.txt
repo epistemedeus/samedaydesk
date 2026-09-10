@@ -57,3 +57,5 @@ Completeness
 Skill install (disposable runtime home)
 
   node scripts/install-local-skill.mjs --runtime grok --home /tmp/s69-grok-home --from .
+
+S75: rebuild archive after pin change; do not reuse an S62-only zip.

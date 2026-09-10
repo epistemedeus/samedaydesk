@@ -63,6 +63,7 @@ const overlayFiles = [
   "docs/SOURCE-LICENSE-PRIVACY.md",
   "docs/DIRECT-API-BASELINE.md",
   "docs/AGENT-EXAMPLE-99533.md",
+  "docs/HTML-VS-COMMENTS.md",
   "scripts/install-local-skill.mjs",
 ];
 for (const rel of overlayFiles) {

@@ -12,3 +12,5 @@ Packaged extras (concrete, not invented savings / WTP):
 3. Constraint retention: page bounds, partial/error classification, no silent blank success.
 
 HTML issue pages are not claimed to provide complete comments.
+
+See also `HTML-VS-COMMENTS.md` for the operator-facing note on HTML vs REST comments.

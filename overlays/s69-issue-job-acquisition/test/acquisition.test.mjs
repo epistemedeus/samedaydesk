@@ -20,11 +20,12 @@ function run(args, env = {}) {
   });
 }
 
-test("pin targets S62 tip and input base", () => {
+test("pin targets S71 tip and input base", () => {
   const pin = JSON.parse(readFileSync(join(overlay, "PIN.json"), "utf8"));
-  assert.equal(pin.semanticsTip, "a63c77d528bbdc2de1558c56e8262e04c7420ae3");
+  assert.equal(pin.semanticsTip, "063d04c3828e197bff32f3aa69a54170982a39a5");
   assert.equal(pin.inputBase, "c295af075c86ab28fea075633e95934a776d006c");
   assert.equal(pin.recipeId, "issue-evidence");
+  assert.equal(pin.session, "s75");
 });
 
 test("SKILL.md has machine-readable frontmatter", () => {
@@ -32,10 +33,11 @@ test("SKILL.md has machine-readable frontmatter", () => {
   assert.ok(md.startsWith("---\n"));
   assert.match(md, /name:\s*issue-evidence/);
   assert.match(md, /description:/);
+  assert.match(md, /063d04c3828e197bff32f3aa69a54170982a39a5/);
 });
 
 test("fixture first run writes immutable prior artifact", () => {
-  const out = mkdtempSync(join(tmpdir(), "s69-acq-"));
+  const out = mkdtempSync(join(tmpdir(), "s75-acq-"));
   const r = run([
     "--evidence-fixture",
     join(fixtures, "99533-base.json"),
@@ -53,11 +55,15 @@ test("fixture first run writes immutable prior artifact", () => {
   assert.equal(body.outcome, "changed");
   assert.ok(body.persisted?.artifact?.path);
   assert.ok(existsSync(body.persisted.artifact.path));
+  const prior = JSON.parse(readFileSync(body.persisted.artifact.path, "utf8"));
+  assert.equal(prior.immutable, true);
+  assert.equal(prior.sha256.length, 64);
+  assert.ok(prior.payload?.evidence?.observation?.completeness);
   rmSync(out, { recursive: true, force: true });
 });
 
 test("prior + same-length edit fixture yields changed", () => {
-  const out1 = mkdtempSync(join(tmpdir(), "s69-acq1-"));
+  const out1 = mkdtempSync(join(tmpdir(), "s75-acq1-"));
   const first = run([
     "--evidence-fixture",
     join(fixtures, "99533-base.json"),
@@ -71,7 +77,7 @@ test("prior + same-length edit fixture yields changed", () => {
   ]);
   assert.equal(first.status, 0, first.stderr);
   const prior = JSON.parse(first.stdout).persisted.artifact.path;
-  const out2 = mkdtempSync(join(tmpdir(), "s69-acq2-"));
+  const out2 = mkdtempSync(join(tmpdir(), "s75-acq2-"));
   const second = run([
     "--evidence-fixture",
     join(fixtures, "99533-same-length-edit.json"),
@@ -85,7 +91,7 @@ test("prior + same-length edit fixture yields changed", () => {
     out2,
     "--write-artifact",
   ]);
-  assert.equal(second.status, 0, second.stderr);
+  assert.equal(second.status, 0, second.stderr + second.stdout);
   const body = JSON.parse(second.stdout);
   assert.equal(body.outcome, "changed");
   const delta = body.evidence?.delta || {};
@@ -93,6 +99,39 @@ test("prior + same-length edit fixture yields changed", () => {
   assert.ok(changes.some((c) => c.classification === "edited" && c.sameLength === true));
   rmSync(out1, { recursive: true, force: true });
   rmSync(out2, { recursive: true, force: true });
+});
+
+test("foreign prior identity is rejected before observation", () => {
+  const out1 = mkdtempSync(join(tmpdir(), "s75-id1-"));
+  const first = run([
+    "--evidence-fixture",
+    join(fixtures, "99533-base.json"),
+    "--schedule",
+    "weekly",
+    "--clock",
+    "2026-09-10T01:00:00.000Z",
+    "--out-dir",
+    out1,
+    "--write-artifact",
+  ]);
+  assert.equal(first.status, 0, first.stderr);
+  const prior = JSON.parse(first.stdout).persisted.artifact.path;
+  const second = run([
+    "--evidence-fixture",
+    join(fixtures, "identity-mismatch-body.json"),
+    "--prior",
+    prior,
+    "--schedule",
+    "weekly",
+    "--clock",
+    "2026-09-10T02:00:00.000Z",
+  ]);
+  assert.notEqual(second.status, 0);
+  const body = JSON.parse(second.stdout);
+  assert.equal(body.ok, false);
+  const blob = JSON.stringify(body);
+  assert.match(blob, /prior_identity_mismatch|invalid_prior|identity|mismatch/i);
+  rmSync(out1, { recursive: true, force: true });
 });
 
 test("429 fixture classifies without hanging", () => {
@@ -104,7 +143,8 @@ test("429 fixture classifies without hanging", () => {
     "--clock",
     "2026-09-10T01:00:00.000Z",
   ]);
-  assert.equal(r.status, 0, r.stderr);
+  // Honest error classification completes; process may exit non-zero when ok=false.
+  assert.ok(r.status === 0 || r.status === 1, r.stderr);
   const body = JSON.parse(r.stdout);
   assert.ok(["partial", "error", "changed"].includes(body.outcome));
   const text = JSON.stringify(body);
@@ -127,4 +167,12 @@ test("GITHUB_TOKEN env is not required and not inferred by lean CLI args", () =>
   const body = JSON.parse(r.stdout);
   assert.equal(body.ok, true);
   assert.doesNotMatch(JSON.stringify(body), /should-not-be-read/);
+});
+
+test("customer HTML note explains miss without paid-HTML or completeness claims", () => {
+  const md = readFileSync(join(overlay, "docs/HTML-VS-COMMENTS.md"), "utf8");
+  assert.match(md, /HTML/);
+  assert.match(md, /REST|comments endpoints/i);
+  assert.doesNotMatch(md, /HTML product failed|paid HTML failure|complete GitHub history/i);
+  assert.doesNotMatch(md, /\$[0-9]|subscribe now|buy now|sign up to pay/i);
 });

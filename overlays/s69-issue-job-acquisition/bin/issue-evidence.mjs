@@ -40,7 +40,7 @@ const { values } = parseArgs({
 });
 
 if (values.help) {
-  process.stdout.write(`issue-evidence lean CLI (S62 semantics; S69 acquisition)
+  process.stdout.write(`issue-evidence lean CLI (S71 semantics; S75 release acquisition)
 
 Node 22.x. Private-token-free default (no GITHUB_TOKEN env inference).
 
@@ -87,14 +87,15 @@ if (values["out-dir"]) {
   let artifact = null;
   if (values["write-artifact"]) {
     const sequence = (result.prior?.sequence || 0) + 1;
+    const payload = { evidence: result.evidence, outcome: result.outcome };
     const body = {
       schema: "samedaydesk.recurring-job-prior.v1",
       recipeId: result.recipeId || "issue-evidence",
       createdAt: result.clock,
       sequence,
       immutable: true,
-      sha256: sha256Hex(stableStringify(result.evidence)),
-      payload: { evidence: result.evidence, outcome: result.outcome },
+      sha256: sha256Hex(payload),
+      payload,
       payment: { attempted: false },
     };
     artifact = writeSequencedArtifact(outDir, result.recipeId || "issue-evidence", sequence, body);

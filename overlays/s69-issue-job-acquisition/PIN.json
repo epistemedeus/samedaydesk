@@ -1,13 +1,13 @@
 {
   "schema": "samedaydesk.package-pin.v1",
   "packageId": "issue-evidence-job",
-  "session": "s69",
-  "branch": "codex/s69-issue-job-acquisition-20260910",
+  "session": "s75",
+  "branch": "codex/s75-issue-job-release-20260910",
   "sourceRepo": "epistemedeus/samedaydesk",
-  "semanticsTip": "a63c77d528bbdc2de1558c56e8262e04c7420ae3",
+  "semanticsTip": "063d04c3828e197bff32f3aa69a54170982a39a5",
   "inputBase": "c295af075c86ab28fea075633e95934a776d006c",
   "recipeId": "issue-evidence",
   "nodeEngines": "22.x",
   "tokenDefault": "none",
-  "notes": "If a final reviewed S62 repair arrives later, only this pin and rebuilt archive must change. Do not alter S67 shared-host/observatory sources from this overlay."
+  "notes": "S75 composes reviewed S71 issue-evidence repairs onto the S69 acquisition overlay. Rebuild the lean archive from this pin; do not merely re-pin an old zip. Do not alter S73 shared-host/observatory or S70 continuation-pack sources from this overlay."
 }
