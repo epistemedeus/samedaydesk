@@ -1,0 +1,49 @@
+{
+  "probed_at": "2026-09-10T10:08:01.897Z",
+  "endpoint": "https://mcp.agensi.io/mcp",
+  "open_count": 0,
+  "all_count": 1,
+  "fulfilled_count": 1,
+  "open": [],
+  "all": [
+    {
+      "title": "Receipt Finder & Organizer",
+      "description": "I get a lot of receipts for business expenses to my email, I would like a skill that automatically finds all these receipts and forwards them to our finance email and saves them all in a folder that is updated monthly for record-keeping.",
+      "vote_count": 0,
+      "status": "fulfilled",
+      "tags": null,
+      "urgency": "nice",
+      "is_bounty": true,
+      "bounty": 10,
+      "created_at": "2026-07-30T10:09:46.836463+00:00"
+    }
+  ],
+  "fulfilled": [
+    {
+      "title": "Receipt Finder & Organizer",
+      "description": "I get a lot of receipts for business expenses to my email, I would like a skill that automatically finds all these receipts and forwards them to our finance email and saves them all in a folder that is updated monthly for record-keeping.",
+      "vote_count": 0,
+      "status": "fulfilled",
+      "tags": null,
+      "urgency": "nice",
+      "is_bounty": true,
+      "bounty": 10,
+      "created_at": "2026-07-30T10:09:46.836463+00:00"
+    }
+  ],
+  "creator_sameday": {
+    "name": "SameDayDesk",
+    "slug": "sameday",
+    "bio": "Practical workflows for agent-run work: source-change evidence, delivery checks and machine-commerce tools. Built by SameDayDesk.",
+    "verified": false,
+    "skill_count": 0,
+    "total_installs": 0,
+    "url": "https://agensi.io/creators/sameday",
+    "skills": []
+  },
+  "digests": {
+    "open": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "all": "ef9fb1e59446052e9881c2c4e44abf72bbba3892a7a57820488478a15822b5a7",
+    "fulfilled": "ef9fb1e59446052e9881c2c4e44abf72bbba3892a7a57820488478a15822b5a7"
+  }
+}

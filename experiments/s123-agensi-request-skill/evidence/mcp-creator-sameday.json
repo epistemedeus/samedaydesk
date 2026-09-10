@@ -1,0 +1,12 @@
+{
+  "jsonrpc": "2.0",
+  "id": 10,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"name\": \"SameDayDesk\",\n  \"slug\": \"sameday\",\n  \"bio\": \"Practical workflows for agent-run work: source-change evidence, delivery checks and machine-commerce tools. Built by SameDayDesk.\",\n  \"verified\": false,\n  \"skill_count\": 0,\n  \"total_installs\": 0,\n  \"url\": \"https://agensi.io/creators/sameday\",\n  \"skills\": []\n}"
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "jsonrpc": "2.0",
+  "id": 10,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "[\n  {\n    \"title\": \"Receipt Finder & Organizer\",\n    \"description\": \"I get a lot of receipts for business expenses to my email, I would like a skill that automatically finds all these receipts and forwards them to our finance email and saves them all in a folder that is updated monthly for record-keeping.\",\n    \"vote_count\": 0,\n    \"status\": \"fulfilled\",\n    \"tags\": null,\n    \"urgency\": \"nice\",\n    \"is_bounty\": true,\n    \"bounty\": 10,\n    \"created_at\": \"2026-07-30T10:09:46.836463+00:00\"\n  }\n]"
+      }
+    ]
+  }
+}
