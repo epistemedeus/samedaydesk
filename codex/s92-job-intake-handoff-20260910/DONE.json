@@ -1,0 +1,101 @@
+{
+  "status": "blocked_missing_input",
+  "neo_push": "not_attempted_no_remote",
+  "sds_handoff_branch": "codex/s92-job-intake-handoff-20260910",
+  "neo_product_branch_intended": "codex/s92-public-job-intake-20260910",
+  "sds_head": "c7e7ddc8524bb6d7da17089b3ff46f3cce21dd96",
+  "sds_remote": "https://github.com/epistemedeus/samedaydesk",
+  "neo_product_branch_created": false,
+  "product_patch": false,
+  "product_bundle": false,
+  "homepage_sdk_taskkit_bytes_changed": false,
+  "claim_bid_pay": false,
+  "invented_s45_or_neo_product": false,
+  "pins_rewritten": false,
+  "pins_from": "codex/s92-job-intake-handoff-20260910/PINS.json",
+  "missing_input_from": "codex/s92-job-intake-handoff-20260910/MISSING_INPUT.txt",
+  "missing": {
+    "pilot_branch": "codex/s45-job-intake-final-review-20260909",
+    "pilot_sha": "1bd25299b2632d77731cae4e1209a51d2e19aa24",
+    "neo_candidate_sha": "d42b8415de3afec24a66502210c77171aff5476c",
+    "neo_main_sha": "8b015afb46cca4e3b1050a267aa232e27bf86ed1",
+    "s45_paths": [
+      "experiments/scale-20260909/s42/pack/",
+      "S45_RESULT",
+      "REVIEWED_CHANGE_INVENTORY"
+    ],
+    "neo_product_branch": "codex/s92-public-job-intake-20260910",
+    "sds_handoff_branch": "codex/s92-job-intake-handoff-20260910",
+    "live_task_kit": "https://neomorphic.io/labs/task-kit/",
+    "live_archive_0_1_0": "https://neomorphic.io/downloads/agent-task-kit/agent-task-kit-0.1.0.tgz",
+    "archive_sha256": "86cea321569ad5375a4ebd9865c2b084af694f207f80056afe9531ae94f438e8",
+    "archive_bytes": 57958,
+    "pilot_repo_attempted": "epistemedeus/pilot"
+  },
+  "live_verification": {
+    "task_kit": {
+      "url": "https://neomorphic.io/labs/task-kit/",
+      "http": 200,
+      "bytes": 23360
+    },
+    "archive_0_1_0": {
+      "url": "https://neomorphic.io/downloads/agent-task-kit/agent-task-kit-0.1.0.tgz",
+      "http": 200,
+      "sha256": "86cea321569ad5375a4ebd9865c2b084af694f207f80056afe9531ae94f438e8",
+      "bytes": 57958
+    },
+    "archive_0_1_2": {
+      "http": 404
+    }
+  },
+  "public_get_probes_only": {
+    "github_issue": {
+      "url": "https://api.github.com/repos/modelcontextprotocol/servers/issues/4785",
+      "html_url": "https://github.com/modelcontextprotocol/servers/issues/4785",
+      "http": 200,
+      "number": 4785,
+      "state": "open",
+      "comments": 0
+    },
+    "moltjobs_list": {
+      "url": "https://api.moltjobs.io/v1/jobs?limit=2",
+      "http": 200,
+      "count": 2,
+      "statuses": [
+        "OPEN",
+        "OPEN"
+      ],
+      "funded": [
+        true,
+        true
+      ],
+      "meta_publicDetailRoute": "/v1/jobs/:id/public"
+    },
+    "moltjobs_public": {
+      "url": "https://api.moltjobs.io/v1/jobs/565f1174-0cfe-44a9-a1bb-0ce1f6a64527/public",
+      "http": 200,
+      "id": "565f1174-0cfe-44a9-a1bb-0ce1f6a64527",
+      "status": "OPEN",
+      "funded": true,
+      "budgetUsdc": "1.5",
+      "paymentProvider": "ON_CHAIN_USDC",
+      "paymentStatus": null,
+      "acceptanceCriteria_count": 3
+    }
+  },
+  "native_owner": {
+    "requested_model": "grok-4.6",
+    "reasoning_effort": "xhigh",
+    "observed_primaryModelId": "grok-4.6-build",
+    "session_id": "01a08a0a-e493-70c2-9233-7e9d09a55af0",
+    "binary": "grok 1.0.25"
+  },
+  "cursor_role": "git_process_transport_only",
+  "root_owns": [
+    "merge",
+    "hosting"
+  ],
+  "result": "codex/s92-job-intake-handoff-20260910/RESULT.md",
+  "owner_note": "codex/s92-job-intake-handoff-20260910/OWNER_NOTE.txt",
+  "usage": "codex/s92-job-intake-handoff-20260910/USAGE.json"
+}

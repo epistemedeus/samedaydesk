@@ -1,0 +1,24 @@
+S92 exact missing input (recorded once; do not invent or rewrite from memory)
+
+1) Neo public git remote URL (cloneable) whose objects include:
+   - current public main 8b015afb46cca4e3b1050a267aa232e27bf86ed1
+   - S86 public Neo candidate d42b8415de3afec24a66502210c77171aff5476c
+   Live surfaces already verified without git:
+   - https://neomorphic.io/labs/task-kit/ (HTTP 200)
+   - https://neomorphic.io/downloads/agent-task-kit/agent-task-kit-0.1.0.tgz
+     sha256=86cea321569ad5375a4ebd9865c2b084af694f207f80056afe9531ae94f438e8 bytes=57958
+   - agent-task-kit-0.1.2.tgz → HTTP 404 from this VM (path variants also 404)
+
+2) Pilot private git remote URL with read access for:
+   branch codex/s45-job-intake-final-review-20260909
+   pin 1bd25299b2632d77731cae4e1209a51d2e19aa24
+   paths experiments/scale-20260909/s42/pack/, S45_RESULT, REVIEWED_CHANGE_INVENTORY
+
+Attempts with already-configured GitHub auth (gh viewer login: cursor[bot]):
+- epistemedeus/pilot → HTTP 404 / git "Repository not found"
+- guessed Neo repo names under epistemedeus → 404
+- GitHub commit search for the three SHAs → 0 items
+- No earlier local S45 checkout on this VM matching pin 1bd25299b2632d77731cae4e1209a51d2e19aa24
+
+Blocked product work: cannot export S45 intake/tests into Neo without those sources;
+inventing a provider or new intake framework is disallowed.

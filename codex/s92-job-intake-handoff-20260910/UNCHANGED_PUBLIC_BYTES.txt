@@ -1,0 +1,6 @@
+No Neo tree available; no public product patch produced.
+Verified existing public archive bytes unchanged on this VM:
+  URL: https://neomorphic.io/downloads/agent-task-kit/agent-task-kit-0.1.0.tgz
+  sha256: 86cea321569ad5375a4ebd9865c2b084af694f207f80056afe9531ae94f438e8
+  bytes: 57958
+Homepage / SDK zip / existing task-kit archive were not modified (no Neo checkout).

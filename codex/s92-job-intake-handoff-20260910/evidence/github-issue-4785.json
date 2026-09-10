@@ -1,0 +1,82 @@
+{
+  "url": "https://api.github.com/repos/modelcontextprotocol/servers/issues/4785",
+  "repository_url": "https://api.github.com/repos/modelcontextprotocol/servers",
+  "labels_url": "https://api.github.com/repos/modelcontextprotocol/servers/issues/4785/labels{/name}",
+  "comments_url": "https://api.github.com/repos/modelcontextprotocol/servers/issues/4785/comments",
+  "events_url": "https://api.github.com/repos/modelcontextprotocol/servers/issues/4785/events",
+  "html_url": "https://github.com/modelcontextprotocol/servers/issues/4785",
+  "id": 5399555405,
+  "node_id": "I_kwDONRaG_88AAAABQdatTQ",
+  "number": 4785,
+  "title": "Four archived reference servers still pull ~214k installs/week, and their npm deprecation message points at npm support rather than a replacement",
+  "user": {
+    "login": "BerkantACUN",
+    "id": 168964527,
+    "node_id": "U_kgDOChIxrw",
+    "avatar_url": "https://avatars.githubusercontent.com/u/168964527?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/BerkantACUN",
+    "html_url": "https://github.com/BerkantACUN",
+    "followers_url": "https://api.github.com/users/BerkantACUN/followers",
+    "following_url": "https://api.github.com/users/BerkantACUN/following{/other_user}",
+    "gists_url": "https://api.github.com/users/BerkantACUN/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/BerkantACUN/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/BerkantACUN/subscriptions",
+    "organizations_url": "https://api.github.com/users/BerkantACUN/orgs",
+    "repos_url": "https://api.github.com/users/BerkantACUN/repos",
+    "events_url": "https://api.github.com/users/BerkantACUN/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/BerkantACUN/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2026-09-09T12:44:25Z",
+  "updated_at": "2026-09-09T12:44:25Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "NONE",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "Measured today (2026-09-09), live from `api.npmjs.org`:\r\n\r\n| Package | Downloads/week | Version | Published |\r\n|---|---:|---|---|\r\n| `@modelcontextprotocol/server-postgres` | 95,430 | 0.6.2 | 2026-07-03 |\r\n| `@modelcontextprotocol/server-github` | 84,416 | 2025.4.8 | 2026-07-03 |\r\n| `@modelcontextprotocol/server-puppeteer` | 21,273 | 2025.5.12 | 2026-07-03 |\r\n| `@modelcontextprotocol/server-brave-search` | 13,250 | 0.6.2 | 2026-06-04 |\r\n| **Total** | **214,369** | | |\r\n\r\nAll four are `deprecated` on npm and live in `modelcontextprotocol/servers-archived`, archived with its last push on 2025-05-28. That README states plainly:\r\n\r\n> **NO SECURITY GUARANTEES ARE PROVIDED FOR THESE ARCHIVED SERVERS.**\r\n\r\nThat decision is clear and I am not questioning it. The gap is that the decision is not reaching the people still installing these — 214k times a week.\r\n\r\n## Why the deprecation notice isn't carrying the message\r\n\r\nEvery one of the four carries npm's generic default text:\r\n\r\n```\r\nnpm warn deprecated @modelcontextprotocol/server-postgres@0.6.2:\r\nPackage no longer supported. Contact Support at https://www.npmjs.com/support for more info.\r\n```\r\n\r\nnpm prints this on every single install, which makes it the one channel that already reaches all 214k. But it currently sends people to **npm's support desk**, which cannot help with an MCP question, and it names no replacement and no security status.\r\n\r\nSomeone installing `server-postgres` today sees a generic \"no longer supported\" line, has no reason to think it means *unmaintained, archived, and explicitly outside any security guarantee*, and carries on — with a server holding database credentials.\r\n\r\n## Two things that don't line up\r\n\r\n**1. There is no replacement to migrate to for any of the four.** `modelcontextprotocol/servers/src` currently holds `everything`, `fetch`, `filesystem`, `git`, `memory`, `sequentialthinking`, `time`. Postgres, GitHub, Puppeteer and Brave Search have no successor there. So a user who correctly reads the warning and goes looking for guidance finds none, which is a plausible reason the install numbers haven't moved.\r\n\r\n**2. There is no route to report anything about them.** `modelcontextprotocol/servers/SECURITY.md` says this repository is not eligible for vulnerability reporting and to use the relevant SDK repo — but these are servers, not SDKs, and their own repo is archived and read-only. If someone finds a problem in `server-postgres` tomorrow, there is nowhere for it to go. This matters more for these four than for the rest of the archive: postgres and github are the two that hold credentials.\r\n\r\n## Suggested fix\r\n\r\nRewriting the npm deprecation string is a single command per package, needs no release, and lands on every future install immediately:\r\n\r\n```sh\r\nnpm deprecate @modelcontextprotocol/server-postgres@\"*\" \\\r\n  \"Archived and unmaintained; no security guarantees. See https://github.com/modelcontextprotocol/servers-archived\"\r\n```\r\n\r\nEven that much would turn \"contact npm support\" into something a user can act on. If a recommended alternative exists for any of the four, naming it there would do more than anything else available.\r\n\r\nA line in the main README pointing at the archive, and a sentence in SECURITY.md stating where (or that) reports on archived servers are accepted, would close the rest.\r\n\r\n---\r\n\r\nHappy to open a PR for the README and SECURITY.md wording if that's useful — the npm side needs publish rights, so that one can only come from a maintainer.\r\n\r\nFor context on why I was measuring this: I maintain a scanner for MCP server configurations, and unpinned or unmaintained server packages are one of the things it flags. These four kept coming up with install counts that didn't match their archived status, which seemed worth reporting rather than just detecting.\r\n",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/modelcontextprotocol/servers/issues/4785/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/modelcontextprotocol/servers/issues/4785/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null,
+  "pinned_comment": null
+}

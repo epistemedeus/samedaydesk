@@ -1,0 +1,18 @@
+{
+  "pilot_branch": "codex/s45-job-intake-final-review-20260909",
+  "pilot_sha": "1bd25299b2632d77731cae4e1209a51d2e19aa24",
+  "neo_candidate_sha": "d42b8415de3afec24a66502210c77171aff5476c",
+  "neo_main_sha": "8b015afb46cca4e3b1050a267aa232e27bf86ed1",
+  "s45_paths": [
+    "experiments/scale-20260909/s42/pack/",
+    "S45_RESULT",
+    "REVIEWED_CHANGE_INVENTORY"
+  ],
+  "neo_product_branch": "codex/s92-public-job-intake-20260910",
+  "sds_handoff_branch": "codex/s92-job-intake-handoff-20260910",
+  "live_task_kit": "https://neomorphic.io/labs/task-kit/",
+  "live_archive_0_1_0": "https://neomorphic.io/downloads/agent-task-kit/agent-task-kit-0.1.0.tgz",
+  "archive_sha256": "86cea321569ad5375a4ebd9865c2b084af694f207f80056afe9531ae94f438e8",
+  "archive_bytes": 57958,
+  "pilot_repo_attempted": "epistemedeus/pilot"
+}
