@@ -18,6 +18,7 @@ const Mcp = lazy(() => import("./pages/Mcp"));
 const ForAgents = lazy(() => import("./pages/ForAgents"));
 const RecordRepeat = lazy(() => import("./pages/RecordRepeat"));
 const DistributionRepair = lazy(() => import("./pages/DistributionRepair"));
+const ConsumerRepeat = lazy(() => import("./pages/ConsumerRepeat"));
 const SellerConformance = lazy(() => import("./pages/SellerConformance"));
 const VerifiedRoutes = lazy(() => import("./pages/VerifiedRoutes"));
 
@@ -41,6 +42,7 @@ export default function App() {
           <Route path="/for-agents" element={<ForAgents />} />
           <Route path="/for-agents/record-repeat" element={<RecordRepeat />} />
           <Route path="/for-agents/distribution-repair" element={<DistributionRepair />} />
+          <Route path="/for-agents/consumer-repeat" element={<ConsumerRepeat />} />
           <Route path="/login" element={<Auth mode="login" />} />
           <Route path="/signup" element={<Auth mode="signup" />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

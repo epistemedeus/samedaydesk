@@ -17,6 +17,7 @@ export const SPA_HISTORY_ROUTES = Object.freeze([
   "/for-agents",
   "/for-agents/record-repeat",
   "/for-agents/distribution-repair",
+  "/for-agents/consumer-repeat",
   "/login",
   "/signup",
   "/dashboard",

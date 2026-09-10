@@ -1,0 +1,11 @@
+{
+  "archive": "/kit/s178-consumer-repeat-kit.tgz",
+  "sha256": "04e9b6f382eedd91ae27b0d0faa68abbee7c26a1f06f52e415cb5a5884dfe05d",
+  "bytes": 718948,
+  "discovery": "/discovery/consumer-repeat.json",
+  "sourceRepo": "epistemedeus/x402-url-extractor",
+  "sourceCommit": "e7a53c48a2db5393e1e340e5d43143547f79dbd7",
+  "reviewedSource": "361460288e96d43da2f215e158fad96745507fde",
+  "packageId": "s178-consumer-repeat-kit",
+  "invokesPricedExecution": false
+}

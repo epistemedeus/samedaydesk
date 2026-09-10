@@ -3,6 +3,7 @@
 // Live paid HTTP/MCP counts are not literals here. Link the merchant inventories.
 
 import DISTRIBUTION_REPAIR_KIT from "./distributionRepairKit.json" with { type: "json" };
+import CONSUMER_REPEAT_KIT from "./consumerRepeatKit.json" with { type: "json" };
 
 export const SITE_ORIGIN = "https://samedaydesk.com";
 export const GATEWAY_ORIGIN = "https://agents.samedaydesk.com";
@@ -444,6 +445,115 @@ export const DISTRIBUTION_REPAIR_SHELL = Object.freeze({
   description: DISTRIBUTION_REPAIR_DESCRIPTION,
   canonical: DISTRIBUTION_REPAIR_CANONICAL,
   crawlerHtml: DISTRIBUTION_REPAIR_CRAWLER_HTML,
+});
+
+export const CONSUMER_REPEAT_PATH = "/for-agents/consumer-repeat";
+export const CONSUMER_REPEAT_TITLE = "Run local consumer evidence jobs offline | SameDayDesk";
+export const CONSUMER_REPEAT_DESCRIPTION =
+  "Download one portable package for local evidence jobs: release brief, table reconcile, procurement brief, and related checks. Verify size and sha256 before extract. Supply your own files and an operator clock. Local provenance is integrity metadata, not an attestation.";
+export const CONSUMER_REPEAT_CANONICAL = `${SITE_ORIGIN}${CONSUMER_REPEAT_PATH}`;
+export const CONSUMER_REPEAT_ARCHIVE = CONSUMER_REPEAT_KIT.archive;
+export const CONSUMER_REPEAT_ARCHIVE_SHA256 = CONSUMER_REPEAT_KIT.sha256;
+export const CONSUMER_REPEAT_ARCHIVE_BYTES = CONSUMER_REPEAT_KIT.bytes;
+export const CONSUMER_REPEAT_DISCOVERY = CONSUMER_REPEAT_KIT.discovery;
+export const CONSUMER_REPEAT_SOURCE_REPO = CONSUMER_REPEAT_KIT.sourceRepo;
+export const CONSUMER_REPEAT_SOURCE_COMMIT = CONSUMER_REPEAT_KIT.sourceCommit;
+export const CONSUMER_REPEAT_REVIEWED_SOURCE = CONSUMER_REPEAT_KIT.reviewedSource;
+export const CONSUMER_REPEAT_PACKAGE_ID = CONSUMER_REPEAT_KIT.packageId;
+
+export function buildConsumerRepeatColdStart({
+  siteOrigin = SITE_ORIGIN,
+  archivePath = CONSUMER_REPEAT_ARCHIVE,
+  bytes = CONSUMER_REPEAT_ARCHIVE_BYTES,
+  sha256 = CONSUMER_REPEAT_ARCHIVE_SHA256,
+} = {}) {
+  const tgzName = "s178-consumer-repeat-kit.tgz";
+  const rootName = "s178-consumer-repeat-kit";
+  const cli = "bin/s178-cli.mjs";
+  return [
+    "s178_consumer_repeat_acquire() {",
+    "  local origin=\"${S178_CONSUMER_REPEAT_ORIGIN:-${1:-" + siteOrigin + "}}\"",
+    "  local bytes=" + String(bytes),
+    "  local sha=" + sha256,
+    "  local work tgz root",
+    "  work=$(mktemp -d \"${TMPDIR:-/tmp}/s178-consumer-repeat.XXXXXX\") || return 1",
+    "  tgz=\"\$work/" + tgzName + "\"",
+    "  root=\"\$work/" + rootName + "\"",
+    "  curl -fsSL --max-time 60 -o \"\$tgz\" \"\$origin" + archivePath + "\" || { rm -rf \"\$work\"; return 1; }",
+    "  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); n=len(b); e=int(sys.argv[2]); (n==e) or sys.exit((sys.stderr.write(\"size %s != %s\\n\" % (n, e)) or 1)); h=hashlib.sha256(b).hexdigest(); (h==sys.argv[3]) or sys.exit((sys.stderr.write(\"sha256 %s != %s\\n\" % (h, sys.argv[3])) or 1))' \"\$tgz\" \"\$bytes\" \"\$sha\" || { rm -rf \"\$work\"; return 1; }",
+    "  tar -xzf \"\$tgz\" -C \"\$work\" || { rm -rf \"\$work\"; return 1; }",
+    "  [ -f \"\$root/" + cli + "\" ] || { rm -rf \"\$work\"; return 1; }",
+    "  (cd \"\$root\" && node " + cli + " list >&2) || { rm -rf \"\$work\"; return 1; }",
+    "  printf '%s\\n' \"\$root\"",
+    "  return 0",
+    "}",
+    "kit=$(s178_consumer_repeat_acquire) || exit 1",
+    "printf '%s\\n' \"\$kit\"",
+  ].join("\n");
+}
+
+export const CONSUMER_REPEAT_COLD_START = buildConsumerRepeatColdStart();
+
+export const CONSUMER_REPEAT_FIRST_USE = [
+  "node \"$kit/bin/s178-cli.mjs\" list",
+  "node \"$kit/bin/s178-cli.mjs\" example release-brief --kind conflict",
+  "node \"$kit/bin/s178-cli.mjs\" run 07 --clock 2026-09-10T18:00:00.000Z",
+  "node \"$kit/bin/s178-cli.mjs\" run release-brief --clock 2026-09-10T18:00:00.000Z",
+].join("\n");
+
+export const CONSUMER_REPEAT_CALLER_USE = [
+  "node \"$kit/bin/s178-cli.mjs\" run 07 --in \"$PWD/caller-a.json\" --clock 2026-09-10T18:00:00.000Z",
+  "node \"$kit/bin/s178-cli.mjs\" run release-brief --in \"$PWD/caller-b.json\" --clock 2026-09-10T18:00:00.000Z",
+].join("\n");
+
+export const CONSUMER_REPEAT_REPEAT_USE = [
+  "node \"$kit/bin/s178-cli.mjs\" run release-brief --in \"$PWD/caller-partial.json\" --clock 2026-09-10T18:00:00.000Z > \"$PWD/repeat-note.json\"",
+  "node \"$kit/bin/s178-cli.mjs\" run release-brief --in \"$PWD/caller-reconciled.json\" --clock 2026-09-10T18:00:00.000Z",
+].join("\n");
+
+export const CONSUMER_REPEAT_CRAWLER_HTML = `
+      <h1>Run local evidence jobs from a portable package offline</h1>
+      <p>
+        SameDayDesk publishes one portable package for local consumer evidence jobs:
+        documentation migration, release evidence brief, table reconcile, link index,
+        replay pack, freshness receipt, procurement brief, customer result package,
+        and acquisition status. Download the archive, verify size and sha256, then
+        extract. Run labeled samples or your own files on a local Node 22 runtime.
+        The CLI reads local files only. It does not fetch, charge, or overwrite caller files.
+      </p>
+      <p>
+        Machine discovery:
+        <a href="${SITE_ORIGIN}${CONSUMER_REPEAT_DISCOVERY}">${SITE_ORIGIN}${CONSUMER_REPEAT_DISCOVERY}</a>.
+        Archive: <a href="${SITE_ORIGIN}${CONSUMER_REPEAT_ARCHIVE}">${SITE_ORIGIN}${CONSUMER_REPEAT_ARCHIVE}</a>
+        (${CONSUMER_REPEAT_ARCHIVE_BYTES} bytes, sha256 <code>${CONSUMER_REPEAT_ARCHIVE_SHA256}</code>).
+        Source <code>${CONSUMER_REPEAT_SOURCE_REPO}</code> at
+        <code>${CONSUMER_REPEAT_SOURCE_COMMIT}</code>. Reviewed package source
+        <code>${CONSUMER_REPEAT_REVIEWED_SOURCE}</code>.
+        <a href="${SITE_ORIGIN}${CONSUMER_REPEAT_ARCHIVE}">Download archive</a>.
+      </p>
+      <h2>Cold start (verify before extract)</h2>
+      <pre><code>${CONSUMER_REPEAT_COLD_START}</code></pre>
+      <h2>Labeled samples (not caller files)</h2>
+      <pre><code>${CONSUMER_REPEAT_FIRST_USE}</code></pre>
+      <h2>Caller files</h2>
+      <pre><code>${CONSUMER_REPEAT_CALLER_USE}</code></pre>
+      <h2>Changed-input repeat</h2>
+      <pre><code>${CONSUMER_REPEAT_REPEAT_USE}</code></pre>
+      <p>
+        Material limit: you must supply an operator clock. Local provenance files are
+        integrity metadata, not an independent attestation, and <code>ok:true</code> is
+        honest completion rather than a pass. Announced, shipped, and tested stay distinct.
+        Paid observation jobs remain on
+        <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>.
+      </p>
+    `;
+
+export const CONSUMER_REPEAT_SHELL = Object.freeze({
+  path: CONSUMER_REPEAT_PATH,
+  title: CONSUMER_REPEAT_TITLE,
+  description: CONSUMER_REPEAT_DESCRIPTION,
+  canonical: CONSUMER_REPEAT_CANONICAL,
+  crawlerHtml: CONSUMER_REPEAT_CRAWLER_HTML,
 });
 
 
