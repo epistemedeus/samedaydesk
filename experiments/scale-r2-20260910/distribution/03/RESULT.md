@@ -7,7 +7,7 @@ Date: 2026-09-10. Owner: Pilot Market Distribution R2 (`32d5b452`). Amend: DIST-
 - Repository: `epistemedeus/samedaydesk`
 - Branch: `codex/r2-distribution-03-20260910`
 - Pin (base): `2b80f38a4e5ec5f080d1764de7c539af63190012`
-- Local tip: see progress JSON / final align commit on this branch
+- Local tip (feature): 
 - Worktree: `/workspace/pilot/worktrees/r2-distribution-03-20260910`
 - Scope: `experiments/scale-r2-20260910/distribution/03`
 - Remote: `origin/codex/r2-distribution-03-20260910`
