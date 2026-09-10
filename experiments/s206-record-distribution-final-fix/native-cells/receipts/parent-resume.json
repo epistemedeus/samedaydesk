@@ -1,0 +1,12 @@
+{
+  "schema": "samedaydesk.native-parent-resume.v1",
+  "milestone": "S206",
+  "sessionId": "01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5",
+  "model": "grok-4.6",
+  "effort": "xhigh",
+  "resumedAt": "2026-09-10T15:04:00.396Z",
+  "branch": "codex/s206-record-distribution-final-fix-20260910",
+  "s198Terminal": "6a7b5b6885842b78c40ecbef1c63570d7987fbe7",
+  "cashUsd": 0,
+  "productionAcquisition": false
+}
