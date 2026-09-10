@@ -62,7 +62,13 @@ export class PostgresStore {
             max: poolMax,
             idleTimeoutMillis: 10_000,
             connectionTimeoutMillis: 5_000,
+            statement_timeout: 5_000,
+            query_timeout: 6_000,
             allowExitOnIdle: true,
+        });
+        // An idle pool connection error must not terminate the shared SDS process.
+        this.pool.on("error", (error) => {
+            console.error("correspondence_pool_error", { name: error.name });
         });
     }
     async connectScoped() {
@@ -89,13 +95,23 @@ export class PostgresStore {
         const sql = readFileSync(migrationPath, "utf8");
         const client = await this.pool.connect();
         try {
+            await client.query("BEGIN");
+            await client.query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))", [`correspondence_migrate:${this.schema}`]);
             await client.query(`CREATE SCHEMA IF NOT EXISTS ${this.schemaIdent}`);
-            await client.query(`SET search_path TO ${this.schemaIdent}`);
+            await client.query(`SET LOCAL search_path TO ${this.schemaIdent}`);
             await client.query(sql);
+            await client.query("COMMIT");
+        }
+        catch (error) {
+            await client.query("ROLLBACK");
+            throw error;
         }
         finally {
             client.release();
         }
+    }
+    async checkReady() {
+        await this.query("SELECT 1");
     }
     async close() {
         await this.pool.end();
@@ -337,7 +353,13 @@ export class PostgresStore {
 }
 export async function createPostgresStore(databaseUrl, options = {}) {
     const store = new PostgresStore(databaseUrl, options);
-    await store.migrate();
-    return store;
+    try {
+        await store.migrate();
+        return store;
+    }
+    catch (error) {
+        await store.close().catch(() => { });
+        throw error;
+    }
 }
 //# sourceMappingURL=postgres.js.map

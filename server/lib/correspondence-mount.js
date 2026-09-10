@@ -24,6 +24,7 @@ export function inspectCorrespondenceEnv(env = process.env) {
   const url = String(env.CORRESPONDENCE_DATABASE_URL || "").trim();
   const token = String(env.CORRESPONDENCE_ADMIN_TOKEN || "").trim();
   const store = String(env.CORRESPONDENCE_STORE || "postgres").toLowerCase();
+  if (store !== "postgres" && store !== "memory") return { kind: "invalid_config", detail: "invalid store" };
   const nodeEnv = env.NODE_ENV || "production";
   if (!url && !token) return { kind: "unconfigured" };
   if (store === "memory" && nodeEnv !== "test") {
@@ -32,13 +33,19 @@ export function inspectCorrespondenceEnv(env = process.env) {
   if (!url || !token || token.length < 24) {
     return { kind: "invalid_config", detail: "database url and admin token required together" };
   }
+  try {
+    const parsed = new URL(url);
+    if (!["postgres:", "postgresql:"].includes(parsed.protocol) || !parsed.hostname || parsed.pathname.length < 2 || parsed.hash) {
+      return { kind: "invalid_config", detail: "database URL must name a Postgres host and database" };
+    }
+  } catch { return { kind: "invalid_config", detail: "invalid database URL" }; }
   const schema = String(env.CORRESPONDENCE_PG_SCHEMA || MOUNTED_PG_SCHEMA).trim();
-  if (!SCHEMA_RE.test(schema) || RESERVED_SCHEMAS.has(schema)) {
+  if (!SCHEMA_RE.test(schema) || RESERVED_SCHEMAS.has(schema) || schema !== MOUNTED_PG_SCHEMA) {
     return { kind: "invalid_config", detail: "invalid schema" };
   }
   const poolRaw = env.CORRESPONDENCE_POOL_MAX;
   const poolMax = poolRaw == null || String(poolRaw).trim() === "" ? 4 : Number(String(poolRaw).trim());
-  if (!Number.isInteger(poolMax) || poolMax < 1 || poolMax > 8) {
+  if (!Number.isInteger(poolMax) || poolMax < 1 || poolMax > 4) {
     return { kind: "invalid_config", detail: "invalid pool" };
   }
   try {
@@ -84,6 +91,8 @@ export function mountCorrespondence(app, options = {}) {
     store: null,
     lastAttempt: 0,
     inFlight: null,
+    retried: false,
+    closed: false,
   };
   const disabled = disabledRouter(state);
 
@@ -119,10 +128,14 @@ export function mountCorrespondence(app, options = {}) {
         poolMax: config.poolMax || inspected.poolMax,
       });
       state.store = store;
+      if (state.closed) { await store.close(); state.store = null; return; }
       state.app = service.createApp(store, config);
       state.status = "ready";
       state.reason = "ready";
     } catch (error) {
+      if (state.store?.close) await state.store.close().catch(() => {});
+      state.store = null;
+      state.app = null;
       state.status = "disabled";
       state.reason = "store_unavailable";
       console.error("correspondence_store_unavailable", {
@@ -139,7 +152,8 @@ export function mountCorrespondence(app, options = {}) {
     if (state.inFlight) {
       return Promise.resolve(state.inFlight).then(proceed).catch(next);
     }
-    if (state.reason === "store_unavailable" && now() - state.lastAttempt >= COOLDOWN_MS) {
+    if (!state.closed && !state.retried && state.reason === "store_unavailable" && now() - state.lastAttempt >= COOLDOWN_MS) {
+      state.retried = true;
       state.inFlight = tryEnable().finally(() => {
         state.inFlight = null;
       });
@@ -157,6 +171,10 @@ export function mountCorrespondence(app, options = {}) {
     state,
     ready: () => state.inFlight || Promise.resolve(),
     close: async () => {
+      state.closed = true;
+      await state.inFlight;
+      state.status = "disabled";
+      state.reason = "store_unavailable";
       if (state.store?.close) await state.store.close();
       state.store = null;
       state.app = null;

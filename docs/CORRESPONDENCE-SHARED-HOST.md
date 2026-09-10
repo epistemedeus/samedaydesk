@@ -65,3 +65,23 @@ node vendor/neomorphic-correspondence/dist/migrate.js
 The service is compiled and tested locally. Production Hostinger traffic is not
 enabled by this branch. Root decides migration/activation from existing
 hosting/DB state.
+
+## S58 reviewed runtime boundary
+
+The shared mount accepts only `pilot_correspondence` and a pool size of 1–4.
+The packaged migration requires `CORRESPONDENCE_DATABASE_URL`; generic
+`DATABASE_URL` is never a migration fallback. A dedicated URL also selects the
+namespaced schema in service configuration. Standalone runtime configuration
+with only `DATABASE_URL` retains its existing schema default.
+
+Initialization attempts once, then allows exactly one request-triggered retry
+after 5 seconds. Concurrent requests share that retry. No timer reconnects in
+the background; after a second failure the operator must restart to retry.
+Failed initialization closes the acquired pool. Idle pool errors are handled.
+Configured health checks perform a bounded store query; a later database outage
+returns 503 with `enabled:false`, while other SDS routes stay independent.
+
+Migration uses one transaction and a schema-specific advisory lock. The portable
+Postgres acceptance tests require `CORRESPONDENCE_TEST_DATABASE_URL` pointing
+at a fresh disposable database; they never borrow a production/generic URL.
+Vendored scripts expose only shipped `dist/index.js` and `dist/migrate.js`.

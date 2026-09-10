@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import express from "express";
 import { createApp, createPostgresStore, loadConfig } from "@neomorphic/correspondence";
-import { startDisposablePg } from "/workspace/pilot/receipts/heavy/s51-shared-host-20260909/tools/disposable-pg.mjs";
 import { mountCorrespondence } from "../lib/correspondence-mount.js";
 import healthRouter from "../routes/health.js";
 import mcpRouter from "../routes/mcp.js";
@@ -32,8 +31,9 @@ async function api(base, method, path, { token, body, idempotencyKey, origin } =
 }
 
 test("mounted correspondence: two clients, artifact/correction, restart, sentinel, SDS health", async (t) => {
-  const cluster = startDisposablePg({ prefix: "s51-accept-" });
-  t.after(() => cluster.stop());
+  const url = process.env.CORRESPONDENCE_TEST_DATABASE_URL;
+  if (!url) { t.skip("requires an explicitly disposable CORRESPONDENCE_TEST_DATABASE_URL"); return; }
+  const cluster = { url };
 
   const pg = await import("pg");
   const admin = new pg.default.Client({ connectionString: cluster.url });

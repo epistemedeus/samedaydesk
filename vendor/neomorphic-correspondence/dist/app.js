@@ -41,8 +41,14 @@ export function createApp(store, config) {
         }
     });
     app.use(express.json({ limit: config.bodyLimitBytes, type: ["application/json"] }));
-    app.get("/healthz", (_req, res) => {
-        res.status(200).json({ ok: true, enabled: true, store: store.kind });
+    app.get("/healthz", async (_req, res) => {
+        try {
+            await store.checkReady?.();
+            res.status(200).json({ ok: true, enabled: true, store: store.kind });
+        }
+        catch {
+            res.status(503).json({ ok: false, enabled: false, store: store.kind, reason: "store_unavailable" });
+        }
     });
     app.post("/v1/projects", async (req, res, next) => {
         try {

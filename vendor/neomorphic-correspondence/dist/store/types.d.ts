@@ -17,6 +17,7 @@ export type ListEventsResult = {
 };
 export interface CorrespondenceStore {
     readonly kind: "memory" | "postgres";
+    checkReady?(): Promise<void>;
     close(): Promise<void>;
     findActiveGrantByTokenHash(tokenHash: string): Promise<ActiveGrant | null>;
     getProject(projectId: string): Promise<Project | null>;

@@ -13,6 +13,7 @@ export declare class PostgresStore implements CorrespondenceStore {
     private connectScoped;
     private query;
     migrate(): Promise<void>;
+    checkReady(): Promise<void>;
     close(): Promise<void>;
     findActiveGrantByTokenHash(tokenHash: string): Promise<ActiveGrant | null>;
     getProject(projectId: string): Promise<Project | null>;

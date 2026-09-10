@@ -18,12 +18,31 @@ export function parsePgSchema(raw, fallback = DEFAULT_PG_SCHEMA) {
     }
     return value;
 }
+export function parseMountedDatabaseUrl(raw) {
+    let url;
+    try {
+        url = new URL(raw);
+    }
+    catch {
+        throw new Error("CORRESPONDENCE_DATABASE_URL must be a Postgres URL");
+    }
+    if (!["postgres:", "postgresql:"].includes(url.protocol) || !url.hostname || url.pathname.length < 2 || url.hash) {
+        throw new Error("CORRESPONDENCE_DATABASE_URL must name a Postgres host and database");
+    }
+    return raw;
+}
+export function parseMountedPgSchema(raw) {
+    const schema = parsePgSchema(raw, MOUNTED_PG_SCHEMA);
+    if (schema !== MOUNTED_PG_SCHEMA)
+        throw new Error("shared host requires schema pilot_correspondence");
+    return schema;
+}
 export function parsePoolMax(raw, fallback = 4) {
     if (raw == null || raw.trim() === "")
         return fallback;
     const value = Number(raw.trim());
-    if (!Number.isInteger(value) || value < 1 || value > 8) {
-        throw new Error("CORRESPONDENCE_POOL_MAX must be an integer from 1 to 8");
+    if (!Number.isInteger(value) || value < 1 || value > 4) {
+        throw new Error("CORRESPONDENCE_POOL_MAX must be an integer from 1 to 4");
     }
     return value;
 }
@@ -51,7 +70,9 @@ export function loadConfig(env = process.env) {
     if (!adminToken || adminToken.length < 24) {
         throw new Error("CORRESPONDENCE_ADMIN_TOKEN must be set to a high-entropy secret (>= 24 chars)");
     }
-    const databaseUrl = env.DATABASE_URL ?? env.CORRESPONDENCE_DATABASE_URL ?? null;
+    const databaseUrl = env.CORRESPONDENCE_DATABASE_URL != null
+        ? parseMountedDatabaseUrl(env.CORRESPONDENCE_DATABASE_URL)
+        : env.DATABASE_URL ?? null;
     if (store === "postgres" && !databaseUrl) {
         throw new Error("DATABASE_URL is required for the postgres store");
     }
@@ -65,7 +86,9 @@ export function loadConfig(env = process.env) {
         rateLimitMax: Number(env.CORRESPONDENCE_RATE_LIMIT_MAX ?? 120),
         corsOrigins: parseCorsOrigins(env.CORRESPONDENCE_CORS_ORIGINS),
         trustProxyHops: parseTrustProxyHops(env.CORRESPONDENCE_TRUST_PROXY),
-        pgSchema: parsePgSchema(env.CORRESPONDENCE_PG_SCHEMA),
+        pgSchema: env.CORRESPONDENCE_DATABASE_URL != null
+            ? parseMountedPgSchema(env.CORRESPONDENCE_PG_SCHEMA)
+            : parsePgSchema(env.CORRESPONDENCE_PG_SCHEMA),
         poolMax: parsePoolMax(env.CORRESPONDENCE_POOL_MAX),
     };
 }

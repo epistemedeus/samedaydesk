@@ -15,7 +15,7 @@ export type ServiceConfig = {
     trustProxyHops: number;
     /** Namespaced Postgres schema. Standalone default is `public`. */
     pgSchema: string;
-    /** Bounded pg.Pool size. Default 4, allowed 1–8. */
+    /** Bounded pg.Pool size. Default 4, allowed 1–4. */
     poolMax: number;
 };
 export declare const PG_SCHEMA_RE: RegExp;
@@ -23,6 +23,8 @@ export declare const DEFAULT_PG_SCHEMA = "public";
 export declare const MOUNTED_PG_SCHEMA = "pilot_correspondence";
 export declare function quoteIdent(name: string): string;
 export declare function parsePgSchema(raw: string | undefined, fallback?: string): string;
+export declare function parseMountedDatabaseUrl(raw: string): string;
+export declare function parseMountedPgSchema(raw: string | undefined): string;
 export declare function parsePoolMax(raw: string | undefined, fallback?: number): number;
 export declare function parseTrustProxyHops(raw: string | undefined): number;
 export declare function loadConfig(env?: NodeJS.ProcessEnv): ServiceConfig;
