@@ -15,3 +15,12 @@ Excluded from deployable product (remain on frozen tips only):
 - unrelated experimental branches
 
 No homepage / Pulse / checkout / prices / merchant service edits intended.
+
+## S198 integration repairs (this candidate)
+
+Mechanical merge defects only — no parser rewrite, no kit source reorg:
+
+- `client/src/data/machineEntry.mjs`: restore `.join("\\n")` on distribution-repair command blocks (merge split the escape).
+- `server/scripts/test-spa-route-shells.js`: `DECLARED_REACT_ROUTES` includes `/for-agents/distribution-repair`.
+- Browser smoke: both inner pages asserted; overflow layout flags on record-repeat.
+- Archives were **not** rebuilt: public kit bytes already match S189/S185 packed receipts.

@@ -1,0 +1,48 @@
+{
+  "schema": "samedaydesk.native-parent-final.v1",
+  "milestone": "S198",
+  "sessionId": "01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5",
+  "model": "grok-4.6",
+  "effort": "xhigh",
+  "branch": "codex/s198-record-distribution-release-20260910",
+  "compositionHead": "339ebf7576aa1a40765b6a2d45bcda8ed46c51d0",
+  "baseMain": "2b80f38a4e5ec5f080d1764de7c539af63190012",
+  "s189Tip": "f830b55bc6f9b31f664394341f33c5e43a2a2cf8",
+  "s185Frozen": "c05522364b26db04b4aa63f945ad15810785efb4",
+  "children": [],
+  "peakConcurrency": 1,
+  "cashUsd": 0,
+  "productionAcquisition": false,
+  "archives": {
+    "recordRepeat": {
+      "name": "record-repeat-job-f3d55e54a7b3.tar.gz",
+      "sha256": "f4669fd20660b19fc4d7f6714b63f02cee217973fbc700484b6cc7ceb3f94eef",
+      "bytes": 1253839
+    },
+    "distributionRepair": {
+      "name": "distribution-repair-2b80f38a4e5e.tar.gz",
+      "sha256": "67903e691958c7680fa2c46f2f53f70eac1ee187a71fa42e527dc2830510a033",
+      "bytes": 75172
+    }
+  },
+  "focused": {
+    "s134": "42/42",
+    "s163": "6/6",
+    "s176": "25 pass 1 skip",
+    "s185": "17/17",
+    "callerBothKits": "2/2",
+    "spaFallback": "2/2",
+    "spaRouteShells": "11/11"
+  },
+  "owningSite": {
+    "hostedStartup": "4/4",
+    "clientBuild": "pass",
+    "browserDesktop1440": "pass",
+    "browserMobile390": "pass",
+    "browserWidth320": "pass",
+    "presence": "25 pass 1 skip",
+    "resultReuse": "23/23",
+    "pulse": "44/46 env skips",
+    "recurring": "85/89 env express"
+  }
+}
