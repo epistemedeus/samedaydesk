@@ -18,6 +18,7 @@ Cash **$0**. No spend/reset/overage. No merge/deployment. Chat reviewer executed
 | Advisory packet head (stale) | `baa0e2c47142c4767f0746efc4ff69af341bbae7` |
 | S142 amended head (already fixed some) | `326ddca2b861ee4702bb218032ba48bf6b539a49` |
 | S147 branch | `codex/s147-record-jobs-chat-amend-20260910` |
+| **amendedHead** | `66b1ff2d3db78fb8bb102ebd965c31de681b2e6d` |
 | Source path | `experiments/s134-record-jobs` |
 | Amend path | `experiments/s147-record-jobs-chat-amend` |
 

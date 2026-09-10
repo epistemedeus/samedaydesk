@@ -273,5 +273,10 @@
   },
   "demoAllExit": 0,
   "cashUsd": 0,
-  "amendedHead": "d7cb9a1b8133909b98c04f7033b5b4d30072b202"
+  "amendedHead": "66b1ff2d3db78fb8bb102ebd965c31de681b2e6d",
+  "ownerResponse": {
+    "amendedHead": "66b1ff2d3db78fb8bb102ebd965c31de681b2e6d",
+    "findingDispositions": "see findingDispositions above",
+    "executionReceipt": "experiments/s147-record-jobs-chat-amend/RESULT.md"
+  }
 }
