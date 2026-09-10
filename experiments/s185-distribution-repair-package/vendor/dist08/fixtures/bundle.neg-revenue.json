@@ -1,0 +1,25 @@
+{
+  "schema": "pilot.r2.distribution.conversion_bundle.v1",
+  "cite": "negative: invented revenue + buyerIntent must be rejected",
+  "captureStatus": "ok",
+  "acquisitionEvidence": [
+    {
+      "id": "acq-bad",
+      "kind": "linkActivated",
+      "sourceTag": "grexal",
+      "provider": "grexal",
+      "buyerIntent": true,
+      "conversionIntent": 0.9
+    }
+  ],
+  "usefulOutputEvidence": [
+    {
+      "id": "out-bad",
+      "kind": "earnings",
+      "provider": "grexal",
+      "synthetic": true,
+      "inventedRevenue": 100,
+      "amount": { "value": 100, "currency": "USD" }
+    }
+  ]
+}

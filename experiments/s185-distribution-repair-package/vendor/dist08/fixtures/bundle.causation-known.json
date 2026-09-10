@@ -1,0 +1,29 @@
+{
+  "schema": "pilot.r2.distribution.conversion_bundle.v1",
+  "cite": "sharedEvidenceId proves causation link; customerIndependence still unknown",
+  "captureStatus": "ok",
+  "acquisitionEvidence": [
+    {
+      "id": "acq-shared",
+      "kind": "linkActivated",
+      "sourceTag": "grexal",
+      "provider": "grexal",
+      "linkId": "grexal-s124-entry",
+      "jobRef": "s124-source-change-evidence",
+      "sharedEvidenceId": "ev-shared-001",
+      "at": "2026-09-10T18:51:00.000Z",
+      "evidenceRef": "experiments/scale-r2-20260910/distribution/04"
+    }
+  ],
+  "usefulOutputEvidence": [
+    {
+      "id": "out-shared-run",
+      "kind": "run",
+      "provider": "grexal",
+      "jobRef": "s124-source-change-evidence",
+      "sharedEvidenceId": "ev-shared-001",
+      "at": "2026-09-10T18:52:00.000Z",
+      "evidenceRef": "/workspace/pilot/receipts/scale-bot-0909/bot-s124-activation-0910/runtime/TERMINAL.md"
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "schema": "pilot.s185.distribution_repair_input.v1",
+  "inputId": "s185-example-partial",
+  "clock": "2026-09-10T20:15:00.000Z",
+  "identity": {
+    "provider": "grexal",
+    "jobRef": "caller-partial-listing",
+    "sharedEvidenceId": "caller-partial-listing",
+    "sourceTag": "catalog"
+  },
+  "discovery": {
+    "captureStatus": "ok",
+    "catalogComplete": true,
+    "listing": {
+      "url": "https://example.test/listing/alpha",
+      "agentId": "agent-alpha",
+      "listingStatus": "PUBLIC_ACTIVE",
+      "freeVsPriced": "discovery_free_run_priced"
+    }
+  },
+  "record": {
+    "routeRegressionInput": {
+      "schema": "x402.r2.record.route_regression_input.v1",
+      "reportId": "nl-04-dist-feed-partial",
+      "feedId": "nl-04-feed-partial",
+      "title": "Partial incomplete current capture (cannot prove removal)",
+      "demo": true,
+      "sourceLabel": "synthetic-fixture",
+      "baseline": {
+        "label": "baseline-complete-2026-09-01",
+        "capturedAt": "2026-09-01T00:00:00.000Z",
+        "routes": [
+          {
+            "path": "/",
+            "url": "https://example.test/",
+            "status": 200,
+            "accessibility": "ok",
+            "title": "Home"
+          },
+          {
+            "path": "/docs",
+            "url": "https://example.test/docs",
+            "status": 200,
+            "accessibility": "ok",
+            "title": "Docs"
+          },
+          {
+            "path": "/old-blog",
+            "url": "https://example.test/old-blog",
+            "status": 200,
+            "accessibility": "ok",
+            "title": "Old Blog"
+          },
+          {
+            "path": "/pricing",
+            "url": "https://example.test/pricing",
+            "status": 200,
+            "accessibility": "ok",
+            "title": "Pricing"
+          }
+        ]
+      },
+      "current": {
+        "label": "current-partial-capture-2026-09-10",
+        "capturedAt": "2026-09-10T00:00:00.000Z",
+        "captureIncomplete": true,
+        "partialCoverage": true,
+        "coverageComplete": false,
+        "routes": [
+          {
+            "path": "/",
+            "url": "https://example.test/",
+            "status": 200,
+            "accessibility": "ok",
+            "title": "Home"
+          },
+          {
+            "path": "/docs",
+            "url": "https://example.test/docs",
+            "status": 200,
+            "accessibility": "ok",
+            "title": "Docs"
+          }
+        ]
+      }
+    }
+  },
+  "callerProvenance": {
+    "suppliedBy": "operator",
+    "syntheticFixture": true
+  }
+}

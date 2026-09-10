@@ -1,0 +1,24 @@
+{
+  "name": "@samedaydesk/s176-record-repeat-package",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Portable source/record repeat-job acquisition package. Four offline families over S134 parsers (S154 pin) + S163 recipes. Free local processing; optional existing paid extract stays separate.",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "record-repeat": "./bin/record-repeat.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "build:archive": "node scripts/build-archive.mjs",
+    "demo:samples": "node bin/record-repeat.mjs sample --all",
+    "admit": "node native-cells/scripts/admit-launch.mjs"
+  },
+  "dependencies": {
+    "csv-parse": "^7.0.2",
+    "fast-xml-parser": "^5.11.1",
+    "yaml": "^2.9.0"
+  }
+}

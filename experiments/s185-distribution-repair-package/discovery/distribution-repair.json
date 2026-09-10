@@ -1,0 +1,30 @@
+{
+  "schema": "samedaydesk.acquisition-discovery.v1",
+  "packageId": "distribution-repair",
+  "title": "Distribution-repair diagnosis package",
+  "session": "s185",
+  "page": "https://samedaydesk.com/for-agents/distribution-repair",
+  "productionAcquisition": false,
+  "archive": {
+    "path": "/kit/distribution-repair-6a7b5b688584.tar.gz",
+    "url": "https://samedaydesk.com/kit/distribution-repair-6a7b5b688584.tar.gz",
+    "sha256": "479e4ce53986291090e455cd26b364de04e2fe49b6c44fe484e0a57b73f74c56",
+    "bytes": 76888
+  },
+  "pins": {
+    "record04": "0e703bd4682894df4e1d25c61b594cac49f2463c",
+    "record05": "a7e2cd7a2223e2aa7e7e09eebf3695aba4731205",
+    "dist08": "ea000772cdbd6d5df7174369dcef9aa2270e5723",
+    "nl06": "76c0732b241beaa569f05a7394fdbf49604ffb66",
+    "firstUseHeld": "ea2938cfa68dadbe20a9d5ec096f315e59f4cdbe",
+    "semanticsTip": "6a7b5b6885842b78c40ecbef1c63570d7987fbe7"
+  },
+  "freeOffline": true,
+  "paidValueClaim": false,
+  "coldStart": [
+    "curl -fsSL -o distribution-repair.tar.gz https://samedaydesk.com/kit/distribution-repair-6a7b5b688584.tar.gz",
+    "mkdir -p /tmp && tar -xzf distribution-repair.tar.gz -C /tmp",
+    "cd /tmp/distribution-repair",
+    "node bin/distribution-repair.mjs sample --positive"
+  ]
+}

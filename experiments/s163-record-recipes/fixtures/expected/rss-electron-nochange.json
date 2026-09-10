@@ -1,0 +1,55 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-rss-atom-brief",
+  "inputs": {
+    "before": "/workspace/experiments/s163-record-recipes/sources/feeds/electron-releases/capture-a.xml",
+    "after": "/workspace/experiments/s163-record-recipes/sources/feeds/electron-releases/capture-b.xml"
+  },
+  "report": {
+    "module": "rss-atom-brief",
+    "ok": true,
+    "comparable": true,
+    "comparisonStatus": "comparable",
+    "beforeKind": "atom",
+    "afterKind": "atom",
+    "added": [],
+    "removed": [],
+    "corrected": [],
+    "conflicting": [],
+    "unchangedCount": 10,
+    "metadataUnchangedCount": 10,
+    "coverage": {
+      "comparedFields": [
+        "title",
+        "link",
+        "updated",
+        "description",
+        "content"
+      ],
+      "note": "Compares title/link/updated plus bounded description/content text when present. Not a full RSS/Atom standards engine."
+    },
+    "dedupBrief": {
+      "beforeRawCount": 10,
+      "afterRawCount": 10,
+      "beforeUniqueKeys": 10,
+      "afterUniqueKeys": 10,
+      "beforeDuplicateKeys": 0,
+      "afterDuplicateKeys": 0,
+      "uniqueCountDelta": 0
+    },
+    "truncated": false,
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "No correction/dedup signal on comparable feed snapshots. Still not a monitoring product."
+  }
+}

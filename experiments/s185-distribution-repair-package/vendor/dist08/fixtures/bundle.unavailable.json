@@ -1,0 +1,8 @@
+{
+  "schema": "pilot.r2.distribution.conversion_bundle.v1",
+  "cite": "unavailable: acquisition or useful-output capture failed",
+  "captureStatus": "unavailable",
+  "reason": "marketplace capture failed — do not claim zero activations or zero useful outputs",
+  "acquisitionEvidence": [],
+  "usefulOutputEvidence": []
+}

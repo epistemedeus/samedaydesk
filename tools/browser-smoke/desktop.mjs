@@ -35,6 +35,43 @@ const PAGE_SPECS = Object.freeze([
     layout: "desktop-nav",
   },
   {
+    id: "record-repeat",
+    path: "/for-agents/record-repeat",
+    screenshot: "record-repeat-desktop.png",
+    expect: {
+      titleIncludes: "Source/record repeat jobs",
+      h1Includes: "portable offline package",
+      bodyIncludes: [
+        "/kit/record-repeat-job-",
+        "sha256",
+        "Free local processing",
+        "Unsupported HTML",
+        "/discovery/record-repeat.json",
+        "R-OPENAPI-PIN-IMPACT",
+        "optional existing paid",
+      ],
+    },
+    layout: "desktop-nav",
+  },
+  {
+    id: "distribution-repair",
+    path: "/for-agents/distribution-repair",
+    screenshot: "distribution-repair-desktop.png",
+    expect: {
+      titleIncludes: "Distribution repair diagnosis",
+      h1Includes: "portable diagnosis package",
+      bodyIncludes: [
+        "Record04",
+        "provider",
+        "jobRef",
+        "sharedEvidenceId",
+        "not a production acquisition",
+        "Download archive",
+      ],
+    },
+    layout: "desktop-nav",
+  },
+  {
     id: "x402",
     path: "/x402",
     screenshot: "x402-desktop.png",

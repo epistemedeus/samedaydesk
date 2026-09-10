@@ -1,0 +1,18 @@
+{
+  "name": "@samedaydesk/s163-record-recipes",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Source-bound repeat-job recipe library around S134 parsers at 65ce186. No marketplace publish.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "demo:all": "node demos/run-all.mjs",
+    "demo:openapi": "node demos/openapi-used-ops.mjs",
+    "demo:pricing": "node demos/pricing-row-unit.mjs",
+    "demo:csv": "node demos/csv-keyed-drift.mjs",
+    "demo:rss": "node demos/rss-atom-brief.mjs"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "samedaydesk.acquisition-discovery.v1",
+  "packageId": "record-repeat-job",
+  "title": "Source/record repeat-job acquisition package",
+  "session": "s176",
+  "page": "https://samedaydesk.com/for-agents/record-repeat",
+  "archive": {
+    "path": "/kit/record-repeat-job-6a7b5b688584.tar.gz",
+    "url": "https://samedaydesk.com/kit/record-repeat-job-6a7b5b688584.tar.gz",
+    "sha256": "27f7bc0175e23820019a360c7561e43dfa50cff90a453eb2cafe01b5b595bcb0",
+    "bytes": 1253961
+  },
+  "pins": {
+    "parser": "65ce1867f1b4339cc708bfb72a7d9a5942785632",
+    "recipes": "a022eb6352156dcdcdf2f8730931f5891bd01436",
+    "semanticsTip": "6a7b5b6885842b78c40ecbef1c63570d7987fbe7"
+  },
+  "families": [
+    "openapi-used-ops",
+    "pricing-row-unit",
+    "csv-keyed-drift",
+    "rss-atom-brief"
+  ],
+  "freeOffline": true,
+  "paidValueClaim": false,
+  "coldStart": [
+    "curl -fsSL -o record-repeat-job.tar.gz https://samedaydesk.com/kit/record-repeat-job-6a7b5b688584.tar.gz",
+    "mkdir -p /tmp && tar -xzf record-repeat-job.tar.gz -C /tmp",
+    "cd /tmp/record-repeat-job",
+    "node bin/record-repeat.mjs sample --all"
+  ],
+  "botRecordKit": "out-of-scope"
+}
