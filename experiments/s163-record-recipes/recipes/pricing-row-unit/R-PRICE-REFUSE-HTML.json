@@ -1,0 +1,18 @@
+{
+  "id": "R-PRICE-REFUSE-HTML",
+  "family": "pricing-row-unit",
+  "title": "Refuse unsupported HTML pricing extraction",
+  "parser": "s134-pricing-table-change",
+  "adapter": "adapters/pricing-row-unit.mjs#preparePricingTable",
+  "inputs": {
+    "html": "sources/pricing/public-model-rows/unsupported-page.html"
+  },
+  "subjobs": [
+    "Attempt preparePricingTable on HTML.",
+    "Must refuse with unsupported-html-extraction \u2014 do not invent rows."
+  ],
+  "expectedSummary": {
+    "refused": true,
+    "code": "unsupported-html-extraction"
+  }
+}

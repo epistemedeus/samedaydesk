@@ -1,0 +1,10 @@
+{
+  "name": "nl-distribution-06-join-record",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "demo": "node src/cli.mjs demo"
+  }
+}

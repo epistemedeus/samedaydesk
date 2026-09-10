@@ -1,0 +1,22 @@
+{
+  "schema": "pilot.s185.distribution_repair_input.v1",
+  "inputId": "s185-example-missing-record",
+  "clock": "2026-09-10T20:15:00.000Z",
+  "identity": {
+    "provider": "grexal",
+    "jobRef": "caller-alpha-listing",
+    "sharedEvidenceId": "caller-alpha-listing",
+    "sourceTag": "catalog"
+  },
+  "discovery": {
+    "captureStatus": "ok",
+    "catalogComplete": true,
+    "listing": {
+      "url": "https://grexal.ai/marketplace/j970cajvv6wbrmy64s2f4ajzw18e5j2q",
+      "agentId": "j970cajvv6wbrmy64s2f4ajzw18e5j2q",
+      "listingStatus": "PUBLIC_ACTIVE",
+      "freeVsPriced": "discovery_free_run_priced",
+      "note": "S149 observed listing cite \u2014 not a universal adapter"
+    }
+  }
+}

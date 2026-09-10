@@ -1,0 +1,64 @@
+{
+  "schema": "pilot.r2.distribution.conversion_bundle.v1",
+  "cite": "DEMO extends DIST-04 acquisition + DIST-05 useful-output + S149 Grexal PUBLIC_ACTIVE — no fake conversion/revenue",
+  "captureStatus": "ok",
+  "reason": "Synthetic source-compatible grexal join; causation/independence unknown without sharedEvidenceId",
+  "acquisitionEvidence": [
+    {
+      "id": "acq-grexal-presented",
+      "kind": "linkPresented",
+      "sourceTag": "grexal",
+      "provider": "grexal",
+      "linkId": "grexal-s124-entry",
+      "jobRef": "s124-source-change-evidence",
+      "at": "2026-09-10T18:50:00.000Z",
+      "evidenceRef": "experiments/scale-r2-20260910/distribution/04"
+    },
+    {
+      "id": "acq-grexal-activated",
+      "kind": "linkActivated",
+      "sourceTag": "grexal",
+      "provider": "grexal",
+      "linkId": "grexal-s124-entry",
+      "jobRef": "s124-source-change-evidence",
+      "at": "2026-09-10T18:51:00.000Z",
+      "evidenceRef": "experiments/scale-r2-20260910/distribution/04",
+      "impliesBuyerIntent": false
+    }
+  ],
+  "usefulOutputEvidence": [
+    {
+      "id": "out-grexal-listed",
+      "kind": "listed",
+      "provider": "grexal",
+      "jobRef": "s124-source-change-evidence",
+      "at": "2026-09-10T11:49:00.000Z",
+      "evidenceRef": "/workspace/pilot/receipts/scale-bot-0909/r2-team/receipts-grexal-s149.json",
+      "pricing": {
+        "run_completed_usd": 0.02,
+        "estimate_reserve_usd": 0.025,
+        "estimateReserveIsCharge": false,
+        "note": "S149 Version1 list price — NOT earnings/payout"
+      }
+    },
+    {
+      "id": "out-grexal-run",
+      "kind": "run",
+      "provider": "grexal",
+      "jobRef": "s124-source-change-evidence",
+      "at": "2026-09-10T10:50:00.000Z",
+      "evidenceRef": "/workspace/pilot/receipts/scale-bot-0909/bot-s124-activation-0910/runtime/TERMINAL.md",
+      "note": "historical free self-run (not customer execution/revenue)"
+    },
+    {
+      "id": "out-grexal-earnings-unavailable",
+      "kind": "earnings",
+      "provider": "grexal",
+      "jobRef": "s124-source-change-evidence",
+      "at": "2026-09-10T11:49:00.000Z",
+      "evidenceRef": "/workspace/pilot/receipts/scale-bot-0909/r2-team/receipts-grexal-s149.json",
+      "earningsStatus": "unavailable",
+      "note": "customerExecutionRevenuePayout=false — earnings unavailable, not $0"
+    }
+  ]
+}

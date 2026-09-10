@@ -1,0 +1,20 @@
+{
+  "family": "rss-atom-brief",
+  "label": "nodejs-releases-atom",
+  "sourceUrl": "https://github.com/nodejs/node/releases.atom",
+  "license": "Node.js release feed; content copyright respective authors; feed retrieved as public Atom",
+  "format": "application/atom+xml",
+  "before": {
+    "file": "capture-a.xml",
+    "sha256": "ab5419edd4be591aea4239ea8271e4135107b6d7ca1a052c97ed41fb7f9a095f",
+    "bytes": 751949
+  },
+  "after": {
+    "file": "capture-b.xml",
+    "sha256": "ab5419edd4be591aea4239ea8271e4135107b6d7ca1a052c97ed41fb7f9a095f",
+    "bytes": 751949
+  },
+  "contentIdentical": true,
+  "synthetic": false,
+  "note": "Full Atom captures omitted from tree for size; truncated captures + SYNTHETIC correction/dedup retained. Electron Atom is the live no-change primary."
+}

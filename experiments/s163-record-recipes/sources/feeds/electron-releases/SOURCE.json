@@ -1,0 +1,19 @@
+{
+  "family": "rss-atom-brief",
+  "label": "electron-releases-atom",
+  "sourceUrl": "https://github.com/electron/electron/releases.atom",
+  "license": "Electron release feed; public Atom",
+  "format": "application/atom+xml",
+  "before": {
+    "file": "capture-a.xml",
+    "sha256": "40eaa75d3f53cc7d464a8f62101ede26933f18c3168afe09e3d44041a261012c",
+    "bytes": 86881
+  },
+  "after": {
+    "file": "capture-b.xml",
+    "sha256": "40eaa75d3f53cc7d464a8f62101ede26933f18c3168afe09e3d44041a261012c",
+    "bytes": 86881
+  },
+  "contentIdentical": true,
+  "synthetic": false
+}

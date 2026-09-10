@@ -1,0 +1,31 @@
+{
+  "schema": "pilot.nl.record.dist_repair_feed.v1",
+  "generatedAt": "2026-09-10T12:51:27.190Z",
+  "status": "rejected",
+  "error": {
+    "code": "forbidden_claim",
+    "message": "input declares forbidden field seoRank",
+    "details": {
+      "field": "seoRank"
+    }
+  },
+  "repairRecommendations": [],
+  "usableBy": [
+    "NL-DISTRIBUTION-06",
+    "distribution/08"
+  ],
+  "pins": {
+    "merchantRecord05": "a7e2cd7a2223e2aa7e7e09eebf3695aba4731205",
+    "samedaydeskDist08": "ea000772cdbd6d5df7174369dcef9aa2270e5723",
+    "recordJobs05Path": "experiments/scale-r2-20260910/record_jobs/05",
+    "distribution08Path": "experiments/scale-r2-20260910/distribution/08",
+    "routeRegressionSchema": "x402.r2.record.route_regression_report.v1",
+    "routeRegressionInputSchema": "x402.r2.record.route_regression_input.v1",
+    "diagnosisSchemaCite": "pilot.r2.distribution.conversion_diagnosis.v1"
+  },
+  "scopeNote": "Feed maps only the supplied baseline+current route snapshot pair into repair recommendations. Absence under incomplete current capture cannot prove global removal. Not a crawl, SEO, traffic, or ranking claim.",
+  "coverageNote": "coveragePreserved: when current capture is incomplete/partial, removed deltas become cannot_prove_global_removal / recheck_with_complete_capture — never a global-removal claim.",
+  "reuseFrom": "NL-RECORD-04",
+  "mutationBoundary": "Isolated feature-branch source/tests only. Root owns merge, publication, and paid actions.",
+  "dryRun": "Fixture/snapshot feed only: never crawl live sites; never invent crawler/traffic/ranking results."
+}

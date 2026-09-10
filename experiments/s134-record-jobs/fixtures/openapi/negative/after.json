@@ -1,0 +1,30 @@
+{
+  "openapi": "3.0.3",
+  "info": {"title": "Demo", "version": "1.1.0"},
+  "paths": {
+    "/v1/items": {
+      "get": {
+        "operationId": "listItems",
+        "parameters": [
+          {"name": "limit", "in": "query", "required": false, "schema": {"type": "integer"}},
+          {"name": "cursor", "in": "query", "required": false, "schema": {"type": "string"}}
+        ],
+        "responses": {"200": {"description": "ok"}}
+      }
+    },
+    "/v1/items/{id}": {
+      "get": {
+        "operationId": "getItem",
+        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "responses": {"200": {"description": "ok"}, "404": {"description": "missing"}, "410": {"description": "gone"}}
+      }
+    },
+    "/v1/admin/stats": {
+      "get": {
+        "operationId": "adminStats",
+        "deprecated": true,
+        "responses": {"200": {"description": "ok"}}
+      }
+    }
+  }
+}

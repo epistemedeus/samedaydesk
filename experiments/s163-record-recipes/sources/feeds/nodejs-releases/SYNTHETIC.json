@@ -1,0 +1,5 @@
+{
+  "synthetic": true,
+  "derivedFrom": "nodejs-releases-atom capture-a",
+  "purpose": "Demonstrate correction + dedup when live feed shows no-change"
+}

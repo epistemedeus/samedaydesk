@@ -1,0 +1,33 @@
+{
+  "schema": "pilot.r2.distribution.conversion_bundle.v1",
+  "cite": "no_users: capture succeeded; zero activations and zero install/run/observed-earnings",
+  "captureStatus": "ok",
+  "reason": "capture ok; presentations only + listed/reviewed marketplace state — no activations, no actionable useful outputs",
+  "acquisitionEvidence": [
+    {
+      "id": "acq-presented-only",
+      "kind": "linkPresented",
+      "sourceTag": "grexal",
+      "provider": "grexal",
+      "linkId": "grexal-s124-entry",
+      "jobRef": "s124-source-change-evidence",
+      "at": "2026-09-10T18:50:00.000Z",
+      "evidenceRef": "experiments/scale-r2-20260910/distribution/04"
+    }
+  ],
+  "usefulOutputEvidence": [
+    {
+      "id": "out-listed-only",
+      "kind": "listed",
+      "provider": "grexal",
+      "jobRef": "s124-source-change-evidence",
+      "at": "2026-09-10T11:49:00.000Z",
+      "evidenceRef": "/workspace/pilot/receipts/scale-bot-0909/r2-team/receipts-grexal-s149.json",
+      "pricing": {
+        "run_completed_usd": 0.02,
+        "estimate_reserve_usd": 0.025,
+        "estimateReserveIsCharge": false
+      }
+    }
+  ]
+}

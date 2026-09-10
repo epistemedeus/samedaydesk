@@ -1,0 +1,24 @@
+{
+  "family": "pricing-row-unit",
+  "label": "curated-public-model-pricing-rows",
+  "extraction": "curated-json-not-html-scrape",
+  "adapterPolicy": "refuse unsupported HTML/PDF extraction; require pre-extracted rows with field/value/unit",
+  "synthetic": false,
+  "citations": [
+    "https://openai.com/api/pricing/",
+    "https://docs.x.ai/docs/models"
+  ],
+  "note": "Curated field/value/unit rows from public docs. Citations identify those docs; this tree is not a live HTML scrape. Numeric literals are not live catalog truth.",
+  "pairs": [
+    {
+      "before": "before.json",
+      "after": "after-identical.json",
+      "expect": "no-change-or-unchanged-rows"
+    },
+    {
+      "before": "before.json",
+      "after": "after-unit-case.json",
+      "expect": "unit-change-case-sensitive"
+    }
+  ]
+}

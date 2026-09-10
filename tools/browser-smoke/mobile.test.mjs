@@ -33,7 +33,12 @@ test(
     assert.equal(report.viewport.height, 844);
     assert.equal(report.productionHits.length, 0);
     const forAgents = report.pages.find((page) => page.id === "for-agents");
+    const recordRepeat = report.pages.find((page) => page.id === "record-repeat");
+    assert.ok(recordRepeat, "record-repeat page missing");
+    assert.equal(recordRepeat.ok, true, recordRepeat.error || "record-repeat failed");
+
     assert.equal(forAgents.innerWidth, 390);
+    assert.equal(recordRepeat.innerWidth, 390);
     assert.equal(forAgents.linksDisplay, "none");
     assert.equal(forAgents.x402LabelDisplay, "none");
     assert.equal(forAgents.signinDisplay, "none");

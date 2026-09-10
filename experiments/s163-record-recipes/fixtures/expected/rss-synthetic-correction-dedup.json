@@ -1,0 +1,77 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-rss-atom-brief",
+  "inputs": {
+    "before": "/workspace/experiments/s163-record-recipes/sources/feeds/nodejs-releases/synthetic-correction-dedup-before.xml",
+    "after": "/workspace/experiments/s163-record-recipes/sources/feeds/nodejs-releases/synthetic-correction-dedup-after.xml"
+  },
+  "report": {
+    "module": "rss-atom-brief",
+    "ok": true,
+    "comparable": true,
+    "comparisonStatus": "comparable",
+    "beforeKind": "atom",
+    "afterKind": "atom",
+    "added": [],
+    "removed": [],
+    "corrected": [
+      {
+        "key": "tag:github.com,2008:Repository/27193779/v24.21.0",
+        "changes": [
+          {
+            "field": "title",
+            "before": "2026-09-08, Version 24.21.0 &#39;Krypton&#39; (LTS), @aduh95",
+            "after": "SYNTHETIC corrected title for recipe demo"
+          }
+        ]
+      }
+    ],
+    "conflicting": [],
+    "unchangedCount": 9,
+    "metadataUnchangedCount": 9,
+    "coverage": {
+      "comparedFields": [
+        "title",
+        "link",
+        "updated",
+        "description",
+        "content"
+      ],
+      "note": "Compares title/link/updated plus bounded description/content text when present. Not a full RSS/Atom standards engine."
+    },
+    "dedupBrief": {
+      "beforeRawCount": 10,
+      "afterRawCount": 11,
+      "beforeUniqueKeys": 10,
+      "afterUniqueKeys": 10,
+      "beforeDuplicateKeys": 0,
+      "afterDuplicateKeys": 1,
+      "uniqueCountDelta": 0
+    },
+    "truncated": false,
+    "uncertainties": [
+      {
+        "code": "duplicates-after",
+        "detail": "Duplicate identity keys in after; differing candidates stay ambiguous",
+        "evidence": {
+          "count": 1,
+          "keys": [
+            "tag:github.com,2008:Repository/27193779/v26.8.2"
+          ]
+        }
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Briefs item add/remove/title-link-updated-description/content corrections and dedup-key counts over supplied XML. Does not poll feeds, push alerts, or assert content authenticity."
+  }
+}

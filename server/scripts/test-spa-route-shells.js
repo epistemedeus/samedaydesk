@@ -40,6 +40,7 @@ const DECLARED_REACT_ROUTES = Object.freeze([
   "/x402/seller-conformance",
   "/x402/verified",
   "/for-agents",
+  "/for-agents/record-repeat",
   "/login",
   "/signup",
   "/dashboard",
@@ -172,6 +173,8 @@ test("catalog is exact, unique, and sufficient to add another public SPA route",
     SPA_ROUTE_SHELLS.map((route) => route.path),
     [
       "/x402", "/x402/seller-conformance", "/x402/verified", "/tools/ai-readiness", "/for-agents",
+      "/for-agents/record-repeat",
+      "/for-agents/distribution-repair",
       "/terms", "/privacy", "/login", "/signup", "/dashboard", "/checkout",
     ],
   );

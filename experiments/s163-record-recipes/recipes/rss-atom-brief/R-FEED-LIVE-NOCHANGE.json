@@ -1,0 +1,22 @@
+{
+  "id": "R-FEED-LIVE-NOCHANGE",
+  "family": "rss-atom-brief",
+  "title": "Live Electron releases.atom double-capture (observed no-change)",
+  "parser": "s134-rss-atom-brief",
+  "primarySource": {
+    "label": "electron-releases-atom",
+    "sourceUrl": "https://github.com/electron/electron/releases.atom",
+    "synthetic": false,
+    "metaFile": "sources/feeds/electron-releases/SOURCE.json"
+  },
+  "inputs": {
+    "before": "sources/feeds/electron-releases/capture-a.xml",
+    "after": "sources/feeds/electron-releases/capture-b.xml"
+  },
+  "expectedFixture": "fixtures/expected/rss-electron-nochange.json",
+  "expectedSummary": {
+    "comparisonStatus": "comparable",
+    "corrected": 0,
+    "note": "Identical digests on back-to-back capture => valid no-change."
+  }
+}

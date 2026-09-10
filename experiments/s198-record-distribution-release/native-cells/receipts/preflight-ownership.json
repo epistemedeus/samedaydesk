@@ -1,0 +1,13 @@
+{
+  "milestone": "S198",
+  "role": "pre-edit-ownership",
+  "at": "2026-09-10T14:36:46Z",
+  "branch": "codex/s198-record-distribution-release-20260910",
+  "baseMain": "2b80f38a4e5ec5f080d1764de7c539af63190012",
+  "s189Tip": "f830b55bc6f9b31f664394341f33c5e43a2a2cf8",
+  "s189SubstantiveRepair": "12d528cdd92ae062d60ecd1beff2c9b5639417d7",
+  "s185Frozen": "c05522364b26db04b4aa63f945ad15810785efb4",
+  "heavyParentSession": "01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5",
+  "model": "grok-4.6",
+  "effort": "xhigh"
+}

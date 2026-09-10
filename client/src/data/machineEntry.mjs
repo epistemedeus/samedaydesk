@@ -2,6 +2,8 @@
 // Route shells, the React pages, llms tests, and crawler HTML all read this file.
 // Live paid HTTP/MCP counts are not literals here. Link the merchant inventories.
 
+import DISTRIBUTION_REPAIR_KIT from "./distributionRepairKit.json" with { type: "json" };
+
 export const SITE_ORIGIN = "https://samedaydesk.com";
 export const GATEWAY_ORIGIN = "https://agents.samedaydesk.com";
 export const MERCHANT_REPO = "https://github.com/epistemedeus/x402-url-extractor";
@@ -298,6 +300,157 @@ export const X402_CRAWLER_HTML = `
         <li><a href="${SITE_ORIGIN}/docs/x402-sdk/">x402 SDK integration reference</a></li>
       </ul>
     `;
+
+
+export const RECORD_REPEAT_PATH = "/for-agents/record-repeat";
+export const RECORD_REPEAT_TITLE = "Source/record repeat jobs | SameDayDesk";
+export const RECORD_REPEAT_DESCRIPTION =
+  "Download one portable offline package for OpenAPI used-ops, pricing row/unit, keyed CSV, and RSS/Atom repeat comparisons. Free local samples and next-run manifests; optional existing paid extract stays separate. Unsupported HTML and missing identity/units stay explicit.";
+export const RECORD_REPEAT_CANONICAL = `${SITE_ORIGIN}${RECORD_REPEAT_PATH}`;
+export const RECORD_REPEAT_ARCHIVE = "/kit/record-repeat-job-f3d55e54a7b3.tar.gz";
+export const RECORD_REPEAT_ARCHIVE_SHA256 = "f4669fd20660b19fc4d7f6714b63f02cee217973fbc700484b6cc7ceb3f94eef";
+export const RECORD_REPEAT_ARCHIVE_BYTES = 1253839;
+export const RECORD_REPEAT_PARSER_PIN = "65ce1867f1b4339cc708bfb72a7d9a5942785632";
+export const RECORD_REPEAT_RECIPE_PIN = "a022eb6352156dcdcdf2f8730931f5891bd01436";
+export const RECORD_REPEAT_DISCOVERY = "/discovery/record-repeat.json";
+
+export const RECORD_REPEAT_COLD_START = [
+  `curl -fsSL -o record-repeat-job.tar.gz ${SITE_ORIGIN}${RECORD_REPEAT_ARCHIVE}`,
+  "mkdir -p /tmp && tar -xzf record-repeat-job.tar.gz -C /tmp",
+  "cd /tmp/record-repeat-job",
+  "node bin/record-repeat.mjs sample --all",
+].join("\n");
+
+export const RECORD_REPEAT_FIRST_USE = [
+  "node bin/record-repeat.mjs sample --recipe R-OPENAPI-PIN-IMPACT",
+  "node bin/record-repeat.mjs sample --recipe R-PRICE-UNIT-CASE",
+  "node bin/record-repeat.mjs sample --recipe R-CSV-KEYED-CHANGE",
+  "node bin/record-repeat.mjs sample --recipe R-FEED-LIVE-NOCHANGE",
+  "node bin/record-repeat.mjs sample --recipe R-PRICE-REFUSE-HTML",
+].join("\n");
+
+export const RECORD_REPEAT_REPEAT_USE = [
+  "node bin/record-repeat.mjs sample --recipe R-OPENAPI-PIN-IMPACT --write-next-run ./next-run.json",
+  "node bin/record-repeat.mjs run --from-next-run ./next-run.json \\",
+  "  --before ./vendor/s163-record-recipes/sources/openapi/museum/before.yaml \\",
+  "  --after ./vendor/s163-record-recipes/sources/openapi/museum/after.yaml \\",
+  "  --used ./vendor/s163-record-recipes/sources/openapi/museum/used-ops.pin.json",
+].join("\n");
+
+export const RECORD_REPEAT_CRAWLER_HTML = `
+      <h1>Source/record repeat jobs — one portable offline package</h1>
+      <p>
+        SameDayDesk publishes a lean acquisition archive for four offline source/record
+        families: OpenAPI used-operation impact, curated pricing row/unit change, keyed CSV drift,
+        and RSS/Atom correction briefs. Parsers are pinned at
+        <code>${RECORD_REPEAT_PARSER_PIN}</code>; recipes/sources at
+        <code>${RECORD_REPEAT_RECIPE_PIN}</code>. Free local processing of samples or caller
+        artifacts is distinct from the optional existing paid merchant extract. No new price,
+        cron, settlement rail, or unattended subscription is introduced. Unsupported HTML and
+        missing identity/units stay explicit.
+      </p>
+      <p>
+        Machine discovery:
+        <a href="${SITE_ORIGIN}${RECORD_REPEAT_DISCOVERY}">${SITE_ORIGIN}${RECORD_REPEAT_DISCOVERY}</a>.
+        Archive: <a href="${SITE_ORIGIN}${RECORD_REPEAT_ARCHIVE}">${SITE_ORIGIN}${RECORD_REPEAT_ARCHIVE}</a>
+        (sha256 <code>${RECORD_REPEAT_ARCHIVE_SHA256}</code>).
+      </p>
+      <h2>Cold start</h2>
+      <pre><code>${RECORD_REPEAT_COLD_START}</code></pre>
+      <h2>First-use samples</h2>
+      <pre><code>${RECORD_REPEAT_FIRST_USE}</code></pre>
+      <h2>Repeat use via next-run manifest</h2>
+      <pre><code>${RECORD_REPEAT_REPEAT_USE}</code></pre>
+      <p>
+        Practical paid observation jobs remain on
+        <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>. Homepage identity is unchanged.
+      </p>
+    `;
+
+export const RECORD_REPEAT_SHELL = Object.freeze({
+  path: RECORD_REPEAT_PATH,
+  title: RECORD_REPEAT_TITLE,
+  description: RECORD_REPEAT_DESCRIPTION,
+  canonical: RECORD_REPEAT_CANONICAL,
+  crawlerHtml: RECORD_REPEAT_CRAWLER_HTML,
+});
+
+export const DISTRIBUTION_REPAIR_PATH = "/for-agents/distribution-repair";
+export const DISTRIBUTION_REPAIR_TITLE = "Distribution repair diagnosis | SameDayDesk";
+export const DISTRIBUTION_REPAIR_DESCRIPTION =
+  "Download one portable package that turns caller-supplied listing snapshots and a baseline/current route pair into an explainable diagnosis and owner repair guidance. Incomplete captures cannot prove global removal. Free offline diagnosis; priced execution is not invoked. Not a production acquisition.";
+export const DISTRIBUTION_REPAIR_CANONICAL = `${SITE_ORIGIN}${DISTRIBUTION_REPAIR_PATH}`;
+export const DISTRIBUTION_REPAIR_ARCHIVE = DISTRIBUTION_REPAIR_KIT.archive;
+export const DISTRIBUTION_REPAIR_ARCHIVE_SHA256 = DISTRIBUTION_REPAIR_KIT.sha256;
+export const DISTRIBUTION_REPAIR_ARCHIVE_BYTES = DISTRIBUTION_REPAIR_KIT.bytes;
+export const DISTRIBUTION_REPAIR_DISCOVERY = DISTRIBUTION_REPAIR_KIT.discovery;
+export const DISTRIBUTION_REPAIR_RECORD04_PIN = DISTRIBUTION_REPAIR_KIT.record04;
+export const DISTRIBUTION_REPAIR_DIST08_PIN = DISTRIBUTION_REPAIR_KIT.dist08;
+export const DISTRIBUTION_REPAIR_NL06_PIN = DISTRIBUTION_REPAIR_KIT.nl06;
+
+export const DISTRIBUTION_REPAIR_COLD_START = [
+  `curl -fsSL -o distribution-repair.tar.gz ${SITE_ORIGIN}${DISTRIBUTION_REPAIR_ARCHIVE}`,
+  "mkdir -p /tmp && tar -xzf distribution-repair.tar.gz -C /tmp",
+  "cd /tmp/distribution-repair",
+  "node bin/distribution-repair.mjs sample --positive",
+].join("
+");
+
+export const DISTRIBUTION_REPAIR_FIRST_USE = [
+  "node bin/distribution-repair.mjs schema",
+  "node bin/distribution-repair.mjs diagnose ./examples/caller/alpha.json",
+  "node bin/distribution-repair.mjs diagnose ./examples/caller/beta.json",
+  "node bin/distribution-repair.mjs sample --partial",
+  "node bin/distribution-repair.mjs sample --mismatch",
+].join("
+");
+
+export const DISTRIBUTION_REPAIR_REPEAT_USE = [
+  "node bin/distribution-repair.mjs diagnose ./examples/positive.json --write-next-run ./next-run.json",
+  "node bin/distribution-repair.mjs diagnose ./examples/next-run/input-after-docs-fix.json",
+].join("
+");
+
+export const DISTRIBUTION_REPAIR_CRAWLER_HTML = `
+      <h1>Why a listed tool cannot run — one portable diagnosis package</h1>
+      <p>
+        SameDayDesk publishes a lean lab archive that maps caller-supplied discovery/listing
+        snapshots and a baseline+current route pair into an explainable diagnosis and owner
+        repair guidance. Record04/Record05, DIST08, and NL06 are reused; there is no second
+        parser. Identity is <code>provider</code> / <code>jobRef</code> /
+        <code>sharedEvidenceId</code> — never a filename, and Grexal is not a universal adapter.
+        Incomplete captures cannot prove global removal. This is not proof of lost customers or
+        revenue, and not a production acquisition.
+      </p>
+      <p>
+        Machine discovery:
+        <a href="${SITE_ORIGIN}${DISTRIBUTION_REPAIR_DISCOVERY}">${SITE_ORIGIN}${DISTRIBUTION_REPAIR_DISCOVERY}</a>.
+        <a href="${SITE_ORIGIN}${DISTRIBUTION_REPAIR_ARCHIVE}">Download archive</a>
+        (sha256 <code>${DISTRIBUTION_REPAIR_ARCHIVE_SHA256}</code>).
+        Pins: Record04 <code>${DISTRIBUTION_REPAIR_RECORD04_PIN}</code>, DIST08
+        <code>${DISTRIBUTION_REPAIR_DIST08_PIN}</code>, NL06 <code>${DISTRIBUTION_REPAIR_NL06_PIN}</code>.
+      </p>
+      <h2>Cold start</h2>
+      <pre><code>${DISTRIBUTION_REPAIR_COLD_START}</code></pre>
+      <h2>Caller-supplied inputs</h2>
+      <pre><code>${DISTRIBUTION_REPAIR_FIRST_USE}</code></pre>
+      <h2>Repeat after a route correction</h2>
+      <pre><code>${DISTRIBUTION_REPAIR_REPEAT_USE}</code></pre>
+      <p>
+        Practical paid observation jobs remain on
+        <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>. Homepage identity is unchanged.
+        Discovery is free; priced execution is not invoked by this package.
+      </p>
+    `;
+
+export const DISTRIBUTION_REPAIR_SHELL = Object.freeze({
+  path: DISTRIBUTION_REPAIR_PATH,
+  title: DISTRIBUTION_REPAIR_TITLE,
+  description: DISTRIBUTION_REPAIR_DESCRIPTION,
+  canonical: DISTRIBUTION_REPAIR_CANONICAL,
+  crawlerHtml: DISTRIBUTION_REPAIR_CRAWLER_HTML,
+});
+
 
 export const FOR_AGENTS_SHELL = Object.freeze({
   path: FOR_AGENTS_PATH,
