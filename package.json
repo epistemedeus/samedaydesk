@@ -24,8 +24,18 @@
     "test:checkout-idempotency": "node --test server/scripts/test-payment-attempt-idempotency.js server/scripts/test-checkout-http-lifecycle.js client/scripts/checkoutAttemptNavigation.test.ts",
     "test:spa-fallback": "node --test server/scripts/test-spa-fallback.js",
     "test:spa-route-shells": "node --test server/scripts/test-spa-route-shells.js",
+    "test:browser-desktop": "node --test tools/browser-smoke/desktop.test.mjs",
+    "browser-desktop": "node tools/browser-smoke/desktop.mjs",
+    "test:browser-mobile": "node --test tools/browser-smoke/mobile.test.mjs",
+    "browser-mobile": "node tools/browser-smoke/mobile.mjs",
     "test:result-reuse": "node --test tools/result-reuse/test/export.test.mjs",
+<<<<<<< HEAD
     "test:public-entry": "node --test scripts/public-entry.test.mjs",
+=======
+    "test:recurring-job-recipes": "node --test tools/recurring-job-recipes/test/*.test.mjs",
+    "recurring-job-recipes": "node tools/recurring-job-recipes/cli.mjs",
+    "recurring-job-recipes:baseline": "node tools/recurring-job-recipes/scripts/baseline-compare.mjs",
+>>>>>>> origin/codex/s37r-final-release-review-20260909
     "test:portfolio-discovery": "node --test tools/portfolio-discovery/test.mjs tools/portfolio-discovery/search-readiness.test.mjs tools/portfolio-discovery/handoff.test.mjs",
     "test:evidence-records": "node --test tools/evidence-records/validate.test.mjs",
     "test:evidence-reconcile": "node --test tools/evidence/reconcile.test.mjs",

@@ -1,7 +1,13 @@
 import { projectResult } from "./project.mjs";
 import { assertObservationShape, n45RecordToObservation } from "./map.mjs";
 import { OWNER_SCOPE_DEFAULT, RECIPE_URI } from "./pins.mjs";
-import { containsHostileMarkup, credentialHits, isPublicHttpUrl, looksLikeFilesystemPath } from "./omit.mjs";
+import {
+  containsHostileMarkup,
+  credentialHits,
+  exportContainsCredentialShape,
+  isPublicHttpUrl,
+  looksLikeFilesystemPath,
+} from "./omit.mjs";
 import { checkPayloadBytes } from "./limits.mjs";
 
 export function previewReuse(input, options = {}) {
@@ -28,7 +34,7 @@ export function previewReuse(input, options = {}) {
   if (!shape.ok) {
     return { ok: false, message: shape.message };
   }
-  return {
+  const preview = {
     ok: true,
     mode: "preview",
     kind: projected.kind,
@@ -51,6 +57,16 @@ export function previewReuse(input, options = {}) {
       observationSchema: "neomorphic.task-memory.observation.v1",
     },
   };
+  const leaked = exportContainsCredentialShape({
+    observation: preview.observation,
+    omitted: preview.omitted,
+    included: preview.included,
+    sourceDisclosure: preview.sourceDisclosure,
+  });
+  if (leaked.length) {
+    return { ok: false, message: "refusing to emit credential-shaped text" };
+  }
+  return preview;
 }
 
 export function exportReuse(input, options = {}) {

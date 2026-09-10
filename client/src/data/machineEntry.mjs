@@ -6,8 +6,43 @@ export const SITE_ORIGIN = "https://samedaydesk.com";
 export const GATEWAY_ORIGIN = "https://agents.samedaydesk.com";
 export const MERCHANT_REPO = "https://github.com/epistemedeus/x402-url-extractor";
 export const MERCHANT_PIN = "ef46e2b5213b9436e5cc4339a159c8ae837db880";
+export const MERCHANT_INPUT_PIN = "f9dd59aeeb200881bc1313ed846ba002e7081258";
+export const MERCHANT_INPUT_SHORT = "f9dd59ae";
 export const CUSTOMER_EXAMPLE_VERSION = "0.2.3";
 export const CUSTOMER_EXAMPLE_DIR = "examples/customer-x402";
+export const RECURRING_MERCHANT_CONTRACTS = Object.freeze({
+  C31: Object.freeze({
+    label: "page-change compare",
+    reportSchema: "pilot/page-change-brief/v1",
+    httpProduct: "samedaydesk-page-change-http",
+    httpSchema: "samedaydesk.page-change-http.v0",
+    route: `${GATEWAY_ORIGIN}/recipes/page-change`,
+    health: `${GATEWAY_ORIGIN}/recipes/page-change/health`,
+    openapi: `${GATEWAY_ORIGIN}/recipes/page-change/openapi.json`,
+    requiredFields: Object.freeze(["before", "after", "fields"]),
+  }),
+  C34: Object.freeze({
+    label: "extract-batch record + skills discovery",
+    product: "samedaydesk-extract-batch",
+    schemaVersion: "samedaydesk.extract-batch.v0",
+    skillsIndex: `${GATEWAY_ORIGIN}/.well-known/skills/index.json`,
+    requiredTopFields: Object.freeze([
+      "ok",
+      "product",
+      "schemaVersion",
+      "quote",
+      "jobId",
+      "jobStatus",
+      "stopReason",
+      "partial",
+      "sources",
+      "accounting",
+      "costInputs",
+      "charged",
+      "boundary",
+    ]),
+  }),
+});
 export const EXPLICIT_RECORD_SKILL =
   `${MERCHANT_REPO}/blob/${MERCHANT_PIN}/plugins/samedaydesk-extract/skills/explicit-record/SKILL.md`;
 
@@ -74,6 +109,29 @@ export const REUSE_QUICKSTART = [
   "  --input tools/result-reuse/fixtures/accepted-page-change.json \\",
   '  --task-id vendor-watch --subject vendor-page-result --sequence 1 --clock "$NOW" \\',
   "  --opt-in --out /tmp/samedaydesk-reuse-observation.json",
+].join("\n");
+
+export const RECURRING_QUICKSTART = [
+  "# Required: --prior, --schedule, --clock, --fields; plus one of --current-fixture | --live-safe | --sources | --candidate | --issue-url | --issue-fixture",
+  "node tools/recurring-job-recipes/cli.mjs --list",
+  "node tools/recurring-job-recipes/cli.mjs --recipe source-change-alert \\",
+  "  --prior tools/recurring-job-recipes/fixtures/priors/source-change.prior.json \\",
+  "  --current-fixture tools/recurring-job-recipes/fixtures/current/example-unchanged.json \\",
+  "  --fields title --schedule daily --clock 2026-09-09T16:00:00.000Z --horizon 168",
+  "node tools/recurring-job-recipes/cli.mjs --recipe issue-to-work-brief \\",
+  "  --prior tools/recurring-job-recipes/fixtures/priors/issue-brief.prior.json \\",
+  "  --issue-url https://github.com/epistemedeus/samedaydesk/issues/1 \\",
+  "  --schedule weekly --clock 2026-09-09T16:00:00.000Z",
+  "node tools/recurring-job-recipes/cli.mjs --recipe buyer-setup-trace \\",
+  "  --schedule once --clock 2026-09-09T16:00:00.000Z",
+].join("\n");
+
+export const BUYER_SETUP_QUICKSTART = [
+  "# Live free inspection only. Stops at unpaid 402. Never signs. Never infers wallet ownership from payTo.",
+  `# Local merchant: sibling x402-url-extractor (name x402-merchant) or MERCHANT_INPUT_ROOT. Pin ${MERCHANT_INPUT_SHORT}. No network clone.`,
+  "node tools/recurring-job-recipes/cli.mjs --recipe buyer-setup-trace \\",
+  "  --schedule once --clock \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" \\",
+  "  --gateway-origin https://agents.samedaydesk.com",
 ].join("\n");
 
 export const FOR_AGENTS_PATH = "/for-agents";
@@ -185,6 +243,29 @@ export const FOR_AGENTS_CRAWLER_HTML = `
         Later task-memory import is a separate step.
       </p>
       <pre><code>${REUSE_QUICKSTART}</code></pre>
+      <h2>Job 5. Recurring page, issue, and buyer-setup recipes</h2>
+      <p>
+        From a SameDayDesk checkout, run one-shot recurring recipes against an immutable prior.
+        Operator supplies <code>--prior</code> (where required), <code>--schedule</code>,
+        <code>--clock</code>, and an observation source. Primary developer-agent workflows are
+        <code>source-change-alert</code> and <code>issue-to-work-brief</code>. Outcomes are
+        unchanged, changed, partial, stale baseline, timed out, or error. Priors are never
+        overwritten; write a new sequenced artifact after review. C31 page-change reports use
+        <code>pilot/page-change-brief/v1</code> at
+        <a href="${RECURRING_MERCHANT_CONTRACTS.C31.route}">${RECURRING_MERCHANT_CONTRACTS.C31.route}</a>.
+        C34 extract-batch records use <code>${RECURRING_MERCHANT_CONTRACTS.C34.schemaVersion}</code>
+        with skills at
+        <a href="${RECURRING_MERCHANT_CONTRACTS.C34.skillsIndex}">${RECURRING_MERCHANT_CONTRACTS.C34.skillsIndex}</a>.
+        <code>buyer-setup-trace</code> is live free inspection of the AgentCash/x402 runtime and
+        stops at unpaid 402 without signing or inferring wallet ownership from addresses.
+        Payment receipts are never automatically replayed.
+        Optional local Neomorphic observation export stays filesystem-local when shared mode is
+        undeployed. Offline runs avoid merchant charges; operator CPU and network remain
+        costs_unknown. Listed batch price 0.01 USDC is not invoked here. No cron is installed.
+        Owner QA issues are not demand.
+      </p>
+      <pre><code>${RECURRING_QUICKSTART}</code></pre>
+      <pre><code>${BUYER_SETUP_QUICKSTART}</code></pre>
       <h2>Live merchant inventory</h2>
       <ul>
         ${inventoryListHtml()}
@@ -205,7 +286,8 @@ export const X402_CRAWLER_HTML = `
         Practical jobs live on
         <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>:
         paid bounded <code>POST /extract/batch</code> observations, free offline comparison and
-        explicit buyer-record mapping, and opt-in reuse of an already produced result.
+        explicit buyer-record mapping, opt-in reuse of an already produced result, and one-shot
+        recurring page or record recipes with immutable priors.
         Purchasing never requires publishing. Other named calls remain on the live inventory.
       </p>
       <ul>

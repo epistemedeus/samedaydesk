@@ -17,6 +17,8 @@ import {
   OBSERVE_QUICKSTART,
   RECORD_QUICKSTART,
   REUSE_QUICKSTART,
+  RECURRING_QUICKSTART,
+  BUYER_SETUP_QUICKSTART,
 } from "../data/machineEntry.mjs";
 import styles from "./Mcp.module.css";
 
@@ -161,6 +163,36 @@ export default function ForAgents() {
           </div>
         </section>
 
+        <section className={styles.section} aria-labelledby="recurring-title">
+          <div className={styles.sectionHead}>
+            <p className="eyebrow">Job 5 · recurring recipes</p>
+            <h2 id="recurring-title">Run one-shot page, issue, and buyer-setup jobs against an immutable prior</h2>
+          </div>
+          <p className={styles.jobCopy}>
+            From a SameDayDesk checkout, run <code>source-change-alert</code> or{" "}
+            <code>issue-to-work-brief</code> as developer-agent workflows, plus optional{" "}
+            <code>buyer-setup-trace</code> for free AgentCash/x402 inspection.
+            You supply schedule hint, clock, and sources. Outcomes are unchanged, changed,
+            partial, stale baseline, timed out, or error. Priors stay immutable; write a new
+            sequenced artifact after review. Partial and failed rows stay visible. Payment
+            receipts are never automatically replayed. <code>buyer-setup-trace</code> stops at
+            unpaid 402 and never infers wallet ownership from addresses. Optional local
+            Neomorphic observation export stays filesystem-local when shared mode is undeployed.
+            Offline fixture dry-runs do not call the merchant. No cron is installed. Owner QA
+            is not demand.
+          </p>
+          <div className={styles.commands}>
+            <div>
+              <span>One-run commands (schedule-neutral; see specs/*.recipe.json)</span>
+              <pre className={styles.jobPre}><code>{RECURRING_QUICKSTART}</code></pre>
+            </div>
+            <div>
+              <span>Buyer-setup free inspection</span>
+              <pre className={styles.jobPre}><code>{BUYER_SETUP_QUICKSTART}</code></pre>
+            </div>
+          </div>
+        </section>
+
         <section className={styles.sellerOffer} aria-labelledby="inventory-title">
           <div>
             <p className="eyebrow">Live merchant inventory</p>
@@ -192,6 +224,8 @@ export default function ForAgents() {
               <li>No keys, secret URLs, or target fetch on this page</li>
               <li>Purchasing never requires publishing</li>
               <li>Schema-valid export is not public-safe certification</li>
+              <li>Recurring recipes do not overwrite immutable priors</li>
+              <li>Payment is never automatically replayed</li>
             </ul>
           </div>
         </section>

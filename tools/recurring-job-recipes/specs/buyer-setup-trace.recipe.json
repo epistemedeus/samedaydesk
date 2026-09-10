@@ -1,0 +1,27 @@
+{
+  "schema": "samedaydesk.recipe-spec.v1",
+  "recipeId": "buyer-setup-trace",
+  "scheduleNeutral": true,
+  "installsCron": false,
+  "requiredFields": ["clock", "schedule"],
+  "optionalFields": ["gateway-origin"],
+  "outcomes": ["unchanged", "partial", "error"],
+  "command": [
+    "node",
+    "tools/recurring-job-recipes/cli.mjs",
+    "--recipe",
+    "buyer-setup-trace",
+    "--schedule",
+    "once",
+    "--clock",
+    "${CLOCK}",
+    "--gateway-origin",
+    "https://agents.samedaydesk.com"
+  ],
+  "claims": {
+    "liveFreeInspectionOnly": true,
+    "paymentSigned": false,
+    "walletOwnershipInferred": false
+  },
+  "notes": "Stops at unpaid 402. Never signs or pays. Merchant payTo is not a buyer wallet."
+}
