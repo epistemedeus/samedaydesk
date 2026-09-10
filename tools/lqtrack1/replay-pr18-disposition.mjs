@@ -136,6 +136,7 @@ export function inspectPr18Git(ref, { root = ROOT } = {}) {
   if (!receipt || !aliases) return null;
   const runtimeImports = gitGrep(root, ref, RECEIPT_IMPORT_PATTERN, [
     "server/index.js",
+    "server/app.js",
     "server/routes",
     "server/lib/fulfill.js",
     "server/lib/notify.js",
@@ -164,7 +165,8 @@ export function inspectPr18(ref, { fixtureDir = DEFAULT_PR18_FIXTURE_DIR, root =
 }
 
 export function inspectCheckout(root = ROOT) {
-  const indexPath = join(root, "server/index.js");
+  const appPath = join(root, "server/app.js");
+  const indexPath = existsSync(appPath) ? appPath : join(root, "server/index.js");
   const index = readFileSync(indexPath, "utf8");
   const receiptStorePath = join(root, "server/lib/settlement-receipt.js");
   const aliasLibPath = join(root, "server/lib/resource-aliases.js");
