@@ -1,0 +1,43 @@
+{
+  "schema": "samedaydesk.lean-archive-manifest.v1",
+  "packageId": "distribution-repair",
+  "includesFromPins": [
+    "vendor/record05/",
+    "vendor/record04/",
+    "vendor/dist08/",
+    "vendor/nl06/"
+  ],
+  "overlayAdds": [
+    "bin/distribution-repair.mjs",
+    "src/",
+    "examples/",
+    "package.json",
+    "PIN.json",
+    "MANIFEST.json",
+    "LICENSE",
+    "SOURCE.txt",
+    "INSTALL.txt",
+    "SKILL.md",
+    "docs/",
+    "discovery/",
+    "scripts/build-archive.mjs",
+    "test/"
+  ],
+  "excludes": [
+    "native-cell transcripts",
+    "private workspace paths",
+    "secrets",
+    "first-use adapter rewrite",
+    "S176 record-repeat parsers",
+    "live listing mutations",
+    "paid invokes",
+    "new pricing / demand / settlement / unattended subscription",
+    "server cron"
+  ],
+  "modules": [
+    { "id": "record05", "pin": "a7e2cd7a2223e2aa7e7e09eebf3695aba4731205" },
+    { "id": "record04", "pin": "0e703bd4682894df4e1d25c61b594cac49f2463c" },
+    { "id": "dist08", "pin": "ea000772cdbd6d5df7174369dcef9aa2270e5723" },
+    { "id": "nl06", "pin": "76c0732b241beaa569f05a7394fdbf49604ffb66" }
+  ]
+}

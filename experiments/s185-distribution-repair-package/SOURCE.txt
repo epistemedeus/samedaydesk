@@ -1,0 +1,32 @@
+SameDayDesk distribution-repair acquisition package (S185)
+==========================================================
+
+Owning repo: epistemedeus/samedaydesk
+Branch: codex/s185-distribution-repair-package-20260910
+Base: 2b80f38a4e5ec5f080d1764de7c539af63190012
+
+Composed pins (algorithms intact; product-only wrapper in src/):
+
+- Record05 route regression
+  epistemedeus/x402-url-extractor @ a7e2cd7a2223e2aa7e7e09eebf3695aba4731205
+  record_jobs/05 → vendor/record05
+- Record04 dist-repair feed
+  epistemedeus/x402-url-extractor @ 0e703bd4682894df4e1d25c61b594cac49f2463c
+  record_jobs/nl-04-dist-feed → vendor/record04
+  export base 8b8e44376e9414f540483a526b048beb9e4dc370
+- DIST08 conversion diagnosis
+  epistemedeus/samedaydesk @ ea000772cdbd6d5df7174369dcef9aa2270e5723
+  experiments/scale-r2-20260910/distribution/08 → vendor/dist08
+- NL06 join-record
+  epistemedeus/samedaydesk @ 76c0732b241beaa569f05a7394fdbf49604ffb66
+  experiments/scale-r2-20260910/distribution/nl-06-join-record → vendor/nl06
+
+First-use adapter ea2938cfa68dadbe20a9d5ec096f315e59f4cdbe is sequencing-held.
+Boundaries only: discovery free vs priced run, unavailable ≠ no_users, no paid invoke.
+Grexal PUBLIC_ACTIVE listing is an S149 cite, not a universal adapter.
+
+S176 record-repeat candidate f3d55e54a7b3c548943312443f9f066652d83980 is frozen
+under S186 review and is not rewritten here.
+
+Not included: live listing mutations, paid invokes, invented SEO/traffic/revenue,
+secrets, transcripts, private workspace paths.

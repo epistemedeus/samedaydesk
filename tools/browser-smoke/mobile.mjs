@@ -35,6 +35,24 @@ const PAGE_SPECS = Object.freeze([
     layout: "mobile-nav",
   },
   {
+    id: "distribution-repair",
+    path: "/for-agents/distribution-repair",
+    screenshot: "distribution-repair-mobile.png",
+    expect: {
+      titleIncludes: "Distribution repair diagnosis",
+      h1Includes: "portable diagnosis package",
+      bodyIncludes: [
+        "Record04",
+        "provider",
+        "jobRef",
+        "sharedEvidenceId",
+        "not a production acquisition",
+        "Download archive",
+      ],
+    },
+    layout: "mobile-nav",
+  },
+  {
     id: "x402",
     path: "/x402",
     screenshot: "x402-mobile.png",

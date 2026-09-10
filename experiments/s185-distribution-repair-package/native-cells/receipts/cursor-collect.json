@@ -1,0 +1,45 @@
+{
+  "milestone": "S185",
+  "branch": "codex/s185-distribution-repair-package-20260910",
+  "baseHeadBeforeCommit": "2b80f38a4e5ec5f080d1764de7c539af63190012",
+  "parentSessionId": "01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5",
+  "model": "grok-4.6",
+  "effort": "xhigh",
+  "children": [],
+  "peakConcurrency": 1,
+  "archive": {
+    "path": "client/public/kit/distribution-repair-2b80f38a4e5e.tar.gz",
+    "sha256": "67903e691958c7680fa2c46f2f53f70eac1ee187a71fa42e527dc2830510a033",
+    "bytes": 75172
+  },
+  "pins": {
+    "schema": "samedaydesk.package-pin.v1",
+    "packageId": "distribution-repair",
+    "session": "s185",
+    "branch": "codex/s185-distribution-repair-package-20260910",
+    "sourceRepo": "epistemedeus/samedaydesk",
+    "semanticsTip": "2b80f38a4e5ec5f080d1764de7c539af63190012",
+    "record04": "0e703bd4682894df4e1d25c61b594cac49f2463c",
+    "record04ExportBase": "8b8e44376e9414f540483a526b048beb9e4dc370",
+    "record05": "a7e2cd7a2223e2aa7e7e09eebf3695aba4731205",
+    "dist08": "ea000772cdbd6d5df7174369dcef9aa2270e5723",
+    "nl06": "76c0732b241beaa569f05a7394fdbf49604ffb66",
+    "firstUseHeld": "ea2938cfa68dadbe20a9d5ec096f315e59f4cdbe",
+    "s176Frozen": "f3d55e54a7b3c548943312443f9f066652d83980",
+    "nodeEngines": ">=20",
+    "cashUsd": 0,
+    "productionAcquisition": false,
+    "notes": "Composes Record04 feed + DIST08 diagnosis + NL06 repair join. First-use adapter held (boundaries only). Grexal is not a universal adapter. No new price/cron/subscription."
+  },
+  "tests": {
+    "package": "17/17",
+    "spaRouteShells": "9/9",
+    "spaFallback": "2/2",
+    "browserDesktop": "pass",
+    "browserMobile390": "pass",
+    "browser320": "pass"
+  },
+  "productionAcquisition": false,
+  "s176Frozen": "do not rewrite",
+  "at": "2026-09-10T14:05:55.737433Z"
+}

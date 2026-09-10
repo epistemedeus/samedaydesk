@@ -163,6 +163,22 @@ export default function ForAgents() {
           </div>
         </section>
 
+        <section className={styles.section} aria-labelledby="distribution-repair-title">
+          <div className={styles.sectionHead}>
+            <p className="eyebrow">Offline package · distribution repair</p>
+            <h2 id="distribution-repair-title">Diagnose a listed tool that cannot be acquired or run</h2>
+          </div>
+          <p className={styles.jobCopy}>
+            Download one portable archive that joins caller listing snapshots with a supplied
+            baseline/current route pair. Incomplete captures stay explicit. Repair output is owner
+            guidance, not lost-customer proof. Details and cold-start commands:{" "}
+            <Link className={styles.inlineLink} to="/for-agents/distribution-repair">
+              /for-agents/distribution-repair
+            </Link>
+            .
+          </p>
+        </section>
+
         <section className={styles.section} aria-labelledby="recurring-title">
           <div className={styles.sectionHead}>
             <p className="eyebrow">Job 5 · recurring recipes</p>

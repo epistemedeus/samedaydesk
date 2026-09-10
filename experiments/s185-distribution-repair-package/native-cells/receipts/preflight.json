@@ -1,0 +1,55 @@
+{
+  "milestone": "S185",
+  "branch": "codex/s185-distribution-repair-package-20260910",
+  "base": "origin/main",
+  "baseHead": "2b80f38a4e5ec5f080d1764de7c539af63190012",
+  "s176FrozenCandidate": "f3d55e54a7b3c548943312443f9f066652d83980",
+  "s176Note": "under pilot-chat 6Pro review S186 \u2014 do not rewrite",
+  "pins": {
+    "nl06": {
+      "repo": "epistemedeus/samedaydesk",
+      "commit": "76c0732b241beaa569f05a7394fdbf49604ffb66",
+      "path": "experiments/scale-r2-20260910/distribution/nl-06-join-record",
+      "local": "/tmp/s185-pins/nl06/nl-06-join-record"
+    },
+    "dist08": {
+      "repo": "epistemedeus/samedaydesk",
+      "commit": "ea000772cdbd6d5df7174369dcef9aa2270e5723",
+      "path": "experiments/scale-r2-20260910/distribution/08",
+      "local": "/tmp/s185-pins/dist08/08"
+    },
+    "firstUse": {
+      "repo": "epistemedeus/samedaydesk",
+      "commit": "ea2938cfa68dadbe20a9d5ec096f315e59f4cdbe",
+      "note": "sequencing held; adapter boundaries only; no overlap rewrite"
+    },
+    "record04": {
+      "repo": "epistemedeus/x402-url-extractor",
+      "commit": "0e703bd4682894df4e1d25c61b594cac49f2463c",
+      "path": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed",
+      "local": "/tmp/s185-pins/record04/nl-04-dist-feed",
+      "routeRepairFixture": "examples/dist08-handoff/fixtures/route-repair-before-after.json",
+      "base": "8b8e44376e9414f540483a526b048beb9e4dc370"
+    },
+    "record05": {
+      "local": "/tmp/s185-pins/record04/05",
+      "note": "sibling required by Record04 feed; no second parser",
+      "commit": "a7e2cd7a2223e2aa7e7e09eebf3695aba4731205"
+    }
+  },
+  "quota": {
+    "note": "Heavy ~20% left @13:32UTC; exact reset 18:27:37.721UTC; no overage/banked reset"
+  },
+  "memory": {
+    "MemTotal": 16791945216,
+    "MemAvailable": 11157102592,
+    "reserve25": 4197986304,
+    "headroom": 6959116288,
+    "psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+  },
+  "modelProbe": {
+    "default": "grok-4.6",
+    "effort": "xhigh",
+    "auth": "grok.com session"
+  }
+}

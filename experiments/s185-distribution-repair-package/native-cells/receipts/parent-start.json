@@ -1,0 +1,56 @@
+{
+  "schema": "samedaydesk.native-parent-start.v1",
+  "milestone": "S185",
+  "sessionId": "01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5",
+  "model": "grok-4.6",
+  "effort": "xhigh",
+  "startedAt": "2026-09-10T13:46:56.985Z",
+  "branch": "codex/s185-distribution-repair-package-20260910",
+  "baseHead": "2b80f38a4e5ec5f080d1764de7c539af63190012",
+  "s176FrozenCandidate": "f3d55e54a7b3c548943312443f9f066652d83980",
+  "s176Note": "under pilot-chat 6Pro review S186 — do not rewrite",
+  "cashUsd": 0,
+  "canonicalPins": {
+    "nl06": "76c0732b241beaa569f05a7394fdbf49604ffb66",
+    "dist08": "ea000772cdbd6d5df7174369dcef9aa2270e5723",
+    "firstUse": "ea2938cfa68dadbe20a9d5ec096f315e59f4cdbe",
+    "record04": "0e703bd4682894df4e1d25c61b594cac49f2463c",
+    "record04ExportBase": "8b8e44376e9414f540483a526b048beb9e4dc370",
+    "record05": "a7e2cd7a2223e2aa7e7e09eebf3695aba4731205",
+    "routeRepairFixture": "examples/dist08-handoff/fixtures/route-repair-before-after.json"
+  },
+  "pinDigests": {
+    "canonicalJson": "/tmp/s185-canonical-pins.json",
+    "treeSha256": {
+      "nl06": {
+        "path": "/tmp/s185-pins/nl06/nl-06-join-record",
+        "sha256": "311167bb6b8c8d9c4f5d6474037858f0c964f0a1893a3d4f48043cdc1e4d0d0a",
+        "files": 21
+      },
+      "dist08": {
+        "path": "/tmp/s185-pins/dist08/08",
+        "sha256": "a05c89755ec140e676c4a47b16e3971cbf0931d18849b24093627e7a8ccbd966",
+        "files": 16
+      },
+      "firstuse": {
+        "path": "/tmp/s185-pins/firstuse",
+        "sha256": "f6aa46e3d618cc596b4b5245f4798e5a5a45752b16b00ce22465278b8dc6eb71",
+        "files": 47,
+        "note": "boundaries only; not vendored; no overlap rewrite"
+      },
+      "record04": {
+        "path": "/tmp/s185-pins/record04/nl-04-dist-feed",
+        "sha256": "5c66ac362f6dab869ace21df08992a1455bca93cb2a4c7c186b13ce3c33ef09b",
+        "files": 28
+      },
+      "record05": {
+        "path": "/tmp/s185-pins/record04/05",
+        "sha256": "cd852628d0737266b2955b817509c7c6499d723f93056b463e3eee95ead0196c",
+        "files": 16
+      }
+    }
+  },
+  "quota": {
+    "note": "Heavy ~20% left before exact reset 18:27:37.721 UTC; no overage/banked reset"
+  }
+}

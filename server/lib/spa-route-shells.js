@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { FOR_AGENTS_SHELL, X402_SHELL } from "../../client/src/data/machineEntry.mjs";
+import { DISTRIBUTION_REPAIR_SHELL, FOR_AGENTS_SHELL, X402_SHELL } from "../../client/src/data/machineEntry.mjs";
 
 // Exact public SPA paths that must return their own crawler-readable HTML.
 // Add a route by appending one catalog object; do not hand-write a full HTML document.
@@ -19,6 +19,12 @@ const PUBLIC_SHELLS = [
     title: FOR_AGENTS_SHELL.title,
     description: FOR_AGENTS_SHELL.description,
     crawlerHtml: FOR_AGENTS_SHELL.crawlerHtml,
+  },
+  {
+    path: DISTRIBUTION_REPAIR_SHELL.path,
+    title: DISTRIBUTION_REPAIR_SHELL.title,
+    description: DISTRIBUTION_REPAIR_SHELL.description,
+    crawlerHtml: DISTRIBUTION_REPAIR_SHELL.crawlerHtml,
   },
   {
     path: "/terms",

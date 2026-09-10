@@ -1,0 +1,41 @@
+SameDayDesk distribution-repair lean acquisition package
+========================================================
+
+Required runtime: Node.js 20+ (22.x preferred; owning-repo suite uses 22)
+Record04 pin: 0e703bd4682894df4e1d25c61b594cac49f2463c
+Record05 pin: a7e2cd7a2223e2aa7e7e09eebf3695aba4731205
+DIST08 pin:   ea000772cdbd6d5df7174369dcef9aa2270e5723
+NL06 pin:     76c0732b241beaa569f05a7394fdbf49604ffb66
+
+This archive is anonymous public packaging of distribution-repair diagnosis.
+It is not a production acquisition, paid route, cron, or marketplace listing.
+Discovery is free; priced execution is not invoked.
+
+1) Unpack outside any private workspace
+
+  mkdir -p /tmp && tar -xzf distribution-repair-*.tar.gz -C /tmp
+  cd /tmp/distribution-repair
+
+2) Schema + labeled samples (offline; no network)
+
+  node bin/distribution-repair.mjs schema
+  node bin/distribution-repair.mjs sample --positive
+  node bin/distribution-repair.mjs sample --partial
+  node bin/distribution-repair.mjs sample --mismatch
+
+3) Caller-supplied snapshots (not bundled demo names)
+
+  node bin/distribution-repair.mjs diagnose ./examples/caller/alpha.json
+  node bin/distribution-repair.mjs diagnose ./examples/caller/beta.json
+
+4) Repeat with changed current state
+
+  node bin/distribution-repair.mjs diagnose ./examples/positive.json \
+    --write-next-run ./next-run.json
+  node bin/distribution-repair.mjs diagnose \
+    ./examples/next-run/input-after-docs-fix.json
+
+Identity is provider / jobRef / sharedEvidenceId — never a filename.
+Incomplete captures cannot prove global removal.
+Repair output is owner guidance, not proof of lost customers or revenue.
+No production acquisition claim before Root release.

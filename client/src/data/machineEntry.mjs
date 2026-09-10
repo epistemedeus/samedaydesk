@@ -2,6 +2,8 @@
 // Route shells, the React pages, llms tests, and crawler HTML all read this file.
 // Live paid HTTP/MCP counts are not literals here. Link the merchant inventories.
 
+import DISTRIBUTION_REPAIR_KIT from "./distributionRepairKit.json" with { type: "json" };
+
 export const SITE_ORIGIN = "https://samedaydesk.com";
 export const GATEWAY_ORIGIN = "https://agents.samedaydesk.com";
 export const MERCHANT_REPO = "https://github.com/epistemedeus/x402-url-extractor";
@@ -274,6 +276,79 @@ export const FOR_AGENTS_CRAWLER_HTML = `
         <li><a href="${SITE_ORIGIN}/x402/verified">Inspected x402 route list</a></li>
       </ul>
     `;
+
+export const DISTRIBUTION_REPAIR_PATH = "/for-agents/distribution-repair";
+export const DISTRIBUTION_REPAIR_TITLE = "Distribution repair diagnosis | SameDayDesk";
+export const DISTRIBUTION_REPAIR_DESCRIPTION =
+  "Download one portable package that turns caller-supplied listing snapshots and a baseline/current route pair into an explainable diagnosis and owner repair guidance. Incomplete captures cannot prove global removal. Free offline diagnosis; priced execution is not invoked. Not a production acquisition.";
+export const DISTRIBUTION_REPAIR_CANONICAL = `${SITE_ORIGIN}${DISTRIBUTION_REPAIR_PATH}`;
+export const DISTRIBUTION_REPAIR_ARCHIVE = DISTRIBUTION_REPAIR_KIT.archive;
+export const DISTRIBUTION_REPAIR_ARCHIVE_SHA256 = DISTRIBUTION_REPAIR_KIT.sha256;
+export const DISTRIBUTION_REPAIR_ARCHIVE_BYTES = DISTRIBUTION_REPAIR_KIT.bytes;
+export const DISTRIBUTION_REPAIR_DISCOVERY = DISTRIBUTION_REPAIR_KIT.discovery;
+export const DISTRIBUTION_REPAIR_RECORD04_PIN = DISTRIBUTION_REPAIR_KIT.record04;
+export const DISTRIBUTION_REPAIR_DIST08_PIN = DISTRIBUTION_REPAIR_KIT.dist08;
+export const DISTRIBUTION_REPAIR_NL06_PIN = DISTRIBUTION_REPAIR_KIT.nl06;
+
+export const DISTRIBUTION_REPAIR_COLD_START = [
+  `curl -fsSL -o distribution-repair.tar.gz ${SITE_ORIGIN}${DISTRIBUTION_REPAIR_ARCHIVE}`,
+  "mkdir -p /tmp && tar -xzf distribution-repair.tar.gz -C /tmp",
+  "cd /tmp/distribution-repair",
+  "node bin/distribution-repair.mjs sample --positive",
+].join("\n");
+
+export const DISTRIBUTION_REPAIR_FIRST_USE = [
+  "node bin/distribution-repair.mjs schema",
+  "node bin/distribution-repair.mjs diagnose ./examples/caller/alpha.json",
+  "node bin/distribution-repair.mjs diagnose ./examples/caller/beta.json",
+  "node bin/distribution-repair.mjs sample --partial",
+  "node bin/distribution-repair.mjs sample --mismatch",
+].join("\n");
+
+export const DISTRIBUTION_REPAIR_REPEAT_USE = [
+  "node bin/distribution-repair.mjs diagnose ./examples/positive.json --write-next-run ./next-run.json",
+  "node bin/distribution-repair.mjs diagnose ./examples/next-run/input-after-docs-fix.json",
+].join("\n");
+
+export const DISTRIBUTION_REPAIR_CRAWLER_HTML = `
+      <h1>Why a listed tool cannot run — one portable diagnosis package</h1>
+      <p>
+        SameDayDesk publishes a lean lab archive that maps caller-supplied discovery/listing
+        snapshots and a baseline+current route pair into an explainable diagnosis and owner
+        repair guidance. Record04/Record05, DIST08, and NL06 are reused; there is no second
+        parser. Identity is <code>provider</code> / <code>jobRef</code> /
+        <code>sharedEvidenceId</code> — never a filename, and Grexal is not a universal adapter.
+        Incomplete captures cannot prove global removal. This is not proof of lost customers or
+        revenue, and not a production acquisition.
+      </p>
+      <p>
+        Machine discovery:
+        <a href="${SITE_ORIGIN}${DISTRIBUTION_REPAIR_DISCOVERY}">${SITE_ORIGIN}${DISTRIBUTION_REPAIR_DISCOVERY}</a>.
+        <a href="${SITE_ORIGIN}${DISTRIBUTION_REPAIR_ARCHIVE}">Download archive</a>
+        (sha256 <code>${DISTRIBUTION_REPAIR_ARCHIVE_SHA256}</code>).
+        Pins: Record04 <code>${DISTRIBUTION_REPAIR_RECORD04_PIN}</code>, DIST08
+        <code>${DISTRIBUTION_REPAIR_DIST08_PIN}</code>, NL06 <code>${DISTRIBUTION_REPAIR_NL06_PIN}</code>.
+      </p>
+      <h2>Cold start</h2>
+      <pre><code>${DISTRIBUTION_REPAIR_COLD_START}</code></pre>
+      <h2>Caller-supplied inputs</h2>
+      <pre><code>${DISTRIBUTION_REPAIR_FIRST_USE}</code></pre>
+      <h2>Repeat after a route correction</h2>
+      <pre><code>${DISTRIBUTION_REPAIR_REPEAT_USE}</code></pre>
+      <p>
+        Practical paid observation jobs remain on
+        <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>. Homepage identity is unchanged.
+        Discovery is free; priced execution is not invoked by this package.
+      </p>
+    `;
+
+export const DISTRIBUTION_REPAIR_SHELL = Object.freeze({
+  path: DISTRIBUTION_REPAIR_PATH,
+  title: DISTRIBUTION_REPAIR_TITLE,
+  description: DISTRIBUTION_REPAIR_DESCRIPTION,
+  canonical: DISTRIBUTION_REPAIR_CANONICAL,
+  crawlerHtml: DISTRIBUTION_REPAIR_CRAWLER_HTML,
+});
 
 export const X402_CRAWLER_HTML = `
       <h1>Agents discover a service, call it, pay, and continue</h1>

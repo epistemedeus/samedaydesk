@@ -1,0 +1,31 @@
+{
+  "schema": "samedaydesk.native-parent-final.v1",
+  "milestone": "S185",
+  "sessionId": "01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5",
+  "model": "grok-4.6",
+  "effort": "xhigh",
+  "cwd": "/workspace/experiments/s185-distribution-repair-package",
+  "branch": "codex/s185-distribution-repair-package-20260910",
+  "baseHead": "2b80f38a4e5ec5f080d1764de7c539af63190012",
+  "s176FrozenCandidate": "f3d55e54a7b3c548943312443f9f066652d83980",
+  "children": [],
+  "peakConcurrency": 1,
+  "cashUsd": 0,
+  "productionAcquisition": false,
+  "archive": {
+    "name": "distribution-repair-2b80f38a4e5e.tar.gz",
+    "sha256": "67903e691958c7680fa2c46f2f53f70eac1ee187a71fa42e527dc2830510a033",
+    "bytes": 75172
+  },
+  "tests": {
+    "pinSuites": "pass",
+    "acquisitionMatrix": "pass",
+    "archiveUnpack": "pass",
+    "spaRouteShells": "pass",
+    "clientBuild": "pass",
+    "browserDesktop1440": "pass",
+    "browserMobile390": "pass",
+    "browserWidth320": "pass"
+  },
+  "resumableFor": "S186"
+}
