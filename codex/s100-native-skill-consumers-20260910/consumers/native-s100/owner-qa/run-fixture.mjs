@@ -242,6 +242,92 @@ try {
       });
       emit({ ok: true, command: cmd, freePath: true, result });
     }
+  } else if (cmd === 'transaction-receipt') {
+    const {
+      NETWORKS,
+      transactionReceipt,
+      normalizeTransactionReceiptInput,
+    } = await load('transaction-receipt.mjs');
+    const {
+      encodeAbiParameters,
+      encodeEventTopics,
+      parseAbiItem,
+    } = await import('/tmp/s100-work/merchant/node_modules/viem/_esm/index.js');
+    const TRANSFER = parseAbiItem('event Transfer(address indexed from, address indexed to, uint256 value)');
+    const TX = `0x${'1'.repeat(64)}`;
+    const FROM = '0x1111111111111111111111111111111111111111';
+    const TO = '0x2222222222222222222222222222222222222222';
+    if (process.argv[3] === 'unsupported-network') {
+      try {
+        normalizeTransactionReceiptInput({ transactionHash: TX, network: 'arbitrum' });
+        emit({ ok: false, command: cmd, error: 'expected unsupported network refusal' });
+        process.exitCode = 2;
+      } catch (err) {
+        emit({ ok: true, command: cmd, refused: true, reason: String(err?.message || err) });
+      }
+    } else {
+      const usdc = NETWORKS.base.canonicalUsdc;
+      const client = {
+        async getTransactionReceipt() {
+          return {
+            status: 'success',
+            blockNumber: 50n,
+            blockHash: `0x${'2'.repeat(64)}`,
+            transactionIndex: 3,
+            from: FROM,
+            to: TO,
+            contractAddress: null,
+            type: 'eip1559',
+            gasUsed: 21000n,
+            effectiveGasPrice: 2000000000n,
+            logs: [{
+              address: usdc,
+              topics: encodeEventTopics({ abi: [TRANSFER], eventName: 'Transfer', args: { from: FROM, to: TO } }),
+              data: encodeAbiParameters([{ type: 'uint256' }], [5000n]),
+              logIndex: 1,
+            }],
+          };
+        },
+        async getBlock() { return { timestamp: 1786350903n }; },
+      };
+      const result = await transactionReceipt({ transactionHash: TX }, {
+        client,
+        now: () => new Date('2026-08-11T08:30:00.000Z'),
+      });
+      emit({ ok: true, command: cmd, result });
+    }
+  } else if (cmd === 'wallet-enrich') {
+    const { walletEnrich } = await load('wallet-enrich.mjs');
+    const ADDR = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913';
+    if (process.argv[3] === 'invalid') {
+      try {
+        await walletEnrich('not-an-address');
+        emit({ ok: false, command: cmd, error: 'expected invalid address refusal' });
+        process.exitCode = 2;
+      } catch (err) {
+        emit({ ok: true, command: cmd, refused: true, reason: String(err?.message || err) });
+      }
+    } else {
+      const rpc = (result) => new Response(JSON.stringify({ jsonrpc: '2.0', id: 1, result }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+      const prior = globalThis.fetch;
+      globalThis.fetch = async (_url, init) => {
+        const body = JSON.parse(String(init?.body || '{}'));
+        if (body.method === 'eth_getCode') return rpc('0x');
+        if (body.method === 'eth_getBalance') return rpc('0xde0b6b3a7640000');
+        if (body.method === 'eth_getTransactionCount') return rpc('0x4');
+        if (body.method === 'eth_call') return rpc(`0x${'0'.repeat(64)}`);
+        return rpc(null);
+      };
+      try {
+        const result = await walletEnrich(ADDR);
+        emit({ ok: true, command: cmd, result });
+      } finally {
+        globalThis.fetch = prior;
+      }
+    }
   } else {
     emit({
       ok: false,
@@ -253,6 +339,8 @@ try {
         'schema-generate',
         'settlement-proof',
         'wallet-policy',
+        'transaction-receipt',
+        'wallet-enrich',
       ],
     });
     process.exitCode = 2;

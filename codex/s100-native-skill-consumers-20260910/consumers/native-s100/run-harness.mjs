@@ -8,7 +8,9 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const SKILLS_ROOT = path.resolve(__dirname, '../..');
+const SKILLS_ROOT = process.env.S100_SKILLS_ROOT
+  ? path.resolve(process.env.S100_SKILLS_ROOT)
+  : path.resolve(__dirname, '../..');
 const STATUS = process.env.S100_STATUS_DIR || '/tmp/s100-status';
 const casesDoc = JSON.parse(fs.readFileSync(path.join(__dirname, 'cases.json'), 'utf8'));
 const selected = process.argv.slice(2);

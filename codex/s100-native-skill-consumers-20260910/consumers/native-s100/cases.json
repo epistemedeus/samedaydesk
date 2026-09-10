@@ -81,6 +81,30 @@
       "expect": "usable_artifact",
       "artifact": "wallet-policy.json",
       "task": "Prefer free local evaluator path. Run: S100_MERCHANT_DIR=/tmp/s100-work/merchant node consumers/native-s100/owner-qa/run-fixture.mjs wallet-policy and also wallet-policy secret. Write combined artifact with freePath conformance result and secret refusal. Do not urge paid SameDayDesk when local matrix completes the task."
+    },
+    {
+      "id": "transaction-receipt-owner-qa",
+      "family": "transaction_receipt",
+      "skill": "transaction-receipt",
+      "expect": "usable_artifact",
+      "artifact": "transaction-receipt.json",
+      "task": "Do not pay live /chain/transaction-receipt. Run owner-qa fixtures: (1) S100_MERCHANT_DIR=/tmp/s100-work/merchant node consumers/native-s100/owner-qa/run-fixture.mjs transaction-receipt (2) ... transaction-receipt unsupported-network. Write a combined JSON artifact with the found receipt fixture and the unsupported-network refusal, labeled owner-qa-deterministic-fixture. Do not invent live chain data."
+    },
+    {
+      "id": "wallet-enrich-owner-qa",
+      "family": "wallet_enrich",
+      "skill": "wallet-enrich",
+      "expect": "usable_artifact",
+      "artifact": "wallet-enrich.json",
+      "task": "Do not pay live /wallet-enrich. Run owner-qa fixtures: (1) S100_MERCHANT_DIR=/tmp/s100-work/merchant node consumers/native-s100/owner-qa/run-fixture.mjs wallet-enrich (2) ... wallet-enrich invalid. Write a combined JSON artifact with the EOA snapshot and invalid-address refusal, labeled owner-qa-deterministic-fixture. Do not invent live balances."
+    },
+    {
+      "id": "opportunity-preflight-402-stop",
+      "family": "payment_required_stop",
+      "skill": "opportunity-preflight",
+      "expect": "correct_stop",
+      "artifact": "stop-report.json",
+      "task": "Follow opportunity-preflight for rewardUsd=50, hours=2, hourlyCostUsd=25. Issue one unpaid live GET to https://agents.samedaydesk.com/work/opportunity-preflight with those query params and header X-SameDayDesk-Agent-Source: agent-skills-v1. On HTTP 402, STOP without paying or signing. Write stop-report JSON with httpStatus, resource, amount, network, asset, payTo, and paid=false. Do not invent a paid decision body."
     }
   ]
 }
