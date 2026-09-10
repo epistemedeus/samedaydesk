@@ -59,7 +59,7 @@ export function costForRecipe(recipeId) {
       related: [COST_NOTES.paidExtractBatch],
     };
   }
-  if (recipeId === "issue-to-work-brief") {
+  if (recipeId === "issue-to-work-brief" || recipeId === "issue-evidence") {
     return {
       primary: COST_NOTES.freeLiveFetch,
       related: [COST_NOTES.offlineCompare],

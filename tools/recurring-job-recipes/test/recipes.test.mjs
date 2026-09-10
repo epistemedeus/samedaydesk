@@ -24,14 +24,15 @@ function page(name) {
   return join(FIXTURES_DIR, "pages", name);
 }
 
-test("lists five runnable recipes with user benefit and operator inputs", () => {
+test("lists six runnable recipes with user benefit and operator inputs", () => {
   const recipes = listRecipes();
-  assert.equal(recipes.length, 5);
+  assert.equal(recipes.length, 6);
   const ids = recipes.map((recipe) => recipe.recipeId);
   assert.ok(ids.includes("source-change-alert"));
   assert.ok(ids.includes("comparable-record-extraction"));
   assert.ok(ids.includes("verification-reconcile"));
   assert.ok(ids.includes("issue-to-work-brief"));
+  assert.ok(ids.includes("issue-evidence"));
   assert.ok(ids.includes("buyer-setup-trace"));
   for (const recipe of recipes) {
     assert.ok(recipe.recipeId);

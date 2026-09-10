@@ -21,9 +21,9 @@ const current = (...p) => join(root, "fixtures", "current", ...p);
 const merchantRoot = resolveMerchantRoot();
 const skipMerchant = !merchantRoot ? "merchant input missing" : false;
 
-test("lists five recipes including issue-to-work-brief and buyer-setup-trace", () => {
+test("lists six recipes including issue-to-work-brief, issue-evidence, and buyer-setup-trace", () => {
   const recipes = listRecipes();
-  assert.equal(recipes.length, 5);
+  assert.equal(recipes.length, 6);
   const ids = recipes.map((r) => r.recipeId);
   assert.ok(ids.includes("source-change-alert"));
   assert.ok(ids.includes("issue-to-work-brief"));

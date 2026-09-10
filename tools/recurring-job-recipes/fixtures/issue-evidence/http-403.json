@@ -1,0 +1,27 @@
+{
+  "provider": "github",
+  "completeness": "error",
+  "issue": null,
+  "comments": [],
+  "pages": [
+    {
+      "page": 1,
+      "retrievalStatus": "forbidden",
+      "count": 0,
+      "retryAfter": null
+    }
+  ],
+  "sources": [
+    {
+      "kind": "issue",
+      "url": "https://api.github.com/repos/NousResearch/hermes-agent/issues/99533",
+      "retrievalStatus": "forbidden",
+      "note": "http_403"
+    }
+  ],
+  "transport": {
+    "issue": {
+      "status": 403
+    }
+  }
+}

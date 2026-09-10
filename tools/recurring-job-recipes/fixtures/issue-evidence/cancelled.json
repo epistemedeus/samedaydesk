@@ -1,0 +1,14 @@
+{
+  "provider": "github",
+  "completeness": "error",
+  "issue": null,
+  "comments": [],
+  "sources": [
+    {
+      "kind": "issue",
+      "url": "https://github.com/NousResearch/hermes-agent/issues/99533",
+      "retrievalStatus": "cancelled",
+      "note": "fetch cancelled before start"
+    }
+  ]
+}

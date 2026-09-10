@@ -10,6 +10,7 @@ import {
 import { runVerificationReconcile, META as VERIFY_META } from "../recipes/verification-reconcile.mjs";
 import { runIssueToWorkBrief, META as ISSUE_META } from "../recipes/issue-to-work-brief.mjs";
 import { runBuyerSetupTrace, META as BUYER_META } from "../recipes/buyer-setup-trace.mjs";
+import { runIssueEvidence, META as ISSUE_EVIDENCE_META } from "../recipes/issue-evidence.mjs";
 import { sha256Hex, stableStringify } from "./hash.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -36,6 +37,10 @@ export const RECIPES = Object.freeze({
   "buyer-setup-trace": {
     meta: BUYER_META,
     run: runBuyerSetupTrace,
+  },
+  "issue-evidence": {
+    meta: ISSUE_EVIDENCE_META,
+    run: runIssueEvidence,
   },
 });
 
