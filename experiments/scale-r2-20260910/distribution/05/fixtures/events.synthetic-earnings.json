@@ -1,0 +1,25 @@
+{
+  "schema": "pilot.r2.distribution.marketplace_events.v1",
+  "cite": "negative — synthetic earnings / invented revenue",
+  "captureStatus": "ok",
+  "events": [
+    {
+      "kind": "draft",
+      "provider": "grexal",
+      "at": "2026-09-10T10:45:00.000Z",
+      "evidenceRef": "/workspace/pilot/receipts/scale-bot-0909/bot-s124-activation-0910/runtime/TERMINAL.md"
+    },
+    {
+      "kind": "earnings",
+      "provider": "grexal",
+      "at": "2026-09-10T16:00:00.000Z",
+      "evidenceRef": "invented-not-real",
+      "synthetic": true,
+      "amount": {
+        "value": 99.0,
+        "currency": "USD"
+      },
+      "note": "must be rejected — synthetic revenue forbidden"
+    }
+  ]
+}

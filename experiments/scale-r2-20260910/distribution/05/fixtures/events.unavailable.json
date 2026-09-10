@@ -1,0 +1,7 @@
+{
+  "schema": "pilot.r2.distribution.marketplace_events.v1",
+  "cite": "synthetic — capture failed / unavailable",
+  "captureStatus": "unavailable",
+  "reason": "marketplace event capture endpoint unavailable on this VM; do not claim zero installs/runs or zero revenue",
+  "events": []
+}

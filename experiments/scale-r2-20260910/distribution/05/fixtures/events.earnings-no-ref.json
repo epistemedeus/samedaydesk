@@ -1,0 +1,17 @@
+{
+  "schema": "pilot.r2.distribution.marketplace_events.v1",
+  "cite": "negative — earnings without evidenceRef",
+  "captureStatus": "ok",
+  "events": [
+    {
+      "kind": "earnings",
+      "provider": "agensi",
+      "at": "2026-09-10T16:00:00.000Z",
+      "amount": {
+        "value": 12.5,
+        "currency": "USD"
+      },
+      "note": "must be rejected — earnings require evidenceRef"
+    }
+  ]
+}

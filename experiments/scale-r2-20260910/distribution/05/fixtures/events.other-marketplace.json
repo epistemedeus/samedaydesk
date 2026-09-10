@@ -1,0 +1,14 @@
+{
+  "schema": "pilot.r2.distribution.marketplace_events.v1",
+  "cite": "negative — forbidden other marketplace provider",
+  "captureStatus": "ok",
+  "events": [
+    {
+      "kind": "listed",
+      "provider": "clawhub",
+      "at": "2026-09-10T15:00:00.000Z",
+      "evidenceRef": "synthetic-forbidden",
+      "note": "must be rejected — Grexal+Agensi only"
+    }
+  ]
+}

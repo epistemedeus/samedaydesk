@@ -1,0 +1,13 @@
+{
+  "schema": "pilot.r2.distribution.marketplace_events.v1",
+  "cite": "negative — forbidden claim field + bad kind",
+  "captureStatus": "ok",
+  "inventedRevenue": 1000,
+  "events": [
+    {
+      "kind": "purchase",
+      "provider": "grexal",
+      "evidenceRef": "bad"
+    }
+  ]
+}

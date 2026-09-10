@@ -1,0 +1,42 @@
+{
+  "schema": "pilot.r2.distribution.marketplace_events.v1",
+  "cite": "DEMO mirrors S149 Grexal PUBLIC_ACTIVE + S131/S149 Agensi Free PendingReview — pricing ≠ earnings; no fake payout",
+  "captureStatus": "ok",
+  "reason": "S149 receipts-grexal-s149.json + S124 self-run lineage + S131 PendingReview; no customer revenue/payout",
+  "events": [
+    {
+      "kind": "listed",
+      "provider": "grexal",
+      "at": "2026-09-10T11:49:00.000Z",
+      "evidenceRef": "/workspace/pilot/receipts/scale-bot-0909/r2-team/receipts-grexal-s149.json",
+      "note": "PUBLIC_ACTIVE agentId j970cajvv6wbrmy64s2f4ajzw18e5j2q deploymentId j570f14047dzpkhc0trh3fnp8s8e43sd v1; category developer-tools; homepage samedaydesk.com; customerExecutionRevenuePayout=false",
+      "pricing": {
+        "run_completed_usd": 0.02,
+        "estimate_reserve_usd": 0.025,
+        "estimateReserveIsCharge": false,
+        "note": "Version1: exactly one run_completed 0.02 USD; estimate reserve 0.025 is NOT a charge"
+      }
+    },
+    {
+      "kind": "run",
+      "provider": "grexal",
+      "at": "2026-09-10T10:50:00.000Z",
+      "evidenceRef": "/workspace/pilot/receipts/scale-bot-0909/bot-s124-activation-0910/runtime/TERMINAL.md",
+      "note": "historical free self-runs observed on prior draft v1 (not customer execution/revenue)"
+    },
+    {
+      "kind": "run",
+      "provider": "grexal",
+      "at": "2026-09-10T10:51:00.000Z",
+      "evidenceRef": "/workspace/pilot/receipts/scale-bot-0909/bot-s124-activation-0910/receipts/sandbox-invoke-positive.txt",
+      "note": "sandbox invoke positive self-run (not customer payout)"
+    },
+    {
+      "kind": "reviewed",
+      "provider": "agensi",
+      "at": "2026-09-10T12:00:00.000Z",
+      "evidenceRef": "/workspace/pilot/receipts/scale-bot-0909/bot-s131-polish-0910/task-exchange/TERMINAL.md",
+      "note": "Free PendingReview — Root owns next provider event; S149 confirms installs=0; do not invent installs/revenue"
+    }
+  ]
+}

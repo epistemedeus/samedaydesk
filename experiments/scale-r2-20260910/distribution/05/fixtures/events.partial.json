@@ -1,0 +1,31 @@
+{
+  "schema": "pilot.r2.distribution.marketplace_events.v1",
+  "cite": "partial fixture — missing evidenceRef on one non-earnings event",
+  "captureStatus": "ok",
+  "events": [
+    {
+      "kind": "listed",
+      "provider": "grexal",
+      "at": "2026-09-10T11:49:00.000Z",
+      "evidenceRef": "/workspace/pilot/receipts/scale-bot-0909/r2-team/receipts-grexal-s149.json",
+      "note": "complete listed event",
+      "pricing": {
+        "run_completed_usd": 0.02,
+        "estimate_reserve_usd": 0.025,
+        "estimateReserveIsCharge": false
+      }
+    },
+    {
+      "kind": "run",
+      "provider": "grexal",
+      "at": "2026-09-10T10:50:00.000Z",
+      "note": "missing evidenceRef — partial gap"
+    },
+    {
+      "kind": "reviewed",
+      "provider": "agensi",
+      "at": "2026-09-10T12:00:00.000Z",
+      "evidenceRef": "/workspace/pilot/receipts/scale-bot-0909/bot-s131-polish-0910/task-exchange/TERMINAL.md"
+    }
+  ]
+}
