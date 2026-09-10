@@ -16,6 +16,8 @@ Base main: `2b80f38a4e5ec5f080d1764de7c539af63190012` (Pulse sources untouched)
 | Parser | `65ce1867f1b4339cc708bfb72a7d9a5942785632` |
 | Recipes | `a022eb6352156dcdcdf2f8730931f5891bd01436` |
 
+Verified tip: 
+
 Production acquisition: **false**. Cash $0. No merge/deploy.
 
 ## Integration repairs (no parser rewrite)
