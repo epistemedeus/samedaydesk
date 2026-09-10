@@ -1,0 +1,10 @@
+installed_at_utc=2026-09-10T02:44:39Z
+binary=/home/ubuntu/.grok/bin/grok
+binary_realpath=/home/ubuntu/.grok/downloads/grok-linux-x86_64
+workspace_symlink=/home/ubuntu/.grok/downloads/grok-linux-x86_64
+total 8
+drwxr-xr-x 2 ubuntu ubuntu 4096 Sep 10 02:44 .
+drwxr-xr-x 6 ubuntu ubuntu 4096 Sep 10 02:44 ..
+lrwxrwxrwx 1 ubuntu ubuntu   30 Sep 10 02:44 agent -> ../downloads/grok-linux-x86_64
+lrwxrwxrwx 1 ubuntu ubuntu   30 Sep 10 02:44 grok -> ../downloads/grok-linux-x86_64
+grok 1.0.25 (f7e67d6988e2)

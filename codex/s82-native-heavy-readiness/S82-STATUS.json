@@ -1,0 +1,44 @@
+{
+  "task": "S82 native Heavy readiness repair",
+  "observed_at_utc": "2026-09-10T02:45:32Z",
+  "s77_artifacts": "preserved; not rerun",
+  "s81_note": "S77 skills source edits remain owned by S81; S82 makes no S77 source/copy edits",
+  "native_cli": {
+    "binary": "/home/ubuntu/.grok/bin/grok",
+    "version": "grok 1.0.25 (f7e67d6988e2)",
+    "install_source": "official https://x.ai/cli/install.sh \u2192 durable $HOME/.grok",
+    "workspace_symlink": "/workspace/.toolchain/bin/grok",
+    "docs": "https://docs.x.ai/docs/build/overview ; auth guide device-auth alias --device-code; this binary uses `grok login --device-auth`"
+  },
+  "native_model_catalog": {
+    "source": "grok models (pre-auth; native catalog)",
+    "default": "grok-4.6",
+    "available": [
+      "grok-4.6",
+      "grok-4.5"
+    ],
+    "cursor_vm_note": "Do not assume Cursor IDs (e.g. grok-4.6-build) equal GrokVM (grok-4.6)"
+  },
+  "profile_presence": {
+    "home_grok_dir": true,
+    "auth_json_present": false,
+    "auth_json_path_reported_only_as_presence": true,
+    "config_toml_present": true
+  },
+  "auth_state": "device_login_waiting",
+  "device_login": {
+    "command": "grok login --device-auth",
+    "verification_url": "https://accounts.x.ai/oauth2/device?user_code=N8NS-PZAM",
+    "one_time_code": "N8NS-PZAM",
+    "tmux_session": "s82-grok-device-auth",
+    "poller_log": "/tmp/s82-status/device-auth.log",
+    "poller_alive": true,
+    "expiry": "not advertised by CLI in current output; code is one-time; poller remains Waiting for authorization...",
+    "instructions_for_root": "Open verification_url, confirm one_time_code, authorize. Do not share code. Poller continues in tmux session s82-grok-device-auth without requiring this agent to wait."
+  },
+  "native_heavy_task": {
+    "status": "blocked_pending_device_auth",
+    "planned_once_authed": "native read of published merchant 1.23.46 free catalog + task-fit/402 stop; no wallet/sign/pay",
+    "not_counted_as_native": "S77 heavy-extract-preflight.mjs (deterministic script; root correctly cannot count as native model consumer)"
+  }
+}
