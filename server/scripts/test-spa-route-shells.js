@@ -41,6 +41,7 @@ const DECLARED_REACT_ROUTES = Object.freeze([
   "/x402/verified",
   "/for-agents",
   "/for-agents/record-repeat",
+  "/for-agents/distribution-repair",
   "/login",
   "/signup",
   "/dashboard",

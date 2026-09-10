@@ -51,6 +51,7 @@ const PAGE_SPECS = Object.freeze([
         "optional existing paid",
       ],
     },
+    layout: "desktop-nav",
   },
   {
     id: "distribution-repair",

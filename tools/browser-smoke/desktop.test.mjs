@@ -34,8 +34,11 @@ test(
     assert.equal(report.productionHits.length, 0);
     const forAgents = report.pages.find((page) => page.id === "for-agents");
     const recordRepeat = report.pages.find((page) => page.id === "record-repeat");
+    const distributionRepair = report.pages.find((page) => page.id === "distribution-repair");
     assert.ok(recordRepeat, "record-repeat page missing");
-    assert.equal(recordRepeat.ok, true, recordRepeat.error || "record-repeat failed");
+    assert.ok(distributionRepair, "distribution-repair page missing");
+    assert.match(recordRepeat.h1 || "", /portable offline package/i);
+    assert.match(distributionRepair.h1 || "", /portable diagnosis package/i);
 
     assert.equal(forAgents.linksDisplay, "flex");
     assert.notEqual(forAgents.x402LabelDisplay, "none");

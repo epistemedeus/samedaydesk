@@ -393,8 +393,7 @@ export const DISTRIBUTION_REPAIR_COLD_START = [
   "mkdir -p /tmp && tar -xzf distribution-repair.tar.gz -C /tmp",
   "cd /tmp/distribution-repair",
   "node bin/distribution-repair.mjs sample --positive",
-].join("
-");
+].join("\n");
 
 export const DISTRIBUTION_REPAIR_FIRST_USE = [
   "node bin/distribution-repair.mjs schema",
@@ -402,14 +401,12 @@ export const DISTRIBUTION_REPAIR_FIRST_USE = [
   "node bin/distribution-repair.mjs diagnose ./examples/caller/beta.json",
   "node bin/distribution-repair.mjs sample --partial",
   "node bin/distribution-repair.mjs sample --mismatch",
-].join("
-");
+].join("\n");
 
 export const DISTRIBUTION_REPAIR_REPEAT_USE = [
   "node bin/distribution-repair.mjs diagnose ./examples/positive.json --write-next-run ./next-run.json",
   "node bin/distribution-repair.mjs diagnose ./examples/next-run/input-after-docs-fix.json",
-].join("
-");
+].join("\n");
 
 export const DISTRIBUTION_REPAIR_CRAWLER_HTML = `
       <h1>Why a listed tool cannot run — one portable diagnosis package</h1>
