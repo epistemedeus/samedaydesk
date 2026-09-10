@@ -1,0 +1,4 @@
+interface:
+  display_name: "Opportunity Preflight"
+  short_description: "Evaluate funded agent work before committing effort"
+  default_prompt: "Evaluate a funded agent work opportunity for expected value, hard gates, and whether to attempt, verify first, or abandon."

@@ -34,5 +34,13 @@ No verified native Grok CLI / persistent profile on this VM (`grok-4.6-build` �
 - Merchant payment code + homepages untouched; no npm/registry/main merge/release/deploy
 - No random paid tools; no customer email; no external post
 
+## Apply pack (skills write 403)
+
+Git `bundle` refused on this shallow checkout; delivery is:
+
+1. `0001-s77-extract-consumers.patch` — apply on skills `origin/main` (`901de86`)
+2. `skills-pack/` — full tree at tip `5460b25` (archive)
+3. `s77-skills.fast-export` — `git fast-import` alternative
+
 ## Apply bundle
 See `BUNDLE-PREREQUISITES.txt`. BASE=`901de861…` TIP=`5460b258…`.

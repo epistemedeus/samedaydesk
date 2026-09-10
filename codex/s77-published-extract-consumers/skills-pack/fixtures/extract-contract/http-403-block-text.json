@@ -1,0 +1,31 @@
+{
+  "name": "http-403-block-text",
+  "envelope": {
+    "ok": true,
+    "requestedUrl": "https://blocked.example/",
+    "finalUrl": "https://blocked.example/",
+    "url": "https://blocked.example/",
+    "status": 403,
+    "sourceOk": false,
+    "error": {
+      "code": "http_403"
+    },
+    "title": null,
+    "text": "block copy",
+    "capture": {
+      "method": "http-get-no-javascript",
+      "javascriptExecuted": false,
+      "textTruncated": false,
+      "bodyTruncated": false,
+      "charset": "utf-8",
+      "charsetSource": "content-type"
+    }
+  },
+  "expect": {
+    "ok": true,
+    "sourceOk": false,
+    "status": 403,
+    "useful_source": false,
+    "error_code": "http_403"
+  }
+}

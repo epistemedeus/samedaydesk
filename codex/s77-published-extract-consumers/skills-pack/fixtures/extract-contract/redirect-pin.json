@@ -1,0 +1,29 @@
+{
+  "name": "redirect-pin",
+  "envelope": {
+    "ok": true,
+    "requestedUrl": "https://start.example/",
+    "finalUrl": "https://end.example/page",
+    "url": "https://end.example/page",
+    "status": 200,
+    "sourceOk": true,
+    "error": null,
+    "title": "End",
+    "text": "end",
+    "capture": {
+      "method": "http-get-no-javascript",
+      "javascriptExecuted": false,
+      "textTruncated": false,
+      "bodyTruncated": false,
+      "charset": "utf-8",
+      "charsetSource": "content-type"
+    }
+  },
+  "expect": {
+    "ok": true,
+    "sourceOk": true,
+    "requestedUrl": "https://start.example/",
+    "finalUrl": "https://end.example/page",
+    "url_equals_final": true
+  }
+}

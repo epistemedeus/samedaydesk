@@ -1,0 +1,31 @@
+{
+  "name": "http-404",
+  "envelope": {
+    "ok": true,
+    "requestedUrl": "https://missing.example/",
+    "finalUrl": "https://missing.example/",
+    "url": "https://missing.example/",
+    "status": 404,
+    "sourceOk": false,
+    "error": {
+      "code": "http_404"
+    },
+    "title": null,
+    "text": "not found",
+    "capture": {
+      "method": "http-get-no-javascript",
+      "javascriptExecuted": false,
+      "textTruncated": false,
+      "bodyTruncated": false,
+      "charset": "utf-8",
+      "charsetSource": "content-type"
+    }
+  },
+  "expect": {
+    "ok": true,
+    "sourceOk": false,
+    "status": 404,
+    "useful_source": false,
+    "error_code": "http_404"
+  }
+}

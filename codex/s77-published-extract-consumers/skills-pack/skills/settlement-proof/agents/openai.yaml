@@ -1,0 +1,4 @@
+interface:
+  display_name: "Base USDC Settlement Proof"
+  short_description: "Verify a claimed Base USDC settlement"
+  default_prompt: "Use $settlement-proof to verify this claimed Base USDC payment against its on-chain receipt."

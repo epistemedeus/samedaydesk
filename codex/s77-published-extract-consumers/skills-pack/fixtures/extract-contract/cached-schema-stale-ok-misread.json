@@ -1,0 +1,31 @@
+{
+  "name": "cached-schema-stale-ok-misread",
+  "notes": "ok true with sourceOk false must not be treated as useful content",
+  "envelope": {
+    "ok": true,
+    "requestedUrl": "https://gone.example/",
+    "finalUrl": "https://gone.example/",
+    "url": "https://gone.example/",
+    "status": 404,
+    "sourceOk": false,
+    "error": {
+      "code": "http_404"
+    },
+    "title": null,
+    "text": "",
+    "capture": {
+      "method": "http-get-no-javascript",
+      "javascriptExecuted": false,
+      "textTruncated": false,
+      "bodyTruncated": false,
+      "charset": "utf-8",
+      "charsetSource": "content-type"
+    }
+  },
+  "expect": {
+    "ok": true,
+    "sourceOk": false,
+    "useful_source": false,
+    "stale_rule": "ok_is_not_sourceOk"
+  }
+}

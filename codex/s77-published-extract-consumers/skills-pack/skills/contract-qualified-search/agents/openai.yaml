@@ -1,0 +1,4 @@
+interface:
+  display_name: "Search Contract-Qualified Services"
+  short_description: "Find machine services with guaranteed outputs"
+  default_prompt: "Use $contract-qualified-search to find machine services matching my capability intent and required JSON output paths, then return a verified non-spending purchase intent."

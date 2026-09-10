@@ -1,0 +1,4 @@
+interface:
+  display_name: "Payment Offer Preflight"
+  short_description: "Compare x402 and MPP offers before payment"
+  default_prompt: "Use $payment-offer-preflight to inspect this paid API URL before authorizing a purchase."

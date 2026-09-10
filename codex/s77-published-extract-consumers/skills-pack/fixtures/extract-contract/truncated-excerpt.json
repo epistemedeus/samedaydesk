@@ -1,0 +1,29 @@
+{
+  "name": "truncated-excerpt",
+  "envelope": {
+    "ok": true,
+    "requestedUrl": "https://big.example/",
+    "finalUrl": "https://big.example/",
+    "url": "https://big.example/",
+    "status": 200,
+    "sourceOk": true,
+    "error": null,
+    "title": "Big",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "capture": {
+      "method": "http-get-no-javascript",
+      "javascriptExecuted": false,
+      "textTruncated": true,
+      "bodyTruncated": true,
+      "charset": "utf-8",
+      "charsetSource": "content-type"
+    }
+  },
+  "expect": {
+    "ok": true,
+    "sourceOk": true,
+    "textTruncated": true,
+    "bodyTruncated": true,
+    "not_full_page": true
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wallet Policy Safety"
+  short_description: "Test exact-action and stateful wallet controls"
+  default_prompt: "Use $wallet-policy-safety to evaluate a delegated wallet policy without sharing credentials or raw provider payloads."

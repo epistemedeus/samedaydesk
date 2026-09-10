@@ -1,0 +1,4 @@
+interface:
+  display_name: "Morpho Risk Evidence"
+  short_description: "Inspect Morpho positions, markets, and protection plans"
+  default_prompt: "Inspect a Morpho position, market, protection plan, or historical PreLiquidation event using read-only evidence."

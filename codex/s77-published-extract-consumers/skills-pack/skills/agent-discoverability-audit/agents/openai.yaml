@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Discoverability Audit"
+  short_description: "Measure agent-catalog rank and stale route pricing"
+  default_prompt: "Audit a public machine service for brand-blind discovery rank and caller-expected exact route-price drift across agent catalogs."

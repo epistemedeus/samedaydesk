@@ -1,0 +1,4 @@
+interface:
+  display_name: "Audit Agent Surface Budget"
+  short_description: "Measure MCP and OpenAPI context burden"
+  default_prompt: "Use $agent-surface-budget-audit to measure this public agent service's MCP and OpenAPI discovery burden and return a verified non-spending purchase intent plus bounded repair actions."

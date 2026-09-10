@@ -1,0 +1,31 @@
+{
+  "name": "http-200-useful",
+  "envelope": {
+    "ok": true,
+    "requestedUrl": "https://ok.example/",
+    "finalUrl": "https://ok.example/",
+    "url": "https://ok.example/",
+    "status": 200,
+    "sourceOk": true,
+    "error": null,
+    "title": "OK",
+    "text": "hello",
+    "capture": {
+      "method": "http-get-no-javascript",
+      "javascriptExecuted": false,
+      "textTruncated": false,
+      "bodyTruncated": false,
+      "charset": "utf-8",
+      "charsetSource": "content-type"
+    }
+  },
+  "expect": {
+    "ok": true,
+    "sourceOk": true,
+    "status": 200,
+    "useful_source": true,
+    "requestedUrl": "https://ok.example/",
+    "finalUrl": "https://ok.example/",
+    "url_equals_final": true
+  }
+}

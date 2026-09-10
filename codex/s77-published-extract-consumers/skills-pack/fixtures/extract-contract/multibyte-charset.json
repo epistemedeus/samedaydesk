@@ -1,0 +1,28 @@
+{
+  "name": "multibyte-charset",
+  "envelope": {
+    "ok": true,
+    "requestedUrl": "https://jp.example/",
+    "finalUrl": "https://jp.example/",
+    "url": "https://jp.example/",
+    "status": 200,
+    "sourceOk": true,
+    "error": null,
+    "title": "\u65e5\u672c\u8a9e",
+    "text": "\u3053\u3093\u306b\u3061\u306f",
+    "capture": {
+      "method": "http-get-no-javascript",
+      "javascriptExecuted": false,
+      "textTruncated": false,
+      "bodyTruncated": false,
+      "charset": "shift_jis",
+      "charsetSource": "html-meta"
+    }
+  },
+  "expect": {
+    "ok": true,
+    "sourceOk": true,
+    "charset": "shift_jis",
+    "charsetSource": "html-meta"
+  }
+}

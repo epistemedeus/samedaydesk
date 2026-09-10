@@ -1,0 +1,40 @@
+{
+  "name": "partial-batch",
+  "envelope": {
+    "ok": true,
+    "partial": true,
+    "product": "samedaydesk-extract-batch",
+    "sources": [
+      {
+        "status": "success",
+        "requestedUrl": "https://a.example/",
+        "finalUrl": "https://a.example/",
+        "httpStatus": 200
+      },
+      {
+        "status": "failure",
+        "requestedUrl": "https://b.example/",
+        "finalUrl": "https://b.example/",
+        "httpStatus": 404
+      },
+      {
+        "status": "unknown",
+        "requestedUrl": "https://c.example/",
+        "finalUrl": null,
+        "httpStatus": null
+      }
+    ],
+    "accounting": {
+      "succeeded": 1,
+      "partial": 0,
+      "failed": 1,
+      "unknown": 1
+    }
+  },
+  "expect": {
+    "ok": true,
+    "partial": true,
+    "do_not_autocharge_repair": true,
+    "unknown_body_honest": true
+  }
+}
