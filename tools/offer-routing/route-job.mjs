@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Task-to-existing-offer cold router (BOT-FIRST-USE-0910).
+ * Task-to-existing-offer cold router.
  * Reads the local capability/limits matrix; never invents payment or live hosting.
  */
 import { readFileSync } from "node:fs";
@@ -102,6 +102,15 @@ export function routeJob(jobInput, { matrix = loadMatrix() } = {}) {
   const noPayment = job.constraints.includes("no_payment") || job.constraints.includes("offline_only");
   const eligible = [];
   for (const offer of candidates) {
+    if (rejected.some((r) => r.offerId === offer.id)) continue;
+    if (job.type === "complete_issue_discussion") {
+      rejected.push({ offerId: offer.id, reason: "complete_issue_acquisition_unavailable" });
+      continue;
+    }
+    if (job.constraints.includes("offline_only") && offer.hosting === "live_paid_http") {
+      rejected.push({ offerId: offer.id, reason: "constraint_offline_only" });
+      continue;
+    }
     if (noPayment && offer.payment && offer.payment !== "none") {
       rejected.push({
         offerId: offer.id,
@@ -127,21 +136,23 @@ export function routeJob(jobInput, { matrix = loadMatrix() } = {}) {
       job,
       selected: null,
       rejected,
-      warnings: ["no_matching_offer"],
-      offlineUntilHosted: true,
+      warnings: [job.type === "complete_issue_discussion" ? "complete_issue_acquisition_unavailable" : "no_matching_offer"],
+      nextAction: job.type === "complete_issue_discussion"
+        ? "Obtain issue body and paginated comments from the official GitHub API, preserving coverage limits. No published complete-discussion acquisition pack is asserted here. Use supplied_issue_brief only to process already-held evidence or fixtures."
+        : "Review missing capabilities or constraints; do not purchase an incompatible route.",
+      avoidedMistakes: [...new Set(rejected.map((r) => r.commonMistake).filter(Boolean))],
+      criteriaAssessment: "not_evaluated",
+      executionAuthorized: false,
+      paymentRequired: false,
+      offlineUntilHosted: false,
       paid: false,
     };
   }
 
   const selected = ranked[0].offer;
   const mistaken = rejected.filter((r) => r.commonMistake);
-  const offlineUntilHosted = [
-    "offline_local",
-    "hosted_archive_download_local_execution",
-    "unhosted_sample_local_rehearsal",
-    "unhosted_prototype",
-    "live_free_http_or_offline_fixture",
-  ].includes(selected.hosting);
+  // Selection is advice, not execution, payment, or proof of acceptance.
+  const offlineUntilHosted = false;
 
   return {
     schema: "samedaydesk.offer-route.v1",
@@ -169,7 +180,14 @@ export function routeJob(jobInput, { matrix = loadMatrix() } = {}) {
     rejected,
     avoidedMistakes: [...new Set(mistaken.map((m) => m.commonMistake).filter(Boolean))],
     offlineUntilHosted,
-    paid: selected.payment !== "none",
+    paid: false,
+    paymentRequired: selected.payment !== "none",
+    criteriaAssessment: "not_evaluated",
+    executionAuthorized: false,
+    executionMode: selected.hosting === "live_paid_http" ? "paid_remote_request_requires_caller_decision"
+      : selected.hosting === "live_free_http_or_offline_fixture" ? "explicit_live_free_or_fixture"
+      : "local",
+    requiresHostedWorkflow: false,
     matrixPath: "tools/offer-routing/capability-limits-matrix.json",
   };
 }
@@ -199,3 +217,4 @@ function main(argv) {
 
 const isDirect = process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href;
 if (isDirect) main(process.argv);
+

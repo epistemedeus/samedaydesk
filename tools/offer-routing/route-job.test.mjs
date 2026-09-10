@@ -29,15 +29,14 @@ test("matrix schema and hard-rule offers exist", () => {
   assert.equal(MATRIX_PATH.endsWith("capability-limits-matrix.json"), true);
 });
 
-test("complete_issue_discussion routes to agent-task-kit, not paid extract", () => {
+test("complete discussion acquisition cannot be substituted by packaging", () => {
   const r = routeJobFromFile(join(here, "fixtures/complete-issue-discussion.job.json"));
-  assert.equal(r.ok, true);
-  assert.equal(r.selected.offerId, "neo.agent_task_kit");
+  assert.equal(r.ok, false);
+  assert.equal(r.selected, null);
   assert.equal(r.paid, false);
-  assert.equal(r.offlineUntilHosted, true);
+  assert.ok(r.warnings.includes("complete_issue_acquisition_unavailable"));
   assert.ok(r.avoidedMistakes.includes("paid_html_extraction_for_complete_issue_comments"));
-  assert.ok(r.rejected.some((x) => x.offerId === "sdd.paid_html_extract"));
-  assert.ok(r.selected.literalCommand.includes("agent-task-kit"));
+  assert.ok(r.rejected.some(x => x.offerId === "neo.agent_task_kit"));
 });
 
 test("page_change_evidence prefers offline page-change / result-reuse", () => {
@@ -45,8 +44,8 @@ test("page_change_evidence prefers offline page-change / result-reuse", () => {
   assert.equal(r.ok, true);
   assert.ok(["sdd.page_change_offline", "sdd.result_reuse_offline"].includes(r.selected.offerId));
   assert.equal(r.paid, false);
-  assert.equal(r.offlineUntilHosted, true);
-  assert.ok(!r.rejected.every((x) => x.offerId !== "sdd.paid_html_extract") || true);
+  assert.equal(r.offlineUntilHosted, false);
+  assert.equal(r.selected.offerId, "sdd.page_change_offline");
 });
 
 test("cross_workspace_correction routes to agent-task-kit", () => {
@@ -62,7 +61,7 @@ test("moltjobs rehearsal selects unhosted sample, not live service label", () =>
   assert.equal(r.selected.offerId, "neo.moltjobs_openai_agents_sample");
   assert.equal(r.selected.hosting, "unhosted_sample_local_rehearsal");
   assert.equal(r.paid, false);
-  assert.equal(r.offlineUntilHosted, true);
+  assert.equal(r.offlineUntilHosted, false);
   assert.match(JSON.stringify(r.selected.limits), /Not a live Neomorphic-operated MoltJobs service/);
 });
 
@@ -74,7 +73,9 @@ test("bounded_html_observation may select paid extract when payment allowed", ()
   });
   assert.equal(r.ok, true);
   assert.equal(r.selected.offerId, "sdd.paid_html_extract");
-  assert.equal(r.paid, true);
+  assert.equal(r.paid, false);
+  assert.equal(r.paymentRequired, true);
+  assert.equal(r.executionAuthorized, false);
 });
 
 test("bounded_html_observation with no_payment does not select paid extract", () => {
@@ -96,3 +97,4 @@ test("README documents matrix path and mistake pair", () => {
   assert.match(md, /offline until hosted/i);
   assert.match(md, /route-job\.mjs/);
 });
+

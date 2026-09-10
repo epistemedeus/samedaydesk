@@ -43,7 +43,7 @@ test("root README cites presence/result-reuse/offer-routing docs and free vs off
   assert.match(md, /--opt-in/);
   assert.match(md, /test:public-entry/);
   assert.match(md, /test:offer-routing/);
-  assert.match(md, /paid_html_extraction_for_complete_issue_comments|neo\.agent_task_kit/);
+  assert.match(md, /complete_issue_acquisition_unavailable/);
 });
 
 test("cited offline cold-read example returns offline_fixture unpaid", () => {
@@ -112,4 +112,16 @@ test("cited result-reuse record export writes neomorphic observation", () => {
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+
+test("literal complete-discussion route reports an unsupported acquisition job", () => {
+  const block = extractFencedBash(readFileSync(readmePath, "utf8")).find(b => b.includes("complete-issue-discussion.job.json"));
+  assert.ok(block);
+  const r = bash(block);
+  assert.equal(r.status, 2, r.stderr);
+  const out = JSON.parse(r.stdout);
+  assert.equal(out.selected, null);
+  assert.equal(out.ok, false);
+  assert.ok(out.warnings.includes("complete_issue_acquisition_unavailable"));
 });

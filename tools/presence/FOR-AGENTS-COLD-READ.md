@@ -41,8 +41,9 @@ which existing artifact fits a job. In particular:
 
 - Paid `/extract` / `/extract/batch` is bounded HTML/JSON **without JavaScript
   rendering**. It is **not** a complete GitHub issue discussion (body + comments).
-- Neomorphic laboratory samples (MoltJobs × OpenAI Agents SDK pack; trial brief
-  builder) are **local rehearsal / unhosted prototypes**, not live hosted services.
+- Task-kit composition processes supplied evidence; it does not acquire complete comments.
+- The MoltJobs SDK download runs a disposable local rehearsal and refuses `--live`.
+  The hosted trial page builds a brief locally in the browser, not in a hosted job runner.
 
 Use the top-level router and matrix:
 
@@ -53,7 +54,11 @@ Use the top-level router and matrix:
 node tools/offer-routing/route-job.mjs tools/offer-routing/fixtures/complete-issue-discussion.job.json
 ```
 
+The complete-discussion example exits 2 with a missing acquisition capability;
+no pending issue-evidence pack is claimed published.
+
 Reading these free sources never requires purchasing `/extract/batch`. A later
 purchase is a separate caller decision for a useful supported job, not a recovery
 step. MCP Registry latest-version selection is documented separately in
 [REGISTRY-CONSUMER.md](REGISTRY-CONSUMER.md).
+

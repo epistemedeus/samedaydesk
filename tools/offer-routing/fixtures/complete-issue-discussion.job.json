@@ -6,16 +6,13 @@
   "leadSuppliedJobFile": null,
   "type": "complete_issue_discussion",
   "title": "Compose work brief from complete public GitHub issue discussion",
-  "goal": "Caller needs body + comment thread as a reusable offline work brief, then a prior/correction when the issue source version changes. Not a one-shot HTML field extract.",
+  "goal": "Acquire a current public issue body and complete comment listing, with explicit partial or unknown coverage when completeness cannot be established.",
   "acceptance": [
-    "Uses already-held or fixture issue JSON that includes discussion comments",
-    "Produces compose stage=useful with execute=false posted=false",
-    "Does not purchase SameDayDesk /extract or /extract/batch",
-    "Does not treat Neomorphic MoltJobs sample as a live hosted bid service"
+    "Acquire issue and paginated comments, preserving missing/partial coverage",
+    "Do not substitute paid HTML extract or historical fixture composition"
   ],
   "inputs": {
-    "primaryFixtureRel": "fixtures/test_traffic/github-issue-4785.json",
-    "changedFixtureRel": "fixtures/test_traffic/github-issue-changed.json"
+    "issueUrl": "https://github.com/modelcontextprotocol/servers/issues/4785"
   },
   "constraints": [
     "no_payment",

@@ -85,10 +85,14 @@ When the job is known, route with the matrix before paying or treating a sample 
 node tools/offer-routing/route-job.mjs tools/offer-routing/fixtures/complete-issue-discussion.job.json
 ```
 
-Expected: `selected.offerId` = `neo.agent_task_kit`, `paid: false`,
-`avoidedMistakes` includes `paid_html_extraction_for_complete_issue_comments`.
-Paid `/extract` is **not** complete issue comments. The MoltJobs SDK pack is an
-**unhosted local rehearsal**, offline until the caller hosts their own path.
+Expected: `ok: false`, `selected: null`, exit code 2 and
+`complete_issue_acquisition_unavailable`. Neither paid `/extract` nor task-kit
+packaging acquires a complete discussion. This matrix does not advertise the
+pending issue-evidence acquisition pack. For historical fixture composition use
+`fixtures/supplied-issue-brief.job.json` under `tools/offer-routing/`.
+The MoltJobs SDK pack runs a disposable local HTTP rehearsal; its shipped runner
+refuses `--live`, even with credentials. Hosted archives are downloads, not hosted
+job execution. Routing does not evaluate acceptance criteria or authorize payment.
 
 ## Verify the cited examples
 
@@ -97,3 +101,4 @@ npm run test:public-entry
 ```
 
 That script runs the offline cold-read and fixture export commands cited above (no network, no payment). Existing focused suites: `npm run test:presence`, `npm run test:result-reuse`, `npm run test:offer-routing`.
+
