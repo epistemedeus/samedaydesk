@@ -60,7 +60,8 @@
     "bazaar-tracker:readback": "node tools/bazaar-tracker/cli.mjs --readback",
     "test:bazaar-tracker": "node --test tools/bazaar-tracker/test.mjs tools/lqtrack1/replay-pr18-disposition.test.mjs",
     "replay:pr18": "node tools/lqtrack1/replay-pr18-disposition.mjs",
-    "test:r2-distribution-08": "node --test experiments/scale-r2-20260910/distribution/08/tests/*.test.mjs"
+    "test:r2-distribution-08": "node --test experiments/scale-r2-20260910/distribution/08/tests/*.test.mjs",
+    "test:nl-distribution-06": "node --test experiments/scale-r2-20260910/distribution/nl-06-join-record/tests/*.test.mjs"
   },
   "dependencies": {
     "@neomorphic/correspondence": "file:./vendor/neomorphic-correspondence",

@@ -1,0 +1,6 @@
+{
+  "schema": "pilot.nl.distribution.join_record_input.v1",
+  "captureStatus": "unavailable",
+  "reason": "record04 feed capture unavailable — do not claim zero users",
+  "feed": null
+}

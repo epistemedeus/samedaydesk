@@ -1,0 +1,1487 @@
+{
+  "schema": "pilot.nl.distribution.join_record_result.v1",
+  "status": "joined",
+  "generatedAt": "2026-09-10T20:15:00.000Z",
+  "reuseFrom": "NL-DISTRIBUTION-06",
+  "pins": {
+    "dist08": "ea000772cdbd6d5df7174369dcef9aa2270e5723",
+    "record04Export": "8b8e44376e9414f540483a526b048beb9e4dc370",
+    "s172Tip": "ea2938cfa68dadbe20a9d5ec096f315e59f4cdbe",
+    "merchantRecord05": "a7e2cd7a2223e2aa7e7e09eebf3695aba4731205",
+    "record04Path": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed",
+    "dist08Path": "experiments/scale-r2-20260910/distribution/08",
+    "feedArtifact": "artifacts/dist-repair-feed.positive.json"
+  },
+  "scopeNote": "Joins NL-RECORD-04 route-repair feed into DIST-08 conversion diagnosis. Source-compatible events only. Gaps explicit. Fixture-derived wiring ≠ live traffic/revenue. S172 tip already saved — no overlap.",
+  "mutationBoundary": "Isolated feature-branch source/tests only. Root owns merge, publication, and paid actions. No CloudAgent. No paid invoke.",
+  "gaps": [
+    {
+      "code": "fixture_derived_acquisition",
+      "message": "Acquisition events are fixture-derived from Record04 repair feed for DIST-08 join wiring — not observed live clicks/traffic"
+    },
+    {
+      "code": "causation_independence_default_unknown",
+      "message": "DIST-08 will mark causation/customerIndependence unknown unless sharedEvidenceId / independentCustomerRef prove otherwise; sharedEvidenceId here is fixture join key only"
+    },
+    {
+      "code": "no_revenue_from_feed",
+      "message": "Route repair feed carries no customer earnings/payout — do not invent revenue from recommendations or list price"
+    }
+  ],
+  "bundle": {
+    "schema": "pilot.r2.distribution.conversion_bundle.v1",
+    "cite": "NL-DISTRIBUTION-06 join: Record04@8b8e44376e9414f540483a526b048beb9e4dc370 → DIST-08@ea000772cdbd6d5df7174369dcef9aa2270e5723; S172@ea2938cfa68dadbe20a9d5ec096f315e59f4cdbe already done (no overlap)",
+    "captureStatus": "ok",
+    "reason": "Joined 6 Record04 repair recommendation(s) into DIST-08 conversion bundle",
+    "acquisitionEvidence": [
+      {
+        "id": "acq-nl06-presented:/changelog",
+        "kind": "linkPresented",
+        "sourceTag": "catalog",
+        "linkId": "route:/changelog",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/changelog",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/changelog",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "fixtureDerived": true,
+        "note": "Fixture-derived catalog presentation for source-compatible join wiring; not live traffic"
+      },
+      {
+        "id": "acq-nl06-activated:/changelog",
+        "kind": "linkActivated",
+        "sourceTag": "catalog",
+        "linkId": "route:/changelog",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/changelog",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/changelog",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "impliesBuyerIntent": false,
+        "fixtureDerived": true,
+        "note": "Fixture-derived activation for join wiring only; click ≠ conversion; not live traffic"
+      },
+      {
+        "id": "acq-nl06-presented:/docs",
+        "kind": "linkPresented",
+        "sourceTag": "catalog",
+        "linkId": "route:/docs",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/docs",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/docs",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "fixtureDerived": true,
+        "note": "Fixture-derived catalog presentation for source-compatible join wiring; not live traffic"
+      },
+      {
+        "id": "acq-nl06-activated:/docs",
+        "kind": "linkActivated",
+        "sourceTag": "catalog",
+        "linkId": "route:/docs",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/docs",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/docs",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "impliesBuyerIntent": false,
+        "fixtureDerived": true,
+        "note": "Fixture-derived activation for join wiring only; click ≠ conversion; not live traffic"
+      },
+      {
+        "id": "acq-nl06-presented:/legacy",
+        "kind": "linkPresented",
+        "sourceTag": "catalog",
+        "linkId": "route:/legacy",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/legacy",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/legacy",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "fixtureDerived": true,
+        "note": "Fixture-derived catalog presentation for source-compatible join wiring; not live traffic"
+      },
+      {
+        "id": "acq-nl06-activated:/legacy",
+        "kind": "linkActivated",
+        "sourceTag": "catalog",
+        "linkId": "route:/legacy",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/legacy",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/legacy",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "impliesBuyerIntent": false,
+        "fixtureDerived": true,
+        "note": "Fixture-derived activation for join wiring only; click ≠ conversion; not live traffic"
+      },
+      {
+        "id": "acq-nl06-presented:/maintenance",
+        "kind": "linkPresented",
+        "sourceTag": "catalog",
+        "linkId": "route:/maintenance",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/maintenance",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/maintenance",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "fixtureDerived": true,
+        "note": "Fixture-derived catalog presentation for source-compatible join wiring; not live traffic"
+      },
+      {
+        "id": "acq-nl06-activated:/maintenance",
+        "kind": "linkActivated",
+        "sourceTag": "catalog",
+        "linkId": "route:/maintenance",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/maintenance",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/maintenance",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "impliesBuyerIntent": false,
+        "fixtureDerived": true,
+        "note": "Fixture-derived activation for join wiring only; click ≠ conversion; not live traffic"
+      },
+      {
+        "id": "acq-nl06-presented:/old-blog",
+        "kind": "linkPresented",
+        "sourceTag": "catalog",
+        "linkId": "route:/old-blog",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/old-blog",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/old-blog",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "fixtureDerived": true,
+        "note": "Fixture-derived catalog presentation for source-compatible join wiring; not live traffic"
+      },
+      {
+        "id": "acq-nl06-activated:/old-blog",
+        "kind": "linkActivated",
+        "sourceTag": "catalog",
+        "linkId": "route:/old-blog",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/old-blog",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/old-blog",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "impliesBuyerIntent": false,
+        "fixtureDerived": true,
+        "note": "Fixture-derived activation for join wiring only; click ≠ conversion; not live traffic"
+      },
+      {
+        "id": "acq-nl06-presented:/pricing",
+        "kind": "linkPresented",
+        "sourceTag": "catalog",
+        "linkId": "route:/pricing",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/pricing",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/pricing",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "fixtureDerived": true,
+        "note": "Fixture-derived catalog presentation for source-compatible join wiring; not live traffic"
+      },
+      {
+        "id": "acq-nl06-activated:/pricing",
+        "kind": "linkActivated",
+        "sourceTag": "catalog",
+        "linkId": "route:/pricing",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/pricing",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/pricing",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "impliesBuyerIntent": false,
+        "fixtureDerived": true,
+        "note": "Fixture-derived activation for join wiring only; click ≠ conversion; not live traffic"
+      }
+    ],
+    "usefulOutputEvidence": [
+      {
+        "id": "out-nl06-route-repair:/changelog",
+        "kind": "run",
+        "provider": "grexal",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/changelog",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/changelog",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "note": "NL-04 repair: consider_listing_new_route for /changelog",
+        "routeRepair": {
+          "routeKey": "/changelog",
+          "delta": "added",
+          "recommendation": "consider_listing_new_route",
+          "confidence": "medium",
+          "coveragePreserved": true
+        }
+      },
+      {
+        "id": "out-nl06-route-repair:/docs",
+        "kind": "run",
+        "provider": "grexal",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/docs",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/docs",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "note": "NL-04 repair: update_listed_route_or_redirect_target for /docs",
+        "routeRepair": {
+          "routeKey": "/docs",
+          "delta": "redirected",
+          "recommendation": "update_listed_route_or_redirect_target",
+          "confidence": "high",
+          "coveragePreserved": true
+        }
+      },
+      {
+        "id": "out-nl06-route-repair:/legacy",
+        "kind": "run",
+        "provider": "grexal",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/legacy",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/legacy",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "note": "NL-04 repair: diagnose_access_or_listing_path for /legacy",
+        "routeRepair": {
+          "routeKey": "/legacy",
+          "delta": "inaccessible",
+          "recommendation": "diagnose_access_or_listing_path",
+          "confidence": "high",
+          "coveragePreserved": true
+        }
+      },
+      {
+        "id": "out-nl06-route-repair:/maintenance",
+        "kind": "run",
+        "provider": "grexal",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/maintenance",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/maintenance",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "note": "NL-04 repair: confirm_restored_route_in_listing for /maintenance",
+        "routeRepair": {
+          "routeKey": "/maintenance",
+          "delta": "restored",
+          "recommendation": "confirm_restored_route_in_listing",
+          "confidence": "medium",
+          "coveragePreserved": true
+        }
+      },
+      {
+        "id": "out-nl06-route-repair:/old-blog",
+        "kind": "run",
+        "provider": "grexal",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/old-blog",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/old-blog",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "note": "NL-04 repair: recommend_distribution_recheck for /old-blog",
+        "routeRepair": {
+          "routeKey": "/old-blog",
+          "delta": "removed",
+          "recommendation": "recommend_distribution_recheck",
+          "confidence": "high",
+          "coveragePreserved": false
+        }
+      },
+      {
+        "id": "out-nl06-route-repair:/pricing",
+        "kind": "run",
+        "provider": "grexal",
+        "jobRef": "nl-record-04:nl-04-feed-positive:/pricing",
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/pricing",
+        "at": "2026-09-10T12:00:00.000Z",
+        "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+        "note": "NL-04 repair: diagnose_access_or_listing_path for /pricing",
+        "routeRepair": {
+          "routeKey": "/pricing",
+          "delta": "inaccessible",
+          "recommendation": "diagnose_access_or_listing_path",
+          "confidence": "high",
+          "coveragePreserved": true
+        }
+      }
+    ],
+    "compatibility": {
+      "allowCatalogManualCrossProvider": false
+    },
+    "sourceFeed": {
+      "schema": "pilot.nl.record.dist_repair_feed.v1",
+      "feedId": "nl-04-feed-positive",
+      "status": "ready",
+      "currentCaptureIncomplete": false,
+      "pin": "8b8e44376e9414f540483a526b048beb9e4dc370"
+    }
+  },
+  "diagnosis": {
+    "schema": "pilot.r2.distribution.conversion_diagnosis.v1",
+    "generatedAt": "2026-09-10T20:15:00.000Z",
+    "cite": "NL-DISTRIBUTION-06 join: Record04@8b8e44376e9414f540483a526b048beb9e4dc370 → DIST-08@ea000772cdbd6d5df7174369dcef9aa2270e5723; S172@ea2938cfa68dadbe20a9d5ec096f315e59f4cdbe already done (no overlap)",
+    "joined": [
+      {
+        "acquisitionId": "acq-nl06-presented:/changelog",
+        "usefulOutputId": "out-nl06-route-repair:/changelog",
+        "compatibilityKeys": [
+          "sharedEvidenceId",
+          "jobRef"
+        ],
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/changelog",
+        "causationKnown": true,
+        "customerIndependenceKnown": false,
+        "unknowns": [
+          "customerIndependence: no independentCustomerRef proving a distinct customer actor",
+          "conversion: linkPresented/linkActivated is not conversion (click ≠ conversion)",
+          "revenue: no customer earnings/payout evidence joined — do not invent revenue from clicks or list price"
+        ],
+        "acquisition": {
+          "id": "acq-nl06-presented:/changelog",
+          "kind": "linkPresented",
+          "sourceTag": "catalog",
+          "provider": null,
+          "linkId": "route:/changelog",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/changelog",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/changelog",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json"
+        },
+        "usefulOutput": {
+          "id": "out-nl06-route-repair:/changelog",
+          "kind": "run",
+          "provider": "grexal",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/changelog",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/changelog",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+          "earningsStatus": null,
+          "pricingObserved": null,
+          "amount": null
+        },
+        "claims": {
+          "conversionFromClick": false,
+          "revenueFromListPrice": false,
+          "buyerIntentFromActivation": false,
+          "causationProven": true,
+          "customerIndependenceProven": false
+        }
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/changelog",
+        "usefulOutputId": "out-nl06-route-repair:/changelog",
+        "compatibilityKeys": [
+          "sharedEvidenceId",
+          "jobRef"
+        ],
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/changelog",
+        "causationKnown": true,
+        "customerIndependenceKnown": false,
+        "unknowns": [
+          "customerIndependence: no independentCustomerRef proving a distinct customer actor",
+          "conversion: linkPresented/linkActivated is not conversion (click ≠ conversion)",
+          "revenue: no customer earnings/payout evidence joined — do not invent revenue from clicks or list price",
+          "intent: linkActivated does not imply buyerIntent or purchaseIntent"
+        ],
+        "acquisition": {
+          "id": "acq-nl06-activated:/changelog",
+          "kind": "linkActivated",
+          "sourceTag": "catalog",
+          "provider": null,
+          "linkId": "route:/changelog",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/changelog",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/changelog",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json"
+        },
+        "usefulOutput": {
+          "id": "out-nl06-route-repair:/changelog",
+          "kind": "run",
+          "provider": "grexal",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/changelog",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/changelog",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+          "earningsStatus": null,
+          "pricingObserved": null,
+          "amount": null
+        },
+        "claims": {
+          "conversionFromClick": false,
+          "revenueFromListPrice": false,
+          "buyerIntentFromActivation": false,
+          "causationProven": true,
+          "customerIndependenceProven": false
+        }
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/docs",
+        "usefulOutputId": "out-nl06-route-repair:/docs",
+        "compatibilityKeys": [
+          "sharedEvidenceId",
+          "jobRef"
+        ],
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/docs",
+        "causationKnown": true,
+        "customerIndependenceKnown": false,
+        "unknowns": [
+          "customerIndependence: no independentCustomerRef proving a distinct customer actor",
+          "conversion: linkPresented/linkActivated is not conversion (click ≠ conversion)",
+          "revenue: no customer earnings/payout evidence joined — do not invent revenue from clicks or list price"
+        ],
+        "acquisition": {
+          "id": "acq-nl06-presented:/docs",
+          "kind": "linkPresented",
+          "sourceTag": "catalog",
+          "provider": null,
+          "linkId": "route:/docs",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/docs",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/docs",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json"
+        },
+        "usefulOutput": {
+          "id": "out-nl06-route-repair:/docs",
+          "kind": "run",
+          "provider": "grexal",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/docs",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/docs",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+          "earningsStatus": null,
+          "pricingObserved": null,
+          "amount": null
+        },
+        "claims": {
+          "conversionFromClick": false,
+          "revenueFromListPrice": false,
+          "buyerIntentFromActivation": false,
+          "causationProven": true,
+          "customerIndependenceProven": false
+        }
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/docs",
+        "usefulOutputId": "out-nl06-route-repair:/docs",
+        "compatibilityKeys": [
+          "sharedEvidenceId",
+          "jobRef"
+        ],
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/docs",
+        "causationKnown": true,
+        "customerIndependenceKnown": false,
+        "unknowns": [
+          "customerIndependence: no independentCustomerRef proving a distinct customer actor",
+          "conversion: linkPresented/linkActivated is not conversion (click ≠ conversion)",
+          "revenue: no customer earnings/payout evidence joined — do not invent revenue from clicks or list price",
+          "intent: linkActivated does not imply buyerIntent or purchaseIntent"
+        ],
+        "acquisition": {
+          "id": "acq-nl06-activated:/docs",
+          "kind": "linkActivated",
+          "sourceTag": "catalog",
+          "provider": null,
+          "linkId": "route:/docs",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/docs",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/docs",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json"
+        },
+        "usefulOutput": {
+          "id": "out-nl06-route-repair:/docs",
+          "kind": "run",
+          "provider": "grexal",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/docs",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/docs",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+          "earningsStatus": null,
+          "pricingObserved": null,
+          "amount": null
+        },
+        "claims": {
+          "conversionFromClick": false,
+          "revenueFromListPrice": false,
+          "buyerIntentFromActivation": false,
+          "causationProven": true,
+          "customerIndependenceProven": false
+        }
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/legacy",
+        "usefulOutputId": "out-nl06-route-repair:/legacy",
+        "compatibilityKeys": [
+          "sharedEvidenceId",
+          "jobRef"
+        ],
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/legacy",
+        "causationKnown": true,
+        "customerIndependenceKnown": false,
+        "unknowns": [
+          "customerIndependence: no independentCustomerRef proving a distinct customer actor",
+          "conversion: linkPresented/linkActivated is not conversion (click ≠ conversion)",
+          "revenue: no customer earnings/payout evidence joined — do not invent revenue from clicks or list price"
+        ],
+        "acquisition": {
+          "id": "acq-nl06-presented:/legacy",
+          "kind": "linkPresented",
+          "sourceTag": "catalog",
+          "provider": null,
+          "linkId": "route:/legacy",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/legacy",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/legacy",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json"
+        },
+        "usefulOutput": {
+          "id": "out-nl06-route-repair:/legacy",
+          "kind": "run",
+          "provider": "grexal",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/legacy",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/legacy",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+          "earningsStatus": null,
+          "pricingObserved": null,
+          "amount": null
+        },
+        "claims": {
+          "conversionFromClick": false,
+          "revenueFromListPrice": false,
+          "buyerIntentFromActivation": false,
+          "causationProven": true,
+          "customerIndependenceProven": false
+        }
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/legacy",
+        "usefulOutputId": "out-nl06-route-repair:/legacy",
+        "compatibilityKeys": [
+          "sharedEvidenceId",
+          "jobRef"
+        ],
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/legacy",
+        "causationKnown": true,
+        "customerIndependenceKnown": false,
+        "unknowns": [
+          "customerIndependence: no independentCustomerRef proving a distinct customer actor",
+          "conversion: linkPresented/linkActivated is not conversion (click ≠ conversion)",
+          "revenue: no customer earnings/payout evidence joined — do not invent revenue from clicks or list price",
+          "intent: linkActivated does not imply buyerIntent or purchaseIntent"
+        ],
+        "acquisition": {
+          "id": "acq-nl06-activated:/legacy",
+          "kind": "linkActivated",
+          "sourceTag": "catalog",
+          "provider": null,
+          "linkId": "route:/legacy",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/legacy",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/legacy",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json"
+        },
+        "usefulOutput": {
+          "id": "out-nl06-route-repair:/legacy",
+          "kind": "run",
+          "provider": "grexal",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/legacy",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/legacy",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+          "earningsStatus": null,
+          "pricingObserved": null,
+          "amount": null
+        },
+        "claims": {
+          "conversionFromClick": false,
+          "revenueFromListPrice": false,
+          "buyerIntentFromActivation": false,
+          "causationProven": true,
+          "customerIndependenceProven": false
+        }
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/maintenance",
+        "usefulOutputId": "out-nl06-route-repair:/maintenance",
+        "compatibilityKeys": [
+          "sharedEvidenceId",
+          "jobRef"
+        ],
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/maintenance",
+        "causationKnown": true,
+        "customerIndependenceKnown": false,
+        "unknowns": [
+          "customerIndependence: no independentCustomerRef proving a distinct customer actor",
+          "conversion: linkPresented/linkActivated is not conversion (click ≠ conversion)",
+          "revenue: no customer earnings/payout evidence joined — do not invent revenue from clicks or list price"
+        ],
+        "acquisition": {
+          "id": "acq-nl06-presented:/maintenance",
+          "kind": "linkPresented",
+          "sourceTag": "catalog",
+          "provider": null,
+          "linkId": "route:/maintenance",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/maintenance",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/maintenance",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json"
+        },
+        "usefulOutput": {
+          "id": "out-nl06-route-repair:/maintenance",
+          "kind": "run",
+          "provider": "grexal",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/maintenance",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/maintenance",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+          "earningsStatus": null,
+          "pricingObserved": null,
+          "amount": null
+        },
+        "claims": {
+          "conversionFromClick": false,
+          "revenueFromListPrice": false,
+          "buyerIntentFromActivation": false,
+          "causationProven": true,
+          "customerIndependenceProven": false
+        }
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/maintenance",
+        "usefulOutputId": "out-nl06-route-repair:/maintenance",
+        "compatibilityKeys": [
+          "sharedEvidenceId",
+          "jobRef"
+        ],
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/maintenance",
+        "causationKnown": true,
+        "customerIndependenceKnown": false,
+        "unknowns": [
+          "customerIndependence: no independentCustomerRef proving a distinct customer actor",
+          "conversion: linkPresented/linkActivated is not conversion (click ≠ conversion)",
+          "revenue: no customer earnings/payout evidence joined — do not invent revenue from clicks or list price",
+          "intent: linkActivated does not imply buyerIntent or purchaseIntent"
+        ],
+        "acquisition": {
+          "id": "acq-nl06-activated:/maintenance",
+          "kind": "linkActivated",
+          "sourceTag": "catalog",
+          "provider": null,
+          "linkId": "route:/maintenance",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/maintenance",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/maintenance",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json"
+        },
+        "usefulOutput": {
+          "id": "out-nl06-route-repair:/maintenance",
+          "kind": "run",
+          "provider": "grexal",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/maintenance",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/maintenance",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+          "earningsStatus": null,
+          "pricingObserved": null,
+          "amount": null
+        },
+        "claims": {
+          "conversionFromClick": false,
+          "revenueFromListPrice": false,
+          "buyerIntentFromActivation": false,
+          "causationProven": true,
+          "customerIndependenceProven": false
+        }
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/old-blog",
+        "usefulOutputId": "out-nl06-route-repair:/old-blog",
+        "compatibilityKeys": [
+          "sharedEvidenceId",
+          "jobRef"
+        ],
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/old-blog",
+        "causationKnown": true,
+        "customerIndependenceKnown": false,
+        "unknowns": [
+          "customerIndependence: no independentCustomerRef proving a distinct customer actor",
+          "conversion: linkPresented/linkActivated is not conversion (click ≠ conversion)",
+          "revenue: no customer earnings/payout evidence joined — do not invent revenue from clicks or list price"
+        ],
+        "acquisition": {
+          "id": "acq-nl06-presented:/old-blog",
+          "kind": "linkPresented",
+          "sourceTag": "catalog",
+          "provider": null,
+          "linkId": "route:/old-blog",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/old-blog",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/old-blog",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json"
+        },
+        "usefulOutput": {
+          "id": "out-nl06-route-repair:/old-blog",
+          "kind": "run",
+          "provider": "grexal",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/old-blog",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/old-blog",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+          "earningsStatus": null,
+          "pricingObserved": null,
+          "amount": null
+        },
+        "claims": {
+          "conversionFromClick": false,
+          "revenueFromListPrice": false,
+          "buyerIntentFromActivation": false,
+          "causationProven": true,
+          "customerIndependenceProven": false
+        }
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/old-blog",
+        "usefulOutputId": "out-nl06-route-repair:/old-blog",
+        "compatibilityKeys": [
+          "sharedEvidenceId",
+          "jobRef"
+        ],
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/old-blog",
+        "causationKnown": true,
+        "customerIndependenceKnown": false,
+        "unknowns": [
+          "customerIndependence: no independentCustomerRef proving a distinct customer actor",
+          "conversion: linkPresented/linkActivated is not conversion (click ≠ conversion)",
+          "revenue: no customer earnings/payout evidence joined — do not invent revenue from clicks or list price",
+          "intent: linkActivated does not imply buyerIntent or purchaseIntent"
+        ],
+        "acquisition": {
+          "id": "acq-nl06-activated:/old-blog",
+          "kind": "linkActivated",
+          "sourceTag": "catalog",
+          "provider": null,
+          "linkId": "route:/old-blog",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/old-blog",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/old-blog",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json"
+        },
+        "usefulOutput": {
+          "id": "out-nl06-route-repair:/old-blog",
+          "kind": "run",
+          "provider": "grexal",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/old-blog",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/old-blog",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+          "earningsStatus": null,
+          "pricingObserved": null,
+          "amount": null
+        },
+        "claims": {
+          "conversionFromClick": false,
+          "revenueFromListPrice": false,
+          "buyerIntentFromActivation": false,
+          "causationProven": true,
+          "customerIndependenceProven": false
+        }
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/pricing",
+        "usefulOutputId": "out-nl06-route-repair:/pricing",
+        "compatibilityKeys": [
+          "sharedEvidenceId",
+          "jobRef"
+        ],
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/pricing",
+        "causationKnown": true,
+        "customerIndependenceKnown": false,
+        "unknowns": [
+          "customerIndependence: no independentCustomerRef proving a distinct customer actor",
+          "conversion: linkPresented/linkActivated is not conversion (click ≠ conversion)",
+          "revenue: no customer earnings/payout evidence joined — do not invent revenue from clicks or list price"
+        ],
+        "acquisition": {
+          "id": "acq-nl06-presented:/pricing",
+          "kind": "linkPresented",
+          "sourceTag": "catalog",
+          "provider": null,
+          "linkId": "route:/pricing",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/pricing",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/pricing",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json"
+        },
+        "usefulOutput": {
+          "id": "out-nl06-route-repair:/pricing",
+          "kind": "run",
+          "provider": "grexal",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/pricing",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/pricing",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+          "earningsStatus": null,
+          "pricingObserved": null,
+          "amount": null
+        },
+        "claims": {
+          "conversionFromClick": false,
+          "revenueFromListPrice": false,
+          "buyerIntentFromActivation": false,
+          "causationProven": true,
+          "customerIndependenceProven": false
+        }
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/pricing",
+        "usefulOutputId": "out-nl06-route-repair:/pricing",
+        "compatibilityKeys": [
+          "sharedEvidenceId",
+          "jobRef"
+        ],
+        "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/pricing",
+        "causationKnown": true,
+        "customerIndependenceKnown": false,
+        "unknowns": [
+          "customerIndependence: no independentCustomerRef proving a distinct customer actor",
+          "conversion: linkPresented/linkActivated is not conversion (click ≠ conversion)",
+          "revenue: no customer earnings/payout evidence joined — do not invent revenue from clicks or list price",
+          "intent: linkActivated does not imply buyerIntent or purchaseIntent"
+        ],
+        "acquisition": {
+          "id": "acq-nl06-activated:/pricing",
+          "kind": "linkActivated",
+          "sourceTag": "catalog",
+          "provider": null,
+          "linkId": "route:/pricing",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/pricing",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/pricing",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json"
+        },
+        "usefulOutput": {
+          "id": "out-nl06-route-repair:/pricing",
+          "kind": "run",
+          "provider": "grexal",
+          "jobRef": "nl-record-04:nl-04-feed-positive:/pricing",
+          "sharedEvidenceId": "nl-record-04:nl-04-feed-positive:/pricing",
+          "independentCustomerRef": null,
+          "at": "2026-09-10T12:00:00.000Z",
+          "evidenceRef": "experiments/scale-r2-20260910/record_jobs/nl-04-dist-feed/artifacts/dist-repair-feed.positive.json",
+          "earningsStatus": null,
+          "pricingObserved": null,
+          "amount": null
+        },
+        "claims": {
+          "conversionFromClick": false,
+          "revenueFromListPrice": false,
+          "buyerIntentFromActivation": false,
+          "causationProven": true,
+          "customerIndependenceProven": false
+        }
+      }
+    ],
+    "unjoined": [
+      {
+        "acquisitionId": "acq-nl06-presented:/changelog",
+        "usefulOutputId": "out-nl06-route-repair:/docs",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/changelog",
+        "usefulOutputId": "out-nl06-route-repair:/legacy",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/changelog",
+        "usefulOutputId": "out-nl06-route-repair:/maintenance",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/changelog",
+        "usefulOutputId": "out-nl06-route-repair:/old-blog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/changelog",
+        "usefulOutputId": "out-nl06-route-repair:/pricing",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/changelog",
+        "usefulOutputId": "out-nl06-route-repair:/docs",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/changelog",
+        "usefulOutputId": "out-nl06-route-repair:/legacy",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/changelog",
+        "usefulOutputId": "out-nl06-route-repair:/maintenance",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/changelog",
+        "usefulOutputId": "out-nl06-route-repair:/old-blog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/changelog",
+        "usefulOutputId": "out-nl06-route-repair:/pricing",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/docs",
+        "usefulOutputId": "out-nl06-route-repair:/changelog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/docs",
+        "usefulOutputId": "out-nl06-route-repair:/legacy",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/docs",
+        "usefulOutputId": "out-nl06-route-repair:/maintenance",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/docs",
+        "usefulOutputId": "out-nl06-route-repair:/old-blog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/docs",
+        "usefulOutputId": "out-nl06-route-repair:/pricing",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/docs",
+        "usefulOutputId": "out-nl06-route-repair:/changelog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/docs",
+        "usefulOutputId": "out-nl06-route-repair:/legacy",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/docs",
+        "usefulOutputId": "out-nl06-route-repair:/maintenance",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/docs",
+        "usefulOutputId": "out-nl06-route-repair:/old-blog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/docs",
+        "usefulOutputId": "out-nl06-route-repair:/pricing",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/legacy",
+        "usefulOutputId": "out-nl06-route-repair:/changelog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/legacy",
+        "usefulOutputId": "out-nl06-route-repair:/docs",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/legacy",
+        "usefulOutputId": "out-nl06-route-repair:/maintenance",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/legacy",
+        "usefulOutputId": "out-nl06-route-repair:/old-blog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/legacy",
+        "usefulOutputId": "out-nl06-route-repair:/pricing",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/legacy",
+        "usefulOutputId": "out-nl06-route-repair:/changelog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/legacy",
+        "usefulOutputId": "out-nl06-route-repair:/docs",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/legacy",
+        "usefulOutputId": "out-nl06-route-repair:/maintenance",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/legacy",
+        "usefulOutputId": "out-nl06-route-repair:/old-blog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/legacy",
+        "usefulOutputId": "out-nl06-route-repair:/pricing",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/maintenance",
+        "usefulOutputId": "out-nl06-route-repair:/changelog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/maintenance",
+        "usefulOutputId": "out-nl06-route-repair:/docs",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/maintenance",
+        "usefulOutputId": "out-nl06-route-repair:/legacy",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/maintenance",
+        "usefulOutputId": "out-nl06-route-repair:/old-blog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/maintenance",
+        "usefulOutputId": "out-nl06-route-repair:/pricing",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/maintenance",
+        "usefulOutputId": "out-nl06-route-repair:/changelog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/maintenance",
+        "usefulOutputId": "out-nl06-route-repair:/docs",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/maintenance",
+        "usefulOutputId": "out-nl06-route-repair:/legacy",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/maintenance",
+        "usefulOutputId": "out-nl06-route-repair:/old-blog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/maintenance",
+        "usefulOutputId": "out-nl06-route-repair:/pricing",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/old-blog",
+        "usefulOutputId": "out-nl06-route-repair:/changelog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/old-blog",
+        "usefulOutputId": "out-nl06-route-repair:/docs",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/old-blog",
+        "usefulOutputId": "out-nl06-route-repair:/legacy",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/old-blog",
+        "usefulOutputId": "out-nl06-route-repair:/maintenance",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/old-blog",
+        "usefulOutputId": "out-nl06-route-repair:/pricing",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/old-blog",
+        "usefulOutputId": "out-nl06-route-repair:/changelog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/old-blog",
+        "usefulOutputId": "out-nl06-route-repair:/docs",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/old-blog",
+        "usefulOutputId": "out-nl06-route-repair:/legacy",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/old-blog",
+        "usefulOutputId": "out-nl06-route-repair:/maintenance",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/old-blog",
+        "usefulOutputId": "out-nl06-route-repair:/pricing",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/pricing",
+        "usefulOutputId": "out-nl06-route-repair:/changelog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/pricing",
+        "usefulOutputId": "out-nl06-route-repair:/docs",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/pricing",
+        "usefulOutputId": "out-nl06-route-repair:/legacy",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/pricing",
+        "usefulOutputId": "out-nl06-route-repair:/maintenance",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-presented:/pricing",
+        "usefulOutputId": "out-nl06-route-repair:/old-blog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/pricing",
+        "usefulOutputId": "out-nl06-route-repair:/changelog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/pricing",
+        "usefulOutputId": "out-nl06-route-repair:/docs",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/pricing",
+        "usefulOutputId": "out-nl06-route-repair:/legacy",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/pricing",
+        "usefulOutputId": "out-nl06-route-repair:/maintenance",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      },
+      {
+        "acquisitionId": "acq-nl06-activated:/pricing",
+        "usefulOutputId": "out-nl06-route-repair:/old-blog",
+        "reason": "incompatible_ambiguous_sourceTag: sourceTag=catalog needs jobRef or sharedEvidenceId to join provider=grexal",
+        "acquisitionSourceTag": "catalog",
+        "usefulOutputProvider": "grexal"
+      }
+    ],
+    "missingInputs": [],
+    "privacyNotes": [
+      "Joins only source-compatible acquisition ↔ useful-output pairs.",
+      "causationKnown defaults false unless sharedEvidenceId matches on both sides.",
+      "customerIndependenceKnown defaults false unless independentCustomerRef matches.",
+      "click/activation ≠ conversion; list pricing ≠ revenue.",
+      "unavailable omits activationCount/usefulOutputActionableCount; no_users sets zeros."
+    ],
+    "truthNotes": [
+      "DEMO fixtures extend DIST-04 acquisition + DIST-05 useful-output shapes; no fake buyers/revenue.",
+      "Grexal S149: PUBLIC_ACTIVE agentId j970cajvv6wbrmy64s2f4ajzw18e5j2q; pricing run_completed 0.02 USD (estimate reserve 0.025 is NOT a charge).",
+      "Grexal: customerExecutionRevenuePayout=false — earnings unavailable (pricing ≠ earnings).",
+      "Agensi: Free PendingReview; 0 installs — do not invent installs/revenue.",
+      "unavailable ≠ no_users; causation/independence unknown by default."
+    ],
+    "mutationBoundary": {
+      "executesProviderMutations": false,
+      "forbids": [
+        "grexal login",
+        "agensi Bot login",
+        "price / publish / review-submit",
+        "invent buyers or revenue",
+        "equate click/activation with conversion",
+        "treat list pricing as earnings/payout",
+        "claim causation without sharedEvidenceId",
+        "claim customerIndependence without independentCustomerRef",
+        "collapse unavailable into no_users",
+        "join incompatible sourceTag/provider/jobRef pairs as converted"
+      ],
+      "ownerOfPublicationAndPrice": "Root",
+      "ownerOfPendingReviewOutcome": "Root"
+    },
+    "evidenceIndex": "evidence/INDEX.md",
+    "grexalS149": {
+      "listingStatus": "PUBLIC_ACTIVE",
+      "agentId": "j970cajvv6wbrmy64s2f4ajzw18e5j2q",
+      "pricingRunCompletedUsd": 0.02,
+      "estimateReserveIsCharge": false,
+      "customerExecutionRevenuePayout": false,
+      "receiptRef": "/workspace/pilot/receipts/scale-bot-0909/r2-team/receipts-grexal-s149.json",
+      "note": "List price ≠ revenue; no customer payout claimed"
+    },
+    "summary": {
+      "acquisitionEvents": 12,
+      "usefulOutputEvents": 6,
+      "joinedCount": 12,
+      "unjoinedCount": 60,
+      "causationKnownCount": 12,
+      "independenceKnownCount": 0
+    },
+    "status": "available",
+    "label": "source_compatible_joins_diagnosed",
+    "reason": "Joined 6 Record04 repair recommendation(s) into DIST-08 conversion bundle",
+    "activationCount": 6,
+    "usefulOutputActionableCount": 6,
+    "routeRepairIndex": [
+      {
+        "routeKey": "/changelog",
+        "delta": "added",
+        "recommendation": "consider_listing_new_route",
+        "confidence": "medium",
+        "coveragePreserved": true,
+        "jobRef": "nl-record-04:nl-04-feed-positive:/changelog"
+      },
+      {
+        "routeKey": "/docs",
+        "delta": "redirected",
+        "recommendation": "update_listed_route_or_redirect_target",
+        "confidence": "high",
+        "coveragePreserved": true,
+        "jobRef": "nl-record-04:nl-04-feed-positive:/docs"
+      },
+      {
+        "routeKey": "/legacy",
+        "delta": "inaccessible",
+        "recommendation": "diagnose_access_or_listing_path",
+        "confidence": "high",
+        "coveragePreserved": true,
+        "jobRef": "nl-record-04:nl-04-feed-positive:/legacy"
+      },
+      {
+        "routeKey": "/maintenance",
+        "delta": "restored",
+        "recommendation": "confirm_restored_route_in_listing",
+        "confidence": "medium",
+        "coveragePreserved": true,
+        "jobRef": "nl-record-04:nl-04-feed-positive:/maintenance"
+      },
+      {
+        "routeKey": "/old-blog",
+        "delta": "removed",
+        "recommendation": "recommend_distribution_recheck",
+        "confidence": "high",
+        "coveragePreserved": false,
+        "jobRef": "nl-record-04:nl-04-feed-positive:/old-blog"
+      },
+      {
+        "routeKey": "/pricing",
+        "delta": "inaccessible",
+        "recommendation": "diagnose_access_or_listing_path",
+        "confidence": "high",
+        "coveragePreserved": true,
+        "jobRef": "nl-record-04:nl-04-feed-positive:/pricing"
+      }
+    ],
+    "nl06": {
+      "record04ExportPin": "8b8e44376e9414f540483a526b048beb9e4dc370",
+      "dist08Pin": "ea000772cdbd6d5df7174369dcef9aa2270e5723",
+      "s172TipDone": "ea2938cfa68dadbe20a9d5ec096f315e59f4cdbe",
+      "feedId": "nl-04-feed-positive",
+      "feedStatus": "ready",
+      "currentCaptureIncomplete": false
+    }
+  },
+  "beforeAfter": {
+    "schema": "pilot.nl.record.route_repair_before_after.v1",
+    "sourceFeed": {
+      "schema": "pilot.nl.record.dist_repair_feed.v1",
+      "feedId": "nl-04-feed-positive",
+      "status": "ready",
+      "merchantPin": "a7e2cd7a2223e2aa7e7e09eebf3695aba4731205",
+      "dist08Cite": "ea000772cdbd6d5df7174369dcef9aa2270e5723",
+      "record04ExportPin": "8b8e44376e9414f540483a526b048beb9e4dc370"
+    },
+    "routeKey": "/docs",
+    "before": {
+      "deltaObserved": "redirected",
+      "notes": [
+        "finalUrl / redirect location changed between snapshots."
+      ],
+      "listingImplication": "listed_path_may_point_at_stale_target"
+    },
+    "after": {
+      "recommendation": "update_listed_route_or_redirect_target",
+      "confidence": "high",
+      "coveragePreserved": true,
+      "actionableStep": "Update distribution listing URL/redirect to match current finalUrl from supplied pair."
+    },
+    "scopeNote": "Fixture derived from NL-RECORD-04 supplied-pair feed only. Not a crawl; not traffic/ranking/revenue.",
+    "routeReportSummary": {
+      "status": "ready",
+      "baselineMeta": {
+        "label": "baseline-2026-09-01",
+        "capturedAt": "2026-09-01T00:00:00.000Z",
+        "routeCount": 6
+      },
+      "currentMeta": {
+        "label": "current-2026-09-10",
+        "capturedAt": "2026-09-10T00:00:00.000Z",
+        "routeCount": 6
+      },
+      "deltaCounts": {
+        "unchanged": 1,
+        "removed": 1,
+        "redirected": 1,
+        "inaccessible": 2,
+        "restored": 1,
+        "status_changed": 0,
+        "added": 1
+      }
+    }
+  },
+  "joinableCount": 6,
+  "claims": {
+    "conversionFromClick": false,
+    "revenueFromListPrice": false,
+    "buyerIntentFromActivation": false,
+    "fixtureDerivedJoin": true,
+    "denies": [
+      "invented_revenue",
+      "live_traffic",
+      "seo_ranking"
+    ]
+  }
+}
