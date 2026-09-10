@@ -113,8 +113,10 @@ export function buildPortableCatalog(inventory, options = {}) {
     packages,
     missingInputs: missing,
     truthNotes: [
-      "Public marketplace listing was not observed for Grexal (draft_private) or Agensi beyond PendingReview.",
-      "Do not invent public availability or user counts.",
+      "Grexal availability is active_public per S149 PUBLIC_ACTIVE receipt (exact agentId/deployment/pricing).",
+      "Agensi remains pending_review / Free with installs=0; no invented demand.",
+      "No customer execution/revenue/payout connection yet (customerExecutionRevenuePayout=false).",
+      "Do not invent public availability or user counts beyond cited receipts.",
       "unavailable ≠ no_users: unavailable omits users; no_users means capture succeeded with zero users.",
       "Install commands are quoted from package READMEs; observed=true only when evidence shows a successful run.",
     ],
@@ -149,13 +151,41 @@ function normalizeAvailability(av) {
       evidenceRefs: av.evidenceRefs || [],
     };
   }
-  return {
+  if (av.status === AVAILABILITY_STATUS.ACTIVE_PUBLIC) {
+    return {
+      status: AVAILABILITY_STATUS.ACTIVE_PUBLIC,
+      label: availabilityLabel(av.status),
+      reason: av.reason || null,
+      observedAt: av.observedAt || null,
+      evidenceRefs: av.evidenceRefs || [],
+      agentId: av.agentId,
+      deploymentId: av.deploymentId,
+      deploymentVersion: av.deploymentVersion,
+      pricing: av.pricing
+        ? {
+            version: av.pricing.version,
+            run_completed_usd: av.pricing.run_completed_usd,
+            estimate_reserve_usd: av.pricing.estimate_reserve_usd,
+            estimateReserveIsCharge: av.pricing.estimateReserveIsCharge === true,
+          }
+        : null,
+      category: av.category || null,
+      tags: Array.isArray(av.tags) ? [...av.tags] : [],
+      homepage: av.homepage || null,
+      // Authoritative: no customer execution/revenue/payout connection yet
+      customerExecutionRevenuePayout: av.customerExecutionRevenuePayout === true,
+    };
+  }
+  const out = {
     status: av.status,
     label: availabilityLabel(av.status),
     reason: av.reason || null,
     observedAt: av.observedAt || null,
     evidenceRefs: av.evidenceRefs || [],
   };
+  if (av.installs !== undefined) out.installs = av.installs;
+  if (av.tier !== undefined) out.tier = av.tier;
+  return out;
 }
 
 function availabilityLabel(status) {
@@ -164,6 +194,8 @@ function availabilityLabel(status) {
       return "local_package_tree_present";
     case AVAILABILITY_STATUS.DRAFT_PRIVATE:
       return "provider_draft_private_no_public_listing_observed";
+    case AVAILABILITY_STATUS.ACTIVE_PUBLIC:
+      return "provider_public_active_priced_deployment";
     case AVAILABILITY_STATUS.PENDING_REVIEW:
       return "provider_pending_review_root_owns_next";
     default:

@@ -89,7 +89,17 @@ try {
             status: positive.status,
             packageIds: positive.packages.map((p) => p.id),
             grexalAvailability: grexal?.availability?.status,
+            grexalAgentId: grexal?.availability?.agentId,
+            grexalDeploymentId: grexal?.availability?.deploymentId,
+            grexalDeploymentVersion: grexal?.availability?.deploymentVersion,
+            grexalPricing: grexal?.availability?.pricing,
+            grexalCategory: grexal?.availability?.category,
+            grexalHomepage: grexal?.availability?.homepage,
+            grexalCustomerExecutionRevenuePayout:
+              grexal?.availability?.customerExecutionRevenuePayout,
             agensiAvailability: agensi?.availability?.status,
+            agensiTier: agensi?.availability?.tier,
+            agensiInstalls: agensi?.availability?.installs,
             grexalObservedCmds: grexal?.installCommands?.filter((c) => c.observed).map((c) => c.command),
             grexalRecommendedNotRun: grexal?.installCommands
               ?.filter((c) => !c.observed)

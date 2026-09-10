@@ -105,6 +105,52 @@ function validateAvailability(av, path) {
       );
     }
   }
+  if (av.status === AVAILABILITY_STATUS.ACTIVE_PUBLIC) {
+    for (const k of ["agentId", "deploymentId", "deploymentVersion", "category", "homepage"]) {
+      if (typeof av[k] !== "string" || !av[k].trim()) {
+        throw catalogError(
+          ERROR_CODES.INVALID_INPUT,
+          `${path}.status=active_public requires non-empty ${k}`,
+        );
+      }
+    }
+    if (!isPlainObject(av.pricing)) {
+      throw catalogError(
+        ERROR_CODES.INVALID_INPUT,
+        `${path}.status=active_public requires pricing object`,
+      );
+    }
+    if (typeof av.pricing.run_completed_usd !== "number") {
+      throw catalogError(
+        ERROR_CODES.INVALID_INPUT,
+        `${path}.pricing.run_completed_usd must be a number`,
+      );
+    }
+    if (typeof av.pricing.estimate_reserve_usd !== "number") {
+      throw catalogError(
+        ERROR_CODES.INVALID_INPUT,
+        `${path}.pricing.estimate_reserve_usd must be a number`,
+      );
+    }
+    if (typeof av.pricing.estimateReserveIsCharge !== "boolean") {
+      throw catalogError(
+        ERROR_CODES.INVALID_INPUT,
+        `${path}.pricing.estimateReserveIsCharge must be boolean`,
+      );
+    }
+    if (!Array.isArray(av.tags)) {
+      throw catalogError(
+        ERROR_CODES.INVALID_INPUT,
+        `${path}.status=active_public requires tags array`,
+      );
+    }
+    if (av.customerExecutionRevenuePayout !== false && av.customerExecutionRevenuePayout !== true) {
+      throw catalogError(
+        ERROR_CODES.INVALID_INPUT,
+        `${path}.customerExecutionRevenuePayout must be boolean when status=active_public`,
+      );
+    }
+  }
 }
 
 function validatePackageEntry(entry, index) {

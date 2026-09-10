@@ -7,6 +7,7 @@ export const CATALOG_SCHEMA = "pilot.r2.distribution.portable_package_catalog.v1
  * Package availability statuses.
  * - available_local: package tree present locally; offline install/validate runnable
  * - draft_private: provider draft exists; visibility private; public listing not observed
+ * - active_public: provider PUBLIC_ACTIVE (authoritative receipt); public deployment + pricing observed
  * - pending_review: provider review pending; Root owns next event
  * - unavailable: capture/provider read could not be obtained (do NOT claim zero users)
  * - no_users: capture succeeded; users/installs/runs are zero
@@ -15,6 +16,7 @@ export const CATALOG_SCHEMA = "pilot.r2.distribution.portable_package_catalog.v1
 export const AVAILABILITY_STATUS = Object.freeze({
   AVAILABLE_LOCAL: "available_local",
   DRAFT_PRIVATE: "draft_private",
+  ACTIVE_PUBLIC: "active_public",
   PENDING_REVIEW: "pending_review",
   UNAVAILABLE: "unavailable",
   NO_USERS: "no_users",

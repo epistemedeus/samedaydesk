@@ -19,7 +19,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const load = (name) => JSON.parse(readFileSync(join(root, "fixtures", name), "utf8"));
 const clock = () => Date.parse("2026-09-10T18:45:00.000Z");
 
-test("positive: Grexal+Agensi catalog with observed vs recommended-not-run cmds", () => {
+test("positive: Grexal active_public (S149) + Agensi pending_review", () => {
   const catalog = buildPortableCatalog(load("inventory.positive.json"), { clock });
   assert.equal(catalog.schema, CATALOG_SCHEMA);
   assert.equal(catalog.status, CATALOG_STATUS.READY);
@@ -31,8 +31,26 @@ test("positive: Grexal+Agensi catalog with observed vs recommended-not-run cmds"
   assert.ok(grexal);
   assert.ok(agensi);
   assert.equal(grexal.sourcePin, "53dbb7adde7dfe89f4dc1fb5efe380389b4e420d");
-  assert.equal(grexal.availability.status, AVAILABILITY_STATUS.DRAFT_PRIVATE);
+  assert.equal(grexal.availability.status, AVAILABILITY_STATUS.ACTIVE_PUBLIC);
+  assert.equal(grexal.availability.agentId, "j970cajvv6wbrmy64s2f4ajzw18e5j2q");
+  assert.equal(grexal.availability.deploymentId, "j570f14047dzpkhc0trh3fnp8s8e43sd");
+  assert.equal(grexal.availability.deploymentVersion, "v1");
+  assert.equal(grexal.availability.pricing.run_completed_usd, 0.02);
+  assert.equal(grexal.availability.pricing.estimate_reserve_usd, 0.025);
+  assert.equal(grexal.availability.pricing.estimateReserveIsCharge, false);
+  assert.equal(grexal.availability.category, "developer-tools");
+  assert.deepEqual(grexal.availability.tags, ["code", "diff", "evidence", "validation"]);
+  assert.equal(grexal.availability.homepage, "samedaydesk.com");
+  assert.equal(grexal.availability.customerExecutionRevenuePayout, false);
+  assert.ok(
+    grexal.availability.evidenceRefs.some((r) =>
+      r.includes("receipts/scale-bot-0909/r2-team/receipts-grexal-s149.json"),
+    ),
+  );
+
   assert.equal(agensi.availability.status, AVAILABILITY_STATUS.PENDING_REVIEW);
+  assert.equal(agensi.availability.installs, 0);
+  assert.equal(agensi.availability.tier, "Free");
   assert.equal(agensi.sourcePin, "8d677a68e320cc34050d533613530d3397cae630");
 
   const observed = grexal.installCommands.filter((c) => c.observed);
@@ -45,6 +63,16 @@ test("positive: Grexal+Agensi catalog with observed vs recommended-not-run cmds"
   assert.equal(catalog.mutationBoundary.executesProviderMutations, false);
   assert.equal(catalog.mutationBoundary.rebuildsPackages, false);
   validateCatalog(catalog);
+});
+
+test("active_public: exact S149 pricing/deployment fields required by validate", () => {
+  const inv = load("inventory.positive.json");
+  const bad = structuredClone(inv);
+  delete bad.packages[0].availability.pricing.estimateReserveIsCharge;
+  assert.throws(
+    () => validateInventory(bad),
+    (err) => err.code === ERROR_CODES.INVALID_INPUT,
+  );
 });
 
 test("negative: malformed inventory with invented buyers/revenue is rejected", () => {
@@ -111,10 +139,11 @@ test("validateCatalog rejects collapsed unavailable+users=0 pairing via labels",
   );
 });
 
-test("availability statuses include required set", () => {
+test("availability statuses include required set including active_public", () => {
   const required = [
     "available_local",
     "draft_private",
+    "active_public",
     "pending_review",
     "unavailable",
     "no_users",
