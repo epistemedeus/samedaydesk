@@ -1,0 +1,40 @@
+{
+  "surface": "agensi",
+  "actor": "root",
+  "workerMustNotAuthenticate": true,
+  "skillRecipePin": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
+  "cloudflareAccessUrl": "https://www.agensi.dev/sell",
+  "publicSellerUrl": "https://www.agensi.io/sell",
+  "primaryTaskHost": {
+    "url": "https://www.agensi.dev/sell",
+    "gate": "Cloudflare Access",
+    "teamHost": "mlehman-899.cloudflareaccess.com",
+    "idp": "GitHub",
+    "oauthClientIdObserved": "Ov23liDyjGUvNI6tlI7S",
+    "anonymousResult": "HTTP 302 to Cloudflare Access login HTML titled 'Sign in ・ Cloudflare Access'; button 'Sign in with: GitHub ・ GitHub'."
+  },
+  "alternatePublicMarketplace": {
+    "authUrl": "https://www.agensi.io/auth",
+    "submitUrl": "https://www.agensi.io/dashboard/submit",
+    "idpNote": "agensi.io /auth is email/password, 6-digit email code, or Continue with Google. There is no GitHub button on that page. Not Cloudflare Access."
+  },
+  "steps": [
+    "Root opens https://www.agensi.dev/sell in a browser they control (this worker will not).",
+    "Complete Cloudflare Access using the GitHub IdP labeled 'GitHub ・ GitHub' against team host mlehman-899.cloudflareaccess.com.",
+    "After Access, capture HTTP status, page title, and enough body text to prove whether the origin is an Agensi seller UI or an unrelated private app. That origin is unknown from this worker.",
+    "Do not paste Cloudflare session cookies, CF_Authorization, or GitHub OAuth tokens into this public overlay.",
+    "If the post-Access origin is not a seller UI, use the public marketplace path: https://www.agensi.io/auth (email/password, 6-digit email code, or Google — not GitHub). Worker will not sign up.",
+    "In the creator dashboard, inspect payout-method state without publishing: Stripe Connect connected true/false, and/or Zoneless USDC-on-Solana enabled true/false.",
+    "Capture verbatim current fee, minimum-price, and payout copy from the authenticated submit flow. Keep private account IDs, bank last-fours, and payout wallets out of this overlay.",
+    "Only after a payout method is enabled may Root draft a listing that cites pin 82d0f019713c7223898806144da08fdbeed5c666 and sells packaging, acceptance formatting, and ops — not proprietary ownership of the free public recipes. This worker will not list."
+  ],
+  "doNotPasteIntoOverlay": [
+    "Cloudflare Access cookies / CF_Authorization",
+    "GitHub OAuth access tokens or refresh tokens",
+    "Agensi account ids or emails",
+    "Stripe Connect account ids or bank last-fours",
+    "Zoneless / Solana payout wallet addresses"
+  ],
+  "successPredicate": "HTTP 200 creator submit form after a Root session cookie, quoting enabled payout rails (Stripe connected and/or Zoneless enabled) without a publish.",
+  "failurePredicate": "Access deny, Agensi reject, or paid-publish blocked with ToS §6.1 quote. Worker must still not retry auth or list."
+}

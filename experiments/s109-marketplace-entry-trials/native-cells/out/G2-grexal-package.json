@@ -1,0 +1,167 @@
+{
+  "cell": "G2-grexal-package",
+  "cohort": "c2-packages",
+  "surface": "grexal",
+  "asOf": "2026-09-10T09:03:09Z",
+  "cashBoundaryUsd": 0,
+  "cashBoundary": {
+    "usd": 0,
+    "didNot": [
+      "npx grexal login",
+      "account signup at grexal.ai",
+      "grexal push / publish / deploy / delete",
+      "grexal init (would write a new project; this tree is vendored)",
+      "grexal agent set-* / price add / price estimate",
+      "grexal runs invoke",
+      "buyer credit top-up",
+      "paid model / LLM API calls inside the agent"
+    ]
+  },
+  "newFact": "Vendored a Grexal manifest_version 3 'source-change evidence packager' at surfaces/grexal/package: grexal.json runtime contract only (typed input_schema/output_schema, runtime.language=typescript, entrypoint agent/pack_evidence.js). Dashboard fields name/description/category/tags/pricing/visibility are omitted — grexal@0.4.1 would reject them. Local identity stub .grexal/agent.json is {\"name\":\"samedaydesk-source-change-evidence\"} with no agentId (agentId is minted on first push, not done). The agent packages git diff + acceptance JSON and hard-codes paidModelCalls=0. Unpacked grexal@0.4.1 `validate` printed \"Manifest valid ✓\" without login. Fee worksheet uses docs clamp platform_fee = clamp(buyer_charge×0.20, $0.02, buyer_charge×0.30): $0.10 → fee $0.02 keep $0.08; $0.05 → fee $0.015 (30% cap); $0.18 → fee $0.036 keep $0.144. This agent has $0 upstream LLM cost, so the unpublished suggested line item is run_completed $0.10 (target net $0.08 / 0.80) — not the docs $0.18 Claude example. npx grexal was not invoked; --help ran from the G1-unpacked tarball. No publish/deploy/auth.",
+  "observedPath": "Corrected the G2 scaffold grexal.json against G1 + grexal@0.4.1 validateManifest (unpacked /tmp/grexal-inspect/grexal-0.4.1.tgz): runtime must be an object with language python|typescript; schemas are flattened typed maps (text|file|number|boolean|json); entrypoint extension .ts/.js; description/name/pricing rejected. Vendored identity stub, pack_evidence.js, offline validator, fee worksheet, price-estimate.md/json. Ran node --test (8 pass). Installed CLI runtime deps only under /tmp/grexal-inspect/cli/package (commander, chokidar, tsx, @grexal/sdk@0.0.2; $0 npm, --ignore-scripts) to execute local `grexal --help` and `grexal validate`. Did not run npx, login, init, push, publish, deploy, or price add. ~/.grexal did not exist after those commands.",
+  "artifactPath": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/grexal.json",
+  "runnablePath": [
+    "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/validate-manifest.mjs",
+    "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/fee-worksheet.mjs",
+    "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js",
+    "npm --prefix experiments/s109-marketplace-entry-trials/surfaces/grexal/package test"
+  ],
+  "authenticatedStepNeeded": "Root: npx grexal login, then first grexal push (mints agentId into .grexal/agent.json), then grexal agent set-description/set-category/set-tags plus grexal agent price add run_completed 0.10, then publish. Not this worker. Unknown demand is not a blocker.",
+  "npxGrexalHelp": {
+    "npxInvoked": false,
+    "reason": "Prompt prefers vendoring grexal.json + docs-formula worksheet; npx would re-download the CLI. Equivalent --help ran from the already-unpacked grexal@0.4.1 tarball after a $0 /tmp npm install of its runtime deps.",
+    "localBinary": "/tmp/grexal-inspect/cli/package/dist/index.js",
+    "helpRanWithoutAuth": true,
+    "helpCommandsSeen": [
+      "validate",
+      "init",
+      "dev",
+      "login",
+      "logout",
+      "push",
+      "deploy",
+      "publish",
+      "unpublish",
+      "delete",
+      "agent",
+      "deployments",
+      "runs",
+      "env",
+      "connections"
+    ],
+    "binaryVersionFlag": "0.1.0",
+    "npmPackageVersion": "0.4.1",
+    "officialValidateOnThisTree": "Manifest valid ✓",
+    "credentialsWritten": false,
+    "credentialsPath": "~/.grexal/credentials.json"
+  },
+  "package": {
+    "root": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package",
+    "npmName": "@samedaydesk/s109-grexal-evidence-agent-scaffold",
+    "private": true,
+    "grexalJsonSha256": "7440dfacada0bd06ef16e27d51a943c0be4117ec170a16b31c11027a480b637c",
+    "identityStub": {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/.grexal/agent.json",
+      "contents": { "name": "samedaydesk-source-change-evidence" },
+      "note": "init writes {name}; first push rewrites to {agentId}. This stub is the pre-push form."
+    },
+    "manifest": {
+      "manifest_version": 3,
+      "entrypoint": "agent/pack_evidence.js",
+      "runtime": {
+        "language": "typescript",
+        "memory_mb": 512,
+        "timeout_seconds": 120,
+        "cpu": 1,
+        "sandbox_template": "standard"
+      },
+      "schemaShape": "flattened typed maps (grexal@0.4.1 init form), not v1 JSON-Schema {type:object,properties}",
+      "connections": "omitted (none; no LLM/API secrets)",
+      "omittedDashboardFields": [
+        "name",
+        "description",
+        "category",
+        "tags",
+        "homepage",
+        "repository",
+        "icon",
+        "is_open_source",
+        "pricing",
+        "visibility"
+      ]
+    },
+    "agent": {
+      "role": "source-change-evidence-packager",
+      "inputs": ["repoPath", "unifiedDiff", "baseRef", "headRef", "acceptanceNotes"],
+      "outputs": ["summary", "commitRange", "diffBytes", "paidModelCalls", "acceptanceReport", "evidencePack"],
+      "paidModelCalls": 0,
+      "network": "none"
+    }
+  },
+  "feeWorksheet": {
+    "pathMd": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/worksheets/price-estimate.md",
+    "pathJson": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/worksheets/price-estimate.json",
+    "runnable": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/fee-worksheet.mjs --table",
+    "primaryCitation": "https://docs.grexal.ai/docs/payments",
+    "formula": "platform_fee = clamp(buyer_charge × 0.20, $0.02, buyer_charge × 0.30)",
+    "thisAgentSuggestedUnpublishedLineItem": {
+      "unit": "run_completed",
+      "amountUsd": 0.1,
+      "targetNetUsd": 0.08,
+      "upstreamLlmUsd": 0,
+      "notInManifest": true,
+      "notApplied": true
+    },
+    "rows": [
+      { "buyerPays": 0.1, "platformFee": 0.02, "sellerReceives": 0.08, "effectivePct": 20, "binding": "nominal-20pct" },
+      { "buyerPays": 0.05, "platformFee": 0.015, "sellerReceives": 0.035, "effectivePct": 30, "binding": "cap-30pct" },
+      { "buyerPays": 0.08, "platformFee": 0.02, "sellerReceives": 0.06, "effectivePct": 25, "binding": "floor-0.02" },
+      { "buyerPays": 0.18, "platformFee": 0.036, "sellerReceives": 0.144, "effectivePct": 20, "binding": "nominal-20pct", "note": "docs Claude backsolve; not this agent's list price" }
+    ]
+  },
+  "tests": {
+    "command": "npm --prefix experiments/s109-marketplace-entry-trials/surfaces/grexal/package test",
+    "passed": 8,
+    "failed": 0
+  },
+  "offerFraming": {
+    "paidDelta": "Per-run packaging of a git range (or supplied unified diff) into a machine-readable acceptance report, billed on Grexal if Root later publishes.",
+    "freeAlternative": "Local git diff + manual notes. Public gateway recipes remain free upstream.",
+    "attribution": "SameDayDesk sells packaging/acceptance, not proprietary ownership of public recipes. Grexal 20% is a runtime take rate, not a license on those recipes.",
+    "upstreamRecipes": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666"
+  },
+  "unknownDemand": {
+    "status": "unknown",
+    "blocker": false,
+    "note": "Buyer volume still unobservable without a public listing. G2 packages the dry scaffold anyway."
+  },
+  "nextMeasurableEvent": "G3: worksheet the $0.18 and $0.05 cases through the published clamp (already computed here as a package artifact) and define buyer replay of grexal.json I/O without paying. Do not login, push, or publish from that cell either.",
+  "sources": [
+    {
+      "url": "https://docs.grexal.ai/docs/agent-manifest",
+      "retrieved": "2026-09-10",
+      "role": "manifest_version 3 fields; rejected dashboard keys; identity binding"
+    },
+    {
+      "url": "https://docs.grexal.ai/docs/payments",
+      "retrieved": "2026-09-10",
+      "role": "fee clamp, worked table, $0.18 backsolve (Claude agent, not this one)"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/native-cells/out/G1-grexal-contract.json",
+      "role": "current seller/runtime contract; next event was this G2 vendor"
+    },
+    {
+      "path": "/tmp/grexal-inspect/grexal-0.4.1.tgz",
+      "role": "unpacked CLI validateManifest + --help; official validate on this grexal.json"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/fixtures/grexal-agent-manifest.txt",
+      "role": "local snapshot of manifest split"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/fixtures/grexal-payments.txt",
+      "role": "local snapshot of fee formula"
+    }
+  ]
+}

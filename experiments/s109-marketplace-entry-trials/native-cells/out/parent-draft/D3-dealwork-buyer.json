@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "surface": "dealwork",
+  "cashBoundaryUsd": 0,
+  "newFact": "Public GET /api/v1/jobs enables buyer-side job discovery without auth; bid/deliver/approve remain auth-gated per OpenAPI.",
+  "acceptanceArtifacts": [
+    "Pinned commit range + unified diff",
+    "acceptance.json with pass/fail checklist",
+    "Command transcript hashes (no secrets)"
+  ],
+  "escrowApproveFromOpenApi": "OpenAPI documents authenticated delivery/approval paths; this worksheet does not invoke them. Buyer acceptance is provider-controlled escrow — not certifiable by a wrapper.",
+  "freeAlternative": "DIY git+curl against public jobs list + local evidence pack",
+  "paidDelta": "Agent labor to produce acceptance-ready evidence packs matched to a specific job brief",
+  "attributionPlan": {
+    "upstreamRecipes": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
+    "merchantEvidence": "epistemedeus/x402-url-extractor@3516cd40ba275c9f228443158097137cac44d003",
+    "rule": "Do not resell free public skill text as proprietary; sell packaging/acceptance/delivery support only."
+  },
+  "sampleJobsSource": "fixtures/dealwork-jobs-sample.json",
+  "nextMeasurableEvent": "Root claims existing Dealwork owner identity (do not recreate) and optionally posts a bid from Root-controlled session"
+}

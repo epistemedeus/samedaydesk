@@ -1,0 +1,42 @@
+{
+  "cohort": "c3-buyer",
+  "endedAt": "2026-09-10T09:18:31.573438Z",
+  "cells": [
+    {
+      "log": "A3-agensi-buyer.jsonl",
+      "sessionId": "01a08a92-4afc-79f3-b6f6-26b056540d2f",
+      "events": 37,
+      "lastType": "result",
+      "logBytes": 1138794
+    },
+    {
+      "log": "D3-dealwork-buyer.jsonl",
+      "sessionId": "01a08a92-4b04-7512-881b-d3b337a1b70a",
+      "events": 33,
+      "lastType": "result",
+      "logBytes": 1027531
+    },
+    {
+      "log": "G3-grexal-buyer.jsonl",
+      "sessionId": "01a08a92-4ad9-7ab1-8696-bbc95e781060",
+      "events": 47,
+      "lastType": "result",
+      "logBytes": 1020318
+    }
+  ],
+  "outs": [
+    "A3-agensi-buyer.json",
+    "A3-agensi-buyer.md",
+    "D3-dealwork-buyer.json",
+    "D3-dealwork-buyer.md",
+    "G3-grexal-buyer.json",
+    "G3-grexal-buyer.md"
+  ],
+  "cashBoundaryUsd": 0,
+  "note": "3 parallel Heavy buyer cells after C2; parent worksheets preserved under native-cells/out/parent-draft/",
+  "memory": {
+    "MemTotal:": 16791945216,
+    "MemAvailable:": 11180175360,
+    "psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+  }
+}

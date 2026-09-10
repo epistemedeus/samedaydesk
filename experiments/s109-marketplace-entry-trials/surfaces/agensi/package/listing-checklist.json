@@ -1,0 +1,127 @@
+{
+  "surface": "agensi",
+  "cashBoundaryUsd": 0,
+  "willNotListFromWorker": true,
+  "skillRecipePin": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
+  "sourceContractCell": "A1-agensi-contract",
+  "items": [
+    {
+      "id": "cash-boundary",
+      "title": "Keep cash at $0; do not list from this worker",
+      "status": "worker-forbidden",
+      "actor": "worker",
+      "workerMustNotPerform": true,
+      "detail": "This package never signs up, uploads a ZIP, publishes, buys credits, or emails Agensi. Listing is a Root action after payout rails are enabled."
+    },
+    {
+      "id": "host-split",
+      "title": "Treat www.agensi.dev and www.agensi.io as different hosts",
+      "status": "known-from-public-contract",
+      "actor": "package",
+      "urls": [
+        "https://www.agensi.dev/sell",
+        "https://www.agensi.io/sell"
+      ],
+      "detail": "A1: entire www.agensi.dev host (including /sell) 302s unauthenticated clients to Cloudflare Access. The currently verifiable seller contract is on www.agensi.io (no Access wall). Apex agensi.dev was Cloudflare 522."
+    },
+    {
+      "id": "no-seller-api",
+      "title": "No public seller listing API or npm SDK",
+      "status": "known-from-public-contract",
+      "actor": "package",
+      "detail": "A1 found no public seller create API, OpenAPI, or official seller SDK. POST /api/skills is HTML 404. Entry is UI handoff only (/dashboard/submit on agensi.io). Buyer MCP at https://mcp.agensi.io/mcp is not a seller upload API."
+    },
+    {
+      "id": "cf-access-dev",
+      "title": "Root Cloudflare Access on the task-named .dev /sell URL",
+      "status": "blocked-pending-root",
+      "actor": "root",
+      "workerMustNotPerform": true,
+      "urls": ["https://www.agensi.dev/sell"],
+      "detail": "Unauthenticated GET /sell → HTTP 302 to mlehman-899.cloudflareaccess.com. Single IdP labeled GitHub. Root must complete Access in a browser they control; this worker will not."
+    },
+    {
+      "id": "io-account",
+      "title": "Root agensi.io creator session if .dev is not the seller UI",
+      "status": "blocked-pending-root",
+      "actor": "root",
+      "workerMustNotPerform": true,
+      "urls": [
+        "https://www.agensi.io/auth",
+        "https://www.agensi.io/dashboard/submit"
+      ],
+      "detail": "Public /auth offers email/password, 6-digit email code, or Continue with Google — not GitHub. Worker will not create the account. Submit form is a JS dashboard; SSR shell is not a listing."
+    },
+    {
+      "id": "payout-rails",
+      "title": "Enable Stripe Connect and/or Zoneless USDC-on-Solana before paid publish",
+      "status": "blocked-pending-root",
+      "actor": "root",
+      "workerMustNotPerform": true,
+      "minPaidPriceUsd": 5,
+      "urls": ["https://www.agensi.io/terms"],
+      "detail": "ToS §6.1 (last updated 2026-09-02): paid skill publish is blocked until a payout method is set up and enabled. Rails named in ToS: Stripe Connect or Zoneless USDC on Solana. Account-level eligibility is not verifiable without auth. Do not assume this worker is eligible."
+    },
+    {
+      "id": "price-gate",
+      "title": "Paid price at least $5.00, or list free",
+      "status": "known-from-public-contract",
+      "actor": "root",
+      "minPaidPriceUsd": 5,
+      "detail": "ToS: minimum price for paid skills is $5.00. Creator share 70% of net ex-VAT; platform 30% all-in. Free listings are allowed and do not cost credits. This draft is not published at either price."
+    },
+    {
+      "id": "zip-skill-md",
+      "title": "Package ZIP as one top-level folder with SKILL.md at that folder root",
+      "status": "blocked-pending-root",
+      "actor": "root",
+      "workerMustNotPerform": true,
+      "detail": "Public creator checklist: zip = single top-level folder named after the skill, SKILL.md at that folder root with YAML name + description. Worker will not build or upload the zip."
+    },
+    {
+      "id": "attribution-no-proprietary",
+      "title": "Cite the public pin; do not claim proprietary ownership of free recipes",
+      "status": "encoded",
+      "actor": "package",
+      "detail": "Listings must cite epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666. ToS §6.3 requires original authorship or distribution rights and an accurate listing. Relabeling the public pin as exclusive paid IP would fail that warranty. This package sells packaging/acceptance/ops only, if Root later lists."
+    },
+    {
+      "id": "scan-8-point",
+      "title": "Expect the 8-point automated scan plus human review",
+      "status": "known-from-public-contract",
+      "actor": "root",
+      "checks": [
+        "prompt injection",
+        "data exfiltration",
+        "dangerous commands",
+        "hardcoded secrets",
+        "obfuscation",
+        "suspicious network access",
+        "zip structure",
+        "SKILL.md validity"
+      ],
+      "detail": "Public copy: automated 8-point scan, then AI + human review, usually 24–48 hours. MCP discoverable toggle defaults on."
+    },
+    {
+      "id": "network-scan-risk",
+      "title": "Note scan check 6 for live HTTPS to the public gateway",
+      "status": "risk-noted",
+      "actor": "package",
+      "detail": "Pinned recipes instruct credential-free HTTPS to https://agents.samedaydesk.com. Network-calling skills may extra-fail Agensi scan check 6 (suspicious network access). Any future listing copy should disclose live catalog reads and stop before wallet access."
+    },
+    {
+      "id": "tos-6-3-rights",
+      "title": "Warrant distribution rights; keep listing copy accurate",
+      "status": "known-from-public-contract",
+      "actor": "root",
+      "detail": "ToS §6.3: original authorship or distribution rights plus an accurate listing. The pinned tree has no LICENSE file; Root must not describe the recipes as SameDayDesk-exclusive proprietary content."
+    },
+    {
+      "id": "private-ids-out-of-overlay",
+      "title": "Keep private account IDs out of this public overlay",
+      "status": "enforced-in-package",
+      "actor": "package",
+      "detail": "Cloudflare session cookies, GitHub OAuth tokens, Stripe account IDs, bank last-fours, and Solana payout wallets must not be added to these files. Access handoff records the steps, not the secrets."
+    }
+  ]
+}

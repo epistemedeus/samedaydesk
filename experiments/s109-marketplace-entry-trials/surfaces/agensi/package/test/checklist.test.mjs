@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -19,21 +20,19 @@ test('offer descriptor validates offline', () => {
 });
 
 test('tampered descriptor fails closed', () => {
-  const bad = path.join(__dirname, 'bad-descriptor.json');
-  fs.writeFileSync(
-    bad,
-    JSON.stringify({
-      surface: 'agensi',
-      cashBoundaryUsd: 0,
-      willNotListFromWorker: true,
-      skillRecipePin: 'wrong-pin',
-      paidDeliverable: 'x',
-      freeAlternative: 'y',
-      rootHandoff: { cloudflareAccessUrl: 'https://www.agensi.dev/sell', steps: ['a', 'b', 'c'] },
-      payoutClaimsVerified: { status: 'blocked-by-access' },
-    }),
-  );
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 's109-agensi-bad-'));
+  for (const name of [
+    'offer-descriptor.json',
+    'offer-descriptor.schema.json',
+    'listing-checklist.json',
+    'access-handoff.json',
+  ]) {
+    fs.copyFileSync(path.join(__dirname, '..', name), path.join(dir, name));
+  }
+  const bad = path.join(dir, 'offer-descriptor.json');
+  const d = JSON.parse(fs.readFileSync(bad, 'utf8'));
+  d.skillRecipePin = 'wrong-pin';
+  fs.writeFileSync(bad, JSON.stringify(d));
   const r = spawnSync(process.execPath, [bin, bad], { encoding: 'utf8' });
-  fs.unlinkSync(bad);
   assert.notEqual(r.status, 0);
 });

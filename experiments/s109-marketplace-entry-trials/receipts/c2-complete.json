@@ -1,0 +1,41 @@
+{
+  "cohort": "c2-packages",
+  "endedAt": "2026-09-10T09:07:18.304663Z",
+  "cells": [
+    {
+      "log": "A2-agensi-package.jsonl",
+      "sessionId": "01a08a81-6b67-7d42-8466-4661ba22d103",
+      "events": 37,
+      "lastType": "result",
+      "logBytes": 849946
+    },
+    {
+      "log": "D2-dealwork-package.jsonl",
+      "sessionId": "01a08a81-6b62-7b12-ab87-834dfa848739",
+      "events": 49,
+      "lastType": "result",
+      "logBytes": 908048
+    },
+    {
+      "log": "G2-grexal-package.jsonl",
+      "sessionId": "01a08a81-6b64-7910-a4cc-194e089cd10d",
+      "events": 59,
+      "lastType": "result",
+      "logBytes": 1063379
+    }
+  ],
+  "cashBoundaryUsd": 0,
+  "outs": [
+    "A2-agensi-package.json",
+    "A2-agensi-package.md",
+    "D2-dealwork-package.json",
+    "D2-dealwork-package.md",
+    "G2-grexal-package.json",
+    "G2-grexal-package.md"
+  ],
+  "memory": {
+    "MemTotal:": 16791945216,
+    "MemAvailable:": 11185848320,
+    "psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+  }
+}

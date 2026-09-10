@@ -2,12 +2,15 @@
   "name": "@samedaydesk/s109-agensi-listing-checklist",
   "version": "0.1.0",
   "private": true,
-  "description": "Offline Agensi paid-skill listing checklist (S109). Cloudflare Access blocks anonymous contract read; no invent endpoints.",
+  "description": "Provider-neutral S109 Agensi listing package: offline JSON Schema for a sanitized offer descriptor, listing checklist, and Cloudflare Access handoff. $0. Does not list or authenticate. Does not claim proprietary ownership of public skill recipes.",
   "type": "module",
   "bin": {
-    "s109-agensi-checklist": "./bin/checklist.mjs"
+    "s109-agensi-checklist": "./bin/checklist.mjs",
+    "s109-agensi-validate": "./bin/validate-descriptor.mjs"
   },
   "scripts": {
+    "validate": "node ./bin/validate-descriptor.mjs",
+    "checklist": "node ./bin/checklist.mjs",
     "test": "node --test test/*.test.mjs"
   },
   "engines": {

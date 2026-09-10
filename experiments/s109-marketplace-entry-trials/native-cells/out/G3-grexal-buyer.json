@@ -1,0 +1,318 @@
+{
+  "cell": "G3-grexal-buyer",
+  "cohort": "c3-buyer",
+  "surface": "grexal",
+  "asOf": "2026-09-10T09:11:00Z",
+  "cashBoundaryUsd": 0,
+  "cashBoundary": {
+    "usd": 0,
+    "didNot": [
+      "npx grexal login",
+      "account signup at grexal.ai",
+      "buyer credit top-up",
+      "grexal push / publish / deploy / delete",
+      "grexal agent set-* / price add / price estimate",
+      "grexal runs invoke",
+      "paid model / LLM API calls",
+      "SameDayDesk paid gateway calls (x402 / MPP / POST /extract/batch)"
+    ]
+  },
+  "newFact": "A buyer can validate this agent's I/O schema from vendored grexal.json (manifest_version 3 typed maps) and replay agent/pack_evidence.js on a supplied unifiedDiff with paidModelCalls=0, without Grexal login, credits, or runs invoke. Live https://docs.grexal.ai/docs/payments (re-fetched 2026-09-10) clamp is platform_fee = clamp(buyer_charge × 0.20, $0.02, buyer_charge × 0.30), implemented as min(max(20%, $0.02), 30% of charge). $0.18 run: 20%=$0.036, floor=$0.02, cap=$0.054 → fee $0.036 / seller $0.144 / 20% (neither floor nor cap binds). $0.05 micro-run: 20%=$0.01, floor=$0.02, cap=$0.015 → fee $0.015 / seller $0.035 / 30% (cap binds; unconstrained floor would have been $0.02 = 40%). Floor $0.02 binds only in ~$0.0667 ≤ charge < $0.10 (derived $0.08 → fee $0.02 = 25%). SameDayDesk evidence tools (recurring-job-recipes, evidence-records, public x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666) are upstream and separately licensed; Grexal's take is a runtime marketplace fee on buyer_charge, not a license on those tools. This packager does not call SameDayDesk paid routes or LLMs, so the docs $0.18 Claude backsolve is not this agent's list price.",
+  "observedPath": "Re-fetched https://docs.grexal.ai/docs/payments (formula, worked table, $0.18 Claude backsolve, $0.02 floor, 30% cap). Cross-checked fixtures/grexal-payments.txt, G1 feeModel, G2 worksheets, and live Agent Manifest (I/O in grexal.json; pricing not). Recomputed clamp via surfaces/grexal/package/bin/fee-worksheet.mjs for 0.18, 0.05, 0.08, 0.10. Ran unpaid buyer replay: validate-manifest.mjs + pack_evidence.js --stdout-only on a 93-byte unifiedDiff + surfaces/grexal/buyer-replay/replay.mjs (schema type-check, paidModelCalls=0). npm test 8/8. ~/.grexal absent. Did not login, push, publish, price add, runs invoke, or top up credits.",
+  "artifactPath": "experiments/s109-marketplace-entry-trials/native-cells/out/G3-grexal-buyer.md",
+  "runnablePath": [
+    "experiments/s109-marketplace-entry-trials/surfaces/grexal/buyer-replay/replay.mjs",
+    "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/fee-worksheet.mjs",
+    "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/validate-manifest.mjs",
+    "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js",
+    "experiments/s109-marketplace-entry-trials/scripts/buyer-worksheet.mjs grexal"
+  ],
+  "authenticatedStepNeeded": "Root: npx grexal login, first grexal push (mints agentId), grexal agent set-description/set-category/set-tags, grexal agent price add run_completed 0.10, set-visibility, publish. Not this worker. Unknown demand is not a blocker.",
+  "primaryCitation": "https://docs.grexal.ai/docs/payments",
+  "formula": "platform_fee = clamp(buyer_charge × 0.20, $0.02, buyer_charge × 0.30); your_earnings = buyer_charge − platform_fee",
+  "clampImplementation": {
+    "note": "When the $0.02 floor exceeds the 30% cap (charge < $0.02/0.30 ≈ $0.0667), min(max(20%, floor), cap) selects the cap. That is the documented $0.05 / $0.02 rows.",
+    "js": "Math.min(Math.max(buyer_charge * 0.20, 0.02), buyer_charge * 0.30)",
+    "rate": 0.2,
+    "floorUsd": 0.02,
+    "capRate": 0.3,
+    "nominal80PercentAtOrAboveUsd": 0.1,
+    "floorBindsFromUsd": 0.0666666667,
+    "floorBindsUntilUsd": 0.1,
+    "capBindsBelowUsd": 0.0666666667
+  },
+  "feeWorksheet": {
+    "pathMd": "experiments/s109-marketplace-entry-trials/native-cells/out/G3-grexal-buyer.md",
+    "packageWorksheetMd": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/worksheets/price-estimate.md",
+    "runnable": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/fee-worksheet.mjs 0.18 0.05 0.08",
+    "source": "https://docs.grexal.ai/docs/payments",
+    "sourceRetrieved": "2026-09-10",
+    "formula": "platform_fee = clamp(buyer_charge × 0.20, $0.02, buyer_charge × 0.30)",
+    "liveDocsWorkedTableMatchesFixture": true,
+    "run018": {
+      "label": "docs Claude backsolve example (NOT this agent's list price)",
+      "buyerChargeUsd": 0.18,
+      "twentyPercentUsd": 0.036,
+      "floorUsd": 0.02,
+      "capUsd": 0.054,
+      "platformFeeUsd": 0.036,
+      "sellerEarningsUsd": 0.144,
+      "effectiveFeePercent": 20,
+      "binding": "nominal-20pct",
+      "floorBinds": false,
+      "capBinds": false,
+      "reserveEstimateTimes1_25Usd": 0.225,
+      "docsBacksolve": {
+        "targetNetUsd": 0.1,
+        "upstreamClaudeUsd": 0.04,
+        "raw": 0.175,
+        "rounded": 0.18
+      }
+    },
+    "micro005": {
+      "label": "docs micro-run (cap binds)",
+      "buyerChargeUsd": 0.05,
+      "twentyPercentUsd": 0.01,
+      "floorUsd": 0.02,
+      "capUsd": 0.015,
+      "unconstrainedFloorWouldChargeUsd": 0.02,
+      "unconstrainedFloorEffectivePercent": 40,
+      "platformFeeUsd": 0.015,
+      "sellerEarningsUsd": 0.035,
+      "effectiveFeePercent": 30,
+      "binding": "cap-30pct",
+      "floorBinds": false,
+      "capBinds": true,
+      "note": "Floor $0.02 is shown but does not apply: cap $0.015 < floor, so clamp yields $0.015 (30%). Buyer is protected from a 40% effective floor.",
+      "reserveEstimateTimes1_25Usd": 0.0625
+    },
+    "floorBand008": {
+      "label": "derived floor-band example (not a docs table row) so the $0.02 floor is visible",
+      "buyerChargeUsd": 0.08,
+      "twentyPercentUsd": 0.016,
+      "floorUsd": 0.02,
+      "capUsd": 0.024,
+      "platformFeeUsd": 0.02,
+      "sellerEarningsUsd": 0.06,
+      "effectiveFeePercent": 25,
+      "binding": "floor-0.02",
+      "floorBinds": true,
+      "capBinds": false
+    },
+    "thisAgentSuggestedUnpublished": {
+      "unit": "run_completed",
+      "amountUsd": 0.1,
+      "twentyPercentUsd": 0.02,
+      "floorUsd": 0.02,
+      "capUsd": 0.03,
+      "platformFeeUsd": 0.02,
+      "sellerEarningsUsd": 0.08,
+      "effectiveFeePercent": 20,
+      "binding": "nominal-20pct",
+      "upstreamLlmUsd": 0,
+      "upstreamSameDayDeskGatewayUsd": 0,
+      "notInManifest": true,
+      "notApplied": true,
+      "reserveEstimateTimes1_25Usd": 0.125,
+      "note": "Zero-LLM backsolve: buyer_charge = target_net / 0.80 = 0.08 / 0.80 = 0.10. Do not copy the $0.18 Claude example."
+    },
+    "buyerPaysListedPrice": true,
+    "noPlatformSurchargeOnTopOfList": true,
+    "sandboxCoveredByFee": true
+  },
+  "buyerReplayWithoutPaying": {
+    "definition": "A buyer validates the agent's declared I/O from grexal.json and exercises the local entrypoint on a supplied unifiedDiff. No Grexal account, credits, or paid run.",
+    "whyUnpaid": [
+      "grexal.json is the runtime contract (input_schema / output_schema) and is a local file in this overlay; pricing is not in it.",
+      "grexal@0.4.1 validate / init / dev do not call requireAuth().",
+      "pack_evidence.js is local Node, zero network, paidModelCalls hard-coded 0.",
+      "Docs: buyers are charged only on paid runs of a published agent (credits reserved at estimate × 1.25)."
+    ],
+    "steps": [
+      "Read grexal.json input_schema and output_schema (manifest_version 3 typed maps: text|file|number|boolean|json).",
+      "Confirm dashboard fields including pricing are absent (buyer cannot infer billed amount from the manifest).",
+      "Offline-validate with bin/validate-manifest.mjs (aligned with grexal@0.4.1 validateManifest).",
+      "Run agent/pack_evidence.js --unifiedDiffFile … --stdout-only (or buyer-replay/replay.mjs).",
+      "Type-check returned keys against output_schema; require paidModelCalls=0.",
+      "Do not call grexal login, push, publish, agent price, or runs invoke."
+    ],
+    "commands": [
+      "node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/validate-manifest.mjs",
+      "node experiments/s109-marketplace-entry-trials/surfaces/grexal/buyer-replay/replay.mjs",
+      "node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js --unifiedDiffFile <diff> --stdout-only"
+    ],
+    "inputSchema": {
+      "repoPath": { "type": "text", "required": false },
+      "unifiedDiff": { "type": "text", "required": false },
+      "baseRef": { "type": "text", "required": false },
+      "headRef": { "type": "text", "required": false },
+      "acceptanceNotes": { "type": "text", "required": false }
+    },
+    "outputSchema": {
+      "summary": "text",
+      "commitRange": "text",
+      "diffBytes": "number",
+      "paidModelCalls": "number",
+      "acceptanceReport": "json",
+      "evidencePack": "json"
+    },
+    "observedReplay": {
+      "ok": true,
+      "receipt": "experiments/s109-marketplace-entry-trials/surfaces/grexal/buyer-replay/receipt.json",
+      "grexalJsonSha256": "7440dfacada0bd06ef16e27d51a943c0be4117ec170a16b31c11027a480b637c",
+      "paid": false,
+      "grexalAuth": false,
+      "grexalRunsInvoke": false,
+      "paidModelCalls": 0,
+      "sampleDiffBytes": 93,
+      "sampleCommitRange": "replay-base...replay-head",
+      "outputKeysTypedOk": true,
+      "pricingInManifest": false
+    },
+    "proves": [
+      "Declared I/O field names and grexal types.",
+      "Local entrypoint emits exactly those output keys with matching JS types.",
+      "paidModelCalls is 0 on the unpaid path."
+    ],
+    "doesNotProve": [
+      "Hosted Grexal sandbox identity (requires Root push + publish).",
+      "Listed buyer price (dashboard / grexal agent price, not grexal.json).",
+      "Marketplace typical-price baseline (docs: 10+ organic completed runs).",
+      "Settlement, earnings, or cash-out."
+    ]
+  },
+  "freeAlternative": "git diff + manual acceptance JSON, or run SameDayDesk evidence tools locally (tools/recurring-job-recipes source-change-alert / issue-evidence; tools/evidence-records). Public gateway recipes at epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666 remain free.",
+  "paidDelta": "If Root later publishes: hosted per-run packaging of a git range (or supplied unifiedDiff) into a machine-readable acceptance report, billed on Grexal at the listed line item. Buyer pays list price; Grexal takes the clamp fee; seller keeps the remainder. That purchase is packaging/acceptance labor on Grexal compute — not a license to upstream recipes and not a SameDayDesk x402 call.",
+  "attribution": {
+    "rule": "Do not resell free public skill text as proprietary. Sell packaging/acceptance/delivery support only. Grexal's fee is a runtime take rate on buyer_charge; it does not license or replace upstream SameDayDesk evidence tools.",
+    "upstreamSameDayDeskEvidenceTools": {
+      "role": "capability / recipes / typed evidence — not billed by Grexal",
+      "inThisRepo": [
+        {
+          "path": "tools/recurring-job-recipes",
+          "recipes": [
+            "source-change-alert",
+            "issue-evidence",
+            "issue-to-work-brief",
+            "comparable-record-extraction",
+            "verification-reconcile",
+            "buyer-setup-trace"
+          ],
+          "costNote": "Offline path is operator compute (costs_unknown), not a Grexal fee. Recipes do not purchase POST /extract/batch (listed 0.01 USDC on /for-agents)."
+        },
+        {
+          "path": "tools/evidence-records",
+          "role": "typed traffic/settlement records; no facilitator call"
+        },
+        {
+          "path": "tools/evidence/reconcile.mjs",
+          "role": "banked settlement totals without mixing buyer classes"
+        },
+        {
+          "path": "tools/result-reuse",
+          "role": "project accepted recipe results; not a marketplace"
+        }
+      ],
+      "publicPins": {
+        "upstreamRecipes": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
+        "merchantEvidence": "epistemedeus/x402-url-extractor@3516cd40ba275c9f228443158097137cac44d003",
+        "licenseFilePresentAtRecipePin": false,
+        "claimsProprietaryOwnershipOfFreeRecipes": false
+      },
+      "sameDayDeskMachineGateway": {
+        "host": "https://agents.samedaydesk.com",
+        "billing": "independent x402 / MPP catalog (example: GET /work/opportunity-preflight listed 0.05 USD)",
+        "invokedByThisGrexalAgent": false,
+        "note": "A Grexal 20% fee does not settle a SameDayDesk gateway call. If a future agent called those routes, that spend would be seller upstream cost (not covered by Grexal's marketplace fee) and should be priced as its own line item."
+      }
+    },
+    "grexalRuntimeFee": {
+      "role": "marketplace / sandbox take on the listed Grexal run charge",
+      "accruesTo": "Grexal",
+      "formula": "clamp(buyer_charge × 0.20, $0.02, buyer_charge × 0.30)",
+      "covers": [
+        "sandbox compute, memory, network egress",
+        "build / push / publish / deploy",
+        "storage of code, artifacts, run history, logs",
+        "marketplace listing and dashboard hosting",
+        "platform-side run orchestration"
+      ],
+      "doesNotCover": [
+        "SameDayDesk evidence-tool operator compute",
+        "SameDayDesk x402/MPP gateway prices",
+        "third-party LLM/API spend",
+        "a license to public recipes"
+      ],
+      "independentOfUpstreamLicenses": true
+    },
+    "sellerKeep": "buyer_charge − platform_fee (80% at ≥ $0.10). Packaging labor, not recipe relicensing."
+  },
+  "unknownDemand": {
+    "status": "unknown",
+    "blocker": false,
+    "note": "Buyer volume is unobservable without a public listing and paid runs. G3 worksheets the clamp and unpaid I/O replay anyway."
+  },
+  "tests": {
+    "package": {
+      "command": "npm --prefix experiments/s109-marketplace-entry-trials/surfaces/grexal/package test",
+      "passed": 8,
+      "failed": 0
+    },
+    "buyerReplay": {
+      "command": "node experiments/s109-marketplace-entry-trials/surfaces/grexal/buyer-replay/replay.mjs",
+      "ok": true,
+      "paidModelCalls": 0
+    }
+  },
+  "nextMeasurableEvent": "Root creates Grexal agent identity + sets pricing/visibility without this worker spending. Do not treat unknown demand as a stop. Still no login from this overlay.",
+  "sources": [
+    {
+      "url": "https://docs.grexal.ai/docs/payments",
+      "retrieved": "2026-09-10",
+      "role": "primary fee formula, floor, cap, worked table, $0.18 Claude backsolve, payout rules"
+    },
+    {
+      "url": "https://docs.grexal.ai/docs/agent-manifest",
+      "retrieved": "2026-09-10",
+      "role": "I/O schema in grexal.json; pricing not in the manifest; buyer charged on published paid runs; reserve × 1.25"
+    },
+    {
+      "url": "https://docs.grexal.ai/llms.txt",
+      "retrieved": "2026-09-10",
+      "role": "20% fee with $0.02 floor and 30% cap in shipping index"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/fixtures/grexal-payments.txt",
+      "role": "local snapshot; matches live formula and table"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/native-cells/out/G1-grexal-contract.json",
+      "role": "seller/runtime contract; next event included this G3 worksheet"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/native-cells/out/G2-grexal-package.json",
+      "role": "vendored grexal.json + pack_evidence; grexal.json sha256 unchanged"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/grexal.json",
+      "sha256": "7440dfacada0bd06ef16e27d51a943c0be4117ec170a16b31c11027a480b637c",
+      "role": "buyer-visible I/O contract for unpaid replay"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/grexal/buyer-replay/receipt.json",
+      "role": "executed unpaid I/O replay"
+    },
+    {
+      "path": "tools/recurring-job-recipes/README.md",
+      "role": "SameDayDesk evidence-tool recipes used as upstream attribution"
+    },
+    {
+      "path": "tools/evidence-records/README.md",
+      "role": "typed evidence records; independent of Grexal billing"
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/PINS.md",
+      "role": "recipe and merchant-evidence pins"
+    }
+  ]
+}

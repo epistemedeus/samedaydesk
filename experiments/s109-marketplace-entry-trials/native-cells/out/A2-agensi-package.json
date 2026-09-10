@@ -1,0 +1,89 @@
+{
+  "cell": "A2-agensi-package",
+  "cohort": "c2-packages",
+  "surface": "agensi",
+  "observedAt": "2026-09-10T09:03:52Z",
+  "cashBoundaryUsd": 0,
+  "listed": false,
+  "authenticated": false,
+  "networkCallsFromValidator": 0,
+  "actionsNotTaken": [
+    "no Cloudflare Access / GitHub OAuth",
+    "no agensi.io signup",
+    "no listing or ZIP upload",
+    "no Stripe Connect or Zoneless onboarding",
+    "no purchase or credits",
+    "no email to Agensi"
+  ],
+  "newFact": "A provider-neutral Agensi listing package now lives at experiments/s109-marketplace-entry-trials/surfaces/agensi/package and validates offline. It encodes a 13-item listing checklist (ZIP+SKILL.md, $5 min paid price, 70/30 net ex-VAT, ToS §6.3 attribution, 8-point scan, no public seller API), Cloudflare Access GitHub handoff steps for Root on https://www.agensi.dev/sell (team mlehman-899.cloudflareaccess.com), and a sanitized offer descriptor that cites the 16 public skill directories at epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666 with ownershipClaim.claimsProprietaryOwnershipOfFreeRecipes=false (pinned tree has no LICENSE file). package.json script `validate` runs bin/validate-descriptor.mjs against a local JSON Schema; the engine refuses network $ref. npm test: 13/13 pass. This worker did not list or authenticate. Stripe Connect / Zoneless USDC account eligibility remains not-verifiable-without-auth.",
+  "artifactPath": "/workspace/experiments/s109-marketplace-entry-trials/surfaces/agensi/package",
+  "runnablePath": "/workspace/experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/validate-descriptor.mjs",
+  "authenticatedStepNeeded": true,
+  "encoded": {
+    "listingChecklist": "/workspace/experiments/s109-marketplace-entry-trials/surfaces/agensi/package/listing-checklist.json",
+    "cloudflareAccessHandoff": "/workspace/experiments/s109-marketplace-entry-trials/surfaces/agensi/package/access-handoff.json",
+    "sanitizedOfferDescriptor": "/workspace/experiments/s109-marketplace-entry-trials/surfaces/agensi/package/offer-descriptor.json",
+    "jsonSchema": "/workspace/experiments/s109-marketplace-entry-trials/surfaces/agensi/package/offer-descriptor.schema.json",
+    "packageJsonValidateScript": "npm run validate → node ./bin/validate-descriptor.mjs"
+  },
+  "skillRecipePin": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
+  "ownership": {
+    "claimsProprietaryOwnershipOfFreeRecipes": false,
+    "licenseFilePresentAtPin": false,
+    "referencedPublicRecipes": [
+      "samedaydesk-machine-commerce",
+      "company-enrich",
+      "wallet-enrich",
+      "web-extract",
+      "repo-security-scan",
+      "schema-generate",
+      "deep-audit",
+      "morpho-risk",
+      "opportunity-preflight",
+      "agent-discoverability-audit",
+      "payment-offer-preflight",
+      "contract-qualified-search",
+      "agent-surface-budget-audit",
+      "settlement-proof",
+      "transaction-receipt",
+      "wallet-policy-safety"
+    ]
+  },
+  "authenticatedStep": {
+    "needed": true,
+    "workerWillNotPerform": true,
+    "primary": "Root GitHub Cloudflare Access on https://www.agensi.dev/sell (mlehman-899.cloudflareaccess.com), then capture whether the origin is an Agensi seller UI.",
+    "alternate": "https://www.agensi.io/auth (email/OTP/Google, not GitHub) then payout-method state on /dashboard/submit without publishing.",
+    "handoffPath": "/workspace/experiments/s109-marketplace-entry-trials/surfaces/agensi/package/access-handoff.json"
+  },
+  "validation": {
+    "ok": true,
+    "command": "node experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/validate-descriptor.mjs",
+    "npmTest": "13 pass / 0 fail",
+    "offline": true,
+    "publicListingSupported": false,
+    "listingChecklistItems": 13,
+    "accessHandoffSteps": 8
+  },
+  "observedPath": "Read A1 contract JSON. Listed public skill directories at epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666 via gh api (read-only; LICENSE 404). Wrote listing-checklist.json, access-handoff.json, offer-descriptor.json + local JSON Schema. Ran validate-descriptor.mjs and npm test offline. Did not open Cloudflare Access, did not sign up on agensi.io, did not upload or publish a skill.",
+  "nextMeasurableEvent": "Root auth (Cloudflare Access on .dev and/or agensi.io creator session) plus payout-method enabled state captured privately; still $0 and no publish from this worker.",
+  "sources": [
+    {
+      "path": "/workspace/experiments/s109-marketplace-entry-trials/native-cells/out/A1-agensi-contract.json",
+      "note": "Seller/runtime contract this package encodes; payout rails are contract-text on agensi.io, Access-blocked on agensi.dev."
+    },
+    {
+      "url": "https://github.com/epistemedeus/x402-data-gateway-skills/tree/82d0f019713c7223898806144da08fdbeed5c666",
+      "note": "Public recipe pin. 16 skill directories. No LICENSE file at pin."
+    },
+    {
+      "path": "/workspace/experiments/s109-marketplace-entry-trials/surfaces/agensi/package/offer-descriptor.json"
+    },
+    {
+      "path": "/workspace/experiments/s109-marketplace-entry-trials/surfaces/agensi/package/listing-checklist.json"
+    },
+    {
+      "path": "/workspace/experiments/s109-marketplace-entry-trials/surfaces/agensi/package/access-handoff.json"
+    }
+  ]
+}

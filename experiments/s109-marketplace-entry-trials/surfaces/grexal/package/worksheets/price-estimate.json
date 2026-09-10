@@ -1,0 +1,174 @@
+{
+  "ok": true,
+  "cashBoundaryUsd": 0,
+  "source": "https://docs.grexal.ai/docs/payments (captured 2026-09-10)",
+  "formula": "platform_fee = clamp(buyer_charge × 0.20, $0.02, buyer_charge × 0.30)",
+  "sellerKeepNominal": 0.8,
+  "notes": [
+    "Normal case ~20% for charges ≥ $0.10.",
+    "Micro-run floor $0.02 binds when 20% < $0.02 and 30% of charge still ≥ $0.02 (~$0.0667 ≤ charge < $0.10).",
+    "Below ~$0.0667 the 30% cap binds (docs $0.05 and $0.02 rows).",
+    "Sandbox compute/build/deploy/storage/listing are covered by the fee; third-party LLM/API spend is not.",
+    "This agent has paidModelCalls=0, so do not copy the docs $0.18 Claude backsolve as the list price.",
+    "Pricing line items are NOT in grexal.json. grexal agent price add requires login + first push — not run here.",
+    "Demand volume unknown — experiment, not a blocker for a dry scaffold."
+  ],
+  "docsWorkedTable": [
+    {
+      "buyerChargeUsd": 5,
+      "twentyPercentUsd": 1,
+      "floorUsd": 0.02,
+      "capUsd": 1.5,
+      "platformFeeUsd": 1,
+      "sellerEarningsUsd": 4,
+      "effectiveFeePercent": 20,
+      "binding": "nominal-20pct"
+    },
+    {
+      "buyerChargeUsd": 1,
+      "twentyPercentUsd": 0.2,
+      "floorUsd": 0.02,
+      "capUsd": 0.3,
+      "platformFeeUsd": 0.2,
+      "sellerEarningsUsd": 0.8,
+      "effectiveFeePercent": 20,
+      "binding": "nominal-20pct"
+    },
+    {
+      "buyerChargeUsd": 0.2,
+      "twentyPercentUsd": 0.04,
+      "floorUsd": 0.02,
+      "capUsd": 0.06,
+      "platformFeeUsd": 0.04,
+      "sellerEarningsUsd": 0.16,
+      "effectiveFeePercent": 20,
+      "binding": "nominal-20pct"
+    },
+    {
+      "buyerChargeUsd": 0.1,
+      "twentyPercentUsd": 0.02,
+      "floorUsd": 0.02,
+      "capUsd": 0.03,
+      "platformFeeUsd": 0.02,
+      "sellerEarningsUsd": 0.08,
+      "effectiveFeePercent": 20,
+      "binding": "nominal-20pct"
+    },
+    {
+      "buyerChargeUsd": 0.05,
+      "twentyPercentUsd": 0.01,
+      "floorUsd": 0.02,
+      "capUsd": 0.015,
+      "platformFeeUsd": 0.015,
+      "sellerEarningsUsd": 0.035,
+      "effectiveFeePercent": 30,
+      "binding": "cap-30pct"
+    },
+    {
+      "buyerChargeUsd": 0.02,
+      "twentyPercentUsd": 0.004,
+      "floorUsd": 0.02,
+      "capUsd": 0.006,
+      "platformFeeUsd": 0.006,
+      "sellerEarningsUsd": 0.014,
+      "effectiveFeePercent": 30,
+      "binding": "cap-30pct"
+    }
+  ],
+  "rows": [
+    {
+      "buyerChargeUsd": 5,
+      "twentyPercentUsd": 1,
+      "floorUsd": 0.02,
+      "capUsd": 1.5,
+      "platformFeeUsd": 1,
+      "sellerEarningsUsd": 4,
+      "effectiveFeePercent": 20,
+      "binding": "nominal-20pct"
+    },
+    {
+      "buyerChargeUsd": 1,
+      "twentyPercentUsd": 0.2,
+      "floorUsd": 0.02,
+      "capUsd": 0.3,
+      "platformFeeUsd": 0.2,
+      "sellerEarningsUsd": 0.8,
+      "effectiveFeePercent": 20,
+      "binding": "nominal-20pct"
+    },
+    {
+      "buyerChargeUsd": 0.2,
+      "twentyPercentUsd": 0.04,
+      "floorUsd": 0.02,
+      "capUsd": 0.06,
+      "platformFeeUsd": 0.04,
+      "sellerEarningsUsd": 0.16,
+      "effectiveFeePercent": 20,
+      "binding": "nominal-20pct"
+    },
+    {
+      "buyerChargeUsd": 0.1,
+      "twentyPercentUsd": 0.02,
+      "floorUsd": 0.02,
+      "capUsd": 0.03,
+      "platformFeeUsd": 0.02,
+      "sellerEarningsUsd": 0.08,
+      "effectiveFeePercent": 20,
+      "binding": "nominal-20pct"
+    },
+    {
+      "buyerChargeUsd": 0.05,
+      "twentyPercentUsd": 0.01,
+      "floorUsd": 0.02,
+      "capUsd": 0.015,
+      "platformFeeUsd": 0.015,
+      "sellerEarningsUsd": 0.035,
+      "effectiveFeePercent": 30,
+      "binding": "cap-30pct"
+    },
+    {
+      "buyerChargeUsd": 0.02,
+      "twentyPercentUsd": 0.004,
+      "floorUsd": 0.02,
+      "capUsd": 0.006,
+      "platformFeeUsd": 0.006,
+      "sellerEarningsUsd": 0.014,
+      "effectiveFeePercent": 30,
+      "binding": "cap-30pct"
+    },
+    {
+      "buyerChargeUsd": 0.08,
+      "twentyPercentUsd": 0.016,
+      "floorUsd": 0.02,
+      "capUsd": 0.024,
+      "platformFeeUsd": 0.02,
+      "sellerEarningsUsd": 0.06,
+      "effectiveFeePercent": 25,
+      "binding": "floor-0.02"
+    },
+    {
+      "buyerChargeUsd": 0.18,
+      "twentyPercentUsd": 0.036,
+      "floorUsd": 0.02,
+      "capUsd": 0.054,
+      "platformFeeUsd": 0.036,
+      "sellerEarningsUsd": 0.144,
+      "effectiveFeePercent": 20,
+      "binding": "nominal-20pct"
+    }
+  ],
+  "thisAgentBacksolve": {
+    "note": "This evidence packager makes no paid model calls, so the docs $0.18 example (net $0.10 + Claude $0.04) does not apply. Backsolve is buyer_charge = target_net / 0.80.",
+    "targetNetUsd": 0.08,
+    "upstreamLlmUsd": 0,
+    "rawChargeUsd": 0.1,
+    "suggestedLineItem": {
+      "unit": "run_completed",
+      "amountUsd": 0.1,
+      "notInManifest": true,
+      "setVia": "npx grexal agent price add run_completed 0.10  # after first push; Root only; not run here"
+    }
+  },
+  "willNotPublishFromWorker": true,
+  "willNotCallPriceEstimateCli": true
+}

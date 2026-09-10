@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 /**
- * Offline Agensi listing checklist.
- * Validates the sanitized offer descriptor JSON Schema, then prints
- * checklist item status. Does not hit Cloudflare Access, list, or spend.
+ * Offline JSON Schema validation for the Agensi sanitized offer descriptor.
+ * Does not hit Cloudflare Access, list skills, or spend.
  */
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,10 +15,12 @@ const PKG = path.resolve(__dirname, '..');
 
 const argv = process.argv.slice(2);
 if (argv.includes('--help') || argv.includes('-h')) {
-  process.stdout.write(`Usage: checklist.mjs [descriptor.json]
+  process.stdout.write(`Usage: validate-descriptor.mjs [descriptor.json]
 
-Offline listing checklist + descriptor schema validation.
-Does not authenticate, list, or spend.
+Validates offer-descriptor.json against offer-descriptor.schema.json offline,
+and cross-checks listing-checklist.json + access-handoff.json.
+
+Does not authenticate, list, or spend. Cash boundary $0.
 `);
   process.exit(0);
 }
@@ -32,5 +33,7 @@ if (forbidden) {
 
 const descriptorPath = argv.find((a) => !a.startsWith('-')) || path.join(PKG, 'offer-descriptor.json');
 const report = validateAgensiPackage(PKG, { descriptorPath });
-process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
+const { listingChecklist, ...rest } = report;
+const out = { ...rest, listingChecklistItemCount: report.listingChecklistItems };
+process.stdout.write(`${JSON.stringify(out, null, 2)}\n`);
 process.exit(report.ok ? 0 : 1);

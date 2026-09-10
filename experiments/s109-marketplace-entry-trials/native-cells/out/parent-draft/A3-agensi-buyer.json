@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "surface": "agensi",
+  "cashBoundaryUsd": 0,
+  "newFact": "Anonymous buyers cannot verify Agensi sell-page payout rails; buyer-replay is limited to offline descriptor checks until Root archives authenticated /sell copy.",
+  "buyerCanVerifyOffline": [
+    "offer-descriptor.json schema via surfaces/agensi/package/bin/checklist.mjs",
+    "skillRecipePin points at public gateway recipes",
+    "paidDeliverable vs freeAlternative delta is explicit"
+  ],
+  "buyerCannotVerifyYet": [
+    "Stripe eligibility",
+    "Solana USDC eligibility",
+    "Live listing contents behind Cloudflare Access"
+  ],
+  "freeAlternative": "Direct use of public x402-data-gateway-skills recipes + DIY acceptance notes",
+  "paidDelta": "Packaging, acceptance checklist, and delivery support against marketplace criteria",
+  "attributionPlan": {
+    "upstreamRecipes": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
+    "merchantEvidence": "epistemedeus/x402-url-extractor@3516cd40ba275c9f228443158097137cac44d003",
+    "rule": "Do not resell free public skill text as proprietary; sell packaging/acceptance/delivery support only."
+  },
+  "nextMeasurableEvent": "Root CF Access + archived sell-page payout text enabling a truthful public listing draft"
+}

@@ -1,17 +1,70 @@
 {
   "surface": "agensi",
+  "providerNeutral": true,
   "cashBoundaryUsd": 0,
   "willNotListFromWorker": true,
+  "schemaPath": "./offer-descriptor.schema.json",
+  "listingChecklistPath": "./listing-checklist.json",
+  "accessHandoffPath": "./access-handoff.json",
+  "listingChecklistSummary": [
+    "cash-boundary",
+    "host-split",
+    "no-seller-api",
+    "cf-access-dev",
+    "io-account",
+    "payout-rails",
+    "price-gate",
+    "zip-skill-md",
+    "attribution-no-proprietary",
+    "scan-8-point",
+    "network-scan-risk",
+    "tos-6-3-rights",
+    "private-ids-out-of-overlay"
+  ],
   "skillRecipePin": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
   "merchantEvidencePin": "epistemedeus/x402-url-extractor@3516cd40ba275c9f228443158097137cac44d003",
-  "offerTitle": "Gateway recipe packaging + acceptance evidence (Agensi draft)",
-  "paidDeliverable": "Buyer receives a versioned packaging of a public gateway recipe plus a machine-checkable acceptance report (pinned commit, command hashes, pass/fail checklist), delivered via Agensi listing ops if Root enables payouts. Not a resale of free recipe text as proprietary IP.",
-  "freeAlternative": "Clone epistemedeus/x402-data-gateway-skills at pin 82d0f019713c7223898806144da08fdbeed5c666 (or npx skills add) and run recipes locally against the public SameDayDesk gateway; DIY acceptance notes without marketplace mediation.",
-  "competentFreeDelta": "Paid delta is packaging labor, Agensi discovery/scan/delivery ops, and acceptance formatting — not exclusive ownership of public recipe content.",
+  "neoTaskKitPin": {
+    "requested": "274bec996ac744573cca428b0de7cd3ec1d146cb",
+    "status": "not-found-on-searched-epistemedeus-repos",
+    "action": "omit-from-offers-until-root-identifies-repo"
+  },
+  "offerTitle": "Gateway recipe packaging + acceptance evidence (Agensi draft — not listed)",
+  "paidDeliverable": "If Root later enables payouts and lists, the buyer would receive a versioned packaging of the public gateway recipes plus a machine-checkable acceptance report (pinned commit, command hashes, pass/fail checklist) delivered through Agensi listing ops. This is packaging labor, discovery/scan/delivery ops, and acceptance formatting — not a resale of free recipe text as proprietary IP, and not a new SameDayDesk HTTP action.",
+  "freeAlternative": "Clone epistemedeus/x402-data-gateway-skills at pin 82d0f019713c7223898806144da08fdbeed5c666 (or `npx skills add epistemedeus/x402-data-gateway-skills --all --yes`) and run the public recipes locally against https://agents.samedaydesk.com. Offline recipe tests live under tests/recipes upstream. No Agensi account, scan, or 30% fee.",
+  "competentFreeDelta": "Paid delta is packaging labor, Agensi discovery/scan/delivery ops, merchant-of-record tax handling, and acceptance formatting. It is not exclusive ownership of public recipe content and does not add a new gateway route.",
+  "ownershipClaim": {
+    "claimsProprietaryOwnershipOfFreeRecipes": false,
+    "statement": "This draft does not claim proprietary ownership of the free public recipes at epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666. Those files remain upstream public recipes (no LICENSE file in the pinned tree). SameDayDesk may, if Root later lists, sell packaging, acceptance formatting, and marketplace ops only."
+  },
+  "referencedPublicRecipes": [
+    "samedaydesk-machine-commerce",
+    "company-enrich",
+    "wallet-enrich",
+    "web-extract",
+    "repo-security-scan",
+    "schema-generate",
+    "deep-audit",
+    "morpho-risk",
+    "opportunity-preflight",
+    "agent-discoverability-audit",
+    "payment-offer-preflight",
+    "contract-qualified-search",
+    "agent-surface-budget-audit",
+    "settlement-proof",
+    "transaction-receipt",
+    "wallet-policy-safety"
+  ],
+  "recipeSource": {
+    "htmlUrl": "https://github.com/epistemedeus/x402-data-gateway-skills/tree/82d0f019713c7223898806144da08fdbeed5c666",
+    "commitUrl": "https://github.com/epistemedeus/x402-data-gateway-skills/commit/82d0f019713c7223898806144da08fdbeed5c666",
+    "install": "npx skills add epistemedeus/x402-data-gateway-skills --all --yes",
+    "licenseFilePresentAtPin": false,
+    "canonicalGateway": "https://agents.samedaydesk.com"
+  },
   "payoutClaimsVerified": {
-    "status": "blocked-by-access",
+    "status": "account-eligibility-not-verifiable-without-auth",
     "accountEligibility": "not-verifiable-without-auth",
-    "agensiDev": "entire www.agensi.dev host 302s to Cloudflare Access (GitHub IdP); /sell not anonymously readable",
+    "agensiDev": "blocked-by-access",
     "agensiIoContractText": {
       "status": "public-tos-verified",
       "termsUrl": "https://www.agensi.io/terms",
@@ -19,28 +72,24 @@
       "railsNamedInToS": ["Stripe Connect", "Zoneless USDC on Solana"],
       "minPaidPriceUsd": 5,
       "revenueShareNetExVat": "70/30 creator/platform (ToS; re-verify before listing)",
-      "note": "A1 cell: ToS last updated 2026-09-02 (Agensi BV). Stripe-terms page older and Stripe-mandatory; prefer later ToS for Zoneless. Account payout eligibility still requires Root auth."
+      "note": "A1 cell: ToS last updated 2026-09-02 (Agensi BV). Stripe-terms page is older and Stripe-mandatory; prefer later ToS for Zoneless. Account payout eligibility still requires Root auth. This package does not assume eligibility."
     },
-    "rumored": ["Stripe", "Solana USDC"],
-    "evidence": "GET https://www.agensi.dev/sell → HTTP 302 Cloudflare Access. Parallel public read of https://www.agensi.io/terms §6.1 names Stripe Connect or Zoneless USDC-on-Solana before paid publish.",
     "doNotAssumeEligible": true
   },
   "rootHandoff": {
     "cloudflareAccessUrl": "https://www.agensi.dev/sell",
     "publicSellerUrl": "https://www.agensi.io/sell",
-    "authHint": "For .dev: Cloudflare Access → GitHub. For .io creator submit: /auth then /dashboard/submit — Root only; worker will not sign up.",
-    "steps": [
-      "Root decides whether www.agensi.dev Access identity is needed vs an agensi.io creator session (worker will not sign up).",
-      "Confirm payout method setup UI state (Stripe Connect connected and/or Zoneless enabled) without publishing.",
-      "Capture verbatim current fee/min-price/payout text from authenticated submit flow; keep private account IDs out of this public overlay.",
-      "Only after payout rails enabled: draft listing that attributes the gateway pin and sells packaging/acceptance/support — worker will not list."
-    ]
+    "authHint": "For .dev: Cloudflare Access → GitHub (team mlehman-899.cloudflareaccess.com). For .io creator submit: /auth then /dashboard/submit — Root only; worker will not sign up or complete Access.",
+    "fullStepsPath": "./access-handoff.json",
+    "idp": "GitHub",
+    "accessTeamHost": "mlehman-899.cloudflareaccess.com"
   },
   "apiOrSdk": {
-    "publicUnauthenticatedApi": "none verified for seller upload",
+    "publicUnauthenticatedSellerApi": false,
+    "publicSellerSdk": false,
     "buyerMcp": "https://mcp.agensi.io/mcp (search_skills etc.; not a seller upload API)",
-    "note": "Seller entry is UI handoff (/dashboard/submit on agensi.io). No official public seller listing API verified from this worker."
+    "note": "Seller entry is UI handoff (/dashboard/submit on agensi.io). No official public seller listing API verified from this worker. This package has no Agensi SDK dependency."
   },
-  "attributionPlan": "Listings must cite upstream recipe repo+pin; SameDayDesk sells packaging/acceptance/ops only. Do not claim proprietary ownership of free recipes.",
-  "nextMeasurableEvent": "Root auth (Access and/or agensi.io) + payout-method enabled state captured privately; still $0 and no publish from worker."
+  "attributionPlan": "Any future listing must cite upstream recipe repo+pin 82d0f019713c7223898806144da08fdbeed5c666. SameDayDesk sells packaging/acceptance/ops only. Do not claim proprietary ownership of free recipes.",
+  "nextMeasurableEvent": "Root auth (Cloudflare Access on .dev and/or agensi.io creator session) plus payout-method enabled state captured privately; still $0 and no publish from this worker."
 }

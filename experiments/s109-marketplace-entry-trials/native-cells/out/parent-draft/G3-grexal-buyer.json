@@ -1,0 +1,36 @@
+{
+  "ok": true,
+  "surface": "grexal",
+  "cashBoundaryUsd": 0,
+  "newFact": "Buyer can validate I/O schema from grexal.json offline without paying; marketplace fee is independent of upstream recipe licenses.",
+  "feeWorksheet": {
+    "source": "https://docs.grexal.ai/docs/payments",
+    "formula": "platform_fee = clamp(buyer_charge × 0.20, $0.02, buyer_charge × 0.30)",
+    "run018": {
+      "buyerChargeUsd": 0.18,
+      "platformFeeUsd": 0.036,
+      "sellerEarningsUsd": 0.144,
+      "effectiveFeePercent": 20
+    },
+    "micro005": {
+      "buyerChargeUsd": 0.05,
+      "platformFeeUsd": 0.015,
+      "sellerEarningsUsd": 0.035,
+      "effectiveFeePercent": 30
+    }
+  },
+  "buyerReplayWithoutPaying": [
+    "Read grexal.json inputs/outputs (manifest_version 3)",
+    "Run local entrypoint pack_evidence.mjs on a git range",
+    "Do not call grexal publish/auth from this worker"
+  ],
+  "freeAlternative": "git diff + manual acceptance JSON",
+  "paidDelta": "Hosted per-run packaging agent with Grexal billing (if Root later publishes)",
+  "attributionPlan": {
+    "upstreamRecipes": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
+    "merchantEvidence": "epistemedeus/x402-url-extractor@3516cd40ba275c9f228443158097137cac44d003",
+    "rule": "Do not resell free public skill text as proprietary; sell packaging/acceptance/delivery support only.",
+    "grexalRuntimeFee": "20% normal marketplace fee accrues to Grexal; upstream recipes remain separately licensed"
+  },
+  "nextMeasurableEvent": "Root creates Grexal agent identity + sets pricing/visibility without this worker spending"
+}

@@ -63,8 +63,8 @@ const worksheets = {
       micro005: fee(0.05),
     },
     buyerReplayWithoutPaying: [
-      'Read grexal.json inputs/outputs (manifest_version 3)',
-      'Run local entrypoint pack_evidence.mjs on a git range',
+      'Read grexal.json input_schema/output_schema (manifest_version 3, typed fields)',
+      'Run local entrypoint agent/pack_evidence.js on a git range or supplied unifiedDiff',
       'Do not call grexal publish/auth from this worker',
     ],
     freeAlternative: 'git diff + manual acceptance JSON',

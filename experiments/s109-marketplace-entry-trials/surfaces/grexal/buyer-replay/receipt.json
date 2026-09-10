@@ -1,0 +1,268 @@
+{
+  "ok": true,
+  "cashBoundaryUsd": 0,
+  "paid": false,
+  "grexalAuth": false,
+  "grexalRunsInvoke": false,
+  "grexalJson": "experiments/s109-marketplace-entry-trials/surfaces/grexal/package/grexal.json",
+  "grexalJsonSha256": "7440dfacada0bd06ef16e27d51a943c0be4117ec170a16b31c11027a480b637c",
+  "identityStub": {
+    "name": "samedaydesk-source-change-evidence"
+  },
+  "manifest_version": 3,
+  "entrypoint": "agent/pack_evidence.js",
+  "runtimeLanguage": "typescript",
+  "manifestErrors": [],
+  "pricingInManifest": false,
+  "dashboardFieldsAbsent": [
+    "name",
+    "description",
+    "category",
+    "tags",
+    "homepage",
+    "repository",
+    "icon",
+    "is_open_source",
+    "pricing",
+    "visibility"
+  ],
+  "inputFields": [
+    "repoPath",
+    "unifiedDiff",
+    "baseRef",
+    "headRef",
+    "acceptanceNotes"
+  ],
+  "outputFields": [
+    "summary",
+    "commitRange",
+    "diffBytes",
+    "paidModelCalls",
+    "acceptanceReport",
+    "evidencePack"
+  ],
+  "inputSchemaChecks": [
+    {
+      "path": "input_schema.repoPath",
+      "pass": true,
+      "grexalType": "text",
+      "required": false,
+      "detail": "text"
+    },
+    {
+      "path": "input_schema.unifiedDiff",
+      "pass": true,
+      "grexalType": "text",
+      "required": false,
+      "detail": "text"
+    },
+    {
+      "path": "input_schema.baseRef",
+      "pass": true,
+      "grexalType": "text",
+      "required": false,
+      "detail": "text"
+    },
+    {
+      "path": "input_schema.headRef",
+      "pass": true,
+      "grexalType": "text",
+      "required": false,
+      "detail": "text"
+    },
+    {
+      "path": "input_schema.acceptanceNotes",
+      "pass": true,
+      "grexalType": "text",
+      "required": false,
+      "detail": "text"
+    }
+  ],
+  "outputSchemaChecks": [
+    {
+      "path": "output_schema.summary",
+      "pass": true,
+      "grexalType": "text",
+      "required": false,
+      "detail": "text"
+    },
+    {
+      "path": "output_schema.commitRange",
+      "pass": true,
+      "grexalType": "text",
+      "required": false,
+      "detail": "text"
+    },
+    {
+      "path": "output_schema.diffBytes",
+      "pass": true,
+      "grexalType": "number",
+      "required": false,
+      "detail": "number"
+    },
+    {
+      "path": "output_schema.paidModelCalls",
+      "pass": true,
+      "grexalType": "number",
+      "required": false,
+      "detail": "number"
+    },
+    {
+      "path": "output_schema.acceptanceReport",
+      "pass": true,
+      "grexalType": "json",
+      "required": false,
+      "detail": "json"
+    },
+    {
+      "path": "output_schema.evidencePack",
+      "pass": true,
+      "grexalType": "json",
+      "required": false,
+      "detail": "json"
+    }
+  ],
+  "inputValueChecks": [
+    {
+      "path": "input.repoPath",
+      "pass": true,
+      "grexalType": "text",
+      "present": false,
+      "detail": "optional field absent"
+    },
+    {
+      "path": "input.unifiedDiff",
+      "pass": true,
+      "grexalType": "text",
+      "present": true,
+      "jsType": "string",
+      "detail": "type matches grexal.json"
+    },
+    {
+      "path": "input.baseRef",
+      "pass": true,
+      "grexalType": "text",
+      "present": true,
+      "jsType": "string",
+      "detail": "type matches grexal.json"
+    },
+    {
+      "path": "input.headRef",
+      "pass": true,
+      "grexalType": "text",
+      "present": true,
+      "jsType": "string",
+      "detail": "type matches grexal.json"
+    },
+    {
+      "path": "input.acceptanceNotes",
+      "pass": true,
+      "grexalType": "text",
+      "present": true,
+      "jsType": "string",
+      "detail": "type matches grexal.json"
+    }
+  ],
+  "outputValueChecks": [
+    {
+      "path": "output.summary",
+      "pass": true,
+      "grexalType": "text",
+      "present": true,
+      "jsType": "string",
+      "detail": "type matches grexal.json"
+    },
+    {
+      "path": "output.commitRange",
+      "pass": true,
+      "grexalType": "text",
+      "present": true,
+      "jsType": "string",
+      "detail": "type matches grexal.json"
+    },
+    {
+      "path": "output.diffBytes",
+      "pass": true,
+      "grexalType": "number",
+      "present": true,
+      "jsType": "number",
+      "detail": "type matches grexal.json"
+    },
+    {
+      "path": "output.paidModelCalls",
+      "pass": true,
+      "grexalType": "number",
+      "present": true,
+      "jsType": "number",
+      "detail": "type matches grexal.json"
+    },
+    {
+      "path": "output.acceptanceReport",
+      "pass": true,
+      "grexalType": "json",
+      "present": true,
+      "jsType": "object",
+      "detail": "type matches grexal.json"
+    },
+    {
+      "path": "output.evidencePack",
+      "pass": true,
+      "grexalType": "json",
+      "present": true,
+      "jsType": "object",
+      "detail": "type matches grexal.json"
+    }
+  ],
+  "paidModelCalls": 0,
+  "sampleOutputSummary": "Packaged 93 bytes / 1 files for replay-base...replay-head; paidModelCalls=0",
+  "sampleCommitRange": "replay-base...replay-head",
+  "sampleDiffBytes": 93,
+  "how": [
+    "Read grexal.json input_schema and output_schema (manifest_version 3 typed maps). Pricing is not in this file.",
+    "Offline-validate the manifest (grexal@0.4.1 rules; no login).",
+    "Run local entrypoint agent/pack_evidence.js on a supplied unifiedDiff (no git, no network).",
+    "Type-check returned keys against output_schema (text|number|json).",
+    "Confirm paidModelCalls=0.",
+    "Do not call grexal login, push, publish, agent price, or runs invoke. Do not top up buyer credits."
+  ],
+  "doesNotProve": [
+    "Hosted Grexal sandbox identity (requires Root push + publish).",
+    "Listed buyer price (pricing is a dashboard/CLI line item, not grexal.json).",
+    "Marketplace typical-price baseline (docs: 10+ organic completed runs).",
+    "Settlement, earnings, or cash-out."
+  ],
+  "feeRowsForBuyer": {
+    "source": "https://docs.grexal.ai/docs/payments",
+    "formula": "platform_fee = clamp(buyer_charge × 0.20, $0.02, buyer_charge × 0.30)",
+    "run018": {
+      "buyerChargeUsd": 0.18,
+      "twentyPercentUsd": 0.036,
+      "floorUsd": 0.02,
+      "capUsd": 0.054,
+      "platformFeeUsd": 0.036,
+      "sellerEarningsUsd": 0.144,
+      "effectiveFeePercent": 20,
+      "binding": "nominal-20pct"
+    },
+    "micro005": {
+      "buyerChargeUsd": 0.05,
+      "twentyPercentUsd": 0.01,
+      "floorUsd": 0.02,
+      "capUsd": 0.015,
+      "platformFeeUsd": 0.015,
+      "sellerEarningsUsd": 0.035,
+      "effectiveFeePercent": 30,
+      "binding": "cap-30pct"
+    },
+    "floorBand008": {
+      "buyerChargeUsd": 0.08,
+      "twentyPercentUsd": 0.016,
+      "floorUsd": 0.02,
+      "capUsd": 0.024,
+      "platformFeeUsd": 0.02,
+      "sellerEarningsUsd": 0.06,
+      "effectiveFeePercent": 25,
+      "binding": "floor-0.02"
+    }
+  }
+}

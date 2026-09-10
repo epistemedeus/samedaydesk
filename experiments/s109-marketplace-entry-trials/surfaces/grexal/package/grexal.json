@@ -1,25 +1,64 @@
 {
   "manifest_version": 3,
-  "entrypoint": "agent/pack_evidence.mjs",
-  "runtime": "node20",
-  "description": "Local scaffold only: packages git diff + acceptance JSON. Does not call paid models or publish.",
-  "inputs": {
-    "type": "object",
-    "required": ["repoPath", "baseRef", "headRef"],
-    "properties": {
-      "repoPath": { "type": "string", "description": "Local git checkout path" },
-      "baseRef": { "type": "string" },
-      "headRef": { "type": "string" },
-      "acceptanceNotes": { "type": "string" }
+  "entrypoint": "agent/pack_evidence.js",
+  "runtime": {
+    "language": "typescript",
+    "memory_mb": 512,
+    "timeout_seconds": 120,
+    "cpu": 1,
+    "sandbox_template": "standard"
+  },
+  "input_schema": {
+    "repoPath": {
+      "type": "text",
+      "description": "Local git checkout to diff. Optional when unifiedDiff is supplied. Dry-run only; sandbox may not contain the buyer's repo.",
+      "required": false
+    },
+    "unifiedDiff": {
+      "type": "text",
+      "description": "Precomputed unified diff text. Use this when the agent should not run git.",
+      "required": false
+    },
+    "baseRef": {
+      "type": "text",
+      "description": "Git base ref (default HEAD~1 when repoPath is used).",
+      "required": false
+    },
+    "headRef": {
+      "type": "text",
+      "description": "Git head ref (default HEAD when repoPath is used).",
+      "required": false
+    },
+    "acceptanceNotes": {
+      "type": "text",
+      "description": "Human or machine notes that belong in the acceptance report.",
+      "required": false
     }
   },
-  "outputs": {
-    "type": "object",
-    "properties": {
-      "diffPath": { "type": "string" },
-      "acceptancePath": { "type": "string" },
-      "commitRange": { "type": "string" }
+  "output_schema": {
+    "summary": {
+      "type": "text",
+      "description": "One-line packaging result. Always notes paidModelCalls=0."
+    },
+    "commitRange": {
+      "type": "text",
+      "description": "baseRef...headRef range that was packaged."
+    },
+    "diffBytes": {
+      "type": "number",
+      "description": "Byte length of the captured unified diff."
+    },
+    "paidModelCalls": {
+      "type": "number",
+      "description": "Always 0. This agent does not call paid models."
+    },
+    "acceptanceReport": {
+      "type": "json",
+      "description": "Machine-readable acceptance report (checks, notes, cash boundary)."
+    },
+    "evidencePack": {
+      "type": "json",
+      "description": "Combined pack: unified diff text plus acceptance report."
     }
-  },
-  "connections": []
+  }
 }

@@ -1,0 +1,10 @@
+node_modules/
+.s109-grexal-dry-out/
+.env
+.env.local
+
+# Grexal local state: commit the identity stub only.
+# connections.json would hold dev credentials and stays ignored.
+# After a first push, agent.json becomes { "agentId": "ag_..." } — still safe to commit.
+.grexal/*
+!.grexal/agent.json

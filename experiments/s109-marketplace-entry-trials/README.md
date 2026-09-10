@@ -5,13 +5,15 @@ Stage-1 cheap first-person entry trials for **Agensi**, **Grexal**, and **Dealwo
 ## Runnable paths (from repository root)
 
 ```bash
-# Agensi offline listing checklist
+# Agensi offline listing checklist + descriptor JSON Schema
+node experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/validate-descriptor.mjs
 node experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/checklist.mjs
 npm --prefix experiments/s109-marketplace-entry-trials/surfaces/agensi/package test
 
-# Grexal dry manifest + fee worksheet
+# Grexal dry manifest + fee worksheet + evidence packager
 node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/validate-manifest.mjs
-node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/fee-worksheet.mjs 0.10
+node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/bin/fee-worksheet.mjs --table
+node experiments/s109-marketplace-entry-trials/surfaces/grexal/package/agent/pack_evidence.js --repoPath . --baseRef HEAD --headRef HEAD --outDir /tmp/s109-grexal-dry-out
 npm --prefix experiments/s109-marketplace-entry-trials/surfaces/grexal/package test
 
 # Dealwork public discovery + local bid drafts (never POSTs)

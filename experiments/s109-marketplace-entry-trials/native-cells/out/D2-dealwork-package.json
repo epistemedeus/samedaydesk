@@ -1,0 +1,118 @@
+{
+  "cell": "D2-dealwork-package",
+  "cohort": "c2-packages",
+  "surface": "dealwork",
+  "observedAt": "2026-09-10T08:54:53Z",
+  "cashBoundaryUsd": 0,
+  "mutatingCallsMade": false,
+  "onboardCalled": false,
+  "bidPosted": false,
+  "newFact": "surfaces/dealwork/package is a Node ESM GET-only client: it loads public GET https://dealwork.ai/api/v1/jobs (or fixtures/dealwork-jobs-sample.json), keeps titles with machine-executable skill tokens (research/python/scripts/data/code/…), and writes a local OpenAPI CreateBid object {jobId, amount, message} plus skill.md dual aliases {proposedAmount, estimatedHours, proposalText} without POSTing. Fixture 10 jobs → 9 machine-friendly, drop Test 7. Live GET per_page=50 (2 pages) → listed 91, machine-friendly 89, drop Test 7 and a Chinese copy job with no English skill tokens. npm test is 7/7 pass offline against the fixture. Every draft has willNotPost=true and postBlockers including cash-boundary-usd-0, poster-not-funded, and likely-seller-ad-not-buyer-rfq. CreateBid.amount is a positive number (preferred $15 SDS bundle, clamped into budgetMin–budgetMax). Existing SameDayDesk agent was not onboarded and no bid was submitted.",
+  "artifactPath": "experiments/s109-marketplace-entry-trials/surfaces/dealwork/package",
+  "runnablePath": "experiments/s109-marketplace-entry-trials/surfaces/dealwork/package/bin/discover.mjs",
+  "authenticatedStepNeeded": "Root-held SameDayDesk identityKey / ~/.openwork/credentials.json before any authenticated POST /api/v1/jobs/{id}/bids. This cell does not onboard, bid, claim, or recover identity.",
+  "observedPath": {
+    "method": "Offline fixture + optional unauthenticated GET /api/v1/jobs. No POST/PATCH/DELETE. No onboard/bid/claim/deliver.",
+    "steps": [
+      "Sanitized fixtures/dealwork-jobs-sample.json from live GET /jobs?per_page=50&page=1 (10 jobs; poster IDs/avatars omitted; descriptions truncated).",
+      "Implemented surfaces/dealwork/package as type=module: lib/discover.mjs + bin/discover.mjs + test/discover.test.mjs.",
+      "Default CLI reads the fixture; --live GETs /jobs?per_page=50 (max 2 pages). --post/--bid/--onboard/--claim exit 2.",
+      "npm --prefix experiments/s109-marketplace-entry-trials/surfaces/dealwork/package test → 7 pass, 0 fail.",
+      "Optional live GET census 2026-09-10T08:54:53Z: meta.total=91, machineFriendly=89, posted=false."
+    ]
+  },
+  "package": {
+    "name": "@samedaydesk/s109-dealwork-discovery",
+    "type": "module",
+    "files": [
+      "package.json",
+      "README.md",
+      "bin/discover.mjs",
+      "lib/discover.mjs",
+      "test/discover.test.mjs"
+    ],
+    "commandsFromRepoRoot": [
+      "node experiments/s109-marketplace-entry-trials/surfaces/dealwork/package/bin/discover.mjs",
+      "node experiments/s109-marketplace-entry-trials/surfaces/dealwork/package/bin/discover.mjs --query research",
+      "node experiments/s109-marketplace-entry-trials/surfaces/dealwork/package/bin/discover.mjs --live",
+      "npm --prefix experiments/s109-marketplace-entry-trials/surfaces/dealwork/package test"
+    ]
+  },
+  "fixture": {
+    "path": "experiments/s109-marketplace-entry-trials/fixtures/dealwork-jobs-sample.json",
+    "source": "GET https://dealwork.ai/api/v1/jobs?per_page=50&page=1",
+    "fetchedAt": "2026-09-10T08:52:27Z",
+    "jobs": 10,
+    "machineFriendly": 9,
+    "droppedTitles": ["Test 7"]
+  },
+  "liveGetOptional": {
+    "url": "GET https://dealwork.ai/api/v1/jobs?per_page=50",
+    "auth": "none",
+    "listed": 91,
+    "machineFriendly": 89,
+    "dropped": [
+      { "id": "623110f8-3e04-4b28-9ee4-a149bc1131ff", "title": "Test 7", "reason": "not-machine-friendly-title" },
+      { "id": "b6f0642a-dada-4b55-98d9-af618d991bf4", "title": "$5 中文内容快速交付：公众号文案/小红书种草/去AI味改写", "reason": "not-machine-friendly-title" }
+    ],
+    "posted": false
+  },
+  "bidDraftContract": {
+    "doNotPOST": true,
+    "endpoint": "POST /api/v1/jobs/{id}/bids",
+    "openapiCreateBid": {
+      "required": ["jobId", "amount"],
+      "properties": {
+        "jobId": "string uuid",
+        "amount": "number > 0",
+        "message": "string"
+      }
+    },
+    "skillMdAliases": {
+      "proposedAmount": "string decimal, same value as amount",
+      "estimatedHours": "number (live bids/distribution.points prove this field exists; OpenAPI CreateBid omits it)",
+      "proposalText": "same text as message; must cite the specific job"
+    },
+    "localDualAliasDraftKeys": ["jobId", "amount", "proposedAmount", "estimatedHours", "message", "proposalText"],
+    "amountRule": "positive number inside job budgetMin–budgetMax (or budget/fixedPrice). Preferred SDS bundle $15, clamped into the window. Zero-budget jobs are not drafted.",
+    "filter": "isMachineFriendlyTitle: title length ≥ 12, not /^test(\\s+\\d+)?$/i, at least one skill token (research, python, script(s), data, technical, code/coding, audit, json, csv, api, report(s), analysis, docs, scrape/scraping, automation, pytest, seo, review, typescript, javascript, parser, excel, pipeline, openapi, writing, translation, bug ?fix, brief(s), intelligence, write)."
+  },
+  "sampleCreateBidFromFixture": {
+    "willNotPost": true,
+    "createBid": {
+      "jobId": "8dedfed6-c546-4a60-b4ab-a0195aafcfff",
+      "amount": 15,
+      "message": "SameDayDesk local draft for “Grok-xAI Autonomous Income Agent — Research Briefs, Technical Writing, Data Analysis & Python Scripts ($5–$40)” (open-mode). I would deliver a reproducible source-change evidence pack: pinned git range + unified diff, acceptance.json pass/fail checklist, and command-transcript hashes (no secrets). Job brief excerpt: Autonomous AI agent built by xAI. I deliver sourced research memos with citations and confidence labels, structured tec…. Evidence routes: GET|POST /work/opportunity-preflight, GET /scan, GET /distribution/agent-discoverability-audit. Public x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666 stay free; this amount would buy packaging/acceptance labor only, not recipe relicensing. Estimate 1.5h at $15.00. This object is a local OpenAPI CreateBid body; POST /api/v1/jobs/{id}/bids is not performed."
+    },
+    "openApiValidation": { "ok": true, "errors": [], "extraKeys": [] },
+    "postBlockers": [
+      "cash-boundary-usd-0",
+      "worker-must-not-post",
+      "poster-not-funded",
+      "open-mode-not-claimable",
+      "likely-seller-ad-not-buyer-rfq"
+    ]
+  },
+  "tests": {
+    "command": "npm --prefix experiments/s109-marketplace-entry-trials/surfaces/dealwork/package test",
+    "runner": "node --test ./test/discover.test.mjs",
+    "result": "pass",
+    "pass": 7,
+    "fail": 0,
+    "usesFixture": "experiments/s109-marketplace-entry-trials/fixtures/dealwork-jobs-sample.json",
+    "networkInTests": false
+  },
+  "nextMeasurableEvent": {
+    "thisCellCompleteWhen": "Package exists, npm test passes on the fixture, D2 JSON written, no Dealwork POST performed.",
+    "d3": "Buyer/economics cell: acceptance artifacts, escrow/approve from OpenAPI (no calls), attribution vs free DIY git+curl.",
+    "bidGate": "A public job with posterFunded=true (bid-mode) or claimable=true (open-mode), budgetMax>0, written as a buyer RFQ not a seller ad — plus Root credentials. Until then drafts stay on disk."
+  },
+  "sources": [
+    { "url": "https://dealwork.ai/api/v1/jobs", "role": "public job search used for fixture + optional live GET" },
+    { "url": "https://dealwork.ai/openapi.json", "role": "CreateBid schema: required jobId, amount; optional message" },
+    { "url": "https://dealwork.ai/skill.md", "role": "skill.md bid body proposedAmount / estimatedHours / proposalText; good-proposal rules" },
+    { "path": "experiments/s109-marketplace-entry-trials/fixtures/dealwork-jobs-sample.json", "role": "sanitized offline fixture for npm test" },
+    { "path": "experiments/s109-marketplace-entry-trials/fixtures/dealwork-openapi.json", "role": "local OpenAPI CreateBid pin" },
+    { "path": "experiments/s109-marketplace-entry-trials/native-cells/out/D1-dealwork-contract.json", "role": "D1 dual-alias draft contract this package implements locally" }
+  ]
+}

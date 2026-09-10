@@ -1,0 +1,425 @@
+{
+  "cell": "A3-agensi-buyer",
+  "cohort": "c3-buyer",
+  "surface": "agensi",
+  "observedAt": "2026-09-10T09:10:42Z",
+  "cashBoundaryUsd": 0,
+  "listed": false,
+  "authenticated": false,
+  "purchased": false,
+  "paidX402Replay": false,
+  "networkCallsFromOfflineReplay": 0,
+  "actionsNotTaken": [
+    "no Cloudflare Access / GitHub OAuth on www.agensi.dev",
+    "no agensi.io signup, email OTP, or Google sign-in",
+    "no listing, ZIP upload, or publish",
+    "no Stripe Connect or Zoneless onboarding",
+    "no Agensi credits, skill purchase, or paid install",
+    "no PAYMENT-SIGNATURE / Authorization: Payment on agents.samedaydesk.com",
+    "no npx skills add install into this workspace",
+    "no email to Agensi"
+  ],
+  "newFact": "Independent buyer-replay of a SameDayDesk Agensi offer does not need Cloudflare Access, Stripe, or Solana USDC. The A2 sanitized listing descriptor is a complete offline artifact: surfaces/agensi/package/bin/checklist.mjs validates offer-descriptor.json against a local JSON Schema (network $ref refused), asserts skillRecipePin epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666, 16 public recipe directories, ownershipClaim.claimsProprietaryOwnershipOfFreeRecipes=false, and an explicit paidDeliverable vs freeAlternative vs competentFreeDelta. npm test 13/13; tampered pin and proprietary-ownership claims fail closed. This cell reconfirmed the Access wall that blocks anonymous sell-page payout verification: unauthenticated GET https://www.agensi.dev/sell HTTP/2 302 Location mlehman-899.cloudflareaccess.com (kid a6751de448d4c74b6816fae20aebc09a22562b1bb5c77eff4e3d5bf33dd98fec), followed login HTML title 'Sign in ・ Cloudflare Access', data-idp=GitHub only. Public ToS on www.agensi.io (effective 2026-03-02, last updated 2026-09-02) still names Stripe Connect or Zoneless USDC-on-Solana, $5.00 min paid, 70/30 net ex-VAT, and §6.3 original-author-or-distribution-rights plus accurate listing — but account eligibility remains not-verifiable-without-auth. Competent free alternative, exercised $0 this cell: GitHub pin tree (16 skill dirs, LICENSE 404) plus direct unpaid x402 discovery on https://agents.samedaydesk.com (/.well-known/x402 v2, 24 route templates; GET /extract?url=https://example.com HTTP 402 amount 5000 atomic Base USDC, network eip155:8453; stop before signing). Unauthenticated MCP search_skills 'samedaydesk x402 data gateway' returned three unrelated paid listings (x402-attack-surface-gate, arweave-gateway-setup, agent-api-gateway) and zero pin hits. Paid Agensi delta is packaging/acceptance/ops against marketplace criteria, not a resale of free recipe text and not a new gateway route.",
+  "observedPath": "Offline first: ran node surfaces/agensi/package/bin/validate-descriptor.mjs and checklist.mjs (ok, networkCalls=0, publicListingSupported=false, claimsProprietaryOwnershipOfFreeRecipes=false), npm --prefix surfaces/agensi/package test (13 pass / 0 fail), and scripts/buyer-worksheet.mjs agensi. Then $0 public HTTP only: curl --max-redirs 0 and -L https://www.agensi.dev/sell (Access 302 + GitHub IdP HTML); GET https://www.agensi.io/terms and /sell (ToS §6.1–6.4 and $29 worked example); gh api pin tree + LICENSE 404 + tests/recipes present; gh api epistemedeus/x402-url-extractor@3516cd40ba275c9f228443158097137cac44d003 exists; GET https://agents.samedaydesk.com/.well-known/x402, /llms.txt, /.well-known/skills/index.json; unpaid GET /extract (402, no PAYMENT-SIGNATURE); POST https://mcp.agensi.io/mcp initialize (agensi v1.1.0) + tools/call search_skills. Did not authenticate, list, purchase, or settle.",
+  "runnablePath": [
+    "node experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/checklist.mjs",
+    "node experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/validate-descriptor.mjs",
+    "npm --prefix experiments/s109-marketplace-entry-trials/surfaces/agensi/package test",
+    "node experiments/s109-marketplace-entry-trials/scripts/buyer-worksheet.mjs agensi"
+  ],
+  "listingDescriptor": {
+    "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/offer-descriptor.json",
+    "schemaPath": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/offer-descriptor.schema.json",
+    "sourcePackageCell": "A2-agensi-package",
+    "sourceContractCell": "A1-agensi-contract",
+    "offerTitle": "Gateway recipe packaging + acceptance evidence (Agensi draft — not listed)",
+    "willNotListFromWorker": true,
+    "publicListingSupported": false
+  },
+  "offlineReplayThisCell": {
+    "ok": true,
+    "command": "node experiments/s109-marketplace-entry-trials/surfaces/agensi/package/bin/checklist.mjs",
+    "npmTest": "13 pass / 0 fail",
+    "offline": true,
+    "networkCalls": 0,
+    "cashBoundaryUsd": 0,
+    "publicListingSupported": false,
+    "claimsProprietaryOwnershipOfFreeRecipes": false,
+    "skillRecipePin": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
+    "listingChecklistItems": 13,
+    "accessHandoffSteps": 8,
+    "referencedPublicRecipes": 16,
+    "failClosedChecks": [
+      "tampered skillRecipePin",
+      "ownershipClaim.claimsProprietaryOwnershipOfFreeRecipes=true",
+      "validate-descriptor.mjs --list (refuses without contacting Agensi)"
+    ]
+  },
+  "independentBuyerReplay": {
+    "definition": "A buyer who is not Root and holds no Agensi session can decide whether a SameDayDesk Agensi listing is worth paying for by checking the listing descriptor plus the public pin and unpaid x402 catalogs. Access-gated /sell widgets are not part of that decision.",
+    "buyerClass": "independent",
+    "completeWithoutAuth": true,
+    "completeWithoutSpend": true,
+    "offlineFromDescriptor": {
+      "status": "executable-now",
+      "steps": [
+        "Read offer-descriptor.json as the skill listing descriptor (draft; not a live Agensi zip).",
+        "Run bin/checklist.mjs (or bin/validate-descriptor.mjs) from repository root. Expect ok=true, cashBoundaryUsd=0, networkCalls=0, publicListingSupported=false.",
+        "Confirm skillRecipePin equals epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666.",
+        "Confirm referencedPublicRecipes has exactly the 16 public skill directories and matches the pin tree.",
+        "Confirm ownershipClaim.claimsProprietaryOwnershipOfFreeRecipes is false and the statement denies proprietary ownership of the free public recipes.",
+        "Diff paidDeliverable vs freeAlternative vs competentFreeDelta: packaging/acceptance/ops only; no new gateway route; no exclusive recipe IP.",
+        "Optional: flip the pin or set proprietary ownership on a copy and confirm the validator fails closed."
+      ]
+    },
+    "optionalZeroSpendNetwork": {
+      "status": "exercised-this-cell",
+      "doesNotUnlockPayoutEligibility": true,
+      "steps": [
+        "GET pin tree at 82d0f019713c7223898806144da08fdbeed5c666; LICENSE must 404; tests/recipes present.",
+        "GET https://agents.samedaydesk.com/.well-known/x402 and /llms.txt (credential-free catalogs).",
+        "GET one paid route without PAYMENT-SIGNATURE; record HTTP 402 amount/network/asset/payTo; stop.",
+        "POST MCP search_skills without OAuth; pin skills are not in the public catalog from this call.",
+        "GET https://www.agensi.io/terms §6.3 for the listing-accuracy / rights warranty (public HTML, no account)."
+      ]
+    },
+    "stopConditions": [
+      "Do not complete Cloudflare Access.",
+      "Do not create an Agensi account or buy credits.",
+      "Do not attach PAYMENT-SIGNATURE or Authorization: Payment.",
+      "Do not treat HTTP 402 as delivery.",
+      "Do not treat public ToS payout rails as enabled-account proof."
+    ]
+  },
+  "buyerCanVerifyOffline": [
+    {
+      "id": "descriptor-schema",
+      "check": "offer-descriptor.json validates against offer-descriptor.schema.json via surfaces/agensi/package/bin/checklist.mjs (local engine; network $ref is a hard error)",
+      "status": "verified-this-cell"
+    },
+    {
+      "id": "recipe-pin",
+      "check": "skillRecipePin is the public gateway-recipes commit 82d0f019713c7223898806144da08fdbeed5c666",
+      "status": "verified-this-cell"
+    },
+    {
+      "id": "sixteen-recipes",
+      "check": "referencedPublicRecipes lists the 16 skill directories present at the pin (samedaydesk-machine-commerce through wallet-policy-safety)",
+      "status": "verified-this-cell"
+    },
+    {
+      "id": "ownership-flag",
+      "check": "ownershipClaim.claimsProprietaryOwnershipOfFreeRecipes === false and statement matches the schema pattern denying proprietary ownership of free recipes",
+      "status": "verified-this-cell"
+    },
+    {
+      "id": "paid-vs-free-delta",
+      "check": "paidDeliverable, freeAlternative, and competentFreeDelta are explicit: packaging/acceptance/ops vs clone/npx + direct gateway; not a new HTTP action",
+      "status": "verified-this-cell"
+    },
+    {
+      "id": "price-and-fee-text",
+      "check": "Descriptor copies public ToS numbers only: min paid $5.00, 70/30 net ex-VAT, Stripe Connect or Zoneless USDC-on-Solana named — marked doNotAssumeEligible",
+      "status": "verified-this-cell"
+    },
+    {
+      "id": "fail-closed-attribution",
+      "check": "Validator and npm tests reject a tampered pin and a proprietary-ownership claim without contacting Agensi",
+      "status": "verified-this-cell"
+    }
+  ],
+  "buyerCannotVerifyYet": [
+    {
+      "id": "stripe-eligibility",
+      "check": "Stripe Connect account connected/enabled for this seller",
+      "reason": "www.agensi.dev/sell is Cloudflare Access (GitHub). Creator payout widgets on agensi.io require a session. Public ToS is contract-text, not an enabled-payout proof."
+    },
+    {
+      "id": "solana-usdc-eligibility",
+      "check": "Zoneless USDC-on-Solana payout method enabled",
+      "reason": "Zoneless onboarding is behind creator auth (ToS §6.1). No public API returns wallet-verification or a Solana payout tx. This cell did not open it."
+    },
+    {
+      "id": "authenticated-sell-page",
+      "check": "Live /sell or /dashboard/submit payout-method state and current fee copy after login",
+      "reason": "Task-named host still 302s anonymous clients to mlehman-899.cloudflareaccess.com. Worker will not complete Access."
+    },
+    {
+      "id": "live-listing-zip",
+      "check": "Contents of a published Agensi skill zip / paid GET /api/install/<slug>",
+      "reason": "No SameDayDesk pin listing exists (MCP search miss). Worker will not publish. Paid slugs 403 without purchase."
+    },
+    {
+      "id": "paid-x402-body",
+      "check": "Delivered JSON from a SameDayDesk paid HTTP action",
+      "reason": "Unpaid GET /extract returns 402. Recipes and this cell stop before wallet access or PAYMENT-SIGNATURE. Gateway USDC is a separate cash layer from Agensi."
+    }
+  ],
+  "payoutRailsAnonymousVerification": {
+    "agensiDevSell": {
+      "url": "https://www.agensi.dev/sell",
+      "httpNofollow": 302,
+      "locationHost": "mlehman-899.cloudflareaccess.com",
+      "accessKid": "a6751de448d4c74b6816fae20aebc09a22562b1bb5c77eff4e3d5bf33dd98fec",
+      "followedTitle": "Sign in ・ Cloudflare Access",
+      "idp": "GitHub only",
+      "stripeEligibility": "blocked-by-access",
+      "solanaUsdcEligibility": "blocked-by-access"
+    },
+    "agensiIoContractText": {
+      "termsUrl": "https://www.agensi.io/terms",
+      "sellUrl": "https://www.agensi.io/sell",
+      "effectiveDate": "2026-03-02",
+      "lastUpdated": "2026-09-02",
+      "operator": "Agensi BV",
+      "railsNamedInToS": ["Stripe Connect", "Zoneless USDC on Solana"],
+      "accountEligibility": "not-verifiable-without-auth",
+      "doNotAssumeEligible": true,
+      "quotes": {
+        "tos61": "To list a skill for sale, you must create an account and set up a payout method. You may either connect a Stripe account via Stripe Connect, or onboard with Zoneless, our stablecoin payout partner, to receive payouts in USDC on Solana. … You may not publish a paid skill until one of these payout methods is set up and enabled.",
+        "tos63": "By listing a skill, you represent and warrant that you are the original author of the skill or have all necessary rights to distribute it, the skill does not infringe upon the intellectual property rights of any third party, … and the listing description accurately describes the skill's functionality.",
+        "tos64": "The minimum price for paid skills is $5.00. The credit cost is calculated automatically as the dollar price multiplied by 5. … Creator receives 70% of the net sale price, excluding VAT or sales tax. Agensi retains 30% of the net sale price as a platform fee."
+      }
+    }
+  },
+  "freeAlternative": {
+    "summary": "Clone or npx the public x402-data-gateway-skills pin and call the live SameDayDesk x402/MPP gateway for credential-free discovery and unpaid 402 terms. Write DIY acceptance notes. No Agensi account, scan, or 30% fee.",
+    "install": "npx skills add epistemedeus/x402-data-gateway-skills --all --yes",
+    "pin": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
+    "canonicalGateway": "https://agents.samedaydesk.com",
+    "thisCellDidNotNpxInstall": true,
+    "githubTreeThisCell": {
+      "skillDirectories": [
+        "agent-discoverability-audit",
+        "agent-surface-budget-audit",
+        "company-enrich",
+        "contract-qualified-search",
+        "deep-audit",
+        "morpho-risk",
+        "opportunity-preflight",
+        "payment-offer-preflight",
+        "repo-security-scan",
+        "samedaydesk-machine-commerce",
+        "schema-generate",
+        "settlement-proof",
+        "transaction-receipt",
+        "wallet-enrich",
+        "wallet-policy-safety",
+        "web-extract"
+      ],
+      "count": 16,
+      "licenseFilePresentAtPin": false,
+      "offlineRecipeTests": "tests/recipes (directory present at pin)"
+    },
+    "directX402ThisCell": {
+      "wellKnown": {
+        "url": "https://agents.samedaydesk.com/.well-known/x402",
+        "http": 200,
+        "x402Version": 2,
+        "itemCount": 24
+      },
+      "unpaidExtractChallenge": {
+        "url": "https://agents.samedaydesk.com/extract?url=https://example.com",
+        "http": 402,
+        "error": "Payment required",
+        "scheme": "exact",
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "amountAtomic": "5000",
+        "amountUsdc": 0.005,
+        "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+        "paidBodyRetrieved": false,
+        "note": "Competent free path records the challenge and stops. Paying this 402 is SameDayDesk Base USDC, not an Agensi purchase."
+      }
+    },
+    "buyerAcceptanceDiy": [
+      "Pinned commit SHA on the recipe repo",
+      "Command transcript hashes (no secrets)",
+      "Pass/fail checklist against the live unpaid 402 terms (amount, network, asset, payTo)",
+      "Explicit stop before wallet / paid replay"
+    ]
+  },
+  "paidDelta": {
+    "summary": "If Root later enables a payout method and lists, the buyer of the Agensi skill would pay for supported packaging, marketplace acceptance, and delivery ops — not for exclusive ownership of the 16 public recipes and not for a new SameDayDesk HTTP action.",
+    "includes": [
+      "Versioned ZIP+SKILL.md packaging that cites the pin SHA",
+      "Machine-checkable acceptance report (pinned commit, command hashes, pass/fail checklist) formatted to Agensi review",
+      "Agensi storefront + optional MCP discovery after 8-point scan and human review (public SLA usually 24–48h)",
+      "Buyer-fingerprinted zip delivery and merchant-of-record VAT/sales-tax handling",
+      "Creator payout ops through Stripe Connect or Zoneless USDC-on-Solana at 70/30 of net ex-VAT — eligibility unverified"
+    ],
+    "excludes": [
+      "New gateway routes or replacement of https://agents.samedaydesk.com",
+      "Proprietary ownership of free public skill text",
+      "Guaranteed pass of Agensi scan check 6 (suspicious network access) for recipes that instruct live HTTPS to the gateway",
+      "Paid x402 response bodies (those settle separately in USDC on Base)"
+    ],
+    "competentBecause": "A buyer who only wants the recipes and unpaid 402 terms can use the pin + gateway catalogs at $0 Agensi. Paying Agensi is optional ops/support, min $5.00 if priced, or a free listing."
+  },
+  "attributionPlan": {
+    "rule": "Do not resell free public skill text as proprietary. Sell packaging, acceptance formatting, and marketplace ops only.",
+    "upstreamRecipes": "epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666",
+    "merchantEvidence": "epistemedeus/x402-url-extractor@3516cd40ba275c9f228443158097137cac44d003",
+    "neoTaskKitPin": {
+      "requested": "274bec996ac744573cca428b0de7cd3ec1d146cb",
+      "status": "not-found-on-searched-epistemedeus-repos",
+      "action": "omit-from-offers-until-root-identifies-repo"
+    },
+    "licenseFilePresentAtPin": false,
+    "overlayLicenseDoesNotRelicenseRecipes": true,
+    "tos63": {
+      "source": "https://www.agensi.io/terms §6.3 Creator Representations (last updated 2026-09-02)",
+      "effect": "A listing that relabels the public pin as exclusive paid IP would fail the original-author-or-distribution-rights warranty and the accurate-description warranty."
+    },
+    "enforcedInPackage": {
+      "schemaConst": "ownershipClaim.claimsProprietaryOwnershipOfFreeRecipes const false",
+      "statementPattern": "does not claim proprietary ownership of (the )?free (public )?recipes",
+      "checklistItem": "attribution-no-proprietary",
+      "npmTest": "proprietary-ownership claim fails closed"
+    },
+    "requiredListingCopyIfRootLaterPublishes": [
+      "Cite epistemedeus/x402-data-gateway-skills@82d0f019713c7223898806144da08fdbeed5c666 in SKILL.md and the storefront description.",
+      "State that the 16 skill directories remain upstream public recipes (no LICENSE file at the pin).",
+      "Describe the paid good as packaging + acceptance evidence + Agensi delivery ops.",
+      "Do not use words that claim exclusive, proprietary, or original authorship of those recipe files unless Root independently holds those rights and the listing still names the GitHub source.",
+      "Disclose credential-free HTTPS to https://agents.samedaydesk.com and that recipes stop before wallet access."
+    ],
+    "forbiddenListingCopy": [
+      "SameDayDesk-exclusive proprietary recipes",
+      "Original paid IP for the 16 public skill directories",
+      "Omitting the pin SHA",
+      "Implying Agensi purchase is required to use the public gateway"
+    ]
+  },
+  "economics": {
+    "status": "hypothetical-worksheet-not-a-live-quote",
+    "listingNotPublished": true,
+    "agensiMinPaidUsd": 5.0,
+    "creatorShareNetExVat": 0.7,
+    "platformShareNetExVat": 0.3,
+    "creditCostRule": "dollar price × 5 (ToS §6.4)",
+    "vat": "collected by Agensi as merchant of record; never part of the 70/30 split",
+    "rows": [
+      {
+        "label": "Agensi min paid listing (ToS floor)",
+        "buyerPaysExVatUsd": 5.0,
+        "creditCost": 25,
+        "platformFeeUsd": 1.5,
+        "creatorReceivesUsd": 3.5,
+        "note": "Blocked until a payout method is enabled. Not listed from this worker."
+      },
+      {
+        "label": "Agensi $29 worked example from public /sell",
+        "buyerPaysExVatUsd": 29.0,
+        "platformFeeUsd": 8.7,
+        "creatorReceivesUsd": 20.3,
+        "source": "https://www.agensi.io/sell — 'Example: a $29 skill … Platform fee (30%, all-in) -$8.70 You receive per sale $20.30'",
+        "note": "Marketing example, not a SameDayDesk list price."
+      },
+      {
+        "label": "Agensi free listing",
+        "buyerPaysExVatUsd": 0,
+        "creditCost": 0,
+        "platformFeeUsd": 0,
+        "creatorReceivesUsd": 0,
+        "note": "ToS: free skills do not cost credits. /sell: 'Free to list'. Still requires Root account; paid-publish gate does not apply."
+      },
+      {
+        "label": "Direct unpaid x402 /extract challenge (not Agensi)",
+        "buyerPaysExVatUsd": 0,
+        "quotedUsdcIfBuyerLaterPays": 0.005,
+        "network": "eip155:8453",
+        "note": "This cell recorded HTTP 402 and did not pay. Gateway USDC is a separate cash layer from Agensi 70/30."
+      }
+    ],
+    "cashLayersDoNotSum": [
+      "Public GitHub recipes: $0",
+      "Optional SameDayDesk x402/MPP HTTP actions: USDC on Base to payTo 0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "Optional Agensi skill purchase: USD/credits at 70/30 net ex-VAT to a creator payout method that is not anonymously verifiable"
+    ]
+  },
+  "catalogAbsence": {
+    "mcp": {
+      "url": "https://mcp.agensi.io/mcp",
+      "initialize": "200 agensi v1.1.0 protocolVersion 2025-03-26",
+      "tool": "search_skills",
+      "query": "samedaydesk x402 data gateway",
+      "auth": "none",
+      "hits": [
+        { "slug": "x402-attack-surface-gate", "pricing_type": "paid", "credit_cost": 95 },
+        { "slug": "arweave-gateway-setup", "pricing_type": "paid", "credit_cost": 25 },
+        { "slug": "agent-api-gateway", "pricing_type": "paid", "credit_cost": 25 }
+      ],
+      "pinSkillsReturned": false,
+      "note": "Buyer-side catalog search is free. Paid get_skill confirm=true was not called."
+    }
+  },
+  "authenticatedStepNeeded": {
+    "needed": true,
+    "neededFor": "seller payout-method eligibility and any public listing draft that quotes live /sell widgets",
+    "notNeededFor": "independent buyer-replay of the sanitized listing descriptor, public pin, unpaid x402 catalogs, or ToS attribution text",
+    "workerWillNotPerform": true,
+    "primary": "Root GitHub Cloudflare Access on https://www.agensi.dev/sell (mlehman-899.cloudflareaccess.com), then capture whether the origin is an Agensi seller UI.",
+    "alternate": "https://www.agensi.io/auth (email/OTP/Google, not GitHub) then payout-method state on /dashboard/submit without publishing."
+  },
+  "nextMeasurableEvent": "Root CF Access and/or agensi.io creator session, still $0: archive enabled payout-method state (Stripe connected true/false, Zoneless enabled true/false) and verbatim authenticated submit-flow fee copy privately. Success predicate: HTTP 200 creator submit form after a Root session cookie, quoting enabled rails, without a publish. That archive is what would let a public listing draft cite live payout text. Independent buyer-replay of the current descriptor does not wait on that event.",
+  "sources": [
+    {
+      "path": "experiments/s109-marketplace-entry-trials/surfaces/agensi/package/offer-descriptor.json",
+      "note": "Skill listing descriptor a buyer can replay offline."
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/native-cells/out/A1-agensi-contract.json",
+      "note": "Seller/runtime contract; payout rails contract-text on .io, Access-blocked on .dev."
+    },
+    {
+      "path": "experiments/s109-marketplace-entry-trials/native-cells/out/A2-agensi-package.json",
+      "note": "Offline package + schema this cell replayed."
+    },
+    {
+      "url": "https://www.agensi.dev/sell",
+      "retrieved": "2026-09-10T09:09:56Z",
+      "httpNofollow": 302,
+      "note": "Cloudflare Access GitHub IdP. Anonymous Stripe/SolanaUSDC sell-page verification blocked."
+    },
+    {
+      "url": "https://www.agensi.io/terms",
+      "retrieved": "2026-09-10T09:10:42Z",
+      "http": 200,
+      "note": "Effective 2026-03-02, last updated 2026-09-02. §§6.1–6.4 payouts, $5 min, 70/30, 6.3 creator representations."
+    },
+    {
+      "url": "https://www.agensi.io/sell",
+      "retrieved": "2026-09-10T09:10:42Z",
+      "http": 200,
+      "note": "$29 worked example 70/30; Free to list; Stripe or USDC via Zoneless."
+    },
+    {
+      "url": "https://github.com/epistemedeus/x402-data-gateway-skills/tree/82d0f019713c7223898806144da08fdbeed5c666",
+      "retrieved": "2026-09-10T09:09:57Z",
+      "note": "16 skill directories. LICENSE 404. tests/recipes present. README npx skills add."
+    },
+    {
+      "url": "https://github.com/epistemedeus/x402-url-extractor/commit/3516cd40ba275c9f228443158097137cac44d003",
+      "retrieved": "2026-09-10T09:09:57Z",
+      "note": "Merchant/Basepay evidence pin exists (S104 merge)."
+    },
+    {
+      "url": "https://agents.samedaydesk.com/.well-known/x402",
+      "retrieved": "2026-09-10T09:09:57Z",
+      "http": 200,
+      "note": "x402 v2 catalog, 24 items."
+    },
+    {
+      "url": "https://agents.samedaydesk.com/extract?url=https://example.com",
+      "retrieved": "2026-09-10T09:10:42Z",
+      "http": 402,
+      "note": "Unpaid challenge only; amount 5000 atomic Base USDC. No paid replay."
+    },
+    {
+      "url": "https://mcp.agensi.io/mcp",
+      "retrieved": "2026-09-10T09:10:42Z",
+      "note": "initialize 200 agensi v1.1.0; search_skills unauthenticated; pin not in hits."
+    }
+  ]
+}

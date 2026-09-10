@@ -44,49 +44,49 @@
       "name": "agensi-checklist",
       "ok": true,
       "status": 0,
-      "stdoutTail": "n\",\n  \"surface\": \"agensi\",\n  \"publicListingSupported\": false,\n  \"publicListingNote\": \"Anonymous worker cannot read /sell; Root must complete Cloudflare Access (GitHub) then paste verified Stripe/SolanaUSDC text before any listing copy goes public.\",\n  \"nextMeasurableEvent\": \"Root CF Access session + verbatim sell-page payout section archived under private Root storage (not this public branch).\"\n}\n",
+      "stdoutTail": "gensi.dev and/or an agensi.io creator session, then paste verified payout-method state before any listing copy goes public. This package will not list.\",\n  \"nextMeasurableEvent\": \"Root auth (Cloudflare Access on .dev and/or agensi.io creator session) plus payout-method enabled state captured privately; still $0 and no publish from this worker.\",\n  \"authenticatedStepNeeded\": true,\n  \"errors\": []\n}\n",
       "stderrTail": ""
     },
     {
       "name": "agensi-npm-test",
       "ok": true,
       "status": 0,
-      "stdoutTail": "test\n> node --test test/*.test.mjs\n\nTAP version 13\n# Subtest: offer descriptor validates offline\nok 1 - offer descriptor validates offline\n  ---\n  duration_ms: 22.182928\n  ...\n# Subtest: tampered descriptor fails closed\nok 2 - tampered descriptor fails closed\n  ---\n  duration_ms: 20.541812\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 2\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 81.040719\n",
+      "stdoutTail": "..\n# Subtest: proprietary-ownership claim fails closed\nok 12 - proprietary-ownership claim fails closed\n  ---\n  duration_ms: 24.480699\n  ...\n# Subtest: refuses listing flags without contacting Agensi\nok 13 - refuses listing flags without contacting Agensi\n  ---\n  duration_ms: 21.567559\n  ...\n1..13\n# tests 13\n# suites 0\n# pass 13\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 264.050685\n",
       "stderrTail": ""
     },
     {
       "name": "grexal-validate",
       "ok": true,
       "status": 0,
-      "stdoutTail": "{\n  \"ok\": true,\n  \"cashBoundaryUsd\": 0,\n  \"manifestPath\": \"experiments/s109-marketplace-entry-trials/surfaces/grexal/package/grexal.json\",\n  \"errors\": [],\n  \"metadataSplit\": \"grexal.json = runtime/IO; marketplace name/description/pricing/visibility via dashboard or grexal agent set-* per docs.grexal.ai/docs/agent-manifest\"\n}\n",
+      "stdoutTail": "e\",\n    \"pricing\",\n    \"visibility\"\n  ],\n  \"metadataSplit\": \"grexal.json = runtime/IO; marketplace name/description/category/tags/pricing/visibility via dashboard or grexal agent set-* / grexal agent price after first push. Source: docs.grexal.ai/docs/agent-manifest + grexal@0.4.1 validator.\",\n  \"alignedWith\": \"grexal@0.4.1 validateManifest (unpacked tarball, not executed via npx unless noted)\"\n}\n",
       "stderrTail": ""
     },
     {
       "name": "grexal-fee-010",
       "ok": true,
       "status": 0,
-      "stdoutTail": " × 0.30)\",\n  \"buyerChargeUsd\": 0.1,\n  \"platformFeeUsd\": 0.02,\n  \"sellerEarningsUsd\": 0.08,\n  \"effectiveFeePercent\": 20,\n  \"notes\": [\n    \"Normal case ~20% for charges ≥ $0.10.\",\n    \"Micro-run floor $0.02 can raise effective % below $0.10.\",\n    \"Fee never exceeds 30% of charge.\",\n    \"Demand volume unknown — experiment, not a blocker for a dry scaffold.\"\n  ],\n  \"willNotPublishFromWorker\": true\n}\n",
+      "stdoutTail": "et_net / 0.80.\",\n    \"targetNetUsd\": 0.08,\n    \"upstreamLlmUsd\": 0,\n    \"rawChargeUsd\": 0.1,\n    \"suggestedLineItem\": {\n      \"unit\": \"run_completed\",\n      \"amountUsd\": 0.1,\n      \"notInManifest\": true,\n      \"setVia\": \"npx grexal agent price add run_completed 0.10  # after first push; Root only; not run here\"\n    }\n  },\n  \"willNotPublishFromWorker\": true,\n  \"willNotCallPriceEstimateCli\": true\n}\n",
       "stderrTail": ""
     },
     {
       "name": "grexal-npm-test",
       "ok": true,
       "status": 0,
-      "stdoutTail": "t/*.test.mjs\n\nTAP version 13\n# Subtest: fee worksheet matches docs at $0.10 and micro $0.05\nok 1 - fee worksheet matches docs at $0.10 and micro $0.05\n  ---\n  duration_ms: 39.829004\n  ...\n# Subtest: manifest validates offline\nok 2 - manifest validates offline\n  ---\n  duration_ms: 20.208342\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 2\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 95.938644\n",
+      "stdoutTail": "o model calls\nok 7 - pack_evidence packages a supplied diff with zero model calls\n  ---\n  duration_ms: 0.293078\n  ...\n# Subtest: pack_evidence CLI writes diff + acceptance on a tiny git repo\nok 8 - pack_evidence CLI writes diff + acceptance on a tiny git repo\n  ---\n  duration_ms: 81.93253\n  ...\n1..8\n# tests 8\n# suites 0\n# pass 8\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 227.674736\n",
       "stderrTail": ""
     },
     {
       "name": "dealwork-discover",
       "ok": true,
       "status": 0,
-      "stdoutTail": "ainst job criteria.\",\n        \"freeAlternative\": \"Local git diff + manual README; public x402-data-gateway-skills recipes (MIT/Apache as published).\",\n        \"attribution\": \"Upstream recipes remain separately licensed; this draft sells packaging/acceptance labor only.\"\n      },\n      \"openApiNote\": \"Submitting requires authenticated POST /jobs/{id}/bids — not performed by this tool.\"\n    }\n  ]\n}\n",
+      "stdoutTail": "     \"worker-must-not-post\",\n        \"poster-not-funded\",\n        \"likely-seller-ad-not-buyer-rfq\"\n      ]\n    }\n  ],\n  \"openApiNote\": \"Submitting requires authenticated POST /jobs/{id}/bids with OpenAPI CreateBid {jobId, amount, message}. This tool never sends that request. skill.md names the same payload proposedAmount / estimatedHours / proposalText — both are emitted as local dual aliases.\"\n}\n",
       "stderrTail": ""
     },
     {
       "name": "dealwork-npm-test",
       "ok": true,
       "status": 0,
-      "stdoutTail": "\n> @samedaydesk/s109-dealwork-discovery@0.1.0 test\n> node --test ./test/discover.test.mjs\n\nTAP version 13\n# Subtest: fixture discovery emits local bid drafts without posting\nok 1 - fixture discovery emits local bid drafts without posting\n  ---\n  duration_ms: 21.786484\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 1\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 57.166788\n",
+      "stdoutTail": "ut posting\n  ---\n  duration_ms: 24.358645\n  ...\n# Subtest: CLI refuses mutating flags\nok 6 - CLI refuses mutating flags\n  ---\n  duration_ms: 21.879463\n  ...\n# Subtest: package source never POSTs bids or onboard\nok 7 - package source never POSTs bids or onboard\n  ---\n  duration_ms: 0.958776\n  ...\n1..7\n# tests 7\n# suites 0\n# pass 7\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 88.473686\n",
       "stderrTail": ""
     },
     {

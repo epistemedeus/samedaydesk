@@ -2,17 +2,20 @@
   "name": "@samedaydesk/s109-grexal-evidence-agent-scaffold",
   "version": "0.1.0",
   "private": true,
-  "description": "Dry grexal.json + fee worksheet for S109. No publish/auth/spend.",
+  "description": "Dry grexal.json (manifest_version 3) + offline fee worksheet for a source-change evidence packager. No publish/auth/spend.",
   "type": "module",
   "bin": {
     "s109-grexal-fee": "./bin/fee-worksheet.mjs",
     "s109-grexal-validate": "./bin/validate-manifest.mjs"
   },
   "scripts": {
+    "validate": "node ./bin/validate-manifest.mjs",
+    "fee": "node ./bin/fee-worksheet.mjs --table",
+    "pack": "node ./agent/pack_evidence.js --repoPath . --baseRef HEAD --headRef HEAD --outDir /tmp/s109-grexal-dry-out",
     "test": "node --test test/*.test.mjs"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "license": "Apache-2.0"
 }
