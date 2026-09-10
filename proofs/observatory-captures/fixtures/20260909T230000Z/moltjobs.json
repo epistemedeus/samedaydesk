@@ -1,0 +1,175 @@
+{
+  "schemaVersion": "pilot.external-observatory.v1",
+  "sourceId": "moltjobs",
+  "sourceKind": "work_market",
+  "upstreamUrl": "https://api.moltjobs.io/v1/stats",
+  "fetchedAt": "2026-09-09T23:00:00.000Z",
+  "providerTimestamp": "2026-09-09T22:55:00.000Z",
+  "providerTimestampState": "ok",
+  "availability": "ok",
+  "httpStatus": 200,
+  "cache": {
+    "hit": false,
+    "ageMs": 0,
+    "stale": false,
+    "ttlMs": 30000,
+    "fetchedAt": "2026-09-09T23:00:00.000Z"
+  },
+  "metrics": [
+    {
+      "key": "jobCount",
+      "value": 12,
+      "unit": "count",
+      "state": "ok",
+      "definition": "Provider-reported totalJobs mapped to jobCount. Work-market snapshot, not traffic.",
+      "population": "moltjobs_work_market",
+      "window": "unspecified_provider_snapshot"
+    },
+    {
+      "key": "completedCount",
+      "value": 4,
+      "unit": "count",
+      "state": "ok",
+      "definition": "Provider-reported totalCompleted. Not delivery proof for SameDayDesk.",
+      "population": "moltjobs_work_market",
+      "window": "unspecified_provider_snapshot"
+    },
+    {
+      "key": "registeredAgents",
+      "value": 3,
+      "unit": "count",
+      "state": "ok",
+      "definition": "Provider-reported totalAgents. Registered agents, not active traffic.",
+      "population": "moltjobs_work_market",
+      "window": "unspecified_provider_snapshot"
+    },
+    {
+      "key": "volumeUsdc",
+      "value": "10.50",
+      "unit": "USDC",
+      "state": "ok",
+      "definition": "Provider-reported totalVolumeUsdc. Provider aggregate, not SameDayDesk revenue.",
+      "population": "moltjobs_work_market",
+      "window": "unspecified_provider_snapshot"
+    },
+    {
+      "key": "escrowDeposits",
+      "value": "1.25",
+      "unit": "USDC",
+      "state": "ok",
+      "definition": "Provider-reported escrowedUsdc. Not settled SameDayDesk funds.",
+      "population": "moltjobs_work_market",
+      "window": "unspecified_provider_snapshot"
+    },
+    {
+      "key": "avgCompletionTimeMs",
+      "value": 1500,
+      "unit": "ms",
+      "state": "ok",
+      "definition": "Provider-reported average completion time in milliseconds.",
+      "population": "moltjobs_work_market",
+      "window": "unspecified_provider_snapshot"
+    },
+    {
+      "key": "medianCompletionTimeMs",
+      "value": 900,
+      "unit": "ms",
+      "state": "ok",
+      "definition": "Provider-reported median completion time in milliseconds.",
+      "population": "moltjobs_work_market",
+      "window": "unspecified_provider_snapshot"
+    },
+    {
+      "key": "avgTimeToFillMs",
+      "value": null,
+      "unit": "ms",
+      "state": "missing",
+      "definition": "Provider-reported average time-to-fill in milliseconds.",
+      "population": "moltjobs_work_market",
+      "window": "unspecified_provider_snapshot"
+    },
+    {
+      "key": "medianTimeToFillMs",
+      "value": null,
+      "unit": "ms",
+      "state": "missing",
+      "definition": "Provider-reported median time-to-fill in milliseconds.",
+      "population": "moltjobs_work_market",
+      "window": "unspecified_provider_snapshot"
+    },
+    {
+      "key": "completionSampleSize",
+      "value": 4,
+      "unit": "count",
+      "state": "ok",
+      "definition": "Provider-reported sample size for completion timing stats.",
+      "population": "moltjobs_work_market",
+      "window": "unspecified_provider_snapshot"
+    },
+    {
+      "key": "disputeRate",
+      "value": "0.01",
+      "unit": "ratio",
+      "state": "ok",
+      "definition": "Provider-reported dispute rate. Not a SameDayDesk quality score.",
+      "population": "moltjobs_work_market",
+      "window": "unspecified_provider_snapshot"
+    },
+    {
+      "key": "completionRatio",
+      "value": "4/12",
+      "unit": "ratio",
+      "state": "ok",
+      "definition": "Derived completedCount/jobCount when both are ok on the same window.",
+      "population": "moltjobs_work_market",
+      "window": "unspecified_provider_snapshot"
+    },
+    {
+      "key": "escrowToVolumeRatio",
+      "value": "1.25/10.50",
+      "unit": "ratio",
+      "state": "ok",
+      "definition": "Derived escrowDeposits/volumeUsdc when both are ok on the same window.",
+      "population": "moltjobs_work_market",
+      "window": "unspecified_provider_snapshot"
+    }
+  ],
+  "coverage": {
+    "kind": "point_snapshot",
+    "complete": false,
+    "additivity": "not_additive",
+    "population": "moltjobs_work_market",
+    "window": "unspecified_provider_snapshot",
+    "notes": "Single MoltJobs stats snapshot. Not agent traffic, customers, or demand."
+  },
+  "errors": [],
+  "warnings": [
+    {
+      "code": "missing",
+      "metric": "avgTimeToFillMs",
+      "message": "avgTimeToFillMs is missing"
+    },
+    {
+      "code": "missing",
+      "metric": "medianTimeToFillMs",
+      "message": "medianTimeToFillMs is missing"
+    }
+  ],
+  "evidenceClass": "provider_reported_aggregate",
+  "rawSourceLink": "https://api.moltjobs.io/v1/stats",
+  "withheldConclusions": [
+    "agent_traffic",
+    "customers",
+    "unique_customers",
+    "profit",
+    "demand",
+    "organic_demand",
+    "revenue",
+    "settlement",
+    "independent_use",
+    "cross_source_total",
+    "runtime_heartbeats",
+    "active_traffic"
+  ],
+  "rawExcerpt": "{\"data\":{\"totalJobs\":12,\"totalCompleted\":4,\"totalAgents\":3,\"totalVolumeUsdc\":\"10.50\",\"escrowedUsdc\":\"1.25\",\"avgCompletionTimeMs\":1500,\"medianCompletionTimeMs\":900,\"completionSampleSize\":4,\"disputeRate\":\"0.01\",\"updatedAt\":\"2026-09-09T22:55:00.000Z\"}}"
+}

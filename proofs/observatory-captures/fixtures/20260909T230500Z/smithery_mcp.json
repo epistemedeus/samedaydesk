@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "pilot.external-observatory.v1",
+  "sourceId": "smithery_mcp",
+  "sourceKind": "capability_discovery",
+  "upstreamUrl": "https://api.smithery.ai/servers?pageSize=1",
+  "fetchedAt": "2026-09-09T23:05:00.000Z",
+  "providerTimestamp": null,
+  "providerTimestampState": "missing",
+  "availability": "ok",
+  "httpStatus": 200,
+  "cache": {
+    "hit": false,
+    "ageMs": 0,
+    "stale": false,
+    "ttlMs": 30000,
+    "fetchedAt": "2026-09-09T23:05:00.000Z"
+  },
+  "metrics": [
+    {
+      "key": "registered_servers",
+      "value": 9,
+      "unit": "count",
+      "state": "ok",
+      "definition": "Smithery catalog registrations from pagination.totalCount. Not runtime heartbeats or active traffic.",
+      "population": "smithery_server_catalog",
+      "window": "catalog_snapshot",
+      "evidenceClass": "catalog_registration_count"
+    }
+  ],
+  "coverage": {
+    "kind": "catalog_registration",
+    "complete": false,
+    "additivity": "not_additive",
+    "population": "smithery_server_catalog",
+    "window": "catalog_snapshot",
+    "notes": "pagination.totalCount is catalog registrations, not runtime heartbeats or traffic."
+  },
+  "errors": [],
+  "warnings": [
+    {
+      "code": "catalog_only",
+      "message": "registered_servers is catalog registrations, not runtime heartbeats or active traffic"
+    },
+    {
+      "code": "missing_provider_timestamp",
+      "message": "smithery catalog payload has no provider timestamp; Last-Modified used when present"
+    }
+  ],
+  "evidenceClass": "catalog_registration_count",
+  "rawSourceLink": "https://api.smithery.ai/servers?pageSize=1",
+  "withheldConclusions": [
+    "agent_traffic",
+    "customers",
+    "unique_customers",
+    "profit",
+    "demand",
+    "organic_demand",
+    "revenue",
+    "settlement",
+    "independent_use",
+    "cross_source_total",
+    "runtime_heartbeats",
+    "active_traffic",
+    "runtime_heartbeats",
+    "active_traffic"
+  ],
+  "rawExcerpt": "{\"pagination\":{\"totalCount\":9}}"
+}
