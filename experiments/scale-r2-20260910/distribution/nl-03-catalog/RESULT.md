@@ -5,6 +5,7 @@
 | Task | NL-DISTRIBUTION-03 |
 | Branch | `codex/nl-distribution-03-catalog-refresh-20260910` |
 | Base | `3f5287e86a4e799dde2d089361dbf97f041a48e2` |
+| Tip | `4391b895acda21587d57d4f006d9ee0adae49086` |
 | Scope | `experiments/scale-r2-20260910/distribution/nl-03-catalog/` |
 | Tests | `npm run test:nl-distribution-03` → **8/8 pass** |
 | Paid invoke | **false** (not executed) |
