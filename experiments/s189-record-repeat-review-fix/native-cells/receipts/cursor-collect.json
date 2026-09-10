@@ -2,6 +2,8 @@
   "milestone": "S189",
   "role": "cursor-collect",
   "branch": "codex/s189-record-repeat-review-fix-20260910",
+  "tip": "396e9a2c2fc75c8ed8bc13deeeee6ecd827aaf3d",
+  "substantiveRepair": "12d528cdd92ae062d60ecd1beff2c9b5639417d7",
   "baseCandidate": "f3d55e54a7b3c548943312443f9f066652d83980",
   "s185Frozen": "c055223",
   "parentSessionId": "01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5",
@@ -16,13 +18,14 @@
     "unpackedNpmTest": "25/25",
     "spaRouteShells": "9/9",
     "spaFallback": "2/2",
-    "f1CollisionUsesManifestCaptures": true
+    "f1CollisionUsesManifestCaptures": true,
+    "reverifiedAt": "2026-09-10T14:09:00Z"
   },
   "archive": {
     "path": "client/public/kit/record-repeat-job-f3d55e54a7b3.tar.gz",
     "sha256": "f4669fd20660b19fc4d7f6714b63f02cee217973fbc700484b6cc7ceb3f94eef",
     "bytes": 1253839
   },
-  "at": "2026-09-10T14:26:54.522832+00:00",
-  "head": "12d528cdd92ae062d60ecd1beff2c9b5639417d7"
+  "at": "2026-09-10T14:09:00Z",
+  "head": "396e9a2c2fc75c8ed8bc13deeeee6ecd827aaf3d"
 }

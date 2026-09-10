@@ -1,11 +1,12 @@
 # S189 RESULT — record-repeat review repair (F1–F6)
 
-Final head: `12d528cdd92ae062d60ecd1beff2c9b5639417d7`
+Final tip: `396e9a2c2fc75c8ed8bc13deeeee6ecd827aaf3d`  
+Substantive repair: `12d528cdd92ae062d60ecd1beff2c9b5639417d7`
 
 Parent session: `01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5`  
 Model: `grok-4.6` · effort `xhigh`  
 Branch: `codex/s189-record-repeat-review-fix-20260910`  
-Head (S176 candidate, still uncommitted repair on top): `f3d55e54a7b3c548943312443f9f066652d83980`  
+Frozen S176 candidate (pre-repair): `f3d55e54a7b3c548943312443f9f066652d83980`  
 S185 frozen tip: `c055223` (not rewritten)
 
 ## Repro (original `f3d55e54` CLI)
@@ -30,7 +31,7 @@ Documented in `native-cells/receipts/repro-f1-f6.json`:
 - F5: declared schemas only; family/parser mapping; `stat` size before read (`MAX_CAPTURE_BYTES=8388608`); directory → `capture-is-directory`; parser timeout 30s.
 - F6: INSTALL no longer requires root `npm ci`; packed tests generate a temp manifest from packed sources; GNU tar is deterministic (`--mtime=UTC0` etc.). Discovery is **not** packed inside the tarball.
 
-## Commands
+## Commands (Cursor re-verify on tip)
 
 ```
 npm --prefix experiments/s134-record-jobs test     # 42/42
