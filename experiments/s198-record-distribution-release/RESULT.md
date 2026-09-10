@@ -16,15 +16,13 @@ Base main: `2b80f38a4e5ec5f080d1764de7c539af63190012` (Pulse sources untouched)
 | Parser | `65ce1867f1b4339cc708bfb72a7d9a5942785632` |
 | Recipes | `a022eb6352156dcdcdf2f8730931f5891bd01436` |
 
-Verified tip: 
-
 Production acquisition: **false**. Cash $0. No merge/deploy.
 
 ## Integration repairs (no parser rewrite)
 
 Mechanical merge defects only:
 
-1. `machineEntry.mjs` distribution-repair command block had a broken `.join("\n")` (SyntaxError).
+1. `machineEntry.mjs` distribution-repair command block had a broken newline join (SyntaxError).
 2. SPA declared-route catalog omitted `/for-agents/distribution-repair` while App/fallback/shells included it.
 3. Browser smokes asserted a nonexistent `page.ok`; both inner pages now asserted by id/h1.
 
@@ -42,7 +40,7 @@ Archives not rebuilt: public kit bytes already match packed S189/S185 receipts.
 | spa-fallback + route-shells | pass |
 | clean unpack CLIs | pass |
 
-Caller-authored (not fixture ok counts): pricing 3→4 then repeat 4→5 with `observedAt: unknown`; distribution-repair incomplete catalog cannot prove global removal; docs-route repeat → unchanged after fix.
+Caller-authored (not fixture ok counts): pricing 3→4 then repeat 4→5 with unknown observation time; distribution-repair incomplete catalog cannot prove global removal; docs-route repeat → unchanged after fix.
 
 ## Owning-site gates
 
@@ -52,11 +50,11 @@ Caller-authored (not fixture ok counts): pricing 3→4 then repeat 4→5 with `o
 | hosted-startup | 4/4 |
 | browser desktop | pass |
 | browser 390 | pass |
-| browser 320 | pass (`pre` overflow-x auto) |
+| browser 320 | pass (code `pre` uses overflow-x auto) |
 | presence | 25 pass + 1 skip |
 | result-reuse | 23/23 |
 | public-entry | 5/5 |
-| Pulse | 44/46 env skips (`.ts` harness import; missing PG17 initdb); **no Pulse source diff vs main** |
+| Pulse | 44/46 env skips (TS harness import; missing PG17 initdb); no Pulse source diff vs main |
 
 ## Archives (generate-once; not rebuilt)
 
