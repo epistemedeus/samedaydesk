@@ -1,0 +1,15 @@
+{
+  "schema": "pilot.r2.distribution.continuation_job.v1",
+  "cite": "R2-DISTRIBUTION-06 negative — optInRequired false",
+  "captureStatus": "ok",
+  "priorDeliveryCount": 1,
+  "jobRef": {
+    "kind": "source_change_evidence_pack",
+    "evidencePath": "/workspace/pilot/receipts/scale-bot-0909/r2-team/receipts-grexal-s149.json",
+    "sourcePath": "/workspace/pilot/tmp/s124-root-0910.dYRsYW/grexal/package"
+  },
+  "reusePolicy": {
+    "optInRequired": false,
+    "broadcast": false
+  }
+}

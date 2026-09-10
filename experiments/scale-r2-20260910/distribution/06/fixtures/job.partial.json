@@ -1,0 +1,7 @@
+{
+  "schema": "pilot.r2.distribution.continuation_job.v1",
+  "cite": "R2-DISTRIBUTION-06 partial — missing jobRef and opt-in",
+  "captureStatus": "ok",
+  "deliveryObserved": true,
+  "priorDeliveryCount": 1
+}

@@ -1,0 +1,16 @@
+{
+  "schema": "pilot.r2.distribution.continuation_job.v1",
+  "cite": "R2-DISTRIBUTION-06 unavailable prior-delivery capture",
+  "captureStatus": "unavailable",
+  "reason": "prior delivery context capture failed on this VM lineage",
+  "jobRef": {
+    "kind": "source_change_evidence_pack",
+    "evidencePath": "/workspace/pilot/receipts/scale-bot-0909/r2-team/receipts-grexal-s149.json",
+    "sourcePath": "/workspace/pilot/tmp/s124-root-0910.dYRsYW/grexal/package",
+    "productSlug": "samedaydesk-source-change-evidence"
+  },
+  "reusePolicy": {
+    "optInRequired": true,
+    "broadcast": false
+  }
+}

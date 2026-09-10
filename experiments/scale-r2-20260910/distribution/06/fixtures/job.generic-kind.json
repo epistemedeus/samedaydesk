@@ -1,0 +1,14 @@
+{
+  "schema": "pilot.r2.distribution.continuation_job.v1",
+  "cite": "R2-DISTRIBUTION-06 negative — generic version_alert",
+  "captureStatus": "ok",
+  "priorDeliveryCount": 1,
+  "jobRef": {
+    "kind": "version_alert",
+    "evidencePath": "/workspace/pilot/receipts/scale-bot-0909/r2-team/receipts-grexal-s149.json"
+  },
+  "reusePolicy": {
+    "optInRequired": true,
+    "broadcast": false
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "pilot.r2.distribution.continuation_job.v1",
+  "cite": "R2-DISTRIBUTION-06 alternate useful job — Agensi provenance compare",
+  "captureStatus": "ok",
+  "priorDeliveryCount": 1,
+  "deliveryObserved": true,
+  "jobRef": {
+    "kind": "agensi_provenance_compare",
+    "evidencePath": "/workspace/pilot/receipts/scale-bot-0909/bot-s131-polish-0910/task-exchange/TERMINAL.md",
+    "sourcePath": "/workspace/pilot/tmp/s124-root-0910.dYRsYW/agensi/package",
+    "productSlug": "offline-package-provenance-check",
+    "note": "Useful job: after offline package provenance delivery, opt-in re-check on a new archive"
+  },
+  "reusePolicy": {
+    "optInRequired": true,
+    "broadcast": false
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schema": "pilot.r2.distribution.continuation_job.v1",
+  "cite": "R2-DISTRIBUTION-06 / S149 Grexal PUBLIC_ACTIVE + S124 source-change evidence pack",
+  "captureStatus": "ok",
+  "deliveryObserved": true,
+  "priorDeliveryCount": 1,
+  "jobRef": {
+    "kind": "source_change_evidence_pack",
+    "evidencePath": "/workspace/pilot/receipts/scale-bot-0909/r2-team/receipts-grexal-s149.json",
+    "sourcePath": "/workspace/pilot/tmp/s124-root-0910.dYRsYW/grexal/package",
+    "productSlug": "samedaydesk-source-change-evidence",
+    "note": "Useful job: after a Grexal source-change evidence pack delivery, optional opt-in re-pack of a new supplied diff"
+  },
+  "reusePolicy": {
+    "optInRequired": true,
+    "broadcast": false
+  },
+  "marketplaceHints": {
+    "listingStatus": "PUBLIC_ACTIVE",
+    "agentId": "j970cajvv6wbrmy64s2f4ajzw18e5j2q",
+    "deploymentVersion": "v1",
+    "pricingRunCompletedUsd": 0.02,
+    "estimateReserveUsd": 0.025,
+    "receiptRef": "/workspace/pilot/receipts/scale-bot-0909/r2-team/receipts-grexal-s149.json"
+  }
+}
