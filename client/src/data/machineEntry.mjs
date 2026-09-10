@@ -4,6 +4,7 @@
 
 import DISTRIBUTION_REPAIR_KIT from "./distributionRepairKit.json" with { type: "json" };
 import CONSUMER_REPEAT_KIT from "./consumerRepeatKit.json" with { type: "json" };
+import USEFUL_JOBS_KIT from "./usefulJobsKit.json" with { type: "json" };
 
 export const SITE_ORIGIN = "https://samedaydesk.com";
 export const GATEWAY_ORIGIN = "https://agents.samedaydesk.com";
@@ -554,6 +555,160 @@ export const CONSUMER_REPEAT_SHELL = Object.freeze({
   description: CONSUMER_REPEAT_DESCRIPTION,
   canonical: CONSUMER_REPEAT_CANONICAL,
   crawlerHtml: CONSUMER_REPEAT_CRAWLER_HTML,
+});
+
+export const USEFUL_JOBS_PATH = "/for-agents/useful-jobs";
+export const USEFUL_JOBS_TITLE = "Offline useful jobs for agent callers | SameDayDesk";
+export const USEFUL_JOBS_DESCRIPTION =
+  "Six offline jobs for API changes, budgets, feeds, and delivery evidence. Acquire with bash, curl, python3, tar, and mktemp; then run on local Node 22. Verify size and sha256 before extract. Samples are labeled SAMPLE. Callers supply their own files. Free local package; not hosted execution.";
+export const USEFUL_JOBS_CANONICAL = `${SITE_ORIGIN}${USEFUL_JOBS_PATH}`;
+export const USEFUL_JOBS_ARCHIVE = USEFUL_JOBS_KIT.archive;
+export const USEFUL_JOBS_ARCHIVE_SHA256 = USEFUL_JOBS_KIT.sha256;
+export const USEFUL_JOBS_ARCHIVE_BYTES = USEFUL_JOBS_KIT.bytes;
+export const USEFUL_JOBS_DISCOVERY = USEFUL_JOBS_KIT.discovery;
+export const USEFUL_JOBS_CATALOG = USEFUL_JOBS_KIT.catalog;
+export const USEFUL_JOBS_OUTCOMES = USEFUL_JOBS_KIT.outcomes;
+export const USEFUL_JOBS_SOURCE_REPO = USEFUL_JOBS_KIT.sourceRepo;
+export const USEFUL_JOBS_SOURCE_COMMIT = USEFUL_JOBS_KIT.sourceCommit;
+export const USEFUL_JOBS_ARCHIVE_FREEZE = USEFUL_JOBS_KIT.archiveFreeze;
+export const USEFUL_JOBS_REVIEWED_SOURCE = USEFUL_JOBS_KIT.reviewedSource;
+export const USEFUL_JOBS_ROOT = USEFUL_JOBS_KIT.rootName;
+export const USEFUL_JOBS_CLI = USEFUL_JOBS_KIT.cli;
+export const USEFUL_JOBS_JOB_IDS = Object.freeze([...USEFUL_JOBS_KIT.jobs]);
+/** Host tools required only to download, verify, and extract the archive. */
+export const USEFUL_JOBS_ACQUIRE_TOOLS = Object.freeze([
+  "bash",
+  "curl",
+  "python3",
+  "tar",
+  "mktemp",
+]);
+/** Runtime after extract: offline Node 22 only. */
+export const USEFUL_JOBS_RUNTIME = "Node >= 22 (offline after extract)";
+
+export function buildUsefulJobsColdStart({
+  siteOrigin = SITE_ORIGIN,
+  archivePath = USEFUL_JOBS_ARCHIVE,
+  bytes = USEFUL_JOBS_ARCHIVE_BYTES,
+  sha256 = USEFUL_JOBS_ARCHIVE_SHA256,
+  rootName = USEFUL_JOBS_ROOT,
+  cli = USEFUL_JOBS_CLI,
+} = {}) {
+  const tgzName = "useful-jobs-1.0.0.tar.gz";
+  return [
+    "useful_jobs_acquire() {",
+    "  local origin=\"${USEFUL_JOBS_ORIGIN:-${1:-" + siteOrigin + "}}\"",
+    "  local bytes=" + String(bytes),
+    "  local sha=" + sha256,
+    "  local work tgz root",
+    "  work=$(mktemp -d \"${TMPDIR:-/tmp}/useful-jobs.XXXXXX\") || return 1",
+    "  tgz=\"\$work/" + tgzName + "\"",
+    "  root=\"\$work/" + rootName + "\"",
+    "  curl -fsSL --max-time 60 -o \"\$tgz\" \"\$origin" + archivePath + "\" || { rm -rf \"\$work\"; return 1; }",
+    "  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); n=len(b); e=int(sys.argv[2]); (n==e) or sys.exit((sys.stderr.write(\"size %s != %s\\n\" % (n, e)) or 1)); h=hashlib.sha256(b).hexdigest(); (h==sys.argv[3]) or sys.exit((sys.stderr.write(\"sha256 %s != %s\\n\" % (h, sys.argv[3])) or 1))' \"\$tgz\" \"\$bytes\" \"\$sha\" || { rm -rf \"\$work\"; return 1; }",
+    "  tar -xzf \"\$tgz\" -C \"\$work\" || { rm -rf \"\$work\"; return 1; }",
+    "  [ -f \"\$root/" + cli + "\" ] || { rm -rf \"\$work\"; return 1; }",
+    "  (cd \"\$root\" && node " + cli + " list >&2) || { rm -rf \"\$work\"; return 1; }",
+    "  printf '%s\\n' \"\$root\"",
+    "  return 0",
+    "}",
+    "kit=$(useful_jobs_acquire) || exit 1",
+    "printf '%s\\n' \"\$kit\"",
+  ].join("\n");
+}
+
+export const USEFUL_JOBS_COLD_START = buildUsefulJobsColdStart();
+/** Public install recipe: one self-contained cold-start invocation (single source of truth). */
+export const USEFUL_JOBS_INSTALL = Object.freeze([USEFUL_JOBS_COLD_START]);
+
+export const USEFUL_JOBS_LIST_HELP = [
+  "node \"$kit/bin/useful-jobs.mjs\" list",
+  "node \"$kit/bin/useful-jobs.mjs\" help",
+  "node \"$kit/bin/useful-jobs.mjs\" help api-upgrade-brief",
+].join("\n");
+
+export const USEFUL_JOBS_EXAMPLES = [
+  "node \"$kit/bin/useful-jobs.mjs\" run api-upgrade-brief --example",
+  "node \"$kit/bin/useful-jobs.mjs\" run vendor-budget-impact --example",
+  "node \"$kit/bin/useful-jobs.mjs\" run feed-agenda --example",
+  "node \"$kit/bin/useful-jobs.mjs\" run evidence-ci-annotation --example",
+  "node \"$kit/bin/useful-jobs.mjs\" run listing-repair-packet --example",
+  "node \"$kit/bin/useful-jobs.mjs\" run repeat-job-record --example",
+].join("\n");
+
+export const USEFUL_JOBS_CALLER_USE = [
+  "node \"$kit/bin/useful-jobs.mjs\" run api-upgrade-brief \\",
+  "  --before \"$kit/samples/openapi/caller-alpha/before.yaml\" \\",
+  "  --after \"$kit/samples/openapi/caller-alpha/after.yaml\" \\",
+  "  --used \"$kit/samples/openapi/caller-alpha/used.json\" \\",
+  "  --out-dir \"$PWD/out/caller-alpha\"",
+  "node \"$kit/bin/useful-jobs.mjs\" run api-upgrade-brief \\",
+  "  --before \"$kit/samples/openapi/caller-beta/before.yaml\" \\",
+  "  --after \"$kit/samples/openapi/caller-beta/after.yaml\" \\",
+  "  --used \"$kit/samples/openapi/caller-beta/used.json\" \\",
+  "  --out-dir \"$PWD/out/caller-beta\"",
+].join("\n");
+
+export const USEFUL_JOBS_REPEAT_USE = [
+  "cp \"$kit/samples/openapi/caller-alpha/after.yaml\" \"$PWD/caller-alpha-after-edit.yaml\"",
+  "printf '\\n# operator edit\\n' >> \"$PWD/caller-alpha-after-edit.yaml\"",
+  "node \"$kit/bin/useful-jobs.mjs\" run api-upgrade-brief \\",
+  "  --before \"$kit/samples/openapi/caller-alpha/before.yaml\" \\",
+  "  --after \"$PWD/caller-alpha-after-edit.yaml\" \\",
+  "  --used \"$kit/samples/openapi/caller-alpha/used.json\" \\",
+  "  --out-dir \"$PWD/out/caller-alpha-repeat\"",
+].join("\n");
+
+export const USEFUL_JOBS_CRAWLER_HTML = `
+      <h1>Offline useful jobs for agent callers</h1>
+      <p>
+        Turn changing files into useful next steps. SameDayDesk publishes six offline
+        jobs for API changes, budgets, feeds, and delivery evidence. Acquire the archive
+        with <code>bash</code>, <code>curl</code>, <code>python3</code>, <code>tar</code>,
+        and <code>mktemp</code>; then run on local Node 22. Labeled samples need
+        <code>--example</code>. Callers supply their own files. Free local package; it does
+        not start hosted extract on <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>.
+      </p>
+      <p>
+        Machine discovery:
+        <a href="${SITE_ORIGIN}${USEFUL_JOBS_DISCOVERY}">${SITE_ORIGIN}${USEFUL_JOBS_DISCOVERY}</a>.
+        Catalog:
+        <a href="${SITE_ORIGIN}${USEFUL_JOBS_CATALOG}">${SITE_ORIGIN}${USEFUL_JOBS_CATALOG}</a>.
+        Outcomes:
+        <a href="${SITE_ORIGIN}${USEFUL_JOBS_OUTCOMES}">${SITE_ORIGIN}${USEFUL_JOBS_OUTCOMES}</a>.
+        Archive: <a href="${SITE_ORIGIN}${USEFUL_JOBS_ARCHIVE}">${SITE_ORIGIN}${USEFUL_JOBS_ARCHIVE}</a>
+        (${USEFUL_JOBS_ARCHIVE_BYTES} bytes, sha256 <code>${USEFUL_JOBS_ARCHIVE_SHA256}</code>).
+        Source <code>${USEFUL_JOBS_SOURCE_REPO}</code> at
+        <code>${USEFUL_JOBS_SOURCE_COMMIT}</code>. Archive freeze
+        <code>${USEFUL_JOBS_ARCHIVE_FREEZE}</code>. Reviewed source
+        <code>${USEFUL_JOBS_REVIEWED_SOURCE}</code>.
+        Acquire tools: <code>${USEFUL_JOBS_ACQUIRE_TOOLS.join(", ")}</code>.
+        Runtime after extract: <code>${USEFUL_JOBS_RUNTIME}</code>.
+        <a href="${SITE_ORIGIN}${USEFUL_JOBS_ARCHIVE}">Download archive</a>.
+      </p>
+      <h2>Install / cold start (verify before extract)</h2>
+      <pre><code>${USEFUL_JOBS_COLD_START}</code></pre>
+      <h2>List and help</h2>
+      <pre><code>${USEFUL_JOBS_LIST_HELP}</code></pre>
+      <h2>Labeled SAMPLE examples (not caller files)</h2>
+      <pre><code>${USEFUL_JOBS_EXAMPLES}</code></pre>
+      <h2>Two different callers</h2>
+      <pre><code>${USEFUL_JOBS_CALLER_USE}</code></pre>
+      <h2>Changed-file repeat</h2>
+      <pre><code>${USEFUL_JOBS_REPEAT_USE}</code></pre>
+      <p>
+        Scope: free local package only. Missing inputs or digest mismatch stop the job.
+        Partial vendor or listing evidence stays non-final. Evidence CI annotations from
+        caller packets stay unattested. This package does not run hosted extract.
+      </p>
+    `;
+
+export const USEFUL_JOBS_SHELL = Object.freeze({
+  path: USEFUL_JOBS_PATH,
+  title: USEFUL_JOBS_TITLE,
+  description: USEFUL_JOBS_DESCRIPTION,
+  canonical: USEFUL_JOBS_CANONICAL,
+  crawlerHtml: USEFUL_JOBS_CRAWLER_HTML,
 });
 
 
