@@ -79,3 +79,11 @@ Discovery JSON and `machineEntry` / `distributionRepairKit.json` literals match 
 ## Remaining limit
 
 Pulse PG17 and merchant-input `express` resolution are environment gaps on this VM, not product-kit defects. Observation time stays unknown unless a digest matches. No production acquisition claim.
+
+
+## Cursor re-verify notes
+
+- Focused kits/SPA/caller/build/browser desktop+390+320: pass.
+-  4/4.
+-  44/46: env skips ( import in events harness; missing PG17 ) — no Pulse source diff vs main.
+- Public kit bytes match discovery/machineEntry; clean unpack CLIs work.

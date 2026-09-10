@@ -2,7 +2,7 @@
   "milestone": "S198",
   "role": "cursor-collect",
   "branch": "codex/s198-record-distribution-release-20260910",
-  "tip": "a4bd6747937e232caabc9ac461288438522d4970",
+  "tip": "75cfb87ef8be5cd027802de0646340af0407a631",
   "parentSession": "01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5",
   "model": "grok-4.6",
   "effort": "xhigh",
@@ -16,7 +16,15 @@
     "clientBuild": "pass",
     "cleanUnpackRecordList": "pass",
     "cleanUnpackDistSchema": "pass",
-    "freshCallerPricing": "pass"
+    "freshCallerPricing": "pass",
+    "hostedStartup": "4/4",
+    "pulse": "44/46 env-skip (no source diff)",
+    "browserDesktop": "2/2",
+    "browserMobile390": "2/2",
+    "browserMobile320": "ok",
+    "presence": "25 pass + 1 skip",
+    "resultReuse": "23/23",
+    "publicEntry": "5/5"
   },
   "archives": {
     "recordRepeat": {
@@ -32,5 +40,13 @@
   },
   "s189Tip": "f830b55bc6f9b31f664394341f33c5e43a2a2cf8",
   "s185Frozen": "c05522364b26db04b4aa63f945ad15810785efb4",
-  "mainBase": "2b80f38a4e5ec5f080d1764de7c539af63190012"
+  "mainBase": "2b80f38a4e5ec5f080d1764de7c539af63190012",
+  "artifacts": [
+    "/opt/cursor/artifacts/s198-record-repeat-desktop.png",
+    "/opt/cursor/artifacts/s198-distribution-repair-desktop.png",
+    "/opt/cursor/artifacts/s198-record-repeat-390.png",
+    "/opt/cursor/artifacts/s198-distribution-repair-390.png",
+    "/opt/cursor/artifacts/s198-record-repeat-320.png",
+    "/opt/cursor/artifacts/s198-distribution-repair-320.png"
+  ]
 }
