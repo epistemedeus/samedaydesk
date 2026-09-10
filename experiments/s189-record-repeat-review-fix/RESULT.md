@@ -1,5 +1,7 @@
 # S189 RESULT — record-repeat review repair (F1–F6)
 
+Final head: `12d528cdd92ae062d60ecd1beff2c9b5639417d7`
+
 Parent session: `01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5`  
 Model: `grok-4.6` · effort `xhigh`  
 Branch: `codex/s189-record-repeat-review-fix-20260910`  
