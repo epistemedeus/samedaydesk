@@ -1,0 +1,17 @@
+{
+  "schema": "samedaydesk.native-parent-resume.v1",
+  "milestone": "S189",
+  "sessionId": "01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5",
+  "model": "grok-4.6",
+  "effort": "xhigh",
+  "cwd": "/workspace/experiments/s189-record-repeat-review-fix",
+  "resumedAt": "2026-09-10T14:11:15.839Z",
+  "branch": "codex/s189-record-repeat-review-fix-20260910",
+  "head": "f3d55e54a7b3c548943312443f9f066652d83980",
+  "s176Candidate": "f3d55e54a7b3c548943312443f9f066652d83980",
+  "s185FrozenTip": "c055223",
+  "s185FrozenAt": "2026-09-10T14:07:44.949Z",
+  "s185Note": "do not rewrite S185 branch/package",
+  "cashUsd": 0,
+  "productionAcquisition": false
+}

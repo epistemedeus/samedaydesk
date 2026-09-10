@@ -1,0 +1,133 @@
+{
+  "F1": {
+    "cwd": "/tmp/s189-f1-5yjlph98/cwd",
+    "manifestDir": "/tmp/s189-f1-5yjlph98/manifest-home",
+    "exit": 0,
+    "ok": true,
+    "inputs": {
+      "before": "/tmp/s189-f1-5yjlph98/cwd/before.json",
+      "after": "/tmp/s189-f1-5yjlph98/cwd/after.json"
+    },
+    "counts": null,
+    "resolvedBefore": "/tmp/s189-f1-5yjlph98/cwd/before.json",
+    "stoleFromCwd": true
+  },
+  "F2": {
+    "exit": 0,
+    "ok": true,
+    "nextRun": {
+      "path": "/tmp/s189-f2-tz908tyn/before.json",
+      "manifest": {
+        "schema": "s176.next-run-manifest.v1",
+        "recipeId": "pricing-row-unit",
+        "family": "pricing-row-unit",
+        "parser": "s134-pricing-table-change",
+        "inputs": {
+          "before": "/tmp/s189-f2-tz908tyn/before.json",
+          "after": "/tmp/s189-f2-tz908tyn/after.json"
+        },
+        "retain": [
+          "units",
+          "coverage",
+          "sourceUrl",
+          "license",
+          "citations"
+        ],
+        "paidValueClaim": false,
+        "freeOffline": true
+      }
+    },
+    "inputBytesBefore": 404,
+    "inputBytesAfter": 415,
+    "destroyedInput": true,
+    "startsWithBraceManifest": "b'{\\n  \"schema\": \"s176.'"
+  },
+  "F3_first": {
+    "exit": 0,
+    "ok": true,
+    "writtenSourceMeta": null,
+    "hasRecipeCommits": false,
+    "keys": [
+      "schema",
+      "recipeId",
+      "parser",
+      "inputs",
+      "sourceMeta",
+      "coverage",
+      "retain",
+      "paidValueClaim",
+      "family",
+      "freeOffline"
+    ]
+  },
+  "F3_replay": {
+    "exit": 0,
+    "generatedSourceMeta": {
+      "label": "stale-inherited",
+      "before": {
+        "sha256": "dead"
+      },
+      "after": {
+        "sha256": "beef"
+      }
+    },
+    "generatedHistorical": null,
+    "currentInputs": null,
+    "inheritedStaleAsCurrent": true
+  },
+  "F4_omitted_equal": {
+    "counts": {},
+    "unchanged": null,
+    "silentUnchanged": false,
+    "unknowns": null
+  },
+  "F4_omitted_value_change": {
+    "counts": {},
+    "treatedAsComparableFieldChange": false
+  },
+  "F4_whitespace": {
+    "counts": null
+  },
+  "F5_null_manifest": {
+    "exit": 1,
+    "body": {
+      "ok": null,
+      "refused": null,
+      "error": null,
+      "prep": null,
+      "status": null
+    },
+    "rawKeys": [
+      "parseError",
+      "stdout",
+      "stderr",
+      "exit"
+    ],
+    "snippet": {
+      "parseError": "Expecting value: line 1 column 1 (char 0)",
+      "stdout": "",
+      "stderr": "file:///workspace/experiments/s176-record-repeat-package/bin/record-repeat.mjs:581\n    const family = normalizeFamily(man.family || man.parser);\n                                       ^\n\nTypeError: Cannot read properties of null (reading 'family')\n    at file:///workspace/experiments/s176-record-rep",
+      "exit": 1
+    }
+  },
+  "F5_directory": {
+    "exit": 0,
+    "refused": true,
+    "prep": {
+      "ok": false,
+      "refused": true,
+      "code": "missing-pricing-capture",
+      "message": "before pricing capture missing",
+      "evidence": {
+        "path": "/tmp/s189-f5-f8kp_eyk"
+      },
+      "paidValueClaim": false
+    },
+    "ok": false,
+    "error": null
+  },
+  "F6_install_npm_ci": true,
+  "F6_test_uses_s163_next_run": true,
+  "F6_archive_excludes_next_run": true,
+  "F6_root_package_has_lock": false
+}

@@ -300,6 +300,46 @@ test('s142 gate: openapi used op security+$ref change is not unchanged', () => {
   assert.ok(fields.includes('responses'));
 });
 
+test('s189: missing/blank units are unit-unknown, not silent unchanged or priced fieldChanges', () => {
+  const omitted = comparePricingTables(
+    { rows: [{ field: 'x', value: 1 }] },
+    { rows: [{ field: 'x', value: 1 }] },
+  );
+  assert.equal(omitted.unchanged.length, 0);
+  assert.equal(omitted.fieldChanges.length, 0);
+  assert.ok(omitted.unknown.some((u) => u.reason === 'unit-unknown'));
+  assert.ok(omitted.uncertainties.some((u) => u.code === 'missing-unit'));
+
+  const valueShift = comparePricingTables(
+    { rows: [{ field: 'x', value: 1 }] },
+    { rows: [{ field: 'x', value: 2 }] },
+  );
+  assert.equal(valueShift.fieldChanges.length, 0);
+  assert.ok(valueShift.unknown.some((u) => u.reason === 'unit-unknown'));
+
+  const blank = comparePricingTables(
+    { rows: [{ field: 'x', value: 1, unit: '   ' }] },
+    { rows: [{ field: 'x', value: 1, unit: '\t' }] },
+  );
+  assert.equal(blank.unchanged.length, 0);
+  assert.ok(blank.unknown.some((u) => u.reason === 'unit-unknown'));
+
+  const sameUnit = comparePricingTables(
+    { rows: [{ field: 'x', value: 1, unit: 'USD/mo' }] },
+    { rows: [{ field: 'x', value: 2, unit: 'USD/mo' }] },
+  );
+  assert.equal(sameUnit.fieldChanges.length, 1);
+  assert.equal(sameUnit.fieldChanges[0].beforeValue, 1);
+  assert.equal(sameUnit.fieldChanges[0].afterValue, 2);
+
+  const caseUnit = comparePricingTables(
+    { rows: [{ field: 'egress', value: 1, unit: 'USD/GB' }] },
+    { rows: [{ field: 'egress', value: 1, unit: 'USD/Gb' }] },
+  );
+  assert.equal(caseUnit.unchanged.length, 0);
+  assert.ok(caseUnit.unitChanges.length >= 1 || caseUnit.conflicting.some((c) => String(c.reason).includes('unit')));
+});
+
 test('s142 gate: pricing refuses cross-unit and missing-cell as fieldChanges', () => {
   const report = comparePricingTables(
     { rows: [{ field: 'a', value: 1, unit: 'USD/mo' }, { field: 'b', value: 2, unit: 'USD/mo' }] },

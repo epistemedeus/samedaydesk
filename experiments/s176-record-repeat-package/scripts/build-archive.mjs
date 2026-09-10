@@ -74,8 +74,8 @@ if (existsSync(join(S163, 'fixtures'))) {
   copyDir(join(S163, 'fixtures'), join(staging, 'vendor/s163-record-recipes/fixtures'));
 }
 
+copyDir(join(PKG, 'bin'), join(staging, 'bin'));
 for (const rel of [
-  'bin/record-repeat.mjs',
   'PIN.json',
   'MANIFEST.json',
   'LICENSE',
@@ -88,7 +88,6 @@ for (const rel of [
   copyFile(src, join(staging, rel));
 }
 copyDir(join(PKG, 'docs'), join(staging, 'docs'));
-if (existsSync(join(PKG, 'discovery'))) copyDir(join(PKG, 'discovery'), join(staging, 'discovery'));
 copyDir(join(PKG, 'test'), join(staging, 'test'), {
   excludeNames: ['archive-hygiene.test.mjs'],
 });
@@ -132,9 +131,20 @@ if (npmCi.status !== 0) {
   }
 }
 
-const packed = spawnSync('tar', ['-czf', archivePath, '-C', stagingRoot, 'record-repeat-job'], {
-  encoding: 'utf8',
-});
+const tarArgs = ['-czf', archivePath, '-C', stagingRoot, 'record-repeat-job'];
+const tarProbe = spawnSync('tar', ['--version'], { encoding: 'utf8' });
+if (String(tarProbe.stdout || '').includes('GNU tar')) {
+  tarArgs.splice(
+    0,
+    0,
+    '--sort=name',
+    '--mtime=UTC0',
+    '--owner=0',
+    '--group=0',
+    '--numeric-owner',
+  );
+}
+const packed = spawnSync('tar', tarArgs, { encoding: 'utf8' });
 if (packed.status !== 0) throw new Error(packed.stderr || 'tar failed');
 
 const bytes = readFileSync(archivePath);

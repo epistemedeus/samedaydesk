@@ -11,8 +11,10 @@ import { emit, parseArgs, uncertainty, FREE_BASELINE, stableSort } from '../../l
 function normalizeUnit(u) {
   // Preserve case: USD/GB and USD/Gb are not equivalent. Only trim whitespace.
   // No silent alias folding / case-folding without an explicit equivalence table.
-  if (u == null || u === '') return null;
-  return String(u).trim();
+  // Blank/whitespace-only units are missing, not an empty comparable unit.
+  if (u == null) return null;
+  const s = String(u).trim();
+  return s === '' ? null : s;
 }
 
 function normalizeField(f) {
@@ -146,6 +148,25 @@ export function comparePricingTables(beforeDoc, afterDoc) {
     const aMissing = a.value == null;
     const valueChanged = JSON.stringify(b.value) !== JSON.stringify(a.value);
     const unitChanged = b.unitKey !== a.unitKey;
+    const bUnitMissing = b.unitKey == null;
+    const aUnitMissing = a.unitKey == null;
+    if (bUnitMissing || aUnitMissing) {
+      unknown.push({
+        fieldKey: key,
+        reason: 'unit-unknown',
+        before: { value: b.value, unit: b.unit },
+        after: { value: a.value, unit: a.unit },
+        note: 'Missing or blank unit is outside definitive price comparability; values are not compared.',
+      });
+      uncertainties.push(
+        uncertainty('missing-unit', `field ${key} missing/blank unit; price comparison withheld`, {
+          fieldKey: key,
+          beforeUnit: b.unit,
+          afterUnit: a.unit,
+        }),
+      );
+      continue;
+    }
     if (!valueChanged && !unitChanged) {
       unchanged.push({ fieldKey: key });
       continue;
@@ -206,7 +227,13 @@ export function comparePricingTables(beforeDoc, afterDoc) {
   }
 
   const hasDelta =
-    added.length + removed.length + fieldChanges.length + unitChanges.length + conflicting.length > 0;
+    added.length +
+      removed.length +
+      fieldChanges.length +
+      unitChanges.length +
+      conflicting.length +
+      unknown.length >
+    0;
 
   return {
     module: 'pricing-table-change',
@@ -220,6 +247,7 @@ export function comparePricingTables(beforeDoc, afterDoc) {
       unitChanges: unitChanges.length,
       conflicting: conflicting.length,
       unchanged: unchanged.length,
+      unknown: unknown.length,
     },
     added: stableSort(added, (x) => x.fieldKey),
     removed: stableSort(removed, (x) => x.fieldKey),
@@ -227,6 +255,7 @@ export function comparePricingTables(beforeDoc, afterDoc) {
     unitChanges: stableSort(unitChanges, (x) => x.fieldKey),
     conflicting: stableSort(conflicting, (x) => x.fieldKey),
     unchanged: stableSort(unchanged, (x) => x.fieldKey),
+    unknown: stableSort(unknown, (x) => x.fieldKey),
     uncertainties,
     freeBaseline: FREE_BASELINE,
     differenceInDeliveredOutput: hasDelta

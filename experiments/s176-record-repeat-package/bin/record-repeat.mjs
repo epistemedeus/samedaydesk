@@ -8,6 +8,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { MAX_CAPTURE_BYTES, PARSER_TIMEOUT_MS, NEXT_RUN_SCHEMAS } from './limits.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PKG = path.resolve(HERE, '..');
@@ -111,20 +113,40 @@ Families: ${Object.keys(FAMILIES).join(', ')}
 
 Free offline processing of local artifacts. Optional existing paid merchant extract is separate.
 Unsupported HTML / missing identity / missing units stay explicit — never synthesized.
+Capture/manifest reads are capped at ${MAX_CAPTURE_BYTES} bytes. Parser child timeout ${PARSER_TIMEOUT_MS}ms.
 Bot Record cell ids native05..08 are out of scope.
 `);
 }
 
-function resolveMaybe(p, extraBases = []) {
+/** Explicit CLI path overrides resolve against CWD only (no unrelated-tree fallback). */
+function resolveCliPath(p) {
   if (p == null || p === true) return null;
   if (path.isAbsolute(p)) return p;
-  const bases = [process.cwd(), ...extraBases, PKG, S163, S134];
-  for (const base of bases) {
-    if (!base) continue;
-    const cand = path.resolve(base, p);
-    if (fs.existsSync(cand)) return cand;
-  }
   return path.resolve(process.cwd(), p);
+}
+
+/**
+ * Manifest-sourced paths resolve against the declared manifest directory only.
+ * Legacy s163.next-run-manifest.v1 paths may additionally resolve against the
+ * S163 recipe root (not CWD) when the relative path is missing next to the manifest.
+ */
+function resolveManifestPath(p, manDir, { legacyS163 = false } = {}) {
+  if (p == null || p === true) return null;
+  if (path.isAbsolute(p)) return p;
+  const fromMan = path.resolve(manDir, p);
+  if (fs.existsSync(fromMan)) return fromMan;
+  if (legacyS163) {
+    const fromS163 = path.resolve(S163, p);
+    if (fs.existsSync(fromS163)) return fromS163;
+  }
+  return fromMan;
+}
+
+/** Recipe-declared relative paths resolve against the S163 recipe tree, never CWD. */
+function resolveRecipePath(p) {
+  if (p == null || p === true) return null;
+  if (path.isAbsolute(p)) return p;
+  return path.resolve(S163, p);
 }
 
 function isExistingFile(p) {
@@ -133,6 +155,43 @@ function isExistingFile(p) {
   } catch {
     return false;
   }
+}
+
+function inspectCapture(p, label, { missingCode = 'missing-capture' } = {}) {
+  if (p == null || p === '') {
+    return refuse(missingCode, `${label} capture missing`, { path: p, label });
+  }
+  let st;
+  try {
+    st = fs.lstatSync(p);
+  } catch {
+    return refuse(missingCode, `${label} capture missing`, { path: p, label });
+  }
+  if (st.isSymbolicLink()) {
+    try {
+      st = fs.statSync(p);
+    } catch {
+      return refuse('missing-capture', `${label} capture missing`, { path: p, label });
+    }
+  }
+  if (st.isDirectory()) {
+    return refuse('capture-is-directory', `${label} path is a directory, not a capture file`, {
+      path: p,
+      label,
+    });
+  }
+  if (!st.isFile()) {
+    return refuse('capture-not-a-file', `${label} is not a regular file`, { path: p, label });
+  }
+  if (st.size > MAX_CAPTURE_BYTES) {
+    return refuse('capture-too-large', `${label} exceeds documented ${MAX_CAPTURE_BYTES} byte limit`, {
+      path: p,
+      label,
+      size: st.size,
+      limit: MAX_CAPTURE_BYTES,
+    });
+  }
+  return { ok: true, path: p, bytes: st.size };
 }
 
 function familyRefuse(familyId, recipeId, prep, extra = {}) {
@@ -148,14 +207,315 @@ function familyRefuse(familyId, recipeId, prep, extra = {}) {
   };
 }
 
-function inheritPrior(man, prior) {
-  if (!prior) return man;
-  if (man.sourceMeta == null && prior.sourceMeta != null) man.sourceMeta = prior.sourceMeta;
-  if (man.retain == null && Array.isArray(prior.retain)) man.retain = prior.retain;
-  if (man.uncertaintyNotes == null && prior.uncertaintyNotes != null) man.uncertaintyNotes = prior.uncertaintyNotes;
-  if (man.coverage == null && prior.coverage != null) man.coverage = prior.coverage;
-  man.paidValueClaim = false;
-  return man;
+function fileDigest(p) {
+  const inspect = inspectCapture(p, 'input');
+  if (!inspect.ok) return { path: p, bytes: null, sha256: null, observedAt: 'unknown', attribution: 'unknown' };
+  const buf = fs.readFileSync(p);
+  return {
+    path: path.resolve(p),
+    bytes: buf.length,
+    sha256: createHash('sha256').update(buf).digest('hex'),
+    observedAt: 'unknown',
+    attribution: 'unknown',
+  };
+}
+
+function matchSideMeta(digest, side) {
+  if (!digest?.sha256 || !side || typeof side !== 'object') return digest;
+  if (side.sha256 && side.sha256 === digest.sha256) {
+    return {
+      ...digest,
+      attribution: 'source-meta-digest-match',
+      commit: side.commit ?? null,
+    };
+  }
+  return digest;
+}
+
+function loadRecipeSourceMeta(loaded) {
+  const recipe = loaded?.recipe;
+  const metaRel = recipe?.primarySource?.metaFile;
+  if (typeof metaRel === 'string' && metaRel.trim()) {
+    const full = path.resolve(S163, metaRel);
+    if (isExistingFile(full)) {
+      try {
+        const st = fs.statSync(full);
+        if (st.size <= MAX_CAPTURE_BYTES) {
+          return JSON.parse(fs.readFileSync(full, 'utf8'));
+        }
+      } catch {
+        return {
+          synthetic: recipe.primarySource?.synthetic === true,
+          label: recipe.primarySource?.label ?? null,
+        };
+      }
+    }
+  }
+  if (recipe?.primarySource && typeof recipe.primarySource === 'object') {
+    return {
+      label: recipe.primarySource.label ?? null,
+      sourceUrl: recipe.primarySource.sourceUrl ?? recipe.primarySource.repo ?? null,
+      license: recipe.primarySource.license ?? null,
+      synthetic: recipe.primarySource.synthetic === true,
+      beforeCommit: recipe.primarySource.beforeCommit ?? null,
+      afterCommit: recipe.primarySource.afterCommit ?? null,
+    };
+  }
+  return null;
+}
+
+function bindProvenance({ before, after, used, priorManifest, recipeMeta }) {
+  const currentInputs = {
+    before: fileDigest(before),
+    after: fileDigest(after),
+    used: used ? fileDigest(used) : null,
+  };
+  const inherited = priorManifest?.sourceMeta && typeof priorManifest.sourceMeta === 'object'
+    ? priorManifest.sourceMeta
+    : recipeMeta && typeof recipeMeta === 'object'
+      ? recipeMeta
+      : null;
+  const synthetic =
+    inherited?.synthetic === true ||
+    recipeMeta?.synthetic === true ||
+    priorManifest?.synthetic === true
+      ? true
+      : inherited?.synthetic === false || recipeMeta?.synthetic === false
+        ? false
+        : undefined;
+
+  let sourceMeta = null;
+  let sourceMetaHistorical = null;
+  if (inherited) {
+    const beforeMatch = inherited.before?.sha256 && inherited.before.sha256 === currentInputs.before.sha256;
+    const afterMatch = inherited.after?.sha256 && inherited.after.sha256 === currentInputs.after.sha256;
+    if (beforeMatch && afterMatch) {
+      sourceMeta = inherited;
+      currentInputs.before = matchSideMeta(currentInputs.before, inherited.before);
+      currentInputs.after = matchSideMeta(currentInputs.after, inherited.after);
+    } else {
+      sourceMetaHistorical = inherited;
+      sourceMeta = {
+        synthetic: synthetic === true,
+        note: 'current capture bytes do not match inherited sourceMeta digests; current attribution unknown',
+      };
+    }
+  } else if (recipeMeta) {
+    sourceMeta = recipeMeta;
+  }
+  if (synthetic === true) {
+    if (sourceMeta && typeof sourceMeta === 'object') sourceMeta = { ...sourceMeta, synthetic: true };
+    currentInputs.synthetic = true;
+  } else if (synthetic === false && sourceMeta && sourceMeta.synthetic == null) {
+    sourceMeta = { ...sourceMeta, synthetic: false };
+  }
+  return { sourceMeta, sourceMetaHistorical, currentInputs };
+}
+
+function fileIdentity(p) {
+  try {
+    const resolved = path.resolve(p);
+    const lst = fs.lstatSync(resolved);
+    const st = lst.isSymbolicLink() ? fs.statSync(resolved) : lst;
+    return {
+      exists: true,
+      resolved,
+      real: lst.isSymbolicLink() ? fs.realpathSync(resolved) : resolved,
+      dev: st.dev,
+      ino: st.ino,
+    };
+  } catch {
+    return { exists: false, resolved: path.resolve(p), real: path.resolve(p), dev: null, ino: null };
+  }
+}
+
+function aliases(a, b) {
+  if (!a || !b) return false;
+  const A = fileIdentity(a);
+  const B = fileIdentity(b);
+  if (A.real === B.real) return true;
+  if (A.exists && B.exists && A.dev != null && A.dev === B.dev && A.ino === B.ino) return true;
+  return false;
+}
+
+function writeNext(file, manifest, protectedPaths = []) {
+  if (typeof file !== 'string' || !file.trim()) {
+    return refuse('invalid-next-run-path', '--write-next-run requires a file path');
+  }
+  const out = path.resolve(file);
+  try {
+    if (fs.existsSync(out) && fs.statSync(out).isDirectory()) {
+      return refuse('next-run-path-is-directory', '--write-next-run must be a file, not a directory', { path: out });
+    }
+  } catch {
+    /* continue */
+  }
+  for (const p of protectedPaths.filter(Boolean)) {
+    if (aliases(out, p)) {
+      return refuse(
+        'next-run-would-overwrite-input',
+        '--write-next-run must not alias before/after/used or the imported manifest',
+        { path: out, protected: path.resolve(p) },
+      );
+    }
+  }
+  try {
+    fs.mkdirSync(path.dirname(out), { recursive: true });
+    const fd = fs.openSync(out, 'wx');
+    try {
+      fs.writeFileSync(fd, `${JSON.stringify(manifest, null, 2)}\n`);
+    } finally {
+      fs.closeSync(fd);
+    }
+    return { ok: true, path: out };
+  } catch (e) {
+    if (e && e.code === 'EEXIST') {
+      return refuse('next-run-path-exists', '--write-next-run refuses to replace an existing file (exclusive create)', {
+        path: out,
+      });
+    }
+    return refuse('next-run-write-failed', String(e.message || e), { path: out });
+  }
+}
+
+function attachNext(result, writeNextRun, man, protectedPaths) {
+  if (!writeNextRun) return result;
+  const written = writeNext(writeNextRun, man, protectedPaths);
+  if (!written.ok) {
+    result.nextRun = { refused: true, prep: written };
+    return result;
+  }
+  result.nextRun = { path: written.path, manifest: man };
+  return result;
+}
+
+function parserMatchesFamily(familyId, parser) {
+  if (!parser) return true;
+  const fam = FAMILIES[familyId];
+  if (!fam) return false;
+  if (parser === `s134-${fam.module}` || parser === fam.module) return true;
+  return FAMILY_ALIASES[parser] === familyId;
+}
+
+function loadNextRunManifest(rawPath) {
+  const resolved = resolveCliPath(rawPath);
+  if (!resolved || !fs.existsSync(resolved)) {
+    return {
+      ok: false,
+      refused: true,
+      prep: refuse('missing-next-run-manifest', 'next-run manifest file missing', { path: resolved || rawPath }),
+      paidValueClaim: false,
+      freeOffline: true,
+      fromNextRun: rawPath,
+    };
+  }
+  let st;
+  try {
+    st = fs.statSync(resolved);
+  } catch {
+    return {
+      ok: false,
+      refused: true,
+      prep: refuse('missing-next-run-manifest', 'next-run manifest file missing', { path: resolved }),
+      paidValueClaim: false,
+      freeOffline: true,
+      fromNextRun: rawPath,
+    };
+  }
+  if (st.isDirectory()) {
+    return {
+      ok: false,
+      refused: true,
+      prep: refuse('next-run-path-is-directory', 'next-run manifest must be a file, not a directory', { path: resolved }),
+      paidValueClaim: false,
+      freeOffline: true,
+      fromNextRun: rawPath,
+    };
+  }
+  if (st.size > MAX_CAPTURE_BYTES) {
+    return {
+      ok: false,
+      refused: true,
+      prep: refuse('capture-too-large', `next-run manifest exceeds documented ${MAX_CAPTURE_BYTES} byte limit`, {
+        path: resolved,
+        size: st.size,
+        limit: MAX_CAPTURE_BYTES,
+      }),
+      paidValueClaim: false,
+      freeOffline: true,
+      fromNextRun: rawPath,
+    };
+  }
+  let parsed;
+  try {
+    parsed = JSON.parse(fs.readFileSync(resolved, 'utf8'));
+  } catch (e) {
+    return {
+      ok: false,
+      refused: true,
+      prep: refuse('invalid-next-run-manifest', 'next-run manifest is not valid JSON', {
+        path: resolved,
+        error: String(e.message || e),
+      }),
+      paidValueClaim: false,
+      freeOffline: true,
+      fromNextRun: rawPath,
+    };
+  }
+  if (parsed == null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    return {
+      ok: false,
+      refused: true,
+      prep: refuse('invalid-next-run-manifest', 'next-run manifest must be a JSON object', {
+        path: resolved,
+        got: parsed === null ? 'null' : Array.isArray(parsed) ? 'array' : typeof parsed,
+      }),
+      paidValueClaim: false,
+      freeOffline: true,
+      fromNextRun: rawPath,
+    };
+  }
+  if (!NEXT_RUN_SCHEMAS.includes(parsed.schema)) {
+    return {
+      ok: false,
+      refused: true,
+      prep: refuse('unsupported-next-run-schema', 'next-run schema must be s176.next-run-manifest.v1 or s163.next-run-manifest.v1', {
+        path: resolved,
+        got: parsed.schema ?? null,
+      }),
+      paidValueClaim: false,
+      freeOffline: true,
+      fromNextRun: rawPath,
+    };
+  }
+  const family = normalizeFamily(parsed.family || parsed.parser);
+  if (!family || !FAMILIES[family]) {
+    return {
+      ok: false,
+      refused: true,
+      prep: refuse('unknown-family', 'next-run family/parser is not a declared S176 family', {
+        family: parsed.family ?? null,
+        parser: parsed.parser ?? null,
+      }),
+      paidValueClaim: false,
+      freeOffline: true,
+      fromNextRun: rawPath,
+    };
+  }
+  if (parsed.parser && !parserMatchesFamily(family, parsed.parser)) {
+    return {
+      ok: false,
+      refused: true,
+      prep: refuse('family-parser-mismatch', 'next-run family does not match parser', {
+        family,
+        parser: parsed.parser,
+      }),
+      paidValueClaim: false,
+      freeOffline: true,
+      fromNextRun: rawPath,
+    };
+  }
+  return { ok: true, path: resolved, manifest: parsed, family };
 }
 
 async function loadAdapter(file) {
@@ -168,6 +528,8 @@ function runParser(moduleName, argv) {
     encoding: 'utf8',
     cwd: PKG,
     maxBuffer: 20 * 1024 * 1024,
+    timeout: PARSER_TIMEOUT_MS,
+    killSignal: 'SIGTERM',
   });
 }
 
@@ -177,6 +539,13 @@ function parseReport(stdout) {
   } catch {
     return { parseError: true, stdout };
   }
+}
+
+function parserFailure(r) {
+  if (r.error && r.error.code === 'ETIMEDOUT') {
+    return refuse('parser-timeout', `parser exceeded ${PARSER_TIMEOUT_MS}ms`, { timeoutMs: PARSER_TIMEOUT_MS });
+  }
+  return null;
 }
 
 function loadRecipe(id) {
@@ -208,63 +577,6 @@ function normalizeFamily(id) {
   return null;
 }
 
-function writeNext(file, manifest) {
-  if (typeof file !== 'string' || !file.trim()) {
-    return refuse('invalid-next-run-path', '--write-next-run requires a file path');
-  }
-  const out = path.resolve(file);
-  try {
-    if (fs.existsSync(out) && fs.statSync(out).isDirectory()) {
-      return refuse('next-run-path-is-directory', '--write-next-run must be a file, not a directory', { path: out });
-    }
-    fs.mkdirSync(path.dirname(out), { recursive: true });
-    fs.writeFileSync(out, `${JSON.stringify(manifest, null, 2)}\n`);
-    return { ok: true, path: out };
-  } catch (e) {
-    return refuse('next-run-write-failed', String(e.message || e), { path: out });
-  }
-}
-
-function attachNext(result, writeNextRun, man) {
-  if (!writeNextRun) return result;
-  const written = writeNext(writeNextRun, man);
-  if (!written.ok) {
-    result.nextRun = { refused: true, prep: written };
-    return result;
-  }
-  result.nextRun = { path: written.path, manifest: man };
-  return result;
-}
-
-function loadNextRunManifest(rawPath) {
-  const resolved = resolveMaybe(rawPath);
-  if (!isExistingFile(resolved)) {
-    return {
-      ok: false,
-      refused: true,
-      prep: refuse('missing-next-run-manifest', 'next-run manifest file missing', { path: resolved || rawPath }),
-      paidValueClaim: false,
-      freeOffline: true,
-      fromNextRun: rawPath,
-    };
-  }
-  try {
-    return { ok: true, path: resolved, manifest: JSON.parse(fs.readFileSync(resolved, 'utf8')) };
-  } catch (e) {
-    return {
-      ok: false,
-      refused: true,
-      prep: refuse('invalid-next-run-manifest', 'next-run manifest is not valid JSON', {
-        path: resolved,
-        error: String(e.message || e),
-      }),
-      paidValueClaim: false,
-      freeOffline: true,
-      fromNextRun: rawPath,
-    };
-  }
-}
-
 function sampleCatalog() {
   return [
     { recipe: 'R-OPENAPI-PIN-IMPACT', family: 'openapi-used-ops', label: 'free-sample' },
@@ -278,13 +590,38 @@ function sampleCatalog() {
   ];
 }
 
-async function runFamily(familyId, inputs, { recipeId = null, writeNextRun = null, priorManifest = null, resolveBases = [] } = {}) {
+function finishManifest(man, { familyId, recipeId, parser, provenance, extra = {} }) {
+  const out = {
+    recipeId: recipeId || familyId,
+    family: familyId,
+    parser,
+    ...man,
+    ...extra,
+    schema: 's176.next-run-manifest.v1',
+    sourceMeta: provenance.sourceMeta,
+    currentInputs: provenance.currentInputs,
+    paidValueClaim: false,
+    freeOffline: true,
+  };
+  if (provenance.sourceMetaHistorical) out.sourceMetaHistorical = provenance.sourceMetaHistorical;
+  if (man.retain && !out.retain) out.retain = man.retain;
+  return out;
+}
+
+async function runFamily(familyId, inputs, {
+  recipeId = null,
+  writeNextRun = null,
+  priorManifest = null,
+  recipeMeta = null,
+  resolvePath = resolveCliPath,
+  importedManifestPath = null,
+} = {}) {
   const fam = FAMILIES[familyId];
   if (!fam) return { ok: false, error: 'unknown-family', familyId };
 
-  const before = resolveMaybe(inputs.before, resolveBases);
-  const after = resolveMaybe(inputs.after, resolveBases);
-  const used = inputs.used ? resolveMaybe(inputs.used, resolveBases) : null;
+  const before = resolvePath(inputs.before);
+  const after = resolvePath(inputs.after);
+  const used = inputs.used ? resolvePath(inputs.used) : null;
   const keyRaw = inputs.key;
   const keys = !keyRaw
     ? []
@@ -294,6 +631,31 @@ async function runFamily(familyId, inputs, { recipeId = null, writeNextRun = nul
           .split(',')
           .map((s) => s.trim())
           .filter(Boolean);
+
+  const missingByFamily = {
+    'openapi-used-ops': 'missing-openapi-capture',
+    'pricing-row-unit': 'missing-pricing-capture',
+    'csv-keyed-drift': 'missing-csv-capture',
+    'rss-atom-brief': 'missing-feed-capture',
+  };
+  const missingCode = missingByFamily[familyId] || 'missing-capture';
+  for (const [label, p] of [
+    ['before', before],
+    ['after', after],
+  ]) {
+    const cap = inspectCapture(p, label, { missingCode });
+    if (!cap.ok) return familyRefuse(familyId, recipeId, cap, { sourceLinked: true });
+  }
+  if (familyId === 'openapi-used-ops') {
+    const cap = inspectCapture(used, 'used', { missingCode: 'empty-used-ops-pin' });
+    if (!cap.ok) return familyRefuse(familyId, recipeId, cap, { sourceLinked: true });
+  } else if (used) {
+    const cap = inspectCapture(used, 'used', { missingCode });
+    if (!cap.ok) return familyRefuse(familyId, recipeId, cap, { sourceLinked: true });
+  }
+
+  const provenance = bindProvenance({ before, after, used, priorManifest, recipeMeta });
+  const protectedPaths = [before, after, used, importedManifestPath];
 
   if (familyId === 'openapi-used-ops') {
     const adapter = await loadAdapter(fam.adapter);
@@ -312,6 +674,8 @@ async function runFamily(familyId, inputs, { recipeId = null, writeNextRun = nul
     }
     if (!pinPrep.ok) return familyRefuse(familyId, recipeId, pinPrep);
     const r = runParser(fam.module, ['--before', before, '--after', after, '--used', used]);
+    const timed = parserFailure(r);
+    if (timed) return familyRefuse(familyId, recipeId, timed);
     const report = parseReport(r.stdout);
     const result = {
       ok: r.status === 0 && !report.parseError,
@@ -324,46 +688,41 @@ async function runFamily(familyId, inputs, { recipeId = null, writeNextRun = nul
       freeOffline: true,
       parser: `s134-${fam.module}`,
       inputs: { before, after, used },
+      currentInputs: provenance.currentInputs,
     };
     if (writeNextRun) {
       const man = adapter.buildNextRunManifest(recipeId || familyId, {
         before,
         after,
         usedPin: used,
-        sourceMeta: priorManifest?.sourceMeta ?? null,
+        sourceMeta: provenance.sourceMeta,
         lastReport: report?.report || report,
       });
-      man.schema = man.schema || 's176.next-run-manifest.v1';
-      man.family = familyId;
-      man.freeOffline = true;
-      man.paidValueClaim = false;
-      inheritPrior(man, priorManifest);
-      attachNext(result, writeNextRun, man);
+      const finished = finishManifest(man, {
+        familyId,
+        recipeId,
+        parser: result.parser,
+        provenance,
+      });
+      attachNext(result, writeNextRun, finished, protectedPaths);
     }
     return result;
   }
 
   if (familyId === 'pricing-row-unit') {
     const adapter = await loadAdapter(fam.adapter);
-    // HTML refuse path: after or before may be HTML
     for (const [label, p] of [
       ['before', before],
       ['after', after],
     ]) {
-      if (!p || !isExistingFile(p)) {
-        return familyRefuse(
-          familyId,
-          recipeId,
-          refuse('missing-pricing-capture', `${label} pricing capture missing`, { path: p }),
-          { sourceLinked: true },
-        );
-      }
       const prep = adapter.preparePricingTable(p, label);
       if (!prep.ok) {
         return familyRefuse(familyId, recipeId, prep, { sourceLinked: true });
       }
     }
     const r = runParser(fam.module, ['--before', before, '--after', after]);
+    const timed = parserFailure(r);
+    if (timed) return familyRefuse(familyId, recipeId, timed);
     const report = parseReport(r.stdout);
     const result = {
       ok: r.status === 0 && !report.parseError,
@@ -376,22 +735,17 @@ async function runFamily(familyId, inputs, { recipeId = null, writeNextRun = nul
       freeOffline: true,
       parser: `s134-${fam.module}`,
       inputs: { before, after },
+      currentInputs: provenance.currentInputs,
     };
     if (writeNextRun) {
-      const man = inheritPrior(
+      const finished = finishManifest(
         {
-          schema: 's176.next-run-manifest.v1',
-          recipeId: recipeId || familyId,
-          family: familyId,
-          parser: result.parser,
           inputs: { before, after },
           retain: ['units', 'coverage', 'sourceUrl', 'license', 'citations'],
-          paidValueClaim: false,
-          freeOffline: true,
         },
-        priorManifest,
+        { familyId, recipeId, parser: result.parser, provenance },
       );
-      attachNext(result, writeNextRun, man);
+      attachNext(result, writeNextRun, finished, protectedPaths);
     }
     return result;
   }
@@ -403,6 +757,8 @@ async function runFamily(familyId, inputs, { recipeId = null, writeNextRun = nul
     const argv = ['--before', before, '--after', after];
     for (const k of prep.keyColumns) argv.push('--key', k);
     const r = runParser(fam.module, argv);
+    const timed = parserFailure(r);
+    if (timed) return familyRefuse(familyId, recipeId, timed);
     const report = parseReport(r.stdout);
     const result = {
       ok: r.status === 0 && !report.parseError,
@@ -415,15 +771,17 @@ async function runFamily(familyId, inputs, { recipeId = null, writeNextRun = nul
       freeOffline: true,
       parser: `s134-${fam.module}`,
       inputs: { before, after, key: prep.keyColumns },
+      currentInputs: provenance.currentInputs,
     };
     if (writeNextRun) {
-      const man = adapter.buildNextRunManifest(recipeId || familyId, prep, priorManifest?.sourceMeta ?? null);
-      man.schema = man.schema || 's176.next-run-manifest.v1';
-      man.family = familyId;
-      man.freeOffline = true;
-      man.paidValueClaim = false;
-      inheritPrior(man, priorManifest);
-      attachNext(result, writeNextRun, man);
+      const man = adapter.buildNextRunManifest(recipeId || familyId, prep, provenance.sourceMeta);
+      const finished = finishManifest(man, {
+        familyId,
+        recipeId,
+        parser: result.parser,
+        provenance,
+      });
+      attachNext(result, writeNextRun, finished, protectedPaths);
     }
     return result;
   }
@@ -431,13 +789,12 @@ async function runFamily(familyId, inputs, { recipeId = null, writeNextRun = nul
   if (familyId === 'rss-atom-brief') {
     const adapter = await loadAdapter(fam.adapter);
     for (const p of [before, after]) {
-      if (p == null) {
-        return familyRefuse(familyId, recipeId, refuse('missing-feed-capture', 'feed capture missing', { path: p }));
-      }
       const prep = adapter.prepareFeedCapture(p);
       if (!prep.ok) return familyRefuse(familyId, recipeId, prep);
     }
     const r = runParser(fam.module, ['--before', before, '--after', after]);
+    const timed = parserFailure(r);
+    if (timed) return familyRefuse(familyId, recipeId, timed);
     const report = parseReport(r.stdout);
     const result = {
       ok: r.status === 0 && !report.parseError,
@@ -450,22 +807,17 @@ async function runFamily(familyId, inputs, { recipeId = null, writeNextRun = nul
       freeOffline: true,
       parser: `s134-${fam.module}`,
       inputs: { before, after },
+      currentInputs: provenance.currentInputs,
     };
     if (writeNextRun) {
-      const man = inheritPrior(
+      const finished = finishManifest(
         {
-          schema: 's176.next-run-manifest.v1',
-          recipeId: recipeId || familyId,
-          family: familyId,
-          parser: result.parser,
           inputs: { before, after },
           retain: ['sourceUrl', 'license', 'format', 'synthetic'],
-          paidValueClaim: false,
-          freeOffline: true,
         },
-        priorManifest,
+        { familyId, recipeId, parser: result.parser, provenance },
       );
-      attachNext(result, writeNextRun, man);
+      attachNext(result, writeNextRun, finished, protectedPaths);
     }
     return result;
   }
@@ -479,18 +831,14 @@ async function runRecipe(recipeId, writeNextRun) {
   const { recipe, familyDir } = loaded;
   const family = normalizeFamily(recipe.family || familyDir);
   const inputs = recipe.inputs || {};
+  const recipeMeta = loadRecipeSourceMeta(loaded);
 
-  // HTML refuse recipe
   if (inputs.html || recipeId === 'R-PRICE-REFUSE-HTML') {
     const adapter = await loadAdapter('pricing-row-unit.mjs');
-    const htmlPath = resolveMaybe(inputs.html);
-    if (!isExistingFile(htmlPath)) {
-      return familyRefuse(
-        'pricing-row-unit',
-        recipeId,
-        refuse('missing-pricing-capture', 'html pricing capture missing', { path: htmlPath }),
-        { sourceLinked: true },
-      );
+    const htmlPath = resolveRecipePath(inputs.html);
+    const cap = inspectCapture(htmlPath, 'html');
+    if (!cap.ok) {
+      return familyRefuse('pricing-row-unit', recipeId, cap, { sourceLinked: true });
     }
     const prep = adapter.preparePricingTable(htmlPath, 'html');
     return familyRefuse('pricing-row-unit', recipeId, prep, { sourceLinked: true });
@@ -504,7 +852,7 @@ async function runRecipe(recipeId, writeNextRun) {
       used: inputs.used,
       key: inputs.key || inputs.keyColumns,
     },
-    { recipeId, writeNextRun },
+    { recipeId, writeNextRun, recipeMeta, resolvePath: resolveRecipePath },
   );
 }
 
@@ -532,6 +880,8 @@ if (cmd === 'list') {
     registryFamilies: registry.families,
     paidValueClaim: false,
     freeOffline: true,
+    maxCaptureBytes: MAX_CAPTURE_BYTES,
+    parserTimeoutMs: PARSER_TIMEOUT_MS,
     botRecordCellsExcluded: ['native05', 'native06', 'native07', 'native08'],
   });
 }
@@ -578,19 +928,25 @@ if (cmd === 'run') {
     const loaded = loadNextRunManifest(args['from-next-run']);
     if (!loaded.ok) emit(loaded, 0);
     const man = loaded.manifest;
-    const family = normalizeFamily(man.family || man.parser);
+    const family = loaded.family;
     const manDir = path.dirname(loaded.path);
+    const legacyS163 = man.schema === 's163.next-run-manifest.v1';
+    const resolveMixed = (cliVal, manVal) => {
+      if (cliVal) return resolveCliPath(cliVal);
+      return resolveManifestPath(manVal, manDir, { legacyS163 });
+    };
     const inputs = {
-      before: args.before || man.inputs?.before,
-      after: args.after || man.inputs?.after,
-      used: args.used || man.inputs?.used || man.inputs?.usedPin,
+      before: resolveMixed(args.before, man.inputs?.before),
+      after: resolveMixed(args.after, man.inputs?.after),
+      used: resolveMixed(args.used, man.inputs?.used || man.inputs?.usedPin),
       key: args.key || man.inputs?.key || man.inputs?.keyColumns,
     };
     const r = await runFamily(family, inputs, {
       recipeId: man.recipeId || null,
       writeNextRun: args['write-next-run'] || null,
       priorManifest: man,
-      resolveBases: [manDir],
+      resolvePath: (p) => p,
+      importedManifestPath: loaded.path,
     });
     r.fromNextRun = args['from-next-run'];
     emit(r, r.ok || r.refused ? 0 : 1);
@@ -600,7 +956,7 @@ if (cmd === 'run') {
     const r = await runFamily(
       family,
       { before: args.before, after: args.after, used: args.used, key: args.key },
-      { writeNextRun: args['write-next-run'] || null },
+      { writeNextRun: args['write-next-run'] || null, resolvePath: resolveCliPath },
     );
     emit(r, r.ok || r.refused ? 0 : 1);
   }

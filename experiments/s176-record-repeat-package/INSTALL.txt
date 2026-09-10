@@ -8,11 +8,17 @@ Recipe pin: a022eb6352156dcdcdf2f8730931f5891bd01436
 This archive is anonymous public packaging of the four source/record repeat-job
 families. It is not a new parser engine, paid route, cron, or marketplace listing.
 
+Captures and next-run manifests are capped at 8388608 bytes (8 MiB). Parser
+child processes time out after 30000 ms. Identity is never a filename.
+
 1) Unpack outside any private workspace
 
-  mkdir -p /tmp/record-repeat-job && tar -xzf record-repeat-job-*.tar.gz -C /tmp
+  mkdir -p /tmp && tar -xzf record-repeat-job-*.tar.gz -C /tmp
   cd /tmp/record-repeat-job
-  npm ci
+
+  # Do not run npm ci at this archive root: there is no root lockfile.
+  # Parser dependencies are already vendored at vendor/s134-record-jobs
+  # (including node_modules from the pack step).
 
 2) List families and free samples
 
@@ -39,6 +45,11 @@ families. It is not a new parser engine, paid route, cron, or marketplace listin
 
   node bin/record-repeat.mjs run --from-next-run ./out/next-run.json \
     --before ./my/before2.yaml --after ./my/after2.yaml
+
+6) Packed tests (optional)
+
+  npm test
+  # uses vendored parsers; does not require a root npm ci or private next-run/ manifests
 
 Paid merchant extract (optional, existing) is a separate product. This package
 does not charge, sign, subscribe, or schedule fetches.

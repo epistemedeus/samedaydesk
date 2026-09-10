@@ -1,0 +1,51 @@
+{
+  "milestone": "S189",
+  "role": "pre-edit-ownership",
+  "at": "2026-09-10T14:10:30.332119+00:00",
+  "branch": "codex/s189-record-repeat-review-fix-20260910",
+  "head": "f3d55e54a7b3c548943312443f9f066652d83980",
+  "s176FrozenCandidate": "f3d55e54a7b3c548943312443f9f066652d83980",
+  "s185Frozen": "c05522364b26db04b4aa63f945ad15810785efb4",
+  "heavyParentSession": "01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5",
+  "model": "grok-4.6",
+  "effort": "xhigh",
+  "s185SharedContract": "S185 resolveMaybe still cwd-first; not a complete F1 repair. Reuse structured refuse / next-run write patterns only.",
+  "ownedFiles": {
+    "experiments/s176-record-repeat-package/bin/record-repeat.mjs": {
+      "sha256": "1779236b68d0067fe3c23f94f075405d27dd0042f319c7dad9c3aaec7897bd6c",
+      "bytes": 19785
+    },
+    "experiments/s176-record-repeat-package/scripts/build-archive.mjs": {
+      "sha256": "f2e26ff9f6c2cb7f261ca41f0d376d61541012e3738f439b36c594f0eeb6ac46",
+      "bytes": 6827
+    },
+    "experiments/s176-record-repeat-package/scripts/archive-hygiene.mjs": {
+      "sha256": "bb5dccbfc31d74cc45b37f225ee2b87667c761d72f222d65410ff0bab542e3f9",
+      "bytes": 2846
+    },
+    "experiments/s176-record-repeat-package/INSTALL.txt": {
+      "sha256": "a0bed9fdaf49348654175ef6940fae6b120954a096d474b1a2a1c907fdbfc2bb",
+      "bytes": 1724
+    },
+    "experiments/s176-record-repeat-package/test/acquisition.test.mjs": {
+      "sha256": "18f517f211cc8e157a7b9aa726004964b5783027ad75db2e6c7bf0fa551503b1",
+      "bytes": 8521
+    },
+    "experiments/s163-record-recipes/adapters/pricing-row-unit.mjs": {
+      "sha256": "46f27c68726dbe5cf593d97227d759e941781e046fc6fba9febfb410ba913100",
+      "bytes": 3008
+    },
+    "experiments/s134-record-jobs/modules/pricing-table-change/cli.mjs": {
+      "sha256": "50ed157aace15e47d92603c6b1bc31a688557c35d089bbcaf535e7cdcb5b124c",
+      "bytes": 8934
+    }
+  },
+  "findings": [
+    "F1",
+    "F2",
+    "F3",
+    "F4",
+    "F5",
+    "F6"
+  ]
+}

@@ -218,13 +218,29 @@ test('write-next-run without a file path refuses instead of throwing', () => {
 
 test('from-next-run rewrite copies sourceMeta and pricing stores resolved paths', () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 's176-inherit-'));
-  const srcPath = path.join(S163, 'next-run/R-OPENAPI-PIN-IMPACT.manifest.json');
-  const src = JSON.parse(fs.readFileSync(srcPath, 'utf8'));
+  const sourceMetaPath = path.join(S163, 'sources/openapi/museum/SOURCE.json');
+  const sourceMeta = JSON.parse(fs.readFileSync(sourceMetaPath, 'utf8'));
+  fs.copyFileSync(path.join(S163, 'sources/openapi/museum/before.yaml'), path.join(tmp, 'before.yaml'));
+  fs.copyFileSync(path.join(S163, 'sources/openapi/museum/after.yaml'), path.join(tmp, 'after.yaml'));
+  fs.copyFileSync(path.join(S163, 'sources/openapi/museum/used-ops.pin.json'), path.join(tmp, 'used.json'));
+  const srcPath = path.join(tmp, 'imported.json');
+  fs.writeFileSync(
+    srcPath,
+    `${JSON.stringify({
+      schema: 's176.next-run-manifest.v1',
+      recipeId: 'R-OPENAPI-PIN-IMPACT',
+      family: 'openapi-used-ops',
+      parser: 's134-openapi-impact',
+      inputs: { before: 'before.yaml', after: 'after.yaml', used: 'used.json' },
+      sourceMeta,
+      paidValueClaim: false,
+    }, null, 2)}\n`,
+  );
   const outPath = path.join(tmp, 'replayed.json');
-  const r1 = run(['run', '--from-next-run', srcPath, '--write-next-run', outPath]);
+  const r1 = run(['run', '--from-next-run', srcPath, '--write-next-run', outPath], tmp);
   assert.equal(r1.status, 0, r1.stderr || r1.stdout);
   const replayed = JSON.parse(fs.readFileSync(outPath, 'utf8'));
-  assert.deepEqual(replayed.sourceMeta, src.sourceMeta);
+  assert.deepEqual(replayed.sourceMeta, sourceMeta);
   assert.equal(replayed.paidValueClaim, false);
 
   const pricePath = path.join(tmp, 'price-next.json');
@@ -234,4 +250,5 @@ test('from-next-run rewrite copies sourceMeta and pricing stores resolved paths'
   assert.ok(path.isAbsolute(priceMan.inputs.before), priceMan.inputs.before);
   assert.ok(fs.existsSync(priceMan.inputs.before));
   assert.ok(fs.existsSync(priceMan.inputs.after));
+  assert.ok(priceMan.sourceMeta);
 });
