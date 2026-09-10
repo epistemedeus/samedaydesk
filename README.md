@@ -11,6 +11,8 @@ Start with the examples below, then open the helper documentation for options an
 | [tools/presence/FOR-AGENTS-COLD-READ.md](tools/presence/FOR-AGENTS-COLD-READ.md) | Free discovery when apex TLS/connect fails |
 | [tools/presence/REGISTRY-CONSUMER.md](tools/presence/REGISTRY-CONSUMER.md) | MCP Registry `version=latest` pitfall |
 | [tools/result-reuse/README.md](tools/result-reuse/README.md) | Offline source → task-memory observation |
+| [tools/offer-routing/README.md](tools/offer-routing/README.md) | Task → existing SameDayDesk/Neomorphic offer |
+| [tools/offer-routing/capability-limits-matrix.json](tools/offer-routing/capability-limits-matrix.json) | Machine-readable capability/limits matrix |
 
 Live free catalogs (no pay): `https://agents.samedaydesk.com/llms.txt` and `https://agents.samedaydesk.com/.well-known/skills/index.json`. Apex `https://samedaydesk.com/for-agents` may TLS/connect-fail; cold-read falls back to those alternates.
 
@@ -74,10 +76,24 @@ printf 'Saved example in %s\n' "$PILOT_EXAMPLE_DIR"
 
 Expected written observation: `schema: "neomorphic.task-memory.observation.v1"`; export requires `--opt-in` plus caller clock/task/subject/sequence.
 
+
+## Task → existing offer (cold selection)
+
+When the job is known, route with the matrix before paying or treating a sample as live:
+
+```bash
+node tools/offer-routing/route-job.mjs tools/offer-routing/fixtures/complete-issue-discussion.job.json
+```
+
+Expected: `selected.offerId` = `neo.agent_task_kit`, `paid: false`,
+`avoidedMistakes` includes `paid_html_extraction_for_complete_issue_comments`.
+Paid `/extract` is **not** complete issue comments. The MoltJobs SDK pack is an
+**unhosted local rehearsal**, offline until the caller hosts their own path.
+
 ## Verify the cited examples
 
 ```bash
 npm run test:public-entry
 ```
 
-That script runs the offline cold-read and fixture export commands cited above (no network, no payment). Existing focused suites: `npm run test:presence`, `npm run test:result-reuse`.
+That script runs the offline cold-read and fixture export commands cited above (no network, no payment). Existing focused suites: `npm run test:presence`, `npm run test:result-reuse`, `npm run test:offer-routing`.

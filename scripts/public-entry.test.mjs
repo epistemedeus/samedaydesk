@@ -31,15 +31,19 @@ function extractFencedBash(md) {
   return blocks;
 }
 
-test("root README cites presence/result-reuse docs and free vs offline modes", () => {
+test("root README cites presence/result-reuse/offer-routing docs and free vs offline modes", () => {
   const md = readFileSync(readmePath, "utf8");
   assert.match(md, /tools\/presence\/FOR-AGENTS-COLD-READ\.md/);
   assert.match(md, /tools\/presence\/REGISTRY-CONSUMER\.md/);
   assert.match(md, /tools\/result-reuse\/README\.md/);
+  assert.match(md, /tools\/offer-routing\/README\.md/);
+  assert.match(md, /capability-limits-matrix\.json/);
   assert.match(md, /preferFixture/);
   assert.match(md, /offline_fixture/);
   assert.match(md, /--opt-in/);
   assert.match(md, /test:public-entry/);
+  assert.match(md, /test:offer-routing/);
+  assert.match(md, /paid_html_extraction_for_complete_issue_comments|neo\.agent_task_kit/);
 });
 
 test("cited offline cold-read example returns offline_fixture unpaid", () => {

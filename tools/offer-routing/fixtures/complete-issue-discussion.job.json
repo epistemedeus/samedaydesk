@@ -1,0 +1,26 @@
+{
+  "schema": "pilot.bot-first-use.job-brief.v1",
+  "citation": "BOT-FIRST-USE-0910",
+  "jobId": "bot-first-use-0910-fixture-complete-issue-discussion",
+  "inventedLocalFixture": true,
+  "leadSuppliedJobFile": null,
+  "type": "complete_issue_discussion",
+  "title": "Compose work brief from complete public GitHub issue discussion",
+  "goal": "Caller needs body + comment thread as a reusable offline work brief, then a prior/correction when the issue source version changes. Not a one-shot HTML field extract.",
+  "acceptance": [
+    "Uses already-held or fixture issue JSON that includes discussion comments",
+    "Produces compose stage=useful with execute=false posted=false",
+    "Does not purchase SameDayDesk /extract or /extract/batch",
+    "Does not treat Neomorphic MoltJobs sample as a live hosted bid service"
+  ],
+  "inputs": {
+    "primaryFixtureRel": "fixtures/test_traffic/github-issue-4785.json",
+    "changedFixtureRel": "fixtures/test_traffic/github-issue-changed.json"
+  },
+  "constraints": [
+    "no_payment",
+    "offline_preferred",
+    "no_live_bid",
+    "no_cloud_agent"
+  ]
+}
