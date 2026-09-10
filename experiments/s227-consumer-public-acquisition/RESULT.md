@@ -81,3 +81,34 @@ Native Heavy session `01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5` hit Grok Build 402 (
 | browser width 320 | pass (`mobile.mjs --viewport 320x568`) |
 
 Archive unchanged: 718948 bytes / sha256 `04e9b6f382eedd91ae27b0d0faa68abbee7c26a1f06f52e415cb5a5884dfe05d` (matches 718948 / `04e9b6f382eedd91ae27b0d0faa68abbee7c26a1f06f52e415cb5a5884dfe05d`). Homepage/payment/Pulse/S221 record+distribution untouched. No merge/deploy.
+
+## S246 — current-source composition (Cursor Auto; Heavy exhausted)
+
+Source tip composed: S239 `a9e937473750dbbb7611e70b4e61554bf15b8681` on `codex/s227-consumer-public-acquisition-20260910`.  
+Merged `origin/main` at PR #49 merge `596694df34bdbe604269d888547961bddc526163` **without force**. Merge was clean (no conflict markers). Native Heavy checkpoint preserved; no retry/reset/overage.
+
+### Preserve check
+| Asset | Status |
+| --- | --- |
+| Consumer archive | unchanged 718948 / `04e9b6f382eedd91ae27b0d0faa68abbee7c26a1f06f52e415cb5a5884dfe05d` |
+| Record-repeat kit/page/discovery | present (S221) |
+| Distribution-repair kit/page/discovery | present (S221) |
+| Homepage / payment / Pulse | untouched by merge |
+| Merchant source pin | `e7a53c48a2db5393e1e340e5d43143547f79dbd7` |
+
+### Extra composition gates (`test/s246-composition-gates.test.mjs`)
+Literal discovery cold-start under `sh` and `bash`: function inside `if` and `&&` contexts; failure (status/size/digest) stops before fake-tar/kit; failed invocation does not remove/overwrite caller marker; two concurrent positive acquisitions with unique `mktemp` dirs + two caller inputs + changed-input repeat. Manifest cold-start string equals renderer/crawler and `CONSUMER_REPEAT_COLD_START`.
+
+### Gates executed
+| Gate | Result |
+| --- | --- |
+| experiment tests (all) | 22/22 |
+| `npm run build` (Node v22.22.2) | pass |
+| spa-fallback | 2/2 |
+| spa-route-shells | 9/9 |
+| hosted-startup | 4/4 |
+| browser desktop 1440 | pass |
+| browser mobile 390 | pass |
+| browser width 320 | pass |
+
+Cash $0. Root owns merge/Hostinger/readback.
