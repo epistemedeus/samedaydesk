@@ -20,10 +20,10 @@ s178_consumer_repeat_acquire() {
   tgz="$work/s178-consumer-repeat-kit.tgz"
   root="$work/s178-consumer-repeat-kit"
   curl -fsSL --max-time 60 -o "$tgz" "$origin/kit/s178-consumer-repeat-kit.tgz" || { rm -rf "$work"; return 1; }
-  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); assert len(b)==int(sys.argv[2]), len(b); h=hashlib.sha256(b).hexdigest(); assert h==sys.argv[3], h' "$tgz" "$bytes" "$sha" || { rm -rf "$work"; return 1; }
+  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); n=len(b); e=int(sys.argv[2]); (n==e) or sys.exit((sys.stderr.write("size %s != %s\n" % (n, e)) or 1)); h=hashlib.sha256(b).hexdigest(); (h==sys.argv[3]) or sys.exit((sys.stderr.write("sha256 %s != %s\n" % (h, sys.argv[3])) or 1))' "$tgz" "$bytes" "$sha" || { rm -rf "$work"; return 1; }
   tar -xzf "$tgz" -C "$work" || { rm -rf "$work"; return 1; }
   [ -f "$root/bin/s178-cli.mjs" ] || { rm -rf "$work"; return 1; }
-  (cd "$root" && node bin/s178-cli.mjs list) || { rm -rf "$work"; return 1; }
+  (cd "$root" && node bin/s178-cli.mjs list >&2) || { rm -rf "$work"; return 1; }
   printf '%s\n' "$root"
   return 0
 }
@@ -31,7 +31,7 @@ kit=$(s178_consumer_repeat_acquire) || exit 1
 printf '%s\n' "$kit"
 ```
 
-The command prints the extracted kit path and stores it in `kit`. Later commands use `"$kit/..."` and `"$PWD/..."`.
+Acquire stdout is exactly the absolute kit directory (list/status diagnostics go to stderr). Later commands use `"$kit/..."` and `"$PWD/..."`.
 
 ## Labeled samples (not caller files)
 

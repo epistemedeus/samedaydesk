@@ -279,13 +279,10 @@ test("literal positive cold-start from discovery + crawler; two callers + change
       rmSync(cwd, { recursive: true, force: true });
       assert.equal(r.status, 0, r.stdout + r.stderr);
     }
-    const kit = String(r.stdout)
-      .trim()
-      .split("\n")
-      .map((s) => s.trim())
-      .filter(Boolean)
-      .at(-1);
-    assert.ok(kit && existsSync(join(kit, "bin/s178-cli.mjs")), `kit path missing: ${kit}\n${r.stdout}`);
+    const kit = String(r.stdout).trim();
+    assert.equal(kit.includes("\n"), false, `stdout must be sole kit path, got: ${JSON.stringify(r.stdout)}`);
+    assert.equal(kit.includes("{"), false, `stdout contaminated with JSON: ${kit.slice(0, 80)}`);
+    assert.ok(kit && existsSync(join(kit, "bin/s178-cli.mjs")), `kit path missing: ${kit}\n${r.stdout}\n${r.stderr}`);
     return { cwd, kit, srv };
   }
 

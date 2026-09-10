@@ -112,3 +112,21 @@ Literal discovery cold-start under `sh` and `bash`: function inside `if` and `&&
 | browser width 320 | pass |
 
 Cash $0. Root owns merge/Hostinger/readback.
+
+## S250 — kit=$(acquire) stdout sole path (Cursor Auto)
+
+Defect: acquire ran `node … list` on stdout, so `kit=$(s178_consumer_repeat_acquire)` captured list JSON and `node "$kit/bin/…"` failed.
+
+Fix in `buildConsumerRepeatColdStart`: `list >&2`; Python verify uses explicit `sys.exit` (not `assert`, so `PYTHONOPTIMIZE=1` still refuse). Discovery `coldStart` regenerated from the one function. Archive unchanged 718948 / `04e9b6f382eedd91ae27b0d0faa68abbee7c26a1f06f52e415cb5a5884dfe05d`.
+
+### Gates
+| Gate | Result |
+| --- | --- |
+| experiment tests | 29/29 (adds `s250-kit-stdout.test.mjs`) |
+| `npm run build` (Node v22.22.2) | pass |
+| spa-fallback | 2/2 |
+| spa-route-shells | 9/9 |
+| hosted-startup | 4/4 |
+| browser 1440/390/320 | not rerun (UI semantics unchanged; S246 receipts stand) |
+
+No deploy. Root owns merge.
