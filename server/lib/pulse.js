@@ -19,6 +19,7 @@ import {
   snapshotCountersFromDelta,
   stableFlushIdFromDelta,
   deltaCanonicalDigest,
+  canonicalizeMcpToolCallsObservedFrom,
   validateDelta,
 } from "./pulse-store/schema.js";
 import {
@@ -311,12 +312,17 @@ async function readDurableSnapshot() {
   }
   durableSnapshot = snapshot;
   if (snapshot?.observationStart) observationStartedAt = snapshot.observationStart;
-  mcpToolCallsObservedFrom = snapshot.mcpToolCallsObservedFrom;
+  // Snapshot RPC returns timestamptz JSON (+00:00); pending deltas must use .mmmZ wire form.
+  mcpToolCallsObservedFrom = canonicalizeMcpToolCallsObservedFrom(
+    snapshot.mcpToolCallsObservedFrom,
+  );
   if (!fileFallback.persistLocalMetadata({ mcpToolCallsObservedFrom })) {
     walWritePending = true;
   } else {
-    mcpToolCallsObservedFrom =
-      fileFallback.getMcpToolCallsObservedFrom() || mcpToolCallsObservedFrom;
+    const persisted = fileFallback.getMcpToolCallsObservedFrom();
+    if (persisted) {
+      mcpToolCallsObservedFrom = canonicalizeMcpToolCallsObservedFrom(persisted);
+    }
   }
   if (snapshot?.legacyUncertainty) legacyUncertainty = snapshot.legacyUncertainty;
   hydrationState = "hydrated";
@@ -551,7 +557,7 @@ function loadWalStateOnStartup() {
   const walStartedAt = fileFallback.getObservationStartedAt();
   if (walStartedAt) observationStartedAt = walStartedAt;
   const walToolStartedAt = fileFallback.getMcpToolCallsObservedFrom();
-  if (walToolStartedAt) mcpToolCallsObservedFrom = walToolStartedAt;
+  if (walToolStartedAt) mcpToolCallsObservedFrom = canonicalizeMcpToolCallsObservedFrom(walToolStartedAt);
   else if (!fileFallback.persistLocalMetadata({ mcpToolCallsObservedFrom })) walWritePending = true;
   for (const entry of fileFallback.loadPendingFlushes()) {
     inFlightFlush = entry;
@@ -985,7 +991,7 @@ export function configurePulseStoreForTests(options = {}) {
     const walStartedAt = fileFallback.getObservationStartedAt();
     if (walStartedAt) observationStartedAt = walStartedAt;
     const walToolStartedAt = fileFallback.getMcpToolCallsObservedFrom();
-    if (walToolStartedAt) mcpToolCallsObservedFrom = walToolStartedAt;
+    if (walToolStartedAt) mcpToolCallsObservedFrom = canonicalizeMcpToolCallsObservedFrom(walToolStartedAt);
     else if (!fileFallback.persistLocalMetadata({ mcpToolCallsObservedFrom })) walWritePending = true;
     for (const entry of fileFallback.loadPendingFlushes()) {
       inFlightFlush = entry;

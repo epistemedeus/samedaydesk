@@ -88,6 +88,35 @@ export function emptySellerRepairDelta() {
   };
 }
 
+/** Strict wire form required by pulse_validate_delta (migration 0003). */
+export const MCP_TOOL_OBSERVED_FROM_WIRE_RE =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+
+/**
+ * Canonicalize mcpToolCallsObservedFrom to the SQL wire form.
+ * PostgreSQL jsonb echoes timestamptz as e.g. 2026-09-02T12:00:00+00:00;
+ * re-submitting that shape is rejected by the strict .mmmZ regex (SQLSTATE 22023).
+ * Equivalent instants must round-trip without dropping durable pending flushes.
+ */
+export function canonicalizeMcpToolCallsObservedFrom(value) {
+  if (typeof value !== "string" || value.length === 0 || value.length > 64) {
+    throw new Error("pulse_invalid_field:mcpToolCallsObservedFrom");
+  }
+  const ms = Date.parse(value);
+  if (!Number.isFinite(ms)) {
+    throw new Error("pulse_invalid_field:mcpToolCallsObservedFrom");
+  }
+  const out = new Date(ms).toISOString();
+  if (MCP_TOOL_OBSERVED_FROM_WIRE_RE.test(value) && out !== value) {
+    throw new Error("pulse_invalid_field:mcpToolCallsObservedFrom");
+  }
+  if (!MCP_TOOL_OBSERVED_FROM_WIRE_RE.test(out)) {
+    throw new Error("pulse_invalid_field:mcpToolCallsObservedFrom");
+  }
+  return out;
+}
+
+
 export function emptyDelta(mcpToolCallsObservedFrom = new Date().toISOString()) {
   return {
     schemaVersion: CLASSIFICATION_SCHEMA_VERSION,
@@ -99,7 +128,7 @@ export function emptyDelta(mcpToolCallsObservedFrom = new Date().toISOString()) 
     mcpProtocolRequests: 0,
     mcpProtocolMessages: 0,
     mcpProtocolByMethod: emptyMcpProtocolByMethod(),
-    mcpToolCallsObservedFrom,
+    mcpToolCallsObservedFrom: canonicalizeMcpToolCallsObservedFrom(mcpToolCallsObservedFrom),
     mcpToolCallsByName: Object.create(null),
     byPath: Object.create(null),
     byReferer: Object.create(null),
@@ -225,14 +254,13 @@ export function validateDelta(delta) {
     maxKeys: MCP_METHOD_KEYS.length,
     maxKeyLen: 32,
   });
-  if (
-    typeof delta.mcpToolCallsObservedFrom !== "string" ||
-    delta.mcpToolCallsObservedFrom.length > 64 ||
-    !Number.isFinite(Date.parse(delta.mcpToolCallsObservedFrom))
-  ) {
+  try {
+    out.mcpToolCallsObservedFrom = canonicalizeMcpToolCallsObservedFrom(
+      delta.mcpToolCallsObservedFrom,
+    );
+  } catch {
     throw new Error("pulse_invalid_delta:mcpToolCallsObservedFrom");
   }
-  out.mcpToolCallsObservedFrom = delta.mcpToolCallsObservedFrom;
   out.mcpToolCallsByName = validateCounterMap(delta.mcpToolCallsByName, "mcpToolCallsByName", {
     allowedKeys: MCP_TOOL_NAMES,
     maxKeys: MCP_TOOL_NAMES.length,
@@ -363,14 +391,13 @@ export function deltaFromV2Snapshot(snapshot) {
     }
     delta.mcpToolCallsObservedFrom = new Date().toISOString();
   } else {
-    if (
-      typeof snapshot.mcpToolCallsObservedFrom !== "string" ||
-      snapshot.mcpToolCallsObservedFrom.length > 64 ||
-      !Number.isFinite(Date.parse(snapshot.mcpToolCallsObservedFrom))
-    ) {
+    try {
+      delta.mcpToolCallsObservedFrom = canonicalizeMcpToolCallsObservedFrom(
+        snapshot.mcpToolCallsObservedFrom,
+      );
+    } catch {
       throw new Error("pulse_invalid_snapshot:mcpToolCallsObservedFrom");
     }
-    delta.mcpToolCallsObservedFrom = snapshot.mcpToolCallsObservedFrom;
   }
   delta.mcpToolCallsByName = validateCounterMap(snapshot.mcpToolCallsByName, "mcpToolCallsByName", {
     allowedKeys: MCP_TOOL_NAMES,
@@ -516,10 +543,11 @@ export function mergeDeltas(into, from) {
   into.mcpProtocolRequests += from.mcpProtocolRequests;
   into.mcpProtocolMessages += from.mcpProtocolMessages;
   into.mcpProtocolByMethod = mergeCounterMaps(into.mcpProtocolByMethod, from.mcpProtocolByMethod);
-  into.mcpToolCallsObservedFrom =
+  into.mcpToolCallsObservedFrom = canonicalizeMcpToolCallsObservedFrom(
     Date.parse(into.mcpToolCallsObservedFrom) <= Date.parse(from.mcpToolCallsObservedFrom)
       ? into.mcpToolCallsObservedFrom
-      : from.mcpToolCallsObservedFrom;
+      : from.mcpToolCallsObservedFrom,
+  );
   into.mcpToolCallsByName = mergeCounterMaps(into.mcpToolCallsByName, from.mcpToolCallsByName);
   into.byPath = mergeCounterMaps(into.byPath, from.byPath);
   into.byReferer = mergeCounterMaps(into.byReferer, from.byReferer);
