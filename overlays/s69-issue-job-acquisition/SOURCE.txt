@@ -1,0 +1,12 @@
+Package: samedaydesk-issue-evidence-job (S69 acquisition overlay)
+Recipe: issue-evidence
+Semantics tip (immutable pin): a63c77d528bbdc2de1558c56e8262e04c7420ae3
+Input base: c295af075c86ab28fea075633e95934a776d006c
+Upstream tree path: tools/recurring-job-recipes/
+Official live source reads: GitHub REST API only
+  GET https://api.github.com/repos/{owner}/{repo}/issues/{number}
+  GET https://api.github.com/repos/{owner}/{repo}/issues/{number}/comments?per_page=&page=
+HTML issue pages are not a complete comment evidence source and are not used
+as the acquisition path.
+No private context, transport bundles, wallets, or payment authority are included.
+If a final reviewed S62 repair lands later, change only PIN.json and rebuild the archive.

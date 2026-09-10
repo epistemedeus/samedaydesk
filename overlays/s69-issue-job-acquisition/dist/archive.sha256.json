@@ -1,0 +1,9 @@
+{
+  "schema": "samedaydesk.lean-archive-receipt.v1",
+  "archive": "issue-evidence-job-a63c77d528bb.tar.gz",
+  "bytes": 27993,
+  "sha256": "8ea4ac83eefe473873d9474d263c3f1e6e170dcbfd9ed581f329a1a938bd94fe",
+  "semanticsTip": "a63c77d528bbdc2de1558c56e8262e04c7420ae3",
+  "inputBase": "c295af075c86ab28fea075633e95934a776d006c",
+  "builtAt": "2026-09-10T01:43:37.573Z"
+}

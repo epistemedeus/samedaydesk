@@ -1,0 +1,59 @@
+SameDayDesk issue-evidence lean acquisition package
+===================================================
+
+Required runtime: Node.js 22.x (engines.node = "22.x")
+Semantics tip: a63c77d528bbdc2de1558c56e8262e04c7420ae3
+Input base: c295af075c86ab28fea075633e95934a776d006c
+
+This archive is anonymous public packaging of the existing issue-evidence
+recurring-job recipe. It is not a new parser service, dashboard, or paid route.
+
+1) Unpack
+
+  mkdir -p /tmp/issue-evidence-job && tar -xzf issue-evidence-job-a63c77d528bb.tar.gz -C /tmp
+  cd /tmp/issue-evidence-job
+
+2) First brief (public issue; private-token-free default)
+
+  node bin/issue-evidence.mjs \
+    --issue-url https://github.com/NousResearch/hermes-agent/issues/99533 \
+    --max-comment-pages 2 \
+    --per-page 50 \
+    --schedule once \
+    --clock "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --out-dir ./out-run1 \
+    --write-artifact
+
+  # Sequenced immutable prior lands under ./out-run1/issue-evidence.seq-1.json
+  # Result JSON is also written beside it.
+
+3) Later changed-state run (reuse prior; do not rewrite it)
+
+  node bin/issue-evidence.mjs \
+    --issue-url https://github.com/NousResearch/hermes-agent/issues/99533 \
+    --prior ./out-run1/issue-evidence.seq-1.json \
+    --max-comment-pages 2 \
+    --out-dir ./out-run2 \
+    --write-artifact
+
+4) Offline fixture (no upstream)
+
+  node bin/issue-evidence.mjs \
+    --evidence-fixture ./vendor/recurring-job-recipes/fixtures/issue-evidence/99533-base.json \
+    --schedule weekly \
+    --clock 2026-09-10T01:00:00.000Z
+
+Costs / bounds
+- Live path uses official GitHub REST only (issue + comments pages).
+- Each comments page is one HTTP GET. Bound with --max-comment-pages and --per-page.
+- 403/429/5xx and partial pages are classified in-result. No Retry-After wait loops
+  and no automatic cost-amplifying retries.
+- Optional --github-token is explicit only; GITHUB_TOKEN env is never inferred.
+
+Completeness
+- Observed completeness is reported from retrieved pages.
+- Do not claim HTML issue views provide complete GitHub comments.
+
+Skill install (disposable runtime home)
+
+  node scripts/install-local-skill.mjs --runtime grok --home /tmp/s69-grok-home --from .

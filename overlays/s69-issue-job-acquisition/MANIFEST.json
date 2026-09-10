@@ -1,0 +1,45 @@
+{
+  "schema": "samedaydesk.lean-archive-manifest.v1",
+  "packageId": "issue-evidence-job",
+  "includesFromTip": [
+    "tools/recurring-job-recipes/recipes/issue-evidence.mjs",
+    "tools/recurring-job-recipes/lib/cost.mjs",
+    "tools/recurring-job-recipes/lib/fetch.mjs",
+    "tools/recurring-job-recipes/lib/github-comments.mjs",
+    "tools/recurring-job-recipes/lib/github-issue.mjs",
+    "tools/recurring-job-recipes/lib/hash.mjs",
+    "tools/recurring-job-recipes/lib/issue-evidence-brief.mjs",
+    "tools/recurring-job-recipes/lib/issue-evidence-delta.mjs",
+    "tools/recurring-job-recipes/lib/issue-evidence-model.mjs",
+    "tools/recurring-job-recipes/lib/issue-evidence-prior.mjs",
+    "tools/recurring-job-recipes/lib/issue-evidence-transport.mjs",
+    "tools/recurring-job-recipes/lib/payment-guard.mjs",
+    "tools/recurring-job-recipes/lib/prior.mjs",
+    "tools/recurring-job-recipes/lib/recovery.mjs",
+    "tools/recurring-job-recipes/lib/work-brief.mjs",
+    "tools/recurring-job-recipes/specs/issue-evidence.recipe.json",
+    "tools/recurring-job-recipes/fixtures/issue-evidence/"
+  ],
+  "overlayAdds": [
+    "bin/issue-evidence.mjs",
+    "package.json",
+    "PIN.json",
+    "MANIFEST.json",
+    "LICENSE",
+    "SOURCE.txt",
+    "INSTALL.txt",
+    "SKILL.md",
+    "docs/",
+    "scripts/build-archive.mjs",
+    "scripts/install-local-skill.mjs",
+    "test/"
+  ],
+  "excludes": [
+    "private context",
+    "transport bundles",
+    "wallets / payment authority",
+    "other recurring recipes",
+    "S67 shared host / observatory sources",
+    "Neomorphic first-job path"
+  ]
+}

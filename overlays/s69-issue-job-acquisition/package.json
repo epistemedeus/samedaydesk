@@ -1,0 +1,19 @@
+{
+  "name": "samedaydesk-issue-evidence-job",
+  "version": "0.69.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "description": "Lean anonymous acquisition package for SameDayDesk issue-evidence (S62 tip a63c77d528bbdc2de1558c56e8262e04c7420ae3).",
+  "bin": {
+    "issue-evidence": "./bin/issue-evidence.mjs"
+  },
+  "scripts": {
+    "issue-evidence": "node ./bin/issue-evidence.mjs",
+    "test:acquisition": "node --test ./test/*.test.mjs",
+    "build:archive": "node ./scripts/build-archive.mjs",
+    "install:skill": "node ./scripts/install-local-skill.mjs"
+  }
+}
