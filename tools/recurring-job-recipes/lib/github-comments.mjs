@@ -52,7 +52,21 @@ export async function fetchGithubIssueEvidence(issueUrl, {
   signal = null,
   fixture = null,
 } = {}) {
-  const effectiveBounds = { ...DEFAULT_BOUNDS, ...bounds };
+  const effectiveBounds = { ...DEFAULT_BOUNDS, ...Object.fromEntries(Object.entries(bounds).filter(([, v]) => v !== undefined)) };
+  const ceilings = { maxCommentPages: 10, perPage: 100, maxCommentBytes: 262144, timeoutMs: 60000 };
+  if (Object.entries(effectiveBounds).some(([k,v]) => !Number.isSafeInteger(v) || v < 1 || v > (ceilings[k] || 0))) return { ok: false, error: { code: "invalid_bounds", message: "finite positive pagination/read limits required" } };
+  const rawFetch = fetchImpl;
+  fetchImpl = async (url, init) => {
+    const signalCombined = signal ? AbortSignal.any([signal, init.signal]) : init.signal;
+    const response = await abortable(rawFetch(url, { ...init, signal: signalCombined }), signalCombined);
+    if (!response.body?.getReader) throw new Error("streaming JSON response required");
+    return { status: response.status, ok: response.ok, url: response.url, headers: response.headers,
+      body: { getReader() { const reader = response.body.getReader(); return {
+        read: () => abortable(reader.read(), signalCombined),
+        cancel: () => abortable(Promise.resolve(reader.cancel()), signalCombined),
+        releaseLock: () => reader.releaseLock?.(),
+      }; } } };
+  };
 
   // Refuse silent env credential fallback.
   if (token != null && typeof token !== "string") {
@@ -63,7 +77,12 @@ export async function fetchGithubIssueEvidence(issueUrl, {
     };
   }
 
-  if (fixture) return observationFromFixture(fixture, effectiveBounds);
+  if (fixture) {
+    const result = observationFromFixture(fixture.observation || fixture, effectiveBounds);
+    const requested = parseIssueRef(issueUrl);
+    if (requested && String(result.observation.issue?.url || "").toLowerCase() !== String(requested.url).toLowerCase()) return { ok: false, error: { code: "identity_mismatch", message: "fixture differs from requested issue" } };
+    return result;
+  }
 
   const parsed = parseIssueRef(issueUrl);
   if (!parsed?.owner || !parsed?.repo || !parsed?.number) {
@@ -144,6 +163,7 @@ export async function fetchGithubIssueEvidence(issueUrl, {
     Number(issue.number) !== Number(parsed.number)
     || String(issue.owner).toLowerCase() !== String(parsed.owner).toLowerCase()
     || String(issue.repo).toLowerCase() !== String(parsed.repo).toLowerCase()
+    || String(issue.url).toLowerCase().replace(/\/$/, "") !== `https://github.com/${parsed.owner}/${parsed.repo}/issues/${parsed.number}`.toLowerCase()
   ) {
     sources.push(sourceRecord({
       url: issue.url,
@@ -169,6 +189,7 @@ export async function fetchGithubIssueEvidence(issueUrl, {
   }
 
   const comments = [];
+  const seenIds = new Set();
   let completeness = "complete";
   let page = 1;
   let nextUrl = githubCommentsUrl(parsed.owner, parsed.repo, parsed.number, {
@@ -214,7 +235,16 @@ export async function fetchGithubIssueEvidence(issueUrl, {
       break;
     }
 
-    for (const raw of pageResult.rawComments) {
+    if (pageResult.rawComments.length > effectiveBounds.perPage) completeness = "partial";
+    for (const raw of pageResult.rawComments.slice(0, effectiveBounds.perPage)) {
+      const id = raw?.id;
+      const expectedIssue = `https://api.github.com/repos/${parsed.owner}/${parsed.repo}/issues/${parsed.number}`;
+      if ((!Number.isSafeInteger(id) && !(typeof id === "string" && /^\d+$/.test(id))) || seenIds.has(String(id)) || (raw.issue_url && raw.issue_url.toLowerCase() !== expectedIssue.toLowerCase()) || typeof raw.body !== "string") {
+        completeness = "partial";
+        sources.push(sourceRecord({ kind: "comment", id, retrievalStatus: "malformed", note: "missing/duplicate/foreign comment identity or unavailable body" }));
+        continue;
+      }
+      seenIds.add(String(id));
       const normalized = normalizeGithubComment(raw, { orderIndex: comments.length });
       const bodyBytes = Buffer.byteLength(normalized.body, "utf8");
       if (bodyBytes > effectiveBounds.maxCommentBytes) {
@@ -254,10 +284,20 @@ export async function fetchGithubIssueEvidence(issueUrl, {
       nextUrl = null;
       break;
     }
+    const next = checkedNext(pageResult.nextUrl, parsed, page + 1, effectiveBounds.perPage);
+    if (!next) {
+      completeness = "partial";
+      sources.push(sourceRecord({ kind: "comments_page", retrievalStatus: "identity_mismatch", note: "pagination target rejected before fetch" }));
+      break;
+    }
     page += 1;
-    nextUrl = pageResult.nextUrl;
+    nextUrl = next;
   }
 
+  if (Number.isInteger(issue.comments) && issue.comments !== comments.length) {
+    completeness = "partial";
+    sources.push(sourceRecord({ kind: "comments_page", retrievalStatus: "omitted", note: "observed count differs from issue count; concurrent edits/deletions or missing pages unknown" }));
+  }
   const observation = buildObservation({
     provider: "github",
     issue,
@@ -354,11 +394,13 @@ function observationFromFixture(fixture, bounds) {
   const issue = fixture.issue || null;
   const comments = Array.isArray(fixture.comments)
     ? fixture.comments.map((c, i) => {
-        if (c && c.retrievalStatus && c.bodySha256) return { ...c, orderIndex: c.orderIndex ?? i };
+        if (c && c.retrievalStatus) return { ...c, bodySha256: commentBodyHash(c.body), orderIndex: c.orderIndex ?? i };
         return normalizeGithubComment(c, { orderIndex: i });
       })
     : [];
-  const completeness = fixture.completeness || "complete";
+  let completeness = fixture.completeness || "partial";
+  if (!["complete", "partial", "error"].includes(completeness) || !issue || typeof issue.body !== "string") completeness = "error";
+  if (completeness === "complete" && (!Array.isArray(fixture.comments) || comments.some(c => !c.id || c.retrievalStatus !== "ok") || new Set(comments.map(c => String(c.id))).size !== comments.length || (Number.isInteger(issue.comments) && issue.comments !== comments.length))) completeness = "partial";
   const sources = Array.isArray(fixture.sources)
     ? fixture.sources
     : [
@@ -382,7 +424,7 @@ function observationFromFixture(fixture, bounds) {
     issue: issue
       ? {
           ...issue,
-          bodySha256: issue.bodySha256 || sha256Hex(issue.body || ""),
+          bodySha256: sha256Hex(issue.body || ""),
           id: String(issue.number ?? issue.id ?? ""),
         }
       : null,
@@ -413,4 +455,24 @@ function cancelledResult(issueUrl, bounds, note) {
       bounds,
     }),
   };
+}
+
+function checkedNext(raw, parsed, page, perPage) {
+  try {
+    const u = new URL(raw);
+    const expected = new URL(githubCommentsUrl(parsed.owner, parsed.repo, parsed.number));
+    if (u.origin !== expected.origin || u.pathname !== expected.pathname || u.username || u.password || u.hash || Number(u.searchParams.get("page")) !== page) return null;
+    if ([...u.searchParams.keys()].some(k => !["page", "per_page"].includes(k)) || u.searchParams.getAll("page").length !== 1 || u.searchParams.getAll("per_page").length > 1) return null;
+    if (u.searchParams.has("per_page") && Number(u.searchParams.get("per_page")) !== perPage) return null;
+    u.searchParams.set("per_page", String(perPage));
+    return u.href;
+  } catch { return null; }
+}
+
+async function abortable(promise, signal) {
+  signal.throwIfAborted();
+  let listener;
+  try { return await Promise.race([promise, new Promise((_, reject) => {
+    listener = () => reject(signal.reason); signal.addEventListener("abort", listener, { once: true });
+  })]); } finally { signal.removeEventListener("abort", listener); }
 }

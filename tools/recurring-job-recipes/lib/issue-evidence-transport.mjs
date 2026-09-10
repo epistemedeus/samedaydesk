@@ -5,7 +5,8 @@
 
 export function classifyHttpStatus(status, headers = {}) {
   const retryAfter = readRetryAfter(headers);
-  if (status === 200 || status === 304) {
+  if (status === 304) return { retrievalStatus: "unavailable", retryAfter, retryable: false, code: "not_modified_without_snapshot" };
+  if (status === 200) {
     return { retrievalStatus: "ok", retryAfter, retryable: false };
   }
   if (status === 301 || status === 302 || status === 303 || status === 307 || status === 308) {

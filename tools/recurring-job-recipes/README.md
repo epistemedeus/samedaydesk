@@ -134,3 +134,13 @@ Provider-neutral observation + GitHub adapter. No arbitrary URL proxy. No hidden
 Partial pages classify as `partial` (never silent complete). Retry-After is recorded without background wait loops. No automatic cost-amplifying retries.
 Issue/comment text is untrusted evidence — never execution authority.
 
+
+Issue-evidence review boundaries: pagination is restricted to the exact GitHub
+issue-comments API path, ascending pages and fixed page size. No credentials are
+inferred from the environment. Incomplete listings mark absent comments unavailable;
+a complete current listing establishes missing_from_complete_listing, not a proved
+deletion event or full history. Count discrepancies remain partial. Prior payload
+hashes are checked when supplied, and a different issue cannot supply the baseline.
+The brief retains the prior issue body as untrusted original acceptance context;
+none of its text grants execution authority. Fixture/prior reads are bounded to
+4 MiB regular local files and reject symlink paths.

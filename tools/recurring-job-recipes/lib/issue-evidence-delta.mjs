@@ -36,13 +36,13 @@ export function diffIssueEvidence(currentObservation, priorPayload = null) {
       commentChanges.push({ id, classification: "added" });
       continue;
     }
-    if (cur.retrievalStatus && ["unavailable", "delayed", "omitted", "forbidden", "rate_limited", "error", "timed_out"].includes(cur.retrievalStatus)) {
+    if (cur.retrievalStatus && ["unavailable", "delayed", "omitted", "forbidden", "rate_limited", "error", "timed_out", "oversize", "cancelled", "partial", "malformed"].includes(cur.retrievalStatus)) {
       commentChanges.push({ id, classification: cur.retrievalStatus });
       classifications.push({ code: cur.retrievalStatus, id });
       continue;
     }
-    const prevHash = prev.bodySha256 || commentBodyHash(prev.body);
-    const curHash = cur.bodySha256 || commentBodyHash(cur.body);
+    const prevHash = commentBodyHash(prev.body);
+    const curHash = commentBodyHash(cur.body);
     if (prevHash !== curHash) {
       // same-length edits still count as edited
       commentChanges.push({
@@ -59,7 +59,7 @@ export function diffIssueEvidence(currentObservation, priorPayload = null) {
 
   for (const [id, prev] of priorById) {
     if (!currentById.has(id)) {
-      commentChanges.push({ id, classification: "deleted" });
+      commentChanges.push({ id, classification: currentObservation.completeness === "complete" ? "missing_from_complete_listing" : "unavailable", basis: currentObservation.completeness === "complete" ? "absent_from_complete_current_listing_not_deletion_history" : "incomplete_current_listing" });
     }
   }
 
@@ -69,6 +69,7 @@ export function diffIssueEvidence(currentObservation, priorPayload = null) {
     classifications.push({ code: "reordered", priorOrder, currentOrder });
   }
 
+  if (prior.completeness !== "complete") classifications.push({ code: "prior_partial_or_unknown", completeness: prior.completeness || "unknown" });
   if (prior.completeness === "complete" && currentObservation.completeness === "partial") {
     classifications.push({ code: "partial_vs_prior_complete" });
   }
@@ -83,7 +84,7 @@ export function diffIssueEvidence(currentObservation, priorPayload = null) {
 
   const issueChanged = stableStringify(issueFinger(prior.issue)) !== stableStringify(issueFinger(currentObservation.issue));
   const meaningfulCommentChange = commentChanges.some((c) => !["unchanged"].includes(c.classification));
-  const changed = issueChanged || meaningfulCommentChange || classifications.some((c) => c.code === "reordered");
+  const changed = issueChanged || meaningfulCommentChange || classifications.some((c) => ["reordered", "prior_partial_or_unknown"].includes(c.code));
 
   return {
     kind: "delta",
@@ -101,9 +102,10 @@ function issueFinger(issue) {
   return {
     id: issue.id ?? issue.number ?? null,
     state: issue.state ?? null,
+    labels: [...(issue.labels || [])].sort(),
     title: issue.title ?? null,
     updatedAt: issue.updatedAt ?? null,
-    bodySha256: issue.bodySha256 || commentBodyHash(issue.body || ""),
+    bodySha256: commentBodyHash(issue.body || ""),
     url: issue.url ?? null,
   };
 }

@@ -73,7 +73,7 @@ test("S62 delta distinguishes same-length edit, reorder, delete, and no-prior", 
   assert.ok(reorderDelta.classifications.some((c) => c.code === "reordered"));
 
   const deleteDelta = diffIssueEvidence(deleted.observation, priorPayload);
-  assert.ok(deleteDelta.commentChanges.some((c) => String(c.id) === "3" && c.classification === "deleted"));
+  assert.ok(deleteDelta.commentChanges.some((c) => String(c.id) === "3" && c.classification === "missing_from_complete_listing"));
 });
 
 test("S62 github adapter respects page bounds and identity mismatch via mocks", async () => {
@@ -190,7 +190,7 @@ test("S62 recipe fixture first observation is changed; prior round-trip; partial
       createdAt: "2026-09-10T01:00:00.000Z",
       sequence: 1,
       immutable: true,
-      sha256: "abc",
+
       payload: {
         observation: first.evidence.observation,
         fingerprint: first.evidence.fingerprint,

@@ -9,7 +9,7 @@ import { inspectPaymentAuthority } from "../lib/payment-guard.mjs";
 import { classifyStaleBaseline, recoveryPlan } from "../lib/recovery.mjs";
 import { fetchGithubIssueEvidence } from "../lib/github-comments.mjs";
 import { diffIssueEvidence, fingerprintObservation } from "../lib/issue-evidence-delta.mjs";
-import { loadOptionalPrior, assertPriorImmutable, priorObservationPayload } from "../lib/issue-evidence-prior.mjs";
+import { loadOptionalPrior, assertPriorImmutable, priorObservationPayload, readIssueEvidenceJson } from "../lib/issue-evidence-prior.mjs";
 import { buildIssueEvidenceBrief, renderIssueEvidenceMarkdown } from "../lib/issue-evidence-brief.mjs";
 import { readFileSync } from "node:fs";
 
@@ -88,8 +88,10 @@ export async function runIssueEvidence(input = {}) {
 
   const observation = fetched.observation;
   const priorPayload = priorObservationPayload(priorLoad.prior);
+  if (priorLoad.present && !priorPayload) return fail("invalid_prior", "prior contains no comparable issue observation", { clock });
+  if (priorPayload && String(priorPayload.observation.issue?.url || "").toLowerCase() !== String(observation.issue?.url || "").toLowerCase()) return fail("prior_identity_mismatch", "prior and current issue identities differ", { clock });
   const delta = diffIssueEvidence(observation, priorPayload);
-  const brief = buildIssueEvidenceBrief({ observation, delta, clock });
+  const brief = buildIssueEvidenceBrief({ observation, delta, clock, priorObservation: priorPayload?.observation });
   const markdown = renderIssueEvidenceMarkdown(brief);
 
   let outcome;
@@ -136,7 +138,7 @@ async function collectEvidence(input) {
   if (input.evidenceFixturePath || input.issueFixturePath) {
     try {
       const path = input.evidenceFixturePath || input.issueFixturePath;
-      const raw = JSON.parse(readFileSync(path, "utf8"));
+      const { doc: raw } = readIssueEvidenceJson(path);
       // Accept either a full evidence fixture or a legacy issue-only fixture.
       if (raw.observation || raw.comments || raw.issue) {
         return fetchGithubIssueEvidence(input.issueUrl || raw.issue?.url || "fixture://issue", {

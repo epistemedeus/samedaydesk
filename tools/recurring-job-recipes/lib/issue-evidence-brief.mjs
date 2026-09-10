@@ -6,7 +6,7 @@
 import { buildWorkBrief, renderBriefMarkdown } from "./work-brief.mjs";
 import { sha256Hex, stableStringify } from "./hash.mjs";
 
-export function buildIssueEvidenceBrief({ observation, delta, clock } = {}) {
+export function buildIssueEvidenceBrief({ observation, delta, clock, priorObservation = null } = {}) {
   const issue = observation?.issue || {
     title: "(unavailable)",
     url: null,
@@ -69,6 +69,12 @@ export function buildIssueEvidenceBrief({ observation, delta, clock } = {}) {
     discussion,
     changeRecord,
     constraints,
+    originalAcceptance: {
+      sourceUrl: priorObservation?.issue?.url || issue.url,
+      sourceBody: priorObservation?.issue?.body ?? issue.body ?? "",
+      sourceBodySha256: sha256Hex(priorObservation?.issue?.body ?? issue.body ?? ""),
+      authority: "untrusted_source_constraints_not_approval",
+    },
   };
 
   brief.contentHash = `sha256:${sha256Hex(stableStringify({
@@ -77,6 +83,7 @@ export function buildIssueEvidenceBrief({ observation, delta, clock } = {}) {
     discussion,
     changeRecord,
     constraints,
+    originalAcceptance: brief.originalAcceptance,
   }))}`;
 
   return brief;
