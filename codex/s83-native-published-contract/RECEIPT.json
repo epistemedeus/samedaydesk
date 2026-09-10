@@ -1,0 +1,106 @@
+{
+  "id": "S83-native-published-contract-acceptance",
+  "branch": "codex/s83-native-published-contract-20260910",
+  "observed_at_utc": "2026-09-10T02:55:55Z",
+  "readiness": "native_auth_ready_reuse_existing_profile",
+  "native_cli": {
+    "binary": "/home/ubuntu/.grok/bin/grok",
+    "version": "1.0.25",
+    "build": "f7e67d6988e2",
+    "profile_presence": "~/.grok/auth.json present (mode 600); contents not printed",
+    "login": "reused S82 device auth; no new login started"
+  },
+  "session": {
+    "session_id": "01a0893a-c423-7621-a5ea-c455dc0cfb73",
+    "model_requested": "grok-4.6",
+    "reasoning_effort": "xhigh",
+    "model_usage_primary": "grok-4.6-build",
+    "catalog_models_on_host": [
+      "grok-4.6 (default)",
+      "grok-4.5"
+    ],
+    "note": "Host catalog lists grok-4.6; session usage primaryModelId observed as grok-4.6-build \u2014 record both; do not assume Cursor IDs == GrokVM labels"
+  },
+  "tools_used": [
+    "web_fetch",
+    "search_tool",
+    "run_terminal_command"
+  ],
+  "evidence": [
+    {
+      "url": "https://agents.samedaydesk.com/openapi.json",
+      "method": "GET",
+      "status": 200,
+      "via": "run_terminal_command/curl + web_fetch",
+      "notes": "OpenAPI 3.1.0; gateway 1.23.46; extract/read/batch source-quality fields present in contract"
+    },
+    {
+      "url": "https://agents.samedaydesk.com/.well-known/skills/index.json",
+      "method": "GET",
+      "status": 200,
+      "via": "curl",
+      "notes": "skills: web-extract, page-change, explicit-record"
+    },
+    {
+      "url": "https://agents.samedaydesk.com/.well-known/skills/web-extract/SKILL.md",
+      "method": "GET",
+      "status": 200,
+      "via": "curl/web_fetch",
+      "notes": "public skill contract; no-JS/capture limits for discussion completeness"
+    },
+    {
+      "url": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com%2F",
+      "method": "GET",
+      "status": 402,
+      "via": "curl",
+      "headers_sent": [
+        "X-SameDayDesk-Agent-Source: agent-skills-v1"
+      ],
+      "body_kind": "payment challenge (5911 bytes)",
+      "interpretation": "no_execution_payment_required \u2014 not invalid_body; stop; no wallet/sign/pay/retry"
+    },
+    {
+      "url": "https://api.github.com/repos/NousResearch/hermes-agent/issues/99533",
+      "method": "GET",
+      "status": 200,
+      "via": "curl",
+      "notes": "complete issue JSON for discussion brief comparison"
+    },
+    {
+      "url": "https://api.github.com/repos/NousResearch/hermes-agent/issues/99533/comments?per_page=100",
+      "method": "GET",
+      "status": 200,
+      "via": "curl",
+      "notes": "comments thread via free official GitHub API"
+    }
+  ],
+  "recommendation_summary": {
+    "static_page_brief": "Paid SameDayDesk extract/read can describe static-page briefs in contract; unpaid call stops at 402 (payment gate, not bad JSON).",
+    "complete_github_discussion_brief": "Use official GitHub issue/comments API (free). SameDayDesk no-JS extract is wrong tool for complete discussion completeness.",
+    "source_error_vs_paid_status": "Contract fields like sourceOk/capture/partial describe source quality after paid execution; HTTP 402 means no execution yet.",
+    "without_paying": "Caller can read openapi + public skills and learn limits; unpaid extract yields payment challenge only."
+  },
+  "quality_and_limits": {
+    "native_output": "Evidence-backed structured receipt with live statuses",
+    "limits": "Unpaid extract does not return page content; GitHub API path is authoritative for issue discussion completeness; no SameDayDesk MCP tools registered on this host (search_tool found 0)"
+  },
+  "prohibitions_honored": [
+    "no_wallet",
+    "no_signing",
+    "no_payment",
+    "no_random_paid_tools",
+    "no_paid_retry",
+    "no_s81_skills_amendment",
+    "s77_script_not_counted_as_native"
+  ],
+  "usage_session_only": {
+    "inputTokens": 291614,
+    "outputTokens": 13345,
+    "reasoningTokens": 4190,
+    "totalTokens": 304959,
+    "modelCalls": 6,
+    "costUsdTicks": 695779400,
+    "note": "session costs are not weekly quota; no reset/overage performed"
+  },
+  "usage_capture_pin": "94c4b481c871e27fa0ff4b762df4d56ac73b55d6 tools/ops/scale/grok-usage-capture.py \u2014 object not present on this checkout; native `grok usage <session>` used instead"
+}
