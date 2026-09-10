@@ -1,0 +1,59 @@
+{
+  "provider": "github",
+  "completeness": "complete",
+  "issue": {
+    "owner": "NousResearch",
+    "repo": "hermes-agent",
+    "number": 106904,
+    "id": "106904",
+    "url": "https://github.com/NousResearch/hermes-agent/issues/106904",
+    "title": "Truncated / lazy GitHub issue comments",
+    "state": "open",
+    "labels": [
+      "bug"
+    ],
+    "body": "Comments appear truncated or lazily loaded so operators miss discussion evidence.",
+    "createdAt": "2026-08-10T12:00:00.000Z",
+    "updatedAt": "2026-09-01T12:00:00.000Z",
+    "author": "reporter-example",
+    "comments": 2
+  },
+  "comments": [
+    {
+      "id": 10,
+      "html_url": "https://github.com/NousResearch/hermes-agent/issues/106904#issuecomment-10",
+      "user": {
+        "login": "dave"
+      },
+      "body": "First page comment only was visible in the UI.",
+      "created_at": "2026-08-11T10:00:00.000Z",
+      "updated_at": "2026-08-11T10:00:00.000Z"
+    },
+    {
+      "id": 11,
+      "html_url": "https://github.com/NousResearch/hermes-agent/issues/106904#issuecomment-11",
+      "user": {
+        "login": "erin"
+      },
+      "body": "Bounded pagination should mark omitted pages as partial, not silent success.",
+      "created_at": "2026-08-12T10:00:00.000Z",
+      "updated_at": "2026-08-12T10:00:00.000Z"
+    }
+  ],
+  "pages": [
+    {
+      "page": 1,
+      "retrievalStatus": "ok",
+      "count": 2
+    }
+  ],
+  "sources": [
+    {
+      "kind": "issue",
+      "url": "https://github.com/NousResearch/hermes-agent/issues/106904",
+      "id": "106904",
+      "updatedAt": "2026-09-01T12:00:00.000Z",
+      "retrievalStatus": "ok"
+    }
+  ]
+}

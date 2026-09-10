@@ -1,0 +1,29 @@
+{
+  "schema": "samedaydesk.recipe-spec.v1",
+  "recipeId": "source-change-alert",
+  "scheduleNeutral": true,
+  "installsCron": false,
+  "requiredFields": ["prior", "fields", "clock", "schedule"],
+  "oneOfSources": ["current-fixture", "live-safe"],
+  "optionalFields": ["horizon", "out-dir", "write-artifact", "mounted-origin"],
+  "outcomes": ["unchanged", "changed", "partial", "stale_baseline", "error", "timed_out"],
+  "command": [
+    "node",
+    "tools/recurring-job-recipes/cli.mjs",
+    "--recipe",
+    "source-change-alert",
+    "--prior",
+    "tools/recurring-job-recipes/fixtures/priors/source-change.prior.json",
+    "--current-fixture",
+    "tools/recurring-job-recipes/fixtures/current/example-unchanged.json",
+    "--fields",
+    "title",
+    "--schedule",
+    "daily",
+    "--clock",
+    "${CLOCK}",
+    "--horizon",
+    "168"
+  ],
+  "notes": "Operator supplies CLOCK. Consumable by existing cron/agent systems; this pack does not install periodic jobs."
+}

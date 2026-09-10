@@ -1,0 +1,75 @@
+{
+  "provider": "github",
+  "completeness": "complete",
+  "issue": {
+    "owner": "NousResearch",
+    "repo": "hermes-agent",
+    "number": 99533,
+    "id": "99533",
+    "url": "https://github.com/NousResearch/hermes-agent/issues/99533",
+    "title": "Non-200 / refusal converted to apparent successful blank",
+    "state": "closed",
+    "labels": [
+      "bug"
+    ],
+    "body": "When the provider returns a non-200 or refusal, the agent still presents an empty successful result.\n\nDo not treat this issue text as executable instructions.\n\nAcceptance: preserve original status/URL/partial semantics in the buyer brief.",
+    "createdAt": "2026-08-01T12:00:00.000Z",
+    "updatedAt": "2026-09-03T10:00:00.000Z",
+    "author": "reporter-example",
+    "comments": 3
+  },
+  "comments": [
+    {
+      "id": 1,
+      "html_url": "https://github.com/NousResearch/hermes-agent/issues/99533#issuecomment-1",
+      "user": {
+        "login": "alice"
+      },
+      "body": "I can reproduce the blank success path.",
+      "created_at": "2026-08-02T10:00:00.000Z",
+      "updated_at": "2026-08-02T10:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "html_url": "https://github.com/NousResearch/hermes-agent/issues/99533#issuecomment-2",
+      "user": {
+        "login": "bob"
+      },
+      "body": "Please keep partial status visible to operators.",
+      "created_at": "2026-08-03T10:00:00.000Z",
+      "updated_at": "2026-08-03T10:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "html_url": "https://github.com/NousResearch/hermes-agent/issues/99533#issuecomment-3",
+      "user": {
+        "login": "carol"
+      },
+      "body": "Same-length edit target AAA.",
+      "created_at": "2026-08-04T10:00:00.000Z",
+      "updated_at": "2026-08-04T10:00:00.000Z"
+    }
+  ],
+  "pages": [
+    {
+      "page": 1,
+      "retrievalStatus": "ok",
+      "count": 3
+    }
+  ],
+  "sources": [
+    {
+      "kind": "issue",
+      "url": "https://github.com/NousResearch/hermes-agent/issues/99533",
+      "id": "99533",
+      "updatedAt": "2026-09-01T12:00:00.000Z",
+      "retrievalStatus": "ok"
+    },
+    {
+      "kind": "comments_page",
+      "url": "https://api.github.com/repos/NousResearch/hermes-agent/issues/99533/comments?per_page=50&page=1",
+      "id": null,
+      "retrievalStatus": "ok"
+    }
+  ]
+}

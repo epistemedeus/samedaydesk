@@ -1,0 +1,9 @@
+{
+  "url": "https://example.com/",
+  "status": 200,
+  "title": "Example Domain Updated",
+  "fields": {
+    "title": "Example Domain Updated"
+  },
+  "contentHash": "sha256:fixture-example-domain-v2"
+}
