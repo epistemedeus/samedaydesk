@@ -472,7 +472,7 @@ function makeSpyPath(logDir) {
   const nodeLog = join(logDir, "node.log");
   writeFileSync(tarLog, "");
   writeFileSync(nodeLog, "");
-  const which = spawnSync("bash", ["-lc", "command -v tar; command -v node"], {
+  const which = spawnSync("bash", ["-c", "command -v tar; command -v node"], {
     encoding: "utf8",
   });
   const [realTar, realNode] = String(which.stdout || "")
@@ -509,7 +509,8 @@ async function runPublishedInstall(recipe, { origin, cwd, env = {}, wrap }) {
   } else {
     script = `bash ${JSON.stringify(scriptPath)}`;
   }
-  return spawnAsync("bash", ["-lc", script], {
+  // Use -c (not -lc): login profiles can replace PATH and bypass test spies.
+  return spawnAsync("bash", ["-c", script], {
     cwd,
     env: {
       ...env,
@@ -519,6 +520,7 @@ async function runPublishedInstall(recipe, { origin, cwd, env = {}, wrap }) {
       HTTPS_PROXY: "",
       NO_PROXY: "*",
       PATH: `${env.PATH || process.env.PATH}`,
+      PYTHONOPTIMIZE: "2",
     },
   });
 }
