@@ -1,0 +1,16 @@
+{
+  "schema": "pilot.r2.distribution.verified_request.v1",
+  "cite": "R2-DISTRIBUTION-07 / kill path: requesterAlreadyHasFix=true",
+  "captureStatus": "ok",
+  "requestId": "req-s149-source-change-002",
+  "requesterId": "requester-synth-beta",
+  "problemSummary": "Need source-change evidence pack — but requester already applied a local fix.",
+  "unresolved": true,
+  "requesterAlreadyHasFix": true,
+  "requesterObserved": true,
+  "requesterCount": 1,
+  "fixEvidence": {
+    "kind": "local_patch_applied",
+    "note": "Requester reports existing fix; do not hand off executable packet"
+  }
+}

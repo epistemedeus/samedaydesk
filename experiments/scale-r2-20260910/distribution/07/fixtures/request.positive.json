@@ -1,0 +1,24 @@
+{
+  "schema": "pilot.r2.distribution.verified_request.v1",
+  "cite": "R2-DISTRIBUTION-07 / synthetic unresolved verified request → Grexal S149 source-change evidence pack handoff",
+  "captureStatus": "ok",
+  "requestId": "req-s149-source-change-001",
+  "requesterId": "requester-synth-alpha",
+  "problemSummary": "Need a bounded source-change evidence pack for a supplied unified diff (structural checks, stdout-only).",
+  "unresolved": true,
+  "requesterAlreadyHasFix": false,
+  "requesterObserved": true,
+  "requesterCount": 1,
+  "artifactHints": {
+    "type": "source_change_evidence_pack",
+    "productSlug": "samedaydesk-source-change-evidence",
+    "packagePath": "/workspace/pilot/tmp/s124-root-0910.dYRsYW/grexal/package",
+    "packageReadme": "/workspace/pilot/tmp/s124-root-0910.dYRsYW/grexal/package/README.md",
+    "listingStatus": "PUBLIC_ACTIVE",
+    "agentId": "j970cajvv6wbrmy64s2f4ajzw18e5j2q",
+    "deploymentVersion": "v1",
+    "pricingRunCompletedUsd": 0.02,
+    "estimateReserveUsd": 0.025,
+    "receiptRef": "/workspace/pilot/receipts/scale-bot-0909/r2-team/receipts-grexal-s149.json"
+  }
+}

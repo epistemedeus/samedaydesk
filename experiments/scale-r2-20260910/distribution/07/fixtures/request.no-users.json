@@ -1,0 +1,13 @@
+{
+  "schema": "pilot.r2.distribution.verified_request.v1",
+  "cite": "R2-DISTRIBUTION-07 / capture ok with zero verified requesters",
+  "captureStatus": "ok",
+  "requestId": "req-empty-pool",
+  "requesterId": "pool-sentinel",
+  "problemSummary": "capture succeeded; verified requester count is zero",
+  "unresolved": true,
+  "requesterAlreadyHasFix": false,
+  "requesterCount": 0,
+  "requesterObserved": false,
+  "verifiedRequesters": []
+}

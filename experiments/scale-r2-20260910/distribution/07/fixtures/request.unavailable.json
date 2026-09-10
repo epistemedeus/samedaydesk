@@ -1,0 +1,9 @@
+{
+  "schema": "pilot.r2.distribution.verified_request.v1",
+  "cite": "R2-DISTRIBUTION-07 / verified-request capture unavailable",
+  "captureStatus": "unavailable",
+  "reason": "upstream verified-request feed capture failed on this VM lineage",
+  "requestId": "req-capture-unavailable",
+  "requesterId": "requester-unknown",
+  "problemSummary": "verified request capture unavailable — do not claim zero requesters"
+}

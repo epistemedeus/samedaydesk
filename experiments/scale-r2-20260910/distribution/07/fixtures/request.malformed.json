@@ -1,0 +1,13 @@
+{
+  "schema": "pilot.r2.distribution.verified_request.v1",
+  "cite": "R2-DISTRIBUTION-07 / malformed invented revenue + broadcast",
+  "captureStatus": "ok",
+  "requestId": "req-bad",
+  "requesterId": "requester-bad",
+  "problemSummary": "malformed",
+  "unresolved": true,
+  "requesterAlreadyHasFix": false,
+  "buyerCount": 99,
+  "inventedRevenue": 1200,
+  "broadcastAudience": ["everyone"]
+}

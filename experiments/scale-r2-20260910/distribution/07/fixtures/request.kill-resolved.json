@@ -1,0 +1,16 @@
+{
+  "schema": "pilot.r2.distribution.verified_request.v1",
+  "cite": "R2-DISTRIBUTION-07 / kill path: unresolved=false with fixEvidence",
+  "captureStatus": "ok",
+  "requestId": "req-s149-source-change-003",
+  "requesterId": "requester-synth-gamma",
+  "problemSummary": "Source-change evidence request marked resolved with fix evidence.",
+  "unresolved": false,
+  "requesterAlreadyHasFix": false,
+  "requesterObserved": true,
+  "requesterCount": 1,
+  "fixEvidence": {
+    "kind": "merged_pr",
+    "fixRef": "synthetic://fixtures/resolved-fix"
+  }
+}

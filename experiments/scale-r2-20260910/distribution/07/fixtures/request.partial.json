@@ -1,0 +1,7 @@
+{
+  "schema": "pilot.r2.distribution.verified_request.v1",
+  "cite": "R2-DISTRIBUTION-07 / partial missing core ids",
+  "captureStatus": "ok",
+  "unresolved": true,
+  "requesterAlreadyHasFix": false
+}
