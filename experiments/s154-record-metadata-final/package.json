@@ -1,0 +1,6 @@
+{
+  "name": "@samedaydesk/s154-record-metadata-final",
+  "private": true,
+  "version": "0.1.0",
+  "description": "S154 CSV metadata-namespace final amend of S147; owner CLI receipts"
+}

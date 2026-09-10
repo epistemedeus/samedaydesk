@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compareOpenApiImpact } from '../modules/openapi-impact/cli.mjs';
 import { comparePricingTables } from '../modules/pricing-table-change/cli.mjs';
-import { compareCsvDrift } from '../modules/csv-drift/cli.mjs';
+import { compareCsvDrift, parseCsvFile } from '../modules/csv-drift/cli.mjs';
 import { compareFeeds } from '../modules/rss-atom-brief/cli.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -479,3 +479,51 @@ test('s147 F6: empty/non-feed after is indeterminate without removals; valid emp
   assert.equal(report.comparisonStatus, 'comparable');
   assert.ok(report.removed.some((r) => r.key === 'urn:x'));
 });
+
+test('s154: __status / __extraFields / __proto__ headers compare (no __ skip / no meta collision)', () => {
+  let report = compareCsvDrift('id,__status\nx,old\n', 'id,__status\nx,new\n', { keyColumns: ['id'] });
+  assert.equal(report.rowDrift.mode, 'keyed');
+  assert.ok(report.rowDrift.changedCount >= 1);
+  assert.ok(
+    report.rowDrift.changed.some((c) =>
+      c.fields.some((f) => f.column === '__status' && f.before === 'old' && f.after === 'new'),
+    ),
+  );
+
+  report = compareCsvDrift('id,__extraFields\nx,old\n', 'id,__extraFields\nx,new\n', { keyColumns: ['id'] });
+  assert.ok(report.rowDrift.changed.some((c) => c.fields.some((f) => f.column === '__extraFields')));
+  assert.equal(report.rowDrift.changed[0].metaChanges, undefined);
+
+  report = compareCsvDrift('id,__proto__\nx,old\n', 'id,__proto__\nx,new\n', { keyColumns: ['id'] });
+  assert.ok(
+    report.rowDrift.changed.some((c) => c.fields.some((f) => f.column === '__proto__' && f.after === 'new')),
+  );
+});
+
+test('s154: empty vs missing presence; ragged meta separate from cells', () => {
+  const report = compareCsvDrift('id,v\nx,\n', 'id,v\nx\n', { keyColumns: ['id'] });
+  assert.equal(report.schema.columnsRemoved.length, 0);
+  const ch = report.rowDrift.changed[0];
+  assert.ok(ch.fields.some((f) => f.column === 'v' && f.beforePresence === 'empty' && f.afterPresence === 'missing'));
+  assert.ok(ch.metaChanges.some((m) => m.field === 'rowWidth'));
+
+  const wide = compareCsvDrift('id,v\nx,A,old\n', 'id,v\nx,A,new\n', { keyColumns: ['id'] });
+  assert.ok(wide.rowDrift.changedCount >= 1);
+  assert.ok(wide.rowDrift.changed[0].metaChanges.some((m) => m.field === 'extraFields'));
+  assert.ok(!('extraFields' in (wide.rowDrift.changed[0].row?.cells || {})));
+});
+
+test('s154: duplicate headers still blocked; columns:false keeps first row; relax:false errors', () => {
+  const dup = compareCsvDrift('id,v,v\nx,A,Z\n', 'id,v,v\nx,B,Z\n', { keyColumns: ['id'] });
+  assert.ok(String(dup.rowDrift.mode).includes('duplicate-header'));
+
+  const matrix = parseCsvFile('a,b\n1,2\n3,4\n', 't', { columns: false });
+  assert.equal(matrix.headerRecord, null);
+  assert.equal(matrix.rows.length, 3);
+  assert.deepEqual(matrix.rows[0].values, ['a', 'b']);
+
+  const bad = parseCsvFile('a,b\n1\n', 't', { relax: false });
+  assert.equal(bad.ok, false);
+  assert.equal(bad.parseStatus, 'error');
+});
+

@@ -1,0 +1,18 @@
+{
+  "schema": "pilot.owner-response.v1",
+  "taskId": "S154",
+  "baseHead": "f9b9701b1b7dda646057d6e57ef5eb35b9595ef6",
+  "branch": "codex/s154-record-metadata-final-20260910",
+  "reviewerExecutedTests": false,
+  "rootReadDiff": true,
+  "finding": {
+    "id": "S154-csv-metadata-namespace",
+    "disposition": "fixed",
+    "note": "Separated row meta from cells; compare all ordinary headers including __status/__extraFields/__proto__; honor columns:false and relax; preserve empty/missing presence. S147 six fixes kept."
+  },
+  "testCounts": {
+    "s134Locked": "41/41"
+  },
+  "demoAllExit": 0,
+  "cashUsd": 0
+}

@@ -1,6 +1,10 @@
 /**
  * CSV schema/row drift with uncertainty (offline).
  * Uses csv-parse on supplied files only. No paid fetch.
+ *
+ * Named rows are { cells, meta }. Caller headers live only in `cells`
+ * (null-prototype map). Width/ragged evidence lives only in `meta`.
+ * Legitimate headers such as __status / __extraFields / __proto__ compare normally.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -8,6 +12,72 @@ import { fileURLToPath } from 'node:url';
 import { parse as parseCsv } from 'csv-parse/sync';
 import { emit, parseArgs, uncertainty, FREE_BASELINE, stableSort } from '../../lib/common.mjs';
 
+function emptyCells() {
+  return Object.create(null);
+}
+
+function emptyMeta() {
+  return { shortRow: false, missingFieldCount: 0, extraFields: null };
+}
+
+function makeRow(cells, meta = {}) {
+  return {
+    cells,
+    meta: {
+      shortRow: Boolean(meta.shortRow),
+      missingFieldCount: meta.missingFieldCount || 0,
+      extraFields: meta.extraFields == null ? null : meta.extraFields,
+    },
+  };
+}
+
+function hasCell(cells, col) {
+  return Object.prototype.hasOwnProperty.call(cells, col);
+}
+
+function cellPresence(cells, col) {
+  if (!hasCell(cells, col)) return 'missing';
+  const v = cells[col];
+  if (v === '') return 'empty';
+  if (v == null) return 'null';
+  return 'present';
+}
+
+function cellValue(cells, col) {
+  return hasCell(cells, col) ? cells[col] : null;
+}
+
+function rowIsShortOrWide(row) {
+  return Boolean(row?.meta?.shortRow || (row?.meta?.extraFields && row.meta.extraFields.length));
+}
+
+function buildNamedRow(objectKeys, rec) {
+  const cells = emptyCells();
+  for (let i = 0; i < objectKeys.length; i++) {
+    if (i < rec.length) {
+      // Present (including ""). Distinct from missing (key absent).
+      cells[objectKeys[i]] = rec[i];
+    }
+  }
+  const meta = emptyMeta();
+  if (rec.length < objectKeys.length) {
+    meta.shortRow = true;
+    meta.missingFieldCount = objectKeys.length - rec.length;
+  }
+  if (rec.length > objectKeys.length) {
+    meta.extraFields = rec.slice(objectKeys.length);
+  }
+  return makeRow(cells, meta);
+}
+
+/**
+ * @param {string} text
+ * @param {string} label
+ * @param {{ columns?: boolean, relax?: boolean }} [opts]
+ *   columns (default true): first record is header; rows are {cells, meta}.
+ *   columns false: every record is a data array row; first record is NOT stripped.
+ *   relax (default true): csv-parse relax_column_count. When false, uneven widths error.
+ */
 export function parseCsvFile(text, label, { columns = true, relax = true } = {}) {
   const uncertainties = [];
   const raw = String(text ?? '');
@@ -16,19 +86,19 @@ export function parseCsvFile(text, label, { columns = true, relax = true } = {})
       ok: true,
       label,
       headers: [],
+      headerRecord: [],
       rows: [],
       uncertainties: [uncertainty('empty-csv', `${label} is empty`)],
       parseStatus: 'empty',
+      columnsMode: Boolean(columns),
+      relaxMode: Boolean(relax),
     };
   }
   try {
-    // Always capture the raw header record BEFORE object mapping so duplicate
-    // column names and width mismatches are visible (csv-parse object mode
-    // otherwise keeps only the last duplicate header value).
     const matrix = parseCsv(raw, {
       columns: false,
       skip_empty_lines: true,
-      relax_column_count: true,
+      relax_column_count: Boolean(relax),
       trim: true,
       bom: true,
     });
@@ -37,15 +107,50 @@ export function parseCsvFile(text, label, { columns = true, relax = true } = {})
         ok: true,
         label,
         headers: [],
+        headerRecord: [],
         rows: [],
         uncertainties: [uncertainty('empty-csv', `${label} has no records`)],
         parseStatus: 'empty',
+        columnsMode: Boolean(columns),
+        relaxMode: Boolean(relax),
       };
     }
+
+    // columns:false — matrix of array rows; do not treat first record as a header.
+    if (!columns) {
+      const expectedWidth = matrix[0]?.length ?? 0;
+      const ragged = [];
+      for (const [i, rec] of matrix.entries()) {
+        if (rec.length !== expectedWidth) {
+          ragged.push({ rowIndex: i, width: rec.length, expectedWidth });
+        }
+      }
+      if (ragged.length) {
+        uncertainties.push(
+          uncertainty('inconsistent-row-width', `${label} has rows whose field count differs (columns:false matrix)`, {
+            expectedWidth,
+            examples: ragged.slice(0, 10),
+            count: ragged.length,
+          }),
+        );
+      }
+      return {
+        ok: true,
+        label,
+        headers: null,
+        headerRecord: null,
+        rows: matrix.map((rec) => ({ values: rec.map((c) => (c == null ? null : c)), meta: emptyMeta() })),
+        uncertainties,
+        parseStatus: ragged.length ? 'partial' : 'ok',
+        columnsMode: false,
+        relaxMode: Boolean(relax),
+        rowShape: 'arrays',
+      };
+    }
+
     const headerRecord = matrix[0].map((h) => (h == null ? '' : String(h)));
     const dataRecords = matrix.slice(1);
 
-    // Duplicate headers: refuse object collapse; keep positional evidence.
     const headerCounts = new Map();
     for (const h of headerRecord) headerCounts.set(h, (headerCounts.get(h) || 0) + 1);
     const duplicateHeaders = [...headerCounts.entries()].filter(([, n]) => n > 1).map(([h, n]) => ({ header: h, count: n }));
@@ -62,7 +167,6 @@ export function parseCsvFile(text, label, { columns = true, relax = true } = {})
       );
     }
 
-    // Width checks against the actual header record (not first object keys).
     const expectedWidth = headerRecord.length;
     const ragged = [];
     for (const [i, rec] of dataRecords.entries()) {
@@ -80,19 +184,6 @@ export function parseCsvFile(text, label, { columns = true, relax = true } = {})
       );
     }
 
-    if (!columns) {
-      return {
-        ok: true,
-        label,
-        headers: headerRecord.map((_, i) => String(i)),
-        rows: dataRecords,
-        headerRecord,
-        uncertainties,
-        parseStatus: duplicateHeaders.length || ragged.length ? 'partial' : 'ok',
-      };
-    }
-
-    // Build row objects with positional disambiguation for duplicate headers.
     const nameCounts = new Map();
     const objectKeys = headerRecord.map((h) => {
       const n = (nameCounts.get(h) || 0) + 1;
@@ -102,44 +193,22 @@ export function parseCsvFile(text, label, { columns = true, relax = true } = {})
     });
 
     if (duplicateHeaders.length) {
-      // Do not pretend unique named columns; expose positional rows for evidence.
       return {
         ok: true,
         label,
         headers: objectKeys,
         headerRecord,
-        rows: dataRecords.map((rec) => {
-          const obj = {};
-          for (let i = 0; i < objectKeys.length; i++) {
-            obj[objectKeys[i]] = i < rec.length ? rec[i] : null;
-            if (i >= rec.length) obj.__shortRow = true;
-          }
-          if (rec.length > objectKeys.length) {
-            obj.__extraFields = rec.slice(objectKeys.length);
-          }
-          return obj;
-        }),
+        rows: dataRecords.map((rec) => buildNamedRow(objectKeys, rec)),
         uncertainties,
         parseStatus: 'duplicate-headers',
         duplicateHeaders,
+        columnsMode: true,
+        relaxMode: Boolean(relax),
+        rowShape: 'named',
       };
     }
 
-    const rows = dataRecords.map((rec, idx) => {
-      const obj = {};
-      for (let i = 0; i < objectKeys.length; i++) {
-        obj[objectKeys[i]] = i < rec.length ? rec[i] : null;
-      }
-      if (rec.length < objectKeys.length) {
-        obj.__shortRow = true;
-        obj.__missingFieldCount = objectKeys.length - rec.length;
-      }
-      if (rec.length > objectKeys.length) {
-        obj.__extraFields = rec.slice(objectKeys.length);
-      }
-      return obj;
-    });
-
+    const rows = dataRecords.map((rec) => buildNamedRow(objectKeys, rec));
     if (rows.length === 0) {
       uncertainties.push(uncertainty('header-only', `${label} has headers but no data rows`));
     }
@@ -152,6 +221,9 @@ export function parseCsvFile(text, label, { columns = true, relax = true } = {})
       rows,
       uncertainties,
       parseStatus: ragged.length ? 'partial-widths' : 'ok',
+      columnsMode: true,
+      relaxMode: Boolean(relax),
+      rowShape: 'named',
     };
   } catch (e) {
     return {
@@ -160,15 +232,59 @@ export function parseCsvFile(text, label, { columns = true, relax = true } = {})
       detail: String(e.message || e),
       label,
       headers: [],
+      headerRecord: [],
       rows: [],
       uncertainties,
       parseStatus: 'error',
+      columnsMode: Boolean(columns),
+      relaxMode: Boolean(relax),
     };
   }
 }
 
-function rowFingerprint(row, headers) {
-  return headers.map((h) => JSON.stringify(row?.[h] ?? null)).join('\u001f');
+function keyOfRow(row, keyColumns) {
+  return keyColumns.map((c) => JSON.stringify(cellValue(row.cells, c))).join('\u001f');
+}
+
+function compareSharedCells(beforeRow, afterRow, columnsShared) {
+  const fields = [];
+  for (const col of columnsShared) {
+    const beforePresence = cellPresence(beforeRow.cells, col);
+    const afterPresence = cellPresence(afterRow.cells, col);
+    const before = cellValue(beforeRow.cells, col);
+    const after = cellValue(afterRow.cells, col);
+    if (beforePresence !== afterPresence || JSON.stringify(before) !== JSON.stringify(after)) {
+      fields.push({
+        column: col,
+        before,
+        after,
+        beforePresence,
+        afterPresence,
+      });
+    }
+  }
+  return fields;
+}
+
+function compareRowMeta(beforeRow, afterRow) {
+  const metaChanges = [];
+  const bExtra = beforeRow.meta?.extraFields ?? null;
+  const aExtra = afterRow.meta?.extraFields ?? null;
+  if (JSON.stringify(bExtra) !== JSON.stringify(aExtra)) {
+    metaChanges.push({ field: 'extraFields', before: bExtra, after: aExtra });
+  }
+  const bShort = Boolean(beforeRow.meta?.shortRow);
+  const aShort = Boolean(afterRow.meta?.shortRow);
+  const bMiss = beforeRow.meta?.missingFieldCount || 0;
+  const aMiss = afterRow.meta?.missingFieldCount || 0;
+  if (bShort !== aShort || bMiss !== aMiss) {
+    metaChanges.push({
+      field: 'rowWidth',
+      before: { short: bShort, missingFieldCount: bMiss },
+      after: { short: aShort, missingFieldCount: aMiss },
+    });
+  }
+  return metaChanges;
 }
 
 export function compareCsvDrift(beforeText, afterText, opts = {}) {
@@ -188,9 +304,8 @@ export function compareCsvDrift(beforeText, afterText, opts = {}) {
     };
   }
 
-  // Prefer raw header records for schema drift so short data rows cannot invent column removals.
-  const beforeHeaders = before.headerRecord || before.headers;
-  const afterHeaders = after.headerRecord || after.headers;
+  const beforeHeaders = before.headerRecord || before.headers || [];
+  const afterHeaders = after.headerRecord || after.headers || [];
   const beforeSet = new Set(beforeHeaders);
   const afterSet = new Set(afterHeaders);
   const columnsAdded = afterHeaders.filter((h) => !beforeSet.has(h));
@@ -208,10 +323,7 @@ export function compareCsvDrift(beforeText, afterText, opts = {}) {
       ),
     );
   }
-  // Short/wide rows are row-level partials, not schema changes.
-  const shortOrWide =
-    before.rows.some((r) => r && (r.__shortRow || r.__extraFields)) ||
-    after.rows.some((r) => r && (r.__shortRow || r.__extraFields));
+  const shortOrWide = before.rows.some(rowIsShortOrWide) || after.rows.some(rowIsShortOrWide);
   if (shortOrWide) {
     uncertainties.push(
       uncertainty(
@@ -221,7 +333,6 @@ export function compareCsvDrift(beforeText, afterText, opts = {}) {
     );
   }
 
-  // Keyed row drift when keys provided and present in both
   let rowDrift = { mode: 'unkeyed-count-only', added: null, removed: null, changed: null };
   if (keyColumns.length === 0) {
     uncertainties.push(
@@ -259,12 +370,12 @@ export function compareCsvDrift(beforeText, afterText, opts = {}) {
       const dupB = [];
       const dupA = [];
       for (const row of before.rows) {
-        const k = keyColumns.map((c) => JSON.stringify(row[c] ?? null)).join('\u001f');
+        const k = keyOfRow(row, keyColumns);
         if (bMap.has(k)) dupB.push(k);
         bMap.set(k, row);
       }
       for (const row of after.rows) {
-        const k = keyColumns.map((c) => JSON.stringify(row[c] ?? null)).join('\u001f');
+        const k = keyOfRow(row, keyColumns);
         if (aMap.has(k)) dupA.push(k);
         aMap.set(k, row);
       }
@@ -302,29 +413,15 @@ export function compareCsvDrift(beforeText, afterText, opts = {}) {
           if (!bMap.has(k)) added.push({ key: k, row });
           else {
             const br = bMap.get(k);
-            const fields = [];
-            for (const col of columnsShared) {
-              if (col.startsWith('__')) continue;
-              if (JSON.stringify(br[col] ?? null) !== JSON.stringify(row[col] ?? null)) {
-                fields.push({ column: col, before: br[col] ?? null, after: row[col] ?? null });
-              }
-            }
-            // Preserve evidence from width overflow that object mapping would discard.
-            const bExtra = br.__extraFields ?? null;
-            const aExtra = row.__extraFields ?? null;
-            if (JSON.stringify(bExtra) !== JSON.stringify(aExtra)) {
-              fields.push({ column: '__extraFields', before: bExtra, after: aExtra });
-            }
-            const bShort = Boolean(br.__shortRow);
-            const aShort = Boolean(row.__shortRow);
-            if (bShort !== aShort || (br.__missingFieldCount || 0) !== (row.__missingFieldCount || 0)) {
-              fields.push({
-                column: '__rowWidth',
-                before: { short: bShort, missingFieldCount: br.__missingFieldCount || 0 },
-                after: { short: aShort, missingFieldCount: row.__missingFieldCount || 0 },
+            const fields = compareSharedCells(br, row, columnsShared);
+            const metaChanges = compareRowMeta(br, row);
+            if (fields.length || metaChanges.length) {
+              changed.push({
+                key: k,
+                fields,
+                ...(metaChanges.length ? { metaChanges } : {}),
               });
             }
-            if (fields.length) changed.push({ key: k, fields });
           }
         }
         for (const [k, row] of bMap) {
@@ -345,15 +442,14 @@ export function compareCsvDrift(beforeText, afterText, opts = {}) {
     }
   }
 
-  // Partial/ragged: if relax detected uneven columns via __parsed_extra or empty
-  // csv-parse with relax_column_count may produce incomplete objects — flag when shared col missing often
   let missingCellRate = null;
   if (columnsShared.length && after.rows.length) {
     let missing = 0;
-    let total = after.rows.length * columnsShared.length;
+    const total = after.rows.length * columnsShared.length;
     for (const row of after.rows) {
       for (const c of columnsShared) {
-        if (row[c] == null || row[c] === '') missing++;
+        const p = cellPresence(row.cells, c);
+        if (p === 'missing' || p === 'empty' || p === 'null') missing++;
       }
     }
     missingCellRate = total ? missing / total : 0;
@@ -408,7 +504,6 @@ export function main(argv = process.argv.slice(2)) {
     process.stderr.write('missing --before/--after\n');
     process.exit(2);
   }
-  // collect repeated --key
   const keyColumns = [];
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--key' && argv[i + 1]) keyColumns.push(argv[++i]);

@@ -1,0 +1,119 @@
+{
+  "status": {
+    "mode": "keyed",
+    "changedCount": 1,
+    "changed": [
+      {
+        "key": "\"x\"",
+        "fields": [
+          {
+            "column": "__status",
+            "before": "old",
+            "after": "new",
+            "beforePresence": "present",
+            "afterPresence": "present"
+          }
+        ]
+      }
+    ],
+    "columnsRemoved": []
+  },
+  "extraFields-header": {
+    "mode": "keyed",
+    "changedCount": 1,
+    "changed": [
+      {
+        "key": "\"x\"",
+        "fields": [
+          {
+            "column": "__extraFields",
+            "before": "old",
+            "after": "new",
+            "beforePresence": "present",
+            "afterPresence": "present"
+          }
+        ]
+      }
+    ],
+    "columnsRemoved": []
+  },
+  "proto": {
+    "mode": "keyed",
+    "changedCount": 1,
+    "changed": [
+      {
+        "key": "\"x\"",
+        "fields": [
+          {
+            "column": "__proto__",
+            "before": "old",
+            "after": "new",
+            "beforePresence": "present",
+            "afterPresence": "present"
+          }
+        ]
+      }
+    ],
+    "columnsRemoved": []
+  },
+  "empty-missing": {
+    "mode": "keyed",
+    "changedCount": 1,
+    "changed": [
+      {
+        "key": "\"x\"",
+        "fields": [
+          {
+            "column": "v",
+            "before": "",
+            "after": null,
+            "beforePresence": "empty",
+            "afterPresence": "missing"
+          }
+        ],
+        "metaChanges": [
+          {
+            "field": "rowWidth",
+            "before": {
+              "short": false,
+              "missingFieldCount": 0
+            },
+            "after": {
+              "short": true,
+              "missingFieldCount": 1
+            }
+          }
+        ]
+      }
+    ],
+    "columnsRemoved": []
+  },
+  "ragged-wide": {
+    "mode": "keyed",
+    "changedCount": 1,
+    "changed": [
+      {
+        "key": "\"x\"",
+        "fields": [],
+        "metaChanges": [
+          {
+            "field": "extraFields",
+            "before": [
+              "old"
+            ],
+            "after": [
+              "new"
+            ]
+          }
+        ]
+      }
+    ],
+    "columnsRemoved": []
+  },
+  "dup-headers": {
+    "mode": "duplicate-headers-blocked",
+    "changedCount": null,
+    "changed": null,
+    "columnsRemoved": []
+  }
+}

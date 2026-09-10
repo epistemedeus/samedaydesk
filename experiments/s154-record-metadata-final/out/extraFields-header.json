@@ -1,0 +1,72 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-csv-drift",
+  "inputs": {
+    "before": "/workspace/experiments/s154-record-metadata-final/repros/extraFields-header/before.csv",
+    "after": "/workspace/experiments/s154-record-metadata-final/repros/extraFields-header/after.csv",
+    "keyColumns": [
+      "id"
+    ]
+  },
+  "report": {
+    "module": "csv-drift",
+    "ok": true,
+    "schema": {
+      "beforeHeaders": [
+        "id",
+        "__extraFields"
+      ],
+      "afterHeaders": [
+        "id",
+        "__extraFields"
+      ],
+      "columnsAdded": [],
+      "columnsRemoved": [],
+      "columnsReordered": false,
+      "columnsShared": [
+        "id",
+        "__extraFields"
+      ]
+    },
+    "rowDrift": {
+      "mode": "keyed",
+      "keyColumns": [
+        "id"
+      ],
+      "addedCount": 0,
+      "removedCount": 0,
+      "changedCount": 1,
+      "added": [],
+      "removed": [],
+      "changed": [
+        {
+          "key": "\"x\"",
+          "fields": [
+            {
+              "column": "__extraFields",
+              "before": "old",
+              "after": "new",
+              "beforePresence": "present",
+              "afterPresence": "present"
+            }
+          ]
+        }
+      ],
+      "truncated": false
+    },
+    "missingCellRate": 0,
+    "uncertainties": [],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Reports schema column add/remove/reorder and keyed row deltas when keys are supplied. Without keys, only row-count delta is stated (identity unknown). Not a warehouse migration plan."
+  }
+}

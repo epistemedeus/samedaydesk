@@ -1,0 +1,111 @@
+{
+  "cashBoundaryUsd": 0,
+  "paidValueClaim": false,
+  "freeBaseline": {
+    "kind": "competent-free-baseline",
+    "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+    "paidValueClaim": false
+  },
+  "tool": "s134-csv-drift",
+  "inputs": {
+    "before": "/workspace/experiments/s154-record-metadata-final/repros/ragged-wide/before.csv",
+    "after": "/workspace/experiments/s154-record-metadata-final/repros/ragged-wide/after.csv",
+    "keyColumns": [
+      "id"
+    ]
+  },
+  "report": {
+    "module": "csv-drift",
+    "ok": true,
+    "schema": {
+      "beforeHeaders": [
+        "id",
+        "v"
+      ],
+      "afterHeaders": [
+        "id",
+        "v"
+      ],
+      "columnsAdded": [],
+      "columnsRemoved": [],
+      "columnsReordered": false,
+      "columnsShared": [
+        "id",
+        "v"
+      ]
+    },
+    "rowDrift": {
+      "mode": "keyed",
+      "keyColumns": [
+        "id"
+      ],
+      "addedCount": 0,
+      "removedCount": 0,
+      "changedCount": 1,
+      "added": [],
+      "removed": [],
+      "changed": [
+        {
+          "key": "\"x\"",
+          "fields": [],
+          "metaChanges": [
+            {
+              "field": "extraFields",
+              "before": [
+                "old"
+              ],
+              "after": [
+                "new"
+              ]
+            }
+          ]
+        }
+      ],
+      "truncated": false
+    },
+    "missingCellRate": 0,
+    "uncertainties": [
+      {
+        "code": "inconsistent-row-width",
+        "detail": "before has rows whose field count differs from header width 2",
+        "evidence": {
+          "expectedWidth": 2,
+          "examples": [
+            {
+              "rowIndex": 0,
+              "width": 3,
+              "expectedWidth": 2
+            }
+          ],
+          "count": 1
+        }
+      },
+      {
+        "code": "inconsistent-row-width",
+        "detail": "after has rows whose field count differs from header width 2",
+        "evidence": {
+          "expectedWidth": 2,
+          "examples": [
+            {
+              "rowIndex": 0,
+              "width": 3,
+              "expectedWidth": 2
+            }
+          ],
+          "count": 1
+        }
+      },
+      {
+        "code": "row-width-partial",
+        "detail": "One or more data rows differ in width from the header record; treated as partial rows, not schema column add/remove.",
+        "evidence": {}
+      }
+    ],
+    "freeBaseline": {
+      "kind": "competent-free-baseline",
+      "description": "Diff supplied local artifacts with maintained offline parsers (yaml / csv-parse / fast-xml-parser). No URL fetch, no LLM, no notifications, no marketplace listing.",
+      "paidValueClaim": false
+    },
+    "differenceInDeliveredOutput": "Reports schema column add/remove/reorder and keyed row deltas when keys are supplied. Without keys, only row-count delta is stated (identity unknown). Not a warehouse migration plan."
+  }
+}
