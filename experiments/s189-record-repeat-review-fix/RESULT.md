@@ -1,6 +1,6 @@
 # S189 RESULT — record-repeat review repair (F1–F6)
 
-Final tip: `396e9a2c2fc75c8ed8bc13deeeee6ecd827aaf3d`  
+Final tip: `0c5a23ec946fbe2afbdff4ccb39869716da3e394`  
 Substantive repair: `12d528cdd92ae062d60ecd1beff2c9b5639417d7`
 
 Parent session: `01a08b8c-8e39-7c13-aeb7-ddfb9b159ba5`  
