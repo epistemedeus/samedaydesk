@@ -37,7 +37,7 @@ test("unconfigured correspondence leaves SDS health/MCP intact and exposes disab
   delete env.CORRESPONDENCE_DATABASE_URL;
   delete env.CORRESPONDENCE_ADMIN_TOKEN;
   delete env.CORRESPONDENCE_STORE;
-  const { createSdsApp } = await import("../index.js");
+  const { createSdsApp } = await import("../app.js");
   const app = createSdsApp({ correspondence: { env } });
   const handle = app.get("s51Correspondence");
   await handle.ready();
@@ -87,7 +87,7 @@ test("malformed correspondence config is disabled without breaking merchant heal
     CORRESPONDENCE_ADMIN_TOKEN: "too-short",
     CORRESPONDENCE_DATABASE_URL: "",
   };
-  const { createSdsApp } = await import("../index.js");
+  const { createSdsApp } = await import("../app.js");
   const app = createSdsApp({ correspondence: { env } });
   const handle = app.get("s51Correspondence");
   await handle.ready();

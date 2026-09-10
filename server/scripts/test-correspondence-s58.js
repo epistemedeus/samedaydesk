@@ -6,7 +6,7 @@ import test from "node:test";
 import express from "express";
 import { createApp, loadConfig, MemoryStore } from "@neomorphic/correspondence";
 import { inspectCorrespondenceEnv, mountCorrespondence } from "../lib/correspondence-mount.js";
-import { createSdsApp } from "../index.js";
+import { createSdsApp } from "../app.js";
 
 const env = { NODE_ENV: "test", CORRESPONDENCE_DATABASE_URL: "postgres://127.0.0.1:1/fixture", CORRESPONDENCE_ADMIN_TOKEN: "s58-fixture-administrator-token-long" };
 async function listen(app, t, handle) {

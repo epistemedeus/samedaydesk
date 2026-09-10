@@ -163,7 +163,7 @@ test("stop states list a paid continuation and refuse to execute it", () => {
 });
 
 test("apex server source still does not host the paid extract route", () => {
-  const index = readFileSync(join(ROOT, "server/index.js"), "utf8");
+  const index = readFileSync(join(ROOT, "server/app.js"), "utf8");
   assert.equal(index.includes("paymentMiddleware"), false);
   const pricing = readFileSync(join(ROOT, "server/pricing.js"), "utf8");
   assert.match(pricing, /machine_payment_route:\s*\{\s*amount:\s*49900/);
