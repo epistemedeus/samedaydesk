@@ -1,0 +1,19 @@
+{
+  "tool": "s134-rss-atom-brief",
+  "ok": true,
+  "correctedKeys": [
+    "title:Orphan headline",
+    "urn:s142:r1",
+    "urn:s142:r2"
+  ],
+  "uncertaintyCodes": [
+    "missing-item-id",
+    "date-ambiguity",
+    "date-ambiguity",
+    "missing-item-id",
+    "date-ambiguity",
+    "date-ambiguity-correction",
+    "date-ambiguity-correction"
+  ],
+  "paidValueClaim": false
+}

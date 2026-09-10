@@ -140,34 +140,58 @@ export function comparePricingTables(beforeDoc, afterDoc) {
     }
     const b = bList[0];
     const a = aList[0];
+    const bMissing = b.value == null;
+    const aMissing = a.value == null;
     const valueChanged = JSON.stringify(b.value) !== JSON.stringify(a.value);
     const unitChanged = b.unitKey !== a.unitKey;
     if (!valueChanged && !unitChanged) {
       unchanged.push({ fieldKey: key });
       continue;
     }
-    if (unitChanged && valueChanged) {
+    // Missing cells: never emit a numeric fieldChange that looks like a priced delta.
+    if (bMissing || aMissing) {
       conflicting.push({
         fieldKey: key,
-        reason: 'value-and-unit-both-changed',
+        reason: 'missing-cell',
         before: { value: b.value, unit: b.unit },
         after: { value: a.value, unit: a.unit },
-        note: 'Cannot attribute numeric delta without a declared unit conversion; marked conflicting/unknown semantics.',
+        note: 'One or both values are missing; refusing price comparison for this field.',
       });
       uncertainties.push(
-        uncertainty('unit-and-value-change', `field ${key} changed value and unit; no conversion table supplied`, {
+        uncertainty('missing-cell', `field ${key} has missing value(s); comparison withheld`, {
           fieldKey: key,
+          beforeMissing: bMissing,
+          afterMissing: aMissing,
         }),
       );
       continue;
     }
+    // Unit differs: never treat raw numeric equality/inequality as a priced comparison.
     if (unitChanged) {
+      conflicting.push({
+        fieldKey: key,
+        reason: 'cross-unit-incomparable',
+        before: { value: b.value, unit: b.unit },
+        after: { value: a.value, unit: a.unit },
+        note: 'Units differ; numeric values are not compared and are not asserted equal or changed.',
+      });
+      uncertainties.push(
+        uncertainty('cross-unit', `field ${key} units differ; no conversion table supplied`, {
+          fieldKey: key,
+          beforeUnit: b.unit,
+          afterUnit: a.unit,
+        }),
+      );
+      // Still record the unit surface change without implying value comparability.
       unitChanges.push({
         fieldKey: key,
         beforeUnit: b.unit,
         afterUnit: a.unit,
-        valueUnchanged: b.value,
+        numericComparison: 'not-applicable-across-units',
+        beforeValueRaw: b.value,
+        afterValueRaw: a.value,
       });
+      continue;
     }
     if (valueChanged) {
       fieldChanges.push({

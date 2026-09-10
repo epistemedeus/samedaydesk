@@ -254,3 +254,76 @@ test('no module claims paid value', () => {
     assert.equal(report.freeBaseline.paidValueClaim, false);
   }
 });
+
+test('s142 gate: openapi used op security+$ref change is not unchanged', () => {
+  const before = {
+    openapi: '3.0.3',
+    info: { title: 't', version: '1' },
+    paths: {
+      '/x': {
+        get: {
+          operationId: 'getX',
+          security: [{ apiKey: [] }],
+          responses: {
+            '200': {
+              description: 'ok',
+              content: { 'application/json': { schema: { $ref: '#/components/schemas/A' } } },
+            },
+          },
+        },
+      },
+    },
+    components: {
+      securitySchemes: { apiKey: { type: 'apiKey', in: 'header', name: 'X' }, oauth2: { type: 'oauth2', flows: {} } },
+      schemas: { A: { type: 'object' }, B: { type: 'object' } },
+    },
+  };
+  const after = structuredClone(before);
+  after.paths['/x'].get.security = [{ oauth2: ['read'] }];
+  after.paths['/x'].get.responses['200'].content['application/json'].schema.$ref = '#/components/schemas/B';
+  const report = compareOpenApiImpact({
+    beforeText: JSON.stringify(before),
+    afterText: JSON.stringify(after),
+    usedSpec: { operations: [{ method: 'get', path: '/x' }] },
+  });
+  assert.equal(report.ok, true);
+  assert.equal(report.impact.unchanged.length, 0);
+  const fields = report.impact.changed.flatMap((c) => c.fieldChanges.map((f) => f.field));
+  assert.ok(fields.includes('security'));
+  assert.ok(fields.includes('responses'));
+});
+
+test('s142 gate: pricing refuses cross-unit and missing-cell as fieldChanges', () => {
+  const report = comparePricingTables(
+    { rows: [{ field: 'a', value: 1, unit: 'USD/mo' }, { field: 'b', value: 2, unit: 'USD/mo' }] },
+    { rows: [{ field: 'a', value: 1, unit: 'EUR/mo' }, { field: 'b', value: null, unit: 'USD/mo' }] },
+  );
+  assert.equal(report.ok, true);
+  assert.equal(report.fieldChanges.length, 0);
+  assert.ok(report.conflicting.some((c) => c.reason === 'cross-unit-incomparable'));
+  assert.ok(report.conflicting.some((c) => c.reason === 'missing-cell'));
+});
+
+test('s142 gate: csv duplicate keys block silent overwrite', () => {
+  const report = compareCsvDrift('sku,price\nA,1\nA,2\n', 'sku,price\nA,3\n', { keyColumns: ['sku'] });
+  assert.equal(report.ok, true);
+  assert.equal(report.rowDrift.mode, 'duplicate-keys-blocked');
+  assert.equal(report.rowDrift.changedCount ?? 0, 0);
+});
+
+test('s142 gate: rss exposes missing-item-id and date-ambiguity', () => {
+  const before = `<?xml version="1.0"?><rss version="2.0"><channel>
+    <item><title>T</title><pubDate>yesterday</pubDate></item>
+    <item><title>U</title><guid>urn:u</guid><pubDate>02/01/2024</pubDate></item>
+  </channel></rss>`;
+  const after = `<?xml version="1.0"?><rss version="2.0"><channel>
+    <item><title>T</title><pubDate>today</pubDate></item>
+    <item><title>U</title><guid>urn:u</guid><pubDate>2024-01-02</pubDate></item>
+  </channel></rss>`;
+  const report = compareFeeds(before, after);
+  assert.equal(report.ok, true);
+  const codes = report.uncertainties.map((u) => u.code);
+  assert.ok(codes.includes('missing-item-id'));
+  assert.ok(codes.includes('date-ambiguity'));
+  assert.ok((report.corrected || []).length >= 1);
+});

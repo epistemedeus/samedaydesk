@@ -81,3 +81,14 @@ Latency start→exit: min 82.3s / median 139.0s / max 275.6s. All `exitCode=0`. 
 - S122 `c0255ac` object identity
 - Provider weekly usage meters (unavailable here)
 - Stop at provider limit; no overage/reset performed
+
+## S142 gate fixes (same source tree)
+
+Applied on branch `codex/s142-record-jobs-final-20260910` without duplicating S127 export work:
+
+- OpenAPI: detect used-op `security` + response `$ref` (no false unchanged)
+- Pricing: cross-unit → `cross-unit-incomparable`; missing → `missing-cell` (not fieldChanges)
+- CSV: duplicate keys → `duplicate-keys-blocked` (no silent overwrite)
+- RSS: `missing-item-id` + `date-ambiguity` exposed
+
+Regressions: +4 tests (32/32). Consumer verification lives in `experiments/s142-record-jobs-final/`.

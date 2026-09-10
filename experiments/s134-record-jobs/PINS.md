@@ -1,3 +1,5 @@
+Owning repo: **epistemedeus/samedaydesk** (not merchant).
+
 # S134 pins
 
 | Asset | Pin | License / note |

@@ -1,0 +1,15 @@
+{
+  "name": "@samedaydesk/s142-record-jobs-final",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "S142 consumer verification of exported S134 record-job CLIs with independent fixtures. Cash $0.",
+  "scripts": {
+    "consume": "node scripts/run-consumer-clis.mjs",
+    "test": "node --test test/*.test.mjs",
+    "verify": "npm run consume && npm test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

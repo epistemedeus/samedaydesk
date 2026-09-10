@@ -1,0 +1,13 @@
+{
+  "at": "2026-09-10T11:37:39.334Z",
+  "owningRepo": "epistemedeus/samedaydesk",
+  "s134Path": "/workspace/experiments/s134-record-jobs",
+  "cashUsd": 0,
+  "gates": {
+    "openapiNoFalseUnchanged": true,
+    "pricingNoCrossUnitOrMissingAsFieldChange": true,
+    "csvNoSilentDuplicateOverwrite": true,
+    "rssExposesMissingIdAndDateAmbiguity": true
+  },
+  "ok": true
+}

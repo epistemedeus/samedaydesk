@@ -1,0 +1,9 @@
+{
+  "tool": "s134-csv-drift",
+  "ok": true,
+  "rowDriftMode": "duplicate-keys-blocked",
+  "uncertaintyCodes": [
+    "duplicate-keys-before"
+  ],
+  "paidValueClaim": false
+}

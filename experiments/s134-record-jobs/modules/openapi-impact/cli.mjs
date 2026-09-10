@@ -60,7 +60,9 @@ export function indexOperations(doc) {
           summary: op.summary || null,
           parameters: summarizeParams([...(item.parameters || []), ...(op.parameters || [])]),
           requestBody: Boolean(op.requestBody),
-          responses: Object.keys(op.responses || {}).sort(),
+          requestBodyRef: extractRequestBodyRef(op.requestBody),
+          responses: summarizeResponses(op.responses || {}),
+          security: summarizeSecurity(op.security, doc.security),
           deprecated: Boolean(op.deprecated),
         });
       }
@@ -74,6 +76,16 @@ function summarizeParams(params) {
   const byKey = new Map();
   for (const p of params) {
     if (!p || typeof p !== 'object') continue;
+    if (p.$ref) {
+      byKey.set(`ref:${p.$ref}`, {
+        name: null,
+        in: null,
+        required: false,
+        schemaType: null,
+        ref: p.$ref,
+      });
+      continue;
+    }
     const name = p.name || null;
     const loc = p.in || null;
     byKey.set(`${loc}:${name}`, {
@@ -81,9 +93,62 @@ function summarizeParams(params) {
       in: loc,
       required: Boolean(p.required),
       schemaType: p.schema?.type || p.type || null,
+      ref: p.schema?.$ref || null,
     });
   }
-  return [...byKey.values()].sort((a, b) => `${a.in}:${a.name}`.localeCompare(`${b.in}:${b.name}`));
+  return [...byKey.values()].sort((a, b) =>
+    `${a.ref || ''}:${a.in}:${a.name}`.localeCompare(`${b.ref || ''}:${b.in}:${b.name}`),
+  );
+}
+
+function summarizeSecurity(opSecurity, docSecurity) {
+  const src = opSecurity !== undefined ? opSecurity : docSecurity;
+  const inherited = opSecurity === undefined;
+  if (src == null) {
+    return { inherited, requirements: [] };
+  }
+  if (!Array.isArray(src)) {
+    return { inherited, requirements: ['<unparseable-security>'] };
+  }
+  const requirements = src.map((req) => {
+    if (!req || typeof req !== 'object') return '<invalid>';
+    return Object.keys(req)
+      .sort()
+      .map((k) => `${k}:[${[...(req[k] || [])].map(String).sort().join(',')}]`)
+      .join(';');
+  });
+  return { inherited, requirements: requirements.sort() };
+}
+
+function extractRequestBodyRef(rb) {
+  if (!rb || typeof rb !== 'object') return null;
+  if (rb.$ref) return rb.$ref;
+  const content = rb.content && typeof rb.content === 'object' ? rb.content : {};
+  const refs = [];
+  for (const mt of Object.keys(content).sort()) {
+    const schema = content[mt]?.schema;
+    if (schema?.$ref) refs.push(`${mt}:${schema.$ref}`);
+  }
+  return refs.length ? refs.join('|') : null;
+}
+
+function summarizeResponses(responses) {
+  const out = [];
+  for (const code of Object.keys(responses || {}).sort()) {
+    const r = responses[code];
+    let ref = null;
+    const schemaRefs = [];
+    if (r && typeof r === 'object') {
+      if (r.$ref) ref = r.$ref;
+      const content = r.content && typeof r.content === 'object' ? r.content : {};
+      for (const mt of Object.keys(content).sort()) {
+        const schema = content[mt]?.schema;
+        if (schema?.$ref) schemaRefs.push(`${mt}:${schema.$ref}`);
+      }
+    }
+    out.push({ code, ref, schemaRefs });
+  }
+  return out;
 }
 
 export function resolveUsed(usedSpec, beforeMap, afterMap) {
@@ -125,7 +190,15 @@ export function resolveUsed(usedSpec, beforeMap, afterMap) {
 }
 
 function paramSig(p) {
-  return `${p.in}|${p.name}|${p.required}|${p.schemaType}`;
+  return `${p.in}|${p.name}|${p.required}|${p.schemaType}|${p.ref || ''}`;
+}
+
+function securitySig(s) {
+  return JSON.stringify(s || null);
+}
+
+function responsesSig(r) {
+  return JSON.stringify(r || []);
 }
 
 export function diffUsedOps(beforeMap, afterMap, usedKeys) {
@@ -158,11 +231,17 @@ export function diffUsedOps(beforeMap, afterMap, usedKeys) {
     if (b.requestBody !== a.requestBody) {
       fieldChanges.push({ field: 'requestBody', before: b.requestBody, after: a.requestBody });
     }
-    if (JSON.stringify(b.responses) !== JSON.stringify(a.responses)) {
+    if (responsesSig(b.responses) !== responsesSig(a.responses)) {
       fieldChanges.push({ field: 'responses', before: b.responses, after: a.responses });
     }
     if (b.operationId !== a.operationId) {
       fieldChanges.push({ field: 'operationId', before: b.operationId, after: a.operationId });
+    }
+    if ((b.requestBodyRef || null) !== (a.requestBodyRef || null)) {
+      fieldChanges.push({ field: 'requestBodyRef', before: b.requestBodyRef, after: a.requestBodyRef });
+    }
+    if (securitySig(b.security) !== securitySig(a.security)) {
+      fieldChanges.push({ field: 'security', before: b.security, after: a.security });
     }
     const bp = b.parameters.map(paramSig).join(';');
     const ap = a.parameters.map(paramSig).join(';');

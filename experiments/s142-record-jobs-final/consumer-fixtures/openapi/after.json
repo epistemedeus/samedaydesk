@@ -1,0 +1,58 @@
+{
+  "openapi": "3.0.3",
+  "info": { "title": "S142 Consumer Catalog", "version": "1.1.0" },
+  "paths": {
+    "/v1/catalog": {
+      "get": {
+        "operationId": "getCatalog",
+        "security": [{ "oauth2": ["catalog:read"] }],
+        "parameters": [
+          { "name": "q", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CatalogPage" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/stats": {
+      "get": {
+        "operationId": "adminStats",
+        "responses": { "200": { "description": "unused changed" }, "500": { "description": "err" } }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKey": { "type": "apiKey", "in": "header", "name": "X-API-Key" },
+      "oauth2": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://example.test/oauth/token",
+            "scopes": { "catalog:read": "read catalog" }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Catalog": {
+        "type": "object",
+        "properties": { "items": { "type": "array" } }
+      },
+      "CatalogPage": {
+        "type": "object",
+        "properties": {
+          "items": { "type": "array" },
+          "next": { "type": "string" }
+        }
+      }
+    }
+  }
+}

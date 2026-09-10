@@ -1,0 +1,9 @@
+consumer-out/*.json
+!consumer-out/*.summary.json
+!consumer-out/gate.json
+native-parent/usage-capture/pane-*.txt
+native-parent/usage-capture/*.stderr
+native-parent/usage-capture/grok.stderr
+native-parent/usage-capture/pane-*.txt
+native-parent/usage-capture/*.stderr
+native-parent/usage-capture/grok.stderr

@@ -110,9 +110,58 @@ function normalizeItem(it, kind, idx, uncertainties, label = 'feed') {
         { index: idx, feed: label, kind, id, guid, link, title },
       ),
     );
+  } else if (!id && !guid) {
+    uncertainties.push(
+      uncertainty(
+        'missing-item-id',
+        `${label} item ${idx} lacks guid/id; identity falls back to link/title and may collide`,
+        { index: idx, feed: label, kind, link, title },
+      ),
+    );
+  }
+  const dateInfo = classifyDate(updated);
+  if (dateInfo.ambiguous) {
+    uncertainties.push(
+      uncertainty('date-ambiguity', `${label} item ${idx} has ambiguous/unparseable date`, {
+        index: idx,
+        feed: label,
+        raw: updated,
+        reason: dateInfo.reason,
+      }),
+    );
   }
   const fingerprint = [id || '', link || '', title || ''].join('\u001f');
-  return { index: idx, id, guid, link, title, updated, fingerprint, raw: { title, link, id, guid, updated } };
+  return {
+    index: idx,
+    id,
+    guid,
+    link,
+    title,
+    updated,
+    dateInfo,
+    fingerprint,
+    raw: { title, link, id, guid, updated },
+  };
+}
+
+function classifyDate(raw) {
+  if (raw == null || String(raw).trim() === '') {
+    return { ambiguous: false, reason: 'absent', parsed: null };
+  }
+  const s = String(raw).trim();
+  // Relative / non-calendar tokens
+  if (/^(yesterday|today|tomorrow|now|recently)$/i.test(s)) {
+    return { ambiguous: true, reason: 'relative-token', parsed: null };
+  }
+  // Bare slash dates like 02/01/2024 are locale-ambiguous (MDY vs DMY)
+  if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(s)) {
+    return { ambiguous: true, reason: 'slash-date-locale-ambiguous', parsed: null };
+  }
+  const t = Date.parse(s);
+  if (Number.isNaN(t)) {
+    return { ambiguous: true, reason: 'unparseable', parsed: null };
+  }
+  return { ambiguous: false, reason: 'parsed', parsed: new Date(t).toISOString() };
 }
 
 function dedupKey(item) {
@@ -175,7 +224,28 @@ export function compareFeeds(beforeXml, afterXml) {
       const changes = [];
       if ((prev.title || null) !== (it.title || null)) changes.push({ field: 'title', before: prev.title, after: it.title });
       if ((prev.link || null) !== (it.link || null)) changes.push({ field: 'link', before: prev.link, after: it.link });
-      if ((prev.updated || null) !== (it.updated || null)) changes.push({ field: 'updated', before: prev.updated, after: it.updated });
+      if ((prev.updated || null) !== (it.updated || null)) {
+        const beforeAmb = prev.dateInfo?.ambiguous || classifyDate(prev.updated).ambiguous;
+        const afterAmb = it.dateInfo?.ambiguous || classifyDate(it.updated).ambiguous;
+        if (beforeAmb || afterAmb) {
+          changes.push({
+            field: 'updated',
+            before: prev.updated,
+            after: it.updated,
+            ambiguity: true,
+            note: 'date token(s) ambiguous or unparseable; correction recorded without asserting chronological order',
+          });
+          uncertainties.push(
+            uncertainty('date-ambiguity-correction', `item ${k} updated field changed with ambiguous date(s)`, {
+              key: k,
+              before: prev.updated,
+              after: it.updated,
+            }),
+          );
+        } else {
+          changes.push({ field: 'updated', before: prev.updated, after: it.updated });
+        }
+      }
       if ((prev.id || null) !== (it.id || null) && (prev.guid || null) !== (it.guid || null)) {
         // same dedup key but id/guid representation shifted
         conflicting.push({ key: k, note: 'identity fields disagree under shared dedup key', before: summarize(prev), after: summarize(it) });

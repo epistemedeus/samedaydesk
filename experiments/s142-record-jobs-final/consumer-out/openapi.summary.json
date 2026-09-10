@@ -1,0 +1,13 @@
+{
+  "tool": "s134-openapi-impact",
+  "ok": true,
+  "unchangedCount": 0,
+  "changedKeys": [
+    "GET /v1/catalog"
+  ],
+  "changedFields": [
+    "responses",
+    "security"
+  ],
+  "paidValueClaim": false
+}

@@ -1,0 +1,18 @@
+{
+  "tool": "s134-pricing-table-change",
+  "ok": true,
+  "fieldChangeCount": 0,
+  "unitChangeCount": 2,
+  "conflictingReasons": [
+    "cross-unit-incomparable",
+    "missing-cell",
+    "cross-unit-incomparable"
+  ],
+  "uncertaintyCodes": [
+    "missing-value",
+    "cross-unit",
+    "missing-cell",
+    "cross-unit"
+  ],
+  "paidValueClaim": false
+}

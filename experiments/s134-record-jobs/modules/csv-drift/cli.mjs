@@ -149,38 +149,64 @@ export function compareCsvDrift(beforeText, afterText, opts = {}) {
         if (aMap.has(k)) dupA.push(k);
         aMap.set(k, row);
       }
-      if (dupB.length) uncertainties.push(uncertainty('duplicate-keys-before', 'Duplicate key rows in before', { count: dupB.length }));
-      if (dupA.length) uncertainties.push(uncertainty('duplicate-keys-after', 'Duplicate key rows in after', { count: dupA.length }));
-      const added = [];
-      const removed = [];
-      const changed = [];
-      for (const [k, row] of aMap) {
-        if (!bMap.has(k)) added.push({ key: k, row });
-        else {
-          const br = bMap.get(k);
-          const fields = [];
-          for (const col of columnsShared) {
-            if (JSON.stringify(br[col] ?? null) !== JSON.stringify(row[col] ?? null)) {
-              fields.push({ column: col, before: br[col] ?? null, after: row[col] ?? null });
+      if (dupB.length) {
+        uncertainties.push(
+          uncertainty('duplicate-keys-before', 'Duplicate key rows in before; keyed compare blocked to avoid silent last-wins overwrite', {
+            count: dupB.length,
+            keys: [...new Set(dupB)].slice(0, 20),
+          }),
+        );
+      }
+      if (dupA.length) {
+        uncertainties.push(
+          uncertainty('duplicate-keys-after', 'Duplicate key rows in after; keyed compare blocked to avoid silent last-wins overwrite', {
+            count: dupA.length,
+            keys: [...new Set(dupA)].slice(0, 20),
+          }),
+        );
+      }
+      if (dupB.length || dupA.length) {
+        rowDrift = {
+          mode: 'duplicate-keys-blocked',
+          keyColumns,
+          duplicateKeysBefore: [...new Set(dupB)],
+          duplicateKeysAfter: [...new Set(dupA)],
+          beforeRowCount: before.rows.length,
+          afterRowCount: after.rows.length,
+          note: 'Refusing keyed add/remove/change: duplicate keys would silently overwrite rows.',
+        };
+      } else {
+        const added = [];
+        const removed = [];
+        const changed = [];
+        for (const [k, row] of aMap) {
+          if (!bMap.has(k)) added.push({ key: k, row });
+          else {
+            const br = bMap.get(k);
+            const fields = [];
+            for (const col of columnsShared) {
+              if (JSON.stringify(br[col] ?? null) !== JSON.stringify(row[col] ?? null)) {
+                fields.push({ column: col, before: br[col] ?? null, after: row[col] ?? null });
+              }
             }
+            if (fields.length) changed.push({ key: k, fields });
           }
-          if (fields.length) changed.push({ key: k, fields });
         }
+        for (const [k, row] of bMap) {
+          if (!aMap.has(k)) removed.push({ key: k, row });
+        }
+        rowDrift = {
+          mode: 'keyed',
+          keyColumns,
+          addedCount: added.length,
+          removedCount: removed.length,
+          changedCount: changed.length,
+          added: added.slice(0, 50),
+          removed: removed.slice(0, 50),
+          changed: changed.slice(0, 50),
+          truncated: added.length > 50 || removed.length > 50 || changed.length > 50,
+        };
       }
-      for (const [k, row] of bMap) {
-        if (!aMap.has(k)) removed.push({ key: k, row });
-      }
-      rowDrift = {
-        mode: 'keyed',
-        keyColumns,
-        addedCount: added.length,
-        removedCount: removed.length,
-        changedCount: changed.length,
-        added: added.slice(0, 50),
-        removed: removed.slice(0, 50),
-        changed: changed.slice(0, 50),
-        truncated: added.length > 50 || removed.length > 50 || changed.length > 50,
-      };
     }
   }
 
@@ -207,6 +233,7 @@ export function compareCsvDrift(beforeText, afterText, opts = {}) {
 
   const hasSchemaDrift = columnsAdded.length + columnsRemoved.length > 0 || columnsReordered;
   const hasRowSignal =
+    rowDrift.mode === 'duplicate-keys-blocked' ||
     (rowDrift.mode === 'keyed' &&
       (rowDrift.addedCount > 0 || rowDrift.removedCount > 0 || rowDrift.changedCount > 0)) ||
     (rowDrift.mode === 'unkeyed-count-only' && rowDrift.rowCountDelta !== 0);

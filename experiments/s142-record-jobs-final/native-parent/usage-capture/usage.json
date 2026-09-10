@@ -1,0 +1,12 @@
+{
+  "source": "native-tui-/usage",
+  "capturedAtUtc": "2026-09-10T11:36:51Z",
+  "planLabel": "Weekly limit (SuperGrok Heavy)",
+  "weeklyUsedPercent": 71,
+  "weeklyRemainingPercent": 29,
+  "resetsLocalDisplay": "September 10, 18:27",
+  "resetsInterpretedUtc": "2026-09-10T18:27:00Z",
+  "sessionUsage": "no model calls yet in this session",
+  "resetOrOverageObserved": false,
+  "note": "Fresh single read via native Grok TUI /usage; reader session reaped after capture. Not stale lineage."
+}

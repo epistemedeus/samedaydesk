@@ -1,0 +1,7 @@
+{
+  "rows": [
+    { "field": "basic", "value": 9, "unit": "USD/mo" },
+    { "field": "plus", "value": 19, "unit": "USD/mo" },
+    { "field": "seat", "value": 4, "unit": "USD/seat" }
+  ]
+}
