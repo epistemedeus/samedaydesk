@@ -3,14 +3,21 @@ branch: codex/s77-published-extract-consumers-20260910
 base: 901de861b18b599a2131d699d034de9c85ac59c7 (origin/main)
 tip: 5460b25854efa990246950ee828c3f94aa43b8c4
 push_result: 403 Permission denied to cursor[bot]
-shallow_note: git bundle create BASE..TIP refused (empty) on shallow clone; unshallow did not unlock pack. Alternate deliveries below.
-deliveries:
-  1) 0001-s77-extract-consumers.patch
-     cd x402-data-gateway-skills && git checkout main && git pull
-     git checkout -b codex/s77-published-extract-consumers-20260910
-     git am /path/to/0001-s77-extract-consumers.patch
-  2) skills-pack/ tree sync at tip (tar/archive of HEAD)
-  3) s77-skills.fast-export → git fast-import
-verify:
+
+bundle: s77-x402-data-gateway-skills.bundle
+  contains: tip commit only (prerequisite = base)
+  verify: git bundle verify s77-x402-data-gateway-skills.bundle
+  apply:
+    git clone https://github.com/epistemedeus/x402-data-gateway-skills.git
+    cd x402-data-gateway-skills && git checkout 901de861b18b599a2131d699d034de9c85ac59c7
+    git fetch ../s77-x402-data-gateway-skills.bundle 5460b25854efa990246950ee828c3f94aa43b8c4:codex/s77-published-extract-consumers-20260910
+    git checkout codex/s77-published-extract-consumers-20260910
+
+alternates:
+  - 0001-s77-extract-consumers.patch (git am on base)
+  - skills-pack/ (full tree archive at tip)
+  - s77-skills.fast-export
+
+verify after apply:
   node --test tests/extract-contract.test.mjs
   node consumers/heavy-extract-preflight.mjs
