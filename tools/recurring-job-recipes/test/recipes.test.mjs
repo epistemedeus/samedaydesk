@@ -324,7 +324,8 @@ test("live-safe fetch rejects oversized responses before reading declared bodies
   assert.equal(bodyRead, false);
 });
 
-test("issue-to-work-brief fixture dry-run is unchanged against the immutable prior", async () => {
+test("issue-to-work-brief fixture dry-run keeps legacy prior immutable and emits complete source fingerprint", async () => {
+  const before = readFileSync(prior("issue-brief.prior.json"), "utf8");
   const result = await runRecipe("issue-to-work-brief", {
     priorPath: prior("issue-brief.prior.json"),
     issueFixturePath: join(FIXTURES_DIR, "issues", "samedaydesk-1.json"),
@@ -332,11 +333,19 @@ test("issue-to-work-brief fixture dry-run is unchanged against the immutable pri
     clock: "2026-09-09T16:00:00.000Z",
     horizonHours: 9000,
   });
-  assert.equal(result.outcome, "unchanged");
+  // Shared fixture prior is intentionally incomplete (pre-bodySha256). Complete
+  // source equality cannot be proven, so outcome is changed — same contract as
+  // s21-e2e / s37r-release. The prior bytes must remain untouched.
+  assert.equal(result.outcome, "changed");
   assert.equal(result.ok, true);
   assert.equal(result.evidence.brief.schema, "samedaydesk.work-brief.v1");
   assert.equal(result.evidence.claims.notDemand, true);
   assert.equal(result.payment.replayBlocked, true);
+  assert.equal(result.evidence.fingerprint.owner, "epistemedeus");
+  assert.equal(result.evidence.fingerprint.repo, "samedaydesk");
+  assert.match(result.evidence.fingerprint.bodySha256, /^[a-f0-9]{64}$/);
+  assert.equal(result.evidence.fingerprint.bodyBytes, 5267);
+  assert.equal(readFileSync(prior("issue-brief.prior.json"), "utf8"), before);
 });
 
 test("live-safe comparable extraction preserves partial fields and mounted-origin policy", async () => {
