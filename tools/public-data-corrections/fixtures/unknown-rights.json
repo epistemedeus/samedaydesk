@@ -1,0 +1,33 @@
+{
+  "schema": "samedaydesk.public-data-correction.v1",
+  "wave": "W3-14",
+  "id": "H03",
+  "rights": "unknown",
+  "privateData": false,
+  "publishAuthorized": false,
+  "ownership": "public-surface",
+  "rightsClearance": {
+    "status": "unknown",
+    "payingRightsHolder": false
+  },
+  "document": {
+    "kind": "public-catalog-snippet",
+    "url": "https://samedaydesk.com/for-agents/useful-jobs/catalog.json",
+    "observedAt": "2026-09-10T17:48:30.000Z",
+    "digest": "sha256:106f65171ed118c66cdb84f7c5046818cff0d12fcf6fdb545ce123329a27062c",
+    "snippet": {
+      "package": "useful-jobs",
+      "version": "1.0.0"
+    }
+  },
+  "correction": {
+    "field": "runtime.purchaseAuthority",
+    "from": true,
+    "to": false,
+    "citation": {
+      "url": "https://samedaydesk.com/for-agents/useful-jobs/catalog.json",
+      "observedAt": "2026-09-10T17:48:30.000Z",
+      "digest": "sha256:106f65171ed118c66cdb84f7c5046818cff0d12fcf6fdb545ce123329a27062c"
+    }
+  }
+}

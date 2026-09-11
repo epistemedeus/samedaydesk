@@ -1,0 +1,39 @@
+{
+  "schema": "samedaydesk.public-data-correction.v1",
+  "wave": "W3-14",
+  "id": "H03",
+  "rights": "cleared",
+  "privateData": false,
+  "publishAuthorized": false,
+  "ownership": "public-surface",
+  "rightsClearance": {
+    "status": "cleared",
+    "basis": "SDS PR50 public consumer surface",
+    "payingRightsHolder": false
+  },
+  "document": {
+    "kind": "public-catalog-snippet",
+    "url": "https://samedaydesk.com/for-agents/useful-jobs/catalog.json",
+    "observedAt": "2026-09-10T17:48:30.000Z",
+    "digest": "sha256:106f65171ed118c66cdb84f7c5046818cff0d12fcf6fdb545ce123329a27062c",
+    "snippet": {
+      "package": "useful-jobs",
+      "version": "1.0.0",
+      "jobId": "vendor-budget-impact"
+    }
+  },
+  "correction": {
+    "field": "contact",
+    "from": null,
+    "to": "Ship to Jane Doe, 123 Main Street, Springfield; jane.doe@customer.example",
+    "citation": {
+      "url": "https://samedaydesk.com/for-agents/useful-jobs/catalog.json",
+      "observedAt": "2026-09-10T17:48:30.000Z",
+      "digest": "sha256:106f65171ed118c66cdb84f7c5046818cff0d12fcf6fdb545ce123329a27062c"
+    }
+  },
+  "customer": {
+    "email": "jane.doe@customer.example",
+    "address": "123 Main Street"
+  }
+}
