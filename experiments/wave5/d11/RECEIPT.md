@@ -2,7 +2,8 @@
 
 **Repo:** epistemedeus/samedaydesk
 **Branch:** `cursor/w5-d11-co01-request-desk-adapter-with-honest-replay-outcomes-b00e`
-**HEAD:** `c68f79e7ad15a07f988ddedd2cb8390b346a88cc` (receipt commit updates this)
+**Fix commit:** `c68f79e7ad15a07f988ddedd2cb8390b346a88cc`
+**Branch tip:** this branch after the receipt commits
 **PR:** https://github.com/epistemedeus/samedaydesk/pull/85 (draft)
 **Owned paths:** `tools/job-request-desk/`, `experiments/wave5/d11/RECEIPT.md`
 **Starting ref:** `912794c6775e16e93dc38cbfc7113a97ab5dc012`
