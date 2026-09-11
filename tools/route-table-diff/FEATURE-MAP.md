@@ -1,4 +1,4 @@
-# FEATURE-MAP — SPA route-table diff (W4-commerce-12)
+# FEATURE-MAP — SPA route-table comparison (W5-M04 / Co12)
 
 Offline job. Reads two caller JSON catalogs and writes `route-diff.json` plus `route-diff.md`. Does not edit `server/lib/spa-route-shells.js`, homepages, or live listings.
 
@@ -6,13 +6,14 @@ Offline job. Reads two caller JSON catalogs and writes `route-diff.json` plus `r
 
 | Goal | Entrypoint | Command | State | Tests |
 | --- | --- | --- | --- | --- |
-| Diff two route catalogs | `bin/route-diff.mjs` | `node tools/route-table-diff/bin/route-diff.mjs --before <json> --after <json> --out-dir <dir>` | Files under `--out-dir`: added / removed / changed canonical or robots | `test/journey.test.mjs` |
+| Diff two route catalogs | `bin/route-diff.mjs` | `node tools/route-table-diff/bin/route-diff.mjs --before <json> --after <json> --out-dir <dir>` | Files under `--out-dir`: added / removed / changed canonical or robots; `breaking` / `outcome` | `test/journey.test.mjs` |
+| Permutation vs collision/removal | same | same, fixtures under `fixtures/comparison/` | Permutation: `breaking=false`, equal digest. Collision or removal: `breaking=true`, exit 0 | `test/comparison.test.mjs` |
 | Labeled SAMPLE run | same | `--example --out-dir <dir>` | `publishedRouteTable: false`, `sample: true`, `evidenceClass: fixture` | `test/seeded-failures.test.mjs` |
-| Local HTTP catalogs | same | `--before http://127.0.0.1:<port>/before.json --after http://127.0.0.1:<port>/after.json` | `evidenceClass: local-runtime`. Not external acceptance. | `test/local-http.test.mjs` |
+| Local HTTP catalogs | same | `--before http://127.0.0.1:<port>/before.json --after http://127.0.0.1:<port>/after.json` | `evidenceClass: local-runtime`. Not external acceptance. | `test/local-http.test.mjs`, permutation case in `test/comparison.test.mjs` |
 
-Record shape: `{ path, canonical, title, robots? }`. Wrapper `{ schema, routes: [...] }` is preferred. A raw array is accepted.
+Record shape: `{ path, canonical, title, robots? }`. Wrapper `{ schema, routes: [...] }` is preferred. A raw array is accepted. Contract: `CONTRACT.md`.
 
-`changed` is canonical or robots only. Title-only edits are `titleOnly`.
+`changed` is canonical or robots only. Title-only edits are `titleOnly`. `breaking` is true only for collisions (duplicate path or shared canonical after SDS identity) or removals. Array permutation is not breaking. `tableDigest` is order-independent (`digest.v2`).
 
 ## Seeded refusals
 
@@ -23,6 +24,7 @@ Record shape: `{ path, canonical, title, robots? }`. Wrapper `{ schema, routes: 
 | Path-less records | `pathless_record` | `fixtures/failures/pathless.json` |
 | Integer `termsVersion` | `integer_terms_version_refused` | `fixtures/failures/integer-terms-version.json` |
 | Public HTTPS catalog | `external_catalog_refused` | `https://samedaydesk.com/...` |
+| OpenAPI / framework catalog | `unsupported_catalog` | `fixtures/failures/unsupported-openapi.json`, `unsupported-framework-record.json` |
 
 ## Evidence classes
 
@@ -41,17 +43,16 @@ Postgres is not an input. This job has no catalog store.
 
 ## Digests
 
-`tableDigest` is `sha256:` + 64 lowercase hex of the normalized route list. Format matches I01 / Neo PR54 content-hash `termsVersion`. This module does not import `hashTermsVersion` or the F01 occupancy kernel.
+`tableDigest` is `sha256:` + 64 lowercase hex of the sorted route list (`samedaydesk.route-table.digest.v2`). Format matches I01 / Neo PR54 content-hash `termsVersion`. This module does not import `hashTermsVersion` or the F01 occupancy kernel.
 
 ## Later integration (unbound)
 
 | Binding | Owner |
 | --- | --- |
-| Live PUBLIC_SHELLS export | Inject a reader of `SPA_ROUTE_SHELLS`. Do not edit the generator. |
+| Live PUBLIC_SHELLS export | W5-M01. Inject a reader of `SPA_ROUTE_SHELLS`. Do not edit the generator. |
+| Paid useful-jobs wrapper | PR52 `aeef964fa188443078958d9d6d393afae1d542ee` does not invoke this engine. Do not claim that wrapper's behavior. |
 | `hashTermsVersion` | I01 / Neo PR54 `packs/funded-task-terms` |
 | listing-repair-packet | Inject if a caller wants diagnosis after this diff. Do not copy that kernel. |
-
-Root is the next integration owner.
 
 ## Non-claims
 
