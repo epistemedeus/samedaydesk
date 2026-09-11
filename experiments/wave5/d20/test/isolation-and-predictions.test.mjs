@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { cpSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { describe, it } from "node:test";
 import { MAILBOX_PIN_SHA, OUTPUT_JSON } from "../lib/pins.mjs";
 import { assertNotSale, mailboxPickupOutcome, OUTCOME } from "../lib/outcomes.mjs";
@@ -62,10 +62,10 @@ describe("W5-D20 isolation, destination, and current-pin predictions", { timeout
     assert.notEqual(pickA.requestId, "req-b");
   });
 
-  it("traversal requestIds are refused at the CLI", () => {
+  it("slash and backslash requestIds are invalid-request-id", () => {
     const mailboxDir = tmp("w5d20-mail-trav-");
     mkdirSync(mailboxDir, { recursive: true });
-    for (const requestId of ["../escape", "foo/bar", "..", "a\\b"]) {
+    for (const requestId of ["../escape", "foo/bar", "a\\b"]) {
       const pickup = pickupMailbox([
         "--mailbox",
         mailboxDir,
@@ -76,9 +76,51 @@ describe("W5-D20 isolation, destination, and current-pin predictions", { timeout
       ]);
       assert.equal(pickup.status, 2, requestId);
       const body = parseJsonStdout(pickup);
-      assert.equal(body.ok, false);
-      assert.equal(body.code, "invalid-request-id");
+      assert.equal(body.ok, false, requestId);
+      assert.equal(body.code, "invalid-request-id", requestId);
       assertNotSale(assert, body);
+    }
+  });
+
+  it("bare .. is still a Co02 pin path escape into the mailbox parent", () => {
+    const job = completeF08Job(tmp("w5d20-f08-dotdot-"));
+    const mailboxDir = tmp("w5d20-mail-dotdot-");
+    const seed = seedMailbox([
+      "--mailbox",
+      mailboxDir,
+      "--request-id",
+      "req-legit",
+      "--job-id",
+      "vendor-budget-impact",
+      "--from-out-dir",
+      job.outDir,
+    ]);
+    assert.equal(seed.status, 0, seed.stderr + seed.stdout);
+    const parent = dirname(mailboxDir);
+    const envelope = readEnvelope(mailboxDir, "req-legit");
+    envelope.requestId = "..";
+    mkdirSync(join(parent, "artifacts"), { recursive: true });
+    cpSync(join(mailboxDir, "req-legit", "artifacts"), join(parent, "artifacts"), { recursive: true });
+    writeFileSync(join(parent, "envelope.json"), `${JSON.stringify(envelope, null, 2)}\n`);
+
+    const pickup = pickupMailbox([
+      "--mailbox",
+      mailboxDir,
+      "--request-id",
+      "..",
+      "--out",
+      tmp("w5d20-dotdot-out-"),
+    ]);
+    const body = parseJsonStdout(pickup);
+    if (mailbox().sha === MAILBOX_PIN_SHA) {
+      assert.equal(pickup.status, 0, pickup.stderr + pickup.stdout);
+      assert.equal(body.ok, true);
+      assert.equal(body.requestId, "..");
+      assert.equal(mailboxPickupOutcome(body).class, OUTCOME.RETRIEVED);
+    } else {
+      assert.equal(pickup.status, 2);
+      assert.equal(body.ok, false);
+      assert.notEqual(body.status, "retrieved");
     }
   });
 

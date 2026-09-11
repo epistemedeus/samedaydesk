@@ -1,4 +1,4 @@
-import { appendFileSync, existsSync, mkdtempSync, rmSync } from "node:fs";
+import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -26,6 +26,8 @@ export function startDisposableCluster() {
   const dir = mkdtempSync(join(tmpdir(), "w5-d20-pg-"));
   const pgdata = join(dir, "pgdata");
   const logFile = join(dir, "pg.log");
+  const socketDir = join(dir, "socket");
+  mkdirSync(socketDir, { recursive: true });
   const port = 55100 + Math.floor(Math.random() * 4000);
   const init = spawnSync(
     bins.initdb,
@@ -37,13 +39,14 @@ export function startDisposableCluster() {
   }
   appendFileSync(
     join(pgdata, "postgresql.conf"),
-    `\nport = ${port}\nlisten_addresses = '127.0.0.1'\n`,
+    `\nport = ${port}\nlisten_addresses = '127.0.0.1'\nunix_socket_directories = '${socketDir}'\n`,
   );
   const start = spawnSync(bins.pg_ctl, ["-D", pgdata, "-l", logFile, "start", "-w"], {
     encoding: "utf8",
   });
   if (start.status !== 0) {
-    throw new Error(`pg_ctl start failed: ${start.stderr || start.stdout}`);
+    const log = existsSync(logFile) ? readFileSync(logFile, "utf8") : "";
+    throw new Error(`pg_ctl start failed: ${start.stderr || start.stdout}\n${log}`);
   }
   return {
     dir,

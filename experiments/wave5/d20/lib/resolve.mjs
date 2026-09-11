@@ -140,9 +140,12 @@ export function resolveF08() {
     return { root: envRoot, sha: revParse(envRoot), source: "env", cli: join(envRoot, F08_CLI_REL) };
   }
   if (existsSync(join(SDS_ROOT, F08_CLI_REL))) {
+    const sha =
+      git(["log", "-1", "--format=%H", "--", "server/paid-useful-jobs"]).stdout.trim() ||
+      revParse(SDS_ROOT);
     return {
       root: SDS_ROOT,
-      sha: revParse(SDS_ROOT),
+      sha,
       source: "in-repo",
       cli: join(SDS_ROOT, F08_CLI_REL),
     };
