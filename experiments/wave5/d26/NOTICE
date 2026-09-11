@@ -1,0 +1,24 @@
+W5-D26 price-floor notices
+==========================
+
+This kit measures the published SameDayDesk paid useful-job wrappers and
+applies documented payment-fee schedules. It does not relicense those works
+and does not copy W4-commerce-16 buyer-value-ledger or any earned-work kernel.
+
+- server/paid-useful-jobs (SDS PR52 aeef964fa188443078958d9d6d393afae1d542ee):
+  consumed as the current implementation. MIT as published in that tree.
+- useful-jobs 1.0.0 archive: engines stay in the wrapper extract path.
+- Coinbase CDP Facilitator pricing is quoted from
+  https://docs.cdp.coinbase.com/x402/core-concepts/facilitator (retrieved
+  2026-09-11). Not a CDP product.
+- Stripe standard US domestic card pricing is quoted from
+  https://stripe.com/pricing (retrieved 2026-09-11). Not a Stripe product.
+- AWS T2/T3 Unlimited Linux CPU-credit rate is quoted from
+  https://aws.amazon.com/ec2/pricing/on-demand/ (retrieved 2026-09-11).
+  That rate is a cost model, not this machine's invoice.
+
+No purchase, live settlement, catalog publication, or organic-demand
+authority is granted here. Owner-qa runs are not customers. Banked 8.105 USDC
+is not this job's revenue or cost cover. Fixture wrapper 0.02 USDC is not a
+live price. Live extract 0.005 USDC and seller-integrity-audit 0.01 USDC are
+not rewritten.
