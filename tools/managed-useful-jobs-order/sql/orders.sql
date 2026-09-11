@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS managed_useful_jobs_orders (
   terms_hash TEXT NOT NULL CHECK (char_length(terms_hash) = 64),
   status TEXT NOT NULL CHECK (status IN ('reserved', 'complete')),
   holder_pid INTEGER,
+  holder_token TEXT,
   execution_count INTEGER NOT NULL DEFAULT 0,
   engine_id TEXT NOT NULL,
   archive_sha256 TEXT NOT NULL CHECK (char_length(archive_sha256) = 64),

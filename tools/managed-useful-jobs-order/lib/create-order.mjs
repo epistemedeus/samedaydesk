@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { existsSync, mkdirSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -122,8 +123,9 @@ async function waitWhileHeld(store, orderId) {
 }
 
 async function acquireReservation(store, record) {
+  const holderToken = randomUUID();
   for (;;) {
-    const outcome = await store.reserve(record);
+    const outcome = await store.reserve({ ...record, holderToken, holderPid: process.pid });
     if (outcome.kind === "held") {
       await waitWhileHeld(store, record.orderId);
       continue;

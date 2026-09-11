@@ -3,7 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import pg from "pg";
 import { OrderRefuse } from "./errors.mjs";
-import { pidAlive } from "./pid.mjs";
+import { liveOtherHolder } from "./pid.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const SQL = readFileSync(join(here, "../sql/orders.sql"), "utf8");
@@ -22,6 +22,7 @@ function mapRow(row) {
     termsHash: row.terms_hash,
     status: row.status,
     holderPid: row.holder_pid,
+    holderToken: row.holder_token,
     executionCount: row.execution_count,
     engineId: row.engine_id,
     archiveSha256: row.archive_sha256,
@@ -51,7 +52,7 @@ export async function createPostgresStore({
     schema,
     async get(orderId) {
       const { rows } = await client.query(
-        `SELECT order_id, terms_hash, status, holder_pid, execution_count, engine_id,
+        `SELECT order_id, terms_hash, status, holder_pid, holder_token, execution_count, engine_id,
                 archive_sha256, request_json, result_json, created_at
          FROM managed_useful_jobs_orders WHERE order_id = $1`,
         [orderId],
@@ -62,7 +63,7 @@ export async function createPostgresStore({
       await client.query("BEGIN");
       try {
         const { rows } = await client.query(
-          `SELECT order_id, terms_hash, status, holder_pid, execution_count, engine_id,
+          `SELECT order_id, terms_hash, status, holder_pid, holder_token, execution_count, engine_id,
                   archive_sha256, request_json, result_json, created_at
            FROM managed_useful_jobs_orders WHERE order_id = $1 FOR UPDATE`,
           [record.orderId],
@@ -71,14 +72,15 @@ export async function createPostgresStore({
           try {
             const inserted = await client.query(
               `INSERT INTO managed_useful_jobs_orders
-                (order_id, terms_hash, status, holder_pid, execution_count, engine_id, archive_sha256, request_json)
-               VALUES ($1, $2, 'reserved', $3, 0, $4, $5, $6::jsonb)
-               RETURNING order_id, terms_hash, status, holder_pid, execution_count, engine_id,
+                (order_id, terms_hash, status, holder_pid, holder_token, execution_count, engine_id, archive_sha256, request_json)
+               VALUES ($1, $2, 'reserved', $3, $4, 0, $5, $6, $7::jsonb)
+               RETURNING order_id, terms_hash, status, holder_pid, holder_token, execution_count, engine_id,
                          archive_sha256, request_json, result_json, created_at`,
               [
                 record.orderId,
                 record.termsHash,
                 process.pid,
+                record.holderToken || null,
                 record.engineId,
                 record.archiveSha256,
                 JSON.stringify(record.request),
@@ -103,17 +105,17 @@ export async function createPostgresStore({
           await client.query("COMMIT");
           return { kind: "replay", record: existing };
         }
-        if (pidAlive(existing.holderPid) && existing.holderPid !== process.pid) {
+        if (liveOtherHolder(existing, record)) {
           await client.query("COMMIT");
           return { kind: "held", record: existing };
         }
         const adopted = await client.query(
           `UPDATE managed_useful_jobs_orders
-           SET holder_pid = $2, status = 'reserved', updated_at = NOW()
+           SET holder_pid = $2, holder_token = $3, status = 'reserved', updated_at = NOW()
            WHERE order_id = $1
-           RETURNING order_id, terms_hash, status, holder_pid, execution_count, engine_id,
+           RETURNING order_id, terms_hash, status, holder_pid, holder_token, execution_count, engine_id,
                      archive_sha256, request_json, result_json, created_at`,
-          [record.orderId, process.pid],
+          [record.orderId, process.pid, record.holderToken || null],
         );
         await client.query("COMMIT");
         return { kind: "adopt", record: mapRow(adopted.rows[0]) };
@@ -151,7 +153,7 @@ export async function createPostgresStore({
         `UPDATE managed_useful_jobs_orders
          SET status = 'complete', result_json = $2::jsonb, holder_pid = $3, updated_at = NOW()
          WHERE order_id = $1
-         RETURNING order_id, terms_hash, status, holder_pid, execution_count, engine_id,
+         RETURNING order_id, terms_hash, status, holder_pid, holder_token, execution_count, engine_id,
                    archive_sha256, request_json, result_json, created_at`,
         [orderId, JSON.stringify(result), process.pid],
       );

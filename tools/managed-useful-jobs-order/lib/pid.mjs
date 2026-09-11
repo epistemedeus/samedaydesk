@@ -9,6 +9,12 @@ export function pidAlive(pid) {
   }
 }
 
+export function liveOtherHolder(existing, incoming) {
+  if (!existing || existing.status === "complete") return false;
+  if (!existing.holderToken || existing.holderToken === incoming?.holderToken) return false;
+  return pidAlive(existing.holderPid);
+}
+
 export function sleep(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);

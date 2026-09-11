@@ -12,7 +12,7 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 import { OrderRefuse } from "./errors.mjs";
-import { pidAlive, sleepSync } from "./pid.mjs";
+import { liveOtherHolder, pidAlive, sleepSync } from "./pid.mjs";
 
 function fileFor(dir, orderId) {
   return join(dir, `${orderId}.json`);
@@ -130,7 +130,7 @@ export function createFileStore(dir) {
         if (existing.status === "complete" && existing.result) {
           return { kind: "replay", record: existing };
         }
-        if (pidAlive(existing.holderPid) && existing.holderPid !== process.pid) {
+        if (liveOtherHolder(existing, record)) {
           return { kind: "held", record: existing };
         }
         const adopted = {
@@ -138,6 +138,7 @@ export function createFileStore(dir) {
           ...record,
           status: "reserved",
           holderPid: process.pid,
+          holderToken: record.holderToken,
           result: null,
         };
         writeAtomic(path, adopted);
