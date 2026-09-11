@@ -1,0 +1,9 @@
+{
+  "schema": "samedaydesk.wave5.d28.live-return-evidence.v1",
+  "label": "independent",
+  "invented": true,
+  "jobId": "vendor-budget-impact",
+  "receiptSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "sold": false,
+  "note": "Fixture that must be rejected. Not an observed customer."
+}

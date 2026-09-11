@@ -1,0 +1,3 @@
+SAMPLE - not a customer, live API, or purchase authority.
+Caller-authored fixture for api-upgrade-brief (inventory domain).
+MIT-style imaginary OpenAPI for offline packaging demos only.

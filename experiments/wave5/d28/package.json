@@ -1,0 +1,20 @@
+{
+  "name": "@samedaydesk/wave5-d28-journey-release",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Journey release packet, readback, and first return-job measurement over the SDS52 paid useful-jobs CLI. Local non-settling owner-QA kit. Not a live deploy.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "w5-d28": "./bin/cli.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "pack": "node bin/cli.mjs pack",
+    "readback": "node bin/cli.mjs readback",
+    "measure-return": "node bin/cli.mjs measure-return",
+    "status": "node bin/cli.mjs status"
+  }
+}

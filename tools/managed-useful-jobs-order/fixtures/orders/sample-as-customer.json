@@ -1,0 +1,35 @@
+{
+  "engineId": "api-upgrade-brief",
+  "orderId": "ord-sample-as-customer",
+  "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+  "archiveBytes": 2522418,
+  "enginePin": {
+    "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+    "bytes": 2522418,
+    "version": "1.0.0"
+  },
+  "example": false,
+  "sold": false,
+  "purchaseAuthority": false,
+  "fundingState": "unfunded",
+  "inputs": [
+    {
+      "flag": "--before",
+      "path": "../labeled-sample/openapi-caller-alpha/before.yaml",
+      "sha256": "169c075464c58fe3dd9de84e900c80c44d6976d10cf0648cacd83d71ea7d47d8",
+      "bytes": 2244
+    },
+    {
+      "flag": "--after",
+      "path": "../labeled-sample/openapi-caller-alpha/after.yaml",
+      "sha256": "a6d74ad015f0b72065db22e21ece757ac1d22e8a9a6ca73b1696a67de7270954",
+      "bytes": 2794
+    },
+    {
+      "flag": "--used",
+      "path": "../labeled-sample/openapi-caller-alpha/used.json",
+      "sha256": "6a26cfa2e9140e9638c734605c46a06671512424e1f5be733d38281d573a4bb5",
+      "bytes": 392
+    }
+  ]
+}

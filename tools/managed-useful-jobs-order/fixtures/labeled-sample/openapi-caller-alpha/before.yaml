@@ -1,0 +1,94 @@
+openapi: 3.0.3
+info:
+  title: SAMPLE Inventory API (caller-alpha before)
+  description: Imaginary SAMPLE OpenAPI. Not a customer system.
+  version: 1.0.0
+  license:
+    name: MIT
+servers:
+  - url: https://sample.example/inventory
+paths:
+  /inventory:
+    get:
+      operationId: listInventory
+      summary: List inventory rows
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InventoryItem"
+    post:
+      operationId: createInventory
+      summary: Create inventory row
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InventoryCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryItem"
+  /inventory/{sku}:
+    get:
+      operationId: getInventory
+      summary: Get one inventory row
+      parameters:
+        - $ref: "#/components/parameters/Sku"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryItem"
+        "404":
+          description: Not found
+    delete:
+      operationId: deleteInventory
+      summary: Delete inventory row
+      parameters:
+        - $ref: "#/components/parameters/Sku"
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+components:
+  parameters:
+    Sku:
+      name: sku
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    InventoryCreate:
+      type: object
+      required: [sku, quantity]
+      properties:
+        sku:
+          type: string
+        quantity:
+          type: integer
+          minimum: 0
+    InventoryItem:
+      type: object
+      required: [sku, quantity]
+      properties:
+        sku:
+          type: string
+        quantity:
+          type: integer
+          minimum: 0
+        updatedAt:
+          type: string
+          format: date-time

@@ -1,0 +1,9 @@
+{
+  "engineId": "api-upgrade-brief",
+  "orderId": "ord-extract",
+  "example": false,
+  "sold": false,
+  "url": "https://agents.samedaydesk.com/extract?url=https://example.com",
+  "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+  "archiveBytes": 2522418
+}

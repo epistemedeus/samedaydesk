@@ -1,0 +1,25 @@
+{
+  "operations": [
+    {
+      "method": "get",
+      "path": "/museum-hours"
+    },
+    {
+      "method": "get",
+      "path": "/special-events/{eventId}"
+    },
+    {
+      "method": "patch",
+      "path": "/special-events/{eventId}"
+    },
+    {
+      "method": "delete",
+      "path": "/special-events/{eventId}"
+    },
+    {
+      "method": "get",
+      "path": "/tickets/{ticketId}/qr"
+    }
+  ],
+  "pinNote": "selected used operations for upgrade-impact recipe"
+}

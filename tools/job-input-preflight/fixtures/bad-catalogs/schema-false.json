@@ -1,0 +1,10 @@
+{
+  "schema": false,
+  "jobs": [
+    {
+      "id": "vendor-budget-impact",
+      "requiredInputs": ["--before", "--after"],
+      "outputs": ["budget-impact.json"]
+    }
+  ]
+}

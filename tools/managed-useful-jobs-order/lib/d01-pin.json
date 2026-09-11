@@ -1,0 +1,9 @@
+{
+  "integrationOwner": "W5-D01",
+  "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+  "testedD01Ref": "codex/w5-d01-20260911",
+  "testedD01Sha": "6bed72dd22a396134aa5c957933b42c3a5746698",
+  "testedD01Pr": 74,
+  "packetPinPr52": "aeef964fa188443078958d9d6d393afae1d542ee",
+  "note": "Consumer of D01 createExecutor/runPaidOffer. Not a second kernel. Unlike order-terms and paid-useful-jobs receipt hashes are not forced equal."
+}

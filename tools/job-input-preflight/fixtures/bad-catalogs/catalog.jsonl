@@ -1,0 +1,2 @@
+{"schema":"useful-jobs.catalog.v1","jobs":[{"id":"vendor-budget-impact","requiredInputs":["--before","--after"]}]}
+{"schema":"useful-jobs.catalog.v1","jobs":[{"id":"feed-agenda","requiredInputs":["--before","--after"]}]}
