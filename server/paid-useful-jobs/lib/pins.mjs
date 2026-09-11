@@ -1,0 +1,54 @@
+/**
+ * Pins for the in-repo useful-jobs engines (PR51 archive) and live prices
+ * this wrapper must not change. Fixture wrapper prices are labelled non-live.
+ */
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { readFileSync } from "node:fs";
+
+const here = dirname(fileURLToPath(import.meta.url));
+export const OWNED_DIR = join(here, "..");
+export const REPO_ROOT = join(here, "../../..");
+
+const kit = JSON.parse(
+  readFileSync(join(REPO_ROOT, "client/src/data/usefulJobsKit.json"), "utf8"),
+);
+
+export const USEFUL_JOBS_PACKAGE = kit.packageId;
+export const USEFUL_JOBS_VERSION = kit.version;
+export const USEFUL_JOBS_ROOT_NAME = kit.rootName;
+export const USEFUL_JOBS_CLI = kit.cli;
+export const USEFUL_JOBS_ARCHIVE_SHA256 = kit.sha256;
+export const USEFUL_JOBS_ARCHIVE_BYTES = kit.bytes;
+export const USEFUL_JOBS_PURCHASE_AUTHORITY = kit.purchaseAuthority;
+export const USEFUL_JOBS_ARCHIVE_REL = kit.archive.replace(/^\//, "");
+export const USEFUL_JOBS_ARCHIVE_PATH = join(REPO_ROOT, "client/public", USEFUL_JOBS_ARCHIVE_REL);
+
+/** Existing live offers. Do not modify these files or values from this feature. */
+export const LIVE_EXTRACT_PRICE_USDC = "0.005";
+export const LIVE_SELLER_INTEGRITY_AUDIT_PRICE_USDC = "0.01";
+export const LIVE_PAY_TO = "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee";
+export const LIVE_ASSET = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+export const LIVE_NETWORK = "eip155:8453";
+
+/** Merchant continuity reference (read-only; SDS has no ResourceServer). */
+export const MERCHANT_CONTINUITY_COMMIT = "a143898dd1ec35c097ca7eb0b472f30dad1ee319";
+export const MERCHANT_CONTINUITY_MODULE = "indexing-payload-continuity.mjs";
+
+/**
+ * Canonical public origin for declared indexing hints.
+ * These paths are not published to the live catalog.
+ */
+export const DECLARED_PUBLIC_ORIGIN = "https://samedaydesk.com";
+export const DECLARED_PATH_PREFIX = "/paid-useful-jobs";
+
+/** Per-input size cap (matches SDS express.json 1mb). */
+export const MAX_INPUT_BYTES = 1_048_576;
+
+/**
+ * Non-live labelled fixture prices. Not a catalog publication.
+ * Deliberately not 0.005 / 0.01 so they cannot be confused with live extract / SIA.
+ */
+export const FIXTURE_PRICE_USDC = "0.02";
+export const FIXTURE_PRICE_ATOMIC = "20000";
+export const FIXTURE_PAY_TO = "0x0000000000000000000000000000000000000F08";
