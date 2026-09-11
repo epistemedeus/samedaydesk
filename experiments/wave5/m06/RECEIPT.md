@@ -2,6 +2,8 @@
 
 Repo: `epistemedeus/samedaydesk`  
 Branch: `cursor/w5-m06-independent-schema-compatibility-corpus-from-specified-schema-semantics-9ed7`  
+Exact head: `6f23b6f330a1891c939429384fba342f7efc4a3b`  
+Draft PR: https://github.com/epistemedeus/samedaydesk/pull/90  
 Starting ref: PR52 `aeef964fa188443078958d9d6d393afae1d542ee`  
 Owned path: `experiments/wave5/m06/`  
 Engine tested: Co10 `94c7bfdfeaa99f5e70f341504df3051cc7717f91` (PR 59) via git worktree, not vendored  
