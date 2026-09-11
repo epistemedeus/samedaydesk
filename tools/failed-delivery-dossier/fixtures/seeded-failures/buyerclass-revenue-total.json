@@ -1,0 +1,19 @@
+{
+  "mixBuyerClassIntoRevenue": true,
+  "revenueTotal": {
+    "usdc": "8.105",
+    "role": "revenue",
+    "parts": [
+      {
+        "buyerClass": "independent",
+        "usdc": "0.005",
+        "operationId": "what-agents-buy-independent-benchmark-2026-08-30"
+      },
+      {
+        "buyerClass": "unknown",
+        "usdc": "8.100",
+        "operationId": "agent402-external-validation-purchase-2026-08-29"
+      }
+    ]
+  }
+}
