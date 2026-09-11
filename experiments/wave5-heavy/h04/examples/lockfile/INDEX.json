@@ -1,0 +1,74 @@
+{
+  "family": "lockfile",
+  "engine": "w4-lockfile-pin-delta",
+  "engineSha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+  "engineWorktree": "/tmp/w5-h04/ro-w4-lockfile",
+  "cli": "node tools/lockfile-pin-delta/bin/lockfile-delta.mjs --before <lock> --after <lock> --out-dir <dir>",
+  "notDuplicated": [
+    "tools/lockfile-pin-delta/fixtures/*",
+    "experiments/wave5/m07/"
+  ],
+  "examples": [
+    {
+      "id": "h04-lock-01",
+      "kind": "change",
+      "expectedStatus": "actionable",
+      "path": "h04-lock-01/",
+      "changedTriples": [
+        "concurrently@10.0.3 -> concurrently@10.0.5",
+        "qs@6.15.2 -> qs@6.16.0",
+        "shell-quote@1.8.4 -> shell-quote@1.9.0"
+      ],
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "beforeSha": "ff381d2b46e9beec1475212df2eb610a7b01229b",
+        "afterSha": "62a88c86461e7b8d0e9a7cf1db57153d7e8fd6cf",
+        "path": "package-lock.json"
+      },
+      "engineRun": {
+        "status": "actionable",
+        "counts": { "changed": 3, "unchanged": 99, "added": 0, "removed": 0 },
+        "outDir": "/tmp/w5-h04/h04-child-lock-runs/h04-lock-01"
+      }
+    },
+    {
+      "id": "h04-lock-02",
+      "kind": "change",
+      "expectedStatus": "actionable",
+      "path": "h04-lock-02/",
+      "changedTriples": [
+        "ms@2.1.3 integrity sha1-V0yBOM4dK1hh8LRFedut1gxmFbI= -> sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA=="
+      ],
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "afterSha": "62a88c86461e7b8d0e9a7cf1db57153d7e8fd6cf",
+        "path": "package-lock.json",
+        "publicSha1": "PowerShell/vscode-powershell@75097e880339e45c09f5f6cca4dbdafe552b679f",
+        "registry": "https://registry.npmjs.org/ms/2.1.3"
+      },
+      "engineRun": {
+        "status": "actionable",
+        "counts": { "changed": 1, "unchanged": 2, "added": 0, "removed": 0 },
+        "outDir": "/tmp/w5-h04/h04-child-lock-runs/h04-lock-02"
+      }
+    },
+    {
+      "id": "h04-lock-03",
+      "kind": "no-change-control",
+      "expectedStatus": "informational",
+      "path": "h04-lock-03/",
+      "changedTriples": [],
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "beforeSha": "218b2fa74d63951eeeda4cf0a67c420835a58b01",
+        "afterSha": "218b2fa74d63951eeeda4cf0a67c420835a58b01",
+        "path": "package-lock.json"
+      },
+      "engineRun": {
+        "status": "informational",
+        "counts": { "changed": 0, "unchanged": 159, "added": 0, "removed": 0 },
+        "outDir": "/tmp/w5-h04/h04-child-lock-runs/h04-lock-03"
+      }
+    }
+  ]
+}

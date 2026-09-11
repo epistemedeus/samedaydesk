@@ -1,0 +1,13 @@
+{
+  "sourceTmp": "/tmp/w5-h04/h04-child-schema-runs/h04-schema-01",
+  "engineSha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+  "files": [
+    "drift-brief.json",
+    "drift-brief.md"
+  ],
+  "copiedAt": "2026-09-11T23:03:23.380Z",
+  "engineId": "w4-json-schema-webhook-drift",
+  "worktree": "/tmp/w5-h04/ro-w4-schema",
+  "sampleNotCustomerJob": false,
+  "note": "Caller-owned fixtures; not W4 SAMPLE / --example."
+}

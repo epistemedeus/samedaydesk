@@ -1,0 +1,41 @@
+{
+  "result": "match",
+  "reason": null,
+  "facts": [
+    {
+      "key": "status",
+      "expected": "changed",
+      "actual": "changed",
+      "result": "match"
+    },
+    {
+      "key": "verdict",
+      "expected": "changed",
+      "actual": "changed",
+      "result": "match"
+    },
+    {
+      "key": "highlight:changed",
+      "expected": "changed",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "highlight:JSON-LD / Schema Validator",
+      "expected": "JSON-LD / Schema Validator",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "highlight:Free JSON-LD Validator & Schema Checker",
+      "expected": "Free JSON-LD Validator & Schema Checker",
+      "actual": true,
+      "result": "match"
+    }
+  ],
+  "expectedPresent": true,
+  "artifactFiles": [
+    "page-change.json",
+    "page-change.md"
+  ]
+}

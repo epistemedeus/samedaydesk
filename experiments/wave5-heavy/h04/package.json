@@ -1,0 +1,12 @@
+{
+  "name": "@samedaydesk/w5-h04-useful-job-benchmark",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "bin": { "h04-benchmark": "./bin/h04-benchmark.mjs" },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "benchmark": "node bin/h04-benchmark.mjs run",
+    "smoke": "node bin/h04-benchmark.mjs smoke"
+  }
+}

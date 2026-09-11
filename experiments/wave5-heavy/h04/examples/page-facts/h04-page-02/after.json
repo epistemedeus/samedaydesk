@@ -1,0 +1,85 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Caller-owned held extract-batch wrapper over git-show HTML facts. Not a live fetch, quote-as-success, or payment."
+  },
+  "jobId": "33ce333a9a0c2ee1eb86ce89d8bfcc16a6951f34f00c9492e25d4c5550a7ce61",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "https://samedaydesk.com/resources.html",
+      "status": "success",
+      "data": {
+        "title": "Guides, Reports & Free Tools for AI Search | SameDayDesk",
+        "description": "Everything SameDayDesk publishes to help you ship safer AI-search, automation, and agent work: 15 plain-English guides, 10 original research reports, and a full set of free tools. No signup.",
+        "headings": {
+          "h1": [
+            "Guides, reports & free tools for AI search"
+          ],
+          "h2": [
+            "Free tools",
+            "Agent interfaces",
+            "Open-source documentation lab",
+            "Public-data product lab",
+            "Guides (15)",
+            "Research reports (10)",
+            "Want it done for you?"
+          ]
+        },
+        "text": "Everything we publish to help you get read, classified, and cited by AI search engines: ChatGPT, Perplexity, Claude, and Google AI Overviews. No signup, no catch. SameDayDesk is the operating merchant. EIN.LLC is a separate formation product. Neomorphic.io is the public experiment lab.",
+        "generatedAt": "2026-09-02T06:23:14.000Z",
+        "assetHash": "d673b6e"
+      },
+      "notes": [
+        "held git show 542d174:client/public/resources.html",
+        "footer-only HTML delta is unused-field noise"
+      ],
+      "error": null,
+      "finalUrl": "https://samedaydesk.com/resources.html",
+      "httpStatus": 200,
+      "provenance": {
+        "transport": "held-git-show",
+        "requestedAt": "2026-09-02T06:23:14.000Z",
+        "completedAt": "2026-09-02T06:23:15.400Z",
+        "fetchedAt": "2026-09-02T06:23:14.400Z",
+        "finalUrl": "https://samedaydesk.com/resources.html",
+        "httpStatus": 200,
+        "note": "Observation timestamps record when this wrapper was produced from git show. They are not page-content freshness."
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 1,
+    "bytes": 5288,
+    "wallMs": 15,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 5288,
+    "requests": 1,
+    "wallMs": 15,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "Held git-show extraction; not socket billing."
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

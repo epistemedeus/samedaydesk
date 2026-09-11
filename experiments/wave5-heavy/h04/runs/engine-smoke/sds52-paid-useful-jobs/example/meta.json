@@ -1,0 +1,37 @@
+{
+  "engineId": "sds52-paid-useful-jobs",
+  "phase": "example",
+  "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+  "executedSha": "aeef964fa188443078958d9d6d393afae1d542ee",
+  "worktree": "/tmp/w5-h04/ro-sds52",
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-sds52/server/paid-useful-jobs/bin/cli.mjs",
+    "run",
+    "vendor-budget-impact",
+    "--example",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/engine-smoke/sds52-paid-useful-jobs/example/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-sds52",
+  "exitCode": 0,
+  "signal": null,
+  "timedOut": false,
+  "spawnError": null,
+  "durationMs": 230,
+  "ok": true,
+  "sample": true,
+  "sampleNotCustomerJob": true,
+  "note": "SAMPLE/--example is not a customer job",
+  "outDir": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/engine-smoke/sds52-paid-useful-jobs/example/out",
+  "outDirFiles": [
+    "budget-impact.json",
+    "budget-impact.md",
+    "receipt.json"
+  ],
+  "stdoutPreview": "{ \"ok\": true, \"jobId\": \"vendor-budget-impact\", \"title\": \"Vendor Budget Impact\", \"fundingState\": \"unfunded\", \"sold\": false, \"sample\": true, \"sampleReasons\": [ \"example-flag\" ], \"purchaseAuthority\": fal",
+  "stderrPreview": "",
+  "capturedAt": "2026-09-11T22:58:23.330Z",
+  "node": "v22.22.2",
+  "harnessCwd": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04"
+}

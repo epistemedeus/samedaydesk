@@ -1,0 +1,28 @@
+{
+  "id": "h04-schema-02",
+  "family": "schema-webhook",
+  "title": "GitHub create webhook adds unused custom_properties",
+  "kind": "unused-additive-control",
+  "engines": ["w4-json-schema-webhook-drift"],
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json",
+    "used": "./used.json"
+  },
+  "changedFact": "GitHub create webhook examples gained repository.custom_properties, but used paths /ref, /ref_type, and /pusher_type are identical so consumers of those fields must not be told to break.",
+  "expectedStatus": "unchanged",
+  "expectedHighlights": [
+    "/ref",
+    "/ref_type",
+    "/pusher_type",
+    "ignoredUnused",
+    "custom_properties"
+  ],
+  "source": {
+    "repo": "octokit/webhooks",
+    "beforeSha": "cdd43ea09fca0dc76c6af948b236cb12a7804e2c",
+    "afterSha": "bc5f6fd16b0df0e3058512e7d44dcba9ba3e0bb0",
+    "path": "payload-examples/api.github.com/create/payload.json",
+    "license": "MIT bounded excerpt"
+  }
+}

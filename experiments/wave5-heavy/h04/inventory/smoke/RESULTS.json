@@ -1,0 +1,18 @@
+{
+  "at": "2026-09-11T22:54:21Z",
+  "node": "v22.22.2",
+  "outRoot": "/tmp/w5-h04/h04-engine-smoke",
+  "note": "--example/SAMPLE is not a customer job. page-change --example is a designed refuse.",
+  "runs": [
+    {"id": "api-upgrade-brief", "sha": "aeef964fa188443078958d9d6d393afae1d542ee", "help": null, "example": {"ran": true, "exit": 0, "ok": true, "sample": true, "sold": false}},
+    {"id": "vendor-budget-impact", "sha": "aeef964fa188443078958d9d6d393afae1d542ee", "help": null, "example": {"ran": true, "exit": 0, "ok": true, "sample": true, "sold": false}},
+    {"id": "feed-agenda", "sha": "aeef964fa188443078958d9d6d393afae1d542ee", "help": null, "example": {"ran": true, "exit": 0, "ok": true, "sample": true, "sold": false}},
+    {"id": "evidence-ci-annotation", "sha": "aeef964fa188443078958d9d6d393afae1d542ee", "help": null, "example": {"ran": true, "exit": 0, "ok": true, "sample": true, "sold": false}},
+    {"id": "listing-repair-packet", "sha": "aeef964fa188443078958d9d6d393afae1d542ee", "help": null, "example": {"ran": true, "exit": 0, "ok": true, "sample": true, "sold": false}},
+    {"id": "repeat-job-record", "sha": "aeef964fa188443078958d9d6d393afae1d542ee", "help": null, "example": {"ran": true, "exit": 0, "ok": true, "sample": true, "sold": false}},
+    {"id": "json-schema-webhook-drift", "sha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91", "help": {"exit": 0}, "example": {"ran": true, "exit": 0, "ok": true, "sample": true, "customerBrief": false}},
+    {"id": "lockfile-pin-delta", "sha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2", "help": {"exit": 0}, "example": {"ran": true, "exit": 0, "ok": true, "provenance": "fixture", "purchaseAuthority": false}},
+    {"id": "route-table-diff", "sha": "7387eb677abd442dfab9081cb0ad95451fd2a762", "help": {"exit": 0}, "example": {"ran": true, "exit": 0, "ok": true, "sample": true, "publishedRouteTable": false, "stderr": "node NO_COLOR/FORCE_COLOR warning only"}},
+    {"id": "page-change-offline-job", "sha": "91b57334818ecd7940cb854e9864f3b1749d1d1d", "help": {"exit": 0}, "example": {"ran": true, "exit": 2, "ok": false, "code": "sample_as_delivered_watch"}, "journeyAnalog": {"ran": true, "exit": 0, "ok": true, "verdict": "changed"}}
+  ]
+}

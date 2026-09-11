@@ -1,0 +1,42 @@
+{
+  "engineId": "sds52-paid-useful-jobs",
+  "phase": "run",
+  "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+  "executedSha": "aeef964fa188443078958d9d6d393afae1d542ee",
+  "worktree": "/tmp/w5-h04/ro-sds52",
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-sds52/server/paid-useful-jobs/bin/cli.mjs",
+    "run",
+    "api-upgrade-brief",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/api-routes/h04-route-02/before.yaml",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/api-routes/h04-route-02/after.yaml",
+    "--used",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/api-routes/h04-route-02/used.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/h04-route-02/sds52-paid-useful-jobs/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-sds52",
+  "exitCode": 0,
+  "signal": null,
+  "timedOut": false,
+  "spawnError": null,
+  "durationMs": 245,
+  "ok": true,
+  "sample": false,
+  "sampleNotCustomerJob": false,
+  "note": "kind=change",
+  "outDir": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/h04-route-02/sds52-paid-useful-jobs/out",
+  "outDirFiles": [
+    "receipt.json",
+    "upgrade-brief.json",
+    "upgrade-brief.md"
+  ],
+  "stdoutPreview": "{ \"ok\": true, \"jobId\": \"api-upgrade-brief\", \"title\": \"API Upgrade Brief\", \"fundingState\": \"unfunded\", \"sold\": false, \"sample\": false, \"sampleReasons\": [], \"purchaseAuthority\": false, \"outputs\": [ { \"n",
+  "stderrPreview": "",
+  "capturedAt": "2026-09-11T23:03:00.422Z",
+  "node": "v22.22.2",
+  "harnessCwd": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04"
+}

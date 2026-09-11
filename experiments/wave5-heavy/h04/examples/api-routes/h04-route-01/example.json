@@ -1,0 +1,24 @@
+{
+  "id": "h04-route-01",
+  "family": "api-routes",
+  "title": "Public useful-jobs SPA path added",
+  "kind": "change",
+  "engines": ["w4-route-table-diff"],
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "changedFact": "S260 appends PUBLIC_SHELLS path /for-agents/useful-jobs with canonical https://samedaydesk.com/for-agents/useful-jobs; no other path, canonical, or robots field changes.",
+  "expectedStatus": "ok",
+  "expectedHighlights": [
+    "/for-agents/useful-jobs",
+    "https://samedaydesk.com/for-agents/useful-jobs",
+    "Added: 1"
+  ],
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "beforeSha": "9c50ecbae3110768309c99a1bbaaa92991fc8e4d",
+    "afterSha": "abeb54eca9a71abe117898e8fe7de7e55e9d917f",
+    "path": "server/lib/spa-route-shells.js"
+  }
+}

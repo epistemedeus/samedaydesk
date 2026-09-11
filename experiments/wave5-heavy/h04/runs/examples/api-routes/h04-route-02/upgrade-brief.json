@@ -1,0 +1,46 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "api-upgrade-brief",
+  "status": "actionable",
+  "summary": "Used-ops delta: +3/~0/-0",
+  "actions": [
+    {
+      "priority": "medium",
+      "kind": "consider-adoption",
+      "op": "GET /api/observatory/sources",
+      "note": "New used-pin operation in after snapshot"
+    },
+    {
+      "priority": "medium",
+      "kind": "consider-adoption",
+      "op": "GET /api/observatory/snapshot",
+      "note": "New used-pin operation in after snapshot"
+    },
+    {
+      "priority": "medium",
+      "kind": "consider-adoption",
+      "op": "GET /api/observatory/sources/{sourceId}",
+      "note": "New used-pin operation in after snapshot"
+    }
+  ],
+  "gaps": [],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "before": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/api-routes/h04-route-02/before.yaml",
+    "after": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/api-routes/h04-route-02/after.yaml",
+    "used": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/api-routes/h04-route-02/used.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "family": "openapi-used-ops",
+    "ok": true,
+    "differenceInDeliveredOutput": "Reports added/removed/changed fields for buyer-used operations only. Does not call the API, apply patches, or assert production breakage."
+  },
+  "generatedAt": "2026-09-11T22:58:27.160Z",
+  "digest": "a93fa5ac1bb3cbd3"
+}

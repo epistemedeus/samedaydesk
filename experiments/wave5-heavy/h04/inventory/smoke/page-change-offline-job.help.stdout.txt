@@ -1,0 +1,8 @@
+Usage:
+  page-change compare --before PATH --after PATH --fields title,description,headings --clock ISO8601Z --out-dir DIR
+  page-change job --job PATH [--clock ISO8601Z] [--fields title,description,headings] --out-dir DIR
+  page-change journey [--fixture PATH]
+
+Compare two already-held samedaydesk.extract-batch.v0 JSON files on selected fields.
+Does not fetch URLs, pay, retry payment, or import merchant compare.mjs.
+Clock is required. SAMPLE/--example is not a delivered watch.

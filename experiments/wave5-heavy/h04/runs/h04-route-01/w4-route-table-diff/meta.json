@@ -1,0 +1,37 @@
+{
+  "engineId": "w4-route-table-diff",
+  "phase": "run",
+  "sha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+  "executedSha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+  "worktree": "/tmp/w5-h04/ro-w4-routes",
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-w4-routes/tools/route-table-diff/bin/route-diff.mjs",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/api-routes/h04-route-01/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/api-routes/h04-route-01/after.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/h04-route-01/w4-route-table-diff/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-w4-routes",
+  "exitCode": 0,
+  "signal": null,
+  "timedOut": false,
+  "spawnError": null,
+  "durationMs": 29,
+  "ok": true,
+  "sample": false,
+  "sampleNotCustomerJob": false,
+  "note": "kind=change",
+  "outDir": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/h04-route-01/w4-route-table-diff/out",
+  "outDirFiles": [
+    "route-diff.json",
+    "route-diff.md"
+  ],
+  "stdoutPreview": "{\"ok\":true,\"schema\":\"samedaydesk.route-diff.v1\",\"publishedRouteTable\":false,\"sample\":false,\"evidenceClass\":{\"before\":\"caller\",\"after\":\"caller\"},\"counts\":{\"added\":1,\"removed\":0,\"changed\":0,\"titleOnly\":",
+  "stderrPreview": "(node:244100) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set. (Use `node --trace-warnings ...` to show where the warning was created)",
+  "capturedAt": "2026-09-11T23:03:00.175Z",
+  "node": "v22.22.2",
+  "harnessCwd": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "h04-route-03",
+  "family": "api-routes",
+  "title": "Copy-only /x402/verified is not a route break",
+  "kind": "no-change-control",
+  "engines": ["w4-route-table-diff"],
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "changedFact": "3693e7c -> 3c96d31 rewrites /x402/verified description and crawlerHtml only. Path, canonical, title, and robots are identical. Route-table-diff must report 0 added, 0 removed, 0 changed, 0 titleOnly.",
+  "expectedStatus": "ok",
+  "expectedHighlights": [
+    "Added: 0",
+    "Removed: 0",
+    "Changed (canonical or robots): 0"
+  ],
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "beforeSha": "3693e7c2ea49c44c8c8f35f24c3916de5b4bc8e0",
+    "afterSha": "3c96d3137f815035ed4a6467d28c8041916a9aa8",
+    "path": "server/lib/spa-route-shells.js"
+  }
+}

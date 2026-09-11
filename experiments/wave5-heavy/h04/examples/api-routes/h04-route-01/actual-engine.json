@@ -1,0 +1,40 @@
+{
+  "engine": "w4-route-table-diff",
+  "engineSha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+  "cli": "node tools/route-table-diff/bin/route-diff.mjs --before --after --out-dir",
+  "exitCode": 0,
+  "stdout": {
+    "ok": true,
+    "schema": "samedaydesk.route-diff.v1",
+    "publishedRouteTable": false,
+    "sample": false,
+    "evidenceClass": {
+      "before": "caller",
+      "after": "caller"
+    },
+    "counts": {
+      "added": 1,
+      "removed": 0,
+      "changed": 0,
+      "titleOnly": 0
+    },
+    "tableDigest": {
+      "before": "sha256:344c9123ad9f1023bc5a1bbae6e53c7ec868d099bf084e04860df63a4cce18c8",
+      "after": "sha256:49d24d600dbe1982545d2b2f02e038fd0b7d55acc1f4d414b243b6b2d5061023"
+    },
+    "outDir": "/tmp/w5-h04/h04-child-route-runs/h04-route-01",
+    "outputs": [
+      "route-diff.json",
+      "route-diff.md"
+    ],
+    "added": [
+      "/for-agents/useful-jobs"
+    ],
+    "changed": []
+  },
+  "outDir": "/tmp/w5-h04/h04-child-route-runs/h04-route-01",
+  "artifacts": [
+    "route-diff.json",
+    "route-diff.md"
+  ]
+}

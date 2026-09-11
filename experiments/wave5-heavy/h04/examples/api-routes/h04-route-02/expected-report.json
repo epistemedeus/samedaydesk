@@ -1,0 +1,24 @@
+{
+  "engine": "sds52-api-upgrade-brief",
+  "ok": true,
+  "status": "actionable",
+  "sold": false,
+  "sample": false,
+  "fundingState": "unfunded",
+  "addedUsedOps": [
+    "GET /api/observatory/sources",
+    "GET /api/observatory/snapshot",
+    "GET /api/observatory/sources/{sourceId}"
+  ],
+  "removedUsedOps": [],
+  "changedUsedOps": [],
+  "summary": "Used-ops delta: +3/~0/-0",
+  "highlights": [
+    "consider-adoption",
+    "Used-ops delta: +3/~0/-0",
+    "GET /api/observatory/sources",
+    "GET /api/observatory/snapshot",
+    "GET /api/observatory/sources/{sourceId}"
+  ],
+  "consumerAction": "Adopt the three new observatory used operations. Health and moltjobs-stats pins are not a used-op removal. Output is not a runtime compatibility proof and is not a sale."
+}

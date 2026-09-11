@@ -1,0 +1,47 @@
+{
+  "result": "match",
+  "reason": null,
+  "facts": [
+    {
+      "key": "status",
+      "expected": "changed",
+      "actual": "changed",
+      "result": "match"
+    },
+    {
+      "key": "verdict",
+      "expected": "changed",
+      "actual": "changed",
+      "result": "match"
+    },
+    {
+      "key": "highlight:changed",
+      "expected": "changed",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "highlight:seven days",
+      "expected": "seven days",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "highlight:OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree",
+      "expected": "OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "highlight:matching fresh CDP Bazaar evidence",
+      "expected": "matching fresh CDP Bazaar evidence",
+      "actual": true,
+      "result": "match"
+    }
+  ],
+  "expectedPresent": true,
+  "artifactFiles": [
+    "page-change.json",
+    "page-change.md"
+  ]
+}

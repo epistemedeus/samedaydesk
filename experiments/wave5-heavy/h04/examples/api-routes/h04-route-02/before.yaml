@@ -1,0 +1,58 @@
+openapi: 3.0.3
+info:
+  title: SameDayDesk public read-only bridges
+  description: Caller-owned OpenAPI translated from Express mounts at d4fec15d822bed6bdb98b6723bdbfbf88c9e5796. Not kit SAMPLE inventory OpenAPI. Not a runtime compatibility proof.
+  version: "0.1.0-d4fec15"
+  license:
+    name: MIT
+servers:
+  - url: https://samedaydesk.com
+paths:
+  /api/health:
+    get:
+      operationId: getHealth
+      summary: Service health
+      description: Bound to server/routes/health.js router.get("/health") mounted at /api.
+      responses:
+        "200":
+          description: Health envelope
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, service]
+                properties:
+                  ok:
+                    type: boolean
+                  service:
+                    type: string
+                  time:
+                    type: string
+                    format: date-time
+  /api/market-observations/moltjobs-stats:
+    get:
+      operationId: getMoltjobsStats
+      summary: Read-only MoltJobs market observations
+      description: Bound to server/routes/market-observations.js router.get("/moltjobs-stats") mounted at /api/market-observations (d4fec15).
+      responses:
+        "200":
+          description: Observation envelope (availability may be unavailable)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [schemaVersion, transport, bridgeRoute]
+                properties:
+                  schemaVersion:
+                    type: string
+                  transport:
+                    type: string
+                  bridgeRoute:
+                    type: string
+                    example: /api/market-observations/moltjobs-stats
+                  availability:
+                    type: string
+                  metrics:
+                    type: array
+                    items:
+                      type: object

@@ -1,0 +1,16 @@
+{
+  "id": "h04-page-03",
+  "title": "Watch /x402/verified title, description, headings, and crawler paragraph",
+  "clock": "2026-09-11T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description",
+    "headings",
+    "text"
+  ],
+  "limits": {
+    "maxStaleMs": 86400000
+  },
+  "before": "./before.json",
+  "after": "./after.json"
+}

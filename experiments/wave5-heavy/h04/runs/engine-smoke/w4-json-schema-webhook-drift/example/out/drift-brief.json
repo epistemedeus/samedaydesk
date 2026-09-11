@@ -1,0 +1,104 @@
+{
+  "schema": "samedaydesk.json-schema-webhook-drift.v1",
+  "schemaVersion": 1,
+  "kind": "json-schema",
+  "usedOnly": true,
+  "notOpenApi": true,
+  "notApiUpgradeBrief": true,
+  "purchaseAuthority": false,
+  "sold": false,
+  "customerBrief": false,
+  "sample": true,
+  "exampleMode": true,
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "payment": {
+    "settling": false,
+    "prototype": true,
+    "paid": false
+  },
+  "provenance": "fixture",
+  "inputs": {
+    "before": "sha256:9ac325c9853ffd17a1736811183bc0d38579dd42e383ae609c6cea48dc92f5a3",
+    "after": "sha256:0f85d00b07403feb8b1ba7167c127586077f9b117164da344410a9c1893959aa",
+    "used": "sha256:6f77939c3486d7a6696293628506ef4e20ee292c2e9c284742fd4626fa1baa04",
+    "beforeBytes": 236,
+    "afterBytes": 237,
+    "usedBytes": 41
+  },
+  "impact": {
+    "breaking": [
+      {
+        "pointer": "/properties/amount",
+        "class": "breaking",
+        "reason": "type-change",
+        "before": {
+          "kind": "schema-object",
+          "type": "number",
+          "format": null,
+          "enum": null,
+          "constJson": null,
+          "required": null,
+          "additionalProperties": null,
+          "propertiesKeys": null,
+          "itemsType": null,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "minItems": null,
+          "maxItems": null,
+          "nullable": false
+        },
+        "after": {
+          "kind": "schema-object",
+          "type": "string",
+          "format": null,
+          "enum": null,
+          "constJson": null,
+          "required": null,
+          "additionalProperties": null,
+          "propertiesKeys": null,
+          "itemsType": null,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "minItems": null,
+          "maxItems": null,
+          "nullable": false
+        }
+      }
+    ],
+    "added": [],
+    "deleted": [],
+    "unknown": [],
+    "unchangedCount": 0,
+    "informationalCount": 0,
+    "ignoredUnused": true
+  },
+  "status": "actionable",
+  "ok": true,
+  "appId": "json-schema-webhook-drift",
+  "summary": "Used-path drift: 1 breaking, 0 deleted, 0 unknown. Unused paths ignored.",
+  "uncertainties": [],
+  "laterIntegrationBindings": [
+    {
+      "id": "useful-jobs-catalog",
+      "status": "not-bound",
+      "note": "PR51 catalog is contrast only. Root owns catalog admission."
+    },
+    {
+      "id": "i01-hash-terms",
+      "status": "pinned-hasher",
+      "note": "Neo PR54 hashTermsVersion contract. Earned-work kernel not imported."
+    }
+  ],
+  "caller": {
+    "exampleMode": true,
+    "sampleLabel": "SAMPLE",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "termsVersion": "sha256:51ee8883a3f2d90a9cee735fc4b38168a9c73e9be6291c3d016fb268d84e166f"
+}

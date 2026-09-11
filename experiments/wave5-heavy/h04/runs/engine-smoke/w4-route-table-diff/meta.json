@@ -1,0 +1,36 @@
+{
+  "engineId": "w4-route-table-diff",
+  "sha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+  "executedSha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+  "worktree": "/tmp/w5-h04/ro-w4-routes",
+  "worktreeExists": true,
+  "cliExists": true,
+  "sampleNotCustomerJob": true,
+  "phases": {
+    "help": {
+      "exitCode": 0,
+      "ok": true,
+      "timedOut": false,
+      "spawnError": null,
+      "durationMs": 30,
+      "stdoutPreview": "SPA route-table diff (offline). Read two JSON route catalogs {path, canonical, title, robots?} and write route-diff.json / route-diff.md (added, removed, changed canonical or robots). node tools/route",
+      "stderrPreview": "",
+      "outDirFiles": [],
+      "sample": false
+    },
+    "example": {
+      "exitCode": 0,
+      "ok": true,
+      "timedOut": false,
+      "spawnError": null,
+      "durationMs": 27,
+      "stdoutPreview": "{\"ok\":true,\"schema\":\"samedaydesk.route-diff.v1\",\"publishedRouteTable\":false,\"sample\":true,\"evidenceClass\":{\"before\":\"fixture\",\"after\":\"fixture\"},\"counts\":{\"added\":1,\"removed\":0,\"changed\":1,\"titleOnly\"",
+      "stderrPreview": "(node:243271) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set. (Use `node --trace-warnings ...` to show where the warning was created)",
+      "outDirFiles": [
+        "route-diff.json",
+        "route-diff.md"
+      ],
+      "sample": true
+    }
+  }
+}

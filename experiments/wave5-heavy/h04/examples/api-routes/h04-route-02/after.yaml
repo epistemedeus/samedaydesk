@@ -1,0 +1,114 @@
+openapi: 3.0.3
+info:
+  title: SameDayDesk public read-only bridges
+  description: Caller-owned OpenAPI translated from Express mounts at 8c1c4f706c75868d1556db483deff98d29758073. Adds GET /api/observatory/{sources,snapshot,sources/{sourceId}}. Not kit SAMPLE inventory OpenAPI.
+  version: "0.2.0-8c1c4f7"
+  license:
+    name: MIT
+servers:
+  - url: https://samedaydesk.com
+paths:
+  /api/health:
+    get:
+      operationId: getHealth
+      summary: Service health
+      description: Bound to server/routes/health.js router.get("/health") mounted at /api.
+      responses:
+        "200":
+          description: Health envelope
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, service]
+                properties:
+                  ok:
+                    type: boolean
+                  service:
+                    type: string
+                  time:
+                    type: string
+                    format: date-time
+  /api/market-observations/moltjobs-stats:
+    get:
+      operationId: getMoltjobsStats
+      summary: Read-only MoltJobs market observations
+      description: Bound to server/routes/market-observations.js router.get("/moltjobs-stats") mounted at /api/market-observations (d4fec15; unchanged at 8c1c4f7).
+      responses:
+        "200":
+          description: Observation envelope (availability may be unavailable)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [schemaVersion, transport, bridgeRoute]
+                properties:
+                  schemaVersion:
+                    type: string
+                  transport:
+                    type: string
+                  bridgeRoute:
+                    type: string
+                    example: /api/market-observations/moltjobs-stats
+                  availability:
+                    type: string
+                  metrics:
+                    type: array
+                    items:
+                      type: object
+  /api/observatory/sources:
+    get:
+      operationId: listObservatorySources
+      summary: List named observatory sources
+      description: Bound to server/routes/observatory.js router.get("/sources") mounted at /api/observatory (8c1c4f7).
+      responses:
+        "200":
+          description: Catalog of named fixed-upstream sources
+          content:
+            application/json:
+              schema:
+                type: object
+  /api/observatory/snapshot:
+    get:
+      operationId: getObservatorySnapshot
+      summary: Observe all named sources
+      description: Bound to server/routes/observatory.js router.get("/snapshot") mounted at /api/observatory (8c1c4f7).
+      responses:
+        "200":
+          description: Snapshot of all named sources
+          content:
+            application/json:
+              schema:
+                type: object
+  /api/observatory/sources/{sourceId}:
+    get:
+      operationId: getObservatorySource
+      summary: Observe one named source
+      description: Bound to server/routes/observatory.js router.get("/sources/:sourceId") mounted at /api/observatory (8c1c4f7).
+      parameters:
+        - name: sourceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Observation envelope for one source
+          content:
+            application/json:
+              schema:
+                type: object
+        "404":
+          description: unknown_source
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: unknown_source
+                  sourceId:
+                    type: string
+                  schemaVersion:
+                    type: string

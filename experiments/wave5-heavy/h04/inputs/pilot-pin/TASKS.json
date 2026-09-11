@@ -1,0 +1,3232 @@
+{
+  "at": "2026-09-11T22:30:25.759Z",
+  "tasks": [
+    {
+      "id": "W5-D01",
+      "slot": "D01",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Extend SDS52 into one usable supplied-input execution contract; integrate selected adapters",
+      "dependency": "S",
+      "proof": "Same inspected bytes produce a complete retrievable result; acquisition/crash/missing-output cases stay truthful",
+      "ownedPaths": [
+        "server/paid-useful-jobs/",
+        "experiments/wave5/d01/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/d01/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-d01-20260911",
+      "integrationOwner": "W5-D01",
+      "existingAgentId": "bc-797312fe-6a91-4c27-9d67-06ef14ac9936",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D02",
+      "slot": "D02",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co05 input materialization/preflight adapter, including inline JSON and catalog schemas",
+      "dependency": "S; consume D01 contract",
+      "proof": "Invalid schema and disguised sample rejected at real entry point; valid custom input succeeds",
+      "ownedPaths": [
+        "tools/job-input-preflight/",
+        "experiments/wave5/d02/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/d02/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "2bd0207800ce1a26bae7fe5dd5086cf196296959",
+          "paths": [
+            "tools/job-input-preflight/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "2bd0207800ce1a26bae7fe5dd5086cf196296959",
+      "branch": "codex/w5-d02-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D03",
+      "slot": "D03",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co17 output completeness/identity validator reused by consumers",
+      "dependency": "S",
+      "proof": "Empty output objects, wrong job and foreign bytes cannot count complete; valid no-change artifact can",
+      "ownedPaths": [
+        "tools/job-output-atomicity/",
+        "experiments/wave5/d03/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/d03/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "58cba6324c1d9793d344bc13154b8b2380e8166f",
+          "paths": [
+            "tools/job-output-atomicity/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "58cba6324c1d9793d344bc13154b8b2380e8166f",
+      "branch": "codex/w5-d03-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D04",
+      "slot": "D04",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co20 managed-order client, removing its competing runner",
+      "dependency": "D01 contract",
+      "proof": "Concurrent reserve and interrupted resume produce one intended order, not duplicate execution",
+      "ownedPaths": [
+        "tools/managed-useful-jobs-order/",
+        "experiments/wave5/d04/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/d04/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "13d1fc023ce235b1611dc868caf5dd84fe5f11c7",
+          "paths": [
+            "tools/managed-useful-jobs-order/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "13d1fc023ce235b1611dc868caf5dd84fe5f11c7",
+      "branch": "codex/w5-d04-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-D05",
+      "slot": "D05",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co02 private result mailbox with request-bound pickup",
+      "dependency": "S; D01 result contract",
+      "proof": "Two requests cannot retrieve each other's output; pickup and delivered acknowledgment remain separate",
+      "ownedPaths": [
+        "tools/result-mailbox/",
+        "experiments/wave5/d05/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/d05/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "baf09dc591c83aec94e0cf42c5c64076fc5b98e3",
+          "paths": [
+            "tools/result-mailbox/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "baf09dc591c83aec94e0cf42c5c64076fc5b98e3",
+      "branch": "codex/w5-d05-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D06",
+      "slot": "D06",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co09 delivery outbox with precise destination and terms mapping",
+      "dependency": "S; D01 result contract",
+      "proof": "Wrong callback path/digest fails; lost delivery acknowledgment does not invent completion",
+      "ownedPaths": [
+        "tools/job-delivery-outbox/",
+        "experiments/wave5/d06/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/d06/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "828d8942fb1631aba92a9116dc9fbde0ee1dd258",
+          "paths": [
+            "tools/job-delivery-outbox/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "828d8942fb1631aba92a9116dc9fbde0ee1dd258",
+      "branch": "codex/w5-d06-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D07",
+      "slot": "D07",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co15 exact-byte export bundle and import check",
+      "dependency": "S; D03",
+      "proof": "Verified archive is the archive consumed, including job/output correspondence",
+      "ownedPaths": [
+        "tools/job-artifact-export/",
+        "experiments/wave5/d07/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/d07/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "f16db42ed48a358ad088b54dc565d39461034704",
+          "paths": [
+            "tools/job-artifact-export/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "f16db42ed48a358ad088b54dc565d39461034704",
+      "branch": "codex/w5-d07-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D08",
+      "slot": "D08",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co14 installed Python client and archive/process cleanup",
+      "dependency": "S; D01",
+      "proof": "Fresh remote install uses real service/CLI; unsafe archive and missing output fail without orphan process",
+      "ownedPaths": [
+        "tools/python-useful-jobs-client/",
+        "experiments/wave5/d08/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/d08/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "4641173163616b76608cbb3beb503f2d94369b25",
+          "paths": [
+            "tools/python-useful-jobs-client/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "4641173163616b76608cbb3beb503f2d94369b25",
+      "branch": "codex/w5-d08-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D09",
+      "slot": "D09",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co03 repeat-job binder using frozen previous/current input references",
+      "dependency": "S; D01",
+      "proof": "Changed meaningful input is analyzed, not previous output reused as new work",
+      "ownedPaths": [
+        "tools/repeat-job-binder/",
+        "experiments/wave5/d09/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/d09/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "7c55738cc5730985b709282af6c24e10f0a8442f",
+          "paths": [
+            "tools/repeat-job-binder/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "7c55738cc5730985b709282af6c24e10f0a8442f",
+      "branch": "codex/w5-d09-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D10",
+      "slot": "D10",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co04 independent replay harness with disjoint output locations",
+      "dependency": "S",
+      "proof": "A/B directory alias and post-run mutation cannot erase comparison evidence",
+      "ownedPaths": [
+        "tools/output-replay-harness/",
+        "experiments/wave5/d10/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/d10/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "ebc71220e034dd28f29d105335c0161a3838831d",
+          "paths": [
+            "tools/output-replay-harness/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "ebc71220e034dd28f29d105335c0161a3838831d",
+      "branch": "codex/w5-d10-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D11",
+      "slot": "D11",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co01 request-desk adapter with honest replay outcomes",
+      "dependency": "S; D01",
+      "proof": "Rejected replay remains rejected; clean request succeeds without stale output",
+      "ownedPaths": [
+        "tools/job-request-desk/",
+        "experiments/wave5/d11/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/d11/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "912794c6775e16e93dc38cbfc7113a97ab5dc012",
+          "paths": [
+            "tools/job-request-desk/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "912794c6775e16e93dc38cbfc7113a97ab5dc012",
+      "branch": "codex/w5-d11-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D12",
+      "slot": "D12",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co08 batch reconciliation consuming one runner and funding contract",
+      "dependency": "S; D01",
+      "proof": "Duplicate/traversing items rejected; valid mixed batch keeps each item and charge distinct",
+      "ownedPaths": [
+        "tools/paid-batch-reconciler/",
+        "experiments/wave5/d12/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/d12/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "ec03dc3445ac73a4a1010712b23a709bd3a7fed3",
+          "paths": [
+            "tools/paid-batch-reconciler/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "ec03dc3445ac73a4a1010712b23a709bd3a7fed3",
+      "branch": "codex/w5-d12-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D13",
+      "slot": "D13",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co16 buyer-value ledger bound to actual job, delivery and settlement",
+      "dependency": "S; D01",
+      "proof": "Wrong-source cache, unrelated payment and failed result cannot become useful paid work",
+      "ownedPaths": [
+        "tools/buyer-value-ledger/",
+        "experiments/wave5/d13/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/d13/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aa306e291adfdd499ca971af01625ccc4bfee5c4",
+          "paths": [
+            "tools/buyer-value-ledger/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aa306e291adfdd499ca971af01625ccc4bfee5c4",
+      "branch": "codex/w5-d13-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D14",
+      "slot": "D14",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Thin real HTTP consumer example, not a second server",
+      "dependency": "D01 interface",
+      "proof": "Independent process supplies its own bytes and fetches the corresponding result",
+      "ownedPaths": [
+        "experiments/wave5/d14/"
+      ],
+      "receiptPath": "experiments/wave5/d14/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-d14-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-D15",
+      "slot": "D15",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Deterministic input/execute race harness",
+      "dependency": "S, replay on D01",
+      "proof": "Mutate path after preflight; implementation either consumes frozen bytes or refuses accurately",
+      "ownedPaths": [
+        "experiments/wave5/d15/"
+      ],
+      "receiptPath": "experiments/wave5/d15/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-d15-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D16",
+      "slot": "D16",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Engine lifecycle failure harness for install/start/timeout/exit/JSON boundaries",
+      "dependency": "S, replay on D01",
+      "proof": "Positive engine succeeds; missing or broken engine cannot be hidden by wrapper success",
+      "ownedPaths": [
+        "experiments/wave5/d16/"
+      ],
+      "receiptPath": "experiments/wave5/d16/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-d16-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D17",
+      "slot": "D17",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Domain-outcome contract tests for successful change/no-change/refusal reports",
+      "dependency": "S; D01, M01",
+      "proof": "Valid analysis outcome differs from transport/engine failure and incomplete delivery",
+      "ownedPaths": [
+        "experiments/wave5/d17/"
+      ],
+      "receiptPath": "experiments/wave5/d17/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-d17-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D18",
+      "slot": "D18",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Artifact contamination harness across sequential and simultaneous jobs",
+      "dependency": "S; D01, D03",
+      "proof": "Stale/foreign/partial artifact sets cannot satisfy another job",
+      "ownedPaths": [
+        "experiments/wave5/d18/"
+      ],
+      "receiptPath": "experiments/wave5/d18/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-d18-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D19",
+      "slot": "D19",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Multi-process order/ledger tests, not sequential mocks",
+      "dependency": "S; D04, D13",
+      "proof": "Simultaneous updates preserve both jobs and intended single reservation",
+      "ownedPaths": [
+        "experiments/wave5/d19/"
+      ],
+      "receiptPath": "experiments/wave5/d19/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-d19-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D20",
+      "slot": "D20",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Delivery interruption harness across mailbox and outbox",
+      "dependency": "S; D05, D06",
+      "proof": "Commit then lose response; correct retrieval/ack state survives restart",
+      "ownedPaths": [
+        "experiments/wave5/d20/"
+      ],
+      "receiptPath": "experiments/wave5/d20/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-d20-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D21",
+      "slot": "D21",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co06 useful failure dossier with actual observed source/status",
+      "dependency": "S",
+      "proof": "Expected 402 or unrun optional check is never reported as observed; actual failure is actionable",
+      "ownedPaths": [
+        "tools/failed-delivery-dossier/",
+        "experiments/wave5/d21/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/d21/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "f76235f32c5fe19d22f381c4b0eaab82962a56b7",
+          "paths": [
+            "tools/failed-delivery-dossier/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "f76235f32c5fe19d22f381c4b0eaab82962a56b7",
+      "branch": "codex/w5-d21-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D22",
+      "slot": "D22",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co07 refund-policy projection from explicit policy and actual job facts",
+      "dependency": "S; D13",
+      "proof": "Operational error alone cannot invent policy or attach unrelated global revenue",
+      "ownedPaths": [
+        "tools/refund-obligation-projector/",
+        "experiments/wave5/d22/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/d22/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "f19a021a82a4ff59fd3b510fda11e603e6885686",
+          "paths": [
+            "tools/refund-obligation-projector/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "f19a021a82a4ff59fd3b510fda11e603e6885686",
+      "branch": "codex/w5-d22-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D23",
+      "slot": "D23",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co19 unpaid/extraction test boundary with honest enforcement claims",
+      "dependency": "S",
+      "proof": "Executed check detects payment attempt where promised; JS-only hooks never claim OS isolation",
+      "ownedPaths": [
+        "tools/extract-unpaid-honesty/",
+        "experiments/wave5/d23/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/d23/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "f09d3886837e690890aa3c8f9574f11b0dbb65c1",
+          "paths": [
+            "tools/extract-unpaid-honesty/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "f09d3886837e690890aa3c8f9574f11b0dbb65c1",
+      "branch": "codex/w5-d23-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-D24",
+      "slot": "D24",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Clean-environment CLI/package consumer acceptance",
+      "dependency": "D01, D07, D08",
+      "proof": "No monorepo/vendor accident needed to install, invoke and retrieve a useful result",
+      "ownedPaths": [
+        "experiments/wave5/d24/"
+      ],
+      "receiptPath": "experiments/wave5/d24/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-d24-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-D25",
+      "slot": "D25",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Actual buyer journey harness covering offer, supplied input, delivery and return",
+      "dependency": "D01, D09, M01",
+      "proof": "Two controlled real jobs complete through public interfaces, labelled owner QA",
+      "ownedPaths": [
+        "experiments/wave5/d25/"
+      ],
+      "receiptPath": "experiments/wave5/d25/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-d25-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-D26",
+      "slot": "D26",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Exact service-cost/price-floor experiment using current implementation",
+      "dependency": "D01, D25",
+      "proof": "Measured variable cost and payment fees support one non-lossmaking proposed offer",
+      "ownedPaths": [
+        "experiments/wave5/d26/"
+      ],
+      "receiptPath": "experiments/wave5/d26/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-d26-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-D27",
+      "slot": "D27",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Recruited independent-runtime trial kit and first execution",
+      "dependency": "D24–D26; F",
+      "proof": "Another runtime uses its own input; record friction, refusal and usefulness without inventing demand",
+      "ownedPaths": [
+        "experiments/wave5/d27/"
+      ],
+      "receiptPath": "experiments/wave5/d27/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-d27-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-D28",
+      "slot": "D28",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Journey release packet, readback and first return-job measurement",
+      "dependency": "D01 plus selected passing consumers; F",
+      "proof": "Exact deployed artifact and useful second job, or honest absent return signal",
+      "ownedPaths": [
+        "experiments/wave5/d28/"
+      ],
+      "receiptPath": "experiments/wave5/d28/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-d28-20260911",
+      "integrationOwner": "W5-D01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-M01",
+      "slot": "M01",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Select and wire useful engines/catalog for D01, keeping first offer narrow",
+      "dependency": "S; consume M02–M05 as ready",
+      "proof": "Catalog promise matches each invoked engine and actual output schema",
+      "ownedPaths": [
+        "experiments/wave5/m01/"
+      ],
+      "receiptPath": "experiments/wave5/m01/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-m01-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-M02",
+      "slot": "M02",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co10 JSON-schema compatibility semantics",
+      "dependency": "S",
+      "proof": "False schema, ref siblings, required-field and numeric changes classified correctly",
+      "ownedPaths": [
+        "tools/json-schema-webhook-drift/",
+        "experiments/wave5/m02/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/m02/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+          "paths": [
+            "tools/json-schema-webhook-drift/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+      "branch": "codex/w5-m02-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-M03",
+      "slot": "M03",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co11 lockfile pin/resolution comparison",
+      "dependency": "S",
+      "proof": "Exact changed dependency/Git resolution detected; constant injected hasher cannot erase byte difference",
+      "ownedPaths": [
+        "tools/lockfile-pin-delta/",
+        "experiments/wave5/m03/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/m03/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+          "paths": [
+            "tools/lockfile-pin-delta/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+      "branch": "codex/w5-m03-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-M04",
+      "slot": "M04",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co12 route-table comparison",
+      "dependency": "S",
+      "proof": "Permutation alone is not breaking change; meaningful route collision/removal is",
+      "ownedPaths": [
+        "tools/route-table-diff/",
+        "experiments/wave5/m04/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/m04/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+          "paths": [
+            "tools/route-table-diff/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+      "branch": "codex/w5-m04-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-M05",
+      "slot": "M05",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co13 bounded page-change analysis",
+      "dependency": "S",
+      "proof": "Real truncation/depth cases reported honestly; meaningful content change survives normalization",
+      "ownedPaths": [
+        "tools/page-change-offline-job/",
+        "experiments/wave5/m05/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/m05/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+          "paths": [
+            "tools/page-change-offline-job/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+      "branch": "codex/w5-m05-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-M06",
+      "slot": "M06",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Independent schema compatibility corpus from specified schema semantics",
+      "dependency": "S; replay on M02",
+      "proof": "Nontrivial valid and invalid witnesses distinguish an always-pass/always-fail engine",
+      "ownedPaths": [
+        "experiments/wave5/m06/"
+      ],
+      "receiptPath": "experiments/wave5/m06/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-m06-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-M07",
+      "slot": "M07",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Independent package-manager lock fixtures across supported formats",
+      "dependency": "S; replay on M03",
+      "proof": "Version, resolved source and integrity changes have explained outputs",
+      "ownedPaths": [
+        "experiments/wave5/m07/"
+      ],
+      "receiptPath": "experiments/wave5/m07/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-m07-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-M08",
+      "slot": "M08",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Independent route consumers for claimed supported frameworks",
+      "dependency": "S; replay on M04",
+      "proof": "Parser handles actual supported examples and explicitly rejects unsupported formats",
+      "ownedPaths": [
+        "experiments/wave5/m08/"
+      ],
+      "receiptPath": "experiments/wave5/m08/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-m08-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-M09",
+      "slot": "M09",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Independent page snapshots with meaningful vs irrelevant change controls",
+      "dependency": "S; replay on M05",
+      "proof": "Noise remains noise; significant changed content is not normalized away",
+      "ownedPaths": [
+        "experiments/wave5/m09/"
+      ],
+      "receiptPath": "experiments/wave5/m09/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-m09-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-M10",
+      "slot": "M10",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Co18 recipe/catalog join actually consuming both named input sources",
+      "dependency": "S; M01",
+      "proof": "Change source B only and observe the expected domain result; inconsistent source refuses honestly",
+      "ownedPaths": [
+        "tools/recipes-catalog-join/",
+        "experiments/wave5/m10/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/m10/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "bb795f6dad362a0ac187fe896d636e62fa1d932e",
+          "paths": [
+            "tools/recipes-catalog-join/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "bb795f6dad362a0ac187fe896d636e62fa1d932e",
+      "branch": "codex/w5-m10-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-M11",
+      "slot": "M11",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Caller-supplied example corpus replacing fixture-only demonstrations",
+      "dependency": "S; M01",
+      "proof": "New inputs are independently valid and expose meaningful output differences",
+      "ownedPaths": [
+        "experiments/wave5/m11/"
+      ],
+      "receiptPath": "experiments/wave5/m11/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-m11-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-M12",
+      "slot": "M12",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Machine-readable capability/pricing description for the selected offer",
+      "dependency": "M01, D26",
+      "proof": "Every advertised job/price/limit matches runtime and cost-backed offer",
+      "ownedPaths": [
+        "experiments/wave5/m12/"
+      ],
+      "receiptPath": "experiments/wave5/m12/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-m12-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-M13",
+      "slot": "M13",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "SameDayDesk machine-discovery surface integration using existing registries",
+      "dependency": "M12, D24",
+      "proof": "Discover then invoke exact current service from a fresh consumer",
+      "ownedPaths": [
+        "experiments/wave5/m13/"
+      ],
+      "receiptPath": "experiments/wave5/m13/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-m13-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-M14",
+      "slot": "M14",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Human-readable result preview and concise machine-first quickstart",
+      "dependency": "D24, M01",
+      "proof": "Unbriefed reader can choose proper input and explain report limits",
+      "ownedPaths": [
+        "experiments/wave5/m14/"
+      ],
+      "receiptPath": "experiments/wave5/m14/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-m14-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-M15",
+      "slot": "M15",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Reproducible schema-change real-project trial",
+      "dependency": "M02, M06, D24; F",
+      "proof": "Run on a permitted real revision pair; maintainer usefulness stays unknown until actually received",
+      "ownedPaths": [
+        "experiments/wave5/m15/"
+      ],
+      "receiptPath": "experiments/wave5/m15/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-m15-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-M16",
+      "slot": "M16",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Reproducible dependency-update real-project trial",
+      "dependency": "M03, M07, D24; F",
+      "proof": "Actual resolved-source change yields actionable result, not a generic dependency list",
+      "ownedPaths": [
+        "experiments/wave5/m16/"
+      ],
+      "receiptPath": "experiments/wave5/m16/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-m16-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-M17",
+      "slot": "M17",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Reproducible API-route change trial",
+      "dependency": "M04, M08, D24; F",
+      "proof": "Specific compatibility consequence demonstrated on a real allowed project",
+      "ownedPaths": [
+        "experiments/wave5/m17/"
+      ],
+      "receiptPath": "experiments/wave5/m17/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-m17-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-M18",
+      "slot": "M18",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "Reproducible changed-page trial",
+      "dependency": "M05, M09, D24; F",
+      "proof": "Useful changed fact can be verified against captured source, with freshness limits",
+      "ownedPaths": [
+        "experiments/wave5/m18/"
+      ],
+      "receiptPath": "experiments/wave5/m18/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-m18-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-M19",
+      "slot": "M19",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "One maintained distribution integration drawn from current partner/registry events",
+      "dependency": "M12, M13; F",
+      "proof": "Exact supported contribution submitted/consumed; do not repeat closed generic outreach scans",
+      "ownedPaths": [
+        "experiments/wave5/m19/"
+      ],
+      "receiptPath": "experiments/wave5/m19/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-m19-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-M20",
+      "slot": "M20",
+      "repo": "epistemedeus/samedaydesk",
+      "outcome": "First-use/drop-off and repeat-job readout that changes the next offer",
+      "dependency": "D27, M15–M19 actual results",
+      "proof": "Distinguish no reply, failed use, useful use and paid return; recommend one concrete next adjustment",
+      "ownedPaths": [
+        "experiments/wave5/m20/"
+      ],
+      "receiptPath": "experiments/wave5/m20/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/samedaydesk",
+          "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+          "ref": "fable/f08-paid-wrappers",
+          "pr": 52
+        }
+      ],
+      "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "branch": "codex/w5-m20-20260911",
+      "integrationOwner": "W5-M01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-A01",
+      "slot": "A01",
+      "repo": "epistemedeus/ein-llc-lean",
+      "outcome": "Existing EIN43 assessment/prepare/claim journey bound to real case and recipient",
+      "dependency": "S",
+      "proof": "Provisional advice stays provisional; one valid case reaches intended operator, incorrect case cannot",
+      "ownedPaths": [
+        "artifacts/api-server/src/routes/agent.ts",
+        "artifacts/api-server/src/activation-wave5/",
+        "experiments/wave5/a01/"
+      ],
+      "receiptPath": "experiments/wave5/a01/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+          "ref": "codex/s219-ein-runtime-release-20260910",
+          "pr": 43
+        }
+      ],
+      "startingRef": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+      "branch": "codex/w5-a01-20260911",
+      "integrationOwner": "W5-A01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-A02",
+      "slot": "A02",
+      "repo": "epistemedeus/ein-llc-lean",
+      "outcome": "Ac01/Ac13 private operator handoff client and truthful instructions",
+      "dependency": "A01 contract",
+      "proof": "Public payload excludes secret claim material; private link reaches correct continuing action",
+      "ownedPaths": [
+        "tools/operator-claim-handoff/",
+        "tools/expansion-operator-handoff/",
+        "artifacts/ein-llc/src/site/pages/agents/operator-handoff.astro",
+        "experiments/wave5/a02/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/a02/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "8ed75f61e44e64ca51c1a4ee8a054af16285db06",
+          "paths": [
+            "tools/operator-claim-handoff/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "1673cecdc5e656835ebe0c203c5e172c8c1b1ad0",
+          "paths": [
+            "tools/expansion-operator-handoff/",
+            "artifacts/ein-llc/src/site/pages/agents/operator-handoff.astro"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+          "ref": "codex/s219-ein-runtime-release-20260910",
+          "pr": 43
+        }
+      ],
+      "startingRef": "8ed75f61e44e64ca51c1a4ee8a054af16285db06",
+      "branch": "codex/w5-a02-20260911",
+      "integrationOwner": "W5-A01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-A03",
+      "slot": "A03",
+      "repo": "epistemedeus/ein-llc-lean",
+      "outcome": "Ac03 operator case desk using actual runtime status",
+      "dependency": "S; A01",
+      "proof": "Two cases cannot alias; display reflects provider/checkout state, not fixture completion",
+      "ownedPaths": [
+        "tools/operator-case-desk/",
+        "experiments/wave5/a03/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/a03/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "a2651a290ef815fdceec906ecc8610851230767d",
+          "paths": [
+            "tools/operator-case-desk/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+          "ref": "codex/s219-ein-runtime-release-20260910",
+          "pr": 43
+        }
+      ],
+      "startingRef": "a2651a290ef815fdceec906ecc8610851230767d",
+      "branch": "codex/w5-a03-20260911",
+      "integrationOwner": "W5-A01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-A04",
+      "slot": "A04",
+      "repo": "epistemedeus/ein-llc-lean",
+      "outcome": "Ac04/Ac06 next-action and assess/prepare client contract",
+      "dependency": "S; A01",
+      "proof": "Caller replacement assessment cannot silently change another case's authorized next step",
+      "ownedPaths": [
+        "tools/operator-next-action/",
+        "tools/assess-prepare-gate/",
+        "experiments/wave5/a04/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/a04/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "73832d5e919385b97ad7ef23908e218c79dfdddf",
+          "paths": [
+            "tools/operator-next-action/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "4eaffb760657f008f365940ec7f03bf742d911b8",
+          "paths": [
+            "tools/assess-prepare-gate/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+          "ref": "codex/s219-ein-runtime-release-20260910",
+          "pr": 43
+        }
+      ],
+      "startingRef": "73832d5e919385b97ad7ef23908e218c79dfdddf",
+      "branch": "codex/w5-a04-20260911",
+      "integrationOwner": "W5-A01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-A05",
+      "slot": "A05",
+      "repo": "epistemedeus/ein-llc-lean",
+      "outcome": "Ac05 applicant evidence binding to supplied case facts",
+      "dependency": "S; A01",
+      "proof": "Swapped applicant/evidence fails association while genuine incomplete evidence is labelled incomplete",
+      "ownedPaths": [
+        "tools/applicant-evidence-binder/",
+        "experiments/wave5/a05/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/a05/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "c41a15a0a6d3aa39e0bdf2f87db08334027fa96a",
+          "paths": [
+            "tools/applicant-evidence-binder/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+          "ref": "codex/s219-ein-runtime-release-20260910",
+          "pr": 43
+        }
+      ],
+      "startingRef": "c41a15a0a6d3aa39e0bdf2f87db08334027fa96a",
+      "branch": "codex/w5-a05-20260911",
+      "integrationOwner": "W5-A01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-A06",
+      "slot": "A06",
+      "repo": "epistemedeus/ein-llc-lean",
+      "outcome": "Ac07 document checklist with explicit supplied/missing/rejected states",
+      "dependency": "S",
+      "proof": "'Not uploaded' cannot pass; valid documents and missing items remain distinguishable",
+      "ownedPaths": [
+        "tools/pre-checkout-document-checklist/",
+        "experiments/wave5/a06/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/a06/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "40a54cb051591f07ac050c8e96aa4a28023bc070",
+          "paths": [
+            "tools/pre-checkout-document-checklist/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+          "ref": "codex/s219-ein-runtime-release-20260910",
+          "pr": 43
+        }
+      ],
+      "startingRef": "40a54cb051591f07ac050c8e96aa4a28023bc070",
+      "branch": "codex/w5-a06-20260911",
+      "integrationOwner": "W5-A01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-A07",
+      "slot": "A07",
+      "repo": "epistemedeus/ein-llc-lean",
+      "outcome": "Ac08/Ac20 actual referral/conversion joins",
+      "dependency": "S; A01",
+      "proof": "Foreign case and browser-only converted flag cannot become provider-confirmed conversion",
+      "ownedPaths": [
+        "tools/referral-attribution-ledger/",
+        "tools/conversion-attribution-conformance/",
+        "experiments/wave5/a07/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/a07/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "8a9ed20a1953a3e49800cab22193c86f99d3af0a",
+          "paths": [
+            "tools/referral-attribution-ledger/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "12d6d3fe9cc9986b1ca961efdfe8176c02fea4c1",
+          "paths": [
+            "tools/conversion-attribution-conformance/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+          "ref": "codex/s219-ein-runtime-release-20260910",
+          "pr": 43
+        }
+      ],
+      "startingRef": "8a9ed20a1953a3e49800cab22193c86f99d3af0a",
+      "branch": "codex/w5-a07-20260911",
+      "integrationOwner": "W5-A01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-A08",
+      "slot": "A08",
+      "repo": "epistemedeus/ein-llc-lean",
+      "outcome": "Ac09/Ac10 partner referral adapter with bounded authority",
+      "dependency": "S; A01",
+      "proof": "Missing/rejected partner gate fails correctly; attribution is not business authorization",
+      "ownedPaths": [
+        "tools/partner-referral-adapter/",
+        "tools/referral-authority-detector/",
+        "experiments/wave5/a08/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/a08/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "957eda2b4648875ce5bf6f97da7c96d29a8b6008",
+          "paths": [
+            "tools/partner-referral-adapter/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "1ccca06ea00c98b89f791ba0aba84a87879d0add",
+          "paths": [
+            "tools/referral-authority-detector/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+          "ref": "codex/s219-ein-runtime-release-20260910",
+          "pr": 43
+        }
+      ],
+      "startingRef": "957eda2b4648875ce5bf6f97da7c96d29a8b6008",
+      "branch": "codex/w5-a08-20260911",
+      "integrationOwner": "W5-A01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-A09",
+      "slot": "A09",
+      "repo": "epistemedeus/ein-llc-lean",
+      "outcome": "Ac11/Ac12 repeat partner journey for distinct qualified cases",
+      "dependency": "A01, A07",
+      "proof": "Returning partner handles two independent cases, not unnecessary repeat entity creation",
+      "ownedPaths": [
+        "tools/repeat-agent-journey/",
+        "tools/expansion-repeat-agent/",
+        "artifacts/ein-llc/src/site/pages/agents/repeat-journey.astro",
+        "experiments/wave5/a09/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/a09/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "0a275e1b3b210fc161f35cad5619c9eaa1414bc2",
+          "paths": [
+            "tools/repeat-agent-journey/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "14a70d630313601a9247efe94d2414a13d26680d",
+          "paths": [
+            "tools/expansion-repeat-agent/",
+            "artifacts/ein-llc/src/site/pages/agents/repeat-journey.astro"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+          "ref": "codex/s219-ein-runtime-release-20260910",
+          "pr": 43
+        }
+      ],
+      "startingRef": "0a275e1b3b210fc161f35cad5619c9eaa1414bc2",
+      "branch": "codex/w5-a09-20260911",
+      "integrationOwner": "W5-A01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-A10",
+      "slot": "A10",
+      "repo": "epistemedeus/ein-llc-lean",
+      "outcome": "Ac14/Ac15 concise qualified route and exact related-service lookup",
+      "dependency": "S; M12 when used",
+      "proof": "Correct service selected by stable identity, not catalog array index; no homepage churn",
+      "ownedPaths": [
+        "tools/expansion-qualified-route/",
+        "artifacts/ein-llc/src/site/pages/agents/qualified-route.astro",
+        "tools/expansion-related-services/",
+        "artifacts/ein-llc/src/site/pages/agents/related-services.astro",
+        "experiments/wave5/a10/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/a10/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "7c5a871a8640c51ad0ee911345be8edb28365582",
+          "paths": [
+            "tools/expansion-qualified-route/",
+            "artifacts/ein-llc/src/site/pages/agents/qualified-route.astro"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "d0d03254e97f18ec753330a1cdaea4a4a6409dd1",
+          "paths": [
+            "tools/expansion-related-services/",
+            "artifacts/ein-llc/src/site/pages/agents/related-services.astro"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+          "ref": "codex/s219-ein-runtime-release-20260910",
+          "pr": 43
+        }
+      ],
+      "startingRef": "7c5a871a8640c51ad0ee911345be8edb28365582",
+      "branch": "codex/w5-a10-20260911",
+      "integrationOwner": "W5-A01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-A11",
+      "slot": "A11",
+      "repo": "epistemedeus/ein-llc-lean",
+      "outcome": "Ac16 operator review UI consuming actual case/quote",
+      "dependency": "A01",
+      "proof": "Same-origin wrong-case/quote link cannot proceed; intended operator can review and continue",
+      "ownedPaths": [
+        "tools/activation-review-component/",
+        "artifacts/ein-llc/src/site/components/agents/PreparedCaseReview.astro",
+        "artifacts/ein-llc/src/site/pages/agents/review-preview.astro",
+        "experiments/wave5/a11/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/a11/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "852e25db335515ec3866a9fa3ff1de406fa22c55",
+          "paths": [
+            "tools/activation-review-component/",
+            "artifacts/ein-llc/src/site/components/agents/PreparedCaseReview.astro",
+            "artifacts/ein-llc/src/site/pages/agents/review-preview.astro"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+          "ref": "codex/s219-ein-runtime-release-20260910",
+          "pr": 43
+        }
+      ],
+      "startingRef": "852e25db335515ec3866a9fa3ff1de406fa22c55",
+      "branch": "codex/w5-a11-20260911",
+      "integrationOwner": "W5-A01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-A12",
+      "slot": "A12",
+      "repo": "epistemedeus/ein-llc-lean",
+      "outcome": "Ac17 independent activation contract harness",
+      "dependency": "S; replay A01–A06",
+      "proof": "Single bad origin/recipient/status independently fails; valid live contract passes",
+      "ownedPaths": [
+        "tools/activation-contract-conformance/",
+        "experiments/wave5/a12/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/a12/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "87ac799ea49e748343c3b5f57155cdb0a749562c",
+          "paths": [
+            "tools/activation-contract-conformance/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+          "ref": "codex/s219-ein-runtime-release-20260910",
+          "pr": 43
+        }
+      ],
+      "startingRef": "87ac799ea49e748343c3b5f57155cdb0a749562c",
+      "branch": "codex/w5-a12-20260911",
+      "integrationOwner": "W5-A01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-A13",
+      "slot": "A13",
+      "repo": "epistemedeus/ein-llc-lean",
+      "outcome": "Ac18 three-site discovery consumer for actual activation path",
+      "dependency": "S; A01, A10",
+      "proof": "Resolve current service and route, not hardcoded booleans or permissive redirect prefixes",
+      "ownedPaths": [
+        "tools/three-site-discovery-consumer/",
+        "experiments/wave5/a13/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/a13/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "a5ed8b7e67dae1e6504b288ea0b2ea7ffc2fe8ef",
+          "paths": [
+            "tools/three-site-discovery-consumer/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+          "ref": "codex/s219-ein-runtime-release-20260910",
+          "pr": 43
+        }
+      ],
+      "startingRef": "a5ed8b7e67dae1e6504b288ea0b2ea7ffc2fe8ef",
+      "branch": "codex/w5-a13-20260911",
+      "integrationOwner": "W5-A01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-A14",
+      "slot": "A14",
+      "repo": "epistemedeus/ein-llc-lean",
+      "outcome": "Ac19 real one-case composition harness through provider boundary",
+      "dependency": "A01–A06, A11",
+      "proof": "Same applicant/case across stages; simulated purchase clearly separate from provider state",
+      "ownedPaths": [
+        "tools/activation-pack-composition/",
+        "experiments/wave5/a14/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/a14/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "4bd5f888f2eed6d54f80b7f82b8c0eea3d5b2cb1",
+          "paths": [
+            "tools/activation-pack-composition/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+          "ref": "codex/s219-ein-runtime-release-20260910",
+          "pr": 43
+        }
+      ],
+      "startingRef": "4bd5f888f2eed6d54f80b7f82b8c0eea3d5b2cb1",
+      "branch": "codex/w5-a14-20260911",
+      "integrationOwner": "W5-A01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-A15",
+      "slot": "A15",
+      "repo": "epistemedeus/ein-llc-lean",
+      "outcome": "Qualified referral field kit and initial partner interaction",
+      "dependency": "A08–A14; F",
+      "proof": "A real relevant operator/partner receives a usable path; no fabricated lead or generic EIN research",
+      "ownedPaths": [
+        "experiments/wave5/a15/"
+      ],
+      "receiptPath": "experiments/wave5/a15/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+          "ref": "codex/s219-ein-runtime-release-20260910",
+          "pr": 43
+        }
+      ],
+      "startingRef": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+      "branch": "codex/w5-a15-20260911",
+      "integrationOwner": "W5-A01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-A16",
+      "slot": "A16",
+      "repo": "epistemedeus/ein-llc-lean",
+      "outcome": "Activation release/learning packet with conversion and abandonment evidence",
+      "dependency": "A14, A15",
+      "proof": "Exact deploy/readback and identifiable drop-off; no customer conversion claim from fixtures",
+      "ownedPaths": [
+        "experiments/wave5/a16/"
+      ],
+      "receiptPath": "experiments/wave5/a16/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/ein-llc-lean",
+          "sha": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+          "ref": "codex/s219-ein-runtime-release-20260910",
+          "pr": 43
+        }
+      ],
+      "startingRef": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+      "branch": "codex/w5-a16-20260911",
+      "integrationOwner": "W5-A01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-E01",
+      "slot": "E01",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Current Neo54 kernel: reproduce residual boundary findings and integrate chosen journey",
+      "dependency": "S",
+      "proof": "Actual compiled positive path and adversarial money-authority cases; retain repaired behavior",
+      "ownedPaths": [
+        "services/earned-work/",
+        "services/walletless-payout-ledger/",
+        "packs/outside-operator-journey-harness/",
+        "packs/earned-work-verification/",
+        "packs/funded-task-terms/",
+        "experiments/wave5/e01/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/e01/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+      "branch": "codex/w5-e01-20260911",
+      "integrationOwner": "W5-E01",
+      "existingAgentId": "bc-8e165dd0-c467-40fb-86ff-08cec8035619",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E02",
+      "slot": "E02",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Ex13 one versioned SDK against selected runtime, with typed outcome contracts",
+      "dependency": "S; E01 interface",
+      "proof": "Actual operation/schema correspondence, not copied legacy integer-terms fixture",
+      "ownedPaths": [
+        "packs/earned-work-sdk/",
+        "experiments/wave5/e02/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/e02/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "50f605e6ef459a500bd3a643165f16b5fbb5d680",
+          "paths": [
+            "packs/earned-work-sdk/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "50f605e6ef459a500bd3a643165f16b5fbb5d680",
+      "branch": "codex/w5-e02-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E03",
+      "slot": "E03",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Ex08 durable mutation journal/resume binding exact body, principal and operation",
+      "dependency": "S; E02",
+      "proof": "Commit then drop response; restart resumes same action without key/body substitution",
+      "ownedPaths": [
+        "packs/job-resume/",
+        "experiments/wave5/e03/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/e03/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "037fbd0138de3a237536b006d51de89b48e015ad",
+          "paths": [
+            "packs/job-resume/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "037fbd0138de3a237536b006d51de89b48e015ad",
+      "branch": "codex/w5-e03-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E04",
+      "slot": "E04",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Ex01 requester offer composer consuming shared recovery",
+      "dependency": "S; E02, E03",
+      "proof": "Partial create/reserve failure recovers one offer and correct observed reservation",
+      "ownedPaths": [
+        "packs/requester-offer-composer/",
+        "experiments/wave5/e04/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/e04/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "08cc3cb6c224a5a5eb8ae5ebd3be4185da5f2c2c",
+          "paths": [
+            "packs/requester-offer-composer/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "08cc3cb6c224a5a5eb8ae5ebd3be4185da5f2c2c",
+      "branch": "codex/w5-e04-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E05",
+      "slot": "E05",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Ex02/Ex18 terms disclosure mapping and actual principal assent",
+      "dependency": "S; E01, E02",
+      "proof": "Modified display economics or Alice-assent/Bob-session cannot authorize a claim",
+      "ownedPaths": [
+        "packs/requester-terms-assent/",
+        "packs/terms-hash-conformance/",
+        "experiments/wave5/e05/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/e05/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "8db30edb5e6a938835f07ef670f97e60386effc0",
+          "paths": [
+            "packs/requester-terms-assent/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "d07f693a6659adeb1ccee911b4da55a9e81a5f67",
+          "paths": [
+            "packs/terms-hash-conformance/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "8db30edb5e6a938835f07ef670f97e60386effc0",
+      "branch": "codex/w5-e05-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E06",
+      "slot": "E06",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Ex04 contributor walletless-job client with local preflight",
+      "dependency": "S; E02, E03, E05",
+      "proof": "Missing artifact produces no claim; valid supplied contribution progresses",
+      "ownedPaths": [
+        "packs/contributor-walletless-job/",
+        "experiments/wave5/e06/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/e06/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "c2d0535ee48d7a573ef43bce6c31a3c2c209aee9",
+          "paths": [
+            "packs/contributor-walletless-job/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "c2d0535ee48d7a573ef43bce6c31a3c2c209aee9",
+      "branch": "codex/w5-e06-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E07",
+      "slot": "E07",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Ex06 contributor session/grant consumer",
+      "dependency": "S; E02, E03",
+      "proof": "Empty 201 is unknown, not success; non-idempotent grant reconciles without broad owner credentials",
+      "ownedPaths": [
+        "packs/contributor-session-grant/",
+        "experiments/wave5/e07/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/e07/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "c13a1665f819ca3854884dda3a05e83f9de09eb6",
+          "paths": [
+            "packs/contributor-session-grant/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "c13a1665f819ca3854884dda3a05e83f9de09eb6",
+      "branch": "codex/w5-e07-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E08",
+      "slot": "E08",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Ex07 submitted-work progress projection bound to contribution/verdict",
+      "dependency": "S; E01",
+      "proof": "Failed/foreign evidence cannot become verified through lifecycle labels",
+      "ownedPaths": [
+        "packs/submission-progress/",
+        "experiments/wave5/e08/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/e08/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "57f89e117c2e55caea988110e374b6c1a129f942",
+          "paths": [
+            "packs/submission-progress/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "57f89e117c2e55caea988110e374b6c1a129f942",
+      "branch": "codex/w5-e08-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E09",
+      "slot": "E09",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Ex03 requester decision desk using current obligation contract",
+      "dependency": "S; E01",
+      "proof": "Empty payout projection cannot mean owed; validations precede consequential acceptance",
+      "ownedPaths": [
+        "packs/requester-decision-desk/",
+        "experiments/wave5/e09/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/e09/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "01cc7af06ff762e96a4ab1188aa46996711f140c",
+          "paths": [
+            "packs/requester-decision-desk/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "01cc7af06ff762e96a4ab1188aa46996711f140c",
+      "branch": "codex/w5-e09-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E10",
+      "slot": "E10",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Ex09 correction budget matching disclosed terms",
+      "dependency": "S; E05",
+      "proof": "Zero remains zero, missing allowance does not replenish, permitted correction works",
+      "ownedPaths": [
+        "packs/bounded-correction-ux/",
+        "experiments/wave5/e10/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/e10/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "483208b4451d3b1c554e6af2cf51c562b0431ea0",
+          "paths": [
+            "packs/bounded-correction-ux/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "483208b4451d3b1c554e6af2cf51c562b0431ea0",
+      "branch": "codex/w5-e10-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E11",
+      "slot": "E11",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Ex11 dispute/appeal experience with correct final decision mapping",
+      "dependency": "S; E09",
+      "proof": "Overturned/affirmed/unknown decisions remain distinct at actual interface",
+      "ownedPaths": [
+        "packs/dispute-experience/",
+        "experiments/wave5/e11/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/e11/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "740adb29598614861f2ade332a1aadf5461ac6e8",
+          "paths": [
+            "packs/dispute-experience/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "740adb29598614861f2ade332a1aadf5461ac6e8",
+      "branch": "codex/w5-e11-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E12",
+      "slot": "E12",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Ex12/Ex14 expiry and next-action consumer",
+      "dependency": "S; E01, E02",
+      "proof": "Redacted reservation is unknown, not unclaimed; current actor sees only valid next actions",
+      "ownedPaths": [
+        "packs/expiry-experience/",
+        "packs/in-task-next-action/",
+        "experiments/wave5/e12/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/e12/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "5390b4cf6b511eb34cd09c4e774b22d84e4610f9",
+          "paths": [
+            "packs/expiry-experience/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "f0ffada446e3184ec9b366a461ced1a67b3eeb93",
+          "paths": [
+            "packs/in-task-next-action/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "5390b4cf6b511eb34cd09c4e774b22d84e4610f9",
+      "branch": "codex/w5-e12-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E13",
+      "slot": "E13",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Ex05/Ex16 recipient and settlement receipt view",
+      "dependency": "S; E01, E02",
+      "proof": "Destination/task/obligation substitution fails; actual settlement remains distinct from owed",
+      "ownedPaths": [
+        "packs/late-address-claim-ux/",
+        "packs/settlement-receipt-view/",
+        "experiments/wave5/e13/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/e13/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "a5860d1b2647fb4e917d2576aeef7722340bb4fb",
+          "paths": [
+            "packs/late-address-claim-ux/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "727d885a36cfff31c19aa5f02296b93a6f2ea789",
+          "paths": [
+            "packs/settlement-receipt-view/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "a5860d1b2647fb4e917d2576aeef7722340bb4fb",
+      "branch": "codex/w5-e13-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E14",
+      "slot": "E14",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Ex15/Ex19 financial boundary independent conformance suite",
+      "dependency": "S; replay E01, E09, E13",
+      "proof": "Positive valid award passes; error/empty/missing state never manufactures or erases obligation",
+      "ownedPaths": [
+        "packs/award-authority-boundary/",
+        "packs/payout-honesty-conformance/",
+        "experiments/wave5/e14/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/e14/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "006349e7805f1792a369c8b12a81037aaac319c6",
+          "paths": [
+            "packs/award-authority-boundary/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "6353d9d8b6dd7ba3b6f9cee24ca5f1eb865b7dd5",
+          "paths": [
+            "packs/payout-honesty-conformance/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "006349e7805f1792a369c8b12a81037aaac319c6",
+      "branch": "codex/w5-e14-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E15",
+      "slot": "E15",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Ex10 evidence reputation tied to actual contribution identity",
+      "dependency": "S; E08",
+      "proof": "Foreign evidence digest cannot credit another contributor; no unearned global trust score",
+      "ownedPaths": [
+        "packs/evidence-reputation/",
+        "experiments/wave5/e15/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/e15/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "c2ba33523943909dfc84c194485996026a4c5195",
+          "paths": [
+            "packs/evidence-reputation/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "c2ba33523943909dfc84c194485996026a4c5195",
+      "branch": "codex/w5-e15-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E16",
+      "slot": "E16",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Ex17/Ex20 operational evidence surface with honest coverage",
+      "dependency": "S; E01",
+      "proof": "Health or negative-only tests cannot stand in for successful live customer workflow",
+      "ownedPaths": [
+        "packs/earned-work-ops-desk/",
+        "packs/evidence-surface-conformance/",
+        "experiments/wave5/e16/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/e16/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "58257939a83786ba8f0e7e76de97a6d3d8004fe8",
+          "paths": [
+            "packs/earned-work-ops-desk/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "2ebadbfa90614f6feb8ea25c2ed61ba50afba5b6",
+          "paths": [
+            "packs/evidence-surface-conformance/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "58257939a83786ba8f0e7e76de97a6d3d8004fe8",
+      "branch": "codex/w5-e16-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E17",
+      "slot": "E17",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Independent interruption/multi-process earned-work test harness",
+      "dependency": "S; E01–E07",
+      "proof": "Actual post-commit loss and simultaneous claims preserve one intended state",
+      "ownedPaths": [
+        "experiments/wave5/e17/"
+      ],
+      "receiptPath": "experiments/wave5/e17/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+      "branch": "codex/w5-e17-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E18",
+      "slot": "E18",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Exact independent reproduction task specification and verifier",
+      "dependency": "S; D/M actual defect",
+      "proof": "Always-accept and always-reject verifier both fail; useful valid submission succeeds",
+      "ownedPaths": [
+        "experiments/wave5/e18/"
+      ],
+      "receiptPath": "experiments/wave5/e18/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+      "branch": "codex/w5-e18-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-E19",
+      "slot": "E19",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Contributor-facing funded trial and payment reconciliation",
+      "dependency": "E01, E06, E13, E14, E18; F",
+      "proof": "Actual contributor deliverable independently verifies; expense/owed/settled remain distinct",
+      "ownedPaths": [
+        "experiments/wave5/e19/"
+      ],
+      "receiptPath": "experiments/wave5/e19/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+      "branch": "codex/w5-e19-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-E20",
+      "slot": "E20",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Earned-work release and first contributor friction synthesis",
+      "dependency": "E01 plus selected consumers, E19",
+      "proof": "A runnable discover→contribute→verify→owed path; exact unresolved payment limits stated",
+      "ownedPaths": [
+        "experiments/wave5/e20/"
+      ],
+      "receiptPath": "experiments/wave5/e20/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        }
+      ],
+      "startingRef": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+      "branch": "codex/w5-e20-20260911",
+      "integrationOwner": "W5-E01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-C01",
+      "slot": "C01",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Authoritative task/room record store and selected context integration; reuse F05/W3-15",
+      "dependency": "S, resolve exact source",
+      "proof": "Two simultaneous processes preserve distinct records and scoped IDs",
+      "ownedPaths": [
+        "packs/task-linked-town-square/",
+        "packs/town-square-subscriptions/",
+        "experiments/wave5/c01/"
+      ],
+      "receiptPath": "experiments/wave5/c01/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "a83d9d56eb571f72c63781572cb7576faacdbdaf",
+          "paths": [
+            "packs/task-linked-town-square/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "bd79f40cb14842090f9c70075c00c0fcd56a3f7c",
+          "paths": [
+            "packs/town-square-subscriptions/"
+          ]
+        }
+      ],
+      "startingRef": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+      "branch": "codex/w5-c01-20260911",
+      "integrationOwner": "W5-C01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-C02",
+      "slot": "C02",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Cm01/Cm02 causal reply and delivery adapter on shared store",
+      "dependency": "S; C01",
+      "proof": "Same text/different actor or body cannot falsely acknowledge an earlier message",
+      "ownedPaths": [
+        "packs/federated-reply-envelope/",
+        "packs/message-delivery-correctness/",
+        "experiments/wave5/c02/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/c02/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "96daf171a93af14c04723b5c410a3e6ec12d1192",
+          "paths": [
+            "packs/federated-reply-envelope/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "89d329bd38656a017869df5b2bbf0479ac0c7ddc",
+          "paths": [
+            "packs/message-delivery-correctness/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "a83d9d56eb571f72c63781572cb7576faacdbdaf",
+          "paths": [
+            "packs/task-linked-town-square/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "bd79f40cb14842090f9c70075c00c0fcd56a3f7c",
+          "paths": [
+            "packs/town-square-subscriptions/"
+          ]
+        }
+      ],
+      "startingRef": "96daf171a93af14c04723b5c410a3e6ec12d1192",
+      "branch": "codex/w5-c02-20260911",
+      "integrationOwner": "W5-C01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-C03",
+      "slot": "C03",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Cm03/Cm04/Cm05 thread/citation/resume composition",
+      "dependency": "S; C01",
+      "proof": "Import collision refuses before overwrite; stable correction/citation target survives resume",
+      "ownedPaths": [
+        "packs/conversation-thread-view/",
+        "packs/cross-room-citation/",
+        "packs/conversation-resume-packet/",
+        "experiments/wave5/c03/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/c03/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "f82e455c23333cba2f767a81879018636d6f550e",
+          "paths": [
+            "packs/conversation-thread-view/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "300c5bb4374adb6149ad6f3f77c92f57bdf18ca6",
+          "paths": [
+            "packs/cross-room-citation/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "d555741d20ba22e7d60cfac671dce2391bf1272d",
+          "paths": [
+            "packs/conversation-resume-packet/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "a83d9d56eb571f72c63781572cb7576faacdbdaf",
+          "paths": [
+            "packs/task-linked-town-square/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "bd79f40cb14842090f9c70075c00c0fcd56a3f7c",
+          "paths": [
+            "packs/town-square-subscriptions/"
+          ]
+        }
+      ],
+      "startingRef": "f82e455c23333cba2f767a81879018636d6f550e",
+      "branch": "codex/w5-c03-20260911",
+      "integrationOwner": "W5-C01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-C04",
+      "slot": "C04",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Cm06 correspondence bridge with exact lost-response reconciliation",
+      "dependency": "S; C01, C02",
+      "proof": "Commit then lose acknowledgment; unrelated room read cannot prove intended post",
+      "ownedPaths": [
+        "packs/correspondence-townsquare-bridge/",
+        "experiments/wave5/c04/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/c04/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "e4e52d8678b93806e7060450b32c4f22c72019fc",
+          "paths": [
+            "packs/correspondence-townsquare-bridge/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "a83d9d56eb571f72c63781572cb7576faacdbdaf",
+          "paths": [
+            "packs/task-linked-town-square/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "bd79f40cb14842090f9c70075c00c0fcd56a3f7c",
+          "paths": [
+            "packs/town-square-subscriptions/"
+          ]
+        }
+      ],
+      "startingRef": "e4e52d8678b93806e7060450b32c4f22c72019fc",
+      "branch": "codex/w5-c04-20260911",
+      "integrationOwner": "W5-C01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-C05",
+      "slot": "C05",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Cm07/Cm08 task-discovery search and explanation keyed to actual observations",
+      "dependency": "S",
+      "proof": "Query-time freshness and same-task distinct observations remain correct",
+      "ownedPaths": [
+        "packs/discovery-search-index/",
+        "packs/rank-explanation-consumer/",
+        "experiments/wave5/c05/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/c05/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "40edb9ab11b12d037392b9d798c326a717d71b59",
+          "paths": [
+            "packs/discovery-search-index/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "dd22004f6fb728bcffdbb9a899b6c1823a6d18da",
+          "paths": [
+            "packs/rank-explanation-consumer/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "a83d9d56eb571f72c63781572cb7576faacdbdaf",
+          "paths": [
+            "packs/task-linked-town-square/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "bd79f40cb14842090f9c70075c00c0fcd56a3f7c",
+          "paths": [
+            "packs/town-square-subscriptions/"
+          ]
+        }
+      ],
+      "startingRef": "40edb9ab11b12d037392b9d798c326a717d71b59",
+      "branch": "codex/w5-c05-20260911",
+      "integrationOwner": "W5-C01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-C06",
+      "slot": "C06",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Cm09/Cm10 live source freshness and normalizer",
+      "dependency": "S",
+      "proof": "Actual HTTP body drives result; timestamp injection/stale data cannot become fresh evidence",
+      "ownedPaths": [
+        "packs/source-freshness-consumer/",
+        "packs/adapter-union-discovery/",
+        "experiments/wave5/c06/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/c06/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "322d677daf7bc8e4654339420bbe9436b49db2c7",
+          "paths": [
+            "packs/source-freshness-consumer/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "c2accfb995141d9a96fdb209572dddc850a7e42c",
+          "paths": [
+            "packs/adapter-union-discovery/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "a83d9d56eb571f72c63781572cb7576faacdbdaf",
+          "paths": [
+            "packs/task-linked-town-square/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "bd79f40cb14842090f9c70075c00c0fcd56a3f7c",
+          "paths": [
+            "packs/town-square-subscriptions/"
+          ]
+        }
+      ],
+      "startingRef": "322d677daf7bc8e4654339420bbe9436b49db2c7",
+      "branch": "codex/w5-c06-20260911",
+      "integrationOwner": "W5-C01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-C07",
+      "slot": "C07",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Cm11/Cm12 actionable offer/workability comparison",
+      "dependency": "S; C05, C06, E01",
+      "proof": "Bare funding flag and invalid clock cannot invent usable reserved offer",
+      "ownedPaths": [
+        "packs/workability-gate-composer/",
+        "packs/offer-comparison/",
+        "experiments/wave5/c07/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/c07/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "02b64932989c4f9f0a17d5c17562c4c67ec9a695",
+          "paths": [
+            "packs/workability-gate-composer/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "330751eab71ea379dd10e53eae556ecae61cc73c",
+          "paths": [
+            "packs/offer-comparison/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "a83d9d56eb571f72c63781572cb7576faacdbdaf",
+          "paths": [
+            "packs/task-linked-town-square/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "bd79f40cb14842090f9c70075c00c0fcd56a3f7c",
+          "paths": [
+            "packs/town-square-subscriptions/"
+          ]
+        }
+      ],
+      "startingRef": "02b64932989c4f9f0a17d5c17562c4c67ec9a695",
+      "branch": "codex/w5-c07-20260911",
+      "integrationOwner": "W5-C01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-C08",
+      "slot": "C08",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Cm13/Cm14/Cm15 field experience and correction attribution",
+      "dependency": "S; C01",
+      "proof": "Evidence binds actual task/author/target, not latest attachment or artifact existence",
+      "ownedPaths": [
+        "packs/field-report-ledger/",
+        "packs/experience-dispute-overlay/",
+        "packs/contribution-attribution/",
+        "experiments/wave5/c08/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/c08/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "18532a8d0f7e88b41ccf9e9220e0a93f9f18ba05",
+          "paths": [
+            "packs/field-report-ledger/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "7209f9379211507d36ad711dae839deda722b7b3",
+          "paths": [
+            "packs/experience-dispute-overlay/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "fd327ed815ab4b1c98f33a430833574680ddb4e3",
+          "paths": [
+            "packs/contribution-attribution/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "a83d9d56eb571f72c63781572cb7576faacdbdaf",
+          "paths": [
+            "packs/task-linked-town-square/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "bd79f40cb14842090f9c70075c00c0fcd56a3f7c",
+          "paths": [
+            "packs/town-square-subscriptions/"
+          ]
+        }
+      ],
+      "startingRef": "18532a8d0f7e88b41ccf9e9220e0a93f9f18ba05",
+      "branch": "codex/w5-c08-20260911",
+      "integrationOwner": "W5-C01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-C09",
+      "slot": "C09",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Cm16 changed-work notice delivery",
+      "dependency": "S; C01, C05",
+      "proof": "Supersession validated before effects; event cursor prevents duplicate/false historical notices",
+      "ownedPaths": [
+        "packs/changed-work-notices/",
+        "experiments/wave5/c09/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/c09/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "cc62833d5279cfd38512a2e7eebe69d00a954d8b",
+          "paths": [
+            "packs/changed-work-notices/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "a83d9d56eb571f72c63781572cb7576faacdbdaf",
+          "paths": [
+            "packs/task-linked-town-square/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "bd79f40cb14842090f9c70075c00c0fcd56a3f7c",
+          "paths": [
+            "packs/town-square-subscriptions/"
+          ]
+        }
+      ],
+      "startingRef": "cc62833d5279cfd38512a2e7eebe69d00a954d8b",
+      "branch": "codex/w5-c09-20260911",
+      "integrationOwner": "W5-C01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-C10",
+      "slot": "C10",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Cm17/Cm18 thin HTTP/MCP read consumers of same implementation",
+      "dependency": "C05–C07",
+      "proof": "Real query returns same source-grounded result; no duplicated fixture engine",
+      "ownedPaths": [
+        "packs/workability-http-readonly/",
+        "packs/discovery-mcp/",
+        "experiments/wave5/c10/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/c10/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "a73367f97432e99bdb83ee4675b0df6986da6c9b",
+          "paths": [
+            "packs/workability-http-readonly/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "83915090dc6f1626227a34b7bb6343e6def47544",
+          "paths": [
+            "packs/discovery-mcp/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "a83d9d56eb571f72c63781572cb7576faacdbdaf",
+          "paths": [
+            "packs/task-linked-town-square/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "bd79f40cb14842090f9c70075c00c0fcd56a3f7c",
+          "paths": [
+            "packs/town-square-subscriptions/"
+          ]
+        }
+      ],
+      "startingRef": "a73367f97432e99bdb83ee4675b0df6986da6c9b",
+      "branch": "codex/w5-c10-20260911",
+      "integrationOwner": "W5-C01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-C11",
+      "slot": "C11",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "Cm19/Cm20 independent cross-process/context-to-task acceptance",
+      "dependency": "S; replay C01–C10",
+      "proof": "Concurrent positive path succeeds; missing Postgres/engine cannot produce ready receipt",
+      "ownedPaths": [
+        "packs/conversation-interop-conformance/",
+        "packs/workability-packet-conformance/",
+        "experiments/wave5/c11/RECEIPT.md"
+      ],
+      "receiptPath": "experiments/wave5/c11/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "83ff25a47b036afa2a78d4eeb2e7aa9e890a6da8",
+          "paths": [
+            "packs/conversation-interop-conformance/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "f473c9346d3e50882bb1e97ffc34bf6ed28730d7",
+          "paths": [
+            "packs/workability-packet-conformance/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "a83d9d56eb571f72c63781572cb7576faacdbdaf",
+          "paths": [
+            "packs/task-linked-town-square/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "bd79f40cb14842090f9c70075c00c0fcd56a3f7c",
+          "paths": [
+            "packs/town-square-subscriptions/"
+          ]
+        }
+      ],
+      "startingRef": "83ff25a47b036afa2a78d4eeb2e7aa9e890a6da8",
+      "branch": "codex/w5-c11-20260911",
+      "integrationOwner": "W5-C01",
+      "phase": "source"
+    },
+    {
+      "id": "W5-C12",
+      "slot": "C12",
+      "repo": "epistemedeus/neomorphic-io",
+      "outcome": "One actual contributor/buyer context-use experiment",
+      "dependency": "C10, C11, E18 or D27; F",
+      "proof": "Task context helps a concrete choice/action, or record no observed benefit without network-effect claims",
+      "ownedPaths": [
+        "experiments/wave5/c12/"
+      ],
+      "receiptPath": "experiments/wave5/c12/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+          "ref": "fable/integration-earned-work",
+          "pr": 54
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "a83d9d56eb571f72c63781572cb7576faacdbdaf",
+          "paths": [
+            "packs/task-linked-town-square/"
+          ]
+        },
+        {
+          "repo": "epistemedeus/neomorphic-io",
+          "sha": "bd79f40cb14842090f9c70075c00c0fcd56a3f7c",
+          "paths": [
+            "packs/town-square-subscriptions/"
+          ]
+        }
+      ],
+      "startingRef": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+      "branch": "codex/w5-c12-20260911",
+      "integrationOwner": "W5-C01",
+      "phase": "dependent"
+    },
+    {
+      "id": "W5-O01",
+      "slot": "O01",
+      "repo": "epistemedeus/pilot",
+      "outcome": "Continue Pilot139 admission helper, canonical path ownership and unknown-POST behavior",
+      "dependency": "S",
+      "proof": "Dot/absolute/alias overlaps rejected; accepted unknown POST is reconciled, never replayed",
+      "ownedPaths": [
+        "tools/ops/cursor-wave-admission.mjs",
+        "tools/ops/cursor-wave-admission.test.mjs",
+        "tools/ops/wave5/o01/"
+      ],
+      "receiptPath": "tools/ops/wave5/o01/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/pilot",
+          "sha": "8eb0aba0089fc4d34ae76633aad4d64905765f73",
+          "ref": "codex/w4-selective-pstack-20260911",
+          "pr": 139
+        }
+      ],
+      "startingRef": "8eb0aba0089fc4d34ae76633aad4d64905765f73",
+      "branch": "codex/w5-o01-20260911",
+      "integrationOwner": "W5-O02",
+      "existingAgentId": "bc-e69ad322-1144-431b-95e8-6fa407bc266b",
+      "phase": "source"
+    },
+    {
+      "id": "W5-O02",
+      "slot": "O02",
+      "repo": "epistemedeus/pilot",
+      "outcome": "Existing collector/export receipts and accepted-throughput meter",
+      "dependency": "S",
+      "proof": "Full pagination, truncated diff and branch-only exports accounted; timing distinguishes active, exported and integrated",
+      "ownedPaths": [
+        "tools/ops/wave5/o02/"
+      ],
+      "receiptPath": "tools/ops/wave5/o02/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/pilot",
+          "sha": "8eb0aba0089fc4d34ae76633aad4d64905765f73",
+          "ref": "codex/w4-selective-pstack-20260911",
+          "pr": 139
+        }
+      ],
+      "startingRef": "8eb0aba0089fc4d34ae76633aad4d64905765f73",
+      "branch": "codex/w5-o02-20260911",
+      "integrationOwner": "W5-O02",
+      "phase": "source"
+    },
+    {
+      "id": "W5-O03",
+      "slot": "O03",
+      "repo": "epistemedeus/pilot",
+      "outcome": "Matched pstack/native delegation experiment on one genuinely useful branch",
+      "dependency": "S; select comparable task",
+      "proof": "Actual skill/model invocation plus accepted output/amendment cost, not slash text/cache assertion",
+      "ownedPaths": [
+        "tools/ops/wave5/o03/"
+      ],
+      "receiptPath": "tools/ops/wave5/o03/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/pilot",
+          "sha": "8eb0aba0089fc4d34ae76633aad4d64905765f73",
+          "ref": "codex/w4-selective-pstack-20260911",
+          "pr": 139
+        }
+      ],
+      "startingRef": "8eb0aba0089fc4d34ae76633aad4d64905765f73",
+      "branch": "codex/w5-o03-20260911",
+      "integrationOwner": "W5-O02",
+      "phase": "source"
+    },
+    {
+      "id": "W5-O04",
+      "slot": "O04",
+      "repo": "epistemedeus/pilot",
+      "outcome": "Existing Chat packet→full artifact→remote amendment round trip",
+      "dependency": "S; real review packet",
+      "proof": "Correct ordinary Chat/model/source coverage and complete findings reach same owner without resend/stop/Work substitution",
+      "ownedPaths": [
+        "tools/ops/wave5/o04/"
+      ],
+      "receiptPath": "tools/ops/wave5/o04/RECEIPT.md",
+      "inputRefs": [
+        {
+          "repo": "epistemedeus/pilot",
+          "sha": "8eb0aba0089fc4d34ae76633aad4d64905765f73",
+          "ref": "codex/w4-selective-pstack-20260911",
+          "pr": 139
+        }
+      ],
+      "startingRef": "8eb0aba0089fc4d34ae76633aad4d64905765f73",
+      "branch": "codex/w5-o04-20260911",
+      "integrationOwner": "W5-O02",
+      "phase": "source"
+    }
+  ]
+}

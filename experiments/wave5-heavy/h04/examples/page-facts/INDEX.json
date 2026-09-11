@@ -1,0 +1,41 @@
+{
+  "family": "page-facts",
+  "engine": "w4-page-change-offline-job",
+  "engineSha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+  "engineWorktree": "/tmp/w5-h04/ro-w4-pages",
+  "cli": "node tools/page-change-offline-job/bin/page-change.mjs job --job <job.json> --out-dir <dir>",
+  "repo": "epistemedeus/samedaydesk",
+  "note": "Caller-owned samedaydesk.extract-batch.v0 wrappers. Facts inside match git show SHA:path HTML/source. Not W4 SAMPLE RFQ fixtures, not W5-M09 page-snapshot corpora.",
+  "examples": [
+    {
+      "id": "h04-page-01",
+      "kind": "change",
+      "expectedStatus": "changed",
+      "path": "client/public/tools/schema-validator.html",
+      "beforeSha": "ff381d2b46e9beec1475212df2eb610a7b01229b",
+      "afterSha": "374a565784bcd4ec89eeda7fedbb9610fed77473",
+      "changedFact": "Public JSON-LD validator title, h1, and meta description renamed from JSON-LD / Schema Validator to Free JSON-LD Validator & Schema Checker.",
+      "dir": "./h04-page-01/"
+    },
+    {
+      "id": "h04-page-02",
+      "kind": "no-change-control",
+      "expectedStatus": "unchanged",
+      "path": "client/public/resources.html",
+      "beforeSha": "ff381d2b46e9beec1475212df2eb610a7b01229b",
+      "afterSha": "542d1748060ffadeda2491ddbbf134db31ce2890",
+      "changedFact": "Footer/portfolio-discovery sentence and extract provenance times move; selected title, description, and headings do not.",
+      "dir": "./h04-page-02/"
+    },
+    {
+      "id": "h04-page-03",
+      "kind": "change",
+      "expectedStatus": "changed",
+      "path": "server/lib/spa-route-shells.js",
+      "beforeSha": "3693e7c2ea49c44c8c8f35f24c3916de5b4bc8e0",
+      "afterSha": "3c96d3137f815035ed4a6467d28c8041916a9aa8",
+      "changedFact": "/x402/verified description and crawler paragraph replace OpenAPI/402-schema/Bazaar agreement with a 7-day CDP Bazaar freshness rule. Title and h1 unchanged.",
+      "dir": "./h04-page-03/"
+    }
+  ]
+}

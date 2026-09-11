@@ -1,0 +1,190 @@
+{
+  "at": "2026-09-11T23:02:59.940Z",
+  "source": "inventory+fallback",
+  "exampleCount": 12,
+  "missingFamilies": [],
+  "catalogErrors": [],
+  "runs": [
+    {
+      "exampleId": "h04-schema-01",
+      "engineId": "w4-json-schema-webhook-drift",
+      "sha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+      "executedSha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 37,
+      "compare": "match",
+      "outDirFiles": [
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "stdoutPreview": "{\"ok\":true,\"appId\":\"json-schema-webhook-drift\",\"status\":\"actionable\",\"termsVersion\":\"sha256:8dfd4dbb1899c9246352b1e1eec293e794f68891f2b932a49a9355db2ac6875b\",\"kind\":\"json-schema\",\"customerBrief\":false"
+    },
+    {
+      "exampleId": "h04-schema-02",
+      "engineId": "w4-json-schema-webhook-drift",
+      "sha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+      "executedSha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 31,
+      "compare": "match",
+      "outDirFiles": [
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "stdoutPreview": "{\"ok\":true,\"appId\":\"json-schema-webhook-drift\",\"status\":\"informational\",\"termsVersion\":\"sha256:689a68d2883bccce7f6a1314b1eab19ff453e3429e5e845363444d6bfeb68c71\",\"kind\":\"webhook-example\",\"customerBrief"
+    },
+    {
+      "exampleId": "h04-schema-03",
+      "engineId": "w4-json-schema-webhook-drift",
+      "sha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+      "executedSha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 30,
+      "compare": "match",
+      "outDirFiles": [
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "stdoutPreview": "{\"ok\":true,\"appId\":\"json-schema-webhook-drift\",\"status\":\"informational\",\"termsVersion\":\"sha256:059b4d4f5e88d2e8a9e4a45977331f68ec6bdb409064b2025c8f7657e68ba45f\",\"kind\":\"webhook-example\",\"customerBrief"
+    },
+    {
+      "exampleId": "h04-lock-01",
+      "engineId": "w4-lockfile-pin-delta",
+      "sha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+      "executedSha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 31,
+      "compare": "match",
+      "outDirFiles": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "stdoutPreview": "{\"ok\":true,\"appId\":\"lockfile-pin-delta\",\"status\":\"actionable\",\"provenance\":\"caller-supplied\",\"digest\":\"efb49b37dd1c3aa63ed8d29c8a4b7874d8d12c4d3bff0cd94a09d7ad2c713c0f\",\"counts\":{\"beforePins\":102,\"aft"
+    },
+    {
+      "exampleId": "h04-lock-02",
+      "engineId": "w4-lockfile-pin-delta",
+      "sha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+      "executedSha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 27,
+      "compare": "match",
+      "outDirFiles": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "stdoutPreview": "{\"ok\":true,\"appId\":\"lockfile-pin-delta\",\"status\":\"actionable\",\"provenance\":\"caller-supplied\",\"digest\":\"138fe1557634c83b1f75a828dfeb068ab1748f7b3f4f602b0a38450942aec5a5\",\"counts\":{\"beforePins\":3,\"after"
+    },
+    {
+      "exampleId": "h04-lock-03",
+      "engineId": "w4-lockfile-pin-delta",
+      "sha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+      "executedSha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 32,
+      "compare": "match",
+      "outDirFiles": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "stdoutPreview": "{\"ok\":true,\"appId\":\"lockfile-pin-delta\",\"status\":\"informational\",\"provenance\":\"caller-supplied\",\"digest\":null,\"counts\":{\"beforePins\":159,\"afterPins\":159,\"added\":0,\"removed\":0,\"changed\":0,\"unchanged\":1"
+    },
+    {
+      "exampleId": "h04-route-01",
+      "engineId": "w4-route-table-diff",
+      "sha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+      "executedSha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 29,
+      "compare": "match",
+      "outDirFiles": [
+        "route-diff.json",
+        "route-diff.md"
+      ],
+      "stdoutPreview": "{\"ok\":true,\"schema\":\"samedaydesk.route-diff.v1\",\"publishedRouteTable\":false,\"sample\":false,\"evidenceClass\":{\"before\":\"caller\",\"after\":\"caller\"},\"counts\":{\"added\":1,\"removed\":0,\"changed\":0,\"titleOnly\":"
+    },
+    {
+      "exampleId": "h04-route-02",
+      "engineId": "sds52-paid-useful-jobs",
+      "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "executedSha": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 245,
+      "compare": "match",
+      "outDirFiles": [
+        "receipt.json",
+        "upgrade-brief.json",
+        "upgrade-brief.md"
+      ],
+      "stdoutPreview": "{ \"ok\": true, \"jobId\": \"api-upgrade-brief\", \"title\": \"API Upgrade Brief\", \"fundingState\": \"unfunded\", \"sold\": false, \"sample\": false, \"sampleReasons\": [], \"purchaseAuthority\": false, \"outputs\": [ { \"n"
+    },
+    {
+      "exampleId": "h04-route-03",
+      "engineId": "w4-route-table-diff",
+      "sha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+      "executedSha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 31,
+      "compare": "match",
+      "outDirFiles": [
+        "route-diff.json",
+        "route-diff.md"
+      ],
+      "stdoutPreview": "{\"ok\":true,\"schema\":\"samedaydesk.route-diff.v1\",\"publishedRouteTable\":false,\"sample\":false,\"evidenceClass\":{\"before\":\"caller\",\"after\":\"caller\"},\"counts\":{\"added\":0,\"removed\":0,\"changed\":0,\"titleOnly\":"
+    },
+    {
+      "exampleId": "h04-page-01",
+      "engineId": "w4-page-change-offline-job",
+      "sha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+      "executedSha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 30,
+      "compare": "match",
+      "outDirFiles": [
+        "page-change.json",
+        "page-change.md"
+      ],
+      "stdoutPreview": "{ \"ok\": true, \"job\": { \"id\": \"h04-page-01\", \"title\": \"Watch JSON-LD validator title, description, and headings\", \"fields\": [ \"title\", \"description\", \"headings\" ] }, \"report\": { \"schema\": \"pilot/page-c"
+    },
+    {
+      "exampleId": "h04-page-02",
+      "engineId": "w4-page-change-offline-job",
+      "sha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+      "executedSha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 31,
+      "compare": "match",
+      "outDirFiles": [
+        "page-change.json",
+        "page-change.md"
+      ],
+      "stdoutPreview": "{ \"ok\": true, \"job\": { \"id\": \"h04-page-02\", \"title\": \"Watch resources.html title, description, and headings across footer-only HTML noise\", \"fields\": [ \"title\", \"description\", \"headings\" ] }, \"report\""
+    },
+    {
+      "exampleId": "h04-page-03",
+      "engineId": "w4-page-change-offline-job",
+      "sha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+      "executedSha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 31,
+      "compare": "match",
+      "outDirFiles": [
+        "page-change.json",
+        "page-change.md"
+      ],
+      "stdoutPreview": "{ \"ok\": true, \"job\": { \"id\": \"h04-page-03\", \"title\": \"Watch /x402/verified title, description, headings, and crawler paragraph\", \"fields\": [ \"title\", \"description\", \"headings\", \"text\" ] }, \"report\": {"
+    }
+  ]
+}

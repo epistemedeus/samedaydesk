@@ -1,0 +1,78 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "listing-repair-packet",
+  "status": "actionable",
+  "summary": "Listing repair packet status=diagnosed",
+  "actions": [
+    {
+      "priority": "high",
+      "kind": "owner-repair",
+      "note": "/changelog: consider_listing_new_route delta=added - Present in current only (within supplied pair).",
+      "sourceRefs": [
+        "route:/changelog"
+      ]
+    },
+    {
+      "priority": "high",
+      "kind": "owner-repair",
+      "note": "/docs: update_listed_route_or_redirect_target delta=redirected - finalUrl / redirect location changed between snapshots.",
+      "sourceRefs": [
+        "route:/docs"
+      ]
+    },
+    {
+      "priority": "high",
+      "kind": "owner-repair",
+      "note": "/legacy: diagnose_access_or_listing_path delta=inaccessible - Was reachable in baseline; now inaccessible in current.",
+      "sourceRefs": [
+        "route:/legacy"
+      ]
+    },
+    {
+      "priority": "high",
+      "kind": "owner-repair",
+      "note": "/maintenance: confirm_restored_route_in_listing delta=restored - Was inaccessible in baseline; now reachable.",
+      "sourceRefs": [
+        "route:/maintenance"
+      ]
+    },
+    {
+      "priority": "high",
+      "kind": "owner-repair",
+      "note": "/old-blog: recommend_distribution_recheck delta=removed - surface_broken_or_removed_route; Present in baseline, absent in complete current capture.",
+      "sourceRefs": [
+        "route:/old-blog"
+      ]
+    },
+    {
+      "priority": "high",
+      "kind": "owner-repair",
+      "note": "/pricing: diagnose_access_or_listing_path delta=inaccessible - Was reachable in baseline; now inaccessible in current.",
+      "sourceRefs": [
+        "route:/pricing"
+      ]
+    }
+  ],
+  "gaps": [
+    "Route repair is owner guidance — not invented revenue or lost-customer proof",
+    "Acquisition events are identity-bound join wiring from the caller identity + repair feed, not observed live clicks"
+  ],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "input": "/tmp/sds-paid-useful-jobs-6bf650391fad4fa6/useful-jobs-1.0.0/samples/listing/caller-alpha.json",
+    "exampleMode": true,
+    "sampleLabel": "explicit-example",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "tool": "distribution-repair",
+    "status": "diagnosed",
+    "ok": true
+  },
+  "generatedAt": "2026-09-11T22:54:23.076Z",
+  "sourceLinked": true,
+  "digest": "7a7bbc9d69820084"
+}

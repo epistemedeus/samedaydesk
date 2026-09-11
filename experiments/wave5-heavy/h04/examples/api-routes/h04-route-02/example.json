@@ -1,0 +1,27 @@
+{
+  "id": "h04-route-02",
+  "family": "api-routes",
+  "title": "Observatory Express API operations added",
+  "kind": "change",
+  "engines": ["sds52-api-upgrade-brief"],
+  "inputs": {
+    "before": "./before.yaml",
+    "after": "./after.yaml",
+    "used": "./used.json"
+  },
+  "changedFact": "S54 mounts GET /api/observatory/sources, GET /api/observatory/snapshot, and GET /api/observatory/sources/{sourceId}. Those used operations are absent at d4fec15 and present at 8c1c4f7. GET /api/health and GET /api/market-observations/moltjobs-stats stay.",
+  "expectedStatus": "actionable",
+  "expectedHighlights": [
+    "consider-adoption",
+    "Used-ops delta: +3/~0/-0",
+    "GET /api/observatory/sources",
+    "GET /api/observatory/snapshot",
+    "GET /api/observatory/sources/{sourceId}"
+  ],
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "beforeSha": "d4fec15d822bed6bdb98b6723bdbfbf88c9e5796",
+    "afterSha": "8c1c4f706c75868d1556db483deff98d29758073",
+    "path": "server/routes/observatory.js"
+  }
+}

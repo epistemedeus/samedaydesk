@@ -1,0 +1,103 @@
+{
+  "ok": true,
+  "jobId": "listing-repair-packet",
+  "title": "Listing Repair Packet",
+  "fundingState": "unfunded",
+  "sold": false,
+  "sample": true,
+  "sampleReasons": [
+    "example-flag"
+  ],
+  "purchaseAuthority": false,
+  "outputs": [
+    {
+      "name": "repair-packet.json",
+      "path": "/tmp/w5-h04/h04-engine-smoke/listing-repair-packet/repair-packet.json",
+      "bytes": 2517,
+      "sha256": "b2d4ae69deabe6b408afc8034519b8681c874b9f79561c58750a30aaeed9b58b"
+    },
+    {
+      "name": "repair-packet.md",
+      "path": "/tmp/w5-h04/h04-engine-smoke/listing-repair-packet/repair-packet.md",
+      "bytes": 1347,
+      "sha256": "5df259bf631fa90863ff5ef39cc0ef0f48da374bb43e21f3d28355b280b4a996"
+    }
+  ],
+  "receipt": {
+    "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+    "jobId": "listing-repair-packet",
+    "engine": {
+      "package": "useful-jobs",
+      "version": "1.0.0",
+      "purchaseAuthority": false,
+      "cli": "node bin/useful-jobs.mjs run <id>",
+      "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "archiveBytes": 2522418,
+      "sourceRepo": "epistemedeus/pilot",
+      "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+      "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+      "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+    },
+    "inputsDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "outputsDigest": "bb81d6d84d3d9b7ce79c33ab9a5bc81f050d005854a93686d5d7a7c454bf86d7",
+    "inputs": [],
+    "inputRoot": null,
+    "outputs": [
+      {
+        "name": "repair-packet.json",
+        "path": "/tmp/w5-h04/h04-engine-smoke/listing-repair-packet/repair-packet.json",
+        "bytes": 2517,
+        "sha256": "b2d4ae69deabe6b408afc8034519b8681c874b9f79561c58750a30aaeed9b58b"
+      },
+      {
+        "name": "repair-packet.md",
+        "path": "/tmp/w5-h04/h04-engine-smoke/listing-repair-packet/repair-packet.md",
+        "bytes": 1347,
+        "sha256": "5df259bf631fa90863ff5ef39cc0ef0f48da374bb43e21f3d28355b280b4a996"
+      }
+    ],
+    "fundingState": "unfunded",
+    "sold": false,
+    "sample": true,
+    "sampleReasons": [
+      "example-flag"
+    ],
+    "purchaseAuthority": false,
+    "liveSettlement": "out-of-scope",
+    "fixturePrice": {
+      "labelled": true,
+      "live": false,
+      "publishedToLiveCatalog": false,
+      "jobId": "listing-repair-packet",
+      "amountUsdc": "0.02",
+      "amountAtomic": "20000",
+      "payTo": "0x0000000000000000000000000000000000000F08",
+      "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+    },
+    "payment": {
+      "fixture": false,
+      "purchaseAuthority": false,
+      "liveSettleAttempted": false,
+      "liveSettleAllowed": false,
+      "fundingState": "unfunded"
+    },
+    "continuity": null,
+    "engineResult": {
+      "ok": true,
+      "status": "actionable",
+      "digest": "7a7bbc9d69820084",
+      "refused": false,
+      "identityVerified": null
+    },
+    "outDir": "/tmp/w5-h04/h04-engine-smoke/listing-repair-packet"
+  },
+  "engine": {
+    "ok": true,
+    "appId": "listing-repair-packet",
+    "status": "actionable",
+    "digest": "7a7bbc9d69820084",
+    "outDir": "/tmp/w5-h04/h04-engine-smoke/listing-repair-packet",
+    "actions": 6
+  },
+  "liveSettlement": "out-of-scope"
+}

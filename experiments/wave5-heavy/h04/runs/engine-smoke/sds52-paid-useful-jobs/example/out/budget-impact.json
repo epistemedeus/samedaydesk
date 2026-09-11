@@ -1,0 +1,48 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "vendor-budget-impact",
+  "status": "partial",
+  "summary": "Budget-impact scan: fieldChanges=0 unitChanges=1 conflicting=1 unknown=0",
+  "actions": [
+    {
+      "priority": "high",
+      "kind": "normalize-unit-before-budgeting",
+      "fieldKey": "grok-4.6-input",
+      "beforeUnit": "USD/1M-tokens",
+      "afterUnit": "USD/1M-Tokens",
+      "note": "Unit label changed; do not compare numeric fields until units match. No purchase authorized."
+    }
+  ],
+  "gaps": [
+    "conflicting or unknown pricing rows present; treat impact as non-final"
+  ],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "before": "/tmp/sds-paid-useful-jobs-6bf650391fad4fa6/useful-jobs-1.0.0/samples/pricing/a/before.json",
+    "after": "/tmp/sds-paid-useful-jobs-6bf650391fad4fa6/useful-jobs-1.0.0/samples/pricing/a/after.json",
+    "exampleMode": true,
+    "sampleLabel": "explicit-example",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "family": "pricing-row-unit",
+    "counts": {
+      "beforeRows": 4,
+      "afterRows": 4,
+      "added": 0,
+      "removed": 0,
+      "fieldChanges": 0,
+      "unitChanges": 1,
+      "conflicting": 1,
+      "unchanged": 3,
+      "unknown": 0
+    },
+    "ok": true
+  },
+  "generatedAt": "2026-09-11T22:58:23.314Z",
+  "purchaseAuthority": false,
+  "digest": "366ba1c234f5b03c"
+}

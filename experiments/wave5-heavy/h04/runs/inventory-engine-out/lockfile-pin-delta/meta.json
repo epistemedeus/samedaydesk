@@ -1,0 +1,13 @@
+{
+  "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/lockfile-pin-delta",
+  "engineSha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+  "files": [
+    "pin-delta.json",
+    "pin-delta.md"
+  ],
+  "copiedAt": "2026-09-11T23:03:23.380Z",
+  "engineId": "w4-lockfile-pin-delta",
+  "worktree": "/tmp/w5-h04/ro-w4-lockfile",
+  "sampleNotCustomerJob": true,
+  "note": "SAMPLE / --example (or page-change journey analog). Not a customer job."
+}

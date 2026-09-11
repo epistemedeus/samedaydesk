@@ -1,0 +1,48 @@
+{
+  "pilotPin": "95b3f3a47f5b1b69bd237e4c978fc3376221365d",
+  "sds52": {
+    "id": "sds52-paid-useful-jobs",
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "worktree": "/tmp/w5-h04/ro-sds52",
+    "cli": "server/paid-useful-jobs/bin/cli.mjs",
+    "pr": 52
+  },
+  "w4": [
+    {
+      "id": "w4-json-schema-webhook-drift",
+      "sha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+      "worktree": "/tmp/w5-h04/ro-w4-schema",
+      "cli": "tools/json-schema-webhook-drift/bin/webhook-drift.mjs",
+      "pr": 59,
+      "commerce": "W4-commerce-10"
+    },
+    {
+      "id": "w4-lockfile-pin-delta",
+      "sha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+      "worktree": "/tmp/w5-h04/ro-w4-lockfile",
+      "cli": "tools/lockfile-pin-delta/bin/lockfile-delta.mjs",
+      "commerce": "W4-commerce-11"
+    },
+    {
+      "id": "w4-route-table-diff",
+      "sha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+      "worktree": "/tmp/w5-h04/ro-w4-routes",
+      "cli": "tools/route-table-diff/bin/route-diff.mjs",
+      "pr": 64,
+      "commerce": "W4-commerce-12"
+    },
+    {
+      "id": "w4-page-change-offline-job",
+      "sha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+      "worktree": "/tmp/w5-h04/ro-w4-pages",
+      "cli": "tools/page-change-offline-job/bin/page-change.mjs",
+      "commerce": "W4-commerce-13"
+    }
+  ],
+  "usefulJobsArchive": {
+    "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+    "bytes": 2522418,
+    "sourceRepo": "epistemedeus/pilot",
+    "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671"
+  }
+}

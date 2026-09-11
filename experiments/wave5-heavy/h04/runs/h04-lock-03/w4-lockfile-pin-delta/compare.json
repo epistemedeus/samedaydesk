@@ -1,0 +1,35 @@
+{
+  "result": "match",
+  "reason": null,
+  "facts": [
+    {
+      "key": "status",
+      "expected": "informational",
+      "actual": "informational",
+      "result": "match"
+    },
+    {
+      "key": "highlight:informational",
+      "expected": "informational",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "highlight:Added 0, removed 0, changed 0.",
+      "expected": "Added 0, removed 0, changed 0.",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "highlight:Unchanged packages omitted (159)",
+      "expected": "Unchanged packages omitted (159)",
+      "actual": true,
+      "result": "match"
+    }
+  ],
+  "expectedPresent": true,
+  "artifactFiles": [
+    "pin-delta.json",
+    "pin-delta.md"
+  ]
+}

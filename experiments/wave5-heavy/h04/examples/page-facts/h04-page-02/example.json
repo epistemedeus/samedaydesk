@@ -1,0 +1,27 @@
+{
+  "id": "h04-page-02",
+  "family": "page-facts",
+  "title": "Resources page footer and provenance noise, selected fields unchanged",
+  "kind": "no-change-control",
+  "engines": [
+    "w4-page-change-offline-job"
+  ],
+  "inputs": {
+    "job": "./job.json",
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "changedFact": "No buyer-facing title, description, or heading change. 542d174 only appends a footer sentence about EIN.LLC / Neomorphic.io; extract provenance times and unused text/asset-hash fields also move.",
+  "expectedStatus": "unchanged",
+  "expectedHighlights": [
+    "unchanged",
+    "No selected-field content changes recorded",
+    "paymentImpliesUsefulOutput: false"
+  ],
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "beforeSha": "ff381d2b46e9beec1475212df2eb610a7b01229b",
+    "afterSha": "542d1748060ffadeda2491ddbbf134db31ce2890",
+    "path": "client/public/resources.html"
+  }
+}

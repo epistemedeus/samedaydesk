@@ -1,0 +1,29 @@
+{
+  "engineId": "sds52-paid-useful-jobs",
+  "phase": "list",
+  "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+  "executedSha": "aeef964fa188443078958d9d6d393afae1d542ee",
+  "worktree": "/tmp/w5-h04/ro-sds52",
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-sds52/server/paid-useful-jobs/bin/cli.mjs",
+    "list"
+  ],
+  "cwd": "/tmp/w5-h04/ro-sds52",
+  "exitCode": 0,
+  "signal": null,
+  "timedOut": false,
+  "spawnError": null,
+  "durationMs": 30,
+  "ok": true,
+  "sample": false,
+  "sampleNotCustomerJob": false,
+  "note": null,
+  "outDir": null,
+  "outDirFiles": [],
+  "stdoutPreview": "{ \"ok\": true, \"jobs\": [ \"api-upgrade-brief\", \"vendor-budget-impact\", \"feed-agenda\", \"evidence-ci-annotation\", \"listing-repair-packet\", \"repeat-job-record\" ], \"liveSettlement\": \"out-of-scope\" }",
+  "stderrPreview": "",
+  "capturedAt": "2026-09-11T22:58:23.360Z",
+  "node": "v22.22.2",
+  "harnessCwd": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04"
+}

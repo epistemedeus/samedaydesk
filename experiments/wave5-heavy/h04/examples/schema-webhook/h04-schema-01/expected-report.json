@@ -1,0 +1,30 @@
+{
+  "ok": true,
+  "status": "actionable",
+  "kind": "json-schema",
+  "usedOnly": true,
+  "consumersBreak": true,
+  "consumerAction": "Update emitters and validators: exclusiveMinimum is no longer a boolean modifier of minimum; it must be a number (the exclusive bound).",
+  "summary": "Used-path drift: /properties/exclusiveMinimum type-change boolean -> number. Unused Draft-06 additions ignored.",
+  "impact": {
+    "breaking": [
+      {
+        "pointer": "/properties/exclusiveMinimum",
+        "class": "breaking",
+        "reason": "type-change",
+        "beforeType": "boolean",
+        "afterType": "number"
+      }
+    ],
+    "added": [],
+    "deleted": [],
+    "unknown": [],
+    "unchangedCount": 0,
+    "ignoredUnused": true
+  },
+  "notReported": [
+    "/properties/exclusiveMaximum also boolean -> number (not in used pointers)",
+    "/properties/const added in Draft 06",
+    "id renamed to $id"
+  ]
+}

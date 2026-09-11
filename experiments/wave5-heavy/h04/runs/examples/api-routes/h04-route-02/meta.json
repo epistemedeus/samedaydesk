@@ -1,0 +1,16 @@
+{
+  "sourceTmp": "/tmp/w5-h04/h04-child-route-runs/h04-route-02",
+  "engineSha": "aeef964fa188443078958d9d6d393afae1d542ee",
+  "files": [
+    "actual-engine.json",
+    "cli-stdout.json",
+    "receipt.json",
+    "upgrade-brief.json",
+    "upgrade-brief.md"
+  ],
+  "copiedAt": "2026-09-11T23:03:23.380Z",
+  "engineId": "sds52-api-upgrade-brief",
+  "worktree": "/tmp/w5-h04/ro-sds52",
+  "sampleNotCustomerJob": false,
+  "note": "Caller-owned OpenAPI used-ops; not kit SAMPLE. sold=false sample=false."
+}

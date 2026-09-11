@@ -1,0 +1,103 @@
+{
+  "ok": true,
+  "jobId": "vendor-budget-impact",
+  "title": "Vendor Budget Impact",
+  "fundingState": "unfunded",
+  "sold": false,
+  "sample": true,
+  "sampleReasons": [
+    "example-flag"
+  ],
+  "purchaseAuthority": false,
+  "outputs": [
+    {
+      "name": "budget-impact.json",
+      "path": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/engine-smoke/sds52-paid-useful-jobs/example/out/budget-impact.json",
+      "bytes": 1458,
+      "sha256": "bd239a823d392922d6203fbb8b172159eec26572580a305b2d1628dff425c227"
+    },
+    {
+      "name": "budget-impact.md",
+      "path": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/engine-smoke/sds52-paid-useful-jobs/example/out/budget-impact.md",
+      "bytes": 396,
+      "sha256": "900ef7be6bc620259ff6e184189aed66037f3e5fb1191f3e2128e9d166b2079b"
+    }
+  ],
+  "receipt": {
+    "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+    "jobId": "vendor-budget-impact",
+    "engine": {
+      "package": "useful-jobs",
+      "version": "1.0.0",
+      "purchaseAuthority": false,
+      "cli": "node bin/useful-jobs.mjs run <id>",
+      "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "archiveBytes": 2522418,
+      "sourceRepo": "epistemedeus/pilot",
+      "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+      "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+      "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+    },
+    "inputsDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "outputsDigest": "34c762491ab6b179b23860637250b802e56a22f765005891be9078ef606e9183",
+    "inputs": [],
+    "inputRoot": null,
+    "outputs": [
+      {
+        "name": "budget-impact.json",
+        "path": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/engine-smoke/sds52-paid-useful-jobs/example/out/budget-impact.json",
+        "bytes": 1458,
+        "sha256": "bd239a823d392922d6203fbb8b172159eec26572580a305b2d1628dff425c227"
+      },
+      {
+        "name": "budget-impact.md",
+        "path": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/engine-smoke/sds52-paid-useful-jobs/example/out/budget-impact.md",
+        "bytes": 396,
+        "sha256": "900ef7be6bc620259ff6e184189aed66037f3e5fb1191f3e2128e9d166b2079b"
+      }
+    ],
+    "fundingState": "unfunded",
+    "sold": false,
+    "sample": true,
+    "sampleReasons": [
+      "example-flag"
+    ],
+    "purchaseAuthority": false,
+    "liveSettlement": "out-of-scope",
+    "fixturePrice": {
+      "labelled": true,
+      "live": false,
+      "publishedToLiveCatalog": false,
+      "jobId": "vendor-budget-impact",
+      "amountUsdc": "0.02",
+      "amountAtomic": "20000",
+      "payTo": "0x0000000000000000000000000000000000000F08",
+      "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+    },
+    "payment": {
+      "fixture": false,
+      "purchaseAuthority": false,
+      "liveSettleAttempted": false,
+      "liveSettleAllowed": false,
+      "fundingState": "unfunded"
+    },
+    "continuity": null,
+    "engineResult": {
+      "ok": true,
+      "status": "partial",
+      "digest": "366ba1c234f5b03c",
+      "refused": false,
+      "identityVerified": null
+    },
+    "outDir": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/engine-smoke/sds52-paid-useful-jobs/example/out"
+  },
+  "engine": {
+    "ok": true,
+    "appId": "vendor-budget-impact",
+    "status": "partial",
+    "digest": "366ba1c234f5b03c",
+    "outDir": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/engine-smoke/sds52-paid-useful-jobs/example/out",
+    "purchaseAuthority": false
+  },
+  "liveSettlement": "out-of-scope"
+}

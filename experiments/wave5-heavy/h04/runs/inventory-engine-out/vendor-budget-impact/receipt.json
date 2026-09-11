@@ -1,0 +1,68 @@
+{
+  "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+  "jobId": "vendor-budget-impact",
+  "engine": {
+    "package": "useful-jobs",
+    "version": "1.0.0",
+    "purchaseAuthority": false,
+    "cli": "node bin/useful-jobs.mjs run <id>",
+    "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+    "archiveBytes": 2522418,
+    "sourceRepo": "epistemedeus/pilot",
+    "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+    "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+    "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+  },
+  "inputsDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "outputsDigest": "312c84af226a67252f80c0a8d57d3fa8264fb98362407e266d6e030291355b8e",
+  "inputs": [],
+  "inputRoot": null,
+  "outputs": [
+    {
+      "name": "budget-impact.json",
+      "path": "/tmp/w5-h04/h04-engine-smoke/vendor-budget-impact/budget-impact.json",
+      "bytes": 1458,
+      "sha256": "e23b2a0eb874b6d033329064aa10a804bfd41d242a8eabeabbc5c9536da87751"
+    },
+    {
+      "name": "budget-impact.md",
+      "path": "/tmp/w5-h04/h04-engine-smoke/vendor-budget-impact/budget-impact.md",
+      "bytes": 396,
+      "sha256": "900ef7be6bc620259ff6e184189aed66037f3e5fb1191f3e2128e9d166b2079b"
+    }
+  ],
+  "fundingState": "unfunded",
+  "sold": false,
+  "sample": true,
+  "sampleReasons": [
+    "example-flag"
+  ],
+  "purchaseAuthority": false,
+  "liveSettlement": "out-of-scope",
+  "fixturePrice": {
+    "labelled": true,
+    "live": false,
+    "publishedToLiveCatalog": false,
+    "jobId": "vendor-budget-impact",
+    "amountUsdc": "0.02",
+    "amountAtomic": "20000",
+    "payTo": "0x0000000000000000000000000000000000000F08",
+    "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+  },
+  "payment": {
+    "fixture": false,
+    "purchaseAuthority": false,
+    "liveSettleAttempted": false,
+    "liveSettleAllowed": false,
+    "fundingState": "unfunded"
+  },
+  "continuity": null,
+  "engineResult": {
+    "ok": true,
+    "status": "partial",
+    "digest": "366ba1c234f5b03c",
+    "refused": false,
+    "identityVerified": null
+  },
+  "outDir": "/tmp/w5-h04/h04-engine-smoke/vendor-budget-impact"
+}

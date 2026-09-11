@@ -1,0 +1,132 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "repeat-job-record",
+  "status": "actionable",
+  "summary": "Verified repeat-job record for family pricing-row-unit",
+  "actions": [
+    {
+      "priority": "high",
+      "kind": "schedule-manually-or-via-caller-cron",
+      "note": "Repeat family pricing-row-unit with updated caller files; this record is not a daemon."
+    }
+  ],
+  "gaps": [],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "nextRunPath": "/tmp/sds-paid-useful-jobs-6bf650391fad4fa6/useful-jobs-1.0.0/samples/repeat/a/next-run.json",
+    "before": null,
+    "after": null,
+    "inputRoot": null,
+    "exampleMode": true,
+    "sampleLabel": "explicit-example",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "source": "record-repeat-next-run",
+    "schema": "s176.next-run-manifest.v1",
+    "provenanceKind": "schema-validated-local-bytes-verified",
+    "family": "pricing-row-unit",
+    "manifestDigest": "54b64ffcbbdc4ef6d31eff41df6ed5c44a9448be824be3821dcf5ef2d4e778bf",
+    "inputVerificationState": "verified",
+    "note": "Schema/family validated and declared digests matched local file bytes relative to manifest/--input-root"
+  },
+  "generatedAt": "2026-09-11T22:54:23.260Z",
+  "repeatJob": {
+    "schema": "s242.repeat-job-record.v1",
+    "family": "pricing-row-unit",
+    "scheduleHint": "manual-operator",
+    "schedulerDaemon": false,
+    "identityVerification": {
+      "state": "verified",
+      "verified": true,
+      "note": "Local file bytes matched declared digests relative to manifest/--input-root"
+    },
+    "inputs": {
+      "before": "../../pricing/a/before.json",
+      "after": "../../pricing/a/after.json",
+      "used": null,
+      "key": null,
+      "declaredDigests": {
+        "before": {
+          "path": "../../pricing/a/before.json",
+          "bytes": 404,
+          "sha256": "93a88b9a585a72927c6de66f22aef60cbe5dcf8f7b37096a33f577e8321614b6",
+          "observedAt": "unknown",
+          "attribution": "unknown"
+        },
+        "after": {
+          "path": "../../pricing/a/after.json",
+          "bytes": 404,
+          "sha256": "9fa7f018ae0fc07e70baca7e039758300de35400c89fc099590dc74a4306c3b6",
+          "observedAt": "unknown",
+          "attribution": "unknown"
+        },
+        "used": null
+      },
+      "verifiedDigests": {
+        "before": {
+          "path": "../../pricing/a/before.json",
+          "bytes": 404,
+          "sha256": "93a88b9a585a72927c6de66f22aef60cbe5dcf8f7b37096a33f577e8321614b6",
+          "verification": "local-bytes-verified"
+        },
+        "after": {
+          "path": "../../pricing/a/after.json",
+          "bytes": 404,
+          "sha256": "9fa7f018ae0fc07e70baca7e039758300de35400c89fc099590dc74a4306c3b6",
+          "verification": "local-bytes-verified"
+        },
+        "used": null
+      },
+      "manifestDigest": "54b64ffcbbdc4ef6d31eff41df6ed5c44a9448be824be3821dcf5ef2d4e778bf"
+    },
+    "nextRunManifest": {
+      "recipeId": "pricing-row-unit",
+      "family": "pricing-row-unit",
+      "parser": "s134-pricing-table-change",
+      "inputs": {
+        "before": "../../pricing/a/before.json",
+        "after": "../../pricing/a/after.json"
+      },
+      "retain": [
+        "units",
+        "coverage",
+        "sourceUrl",
+        "license",
+        "citations"
+      ],
+      "schema": "s176.next-run-manifest.v1",
+      "sourceMeta": null,
+      "currentInputs": {
+        "before": {
+          "path": "../../pricing/a/before.json",
+          "bytes": 404,
+          "sha256": "93a88b9a585a72927c6de66f22aef60cbe5dcf8f7b37096a33f577e8321614b6",
+          "observedAt": "unknown",
+          "attribution": "unknown"
+        },
+        "after": {
+          "path": "../../pricing/a/after.json",
+          "bytes": 404,
+          "sha256": "9fa7f018ae0fc07e70baca7e039758300de35400c89fc099590dc74a4306c3b6",
+          "observedAt": "unknown",
+          "attribution": "unknown"
+        },
+        "used": null
+      },
+      "paidValueClaim": false,
+      "freeOffline": true
+    },
+    "operatorInstructions": [
+      "Re-run with changed local before/after artifacts using the same family.",
+      "Do not start a background scheduler from this record.",
+      "Preserve refused/partial flags from the underlying compare.",
+      "Declared sha256 values are verified only when local file bytes match; otherwise the record is informational/unverified."
+    ]
+  },
+  "identityVerified": true,
+  "digest": "8cd091075d07c69b"
+}

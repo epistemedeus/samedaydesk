@@ -1,0 +1,28 @@
+{
+  "id": "h04-schema-03",
+  "family": "schema-webhook",
+  "title": "CloudEvents JSON example key-order plus unused debug",
+  "kind": "no-change-control",
+  "engines": ["w4-json-schema-webhook-drift"],
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json",
+    "used": "./used.json"
+  },
+  "changedFact": "Used CloudEvents context attributes id, type, source, and specversion are identical; only key order and an unused debug field differ, so consumers need no action.",
+  "expectedStatus": "unchanged",
+  "expectedHighlights": [
+    "/id",
+    "/type",
+    "/source",
+    "/specversion",
+    "no consumer action"
+  ],
+  "source": {
+    "repo": "cloudevents/spec",
+    "beforeSha": "d665aa6402a7ed5d0e506dc1c3cc408dba88d085",
+    "afterSha": "d665aa6402a7ed5d0e506dc1c3cc408dba88d085",
+    "path": "json-format.md",
+    "license": "Apache-2.0 bounded excerpt"
+  }
+}

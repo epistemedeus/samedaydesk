@@ -1,0 +1,65 @@
+{
+  "cliStdout": {
+    "ok": true,
+    "appId": "lockfile-pin-delta",
+    "status": "informational",
+    "provenance": "caller-supplied",
+    "digest": null,
+    "counts": {
+      "beforePins": 159,
+      "afterPins": 159,
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "unchanged": 159,
+      "missingIntegrity": 0
+    },
+    "outDir": "/tmp/w5-h04/h04-child-lock-runs/h04-lock-03",
+    "purchaseAuthority": false,
+    "settlement": "nonsettling-prototype"
+  },
+  "pinDelta": {
+    "schema": "samedaydesk.lockfile-pin-delta.v1",
+    "appId": "lockfile-pin-delta",
+    "ok": true,
+    "status": "informational",
+    "purchaseAuthority": false,
+    "paidValueClaim": false,
+    "settlement": "nonsettling-prototype",
+    "lockfileVersion": {
+      "before": 3,
+      "after": 3
+    },
+    "mapSource": {
+      "before": "packages",
+      "after": "packages"
+    },
+    "counts": {
+      "beforePins": 159,
+      "afterPins": 159,
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "unchanged": 159,
+      "missingIntegrity": 0
+    },
+    "added": [],
+    "removed": [],
+    "changed": [],
+    "gaps": [],
+    "caller": {
+      "before": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-03/before.json",
+      "after": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-03/after.json",
+      "exampleMode": false,
+      "sampleLabel": "caller-input",
+      "notCustomerDemand": true,
+      "notMarketFact": true
+    },
+    "provenance": "caller-supplied",
+    "generatedAt": "2026-09-11T22:56:40.480Z"
+  },
+  "markdown": "# Lockfile pin delta\n\nStatus: **informational**\n\nLockfile versions: before 3, after 3.\nMaps: before packages, after packages.\nPins: before 159, after 159.\nAdded 0, removed 0, changed 0.\nUnchanged packages omitted (159).\n\nCaller label: caller-input (not a customer sale).\n\nOffline lockfile JSON parse only. Not an npm install, audit, purchase, or settlement.\n\n",
+  "outDir": "/tmp/w5-h04/h04-child-lock-runs/h04-lock-03",
+  "engineSha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+  "engineCli": "node tools/lockfile-pin-delta/bin/lockfile-delta.mjs --before <lock> --after <lock> --out-dir <dir>"
+}

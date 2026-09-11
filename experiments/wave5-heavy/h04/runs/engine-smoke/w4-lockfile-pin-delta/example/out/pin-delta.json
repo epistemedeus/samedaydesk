@@ -1,0 +1,65 @@
+{
+  "schema": "samedaydesk.lockfile-pin-delta.v1",
+  "appId": "lockfile-pin-delta",
+  "ok": true,
+  "status": "actionable",
+  "purchaseAuthority": false,
+  "paidValueClaim": false,
+  "settlement": "nonsettling-prototype",
+  "lockfileVersion": {
+    "before": 3,
+    "after": 3
+  },
+  "mapSource": {
+    "before": "packages",
+    "after": "packages"
+  },
+  "counts": {
+    "beforePins": 2,
+    "afterPins": 2,
+    "added": 0,
+    "removed": 0,
+    "changed": 1,
+    "unchanged": 1,
+    "missingIntegrity": 0
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "node_modules/fixture-alpha",
+      "name": "fixture-alpha",
+      "before": {
+        "id": "node_modules/fixture-alpha",
+        "name": "fixture-alpha",
+        "version": "1.0.0",
+        "integrity": "sha512-l/0QZeYH6WYJLVF9qn9Rymjnrjn7Oi0ExEDpGIQ337qIpPWJQhd5TSVlE2YOET42IWoCns7YnU02SuLR7aduBA==",
+        "termsHash": "35692e966c9d30957f041a3374614bb0de8d124bca5d6e55537df2bd5569f2af",
+        "missingIntegrity": false
+      },
+      "after": {
+        "id": "node_modules/fixture-alpha",
+        "name": "fixture-alpha",
+        "version": "1.0.1",
+        "integrity": "sha512-wVVmY4V8n45/SbnRdhRHz/Ug91u4hs7gEBP5Yd72r7o7mg5C2TOxvLSeMKRgw14M/WfRYzHIQr63JaNtAVJntA==",
+        "termsHash": "b848fc8ec2a7eb00958cbb6cb50f9f7454b8e60d945d7fb5c34467df831ff830",
+        "missingIntegrity": false
+      },
+      "changeKinds": [
+        "version",
+        "integrity"
+      ]
+    }
+  ],
+  "gaps": [],
+  "caller": {
+    "before": "/tmp/w5-h04/ro-w4-lockfile/tools/lockfile-pin-delta/fixtures/journey/before.json",
+    "after": "/tmp/w5-h04/ro-w4-lockfile/tools/lockfile-pin-delta/fixtures/journey/after.json",
+    "exampleMode": true,
+    "sampleLabel": "explicit-example",
+    "notCustomerDemand": true,
+    "notMarketFact": true
+  },
+  "provenance": "fixture",
+  "generatedAt": "2026-09-11T22:58:23.477Z"
+}

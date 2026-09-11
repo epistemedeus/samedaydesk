@@ -1,0 +1,189 @@
+{
+  "ok": true,
+  "job": {
+    "id": "h04-page-03",
+    "title": "Watch /x402/verified title, description, headings, and crawler paragraph",
+    "fields": [
+      "title",
+      "description",
+      "headings",
+      "text"
+    ]
+  },
+  "report": {
+    "schema": "pilot/page-change-brief/v1",
+    "kind": "merchant_extract_batch",
+    "verdict": "changed",
+    "fields": [
+      "title",
+      "description",
+      "headings",
+      "text"
+    ],
+    "claims": {
+      "noChangeProven": false,
+      "contentUnchangedProven": false,
+      "comparable": true,
+      "complete": true,
+      "current": false,
+      "fresh": false,
+      "usefulOutputProven": true,
+      "paymentImpliesUsefulOutput": false
+    },
+    "freshness": "unknown",
+    "snapshot": {
+      "schema": "pilot/change-digest/v1",
+      "verdict": "changed",
+      "claims": {
+        "noChangeProven": false,
+        "current": false,
+        "comparable": true,
+        "fresh": false
+      },
+      "freshness": "unknown",
+      "before": {
+        "status": "present",
+        "mediaType": "application/json",
+        "observedAt": null,
+        "truncated": false,
+        "byteLength": 2391,
+        "sha256": "d86f7e2295c4465d12f1ea802116f5076613d031207cb7ec82013ffb1c596840",
+        "source": {
+          "kind": "file",
+          "role": "before"
+        },
+        "issues": []
+      },
+      "after": {
+        "status": "present",
+        "mediaType": "application/json",
+        "observedAt": null,
+        "truncated": false,
+        "byteLength": 2407,
+        "sha256": "9d96f212273128b0207921a8b6ce56aa6c0c87de5f0222a271aacd56d061a70c",
+        "source": {
+          "kind": "file",
+          "role": "after"
+        },
+        "issues": []
+      },
+      "limitsHit": []
+    },
+    "summary": {
+      "matched": 1,
+      "missing": 0,
+      "failed": 0,
+      "unknown": 0,
+      "duplicates": 0,
+      "coverageUnknown": 0,
+      "semantic": 2,
+      "order": 0
+    },
+    "rows": {
+      "matched": [
+        {
+          "sourceKey": "https://samedaydesk.com/x402/verified",
+          "source": "https://samedaydesk.com/x402/verified",
+          "before": {
+            "id": "item-001",
+            "status": "success"
+          },
+          "after": {
+            "id": "item-001",
+            "status": "success"
+          }
+        }
+      ],
+      "missing": [],
+      "failed": [],
+      "unknown": [],
+      "duplicates": []
+    },
+    "coverageUnknown": [],
+    "changes": [
+      {
+        "class": "semantic",
+        "op": "replace",
+        "path": "/description",
+        "before": "Build-time inspection list of unpaid 402 terms, last check time, contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree.",
+        "after": "Build-time inspection list of current SameDayDesk unpaid 402 evidence, including an OpenAPI operation observation and matching fresh CDP Bazaar evidence.",
+        "beforeEvidence": "Build-time inspection list of unpaid 402 terms, last check time, contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree.",
+        "afterEvidence": "Build-time inspection list of current SameDayDesk unpaid 402 evidence, including an OpenAPI operation observation and matching fresh CDP Bazaar evidence.",
+        "evidenceTruncated": false,
+        "sourceKey": "https://samedaydesk.com/x402/verified"
+      },
+      {
+        "class": "semantic",
+        "op": "replace",
+        "path": "/text",
+        "before": "Each row records seller, route, unpaid 402 price and network, last check time, contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree. The badge is verified, drift, or unverified.",
+        "after": "Each row has a live unpaid 402 check and contract hash. It records whether the operation was observed in OpenAPI and whether a matching CDP Bazaar row was observed within seven days of the crawl. The badge is verified, drift, or unverified.",
+        "beforeEvidence": "Each row records seller, route, unpaid 402 price and network, last check time, contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree. The badge is verified, dr",
+        "afterEvidence": "Each row has a live unpaid 402 check and contract hash. It records whether the operation was observed in OpenAPI and whether a matching CDP Bazaar row was observed within seven days of the crawl. The ",
+        "evidenceTruncated": true,
+        "sourceKey": "https://samedaydesk.com/x402/verified"
+      }
+    ],
+    "observations": {
+      "before": {
+        "jobId": "89ffe029fb70ad89bcb08d11c646bffe9a1c4a0e673fcceaf11a8c97ae7a7251",
+        "jobStatus": "completed",
+        "charged": false,
+        "ok": true,
+        "snapshotObservedAt": null,
+        "artifactObservedAt": "2026-09-03T10:01:47.000Z",
+        "rows": [
+          {
+            "sourceKey": "https://samedaydesk.com/x402/verified",
+            "itemId": "item-001",
+            "requestedAt": "2026-09-03T10:01:46.000Z",
+            "completedAt": "2026-09-03T10:01:47.000Z",
+            "fetchedAt": "2026-09-03T10:01:46.000Z",
+            "requestedAtIsNotFreshness": true,
+            "fetchedAtIsNotFreshness": true
+          }
+        ]
+      },
+      "after": {
+        "jobId": "8735805c9387e70116b548f67297ac62391566baeee8b17010170256ec820d36",
+        "jobStatus": "completed",
+        "charged": false,
+        "ok": true,
+        "snapshotObservedAt": null,
+        "artifactObservedAt": "2026-09-03T12:00:43.000Z",
+        "rows": [
+          {
+            "sourceKey": "https://samedaydesk.com/x402/verified",
+            "itemId": "item-001",
+            "requestedAt": "2026-09-03T12:00:42.000Z",
+            "completedAt": "2026-09-03T12:00:43.000Z",
+            "fetchedAt": "2026-09-03T12:00:42.000Z",
+            "requestedAtIsNotFreshness": true,
+            "fetchedAtIsNotFreshness": true
+          }
+        ]
+      },
+      "note": "Source URL identity is separate from two-time observation identity. fetchedAt and completedAt are observation metadata, not content freshness."
+    },
+    "provenance": {
+      "engine": "samedaydesk.page-change-offline-job",
+      "engineVersion": "0.1.0",
+      "merchantCompareImported": false,
+      "networkUsed": false,
+      "paymentAttempted": false,
+      "purchaseAuthorized": false,
+      "evidenceClass": "fixture",
+      "termsVersion": "sha256:2f3cb81e9260affb1e6b61caa32b66f9af0367b2715186d4e1ac1a1d35802fee",
+      "termsHasher": "i01-integrated-hash-terms",
+      "comparedWithClock": "2026-09-11T12:00:00.000Z",
+      "beforeSha256": "d86f7e2295c4465d12f1ea802116f5076613d031207cb7ec82013ffb1c596840",
+      "afterSha256": "9d96f212273128b0207921a8b6ce56aa6c0c87de5f0222a271aacd56d061a70c",
+      "elapsedMs": 1.30544,
+      "digestSha256": "9877f4d33813116b6c6e546f19198c2af05a1ac037bcd258318ec4055145e071"
+    }
+  },
+  "written": {
+    "jsonPath": "/tmp/w5-h04/h04-child-page-runs/h04-page-03/page-change.json",
+    "mdPath": "/tmp/w5-h04/h04-child-page-runs/h04-page-03/page-change.md"
+  }
+}

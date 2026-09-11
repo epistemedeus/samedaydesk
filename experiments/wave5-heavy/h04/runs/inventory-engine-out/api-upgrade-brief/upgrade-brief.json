@@ -1,0 +1,33 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "api-upgrade-brief",
+  "status": "informational",
+  "summary": "No used-operation structural delta",
+  "actions": [
+    {
+      "priority": "low",
+      "kind": "no-used-op-delta",
+      "note": "No structural delta on used operations; not a runtime compatibility proof"
+    }
+  ],
+  "gaps": [],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "before": "/tmp/sds-paid-useful-jobs-6bf650391fad4fa6/useful-jobs-1.0.0/samples/openapi/a/before.yaml",
+    "after": "/tmp/sds-paid-useful-jobs-6bf650391fad4fa6/useful-jobs-1.0.0/samples/openapi/a/after.yaml",
+    "used": "/tmp/sds-paid-useful-jobs-6bf650391fad4fa6/useful-jobs-1.0.0/samples/openapi/a/used.json",
+    "exampleMode": true,
+    "sampleLabel": "explicit-example",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "family": "openapi-used-ops",
+    "ok": true,
+    "differenceInDeliveredOutput": "No used-operation structural deltas detected (or used list empty/unknown). Still not a runtime compatibility proof."
+  },
+  "generatedAt": "2026-09-11T22:54:22.208Z",
+  "digest": "9659822ea20152a4"
+}

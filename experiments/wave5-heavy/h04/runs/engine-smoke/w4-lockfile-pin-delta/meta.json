@@ -1,0 +1,36 @@
+{
+  "engineId": "w4-lockfile-pin-delta",
+  "sha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+  "executedSha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+  "worktree": "/tmp/w5-h04/ro-w4-lockfile",
+  "worktreeExists": true,
+  "cliExists": true,
+  "sampleNotCustomerJob": true,
+  "phases": {
+    "help": {
+      "exitCode": 0,
+      "ok": true,
+      "timedOut": false,
+      "spawnError": null,
+      "durationMs": 29,
+      "stdoutPreview": "lockfile-delta - offline npm package-lock pin delta (Node >= 22) Compare two package-lock.json files (lockfileVersion 2 or 3) and emit pin-delta.json plus pin-delta.md of added, removed, and changed n",
+      "stderrPreview": "",
+      "outDirFiles": [],
+      "sample": false
+    },
+    "example": {
+      "exitCode": 0,
+      "ok": true,
+      "timedOut": false,
+      "spawnError": null,
+      "durationMs": 28,
+      "stdoutPreview": "{\"ok\":true,\"appId\":\"lockfile-pin-delta\",\"status\":\"actionable\",\"provenance\":\"fixture\",\"digest\":\"b848fc8ec2a7eb00958cbb6cb50f9f7454b8e60d945d7fb5c34467df831ff830\",\"counts\":{\"beforePins\":2,\"afterPins\":2,",
+      "stderrPreview": "",
+      "outDirFiles": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "sample": true
+    }
+  }
+}

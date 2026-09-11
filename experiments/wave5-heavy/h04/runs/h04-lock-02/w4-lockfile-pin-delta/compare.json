@@ -1,0 +1,47 @@
+{
+  "result": "match",
+  "reason": null,
+  "facts": [
+    {
+      "key": "status",
+      "expected": "actionable",
+      "actual": "actionable",
+      "result": "match"
+    },
+    {
+      "key": "highlight:\"name\": \"ms\"",
+      "expected": "\"name\": \"ms\"",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "highlight:2.1.3",
+      "expected": "2.1.3",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "highlight:sha1-V0yBOM4dK1hh8LRFedut1gxmFbI=",
+      "expected": "sha1-V0yBOM4dK1hh8LRFedut1gxmFbI=",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "highlight:sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==",
+      "expected": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "highlight:integrity",
+      "expected": "integrity",
+      "actual": true,
+      "result": "match"
+    }
+  ],
+  "expectedPresent": true,
+  "artifactFiles": [
+    "pin-delta.json",
+    "pin-delta.md"
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "ok": true,
+  "jobId": "repeat-job-record",
+  "title": "Repeat Job Record",
+  "fundingState": "unfunded",
+  "sold": false,
+  "sample": true,
+  "sampleReasons": [
+    "example-flag"
+  ],
+  "purchaseAuthority": false,
+  "outputs": [
+    {
+      "name": "repeat-job.json",
+      "path": "/tmp/w5-h04/h04-engine-smoke/repeat-job-record/repeat-job.json",
+      "bytes": 4559,
+      "sha256": "5c9dfe3eb768b8a1ecc8d4f89e8fb4fe61a36e45a82234506db9a55ce6d4da86"
+    },
+    {
+      "name": "repeat-job.md",
+      "path": "/tmp/w5-h04/h04-engine-smoke/repeat-job-record/repeat-job.md",
+      "bytes": 1277,
+      "sha256": "f1b4edf4aa6c9a41a068b46d8164ba49f40b80be77e469267c97c8b79ba7eceb"
+    }
+  ],
+  "receipt": {
+    "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+    "jobId": "repeat-job-record",
+    "engine": {
+      "package": "useful-jobs",
+      "version": "1.0.0",
+      "purchaseAuthority": false,
+      "cli": "node bin/useful-jobs.mjs run <id>",
+      "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "archiveBytes": 2522418,
+      "sourceRepo": "epistemedeus/pilot",
+      "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+      "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+      "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+    },
+    "inputsDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "outputsDigest": "a0f69a09f3ecfca3f6eece3fb86f0243588757dd6d537b9dd020a42ba2ed473d",
+    "inputs": [],
+    "inputRoot": null,
+    "outputs": [
+      {
+        "name": "repeat-job.json",
+        "path": "/tmp/w5-h04/h04-engine-smoke/repeat-job-record/repeat-job.json",
+        "bytes": 4559,
+        "sha256": "5c9dfe3eb768b8a1ecc8d4f89e8fb4fe61a36e45a82234506db9a55ce6d4da86"
+      },
+      {
+        "name": "repeat-job.md",
+        "path": "/tmp/w5-h04/h04-engine-smoke/repeat-job-record/repeat-job.md",
+        "bytes": 1277,
+        "sha256": "f1b4edf4aa6c9a41a068b46d8164ba49f40b80be77e469267c97c8b79ba7eceb"
+      }
+    ],
+    "fundingState": "unfunded",
+    "sold": false,
+    "sample": true,
+    "sampleReasons": [
+      "example-flag"
+    ],
+    "purchaseAuthority": false,
+    "liveSettlement": "out-of-scope",
+    "fixturePrice": {
+      "labelled": true,
+      "live": false,
+      "publishedToLiveCatalog": false,
+      "jobId": "repeat-job-record",
+      "amountUsdc": "0.02",
+      "amountAtomic": "20000",
+      "payTo": "0x0000000000000000000000000000000000000F08",
+      "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+    },
+    "payment": {
+      "fixture": false,
+      "purchaseAuthority": false,
+      "liveSettleAttempted": false,
+      "liveSettleAllowed": false,
+      "fundingState": "unfunded"
+    },
+    "continuity": null,
+    "engineResult": {
+      "ok": true,
+      "status": "actionable",
+      "digest": "8cd091075d07c69b",
+      "refused": false,
+      "identityVerified": true
+    },
+    "outDir": "/tmp/w5-h04/h04-engine-smoke/repeat-job-record"
+  },
+  "engine": {
+    "ok": true,
+    "appId": "repeat-job-record",
+    "status": "actionable",
+    "identityVerified": true,
+    "digest": "8cd091075d07c69b",
+    "outDir": "/tmp/w5-h04/h04-engine-smoke/repeat-job-record",
+    "family": "pricing-row-unit"
+  },
+  "liveSettlement": "out-of-scope"
+}

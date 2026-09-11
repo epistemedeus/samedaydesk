@@ -1,0 +1,15 @@
+SPA route-table diff (offline).
+
+Read two JSON route catalogs {path, canonical, title, robots?} and write
+route-diff.json / route-diff.md (added, removed, changed canonical or robots).
+
+  node tools/route-table-diff/bin/route-diff.mjs --before <file-or-loopback-url> --after <file-or-loopback-url> --out-dir <dir>
+  node tools/route-table-diff/bin/route-diff.mjs --example --out-dir <dir>
+
+Does not edit spa-route-shells.js, homepages, or live listings.
+Does not fetch public hosts. Loopback http://127.0.0.1 is local-runtime, not external acceptance.
+SAMPLE / --example is a fixture, not the published route table.
+--published with SAMPLE is refused. --rewrite-homepage is refused.
+Path-less records are refused.
+
+Node >= 22. No extra npm packages. Payments: none (nonsettling prototype; paid=false).

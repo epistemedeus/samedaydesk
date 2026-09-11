@@ -1,0 +1,27 @@
+{
+  "id": "h04-page-01",
+  "family": "page-facts",
+  "title": "JSON-LD validator title, h1, and description rewrite",
+  "kind": "change",
+  "engines": [
+    "w4-page-change-offline-job"
+  ],
+  "inputs": {
+    "job": "./job.json",
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "changedFact": "The public JSON-LD validator page renamed from \u201cJSON-LD / Schema Validator\u201d to \u201cFree JSON-LD Validator & Schema Checker\u201d; title, h1, and meta description a buyer would search for all moved.",
+  "expectedStatus": "changed",
+  "expectedHighlights": [
+    "changed",
+    "JSON-LD / Schema Validator",
+    "Free JSON-LD Validator & Schema Checker"
+  ],
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "beforeSha": "ff381d2b46e9beec1475212df2eb610a7b01229b",
+    "afterSha": "374a565784bcd4ec89eeda7fedbb9610fed77473",
+    "path": "client/public/tools/schema-validator.html"
+  }
+}

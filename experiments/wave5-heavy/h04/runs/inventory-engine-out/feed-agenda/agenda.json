@@ -1,0 +1,54 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "feed-agenda",
+  "status": "actionable",
+  "summary": "Agenda delta: +1/~0/-1",
+  "actions": [
+    {
+      "priority": "high",
+      "kind": "agenda-added",
+      "key": "tag:useful-jobs.sample,2026:caller-alpha/new",
+      "note": "SAMPLE fixture feed added entry (not a live deadline)"
+    },
+    {
+      "priority": "medium",
+      "kind": "agenda-removed",
+      "key": "tag:useful-jobs.sample,2026:caller-alpha/old",
+      "note": "SAMPLE fixture feed removed entry (not a live deadline)"
+    }
+  ],
+  "gaps": [],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "before": "/tmp/sds-paid-useful-jobs-6bf650391fad4fa6/useful-jobs-1.0.0/samples/feed/caller-alpha/before.xml",
+    "after": "/tmp/sds-paid-useful-jobs-6bf650391fad4fa6/useful-jobs-1.0.0/samples/feed/caller-alpha/after.xml",
+    "exampleMode": true,
+    "sampleLabel": "explicit-example",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "family": "rss-atom-brief",
+    "ok": true
+  },
+  "generatedAt": "2026-09-11T22:54:22.689Z",
+  "events": [
+    {
+      "kind": "added",
+      "key": "tag:useful-jobs.sample,2026:caller-alpha/new",
+      "title": "SAMPLE Alpha New Item",
+      "link": "https://example.test/sample/alpha/new",
+      "updated": "2026-09-10T11:00:00Z"
+    },
+    {
+      "kind": "removed",
+      "key": "tag:useful-jobs.sample,2026:caller-alpha/old",
+      "title": "SAMPLE Alpha Retired Item",
+      "link": "https://example.test/sample/alpha/old",
+      "updated": "2026-09-07T09:00:00Z"
+    }
+  ],
+  "digest": "b4a8030f651b1c32"
+}

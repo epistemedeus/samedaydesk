@@ -1,0 +1,29 @@
+{
+  "engineId": "w4-lockfile-pin-delta",
+  "phase": "help",
+  "sha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+  "executedSha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+  "worktree": "/tmp/w5-h04/ro-w4-lockfile",
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-w4-lockfile/tools/lockfile-pin-delta/bin/lockfile-delta.mjs",
+    "--help"
+  ],
+  "cwd": "/tmp/w5-h04/ro-w4-lockfile",
+  "exitCode": 0,
+  "signal": null,
+  "timedOut": false,
+  "spawnError": null,
+  "durationMs": 29,
+  "ok": true,
+  "sample": false,
+  "sampleNotCustomerJob": false,
+  "note": null,
+  "outDir": null,
+  "outDirFiles": [],
+  "stdoutPreview": "lockfile-delta - offline npm package-lock pin delta (Node >= 22) Compare two package-lock.json files (lockfileVersion 2 or 3) and emit pin-delta.json plus pin-delta.md of added, removed, and changed n",
+  "stderrPreview": "",
+  "capturedAt": "2026-09-11T22:58:23.453Z",
+  "node": "v22.22.2",
+  "harnessCwd": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04"
+}

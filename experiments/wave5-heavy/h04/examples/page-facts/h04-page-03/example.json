@@ -1,0 +1,28 @@
+{
+  "id": "h04-page-03",
+  "family": "page-facts",
+  "title": "/x402/verified inspection criterion: 7-day CDP Bazaar freshness",
+  "kind": "change",
+  "engines": [
+    "w4-page-change-offline-job"
+  ],
+  "inputs": {
+    "job": "./job.json",
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "changedFact": "The inspected-routes page description and crawler paragraph stop claiming OpenAPI / unpaid-402-schema / CDP Bazaar \u201cagree\u201d and instead require a matching CDP Bazaar row observed within seven days of the crawl. Title and h1 stay the same.",
+  "expectedStatus": "changed",
+  "expectedHighlights": [
+    "changed",
+    "seven days",
+    "OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree",
+    "matching fresh CDP Bazaar evidence"
+  ],
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "beforeSha": "3693e7c2ea49c44c8c8f35f24c3916de5b4bc8e0",
+    "afterSha": "3c96d3137f815035ed4a6467d28c8041916a9aa8",
+    "path": "server/lib/spa-route-shells.js"
+  }
+}

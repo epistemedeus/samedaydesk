@@ -1,0 +1,66 @@
+{
+  "schema": "samedaydesk.route-diff.v1",
+  "ok": true,
+  "publishedRouteTable": false,
+  "sample": true,
+  "evidenceClass": {
+    "before": "fixture",
+    "after": "fixture"
+  },
+  "tableDigest": {
+    "before": "sha256:94235daa99dbefc55b297070613f9ad595e2901783628743bc70f54145378770",
+    "after": "sha256:86f97aaf8f9d6192ff8517f99f59a71ccb32b0a13d0946653d6445975e6a47a2"
+  },
+  "counts": {
+    "added": 1,
+    "removed": 0,
+    "changed": 1,
+    "titleOnly": 0
+  },
+  "added": [
+    {
+      "path": "/for-agents/useful-jobs/v2",
+      "canonical": "https://samedaydesk.com/for-agents/useful-jobs/v2",
+      "title": "Offline useful jobs v2 for agent callers | SameDayDesk",
+      "robots": null
+    }
+  ],
+  "removed": [],
+  "changed": [
+    {
+      "path": "/terms",
+      "fields": [
+        "canonical"
+      ],
+      "before": {
+        "canonical": "https://samedaydesk.com/terms",
+        "robots": null,
+        "title": "Terms of Service | SameDayDesk"
+      },
+      "after": {
+        "canonical": "https://samedaydesk.com/legal/terms",
+        "robots": null,
+        "title": "Terms of Service | SameDayDesk"
+      }
+    }
+  ],
+  "titleOnly": [],
+  "notes": [
+    "changed lists canonical or robots only. Title-only edits are titleOnly, not a canonical/robots change.",
+    "This artifact is not a published SDS route table and does not rewrite the homepage or spa-route-shells.js.",
+    "Fixture, local-runtime, and external stay distinct. Local HTTP loopback is local-runtime. SAMPLE is fixture."
+  ],
+  "locators": {
+    "before": "/tmp/w5-h04/ro-w4-routes/tools/route-table-diff/fixtures/SAMPLE/before.json",
+    "after": "/tmp/w5-h04/ro-w4-routes/tools/route-table-diff/fixtures/SAMPLE/after.json"
+  },
+  "laterBindings": {
+    "publicShellsLiveExport": "Unbound. Inject a reader of PUBLIC_SHELLS / SPA_ROUTE_SHELLS. Do not edit spa-route-shells.js.",
+    "hashTermsVersion": "I01 / Neo PR54 owns hashTermsVersion (sha256: + 64 hex). This job hashes route tables only and does not import the earned-work kernel.",
+    "listingRepairPacket": "listing-repair-packet diagnoses listing/route snapshots. Consume it later through an injected adapter. This job diffs caller route catalogs only.",
+    "spaRouteShellsWriter": "Never bind. This job does not write route shells or homepages."
+  },
+  "nonsettling": true,
+  "paid": false,
+  "settled": false
+}

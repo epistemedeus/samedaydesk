@@ -1,0 +1,1 @@
+Octokit’s GitHub `create` webhook example gained `repository.custom_properties` as an empty object while `ref`, `ref_type`, and `pusher_type` stayed `simple-tag` / `tag` / `user`. A buyer who only consumes those three used fields should be told there is no consumer-breaking drift; reporting the unused additive object as a break would be a false alarm.

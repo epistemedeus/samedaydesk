@@ -1,0 +1,39 @@
+{
+  "engineId": "w4-json-schema-webhook-drift",
+  "phase": "run",
+  "sha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+  "executedSha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+  "worktree": "/tmp/w5-h04/ro-w4-schema",
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-w4-schema/tools/json-schema-webhook-drift/bin/webhook-drift.mjs",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-02/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-02/after.json",
+    "--used",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-02/used.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/h04-schema-02/w4-json-schema-webhook-drift/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-w4-schema",
+  "exitCode": 0,
+  "signal": null,
+  "timedOut": false,
+  "spawnError": null,
+  "durationMs": 31,
+  "ok": true,
+  "sample": false,
+  "sampleNotCustomerJob": false,
+  "note": "kind=unused-additive-control",
+  "outDir": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/h04-schema-02/w4-json-schema-webhook-drift/out",
+  "outDirFiles": [
+    "drift-brief.json",
+    "drift-brief.md"
+  ],
+  "stdoutPreview": "{\"ok\":true,\"appId\":\"json-schema-webhook-drift\",\"status\":\"informational\",\"termsVersion\":\"sha256:689a68d2883bccce7f6a1314b1eab19ff453e3429e5e845363444d6bfeb68c71\",\"kind\":\"webhook-example\",\"customerBrief",
+  "stderrPreview": "",
+  "capturedAt": "2026-09-11T23:03:00.014Z",
+  "node": "v22.22.2",
+  "harnessCwd": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04"
+}

@@ -1,0 +1,25 @@
+{
+  "operations": [
+    {
+      "method": "get",
+      "path": "/api/health"
+    },
+    {
+      "method": "get",
+      "path": "/api/market-observations/moltjobs-stats"
+    },
+    {
+      "method": "get",
+      "path": "/api/observatory/sources"
+    },
+    {
+      "method": "get",
+      "path": "/api/observatory/snapshot"
+    },
+    {
+      "method": "get",
+      "path": "/api/observatory/sources/{sourceId}"
+    }
+  ],
+  "pinNote": "Caller-owned used-operation pins for SameDayDesk public read-only Express bridges. Bound to server/routes at d4fec15d822bed6bdb98b6723bdbfbf88c9e5796 -> 8c1c4f706c75868d1556db483deff98d29758073. Not kit SAMPLE inventory pins."
+}

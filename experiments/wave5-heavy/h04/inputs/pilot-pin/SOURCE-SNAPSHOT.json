@@ -1,0 +1,54 @@
+{
+  "at": "2026-09-11T22:30:25.757Z",
+  "pilotPin": "95b3f3a47f5b1b69bd237e4c978fc3376221365d",
+  "note": "Kernels + SDS W4-commerce leaves extracted for H04. Full leaf list remains in pilot SOURCE-SNAPSHOT at that pin (MCP-readable; public clone 404 on this token).",
+  "kernels": {
+    "SDS52": {
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "ref": "fable/f08-paid-wrappers",
+      "pr": 52
+    },
+    "Neo54": {
+      "repo": "epistemedeus/neomorphic-io",
+      "sha": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+      "ref": "fable/integration-earned-work",
+      "pr": 54
+    },
+    "EIN43": {
+      "repo": "epistemedeus/ein-llc-lean",
+      "sha": "bf9ab2e55b605c0ea3becf465e9302e03d2d19c8",
+      "ref": "codex/s219-ein-runtime-release-20260910",
+      "pr": 43
+    },
+    "Pilot139": {
+      "repo": "epistemedeus/pilot",
+      "sha": "8eb0aba0089fc4d34ae76633aad4d64905765f73",
+      "ref": "codex/w4-selective-pstack-20260911",
+      "pr": 139
+    }
+  },
+  "sdsCommerceLeaves": [
+    {"id": "W4-commerce-01", "head": "912794c6775e16e93dc38cbfc7113a97ab5dc012", "pr": 61},
+    {"id": "W4-commerce-02", "head": "baf09dc591c83aec94e0cf42c5c64076fc5b98e3", "pr": 58},
+    {"id": "W4-commerce-03", "head": "7c55738cc5730985b709282af6c24e10f0a8442f", "pr": 62},
+    {"id": "W4-commerce-04", "head": "ebc71220e034dd28f29d105335c0161a3838831d", "pr": 66},
+    {"id": "W4-commerce-05", "head": "2bd0207800ce1a26bae7fe5dd5086cf196296959", "pr": 67},
+    {"id": "W4-commerce-06", "head": "f76235f32c5fe19d22f381c4b0eaab82962a56b7", "pr": 63},
+    {"id": "W4-commerce-07", "head": "f19a021a82a4ff59fd3b510fda11e603e6885686", "pr": 65},
+    {"id": "W4-commerce-08", "head": "ec03dc3445ac73a4a1010712b23a709bd3a7fed3", "pr": 68},
+    {"id": "W4-commerce-09", "head": "828d8942fb1631aba92a9116dc9fbde0ee1dd258", "pr": 71},
+    {"id": "W4-commerce-10", "head": "94c7bfdfeaa99f5e70f341504df3051cc7717f91", "pr": 59},
+    {"id": "W4-commerce-12", "head": "7387eb677abd442dfab9081cb0ad95451fd2a762", "pr": 64},
+    {"id": "W4-commerce-15", "head": "f16db42ed48a358ad088b54dc565d39461034704", "pr": 60},
+    {"id": "W4-commerce-16", "head": "aa306e291adfdd499ca971af01625ccc4bfee5c4", "pr": 72},
+    {"id": "W4-commerce-17", "head": "58cba6324c1d9793d344bc13154b8b2380e8166f", "pr": 69},
+    {"id": "W4-commerce-19", "head": "f09d3886837e690890aa3c8f9574f11b0dbb65c1", "pr": 70}
+  ],
+  "m06m09Complement": {
+    "W5-M06": "schema compatibility corpus",
+    "W5-M07": "package-manager lock fixtures",
+    "W5-M08": "route consumers",
+    "W5-M09": "page snapshots with meaningful vs noise controls"
+  }
+}

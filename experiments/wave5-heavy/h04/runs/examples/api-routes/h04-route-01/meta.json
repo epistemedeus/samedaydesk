@@ -1,0 +1,15 @@
+{
+  "sourceTmp": "/tmp/w5-h04/h04-child-route-runs/h04-route-01",
+  "engineSha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+  "files": [
+    "actual-engine.json",
+    "cli-stdout.json",
+    "route-diff.json",
+    "route-diff.md"
+  ],
+  "copiedAt": "2026-09-11T23:03:23.380Z",
+  "engineId": "w4-route-table-diff",
+  "worktree": "/tmp/w5-h04/ro-w4-routes",
+  "sampleNotCustomerJob": false,
+  "note": "Caller-owned SPA route catalogs; not W4 SAMPLE."
+}

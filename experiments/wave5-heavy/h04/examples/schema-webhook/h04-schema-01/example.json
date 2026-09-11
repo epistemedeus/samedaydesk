@@ -1,0 +1,27 @@
+{
+  "id": "h04-schema-01",
+  "family": "schema-webhook",
+  "title": "JSON Schema exclusiveMinimum boolean → number",
+  "kind": "change",
+  "engines": ["w4-json-schema-webhook-drift"],
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json",
+    "used": "./used.json"
+  },
+  "changedFact": "Used keyword exclusiveMinimum changed type from boolean (Draft 04) to number (Draft 06); consumers that emit true/false modifiers will fail validation.",
+  "expectedStatus": "actionable",
+  "expectedHighlights": [
+    "/properties/exclusiveMinimum",
+    "type-change",
+    "boolean",
+    "number"
+  ],
+  "source": {
+    "repo": "json-schema-org/json-schema-spec",
+    "beforeSha": "d4c5b3a2924370c51b710c8bfd81d3644a92766e",
+    "afterSha": "4b495a2933b1d6f75298abdd23f018ba6a9d4f4a",
+    "path": "schema.json",
+    "license": "bounded excerpt"
+  }
+}

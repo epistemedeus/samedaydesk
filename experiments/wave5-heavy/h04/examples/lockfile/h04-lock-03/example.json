@@ -1,0 +1,21 @@
+{
+  "id": "h04-lock-03",
+  "family": "lockfile",
+  "title": "S51 correspondence lock: key-order/whitespace/link omit, no pin delta",
+  "kind": "no-change-control",
+  "engines": ["w4-lockfile-pin-delta"],
+  "inputs": { "before": "./before.json", "after": "./after.json" },
+  "changedFact": "No name+version+integrity pin changes: 159 S51 lock pins are identical after key-order, indent, unused-field, and link:true noise.",
+  "expectedStatus": "informational",
+  "expectedHighlights": [
+    "informational",
+    "Added 0, removed 0, changed 0.",
+    "Unchanged packages omitted (159)"
+  ],
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "beforeSha": "218b2fa74d63951eeeda4cf0a67c420835a58b01",
+    "afterSha": "218b2fa74d63951eeeda4cf0a67c420835a58b01",
+    "path": "package-lock.json"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "engineId": "w4-json-schema-webhook-drift",
+  "sha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+  "executedSha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+  "worktree": "/tmp/w5-h04/ro-w4-schema",
+  "worktreeExists": true,
+  "cliExists": true,
+  "sampleNotCustomerJob": true,
+  "phases": {
+    "help": {
+      "exitCode": 0,
+      "ok": true,
+      "timedOut": false,
+      "spawnError": null,
+      "durationMs": 27,
+      "stdoutPreview": "json-schema-webhook-drift - used JSON Pointer drift (offline, Node built-ins) Not OpenAPI. Not api-upgrade-brief. Nonsettling prototype. No purchase authority. Usage: node bin/webhook-drift.mjs --befo",
+      "stderrPreview": "",
+      "outDirFiles": [],
+      "sample": false
+    },
+    "example": {
+      "exitCode": 0,
+      "ok": true,
+      "timedOut": false,
+      "spawnError": null,
+      "durationMs": 33,
+      "stdoutPreview": "{\"ok\":true,\"appId\":\"json-schema-webhook-drift\",\"status\":\"actionable\",\"termsVersion\":\"sha256:51ee8883a3f2d90a9cee735fc4b38168a9c73e9be6291c3d016fb268d84e166f\",\"kind\":\"json-schema\",\"customerBrief\":false",
+      "stderrPreview": "",
+      "outDirFiles": [
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "sample": true
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "engineId": "w4-page-change-offline-job",
+  "phase": "run",
+  "sha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+  "executedSha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+  "worktree": "/tmp/w5-h04/ro-w4-pages",
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-w4-pages/tools/page-change-offline-job/bin/page-change.mjs",
+    "job",
+    "--job",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-02/job.json",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-02/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-02/after.json",
+    "--clock",
+    "2026-09-08T12:00:00.000Z",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/h04-page-02/w4-page-change-offline-job/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-w4-pages",
+  "exitCode": 0,
+  "signal": null,
+  "timedOut": false,
+  "spawnError": null,
+  "durationMs": 31,
+  "ok": true,
+  "sample": false,
+  "sampleNotCustomerJob": false,
+  "note": "kind=no-change-control",
+  "outDir": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/h04-page-02/w4-page-change-offline-job/out",
+  "outDirFiles": [
+    "page-change.json",
+    "page-change.md"
+  ],
+  "stdoutPreview": "{ \"ok\": true, \"job\": { \"id\": \"h04-page-02\", \"title\": \"Watch resources.html title, description, and headings across footer-only HTML noise\", \"fields\": [ \"title\", \"description\", \"headings\" ] }, \"report\"",
+  "stderrPreview": "",
+  "capturedAt": "2026-09-11T23:03:00.520Z",
+  "node": "v22.22.2",
+  "harnessCwd": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04"
+}

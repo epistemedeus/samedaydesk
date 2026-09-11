@@ -1,0 +1,68 @@
+{
+  "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+  "jobId": "feed-agenda",
+  "engine": {
+    "package": "useful-jobs",
+    "version": "1.0.0",
+    "purchaseAuthority": false,
+    "cli": "node bin/useful-jobs.mjs run <id>",
+    "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+    "archiveBytes": 2522418,
+    "sourceRepo": "epistemedeus/pilot",
+    "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+    "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+    "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+  },
+  "inputsDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "outputsDigest": "0c9761cd6d8be3387b83e44fbecf8badb80c7671dabc6baec0f46edf1ad17182",
+  "inputs": [],
+  "inputRoot": null,
+  "outputs": [
+    {
+      "name": "agenda.json",
+      "path": "/tmp/w5-h04/h04-engine-smoke/feed-agenda/agenda.json",
+      "bytes": 1672,
+      "sha256": "8db1997877139788e6d65cfc589554e6c87159c9022c12197f9f3a2cdf365404"
+    },
+    {
+      "name": "agenda.ics",
+      "path": "/tmp/w5-h04/h04-engine-smoke/feed-agenda/agenda.ics",
+      "bytes": 584,
+      "sha256": "838b2529da3730f235810080b7a32b6931e89b7601300b1fb16e58302402a12e"
+    }
+  ],
+  "fundingState": "unfunded",
+  "sold": false,
+  "sample": true,
+  "sampleReasons": [
+    "example-flag"
+  ],
+  "purchaseAuthority": false,
+  "liveSettlement": "out-of-scope",
+  "fixturePrice": {
+    "labelled": true,
+    "live": false,
+    "publishedToLiveCatalog": false,
+    "jobId": "feed-agenda",
+    "amountUsdc": "0.02",
+    "amountAtomic": "20000",
+    "payTo": "0x0000000000000000000000000000000000000F08",
+    "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+  },
+  "payment": {
+    "fixture": false,
+    "purchaseAuthority": false,
+    "liveSettleAttempted": false,
+    "liveSettleAllowed": false,
+    "fundingState": "unfunded"
+  },
+  "continuity": null,
+  "engineResult": {
+    "ok": true,
+    "status": "actionable",
+    "digest": "b4a8030f651b1c32",
+    "refused": false,
+    "identityVerified": null
+  },
+  "outDir": "/tmp/w5-h04/h04-engine-smoke/feed-agenda"
+}

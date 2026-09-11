@@ -1,0 +1,41 @@
+{
+  "result": "match",
+  "reason": null,
+  "facts": [
+    {
+      "key": "status",
+      "expected": "unchanged",
+      "actual": "unchanged",
+      "result": "match"
+    },
+    {
+      "key": "verdict",
+      "expected": "unchanged",
+      "actual": "unchanged",
+      "result": "match"
+    },
+    {
+      "key": "highlight:unchanged",
+      "expected": "unchanged",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "highlight:No selected-field content changes recorded",
+      "expected": "No selected-field content changes recorded",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "highlight:paymentImpliesUsefulOutput: false",
+      "expected": "paymentImpliesUsefulOutput: false",
+      "actual": true,
+      "result": "match"
+    }
+  ],
+  "expectedPresent": true,
+  "artifactFiles": [
+    "page-change.json",
+    "page-change.md"
+  ]
+}

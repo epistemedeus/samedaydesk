@@ -1,0 +1,29 @@
+{
+  "id": "h04-lock-01",
+  "family": "lockfile",
+  "title": "SDS vulnerable lock pins: concurrently, qs, shell-quote",
+  "kind": "change",
+  "engines": ["w4-lockfile-pin-delta"],
+  "inputs": { "before": "./before.json", "after": "./after.json" },
+  "changedFact": "concurrently 10.0.3→10.0.5, qs 6.15.2→6.16.0, and shell-quote 1.8.4→1.9.0 (version+integrity) in package-lock.json.",
+  "expectedStatus": "actionable",
+  "expectedHighlights": [
+    "concurrently",
+    "10.0.3",
+    "10.0.5",
+    "qs",
+    "6.15.2",
+    "6.16.0",
+    "shell-quote",
+    "1.8.4",
+    "1.9.0",
+    "Unchanged packages omitted (99)"
+  ],
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "beforeSha": "ff381d2b46e9beec1475212df2eb610a7b01229b",
+    "afterSha": "62a88c86461e7b8d0e9a7cf1db57153d7e8fd6cf",
+    "path": "package-lock.json",
+    "parentSha": "8ffef693719456a0acbc1e2afbbdff5900b82736"
+  }
+}

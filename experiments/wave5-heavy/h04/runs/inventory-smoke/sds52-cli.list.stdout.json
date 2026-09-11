@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "jobs": [
+    "api-upgrade-brief",
+    "vendor-budget-impact",
+    "feed-agenda",
+    "evidence-ci-annotation",
+    "listing-repair-packet",
+    "repeat-job-record"
+  ],
+  "liveSettlement": "out-of-scope"
+}

@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "status": "unchanged",
+  "kind": "webhook-example",
+  "usedOnly": true,
+  "consumersBreak": false,
+  "consumerAction": "none — used create-event fields ref, ref_type, and pusher_type are identical; repository.custom_properties is unused.",
+  "summary": "No used-path drift. Additive /repository/custom_properties is outside the used pin and is not breaking for this caller.",
+  "impact": {
+    "breaking": [],
+    "added": [],
+    "deleted": [],
+    "unknown": [],
+    "unchangedCount": 3,
+    "ignoredUnused": true
+  },
+  "notReported": [
+    "/repository/custom_properties added as {}"
+  ]
+}

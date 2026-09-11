@@ -1,0 +1,14 @@
+{
+  "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/vendor-budget-impact",
+  "engineSha": "aeef964fa188443078958d9d6d393afae1d542ee",
+  "files": [
+    "budget-impact.json",
+    "budget-impact.md",
+    "receipt.json"
+  ],
+  "copiedAt": "2026-09-11T23:03:23.380Z",
+  "engineId": "sds52-vendor-budget-impact",
+  "worktree": "/tmp/w5-h04/ro-sds52",
+  "sampleNotCustomerJob": true,
+  "note": "SAMPLE / --example (or page-change journey analog). Not a customer job."
+}

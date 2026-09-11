@@ -1,0 +1,37 @@
+{
+  "engineId": "w4-lockfile-pin-delta",
+  "phase": "run",
+  "sha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+  "executedSha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+  "worktree": "/tmp/w5-h04/ro-w4-lockfile",
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-w4-lockfile/tools/lockfile-pin-delta/bin/lockfile-delta.mjs",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-02/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-02/after.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/h04-lock-02/w4-lockfile-pin-delta/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-w4-lockfile",
+  "exitCode": 0,
+  "signal": null,
+  "timedOut": false,
+  "spawnError": null,
+  "durationMs": 27,
+  "ok": true,
+  "sample": false,
+  "sampleNotCustomerJob": false,
+  "note": "kind=change",
+  "outDir": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/h04-lock-02/w4-lockfile-pin-delta/out",
+  "outDirFiles": [
+    "pin-delta.json",
+    "pin-delta.md"
+  ],
+  "stdoutPreview": "{\"ok\":true,\"appId\":\"lockfile-pin-delta\",\"status\":\"actionable\",\"provenance\":\"caller-supplied\",\"digest\":\"138fe1557634c83b1f75a828dfeb068ab1748f7b3f4f602b0a38450942aec5a5\",\"counts\":{\"beforePins\":3,\"after",
+  "stderrPreview": "",
+  "capturedAt": "2026-09-11T23:03:00.110Z",
+  "node": "v22.22.2",
+  "harnessCwd": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04"
+}

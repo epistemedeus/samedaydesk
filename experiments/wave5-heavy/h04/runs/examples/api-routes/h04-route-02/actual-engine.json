@@ -1,0 +1,60 @@
+{
+  "engine": "sds52-api-upgrade-brief",
+  "engineSha": "aeef964fa188443078958d9d6d393afae1d542ee",
+  "cli": "node server/paid-useful-jobs/bin/cli.mjs run api-upgrade-brief --before --after --used --funding unfunded --out-dir",
+  "exitCode": 0,
+  "stdout": {
+    "ok": true,
+    "jobId": "api-upgrade-brief",
+    "fundingState": "unfunded",
+    "sold": false,
+    "sample": false,
+    "sampleReasons": [],
+    "purchaseAuthority": false,
+    "engine": {
+      "ok": true,
+      "appId": "api-upgrade-brief",
+      "status": "actionable",
+      "digest": "a93fa5ac1bb3cbd3",
+      "outDir": "/tmp/w5-h04/h04-child-route-runs/h04-route-02",
+      "actions": 3
+    },
+    "liveSettlement": "out-of-scope",
+    "outputs": [
+      {
+        "name": "upgrade-brief.json",
+        "bytes": 1585,
+        "sha256": "635f044d085c82b1fd44bab49cc11d3065fbf0462732d783a815c0881d3bafbb"
+      },
+      {
+        "name": "upgrade-brief.md",
+        "bytes": 471,
+        "sha256": "ff4b1b115ae425d54012a2dca98a3b6c1b8b2f4c9d73a665341f9608378e1777"
+      }
+    ]
+  },
+  "outDir": "/tmp/w5-h04/h04-child-route-runs/h04-route-02",
+  "artifacts": [
+    "upgrade-brief.json",
+    "upgrade-brief.md",
+    "receipt.json"
+  ],
+  "upgradeBrief": {
+    "status": "actionable",
+    "summary": "Used-ops delta: +3/~0/-0",
+    "actions": [
+      {
+        "kind": "consider-adoption",
+        "op": "GET /api/observatory/sources"
+      },
+      {
+        "kind": "consider-adoption",
+        "op": "GET /api/observatory/snapshot"
+      },
+      {
+        "kind": "consider-adoption",
+        "op": "GET /api/observatory/sources/{sourceId}"
+      }
+    ]
+  }
+}

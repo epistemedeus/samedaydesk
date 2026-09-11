@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "status": "unchanged",
+  "kind": "webhook-example",
+  "usedOnly": true,
+  "consumersBreak": false,
+  "consumerAction": "none — used CloudEvents context attributes are identical; key order and unused debug are not consumer-breaking.",
+  "summary": "No structural used-path drift. Not a runtime compatibility proof. Consumers need no action.",
+  "impact": {
+    "breaking": [],
+    "added": [],
+    "deleted": [],
+    "unknown": [],
+    "unchangedCount": 4,
+    "ignoredUnused": true
+  },
+  "notReported": [
+    "top-level key order",
+    "/debug formatter-trace sibling"
+  ]
+}

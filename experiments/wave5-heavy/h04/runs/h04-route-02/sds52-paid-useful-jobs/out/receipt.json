@@ -1,0 +1,85 @@
+{
+  "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+  "jobId": "api-upgrade-brief",
+  "engine": {
+    "package": "useful-jobs",
+    "version": "1.0.0",
+    "purchaseAuthority": false,
+    "cli": "node bin/useful-jobs.mjs run <id>",
+    "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+    "archiveBytes": 2522418,
+    "sourceRepo": "epistemedeus/pilot",
+    "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+    "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+    "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+  },
+  "inputsDigest": "8085d1b59f2d9485707ffcb40e854ff1e8a12a2341f84d464f9425dea3eaf9b8",
+  "outputsDigest": "c52f3814a047e529969c448fd93ce679b0595a9cd5acd45705ae3410239d4bb0",
+  "inputs": [
+    {
+      "name": "before",
+      "kind": "file",
+      "bytes": 2008,
+      "sha256": "ad045744f8d555d1cdf4b4dfd9f569d1a07b3ebe15c73961614c7d59c4c416ab"
+    },
+    {
+      "name": "after",
+      "kind": "file",
+      "bytes": 3913,
+      "sha256": "a8211c2727aaa218668bbaf6789285697f801be75c0a5ab92b54a7c1d78ecfc4"
+    },
+    {
+      "name": "used",
+      "kind": "file",
+      "bytes": 666,
+      "sha256": "0fcd55b6463fda09ad03c7b1ca21567264fc0a72169d2f8cb15aa272fca6a550"
+    }
+  ],
+  "inputRoot": null,
+  "outputs": [
+    {
+      "name": "upgrade-brief.json",
+      "path": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/h04-route-02/sds52-paid-useful-jobs/out/upgrade-brief.json",
+      "bytes": 1585,
+      "sha256": "c6b545d9747c1df5c714c68d6a8a27c483be700ccf38b205b2929f3385b30d89"
+    },
+    {
+      "name": "upgrade-brief.md",
+      "path": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/h04-route-02/sds52-paid-useful-jobs/out/upgrade-brief.md",
+      "bytes": 471,
+      "sha256": "ff4b1b115ae425d54012a2dca98a3b6c1b8b2f4c9d73a665341f9608378e1777"
+    }
+  ],
+  "fundingState": "unfunded",
+  "sold": false,
+  "sample": false,
+  "sampleReasons": [],
+  "purchaseAuthority": false,
+  "liveSettlement": "out-of-scope",
+  "fixturePrice": {
+    "labelled": true,
+    "live": false,
+    "publishedToLiveCatalog": false,
+    "jobId": "api-upgrade-brief",
+    "amountUsdc": "0.02",
+    "amountAtomic": "20000",
+    "payTo": "0x0000000000000000000000000000000000000F08",
+    "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+  },
+  "payment": {
+    "fixture": false,
+    "purchaseAuthority": false,
+    "liveSettleAttempted": false,
+    "liveSettleAllowed": false,
+    "fundingState": "unfunded"
+  },
+  "continuity": null,
+  "engineResult": {
+    "ok": true,
+    "status": "actionable",
+    "digest": "a93fa5ac1bb3cbd3",
+    "refused": false,
+    "identityVerified": null
+  },
+  "outDir": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/h04-route-02/sds52-paid-useful-jobs/out"
+}

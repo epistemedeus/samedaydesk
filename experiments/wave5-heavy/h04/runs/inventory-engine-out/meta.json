@@ -1,0 +1,25 @@
+{
+  "sourceTmp": "/tmp/w5-h04/h04-engine-smoke",
+  "engineSha": {
+    "sds52-paid-useful-jobs": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "w4-json-schema-webhook-drift": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+    "w4-lockfile-pin-delta": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+    "w4-route-table-diff": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+    "w4-page-change-offline-job": "91b57334818ecd7940cb854e9864f3b1749d1d1d"
+  },
+  "files": [
+    "api-upgrade-brief",
+    "evidence-ci-annotation",
+    "feed-agenda",
+    "json-schema-webhook-drift",
+    "listing-repair-packet",
+    "lockfile-pin-delta",
+    "page-change-offline-job",
+    "repeat-job-record",
+    "route-table-diff",
+    "vendor-budget-impact"
+  ],
+  "copiedAt": "2026-09-11T23:03:23.380Z",
+  "sampleNotCustomerJob": true,
+  "note": "json/md/receipt only from /tmp/w5-h04/h04-engine-smoke. agenda.ics skipped."
+}

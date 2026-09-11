@@ -1,0 +1,113 @@
+{
+  "schema": "samedaydesk.lockfile-pin-delta.v1",
+  "appId": "lockfile-pin-delta",
+  "ok": true,
+  "status": "actionable",
+  "purchaseAuthority": false,
+  "paidValueClaim": false,
+  "settlement": "nonsettling-prototype",
+  "lockfileVersion": {
+    "before": 3,
+    "after": 3
+  },
+  "mapSource": {
+    "before": "packages",
+    "after": "packages"
+  },
+  "counts": {
+    "beforePins": 102,
+    "afterPins": 102,
+    "added": 0,
+    "removed": 0,
+    "changed": 3,
+    "unchanged": 99,
+    "missingIntegrity": 0
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "node_modules/concurrently",
+      "name": "concurrently",
+      "before": {
+        "id": "node_modules/concurrently",
+        "name": "concurrently",
+        "version": "10.0.3",
+        "integrity": "sha512-hc3LH4UaKWd/bbyDK/IGVa4RB6PtQ3CUYwtrkzqHn+wIG3Hr5fhpRlk0L/gCa8ZE1L/Ufj50Zho69cI5w8SQBA==",
+        "termsHash": "efacfc89ba516ad83deb17a87444a0de652abf36e0bcabc28edf167d41cc3784",
+        "missingIntegrity": false
+      },
+      "after": {
+        "id": "node_modules/concurrently",
+        "name": "concurrently",
+        "version": "10.0.5",
+        "integrity": "sha512-JaP/CoftUrCcAFW/g//RbgEGwlelnEae6cfBLgH6ZdO6s8jPkn6p9SB9u6pdVxYXoiSnFqseOlHfrEfF82TVOg==",
+        "termsHash": "efb49b37dd1c3aa63ed8d29c8a4b7874d8d12c4d3bff0cd94a09d7ad2c713c0f",
+        "missingIntegrity": false
+      },
+      "changeKinds": [
+        "version",
+        "integrity"
+      ]
+    },
+    {
+      "id": "node_modules/qs",
+      "name": "qs",
+      "before": {
+        "id": "node_modules/qs",
+        "name": "qs",
+        "version": "6.15.2",
+        "integrity": "sha512-Rzq0KEyX/w/tEybncDgdkZrJgVUsUMk3xjh3t5bv3S1HTAtg+uOYt72+ZfwiQwKdysThkTBdL/rTi6HDmX9Ddw==",
+        "termsHash": "9bcee48b3459a8a0e8a1994c18952d6f5e8ba1f98b8640619ba6959d15b09358",
+        "missingIntegrity": false
+      },
+      "after": {
+        "id": "node_modules/qs",
+        "name": "qs",
+        "version": "6.16.0",
+        "integrity": "sha512-h6fhOIaRrID2CbEY2fqs+7t+UXZo+MLAnU5gRIq85uFtdiUPCdsApMlHhXogKVM4HM2DVbIjGNTTYH2OcmP1vA==",
+        "termsHash": "12dd4211162288d56aaf52b21ba6d84f09b30672c53dde7431905ad1f2936843",
+        "missingIntegrity": false
+      },
+      "changeKinds": [
+        "version",
+        "integrity"
+      ]
+    },
+    {
+      "id": "node_modules/shell-quote",
+      "name": "shell-quote",
+      "before": {
+        "id": "node_modules/shell-quote",
+        "name": "shell-quote",
+        "version": "1.8.4",
+        "integrity": "sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==",
+        "termsHash": "9f5f6e51f36540a3219910adc9642dd27bdbce94f219403a0452be1c276f1d5e",
+        "missingIntegrity": false
+      },
+      "after": {
+        "id": "node_modules/shell-quote",
+        "name": "shell-quote",
+        "version": "1.9.0",
+        "integrity": "sha512-Iov+JwFv/2HcTpcwNMKd8+IWNb8tboQJNQTkAY/LLVK7gGH9jy+LGkVqPxfekHl+yMmiqXszdGWXgkfml7hjqA==",
+        "termsHash": "a9b7934c69d1f32fd3e9fc534fa3631c554159a006236ff2f4e80aaa454b5c68",
+        "missingIntegrity": false
+      },
+      "changeKinds": [
+        "version",
+        "integrity"
+      ]
+    }
+  ],
+  "gaps": [],
+  "caller": {
+    "before": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-01/before.json",
+    "after": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-01/after.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notCustomerDemand": true,
+    "notMarketFact": true
+  },
+  "provenance": "caller-supplied",
+  "generatedAt": "2026-09-11T22:55:42.393Z"
+}

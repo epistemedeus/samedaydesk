@@ -1,0 +1,64 @@
+{
+  "schema": "samedaydesk.lockfile-pin-delta.v1",
+  "appId": "lockfile-pin-delta",
+  "ok": true,
+  "status": "actionable",
+  "purchaseAuthority": false,
+  "paidValueClaim": false,
+  "settlement": "nonsettling-prototype",
+  "lockfileVersion": {
+    "before": 3,
+    "after": 3
+  },
+  "mapSource": {
+    "before": "packages",
+    "after": "packages"
+  },
+  "counts": {
+    "beforePins": 3,
+    "afterPins": 3,
+    "added": 0,
+    "removed": 0,
+    "changed": 1,
+    "unchanged": 2,
+    "missingIntegrity": 0
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "node_modules/ms",
+      "name": "ms",
+      "before": {
+        "id": "node_modules/ms",
+        "name": "ms",
+        "version": "2.1.3",
+        "integrity": "sha1-V0yBOM4dK1hh8LRFedut1gxmFbI=",
+        "termsHash": "80d4a96ae6b193ab2ce6fd47b5f8c10223fd7db2cbdb04a4166ec6f428568078",
+        "missingIntegrity": false
+      },
+      "after": {
+        "id": "node_modules/ms",
+        "name": "ms",
+        "version": "2.1.3",
+        "integrity": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==",
+        "termsHash": "138fe1557634c83b1f75a828dfeb068ab1748f7b3f4f602b0a38450942aec5a5",
+        "missingIntegrity": false
+      },
+      "changeKinds": [
+        "integrity"
+      ]
+    }
+  ],
+  "gaps": [],
+  "caller": {
+    "before": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-02/before.json",
+    "after": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-02/after.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notCustomerDemand": true,
+    "notMarketFact": true
+  },
+  "provenance": "caller-supplied",
+  "generatedAt": "2026-09-11T22:55:42.448Z"
+}

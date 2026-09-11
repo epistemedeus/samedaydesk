@@ -1,0 +1,675 @@
+{
+  "schema": "w5-h04.engines.v1",
+  "generatedAt": "2026-09-11",
+  "repo": "epistemedeus/samedaydesk",
+  "observedBy": {
+    "method": "git -C <worktree> rev-parse HEAD && git cat-file -t HEAD",
+    "node": "v22.22.2",
+    "note": "SHAs below were observed in the listed read-only worktrees. No SHA is claimed that was not rev-parse + cat-file verified."
+  },
+  "usefulJobsArchive": {
+    "package": "useful-jobs",
+    "version": "1.0.0",
+    "relPath": "client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz",
+    "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+    "bytes": 2522418,
+    "sourceRepo": "epistemedeus/pilot",
+    "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+    "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+    "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+    "cliInsideArchive": "bin/useful-jobs.mjs",
+    "purchaseAuthority": false,
+    "observedHashMatch": true,
+    "observedBytesMatch": true,
+    "source": "SDS52 pins.mjs reads client/src/data/usefulJobsKit.json; sha256/bytes re-hashed from the tar.gz at SDS52 HEAD"
+  },
+  "worktrees": {
+    "sds52": {
+      "path": "/tmp/w5-h04/ro-sds52",
+      "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "type": "commit",
+      "subject": "F08: record W4-I02-AMEND results in RECEIPT-REVIEW.md",
+      "pr": 52,
+      "ref": "fable/f08-paid-wrappers"
+    },
+    "w4-schema": {
+      "path": "/tmp/w5-h04/ro-w4-schema",
+      "sha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+      "type": "commit",
+      "subject": "W4-commerce-10: record exact receipt commit SHA",
+      "pr": 59,
+      "leaf": "W4-commerce-10",
+      "ownedPath": "tools/json-schema-webhook-drift/"
+    },
+    "w4-lockfile": {
+      "path": "/tmp/w5-h04/ro-w4-lockfile",
+      "sha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+      "type": "commit",
+      "subject": "W4-commerce-11: record compare URL after branch push",
+      "pr": null,
+      "prNote": "Not in SOURCE-SNAPSHOT sdsCommerceLeaves. TASKS W5-M03 inputRef. RECEIPT at this SHA says draft PR blocked; compare URL only. PR number not observed.",
+      "leaf": "W4-commerce-11",
+      "ownedPath": "tools/lockfile-pin-delta/"
+    },
+    "w4-routes": {
+      "path": "/tmp/w5-h04/ro-w4-routes",
+      "sha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+      "type": "commit",
+      "subject": "Record implementation SHA in the route-table-diff receipt.",
+      "pr": 64,
+      "leaf": "W4-commerce-12",
+      "ownedPath": "tools/route-table-diff/"
+    },
+    "w4-pages": {
+      "path": "/tmp/w5-h04/ro-w4-pages",
+      "sha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+      "type": "commit",
+      "subject": "W4-commerce-13: add compare URL to RECEIPT",
+      "pr": null,
+      "prNote": "Not in SOURCE-SNAPSHOT sdsCommerceLeaves. TASKS W5-M05 inputRef. RECEIPT at this SHA has compare URL, no PR number observed.",
+      "leaf": "W4-commerce-13",
+      "ownedPath": "tools/page-change-offline-job/"
+    }
+  },
+  "sds52WrapperShared": {
+    "family": "sds52-wrapper",
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "worktreePath": "/tmp/w5-h04/ro-sds52",
+    "pr": 52,
+    "cwd": "/tmp/w5-h04/ro-sds52",
+    "cliBinRel": "server/paid-useful-jobs/bin/cli.mjs",
+    "cliBinAbs": "/tmp/w5-h04/ro-sds52/server/paid-useful-jobs/bin/cli.mjs",
+    "engineInvocation": "extracts useful-jobs-1.0.0.tar.gz then node bin/useful-jobs.mjs run <id>",
+    "sampleFlag": "--example",
+    "fundingStates": ["unfunded", "reserved-fixture", "rejected"],
+    "soldAlways": false,
+    "liveSettlement": "out-of-scope",
+    "wrapperRefuseCodes": [
+      "missing-job",
+      "unknown-job",
+      "sample-not-a-sale",
+      "live-settle-out-of-scope",
+      "live-sale-not-available",
+      "reserved-fixture-requires-payment",
+      "fixture-cannot-live-settle",
+      "missing-required-inputs",
+      "input-oversize",
+      "input-missing-file",
+      "input-not-file",
+      "input-malformed",
+      "input-root-not-directory",
+      "internal-error",
+      "engine-refused"
+    ],
+    "enginePassThroughShared": [
+      "missing-required-inputs",
+      "out-dir-collides-with-input",
+      "output-collides-with-input",
+      "internal-error"
+    ],
+    "stdoutContract": {
+      "list": {
+        "stream": "stdout",
+        "exit": 0,
+        "keys": ["ok", "jobs", "liveSettlement"]
+      },
+      "help": {
+        "stream": "stdout",
+        "exit": 0,
+        "format": "text usage"
+      },
+      "success": {
+        "stream": "stdout",
+        "exit": 0,
+        "keys": [
+          "ok",
+          "jobId",
+          "title",
+          "fundingState",
+          "sold",
+          "sample",
+          "sampleReasons",
+          "purchaseAuthority",
+          "outputs",
+          "receipt",
+          "engine",
+          "liveSettlement"
+        ]
+      },
+      "failure": {
+        "stream": "stdout",
+        "exit": 2,
+        "keys": [
+          "ok",
+          "refused",
+          "jobId",
+          "code",
+          "error",
+          "detail",
+          "fundingState",
+          "sold",
+          "sample",
+          "sampleReasons",
+          "purchaseAuthority",
+          "liveSettleAttempted",
+          "liveSettleAllowed",
+          "outputs",
+          "receipt"
+        ],
+        "engineRefuseAlsoMayInclude": ["engine"]
+      }
+    },
+    "notes": "Local non-settling paid-offer adapter around the published useful-jobs 1.0.0 archive. Does not reimplement jobs. Fixture payments cannot live-settle. SAMPLE/--example is never a paid sale. sold is always false."
+  },
+  "engines": [
+    {
+      "id": "api-upgrade-brief",
+      "title": "API Upgrade Brief",
+      "family": "sds52-wrapper",
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "worktreePath": "/tmp/w5-h04/ro-sds52",
+      "pr": 52,
+      "cli": "node /tmp/w5-h04/ro-sds52/server/paid-useful-jobs/bin/cli.mjs run api-upgrade-brief --before <file> --after <file> --used <file> [--example] [--funding unfunded|reserved-fixture] [--payment <file.json>] [--out-dir <dir>]",
+      "cliRelFromWorktree": "node server/paid-useful-jobs/bin/cli.mjs run api-upgrade-brief --before <file> --after <file> --used <file> [--example] [--funding unfunded|reserved-fixture] [--payment <file.json>] [--out-dir <dir>]",
+      "cwd": "/tmp/w5-h04/ro-sds52",
+      "requiredFlags": ["--before", "--after", "--used"],
+      "optionalFlags": ["--example", "--funding", "--payment", "--out-dir", "--settle"],
+      "inputShape": {
+        "before": "OpenAPI document path (YAML/JSON)",
+        "after": "OpenAPI document path (YAML/JSON)",
+        "used": "used-operation pin JSON path",
+        "job": null,
+        "payment": "optional fixture payment JSON (required only for --funding reserved-fixture)"
+      },
+      "outputs": ["upgrade-brief.json", "upgrade-brief.md", "receipt.json"],
+      "refuseCodes": [
+        "missing-job",
+        "unknown-job",
+        "sample-not-a-sale",
+        "live-settle-out-of-scope",
+        "live-sale-not-available",
+        "reserved-fixture-requires-payment",
+        "fixture-cannot-live-settle",
+        "missing-required-inputs",
+        "input-oversize",
+        "input-missing-file",
+        "input-not-file",
+        "input-malformed",
+        "internal-error",
+        "engine-refused",
+        "out-dir-collides-with-input",
+        "output-collides-with-input"
+      ],
+      "sampleFlag": "--example",
+      "notes": "NOT json-schema-webhook-drift. NOT webhook payload compare. Fixture/sample OpenAPI only; not a runtime compatibility proof. SAMPLE/--example is not a customer sale.",
+      "stdoutContract": {
+        "successKeys": ["ok", "jobId", "title", "fundingState", "sold", "sample", "sampleReasons", "purchaseAuthority", "outputs", "receipt", "engine", "liveSettlement"],
+        "failureKeys": ["ok", "refused", "jobId", "code", "error", "fundingState", "sold", "sample", "purchaseAuthority"]
+      }
+    },
+    {
+      "id": "vendor-budget-impact",
+      "title": "Vendor Budget Impact",
+      "family": "sds52-wrapper",
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "worktreePath": "/tmp/w5-h04/ro-sds52",
+      "pr": 52,
+      "cli": "node /tmp/w5-h04/ro-sds52/server/paid-useful-jobs/bin/cli.mjs run vendor-budget-impact --before <file> --after <file> [--example] [--funding unfunded|reserved-fixture] [--payment <file.json>] [--out-dir <dir>]",
+      "cliRelFromWorktree": "node server/paid-useful-jobs/bin/cli.mjs run vendor-budget-impact --before <file> --after <file> [--example] [--funding unfunded|reserved-fixture] [--payment <file.json>] [--out-dir <dir>]",
+      "cwd": "/tmp/w5-h04/ro-sds52",
+      "requiredFlags": ["--before", "--after"],
+      "optionalFlags": ["--example", "--funding", "--payment", "--out-dir", "--settle"],
+      "inputShape": {
+        "before": "curated pricing-row JSON path",
+        "after": "curated pricing-row JSON path",
+        "used": null,
+        "job": null,
+        "payment": "optional fixture payment JSON"
+      },
+      "outputs": ["budget-impact.json", "budget-impact.md", "receipt.json"],
+      "refuseCodes": [
+        "missing-job",
+        "unknown-job",
+        "sample-not-a-sale",
+        "live-settle-out-of-scope",
+        "live-sale-not-available",
+        "reserved-fixture-requires-payment",
+        "fixture-cannot-live-settle",
+        "missing-required-inputs",
+        "input-oversize",
+        "input-missing-file",
+        "input-not-file",
+        "input-malformed",
+        "internal-error",
+        "engine-refused",
+        "out-dir-collides-with-input",
+        "output-collides-with-input"
+      ],
+      "sampleFlag": "--example",
+      "notes": "NOT lockfile-pin-delta. Curated pricing rows only; no purchase authority. Conflicting/unknown upstream evidence stays partial. SAMPLE/--example is not a sale.",
+      "stdoutContract": {
+        "successKeys": ["ok", "jobId", "title", "fundingState", "sold", "sample", "sampleReasons", "purchaseAuthority", "outputs", "receipt", "engine", "liveSettlement"],
+        "failureKeys": ["ok", "refused", "jobId", "code", "error", "fundingState", "sold", "sample", "purchaseAuthority"]
+      }
+    },
+    {
+      "id": "feed-agenda",
+      "title": "Feed Agenda",
+      "family": "sds52-wrapper",
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "worktreePath": "/tmp/w5-h04/ro-sds52",
+      "pr": 52,
+      "cli": "node /tmp/w5-h04/ro-sds52/server/paid-useful-jobs/bin/cli.mjs run feed-agenda --before <file> --after <file> [--example] [--funding unfunded|reserved-fixture] [--payment <file.json>] [--out-dir <dir>]",
+      "cliRelFromWorktree": "node server/paid-useful-jobs/bin/cli.mjs run feed-agenda --before <file> --after <file> [--example] [--funding unfunded|reserved-fixture] [--payment <file.json>] [--out-dir <dir>]",
+      "cwd": "/tmp/w5-h04/ro-sds52",
+      "requiredFlags": ["--before", "--after"],
+      "optionalFlags": ["--example", "--funding", "--payment", "--out-dir", "--settle"],
+      "inputShape": {
+        "before": "RSS/Atom XML path",
+        "after": "RSS/Atom XML path",
+        "used": null,
+        "job": null,
+        "payment": "optional fixture payment JSON"
+      },
+      "outputs": ["agenda.json", "agenda.ics", "receipt.json"],
+      "refuseCodes": [
+        "missing-job",
+        "unknown-job",
+        "sample-not-a-sale",
+        "live-settle-out-of-scope",
+        "live-sale-not-available",
+        "reserved-fixture-requires-payment",
+        "fixture-cannot-live-settle",
+        "missing-required-inputs",
+        "input-oversize",
+        "input-missing-file",
+        "input-not-file",
+        "input-malformed",
+        "internal-error",
+        "engine-refused",
+        "out-dir-collides-with-input",
+        "output-collides-with-input"
+      ],
+      "sampleFlag": "--example",
+      "notes": "Sample feed deltas only; not live deadlines. Not a calendar daemon. SAMPLE/--example is not a sale.",
+      "stdoutContract": {
+        "successKeys": ["ok", "jobId", "title", "fundingState", "sold", "sample", "sampleReasons", "purchaseAuthority", "outputs", "receipt", "engine", "liveSettlement"],
+        "failureKeys": ["ok", "refused", "jobId", "code", "error", "fundingState", "sold", "sample", "purchaseAuthority"]
+      }
+    },
+    {
+      "id": "evidence-ci-annotation",
+      "title": "Evidence CI Annotation",
+      "family": "sds52-wrapper",
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "worktreePath": "/tmp/w5-h04/ro-sds52",
+      "pr": 52,
+      "cli": "node /tmp/w5-h04/ro-sds52/server/paid-useful-jobs/bin/cli.mjs run evidence-ci-annotation --input <file> [--example] [--funding unfunded|reserved-fixture] [--payment <file.json>] [--out-dir <dir>]",
+      "cliRelFromWorktree": "node server/paid-useful-jobs/bin/cli.mjs run evidence-ci-annotation --input <file> [--example] [--funding unfunded|reserved-fixture] [--payment <file.json>] [--out-dir <dir>]",
+      "cwd": "/tmp/w5-h04/ro-sds52",
+      "requiredFlags": ["--input"],
+      "optionalFlags": ["--example", "--funding", "--payment", "--out-dir", "--settle"],
+      "inputShape": {
+        "before": null,
+        "after": null,
+        "used": null,
+        "job": null,
+        "input": "schema-compatible evidence packet JSON",
+        "payment": "optional fixture payment JSON"
+      },
+      "outputs": ["annotations.json", "annotations.md", "receipt.json"],
+      "refuseCodes": [
+        "missing-job",
+        "unknown-job",
+        "sample-not-a-sale",
+        "live-settle-out-of-scope",
+        "live-sale-not-available",
+        "reserved-fixture-requires-payment",
+        "fixture-cannot-live-settle",
+        "missing-required-inputs",
+        "input-oversize",
+        "input-missing-file",
+        "input-not-file",
+        "input-malformed",
+        "internal-error",
+        "engine-refused",
+        "out-dir-collides-with-input",
+        "output-collides-with-input",
+        "invalid-evidence-packet",
+        "unsupported-evidence-schema",
+        "invalid-evidence-decision",
+        "invalid-evidence-class",
+        "invalid-evidence-clock",
+        "invalid-evidence-findings",
+        "invalid-evidence-citations",
+        "invalid-evidence-finding",
+        "uncited-evidence-finding"
+      ],
+      "sampleFlag": "--example",
+      "notes": "Caller-supplied schema-compatible packets remain unattested; never treated as kit-produced trusted action. SAMPLE/--example is not a sale.",
+      "stdoutContract": {
+        "successKeys": ["ok", "jobId", "title", "fundingState", "sold", "sample", "sampleReasons", "purchaseAuthority", "outputs", "receipt", "engine", "liveSettlement"],
+        "failureKeys": ["ok", "refused", "jobId", "code", "error", "fundingState", "sold", "sample", "purchaseAuthority"]
+      }
+    },
+    {
+      "id": "listing-repair-packet",
+      "title": "Listing Repair Packet",
+      "family": "sds52-wrapper",
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "worktreePath": "/tmp/w5-h04/ro-sds52",
+      "pr": 52,
+      "cli": "node /tmp/w5-h04/ro-sds52/server/paid-useful-jobs/bin/cli.mjs run listing-repair-packet --input <file> [--example] [--funding unfunded|reserved-fixture] [--payment <file.json>] [--out-dir <dir>]",
+      "cliRelFromWorktree": "node server/paid-useful-jobs/bin/cli.mjs run listing-repair-packet --input <file> [--example] [--funding unfunded|reserved-fixture] [--payment <file.json>] [--out-dir <dir>]",
+      "cwd": "/tmp/w5-h04/ro-sds52",
+      "requiredFlags": ["--input"],
+      "optionalFlags": ["--example", "--funding", "--payment", "--out-dir", "--settle"],
+      "inputShape": {
+        "before": null,
+        "after": null,
+        "used": null,
+        "job": null,
+        "input": "listing/route snapshot JSON",
+        "payment": "optional fixture payment JSON"
+      },
+      "outputs": ["repair-packet.json", "repair-packet.md", "receipt.json"],
+      "refuseCodes": [
+        "missing-job",
+        "unknown-job",
+        "sample-not-a-sale",
+        "live-settle-out-of-scope",
+        "live-sale-not-available",
+        "reserved-fixture-requires-payment",
+        "fixture-cannot-live-settle",
+        "missing-required-inputs",
+        "input-oversize",
+        "input-missing-file",
+        "input-not-file",
+        "input-malformed",
+        "internal-error",
+        "engine-refused",
+        "out-dir-collides-with-input",
+        "output-collides-with-input"
+      ],
+      "sampleFlag": "--example",
+      "notes": "NOT route-table-diff. Diagnoses listing/route snapshots into an owner repair packet. Partial/incomplete evidence stays non-final; no global unlisting claim. SAMPLE/--example is not a sale. Nested distribution-repair diagnose codes are pass-through and not fully enumerated here.",
+      "stdoutContract": {
+        "successKeys": ["ok", "jobId", "title", "fundingState", "sold", "sample", "sampleReasons", "purchaseAuthority", "outputs", "receipt", "engine", "liveSettlement"],
+        "failureKeys": ["ok", "refused", "jobId", "code", "error", "fundingState", "sold", "sample", "purchaseAuthority"]
+      }
+    },
+    {
+      "id": "repeat-job-record",
+      "title": "Repeat Job Record",
+      "family": "sds52-wrapper",
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "worktreePath": "/tmp/w5-h04/ro-sds52",
+      "pr": 52,
+      "cli": "node /tmp/w5-h04/ro-sds52/server/paid-useful-jobs/bin/cli.mjs run repeat-job-record --next-run <file> [--input-root <dir>] [--example] [--funding unfunded|reserved-fixture] [--payment <file.json>] [--out-dir <dir>]",
+      "cliRelFromWorktree": "node server/paid-useful-jobs/bin/cli.mjs run repeat-job-record --next-run <file> [--input-root <dir>] [--example] [--funding unfunded|reserved-fixture] [--payment <file.json>] [--out-dir <dir>]",
+      "cwd": "/tmp/w5-h04/ro-sds52",
+      "requiredFlags": ["--next-run"],
+      "optionalFlags": ["--input-root", "--example", "--funding", "--payment", "--out-dir", "--settle"],
+      "inputShape": {
+        "before": null,
+        "after": null,
+        "used": null,
+        "job": null,
+        "next-run": "next-run manifest JSON",
+        "input-root": "optional directory for local byte verification",
+        "payment": "optional fixture payment JSON"
+      },
+      "outputs": ["repeat-job.json", "repeat-job.md", "receipt.json"],
+      "refuseCodes": [
+        "missing-job",
+        "unknown-job",
+        "sample-not-a-sale",
+        "live-settle-out-of-scope",
+        "live-sale-not-available",
+        "reserved-fixture-requires-payment",
+        "fixture-cannot-live-settle",
+        "missing-required-inputs",
+        "input-oversize",
+        "input-missing-file",
+        "input-not-file",
+        "input-malformed",
+        "input-root-not-directory",
+        "internal-error",
+        "engine-refused",
+        "out-dir-collides-with-input",
+        "output-collides-with-input",
+        "invalid-current-input",
+        "invalid-current-input-sha256",
+        "input-path-escapes-root",
+        "input-not-regular-file",
+        "input-too-large",
+        "invalid-next-run-manifest",
+        "unsupported-next-run-schema",
+        "unknown-family",
+        "family-parser-mismatch",
+        "input-digest-mismatch"
+      ],
+      "sampleFlag": "--example",
+      "notes": "NOT a scheduler daemon. Operator-schedulable next-run record with local byte verification. Declared digests must match local file bytes for verified identity. SAMPLE/--example is not a sale.",
+      "stdoutContract": {
+        "successKeys": ["ok", "jobId", "title", "fundingState", "sold", "sample", "sampleReasons", "purchaseAuthority", "outputs", "receipt", "engine", "liveSettlement"],
+        "failureKeys": ["ok", "refused", "jobId", "code", "error", "fundingState", "sold", "sample", "purchaseAuthority"]
+      }
+    },
+    {
+      "id": "json-schema-webhook-drift",
+      "title": "JSON Schema / webhook used-path drift",
+      "family": "w4-schema-webhook",
+      "leaf": "W4-commerce-10",
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+      "worktreePath": "/tmp/w5-h04/ro-w4-schema",
+      "pr": 59,
+      "cli": "node /tmp/w5-h04/ro-w4-schema/tools/json-schema-webhook-drift/bin/webhook-drift.mjs --before <json> --after <json> --used <json> [--out-dir <dir>]",
+      "cliRelFromWorktree": "node tools/json-schema-webhook-drift/bin/webhook-drift.mjs --before <json> --after <json> --used <json> [--out-dir <dir>]",
+      "cwd": "/tmp/w5-h04/ro-w4-schema",
+      "requiredFlags": ["--before", "--after", "--used"],
+      "optionalFlags": ["--example", "--out-dir", "--help"],
+      "inputShape": {
+        "before": "JSON Schema or webhook example JSON",
+        "after": "JSON Schema or webhook example JSON",
+        "used": "{ \"pointers\": [\"/json/pointer\"] } plus optional I01 termsVersion",
+        "job": null,
+        "payment": null
+      },
+      "outputs": ["drift-brief.json", "drift-brief.md"],
+      "refuseCodes": [
+        "missing-required-inputs",
+        "unreadable-input",
+        "html-or-markup",
+        "not-json",
+        "parse-error",
+        "not-object-or-value",
+        "missing-used-list",
+        "invalid_input",
+        "not-this-job-openapi",
+        "invalid-document",
+        "kind-mismatch",
+        "remote-ref-refused",
+        "internal-error",
+        "error"
+      ],
+      "sampleFlag": "--example",
+      "notes": "NOT OpenAPI. NOT api-upgrade-brief. Used JSON Pointers only; unused fields ignored. Remote $ref refused (no fetch). Integer termsVersion refused. SAMPLE cannot be a customer brief. Nonsettling prototype.",
+      "stdoutContract": {
+        "success": {
+          "stream": "stdout",
+          "exit": 0,
+          "keys": ["ok", "appId", "status", "termsVersion", "kind", "customerBrief", "sample", "exampleMode", "purchaseAuthority", "sold", "outDir", "outputs", "breaking", "unknown"]
+        },
+        "failure": {
+          "stream": "stdout",
+          "exit": 2,
+          "keys": ["ok", "refused", "code", "error", "detail", "customerBrief", "sample", "purchaseAuthority", "sold", "payment", "schema", "schemaVersion", "notOpenApi", "notApiUpgradeBrief"]
+        }
+      }
+    },
+    {
+      "id": "lockfile-pin-delta",
+      "title": "Lockfile pin-delta",
+      "family": "w4-lockfile",
+      "leaf": "W4-commerce-11",
+      "mPin": "W5-M03",
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+      "worktreePath": "/tmp/w5-h04/ro-w4-lockfile",
+      "pr": null,
+      "cli": "node /tmp/w5-h04/ro-w4-lockfile/tools/lockfile-pin-delta/bin/lockfile-delta.mjs --before <lock> --after <lock> [--out-dir <dir>]",
+      "cliRelFromWorktree": "node tools/lockfile-pin-delta/bin/lockfile-delta.mjs --before <lock> --after <lock> [--out-dir <dir>]",
+      "cwd": "/tmp/w5-h04/ro-w4-lockfile",
+      "requiredFlags": ["--before", "--after"],
+      "optionalFlags": ["--example", "--out-dir", "--as-customer", "--customer", "--help"],
+      "inputShape": {
+        "before": "npm package-lock.json (lockfileVersion 2 or 3)",
+        "after": "npm package-lock.json (lockfileVersion 2 or 3)",
+        "used": null,
+        "job": null,
+        "payment": null
+      },
+      "outputs": ["pin-delta.json", "pin-delta.md"],
+      "refuseCodes": [
+        "missing-required-inputs",
+        "missing-input-file",
+        "sample-as-customer-delta",
+        "html-input",
+        "parse-error",
+        "not-a-lockfile",
+        "package-json-only",
+        "unsupported-lockfile-version",
+        "missing-packages-and-dependencies",
+        "out-dir-collides-with-input",
+        "internal-error"
+      ],
+      "sampleFlag": "--example",
+      "notes": "NOT vendor-budget-impact (that job is curated pricing rows). Parses package-lock.json only. Does not spawn npm, audit, or purchase. HTML and package.json-only refuse. SAMPLE as customer delta refuses. Missing integrity is partial, not a sale.",
+      "stdoutContract": {
+        "success": {
+          "stream": "stdout",
+          "exit": 0,
+          "keys": ["ok", "appId", "status", "provenance", "digest", "counts", "outDir", "purchaseAuthority", "settlement"]
+        },
+        "failure": {
+          "stream": "stdout",
+          "exit": 2,
+          "keys": ["ok", "refused", "code", "error", "detail", "purchaseAuthority"]
+        }
+      }
+    },
+    {
+      "id": "route-table-diff",
+      "title": "SPA route-table diff",
+      "family": "w4-routes",
+      "leaf": "W4-commerce-12",
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+      "worktreePath": "/tmp/w5-h04/ro-w4-routes",
+      "pr": 64,
+      "cli": "node /tmp/w5-h04/ro-w4-routes/tools/route-table-diff/bin/route-diff.mjs --before <file-or-loopback-url> --after <file-or-loopback-url> --out-dir <dir>",
+      "cliRelFromWorktree": "node tools/route-table-diff/bin/route-diff.mjs --before <file-or-loopback-url> --after <file-or-loopback-url> --out-dir <dir>",
+      "cwd": "/tmp/w5-h04/ro-w4-routes",
+      "requiredFlags": ["--out-dir"],
+      "optionalFlags": ["--before", "--after", "--example", "--published", "--rewrite-homepage", "--help"],
+      "inputShape": {
+        "before": "JSON route catalog {path, canonical, title, robots?} or {schema, routes:[...]} or raw array; file or loopback http://127.0.0.1",
+        "after": "same shape as before",
+        "used": null,
+        "job": null,
+        "payment": null
+      },
+      "outputs": ["route-diff.json", "route-diff.md"],
+      "refuseCodes": [
+        "invalid_args",
+        "missing_out_dir",
+        "missing_catalog",
+        "homepage_rewrite_refused",
+        "sample_not_published_route_table",
+        "pathless_record",
+        "integer_terms_version_refused",
+        "external_catalog_refused",
+        "invalid_catalog",
+        "error"
+      ],
+      "sampleFlag": "--example",
+      "notes": "Does not edit spa-route-shells.js, homepages, or live listings. Does not fetch public hosts. SAMPLE/--example is not the published route table. --published with SAMPLE is refused. --rewrite-homepage is refused. NOT listing-repair-packet. Postgres is not an input.",
+      "stdoutContract": {
+        "success": {
+          "stream": "stdout",
+          "exit": 0,
+          "keys": ["ok", "schema", "publishedRouteTable", "sample", "evidenceClass", "counts", "tableDigest", "outDir", "outputs", "added", "changed"]
+        },
+        "failure": {
+          "stream": "stdout",
+          "exit": 2,
+          "keys": ["ok", "refused", "code", "error", "detail"]
+        }
+      }
+    },
+    {
+      "id": "page-change-offline-job",
+      "title": "Offline extract-batch page-change",
+      "family": "w4-pages",
+      "leaf": "W4-commerce-13",
+      "mPin": "W5-M05",
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+      "worktreePath": "/tmp/w5-h04/ro-w4-pages",
+      "pr": null,
+      "cli": "node /tmp/w5-h04/ro-w4-pages/tools/page-change-offline-job/bin/page-change.mjs compare --before <path> --after <path> --fields title,description,headings --clock <ISO8601Z> --out-dir <dir>",
+      "cliJob": "node /tmp/w5-h04/ro-w4-pages/tools/page-change-offline-job/bin/page-change.mjs job --job <job.json> --out-dir <dir>",
+      "cliJourney": "node /tmp/w5-h04/ro-w4-pages/tools/page-change-offline-job/bin/page-change.mjs journey [--fixture PATH] [--out-dir DIR]",
+      "cliRelFromWorktree": "node tools/page-change-offline-job/bin/page-change.mjs compare --before <path> --after <path> --fields <csv> --clock <ISO8601Z> --out-dir <dir>",
+      "cwd": "/tmp/w5-h04/ro-w4-pages",
+      "requiredFlags": ["--before", "--after", "--fields", "--out-dir"],
+      "optionalFlags": ["--job", "--clock", "--fixture", "--max-bytes", "--max-stale-ms", "--max-sources", "--max-fields", "--max-changes", "--help"],
+      "inputShape": {
+        "before": "already-held samedaydesk.extract-batch.v0 JSON path (not a URL)",
+        "after": "already-held samedaydesk.extract-batch.v0 JSON path (not a URL)",
+        "used": null,
+        "job": "optional job.json with before/after/fields/clock",
+        "payment": null
+      },
+      "outputs": ["page-change.json", "page-change.md"],
+      "refuseCodes": [
+        "live_fetch_url",
+        "payment_retry",
+        "quote_as_success",
+        "sample_as_delivered_watch",
+        "clock_required",
+        "integer_terms_version",
+        "fields_required",
+        "unsupported_field",
+        "input_bounds",
+        "unrecognized_batch_artifact",
+        "usage"
+      ],
+      "sampleFlag": "--example",
+      "sampleFlagNote": "--example / --sample / --delivered-watch refuse with sample_as_delivered_watch. Labeled fixture analog is the `journey` subcommand, not --example.",
+      "notes": "NOT live fetch. NOT merchant compare.mjs. NOT payment retry. NOT quote-as-success. NOT a delivered watch. Clock required. Does not import tools/recurring-job-recipes/vendor/page-change-bridge.mjs. --example is a refuse, not a SAMPLE success path.",
+      "stdoutContract": {
+        "success": {
+          "stream": "stdout",
+          "exit": 0,
+          "keys": ["ok", "job", "report", "written"],
+          "journeyAlso": ["journey"]
+        },
+        "failure": {
+          "stream": "stderr",
+          "exit": 2,
+          "keys": ["ok", "code", "message"]
+        }
+      }
+    }
+  ]
+}

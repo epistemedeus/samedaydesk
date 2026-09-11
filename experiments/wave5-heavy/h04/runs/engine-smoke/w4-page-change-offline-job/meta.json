@@ -1,0 +1,47 @@
+{
+  "engineId": "w4-page-change-offline-job",
+  "sha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+  "executedSha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+  "worktree": "/tmp/w5-h04/ro-w4-pages",
+  "worktreeExists": true,
+  "cliExists": true,
+  "sampleNotCustomerJob": true,
+  "phases": {
+    "help": {
+      "exitCode": 0,
+      "ok": true,
+      "timedOut": false,
+      "spawnError": null,
+      "durationMs": 30,
+      "stdoutPreview": "Usage: page-change compare --before PATH --after PATH --fields title,description,headings --clock ISO8601Z --out-dir DIR page-change job --job PATH [--clock ISO8601Z] [--fields title,description,headi",
+      "stderrPreview": "",
+      "outDirFiles": [],
+      "sample": false
+    },
+    "example": {
+      "exitCode": 2,
+      "ok": false,
+      "timedOut": false,
+      "spawnError": null,
+      "durationMs": 26,
+      "stdoutPreview": "",
+      "stderrPreview": "{\"ok\":false,\"code\":\"sample_as_delivered_watch\",\"message\":\"SAMPLE or --example is not a delivered watch\"}",
+      "outDirFiles": [],
+      "sample": true
+    },
+    "journey": {
+      "exitCode": 0,
+      "ok": true,
+      "timedOut": false,
+      "spawnError": null,
+      "durationMs": 34,
+      "stdoutPreview": "{ \"ok\": true, \"journey\": true, \"job\": { \"id\": \"rfq-and-vendor-page-watch\", \"title\": \"Compare two previously delivered extract-batch JSON artifacts for selected RFQ fields\", \"fields\": [ \"title\", \"descr",
+      "stderrPreview": "",
+      "outDirFiles": [
+        "page-change.json",
+        "page-change.md"
+      ],
+      "sample": false
+    }
+  }
+}

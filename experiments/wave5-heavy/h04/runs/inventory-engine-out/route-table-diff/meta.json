@@ -1,0 +1,13 @@
+{
+  "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/route-table-diff",
+  "engineSha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+  "files": [
+    "route-diff.json",
+    "route-diff.md"
+  ],
+  "copiedAt": "2026-09-11T23:03:23.380Z",
+  "engineId": "w4-route-table-diff",
+  "worktree": "/tmp/w5-h04/ro-w4-routes",
+  "sampleNotCustomerJob": true,
+  "note": "SAMPLE / --example (or page-change journey analog). Not a customer job."
+}

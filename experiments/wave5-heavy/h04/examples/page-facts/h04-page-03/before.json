@@ -1,0 +1,71 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Caller-owned held extract-batch wrapper over git-show HTML facts. Not a live fetch, quote-as-success, or payment."
+  },
+  "jobId": "89ffe029fb70ad89bcb08d11c646bffe9a1c4a0e673fcceaf11a8c97ae7a7251",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "https://samedaydesk.com/x402/verified",
+      "status": "success",
+      "data": {
+        "title": "Inspected x402 routes | SameDayDesk",
+        "description": "Build-time inspection list of unpaid 402 terms, last check time, contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree.",
+        "headings": {
+          "h1": [
+            "Inspected routes, not a certificate"
+          ]
+        },
+        "text": "Each row records seller, route, unpaid 402 price and network, last check time, contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree. The badge is verified, drift, or unverified."
+      },
+      "notes": [],
+      "error": null,
+      "finalUrl": "https://samedaydesk.com/x402/verified",
+      "httpStatus": 200,
+      "provenance": {
+        "transport": "held-git-show",
+        "requestedAt": "2026-09-03T10:01:46.000Z",
+        "completedAt": "2026-09-03T10:01:47.000Z",
+        "fetchedAt": "2026-09-03T10:01:46.000Z",
+        "finalUrl": "https://samedaydesk.com/x402/verified",
+        "httpStatus": 200,
+        "note": "Observation timestamps record when this wrapper was produced from git show. They are not page-content freshness."
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 1,
+    "bytes": 2400,
+    "wallMs": 9,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 2400,
+    "requests": 1,
+    "wallMs": 9,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "Held git-show extraction; not socket billing."
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

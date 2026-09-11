@@ -1,0 +1,242 @@
+{
+  "schema": "w5-h04.evidence-bindings.v1",
+  "generatedAt": "2026-09-11T23:04:35Z",
+  "parentSessionId": "03efef00-6fd3-4435-b2d1-1b32a46661b8",
+  "assignment": "W5-H04 offers / useful-job evidence bind",
+  "harnessCompareSource": "experiments/wave5-heavy/h04/runs/run-summary.json",
+  "note": "engineStatusActual is copied from each example actual-engine.json (status or verdict). Missing status is null, not invented. engineSha comes from actual-engine.json when present, else the executed pin in run-summary.json / inventory/PINS.md.",
+  "enginePins": {
+    "w4-json-schema-webhook-drift": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+    "w4-lockfile-pin-delta": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+    "w4-route-table-diff": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+    "w4-page-change-offline-job": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+    "sds52-paid-useful-jobs": "aeef964fa188443078958d9d6d393afae1d542ee"
+  },
+  "bindings": [
+    {
+      "id": "h04-schema-01",
+      "family": "schema-webhook",
+      "changedFact": "Used keyword exclusiveMinimum changed type from boolean (Draft 04) to number (Draft 06); consumers that emit true/false modifiers will fail validation.",
+      "source": {
+        "repo": "json-schema-org/json-schema-spec",
+        "beforeSha": "d4c5b3a2924370c51b710c8bfd81d3644a92766e",
+        "afterSha": "4b495a2933b1d6f75298abdd23f018ba6a9d4f4a",
+        "path": "schema.json"
+      },
+      "engineId": "w4-json-schema-webhook-drift",
+      "engineSha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+      "engineStatusActual": "actionable",
+      "expectedStatus": "actionable",
+      "match": "match",
+      "consumerAction": "Update emitters and validators: exclusiveMinimum is no longer a boolean modifier of minimum; it must be a number (the exclusive bound).",
+      "notes": "harnessCompare=match. actual-engine.json is CLI stdout only (no engineSha); SHA from run-summary executedSha + PINS. drift-brief: 1 breaking type-change at /properties/exclusiveMinimum boolean→number; unused exclusiveMaximum/const/$id omitted. Child run: /tmp/w5-h04/h04-child-schema-runs/h04-schema-01."
+    },
+    {
+      "id": "h04-schema-02",
+      "family": "schema-webhook",
+      "changedFact": "GitHub create webhook examples gained repository.custom_properties, but used paths /ref, /ref_type, and /pusher_type are identical so consumers of those fields must not be told to break.",
+      "source": {
+        "repo": "octokit/webhooks",
+        "beforeSha": "cdd43ea09fca0dc76c6af948b236cb12a7804e2c",
+        "afterSha": "bc5f6fd16b0df0e3058512e7d44dcba9ba3e0bb0",
+        "path": "payload-examples/api.github.com/create/payload.json"
+      },
+      "engineId": "w4-json-schema-webhook-drift",
+      "engineSha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+      "engineStatusActual": "informational",
+      "expectedStatus": "unchanged",
+      "match": "vocabulary-gap",
+      "consumerAction": "none — used create-event fields ref, ref_type, and pusher_type are identical; repository.custom_properties is unused.",
+      "notes": "harnessCompare=match because compare.mjs normalizeStatus maps informational and unchanged to no-change. Literal tokens differ. Engine: breaking=0, unchangedCount=3, ignoredUnused=true; custom_properties absent from brief. example.json kind=change (document delta) vs expectedStatus=unchanged (used-path consumer). Child run: /tmp/w5-h04/h04-child-schema-runs/h04-schema-02."
+    },
+    {
+      "id": "h04-schema-03",
+      "family": "schema-webhook",
+      "changedFact": "Used CloudEvents context attributes id, type, source, and specversion are identical; only key order and an unused debug field differ, so consumers need no action.",
+      "source": {
+        "repo": "cloudevents/spec",
+        "beforeSha": "d665aa6402a7ed5d0e506dc1c3cc408dba88d085",
+        "afterSha": "d665aa6402a7ed5d0e506dc1c3cc408dba88d085",
+        "path": "json-format.md"
+      },
+      "engineId": "w4-json-schema-webhook-drift",
+      "engineSha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+      "engineStatusActual": "informational",
+      "expectedStatus": "unchanged",
+      "match": "vocabulary-gap",
+      "consumerAction": "none — used CloudEvents context attributes are identical; key order and unused debug are not consumer-breaking.",
+      "notes": "harnessCompare=match via the same informational↔unchanged alias. Engine summary: 'No structural used-path drift. Not a runtime compatibility proof.' Oracle highlight 'no consumer action' is not in the brief. debug omitted. Child run: /tmp/w5-h04/h04-child-schema-runs/h04-schema-03."
+    },
+    {
+      "id": "h04-lock-01",
+      "family": "lockfile",
+      "changedFact": "concurrently 10.0.3→10.0.5, qs 6.15.2→6.16.0, and shell-quote 1.8.4→1.9.0 (version+integrity) in package-lock.json.",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "beforeSha": "ff381d2b46e9beec1475212df2eb610a7b01229b",
+        "afterSha": "62a88c86461e7b8d0e9a7cf1db57153d7e8fd6cf",
+        "path": "package-lock.json",
+        "parentSha": "8ffef693719456a0acbc1e2afbbdff5900b82736"
+      },
+      "engineId": "w4-lockfile-pin-delta",
+      "engineSha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+      "engineStatusActual": "actionable",
+      "expectedStatus": "actionable",
+      "match": "match",
+      "consumerAction": "Review three locked version+integrity bumps before trusting npm ci: concurrently, qs, and shell-quote. 99 other pins are unchanged and must stay omitted.",
+      "notes": "harnessCompare=match. counts changed=3 unchanged=99 added=0 removed=0 missingIntegrity=0. changeKinds version+integrity on all three. SHA present in actual-engine.json. Child run: /tmp/w5-h04/h04-child-lock-runs/h04-lock-01."
+    },
+    {
+      "id": "h04-lock-02",
+      "family": "lockfile",
+      "changedFact": "ms@2.1.3 keeps the same version while integrity moves from sha1-V0yBOM4dK1hh8LRFedut1gxmFbI= to sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==.",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "beforeSha": "62a88c86461e7b8d0e9a7cf1db57153d7e8fd6cf",
+        "afterSha": "62a88c86461e7b8d0e9a7cf1db57153d7e8fd6cf",
+        "path": "package-lock.json",
+        "publicSha1Lock": {
+          "repo": "PowerShell/vscode-powershell",
+          "sha": "75097e880339e45c09f5f6cca4dbdafe552b679f",
+          "path": "package-lock.json",
+          "package": "ms@2.1.3",
+          "integrity": "sha1-V0yBOM4dK1hh8LRFedut1gxmFbI="
+        },
+        "registry": "https://registry.npmjs.org/ms/2.1.3"
+      },
+      "engineId": "w4-lockfile-pin-delta",
+      "engineSha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+      "engineStatusActual": "actionable",
+      "expectedStatus": "actionable",
+      "match": "match",
+      "consumerAction": "Treat ms@2.1.3 as a pin change even though the version string is identical: the locked integrity algorithm/hash changed (sha1 → sha512). debug@4.4.3 and safer-buffer@2.1.2 must stay omitted.",
+      "notes": "Status tokens match. harnessCompare=mismatch on runs/h04-lock-02 compare.json highlight 'ms@2.1.3 integrity-only' (engine never emits that phrase; it uses changeKinds:[\"integrity\"]). Current expected-report.json highlights were rewritten to '\"name\": \"ms\"' + integrity and would likely match if re-run. Markdown truncates integrity to sha1-V0yBOM4dK1hh8LR... / sha512-6FlzubTLZG3J2.... Child run: /tmp/w5-h04/h04-child-lock-runs/h04-lock-02."
+    },
+    {
+      "id": "h04-lock-03",
+      "family": "lockfile",
+      "changedFact": "No name+version+integrity pin changes: 159 S51 lock pins are identical after key-order, indent, unused-field, and link:true noise.",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "beforeSha": "218b2fa74d63951eeeda4cf0a67c420835a58b01",
+        "afterSha": "218b2fa74d63951eeeda4cf0a67c420835a58b01",
+        "path": "package-lock.json"
+      },
+      "engineId": "w4-lockfile-pin-delta",
+      "engineSha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+      "engineStatusActual": "informational",
+      "expectedStatus": "informational",
+      "match": "match",
+      "consumerAction": "Do not treat key-order, lockfile whitespace, unused package fields, or link:true workspace entries as pin changes. No added, removed, or changed name+version+integrity triples.",
+      "notes": "harnessCompare=match. Oracle already uses engine token informational (unlike schema-02/03). Full-file 218b2fa self-diff is partial (missingIntegrity=1 on vendor/neomorphic-correspondence); this control subsets that key out. Child run: /tmp/w5-h04/h04-child-lock-runs/h04-lock-03."
+    },
+    {
+      "id": "h04-route-01",
+      "family": "api-routes",
+      "changedFact": "S260 appends PUBLIC_SHELLS path /for-agents/useful-jobs with canonical https://samedaydesk.com/for-agents/useful-jobs; no other path, canonical, or robots field changes.",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "beforeSha": "9c50ecbae3110768309c99a1bbaaa92991fc8e4d",
+        "afterSha": "abeb54eca9a71abe117898e8fe7de7e55e9d917f",
+        "path": "server/lib/spa-route-shells.js"
+      },
+      "engineId": "w4-route-table-diff",
+      "engineSha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+      "engineStatusActual": null,
+      "expectedStatus": "ok",
+      "match": "unknown",
+      "consumerAction": "Treat /for-agents/useful-jobs as a new public crawler shell. Canonical equals https://samedaydesk.com/for-agents/useful-jobs. Do not rewrite the homepage or spa-route-shells.js from this job.",
+      "notes": "harnessCompare=unknown: oracle status='ok' but route-diff.json has no status/verdict key (ok:true boolean + counts). Do not invent status. Observed counts added=1 removed=0 changed=0 titleOnly=0; added path /for-agents/useful-jobs. Highlights in compare.json matched. Child run: /tmp/w5-h04/h04-child-route-runs/h04-route-01."
+    },
+    {
+      "id": "h04-route-02",
+      "family": "api-routes",
+      "changedFact": "S54 mounts GET /api/observatory/sources, GET /api/observatory/snapshot, and GET /api/observatory/sources/{sourceId}. Those used operations are absent at d4fec15 and present at 8c1c4f7. GET /api/health and GET /api/market-observations/moltjobs-stats stay.",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "beforeSha": "d4fec15d822bed6bdb98b6723bdbfbf88c9e5796",
+        "afterSha": "8c1c4f706c75868d1556db483deff98d29758073",
+        "path": "server/routes/observatory.js"
+      },
+      "engineId": "sds52-api-upgrade-brief",
+      "engineSha": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "engineStatusActual": "actionable",
+      "expectedStatus": "actionable",
+      "match": "match",
+      "consumerAction": "Adopt the three new observatory used operations. Health and moltjobs-stats pins are not a used-op removal. Output is not a runtime compatibility proof and is not a sale.",
+      "notes": "harnessCompare=match. example.json engine id sds52-api-upgrade-brief is an alias of inventory sds52-paid-useful-jobs (job api-upgrade-brief). sold=false sample=false fundingState=unfunded. Used-ops delta +3/~0/-0; three consider-adoption actions (medium). OpenAPI YAML is a caller translation of Express method+path, not kit SAMPLE. Child run: /tmp/w5-h04/h04-child-route-runs/h04-route-02."
+    },
+    {
+      "id": "h04-route-03",
+      "family": "api-routes",
+      "changedFact": "3693e7c -> 3c96d31 rewrites /x402/verified description and crawlerHtml only. Path, canonical, title, and robots are identical. Route-table-diff must report 0 added, 0 removed, 0 changed, 0 titleOnly.",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "beforeSha": "3693e7c2ea49c44c8c8f35f24c3916de5b4bc8e0",
+        "afterSha": "3c96d3137f815035ed4a6467d28c8041916a9aa8",
+        "path": "server/lib/spa-route-shells.js"
+      },
+      "engineId": "w4-route-table-diff",
+      "engineSha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+      "engineStatusActual": null,
+      "expectedStatus": "ok",
+      "match": "unknown",
+      "consumerAction": "Do not treat the /x402/verified description/crawlerHtml copy rewrite as a route break. Path, canonical, title, and robots did not change. Title-only is also empty.",
+      "notes": "harnessCompare=unknown for the same missing status key as route-01. Counts and equal tableDigest sha256:a207a78c75560b76f736f82785f95f308d69194519cc0dc0276e3fecd31cb56a are the useful no-change proof. Same SHAs as h04-page-03 (page-change reports changed). Child run: /tmp/w5-h04/h04-child-route-runs/h04-route-03."
+    },
+    {
+      "id": "h04-page-01",
+      "family": "page-facts",
+      "changedFact": "The public JSON-LD validator page renamed from “JSON-LD / Schema Validator” to “Free JSON-LD Validator & Schema Checker”; title, h1, and meta description a buyer would search for all moved.",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "beforeSha": "ff381d2b46e9beec1475212df2eb610a7b01229b",
+        "afterSha": "374a565784bcd4ec89eeda7fedbb9610fed77473",
+        "path": "client/public/tools/schema-validator.html"
+      },
+      "engineId": "w4-page-change-offline-job",
+      "engineSha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+      "engineStatusActual": "changed",
+      "expectedStatus": "changed",
+      "match": "match",
+      "consumerAction": "Treat the public JSON-LD validator as renamed: search snippets and the on-page h1 now say Free JSON-LD Validator & Schema Checker, and the description says the check runs in the browser.",
+      "notes": "harnessCompare=match. Engine token is report.verdict (no status key); compare walks verdict. 3 semantic replaces (/title, /headings/h1, /description). SHA not in actual-engine.json; from expected-report.engine.sha + run-summary. Child run: /tmp/w5-h04/h04-child-page-runs/h04-page-01."
+    },
+    {
+      "id": "h04-page-02",
+      "family": "page-facts",
+      "changedFact": "No buyer-facing title, description, or heading change. 542d174 only appends a footer sentence about EIN.LLC / Neomorphic.io; extract provenance times and unused text/asset-hash fields also move.",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "beforeSha": "ff381d2b46e9beec1475212df2eb610a7b01229b",
+        "afterSha": "542d1748060ffadeda2491ddbbf134db31ce2890",
+        "path": "client/public/resources.html"
+      },
+      "engineId": "w4-page-change-offline-job",
+      "engineSha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+      "engineStatusActual": "unchanged",
+      "expectedStatus": "unchanged",
+      "match": "match",
+      "consumerAction": "Do not treat the resources page as a catalog or heading change. Footer/portfolio-discovery copy and extract provenance times moved; title, description, and headings did not.",
+      "notes": "harnessCompare=match. Page-change no-change token is unchanged, not informational (contrast schema/lock). semantic=0 noChangeProven=true. Markdown: 'No selected-field content changes recorded'. Child run: /tmp/w5-h04/h04-child-page-runs/h04-page-02."
+    },
+    {
+      "id": "h04-page-03",
+      "family": "page-facts",
+      "changedFact": "The inspected-routes page description and crawler paragraph stop claiming OpenAPI / unpaid-402-schema / CDP Bazaar “agree” and instead require a matching CDP Bazaar row observed within seven days of the crawl. Title and h1 stay the same.",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "beforeSha": "3693e7c2ea49c44c8c8f35f24c3916de5b4bc8e0",
+        "afterSha": "3c96d3137f815035ed4a6467d28c8041916a9aa8",
+        "path": "server/lib/spa-route-shells.js"
+      },
+      "engineId": "w4-page-change-offline-job",
+      "engineSha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+      "engineStatusActual": "changed",
+      "expectedStatus": "changed",
+      "match": "match",
+      "consumerAction": "Re-read /x402/verified inspection rules: agreement of OpenAPI + unpaid 402 schema + CDP Bazaar is no longer the published criterion; a matching CDP Bazaar row must have been observed within seven days of the crawl. Title and h1 are unchanged.",
+      "notes": "harnessCompare=match. 2 semantic replaces (/description, /text); headings unchanged. Same SHAs as h04-route-03 (route identity 0/0/0/0). Honesty: client/index.html still uses the older agree blurb at both SHAs. Child run: /tmp/w5-h04/h04-child-page-runs/h04-page-03."
+    }
+  ]
+}

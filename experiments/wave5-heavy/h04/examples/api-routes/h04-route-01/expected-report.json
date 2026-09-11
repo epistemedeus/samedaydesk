@@ -1,0 +1,29 @@
+{
+  "engine": "w4-route-table-diff",
+  "ok": true,
+  "status": "ok",
+  "publishedRouteTable": false,
+  "sample": false,
+  "counts": {
+    "added": 1,
+    "removed": 0,
+    "changed": 0,
+    "titleOnly": 0
+  },
+  "addedPaths": ["/for-agents/useful-jobs"],
+  "addedCanonical": "https://samedaydesk.com/for-agents/useful-jobs",
+  "changed": [],
+  "titleOnly": [],
+  "tableDigest": {
+    "before": "sha256:344c9123ad9f1023bc5a1bbae6e53c7ec868d099bf084e04860df63a4cce18c8",
+    "after": "sha256:49d24d600dbe1982545d2b2f02e038fd0b7d55acc1f4d414b243b6b2d5061023"
+  },
+  "highlights": [
+    "/for-agents/useful-jobs",
+    "https://samedaydesk.com/for-agents/useful-jobs",
+    "Added: 1",
+    "Removed: 0",
+    "Changed (canonical or robots): 0"
+  ],
+  "consumerAction": "Treat /for-agents/useful-jobs as a new public crawler shell. Canonical equals https://samedaydesk.com/for-agents/useful-jobs. Do not rewrite the homepage or spa-route-shells.js from this job."
+}

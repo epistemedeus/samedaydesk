@@ -1,0 +1,14 @@
+{
+  "sourceTmp": "/tmp/w5-h04/h04-child-lock-runs/h04-lock-02",
+  "engineSha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+  "files": [
+    "cli-stdout.json",
+    "pin-delta.json",
+    "pin-delta.md"
+  ],
+  "copiedAt": "2026-09-11T23:03:23.380Z",
+  "engineId": "w4-lockfile-pin-delta",
+  "worktree": "/tmp/w5-h04/ro-w4-lockfile",
+  "sampleNotCustomerJob": false,
+  "note": "Caller-owned lock pairs; extract/ bulk dumps skipped."
+}

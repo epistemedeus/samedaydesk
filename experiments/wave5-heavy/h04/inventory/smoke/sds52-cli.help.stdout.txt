@@ -1,0 +1,17 @@
+paid-useful-jobs — local non-settling wrappers (not live sales)
+
+Commands:
+  list
+  run <job-id> [inputs] [--example] [--funding unfunded|reserved-fixture] [--payment file.json] [--out-dir dir]
+
+Examples:
+  node server/paid-useful-jobs/bin/cli.mjs list
+  node server/paid-useful-jobs/bin/cli.mjs run vendor-budget-impact \
+    --before server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/before.json \
+    --after server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/after.json \
+    --funding reserved-fixture \
+    --payment server/paid-useful-jobs/fixtures/payment/reserved-fixture.json \
+    --out-dir ./out/paid-vendor-budget
+
+Live settlement is out of scope. SAMPLE/--example is never a paid sale.
+reserved-fixture requires --payment with a recognized fixture object (CLI and library).

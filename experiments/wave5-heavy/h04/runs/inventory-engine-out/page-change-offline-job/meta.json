@@ -1,0 +1,13 @@
+{
+  "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/page-change-offline-job",
+  "engineSha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+  "files": [
+    "journey/page-change.json",
+    "journey/page-change.md"
+  ],
+  "copiedAt": "2026-09-11T23:03:23.380Z",
+  "engineId": "w4-page-change-offline-job",
+  "worktree": "/tmp/w5-h04/ro-w4-pages",
+  "sampleNotCustomerJob": true,
+  "note": "SAMPLE / --example (or page-change journey analog). Not a customer job."
+}

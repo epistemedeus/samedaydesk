@@ -1,0 +1,953 @@
+{
+  "copiedAt": "2026-09-11T23:03:23.380Z",
+  "note": "Byte-identical copies of child engine outputs. Engines not rewritten. SAMPLE inventory smoke is not a customer job.",
+  "missingSources": [],
+  "skipped": [
+    {
+      "sourceTmp": "/tmp/w5-h04/h04-child-lock-runs/extract",
+      "reason": "bulk lock dumps (extract/); not copied"
+    },
+    {
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/feed-agenda/agenda.ics",
+      "reason": "not json/md/receipt"
+    }
+  ],
+  "files": [
+    {
+      "path": "examples/api-routes/h04-route-01/actual-engine.json",
+      "bytes": 1055,
+      "sourceTmp": "/tmp/w5-h04/h04-child-route-runs/h04-route-01/actual-engine.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/api-routes/h04-route-01/cli-stdout.json",
+      "bytes": 537,
+      "sourceTmp": "/tmp/w5-h04/h04-child-route-runs/h04-route-01/cli-stdout.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/api-routes/h04-route-01/meta.json",
+      "bytes": 451,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "examples/api-routes/h04-route-01/route-diff.json",
+      "bytes": 1985,
+      "sourceTmp": "/tmp/w5-h04/h04-child-route-runs/h04-route-01/route-diff.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/api-routes/h04-route-01/route-diff.md",
+      "bytes": 640,
+      "sourceTmp": "/tmp/w5-h04/h04-child-route-runs/h04-route-01/route-diff.md",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/api-routes/h04-route-02/actual-engine.json",
+      "bytes": 1633,
+      "sourceTmp": "/tmp/w5-h04/h04-child-route-runs/h04-route-02/actual-engine.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/api-routes/h04-route-02/cli-stdout.json",
+      "bytes": 3796,
+      "sourceTmp": "/tmp/w5-h04/h04-child-route-runs/h04-route-02/cli-stdout.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/api-routes/h04-route-02/meta.json",
+      "bytes": 501,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "examples/api-routes/h04-route-02/receipt.json",
+      "bytes": 2683,
+      "sourceTmp": "/tmp/w5-h04/h04-child-route-runs/h04-route-02/receipt.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/api-routes/h04-route-02/upgrade-brief.json",
+      "bytes": 1585,
+      "sourceTmp": "/tmp/w5-h04/h04-child-route-runs/h04-route-02/upgrade-brief.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/api-routes/h04-route-02/upgrade-brief.md",
+      "bytes": 471,
+      "sourceTmp": "/tmp/w5-h04/h04-child-route-runs/h04-route-02/upgrade-brief.md",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/api-routes/h04-route-03/actual-engine.json",
+      "bytes": 1018,
+      "sourceTmp": "/tmp/w5-h04/h04-child-route-runs/h04-route-03/actual-engine.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/api-routes/h04-route-03/cli-stdout.json",
+      "bytes": 512,
+      "sourceTmp": "/tmp/w5-h04/h04-child-route-runs/h04-route-03/cli-stdout.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/api-routes/h04-route-03/meta.json",
+      "bytes": 447,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "examples/api-routes/h04-route-03/route-diff.json",
+      "bytes": 1769,
+      "sourceTmp": "/tmp/w5-h04/h04-child-route-runs/h04-route-03/route-diff.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/api-routes/h04-route-03/route-diff.md",
+      "bytes": 562,
+      "sourceTmp": "/tmp/w5-h04/h04-child-route-runs/h04-route-03/route-diff.md",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/lockfile/h04-lock-01/cli-stdout.json",
+      "bytes": 402,
+      "sourceTmp": "/tmp/w5-h04/h04-child-lock-runs/h04-lock-01/cli-stdout.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/lockfile/h04-lock-01/meta.json",
+      "bytes": 431,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "examples/lockfile/h04-lock-01/pin-delta.json",
+      "bytes": 3637,
+      "sourceTmp": "/tmp/w5-h04/h04-child-lock-runs/h04-lock-01/pin-delta.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/lockfile/h04-lock-01/pin-delta.md",
+      "bytes": 1220,
+      "sourceTmp": "/tmp/w5-h04/h04-child-lock-runs/h04-lock-01/pin-delta.md",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/lockfile/h04-lock-02/cli-stdout.json",
+      "bytes": 397,
+      "sourceTmp": "/tmp/w5-h04/h04-child-lock-runs/h04-lock-02/cli-stdout.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/lockfile/h04-lock-02/meta.json",
+      "bytes": 431,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "examples/lockfile/h04-lock-02/pin-delta.json",
+      "bytes": 1755,
+      "sourceTmp": "/tmp/w5-h04/h04-child-lock-runs/h04-lock-02/pin-delta.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/lockfile/h04-lock-02/pin-delta.md",
+      "bytes": 605,
+      "sourceTmp": "/tmp/w5-h04/h04-child-lock-runs/h04-lock-02/pin-delta.md",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/lockfile/h04-lock-03/cli-stdout.json",
+      "bytes": 344,
+      "sourceTmp": "/tmp/w5-h04/h04-child-lock-runs/h04-lock-03/cli-stdout.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/lockfile/h04-lock-03/meta.json",
+      "bytes": 431,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "examples/lockfile/h04-lock-03/pin-delta.json",
+      "bytes": 1004,
+      "sourceTmp": "/tmp/w5-h04/h04-child-lock-runs/h04-lock-03/pin-delta.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/lockfile/h04-lock-03/pin-delta.md",
+      "bytes": 359,
+      "sourceTmp": "/tmp/w5-h04/h04-child-lock-runs/h04-lock-03/pin-delta.md",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/page-facts/h04-page-01/meta.json",
+      "bytes": 455,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "examples/page-facts/h04-page-01/page-change.json",
+      "bytes": 6938,
+      "sourceTmp": "/tmp/w5-h04/h04-child-page-runs/h04-page-01/page-change.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/page-facts/h04-page-01/page-change.md",
+      "bytes": 1793,
+      "sourceTmp": "/tmp/w5-h04/h04-child-page-runs/h04-page-01/page-change.md",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/page-facts/h04-page-01/stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/h04-child-page-runs/h04-page-01/stderr.txt",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/page-facts/h04-page-01/stdout.json",
+      "bytes": 7127,
+      "sourceTmp": "/tmp/w5-h04/h04-child-page-runs/h04-page-01/stdout.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/page-facts/h04-page-02/meta.json",
+      "bytes": 455,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "examples/page-facts/h04-page-02/page-change.json",
+      "bytes": 4808,
+      "sourceTmp": "/tmp/w5-h04/h04-child-page-runs/h04-page-02/page-change.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/page-facts/h04-page-02/page-change.md",
+      "bytes": 965,
+      "sourceTmp": "/tmp/w5-h04/h04-child-page-runs/h04-page-02/page-change.md",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/page-facts/h04-page-02/stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/h04-child-page-runs/h04-page-02/stderr.txt",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/page-facts/h04-page-02/stdout.json",
+      "bytes": 4997,
+      "sourceTmp": "/tmp/w5-h04/h04-child-page-runs/h04-page-02/stdout.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/page-facts/h04-page-03/meta.json",
+      "bytes": 455,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "examples/page-facts/h04-page-03/page-change.json",
+      "bytes": 6904,
+      "sourceTmp": "/tmp/w5-h04/h04-child-page-runs/h04-page-03/page-change.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/page-facts/h04-page-03/page-change.md",
+      "bytes": 1830,
+      "sourceTmp": "/tmp/w5-h04/h04-child-page-runs/h04-page-03/page-change.md",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/page-facts/h04-page-03/stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/h04-child-page-runs/h04-page-03/stderr.txt",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/page-facts/h04-page-03/stdout.json",
+      "bytes": 7093,
+      "sourceTmp": "/tmp/w5-h04/h04-child-page-runs/h04-page-03/stdout.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/schema-webhook/h04-schema-01/drift-brief.json",
+      "bytes": 2895,
+      "sourceTmp": "/tmp/w5-h04/h04-child-schema-runs/h04-schema-01/drift-brief.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/schema-webhook/h04-schema-01/drift-brief.md",
+      "bytes": 635,
+      "sourceTmp": "/tmp/w5-h04/h04-child-schema-runs/h04-schema-01/drift-brief.md",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/schema-webhook/h04-schema-01/meta.json",
+      "bytes": 417,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "examples/schema-webhook/h04-schema-02/drift-brief.json",
+      "bytes": 1762,
+      "sourceTmp": "/tmp/w5-h04/h04-child-schema-runs/h04-schema-02/drift-brief.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/schema-webhook/h04-schema-02/drift-brief.md",
+      "bytes": 576,
+      "sourceTmp": "/tmp/w5-h04/h04-child-schema-runs/h04-schema-02/drift-brief.md",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/schema-webhook/h04-schema-02/meta.json",
+      "bytes": 417,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "examples/schema-webhook/h04-schema-03/drift-brief.json",
+      "bytes": 1760,
+      "sourceTmp": "/tmp/w5-h04/h04-child-schema-runs/h04-schema-03/drift-brief.json",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/schema-webhook/h04-schema-03/drift-brief.md",
+      "bytes": 576,
+      "sourceTmp": "/tmp/w5-h04/h04-child-schema-runs/h04-schema-03/drift-brief.md",
+      "kind": "example-engine-out"
+    },
+    {
+      "path": "examples/schema-webhook/h04-schema-03/meta.json",
+      "bytes": 417,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "inventory-engine-out/api-upgrade-brief/meta.json",
+      "bytes": 452,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "inventory-engine-out/api-upgrade-brief/receipt.json",
+      "bytes": 2223,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/api-upgrade-brief/receipt.json",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/api-upgrade-brief/upgrade-brief.json",
+      "bytes": 1207,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/api-upgrade-brief/upgrade-brief.json",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/api-upgrade-brief/upgrade-brief.md",
+      "bytes": 261,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/api-upgrade-brief/upgrade-brief.md",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/evidence-ci-annotation/annotations.json",
+      "bytes": 2480,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/evidence-ci-annotation/annotations.json",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/evidence-ci-annotation/annotations.md",
+      "bytes": 724,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/evidence-ci-annotation/annotations.md",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/evidence-ci-annotation/meta.json",
+      "bytes": 458,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "inventory-engine-out/evidence-ci-annotation/receipt.json",
+      "bytes": 2240,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/evidence-ci-annotation/receipt.json",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/feed-agenda/agenda.json",
+      "bytes": 1672,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/feed-agenda/agenda.json",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/feed-agenda/meta.json",
+      "bytes": 409,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "inventory-engine-out/feed-agenda/receipt.json",
+      "bytes": 2164,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/feed-agenda/receipt.json",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/json-schema-webhook-drift/drift-brief.json",
+      "bytes": 2868,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/json-schema-webhook-drift/drift-brief.json",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/json-schema-webhook-drift/drift-brief.md",
+      "bytes": 703,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/json-schema-webhook-drift/drift-brief.md",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/json-schema-webhook-drift/meta.json",
+      "bytes": 445,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "inventory-engine-out/listing-repair-packet/meta.json",
+      "bytes": 460,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "inventory-engine-out/listing-repair-packet/receipt.json",
+      "bytes": 2241,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/listing-repair-packet/receipt.json",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/listing-repair-packet/repair-packet.json",
+      "bytes": 2517,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/listing-repair-packet/repair-packet.json",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/listing-repair-packet/repair-packet.md",
+      "bytes": 1347,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/listing-repair-packet/repair-packet.md",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/lockfile-pin-delta/meta.json",
+      "bytes": 429,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "inventory-engine-out/lockfile-pin-delta/pin-delta.json",
+      "bytes": 1889,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/lockfile-pin-delta/pin-delta.json",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/lockfile-pin-delta/pin-delta.md",
+      "bytes": 659,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/lockfile-pin-delta/pin-delta.md",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/meta.json",
+      "bytes": 897,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "inventory-engine-out/page-change-offline-job/journey/page-change.json",
+      "bytes": 9318,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/page-change-offline-job/journey/page-change.json",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/page-change-offline-job/journey/page-change.md",
+      "bytes": 1658,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/page-change-offline-job/journey/page-change.md",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/page-change-offline-job/meta.json",
+      "bytes": 456,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "inventory-engine-out/repeat-job-record/meta.json",
+      "bytes": 446,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "inventory-engine-out/repeat-job-record/receipt.json",
+      "bytes": 2209,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/repeat-job-record/receipt.json",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/repeat-job-record/repeat-job.json",
+      "bytes": 4559,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/repeat-job-record/repeat-job.json",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/repeat-job-record/repeat-job.md",
+      "bytes": 1277,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/repeat-job-record/repeat-job.md",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/route-table-diff/meta.json",
+      "bytes": 425,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "inventory-engine-out/route-table-diff/route-diff.json",
+      "bytes": 2371,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/route-table-diff/route-diff.json",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/route-table-diff/route-diff.md",
+      "bytes": 733,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/route-table-diff/route-diff.md",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/vendor-budget-impact/budget-impact.json",
+      "bytes": 1458,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/vendor-budget-impact/budget-impact.json",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/vendor-budget-impact/budget-impact.md",
+      "bytes": 396,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/vendor-budget-impact/budget-impact.md",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-engine-out/vendor-budget-impact/meta.json",
+      "bytes": 458,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "inventory-engine-out/vendor-budget-impact/receipt.json",
+      "bytes": 2232,
+      "sourceTmp": "/tmp/w5-h04/h04-engine-smoke/vendor-budget-impact/receipt.json",
+      "kind": "inventory-engine-out"
+    },
+    {
+      "path": "inventory-smoke/api-upgrade-brief.example.exit.txt",
+      "bytes": 2,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/api-upgrade-brief.example.exit.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/api-upgrade-brief.example.stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/api-upgrade-brief.example.stderr.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/api-upgrade-brief.example.stdout.json",
+      "bytes": 3329,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/api-upgrade-brief.example.stdout.json",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/api-upgrade-brief.example.stdout.txt",
+      "bytes": 3329,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/api-upgrade-brief.example.stdout.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/evidence-ci-annotation.example.exit.txt",
+      "bytes": 2,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/evidence-ci-annotation.example.exit.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/evidence-ci-annotation.example.stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/evidence-ci-annotation.example.stderr.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/evidence-ci-annotation.example.stdout.json",
+      "bytes": 3423,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/evidence-ci-annotation.example.stdout.json",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/evidence-ci-annotation.example.stdout.txt",
+      "bytes": 3423,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/evidence-ci-annotation.example.stdout.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/feed-agenda.example.exit.txt",
+      "bytes": 2,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/feed-agenda.example.exit.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/feed-agenda.example.stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/feed-agenda.example.stderr.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/feed-agenda.example.stdout.json",
+      "bytes": 3204,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/feed-agenda.example.stdout.json",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/feed-agenda.example.stdout.txt",
+      "bytes": 3204,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/feed-agenda.example.stdout.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/json-schema-webhook-drift.example.exit.txt",
+      "bytes": 2,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/json-schema-webhook-drift.example.exit.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/json-schema-webhook-drift.example.stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/json-schema-webhook-drift.example.stderr.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/json-schema-webhook-drift.example.stdout.json",
+      "bytes": 413,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/json-schema-webhook-drift.example.stdout.json",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/json-schema-webhook-drift.example.stdout.txt",
+      "bytes": 413,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/json-schema-webhook-drift.example.stdout.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/json-schema-webhook-drift.help.exit.txt",
+      "bytes": 2,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/json-schema-webhook-drift.help.exit.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/json-schema-webhook-drift.help.stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/json-schema-webhook-drift.help.stderr.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/json-schema-webhook-drift.help.stdout.txt",
+      "bytes": 705,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/json-schema-webhook-drift.help.stdout.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/listing-repair-packet.example.exit.txt",
+      "bytes": 2,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/listing-repair-packet.example.exit.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/listing-repair-packet.example.stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/listing-repair-packet.example.stderr.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/listing-repair-packet.example.stdout.json",
+      "bytes": 3369,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/listing-repair-packet.example.stdout.json",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/listing-repair-packet.example.stdout.txt",
+      "bytes": 3369,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/listing-repair-packet.example.stdout.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/lockfile-pin-delta.example.exit.txt",
+      "bytes": 2,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/lockfile-pin-delta.example.exit.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/lockfile-pin-delta.example.stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/lockfile-pin-delta.example.stderr.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/lockfile-pin-delta.example.stdout.json",
+      "bytes": 393,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/lockfile-pin-delta.example.stdout.json",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/lockfile-pin-delta.example.stdout.txt",
+      "bytes": 393,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/lockfile-pin-delta.example.stdout.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/lockfile-pin-delta.help.exit.txt",
+      "bytes": 2,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/lockfile-pin-delta.help.exit.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/lockfile-pin-delta.help.stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/lockfile-pin-delta.help.stderr.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/lockfile-pin-delta.help.stdout.txt",
+      "bytes": 626,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/lockfile-pin-delta.help.stdout.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/meta.json",
+      "bytes": 3535,
+      "sourceTmp": null,
+      "kind": "meta"
+    },
+    {
+      "path": "inventory-smoke/meta.txt",
+      "bytes": 336,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/meta.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/page-change-offline-job.example.exit.txt",
+      "bytes": 2,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/page-change-offline-job.example.exit.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/page-change-offline-job.example.stderr.json",
+      "bytes": 105,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/page-change-offline-job.example.stderr.json",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/page-change-offline-job.example.stderr.txt",
+      "bytes": 105,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/page-change-offline-job.example.stderr.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/page-change-offline-job.example.stdout.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/page-change-offline-job.example.stdout.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/page-change-offline-job.help.exit.txt",
+      "bytes": 2,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/page-change-offline-job.help.exit.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/page-change-offline-job.help.stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/page-change-offline-job.help.stderr.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/page-change-offline-job.help.stdout.txt",
+      "bytes": 483,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/page-change-offline-job.help.stdout.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/page-change-offline-job.journey.exit.txt",
+      "bytes": 2,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/page-change-offline-job.journey.exit.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/page-change-offline-job.journey.stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/page-change-offline-job.journey.stderr.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/page-change-offline-job.journey.stdout.json",
+      "bytes": 9560,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/page-change-offline-job.journey.stdout.json",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/page-change-offline-job.journey.stdout.txt",
+      "bytes": 9560,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/page-change-offline-job.journey.stdout.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/repeat-job-record.example.exit.txt",
+      "bytes": 2,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/repeat-job-record.example.exit.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/repeat-job-record.example.stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/repeat-job-record.example.stderr.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/repeat-job-record.example.stdout.json",
+      "bytes": 3347,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/repeat-job-record.example.stdout.json",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/repeat-job-record.example.stdout.txt",
+      "bytes": 3347,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/repeat-job-record.example.stdout.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/RESULTS.json",
+      "bytes": 2225,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/RESULTS.json",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/route-table-diff.example.exit.txt",
+      "bytes": 2,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/route-table-diff.example.exit.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/route-table-diff.example.stderr.txt",
+      "bytes": 165,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/route-table-diff.example.stderr.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/route-table-diff.example.stdout.json",
+      "bytes": 581,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/route-table-diff.example.stdout.json",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/route-table-diff.example.stdout.txt",
+      "bytes": 581,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/route-table-diff.example.stdout.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/route-table-diff.help.exit.txt",
+      "bytes": 2,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/route-table-diff.help.exit.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/route-table-diff.help.stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/route-table-diff.help.stderr.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/route-table-diff.help.stdout.txt",
+      "bytes": 802,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/route-table-diff.help.stdout.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/sds52-cli.help.exit.txt",
+      "bytes": 2,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/sds52-cli.help.exit.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/sds52-cli.help.stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/sds52-cli.help.stderr.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/sds52-cli.help.stdout.txt",
+      "bytes": 811,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/sds52-cli.help.stdout.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/sds52-cli.list.exit.txt",
+      "bytes": 2,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/sds52-cli.list.exit.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/sds52-cli.list.stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/sds52-cli.list.stderr.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/sds52-cli.list.stdout.json",
+      "bytes": 225,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/sds52-cli.list.stdout.json",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/sds52-cli.list.stdout.txt",
+      "bytes": 225,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/sds52-cli.list.stdout.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/vendor-budget-impact.example.exit.txt",
+      "bytes": 2,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/vendor-budget-impact.example.exit.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/vendor-budget-impact.example.stderr.txt",
+      "bytes": 0,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/vendor-budget-impact.example.stderr.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/vendor-budget-impact.example.stdout.json",
+      "bytes": 3364,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/vendor-budget-impact.example.stdout.json",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "inventory-smoke/vendor-budget-impact.example.stdout.txt",
+      "bytes": 3364,
+      "sourceTmp": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/inventory/smoke/vendor-budget-impact.example.stdout.txt",
+      "kind": "inventory-smoke"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2715,
+      "sourceTmp": null,
+      "kind": "readme"
+    }
+  ],
+  "totals": {
+    "files": 155,
+    "bytes": 215740,
+    "copiedEngineFiles": 130,
+    "missingSources": 0
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "engineId": "sds52-paid-useful-jobs",
+  "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+  "executedSha": "aeef964fa188443078958d9d6d393afae1d542ee",
+  "worktree": "/tmp/w5-h04/ro-sds52",
+  "worktreeExists": true,
+  "cliExists": true,
+  "sampleNotCustomerJob": true,
+  "phases": {
+    "help": {
+      "exitCode": 0,
+      "ok": true,
+      "timedOut": false,
+      "spawnError": null,
+      "durationMs": 33,
+      "stdoutPreview": "paid-useful-jobs — local non-settling wrappers (not live sales) Commands: list run <job-id> [inputs] [--example] [--funding unfunded|reserved-fixture] [--payment file.json] [--out-dir dir] Examples: n",
+      "stderrPreview": "",
+      "outDirFiles": [],
+      "sample": false
+    },
+    "example": {
+      "exitCode": 0,
+      "ok": true,
+      "timedOut": false,
+      "spawnError": null,
+      "durationMs": 230,
+      "stdoutPreview": "{ \"ok\": true, \"jobId\": \"vendor-budget-impact\", \"title\": \"Vendor Budget Impact\", \"fundingState\": \"unfunded\", \"sold\": false, \"sample\": true, \"sampleReasons\": [ \"example-flag\" ], \"purchaseAuthority\": fal",
+      "stderrPreview": "",
+      "outDirFiles": [
+        "budget-impact.json",
+        "budget-impact.md",
+        "receipt.json"
+      ],
+      "sample": true
+    },
+    "list": {
+      "exitCode": 0,
+      "ok": true,
+      "timedOut": false,
+      "spawnError": null,
+      "durationMs": 30,
+      "stdoutPreview": "{ \"ok\": true, \"jobs\": [ \"api-upgrade-brief\", \"vendor-budget-impact\", \"feed-agenda\", \"evidence-ci-annotation\", \"listing-repair-packet\", \"repeat-job-record\" ], \"liveSettlement\": \"out-of-scope\" }",
+      "stderrPreview": "",
+      "outDirFiles": [],
+      "sample": false
+    }
+  }
+}

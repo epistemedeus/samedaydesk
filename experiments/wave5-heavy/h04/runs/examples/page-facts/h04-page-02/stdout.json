@@ -1,0 +1,164 @@
+{
+  "ok": true,
+  "job": {
+    "id": "h04-page-02",
+    "title": "Watch resources.html title, description, and headings across footer-only HTML noise",
+    "fields": [
+      "title",
+      "description",
+      "headings"
+    ]
+  },
+  "report": {
+    "schema": "pilot/page-change-brief/v1",
+    "kind": "merchant_extract_batch",
+    "verdict": "unchanged",
+    "fields": [
+      "title",
+      "description",
+      "headings"
+    ],
+    "claims": {
+      "noChangeProven": true,
+      "contentUnchangedProven": true,
+      "comparable": true,
+      "complete": true,
+      "current": false,
+      "fresh": false,
+      "usefulOutputProven": true,
+      "paymentImpliesUsefulOutput": false
+    },
+    "freshness": "unknown",
+    "snapshot": {
+      "schema": "pilot/change-digest/v1",
+      "verdict": "unchanged",
+      "claims": {
+        "noChangeProven": true,
+        "current": false,
+        "comparable": true,
+        "fresh": false
+      },
+      "freshness": "unknown",
+      "before": {
+        "status": "present",
+        "mediaType": "application/json",
+        "observedAt": null,
+        "truncated": false,
+        "byteLength": 2821,
+        "sha256": "cf004a7f058b958503ce8fcc1f4504dbc5f0e91bf0d2e14a6eefd92761d062dd",
+        "source": {
+          "kind": "file",
+          "role": "before"
+        },
+        "issues": []
+      },
+      "after": {
+        "status": "present",
+        "mediaType": "application/json",
+        "observedAt": null,
+        "truncated": false,
+        "byteLength": 3001,
+        "sha256": "d94b62ae4ee3000dfbdc72bab72e6b09db62ab6a00b1142f05852c15d0d54d5c",
+        "source": {
+          "kind": "file",
+          "role": "after"
+        },
+        "issues": []
+      },
+      "limitsHit": []
+    },
+    "summary": {
+      "matched": 1,
+      "missing": 0,
+      "failed": 0,
+      "unknown": 0,
+      "duplicates": 0,
+      "coverageUnknown": 0,
+      "semantic": 0,
+      "order": 0
+    },
+    "rows": {
+      "matched": [
+        {
+          "sourceKey": "https://samedaydesk.com/resources.html",
+          "source": "https://samedaydesk.com/resources.html",
+          "before": {
+            "id": "item-001",
+            "status": "success"
+          },
+          "after": {
+            "id": "item-001",
+            "status": "success"
+          }
+        }
+      ],
+      "missing": [],
+      "failed": [],
+      "unknown": [],
+      "duplicates": []
+    },
+    "coverageUnknown": [],
+    "changes": [],
+    "observations": {
+      "before": {
+        "jobId": "48ebc1a6db3f1dcd2d53d39dfcd7efc2eec7889704c31e68a9d751eb2922f81c",
+        "jobStatus": "completed",
+        "charged": false,
+        "ok": true,
+        "snapshotObservedAt": null,
+        "artifactObservedAt": "2026-08-30T13:09:16.200Z",
+        "rows": [
+          {
+            "sourceKey": "https://samedaydesk.com/resources.html",
+            "itemId": "item-001",
+            "requestedAt": "2026-08-30T13:09:15.000Z",
+            "completedAt": "2026-08-30T13:09:16.200Z",
+            "fetchedAt": "2026-08-30T13:09:15.200Z",
+            "requestedAtIsNotFreshness": true,
+            "fetchedAtIsNotFreshness": true
+          }
+        ]
+      },
+      "after": {
+        "jobId": "33ce333a9a0c2ee1eb86ce89d8bfcc16a6951f34f00c9492e25d4c5550a7ce61",
+        "jobStatus": "completed",
+        "charged": false,
+        "ok": true,
+        "snapshotObservedAt": null,
+        "artifactObservedAt": "2026-09-02T06:23:15.400Z",
+        "rows": [
+          {
+            "sourceKey": "https://samedaydesk.com/resources.html",
+            "itemId": "item-001",
+            "requestedAt": "2026-09-02T06:23:14.000Z",
+            "completedAt": "2026-09-02T06:23:15.400Z",
+            "fetchedAt": "2026-09-02T06:23:14.400Z",
+            "requestedAtIsNotFreshness": true,
+            "fetchedAtIsNotFreshness": true
+          }
+        ]
+      },
+      "note": "Source URL identity is separate from two-time observation identity. fetchedAt and completedAt are observation metadata, not content freshness."
+    },
+    "provenance": {
+      "engine": "samedaydesk.page-change-offline-job",
+      "engineVersion": "0.1.0",
+      "merchantCompareImported": false,
+      "networkUsed": false,
+      "paymentAttempted": false,
+      "purchaseAuthorized": false,
+      "evidenceClass": "fixture",
+      "termsVersion": "sha256:21ed7f9e51b05fc1b291d4dd82d3d1d55fabb6e3b2cb936aa94f5763b435243e",
+      "termsHasher": "i01-integrated-hash-terms",
+      "comparedWithClock": "2026-09-11T12:00:00.000Z",
+      "beforeSha256": "cf004a7f058b958503ce8fcc1f4504dbc5f0e91bf0d2e14a6eefd92761d062dd",
+      "afterSha256": "d94b62ae4ee3000dfbdc72bab72e6b09db62ab6a00b1142f05852c15d0d54d5c",
+      "elapsedMs": 1.136785,
+      "digestSha256": "15278902ccdff66e0ad144a0f58f09f96aa39c4c9aaab9b8437690d413a907c1"
+    }
+  },
+  "written": {
+    "jsonPath": "/tmp/w5-h04/h04-child-page-runs/h04-page-02/page-change.json",
+    "mdPath": "/tmp/w5-h04/h04-child-page-runs/h04-page-02/page-change.md"
+  }
+}

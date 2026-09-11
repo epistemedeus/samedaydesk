@@ -1,0 +1,47 @@
+{
+  "family": "schema-webhook",
+  "engine": {
+    "id": "w4-json-schema-webhook-drift",
+    "sha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+    "cli": "node tools/json-schema-webhook-drift/bin/webhook-drift.mjs --before --after --used --out-dir"
+  },
+  "ids": ["h04-schema-01", "h04-schema-02", "h04-schema-03"],
+  "examples": [
+    {
+      "id": "h04-schema-01",
+      "kind": "change",
+      "expectedStatus": "actionable",
+      "changedFact": "exclusiveMinimum type boolean → number (JSON Schema Draft 04 → 06 meta-schema)",
+      "source": {
+        "repo": "json-schema-org/json-schema-spec",
+        "beforeSha": "d4c5b3a2924370c51b710c8bfd81d3644a92766e",
+        "afterSha": "4b495a2933b1d6f75298abdd23f018ba6a9d4f4a",
+        "path": "schema.json"
+      }
+    },
+    {
+      "id": "h04-schema-02",
+      "kind": "change",
+      "expectedStatus": "unchanged",
+      "changedFact": "GitHub create webhook added unused repository.custom_properties; used ref/ref_type/pusher_type identical",
+      "source": {
+        "repo": "octokit/webhooks",
+        "beforeSha": "cdd43ea09fca0dc76c6af948b236cb12a7804e2c",
+        "afterSha": "bc5f6fd16b0df0e3058512e7d44dcba9ba3e0bb0",
+        "path": "payload-examples/api.github.com/create/payload.json"
+      }
+    },
+    {
+      "id": "h04-schema-03",
+      "kind": "no-change-control",
+      "expectedStatus": "unchanged",
+      "changedFact": "CloudEvents v1.0 used context attributes identical; key-order plus unused debug only",
+      "source": {
+        "repo": "cloudevents/spec",
+        "beforeSha": "d665aa6402a7ed5d0e506dc1c3cc408dba88d085",
+        "afterSha": "d665aa6402a7ed5d0e506dc1c3cc408dba88d085",
+        "path": "json-format.md"
+      }
+    }
+  ]
+}

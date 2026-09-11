@@ -1,0 +1,45 @@
+{
+  "schema": "pilot/page-change-brief/v1",
+  "kind": "merchant_extract_batch",
+  "verdict": "unchanged",
+  "status": "unchanged",
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "claims": {
+    "usefulOutputProven": true,
+    "paymentImpliesUsefulOutput": false,
+    "complete": true,
+    "noChangeProven": true,
+    "contentUnchangedProven": true,
+    "comparable": true
+  },
+  "summary": {
+    "matched": 1,
+    "missing": 0,
+    "failed": 0,
+    "unknown": 0,
+    "duplicates": 0,
+    "coverageUnknown": 0,
+    "semantic": 0,
+    "order": 0
+  },
+  "changes": [],
+  "expectedHighlights": [
+    "unchanged",
+    "No selected-field content changes recorded",
+    "paymentImpliesUsefulOutput: false"
+  ],
+  "consumerAction": "Do not treat the resources page as a catalog or heading change. Footer/portfolio-discovery copy and extract provenance times moved; title, description, and headings did not.",
+  "engine": {
+    "id": "samedaydesk.page-change-offline-job",
+    "version": "0.1.0",
+    "sha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+    "networkUsed": false,
+    "paymentAttempted": false,
+    "merchantCompareImported": false
+  },
+  "note": "Fact-level oracle, not a byte copy of engine stdout. elapsedMs and digestSha256 are run-specific."
+}

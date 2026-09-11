@@ -1,0 +1,69 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "evidence-ci-annotation",
+  "status": "informational",
+  "summary": "Caller-supplied evidence job sample-caller-a-freshness decision=pass (schema-compatible, unattested)",
+  "actions": [
+    {
+      "priority": "medium",
+      "kind": "ci-annotation-unattested",
+      "note": "headers-present: etag and last-modified present on sample capture"
+    },
+    {
+      "priority": "medium",
+      "kind": "ci-annotation-unattested",
+      "note": "body-hash-stable: body hash matched prior sample capture"
+    }
+  ],
+  "gaps": [
+    "Caller-supplied schema-compatible packet is not kit-produced or externally attested; status is not trusted action"
+  ],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "input": "/tmp/sds-paid-useful-jobs-6bf650391fad4fa6/useful-jobs-1.0.0/samples/evidence/caller-a.json",
+    "exampleMode": true,
+    "sampleLabel": "explicit-example",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "formatReference": "s137-consumer-evidence-kit",
+    "schema": "s137.consumer-evidence.packet.v1",
+    "provenanceKind": "caller-supplied-schema-compatible-unattested",
+    "origin": "caller-supplied",
+    "authority": false,
+    "trust": "unattested",
+    "kitProduced": false,
+    "externallyAttested": false,
+    "decision": "pass",
+    "verificationClaims": [
+      {
+        "kind": "caller-supplied-link",
+        "value": "https://example.test/sample-caller-a/verification",
+        "label": "caller-supplied link (sample; not attestation)",
+        "attested": false
+      }
+    ],
+    "note": "Local schema/type compatibility against pinned format constants only. Not kit-produced, not externally attested, not trusted action authority."
+  },
+  "generatedAt": "2026-09-11T22:54:22.862Z",
+  "trust": "unattested",
+  "authority": false,
+  "githubCheckAnnotations": [
+    {
+      "path": "samples/evidence/caller-a/freshness/",
+      "annotation_level": "notice",
+      "message": "headers-present: etag and last-modified present on sample capture",
+      "title": "Evidence (unattested): sample-caller-a-freshness"
+    },
+    {
+      "path": "samples/evidence/caller-a/freshness/",
+      "annotation_level": "notice",
+      "message": "body-hash-stable: body hash matched prior sample capture",
+      "title": "Evidence (unattested): sample-caller-a-freshness"
+    }
+  ],
+  "digest": "cf0fd83a63bbb44e"
+}

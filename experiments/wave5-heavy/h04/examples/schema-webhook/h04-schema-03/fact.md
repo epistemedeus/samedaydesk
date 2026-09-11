@@ -1,0 +1,1 @@
+The CloudEvents v1.0 JSON example’s used context attributes (`id`, `type`, `source`, `specversion`) are unchanged in meaning; the after document only reorders keys and adds an unused `debug` sibling. A paying consumer of those four fields should be told there is nothing to migrate — a naive byte or key-order diff is not a compatibility break.

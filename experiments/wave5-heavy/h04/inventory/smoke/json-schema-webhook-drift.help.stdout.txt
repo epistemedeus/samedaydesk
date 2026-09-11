@@ -1,0 +1,19 @@
+json-schema-webhook-drift - used JSON Pointer drift (offline, Node built-ins)
+
+Not OpenAPI. Not api-upgrade-brief. Nonsettling prototype. No purchase authority.
+
+Usage:
+  node bin/webhook-drift.mjs --before <json> --after <json> --used <json> [--out-dir <dir>]
+  node bin/webhook-drift.mjs --example
+  node bin/webhook-drift.mjs --help
+
+--used is a JSON Pointer list:
+  { "pointers": ["/properties/amount"] }
+
+--example writes a SAMPLE brief. SAMPLE cannot be a customer brief.
+
+Remote $ref is refused. Local #/ refs only. No network resolve.
+A used path missing in both documents is unknown, not deleted.
+Unused paths (including /properties/debug) are ignored.
+
+Outputs: drift-brief.json, drift-brief.md

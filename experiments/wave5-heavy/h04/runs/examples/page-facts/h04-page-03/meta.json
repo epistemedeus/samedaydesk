@@ -1,0 +1,15 @@
+{
+  "sourceTmp": "/tmp/w5-h04/h04-child-page-runs/h04-page-03",
+  "engineSha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+  "files": [
+    "page-change.json",
+    "page-change.md",
+    "stderr.txt",
+    "stdout.json"
+  ],
+  "copiedAt": "2026-09-11T23:03:23.380Z",
+  "engineId": "w4-page-change-offline-job",
+  "worktree": "/tmp/w5-h04/ro-w4-pages",
+  "sampleNotCustomerJob": false,
+  "note": "Caller-owned extract-batch jobs; not SAMPLE RFQ fixtures."
+}

@@ -1,0 +1,54 @@
+{
+  "result": "match",
+  "reason": null,
+  "facts": [
+    {
+      "key": "status",
+      "expected": "actionable",
+      "actual": "actionable",
+      "result": "match"
+    },
+    {
+      "key": "highlight:consider-adoption",
+      "expected": "consider-adoption",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "highlight:Used-ops delta: +3/~0/-0",
+      "expected": "Used-ops delta: +3/~0/-0",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "highlight:GET /api/observatory/sources",
+      "expected": "GET /api/observatory/sources",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "highlight:GET /api/observatory/snapshot",
+      "expected": "GET /api/observatory/snapshot",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "highlight:GET /api/observatory/sources/{sourceId}",
+      "expected": "GET /api/observatory/sources/{sourceId}",
+      "actual": true,
+      "result": "match"
+    },
+    {
+      "key": "ok",
+      "expected": true,
+      "actual": true,
+      "result": "match"
+    }
+  ],
+  "expectedPresent": true,
+  "artifactFiles": [
+    "receipt.json",
+    "upgrade-brief.json",
+    "upgrade-brief.md"
+  ]
+}

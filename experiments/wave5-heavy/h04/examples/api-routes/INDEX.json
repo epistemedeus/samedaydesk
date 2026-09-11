@@ -1,0 +1,65 @@
+{
+  "family": "api-routes",
+  "assignment": "W5-H04",
+  "ownedPath": "experiments/wave5-heavy/h04/examples/api-routes/",
+  "notCopied": [
+    "tools/route-table-diff/fixtures/*",
+    "useful-jobs SAMPLE samples/openapi/*",
+    "W5-M08 route-consumer corpora"
+  ],
+  "engines": {
+    "w4-route-table-diff": {
+      "sha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+      "worktree": "/tmp/w5-h04/ro-w4-routes",
+      "cli": "node tools/route-table-diff/bin/route-diff.mjs --before --after --out-dir"
+    },
+    "sds52-api-upgrade-brief": {
+      "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "worktree": "/tmp/w5-h04/ro-sds52",
+      "cli": "node server/paid-useful-jobs/bin/cli.mjs run api-upgrade-brief --before --after --used --funding unfunded --out-dir"
+    }
+  },
+  "examples": [
+    {
+      "id": "h04-route-01",
+      "kind": "change",
+      "engines": ["w4-route-table-diff"],
+      "beforeSha": "9c50ecbae3110768309c99a1bbaaa92991fc8e4d",
+      "afterSha": "abeb54eca9a71abe117898e8fe7de7e55e9d917f",
+      "fact": "PUBLIC_SHELLS gains path /for-agents/useful-jobs canonical https://samedaydesk.com/for-agents/useful-jobs",
+      "engineObserved": {
+        "ok": true,
+        "counts": { "added": 1, "removed": 0, "changed": 0, "titleOnly": 0 },
+        "added": ["/for-agents/useful-jobs"]
+      }
+    },
+    {
+      "id": "h04-route-02",
+      "kind": "change",
+      "engines": ["sds52-api-upgrade-brief"],
+      "beforeSha": "d4fec15d822bed6bdb98b6723bdbfbf88c9e5796",
+      "afterSha": "8c1c4f706c75868d1556db483deff98d29758073",
+      "fact": "GET /api/observatory/sources, /snapshot, /sources/{sourceId} appear; health and moltjobs-stats stay",
+      "engineObserved": {
+        "ok": true,
+        "status": "actionable",
+        "sold": false,
+        "sample": false,
+        "summary": "Used-ops delta: +3/~0/-0"
+      }
+    },
+    {
+      "id": "h04-route-03",
+      "kind": "no-change-control",
+      "engines": ["w4-route-table-diff"],
+      "beforeSha": "3693e7c2ea49c44c8c8f35f24c3916de5b4bc8e0",
+      "afterSha": "3c96d3137f815035ed4a6467d28c8041916a9aa8",
+      "fact": "/x402/verified path+canonical+title+robots identical; description/crawlerHtml copy only",
+      "engineObserved": {
+        "ok": true,
+        "counts": { "added": 0, "removed": 0, "changed": 0, "titleOnly": 0 },
+        "digestsEqual": true
+      }
+    }
+  ]
+}

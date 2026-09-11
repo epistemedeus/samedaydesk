@@ -1,0 +1,292 @@
+{
+  "job": {
+    "id": "rfq-and-vendor-page-watch",
+    "title": "Compare two previously delivered extract-batch JSON artifacts for selected RFQ fields",
+    "fields": [
+      "title",
+      "description",
+      "headings"
+    ]
+  },
+  "report": {
+    "schema": "pilot/page-change-brief/v1",
+    "kind": "merchant_extract_batch",
+    "verdict": "changed",
+    "fields": [
+      "title",
+      "description",
+      "headings"
+    ],
+    "claims": {
+      "noChangeProven": false,
+      "contentUnchangedProven": false,
+      "comparable": true,
+      "complete": false,
+      "current": false,
+      "fresh": false,
+      "usefulOutputProven": true,
+      "paymentImpliesUsefulOutput": false
+    },
+    "freshness": "unknown",
+    "snapshot": {
+      "schema": "pilot/change-digest/v1",
+      "verdict": "changed",
+      "claims": {
+        "noChangeProven": false,
+        "current": false,
+        "comparable": true,
+        "fresh": false
+      },
+      "freshness": "unknown",
+      "before": {
+        "status": "present",
+        "mediaType": "application/json",
+        "observedAt": null,
+        "truncated": false,
+        "byteLength": 3450,
+        "sha256": "23833bf7b28ca27a074cb9d73daaa2ec3beed14a55d767567c5fab50b66605f4",
+        "source": {
+          "kind": "file",
+          "role": "before"
+        },
+        "issues": []
+      },
+      "after": {
+        "status": "present",
+        "mediaType": "application/json",
+        "observedAt": null,
+        "truncated": false,
+        "byteLength": 3469,
+        "sha256": "a7fdf95f161c67529a7254b1d2e1c4efa068506ac01edaee3c2561a5d09c9bd6",
+        "source": {
+          "kind": "file",
+          "role": "after"
+        },
+        "issues": []
+      },
+      "limitsHit": []
+    },
+    "summary": {
+      "matched": 2,
+      "missing": 1,
+      "failed": 1,
+      "unknown": 0,
+      "duplicates": 0,
+      "coverageUnknown": 1,
+      "semantic": 2,
+      "order": 1
+    },
+    "rows": {
+      "matched": [
+        {
+          "sourceKey": "https://rfq.example/widgets",
+          "source": "https://rfq.example/widgets",
+          "before": {
+            "id": "item-001",
+            "status": "success"
+          },
+          "after": {
+            "id": "item-002",
+            "status": "success"
+          }
+        },
+        {
+          "sourceKey": "https://research.example/vendor-alpha",
+          "source": "https://research.example/vendor-alpha",
+          "before": {
+            "id": "item-003",
+            "status": "success"
+          },
+          "after": {
+            "id": "item-001",
+            "status": "success"
+          }
+        }
+      ],
+      "missing": [
+        {
+          "sourceKey": "https://research.example/vendor-beta",
+          "missingSide": "before",
+          "status": "unknown",
+          "source": "https://research.example/vendor-beta",
+          "id": "item-004"
+        }
+      ],
+      "failed": [
+        {
+          "sourceKey": "https://rfq.example/fasteners",
+          "before": {
+            "id": "item-002",
+            "status": "success",
+            "error": null
+          },
+          "after": {
+            "id": "item-003",
+            "status": "failure",
+            "error": {
+              "code": "http_error",
+              "message": "upstream returned HTTP 503"
+            }
+          }
+        }
+      ],
+      "unknown": [],
+      "duplicates": []
+    },
+    "coverageUnknown": [
+      {
+        "sourceKey": "https://research.example/vendor-alpha",
+        "field": "description",
+        "beforePresent": true,
+        "afterPresent": false,
+        "reason": "absent_field_is_coverage_unknown_not_deletion"
+      }
+    ],
+    "changes": [
+      {
+        "class": "semantic",
+        "op": "replace",
+        "path": "/description",
+        "before": "Offer due 2026-09-20. Unit price 12.40 USD.",
+        "after": "Offer due 2026-09-27. Unit price 12.40 USD.",
+        "beforeEvidence": "Offer due 2026-09-20. Unit price 12.40 USD.",
+        "afterEvidence": "Offer due 2026-09-27. Unit price 12.40 USD.",
+        "evidenceTruncated": false,
+        "sourceKey": "https://rfq.example/widgets"
+      },
+      {
+        "class": "order",
+        "op": "reorder",
+        "path": "/headings/h2",
+        "before": "[\"Scope\",\"Dates\"]",
+        "after": "[\"Dates\",\"Scope\"]",
+        "beforeEvidence": "[\"Scope\",\"Dates\"]",
+        "afterEvidence": "[\"Dates\",\"Scope\"]",
+        "evidenceTruncated": false,
+        "sourceKey": "https://rfq.example/widgets"
+      },
+      {
+        "class": "semantic",
+        "op": "replace",
+        "path": "/title",
+        "before": "Q3 widget RFQ",
+        "after": "Q3 widget RFQ (deadline moved)",
+        "beforeEvidence": "Q3 widget RFQ",
+        "afterEvidence": "Q3 widget RFQ (deadline moved)",
+        "evidenceTruncated": false,
+        "sourceKey": "https://rfq.example/widgets"
+      }
+    ],
+    "observations": {
+      "before": {
+        "jobId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "jobStatus": "completed",
+        "charged": true,
+        "ok": true,
+        "snapshotObservedAt": null,
+        "artifactObservedAt": "2026-09-01T10:00:03.400Z",
+        "rows": [
+          {
+            "sourceKey": "https://rfq.example/widgets",
+            "itemId": "item-001",
+            "requestedAt": "2026-09-01T10:00:00.000Z",
+            "completedAt": "2026-09-01T10:00:01.200Z",
+            "fetchedAt": "2026-09-01T10:00:01.000Z",
+            "requestedAtIsNotFreshness": true,
+            "fetchedAtIsNotFreshness": true
+          },
+          {
+            "sourceKey": "https://rfq.example/fasteners",
+            "itemId": "item-002",
+            "requestedAt": "2026-09-01T10:00:02.000Z",
+            "completedAt": "2026-09-01T10:00:02.800Z",
+            "fetchedAt": null,
+            "requestedAtIsNotFreshness": true,
+            "fetchedAtIsNotFreshness": true
+          },
+          {
+            "sourceKey": "https://research.example/vendor-alpha",
+            "itemId": "item-003",
+            "requestedAt": "2026-09-01T10:00:03.000Z",
+            "completedAt": "2026-09-01T10:00:03.400Z",
+            "fetchedAt": null,
+            "requestedAtIsNotFreshness": true,
+            "fetchedAtIsNotFreshness": true
+          },
+          {
+            "sourceKey": "https://research.example/vendor-alpha",
+            "itemId": "item-004",
+            "requestedAt": null,
+            "completedAt": null,
+            "fetchedAt": null,
+            "requestedAtIsNotFreshness": true,
+            "fetchedAtIsNotFreshness": true
+          }
+        ]
+      },
+      "after": {
+        "jobId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "jobStatus": "completed_with_unknown",
+        "charged": true,
+        "ok": false,
+        "snapshotObservedAt": null,
+        "artifactObservedAt": "2026-09-08T10:00:02.200Z",
+        "rows": [
+          {
+            "sourceKey": "https://research.example/vendor-alpha",
+            "itemId": "item-001",
+            "requestedAt": "2026-09-08T10:00:00.000Z",
+            "completedAt": "2026-09-08T10:00:00.500Z",
+            "fetchedAt": "2026-09-08T10:00:00.400Z",
+            "requestedAtIsNotFreshness": true,
+            "fetchedAtIsNotFreshness": true
+          },
+          {
+            "sourceKey": "https://rfq.example/widgets",
+            "itemId": "item-002",
+            "requestedAt": "2026-09-08T10:00:01.000Z",
+            "completedAt": "2026-09-08T10:00:01.700Z",
+            "fetchedAt": null,
+            "requestedAtIsNotFreshness": true,
+            "fetchedAtIsNotFreshness": true
+          },
+          {
+            "sourceKey": "https://rfq.example/fasteners",
+            "itemId": "item-003",
+            "requestedAt": "2026-09-08T10:00:02.000Z",
+            "completedAt": "2026-09-08T10:00:02.200Z",
+            "fetchedAt": "2026-09-08T10:00:02.100Z",
+            "requestedAtIsNotFreshness": true,
+            "fetchedAtIsNotFreshness": true
+          },
+          {
+            "sourceKey": "https://research.example/vendor-beta",
+            "itemId": "item-004",
+            "requestedAt": null,
+            "completedAt": null,
+            "fetchedAt": null,
+            "requestedAtIsNotFreshness": true,
+            "fetchedAtIsNotFreshness": true
+          }
+        ]
+      },
+      "note": "Source URL identity is separate from two-time observation identity. fetchedAt and completedAt are observation metadata, not content freshness."
+    },
+    "provenance": {
+      "engine": "samedaydesk.page-change-offline-job",
+      "engineVersion": "0.1.0",
+      "merchantCompareImported": false,
+      "networkUsed": false,
+      "paymentAttempted": false,
+      "purchaseAuthorized": false,
+      "evidenceClass": "fixture",
+      "termsVersion": "sha256:a51d5a25585a8dde706cdc954fa4fbc2aeed50b3599cfb8791c601eb5932c0f4",
+      "termsHasher": "i01-integrated-hash-terms",
+      "comparedWithClock": "2026-09-08T12:00:00.000Z",
+      "beforeSha256": "23833bf7b28ca27a074cb9d73daaa2ec3beed14a55d767567c5fab50b66605f4",
+      "afterSha256": "a7fdf95f161c67529a7254b1d2e1c4efa068506ac01edaee3c2561a5d09c9bd6",
+      "elapsedMs": 1.362801,
+      "digestSha256": "17b2bf28e9ffe0de4cf930f79a034f311096e52c82b33f6a932817ff4b0cd000"
+    }
+  }
+}

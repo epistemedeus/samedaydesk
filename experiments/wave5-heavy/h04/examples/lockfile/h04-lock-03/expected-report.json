@@ -1,0 +1,24 @@
+{
+  "engine": "w4-lockfile-pin-delta",
+  "status": "informational",
+  "consumerAction": "Do not treat key-order, lockfile whitespace, unused package fields, or link:true workspace entries as pin changes. No added, removed, or changed name+version+integrity triples.",
+  "highlights": [
+    "informational",
+    "Added 0, removed 0, changed 0.",
+    "Unchanged packages omitted (159)"
+  ],
+  "counts": {
+    "beforePins": 159,
+    "afterPins": 159,
+    "added": 0,
+    "removed": 0,
+    "changed": 0,
+    "unchanged": 159,
+    "missingIntegrity": 0
+  },
+  "changed": [],
+  "added": [],
+  "removed": [],
+  "purchaseAuthority": false,
+  "note": "Engine success status for zero pin delta is informational, not a synonym of unchanged."
+}
