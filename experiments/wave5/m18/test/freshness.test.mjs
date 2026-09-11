@@ -58,3 +58,32 @@ test("engine --max-stale-ms 1 does not set claims.fresh at pin 91b5733", () => {
   assert.equal(report.claims.current, false);
   assert.equal(report.verdict, "changed");
 });
+
+test("same captures with unlike clocks produce unlike termsVersion hashes", () => {
+  const resolved = engine();
+  const before = join(SDS_ROOT, "experiments/wave5/m18/captures/complete-changed/before.json");
+  const after = join(SDS_ROOT, "experiments/wave5/m18/captures/complete-changed/after.json");
+  const args = (clock, dir) => [
+    "compare",
+    "--before", before,
+    "--after", after,
+    "--fields", "title,description",
+    "--clock", clock,
+    "--out-dir", dir,
+  ];
+  const first = spawnPageChange({
+    cli: resolved.cli,
+    args: args("2026-09-11T18:00:00.000Z", mkdtempSync(join(tmpdir(), "m18-clock-a-"))),
+  });
+  const second = spawnPageChange({
+    cli: resolved.cli,
+    args: args("2026-09-11T19:00:00.000Z", mkdtempSync(join(tmpdir(), "m18-clock-b-"))),
+  });
+  assert.equal(first.kind, "valid_analysis", first.stderr);
+  assert.equal(second.kind, "valid_analysis", second.stderr);
+  const a = JSON.parse(first.stdout).report.provenance.termsVersion;
+  const b = JSON.parse(second.stdout).report.provenance.termsVersion;
+  assert.match(a, /^sha256:[a-f0-9]{64}$/);
+  assert.match(b, /^sha256:[a-f0-9]{64}$/);
+  assert.notEqual(a, b);
+});

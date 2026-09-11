@@ -45,7 +45,7 @@ test("useful-jobs catalog on SDS52 has no page-change job", () => {
   assert.equal(catalog.jobs.some((job) => String(job.id).includes("page-change")), false);
 });
 
-test("unlike clocks produce unlike termsVersion hashes; they are not forced equal", () => {
+test("unlike capture bytes produce unlike termsVersion hashes; they are not forced equal", () => {
   const first = stdoutJson(spawnTrial(["run", "--case", "complete-changed", "--out-dir", tmpOut("m18-terms-a-")]));
   const second = stdoutJson(spawnTrial(["run", "--case", "stale-after", "--out-dir", tmpOut("m18-terms-b-")]));
   assert.match(first.engine.termsVersion, /^sha256:[a-f0-9]{64}$/);
