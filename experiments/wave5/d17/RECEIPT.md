@@ -3,7 +3,7 @@
 **Slot:** W5-D17
 **Repo:** epistemedeus/samedaydesk
 **Branch:** `cursor/w5-d17-domain-outcome-contract-tests-for-successful-change-no-change-refusal-reports-5d04`
-**Head:** see git after this commit
+**Head:** `7f4306d2c9733112a2fea80fee8fd3c5e89488b5`
 **Tested implementation:** SDS PR52 `aeef964fa188443078958d9d6d393afae1d542ee` (`fable/f08-paid-wrappers`, wrapper `server/paid-useful-jobs/bin/cli.mjs`)
 **Engine archive:** useful-jobs 1.0.0 sha256 `6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51` (2522418 bytes)
 **Owned paths:** `experiments/wave5/d17/`
