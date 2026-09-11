@@ -63,4 +63,8 @@ SDS52 `api-upgrade-brief` on caller OpenAPI (`h04-route-02`) is `actionable`, `s
 
 ## PR / compare
 
-Filled after push (see git / `gh`).
+| Field | Value |
+| --- | --- |
+| Head | `3a96c8db0ce21ce9059f76da91019c17138b9567` (RECEIPT-stamp commit follows) |
+| Draft PR | `gh pr create` GraphQL **Resource not accessible by integration** |
+| Compare | https://github.com/epistemedeus/samedaydesk/compare/main...codex/w5-h04-20260911 |
