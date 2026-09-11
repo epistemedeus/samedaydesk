@@ -2,7 +2,7 @@
 
 **Date:** 11 September 2026
 **Branch:** `fable/w3-11-f05-managed-listing-repair`
-**HEAD:** (this branch tip)
+**HEAD:** `c273491f4c5a5df55748563c14ac87d1c853fd6e`
 **Base:** `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545` (PR51 useful-jobs public integration)
 
 ## What
