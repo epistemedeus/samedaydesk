@@ -3,6 +3,7 @@
 Repo: `epistemedeus/samedaydesk`
 Branch: `cursor/w5-m01-select-and-wire-useful-engines-catalog-for-d01-keeping-first-offer-narrow-53b7`
 Continue-from: `958361610cf1e2b62062040bf4e91f1371fe2f3e`
+Implementation: `8454bc187fdae4c8ac15feec5bf8ed8f96f82b1c`
 Owned paths: `experiments/wave5/m01/` plus imported `tools/{json-schema-webhook-drift,lockfile-pin-delta,route-table-diff,page-change-offline-job}/`
 Did not write: `server/paid-useful-jobs/`, root `package.json`, live catalog, homepages.
 
