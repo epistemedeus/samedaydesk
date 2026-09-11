@@ -109,3 +109,18 @@ test("CLI G01 proposal is not a live job", () => {
   assert.equal(body.fifteenDollarJob, false);
   assert.equal(body.saleState, "not_a_sale");
 });
+
+test("CLI corpus loads fixtures without promoting SAMPLE to a sale", () => {
+  const result = run(["corpus", "--fixtures", "fixtures/corpus/"]);
+  assert.equal(result.status, 0, result.stderr);
+  const body = jsonStdout(result);
+  assert.equal(body.ok, true);
+  assert.equal(body.command, "corpus");
+  assert.equal(body.saleState, "not_a_sale");
+  assert.equal(body.canarySettled, false);
+  assert.deepEqual(body.missingIds, []);
+  assert.deepEqual(body.rejected, []);
+  const ids = body.results.map((row: { id: string }) => row.id);
+  assert.equal(ids.includes("M-SDS-F08"), true);
+  assert.equal(ids.includes("F18-402"), true);
+});

@@ -2,8 +2,12 @@ import type { SubjectJobId } from "./types.ts";
 
 export const SDS_START_HEAD = "5b97d1b02e786acd1895cfa1508087ae3f7a1545";
 export const FEATURE_BRANCH = "fable/h4-precise-repairs";
+export const H4R_BRANCH = "fable/h4r-defect-corpus";
 export const MERCHANT_PIN = "a143898dd1ec35c097ca7eb0b472f30dad1ee319";
 export const SESSION_ID = "1434eeed-5e5c-48d1-b2d1-1ea29c966400";
+export const H4R_SESSION_ID = "512803b8-c0dc-4a9d-a58f-1ab2d07cc0a3";
+export const COMPARE_URL =
+  "https://github.com/epistemedeus/samedaydesk/compare/main...fable/h4r-defect-corpus";
 
 export const SUBJECT_JOB_IDS: readonly SubjectJobId[] = Object.freeze([
   "api-upgrade-brief",

@@ -1,5 +1,6 @@
 import { EXAMPLE_MISMATCH } from "./paths.ts";
 import { SUBJECT_JOB_IDS } from "./constants.ts";
+import { corpusCommand } from "./corpus.ts";
 import { intakeFromFixture, acceptRepairIntake, completeRepair } from "./intake.ts";
 import { diagnosePaymentPayload } from "./diagnostics.ts";
 import { loadFixture } from "./load-fixture.ts";
@@ -38,7 +39,7 @@ function parseArgs(argv: string[]): Opts {
   for (let i = 1; i < argv.length; i += 1) {
     const arg = argv[i];
     flags.push(arg);
-    if (arg === "--fixture" || arg === "--input") {
+    if (arg === "--fixture" || arg === "--input" || arg === "--fixtures") {
       opts.fixture = argv[i + 1] ?? null;
       i += 1;
       continue;
@@ -77,11 +78,18 @@ export async function main(argv: string[]): Promise<number> {
         "h4-precise-repairs canary [--route extract|seller-integrity-audit]",
         "h4-precise-repairs subjects",
         "h4-precise-repairs proposal [--subject <job-id>]",
+        "h4-precise-repairs corpus --fixtures fixtures/corpus/",
+        "node --experimental-strip-types bin/repair.ts corpus --fixtures fixtures/corpus/",
       ],
       dryRun: true,
       saleState: "not_a_sale",
       subjects: SUBJECT_JOB_IDS,
     }, 0);
+  }
+
+  if (opts.command === "corpus") {
+    const ran = corpusCommand(opts.fixture);
+    return print(ran.payload, ran.exitCode);
   }
 
   if (opts.command === "subjects") {
