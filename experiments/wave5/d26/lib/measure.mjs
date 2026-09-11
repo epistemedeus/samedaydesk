@@ -49,14 +49,10 @@ function parseStdoutJson(stdout) {
 export function measureJob(request = {}) {
   const jobId = request.jobId || PROPOSED_JOB_ID;
   const preset = defaultInputs(jobId);
-  if (!preset && !(request.args && request.args.length)) {
-    return refuse(ERROR_CODES.UNKNOWN_JOB, `no F08 caller inputs pinned for ${jobId}`);
-  }
-
   const args = ["run", jobId];
   if (request.example === true) args.push("--example");
   else if (Array.isArray(request.args) && request.args.length) args.push(...request.args);
-  else args.push(...preset.flags);
+  else if (preset) args.push(...preset.flags);
 
   if (request.funding) {
     args.push("--funding", String(request.funding));
