@@ -1,7 +1,9 @@
 # RECEIPT — W5-D13 Co16 buyer-value ledger
 
 Repo: `epistemedeus/samedaydesk`
+Head: `fc97c26c0d9be2f15b097471c4da9b8d09478313`
 Branch: `cursor/w5-d13-co16-buyer-value-ledger-bound-to-actual-job-delivery-and-settlement-2890`
+Draft PR: https://github.com/epistemedeus/samedaydesk/pull/104
 Starting ref: `aa306e291adfdd499ca971af01625ccc4bfee5c4`
 D01 pin tested: `aeef964fa188443078958d9d6d393afae1d542ee` (`fable/f08-paid-wrappers`, PR52) via read-only worktree `/tmp/ro-sds-pr52-aeef964`
 Node: v22.14.0
