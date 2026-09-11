@@ -1,0 +1,35 @@
+job-input-preflight notices
+==========================
+
+This package preflights caller files and inline JSON against the published
+SameDayDesk useful-jobs catalog (PR51). It does not run the job engine and
+does not grant purchase, network, or scheduler authority.
+
+Pinned published inputs (read-only):
+- client/public/for-agents/useful-jobs/catalog.json
+- client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz
+- client/src/data/usefulJobsKit.json
+
+The kit 8 MiB cap is aligned with useful-jobs 1.0.0 lib/validate-next-run.mjs
+(MAX_LOCAL_INPUT_BYTES). Tests extract that archive and spawn
+`node --eval` against the extracted module. ok:true preflight is additionally
+bounded by D01 execution.v1 MAX_INPUT_BYTES (1_048_576). A 1 MiB+1 file that
+is still under the kit cap is `input-oversize`, matching
+server/paid-useful-jobs/lib/input-guard.mjs at pin 6bed72dd. This directory
+does not copy that wrapper kernel.
+
+D01 is imported read-only from epistemedeus/samedaydesk@6bed72dd (PR 74,
+codex/w5-d01-20260911) as samedaydesk.paid-useful-jobs.execution.v1
+(createExecutor / runPaidOffer / bin/cli.mjs). Bind tests feed the same
+staged file bytes into that CLI and library.
+
+Fixture JSON under fixtures/vendor-budget-impact/ is a labeled SAMPLE copy
+of kit samples/pricing/a (sibling SAMPLE.txt). That path is a refuse case.
+Custom caller rows live under fixtures/caller/vendor-budget-impact/.
+
+I01 (Neo PR54) hash-terms identity is `sha256:` + 64 hex. Integer digest
+values are rejected. Bare 64-hex from validate-next-run currentInputs.sha256
+is accepted as input.
+
+Useful-jobs LICENSE/NOTICE inside the pinned archive remain authoritative
+for that package. This module is MIT (see LICENSE).
