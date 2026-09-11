@@ -8,12 +8,12 @@ import { assertCleanPrefix } from "../lib/isolation.mjs";
 import { sdsRepoRoot } from "../lib/locate.mjs";
 import { sharedPrefix } from "./helpers.mjs";
 
-test("clean prefix pip-installs Co14 and stages D01/D07 without SDS vendor trees", () => {
+test("clean prefix installs Co14 and stages D01/D07 without SDS vendor trees", () => {
   const prefix = sharedPrefix();
   const layout = prefixLayout(prefix);
   const isolation = assertCleanPrefix(prefix);
   assert.equal(isolation.ok, true, JSON.stringify(isolation, null, 2));
-  assert.equal(isolation.importedFromVenv, true);
+  assert.equal(isolation.importedFromPrefix, true);
   assert.equal(isolation.importedFromCheckout, false);
   assert.equal(isolation.accidents.length, 0);
   assert.ok(existsSync(pythonCli(prefix)));

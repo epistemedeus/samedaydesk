@@ -13,8 +13,7 @@ const MONOREPO_MARKERS = [
 export function assertCleanPrefix(prefix) {
   const layout = prefixLayout(prefix);
   const missing = [];
-  if (!existsSync(layout.venv)) missing.push("venv");
-  if (!existsSync(join(layout.venv, "bin/samedaydesk-useful-jobs"))) missing.push("python-cli");
+  if (!existsSync(join(layout.bin, "samedaydesk-useful-jobs"))) missing.push("python-cli");
   if (!existsSync(join(layout.d01, "server/paid-useful-jobs/bin/cli.mjs"))) missing.push("d01-cli");
   if (!existsSync(join(layout.d07, "tools/job-artifact-export/bin/export.mjs"))) missing.push("d07-cli");
   if (missing.length) {
@@ -33,12 +32,12 @@ export function assertCleanPrefix(prefix) {
   const modulePath = installedPythonModulePath(prefix);
   const checkout = sdsRepoRoot();
   const importedFromCheckout = modulePath.startsWith(join(checkout, "tools/python-useful-jobs-client"));
-  const importedFromVenv = modulePath.startsWith(layout.venv);
+  const importedFromPrefix = modulePath.startsWith(layout.pythonSrc);
 
   return {
-    ok: accidents.length === 0 && importedFromVenv && !importedFromCheckout,
+    ok: accidents.length === 0 && importedFromPrefix && !importedFromCheckout,
     pythonModule: modulePath,
-    importedFromVenv,
+    importedFromPrefix,
     importedFromCheckout,
     accidents,
     checkout,

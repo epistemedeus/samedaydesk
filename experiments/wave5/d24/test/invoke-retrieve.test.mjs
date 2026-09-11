@@ -7,7 +7,7 @@ import { prefixLayout, sha256File } from "../lib/install.mjs";
 import { runD01Cli, runPythonCli } from "../lib/invoke.mjs";
 import { archivePath, sharedPrefix, stageCaller } from "./helpers.mjs";
 
-test("pip-installed Co14 CLI runs caller vendor-budget-impact and writes usable outputs", () => {
+test("installed Co14 CLI runs caller vendor-budget-impact and writes usable outputs", () => {
   const prefix = sharedPrefix();
   const layout = prefixLayout(prefix);
   const caller = stageCaller(prefix);

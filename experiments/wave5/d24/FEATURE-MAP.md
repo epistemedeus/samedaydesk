@@ -10,6 +10,7 @@ Thin consumer. Does not reimplement D01, D07, or Co14/D08.
 | State | `sold` always false; live settlement out of scope |
 | Tests | `node --test --test-concurrency=1 experiments/wave5/d24/test/*.test.mjs` |
 | Account prerequisite | None. Offline. Node >= 22, Python 3.10+, `tar`. No wallet, facilitator, chain, or new account. |
+| Python install | Copy Co14 tree + wrapper. Current Co14 wheel omits `pins.json`. |
 
 ## Acceptance classes
 

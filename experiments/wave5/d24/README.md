@@ -21,9 +21,14 @@ node experiments/wave5/d24/bin/clean-env.mjs accept --prefix "$prefix"
 #   $prefix/work/export/job-artifacts.zip
 ```
 
-`accept` pip-installs Co14 from the pinned sibling tree, stages D01 and D07
-into mini layouts that only contain those packages plus the catalog/kit/archive
-pin files, then runs caller `vendor-budget-impact` and D07 export/import.
+`accept` copies Co14 from the pinned sibling tree (including `pins.json`),
+stages D01 and D07 into mini layouts that only contain those packages plus the
+catalog/kit/archive pin files, then runs caller `vendor-budget-impact` and D07
+export/import.
+
+This image has no `ensurepip`, so `python3 -m venv` cannot pip-install. The
+consumer wrapper is the Co14 PYTHONPATH install. `pip3 install --target` of
+the current Co14 pyproject omits `pins.json`; that stays a D08 bind.
 
 ## What is not required
 

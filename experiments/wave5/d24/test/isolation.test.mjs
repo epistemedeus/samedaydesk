@@ -4,15 +4,16 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import { prefixLayout, probePipTarget } from "../lib/install.mjs";
 import { isolatedEnv, runPythonCli } from "../lib/invoke.mjs";
 import { assertCleanPrefix, vendorOnlyCannotImport } from "../lib/isolation.mjs";
 import { sharedPrefix } from "./helpers.mjs";
 
-test("installed Python module is loaded from the prefix venv, not the SDS checkout", () => {
+test("installed Python module is loaded from the prefix copy, not the SDS checkout", () => {
   const prefix = sharedPrefix();
   const isolation = assertCleanPrefix(prefix);
   assert.equal(isolation.ok, true);
-  assert.match(isolation.pythonModule, /site-packages\/samedaydesk_useful_jobs/);
+  assert.match(isolation.pythonModule, /python-useful-jobs-client\/samedaydesk_useful_jobs/);
 });
 
 test("Co14 without --archive in a directory that is not SDS refuses missing-archive", () => {
@@ -32,6 +33,15 @@ test("vendor-only directory is not an installable client", () => {
   const prefix = sharedPrefix();
   const trap = vendorOnlyCannotImport(prefix);
   assert.equal(trap.hasPythonCli, false);
+});
+
+test("pip --target of current Co14 omits pins.json (remaining D08 bind)", () => {
+  const prefix = sharedPrefix();
+  const layout = prefixLayout(prefix);
+  const probe = probePipTarget(layout.pythonSrc, join(layout.work, "pip-target"));
+  assert.equal(probe.status, 0);
+  assert.equal(probe.installedPackage, true);
+  assert.equal(probe.pinsJsonPresent, false);
 });
 
 test("system python without the venv cannot import the client from a vendor trap", () => {

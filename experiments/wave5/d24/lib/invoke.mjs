@@ -6,14 +6,16 @@ const ENGINE_TIMEOUT_MS = 120_000;
 
 export function isolatedEnv(prefix, extra = {}) {
   const path = process.env.PATH || "/usr/bin:/bin";
-  const env = { ...process.env, ...extra };
+  const layout = prefixLayout(prefix);
+  const env = { ...process.env };
   delete env.SAMEDAYDESK_ROOT;
-  delete env.PYTHONPATH;
   delete env.NODE_PATH;
   env.PYTHONNOUSERSITE = "1";
-  env.VIRTUAL_ENV = prefixLayout(prefix).venv;
-  env.PATH = `${prefixLayout(prefix).venv}/bin:${dirname(process.execPath)}:${path}`;
-  env.TMPDIR = prefixLayout(prefix).work;
+  env.PYTHONPATH = layout.pythonSrc;
+  env.PATH = `${layout.bin}:${dirname(process.execPath)}:${path}`;
+  env.TMPDIR = layout.work;
+  Object.assign(env, extra);
+  delete env.SAMEDAYDESK_ROOT;
   return env;
 }
 

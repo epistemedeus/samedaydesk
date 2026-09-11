@@ -11,9 +11,14 @@ export const CALLER_AFTER = join(D24_ROOT, "fixtures/caller/vendor-budget-impact
 let cachedPrefix = null;
 
 export function sharedPrefix() {
-  if (cachedPrefix && existsSync(join(cachedPrefix, "INSTALL.json"))) return cachedPrefix;
   const dest = join(tmpdir(), `w5-d24-prefix-${PINS.tested.d01.sha.slice(0, 12)}`);
-  cachedPrefix = installCleanPrefix(dest);
+  if (cachedPrefix === dest && existsSync(join(dest, "INSTALL.json"))) return dest;
+  if (existsSync(join(dest, "INSTALL.json"))) {
+    cachedPrefix = dest;
+    return dest;
+  }
+  installCleanPrefix(dest);
+  cachedPrefix = dest;
   return dest;
 }
 
