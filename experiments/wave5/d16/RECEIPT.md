@@ -4,7 +4,7 @@
 **Slot:** W5-D16
 **Repo:** epistemedeus/samedaydesk
 **Branch:** `cursor/w5-d16-engine-lifecycle-failure-harness-for-install-start-timeout-exit-json-boundaries-4d24`
-**Head:** filled at commit time
+**Head:** `94cc504ed26c5774f92b989825074e147465077e`
 **Base / pinned implementation:** `aeef964fa188443078958d9d6d393afae1d542ee` (SDS PR52 `fable/f08-paid-wrappers`)
 **Owned paths:** `experiments/wave5/d16/`
 **Integration owner:** W5-D01
