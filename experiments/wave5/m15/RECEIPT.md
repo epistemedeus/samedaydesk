@@ -2,7 +2,9 @@
 
 Repo: `epistemedeus/samedaydesk`
 Branch: `cursor/w5-m15-reproducible-schema-change-real-project-trial-6e66`
+Head: `751ae77f73700decb8c2bef4e70d276239172e2b`
 Starting ref: `fable/f08-paid-wrappers` `aeef964fa188443078958d9d6d393afae1d542ee`
+Compare: https://github.com/epistemedeus/samedaydesk/compare/fable/f08-paid-wrappers...cursor/w5-m15-reproducible-schema-change-real-project-trial-6e66
 Owned path: `experiments/wave5/m15/`
 Integration owner: W5-M01
 
