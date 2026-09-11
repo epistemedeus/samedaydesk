@@ -50,5 +50,3 @@ Includes CLI `bin/batch.mjs`, `POST /batch` on 127.0.0.1, disposable Postgres 16
 W5-D01 may still amend `server/paid-useful-jobs`. This package reports pin
 `aeef964` only. Wrapper kit-acquisition-before-try and other D01 defects are
 not claimed fixed here.
-
-**PR:** https://github.com/epistemedeus/samedaydesk/pull/93 (draft)
