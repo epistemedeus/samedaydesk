@@ -66,10 +66,13 @@ export function mergeDeclared(args, ticket) {
     const cliBytes = args[`declare-${slot}-bytes`];
     const fromTicket = ticket.declared?.[slot] || null;
     const sha256 = cliSha || fromTicket?.sha256 || null;
+    // A newly declared digest must not inherit a stale byte length from the ticket.
     const bytes =
       cliBytes != null && cliBytes !== true
         ? Number(cliBytes)
-        : fromTicket?.bytes ?? null;
+        : cliSha
+          ? null
+          : fromTicket?.bytes ?? null;
     out[slot] = sha256 || bytes != null ? { sha256, bytes, path: fromTicket?.path || null } : null;
   }
   return out;
