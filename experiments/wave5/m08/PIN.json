@@ -1,0 +1,30 @@
+{
+  "id": "W5-M08",
+  "outcome": "Independent route consumers for claimed supported frameworks",
+  "integrationOwner": "W5-M01",
+  "kernelOwner": "W5-M04",
+  "engine": {
+    "package": "W4-commerce-12",
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+    "ref": "codex/w4-commerce-12-20260911",
+    "pr": 64,
+    "path": "tools/route-table-diff",
+    "cli": "bin/route-diff.mjs"
+  },
+  "startingRef": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "ref": "fable/f08-paid-wrappers",
+    "pr": 52
+  },
+  "claimedSupportedFormats": [
+    "routes-wrapper",
+    "raw-array",
+    "catalog-wrapper",
+    "loopback-http-json"
+  ],
+  "paid": false,
+  "settled": false,
+  "purchaseAuthority": false
+}

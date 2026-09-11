@@ -1,0 +1,14 @@
+{
+  "name": "@samedaydesk/wave5-m08-route-consumers",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Independent SDS route-catalog consumers for the claimed Co12 formats. Not a second route-table kernel.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "consumer": "node bin/route-consumer.mjs"
+  }
+}

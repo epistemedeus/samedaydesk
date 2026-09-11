@@ -1,0 +1,11 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "publishedRouteTable": false,
+  "routes": [
+    {
+      "path": "/users/:id",
+      "title": "User",
+      "canonical": "https://example.com/users/:id"
+    }
+  ]
+}

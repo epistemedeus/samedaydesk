@@ -1,0 +1,22 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "publishedRouteTable": false,
+  "authority": "caller",
+  "routes": [
+    {
+      "path": "/for-agents",
+      "title": "Practical agent jobs | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents"
+    },
+    {
+      "path": "/terms",
+      "title": "Terms of Service | SameDayDesk",
+      "canonical": "https://samedaydesk.com/terms"
+    },
+    {
+      "path": "/privacy",
+      "title": "Privacy Policy | SameDayDesk",
+      "canonical": "https://samedaydesk.com/privacy"
+    }
+  ]
+}

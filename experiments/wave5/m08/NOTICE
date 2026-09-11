@@ -1,0 +1,9 @@
+W5-M08 invokes the pinned Co12 route-table-diff CLI at
+7387eb677abd442dfab9081cb0ad95451fd2a762. It does not copy that kernel.
+
+Co12 source files remain under tools/route-table-diff/ on that SHA. Their
+absence of a module LICENSE is unchanged; this consumer keeps the SameDayDesk
+MIT license for files it owns.
+
+spa-route-shells.js is read-only input from the SDS52 starting ref. This
+package never writes route shells, homepages, or live listings.
