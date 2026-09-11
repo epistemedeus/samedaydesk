@@ -1,0 +1,72 @@
+{
+  "ok": true,
+  "projection": {
+    "schema": "samedaydesk.refund-obligation-projection.v1",
+    "mode": "read_only",
+    "nonsettling": true,
+    "evidenceKind": "fixture",
+    "citedBankedUsdcAttached": false,
+    "payableAsserted": false,
+    "stripeRefundsCalled": false,
+    "obligationsPostedAsPaid": false,
+    "revenueAcrossBuyerClass": null,
+    "paidOut": false,
+    "records": [
+      {
+        "operationId": "agent402-external-validation-purchase-2026-08-29",
+        "amountUsdc": "0.010",
+        "buyerClass": "unknown",
+        "delivery": "seller_http_200_repair_required_no_buyer_owned_output_enforcement",
+        "outcomeKind": "operational_error",
+        "refundClaim": "unknown",
+        "refundClaimSource": "no_policy",
+        "policyId": null,
+        "paidOut": false
+      },
+      {
+        "operationId": "early-x402-revenue",
+        "amountUsdc": "0.040",
+        "buyerClass": "unknown",
+        "delivery": "unknown",
+        "outcomeKind": "unknown",
+        "refundClaim": "unknown",
+        "refundClaimSource": "no_policy",
+        "policyId": null,
+        "paidOut": false
+      },
+      {
+        "operationId": "frantic-42-revenue-2026-06-25",
+        "amountUsdc": "8.000",
+        "buyerClass": "independent",
+        "delivery": "platform_accepted_and_paid",
+        "outcomeKind": "analysis",
+        "refundClaim": "unknown",
+        "refundClaimSource": "no_policy",
+        "policyId": null,
+        "paidOut": false
+      },
+      {
+        "operationId": "payapi-verification-revenue-2026-08-09",
+        "amountUsdc": "0.050",
+        "buyerClass": "unknown",
+        "delivery": "seller_http_200_and_listing_marked_x402_verified",
+        "outcomeKind": "analysis",
+        "refundClaim": "unknown",
+        "refundClaimSource": "no_policy",
+        "policyId": null,
+        "paidOut": false
+      },
+      {
+        "operationId": "what-agents-buy-independent-benchmark-2026-08-30",
+        "amountUsdc": "0.005",
+        "buyerClass": "independent",
+        "delivery": "buyer_attested_delivered_six_fields_raw_ref_null",
+        "outcomeKind": "analysis",
+        "refundClaim": "unknown",
+        "refundClaimSource": "no_policy",
+        "policyId": null,
+        "paidOut": false
+      }
+    ]
+  }
+}

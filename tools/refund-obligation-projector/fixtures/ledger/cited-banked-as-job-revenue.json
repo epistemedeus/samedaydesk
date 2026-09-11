@@ -1,0 +1,8 @@
+{
+  "schema": "samedaydesk.buyer-value-ledger.v1",
+  "independentDemand": false,
+  "organicDemand": false,
+  "jobRevenueUsdc": "8.105",
+  "citedBankedUsdcIsNotJobRevenue": false,
+  "rows": []
+}
