@@ -4,6 +4,7 @@
 **Repo:** `epistemedeus/samedaydesk`
 **Branch:** `cursor/w5-d10-co04-independent-replay-harness-with-disjoint-output-locations-0c47`
 **Starting source:** `ebc71220e034dd28f29d105335c0161a3838831d` (W4 Co04 / PR 66)
+**Draft PR:** https://github.com/epistemedeus/samedaydesk/pull/81
 **Owned paths:** `tools/output-replay-harness/`, `experiments/wave5/d10/RECEIPT.md`
 
 ## What
