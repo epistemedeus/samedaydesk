@@ -2,7 +2,7 @@
 
 **Date:** 11 September 2026
 **Branch:** `fable/w3-13-h02-vendor-price-feed`
-**HEAD:** (filled after commit)
+**HEAD:** `2b6952c98a5cf2e54f73b25c03f5bebe0b17e843` on `fable/w3-13-h02-vendor-price-feed`
 **Base:** `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545` (PR51 useful-jobs public integration)
 
 ## What
@@ -56,6 +56,8 @@ current → SAMPLE rejected as upstream.
 cd tools/vendor-price-feed
 npm test
 ```
+
+**PASS** — 12 tests, 0 fail (`node --test --test-concurrency=1 test/*.test.mjs`).
 
 Tests are offline `node:test`. They do not deploy, pay, or write secrets.
 
