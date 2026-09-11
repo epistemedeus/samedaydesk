@@ -1,0 +1,30 @@
+{
+  "id": "W5-M06",
+  "outcome": "Independent schema compatibility corpus from specified schema semantics",
+  "startingRef": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "ref": "fable/f08-paid-wrappers",
+    "pr": 52
+  },
+  "engine": {
+    "owner": "W5-M02",
+    "package": "W4-commerce-10",
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+    "ref": "codex/w4-commerce-10-20260911",
+    "pr": 59,
+    "cli": "tools/json-schema-webhook-drift/bin/webhook-drift.mjs",
+    "publicFlags": ["--before", "--after", "--used", "--out-dir", "--example"]
+  },
+  "specified": {
+    "dialect": "https://json-schema.org/draft/2020-12/schema",
+    "compatibility": "instance-set-inclusion"
+  },
+  "integrationOwner": "W5-M01",
+  "purchaseAuthority": false,
+  "payment": {
+    "settling": false,
+    "prototype": true
+  }
+}
