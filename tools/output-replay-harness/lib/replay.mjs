@@ -1,4 +1,3 @@
-import { mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { parseArgs, replayRefuse, ReplayRefuse, usage } from "./args.mjs";
 import {
@@ -9,9 +8,10 @@ import {
   loadPublicCatalog,
   requiredInputKeys,
 } from "./catalog.mjs";
-import { compareCatalogOutputs } from "./compare.mjs";
+import { captureCatalogOutputs, compareCatalogOutputs } from "./compare.mjs";
 import { assertEngineOk, defaultRunJob } from "./engine.mjs";
 import { ensureUsefulJobsKit } from "./kit.mjs";
+import { actualOutputDir, assertDisjointOutputDirs } from "./locations.mjs";
 import {
   USEFUL_JOBS_ARCHIVE_BYTES,
   USEFUL_JOBS_ARCHIVE_SHA256,
@@ -25,6 +25,8 @@ import {
 } from "./terms.mjs";
 
 export { parseArgs, usage, ReplayRefuse, replayRefuse };
+export { assertDisjointOutputDirs, resolveOutputDir, actualOutputDir } from "./locations.mjs";
+export { captureCatalogOutputs } from "./compare.mjs";
 
 export function defaultAdapters(overrides = {}) {
   return {
@@ -85,32 +87,44 @@ export function replay(request = {}, adapterOverrides = {}) {
     }
   }
 
-  mkdirSync(outA, { recursive: true });
-  mkdirSync(outB, { recursive: true });
+  const locations = assertDisjointOutputDirs(outA, outB);
 
   const runA = adapters.runJob(jobId, {
     files: example ? {} : inputsA,
     example,
-    outDir: resolve(outA),
+    outDir: locations.outA.real,
     kit,
   });
   assertEngineOk(runA, "run-a");
+  const usedA = actualOutputDir(runA, locations.outA.real);
+  const captureA = captureCatalogOutputs(usedA, outputNames);
 
   if (typeof request.betweenRuns === "function") {
-    request.betweenRuns({ inputs: inputsA, inputsB, outA, outB, runA, kit });
+    request.betweenRuns({
+      inputs: inputsA,
+      inputsB,
+      outA: locations.outA.real,
+      outB: locations.outB.real,
+      runA,
+      kit,
+      captureA,
+    });
   }
 
   const runB = adapters.runJob(jobId, {
     files: example ? {} : inputsB,
     example,
-    outDir: resolve(outB),
+    outDir: locations.outB.real,
     kit,
   });
   assertEngineOk(runB, "run-b");
+  const usedB = actualOutputDir(runB, locations.outB.real);
+  const captureB = captureCatalogOutputs(usedB, outputNames);
+  assertDisjointOutputDirs(usedA, usedB);
 
   const compared = compareCatalogOutputs({
-    outA: resolve(outA),
-    outB: resolve(outB),
+    captureA,
+    captureB,
     outputNames,
   });
 
@@ -147,14 +161,16 @@ export function replay(request = {}, adapterOverrides = {}) {
       archiveBytes: USEFUL_JOBS_ARCHIVE_BYTES,
       digestA: runA.json?.digest || null,
       digestB: runB.json?.digest || null,
-      outA: runA.json?.outDir || resolve(outA),
-      outB: runB.json?.outDir || resolve(outB),
+      outA: usedA,
+      outB: usedB,
+      requestedOutA: locations.outA.real,
+      requestedOutB: locations.outB.real,
     },
     laterBindings: {
       hashTermsVersion: "I01 Neo PR54 packs/funded-task-terms (pinned isolated dependency)",
       usefulJobsCli: "PR51 useful-jobs CLI from in-repo archive",
-      paidWrappers: "F08 not consumed; wrappers are not replay identity",
-      integrator: "Root",
+      paidWrappers: "F08 PR52 aeef964f not consumed; wrappers are not replay identity",
+      integrator: "W5-D01",
     },
   };
 }

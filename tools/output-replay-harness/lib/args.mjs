@@ -83,9 +83,11 @@ Usage:
   node bin/replay.mjs --job api-upgrade-brief --after-b <path> --out-a <dir> --out-b <dir> …
 
 Identity (pinned useful-jobs 1.0.0):
-  Compare catalog output filenames only.
+  --out-a and --out-b must be disjoint locations (realpath / device+inode).
+  Catalog bytes are captured immediately after each run.
   JSON identity ignores envelope generatedAt. Markdown timestamp chatter is
-  not identity-break when identity JSON matches.
+  labelled-drift, not proof of equivalent results. Other markdown body
+  differences are identity-break.
   SAMPLE / --example never reports identityVerified as a customer replay.
 
 Classifications: identical | labelled-drift | identity-break

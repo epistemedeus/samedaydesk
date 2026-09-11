@@ -110,4 +110,8 @@ test("assertDisjointOutputDirs is a tested public export", async () => {
     () => assertDisjointOutputDirs(join(work, "same"), join(work, "same")),
     (err) => err instanceof ReplayRefuse && err.code === "overlapping-output-dirs",
   );
+  assert.throws(
+    () => assertDisjointOutputDirs(join(work, "rel"), join(work, "rel", ".", ".")),
+    (err) => err instanceof ReplayRefuse && err.code === "overlapping-output-dirs",
+  );
 });
