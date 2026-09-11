@@ -3,7 +3,8 @@
 **Task:** W5-D28
 **Repo:** `epistemedeus/samedaydesk`
 **Branch:** `cursor/w5-d28-journey-release-packet-readback-and-first-return-job-measurement-ca2f`
-**HEAD:** `f240d71b40f81042a40c3d86b202f8e1ccef884b`
+**HEAD:** `f240d71b40f81042a40c3d86b202f8e1ccef884b` (kit); branch tip recorded at PR110
+**Draft PR:** https://github.com/epistemedeus/samedaydesk/pull/110
 **StartingRef:** `aeef964fa188443078958d9d6d393afae1d542ee` (SDS PR52)
 **Owned path:** `experiments/wave5/d28/`
 **Pilot source:** `epistemedeus/pilot@95b3f3a47f5b1b69bd237e4c978fc3376221365d`
