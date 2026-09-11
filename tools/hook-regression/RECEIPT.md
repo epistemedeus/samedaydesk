@@ -6,6 +6,8 @@
 **Cloud run:** https://cursor.com/agents/bc-623468c3-d80c-4c82-b87f-b4b6c03590dd
 **Merchant pin:** `a143898dd1ec35c097ca7eb0b472f30dad1ee319` (`indexing-payload-continuity.mjs`, x402-url-extractor PR54)
 **H4:** `experiments/cursor-wave-20260911/h4-precise-repairs/` owned by `fable/h4-precise-repairs` — imported read-only, not edited
+**Compare URL:** https://github.com/epistemedeus/samedaydesk/compare/main...fable/w3-12-g02-hook-regression
+**Draft PR:** ManagePullRequest registered this turn for user approval (not auto-created). Compare URL above. Not merged. Not deployed.
 **Secrets:** none. No deploy. No live payment.
 
 ## What
