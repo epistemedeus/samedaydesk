@@ -1,6 +1,6 @@
-import { closeSync, openSync, readFileSync, fstatSync } from "node:fs";
+import { closeSync, constants, openSync, readFileSync, fstatSync } from "node:fs";
 import { RECEIPT_NAME, RECEIPT_SCHEMA } from "./pins.mjs";
-import { loadCatalog, jobOutputs } from "./catalog.mjs";
+import { loadCatalog, jobById } from "./catalog.mjs";
 import { createDigestAdapter, normalizeSha256, sha256Bytes } from "./digest.mjs";
 import {
   createHashTermsAdapter,
@@ -10,10 +10,19 @@ import {
 import {
   bindUnderRoot,
   declaredRelativeEscapes,
+  inspectBoundOutput,
   joinReceipt,
   realpathInsideRoot,
   resolveRoot,
 } from "./paths.mjs";
+import {
+  TESTED_PRODUCER,
+  VERIFY_CODES,
+  analysisFromReceipt,
+  engineArchiveFromReceipt,
+  engineOriginMatches,
+  expectedEngineArchive,
+} from "./contract.mjs";
 
 function verdict({ classification, code, message, extra = {} }) {
   const ok = classification === "complete";
@@ -25,6 +34,7 @@ function verdict({ classification, code, message, extra = {} }) {
     liveSettlement: "out-of-scope",
     purchaseAuthority: false,
     sold: false,
+    testedProducer: TESTED_PRODUCER,
     ...extra,
   };
 }
@@ -32,9 +42,22 @@ function verdict({ classification, code, message, extra = {} }) {
 function readStableFile(filePath, { maxAttempts = 4 } = {}) {
   let lastHash = null;
   for (let i = 0; i < maxAttempts; i += 1) {
-    const fd = openSync(filePath, "r");
+    let fd;
+    try {
+      fd = openSync(filePath, constants.O_RDONLY | constants.O_NONBLOCK);
+    } catch (err) {
+      const wrapped = new Error(err.message || "cannot open output");
+      wrapped.code =
+        err.code === "ENXIO" || err.code === "EISDIR" ? "special-output-file" : err.code || "open-failed";
+      throw wrapped;
+    }
     try {
       const st1 = fstatSync(fd);
+      if (!st1.isFile()) {
+        const err = new Error("output is not a regular file");
+        err.code = "special-output-file";
+        throw err;
+      }
       const buf = readFileSync(fd);
       const st2 = fstatSync(fd);
       const t1 = st1.mtimeNs ?? st1.mtimeMs;
@@ -49,7 +72,7 @@ function readStableFile(filePath, { maxAttempts = 4 } = {}) {
         err.code = "digest-changed-after-read";
         throw err;
       }
-      const fd2 = openSync(filePath, "r");
+      const fd2 = openSync(filePath, constants.O_RDONLY | constants.O_NONBLOCK);
       try {
         const buf2 = readFileSync(fd2);
         const hash2 = sha256Bytes(buf2);
@@ -86,12 +109,18 @@ function parseReceiptBytes(bytes) {
   }
 }
 
+function listedEntryName(entry) {
+  if (!entry || typeof entry !== "object" || Array.isArray(entry)) return null;
+  return typeof entry.name === "string" && entry.name.length ? entry.name : null;
+}
+
 export function verifyComplete(options = {}) {
   const digest = createDigestAdapter(options.digest);
   const terms = createHashTermsAdapter(options.hashTerms);
   const receiptName = options.receiptName || RECEIPT_NAME;
   const producerNotes = [];
   const evidenceClass = options.evidenceClass || "local-runtime";
+  const expectedArchive = expectedEngineArchive(options);
 
   let root;
   try {
@@ -168,19 +197,30 @@ export function verifyComplete(options = {}) {
     });
   }
 
+  const analysis = analysisFromReceipt(receipt);
+
   if (integerTermsVersionRejected(receipt.termsVersion)) {
     return verdict({
       classification: "unknown",
       code: "integer-terms-version-not-a-claim-key",
       message: "integer termsVersion is not a public claim key (I01 content-hash contract)",
-      extra: { root, jobId: receipt.jobId || null, evidenceClass, producerNotes },
+      extra: { root, jobId: receipt.jobId || null, evidenceClass, producerNotes, ...analysis },
     });
   }
 
-  if (receipt.schema && receipt.schema !== RECEIPT_SCHEMA) {
-    producerNotes.push({
-      code: "unrecognized-receipt-schema",
-      schema: receipt.schema,
+  if (receipt.schema !== RECEIPT_SCHEMA) {
+    return verdict({
+      classification: "unknown",
+      code: VERIFY_CODES.UNRECOGNIZED_RECEIPT_SCHEMA,
+      message: "receipt schema is not samedaydesk.paid-useful-jobs.receipt.v1",
+      extra: {
+        root,
+        jobId: receipt.jobId || null,
+        receiptSchema: receipt.schema || null,
+        evidenceClass,
+        producerNotes,
+        ...analysis,
+      },
     });
   }
 
@@ -189,18 +229,55 @@ export function verifyComplete(options = {}) {
       classification: "unknown",
       code: "sale-claim-not-accepted",
       message: "this consumer does not accept sold/purchaseAuthority receipts",
-      extra: { root, jobId: receipt.jobId || null, evidenceClass, producerNotes },
+      extra: { root, jobId: receipt.jobId || null, evidenceClass, producerNotes, ...analysis },
     });
   }
 
   const listed = Array.isArray(receipt.outputs) ? receipt.outputs : [];
-  const catalogPath = options.catalogPath;
-  let catalogNames = [];
+  for (const entry of listed) {
+    if (!listedEntryName(entry)) {
+      return verdict({
+        classification: "unknown",
+        code: VERIFY_CODES.EMPTY_OUTPUT_OBJECT,
+        message: "empty or nameless output objects cannot count complete",
+        extra: { root, jobId: receipt.jobId || null, evidenceClass, producerNotes, ...analysis },
+      });
+    }
+  }
+
+  let catalog;
   try {
-    const catalog = loadCatalog(catalogPath);
-    catalogNames = receipt.jobId ? jobOutputs(catalog, receipt.jobId) : [];
+    catalog = loadCatalog(options.catalogPath);
   } catch (err) {
-    producerNotes.push({ code: err.code || "missing-catalog", message: err.message });
+    return verdict({
+      classification: "unknown",
+      code: err.code || VERIFY_CODES.MISSING_CATALOG,
+      message: err.message,
+      extra: { root, jobId: receipt.jobId || null, evidenceClass, producerNotes, ...analysis },
+    });
+  }
+
+  if (!receipt.jobId || !jobById(catalog, receipt.jobId)) {
+    return verdict({
+      classification: "unknown",
+      code: VERIFY_CODES.UNKNOWN_JOB,
+      message: "receipt jobId is not a catalog job; unknown jobs cannot count complete",
+      extra: { root, jobId: receipt.jobId || null, evidenceClass, producerNotes, ...analysis },
+    });
+  }
+
+  const catalogNames = [...jobById(catalog, receipt.jobId).outputs];
+
+  const listedNames = listed.map((e) => e.name);
+  for (const name of listedNames) {
+    if (!catalogNames.includes(name)) {
+      return verdict({
+        classification: "unknown",
+        code: VERIFY_CODES.FOREIGN_OUTPUT_NAME,
+        message: `listed output ${name} is not a catalog output for ${receipt.jobId}`,
+        extra: { root, jobId: receipt.jobId, name, evidenceClass, producerNotes, ...analysis },
+      });
+    }
   }
 
   if (listed.length === 0 && catalogNames.length === 0) {
@@ -208,7 +285,7 @@ export function verifyComplete(options = {}) {
       classification: "unknown",
       code: "no-output-identity",
       message: "receipt lists no outputs and catalog did not bind the job",
-      extra: { root, jobId: receipt.jobId || null, evidenceClass, producerNotes },
+      extra: { root, jobId: receipt.jobId, evidenceClass, producerNotes, ...analysis },
     });
   }
 
@@ -220,7 +297,7 @@ export function verifyComplete(options = {}) {
         message: `catalog output ${name} is not listed on the receipt`,
         extra: {
           root,
-          jobId: receipt.jobId || null,
+          jobId: receipt.jobId,
           name,
           evidenceClass,
           producerNotes: [
@@ -231,6 +308,7 @@ export function verifyComplete(options = {}) {
               name,
             },
           ],
+          ...analysis,
         },
       });
     }
@@ -238,14 +316,21 @@ export function verifyComplete(options = {}) {
 
   const verified = [];
   for (const entry of listed) {
-    const name = entry && entry.name;
-    if (!name) continue;
+    const name = entry.name;
     if (declaredRelativeEscapes(root, entry.path)) {
       return verdict({
         classification: "unknown",
         code: "receipt-path-escapes-root",
         message: `receipt path for ${name} escapes selected root`,
-        extra: { root, jobId: receipt.jobId || null, name, declaredPath: entry.path, evidenceClass, producerNotes },
+        extra: {
+          root,
+          jobId: receipt.jobId,
+          name,
+          declaredPath: entry.path,
+          evidenceClass,
+          producerNotes,
+          ...analysis,
+        },
       });
     }
     if (typeof entry.path === "string" && entry.path.length && entry.path.startsWith("/")) {
@@ -265,7 +350,33 @@ export function verifyComplete(options = {}) {
         classification: "unknown",
         code: err.code || "receipt-path-escapes-root",
         message: err.message,
-        extra: { root, jobId: receipt.jobId || null, name, evidenceClass, producerNotes },
+        extra: { root, jobId: receipt.jobId, name, evidenceClass, producerNotes, ...analysis },
+      });
+    }
+
+    const kind = inspectBoundOutput(bound);
+    if (!kind.exists) {
+      return verdict({
+        classification: "partial",
+        code: "missing-output",
+        message: `missing output file ${name}`,
+        extra: { root, jobId: receipt.jobId, name, bound, evidenceClass, producerNotes, ...analysis },
+      });
+    }
+    if (kind.special) {
+      return verdict({
+        classification: "unknown",
+        code: VERIFY_CODES.SPECIAL_OUTPUT_FILE,
+        message: `output ${name} is a ${kind.kind}, not a regular file`,
+        extra: {
+          root,
+          jobId: receipt.jobId,
+          name,
+          kind: kind.kind,
+          evidenceClass,
+          producerNotes,
+          ...analysis,
+        },
       });
     }
 
@@ -275,7 +386,7 @@ export function verifyComplete(options = {}) {
         classification: "partial",
         code: "missing-output",
         message: `missing output file ${name}`,
-        extra: { root, jobId: receipt.jobId || null, name, bound, evidenceClass, producerNotes },
+        extra: { root, jobId: receipt.jobId, name, bound, evidenceClass, producerNotes, ...analysis },
       });
     }
     if (!loc.inside) {
@@ -283,7 +394,7 @@ export function verifyComplete(options = {}) {
         classification: "unknown",
         code: "receipt-path-escapes-root",
         message: `output ${name} realpath escapes selected root`,
-        extra: { root, jobId: receipt.jobId || null, name, evidenceClass, producerNotes },
+        extra: { root, jobId: receipt.jobId, name, evidenceClass, producerNotes, ...analysis },
       });
     }
 
@@ -292,20 +403,33 @@ export function verifyComplete(options = {}) {
       fileRead = readStableFile(loc.real);
     } catch (err) {
       return verdict({
-        classification: err.code === "digest-changed-after-read" ? "unknown" : "partial",
+        classification:
+          err.code === "digest-changed-after-read"
+            ? "unknown"
+            : err.code === "special-output-file"
+              ? "unknown"
+              : "partial",
         code: err.code || "digest-changed-after-read",
         message: err.message,
-        extra: { root, jobId: receipt.jobId || null, name, evidenceClass, producerNotes },
+        extra: { root, jobId: receipt.jobId, name, evidenceClass, producerNotes, ...analysis },
       });
     }
 
     const claimed = normalizeSha256(entry.sha256);
-    if (claimed && claimed !== fileRead.sha256) {
+    if (!claimed) {
+      return verdict({
+        classification: "unknown",
+        code: VERIFY_CODES.MISSING_OUTPUT_DIGEST,
+        message: `output ${name} has no sha256; stable size alone is not origin`,
+        extra: { root, jobId: receipt.jobId, name, evidenceClass, producerNotes, ...analysis },
+      });
+    }
+    if (claimed !== fileRead.sha256) {
       return verdict({
         classification: "unknown",
         code: "output-digest-mismatch",
         message: `output ${name} digest does not match receipt`,
-        extra: { root, jobId: receipt.jobId || null, name, evidenceClass, producerNotes },
+        extra: { root, jobId: receipt.jobId, name, evidenceClass, producerNotes, ...analysis },
       });
     }
     if (entry.bytes != null && Number(entry.bytes) !== fileRead.bytesLength) {
@@ -313,7 +437,7 @@ export function verifyComplete(options = {}) {
         classification: "unknown",
         code: "output-size-mismatch",
         message: `output ${name} size does not match receipt`,
-        extra: { root, jobId: receipt.jobId || null, name, evidenceClass, producerNotes },
+        extra: { root, jobId: receipt.jobId, name, evidenceClass, producerNotes, ...analysis },
       });
     }
 
@@ -326,6 +450,15 @@ export function verifyComplete(options = {}) {
     });
   }
 
+  if (!receipt.outputsDigest) {
+    return verdict({
+      classification: "unknown",
+      code: VERIFY_CODES.MISSING_OUTPUTS_DIGEST,
+      message: "receipt omits outputsDigest; file bytes alone are not origin",
+      extra: { root, jobId: receipt.jobId, evidenceClass, producerNotes, outputs: verified, ...analysis },
+    });
+  }
+
   const recomputed = digest.digestNamedBytes(
     verified.map((e) => ({
       name: e.name,
@@ -334,7 +467,7 @@ export function verifyComplete(options = {}) {
       sha256: e.sha256,
     })),
   );
-  if (receipt.outputsDigest && receipt.outputsDigest !== recomputed) {
+  if (receipt.outputsDigest !== recomputed) {
     producerNotes.push({
       code: "outputs-digest-mismatch",
       claimed: receipt.outputsDigest,
@@ -346,17 +479,34 @@ export function verifyComplete(options = {}) {
       classification: "unknown",
       code: "outputs-digest-mismatch",
       message: "recomputed outputsDigest does not match receipt",
-      extra: { root, jobId: receipt.jobId || null, evidenceClass, producerNotes, outputs: verified },
+      extra: { root, jobId: receipt.jobId, evidenceClass, producerNotes, outputs: verified, ...analysis },
     });
   }
 
-  const archiveSha =
-    receipt.engine?.archiveSha256 || receipt.engine?.archive?.sha256 || null;
+  const claimedArchive = engineArchiveFromReceipt(receipt);
+  if (!engineOriginMatches(claimedArchive, expectedArchive)) {
+    return verdict({
+      classification: "unknown",
+      code: VERIFY_CODES.FOREIGN_ENGINE_ARCHIVE,
+      message: "receipt engine archive is not the pinned useful-jobs origin",
+      extra: {
+        root,
+        jobId: receipt.jobId,
+        claimedArchive,
+        expectedArchive,
+        evidenceClass,
+        producerNotes,
+        outputs: verified,
+        ...analysis,
+      },
+    });
+  }
+
   const identity = identityDocument({
     jobId: receipt.jobId,
     outputs: verified,
     outputsDigest: recomputed,
-    engineArchiveSha256: archiveSha,
+    engineArchiveSha256: claimedArchive.sha256,
   });
   const termsVersion = terms.hashTermsVersion(identity);
   if (!terms.isTermsVersionHash(termsVersion)) {
@@ -364,9 +514,14 @@ export function verifyComplete(options = {}) {
       classification: "unknown",
       code: "terms-version-not-content-hash",
       message: "identity termsVersion is not sha256: + 64 hex",
-      extra: { root, jobId: receipt.jobId || null, evidenceClass, producerNotes },
+      extra: { root, jobId: receipt.jobId, evidenceClass, producerNotes, ...analysis },
     });
   }
+
+  const receiptTermsVersion =
+    typeof receipt.termsVersion === "string" && terms.isTermsVersionHash(receipt.termsVersion)
+      ? receipt.termsVersion
+      : null;
 
   return verdict({
     classification: "complete",
@@ -374,16 +529,18 @@ export function verifyComplete(options = {}) {
     extra: {
       root,
       receiptPath,
-      jobId: receipt.jobId || null,
+      jobId: receipt.jobId,
       fundingState: receipt.fundingState || null,
       sample: receipt.sample === true,
       outputsDigest: recomputed,
       termsVersion,
+      receiptTermsVersion,
       identity,
       outputs: verified,
       evidenceClass,
       producerNotes,
       receiptSchema: receipt.schema || null,
+      ...analysis,
     },
   });
 }

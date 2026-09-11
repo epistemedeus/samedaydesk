@@ -1,11 +1,12 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { REPO_ROOT } from "../lib/pins.mjs";
 import { ensureF08Worktree } from "../lib/f08-worktree.mjs";
+import { launchPaidWrapper } from "../lib/launch.mjs";
 import { killProcessGroup } from "../lib/reap.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -22,6 +23,30 @@ export function f08Root() {
 
 export function tempDir(prefix = "joa-") {
   return mkdtempSync(join(tmpdir(), prefix));
+}
+
+export function completePackage() {
+  const wrapperRoot = f08Root();
+  const outDir = tempDir("joa-pkg-");
+  const launched = launchPaidWrapper({ f08Root: wrapperRoot, outDir });
+  if (launched.status !== 0) {
+    throw new Error(launched.stderr + launched.stdout);
+  }
+  return outDir;
+}
+
+export function vendorBudgetPaths(wrapperRoot = f08Root()) {
+  return {
+    before: join(wrapperRoot, "server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/before.json"),
+    after: join(wrapperRoot, "server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/after.json"),
+    payment: join(wrapperRoot, "server/paid-useful-jobs/fixtures/payment/reserved-fixture.json"),
+  };
+}
+
+export function verifyCli(root, extraArgs = []) {
+  return spawnSync(process.execPath, [VERIFY_CLI, "--root", root, "--catalog", CATALOG, ...extraArgs], {
+    encoding: "utf8",
+  });
 }
 
 export async function waitForFile(filePath, { timeoutMs = 20_000, intervalMs = 20 } = {}) {

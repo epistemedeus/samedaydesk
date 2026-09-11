@@ -64,6 +64,18 @@ export function bindUnderRoot(root, name) {
   return bound;
 }
 
+export function inspectBoundOutput(filePath) {
+  if (!existsSync(filePath)) return { exists: false, kind: "missing", special: false };
+  const st = lstatSync(filePath);
+  if (st.isSymbolicLink()) return { exists: true, kind: "symlink", special: true };
+  if (st.isFIFO()) return { exists: true, kind: "fifo", special: true };
+  if (st.isSocket()) return { exists: true, kind: "socket", special: true };
+  if (st.isDirectory()) return { exists: true, kind: "directory", special: true };
+  if (st.isBlockDevice() || st.isCharacterDevice()) return { exists: true, kind: "device", special: true };
+  if (!st.isFile()) return { exists: true, kind: "special", special: true };
+  return { exists: true, kind: "file", special: false };
+}
+
 export function realpathInsideRoot(root, filePath) {
   if (!existsSync(filePath)) return { exists: false, real: null, inside: false };
   const real = realpathSync(filePath);

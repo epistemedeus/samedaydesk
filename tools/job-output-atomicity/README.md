@@ -13,7 +13,8 @@ node tools/job-output-atomicity/bin/verify-complete.mjs --root <package-dir>
 ```
 
 Exit 0 only when classification is `complete`. Incomplete, truncated, escaped,
-or mutated files exit 2 with a JSON body.
+mutated, empty-object, unknown-job, unknown-schema, special-file, or
+foreign-name packages exit 2 with a JSON body. See `CONTRACT.md`.
 
 Optional `--catalog` points at `client/public/for-agents/useful-jobs/catalog.json`
 (default). `--receipt` names the receipt file under `--root` (default
@@ -38,15 +39,18 @@ Tested wrapper: `fable/f08-paid-wrappers` `aeef964fa188443078958d9d6d393afae1d54
 
 ## Binding rules
 
-- Output `name` must be a single basename.
-- Files are read only from the selected root (symlink realpath must stay inside).
+- Output `name` must be a single basename and a catalog output for `jobId`.
+- Files are read only from the selected root. Symlinks, FIFOs, directories,
+  sockets, and devices are `special-output-file`, not hashed.
 - Relative receipt paths that resolve outside the root are rejected
   (`receipt-path-escapes-root`).
 - Absolute paths stamped by F08 are not followed. The consumer rebinds by
   basename so a copied package can verify at a new root.
 
 Identity `termsVersion` follows I01 / Neo PR54: `sha256:` + 64 hex. Integer
-`termsVersion` is not a public claim key.
+`termsVersion` is not a public claim key. A disclosure hash on the receipt is
+recorded as `receiptTermsVersion` and is not forced equal to the output
+identity hash.
 
 ## Evidence classes
 

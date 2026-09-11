@@ -32,9 +32,10 @@ function usage() {
 Usage:
   node tools/job-output-atomicity/bin/verify-complete.mjs --root <dir> [--receipt receipt.json] [--catalog <catalog.json>]
 
-Binds every output name to the selected root. Relative receipt paths that
-escape the root are rejected. Absolute producer paths are not read; files are
-resolved by basename under --root (F08 stamps absolute outDir).
+Binds every catalog output name to the selected root. Empty objects, unknown
+jobs, unknown schemas, special files, and foreign listed names cannot count
+complete. Relative receipt paths that escape the root are rejected. Absolute
+producer paths are not read; files are resolved by basename under --root.
 
 Exit 0 only for classification=complete. Payments are non-settling prototypes.
 `;
