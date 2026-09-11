@@ -1,0 +1,9 @@
+{
+  "sourceUrl": "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz#samples/pricing/a/before.json?field=gpt-4.1-input",
+  "observedAt": "2026-09-11T12:00:00.000Z",
+  "unit": "USD/1M-tokens",
+  "amount": "2.5",
+  "effectiveDate": "2026-09-11",
+  "priorObservationId": null,
+  "provenance": "fixture"
+}
