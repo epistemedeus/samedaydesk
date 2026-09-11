@@ -231,3 +231,32 @@ test("--help prints public flags", () => {
   assert.match(r.stdout, /SAMPLE/);
   assert.match(r.stdout, /Not OpenAPI/);
 });
+
+test("YAML input refuses (no YAML parser in this job)", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "wd-yaml-"));
+  const yamlPath = path.join(dir, "before.yaml");
+  fs.writeFileSync(yamlPath, "---\ntitle: not-json\n");
+  const r = run([
+    "--before",
+    yamlPath,
+    "--after",
+    fx("journey", "after.json"),
+    "--used",
+    fx("journey", "used.json"),
+  ]);
+  assert.equal(r.status, 2);
+  assert.equal(parseStdout(r).code, "not-json");
+});
+
+test("schema vs webhook-example kind mismatch refuses", () => {
+  const r = run([
+    "--before",
+    fx("journey", "before.json"),
+    "--after",
+    fx("webhook-payload", "after.json"),
+    "--used",
+    fx("journey", "used.json"),
+  ]);
+  assert.equal(r.status, 2);
+  assert.equal(parseStdout(r).code, "kind-mismatch");
+});

@@ -1,9 +1,6 @@
 /**
  * Deterministic JSON for hashing (JCS-subset for this pack's types).
  * Objects: lexicographic keys. Arrays: order preserved. Integers only.
- *
- * Pinned from epistemedeus/neomorphic-io@819fa637ecf5e5177c84efc16fcaa18d57017631
- * packs/funded-task-terms/src/canonical.mjs (I01 / Neo PR54). License: ../LICENSE
  */
 
 function isPlainObject(value) {

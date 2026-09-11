@@ -186,7 +186,6 @@ export function runCompare({
     },
     hashAdapter,
   );
-  brief.summary = summarize(impact, false);
 
   const resolvedOut = resolveOutDir(outDir);
   fs.mkdirSync(resolvedOut, { recursive: true });
@@ -232,9 +231,6 @@ export function runFromArgs(argv, { hashAdapter } = {}) {
   if (args.help) {
     process.stdout.write(usage());
     return { ok: true, help: true, exitCode: 0 };
-  }
-  if (args.customer === true || args["customer-brief"] === true) {
-    throw cliRefuse("not-a-customer-brief", "This job cannot emit a customer brief", {});
   }
   const exampleMode = args.example === true || args.example === "true";
   let before = args.before;
