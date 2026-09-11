@@ -17,6 +17,23 @@ function walkJsonSampleHits(value, into) {
   for (const child of Object.values(value)) walkJsonSampleHits(child, into);
 }
 
+function collectTextSampleHits(text, key, reasons) {
+  if (typeof text !== "string") return;
+  const trimmed = text.trim();
+  if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+    try {
+      const hits = [];
+      walkJsonSampleHits(JSON.parse(trimmed), hits);
+      if (hits.length) reasons.push(`json-sample-label:${key}`);
+    } catch {
+      /* not json */
+    }
+  }
+  if (/<!--\s*SAMPLE fixture/i.test(text) || /^SAMPLE - not a customer/m.test(text)) {
+    reasons.push(`labelled-sample-text:${key}`);
+  }
+}
+
 function siblingSampleMarker(filePath) {
   const dir = dirname(filePath);
   if (!existsSync(dir)) return null;
@@ -48,24 +65,14 @@ export function inspectSample(request, { kitRoot = null } = {}) {
         }
         try {
           const text = readFileSync(abs, "utf8");
-          const trimmed = text.trim();
-          if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
-            try {
-              const hits = [];
-              walkJsonSampleHits(JSON.parse(text), hits);
-              if (hits.length) reasons.push(`json-sample-label:${key}`);
-            } catch {
-              /* not json */
-            }
-          }
-          if (/<!--\s*SAMPLE fixture/i.test(text) || /^SAMPLE - not a customer/m.test(text)) {
-            reasons.push(`labelled-sample-text:${key}`);
-          }
+          collectTextSampleHits(text, key, reasons);
         } catch {
           /* unreadable */
         }
+      } else {
+        collectTextSampleHits(value, key, reasons);
       }
-    } else if (isPlainObject(value)) {
+    } else if (isPlainObject(value) || Array.isArray(value)) {
       const hits = [];
       walkJsonSampleHits(value, hits);
       if (hits.length) reasons.push(`json-sample-label:${key}`);

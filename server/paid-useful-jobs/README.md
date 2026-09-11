@@ -8,6 +8,12 @@ ResourceServer; live settlement is out of scope. Fixture payments are labelled
 Engines are reused from `client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz`.
 They are not reimplemented here.
 
+Execution contract `samedaydesk.paid-useful-jobs.execution.v1` is documented in
+[`CONTRACT.md`](CONTRACT.md). `ok` means transport succeeded and this run's
+expected artifacts were delivered. Analysis refusal / no-change with a complete
+artifact set can still be useful. Kit acquisition, engine crash, and missing
+output stay distinct from that.
+
 Existing live prices (extract `$0.005`, seller-integrity-audit `$0.01`) and
 `payTo` are not changed. Wrapper amounts are **non-live labelled fixtures**
 and are not published to the live catalog.

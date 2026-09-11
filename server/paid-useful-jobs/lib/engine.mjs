@@ -151,6 +151,8 @@ export function runEngineJob(jobId, { files = {}, example = false, outDir, timeo
     stdout: result.stdout || "",
     stderr: result.stderr || "",
     json: parseEngineJson(result.stdout),
+    timedOut: Boolean(result.error && result.error.code === "ETIMEDOUT"),
+    signal: result.signal || null,
     kit,
     cli,
     args,

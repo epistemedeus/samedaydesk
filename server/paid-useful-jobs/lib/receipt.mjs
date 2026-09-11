@@ -18,7 +18,9 @@ function describeInput(entry) {
     name: entry.name,
     kind: entry.kind || "file",
     bytes: entry.bytes,
-    sha256: entry.path && existsSync(entry.path) ? sha256File(entry.path) : entry.sha256,
+    sha256:
+      entry.sha256 ||
+      (entry.path && existsSync(entry.path) ? sha256File(entry.path) : entry.sha256),
   };
 }
 

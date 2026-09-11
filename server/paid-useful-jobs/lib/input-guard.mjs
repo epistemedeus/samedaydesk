@@ -1,7 +1,8 @@
-import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { extname, join, resolve } from "node:path";
 import { MAX_INPUT_BYTES } from "./pins.mjs";
 import { getJob, optionalKeys, requiredKeys } from "./jobs.mjs";
+import { sha256File } from "./digest.mjs";
 
 export class WrapperRefuse extends Error {
   constructor(code, message, detail = {}) {
@@ -90,8 +91,11 @@ export function materializeInputs(jobId, request, workDir) {
           path: dirPath,
         });
       }
-      files[key] = dirPath;
-      entries.push({ name: key, path: dirPath, kind: "directory" });
+      const stagedDir = join(workDir, "input-root");
+      cpSync(dirPath, stagedDir, { recursive: true });
+      files[key] = stagedDir;
+      // Receipt path stays the caller directory; the engine consumes the staged copy.
+      entries.push({ name: key, path: dirPath, kind: "directory", stagedPath: stagedDir, sourcePath: dirPath });
       continue;
     }
 
@@ -133,6 +137,19 @@ export function materializeInputs(jobId, request, workDir) {
           throw refuse("input-malformed", `Input ${key} is not valid JSON: ${err.message}`, { key, path: filePath });
         }
       }
+      const staged = join(workDir, `${key}${extname(filePath) || ""}`);
+      copyFileSync(filePath, staged);
+      files[key] = staged;
+      entries.push({
+        name: key,
+        path: filePath,
+        bytes,
+        sha256: sha256File(staged),
+        kind: "file",
+        stagedPath: staged,
+        sourcePath: filePath,
+      });
+      continue;
     } else {
       throw refuse("input-malformed", `Input ${key} must be a file path or JSON object`, { key });
     }

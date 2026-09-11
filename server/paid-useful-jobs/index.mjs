@@ -1,5 +1,12 @@
 export { JOBS, JOB_IDS, getJob } from "./lib/jobs.mjs";
-export { runPaidOffer, runPaidOffers } from "./lib/wrapper.mjs";
+export { runPaidOffer, runPaidOffers, createExecutor } from "./lib/wrapper.mjs";
+export {
+  EXECUTION_CONTRACT_VERSION,
+  assessDelivery,
+  classifyTransport,
+  classifyAnalysis,
+} from "./lib/contract.mjs";
+export { createExecutionServer, listenExecutionServer } from "./lib/http.mjs";
 export { ensureUsefulJobsKit, runEngineJob, engineProvenance, engineArchiveIdentity } from "./lib/engine.mjs";
 export {
   registerIndexingPayloadContinuity,
