@@ -32,6 +32,7 @@ describe("seeded fail-closed cases", () => {
     assert.equal(result.code, CODES.PRIVATE_DATA);
     assert.equal(result.privateData, true);
     assert.equal(result.publishAuthorized, false);
+    assert.equal(result.purchaseAuthorized, false);
     assert.ok(result.reasons.includes("email-shape"));
     assert.ok(result.reasons.includes("street-address-shape"));
     const blob = JSON.stringify(result);

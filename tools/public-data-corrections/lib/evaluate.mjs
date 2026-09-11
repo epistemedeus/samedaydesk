@@ -26,13 +26,14 @@ function reject(code, error, extra = {}) {
   return {
     ok: false,
     rights: extra.rights ?? null,
-    publishAuthorized: false,
     privateData: extra.privateData === true,
     wave: WAVE_ID,
     id: FEATURE_ID,
     code,
     error,
     ...extra,
+    publishAuthorized: false,
+    purchaseAuthorized: false,
   };
 }
 
@@ -301,6 +302,7 @@ export function evaluate(packet) {
     ok: true,
     rights: "cleared",
     publishAuthorized: false,
+    purchaseAuthorized: false,
     privateData: false,
     wave: WAVE_ID,
     id: FEATURE_ID,

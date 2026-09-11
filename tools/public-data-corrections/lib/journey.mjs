@@ -14,25 +14,25 @@ export function loadPacketFile(filePath) {
   try {
     stat = statSync(abs);
   } catch {
-    return { ok: false, code: CODES.INPUT_MALFORMED, error: "cannot read fixture", publishAuthorized: false };
+    return { ok: false, code: CODES.INPUT_MALFORMED, error: "cannot read fixture", publishAuthorized: false, purchaseAuthorized: false };
   }
   if (!stat.isFile()) {
-    return { ok: false, code: CODES.INPUT_MALFORMED, error: "fixture is not a file", publishAuthorized: false };
+    return { ok: false, code: CODES.INPUT_MALFORMED, error: "fixture is not a file", publishAuthorized: false, purchaseAuthorized: false };
   }
   if (stat.size > MAX_PACKET_BYTES) {
-    return { ok: false, code: CODES.INPUT_OVERSIZE, error: "fixture exceeds 256 KiB", publishAuthorized: false };
+    return { ok: false, code: CODES.INPUT_OVERSIZE, error: "fixture exceeds 256 KiB", publishAuthorized: false, purchaseAuthorized: false };
   }
   let text;
   try {
     text = readFileSync(abs, "utf8");
   } catch {
-    return { ok: false, code: CODES.INPUT_MALFORMED, error: "cannot read fixture", publishAuthorized: false };
+    return { ok: false, code: CODES.INPUT_MALFORMED, error: "cannot read fixture", publishAuthorized: false, purchaseAuthorized: false };
   }
   let packet;
   try {
     packet = JSON.parse(text);
   } catch {
-    return { ok: false, code: CODES.INPUT_MALFORMED, error: "fixture is not JSON", publishAuthorized: false };
+    return { ok: false, code: CODES.INPUT_MALFORMED, error: "fixture is not JSON", publishAuthorized: false, purchaseAuthorized: false };
   }
   return { ok: true, packet, path: abs };
 }
@@ -44,6 +44,7 @@ export function checkFixture(filePath) {
       ok: false,
       rights: null,
       publishAuthorized: false,
+      purchaseAuthorized: false,
       privateData: false,
       wave: WAVE_ID,
       id: FEATURE_ID,
@@ -64,6 +65,7 @@ export function runJourney({ fixturePath, privateFixturePath = DEFAULT_PRIVATE_F
       ok: false,
       rights: null,
       publishAuthorized: false,
+      purchaseAuthorized: false,
       privateData: false,
       wave: WAVE_ID,
       id: FEATURE_ID,
@@ -79,6 +81,7 @@ export function runJourney({ fixturePath, privateFixturePath = DEFAULT_PRIVATE_F
     return {
       ...accepted,
       publishAuthorized: false,
+      purchaseAuthorized: false,
       privatePacket,
     };
   }
@@ -91,6 +94,7 @@ export function runJourney({ fixturePath, privateFixturePath = DEFAULT_PRIVATE_F
       ok: false,
       rights: accepted.rights,
       publishAuthorized: false,
+      purchaseAuthorized: false,
       privateData: false,
       wave: WAVE_ID,
       id: FEATURE_ID,
@@ -105,6 +109,7 @@ export function runJourney({ fixturePath, privateFixturePath = DEFAULT_PRIVATE_F
     ok: true,
     rights: "cleared",
     publishAuthorized: false,
+    purchaseAuthorized: false,
     privateData: false,
     wave: WAVE_ID,
     id: FEATURE_ID,
@@ -116,6 +121,7 @@ export function runJourney({ fixturePath, privateFixturePath = DEFAULT_PRIVATE_F
       ok: false,
       rights: privatePacket.rights,
       publishAuthorized: false,
+      purchaseAuthorized: false,
       privateData: true,
       code: CODES.PRIVATE_DATA,
       error: privatePacket.error,

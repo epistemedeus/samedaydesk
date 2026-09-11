@@ -28,6 +28,7 @@ describe("evaluate public-data corrections", () => {
     assert.equal(result.ok, true);
     assert.equal(result.rights, "cleared");
     assert.equal(result.publishAuthorized, false);
+    assert.equal(result.purchaseAuthorized, false);
     assert.equal(result.privateData, false);
     assert.equal(result.correction.to, false);
     assert.equal(result.rightsClearance.payingRightsHolder, false);
@@ -85,6 +86,7 @@ describe("evaluate public-data corrections", () => {
     const result = evaluate(loadOk());
     assert.equal(result.ok, true);
     assert.equal(result.publishAuthorized, false);
+    assert.equal(result.purchaseAuthorized, false);
   });
 
   it("does not call fetch", () => {

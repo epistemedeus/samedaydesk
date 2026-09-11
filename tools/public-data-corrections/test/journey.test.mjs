@@ -28,6 +28,7 @@ describe("literal user journey", () => {
     assert.equal(body.ok, true);
     assert.equal(body.rights, "cleared");
     assert.equal(body.publishAuthorized, false);
+    assert.equal(body.purchaseAuthorized, false);
     assert.equal(body.privateData, false);
     assert.equal(body.code, CODES.ACCEPTED);
     assert.equal(body.correction.field, "runtime.purchaseAuthority");
@@ -53,6 +54,7 @@ describe("literal user journey", () => {
     assert.equal(body.ok, true);
     assert.equal(body.rights, "cleared");
     assert.equal(body.publishAuthorized, false);
+    assert.equal(body.purchaseAuthorized, false);
   });
 
   it("journey without --fixture is a structured rejection", () => {
@@ -61,6 +63,7 @@ describe("literal user journey", () => {
     const body = JSON.parse(r.stdout);
     assert.equal(body.ok, false);
     assert.equal(body.publishAuthorized, false);
+    assert.equal(body.purchaseAuthorized, false);
     assert.equal(body.code, CODES.FIXTURE_REQUIRED);
   });
 });

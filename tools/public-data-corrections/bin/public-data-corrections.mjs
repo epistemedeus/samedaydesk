@@ -65,6 +65,7 @@ if (!args.fixture || args.fixture === true) {
       ok: false,
       rights: null,
       publishAuthorized: false,
+      purchaseAuthorized: false,
       code: "fixture-required",
       error: "--fixture is required",
     },
