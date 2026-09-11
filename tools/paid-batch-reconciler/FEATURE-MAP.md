@@ -7,7 +7,7 @@
 | Command | `node tools/paid-batch-reconciler/bin/batch.mjs run <request.json>` |
 | Local HTTP | `POST http://127.0.0.1:<port>/batch` via `bin/batch.mjs serve` |
 | State | item `unfunded` / `reserved-fixture` / `rejected`; batch `completed` / `partial` / `rejected`; `sold` always false; live settlement out of scope |
-| Tests | `node --test tools/paid-batch-reconciler/test/*.test.mjs` |
+| Tests | `node --test tools/paid-batch-reconciler/test/*.test.mjs` (12 pass / 0 fail on this Cloud run with F08 pin + Postgres 16) |
 | Account prerequisite | None for the fixture journey. Optional: F08 pin worktree (`F08_PIN_ROOT`), Postgres 16 binaries for the local-runtime persist test. |
 | Next integration owner | Root |
 

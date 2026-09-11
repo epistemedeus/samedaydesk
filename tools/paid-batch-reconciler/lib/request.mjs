@@ -69,10 +69,8 @@ export function parseBatchRequest(raw, { baseDir = process.cwd() } = {}) {
     let job;
     try {
       job = getJob(engineId);
-    } catch (err) {
+    } catch {
       job = null;
-      err.index = index;
-      // keep unknown engines as item-level rejects rather than aborting siblings
     }
     const files = {};
     const source = filesFromItem(item);

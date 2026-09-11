@@ -1,12 +1,9 @@
-import { appendFileSync, existsSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { appendFileSync, existsSync, mkdirSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 
-const here = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 
 export const SCHEMA_SQL = `
@@ -169,4 +166,3 @@ export async function loadLedger(client, batchId) {
   return row.rows[0]?.ledger || null;
 }
 
-export { here, writeFileSync };
