@@ -59,7 +59,13 @@ test("journey discovers vendor-budget-impact by id then invokes the current wrap
   assert.equal(existsSync(join(outDir, "budget-impact.json")), true);
   assert.equal(existsSync(join(outDir, "budget-impact.md")), true);
   const report = JSON.parse(readFileSync(join(outDir, "budget-impact.json"), "utf8"));
-  assert.equal(report.ok, true);
+  assert.equal(report.schema, "s233.useful-application.artifact.v1");
+  assert.equal(report.appId, "vendor-budget-impact");
+  assert.equal(report.status, "actionable");
+  assert.equal(report.underlying.ok, true);
+  assert.equal(report.underlying.counts.fieldChanges, 2);
+  assert.equal(report.underlying.counts.added, 1);
+  assert.equal(report.noPurchaseAuthority, true);
 });
 
 test("journey CLI process discovers then writes usable outputs", () => {
@@ -97,8 +103,13 @@ test("identical before/after is still analysis, not transport failure", async ()
     inputs: { before, after: before },
     outDir,
   });
-  assert.notEqual(result.failureClass, "transport");
-  assert.equal(typeof result.ok, "boolean");
-  assert.ok(result.invoke.body && typeof result.invoke.body.ok === "boolean");
+  assert.equal(result.ok, true);
+  assert.equal(result.failureClass, "analysis");
+  assert.equal(result.outcome, "success");
   assert.equal(result.sold, false);
+  const report = JSON.parse(readFileSync(join(outDir, "budget-impact.json"), "utf8"));
+  assert.equal(report.status, "informational");
+  assert.equal(report.underlying.counts.fieldChanges, 0);
+  assert.equal(report.underlying.counts.unchanged, 2);
+  assert.notEqual(report.status, "actionable");
 });
