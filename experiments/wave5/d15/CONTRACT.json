@@ -4,9 +4,14 @@
   "executionContract": "samedaydesk.paid-useful-jobs.execution.v1",
   "testedImplementation": {
     "repo": "epistemedeus/samedaydesk",
-    "sha": "6bed72dd22a396134aa5c957933b42c3a5746698",
+    "sha": "e2f951cae7bb299df2283b9c181bb0d369fc26af",
     "paths": ["server/paid-useful-jobs/"],
     "note": "execution.v1 kernel replayed from a read-only worktree. Freeze-shim runs are not product acceptance."
+  },
+  "previousKernel": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "6bed72dd22a396134aa5c957933b42c3a5746698",
+    "note": "Inspect-to-materialize still consumed mutated bytes. Kept as a runnable negative pin."
   },
   "negativeBaseline": {
     "repo": "epistemedeus/samedaydesk",
@@ -17,5 +22,5 @@
   "integrationOwner": "W5-D01",
   "refuseCode": "input-changed-after-preflight",
   "bind": ["frozen", "verify-live", "live-observe"],
-  "remainingBinding": "D01 copies caller files at materialize time. Mutating after that copy is frozen-consumed with a matching receipt. Mutating after inspectSample's first read and before copy still executes the new bytes; receipt follows the staged copy, not the inspected hash. Concurrent caller outDir last-writer-wins on published outputs while isolated runOutDir stays distinct. D01 owns kernel fixes."
+  "remainingBinding": "Product pin e2f951ca snapshots file bytes before inspect. Inspect-to-execute and post-stage caller mutation must consume those bytes or refuse without a wrong receipt. 6bed72dd still executes inspect-window mutations. SDS52 aeef964 still aliases live caller paths. Concurrent caller outDir last-writer-wins on the published copy; receipts at e2f951ca bind runOutDir. Freeze-shim runs are not product acceptance."
 }

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { spawn, spawnSync } from "node:child_process";
 import http from "node:http";
 import { dirname, join } from "node:path";
@@ -325,10 +325,15 @@ describe("W5-D15 harness freeze shim (not product acceptance)", { timeout: 180_0
     const body = parseCli(r);
     assert.equal(r.status, 0, r.stderr);
     assert.equal(body.testedImplementation.sha, D01_SHA);
+    assert.equal(body.previousKernel.sha, "6bed72dd22a396134aa5c957933b42c3a5746698");
     assert.equal(body.integrationOwner, "W5-D01");
     assert.equal(body.refuseCode, REFUSE_CODE);
     assert.equal(body.executionContract, contractRecord().executionContract);
     assert.equal(body.negativeBaseline.sha, "aeef964fa188443078958d9d6d393afae1d542ee");
     assert.deepEqual(body, contractRecord());
+    assert.deepEqual(
+      JSON.parse(readFileSync(join(here, "../CONTRACT.json"), "utf8")),
+      contractRecord(),
+    );
   });
 });

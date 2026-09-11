@@ -35,7 +35,7 @@ Commands:
 frozen: execute harness freeze copies after the live path mutates (not product acceptance)
 verify-live: refuse input-changed-after-preflight when live bytes drifted
 live-observe: pass live paths to the in-tree SDS52 CLI and classify mutation consumption
-Kernel replay lives in test/kernel-replay.test.mjs against read-only D01/SDS52 worktrees.
+Kernel replay lives in test/kernel-replay.test.mjs against read-only D01 e2f951ca / 6bed72dd / SDS52 aeef964 worktrees.
 `;
 }
 

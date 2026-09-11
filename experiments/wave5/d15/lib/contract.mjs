@@ -1,4 +1,4 @@
-import { SDS52_SHA, D01_SHA, EXECUTION_CONTRACT_VERSION } from "./kernels.mjs";
+import { SDS52_SHA, D01_SHA, D01_PREV_SHA, EXECUTION_CONTRACT_VERSION } from "./kernels.mjs";
 
 export const CONTRACT_SCHEMA = "samedaydesk.wave5.d15.input-execute-race.v1";
 
@@ -41,6 +41,11 @@ export function contractRecord() {
       paths: ["server/paid-useful-jobs/"],
       note: "execution.v1 kernel replayed from a read-only worktree. Freeze-shim runs are not product acceptance.",
     },
+    previousKernel: {
+      repo: "epistemedeus/samedaydesk",
+      sha: D01_PREV_SHA,
+      note: "Inspect-to-materialize still consumed mutated bytes. Kept as a runnable negative pin.",
+    },
     negativeBaseline: {
       repo: "epistemedeus/samedaydesk",
       sha: SDS52_SHA,
@@ -51,6 +56,6 @@ export function contractRecord() {
     refuseCode: REFUSE_CODE,
     bind: Object.values(BIND),
     remainingBinding:
-      "D01 copies caller files at materialize time. Mutating after that copy is frozen-consumed with a matching receipt. Mutating after inspectSample's first read and before copy still executes the new bytes; receipt follows the staged copy, not the inspected hash. Concurrent caller outDir last-writer-wins on published outputs while isolated runOutDir stays distinct. D01 owns kernel fixes.",
+      "Product pin e2f951ca snapshots file bytes before inspect. Inspect-to-execute and post-stage caller mutation must consume those bytes or refuse without a wrong receipt. 6bed72dd still executes inspect-window mutations. SDS52 aeef964 still aliases live caller paths. Concurrent caller outDir last-writer-wins on the published copy; receipts at e2f951ca bind runOutDir. Freeze-shim runs are not product acceptance.",
   };
 }

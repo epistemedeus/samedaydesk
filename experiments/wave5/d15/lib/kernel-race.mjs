@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,12 +11,19 @@ import {
   ensureKernelRoot,
   kernelCli,
   kernelFixture,
+  kernelServe,
   importKernel,
 } from "./kernels.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const PRELOAD_AFTER_COPY = join(here, "mutate-after-copy.cjs");
+export const PRELOAD_AFTER_STAGE = join(here, "mutate-after-stage.cjs");
 export const PRELOAD_AFTER_INSPECT = join(here, "mutate-after-first-read.cjs");
+
+export const ACTIONABLE = {
+  status: "actionable",
+  summary: "Budget-impact scan: fieldChanges=2 unitChanges=0 conflicting=0 unknown=0",
+};
 
 export function shaBuf(buf) {
   return sha256Bytes(Buffer.isBuffer(buf) ? buf : Buffer.from(buf));
@@ -40,6 +47,24 @@ export function stageKernelBudget(root) {
     inspectAfterSha: sha256File(after),
     inspectBeforeSha: sha256File(before),
   };
+}
+
+export function domainStable(impact) {
+  if (!impact || typeof impact !== "object") return null;
+  return {
+    status: impact.status ?? null,
+    summary: impact.summary ?? null,
+    fieldChanges: impact.fieldChanges ?? null,
+    unitChanges: impact.unitChanges ?? null,
+    conflicting: impact.conflicting ?? null,
+    unknown: impact.unknown ?? null,
+  };
+}
+
+export function domainStableSha(impact) {
+  const stable = domainStable(impact);
+  if (!stable) return null;
+  return shaBuf(JSON.stringify(stable));
 }
 
 function parseJsonStdout(stdout) {
@@ -105,7 +130,10 @@ function impactFrom(wrapper, outDir) {
   const fromPath = fromOutput?.path && existsSync(fromOutput.path)
     ? JSON.parse(readFileSync(fromOutput.path, "utf8"))
     : null;
-  return fromOut || fromPath;
+  const fromEngine = wrapper?.engine && typeof wrapper.engine === "object" && wrapper.engine.status
+    ? wrapper.engine
+    : null;
+  return fromOut || fromPath || fromEngine;
 }
 
 export function classifyKernelRace({ inspectSha, liveSha, wrapper, impact, control }) {
@@ -195,16 +223,21 @@ export function classifyKernelRace({ inspectSha, liveSha, wrapper, impact, contr
   };
 }
 
+function preloadForWindow(window) {
+  if (window === "after-inspect") return PRELOAD_AFTER_INSPECT;
+  if (window === "after-copy") return PRELOAD_AFTER_COPY;
+  return PRELOAD_AFTER_STAGE;
+}
+
 export function replayKernelCli(root, { window, jobId = "vendor-budget-impact" } = {}) {
   const staged = stageKernelBudget(root);
   const outDir = join(staged.work, "out");
   const flagPath = join(staged.work, "flag.json");
-  const preload = window === "after-inspect" ? PRELOAD_AFTER_INSPECT : PRELOAD_AFTER_COPY;
   const spawned = spawnKernelCli(root, {
     jobId,
     inputs: { before: staged.before, after: staged.after },
     outDir,
-    preload,
+    preload: preloadForWindow(window),
     racePath: staged.after,
     overwrite: staged.before,
     flagPath,
@@ -217,13 +250,32 @@ export function replayKernelCli(root, { window, jobId = "vendor-budget-impact" }
     liveSha,
     inspectSha: staged.inspectAfterSha,
     impact,
+    stable: domainStable(impact),
+    stableSha: domainStableSha(impact),
     flag: existsSync(flagPath) ? JSON.parse(readFileSync(flagPath, "utf8")) : null,
     enginePath: impact?.caller?.after || null,
   };
 }
 
-export async function d01PostMaterializeLibrary() {
-  const root = ensureKernelRoot(D01_SHA);
+export async function d01ControlLibrary(root = ensureKernelRoot(D01_SHA)) {
+  const { wrapper } = await importKernel(root);
+  const staged = stageKernelBudget(root);
+  const result = await wrapper.runPaidOffer({
+    jobId: "vendor-budget-impact",
+    inputs: { before: staged.before, after: staged.after },
+  });
+  const impact = impactFrom(result, result.runOutDir || result.outDir);
+  return {
+    root,
+    result,
+    impact,
+    inspectSha: staged.inspectAfterSha,
+    stable: domainStable(impact),
+    stableSha: domainStableSha(impact),
+  };
+}
+
+export async function d01PostMaterializeLibrary(root = ensureKernelRoot(D01_SHA)) {
   const { wrapper, engine, contract } = await importKernel(root);
   if (typeof wrapper.createExecutor !== "function") {
     return { root, skipped: false, missingCreateExecutor: true };
@@ -245,7 +297,7 @@ export async function d01PostMaterializeLibrary() {
     inputs: { before: staged.before, after: staged.after },
   });
   const liveSha = sha256File(staged.after);
-  const impact = impactFrom(result, result.outDir || result.runOutDir);
+  const impact = impactFrom(result, result.runOutDir || result.outDir);
   return {
     root,
     contract: result.contract || contract.EXECUTION_CONTRACT_VERSION,
@@ -254,12 +306,69 @@ export async function d01PostMaterializeLibrary() {
     liveSha,
     inspectSha: staged.inspectAfterSha,
     impact,
+    stable: domainStable(impact),
+    stableSha: domainStableSha(impact),
     engineConsumedInspect: seen?.afterSha === staged.inspectAfterSha,
   };
 }
 
-export async function d01NoChangeControl() {
-  const root = ensureKernelRoot(D01_SHA);
+export async function d01PostSnapshotOutDirGetter(root = ensureKernelRoot(D01_SHA)) {
+  const { wrapper } = await importKernel(root);
+  const staged = stageKernelBudget(root);
+  const published = mkdtempSync(join(tmpdir(), "d15-getter-out-"));
+  const inspectSha = staged.inspectAfterSha;
+  const result = await wrapper.runPaidOffer({
+    jobId: "vendor-budget-impact",
+    inputs: { before: staged.before, after: staged.after },
+    get outDir() {
+      writeFileSync(staged.after, readFileSync(staged.before));
+      return published;
+    },
+  });
+  const liveSha = sha256File(staged.after);
+  const impact = impactFrom(result, result.runOutDir || result.outDir);
+  return {
+    root,
+    result,
+    impact,
+    inspectSha,
+    liveSha,
+    stable: domainStable(impact),
+    stableSha: domainStableSha(impact),
+    published,
+  };
+}
+
+export async function d01GetterSecondEval(root) {
+  const { wrapper } = await importKernel(root);
+  const staged = stageKernelBudget(root);
+  const inspectSha = staged.inspectAfterSha;
+  let reads = 0;
+  const result = await wrapper.runPaidOffer({
+    jobId: "vendor-budget-impact",
+    get inputs() {
+      reads += 1;
+      if (reads > 1) {
+        writeFileSync(staged.after, readFileSync(staged.before));
+      }
+      return { before: staged.before, after: staged.after };
+    },
+  });
+  const liveSha = sha256File(staged.after);
+  const impact = impactFrom(result, result.runOutDir || result.outDir);
+  return {
+    root,
+    result,
+    impact,
+    reads,
+    inspectSha,
+    liveSha,
+    stable: domainStable(impact),
+    stableSha: domainStableSha(impact),
+  };
+}
+
+export async function d01NoChangeControl(root = ensureKernelRoot(D01_SHA)) {
   const { wrapper } = await importKernel(root);
   const staged = stageKernelBudget(root);
   writeFileSync(staged.after, readFileSync(staged.before));
@@ -267,12 +376,18 @@ export async function d01NoChangeControl() {
     jobId: "vendor-budget-impact",
     inputs: { before: staged.before, after: staged.after },
   });
-  const impact = impactFrom(result, result.outDir || result.runOutDir);
-  return { root, result, impact };
+  const impact = impactFrom(result, result.runOutDir || result.outDir);
+  return {
+    root,
+    result,
+    impact,
+    inspectSha: sha256File(staged.after),
+    stable: domainStable(impact),
+    stableSha: domainStableSha(impact),
+  };
 }
 
-export async function d01ConcurrentOutDir() {
-  const root = ensureKernelRoot(D01_SHA);
+export async function d01ConcurrentOutDir(root = ensureKernelRoot(D01_SHA)) {
   const { wrapper } = await importKernel(root);
   const change = stageKernelBudget(root);
   const noChange = stageKernelBudget(root);
@@ -293,10 +408,9 @@ export async function d01ConcurrentOutDir() {
   const published = JSON.parse(readFileSync(join(shared, "budget-impact.json"), "utf8"));
   const changedIsolated = JSON.parse(readFileSync(join(changed.runOutDir, "budget-impact.json"), "utf8"));
   const quietIsolated = JSON.parse(readFileSync(join(quiet.runOutDir, "budget-impact.json"), "utf8"));
-  const changedPublishedPath = changed.outputs.find((o) => o.name === "budget-impact.json")?.path;
-  const publishedAtChangedOutput = changedPublishedPath && existsSync(changedPublishedPath)
-    ? JSON.parse(readFileSync(changedPublishedPath, "utf8"))
-    : null;
+  const changedJson = changed.outputs.find((o) => o.name === "budget-impact.json");
+  const quietJson = quiet.outputs.find((o) => o.name === "budget-impact.json");
+  const publishedSha = sha256File(join(shared, "budget-impact.json"));
   return {
     root,
     shared,
@@ -308,7 +422,11 @@ export async function d01ConcurrentOutDir() {
     aliasExposed: changed.runOutDir !== quiet.runOutDir,
     publishedMatchesChanged: published.status === changedIsolated.status,
     publishedMatchesQuiet: published.status === quietIsolated.status,
-    changedOutputFollowsAlias: publishedAtChangedOutput?.status !== changedIsolated.status,
+    outputsBoundToRunOutDir: Boolean(
+      changedJson?.path?.startsWith(changed.runOutDir) && quietJson?.path?.startsWith(quiet.runOutDir),
+    ),
+    receiptDistinctFromPublished: changedJson?.sha256 !== publishedSha && quietJson?.sha256 !== publishedSha,
+    changedOutputFollowsAlias: changedJson?.path === join(shared, "budget-impact.json"),
   };
 }
 
@@ -329,5 +447,48 @@ export function sds52MutateThenCall() {
     inspectSha: staged.inspectAfterSha,
     liveSha: sha256File(staged.after),
     impact,
+    stable: domainStable(impact),
+    stableSha: domainStableSha(impact),
   };
+}
+
+export function spawnKernelServe(root, { preload, racePath, overwrite, flagPath } = {}) {
+  const args = [];
+  if (preload) args.push("-r", preload);
+  args.push(kernelServe(root));
+  return spawn(process.execPath, args, {
+    cwd: root,
+    env: {
+      ...process.env,
+      HOST: "127.0.0.1",
+      PORT: "0",
+      D15_RACE_PATH: racePath || "",
+      D15_RACE_OVERWRITE: overwrite || "",
+      D15_RACE_FLAG: flagPath || "",
+    },
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+}
+
+export function waitForOrigin(child, timeoutMs = 15_000) {
+  return new Promise((resolve, reject) => {
+    let buf = "";
+    const timer = setTimeout(() => reject(new Error("serve-execution produced no origin")), timeoutMs);
+    child.stdout.on("data", (chunk) => {
+      buf += chunk.toString("utf8");
+      const nl = buf.indexOf("\n");
+      if (nl >= 0) {
+        clearTimeout(timer);
+        try {
+          resolve(JSON.parse(buf.slice(0, nl)).origin);
+        } catch (err) {
+          reject(err);
+        }
+      }
+    });
+    child.on("error", reject);
+    child.on("exit", (code) => {
+      if (code) reject(new Error(`serve-execution exited ${code}`));
+    });
+  });
 }
