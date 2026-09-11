@@ -2,6 +2,7 @@
 
 Repo: `epistemedeus/samedaydesk`
 Branch: `cursor/w5-m01-select-and-wire-useful-engines-catalog-for-d01-keeping-first-offer-narrow-53b7`
+Head: `3655d7e1a5196d32cf6a83cc650d9f9a129f6124`
 Starting ref: `aeef964fa188443078958d9d6d393afae1d542ee` (SDS52 / PR52)
 Owned path: `experiments/wave5/m01/`
 Assignment branch name in TASKS.json: `codex/w5-m01-20260911` (this Cloud run used the Cursor branch above)
