@@ -3,7 +3,9 @@
 Repo: `epistemedeus/samedaydesk`  
 Branch: `cursor/w5-m02-co10-json-schema-compatibility-semantics-a811`  
 Starting pin: `94c7bfdfeaa99f5e70f341504df3051cc7717f91` (W4-commerce-10 / PR 59)  
-Exact head: see this commit  
+Exact head: `ae78da64b0c56f848c7a2dec82afa7bec0b1d858`  
+Draft PR: https://github.com/epistemedeus/samedaydesk/pull/79  
+Compare: https://github.com/epistemedeus/samedaydesk/compare/main...cursor/w5-m02-co10-json-schema-compatibility-semantics-a811  
 Owned paths: `tools/json-schema-webhook-drift/`, `experiments/wave5/m02/RECEIPT.md`  
 Integration owner: W5-M01
 
