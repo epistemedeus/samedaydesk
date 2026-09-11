@@ -2,6 +2,7 @@
 
 **Date:** 11 September 2026
 **Branch:** `codex/w4-commerce-07-20260911`
+**HEAD:** `6d57566822c3e416910d121caee76cd825021027`
 **Base:** `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545`
 **Owned path:** `tools/refund-obligation-projector/`
 **Integration owner:** Root
