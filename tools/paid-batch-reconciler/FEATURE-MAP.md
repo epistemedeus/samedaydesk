@@ -7,7 +7,7 @@
 | Command | `node tools/paid-batch-reconciler/bin/batch.mjs run <request.json>` |
 | Local HTTP | `POST http://127.0.0.1:<port>/batch` via `bin/batch.mjs serve` |
 | State | item `unfunded` / `reserved-fixture` / `rejected`; batch `completed` / `partial` / `rejected`; `sold` always false; live settlement out of scope |
-| Tests | `node --test tools/paid-batch-reconciler/test/*.test.mjs` |
+| Tests | `node --test tools/paid-batch-reconciler/test/*.test.mjs` (**22 pass / 0 fail / 0 skip** on this run with PR52 pin + Postgres 16) |
 | Account prerequisite | `F08_PIN_ROOT` (SDS PR52 `aeef964`) and Postgres 16 binaries for the persist test. |
 | Next integration owner | W5-D01 |
 

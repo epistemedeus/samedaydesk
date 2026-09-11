@@ -5,6 +5,7 @@
 **Repo:** `epistemedeus/samedaydesk`
 **Branch:** `cursor/w5-d12-co08-batch-reconciliation-consuming-one-runner-and-funding-contract-02ad`
 **Base / startingRef:** `ec03dc3445ac73a4a1010712b23a709bd3a7fed3`
+**PR:** https://github.com/epistemedeus/samedaydesk/pull/93 (draft)
 **Owned paths:** `tools/paid-batch-reconciler/`, `experiments/wave5/d12/RECEIPT.md`
 **Integration owner:** W5-D01
 
@@ -31,8 +32,23 @@ Ledger `termsVersion` is not forced equal to wrapper receipt hashes.
 
 Valid refusal/no-change remains a ledger outcome, not a crash.
 
+## Commands and counts
+
+Node v22.14.0. `pg` from repository `package.json`. Postgres 16 at `/usr/lib/postgresql/16/bin`. No secrets. No live payment.
+
+```bash
+F08_PIN_ROOT=/tmp/sds-pr52-aeef964 \
+  node --test --test-concurrency=1 tools/paid-batch-reconciler/test/*.test.mjs
+```
+
+**22 pass, 0 fail, 0 skip.**
+
+Includes CLI `bin/batch.mjs`, `POST /batch` on 127.0.0.1, disposable Postgres 16 unique `(batch_id, item_id)`, and required PR52 pin import. Missing runner or Postgres would be incomplete, not a skip.
+
 ## Remaining integration binding
 
 W5-D01 may still amend `server/paid-useful-jobs`. This package reports pin
 `aeef964` only. Wrapper kit-acquisition-before-try and other D01 defects are
 not claimed fixed here.
+
+**PR:** https://github.com/epistemedeus/samedaydesk/pull/93 (draft)
