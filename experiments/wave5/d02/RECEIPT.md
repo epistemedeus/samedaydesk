@@ -2,6 +2,7 @@
 
 **Repo:** epistemedeus/samedaydesk
 **Branch:** `cursor/w5-d02-co05-input-materialization-preflight-adapter-including-inline-json-and-catalog-schemas-20f2`
+**Compare:** https://github.com/epistemedeus/samedaydesk/compare/main...cursor/w5-d02-co05-input-materialization-preflight-adapter-including-inline-json-and-catalog-schemas-20f2
 **Starting ref:** `2bd0207800ce1a26bae7fe5dd5086cf196296959` (W4-commerce-05 / PR 67)
 **Owned paths:** `tools/job-input-preflight/`, `experiments/wave5/d02/RECEIPT.md`
 **Integration owner:** W5-D01
