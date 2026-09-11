@@ -4,10 +4,17 @@ import { randomBytes } from "node:crypto";
 import { refuse } from "./refuse.mjs";
 import { SUPPORTED_FAMILIES } from "./pins.mjs";
 import { extractPinnedKits } from "./extract.mjs";
-import { createAdapters, runEngine } from "./engines.mjs";
+import { classifyEngineRun, createAdapters, runEngine } from "./engines.mjs";
 import { loadTicket } from "./ticket.mjs";
 import { mergeDeclared, refuseCron, refuseLiveSample, resolveInputs, verifyInputs } from "./verify.mjs";
 import { buildSecondRun, writeSecondRun } from "./second-run.mjs";
+import {
+  collectPreviousOutputRefs,
+  engineInputPaths,
+  freezeCurrentInputs,
+  refusePreviousOutputReuse,
+  refuseReusedOutDir,
+} from "./freeze.mjs";
 
 const OUTPUTS = ["second-run.json", "second-run.md"];
 
@@ -19,7 +26,7 @@ function realpathOrAbs(p) {
   }
 }
 
-export function resolveOutDir(args, sourcePaths) {
+export function resolveOutDir(args, sourcePaths, extra = {}) {
   const sources = (sourcePaths || []).filter(Boolean).map((p) => realpathOrAbs(String(p)));
   const sourceSet = new Set(sources);
   let outDir;
@@ -46,16 +53,28 @@ export function resolveOutDir(args, sourcePaths) {
       });
     }
   }
+  if (extra.ticket) {
+    refuseReusedOutDir({ outDir, ticket: extra.ticket, sourcePaths });
+  }
   fs.mkdirSync(outDir, { recursive: true });
   return outDir;
 }
 
 function engineKindOf(args) {
   const k = args.engine == null || args.engine === true ? "catalog" : String(args.engine);
-  if (k !== "catalog" && k !== "vendor-pin") {
-    throw refuse("unknown-engine", "engine must be catalog or vendor-pin", { engine: k });
+  if (args["paid-wrapper-bin"] && (k === "catalog" || k === "d01-wrapper")) {
+    return "d01-wrapper";
+  }
+  if (k !== "catalog" && k !== "vendor-pin" && k !== "d01-wrapper") {
+    throw refuse("unknown-engine", "engine must be catalog, vendor-pin, or d01-wrapper", { engine: k });
   }
   return k;
+}
+
+function binderStatusFor(analysisOutcome) {
+  if (analysisOutcome === "refused") return "analysis-refused";
+  if (analysisOutcome === "no-change") return "analysis-no-change";
+  return "actionable";
 }
 
 export async function bind(args, injectedAdapters = null) {
@@ -81,13 +100,23 @@ export async function bind(args, injectedAdapters = null) {
   }
 
   const sourcePaths = [ticket.path, inputs.before, inputs.after, inputs.used, args["input-root"]].filter(Boolean);
-  const outDir = resolveOutDir(args, sourcePaths);
+  const outDir = resolveOutDir(args, sourcePaths, { ticket });
 
   const afterActual = verification.verifiedInputs.after?.actual?.sha256 || null;
   let status;
+  let frozen = null;
+  let engineResult = null;
+  let classified = null;
   if (verification.state === "verified") {
     if (!afterActual) {
       throw refuse("missing-after", "Verified second use requires an after file");
+    }
+    if (!ticket.firstAfterSha256) {
+      throw refuse(
+        "unchecked-next-manifest",
+        "Actionable second use requires a frozen previous after sha256 on the ticket",
+        { ticket: ticket.path },
+      );
     }
     if (ticket.firstAfterSha256 && afterActual === ticket.firstAfterSha256) {
       throw refuse(
@@ -102,22 +131,40 @@ export async function bind(args, injectedAdapters = null) {
         "Changed after file must declare its new sha256 (--declare-after-sha256 or ticket currentInputs)",
       );
     }
-    status = "actionable";
-  } else {
-    status = "informational";
-  }
-
-  let engineResult = null;
-  if (status === "actionable") {
+    frozen = freezeCurrentInputs({
+      verifiedInputs: verification.verifiedInputs,
+      destDir: path.join(outDir, "frozen-current"),
+    });
+    refusePreviousOutputReuse({
+      frozen,
+      previousRefs: collectPreviousOutputRefs(ticket),
+    });
     const adapters =
       injectedAdapters ||
       createAdapters(
         extractPinnedKits({
           usefulJobsRoot: args["useful-jobs-root"] || process.env.USEFUL_JOBS_ROOT || null,
           recordRepeatBin: args["record-repeat-bin"] || process.env.RECORD_REPEAT_BIN || null,
+          paidWrapperBin: args["paid-wrapper-bin"] || process.env.SDS_D01_WRAPPER_BIN || null,
         }),
       );
-    engineResult = await runEngine(adapters, engineKind, { family, inputs, outDir });
+    engineResult = await runEngine(adapters, engineKind, {
+      family,
+      inputs: engineInputPaths(frozen, inputs),
+      outDir,
+    });
+    classified = classifyEngineRun(engineResult, { family });
+    if (classified.transport === "failed") {
+      throw refuse(classified.code, classified.message, {
+        exitCode: classified.exitCode ?? engineResult.exitCode,
+        missing: classified.missing || null,
+        family,
+        job: spec.catalogJob,
+      });
+    }
+    status = binderStatusFor(classified.analysisOutcome);
+  } else {
+    status = "informational";
   }
 
   const record = buildSecondRun({
@@ -129,6 +176,8 @@ export async function bind(args, injectedAdapters = null) {
     outDir,
     engineKind,
     catalogJob: spec.catalogJob,
+    frozen,
+    classified,
   });
   const written = writeSecondRun(outDir, record);
   return {
@@ -141,6 +190,8 @@ export async function bind(args, injectedAdapters = null) {
     digest: record.digest,
     distinctFromFirst: record.distinctFromFirst,
     identityVerified: record.identityVerification.verified,
+    transport: record.transport,
+    analysisOutcome: record.analysisOutcome,
     outDir,
     outputs: written,
     schedulerDaemon: false,
@@ -163,6 +214,8 @@ export async function bindMain(args) {
       digest: result.digest,
       distinctFromFirst: result.distinctFromFirst,
       identityVerified: result.identityVerified,
+      transport: result.transport,
+      analysisOutcome: result.analysisOutcome,
       outDir: result.outDir,
       schedulerDaemon: false,
       settling: false,

@@ -62,6 +62,20 @@ test("stale digest vs new bytes refuses", () => {
   assert.ok(r.json.detail?.mismatches?.some((m) => m.slot === "after"));
 });
 
+test("unchecked next-run without frozen currentInputs refuses", () => {
+  const r = runBind(["--ticket", path.join(OWNED, "fixtures/unchecked-next-manifest.json")], {
+    expectStatus: 2,
+  });
+  assert.equal(r.json.ok, false);
+  assert.equal(r.json.refused, true);
+  assert.equal(r.json.code, "unchecked-next-manifest");
+});
+
+test("next-run family/parser mismatch refuses", () => {
+  const r = runBind(["--ticket", path.join(OWNED, "fixtures/parser-mismatch.json")], { expectStatus: 2 });
+  assert.equal(r.json.code, "family-parser-mismatch");
+});
+
 test("cron install flags refuse", () => {
   const r = runBind(
     ["--ticket", path.join(OWNED, "fixtures/scheduler-daemon.json"), "--install-cron"],

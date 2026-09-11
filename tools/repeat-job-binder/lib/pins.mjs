@@ -1,6 +1,7 @@
 /**
- * Pins for W4-commerce-03. Exact current PR51 archives on SDS main are
+ * Pins for W5-D09 / Co03. Exact current PR51 archives on SDS main are
  * authoritative. Do not copy a second useful-jobs / record-repeat kernel here.
+ * D01/PR52 wrapper is an optional injected CLI, not vendored source.
  */
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, statSync } from "node:fs";
@@ -11,9 +12,13 @@ const here = dirname(fileURLToPath(import.meta.url));
 export const OWNED_DIR = join(here, "..");
 export const REPO_ROOT = join(here, "../../..");
 
-export const FEATURE_ID = "W4-commerce-03";
+export const FEATURE_ID = "W5-D09";
 export const FEATURE_DIR = "tools/repeat-job-binder";
-export const STARTING_REF = "5b97d1b02e786acd1895cfa1508087ae3f7a1545";
+export const STARTING_REF = "7c55738cc5730985b709282af6c24e10f0a8442f";
+export const D01_PIN_SHA = "aeef964fa188443078958d9d6d393afae1d542ee";
+export const D01_PIN_REF = "fable/f08-paid-wrappers";
+export const D01_PIN_PR = 52;
+export const D01_WRAPPER_CLI_REL = "server/paid-useful-jobs/bin/cli.mjs";
 
 export const USEFUL_JOBS_ARCHIVE_REL =
   "client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz";
@@ -55,21 +60,41 @@ export const SUPPORTED_FAMILIES = Object.freeze({
     vendorPinFamily: "openapi-used-ops",
     requiredSlots: ["before", "after", "used"],
     catalogOutputs: ["upgrade-brief.json", "upgrade-brief.md"],
+    parsers: Object.freeze(["openapi-used-ops", "openapi-impact", "s134-openapi-impact"]),
   },
   "pricing-row-unit": {
     catalogJob: "vendor-budget-impact",
     vendorPinFamily: "pricing-row-unit",
     requiredSlots: ["before", "after"],
     catalogOutputs: ["budget-impact.json", "budget-impact.md"],
+    parsers: Object.freeze(["pricing-row-unit", "pricing-table-change", "s134-pricing-table-change"]),
   },
 });
 
+export function parserMatchesFamily(family, parser) {
+  if (!parser) return true;
+  const spec = SUPPORTED_FAMILIES[family];
+  if (!spec) return false;
+  const token = String(parser);
+  return spec.parsers.includes(token);
+}
+
 export const LATER_BINDINGS = Object.freeze({
+  d01ExecutionContract: {
+    id: "W5-D01",
+    role: "supplied-input execution/receipt contract this binder consumes",
+    pin: D01_PIN_SHA,
+    ref: D01_PIN_REF,
+    pr: D01_PIN_PR,
+    cli: D01_WRAPPER_CLI_REL,
+    status: "consumed-as-optional-injected-cli",
+    note: "Tested against PR52 aeef964 via --paid-wrapper-bin. D01 may amend that wrapper; this package does not claim a future sibling.",
+  },
   operatorProduct: {
     id: "W4-commerce-09",
     role: "operator product that would consume this binder",
     status: "not-consumed",
-    note: "Missing sibling W4 work must not block; Root binds when it publishes.",
+    note: "Missing sibling work must not block; W5-D01 binds when it publishes.",
   },
   earnedWorkTerms: {
     id: "I01",
@@ -79,8 +104,9 @@ export const LATER_BINDINGS = Object.freeze({
     kernelCopied: false,
   },
   f08PaidWrappers: {
-    status: "not-edited",
-    note: "Wave payments are nonsettling prototypes. This binder has no pay path.",
+    status: "not-copied",
+    pin: D01_PIN_SHA,
+    note: "Wave payments are nonsettling prototypes. This binder has no pay path and does not vendor wrapper.mjs.",
   },
 });
 
