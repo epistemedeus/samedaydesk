@@ -1,0 +1,10 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "api-upgrade-brief",
+  "status": "informational",
+  "summary": "No used-operation structural delta",
+  "actions": [{ "priority": "low", "kind": "no-used-op-delta", "note": "stable" }],
+  "gaps": [],
+  "generatedAt": "2026-09-11T20:00:01.000Z",
+  "digest": "aaaaaaaaaaaaaaaa"
+}
