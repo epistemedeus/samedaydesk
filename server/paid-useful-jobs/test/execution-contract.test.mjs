@@ -312,4 +312,191 @@ describe("W5-D01 execution contract", { timeout: 180_000 }, () => {
       child.kill("SIGTERM");
     }
   });
+
+  it("request inputs getter is evaluated once; live mutate on later reads is not executed", async () => {
+    const work = mkdtempSync(join(tmpdir(), "puj-getter-"));
+    const srcBefore = join(work, "before.json");
+    const srcAfter = join(work, "after.json");
+    writeFileSync(srcBefore, readFileSync(before));
+    writeFileSync(srcAfter, readFileSync(after));
+    const original = readFileSync(srcBefore);
+    const { sha256Bytes } = await import("../lib/digest.mjs");
+    const originalSha = sha256Bytes(original);
+    let reads = 0;
+    const request = {
+      jobId: "vendor-budget-impact",
+      get inputs() {
+        reads += 1;
+        if (reads > 1) {
+          writeFileSync(
+            srcBefore,
+            `${JSON.stringify({
+              label: "MUTATED-AFTER-INSPECT",
+              rows: [{ field: "desk-chat-input", value: 99, unit: "USD/1M-tokens" }],
+            })}\n`,
+          );
+        }
+        return { before: srcBefore, after: srcAfter };
+      },
+    };
+    const result = await runPaidOffer(request);
+    assert.equal(result.ok, true, result.error);
+    assert.equal(reads, 1);
+    assert.equal(result.receipt.inputs.find((i) => i.name === "before").sha256, originalSha);
+    assert.equal(JSON.parse(readFileSync(srcBefore, "utf8")).label, "caller");
+  });
+
+  it("second getter path is not the executed input", async () => {
+    const work = mkdtempSync(join(tmpdir(), "puj-getter-path-"));
+    const first = join(work, "first.json");
+    const second = join(work, "second.json");
+    const srcAfter = join(work, "after.json");
+    writeFileSync(first, readFileSync(before));
+    writeFileSync(
+      second,
+      `${JSON.stringify({
+        label: "SECOND-PATH",
+        rows: [{ field: "desk-chat-input", value: 99, unit: "USD/1M-tokens" }],
+      })}\n`,
+    );
+    writeFileSync(srcAfter, readFileSync(after));
+    const { sha256Bytes } = await import("../lib/digest.mjs");
+    const firstSha = sha256Bytes(readFileSync(first));
+    let reads = 0;
+    const result = await runPaidOffer({
+      jobId: "vendor-budget-impact",
+      get inputs() {
+        reads += 1;
+        return reads === 1
+          ? { before: first, after: srcAfter }
+          : { before: second, after: srcAfter };
+      },
+    });
+    assert.equal(result.ok, true, result.error);
+    assert.equal(reads, 1);
+    assert.equal(result.receipt.inputs.find((i) => i.name === "before").sha256, firstSha);
+  });
+
+  it("live filesystem change after input snapshot is not executed", async () => {
+    const work = mkdtempSync(join(tmpdir(), "puj-fs-race-"));
+    const srcBefore = join(work, "before.json");
+    const srcAfter = join(work, "after.json");
+    const published = mkdtempSync(join(tmpdir(), "puj-fs-out-"));
+    writeFileSync(srcBefore, readFileSync(before));
+    writeFileSync(srcAfter, readFileSync(after));
+    const { sha256Bytes } = await import("../lib/digest.mjs");
+    const originalSha = sha256Bytes(readFileSync(srcBefore));
+    const result = await runPaidOffer({
+      jobId: "vendor-budget-impact",
+      inputs: { before: srcBefore, after: srcAfter },
+      get outDir() {
+        writeFileSync(
+          srcBefore,
+          `${JSON.stringify({
+            label: "MUTATED-AFTER-SNAPSHOT",
+            rows: [{ field: "desk-chat-input", value: 99, unit: "USD/1M-tokens" }],
+          })}\n`,
+        );
+        return published;
+      },
+    });
+    assert.equal(result.ok, true, result.error);
+    assert.equal(result.receipt.inputs.find((i) => i.name === "before").sha256, originalSha);
+    assert.equal(JSON.parse(readFileSync(srcBefore, "utf8")).label, "MUTATED-AFTER-SNAPSHOT");
+  });
+
+  it("shared caller outDir: receipt describes this runOutDir, not another writer's publication", async () => {
+    const shared = mkdtempSync(join(tmpdir(), "puj-alias-"));
+    const work = mkdtempSync(join(tmpdir(), "puj-alias-in-"));
+    const beforeA = join(work, "before.json");
+    const afterA = join(work, "after-a.json");
+    const afterB = join(work, "after-b.json");
+    writeFileSync(beforeA, readFileSync(before));
+    writeFileSync(afterA, readFileSync(after));
+    const afterBBody = JSON.parse(readFileSync(after, "utf8"));
+    afterBBody.rows = afterBBody.rows.map((row) =>
+      row.field === "desk-chat-output" ? { ...row, value: 99 } : row,
+    );
+    writeFileSync(afterB, `${JSON.stringify(afterBBody, null, 2)}\n`);
+
+    const execute = createExecutor({
+      runEngine(_jobId, opts) {
+        const marker = readFileSync(opts.files.after, "utf8");
+        writeFileSync(join(opts.outDir, "budget-impact.json"), `${JSON.stringify({ marker })}\n`);
+        writeFileSync(join(opts.outDir, "budget-impact.md"), marker);
+        return {
+          status: 0,
+          stdout: JSON.stringify({ ok: true, status: "informational" }),
+          stderr: "",
+          json: { ok: true, status: "informational" },
+        };
+      },
+    });
+
+    const [a, b] = await Promise.all([
+      execute({ jobId: "vendor-budget-impact", inputs: { before: beforeA, after: afterA }, outDir: shared }),
+      execute({ jobId: "vendor-budget-impact", inputs: { before: beforeA, after: afterB }, outDir: shared }),
+    ]);
+    assert.equal(a.ok, true, a.error);
+    assert.equal(b.ok, true, b.error);
+    assert.equal(a.analysis.outcome, "informational");
+    assert.notEqual(a.receipt.outputsDigest, b.receipt.outputsDigest);
+    assert.ok(a.outputs[0].path.startsWith(a.runOutDir));
+    assert.ok(b.outputs[0].path.startsWith(b.runOutDir));
+
+    writeFileSync(join(shared, "budget-impact.json"), '{"foreign":true}\n');
+    writeFileSync(join(shared, "budget-impact.md"), "foreign\n");
+    const { sha256File } = await import("../lib/digest.mjs");
+    const publishedJsonSha = sha256File(join(shared, "budget-impact.json"));
+    const aJson = a.receipt.outputs.find((o) => o.name === "budget-impact.json");
+    const bJson = b.receipt.outputs.find((o) => o.name === "budget-impact.json");
+    assert.notEqual(aJson.sha256, publishedJsonSha);
+    assert.notEqual(bJson.sha256, publishedJsonSha);
+    assert.equal(sha256File(aJson.path), aJson.sha256);
+    assert.equal(sha256File(bJson.path), bJson.sha256);
+  });
+
+  it("two CLI processes sharing --out-dir keep distinct run receipts", async () => {
+    const shared = mkdtempSync(join(tmpdir(), "puj-cli-alias-"));
+    const work = mkdtempSync(join(tmpdir(), "puj-cli-alias-in-"));
+    const afterA = join(work, "after-a.json");
+    const afterB = join(work, "after-b.json");
+    writeFileSync(afterA, readFileSync(after));
+    const afterBBody = JSON.parse(readFileSync(after, "utf8"));
+    afterBBody.rows = afterBBody.rows.map((row) =>
+      row.field === "desk-chat-output" ? { ...row, value: 99 } : row,
+    );
+    writeFileSync(afterB, `${JSON.stringify(afterBBody, null, 2)}\n`);
+
+    const spawnOne = (afterPath) =>
+      new Promise((resolve, reject) => {
+        const child = spawn(
+          process.execPath,
+          [cli, "run", "vendor-budget-impact", "--before", before, "--after", afterPath, "--out-dir", shared],
+          { cwd: REPO_ROOT, timeout: 120_000 },
+        );
+        let stdout = "";
+        let stderr = "";
+        child.stdout.on("data", (c) => {
+          stdout += c.toString("utf8");
+        });
+        child.stderr.on("data", (c) => {
+          stderr += c.toString("utf8");
+        });
+        child.on("error", reject);
+        child.on("close", (status) => resolve({ status, stdout, stderr }));
+      });
+
+    const [ra, rb] = await Promise.all([spawnOne(afterA), spawnOne(afterB)]);
+    assert.equal(ra.status, 0, ra.stderr + ra.stdout);
+    assert.equal(rb.status, 0, rb.stderr + rb.stdout);
+    const a = JSON.parse(ra.stdout);
+    const b = JSON.parse(rb.stdout);
+    assert.equal(a.ok, true, a.error);
+    assert.equal(b.ok, true, b.error);
+    assert.equal(a.contract, EXECUTION_CONTRACT_VERSION);
+    assert.notEqual(a.receipt.outputsDigest, b.receipt.outputsDigest);
+    assert.ok(a.outputs.every((o) => o.path.startsWith(a.runOutDir)));
+    assert.ok(b.outputs.every((o) => o.path.startsWith(b.runOutDir)));
+  });
 });

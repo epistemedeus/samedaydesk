@@ -3,30 +3,22 @@
 **Task:** W5-D01  
 **Repo:** `epistemedeus/samedaydesk`  
 **Branch:** `codex/w5-d01-20260911`  
-**HEAD:** `09a6535bf7716e3e965388b90a68314d26e75cb1`  
+**HEAD:** (branch tip after this commit)  
 **StartingRef:** `aeef964fa188443078958d9d6d393afae1d542ee` (SDS PR52)  
-**Tested kernel SHA:** `bccf34b3816ebe20d43823d0978308fd10f9bb33`  
 **PR:** https://github.com/epistemedeus/samedaydesk/pull/74 (draft)  
 **Pilot source:** `epistemedeus/pilot@95b3f3a47f5b1b69bd237e4c978fc3376221365d`  
-**Contract:** `samedaydesk.paid-useful-jobs.execution.v1`
+**D15 read-only:** `8564cd60f03d624f1f9c289c76c0ee424ba9df84` `experiments/wave5/d15/`  
+**Contract:** `samedaydesk.paid-useful-jobs.execution.v1` (unchanged version string)
 
 ## What
 
-Extended SDS52 `runPaidOffer` into one executor (`createExecutor`). Isolated staging and out dirs; caller `outDir` is published only when this run's expected artifacts are complete. Kit acquisition is inside the try path. Transport, analysis, and delivery are distinct fields. Thin CLI + loopback HTTP consume the same kernel. No competing runner. `sold` remains false.
+Kernel freeze: getters once; file bytes slurped at snapshot; copy before inspect; engine and receipt use staged/`runOutDir` bytes. Caller `outDir` is a publication copy, not delivery identity. D15 harness was not vendored.
 
-## Changed paths
+## Current-source findings
 
-- `server/paid-useful-jobs/` (wrapper kernel, contract, HTTP, tests, CONTRACT.md)
-- `experiments/wave5/d01/RECEIPT.md`
+At `6bed72dd` (and SDS52 `aeef964`): `inspectSample(request)` ran before the main try; `request.inputs` was read again at materialize (6 reads in a getter repro). Mutating the live file on a later getter executed the new bytes; receipt sha256 followed the mutation, not the first observation. After complete delivery, `outputs`/`outputsDigest` were re-read from the caller alias, so a concurrent publisher could become another run's receipt.
 
-## Current-source findings (SDS52 `wrapper.mjs` at `aeef964`)
-
-Reproduced as predicted by Pilot `REVIEW-INTEGRATION.md`:
-
-1. Kit `ensureUsefulJobsKit()` ran **before** the try block.
-2. Caller `outDir` was reused; outputs were `existsSync`-filtered (stale files could count as this run).
-3. Inline JSON SAMPLE **strings** were not inspected (`inspectSample` only parsed objects / existing files).
-4. Engine `ok === false` was collapsed into wrapper failure without delivery/analysis split.
+D15 `@8564cd60` proved that on **aeef964** plus its own freeze shim. That is not this kernel. Reproduced here against `runPaidOffer` at `6bed72dd`, then fixed in `server/paid-useful-jobs/` only.
 
 ## Tests
 
@@ -34,17 +26,12 @@ Reproduced as predicted by Pilot `REVIEW-INTEGRATION.md`:
 npm run test:paid-useful-jobs
 ```
 
-**PASS** — 46 pass, 0 fail, 0 skipped, 0 cancelled (`node --test server/paid-useful-jobs/test/*.test.mjs`).  
-Suites: continuity 8, execution-contract 12, journey 6, live-prices 3, seeded 9, wrappers 8.  
-Includes real CLI (`spawnSync` cli.mjs), real engine archive, loopback HTTP POST/GET, and `serve-execution.mjs` process `/health`. Missing deps were not skipped.
-
-Postgres is not required for this claim.
+**PASS** — 51 pass, 0 fail, 0 skipped (`node --test server/paid-useful-jobs/test/*.test.mjs`).  
+execution-contract 17 (was 12), continuity 8, journey 6, live-prices 3, seeded 9, wrappers 8.  
+Real CLI concurrent `--out-dir`, library getters, live FS change after snapshot, isolated `runOutDir` vs foreign publication.
 
 ## Integration limits
 
-- Tested implementation: `samedaydesk.paid-useful-jobs.execution.v1` at kernel SHA `bccf34b3816ebe20d43823d0978308fd10f9bb33`. Not a future sibling.
-- Remaining binding: D02–D16 consume this contract. D04 must drop `tools/managed-useful-jobs-order/` competing runner.
-- D08 Python client and D14 independent HTTP consumer are **not** this result; loopback HTTP here is a thin adapter over the same kernel, not D14.
-- M01 catalog/engine selection is not claimed; engines remain the PR51 archive.
-- No live settlement, catalog publication, production deploy, or new spend.
-- pstack: plugin cache has `setup-pstack/SKILL.md`; `~/.cursor/rules/pstack-models.mdc` absent; slash not invoked; no extra Cloud/Task agents (Root counts the cohort). Parent model from run-info: Cursor Grok 4.6 xhigh.
+- Same `execution.v1` fields. Receipts bind `runOutDir`; `publishedDir` is the optional alias copy.
+- D15 remains independent harness owner. D04/D08/D14 not claimed.
+- No multi-tenant hosting, live settle, deploy, or spend.

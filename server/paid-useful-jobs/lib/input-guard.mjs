@@ -1,8 +1,51 @@
-import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { extname, join, resolve } from "node:path";
 import { MAX_INPUT_BYTES } from "./pins.mjs";
 import { getJob, optionalKeys, requiredKeys } from "./jobs.mjs";
-import { sha256File } from "./digest.mjs";
+import { sha256Bytes } from "./digest.mjs";
+
+/**
+ * Evaluate caller getters once. Later inspect/materialize/execute must
+ * use this object, not the live request.
+ */
+export function freezeRequest(request = {}) {
+  const inputsSrc = request.inputs;
+  const inputs = {};
+  const fileBytes = {};
+  if (inputsSrc && typeof inputsSrc === "object" && !Array.isArray(inputsSrc)) {
+    for (const [key, value] of Object.entries(inputsSrc)) {
+      if (value && typeof value === "object") {
+        try {
+          inputs[key] = structuredClone(value);
+        } catch {
+          inputs[key] = value;
+        }
+      } else {
+        inputs[key] = value;
+      }
+      if (typeof value === "string" && !looksJsonText(value)) {
+        const abs = resolve(value);
+        if (existsSync(abs) && statSync(abs).isFile()) {
+          fileBytes[key] = readFileSync(abs);
+        }
+      }
+    }
+  }
+  return {
+    jobId: request.jobId,
+    example: request.example,
+    fundingIntent: request.fundingIntent,
+    funding: request.funding,
+    payment: request.payment,
+    settle: request.settle,
+    sold: request.sold,
+    liveSettle: request.liveSettle,
+    outDir: request.outDir,
+    executionId: request.executionId,
+    inputs,
+    fileBytes,
+  };
+}
 
 export class WrapperRefuse extends Error {
   constructor(code, message, detail = {}) {
@@ -127,24 +170,27 @@ export function materializeInputs(jobId, request, workDir) {
       if (st.isDirectory()) {
         throw refuse("input-not-file", `Input ${key} must be a file, not a directory`, { key, path: filePath });
       }
-      bytes = st.size;
+      const buf = request.fileBytes?.[key] || readFileSync(filePath);
+      bytes = buf.length;
       assertNotOversize(key, bytes);
       if (key === "input" || key === "next-run" || filePath.endsWith(".json")) {
-        try {
-          const text = readFileSync(filePath, "utf8");
-          if (text.trim().startsWith("{") || text.trim().startsWith("[")) JSON.parse(text);
-        } catch (err) {
-          throw refuse("input-malformed", `Input ${key} is not valid JSON: ${err.message}`, { key, path: filePath });
+        const text = buf.toString("utf8");
+        if (text.trim().startsWith("{") || text.trim().startsWith("[")) {
+          try {
+            JSON.parse(text);
+          } catch (err) {
+            throw refuse("input-malformed", `Input ${key} is not valid JSON: ${err.message}`, { key, path: filePath });
+          }
         }
       }
       const staged = join(workDir, `${key}${extname(filePath) || ""}`);
-      copyFileSync(filePath, staged);
+      writeFileSync(staged, buf);
       files[key] = staged;
       entries.push({
         name: key,
         path: filePath,
         bytes,
-        sha256: sha256File(staged),
+        sha256: sha256Bytes(buf),
         kind: "file",
         stagedPath: staged,
         sourcePath: filePath,

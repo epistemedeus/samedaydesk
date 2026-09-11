@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { getJob } from "./jobs.mjs";
-import { materializeInputs, WrapperRefuse } from "./input-guard.mjs";
+import { freezeRequest, materializeInputs, WrapperRefuse } from "./input-guard.mjs";
 import { inspectSample, wantsLiveSale } from "./sample-guard.mjs";
 import { classifyFunding, isFixturePayment, wouldSettleIfGuardOmitted } from "./funding.mjs";
 import { engineProvenance, ensureUsefulJobsKit, runEngineJob } from "./engine.mjs";
@@ -108,8 +108,9 @@ export function createExecutor(deps = {}) {
   const runEngine = deps.runEngine || runEngineJob;
 
   return async function runPaidOffer(request = {}) {
-    const executionId = request.executionId || randomUUID();
-    const jobId = request.jobId;
+    const frozen = freezeRequest(request);
+    const executionId = frozen.executionId || randomUUID();
+    const jobId = frozen.jobId;
     if (!jobId) {
       return rejection({
         jobId: null,
@@ -131,25 +132,32 @@ export function createExecutor(deps = {}) {
       });
     }
 
-    let kit;
-    try {
-      kit = await Promise.resolve(acquireKit());
-    } catch (err) {
-      return rejection({
-        jobId,
-        code: "kit-acquisition-failed",
-        message: err instanceof Error ? err.message : String(err),
-        transport: "acquisition-failed",
-        analysis: { status: "not-run", outcome: "not-run", identityVerified: null },
-        delivery: emptyDelivery(job.outputs || []),
-        executionId,
-      });
-    }
-
-    const sampleInfo = inspectSample(request, { kitRoot: kit });
+    let sampleInfo = { sample: false, reasons: [] };
 
     try {
-      const funding = classifyFunding(request, { sample: sampleInfo.sample });
+      const work = mkdtempSync(join(tmpdir(), `puj-${jobId}-`));
+      const runOutDir = mkdtempSync(join(tmpdir(), `puj-${jobId}-out-`));
+      const materialized = materializeInputs(jobId, frozen, join(work, "inputs"));
+      const example = materialized.example;
+
+      let kit;
+      try {
+        kit = await Promise.resolve(acquireKit());
+      } catch (err) {
+        return rejection({
+          jobId,
+          code: "kit-acquisition-failed",
+          message: err instanceof Error ? err.message : String(err),
+          transport: "acquisition-failed",
+          analysis: { status: "not-run", outcome: "not-run", identityVerified: null },
+          delivery: emptyDelivery(job.outputs || []),
+          executionId,
+        });
+      }
+
+      sampleInfo = inspectSample(frozen, { kitRoot: kit, entries: materialized.entries });
+
+      const funding = classifyFunding(frozen, { sample: sampleInfo.sample });
       if (funding.fundingState === "rejected") {
         return rejection({
           jobId,
@@ -162,7 +170,7 @@ export function createExecutor(deps = {}) {
         });
       }
 
-      if (wantsLiveSale(request)) {
+      if (wantsLiveSale(frozen)) {
         return rejection({
           jobId,
           code: "live-sale-not-available",
@@ -173,14 +181,8 @@ export function createExecutor(deps = {}) {
         });
       }
 
-      const work = mkdtempSync(join(tmpdir(), `puj-${jobId}-`));
-      const runOutDir = mkdtempSync(join(tmpdir(), `puj-${jobId}-out-`));
-
-      const materialized = materializeInputs(jobId, request, join(work, "inputs"));
-      const example = materialized.example;
-
       let continuity = null;
-      const payment = request.payment;
+      const payment = frozen.payment;
       if (payment && typeof payment === "object") {
         const payload = structuredClone(payment);
         const applied = await applyEnvelopeContinuity({
@@ -327,13 +329,12 @@ export function createExecutor(deps = {}) {
         };
       }
 
-      const publishedDir = publishCompleteOutputs(runOutDir, request.outDir, expected);
-      const outputFiles = listPresentOutputs(publishedDir, expected);
+      const publishedDir = publishCompleteOutputs(runOutDir, frozen.outDir, expected);
       const receipt = buildReceipt({
         jobId,
         kit,
         inputEntries: materialized.entries,
-        outputFiles,
+        outputFiles: thisRunOutputs,
         funding,
         sample: sampleInfo.sample || example,
         sampleReasons: sampleInfo.reasons,
@@ -341,7 +342,8 @@ export function createExecutor(deps = {}) {
         continuity,
         payment,
       });
-      receipt.outDir = publishedDir;
+      receipt.outDir = runOutDir;
+      receipt.publishedDir = frozen.outDir || null;
       receipt.contract = EXECUTION_CONTRACT_VERSION;
       receipt.transport = transport;
       receipt.analysis = analysis;
@@ -357,7 +359,7 @@ export function createExecutor(deps = {}) {
         sample: receipt.sample,
         sampleReasons: sampleInfo.reasons,
         purchaseAuthority: false,
-        outputs: outputFiles,
+        outputs: thisRunOutputs,
         receipt,
         engine: engine.json,
         liveSettlement: "out-of-scope",

@@ -48,7 +48,7 @@ Local HTTP (loopback only):
 | `delivery` | `{ status, complete, expected, present, missing }` from **this run's** isolated out dir |
 | `sample` / `sampleReasons` | SAMPLE / `--example` / kit SAMPLE provenance |
 | `executionId` | Retrieval id for the HTTP adapter |
-| `outputs` | Expected artifacts from **this** execution (published to `request.outDir` only when complete) |
+| `outputs` | Expected artifacts from **this** execution's isolated out dir (`runOutDir`). Caller `outDir` may receive a copy when complete; receipts do not re-hash that alias. |
 
 `ok: false` with `code` `sample-not-a-sale`, `missing-required-inputs`,
 `reserved-fixture-requires-payment`, `unknown-job`, `kit-acquisition-failed`,
@@ -61,9 +61,14 @@ and missing expected files are never that.
 
 ## Staging
 
-Kit acquisition is inside the executor try path. Inputs are copied into an
-isolated work directory; the engine writes to a fresh out directory. Caller
-`outDir` is overwritten only with this run's complete expected files.
+Kit acquisition is inside the executor try path. Caller getters are evaluated
+once (`freezeRequest`). File bytes are copied into an isolated work directory
+**before** `inspectSample` and the engine; inspect reads staged content (kit
+provenance still uses the original source path). The engine writes to a
+fresh out directory. `outputs` and `receipt.outputsDigest` are those isolated
+bytes. Caller `outDir` is a published copy of a complete run, not the identity
+of delivery. Two executions may share a publication path; each receipt still
+describes its own `runOutDir`.
 
 ## Tests
 
