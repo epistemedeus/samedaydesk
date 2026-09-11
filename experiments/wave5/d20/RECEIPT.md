@@ -6,7 +6,8 @@ Assignment branch name: `codex/w5-d20-20260911`
 Owned path: `experiments/wave5/d20/`
 Integration owner: W5-D01
 Phase: source
-Draft PR: opened from this branch against `fable/f08-paid-wrappers` so the diff stays in owned paths.
+Draft PR: https://github.com/epistemedeus/samedaydesk/pull/96 against `fable/f08-paid-wrappers` so the diff stays in owned paths.
+Head: `254cae1b7aa4e42238ea021e468747aec327c56d`
 
 ## Versions tested
 
