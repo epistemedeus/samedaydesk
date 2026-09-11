@@ -3,7 +3,6 @@
 Repo: `epistemedeus/samedaydesk`
 Owned paths: `tools/route-table-diff/`, `experiments/wave5/m04/RECEIPT.md`
 Feature branch: `cursor/w5-m04-co12-route-table-comparison-faa0`
-Feature tip: `4212678094de07408739d03525fae11315b3d97a`
 Starting ref: `7387eb677abd442dfab9081cb0ad95451fd2a762`
 Implementation: `386b8f9fc4745afdc520d1e650d520280936eb39`
 Draft PR: https://github.com/epistemedeus/samedaydesk/pull/88
