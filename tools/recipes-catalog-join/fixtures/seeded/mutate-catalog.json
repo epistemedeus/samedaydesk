@@ -1,0 +1,10 @@
+{
+  "schema": "samedaydesk.recipes-catalog-join.seeded-mutation.v1",
+  "kind": "fixture",
+  "note": "Illegal action: this join editing published recipes or catalog. Join is read-only.",
+  "action": "edit",
+  "targets": [
+    "client/public/for-agents/useful-jobs/catalog.json",
+    "tools/recurring-job-recipes/specs/source-change-alert.recipe.json"
+  ]
+}

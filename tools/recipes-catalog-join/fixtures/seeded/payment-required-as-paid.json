@@ -1,0 +1,9 @@
+{
+  "schema": "samedaydesk.recipes-catalog-join.seeded-payment.v1",
+  "kind": "fixture",
+  "note": "Illegal claim: offer-routing paymentRequired means paid. The published router keeps paid false.",
+  "jobType": "bounded_html_observation",
+  "paymentRequired": true,
+  "paid": true,
+  "executionAuthorized": true
+}

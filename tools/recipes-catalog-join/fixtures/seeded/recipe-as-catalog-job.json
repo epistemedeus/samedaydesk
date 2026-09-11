@@ -1,0 +1,7 @@
+{
+  "schema": "samedaydesk.recipes-catalog-join.seeded-claim.v1",
+  "kind": "fixture",
+  "note": "Illegal claim: a recipe id is a useful-jobs catalog job id. Fixture only; not a published catalog rewrite.",
+  "recipeId": "source-change-alert",
+  "claimedCatalogJobId": "source-change-alert"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "@samedaydesk/recipes-catalog-join",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Read-only conformance join of recurring-job-recipes, repeat-job families, useful-jobs catalog, and offer-routing. Does not reimplement recipes or settle payment.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "recipes-catalog-join": "./bin/join.mjs"
+  },
+  "scripts": {
+    "join": "node bin/join.mjs",
+    "test": "node --test --test-concurrency=1 test/*.test.mjs"
+  },
+  "license": "MIT"
+}
