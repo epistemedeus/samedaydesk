@@ -1,0 +1,29 @@
+repeat-job-binder notices
+=========================
+
+Pilot-authored binder, fixtures, and tests in this directory are MIT (LICENSE).
+
+This package does not copy a second useful-jobs or record-repeat kernel.
+It consumes the published PR51 archives already on SameDayDesk main:
+
+- client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz
+  2522418 bytes
+  sha256 6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51
+  Nested licenses remain inside that archive (useful-jobs LICENSE / NOTICE
+  and licenses/vendor/).
+
+- client/public/kit/record-repeat-job-ab84d79b0272.tar.gz
+  1253570 bytes
+  sha256 9814feabcda58c1f4a494a8919d9c6c2ac7d35b094ce5218261f976196c045ea
+  Nested s134/s163 vendor licenses remain inside that archive.
+
+I01 hash-terms contract (content-hash termsVersion, integer termsVersion
+refused) is an isolated adapter of:
+
+  epistemedeus/neomorphic-io pull/54
+  head 819fa637ecf5e5177c84efc16fcaa18d57017631
+  packs/funded-task-terms/src/{hash.mjs,canonical.mjs}
+  MIT. The earned-work kernel is not copied.
+
+No purchase, network, settlement, or scheduler authority is granted here.
+Samples and --example tickets are fixtures, not customers or live recurrence.
