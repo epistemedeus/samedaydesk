@@ -8,6 +8,8 @@ export const REFUSAL = Object.freeze({
   JOIN_IS_READ_ONLY: "join_is_read_only",
   EXECUTION_NOT_AUTHORIZED: "executionAuthorized_stays_false",
   OUT_PATH_FORBIDDEN: "out_path_hits_published_surface",
+  INCONSISTENT_NAMED_SOURCE: "inconsistent_named_source",
+  MISSING_NAMED_SOURCE: "missing_named_source",
 });
 
 export class JoinRefusal extends Error {
@@ -22,13 +24,16 @@ export class JoinRefusal extends Error {
   }
 
   toJSON() {
-    return {
+    const body = {
       ok: false,
+      outcome: "refused",
       code: this.code,
       message: this.message,
       executionAuthorized: false,
       paid: false,
     };
+    if (this.surface) body.surface = this.surface;
+    return body;
   }
 }
 
@@ -82,4 +87,20 @@ export function assertPaidFalse(value) {
       "paid must stay false; this wave is a nonsettling prototype",
     );
   }
+}
+
+export function refuseInconsistentSource({ message, surface, detail } = {}) {
+  throw new JoinRefusal(
+    REFUSAL.INCONSISTENT_NAMED_SOURCE,
+    message || "named input sources are internally inconsistent",
+    { surface: surface || null, detail: detail || null },
+  );
+}
+
+export function refuseMissingNamedSource({ name, path } = {}) {
+  throw new JoinRefusal(
+    REFUSAL.MISSING_NAMED_SOURCE,
+    `named source ${name || "input"} is missing`,
+    { surface: name || null, path: path || null },
+  );
 }

@@ -62,7 +62,7 @@ node --test --test-concurrency=1 test/*.test.mjs
 
 Equivalent: `npm test` in this directory (no extra install; Node >= 22).
 
-**PASS** — 9 tests, 0 fail.
+**PASS** — 16 tests, 0 fail, 0 skip.
 
 Evidence classes: filesystem join is `local-runtime-fs`. `--http` loads catalog,
 specs, and families over loopback HTTP of those published files (`local-runtime-http`
@@ -78,10 +78,16 @@ fixtures for illegal claims, not substitutes for the published surfaces.
 - I01 hash-terms contract bytes from Neo PR54 (repo not readable here).
 - Recipe execution / paid extract / F08 wrappers (out of scope).
 
+## W5-M10 amendment
+
+See `experiments/wave5/m10/RECEIPT.md`. Catalog/recipe digests now hash the
+bytes actually loaded. `--catalog` / `--recipe-specs` name the two inputs.
+Inconsistent sources refuse; `ok: true` is a joined analysis, not a hide.
+
 ## Next integration owner
 
-Root. Bind I01 hash-terms if Neo PR54 is attached. Do not merge this as a
-recipe or catalog rewrite.
+W5-M01. Bind I01 hash-terms if Neo PR54 is attached. Do not merge this as a
+recipe or catalog rewrite. This join does not vendor PR52 wrapper source.
 
 ## Hard stops honored
 

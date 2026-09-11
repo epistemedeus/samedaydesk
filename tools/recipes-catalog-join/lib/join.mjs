@@ -1,6 +1,3 @@
-import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import { PUBLISHED } from "./paths.mjs";
 import { adjacentCatalogIds } from "./families.mjs";
 import {
@@ -11,7 +8,11 @@ import {
   loadRunnerRecipes,
   loadRouter,
 } from "./adapters.mjs";
-import { assertExecutionUnauthorized, assertPaidFalse } from "./refuse.mjs";
+import {
+  assertExecutionUnauthorized,
+  assertPaidFalse,
+  refuseInconsistentSource,
+} from "./refuse.mjs";
 
 export const SCHEMA = "samedaydesk.recipes-catalog-join.v1";
 
@@ -21,10 +22,6 @@ const DEFAULT_ROUTE_JOBS = Object.freeze([
   { type: "complete_issue_discussion", source: "router-api", constraints: ["no_payment"] },
   { type: "supplied_issue_brief", source: "router-api", constraints: ["offline_only"] },
 ]);
-
-function sha256File(path) {
-  return createHash("sha256").update(readFileSync(path)).digest("hex");
-}
 
 function unique(values) {
   return [...new Set(values)];
@@ -70,9 +67,11 @@ function classifyEvidence(parts) {
   return "mixed";
 }
 
-function specFilePath(specEntry) {
-  if (specEntry.path && !String(specEntry.path).startsWith("http")) return specEntry.path;
-  return join(PUBLISHED.recipeSpecsDir, specEntry.fileName);
+function requireDigest(value, label) {
+  if (typeof value !== "string" || !/^[0-9a-f]{64}$/.test(value)) {
+    throw new Error(`${label}_source_bytes_unbound`);
+  }
+  return value;
 }
 
 export async function joinRecipesCatalog(options = {}) {
@@ -92,6 +91,7 @@ export async function joinRecipesCatalog(options = {}) {
   const hashTerms = options.hashTerms || defaultHashTerms();
 
   const catalog = catalogLoad.catalog;
+  const catalogDigest = requireDigest(catalogLoad.sha256, "catalog");
   const catalogJobs = catalog.jobs.map((job) => ({
     id: job.id,
     title: job.title,
@@ -100,10 +100,30 @@ export async function joinRecipesCatalog(options = {}) {
     purchaseAuthority: catalog.runtime?.purchaseAuthority === true,
     schedulerDaemon: catalog.runtime?.schedulerDaemon === true,
   }));
-  const catalogIdSet = new Set(catalogJobs.map((j) => j.id));
+  const catalogJobIds = catalogJobs.map((j) => j.id);
+  const catalogIdSet = new Set(catalogJobIds);
+  if (catalogJobIds.length !== catalogIdSet.size) {
+    refuseInconsistentSource({
+      message: "catalog source has duplicate job ids",
+      surface: "catalog",
+      detail: { jobIds: catalogJobIds },
+    });
+  }
+
+  const specDigests = Object.fromEntries(
+    specLoad.specs.map((s) => [s.spec.recipeId, requireDigest(s.sha256, `recipe:${s.spec.recipeId}`)]),
+  );
+  const specIdList = specLoad.specs.map((s) => s.spec.recipeId);
+  if (new Set(specIdList).size !== specIdList.length) {
+    refuseInconsistentSource({
+      message: "recipe source has duplicate spec ids",
+      surface: "recipes",
+      detail: { specIds: specIdList },
+    });
+  }
 
   const runnerById = new Map((runnerLoad.recipes || []).map((meta) => [meta.recipeId, meta]));
-  const specIds = new Set(specLoad.specs.map((s) => s.spec.recipeId));
+  const specIds = new Set(specIdList);
   const recipeIds = unique([
     ...specLoad.specs.map((s) => s.spec.recipeId),
     ...[...runnerById.keys()],
@@ -282,10 +302,18 @@ export async function joinRecipesCatalog(options = {}) {
   const familyDocIds = familyLoad.families.map((f) => f.id).sort();
   const discoveryIds = [...familyLoad.discoveryIds].sort();
   const familyIdAgreement = familyDocIds.join(",") === discoveryIds.join(",");
+  if (!familyIdAgreement) {
+    refuseInconsistentSource({
+      message: "family document ids disagree with discovery families",
+      surface: "families",
+      detail: { familyDocIds, discoveryIds },
+    });
+  }
 
   return {
     schema: SCHEMA,
     ok: true,
+    outcome: "joined",
     executionAuthorized: false,
     paid: false,
     paymentRequiredFromRoutingIsPaid: false,
@@ -300,10 +328,22 @@ export async function joinRecipesCatalog(options = {}) {
       recipeSpecs: specLoad.specs.map((s) => s.fileName),
       familiesDoc: familyLoad.familiesDoc || PUBLISHED.familiesDoc,
       familyDiscovery: familyLoad.familyDiscovery || PUBLISHED.familyDiscovery,
-      catalogSha256: sha256File(PUBLISHED.catalog),
-      recipeSpecSha256: Object.fromEntries(
-        specLoad.specs.map((s) => [s.spec.recipeId, sha256File(specFilePath(s))]),
-      ),
+      catalogSha256: catalogDigest,
+      recipeSpecSha256: specDigests,
+      familiesSha256: familyLoad.familiesSha256 || null,
+      discoverySha256: familyLoad.discoverySha256 || null,
+      namedInputs: {
+        catalog: {
+          path: catalogLoad.path || null,
+          sha256: catalogDigest,
+          evidenceClass: catalogLoad.evidenceClass || null,
+        },
+        recipes: {
+          specFiles: specLoad.specs.map((s) => s.fileName),
+          sha256: specDigests,
+          evidenceClass: specLoad.evidenceClass || null,
+        },
+      },
       loaders: {
         catalog: catalogLoad.evidenceClass || null,
         recipeSpecs: specLoad.evidenceClass || null,
