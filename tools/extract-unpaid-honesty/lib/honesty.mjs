@@ -5,7 +5,7 @@ import { ensureUsefulJobsKit } from "./kit.mjs";
 import { spawnUsefulJob, spawnNodeScript } from "./spawn.mjs";
 import { buildReport } from "./report.mjs";
 import { refusePaidRetry } from "./refuse.mjs";
-import { TOOL_ROOT, USEFUL_JOBS_JOB } from "./pins.mjs";
+import { TOOL_ROOT, USEFUL_JOBS_JOB, EXTRACT_EXAMPLE_URL } from "./pins.mjs";
 
 export { createAdapters, loadHonestyInputs, readJson } from "./load.mjs";
 export { ensureUsefulJobsKit } from "./kit.mjs";
@@ -46,7 +46,7 @@ export async function probeExtractFetch(options = {}) {
       script,
       env: {
         ...intercept.childEnv,
-        HONESTY_PROBE_URL: options.url || intercept.childEnv.HONESTY_PROBE_URL,
+        HONESTY_PROBE_URL: options.url || intercept.childEnv.HONESTY_PROBE_URL || EXTRACT_EXAMPLE_URL,
       },
     });
     const log = loadLog(intercept.logPath);
