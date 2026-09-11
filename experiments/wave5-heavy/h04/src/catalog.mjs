@@ -1,5 +1,5 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { EXAMPLES_DIR, FAMILIES } from "./paths.mjs";
 
 function listDirs(dir) {
@@ -16,6 +16,25 @@ function listDirs(dir) {
 
 function readJson(file) {
   return JSON.parse(readFileSync(file, "utf8"));
+}
+
+function findExampleJsonFiles(root) {
+  const out = [];
+  const walk = (dir) => {
+    let ents;
+    try {
+      ents = readdirSync(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const ent of ents) {
+      const path = join(dir, ent.name);
+      if (ent.isDirectory()) walk(path);
+      else if (ent.isFile() && ent.name === "example.json") out.push(path);
+    }
+  };
+  walk(root);
+  return out.sort();
 }
 
 /**
@@ -43,19 +62,19 @@ export function loadCatalog({ examplesDir = EXAMPLES_DIR } = {}) {
       missingFamilies.push(family);
       continue;
     }
-    const children = listDirs(familyDir);
-    if (children.length === 0) {
-      // Family folder exists but has no examples yet — not an error.
+    const found = findExampleJsonFiles(familyDir);
+    if (found.length === 0) {
       continue;
     }
-    for (const name of children) {
-      const dir = join(familyDir, name);
-      const file = join(dir, "example.json");
-      if (!existsSync(file)) continue;
+    for (const file of found) {
+      const dir = dirname(file);
       try {
         const data = readJson(file);
-        const id = data.id || name;
+        const id = data.id || basename(dir);
         const expectedReportPath = join(dir, "expected-report.json");
+        const expectedFactsPath = join(dir, "expected-facts.json");
+        const expectedRefusalPath = join(dir, "expected-refusal.json");
+        const expectedNoChangePath = join(dir, "expected-no-change.json");
         examples.push({
           ...data,
           id,
@@ -63,9 +82,12 @@ export function loadCatalog({ examplesDir = EXAMPLES_DIR } = {}) {
           dir,
           examplePath: file,
           expectedReportPath: existsSync(expectedReportPath) ? expectedReportPath : null,
+          expectedFactsPath: existsSync(expectedFactsPath) ? expectedFactsPath : null,
+          expectedRefusalPath: existsSync(expectedRefusalPath) ? expectedRefusalPath : null,
+          expectedNoChangePath: existsSync(expectedNoChangePath) ? expectedNoChangePath : null,
         });
       } catch (err) {
-        errors.push({ family, id: name, path: file, error: err.message });
+        errors.push({ family, id: basename(dir), path: file, error: err.message });
       }
     }
   }

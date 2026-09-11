@@ -1,0 +1,153 @@
+{
+  "exampleId": "h04-pub-lock-02",
+  "family": "lockfile-public",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "mapping": {
+    "m01EngineId": "lockfile-pin-delta",
+    "mapping": "ok",
+    "note": null
+  },
+  "oracles": {
+    "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-02/expected-facts.json",
+    "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-02/expected-refusal.json",
+    "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-02/expected-no-change.json"
+  },
+  "m01EngineId": "lockfile-pin-delta",
+  "skipped": false,
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "lockfile-pin-delta",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-02/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-02/after.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-pub-lock-02/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "ok": true,
+  "durationMs": 78,
+  "stdoutBytes": 1275,
+  "stderrBytes": 0,
+  "outputs": {
+    "files": [
+      {
+        "name": "catalog-receipt.json",
+        "bytes": 1275,
+        "sha256": "bcec782ade0237113254db5299dcd028e1faaff36cf6ab77e5c4e77d47caff46"
+      },
+      {
+        "name": "pin-delta.json",
+        "bytes": 3931,
+        "sha256": "c092d2acb607cd9f283585b67c23185763c5f42b749a85febb42342c8f41e909"
+      },
+      {
+        "name": "pin-delta.md",
+        "bytes": 1341,
+        "sha256": "7aaedee8574093578f5535d8901bdda8469d960371d49033dcd493dfec868e86"
+      }
+    ],
+    "totalBytes": 6547
+  },
+  "stdoutStatus": "actionable",
+  "outcomeKind": "analysis",
+  "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+  "schemaMatchOk": true,
+  "factsCompare": {
+    "result": "match",
+    "checks": [
+      {
+        "fact": "node_modules/got",
+        "op": "changed",
+        "idNeedles": [
+          "got",
+          "got"
+        ],
+        "presentIds": [
+          "got",
+          "got"
+        ],
+        "presentValues": [
+          "sha1-JAzQV4WpoY5WHcG0S0HHY+8ejbA=",
+          "sha1-JAzQV4WpoY5WHcG0S0HHY+8ejbA=",
+          "http://registry.npmjs.org/got/-/got-6.7.1.tgz",
+          "https://registry.npmjs.org/got/-/got-6.7.1.tgz"
+        ],
+        "result": "match"
+      },
+      {
+        "fact": "node_modules/path-is-absolute",
+        "op": "changed",
+        "idNeedles": [
+          "path-is-absolute",
+          "path-is-absolute"
+        ],
+        "presentIds": [
+          "path-is-absolute",
+          "path-is-absolute"
+        ],
+        "presentValues": [
+          "sha1-F0uSaHNVNP+8es5r9TpanhtcX18=",
+          "sha1-F0uSaHNVNP+8es5r9TpanhtcX18=",
+          "http://registry.npmjs.org/path-is-absolute/-/path-is-absolute-1.0.1.tgz",
+          "https://registry.npmjs.org/path-is-absolute/-/path-is-absolute-1.0.1.tgz"
+        ],
+        "result": "match"
+      },
+      {
+        "fact": "node_modules/strip-eof",
+        "op": "changed",
+        "idNeedles": [
+          "strip-eof",
+          "strip-eof"
+        ],
+        "presentIds": [
+          "strip-eof",
+          "strip-eof"
+        ],
+        "presentValues": [
+          "sha1-u0P/VZim6wXYm1n80SnJgzE2Br8=",
+          "sha1-u0P/VZim6wXYm1n80SnJgzE2Br8=",
+          "http://registry.npmjs.org/strip-eof/-/strip-eof-1.0.0.tgz",
+          "https://registry.npmjs.org/strip-eof/-/strip-eof-1.0.0.tgz"
+        ],
+        "result": "match"
+      }
+    ]
+  },
+  "refusalCompare": {
+    "result": "match",
+    "expected": false,
+    "actualRefused": false
+  },
+  "noChange": {
+    "isNoChangeControl": false,
+    "unchangedMustOmit": [
+      {
+        "id": "node_modules/@11ty/dependency-tree",
+        "name": "@11ty/dependency-tree",
+        "version": "1.0.0",
+        "integrity": "sha512-2FWYlkphQ/83MG7b9qqBJfJJ0K9zupNz/6n4EdDuNLw6hQHGp4Sp4UMDRyBvA/xCTYDBaPSuSjHuu45tSujegg==",
+        "resolved": "https://registry.npmjs.org/@11ty/dependency-tree/-/dependency-tree-1.0.0.tgz"
+      },
+      {
+        "id": "node_modules/@babel/code-frame",
+        "name": "@babel/code-frame",
+        "version": "7.8.3",
+        "integrity": "sha512-a9gxpmdXtZEInkCSHUJDLHZVBgb1QS0jhss4cPP93EW7s+uC5bikET2twEF3KV+7rDblJcmNvTR7VJejqd2C2g==",
+        "resolved": "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.8.3.tgz"
+      }
+    ],
+    "enginePinTermsOmitResolved": true,
+    "notes": "Engine hashes name+version+integrity only. These resolved-only pins are source facts even if the engine reports no pin-terms delta."
+  },
+  "reportCompare": {
+    "result": "unknown",
+    "reason": "expected-report-missing",
+    "facts": [],
+    "expectedPresent": false
+  }
+}

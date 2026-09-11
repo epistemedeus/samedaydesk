@@ -1,0 +1,50 @@
+{
+  "id": "h04-page-03",
+  "family": "page-facts",
+  "kind": "change",
+  "method": "raw-bytes",
+  "quotedSourceMdShas": {
+    "repo": "epistemedeus/samedaydesk",
+    "path": "server/lib/spa-route-shells.js",
+    "beforeSha": "3693e7c2ea49c44c8c8f35f24c3916de5b4bc8e0",
+    "afterSha": "3c96d3137f815035ed4a6467d28c8041916a9aa8"
+  },
+  "inputsHashed": {
+    "before": "d86f7e2295c4465d12f1ea802116f5076613d031207cb7ec82013ffb1c596840",
+    "after": "9d96f212273128b0207921a8b6ce56aa6c0c87de5f0222a271aacd56d061a70c",
+    "job": "9375feb9275a428f78421affc118ba97ed93f5ad5689cc5d94ede980ffa01e0a",
+    "excerptBefore": "d994fadf663810c7128c48ee4591e9dd6e33ff4050feef1041716d2b976471be",
+    "excerptAfter": "76732abaedd38cc8e4abeac450a13932f337e677a9e8852fb9852dfc5108777f"
+  },
+  "sourceFacts": [
+    {
+      "id": "title",
+      "op": "unchanged",
+      "field": "title",
+      "before": "Inspected x402 routes | SameDayDesk",
+      "after": "Inspected x402 routes | SameDayDesk"
+    },
+    {
+      "id": "headings.h1",
+      "op": "unchanged",
+      "field": "headings",
+      "path": "/headings/h1",
+      "before": "Inspected routes, not a certificate",
+      "after": "Inspected routes, not a certificate"
+    },
+    {
+      "id": "description",
+      "op": "changed",
+      "field": "description",
+      "before": "Build-time inspection list of unpaid 402 terms, last check time, contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree.",
+      "after": "Build-time inspection list of current SameDayDesk unpaid 402 evidence, including an OpenAPI operation observation and matching fresh CDP Bazaar evidence."
+    },
+    {
+      "id": "text",
+      "op": "changed",
+      "field": "text",
+      "before": "Each row records seller, route, unpaid 402 price and network, last check time, contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree. The badge is verified, drift, or unverified.",
+      "after": "Each row has a live unpaid 402 check and contract hash. It records whether the operation was observed in OpenAPI and whether a matching CDP Bazaar row was observed within seven days of the crawl. The badge is verified, drift, or unverified."
+    }
+  ]
+}

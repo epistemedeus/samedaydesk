@@ -1,0 +1,96 @@
+{
+  "id": "h04-schema-03",
+  "family": "schema-webhook",
+  "kind": "no-change-control",
+  "method": "raw-bytes",
+  "quotedSourceMdShas": {
+    "repo": "cloudevents/spec",
+    "path": "json-format.md",
+    "beforeSha": "d665aa6402a7ed5d0e506dc1c3cc408dba88d085",
+    "afterSha": "d665aa6402a7ed5d0e506dc1c3cc408dba88d085",
+    "tag": "v1.0"
+  },
+  "inputsHashed": {
+    "before": "5cb97a4118155b1635e81169761c256667d8e981d9bb00eeb49219a59ec1a310",
+    "after": "2a0b5af829f2e29bf4bed018f160ddd9a7c461a75b6f6815a779e4197cdf2e62",
+    "used": "29dec69ef5e8c6fdb7b645ab37a0a2389b5295217e26931c5e216079bec2d1a6"
+  },
+  "sourceFacts": [
+    {
+      "id": "id",
+      "op": "unchanged",
+      "used": true,
+      "pointer": "/id",
+      "beforeType": "string",
+      "afterType": "string",
+      "before": "A234-1234-1234",
+      "after": "A234-1234-1234"
+    },
+    {
+      "id": "type",
+      "op": "unchanged",
+      "used": true,
+      "pointer": "/type",
+      "beforeType": "string",
+      "afterType": "string",
+      "before": "com.example.someevent",
+      "after": "com.example.someevent"
+    },
+    {
+      "id": "source",
+      "op": "unchanged",
+      "used": true,
+      "pointer": "/source",
+      "beforeType": "string",
+      "afterType": "string",
+      "before": "/mycontext",
+      "after": "/mycontext"
+    },
+    {
+      "id": "specversion",
+      "op": "unchanged",
+      "used": true,
+      "pointer": "/specversion",
+      "beforeType": "string",
+      "afterType": "string",
+      "before": "1.0",
+      "after": "1.0"
+    }
+  ],
+  "ignoredUnused": [
+    {
+      "pointer": "/debug",
+      "op": "added",
+      "used": false,
+      "after": "formatter-trace",
+      "why": "unused sibling"
+    },
+    {
+      "op": "key-order",
+      "beforeKeys": [
+        "specversion",
+        "type",
+        "source",
+        "id",
+        "time",
+        "comexampleextension1",
+        "comexampleothervalue",
+        "datacontenttype",
+        "data"
+      ],
+      "afterKeys": [
+        "debug",
+        "id",
+        "source",
+        "specversion",
+        "type",
+        "time",
+        "comexampleextension1",
+        "comexampleothervalue",
+        "datacontenttype",
+        "data"
+      ],
+      "why": "key reorder is not used-path drift"
+    }
+  ]
+}

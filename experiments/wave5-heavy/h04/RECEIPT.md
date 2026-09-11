@@ -7,7 +7,7 @@
 | Owned path | `experiments/wave5-heavy/h04/` only |
 | Native model | `grok-4.6-build` |
 | Parent session | `03efef00-6fd3-4435-b2d1-1b32a46661b8` |
-| Child count chosen | **9** (6 immediate + 3 expand; RAM/disk reserve held) |
+| Child count chosen | **9** first delivery + **6** M01 continuation (15 native children total) |
 | Pilot pin | `95b3f3a47f5b1b69bd237e4c978fc3376221365d` |
 
 ## Child session ids
@@ -21,6 +21,15 @@
 7. `01a092b3-0d0c-7702-9cbb-e552273db7fc` — offer candidates + evidence bind
 8. `01a092b3-0d0c-7702-9cbb-e56b82beb1f8` — extra tests + SDS52 OpenAPI run
 9. `01a092b3-0d0c-7702-9cbb-e57ac61fd344` — persist child engine artifacts into `runs/`
+
+### M01 continuation children (this resume)
+
+10. `01a092c7-66cf-7532-8e7c-eac8259c2724` — M01 composition CLI inventory
+11. `01a092c7-66cf-7532-8e7c-ead0ea041b1d` — raw-byte oracles for 12 examples
+12. `01a092c7-66cf-7532-8e7c-eae70c6505cb` — public lockfile integrity/resolved/addition
+13. `01a092c7-66cf-7532-8e7c-eaf81f75895f` — public lockfile remove/noise/refuse/large
+14. `01a092c7-66cf-7532-8e7c-eb0821da05d2` — non-CVE language correction
+15. `01a092c7-66cf-7532-8e7c-eb103907a82c` — CLI/library equivalence
 
 ## RAM / disk vs reserve
 
@@ -40,11 +49,11 @@ useful-jobs archive sha256 `6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6
 
 ## Tests / coverage
 
-`cd experiments/wave5-heavy/h04 && npm test` → **17 pass, 0 fail** (`node:test`). Catalog `run`: **12 examples, 12 match**. Smoke recorded under `runs/engine-smoke/` (SAMPLE not a customer job).
+`cd experiments/wave5-heavy/h04 && npm test` → **22 pass, 0 fail**. Prior W4/SDS52 `run`: 12/12 fact match. M01 `m01` replay: 18 CLI runs (11 original + 7 public lockfile) + 1 mapping skip (`h04-route-02`). Measurements: `runs/measurements/m01-replay.json` (wall-clock ms and output bytes; not a hosting bill).
 
 ## Strongest offer candidates
 
-1. **h04-lock-01** — `concurrently`/`qs`/`shell-quote` version+integrity bumps; operator must not `npm ci` as if pins were unchanged.
+1. **h04-lock-01** — `concurrently`/`qs`/`shell-quote` version+integrity+resolved pin-deltas; operator must not `npm ci` as if pins were unchanged. SDS commit subject is `fix(deps): update vulnerable locked dependencies` (quoted). The commit message claims vulnerable deps; H04 does not join advisories. Not a CVE proof / not a vulnerability scanner.
 2. **h04-schema-01** — JSON Schema `exclusiveMinimum` boolean→number; boolean emitters break.
 3. **h04-page-03** — `/x402/verified` inspection criterion becomes 7-day CDP Bazaar freshness; same SHAs as a route no-change control.
 
@@ -60,6 +69,28 @@ useful-jobs archive sha256 `6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6
 SDS52 `api-upgrade-brief` on caller OpenAPI (`h04-route-02`) is `actionable`, `sold=false`, `fundingState=unfunded`, +3 used ops (`consider-adoption`). W4 engines produce decision-changing briefs on real public/SDS revision pairs without copying M06–M09 corpora.
 
 **Next owner:** W5-D01 / Root — bind these twelve jobs into the SDS52 supplied-input contract if an offer is published. Do not treat SAMPLE smoke as a sale. Do not merge to production from this receipt.
+
+## M01 composition (continuation)
+
+| Item | Value |
+| --- | --- |
+| Composition SHA | `a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e` (observed `/tmp/w5-h04/ro-m01`) |
+| Replay CLI | `node experiments/wave5/m01/bin/run-job.mjs` |
+| Library | `runCatalogJob` ≡ `invokeEngine` on domain counts/status; `pin-delta.json` sha256 differs at `generatedAt` only |
+| Mapping failure | `h04-route-02` not in M01 four; schema engine probe `not-json` on YAML OpenAPI |
+| New lockfile cases | 7 (mocha integrity, mocha resolved http→https, axios add, webpack-cli remove, npm/cli noise, berry yarn.lock refuse, SDS large partial) |
+| Language | Version bumps are pin-deltas, not CVEs without advisory join (`offers/LANGUAGE.md`) |
+| Lockfile still first offer | Yes. M01 `firstOffer=lockfile-pin-delta`. Replay covers add/remove/integrity/resolved/noise/refuse/large with honest analysis/refuse. Schema/route/page remain later SKUs (used-path only; OpenAPI not this job; page never claims fresh fetch). |
+
+Strongest invocations (cwd `/tmp/w5-h04/ro-m01`):
+
+```bash
+node experiments/wave5/m01/bin/run-job.mjs lockfile-pin-delta \
+  --before <h04-lock-01/before.json> --after <h04-lock-01/after.json> --out-dir "$OUT"
+node experiments/wave5/m01/bin/run-job.mjs lockfile-pin-delta \
+  --before <h04-pub-lock-01/before.json> --after <h04-pub-lock-01/after.json> --out-dir "$OUT"
+node experiments/wave5/m01/bin/catalog.mjs contract
+```
 
 ## PR / compare
 

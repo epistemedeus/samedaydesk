@@ -1,0 +1,35 @@
+{
+  "id": "h04-lock-pub-b04-removal",
+  "family": "lockfile-public",
+  "title": "webpack-cli WDS v6: packages keys removed from lockfileVersion 3",
+  "kind": "change",
+  "engines": [
+    "w4-lockfile-pin-delta"
+  ],
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "changedFact": "webpack-cli package-lock.json drops eight packages-map keys (array-flatten@1.1.1, binary-extensions@2.3.0, core-util-is@1.0.3, destroy@1.2.0, detect-node@2.1.0, faye-websocket@0.11.4, follow-redirects@1.16.0, http-proxy@1.18.1) when webpack-dev-server moves to v6; those keys exist at cbd3a24 and are absent at 3664b9d.",
+  "expectedStatus": "actionable",
+  "expectedHighlights": [
+    "array-flatten@1.1.1",
+    "binary-extensions@2.3.0",
+    "core-util-is@1.0.3",
+    "destroy@1.2.0",
+    "detect-node@2.1.0",
+    "faye-websocket@0.11.4",
+    "follow-redirects@1.16.0",
+    "http-proxy@1.18.1",
+    "array-flatten",
+    "http-proxy",
+    "faye-websocket"
+  ],
+  "source": {
+    "repo": "webpack/webpack-cli",
+    "beforeSha": "cbd3a24dbdadd84e3614f9aff1068af2f1275cfe",
+    "afterSha": "3664b9d8239834f63124783307dd3e93953d6dd9",
+    "path": "package-lock.json",
+    "note": "webpack/webpack tracks yarn.lock, not package-lock.json; this npm lockfileVersion 3 pair is the webpack-org stand-in."
+  }
+}

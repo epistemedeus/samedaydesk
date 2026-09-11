@@ -1,0 +1,63 @@
+{
+  "schema": "samedaydesk.json-schema-webhook-drift.v1",
+  "schemaVersion": 2,
+  "kind": "webhook-example",
+  "usedOnly": true,
+  "notOpenApi": true,
+  "notApiUpgradeBrief": true,
+  "purchaseAuthority": false,
+  "sold": false,
+  "customerBrief": false,
+  "sample": false,
+  "exampleMode": false,
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "payment": {
+    "settling": false,
+    "prototype": true,
+    "paid": false
+  },
+  "provenance": "caller-input",
+  "inputs": {
+    "before": "sha256:5cb97a4118155b1635e81169761c256667d8e981d9bb00eeb49219a59ec1a310",
+    "after": "sha256:2a0b5af829f2e29bf4bed018f160ddd9a7c461a75b6f6815a779e4197cdf2e62",
+    "used": "sha256:29dec69ef5e8c6fdb7b645ab37a0a2389b5295217e26931c5e216079bec2d1a6",
+    "beforeBytes": 305,
+    "afterBytes": 308,
+    "usedBytes": 62
+  },
+  "impact": {
+    "breaking": [],
+    "compatible": [],
+    "added": [],
+    "deleted": [],
+    "unknown": [],
+    "unchangedCount": 4,
+    "informationalCount": 0,
+    "ignoredUnused": true
+  },
+  "status": "informational",
+  "ok": true,
+  "appId": "json-schema-webhook-drift",
+  "summary": "No structural used-path drift. Not a runtime compatibility proof.",
+  "uncertainties": [],
+  "laterIntegrationBindings": [
+    {
+      "id": "useful-jobs-catalog",
+      "status": "not-bound",
+      "note": "PR51 catalog is contrast only. Root owns catalog admission."
+    },
+    {
+      "id": "i01-hash-terms",
+      "status": "pinned-hasher",
+      "note": "Neo PR54 hashTermsVersion contract. Earned-work kernel not imported."
+    }
+  ],
+  "caller": {
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "termsVersion": "sha256:726b9b9f83d3b825b32225ca0652b68eba29d935e44a26bd26f1c73771c4da27"
+}

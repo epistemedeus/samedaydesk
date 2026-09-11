@@ -1,0 +1,21 @@
+{
+  "id": "h04-pub-lock-01",
+  "family": "lockfile-public",
+  "title": "mocha glob-v8 lock: sha1→sha512 integrity rewrite at unchanged versions",
+  "kind": "integrity-source",
+  "engines": [
+    "m01-lockfile-pin-delta"
+  ],
+  "m01EngineId": "lockfile-pin-delta",
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "changedFact": "archy@1.0.0, ansi-wrap@0.1.0, and array-uniq@1.0.3 keep the same version and resolved tarball while integrity rewrites sha1→sha512.",
+  "source": {
+    "repo": "mochajs/mocha",
+    "beforeSha": "202e9b8b4d1b6611c96d95d631c49d631d88c827",
+    "afterSha": "d722d0038602eeb6968616b49ec79288100fdc72",
+    "path": "package-lock.json"
+  }
+}

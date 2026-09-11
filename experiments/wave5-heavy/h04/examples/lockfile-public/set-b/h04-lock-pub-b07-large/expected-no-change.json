@@ -1,0 +1,15 @@
+{
+  "expected": true,
+  "kind": "self-diff-large-lockfileVersion-3",
+  "sameNameVersionIntegrityResolved": true,
+  "note": "Full public blob self-compare. One pin (vendor/@neomorphic/correspondence) lacks integrity, so engine status is partial while added/removed/changed stay 0.",
+  "counts": {
+    "beforePins": 160,
+    "afterPins": 160,
+    "added": 0,
+    "removed": 0,
+    "changed": 0,
+    "unchanged": 160,
+    "missingIntegrity": 1
+  }
+}

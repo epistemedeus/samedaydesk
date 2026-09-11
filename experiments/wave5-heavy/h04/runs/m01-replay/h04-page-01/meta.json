@@ -1,0 +1,177 @@
+{
+  "exampleId": "h04-page-01",
+  "family": "page-facts",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "mapping": {
+    "m01EngineId": "page-change-offline-job",
+    "mapping": "ok",
+    "note": null
+  },
+  "oracles": {
+    "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-01/expected-facts.json",
+    "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-01/expected-refusal.json",
+    "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-01/expected-no-change.json"
+  },
+  "m01EngineId": "page-change-offline-job",
+  "skipped": false,
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "page-change-offline-job",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-01/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-01/after.json",
+    "--job",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-01/job.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-page-01/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "ok": true,
+  "durationMs": 81,
+  "stdoutBytes": 8350,
+  "stderrBytes": 0,
+  "outputs": {
+    "files": [
+      {
+        "name": "catalog-receipt.json",
+        "bytes": 8350,
+        "sha256": "8a58bee16c742753feb588700feb5f457b9ca65cb87a6d184bf5cb4f0d130d4c"
+      },
+      {
+        "name": "page-change.json",
+        "bytes": 6978,
+        "sha256": "e82506a4c395a07ed62784a86d5ab184b9e80e7e9ab28f57506205c567259e71"
+      },
+      {
+        "name": "page-change.md",
+        "bytes": 1902,
+        "sha256": "f9324521893d63d6cda3811b0c852e193e9275623f17677775a7ae008074e0be"
+      }
+    ],
+    "totalBytes": 17230
+  },
+  "stdoutStatus": "changed",
+  "outcomeKind": "analysis",
+  "pinSha": "fec7bc04ac4419f8e7ce40f2613314e6953af6bc",
+  "schemaMatchOk": true,
+  "factsCompare": {
+    "result": "match",
+    "checks": [
+      {
+        "fact": "title",
+        "op": "changed",
+        "idNeedles": [
+          "title"
+        ],
+        "presentIds": [
+          "title"
+        ],
+        "presentValues": [
+          "Free JSON-LD / Schema Validator: check your structured data for AI search | SameDayDesk",
+          "Free JSON-LD Validator & Schema Checker | SameDayDesk"
+        ],
+        "result": "match"
+      },
+      {
+        "fact": "description",
+        "op": "changed",
+        "idNeedles": [
+          "description"
+        ],
+        "presentIds": [
+          "description"
+        ],
+        "presentValues": [
+          "Paste your JSON-LD structured data to validate it: catches JSON syntax errors, missing @context/@type, and missing recommended fields for common schema types (Organization, Product, FAQPage, Article, LocalBusiness). Free, no signup, instant.",
+          "Paste JSON-LD to check JSON syntax, @context, @type, and recommended fields for common Schema.org types. Runs in your browser. Free, no signup."
+        ],
+        "result": "match"
+      },
+      {
+        "fact": "headings.h1",
+        "op": "changed",
+        "idNeedles": [
+          "/headings/h1",
+          "headings"
+        ],
+        "presentIds": [
+          "/headings/h1",
+          "headings"
+        ],
+        "presentValues": [
+          "JSON-LD / Schema Validator",
+          "Free JSON-LD Validator & Schema Checker"
+        ],
+        "result": "match"
+      },
+      {
+        "fact": "headings.h2",
+        "op": "unchanged",
+        "idNeedles": [
+          "/headings/h2",
+          "headings"
+        ],
+        "presentIds": [
+          "headings"
+        ],
+        "presentValues": [],
+        "result": "source-only"
+      }
+    ]
+  },
+  "refusalCompare": {
+    "result": "match",
+    "expected": false,
+    "actualRefused": false
+  },
+  "noChange": {
+    "usefulNoChange": false,
+    "why": "Title, h1, and meta description rename JSON-LD / Schema Validator to Free JSON-LD Validator & Schema Checker."
+  },
+  "reportCompare": {
+    "result": "match",
+    "reason": null,
+    "facts": [
+      {
+        "key": "status",
+        "expected": "changed",
+        "actual": "changed",
+        "result": "match"
+      },
+      {
+        "key": "verdict",
+        "expected": "changed",
+        "actual": "changed",
+        "result": "match"
+      },
+      {
+        "key": "highlight:changed",
+        "expected": "changed",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:JSON-LD / Schema Validator",
+        "expected": "JSON-LD / Schema Validator",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:Free JSON-LD Validator & Schema Checker",
+        "expected": "Free JSON-LD Validator & Schema Checker",
+        "actual": true,
+        "result": "match"
+      }
+    ],
+    "expectedPresent": true,
+    "artifactFiles": [
+      "catalog-receipt.json",
+      "page-change.json",
+      "page-change.md"
+    ]
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "exampleId": "h04-route-03",
+  "family": "api-routes",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "mapping": {
+    "m01EngineId": "route-table-diff",
+    "mapping": "ok",
+    "note": null
+  },
+  "oracles": {
+    "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-03/expected-facts.json",
+    "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-03/expected-refusal.json",
+    "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-03/expected-no-change.json"
+  },
+  "m01EngineId": "route-table-diff",
+  "skipped": false,
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "route-table-diff",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/api-routes/h04-route-03/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/api-routes/h04-route-03/after.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-route-03/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "ok": true,
+  "durationMs": 83,
+  "stdoutBytes": 1571,
+  "stderrBytes": 0,
+  "outputs": {
+    "files": [
+      {
+        "name": "catalog-receipt.json",
+        "bytes": 1571,
+        "sha256": "68e6e24b1c89512e6aee91a347a39cf587e5dbd13bc837696cf2df625bda7146"
+      },
+      {
+        "name": "route-diff.json",
+        "bytes": 2360,
+        "sha256": "c057f310e5f0e83f4f694fc99804a402ff504499e7594513edbf71f38f950e11"
+      },
+      {
+        "name": "route-diff.md",
+        "bytes": 642,
+        "sha256": "ab5145f1cd4c308fadf62a2aca65929c03530c673ff05a05b77cb4e3938fbb84"
+      }
+    ],
+    "totalBytes": 4573
+  },
+  "stdoutStatus": "no-change",
+  "outcomeKind": "analysis",
+  "pinSha": "886c81d824e0a24e2faa5b821b1cd0ca46ae0859",
+  "schemaMatchOk": true,
+  "factsCompare": {
+    "result": "source-only",
+    "checks": [
+      {
+        "fact": "x402-verified-identity",
+        "op": "unchanged",
+        "idNeedles": [
+          "/x402/verified"
+        ],
+        "presentIds": [],
+        "presentValues": [],
+        "result": "source-only"
+      }
+    ]
+  },
+  "refusalCompare": {
+    "result": "match",
+    "expected": false,
+    "actualRefused": false
+  },
+  "noChange": {
+    "usefulNoChange": true,
+    "why": "/x402/verified path, canonical, title, and robots are identical across 11 catalog records; description/crawlerHtml copy is not a route identity change."
+  },
+  "reportCompare": {
+    "result": "match",
+    "reason": null,
+    "facts": [
+      {
+        "key": "status",
+        "expected": "ok",
+        "actual": "ok",
+        "result": "match"
+      },
+      {
+        "key": "highlight:Added: 0",
+        "expected": "Added: 0",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:Removed: 0",
+        "expected": "Removed: 0",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:Changed (canonical or robots): 0",
+        "expected": "Changed (canonical or robots): 0",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "ok",
+        "expected": true,
+        "actual": true,
+        "result": "match"
+      }
+    ],
+    "expectedPresent": true,
+    "artifactFiles": [
+      "catalog-receipt.json",
+      "route-diff.json",
+      "route-diff.md"
+    ]
+  }
+}

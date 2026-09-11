@@ -1,0 +1,115 @@
+{
+  "pass": true,
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "expectedCompositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "fixture": {
+    "family": "lockfile",
+    "id": "h04-lock-01",
+    "before": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-01/before.json",
+    "after": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-01/after.json"
+  },
+  "cli": {
+    "cwd": "/tmp/w5-h04/ro-m01",
+    "argv": [
+      "experiments/wave5/m01/bin/run-job.mjs",
+      "lockfile-pin-delta",
+      "--before",
+      "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-01/before.json",
+      "--after",
+      "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-01/after.json",
+      "--out-dir",
+      "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-equivalence/cli"
+    ],
+    "exitCode": 0,
+    "outcomeKind": "analysis",
+    "ok": true,
+    "status": "actionable",
+    "counts": {
+      "added": 0,
+      "removed": 0,
+      "changed": 3
+    },
+    "pinDeltaSha256": "ad13674b5d5ba966cfba294c7fe73729fc968ca0cc7c47fd9ed2866ba4920caf",
+    "pinDeltaStableSha256": "81582a69c5c2e9147439c415a64119e6e9f19757990b1497622b23b1dbb8bd1e",
+    "pinDeltaMdSha256": "562ed996fac2a4244b28a720a95d7e27d813e0af419ce6672d31abf5d029c57c",
+    "pinDeltaBytes": 4375,
+    "generatedAt": "2026-09-11T23:27:21.182Z",
+    "durationMs": 85,
+    "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+    "engineSource": "in-tree",
+    "digest": "ad13674b5d5ba966cfba294c7fe73729fc968ca0cc7c47fd9ed2866ba4920caf"
+  },
+  "library": {
+    "api": "runCatalogJob+invokeEngine",
+    "import": "file:///tmp/w5-h04/ro-m01/experiments/wave5/m01/index.mjs",
+    "runCatalogJob": {
+      "ok": true,
+      "outcomeKind": "analysis",
+      "derivedExit": 0,
+      "status": "actionable",
+      "counts": {
+        "added": 0,
+        "removed": 0,
+        "changed": 3
+      },
+      "pinDeltaSha256": "2e224ba54fb5335d5a71fc1d68eba981432a5269d674651497434dbcc2952cc3",
+      "pinDeltaStableSha256": "81582a69c5c2e9147439c415a64119e6e9f19757990b1497622b23b1dbb8bd1e",
+      "pinDeltaMdSha256": "562ed996fac2a4244b28a720a95d7e27d813e0af419ce6672d31abf5d029c57c",
+      "pinDeltaBytes": 4375,
+      "generatedAt": "2026-09-11T23:27:21.226Z",
+      "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "engineSource": "in-tree",
+      "digest": "2e224ba54fb5335d5a71fc1d68eba981432a5269d674651497434dbcc2952cc3",
+      "durationMs": 34
+    },
+    "invokeEngine": {
+      "ok": true,
+      "outcomeKind": "analysis",
+      "derivedExit": 0,
+      "status": "actionable",
+      "counts": {
+        "added": 0,
+        "removed": 0,
+        "changed": 3
+      },
+      "pinDeltaSha256": "125a426c607e34ee5c0498d4f0f685876de0dfa592978022ae3a6e5d98dfbe54",
+      "pinDeltaStableSha256": "81582a69c5c2e9147439c415a64119e6e9f19757990b1497622b23b1dbb8bd1e",
+      "pinDeltaMdSha256": "562ed996fac2a4244b28a720a95d7e27d813e0af419ce6672d31abf5d029c57c",
+      "pinDeltaBytes": 4375,
+      "generatedAt": "2026-09-11T23:27:21.259Z",
+      "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "engineSource": "in-tree",
+      "digest": "125a426c607e34ee5c0498d4f0f685876de0dfa592978022ae3a6e5d98dfbe54",
+      "durationMs": 36
+    },
+    "ok": true,
+    "outcomeKind": "analysis",
+    "status": "actionable",
+    "counts": {
+      "added": 0,
+      "removed": 0,
+      "changed": 3
+    },
+    "pinDeltaSha256": "2e224ba54fb5335d5a71fc1d68eba981432a5269d674651497434dbcc2952cc3",
+    "pinDeltaStableSha256": "81582a69c5c2e9147439c415a64119e6e9f19757990b1497622b23b1dbb8bd1e",
+    "durationMs": 34
+  },
+  "pinDeltaSha256Match": false,
+  "pinDeltaStableSha256Match": true,
+  "pinDeltaMdSha256Match": true,
+  "countsMatch": true,
+  "outcomeKindMatch": true,
+  "statusMatch": true,
+  "exitMatch": true,
+  "onlyGeneratedAtDiff": true,
+  "jsonFieldDiffs": {
+    "cliVsRunCatalogJob": [
+      "generatedAt"
+    ],
+    "runCatalogJobVsInvokeEngine": [
+      "generatedAt"
+    ]
+  },
+  "durationMs": 161,
+  "detail": "CLI/library match analysis/actionable added=0 removed=0 changed=3; raw pin-delta sha256 differs only at generatedAt (cli=ad13674b5d5ba966cfba294c7fe73729fc968ca0cc7c47fd9ed2866ba4920caf lib=2e224ba54fb5335d5a71fc1d68eba981432a5269d674651497434dbcc2952cc3 invoke=125a426c607e34ee5c0498d4f0f685876de0dfa592978022ae3a6e5d98dfbe54)"
+}

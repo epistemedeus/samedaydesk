@@ -1,0 +1,56 @@
+{
+  "id": "h04-schema-01",
+  "family": "schema-webhook",
+  "kind": "change",
+  "method": "raw-bytes",
+  "quotedSourceMdShas": {
+    "repo": "json-schema-org/json-schema-spec",
+    "path": "schema.json",
+    "beforeSha": "d4c5b3a2924370c51b710c8bfd81d3644a92766e",
+    "afterSha": "4b495a2933b1d6f75298abdd23f018ba6a9d4f4a",
+    "beforeTag": "draft-fge-json-schema-validation-00",
+    "afterTag": "draft-wright-json-schema-01"
+  },
+  "inputsHashed": {
+    "before": "7353ff13faa979027813b95c8b35f992057822696a70c43c79b3bfb7249e76b4",
+    "after": "66b96857b160d07a0be15dc25e64831b1e841656f5d3197770ceb2dcddbcb49c",
+    "used": "521484d7a8d072d69a797289dc16cf7bd97d32f828cf8bb4bb47674a7d0bdf87"
+  },
+  "sourceFacts": [
+    {
+      "id": "exclusiveMinimum-type",
+      "op": "changed",
+      "used": true,
+      "pointer": "/properties/exclusiveMinimum",
+      "beforeType": "boolean",
+      "afterType": "number",
+      "before": "boolean",
+      "after": "number",
+      "beforeSchema": {
+        "type": "boolean",
+        "default": false
+      },
+      "afterSchema": {
+        "type": "number"
+      }
+    }
+  ],
+  "ignoredUnused": [
+    {
+      "pointer": "/properties/exclusiveMaximum",
+      "beforeType": "boolean",
+      "afterType": "number",
+      "why": "same type-change but not in used.json"
+    },
+    {
+      "pointer": "/properties/const",
+      "op": "added",
+      "why": "Draft 06 addition, unused"
+    },
+    {
+      "pointer": "/properties/id -> /$id",
+      "op": "renamed",
+      "why": "unused in this job"
+    }
+  ]
+}

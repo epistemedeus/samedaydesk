@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": true,
+  "why": "Used CloudEvents id/type/source/specversion types and values are identical; only key order and unused debug differ."
+}

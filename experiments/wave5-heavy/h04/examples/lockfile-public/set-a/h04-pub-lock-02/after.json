@@ -1,0 +1,42 @@
+{
+  "name": "mocha",
+  "version": "7.1.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "mocha",
+      "version": "7.1.0"
+    },
+    "node_modules/got": {
+      "name": "got",
+      "version": "6.7.1",
+      "resolved": "https://registry.npmjs.org/got/-/got-6.7.1.tgz",
+      "integrity": "sha1-JAzQV4WpoY5WHcG0S0HHY+8ejbA="
+    },
+    "node_modules/path-is-absolute": {
+      "name": "path-is-absolute",
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/path-is-absolute/-/path-is-absolute-1.0.1.tgz",
+      "integrity": "sha1-F0uSaHNVNP+8es5r9TpanhtcX18="
+    },
+    "node_modules/strip-eof": {
+      "name": "strip-eof",
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/strip-eof/-/strip-eof-1.0.0.tgz",
+      "integrity": "sha1-u0P/VZim6wXYm1n80SnJgzE2Br8="
+    },
+    "node_modules/@babel/code-frame": {
+      "name": "@babel/code-frame",
+      "version": "7.8.3",
+      "resolved": "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.8.3.tgz",
+      "integrity": "sha512-a9gxpmdXtZEInkCSHUJDLHZVBgb1QS0jhss4cPP93EW7s+uC5bikET2twEF3KV+7rDblJcmNvTR7VJejqd2C2g=="
+    },
+    "node_modules/@11ty/dependency-tree": {
+      "name": "@11ty/dependency-tree",
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/@11ty/dependency-tree/-/dependency-tree-1.0.0.tgz",
+      "integrity": "sha512-2FWYlkphQ/83MG7b9qqBJfJJ0K9zupNz/6n4EdDuNLw6hQHGp4Sp4UMDRyBvA/xCTYDBaPSuSjHuu45tSujegg=="
+    }
+  }
+}

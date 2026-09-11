@@ -1,0 +1,24 @@
+{
+  "id": "h04-lock-pub-b06-refuse",
+  "family": "lockfile-public",
+  "title": "yarnpkg/berry yarn.lock is unsupported; engine must refuse",
+  "kind": "unsupported-format",
+  "engines": [
+    "w4-lockfile-pin-delta"
+  ],
+  "inputs": {
+    "before": "./yarn.lock",
+    "after": "./yarn.lock"
+  },
+  "changedFact": "yarn.lock from yarnpkg/berry at 3ad9e350 is Yarn metadata, not an npm package-lock.json; lockfile-pin-delta must refuse (exit 2) instead of emitting a pin analysis.",
+  "expectedStatus": "refused",
+  "expectedHighlights": [
+    "refused"
+  ],
+  "source": {
+    "repo": "yarnpkg/berry",
+    "beforeSha": "3ad9e35026e514632a5ff8551d8308852094befd",
+    "afterSha": "3ad9e35026e514632a5ff8551d8308852094befd",
+    "path": "yarn.lock"
+  }
+}

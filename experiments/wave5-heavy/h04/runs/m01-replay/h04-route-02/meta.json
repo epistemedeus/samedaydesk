@@ -1,0 +1,81 @@
+{
+  "exampleId": "h04-route-02",
+  "family": "api-routes",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "mapping": "not-in-m01-four",
+  "oracles": {
+    "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-02/expected-facts.json",
+    "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-02/expected-refusal.json",
+    "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-02/expected-no-change.json"
+  },
+  "skipped": true,
+  "mappingFailure": {
+    "mapping": "not-in-m01-four",
+    "note": "OpenAPI api-upgrade-brief stays SDS52. M01 json-schema-webhook-drift refuses OpenAPI (not-this-job-openapi).",
+    "sds52Job": "api-upgrade-brief"
+  },
+  "sds52Job": "api-upgrade-brief",
+  "m01ProbeEngine": "json-schema-webhook-drift",
+  "m01Probe": {
+    "ok": false,
+    "engineId": "json-schema-webhook-drift",
+    "pinSha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+    "engineSource": "in-tree",
+    "outcome": {
+      "kind": "refused",
+      "transportOk": true,
+      "code": "not-json",
+      "analysis": null
+    },
+    "schemaMatch": {
+      "ok": true,
+      "mismatches": [],
+      "outputs": []
+    },
+    "stdoutJson": {
+      "ok": false,
+      "refused": true,
+      "code": "not-json",
+      "error": "before is not JSON (YAML/plain text refused; no YAML parser in this job)",
+      "detail": {
+        "label": "before"
+      },
+      "customerBrief": false,
+      "sample": false,
+      "purchaseAuthority": false,
+      "sold": false,
+      "payment": {
+        "settling": false,
+        "prototype": true,
+        "paid": false
+      },
+      "schema": "samedaydesk.json-schema-webhook-drift.v1",
+      "schemaVersion": 2,
+      "notOpenApi": true,
+      "notApiUpgradeBrief": true
+    },
+    "refuseJson": {
+      "ok": false,
+      "refused": true,
+      "code": "not-json",
+      "error": "before is not JSON (YAML/plain text refused; no YAML parser in this job)",
+      "detail": {
+        "label": "before"
+      },
+      "customerBrief": false,
+      "sample": false,
+      "purchaseAuthority": false,
+      "sold": false,
+      "payment": {
+        "settling": false,
+        "prototype": true,
+        "paid": false
+      },
+      "schema": "samedaydesk.json-schema-webhook-drift.v1",
+      "schemaVersion": 2,
+      "notOpenApi": true,
+      "notApiUpgradeBrief": true
+    }
+  }
+}

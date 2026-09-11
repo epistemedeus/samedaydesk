@@ -1,0 +1,10 @@
+{
+  "source": "raw-packages-parse",
+  "notEngineStdout": true,
+  "parseableAsNpmLock": false,
+  "format": "yarn.lock",
+  "reason": "Yarn Berry lock is not JSON; no packages map to parse as npm lockfileVersion 2/3 pins.",
+  "added": [],
+  "removed": [],
+  "changed": []
+}

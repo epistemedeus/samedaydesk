@@ -1,0 +1,141 @@
+{
+  "exampleId": "h04-route-01",
+  "family": "api-routes",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "mapping": {
+    "m01EngineId": "route-table-diff",
+    "mapping": "ok",
+    "note": null
+  },
+  "oracles": {
+    "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-01/expected-facts.json",
+    "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-01/expected-refusal.json",
+    "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-01/expected-no-change.json"
+  },
+  "m01EngineId": "route-table-diff",
+  "skipped": false,
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "route-table-diff",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/api-routes/h04-route-01/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/api-routes/h04-route-01/after.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-route-01/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "ok": true,
+  "durationMs": 81,
+  "stdoutBytes": 1604,
+  "stderrBytes": 0,
+  "outputs": {
+    "files": [
+      {
+        "name": "catalog-receipt.json",
+        "bytes": 1604,
+        "sha256": "326dfd3526c5630c36f7e279b9f0f2874cacc22d6d26f51c874d1527d22b5a04"
+      },
+      {
+        "name": "route-diff.json",
+        "bytes": 2574,
+        "sha256": "38eac162c98e9e7dc11862fdb1ff18480e25e3cbc02e5b600954cc4e1759502a"
+      },
+      {
+        "name": "route-diff.md",
+        "bytes": 718,
+        "sha256": "0796deec09a96ecf07346a46a940940b199726d6da90d2122ce326c82651f53b"
+      }
+    ],
+    "totalBytes": 4896
+  },
+  "stdoutStatus": "changed",
+  "outcomeKind": "analysis",
+  "pinSha": "886c81d824e0a24e2faa5b821b1cd0ca46ae0859",
+  "schemaMatchOk": true,
+  "factsCompare": {
+    "result": "match",
+    "checks": [
+      {
+        "fact": "added-useful-jobs",
+        "op": "added",
+        "idNeedles": [
+          "/for-agents/useful-jobs"
+        ],
+        "presentIds": [
+          "/for-agents/useful-jobs"
+        ],
+        "presentValues": [
+          "/for-agents/useful-jobs"
+        ],
+        "result": "match"
+      }
+    ]
+  },
+  "refusalCompare": {
+    "result": "match",
+    "expected": false,
+    "actualRefused": false
+  },
+  "noChange": {
+    "usefulNoChange": false,
+    "why": "PUBLIC_SHELLS gains path /for-agents/useful-jobs with canonical https://samedaydesk.com/for-agents/useful-jobs."
+  },
+  "reportCompare": {
+    "result": "match",
+    "reason": null,
+    "facts": [
+      {
+        "key": "status",
+        "expected": "ok",
+        "actual": "ok",
+        "result": "match"
+      },
+      {
+        "key": "highlight:/for-agents/useful-jobs",
+        "expected": "/for-agents/useful-jobs",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:https://samedaydesk.com/for-agents/useful-jobs",
+        "expected": "https://samedaydesk.com/for-agents/useful-jobs",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:Added: 1",
+        "expected": "Added: 1",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:Removed: 0",
+        "expected": "Removed: 0",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:Changed (canonical or robots): 0",
+        "expected": "Changed (canonical or robots): 0",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "ok",
+        "expected": true,
+        "actual": true,
+        "result": "match"
+      }
+    ],
+    "expectedPresent": true,
+    "artifactFiles": [
+      "catalog-receipt.json",
+      "route-diff.json",
+      "route-diff.md"
+    ]
+  }
+}

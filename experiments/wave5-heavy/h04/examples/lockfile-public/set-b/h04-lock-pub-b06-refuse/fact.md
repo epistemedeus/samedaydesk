@@ -1,0 +1,1 @@
+yarnpkg/berry yarn.lock at 3ad9e35026e514632a5ff8551d8308852094befd is a real public Yarn Berry lock (starts with generated-file header and `__metadata` / `resolution` stanzas). It is not npm lockfileVersion 2 or 3 JSON. Raw parse cannot extract packages-map pins. lockfile-pin-delta must refuse with exit 2 instead of analyzing added/removed/changed triples.

@@ -1,0 +1,226 @@
+{
+  "ok": true,
+  "engineId": "page-change-offline-job",
+  "pinSha": "fec7bc04ac4419f8e7ce40f2613314e6953af6bc",
+  "engineSource": "in-tree",
+  "outcome": {
+    "kind": "analysis",
+    "transportOk": true,
+    "code": null,
+    "analysis": "changed"
+  },
+  "schemaMatch": {
+    "ok": true,
+    "mismatches": [],
+    "outputs": [
+      {
+        "name": "page-change.json",
+        "path": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-page-01/out/page-change.json",
+        "exists": true
+      },
+      {
+        "name": "page-change.md",
+        "path": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-page-01/out/page-change.md",
+        "exists": true
+      }
+    ]
+  },
+  "stdoutJson": {
+    "ok": true,
+    "job": {
+      "id": "h04-page-01",
+      "title": "Watch JSON-LD validator title, description, and headings",
+      "fields": [
+        "title",
+        "description",
+        "headings"
+      ]
+    },
+    "report": {
+      "schema": "pilot/page-change-brief/v1",
+      "kind": "merchant_extract_batch",
+      "verdict": "changed",
+      "fields": [
+        "title",
+        "description",
+        "headings"
+      ],
+      "claims": {
+        "noChangeProven": false,
+        "contentUnchangedProven": false,
+        "comparable": true,
+        "complete": true,
+        "current": false,
+        "fresh": false,
+        "usefulOutputProven": true,
+        "paymentImpliesUsefulOutput": false
+      },
+      "freshness": "stale",
+      "snapshot": {
+        "schema": "pilot/change-digest/v1",
+        "verdict": "changed",
+        "claims": {
+          "noChangeProven": false,
+          "current": false,
+          "comparable": true,
+          "fresh": false
+        },
+        "freshness": "stale",
+        "before": {
+          "status": "present",
+          "mediaType": "application/json",
+          "observedAt": "2026-08-30T13:09:16.000Z",
+          "truncated": false,
+          "byteLength": 2630,
+          "sha256": "e7ee347eae80363f73b2a3c8f0c87109a11fff98d7004213ab4e45ee10682127",
+          "source": {
+            "kind": "file",
+            "role": "before"
+          },
+          "issues": []
+        },
+        "after": {
+          "status": "present",
+          "mediaType": "application/json",
+          "observedAt": "2026-09-02T11:18:43.000Z",
+          "truncated": false,
+          "byteLength": 2495,
+          "sha256": "ef2c7d27a6b63ffd93f5897f6e15a6a510085c5b9f3ce028f00cc802760374eb",
+          "source": {
+            "kind": "file",
+            "role": "after"
+          },
+          "issues": []
+        },
+        "limitsHit": []
+      },
+      "summary": {
+        "matched": 1,
+        "missing": 0,
+        "failed": 0,
+        "unknown": 0,
+        "duplicates": 0,
+        "coverageUnknown": 0,
+        "semantic": 3,
+        "order": 0
+      },
+      "rows": {
+        "matched": [
+          {
+            "sourceKey": "https://samedaydesk.com/tools/schema-validator.html",
+            "source": "https://samedaydesk.com/tools/schema-validator.html",
+            "before": {
+              "id": "item-001",
+              "status": "success"
+            },
+            "after": {
+              "id": "item-001",
+              "status": "success"
+            }
+          }
+        ],
+        "missing": [],
+        "failed": [],
+        "unknown": [],
+        "duplicates": []
+      },
+      "coverageUnknown": [],
+      "changes": [
+        {
+          "class": "semantic",
+          "op": "replace",
+          "path": "/description",
+          "before": "Paste your JSON-LD structured data to validate it: catches JSON syntax errors, missing @context/@type, and missing recommended fields for common schema types (Organization, Product, FAQPage, Article, LocalBusiness). Free, no signup, instant.",
+          "after": "Paste JSON-LD to check JSON syntax, @context, @type, and recommended fields for common Schema.org types. Runs in your browser. Free, no signup.",
+          "beforeEvidence": "Paste your JSON-LD structured data to validate it: catches JSON syntax errors, missing @context/@type, and missing recommended fields for common schema types (Organization, Product, FAQPage, Article, ",
+          "afterEvidence": "Paste JSON-LD to check JSON syntax, @context, @type, and recommended fields for common Schema.org types. Runs in your browser. Free, no signup.",
+          "evidenceTruncated": true,
+          "sourceKey": "https://samedaydesk.com/tools/schema-validator.html"
+        },
+        {
+          "class": "semantic",
+          "op": "replace",
+          "path": "/headings/h1",
+          "before": "[\"JSON-LD / Schema Validator\"]",
+          "after": "[\"Free JSON-LD Validator & Schema Checker\"]",
+          "beforeEvidence": "[\"JSON-LD / Schema Validator\"]",
+          "afterEvidence": "[\"Free JSON-LD Validator & Schema Checker\"]",
+          "evidenceTruncated": false,
+          "sourceKey": "https://samedaydesk.com/tools/schema-validator.html"
+        },
+        {
+          "class": "semantic",
+          "op": "replace",
+          "path": "/title",
+          "before": "Free JSON-LD / Schema Validator: check your structured data for AI search | SameDayDesk",
+          "after": "Free JSON-LD Validator & Schema Checker | SameDayDesk",
+          "beforeEvidence": "Free JSON-LD / Schema Validator: check your structured data for AI search | SameDayDesk",
+          "afterEvidence": "Free JSON-LD Validator & Schema Checker | SameDayDesk",
+          "evidenceTruncated": false,
+          "sourceKey": "https://samedaydesk.com/tools/schema-validator.html"
+        }
+      ],
+      "observations": {
+        "before": {
+          "jobId": "ac15e30f5ecabcd7ff363053f470957cab99859ecd511a448fd4ca38756ef214",
+          "jobStatus": "completed",
+          "charged": false,
+          "ok": true,
+          "snapshotObservedAt": null,
+          "artifactObservedAt": "2026-08-30T13:09:16.000Z",
+          "rows": [
+            {
+              "sourceKey": "https://samedaydesk.com/tools/schema-validator.html",
+              "itemId": "item-001",
+              "requestedAt": "2026-08-30T13:09:15.000Z",
+              "completedAt": "2026-08-30T13:09:16.000Z",
+              "fetchedAt": "2026-08-30T13:09:15.000Z",
+              "requestedAtIsNotFreshness": true,
+              "fetchedAtIsNotFreshness": true
+            }
+          ]
+        },
+        "after": {
+          "jobId": "44dca769f2e41810a9a88dc4a07a1e6c05ff5745074e1408026945ecb0218a17",
+          "jobStatus": "completed",
+          "charged": false,
+          "ok": true,
+          "snapshotObservedAt": null,
+          "artifactObservedAt": "2026-09-02T11:18:43.000Z",
+          "rows": [
+            {
+              "sourceKey": "https://samedaydesk.com/tools/schema-validator.html",
+              "itemId": "item-001",
+              "requestedAt": "2026-09-02T11:18:42.000Z",
+              "completedAt": "2026-09-02T11:18:43.000Z",
+              "fetchedAt": "2026-09-02T11:18:42.000Z",
+              "requestedAtIsNotFreshness": true,
+              "fetchedAtIsNotFreshness": true
+            }
+          ]
+        },
+        "note": "Source URL identity is separate from two-time observation identity. fetchedAt and completedAt are observation metadata, not content freshness."
+      },
+      "provenance": {
+        "engine": "samedaydesk.page-change-offline-job",
+        "engineVersion": "0.1.1",
+        "merchantCompareImported": false,
+        "networkUsed": false,
+        "paymentAttempted": false,
+        "purchaseAuthorized": false,
+        "evidenceClass": "fixture",
+        "termsVersion": "sha256:4f3b8f72a3a0334221fe32234b4d60ae1a925b2d765a90af884d416eb067c694",
+        "termsHasher": "i01-integrated-hash-terms",
+        "comparedWithClock": "2026-09-11T12:00:00.000Z",
+        "beforeSha256": "e7ee347eae80363f73b2a3c8f0c87109a11fff98d7004213ab4e45ee10682127",
+        "afterSha256": "ef2c7d27a6b63ffd93f5897f6e15a6a510085c5b9f3ce028f00cc802760374eb",
+        "elapsedMs": 1.409633,
+        "digestSha256": "970827928ef374cd2a970bc23cdb76541354ba182b071de5a2396b223957b651"
+      }
+    },
+    "written": {
+      "jsonPath": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-page-01/out/page-change.json",
+      "mdPath": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-page-01/out/page-change.md"
+    }
+  }
+}

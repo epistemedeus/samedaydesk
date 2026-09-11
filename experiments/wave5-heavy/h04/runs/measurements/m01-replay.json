@@ -1,0 +1,56 @@
+{
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "at": "2026-09-11T23:41:51.897Z",
+  "replayed": 18,
+  "skipped": 1,
+  "mappingFailures": [
+    {
+      "id": "h04-route-02",
+      "mapping": "not-in-m01-four",
+      "note": "OpenAPI api-upgrade-brief stays SDS52. M01 json-schema-webhook-drift refuses OpenAPI (not-this-job-openapi).",
+      "sds52Job": "api-upgrade-brief"
+    }
+  ],
+  "durationsMs": {
+    "h04-schema-01": 90,
+    "h04-schema-02": 83,
+    "h04-schema-03": 81,
+    "h04-lock-01": 85,
+    "h04-lock-02": 79,
+    "h04-lock-03": 85,
+    "h04-route-01": 81,
+    "h04-route-03": 83,
+    "h04-page-01": 81,
+    "h04-page-02": 80,
+    "h04-page-03": 88,
+    "h04-pub-lock-01": 77,
+    "h04-pub-lock-02": 78,
+    "h04-pub-lock-03": 78,
+    "h04-lock-pub-b04-removal": 81,
+    "h04-lock-pub-b05-normalize": 82,
+    "h04-lock-pub-b06-refuse": 83,
+    "h04-lock-pub-b07-large": 83
+  },
+  "outputBytes": {
+    "h04-schema-01": 5114,
+    "h04-schema-02": 3710,
+    "h04-schema-03": 3708,
+    "h04-lock-01": 7264,
+    "h04-lock-02": 3841,
+    "h04-lock-03": 2666,
+    "h04-route-01": 4896,
+    "h04-route-03": 4573,
+    "h04-page-01": 17230,
+    "h04-page-02": 11994,
+    "h04-page-03": 17183,
+    "h04-pub-lock-01": 6483,
+    "h04-pub-lock-02": 6547,
+    "h04-pub-lock-03": 3903,
+    "h04-lock-pub-b04-removal": 7755,
+    "h04-lock-pub-b05-normalize": 2758,
+    "h04-lock-pub-b06-refuse": 855,
+    "h04-lock-pub-b07-large": 2866
+  },
+  "note": "Wall-clock durationMs of clean CLI invocations. Not a hosting bill or CPU-cost claim."
+}

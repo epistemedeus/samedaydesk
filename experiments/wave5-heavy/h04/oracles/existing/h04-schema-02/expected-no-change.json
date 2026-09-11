@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": true,
+  "why": "Used /ref /ref_type /pusher_type values and types are identical; repository.custom_properties {} is unused additive noise."
+}

@@ -1,0 +1,4 @@
+{
+  "expected": false,
+  "reason": "unsupported format must refuse before any pin compare"
+}

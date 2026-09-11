@@ -4,17 +4,17 @@ Exactly three. Ranked by whether a paying caller would change an operational dec
 
 Selected: `h04-lock-01`, `h04-schema-01`, `h04-page-03`.
 
-Not selected (short): `h04-lock-02` is one integrity-algorithm rewrite, not a named vulnerable version bump, and the harness still has a highlight mismatch on `integrity-only`. `h04-lock-03` / `h04-schema-03` / `h04-page-02` / `h04-route-03` are no-change controls. `h04-schema-02` is unused additive noise (buyer of used paths does nothing). `h04-page-01` is a marketing rename, not a contract. `h04-route-01` adds a public SPA path (catalog/SEO, not a break). `h04-route-02` is a real SDS52 used-ops add (`consider-adoption`, medium) but it is additive: existing `GET /api/health` and moltjobs-stats callers do not break.
+Not selected (short): `h04-lock-02` is one integrity-algorithm rewrite, not a named version+integrity+resolved pin-delta, and the harness still has a highlight mismatch on `integrity-only`. `h04-lock-03` / `h04-schema-03` / `h04-page-02` / `h04-route-03` are no-change controls. `h04-schema-02` is unused additive noise (buyer of used paths does nothing). `h04-page-01` is a marketing rename, not a contract. `h04-route-01` adds a public SPA path (catalog/SEO, not a break). `h04-route-02` is a real SDS52 used-ops add (`consider-adoption`, medium) but it is additive: existing `GET /api/health` and moltjobs-stats callers do not break.
 
-## 1. h04-lock-01 — three vulnerable lock pins
+## 1. h04-lock-01 — three lock pin-deltas (version + integrity + resolved)
 
 ### What a buyer pays for
 
-A lockfile pin delta that names the three packages whose version **and** integrity moved, and omits the other 99 pins. Input is the real SDS `package-lock.json` blobs, not the W4 SAMPLE fixture.
+A lockfile pin-delta that names the three packages whose version, integrity, and resolved tarball URL moved, and omits the other 99 pins. Input is the real SDS `package-lock.json` blobs, not the W4 SAMPLE fixture. This is an **operator-risk / pin-delta / integrity-change / resolved-source change** job. H04 is **not** a vulnerability scanner and does not join advisories or version-range CVEs.
 
 ### Decision that changes
 
-Do not run `npm ci` against the after lock as if nothing security-relevant moved. Review/apply `concurrently` 10.0.3→10.0.5, `qs` 6.15.2→6.16.0, `shell-quote` 1.8.4→1.9.0 before trusting the tree. Commit subject is `fix(deps): update vulnerable locked dependencies`.
+Do not run `npm ci` against the after lock as if the resolved tree were unchanged. Review/apply `concurrently` 10.0.3→10.0.5, `qs` 6.15.2→6.16.0, `shell-quote` 1.8.4→1.9.0 (new `resolved` + `sha512`) before trusting the tree. The SDS commit subject is `fix(deps): update vulnerable locked dependencies` (quoted as the commit message). The commit message claims vulnerable deps; H04 does not join advisories. A version bump is not a security vulnerability without that join. Do not tell a buyer this engine proved a CVE.
 
 ### Primary-source proof
 
@@ -36,7 +36,7 @@ Same engine on `h04-lock-03` correctly uses `informational` for zero pin delta (
 
 ### Why stronger than the other nine
 
-It is the only example where a recorded engine report names three version+integrity bumps that an operator must treat as a lock update, with a public SDS commit that says the pins were vulnerable. Integrity-only `ms` (`h04-lock-02`) does not change the version string. SPA path add (`h04-route-01`) and validator rename (`h04-page-01`) do not force a dependency decision.
+It is the only example where a recorded engine report names three version+integrity+resolved pin-deltas that an operator must treat as a lock update. The public SDS commit subject (`fix(deps): update vulnerable locked dependencies`) claims the pins were vulnerable; H04 quotes that subject and does not join advisories. Integrity-only `ms` (`h04-lock-02`) does not change the version string. SPA path add (`h04-route-01`) and validator rename (`h04-page-01`) do not force a dependency decision.
 
 ## 2. h04-schema-01 — exclusiveMinimum boolean → number
 

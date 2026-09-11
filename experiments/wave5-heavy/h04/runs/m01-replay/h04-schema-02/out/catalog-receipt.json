@@ -1,0 +1,48 @@
+{
+  "ok": true,
+  "engineId": "json-schema-webhook-drift",
+  "pinSha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+  "engineSource": "in-tree",
+  "outcome": {
+    "kind": "analysis",
+    "transportOk": true,
+    "code": null,
+    "analysis": "informational"
+  },
+  "schemaMatch": {
+    "ok": true,
+    "mismatches": [],
+    "outputs": [
+      {
+        "name": "drift-brief.json",
+        "path": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-schema-02/out/drift-brief.json",
+        "exists": true
+      },
+      {
+        "name": "drift-brief.md",
+        "path": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-schema-02/out/drift-brief.md",
+        "exists": true
+      }
+    ]
+  },
+  "stdoutJson": {
+    "ok": true,
+    "appId": "json-schema-webhook-drift",
+    "status": "informational",
+    "termsVersion": "sha256:5682569b18597ad4fd70093b5d3ea70bc14552c3d03ab8c8cae174ad52af3e0e",
+    "kind": "webhook-example",
+    "customerBrief": false,
+    "sample": false,
+    "exampleMode": false,
+    "purchaseAuthority": false,
+    "sold": false,
+    "outDir": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-schema-02/out",
+    "outputs": [
+      "drift-brief.json",
+      "drift-brief.md"
+    ],
+    "breaking": 0,
+    "compatible": 0,
+    "unknown": 0
+  }
+}

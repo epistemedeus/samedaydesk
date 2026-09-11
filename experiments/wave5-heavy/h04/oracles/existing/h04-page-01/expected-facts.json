@@ -1,0 +1,51 @@
+{
+  "id": "h04-page-01",
+  "family": "page-facts",
+  "kind": "change",
+  "method": "raw-bytes",
+  "quotedSourceMdShas": {
+    "repo": "epistemedeus/samedaydesk",
+    "path": "client/public/tools/schema-validator.html",
+    "beforeSha": "ff381d2b46e9beec1475212df2eb610a7b01229b",
+    "afterSha": "374a565784bcd4ec89eeda7fedbb9610fed77473"
+  },
+  "inputsHashed": {
+    "before": "e7ee347eae80363f73b2a3c8f0c87109a11fff98d7004213ab4e45ee10682127",
+    "after": "ef2c7d27a6b63ffd93f5897f6e15a6a510085c5b9f3ce028f00cc802760374eb",
+    "job": "34f71c08baa06569c564a55b5b9a1542ca08866fa7b700d1109d520641a1275a",
+    "excerptBefore": "b710a9c107d640a2bbee50afb3b0cd3ec64eb75bbf4c823834441dc9752935de",
+    "excerptAfter": "d3d41bf09f255baeb25374a400647e9e1f1aec9ce87ec9a5cfda93c772bbc677"
+  },
+  "sourceFacts": [
+    {
+      "id": "title",
+      "op": "changed",
+      "field": "title",
+      "before": "Free JSON-LD / Schema Validator: check your structured data for AI search | SameDayDesk",
+      "after": "Free JSON-LD Validator & Schema Checker | SameDayDesk"
+    },
+    {
+      "id": "description",
+      "op": "changed",
+      "field": "description",
+      "before": "Paste your JSON-LD structured data to validate it: catches JSON syntax errors, missing @context/@type, and missing recommended fields for common schema types (Organization, Product, FAQPage, Article, LocalBusiness). Free, no signup, instant.",
+      "after": "Paste JSON-LD to check JSON syntax, @context, @type, and recommended fields for common Schema.org types. Runs in your browser. Free, no signup."
+    },
+    {
+      "id": "headings.h1",
+      "op": "changed",
+      "field": "headings",
+      "path": "/headings/h1",
+      "before": "JSON-LD / Schema Validator",
+      "after": "Free JSON-LD Validator & Schema Checker"
+    },
+    {
+      "id": "headings.h2",
+      "op": "unchanged",
+      "field": "headings",
+      "path": "/headings/h2",
+      "before": "Want valid structured data installed on your real pages?",
+      "after": "Want valid structured data installed on your real pages?"
+    }
+  ]
+}

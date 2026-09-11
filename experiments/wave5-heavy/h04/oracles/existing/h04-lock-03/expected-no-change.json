@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": true,
+  "why": "159 name@version integrity resolved triples are identical; key-order, indent, unused fields, and an extra link:true omit are not pin deltas."
+}

@@ -1,0 +1,122 @@
+{
+  "exampleId": "h04-pub-lock-03",
+  "family": "lockfile-public",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "mapping": {
+    "m01EngineId": "lockfile-pin-delta",
+    "mapping": "ok",
+    "note": null
+  },
+  "oracles": {
+    "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-03/expected-facts.json",
+    "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-03/expected-refusal.json",
+    "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-03/expected-no-change.json"
+  },
+  "m01EngineId": "lockfile-pin-delta",
+  "skipped": false,
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "lockfile-pin-delta",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-03/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-03/after.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-pub-lock-03/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "ok": true,
+  "durationMs": 78,
+  "stdoutBytes": 1275,
+  "stderrBytes": 0,
+  "outputs": {
+    "files": [
+      {
+        "name": "catalog-receipt.json",
+        "bytes": 1275,
+        "sha256": "cbb06480007c5ccf47bb7086d8072117f3f07ac4d1d30d81c3e0541d933f2dc7"
+      },
+      {
+        "name": "pin-delta.json",
+        "bytes": 1959,
+        "sha256": "f2f64dfe13012ddbb698806fbe616002ffae0ed7a50acbe7a1440123fb691d2f"
+      },
+      {
+        "name": "pin-delta.md",
+        "bytes": 669,
+        "sha256": "a741fbae71a1d9a0089f9f00f30ed4f7e50f3587af2272c2fe2493bfc4017d77"
+      }
+    ],
+    "totalBytes": 3903
+  },
+  "stdoutStatus": "actionable",
+  "outcomeKind": "analysis",
+  "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+  "schemaMatchOk": true,
+  "factsCompare": {
+    "result": "match",
+    "checks": [
+      {
+        "fact": "node-forge",
+        "op": "changed",
+        "idNeedles": [
+          "node-forge",
+          "node-forge"
+        ],
+        "presentIds": [
+          "node-forge",
+          "node-forge"
+        ],
+        "presentValues": [],
+        "result": "match"
+      },
+      {
+        "fact": "selfsigned",
+        "op": "changed",
+        "idNeedles": [
+          "selfsigned",
+          "selfsigned"
+        ],
+        "presentIds": [
+          "selfsigned",
+          "selfsigned"
+        ],
+        "presentValues": [],
+        "result": "match"
+      }
+    ]
+  },
+  "refusalCompare": {
+    "result": "match",
+    "expected": false,
+    "actualRefused": false
+  },
+  "noChange": {
+    "isNoChangeControl": false,
+    "unchangedMustOmit": [
+      {
+        "id": "node_modules/@ampproject/remapping",
+        "name": "@ampproject/remapping",
+        "version": "2.2.0",
+        "integrity": "sha512-qRmjj8nj9qmLTQXXmaR1cck3UXSRMPrbsLJAasZpF+t3riI71BXed5ebIOYwQntykeZuhjsdweEc9BxH5Jc26w==",
+        "resolved": "https://registry.npmjs.org/@ampproject/remapping/-/remapping-2.2.0.tgz"
+      },
+      {
+        "id": "node_modules/@babel/code-frame",
+        "name": "@babel/code-frame",
+        "version": "7.23.5",
+        "integrity": "sha512-CgH3s1a96LipHCmSUmYFPwY7MNx8C3avkq7i4Wl3cfa662ldtUe4VM1TPXX70pfmrlWTb6jLqTYrZyT2ZTJBgA==",
+        "resolved": "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.23.5.tgz"
+      }
+    ]
+  },
+  "reportCompare": {
+    "result": "unknown",
+    "reason": "expected-report-missing",
+    "facts": [],
+    "expectedPresent": false
+  }
+}

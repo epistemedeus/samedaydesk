@@ -1,0 +1,139 @@
+{
+  "exampleId": "h04-schema-03",
+  "family": "schema-webhook",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "mapping": {
+    "m01EngineId": "json-schema-webhook-drift",
+    "mapping": "ok",
+    "note": null
+  },
+  "oracles": {
+    "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-03/expected-facts.json",
+    "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-03/expected-refusal.json",
+    "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-03/expected-no-change.json"
+  },
+  "m01EngineId": "json-schema-webhook-drift",
+  "skipped": false,
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "json-schema-webhook-drift",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-03/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-03/after.json",
+    "--used",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-03/used.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-schema-03/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "ok": true,
+  "durationMs": 81,
+  "stdoutBytes": 1310,
+  "stderrBytes": 0,
+  "outputs": {
+    "files": [
+      {
+        "name": "catalog-receipt.json",
+        "bytes": 1310,
+        "sha256": "5a05d53ce4fecd489a1564d6565a89bd6d491c35f106744cd8be42a607032448"
+      },
+      {
+        "name": "drift-brief.json",
+        "bytes": 1782,
+        "sha256": "a9f72ba9cb9a23a5af02fc53c321a6b511ead1fc718f311149bb101ed0289035"
+      },
+      {
+        "name": "drift-brief.md",
+        "bytes": 616,
+        "sha256": "f63f7630edc8e218c3f213e73921966b5abce757df479353c94cc06f547fe09d"
+      }
+    ],
+    "totalBytes": 3708
+  },
+  "stdoutStatus": "informational",
+  "outcomeKind": "analysis",
+  "pinSha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+  "schemaMatchOk": true,
+  "factsCompare": {
+    "result": "source-only",
+    "checks": [
+      {
+        "fact": "id",
+        "op": "unchanged",
+        "idNeedles": [
+          "/id"
+        ],
+        "presentIds": [],
+        "presentValues": [],
+        "result": "source-only"
+      },
+      {
+        "fact": "type",
+        "op": "unchanged",
+        "idNeedles": [
+          "/type"
+        ],
+        "presentIds": [],
+        "presentValues": [],
+        "result": "source-only"
+      },
+      {
+        "fact": "source",
+        "op": "unchanged",
+        "idNeedles": [
+          "/source"
+        ],
+        "presentIds": [],
+        "presentValues": [],
+        "result": "source-only"
+      },
+      {
+        "fact": "specversion",
+        "op": "unchanged",
+        "idNeedles": [
+          "/specversion"
+        ],
+        "presentIds": [],
+        "presentValues": [],
+        "result": "source-only"
+      }
+    ]
+  },
+  "refusalCompare": {
+    "result": "match",
+    "expected": false,
+    "actualRefused": false
+  },
+  "noChange": {
+    "usefulNoChange": true,
+    "why": "Used CloudEvents id/type/source/specversion types and values are identical; only key order and unused debug differ."
+  },
+  "reportCompare": {
+    "result": "match",
+    "reason": null,
+    "facts": [
+      {
+        "key": "status",
+        "expected": "unchanged",
+        "actual": "informational",
+        "result": "match"
+      },
+      {
+        "key": "ok",
+        "expected": true,
+        "actual": true,
+        "result": "match"
+      }
+    ],
+    "expectedPresent": true,
+    "artifactFiles": [
+      "catalog-receipt.json",
+      "drift-brief.json",
+      "drift-brief.md"
+    ]
+  }
+}

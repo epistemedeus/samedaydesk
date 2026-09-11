@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": false,
+  "why": "Three lock pins change version+integrity+resolved: concurrently, qs, shell-quote."
+}

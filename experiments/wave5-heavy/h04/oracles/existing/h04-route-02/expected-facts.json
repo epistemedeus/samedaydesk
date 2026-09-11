@@ -1,0 +1,79 @@
+{
+  "id": "h04-route-02",
+  "family": "api-routes",
+  "kind": "change",
+  "method": "raw-bytes",
+  "quotedSourceMdShas": {
+    "repo": "epistemedeus/samedaydesk",
+    "path": "server/routes/observatory.js",
+    "beforeSha": "d4fec15d822bed6bdb98b6723bdbfbf88c9e5796",
+    "afterSha": "8c1c4f706c75868d1556db483deff98d29758073"
+  },
+  "inputsHashed": {
+    "before": "ad045744f8d555d1cdf4b4dfd9f569d1a07b3ebe15c73961614c7d59c4c416ab",
+    "after": "a8211c2727aaa218668bbaf6789285697f801be75c0a5ab92b54a7c1d78ecfc4",
+    "used": "0fcd55b6463fda09ad03c7b1ca21567264fc0a72169d2f8cb15aa272fca6a550"
+  },
+  "sourceFacts": [
+    {
+      "id": "observatory-sources",
+      "op": "added",
+      "httpMethod": "GET",
+      "path": "/api/observatory/sources",
+      "canonical": null,
+      "robots": null,
+      "titleOnly": false,
+      "before": "absent",
+      "after": "GET /api/observatory/sources"
+    },
+    {
+      "id": "observatory-snapshot",
+      "op": "added",
+      "httpMethod": "GET",
+      "path": "/api/observatory/snapshot",
+      "canonical": null,
+      "robots": null,
+      "titleOnly": false,
+      "before": "absent",
+      "after": "GET /api/observatory/snapshot"
+    },
+    {
+      "id": "observatory-sourceId",
+      "op": "added",
+      "httpMethod": "GET",
+      "path": "/api/observatory/sources/{sourceId}",
+      "canonical": null,
+      "robots": null,
+      "titleOnly": false,
+      "before": "absent",
+      "after": "GET /api/observatory/sources/{sourceId}"
+    },
+    {
+      "id": "health-unchanged",
+      "op": "unchanged",
+      "httpMethod": "GET",
+      "path": "/api/health",
+      "before": "GET /api/health",
+      "after": "GET /api/health",
+      "titleOnly": false
+    },
+    {
+      "id": "moltjobs-unchanged",
+      "op": "unchanged",
+      "httpMethod": "GET",
+      "path": "/api/market-observations/moltjobs-stats",
+      "before": "GET /api/market-observations/moltjobs-stats",
+      "after": "GET /api/market-observations/moltjobs-stats",
+      "titleOnly": false
+    }
+  ],
+  "counts": {
+    "added": 3,
+    "removed": 0,
+    "changed": 0,
+    "titleOnly": 0
+  },
+  "removed": [],
+  "titleOnly": [],
+  "note": "SDS52 api-upgrade-brief OpenAPI pair; source facts are the three GET observatory operations that appear. Not a refusal."
+}

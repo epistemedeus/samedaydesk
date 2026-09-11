@@ -1,0 +1,8 @@
+{
+  "engine": "lockfile-pin-delta",
+  "ok": false,
+  "refused": true,
+  "exitCode": 2,
+  "consumerAction": "Do not analyze yarn.lock as npm package-lock pins.",
+  "purchaseAuthority": false
+}

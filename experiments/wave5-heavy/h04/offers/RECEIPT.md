@@ -29,7 +29,7 @@ Actual artifacts: each `examples/**/actual-engine.json` plus `/tmp/w5-h04/h04-ch
 
 | id | Why |
 | --- | --- |
-| h04-lock-01 | Operator must review three vulnerable version+integrity pins (`concurrently`/`qs`/`shell-quote`); engine `actionable`, 3 changed / 99 omitted. |
+| h04-lock-01 | Operator must review three version+integrity+resolved pin-deltas (`concurrently`/`qs`/`shell-quote`); engine `actionable`, 3 changed / 99 omitted. SDS commit subject claims vulnerable deps; H04 does not join advisories and is not a CVE proof. |
 | h04-schema-01 | Draft 04→06 `exclusiveMinimum` boolean→number breaks boolean emitters; engine `actionable`, 1 used-path type-change. |
 | h04-page-03 | `/x402/verified` inspection rule becomes 7-day CDP Bazaar freshness; title/h1 unchanged. Page-change `changed`; same SHAs, route-diff identity 0. |
 
@@ -50,6 +50,10 @@ match: schema-01, schema-02, schema-03, lock-01, lock-03, route-02, page-01, pag
 mismatch: lock-02 (highlight)  
 unknown: route-01, route-03 (missing status)
 
+## Language (lock-01)
+
+H04 is not a vulnerability scanner. `h04-lock-01` is a pin-delta / operator-risk / integrity-change / resolved-source job. Quote the SDS subject `fix(deps): update vulnerable locked dependencies` as a commit message only. See `offers/LANGUAGE.md`.
+
 ## Next owner
 
-Parent / FEATURE-MAP + tests: keep informational↔unchanged as a documented alias, not a silent pass; do not invent route `status`. Do not treat lock-02 harness mismatch as an engine crash.
+Parent / FEATURE-MAP + tests: keep informational↔unchanged as a documented alias, not a silent pass; do not invent route `status`. Do not treat lock-02 harness mismatch as an engine crash. Do not tell a buyer this engine proved a CVE.

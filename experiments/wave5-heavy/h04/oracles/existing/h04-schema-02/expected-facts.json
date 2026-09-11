@@ -1,0 +1,59 @@
+{
+  "id": "h04-schema-02",
+  "family": "schema-webhook",
+  "kind": "unused-additive-control",
+  "method": "raw-bytes",
+  "quotedSourceMdShas": {
+    "repo": "octokit/webhooks",
+    "path": "payload-examples/api.github.com/create/payload.json",
+    "beforeSha": "cdd43ea09fca0dc76c6af948b236cb12a7804e2c",
+    "afterSha": "bc5f6fd16b0df0e3058512e7d44dcba9ba3e0bb0"
+  },
+  "inputsHashed": {
+    "before": "8b418ddf05f2ad7bfcc1c7c532929cd36335d7dad59cf27c2d308b96f752d525",
+    "after": "a3dc33c8a762dc4afb11f88fbc6ae5c3a870785e6109706fa343416eb7651aba",
+    "used": "499147b9a0ba0b72f5f599dceb1e53ec62ec7963cc399de7c109eaf11236c0ef"
+  },
+  "sourceFacts": [
+    {
+      "id": "ref",
+      "op": "unchanged",
+      "used": true,
+      "pointer": "/ref",
+      "beforeType": "string",
+      "afterType": "string",
+      "before": "simple-tag",
+      "after": "simple-tag"
+    },
+    {
+      "id": "ref_type",
+      "op": "unchanged",
+      "used": true,
+      "pointer": "/ref_type",
+      "beforeType": "string",
+      "afterType": "string",
+      "before": "tag",
+      "after": "tag"
+    },
+    {
+      "id": "pusher_type",
+      "op": "unchanged",
+      "used": true,
+      "pointer": "/pusher_type",
+      "beforeType": "string",
+      "afterType": "string",
+      "before": "user",
+      "after": "user"
+    }
+  ],
+  "ignoredUnused": [
+    {
+      "pointer": "/repository/custom_properties",
+      "op": "added",
+      "used": false,
+      "before": null,
+      "after": {},
+      "why": "only structural delta in create/payload.json; not a used pointer"
+    }
+  ]
+}

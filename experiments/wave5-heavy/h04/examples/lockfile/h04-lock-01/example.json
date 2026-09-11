@@ -1,7 +1,7 @@
 {
   "id": "h04-lock-01",
   "family": "lockfile",
-  "title": "SDS vulnerable lock pins: concurrently, qs, shell-quote",
+  "title": "SDS lock pin-delta: concurrently, qs, shell-quote (version+integrity+resolved)",
   "kind": "change",
   "engines": ["w4-lockfile-pin-delta"],
   "inputs": { "before": "./before.json", "after": "./after.json" },

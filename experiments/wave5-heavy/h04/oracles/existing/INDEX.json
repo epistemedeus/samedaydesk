@@ -1,0 +1,104 @@
+{
+  "owned": "experiments/wave5-heavy/h04/oracles/existing/",
+  "method": "raw-bytes",
+  "notDerivedFrom": "engine-stdout",
+  "count": 12,
+  "examples": [
+    {
+      "id": "h04-schema-01",
+      "family": "schema-webhook",
+      "kind": "change",
+      "usefulNoChange": false,
+      "expectedRefusal": false,
+      "fact": "Used /properties/exclusiveMinimum type boolean -> number (Draft 04 -> 06)."
+    },
+    {
+      "id": "h04-schema-02",
+      "family": "schema-webhook",
+      "kind": "unused-additive-control",
+      "usefulNoChange": true,
+      "expectedRefusal": false,
+      "fact": "Used /ref /ref_type /pusher_type identical; unused repository.custom_properties {} added."
+    },
+    {
+      "id": "h04-schema-03",
+      "family": "schema-webhook",
+      "kind": "no-change-control",
+      "usefulNoChange": true,
+      "expectedRefusal": false,
+      "fact": "Used CloudEvents id/type/source/specversion identical; key-order + unused debug only."
+    },
+    {
+      "id": "h04-lock-01",
+      "family": "lockfile",
+      "kind": "change",
+      "usefulNoChange": false,
+      "expectedRefusal": false,
+      "fact": "concurrently 10.0.3->10.0.5, qs 6.15.2->6.16.0, shell-quote 1.8.4->1.9.0 version+integrity+resolved."
+    },
+    {
+      "id": "h04-lock-02",
+      "family": "lockfile",
+      "kind": "change",
+      "usefulNoChange": false,
+      "expectedRefusal": false,
+      "fact": "ms@2.1.3 same version/resolved; integrity sha1-V0yBOM4dK1hh8LRFedut1gxmFbI= -> sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==."
+    },
+    {
+      "id": "h04-lock-03",
+      "family": "lockfile",
+      "kind": "no-change-control",
+      "usefulNoChange": true,
+      "expectedRefusal": false,
+      "fact": "159 integrity-bearing pins identical under key-order/indent/unused-field/link:true noise."
+    },
+    {
+      "id": "h04-route-01",
+      "family": "api-routes",
+      "kind": "change",
+      "usefulNoChange": false,
+      "expectedRefusal": false,
+      "fact": "Added path /for-agents/useful-jobs canonical https://samedaydesk.com/for-agents/useful-jobs; titleOnly 0."
+    },
+    {
+      "id": "h04-route-02",
+      "family": "api-routes",
+      "kind": "change",
+      "usefulNoChange": false,
+      "expectedRefusal": false,
+      "fact": "Added GET /api/observatory/sources, /snapshot, /sources/{sourceId}; health and moltjobs-stats stay."
+    },
+    {
+      "id": "h04-route-03",
+      "family": "api-routes",
+      "kind": "no-change-control",
+      "usefulNoChange": true,
+      "expectedRefusal": false,
+      "fact": "/x402/verified path/canonical/title/robots identical; copy-only description/crawlerHtml is not titleOnly."
+    },
+    {
+      "id": "h04-page-01",
+      "family": "page-facts",
+      "kind": "change",
+      "usefulNoChange": false,
+      "expectedRefusal": false,
+      "fact": "Title/h1/description rename JSON-LD / Schema Validator -> Free JSON-LD Validator & Schema Checker."
+    },
+    {
+      "id": "h04-page-02",
+      "family": "page-facts",
+      "kind": "no-change-control",
+      "usefulNoChange": true,
+      "expectedRefusal": false,
+      "fact": "resources.html title/description/h1/h2 unchanged; footer and provenance noise only."
+    },
+    {
+      "id": "h04-page-03",
+      "family": "page-facts",
+      "kind": "change",
+      "usefulNoChange": false,
+      "expectedRefusal": false,
+      "fact": "Title/h1 unchanged; description+text replace agree-rule with 7-day CDP Bazaar freshness."
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "h04-lock-pub-b07-large",
+  "family": "lockfile-public",
+  "title": "samedaydesk lockfileVersion 3 self-diff, 160 pins, realistic bounded size",
+  "kind": "large-bounded",
+  "engines": [
+    "w4-lockfile-pin-delta"
+  ],
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "changedFact": "The full samedaydesk package-lock.json at 218b2fa (lockfileVersion 3, 162 packages keys, 160 engine pins) has zero added/removed/changed name+version+integrity+resolved triples on a self-diff; one local vendor pin lacks integrity.",
+  "expectedStatus": "partial",
+  "expectedHighlights": [
+    "partial",
+    "Added 0, removed 0, changed 0."
+  ],
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "beforeSha": "218b2fa74d63951eeeda4cf0a67c420835a58b01",
+    "afterSha": "218b2fa74d63951eeeda4cf0a67c420835a58b01",
+    "path": "package-lock.json"
+  }
+}

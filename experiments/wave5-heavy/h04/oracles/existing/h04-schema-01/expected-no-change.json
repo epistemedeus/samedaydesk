@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": false,
+  "why": "Used pointer /properties/exclusiveMinimum type boolean -> number is a consumer-breaking schema change."
+}

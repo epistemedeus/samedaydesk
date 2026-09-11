@@ -1,0 +1,10 @@
+{
+  "refuse": false,
+  "reasons": [],
+  "originalWouldRefuse": false,
+  "originalLockfileVersion": {
+    "before": 2,
+    "after": 2
+  },
+  "storedLockfileVersion": 3
+}

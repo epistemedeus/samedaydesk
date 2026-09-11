@@ -1,0 +1,27 @@
+{
+  "id": "h04-lock-pub-b05-normalize",
+  "family": "lockfile-public",
+  "title": "npm/cli 12.0.2 lock extract: key-order/indent/unused-field noise, no pin delta",
+  "kind": "no-change-control",
+  "engines": [
+    "w4-lockfile-pin-delta"
+  ],
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "changedFact": "No name+version+integrity+resolved pin changes: 22 npm/cli 12.0.2 packages-map pins stay identical after reversed key order, 4-space indent, unused fields, and an extra link:true omit entry.",
+  "expectedStatus": "informational",
+  "expectedHighlights": [
+    "informational",
+    "Added 0, removed 0, changed 0.",
+    "Unchanged packages omitted (22)"
+  ],
+  "source": {
+    "repo": "npm/cli",
+    "beforeSha": "b888cc9a9ff34a8b023ff47b784692396635397b",
+    "afterSha": "b888cc9a9ff34a8b023ff47b784692396635397b",
+    "path": "package-lock.json",
+    "release": "12.0.2"
+  }
+}

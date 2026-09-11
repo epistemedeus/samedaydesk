@@ -1,0 +1,125 @@
+{
+  "exampleId": "h04-lock-pub-b05-normalize",
+  "family": "lockfile-public",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "mapping": {
+    "m01EngineId": "lockfile-pin-delta",
+    "mapping": "ok",
+    "note": null
+  },
+  "oracles": {
+    "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b05-normalize/expected-facts.json",
+    "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b05-normalize/expected-refusal.json",
+    "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b05-normalize/expected-no-change.json"
+  },
+  "m01EngineId": "lockfile-pin-delta",
+  "skipped": false,
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "lockfile-pin-delta",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b05-normalize/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b05-normalize/after.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-lock-pub-b05-normalize/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "ok": true,
+  "durationMs": 82,
+  "stdoutBytes": 1317,
+  "stderrBytes": 0,
+  "outputs": {
+    "files": [
+      {
+        "name": "catalog-receipt.json",
+        "bytes": 1317,
+        "sha256": "4e46a8307336a67a4537b775f14848ed61bacb95a388e81c392999c84e80d319"
+      },
+      {
+        "name": "pin-delta.json",
+        "bytes": 1085,
+        "sha256": "10f55d471dc9ce580ba31cbc7d90ad9e7a6703d5bf69e32c1ef0af85c1e117c3"
+      },
+      {
+        "name": "pin-delta.md",
+        "bytes": 356,
+        "sha256": "97137897e98ef7bf11c167119549e6c9445d6bfe6497507cb2923c1c2b42eb4e"
+      }
+    ],
+    "totalBytes": 2758
+  },
+  "stdoutStatus": "informational",
+  "outcomeKind": "analysis",
+  "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+  "schemaMatchOk": true,
+  "factsCompare": {
+    "result": "unknown",
+    "reason": "no-source-facts",
+    "checks": []
+  },
+  "refusalCompare": {
+    "result": "match",
+    "expected": false,
+    "actualRefused": false
+  },
+  "noChange": {
+    "expected": true,
+    "kind": "normalization-noise",
+    "sameNameVersionIntegrityResolved": true,
+    "noise": [
+      "key-order",
+      "indent-4",
+      "unused-fields",
+      "link-true-omit"
+    ],
+    "counts": {
+      "beforePins": 22,
+      "afterPins": 22,
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "unchanged": 22,
+      "missingIntegrity": 0
+    }
+  },
+  "reportCompare": {
+    "result": "match",
+    "reason": null,
+    "facts": [
+      {
+        "key": "status",
+        "expected": "informational",
+        "actual": "informational",
+        "result": "match"
+      },
+      {
+        "key": "highlight:informational",
+        "expected": "informational",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:Added 0, removed 0, changed 0.",
+        "expected": "Added 0, removed 0, changed 0.",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:Unchanged packages omitted (22)",
+        "expected": "Unchanged packages omitted (22)",
+        "actual": true,
+        "result": "match"
+      }
+    ],
+    "expectedPresent": true,
+    "artifactFiles": [
+      "catalog-receipt.json",
+      "pin-delta.json",
+      "pin-delta.md"
+    ]
+  }
+}

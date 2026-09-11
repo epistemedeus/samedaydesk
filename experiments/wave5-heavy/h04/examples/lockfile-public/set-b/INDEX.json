@@ -1,0 +1,111 @@
+{
+  "family": "lockfile-public",
+  "set": "b",
+  "engine": "lockfile-pin-delta",
+  "enginePins": {
+    "w4-lockfile-pin-delta": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+    "m01-composition": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+    "m01-lockfile-tool": "fba9d14872bc4c04214e527b9edfb30c2123c9e7"
+  },
+  "notDuplicated": [
+    "tools/lockfile-pin-delta/fixtures/*",
+    "experiments/wave5/m07/",
+    "set-a repos express/axios/debug/prettier/mocha/got"
+  ],
+  "examples": [
+    {
+      "id": "h04-lock-pub-b04-removal",
+      "kind": "change",
+      "semantic": "dependency-removal",
+      "path": "h04-lock-pub-b04-removal/",
+      "project": "webpack/webpack-cli",
+      "beforeSha": "cbd3a24dbdadd84e3614f9aff1068af2f1275cfe",
+      "afterSha": "3664b9d8239834f63124783307dd3e93953d6dd9",
+      "removed": [
+        "array-flatten@1.1.1",
+        "binary-extensions@2.3.0",
+        "core-util-is@1.0.3",
+        "destroy@1.2.0",
+        "detect-node@2.1.0",
+        "faye-websocket@0.11.4",
+        "follow-redirects@1.16.0",
+        "http-proxy@1.18.1"
+      ],
+      "counts": {
+        "beforePins": 19,
+        "afterPins": 11,
+        "added": 0,
+        "removed": 8,
+        "changed": 0,
+        "unchanged": 11,
+        "missingIntegrity": 0
+      },
+      "engineVerified": {
+        "w4": { "exitCode": 0, "status": "actionable", "removed": 8 },
+        "m01": { "exitCode": 0, "status": "actionable", "removed": 8, "outcome": "analysis" }
+      }
+    },
+    {
+      "id": "h04-lock-pub-b05-normalize",
+      "kind": "no-change-control",
+      "semantic": "normalization-noise",
+      "path": "h04-lock-pub-b05-normalize/",
+      "project": "npm/cli",
+      "beforeSha": "b888cc9a9ff34a8b023ff47b784692396635397b",
+      "afterSha": "b888cc9a9ff34a8b023ff47b784692396635397b",
+      "counts": {
+        "beforePins": 22,
+        "afterPins": 22,
+        "added": 0,
+        "removed": 0,
+        "changed": 0,
+        "unchanged": 22,
+        "missingIntegrity": 0
+      },
+      "engineVerified": {
+        "w4": { "exitCode": 0, "status": "informational" },
+        "m01": { "exitCode": 0, "status": "informational" }
+      }
+    },
+    {
+      "id": "h04-lock-pub-b06-refuse",
+      "kind": "unsupported-format",
+      "semantic": "yarn.lock-refusal",
+      "path": "h04-lock-pub-b06-refuse/",
+      "project": "yarnpkg/berry",
+      "beforeSha": "3ad9e35026e514632a5ff8551d8308852094befd",
+      "afterSha": "3ad9e35026e514632a5ff8551d8308852094befd",
+      "expectedRefusal": {
+        "expected": true,
+        "engineId": "lockfile-pin-delta",
+        "exitCode": 2
+      },
+      "engineVerified": {
+        "w4": { "exitCode": 2, "refused": true, "code": "parse-error" },
+        "m01": { "exitCode": 2, "refused": true, "code": "parse-error", "outcome": "refused" }
+      }
+    },
+    {
+      "id": "h04-lock-pub-b07-large",
+      "kind": "large-bounded",
+      "semantic": "realistic-large-lockfileVersion-3",
+      "path": "h04-lock-pub-b07-large/",
+      "project": "epistemedeus/samedaydesk",
+      "beforeSha": "218b2fa74d63951eeeda4cf0a67c420835a58b01",
+      "afterSha": "218b2fa74d63951eeeda4cf0a67c420835a58b01",
+      "counts": {
+        "beforePins": 160,
+        "afterPins": 160,
+        "added": 0,
+        "removed": 0,
+        "changed": 0,
+        "unchanged": 160,
+        "missingIntegrity": 1
+      },
+      "engineVerified": {
+        "w4": { "exitCode": 0, "status": "partial", "missingIntegrity": 1 },
+        "m01": { "exitCode": 0, "status": "partial", "missingIntegrity": 1 }
+      }
+    }
+  ]
+}

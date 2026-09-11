@@ -1,0 +1,11 @@
+w5-m01 useful-engine consumer
+
+Commands:
+  list
+  contract
+  describe <engine-id>
+  run|invoke <engine-id> --out-dir DIR [--before PATH --after PATH --used PATH --job PATH --fields LIST --clock ISO --example]
+
+Executes each selected engine's published CLI. Does not copy compare algorithms.
+First offer: lockfile-pin-delta
+Does not edit the live useful-jobs catalog or paid-useful-jobs wrapper.

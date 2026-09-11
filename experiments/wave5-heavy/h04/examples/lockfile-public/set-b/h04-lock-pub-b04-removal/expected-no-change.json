@@ -1,0 +1,4 @@
+{
+  "expected": false,
+  "reason": "packages keys present in before are absent in after"
+}

@@ -1,0 +1,22 @@
+{
+  "engine": "lockfile-pin-delta",
+  "status": "partial",
+  "consumerAction": "Large lockfile parsed. No pin identity delta on self-diff; treat missing vendor integrity as partial, not as a sale.",
+  "highlights": [
+    "partial",
+    "Added 0, removed 0, changed 0."
+  ],
+  "counts": {
+    "beforePins": 160,
+    "afterPins": 160,
+    "added": 0,
+    "removed": 0,
+    "changed": 0,
+    "unchanged": 160,
+    "missingIntegrity": 1
+  },
+  "added": [],
+  "removed": [],
+  "changed": [],
+  "purchaseAuthority": false
+}

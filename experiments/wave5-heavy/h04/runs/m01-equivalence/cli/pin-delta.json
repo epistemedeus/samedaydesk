@@ -1,0 +1,129 @@
+{
+  "schema": "samedaydesk.lockfile-pin-delta.v1",
+  "appId": "lockfile-pin-delta",
+  "ok": true,
+  "status": "actionable",
+  "purchaseAuthority": false,
+  "paidValueClaim": false,
+  "settlement": "nonsettling-prototype",
+  "equality": "pin-fields",
+  "lockfileVersion": {
+    "before": 3,
+    "after": 3
+  },
+  "mapSource": {
+    "before": "packages",
+    "after": "packages"
+  },
+  "counts": {
+    "beforePins": 102,
+    "afterPins": 102,
+    "added": 0,
+    "removed": 0,
+    "changed": 3,
+    "unchanged": 99,
+    "missingIntegrity": 0
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "node_modules/concurrently",
+      "name": "concurrently",
+      "before": {
+        "id": "node_modules/concurrently",
+        "name": "concurrently",
+        "version": "10.0.3",
+        "integrity": "sha512-hc3LH4UaKWd/bbyDK/IGVa4RB6PtQ3CUYwtrkzqHn+wIG3Hr5fhpRlk0L/gCa8ZE1L/Ufj50Zho69cI5w8SQBA==",
+        "resolved": "https://registry.npmjs.org/concurrently/-/concurrently-10.0.3.tgz",
+        "gitCommit": null,
+        "termsHash": "2a66bc23eb1c6c4b23dbe092b91118bdb8e014a5b5bb274eacea93f9242a2e7a",
+        "missingIntegrity": false
+      },
+      "after": {
+        "id": "node_modules/concurrently",
+        "name": "concurrently",
+        "version": "10.0.5",
+        "integrity": "sha512-JaP/CoftUrCcAFW/g//RbgEGwlelnEae6cfBLgH6ZdO6s8jPkn6p9SB9u6pdVxYXoiSnFqseOlHfrEfF82TVOg==",
+        "resolved": "https://registry.npmjs.org/concurrently/-/concurrently-10.0.5.tgz",
+        "gitCommit": null,
+        "termsHash": "8e6111a5db7474cc280ebe88104e1dbf1525cebdc8768378972419c9848f8746",
+        "missingIntegrity": false
+      },
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ]
+    },
+    {
+      "id": "node_modules/qs",
+      "name": "qs",
+      "before": {
+        "id": "node_modules/qs",
+        "name": "qs",
+        "version": "6.15.2",
+        "integrity": "sha512-Rzq0KEyX/w/tEybncDgdkZrJgVUsUMk3xjh3t5bv3S1HTAtg+uOYt72+ZfwiQwKdysThkTBdL/rTi6HDmX9Ddw==",
+        "resolved": "https://registry.npmjs.org/qs/-/qs-6.15.2.tgz",
+        "gitCommit": null,
+        "termsHash": "407fd174d3d3eea295aac793969107ededd639d3ba6b29186d6d1382da5a6c0c",
+        "missingIntegrity": false
+      },
+      "after": {
+        "id": "node_modules/qs",
+        "name": "qs",
+        "version": "6.16.0",
+        "integrity": "sha512-h6fhOIaRrID2CbEY2fqs+7t+UXZo+MLAnU5gRIq85uFtdiUPCdsApMlHhXogKVM4HM2DVbIjGNTTYH2OcmP1vA==",
+        "resolved": "https://registry.npmjs.org/qs/-/qs-6.16.0.tgz",
+        "gitCommit": null,
+        "termsHash": "2fcf461f26361e3aa9d1a33031719fbb57a6d46acbeeec187d27e73ee1b5fad4",
+        "missingIntegrity": false
+      },
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ]
+    },
+    {
+      "id": "node_modules/shell-quote",
+      "name": "shell-quote",
+      "before": {
+        "id": "node_modules/shell-quote",
+        "name": "shell-quote",
+        "version": "1.8.4",
+        "integrity": "sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==",
+        "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.8.4.tgz",
+        "gitCommit": null,
+        "termsHash": "92d02e43b37f60ea0a8e6c06ded56f1dc5f42ec9e343c69849238f7bb215502f",
+        "missingIntegrity": false
+      },
+      "after": {
+        "id": "node_modules/shell-quote",
+        "name": "shell-quote",
+        "version": "1.9.0",
+        "integrity": "sha512-Iov+JwFv/2HcTpcwNMKd8+IWNb8tboQJNQTkAY/LLVK7gGH9jy+LGkVqPxfekHl+yMmiqXszdGWXgkfml7hjqA==",
+        "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.9.0.tgz",
+        "gitCommit": null,
+        "termsHash": "39082033da1beabac2fc82b69d671e6d27f885921f58ae91bb7b63eebe20974b",
+        "missingIntegrity": false
+      },
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ]
+    }
+  ],
+  "gaps": [],
+  "caller": {
+    "before": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-01/before.json",
+    "after": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-01/after.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notCustomerDemand": true,
+    "notMarketFact": true
+  },
+  "provenance": "caller-supplied",
+  "generatedAt": "2026-09-11T23:27:21.182Z"
+}

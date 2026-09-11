@@ -9,7 +9,7 @@ Given two local revisions of a schema, lockfile, public route table, OpenAPI, or
 | Field | Value |
 | --- | --- |
 | Entrypoint | `experiments/wave5-heavy/h04/` |
-| Command | `node bin/h04-benchmark.mjs smoke` · `run` · `list` |
+| Command | `node bin/h04-benchmark.mjs smoke` · `run` · `m01` · `list` |
 | Tests | `npm test` (`node --test test/*.test.mjs`) |
 | Account / spend | None. Offline. `sold` always false. Live settlement out of scope. |
 
@@ -50,6 +50,26 @@ Corpus is not W4 SAMPLE fixtures and not M06–M09 unit corpora.
 - Compare is fact-level (`match` / `mismatch` / `unknown`). Missing expected-report stays `unknown`.
 - Engine `informational` and oracle `unchanged` are recorded as the same no-change class (vocabulary alias, not a hidden pass).
 - Route-table-diff has no `status` field; expected `ok` matches CLI `ok: true` plus highlight counts.
+
+## M01 four-engine composition replay
+
+Composition SHA `a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e` at `/tmp/w5-h04/ro-m01`. H04 does not amend those engines.
+
+| Surface | Value |
+| --- | --- |
+| CLI | `node experiments/wave5/m01/bin/run-job.mjs <id> --out-dir DIR …` |
+| Library | `runCatalogJob` / `invokeEngine` from `experiments/wave5/m01/index.mjs` |
+| In-tree pins | lockfile `fba9d148…`, schema `27482b71…`, route `886c81d8…`, page `fec7bc04…` |
+
+`node bin/h04-benchmark.mjs m01` replays catalog examples against that CLI. 11 of 12 original examples map onto the four engines (exit 0). `h04-route-02` OpenAPI stays SDS52; M01 schema engine refuses YAML as `not-json`.
+
+Expected artifacts are split: `oracles/existing/<id>/expected-facts.json` (raw bytes), `expected-refusal.json`, `expected-no-change.json`. Engine stdout is not the oracle.
+
+Public lockfile cases (≤8 projects; distinct semantics): mocha integrity sha1→sha512, mocha resolved http→https, axios addition, webpack-cli removal, npm/cli noise no-change, yarnpkg/berry yarn.lock refuse, SDS large v3 self-diff (partial missingIntegrity).
+
+CLI vs library: counts/status/outcome match on h04-lock-01; full `pin-delta.json` sha256 differs only at `generatedAt`. Not a CPU/hosting bill.
+
+Lockfile remains the first offer: M01 catalog `firstOffer=lockfile-pin-delta`; this replay shows add/remove/integrity/resolved/noise/refuse/large all produce honest analysis or refuse without claiming CVEs.
 
 ## Later integration
 

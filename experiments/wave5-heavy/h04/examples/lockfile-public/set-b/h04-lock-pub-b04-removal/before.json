@@ -1,0 +1,324 @@
+{
+  "name": "webpack-cli-monorepo",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "webpack-cli-monorepo",
+      "license": "MIT",
+      "workspaces": [
+        "./packages/*"
+      ],
+      "devDependencies": {
+        "@babel/core": "^8.0.1",
+        "@babel/preset-env": "^8.0.2",
+        "@babel/register": "^8.0.1",
+        "@changesets/cli": "^2.31.0",
+        "@changesets/get-github-info": "^0.8.0",
+        "@swc/core": "^1.15.41",
+        "@swc/jest": "^0.2.39",
+        "@types/jest": "^30.0.0",
+        "@types/js-yaml": "^4.0.9",
+        "@types/node": "^26.0.0",
+        "@types/rechoir": "^0.6.4",
+        "c8": "^12.0.0",
+        "coffeescript": "^2.7.0",
+        "colorette": "^2.0.20",
+        "concat-stream": "^2.0.0",
+        "cspell": "^10.0.1",
+        "css-loader": "^7.1.4",
+        "del-cli": "^7.0.0",
+        "eslint": "^10.5.0",
+        "eslint-config-webpack": "^4.9.6",
+        "execa": "^9.6.1",
+        "get-port": "^7.2.0",
+        "husky": "^9.1.7",
+        "jest": "^30.4.2",
+        "js-yaml": "^5.0.0",
+        "json5": "^2.2.3",
+        "lint-staged": "^17.0.8",
+        "mini-css-extract-plugin": "^2.10.2",
+        "pkg-pr-new": "^0.0.79",
+        "prettier": "^3.8.4",
+        "readable-stream": "^4.7.0",
+        "sass": "^1.101.0",
+        "sass-loader": "^17.0.0",
+        "style-loader": "^4.0.0",
+        "ts-loader": "^9.6.2",
+        "ts-node": "^10.9.2",
+        "tsx": "^4.23.0",
+        "typescript": "^6.0.3",
+        "webpack": "^5.107.2",
+        "webpack-bundle-analyzer": "^5.3.0",
+        "webpack-dev-server": "^5.2.5"
+      },
+      "engines": {
+        "node": ">=20.9.0"
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/webpack"
+      },
+      "peerDependencies": {
+        "webpack": "5.x.x"
+      }
+    },
+    "node_modules/array-flatten": {
+      "version": "1.1.1",
+      "resolved": "https://registry.npmjs.org/array-flatten/-/array-flatten-1.1.1.tgz",
+      "integrity": "sha512-PCVAQswWemu6UdxsDFFX/+gVeYqKAod3D3UVm91jHwynguOwAvYPhx8nNlM++NqRcK6CxxpUafjmhIdKiHibqg==",
+      "devOptional": true,
+      "license": "MIT"
+    },
+    "node_modules/binary-extensions": {
+      "version": "2.3.0",
+      "resolved": "https://registry.npmjs.org/binary-extensions/-/binary-extensions-2.3.0.tgz",
+      "integrity": "sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==",
+      "devOptional": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=8"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/sindresorhus"
+      }
+    },
+    "node_modules/core-util-is": {
+      "version": "1.0.3",
+      "resolved": "https://registry.npmjs.org/core-util-is/-/core-util-is-1.0.3.tgz",
+      "integrity": "sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==",
+      "devOptional": true,
+      "license": "MIT"
+    },
+    "node_modules/destroy": {
+      "version": "1.2.0",
+      "resolved": "https://registry.npmjs.org/destroy/-/destroy-1.2.0.tgz",
+      "integrity": "sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==",
+      "devOptional": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.8",
+        "npm": "1.2.8000 || >= 1.4.16"
+      }
+    },
+    "node_modules/detect-node": {
+      "version": "2.1.0",
+      "resolved": "https://registry.npmjs.org/detect-node/-/detect-node-2.1.0.tgz",
+      "integrity": "sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g==",
+      "devOptional": true,
+      "license": "MIT"
+    },
+    "node_modules/faye-websocket": {
+      "version": "0.11.4",
+      "resolved": "https://registry.npmjs.org/faye-websocket/-/faye-websocket-0.11.4.tgz",
+      "integrity": "sha512-CzbClwlXAuiRQAlUyfqPgvPoNKTckTPGfwZV4ZdAhVcP2lh9KUxJg2b5GkE7XbjKQ3YJnQ9z6D9ntLAlB+tP8g==",
+      "devOptional": true,
+      "license": "Apache-2.0",
+      "dependencies": {
+        "websocket-driver": ">=0.5.1"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      }
+    },
+    "node_modules/follow-redirects": {
+      "version": "1.16.0",
+      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.0.tgz",
+      "integrity": "sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==",
+      "devOptional": true,
+      "funding": [
+        {
+          "type": "individual",
+          "url": "https://github.com/sponsors/RubenVerborgh"
+        }
+      ],
+      "license": "MIT",
+      "engines": {
+        "node": ">=4.0"
+      },
+      "peerDependenciesMeta": {
+        "debug": {
+          "optional": true
+        }
+      }
+    },
+    "node_modules/http-proxy": {
+      "version": "1.18.1",
+      "resolved": "https://registry.npmjs.org/http-proxy/-/http-proxy-1.18.1.tgz",
+      "integrity": "sha512-7mz/721AbnJwIVbnaSv1Cz3Am0ZLT/UBwkC92VlxhXv/k/BBQfM2fXElQNC27BVGr0uwUpplYPQM9LnaBMR5NQ==",
+      "devOptional": true,
+      "license": "MIT",
+      "dependencies": {
+        "eventemitter3": "^4.0.0",
+        "follow-redirects": "^1.0.0",
+        "requires-port": "^1.0.0"
+      },
+      "engines": {
+        "node": ">=8.0.0"
+      }
+    },
+    "node_modules/colorette": {
+      "version": "2.0.20",
+      "resolved": "https://registry.npmjs.org/colorette/-/colorette-2.0.20.tgz",
+      "integrity": "sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==",
+      "license": "MIT"
+    },
+    "node_modules/commander": {
+      "version": "14.0.3",
+      "resolved": "https://registry.npmjs.org/commander/-/commander-14.0.3.tgz",
+      "integrity": "sha512-H+y0Jo/T1RZ9qPP4Eh1pkcQcLRglraJaSLoyOtHxu6AapkjWVCy2Sit1QQ4x3Dng8qDlSsZEet7g5Pq06MvTgw==",
+      "license": "MIT",
+      "engines": {
+        "node": ">=20"
+      }
+    },
+    "node_modules/cross-spawn": {
+      "version": "7.0.6",
+      "resolved": "https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.6.tgz",
+      "integrity": "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==",
+      "license": "MIT",
+      "dependencies": {
+        "path-key": "^3.1.0",
+        "shebang-command": "^2.0.0",
+        "which": "^2.0.1"
+      },
+      "engines": {
+        "node": ">= 8"
+      }
+    },
+    "node_modules/envinfo": {
+      "version": "7.21.0",
+      "resolved": "https://registry.npmjs.org/envinfo/-/envinfo-7.21.0.tgz",
+      "integrity": "sha512-Lw7I8Zp5YKHFCXL7+Dz95g4CcbMEpgvqZNNq3AmlT5XAV6CgAAk6gyAMqn2zjw08K9BHfcNuKrMiCPLByGafow==",
+      "license": "MIT",
+      "bin": {
+        "envinfo": "dist/cli.js"
+      },
+      "engines": {
+        "node": ">=4"
+      }
+    },
+    "node_modules/graceful-fs": {
+      "version": "4.2.11",
+      "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.11.tgz",
+      "integrity": "sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==",
+      "license": "ISC"
+    },
+    "node_modules/import-local": {
+      "version": "3.2.0",
+      "resolved": "https://registry.npmjs.org/import-local/-/import-local-3.2.0.tgz",
+      "integrity": "sha512-2SPlun1JUPWoM6t3F0dw0FkCF/jWY8kttcY4f599GLTSjh2OCuuhdTkJQsEcZzBqbXZGKMK2OqW1oZsjtf/gQA==",
+      "license": "MIT",
+      "dependencies": {
+        "pkg-dir": "^4.2.0",
+        "resolve-cwd": "^3.0.0"
+      },
+      "bin": {
+        "import-local-fixture": "fixtures/cli.js"
+      },
+      "engines": {
+        "node": ">=8"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/sindresorhus"
+      }
+    },
+    "node_modules/interpret": {
+      "version": "3.1.1",
+      "resolved": "https://registry.npmjs.org/interpret/-/interpret-3.1.1.tgz",
+      "integrity": "sha512-6xwYfHbajpoF0xLW+iwLkhwgvLoZDfjYfoFNu8ftMoXINzwuymNLd9u/KmwtdT2GbR+/Cz66otEGEVVUHX9QLQ==",
+      "license": "MIT",
+      "engines": {
+        "node": ">=10.13.0"
+      }
+    },
+    "node_modules/jest-worker": {
+      "version": "30.4.1",
+      "resolved": "https://registry.npmjs.org/jest-worker/-/jest-worker-30.4.1.tgz",
+      "integrity": "sha512-SHynN/q/QD++iNyvMdy+WMmbCGk8jIsNcRxycXbWubSOhvo6T+j2afcfUSl+3hYsiBebOTo0cT7c2H7CXugu1g==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@types/node": "*",
+        "@ungap/structured-clone": "^1.3.0",
+        "jest-util": "30.4.1",
+        "merge-stream": "^2.0.0",
+        "supports-color": "^8.1.1"
+      },
+      "engines": {
+        "node": "^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0"
+      }
+    },
+    "node_modules/rechoir": {
+      "version": "0.8.0",
+      "resolved": "https://registry.npmjs.org/rechoir/-/rechoir-0.8.0.tgz",
+      "integrity": "sha512-/vxpCXddiX8NGfGO/mTafwjq4aFa/71pvamip0++IQk3zG8cbCj0fifNPrjjF1XMXUne91jL9OoxmdykoEtifQ==",
+      "license": "MIT",
+      "dependencies": {
+        "resolve": "^1.20.0"
+      },
+      "engines": {
+        "node": ">= 10.13.0"
+      }
+    },
+    "node_modules/webpack": {
+      "version": "5.108.4",
+      "resolved": "https://registry.npmjs.org/webpack/-/webpack-5.108.4.tgz",
+      "integrity": "sha512-yur8LyJoeiWh47dErD+Ok7vlbmDsJ3UbbRPAoxbGJ54WpE2y5yVo5G/inUzujnYgw3tPmBRdn+G7PoxXaYC33w==",
+      "license": "MIT",
+      "dependencies": {
+        "@types/estree": "^1.0.8",
+        "@types/json-schema": "^7.0.15",
+        "@webassemblyjs/ast": "^1.14.1",
+        "@webassemblyjs/wasm-edit": "^1.14.1",
+        "@webassemblyjs/wasm-parser": "^1.14.1",
+        "acorn": "^8.16.0",
+        "acorn-import-phases": "^1.0.3",
+        "browserslist": "^4.28.1",
+        "chrome-trace-event": "^1.0.2",
+        "enhanced-resolve": "^5.22.2",
+        "es-module-lexer": "^2.1.0",
+        "eslint-scope": "5.1.1",
+        "events": "^3.2.0",
+        "graceful-fs": "^4.2.11",
+        "loader-runner": "^4.3.2",
+        "mime-db": "^1.54.0",
+        "minimizer-webpack-plugin": "^5.6.1",
+        "neo-async": "^2.6.2",
+        "schema-utils": "^4.3.3",
+        "tapable": "^2.3.0",
+        "watchpack": "^2.5.2",
+        "webpack-sources": "^3.5.0"
+      },
+      "bin": {
+        "webpack": "bin/webpack.js"
+      },
+      "engines": {
+        "node": ">=10.13.0"
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/webpack"
+      },
+      "peerDependenciesMeta": {
+        "webpack-cli": {
+          "optional": true
+        }
+      }
+    },
+    "node_modules/webpack-merge": {
+      "version": "6.0.1",
+      "resolved": "https://registry.npmjs.org/webpack-merge/-/webpack-merge-6.0.1.tgz",
+      "integrity": "sha512-hXXvrjtx2PLYx4qruKl+kyRSLc52V+cCvMxRjmKwoA+CBbbF5GfIBtR6kCvl0fYGqTUPKB+1ktVmTHqMOzgCBg==",
+      "license": "MIT",
+      "dependencies": {
+        "clone-deep": "^4.0.1",
+        "flat": "^5.0.2",
+        "wildcard": "^2.0.1"
+      },
+      "engines": {
+        "node": ">=18.0.0"
+      }
+    }
+  }
+}

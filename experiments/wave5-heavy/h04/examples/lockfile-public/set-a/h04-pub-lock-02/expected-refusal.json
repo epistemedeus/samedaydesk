@@ -1,0 +1,12 @@
+{
+  "refuse": false,
+  "reasons": [],
+  "originalWouldRefuse": true,
+  "originalRefuseCode": "unsupported-lockfile-version",
+  "originalLockfileVersion": {
+    "before": 1,
+    "after": 1
+  },
+  "storedLockfileVersion": 3,
+  "notes": "Raw git blobs are lockfileVersion 1. Engine lockfile-pin-delta refuses v1. Stored fixtures are a v3 packages-map subset of the proven triples so the example is parseable; expected-facts still include resolved."
+}

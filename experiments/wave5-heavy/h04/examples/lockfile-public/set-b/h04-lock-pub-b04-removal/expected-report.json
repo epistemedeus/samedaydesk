@@ -1,0 +1,37 @@
+{
+  "engine": "lockfile-pin-delta",
+  "status": "actionable",
+  "consumerAction": "Treat the eight missing packages-map keys as removed pins, not as a no-change reformat.",
+  "highlights": [
+    "array-flatten@1.1.1",
+    "binary-extensions@2.3.0",
+    "core-util-is@1.0.3",
+    "destroy@1.2.0",
+    "detect-node@2.1.0",
+    "faye-websocket@0.11.4",
+    "follow-redirects@1.16.0",
+    "http-proxy@1.18.1"
+  ],
+  "counts": {
+    "beforePins": 19,
+    "afterPins": 11,
+    "added": 0,
+    "removed": 8,
+    "changed": 0,
+    "unchanged": 11,
+    "missingIntegrity": 0
+  },
+  "added": [],
+  "removed": [
+    "array-flatten@1.1.1",
+    "binary-extensions@2.3.0",
+    "core-util-is@1.0.3",
+    "destroy@1.2.0",
+    "detect-node@2.1.0",
+    "faye-websocket@0.11.4",
+    "follow-redirects@1.16.0",
+    "http-proxy@1.18.1"
+  ],
+  "changed": [],
+  "purchaseAuthority": false
+}

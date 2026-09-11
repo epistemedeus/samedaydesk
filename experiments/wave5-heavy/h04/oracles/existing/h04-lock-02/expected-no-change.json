@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": false,
+  "why": "ms@2.1.3 keeps version and resolved; integrity sha1 -> sha512 is a pin change."
+}

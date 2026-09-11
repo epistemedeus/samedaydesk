@@ -1,0 +1,129 @@
+{
+  "exampleId": "h04-schema-02",
+  "family": "schema-webhook",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "mapping": {
+    "m01EngineId": "json-schema-webhook-drift",
+    "mapping": "ok",
+    "note": null
+  },
+  "oracles": {
+    "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-02/expected-facts.json",
+    "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-02/expected-refusal.json",
+    "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-02/expected-no-change.json"
+  },
+  "m01EngineId": "json-schema-webhook-drift",
+  "skipped": false,
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "json-schema-webhook-drift",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-02/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-02/after.json",
+    "--used",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-02/used.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-schema-02/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "ok": true,
+  "durationMs": 83,
+  "stdoutBytes": 1310,
+  "stderrBytes": 0,
+  "outputs": {
+    "files": [
+      {
+        "name": "catalog-receipt.json",
+        "bytes": 1310,
+        "sha256": "55d030427683b305f2eeddc63684706fe828594152041612107e6d3d7c9c398f"
+      },
+      {
+        "name": "drift-brief.json",
+        "bytes": 1784,
+        "sha256": "f8eb74c9fa7a5e0db200c31c69bddf83931aefce34ff87d5a1c1ac7c99aa73ab"
+      },
+      {
+        "name": "drift-brief.md",
+        "bytes": 616,
+        "sha256": "dd31e261b4cd5a3441e5df8728655881968a143aca267d4c6c9b7682970f7d33"
+      }
+    ],
+    "totalBytes": 3710
+  },
+  "stdoutStatus": "informational",
+  "outcomeKind": "analysis",
+  "pinSha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+  "schemaMatchOk": true,
+  "factsCompare": {
+    "result": "source-only",
+    "checks": [
+      {
+        "fact": "ref",
+        "op": "unchanged",
+        "idNeedles": [
+          "/ref"
+        ],
+        "presentIds": [],
+        "presentValues": [],
+        "result": "source-only"
+      },
+      {
+        "fact": "ref_type",
+        "op": "unchanged",
+        "idNeedles": [
+          "/ref_type"
+        ],
+        "presentIds": [],
+        "presentValues": [],
+        "result": "source-only"
+      },
+      {
+        "fact": "pusher_type",
+        "op": "unchanged",
+        "idNeedles": [
+          "/pusher_type"
+        ],
+        "presentIds": [],
+        "presentValues": [],
+        "result": "source-only"
+      }
+    ]
+  },
+  "refusalCompare": {
+    "result": "match",
+    "expected": false,
+    "actualRefused": false
+  },
+  "noChange": {
+    "usefulNoChange": true,
+    "why": "Used /ref /ref_type /pusher_type values and types are identical; repository.custom_properties {} is unused additive noise."
+  },
+  "reportCompare": {
+    "result": "match",
+    "reason": null,
+    "facts": [
+      {
+        "key": "status",
+        "expected": "unchanged",
+        "actual": "informational",
+        "result": "match"
+      },
+      {
+        "key": "ok",
+        "expected": true,
+        "actual": true,
+        "result": "match"
+      }
+    ],
+    "expectedPresent": true,
+    "artifactFiles": [
+      "catalog-receipt.json",
+      "drift-brief.json",
+      "drift-brief.md"
+    ]
+  }
+}

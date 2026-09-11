@@ -1,0 +1,25 @@
+{
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "at": "2026-09-11T23:28:00Z",
+  "failures": [
+    {
+      "id": "h04-route-02",
+      "catalog": "sds52-api-upgrade-brief",
+      "m01Four": null,
+      "mapping": "not-in-m01-four",
+      "probe": {
+        "engine": "json-schema-webhook-drift",
+        "inputs": "before.yaml/after.yaml OpenAPI",
+        "outcome": "refused",
+        "code": "not-json",
+        "note": "YAML OpenAPI is not JSON Schema/webhook-example. SDS52 api-upgrade-brief remains the surface."
+      }
+    }
+  ],
+  "notes": [
+    "M01 firstOffer is lockfile-pin-delta. Route-table-diff analysisField is outcome (no-change|changed|...).",
+    "Lockfile equality now includes resolved URL (M01 pin fba9d148).",
+    "Page-change refusals remain on stderr.",
+    "run-job.mjs vs tools/*/bin pin-delta.json differ only at generatedAt; counts/status match."
+  ]
+}

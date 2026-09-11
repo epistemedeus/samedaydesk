@@ -1,0 +1,41 @@
+{
+  "schema": "samedaydesk.lockfile-pin-delta.v1",
+  "appId": "lockfile-pin-delta",
+  "ok": true,
+  "status": "informational",
+  "purchaseAuthority": false,
+  "paidValueClaim": false,
+  "settlement": "nonsettling-prototype",
+  "equality": "pin-fields",
+  "lockfileVersion": {
+    "before": 3,
+    "after": 3
+  },
+  "mapSource": {
+    "before": "packages",
+    "after": "packages"
+  },
+  "counts": {
+    "beforePins": 22,
+    "afterPins": 22,
+    "added": 0,
+    "removed": 0,
+    "changed": 0,
+    "unchanged": 22,
+    "missingIntegrity": 0
+  },
+  "added": [],
+  "removed": [],
+  "changed": [],
+  "gaps": [],
+  "caller": {
+    "before": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b05-normalize/before.json",
+    "after": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b05-normalize/after.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notCustomerDemand": true,
+    "notMarketFact": true
+  },
+  "provenance": "caller-supplied",
+  "generatedAt": "2026-09-11T23:41:51.717Z"
+}

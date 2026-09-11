@@ -1,0 +1,21 @@
+{
+  "id": "h04-pub-lock-02",
+  "family": "lockfile-public",
+  "title": "mocha lock: same-version resolved tarball URL http→https (registry path scheme)",
+  "kind": "resolved-url",
+  "engines": [
+    "m01-lockfile-pin-delta"
+  ],
+  "m01EngineId": "lockfile-pin-delta",
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "changedFact": "got@6.7.1, path-is-absolute@1.0.1, and strip-eof@1.0.0 keep name+version+integrity while resolved rewrites http://registry.npmjs.org/… to https://registry.npmjs.org/…",
+  "source": {
+    "repo": "mochajs/mocha",
+    "beforeSha": "cb5eb8ed42abfd0d63c5013353843f1208ff6582",
+    "afterSha": "12b130b10e7ed1ee40e8becec3ca75066314fc43",
+    "path": "package-lock.json"
+  }
+}

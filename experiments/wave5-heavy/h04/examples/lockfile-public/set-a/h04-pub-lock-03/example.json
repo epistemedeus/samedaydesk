@@ -1,0 +1,21 @@
+{
+  "id": "h04-pub-lock-03",
+  "family": "lockfile-public",
+  "title": "axios HTTP/2 lock: add node-forge@1.3.1 and selfsigned@3.0.1",
+  "kind": "addition",
+  "engines": [
+    "m01-lockfile-pin-delta"
+  ],
+  "m01EngineId": "lockfile-pin-delta",
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "changedFact": "packages[] gains node-forge@1.3.1 and selfsigned@3.0.1 with integrity; no other subset pins change name, version, integrity, or resolved.",
+  "source": {
+    "repo": "axios/axios",
+    "beforeSha": "e9cfed35cfd18778050da9892a29efd8e9fc4d82",
+    "afterSha": "d676df772244726533ca320f42e967f5af056bac",
+    "path": "package-lock.json"
+  }
+}

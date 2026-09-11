@@ -1,0 +1,71 @@
+{
+  "id": "h04-page-02",
+  "family": "page-facts",
+  "kind": "no-change-control",
+  "method": "raw-bytes",
+  "quotedSourceMdShas": {
+    "repo": "epistemedeus/samedaydesk",
+    "path": "client/public/resources.html",
+    "beforeSha": "ff381d2b46e9beec1475212df2eb610a7b01229b",
+    "afterSha": "542d1748060ffadeda2491ddbbf134db31ce2890"
+  },
+  "inputsHashed": {
+    "before": "cf004a7f058b958503ce8fcc1f4504dbc5f0e91bf0d2e14a6eefd92761d062dd",
+    "after": "d94b62ae4ee3000dfbdc72bab72e6b09db62ab6a00b1142f05852c15d0d54d5c",
+    "job": "9729600d36370d2519e57194f3187551f0dbb691d77cd43adf130691b4ee4f50",
+    "excerptBefore": "abd3d080225447b344c62d911005264dcd0858fef7d723fd0df35b14e99c16cf",
+    "excerptAfter": "99bc845db72f08d3581a86d2b76ee10bedaae690fe791061886a8e285303fae8"
+  },
+  "sourceFacts": [
+    {
+      "id": "title",
+      "op": "unchanged",
+      "field": "title",
+      "before": "Guides, Reports & Free Tools for AI Search | SameDayDesk",
+      "after": "Guides, Reports & Free Tools for AI Search | SameDayDesk"
+    },
+    {
+      "id": "description",
+      "op": "unchanged",
+      "field": "description",
+      "before": "Everything SameDayDesk publishes to help you ship safer AI-search, automation, and agent work: 15 plain-English guides, 10 original research reports, and a full set of free tools. No signup.",
+      "after": "Everything SameDayDesk publishes to help you ship safer AI-search, automation, and agent work: 15 plain-English guides, 10 original research reports, and a full set of free tools. No signup."
+    },
+    {
+      "id": "headings.h1",
+      "op": "unchanged",
+      "field": "headings",
+      "path": "/headings/h1",
+      "before": "Guides, reports & free tools for AI search",
+      "after": "Guides, reports & free tools for AI search"
+    },
+    {
+      "id": "headings.h2",
+      "op": "unchanged",
+      "field": "headings",
+      "path": "/headings/h2",
+      "before": "Free tools | Agent interfaces | Open-source documentation lab | Public-data product lab | Guides (15) | Research reports (10) | Want it done for you?",
+      "after": "Free tools | Agent interfaces | Open-source documentation lab | Public-data product lab | Guides (15) | Research reports (10) | Want it done for you?"
+    }
+  ],
+  "ignoredUnused": [
+    {
+      "field": "footer/text",
+      "why": "appends EIN.LLC / Neomorphic.io sentence; not a selected title/description/headings field"
+    },
+    {
+      "field": "data.generatedAt",
+      "before": "2026-08-30T13:09:15.000Z",
+      "after": "2026-09-02T06:23:14.000Z"
+    },
+    {
+      "field": "data.assetHash",
+      "before": "8da38e5",
+      "after": "d673b6e"
+    },
+    {
+      "field": "provenance.fetchedAt",
+      "why": "wrapper timestamps, not page content"
+    }
+  ]
+}

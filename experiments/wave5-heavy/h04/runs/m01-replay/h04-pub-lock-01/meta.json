@@ -1,0 +1,151 @@
+{
+  "exampleId": "h04-pub-lock-01",
+  "family": "lockfile-public",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "mapping": {
+    "m01EngineId": "lockfile-pin-delta",
+    "mapping": "ok",
+    "note": null
+  },
+  "oracles": {
+    "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-01/expected-facts.json",
+    "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-01/expected-refusal.json",
+    "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-01/expected-no-change.json"
+  },
+  "m01EngineId": "lockfile-pin-delta",
+  "skipped": false,
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "lockfile-pin-delta",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-01/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-01/after.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-pub-lock-01/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "ok": true,
+  "durationMs": 77,
+  "stdoutBytes": 1275,
+  "stderrBytes": 0,
+  "outputs": {
+    "files": [
+      {
+        "name": "catalog-receipt.json",
+        "bytes": 1275,
+        "sha256": "6538bfa3574e67b94277cf916beab7ec1098cac0c0dfbcc44f2d01c2e7b2c67b"
+      },
+      {
+        "name": "pin-delta.json",
+        "bytes": 4083,
+        "sha256": "49753e121d470491577df7325467c41400171bcb2d9a3fb9681005ad7e41bd90"
+      },
+      {
+        "name": "pin-delta.md",
+        "bytes": 1125,
+        "sha256": "9ac71c3ddc47e38e41eb909d461ebeb1107f3e71bb4a564e66e41df993f4e7b3"
+      }
+    ],
+    "totalBytes": 6483
+  },
+  "stdoutStatus": "actionable",
+  "outcomeKind": "analysis",
+  "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+  "schemaMatchOk": true,
+  "factsCompare": {
+    "result": "match",
+    "checks": [
+      {
+        "fact": "node_modules/ansi-wrap",
+        "op": "changed",
+        "idNeedles": [
+          "ansi-wrap",
+          "ansi-wrap"
+        ],
+        "presentIds": [
+          "ansi-wrap",
+          "ansi-wrap"
+        ],
+        "presentValues": [
+          "sha1-qCJQ3bABXponyoLoLqYDu/pF768=",
+          "sha512-ZyznvL8k/FZeQHr2T6LzcJ/+vBApDnMNZvfVFy3At0knswWd6rJ3/0Hhmpu8oqa6C92npmozs890sX9Dl6q+Qw==",
+          "https://registry.npmjs.org/ansi-wrap/-/ansi-wrap-0.1.0.tgz",
+          "https://registry.npmjs.org/ansi-wrap/-/ansi-wrap-0.1.0.tgz"
+        ],
+        "result": "match"
+      },
+      {
+        "fact": "node_modules/archy",
+        "op": "changed",
+        "idNeedles": [
+          "archy",
+          "archy"
+        ],
+        "presentIds": [
+          "archy",
+          "archy"
+        ],
+        "presentValues": [
+          "sha1-+cjBN1fMHde8N5rHeyxipcKGjEA=",
+          "sha512-Xg+9RwCg/0p32teKdGMPTPnVXKD0w3DfHnFTficozsAgsvq2XenPJq/MYpzzQ/v8zrOyJn6Ds39VA4JIDwFfqw==",
+          "https://registry.npmjs.org/archy/-/archy-1.0.0.tgz",
+          "https://registry.npmjs.org/archy/-/archy-1.0.0.tgz"
+        ],
+        "result": "match"
+      },
+      {
+        "fact": "node_modules/array-uniq",
+        "op": "changed",
+        "idNeedles": [
+          "array-uniq",
+          "array-uniq"
+        ],
+        "presentIds": [
+          "array-uniq",
+          "array-uniq"
+        ],
+        "presentValues": [
+          "sha1-r2rId6Jcx/dOBYiUdThY39sk/bY=",
+          "sha512-MNha4BWQ6JbwhFhj03YK552f7cb3AzoE8SzeljgChvL1dl3IcvggXVz1DilzySZkCja+CXuZbdW7yATchWn8/Q==",
+          "https://registry.npmjs.org/array-uniq/-/array-uniq-1.0.3.tgz",
+          "https://registry.npmjs.org/array-uniq/-/array-uniq-1.0.3.tgz"
+        ],
+        "result": "match"
+      }
+    ]
+  },
+  "refusalCompare": {
+    "result": "match",
+    "expected": false,
+    "actualRefused": false
+  },
+  "noChange": {
+    "isNoChangeControl": false,
+    "unchangedMustOmit": [
+      {
+        "id": "node_modules/@colors/colors",
+        "name": "@colors/colors",
+        "version": "1.5.0",
+        "integrity": "sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==",
+        "resolved": "https://registry.npmjs.org/@colors/colors/-/colors-1.5.0.tgz"
+      },
+      {
+        "id": "node_modules/@hapi/hoek",
+        "name": "@hapi/hoek",
+        "version": "8.5.1",
+        "integrity": "sha512-yN7kbciD87WzLGc5539Tn0sApjyiGHAJgKvG9W8C7O+6c7qmoQMfVs0W4bX17eqz6C78QJqqFrtgdK5EWf6Qow==",
+        "resolved": "https://registry.npmjs.org/@hapi/hoek/-/hoek-8.5.1.tgz"
+      }
+    ]
+  },
+  "reportCompare": {
+    "result": "unknown",
+    "reason": "expected-report-missing",
+    "facts": [],
+    "expectedPresent": false
+  }
+}

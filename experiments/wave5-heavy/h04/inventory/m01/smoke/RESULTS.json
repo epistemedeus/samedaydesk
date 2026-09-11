@@ -1,0 +1,46 @@
+{
+  "schema": "w5-h04.m01-inventory-smoke.v1",
+  "date": "2026-09-11T23:26:18Z",
+  "node": "v22.22.2",
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "exampleRan": false,
+  "note": "--example was not run. If it is run later, label SAMPLE not customer. page-change --example is a designed refuse on stderr.",
+  "commands": [
+    {
+      "id": "catalog.list",
+      "argv": ["node", "experiments/wave5/m01/bin/catalog.mjs", "list"],
+      "exit": 0
+    },
+    {
+      "id": "catalog.contract",
+      "argv": ["node", "experiments/wave5/m01/bin/catalog.mjs", "contract"],
+      "exit": 0
+    },
+    {
+      "id": "catalog.help",
+      "argv": ["node", "experiments/wave5/m01/bin/catalog.mjs", "--help"],
+      "exit": 0
+    },
+    {
+      "id": "lockfile-pin-delta.help",
+      "argv": ["node", "tools/lockfile-pin-delta/bin/lockfile-delta.mjs", "--help"],
+      "exit": 0
+    },
+    {
+      "id": "json-schema-webhook-drift.help",
+      "argv": ["node", "tools/json-schema-webhook-drift/bin/webhook-drift.mjs", "--help"],
+      "exit": 0
+    },
+    {
+      "id": "route-table-diff.help",
+      "argv": ["node", "tools/route-table-diff/bin/route-diff.mjs", "--help"],
+      "exit": 0
+    },
+    {
+      "id": "page-change-offline-job.help",
+      "argv": ["node", "tools/page-change-offline-job/bin/page-change.mjs", "--help"],
+      "exit": 0
+    }
+  ]
+}

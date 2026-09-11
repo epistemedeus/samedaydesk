@@ -1,0 +1,114 @@
+{
+  "exampleId": "h04-schema-01",
+  "family": "schema-webhook",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "mapping": {
+    "m01EngineId": "json-schema-webhook-drift",
+    "mapping": "ok",
+    "note": null
+  },
+  "oracles": {
+    "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-01/expected-facts.json",
+    "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-01/expected-refusal.json",
+    "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-01/expected-no-change.json"
+  },
+  "m01EngineId": "json-schema-webhook-drift",
+  "skipped": false,
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "json-schema-webhook-drift",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-01/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-01/after.json",
+    "--used",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-01/used.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-schema-01/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "ok": true,
+  "durationMs": 90,
+  "stdoutBytes": 1300,
+  "stderrBytes": 0,
+  "outputs": {
+    "files": [
+      {
+        "name": "catalog-receipt.json",
+        "bytes": 1300,
+        "sha256": "79f53fba641300d3e3e36f1cc87f5f2eeec1243fca25383015be0317d0852ce3"
+      },
+      {
+        "name": "drift-brief.json",
+        "bytes": 3125,
+        "sha256": "57421b7493e3c4f69649185729df254a49964e982d0bbd35becbb410cc7b278d"
+      },
+      {
+        "name": "drift-brief.md",
+        "bytes": 689,
+        "sha256": "71e3d36421853b37d0de6fa458d36c608e11e9631317a853cff1992dd25f4859"
+      }
+    ],
+    "totalBytes": 5114
+  },
+  "stdoutStatus": "actionable",
+  "outcomeKind": "analysis",
+  "pinSha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+  "schemaMatchOk": true,
+  "factsCompare": {
+    "result": "match",
+    "checks": [
+      {
+        "fact": "exclusiveMinimum-type",
+        "op": "changed",
+        "idNeedles": [
+          "/properties/exclusiveMinimum"
+        ],
+        "presentIds": [
+          "/properties/exclusiveMinimum"
+        ],
+        "presentValues": [
+          "boolean",
+          "number"
+        ],
+        "result": "match"
+      }
+    ]
+  },
+  "refusalCompare": {
+    "result": "match",
+    "expected": false,
+    "actualRefused": false
+  },
+  "noChange": {
+    "usefulNoChange": false,
+    "why": "Used pointer /properties/exclusiveMinimum type boolean -> number is a consumer-breaking schema change."
+  },
+  "reportCompare": {
+    "result": "match",
+    "reason": null,
+    "facts": [
+      {
+        "key": "status",
+        "expected": "actionable",
+        "actual": "actionable",
+        "result": "match"
+      },
+      {
+        "key": "ok",
+        "expected": true,
+        "actual": true,
+        "result": "match"
+      }
+    ],
+    "expectedPresent": true,
+    "artifactFiles": [
+      "catalog-receipt.json",
+      "drift-brief.json",
+      "drift-brief.md"
+    ]
+  }
+}

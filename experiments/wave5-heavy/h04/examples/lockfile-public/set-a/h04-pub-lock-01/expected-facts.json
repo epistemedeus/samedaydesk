@@ -1,0 +1,111 @@
+{
+  "schema": "h04.lockfile-public.expected-facts.v1",
+  "computedFrom": "raw-json-parse",
+  "notFromEngine": true,
+  "fields": [
+    "name",
+    "version",
+    "integrity",
+    "resolved"
+  ],
+  "lockfileVersion": {
+    "before": 3,
+    "after": 3
+  },
+  "counts": {
+    "added": 0,
+    "removed": 0,
+    "changed": 3,
+    "unchanged": 2
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "node_modules/ansi-wrap",
+      "name": "ansi-wrap",
+      "before": {
+        "name": "ansi-wrap",
+        "version": "0.1.0",
+        "integrity": "sha1-qCJQ3bABXponyoLoLqYDu/pF768=",
+        "resolved": "https://registry.npmjs.org/ansi-wrap/-/ansi-wrap-0.1.0.tgz"
+      },
+      "after": {
+        "name": "ansi-wrap",
+        "version": "0.1.0",
+        "integrity": "sha512-ZyznvL8k/FZeQHr2T6LzcJ/+vBApDnMNZvfVFy3At0knswWd6rJ3/0Hhmpu8oqa6C92npmozs890sX9Dl6q+Qw==",
+        "resolved": "https://registry.npmjs.org/ansi-wrap/-/ansi-wrap-0.1.0.tgz"
+      },
+      "changeKinds": [
+        "integrity"
+      ]
+    },
+    {
+      "id": "node_modules/archy",
+      "name": "archy",
+      "before": {
+        "name": "archy",
+        "version": "1.0.0",
+        "integrity": "sha1-+cjBN1fMHde8N5rHeyxipcKGjEA=",
+        "resolved": "https://registry.npmjs.org/archy/-/archy-1.0.0.tgz"
+      },
+      "after": {
+        "name": "archy",
+        "version": "1.0.0",
+        "integrity": "sha512-Xg+9RwCg/0p32teKdGMPTPnVXKD0w3DfHnFTficozsAgsvq2XenPJq/MYpzzQ/v8zrOyJn6Ds39VA4JIDwFfqw==",
+        "resolved": "https://registry.npmjs.org/archy/-/archy-1.0.0.tgz"
+      },
+      "changeKinds": [
+        "integrity"
+      ]
+    },
+    {
+      "id": "node_modules/array-uniq",
+      "name": "array-uniq",
+      "before": {
+        "name": "array-uniq",
+        "version": "1.0.3",
+        "integrity": "sha1-r2rId6Jcx/dOBYiUdThY39sk/bY=",
+        "resolved": "https://registry.npmjs.org/array-uniq/-/array-uniq-1.0.3.tgz"
+      },
+      "after": {
+        "name": "array-uniq",
+        "version": "1.0.3",
+        "integrity": "sha512-MNha4BWQ6JbwhFhj03YK552f7cb3AzoE8SzeljgChvL1dl3IcvggXVz1DilzySZkCja+CXuZbdW7yATchWn8/Q==",
+        "resolved": "https://registry.npmjs.org/array-uniq/-/array-uniq-1.0.3.tgz"
+      },
+      "changeKinds": [
+        "integrity"
+      ]
+    }
+  ],
+  "unchanged": [
+    {
+      "id": "node_modules/@colors/colors",
+      "name": "@colors/colors",
+      "version": "1.5.0",
+      "integrity": "sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==",
+      "resolved": "https://registry.npmjs.org/@colors/colors/-/colors-1.5.0.tgz"
+    },
+    {
+      "id": "node_modules/@hapi/hoek",
+      "name": "@hapi/hoek",
+      "version": "8.5.1",
+      "integrity": "sha512-yN7kbciD87WzLGc5539Tn0sApjyiGHAJgKvG9W8C7O+6c7qmoQMfVs0W4bX17eqz6C78QJqqFrtgdK5EWf6Qow==",
+      "resolved": "https://registry.npmjs.org/@hapi/hoek/-/hoek-8.5.1.tgz"
+    }
+  ],
+  "id": "h04-pub-lock-01",
+  "kind": "integrity-source",
+  "source": {
+    "repo": "mochajs/mocha",
+    "beforeSha": "202e9b8b4d1b6611c96d95d631c49d631d88c827",
+    "afterSha": "d722d0038602eeb6968616b49ec79288100fdc72",
+    "path": "package-lock.json",
+    "sourceLockfileVersion": {
+      "before": 2,
+      "after": 2
+    },
+    "stored": "lockfileVersion 3 subset of packages[] keys listed in SOURCE.md"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "source": "raw-packages-parse",
+  "notEngineStdout": true,
+  "pinIdentity": [
+    "name",
+    "version",
+    "integrity",
+    "resolved"
+  ],
+  "mapSource": "packages",
+  "lockfileVersion": {
+    "before": 3,
+    "after": 3
+  },
+  "counts": {
+    "beforePins": 22,
+    "afterPins": 22,
+    "added": 0,
+    "removed": 0,
+    "changed": 0,
+    "unchanged": 22,
+    "missingIntegrity": 0
+  },
+  "added": [],
+  "removed": [],
+  "changed": [],
+  "addedPins": [],
+  "removedPins": [],
+  "changedPins": []
+}

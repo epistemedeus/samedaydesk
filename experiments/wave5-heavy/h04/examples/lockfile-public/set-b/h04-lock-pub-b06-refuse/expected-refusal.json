@@ -1,0 +1,5 @@
+{
+  "expected": true,
+  "engineId": "lockfile-pin-delta",
+  "exitCode": 2
+}

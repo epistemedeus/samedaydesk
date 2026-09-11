@@ -1,0 +1,120 @@
+{
+  "exampleId": "h04-lock-03",
+  "family": "lockfile",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "mapping": {
+    "m01EngineId": "lockfile-pin-delta",
+    "mapping": "ok",
+    "note": null
+  },
+  "oracles": {
+    "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-lock-03/expected-facts.json",
+    "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-lock-03/expected-refusal.json",
+    "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-lock-03/expected-no-change.json"
+  },
+  "m01EngineId": "lockfile-pin-delta",
+  "skipped": false,
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "lockfile-pin-delta",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-03/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-03/after.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-lock-03/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "ok": true,
+  "durationMs": 85,
+  "stdoutBytes": 1275,
+  "stderrBytes": 0,
+  "outputs": {
+    "files": [
+      {
+        "name": "catalog-receipt.json",
+        "bytes": 1275,
+        "sha256": "d8e5b7703607afb6f6ed65e1d3ac6f7377643a46489625b82a66275b00a3d268"
+      },
+      {
+        "name": "pin-delta.json",
+        "bytes": 1032,
+        "sha256": "5b992e3dae9cc23199359865957ac964308cbb0fd28b17b9006b204426c0d603"
+      },
+      {
+        "name": "pin-delta.md",
+        "bytes": 359,
+        "sha256": "7428632f3fd9f30ebda9ad57b3424d990678297e27a85b49a5b6bcc3ab432a11"
+      }
+    ],
+    "totalBytes": 2666
+  },
+  "stdoutStatus": "informational",
+  "outcomeKind": "analysis",
+  "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+  "schemaMatchOk": true,
+  "factsCompare": {
+    "result": "source-only",
+    "checks": [
+      {
+        "fact": "pin-triples",
+        "op": "unchanged",
+        "idNeedles": [
+          "name@version+integrity+resolved",
+          "pins"
+        ],
+        "presentIds": [],
+        "presentValues": [],
+        "result": "source-only"
+      }
+    ]
+  },
+  "refusalCompare": {
+    "result": "match",
+    "expected": false,
+    "actualRefused": false
+  },
+  "noChange": {
+    "usefulNoChange": true,
+    "why": "159 name@version integrity resolved triples are identical; key-order, indent, unused fields, and an extra link:true omit are not pin deltas."
+  },
+  "reportCompare": {
+    "result": "match",
+    "reason": null,
+    "facts": [
+      {
+        "key": "status",
+        "expected": "informational",
+        "actual": "informational",
+        "result": "match"
+      },
+      {
+        "key": "highlight:informational",
+        "expected": "informational",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:Added 0, removed 0, changed 0.",
+        "expected": "Added 0, removed 0, changed 0.",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:Unchanged packages omitted (159)",
+        "expected": "Unchanged packages omitted (159)",
+        "actual": true,
+        "result": "match"
+      }
+    ],
+    "expectedPresent": true,
+    "artifactFiles": [
+      "catalog-receipt.json",
+      "pin-delta.json",
+      "pin-delta.md"
+    ]
+  }
+}

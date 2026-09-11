@@ -1,0 +1,19 @@
+{
+  "isNoChangeControl": false,
+  "unchangedMustOmit": [
+    {
+      "id": "node_modules/@colors/colors",
+      "name": "@colors/colors",
+      "version": "1.5.0",
+      "integrity": "sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==",
+      "resolved": "https://registry.npmjs.org/@colors/colors/-/colors-1.5.0.tgz"
+    },
+    {
+      "id": "node_modules/@hapi/hoek",
+      "name": "@hapi/hoek",
+      "version": "8.5.1",
+      "integrity": "sha512-yN7kbciD87WzLGc5539Tn0sApjyiGHAJgKvG9W8C7O+6c7qmoQMfVs0W4bX17eqz6C78QJqqFrtgdK5EWf6Qow==",
+      "resolved": "https://registry.npmjs.org/@hapi/hoek/-/hoek-8.5.1.tgz"
+    }
+  ]
+}

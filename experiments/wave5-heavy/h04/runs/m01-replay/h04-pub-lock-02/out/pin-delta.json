@@ -1,0 +1,123 @@
+{
+  "schema": "samedaydesk.lockfile-pin-delta.v1",
+  "appId": "lockfile-pin-delta",
+  "ok": true,
+  "status": "actionable",
+  "purchaseAuthority": false,
+  "paidValueClaim": false,
+  "settlement": "nonsettling-prototype",
+  "equality": "pin-fields",
+  "lockfileVersion": {
+    "before": 3,
+    "after": 3
+  },
+  "mapSource": {
+    "before": "packages",
+    "after": "packages"
+  },
+  "counts": {
+    "beforePins": 5,
+    "afterPins": 5,
+    "added": 0,
+    "removed": 0,
+    "changed": 3,
+    "unchanged": 2,
+    "missingIntegrity": 0
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "node_modules/got",
+      "name": "got",
+      "before": {
+        "id": "node_modules/got",
+        "name": "got",
+        "version": "6.7.1",
+        "integrity": "sha1-JAzQV4WpoY5WHcG0S0HHY+8ejbA=",
+        "resolved": "http://registry.npmjs.org/got/-/got-6.7.1.tgz",
+        "gitCommit": null,
+        "termsHash": "033e65ec381bbaed9ecb744a60f0c5ddc52ecfac068d73ac02b9f7f6330b38e4",
+        "missingIntegrity": false
+      },
+      "after": {
+        "id": "node_modules/got",
+        "name": "got",
+        "version": "6.7.1",
+        "integrity": "sha1-JAzQV4WpoY5WHcG0S0HHY+8ejbA=",
+        "resolved": "https://registry.npmjs.org/got/-/got-6.7.1.tgz",
+        "gitCommit": null,
+        "termsHash": "138b1bb1e8cc1ff10a161fa5896c59eb45e75d0a2fe712e2766807cbb8bd22b6",
+        "missingIntegrity": false
+      },
+      "changeKinds": [
+        "resolved"
+      ]
+    },
+    {
+      "id": "node_modules/path-is-absolute",
+      "name": "path-is-absolute",
+      "before": {
+        "id": "node_modules/path-is-absolute",
+        "name": "path-is-absolute",
+        "version": "1.0.1",
+        "integrity": "sha1-F0uSaHNVNP+8es5r9TpanhtcX18=",
+        "resolved": "http://registry.npmjs.org/path-is-absolute/-/path-is-absolute-1.0.1.tgz",
+        "gitCommit": null,
+        "termsHash": "70ee02144e0011d8a88cd2fcb42dd21fcff6bfc3b91524f7ae748ce7fc3e929c",
+        "missingIntegrity": false
+      },
+      "after": {
+        "id": "node_modules/path-is-absolute",
+        "name": "path-is-absolute",
+        "version": "1.0.1",
+        "integrity": "sha1-F0uSaHNVNP+8es5r9TpanhtcX18=",
+        "resolved": "https://registry.npmjs.org/path-is-absolute/-/path-is-absolute-1.0.1.tgz",
+        "gitCommit": null,
+        "termsHash": "042e119059db181644a095e1ea644ba95919432c287b36294914be06c72ffe01",
+        "missingIntegrity": false
+      },
+      "changeKinds": [
+        "resolved"
+      ]
+    },
+    {
+      "id": "node_modules/strip-eof",
+      "name": "strip-eof",
+      "before": {
+        "id": "node_modules/strip-eof",
+        "name": "strip-eof",
+        "version": "1.0.0",
+        "integrity": "sha1-u0P/VZim6wXYm1n80SnJgzE2Br8=",
+        "resolved": "http://registry.npmjs.org/strip-eof/-/strip-eof-1.0.0.tgz",
+        "gitCommit": null,
+        "termsHash": "c91f51a228e955b82ca63709853dc63528f967f11bc90facea666807ac5197d3",
+        "missingIntegrity": false
+      },
+      "after": {
+        "id": "node_modules/strip-eof",
+        "name": "strip-eof",
+        "version": "1.0.0",
+        "integrity": "sha1-u0P/VZim6wXYm1n80SnJgzE2Br8=",
+        "resolved": "https://registry.npmjs.org/strip-eof/-/strip-eof-1.0.0.tgz",
+        "gitCommit": null,
+        "termsHash": "0ac63a225c5eaefeeffc22495144bfaa1267b13cd10f8e3aad954e3a90304b6d",
+        "missingIntegrity": false
+      },
+      "changeKinds": [
+        "resolved"
+      ]
+    }
+  ],
+  "gaps": [],
+  "caller": {
+    "before": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-02/before.json",
+    "after": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-02/after.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notCustomerDemand": true,
+    "notMarketFact": true
+  },
+  "provenance": "caller-supplied",
+  "generatedAt": "2026-09-11T23:41:51.470Z"
+}

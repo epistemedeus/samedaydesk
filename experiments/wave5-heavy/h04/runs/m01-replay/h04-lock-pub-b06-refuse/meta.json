@@ -1,0 +1,79 @@
+{
+  "exampleId": "h04-lock-pub-b06-refuse",
+  "family": "lockfile-public",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "mapping": {
+    "m01EngineId": "lockfile-pin-delta",
+    "mapping": "ok",
+    "note": null
+  },
+  "oracles": {
+    "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b06-refuse/expected-facts.json",
+    "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b06-refuse/expected-refusal.json",
+    "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b06-refuse/expected-no-change.json"
+  },
+  "m01EngineId": "lockfile-pin-delta",
+  "skipped": false,
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "lockfile-pin-delta",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b06-refuse/yarn.lock",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b06-refuse/yarn.lock",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-lock-pub-b06-refuse/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 2,
+  "ok": false,
+  "durationMs": 83,
+  "stdoutBytes": 855,
+  "stderrBytes": 0,
+  "outputs": {
+    "files": [
+      {
+        "name": "catalog-receipt.json",
+        "bytes": 855,
+        "sha256": "d39a61b58ff1e59c999e442ad39ab588c531743d7c43bff0dd8c65b2b414ecf6"
+      }
+    ],
+    "totalBytes": 855
+  },
+  "stdoutStatus": null,
+  "outcomeKind": "refused",
+  "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+  "schemaMatchOk": true,
+  "factsCompare": {
+    "result": "unknown",
+    "reason": "no-source-facts",
+    "checks": []
+  },
+  "refusalCompare": {
+    "result": "match",
+    "expected": true,
+    "actualRefused": true
+  },
+  "noChange": {
+    "expected": false,
+    "reason": "unsupported format must refuse before any pin compare"
+  },
+  "reportCompare": {
+    "result": "match",
+    "reason": null,
+    "facts": [
+      {
+        "key": "ok",
+        "expected": false,
+        "actual": false,
+        "result": "match"
+      }
+    ],
+    "expectedPresent": true,
+    "artifactFiles": [
+      "catalog-receipt.json"
+    ]
+  }
+}

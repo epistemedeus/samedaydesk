@@ -1,0 +1,2689 @@
+{
+  "at": "2026-09-11T23:41:51.897Z",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "h04Root": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04",
+  "exampleCount": 19,
+  "replayed": 18,
+  "skipped": 1,
+  "mappingFailures": [
+    {
+      "id": "h04-route-02",
+      "mapping": "not-in-m01-four",
+      "note": "OpenAPI api-upgrade-brief stays SDS52. M01 json-schema-webhook-drift refuses OpenAPI (not-this-job-openapi).",
+      "sds52Job": "api-upgrade-brief"
+    }
+  ],
+  "durationsMs": {
+    "h04-schema-01": 90,
+    "h04-schema-02": 83,
+    "h04-schema-03": 81,
+    "h04-lock-01": 85,
+    "h04-lock-02": 79,
+    "h04-lock-03": 85,
+    "h04-route-01": 81,
+    "h04-route-03": 83,
+    "h04-page-01": 81,
+    "h04-page-02": 80,
+    "h04-page-03": 88,
+    "h04-pub-lock-01": 77,
+    "h04-pub-lock-02": 78,
+    "h04-pub-lock-03": 78,
+    "h04-lock-pub-b04-removal": 81,
+    "h04-lock-pub-b05-normalize": 82,
+    "h04-lock-pub-b06-refuse": 83,
+    "h04-lock-pub-b07-large": 83
+  },
+  "outputBytes": {
+    "h04-schema-01": 5114,
+    "h04-schema-02": 3710,
+    "h04-schema-03": 3708,
+    "h04-lock-01": 7264,
+    "h04-lock-02": 3841,
+    "h04-lock-03": 2666,
+    "h04-route-01": 4896,
+    "h04-route-03": 4573,
+    "h04-page-01": 17230,
+    "h04-page-02": 11994,
+    "h04-page-03": 17183,
+    "h04-pub-lock-01": 6483,
+    "h04-pub-lock-02": 6547,
+    "h04-pub-lock-03": 3903,
+    "h04-lock-pub-b04-removal": 7755,
+    "h04-lock-pub-b05-normalize": 2758,
+    "h04-lock-pub-b06-refuse": 855,
+    "h04-lock-pub-b07-large": 2866
+  },
+  "runs": [
+    {
+      "exampleId": "h04-schema-01",
+      "family": "schema-webhook",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "json-schema-webhook-drift",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-01/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-01/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-01/expected-no-change.json"
+      },
+      "m01EngineId": "json-schema-webhook-drift",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "json-schema-webhook-drift",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-01/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-01/after.json",
+        "--used",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-01/used.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-schema-01/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 90,
+      "stdoutBytes": 1300,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 1300,
+            "sha256": "79f53fba641300d3e3e36f1cc87f5f2eeec1243fca25383015be0317d0852ce3"
+          },
+          {
+            "name": "drift-brief.json",
+            "bytes": 3125,
+            "sha256": "57421b7493e3c4f69649185729df254a49964e982d0bbd35becbb410cc7b278d"
+          },
+          {
+            "name": "drift-brief.md",
+            "bytes": 689,
+            "sha256": "71e3d36421853b37d0de6fa458d36c608e11e9631317a853cff1992dd25f4859"
+          }
+        ],
+        "totalBytes": 5114
+      },
+      "stdoutStatus": "actionable",
+      "outcomeKind": "analysis",
+      "pinSha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "match",
+        "checks": [
+          {
+            "fact": "exclusiveMinimum-type",
+            "op": "changed",
+            "idNeedles": [
+              "/properties/exclusiveMinimum"
+            ],
+            "presentIds": [
+              "/properties/exclusiveMinimum"
+            ],
+            "presentValues": [
+              "boolean",
+              "number"
+            ],
+            "result": "match"
+          }
+        ]
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": false,
+        "actualRefused": false
+      },
+      "noChange": {
+        "usefulNoChange": false,
+        "why": "Used pointer /properties/exclusiveMinimum type boolean -> number is a consumer-breaking schema change."
+      },
+      "reportCompare": {
+        "result": "match",
+        "reason": null,
+        "facts": [
+          {
+            "key": "status",
+            "expected": "actionable",
+            "actual": "actionable",
+            "result": "match"
+          },
+          {
+            "key": "ok",
+            "expected": true,
+            "actual": true,
+            "result": "match"
+          }
+        ],
+        "expectedPresent": true,
+        "artifactFiles": [
+          "catalog-receipt.json",
+          "drift-brief.json",
+          "drift-brief.md"
+        ]
+      }
+    },
+    {
+      "exampleId": "h04-schema-02",
+      "family": "schema-webhook",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "json-schema-webhook-drift",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-02/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-02/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-02/expected-no-change.json"
+      },
+      "m01EngineId": "json-schema-webhook-drift",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "json-schema-webhook-drift",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-02/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-02/after.json",
+        "--used",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-02/used.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-schema-02/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 83,
+      "stdoutBytes": 1310,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 1310,
+            "sha256": "55d030427683b305f2eeddc63684706fe828594152041612107e6d3d7c9c398f"
+          },
+          {
+            "name": "drift-brief.json",
+            "bytes": 1784,
+            "sha256": "f8eb74c9fa7a5e0db200c31c69bddf83931aefce34ff87d5a1c1ac7c99aa73ab"
+          },
+          {
+            "name": "drift-brief.md",
+            "bytes": 616,
+            "sha256": "dd31e261b4cd5a3441e5df8728655881968a143aca267d4c6c9b7682970f7d33"
+          }
+        ],
+        "totalBytes": 3710
+      },
+      "stdoutStatus": "informational",
+      "outcomeKind": "analysis",
+      "pinSha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "source-only",
+        "checks": [
+          {
+            "fact": "ref",
+            "op": "unchanged",
+            "idNeedles": [
+              "/ref"
+            ],
+            "presentIds": [],
+            "presentValues": [],
+            "result": "source-only"
+          },
+          {
+            "fact": "ref_type",
+            "op": "unchanged",
+            "idNeedles": [
+              "/ref_type"
+            ],
+            "presentIds": [],
+            "presentValues": [],
+            "result": "source-only"
+          },
+          {
+            "fact": "pusher_type",
+            "op": "unchanged",
+            "idNeedles": [
+              "/pusher_type"
+            ],
+            "presentIds": [],
+            "presentValues": [],
+            "result": "source-only"
+          }
+        ]
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": false,
+        "actualRefused": false
+      },
+      "noChange": {
+        "usefulNoChange": true,
+        "why": "Used /ref /ref_type /pusher_type values and types are identical; repository.custom_properties {} is unused additive noise."
+      },
+      "reportCompare": {
+        "result": "match",
+        "reason": null,
+        "facts": [
+          {
+            "key": "status",
+            "expected": "unchanged",
+            "actual": "informational",
+            "result": "match"
+          },
+          {
+            "key": "ok",
+            "expected": true,
+            "actual": true,
+            "result": "match"
+          }
+        ],
+        "expectedPresent": true,
+        "artifactFiles": [
+          "catalog-receipt.json",
+          "drift-brief.json",
+          "drift-brief.md"
+        ]
+      }
+    },
+    {
+      "exampleId": "h04-schema-03",
+      "family": "schema-webhook",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "json-schema-webhook-drift",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-03/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-03/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-schema-03/expected-no-change.json"
+      },
+      "m01EngineId": "json-schema-webhook-drift",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "json-schema-webhook-drift",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-03/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-03/after.json",
+        "--used",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/schema-webhook/h04-schema-03/used.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-schema-03/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 81,
+      "stdoutBytes": 1310,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 1310,
+            "sha256": "5a05d53ce4fecd489a1564d6565a89bd6d491c35f106744cd8be42a607032448"
+          },
+          {
+            "name": "drift-brief.json",
+            "bytes": 1782,
+            "sha256": "a9f72ba9cb9a23a5af02fc53c321a6b511ead1fc718f311149bb101ed0289035"
+          },
+          {
+            "name": "drift-brief.md",
+            "bytes": 616,
+            "sha256": "f63f7630edc8e218c3f213e73921966b5abce757df479353c94cc06f547fe09d"
+          }
+        ],
+        "totalBytes": 3708
+      },
+      "stdoutStatus": "informational",
+      "outcomeKind": "analysis",
+      "pinSha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "source-only",
+        "checks": [
+          {
+            "fact": "id",
+            "op": "unchanged",
+            "idNeedles": [
+              "/id"
+            ],
+            "presentIds": [],
+            "presentValues": [],
+            "result": "source-only"
+          },
+          {
+            "fact": "type",
+            "op": "unchanged",
+            "idNeedles": [
+              "/type"
+            ],
+            "presentIds": [],
+            "presentValues": [],
+            "result": "source-only"
+          },
+          {
+            "fact": "source",
+            "op": "unchanged",
+            "idNeedles": [
+              "/source"
+            ],
+            "presentIds": [],
+            "presentValues": [],
+            "result": "source-only"
+          },
+          {
+            "fact": "specversion",
+            "op": "unchanged",
+            "idNeedles": [
+              "/specversion"
+            ],
+            "presentIds": [],
+            "presentValues": [],
+            "result": "source-only"
+          }
+        ]
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": false,
+        "actualRefused": false
+      },
+      "noChange": {
+        "usefulNoChange": true,
+        "why": "Used CloudEvents id/type/source/specversion types and values are identical; only key order and unused debug differ."
+      },
+      "reportCompare": {
+        "result": "match",
+        "reason": null,
+        "facts": [
+          {
+            "key": "status",
+            "expected": "unchanged",
+            "actual": "informational",
+            "result": "match"
+          },
+          {
+            "key": "ok",
+            "expected": true,
+            "actual": true,
+            "result": "match"
+          }
+        ],
+        "expectedPresent": true,
+        "artifactFiles": [
+          "catalog-receipt.json",
+          "drift-brief.json",
+          "drift-brief.md"
+        ]
+      }
+    },
+    {
+      "exampleId": "h04-lock-01",
+      "family": "lockfile",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "lockfile-pin-delta",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-lock-01/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-lock-01/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-lock-01/expected-no-change.json"
+      },
+      "m01EngineId": "lockfile-pin-delta",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-01/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-01/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-lock-01/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 85,
+      "stdoutBytes": 1268,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 1268,
+            "sha256": "84801a60950dfae6b7278fd573eb7482c15230f231d41d3f2345cc692a42686e"
+          },
+          {
+            "name": "pin-delta.json",
+            "bytes": 4375,
+            "sha256": "e483ec59a9d1753b1d0bd2fa8030bfed50b0f74f046fe9786441d3472d12fd82"
+          },
+          {
+            "name": "pin-delta.md",
+            "bytes": 1621,
+            "sha256": "562ed996fac2a4244b28a720a95d7e27d813e0af419ce6672d31abf5d029c57c"
+          }
+        ],
+        "totalBytes": 7264
+      },
+      "stdoutStatus": "actionable",
+      "outcomeKind": "analysis",
+      "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "match",
+        "checks": [
+          {
+            "fact": "concurrently",
+            "op": "changed",
+            "idNeedles": [
+              "concurrently",
+              "concurrently"
+            ],
+            "presentIds": [
+              "concurrently",
+              "concurrently"
+            ],
+            "presentValues": [
+              "sha512-hc3LH4UaKWd/bbyDK/IGVa4RB6PtQ3CUYwtrkzqHn+wIG3Hr5fhpRlk0L/gCa8ZE1L/Ufj50Zho69cI5w8SQBA==",
+              "sha512-JaP/CoftUrCcAFW/g//RbgEGwlelnEae6cfBLgH6ZdO6s8jPkn6p9SB9u6pdVxYXoiSnFqseOlHfrEfF82TVOg=="
+            ],
+            "result": "match"
+          },
+          {
+            "fact": "qs",
+            "op": "changed",
+            "idNeedles": [
+              "qs",
+              "qs"
+            ],
+            "presentIds": [
+              "qs",
+              "qs"
+            ],
+            "presentValues": [
+              "sha512-Rzq0KEyX/w/tEybncDgdkZrJgVUsUMk3xjh3t5bv3S1HTAtg+uOYt72+ZfwiQwKdysThkTBdL/rTi6HDmX9Ddw==",
+              "sha512-h6fhOIaRrID2CbEY2fqs+7t+UXZo+MLAnU5gRIq85uFtdiUPCdsApMlHhXogKVM4HM2DVbIjGNTTYH2OcmP1vA=="
+            ],
+            "result": "match"
+          },
+          {
+            "fact": "shell-quote",
+            "op": "changed",
+            "idNeedles": [
+              "shell-quote",
+              "shell-quote"
+            ],
+            "presentIds": [
+              "shell-quote",
+              "shell-quote"
+            ],
+            "presentValues": [
+              "sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==",
+              "sha512-Iov+JwFv/2HcTpcwNMKd8+IWNb8tboQJNQTkAY/LLVK7gGH9jy+LGkVqPxfekHl+yMmiqXszdGWXgkfml7hjqA=="
+            ],
+            "result": "match"
+          }
+        ]
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": false,
+        "actualRefused": false
+      },
+      "noChange": {
+        "usefulNoChange": false,
+        "why": "Three lock pins change version+integrity+resolved: concurrently, qs, shell-quote."
+      },
+      "reportCompare": {
+        "result": "match",
+        "reason": null,
+        "facts": [
+          {
+            "key": "status",
+            "expected": "actionable",
+            "actual": "actionable",
+            "result": "match"
+          },
+          {
+            "key": "highlight:concurrently@10.0.3 -> concurrently@10.0.5",
+            "expected": "concurrently@10.0.3 -> concurrently@10.0.5",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:qs@6.15.2 -> qs@6.16.0",
+            "expected": "qs@6.15.2 -> qs@6.16.0",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:shell-quote@1.8.4 -> shell-quote@1.9.0",
+            "expected": "shell-quote@1.8.4 -> shell-quote@1.9.0",
+            "actual": true,
+            "result": "match"
+          }
+        ],
+        "expectedPresent": true,
+        "artifactFiles": [
+          "catalog-receipt.json",
+          "pin-delta.json",
+          "pin-delta.md"
+        ]
+      }
+    },
+    {
+      "exampleId": "h04-lock-02",
+      "family": "lockfile",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "lockfile-pin-delta",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-lock-02/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-lock-02/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-lock-02/expected-no-change.json"
+      },
+      "m01EngineId": "lockfile-pin-delta",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-02/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-02/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-lock-02/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 79,
+      "stdoutBytes": 1263,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 1263,
+            "sha256": "770a8ff2f2811f6a8ff14bc23321397948f3f15655b0fc5dc98bc29d78eb180c"
+          },
+          {
+            "name": "pin-delta.json",
+            "bytes": 1973,
+            "sha256": "434a505d8c5a6ebbcdee05cd4a8dfece2a334e386d0197031a4822ad33b732e5"
+          },
+          {
+            "name": "pin-delta.md",
+            "bytes": 605,
+            "sha256": "dcd9a1666bc2d86849877b90ae0661d32bd6b0d405a51b0d71dfddf2de56fd7d"
+          }
+        ],
+        "totalBytes": 3841
+      },
+      "stdoutStatus": "actionable",
+      "outcomeKind": "analysis",
+      "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "match",
+        "checks": [
+          {
+            "fact": "ms-integrity",
+            "op": "changed",
+            "idNeedles": [
+              "ms",
+              "ms"
+            ],
+            "presentIds": [
+              "ms",
+              "ms"
+            ],
+            "presentValues": [
+              "sha1-V0yBOM4dK1hh8LRFedut1gxmFbI=",
+              "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==",
+              "sha1-V0yBOM4dK1hh8LRFedut1gxmFbI=",
+              "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA=="
+            ],
+            "result": "match"
+          },
+          {
+            "fact": "debug-unchanged",
+            "op": "unchanged",
+            "idNeedles": [
+              "debug",
+              "debug"
+            ],
+            "presentIds": [],
+            "presentValues": [],
+            "result": "source-only"
+          },
+          {
+            "fact": "safer-buffer-unchanged",
+            "op": "unchanged",
+            "idNeedles": [
+              "safer-buffer",
+              "safer-buffer"
+            ],
+            "presentIds": [],
+            "presentValues": [],
+            "result": "source-only"
+          }
+        ]
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": false,
+        "actualRefused": false
+      },
+      "noChange": {
+        "usefulNoChange": false,
+        "why": "ms@2.1.3 keeps version and resolved; integrity sha1 -> sha512 is a pin change."
+      },
+      "reportCompare": {
+        "result": "match",
+        "reason": null,
+        "facts": [
+          {
+            "key": "status",
+            "expected": "actionable",
+            "actual": "actionable",
+            "result": "match"
+          },
+          {
+            "key": "highlight:\"name\": \"ms\"",
+            "expected": "\"name\": \"ms\"",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:2.1.3",
+            "expected": "2.1.3",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:sha1-V0yBOM4dK1hh8LRFedut1gxmFbI=",
+            "expected": "sha1-V0yBOM4dK1hh8LRFedut1gxmFbI=",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==",
+            "expected": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:integrity",
+            "expected": "integrity",
+            "actual": true,
+            "result": "match"
+          }
+        ],
+        "expectedPresent": true,
+        "artifactFiles": [
+          "catalog-receipt.json",
+          "pin-delta.json",
+          "pin-delta.md"
+        ]
+      }
+    },
+    {
+      "exampleId": "h04-lock-03",
+      "family": "lockfile",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "lockfile-pin-delta",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-lock-03/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-lock-03/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-lock-03/expected-no-change.json"
+      },
+      "m01EngineId": "lockfile-pin-delta",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-03/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile/h04-lock-03/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-lock-03/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 85,
+      "stdoutBytes": 1275,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 1275,
+            "sha256": "d8e5b7703607afb6f6ed65e1d3ac6f7377643a46489625b82a66275b00a3d268"
+          },
+          {
+            "name": "pin-delta.json",
+            "bytes": 1032,
+            "sha256": "5b992e3dae9cc23199359865957ac964308cbb0fd28b17b9006b204426c0d603"
+          },
+          {
+            "name": "pin-delta.md",
+            "bytes": 359,
+            "sha256": "7428632f3fd9f30ebda9ad57b3424d990678297e27a85b49a5b6bcc3ab432a11"
+          }
+        ],
+        "totalBytes": 2666
+      },
+      "stdoutStatus": "informational",
+      "outcomeKind": "analysis",
+      "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "source-only",
+        "checks": [
+          {
+            "fact": "pin-triples",
+            "op": "unchanged",
+            "idNeedles": [
+              "name@version+integrity+resolved",
+              "pins"
+            ],
+            "presentIds": [],
+            "presentValues": [],
+            "result": "source-only"
+          }
+        ]
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": false,
+        "actualRefused": false
+      },
+      "noChange": {
+        "usefulNoChange": true,
+        "why": "159 name@version integrity resolved triples are identical; key-order, indent, unused fields, and an extra link:true omit are not pin deltas."
+      },
+      "reportCompare": {
+        "result": "match",
+        "reason": null,
+        "facts": [
+          {
+            "key": "status",
+            "expected": "informational",
+            "actual": "informational",
+            "result": "match"
+          },
+          {
+            "key": "highlight:informational",
+            "expected": "informational",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:Added 0, removed 0, changed 0.",
+            "expected": "Added 0, removed 0, changed 0.",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:Unchanged packages omitted (159)",
+            "expected": "Unchanged packages omitted (159)",
+            "actual": true,
+            "result": "match"
+          }
+        ],
+        "expectedPresent": true,
+        "artifactFiles": [
+          "catalog-receipt.json",
+          "pin-delta.json",
+          "pin-delta.md"
+        ]
+      }
+    },
+    {
+      "exampleId": "h04-route-01",
+      "family": "api-routes",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "route-table-diff",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-01/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-01/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-01/expected-no-change.json"
+      },
+      "m01EngineId": "route-table-diff",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "route-table-diff",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/api-routes/h04-route-01/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/api-routes/h04-route-01/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-route-01/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 81,
+      "stdoutBytes": 1604,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 1604,
+            "sha256": "326dfd3526c5630c36f7e279b9f0f2874cacc22d6d26f51c874d1527d22b5a04"
+          },
+          {
+            "name": "route-diff.json",
+            "bytes": 2574,
+            "sha256": "38eac162c98e9e7dc11862fdb1ff18480e25e3cbc02e5b600954cc4e1759502a"
+          },
+          {
+            "name": "route-diff.md",
+            "bytes": 718,
+            "sha256": "0796deec09a96ecf07346a46a940940b199726d6da90d2122ce326c82651f53b"
+          }
+        ],
+        "totalBytes": 4896
+      },
+      "stdoutStatus": "changed",
+      "outcomeKind": "analysis",
+      "pinSha": "886c81d824e0a24e2faa5b821b1cd0ca46ae0859",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "match",
+        "checks": [
+          {
+            "fact": "added-useful-jobs",
+            "op": "added",
+            "idNeedles": [
+              "/for-agents/useful-jobs"
+            ],
+            "presentIds": [
+              "/for-agents/useful-jobs"
+            ],
+            "presentValues": [
+              "/for-agents/useful-jobs"
+            ],
+            "result": "match"
+          }
+        ]
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": false,
+        "actualRefused": false
+      },
+      "noChange": {
+        "usefulNoChange": false,
+        "why": "PUBLIC_SHELLS gains path /for-agents/useful-jobs with canonical https://samedaydesk.com/for-agents/useful-jobs."
+      },
+      "reportCompare": {
+        "result": "match",
+        "reason": null,
+        "facts": [
+          {
+            "key": "status",
+            "expected": "ok",
+            "actual": "ok",
+            "result": "match"
+          },
+          {
+            "key": "highlight:/for-agents/useful-jobs",
+            "expected": "/for-agents/useful-jobs",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:https://samedaydesk.com/for-agents/useful-jobs",
+            "expected": "https://samedaydesk.com/for-agents/useful-jobs",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:Added: 1",
+            "expected": "Added: 1",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:Removed: 0",
+            "expected": "Removed: 0",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:Changed (canonical or robots): 0",
+            "expected": "Changed (canonical or robots): 0",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "ok",
+            "expected": true,
+            "actual": true,
+            "result": "match"
+          }
+        ],
+        "expectedPresent": true,
+        "artifactFiles": [
+          "catalog-receipt.json",
+          "route-diff.json",
+          "route-diff.md"
+        ]
+      }
+    },
+    {
+      "exampleId": "h04-route-02",
+      "family": "api-routes",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": null,
+        "mapping": "not-in-m01-four",
+        "sds52Job": "api-upgrade-brief",
+        "note": "OpenAPI api-upgrade-brief stays SDS52. M01 json-schema-webhook-drift refuses OpenAPI (not-this-job-openapi)."
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-02/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-02/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-02/expected-no-change.json"
+      },
+      "skipped": true,
+      "mappingFailure": {
+        "mapping": "not-in-m01-four",
+        "note": "OpenAPI api-upgrade-brief stays SDS52. M01 json-schema-webhook-drift refuses OpenAPI (not-this-job-openapi).",
+        "sds52Job": "api-upgrade-brief"
+      }
+    },
+    {
+      "exampleId": "h04-route-03",
+      "family": "api-routes",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "route-table-diff",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-03/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-03/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-route-03/expected-no-change.json"
+      },
+      "m01EngineId": "route-table-diff",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "route-table-diff",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/api-routes/h04-route-03/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/api-routes/h04-route-03/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-route-03/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 83,
+      "stdoutBytes": 1571,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 1571,
+            "sha256": "68e6e24b1c89512e6aee91a347a39cf587e5dbd13bc837696cf2df625bda7146"
+          },
+          {
+            "name": "route-diff.json",
+            "bytes": 2360,
+            "sha256": "c057f310e5f0e83f4f694fc99804a402ff504499e7594513edbf71f38f950e11"
+          },
+          {
+            "name": "route-diff.md",
+            "bytes": 642,
+            "sha256": "ab5145f1cd4c308fadf62a2aca65929c03530c673ff05a05b77cb4e3938fbb84"
+          }
+        ],
+        "totalBytes": 4573
+      },
+      "stdoutStatus": "no-change",
+      "outcomeKind": "analysis",
+      "pinSha": "886c81d824e0a24e2faa5b821b1cd0ca46ae0859",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "source-only",
+        "checks": [
+          {
+            "fact": "x402-verified-identity",
+            "op": "unchanged",
+            "idNeedles": [
+              "/x402/verified"
+            ],
+            "presentIds": [],
+            "presentValues": [],
+            "result": "source-only"
+          }
+        ]
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": false,
+        "actualRefused": false
+      },
+      "noChange": {
+        "usefulNoChange": true,
+        "why": "/x402/verified path, canonical, title, and robots are identical across 11 catalog records; description/crawlerHtml copy is not a route identity change."
+      },
+      "reportCompare": {
+        "result": "match",
+        "reason": null,
+        "facts": [
+          {
+            "key": "status",
+            "expected": "ok",
+            "actual": "ok",
+            "result": "match"
+          },
+          {
+            "key": "highlight:Added: 0",
+            "expected": "Added: 0",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:Removed: 0",
+            "expected": "Removed: 0",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:Changed (canonical or robots): 0",
+            "expected": "Changed (canonical or robots): 0",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "ok",
+            "expected": true,
+            "actual": true,
+            "result": "match"
+          }
+        ],
+        "expectedPresent": true,
+        "artifactFiles": [
+          "catalog-receipt.json",
+          "route-diff.json",
+          "route-diff.md"
+        ]
+      }
+    },
+    {
+      "exampleId": "h04-page-01",
+      "family": "page-facts",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "page-change-offline-job",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-01/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-01/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-01/expected-no-change.json"
+      },
+      "m01EngineId": "page-change-offline-job",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "page-change-offline-job",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-01/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-01/after.json",
+        "--job",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-01/job.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-page-01/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 81,
+      "stdoutBytes": 8350,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 8350,
+            "sha256": "8a58bee16c742753feb588700feb5f457b9ca65cb87a6d184bf5cb4f0d130d4c"
+          },
+          {
+            "name": "page-change.json",
+            "bytes": 6978,
+            "sha256": "e82506a4c395a07ed62784a86d5ab184b9e80e7e9ab28f57506205c567259e71"
+          },
+          {
+            "name": "page-change.md",
+            "bytes": 1902,
+            "sha256": "f9324521893d63d6cda3811b0c852e193e9275623f17677775a7ae008074e0be"
+          }
+        ],
+        "totalBytes": 17230
+      },
+      "stdoutStatus": "changed",
+      "outcomeKind": "analysis",
+      "pinSha": "fec7bc04ac4419f8e7ce40f2613314e6953af6bc",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "match",
+        "checks": [
+          {
+            "fact": "title",
+            "op": "changed",
+            "idNeedles": [
+              "title"
+            ],
+            "presentIds": [
+              "title"
+            ],
+            "presentValues": [
+              "Free JSON-LD / Schema Validator: check your structured data for AI search | SameDayDesk",
+              "Free JSON-LD Validator & Schema Checker | SameDayDesk"
+            ],
+            "result": "match"
+          },
+          {
+            "fact": "description",
+            "op": "changed",
+            "idNeedles": [
+              "description"
+            ],
+            "presentIds": [
+              "description"
+            ],
+            "presentValues": [
+              "Paste your JSON-LD structured data to validate it: catches JSON syntax errors, missing @context/@type, and missing recommended fields for common schema types (Organization, Product, FAQPage, Article, LocalBusiness). Free, no signup, instant.",
+              "Paste JSON-LD to check JSON syntax, @context, @type, and recommended fields for common Schema.org types. Runs in your browser. Free, no signup."
+            ],
+            "result": "match"
+          },
+          {
+            "fact": "headings.h1",
+            "op": "changed",
+            "idNeedles": [
+              "/headings/h1",
+              "headings"
+            ],
+            "presentIds": [
+              "/headings/h1",
+              "headings"
+            ],
+            "presentValues": [
+              "JSON-LD / Schema Validator",
+              "Free JSON-LD Validator & Schema Checker"
+            ],
+            "result": "match"
+          },
+          {
+            "fact": "headings.h2",
+            "op": "unchanged",
+            "idNeedles": [
+              "/headings/h2",
+              "headings"
+            ],
+            "presentIds": [
+              "headings"
+            ],
+            "presentValues": [],
+            "result": "source-only"
+          }
+        ]
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": false,
+        "actualRefused": false
+      },
+      "noChange": {
+        "usefulNoChange": false,
+        "why": "Title, h1, and meta description rename JSON-LD / Schema Validator to Free JSON-LD Validator & Schema Checker."
+      },
+      "reportCompare": {
+        "result": "match",
+        "reason": null,
+        "facts": [
+          {
+            "key": "status",
+            "expected": "changed",
+            "actual": "changed",
+            "result": "match"
+          },
+          {
+            "key": "verdict",
+            "expected": "changed",
+            "actual": "changed",
+            "result": "match"
+          },
+          {
+            "key": "highlight:changed",
+            "expected": "changed",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:JSON-LD / Schema Validator",
+            "expected": "JSON-LD / Schema Validator",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:Free JSON-LD Validator & Schema Checker",
+            "expected": "Free JSON-LD Validator & Schema Checker",
+            "actual": true,
+            "result": "match"
+          }
+        ],
+        "expectedPresent": true,
+        "artifactFiles": [
+          "catalog-receipt.json",
+          "page-change.json",
+          "page-change.md"
+        ]
+      }
+    },
+    {
+      "exampleId": "h04-page-02",
+      "family": "page-facts",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "page-change-offline-job",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-02/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-02/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-02/expected-no-change.json"
+      },
+      "m01EngineId": "page-change-offline-job",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "page-change-offline-job",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-02/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-02/after.json",
+        "--job",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-02/job.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-page-02/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 80,
+      "stdoutBytes": 6152,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 6152,
+            "sha256": "99324b74931c53b0e9e545fb6a39973da1752629e93d8bb7942758aa71f7c489"
+          },
+          {
+            "name": "page-change.json",
+            "bytes": 4846,
+            "sha256": "6b1d1bb2084ab2f458f1549a0f780e278746e576d9bf840067fa152aaed0182c"
+          },
+          {
+            "name": "page-change.md",
+            "bytes": 996,
+            "sha256": "f67814272bd95df59efec3e0ccf76e98f9340a130d3ba02ae718098f612095a0"
+          }
+        ],
+        "totalBytes": 11994
+      },
+      "stdoutStatus": "unchanged",
+      "outcomeKind": "analysis",
+      "pinSha": "fec7bc04ac4419f8e7ce40f2613314e6953af6bc",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "source-only",
+        "checks": [
+          {
+            "fact": "title",
+            "op": "unchanged",
+            "idNeedles": [
+              "title"
+            ],
+            "presentIds": [
+              "title"
+            ],
+            "presentValues": [],
+            "result": "source-only"
+          },
+          {
+            "fact": "description",
+            "op": "unchanged",
+            "idNeedles": [
+              "description"
+            ],
+            "presentIds": [
+              "description"
+            ],
+            "presentValues": [],
+            "result": "source-only"
+          },
+          {
+            "fact": "headings.h1",
+            "op": "unchanged",
+            "idNeedles": [
+              "/headings/h1",
+              "headings"
+            ],
+            "presentIds": [
+              "headings"
+            ],
+            "presentValues": [],
+            "result": "source-only"
+          },
+          {
+            "fact": "headings.h2",
+            "op": "unchanged",
+            "idNeedles": [
+              "/headings/h2",
+              "headings"
+            ],
+            "presentIds": [
+              "headings"
+            ],
+            "presentValues": [],
+            "result": "source-only"
+          }
+        ]
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": false,
+        "actualRefused": false
+      },
+      "noChange": {
+        "usefulNoChange": true,
+        "why": "Selected title, description, h1, and h2 list are identical; footer sentence and extract provenance/assetHash are unused noise."
+      },
+      "reportCompare": {
+        "result": "match",
+        "reason": null,
+        "facts": [
+          {
+            "key": "status",
+            "expected": "unchanged",
+            "actual": "unchanged",
+            "result": "match"
+          },
+          {
+            "key": "verdict",
+            "expected": "unchanged",
+            "actual": "unchanged",
+            "result": "match"
+          },
+          {
+            "key": "highlight:unchanged",
+            "expected": "unchanged",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:No selected-field content changes recorded",
+            "expected": "No selected-field content changes recorded",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:paymentImpliesUsefulOutput: false",
+            "expected": "paymentImpliesUsefulOutput: false",
+            "actual": true,
+            "result": "match"
+          }
+        ],
+        "expectedPresent": true,
+        "artifactFiles": [
+          "catalog-receipt.json",
+          "page-change.json",
+          "page-change.md"
+        ]
+      }
+    },
+    {
+      "exampleId": "h04-page-03",
+      "family": "page-facts",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "page-change-offline-job",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-03/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-03/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-03/expected-no-change.json"
+      },
+      "m01EngineId": "page-change-offline-job",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "page-change-offline-job",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-03/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-03/after.json",
+        "--job",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-03/job.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-page-03/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 88,
+      "stdoutBytes": 8299,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 8299,
+            "sha256": "d668f4e03708e46b3cb1917e9669230ee1190743c1779eca88f369765dbd6a12"
+          },
+          {
+            "name": "page-change.json",
+            "bytes": 6945,
+            "sha256": "5ae307d873bb373f64c0c182223ab3eadd1182171b1ccd026512785e5d5ca017"
+          },
+          {
+            "name": "page-change.md",
+            "bytes": 1939,
+            "sha256": "b0202396efef8bb3377da5be152f95fc472984a067257d99e0f87f879dc1df09"
+          }
+        ],
+        "totalBytes": 17183
+      },
+      "stdoutStatus": "changed",
+      "outcomeKind": "analysis",
+      "pinSha": "fec7bc04ac4419f8e7ce40f2613314e6953af6bc",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "match",
+        "checks": [
+          {
+            "fact": "title",
+            "op": "unchanged",
+            "idNeedles": [
+              "title"
+            ],
+            "presentIds": [
+              "title"
+            ],
+            "presentValues": [],
+            "result": "source-only"
+          },
+          {
+            "fact": "headings.h1",
+            "op": "unchanged",
+            "idNeedles": [
+              "/headings/h1",
+              "headings"
+            ],
+            "presentIds": [
+              "headings"
+            ],
+            "presentValues": [],
+            "result": "source-only"
+          },
+          {
+            "fact": "description",
+            "op": "changed",
+            "idNeedles": [
+              "description"
+            ],
+            "presentIds": [
+              "description"
+            ],
+            "presentValues": [
+              "Build-time inspection list of unpaid 402 terms, last check time, contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree.",
+              "Build-time inspection list of current SameDayDesk unpaid 402 evidence, including an OpenAPI operation observation and matching fresh CDP Bazaar evidence."
+            ],
+            "result": "match"
+          },
+          {
+            "fact": "text",
+            "op": "changed",
+            "idNeedles": [
+              "text"
+            ],
+            "presentIds": [
+              "text"
+            ],
+            "presentValues": [
+              "Each row records seller, route, unpaid 402 price and network, last check time, contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree. The badge is verified, drift, or unverified.",
+              "Each row has a live unpaid 402 check and contract hash. It records whether the operation was observed in OpenAPI and whether a matching CDP Bazaar row was observed within seven days of the crawl. The badge is verified, drift, or unverified."
+            ],
+            "result": "match"
+          }
+        ]
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": false,
+        "actualRefused": false
+      },
+      "noChange": {
+        "usefulNoChange": false,
+        "why": "Title and h1 stay; description and crawler paragraph replace OpenAPI/402-schema/Bazaar agreement with a 7-day CDP Bazaar freshness rule."
+      },
+      "reportCompare": {
+        "result": "match",
+        "reason": null,
+        "facts": [
+          {
+            "key": "status",
+            "expected": "changed",
+            "actual": "changed",
+            "result": "match"
+          },
+          {
+            "key": "verdict",
+            "expected": "changed",
+            "actual": "changed",
+            "result": "match"
+          },
+          {
+            "key": "highlight:changed",
+            "expected": "changed",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:seven days",
+            "expected": "seven days",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree",
+            "expected": "OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:matching fresh CDP Bazaar evidence",
+            "expected": "matching fresh CDP Bazaar evidence",
+            "actual": true,
+            "result": "match"
+          }
+        ],
+        "expectedPresent": true,
+        "artifactFiles": [
+          "catalog-receipt.json",
+          "page-change.json",
+          "page-change.md"
+        ]
+      }
+    },
+    {
+      "exampleId": "h04-pub-lock-01",
+      "family": "lockfile-public",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "lockfile-pin-delta",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-01/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-01/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-01/expected-no-change.json"
+      },
+      "m01EngineId": "lockfile-pin-delta",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-01/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-01/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-pub-lock-01/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 77,
+      "stdoutBytes": 1275,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 1275,
+            "sha256": "6538bfa3574e67b94277cf916beab7ec1098cac0c0dfbcc44f2d01c2e7b2c67b"
+          },
+          {
+            "name": "pin-delta.json",
+            "bytes": 4083,
+            "sha256": "49753e121d470491577df7325467c41400171bcb2d9a3fb9681005ad7e41bd90"
+          },
+          {
+            "name": "pin-delta.md",
+            "bytes": 1125,
+            "sha256": "9ac71c3ddc47e38e41eb909d461ebeb1107f3e71bb4a564e66e41df993f4e7b3"
+          }
+        ],
+        "totalBytes": 6483
+      },
+      "stdoutStatus": "actionable",
+      "outcomeKind": "analysis",
+      "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "match",
+        "checks": [
+          {
+            "fact": "node_modules/ansi-wrap",
+            "op": "changed",
+            "idNeedles": [
+              "ansi-wrap",
+              "ansi-wrap"
+            ],
+            "presentIds": [
+              "ansi-wrap",
+              "ansi-wrap"
+            ],
+            "presentValues": [
+              "sha1-qCJQ3bABXponyoLoLqYDu/pF768=",
+              "sha512-ZyznvL8k/FZeQHr2T6LzcJ/+vBApDnMNZvfVFy3At0knswWd6rJ3/0Hhmpu8oqa6C92npmozs890sX9Dl6q+Qw==",
+              "https://registry.npmjs.org/ansi-wrap/-/ansi-wrap-0.1.0.tgz",
+              "https://registry.npmjs.org/ansi-wrap/-/ansi-wrap-0.1.0.tgz"
+            ],
+            "result": "match"
+          },
+          {
+            "fact": "node_modules/archy",
+            "op": "changed",
+            "idNeedles": [
+              "archy",
+              "archy"
+            ],
+            "presentIds": [
+              "archy",
+              "archy"
+            ],
+            "presentValues": [
+              "sha1-+cjBN1fMHde8N5rHeyxipcKGjEA=",
+              "sha512-Xg+9RwCg/0p32teKdGMPTPnVXKD0w3DfHnFTficozsAgsvq2XenPJq/MYpzzQ/v8zrOyJn6Ds39VA4JIDwFfqw==",
+              "https://registry.npmjs.org/archy/-/archy-1.0.0.tgz",
+              "https://registry.npmjs.org/archy/-/archy-1.0.0.tgz"
+            ],
+            "result": "match"
+          },
+          {
+            "fact": "node_modules/array-uniq",
+            "op": "changed",
+            "idNeedles": [
+              "array-uniq",
+              "array-uniq"
+            ],
+            "presentIds": [
+              "array-uniq",
+              "array-uniq"
+            ],
+            "presentValues": [
+              "sha1-r2rId6Jcx/dOBYiUdThY39sk/bY=",
+              "sha512-MNha4BWQ6JbwhFhj03YK552f7cb3AzoE8SzeljgChvL1dl3IcvggXVz1DilzySZkCja+CXuZbdW7yATchWn8/Q==",
+              "https://registry.npmjs.org/array-uniq/-/array-uniq-1.0.3.tgz",
+              "https://registry.npmjs.org/array-uniq/-/array-uniq-1.0.3.tgz"
+            ],
+            "result": "match"
+          }
+        ]
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": false,
+        "actualRefused": false
+      },
+      "noChange": {
+        "isNoChangeControl": false,
+        "unchangedMustOmit": [
+          {
+            "id": "node_modules/@colors/colors",
+            "name": "@colors/colors",
+            "version": "1.5.0",
+            "integrity": "sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==",
+            "resolved": "https://registry.npmjs.org/@colors/colors/-/colors-1.5.0.tgz"
+          },
+          {
+            "id": "node_modules/@hapi/hoek",
+            "name": "@hapi/hoek",
+            "version": "8.5.1",
+            "integrity": "sha512-yN7kbciD87WzLGc5539Tn0sApjyiGHAJgKvG9W8C7O+6c7qmoQMfVs0W4bX17eqz6C78QJqqFrtgdK5EWf6Qow==",
+            "resolved": "https://registry.npmjs.org/@hapi/hoek/-/hoek-8.5.1.tgz"
+          }
+        ]
+      },
+      "reportCompare": {
+        "result": "unknown",
+        "reason": "expected-report-missing",
+        "facts": [],
+        "expectedPresent": false
+      }
+    },
+    {
+      "exampleId": "h04-pub-lock-02",
+      "family": "lockfile-public",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "lockfile-pin-delta",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-02/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-02/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-02/expected-no-change.json"
+      },
+      "m01EngineId": "lockfile-pin-delta",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-02/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-02/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-pub-lock-02/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 78,
+      "stdoutBytes": 1275,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 1275,
+            "sha256": "bcec782ade0237113254db5299dcd028e1faaff36cf6ab77e5c4e77d47caff46"
+          },
+          {
+            "name": "pin-delta.json",
+            "bytes": 3931,
+            "sha256": "c092d2acb607cd9f283585b67c23185763c5f42b749a85febb42342c8f41e909"
+          },
+          {
+            "name": "pin-delta.md",
+            "bytes": 1341,
+            "sha256": "7aaedee8574093578f5535d8901bdda8469d960371d49033dcd493dfec868e86"
+          }
+        ],
+        "totalBytes": 6547
+      },
+      "stdoutStatus": "actionable",
+      "outcomeKind": "analysis",
+      "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "match",
+        "checks": [
+          {
+            "fact": "node_modules/got",
+            "op": "changed",
+            "idNeedles": [
+              "got",
+              "got"
+            ],
+            "presentIds": [
+              "got",
+              "got"
+            ],
+            "presentValues": [
+              "sha1-JAzQV4WpoY5WHcG0S0HHY+8ejbA=",
+              "sha1-JAzQV4WpoY5WHcG0S0HHY+8ejbA=",
+              "http://registry.npmjs.org/got/-/got-6.7.1.tgz",
+              "https://registry.npmjs.org/got/-/got-6.7.1.tgz"
+            ],
+            "result": "match"
+          },
+          {
+            "fact": "node_modules/path-is-absolute",
+            "op": "changed",
+            "idNeedles": [
+              "path-is-absolute",
+              "path-is-absolute"
+            ],
+            "presentIds": [
+              "path-is-absolute",
+              "path-is-absolute"
+            ],
+            "presentValues": [
+              "sha1-F0uSaHNVNP+8es5r9TpanhtcX18=",
+              "sha1-F0uSaHNVNP+8es5r9TpanhtcX18=",
+              "http://registry.npmjs.org/path-is-absolute/-/path-is-absolute-1.0.1.tgz",
+              "https://registry.npmjs.org/path-is-absolute/-/path-is-absolute-1.0.1.tgz"
+            ],
+            "result": "match"
+          },
+          {
+            "fact": "node_modules/strip-eof",
+            "op": "changed",
+            "idNeedles": [
+              "strip-eof",
+              "strip-eof"
+            ],
+            "presentIds": [
+              "strip-eof",
+              "strip-eof"
+            ],
+            "presentValues": [
+              "sha1-u0P/VZim6wXYm1n80SnJgzE2Br8=",
+              "sha1-u0P/VZim6wXYm1n80SnJgzE2Br8=",
+              "http://registry.npmjs.org/strip-eof/-/strip-eof-1.0.0.tgz",
+              "https://registry.npmjs.org/strip-eof/-/strip-eof-1.0.0.tgz"
+            ],
+            "result": "match"
+          }
+        ]
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": false,
+        "actualRefused": false
+      },
+      "noChange": {
+        "isNoChangeControl": false,
+        "unchangedMustOmit": [
+          {
+            "id": "node_modules/@11ty/dependency-tree",
+            "name": "@11ty/dependency-tree",
+            "version": "1.0.0",
+            "integrity": "sha512-2FWYlkphQ/83MG7b9qqBJfJJ0K9zupNz/6n4EdDuNLw6hQHGp4Sp4UMDRyBvA/xCTYDBaPSuSjHuu45tSujegg==",
+            "resolved": "https://registry.npmjs.org/@11ty/dependency-tree/-/dependency-tree-1.0.0.tgz"
+          },
+          {
+            "id": "node_modules/@babel/code-frame",
+            "name": "@babel/code-frame",
+            "version": "7.8.3",
+            "integrity": "sha512-a9gxpmdXtZEInkCSHUJDLHZVBgb1QS0jhss4cPP93EW7s+uC5bikET2twEF3KV+7rDblJcmNvTR7VJejqd2C2g==",
+            "resolved": "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.8.3.tgz"
+          }
+        ],
+        "enginePinTermsOmitResolved": true,
+        "notes": "Engine hashes name+version+integrity only. These resolved-only pins are source facts even if the engine reports no pin-terms delta."
+      },
+      "reportCompare": {
+        "result": "unknown",
+        "reason": "expected-report-missing",
+        "facts": [],
+        "expectedPresent": false
+      }
+    },
+    {
+      "exampleId": "h04-pub-lock-03",
+      "family": "lockfile-public",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "lockfile-pin-delta",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-03/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-03/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-03/expected-no-change.json"
+      },
+      "m01EngineId": "lockfile-pin-delta",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-03/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-03/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-pub-lock-03/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 78,
+      "stdoutBytes": 1275,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 1275,
+            "sha256": "cbb06480007c5ccf47bb7086d8072117f3f07ac4d1d30d81c3e0541d933f2dc7"
+          },
+          {
+            "name": "pin-delta.json",
+            "bytes": 1959,
+            "sha256": "f2f64dfe13012ddbb698806fbe616002ffae0ed7a50acbe7a1440123fb691d2f"
+          },
+          {
+            "name": "pin-delta.md",
+            "bytes": 669,
+            "sha256": "a741fbae71a1d9a0089f9f00f30ed4f7e50f3587af2272c2fe2493bfc4017d77"
+          }
+        ],
+        "totalBytes": 3903
+      },
+      "stdoutStatus": "actionable",
+      "outcomeKind": "analysis",
+      "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "match",
+        "checks": [
+          {
+            "fact": "node-forge",
+            "op": "changed",
+            "idNeedles": [
+              "node-forge",
+              "node-forge"
+            ],
+            "presentIds": [
+              "node-forge",
+              "node-forge"
+            ],
+            "presentValues": [],
+            "result": "match"
+          },
+          {
+            "fact": "selfsigned",
+            "op": "changed",
+            "idNeedles": [
+              "selfsigned",
+              "selfsigned"
+            ],
+            "presentIds": [
+              "selfsigned",
+              "selfsigned"
+            ],
+            "presentValues": [],
+            "result": "match"
+          }
+        ]
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": false,
+        "actualRefused": false
+      },
+      "noChange": {
+        "isNoChangeControl": false,
+        "unchangedMustOmit": [
+          {
+            "id": "node_modules/@ampproject/remapping",
+            "name": "@ampproject/remapping",
+            "version": "2.2.0",
+            "integrity": "sha512-qRmjj8nj9qmLTQXXmaR1cck3UXSRMPrbsLJAasZpF+t3riI71BXed5ebIOYwQntykeZuhjsdweEc9BxH5Jc26w==",
+            "resolved": "https://registry.npmjs.org/@ampproject/remapping/-/remapping-2.2.0.tgz"
+          },
+          {
+            "id": "node_modules/@babel/code-frame",
+            "name": "@babel/code-frame",
+            "version": "7.23.5",
+            "integrity": "sha512-CgH3s1a96LipHCmSUmYFPwY7MNx8C3avkq7i4Wl3cfa662ldtUe4VM1TPXX70pfmrlWTb6jLqTYrZyT2ZTJBgA==",
+            "resolved": "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.23.5.tgz"
+          }
+        ]
+      },
+      "reportCompare": {
+        "result": "unknown",
+        "reason": "expected-report-missing",
+        "facts": [],
+        "expectedPresent": false
+      }
+    },
+    {
+      "exampleId": "h04-lock-pub-b04-removal",
+      "family": "lockfile-public",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "lockfile-pin-delta",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b04-removal/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b04-removal/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b04-removal/expected-no-change.json"
+      },
+      "m01EngineId": "lockfile-pin-delta",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b04-removal/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b04-removal/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-lock-pub-b04-removal/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 81,
+      "stdoutBytes": 1305,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 1305,
+            "sha256": "2e0d7fad3ed5a82f0094ac7fd26cbd5d779748c9b40b8bfbe23b8f1d3b3bc932"
+          },
+          {
+            "name": "pin-delta.json",
+            "bytes": 4766,
+            "sha256": "0c57b34ee46ef4f766a24ba4f8d44d598298179af5d9197c0bd2f20c91393ce6"
+          },
+          {
+            "name": "pin-delta.md",
+            "bytes": 1684,
+            "sha256": "f18da0019d60e205b54c3bbb6e3bd7c28e72282db3073da917ed7673fdc129bf"
+          }
+        ],
+        "totalBytes": 7755
+      },
+      "stdoutStatus": "actionable",
+      "outcomeKind": "analysis",
+      "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "match",
+        "checks": [
+          {
+            "fact": "array-flatten",
+            "op": "changed",
+            "idNeedles": [
+              "array-flatten",
+              "array-flatten"
+            ],
+            "presentIds": [
+              "array-flatten",
+              "array-flatten"
+            ],
+            "presentValues": [],
+            "result": "match"
+          },
+          {
+            "fact": "binary-extensions",
+            "op": "changed",
+            "idNeedles": [
+              "binary-extensions",
+              "binary-extensions"
+            ],
+            "presentIds": [
+              "binary-extensions",
+              "binary-extensions"
+            ],
+            "presentValues": [],
+            "result": "match"
+          },
+          {
+            "fact": "core-util-is",
+            "op": "changed",
+            "idNeedles": [
+              "core-util-is",
+              "core-util-is"
+            ],
+            "presentIds": [
+              "core-util-is",
+              "core-util-is"
+            ],
+            "presentValues": [],
+            "result": "match"
+          },
+          {
+            "fact": "destroy",
+            "op": "changed",
+            "idNeedles": [
+              "destroy",
+              "destroy"
+            ],
+            "presentIds": [
+              "destroy",
+              "destroy"
+            ],
+            "presentValues": [],
+            "result": "match"
+          },
+          {
+            "fact": "detect-node",
+            "op": "changed",
+            "idNeedles": [
+              "detect-node",
+              "detect-node"
+            ],
+            "presentIds": [
+              "detect-node",
+              "detect-node"
+            ],
+            "presentValues": [],
+            "result": "match"
+          },
+          {
+            "fact": "faye-websocket",
+            "op": "changed",
+            "idNeedles": [
+              "faye-websocket",
+              "faye-websocket"
+            ],
+            "presentIds": [
+              "faye-websocket",
+              "faye-websocket"
+            ],
+            "presentValues": [],
+            "result": "match"
+          },
+          {
+            "fact": "follow-redirects",
+            "op": "changed",
+            "idNeedles": [
+              "follow-redirects",
+              "follow-redirects"
+            ],
+            "presentIds": [
+              "follow-redirects",
+              "follow-redirects"
+            ],
+            "presentValues": [],
+            "result": "match"
+          },
+          {
+            "fact": "http-proxy",
+            "op": "changed",
+            "idNeedles": [
+              "http-proxy",
+              "http-proxy"
+            ],
+            "presentIds": [
+              "http-proxy",
+              "http-proxy"
+            ],
+            "presentValues": [],
+            "result": "match"
+          }
+        ]
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": false,
+        "actualRefused": false
+      },
+      "noChange": {
+        "expected": false,
+        "reason": "packages keys present in before are absent in after"
+      },
+      "reportCompare": {
+        "result": "match",
+        "reason": null,
+        "facts": [
+          {
+            "key": "status",
+            "expected": "actionable",
+            "actual": "actionable",
+            "result": "match"
+          },
+          {
+            "key": "highlight:array-flatten@1.1.1",
+            "expected": "array-flatten@1.1.1",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:binary-extensions@2.3.0",
+            "expected": "binary-extensions@2.3.0",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:core-util-is@1.0.3",
+            "expected": "core-util-is@1.0.3",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:destroy@1.2.0",
+            "expected": "destroy@1.2.0",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:detect-node@2.1.0",
+            "expected": "detect-node@2.1.0",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:faye-websocket@0.11.4",
+            "expected": "faye-websocket@0.11.4",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:follow-redirects@1.16.0",
+            "expected": "follow-redirects@1.16.0",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:http-proxy@1.18.1",
+            "expected": "http-proxy@1.18.1",
+            "actual": true,
+            "result": "match"
+          }
+        ],
+        "expectedPresent": true,
+        "artifactFiles": [
+          "catalog-receipt.json",
+          "pin-delta.json",
+          "pin-delta.md"
+        ]
+      }
+    },
+    {
+      "exampleId": "h04-lock-pub-b05-normalize",
+      "family": "lockfile-public",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "lockfile-pin-delta",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b05-normalize/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b05-normalize/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b05-normalize/expected-no-change.json"
+      },
+      "m01EngineId": "lockfile-pin-delta",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b05-normalize/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b05-normalize/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-lock-pub-b05-normalize/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 82,
+      "stdoutBytes": 1317,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 1317,
+            "sha256": "4e46a8307336a67a4537b775f14848ed61bacb95a388e81c392999c84e80d319"
+          },
+          {
+            "name": "pin-delta.json",
+            "bytes": 1085,
+            "sha256": "10f55d471dc9ce580ba31cbc7d90ad9e7a6703d5bf69e32c1ef0af85c1e117c3"
+          },
+          {
+            "name": "pin-delta.md",
+            "bytes": 356,
+            "sha256": "97137897e98ef7bf11c167119549e6c9445d6bfe6497507cb2923c1c2b42eb4e"
+          }
+        ],
+        "totalBytes": 2758
+      },
+      "stdoutStatus": "informational",
+      "outcomeKind": "analysis",
+      "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "unknown",
+        "reason": "no-source-facts",
+        "checks": []
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": false,
+        "actualRefused": false
+      },
+      "noChange": {
+        "expected": true,
+        "kind": "normalization-noise",
+        "sameNameVersionIntegrityResolved": true,
+        "noise": [
+          "key-order",
+          "indent-4",
+          "unused-fields",
+          "link-true-omit"
+        ],
+        "counts": {
+          "beforePins": 22,
+          "afterPins": 22,
+          "added": 0,
+          "removed": 0,
+          "changed": 0,
+          "unchanged": 22,
+          "missingIntegrity": 0
+        }
+      },
+      "reportCompare": {
+        "result": "match",
+        "reason": null,
+        "facts": [
+          {
+            "key": "status",
+            "expected": "informational",
+            "actual": "informational",
+            "result": "match"
+          },
+          {
+            "key": "highlight:informational",
+            "expected": "informational",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:Added 0, removed 0, changed 0.",
+            "expected": "Added 0, removed 0, changed 0.",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:Unchanged packages omitted (22)",
+            "expected": "Unchanged packages omitted (22)",
+            "actual": true,
+            "result": "match"
+          }
+        ],
+        "expectedPresent": true,
+        "artifactFiles": [
+          "catalog-receipt.json",
+          "pin-delta.json",
+          "pin-delta.md"
+        ]
+      }
+    },
+    {
+      "exampleId": "h04-lock-pub-b06-refuse",
+      "family": "lockfile-public",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "lockfile-pin-delta",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b06-refuse/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b06-refuse/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b06-refuse/expected-no-change.json"
+      },
+      "m01EngineId": "lockfile-pin-delta",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b06-refuse/yarn.lock",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b06-refuse/yarn.lock",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-lock-pub-b06-refuse/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 2,
+      "ok": false,
+      "durationMs": 83,
+      "stdoutBytes": 855,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 855,
+            "sha256": "d39a61b58ff1e59c999e442ad39ab588c531743d7c43bff0dd8c65b2b414ecf6"
+          }
+        ],
+        "totalBytes": 855
+      },
+      "stdoutStatus": null,
+      "outcomeKind": "refused",
+      "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "unknown",
+        "reason": "no-source-facts",
+        "checks": []
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": true,
+        "actualRefused": true
+      },
+      "noChange": {
+        "expected": false,
+        "reason": "unsupported format must refuse before any pin compare"
+      },
+      "reportCompare": {
+        "result": "match",
+        "reason": null,
+        "facts": [
+          {
+            "key": "ok",
+            "expected": false,
+            "actual": false,
+            "result": "match"
+          }
+        ],
+        "expectedPresent": true,
+        "artifactFiles": [
+          "catalog-receipt.json"
+        ]
+      }
+    },
+    {
+      "exampleId": "h04-lock-pub-b07-large",
+      "family": "lockfile-public",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "mapping": {
+        "m01EngineId": "lockfile-pin-delta",
+        "mapping": "ok",
+        "note": null
+      },
+      "oracles": {
+        "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b07-large/expected-facts.json",
+        "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b07-large/expected-refusal.json",
+        "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b07-large/expected-no-change.json"
+      },
+      "m01EngineId": "lockfile-pin-delta",
+      "skipped": false,
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b07-large/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b07-large/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-lock-pub-b07-large/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "ok": true,
+      "durationMs": 83,
+      "stdoutBytes": 1296,
+      "stderrBytes": 0,
+      "outputs": {
+        "files": [
+          {
+            "name": "catalog-receipt.json",
+            "bytes": 1296,
+            "sha256": "652d911a1f4d00d1e15f875cd1ba1d94be204fdba15b5299854f345fb001229e"
+          },
+          {
+            "name": "pin-delta.json",
+            "bytes": 1144,
+            "sha256": "556cbf82aab0372c981005d245f0e203c27e26e8c52e53ce6023029e5666fd2b"
+          },
+          {
+            "name": "pin-delta.md",
+            "bytes": 426,
+            "sha256": "862eadf241dd9ba49fbffa16bb357897591e6a06299db13589fc3f6f5b66dae5"
+          }
+        ],
+        "totalBytes": 2866
+      },
+      "stdoutStatus": "partial",
+      "outcomeKind": "analysis",
+      "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "schemaMatchOk": true,
+      "factsCompare": {
+        "result": "unknown",
+        "reason": "no-source-facts",
+        "checks": []
+      },
+      "refusalCompare": {
+        "result": "match",
+        "expected": false,
+        "actualRefused": false
+      },
+      "noChange": {
+        "expected": true,
+        "kind": "self-diff-large-lockfileVersion-3",
+        "sameNameVersionIntegrityResolved": true,
+        "note": "Full public blob self-compare. One pin (vendor/@neomorphic/correspondence) lacks integrity, so engine status is partial while added/removed/changed stay 0.",
+        "counts": {
+          "beforePins": 160,
+          "afterPins": 160,
+          "added": 0,
+          "removed": 0,
+          "changed": 0,
+          "unchanged": 160,
+          "missingIntegrity": 1
+        }
+      },
+      "reportCompare": {
+        "result": "match",
+        "reason": null,
+        "facts": [
+          {
+            "key": "status",
+            "expected": "partial",
+            "actual": "partial",
+            "result": "match"
+          },
+          {
+            "key": "highlight:partial",
+            "expected": "partial",
+            "actual": true,
+            "result": "match"
+          },
+          {
+            "key": "highlight:Added 0, removed 0, changed 0.",
+            "expected": "Added 0, removed 0, changed 0.",
+            "actual": true,
+            "result": "match"
+          }
+        ],
+        "expectedPresent": true,
+        "artifactFiles": [
+          "catalog-receipt.json",
+          "pin-delta.json",
+          "pin-delta.md"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "id": "h04-route-03",
+  "family": "api-routes",
+  "kind": "no-change-control",
+  "method": "raw-bytes",
+  "quotedSourceMdShas": {
+    "repo": "epistemedeus/samedaydesk",
+    "path": "server/lib/spa-route-shells.js",
+    "beforeSha": "3693e7c2ea49c44c8c8f35f24c3916de5b4bc8e0",
+    "afterSha": "3c96d3137f815035ed4a6467d28c8041916a9aa8"
+  },
+  "inputsHashed": {
+    "before": "0701c9a60f8cab33afbddf0240cc3105b3bba3d3ab8c6083020b8c912a10b3ab",
+    "after": "9acf3361e698434b5a97e154ca6cb34385b22e794827dba33cdf98c3e10fe69f"
+  },
+  "sourceFacts": [
+    {
+      "id": "x402-verified-identity",
+      "op": "unchanged",
+      "path": "/x402/verified",
+      "canonical": "https://samedaydesk.com/x402/verified",
+      "robots": null,
+      "title": "Inspected x402 routes | SameDayDesk",
+      "titleOnly": false,
+      "before": "/x402/verified",
+      "after": "/x402/verified"
+    }
+  ],
+  "counts": {
+    "routes": 11,
+    "added": 0,
+    "removed": 0,
+    "changed": 0,
+    "titleOnly": 0
+  },
+  "added": [],
+  "removed": [],
+  "titleOnly": [],
+  "ignoredUnused": [
+    {
+      "from": "git show spa-route-shells.js /x402/verified",
+      "fields": [
+        "description",
+        "crawlerHtml"
+      ],
+      "why": "copy-only; not path/canonical/robots/title. Catalog fixtures omit those fields and identity records match."
+    }
+  ]
+}

@@ -1,0 +1,178 @@
+{
+  "exampleId": "h04-page-03",
+  "family": "page-facts",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "mapping": {
+    "m01EngineId": "page-change-offline-job",
+    "mapping": "ok",
+    "note": null
+  },
+  "oracles": {
+    "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-03/expected-facts.json",
+    "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-03/expected-refusal.json",
+    "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-03/expected-no-change.json"
+  },
+  "m01EngineId": "page-change-offline-job",
+  "skipped": false,
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "page-change-offline-job",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-03/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-03/after.json",
+    "--job",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-03/job.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-page-03/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "ok": true,
+  "durationMs": 88,
+  "stdoutBytes": 8299,
+  "stderrBytes": 0,
+  "outputs": {
+    "files": [
+      {
+        "name": "catalog-receipt.json",
+        "bytes": 8299,
+        "sha256": "d668f4e03708e46b3cb1917e9669230ee1190743c1779eca88f369765dbd6a12"
+      },
+      {
+        "name": "page-change.json",
+        "bytes": 6945,
+        "sha256": "5ae307d873bb373f64c0c182223ab3eadd1182171b1ccd026512785e5d5ca017"
+      },
+      {
+        "name": "page-change.md",
+        "bytes": 1939,
+        "sha256": "b0202396efef8bb3377da5be152f95fc472984a067257d99e0f87f879dc1df09"
+      }
+    ],
+    "totalBytes": 17183
+  },
+  "stdoutStatus": "changed",
+  "outcomeKind": "analysis",
+  "pinSha": "fec7bc04ac4419f8e7ce40f2613314e6953af6bc",
+  "schemaMatchOk": true,
+  "factsCompare": {
+    "result": "match",
+    "checks": [
+      {
+        "fact": "title",
+        "op": "unchanged",
+        "idNeedles": [
+          "title"
+        ],
+        "presentIds": [
+          "title"
+        ],
+        "presentValues": [],
+        "result": "source-only"
+      },
+      {
+        "fact": "headings.h1",
+        "op": "unchanged",
+        "idNeedles": [
+          "/headings/h1",
+          "headings"
+        ],
+        "presentIds": [
+          "headings"
+        ],
+        "presentValues": [],
+        "result": "source-only"
+      },
+      {
+        "fact": "description",
+        "op": "changed",
+        "idNeedles": [
+          "description"
+        ],
+        "presentIds": [
+          "description"
+        ],
+        "presentValues": [
+          "Build-time inspection list of unpaid 402 terms, last check time, contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree.",
+          "Build-time inspection list of current SameDayDesk unpaid 402 evidence, including an OpenAPI operation observation and matching fresh CDP Bazaar evidence."
+        ],
+        "result": "match"
+      },
+      {
+        "fact": "text",
+        "op": "changed",
+        "idNeedles": [
+          "text"
+        ],
+        "presentIds": [
+          "text"
+        ],
+        "presentValues": [
+          "Each row records seller, route, unpaid 402 price and network, last check time, contract hash, and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree. The badge is verified, drift, or unverified.",
+          "Each row has a live unpaid 402 check and contract hash. It records whether the operation was observed in OpenAPI and whether a matching CDP Bazaar row was observed within seven days of the crawl. The badge is verified, drift, or unverified."
+        ],
+        "result": "match"
+      }
+    ]
+  },
+  "refusalCompare": {
+    "result": "match",
+    "expected": false,
+    "actualRefused": false
+  },
+  "noChange": {
+    "usefulNoChange": false,
+    "why": "Title and h1 stay; description and crawler paragraph replace OpenAPI/402-schema/Bazaar agreement with a 7-day CDP Bazaar freshness rule."
+  },
+  "reportCompare": {
+    "result": "match",
+    "reason": null,
+    "facts": [
+      {
+        "key": "status",
+        "expected": "changed",
+        "actual": "changed",
+        "result": "match"
+      },
+      {
+        "key": "verdict",
+        "expected": "changed",
+        "actual": "changed",
+        "result": "match"
+      },
+      {
+        "key": "highlight:changed",
+        "expected": "changed",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:seven days",
+        "expected": "seven days",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree",
+        "expected": "OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:matching fresh CDP Bazaar evidence",
+        "expected": "matching fresh CDP Bazaar evidence",
+        "actual": true,
+        "result": "match"
+      }
+    ],
+    "expectedPresent": true,
+    "artifactFiles": [
+      "catalog-receipt.json",
+      "page-change.json",
+      "page-change.md"
+    ]
+  }
+}

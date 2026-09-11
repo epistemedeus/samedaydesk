@@ -1,0 +1,39 @@
+{
+  "id": "h04-route-01",
+  "family": "api-routes",
+  "kind": "change",
+  "method": "raw-bytes",
+  "quotedSourceMdShas": {
+    "repo": "epistemedeus/samedaydesk",
+    "path": "server/lib/spa-route-shells.js",
+    "beforeSha": "9c50ecbae3110768309c99a1bbaaa92991fc8e4d",
+    "afterSha": "abeb54eca9a71abe117898e8fe7de7e55e9d917f"
+  },
+  "inputsHashed": {
+    "before": "e30cecbbe1727b25eb0b3126b7f150e9c2d31c4e0633014d4d64fda35058486e",
+    "after": "98a5fb79f15de4b10ea6685c8e99a0e0cbe71542dd1a218c8f80f2e23b51f7e4"
+  },
+  "sourceFacts": [
+    {
+      "id": "added-useful-jobs",
+      "op": "added",
+      "path": "/for-agents/useful-jobs",
+      "canonical": "https://samedaydesk.com/for-agents/useful-jobs",
+      "robots": null,
+      "title": "Offline useful jobs for agent callers | SameDayDesk",
+      "titleOnly": false,
+      "before": "absent",
+      "after": "/for-agents/useful-jobs"
+    }
+  ],
+  "counts": {
+    "beforeRoutes": 14,
+    "afterRoutes": 15,
+    "added": 1,
+    "removed": 0,
+    "changed": 0,
+    "titleOnly": 0
+  },
+  "removed": [],
+  "titleOnly": []
+}

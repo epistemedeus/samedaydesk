@@ -1,0 +1,47 @@
+{
+  "ok": true,
+  "schema": "samedaydesk.wave5.m01.engine-catalog.v1",
+  "firstOffer": "lockfile-pin-delta",
+  "source": "in-tree",
+  "selected": [
+    {
+      "id": "lockfile-pin-delta",
+      "owner": "W5-M03",
+      "pin": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "source": "in-tree",
+      "firstOffer": true
+    },
+    {
+      "id": "json-schema-webhook-drift",
+      "owner": "W5-M02",
+      "pin": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+      "source": "in-tree",
+      "firstOffer": false
+    },
+    {
+      "id": "route-table-diff",
+      "owner": "W5-M04",
+      "pin": "886c81d824e0a24e2faa5b821b1cd0ca46ae0859",
+      "source": "in-tree",
+      "firstOffer": false
+    },
+    {
+      "id": "page-change-offline-job",
+      "owner": "W5-M05",
+      "pin": "fec7bc04ac4419f8e7ce40f2613314e6953af6bc",
+      "source": "in-tree",
+      "firstOffer": false
+    }
+  ],
+  "wrapperJobIds": [
+    "api-upgrade-brief",
+    "vendor-budget-impact",
+    "feed-agenda",
+    "evidence-ci-annotation",
+    "listing-repair-packet",
+    "repeat-job-record"
+  ],
+  "liveSettlement": "out-of-scope",
+  "d01Binding": "adapter-exported-injection-required",
+  "d01Injection": "required"
+}

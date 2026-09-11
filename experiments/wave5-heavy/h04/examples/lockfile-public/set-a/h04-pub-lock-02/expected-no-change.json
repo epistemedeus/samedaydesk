@@ -1,0 +1,21 @@
+{
+  "isNoChangeControl": false,
+  "unchangedMustOmit": [
+    {
+      "id": "node_modules/@11ty/dependency-tree",
+      "name": "@11ty/dependency-tree",
+      "version": "1.0.0",
+      "integrity": "sha512-2FWYlkphQ/83MG7b9qqBJfJJ0K9zupNz/6n4EdDuNLw6hQHGp4Sp4UMDRyBvA/xCTYDBaPSuSjHuu45tSujegg==",
+      "resolved": "https://registry.npmjs.org/@11ty/dependency-tree/-/dependency-tree-1.0.0.tgz"
+    },
+    {
+      "id": "node_modules/@babel/code-frame",
+      "name": "@babel/code-frame",
+      "version": "7.8.3",
+      "integrity": "sha512-a9gxpmdXtZEInkCSHUJDLHZVBgb1QS0jhss4cPP93EW7s+uC5bikET2twEF3KV+7rDblJcmNvTR7VJejqd2C2g==",
+      "resolved": "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.8.3.tgz"
+    }
+  ],
+  "enginePinTermsOmitResolved": true,
+  "notes": "Engine hashes name+version+integrity only. These resolved-only pins are source facts even if the engine reports no pin-terms delta."
+}

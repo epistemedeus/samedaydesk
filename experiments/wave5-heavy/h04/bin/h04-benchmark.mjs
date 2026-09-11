@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import { loadCatalog } from "../src/catalog.mjs";
 import { describeEngine, loadEngines } from "../src/engines.mjs";
+import { replayAll } from "../src/m01-replay.mjs";
+import { COMPOSITION_SHA, observedCompositionSha } from "../src/m01.mjs";
 import { runCatalog } from "../src/run-examples.mjs";
 import { runSmoke } from "../src/smoke.mjs";
 
@@ -10,11 +12,13 @@ function usage() {
 Commands:
   list    Show pinned engines and catalog examples
   smoke   Run each engine --help and --example (SAMPLE, not a customer job)
-  run     Execute catalog examples against pinned engines
+  run     Execute catalog examples against pinned W4/SDS52 engines
+  m01     Replay catalog against M01 composition ${COMPOSITION_SHA}
 
 From experiments/wave5-heavy/h04:
   node bin/h04-benchmark.mjs smoke
   node bin/h04-benchmark.mjs run
+  node bin/h04-benchmark.mjs m01
   node bin/h04-benchmark.mjs list
 
 Engines write --out-dir under runs/. SAMPLE/--example is never a paid sale.
@@ -63,6 +67,17 @@ if (cmd === "smoke") {
 if (cmd === "run") {
   const summary = await runCatalog();
   emit({ ok: true, command: "run", ...summary });
+}
+
+if (cmd === "m01") {
+  const summary = await replayAll();
+  emit({
+    ok: true,
+    command: "m01",
+    compositionSha: COMPOSITION_SHA,
+    observedSha: observedCompositionSha(),
+    ...summary,
+  });
 }
 
 process.stderr.write(`unknown command ${cmd}\n`);

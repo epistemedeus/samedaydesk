@@ -1,0 +1,122 @@
+{
+  "schema": "samedaydesk.lockfile-pin-delta.v1",
+  "appId": "lockfile-pin-delta",
+  "ok": true,
+  "status": "actionable",
+  "purchaseAuthority": false,
+  "paidValueClaim": false,
+  "settlement": "nonsettling-prototype",
+  "equality": "pin-fields",
+  "lockfileVersion": {
+    "before": 3,
+    "after": 3
+  },
+  "mapSource": {
+    "before": "packages",
+    "after": "packages"
+  },
+  "counts": {
+    "beforePins": 19,
+    "afterPins": 11,
+    "added": 0,
+    "removed": 8,
+    "changed": 0,
+    "unchanged": 11,
+    "missingIntegrity": 0
+  },
+  "added": [],
+  "removed": [
+    {
+      "id": "node_modules/array-flatten",
+      "name": "array-flatten",
+      "version": "1.1.1",
+      "integrity": "sha512-PCVAQswWemu6UdxsDFFX/+gVeYqKAod3D3UVm91jHwynguOwAvYPhx8nNlM++NqRcK6CxxpUafjmhIdKiHibqg==",
+      "resolved": "https://registry.npmjs.org/array-flatten/-/array-flatten-1.1.1.tgz",
+      "gitCommit": null,
+      "termsHash": "2e6b751bb3a615cefb95454111df73e69ac6fd45bf1d044477285b7d40e5c668",
+      "missingIntegrity": false
+    },
+    {
+      "id": "node_modules/binary-extensions",
+      "name": "binary-extensions",
+      "version": "2.3.0",
+      "integrity": "sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==",
+      "resolved": "https://registry.npmjs.org/binary-extensions/-/binary-extensions-2.3.0.tgz",
+      "gitCommit": null,
+      "termsHash": "69e414c20e8ce61b7d19adfc0d0f3aee5714e39f5df48ee9489408e35f483d82",
+      "missingIntegrity": false
+    },
+    {
+      "id": "node_modules/core-util-is",
+      "name": "core-util-is",
+      "version": "1.0.3",
+      "integrity": "sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==",
+      "resolved": "https://registry.npmjs.org/core-util-is/-/core-util-is-1.0.3.tgz",
+      "gitCommit": null,
+      "termsHash": "b57147063ea01dc257ceb85bcefcf9ff12ceb117599b33fb68a11a177c429157",
+      "missingIntegrity": false
+    },
+    {
+      "id": "node_modules/destroy",
+      "name": "destroy",
+      "version": "1.2.0",
+      "integrity": "sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==",
+      "resolved": "https://registry.npmjs.org/destroy/-/destroy-1.2.0.tgz",
+      "gitCommit": null,
+      "termsHash": "39bff2fcab75bb6c19c865c2ad6990089958ae1fca23360396c60bee4c736fbe",
+      "missingIntegrity": false
+    },
+    {
+      "id": "node_modules/detect-node",
+      "name": "detect-node",
+      "version": "2.1.0",
+      "integrity": "sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g==",
+      "resolved": "https://registry.npmjs.org/detect-node/-/detect-node-2.1.0.tgz",
+      "gitCommit": null,
+      "termsHash": "7a19273055415a1802f4dc2dcec4dcbab51934acad0798ffe39d8989fb89d94d",
+      "missingIntegrity": false
+    },
+    {
+      "id": "node_modules/faye-websocket",
+      "name": "faye-websocket",
+      "version": "0.11.4",
+      "integrity": "sha512-CzbClwlXAuiRQAlUyfqPgvPoNKTckTPGfwZV4ZdAhVcP2lh9KUxJg2b5GkE7XbjKQ3YJnQ9z6D9ntLAlB+tP8g==",
+      "resolved": "https://registry.npmjs.org/faye-websocket/-/faye-websocket-0.11.4.tgz",
+      "gitCommit": null,
+      "termsHash": "bf8a528ef211adae35d56ccc899db38e03f77b01b281c2ce5e0fec439dd099bf",
+      "missingIntegrity": false
+    },
+    {
+      "id": "node_modules/follow-redirects",
+      "name": "follow-redirects",
+      "version": "1.16.0",
+      "integrity": "sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==",
+      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.0.tgz",
+      "gitCommit": null,
+      "termsHash": "ca75109c926f04ea70554a124668207fe887602f8eac1bbeea2cad865bcea97a",
+      "missingIntegrity": false
+    },
+    {
+      "id": "node_modules/http-proxy",
+      "name": "http-proxy",
+      "version": "1.18.1",
+      "integrity": "sha512-7mz/721AbnJwIVbnaSv1Cz3Am0ZLT/UBwkC92VlxhXv/k/BBQfM2fXElQNC27BVGr0uwUpplYPQM9LnaBMR5NQ==",
+      "resolved": "https://registry.npmjs.org/http-proxy/-/http-proxy-1.18.1.tgz",
+      "gitCommit": null,
+      "termsHash": "336e948dbc397e4b97d12812b34f6b5fa2629c2cd53837eafd6b810651e01c6c",
+      "missingIntegrity": false
+    }
+  ],
+  "changed": [],
+  "gaps": [],
+  "caller": {
+    "before": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b04-removal/before.json",
+    "after": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b04-removal/after.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notCustomerDemand": true,
+    "notMarketFact": true
+  },
+  "provenance": "caller-supplied",
+  "generatedAt": "2026-09-11T23:41:51.632Z"
+}

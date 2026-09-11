@@ -7,6 +7,7 @@
   "scripts": {
     "test": "node --test test/*.test.mjs",
     "benchmark": "node bin/h04-benchmark.mjs run",
+    "m01": "node bin/h04-benchmark.mjs m01",
     "smoke": "node bin/h04-benchmark.mjs smoke"
   }
 }

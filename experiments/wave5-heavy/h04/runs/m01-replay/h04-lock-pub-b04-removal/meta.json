@@ -1,0 +1,251 @@
+{
+  "exampleId": "h04-lock-pub-b04-removal",
+  "family": "lockfile-public",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "mapping": {
+    "m01EngineId": "lockfile-pin-delta",
+    "mapping": "ok",
+    "note": null
+  },
+  "oracles": {
+    "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b04-removal/expected-facts.json",
+    "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b04-removal/expected-refusal.json",
+    "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b04-removal/expected-no-change.json"
+  },
+  "m01EngineId": "lockfile-pin-delta",
+  "skipped": false,
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "lockfile-pin-delta",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b04-removal/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b04-removal/after.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-lock-pub-b04-removal/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "ok": true,
+  "durationMs": 81,
+  "stdoutBytes": 1305,
+  "stderrBytes": 0,
+  "outputs": {
+    "files": [
+      {
+        "name": "catalog-receipt.json",
+        "bytes": 1305,
+        "sha256": "2e0d7fad3ed5a82f0094ac7fd26cbd5d779748c9b40b8bfbe23b8f1d3b3bc932"
+      },
+      {
+        "name": "pin-delta.json",
+        "bytes": 4766,
+        "sha256": "0c57b34ee46ef4f766a24ba4f8d44d598298179af5d9197c0bd2f20c91393ce6"
+      },
+      {
+        "name": "pin-delta.md",
+        "bytes": 1684,
+        "sha256": "f18da0019d60e205b54c3bbb6e3bd7c28e72282db3073da917ed7673fdc129bf"
+      }
+    ],
+    "totalBytes": 7755
+  },
+  "stdoutStatus": "actionable",
+  "outcomeKind": "analysis",
+  "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+  "schemaMatchOk": true,
+  "factsCompare": {
+    "result": "match",
+    "checks": [
+      {
+        "fact": "array-flatten",
+        "op": "changed",
+        "idNeedles": [
+          "array-flatten",
+          "array-flatten"
+        ],
+        "presentIds": [
+          "array-flatten",
+          "array-flatten"
+        ],
+        "presentValues": [],
+        "result": "match"
+      },
+      {
+        "fact": "binary-extensions",
+        "op": "changed",
+        "idNeedles": [
+          "binary-extensions",
+          "binary-extensions"
+        ],
+        "presentIds": [
+          "binary-extensions",
+          "binary-extensions"
+        ],
+        "presentValues": [],
+        "result": "match"
+      },
+      {
+        "fact": "core-util-is",
+        "op": "changed",
+        "idNeedles": [
+          "core-util-is",
+          "core-util-is"
+        ],
+        "presentIds": [
+          "core-util-is",
+          "core-util-is"
+        ],
+        "presentValues": [],
+        "result": "match"
+      },
+      {
+        "fact": "destroy",
+        "op": "changed",
+        "idNeedles": [
+          "destroy",
+          "destroy"
+        ],
+        "presentIds": [
+          "destroy",
+          "destroy"
+        ],
+        "presentValues": [],
+        "result": "match"
+      },
+      {
+        "fact": "detect-node",
+        "op": "changed",
+        "idNeedles": [
+          "detect-node",
+          "detect-node"
+        ],
+        "presentIds": [
+          "detect-node",
+          "detect-node"
+        ],
+        "presentValues": [],
+        "result": "match"
+      },
+      {
+        "fact": "faye-websocket",
+        "op": "changed",
+        "idNeedles": [
+          "faye-websocket",
+          "faye-websocket"
+        ],
+        "presentIds": [
+          "faye-websocket",
+          "faye-websocket"
+        ],
+        "presentValues": [],
+        "result": "match"
+      },
+      {
+        "fact": "follow-redirects",
+        "op": "changed",
+        "idNeedles": [
+          "follow-redirects",
+          "follow-redirects"
+        ],
+        "presentIds": [
+          "follow-redirects",
+          "follow-redirects"
+        ],
+        "presentValues": [],
+        "result": "match"
+      },
+      {
+        "fact": "http-proxy",
+        "op": "changed",
+        "idNeedles": [
+          "http-proxy",
+          "http-proxy"
+        ],
+        "presentIds": [
+          "http-proxy",
+          "http-proxy"
+        ],
+        "presentValues": [],
+        "result": "match"
+      }
+    ]
+  },
+  "refusalCompare": {
+    "result": "match",
+    "expected": false,
+    "actualRefused": false
+  },
+  "noChange": {
+    "expected": false,
+    "reason": "packages keys present in before are absent in after"
+  },
+  "reportCompare": {
+    "result": "match",
+    "reason": null,
+    "facts": [
+      {
+        "key": "status",
+        "expected": "actionable",
+        "actual": "actionable",
+        "result": "match"
+      },
+      {
+        "key": "highlight:array-flatten@1.1.1",
+        "expected": "array-flatten@1.1.1",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:binary-extensions@2.3.0",
+        "expected": "binary-extensions@2.3.0",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:core-util-is@1.0.3",
+        "expected": "core-util-is@1.0.3",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:destroy@1.2.0",
+        "expected": "destroy@1.2.0",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:detect-node@2.1.0",
+        "expected": "detect-node@2.1.0",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:faye-websocket@0.11.4",
+        "expected": "faye-websocket@0.11.4",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:follow-redirects@1.16.0",
+        "expected": "follow-redirects@1.16.0",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:http-proxy@1.18.1",
+        "expected": "http-proxy@1.18.1",
+        "actual": true,
+        "result": "match"
+      }
+    ],
+    "expectedPresent": true,
+    "artifactFiles": [
+      "catalog-receipt.json",
+      "pin-delta.json",
+      "pin-delta.md"
+    ]
+  }
+}

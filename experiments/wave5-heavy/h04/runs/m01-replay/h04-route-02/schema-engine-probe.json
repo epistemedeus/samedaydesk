@@ -1,0 +1,61 @@
+{
+  "ok": false,
+  "engineId": "json-schema-webhook-drift",
+  "pinSha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+  "engineSource": "in-tree",
+  "outcome": {
+    "kind": "refused",
+    "transportOk": true,
+    "code": "not-json",
+    "analysis": null
+  },
+  "schemaMatch": {
+    "ok": true,
+    "mismatches": [],
+    "outputs": []
+  },
+  "stdoutJson": {
+    "ok": false,
+    "refused": true,
+    "code": "not-json",
+    "error": "before is not JSON (YAML/plain text refused; no YAML parser in this job)",
+    "detail": {
+      "label": "before"
+    },
+    "customerBrief": false,
+    "sample": false,
+    "purchaseAuthority": false,
+    "sold": false,
+    "payment": {
+      "settling": false,
+      "prototype": true,
+      "paid": false
+    },
+    "schema": "samedaydesk.json-schema-webhook-drift.v1",
+    "schemaVersion": 2,
+    "notOpenApi": true,
+    "notApiUpgradeBrief": true
+  },
+  "refuseJson": {
+    "ok": false,
+    "refused": true,
+    "code": "not-json",
+    "error": "before is not JSON (YAML/plain text refused; no YAML parser in this job)",
+    "detail": {
+      "label": "before"
+    },
+    "customerBrief": false,
+    "sample": false,
+    "purchaseAuthority": false,
+    "sold": false,
+    "payment": {
+      "settling": false,
+      "prototype": true,
+      "paid": false
+    },
+    "schema": "samedaydesk.json-schema-webhook-drift.v1",
+    "schemaVersion": 2,
+    "notOpenApi": true,
+    "notApiUpgradeBrief": true
+  }
+}

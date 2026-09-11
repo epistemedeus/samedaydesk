@@ -1,0 +1,489 @@
+{
+    "packages": {
+        "node_modules/yallist": {
+            "engines": {
+                "node": ">=18"
+            },
+            "license": "BlueOak-1.0.0",
+            "inBundle": true,
+            "integrity": "sha512-YgvUTfwqyc7UXVMrB+SImsVYSmTS8X/tSrtdNZMImM+n7+QTriRXyXim0mBrTXNeqzVF0KWGgHPeiyViFFrNDw==",
+            "resolved": "https://registry.npmjs.org/yallist/-/yallist-5.0.0.tgz",
+            "version": "5.0.0"
+        },
+        "node_modules/write-file-atomic": {
+            "engines": {
+                "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+            },
+            "dependencies": {
+                "signal-exit": "^4.0.1"
+            },
+            "license": "ISC",
+            "inBundle": true,
+            "integrity": "sha512-dYwyZredl67GyLLIHJnRM3h2PcOmN5SkcgC7eM5DPDEOEl6dLFqVrMg3F1Ea32usj4VSVZtd2H4MtKTNOf6nPg==",
+            "resolved": "https://registry.npmjs.org/write-file-atomic/-/write-file-atomic-8.0.0.tgz",
+            "version": "8.0.0"
+        },
+        "node_modules/which": {
+            "engines": {
+                "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+            },
+            "bin": {
+                "node-which": "bin/which.js"
+            },
+            "dependencies": {
+                "isexe": "^4.0.0"
+            },
+            "license": "ISC",
+            "inBundle": true,
+            "integrity": "sha512-RancgH2dmbLdHl6LRhEqvklWMgl/Hdnun0Y90KhBOLkMefg8Qa7/Zel8Sm+8HEcP6DEjzsWzpkuBQEZok58isA==",
+            "resolved": "https://registry.npmjs.org/which/-/which-7.0.0.tgz",
+            "version": "7.0.0"
+        },
+        "node_modules/validate-npm-package-name": {
+            "engines": {
+                "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+            },
+            "license": "ISC",
+            "inBundle": true,
+            "integrity": "sha512-SCv6OOV6Xj2/3cXy3dGmADluJTNcL3o7hZAglNPTe+WYuEuvxgJzxPrSDLZhF+CwyQOubqgecjMmTJGMVLWjYQ==",
+            "resolved": "https://registry.npmjs.org/validate-npm-package-name/-/validate-npm-package-name-8.0.0.tgz",
+            "version": "8.0.0"
+        },
+        "node_modules/tar": {
+            "engines": {
+                "node": ">=18"
+            },
+            "dependencies": {
+                "yallist": "^5.0.0",
+                "minizlib": "^3.1.0",
+                "minipass": "^7.1.2",
+                "chownr": "^3.0.0",
+                "@isaacs/fs-minipass": "^4.0.0"
+            },
+            "license": "BlueOak-1.0.0",
+            "inBundle": true,
+            "integrity": "sha512-4LeEWl96twnS2Q7Bz4MGqgazLqO+hJN63GZxXoIqh1T3VweYD997gbU1ItNsQafqqXTXd5WFyFdReLtwvRBNiw==",
+            "resolved": "https://registry.npmjs.org/tar/-/tar-7.5.19.tgz",
+            "version": "7.5.19"
+        },
+        "node_modules/ssri": {
+            "engines": {
+                "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+            },
+            "dependencies": {
+                "minipass": "^7.0.3"
+            },
+            "license": "ISC",
+            "inBundle": true,
+            "integrity": "sha512-jQxKI0yx0ZnTKrqjKkLDV2DXkBQn3k49JVmVqDGcDwKDtGDbImD/GXsq04KD0VVzCQQ9wZJYal3RwR1GzWTSow==",
+            "resolved": "https://registry.npmjs.org/ssri/-/ssri-14.0.0.tgz",
+            "version": "14.0.0"
+        },
+        "node_modules/semver": {
+            "engines": {
+                "node": ">=10"
+            },
+            "bin": {
+                "semver": "bin/semver.js"
+            },
+            "license": "ISC",
+            "inBundle": true,
+            "integrity": "sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==",
+            "resolved": "https://registry.npmjs.org/semver/-/semver-7.8.5.tgz",
+            "version": "7.8.5",
+            "hasInstallScript": false,
+            "funding": {
+                "url": "https://example.invalid/unused-field"
+            }
+        },
+        "node_modules/proc-log": {
+            "engines": {
+                "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+            },
+            "license": "ISC",
+            "inBundle": true,
+            "integrity": "sha512-FYgfaA69XZ93zaXLoMNQ+ViDXGGBgR8aLh03txzcFhV+9xOXx7+8DLCULrKKpR9+GsH9ZfHm82aSUPpozX0Ztg==",
+            "resolved": "https://registry.npmjs.org/proc-log/-/proc-log-7.0.0.tgz",
+            "version": "7.0.0"
+        },
+        "node_modules/npm-package-arg": {
+            "engines": {
+                "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+            },
+            "dependencies": {
+                "validate-npm-package-name": "^8.0.0",
+                "semver": "^7.3.5",
+                "proc-log": "^7.0.0",
+                "hosted-git-info": "^10.1.0"
+            },
+            "license": "ISC",
+            "inBundle": true,
+            "integrity": "sha512-69XQh3k+dtGa1p+7RaR57IuG3rCko96xr/nUfN4yDYBXbTYICiWcOpsFKLN2GtGE9cyIljE+f1exnaYt9MvM+Q==",
+            "resolved": "https://registry.npmjs.org/npm-package-arg/-/npm-package-arg-14.0.0.tgz",
+            "version": "14.0.0"
+        },
+        "node_modules/nopt": {
+            "engines": {
+                "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+            },
+            "bin": {
+                "nopt": "bin/nopt.js"
+            },
+            "dependencies": {
+                "abbrev": "^5.0.0"
+            },
+            "license": "ISC",
+            "inBundle": true,
+            "integrity": "sha512-df3sBr/6ax9hSGuC3CspvLlbnX8cP5L5nZwXF8cGN8l0zSWR6BvzmQ6jPUKjvo6+/xdpkNvEcucBNUdBeeV13g==",
+            "resolved": "https://registry.npmjs.org/nopt/-/nopt-10.0.1.tgz",
+            "version": "10.0.1"
+        },
+        "node_modules/minizlib": {
+            "engines": {
+                "node": ">= 18"
+            },
+            "dependencies": {
+                "minipass": "^7.1.2"
+            },
+            "license": "MIT",
+            "inBundle": true,
+            "integrity": "sha512-KZxYo1BUkWD2TVFLr0MQoM8vUUigWD3LlD83a/75BqC+4qE0Hb1Vo5v1FgcfaNXvfXzr+5EhQ6ing/CaBijTlw==",
+            "resolved": "https://registry.npmjs.org/minizlib/-/minizlib-3.1.0.tgz",
+            "version": "3.1.0"
+        },
+        "node_modules/minipass": {
+            "engines": {
+                "node": ">=16 || 14 >=14.17"
+            },
+            "license": "BlueOak-1.0.0",
+            "inBundle": true,
+            "integrity": "sha512-tEBHqDnIoM/1rXME1zgka9g6Q2lcoCkxHLuc7ODJ5BxbP5d4c2Z5cGgtXAku59200Cx7diuHTOYfSBD8n6mm8A==",
+            "resolved": "https://registry.npmjs.org/minipass/-/minipass-7.1.3.tgz",
+            "version": "7.1.3"
+        },
+        "node_modules/minimatch": {
+            "funding": {
+                "url": "https://github.com/sponsors/isaacs"
+            },
+            "engines": {
+                "node": "18 || 20 || >=22"
+            },
+            "dependencies": {
+                "brace-expansion": "^5.0.5"
+            },
+            "license": "BlueOak-1.0.0",
+            "inBundle": true,
+            "integrity": "sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==",
+            "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.5.tgz",
+            "version": "10.2.5"
+        },
+        "node_modules/lru-cache": {
+            "engines": {
+                "node": "20 || >=22"
+            },
+            "license": "BlueOak-1.0.0",
+            "inBundle": true,
+            "integrity": "sha512-4pfM1Ff0x50o0tQwb5ucw/RzNyD0/YJME6IVcStalZuMWxdt3sR3huStTtxz4PUmvZfRguvDejasvQ2kifR11g==",
+            "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-11.5.2.tgz",
+            "version": "11.5.2"
+        },
+        "node_modules/json-parse-even-better-errors": {
+            "engines": {
+                "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+            },
+            "license": "MIT",
+            "inBundle": true,
+            "integrity": "sha512-2/8adwnK1/+Fdjyts4r6wSpfANWw8zdNhU9U/Llk59c6O+DjSisPWPykwoL8gZmocP9Dy64S7oie2g+Mia123A==",
+            "resolved": "https://registry.npmjs.org/json-parse-even-better-errors/-/json-parse-even-better-errors-6.0.0.tgz",
+            "version": "6.0.0"
+        },
+        "node_modules/ini": {
+            "engines": {
+                "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+            },
+            "license": "ISC",
+            "inBundle": true,
+            "integrity": "sha512-ifK0CgjALofS5bkrcTy4RaQ9Vx2Knf/eLeIO+NaswQEpH1UblrtTSCIvN71qQDMq0PeQ/SSPojvEJp9vvvfr+w==",
+            "resolved": "https://registry.npmjs.org/ini/-/ini-7.0.0.tgz",
+            "version": "7.0.0"
+        },
+        "node_modules/hosted-git-info": {
+            "engines": {
+                "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+            },
+            "dependencies": {
+                "lru-cache": "^11.1.0"
+            },
+            "license": "ISC",
+            "inBundle": true,
+            "integrity": "sha512-DeOnSPAvOndYKfw075gt8yZzQ7S2hNztw34zBTfhIzLhmBTswIBg5/y+pqu/VD5cYWm5goAFTusDmUEmKZ0PEQ==",
+            "resolved": "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-10.1.1.tgz",
+            "version": "10.1.1"
+        },
+        "node_modules/glob": {
+            "funding": {
+                "url": "https://github.com/sponsors/isaacs"
+            },
+            "engines": {
+                "node": "18 || 20 || >=22"
+            },
+            "dependencies": {
+                "path-scurry": "^2.0.2",
+                "minipass": "^7.1.3",
+                "minimatch": "^10.2.2"
+            },
+            "license": "BlueOak-1.0.0",
+            "inBundle": true,
+            "integrity": "sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw==",
+            "resolved": "https://registry.npmjs.org/glob/-/glob-13.0.6.tgz",
+            "version": "13.0.6"
+        },
+        "node_modules/chownr": {
+            "engines": {
+                "node": ">=18"
+            },
+            "license": "BlueOak-1.0.0",
+            "inBundle": true,
+            "integrity": "sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g==",
+            "resolved": "https://registry.npmjs.org/chownr/-/chownr-3.0.0.tgz",
+            "version": "3.0.0"
+        },
+        "node_modules/cacache": {
+            "engines": {
+                "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+            },
+            "dependencies": {
+                "ssri": "^14.0.0",
+                "p-map": "^7.0.2",
+                "minipass-pipeline": "^1.2.4",
+                "minipass-flush": "^1.0.5",
+                "minipass-collect": "^2.0.1",
+                "minipass": "^7.0.3",
+                "lru-cache": "^11.1.0",
+                "glob": "^13.0.0",
+                "fs-minipass": "^3.0.0",
+                "@npmcli/fs": "^6.0.0"
+            },
+            "license": "ISC",
+            "inBundle": true,
+            "integrity": "sha512-pTwz/uj3Jyp6WXdJ6fWhR+7LVxVs6RyroQSn7KJwHsSxXuyGSp0pcMVcwSwTpCFq1X2YG8QBe0W+vN+cr0SwzA==",
+            "resolved": "https://registry.npmjs.org/cacache/-/cacache-21.0.1.tgz",
+            "version": "21.0.1"
+        },
+        "node_modules/brace-expansion": {
+            "engines": {
+                "node": "18 || 20 || >=22"
+            },
+            "dependencies": {
+                "balanced-match": "^4.0.2"
+            },
+            "license": "MIT",
+            "inBundle": true,
+            "integrity": "sha512-7oFy703dxfY3/NLxC1fh2SUCQ0H9rmAY+5EpDVfXjUTTs+HEwR2nYaqLv+GWcTsumwxPfiz6CzCNkwXwBUwqCA==",
+            "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.7.tgz",
+            "version": "5.0.7"
+        },
+        "node_modules/abbrev": {
+            "engines": {
+                "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+            },
+            "license": "ISC",
+            "inBundle": true,
+            "integrity": "sha512-/XrFJgzQQQHpti1raDJC6m4ws6aNktmjBlhk8Fdlk7LwCEuDoieEJJY9OFHjfiFJFFRM2tK+Ky/IsfbbmlMu1w==",
+            "resolved": "https://registry.npmjs.org/abbrev/-/abbrev-5.0.0.tgz",
+            "version": "5.0.0"
+        },
+        "": {
+            "engines": {
+                "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+            },
+            "devDependencies": {
+                "tap": "^16.3.9",
+                "spawk": "^1.7.1",
+                "rimraf": "^6.0.1",
+                "remark-github": "^12.0.0",
+                "remark-gfm": "^4.0.1",
+                "remark": "^15.0.1",
+                "npm-packlist": "^11.3.0",
+                "nock": "^14.0.0",
+                "diff": "^8.0.4",
+                "cli-table3": "^0.6.4",
+                "ajv-formats-draft2019": "^1.6.1",
+                "ajv-formats": "^3.0.1",
+                "ajv": "^8.12.0",
+                "@tufjs/repo-mock": "^5.0.0",
+                "@npmcli/template-oss": "5.1.1",
+                "@npmcli/node-gyp": "^6.0.0",
+                "@npmcli/name-from-folder": "^5.0.0",
+                "@npmcli/mock-registry": "^1.0.0",
+                "@npmcli/mock-globals": "^1.0.0",
+                "@npmcli/installed-package-contents": "^5.0.0",
+                "@npmcli/eslint-config": "^5.1.0",
+                "@npmcli/docs": "^1.0.0"
+            },
+            "bin": {
+                "npx": "bin/npx-cli.js",
+                "npm": "bin/npm-cli.js"
+            },
+            "dependencies": {
+                "which": "^7.0.0",
+                "validate-npm-package-name": "^8.0.0",
+                "treeverse": "^3.0.0",
+                "tiny-relative-date": "^2.0.2",
+                "text-table": "~0.2.0",
+                "tar": "^7.5.19",
+                "supports-color": "^10.2.2",
+                "ssri": "^14.0.0",
+                "spdx-expression-parse": "^4.0.0",
+                "semver": "^7.8.5",
+                "read": "^6.0.0",
+                "qrcode-terminal": "^0.12.0",
+                "proc-log": "^7.0.0",
+                "parse-conflict-json": "^6.0.0",
+                "pacote": "^22.0.0",
+                "p-map": "^7.0.4",
+                "npm-user-validate": "^5.0.0",
+                "npm-registry-fetch": "^20.0.1",
+                "npm-profile": "^13.0.1",
+                "npm-pick-manifest": "^12.0.0",
+                "npm-package-arg": "^14.0.0",
+                "npm-install-checks": "^9.0.0",
+                "npm-audit-report": "^8.0.0",
+                "nopt": "^10.0.1",
+                "node-gyp": "^13.0.0",
+                "ms": "^2.1.2",
+                "minipass-pipeline": "^1.2.4",
+                "minipass": "^7.1.3",
+                "minimatch": "^10.2.5",
+                "make-fetch-happen": "^16.0.1",
+                "libnpmversion": "^9.0.0",
+                "libnpmteam": "^9.0.0",
+                "libnpmsearch": "^10.0.0",
+                "libnpmpublish": "^12.0.0",
+                "libnpmpack": "^10.0.2",
+                "libnpmorg": "^9.0.0",
+                "libnpmfund": "^8.0.2",
+                "libnpmexec": "^11.0.2",
+                "libnpmdiff": "^9.0.2",
+                "libnpmaccess": "^11.0.0",
+                "json-parse-even-better-errors": "^6.0.0",
+                "is-cidr": "^7.0.0",
+                "init-package-json": "^9.0.0",
+                "ini": "^7.0.0",
+                "hosted-git-info": "^10.1.1",
+                "graceful-fs": "^4.2.11",
+                "glob": "^13.0.6",
+                "fs-minipass": "^3.0.3",
+                "fastest-levenshtein": "^1.0.16",
+                "diff": "^8.0.2",
+                "ci-info": "^4.4.0",
+                "chalk": "^5.6.2",
+                "cacache": "^21.0.1",
+                "bin-links": "^7.0.0",
+                "archy": "~1.0.0",
+                "abbrev": "^5.0.0",
+                "@sigstore/tuf": "^5.0.0",
+                "@npmcli/run-script": "^11.0.0",
+                "@npmcli/redact": "^5.0.0",
+                "@npmcli/promise-spawn": "^10.0.0",
+                "@npmcli/package-json": "^8.0.0",
+                "@npmcli/metavuln-calculator": "^10.0.0",
+                "@npmcli/map-workspaces": "^6.0.0",
+                "@npmcli/git": "^8.0.0",
+                "@npmcli/fs": "^6.0.0",
+                "@npmcli/config": "^11.0.1",
+                "@npmcli/arborist": "^10.0.2",
+                "@isaacs/string-locale-compare": "^1.1.0"
+            },
+            "workspaces": [
+                "docs",
+                "smoke-tests",
+                "mock-globals",
+                "mock-registry",
+                "workspaces/*"
+            ],
+            "license": "Artistic-2.0",
+            "bundleDependencies": [
+                "@isaacs/string-locale-compare",
+                "@npmcli/arborist",
+                "@npmcli/config",
+                "@npmcli/fs",
+                "@npmcli/git",
+                "@npmcli/map-workspaces",
+                "@npmcli/metavuln-calculator",
+                "@npmcli/package-json",
+                "@npmcli/promise-spawn",
+                "@npmcli/redact",
+                "@npmcli/run-script",
+                "@sigstore/tuf",
+                "abbrev",
+                "archy",
+                "bin-links",
+                "cacache",
+                "chalk",
+                "ci-info",
+                "diff",
+                "fastest-levenshtein",
+                "fs-minipass",
+                "glob",
+                "graceful-fs",
+                "hosted-git-info",
+                "ini",
+                "init-package-json",
+                "is-cidr",
+                "json-parse-even-better-errors",
+                "libnpmaccess",
+                "libnpmdiff",
+                "libnpmexec",
+                "libnpmfund",
+                "libnpmorg",
+                "libnpmpack",
+                "libnpmpublish",
+                "libnpmsearch",
+                "libnpmteam",
+                "libnpmversion",
+                "make-fetch-happen",
+                "minimatch",
+                "minipass",
+                "minipass-pipeline",
+                "ms",
+                "node-gyp",
+                "nopt",
+                "npm-audit-report",
+                "npm-install-checks",
+                "npm-package-arg",
+                "npm-pick-manifest",
+                "npm-profile",
+                "npm-registry-fetch",
+                "npm-user-validate",
+                "p-map",
+                "pacote",
+                "parse-conflict-json",
+                "proc-log",
+                "qrcode-terminal",
+                "read",
+                "semver",
+                "spdx-expression-parse",
+                "ssri",
+                "supports-color",
+                "tar",
+                "text-table",
+                "tiny-relative-date",
+                "treeverse",
+                "validate-npm-package-name",
+                "which"
+            ],
+            "version": "12.0.2",
+            "name": "npm",
+            "description": "unused field; not name/version/integrity/resolved"
+        },
+        "node_modules/lockfile-public-link-omit": {
+            "resolved": "file:./unused-link-omit",
+            "link": true
+        }
+    },
+    "requires": true,
+    "lockfileVersion": 3,
+    "version": "12.0.2",
+    "name": "npm"
+}

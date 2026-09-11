@@ -1,0 +1,67 @@
+{
+  "id": "h04-lock-03",
+  "family": "lockfile",
+  "kind": "no-change-control",
+  "method": "raw-bytes",
+  "quotedSourceMdShas": {
+    "repo": "epistemedeus/samedaydesk",
+    "path": "package-lock.json",
+    "beforeSha": "218b2fa74d63951eeeda4cf0a67c420835a58b01",
+    "afterSha": "218b2fa74d63951eeeda4cf0a67c420835a58b01",
+    "gitBlobSha256": "d51849d016d28f67aae0a99eeb6b4dd810c1c0069ced4094eb127a5301ed8fac"
+  },
+  "inputsHashed": {
+    "before": "f198dc320cb91af50837233853ec491ca52c98107c462cdc218221d7d7347a2e",
+    "after": "c801019a0eb39977749a9f9513ed03a1ec5fa29d655a8c29f983ca90f724aab2"
+  },
+  "sourceFacts": [
+    {
+      "id": "pin-triples",
+      "op": "unchanged",
+      "package": "name@version+integrity+resolved",
+      "name": "pins",
+      "added": [],
+      "removed": [],
+      "changed": [],
+      "unchangedCount": 159,
+      "before": "159 integrity-bearing pins",
+      "after": "159 integrity-bearing pins"
+    }
+  ],
+  "counts": {
+    "beforePackagesKeys": 161,
+    "afterPackagesKeys": 162,
+    "integrityBearingPins": 159,
+    "added": 0,
+    "removed": 0,
+    "changed": 0,
+    "missingIntegrity": 0
+  },
+  "ignoredUnused": [
+    {
+      "op": "packages-key-order-reversed"
+    },
+    {
+      "op": "indent-4-vs-2"
+    },
+    {
+      "op": "unused-field",
+      "path": "packages/\"\"/description",
+      "after": "key-order/whitespace no-change control; not a pin"
+    },
+    {
+      "op": "unused-field",
+      "path": "node_modules/ms",
+      "fields": [
+        "hasInstallScript",
+        "funding"
+      ]
+    },
+    {
+      "op": "link-true-omit",
+      "idPath": "node_modules/samedaydesk-link-omit",
+      "resolved": "../vendor/neomorphic-correspondence",
+      "why": "link:true is not a name@version integrity pin"
+    }
+  ]
+}

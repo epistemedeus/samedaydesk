@@ -1,0 +1,114 @@
+{
+  "exampleId": "h04-lock-pub-b07-large",
+  "family": "lockfile-public",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "mapping": {
+    "m01EngineId": "lockfile-pin-delta",
+    "mapping": "ok",
+    "note": null
+  },
+  "oracles": {
+    "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b07-large/expected-facts.json",
+    "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b07-large/expected-refusal.json",
+    "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b07-large/expected-no-change.json"
+  },
+  "m01EngineId": "lockfile-pin-delta",
+  "skipped": false,
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "lockfile-pin-delta",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b07-large/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b07-large/after.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-lock-pub-b07-large/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "ok": true,
+  "durationMs": 83,
+  "stdoutBytes": 1296,
+  "stderrBytes": 0,
+  "outputs": {
+    "files": [
+      {
+        "name": "catalog-receipt.json",
+        "bytes": 1296,
+        "sha256": "652d911a1f4d00d1e15f875cd1ba1d94be204fdba15b5299854f345fb001229e"
+      },
+      {
+        "name": "pin-delta.json",
+        "bytes": 1144,
+        "sha256": "556cbf82aab0372c981005d245f0e203c27e26e8c52e53ce6023029e5666fd2b"
+      },
+      {
+        "name": "pin-delta.md",
+        "bytes": 426,
+        "sha256": "862eadf241dd9ba49fbffa16bb357897591e6a06299db13589fc3f6f5b66dae5"
+      }
+    ],
+    "totalBytes": 2866
+  },
+  "stdoutStatus": "partial",
+  "outcomeKind": "analysis",
+  "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+  "schemaMatchOk": true,
+  "factsCompare": {
+    "result": "unknown",
+    "reason": "no-source-facts",
+    "checks": []
+  },
+  "refusalCompare": {
+    "result": "match",
+    "expected": false,
+    "actualRefused": false
+  },
+  "noChange": {
+    "expected": true,
+    "kind": "self-diff-large-lockfileVersion-3",
+    "sameNameVersionIntegrityResolved": true,
+    "note": "Full public blob self-compare. One pin (vendor/@neomorphic/correspondence) lacks integrity, so engine status is partial while added/removed/changed stay 0.",
+    "counts": {
+      "beforePins": 160,
+      "afterPins": 160,
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "unchanged": 160,
+      "missingIntegrity": 1
+    }
+  },
+  "reportCompare": {
+    "result": "match",
+    "reason": null,
+    "facts": [
+      {
+        "key": "status",
+        "expected": "partial",
+        "actual": "partial",
+        "result": "match"
+      },
+      {
+        "key": "highlight:partial",
+        "expected": "partial",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:Added 0, removed 0, changed 0.",
+        "expected": "Added 0, removed 0, changed 0.",
+        "actual": true,
+        "result": "match"
+      }
+    ],
+    "expectedPresent": true,
+    "artifactFiles": [
+      "catalog-receipt.json",
+      "pin-delta.json",
+      "pin-delta.md"
+    ]
+  }
+}

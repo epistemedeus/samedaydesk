@@ -1,0 +1,167 @@
+{
+  "exampleId": "h04-page-02",
+  "family": "page-facts",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "mapping": {
+    "m01EngineId": "page-change-offline-job",
+    "mapping": "ok",
+    "note": null
+  },
+  "oracles": {
+    "facts": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-02/expected-facts.json",
+    "refusal": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-02/expected-refusal.json",
+    "noChange": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/oracles/existing/h04-page-02/expected-no-change.json"
+  },
+  "m01EngineId": "page-change-offline-job",
+  "skipped": false,
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "page-change-offline-job",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-02/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-02/after.json",
+    "--job",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/page-facts/h04-page-02/job.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/runs/m01-replay/h04-page-02/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "ok": true,
+  "durationMs": 80,
+  "stdoutBytes": 6152,
+  "stderrBytes": 0,
+  "outputs": {
+    "files": [
+      {
+        "name": "catalog-receipt.json",
+        "bytes": 6152,
+        "sha256": "99324b74931c53b0e9e545fb6a39973da1752629e93d8bb7942758aa71f7c489"
+      },
+      {
+        "name": "page-change.json",
+        "bytes": 4846,
+        "sha256": "6b1d1bb2084ab2f458f1549a0f780e278746e576d9bf840067fa152aaed0182c"
+      },
+      {
+        "name": "page-change.md",
+        "bytes": 996,
+        "sha256": "f67814272bd95df59efec3e0ccf76e98f9340a130d3ba02ae718098f612095a0"
+      }
+    ],
+    "totalBytes": 11994
+  },
+  "stdoutStatus": "unchanged",
+  "outcomeKind": "analysis",
+  "pinSha": "fec7bc04ac4419f8e7ce40f2613314e6953af6bc",
+  "schemaMatchOk": true,
+  "factsCompare": {
+    "result": "source-only",
+    "checks": [
+      {
+        "fact": "title",
+        "op": "unchanged",
+        "idNeedles": [
+          "title"
+        ],
+        "presentIds": [
+          "title"
+        ],
+        "presentValues": [],
+        "result": "source-only"
+      },
+      {
+        "fact": "description",
+        "op": "unchanged",
+        "idNeedles": [
+          "description"
+        ],
+        "presentIds": [
+          "description"
+        ],
+        "presentValues": [],
+        "result": "source-only"
+      },
+      {
+        "fact": "headings.h1",
+        "op": "unchanged",
+        "idNeedles": [
+          "/headings/h1",
+          "headings"
+        ],
+        "presentIds": [
+          "headings"
+        ],
+        "presentValues": [],
+        "result": "source-only"
+      },
+      {
+        "fact": "headings.h2",
+        "op": "unchanged",
+        "idNeedles": [
+          "/headings/h2",
+          "headings"
+        ],
+        "presentIds": [
+          "headings"
+        ],
+        "presentValues": [],
+        "result": "source-only"
+      }
+    ]
+  },
+  "refusalCompare": {
+    "result": "match",
+    "expected": false,
+    "actualRefused": false
+  },
+  "noChange": {
+    "usefulNoChange": true,
+    "why": "Selected title, description, h1, and h2 list are identical; footer sentence and extract provenance/assetHash are unused noise."
+  },
+  "reportCompare": {
+    "result": "match",
+    "reason": null,
+    "facts": [
+      {
+        "key": "status",
+        "expected": "unchanged",
+        "actual": "unchanged",
+        "result": "match"
+      },
+      {
+        "key": "verdict",
+        "expected": "unchanged",
+        "actual": "unchanged",
+        "result": "match"
+      },
+      {
+        "key": "highlight:unchanged",
+        "expected": "unchanged",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:No selected-field content changes recorded",
+        "expected": "No selected-field content changes recorded",
+        "actual": true,
+        "result": "match"
+      },
+      {
+        "key": "highlight:paymentImpliesUsefulOutput: false",
+        "expected": "paymentImpliesUsefulOutput: false",
+        "actual": true,
+        "result": "match"
+      }
+    ],
+    "expectedPresent": true,
+    "artifactFiles": [
+      "catalog-receipt.json",
+      "page-change.json",
+      "page-change.md"
+    ]
+  }
+}

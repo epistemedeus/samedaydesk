@@ -1,0 +1,10 @@
+date=2026-09-11T23:26:18Z
+node=v22.22.2
+which=/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node
+compositionSha=a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e
+compositionType=commit
+worktree=/tmp/w5-h04/ro-m01
+lockfilePin=fba9d14872bc4c04214e527b9edfb30c2123c9e7
+schemaPin=27482b712a7221e5079d70df85c5dd5608dc70eb
+routePin=886c81d824e0a24e2faa5b821b1cd0ca46ae0859
+pagePin=fec7bc04ac4419f8e7ce40f2613314e6953af6bc

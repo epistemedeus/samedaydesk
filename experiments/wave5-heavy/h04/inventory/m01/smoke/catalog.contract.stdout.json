@@ -1,0 +1,246 @@
+{
+  "schema": "samedaydesk.wave5.m01.job-catalog.v1",
+  "catalogSchema": "samedaydesk.wave5.m01.engine-catalog.v1",
+  "id": "w5-m01",
+  "firstOffer": "lockfile-pin-delta",
+  "firstOfferRationale": "Independent M07 corpus: 20/20 domain match on the imported M03 engine. Version and integrity edits are explained, resolved-only git/registry edits are now changed (Co11 gap closed), noise is informational no-change, unsupported formats refuse exit 2, and a constant hasher cannot hide integrity. Schema/route/page stay selected later SKUs: schema is used-path JSON Schema only, route collisions are analysis not refuse and Next.js-shaped JSON is not a claimed format, page-change still never claims fresh live fetch.",
+  "source": "in-tree",
+  "d01Binding": {
+    "status": "adapter-exported-injection-required",
+    "testedWrapperSha": "6bed72dd22a396134aa5c957933b42c3a5746698",
+    "testedKernelSha": "bccf34b3816ebe20d43823d0978308fd10f9bb33",
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+    "adapter": "experiments/wave5/m01/lib/d01-adapter.mjs",
+    "remaining": "D01 createExecutor injects acquireKit and runEngine only. getJob and materializeInputs are hardcoded to the PR51 live catalog, so lockfile-pin-delta is unknown-job before runEngine runs. Exact small change is documented in CONTRACT.md. This package does not write server/paid-useful-jobs/."
+  },
+  "outcomeKinds": [
+    "analysis",
+    "refused",
+    "incomplete-delivery",
+    "transport-failure"
+  ],
+  "jobs": [
+    {
+      "id": "lockfile-pin-delta",
+      "selected": true,
+      "firstOffer": true,
+      "pin": {
+        "repo": "epistemedeus/samedaydesk",
+        "sha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+        "ownedPath": "tools/lockfile-pin-delta/",
+        "packageName": "@samedaydesk/lockfile-pin-delta",
+        "source": "in-tree"
+      },
+      "relativeBin": "bin/lockfile-delta.mjs",
+      "requiredInputs": [
+        "before",
+        "after"
+      ],
+      "acceptedInputs": {
+        "formats": [
+          "npm-package-lock-v2",
+          "npm-package-lock-v3"
+        ],
+        "equality": [
+          "name",
+          "version",
+          "integrity",
+          "resolved"
+        ],
+        "notHashedTogether": [
+          "yarn.lock",
+          "pnpm-lock.yaml",
+          "bun.lock",
+          "composer.lock",
+          "Cargo.lock",
+          "package.json",
+          "html"
+        ]
+      },
+      "outputs": [
+        {
+          "name": "pin-delta.json",
+          "schema": "samedaydesk.lockfile-pin-delta.v1"
+        },
+        {
+          "name": "pin-delta.md",
+          "schema": null
+        }
+      ],
+      "refuseStream": "stdout",
+      "analysisField": "status",
+      "usefulStatus": {
+        "actionable": "analysis",
+        "informational": "analysis",
+        "partial": "analysis"
+      }
+    },
+    {
+      "id": "json-schema-webhook-drift",
+      "selected": true,
+      "firstOffer": false,
+      "pin": {
+        "repo": "epistemedeus/samedaydesk",
+        "sha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+        "ownedPath": "tools/json-schema-webhook-drift/",
+        "packageName": "@samedaydesk/json-schema-webhook-drift",
+        "source": "in-tree",
+        "integrationFix": "boolean array items true to false is boolean-schema-tightened (M06 items-true-to-false)"
+      },
+      "relativeBin": "bin/webhook-drift.mjs",
+      "requiredInputs": [
+        "before",
+        "after",
+        "used"
+      ],
+      "acceptedInputs": {
+        "formats": [
+          "json-schema",
+          "webhook-example"
+        ],
+        "used": {
+          "pointers": [
+            "JSON Pointers"
+          ]
+        },
+        "notThisJob": [
+          "openapi",
+          "swagger",
+          "html",
+          "yaml",
+          "remote-$ref"
+        ]
+      },
+      "outputs": [
+        {
+          "name": "drift-brief.json",
+          "schema": "samedaydesk.json-schema-webhook-drift.v1"
+        },
+        {
+          "name": "drift-brief.md",
+          "schema": null
+        }
+      ],
+      "refuseStream": "stdout",
+      "analysisField": "status",
+      "usefulStatus": [
+        "actionable",
+        "informational",
+        "partial"
+      ]
+    },
+    {
+      "id": "route-table-diff",
+      "selected": true,
+      "firstOffer": false,
+      "pin": {
+        "repo": "epistemedeus/samedaydesk",
+        "sha": "886c81d824e0a24e2faa5b821b1cd0ca46ae0859",
+        "ownedPath": "tools/route-table-diff/",
+        "packageName": null,
+        "binPresent": "bin/route-diff.mjs",
+        "source": "in-tree"
+      },
+      "relativeBin": "bin/route-diff.mjs",
+      "requiredInputs": [
+        "before",
+        "after",
+        "outDir"
+      ],
+      "acceptedInputs": {
+        "formats": [
+          "routes-wrapper",
+          "catalog-wrapper",
+          "raw-array",
+          "loopback-http-json"
+        ],
+        "record": [
+          "path",
+          "canonical",
+          "title",
+          "robots?"
+        ],
+        "notClaimed": [
+          "nextjs",
+          "express-path-params",
+          "openapi",
+          "html",
+          "yaml",
+          "https-url"
+        ]
+      },
+      "outputs": [
+        {
+          "name": "route-diff.json",
+          "schema": "samedaydesk.route-diff.v1"
+        },
+        {
+          "name": "route-diff.md",
+          "schema": null
+        }
+      ],
+      "refuseStream": "stdout",
+      "analysisField": "outcome",
+      "usefulStatus": [
+        "no-change",
+        "permutation",
+        "title-only",
+        "changed",
+        "breaking"
+      ]
+    },
+    {
+      "id": "page-change-offline-job",
+      "selected": true,
+      "firstOffer": false,
+      "pin": {
+        "repo": "epistemedeus/samedaydesk",
+        "sha": "fec7bc04ac4419f8e7ce40f2613314e6953af6bc",
+        "ownedPath": "tools/page-change-offline-job/",
+        "packageName": "@samedaydesk/page-change-offline-job",
+        "engineVersion": "0.1.1",
+        "source": "in-tree"
+      },
+      "relativeBin": "bin/page-change.mjs",
+      "requiredInputs": [
+        "job"
+      ],
+      "acceptedInputs": {
+        "formats": [
+          "samedaydesk.extract-batch.v0"
+        ],
+        "fields": [
+          "title",
+          "description",
+          "headings"
+        ],
+        "notThisJob": [
+          "live-url",
+          "payment-retry",
+          "quote-as-success",
+          "sample-as-delivered-watch"
+        ]
+      },
+      "outputs": [
+        {
+          "name": "page-change.json",
+          "schema": "pilot/page-change-brief/v1"
+        },
+        {
+          "name": "page-change.md",
+          "schema": null
+        }
+      ],
+      "refuseStream": "stderr",
+      "analysisField": "report.verdict",
+      "usefulStatus": [
+        "changed",
+        "unchanged",
+        "reordered",
+        "incomplete",
+        "ambiguous",
+        "incomparable"
+      ]
+    }
+  ]
+}

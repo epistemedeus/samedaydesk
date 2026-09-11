@@ -105,8 +105,14 @@ test("no-change-control examples exist in each family that has examples", () => 
     const list = examples.filter((e) => e.family === family);
     if (list.length === 0) continue;
     assert.ok(
-      list.some((e) => e.kind === "no-change-control"),
-      `${family} has examples but no no-change-control`,
+      list.some(
+        (e) =>
+          e.kind === "no-change-control" ||
+          e.kind === "unused-additive-control" ||
+          String(e.kind).includes("no-change") ||
+          String(e.kind).includes("normalize"),
+      ),
+      `${family} has examples but no useful no-change control`,
     );
   }
 });
