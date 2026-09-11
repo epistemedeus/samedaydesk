@@ -1,0 +1,47 @@
+{
+  "schema": "samedaydesk.wave5.m16.pin.v1",
+  "assignment": "W5-M16",
+  "ownedPath": "experiments/wave5/m16/",
+  "engine": {
+    "id": "W4-commerce-11",
+    "wave5": "W5-M03",
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+    "ref": "codex/w4-commerce-11-20260911",
+    "path": "tools/lockfile-pin-delta/",
+    "cli": "bin/lockfile-delta.mjs",
+    "interface": "node bin/lockfile-delta.mjs --before <lock> --after <lock> [--out-dir <dir>]"
+  },
+  "wrapper": {
+    "id": "SDS52",
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "ref": "fable/f08-paid-wrappers",
+    "pr": 52,
+    "path": "server/paid-useful-jobs/",
+    "catalogJobId": null,
+    "note": "Current catalog has no lockfile-pin-delta job. Wrapper unknown-job is the remaining D01/M01 binding."
+  },
+  "siblings": {
+    "M07": {
+      "status": "not-tested-as-implementation",
+      "note": "yarn.lock / pnpm-lock.yaml are unsupported by the pinned engine."
+    },
+    "D24": {
+      "status": "not-tested-as-implementation",
+      "note": "This kit still needs the SDS git object database plus git archive of the engine pin. Clean npm install of the engine is a later D24 step."
+    }
+  },
+  "journeys": {
+    "sds-vuln-update": {
+      "label": "owner-qa",
+      "notCustomerDemand": true,
+      "repo": "epistemedeus/samedaydesk",
+      "lockPath": "package-lock.json",
+      "beforeRef": "126776d364302a610f3e1a91c19191b99ef3b99a",
+      "afterRef": "62a88c86461e7b8d0e9a7cf1db57153d7e8fd6cf",
+      "afterSubject": "fix(deps): update vulnerable locked dependencies",
+      "expectChangedNames": ["concurrently", "qs", "shell-quote"]
+    }
+  }
+}

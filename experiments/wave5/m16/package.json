@@ -1,0 +1,17 @@
+{
+  "name": "@samedaydesk/w5-m16-dependency-update-trial",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Real-project dependency-update trial against the pinned lockfile-pin-delta CLI. Joins staged resolved URLs. No npm install, audit, purchase, or catalog rewrite.",
+  "bin": {
+    "w5-m16-trial": "./bin/trial.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "trial": "node bin/trial.mjs run --journey sds-vuln-update"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

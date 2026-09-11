@@ -1,0 +1,12 @@
+W5-M16 dependency-update real-project trial
+
+This directory is a thin consumer. It does not vendor
+tools/lockfile-pin-delta/ (W4-commerce-11 / W5-M03). Tests materialize that
+engine from git pin e81efc8ab71b1bde88eca743d297149e61bbb6f2 via `git archive`.
+
+SameDayDesk package-lock.json revision pairs are read from git objects in this
+repository. They are not copied here.
+
+F08 paid wrappers (PR52 aeef964fa188443078958d9d6d393afae1d542ee) are invoked
+only as the current catalog/unknown-job binding. This kit does not add a
+catalog job or a second runner.

@@ -1,0 +1,20 @@
+{
+  "name": "resolved-only-owner-qa",
+  "version": "1.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "resolved-only-owner-qa",
+      "version": "1.0.0",
+      "dependencies": {
+        "fixture-pin": "1.2.3"
+      }
+    },
+    "node_modules/fixture-pin": {
+      "version": "1.2.3",
+      "resolved": "https://registry.npmjs.org/fixture-pin/-/fixture-pin-1.2.3.tgz",
+      "integrity": "sha512-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
+    }
+  }
+}
