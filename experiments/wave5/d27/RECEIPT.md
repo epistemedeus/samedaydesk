@@ -4,6 +4,8 @@
 **Assignment:** W5-D27
 **Repo:** epistemedeus/samedaydesk
 **Branch:** `cursor/w5-d27-recruited-independent-runtime-trial-kit-and-first-execution-3237`
+**Draft PR:** https://github.com/epistemedeus/samedaydesk/pull/101
+**HEAD:** `6cfbda20d625d9c535c5b82374f46c64854e26d0`
 **Owned path:** `experiments/wave5/d27/`
 
 ## Tested implementation
