@@ -2,7 +2,7 @@
 
 **Date:** 11 September 2026
 **Branch:** `fable/f08-paid-wrappers`
-**HEAD:** (this commit on `fable/f08-paid-wrappers`; filled after git SHA is known)
+**HEAD:** `e935bd8` on `fable/f08-paid-wrappers`
 **Base:** `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545` (PR51 useful-jobs public integration)
 
 ## What
