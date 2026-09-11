@@ -1,7 +1,9 @@
-import { mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { failBody, MailboxError } from "./errors.mjs";
 import { pickup } from "./pickup.mjs";
+import { acknowledge } from "./ack.mjs";
+import { seedFromD01Receipt } from "./d01-receipt.mjs";
 import { seedBySpawningEngine, seedFromOutDir } from "./seed.mjs";
 import { parseClock } from "./expiry.mjs";
 import { DEFAULT_TTL_SECONDS } from "./pins.mjs";
@@ -10,8 +12,9 @@ function usage() {
   return `result-mailbox — pickup completed useful-job artifacts (non-settling prototype)
 
 Commands:
-  seed   Write an envelope from a useful-jobs out-dir (or spawn the PR51 engine)
+  seed   Write an envelope from a useful-jobs out-dir, D01 receipt, or spawned PR51 engine
   pickup Copy artifacts by requestId, verify sha256, label expiry, write pickup.json
+  ack    Record delivered acknowledgment for one requestId (not a pickup)
 
 Examples:
   node tools/result-mailbox/bin/mailbox.mjs seed \\
@@ -21,8 +24,12 @@ Examples:
   node tools/result-mailbox/bin/mailbox.mjs pickup \\
     --mailbox /tmp/mailbox --request-id req-1 --out /tmp/pickup --clock 2026-09-11T20:00:00Z
 
-SAMPLE envelopes cannot be labelled delivered-to-buyer. Expiry is a timestamp
-comparison against --clock, not a daemon. Payments are non-settling prototypes.
+  node tools/result-mailbox/bin/mailbox.mjs ack \\
+    --mailbox /tmp/mailbox --request-id req-1 --clock 2026-09-11T20:00:00Z
+
+Pickup is not delivery. SAMPLE envelopes cannot be labelled delivered-to-buyer.
+Expiry is a timestamp comparison against --clock, not a daemon. Payments are
+non-settling prototypes. Two requestIds cannot retrieve each other's artifacts.
 `;
 }
 
@@ -74,7 +81,25 @@ export function runCli(argv, { stdout = process.stdout, stderr = process.stderr 
       mkdirSync(mailbox, { recursive: true });
 
       let body;
-      if (args["from-out-dir"]) {
+      if (args["from-d01-receipt"]) {
+        const receiptPath = resolve(String(args["from-d01-receipt"]));
+        const receipt = JSON.parse(readFileSync(receiptPath, "utf8"));
+        const outDir = args["from-out-dir"]
+          ? resolve(String(args["from-out-dir"]))
+          : receipt.outDir
+            ? resolve(String(receipt.outDir))
+            : undefined;
+        body = seedFromD01Receipt({
+          mailbox,
+          requestId,
+          receipt,
+          outDir,
+          clock,
+          expiresAt,
+          ttlSeconds: ttl,
+          expectedJobId: jobId,
+        });
+      } else if (args["from-out-dir"]) {
         body = seedFromOutDir({
           mailbox,
           requestId,
@@ -119,6 +144,22 @@ export function runCli(argv, { stdout = process.stdout, stderr = process.stderr 
         outDir,
         clock,
         asDelivered: args.delivered === true,
+      });
+      stdout.write(`${JSON.stringify(body, null, 2)}\n`);
+      return { exitCode: body.ok ? 0 : 2, body };
+    }
+
+    if (cmd === "ack") {
+      const mailbox = resolve(requireValue(args, "mailbox", "ack requires --mailbox"));
+      const requestId = requireValue(args, "request-id", "ack requires --request-id");
+      const clock = requireValue(args, "clock", "ack requires --clock (ISO UTC)");
+      parseClock(clock, "clock");
+      const outDir = args.out ? resolve(String(args.out)) : null;
+      const body = acknowledge({
+        mailbox,
+        requestId,
+        clock,
+        outDir,
       });
       stdout.write(`${JSON.stringify(body, null, 2)}\n`);
       return { exitCode: body.ok ? 0 : 2, body };

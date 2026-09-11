@@ -1,11 +1,16 @@
 # Result mailbox
 
 Pickup CLI for completed useful-job artifacts. Given a mailbox directory of
-envelopes, copy bytes by `requestId`, verify sha256, and label expiry. SAMPLE
-envelopes cannot be labelled delivered-to-buyer.
+envelopes, copy bytes by `requestId`, verify sha256, and label expiry. Pickup
+is not delivery: `ack` records delivered acknowledgment. SAMPLE envelopes
+cannot be labelled delivered-to-buyer. Two requestIds cannot retrieve each
+other's artifacts.
 
-This module owns the envelope schema. It does not import F08. Engines come from
-the published PR51 archive `client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz`.
+This module owns the envelope schema. It does not import F08/D01 wrapper
+source. Engines come from the published PR51 archive
+`client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz`.
+D01 results are consumed as `samedaydesk.paid-useful-jobs.receipt.v1` plus
+the receipt out-dir (current pin PR52 `aeef964fa188443078958d9d6d393afae1d542ee`).
 Payments are non-settling prototypes. Expiry is a timestamp comparison against
 `--clock`, not a daemon. Result-reuse is a different tool: it projects
 observations, it does not hand back job outputs.
@@ -43,10 +48,16 @@ node tools/result-mailbox/bin/mailbox.mjs pickup \
   --request-id req-vendor-budget-1 \
   --out "$PICK" \
   --clock "$NOW"
+
+node tools/result-mailbox/bin/mailbox.mjs ack \
+  --mailbox "$MAIL" \
+  --request-id req-vendor-budget-1 \
+  --clock "$NOW"
 ```
 
-`pickup.json` records `retrievedAt`. Copied `budget-impact.json` / `.md` bytes
-and sha256 match the engine out-dir.
+`pickup.json` records `retrievedAt` with `deliveredToBuyer: false`.
+Copied `budget-impact.json` / `.md` bytes and sha256 match the engine out-dir.
+`ack` writes `<mailbox>/<requestId>/ack.json` with `deliveredToBuyer: true`.
 
 ## Tests
 
@@ -57,9 +68,12 @@ node --test tools/result-mailbox/test/*.test.mjs
 ## Honesty
 
 - Fixture: SAMPLE / `--example` kit run. Not a buyer delivery.
-- Local-runtime: spawn of the published useful-jobs CLI against caller files.
-- External acceptance: not claimed. No live payment, HTTP mailbox, or Postgres store.
+- Local-runtime: spawn of the published useful-jobs CLI against caller files;
+  D01 binding spawns PR52 wrapper from a read-only pin worktree.
+- External acceptance: not claimed. No live payment, hosted HTTP mailbox,
+  or Postgres store.
 
 I01 content-hash `termsVersion` (`sha256:` + 64 hex) is required. Integer
-`termsVersion` is rejected. F08 paid wrappers are a later Root binding, not an
-import.
+`termsVersion` is rejected. Mailbox terms are not F08 receipt terms.
+D01 wrapper amendments remain a later binding; this package reports the
+PR52 pin it actually ran.

@@ -56,7 +56,8 @@ describe("literal caller journey (local-runtime engine)", { timeout: 120_000 }, 
     const body = parseJson(pickup.stdout);
     assert.equal(body.ok, true);
     assert.equal(body.status, "retrieved");
-    assert.equal(body.deliveredToBuyer, true);
+    assert.equal(body.deliveredToBuyer, false);
+    assert.equal(body.acknowledged, false);
     assert.equal(body.retrievedAt, CLOCK);
     assert.equal(body.expiry.state, "unexpired");
     assert.equal(body.expiry.expiresAt, EXPIRES);
@@ -79,10 +80,28 @@ describe("literal caller journey (local-runtime engine)", { timeout: 120_000 }, 
     const pickupJson = JSON.parse(readFileSync(join(pickupOut, "pickup.json"), "utf8"));
     assert.equal(pickupJson.schema, "samedaydesk.result-mailbox.pickup.v1");
     assert.equal(pickupJson.retrievedAt, CLOCK);
-    assert.equal(pickupJson.deliveredToBuyer, true);
+    assert.equal(pickupJson.deliveredToBuyer, false);
     assert.equal(pickupJson.sample, false);
     const listedJson = pickupJson.artifacts.find((a) => a.name === jsonName);
     assert.equal(listedJson.sha256, sha256File(outJson));
     assert.equal(listedJson.ok, true);
+
+    const ack = runMailbox([
+      "ack",
+      "--mailbox",
+      mailbox,
+      "--request-id",
+      requestId,
+      "--clock",
+      CLOCK,
+    ]);
+    assert.equal(ack.status, 0, ack.stderr + ack.stdout);
+    const acked = parseJson(ack.stdout);
+    assert.equal(acked.ok, true);
+    assert.equal(acked.status, "acknowledged");
+    assert.equal(acked.deliveredToBuyer, true);
+    assert.equal(acked.requestId, requestId);
+    assert.equal(existsSync(join(mailbox, requestId, "ack.json")), true);
+    assert.equal(existsSync(join(mailbox, requestId, "retrieved.json")), true);
   });
 });

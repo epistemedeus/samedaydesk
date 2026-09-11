@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -23,6 +23,45 @@ export function runMailbox(args, extra = {}) {
   return spawnSync(process.execPath, [cli, ...args], {
     encoding: "utf8",
     cwd: REPO_ROOT,
+    timeout: extra.timeout ?? 120_000,
+    maxBuffer: 8 * 1024 * 1024,
+  });
+}
+
+export function ensureD01PinCheckout() {
+  const pin = "aeef964fa188443078958d9d6d393afae1d542ee";
+  const dest = join(tmpdir(), `sds-d01-${pin.slice(0, 12)}`);
+  const wrapperCli = join(dest, "server/paid-useful-jobs/bin/cli.mjs");
+  if (existsSync(wrapperCli)) return dest;
+  const fetch = spawnSync("git", ["fetch", "origin", pin], {
+    cwd: REPO_ROOT,
+    encoding: "utf8",
+    timeout: 120_000,
+  });
+  if (existsSync(dest)) {
+    spawnSync("git", ["worktree", "remove", "--force", dest], {
+      cwd: REPO_ROOT,
+      encoding: "utf8",
+    });
+  }
+  const add = spawnSync("git", ["worktree", "add", "--detach", dest, pin], {
+    cwd: REPO_ROOT,
+    encoding: "utf8",
+    timeout: 60_000,
+  });
+  if (!existsSync(wrapperCli)) {
+    throw new Error(
+      `D01 pin ${pin} unavailable (incomplete, not skipped): fetch=${fetch.status} ${fetch.stderr} add=${add.status} ${add.stderr}`,
+    );
+  }
+  return dest;
+}
+
+export function runD01Wrapper(pinRoot, args, extra = {}) {
+  const wrapperCli = join(pinRoot, "server/paid-useful-jobs/bin/cli.mjs");
+  return spawnSync(process.execPath, [wrapperCli, ...args], {
+    encoding: "utf8",
+    cwd: pinRoot,
     timeout: extra.timeout ?? 120_000,
     maxBuffer: 8 * 1024 * 1024,
   });

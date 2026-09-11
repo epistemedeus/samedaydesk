@@ -1,13 +1,36 @@
-import { copyFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { sha256Bytes } from "./digest.mjs";
 import { failBody, refuse } from "./errors.mjs";
 import { compareExpiry } from "./expiry.mjs";
 import { PICKUP_SCHEMA } from "./pins.mjs";
-import { artifactsDir, readEnvelope, writeJson } from "./store.mjs";
+import { artifactsDir, readEnvelope, retrievedRecordPath, writeJson } from "./store.mjs";
 
-function loadBytes(filePath) {
-  return readFileSync(filePath);
+export function materializeVerifiedArtifacts(verified, dest) {
+  const target = resolve(dest);
+  mkdirSync(target, { recursive: true });
+  const copied = [];
+  for (const { listed, buf } of verified) {
+    const destFile = join(target, listed.name);
+    writeFileSync(destFile, buf);
+    const written = readFileSync(destFile);
+    const digest = sha256Bytes(written);
+    if (written.length !== listed.bytes || digest !== listed.sha256) {
+      throw refuse(
+        "digest-mismatch",
+        `artifact ${listed.name} dest bytes failed digest verification`,
+        { status: "digest-mismatch" },
+      );
+    }
+    copied.push({
+      name: listed.name,
+      bytes: listed.bytes,
+      sha256: listed.sha256,
+      path: destFile,
+      ok: true,
+    });
+  }
+  return copied;
 }
 
 export function pickup({
@@ -31,7 +54,7 @@ export function pickup({
   const dest = resolve(outDir);
   mkdirSync(dest, { recursive: true });
 
-  if (envelope.sample === true && (asDelivered || envelope.deliveredToBuyer === true)) {
+  if (envelope.sample === true && asDelivered) {
     const body = failBody(
       refuse(
         "sample-not-delivered",
@@ -45,6 +68,27 @@ export function pickup({
         sampleReasons: envelope.sampleReasons || [],
         expiry,
         jobId: envelope.jobId,
+        acknowledged: false,
+      },
+    );
+    writePickupFile(dest, body);
+    return body;
+  }
+
+  if (asDelivered) {
+    const body = failBody(
+      refuse(
+        "pickup-is-not-delivery",
+        "pickup copies bytes; delivered acknowledgment is a separate ack command",
+        { status: "pickup-is-not-delivery" },
+      ),
+      {
+        requestId,
+        retrievedAt,
+        sample: envelope.sample === true,
+        expiry,
+        jobId: envelope.jobId,
+        acknowledged: envelope.deliveredToBuyer === true,
       },
     );
     writePickupFile(dest, body);
@@ -64,6 +108,7 @@ export function pickup({
         expiry,
         jobId: envelope.jobId,
         status: "expired",
+        acknowledged: envelope.deliveredToBuyer === true,
       },
     );
     writePickupFile(dest, body);
@@ -84,7 +129,7 @@ export function pickup({
       writePickupFile(dest, body);
       return body;
     }
-    const buf = loadBytes(src);
+    const buf = readFileSync(src);
     const digest = sha256Bytes(buf);
     if (buf.length !== listed.bytes || digest !== listed.sha256) {
       const body = failBody(
@@ -112,30 +157,26 @@ export function pickup({
       writePickupFile(dest, body);
       return body;
     }
-    verified.push({ listed, src, buf });
+    verified.push({ listed, buf });
   }
 
-  const copied = [];
-  for (const { listed, src } of verified) {
-    const destFile = join(dest, listed.name);
-    copyFileSync(src, destFile);
-    copied.push({
-      name: listed.name,
-      bytes: listed.bytes,
-      sha256: listed.sha256,
-      path: destFile,
-      ok: true,
-    });
+  let copied;
+  try {
+    copied = materializeVerifiedArtifacts(verified, dest);
+  } catch (err) {
+    const body = failBody(err, { requestId, retrievedAt, expiry, jobId: envelope.jobId });
+    writePickupFile(dest, body);
+    return body;
   }
 
-  const deliveredToBuyer = envelope.sample !== true;
   const status = envelope.sample ? "retrieved-sample" : "retrieved";
   const body = {
     schema: PICKUP_SCHEMA,
     ok: true,
     refused: false,
     status,
-    deliveredToBuyer,
+    deliveredToBuyer: false,
+    acknowledged: envelope.deliveredToBuyer === true,
     sample: envelope.sample === true,
     sampleReasons: envelope.sampleReasons || [],
     requestId,
@@ -151,6 +192,16 @@ export function pickup({
     evidenceClass: "local-runtime",
   };
   body.pickupPath = writePickupFile(dest, body);
+  writeJson(retrievedRecordPath(mailbox, requestId), {
+    schema: PICKUP_SCHEMA,
+    status,
+    requestId,
+    jobId: envelope.jobId,
+    retrievedAt,
+    deliveredToBuyer: false,
+    acknowledged: envelope.deliveredToBuyer === true,
+    artifactsDigest: envelope.artifactsDigest,
+  });
   return body;
 }
 

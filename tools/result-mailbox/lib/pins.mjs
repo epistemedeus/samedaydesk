@@ -39,12 +39,16 @@ if (archiveMeta.bytes !== USEFUL_JOBS_ARCHIVE_BYTES) {
 
 export const ENVELOPE_SCHEMA = "samedaydesk.result-mailbox.envelope.v1";
 export const PICKUP_SCHEMA = "samedaydesk.result-mailbox.pickup.v1";
+export const ACK_SCHEMA = "samedaydesk.result-mailbox.ack.v1";
 export const MAILBOX_TERMS_SCHEMA = "samedaydesk.result-mailbox.terms.v1";
 export const SCHEMA_VERSION = 1;
 export const I01_HASHER_PIN = "819fa637ecf5e5177c84efc16fcaa18d57017631";
 export const I01_HASHER_PR = 54;
 export const F08_PIN = "bae3e7cd5034b21019fb272a99d88db964b831ee";
-export const STARTING_REF = "5b97d1b02e786acd1895cfa1508087ae3f7a1545";
+export const D01_RECEIPT_SCHEMA = "samedaydesk.paid-useful-jobs.receipt.v1";
+export const D01_RECEIPT_PIN = "aeef964fa188443078958d9d6d393afae1d542ee";
+export const D01_RECEIPT_PR = 52;
+export const STARTING_REF = "baf09dc591c83aec94e0cf42c5c64076fc5b98e3";
 
 export const REQUEST_ID_RE = /^[A-Za-z0-9._-]{1,128}$/;
 export const SHA256_HEX_RE = /^[0-9a-f]{64}$/;

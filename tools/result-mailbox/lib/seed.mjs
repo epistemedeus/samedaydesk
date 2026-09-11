@@ -1,21 +1,26 @@
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { catalogJob, engineProvenance, runEngineJob } from "./engine.mjs";
+import { engineProvenance, runEngineJob } from "./engine.mjs";
 import { buildEnvelope } from "./envelope.mjs";
 import { refuse } from "./errors.mjs";
 import { addSeconds, parseClock } from "./expiry.mjs";
-import { DEFAULT_TTL_SECONDS, MAX_ARTIFACT_BYTES, VENDOR_BUDGET_OUTPUTS } from "./pins.mjs";
+import {
+  DEFAULT_TTL_SECONDS,
+  MAX_ARTIFACT_BYTES,
+  USEFUL_JOBS_CATALOG_PATH,
+} from "./pins.mjs";
 import { fileArtifact, statBytes } from "./digest.mjs";
 import { inspectSample } from "./sample.mjs";
 import { writeEnvelopeFiles } from "./store.mjs";
 
-function expectedOutputs(jobId, kit) {
-  try {
-    const job = catalogJob(jobId, kit);
-    return job.outputs || VENDOR_BUDGET_OUTPUTS;
-  } catch {
-    return VENDOR_BUDGET_OUTPUTS;
+function expectedOutputs(jobId) {
+  const catalog = JSON.parse(readFileSync(USEFUL_JOBS_CATALOG_PATH, "utf8"));
+  const job = (catalog.jobs || []).find((j) => j.id === jobId);
+  if (!job) throw refuse("unknown-job", `unknown useful-job ${jobId}`);
+  if (!Array.isArray(job.outputs) || job.outputs.length < 1) {
+    throw refuse("missing-engine-output", `job ${jobId} declares no outputs`);
   }
+  return job.outputs;
 }
 
 function collectOutputs(outDir, names) {
@@ -29,7 +34,8 @@ function collectOutputs(outDir, names) {
     if (bytes > MAX_ARTIFACT_BYTES) {
       throw refuse("artifact-too-large", `${name} exceeds 1 MiB`);
     }
-    files.push({ name, path, ...fileArtifact(name, path) });
+    const listed = fileArtifact(name, path);
+    files.push({ name, path, buf: readFileSync(path), ...listed });
   }
   return files;
 }
@@ -50,7 +56,7 @@ export function seedFromOutDir({
 }) {
   parseClock(clock, "clock");
   const exp = expiresAt || addSeconds(clock, ttlSeconds);
-  const names = expectedOutputs(jobId, engine?.kitRoot);
+  const names = expectedOutputs(jobId);
   const files = collectOutputs(resolve(outDir), names);
   const sampleInfo = inspectSample({
     example: sample,

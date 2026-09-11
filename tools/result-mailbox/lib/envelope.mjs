@@ -10,6 +10,14 @@ export function assertRequestId(requestId) {
     throw refuse(
       "invalid-request-id",
       "requestId must be 1-128 chars of A-Za-z0-9._- (no path separators)",
+      { status: "invalid-request-id" },
+    );
+  }
+  if (requestId === "." || requestId === "..") {
+    throw refuse(
+      "invalid-request-id",
+      "requestId cannot be a path traversal token",
+      { status: "invalid-request-id" },
     );
   }
   return requestId;
