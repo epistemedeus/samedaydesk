@@ -1,7 +1,7 @@
 # F08 RECEIPT-REVIEW — paid wrappers of existing useful jobs
 
 **Date:** 11 September 2026
-**Reviewer run:** `bc-797312fe-6a91-4c27-9d67-06ef14ac9936` (I02 bounded re-review)
+**Reviewer run:** `bc-797312fe-6a91-4c27-9d67-06ef14ac9936` (I02 bounded re-review + W4-I02-AMEND)
 **Prior incomplete reviewer:** `bc-145f17ff-7a1e-459a-9d0e-2b39e7d68fad` / `run-acded250-abd4-4727-909d-ec78333a5200`
 **Branch:** `fable/f08-paid-wrappers`
 **Draft PR:** [sds#52](https://github.com/epistemedeus/samedaydesk/pull/52) (left draft; not merged)
@@ -13,13 +13,51 @@
 | Item | SHA |
 | --- | --- |
 | PR 52 pin at re-review start (origin had not moved) | `95d9d21869717e26c80d17cee3933a0350aeee1e` |
-| Implementation HEAD this receipt judges | `ab2d42419f59a85839b8408555cb32c1bf05640f` |
-| Extra commit from this re-review | `ab2d42419f59a85839b8408555cb32c1bf05640f` — structured CLI rejection for unknown job ids |
-| This file | `a86ae165381a11c87172c7b7a45b9e771ec91e0a` |
+| W4-I02-AMEND start | `bae3e7cd5034b21019fb272a99d88db964b831ee` |
+| W4 implementation | `2529f1f82fb38501f7ecdf7f6ce0b63ac5949039` |
+| Extra commit from first re-review | `ab2d42419f59a85839b8408555cb32c1bf05640f` — structured CLI rejection for unknown job ids |
+| This file (original land) | `a86ae165381a11c87172c7b7a45b9e771ec91e0a` |
 
-`origin/fable/f08-paid-wrappers` was `95d9d218` at start. No reset. Writer commits `e935bd8` + `b4af5a2` and first-reviewer SAMPLE rejection `95d9d218` were kept. Implementation judged at `ab2d424`; this receipt file was added in `a86ae16`.
+No reset. W4 amendment continued from exact `bae3e7cd`.
 
 **Verdict: ready**
+
+## W4-I02-AMEND (Sol Extra High advisory)
+
+Advisory did not execute tests. This amendment reproduced all three claimed defects at `bae3e7cd`, fixed them in-branch, and re-ran `npm run test:paid-useful-jobs` plus the live-price guard.
+
+| Finding | Reproduced at `bae3e7cd` | Addressed |
+| --- | --- | --- |
+| 1. `repeat-job-record --input-root` directory hashed as a file | **yes** — engine completed, then `EISDIR` → `internal-error` | **yes** — directory entries are not byte-hashed; recorded as `kind: directory`. Library + CLI exit 0, `identityVerified: true` |
+| 2. Library `fundingIntent: "reserved-fixture"` without payment | **yes** — `fundingState: reserved-fixture` with `receipt.payment.fixture: false` | **yes** — both CLI and `runPaidOffer` reject `reserved-fixture-requires-payment` unless a recognized fixture payment is supplied. CLI no longer synthesizes a payment the library would not see |
+| 3. Receipt missing archive/source identity | **yes** — receipt `engine` was only package/version/cli | **yes** — every success/refusal receipt stamps `archiveSha256`/`archiveBytes` plus `sourceRepo`/`sourceCommit`/`archiveFreeze`/`reviewedSource`. Archive identity is sha+bytes, not the version string |
+
+Commands after the fix:
+
+```bash
+npm run test:paid-useful-jobs
+```
+
+**PASS** — 34 tests, 0 fail (was 27 at `bae3e7cd`). Live-price guard still asserts extract `$0.005`, seller-integrity-audit `0.01`, existing `payTo`, and useful-jobs `purchaseAuthority: false` / no paid-hosted claim.
+
+Finding 1 CLI:
+
+```bash
+node server/paid-useful-jobs/bin/cli.mjs run repeat-job-record \
+  --next-run server/paid-useful-jobs/fixtures/caller/repeat-job-record/next-run-with-root.json \
+  --input-root server/paid-useful-jobs/fixtures/caller/repeat-job-record/input-root \
+  --out-dir /tmp/paid-repeat-root
+```
+
+**PASS** (exit 0). `identityVerified: true`. Receipt `inputs[]` for `input-root` has `kind: directory`, `sha256: null`. Engine verified local bytes; wrapper did not `readFileSync` the directory.
+
+Finding 2 minimum caller (`runPaidOffer({ jobId: "vendor-budget-impact", inputs: {before, after}, fundingIntent: "reserved-fixture" })` with no `payment`): **rejected**, `sold: false`. Same classification through CLI `--funding reserved-fixture` without `--payment`.
+
+Finding 3 receipt `engine` now:
+
+`archiveSha256 6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51`, `archiveBytes 2522418`, `sourceRepo epistemedeus/pilot`, `sourceCommit 0e473974554de9bfdba90676b6d3d710c10a2671`, freeze/reviewedSource `318130daaf19490e2f8af7c23131b42fe20e6cde`. Changing only `version` does not change `engineArchiveIdentity`.
+
+No live-price, signature-authority, homepage, or merchant-repo changes. PR left draft.
 
 ## Why this re-review existed
 
@@ -56,9 +94,9 @@ Matches the brief. Samples stay labelled SAMPLE and require `--example`. Funding
 npm run test:paid-useful-jobs
 ```
 
-**PASS** — 27 tests, 0 fail (`node --test server/paid-useful-jobs/test/*.test.mjs`).
+**PASS** — 34 tests, 0 fail (`node --test server/paid-useful-jobs/test/*.test.mjs`).
 
-Counts: writer reported 22 at `e935bd8`; `95d9d218` added SAMPLE reserved-fixture regressions (26 at re-review start); this re-review added 1 CLI unknown-job test (27).
+Counts: writer reported 22 at `e935bd8`; `95d9d218` added SAMPLE reserved-fixture regressions (26 at re-review start); first re-review added 1 CLI unknown-job test (27 at `bae3e7cd`); W4-I02-AMEND added input-root, funding-parity, and provenance regressions (34).
 
 PR diff vs `main` is `package.json` (`test:paid-useful-jobs` script only) plus `server/paid-useful-jobs/`. Homepage CSS/brand untouched. No deploy, no live payment, no new account/chain/queue.
 
