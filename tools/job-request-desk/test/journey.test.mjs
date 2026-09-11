@@ -71,4 +71,42 @@ describe("literal caller journey", { timeout: 120_000 }, () => {
 
     assert.equal(existsSync(join(store, "tickets", `${body.requestId}.json`)), true);
   });
+
+  it("create --defer records queued without completing; later create runs the same requestId", () => {
+    const store = tempStore("jrd-defer-");
+    const deferred = runDesk([
+      "create",
+      "vendor-budget-impact",
+      "--before",
+      CALLER_BEFORE,
+      "--after",
+      CALLER_AFTER,
+      "--store",
+      store,
+      "--defer",
+    ]);
+    assert.equal(deferred.status, 0, deferred.stderr + deferred.stdout);
+    const queued = parseJson(deferred.stdout);
+    assert.equal(queued.status, "queued");
+    assert.equal(queued.sold, false);
+    assert.match(queued.resultUri, /^file:\/\//);
+    assert.deepEqual((queued.statusHistory || []).map((h) => h.status), ["queued"]);
+
+    const ran = runDesk([
+      "create",
+      "vendor-budget-impact",
+      "--before",
+      CALLER_BEFORE,
+      "--after",
+      CALLER_AFTER,
+      "--store",
+      store,
+    ]);
+    assert.equal(ran.status, 0, ran.stderr + ran.stdout);
+    const completed = parseJson(ran.stdout);
+    assert.equal(completed.requestId, queued.requestId);
+    assert.equal(completed.status, "completed");
+    assert.equal(completed.sold, false);
+    assert.deepEqual((completed.statusHistory || []).map((h) => h.status), ["queued", "running", "completed"]);
+  });
 });

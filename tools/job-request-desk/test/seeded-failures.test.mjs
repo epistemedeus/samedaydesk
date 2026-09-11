@@ -11,7 +11,7 @@ describe("seeded fail-closed cases", { timeout: 120_000 }, () => {
   it("--example cannot become status completed as a sale", () => {
     const store = tempStore("jrd-example-");
     const r = runDesk(["create", "vendor-budget-impact", "--example", "--store", store]);
-    assert.equal(createdOkOrRefuse(r).sold, false);
+    assert.equal(r.status, 0, r.stderr + r.stdout);
     const body = parseJson(r.stdout);
     assert.equal(body.sold, false);
     assert.notEqual(body.status, "completed");
@@ -149,8 +149,3 @@ describe("seeded fail-closed cases", { timeout: 120_000 }, () => {
     assert.equal(result.code, "digest-mismatch");
   });
 });
-
-function createdOkOrRefuse(r) {
-  const body = parseJson(r.stdout);
-  return body;
-}
