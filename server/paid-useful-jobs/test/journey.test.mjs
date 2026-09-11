@@ -55,6 +55,22 @@ describe("literal user journey", { timeout: 120_000 }, () => {
     assert.equal(receipt.purchaseAuthority, false);
   });
 
+  it("unknown job id is a structured rejection, not an uncaught throw", () => {
+    const r = spawnSync(
+      process.execPath,
+      [cli, "run", "not-a-real-job"],
+      { encoding: "utf8", cwd: REPO_ROOT, timeout: 30_000, maxBuffer: 8 * 1024 * 1024 },
+    );
+    assert.equal(r.status, 2, r.stderr + r.stdout);
+    assert.equal(r.signal, null);
+    const body = JSON.parse(r.stdout);
+    assert.equal(body.ok, false);
+    assert.equal(body.sold, false);
+    assert.equal(body.fundingState, "rejected");
+    assert.equal(body.code, "unknown-job");
+    assert.match(body.error, /unknown job/i);
+  });
+
   it("--example with reserved-fixture payment is not a sale", () => {
     const r = spawnSync(
       process.execPath,

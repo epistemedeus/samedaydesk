@@ -5,7 +5,7 @@
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { JOB_IDS, getJob } from "../lib/jobs.mjs";
+import { JOB_IDS, JOB_BY_ID } from "../lib/jobs.mjs";
 import { runPaidOffer } from "../lib/wrapper.mjs";
 import { fixturePaymentTemplate } from "../lib/funding.mjs";
 
@@ -72,11 +72,13 @@ if (!jobId) {
   process.exit(2);
 }
 
-const job = getJob(jobId);
+const job = JOB_BY_ID[jobId];
 const inputs = {};
-for (const flag of [...job.requiredInputs, ...(job.optionalInputs || [])]) {
-  const key = flag.replace(/^--/, "");
-  if (args[key]) inputs[key] = resolve(String(args[key]));
+if (job) {
+  for (const flag of [...job.requiredInputs, ...(job.optionalInputs || [])]) {
+    const key = flag.replace(/^--/, "");
+    if (args[key]) inputs[key] = resolve(String(args[key]));
+  }
 }
 
 let payment = null;
