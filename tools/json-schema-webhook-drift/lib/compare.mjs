@@ -1,14 +1,57 @@
 import { jsonType } from "./kind.mjs";
 import { remoteRefsInNode, resolveLocalRef } from "./refs.mjs";
 
+const CONSTRAINT_SIBLING_KEYS = new Set([
+  "type",
+  "format",
+  "enum",
+  "const",
+  "required",
+  "additionalProperties",
+  "properties",
+  "items",
+  "minLength",
+  "maxLength",
+  "minimum",
+  "maximum",
+  "exclusiveMinimum",
+  "exclusiveMaximum",
+  "minItems",
+  "maxItems",
+  "nullable",
+]);
+
 function normalizeType(type) {
   if (typeof type === "string") return type;
   if (Array.isArray(type)) return [...type].map(String).sort();
   return null;
 }
 
-function intOrNull(value) {
-  return typeof value === "number" && Number.isInteger(value) ? value : null;
+function numberOrNull(value) {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function encodeNumber(value) {
+  const n = numberOrNull(value);
+  if (n === null) return null;
+  if (Number.isInteger(n)) return n;
+  return JSON.stringify(n);
+}
+
+function boundOrNull(value) {
+  if (typeof value === "boolean") return value;
+  return encodeNumber(value);
+}
+
+function decodeBound(value) {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : { incomparable: true };
+  }
+  if (value === null || value === undefined) return null;
+  return { incomparable: true };
 }
 
 function sortedStrings(value) {
@@ -21,8 +64,60 @@ function stableLiteral(value) {
   return JSON.stringify(value);
 }
 
+function schemaObjectFingerprint(node) {
+  return {
+    kind: "schema-object",
+    type: normalizeType(node.type),
+    format: typeof node.format === "string" ? node.format : null,
+    enum: Array.isArray(node.enum) ? [...node.enum].map(stableLiteral).sort() : null,
+    constJson: Object.prototype.hasOwnProperty.call(node, "const") ? stableLiteral(node.const) : null,
+    required: sortedStrings(node.required),
+    additionalProperties:
+      typeof node.additionalProperties === "boolean"
+        ? node.additionalProperties
+        : node.additionalProperties === undefined
+          ? null
+          : "schema",
+    propertiesKeys:
+      node.properties && typeof node.properties === "object" && !Array.isArray(node.properties)
+        ? Object.keys(node.properties).sort()
+        : null,
+    itemsType: node.items && typeof node.items === "object" ? normalizeType(node.items.type) : null,
+    minLength: encodeNumber(node.minLength),
+    maxLength: encodeNumber(node.maxLength),
+    minimum: encodeNumber(node.minimum),
+    maximum: encodeNumber(node.maximum),
+    exclusiveMinimum: boundOrNull(node.exclusiveMinimum),
+    exclusiveMaximum: boundOrNull(node.exclusiveMaximum),
+    minItems: encodeNumber(node.minItems),
+    maxItems: encodeNumber(node.maxItems),
+    nullable: node.nullable === true,
+  };
+}
+
+function emptySchemaFingerprint() {
+  return schemaObjectFingerprint({});
+}
+
+function fingerprintSiblingConstraints(node) {
+  const rest = {};
+  let any = false;
+  for (const key of Object.keys(node)) {
+    if (key === "$ref") continue;
+    if (CONSTRAINT_SIBLING_KEYS.has(key)) {
+      rest[key] = node[key];
+      any = true;
+    }
+  }
+  if (!any) return null;
+  return schemaObjectFingerprint(rest);
+}
+
 export function fingerprintSchemaNode(node, doc) {
   if (node === undefined) return { kind: "absent" };
+  if (typeof node === "boolean") {
+    return { kind: "boolean-schema", allows: node };
+  }
   if (node === null || typeof node !== "object" || Array.isArray(node)) {
     return { kind: "literal", jsonType: jsonType(node) };
   }
@@ -47,31 +142,13 @@ export function fingerprintSchemaNode(node, doc) {
       };
     }
     const target = fingerprintSchemaNode(resolved.value, doc);
-    return { kind: "local-ref", ref: node.$ref, target };
+    const siblings = fingerprintSiblingConstraints(node);
+    const out = { kind: "local-ref", ref: node.$ref, target };
+    if (siblings) out.siblings = siblings;
+    return out;
   }
 
-  return {
-    kind: "schema-object",
-    type: normalizeType(node.type),
-    format: typeof node.format === "string" ? node.format : null,
-    enum: Array.isArray(node.enum) ? [...node.enum].map(stableLiteral).sort() : null,
-    constJson: Object.prototype.hasOwnProperty.call(node, "const") ? stableLiteral(node.const) : null,
-    required: sortedStrings(node.required),
-    additionalProperties:
-      typeof node.additionalProperties === "boolean" ? node.additionalProperties : node.additionalProperties === undefined ? null : "schema",
-    propertiesKeys:
-      node.properties && typeof node.properties === "object" && !Array.isArray(node.properties)
-        ? Object.keys(node.properties).sort()
-        : null,
-    itemsType: node.items && typeof node.items === "object" ? normalizeType(node.items.type) : null,
-    minLength: intOrNull(node.minLength),
-    maxLength: intOrNull(node.maxLength),
-    minimum: intOrNull(node.minimum),
-    maximum: intOrNull(node.maximum),
-    minItems: intOrNull(node.minItems),
-    maxItems: intOrNull(node.maxItems),
-    nullable: node.nullable === true,
-  };
+  return schemaObjectFingerprint(node);
 }
 
 export function fingerprintExampleNode(node) {
@@ -105,6 +182,172 @@ function typeChanged(beforeFp, afterFp) {
   return false;
 }
 
+function requiredSet(fp) {
+  return new Set(fp.required || []);
+}
+
+function classifyRequired(before, after) {
+  const beforeSet = requiredSet(before);
+  const afterSet = requiredSet(after);
+  const added = [...afterSet].filter((name) => !beforeSet.has(name));
+  const removed = [...beforeSet].filter((name) => !afterSet.has(name));
+  if (added.length && removed.length) return { class: "breaking", reason: "required-changed" };
+  if (added.length) return { class: "breaking", reason: "required-added" };
+  if (removed.length) return { class: "compatible", reason: "required-removed" };
+  return null;
+}
+
+function compareLowerBound(beforeRaw, after) {
+  const before = decodeBound(beforeRaw);
+  const decodedAfter = decodeBound(after);
+  if (before && typeof before === "object" && before.incomparable) return "incomparable";
+  if (decodedAfter && typeof decodedAfter === "object" && decodedAfter.incomparable) return "incomparable";
+  if (typeof before === "number" && typeof decodedAfter === "number") {
+    if (decodedAfter > before) return "tighter";
+    if (decodedAfter < before) return "weaker";
+    return "same";
+  }
+  if (typeof before === "boolean" && typeof decodedAfter === "boolean") {
+    if (decodedAfter === before) return "same";
+    return decodedAfter ? "tighter" : "weaker";
+  }
+  if (before === null && decodedAfter === null) return "same";
+  if (before === null && decodedAfter !== null) return "tighter";
+  if (before !== null && decodedAfter === null) return "weaker";
+  return "incomparable";
+}
+
+function compareUpperBound(beforeRaw, after) {
+  const before = decodeBound(beforeRaw);
+  const decodedAfter = decodeBound(after);
+  if (before && typeof before === "object" && before.incomparable) return "incomparable";
+  if (decodedAfter && typeof decodedAfter === "object" && decodedAfter.incomparable) return "incomparable";
+  if (typeof before === "number" && typeof decodedAfter === "number") {
+    if (decodedAfter < before) return "tighter";
+    if (decodedAfter > before) return "weaker";
+    return "same";
+  }
+  if (typeof before === "boolean" && typeof decodedAfter === "boolean") {
+    if (decodedAfter === before) return "same";
+    return decodedAfter ? "tighter" : "weaker";
+  }
+  if (before === null && decodedAfter === null) return "same";
+  if (before === null && decodedAfter !== null) return "tighter";
+  if (before !== null && decodedAfter === null) return "weaker";
+  return "incomparable";
+}
+
+const LOWER_BOUNDS = ["minimum", "exclusiveMinimum", "minLength", "minItems"];
+const UPPER_BOUNDS = ["maximum", "exclusiveMaximum", "maxLength", "maxItems"];
+
+function classifyNumeric(before, after) {
+  const directions = [];
+  for (const key of LOWER_BOUNDS) {
+    directions.push(compareLowerBound(before[key], after[key]));
+  }
+  for (const key of UPPER_BOUNDS) {
+    directions.push(compareUpperBound(before[key], after[key]));
+  }
+  if (directions.includes("incomparable")) {
+    return { class: "unknown", reason: "numeric-incomparable" };
+  }
+  const tighter = directions.includes("tighter");
+  const weaker = directions.includes("weaker");
+  if (tighter) return { class: "breaking", reason: "numeric-tightened" };
+  if (weaker) return { class: "compatible", reason: "numeric-weakened" };
+  return null;
+}
+
+function additionalPropertiesRank(value) {
+  if (value === false) return 0;
+  if (value === "schema") return 1;
+  return 2;
+}
+
+function classifyAdditionalProperties(before, after) {
+  const beforeRank = additionalPropertiesRank(before.additionalProperties);
+  const afterRank = additionalPropertiesRank(after.additionalProperties);
+  if (afterRank < beforeRank) return { class: "breaking", reason: "additionalProperties-tightened" };
+  if (afterRank > beforeRank) return { class: "compatible", reason: "additionalProperties-weakened" };
+  return null;
+}
+
+const OTHER_KEYS = ["format", "enum", "constJson", "propertiesKeys", "itemsType", "nullable"];
+
+function classifySchemaConstraints(before, after) {
+  if (before.kind !== "schema-object" || after.kind !== "schema-object") return null;
+  if (JSON.stringify(before.type) !== JSON.stringify(after.type)) {
+    return { class: "breaking", reason: "type-change" };
+  }
+  const deltas = [];
+  const required = classifyRequired(before, after);
+  if (required) deltas.push(required);
+  const numeric = classifyNumeric(before, after);
+  if (numeric) deltas.push(numeric);
+  const additional = classifyAdditionalProperties(before, after);
+  if (additional) deltas.push(additional);
+
+  const restChanged = OTHER_KEYS.some((key) => JSON.stringify(before[key]) !== JSON.stringify(after[key]));
+  const tightening = deltas.find((delta) => delta.class === "breaking");
+  if (tightening) return tightening;
+  if (deltas.some((delta) => delta.class === "unknown")) {
+    return deltas.find((delta) => delta.class === "unknown");
+  }
+  if (restChanged) return { class: "breaking", reason: "structural-change" };
+  const weakening = deltas.find((delta) => delta.class === "compatible");
+  if (weakening) return weakening;
+  return null;
+}
+
+function classifyBooleanSchema(beforeFp, afterFp) {
+  const beforeAllows = beforeFp.kind === "boolean-schema" ? beforeFp.allows : beforeFp.kind === "schema-object" ? "some" : null;
+  const afterAllows = afterFp.kind === "boolean-schema" ? afterFp.allows : afterFp.kind === "schema-object" ? "some" : null;
+  if (beforeAllows === null || afterAllows === null) return null;
+  if (beforeFp.kind === "boolean-schema" && afterFp.kind === "boolean-schema") {
+    if (beforeFp.allows === afterFp.allows) return { class: "unchanged", reason: "structural-equal" };
+    if (beforeFp.allows === false && afterFp.allows === true) {
+      return { class: "compatible", reason: "boolean-schema-weakened" };
+    }
+    return { class: "breaking", reason: "boolean-schema-tightened" };
+  }
+  if (beforeFp.kind === "boolean-schema" && afterFp.kind === "schema-object") {
+    return beforeFp.allows === false
+      ? { class: "compatible", reason: "boolean-schema-weakened" }
+      : { class: "breaking", reason: "boolean-schema-tightened" };
+  }
+  if (beforeFp.kind === "schema-object" && afterFp.kind === "boolean-schema") {
+    return afterFp.allows === true
+      ? { class: "compatible", reason: "boolean-schema-weakened" }
+      : { class: "breaking", reason: "boolean-schema-tightened" };
+  }
+  return null;
+}
+
+const CLASS_SEVERITY = {
+  "remote-ref": 0,
+  unknown: 1,
+  breaking: 2,
+  added: 3,
+  deleted: 3,
+  compatible: 4,
+  informational: 5,
+  unchanged: 6,
+};
+
+function combineClass(target, siblings) {
+  const targetRank = CLASS_SEVERITY[target.class] ?? 5;
+  const siblingRank = CLASS_SEVERITY[siblings.class] ?? 5;
+  if (targetRank <= siblingRank) return target;
+  return siblings;
+}
+
+function unwrapRef(fp) {
+  if (fp?.kind !== "local-ref") {
+    return { target: fp, siblings: emptySchemaFingerprint() };
+  }
+  return { target: fp.target, siblings: fp.siblings || emptySchemaFingerprint() };
+}
+
 export function classifyPair(beforeFp, afterFp) {
   if (beforeFp?.refuse || afterFp?.refuse) {
     return { class: "remote-ref", reason: "remote-ref" };
@@ -120,6 +363,17 @@ export function classifyPair(beforeFp, afterFp) {
   }
   if (fpKey(beforeFp) === fpKey(afterFp)) {
     return { class: "unchanged", reason: "structural-equal" };
+  }
+  if (beforeFp.kind === "local-ref" || afterFp.kind === "local-ref") {
+    const before = unwrapRef(beforeFp);
+    const after = unwrapRef(afterFp);
+    return combineClass(classifyPair(before.target, after.target), classifyPair(before.siblings, after.siblings));
+  }
+  const booleanClass = classifyBooleanSchema(beforeFp, afterFp);
+  if (booleanClass) return booleanClass;
+  if (beforeFp.kind === "schema-object" && afterFp.kind === "schema-object") {
+    const directional = classifySchemaConstraints(beforeFp, afterFp);
+    if (directional) return directional;
   }
   if (typeChanged(beforeFp, afterFp)) {
     return { class: "breaking", reason: "type-change" };

@@ -55,6 +55,8 @@ Usage:
 
 Remote $ref is refused. Local #/ refs only. No network resolve.
 A used path missing in both documents is unknown, not deleted.
+False/true schemas, $ref constraint siblings, required and numeric bounds are classified.
+Compatible weakening is a valid analysis (exit 0), not a transport failure.
 Unused paths (including /properties/debug) are ignored.
 
 Outputs: drift-brief.json, drift-brief.md

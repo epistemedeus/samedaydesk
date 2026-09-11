@@ -43,6 +43,7 @@ export function attachTermsVersion(brief, hashAdapter = createHashTermsAdapter()
 
 function typeLabel(fp) {
   if (!fp || fp.kind === "absent") return "absent";
+  if (fp.kind === "boolean-schema") return fp.allows ? "true-schema" : "false-schema";
   if (fp.kind === "schema-object") {
     return Array.isArray(fp.type) ? fp.type.join("|") : fp.type || "untyped";
   }
@@ -76,6 +77,18 @@ export function toMarkdown(brief) {
       );
     }
   }
+  lines.push("", "## Compatible used-path changes");
+  const compatible = brief.impact.compatible || [];
+  if (!compatible.length) {
+    lines.push("- none");
+  } else {
+    for (const row of compatible) {
+      lines.push(
+        `- \`${row.pointer}\`: ${row.reason} (${typeLabel(row.before)} -> ${typeLabel(row.after)})`,
+      );
+    }
+  }
+
   lines.push("", "## Deleted used paths");
   const deleted = brief.impact.deleted || [];
   if (!deleted.length) lines.push("- none");
@@ -105,11 +118,15 @@ export function toMarkdown(brief) {
 export function summarize(impact, refused) {
   if (refused) return "Used-path comparison refused.";
   const breaking = (impact.breaking || []).length;
+  const compatible = (impact.compatible || []).length;
   const deleted = (impact.deleted || []).length;
   const unknown = (impact.unknown || []).length;
   if (breaking + deleted > 0) {
-    return `Used-path drift: ${breaking} breaking, ${deleted} deleted, ${unknown} unknown. Unused paths ignored.`;
+    return `Used-path drift: ${breaking} breaking, ${compatible} compatible, ${deleted} deleted, ${unknown} unknown. Unused paths ignored.`;
   }
   if (unknown > 0) return `Partial used-path report: ${unknown} unknown pointer(s).`;
+  if (compatible > 0) {
+    return `Used-path drift: ${compatible} compatible weakening change(s). Valid analysis, not a transport failure.`;
+  }
   return "No structural used-path drift. Not a runtime compatibility proof.";
 }

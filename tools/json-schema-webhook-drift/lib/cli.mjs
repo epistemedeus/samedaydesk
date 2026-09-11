@@ -28,6 +28,7 @@ function digestMeta(filePath, buf) {
 function emptyImpact() {
   return {
     breaking: [],
+    compatible: [],
     added: [],
     deleted: [],
     unchanged: [],
@@ -73,6 +74,7 @@ export function compareDocuments({ beforeDoc, afterDoc, usedSpec, kind }) {
       continue;
     }
     if (classified.class === "breaking") impact.breaking.push(row);
+    else if (classified.class === "compatible") impact.compatible.push(row);
     else if (classified.class === "added") impact.added.push(row);
     else if (classified.class === "deleted") impact.deleted.push(row);
     else if (classified.class === "unchanged") impact.unchanged.push(row);
@@ -141,6 +143,7 @@ export function runCompare({
     sample,
     impact: {
       breaking: impact.breaking.map(publicRow),
+      compatible: impact.compatible.map(publicRow),
       added: impact.added.map(publicRow),
       deleted: impact.deleted.map(publicRow),
       unknown: impact.unknown.map(publicRow),
@@ -207,6 +210,7 @@ export function runCompare({
     outDir: resolvedOut,
     outputs: [OUTPUT_JSON, OUTPUT_MD],
     breaking: brief.impact.breaking.length,
+    compatible: brief.impact.compatible.length,
     unknown: brief.impact.unknown.length,
   };
 }

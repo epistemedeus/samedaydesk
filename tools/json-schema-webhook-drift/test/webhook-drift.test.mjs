@@ -57,7 +57,9 @@ test("journey CLI: amount type change is one breaking used-path; unused debug ig
 
   const brief = readBrief(outDir);
   assert.equal(brief.schema, "samedaydesk.json-schema-webhook-drift.v1");
-  assert.equal(brief.schemaVersion, 1);
+  assert.equal(brief.schemaVersion, 2);
+  assert.equal(Array.isArray(brief.impact.compatible), true);
+  assert.equal(brief.impact.compatible.length, 0);
   assert.equal(brief.notOpenApi, true);
   assert.equal(brief.notApiUpgradeBrief, true);
   assert.equal(brief.customerBrief, false);
