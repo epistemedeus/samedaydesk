@@ -7,6 +7,7 @@ Reproducible dependency-update real-project trial. Thin consumer of the pinned l
 - Repo: `epistemedeus/samedaydesk`
 - Starting ref: `fable/f08-paid-wrappers` `aeef964fa188443078958d9d6d393afae1d542ee` (PR52)
 - Feature branch: `cursor/w5-m16-reproducible-dependency-update-real-project-trial-aef5`
+- Feature head: `80a89f0f5438b36e64e8051486b8a8eba6b35cfb`
 - Engine tested: `tools/lockfile-pin-delta/` at `e81efc8ab71b1bde88eca743d297149e61bbb6f2` (`codex/w4-commerce-11-20260911`), materialized with `git archive` at runtime. Not copied into this tree.
 - Wrapper tested: `server/paid-useful-jobs/` at the PR52 pin above. Catalog still has no `lockfile-pin-delta` job.
 - Real project pair: SDS `package-lock.json` `126776d364302a610f3e1a91c19191b99ef3b99a` → `62a88c86461e7b8d0e9a7cf1db57153d7e8fd6cf` (`fix(deps): update vulnerable locked dependencies`). Owner QA. Not customer demand.
