@@ -1,0 +1,22 @@
+{
+  "event": "capacity_completion",
+  "at": "2026-09-11T15:45:53Z",
+  "memAvailablePct": 65.3,
+  "memFreePct": 33.18,
+  "diskFreePct": 96.26,
+  "cpus": 4,
+  "loadavg": "1.00 1.01 1.00 2/514 226386",
+  "nativeChildSlicesCompleted": 6,
+  "expandBeyond6": false,
+  "nodeTestProcessCountIsNotHeavyConcurrency": true,
+  "noRecurringWatcher": true,
+  "childDurationsMs": {
+    "C1": 198254,
+    "C2": 353458,
+    "C3": 199727,
+    "C4": 139873,
+    "C5": 144247,
+    "C6": 385485
+  },
+  "parentFix": "C2-D1 signed net sort"
+}

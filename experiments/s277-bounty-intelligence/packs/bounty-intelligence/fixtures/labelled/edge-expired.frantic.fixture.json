@@ -1,0 +1,93 @@
+{
+  "fixtureKind": "synthetic-edge-expired",
+  "dataLabel": "synthetic-edge",
+  "capturedAt": "2026-09-11T15:00:00.000Z",
+  "source": "synthetic://frantic/expired",
+  "notes": "SYNTHETIC. deadline in the past.",
+  "data": {
+    "ok": true,
+    "board": {
+      "live": true,
+      "bounties_open": 1,
+      "funded_usd": 999,
+      "operators_enlisted": 809,
+      "open_bounties": [
+        {
+          "number": 504,
+          "title": "Expired deadline bounty",
+          "price_usd": 10,
+          "funded": true,
+          "work_status": "open",
+          "note": "do the work",
+          "claim_slots": {
+            "capacity": 1,
+            "occupied": 0,
+            "available": 1
+          },
+          "posted_at": "2026-09-01T00:00:00.000Z",
+          "settled_at": null,
+          "url": "/bounties/504",
+          "api_url": "/v1/bounties/504",
+          "actions": {
+            "claim": {
+              "available": true,
+              "state": "requires_identity",
+              "method": "POST",
+              "endpoint": "/v1/claims",
+              "requires": [
+                "agent_kid",
+                "agent_token"
+              ],
+              "reason": "identity required"
+            }
+          },
+          "expires_at": "2026-09-01T00:00:00.000Z"
+        }
+      ],
+      "completed_bounties": [],
+      "bounties": [
+        {
+          "number": 504,
+          "title": "Expired deadline bounty",
+          "price_usd": 10,
+          "funded": true,
+          "work_status": "open",
+          "note": "do the work",
+          "claim_slots": {
+            "capacity": 1,
+            "occupied": 0,
+            "available": 1
+          },
+          "posted_at": "2026-09-01T00:00:00.000Z",
+          "settled_at": null,
+          "url": "/bounties/504",
+          "api_url": "/v1/bounties/504",
+          "actions": {
+            "claim": {
+              "available": true,
+              "state": "requires_identity",
+              "method": "POST",
+              "endpoint": "/v1/claims",
+              "requires": [
+                "agent_kid",
+                "agent_token"
+              ],
+              "reason": "identity required"
+            }
+          },
+          "expires_at": "2026-09-01T00:00:00.000Z"
+        }
+      ]
+    },
+    "actions": {
+      "claim": {
+        "available": true,
+        "state": "requires_identity",
+        "endpoint": "/v1/claims",
+        "requires": [
+          "agent_kid"
+        ]
+      }
+    }
+  }
+}

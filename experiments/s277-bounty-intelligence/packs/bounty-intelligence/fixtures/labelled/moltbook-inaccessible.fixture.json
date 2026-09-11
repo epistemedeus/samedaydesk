@@ -1,0 +1,13 @@
+{
+  "fixtureKind": "moltbook_inaccessible",
+  "dataLabel": "fixture",
+  "capturedAt": "2026-09-11T15:15:00Z",
+  "source": "https://api.moltbook.com/v1/jobs?limit=5",
+  "notes": "Verified inaccessible 2026-09-11. Do not fake listings.",
+  "data": {
+    "ok": false,
+    "error": "NXDOMAIN",
+    "errno": -2,
+    "message": "Name or service not known"
+  }
+}

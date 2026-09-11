@@ -1,0 +1,37 @@
+{
+  "child": "C3",
+  "model": "grok-4.6",
+  "slice": "experience-events-interop",
+  "at": "2026-09-11T15:41:26Z",
+  "startedAt": "2026-09-11T15:39:46Z",
+  "status": "pass",
+  "exclusive": "tests/c3-experience-events.test.mjs",
+  "cwd": "/workspace/experiments/s277-bounty-intelligence/packs/bounty-intelligence",
+  "commands": [
+    {
+      "command": "node --test tests/c3-experience-events.test.mjs",
+      "exitCode": 0,
+      "tests": 7,
+      "pass": 7,
+      "fail": 0
+    },
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "tests": 59,
+      "pass": 59,
+      "fail": 0
+    }
+  ],
+  "coverage": {
+    "selfReportedNotVerifiedCompletionOrPayout": true,
+    "contributorEffortHoursRequireDeclared": true,
+    "paidReviewAmountRequiresDeclared": true,
+    "compactEventsSixTypesAndDiscoveryFromRecords": true,
+    "toInteropV0AmountFundingIdsIdempotencyReservationDataLabel": true,
+    "firstDollarWalletlessUnknownOnFourFixtures": true
+  },
+  "noMerge": true,
+  "noDeploy": true,
+  "noPay": true
+}

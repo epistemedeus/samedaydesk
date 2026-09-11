@@ -1,0 +1,91 @@
+{
+  "fixtureKind": "synthetic-edge-stale",
+  "dataLabel": "synthetic-edge",
+  "capturedAt": "2026-08-01T00:00:00.000Z",
+  "source": "synthetic://frantic/stale",
+  "notes": "SYNTHETIC. capturedAt August 2026. Stale vs test now 2026-09-11 with 7d window.",
+  "data": {
+    "ok": true,
+    "board": {
+      "live": true,
+      "bounties_open": 1,
+      "funded_usd": 999,
+      "operators_enlisted": 809,
+      "open_bounties": [
+        {
+          "number": 503,
+          "title": "Stale observation bounty",
+          "price_usd": 10,
+          "funded": true,
+          "work_status": "open",
+          "note": "do the work",
+          "claim_slots": {
+            "capacity": 1,
+            "occupied": 0,
+            "available": 1
+          },
+          "posted_at": "2026-07-01T00:00:00.000Z",
+          "settled_at": null,
+          "url": "/bounties/503",
+          "api_url": "/v1/bounties/503",
+          "actions": {
+            "claim": {
+              "available": true,
+              "state": "requires_identity",
+              "method": "POST",
+              "endpoint": "/v1/claims",
+              "requires": [
+                "agent_kid",
+                "agent_token"
+              ],
+              "reason": "identity required"
+            }
+          }
+        }
+      ],
+      "completed_bounties": [],
+      "bounties": [
+        {
+          "number": 503,
+          "title": "Stale observation bounty",
+          "price_usd": 10,
+          "funded": true,
+          "work_status": "open",
+          "note": "do the work",
+          "claim_slots": {
+            "capacity": 1,
+            "occupied": 0,
+            "available": 1
+          },
+          "posted_at": "2026-07-01T00:00:00.000Z",
+          "settled_at": null,
+          "url": "/bounties/503",
+          "api_url": "/v1/bounties/503",
+          "actions": {
+            "claim": {
+              "available": true,
+              "state": "requires_identity",
+              "method": "POST",
+              "endpoint": "/v1/claims",
+              "requires": [
+                "agent_kid",
+                "agent_token"
+              ],
+              "reason": "identity required"
+            }
+          }
+        }
+      ]
+    },
+    "actions": {
+      "claim": {
+        "available": true,
+        "state": "requires_identity",
+        "endpoint": "/v1/claims",
+        "requires": [
+          "agent_kid"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "child": "C6",
+  "model": "grok-4.6",
+  "slice": "pack-export-interop",
+  "at": "2026-09-11T15:44:28.000Z",
+  "ok": true,
+  "patch": {
+    "path": "PACK-EXPORT.patch",
+    "bytes": 341472,
+    "sha256": "bbd1ca767245febaf9f26223b4086f1d3aeaefb3c480c122fe318438435e5779",
+    "pathStyle": "pack-root-relative",
+    "method": "git-diff-no-index-per-file",
+    "note": "git diff --no-index /dev/null . from the pack directory failed (directory vs /dev/null). Exporter concatenated per-file git diff --no-index /dev/null <relpath> from the pack root, excluding node_modules and PACK-EXPORT.patch itself. Paths are relative to pack root (a/src/..., a/package.json), suitable for git apply inside neomorphic-io packs/bounty-intelligence. Fallback git add -N + git diff from /workspace was not needed."
+  },
+  "tests": {
+    "c6": { "pass": 4, "fail": 0 },
+    "pack": { "pass": 69, "fail": 0 }
+  }
+}

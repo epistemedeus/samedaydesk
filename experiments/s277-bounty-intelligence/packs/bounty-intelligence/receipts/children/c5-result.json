@@ -1,0 +1,42 @@
+{
+  "child": "C5",
+  "model": "grok-4.6",
+  "slice": "html-renderer",
+  "at": "2026-09-11T15:40:20.000Z",
+  "startedAt": "2026-09-11T15:39:45.000Z",
+  "exclusiveFiles": [
+    "tests/c5-html.test.mjs",
+    "receipts/children/c5-start.json",
+    "receipts/children/c5-result.json"
+  ],
+  "didNotEdit": [
+    "src/html.mjs"
+  ],
+  "constraintsHonored": {
+    "noGitCommit": true,
+    "noMerge": true,
+    "noDeploy": true,
+    "noPay": true,
+    "noHomepageNavChange": true
+  },
+  "command": "node --test tests/c5-html.test.mjs",
+  "cwd": "/workspace/experiments/s277-bounty-intelligence/packs/bounty-intelligence",
+  "node": "v22.22.2",
+  "exitCode": 0,
+  "tests": 5,
+  "pass": 5,
+  "fail": 0,
+  "ok": true,
+  "assertions": {
+    "fullDocument": true,
+    "noNav": true,
+    "noSiteHeaderChrome": true,
+    "containsBountyIntelligence": true,
+    "selectedOrNoMatchCopy": true,
+    "rankedHeadersNetUncOrExpectedUseful": true,
+    "disclaimersMarketplaceAndMoltbookOrLabSchedule": true,
+    "embeddedReportJsonParses": true,
+    "selectedMatchIsBoolean": true,
+    "githubNeomorphicNoMatchCopy": true
+  }
+}

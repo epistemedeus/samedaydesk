@@ -1,0 +1,54 @@
+{
+  "dataLabel": "live-capture",
+  "capturedAt": "2026-09-11T15:30:00.000Z",
+  "limit": 5,
+  "bounded": true,
+  "crawl": false,
+  "captures": [
+    {
+      "adapter": "moltjobs",
+      "path": "receipts/live-capture/moltjobs.json",
+      "bytes": 28407,
+      "sha256": "04ea148ce66cbb90f677677f76aa50e84b8af7b6150769c858c9a980f415e69f",
+      "httpStatus": 200,
+      "error": null,
+      "recordCount": 5
+    },
+    {
+      "adapter": "frantic",
+      "path": "receipts/live-capture/frantic.json",
+      "bytes": 72933,
+      "sha256": "1a0d0bc589d49d32728674b8db6a1f4fb8bc26a889193404555352ac17ff5c63",
+      "httpStatus": 200,
+      "error": null,
+      "recordCount": 8
+    },
+    {
+      "adapter": "github-issues",
+      "path": "receipts/live-capture/github-issues.json",
+      "bytes": 38299,
+      "sha256": "77a2f91d08752ddaf8d52bf4136d11c1a89e49a76ed3ba47b222da2ce43d26ec",
+      "httpStatus": 200,
+      "error": null,
+      "recordCount": 5
+    },
+    {
+      "adapter": "neomorphic-schedule",
+      "path": "receipts/live-capture/neomorphic-schedule.json",
+      "bytes": 9961,
+      "sha256": "24602cad90bee9ae25ab401468485cb46365095c22ede0fa1adca0428a759d47",
+      "httpStatus": 200,
+      "error": null,
+      "recordCount": 2
+    },
+    {
+      "adapter": "moltbook",
+      "path": "receipts/live-capture/moltbook.json",
+      "bytes": 4384,
+      "sha256": "f54dd7d683acb60851884fd34cc0c99eea03d61ba114366fdf6a0db7d35e5f7b",
+      "httpStatus": null,
+      "error": "fetch failed",
+      "recordCount": 1
+    }
+  ]
+}

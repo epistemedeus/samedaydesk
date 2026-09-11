@@ -1,0 +1,26 @@
+{
+  "child": "C2",
+  "model": "grok-4.6",
+  "slice": "rank-policy",
+  "at": "2026-09-11T15:43:57.179Z",
+  "pass": true,
+  "fail": false,
+  "command": "cd /workspace/experiments/s277-bounty-intelligence/packs/bounty-intelligence && node --test tests/c2-rank-policy.test.mjs",
+  "duration": "68.285ms",
+  "duration_ms": 68.28546,
+  "tests": {
+    "total": 6,
+    "pass": 6,
+    "fail": 0
+  },
+  "defects": [
+    {
+      "id": "C2-D1",
+      "severity": "medium",
+      "where": ["src/rank.mjs", "src/money.mjs"],
+      "summary": "rank() sort cannot order negative expectedUsefulNetReturn. cmpDecimal/atomicDecimalString reject signed strings, so netCmp becomes 0 and sort falls through to uncertainty then taskId.",
+      "evidence": "With effortHours=2 hourlyCostAmount=25 on frantic-board.open.fixture.json at now 2026-09-11T15:00:00.000Z, nativeId 130 (-48.95) ranks above 129 (-45.52). At effortHours=0, 129 correctly ranks first. Assigned C2 tests still pass because they assert net values change, not negative-net order.",
+      "patched": false
+    }
+  ]
+}

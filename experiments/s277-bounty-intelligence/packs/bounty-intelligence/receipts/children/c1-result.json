@@ -1,0 +1,36 @@
+{
+  "child": "C1",
+  "model": "grok-4.6",
+  "slice": "vendor-shape-audit",
+  "at": "2026-09-11T15:41:24.000Z",
+  "ok": true,
+  "tests": 7,
+  "command": "node --test tests/c1-vendor-shape.test.mjs",
+  "pass": 7,
+  "fail": 0,
+  "exitCode": 0,
+  "cwd": "/workspace/experiments/s277-bounty-intelligence/packs/bounty-intelligence",
+  "now": "2026-09-11T15:00:00.000Z",
+  "file": "tests/c1-vendor-shape.test.mjs",
+  "vendorTree": "/workspace/experiments/s277-bounty-intelligence/vendor/external-job-intake/",
+  "checks": {
+    "moltjobs_forum_list": true,
+    "referral_campaign_not_claimable_with_prereqs": true,
+    "claimAuthority_none": true,
+    "frantic_board": true,
+    "listingMeta_notTasks": true,
+    "operators_enlisted_not_rank_input": true,
+    "rank_why_mentions_not_using_marketing_totals": true,
+    "github_price_funding_unknown": true,
+    "github_issue_comment": true,
+    "neomorphic_labSchedule_not_paid_jobs": true,
+    "moltbook_inaccessible_listingsInvented_false": true
+  },
+  "constraintsHonored": {
+    "noGitCommit": true,
+    "noMerge": true,
+    "noDeploy": true,
+    "noPay": true,
+    "exclusiveFilesOnly": true
+  }
+}

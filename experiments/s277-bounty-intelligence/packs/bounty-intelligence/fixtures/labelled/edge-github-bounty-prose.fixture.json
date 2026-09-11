@@ -1,0 +1,36 @@
+{
+  "fixtureKind": "synthetic-edge-github-prose",
+  "dataLabel": "synthetic-edge",
+  "capturedAt": "2026-09-11T15:00:00.000Z",
+  "source": "synthetic://github/prose",
+  "notes": "SYNTHETIC. Issue prose mentions $500. Must remain funding unknown; never invent price.",
+  "data": {
+    "repo": "example/repo",
+    "issues": [
+      {
+        "id": 1,
+        "number": 9,
+        "title": "Pay me $500 bounty",
+        "state": "open",
+        "html_url": "https://github.com/example/repo/issues/9",
+        "url": "https://api.github.com/repos/example/repo/issues/9",
+        "body": "Bounty: $500 USDC if you fix this. First come first served.",
+        "user": {
+          "login": "alice",
+          "id": 1
+        },
+        "labels": [
+          {
+            "name": "bounty"
+          }
+        ],
+        "created_at": "2026-09-11T12:00:00Z",
+        "updated_at": "2026-09-11T12:00:00Z",
+        "closed_at": null,
+        "comments": 3,
+        "pull_request": null,
+        "locked": false
+      }
+    ]
+  }
+}

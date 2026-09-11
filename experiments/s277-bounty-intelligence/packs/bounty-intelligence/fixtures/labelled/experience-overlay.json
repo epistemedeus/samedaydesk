@@ -1,0 +1,43 @@
+{
+  "dataLabel": "synthetic-edge",
+  "overlays": [
+    {
+      "taskId": null,
+      "adapter": "frantic",
+      "nativeId": "130",
+      "experience": {
+        "selfReported": {
+          "present": true,
+          "summary": "I completed similar Reddit answers last month."
+        },
+        "verifiedCompletion": {
+          "present": false,
+          "evidence": null
+        },
+        "verifiedPayout": {
+          "present": false,
+          "evidence": null
+        },
+        "contributorEffort": {
+          "declared": true,
+          "hours": "2"
+        },
+        "paidReview": {
+          "declared": false
+        }
+      }
+    }
+  ],
+  "log": [
+    {
+      "type": "claim",
+      "taskId": "PLACEHOLDER",
+      "at": "2026-09-11T15:05:00.000Z",
+      "dataLabel": "synthetic-edge",
+      "payload": {
+        "reservationId": null,
+        "note": "labelled synthetic; not a real claim"
+      }
+    }
+  ]
+}

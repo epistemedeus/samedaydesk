@@ -1,0 +1,42 @@
+{
+  "fixtureKind": "neomorphic_bounty_schedule",
+  "dataLabel": "fixture",
+  "capturedAt": "2026-09-01T00:00:00Z",
+  "source": "https://neomorphic.io/api/bounties.json",
+  "notes": "Lab schedule. Explicitly not a job offer or cash bounty. evidenceClass/consideration are not paid agent jobs.",
+  "data": {
+    "schema": "neomorphic.bounty-schedule.v1",
+    "publishedAt": "2026-09-01T00:00:00Z",
+    "boundary": "A listed item is not a job offer, purchase order, or promise of payment beyond its stated consideration.",
+    "bounties": [
+      {
+        "id": "N-BTY-001",
+        "title": "Expose one seller-route repair",
+        "state": "open",
+        "evidenceClass": "sponsored",
+        "scope": "Provide one public GET method-path pair whose buyability contract may be reviewed without credentials, payment, or a state-changing request.",
+        "acceptance": [
+          "Operator confirms authority to submit the route",
+          "Public challenge or discovery surface is inspectable without credentials",
+          "A public-safe issue and resolution summary may be approved separately"
+        ],
+        "consideration": "First three eligible reviews are sponsored by the lab. No cash bounty and no purchase are implied.",
+        "experimentSlug": "seller-repair-board"
+      },
+      {
+        "id": "N-BTY-002",
+        "title": "Provide a contract-complete synthetic listing",
+        "state": "staged",
+        "evidenceClass": "internal",
+        "scope": "Draft a non-live listing with exact authority, route, price, recipient, output contract, expiry, and revocation fields.",
+        "acceptance": [
+          "No live purchase route",
+          "No customer or credential data",
+          "Every required field has an explicit source"
+        ],
+        "consideration": "Design contribution only until the market experiment leaves staged state.",
+        "experimentSlug": "contract-qualified-market"
+      }
+    ]
+  }
+}

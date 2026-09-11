@@ -1,0 +1,68 @@
+{
+  "child": "C4",
+  "model": "grok-4.6",
+  "slice": "bounded-live-probes",
+  "startedAt": "2026-09-11T15:38:50Z",
+  "finishedAt": "2026-09-11T15:40:21Z",
+  "method": "GET",
+  "timeoutMs": 20000,
+  "userAgent": "s277-bounty-intelligence/0.1 child-c4 keyless bounded",
+  "test": {
+    "file": "tests/c4-live-probe-shape.test.mjs",
+    "passed": true,
+    "fail": 0,
+    "tests": 3,
+    "duration_ms": 43.23879,
+    "exitCode": 0
+  },
+  "urls": [
+    {
+      "id": "moltjobs",
+      "url": "https://api.moltjobs.io/v1/jobs?limit=5&status=OPEN",
+      "succeeded": true,
+      "ok": true,
+      "httpStatus": 200,
+      "elapsed_ms": 758,
+      "bytes": 14762
+    },
+    {
+      "id": "frantic",
+      "url": "https://gofrantic.com/v1/board",
+      "succeeded": true,
+      "ok": true,
+      "httpStatus": 200,
+      "elapsed_ms": 329,
+      "bytes": 161969
+    },
+    {
+      "id": "github",
+      "url": "https://api.github.com/repos/epistemedeus/samedaydesk/issues?state=open&per_page=5",
+      "succeeded": true,
+      "ok": true,
+      "httpStatus": 200,
+      "elapsed_ms": 414,
+      "bytes": 23756
+    },
+    {
+      "id": "neomorphic",
+      "url": "https://neomorphic.io/api/bounties.json",
+      "succeeded": true,
+      "ok": true,
+      "httpStatus": 200,
+      "elapsed_ms": 242,
+      "bytes": 1573,
+      "schemaPreview": "neomorphic.bounty-schedule.v1",
+      "note": "lab schedule schema, not a job board"
+    },
+    {
+      "id": "moltbook",
+      "url": "https://api.moltbook.com/v1/jobs?limit=5",
+      "succeeded": false,
+      "ok": false,
+      "httpStatus": null,
+      "elapsed_ms": 39,
+      "bytes": 0,
+      "error": "fetch failed"
+    }
+  ]
+}

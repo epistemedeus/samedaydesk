@@ -1,0 +1,660 @@
+{
+  "dataLabel": "live-capture",
+  "capturedAt": "2026-09-11T15:30:00.000Z",
+  "adapter": "github-issues",
+  "liveUrl": "https://api.github.com/repos/epistemedeus/samedaydesk/issues",
+  "fetchMeta": {
+    "mode": "live_public",
+    "httpStatus": 200,
+    "fetchedAt": "2026-09-11T15:30:00.000Z",
+    "bodySha256": "d6a17afc2913e8ac5352d21af9e454078746b91daa321f6e4106e35187a30465",
+    "partial": false,
+    "url": "https://api.github.com/repos/epistemedeus/samedaydesk/issues?state=open&per_page=5"
+  },
+  "listingMeta": {
+    "schema": "s277.bounty-intelligence.listing-meta.v1",
+    "kind": "github_issue_list",
+    "repo": "epistemedeus/samedaydesk",
+    "claimAuthority": "none",
+    "fundingAuthority": "none"
+  },
+  "error": null,
+  "recordCount": 5,
+  "records": [
+    {
+      "schema": "s277.bounty-intelligence.record.v1",
+      "dataLabel": "live-capture",
+      "fixtureKind": null,
+      "taskId": "bty_cf824054c361a75f61139bee85e855ed",
+      "termsVersion": "b9bec1b67c695a0ba41dd20f3c023b67",
+      "observedAt": "2026-09-11T15:30:00.000Z",
+      "title": "Add unpaid buyer-runtime fixture quickstart",
+      "description": "## Summary\n\nA clone of this tree had no repository README and no integrator guide next to `tools/buyer-runtimes`. A stranger could not tell how to obtain the unpaid `GET /extract` replay, that default `npm init` is CommonJS, or that `npm pack` at the repository root packs the private app.\n\nThis draft adds:\n\n- `README.md` — points at the unpaid fixture path and warns not to pack the repository root.\n- `tools/buyer-runtimes/README.md` — clone, ESM (`.mjs` / `node --input-type=module`), fixture-only loader snippet, optional packed module when `packages/buyer-evidence` exists.\n\nNo runtime code, no payment terms copied into source, no wallet path.\n\n## How to try it\n\nFrom the repository root:\n\n```sh\nnode --input-type=module -e '\nimport { loadCatalog, loadRuntime } from \"./tools/buyer-runtimes/lib.mjs\";\nconst catalog = loadCatalog();\nconst agent402 = loadRuntime(\"agent402\");\nconst coinbase = loadRuntime(\"coinbase-x402\");\nconsole.log(catalog.route.path, Object.keys(agent402.states), Object.keys(coinbase.states));\n'\n```\n\nFixture-only checks:\n\n```sh\nSKIP_LIVE_BUYER_REPLAY=1 npm run test:buyer-runtimes\n```\n\n## Base\n\nStacked on `integration-2026-09-03`. Documentation only.",
+      "source": {
+        "adapter": "github-issues",
+        "kind": "github_pull_request",
+        "url": "https://github.com/epistemedeus/samedaydesk/pull/32",
+        "nativeId": "epistemedeus/samedaydesk#32",
+        "vendorAdapter": "github_issue_comment",
+        "inaccessible": false,
+        "inaccessibleReason": null,
+        "labSchedule": false,
+        "authBoundary": "Public GitHub API without credentials; private repos unsupported. Issue/PR prose is not a trusted price or funding field.",
+        "captureMode": "live_public",
+        "httpStatus": 200,
+        "bodySha256": "d6a17afc2913e8ac5352d21af9e454078746b91daa321f6e4106e35187a30465",
+        "classificationKind": "unfunded_work_request"
+      },
+      "status": {
+        "lifecycle": "open",
+        "raw": "open",
+        "cancelled": false,
+        "closed": false,
+        "availablePaidJob": false,
+        "exclusionReasons": []
+      },
+      "freshness": {
+        "sourceCreatedAt": "2026-09-03T18:04:23Z",
+        "sourceUpdatedAt": "2026-09-03T18:04:23Z",
+        "observedAt": "2026-09-11T15:30:00.000Z",
+        "stale": false,
+        "staleAfterSeconds": null,
+        "unknown": false,
+        "ageSeconds": 0
+      },
+      "reward": {
+        "amount": null,
+        "asset": null,
+        "network": null,
+        "unknown": true,
+        "provenance": "unknown"
+      },
+      "funding": {
+        "status": "unknown",
+        "evidenceKind": "not_applicable",
+        "present": false,
+        "verified": false,
+        "escrowTxHash": null,
+        "disclaimer": "GitHub issue/comment/PR has no trusted public price field. Bounty prose in the body is not funding. Never invented."
+      },
+      "claimability": {
+        "state": "not_claimable",
+        "prerequisites": [
+          "Not a paid agent job on this source",
+          "No public funding field"
+        ],
+        "identityRequired": "unknown",
+        "firstDollar": "unknown",
+        "walletlessEligibility": "unknown",
+        "slotsAvailable": null,
+        "claimAuthority": "none",
+        "sourceClaimAvailable": null
+      },
+      "deadline": {
+        "at": null,
+        "expired": false,
+        "unknown": true
+      },
+      "revision": {
+        "termsVersion": "b9bec1b67c695a0ba41dd20f3c023b67",
+        "termsFingerprint": "b9bec1b67c695a0ba41dd20f3c023b67"
+      },
+      "verificationPaymentTerms": {
+        "verbatim": "## Summary\n\nA clone of this tree had no repository README and no integrator guide next to `tools/buyer-runtimes`. A stranger could not tell how to obtain the unpaid `GET /extract` replay, that default `npm init` is CommonJS, or that `npm pack` at the repository root packs the private app.\n\nThis draft adds:\n\n- `README.md` — points at the unpaid fixture path and warns not to pack the repository root.\n- `tools/buyer-runtimes/README.md` — clone, ESM (`.mjs` / `node --input-type=module`), fixture-only loader snippet, optional packed module when `packages/buyer-evidence` exists.\n\nNo runtime code, no payment terms copied into source, no wallet path.\n\n## How to try it\n\nFrom the repository root:\n\n```sh\nnode --input-type=module -e '\nimport { loadCatalog, loadRuntime } from \"./tools/buyer-runtimes/lib.mjs\";\nconst catalog = loadCatalog();\nconst agent402 = loadRuntime(\"agent402\");\nconst coinbase = loadRuntime(\"coinbase-x402\");\nconsole.log(catalog.route.path, Object.keys(agent402.states), Object.keys(coinbase.states));\n'\n```\n\nFixture-only checks:\n\n```sh\nSKIP_LIVE_BUYER_REPLAY=1 npm run test:buyer-runtimes\n```\n\n## Base\n\nStacked on `integration-2026-09-03`. Documentation only.",
+        "unknown": false
+      },
+      "experience": {
+        "selfReported": {
+          "present": false,
+          "summary": null
+        },
+        "verifiedCompletion": {
+          "present": false,
+          "evidence": null
+        },
+        "verifiedPayout": {
+          "present": false,
+          "evidence": null
+        },
+        "contributorEffort": {
+          "declared": false,
+          "hours": null,
+          "unknown": true
+        },
+        "paidReview": {
+          "declared": false,
+          "amount": null,
+          "unknown": true
+        }
+      },
+      "interopHints": {
+        "contributorPublicId": "github:epistemedeus",
+        "payoutDestination": null
+      },
+      "unknowns": [
+        "reward.amount",
+        "reward.asset",
+        "reward.network",
+        "deadline.at",
+        "claimability.firstDollar",
+        "claimability.walletlessEligibility",
+        "funding.status",
+        "claimability.identityRequired"
+      ],
+      "raw": {
+        "number": 32,
+        "state": "open",
+        "pull_request": true,
+        "comments": 0
+      }
+    },
+    {
+      "schema": "s277.bounty-intelligence.record.v1",
+      "dataLabel": "live-capture",
+      "fixtureKind": null,
+      "taskId": "bty_d17da315c106d65c1d863a00702548df",
+      "termsVersion": "75abeceb2efaaff1b6fa30c58ee79051",
+      "observedAt": "2026-09-11T15:30:00.000Z",
+      "title": "Add draft buyer-runtime integration guide",
+      "description": "This pull request is a **draft**. The new page is draft copy; publication is not implied by merging or by the route existing in the repository.\n\nThe page is `/x402/buyer-runtime`. It tells a runtime author how to discover SameDayDesk paid routes, verify the `/extract` response contract, load the unpaid replay fixtures, and attach at seams that already exist.\n\n## Runtimes covered\n\n- Agent402 (verified seller index, unpaid `fetch` in `payX402`, `pickPayableAccept` / `parse402Usd`)\n- Coinbase x402 client (`@x402/fetch` `wrapFetchWithPayment` and `@x402/core` `x402Client`)\n- x402 Bazaar inspected-route filter (`filterDiscoveryResources` in `@x402/extensions`, consuming `listResources`)\n\n## What the page contains\n\n- Live discovery entry points that exist today: origin `/.well-known/x402`, origin OpenAPI, the Agent402 seller index, and the AgentCash OpenAPI discovery CLI. Each live claim has a command on the page.\n- Response-contract fields a runtime can verify on unpaid `GET /extract` (HTTP 402, `PAYMENT-REQUIRED` present, OpenAPI required `ok` / `url` / `title`).\n- Fixture tree and loader from pull request 23 (`fixtures/buyer-runtimes/`, `tools/buyer-runtimes/lib.mjs`).\n- Payment terms are not copied. The page links to `https://agents.samedaydesk.com/.well-known/x402`.\n\n## Checks run on this branch\n\n- `npm run build`\n- `npm run test:spa-route-shells`\n- `npm run test:spa-fallback`\n- Link check of absolute URLs cited on the page (unpaid `/extract` returns 402; the new canonical URL is not live until this ships)",
+      "source": {
+        "adapter": "github-issues",
+        "kind": "github_pull_request",
+        "url": "https://github.com/epistemedeus/samedaydesk/pull/30",
+        "nativeId": "epistemedeus/samedaydesk#30",
+        "vendorAdapter": "github_issue_comment",
+        "inaccessible": false,
+        "inaccessibleReason": null,
+        "labSchedule": false,
+        "authBoundary": "Public GitHub API without credentials; private repos unsupported. Issue/PR prose is not a trusted price or funding field.",
+        "captureMode": "live_public",
+        "httpStatus": 200,
+        "bodySha256": "d6a17afc2913e8ac5352d21af9e454078746b91daa321f6e4106e35187a30465",
+        "classificationKind": "unfunded_work_request"
+      },
+      "status": {
+        "lifecycle": "open",
+        "raw": "open",
+        "cancelled": false,
+        "closed": false,
+        "availablePaidJob": false,
+        "exclusionReasons": []
+      },
+      "freshness": {
+        "sourceCreatedAt": "2026-09-03T17:22:08Z",
+        "sourceUpdatedAt": "2026-09-03T18:22:32Z",
+        "observedAt": "2026-09-11T15:30:00.000Z",
+        "stale": false,
+        "staleAfterSeconds": null,
+        "unknown": false,
+        "ageSeconds": 0
+      },
+      "reward": {
+        "amount": null,
+        "asset": null,
+        "network": null,
+        "unknown": true,
+        "provenance": "unknown"
+      },
+      "funding": {
+        "status": "unknown",
+        "evidenceKind": "not_applicable",
+        "present": false,
+        "verified": false,
+        "escrowTxHash": null,
+        "disclaimer": "GitHub issue/comment/PR has no trusted public price field. Bounty prose in the body is not funding. Never invented."
+      },
+      "claimability": {
+        "state": "not_claimable",
+        "prerequisites": [
+          "Not a paid agent job on this source",
+          "No public funding field"
+        ],
+        "identityRequired": "unknown",
+        "firstDollar": "unknown",
+        "walletlessEligibility": "unknown",
+        "slotsAvailable": null,
+        "claimAuthority": "none",
+        "sourceClaimAvailable": null
+      },
+      "deadline": {
+        "at": null,
+        "expired": false,
+        "unknown": true
+      },
+      "revision": {
+        "termsVersion": "75abeceb2efaaff1b6fa30c58ee79051",
+        "termsFingerprint": "75abeceb2efaaff1b6fa30c58ee79051"
+      },
+      "verificationPaymentTerms": {
+        "verbatim": "This pull request is a **draft**. The new page is draft copy; publication is not implied by merging or by the route existing in the repository.\n\nThe page is `/x402/buyer-runtime`. It tells a runtime author how to discover SameDayDesk paid routes, verify the `/extract` response contract, load the unpaid replay fixtures, and attach at seams that already exist.\n\n## Runtimes covered\n\n- Agent402 (verified seller index, unpaid `fetch` in `payX402`, `pickPayableAccept` / `parse402Usd`)\n- Coinbase x402 client (`@x402/fetch` `wrapFetchWithPayment` and `@x402/core` `x402Client`)\n- x402 Bazaar inspected-route filter (`filterDiscoveryResources` in `@x402/extensions`, consuming `listResources`)\n\n## What the page contains\n\n- Live discovery entry points that exist today: origin `/.well-known/x402`, origin OpenAPI, the Agent402 seller index, and the AgentCash OpenAPI discovery CLI. Each live claim has a command on the page.\n- Response-contract fields a runtime can verify on unpaid `GET /extract` (HTTP 402, `PAYMENT-REQUIRED` present, OpenAPI required `ok` / `url` / `title`).\n- Fixture tree and loader from pull request 23 (`fixtures/buyer-runtimes/`, `tools/buyer-runtimes/lib.mjs`).\n- Payment terms are not copied. The page links to `https://agents.samedaydesk.com/.well-known/x402`.\n\n## Checks run on this branch\n\n- `npm run build`\n- `npm run test:spa-route-shells`\n- `npm run test:spa-fallback`\n- Link check of absolute URLs cited on the page (unpaid `/extract` returns 402; the new canonical URL is not live until this ships)",
+        "unknown": false
+      },
+      "experience": {
+        "selfReported": {
+          "present": false,
+          "summary": null
+        },
+        "verifiedCompletion": {
+          "present": false,
+          "evidence": null
+        },
+        "verifiedPayout": {
+          "present": false,
+          "evidence": null
+        },
+        "contributorEffort": {
+          "declared": false,
+          "hours": null,
+          "unknown": true
+        },
+        "paidReview": {
+          "declared": false,
+          "amount": null,
+          "unknown": true
+        }
+      },
+      "interopHints": {
+        "contributorPublicId": "github:epistemedeus",
+        "payoutDestination": null
+      },
+      "unknowns": [
+        "reward.amount",
+        "reward.asset",
+        "reward.network",
+        "deadline.at",
+        "claimability.firstDollar",
+        "claimability.walletlessEligibility",
+        "funding.status",
+        "claimability.identityRequired"
+      ],
+      "raw": {
+        "number": 30,
+        "state": "open",
+        "pull_request": true,
+        "comments": 0
+      }
+    },
+    {
+      "schema": "s277.bounty-intelligence.record.v1",
+      "dataLabel": "live-capture",
+      "fixtureKind": null,
+      "taskId": "bty_24ac924931e9514cb4c0251f1e50f389",
+      "termsVersion": "6a649fd5b14e6813e081b7cb74302836",
+      "observedAt": "2026-09-11T15:30:00.000Z",
+      "title": "Package unpaid extract contract evidence as an ESM dependency",
+      "description": "Stacks on #23.\n\nMoves the unpaid `GET /extract` catalog, replay fixtures, and contract helpers into `packages/buyer-evidence` (`@samedaydesk/buyer-evidence` 0.1.0). A runtime can depend on that package instead of copying the pin.\n\nThe package is zero-dependency ESM. It exports the fixture loader, the existing contract helpers, and `verify(resource, evidence)` → `{ ok, reasons[] }`. Named mismatch reasons: `foreign_payTo`, `changed_price`, `stale_timestamp`, `missing_accepts`. `tools/buyer-runtimes` now imports that implementation.\n\nThis repository has no SPDX license file; the package `license` field is `UNLICENSED` to match. `npm pack --dry-run` lists the packed files. Nothing is published to the npm registry.\n\n`npm test` at the repository root runs the package tests with the existing suites (except `test:pulse`, which still needs PostgreSQL 17 `initdb`).\n\nNo prices, payTo addresses, networks, facilitator URLs, or Stripe objects are changed. No `npm publish`.",
+      "source": {
+        "adapter": "github-issues",
+        "kind": "github_pull_request",
+        "url": "https://github.com/epistemedeus/samedaydesk/pull/29",
+        "nativeId": "epistemedeus/samedaydesk#29",
+        "vendorAdapter": "github_issue_comment",
+        "inaccessible": false,
+        "inaccessibleReason": null,
+        "labSchedule": false,
+        "authBoundary": "Public GitHub API without credentials; private repos unsupported. Issue/PR prose is not a trusted price or funding field.",
+        "captureMode": "live_public",
+        "httpStatus": 200,
+        "bodySha256": "d6a17afc2913e8ac5352d21af9e454078746b91daa321f6e4106e35187a30465",
+        "classificationKind": "unfunded_work_request"
+      },
+      "status": {
+        "lifecycle": "open",
+        "raw": "open",
+        "cancelled": false,
+        "closed": false,
+        "availablePaidJob": false,
+        "exclusionReasons": []
+      },
+      "freshness": {
+        "sourceCreatedAt": "2026-09-03T17:19:32Z",
+        "sourceUpdatedAt": "2026-09-03T18:25:02Z",
+        "observedAt": "2026-09-11T15:30:00.000Z",
+        "stale": false,
+        "staleAfterSeconds": null,
+        "unknown": false,
+        "ageSeconds": 0
+      },
+      "reward": {
+        "amount": null,
+        "asset": null,
+        "network": null,
+        "unknown": true,
+        "provenance": "unknown"
+      },
+      "funding": {
+        "status": "unknown",
+        "evidenceKind": "not_applicable",
+        "present": false,
+        "verified": false,
+        "escrowTxHash": null,
+        "disclaimer": "GitHub issue/comment/PR has no trusted public price field. Bounty prose in the body is not funding. Never invented."
+      },
+      "claimability": {
+        "state": "not_claimable",
+        "prerequisites": [
+          "Not a paid agent job on this source",
+          "No public funding field"
+        ],
+        "identityRequired": "unknown",
+        "firstDollar": "unknown",
+        "walletlessEligibility": "unknown",
+        "slotsAvailable": null,
+        "claimAuthority": "none",
+        "sourceClaimAvailable": null
+      },
+      "deadline": {
+        "at": null,
+        "expired": false,
+        "unknown": true
+      },
+      "revision": {
+        "termsVersion": "6a649fd5b14e6813e081b7cb74302836",
+        "termsFingerprint": "6a649fd5b14e6813e081b7cb74302836"
+      },
+      "verificationPaymentTerms": {
+        "verbatim": "Stacks on #23.\n\nMoves the unpaid `GET /extract` catalog, replay fixtures, and contract helpers into `packages/buyer-evidence` (`@samedaydesk/buyer-evidence` 0.1.0). A runtime can depend on that package instead of copying the pin.\n\nThe package is zero-dependency ESM. It exports the fixture loader, the existing contract helpers, and `verify(resource, evidence)` → `{ ok, reasons[] }`. Named mismatch reasons: `foreign_payTo`, `changed_price`, `stale_timestamp`, `missing_accepts`. `tools/buyer-runtimes` now imports that implementation.\n\nThis repository has no SPDX license file; the package `license` field is `UNLICENSED` to match. `npm pack --dry-run` lists the packed files. Nothing is published to the npm registry.\n\n`npm test` at the repository root runs the package tests with the existing suites (except `test:pulse`, which still needs PostgreSQL 17 `initdb`).\n\nNo prices, payTo addresses, networks, facilitator URLs, or Stripe objects are changed. No `npm publish`.",
+        "unknown": false
+      },
+      "experience": {
+        "selfReported": {
+          "present": false,
+          "summary": null
+        },
+        "verifiedCompletion": {
+          "present": false,
+          "evidence": null
+        },
+        "verifiedPayout": {
+          "present": false,
+          "evidence": null
+        },
+        "contributorEffort": {
+          "declared": false,
+          "hours": null,
+          "unknown": true
+        },
+        "paidReview": {
+          "declared": false,
+          "amount": null,
+          "unknown": true
+        }
+      },
+      "interopHints": {
+        "contributorPublicId": "github:epistemedeus",
+        "payoutDestination": null
+      },
+      "unknowns": [
+        "reward.amount",
+        "reward.asset",
+        "reward.network",
+        "deadline.at",
+        "claimability.firstDollar",
+        "claimability.walletlessEligibility",
+        "funding.status",
+        "claimability.identityRequired"
+      ],
+      "raw": {
+        "number": 29,
+        "state": "open",
+        "pull_request": true,
+        "comments": 0
+      }
+    },
+    {
+      "schema": "s277.bounty-intelligence.record.v1",
+      "dataLabel": "live-capture",
+      "fixtureKind": null,
+      "taskId": "bty_4a4374d84dd7e708903b34182886eb97",
+      "termsVersion": "c91e9c79ad9a66935405b42e2d1d7496",
+      "observedAt": "2026-09-11T15:30:00.000Z",
+      "title": "Reconcile banked settlement observations from typed evidence records",
+      "description": "## Summary\n\nStacks on #25.\n\nAdds settlement observation fixtures under the evidence-record fixtures directory, plus `tools/evidence/reconcile.mjs`. The tool reads only those records and emits a per-class table (count, amount, operations, delivery status), including a row for anything the records cannot classify. It compares the computed total to the cited banked amount and reports the exact difference instead of adjusting records.\n\nThree source kinds were added because #25 could not name their producers without collapsing them into the x402 facilitator provider:\n\n- `external_work_payout` for a work-platform payout\n- `buyer_attested_receipt` for a buyer-receipt publisher\n- `seller_ledger_line` for a ledger line with no bound settlement\n\nAn optional `settlement` object carries operation id, amount, class, and delivery status.\n\n## Tests\n\n- `npm run test:evidence-records`\n- `npm run test:evidence-reconcile`\n\nThe generated table is pinned to `tools/evidence/golden/banked-settlement-table.json`. Dropping `completeness` from a record moves it to the unclassifiable row. A record that commits a prohibited inference is rejected.",
+      "source": {
+        "adapter": "github-issues",
+        "kind": "github_pull_request",
+        "url": "https://github.com/epistemedeus/samedaydesk/pull/27",
+        "nativeId": "epistemedeus/samedaydesk#27",
+        "vendorAdapter": "github_issue_comment",
+        "inaccessible": false,
+        "inaccessibleReason": null,
+        "labSchedule": false,
+        "authBoundary": "Public GitHub API without credentials; private repos unsupported. Issue/PR prose is not a trusted price or funding field.",
+        "captureMode": "live_public",
+        "httpStatus": 200,
+        "bodySha256": "d6a17afc2913e8ac5352d21af9e454078746b91daa321f6e4106e35187a30465",
+        "classificationKind": "unfunded_work_request"
+      },
+      "status": {
+        "lifecycle": "open",
+        "raw": "open",
+        "cancelled": false,
+        "closed": false,
+        "availablePaidJob": false,
+        "exclusionReasons": []
+      },
+      "freshness": {
+        "sourceCreatedAt": "2026-09-03T17:13:15Z",
+        "sourceUpdatedAt": "2026-09-03T17:13:15Z",
+        "observedAt": "2026-09-11T15:30:00.000Z",
+        "stale": false,
+        "staleAfterSeconds": null,
+        "unknown": false,
+        "ageSeconds": 0
+      },
+      "reward": {
+        "amount": null,
+        "asset": null,
+        "network": null,
+        "unknown": true,
+        "provenance": "unknown"
+      },
+      "funding": {
+        "status": "unknown",
+        "evidenceKind": "not_applicable",
+        "present": false,
+        "verified": false,
+        "escrowTxHash": null,
+        "disclaimer": "GitHub issue/comment/PR has no trusted public price field. Bounty prose in the body is not funding. Never invented."
+      },
+      "claimability": {
+        "state": "not_claimable",
+        "prerequisites": [
+          "Not a paid agent job on this source",
+          "No public funding field"
+        ],
+        "identityRequired": "unknown",
+        "firstDollar": "unknown",
+        "walletlessEligibility": "unknown",
+        "slotsAvailable": null,
+        "claimAuthority": "none",
+        "sourceClaimAvailable": null
+      },
+      "deadline": {
+        "at": null,
+        "expired": false,
+        "unknown": true
+      },
+      "revision": {
+        "termsVersion": "c91e9c79ad9a66935405b42e2d1d7496",
+        "termsFingerprint": "c91e9c79ad9a66935405b42e2d1d7496"
+      },
+      "verificationPaymentTerms": {
+        "verbatim": "## Summary\n\nStacks on #25.\n\nAdds settlement observation fixtures under the evidence-record fixtures directory, plus `tools/evidence/reconcile.mjs`. The tool reads only those records and emits a per-class table (count, amount, operations, delivery status), including a row for anything the records cannot classify. It compares the computed total to the cited banked amount and reports the exact difference instead of adjusting records.\n\nThree source kinds were added because #25 could not name their producers without collapsing them into the x402 facilitator provider:\n\n- `external_work_payout` for a work-platform payout\n- `buyer_attested_receipt` for a buyer-receipt publisher\n- `seller_ledger_line` for a ledger line with no bound settlement\n\nAn optional `settlement` object carries operation id, amount, class, and delivery status.\n\n## Tests\n\n- `npm run test:evidence-records`\n- `npm run test:evidence-reconcile`\n\nThe generated table is pinned to `tools/evidence/golden/banked-settlement-table.json`. Dropping `completeness` from a record moves it to the unclassifiable row. A record that commits a prohibited inference is rejected.",
+        "unknown": false
+      },
+      "experience": {
+        "selfReported": {
+          "present": false,
+          "summary": null
+        },
+        "verifiedCompletion": {
+          "present": false,
+          "evidence": null
+        },
+        "verifiedPayout": {
+          "present": false,
+          "evidence": null
+        },
+        "contributorEffort": {
+          "declared": false,
+          "hours": null,
+          "unknown": true
+        },
+        "paidReview": {
+          "declared": false,
+          "amount": null,
+          "unknown": true
+        }
+      },
+      "interopHints": {
+        "contributorPublicId": "github:epistemedeus",
+        "payoutDestination": null
+      },
+      "unknowns": [
+        "reward.amount",
+        "reward.asset",
+        "reward.network",
+        "deadline.at",
+        "claimability.firstDollar",
+        "claimability.walletlessEligibility",
+        "funding.status",
+        "claimability.identityRequired"
+      ],
+      "raw": {
+        "number": 27,
+        "state": "open",
+        "pull_request": true,
+        "comments": 0
+      }
+    },
+    {
+      "schema": "s277.bounty-intelligence.record.v1",
+      "dataLabel": "live-capture",
+      "fixtureKind": null,
+      "taskId": "bty_d6702b4e7420227e84a878d2084d6e1b",
+      "termsVersion": "85821897705f49ba05cfc6134f6b6ed2",
+      "observedAt": "2026-09-11T15:30:00.000Z",
+      "title": "LQTRACK1: compact Bazaar evidence and PR18 close replay",
+      "description": "<!-- CURSOR_AGENT_PR_BODY_BEGIN -->\nLQTRACK1 (batch LQ01). Replaces GB06 PR19's committed ~780 KiB CDP discovery snapshot with a compact, source-separated per-route observation record plus a human-readable changelog. Keeps the one-shot, cron-free Bazaar readback. Does **not** merge or extend GB07 PR18.\n\n## Why this branch starts from PR19\n\nThe bazaar-tracker feature exists only on GB06 PR19 (`gb06-bazaar-rematerialization-tracker` @ `3426bec`). Default `main` (`3fbb743`) does not contain it. This PR is based on that head so the compact evidence can replace the snapshot rather than re-implement the tracker from scratch.\n\n## What changed\n\n- Full snapshots stay under `data/bazaar-tracker/snapshots/` and are **gitignored**.\n- Git tracks `data/bazaar-tracker/observations.json` (cdp-discovery → seller → route, payment terms + extension digest) and `data/bazaar-tracker/CHANGELOG.md`.\n- `--readback` prints the committed compact record with no network and no daemon.\n- `--from` still detects a synthetic field change against the compact record when no snapshot is present (`accepts.0.amount` 3000 → 12345 and description).\n\n## PR18 disposition: **CLOSE**\n\nDo not merge https://github.com/epistemedeus/samedaydesk/pull/18.\n\n- Live `GET https://samedaydesk.com/listings` and `/listings/bazaar/mcp` are HTTP 404 (SPA 404 HTML, not the advertised JSON catalog).\n- `GET https://agents.samedaydesk.com/listings` is Express `Cannot GET /listings`.\n- Canonical `/mcp` and `/scan` are live 200, but they are not per-surface aliases and cannot carry a registry `surface` without a new product path.\n- PR18's settlement-receipt store is an in-process `Map` imported only by its test file. No MCP/scan/tools/checkout/fulfill route records surface.\n- Existing Stripe email and pulse flush receipts have no registry surface field.\n\nReplay (executable):\n\n```\nnode tools/lqtrack1/replay-pr18-disposition.mjs --live\n# or offline:\nnode tools/lqtrack1/replay-pr18-disposition.mjs --fixture tools/lqtrack1/fixtures/pr18-live-probe.json\n```\n\nEvidence: `data/lqtrack1/PR18-DISPOSITION.md` and `data/lqtrack1/pr18-disposition.json`.\n\n## Verify (this revision)\n\n| Command | Exit |\n|---|---|\n| `npm run test:bazaar-tracker` | 0 (14/14) |\n| `npm run bazaar-tracker -- --readback` | 0 |\n| `node tools/lqtrack1/replay-pr18-disposition.mjs --live` | 0, recommendation=close |\n| `git ls-files data/bazaar-tracker` | observations.json, CHANGELOG.md, changelog.jsonl only |\n| `npm run test:indexnow` | 0 |\n| `npm run test:portfolio-discovery` | 0 |\n| `npm run test:spa-fallback` | 0 |\n| `npm run test:spa-route-shells` | 0 |\n| `npm run test:taskmarket` | 0 |\n| `npm run test:mcp` | 0 |\n| `npm run test:schema-validator-search` | 0 |\n\n`test:pulse` / `test:seller-repair-checkout` / `test:seller-repair-briefs` still need `node --experimental-strip-types` or a local Postgres 17 binary on this image; unchanged from GB06.\n\nDo not merge this PR as part of LQTRACK1; it is draft-only.\n<!-- CURSOR_AGENT_PR_BODY_END -->\n\n<div><a href=\"https://cursor.com/agents/bc-ffc5ede3-589b-4b16-9f79-7cd0220c9b29?cursor_ref=pr_footer&cursor_cta=open_in_web\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/assets/images/open-in-web-dark.png\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/assets/images/open-in-web-light.png\"><img alt=\"Open in Web\" width=\"114\" height=\"28\" src=\"https://cursor.com/assets/images/open-in-web-dark.png\"></picture></a>&nbsp;<a href=\"https://cursor.com/background-agent?bcId=bc-ffc5ede3-589b-4b16-9f79-7cd0220c9b29&cursor_ref=pr_footer&cursor_cta=open_in_cursor\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/assets/images/open-in-cursor-dark.png\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/assets/images/open-in-cursor-light.png\"><img alt=\"Open in Cursor\" width=\"131\" height=\"28\" src=\"https://cursor.com/assets/images/open-in-cursor-dark.png\"></picture></a>&nbsp;</div>\n\n",
+      "source": {
+        "adapter": "github-issues",
+        "kind": "github_pull_request",
+        "url": "https://github.com/epistemedeus/samedaydesk/pull/21",
+        "nativeId": "epistemedeus/samedaydesk#21",
+        "vendorAdapter": "github_issue_comment",
+        "inaccessible": false,
+        "inaccessibleReason": null,
+        "labSchedule": false,
+        "authBoundary": "Public GitHub API without credentials; private repos unsupported. Issue/PR prose is not a trusted price or funding field.",
+        "captureMode": "live_public",
+        "httpStatus": 200,
+        "bodySha256": "d6a17afc2913e8ac5352d21af9e454078746b91daa321f6e4106e35187a30465",
+        "classificationKind": "unfunded_work_request"
+      },
+      "status": {
+        "lifecycle": "open",
+        "raw": "open",
+        "cancelled": false,
+        "closed": false,
+        "availablePaidJob": false,
+        "exclusionReasons": []
+      },
+      "freshness": {
+        "sourceCreatedAt": "2026-09-03T10:52:10Z",
+        "sourceUpdatedAt": "2026-09-03T10:53:24Z",
+        "observedAt": "2026-09-11T15:30:00.000Z",
+        "stale": false,
+        "staleAfterSeconds": null,
+        "unknown": false,
+        "ageSeconds": 0
+      },
+      "reward": {
+        "amount": null,
+        "asset": null,
+        "network": null,
+        "unknown": true,
+        "provenance": "unknown"
+      },
+      "funding": {
+        "status": "unknown",
+        "evidenceKind": "not_applicable",
+        "present": false,
+        "verified": false,
+        "escrowTxHash": null,
+        "disclaimer": "GitHub issue/comment/PR has no trusted public price field. Bounty prose in the body is not funding. Never invented."
+      },
+      "claimability": {
+        "state": "not_claimable",
+        "prerequisites": [
+          "Not a paid agent job on this source",
+          "No public funding field"
+        ],
+        "identityRequired": "unknown",
+        "firstDollar": "unknown",
+        "walletlessEligibility": "unknown",
+        "slotsAvailable": null,
+        "claimAuthority": "none",
+        "sourceClaimAvailable": null
+      },
+      "deadline": {
+        "at": null,
+        "expired": false,
+        "unknown": true
+      },
+      "revision": {
+        "termsVersion": "85821897705f49ba05cfc6134f6b6ed2",
+        "termsFingerprint": "85821897705f49ba05cfc6134f6b6ed2"
+      },
+      "verificationPaymentTerms": {
+        "verbatim": "<!-- CURSOR_AGENT_PR_BODY_BEGIN -->\nLQTRACK1 (batch LQ01). Replaces GB06 PR19's committed ~780 KiB CDP discovery snapshot with a compact, source-separated per-route observation record plus a human-readable changelog. Keeps the one-shot, cron-free Bazaar readback. Does **not** merge or extend GB07 PR18.\n\n## Why this branch starts from PR19\n\nThe bazaar-tracker feature exists only on GB06 PR19 (`gb06-bazaar-rematerialization-tracker` @ `3426bec`). Default `main` (`3fbb743`) does not contain it. This PR is based on that head so the compact evidence can replace the snapshot rather than re-implement the tracker from scratch.\n\n## What changed\n\n- Full snapshots stay under `data/bazaar-tracker/snapshots/` and are **gitignored**.\n- Git tracks `data/bazaar-tracker/observations.json` (cdp-discovery → seller → route, payment terms + extension digest) and `data/bazaar-tracker/CHANGELOG.md`.\n- `--readback` prints the committed compact record with no network and no daemon.\n- `--from` still detects a synthetic field change against the compact record when no snapshot is present (`accepts.0.amount` 3000 → 12345 and description).\n\n## PR18 disposition: **CLOSE**\n\nDo not merge https://github.com/epistemedeus/samedaydesk/pull/18.\n\n- Live `GET https://samedaydesk.com/listings` and `/listings/bazaar/mcp` are HTTP 404 (SPA 404 HTML, not the advertised JSON catalog).\n- `GET https://agents.samedaydesk.com/listings` is Express `Cannot GET /listings`.\n- Canonical `/mcp` and `/scan` are live 200, but they are not per-surface aliases and cannot carry a registry `surface` without a new product path.\n- PR18's settlement-receipt store is an in-process `Map` imported only by its test file. No MCP/scan/tools/checkout/fulfill route records surface.\n- Existing Stripe email and pulse flush receipts have no registry surface field.\n\nReplay (executable):\n\n```\nnode tools/lqtrack1/replay-pr18-disposition.mjs --live\n# or offline:\nnode tools/lqtrack1/replay-pr18-disposition.mjs --fixture tools/lqtrack1/fixtures/pr18-live-probe.json\n```\n\nEvidence: `data/lqtrack1/PR18-DISPOSITION.md` and `data/lqtrack1/pr18-disposition.json`.\n\n## Verify (this revision)\n\n| Command | Exit |\n|---|---|\n| `npm run test:bazaar-tracker` | 0 (14/14) |\n| `npm run bazaar-tracker -- --readback` | 0 |\n| `node tools/lqtrack1/replay-pr18-disposition.mjs --live` | 0, recommendation=close |\n| `git ls-files data/bazaar-tracker` | observations.json, CHANGELOG.md, changelog.jsonl only |\n| `npm run test:indexnow` | 0 |\n| `npm run test:portfolio-discovery` | 0 |\n| `npm run test:spa-fallback` | 0 |\n| `npm run test:spa-route-shells` | 0 |\n| `npm run test:taskmarket` | 0 |\n| `npm run test:mcp` | 0 |\n| `npm run test:schema-validator-search` | 0 |\n\n`test:pulse` / `test:seller-repair-checkout` / `test:seller-repair-briefs` still need `node --experimental-strip-types` or a local Postgres 17 binary on this image; unchanged from GB06.\n\nDo not merge this PR as part of LQTRACK1; it is draft-only.\n<!-- CURSOR_AGENT_PR_BODY_END -->\n\n<div><a href=\"https://cursor.com/agents/bc-ffc5ede3-589b-4b16-9f79-7cd0220c9b29?cursor_ref=pr_footer&cursor_cta=open_in_web\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/assets/images/open-in-web-dark.png\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/assets/images/open-in-web-light.png\"><img alt=\"Open in Web\" width=\"114\" height=\"28\" src=\"https://cursor.com/assets/images/open-in-web-dark.png\"></picture></a>&nbsp;<a href=\"https://cursor.com/background-agent?bcId=bc-ffc5ede3-589b-4b16-9f79-7cd0220c9b29&cursor_ref=pr_footer&cursor_cta=open_in_cursor\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/assets/images/open-in-cursor-dark.png\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/assets/images/open-in-cursor-light.png\"><img alt=\"Open in Cursor\" width=\"131\" height=\"28\" src=\"https://cursor.com/assets/images/open-in-cursor-dark.png\"></picture></a>&nbsp;</div>\n\n",
+        "unknown": false
+      },
+      "experience": {
+        "selfReported": {
+          "present": false,
+          "summary": null
+        },
+        "verifiedCompletion": {
+          "present": false,
+          "evidence": null
+        },
+        "verifiedPayout": {
+          "present": false,
+          "evidence": null
+        },
+        "contributorEffort": {
+          "declared": false,
+          "hours": null,
+          "unknown": true
+        },
+        "paidReview": {
+          "declared": false,
+          "amount": null,
+          "unknown": true
+        }
+      },
+      "interopHints": {
+        "contributorPublicId": "github:epistemedeus",
+        "payoutDestination": null
+      },
+      "unknowns": [
+        "reward.amount",
+        "reward.asset",
+        "reward.network",
+        "deadline.at",
+        "claimability.firstDollar",
+        "claimability.walletlessEligibility",
+        "funding.status",
+        "claimability.identityRequired"
+      ],
+      "raw": {
+        "number": 21,
+        "state": "open",
+        "pull_request": true,
+        "comments": 0
+      }
+    }
+  ]
+}

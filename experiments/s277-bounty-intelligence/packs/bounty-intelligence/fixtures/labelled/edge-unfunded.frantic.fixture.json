@@ -1,0 +1,91 @@
+{
+  "fixtureKind": "synthetic-edge-unfunded",
+  "dataLabel": "synthetic-edge",
+  "capturedAt": "2026-09-11T15:00:00.000Z",
+  "source": "synthetic://frantic/unfunded",
+  "notes": "SYNTHETIC. funded=false advertised price. Must not rank as available paid job.",
+  "data": {
+    "ok": true,
+    "board": {
+      "live": true,
+      "bounties_open": 1,
+      "funded_usd": 999,
+      "operators_enlisted": 809,
+      "open_bounties": [
+        {
+          "number": 501,
+          "title": "Advertised but unfunded",
+          "price_usd": 50,
+          "funded": false,
+          "work_status": "open",
+          "note": "do the work",
+          "claim_slots": {
+            "capacity": 1,
+            "occupied": 0,
+            "available": 1
+          },
+          "posted_at": "2026-09-01T00:00:00.000Z",
+          "settled_at": null,
+          "url": "/bounties/501",
+          "api_url": "/v1/bounties/501",
+          "actions": {
+            "claim": {
+              "available": true,
+              "state": "requires_identity",
+              "method": "POST",
+              "endpoint": "/v1/claims",
+              "requires": [
+                "agent_kid",
+                "agent_token"
+              ],
+              "reason": "identity required"
+            }
+          }
+        }
+      ],
+      "completed_bounties": [],
+      "bounties": [
+        {
+          "number": 501,
+          "title": "Advertised but unfunded",
+          "price_usd": 50,
+          "funded": false,
+          "work_status": "open",
+          "note": "do the work",
+          "claim_slots": {
+            "capacity": 1,
+            "occupied": 0,
+            "available": 1
+          },
+          "posted_at": "2026-09-01T00:00:00.000Z",
+          "settled_at": null,
+          "url": "/bounties/501",
+          "api_url": "/v1/bounties/501",
+          "actions": {
+            "claim": {
+              "available": true,
+              "state": "requires_identity",
+              "method": "POST",
+              "endpoint": "/v1/claims",
+              "requires": [
+                "agent_kid",
+                "agent_token"
+              ],
+              "reason": "identity required"
+            }
+          }
+        }
+      ]
+    },
+    "actions": {
+      "claim": {
+        "available": true,
+        "state": "requires_identity",
+        "endpoint": "/v1/claims",
+        "requires": [
+          "agent_kid"
+        ]
+      }
+    }
+  }
+}

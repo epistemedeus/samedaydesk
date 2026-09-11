@@ -1,0 +1,26 @@
+{
+  "dataLabel": "live-capture",
+  "at": "2026-09-11T15:30:00.000Z",
+  "from": "receipts/live-capture/*.json",
+  "liveRecords": 21,
+  "availablePaidJobs": 5,
+  "ranked": 5,
+  "selected": {
+    "match": true,
+    "adapter": "frantic",
+    "nativeId": "129",
+    "title": "Earn a citation for Sourcey on a page that already ranks for a startup-credits, agent-readiness, or docs-tooling query",
+    "sourceUrl": "https://gofrantic.com/bounties/129",
+    "expectedUsefulNetReturn": "4.48",
+    "uncertainty": "0.45",
+    "claimAuthority": "none",
+    "prerequisites": [
+      "frantic.claim.requires:agent_kid",
+      "frantic.claim.requires:agent_token",
+      "frantic.claim.requires:verified_email_or_runx_github_identity",
+      "frantic.claim.requires:eligible_operator_or_successful_paid_bounty",
+      "This paid bounty is over $10. It requires normal paid eligibility or one successful paid bounty.",
+      "claim endpoint POST /v1/claims (this pack never calls it)"
+    ]
+  }
+}

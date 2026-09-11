@@ -1,0 +1,147 @@
+{
+  "fixtureKind": "github_issues_open",
+  "dataLabel": "fixture",
+  "capturedAt": "2026-09-11T15:24:34Z",
+  "source": "https://api.github.com/repos/epistemedeus/samedaydesk/issues?state=open&per_page=5",
+  "notes": "Public GitHub issues/PRs. No trusted price field. priceKnown=false. Never invent funding. Not available paid jobs.",
+  "data": {
+    "repo": "epistemedeus/samedaydesk",
+    "issues": [
+      {
+        "id": 5339857418,
+        "number": 32,
+        "title": "Add unpaid buyer-runtime fixture quickstart",
+        "state": "open",
+        "html_url": "https://github.com/epistemedeus/samedaydesk/pull/32",
+        "url": "https://api.github.com/repos/epistemedeus/samedaydesk/issues/32",
+        "body": "## Summary\n\nA clone of this tree had no repository README and no integrator guide next to `tools/buyer-runtimes`. A stranger could not tell how to obtain the unpaid `GET /extract` replay, that default `npm init` is CommonJS, or that `npm pack` at the repository root packs the private app.\n\nThis draft adds:\n\n- `README.md` \u2014 points at the unpaid fixture path and warns not to pack the repository root.\n- `tools/buyer-runtimes/README.md` \u2014 clone, ESM (`.mjs` / `node --input-type=module`), fixture-only loader snippet, optional packed module when `packages/buyer-evidence` exists.\n\nNo runtime code, no\u2026",
+        "user": {
+          "login": "epistemedeus",
+          "id": 124947147
+        },
+        "labels": [],
+        "created_at": "2026-09-03T18:04:23Z",
+        "updated_at": "2026-09-03T18:04:23Z",
+        "closed_at": null,
+        "comments": 0,
+        "pull_request": {
+          "url": "https://api.github.com/repos/epistemedeus/samedaydesk/pulls/32",
+          "html_url": "https://github.com/epistemedeus/samedaydesk/pull/32",
+          "diff_url": "https://github.com/epistemedeus/samedaydesk/pull/32.diff",
+          "patch_url": "https://github.com/epistemedeus/samedaydesk/pull/32.patch",
+          "merged_at": null
+        },
+        "locked": false,
+        "draft": true
+      },
+      {
+        "id": 5339476860,
+        "number": 30,
+        "title": "Add draft buyer-runtime integration guide",
+        "state": "open",
+        "html_url": "https://github.com/epistemedeus/samedaydesk/pull/30",
+        "url": "https://api.github.com/repos/epistemedeus/samedaydesk/issues/30",
+        "body": "This pull request is a **draft**. The new page is draft copy; publication is not implied by merging or by the route existing in the repository.\n\nThe page is `/x402/buyer-runtime`. It tells a runtime author how to discover SameDayDesk paid routes, verify the `/extract` response contract, load the unpaid replay fixtures, and attach at seams that already exist.\n\n## Runtimes covered\n\n- Agent402 (verified seller index, unpaid `fetch` in `payX402`, `pickPayableAccept` / `parse402Usd`)\n- Coinbase x402 client (`@x402/fetch` `wrapFetchWithPayment` and `@x402/core` `x402Client`)\n- x402 Bazaar inspected-\u2026",
+        "user": {
+          "login": "epistemedeus",
+          "id": 124947147
+        },
+        "labels": [],
+        "created_at": "2026-09-03T17:22:08Z",
+        "updated_at": "2026-09-03T18:22:32Z",
+        "closed_at": null,
+        "comments": 0,
+        "pull_request": {
+          "url": "https://api.github.com/repos/epistemedeus/samedaydesk/pulls/30",
+          "html_url": "https://github.com/epistemedeus/samedaydesk/pull/30",
+          "diff_url": "https://github.com/epistemedeus/samedaydesk/pull/30.diff",
+          "patch_url": "https://github.com/epistemedeus/samedaydesk/pull/30.patch",
+          "merged_at": null
+        },
+        "locked": false,
+        "draft": true
+      },
+      {
+        "id": 5339451683,
+        "number": 29,
+        "title": "Package unpaid extract contract evidence as an ESM dependency",
+        "state": "open",
+        "html_url": "https://github.com/epistemedeus/samedaydesk/pull/29",
+        "url": "https://api.github.com/repos/epistemedeus/samedaydesk/issues/29",
+        "body": "Stacks on #23.\n\nMoves the unpaid `GET /extract` catalog, replay fixtures, and contract helpers into `packages/buyer-evidence` (`@samedaydesk/buyer-evidence` 0.1.0). A runtime can depend on that package instead of copying the pin.\n\nThe package is zero-dependency ESM. It exports the fixture loader, the existing contract helpers, and `verify(resource, evidence)` \u2192 `{ ok, reasons[] }`. Named mismatch reasons: `foreign_payTo`, `changed_price`, `stale_timestamp`, `missing_accepts`. `tools/buyer-runtimes` now imports that implementation.\n\nThis repository has no SPDX license file; the package `license\u2026",
+        "user": {
+          "login": "epistemedeus",
+          "id": 124947147
+        },
+        "labels": [],
+        "created_at": "2026-09-03T17:19:32Z",
+        "updated_at": "2026-09-03T18:25:02Z",
+        "closed_at": null,
+        "comments": 0,
+        "pull_request": {
+          "url": "https://api.github.com/repos/epistemedeus/samedaydesk/pulls/29",
+          "html_url": "https://github.com/epistemedeus/samedaydesk/pull/29",
+          "diff_url": "https://github.com/epistemedeus/samedaydesk/pull/29.diff",
+          "patch_url": "https://github.com/epistemedeus/samedaydesk/pull/29.patch",
+          "merged_at": null
+        },
+        "locked": false,
+        "draft": true
+      },
+      {
+        "id": 5339393024,
+        "number": 27,
+        "title": "Reconcile banked settlement observations from typed evidence records",
+        "state": "open",
+        "html_url": "https://github.com/epistemedeus/samedaydesk/pull/27",
+        "url": "https://api.github.com/repos/epistemedeus/samedaydesk/issues/27",
+        "body": "## Summary\n\nStacks on #25.\n\nAdds settlement observation fixtures under the evidence-record fixtures directory, plus `tools/evidence/reconcile.mjs`. The tool reads only those records and emits a per-class table (count, amount, operations, delivery status), including a row for anything the records cannot classify. It compares the computed total to the cited banked amount and reports the exact difference instead of adjusting records.\n\nThree source kinds were added because #25 could not name their producers without collapsing them into the x402 facilitator provider:\n\n- `external_work_payout` for a\u2026",
+        "user": {
+          "login": "epistemedeus",
+          "id": 124947147
+        },
+        "labels": [],
+        "created_at": "2026-09-03T17:13:15Z",
+        "updated_at": "2026-09-03T17:13:15Z",
+        "closed_at": null,
+        "comments": 0,
+        "pull_request": {
+          "url": "https://api.github.com/repos/epistemedeus/samedaydesk/pulls/27",
+          "html_url": "https://github.com/epistemedeus/samedaydesk/pull/27",
+          "diff_url": "https://github.com/epistemedeus/samedaydesk/pull/27.diff",
+          "patch_url": "https://github.com/epistemedeus/samedaydesk/pull/27.patch",
+          "merged_at": null
+        },
+        "locked": false,
+        "draft": true
+      },
+      {
+        "id": 5335627080,
+        "number": 21,
+        "title": "LQTRACK1: compact Bazaar evidence and PR18 close replay",
+        "state": "open",
+        "html_url": "https://github.com/epistemedeus/samedaydesk/pull/21",
+        "url": "https://api.github.com/repos/epistemedeus/samedaydesk/issues/21",
+        "body": "<!-- CURSOR_AGENT_PR_BODY_BEGIN -->\nLQTRACK1 (batch LQ01). Replaces GB06 PR19's committed ~780 KiB CDP discovery snapshot with a compact, source-separated per-route observation record plus a human-readable changelog. Keeps the one-shot, cron-free Bazaar readback. Does **not** merge or extend GB07 PR18.\n\n## Why this branch starts from PR19\n\nThe bazaar-tracker feature exists only on GB06 PR19 (`gb06-bazaar-rematerialization-tracker` @ `3426bec`). Default `main` (`3fbb743`) does not contain it. This PR is based on that head so the compact evidence can replace the snapshot rather than re-implement\u2026",
+        "user": {
+          "login": "epistemedeus",
+          "id": 124947147
+        },
+        "labels": [],
+        "created_at": "2026-09-03T10:52:10Z",
+        "updated_at": "2026-09-03T10:53:24Z",
+        "closed_at": null,
+        "comments": 0,
+        "pull_request": {
+          "url": "https://api.github.com/repos/epistemedeus/samedaydesk/pulls/21",
+          "html_url": "https://github.com/epistemedeus/samedaydesk/pull/21",
+          "diff_url": "https://github.com/epistemedeus/samedaydesk/pull/21.diff",
+          "patch_url": "https://github.com/epistemedeus/samedaydesk/pull/21.patch",
+          "merged_at": null
+        },
+        "locked": false,
+        "draft": true
+      }
+    ]
+  }
+}

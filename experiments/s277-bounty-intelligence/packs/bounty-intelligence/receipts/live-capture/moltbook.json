@@ -1,0 +1,152 @@
+{
+  "dataLabel": "live-capture",
+  "capturedAt": "2026-09-11T15:30:00.000Z",
+  "adapter": "moltbook",
+  "liveUrl": "https://api.moltbook.com/v1/jobs?limit=5",
+  "fetchMeta": {
+    "mode": "inaccessible",
+    "httpStatus": null,
+    "fetchedAt": "2026-09-11T15:30:00.000Z",
+    "bodySha256": null,
+    "partial": true,
+    "error": "fetch failed"
+  },
+  "listingMeta": {
+    "schema": "s277.bounty-intelligence.listing-meta.v1",
+    "kind": "inaccessible",
+    "inaccessible": true,
+    "reason": "fetch failed",
+    "claimAuthority": "none",
+    "listingsInvented": false
+  },
+  "error": "fetch failed",
+  "recordCount": 1,
+  "records": [
+    {
+      "schema": "s277.bounty-intelligence.record.v1",
+      "dataLabel": "live-capture",
+      "fixtureKind": null,
+      "taskId": "bty_e1d9f06cefafcdcb68197af8de69367a",
+      "termsVersion": "c32208626c207898c3688658446cb6b5",
+      "observedAt": "2026-09-11T15:30:00.000Z",
+      "title": "Moltbook API inaccessible",
+      "description": "api.moltbook.com does not resolve. No listings invented.",
+      "source": {
+        "adapter": "moltbook",
+        "kind": "inaccessible_source",
+        "url": "https://api.moltbook.com/v1/jobs?limit=5",
+        "nativeId": "api.moltbook.com",
+        "vendorAdapter": null,
+        "inaccessible": true,
+        "inaccessibleReason": "fetch failed",
+        "labSchedule": false,
+        "authBoundary": "api.moltbook.com is NXDOMAIN (verified 2026-09-11). No listings invented.",
+        "captureMode": "inaccessible",
+        "httpStatus": null,
+        "bodySha256": null,
+        "classificationKind": "inaccessible"
+      },
+      "status": {
+        "lifecycle": "unknown",
+        "raw": "inaccessible",
+        "cancelled": false,
+        "closed": false,
+        "availablePaidJob": false,
+        "exclusionReasons": []
+      },
+      "freshness": {
+        "sourceCreatedAt": null,
+        "sourceUpdatedAt": null,
+        "observedAt": "2026-09-11T15:30:00.000Z",
+        "stale": false,
+        "staleAfterSeconds": null,
+        "unknown": false,
+        "ageSeconds": 0
+      },
+      "reward": {
+        "amount": null,
+        "asset": null,
+        "network": null,
+        "unknown": true,
+        "provenance": "unknown"
+      },
+      "funding": {
+        "status": "unknown",
+        "evidenceKind": "unknown",
+        "present": null,
+        "verified": false,
+        "escrowTxHash": null,
+        "disclaimer": "Funding flags and escrow hashes are source assertions. This pack does not verify chain state or remaining claimable balance."
+      },
+      "claimability": {
+        "state": "not_claimable",
+        "prerequisites": [
+          "Source inaccessible; no task"
+        ],
+        "identityRequired": "unknown",
+        "firstDollar": "unknown",
+        "walletlessEligibility": "unknown",
+        "slotsAvailable": null,
+        "claimAuthority": "none",
+        "sourceClaimAvailable": null
+      },
+      "deadline": {
+        "at": null,
+        "expired": false,
+        "unknown": true
+      },
+      "revision": {
+        "termsVersion": "c32208626c207898c3688658446cb6b5",
+        "termsFingerprint": "c32208626c207898c3688658446cb6b5"
+      },
+      "verificationPaymentTerms": {
+        "verbatim": null,
+        "unknown": true
+      },
+      "experience": {
+        "selfReported": {
+          "present": false,
+          "summary": null
+        },
+        "verifiedCompletion": {
+          "present": false,
+          "evidence": null
+        },
+        "verifiedPayout": {
+          "present": false,
+          "evidence": null
+        },
+        "contributorEffort": {
+          "declared": false,
+          "hours": null,
+          "unknown": true
+        },
+        "paidReview": {
+          "declared": false,
+          "amount": null,
+          "unknown": true
+        }
+      },
+      "interopHints": {
+        "contributorPublicId": null,
+        "payoutDestination": null
+      },
+      "unknowns": [
+        "reward.amount",
+        "reward.asset",
+        "reward.network",
+        "deadline.at",
+        "freshness.sourceCreatedAt",
+        "freshness.sourceUpdatedAt",
+        "claimability.firstDollar",
+        "claimability.walletlessEligibility",
+        "funding.status",
+        "verificationPaymentTerms",
+        "claimability.identityRequired"
+      ],
+      "raw": {
+        "error": "fetch failed"
+      }
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "event": "parent_fix",
+  "id": "C2-D1",
+  "at": "2026-09-11T15:45:30Z",
+  "summary": "signedDecimalString + toScaled handle negative expectedUsefulNetReturn so rank sort stays net-desc when effort exceeds gross.",
+  "files": ["src/money.mjs", "tests/rank-select.test.mjs"]
+}

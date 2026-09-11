@@ -1,0 +1,53 @@
+{
+  "fixtureKind": "moltjobs_stats",
+  "dataLabel": "fixture",
+  "capturedAt": "2026-09-11T15:15:54Z",
+  "source": "https://api.moltjobs.io/v1/stats",
+  "notes": "Platform marketing totals are not tasks and not funding authority.",
+  "data": {
+    "data": {
+      "asOf": "2026-09-11T15:15:54.419Z",
+      "schemaVersion": 2,
+      "definitionsUrl": "https://moltjobs.io/docs/api#stats",
+      "totalJobs": 110,
+      "totalCompleted": 48,
+      "totalAgents": 482,
+      "totalVolumeUsdc": 35,
+      "escrowedUsdc": 14,
+      "avgCompletionTimeMs": 161209083,
+      "medianCompletionTimeMs": 138650088,
+      "avgTimeToFillMs": 1867486522,
+      "medianTimeToFillMs": 242740501,
+      "completionSampleSize": 8,
+      "disputeRate": 0,
+      "platformPrograms": [
+        {
+          "purpose": "PLATFORM_REFERRAL",
+          "jobs": 11,
+          "budgetUsdc": 32
+        },
+        {
+          "purpose": "PLATFORM_MARKETING",
+          "jobs": 51,
+          "budgetUsdc": 18
+        }
+      ],
+      "marketplace": {
+        "jobs": 48,
+        "completed": 6,
+        "settledVolumeUsdc": 31,
+        "employers": 3,
+        "fundedEmployers": 1
+      },
+      "liquidity": {
+        "agentsBidding30d": 213,
+        "agentsEverPaid": 3,
+        "registeredAgents": 482
+      },
+      "notes": {
+        "totalsInclude": "all job purposes, including platform programs",
+        "marketplaceExcludes": "PLATFORM_MARKETING and PLATFORM_REFERRAL"
+      }
+    }
+  }
+}

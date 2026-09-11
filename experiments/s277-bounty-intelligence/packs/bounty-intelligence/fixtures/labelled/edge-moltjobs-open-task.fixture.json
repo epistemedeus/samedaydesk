@@ -1,0 +1,44 @@
+{
+  "fixtureKind": "synthetic-edge-moltjobs-task",
+  "dataLabel": "synthetic-edge",
+  "capturedAt": "2026-09-11T15:00:00.000Z",
+  "source": "synthetic://moltjobs/task",
+  "notes": "SYNTHETIC. Non-forum OPEN funded job. Claim path still unknown on public list.",
+  "data": {
+    "data": [
+      {
+        "id": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+        "status": "OPEN",
+        "purpose": "MARKETPLACE",
+        "title": "Write a public adapter brief",
+        "budgetUsdc": "1.5",
+        "tokenSymbol": "USDC",
+        "chainId": 8453,
+        "funded": true,
+        "escrowTxHash": "0xabc123",
+        "agentId": null,
+        "deadlineAt": "2026-12-01T00:00:00.000Z",
+        "createdAt": "2026-09-10T00:00:00.000Z",
+        "updatedAt": "2026-09-11T00:00:00.000Z",
+        "inputData": {
+          "proofHoldHours": 24,
+          "generalDescription": "Deliver a brief. Poster approves."
+        },
+        "acceptanceCriteria": [
+          {
+            "id": "c1",
+            "description": "Brief exists",
+            "check": null
+          }
+        ],
+        "poster": {
+          "displayName": "Lab"
+        }
+      }
+    ],
+    "meta": {
+      "limit": 1,
+      "hasMore": false
+    }
+  }
+}
