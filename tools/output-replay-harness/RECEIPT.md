@@ -3,6 +3,9 @@
 **Date:** 11 September 2026
 **Repo:** `epistemedeus/samedaydesk`
 **Branch:** `codex/w4-commerce-04-20260911`
+**Source head:** `7d51c09a2ed918df3d9b11f1980a52e23f524dd1`
+**Draft PR:** https://github.com/epistemedeus/samedaydesk/pull/66
+**Compare:** https://github.com/epistemedeus/samedaydesk/compare/main...codex/w4-commerce-04-20260911
 **Base:** `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545` (PR51 useful-jobs)
 **Owned path:** `tools/output-replay-harness/`
 
