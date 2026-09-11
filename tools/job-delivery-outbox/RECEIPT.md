@@ -2,7 +2,7 @@
 
 **Repo:** `epistemedeus/samedaydesk`
 **Branch:** `cursor/w5-d06-co09-delivery-outbox-with-precise-destination-and-terms-mapping-4f5e`
-**Head:** `ab2b138d6cef03a6af7033645fc5b6bb6a7a3f67`
+**Head:** `b93837ae10b72fffb7adca9ef34fa5b105471d10`
 **Starting ref:** `828d8942fb1631aba92a9116dc9fbde0ee1dd258`
 **PR:** https://github.com/epistemedeus/samedaydesk/pull/84 (draft)
 **Owned paths:** `tools/job-delivery-outbox/`, `experiments/wave5/d06/RECEIPT.md`
