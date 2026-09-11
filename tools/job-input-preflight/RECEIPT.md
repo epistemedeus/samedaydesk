@@ -2,7 +2,9 @@
 
 **Repo:** epistemedeus/samedaydesk
 **Branch:** `codex/w4-commerce-05-20260911`
-**Pack HEAD:** `96e1027c4b6b06bf4778f2daaabbd53911c99fc4`
+**Pack HEAD:** `7ff6988be0ded2c3f9d2395dc12d9bcbfd7f2127` (implementation `96e1027c4b6b06bf4778f2daaabbd53911c99fc4`)
+**Draft PR:** https://github.com/epistemedeus/samedaydesk/pull/67
+**Compare:** https://github.com/epistemedeus/samedaydesk/compare/main...codex/w4-commerce-05-20260911
 **Base / source head:** `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545` (PR51)
 **Owned path:** `tools/job-input-preflight/`
 **Integration owner:** Root
