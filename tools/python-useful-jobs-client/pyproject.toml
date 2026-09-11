@@ -1,0 +1,15 @@
+[project]
+name = "samedaydesk-useful-jobs"
+version = "1.0.0"
+description = "MIT Python 3 client that verifies, extracts, and runs SameDayDesk useful-jobs via Node."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "SameDayDesk Python client authors" }]
+dependencies = []
+
+[project.scripts]
+samedaydesk-useful-jobs = "samedaydesk_useful_jobs.cli:main"
+
+[project.urls]
+Homepage = "https://samedaydesk.com/for-agents/useful-jobs"

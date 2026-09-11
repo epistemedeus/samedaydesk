@@ -1,0 +1,35 @@
+{
+  "schema": "samedaydesk.useful-jobs.hash-terms.v1",
+  "package": "useful-jobs",
+  "version": "1.0.0",
+  "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+  "bytes": 2522418,
+  "rootName": "useful-jobs-1.0.0",
+  "cli": "bin/useful-jobs.mjs",
+  "archiveRel": "client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz",
+  "archivePublicPath": "/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz",
+  "catalogRel": "client/public/for-agents/useful-jobs/catalog.json",
+  "kitJsonRel": "client/src/data/usefulJobsKit.json",
+  "node": ">=22",
+  "purchaseAuthority": false,
+  "sourceRepo": "epistemedeus/pilot",
+  "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+  "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+  "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+  "jobs": [
+    "api-upgrade-brief",
+    "vendor-budget-impact",
+    "feed-agenda",
+    "evidence-ci-annotation",
+    "listing-repair-packet",
+    "repeat-job-record"
+  ],
+  "jobOutputs": {
+    "api-upgrade-brief": ["upgrade-brief.json", "upgrade-brief.md"],
+    "vendor-budget-impact": ["budget-impact.json", "budget-impact.md"],
+    "feed-agenda": ["agenda.json", "agenda.ics"],
+    "evidence-ci-annotation": ["annotations.json", "annotations.md"],
+    "listing-repair-packet": ["repair-packet.json", "repair-packet.md"],
+    "repeat-job-record": ["repeat-job.json", "repeat-job.md"]
+  }
+}
