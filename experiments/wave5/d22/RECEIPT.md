@@ -5,6 +5,7 @@ error does not invent `not-offered`. 8.105 USDC is not a job dossier field.
 
 Owned paths: `tools/refund-obligation-projector/`, `experiments/wave5/d22/RECEIPT.md`.
 Integration owner: W5-D01.
+HEAD: `ab93e2517be74442d4d6ab7bc7f62fccf2e0ebc9`.
 
 ## Interface
 

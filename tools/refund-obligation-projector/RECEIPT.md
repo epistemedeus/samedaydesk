@@ -3,6 +3,7 @@
 **Date:** 11 September 2026
 **Branch:** `cursor/w5-d22-co07-refund-policy-projection-from-explicit-policy-and-actual-job-facts-8a04`
 **Base:** `f19a021a82a4ff59fd3b510fda11e603e6885686`
+**HEAD:** `ab93e2517be74442d4d6ab7bc7f62fccf2e0ebc9`
 **Owned paths:** `tools/refund-obligation-projector/`, `experiments/wave5/d22/RECEIPT.md`
 **Integration owner:** W5-D01
 
