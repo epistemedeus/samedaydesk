@@ -3,8 +3,8 @@
 **Task:** W5-M20  
 **Repo:** `epistemedeus/samedaydesk`  
 **Branch:** `cursor/w5-m20-first-use-drop-off-and-repeat-job-readout-that-changes-the-next-offer-bb85`  
-**HEAD:** `bb1028d66219812a5c5953ac92da6e3bcc9c5659`  
-**StartingRef:** `aeef964fa188443078958d9d6d393afae1d542ee` (SDS PR52)  
+**Tested wrapper pin:** `aeef964fa188443078958d9d6d393afae1d542ee` (SDS PR52)  
+**StartingRef:** `aeef964fa188443078958d9d6d393afae1d542ee`  
 **PR:** https://github.com/epistemedeus/samedaydesk/pull/109  
 **Pilot packet:** `epistemedeus/pilot@95b3f3a47f5b1b69bd237e4c978fc3376221365d`  
 **Contract:** `samedaydesk.wave5.m20.readout.v1`
