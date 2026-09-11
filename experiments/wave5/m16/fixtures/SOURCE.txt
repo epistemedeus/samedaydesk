@@ -1,0 +1,6 @@
+Owner-QA fixtures for W5-M16. Not customer locks. Not SAMPLE presented as a sale.
+
+resolved-only/: same name+version+integrity, different packages[id].resolved.
+html/: HTML page used as --before against a real staged lock.
+crash-engine/: a non-M03 CLI that exits 1 with non-JSON stdout so transport
+failure is distinct from a valid engine refusal.
