@@ -1,0 +1,39 @@
+{
+  "assignment": "W5-M17",
+  "outcome": "Reproducible API-route change trial",
+  "sds52": {
+    "repo": "epistemedeus/samedaydesk",
+    "ref": "fable/f08-paid-wrappers",
+    "pr": 52,
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee"
+  },
+  "m04": {
+    "id": "W4-commerce-12",
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+    "branch": "codex/w4-commerce-12-20260911",
+    "pr": 64,
+    "ownedPath": "tools/route-table-diff/",
+    "cli": "tools/route-table-diff/bin/route-diff.mjs",
+    "engineTests": "node --test tools/route-table-diff/test/*.test.mjs"
+  },
+  "m08": {
+    "id": "W5-M08",
+    "status": "unbound",
+    "note": "Independent framework route consumers are not in this checkout. This kit observes live SDS Express HTTP and imports SPA_ROUTE_SHELLS. It does not vendor a Next/FastAPI parser."
+  },
+  "d24": {
+    "id": "W5-D24",
+    "status": "unbound",
+    "note": "Clean-environment package install is a later journey owner step. This kit runs from the SDS git checkout plus Node >= 22."
+  },
+  "pilotPacket": {
+    "repo": "epistemedeus/pilot",
+    "sha": "95b3f3a47f5b1b69bd237e4c978fc3376221365d",
+    "paths": [
+      "overview/research/cursor-wave5-20260911/PLAN.md",
+      "overview/research/cursor-wave5-20260911/REVIEW-INTEGRATION.md",
+      "overview/research/cursor-wave5-20260911/TASKS.json"
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+import assert from "node:assert/strict";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import test from "node:test";
+import { parseJsonLine, runTrial, tmpDir } from "./helpers.mjs";
+import { M04_SHA, SDS52_SHA } from "../lib/pins.mjs";
+
+test("trial CLI run writes a dry-run result bound to the tested pins", async () => {
+  const outDir = tmpDir("w5-m17-run-");
+  const spawned = runTrial(["run", "--out-dir", outDir]);
+  assert.equal(spawned.status, 0, spawned.stderr || spawned.stdout);
+  const summary = parseJsonLine(spawned.stdout);
+  assert.equal(summary.ok, true);
+  assert.equal(summary.classification.kind, "analysis_no_change");
+  const result = JSON.parse(readFileSync(join(outDir, "trial-result.json"), "utf8"));
+  assert.equal(result.schema, "samedaydesk.w5-m17.trial.v1");
+  assert.equal(result.label, "owner-qa-dry-run");
+  assert.equal(result.sold, false);
+  assert.equal(result.postgres, "not-an-input");
+  assert.equal(result.tested.sds52, SDS52_SHA);
+  assert.equal(result.tested.m04.sha, M04_SHA);
+  assert.equal(result.tested.m08.status, "unbound");
+  assert.equal(result.tested.d24.status, "unbound");
+  assert.equal(result.permutation.classification.kind, "analysis_no_change");
+  assert.notEqual(result.permutation.tableDigest.before, result.permutation.tableDigest.after);
+  assert.equal(result.homepageHistory.code, "homepage_rewrite_refused");
+  assert.equal(result.mcpQueryPath.code, "invalid_path");
+  assert.equal(result.mcpDuplicatePath.code, "duplicate_path");
+  assert.equal(result.http.x402OnApiProcess.status, 404);
+  assert.equal(result.http.x402OnSpaShells.status, 200);
+  assert.equal(result.enginePackageTests.status, 0);
+  assert.equal(result.enginePackageTests.pass, 14);
+  assert.equal(existsSync(join(outDir, "route-diff.json")), false);
+  assert.equal(existsSync(join(outDir, "diff-permutation", "route-diff.json")), true);
+});

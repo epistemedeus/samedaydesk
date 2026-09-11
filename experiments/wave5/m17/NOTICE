@@ -1,0 +1,5 @@
+This kit is original W5-M17 trial code. It consumes, and does not copy,
+`tools/route-table-diff/` from epistemedeus/samedaydesk@7387eb677abd442dfab9081cb0ad95451fd2a762
+(W4-commerce-12 / W5-M04). That engine keeps its own license in its owning
+tree. SameDayDesk server and client modules are imported read-only from
+PR52 `aeef964fa188443078958d9d6d393afae1d542ee`.

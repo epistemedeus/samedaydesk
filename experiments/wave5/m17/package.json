@@ -1,0 +1,13 @@
+{
+  "name": "w5-m17-api-route-change-trial",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "trial": "node bin/trial.mjs run --out-dir /tmp/w5-m17-trial"
+  }
+}
