@@ -1,0 +1,21 @@
+{
+  "id": "noise-observation-metadata",
+  "control": "noise",
+  "mutation": "jobId, charged, notes, fetchedAt, completedAt, httpStatus stay 200; selected fields identical",
+  "html": [
+    "northshore-lead-sheet.v1.html",
+    "northshore-lead-sheet.noise-comment.html"
+  ],
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "clock": "2026-09-11T12:00:00.000Z",
+  "expected": {
+    "transportOk": true,
+    "verdict": "unchanged",
+    "semantic": 0,
+    "usefulOutputProven": true
+  }
+}

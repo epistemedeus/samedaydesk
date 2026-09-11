@@ -1,0 +1,22 @@
+{
+  "id": "meaningful-description",
+  "control": "meaningful",
+  "mutation": "unit price 12.40 USD to 14.10 USD in description",
+  "html": [
+    "northshore-lead-sheet.v1.html",
+    "northshore-lead-sheet.description-changed.html"
+  ],
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "clock": "2026-09-11T12:00:00.000Z",
+  "expected": {
+    "transportOk": true,
+    "verdict": "changed",
+    "minSemantic": 1,
+    "usefulOutputProven": true,
+    "changePathIncludes": "/description"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "id": "W5-M09",
+  "outcome": "Independent page snapshots with meaningful vs irrelevant change controls",
+  "proof": "Noise remains noise; significant changed content is not normalized away",
+  "ownedPaths": ["experiments/wave5/m09/"],
+  "integrationOwner": "W5-M01",
+  "engineOwner": "W5-M05",
+  "startingRef": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "ref": "fable/f08-paid-wrappers",
+    "pr": 52
+  },
+  "engine": {
+    "package": "W4-commerce-13",
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+    "ref": "cursor/w4-commerce-13-offline-extract-batch-page-change-job-no-merchant-kernel-3ddc",
+    "path": "tools/page-change-offline-job",
+    "cli": "bin/page-change.mjs",
+    "reportSchema": "pilot/page-change-brief/v1",
+    "extractSchema": "samedaydesk.extract-batch.v0",
+    "interface": {
+      "compare": "node bin/page-change.mjs compare --before PATH --after PATH --fields CSV --clock ISO8601Z --out-dir DIR",
+      "optionalLimits": ["--max-bytes", "--max-stale-ms", "--max-sources", "--max-fields", "--max-changes"]
+    },
+    "note": "Consumers test this exact pin. W5-M05 may amend the engine later; do not claim that future behavior here."
+  },
+  "envOverride": "PAGE_CHANGE_ENGINE_ROOT"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "noise-source-reorder",
+  "control": "noise",
+  "mutation": "source list permutation only",
+  "html": [
+    "northshore-lead-sheet.v1.html"
+  ],
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "clock": "2026-09-11T12:00:00.000Z",
+  "expected": {
+    "transportOk": true,
+    "verdict": "reordered",
+    "semantic": 0,
+    "usefulOutputProven": true
+  }
+}

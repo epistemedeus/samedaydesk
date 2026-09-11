@@ -1,0 +1,11 @@
+Independent Northshore fastener catalog snapshots for W5-M09.
+
+These are held local documents. They are not SDS customer-job RFQ fixtures,
+not live fetches, and not merchant compare.mjs samples. HTML is the captured
+page; extract-batch JSON is the independently authored selected-field view
+consumed by the Co13/M05 CLI (`title`, `description`, `headings`).
+
+Noise controls change observation metadata, unselected fields, JSON key
+order, or source-list order. Meaningful controls change selected content.
+A valid unchanged/incomplete/refusal report is analysis output, not a
+transport crash.

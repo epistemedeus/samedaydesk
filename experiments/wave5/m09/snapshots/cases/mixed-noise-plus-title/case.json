@@ -1,0 +1,22 @@
+{
+  "id": "mixed-noise-plus-title",
+  "control": "meaningful",
+  "mutation": "observation noise plus title change; noise must not hide the title",
+  "html": [
+    "northshore-lead-sheet.v1.html",
+    "northshore-lead-sheet.title-changed.html"
+  ],
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "clock": "2026-09-11T12:00:00.000Z",
+  "expected": {
+    "transportOk": true,
+    "verdict": "changed",
+    "minSemantic": 1,
+    "usefulOutputProven": true,
+    "changePathIncludes": "/title"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "id": "truncation-max-changes-in-bounds",
+  "control": "meaningful",
+  "mutation": "same title and description changes with default max-changes; verdict must stay changed",
+  "html": [
+    "northshore-lead-sheet.v1.html"
+  ],
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "clock": "2026-09-11T12:00:00.000Z",
+  "expected": {
+    "transportOk": true,
+    "verdict": "changed",
+    "minSemantic": 2,
+    "usefulOutputProven": true
+  }
+}

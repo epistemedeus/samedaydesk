@@ -1,0 +1,22 @@
+{
+  "id": "truncation-max-sources-in-bounds",
+  "control": "meaningful",
+  "mutation": "same three-source pair without max-sources clamp; grade-chart title change must remain changed",
+  "html": [
+    "northshore-lead-sheet.v1.html",
+    "northshore-lead-sheet.title-changed.html"
+  ],
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "clock": "2026-09-11T12:00:00.000Z",
+  "expected": {
+    "transportOk": true,
+    "verdict": "changed",
+    "minSemantic": 1,
+    "usefulOutputProven": true,
+    "changePathIncludes": "/title"
+  }
+}

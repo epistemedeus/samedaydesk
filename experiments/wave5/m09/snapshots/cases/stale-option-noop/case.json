@@ -1,0 +1,26 @@
+{
+  "id": "stale-option-noop",
+  "control": "noise",
+  "mutation": "same selected fields; provenance 30 days apart; --max-stale-ms 1000 is unused on current Co13 pin",
+  "html": [
+    "northshore-lead-sheet.v1.html"
+  ],
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "clock": "2026-09-11T12:00:00.000Z",
+  "extraArgs": [
+    "--max-stale-ms",
+    "1000"
+  ],
+  "expected": {
+    "transportOk": true,
+    "verdict": "unchanged",
+    "semantic": 0,
+    "usefulOutputProven": true,
+    "freshness": "unknown",
+    "remainingBinding": "W5-M05: DEFAULT_LIMITS.maxStaleMs / maxJsonDepth / maxJsonNodes and CLI --max-stale-ms are accepted but unused in io/parse/compare on 91b57334. Fixture customer-job.limits.maxStaleMs=86400000 likewise does not bind freshness."
+  }
+}

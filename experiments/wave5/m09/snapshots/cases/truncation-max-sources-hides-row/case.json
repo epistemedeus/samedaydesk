@@ -1,0 +1,27 @@
+{
+  "id": "truncation-max-sources-hides-row",
+  "control": "meaningful",
+  "mutation": "title change lives on source B; --max-sources 1 drops that row on current Co13 pin",
+  "html": [
+    "northshore-lead-sheet.v1.html",
+    "northshore-lead-sheet.title-changed.html"
+  ],
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "clock": "2026-09-11T12:00:00.000Z",
+  "extraArgs": [
+    "--max-sources",
+    "1"
+  ],
+  "expected": {
+    "transportOk": true,
+    "verdict": "incomplete",
+    "semantic": 0,
+    "usefulOutputProven": false,
+    "remainingBinding": "W5-M05: source_limit truncation currently forces verdict incomplete and drops later semantic rows. Do not treat incomplete as unchanged, and do not hide a detected change when the changed row is in-bounds."
+  },
+  "contrastId": "truncation-max-sources-in-bounds"
+}

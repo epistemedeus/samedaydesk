@@ -1,0 +1,28 @@
+{
+  "id": "truncation-max-changes-hides-verdict",
+  "control": "meaningful",
+  "mutation": "title and description both change; --max-changes 1 records a semantic change then incomplete on current Co13 pin",
+  "html": [
+    "northshore-lead-sheet.v1.html"
+  ],
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "clock": "2026-09-11T12:00:00.000Z",
+  "extraArgs": [
+    "--max-changes",
+    "1"
+  ],
+  "expected": {
+    "transportOk": true,
+    "verdict": "changed",
+    "minSemantic": 1,
+    "usefulOutputProven": true,
+    "changePathIncludes": "/description",
+    "omittedChangePath": "/title",
+    "remainingBinding": "W5-M05: with --max-changes 1, visit stops at >= maxChanges so truncated never becomes true (it tests length > maxChanges). A later sibling path such as /title is omitted from changes[] while verdict stays changed and snapshot.truncated stays false."
+  },
+  "contrastId": "truncation-max-changes-in-bounds"
+}

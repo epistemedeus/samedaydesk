@@ -1,0 +1,20 @@
+{
+  "id": "noise-json-key-order",
+  "control": "noise",
+  "mutation": "headings object key order h2 before h1; same members",
+  "html": [
+    "northshore-lead-sheet.v1.html"
+  ],
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "clock": "2026-09-11T12:00:00.000Z",
+  "expected": {
+    "transportOk": true,
+    "verdict": "unchanged",
+    "semantic": 0,
+    "usefulOutputProven": true
+  }
+}

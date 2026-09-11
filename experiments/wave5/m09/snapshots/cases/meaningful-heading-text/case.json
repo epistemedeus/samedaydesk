@@ -1,0 +1,22 @@
+{
+  "id": "meaningful-heading-text",
+  "control": "meaningful",
+  "mutation": "h2 member Grades becomes ISO grades; not a permutation",
+  "html": [
+    "northshore-lead-sheet.v1.html",
+    "northshore-lead-sheet.heading-changed.html"
+  ],
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "clock": "2026-09-11T12:00:00.000Z",
+  "expected": {
+    "transportOk": true,
+    "verdict": "changed",
+    "minSemantic": 1,
+    "usefulOutputProven": true,
+    "changePathIncludes": "/headings"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "quote": {
+    "amountAtomic": "10000",
+    "displayUsdc": "0.01",
+    "meaning": "Introductory flat 0.01 USDC batch quote for a bounded 1-5 URL attempt. Not a per-URL success promise."
+  }
+}

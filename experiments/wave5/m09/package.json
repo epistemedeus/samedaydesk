@@ -1,0 +1,23 @@
+{
+  "name": "@samedaydesk/wave5-m09-page-snapshots",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "W5-M09 independent page snapshots with meaningful vs irrelevant change controls. Thin consumer of the Co13/M05 page-change CLI. Does not vendor a competing compare kernel.",
+  "bin": {
+    "m09-replay": "./bin/replay.mjs"
+  },
+  "exports": {
+    ".": "./lib/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "journey": "node ./bin/replay.mjs journey",
+    "materialize": "node ./scripts/materialize.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}

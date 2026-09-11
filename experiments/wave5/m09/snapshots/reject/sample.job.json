@@ -1,0 +1,8 @@
+{
+  "id": "SAMPLE",
+  "title": "not a delivered watch",
+  "clock": "2026-09-11T12:00:00.000Z",
+  "fields": ["title"],
+  "before": "./quote-only.json",
+  "after": "./quote-only.json"
+}

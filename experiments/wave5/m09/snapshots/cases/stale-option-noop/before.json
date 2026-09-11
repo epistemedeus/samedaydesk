@@ -1,0 +1,102 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "10000",
+    "displayUsdc": "0.01",
+    "meaning": "Introductory flat 0.01 USDC batch quote for a bounded 1-5 URL attempt. Not a per-URL success promise."
+  },
+  "jobId": "1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "https://catalog.northshore.test/lead-sheet",
+      "status": "success",
+      "data": {
+        "title": "Northshore fastener lead sheet",
+        "description": "Grade 8 hex bolts. Lead time 14 days. Unit price 12.40 USD.",
+        "headings": {
+          "h1": [
+            "Northshore Fasteners"
+          ],
+          "h2": [
+            "Lead times",
+            "Grades"
+          ]
+        }
+      },
+      "notes": [],
+      "error": null,
+      "finalUrl": "https://catalog.northshore.test/lead-sheet",
+      "httpStatus": 200,
+      "provenance": {
+        "transport": "held-snapshot",
+        "requestedAt": "2026-08-01T10:00:00.000Z",
+        "completedAt": "2026-08-01T10:00:00.000Z",
+        "fetchedAt": "2026-08-01T10:00:00.000Z",
+        "finalUrl": "https://catalog.northshore.test/lead-sheet",
+        "httpStatus": 200
+      }
+    },
+    {
+      "id": "item-002",
+      "source": "https://catalog.northshore.test/grade-chart",
+      "status": "success",
+      "data": {
+        "title": "Northshore grade chart",
+        "description": "Grade 5 and Grade 8 hex listed.",
+        "headings": {
+          "h1": [
+            "Grades"
+          ],
+          "h2": [
+            "Hex",
+            "Carriage"
+          ]
+        }
+      },
+      "notes": [],
+      "error": null,
+      "finalUrl": "https://catalog.northshore.test/grade-chart",
+      "httpStatus": 200,
+      "provenance": {
+        "transport": "held-snapshot",
+        "requestedAt": "2026-08-01T10:00:00.000Z",
+        "completedAt": "2026-08-01T10:00:00.000Z",
+        "fetchedAt": "2026-08-01T10:00:00.000Z",
+        "finalUrl": "https://catalog.northshore.test/grade-chart",
+        "httpStatus": 200
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 2,
+    "bytes": 1600,
+    "wallMs": 40,
+    "retries": 0,
+    "succeeded": 2,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 1600,
+    "requests": 2,
+    "wallMs": 40,
+    "hostingCosts": "unknown",
+    "modelCosts": "none",
+    "monetaryMargin": null
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": true,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

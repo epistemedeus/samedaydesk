@@ -1,0 +1,21 @@
+{
+  "count": 16,
+  "ids": [
+    "noise-observation-metadata",
+    "noise-unselected-opengraph",
+    "noise-json-key-order",
+    "noise-source-reorder",
+    "meaningful-title",
+    "meaningful-description",
+    "meaningful-heading-text",
+    "mixed-noise-plus-title",
+    "heading-permutation",
+    "coverage-unknown-absent-description",
+    "excerpt-long-title",
+    "truncation-max-sources-hides-row",
+    "truncation-max-sources-in-bounds",
+    "truncation-max-changes-hides-verdict",
+    "truncation-max-changes-in-bounds",
+    "stale-option-noop"
+  ]
+}
