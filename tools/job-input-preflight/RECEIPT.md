@@ -2,6 +2,7 @@
 
 **Repo:** epistemedeus/samedaydesk
 **Branch:** `codex/w4-commerce-05-20260911`
+**Pack HEAD:** `96e1027c4b6b06bf4778f2daaabbd53911c99fc4`
 **Base / source head:** `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545` (PR51)
 **Owned path:** `tools/job-input-preflight/`
 **Integration owner:** Root
