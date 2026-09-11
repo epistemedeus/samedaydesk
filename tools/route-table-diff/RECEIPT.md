@@ -4,7 +4,7 @@ Repo: `epistemedeus/samedaydesk`
 Owned path: `tools/route-table-diff/`
 Feature branch: `codex/w4-commerce-12-20260911`
 Starting ref: `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545`
-Feature tip: record after push (`git rev-parse HEAD` on this branch)
+Feature tip: `132ac1e4095865651e4a09ee55eb9c3d105470ee` on `codex/w4-commerce-12-20260911`
 Integration owner: Root
 
 ## What this is
