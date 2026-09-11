@@ -4,7 +4,8 @@ Package: `tools/job-artifact-export/`
 Repo: `epistemedeus/samedaydesk`
 Starting ref: `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545` (PR51 useful-jobs public integration)
 Feature branch: `codex/w4-commerce-15-20260911`
-HEAD: `89c8b03a5b858cedadef812215fff03825fcebcb`
+Draft PR: https://github.com/epistemedeus/samedaydesk/pull/60
+Compare: https://github.com/epistemedeus/samedaydesk/compare/main...codex/w4-commerce-15-20260911
 Integration owner: Root
 
 ## What shipped
@@ -50,7 +51,7 @@ Observed on this VM: useful-jobs returned `ok=true` `appId=feed-agenda` `status=
 node --test tools/job-artifact-export/test/*.test.mjs
 ```
 
-Node v22.14.0. **11 tests, 11 pass, 0 fail** at `89c8b03a5b858cedadef812215fff03825fcebcb`.
+Node v22.14.0. **11 tests, 11 pass, 0 fail.**
 
 Dependencies: Node >= 22, `tar`, `unzip`. No extra npm packages. No Postgres listener (none required). No live HTTP.
 
