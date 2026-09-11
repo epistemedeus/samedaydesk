@@ -1,8 +1,25 @@
 import { EXECUTION_CONTRACT_VERSION } from "./pins.mjs";
 
+function errorCode(err) {
+  let cur = err;
+  const seen = new Set();
+  while (cur && typeof cur === "object" && !seen.has(cur)) {
+    seen.add(cur);
+    if (cur.code === "ECONNREFUSED") return "ECONNREFUSED";
+    if (Array.isArray(cur.errors)) {
+      for (const inner of cur.errors) {
+        const nested = errorCode(inner);
+        if (nested === "ECONNREFUSED") return "ECONNREFUSED";
+      }
+    }
+    cur = cur.cause;
+  }
+  return err?.code || "fetch-failed";
+}
+
 export function classifyHttpExchange({ fetchError, status, body }) {
   if (fetchError) {
-    const code = fetchError.code || fetchError.cause?.code || "fetch-failed";
+    const code = errorCode(fetchError);
     const mapped = code === "ECONNREFUSED" ? "connection-refused" : code;
     return {
       kind: "http-transport-failure",

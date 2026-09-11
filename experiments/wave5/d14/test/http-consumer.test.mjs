@@ -6,7 +6,6 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { after, describe, it } from "node:test";
-import { createSdsApp } from "../../../../server/app.js";
 import { declaredRouteMetadata } from "../../../../server/paid-useful-jobs/lib/envelope.mjs";
 import { classifyHttpExchange, getHealth, getResult, postExecute } from "../lib/client.mjs";
 import { ConsumerRefuse, encodeExecuteRequest, encodeInputFile } from "../lib/encode-inputs.mjs";
@@ -68,6 +67,7 @@ describe("W5-D14 current SDS52 HTTP", { timeout: 30_000 }, () => {
   });
 
   it("SDS52 Express POST /execute is not the D01 execution contract", async () => {
+    const { createSdsApp } = await import("../../../../server/app.js");
     const app = createSdsApp();
     const { server, origin } = await listenApp(app);
     try {
@@ -104,10 +104,18 @@ describe("W5-D14 current SDS52 HTTP", { timeout: 30_000 }, () => {
   });
 
   it("closed port is http-transport-failure, not an analysis refusal", async () => {
-    const got = await getHealth("http://127.0.0.1:1");
+    const closed = await new Promise((resolve) => {
+      const server = createServer();
+      server.listen(0, "127.0.0.1", () => {
+        const addr = server.address();
+        const origin = `http://127.0.0.1:${addr.port}`;
+        server.close(() => resolve(origin));
+      });
+    });
+    const got = await getHealth(closed);
     assert.equal(got.classify.kind, "http-transport-failure");
     assert.equal(got.classify.code, "connection-refused");
-    const r = runCli(["health", "--base", "http://127.0.0.1:1"]);
+    const r = runCli(["health", "--base", closed]);
     assert.notEqual(r.status, 0);
     const body = JSON.parse(r.stdout);
     assert.equal(body.classify.kind, "http-transport-failure");
