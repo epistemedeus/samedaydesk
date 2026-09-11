@@ -12,7 +12,7 @@
 
 ## Tested producer
 
-F08 `fable/f08-paid-wrappers` `aeef964fa188443078958d9d6d393afae1d542ee` (read-only worktree). Named pin `bae3e7cd…` was not spawned. D01 owns later wrapper amendments. This export does not claim untested sibling behavior.
+F08 `aeef964` is historical. Composition producer is this tree's D01 CLI. Named pin `bae3e7cd…` was not spawned.
 
 I01 hasher remains Neo PR54 `819fa637ecf5e5177c84efc16fcaa18d57017631` vendored files plus LICENSE.
 
