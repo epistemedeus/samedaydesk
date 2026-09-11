@@ -10,12 +10,18 @@ Pinned published inputs (read-only):
 - client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz
 - client/src/data/usefulJobsKit.json
 
-The 8 MiB cap is aligned with useful-jobs 1.0.0 lib/validate-next-run.mjs
+The kit 8 MiB cap is aligned with useful-jobs 1.0.0 lib/validate-next-run.mjs
 (MAX_LOCAL_INPUT_BYTES). Tests extract that archive and spawn
-`node --eval` against the extracted module. This directory does not copy
-F08 server/paid-useful-jobs/lib/input-guard.mjs (1 MiB Express-aligned cap)
-or a competing useful-jobs kernel. Optional `--d01-root` imports SDS52
-`inspectSample` from a read-only pin; it is not vendored here.
+`node --eval` against the extracted module. ok:true preflight is additionally
+bounded by D01 execution.v1 MAX_INPUT_BYTES (1_048_576). A 1 MiB+1 file that
+is still under the kit cap is `input-oversize`, matching
+server/paid-useful-jobs/lib/input-guard.mjs at pin 6bed72dd. This directory
+does not copy that wrapper kernel.
+
+D01 is imported read-only from epistemedeus/samedaydesk@6bed72dd (PR 74,
+codex/w5-d01-20260911) as samedaydesk.paid-useful-jobs.execution.v1
+(createExecutor / runPaidOffer / bin/cli.mjs). Bind tests feed the same
+staged file bytes into that CLI and library.
 
 Fixture JSON under fixtures/vendor-budget-impact/ is a labeled SAMPLE copy
 of kit samples/pricing/a (sibling SAMPLE.txt). That path is a refuse case.

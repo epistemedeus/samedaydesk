@@ -61,7 +61,7 @@ Dependencies: Node 22, `tar` (kit-alignment extract only), in-tree catalog + arc
 | `--declared-inputs` digest `sha256:0{64}` / bytes `1` | `input-digest-mismatch` |
 | `--before-digest 7` | `invalid-digest` |
 
-A 1 MiB + 1 file is accepted (proves this is not F08's cap).
+A 1 MiB + 1 file was accepted in W4 (kit 8 MiB only). Wave5 D02 binds execution.v1: that size is now `input-oversize`. See `experiments/wave5/d02/RECEIPT.md`.
 
 ## Untested / not claimed
 

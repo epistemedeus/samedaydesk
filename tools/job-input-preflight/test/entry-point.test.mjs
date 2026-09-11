@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -38,6 +38,9 @@ test("proof: valid custom caller files succeed at the CLI", () => {
   assert.equal(r.json.sample, false);
   assert.equal(r.json.job, "vendor-budget-impact");
   assert.equal(r.json.inputs.before.json, true);
+  assert.ok(r.json.inputs.before.stagedPath);
+  assert.equal(r.json.limitBytes, 1_048_576);
+  assert.equal(r.json.executionContractVersion, "samedaydesk.paid-useful-jobs.execution.v1");
   assert.match(r.json.inputs.before.digest, /^sha256:[0-9a-f]{64}$/);
 });
 
@@ -84,6 +87,8 @@ test("proof: valid inline JSON custom input succeeds at the CLI", () => {
   assert.equal(r.json.inputs.after.inline, true);
   assert.equal(r.json.sample, false);
   assert.equal(r.json.engineInvoked, false);
+  assert.equal(readFileSync(r.json.inputs.before.stagedPath, "utf8"), INLINE_BEFORE);
+  assert.equal(readFileSync(r.json.inputs.after.stagedPath, "utf8"), INLINE_AFTER);
 });
 
 test("proof: inline JSON with SAMPLE label is rejected at the CLI", () => {

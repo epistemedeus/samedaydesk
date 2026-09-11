@@ -1,15 +1,15 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync } from "node:fs";
 import http from "node:http";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
-import { DIGEST_RE, MAX_LOCAL_INPUT_BYTES } from "../lib/constants.mjs";
+import { DIGEST_RE, EXECUTION_MAX_INPUT_BYTES, KIT_MAX_LOCAL_INPUT_BYTES, MAX_LOCAL_INPUT_BYTES } from "../lib/constants.mjs";
 import { formatDigest } from "../lib/digest.mjs";
 import { DEFAULT_ARCHIVE, DEFAULT_CATALOG, DEFAULT_KIT_JSON, FIXTURES } from "../lib/roots.mjs";
-import { JOURNEY_ARGS, runCli, runCliAsync } from "./helpers.mjs";
+import { JOURNEY_ARGS, runCli, runCliAsync, writePaddedPricingJson } from "./helpers.mjs";
 
 const pin = JSON.parse(readFileSync(path.join(FIXTURES, "catalog-pin.json"), "utf8"));
 const kit = JSON.parse(readFileSync(DEFAULT_KIT_JSON, "utf8"));
@@ -36,19 +36,18 @@ test("extracted kit: MAX_LOCAL_INPUT_BYTES via node --eval (not a copied kernel)
   const r = spawnSync(process.execPath, ["--input-type=module", "--eval", evalJs], { encoding: "utf8" });
   assert.equal(r.status, 0, r.stderr);
   assert.equal(Number(r.stdout), MAX_LOCAL_INPUT_BYTES);
+  assert.equal(MAX_LOCAL_INPUT_BYTES, KIT_MAX_LOCAL_INPUT_BYTES);
   assert.equal(MAX_LOCAL_INPUT_BYTES, 8 * 1024 * 1024);
+  assert.equal(EXECUTION_MAX_INPUT_BYTES, 1_048_576);
+  assert.notEqual(EXECUTION_MAX_INPUT_BYTES, MAX_LOCAL_INPUT_BYTES);
 });
 
-test("not F08: a 1MiB+1 file under the 8MiB kit cap is accepted", () => {
+test("compatible bound: 1MiB+1 under the kit cap is input-oversize, not a green preflight", () => {
   const work = mkdtempSync(path.join(tmpdir(), "jip-1mib-"));
   const before = path.join(work, "before.json");
   const after = path.join(work, "after.json");
-  const f08Cap = 1_048_576;
-  writeFileSync(before, `${JSON.stringify({ label: "caller", rows: [{ field: "a", value: 1, unit: "u" }] })}\n`);
-  const payload = { label: "caller", rows: [{ field: "a", value: 2, unit: "u" }] };
-  const json = `${JSON.stringify(payload)}\n`;
-  const pad = Buffer.alloc(f08Cap + 1 - Buffer.byteLength(json), 0x20);
-  writeFileSync(after, Buffer.concat([Buffer.from(json), pad]));
+  writePaddedPricingJson(before, 256, { value: 1 });
+  writePaddedPricingJson(after, EXECUTION_MAX_INPUT_BYTES + 1, { value: 2 });
   const r = runCli([
     "vendor-budget-impact",
     "--before",
@@ -58,9 +57,12 @@ test("not F08: a 1MiB+1 file under the 8MiB kit cap is accepted", () => {
     "--input-root",
     work,
   ]);
-  assert.equal(r.status, 0, r.stdout);
-  assert.equal(r.json.ok, true);
-  assert.ok(r.json.inputs.after.bytes > f08Cap);
+  assert.equal(r.status, 2, r.stdout);
+  assert.equal(r.json.ok, false);
+  assert.equal(r.json.code, "input-oversize");
+  assert.equal(r.json.detail.max, EXECUTION_MAX_INPUT_BYTES);
+  assert.equal(r.json.detail.kitLimitBytes, KIT_MAX_LOCAL_INPUT_BYTES);
+  assert.ok(r.json.inputs.after.bytes > EXECUTION_MAX_INPUT_BYTES);
   assert.ok(r.json.inputs.after.bytes <= MAX_LOCAL_INPUT_BYTES);
 });
 
