@@ -1,0 +1,28 @@
+{
+  "id": "M-F07",
+  "title": "F07 harness_fixture labelled insufficient",
+  "disposition": "briefed_out_of_scope",
+  "inSdsScope": false,
+  "saleState": "not_a_sale",
+  "provenance": "fixture",
+  "authorized": false,
+  "kind": "brief",
+  "evaluator": "h4r-child-7-monitor-briefs",
+  "briefPath": "briefs/M-F07.md",
+  "notes": "Neo residual. harness_fixture is not customer or production evidence. SDS F07 consumer-evidence-refresh is a different workstream. not patched on SDS.",
+  "facts": {
+    "monitorCloseout": "wave monitor closeout ~18:55Z",
+    "quotedDefect": "F07 harness_fixture labelled insufficient",
+    "inSdsScopeQuoted": "No (Neo)",
+    "requiredActionQuoted": "Repair brief only",
+    "insufficientMeans": "evidence labelled harness_fixture is not customer/production evidence",
+    "neoWritable": false,
+    "neoSourceInThisWorkspace": false,
+    "patchedOnSds": false,
+    "sdsF07Branch": "fable/w2-09-f07-consumer-evidence-refresh",
+    "sdsF07Quoted": "Wave 1 F07 (packs/outside-operator-journey-harness/) is a different Neo harness and was not touched.",
+    "neoHarnessPath": "packs/outside-operator-journey-harness/",
+    "neoHarnessPresentOnThisTree": false,
+    "recommendedNeoRepair": "do not treat harness_fixture as sufficient consumer evidence"
+  }
+}

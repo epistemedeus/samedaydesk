@@ -1,0 +1,22 @@
+{
+  "id": "M-H4-api",
+  "title": "Short API result vs delivered branch — collector must keep a non-truncated Heavy receipt",
+  "disposition": "noted",
+  "inSdsScope": false,
+  "saleState": "not_a_sale",
+  "provenance": "fixture",
+  "authorized": false,
+  "kind": "note",
+  "evaluator": "corpus-notes",
+  "briefPath": null,
+  "notes": "Short API result versus delivered branch is a collector/receipt problem, not an SDS product patch. This pack child cannot write parent RECEIPT.md. The deliverable is the parent RECEIPT.md H4R section plus the non-truncated final JSON stdout. Prior H4 session 1434eeed-5e5c-48d1-b2d1-1ea29c966400. Parent H4R session 512803b8-c0dc-4a9d-a58f-1ab2d07cc0a3.",
+  "facts": {
+    "priorH4SessionId": "1434eeed-5e5c-48d1-b2d1-1ea29c966400",
+    "parentSessionId": "512803b8-c0dc-4a9d-a58f-1ab2d07cc0a3",
+    "childWritesParentReceipt": false,
+    "deliverable": [
+      "parent RECEIPT.md H4R section",
+      "parent final JSON stdout (non-truncated)"
+    ]
+  }
+}

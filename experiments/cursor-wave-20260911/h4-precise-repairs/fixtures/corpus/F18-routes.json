@@ -1,0 +1,43 @@
+{
+  "id": "F18-routes",
+  "title": "Live routeCount 23 vs older 22 vs local verified.json 20",
+  "disposition": "noted",
+  "inSdsScope": true,
+  "saleState": "not_a_sale",
+  "provenance": "fixture",
+  "authorized": false,
+  "kind": "note",
+  "evaluator": "corpus-notes",
+  "briefPath": null,
+  "notes": "F18 live journeys reported routeCount 23 versus an older count of 22. This tree's committed client/public/x402/verified.json has routes.length 20. Observation only; verified.json is not changed.",
+  "facts": {
+    "localRouteCount": 20,
+    "f18LiveRouteCount": 23,
+    "olderRouteCount": 22,
+    "feedPath": "client/public/x402/verified.json",
+    "schemaVersion": "samedaydesk.x402-verified-feed.v1",
+    "generatedAt": "2026-09-07T18:50:05.000Z",
+    "localRoutes": [
+      "GET /extract",
+      "GET /read",
+      "GET /scan",
+      "GET /schemaforge",
+      "GET /enrich",
+      "GET /wallet-enrich",
+      "GET /deep-audit",
+      "GET /defi/morpho-position",
+      "GET /defi/morpho-protection",
+      "GET /defi/morpho-market-underwrite",
+      "GET /defi/morpho-preliquidation-replay",
+      "GET /work/opportunity-preflight",
+      "GET /distribution/agent-discoverability-audit",
+      "GET /commerce/payment-offer-preflight",
+      "GET /commerce/settlement-proof",
+      "GET /chain/transaction-receipt",
+      "GET /chain/solana-transaction-receipt",
+      "GET /commerce/seller-integrity-audit",
+      "GET /commerce/contract-qualified-search",
+      "GET /distribution/agent-surface-budget-audit"
+    ]
+  }
+}

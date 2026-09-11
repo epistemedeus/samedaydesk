@@ -1,0 +1,24 @@
+{
+  "id": "M-termsVersion",
+  "title": "F01 integer termsVersion vs F17/F02 content hash",
+  "disposition": "briefed_out_of_scope",
+  "inSdsScope": false,
+  "saleState": "not_a_sale",
+  "provenance": "fixture",
+  "authorized": false,
+  "kind": "brief",
+  "evaluator": "h4r-child-7-monitor-briefs",
+  "briefPath": "briefs/M-termsVersion.md",
+  "notes": "Neo residual. Repair brief only. not patched on SDS. Neo source is not in this workspace.",
+  "facts": {
+    "monitorCloseout": "wave monitor closeout ~18:55Z",
+    "quotedDefect": "F01 integer termsVersion vs F17/F02 content hash",
+    "inSdsScopeQuoted": "No (Neo)",
+    "requiredActionQuoted": "Repair brief only under pack briefs/",
+    "neoWritable": false,
+    "neoSourceInThisWorkspace": false,
+    "patchedOnSds": false,
+    "recommendedNeoRepair": "hash-based terms identity; do not silently coerce integer to hash or hash to integer",
+    "sdsTermsVersionHits": "none outside this pack MONITOR table"
+  }
+}

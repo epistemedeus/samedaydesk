@@ -1,0 +1,29 @@
+{
+  "id": "M-F02-pr",
+  "title": "F02 PR create URL only",
+  "disposition": "noted",
+  "inSdsScope": false,
+  "saleState": "not_a_sale",
+  "provenance": "fixture",
+  "authorized": false,
+  "kind": "note",
+  "evaluator": "h4r-child-7-monitor-briefs",
+  "briefPath": "briefs/M-F02-pr.md",
+  "notes": "Note only. F02 produced a PR create URL; follow-up is note-only. No SDS code change.",
+  "facts": {
+    "monitorCloseout": "wave monitor closeout ~18:55Z",
+    "quotedDefect": "F02 PR create URL only",
+    "requiredActionQuoted": "Note only",
+    "followUp": "note-only",
+    "sdsCodeChange": false,
+    "f02BranchOnOrigin": false,
+    "f02PullRequestOnSds": false,
+    "originFableHeadsSearched": [
+      "fable/f08-paid-wrappers",
+      "fable/h4-precise-repairs",
+      "fable/h4r-defect-corpus",
+      "fable/w2-06-e01-cold-start-assessment",
+      "fable/w2-09-f07-consumer-evidence-refresh"
+    ]
+  }
+}

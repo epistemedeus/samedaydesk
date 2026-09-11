@@ -1,0 +1,24 @@
+{
+  "id": "M-F16-meter",
+  "title": "F16 meter vendored; Pilot not attached to SDS",
+  "disposition": "noted",
+  "inSdsScope": false,
+  "saleState": "not_a_sale",
+  "provenance": "fixture",
+  "authorized": false,
+  "kind": "note",
+  "evaluator": "corpus-notes",
+  "briefPath": "briefs/M-F16-meter.md",
+  "notes": "F16 meter is a vendored Pilot residual. Pilot is not attached to SDS, and SDS cannot push Pilot. Repo search found no F16 meter product on this tree. Observation/brief only; no meter implementation and no production change in this pack.",
+  "facts": {
+    "vendoredMeter": true,
+    "pilotAttached": false,
+    "sdsCanPushPilot": false,
+    "meterImplemented": false,
+    "productionChangeInThisPack": false,
+    "searchHits": [
+      "experiments/cursor-wave-20260911/h4-precise-repairs/PROMPT-H4R.md",
+      "experiments/cursor-wave-20260911/h4-precise-repairs/src/corpus-types.ts"
+    ]
+  }
+}
