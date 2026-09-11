@@ -1,0 +1,89 @@
+{
+  "schema": "samedaydesk.managed-listing-repair.case.v1",
+  "clock": "2026-09-11T19:00:00.000Z",
+  "source": {
+    "kind": "listing_observation",
+    "listingId": "fixture-noop",
+    "observedAt": "2026-09-11T19:00:00.000Z",
+    "url": "https://example.test/listing/fixture-noop",
+    "fields": {
+      "listingStatus": "PUBLIC_ACTIVE",
+      "title": "Owner listing"
+    }
+  },
+  "packet": {
+    "kind": "repair_packet",
+    "soldAsFix": true,
+    "changes": [
+      {
+        "field": "listingStatus",
+        "from": "PUBLIC_ACTIVE",
+        "to": "PUBLIC_ACTIVE"
+      }
+    ]
+  },
+  "engineInput": {
+    "schema": "pilot.s185.distribution_repair_input.v1",
+    "inputId": "f05-noop",
+    "clock": "2026-09-11T19:00:00.000Z",
+    "identity": {
+      "provider": "fixture",
+      "jobRef": "fixture-noop",
+      "sharedEvidenceId": "fixture-noop",
+      "sourceTag": "catalog"
+    },
+    "discovery": {
+      "captureStatus": "ok",
+      "catalogComplete": true,
+      "listing": {
+        "url": "https://example.test/listing/fixture-noop",
+        "agentId": "fixture-noop",
+        "listingStatus": "PUBLIC_ACTIVE"
+      }
+    },
+    "record": {
+      "routeRegressionInput": {
+        "schema": "x402.r2.record.route_regression_input.v1",
+        "reportId": "f05-noop",
+        "title": "No-op sold as a fix",
+        "demo": false,
+        "sourceLabel": "operator-fixture",
+        "baseline": {
+          "label": "baseline",
+          "capturedAt": "2026-09-01T00:00:00.000Z",
+          "routes": [
+            {
+              "path": "/",
+              "url": "https://example.test/",
+              "status": 200,
+              "accessibility": "ok",
+              "title": "Home"
+            }
+          ]
+        },
+        "current": {
+          "label": "current",
+          "capturedAt": "2026-09-11T00:00:00.000Z",
+          "captureIncomplete": false,
+          "coverageComplete": true,
+          "routes": [
+            {
+              "path": "/",
+              "url": "https://example.test/",
+              "status": 200,
+              "accessibility": "ok",
+              "title": "Home"
+            }
+          ]
+        },
+        "feedId": "f05-noop"
+      }
+    },
+    "callerProvenance": {
+      "suppliedBy": "operator",
+      "syntheticFixture": true,
+      "notCustomer": true,
+      "notMarketFact": true
+    }
+  }
+}

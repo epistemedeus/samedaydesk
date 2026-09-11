@@ -43,3 +43,6 @@ tools/recurring-job-recipes/artifacts/**
 
 # Verified-feed refresh candidates stay local until review.
 client/tmp/
+
+# Managed listing repair local outputs.
+tools/managed-listing-repair/out/
