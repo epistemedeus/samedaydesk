@@ -1,0 +1,5 @@
+{
+  "schema": "samedaydesk.pre-spend-cost-assurance.journey.v1",
+  "plan": "./ok-plan.json",
+  "postPaymentPlan": "./reject/post-payment.json"
+}

@@ -1,0 +1,19 @@
+{
+  "schema": "samedaydesk.pre-spend-cost-assurance.plan.v1",
+  "id": "http-402-as-success",
+  "purchaseAuthorized": false,
+  "network": "eip155:8453",
+  "currency": "USDC",
+  "lines": [
+    {
+      "tool": "extract",
+      "route": "/extract",
+      "amountAtomic": "5000",
+      "httpStatus": 402,
+      "success": true,
+      "paid": true,
+      "outcome": "success",
+      "treat402AsSuccess": true
+    }
+  ]
+}
