@@ -6,7 +6,7 @@ Assignment `W5-D26` on `epistemedeus/samedaydesk`. Stage-1 kit against current S
 
 - Repo: `epistemedeus/samedaydesk`
 - Branch: `cursor/w5-d26-exact-service-cost-price-floor-experiment-using-current-implementation-d554`
-- Head: `c7d1f33982f316e886063ea9cad47f230298e107`
+- Head: branch tip (do not embed a SHA that the next commit would invalidate)
 - Compare: https://github.com/epistemedeus/samedaydesk/compare/fable/f08-paid-wrappers...cursor/w5-d26-exact-service-cost-price-floor-experiment-using-current-implementation-d554
 - PR (draft): https://github.com/epistemedeus/samedaydesk/pull/95
 - Owned path: `experiments/wave5/d26/` only
