@@ -28,7 +28,7 @@ Instance-set classification on the existing CLI. `impact.compatible` added (`sch
 
 ## Tests
 
-Node `v22`. No extra npm install. No Postgres (this job has no store).
+Node `v22.14.0`. No extra npm install. No Postgres (this job has no store).
 
 ```bash
 node --test --test-concurrency=1 tools/json-schema-webhook-drift/test/*.test.mjs
