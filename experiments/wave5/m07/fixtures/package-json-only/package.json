@@ -1,0 +1,8 @@
+{
+  "name": "m07-pkg-only",
+  "version": "1.0.0",
+  "dependencies": {
+    "m07-alpha": "1.0.0",
+    "m07-beta": "2.0.0"
+  }
+}

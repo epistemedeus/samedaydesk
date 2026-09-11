@@ -1,0 +1,23 @@
+{
+  "content-hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "packages": [
+    {
+      "name": "m07/alpha",
+      "version": "1.0.0",
+      "dist": {
+        "type": "zip",
+        "url": "https://example.invalid/m07-alpha-1.0.0.zip",
+        "shasum": "aaa"
+      }
+    }
+  ],
+  "packages-dev": [],
+  "aliases": [],
+  "minimum-stability": "stable",
+  "stability-flags": [],
+  "prefer-stable": false,
+  "prefer-lowest": false,
+  "platform": [],
+  "platform-dev": [],
+  "plugin-api-version": "2.6.0"
+}

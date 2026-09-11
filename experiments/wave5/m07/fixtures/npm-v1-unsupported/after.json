@@ -1,0 +1,11 @@
+{
+  "name": "m07-v1-app",
+  "version": "1.0.0",
+  "lockfileVersion": 1,
+  "dependencies": {
+    "m07-alpha": {
+      "version": "1.1.0",
+      "integrity": "sha512-m07-alpha-1.1.0"
+    }
+  }
+}

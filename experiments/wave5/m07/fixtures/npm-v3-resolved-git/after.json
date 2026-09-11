@@ -1,0 +1,26 @@
+{
+  "name": "m07-git-app",
+  "version": "1.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "m07-git-app",
+      "version": "1.0.0",
+      "dependencies": {
+        "m07-git": "1.0.0",
+        "m07-beta": "2.0.0"
+      }
+    },
+    "node_modules/m07-git": {
+      "version": "1.0.0",
+      "resolved": "git+https://github.com/example-invalid/m07-git.git#bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "integrity": "sha512-m07-git-1.0.0"
+    },
+    "node_modules/m07-beta": {
+      "version": "2.0.0",
+      "resolved": "https://example.invalid/m07-beta-2.0.0.tgz",
+      "integrity": "sha512-m07-beta-2.0.0"
+    }
+  }
+}

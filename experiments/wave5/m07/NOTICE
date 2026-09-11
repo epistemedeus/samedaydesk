@@ -1,0 +1,7 @@
+W5-M07 independent lock fixtures.
+
+This package owns fixtures, replay tests, and a thin CLI consumer only.
+It does not copy tools/lockfile-pin-delta (W4-commerce-11 / W5-M03).
+Replay uses that engine from a read-only worktree at the SHA in PIN.json.
+
+License: MIT, same grant as other SameDayDesk experiment packages.

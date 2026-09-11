@@ -1,0 +1,26 @@
+{
+  "id": "W5-M07",
+  "outcome": "Independent package-manager lock fixtures across supported formats",
+  "engine": {
+    "id": "W4-commerce-11",
+    "integrationTask": "W5-M03",
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+    "ref": "codex/w4-commerce-11-20260911",
+    "ownedPath": "tools/lockfile-pin-delta/",
+    "cli": "bin/lockfile-delta.mjs",
+    "claimedFormats": [
+      "npm-package-lock-v2",
+      "npm-package-lock-v3"
+    ],
+    "pinIdentity": ["name", "version", "integrity"]
+  },
+  "wrapper": {
+    "id": "SDS52",
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "ref": "fable/f08-paid-wrappers",
+    "pr": 52,
+    "binding": "Not consumed. Catalog and paid-wrapper wiring belong to W5-M01 and D01."
+  },
+  "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee"
+}
