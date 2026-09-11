@@ -96,6 +96,6 @@ node experiments/wave5/m01/bin/catalog.mjs contract
 
 | Field | Value |
 | --- | --- |
-| Head | `3a96c8db0ce21ce9059f76da91019c17138b9567` (RECEIPT-stamp commit follows) |
-| Draft PR | `gh pr create` GraphQL **Resource not accessible by integration** |
+| Head | `5a1bd8bfc2f1945319e843096aa5aa793e53d1e4` (M01 continuation; stamp follows if needed) |
+| Draft PR | `gh pr create` GraphQL **Resource not accessible by integration** (unchanged) |
 | Compare | https://github.com/epistemedeus/samedaydesk/compare/main...codex/w5-h04-20260911 |
