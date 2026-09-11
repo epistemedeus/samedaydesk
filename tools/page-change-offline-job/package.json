@@ -1,0 +1,22 @@
+{
+  "name": "@samedaydesk/page-change-offline-job",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "W4-commerce-13 offline compare of two already-held samedaydesk.extract-batch.v0 JSON files. Emits page-change.json/md. Does not fetch, pay, or import merchant compare.mjs.",
+  "bin": {
+    "page-change": "./bin/page-change.mjs"
+  },
+  "exports": {
+    ".": "./lib/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "journey": "node ./bin/page-change.mjs journey"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "UNLICENSED"
+}
