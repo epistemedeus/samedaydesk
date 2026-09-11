@@ -14,10 +14,10 @@
 | --- | --- |
 | PR 52 pin at re-review start (origin had not moved) | `95d9d21869717e26c80d17cee3933a0350aeee1e` |
 | Implementation HEAD this receipt judges | `ab2d42419f59a85839b8408555cb32c1bf05640f` |
-| Extra commit from this re-review | `ab2d424` — structured CLI rejection for unknown job ids |
-| This file | landed in the following commit on the same branch |
+| Extra commit from this re-review | `ab2d42419f59a85839b8408555cb32c1bf05640f` — structured CLI rejection for unknown job ids |
+| This file | `a86ae165381a11c87172c7b7a45b9e771ec91e0a` |
 
-`origin/fable/f08-paid-wrappers` was `95d9d218` at start. No reset. Writer commits `e935bd8` + `b4af5a2` and first-reviewer SAMPLE rejection `95d9d218` were kept.
+`origin/fable/f08-paid-wrappers` was `95d9d218` at start. No reset. Writer commits `e935bd8` + `b4af5a2` and first-reviewer SAMPLE rejection `95d9d218` were kept. Implementation judged at `ab2d424`; this receipt file was added in `a86ae16`.
 
 **Verdict: ready**
 
