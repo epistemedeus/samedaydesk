@@ -1,4 +1,4 @@
-import { CALLBACK_SCHEMA, engineArchiveIdentity, USEFUL_JOBS_ARCHIVE_BYTES, USEFUL_JOBS_ARCHIVE_SHA256 } from "./pins.mjs";
+import { CALLBACK_SCHEMA } from "./pins.mjs";
 import { outputRefs } from "./receipt-shape.mjs";
 
 const SECRET_KEY = /(bearer|authorization|password|secret|token|apikey|api_key|privatekey)/i;
@@ -20,22 +20,32 @@ function stripSecrets(value) {
  * Callback body: redacted result references only. No caller input contents,
  * payment payloads, filesystem paths, or bearer secrets.
  */
-export function redactResultReferences({ eventId, receipt, termsHash, termsVersion, callbackOrigin }) {
+export function redactResultReferences({
+  eventId,
+  receipt,
+  termsHash,
+  termsVersion,
+  mappingId,
+  mappingVersion,
+  callbackDestination,
+  outputsDigest,
+  engineArchiveIdentity: identity,
+}) {
   const engine = receipt.engine && typeof receipt.engine === "object" ? receipt.engine : {};
   return stripSecrets({
     schema: CALLBACK_SCHEMA,
     eventId,
     jobId: receipt.jobId,
-    engineArchiveIdentity: engineArchiveIdentity(engine),
+    engineArchiveIdentity: identity,
     engine: {
       package: engine.package || engine.extractedPackage || "useful-jobs",
       version: engine.version || null,
       purchaseAuthority: false,
-      archiveSha256: engine.archiveSha256 || USEFUL_JOBS_ARCHIVE_SHA256,
-      archiveBytes: engine.archiveBytes ?? USEFUL_JOBS_ARCHIVE_BYTES,
+      archiveSha256: engine.archiveSha256,
+      archiveBytes: engine.archiveBytes,
     },
     outputs: outputRefs(receipt),
-    outputsDigest: receipt.outputsDigest,
+    outputsDigest,
     fundingState: receipt.fundingState,
     sold: false,
     sample: Boolean(receipt.sample),
@@ -46,6 +56,9 @@ export function redactResultReferences({ eventId, receipt, termsHash, termsVersi
     sale: false,
     termsHash,
     termsVersion,
-    callbackOrigin,
+    mappingId,
+    mappingVersion,
+    callbackOrigin: callbackDestination.origin,
+    callbackDestination,
   });
 }

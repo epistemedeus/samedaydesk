@@ -48,10 +48,9 @@ function startDisposableCluster() {
   };
 }
 
-test("local-runtime postgres: enqueue, loopback ack, reopen client, one acknowledged event", { timeout: 90_000 }, async (t) => {
+test("local-runtime postgres: enqueue, loopback ack, reopen client, one acknowledged event", { timeout: 90_000 }, async () => {
   if (!pgAvailable()) {
-    t.skip("PostgreSQL binaries missing; file-store tests still cover the outbox protocol");
-    return;
+    throw new Error("PostgreSQL 16 initdb/pg_ctl required at /usr/lib/postgresql/16/bin; missing binaries mean incomplete coverage");
   }
   const cluster = startDisposableCluster();
   const dir = tmpSpace("outbox-pg-j-");
@@ -69,6 +68,7 @@ test("local-runtime postgres: enqueue, loopback ack, reopen client, one acknowle
     const enq = await enqueue(store, { receipt, callbackUrl: receiver.url });
     assert.equal(enq.ok, true);
     assert.equal(enq.event.deliveryState, "queued");
+    assert.equal(enq.event.callbackDestination.path, "/callback");
     const delivered = await deliverOnce(store, { eventId: enq.event.eventId, optIn: true });
     assert.equal(delivered.event.deliveryState, "delivered");
     assert.equal(delivered.event.buyerAccepted, false);

@@ -1,74 +1,40 @@
-# RECEIPT — W4-commerce-09 crash-safe delivery outbox
+# RECEIPT — W5-D06 Co09 delivery outbox
 
-**Repo:** `epistemedeus/samedaydesk`  
-**Branch:** `codex/w4-commerce-09-20260911`  
-**Source head:** `dc619741068807665ecf2c1ea15eb3a65a659f6c`  
-**Starting ref:** `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545`  
-**Owned path:** `tools/job-delivery-outbox/`  
-**Integration owner:** Root  
-**Stop:** tested isolated outbox + draft PR; no daemon or external delivery  
+**Repo:** `epistemedeus/samedaydesk`
+**Branch:** `cursor/w5-d06-co09-delivery-outbox-with-precise-destination-and-terms-mapping-4f5e`
+**Starting ref:** `828d8942fb1631aba92a9116dc9fbde0ee1dd258`
+**Owned paths:** `tools/job-delivery-outbox/`, `experiments/wave5/d06/RECEIPT.md`
+**Integration owner:** W5-D01
+**Stop:** tested isolated outbox + draft PR; no daemon, deploy, or spend
 
 ## What
 
-A durable local outbox stores completed useful-job result notifications, attempts one operator-configured localhost callback, reads the ack before `delivered`, and resumes after interruption without treating an incomplete HTTP attempt as success. Default is no network. Payments stay non-settling prototypes. SAMPLE remains SAMPLE. Callback ack is not buyer acceptance or a sale.
+Reproduced REVIEW-INTEGRATION Co09 predictions at Co09 head `828d8942`. Origin-only destination identity, trusted asserted output digest, invented kit pin, and path/digest-blind acks were real. Smallest fix: destination is origin+path, listed-output digest is recomputed, engine archive identity is required, ack binds eventId+path+digest, lost HTTP stays `unknown`. Outbox terms.v1 is an explicit mapping from SDS52 receipt.v1. Unlike schema hashes are not forced equal. Empty HTTP 200 ack body was already not completion (`failed`); preserved.
 
-Replaces the planner's repeat-delivery operator (overlap with commerce-03). F08 and the result mailbox still do not deliver or reconcile external callback attempts.
-
-## Pins
+## Pins tested
 
 | Item | Value |
 | --- | --- |
-| SDS main | `5b97d1b02e786acd1895cfa1508087ae3f7a1545` |
-| F08 receipt pin (read-only) | `bae3e7cd5034b21019fb272a99d88db964b831ee` |
+| Co09 starting source | `828d8942fb1631aba92a9116dc9fbde0ee1dd258` |
+| SDS52 wrapper (current) | `aeef964fa188443078958d9d6d393afae1d542ee` |
+| Historical F08 (not official) | `bae3e7cd5034b21019fb272a99d88db964b831ee` |
 | useful-jobs 1.0.0 | sha256 `6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51`, 2522418 B |
-| I01 terms | canonical JSON hash + `termsVersion`; engine identity `archiveSha256:archiveBytes`, not the version string |
-| F08 kernel | not copied; receipt schema `samedaydesk.paid-useful-jobs.receipt.v1` only |
-| cursor/plugins swarm skill | `f5bdd6826fd0a0d9cbc4347134c3a74a200b9d9d` (environment `.cursor/skills/pstack-swarm`, not in this PR) |
+| Terms mapping | `samedaydesk.paid-useful-jobs.receipt.v1->job-delivery-outbox.terms.v1` v1 |
+| W5-D01 result contract | not published; remaining binding |
 
-## Commands and counts
-
-From the module (Node >= 22). `npm install` is required only for the optional `pg` driver used by the Postgres local-runtime test.
+## Commands
 
 ```bash
 cd tools/job-delivery-outbox && npm install
 node --test --test-concurrency=1 test/*.test.mjs
 ```
 
-From the repository root:
+pstack: relevant skills read (`principle-prove-it-works`, `principle-test-behavior-not-implementation`, `tdd`, `principle-boundary-discipline`, `principle-make-operations-idempotent`, `principle-subtract-before-you-add`, `principle-fix-root-causes`, `principle-laziness-protocol`, `no-comments`, `blast-radius`, `setup-pstack`). Actual model: Cursor Grok 4.6 xhigh (`cursor-grok-4.6-xhigh`). No extra Cloud agents. `~/.cursor/rules/pstack-models.mdc` not present; parent run used included Grok 4.6 xhigh.
 
-```bash
-node --test --test-concurrency=1 tools/job-delivery-outbox/test/*.test.mjs
-```
-
-**PASS — 10 tests, 0 fail, 0 skip** on this worker (`node v22`, PostgreSQL 16 `initdb`, F08 pin worktree at `/tmp/sds-f08-pin-ro`).
-
-| Class | Evidence |
-| --- | --- |
-| Fixture | SAMPLE `--example` receipt; F08 caller before/after JSON from the pin |
-| Local-runtime | useful-jobs CLI; two OS processes (loopback receiver + outbox CLI); disposable Postgres 16 cluster; F08 pin CLI `receipt.json` enqueue |
-| External | Not claimed. No production webhook, hosted DB, or customer message |
-
-## Caller journey
-
-Two real local processes: enqueue a completed `vendor-budget-impact` output (useful-jobs on the F08 caller pair), `deliver-once --opt-in` to `bin/loopback-receiver.mjs`, ack, reopen `status` in a new process, one acknowledged event. `sold`/`sale`/`buyerAccepted` stay false.
-
-## Seeded failures
-
-1. Receiver stores the body then destroys the socket: sender records `unknown`, not failed or delivered; `deliver-once` refuses auto-replay.
-2. SIGTERM after attempt persist and before HTTP response: reopen shows the same `eventId` / `termsHash`, state `unknown`.
-3. Duplicate enqueue is idempotent; a body change under the same event ID is rejected.
-4. SAMPLE `--example` remains `sample: true` after ack; ack is not buyer acceptance or a sale.
-5. Extra refuse-closed: `sold: true`, non-loopback URL, missing `--opt-in`.
-
-## Honestly untested
+## Honestly untested / remaining binding
 
 - Hosted / non-loopback webhooks
-- Production payment or settlement
-- Concurrent writers on one store beyond the file lock
-- Crash of the disk itself (we fsync+rename; we did not pull power)
-- IPv6 `::1` receiver path is allowed by the URL guard but not exercised in the two-process tests (`127.0.0.1` was)
-- Sibling W4 mailbox/binder injection (recorded as later bindings, not imported)
-
-## Next integration owner
-
-Root. Consume this CLI/library through injected adapters. Do not wait on other W4 siblings. Do not turn this into a daemon or live webhook.
+- W5-D01 result contract (consume SDS52 until D01 publishes)
+- I01 kernel terms hash (different schema; not imported)
+- Concurrent writers beyond the file lock
+- IPv6 `::1` two-process path (allowed by the URL guard; tests used `127.0.0.1`)

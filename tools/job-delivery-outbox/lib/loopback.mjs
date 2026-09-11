@@ -38,3 +38,15 @@ export function callbackOrigin(raw) {
   const host = url.hostname.includes(":") && !url.hostname.startsWith("[") ? `[${url.hostname}]` : url.hostname;
   return `http://${host}:${url.port || "80"}`;
 }
+
+/** Precise destination: origin is not the whole identity. Path and search bind delivery. */
+export function callbackDestination(raw) {
+  const url = typeof raw === "string" ? assertLoopbackCallbackUrl(raw) : raw;
+  const origin = callbackOrigin(url);
+  const path = `${url.pathname || "/"}${url.search || ""}`;
+  return {
+    origin,
+    path,
+    canonical: `${origin}${path}`,
+  };
+}

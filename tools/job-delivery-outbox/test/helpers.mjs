@@ -5,7 +5,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { extractUsefulJobsKit, runUsefulJob, buildF08ShapedReceipt } from "../lib/kit.mjs";
 import { fileEntry } from "../lib/receipt-shape.mjs";
-import { F08_PIN_SHA, OWNED_DIR, REPO_ROOT, USEFUL_JOBS_ARCHIVE_SHA256 } from "../lib/pins.mjs";
+import { SDS52_PIN_SHA, OWNED_DIR, REPO_ROOT, USEFUL_JOBS_ARCHIVE_SHA256 } from "../lib/pins.mjs";
 
 export const here = dirname(fileURLToPath(import.meta.url));
 export const cli = join(OWNED_DIR, "bin/outbox.mjs");
@@ -151,17 +151,22 @@ export function waitForFile(path, timeoutMs = 8_000) {
   return readFileSync(path, "utf8");
 }
 
-export function maybeF08Worktree() {
-  const dest = process.env.F08_PIN_WORKTREE || join(tmpdir(), "sds-f08-pin-ro");
+export function sds52Worktree() {
+  const dest = process.env.SDS52_PIN_WORKTREE || join(tmpdir(), "sds-pr52-ro");
   const cliPath = join(dest, "server/paid-useful-jobs/bin/cli.mjs");
   if (existsSync(cliPath)) return dest;
   const add = spawnSync(
     "git",
-    ["-C", REPO_ROOT, "worktree", "add", "--detach", dest, F08_PIN_SHA],
+    ["-C", REPO_ROOT, "worktree", "add", "--detach", dest, SDS52_PIN_SHA],
     { encoding: "utf8" },
   );
-  if (add.status !== 0) return null;
-  return existsSync(cliPath) ? dest : null;
+  if (add.status !== 0) {
+    throw new Error(`SDS52 worktree ${SDS52_PIN_SHA} unavailable: ${add.stderr || add.stdout}`);
+  }
+  if (!existsSync(cliPath)) {
+    throw new Error(`SDS52 worktree missing paid-useful-jobs CLI at ${cliPath}`);
+  }
+  return dest;
 }
 
 export const PG_BIN = process.env.OUTBOX_PG_BIN || "/usr/lib/postgresql/16/bin";

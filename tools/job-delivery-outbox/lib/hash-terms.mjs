@@ -1,15 +1,20 @@
 /**
- * Canonical terms hash (I01 integrated contract).
+ * Canonical terms hash for delivery-outbox terms.v1.
  *
- * I01/S275 hashes a stable-sorted JSON of terms and binds reservations to
- * termsVersion. Original F01-style "hash the whole order including caller input
- * bytes" is rejected here: inputs stay off the terms object. Engine identity
- * is archive sha256+bytes (W4-I02), not the version string.
- *
- * This module does not copy the earned-work kernel.
+ * Explicit mapping from SDS52 receipt.v1. Disclosure, kernel terms, and this
+ * outbox document are different schemas. Their hashes are never forced equal.
+ * Engine identity is archive sha256+bytes, not the version string.
  */
 import { createHash } from "node:crypto";
-import { engineArchiveIdentity, TERMS_SCHEMA } from "./pins.mjs";
+import {
+  TERMS_MAPPING_ID,
+  TERMS_MAPPING_VERSION,
+  TERMS_SCHEMA,
+  F08_RECEIPT_SCHEMA,
+  engineArchiveIdentity,
+} from "./pins.mjs";
+import { callbackDestination } from "./loopback.mjs";
+import { verifyOutputsDigest } from "./receipt-shape.mjs";
 
 export function stableStringify(value) {
   return JSON.stringify(sortValue(value));
@@ -35,17 +40,29 @@ export function hashBody(value) {
   return createHash("sha256").update(stableStringify(value), "utf8").digest("hex");
 }
 
-export function sha256Bytes(buf) {
-  return createHash("sha256").update(buf).digest("hex");
+export { sha256Bytes } from "./sha256.mjs";
+
+function asDestination(callback) {
+  if (callback && typeof callback === "object" && callback.canonical && callback.path && callback.origin) {
+    return callback;
+  }
+  return callbackDestination(callback);
 }
 
 /**
- * Delivery terms: job + engine archive identity + funding labels + output digest
- * + loopback origin. Never caller file contents, payment payloads, or secrets.
+ * Map a validated receipt.v1 onto outbox terms.v1. Destination is origin+path,
+ * not origin alone. outputsDigest is the recomputed listed-output digest.
  */
-export function deliveryTermsFromReceipt(receipt, callbackOrigin) {
+export function deliveryTermsFromReceipt(receipt, callback) {
+  const dest = asDestination(callback);
+  const outputsDigest = verifyOutputsDigest(receipt);
   return {
     schema: TERMS_SCHEMA,
+    mappingId: TERMS_MAPPING_ID,
+    mappingVersion: TERMS_MAPPING_VERSION,
+    sourceSchema: F08_RECEIPT_SCHEMA,
+    sourceTermsVersion: Number.isInteger(receipt.termsVersion) ? receipt.termsVersion : null,
+    termsVersion: TERMS_MAPPING_VERSION,
     jobId: receipt.jobId,
     engineArchiveIdentity: engineArchiveIdentity(receipt.engine || {}),
     fundingState: receipt.fundingState,
@@ -53,9 +70,8 @@ export function deliveryTermsFromReceipt(receipt, callbackOrigin) {
     sample: Boolean(receipt.sample),
     purchaseAuthority: false,
     liveSettlement: "out-of-scope",
-    outputsDigest: receipt.outputsDigest,
-    callbackOrigin,
-    termsVersion: Number.isInteger(receipt.termsVersion) ? receipt.termsVersion : 1,
+    outputsDigest,
+    callbackDestination: dest.canonical,
   };
 }
 

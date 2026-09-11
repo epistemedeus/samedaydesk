@@ -5,6 +5,7 @@ import test from "node:test";
 import { cli, parseCli, runCli, sampleReceipt, spawnReceiver, stopChild, tmpSpace, waitForFile, writeJson } from "./helpers.mjs";
 import { completedCallerReceipt } from "./helpers.mjs";
 import { REPO_ROOT } from "../lib/pins.mjs";
+import { digestNamedBytes } from "../lib/receipt-shape.mjs";
 
 test("seeded: receiver stores then closes before response -> unknown, not failed or delivered", { timeout: 60_000 }, async () => {
   const dir = tmpSpace("outbox-close-");
@@ -91,7 +92,15 @@ test("seeded: duplicate enqueue is idempotent; body change under same event ID i
   assert.equal(second.duplicate, true);
   assert.equal(second.event.eventId, "evt_fixed");
 
-  const changed = { ...receipt, outputsDigest: "f".repeat(64), outputs: [{ ...receipt.outputs[0], sha256: "a".repeat(64) }] };
+  const changedOutputs = [
+    { ...receipt.outputs[0], sha256: "a".repeat(64) },
+    ...receipt.outputs.slice(1),
+  ];
+  const changed = {
+    ...receipt,
+    outputs: changedOutputs,
+    outputsDigest: digestNamedBytes(changedOutputs),
+  };
   const changedPath = join(dir, "changed.json");
   writeJson(changedPath, changed);
   const conflict = runCli([

@@ -6,7 +6,7 @@
   "engines": {
     "node": ">=22"
   },
-  "description": "Crash-safe local outbox for useful-job result callbacks. Non-settling prototype. No daemon, production webhook, or payment.",
+  "description": "Crash-safe local outbox for useful-job result callbacks with precise destination and receipt.v1 terms mapping. Non-settling prototype.",
   "license": "MIT",
   "exports": {
     ".": "./lib/index.mjs"

@@ -58,7 +58,14 @@ function urlPort(url) {
   return 80;
 }
 
-export function parseAck(raw, eventId) {
+function hex64(value) {
+  return typeof value === "string" && /^[0-9a-f]{64}$/.test(value);
+}
+
+export function parseAck(raw, expected) {
+  const eventId = typeof expected === "string" ? expected : expected.eventId;
+  const callbackPath = typeof expected === "object" ? expected.callbackPath : null;
+  const outputsDigest = typeof expected === "object" ? expected.outputsDigest : null;
   let parsed;
   try {
     parsed = JSON.parse(raw);
@@ -74,12 +81,20 @@ export function parseAck(raw, eventId) {
   if (parsed.eventId !== eventId) {
     return { ok: false, reason: "ack-event-mismatch", parsed };
   }
+  if (!callbackPath || parsed.callbackPath !== callbackPath) {
+    return { ok: false, reason: "ack-destination-mismatch", parsed };
+  }
+  if (!hex64(outputsDigest) || parsed.outputsDigest !== outputsDigest) {
+    return { ok: false, reason: "ack-digest-mismatch", parsed };
+  }
   return {
     ok: true,
     ack: {
       schema: parsed.schema || ACK_SCHEMA,
       ack: true,
       eventId,
+      callbackPath,
+      outputsDigest,
       buyerAccepted: false,
       sale: false,
       receivedAt: parsed.receivedAt || null,

@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
-import { F08_FUNDING_STATES, F08_RECEIPT_SCHEMA } from "./pins.mjs";
+import { F08_FUNDING_STATES, F08_RECEIPT_SCHEMA, engineArchiveIdentity } from "./pins.mjs";
 import { refuse } from "./errors.mjs";
-import { sha256Bytes } from "./hash-terms.mjs";
+import { sha256Bytes } from "./sha256.mjs";
 
 const INVENTED_PAID = new Set([
   "paid",
@@ -21,17 +21,24 @@ export function fileEntry(name, filePath) {
   const buf = readFileSync(filePath);
   return {
     name,
+    kind: "file",
     bytes: buf.length,
     sha256: sha256Bytes(buf),
   };
 }
 
+/**
+ * Receipt.v1 named-bytes digest (SDS52). File rows bind name/kind/bytes/sha256.
+ * Directory path is included only when kind is directory. Not a kernel copy.
+ */
 export function digestNamedBytes(entries) {
   const rows = [...entries]
     .map((e) => ({
       name: e.name,
-      bytes: e.bytes,
-      sha256: e.sha256,
+      kind: e.kind || "file",
+      bytes: e.bytes ?? null,
+      sha256: e.sha256 ?? null,
+      path: e.kind === "directory" ? e.path : undefined,
     }))
     .sort((a, b) => String(a.name).localeCompare(b.name));
   return sha256Bytes(Buffer.from(JSON.stringify(rows), "utf8"));
@@ -45,9 +52,31 @@ function hex64(value) {
   return typeof value === "string" && /^[0-9a-f]{64}$/.test(value);
 }
 
+export function outputRefs(receipt) {
+  return receipt.outputs.map((o) => ({
+    name: o.name,
+    kind: o.kind || "file",
+    bytes: o.bytes,
+    sha256: o.sha256,
+    path: o.kind === "directory" ? o.path : undefined,
+  }));
+}
+
+export function verifyOutputsDigest(receipt) {
+  const computed = digestNamedBytes(outputRefs(receipt));
+  if (receipt.outputsDigest !== computed) {
+    refuse("outputs-digest-mismatch", "Asserted outputsDigest does not match listed output bytes", {
+      asserted: receipt.outputsDigest,
+      computed,
+    });
+  }
+  return computed;
+}
+
 /**
- * Accept F08 pin receipts and later-compatible extras (archive identity,
- * identityVerified, inputRoot). Refuse invented paid statuses.
+ * Accept SDS52 / F08-shaped receipts. Refuse invented paid statuses, missing
+ * engine archive identity, and asserted output digests that do not match
+ * listed outputs.
  */
 export function assertF08Receipt(receipt) {
   if (!isPlainObject(receipt)) {
@@ -104,13 +133,7 @@ export function assertF08Receipt(receipt) {
   if (receipt.engineResult && receipt.engineResult.ok === false) {
     refuse("receipt-not-completed", "Engine result is not a completed output");
   }
+  engineArchiveIdentity(receipt.engine || {});
+  verifyOutputsDigest(receipt);
   return receipt;
-}
-
-export function outputRefs(receipt) {
-  return receipt.outputs.map((o) => ({
-    name: o.name,
-    bytes: o.bytes,
-    sha256: o.sha256,
-  }));
 }

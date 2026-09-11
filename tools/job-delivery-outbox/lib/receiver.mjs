@@ -9,8 +9,10 @@ export function startLoopbackReceiver({
   mode = "ack",
   delayMs = 0,
   storeDir = null,
+  path = "/callback",
 } = {}) {
   if (storeDir) mkdirSync(storeDir, { recursive: true });
+  const pathname = path.startsWith("/") ? path : `/${path}`;
 
   const server = createServer((req, res) => {
     if (req.method !== "POST") {
@@ -43,14 +45,30 @@ export function startLoopbackReceiver({
       }
 
       const reply = () => {
+        if (mode === "empty-body") {
+          res.writeHead(200, { "content-type": "application/json" });
+          res.end("");
+          return;
+        }
+        const dest = payload?.callbackDestination || {};
+        const ackPath =
+          mode === "ack-wrong-path" ? "/not-the-callback" : dest.path || pathname;
+        const ackDigest =
+          mode === "ack-wrong-digest" ? "f".repeat(64) : payload?.outputsDigest || null;
         const ack = {
           schema: ACK_SCHEMA,
           ack: true,
           eventId,
+          callbackPath: mode === "ack-event-only" ? undefined : ackPath,
+          outputsDigest: mode === "ack-event-only" ? undefined : ackDigest,
           buyerAccepted: false,
           sale: false,
           receivedAt: new Date().toISOString(),
         };
+        if (mode === "ack-event-only") {
+          delete ack.callbackPath;
+          delete ack.outputsDigest;
+        }
         res.writeHead(200, { "content-type": "application/json" });
         res.end(JSON.stringify(ack));
       };
@@ -64,10 +82,11 @@ export function startLoopbackReceiver({
     server.on("error", reject);
     server.listen(port, host, () => {
       const addr = server.address();
-      const url = `http://${host}:${addr.port}/callback`;
+      const url = `http://${host}:${addr.port}${pathname}`;
       resolve({
         url,
         port: addr.port,
+        path: pathname,
         server,
         async close() {
           await new Promise((done) => server.close(done));

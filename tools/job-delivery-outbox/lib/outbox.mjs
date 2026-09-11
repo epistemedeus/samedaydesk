@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { writeFileSync } from "node:fs";
 import { assertF08Receipt } from "./receipt-shape.mjs";
-import { assertLoopbackCallbackUrl, callbackOrigin } from "./loopback.mjs";
+import { assertLoopbackCallbackUrl, callbackDestination } from "./loopback.mjs";
 import { deliveryTermsFromReceipt, eventIdFromTermsHash, hashBody, hashTerms } from "./hash-terms.mjs";
 import { redactResultReferences } from "./redact.mjs";
 import { parseAck, postCallbackOnce } from "./http-post.mjs";
@@ -14,8 +14,8 @@ function nowIso() {
 export async function enqueue(store, { receipt, callbackUrl, eventId }) {
   const rec = assertF08Receipt(receipt);
   const url = assertLoopbackCallbackUrl(callbackUrl);
-  const origin = callbackOrigin(url);
-  const terms = deliveryTermsFromReceipt(rec, origin);
+  const dest = callbackDestination(url);
+  const terms = deliveryTermsFromReceipt(rec, dest);
   const termsHash = hashTerms(terms);
   const id = eventId || eventIdFromTermsHash(termsHash);
   const payload = redactResultReferences({
@@ -23,7 +23,11 @@ export async function enqueue(store, { receipt, callbackUrl, eventId }) {
     receipt: rec,
     termsHash,
     termsVersion: terms.termsVersion,
-    callbackOrigin: origin,
+    mappingId: terms.mappingId,
+    mappingVersion: terms.mappingVersion,
+    callbackDestination: dest,
+    outputsDigest: terms.outputsDigest,
+    engineArchiveIdentity: terms.engineArchiveIdentity,
   });
   const bodyHash = hashBody({ callbackUrl: url.toString(), payload });
   const event = {
@@ -31,6 +35,7 @@ export async function enqueue(store, { receipt, callbackUrl, eventId }) {
     bodyHash,
     termsHash,
     termsVersion: terms.termsVersion,
+    mappingId: terms.mappingId,
     deliveryState: "queued",
     sample: Boolean(rec.sample),
     sold: false,
@@ -38,6 +43,7 @@ export async function enqueue(store, { receipt, callbackUrl, eventId }) {
     sale: false,
     callbackAcknowledged: false,
     callbackUrl: url.toString(),
+    callbackDestination: dest,
     payload,
     createdAt: nowIso(),
     updatedAt: nowIso(),
@@ -73,6 +79,7 @@ export async function deliverOnce(store, { eventId, optIn, attemptReadyPath, tim
       deliveryState: "failed",
     });
   }
+  const dest = callbackDestination(event.callbackUrl);
   assertLoopbackCallbackUrl(event.callbackUrl);
 
   const attempt = {
@@ -114,7 +121,12 @@ export async function deliverOnce(store, { eventId, optIn, attemptReadyPath, tim
     };
   }
 
-  const ack = parseAck(httpResult.raw, eventId);
+  const expectedAck = {
+    eventId,
+    callbackPath: dest.path,
+    outputsDigest: event.payload.outputsDigest,
+  };
+  const ack = parseAck(httpResult.raw, expectedAck);
   if (httpResult.status >= 200 && httpResult.status < 300 && ack.ok) {
     const updated = await store.completeAttempt({
       eventId,
@@ -173,12 +185,13 @@ export async function reconcile(store) {
       delivered: events.filter((e) => e.deliveryState === "delivered").length,
     },
     unknownEventIds: unknown.map((e) => e.eventId),
-    note: "Reconcile never POSTs. Unknown stays unknown until an operator inspects. Callback ack is not a sale.",
+    note: "Reconcile never POSTs. Unknown stays unknown until an operator inspects. Callback ack is not a sale. Lost ack is not completion.",
     events,
   };
 }
 
 export function publicEvent(event) {
+  const dest = event.callbackDestination || (event.callbackUrl ? callbackDestination(event.callbackUrl) : null);
   return {
     eventId: event.eventId,
     deliveryState: event.deliveryState,
@@ -189,8 +202,10 @@ export function publicEvent(event) {
     callbackAcknowledged: event.deliveryState === "delivered" || event.callbackAcknowledged === true,
     termsHash: event.termsHash,
     termsVersion: event.termsVersion,
+    mappingId: event.mappingId || event.payload?.mappingId || null,
     bodyHash: event.bodyHash,
     callbackUrl: event.callbackUrl,
+    callbackDestination: dest,
     payload: event.payload,
     createdAt: event.createdAt,
     updatedAt: event.updatedAt,

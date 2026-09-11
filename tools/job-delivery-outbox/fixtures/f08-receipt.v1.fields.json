@@ -1,10 +1,12 @@
 {
-  "source": "F08 pin bae3e7cd5034b21019fb272a99d88db964b831ee server/paid-useful-jobs/lib/receipt.mjs",
+  "source": "SDS52 pin aeef964fa188443078958d9d6d393afae1d542ee server/paid-useful-jobs/lib/receipt.mjs",
   "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
   "required": [
     "schema",
     "jobId",
     "engine",
+    "engine.archiveSha256",
+    "engine.archiveBytes",
     "inputsDigest",
     "outputsDigest",
     "inputs",
@@ -21,6 +23,7 @@
     "purchaseAuthority": false,
     "liveSettlement": "out-of-scope"
   },
+  "outputsDigest": "recomputed from listed outputs using receipt.v1 named-bytes digest; asserted mismatch is refused",
   "laterCompatibleFields": [
     "engine.archiveSha256",
     "engine.archiveBytes",
@@ -28,5 +31,6 @@
     "inputRoot",
     "engineResult.identityVerified"
   ],
-  "notImported": "F08 wrapper/envelope/settle kernel is not copied into this module"
+  "termsMapping": "samedaydesk.paid-useful-jobs.receipt.v1->job-delivery-outbox.terms.v1",
+  "notImported": "SDS52 wrapper/envelope/settle kernel is not copied into this module"
 }

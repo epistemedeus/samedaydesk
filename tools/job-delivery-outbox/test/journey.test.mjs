@@ -4,6 +4,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { hashTerms, deliveryTermsFromReceipt } from "../lib/hash-terms.mjs";
 import { engineArchiveIdentity } from "../lib/pins.mjs";
+import { digestNamedBytes } from "../lib/receipt-shape.mjs";
 import { redactResultReferences } from "../lib/redact.mjs";
 import {
   completedCallerReceipt,
@@ -48,6 +49,8 @@ test("journey: two processes enqueue, deliver, ack, restart, one acknowledged ev
     assert.equal(enq.event.deliveryState, "queued");
     assert.equal(enq.event.sold, false);
     assert.equal(enq.event.payload.sample, false);
+    assert.equal(enq.event.callbackDestination.path, new URL(receiver.url).pathname);
+    assert.ok(enq.event.payload.callbackDestination.canonical.endsWith("/callback"));
     assert.ok(!JSON.stringify(enq.event.payload).includes("desk-chat-input"));
     assert.ok(!("inputs" in enq.event.payload));
     const eventId = enq.event.eventId;
@@ -78,22 +81,25 @@ test("journey: two processes enqueue, deliver, ack, restart, one acknowledged ev
   }
 });
 
-test("hash terms: I01 stable stringify; archive identity is sha+bytes not version", () => {
+test("hash terms: mapping binds destination path; archive identity is sha+bytes not version", () => {
+  const outputs = [{ name: "budget-impact.json", kind: "file", bytes: 3, sha256: "a".repeat(64) }];
   const receipt = {
+    schema: "samedaydesk.paid-useful-jobs.receipt.v1",
     jobId: "vendor-budget-impact",
     fundingState: "reserved-fixture",
     sample: false,
-    outputsDigest: "a".repeat(64),
+    outputs,
+    outputsDigest: digestNamedBytes(outputs),
     engine: {
       version: "1.0.0",
       archiveSha256: "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
       archiveBytes: 2522418,
     },
   };
-  const a = deliveryTermsFromReceipt(receipt, "http://127.0.0.1:9");
+  const a = deliveryTermsFromReceipt(receipt, "http://127.0.0.1:9/callback");
   const b = deliveryTermsFromReceipt(
     { ...receipt, engine: { ...receipt.engine, version: "9.9.9" } },
-    "http://127.0.0.1:9",
+    "http://127.0.0.1:9/callback",
   );
   assert.equal(hashTerms(a), hashTerms(b));
   assert.equal(
@@ -104,38 +110,61 @@ test("hash terms: I01 stable stringify; archive identity is sha+bytes not versio
     engineArchiveIdentity(receipt.engine),
     engineArchiveIdentity({ ...receipt.engine, archiveSha256: "0".repeat(64) }),
   );
+  const otherPath = deliveryTermsFromReceipt(receipt, "http://127.0.0.1:9/other");
+  assert.notEqual(hashTerms(a), hashTerms(otherPath));
+  assert.equal(a.callbackDestination, "http://127.0.0.1:9/callback");
+  assert.equal(otherPath.callbackDestination, "http://127.0.0.1:9/other");
+  const kernelLike = hashTerms({
+    schema: "neomorphic.earned-work.terms.v1",
+    termsVersion: 1,
+    jobId: receipt.jobId,
+  });
+  assert.notEqual(hashTerms(a), kernelLike);
+  assert.notEqual(hashTerms(a), receipt.outputsDigest);
   const flipped = hashTerms({
     schema: a.schema,
-    callbackOrigin: a.callbackOrigin,
+    callbackDestination: a.callbackDestination,
     engineArchiveIdentity: a.engineArchiveIdentity,
     fundingState: a.fundingState,
     jobId: a.jobId,
     liveSettlement: a.liveSettlement,
+    mappingId: a.mappingId,
+    mappingVersion: a.mappingVersion,
     outputsDigest: a.outputsDigest,
     purchaseAuthority: a.purchaseAuthority,
     sample: a.sample,
     sold: a.sold,
+    sourceSchema: a.sourceSchema,
+    sourceTermsVersion: a.sourceTermsVersion,
     termsVersion: a.termsVersion,
   });
   assert.equal(hashTerms(a), flipped);
 });
 
 test("redaction drops input contents and secret-looking keys", () => {
+  const outputs = [{ name: "budget-impact.json", kind: "file", bytes: 3, sha256: "c".repeat(64) }];
   const payload = redactResultReferences({
     eventId: "evt_test",
     receipt: {
       jobId: "vendor-budget-impact",
       fundingState: "unfunded",
       sample: false,
-      outputsDigest: "b".repeat(64),
-      outputs: [{ name: "budget-impact.json", bytes: 3, sha256: "c".repeat(64) }],
-      engine: {},
+      outputsDigest: digestNamedBytes(outputs),
+      outputs,
+      engine: {
+        archiveSha256: "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+        archiveBytes: 2522418,
+      },
       authorization: "Bearer secret",
       inputs: [{ name: "before", bytes: 1, sha256: "d".repeat(64) }],
     },
     termsHash: "e".repeat(64),
     termsVersion: 1,
-    callbackOrigin: "http://127.0.0.1:1",
+    mappingId: "samedaydesk.paid-useful-jobs.receipt.v1->job-delivery-outbox.terms.v1",
+    mappingVersion: 1,
+    callbackDestination: { origin: "http://127.0.0.1:1", path: "/callback", canonical: "http://127.0.0.1:1/callback" },
+    outputsDigest: digestNamedBytes(outputs),
+    engineArchiveIdentity: "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51:2522418",
   });
   assert.equal(payload.sold, false);
   assert.equal(payload.buyerAccepted, false);
@@ -143,4 +172,6 @@ test("redaction drops input contents and secret-looking keys", () => {
   assert.ok(!("inputs" in payload));
   assert.ok(!("authorization" in payload));
   assert.deepEqual(payload.outputs[0].name, "budget-impact.json");
+  assert.equal(payload.callbackDestination.path, "/callback");
+  assert.equal(payload.callbackOrigin, "http://127.0.0.1:1");
 });

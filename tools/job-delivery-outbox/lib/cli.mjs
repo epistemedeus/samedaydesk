@@ -118,6 +118,7 @@ Optional Postgres (local prototype, not a payment rail):
   --postgres postgres://USER@127.0.0.1:PORT/DB
 
 Callback ack is not buyer acceptance or a sale. SAMPLE remains SAMPLE.
+Destination identity is origin plus path. Ack must bind eventId, path, and outputs digest.
 Unknown HTTP outcomes stay unknown; deliver-once will not auto-POST them.`;
 }
 

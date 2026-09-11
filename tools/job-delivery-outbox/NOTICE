@@ -1,18 +1,20 @@
 job-delivery-outbox notices
 =============================
 
-This module is a local, non-settling prototype. It does not copy the F08
+This module is a local, non-settling prototype. It does not copy the SDS52
 paid-wrapper kernel, the I01 earned-work kernel, or the published useful-jobs
 engine source.
 
 - useful-jobs 1.0.0 remains under its own LICENSE/NOTICE inside
   `client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz`.
-- F08 receipt schema `samedaydesk.paid-useful-jobs.receipt.v1` is imported as a
-  shape from pin `bae3e7cd5034b21019fb272a99d88db964b831ee`. The wrapper,
+- Receipt schema `samedaydesk.paid-useful-jobs.receipt.v1` is consumed as a
+  shape from SDS52 pin `aeef964fa188443078958d9d6d393afae1d542ee`. The wrapper,
   envelope, and settlePayment implementation are not vendored here.
+- Historical F08 pin `bae3e7cd5034b21019fb272a99d88db964b831ee` is not an
+  official pin for this Wave5 outbox.
 - Caller before/after JSON under `fixtures/caller/vendor-budget-impact/` is the
-  F08 pin caller pair (not a SAMPLE kit fixture).
-- `pg` is an optional local-runtime driver for a disposable Postgres store. It is
-  not a payment rail.
+  F08/SDS52 caller pair (not a SAMPLE kit fixture).
+- `pg` is a local-runtime driver for a disposable Postgres store. It is not a
+  payment rail.
 
 No purchase, production webhook, or scheduler daemon is granted by this package.
