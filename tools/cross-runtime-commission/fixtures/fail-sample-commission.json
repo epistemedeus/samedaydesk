@@ -1,0 +1,14 @@
+{
+  "schema": "samedaydesk.cross-runtime-commission.fixture.v1",
+  "id": "fail-sample-commission",
+  "jobId": "listing-repair-packet",
+  "input": "fixtures/listing/sample/listing.json",
+  "commissionedCustomer": true,
+  "sold": true,
+  "completionLabel": "commissioned-customer",
+  "runtimes": [
+    { "label": "node22-local", "kind": "local" },
+    { "label": "node22-container-fixture", "kind": "container-fixture" }
+  ],
+  "notes": "Seeded failure: SAMPLE sold as commissioned customer work."
+}

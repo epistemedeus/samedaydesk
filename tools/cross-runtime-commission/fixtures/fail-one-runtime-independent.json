@@ -1,0 +1,11 @@
+{
+  "schema": "samedaydesk.cross-runtime-commission.fixture.v1",
+  "id": "fail-one-runtime-independent",
+  "jobId": "listing-repair-packet",
+  "input": "fixtures/listing/caller-ok.json",
+  "independent": true,
+  "runtimes": [
+    { "label": "node22-local", "kind": "local", "independent": true }
+  ],
+  "notes": "Seeded failure: one runtime labelled independent."
+}
