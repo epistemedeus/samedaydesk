@@ -34,12 +34,11 @@ describe("owned-path hygiene", () => {
       .map((line) => line.slice(3).trim())
       .filter(Boolean);
     const all = [...new Set([...files, ...extra])];
+    const owned = (file) =>
+      file.startsWith("tools/managed-useful-jobs-order/") || file.startsWith("experiments/wave5/d04/");
     for (const file of all) {
       if (file === "node_modules" || file.startsWith("node_modules/") || file === "package-lock.json") continue;
-      assert.ok(
-        file.startsWith("tools/managed-useful-jobs-order/"),
-        `unexpected path outside owned module: ${file}`,
-      );
+      assert.ok(owned(file), `unexpected path outside owned module: ${file}`);
     }
   });
 
@@ -54,14 +53,21 @@ describe("owned-path hygiene", () => {
       );
       assert.equal(/fetch\(\s*['"`]https:\/\/(?:agents\.)?samedaydesk\.com/.test(text), false, file);
       assert.equal(text.includes("from \"express\"") || text.includes("from 'express'"), false, file);
+      assert.equal(text.includes("useful-jobs.mjs"), false, `${file} still spawns the competing useful-jobs CLI`);
     }
   });
 
-  it("does not fork the F08 receipt schema", () => {
+  it("nests D01 receipt without forking a second wrapper kernel", () => {
     const files = walk(join(OWNED_DIR, "lib"));
     for (const file of files) {
+      const rel = relative(OWNED_DIR, file);
       const text = readFileSync(file, "utf8");
-      assert.equal(text.includes("samedaydesk.paid-useful-jobs.receipt.v1"), false, relative(OWNED_DIR, file));
+      assert.equal(text.includes("export function buildReceipt"), false, rel);
+      assert.equal(text.includes("export function createExecutor"), false, rel);
+      assert.equal(text.includes("export function runEngineJob"), false, rel);
     }
+    const client = readFileSync(join(OWNED_DIR, "lib/wrapper-client.mjs"), "utf8");
+    assert.match(client, /createExecutor/);
+    assert.match(client, /runPaidOffer/);
   });
 });

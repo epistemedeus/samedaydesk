@@ -6,18 +6,22 @@ import { createListener } from "../lib/listener.mjs";
 import { createPostgresStore } from "../lib/store-postgres.mjs";
 import { requestDirFromFile } from "../lib/contract.mjs";
 import { OWNED_DIR } from "../lib/pins.mjs";
+import { defaultWrapperRoot } from "../lib/wrapper-client.mjs";
 
 function usage() {
-  return `managed useful-jobs order runner (local prototype, not a live catalog)
+  return `managed useful-jobs order client (local prototype, not a live catalog)
+
+Consumes W5-D01 createExecutor/runPaidOffer. Does not spawn useful-jobs CLI.
 
 Commands:
   create --request order.json [--out-dir DIR] [--store DIR] [--database-url URL]
-  listen [--port N] [--store DIR] [--database-url URL]
+         [--wrapper-root DIR] [--execute-url URL]
+  listen [--port N] [--store DIR] [--database-url URL] [--wrapper-root DIR] [--execute-url URL]
   help
 
 Binds engineId, archive pin, buyer-echoed input digests, immutable orderId,
-and catalog output names. Spawns useful-jobs CLI from the published archive.
-Does not POST to samedaydesk.com. Loopback listener only; not a live app route. sold=false.
+and catalog output names. Concurrent reserve and interrupted resume keep one order.
+Does not POST to samedaydesk.com. Loopback listener only. sold=false.
 `;
 }
 
@@ -25,6 +29,13 @@ function argValue(argv, name) {
   const i = argv.indexOf(name);
   if (i < 0) return null;
   return argv[i + 1] || null;
+}
+
+function wrapperOptions(argv) {
+  return {
+    wrapperRoot: argValue(argv, "--wrapper-root") || process.env.MANAGED_ORDER_WRAPPER_ROOT || defaultWrapperRoot(),
+    executeUrl: argValue(argv, "--execute-url") || process.env.MANAGED_ORDER_EXECUTE_URL || null,
+  };
 }
 
 async function makeStore(argv) {
@@ -43,7 +54,23 @@ async function cmdCreate(argv) {
     process.exit(2);
   }
   const abs = resolve(requestPath);
-  const raw = JSON.parse(readFileSync(abs, "utf8"));
+  let raw;
+  try {
+    raw = JSON.parse(readFileSync(abs, "utf8"));
+  } catch (err) {
+    const body = {
+      schema: "samedaydesk.useful-jobs-consumer.v1",
+      ok: false,
+      sold: false,
+      charged: false,
+      code: "invalid-json",
+      error: `request is not JSON: ${err.message}`,
+      liveCatalogItem: false,
+      productionExpressRoute: false,
+    };
+    process.stdout.write(`${JSON.stringify(body, null, 2)}\n`);
+    process.exit(2);
+  }
   const store = await makeStore(argv);
   try {
     const outDir = argValue(argv, "--out-dir");
@@ -51,6 +78,7 @@ async function cmdCreate(argv) {
       store,
       requestDir: requestDirFromFile(abs),
       outDir: outDir ? resolve(outDir) : undefined,
+      ...wrapperOptions(argv),
     });
     process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
     process.exit(result.ok ? 0 : 2);
@@ -62,10 +90,14 @@ async function cmdCreate(argv) {
 async function cmdListen(argv) {
   const store = await makeStore(argv);
   const port = Number(argValue(argv, "--port") || 0);
-  const listener = createListener({ store, requestDir: process.cwd() });
+  const listener = createListener({
+    store,
+    requestDir: process.cwd(),
+    ...wrapperOptions(argv),
+  });
   const { origin, port: bound } = await listener.listen(Number.isInteger(port) ? port : 0);
   process.stdout.write(
-    `${JSON.stringify({ ok: true, origin, port: bound, host: "127.0.0.1", productionExpress: false }, null, 2)}\n`,
+    `${JSON.stringify({ ok: true, origin, port: bound, host: "127.0.0.1", productionExpress: false, competingRunner: false }, null, 2)}\n`,
   );
   const stop = async () => {
     await listener.close();
