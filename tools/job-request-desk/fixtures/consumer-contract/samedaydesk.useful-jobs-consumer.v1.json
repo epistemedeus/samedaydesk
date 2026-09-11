@@ -64,6 +64,10 @@
     "missingInputsRefuse": true,
     "digestMismatchRefuses": true,
     "sameOrderIdMustNotSwapFiles": true,
-    "changedInputsNeedNewOrderId": true
+    "changedInputsNeedNewOrderId": true,
+    "rejectedReplayStaysRejected": true,
+    "isolatedResultDir": "store/results/<requestId>",
+    "unlikeTermsHashesAreNotForcedEqual": true,
+    "testedSds52": "aeef964fa188443078958d9d6d393afae1d542ee"
   }
 }

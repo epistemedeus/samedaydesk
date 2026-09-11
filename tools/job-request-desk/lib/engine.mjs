@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
@@ -12,6 +11,7 @@ import {
 } from "./pins.mjs";
 import { sha256Bytes } from "./digest.mjs";
 import { refuse } from "./refuse.mjs";
+import { runViaSds52 } from "./sds52.mjs";
 
 function sleep(ms) {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
@@ -25,9 +25,6 @@ export function kitPath(root = cacheRoot()) {
   return join(root, USEFUL_JOBS_ROOT_NAME);
 }
 
-/**
- * Extract the committed public useful-jobs archive. Reuses engines; does not reimplement jobs.
- */
 export function ensureUsefulJobsKit() {
   const dest = cacheRoot();
   const kit = kitPath(dest);
@@ -81,53 +78,6 @@ export function ensureUsefulJobsKit() {
   }
 }
 
-function parseEngineJson(stdout) {
-  const trimmed = String(stdout || "").trim();
-  if (!trimmed) return null;
-  try {
-    return JSON.parse(trimmed);
-  } catch {
-    const start = trimmed.indexOf("{");
-    const end = trimmed.lastIndexOf("}");
-    if (start >= 0 && end > start) {
-      try {
-        return JSON.parse(trimmed.slice(start, end + 1));
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  }
-}
-
-export function runEngineJob(jobId, { files = {}, example = false, outDir, timeoutMs = 120_000 } = {}) {
-  const kit = ensureUsefulJobsKit();
-  const cli = join(kit, USEFUL_JOBS_CLI);
-  const args = ["run", jobId];
-  if (example) args.push("--example");
-  else {
-    for (const [key, filePath] of Object.entries(files)) {
-      if (!filePath) continue;
-      args.push(`--${key}`, filePath);
-    }
-  }
-  if (outDir) args.push("--out-dir", outDir);
-
-  const result = spawnSync(process.execPath, [cli, ...args], {
-    encoding: "utf8",
-    timeout: timeoutMs,
-    maxBuffer: 8 * 1024 * 1024,
-    cwd: kit,
-  });
-
-  return {
-    status: result.status,
-    stdout: result.stdout || "",
-    stderr: result.stderr || "",
-    json: parseEngineJson(result.stdout),
-    kit,
-    cli,
-    args,
-    digest: createHash("sha256").update(String(result.stdout || "")).digest("hex").slice(0, 16),
-  };
+export function runEngineJob(jobId, opts = {}) {
+  return runViaSds52(jobId, opts);
 }

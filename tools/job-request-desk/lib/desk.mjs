@@ -1,14 +1,16 @@
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { join, resolve } from "node:path";
 import {
   MAX_INPUT_BYTES,
   SCHEMA_VERSION,
+  SDS52_PIN,
   TICKET_SCHEMA,
   enginePin,
 } from "./pins.mjs";
 import { getJob, keyToFlag, optionalKeys, requiredKeys } from "./catalog.mjs";
 import { fileDigest, sha256File, statBytes } from "./digest.mjs";
 import { ensureUsefulJobsKit, runEngineJob } from "./engine.mjs";
+import { classifyExecution, isReplayFailure } from "./outcomes.mjs";
 import { DeskRefuse, refuse, rejectionEnvelope } from "./refuse.mjs";
 import { inspectSample, wantsLiveSale } from "./sample-guard.mjs";
 import { createJsonStore } from "./store.mjs";
@@ -108,34 +110,69 @@ function saleFields() {
   };
 }
 
-function listOutputs(job, outDir) {
-  return job.outputs
-    .map((name) => {
-      const path = join(outDir, name);
-      if (!existsSync(path)) return null;
-      return fileDigest(name, path);
-    })
-    .filter(Boolean)
-    .map((row) => ({
-      name: row.name,
-      path: row.path,
-      bytes: row.bytes,
-      sha256: row.sha256,
-    }));
+function isCatalogBasename(name) {
+  return typeof name === "string" && /^[A-Za-z0-9._-]+$/.test(name);
 }
 
-function finalizeSampleOrCompleted(ticket, { sample, sampleReasons, outputs, engine, at }) {
+function resetCatalogOutputs(dir, outputNames) {
+  mkdirSync(dir, { recursive: true });
+  for (const name of outputNames) {
+    if (!isCatalogBasename(name)) {
+      throw refuse("store-path-escape", "output name is not a catalog basename", { name });
+    }
+    const path = join(dir, name);
+    if (existsSync(path)) rmSync(path, { force: true });
+  }
+}
+
+function presentCatalogOutputs(job, outDir) {
+  const present = [];
+  const outputs = [];
+  for (const name of job.outputs) {
+    if (!isCatalogBasename(name)) continue;
+    const path = join(outDir, name);
+    if (!existsSync(path)) continue;
+    present.push(name);
+    outputs.push(fileDigest(name, path));
+  }
+  return { present, outputs };
+}
+
+function replayEnvelope(existing) {
+  if (isReplayFailure(existing)) {
+    return {
+      ...existing,
+      ok: false,
+      refused: true,
+      replay: true,
+      code: existing.engine?.code || existing.code || "rejected-replay",
+      error: existing.engine?.error || existing.error || "rejected request remains rejected on replay",
+    };
+  }
+  return { ...existing, ok: true, replay: true };
+}
+
+function finalizeDelivered(ticket, { sample, sampleReasons, outputs, engine, classified, wrapper, at }) {
   ticket.sample = Boolean(sample);
   ticket.sampleReasons = sampleReasons || [];
   ticket.outputs = outputs;
+  ticket.outcomeKind = classified.outcomeKind;
+  ticket.analysisOutcome = classified.analysisOutcome;
+  ticket.executionOk = true;
   ticket.engine = engine
-    ? { ok: engine.json?.ok !== false, status: engine.json?.status || null, digest: engine.json?.digest || null }
-    : null;
+    ? {
+        ok: engine.json?.ok !== false,
+        status: engine.json?.status || classified.analysisOutcome || null,
+        digest: engine.json?.digest || null,
+        pin: engine.pin || SDS52_PIN,
+      }
+    : { ok: true, status: classified.analysisOutcome, digest: null, pin: SDS52_PIN };
+  if (wrapper?.receipt) ticket.sds52Receipt = wrapper.receipt;
   Object.assign(ticket, saleFields());
   if (ticket.sample) {
     pushHistory(ticket, "sample", at);
   } else {
-    pushHistory(ticket, "completed", at);
+    pushHistory(ticket, classified.ticketStatus, at);
   }
   return ticket;
 }
@@ -220,7 +257,7 @@ export function createDesk({ store, engineRunner = runEngineJob, clock } = {}) {
 
       const existing = store.read(identity.requestId);
       if (existing && existing.status !== "queued") {
-        return { ok: true, ...existing };
+        return replayEnvelope(existing);
       }
 
       const resultUri = store.resultUri(identity.requestId);
@@ -232,6 +269,7 @@ export function createDesk({ store, engineRunner = runEngineJob, clock } = {}) {
         orderId: request.orderId || identity.requestId,
         engineId,
         enginePin: enginePin(),
+        sds52Pin: SDS52_PIN,
         termsVersion: identity.termsVersion,
         terms: identity.terms,
         status: "queued",
@@ -244,6 +282,9 @@ export function createDesk({ store, engineRunner = runEngineJob, clock } = {}) {
         archiveSha256: enginePin().sha256,
         createdAt: at,
         updatedAt: at,
+        executionOk: null,
+        outcomeKind: null,
+        analysisOutcome: null,
         ...saleFields(),
       };
       if (!existing) stamp(ticket, "queued");
@@ -253,20 +294,11 @@ export function createDesk({ store, engineRunner = runEngineJob, clock } = {}) {
         return { ok: true, ...ticket };
       }
 
-      if (sampleInfo.sample && wantsLiveSale(request)) {
-        return rejectionEnvelope({
-          code: "sample-not-a-sale",
-          message: "SAMPLE / --example cannot become a sale",
-          engineId,
-          requestId: ticket.requestId,
-        });
-      }
-
       stamp(ticket, "running");
       persist(ticket);
 
-      const outDir = request.outDir ? resolve(String(request.outDir)) : store.resultDir(identity.requestId);
-      mkdirSync(outDir, { recursive: true });
+      const outDir = store.resultDir(identity.requestId);
+      resetCatalogOutputs(outDir, job.outputs);
 
       const engine = engineRunner(engineId, {
         files: materialized.files,
@@ -274,31 +306,55 @@ export function createDesk({ store, engineRunner = runEngineJob, clock } = {}) {
         outDir,
       });
 
-      if (engine.status !== 0 || !engine.json || engine.json.ok === false) {
+      const listed = presentCatalogOutputs(job, outDir);
+      const classified = classifyExecution({
+        spawnStatus: engine.status,
+        engineJson: engine.json,
+        expectedNames: job.outputs,
+        presentNames: listed.present,
+      });
+
+      ticket.sds52 = {
+        pin: engine.pin || SDS52_PIN,
+        invoked: engine.wrapper != null || engine.cli != null,
+      };
+
+      if (!classified.executionOk) {
         ticket.engine = {
           ok: false,
-          code: engine.json?.code || "engine-refused",
-          error: engine.json?.error || engine.stderr || "engine refused",
+          code:
+            classified.outcomeKind === "incomplete-outputs"
+              ? "incomplete-outputs"
+              : engine.json?.code || classified.outcomeKind || "engine-refused",
+          error:
+            classified.outcomeKind === "incomplete-outputs"
+              ? `missing catalog outputs: ${classified.missing.join(", ")}`
+              : engine.json?.error || engine.stderr || "engine refused",
         };
+        ticket.outputs = [];
+        ticket.outcomeKind = classified.outcomeKind;
+        ticket.analysisOutcome = classified.analysisOutcome;
+        ticket.executionOk = false;
         Object.assign(ticket, saleFields());
         stamp(ticket, "rejected");
         persist(ticket);
         return {
+          ...ticket,
           ok: false,
           refused: true,
           code: ticket.engine.code,
           error: ticket.engine.error,
-          ...ticket,
         };
       }
 
-      const outputs = listOutputs(job, outDir);
       ticket.resultUri = `file://${outDir}`;
-      finalizeSampleOrCompleted(ticket, {
+      finalizeDelivered(ticket, {
         sample: sampleInfo.sample || materialized.example,
         sampleReasons: sampleInfo.reasons,
-        outputs,
+        outputs: listed.outputs,
         engine,
+        classified,
+        wrapper: engine.wrapper || null,
         at: nowIso(clock),
       });
       persist(ticket);
@@ -353,6 +409,8 @@ export function createDesk({ store, engineRunner = runEngineJob, clock } = {}) {
         status: t.status,
         sold: false,
         sample: Boolean(t.sample),
+        executionOk: t.executionOk,
+        outcomeKind: t.outcomeKind || null,
         resultUri: t.resultUri,
         updatedAt: t.updatedAt,
       })),

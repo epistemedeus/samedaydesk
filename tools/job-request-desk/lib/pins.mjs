@@ -34,6 +34,7 @@ export const I01_GOLDEN_TERMS_VERSION =
   "sha256:c82f232dd9d63261b91d32234abf3e0f655d99182cde7c66b7de5c8c787ea31f";
 export const F08_FIXTURE_PIN = "bae3e7cd5034b21019fb272a99d88db964b831ee";
 export const SDS_MAIN_PIN = "5b97d1b02e786acd1895cfa1508087ae3f7a1545";
+export const SDS52_PIN = "aeef964fa188443078958d9d6d393afae1d542ee";
 export const CONSUMER_CONTRACT_PIN = "c621646897e6fe1dccf0e5993aea63b5bc1f6bd3";
 
 export function enginePin() {
