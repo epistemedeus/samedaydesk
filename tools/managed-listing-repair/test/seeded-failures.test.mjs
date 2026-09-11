@@ -14,6 +14,8 @@ describe("seeded fail-closed refusals", () => {
     assert.equal(result.ok, false);
     assert.equal(result.code, "auto_publish_rejected");
     assert.equal(result.publishAuthorized, false);
+    assert.equal(result.purchaseAuthorized, false);
+    assert.equal(result.sold, false);
   });
 
   it("rejects --publish / --auto-publish on the ok fixture", () => {
@@ -35,6 +37,8 @@ describe("seeded fail-closed refusals", () => {
     assert.equal(result.code, "sample_accepted_correction_rejected");
     assert.equal(result.accepted_correction, false);
     assert.equal(result.sample, true);
+    assert.equal(result.purchaseAuthorized, false);
+    assert.equal(result.sold, false);
   });
 
   it("rejects --example becoming accepted_correction", () => {
@@ -65,6 +69,7 @@ describe("seeded fail-closed refusals", () => {
     assert.equal(result.ok, false);
     assert.equal(result.code, "f08_edit_rejected");
     assert.equal(existsSync(dest), false);
+    assert.equal(result.purchaseAuthorized, false);
   });
 
   it("rejects --write-f08 even without an out path", () => {

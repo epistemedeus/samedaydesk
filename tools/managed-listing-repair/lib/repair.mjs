@@ -43,6 +43,7 @@ function rejection({
     accepted_correction: false,
     sold: false,
     purchaseAuthority: false,
+    purchaseAuthorized: false,
     payment: { attempted: false },
     liveSettlement: "out-of-scope",
     wrote: false,
@@ -237,6 +238,7 @@ export function runManagedListingRepair(request = {}) {
     sampleReasons: sampleInfo.reasons,
     sold: false,
     purchaseAuthority: false,
+    purchaseAuthorized: false,
     payment: { attempted: false },
     liveSettlement: "out-of-scope",
     claims: {

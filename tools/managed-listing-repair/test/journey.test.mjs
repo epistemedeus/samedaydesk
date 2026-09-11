@@ -16,6 +16,8 @@ describe("literal user journey", () => {
     assert.equal(body.publishAuthorized, false);
     assert.equal(body.accepted_correction, false);
     assert.equal(body.sold, false);
+    assert.equal(body.purchaseAuthority, false);
+    assert.equal(body.purchaseAuthorized, false);
     assert.ok(body.evidence);
     assert.equal(body.evidence.kind, "source_observation");
     assert.match(body.evidence.digest, /^[0-9a-f]{64}$/);
@@ -52,12 +54,16 @@ describe("literal user journey", () => {
     assert.equal(body.accepted_correction, false);
     assert.equal(body.publishAuthorized, false);
     assert.equal(body.sample, true);
+    assert.equal(body.purchaseAuthorized, false);
+    assert.equal(body.sold, false);
   });
 
   it("library journey matches the CLI on the ok fixture", () => {
     const result = runManagedListingRepair({ fixturePath: OK_FIXTURE });
     assert.equal(result.ok, true);
     assert.equal(result.publishAuthorized, false);
+    assert.equal(result.purchaseAuthorized, false);
+    assert.equal(result.sold, false);
     assert.equal(result.suggestion.notAPublish, true);
     assert.equal(result.claims.published, false);
     assert.ok(Array.isArray(result.suggestion.engineActions));

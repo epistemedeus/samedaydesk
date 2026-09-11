@@ -101,6 +101,8 @@ export async function main(argv = process.argv.slice(2)) {
     publishAuthorized: false,
     accepted_correction: false,
     sold: false,
+    purchaseAuthority: false,
+    purchaseAuthorized: false,
     out: result.outPath,
   };
   process.stdout.write(`${JSON.stringify(compact, null, 2)}\n`);
