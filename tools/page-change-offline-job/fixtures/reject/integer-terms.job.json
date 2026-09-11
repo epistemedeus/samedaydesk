@@ -1,0 +1,9 @@
+{
+  "id": "integer-terms",
+  "title": "I01 rejects integer termsVersion",
+  "clock": "2026-09-08T12:00:00.000Z",
+  "fields": ["title"],
+  "before": "../customer-job/before.json",
+  "after": "../customer-job/after.json",
+  "termsVersion": 1
+}

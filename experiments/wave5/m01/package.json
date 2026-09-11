@@ -1,0 +1,25 @@
+{
+  "name": "@samedaydesk/wave5-m01-engine-catalog",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "W5-M01 useful-engine composition for D01. In-tree M02-M05 CLIs, job catalog contract, D01 adapter. Not a second paid runner.",
+  "exports": {
+    ".": "./index.mjs",
+    "./catalog.json": "./catalog.json",
+    "./contract": "./lib/contract.mjs",
+    "./d01-adapter": "./lib/d01-adapter.mjs",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "w5-m01-catalog": "./bin/catalog.mjs",
+    "w5-m01-run-job": "./bin/run-job.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "catalog": "node bin/catalog.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

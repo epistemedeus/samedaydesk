@@ -1,0 +1,10 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "routes": [
+    {
+      "path": "/blog/[slug]",
+      "canonical": "https://samedaydesk.com/blog/example",
+      "title": "Blog post"
+    }
+  ]
+}
