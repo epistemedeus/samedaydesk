@@ -1,0 +1,47 @@
+{
+  "id": "W5-M19",
+  "outcome": "One maintained distribution integration drawn from current partner/registry events",
+  "schema": "samedaydesk.wave5.m19.distribution.v1",
+  "tested": {
+    "SDS52": {
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "ref": "fable/f08-paid-wrappers",
+      "pr": 52
+    },
+    "presence": {
+      "path": "tools/presence/",
+      "note": "On SDS52. Surface dry-run and mcp-registry version-only apply."
+    },
+    "registryConsumer": {
+      "path": "tools/presence/registry-consumer.mjs",
+      "capture": "tools/presence/fixtures/mcp-registry-consumer/capture.json",
+      "pinnedLatestVersion": "1.23.45"
+    },
+    "wrapper": {
+      "path": "server/paid-useful-jobs/",
+      "cli": "server/paid-useful-jobs/bin/cli.mjs",
+      "note": "SDS52 runPaidOffer / CLI. Not D01 createExecutor."
+    },
+    "usefulJobsCatalog": {
+      "path": "client/public/for-agents/useful-jobs/catalog.json",
+      "version": "1.0.0",
+      "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "archiveBytes": 2522418
+    }
+  },
+  "remainingBinding": {
+    "W5-M12": "Machine-readable capability/pricing export not on this branch. Tested current catalog.json + discovery/useful-jobs.json.",
+    "W5-M13": "Machine-discovery surface integration not on this branch. Tested presence SURFACES plus registry-consumer latest paths.",
+    "W5-D01": "samedaydesk.paid-useful-jobs.execution.v1 at later kernel SHA is not this result. SDS52 wrapper fields were tested.",
+    "W5-M01": "Catalog/engine selection for D01 is not claimed."
+  },
+  "closedGenericOutreach": [
+    "grexal-marketplace-scan",
+    "unfiltered-mcp-search-as-latest",
+    "multi-surface-blast",
+    "invented-partner",
+    "live-partner-email"
+  ],
+  "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee"
+}

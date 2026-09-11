@@ -1,0 +1,15 @@
+W5-M19 maintained distribution integration.
+
+This package is a thin consumer of current SameDayDesk interfaces already
+on SDS PR52:
+
+- tools/presence (surface dry-run / protected-field apply gate)
+- tools/presence/registry-consumer.mjs (latest vs unfiltered MCP Registry)
+- server/paid-useful-jobs (PR52 wrapper CLI, not a second runner)
+- client/public/for-agents/useful-jobs/catalog.json
+- client/public/discovery/useful-jobs.json
+
+It does not copy those kernels, does not vendor another MCP registry client,
+and does not rewrite the homepage or root package.json.
+
+License: MIT, same grant as other SameDayDesk experiment packages.

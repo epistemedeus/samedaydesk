@@ -1,0 +1,18 @@
+{
+  "name": "@samedaydesk/wave5-m19-distribution",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "One maintained distribution integration from current partner/registry events. Thin consumer of PR52 presence, registry-consumer, and paid-useful-jobs.",
+  "bin": {
+    "m19-distribute": "./bin/distribute.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "journey": "node bin/distribute.mjs journey",
+    "serve": "node bin/serve.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
