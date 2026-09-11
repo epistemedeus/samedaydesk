@@ -5,10 +5,6 @@ import {
   SETTLEMENT_BUYER_CLASSES,
 } from "./pins.mjs";
 
-export function isPlainObject(value) {
-  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
-}
-
 export function refuse(code, message, extra = {}) {
   return {
     ok: false,

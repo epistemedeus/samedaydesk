@@ -143,8 +143,8 @@ export async function runLabelledJob(request = {}, adapters = {}) {
     appendRow(request.ledgerPath, row);
   }
   if (request.postgres) {
-    postgresInsert(request.postgres, row);
     row.evidence.postgres = "local-runtime";
+    postgresInsert(request.postgres, row);
   }
 
   return {

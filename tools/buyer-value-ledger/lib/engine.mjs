@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 import {
@@ -76,17 +76,6 @@ export function measureOutputs(outDir, outputNames) {
   }
   const usableOutput = names.length > 0 && outputs.every((item) => item.present && item.bytes > 0);
   return { outputs, outputBytes, usableOutput };
-}
-
-export function listDirBytes(dir) {
-  if (!existsSync(dir)) return 0;
-  let total = 0;
-  for (const name of readdirSync(dir)) {
-    const p = join(dir, name);
-    const st = statSync(p);
-    if (st.isFile()) total += st.size;
-  }
-  return total;
 }
 
 /**

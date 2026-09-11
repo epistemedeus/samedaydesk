@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, mkdirSync, readFileSync, appendFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, appendFileSync, rmSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -128,7 +128,11 @@ export function insertRow(cluster, row) {
   if (!row || row.schema !== SCHEMA_ROW) {
     throw new Error("postgres insert requires a ledger row");
   }
-  const tag = `bvl${Math.random().toString(16).slice(2, 10)}`;
+  const json = JSON.stringify(row);
+  const tag = "bvljson";
+  if (json.includes(`$${tag}$`)) {
+    throw new Error("row JSON collides with postgres dollar-quote tag");
+  }
   const sql = `
 INSERT INTO buyer_value_ledger_rows
   (run_id, job_id, buyer_class, sample, independent_demand, duration_ms, output_bytes, row_json)
@@ -140,7 +144,7 @@ VALUES (
   FALSE,
   ${Number.parseInt(String(row.durationMs), 10)},
   ${Number.parseInt(String(row.outputBytes), 10)},
-  $${tag}${JSON.stringify(row)}$${tag}::jsonb
+  $${tag}$${json}$${tag}$::jsonb
 );
 `;
   const result = run(cluster.psql, ["-v", "ON_ERROR_STOP=1", "-c", sql], cluster.env);
@@ -170,17 +174,3 @@ function esc(value) {
   return String(value).replaceAll("'", "''");
 }
 
-export function writeHelperNote(filePath) {
-  writeFileSync(
-    filePath,
-    `${JSON.stringify(
-      {
-        kind: "local-runtime-postgres",
-        available: postgresAvailable(),
-        pgBin: resolvePgBin(),
-      },
-      null,
-      2,
-    )}\n`,
-  );
-}
