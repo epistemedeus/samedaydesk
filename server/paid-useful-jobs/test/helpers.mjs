@@ -29,6 +29,13 @@ export function callerRepeat() {
   return { "next-run": join(FIXTURES, "caller/repeat-job-record/next-run.json") };
 }
 
+export function callerRepeatWithRoot() {
+  return {
+    "next-run": join(FIXTURES, "caller/repeat-job-record/next-run-with-root.json"),
+    "input-root": join(FIXTURES, "caller/repeat-job-record/input-root"),
+  };
+}
+
 export function loadReservedPayment() {
   return JSON.parse(readFileSync(join(FIXTURES, "payment/reserved-fixture.json"), "utf8"));
 }

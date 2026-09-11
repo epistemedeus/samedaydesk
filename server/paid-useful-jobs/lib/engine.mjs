@@ -1,14 +1,20 @@
-import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import {
   USEFUL_JOBS_ARCHIVE_BYTES,
+  USEFUL_JOBS_ARCHIVE_FREEZE,
   USEFUL_JOBS_ARCHIVE_PATH,
   USEFUL_JOBS_ARCHIVE_SHA256,
   USEFUL_JOBS_CLI,
+  USEFUL_JOBS_PACKAGE,
+  USEFUL_JOBS_PURCHASE_AUTHORITY,
+  USEFUL_JOBS_REVIEWED_SOURCE,
   USEFUL_JOBS_ROOT_NAME,
+  USEFUL_JOBS_SOURCE_COMMIT,
+  USEFUL_JOBS_SOURCE_REPO,
+  USEFUL_JOBS_VERSION,
 } from "./pins.mjs";
 import { sha256Bytes } from "./digest.mjs";
 
@@ -72,9 +78,33 @@ export function ensureUsefulJobsKit() {
   }
 }
 
+/**
+ * Immutable engine identity for receipts. Uses the same archive sha/bytes
+ * constants `ensureUsefulJobsKit()` verifies before extract. Package version
+ * is metadata only and is not the archive identity.
+ */
+export function engineProvenance() {
+  return {
+    package: USEFUL_JOBS_PACKAGE,
+    version: USEFUL_JOBS_VERSION,
+    purchaseAuthority: USEFUL_JOBS_PURCHASE_AUTHORITY === true,
+    cli: "node bin/useful-jobs.mjs run <id>",
+    archiveSha256: USEFUL_JOBS_ARCHIVE_SHA256,
+    archiveBytes: USEFUL_JOBS_ARCHIVE_BYTES,
+    sourceRepo: USEFUL_JOBS_SOURCE_REPO,
+    sourceCommit: USEFUL_JOBS_SOURCE_COMMIT,
+    archiveFreeze: USEFUL_JOBS_ARCHIVE_FREEZE,
+    reviewedSource: USEFUL_JOBS_REVIEWED_SOURCE,
+  };
+}
+
+export function engineArchiveIdentity(provenance = engineProvenance()) {
+  return `${provenance.archiveSha256}:${provenance.archiveBytes}`;
+}
+
 export function engineVersion(kit = ensureUsefulJobsKit()) {
   const pkg = JSON.parse(readFileSync(join(kit, "package.json"), "utf8"));
-  return { package: pkg.name, version: pkg.version, purchaseAuthority: false };
+  return { ...engineProvenance(), extractedPackage: pkg.name, extractedVersion: pkg.version };
 }
 
 function parseEngineJson(stdout) {

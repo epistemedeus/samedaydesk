@@ -23,6 +23,11 @@ export const USEFUL_JOBS_ARCHIVE_BYTES = kit.bytes;
 export const USEFUL_JOBS_PURCHASE_AUTHORITY = kit.purchaseAuthority;
 export const USEFUL_JOBS_ARCHIVE_REL = kit.archive.replace(/^\//, "");
 export const USEFUL_JOBS_ARCHIVE_PATH = join(REPO_ROOT, "client/public", USEFUL_JOBS_ARCHIVE_REL);
+export const USEFUL_JOBS_SOURCE_REPO = kit.sourceRepo;
+export const USEFUL_JOBS_SOURCE_COMMIT = kit.sourceCommit;
+export const USEFUL_JOBS_ARCHIVE_FREEZE = kit.archiveFreeze;
+export const USEFUL_JOBS_REVIEWED_SOURCE = kit.reviewedSource;
+export const USEFUL_JOBS_NODE = kit.node;
 
 /** Existing live offers. Do not modify these files or values from this feature. */
 export const LIVE_EXTRACT_PRICE_USDC = "0.005";

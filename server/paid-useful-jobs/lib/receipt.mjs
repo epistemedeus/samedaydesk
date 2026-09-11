@@ -1,9 +1,26 @@
 import { join } from "node:path";
 import { existsSync } from "node:fs";
 import { digestNamedBytes, fileEntry, sha256File } from "./digest.mjs";
-import { engineVersion } from "./engine.mjs";
+import { engineProvenance } from "./engine.mjs";
 import { fixturePriceNote } from "./funding.mjs";
-import { USEFUL_JOBS_VERSION } from "./pins.mjs";
+
+function describeInput(entry) {
+  if (entry.kind === "directory") {
+    return {
+      name: entry.name,
+      kind: "directory",
+      path: entry.path,
+      bytes: null,
+      sha256: null,
+    };
+  }
+  return {
+    name: entry.name,
+    kind: entry.kind || "file",
+    bytes: entry.bytes,
+    sha256: entry.path && existsSync(entry.path) ? sha256File(entry.path) : entry.sha256,
+  };
+}
 
 export function buildReceipt({
   jobId,
@@ -17,24 +34,19 @@ export function buildReceipt({
   continuity,
   payment,
 }) {
+  void kit;
   const outputs = (outputFiles || []).map((f) => fileEntry(f.name, f.path));
-  const inputs = (inputEntries || []).map((e) => ({
-    name: e.name,
-    bytes: e.bytes,
-    sha256: e.path && existsSync(e.path) ? sha256File(e.path) : e.sha256,
-  }));
-  const version = kit ? engineVersion(kit) : { package: "useful-jobs", version: USEFUL_JOBS_VERSION, purchaseAuthority: false };
+  const inputs = (inputEntries || []).map(describeInput);
+  const inputRoot = inputs.find((e) => e.name === "input-root" && e.kind === "directory")?.path || null;
 
   return {
     schema: "samedaydesk.paid-useful-jobs.receipt.v1",
     jobId,
-    engine: {
-      ...version,
-      cli: "node bin/useful-jobs.mjs run <id>",
-    },
+    engine: engineProvenance(),
     inputsDigest: digestNamedBytes(inputs),
     outputsDigest: digestNamedBytes(outputs),
     inputs,
+    inputRoot,
     outputs,
     fundingState: funding.fundingState,
     sold: false,
@@ -57,6 +69,8 @@ export function buildReceipt({
           status: engineJson.status || null,
           digest: engineJson.digest || null,
           refused: engineJson.refused === true,
+          identityVerified:
+            typeof engineJson.identityVerified === "boolean" ? engineJson.identityVerified : null,
         }
       : null,
     outDir: outputFiles?.[0] ? join(outputFiles[0].path, "..") : null,

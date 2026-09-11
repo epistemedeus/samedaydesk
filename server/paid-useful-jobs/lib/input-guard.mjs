@@ -36,9 +36,14 @@ function assertNotOversize(key, bytes) {
   }
 }
 
+const DIRECTORY_KEYS = new Set(["input-root"]);
+
 /**
  * Materialize caller-supplied inputs to files. Never substitutes kit samples
  * unless the caller explicitly set example mode.
+ *
+ * `input-root` is a directory used by repeat-job-record to verify
+ * manifest-declared bytes. It is not a file and must not be byte-hashed.
  */
 export function materializeInputs(jobId, request, workDir) {
   const job = getJob(jobId);
@@ -70,6 +75,26 @@ export function materializeInputs(jobId, request, workDir) {
     if (!allowed.has(key)) continue;
     if (value == null || value === false || value === "") continue;
 
+    if (DIRECTORY_KEYS.has(key)) {
+      if (typeof value !== "string" || looksJsonText(value)) {
+        throw refuse("input-root-not-directory", "input-root must be a filesystem directory path", { key });
+      }
+      const dirPath = resolve(value);
+      if (!existsSync(dirPath)) {
+        throw refuse("input-missing-file", `Input ${key} directory not found: ${dirPath}`, { key, path: dirPath });
+      }
+      const st = statSync(dirPath);
+      if (!st.isDirectory()) {
+        throw refuse("input-root-not-directory", `Input input-root must be a directory: ${dirPath}`, {
+          key,
+          path: dirPath,
+        });
+      }
+      files[key] = dirPath;
+      entries.push({ name: key, path: dirPath, kind: "directory" });
+      continue;
+    }
+
     let filePath;
     let bytes;
 
@@ -94,7 +119,11 @@ export function materializeInputs(jobId, request, workDir) {
       if (!existsSync(filePath)) {
         throw refuse("input-missing-file", `Input ${key} file not found: ${filePath}`, { key, path: filePath });
       }
-      bytes = statSync(filePath).size;
+      const st = statSync(filePath);
+      if (st.isDirectory()) {
+        throw refuse("input-not-file", `Input ${key} must be a file, not a directory`, { key, path: filePath });
+      }
+      bytes = st.size;
       assertNotOversize(key, bytes);
       if (key === "input" || key === "next-run" || filePath.endsWith(".json")) {
         try {
@@ -109,7 +138,7 @@ export function materializeInputs(jobId, request, workDir) {
     }
 
     files[key] = filePath;
-    entries.push({ name: key, path: filePath, bytes: bytes ?? statSync(filePath).size });
+    entries.push({ name: key, path: filePath, bytes: bytes ?? statSync(filePath).size, kind: "file" });
   }
 
   return { example, files, entries, job };

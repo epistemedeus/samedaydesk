@@ -39,6 +39,9 @@ node server/paid-useful-jobs/bin/cli.mjs run vendor-budget-impact \
 
 `--example` / SAMPLE inputs produce labeled sample output and are **not** a paid sale.
 
+`--funding reserved-fixture` requires `--payment` with a recognized fixture object
+(same rule in the CLI and `runPaidOffer`). Intent alone is not a reservation.
+
 ```bash
 node server/paid-useful-jobs/bin/cli.mjs run vendor-budget-impact --example
 # fundingState is not a sale; sample=true

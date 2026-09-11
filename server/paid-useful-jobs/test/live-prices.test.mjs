@@ -8,7 +8,10 @@ import {
   LIVE_PAY_TO,
   LIVE_SELLER_INTEGRITY_AUDIT_PRICE_USDC,
   REPO_ROOT,
+  USEFUL_JOBS_ARCHIVE_BYTES,
+  USEFUL_JOBS_ARCHIVE_SHA256,
 } from "../lib/pins.mjs";
+import { engineArchiveIdentity, engineProvenance } from "../lib/engine.mjs";
 
 describe("existing live prices and signature authority stay unchanged", () => {
   it("does not publish fixture prices onto live catalog pins", () => {
@@ -38,5 +41,18 @@ describe("existing live prices and signature authority stay unchanged", () => {
     );
     assert.equal(useful.purchaseAuthority, false);
     assert.equal(useful.paidHostedClaim, false);
+  });
+
+  it("engine archive identity is archive sha/bytes, not a version string", () => {
+    const provenance = engineProvenance();
+    assert.equal(provenance.archiveSha256, USEFUL_JOBS_ARCHIVE_SHA256);
+    assert.equal(provenance.archiveBytes, USEFUL_JOBS_ARCHIVE_BYTES);
+    assert.equal(provenance.purchaseAuthority, false);
+    assert.equal(engineArchiveIdentity({ ...provenance, version: "9.9.9" }), engineArchiveIdentity(provenance));
+    assert.notEqual(
+      engineArchiveIdentity({ ...provenance, archiveSha256: "0".repeat(64) }),
+      engineArchiveIdentity(provenance),
+    );
+    assert.notEqual(engineArchiveIdentity(provenance), `useful-jobs@${provenance.version}`);
   });
 });

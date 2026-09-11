@@ -143,10 +143,11 @@ export function classifyFunding(request, { sample = false } = {}) {
 
   if (intent === "reserved-fixture") {
     return {
-      fundingState: "reserved-fixture",
+      fundingState: "rejected",
       sold: false,
-      purchaseAuthority: false,
-      fixture: true,
+      code: "reserved-fixture-requires-payment",
+      message:
+        "reserved-fixture requires a recognized fixture payment object; fundingIntent alone is not a reservation",
     };
   }
 

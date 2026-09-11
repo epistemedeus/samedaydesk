@@ -6,6 +6,10 @@ export function sha256Bytes(buf) {
 }
 
 export function sha256File(filePath) {
+  const st = statSync(filePath);
+  if (!st.isFile()) {
+    throw new Error(`sha256File expected a regular file: ${filePath}`);
+  }
   return sha256Bytes(readFileSync(filePath));
 }
 
@@ -17,8 +21,10 @@ export function digestNamedBytes(entries) {
   const rows = [...entries]
     .map((e) => ({
       name: e.name,
-      bytes: e.bytes,
-      sha256: e.sha256,
+      kind: e.kind || "file",
+      bytes: e.bytes ?? null,
+      sha256: e.sha256 ?? null,
+      path: e.kind === "directory" ? e.path : undefined,
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
   return sha256Text(JSON.stringify(rows));

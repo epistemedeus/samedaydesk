@@ -5,12 +5,24 @@ import { join } from "node:path";
 import { describe, it } from "node:test";
 import { JOB_IDS } from "../lib/jobs.mjs";
 import { runPaidOffer, runPaidOffers } from "../lib/wrapper.mjs";
-import { LIVE_EXTRACT_PRICE_USDC, LIVE_SELLER_INTEGRITY_AUDIT_PRICE_USDC, FIXTURE_PRICE_USDC } from "../lib/pins.mjs";
+import {
+  LIVE_EXTRACT_PRICE_USDC,
+  LIVE_SELLER_INTEGRITY_AUDIT_PRICE_USDC,
+  FIXTURE_PRICE_USDC,
+  USEFUL_JOBS_ARCHIVE_SHA256,
+  USEFUL_JOBS_ARCHIVE_BYTES,
+  USEFUL_JOBS_SOURCE_REPO,
+  USEFUL_JOBS_SOURCE_COMMIT,
+  USEFUL_JOBS_ARCHIVE_FREEZE,
+  USEFUL_JOBS_REVIEWED_SOURCE,
+} from "../lib/pins.mjs";
+import { engineArchiveIdentity, engineProvenance } from "../lib/engine.mjs";
 import {
   callerBudget,
   callerEvidence,
   callerFeed,
   callerRepeat,
+  callerRepeatWithRoot,
   copyKitListing,
   copyKitOpenApi,
   loadReservedPayment,
@@ -68,6 +80,53 @@ describe("paid useful-job wrappers", { timeout: 180_000 }, () => {
     });
     assert.equal(repeat.ok, true, repeat.error);
     assert.ok(repeat.outputs.some((o) => o.name === "repeat-job.json"));
+  });
+
+  it("repeat-job-record --input-root directory yields verified identity and a receipt", async () => {
+    const result = await runPaidOffer({
+      jobId: "repeat-job-record",
+      inputs: callerRepeatWithRoot(),
+    });
+    assert.equal(result.ok, true, result.error);
+    assert.equal(result.code, undefined);
+    assert.equal(result.sold, false);
+    assert.ok(result.outputs.some((o) => o.name === "repeat-job.json"));
+    assert.ok(result.outputs.some((o) => o.name === "repeat-job.md"));
+    assert.equal(result.engine.identityVerified, true);
+    assert.equal(result.receipt.engineResult.identityVerified, true);
+    const rootEntry = result.receipt.inputs.find((i) => i.name === "input-root");
+    assert.equal(rootEntry.kind, "directory");
+    assert.equal(rootEntry.sha256, null);
+    assert.equal(rootEntry.path, callerRepeatWithRoot()["input-root"]);
+    assert.equal(result.receipt.inputRoot, callerRepeatWithRoot()["input-root"]);
+    const { readFileSync } = await import("node:fs");
+    const artifact = JSON.parse(readFileSync(result.outputs.find((o) => o.name === "repeat-job.json").path, "utf8"));
+    assert.equal(artifact.identityVerified, true);
+  });
+
+  it("receipt engine provenance matches ensureUsefulJobsKit archive pins", async () => {
+    const result = await runPaidOffer({
+      jobId: "vendor-budget-impact",
+      inputs: callerBudget(),
+    });
+    assert.equal(result.ok, true, result.error);
+    const expected = engineProvenance();
+    assert.equal(result.receipt.engine.archiveSha256, USEFUL_JOBS_ARCHIVE_SHA256);
+    assert.equal(result.receipt.engine.archiveBytes, USEFUL_JOBS_ARCHIVE_BYTES);
+    assert.equal(result.receipt.engine.sourceRepo, USEFUL_JOBS_SOURCE_REPO);
+    assert.equal(result.receipt.engine.sourceCommit, USEFUL_JOBS_SOURCE_COMMIT);
+    assert.equal(result.receipt.engine.archiveFreeze, USEFUL_JOBS_ARCHIVE_FREEZE);
+    assert.equal(result.receipt.engine.reviewedSource, USEFUL_JOBS_REVIEWED_SOURCE);
+    assert.equal(result.receipt.engine.archiveSha256, expected.archiveSha256);
+    assert.equal(engineArchiveIdentity(result.receipt.engine), engineArchiveIdentity(expected));
+    assert.equal(
+      engineArchiveIdentity({ ...expected, version: "9.9.9" }),
+      engineArchiveIdentity(expected),
+    );
+    assert.notEqual(
+      engineArchiveIdentity({ ...expected, archiveSha256: "0".repeat(64) }),
+      engineArchiveIdentity(expected),
+    );
   });
 
   it("runs api-upgrade-brief and listing-repair-packet from copied kit files (not silent substitution)", async () => {

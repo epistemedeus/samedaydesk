@@ -5,7 +5,7 @@ import { getJob } from "./jobs.mjs";
 import { materializeInputs, refuse, WrapperRefuse } from "./input-guard.mjs";
 import { inspectSample, wantsLiveSale } from "./sample-guard.mjs";
 import { classifyFunding, isFixturePayment, wouldSettleIfGuardOmitted } from "./funding.mjs";
-import { ensureUsefulJobsKit, runEngineJob } from "./engine.mjs";
+import { engineProvenance, ensureUsefulJobsKit, runEngineJob } from "./engine.mjs";
 import { applyEnvelopeContinuity, declaredRouteMetadata } from "./envelope.mjs";
 import { getLastIndexingContinuityDiagnostic } from "./continuity.mjs";
 import { buildReceipt } from "./receipt.mjs";
@@ -30,6 +30,7 @@ function rejection({ jobId, code, message, detail, fundingState = "rejected", sa
     receipt: {
       schema: "samedaydesk.paid-useful-jobs.receipt.v1",
       jobId,
+      engine: engineProvenance(),
       fundingState,
       sold: false,
       sample,

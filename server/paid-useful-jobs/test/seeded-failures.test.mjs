@@ -162,4 +162,19 @@ describe("seeded fail-closed cases", { timeout: 60_000 }, () => {
     assert.equal(result.code, "input-malformed");
     assert.equal(result.fundingState, "rejected");
   });
+
+  it("reserved-fixture without a fixture payment is not a reservation", async () => {
+    const result = await runPaidOffer({
+      jobId: "vendor-budget-impact",
+      inputs: callerBudget(),
+      fundingIntent: "reserved-fixture",
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.sold, false);
+    assert.equal(result.fundingState, "rejected");
+    assert.equal(result.code, "reserved-fixture-requires-payment");
+    assert.equal(result.receipt.payment, undefined);
+    assert.equal(result.receipt.engine.archiveSha256, result.receipt.engine.archiveSha256);
+    assert.match(result.receipt.engine.archiveSha256, /^[0-9a-f]{64}$/);
+  });
 });

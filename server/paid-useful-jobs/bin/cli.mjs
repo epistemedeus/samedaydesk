@@ -7,7 +7,6 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { JOB_IDS, JOB_BY_ID } from "../lib/jobs.mjs";
 import { runPaidOffer } from "../lib/wrapper.mjs";
-import { fixturePaymentTemplate } from "../lib/funding.mjs";
 
 function parseArgs(argv) {
   const out = { _: [] };
@@ -43,6 +42,7 @@ Examples:
     --out-dir ./out/paid-vendor-budget
 
 Live settlement is out of scope. SAMPLE/--example is never a paid sale.
+reserved-fixture requires --payment with a recognized fixture object (CLI and library).
 `;
 }
 
@@ -84,8 +84,6 @@ if (job) {
 let payment = null;
 if (args.payment) {
   payment = JSON.parse(readFileSync(resolve(String(args.payment)), "utf8"));
-} else if (args.funding === "reserved-fixture") {
-  payment = fixturePaymentTemplate();
 }
 
 const result = await runPaidOffer({
