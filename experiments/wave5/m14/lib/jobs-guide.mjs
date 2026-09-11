@@ -1,7 +1,7 @@
-import { JOBS, JOB_BY_ID, getJob } from "../../../../server/paid-useful-jobs/lib/jobs.mjs";
+import { JOBS, JOB_BY_ID, JOB_IDS, getJob } from "../../../../server/paid-useful-jobs/lib/jobs.mjs";
 import { loadCatalog, loadOutcomes, loadPin } from "./paths.mjs";
 
-export { JOBS, JOB_BY_ID, getJob };
+export { JOBS, JOB_BY_ID, JOB_IDS, getJob };
 
 export const SHARED_LIMITS = Object.freeze([
   "sold is always false. This wrapper is not a live sale.",
