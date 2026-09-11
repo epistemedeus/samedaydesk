@@ -1,4 +1,6 @@
 import { crc32 } from "node:zlib";
+import { posix } from "node:path";
+import { refuse } from "./refuse.mjs";
 
 function u16(value) {
   const buf = Buffer.alloc(2);
@@ -74,4 +76,69 @@ export function buildStoredZip(entries) {
     u16(0),
   ]);
   return Buffer.concat([...locals, centralDir, eocd]);
+}
+
+function assertSafeZipName(name) {
+  if (!name || name.includes("\0") || name.includes("\\") || name.startsWith("/") || name.includes("..")) {
+    throw refuse("invalid-zip", "zip member path is refused", { path: name || null });
+  }
+  const normalized = posix.normalize(name);
+  if (normalized !== name || posix.isAbsolute(normalized) || normalized.startsWith("../") || normalized === "..") {
+    throw refuse("invalid-zip", "zip member path is refused", { path: name });
+  }
+}
+
+function findEocd(buf) {
+  const min = Math.max(0, buf.length - 22 - 65535);
+  for (let i = buf.length - 22; i >= min; i -= 1) {
+    if (buf.readUInt32LE(i) !== 0x06054b50) continue;
+    const commentLen = buf.readUInt16LE(i + 20);
+    if (i + 22 + commentLen === buf.length) return i;
+  }
+  throw refuse("invalid-zip", "zip end-of-central-directory not found");
+}
+
+export function parseStoredZip(buffer) {
+  const buf = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
+  if (buf.length < 22) throw refuse("invalid-zip", "zip is too small");
+  const eocd = findEocd(buf);
+  const diskEntries = buf.readUInt16LE(eocd + 8);
+  const totalEntries = buf.readUInt16LE(eocd + 10);
+  if (diskEntries !== totalEntries) throw refuse("invalid-zip", "multi-disk zip is refused");
+  if (totalEntries === 0xffff) throw refuse("invalid-zip", "zip64 is refused");
+  const centralSize = buf.readUInt32LE(eocd + 12);
+  const centralOffset = buf.readUInt32LE(eocd + 16);
+  if (centralOffset + centralSize > eocd) throw refuse("invalid-zip", "central directory overruns zip");
+  const entries = [];
+  let cursor = centralOffset;
+  for (let i = 0; i < totalEntries; i += 1) {
+    if (cursor + 46 > buf.length || buf.readUInt32LE(cursor) !== 0x02014b50) {
+      throw refuse("invalid-zip", "central directory signature missing");
+    }
+    const method = buf.readUInt16LE(cursor + 10);
+    const crc = buf.readUInt32LE(cursor + 16);
+    const compSize = buf.readUInt32LE(cursor + 20);
+    const uncompSize = buf.readUInt32LE(cursor + 24);
+    const nameLen = buf.readUInt16LE(cursor + 28);
+    const extraLen = buf.readUInt16LE(cursor + 30);
+    const commentLen = buf.readUInt16LE(cursor + 32);
+    const localOffset = buf.readUInt32LE(cursor + 42);
+    const name = buf.subarray(cursor + 46, cursor + 46 + nameLen).toString("utf8");
+    assertSafeZipName(name);
+    if (method !== 0) throw refuse("invalid-zip", `zip member ${name} is not stored`, { name, method });
+    if (compSize !== uncompSize) throw refuse("invalid-zip", `zip member ${name} size mismatch`, { name });
+    if (localOffset + 30 > buf.length || buf.readUInt32LE(localOffset) !== 0x04034b50) {
+      throw refuse("invalid-zip", `local header missing for ${name}`, { name });
+    }
+    const localNameLen = buf.readUInt16LE(localOffset + 26);
+    const localExtraLen = buf.readUInt16LE(localOffset + 28);
+    const dataStart = localOffset + 30 + localNameLen + localExtraLen;
+    const data = buf.subarray(dataStart, dataStart + uncompSize);
+    if (data.length !== uncompSize) throw refuse("invalid-zip", `truncated member ${name}`, { name });
+    if ((crc32(data) >>> 0) !== crc) throw refuse("invalid-zip", `crc mismatch for ${name}`, { name });
+    entries.push({ name, data: Buffer.from(data), bytes: uncompSize });
+    cursor += 46 + nameLen + extraLen + commentLen;
+  }
+  if (cursor !== centralOffset + centralSize) throw refuse("invalid-zip", "central directory size mismatch");
+  return { entries, bytes: buf.length };
 }

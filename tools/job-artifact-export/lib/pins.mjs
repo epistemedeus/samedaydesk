@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -89,7 +89,8 @@ export function loadKitPin(root = REPO_ROOT) {
 
 export function verifyArchiveFile(file, expectedBareHex = USEFUL_JOBS_ARCHIVE_SHA256) {
   if (!existsSync(file)) return { ok: false, code: "missing-archive", message: "useful-jobs archive is not at the pinned path" };
-  const size = statSync(file).size;
+  const bytes = readFileSync(file);
+  const size = bytes.length;
   if (size !== USEFUL_JOBS_ARCHIVE_BYTES) {
     return {
       ok: false,
@@ -97,13 +98,55 @@ export function verifyArchiveFile(file, expectedBareHex = USEFUL_JOBS_ARCHIVE_SH
       message: `archive bytes ${size} != ${USEFUL_JOBS_ARCHIVE_BYTES}`,
     };
   }
-  const actual = sha256Hex(readFileSync(file));
-  if (actual !== expectedBareHex) {
+  const actual = sha256Hex(bytes);
+  const expected = String(expectedBareHex || "").replace(/^sha256:/, "");
+  if (actual !== expected) {
     return {
       ok: false,
       code: "archive-sha-mismatch",
       message: "useful-jobs archive sha256 does not match the pinned kit",
+      actual: prefixSha256(actual),
+      expected: prefixSha256(expected),
     };
   }
   return { ok: true, sha256: prefixSha256(actual), bytes: size };
+}
+
+export function bindArchiveIdentity({ archiveFile, claimedSha256 = null, expectedBareHex = USEFUL_JOBS_ARCHIVE_SHA256 } = {}) {
+  const verified = verifyArchiveFile(archiveFile, expectedBareHex);
+  if (!verified.ok) return verified;
+  if (claimedSha256 != null && claimedSha256 !== "") {
+    const claimed = prefixSha256(claimedSha256);
+    if (!claimed) {
+      return {
+        ok: false,
+        code: "invalid-archive-sha256",
+        message: "archive sha256 must be 64 hex, optionally sha256-prefixed",
+      };
+    }
+    if (claimed !== verified.sha256) {
+      return {
+        ok: false,
+        code: "archive-identity-override",
+        message: "caller archive sha256 does not match the archive bytes consumed",
+        claimed,
+        actual: verified.sha256,
+      };
+    }
+  }
+  return verified;
+}
+
+export function zipSidecarPath(zipPath) {
+  return `${zipPath}.sha256`;
+}
+
+export function writeZipSidecar(zipPath, digest) {
+  writeFileSync(zipSidecarPath(zipPath), `${digest}\n`);
+}
+
+export function readZipSidecar(zipPath) {
+  const path = zipSidecarPath(zipPath);
+  if (!existsSync(path)) return null;
+  return prefixSha256(readFileSync(path, "utf8").trim());
 }

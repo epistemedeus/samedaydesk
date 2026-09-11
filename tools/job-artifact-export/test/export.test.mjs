@@ -174,3 +174,95 @@ test("seeded failure: SAMPLE cannot be relabeled sale", () => {
   assert.equal(proc.status, 2);
   assert.equal(body.code, "sample-not-sale");
 });
+
+test("seeded failure: caller --archive-sha256 cannot replace the hashed archive identity", () => {
+  const fake = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+  const proc = runExport([
+    "export",
+    "--in-dir",
+    copyFixture("sale-out-dir"),
+    "--out",
+    tmp("w5-arch-override-"),
+    "--archive-sha256",
+    fake,
+    "--clock",
+    CLOCK,
+  ]);
+  const body = payload(proc);
+  assert.equal(proc.status, 2, proc.stdout);
+  assert.equal(body.ok, false);
+  assert.equal(body.code, "archive-identity-override");
+  assert.equal(body.detail.claimed, prefixSha256(fake));
+  assert.equal(body.detail.actual, ARCHIVE);
+});
+
+test("matching --archive-sha256 records the actual archive bytes, not a distinct claim", () => {
+  const proc = runExport([
+    "export",
+    "--in-dir",
+    copyFixture("sale-out-dir"),
+    "--out",
+    tmp("w5-arch-match-"),
+    "--archive-sha256",
+    USEFUL_JOBS_ARCHIVE_SHA256,
+    "--clock",
+    CLOCK,
+  ]);
+  const body = payload(proc);
+  assert.equal(proc.status, 0, proc.stdout);
+  assert.equal(body.ok, true);
+  assert.equal(body.archiveSha256, ARCHIVE);
+  assert.equal(body.jobId, "feed-agenda");
+});
+
+test("seeded failure: known jobId with another job's outputs is not a valid delivery", () => {
+  const proc = runExport([
+    "export",
+    "--in-dir",
+    copyFixture("sale-out-dir"),
+    "--out",
+    tmp("w5-wrong-job-"),
+    "--job-id",
+    "vendor-budget-impact",
+    "--clock",
+    CLOCK,
+  ]);
+  const body = payload(proc);
+  assert.equal(proc.status, 2, proc.stdout);
+  assert.equal(body.ok, false);
+  assert.equal(body.code, "job-output-mismatch");
+  assert.equal(body.detail.jobId, "vendor-budget-impact");
+});
+
+test("matching --job-id that corresponds to the outputs exports", () => {
+  const proc = runExport([
+    "export",
+    "--in-dir",
+    copyFixture("sale-out-dir"),
+    "--out",
+    tmp("w5-job-match-"),
+    "--job-id",
+    "feed-agenda",
+    "--clock",
+    CLOCK,
+  ]);
+  const body = payload(proc);
+  assert.equal(proc.status, 0, proc.stdout);
+  assert.equal(body.ok, true);
+  assert.equal(body.jobId, "feed-agenda");
+});
+
+test("library skipArchiveVerify is refused; identity still requires archive bytes", () => {
+  const inDir = copyFixture("sale-out-dir");
+  assert.throws(
+    () =>
+      exportJobArtifacts({
+        inDir,
+        out: tmp("w5-skip-"),
+        skipArchiveVerify: true,
+        archiveSha256: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        clock: CLOCK,
+      }),
+    (err) => err.code === "archive-verify-required",
+  );
+});

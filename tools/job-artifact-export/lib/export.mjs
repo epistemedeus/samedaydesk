@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { isAbsolute, join, resolve } from "node:path";
-import { detectJobId, loadCatalog, assertKnownJobId } from "./catalog.mjs";
+import { detectJobId, loadCatalog, assertJobOutputCorrespondence } from "./catalog.mjs";
 import { createHashTermsAdapter, assertNotIntegerTermsVersion } from "./hash-terms.mjs";
 import { inferProvenanceLabel, resolveLabel } from "./labels.mjs";
 import {
@@ -11,12 +11,12 @@ import {
   TERMS_SCHEMA,
   USEFUL_JOBS_ARCHIVE_SHA256,
   archivePath,
+  bindArchiveIdentity,
   catalogPath,
-  isSha256Prefixed,
   loadKitPin,
   prefixSha256,
   sha256Prefixed,
-  verifyArchiveFile,
+  writeZipSidecar,
 } from "./pins.mjs";
 import { refuse } from "./refuse.mjs";
 import { listExportFiles, readExportFile, sha256File } from "./scan.mjs";
@@ -60,15 +60,17 @@ export function exportJobArtifacts(options) {
   const repoRoot = options.repoRoot;
   const catalog = loadCatalog(options.catalog || catalogPath(repoRoot));
   const kit = options.enginePin || loadKitPin(repoRoot);
+  if (options.skipArchiveVerify) {
+    throw refuse("archive-verify-required", "archive identity cannot skip byte verification");
+  }
   const archiveFile = options.archiveFile || archivePath(repoRoot);
-  if (!options.skipArchiveVerify) {
-    const verified = verifyArchiveFile(archiveFile, (kit.archiveSha256 || "").replace(/^sha256:/, "") || USEFUL_JOBS_ARCHIVE_SHA256);
-    if (!verified.ok) throw refuse(verified.code, verified.message);
-  }
-  const archiveSha256 = prefixSha256(options.archiveSha256 || kit.archiveSha256 || USEFUL_JOBS_ARCHIVE_SHA256);
-  if (!isSha256Prefixed(archiveSha256)) {
-    throw refuse("invalid-archive-sha256", "archive sha256 must be 64 hex, optionally sha256-prefixed");
-  }
+  const bound = bindArchiveIdentity({
+    archiveFile,
+    claimedSha256: options.archiveSha256 || null,
+    expectedBareHex: (kit.archiveSha256 || "").replace(/^sha256:/, "") || USEFUL_JOBS_ARCHIVE_SHA256,
+  });
+  if (!bound.ok) throw refuse(bound.code, bound.message, { claimed: bound.claimed, actual: bound.actual });
+  const archiveSha256 = bound.sha256;
 
   const hasher = createHashTermsAdapter(options.hashTerms || {});
   if (options.termsVersion !== undefined) assertNotIntegerTermsVersion(options.termsVersion);
@@ -96,7 +98,12 @@ export function exportJobArtifacts(options) {
   if (!labelResult.ok) throw refuse(labelResult.code, labelResult.message, { inferred: inferred.label });
 
   const jobId = options.jobId || detectJobId(files.map((f) => f.path.split("/").pop()), catalog, firstJsonAppId(files));
-  assertKnownJobId(jobId, catalog);
+  assertJobOutputCorrespondence({
+    jobId,
+    fileNames: files.map((f) => f.path.split("/").pop()),
+    catalog,
+    jsonAppId: firstJsonAppId(files),
+  });
 
   const engine = {
     package: kit.package,
@@ -175,6 +182,7 @@ export function exportJobArtifacts(options) {
   const jsonlPath = join(outDir, "files.jsonl");
   const manifestPath = join(outDir, "manifest.json");
   writeFileSync(zipPath, zipBuffer);
+  writeZipSidecar(zipPath, sha256Prefixed(zipBuffer));
   writeFileSync(jsonlPath, jsonl);
   writeFileSync(manifestPath, manifestText);
 

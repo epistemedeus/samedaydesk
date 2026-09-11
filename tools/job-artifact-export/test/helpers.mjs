@@ -55,6 +55,27 @@ export function extractUsefulJobs() {
   return kitRoot;
 }
 
+export function ensureD03Worktree() {
+  const sha = "58cba6324c1d9793d344bc13154b8b2380e8166f";
+  const dest = join(tmpdir(), "w5-d07-d03-ro");
+  const marker = join(dest, "tools/job-output-atomicity/bin/verify-complete.mjs");
+  if (existsSync(marker)) {
+    const head = spawnSync("git", ["-C", dest, "rev-parse", "HEAD"], { encoding: "utf8" });
+    if (head.status === 0 && head.stdout.trim() === sha) {
+      return { root: dest, cli: marker, sha };
+    }
+  }
+  spawnSync("rm", ["-rf", dest], { encoding: "utf8" });
+  const fetch = spawnSync("git", ["-C", REPO_ROOT, "fetch", "origin", sha], { encoding: "utf8" });
+  if (fetch.status !== 0) throw new Error(fetch.stderr || "git fetch D03 pin failed");
+  const add = spawnSync("git", ["-C", REPO_ROOT, "worktree", "add", "--detach", dest, sha], {
+    encoding: "utf8",
+  });
+  if (add.status !== 0) throw new Error(add.stderr || "git worktree add D03 pin failed");
+  if (!existsSync(marker)) throw new Error("D03 verify-complete CLI missing after worktree add");
+  return { root: dest, cli: marker, sha };
+}
+
 export function runFeedAgendaA(outDir) {
   const kit = extractUsefulJobs();
   mkdirSync(outDir, { recursive: true });

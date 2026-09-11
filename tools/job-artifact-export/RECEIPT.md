@@ -1,5 +1,7 @@
 # RECEIPT — W4-commerce-15 job artifact provenance export
 
+Wave5 continuation (W5-D07 exact-byte import): see `experiments/wave5/d07/RECEIPT.md`.
+
 Package: `tools/job-artifact-export/`
 Repo: `epistemedeus/samedaydesk`
 Starting ref: `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545` (PR51 useful-jobs public integration)

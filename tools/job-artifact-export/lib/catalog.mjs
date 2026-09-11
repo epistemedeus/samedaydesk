@@ -48,3 +48,27 @@ export function assertKnownJobId(jobId, catalog) {
   }
   return catalog.byId.get(jobId);
 }
+
+export function assertJobOutputCorrespondence({ jobId, fileNames, catalog, jsonAppId = null }) {
+  const job = assertKnownJobId(jobId, catalog);
+  const names = new Set(fileNames);
+  const expected = [...(job.outputs || [])];
+  const missing = expected.filter((name) => !names.has(name));
+  if (missing.length) {
+    throw refuse("job-output-mismatch", "claimed catalog job does not correspond to the output files", {
+      jobId,
+      missing,
+      expected,
+      files: [...names].sort(),
+    });
+  }
+  if (jsonAppId && catalog.byId.has(jsonAppId) && jsonAppId !== jobId) {
+    throw refuse("job-output-mismatch", "output appId does not match claimed jobId", {
+      jobId,
+      jsonAppId,
+      expected,
+      files: [...names].sort(),
+    });
+  }
+  return job;
+}
