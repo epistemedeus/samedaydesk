@@ -1,0 +1,10 @@
+{
+  "note": "Pinned evidence-records settlement used only for exact operationId join tests. Not this job's revenue.",
+  "path": "tools/evidence-records/fixtures/settlements/early-x402-revenue.json",
+  "operationId": "early-x402-revenue",
+  "amountUsdc": "0.040",
+  "buyerClass": "unknown",
+  "jobRevenue": false,
+  "citedBankedUsdc": "8.105",
+  "citedBankedUsdcIsNotJobRevenue": true
+}
