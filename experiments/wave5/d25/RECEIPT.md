@@ -4,6 +4,7 @@
 **Assignment:** W5-D25
 **Repo:** `epistemedeus/samedaydesk`
 **Branch:** `cursor/w5-d25-actual-buyer-journey-harness-covering-offer-supplied-input-delivery-and-return-dfbf`
+**HEAD:** `dbc156dd92bc1f014effe9b167f8468902a16173`
 **Owned path:** `experiments/wave5/d25/`
 **QA label:** `owner-qa` (not a customer, recruited buyer, independent demand, or settlement)
 
