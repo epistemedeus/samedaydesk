@@ -1,5 +1,5 @@
 import { DEFAULT_LIMITS, ENGINE_ID, ENGINE_VERSION, ERROR_CODES, REPORT_SCHEMA } from "./constants.mjs";
-import { requireClock } from "./clock.mjs";
+import { requireClock, observationFreshness } from "./clock.mjs";
 import { normalizeFields, pickPresent } from "./fields.mjs";
 import { hashJobTerms, jobTermsBody, sha256Hex } from "./hash-terms.mjs";
 import { matchBatches } from "./match.mjs";
@@ -10,13 +10,17 @@ import { readBoundedJson } from "./io.mjs";
 import { stableStringify } from "./canonical.mjs";
 
 function classifyVerdict({ missing, failed, unknown, duplicates, coverageUnknown, semantic, order, truncated, matched }) {
-  if (truncated) return "incomplete";
   if (duplicates.length) return "ambiguous";
   if (semantic) return "changed";
+  if (truncated) return "incomplete";
   if (missing.length || failed.length || unknown.length || coverageUnknown.length) return "incomplete";
   if (order) return "reordered";
   if (!matched.length) return "incomplete";
   return "unchanged";
+}
+
+function noteLimit(hits, name) {
+  if (name && !hits.includes(name)) hits.push(name);
 }
 
 function normalizeLimits(input = {}) {
@@ -204,7 +208,13 @@ export async function comparePageChange({
     ...beforeBatch.issues.map((code) => ({ side: "before", code })),
     ...afterBatch.issues.map((code) => ({ side: "after", code })),
   ];
+  const limitsHit = [];
   let diffTruncated = beforeBatch.truncated || afterBatch.truncated;
+  if (beforeBatch.truncated || afterBatch.truncated) noteLimit(limitsHit, "maxSources");
+  report.snapshot.before.truncated = beforeBatch.truncated === true;
+  report.snapshot.after.truncated = afterBatch.truncated === true;
+  report.snapshot.before.observedAt = beforeBatch.observation.artifactObservedAt;
+  report.snapshot.after.observedAt = afterBatch.observation.artifactObservedAt;
 
   for (const pair of matched.matched) {
     const beforePick = pickPresent(pair.before.data, selectedFields);
@@ -228,10 +238,14 @@ export async function comparePageChange({
     }
     if (both.length) {
       const fieldDiff = diffJson(comparableBefore, comparableAfter, limits);
-      if (fieldDiff.truncated) diffTruncated = true;
+      if (fieldDiff.truncated) {
+        diffTruncated = true;
+        noteLimit(limitsHit, fieldDiff.limitHit ?? "maxChanges");
+      }
       for (const change of fieldDiff.changes) {
         if (changes.length >= limits.maxChanges) {
           diffTruncated = true;
+          noteLimit(limitsHit, "maxChanges");
           break;
         }
         changes.push({ ...change, sourceKey: pair.sourceKey });
@@ -288,7 +302,19 @@ export async function comparePageChange({
   report.claims.contentUnchangedProven = contentUnchangedProven && (verdict === "unchanged" || verdict === "reordered");
   report.claims.usefulOutputProven = comparedFieldPairs > 0 && (verdict === "changed" || verdict === "unchanged" || verdict === "reordered");
   report.claims.paymentImpliesUsefulOutput = false;
+  const time = observationFreshness({
+    observedAt: afterBatch.observation.artifactObservedAt,
+    clock: requiredClock,
+    maxStaleMs: limits.maxStaleMs,
+  });
+  report.freshness = time.freshness;
+  report.snapshot.freshness = time.freshness;
+  report.claims.current = time.current === true && complete;
+  report.claims.fresh = false;
   report.snapshot.claims.noChangeProven = report.claims.noChangeProven;
+  report.snapshot.claims.current = report.claims.current;
+  report.snapshot.claims.fresh = false;
+  report.snapshot.limitsHit = limitsHit;
   report.summary = {
     matched: matched.matched.length,
     missing: matched.missing.length,

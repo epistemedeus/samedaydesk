@@ -29,6 +29,9 @@ const ALLOWED = new Set([
   "max-sources",
   "max-fields",
   "max-changes",
+  "max-json-depth",
+  "max-json-nodes",
+  "max-excerpt-bytes",
 ]);
 
 function usage() {
@@ -101,6 +104,9 @@ function limitsFromArgs(args) {
   if (args["max-sources"] !== undefined) limits.maxSources = integerFlag(args["max-sources"], "max-sources");
   if (args["max-fields"] !== undefined) limits.maxFields = integerFlag(args["max-fields"], "max-fields");
   if (args["max-changes"] !== undefined) limits.maxChanges = integerFlag(args["max-changes"], "max-changes");
+  if (args["max-json-depth"] !== undefined) limits.maxJsonDepth = integerFlag(args["max-json-depth"], "max-json-depth");
+  if (args["max-json-nodes"] !== undefined) limits.maxJsonNodes = integerFlag(args["max-json-nodes"], "max-json-nodes");
+  if (args["max-excerpt-bytes"] !== undefined) limits.maxExcerptBytes = integerFlag(args["max-excerpt-bytes"], "max-excerpt-bytes");
   return limits;
 }
 

@@ -8,9 +8,11 @@ export function renderMarkdown(report, { job } = {}) {
     `- schema: ${report.schema}`,
     `- fields: ${report.fields.join(", ")}`,
     `- clock: ${report.provenance?.comparedWithClock ?? "missing"}`,
-    `- freshness: ${report.freshness} (current/fresh stay false unless a later owner proves currency)`,
+    `- freshness: ${report.freshness} (claims.fresh stays false; current is only observed+complete)`,
     `- usefulOutputProven: ${report.claims.usefulOutputProven}`,
     `- paymentImpliesUsefulOutput: ${report.claims.paymentImpliesUsefulOutput}`,
+    `- complete: ${report.claims.complete}`,
+    `- limitsHit: ${(report.snapshot?.limitsHit ?? []).join(", ") || "none"}`,
     `- charged is not useful output`,
     "",
     "## Summary",
@@ -29,6 +31,7 @@ export function renderMarkdown(report, { job } = {}) {
       lines.push(`- ${change.class} ${change.op} \`${change.path}\` \`${change.sourceKey ?? ""}\``);
       if (change.beforeEvidence !== undefined) lines.push(`  - before: ${change.beforeEvidence}`);
       if (change.afterEvidence !== undefined) lines.push(`  - after: ${change.afterEvidence}`);
+      if (change.evidenceTruncated) lines.push("  - display excerpt truncated; comparison used the full selected-field values");
     }
     lines.push("");
   } else {
