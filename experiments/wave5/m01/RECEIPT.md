@@ -2,10 +2,12 @@
 
 Repo: `epistemedeus/samedaydesk`
 Branch: `cursor/w5-m01-select-and-wire-useful-engines-catalog-for-d01-keeping-first-offer-narrow-53b7`
-Head: `3655d7e1a5196d32cf6a83cc650d9f9a129f6124`
+Implementation: `3655d7e1a5196d32cf6a83cc650d9f9a129f6124`
+Receipt head: `bd3d2aa5b91ba9c35720ea952db35349a7be2ce9`
 Starting ref: `aeef964fa188443078958d9d6d393afae1d542ee` (SDS52 / PR52)
 Owned path: `experiments/wave5/m01/`
 Assignment branch name in TASKS.json: `codex/w5-m01-20260911` (this Cloud run used the Cursor branch above)
+Draft PR: ManagePullRequest registered for operator approval (account setting blocked automatic open). Compare: https://github.com/epistemedeus/samedaydesk/compare/fable/f08-paid-wrappers...cursor/w5-m01-select-and-wire-useful-engines-catalog-for-d01-keeping-first-offer-narrow-53b7
 
 ## First offer
 
