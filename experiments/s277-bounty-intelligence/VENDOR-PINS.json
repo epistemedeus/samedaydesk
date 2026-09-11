@@ -1,0 +1,62 @@
+{
+  "capability-preflight": {
+    "file_count": 213,
+    "sample_sha256": {
+      "SOURCE-MAP.json": "c9ebd5ba4a325da6642e1fc007bab05c69ec17bec0b99364bf4fa3b863df4b98",
+      "README.md": "ea34b257a62d3b0f5902e384e14aef2b4b3b2afc3d8607db9fa3d0d42b6ea17d",
+      "package.json": "a825635797cb84dab22b1b0a79131e8fd40b99c26b204e8978fedd195b27a829",
+      "SOURCE.txt": "3d98d81fe903f31090ed01a282f0283c30a0f69e9b0c67a5d702bfbd7e8734c8",
+      "LICENSE": "ffc6c38e31097da48f90bb4650e0fa5377b4d0889fdd1ea9cf2119c16b8bfa10"
+    }
+  },
+  "correspondence": {
+    "file_count": 44,
+    "sample_sha256": {
+      "package.json": "5cc8de1b6522103fe06e3a567fcb7ca402dce9dec4d9ecc8960de0381c047c6b",
+      "migrations/001_init.sql": "c361c95ff1b95e8b780658dff337c4fc57f7cafd3e0397bc304e8f7f3fbcb7dd",
+      "dist/auth.js": "ddd36f75ee9ebbf9c33c3667f919a0f0275d170f9e95e746b110572293705a76",
+      "dist/bootstrap-replay.js.map": "ae7b474b99a15a77c9cc339c8748b1eaac5057868d59152ed8986a52e3eaf1e4",
+      "dist/app.d.ts": "195da4c4ceb17cbbcdda28d66dc95fa49f20c0aa59d00cc1d67493706f04cbeb"
+    }
+  },
+  "exchange-townsquare": {
+    "file_count": 174,
+    "sample_sha256": {
+      "README.md": "2956aeeddc52bd4bf580ac47130f8008dec27e98de360e328593822de2c93c71",
+      "package.json": "988314ed758cb318fa6a25e1ad152a97ec5af9921e7a1ad14d1bce5589df2621",
+      "SOURCE-NOTICE.txt": "3156af6cdd7e611dfa2ca5b9d58abeb4835f9aba2bb9972e22af624a98b21c16",
+      "PUBLICATION-ALLOWLIST.json": "c3cb7612038f6e6986310296b8f61174df62972972ef2a50fe436ed0d326a1d4",
+      "LICENSE": "64d6c3814cdaa9e9cf2322cfb1f222cd85a61a6460c9cf3e82471851911225b6"
+    }
+  },
+  "external-job-intake": {
+    "file_count": 76,
+    "sample_sha256": {
+      "README.md": "8f9fc0180d47ff434cb70900186359c5602e159986e87266eb09877816e7eeff",
+      "MANIFEST.json": "27ba8773e9d261c9c7cba3f5ff43655cf23987b3bddb5f66a485571043ad4590",
+      "SOURCE-NOTICE.txt": "3611f2130650f415c04609a172c5d4a8038e03ad0ca2121e67a4762c4b47dad5",
+      "PUBLICATION-ALLOWLIST.json": "c9e88c166bf5e22e61eff41015d1773004df442246f3380c691db3463194649c",
+      "LICENSE": "2556c9663903c7f2b86f53ffc4364e67524deb81693c949d74581cb2a8a342a0"
+    }
+  },
+  "outside-operator-first-job": {
+    "file_count": 56,
+    "sample_sha256": {
+      "README.md": "f879d3d9d5fce1106d9cdc112432c44a7485c34571de6792f16ac1700410102a",
+      "MANIFEST.json": "dec2f2b9edc141db23814eb67b706e03eef06ba3956985452925838a672deb6e",
+      "cli.mjs": "9cebe2b59a9705059ed1507ca6cc3ba63b4c98853e93fe923fb951bbcc7d3453",
+      "SOURCE-NOTICE.txt": "224a7f276f138e7c5530f9e497f54c4b2483bb072459ccd7facc993dee502cfe",
+      "run.mjs": "cf08a016936f3cb8e244b505fbb78dae96e800d19d542dc5f9d3bdbaab441680"
+    }
+  },
+  "x402-url-extractor-pin": {
+    "file_count": 493,
+    "sample_sha256": {
+      "payment-offer-preflight.mjs": "4618bca9db089eb2c1760281b11d9107bac9d2103a8640bf2673bb440a738377",
+      "mcp-typed-marker-reconciler.test.mjs": "1f2b021bd5ef2b21f3198b19c27b58ed3d6de6e7f1a2776ab1b9d6517ef9e577",
+      "agent-discoverability-audit.mjs": "7f5aef120d81c8531dd2764e689e69820b9d746fa84c0a139a62cafef99f839e",
+      "skill-contract.test.mjs": "8b1565b968499c300b9a883b75222f25424995dcc3e61bffb8ccd523aa1d172c",
+      "solana-agent-registration.mjs": "0b490b6b800dc17cae8ca6f91f0c7b60ff9a597837858b5617c7e1cefb61e0db"
+    }
+  }
+}

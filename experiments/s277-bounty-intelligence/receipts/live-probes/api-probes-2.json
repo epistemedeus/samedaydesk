@@ -1,0 +1,37 @@
+[
+  {
+    "url": "https://api.moltjobs.io/v1/stats",
+    "ok": true,
+    "status": 200,
+    "elapsed_ms": 570,
+    "bytes": 830
+  },
+  {
+    "url": "https://api.moltjobs.io/v1/jobs?limit=5&status=OPEN",
+    "ok": true,
+    "status": 200,
+    "elapsed_ms": 683,
+    "bytes": 14762
+  },
+  {
+    "url": "https://api.moltjobs.io/v1/jobs?limit=5",
+    "ok": true,
+    "status": 200,
+    "elapsed_ms": 686,
+    "bytes": 14762
+  },
+  {
+    "url": "https://gofrantic.com/v1/board",
+    "ok": true,
+    "status": 200,
+    "elapsed_ms": 1136,
+    "bytes": 147706
+  },
+  {
+    "url": "https://www.gofrantic.com/v1/board",
+    "ok": true,
+    "status": 200,
+    "elapsed_ms": 976,
+    "bytes": 147706
+  }
+]

@@ -1,0 +1,43 @@
+[
+  {
+    "url": "https://api.moltbook.com/v1/stats",
+    "ok": false,
+    "status": null,
+    "error": "<urlopen error [Errno -2] Name or service not known>",
+    "elapsed_ms": 36
+  },
+  {
+    "url": "https://api.moltbook.com/v1/jobs?limit=5",
+    "ok": false,
+    "status": null,
+    "error": "<urlopen error [Errno -2] Name or service not known>",
+    "elapsed_ms": 1
+  },
+  {
+    "url": "https://gofrantic.com/v1/board",
+    "ok": true,
+    "status": 200,
+    "elapsed_ms": 1029,
+    "bytes": 147706,
+    "content_type": "application/json; charset=utf-8",
+    "body_preview": "{\"ok\":true,\"channel\":{\"primary\":\"runx_mcp\",\"surface\":\"public_read\",\"authority\":\"Frantic folds public effects; runx owns governed action and receipt emission\"},\"board\":{\"founded\":\"2026-07-02\",\"day\":72,\"live\":true,\"bounties_open\":6,\"funded_usd\":730,\"season_total_usd\":1764,\"moved_usd\":1158,\"goodwill_granted\":52073.57,\"goodwill_granted_cents\":5207357,\"operators_enlisted\":809,\"sworn_count\":314,\"open_bounties\":[{\"number\":130,\"title\":\"Answer live Reddit threads with a dated Sourcey fact\",\"price_usd\":3,"
+  },
+  {
+    "url": "https://api.github.com/repos/epistemedeus/samedaydesk/issues?state=open&per_page=5",
+    "ok": true,
+    "status": 200,
+    "elapsed_ms": 259,
+    "bytes": 23756,
+    "content_type": "application/json; charset=utf-8",
+    "body_preview": "[{\"url\":\"https://api.github.com/repos/epistemedeus/samedaydesk/issues/32\",\"repository_url\":\"https://api.github.com/repos/epistemedeus/samedaydesk\",\"labels_url\":\"https://api.github.com/repos/epistemedeus/samedaydesk/issues/32/labels{/name}\",\"comments_url\":\"https://api.github.com/repos/epistemedeus/samedaydesk/issues/32/comments\",\"events_url\":\"https://api.github.com/repos/epistemedeus/samedaydesk/issues/32/events\",\"html_url\":\"https://github.com/epistemedeus/samedaydesk/pull/32\",\"id\":5339857418,\"no"
+  },
+  {
+    "url": "https://neomorphic.io/api/bounties.json",
+    "ok": true,
+    "status": 200,
+    "elapsed_ms": 179,
+    "bytes": 1573,
+    "content_type": "application/json; charset=UTF-8",
+    "body_preview": "{\n  \"schema\": \"neomorphic.bounty-schedule.v1\",\n  \"publishedAt\": \"2026-09-01T00:00:00Z\",\n  \"boundary\": \"A listed item is not a job offer, purchase order, or promise of payment beyond its stated consideration.\",\n  \"bounties\": [\n    {\n      \"id\": \"N-BTY-001\",\n      \"title\": \"Expose one seller-route repair\",\n      \"state\": \"open\",\n      \"evidenceClass\": \"sponsored\",\n      \"scope\": \"Provide one public GET method-path pair whose buyability contract may be reviewed without credentials, payment, or a st"
+  }
+]
