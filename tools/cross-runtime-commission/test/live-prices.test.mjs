@@ -22,8 +22,9 @@ describe("existing live prices stay unchanged", () => {
 
   it("Mcp.tsx extract remains $0.005 and seller-integrity-audit remains $0.01", () => {
     const mcp = readFileSync(join(REPO_ROOT, "client/src/pages/Mcp.tsx"), "utf8");
-    assert.match(mcp, /name: "extract"/);
-    assert.match(mcp, /price: "\$0\.005"/);
+    const extractAt = mcp.indexOf('name: "extract"');
+    assert.ok(extractAt >= 0);
+    assert.match(mcp.slice(extractAt, extractAt + 80), /price: "\$0\.005"/);
     const sia = mcp.indexOf('name: "seller_integrity_audit"');
     assert.ok(sia >= 0);
     assert.match(mcp.slice(sia, sia + 80), /price: "\$0\.01"/);

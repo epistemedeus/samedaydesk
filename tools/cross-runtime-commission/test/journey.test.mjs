@@ -4,7 +4,14 @@ import { join } from "node:path";
 import { describe, it } from "node:test";
 import { fingerprintForIndependence } from "../lib/environment.mjs";
 import { runFixtureFile } from "../lib/commission.mjs";
-import { ENGINE_PIN, JOURNEY_JOB_ID, LIVE_EXTRACT, OWNED_DIR, SCHEMA } from "../lib/pins.mjs";
+import {
+  ENGINE_PIN,
+  JOURNEY_JOB_ID,
+  LIVE_EXTRACT,
+  LIVE_SELLER_INTEGRITY_AUDIT,
+  OWNED_DIR,
+  SCHEMA,
+} from "../lib/pins.mjs";
 
 const BIN = join(OWNED_DIR, "bin/cross-runtime.mjs");
 
@@ -42,12 +49,17 @@ describe("literal two-runtime journey", { timeout: 120_000 }, () => {
     assert.equal(result.commissionedCustomer, false);
     assert.equal(result.payingMaintainer, false);
     assert.equal(result.purchaseAuthority, false);
+    assert.equal(result.purchaseAuthorized, false);
     assert.equal(result.sold, false);
     assert.equal(result.sample, false);
     assert.equal(result.demo, false);
     assert.equal(result.label, "scaffold");
     assert.equal(result.engine.pin, ENGINE_PIN.merge);
     assert.equal(result.liveExtract.usdc, LIVE_EXTRACT.usdc);
+    assert.equal(result.liveExtract.usdc, "0.005");
+    assert.equal(result.liveSellerIntegrityAudit.usdc, LIVE_SELLER_INTEGRITY_AUDIT.usdc);
+    assert.equal(result.liveSellerIntegrityAudit.usdc, "0.01");
+    assert.equal(result.liveSellerIntegrityAudit.mcpPrice, "$0.01");
 
     for (const row of result.runtimes) {
       assert.ok(Array.isArray(row.command.argv));
@@ -76,6 +88,8 @@ describe("literal two-runtime journey", { timeout: 120_000 }, () => {
     assert.equal(result.independent, false);
     assert.match(result.independentReason, /single-runtime|fewer-than-two/);
     assert.equal(result.commissionedCustomer, false);
+    assert.equal(result.purchaseAuthorized, false);
+    assert.equal(result.sold, false);
     assert.equal(result.comparable, false);
   });
 

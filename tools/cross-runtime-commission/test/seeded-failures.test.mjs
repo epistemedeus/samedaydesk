@@ -16,6 +16,7 @@ describe("seeded fail-closed cases", { timeout: 60_000 }, () => {
     assert.equal(result.code, "one-runtime-not-independent");
     assert.equal(result.independent, false);
     assert.equal(result.commissionedCustomer, false);
+    assert.equal(result.purchaseAuthorized, false);
     assert.equal(result.sold, false);
   });
 
@@ -26,6 +27,7 @@ describe("seeded fail-closed cases", { timeout: 60_000 }, () => {
     assert.equal(result.code, "sample-not-commissioned-customer-work");
     assert.equal(result.sample, true);
     assert.equal(result.commissionedCustomer, false);
+    assert.equal(result.purchaseAuthorized, false);
     assert.equal(result.sold, false);
     assert.ok(result.sampleReasons.length >= 1);
   });
@@ -35,7 +37,9 @@ describe("seeded fail-closed cases", { timeout: 60_000 }, () => {
     assert.equal(result.ok, false);
     assert.equal(result.refused, true);
     assert.equal(result.code, "extract-price-immutable");
+    assert.equal(result.purchaseAuthorized, false);
     assert.equal(result.liveExtract.usdc, "0.005");
+    assert.equal(result.liveSellerIntegrityAudit.usdc, "0.01");
   });
 
   it("rejects inventing a paying maintainer", () => {
@@ -44,6 +48,7 @@ describe("seeded fail-closed cases", { timeout: 60_000 }, () => {
     assert.equal(result.refused, true);
     assert.equal(result.code, "invented-paying-maintainer");
     assert.equal(result.payingMaintainer, false);
+    assert.equal(result.purchaseAuthorized, false);
   });
 
   it("rejects touching F08 wrappers", () => {
@@ -51,6 +56,7 @@ describe("seeded fail-closed cases", { timeout: 60_000 }, () => {
     assert.equal(result.ok, false);
     assert.equal(result.refused, true);
     assert.equal(result.code, "f08-wrappers-out-of-scope");
+    assert.equal(result.purchaseAuthorized, false);
   });
 
   it("rejects demo single-runtime that claims independent: true", () => {
@@ -64,5 +70,7 @@ describe("seeded fail-closed cases", { timeout: 60_000 }, () => {
     assert.equal(result.ok, false);
     assert.equal(result.code, "one-runtime-not-independent");
     assert.equal(result.independent, false);
+    assert.equal(result.purchaseAuthorized, false);
+    assert.equal(result.sold, false);
   });
 });
