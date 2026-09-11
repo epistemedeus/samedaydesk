@@ -21,6 +21,11 @@ describe("seeded failures", () => {
     assert.equal(body.escaped, false);
     assert.equal(body.code, "honesty_forbidden_request");
     assert.equal(body.purchaseAuthority, false);
+    assert.equal(body.osIsolation, false);
+    assert.equal(body.hooksInstalled, true);
+    assert.equal(body.liveGet, false);
+    assert.equal(body.paymentAttemptDetected, true);
+    assert.equal(body.outcomeClass, "payment-attempt-detected");
     assert.ok(body.log.some((entry) => entry.forbidden));
   });
 

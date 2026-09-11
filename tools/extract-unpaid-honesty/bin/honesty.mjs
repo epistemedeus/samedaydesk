@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 import { writeFileSync } from "node:fs";
 import {
+  defaultMustNotRunEcho,
   defaultPaidRetryFixture,
+  enforcementContract,
+  loadHonestyInputs,
+  observeMustNotRun,
+  observeMustNotRunScript,
   probeExtractFetch,
   refusePaidRetryFile,
   runHonestyReport,
@@ -9,21 +14,18 @@ import {
 import { USEFUL_JOBS_JOB } from "../lib/pins.mjs";
 
 function usage() {
-  return `extract-unpaid-honesty — join useful-jobs purchaseAuthority=false with buyer-runtimes unpaid stop.
+  return `extract-unpaid-honesty — unpaid useful-jobs join with honest JS-hook enforcement.
 
 Commands:
-  journey                         listing-repair-packet --example under intercept
+  journey                         listing-repair-packet --example under JS/PATH intercept
   report [--example|--input PATH] Spawn a catalog job under PATH/proxy intercept
-  probe-extract                    Seeded stub fetch of /extract; must be caught
-  refuse-paid-retry [--wrap FILE] Refuse wrapping useful-jobs with a paid retry
+  probe-extract                    Seeded /extract fetch on the local intercept; must be caught
+  observe-must-not-run [--script]  Text-scan mustNotRun markers in a spawned script
+  enforcement                      Print the JS-hook enforcement contract (osIsolation false)
+  refuse-paid-retry [--wrap FILE]  Refuse wrapping useful-jobs with a paid retry
   help
 
-Examples:
-  node tools/extract-unpaid-honesty/bin/honesty.mjs journey
-  node tools/extract-unpaid-honesty/bin/honesty.mjs report --example
-  node tools/extract-unpaid-honesty/bin/honesty.mjs probe-extract
-  node tools/extract-unpaid-honesty/bin/honesty.mjs refuse-paid-retry
-
+JS fetch/http hooks plus PATH curl/wget stubs are not OS network isolation.
 Does not pay, settle, or live-GET merchant pages. Local HTTP intercept + spawned kit only.
 `;
 }
@@ -58,10 +60,26 @@ if (cmd === "help" || cmd === "--help" || args.help) {
   process.exit(0);
 }
 
+if (cmd === "enforcement") {
+  emit(enforcementContract(), 0);
+}
+
 if (cmd === "refuse-paid-retry") {
   const wrapPath = args.wrap || defaultPaidRetryFixture();
-  const result = args.wrap || wrapPath ? refusePaidRetryFile(wrapPath) : refusePaidRetry({});
+  const result = refusePaidRetryFile(wrapPath);
   emit(result, 2);
+}
+
+if (cmd === "observe-must-not-run") {
+  const loaded = loadHonestyInputs();
+  const mustNotRun = loaded.stop.mustNotRun;
+  if (args.script || (!args.text && !args.script)) {
+    const script = args.script || defaultMustNotRunEcho();
+    const result = observeMustNotRunScript(script, mustNotRun);
+    emit(result, result.mustNotRunPreserved ? 0 : 1);
+  }
+  const result = observeMustNotRun({ text: String(args.text || ""), mustNotRun });
+  emit(result, result.mustNotRunPreserved ? 0 : 1);
 }
 
 if (cmd === "probe-extract") {

@@ -21,4 +21,11 @@ describe("inspect", () => {
     const scan = scanText("GET https://agents.samedaydesk.com/extract/batch");
     assert.ok(scan.reasons.includes("extract-batch-url"));
   });
+
+  it("does not claim a useful-jobs public path is a payment attempt", () => {
+    const hit = inspectRequest({
+      url: "https://samedaydesk.com/for-agents/useful-jobs/catalog.json",
+    });
+    assert.equal(hit.forbidden, false);
+  });
 });

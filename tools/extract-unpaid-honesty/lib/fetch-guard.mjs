@@ -7,8 +7,7 @@ function logPath() {
   return process.env.HONESTY_INTERCEPT_LOG || "";
 }
 
-export function appendInterceptLog(entry) {
-  const dest = logPath();
+export function appendInterceptLog(entry, dest = logPath()) {
   if (!dest) return;
   appendFileSync(dest, `${JSON.stringify({ t: new Date().toISOString(), ...entry })}\n`);
 }

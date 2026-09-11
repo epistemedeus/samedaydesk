@@ -67,6 +67,8 @@ export function loadHonestyInputs(adapters = createAdapters()) {
       i01HashTerms: "Neo PR54 hashTermsVersion; integer F01 termsVersion refused",
       f08: "not imported; paid retry wrap of useful-jobs is refused here",
       f18: "contrast fixture only; no live GET",
+      sds52:
+        "read-only SDS PR52 aeef964fa188443078958d9d6d393afae1d542ee; D01 owns server/paid-useful-jobs; wrapper not imported",
     },
   };
 }

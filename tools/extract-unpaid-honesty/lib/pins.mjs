@@ -17,8 +17,13 @@ export const USEFUL_JOBS_JOB = "listing-repair-packet";
 
 export const SDS_MAIN_SHA = "5b97d1b02e786acd1895cfa1508087ae3f7a1545";
 export const F18_SHA = "5e9fd3fc5e13989ef2cd45cf08f01cfe60c296cb";
+export const SDS52_SHA = "aeef964fa188443078958d9d6d393afae1d542ee";
+export const SDS52_REF = "fable/f08-paid-wrappers";
+export const SDS52_PR = 52;
 export const I01_HASH_TERMS_BINDING =
   "later: Neo PR54 / fable/integration-earned-work hashTermsVersion (sha256: + 64 hex). Integer F01 termsVersion is rejected here. Earned-work kernel is not copied.";
+export const SDS52_BINDING =
+  "read-only pin SDS PR52 aeef964fa188443078958d9d6d393afae1d542ee. D01 owns server/paid-useful-jobs. This module does not import or copy that wrapper.";
 
 export const CATALOG_REL = "client/public/for-agents/useful-jobs/catalog.json";
 export const DISCOVERY_REL = "client/public/discovery/useful-jobs.json";

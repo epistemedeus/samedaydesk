@@ -38,11 +38,22 @@ export function ensureUsefulJobsKit(repoRoot = REPO_ROOT) {
   const dest = join(tmpdir(), `sds-honesty-uj-${USEFUL_JOBS_ARCHIVE_SHA256.slice(0, 16)}`);
   const kit = join(dest, USEFUL_JOBS_ROOT_NAME);
   const cli = join(kit, USEFUL_JOBS_CLI);
-  if (existsSync(cli)) return { kit, cli, ...pin };
+  if (!existsSync(cli)) {
+    mkdirSync(dest, { recursive: true });
+    const tar = spawnSync("tar", ["-xzf", pin.path, "-C", dest], { encoding: "utf8" });
+    if (tar.status !== 0) throw new Error(tar.stderr || "tar extract failed");
+    if (!existsSync(cli)) throw new Error(`missing ${USEFUL_JOBS_CLI} after extract`);
+  }
 
-  mkdirSync(dest, { recursive: true });
-  const tar = spawnSync("tar", ["-xzf", pin.path, "-C", dest], { encoding: "utf8" });
-  if (tar.status !== 0) throw new Error(tar.stderr || "tar extract failed");
-  if (!existsSync(cli)) throw new Error(`missing ${USEFUL_JOBS_CLI} after extract`);
-  return { kit, cli, ...pin };
+  const extractedCliSha256 = existsSync(cli) ? sha256Bytes(readFileSync(cli)) : null;
+  return {
+    kit,
+    cli,
+    cacheKind: "shared-tmpdir",
+    cacheMutable: true,
+    archiveVerified: true,
+    extractedContentsVerified: false,
+    extractedCliSha256,
+    ...pin,
+  };
 }

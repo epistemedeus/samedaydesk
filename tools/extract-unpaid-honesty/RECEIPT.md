@@ -1,4 +1,13 @@
+# Extract unpaid honesty
+
+W5-D23 current receipt: `experiments/wave5/d23/RECEIPT.md`.
+Enforcement is JS/PATH hooks, not OS isolation. Payment-shaped attempts are
+detected on the local intercept; `mustNotRun` preservation is a job text scan.
+
+---
+
 # W4-commerce-19 RECEIPT — extract unpaid honesty join
+
 
 **Repo:** epistemedeus/samedaydesk  
 **Branch:** `codex/w4-commerce-19-20260911`  

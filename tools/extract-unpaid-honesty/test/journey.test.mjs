@@ -41,7 +41,17 @@ describe("literal user journey", () => {
     assert.equal(body.kit.bytes, USEFUL_JOBS_ARCHIVE_BYTES);
     assert.match(body.termsVersion, /^sha256:[0-9a-f]{64}$/);
     assert.equal(body.intercept.class, "local-runtime");
+    assert.equal(body.osIsolation, false);
+    assert.equal(body.enforcement.osIsolation, false);
+    assert.equal(body.enforcement.kind, "js-hooks+path-stub+proxy-env");
+    assert.equal(body.outcomeClass, "valid-unpaid");
+    assert.equal(body.paymentAttemptDetected, false);
+    assert.deepEqual(body.mustNotRunObserved, []);
+    assert.equal(body.mustNotRunEvidenceClass, "job-stdout-stderr-text-scan");
+    assert.equal(body.kit.extractedContentsVerified, false);
+    assert.equal(body.kit.archiveVerified, true);
     assert.equal(body.evidenceClass.liveGet, "not-run");
+    assert.equal(body.evidenceClass.enforcement, "js-hooks-not-os-isolation");
   });
 
   it("library report matches CLI on --example", async () => {

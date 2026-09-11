@@ -15,3 +15,7 @@ not a live GET and not external acceptance.
 I01 earned-work / hashTermsVersion lives on Neo PR54. This module uses the
 documented sha256: content-hash shape and rejects F01 integer termsVersion.
 The earned-work kernel is not copied.
+
+SDS PR52 (fable/f08-paid-wrappers, aeef964fa188443078958d9d6d393afae1d542ee)
+is a read-only pin. D01 owns server/paid-useful-jobs. That wrapper is not copied
+into this module.

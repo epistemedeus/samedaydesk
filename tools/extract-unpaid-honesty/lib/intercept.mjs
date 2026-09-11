@@ -6,6 +6,7 @@ import { pathToFileURL } from "node:url";
 import { inspectRequest } from "./inspect.mjs";
 import { appendInterceptLog } from "./fetch-guard.mjs";
 import { TOOL_ROOT } from "./pins.mjs";
+import { enforcementContract } from "./enforcement.mjs";
 
 function listen(server) {
   return new Promise((resolve, reject) => {
@@ -27,13 +28,12 @@ export function loadLog(logPath) {
 export async function startIntercept({ logPath } = {}) {
   const dest = logPath || join(mkdtempSync(join(tmpdir(), "honesty-log-")), "intercept.ndjson");
   writeFileSync(dest, "");
-  process.env.HONESTY_INTERCEPT_LOG = dest;
 
   const server = http.createServer((req, res) => {
     const host = req.headers.host || "127.0.0.1";
     const url = `http://${host}${req.url || "/"}`;
     const hit = inspectRequest({ url, method: req.method, headers: req.headers });
-    appendInterceptLog({ kind: "local-http", ...hit });
+    appendInterceptLog({ kind: "local-http", ...hit }, dest);
     const body = {
       ok: false,
       refused: true,
@@ -77,6 +77,8 @@ await runNetStub(tool, process.argv.slice(2));
 
   return {
     kind: "local-http+fetch-guard+path",
+    osIsolation: false,
+    enforcement: enforcementContract(),
     port: addr.port,
     origin,
     logPath: dest,

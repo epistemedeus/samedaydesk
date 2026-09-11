@@ -35,6 +35,7 @@ describe("local HTTP intercept (not a live merchant GET)", () => {
       assert.equal(res.status, 403);
       const body = await res.json();
       assert.ok(body.reasons.includes("payment-header") || body.reasons.includes("seller-integrity-url"));
+      assert.equal(intercept.osIsolation, false);
     } finally {
       await intercept.stop();
     }
