@@ -1,0 +1,10 @@
+Task: W5-M11
+Repo: epistemedeus/samedaydesk
+Owned path: experiments/wave5/m11/
+Starting pin: aeef964fa188443078958d9d6d393afae1d542ee
+Input ref: SDS PR52 fable/f08-paid-wrappers
+Wrapper consumed: server/paid-useful-jobs/
+Catalog consumed: client/public/for-agents/useful-jobs/catalog.json
+Engine archive: client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz
+Integration owner: W5-M01 (catalog/engine contract not yet bound; this package
+tests the current PR52 wrapper CLI).

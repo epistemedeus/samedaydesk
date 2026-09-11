@@ -1,0 +1,11 @@
+W5-M11 consumes the SameDayDesk PR52 paid wrapper and the published
+useful-jobs 1.0.0 archive. It does not reimplement those engines.
+
+Pinned wrapper: server/paid-useful-jobs at
+aeef964fa188443078958d9d6d393afae1d542ee (SDS PR52).
+
+Pinned archive identity is the wrapper's engineProvenance() values
+(sha256 + bytes). Package version metadata is not the archive identity.
+
+Kit SAMPLE / --example paths remain labeled samples. They are not
+independently valid caller corpus members.

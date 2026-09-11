@@ -1,0 +1,8 @@
+{
+  "label": "caller",
+  "note": "Independent ops-desk rates. Not a kit SAMPLE and not a live quote.",
+  "rows": [
+    { "field": "ops-llm-input", "value": 2.0, "unit": "USD/1M-tokens" },
+    { "field": "ops-llm-output", "value": 8.0, "unit": "USD/1M-tokens" }
+  ]
+}

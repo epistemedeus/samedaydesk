@@ -1,0 +1,8 @@
+{
+  "id": "ops-desk-rate-raise",
+  "jobId": "vendor-budget-impact",
+  "inputs": {
+    "before": "before.json",
+    "after": "after.json"
+  }
+}

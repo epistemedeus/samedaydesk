@@ -1,0 +1,33 @@
+{
+  "schema": "samedaydesk.caller-example-corpus.v1",
+  "id": "w5-m11-independent-caller-examples",
+  "role": "caller",
+  "note": "Independently valid caller files. Not kit SAMPLE, not --example, not live quotes.",
+  "enginePin": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "wrapperCli": "server/paid-useful-jobs/bin/cli.mjs"
+  },
+  "cases": [
+    {
+      "id": "ops-desk-rate-raise",
+      "jobId": "vendor-budget-impact",
+      "dir": "ops-desk-rate-raise"
+    },
+    {
+      "id": "vision-unit-shift",
+      "jobId": "vendor-budget-impact",
+      "dir": "vision-unit-shift"
+    },
+    {
+      "id": "ops-stable-rates",
+      "jobId": "vendor-budget-impact",
+      "dir": "ops-stable-rates"
+    },
+    {
+      "id": "harbor-feed-delta",
+      "jobId": "feed-agenda",
+      "dir": "harbor-feed-delta"
+    }
+  ]
+}
