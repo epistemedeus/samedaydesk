@@ -1,0 +1,52 @@
+{
+  "assignment": "W5-D25",
+  "slot": "D25",
+  "outcome": "Actual buyer journey harness covering offer, supplied input, delivery and return",
+  "ownedPaths": ["experiments/wave5/d25/"],
+  "qaLabel": "owner-qa",
+  "tested": {
+    "D01": {
+      "id": "W5-D01",
+      "role": "supplied-input execution contract (paid wrappers)",
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "ref": "fable/f08-paid-wrappers",
+      "pr": 52,
+      "paths": ["server/paid-useful-jobs/"],
+      "cli": "server/paid-useful-jobs/bin/cli.mjs",
+      "library": "server/paid-useful-jobs/index.mjs",
+      "wave5Export": false,
+      "note": "Wave5 D01 has not published a later contract. Tested this PR52 head."
+    },
+    "D09": {
+      "id": "W5-D09",
+      "role": "repeat-job binder using frozen previous/current input references",
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "7c55738cc5730985b709282af6c24e10f0a8442f",
+      "ref": "codex/w4-commerce-03-20260911",
+      "pr": 62,
+      "paths": ["tools/repeat-job-binder/"],
+      "cli": "tools/repeat-job-binder/bin/bind.mjs",
+      "wave5Export": false,
+      "note": "Wave5 D09 has not published a later binder. Consumed W4 Co03 read-only. Binder still invokes PR51 useful-jobs CLI directly; paid delivery stays on D01."
+    },
+    "M01": {
+      "id": "W5-M01",
+      "role": "selected engines/catalog for the first offer",
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "ref": "fable/f08-paid-wrappers",
+      "pr": 52,
+      "catalog": "client/public/for-agents/useful-jobs/catalog.json",
+      "discovery": "client/public/discovery/useful-jobs.json",
+      "wave5Export": false,
+      "firstOffer": "vendor-budget-impact",
+      "note": "Wave5 M01 has not published a later catalog. Offer join uses this public catalog plus D01 CLI list."
+    }
+  },
+  "notTested": {
+    "postgres": "Paid wrappers are offline; this journey does not claim a hosted store.",
+    "liveSettlement": "out-of-scope on PR52",
+    "wave5D01Amendment": "Required sibling amendments remain a final integration dependency."
+  }
+}

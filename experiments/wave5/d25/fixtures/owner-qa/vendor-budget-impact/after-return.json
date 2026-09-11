@@ -1,0 +1,9 @@
+{
+  "label": "owner-qa",
+  "note": "Owner QA return-job pricing rows. Not a kit fixture and not a live quote.",
+  "rows": [
+    { "field": "desk-chat-input", "value": 2.25, "unit": "USD/1M-tokens" },
+    { "field": "desk-chat-output", "value": 8, "unit": "USD/1M-tokens" },
+    { "field": "desk-embed", "value": 0.12, "unit": "USD/1M-tokens" }
+  ]
+}

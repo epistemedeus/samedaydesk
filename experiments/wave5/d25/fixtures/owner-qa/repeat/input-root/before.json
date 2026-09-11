@@ -1,0 +1,8 @@
+{
+  "label": "owner-qa",
+  "note": "Owner QA pricing rows. Not a kit fixture and not a live quote.",
+  "rows": [
+    { "field": "desk-chat-input", "value": 1, "unit": "USD/1M-tokens" },
+    { "field": "desk-chat-output", "value": 4, "unit": "USD/1M-tokens" }
+  ]
+}

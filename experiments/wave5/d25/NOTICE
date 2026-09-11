@@ -1,0 +1,30 @@
+W5-D25 buyer journey harness notices
+===================================
+
+Pilot-authored harness, fixtures, and tests in this directory are MIT (LICENSE).
+
+This package does not copy a second paid-wrapper, useful-jobs, or repeat-job
+binder kernel. It consumes current pinned public interfaces:
+
+- D01 / SDS PR52 `server/paid-useful-jobs/` at
+  aeef964fa188443078958d9d6d393afae1d542ee
+  CLI: node server/paid-useful-jobs/bin/cli.mjs
+  Library: server/paid-useful-jobs/index.mjs
+
+- M01 catalog pin (Wave5 M01 has not published a later export):
+  client/public/for-agents/useful-jobs/catalog.json
+  client/public/discovery/useful-jobs.json
+  Engines remain the PR51 archive
+  client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz
+  2522418 bytes
+  sha256 6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51
+  Nested licenses remain inside that archive.
+
+- D09 / W4-commerce-03 `tools/repeat-job-binder/` at
+  7c55738cc5730985b709282af6c24e10f0a8442f (PR 62)
+  Consumed read-only from a detached worktree. Binder LICENSE/NOTICE stay with
+  that pin. This harness does not vendor bind.mjs or its I01 hasher.
+
+No purchase, network settlement, payout, deploy, or customer message
+authority is granted here. Owner-QA fixtures are not customers, recruited
+buyers, or independent demand.
