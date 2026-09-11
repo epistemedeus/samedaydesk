@@ -1,0 +1,17 @@
+{
+  "name": "@samedaydesk/wave5-m14-result-preview",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Human-readable result preview and machine-first quickstart over the current paid useful-jobs wrapper. Not a second runner.",
+  "bin": {
+    "m14-preview": "./bin/preview.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "preview": "node bin/preview.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
