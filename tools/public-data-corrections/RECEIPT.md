@@ -2,6 +2,7 @@
 
 **Date:** 11 September 2026
 **Branch:** `fable/w3-14-h03-public-data-corrections`
+**HEAD:** `c265874` on `fable/w3-14-h03-public-data-corrections`
 **Own directory:** `tools/public-data-corrections/`
 **Base:** `main` (SDS PR50 consumer surfaces are public; PR51 useful-jobs catalog)
 
