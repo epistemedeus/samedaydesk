@@ -1,0 +1,2 @@
+Held extract-batch JSON for W5-M05 bounded analysis regressions.
+These are SDS-local fixtures, not live fetches and not merchant kernel copies.

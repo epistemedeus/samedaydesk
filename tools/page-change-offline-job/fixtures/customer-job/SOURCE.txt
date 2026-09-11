@@ -1,0 +1,4 @@
+Published SDS fixture copies for isolated runs. Authoritative copies live at
+tools/recurring-job-recipes/fixtures/merchant/page-change/ on
+epistemedeus/samedaydesk@5b97d1b02e786acd1895cfa1508087ae3f7a1545.
+Journey tests prefer that published path. These copies are the same bytes.

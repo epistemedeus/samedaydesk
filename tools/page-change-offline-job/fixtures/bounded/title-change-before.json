@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": { "amountAtomic": "10000", "displayUsdc": "0.01", "meaning": "held fixture, not a sale" },
+  "jobId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "https://rfq.example/widgets",
+      "status": "success",
+      "data": {
+        "title": "Keep the RFQ name",
+        "description": "  same spacing  ",
+        "headings": { "h2": ["Dates", "Scope"], "h1": ["Q3 widget RFQ"] }
+      },
+      "notes": [],
+      "error": null,
+      "provenance": {
+        "transport": "held",
+        "completedAt": "2026-09-01T10:00:01.000Z",
+        "fetchedAt": "2026-09-01T10:00:00.900Z",
+        "finalUrl": "https://rfq.example/widgets",
+        "httpStatus": 200
+      }
+    }
+  ],
+  "accounting": { "requests": 1, "bytes": 200, "wallMs": 1, "retries": 0, "succeeded": 1, "partial": 0, "failed": 0, "unknown": 0, "skippedDuplicate": 0 },
+  "costInputs": { "admittedBodyBytes": 200, "requests": 1, "wallMs": 1, "hostingCosts": "unknown", "modelCosts": "none", "monetaryMargin": null },
+  "charged": false,
+  "boundary": { "guaranteedUrlSuccess": false, "introductoryPrice": true, "sourceFetchBeforeAuthorization": false, "automaticRetries": false }
+}

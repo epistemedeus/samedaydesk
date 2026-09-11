@@ -1,0 +1,8 @@
+{
+  "id": "live-fetch-watch",
+  "title": "Must refuse URL inputs",
+  "clock": "2026-09-08T12:00:00.000Z",
+  "fields": ["title"],
+  "before": "https://example.com/before.json",
+  "after": "https://example.com/after.json"
+}
