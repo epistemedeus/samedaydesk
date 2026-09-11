@@ -13,12 +13,16 @@ export function refuse(code, message, detail) {
 }
 
 export function resultFromRefuse(err) {
+  const sampleReasons = err.detail?.sampleReasons || [];
+  const sample = err.code === "disguised-sample" || sampleReasons.length > 0;
   return {
     ok: false,
     refused: true,
     code: err.code || "error",
     error: err.message,
     detail: err.detail || null,
+    sample,
+    sampleReasons,
     engineInvoked: false,
     purchaseAuthority: false,
     spendClaim: false,

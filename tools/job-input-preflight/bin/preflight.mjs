@@ -7,6 +7,7 @@ import { createNullEngineAdapter } from "../lib/engine-adapter.mjs";
 import { preflight } from "../lib/preflight.mjs";
 import { PreflightRefuse, resultFromRefuse } from "../lib/refuse.mjs";
 import { DEFAULT_CATALOG } from "../lib/roots.mjs";
+import { consumeD01InspectSample } from "../lib/sample.mjs";
 
 function emit(payload, exitCode) {
   process.stdout.write(`${JSON.stringify(payload, null, 2)}\n`);
@@ -53,6 +54,15 @@ export async function main(argv = process.argv.slice(2)) {
   const outDir = parsed.control["out-dir"] && parsed.control["out-dir"] !== true
     ? parsed.control["out-dir"]
     : null;
+  const kitRoot = parsed.control["kit-root"] && parsed.control["kit-root"] !== true
+    ? parsed.control["kit-root"]
+    : null;
+  const d01Root = parsed.control["d01-root"] && parsed.control["d01-root"] !== true
+    ? parsed.control["d01-root"]
+    : null;
+
+  const d01Request = { jobId: parsed.jobId, example: parsed.control.example === true, inputs: { ...flags } };
+  const d01Sample = d01Root ? await consumeD01InspectSample(d01Request, d01Root) : null;
 
   const result = preflight({
     catalog,
@@ -61,6 +71,8 @@ export async function main(argv = process.argv.slice(2)) {
     inputRoot,
     declaredInputs,
     outDir,
+    kitRoot,
+    d01Sample,
     example: parsed.control.example === true,
     engineAdapter,
   });

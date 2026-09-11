@@ -1,10 +1,14 @@
 import fs from "node:fs";
 import path from "node:path";
-import { CATALOG_SCHEMA, MAX_LOCAL_INPUT_BYTES, PREFLIGHT_RESULT_NAME } from "./constants.mjs";
-import { declaredIdentity, formatDigest } from "./digest.mjs";
+import { CATALOG_SCHEMA, MAX_LOCAL_INPUT_BYTES, PREFLIGHT_RESULT_NAME, STAGED_DIR_NAME } from "./constants.mjs";
+import { PREFLIGHT_CONTRACT, toWrapperRequest } from "./contract.mjs";
+import { declaredIdentity, formatDigest, sha256Buffer } from "./digest.mjs";
 import { createNullEngineAdapter, LATER_ENGINE_BINDING } from "./engine-adapter.mjs";
+import { classifyInputValue } from "./inline.mjs";
+import { validateStagedInput } from "./input-schema.mjs";
 import { flagToKey, readBoundedRegularFile, resolveInputPath } from "./paths.mjs";
 import { refuse } from "./refuse.mjs";
+import { inspectStagedSample } from "./sample.mjs";
 
 function loadDeclaredInputs(raw) {
   if (raw == null) return {};
@@ -36,23 +40,87 @@ function loadDeclaredInputs(raw) {
   return raw;
 }
 
-function maybeParseJsonFile(file) {
-  if (!file.path.endsWith(".json") && !file.path.endsWith(".jsonl")) return { json: false };
-  try {
-    const text = file.buffer.toString("utf8");
-    JSON.parse(text);
-    return { json: true };
-  } catch (err) {
-    throw refuse("input-malformed-json", "JSON input is not valid JSON", {
-      path: file.path,
-      error: String(err?.message || err),
-    });
+function materializeOne(key, declaredPath, { inputRoot, job }) {
+  const classified = classifyInputValue(declaredPath);
+  if (classified.kind === "invalid") {
+    throw refuse("input-malformed", `Input ${key} must be a file path or JSON object`, { key });
   }
+  if (classified.kind === "empty") return null;
+
+  if (key === "input-root") {
+    if (classified.kind !== "path") {
+      throw refuse("input-root-not-directory", "input-root must be a filesystem directory path", { key });
+    }
+    const dirPath = path.resolve(classified.path);
+    let st;
+    try {
+      st = fs.statSync(dirPath);
+    } catch {
+      throw refuse("input-missing-file", `Input ${key} directory not found: ${dirPath}`, { key, path: dirPath });
+    }
+    if (!st.isDirectory()) {
+      throw refuse("input-root-not-directory", `Input input-root must be a directory: ${dirPath}`, {
+        key,
+        path: dirPath,
+      });
+    }
+    return {
+      key,
+      kind: "directory",
+      path: dirPath,
+      inline: false,
+      buffer: null,
+      text: null,
+      bytes: null,
+      sha256: null,
+    };
+  }
+
+  if (classified.kind === "json-value" || classified.kind === "json-text") {
+    const buffer = Buffer.from(classified.text, "utf8");
+    if (buffer.length > MAX_LOCAL_INPUT_BYTES) {
+      throw refuse("input-too-large", `Local input exceeds ${MAX_LOCAL_INPUT_BYTES} byte bound`, {
+        key,
+        size: buffer.length,
+        limit: MAX_LOCAL_INPUT_BYTES,
+      });
+    }
+    const schema = validateStagedInput(job, key, buffer);
+    return {
+      key,
+      kind: "file",
+      path: null,
+      inline: true,
+      buffer,
+      text: classified.text,
+      bytes: buffer.length,
+      sha256: sha256Buffer(buffer),
+      encoding: schema.encoding,
+      json: schema.json === true,
+    };
+  }
+
+  const abs = resolveInputPath(String(classified.path), { inputRoot });
+  const actual = readBoundedRegularFile(abs, { inputRoot });
+  const schema = validateStagedInput(job, key, actual.buffer);
+  return {
+    key,
+    kind: "file",
+    path: actual.path,
+    inline: false,
+    buffer: actual.buffer,
+    text: actual.buffer.toString("utf8"),
+    bytes: actual.bytes,
+    sha256: actual.sha256,
+    encoding: schema.encoding,
+    json: schema.json === true,
+  };
 }
 
 /**
- * Preflight caller files against catalog requiredInputs.
+ * Preflight caller files / inline JSON against catalog requiredInputs.
  * Never invokes the job engine. No spend or tool-cost claims.
+ * Validates staged bytes (schema, not extension/syntax alone) and refuses disguised SAMPLE.
  */
 export function preflight(options) {
   const engineAdapter = options.engineAdapter || createNullEngineAdapter();
@@ -90,56 +158,103 @@ export function preflight(options) {
   const allowed = new Set([...requiredKeys, ...optionalKeys]);
 
   const fileKeys = [...new Set([...requiredKeys, ...Object.keys(flags).filter((k) => allowed.has(k))])].filter(
-    (k) => k !== "input-root" && k !== "example",
+    (k) => k !== "example",
   );
 
-  const inputs = {};
+  const staged = [];
   for (const key of fileKeys) {
     const declaredPath = flags[key];
     if (declaredPath == null || declaredPath === false || declaredPath === "") continue;
-    const abs = resolveInputPath(String(declaredPath), { inputRoot });
-    const actual = readBoundedRegularFile(abs, { inputRoot });
-    const slotDeclared = declared[key] || {};
-    const identity = declaredIdentity({
-      digest: flags[`${key}-digest`] ?? slotDeclared.digest,
-      sha256: flags[`${key}-sha256`] ?? slotDeclared.sha256,
-      bytes: flags[`${key}-bytes`] ?? slotDeclared.bytes,
-    });
-    maybeParseJsonFile(actual);
+    const item = materializeOne(key, declaredPath, { inputRoot, job });
+    if (!item) continue;
 
-    if (identity.digestHex && identity.digestHex !== actual.sha256) {
-      throw refuse("input-digest-mismatch", "Declared digest does not match local file bytes", {
-        key,
-        path: actual.path,
-        declaredDigest: formatDigest(identity.digestHex),
-        actualDigest: formatDigest(actual.sha256),
-        declaredBytes: identity.bytes,
-        actualBytes: actual.bytes,
+    if (item.kind === "file") {
+      const slotDeclared = declared[key] || {};
+      const identity = declaredIdentity({
+        digest: flags[`${key}-digest`] ?? slotDeclared.digest,
+        sha256: flags[`${key}-sha256`] ?? slotDeclared.sha256,
+        bytes: flags[`${key}-bytes`] ?? slotDeclared.bytes,
       });
+      if (identity.digestHex && identity.digestHex !== item.sha256) {
+        throw refuse("input-digest-mismatch", "Declared digest does not match staged bytes", {
+          key,
+          path: item.path,
+          inline: item.inline,
+          declaredDigest: formatDigest(identity.digestHex),
+          actualDigest: formatDigest(item.sha256),
+          declaredBytes: identity.bytes,
+          actualBytes: item.bytes,
+        });
+      }
+      if (identity.bytes != null && Number(identity.bytes) !== item.bytes) {
+        throw refuse("input-digest-mismatch", "Declared digest/bytes do not match staged bytes", {
+          key,
+          path: item.path,
+          declaredBytes: identity.bytes,
+          actualBytes: item.bytes,
+          actualDigest: formatDigest(item.sha256),
+        });
+      }
     }
-    if (identity.bytes != null && Number(identity.bytes) !== actual.bytes) {
-      throw refuse("input-digest-mismatch", "Declared digest/bytes do not match local file bytes", {
-        key,
-        path: actual.path,
-        declaredBytes: identity.bytes,
-        actualBytes: actual.bytes,
-        actualDigest: formatDigest(actual.sha256),
-      });
-    }
-
-    inputs[key] = {
-      flag: `--${key}`,
-      path: actual.path,
-      bytes: actual.bytes,
-      sha256: actual.sha256,
-      digest: formatDigest(actual.sha256),
-      json: actual.path.endsWith(".json"),
-    };
+    staged.push(item);
   }
 
-  // Never call the engine. Record that the adapter stayed unused.
+  const sampleInfo = inspectStagedSample(
+    { example: false, staged },
+    { kitRoot: options.kitRoot || null },
+  );
+  if (options.d01Sample && options.d01Sample.sample) {
+    for (const reason of options.d01Sample.reasons || []) {
+      if (!sampleInfo.reasons.includes(reason)) sampleInfo.reasons.push(reason);
+    }
+    sampleInfo.sample = true;
+  }
+  if (sampleInfo.sample) {
+    throw refuse(
+      "disguised-sample",
+      "SAMPLE-labelled or kit-sample input is not a caller custom input; preflight does not substitute samples",
+      { sampleReasons: sampleInfo.reasons },
+    );
+  }
+
   if (typeof engineAdapter.invoke !== "function") {
     throw refuse("invalid-engine-adapter", "engine adapter is missing invoke()");
+  }
+
+  const outDir = options.outDir ? path.resolve(String(options.outDir)) : null;
+  const stagedDir = outDir ? path.join(outDir, STAGED_DIR_NAME) : null;
+  if (stagedDir) fs.mkdirSync(stagedDir, { recursive: true });
+
+  const inputs = {};
+  for (const item of staged) {
+    let stagedPath = null;
+    if (item.kind === "directory") {
+      inputs[item.key] = {
+        flag: `--${item.key}`,
+        kind: "directory",
+        path: item.path,
+        inline: false,
+      };
+      continue;
+    }
+    if (stagedDir) {
+      const name = item.inline ? `${item.key}.json` : `${item.key}${path.extname(item.path) || ".json"}`;
+      stagedPath = path.join(stagedDir, name);
+      fs.writeFileSync(stagedPath, item.buffer);
+    }
+    inputs[item.key] = {
+      flag: `--${item.key}`,
+      kind: "file",
+      path: item.path,
+      stagedPath,
+      inline: item.inline,
+      bytes: item.bytes,
+      sha256: item.sha256,
+      digest: formatDigest(item.sha256),
+      json: item.json === true,
+      encoding: item.encoding || null,
+      ...(item.inline ? { text: item.text } : {}),
+    };
   }
 
   const result = {
@@ -155,6 +270,9 @@ export function preflight(options) {
     engineInvoked: false,
     engineAdapter: engineAdapter.name || "null-not-invoked",
     laterEngineBinding: LATER_ENGINE_BINDING,
+    contract: PREFLIGHT_CONTRACT,
+    sample: false,
+    sampleReasons: [],
     purchaseAuthority: false,
     spendClaim: false,
     toolCostClaim: false,
@@ -164,10 +282,12 @@ export function preflight(options) {
     inputs,
   };
 
-  if (options.outDir) {
-    const outDir = path.resolve(String(options.outDir));
+  result.wrapperRequest = toWrapperRequest(result);
+
+  if (outDir) {
     result.outDir = outDir;
     result.written = [PREFLIGHT_RESULT_NAME];
+    if (stagedDir) result.written.push(STAGED_DIR_NAME);
     fs.mkdirSync(outDir, { recursive: true });
     const target = path.join(outDir, PREFLIGHT_RESULT_NAME);
     fs.writeFileSync(target, `${JSON.stringify(result, null, 2)}\n`);

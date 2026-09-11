@@ -1,10 +1,18 @@
 import fs from "node:fs";
 import { CATALOG_SCHEMA } from "./constants.mjs";
+import { looksJsonl } from "./jsonl.mjs";
 import { refuse } from "./refuse.mjs";
 
 export function parseCatalog(raw, { source = null } = {}) {
   if (raw == null || typeof raw !== "object" || Array.isArray(raw)) {
     throw refuse("catalog-schema-mismatch", "catalog must be a JSON object", { source });
+  }
+  if (typeof raw.$schema === "string" && raw.schema !== CATALOG_SCHEMA) {
+    throw refuse("catalog-schema-mismatch", "JSON Schema documents are not useful-jobs catalogs", {
+      got: raw.schema ?? null,
+      jsonSchema: raw.$schema,
+      source,
+    });
   }
   if (raw.schema !== CATALOG_SCHEMA) {
     throw refuse("catalog-schema-mismatch", `catalog schema must be ${CATALOG_SCHEMA}`, {
@@ -23,6 +31,12 @@ export function parseCatalog(raw, { source = null } = {}) {
       throw refuse("catalog-schema-mismatch", `job ${job.id} requiredInputs must be --flags`, {
         job: job.id,
         requiredInputs: job.requiredInputs ?? null,
+      });
+    }
+    if (!Array.isArray(job.outputs) || job.outputs.length === 0 || job.outputs.some((n) => typeof n !== "string" || !n)) {
+      throw refuse("catalog-schema-mismatch", `job ${job.id} outputs must be a non-empty string array`, {
+        job: job.id,
+        outputs: job.outputs ?? null,
       });
     }
   }
@@ -73,6 +87,11 @@ export async function loadCatalog(source) {
     text = fs.readFileSync(source, "utf8");
   } catch {
     throw refuse("catalog-unavailable", "catalog file not found", { source });
+  }
+  if (looksJsonl(text)) {
+    throw refuse("catalog-jsonl-not-document", "catalog must be one JSON document, not JSONL", {
+      source,
+    });
   }
   let json;
   try {

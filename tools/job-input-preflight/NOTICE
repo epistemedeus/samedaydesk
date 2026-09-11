@@ -1,9 +1,9 @@
 job-input-preflight notices
 ==========================
 
-This package preflights caller files against the published SameDayDesk
-useful-jobs catalog (PR51). It does not run the job engine and does not
-grant purchase, network, or scheduler authority.
+This package preflights caller files and inline JSON against the published
+SameDayDesk useful-jobs catalog (PR51). It does not run the job engine and
+does not grant purchase, network, or scheduler authority.
 
 Pinned published inputs (read-only):
 - client/public/for-agents/useful-jobs/catalog.json
@@ -14,10 +14,12 @@ The 8 MiB cap is aligned with useful-jobs 1.0.0 lib/validate-next-run.mjs
 (MAX_LOCAL_INPUT_BYTES). Tests extract that archive and spawn
 `node --eval` against the extracted module. This directory does not copy
 F08 server/paid-useful-jobs/lib/input-guard.mjs (1 MiB Express-aligned cap)
-or a competing useful-jobs kernel.
+or a competing useful-jobs kernel. Optional `--d01-root` imports SDS52
+`inspectSample` from a read-only pin; it is not vendored here.
 
 Fixture JSON under fixtures/vendor-budget-impact/ is a labeled SAMPLE copy
-of kit samples/pricing/a. Not a live quote or customer demand.
+of kit samples/pricing/a (sibling SAMPLE.txt). That path is a refuse case.
+Custom caller rows live under fixtures/caller/vendor-budget-impact/.
 
 I01 (Neo PR54) hash-terms identity is `sha256:` + 64 hex. Integer digest
 values are rejected. Bare 64-hex from validate-next-run currentInputs.sha256

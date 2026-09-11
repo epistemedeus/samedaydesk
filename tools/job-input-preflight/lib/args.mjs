@@ -40,10 +40,10 @@ export function parseArgs(argv) {
 }
 
 export function usage() {
-  return `job-input-preflight — check caller files against useful-jobs catalog requiredInputs
+  return `job-input-preflight — check caller files or inline JSON against useful-jobs catalog requiredInputs
 
 Usage:
-  node tools/job-input-preflight/bin/preflight.mjs <job-id> --before <file> --after <file> [options]
+  node tools/job-input-preflight/bin/preflight.mjs <job-id> --before <file|json> --after <file|json> [options]
 
 Options:
   --catalog PATH|URL     Catalog JSON (default: client/public/for-agents/useful-jobs/catalog.json)
@@ -51,16 +51,19 @@ Options:
   --declared-inputs JSON Object or file with per-flag digest/bytes identity claims
   --<flag>-digest VALUE  I01 sha256:<64 hex> or validate-next-run 64-hex
   --<flag>-bytes N       Declared byte length
-  --out-dir DIR          Write preflight.json only (never engine artifacts)
+  --out-dir DIR          Write preflight.json and staged bytes (never engine artifacts)
+  --kit-root DIR         Optional useful-jobs kit root for samples/ path detection
+  --d01-root DIR         Optional SDS52 paid-useful-jobs dir to consume inspectSample
   --help
 
 Does not run useful-jobs, F08 wrappers, or any payment path.
 No spend, tool-cost, or pre-spend savings claims.
+Invalid input schema and disguised SAMPLE are refused. Inline JSON is staged.
 
 Example (from repo root; relative inputs resolve under --input-root):
   node tools/job-input-preflight/bin/preflight.mjs vendor-budget-impact \\
-    --before vendor-budget-impact/before.json \\
-    --after vendor-budget-impact/after.json \\
+    --before caller/vendor-budget-impact/before.json \\
+    --after caller/vendor-budget-impact/after.json \\
     --input-root tools/job-input-preflight/fixtures
 `;
 }
