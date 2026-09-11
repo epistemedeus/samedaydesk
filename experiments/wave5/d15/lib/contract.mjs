@@ -1,4 +1,4 @@
-import { TESTED_WRAPPER_SHA } from "./paths.mjs";
+import { SDS52_SHA, D01_SHA, EXECUTION_CONTRACT_VERSION } from "./kernels.mjs";
 
 export const CONTRACT_SCHEMA = "samedaydesk.wave5.d15.input-execute-race.v1";
 
@@ -34,17 +34,23 @@ export function contractRecord() {
   return {
     schema: CONTRACT_SCHEMA,
     outcome: "Deterministic input/execute race harness",
+    executionContract: EXECUTION_CONTRACT_VERSION,
     testedImplementation: {
       repo: "epistemedeus/samedaydesk",
-      sha: TESTED_WRAPPER_SHA,
+      sha: D01_SHA,
+      paths: ["server/paid-useful-jobs/"],
+      note: "execution.v1 kernel replayed from a read-only worktree. Freeze-shim runs are not product acceptance.",
+    },
+    negativeBaseline: {
+      repo: "epistemedeus/samedaydesk",
+      sha: SDS52_SHA,
       ref: "fable/f08-paid-wrappers",
       pr: 52,
-      paths: ["server/paid-useful-jobs/"],
     },
     integrationOwner: "W5-D01",
     refuseCode: REFUSE_CODE,
     bind: Object.values(BIND),
     remainingBinding:
-      "materializeInputs aliases caller file paths into runEngineJob. D01 should copy inspected bytes into the work directory at materialize time, or refuse when live digest drifts before execute. This harness does not claim a future D01 freeze.",
+      "D01 copies caller files at materialize time. Mutating after that copy is frozen-consumed with a matching receipt. Mutating after inspectSample's first read and before copy still executes the new bytes; receipt follows the staged copy, not the inspected hash. Concurrent caller outDir last-writer-wins on published outputs while isolated runOutDir stays distinct. D01 owns kernel fixes.",
   };
 }

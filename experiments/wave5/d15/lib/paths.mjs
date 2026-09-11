@@ -25,4 +25,3 @@ export const CALLER_REPEAT_INPUT_ROOT = join(
   "server/paid-useful-jobs/fixtures/caller/repeat-job-record/input-root",
 );
 
-export const TESTED_WRAPPER_SHA = "aeef964fa188443078958d9d6d393afae1d542ee";

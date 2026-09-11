@@ -2,9 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| User goal | After preflight, mutate the caller path. Execute either the frozen bytes or refuse `input-changed-after-preflight`. |
-| Entrypoint | `experiments/wave5/d15/` (`bin/d15-race.mjs`, `lib/race.mjs`) |
-| Command | `node experiments/wave5/d15/bin/d15-race.mjs run vendor-budget-impact --before … --after … --bind frozen --mutate-after after` |
-| State | `frozen-consumed` / `accurate-refuse` / `race-consumed-mutated` / `wrapper-refuse` / `engine-failure` / `transport-failure` |
-| Tests | `node --test experiments/wave5/d15/test/*.test.mjs` |
-| Account prerequisite | None. Offline. Reuses SDS52 CLI. No wallet, facilitator, or Postgres. |
+| User goal | Mutate the caller path between inspect, materialize, and execute. The kernel must use inspected bytes or refuse, with a matching receipt. |
+| Entrypoint | `experiments/wave5/d15/` (`bin/d15-race.mjs`, `lib/kernel-race.mjs`) |
+| Product tests | `node --test experiments/wave5/d15/test/*.test.mjs` against D01 `execution.v1` at `6bed72dd` and SDS52 `aeef964` |
+| Not product | Harness `--bind frozen` / `--bind verify-live` freeze shim |
+| Account prerequisite | None. Offline. Read-only git worktrees. No wallet, facilitator, or Postgres. |

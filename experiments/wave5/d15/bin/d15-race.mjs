@@ -32,9 +32,10 @@ Commands:
   listen [--host 127.0.0.1] [--port 0]
   contract
 
-frozen: execute frozen copies after the live path mutates
+frozen: execute harness freeze copies after the live path mutates (not product acceptance)
 verify-live: refuse input-changed-after-preflight when live bytes drifted
-live-observe: pass live paths to SDS52 and classify whether it consumed the mutation
+live-observe: pass live paths to the in-tree SDS52 CLI and classify mutation consumption
+Kernel replay lives in test/kernel-replay.test.mjs against read-only D01/SDS52 worktrees.
 `;
 }
 

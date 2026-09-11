@@ -6,7 +6,8 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
 import { BIND, KIND, REFUSE_CODE, contractRecord } from "../lib/contract.mjs";
-import { REPO_ROOT, TESTED_WRAPPER_SHA } from "../lib/paths.mjs";
+import { REPO_ROOT } from "../lib/paths.mjs";
+import { D01_SHA } from "../lib/kernels.mjs";
 import { sha256File } from "../../../../server/paid-useful-jobs/lib/digest.mjs";
 import { runRace, spawnPaidCli } from "../lib/race.mjs";
 import { stageNoChangeBudget, stageRepeatRoot, stageVendorBudget, writeSibling } from "./helpers.mjs";
@@ -100,7 +101,7 @@ function startListenProcess() {
   });
 }
 
-describe("W5-D15 input/execute race harness", { timeout: 180_000 }, () => {
+describe("W5-D15 harness freeze shim (not product acceptance)", { timeout: 180_000 }, () => {
   it("control: frozen vendor-budget-impact through paid CLI stays actionable", async () => {
     const staged = stageVendorBudget();
     const result = await runRace({
@@ -114,7 +115,7 @@ describe("W5-D15 input/execute race harness", { timeout: 180_000 }, () => {
     assert.equal(result.domain.status, "actionable");
     assert.equal(result.wrapper.ok, true);
     assert.equal(existsSync(join(result.outDir, "budget-impact.json")), true);
-    assert.equal(result.contract.testedImplementation.sha, TESTED_WRAPPER_SHA);
+    assert.equal(result.contract.testedImplementation.sha, D01_SHA);
   });
 
   it("mutate after preflight: frozen bind consumes freeze bytes, not the live mutation", async () => {
@@ -323,9 +324,11 @@ describe("W5-D15 input/execute race harness", { timeout: 180_000 }, () => {
     const r = spawnRaceCli(["contract"]);
     const body = parseCli(r);
     assert.equal(r.status, 0, r.stderr);
-    assert.equal(body.testedImplementation.sha, TESTED_WRAPPER_SHA);
+    assert.equal(body.testedImplementation.sha, D01_SHA);
     assert.equal(body.integrationOwner, "W5-D01");
     assert.equal(body.refuseCode, REFUSE_CODE);
+    assert.equal(body.executionContract, contractRecord().executionContract);
+    assert.equal(body.negativeBaseline.sha, "aeef964fa188443078958d9d6d393afae1d542ee");
     assert.deepEqual(body, contractRecord());
   });
 });

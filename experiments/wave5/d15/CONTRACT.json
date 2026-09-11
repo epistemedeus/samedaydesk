@@ -1,15 +1,21 @@
 {
   "schema": "samedaydesk.wave5.d15.input-execute-race.v1",
   "outcome": "Deterministic input/execute race harness",
+  "executionContract": "samedaydesk.paid-useful-jobs.execution.v1",
   "testedImplementation": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "6bed72dd22a396134aa5c957933b42c3a5746698",
+    "paths": ["server/paid-useful-jobs/"],
+    "note": "execution.v1 kernel replayed from a read-only worktree. Freeze-shim runs are not product acceptance."
+  },
+  "negativeBaseline": {
     "repo": "epistemedeus/samedaydesk",
     "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
     "ref": "fable/f08-paid-wrappers",
-    "pr": 52,
-    "paths": ["server/paid-useful-jobs/"]
+    "pr": 52
   },
   "integrationOwner": "W5-D01",
   "refuseCode": "input-changed-after-preflight",
   "bind": ["frozen", "verify-live", "live-observe"],
-  "remainingBinding": "materializeInputs aliases caller file paths into runEngineJob. D01 should copy inspected bytes into the work directory at materialize time, or refuse when live digest drifts before execute. This harness does not claim a future D01 freeze."
+  "remainingBinding": "D01 copies caller files at materialize time. Mutating after that copy is frozen-consumed with a matching receipt. Mutating after inspectSample's first read and before copy still executes the new bytes; receipt follows the staged copy, not the inspected hash. Concurrent caller outDir last-writer-wins on published outputs while isolated runOutDir stays distinct. D01 owns kernel fixes."
 }
