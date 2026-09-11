@@ -5,6 +5,7 @@
 **Repo:** `epistemedeus/samedaydesk`
 **Branch:** `cursor/w5-m10-co18-recipe-catalog-join-actually-consuming-both-named-input-sources-61ed`
 **Starting ref:** `bb795f6dad362a0ac187fe896d636e62fa1d932e` (W4-commerce-18)
+**HEAD:** `dd75673` (filled with full sha after this receipt commit)
 **Secondary pin (read-only worktree):** PR52 `aeef964fa188443078958d9d6d393afae1d542ee`
 
 ## Current-source findings (reproduced)
