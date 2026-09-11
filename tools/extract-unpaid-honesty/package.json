@@ -1,0 +1,24 @@
+{
+  "name": "@samedaydesk/extract-unpaid-honesty",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "W4-commerce-19: join buyer-runtimes unpaid-stop with useful-jobs purchaseAuthority false. Spawned catalog jobs must not start extract/batch or seller-integrity payment.",
+  "bin": {
+    "honesty": "./bin/honesty.mjs"
+  },
+  "exports": {
+    ".": "./lib/honesty.mjs",
+    "./inspect": "./lib/inspect.mjs",
+    "./hash-terms": "./lib/hash-terms.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "journey": "node ./bin/honesty.mjs journey",
+    "report": "node ./bin/honesty.mjs report --example"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "UNLICENSED"
+}
