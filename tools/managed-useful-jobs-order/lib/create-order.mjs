@@ -90,7 +90,7 @@ function mapWrapperRefuse(offer, raw) {
   const code = offer?.code || "engine-refused";
   let falsifier = null;
   if (code === "sample-not-a-sale" || offer?.sample) falsifier = "F-SAMPLE";
-  if (code === "missing-required-inputs" || code === "input-malformed" || code === "input-missing-file") {
+  if (code === "missing-required-inputs" || code === "input-malformed" || code === "input-missing-file" || code === "input-schema-mismatch" || code === "input-jsonl-not-document") {
     falsifier = "F-INPUT";
   }
   const httpStatus = isTransportFailure(offer) ? 503 : 400;
@@ -174,7 +174,9 @@ function buildSuccessResult({ request, pins, termsHash, offer, outDir }) {
     liveCatalogItem: false,
     productionExpressRoute: false,
     competingRunner: false,
-    outDir: offer.outDir || outDir || null,
+    outDir: outDir || offer.outDir || offer.runOutDir || null,
+    runOutDir: offer.runOutDir || null,
+    publishedDir: offer.outDir || outDir || null,
     wrapper: {
       contract: offer.contract || EXECUTION_CONTRACT_PIN,
       testedD01Sha: TESTED_D01_SHA,

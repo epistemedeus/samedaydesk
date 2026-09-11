@@ -15,7 +15,7 @@ export const PREFLIGHT_CONTRACT = Object.freeze({
   executionContractVersion: EXECUTION_CONTRACT_VERSION,
   testedD01: TESTED_D01,
   remainingIntegrationBinding:
-    "Pass toWrapperRequest(preflight).inputs staged file paths into createExecutor/runPaidOffer at epistemedeus/samedaydesk@6bed72dd22a396134aa5c957933b42c3a5746698 (PR 74, execution.v1). D01 concurrent/freeze tests are still closing separately; do not assume a later head. D01 does not enforce vendor-budget-impact pricing-row schema; this preflight does. Execution cap is 1 MiB (input-oversize); kit cap remains 8 MiB (input-too-large). This package never claims spend, tool cost, or settlement.",
+    "Pass toWrapperRequest(preflight).inputs staged file paths into this tree's createExecutor/runPaidOffer (execution.v1). D01 also validates vendor-budget-impact pricing-row schema at service entry; this preflight still gates first. Execution cap is 1 MiB (input-oversize); kit cap remains 8 MiB (input-too-large). This package never claims spend, tool cost, or settlement.",
 });
 
 /**

@@ -16,10 +16,10 @@ export const VERIFY_CODES = Object.freeze({
 });
 
 export const TESTED_PRODUCER = Object.freeze({
-  repo: PIN.f08.repo,
-  ref: PIN.f08.ref,
+  repo: PIN.producer.repo,
+  ref: PIN.producer.ref,
   sha: F08_TESTED_SHA,
-  cli: PIN.f08.cli,
+  cli: PIN.producer.cli,
 });
 
 export function analysisFromReceipt(receipt) {

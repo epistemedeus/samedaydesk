@@ -3,6 +3,10 @@ import { extname, join, resolve } from "node:path";
 import { MAX_INPUT_BYTES } from "./pins.mjs";
 import { getJob, optionalKeys, requiredKeys } from "./jobs.mjs";
 import { sha256Bytes } from "./digest.mjs";
+import { WrapperRefuse, refuse } from "./errors.mjs";
+import { validateStagedInput } from "./input-schema.mjs";
+
+export { WrapperRefuse, refuse };
 
 /**
  * Evaluate caller getters once. Later inspect/materialize/execute must
@@ -47,19 +51,6 @@ export function freezeRequest(request = {}) {
   };
 }
 
-export class WrapperRefuse extends Error {
-  constructor(code, message, detail = {}) {
-    super(message);
-    this.name = "WrapperRefuse";
-    this.code = code;
-    this.detail = detail;
-  }
-}
-
-export function refuse(code, message, detail) {
-  return new WrapperRefuse(code, message, detail);
-}
-
 function isPlainObject(value) {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
@@ -89,8 +80,8 @@ const DIRECTORY_KEYS = new Set(["input-root"]);
  * `input-root` is a directory used by repeat-job-record to verify
  * manifest-declared bytes. It is not a file and must not be byte-hashed.
  */
-export function materializeInputs(jobId, request, workDir) {
-  const job = getJob(jobId);
+export function materializeInputs(jobId, request, workDir, { getJob: getJobFn = getJob } = {}) {
+  const job = getJobFn(jobId);
   const example = request?.example === true || request?.example === "true";
   const raw = request?.inputs && typeof request.inputs === "object" ? { ...request.inputs } : {};
   const reqKeys = requiredKeys(job);
@@ -149,16 +140,20 @@ export function materializeInputs(jobId, request, workDir) {
       const text = `${JSON.stringify(value, null, 2)}\n`;
       bytes = Buffer.byteLength(text, "utf8");
       assertNotOversize(key, bytes);
+      const buf = Buffer.from(text, "utf8");
+      validateStagedInput(job, key, buf);
       filePath = join(workDir, `${key}.json`);
       writeFileSync(filePath, text);
     } else if (typeof value === "string" && looksJsonText(value)) {
       bytes = Buffer.byteLength(value, "utf8");
       assertNotOversize(key, bytes);
+      const buf = Buffer.from(value, "utf8");
       try {
         JSON.parse(value);
       } catch (err) {
         throw refuse("input-malformed", `Input ${key} is not valid JSON: ${err.message}`, { key });
       }
+      validateStagedInput(job, key, buf);
       filePath = join(workDir, `${key}.json`);
       writeFileSync(filePath, value.endsWith("\n") ? value : `${value}\n`);
     } else if (typeof value === "string") {
@@ -183,6 +178,7 @@ export function materializeInputs(jobId, request, workDir) {
           }
         }
       }
+      validateStagedInput(job, key, buf);
       const staged = join(workDir, `${key}${extname(filePath) || ""}`);
       writeFileSync(staged, buf);
       files[key] = staged;

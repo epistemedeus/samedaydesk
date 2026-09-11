@@ -43,7 +43,7 @@ function inspectText(text, key, reasons) {
 
 /**
  * Inspect SAMPLE provenance on staged bytes (and original file paths).
- * D01 inspectSample at 6bed72dd also inspects inline JSON strings; this
+ * D01 inspectSample on this tree also inspects inline JSON strings; this
  * adapter still refuses disguised SAMPLE before bind.
  */
 export function inspectStagedSample({ example = false, staged = [] } = {}, { kitRoot = null } = {}) {

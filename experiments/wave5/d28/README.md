@@ -36,6 +36,8 @@ node --test --test-concurrency=1 experiments/wave5/d28/test/*.test.mjs
 
 ## What this is not
 
-- Not W5-D01's `createExecutor` / loopback execute HTTP (remaining binding).
-- Not Co03's binder or Co17's verify-complete (not on this branch).
+- Not a second execution kernel. Pack/readback spawn this tree's
+  `server/paid-useful-jobs/bin/cli.mjs` (`execution.v1`).
+- Not Co03's binder (`tools/repeat-job-binder/` is still off this tree).
+- Co17 `tools/job-output-atomicity/` is on this composition branch and is not copied into D28.
 - Not a production deploy, recruited trial, or independent demand claim.

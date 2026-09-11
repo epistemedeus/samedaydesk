@@ -1,13 +1,19 @@
 {
   "module": "tools/job-output-atomicity",
-  "wave": "W4-commerce-17",
+  "wave": "W5-D01-composition",
+  "producer": {
+    "repo": "epistemedeus/samedaydesk",
+    "ref": "codex/w5-d01-20260911",
+    "testedSha": "in-repo",
+    "cli": "server/paid-useful-jobs/bin/cli.mjs",
+    "note": "Spawns this tree's D01 CLI. Identity SHA is git HEAD at verify time."
+  },
   "f08": {
     "repo": "epistemedeus/samedaydesk",
     "ref": "fable/f08-paid-wrappers",
     "namedSha": "bae3e7cd5034b21019fb272a99d88db964b831ee",
-    "testedSha": "aeef964fa188443078958d9d6d393afae1d542ee",
-    "cli": "server/paid-useful-jobs/bin/cli.mjs",
-    "note": "Named assignment pin is bae3e7cd. I02 landed wrapper amendments after that pin. Tests spawn origin tip aeef964, the current public CLI, not a copied kernel."
+    "historicalSha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "note": "Named assignment pin is historical. Not spawned as the product producer."
   },
   "i01HashTerms": {
     "repo": "epistemedeus/neomorphic-io",

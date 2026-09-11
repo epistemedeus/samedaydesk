@@ -21,7 +21,7 @@ export const LATER_ENGINE_BINDING = Object.freeze({
   testedImplementation: TESTED_D01,
   publishedCli: ["node", "server/paid-useful-jobs/bin/cli.mjs", "run", "<job-id>"],
   remaining:
-    "D01 concurrent/freeze tests are still closing separately. Feed toWrapperRequest staged file paths into runPaidOffer/createExecutor at 6bed72dd (execution.v1). D01 does not pricing-row schema-check; this adapter does. 1 MiB execution cap is enforced here as input-oversize so preflight cannot go green past the wrapper. This package never claims spend, tool cost, or settlement.",
+    "Feed toWrapperRequest staged file paths into this tree's runPaidOffer/createExecutor (execution.v1). D01 now pricing-row schema-checks at service entry; this adapter still refuses first. 1 MiB execution cap is enforced here as input-oversize so preflight cannot go green past the wrapper. This package never claims spend, tool cost, or settlement.",
 });
 
 export { bindExecutionV1 } from "./d01-bind.mjs";

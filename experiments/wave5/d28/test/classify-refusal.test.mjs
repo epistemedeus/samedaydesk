@@ -76,15 +76,15 @@ describe("refusals vs crashes vs valid no-change", { timeout: 180_000 }, () => {
     assert.notEqual(result.classified.analysis.outcome, "informational");
   });
 
-  it("SDS52 inspectSample misses inline JSON SAMPLE strings", () => {
+  it("execution.v1 inspectSample detects inline JSON SAMPLE strings", () => {
     const asString = inspectSample({
       inputs: { input: JSON.stringify({ label: "SAMPLE", sampleLabel: "SAMPLE" }) },
     });
     const asObject = inspectSample({
       inputs: { input: { label: "SAMPLE", sampleLabel: "SAMPLE" } },
     });
-    assert.equal(asString.sample, false);
-    assert.deepEqual(asString.reasons, []);
+    assert.equal(asString.sample, true);
+    assert.ok(asString.reasons.some((r) => r.startsWith("json-sample-label:")));
     assert.equal(asObject.sample, true);
     assert.ok(asObject.reasons.includes("json-sample-label:input"));
   });

@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -8,10 +9,16 @@ export const REPO_ROOT = join(here, "../../..");
 
 export const PIN = JSON.parse(readFileSync(join(MODULE_DIR, "PIN.json"), "utf8"));
 
+export function producerSha(cwd = REPO_ROOT) {
+  const r = spawnSync("git", ["rev-parse", "HEAD"], { cwd, encoding: "utf8" });
+  return String(r.stdout || "").trim() || PIN.producer.testedSha;
+}
+
 export const F08_NAMED_SHA = PIN.f08.namedSha;
-export const F08_TESTED_SHA = PIN.f08.testedSha;
-export const F08_REF = PIN.f08.ref;
-export const F08_CLI_REL = PIN.f08.cli;
+export const F08_HISTORICAL_SHA = PIN.f08.historicalSha;
+export const F08_TESTED_SHA = producerSha();
+export const F08_REF = PIN.producer.ref;
+export const F08_CLI_REL = PIN.producer.cli;
 
 export const CATALOG_REL = PIN.catalog;
 export const KIT_REL = PIN.kit;

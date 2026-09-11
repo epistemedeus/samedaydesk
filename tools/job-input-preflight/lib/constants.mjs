@@ -1,3 +1,11 @@
+import { spawnSync } from "node:child_process";
+import { REPO_ROOT } from "./roots.mjs";
+
+function repoHead() {
+  const r = spawnSync("git", ["rev-parse", "HEAD"], { cwd: REPO_ROOT, encoding: "utf8" });
+  return String(r.stdout || "").trim();
+}
+
 /** Kit archive `lib/validate-next-run.mjs` (PR51). Not the execution.v1 wrapper cap. */
 export const KIT_MAX_LOCAL_INPUT_BYTES = 8 * 1024 * 1024;
 export const MAX_LOCAL_INPUT_BYTES = KIT_MAX_LOCAL_INPUT_BYTES;
@@ -45,7 +53,7 @@ export const EXECUTION_CONTRACT_VERSION = "samedaydesk.paid-useful-jobs.executio
 export const TESTED_D01 = Object.freeze({
   owner: "W5-D01",
   repo: "epistemedeus/samedaydesk",
-  sha: "6bed72dd22a396134aa5c957933b42c3a5746698",
+  sha: repoHead() || "in-repo",
   ref: "codex/w5-d01-20260911",
   pr: 74,
   executionContractVersion: EXECUTION_CONTRACT_VERSION,

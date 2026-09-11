@@ -14,8 +14,8 @@ Integration owner: W5-D01
 | Ref | SHA | Use |
 | --- | --- | --- |
 | Co02 mailbox | `baf09dc591c83aec94e0cf42c5c64076fc5b98e3` | owned kernel |
-| D01 execution.v1 | `6bed72dd22a396134aa5c957933b42c3a5746698` | CONTRACT.md + CLI `bin/cli.mjs` + library `index.mjs` (`createExecutor` / `runPaidOffer`). Worktree spawn/import only. Not vendored. |
-| PR51 useful-jobs archive | this checkout | engine spawn for non-D01 seed |
+| D01 execution.v1 | this tree PR 74 | CONTRACT.md + CLI `bin/cli.mjs` + library `index.mjs`. Not vendored. Historical `6bed72dd` is not spawned. |
+| PR51 useful-jobs archive | this checkout | engines remain in D01; mailbox no longer spawns a competing runner |
 | I01 hasher | `819fa637ecf5e5177c84efc16fcaa18d57017631` | already vendored |
 
 Pilot Wave5 pin: `epistemedeus/pilot@95b3f3a47f5b1b69bd237e4c978fc3376221365d`.

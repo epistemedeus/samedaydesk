@@ -15,6 +15,9 @@ const WRAPPER_REJECT_CODES = new Set([
   "input-oversize",
   "input-not-file",
   "input-root-not-directory",
+  "input-schema-mismatch",
+  "input-jsonl-not-document",
+  "missing-output",
 ]);
 
 export function engineReport(result) {

@@ -164,7 +164,7 @@ test("positive: staged inline JSON files feed execution.v1 (not re-stringified t
   assert.equal(receiptSha(cli.json, "before"), pre.json.inputs.before.sha256);
 });
 
-test("negative: schema-invalid is refused here; D01 may still run the same staged bytes", async () => {
+test("negative: schema-invalid is refused here and at D01 service entry", async () => {
   const outDir = mkdtempSync(path.join(tmpdir(), "jip-d01-schema-"));
   const pre = runCli([
     "vendor-budget-impact",
@@ -185,9 +185,10 @@ test("negative: schema-invalid is refused here; D01 may still run the same stage
   const libOut = mkdtempSync(path.join(tmpdir(), "jip-d01-schema-lib-"));
   const libResult = await bind.runPaidOffer({ ...req, outDir: libOut });
   assert.equal(libResult.contract, EXECUTION_CONTRACT_VERSION);
-  assert.notEqual(libResult.code, "input-schema-mismatch");
+  assert.equal(libResult.code, "input-schema-mismatch");
+  assert.equal(libResult.ok, false);
+  assert.equal(libResult.sold, false);
   assertNotEngineCrash(libResult);
-  // Remaining limit: execution.v1 does not pricing-row schema-check.
 
   const cliOut = mkdtempSync(path.join(tmpdir(), "jip-d01-schema-cli-"));
   const cli = runD01Cli(checkout.repoRoot, [
@@ -201,7 +202,8 @@ test("negative: schema-invalid is refused here; D01 may still run the same stage
     cliOut,
   ]);
   assert.equal(cli.json.contract, EXECUTION_CONTRACT_VERSION);
-  assert.notEqual(cli.json.code, "input-schema-mismatch");
+  assert.equal(cli.json.code, "input-schema-mismatch");
+  assert.equal(cli.json.ok, false);
 });
 
 test("negative: SAMPLE sibling is disguised-sample here; D01 labels sample / rejects reserved-fixture", async () => {
@@ -370,9 +372,10 @@ test("positive: exact 1MiB execution bound is accepted by preflight and D01", as
   assert.equal(receiptSha(libResult, "after"), pre.json.inputs.after.sha256);
 });
 
-test("tested pin metadata matches CONTRACT.md at the D01 checkout", () => {
+test("tested pin metadata matches CONTRACT.md at the in-repo D01 checkout", () => {
   const contract = readFileSync(path.join(checkout.paidRoot, "CONTRACT.md"), "utf8");
   assert.match(contract, /samedaydesk\.paid-useful-jobs\.execution\.v1/);
   assert.equal(TESTED_D01.executionContractVersion, EXECUTION_CONTRACT_VERSION);
-  assert.equal(TESTED_D01.sha, "6bed72dd22a396134aa5c957933b42c3a5746698");
+  assert.equal(checkout.paidRoot, path.join(checkout.repoRoot, "server/paid-useful-jobs"));
+  assert.match(TESTED_D01.sha, /^[0-9a-f]{40}$/);
 });

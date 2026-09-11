@@ -33,11 +33,12 @@ Pickup is not delivery. `--delivered` on pickup is refused (SAMPLE:
 
 ## D01 result contract (consumed, not vendored)
 
-Current pin tested: SDS `6bed72dd22a396134aa5c957933b42c3a5746698`
-(`samedaydesk.paid-useful-jobs.execution.v1`). Nested receipt remains
+Current pin tested: this tree's `server/paid-useful-jobs`
+(`samedaydesk.paid-useful-jobs.execution.v1`, PR 74). Nested receipt remains
 `samedaydesk.paid-useful-jobs.receipt.v1` and is not mailbox envelope terms.
 Seed with `--from-d01-execution` (or `--from-d01-receipt` for a receipt that
-carries `contract` + `delivery`). This mailbox does not import `wrapper.mjs`.
+carries `contract` + `delivery`). Prefer `runOutDir` over a published copy.
+This mailbox does not import `wrapper.mjs` and does not spawn an engine.
 
 Retrievable means `transport === "ok"` and `delivery.complete === true`.
 Useful analysis `refused` / `informational` with complete artifacts can be

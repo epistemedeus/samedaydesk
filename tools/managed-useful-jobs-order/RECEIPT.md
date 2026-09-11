@@ -11,34 +11,29 @@ catalog item. Payments remain nonsettling (`sold: false`, `charged: false`).
 | Feature branch | `cursor/w5-d04-co20-managed-order-client-removing-its-competing-runner-979c` |
 | Starting ref | `13d1fc023ce235b1611dc868caf5dd84fe5f11c7` (`codex/w4-commerce-20-20260911`) |
 | Owned paths | `tools/managed-useful-jobs-order/`, `experiments/wave5/d04/RECEIPT.md` |
-| Tested D01 | `codex/w5-d01-20260911` `6bed72dd22a396134aa5c957933b42c3a5746698` PR74 |
+| Tested D01 | this tree `codex/w5-d01-20260911` PR74 |
 | Contract | `samedaydesk.paid-useful-jobs.execution.v1` |
 | Packet pin PR52 | `aeef964fa188443078958d9d6d393afae1d542ee` (read-only worktree) |
 | Competing runner removed | `lib/engine.mjs`, `lib/kit.mjs` |
 
 ## Commands
 
-From the repository root, Node >= 22. D01 contract must be importable.
+From the repository root, Node >= 22. D01 is this tree's `server/paid-useful-jobs`.
 
 ```bash
-git fetch origin codex/w5-d01-20260911
-git worktree add --detach /tmp/ro-worktrees/sds-d01 origin/codex/w5-d01-20260911
-export MANAGED_ORDER_WRAPPER_ROOT=/tmp/ro-worktrees/sds-d01/server/paid-useful-jobs
-
-node --test tools/managed-useful-jobs-order/test/*.test.mjs
+npm run test:managed-useful-jobs-order
 ```
 
 ```bash
 node tools/managed-useful-jobs-order/bin/orders.mjs create \
   --request tools/managed-useful-jobs-order/fixtures/orders/ord-1.json \
   --store /tmp/managed-order-store \
-  --out-dir /tmp/managed-order-out \
-  --wrapper-root "$MANAGED_ORDER_WRAPPER_ROOT"
+  --out-dir /tmp/managed-order-out
 ```
 
 ## Tests
 
-Executed from repo root, Node v22.14.0, 2026-09-11. Postgres 16 initdb/pg_ctl present. D01 worktree at `6bed72dd`.
+Executed from repo root, Node v22.14.0. D01 is this tree's `server/paid-useful-jobs`. Historical counts at `6bed72dd` are below; composition re-test is recorded on PR 74.
 
 ```bash
 node --test tools/managed-useful-jobs-order/test/*.test.mjs
@@ -60,7 +55,7 @@ Missing deps were not skipped. `sold`/`charged` stay false.
 
 ## Integration limits
 
-- Tested D01 `6bed72dd22a396134aa5c957933b42c3a5746698`. Later D01 amendments remain a binding.
+- Tested D01 is this tree's `execution.v1` (PR 74). Historical pin `6bed72dd` is not spawned.
 - Order `termsHash` and D01 `receipt.inputsDigest` are unlike documents.
 - D19 owns further multi-process order/ledger tests.
 - No live catalog, Express mount, price change, spend, or default-branch push.

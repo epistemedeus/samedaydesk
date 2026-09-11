@@ -9,10 +9,9 @@ import {
   CLOCK,
   EXPIRED_CLOCK,
   EXPIRES,
-  afterPath,
-  beforePath,
   parseJson,
   runMailbox,
+  seedVendorFromD01,
   tmp,
   writeRawEnvelope,
 } from "./helpers.mjs";
@@ -20,26 +19,10 @@ import {
 describe("seeded failures", { timeout: 120_000 }, () => {
   it("SAMPLE envelope is refused as delivered", () => {
     const mailbox = tmp("rmb-sample-mail-");
-    const engineOut = tmp("rmb-sample-engine-");
     const pickupOut = tmp("rmb-sample-pickup-");
     const requestId = "req-sample-1";
 
-    const seed = runMailbox([
-      "seed",
-      "--mailbox",
-      mailbox,
-      "--request-id",
-      requestId,
-      "--job-id",
-      "vendor-budget-impact",
-      "--example",
-      "--out-dir",
-      engineOut,
-      "--clock",
-      CLOCK,
-      "--expires-at",
-      EXPIRES,
-    ]);
+    const { seed } = seedVendorFromD01({ mailbox, requestId, example: true });
     assert.equal(seed.status, 0, seed.stderr + seed.stdout);
     const seeded = parseJson(seed.stdout);
     assert.equal(seeded.sample, true);
@@ -67,29 +50,10 @@ describe("seeded failures", { timeout: 120_000 }, () => {
 
   it("non-SAMPLE --delivered on pickup is pickup-is-not-delivery", () => {
     const mailbox = tmp("rmb-not-delivery-mail-");
-    const engineOut = tmp("rmb-not-delivery-engine-");
     const pickupOut = tmp("rmb-not-delivery-pickup-");
     const requestId = "req-not-delivery-1";
 
-    const seed = runMailbox([
-      "seed",
-      "--mailbox",
-      mailbox,
-      "--request-id",
-      requestId,
-      "--job-id",
-      "vendor-budget-impact",
-      "--before",
-      beforePath,
-      "--after",
-      afterPath,
-      "--out-dir",
-      engineOut,
-      "--clock",
-      CLOCK,
-      "--expires-at",
-      EXPIRES,
-    ]);
+    const { seed } = seedVendorFromD01({ mailbox, requestId });
     assert.equal(seed.status, 0, seed.stderr + seed.stdout);
 
     const pickup = runMailbox([
@@ -136,29 +100,10 @@ describe("seeded failures", { timeout: 120_000 }, () => {
 
   it("mutated output bytes fail digest check", () => {
     const mailbox = tmp("rmb-digest-mail-");
-    const engineOut = tmp("rmb-digest-engine-");
     const pickupOut = tmp("rmb-digest-pickup-");
     const requestId = "req-digest-1";
 
-    const seed = runMailbox([
-      "seed",
-      "--mailbox",
-      mailbox,
-      "--request-id",
-      requestId,
-      "--job-id",
-      "vendor-budget-impact",
-      "--before",
-      beforePath,
-      "--after",
-      afterPath,
-      "--out-dir",
-      engineOut,
-      "--clock",
-      CLOCK,
-      "--expires-at",
-      EXPIRES,
-    ]);
+    const { seed } = seedVendorFromD01({ mailbox, requestId });
     assert.equal(seed.status, 0, seed.stderr + seed.stdout);
 
     const mutated = join(mailbox, requestId, "artifacts", "budget-impact.json");
@@ -185,29 +130,10 @@ describe("seeded failures", { timeout: 120_000 }, () => {
 
   it("expired labelled envelope returns expired not delivered", () => {
     const mailbox = tmp("rmb-exp-mail-");
-    const engineOut = tmp("rmb-exp-engine-");
     const pickupOut = tmp("rmb-exp-pickup-");
     const requestId = "req-expired-1";
 
-    const seed = runMailbox([
-      "seed",
-      "--mailbox",
-      mailbox,
-      "--request-id",
-      requestId,
-      "--job-id",
-      "vendor-budget-impact",
-      "--before",
-      beforePath,
-      "--after",
-      afterPath,
-      "--out-dir",
-      engineOut,
-      "--clock",
-      CLOCK,
-      "--expires-at",
-      EXPIRES,
-    ]);
+    const { seed } = seedVendorFromD01({ mailbox, requestId });
     assert.equal(seed.status, 0, seed.stderr + seed.stdout);
 
     const pickup = runMailbox([
@@ -304,26 +230,10 @@ describe("seeded failures", { timeout: 120_000 }, () => {
 
   it("SAMPLE pickup without --delivered is retrieved-sample, not delivered-to-buyer", () => {
     const mailbox = tmp("rmb-sample-ok-mail-");
-    const engineOut = tmp("rmb-sample-ok-engine-");
     const pickupOut = tmp("rmb-sample-ok-pickup-");
     const requestId = "req-sample-retrieve";
 
-    const seed = runMailbox([
-      "seed",
-      "--mailbox",
-      mailbox,
-      "--request-id",
-      requestId,
-      "--job-id",
-      "vendor-budget-impact",
-      "--example",
-      "--out-dir",
-      engineOut,
-      "--clock",
-      CLOCK,
-      "--expires-at",
-      EXPIRES,
-    ]);
+    const { seed } = seedVendorFromD01({ mailbox, requestId, example: true });
     assert.equal(seed.status, 0, seed.stderr + seed.stdout);
 
     const pickup = runMailbox([
@@ -347,24 +257,8 @@ describe("seeded failures", { timeout: 120_000 }, () => {
 
   it("SAMPLE ack is refused as delivered", () => {
     const mailbox = tmp("rmb-sample-ack-mail-");
-    const engineOut = tmp("rmb-sample-ack-engine-");
     const requestId = "req-sample-ack";
-    const seed = runMailbox([
-      "seed",
-      "--mailbox",
-      mailbox,
-      "--request-id",
-      requestId,
-      "--job-id",
-      "vendor-budget-impact",
-      "--example",
-      "--out-dir",
-      engineOut,
-      "--clock",
-      CLOCK,
-      "--expires-at",
-      EXPIRES,
-    ]);
+    const { seed } = seedVendorFromD01({ mailbox, requestId, example: true });
     assert.equal(seed.status, 0, seed.stderr + seed.stdout);
     const ack = runMailbox(["ack", "--mailbox", mailbox, "--request-id", requestId, "--clock", CLOCK]);
     assert.equal(ack.status, 2, ack.stderr + ack.stdout);
@@ -374,7 +268,7 @@ describe("seeded failures", { timeout: 120_000 }, () => {
     assert.equal(body.deliveredToBuyer, false);
   });
 
-  it("engine refusal is not a delivered mailbox result", () => {
+  it("seed without D01 execution or out-dir is not a delivered mailbox result", () => {
     const mailbox = tmp("rmb-eng-fail-mail-");
     const seed = runMailbox([
       "seed",
@@ -392,6 +286,7 @@ describe("seeded failures", { timeout: 120_000 }, () => {
     assert.equal(seed.status, 2, seed.stderr + seed.stdout);
     const body = parseJson(seed.stdout);
     assert.equal(body.ok, false);
+    assert.equal(body.code, "missing-seed-source");
     assert.equal(body.deliveredToBuyer, false);
     assert.notEqual(body.status, "retrieved");
     assert.notEqual(body.status, "acknowledged");

@@ -11,7 +11,7 @@ export { MAILBOX_TERMS, MAILBOX_TERMS_VERSION } from "./terms.mjs";
 export { assertRequestId, buildEnvelope, parseEnvelope } from "./envelope.mjs";
 export { pickup, materializeVerifiedArtifacts } from "./pickup.mjs";
 export { acknowledge } from "./ack.mjs";
-export { seedFromOutDir, seedBySpawningEngine } from "./seed.mjs";
+export { seedFromOutDir } from "./seed.mjs";
 export {
   D01_RESULT_CONTRACT,
   asD01Execution,

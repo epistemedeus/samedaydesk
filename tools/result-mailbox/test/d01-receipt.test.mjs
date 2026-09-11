@@ -46,7 +46,7 @@ function seedExecution(mailbox, requestId, jobId, executionPath, outDir) {
   ]);
 }
 
-describe("D01 execution.v1 binding (6bed72dd, not aeef964 assumptions)", { timeout: 180_000 }, () => {
+describe("D01 execution.v1 binding (in-repo, not aeef964 assumptions)", { timeout: 180_000 }, () => {
   it("CLI supplied-input execution can be put, picked up, and acked with same-byte identity", () => {
     const pinRoot = ensureD01PinCheckout();
     const wrapperOut = tmp("rmb-d01-cli-out-");
@@ -84,7 +84,7 @@ describe("D01 execution.v1 binding (6bed72dd, not aeef964 assumptions)", { timeo
     const executionPath = writeJson(join(tmp("rmb-d01-exec-"), "execution.json"), execution);
     const mailbox = tmp("rmb-d01-mail-");
     const pickupOut = tmp("rmb-d01-pick-");
-    const seed = seedExecution(mailbox, "req-d01-1", "vendor-budget-impact", executionPath, wrapperOut);
+    const seed = seedExecution(mailbox, "req-d01-1", "vendor-budget-impact", executionPath, execution.runOutDir || wrapperOut);
     assert.equal(seed.status, 0, seed.stderr + seed.stdout);
     const seeded = parseJson(seed.stdout);
     assert.equal(seeded.ok, true);
@@ -186,14 +186,14 @@ describe("D01 execution.v1 binding (6bed72dd, not aeef964 assumptions)", { timeo
       "req-job-a",
       "vendor-budget-impact",
       writeJson(join(tmp("rmb-d01-a-json-"), "execution.json"), execA),
-      outA,
+      execA.runOutDir || outA,
     );
     const seedB = seedExecution(
       mailbox,
       "req-job-b",
       "evidence-ci-annotation",
       writeJson(join(tmp("rmb-d01-b-json-"), "execution.json"), execB),
-      outB,
+      execB.runOutDir || outB,
     );
     assert.equal(seedA.status, 0, seedA.stderr + seedA.stdout);
     assert.equal(seedB.status, 0, seedB.stderr + seedB.stdout);
@@ -272,7 +272,7 @@ describe("D01 execution.v1 binding (6bed72dd, not aeef964 assumptions)", { timeo
       "req-useful-refused",
       "vendor-budget-impact",
       writeJson(join(tmp("rmb-d01-refused-json-"), "execution.json"), result),
-      wrapperOut,
+      result.runOutDir || wrapperOut,
     );
     assert.equal(seed.status, 0, seed.stderr + seed.stdout);
     const seeded = parseJson(seed.stdout);

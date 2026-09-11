@@ -72,8 +72,8 @@ function snapshotJob({ jobId, outDir, result, role, inputs }) {
 
 export function testedPins() {
   return {
-    sds52: { ...SDS52, cli: WRAPPER_CLI, onThisBranch: true },
-    d01: { ...D01_OBSERVED },
+    sds52: { ...SDS52, cli: WRAPPER_CLI, onThisBranch: false, historical: true },
+    d01: { ...D01_OBSERVED, cli: WRAPPER_CLI, onThisBranch: true },
     co03: { ...CO03 },
     co17: { ...CO17 },
   };

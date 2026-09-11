@@ -1,6 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { engineProvenance, runEngineJob } from "./engine.mjs";
 import { buildEnvelope } from "./envelope.mjs";
 import { refuse } from "./errors.mjs";
 import { addSeconds, parseClock } from "./expiry.mjs";
@@ -8,6 +7,7 @@ import {
   DEFAULT_TTL_SECONDS,
   MAX_ARTIFACT_BYTES,
   USEFUL_JOBS_CATALOG_PATH,
+  kitEngineProvenance,
 } from "./pins.mjs";
 import { fileArtifact, statBytes } from "./digest.mjs";
 import { inspectSample } from "./sample.mjs";
@@ -73,7 +73,7 @@ export function seedFromOutDir({
     sampleReasons: sampleReasons.length ? sampleReasons : sampleInfo.reasons,
     deliveredToBuyer: false,
     artifacts: files,
-    engine: engine || engineProvenance(),
+    engine: engine || kitEngineProvenance(),
     engineResult,
     payment,
   });
@@ -90,43 +90,4 @@ export function seedFromOutDir({
     envelope,
     evidenceClass: "local-runtime",
   };
-}
-
-export function seedBySpawningEngine({
-  mailbox,
-  requestId,
-  jobId,
-  files = {},
-  example = false,
-  outDir,
-  clock,
-  expiresAt,
-  ttlSeconds = DEFAULT_TTL_SECONDS,
-  payment = null,
-}) {
-  const engine = runEngineJob(jobId, { files, example, outDir });
-  if (engine.status !== 0 || !engine.json || engine.json.ok === false) {
-    throw refuse(
-      engine.json?.code || "engine-refused",
-      engine.json?.error || engine.stderr || "useful-jobs engine refused",
-      { detail: { status: engine.status, stdout: engine.stdout?.slice(0, 800) } },
-    );
-  }
-  const resolvedOut = engine.json.outDir || outDir;
-  if (!resolvedOut) {
-    throw refuse("missing-engine-output", "engine did not return outDir");
-  }
-  return seedFromOutDir({
-    mailbox,
-    requestId,
-    jobId,
-    outDir: resolvedOut,
-    clock,
-    expiresAt,
-    ttlSeconds,
-    sample: example || engine.json?.caller?.exampleMode === true,
-    engine: engine.provenance,
-    engineResult: engine.json,
-    payment,
-  });
 }

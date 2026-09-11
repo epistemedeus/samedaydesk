@@ -29,35 +29,7 @@ export function runMailbox(args, extra = {}) {
 }
 
 export function ensureD01PinCheckout() {
-  const pin = "6bed72dd22a396134aa5c957933b42c3a5746698";
-  const dest = join(tmpdir(), `sds-d01-${pin.slice(0, 12)}`);
-  const reused = "/tmp/ro-worktrees/sds-d01-6bed72dd";
-  const wrapperCliAt = (root) => join(root, "server/paid-useful-jobs/bin/cli.mjs");
-  if (existsSync(wrapperCliAt(reused))) return reused;
-  if (existsSync(wrapperCliAt(dest))) return dest;
-  const wrapperCli = wrapperCliAt(dest);
-  const fetch = spawnSync("git", ["fetch", "origin", pin], {
-    cwd: REPO_ROOT,
-    encoding: "utf8",
-    timeout: 120_000,
-  });
-  if (existsSync(dest)) {
-    spawnSync("git", ["worktree", "remove", "--force", dest], {
-      cwd: REPO_ROOT,
-      encoding: "utf8",
-    });
-  }
-  const add = spawnSync("git", ["worktree", "add", "--detach", dest, pin], {
-    cwd: REPO_ROOT,
-    encoding: "utf8",
-    timeout: 60_000,
-  });
-  if (!existsSync(wrapperCli)) {
-    throw new Error(
-      `D01 pin ${pin} unavailable (incomplete, not skipped): fetch=${fetch.status} ${fetch.stderr} add=${add.status} ${add.stderr}`,
-    );
-  }
-  return dest;
+  return REPO_ROOT;
 }
 
 export async function loadD01Library(pinRoot = ensureD01PinCheckout()) {
@@ -90,4 +62,50 @@ export function writeRawEnvelope(mailbox, requestId, envelope, files = []) {
     writeFileSync(join(dir, file.name), file.bytes);
   }
   writeFileSync(join(mailbox, requestId, "envelope.json"), `${JSON.stringify(envelope, null, 2)}\n`);
+}
+
+export function writeExecution(execution) {
+  const dir = tmp("rmb-exec-json-");
+  const path = join(dir, "execution.json");
+  writeFileSync(path, `${JSON.stringify(execution, null, 2)}\n`);
+  return path;
+}
+
+export function seedVendorFromD01({
+  mailbox,
+  requestId,
+  jobId = "vendor-budget-impact",
+  before = beforePath,
+  after = afterPath,
+  example = false,
+  extraArgs = [],
+} = {}) {
+  const published = tmp("rmb-d01-pub-");
+  const args = ["run", jobId];
+  if (example) args.push("--example");
+  if (!example && before) args.push("--before", before);
+  if (!example && after) args.push("--after", after);
+  args.push("--out-dir", published, ...extraArgs);
+  const wrapper = runD01Wrapper(REPO_ROOT, args);
+  const execution = parseJson(wrapper.stdout);
+  const executionPath = writeExecution(execution);
+  const identityDir = execution.runOutDir || published;
+  const seed = runMailbox([
+    "seed",
+    "--mailbox",
+    mailbox,
+    "--request-id",
+    requestId,
+    "--job-id",
+    jobId,
+    "--from-d01-execution",
+    executionPath,
+    "--from-out-dir",
+    identityDir,
+    "--clock",
+    CLOCK,
+    "--expires-at",
+    EXPIRES,
+  ]);
+  return { wrapper, execution, seed, published, identityDir, executionPath };
 }

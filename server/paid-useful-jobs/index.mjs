@@ -1,4 +1,4 @@
-export { JOBS, JOB_IDS, getJob } from "./lib/jobs.mjs";
+export { JOBS, JOB_IDS, getJob, createJobLookup } from "./lib/jobs.mjs";
 export { runPaidOffer, runPaidOffers, createExecutor } from "./lib/wrapper.mjs";
 export {
   EXECUTION_CONTRACT_VERSION,
@@ -7,7 +7,10 @@ export {
   classifyAnalysis,
 } from "./lib/contract.mjs";
 export { createExecutionServer, listenExecutionServer } from "./lib/http.mjs";
+export { deliverSuppliedInput, deliverDisjointSecondJob, runPreflightStage } from "./lib/delivery-kit.mjs";
 export { ensureUsefulJobsKit, runEngineJob, engineProvenance, engineArchiveIdentity } from "./lib/engine.mjs";
+export { validateStagedInput } from "./lib/input-schema.mjs";
+export { repoHead } from "./lib/git-head.mjs";
 export {
   registerIndexingPayloadContinuity,
   applyIndexingPayloadContinuity,

@@ -22,15 +22,17 @@ Usable owner-QA kit that packs the SDS52 paid useful-jobs CLI result, reads the 
 | Receipt schema | `samedaydesk.paid-useful-jobs.receipt.v1` |
 | Kit schema | `samedaydesk.wave5.d28.journey-release.v1` |
 
-SDS52 results have no `transport` / `analysis` / `delivery` / `contract` fields.
+Historical SDS52 results had no `transport` / `analysis` / `delivery` / `contract`
+fields. This composition branch spawns the in-repo `execution.v1` CLI; those
+fields are present on packed results.
 
-## Remaining integration binding (not claimed)
+## Remaining integration binding
 
 | Sibling | Observed | On this branch |
 | --- | --- | --- |
-| W5-D01 `samedaydesk.paid-useful-jobs.execution.v1` | `6bed72dd22a396134aa5c957933b42c3a5746698` PR74 | no |
+| W5-D01 `samedaydesk.paid-useful-jobs.execution.v1` | this tree, PR 74 | yes |
 | W4-commerce-03 binder | `7c55738cc5730985b709282af6c24e10f0a8442f` PR62 | no |
-| W4-commerce-17 verify-complete | `58cba6324c1d9793d344bc13154b8b2380e8166f` PR69 | no |
+| W4-commerce-17 verify-complete | `tools/job-output-atomicity/` PR 112 | yes |
 
 ## Current-source findings (SDS52 `aeef964`)
 

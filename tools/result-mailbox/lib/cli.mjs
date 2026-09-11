@@ -4,7 +4,7 @@ import { failBody, MailboxError } from "./errors.mjs";
 import { pickup } from "./pickup.mjs";
 import { acknowledge } from "./ack.mjs";
 import { seedFromD01Execution } from "./d01-receipt.mjs";
-import { seedBySpawningEngine, seedFromOutDir } from "./seed.mjs";
+import { seedFromOutDir } from "./seed.mjs";
 import { parseClock } from "./expiry.mjs";
 import { DEFAULT_TTL_SECONDS } from "./pins.mjs";
 
@@ -12,7 +12,7 @@ function usage() {
   return `result-mailbox — pickup completed useful-job artifacts (non-settling prototype)
 
 Commands:
-  seed   Write an envelope from a useful-jobs out-dir, D01 execution.v1 result, or spawned PR51 engine
+  seed   Write an envelope from a useful-jobs out-dir or D01 execution.v1 result
   pickup Copy artifacts by requestId, verify sha256, label expiry, write pickup.json
   ack    Record delivered acknowledgment for one requestId (not a pickup)
 
@@ -88,11 +88,13 @@ export function runCli(argv, { stdout = process.stdout, stderr = process.stderr 
         const execution = JSON.parse(readFileSync(resultPath, "utf8"));
         const outDir = args["from-out-dir"]
           ? resolve(String(args["from-out-dir"]))
-          : execution.outDir
-            ? resolve(String(execution.outDir))
-            : execution.receipt?.outDir
-              ? resolve(String(execution.receipt.outDir))
-              : undefined;
+          : execution.runOutDir
+            ? resolve(String(execution.runOutDir))
+            : execution.receipt?.runOutDir
+              ? resolve(String(execution.receipt.runOutDir))
+              : execution.receipt?.outDir
+                ? resolve(String(execution.receipt.outDir))
+                : undefined;
         body = seedFromD01Execution({
           mailbox,
           requestId,
@@ -115,22 +117,10 @@ export function runCli(argv, { stdout = process.stdout, stderr = process.stderr 
           sample: args.example === true || args.sample === true,
         });
       } else {
-        const files = {};
-        for (const key of ["before", "after", "used", "input", "next-run", "input-root"]) {
-          if (args[key]) files[key] = resolve(String(args[key]));
-        }
-        const outDir = args["out-dir"] ? resolve(String(args["out-dir"])) : undefined;
-        body = seedBySpawningEngine({
-          mailbox,
-          requestId,
-          jobId,
-          files,
-          example: args.example === true,
-          outDir,
-          clock,
-          expiresAt,
-          ttlSeconds: ttl,
-        });
+        throw new MailboxError(
+          "missing-seed-source",
+          "seed requires --from-d01-execution or --from-out-dir; this mailbox does not spawn a competing engine",
+        );
       }
       stdout.write(`${JSON.stringify(body, null, 2)}\n`);
       return { exitCode: 0, body };

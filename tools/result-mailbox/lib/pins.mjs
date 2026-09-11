@@ -1,6 +1,7 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const OWNED_DIR = join(here, "..");
@@ -47,8 +48,12 @@ export const I01_HASHER_PR = 54;
 export const F08_PIN = "bae3e7cd5034b21019fb272a99d88db964b831ee";
 export const D01_EXECUTION_CONTRACT = "samedaydesk.paid-useful-jobs.execution.v1";
 export const D01_RECEIPT_SCHEMA = "samedaydesk.paid-useful-jobs.receipt.v1";
-export const D01_RECEIPT_PIN = "6bed72dd22a396134aa5c957933b42c3a5746698";
-export const D01_RECEIPT_PR = 52;
+export function d01ReceiptPin() {
+  const r = spawnSync("git", ["rev-parse", "HEAD"], { cwd: REPO_ROOT, encoding: "utf8" });
+  return String(r.stdout || "").trim();
+}
+export const D01_RECEIPT_PIN = d01ReceiptPin();
+export const D01_RECEIPT_PR = 74;
 export const STARTING_REF = "baf09dc591c83aec94e0cf42c5c64076fc5b98e3";
 
 export const REQUEST_ID_RE = /^[A-Za-z0-9._-]{1,128}$/;
@@ -61,3 +66,14 @@ export const MAX_ENVELOPE_BYTES = 1_048_576;
 export const ENGINE_TIMEOUT_MS = 120_000;
 
 export const VENDOR_BUDGET_OUTPUTS = Object.freeze(["budget-impact.json", "budget-impact.md"]);
+
+export function kitEngineProvenance() {
+  return {
+    package: USEFUL_JOBS_PACKAGE,
+    version: USEFUL_JOBS_VERSION,
+    cli: USEFUL_JOBS_CLI,
+    archiveSha256: USEFUL_JOBS_ARCHIVE_SHA256,
+    archiveBytes: USEFUL_JOBS_ARCHIVE_BYTES,
+    purchaseAuthority: USEFUL_JOBS_PURCHASE_AUTHORITY,
+  };
+}

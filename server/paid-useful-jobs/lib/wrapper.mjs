@@ -1,8 +1,8 @@
-import { copyFileSync, existsSync, mkdirSync, mkdtempSync, statSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
-import { getJob } from "./jobs.mjs";
+import { createJobLookup, getJob as defaultGetJob } from "./jobs.mjs";
 import { freezeRequest, materializeInputs, WrapperRefuse } from "./input-guard.mjs";
 import { inspectSample, wantsLiveSale } from "./sample-guard.mjs";
 import { classifyFunding, isFixturePayment, wouldSettleIfGuardOmitted } from "./funding.mjs";
@@ -99,13 +99,26 @@ function listPresentOutputs(dir, names) {
     .map((name) => fileEntry(name, join(dir, name)));
 }
 
+function persistReceipt(runOutDir, receipt, publishedDir = null) {
+  if (!runOutDir) return;
+  mkdirSync(runOutDir, { recursive: true });
+  const src = join(runOutDir, "receipt.json");
+  writeFileSync(src, `${JSON.stringify(receipt, null, 2)}\n`);
+  if (publishedDir && publishedDir !== runOutDir) {
+    mkdirSync(publishedDir, { recursive: true });
+    copyFileSync(src, join(publishedDir, "receipt.json"));
+  }
+}
+
 /**
  * One execution kernel. CLI, library, and local HTTP stay thin.
- * Inject acquireKit / runEngine only in tests.
+ * Inject acquireKit / runEngine / getJob / catalog only in tests or composition.
  */
 export function createExecutor(deps = {}) {
   const acquireKit = deps.acquireKit || ensureUsefulJobsKit;
   const runEngine = deps.runEngine || runEngineJob;
+  const resolveJob =
+    deps.getJob || (deps.catalog ? createJobLookup(deps.catalog).getJob : defaultGetJob);
 
   return async function runPaidOffer(request = {}) {
     const frozen = freezeRequest(request);
@@ -122,7 +135,7 @@ export function createExecutor(deps = {}) {
 
     let job;
     try {
-      job = getJob(jobId);
+      job = resolveJob(jobId);
     } catch (err) {
       return rejection({
         jobId,
@@ -137,7 +150,9 @@ export function createExecutor(deps = {}) {
     try {
       const work = mkdtempSync(join(tmpdir(), `puj-${jobId}-`));
       const runOutDir = mkdtempSync(join(tmpdir(), `puj-${jobId}-out-`));
-      const materialized = materializeInputs(jobId, frozen, join(work, "inputs"));
+      const materialized = materializeInputs(jobId, frozen, join(work, "inputs"), {
+        getJob: resolveJob,
+      });
       const example = materialized.example;
 
       let kit;
@@ -304,6 +319,7 @@ export function createExecutor(deps = {}) {
         receipt.transport = transport;
         receipt.analysis = analysis;
         receipt.delivery = delivery;
+        persistReceipt(runOutDir, receipt, frozen.outDir || null);
         return {
           ok: false,
           refused: true,
@@ -349,6 +365,7 @@ export function createExecutor(deps = {}) {
       receipt.analysis = analysis;
       receipt.delivery = { ...delivery, publishedDir };
       receipt.runOutDir = runOutDir;
+      persistReceipt(runOutDir, receipt, publishedDir);
 
       return {
         ok: true,

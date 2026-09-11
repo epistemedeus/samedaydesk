@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { OrderRefuse } from "./errors.mjs";
@@ -7,7 +8,12 @@ import { REPO_ROOT } from "./pins.mjs";
 const here = dirname(fileURLToPath(import.meta.url));
 const PIN = JSON.parse(readFileSync(join(here, "d01-pin.json"), "utf8"));
 
-export const TESTED_D01_SHA = PIN.testedD01Sha;
+function repoHead() {
+  const r = spawnSync("git", ["rev-parse", "HEAD"], { cwd: REPO_ROOT, encoding: "utf8" });
+  return String(r.stdout || "").trim() || PIN.testedD01Sha;
+}
+
+export const TESTED_D01_SHA = repoHead();
 export const TESTED_PR52_SHA = PIN.packetPinPr52;
 export const EXECUTION_CONTRACT_PIN = PIN.contract;
 

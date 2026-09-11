@@ -178,7 +178,8 @@ export function seedFromD01Execution({
       { detail: { expectedJobId, executionJobId: checked.jobId } },
     );
   }
-  const resolvedOut = outDir || checked.outDir || checked.receipt?.outDir;
+  const resolvedOut =
+    outDir || checked.runOutDir || checked.receipt?.runOutDir || checked.receipt?.outDir;
   if (!resolvedOut) {
     throw refuse("d01-missing-output", "D01 execution seed requires outDir");
   }

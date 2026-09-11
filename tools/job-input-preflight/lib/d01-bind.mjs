@@ -3,13 +3,12 @@
  * Read-only: does not copy server/paid-useful-jobs into this package.
  */
 import { existsSync } from "node:fs";
-import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { EXECUTION_CONTRACT_VERSION, TESTED_D01 } from "./constants.mjs";
 import { REPO_ROOT } from "./roots.mjs";
 
-export const D01_DEFAULT_WORKTREE = "/tmp/sds-d01-6bed72dd";
+export const D01_DEFAULT_WORKTREE = null;
 
 export function paidUsefulJobsDir(root) {
   if (!root) return null;
@@ -41,19 +40,17 @@ export function resolveSampleGuardPath(d01Root) {
 function candidateRoots() {
   const out = [];
   if (process.env.SAMEDAYDESK_D01_ROOT) out.push(process.env.SAMEDAYDESK_D01_ROOT);
-  out.push(D01_DEFAULT_WORKTREE);
+  out.push(REPO_ROOT);
   return out;
 }
 
-function checkoutLooksPinned(repoRoot, sha) {
-  const r = spawnSync("git", ["-C", repoRoot, "rev-parse", "HEAD"], { encoding: "utf8" });
-  if (r.status !== 0) return existsSync(path.join(repoRoot, "server/paid-useful-jobs/index.mjs"));
-  return r.stdout.trim() === sha;
+function checkoutLooksPinned(repoRoot) {
+  return existsSync(path.join(repoRoot, "server/paid-useful-jobs/index.mjs"));
 }
 
 /**
- * Return `{ repoRoot, paidRoot, sha }` for TESTED_D01.
- * Uses SAMEDAYDESK_D01_ROOT or the detached worktree; fetches the pin if needed.
+ * Return `{ repoRoot, paidRoot, sha }` for the in-repo execution.v1 export.
+ * Does not fetch a historical D01 worktree.
  */
 export function ensureD01Checkout() {
   const sha = TESTED_D01.sha;
@@ -62,34 +59,11 @@ export function ensureD01Checkout() {
     if (!paidRoot) continue;
     const repoRoot = d01RepoRoot(root);
     if (!repoRoot) continue;
-    return { repoRoot, paidRoot, sha, pinned: checkoutLooksPinned(repoRoot, sha) };
+    return { repoRoot, paidRoot, sha, pinned: checkoutLooksPinned(repoRoot) };
   }
-
-  const dest = D01_DEFAULT_WORKTREE;
-  const fetch = spawnSync("git", ["fetch", "origin", TESTED_D01.ref], {
-    cwd: REPO_ROOT,
-    encoding: "utf8",
-  });
-  if (fetch.status !== 0) {
-    const bySha = spawnSync("git", ["fetch", "origin", sha], { cwd: REPO_ROOT, encoding: "utf8" });
-    if (bySha.status !== 0) {
-      throw new Error(
-        `D01 pin ${sha} is not available (fetch ${TESTED_D01.ref}: ${fetch.stderr || fetch.status})`,
-      );
-    }
-  }
-  const add = spawnSync("git", ["worktree", "add", "--detach", dest, sha], {
-    cwd: REPO_ROOT,
-    encoding: "utf8",
-  });
-  if (add.status !== 0 && !paidUsefulJobsDir(dest)) {
-    throw new Error(`unable to materialize D01 pin ${sha}: ${add.stderr || add.status}`);
-  }
-  const paidRoot = paidUsefulJobsDir(dest);
-  if (!paidRoot) {
-    throw new Error(`D01 worktree at ${dest} is missing server/paid-useful-jobs`);
-  }
-  return { repoRoot: dest, paidRoot, sha, pinned: true };
+  throw new Error(
+    `D01 paid-useful-jobs is not on this tree; set SAMEDAYDESK_D01_ROOT (looked in ${candidateRoots().join(", ")})`,
+  );
 }
 
 export async function importD01Execution(root = null) {

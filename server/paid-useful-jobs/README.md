@@ -23,25 +23,28 @@ and are not published to the live catalog.
 From the repository root, Node >= 22:
 
 ```bash
-# 1. Use in-repo engines (committed public archive; wrapper extracts + verifies sha256)
-# 2. Supply caller files (these fixtures are not SAMPLE kit examples)
-# 3. Run the wrapper
-# 4. Read usable outputs + receipt
+node server/paid-useful-jobs/bin/deliver.mjs \
+  --job vendor-budget-impact \
+  --before server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/before.json \
+  --after server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/after.json
+```
 
+That path is preflight → managed-order → executor → `verifyComplete(runOutDir)`
+→ mailbox pickup/ack. Isolated `runOutDir` is delivery identity; `--out-dir`
+is a last-writer published copy. `--second-after` runs a disjoint second job.
+`--http` mounts loopback `POST /execute` for the order client.
+
+Single-job CLI (same kernel):
+
+```bash
 node server/paid-useful-jobs/bin/cli.mjs run vendor-budget-impact \
   --before server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/before.json \
   --after server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/after.json \
-  --funding reserved-fixture \
-  --payment server/paid-useful-jobs/fixtures/payment/reserved-fixture.json \
   --out-dir /tmp/paid-vendor-budget
-
-# Usable outputs:
-#   /tmp/paid-vendor-budget/budget-impact.json
-#   /tmp/paid-vendor-budget/budget-impact.md
-# Receipt:
-#   /tmp/paid-vendor-budget/receipt.json
-# fundingState is reserved-fixture; sold is always false.
 ```
+
+Usable outputs live under that `--out-dir` as a convenience copy. Receipts bind
+`runOutDir`. `sold` is always false.
 
 `--example` / SAMPLE inputs produce labeled sample output and are **not** a paid sale.
 
@@ -57,6 +60,11 @@ node server/paid-useful-jobs/bin/cli.mjs run vendor-budget-impact --example
 
 ```bash
 npm run test:paid-useful-jobs
+npm run test:job-input-preflight
+npm run test:job-output-atomicity
+npm run test:managed-useful-jobs-order
+npm run test:result-mailbox
+npm run test:d28-journey
 ```
 
 Seeded fail-closed cases:

@@ -17,14 +17,15 @@ export const SDS52 = Object.freeze({
   pr: 52,
   cliRel: "server/paid-useful-jobs/bin/cli.mjs",
   libraryRel: "server/paid-useful-jobs/index.mjs",
+  historical: true,
 });
 
 export const D01_OBSERVED = Object.freeze({
   id: "W5-D01",
-  sha: "6bed72dd22a396134aa5c957933b42c3a5746698",
+  sha: "in-repo",
   pr: 74,
   contract: D01_CONTRACT,
-  onThisBranch: false,
+  onThisBranch: true,
 });
 
 export const CO03 = Object.freeze({
@@ -37,10 +38,10 @@ export const CO03 = Object.freeze({
 
 export const CO17 = Object.freeze({
   id: "W4-commerce-17",
-  sha: "58cba6324c1d9793d344bc13154b8b2380e8166f",
-  pr: 69,
+  sha: "in-repo",
+  pr: 112,
   path: "tools/job-output-atomicity/",
-  onThisBranch: false,
+  onThisBranch: true,
 });
 
 export const WRAPPER_CLI = join(REPO_ROOT, SDS52.cliRel);

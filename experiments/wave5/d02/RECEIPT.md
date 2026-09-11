@@ -31,7 +31,7 @@ The wrapper kernel is not copied into this package.
 
 ## Remaining limits
 
-- D01 does not enforce vendor-budget-impact pricing-row schema. Schema-invalid staged bytes are `input-schema-mismatch` here and may still execute there (not an engine crash when transport/delivery are truthful).
+- D01 now also refuses vendor-budget-impact pricing-row schema at service entry (`input-schema-mismatch`). This adapter still gates first.
 - Unfunded SAMPLE may run as labeled sample on D01; reserved-fixture SAMPLE is `sample-not-a-sale`. This adapter refuses SAMPLE as `disguised-sample` before bind.
 - Kit 8 MiB vs execution 1 MiB is explicit (`input-too-large` vs `input-oversize`).
 - Postgres is not a surface of this package.

@@ -3,7 +3,7 @@ import { existsSync, mkdtempSync, rmSync, unlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "node:test";
-import { ARCHIVE_SHA256, DEFAULT_OUTPUTS, RECEIPT_SCHEMA } from "../lib/pins.mjs";
+import { ARCHIVE_SHA256, DEFAULT_OUTPUTS, D01_CONTRACT, RECEIPT_SCHEMA } from "../lib/pins.mjs";
 import { parseJson, SDS52_CALLER, spawnD28 } from "./helpers.mjs";
 
 describe("pack and readback", { timeout: 180_000 }, () => {
@@ -32,7 +32,7 @@ describe("pack and readback", { timeout: 180_000 }, () => {
     assert.equal(body.packet.field.liveReturn, "absent");
     assert.equal(body.packet.firstJob.analysisStatus, "actionable");
     assert.equal(body.packet.firstJob.receiptSchema, RECEIPT_SCHEMA);
-    assert.equal(body.packet.firstJob.classified.contract, null);
+    assert.equal(body.packet.firstJob.classified.contract, D01_CONTRACT);
     for (const name of DEFAULT_OUTPUTS) {
       assert.equal(existsSync(join(packetDir, "first", name)), true);
     }
@@ -42,8 +42,8 @@ describe("pack and readback", { timeout: 180_000 }, () => {
     assert.equal(rb.status, 0, rb.stderr + rb.stdout);
     const readback = parseJson(rb.stdout);
     assert.equal(readback.ok, true);
-    assert.equal(readback.sds52LacksD01Contract, true);
-    assert.equal(readback.d01ContractObservedOnResult, false);
+    assert.equal(readback.sds52LacksD01Contract, false);
+    assert.equal(readback.d01ContractObservedOnResult, true);
     assert.ok(readback.listedJobs.includes("vendor-budget-impact"));
   });
 

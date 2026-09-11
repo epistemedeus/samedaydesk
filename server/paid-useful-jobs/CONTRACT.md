@@ -52,8 +52,8 @@ Local HTTP (loopback only):
 
 `ok: false` with `code` `sample-not-a-sale`, `missing-required-inputs`,
 `reserved-fixture-requires-payment`, `unknown-job`, `kit-acquisition-failed`,
-`engine-crash`, `engine-timeout`, `missing-output` are truthful refusals, not
-sales.
+`engine-crash`, `engine-timeout`, `missing-output`, `input-schema-mismatch` are
+truthful refusals, not sales.
 
 A complete artifact set with analysis `refused` / `informational` can be
 `ok: true` (useful no-change or refusal report). Crash, timeout, missing JSON,
@@ -68,10 +68,36 @@ provenance still uses the original source path). The engine writes to a
 fresh out directory. `outputs` and `receipt.outputsDigest` are those isolated
 bytes. Caller `outDir` is a published copy of a complete run, not the identity
 of delivery. Two executions may share a publication path; each receipt still
-describes its own `runOutDir`.
+describes its own `runOutDir`. Receipt JSON is written into `runOutDir`.
+
+Positive schema validation runs at this service entry (`lib/input-schema.mjs`)
+after staging. Syntax-only `JSON.parse` is not enough: vendor-budget-impact
+requires a `rows` array of `{field, value, unit}` objects. Preflight may refuse
+the same bytes first; the kernel still refuses them if they arrive here.
+
+`createExecutor({ catalog })` or `createExecutor({ getJob })` is the catalog
+injection seam. M01 is not on this tree.
+
+## Delivery composition
+
+```bash
+node server/paid-useful-jobs/bin/deliver.mjs \
+  --job vendor-budget-impact \
+  --before server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/before.json \
+  --after server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/after.json
+```
+
+That path is preflight → managed-order → executor → `verifyComplete(runOutDir)`
+→ mailbox pickup/ack. `--second-after` runs a disjoint second job. `--http`
+mounts loopback `POST /execute` for the order client.
 
 ## Tests
 
 ```bash
 npm run test:paid-useful-jobs
+npm run test:job-input-preflight
+npm run test:job-output-atomicity
+npm run test:managed-useful-jobs-order
+npm run test:result-mailbox
+npm run test:d28-journey
 ```

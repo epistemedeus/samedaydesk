@@ -20,10 +20,10 @@ test("contract export names the tested D01 execution.v1 pin and remaining bindin
   assert.equal(PREFLIGHT_CONTRACT.testedD01.ref, "codex/w5-d01-20260911");
   assert.equal(PREFLIGHT_CONTRACT.executionContractVersion, EXECUTION_CONTRACT_VERSION);
   assert.match(PREFLIGHT_CONTRACT.remainingIntegrationBinding, /execution\.v1/);
-  assert.match(PREFLIGHT_CONTRACT.remainingIntegrationBinding, /concurrent\/freeze/);
+  assert.match(PREFLIGHT_CONTRACT.remainingIntegrationBinding, /schema/);
 });
 
-test("D01 inspectSample at 6bed72dd detects inline JSON SAMPLE; D02 CLI refuses it", async () => {
+test("D01 inspectSample detects inline JSON SAMPLE; D02 CLI refuses it", async () => {
   const checkout = ensureD01Checkout();
   const guardPath = path.join(checkout.paidRoot, "lib/sample-guard.mjs");
   const mod = await import(pathToFileURL(guardPath).href);

@@ -11,11 +11,10 @@ This worker did not deploy, spend, pay out, or message anyone.
 
 ## Remaining before a field return signal can be non-absent
 
-1. Bind W5-D01 `samedaydesk.paid-useful-jobs.execution.v1` at observed `6bed72dd22a396134aa5c957933b42c3a5746698` (PR74) when Root selects it. Re-run this kit against that CLI; do not assume SDS52 `ok` equals D01 `ok`.
-2. Optionally consume Co03 `tools/repeat-job-binder/` `7c55738cc5730985b709282af6c24e10f0a8442f` and Co17 `verify-complete` `58cba6324c1d9793d344bc13154b8b2380e8166f` from their branches. They are not on this tree.
-3. Publish a real public artifact (catalog route, not homepage rewrite). Record origin + archive sha256 in an evidence file.
-4. Run D25/D27 recruited or independent runtime with the caller's own input.
-5. If a second paid/useful job is observed, write evidence:
+1. D01 `execution.v1` and Co17 `verify-complete` are on this composition branch; Co03 binder is still off-tree.
+2. Publish a real public artifact (catalog route, not homepage rewrite). Record origin + archive sha256 in an evidence file.
+3. Run D25/D27 recruited or independent runtime with the caller's own input.
+4. If a second paid/useful job is observed, write evidence:
 
 ```json
 {

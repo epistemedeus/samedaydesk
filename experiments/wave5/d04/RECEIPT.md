@@ -7,7 +7,7 @@
 **StartingRef:** `13d1fc023ce235b1611dc868caf5dd84fe5f11c7`  
 **PR:** https://github.com/epistemedeus/samedaydesk/pull/107  
 **Pilot source:** `epistemedeus/pilot@95b3f3a47f5b1b69bd237e4c978fc3376221365d`  
-**Tested D01:** `6bed72dd22a396134aa5c957933b42c3a5746698` (`codex/w5-d01-20260911`, PR74)  
+**Tested D01:** this tree `codex/w5-d01-20260911` PR74 (historical pin `6bed72dd` not spawned)  
 **Packet PR52 pin:** `aeef964fa188443078958d9d6d393afae1d542ee`  
 **Contract:** `samedaydesk.paid-useful-jobs.execution.v1`
 
@@ -28,8 +28,7 @@ once. `sold` stays false.
 ## Tests
 
 ```bash
-export MANAGED_ORDER_WRAPPER_ROOT=/tmp/ro-worktrees/sds-d01/server/paid-useful-jobs
-node --test tools/managed-useful-jobs-order/test/*.test.mjs
+npm run test:managed-useful-jobs-order
 ```
 
 **21 pass, 0 fail, 0 skipped, 0 cancelled** (Node v22.14.0). Suites: concurrent 2, boundaries 3, HTTP listener 2, hygiene 3, journey 1, Postgres 2, seeded 8. Real CLI/process, loopback HTTP, D01 `/execute`, disposable Postgres 16. Missing deps were not skipped.

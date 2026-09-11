@@ -10,6 +10,7 @@ import { createExecutor, runPaidOffer } from "../lib/wrapper.mjs";
 import { runEngineJob } from "../lib/engine.mjs";
 import { EXECUTION_CONTRACT_VERSION } from "../lib/contract.mjs";
 import { createExecutionServer, listenExecutionServer } from "../lib/http.mjs";
+import { createJobLookup, JOBS } from "../lib/jobs.mjs";
 import { REPO_ROOT } from "../lib/pins.mjs";
 import { callerBudget, loadReservedPayment } from "./helpers.mjs";
 
@@ -40,7 +41,7 @@ describe("W5-D01 execution contract", { timeout: 180_000 }, () => {
 
     const result = await runPaidOffer({
       jobId: "evidence-ci-annotation",
-      inputs: { input: JSON.stringify({ label: "SAMPLE", sampleLabel: "SAMPLE", findings: [] }) },
+      inputs: { input: JSON.stringify({ schema: "s137.consumer-evidence.packet.v1", label: "SAMPLE", sampleLabel: "SAMPLE", findings: [] }) },
       fundingIntent: "reserved-fixture",
       payment: loadReservedPayment(),
     });
@@ -498,5 +499,72 @@ describe("W5-D01 execution contract", { timeout: 180_000 }, () => {
     assert.notEqual(a.receipt.outputsDigest, b.receipt.outputsDigest);
     assert.ok(a.outputs.every((o) => o.path.startsWith(a.runOutDir)));
     assert.ok(b.outputs.every((o) => o.path.startsWith(b.runOutDir)));
+  });
+
+  it("schema-invalid vendor-budget rows are refused at service entry, not useful", async () => {
+    const work = mkdtempSync(join(tmpdir(), "puj-schema-"));
+    const bad = join(work, "before.json");
+    writeFileSync(bad, `${JSON.stringify({ hello: "world" })}\n`);
+    const result = await runPaidOffer({
+      jobId: "vendor-budget-impact",
+      inputs: { before: bad, after },
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.code, "input-schema-mismatch");
+    assert.equal(result.transport, "rejected");
+    assert.equal(result.sold, false);
+    assert.equal(result.delivery.complete, false);
+  });
+
+  it("CLI schema-invalid pricing JSON is not a useful delivery", () => {
+    const work = mkdtempSync(join(tmpdir(), "puj-schema-cli-"));
+    const bad = join(work, "before.json");
+    writeFileSync(bad, `${JSON.stringify({ hello: "world" })}\n`);
+    const r = spawnSync(
+      process.execPath,
+      [cli, "run", "vendor-budget-impact", "--before", bad, "--after", after],
+      { encoding: "utf8", cwd: REPO_ROOT, timeout: 30_000, maxBuffer: 8 * 1024 * 1024 },
+    );
+    assert.equal(r.status, 2);
+    const body = JSON.parse(r.stdout);
+    assert.equal(body.code, "input-schema-mismatch");
+    assert.equal(body.ok, false);
+  });
+
+  it("createExecutor catalog/getJob injection does not wait on M01", async () => {
+    const lookup = createJobLookup({ jobs: JOBS.map((j) => ({ ...j })) });
+    let seen = null;
+    const execute = createExecutor({
+      getJob(id) {
+        seen = id;
+        return lookup.getJob(id);
+      },
+      runEngine(_jobId, opts) {
+        return writeExpected(opts.outDir);
+      },
+    });
+    const result = await execute({
+      jobId: "vendor-budget-impact",
+      inputs: callerBudget(),
+    });
+    assert.equal(seen, "vendor-budget-impact");
+    assert.equal(result.ok, true, result.error);
+    assert.equal(existsSync(join(result.runOutDir, "receipt.json")), true);
+  });
+
+  it("createExecutor({ catalog }) is enough without a getJob function", async () => {
+    const execute = createExecutor({
+      catalog: { jobs: JOBS.map((j) => ({ ...j })) },
+      runEngine(_jobId, opts) {
+        return writeExpected(opts.outDir);
+      },
+    });
+    const result = await execute({
+      jobId: "vendor-budget-impact",
+      inputs: callerBudget(),
+    });
+    assert.equal(result.ok, true, result.error);
+    assert.equal(result.contract, EXECUTION_CONTRACT_VERSION);
+    assert.equal(existsSync(join(result.runOutDir, "receipt.json")), true);
   });
 });

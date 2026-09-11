@@ -3,34 +3,23 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
 import { sha256File } from "../lib/digest.mjs";
-import { CLOCK, EXPIRES, afterPath, beforePath, parseJson, runMailbox, tmp } from "./helpers.mjs";
+import { CLOCK, EXPIRES, afterPath, beforePath, parseJson, runMailbox, seedVendorFromD01, tmp } from "./helpers.mjs";
 
-describe("literal caller journey (local-runtime engine)", { timeout: 120_000 }, () => {
-  it("seeds vendor-budget-impact from engine outputs and picks up matching bytes", () => {
+describe("literal caller journey (D01 execution then mailbox)", { timeout: 180_000 }, () => {
+  it("seeds vendor-budget-impact from D01 runOutDir and picks up matching bytes", () => {
     const mailbox = tmp("rmb-mail-");
-    const engineOut = tmp("rmb-engine-");
     const pickupOut = tmp("rmb-pickup-");
     const requestId = "req-vendor-budget-1";
 
-    const seed = runMailbox([
-      "seed",
-      "--mailbox",
+    const { wrapper, execution, seed, identityDir } = seedVendorFromD01({
       mailbox,
-      "--request-id",
       requestId,
-      "--job-id",
-      "vendor-budget-impact",
-      "--before",
-      beforePath,
-      "--after",
-      afterPath,
-      "--out-dir",
-      engineOut,
-      "--clock",
-      CLOCK,
-      "--expires-at",
-      EXPIRES,
-    ]);
+      before: beforePath,
+      after: afterPath,
+    });
+    assert.equal(wrapper.status, 0, wrapper.stderr + wrapper.stdout);
+    assert.equal(execution.ok, true, execution.error);
+    assert.equal(execution.contract, "samedaydesk.paid-useful-jobs.execution.v1");
     assert.equal(seed.status, 0, seed.stderr + seed.stdout);
     const seeded = parseJson(seed.stdout);
     assert.equal(seeded.ok, true);
@@ -38,8 +27,8 @@ describe("literal caller journey (local-runtime engine)", { timeout: 120_000 }, 
     assert.equal(seeded.deliveredToBuyer, false);
     assert.equal(seeded.envelope.jobId, "vendor-budget-impact");
     assert.match(seeded.envelope.termsVersion, /^sha256:[0-9a-f]{64}$/);
-    assert.equal(existsSync(join(engineOut, "budget-impact.json")), true);
-    assert.equal(existsSync(join(engineOut, "budget-impact.md")), true);
+    assert.equal(existsSync(join(identityDir, "budget-impact.json")), true);
+    assert.equal(existsSync(join(identityDir, "budget-impact.md")), true);
 
     const pickup = runMailbox([
       "pickup",
@@ -64,18 +53,15 @@ describe("literal caller journey (local-runtime engine)", { timeout: 120_000 }, 
 
     const jsonName = "budget-impact.json";
     const mdName = "budget-impact.md";
-    const srcJson = join(engineOut, jsonName);
-    const srcMd = join(engineOut, mdName);
+    const srcJson = join(identityDir, jsonName);
+    const srcMd = join(identityDir, mdName);
     const outJson = join(pickupOut, jsonName);
     const outMd = join(pickupOut, mdName);
     assert.equal(existsSync(outJson), true);
     assert.equal(existsSync(outMd), true);
     assert.equal(sha256File(outJson), sha256File(srcJson));
     assert.equal(sha256File(outMd), sha256File(srcMd));
-    assert.deepEqual(
-      readFileSync(outJson),
-      readFileSync(srcJson),
-    );
+    assert.deepEqual(readFileSync(outJson), readFileSync(srcJson));
 
     const pickupJson = JSON.parse(readFileSync(join(pickupOut, "pickup.json"), "utf8"));
     assert.equal(pickupJson.schema, "samedaydesk.result-mailbox.pickup.v1");

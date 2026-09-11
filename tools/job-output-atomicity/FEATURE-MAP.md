@@ -8,7 +8,7 @@
 | State | `complete` / `partial` / `unknown`. Never treats missing receipt, truncated JSON, `outputs: [{}]`, unknown job/schema, or special files as complete. `sold` remains false. |
 | Tests | `node --test --test-concurrency=1 tools/job-output-atomicity/test/*.test.mjs` |
 | Account prerequisite | None. Offline wrapper + local disk. Optional loopback HTTP. No wallet, facilitator, or live settle. |
-| Producer | Injected F08 CLI from worktree `aeef964` (`fable/f08-paid-wrappers`). D01 owns later producer amendments. |
+| Producer | This tree's D01 CLI (`server/paid-useful-jobs/bin/cli.mjs`). Historical F08 `aeef964` is not spawned. |
 | Hash identity | I01 Neo PR54 `hashTermsVersion` (`sha256:` + 64 hex), vendored hasher only, not the earned-work kernel. Output identity is not forced equal to a receipt disclosure hash. |
 
 ## Caller journey

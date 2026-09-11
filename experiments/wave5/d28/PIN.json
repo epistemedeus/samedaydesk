@@ -4,21 +4,22 @@
   "task": "W5-D28",
   "repo": "epistemedeus/samedaydesk",
   "testedImplementation": {
-    "id": "SDS52",
-    "ref": "fable/f08-paid-wrappers",
-    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
-    "pr": 52,
+    "id": "W5-D01",
+    "ref": "codex/w5-d01-20260911",
+    "sha": "in-repo",
+    "pr": 74,
     "cli": "server/paid-useful-jobs/bin/cli.mjs",
     "library": "server/paid-useful-jobs/index.mjs",
     "receiptSchema": "samedaydesk.paid-useful-jobs.receipt.v1",
-    "note": "This branch tests SDS52. It does not claim W5-D01 createExecutor/HTTP behavior."
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+    "note": "Rebound to this tree's execution.v1. SDS52 aeef964 is historical."
   },
   "remainingBinding": {
     "id": "W5-D01",
     "contract": "samedaydesk.paid-useful-jobs.execution.v1",
-    "sha": "6bed72dd22a396134aa5c957933b42c3a5746698",
+    "sha": "in-repo",
     "pr": 74,
-    "onThisBranch": false
+    "onThisBranch": true
   },
   "selectedConsumers": [
     {
@@ -31,9 +32,9 @@
     {
       "id": "W4-commerce-17",
       "path": "tools/job-output-atomicity/",
-      "sha": "58cba6324c1d9793d344bc13154b8b2380e8166f",
-      "pr": 69,
-      "onThisBranch": false
+      "sha": "in-repo",
+      "pr": 112,
+      "onThisBranch": true
     }
   ],
   "engineArchive": {

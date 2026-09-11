@@ -13,7 +13,7 @@ Integration owner: W5-D01
 | Ref | SHA | Use |
 | --- | --- | --- |
 | SDS main / PR51 useful-jobs | this checkout | catalog + archive |
-| D01 execution.v1 | `6bed72dd22a396134aa5c957933b42c3a5746698` | spawned `server/paid-useful-jobs/bin/cli.mjs` and imported `index.mjs` from a read-only worktree. Mailbox does not import `wrapper.mjs`. |
+| D01 execution.v1 | this tree PR 74 | spawned `server/paid-useful-jobs/bin/cli.mjs` and imported `index.mjs`. Mailbox does not import `wrapper.mjs`. Historical pin `6bed72dd` is not spawned. |
 | I01 Neo PR54 hasher | `819fa637ecf5e5177c84efc16fcaa18d57017631` | already vendored |
 
 Mailbox `termsVersion`:
