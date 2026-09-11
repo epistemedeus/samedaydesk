@@ -2,7 +2,7 @@
 
 **Date:** 11 September 2026
 **Branch:** `fable/w2-09-f07-consumer-evidence-refresh`
-**HEAD:** recorded after first commit on this branch
+**HEAD:** `a3b7101` on `fable/w2-09-f07-consumer-evidence-refresh`
 **Base:** `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545` (PR51 useful-jobs public integration; includes PR50)
 
 ## What
