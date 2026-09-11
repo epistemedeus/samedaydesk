@@ -1,0 +1,37 @@
+{
+  "schema": "samedaydesk.caller-example-corpus.v1",
+  "title": "Caller-supplied example corpus",
+  "entrypoint": "node experiments/wave5/m11/bin/corpus.mjs",
+  "commands": ["help", "contract", "validate", "run", "compare"],
+  "engine": {
+    "owner": "W5-M01",
+    "testedImplementation": {
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "wrapperCli": "server/paid-useful-jobs/bin/cli.mjs",
+      "wrapperLibrary": "server/paid-useful-jobs/lib/wrapper.mjs",
+      "catalog": "client/public/for-agents/useful-jobs/catalog.json"
+    },
+    "remainingBinding": "W5-M01 catalog/engine export when it lands; consumers must not assume a future sibling's schema."
+  },
+  "case": {
+    "required": ["id", "jobId", "inputs"],
+    "inputs": "Caller file paths for the job's required (and optional) wrapper flags, without --example.",
+    "role": "caller"
+  },
+  "outcomes": {
+    "transport": ["ok", "failed"],
+    "analysis": ["delivered", "no-change", "refused", "sample", "failed"],
+    "notes": [
+      "transportOk means the wrapper CLI returned parseable JSON. It is not delivery.",
+      "sample is a labeled SAMPLE/--example demonstration, not independently valid caller input.",
+      "no-change and refused can be useful analysis. They are not engine crashes.",
+      "Meaningful difference is domain status/actions/keys, not forced digest equality."
+    ]
+  },
+  "forbidden": [
+    "Treating kit samples/ or --example as a caller corpus member",
+    "Vendoring a second useful-jobs kernel",
+    "Forcing unlike job or terms hashes equal"
+  ]
+}

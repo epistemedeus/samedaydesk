@@ -1,0 +1,8 @@
+{
+  "label": "caller",
+  "note": "Stable ops-desk pair. Valid no-change is useful output.",
+  "rows": [
+    { "field": "ops-llm-input", "value": 2.0, "unit": "USD/1M-tokens" },
+    { "field": "ops-llm-output", "value": 8.0, "unit": "USD/1M-tokens" }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "id": "harbor-feed-delta",
+  "jobId": "feed-agenda",
+  "inputs": {
+    "before": "before.xml",
+    "after": "after.xml"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "samedaydesk-w5-m11-caller-example-corpus",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Caller-supplied example corpus over the PR52 paid useful-jobs wrapper",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "corpus": "node bin/corpus.mjs",
+    "contract": "node bin/corpus.mjs contract"
+  }
+}

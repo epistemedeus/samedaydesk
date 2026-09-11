@@ -1,0 +1,8 @@
+{
+  "id": "ops-stable-rates",
+  "jobId": "vendor-budget-impact",
+  "inputs": {
+    "before": "before.json",
+    "after": "after.json"
+  }
+}

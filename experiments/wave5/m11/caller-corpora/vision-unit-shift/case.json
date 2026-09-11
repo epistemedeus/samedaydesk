@@ -1,0 +1,8 @@
+{
+  "id": "vision-unit-shift",
+  "jobId": "vendor-budget-impact",
+  "inputs": {
+    "before": "before.json",
+    "after": "after.json"
+  }
+}

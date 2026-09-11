@@ -1,0 +1,8 @@
+{
+  "label": "caller",
+  "note": "Independent yard-vision rates. Not a kit SAMPLE and not a live quote.",
+  "rows": [
+    { "field": "yard-vision", "value": 4.0, "unit": "USD/1M-tokens" },
+    { "field": "yard-rerank", "value": 0.4, "unit": "USD/1K-queries" }
+  ]
+}
