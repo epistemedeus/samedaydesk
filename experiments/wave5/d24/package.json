@@ -1,0 +1,17 @@
+{
+  "name": "w5-d24-clean-env-consumer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Clean-environment CLI/package consumer for D01, D07 and Co14/D08. Does not reimplement those kernels.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "w5-d24-clean-env": "./bin/clean-env.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs"
+  },
+  "license": "MIT"
+}

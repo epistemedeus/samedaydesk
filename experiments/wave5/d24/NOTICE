@@ -1,0 +1,16 @@
+W5-D24 clean-environment consumer
+=================================
+
+This directory is a thin consumer and install harness. It does not reimplement
+paid-useful-jobs, job-artifact-export, or the Python useful-jobs client.
+
+Licenses kept:
+
+- This consumer: MIT (`LICENSE`)
+- Co14 Python client (`tools/python-useful-jobs-client/` at the D08 pin): MIT
+- D07 job-artifact-export: MIT, including its isolated I01 hasher vendor pin
+- useful-jobs 1.0.0 archive: its own LICENSE/NOTICE inside the pinned tarball
+- D01 paid-useful-jobs: consumed read-only from the D01 sibling tree
+
+Do not treat this consumer as a second execution kernel or a published npm
+package of those siblings.
