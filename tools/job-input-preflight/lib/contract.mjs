@@ -1,4 +1,10 @@
-import { PREFLIGHT_CONTRACT_SCHEMA, TESTED_D01 } from "./constants.mjs";
+import {
+  EXECUTION_CONTRACT_VERSION,
+  EXECUTION_MAX_INPUT_BYTES,
+  KIT_MAX_LOCAL_INPUT_BYTES,
+  PREFLIGHT_CONTRACT_SCHEMA,
+  TESTED_D01,
+} from "./constants.mjs";
 
 export const PREFLIGHT_CONTRACT = Object.freeze({
   schema: PREFLIGHT_CONTRACT_SCHEMA,
@@ -6,15 +12,15 @@ export const PREFLIGHT_CONTRACT = Object.freeze({
   entry: "tools/job-input-preflight/bin/preflight.mjs",
   library: "tools/job-input-preflight/lib/preflight.mjs#preflight",
   wrapperRequest: "tools/job-input-preflight/lib/contract.mjs#toWrapperRequest",
+  executionContractVersion: EXECUTION_CONTRACT_VERSION,
   testedD01: TESTED_D01,
   remainingIntegrationBinding:
-    "W5-D01 had not published a Wave5 export when this adapter was tested. Pass toWrapperRequest(preflight).inputs file paths into runPaidOffer({ jobId, inputs }) at SDS52 aeef964f. That pin's inspectSample misses inline JSON strings; this CLI refuses those. D01 still enforces its 1 MiB cap after bind; this adapter uses the kit 8 MiB cap. Do not assume a future D01 head.",
+    "Pass toWrapperRequest(preflight).inputs staged file paths into createExecutor/runPaidOffer at epistemedeus/samedaydesk@6bed72dd22a396134aa5c957933b42c3a5746698 (PR 74, execution.v1). D01 concurrent/freeze tests are still closing separately; do not assume a later head. D01 does not enforce vendor-budget-impact pricing-row schema; this preflight does. Execution cap is 1 MiB (input-oversize); kit cap remains 8 MiB (input-too-large). This package never claims spend, tool cost, or settlement.",
 });
 
 /**
- * Map a successful preflight onto the current D01 runPaidOffer request shape.
- * Staged file paths are the bytes that were inspected. Inline JSON is emitted
- * as a JSON string, which D01 materializeInputs accepts.
+ * Map a successful preflight onto D01 runPaidOffer.
+ * Always file paths of the exact staged bytes. Never re-stringify inline JSON.
  */
 export function toWrapperRequest(result) {
   if (!result || result.ok !== true) {
@@ -27,15 +33,10 @@ export function toWrapperRequest(result) {
       inputs[key] = rec.path;
       continue;
     }
-    if (rec.stagedPath) {
-      inputs[key] = rec.stagedPath;
-      continue;
+    if (!rec.stagedPath) {
+      throw new Error(`toWrapperRequest missing stagedPath for ${key}; preflight must stage exact bytes`);
     }
-    if (rec.inline && rec.text) {
-      inputs[key] = rec.text;
-      continue;
-    }
-    if (rec.path) inputs[key] = rec.path;
+    inputs[key] = rec.stagedPath;
   }
   return {
     jobId: result.job,
@@ -43,3 +44,5 @@ export function toWrapperRequest(result) {
     example: false,
   };
 }
+
+export { EXECUTION_CONTRACT_VERSION, EXECUTION_MAX_INPUT_BYTES, KIT_MAX_LOCAL_INPUT_BYTES };

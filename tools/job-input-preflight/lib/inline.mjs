@@ -17,7 +17,7 @@ export function classifyInputValue(value) {
     return { kind: "json-value", text, value };
   }
   if (typeof value === "string" && looksJsonText(value)) {
-    return { kind: "json-text", text: value.endsWith("\n") ? value : `${value}\n` };
+    return { kind: "json-text", text: value };
   }
   if (typeof value === "string") {
     return { kind: "path", path: value };

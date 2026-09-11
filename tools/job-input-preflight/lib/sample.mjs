@@ -43,8 +43,8 @@ function inspectText(text, key, reasons) {
 
 /**
  * Inspect SAMPLE provenance on staged bytes (and original file paths).
- * Inline JSON strings are inspected from their staged text, which is the
- * D01 inspectSample gap at aeef964f (string JSON is treated as a missing path).
+ * D01 inspectSample at 6bed72dd also inspects inline JSON strings; this
+ * adapter still refuses disguised SAMPLE before bind.
  */
 export function inspectStagedSample({ example = false, staged = [] } = {}, { kitRoot = null } = {}) {
   const reasons = [];
@@ -70,13 +70,16 @@ export function inspectStagedSample({ example = false, staged = [] } = {}, { kit
 }
 
 /**
- * Optional consume of D01 inspectSample. File-path request shape only.
- * Inline JSON strings at the tested pin are known not to be detected there.
+ * Optional consume of D01 inspectSample from a paid-useful-jobs dir or repo root.
  */
 export async function consumeD01InspectSample(request, d01Root) {
   if (!d01Root) return null;
   const { pathToFileURL } = await import("node:url");
-  const abs = resolve(String(d01Root), "lib/sample-guard.mjs");
+  const { resolveSampleGuardPath } = await import("./d01-bind.mjs");
+  const abs = resolveSampleGuardPath(d01Root);
+  if (!abs) {
+    throw new Error("d01-root does not contain lib/sample-guard.mjs");
+  }
   const mod = await import(pathToFileURL(abs).href);
   if (typeof mod.inspectSample !== "function") {
     throw new Error("d01-root sample-guard.mjs does not export inspectSample");

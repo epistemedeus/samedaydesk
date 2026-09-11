@@ -1,8 +1,26 @@
 import fs from "node:fs";
 import path from "node:path";
-import { MAX_LOCAL_INPUT_BYTES } from "./constants.mjs";
+import {
+  EXECUTION_CONTRACT_VERSION,
+  EXECUTION_MAX_INPUT_BYTES,
+  KIT_MAX_LOCAL_INPUT_BYTES,
+  MAX_LOCAL_INPUT_BYTES,
+} from "./constants.mjs";
 import { sha256Buffer } from "./digest.mjs";
 import { refuse } from "./refuse.mjs";
+
+export function assertExecutionInputBytes(key, bytes, extra = {}) {
+  if (bytes > EXECUTION_MAX_INPUT_BYTES) {
+    throw refuse("input-oversize", `Input ${key} is ${bytes} bytes; max is ${EXECUTION_MAX_INPUT_BYTES}`, {
+      key,
+      bytes,
+      max: EXECUTION_MAX_INPUT_BYTES,
+      kitLimitBytes: KIT_MAX_LOCAL_INPUT_BYTES,
+      contract: EXECUTION_CONTRACT_VERSION,
+      ...extra,
+    });
+  }
+}
 
 export function flagToKey(flag) {
   return String(flag).replace(/^--/, "");

@@ -53,12 +53,12 @@ Options:
   --<flag>-bytes N       Declared byte length
   --out-dir DIR          Write preflight.json and staged bytes (never engine artifacts)
   --kit-root DIR         Optional useful-jobs kit root for samples/ path detection
-  --d01-root DIR         Optional SDS52 paid-useful-jobs dir to consume inspectSample
+  --d01-root DIR         Optional D01 checkout or paid-useful-jobs dir to consume inspectSample
   --help
 
-Does not run useful-jobs, F08 wrappers, or any payment path.
-No spend, tool-cost, or pre-spend savings claims.
-Invalid input schema and disguised SAMPLE are refused. Inline JSON is staged.
+Does not run useful-jobs or paid-useful-jobs. No spend, tool-cost, or settlement claims.
+Invalid input schema and disguised SAMPLE are refused. Inline JSON is staged as files.
+ok:true is bounded by execution.v1 1 MiB (input-oversize); kit cap remains 8 MiB.
 
 Example (from repo root; relative inputs resolve under --input-root):
   node tools/job-input-preflight/bin/preflight.mjs vendor-budget-impact \\

@@ -1,7 +1,9 @@
 /**
  * Injected engine adapter. Preflight must not run useful-jobs / F08 wrappers.
- * W5-D01 binds runPaidOffer after ok:true. Tested pin is SDS52 aeef964f.
+ * Bind createExecutor / runPaidOffer from the pinned execution.v1 export.
  */
+import { EXECUTION_CONTRACT_VERSION, TESTED_D01 } from "./constants.mjs";
+
 export function createNullEngineAdapter() {
   const calls = [];
   return {
@@ -16,15 +18,11 @@ export function createNullEngineAdapter() {
 
 export const LATER_ENGINE_BINDING = Object.freeze({
   owner: "W5-D01",
-  testedImplementation: {
-    repo: "epistemedeus/samedaydesk",
-    sha: "aeef964fa188443078958d9d6d393afae1d542ee",
-    ref: "fable/f08-paid-wrappers",
-    pr: 52,
-    entry: "server/paid-useful-jobs/lib/wrapper.mjs#runPaidOffer",
-  },
-  publishedCli: ["node", "bin/useful-jobs.mjs", "run", "<job-id>"],
-  f08Wrapper: "server/paid-useful-jobs/ (do not edit from this package)",
+  testedImplementation: TESTED_D01,
+  publishedCli: ["node", "server/paid-useful-jobs/bin/cli.mjs", "run", "<job-id>"],
   remaining:
-    "D01 Wave5 export was not published at test time. Pass toWrapperRequest(preflight) into runPaidOffer at the tested pin. That pin's inspectSample misses inline JSON strings; this adapter refuses them. D01 1 MiB cap still applies after bind. This package never claims spend, tool cost, or settlement.",
+    "D01 concurrent/freeze tests are still closing separately. Feed toWrapperRequest staged file paths into runPaidOffer/createExecutor at 6bed72dd (execution.v1). D01 does not pricing-row schema-check; this adapter does. 1 MiB execution cap is enforced here as input-oversize so preflight cannot go green past the wrapper. This package never claims spend, tool cost, or settlement.",
 });
+
+export { bindExecutionV1 } from "./d01-bind.mjs";
+export { EXECUTION_CONTRACT_VERSION };

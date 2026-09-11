@@ -1,14 +1,23 @@
 import fs from "node:fs";
 import path from "node:path";
-import { CATALOG_SCHEMA, MAX_LOCAL_INPUT_BYTES, PREFLIGHT_RESULT_NAME, STAGED_DIR_NAME } from "./constants.mjs";
+import {
+  CATALOG_SCHEMA,
+  EXECUTION_CONTRACT_VERSION,
+  EXECUTION_MAX_INPUT_BYTES,
+  KIT_MAX_LOCAL_INPUT_BYTES,
+  MAX_LOCAL_INPUT_BYTES,
+  PREFLIGHT_RESULT_NAME,
+  STAGED_DIR_NAME,
+} from "./constants.mjs";
 import { PREFLIGHT_CONTRACT, toWrapperRequest } from "./contract.mjs";
 import { declaredIdentity, formatDigest, sha256Buffer } from "./digest.mjs";
 import { createNullEngineAdapter, LATER_ENGINE_BINDING } from "./engine-adapter.mjs";
 import { classifyInputValue } from "./inline.mjs";
 import { validateStagedInput } from "./input-schema.mjs";
-import { flagToKey, readBoundedRegularFile, resolveInputPath } from "./paths.mjs";
+import { assertExecutionInputBytes, flagToKey, readBoundedRegularFile, resolveInputPath } from "./paths.mjs";
 import { refuse } from "./refuse.mjs";
 import { inspectStagedSample } from "./sample.mjs";
+import { copySiblingSampleMarkers, ensureStagedDir, writeStagedBytes } from "./stage.mjs";
 
 function loadDeclaredInputs(raw) {
   if (raw == null) return {};
@@ -40,7 +49,7 @@ function loadDeclaredInputs(raw) {
   return raw;
 }
 
-function materializeOne(key, declaredPath, { inputRoot, job }) {
+function materializeOne(key, declaredPath, { inputRoot }) {
   const classified = classifyInputValue(declaredPath);
   if (classified.kind === "invalid") {
     throw refuse("input-malformed", `Input ${key} must be a file path or JSON object`, { key });
@@ -83,9 +92,9 @@ function materializeOne(key, declaredPath, { inputRoot, job }) {
         key,
         size: buffer.length,
         limit: MAX_LOCAL_INPUT_BYTES,
+        kitLimitBytes: KIT_MAX_LOCAL_INPUT_BYTES,
       });
     }
-    const schema = validateStagedInput(job, key, buffer);
     return {
       key,
       kind: "file",
@@ -95,14 +104,11 @@ function materializeOne(key, declaredPath, { inputRoot, job }) {
       text: classified.text,
       bytes: buffer.length,
       sha256: sha256Buffer(buffer),
-      encoding: schema.encoding,
-      json: schema.json === true,
     };
   }
 
   const abs = resolveInputPath(String(classified.path), { inputRoot });
   const actual = readBoundedRegularFile(abs, { inputRoot });
-  const schema = validateStagedInput(job, key, actual.buffer);
   return {
     key,
     kind: "file",
@@ -112,15 +118,52 @@ function materializeOne(key, declaredPath, { inputRoot, job }) {
     text: actual.buffer.toString("utf8"),
     bytes: actual.bytes,
     sha256: actual.sha256,
-    encoding: schema.encoding,
-    json: schema.json === true,
   };
+}
+
+function snapshotInputs(staged) {
+  const inputs = {};
+  for (const item of staged) {
+    if (item.kind === "directory") {
+      inputs[item.key] = {
+        flag: `--${item.key}`,
+        kind: "directory",
+        path: item.path,
+        inline: false,
+      };
+      continue;
+    }
+    inputs[item.key] = {
+      flag: `--${item.key}`,
+      kind: "file",
+      path: item.path,
+      stagedPath: item.stagedPath || null,
+      inline: item.inline,
+      bytes: item.bytes,
+      sha256: item.sha256,
+      digest: formatDigest(item.sha256),
+      json: item.json === true,
+      encoding: item.encoding || null,
+      ...(item.inline ? { text: item.text } : {}),
+    };
+  }
+  return inputs;
+}
+
+function refuseWithStaged(code, message, extra, staged, stagedDir, job) {
+  throw refuse(code, message, {
+    ...extra,
+    job: job?.id,
+    stagedDir,
+    inputs: snapshotInputs(staged),
+  });
 }
 
 /**
  * Preflight caller files / inline JSON against catalog requiredInputs.
  * Never invokes the job engine. No spend or tool-cost claims.
- * Validates staged bytes (schema, not extension/syntax alone) and refuses disguised SAMPLE.
+ * Stages exact bytes, then validates schema and refuses disguised SAMPLE.
+ * ok:true is bounded by execution.v1 1 MiB, not only the kit 8 MiB cap.
  */
 export function preflight(options) {
   const engineAdapter = options.engineAdapter || createNullEngineAdapter();
@@ -165,7 +208,7 @@ export function preflight(options) {
   for (const key of fileKeys) {
     const declaredPath = flags[key];
     if (declaredPath == null || declaredPath === false || declaredPath === "") continue;
-    const item = materializeOne(key, declaredPath, { inputRoot, job });
+    const item = materializeOne(key, declaredPath, { inputRoot });
     if (!item) continue;
 
     if (item.kind === "file") {
@@ -199,6 +242,28 @@ export function preflight(options) {
     staged.push(item);
   }
 
+  const { outDir, stagedDir } = ensureStagedDir(options.outDir || null);
+  for (const item of staged) {
+    if (item.kind !== "file") continue;
+    item.stagedPath = writeStagedBytes(stagedDir, item);
+    if (item.path) copySiblingSampleMarkers(item.path, stagedDir);
+  }
+
+  for (const item of staged) {
+    if (item.kind !== "file") continue;
+    try {
+      assertExecutionInputBytes(item.key, item.bytes, { stagedPath: item.stagedPath, path: item.path });
+    } catch (err) {
+      err.detail = {
+        ...(err.detail || {}),
+        job: job.id,
+        stagedDir,
+        inputs: snapshotInputs(staged),
+      };
+      throw err;
+    }
+  }
+
   const sampleInfo = inspectStagedSample(
     { example: false, staged },
     { kitRoot: options.kitRoot || null },
@@ -210,53 +275,38 @@ export function preflight(options) {
     sampleInfo.sample = true;
   }
   if (sampleInfo.sample) {
-    throw refuse(
+    refuseWithStaged(
       "disguised-sample",
       "SAMPLE-labelled or kit-sample input is not a caller custom input; preflight does not substitute samples",
       { sampleReasons: sampleInfo.reasons },
+      staged,
+      stagedDir,
+      job,
     );
+  }
+
+  for (const item of staged) {
+    if (item.kind !== "file") continue;
+    try {
+      const schema = validateStagedInput(job, item.key, item.buffer);
+      item.encoding = schema.encoding;
+      item.json = schema.json === true;
+    } catch (err) {
+      err.detail = {
+        ...(err.detail || {}),
+        job: job.id,
+        stagedDir,
+        inputs: snapshotInputs(staged),
+      };
+      throw err;
+    }
   }
 
   if (typeof engineAdapter.invoke !== "function") {
     throw refuse("invalid-engine-adapter", "engine adapter is missing invoke()");
   }
 
-  const outDir = options.outDir ? path.resolve(String(options.outDir)) : null;
-  const stagedDir = outDir ? path.join(outDir, STAGED_DIR_NAME) : null;
-  if (stagedDir) fs.mkdirSync(stagedDir, { recursive: true });
-
-  const inputs = {};
-  for (const item of staged) {
-    let stagedPath = null;
-    if (item.kind === "directory") {
-      inputs[item.key] = {
-        flag: `--${item.key}`,
-        kind: "directory",
-        path: item.path,
-        inline: false,
-      };
-      continue;
-    }
-    if (stagedDir) {
-      const name = item.inline ? `${item.key}.json` : `${item.key}${path.extname(item.path) || ".json"}`;
-      stagedPath = path.join(stagedDir, name);
-      fs.writeFileSync(stagedPath, item.buffer);
-    }
-    inputs[item.key] = {
-      flag: `--${item.key}`,
-      kind: "file",
-      path: item.path,
-      stagedPath,
-      inline: item.inline,
-      bytes: item.bytes,
-      sha256: item.sha256,
-      digest: formatDigest(item.sha256),
-      json: item.json === true,
-      encoding: item.encoding || null,
-      ...(item.inline ? { text: item.text } : {}),
-    };
-  }
-
+  const inputs = snapshotInputs(staged);
   const result = {
     ok: true,
     refused: false,
@@ -271,13 +321,16 @@ export function preflight(options) {
     engineAdapter: engineAdapter.name || "null-not-invoked",
     laterEngineBinding: LATER_ENGINE_BINDING,
     contract: PREFLIGHT_CONTRACT,
+    executionContractVersion: EXECUTION_CONTRACT_VERSION,
     sample: false,
     sampleReasons: [],
     purchaseAuthority: false,
     spendClaim: false,
     toolCostClaim: false,
     preSpendSavingsClaim: false,
-    limitBytes: MAX_LOCAL_INPUT_BYTES,
+    limitBytes: EXECUTION_MAX_INPUT_BYTES,
+    kitLimitBytes: KIT_MAX_LOCAL_INPUT_BYTES,
+    stagedDir,
     inputRoot,
     inputs,
   };
@@ -286,8 +339,7 @@ export function preflight(options) {
 
   if (outDir) {
     result.outDir = outDir;
-    result.written = [PREFLIGHT_RESULT_NAME];
-    if (stagedDir) result.written.push(STAGED_DIR_NAME);
+    result.written = [PREFLIGHT_RESULT_NAME, STAGED_DIR_NAME];
     fs.mkdirSync(outDir, { recursive: true });
     const target = path.join(outDir, PREFLIGHT_RESULT_NAME);
     fs.writeFileSync(target, `${JSON.stringify(result, null, 2)}\n`);

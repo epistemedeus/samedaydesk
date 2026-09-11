@@ -1,5 +1,12 @@
-/** Aligned with useful-jobs 1.0.0 `lib/validate-next-run.mjs` (PR51 archive). Not F08's 1 MiB wrapper cap. */
-export const MAX_LOCAL_INPUT_BYTES = 8 * 1024 * 1024;
+/** Kit archive `lib/validate-next-run.mjs` (PR51). Not the execution.v1 wrapper cap. */
+export const KIT_MAX_LOCAL_INPUT_BYTES = 8 * 1024 * 1024;
+export const MAX_LOCAL_INPUT_BYTES = KIT_MAX_LOCAL_INPUT_BYTES;
+
+/**
+ * D01 `MAX_INPUT_BYTES` (`lib/pins.mjs`) at the pinned execution.v1 SHA.
+ * ok:true preflight must not exceed this; 1 MiB+1 under the kit cap is `input-oversize`.
+ */
+export const EXECUTION_MAX_INPUT_BYTES = 1_048_576;
 
 export const CATALOG_SCHEMA = "useful-jobs.catalog.v1";
 
@@ -32,17 +39,22 @@ export const NEXT_RUN_MANIFEST_SCHEMAS = Object.freeze([
 export const STAGED_DIR_NAME = "staged";
 export const PREFLIGHT_CONTRACT_SCHEMA = "samedaydesk.job-input-preflight.v1";
 
-/** Current pinned D01 implementation this adapter was tested against. */
+/** Pinned D01 execution.v1 export. Do not assume a later sibling head. */
+export const EXECUTION_CONTRACT_VERSION = "samedaydesk.paid-useful-jobs.execution.v1";
+
 export const TESTED_D01 = Object.freeze({
   owner: "W5-D01",
   repo: "epistemedeus/samedaydesk",
-  sha: "aeef964fa188443078958d9d6d393afae1d542ee",
-  ref: "fable/f08-paid-wrappers",
-  pr: 52,
-  entry: "server/paid-useful-jobs/lib/wrapper.mjs#runPaidOffer",
+  sha: "6bed72dd22a396134aa5c957933b42c3a5746698",
+  ref: "codex/w5-d01-20260911",
+  pr: 74,
+  executionContractVersion: EXECUTION_CONTRACT_VERSION,
+  entry: "server/paid-useful-jobs/index.mjs#createExecutor,runPaidOffer",
+  cli: "server/paid-useful-jobs/bin/cli.mjs",
+  contract: "server/paid-useful-jobs/CONTRACT.md",
   inspectSample: "server/paid-useful-jobs/lib/sample-guard.mjs#inspectSample",
   materializeInputs: "server/paid-useful-jobs/lib/input-guard.mjs#materializeInputs",
-  maxInputBytes: 1_048_576,
+  maxInputBytes: EXECUTION_MAX_INPUT_BYTES,
 });
 
 /** Engine artifacts this preflight must never write. */
