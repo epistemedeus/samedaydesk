@@ -1,0 +1,48 @@
+{
+  "assignment": "W5-D24",
+  "outcome": "Clean-environment CLI/package consumer acceptance",
+  "proof": "No monorepo/vendor accident needed to install, invoke and retrieve a useful result",
+  "ownedPaths": ["experiments/wave5/d24/"],
+  "contracts": {
+    "d01": "samedaydesk.paid-useful-jobs.execution.v1",
+    "d07": "samedaydesk.job-artifact-export.manifest.v1"
+  },
+  "tested": {
+    "sdsStartingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "pilotPacket": "epistemedeus/pilot@95b3f3a47f5b1b69bd237e4c978fc3376221365d",
+    "d01": {
+      "sha": "6bed72dd22a396134aa5c957933b42c3a5746698",
+      "branch": "codex/w5-d01-20260911",
+      "pr": 74,
+      "owned": "server/paid-useful-jobs/",
+      "note": "Current D01 sibling at test time. Not a future amendment."
+    },
+    "d07": {
+      "sha": "5620dcda5a0cd25892914717f8680c12d887632d",
+      "branch": "codex/w5-d07-20260911",
+      "pr": 77,
+      "owned": "tools/job-artifact-export/",
+      "note": "Current D07 sibling at test time. Import binds zip bytes actually read."
+    },
+    "d08": {
+      "sha": "4641173163616b76608cbb3beb503f2d94369b25",
+      "branch": "codex/w4-commerce-14-20260911",
+      "pr": null,
+      "owned": "tools/python-useful-jobs-client/",
+      "note": "W4 Co14 pin. W5-D08 branch was unpublished at test time."
+    },
+    "d03": {
+      "sha": "58cba6324c1d9793d344bc13154b8b2380e8166f",
+      "note": "D07 completeness adapter pin. Not vendored into this consumer."
+    }
+  },
+  "archive": {
+    "package": "useful-jobs",
+    "version": "1.0.0",
+    "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+    "bytes": 2522418,
+    "rel": "client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz",
+    "catalogRel": "client/public/for-agents/useful-jobs/catalog.json",
+    "kitRel": "client/src/data/usefulJobsKit.json"
+  }
+}
