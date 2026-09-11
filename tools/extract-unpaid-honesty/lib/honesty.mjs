@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { createAdapters, loadHonestyInputs, readJson } from "./load.mjs";
 import { startIntercept, loadLog } from "./intercept.mjs";
 import { ensureUsefulJobsKit } from "./kit.mjs";
-import { spawnUsefulJob, spawnNodeScript } from "./spawn.mjs";
+import { spawnUsefulJob, spawnNodeScript, spawnNodeScriptAsync } from "./spawn.mjs";
 import { buildReport } from "./report.mjs";
 import { refusePaidRetry } from "./refuse.mjs";
 import { parseUrl } from "./inspect.mjs";
@@ -128,17 +128,23 @@ export async function probeExtractFetch(options = {}) {
   }
 }
 
-export function probeExtractFetchUnhooked(options = {}) {
+function envWithoutHooks(extra = {}) {
+  const env = { ...process.env, ...extra };
+  for (const key of Object.keys(env)) {
+    if (/^(https?|all)_proxy$/i.test(key)) delete env[key];
+    if (key.startsWith("HONESTY_INTERCEPT_")) delete env[key];
+  }
+  delete env.NODE_OPTIONS;
+  env.NO_PROXY = "*";
+  env.no_proxy = "*";
+  return env;
+}
+
+export async function probeExtractFetchUnhooked(options = {}) {
   const url = assertLocalUrl(options.url);
   const script = options.script || join(TOOL_ROOT, "fixtures/probes/fetch-extract.mjs");
-  const env = { ...process.env, HONESTY_PROBE_URL: url };
-  delete env.HONESTY_INTERCEPT_LOG;
-  delete env.HONESTY_INTERCEPT_ORIGIN;
-  delete env.HTTP_PROXY;
-  delete env.HTTPS_PROXY;
-  delete env.ALL_PROXY;
-  env.NODE_OPTIONS = "";
-  const spawned = spawnNodeScript({ script, env });
+  const env = envWithoutHooks({ HONESTY_PROBE_URL: url });
+  const spawned = await spawnNodeScriptAsync({ script, env, timeoutMs: options.timeoutMs || 8_000 });
   const blob = `${spawned.stdout}\n${spawned.stderr}`;
   const escaped = spawned.status === 0 && /"escaped"\s*:\s*true/.test(spawned.stdout);
   const transportFailed = spawned.status !== 0 && !/honesty_forbidden_request/.test(blob);
@@ -159,6 +165,7 @@ export function probeExtractFetchUnhooked(options = {}) {
     code: escaped ? "extract_fetch_escaped_without_hooks" : "unhooked_probe_not_escaped",
     stdout: spawned.stdout,
     stderr: spawned.stderr,
+    error: spawned.error,
     enforcement: enforcementContract(),
     purchaseAuthority: false,
     sold: false,

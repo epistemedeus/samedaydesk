@@ -1,4 +1,4 @@
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { join } from "node:path";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -59,4 +59,39 @@ export function spawnNodeScript({ script, args = [], env = process.env, cwd, tim
     stderr: result.stderr || "",
     error: result.error ? String(result.error.message || result.error) : null,
   };
+}
+
+export function spawnNodeScriptAsync({ script, args = [], env = process.env, cwd, timeoutMs = 15_000 } = {}) {
+  return new Promise((resolve) => {
+    const child = spawn(process.execPath, [script, ...args], {
+      env,
+      cwd,
+    });
+    let stdout = "";
+    let stderr = "";
+    let settled = false;
+    const finish = (status, error) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve({
+        status,
+        stdout,
+        stderr,
+        error,
+      });
+    };
+    const timer = setTimeout(() => {
+      child.kill("SIGKILL");
+      finish(null, "timeout");
+    }, timeoutMs);
+    child.stdout.on("data", (chunk) => {
+      stdout += chunk.toString("utf8");
+    });
+    child.stderr.on("data", (chunk) => {
+      stderr += chunk.toString("utf8");
+    });
+    child.on("error", (error) => finish(null, String(error.message || error)));
+    child.on("close", (status) => finish(status, null));
+  });
 }

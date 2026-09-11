@@ -62,8 +62,8 @@ describe("honest enforcement claims", () => {
     const dummy = await startDummyJsonServer();
     try {
       const url = `${dummy.origin}/extract?url=https://example.com`;
-      const body = probeExtractFetchUnhooked({ url });
-      assert.equal(body.escaped, true);
+      const body = await probeExtractFetchUnhooked({ url });
+      assert.equal(body.escaped, true, `${body.stdout}\n${body.stderr}\n${body.error}`);
       assert.equal(body.caught, false);
       assert.equal(body.osIsolation, false);
       assert.equal(body.hooksInstalled, false);
@@ -74,8 +74,8 @@ describe("honest enforcement claims", () => {
     }
   });
 
-  it("unhooked probe refuses a remote URL instead of live-GET", () => {
-    assert.throws(
+  it("unhooked probe refuses a remote URL instead of live-GET", async () => {
+    await assert.rejects(
       () => probeExtractFetchUnhooked({ url: EXTRACT_EXAMPLE_URL }),
       (err) => err.code === "unhooked_probe_requires_local_url",
     );
