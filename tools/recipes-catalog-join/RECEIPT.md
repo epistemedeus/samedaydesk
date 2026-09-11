@@ -3,7 +3,7 @@
 **Date:** 11 September 2026
 **Branch:** `codex/w4-commerce-18-20260911`
 **Base:** `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545` (PR51 useful-jobs public integration)
-**HEAD:** recorded in the commit that lands this file on the branch
+**HEAD:** `450b24542a6ba1d5460022e7b8959e3e360cb912` on `codex/w4-commerce-18-20260911`
 **Repo:** `epistemedeus/samedaydesk`
 
 ## What
