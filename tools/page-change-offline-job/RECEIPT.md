@@ -1,5 +1,9 @@
 # RECEIPT — W4-commerce-13 offline extract-batch page-change job
 
+W5-M05 amendment: see `experiments/wave5/m05/RECEIPT.md`. Engine `0.1.1` on
+`cursor/w5-m05-co13-bounded-page-change-analysis-266c`. Contract export
+`PAGE_CHANGE_OFFLINE_CONTRACT`. Tests: 26/26.
+
 Tool: `tools/page-change-offline-job/`
 Cloud branch: `cursor/w4-commerce-13-offline-extract-batch-page-change-job-no-merchant-kernel-3ddc`
 Root-named identity: `codex/w4-commerce-13-20260911` (this Cloud checkout writes the Cursor branch)
