@@ -44,11 +44,11 @@ test("not F08: a 1MiB+1 file under the 8MiB kit cap is accepted", () => {
   const before = path.join(work, "before.json");
   const after = path.join(work, "after.json");
   const f08Cap = 1_048_576;
-  writeFileSync(before, `${JSON.stringify({ rows: [{ field: "a", value: 1, unit: "u" }] })}\n`);
-  writeFileSync(after, `${JSON.stringify({ rows: [{ field: "a", value: 2, unit: "u" }] })}\n`);
-  // Pad after.json as raw bytes over F08's 1 MiB without exceeding 8MiB.
-  const pad = Buffer.alloc(f08Cap + 1 - 2, 0x20);
-  writeFileSync(after, Buffer.concat([Buffer.from("{"), pad, Buffer.from("}")]));
+  writeFileSync(before, `${JSON.stringify({ label: "caller", rows: [{ field: "a", value: 1, unit: "u" }] })}\n`);
+  const payload = { label: "caller", rows: [{ field: "a", value: 2, unit: "u" }] };
+  const json = `${JSON.stringify(payload)}\n`;
+  const pad = Buffer.alloc(f08Cap + 1 - Buffer.byteLength(json), 0x20);
+  writeFileSync(after, Buffer.concat([Buffer.from(json), pad]));
   const r = runCli([
     "vendor-budget-impact",
     "--before",

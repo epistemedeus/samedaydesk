@@ -1,5 +1,8 @@
 # RECEIPT — W4-commerce-05 job input preflight
 
+Wave5 continuation (inline JSON, catalog/job schemas, disguised SAMPLE):
+`experiments/wave5/d02/RECEIPT.md`.
+
 **Repo:** epistemedeus/samedaydesk
 **Branch:** `codex/w4-commerce-05-20260911`
 **Pack HEAD:** `7ff6988be0ded2c3f9d2395dc12d9bcbfd7f2127` (implementation `96e1027c4b6b06bf4778f2daaabbd53911c99fc4`)

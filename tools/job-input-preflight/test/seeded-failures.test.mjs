@@ -28,7 +28,7 @@ test("seeded failure: path that escapes --input-root", () => {
   const root = path.join(work, "root");
   const outside = path.join(work, "outside.json");
   mkdirSync(root);
-  writeFileSync(outside, `${JSON.stringify({ rows: [] })}\n`);
+  writeFileSync(outside, `${JSON.stringify({ label: "caller", rows: [] })}\n`);
   writeFileSync(path.join(root, "before.json"), readBefore());
   const r = runCli([
     "vendor-budget-impact",
@@ -107,5 +107,5 @@ test("seeded failure: integer digest is rejected (I01, not original F01 integer 
 });
 
 function readBefore() {
-  return `${JSON.stringify({ rows: [{ field: "x", value: 1, unit: "u" }] })}\n`;
+  return `${JSON.stringify({ label: "caller", rows: [{ field: "x", value: 1, unit: "u" }] })}\n`;
 }

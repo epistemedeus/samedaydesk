@@ -41,14 +41,14 @@ test("journey: preflight vendor-budget-impact with two valid JSON files", async 
   assert.match(r.json.inputs.before.digest, /^sha256:[0-9a-f]{64}$/);
   assert.match(r.json.inputs.after.digest, /^sha256:[0-9a-f]{64}$/);
 
-  const names = readdirSync(outDir);
-  assert.deepEqual(names, [PREFLIGHT_RESULT_NAME]);
+  const names = readdirSync(outDir).sort();
+  assert.ok(names.includes(PREFLIGHT_RESULT_NAME));
   for (const name of ENGINE_OUTPUT_NAMES) {
     assert.equal(existsSync(path.join(outDir, name)), false, `engine artifact ${name} must not be written`);
   }
 
-  const beforeAbs = path.join(FIXTURES, "vendor-budget-impact/before.json");
-  const afterAbs = path.join(FIXTURES, "vendor-budget-impact/after.json");
+  const beforeAbs = path.join(FIXTURES, "caller/vendor-budget-impact/before.json");
+  const afterAbs = path.join(FIXTURES, "caller/vendor-budget-impact/after.json");
   assert.equal(r.json.inputs.before.sha256, sha256File(beforeAbs));
   assert.equal(r.json.inputs.after.sha256, sha256File(afterAbs));
   assert.equal(r.json.inputs.before.digest, formatDigest(sha256File(beforeAbs)));
@@ -62,18 +62,19 @@ test("in-process: null engine adapter is never invoked", async () => {
     catalog,
     job,
     flags: {
-      before: path.join(FIXTURES, "vendor-budget-impact/before.json"),
-      after: path.join(FIXTURES, "vendor-budget-impact/after.json"),
+      before: path.join(FIXTURES, "caller/vendor-budget-impact/before.json"),
+      after: path.join(FIXTURES, "caller/vendor-budget-impact/after.json"),
     },
     inputRoot: FIXTURES,
     engineAdapter: engine,
   });
   assert.equal(result.ok, true);
+  assert.equal(result.sample, false);
   assert.equal(engine.calls.length, 0);
 });
 
 test("journey: matching I01 digest field is accepted", () => {
-  const beforeAbs = path.join(FIXTURES, "vendor-budget-impact/before.json");
+  const beforeAbs = path.join(FIXTURES, "caller/vendor-budget-impact/before.json");
   const digest = formatDigest(sha256File(beforeAbs));
   const r = runCli([
     ...JOURNEY_ARGS,

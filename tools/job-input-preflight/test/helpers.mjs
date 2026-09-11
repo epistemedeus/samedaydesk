@@ -48,9 +48,9 @@ function decode(status, stdout, stderr) {
 export const JOURNEY_ARGS = [
   "vendor-budget-impact",
   "--before",
-  "vendor-budget-impact/before.json",
+  "caller/vendor-budget-impact/before.json",
   "--after",
-  "vendor-budget-impact/after.json",
+  "caller/vendor-budget-impact/after.json",
   "--input-root",
   "tools/job-input-preflight/fixtures",
 ];
