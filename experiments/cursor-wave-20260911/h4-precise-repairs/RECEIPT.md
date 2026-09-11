@@ -2,6 +2,8 @@
 
 - **SDS start HEAD:** `5b97d1b02e786acd1895cfa1508087ae3f7a1545` (PR51 merge)
 - **Branch:** `fable/h4-precise-repairs`
+- **Compare URL:** https://github.com/epistemedeus/samedaydesk/compare/main...fable/h4-precise-repairs
+- **Draft PR:** `gh pr create --draft` failed (`Resource not accessible by integration`). Not merged. Not deployed.
 - **Heavy session id:** `1434eeed-5e5c-48d1-b2d1-1ea29c966400`
 - **Merchant pin:** `a143898dd1ec35c097ca7eb0b472f30dad1ee319` (`fixtures/merchant-pr54/indexing-payload-continuity.mjs`)
 - **Runtime:** Node v22.22.2; tests via `node --experimental-strip-types --test tests/*.test.ts`
@@ -13,6 +15,8 @@
 | --- | --- |
 | Inspect SDS catalog, `verified.json`, `server/pricing.js`, ResourceServer hooks | Current source recorded (see contradictions) |
 | `npm test` (this pack) | **pass** — 30/30 |
+| `git push -u origin fable/h4-precise-repairs` | **pass** |
+| `gh pr create --draft` | **fail** — integration token cannot create PRs |
 
 ## Contradictions vs brief (followed current source)
 
