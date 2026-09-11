@@ -29,7 +29,7 @@ aeef964 receipt.v1 without `contract`/`delivery` is rejected.
 node --test tools/result-mailbox/test/*.test.mjs
 ```
 
-**PASS** — 21 tests, 0 fail, 0 skipped. Node v22.14.0. 5 suites.
+**PASS** — 21 tests, 0 fail, 0 skipped. Node v22.14.0. 5 suites. Composition re-test on PR 74 (`npm run test:result-mailbox`).
 
 ## Journey
 

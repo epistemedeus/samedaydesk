@@ -28,7 +28,7 @@ Mailbox `termsVersion`: `sha256:8a014f7d6db9a5a2a9010d9f7cc84e51abeac911d3c225ff
 node --test tools/result-mailbox/test/*.test.mjs
 ```
 
-**PASS** — 21 tests, 0 fail, 0 skipped. Node v22.14.0. 5 suites. No extra npm install. Root `package.json` not edited.
+**PASS** — 21 tests, 0 fail, 0 skipped. Node v22.14.0. 5 suites. No extra npm install. Root `package.json` not edited for this mailbox kernel. Composition re-test on PR 74.
 
 Evidence classes: mailbox CLI/process; two-request D01 CLI isolation; D01 library `createExecutor` useful-refusal / crash / missing-output; local-runtime useful-jobs 1.0.0 spawn. No HTTP mailbox. No Postgres.
 

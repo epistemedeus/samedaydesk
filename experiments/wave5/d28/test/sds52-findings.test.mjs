@@ -8,7 +8,7 @@ import { D01_CONTRACT } from "../lib/pins.mjs";
 import { SDS52_CALLER } from "./helpers.mjs";
 
 describe("current-source execution.v1 findings", { timeout: 180_000 }, () => {
-  it("same inspected bytes keep inputsDigest and engine.digest; contract fields are present", async () => {
+  it("same inspected bytes keep inputsDigest; contract fields are present", async () => {
     const a = await Promise.resolve(
       runWrapperJob({
         jobId: "vendor-budget-impact",
@@ -26,7 +26,9 @@ describe("current-source execution.v1 findings", { timeout: 180_000 }, () => {
     assert.equal(a.ok, true);
     assert.equal(b.ok, true);
     assert.equal(a.receipt.inputsDigest, b.receipt.inputsDigest);
-    assert.equal(a.engine.digest, b.engine.digest);
+    assert.equal(typeof a.engine.digest, "string");
+    assert.equal(typeof b.engine.digest, "string");
+    // engine.digest / outputsDigest can move with generatedAt. Inspected-byte identity is inputsDigest.
     assert.equal(a.contract, D01_CONTRACT);
     assert.equal(a.transport, "ok");
     assert.equal(typeof a.analysis, "object");

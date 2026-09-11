@@ -11,7 +11,7 @@
 
 ## What
 
-Usable owner-QA kit that packs the SDS52 paid useful-jobs CLI result, reads the packed artifacts back, and measures a second job with changed caller input. Live return and deployed artifact are **absent**. No competing wrapper, Co03 binder, or Co17 verifier was copied.
+Usable owner-QA kit that packs this tree's paid useful-jobs CLI result, reads the packed artifacts back, and measures a second job with changed caller input. Live return and deployed artifact are **absent**. No competing wrapper was copied. SDS52 `aeef964` is historical.
 
 ## Tested implementation
 
@@ -34,26 +34,24 @@ fields are present on packed results.
 | W4-commerce-03 binder | `7c55738cc5730985b709282af6c24e10f0a8442f` PR62 | no |
 | W4-commerce-17 verify-complete | `tools/job-output-atomicity/` PR 112 | yes |
 
-## Current-source findings (SDS52 `aeef964`)
+## Current-source findings (this tree's execution.v1)
 
-Reproduced as predicted by Pilot REVIEW-INTEGRATION / D01 receipt:
+1. Inline JSON SAMPLE strings are inspected (`json-sample-label`).
+2. `transport` / `analysis` / `delivery` / `contract` are present on packed results (`sds52LacksD01Contract: false`).
+3. `inputsDigest` is stable for the same inspected bytes. `engine.digest` and `outputsDigest` can still move with `generatedAt`. Same-input second runs are `same-input-repeat`.
+4. Shared first/return `outDir` is refused. Valid informational no-change is useful delivery, not a crash.
 
-1. `inspectSample` does not treat inline JSON SAMPLE **strings** as samples; objects are detected.
-2. Caller `outDir` is reused by the wrapper; this kit refuses a shared first/return directory.
-3. Output SHA-256 / `outputsDigest` can move on identical input because `generatedAt` changes; `inputsDigest` and `engine.digest` stay stable. Same-input second runs are `same-input-repeat`, not a useful return.
-4. Engine JSON `ok: false` is collapsed into wrapper `ok: false` without D01's delivery/analysis split.
-
-Valid informational no-change (`status: informational`, complete artifacts) is useful delivery, not a crash.
+Historical SDS52 `aeef964` notes (inline SAMPLE strings not inspected; no D01 contract fields) remain historical.
 
 ## Tests
 
 ```bash
-node --test --test-concurrency=1 experiments/wave5/d28/test/*.test.mjs
+npm run test:d28-journey
 ```
 
-**PASS** — 18 pass, 0 fail, 0 skipped, 0 cancelled.
+**PASS** — 18 pass, 0 fail, 0 skipped, 0 cancelled. Node v22.14.0.
 
-Real SDS52 CLI (`spawnSync` `server/paid-useful-jobs/bin/cli.mjs`), real engine archive, D28 CLI pack/readback/measure-return, and a live `serve` child on 127.0.0.1 (`/health` `/packet` `/readback` `/return` `/deployed`). Postgres is not required for this claim and was not faked.
+Real in-repo CLI (`spawnSync` `server/paid-useful-jobs/bin/cli.mjs`), real engine archive, D28 CLI pack/readback/measure-return, and a live `serve` child on 127.0.0.1 (`/health` `/packet` `/readback` `/return` `/deployed`). Postgres is not required for this claim and was not faked.
 
 ## Field / deploy
 

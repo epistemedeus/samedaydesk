@@ -33,13 +33,13 @@ node tools/managed-useful-jobs-order/bin/orders.mjs create \
 
 ## Tests
 
-Executed from repo root, Node v22.14.0. D01 is this tree's `server/paid-useful-jobs`. Historical counts at `6bed72dd` are below; composition re-test is recorded on PR 74.
+Executed from repo root, Node v22.14.0. D01 is this tree's `server/paid-useful-jobs`. File-store CLI lazy-imports `pg` only when `--database-url` is set.
 
 ```bash
-node --test tools/managed-useful-jobs-order/test/*.test.mjs
+npm run test:managed-useful-jobs-order
 ```
 
-**21 tests, 7 suites, 21 pass, 0 fail, 0 skip, 0 cancelled.** Duration about 2.8s after kit extract cache.
+**21 tests, 7 suites, 21 pass, 0 fail, 0 skip, 0 cancelled.** Composition re-test on PR 74. Disposable Postgres 16 `initdb`/`pg_ctl`.
 
 | Suite | Tests | Class |
 | --- | --- | --- |

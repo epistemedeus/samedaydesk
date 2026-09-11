@@ -40,24 +40,20 @@ node server/paid-useful-jobs/bin/deliver.mjs \
 
 ## Tests
 
-Kernel freeze at `e2f951ca`:
+Kernel freeze at `e2f951ca`: **51 pass**, 0 fail, 0 skipped.
 
-```bash
-npm run test:paid-useful-jobs
-```
+Composition measured on this branch (Node v22.14.0). Implementation SHA before this receipt commit: `becc8a5811c47f2d8c5e00604791144fd73bab54` plus the D04 lazy-`pg` import and D28 findings assertion in the following commit.
 
-**PASS** — 51 pass, 0 fail, 0 skipped. execution-contract 17, continuity 8, journey 6, live-prices 3, seeded 9, wrappers 8.
+| Script | Result |
+| --- | --- |
+| `npm run test:paid-useful-jobs` | **67 pass**, 0 fail, 0 skipped (7 suites: continuity 8, delivery-kit 12, execution-contract 21, journey 6, live-prices 3, seeded 9, wrappers 8) |
+| `npm run test:job-input-preflight` | **39 pass**, 0 fail, 0 skipped |
+| `npm run test:job-output-atomicity` | **26 pass**, 0 fail, 0 skipped (7 suites) |
+| `npm run test:managed-useful-jobs-order` | **21 pass**, 0 fail, 0 skipped (7 suites; disposable Postgres 16) |
+| `npm run test:result-mailbox` | **21 pass**, 0 fail, 0 skipped (5 suites) |
+| `npm run test:d28-journey` | **18 pass**, 0 fail, 0 skipped (6 suites) |
 
-Composition counts (this commit) are recorded after the measured run on PR 74:
-
-```bash
-npm run test:paid-useful-jobs
-npm run test:job-input-preflight
-npm run test:job-output-atomicity
-npm run test:managed-useful-jobs-order
-npm run test:result-mailbox
-npm run test:d28-journey
-```
+**192 pass**, 0 fail, 0 skipped across owned entrypoints. D03 Postgres TCP `127.0.0.1:5432` is `untested-external`; completeness does not depend on it. D04 uses a disposable `initdb` cluster.
 
 ## Integration limits
 

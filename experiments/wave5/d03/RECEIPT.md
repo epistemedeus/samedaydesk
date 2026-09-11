@@ -35,15 +35,14 @@ Engine archive origin is now required. Stable size without sha256 is not origin.
 
 ## Commands
 
-Node v22.14.0. No extra npm install. No root `package.json` edit.
+Node v22.14.0. Producer is this tree's D01 CLI.
 
 ```bash
-git fetch origin fable/f08-paid-wrappers
-F08_ROOT=/tmp/joa-f08-aeef964fa188 node --test --test-concurrency=1 tools/job-output-atomicity/test/*.test.mjs
+npm run test:job-output-atomicity
 node tools/job-output-atomicity/bin/verify-complete.mjs --root <package-dir>
 ```
 
-**PASS** — 26 tests, 0 fail, 0 skipped, ~4.6s. Suites: hash-terms 3, HTTP 1, identity 11, interrupt 2, journey 2, postgres probe 1, seeded 6.
+**PASS** — 26 tests, 0 fail, 0 skipped. Composition re-test on PR 74. Suites: hash-terms 3, HTTP 1, identity 11, interrupt 2, journey 2, postgres probe 1, seeded 6.
 
 Postgres at `127.0.0.1:5432` was `ECONNREFUSED`. The probe records `untested-external`. Completeness does not depend on a database. No fake database and no skipped-as-pass gate.
 

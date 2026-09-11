@@ -31,7 +31,7 @@ once. `sold` stays false.
 npm run test:managed-useful-jobs-order
 ```
 
-**21 pass, 0 fail, 0 skipped, 0 cancelled** (Node v22.14.0). Suites: concurrent 2, boundaries 3, HTTP listener 2, hygiene 3, journey 1, Postgres 2, seeded 8. Real CLI/process, loopback HTTP, D01 `/execute`, disposable Postgres 16. Missing deps were not skipped.
+**21 pass, 0 fail, 0 skipped, 0 cancelled** (Node v22.14.0). Composition re-test on PR 74. Suites: concurrent 2, boundaries 3, HTTP listener 2, hygiene 3, journey 1, Postgres 2, seeded 8. Real CLI/process, loopback HTTP, D01 `/execute`, disposable Postgres 16. File-store CLI does not import `pg` until `--database-url`.
 
 ## Current-source findings
 

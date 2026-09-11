@@ -42,7 +42,7 @@ The wrapper kernel is not copied into this package.
 node --test --test-concurrency=1 tools/job-input-preflight/test/*.test.mjs
 ```
 
-**PASS** — 39 tests, 0 fail, 0 skip, Node v22.14.0.
+**PASS** — 39 tests, 0 fail, 0 skip, Node v22.14.0. Composition re-test on PR 74 (`npm run test:job-input-preflight`).
 
 Positive: custom caller files, inline JSON (exact staged bytes), exact 1 MiB bound — preflight `ok: true` and D01 `ok: true` with matching receipt input sha256.
 
@@ -50,7 +50,7 @@ Negative: schema-invalid (`input-schema-mismatch`), SAMPLE sibling and inline SA
 
 ## Proof at the real CLI, then the same staged bytes through D01
 
-| Attempt | Preflight | D01 CLI/library at 6bed72dd |
+| Attempt | Preflight | D01 CLI/library on this tree |
 | --- | --- | --- |
 | Custom caller files | `ok: true` | `ok: true`, `execution.v1`, receipt input sha256 matches staged |
 | Inline JSON custom rows | `ok: true` (staged files) | `ok: true` on those staged paths, not the original strings |

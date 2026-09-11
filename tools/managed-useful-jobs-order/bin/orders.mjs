@@ -3,7 +3,6 @@ import { readFileSync, mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { runCreateOrder, defaultFileStore } from "../lib/create-order.mjs";
 import { createListener } from "../lib/listener.mjs";
-import { createPostgresStore } from "../lib/store-postgres.mjs";
 import { requestDirFromFile } from "../lib/contract.mjs";
 import { OWNED_DIR } from "../lib/pins.mjs";
 import { defaultWrapperRoot } from "../lib/wrapper-client.mjs";
@@ -40,7 +39,10 @@ function wrapperOptions(argv) {
 
 async function makeStore(argv) {
   const databaseUrl = argValue(argv, "--database-url") || process.env.MANAGED_ORDER_DATABASE_URL || null;
-  if (databaseUrl) return createPostgresStore({ connectionString: databaseUrl });
+  if (databaseUrl) {
+    const { createPostgresStore } = await import("../lib/store-postgres.mjs");
+    return createPostgresStore({ connectionString: databaseUrl });
+  }
   const storeDir = argValue(argv, "--store") || resolve(OWNED_DIR, ".store");
   mkdirSync(storeDir, { recursive: true });
   return defaultFileStore(storeDir);
