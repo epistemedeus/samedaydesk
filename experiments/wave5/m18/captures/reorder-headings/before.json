@@ -1,0 +1,61 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "10000",
+    "displayUsdc": "0.01",
+    "meaning": "Owner-labelled trial capture. Not a live quote or sale."
+  },
+  "jobId": "111111111111111111111111111111111111111111111111111111111111ro01",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "https://vendor.example.invalid/alpha",
+      "status": "success",
+      "data": {
+        "title": "Alpha v1",
+        "description": "Lead time 14 days.",
+        "headings": { "h1": ["Alpha"], "h2": ["Scope", "Dates"] }
+      },
+      "notes": [],
+      "error": null,
+      "provenance": {
+        "transport": "captured-file",
+        "requestedAt": "2026-09-11T16:00:00.000Z",
+        "completedAt": "2026-09-11T16:00:01.000Z",
+        "fetchedAt": "2026-09-11T16:00:00.800Z"
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 1,
+    "bytes": 400,
+    "wallMs": 100,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 400,
+    "requests": 1,
+    "wallMs": 100,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "Owner-labelled trial capture. Not a customer settlement."
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

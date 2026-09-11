@@ -1,0 +1,23 @@
+{
+  "id": "reorder-headings",
+  "label": "owner-qa",
+  "fields": ["title", "description", "headings"],
+  "clock": "2026-09-11T18:00:00.000Z",
+  "limits": { "maxStaleMs": 86400000 },
+  "before": "before.json",
+  "after": "after.json",
+  "facts": [
+    {
+      "kind": "unchanged",
+      "sourceKey": "https://vendor.example.invalid/alpha",
+      "field": "title",
+      "before": "Alpha v1"
+    },
+    {
+      "kind": "order",
+      "sourceKey": "https://vendor.example.invalid/alpha",
+      "field": "headings",
+      "path": "/headings/h2"
+    }
+  ]
+}

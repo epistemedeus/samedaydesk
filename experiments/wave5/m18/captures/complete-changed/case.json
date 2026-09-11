@@ -1,0 +1,24 @@
+{
+  "id": "complete-changed",
+  "label": "owner-qa",
+  "fields": ["title", "description"],
+  "clock": "2026-09-11T18:00:00.000Z",
+  "limits": { "maxStaleMs": 86400000 },
+  "before": "before.json",
+  "after": "after.json",
+  "facts": [
+    {
+      "kind": "changed",
+      "sourceKey": "https://vendor.example.invalid/alpha",
+      "field": "title",
+      "before": "Alpha v1",
+      "after": "Alpha v2"
+    },
+    {
+      "kind": "unchanged",
+      "sourceKey": "https://vendor.example.invalid/alpha",
+      "field": "description",
+      "before": "Lead time 14 days."
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "id": "W5-M18",
+  "outcome": "Reproducible changed-page trial",
+  "reportSchema": "samedaydesk.wave5.m18.changed-page-trial.v0",
+  "engine": {
+    "id": "samedaydesk.page-change-offline-job",
+    "wave4": "W4-commerce-13",
+    "wave5Owner": "W5-M05",
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+    "ref": "cursor/w4-commerce-13-offline-extract-batch-page-change-job-no-merchant-kernel-3ddc",
+    "path": "tools/page-change-offline-job/",
+    "cli": "bin/page-change.mjs",
+    "reportSchema": "pilot/page-change-brief/v1",
+    "extractSchema": "samedaydesk.extract-batch.v0"
+  },
+  "sds52": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "ref": "fable/f08-paid-wrappers",
+    "pr": 52
+  },
+  "publishedCustomerJob": {
+    "path": "tools/recurring-job-recipes/fixtures/merchant/page-change/customer-job/",
+    "beforeSha256": "23833bf7b28ca27a074cb9d73daaa2ec3beed14a55d767567c5fab50b66605f4",
+    "afterSha256": "a7fdf95f161c67529a7254b1d2e1c4efa068506ac01edaee3c2561a5d09c9bd6",
+    "jobSha256": "53936f83455f1b0acb24690c2994600dd31a51d95426b96bd7290e15d281fffb"
+  },
+  "siblings": {
+    "M05": "engine owner; this trial consumes the packet pin, not a future amendment",
+    "M09": "independent snapshot corpus not present on SDS52; trial captures are owner-labelled controls",
+    "D24": "clean-environment package install not claimed; invoke via Node CLI plus PAGE_CHANGE_ENGINE_ROOT or git worktree pin",
+    "M01": "catalog has no page-change job; sdd.page_change_offline still names the merchant skill"
+  }
+}

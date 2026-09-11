@@ -1,0 +1,24 @@
+{
+  "id": "truncation-max-sources",
+  "label": "owner-qa",
+  "fields": ["title", "description", "headings"],
+  "clock": "2026-09-08T12:00:00.000Z",
+  "limits": { "maxStaleMs": 86400000, "maxSources": 1 },
+  "before": {
+    "repoPath": "tools/recurring-job-recipes/fixtures/merchant/page-change/customer-job/before.json",
+    "sha256": "23833bf7b28ca27a074cb9d73daaa2ec3beed14a55d767567c5fab50b66605f4"
+  },
+  "after": {
+    "repoPath": "tools/recurring-job-recipes/fixtures/merchant/page-change/customer-job/after.json",
+    "sha256": "a7fdf95f161c67529a7254b1d2e1c4efa068506ac01edaee3c2561a5d09c9bd6"
+  },
+  "facts": [
+    {
+      "kind": "changed",
+      "sourceKey": "https://rfq.example/widgets",
+      "field": "title",
+      "before": "Q3 widget RFQ",
+      "after": "Q3 widget RFQ (deadline moved)"
+    }
+  ]
+}

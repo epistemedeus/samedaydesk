@@ -1,0 +1,3 @@
+Owner-labelled extract-batch captures for W5-M18. Not a live page, customer
+job, or M09 corpus export. The useful changed fact is title Alpha v1 to
+Alpha v2 at https://vendor.example.invalid/alpha.
