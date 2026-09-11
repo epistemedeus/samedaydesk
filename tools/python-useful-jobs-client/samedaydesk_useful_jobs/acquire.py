@@ -84,6 +84,46 @@ def default_fetch(url: str, timeout: float = 30.0) -> tuple[int, bytes]:
         ) from err
 
 
+def _refuse_unsafe_member(member: tarfile.TarInfo, dest: Path, dest_resolved: Path) -> None:
+    name = member.name or ""
+    if member.issym() or member.islnk():
+        raise ClientRefuse(
+            "extract-unsafe-member",
+            f"archive member is a link: {member.name}",
+            extracted=False,
+            executed=False,
+        )
+    if member.isfifo() or member.isdev():
+        raise ClientRefuse(
+            "extract-unsafe-member",
+            f"archive member is a special file: {member.name}",
+            extracted=False,
+            executed=False,
+        )
+    if not name or Path(name).is_absolute() or name.startswith("/") or name.startswith("\\"):
+        raise ClientRefuse(
+            "extract-unsafe-path",
+            f"archive member escapes extract dir: {member.name}",
+            extracted=False,
+            executed=False,
+        )
+    if any(part == ".." for part in Path(name).parts):
+        raise ClientRefuse(
+            "extract-unsafe-path",
+            f"archive member escapes extract dir: {member.name}",
+            extracted=False,
+            executed=False,
+        )
+    target = (dest / name).resolve()
+    if dest_resolved != target and dest_resolved not in target.parents:
+        raise ClientRefuse(
+            "extract-unsafe-path",
+            f"archive member escapes extract dir: {member.name}",
+            extracted=False,
+            executed=False,
+        )
+
+
 def _safe_extract(buf: bytes, dest: Path) -> None:
     dest.mkdir(parents=True, exist_ok=True)
     tmp_tar = dest / "useful-jobs-1.0.0.tar.gz"
@@ -92,18 +132,16 @@ def _safe_extract(buf: bytes, dest: Path) -> None:
         with tarfile.open(tmp_tar, "r:gz") as tar:
             dest_resolved = dest.resolve()
             for member in tar.getmembers():
-                target = (dest / member.name).resolve()
-                if dest_resolved != target and dest_resolved not in target.parents:
-                    raise ClientRefuse(
-                        "extract-unsafe-path",
-                        f"archive member escapes extract dir: {member.name}",
-                        extracted=False,
-                        executed=False,
-                    )
+                _refuse_unsafe_member(member, dest, dest_resolved)
             try:
                 tar.extractall(path=dest, filter="data")
-            except TypeError:
-                tar.extractall(path=dest)
+            except TypeError as err:
+                raise ClientRefuse(
+                    "extract-filter-required",
+                    "this client refuses unfiltered tar extract; Python tarfile data filter is required",
+                    extracted=False,
+                    executed=False,
+                ) from err
     except ClientRefuse:
         raise
     except tarfile.TarError as err:
@@ -236,6 +274,8 @@ def acquire(
 
 
 def acquired_payload(kit: AcquiredKit) -> dict:
+    catalog = json.loads((kit.kit_root / "catalog.json").read_text(encoding="utf-8"))
+    ids = [job["id"] for job in catalog.get("jobs") or [] if isinstance(job, dict) and job.get("id")]
     return {
         "ok": True,
         "command": "acquire",
@@ -245,7 +285,37 @@ def acquired_payload(kit: AcquiredKit) -> dict:
         "source": kit.source,
         "origin": kit.origin,
         "archive": kit.archive_path,
-        "jobs": list(HASH_TERMS.jobs),
+        "jobs": ids,
+        "sold": False,
+        "purchaseAuthority": False,
+        "extracted": True,
+        "executed": False,
+        "kind": "local-runtime",
+        "acceptanceClass": "local-runtime",
+    }
+
+
+def catalog_payload(kit: AcquiredKit) -> dict:
+    catalog = json.loads((kit.kit_root / "catalog.json").read_text(encoding="utf-8"))
+    jobs = [job for job in catalog.get("jobs") or [] if isinstance(job, dict) and job.get("id")]
+    ids = [job["id"] for job in jobs]
+    outputs = {job["id"]: list(job.get("outputs") or []) for job in jobs}
+    return {
+        "ok": True,
+        "command": "catalog",
+        "jobs": ids,
+        "outputs": outputs,
+        "hashTerms": {
+            "sha256": HASH_TERMS.sha256,
+            "bytes": HASH_TERMS.bytes,
+            "package": HASH_TERMS.package,
+            "version": HASH_TERMS.version,
+            "cli": HASH_TERMS.cli,
+        },
+        "kitRoot": str(kit.kit_root),
+        "source": kit.source,
+        "sha256": kit.sha256,
+        "bytes": kit.bytes,
         "sold": False,
         "purchaseAuthority": False,
         "extracted": True,

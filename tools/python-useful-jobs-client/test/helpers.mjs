@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import { spawn, spawnSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync } from "node:fs";
 import http from "node:http";
-import { dirname, join, resolve } from "node:path";
+import { tmpdir } from "node:os";
+import { dirname, delimiter as pathDelimiter, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -129,4 +130,68 @@ export function assertNoPaymentStory(body) {
   assert.doesNotMatch(error, /402|payment failed|settled sale|live sale succeeded/i);
 }
 
-export { existsSync, join, readFileSync };
+export function processAlive(pid) {
+  if (!pid) return false;
+  try {
+    process.kill(Number(pid), 0);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function pipInstallUser(clientRoot = CLIENT_ROOT) {
+  const home = mkdtempSync(join(tmpdir(), "uj-py-install-"));
+  const env = { ...process.env, HOME: home };
+  delete env.PYTHONPATH;
+  delete env.PYTHONNOUSERSITE;
+  const pip = spawnSync(PYTHON, ["-m", "pip", "install", "--user", clientRoot], {
+    cwd: home,
+    env,
+    encoding: "utf8",
+    timeout: 180_000,
+  });
+  const script = join(home, ".local/bin/samedaydesk-useful-jobs");
+  const loc = spawnSync(
+    PYTHON,
+    [
+      "-c",
+      "from pathlib import Path; import samedaydesk_useful_jobs; print(Path(samedaydesk_useful_jobs.__file__).resolve().parent / 'pins.json')",
+    ],
+    { cwd: home, env, encoding: "utf8", timeout: 15_000 },
+  );
+  const pins = String(loc.stdout || "").trim();
+  return { home, script, pins, pip, loc, env };
+}
+
+export function installedEnv(install, extra = {}) {
+  const env = {
+    ...process.env,
+    HOME: install.home,
+    PATH: `${join(install.home, ".local/bin")}${pathDelimiter}${process.env.PATH || ""}`,
+    PYTHONUNBUFFERED: "1",
+    HTTP_PROXY: "",
+    HTTPS_PROXY: "",
+    NO_PROXY: "*",
+    ...extra,
+  };
+  delete env.PYTHONPATH;
+  delete env.PYTHONNOUSERSITE;
+  if (extra.SAMEDAYDESK_ROOT === "") {
+    delete env.SAMEDAYDESK_ROOT;
+  } else if (extra.SAMEDAYDESK_ROOT === undefined) {
+    env.SAMEDAYDESK_ROOT = REPO_ROOT;
+  }
+  return env;
+}
+
+export function installedCli(install, args, opts = {}) {
+  return spawnSync(install.script, args, {
+    cwd: opts.cwd || REPO_ROOT,
+    env: installedEnv(install, opts.env),
+    encoding: "utf8",
+    timeout: opts.timeout || 60_000,
+  });
+}
+
+export { existsSync, join, mkdtempSync, readFileSync, tmpdir };

@@ -13,4 +13,4 @@ __all__ = [
     "run_job",
     "load_packaged_pins",
 ]
-__version__ = "1.0.0"
+__version__ = "1.0.1"

@@ -1,5 +1,7 @@
 # W4-commerce-14 RECEIPT — Python useful-jobs client
 
+W5-D08 follow-up: [experiments/wave5/d08/RECEIPT.md](../../experiments/wave5/d08/RECEIPT.md).
+
 **Date:** 11 September 2026
 **Branch:** `codex/w4-commerce-14-20260911`
 **HEAD:** `2de845277f5a6eebef676494d3abd095ad428f87` (10/10 tests; later receipt-only commits may follow)
