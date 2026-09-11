@@ -46,7 +46,11 @@ describe("literal caller corpus journey", { timeout: 180_000 }, () => {
     assert.equal(report.purchaseAuthority, false);
     assert.equal(report.enginePin.sha, enginePin().sha);
 
-    const raise = report.results.find((r) => r.id === "ops-desk-rate-raise");
+    const raiseVsVision = report.comparisons.find(
+      (c) => c.a === "ops-desk-rate-raise" && c.b === "vision-unit-shift",
+    );
+    assert.equal(raiseVsVision.meaningful, true);
+    assert.equal(typeof raiseVsVision.a, "string");
     const vision = report.results.find((r) => r.id === "vision-unit-shift");
     const stable = report.results.find((r) => r.id === "ops-stable-rates");
     const harbor = report.results.find((r) => r.id === "harbor-feed-delta");

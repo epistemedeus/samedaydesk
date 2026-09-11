@@ -1,4 +1,5 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { loadCorpus } from "./load-corpus.mjs";
 import { runWrapperCli } from "./run-wrapper.mjs";
@@ -50,12 +51,12 @@ export function runCorpus(input, { outDir } = {}) {
     throw err;
   }
 
-  const work = outDir;
-  if (work) mkdirSync(work, { recursive: true });
+  const work = outDir || mkdtempSync(join(tmpdir(), "w5-m11-run-"));
+  mkdirSync(work, { recursive: true });
 
   const results = [];
   for (const item of corpus.cases) {
-    const caseOut = work ? join(work, item.id) : undefined;
+    const caseOut = join(work, item.id);
     const wrapper = runWrapperCli({
       jobId: item.jobId,
       files: item.files,
@@ -63,7 +64,7 @@ export function runCorpus(input, { outDir } = {}) {
       funding: "unfunded",
       outDir: caseOut,
     });
-    const artifact = loadCaseArtifact(caseOut, item.outputs);
+    const artifact = loadCaseArtifact(wrapper, caseOut, item.outputs);
     const outcome = classifyRun({ wrapper, artifact, sample: false });
     const domain = domainView(artifact, { jobId: item.jobId, analysis: outcome.analysis });
     results.push({
@@ -90,11 +91,16 @@ export function runCorpus(input, { outDir } = {}) {
       const right = results[j];
       if (left.domain?.jobId !== right.domain?.jobId) continue;
       if (left.analysis === "failed" || right.analysis === "failed") continue;
+      const domain = compareDomain(left.domain, right.domain);
       comparisons.push({
         a: left.id,
         b: right.id,
         jobId: left.jobId,
-        ...compareDomain(left.domain, right.domain),
+        comparable: domain.comparable,
+        meaningful: domain.meaningful,
+        sameStatus: domain.sameStatus,
+        sameActions: domain.sameActions,
+        sameKeys: domain.sameKeys,
       });
     }
   }
@@ -108,11 +114,9 @@ export function runCorpus(input, { outDir } = {}) {
     enginePin: enginePin(),
     results,
     comparisons,
-    outDir: work || null,
+    outDir: work,
   };
-  if (work) {
-    writeFileSync(join(work, "report.json"), `${JSON.stringify(report, null, 2)}\n`);
-  }
+  writeFileSync(join(work, "report.json"), `${JSON.stringify(report, null, 2)}\n`);
   return report;
 }
 

@@ -142,6 +142,8 @@ describe("independent caller inputs", { timeout: 180_000 }, () => {
     const raise = shipped.results.find((x) => x.id === "ops-desk-rate-raise");
     const harbor = shipped.results.find((x) => x.id === "harbor-feed-delta");
     assert.equal(noisy.results[0].analysis, "delivered");
+    assert.ok((raise.domain.actionKinds || []).length > 0);
+    assert.ok((raise.domain.fieldKeys || []).length > 0);
     const sameDomain = compareDomain(raise.domain, noisy.results[0].domain);
     assert.equal(sameDomain.comparable, true);
     assert.equal(sameDomain.meaningful, false);

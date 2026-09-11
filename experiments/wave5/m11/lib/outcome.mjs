@@ -91,6 +91,19 @@ export function classifyRun({ wrapper, artifact, sample = false }) {
   };
 }
 
-export function loadCaseArtifact(outDir, outputs) {
-  return readArtifact(outDir, outputs);
+export function loadCaseArtifact(wrapper, outDir, outputs) {
+  const fromDir = readArtifact(outDir, outputs);
+  if (fromDir) return fromDir;
+  const listed = wrapper?.json?.outputs || [];
+  const jsonOut = listed.find((o) => String(o.name || "").endsWith(".json") && o.path);
+  if (jsonOut?.path && existsSync(jsonOut.path)) {
+    try {
+      return JSON.parse(readFileSync(jsonOut.path, "utf8"));
+    } catch {
+      return null;
+    }
+  }
+  const engineOut = wrapper?.json?.engine?.outDir;
+  if (engineOut) return readArtifact(engineOut, outputs);
+  return null;
 }
