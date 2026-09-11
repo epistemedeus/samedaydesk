@@ -8,10 +8,9 @@ import { postgresBinariesAvailable, startDisposablePostgres } from "./pg-cluster
 const havePg = postgresBinariesAvailable();
 
 describe("real local Postgres order store", { timeout: 180_000 }, () => {
-  it("persists terms hash and refuses swapped files on the same orderId", async (t) => {
+  it("persists terms hash and refuses swapped files on the same orderId", async () => {
     if (!havePg) {
-      t.skip("postgresql-16 initdb/pg_ctl not installed");
-      return;
+      throw new Error("postgresql-16 initdb/pg_ctl missing; missing dependency is incomplete, not a skip");
     }
     const cluster = startDisposablePostgres();
     const store = await createPostgresStore({
@@ -44,6 +43,48 @@ describe("real local Postgres order store", { timeout: 180_000 }, () => {
       assert.equal(swapped.sold, false);
     } finally {
       await store.close();
+      cluster.stop();
+    }
+  });
+
+  it("two Postgres clients concurrently reserve one order", async () => {
+    if (!havePg) {
+      throw new Error("postgresql-16 initdb/pg_ctl missing; missing dependency is incomplete, not a skip");
+    }
+    const cluster = startDisposablePostgres();
+    const storeA = await createPostgresStore({
+      clientConfig: cluster.clientConfig,
+      schema: "managed_useful_jobs_order",
+    });
+    const storeB = await createPostgresStore({
+      clientConfig: cluster.clientConfig,
+      schema: "managed_useful_jobs_order",
+    });
+    try {
+      const [a, b] = await Promise.all([
+        runCreateOrder(loadOrder("ord-1.json"), {
+          store: storeA,
+          requestDir: ORDERS,
+          outDir: tmpOut(),
+        }),
+        runCreateOrder(loadOrder("ord-1.json"), {
+          store: storeB,
+          requestDir: ORDERS,
+          outDir: tmpOut(),
+        }),
+      ]);
+      assert.equal(a.ok, true, JSON.stringify(a));
+      assert.equal(b.ok, true, JSON.stringify(b));
+      assert.equal(a.orderId, "ord-1");
+      assert.equal(b.orderId, "ord-1");
+      assert.equal(a.termsHash, b.termsHash);
+      const replayed = [a.replayed, b.replayed].filter(Boolean).length;
+      assert.equal(replayed, 1, `expected one replay got a=${a.replayed} b=${b.replayed}`);
+      const execs = await storeA.listExecutions("ord-1");
+      assert.equal(execs.length, 1);
+    } finally {
+      await storeA.close();
+      await storeB.close();
       cluster.stop();
     }
   });

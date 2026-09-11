@@ -1,89 +1,51 @@
-# RECEIPT: W4-commerce-20 F13 managed useful-jobs order runner
+# RECEIPT: W5-D04 Co20 managed-order client
 
-Local proposed-contract runner. Not deployed. Not a live catalog item.
-Payments in this wave are nonsettling prototypes (`sold: false`, `charged: false`).
+Local order client over the D01 execution contract. Not deployed. Not a live
+catalog item. Payments remain nonsettling (`sold: false`, `charged: false`).
 
 ## Source
 
 | Item | Value |
 | --- | --- |
 | Repo | epistemedeus/samedaydesk |
-| Feature branch | `codex/w4-commerce-20-20260911` |
-| Starting ref | `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545` |
-| Owned path | `tools/managed-useful-jobs-order/` |
-| Head | branch `codex/w4-commerce-20-20260911` (see git rev-parse after clone) |
-| Consumer contract pin | epistemedeus/pilot `c621646897e6fe1dccf0e5993aea63b5bc1f6bd3` |
-| F13 brief pin | epistemedeus/pilot `4188f794aada5cb15ec0f75d298096e97650f038` |
-| Archive pin | sha256 `6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51`, 2522418 bytes |
-| I01 hash terms | Read-only S275 `5de66179` `hashTerms`/`digestSha256` lesson; kernel not copied |
-| F08 contrast | pin `bae3e7cd` README only; receipt schema not forked |
-| Next integration owner | Root |
+| Feature branch | `cursor/w5-d04-co20-managed-order-client-removing-its-competing-runner-979c` |
+| Starting ref | `13d1fc023ce235b1611dc868caf5dd84fe5f11c7` (`codex/w4-commerce-20-20260911`) |
+| Owned paths | `tools/managed-useful-jobs-order/`, `experiments/wave5/d04/RECEIPT.md` |
+| Tested D01 | `codex/w5-d01-20260911` `6bed72dd22a396134aa5c957933b42c3a5746698` PR74, contract `samedaydesk.paid-useful-jobs.execution.v1` |
+| Packet pin PR52 | `aeef964fa188443078958d9d6d393afae1d542ee` (read-only worktree; D01 extends it) |
+| Competing runner removed | `lib/engine.mjs`, `lib/kit.mjs` (no spawn of useful-jobs CLI) |
 
 ## Commands
 
-From the repository root, Node >= 22. No extra packages beyond the repo `pg`
-dependency already declared in root `package.json`. Local Postgres tests need
-`/usr/lib/postgresql/16/bin/{initdb,pg_ctl}`.
+From the repository root, Node >= 22. D01 contract must be importable:
 
 ```bash
+# If server/paid-useful-jobs is not on this tree:
+git fetch origin codex/w5-d01-20260911
+git worktree add --detach /tmp/ro-worktrees/sds-d01 origin/codex/w5-d01-20260911
+export MANAGED_ORDER_WRAPPER_ROOT=/tmp/ro-worktrees/sds-d01/server/paid-useful-jobs
+
 node --test tools/managed-useful-jobs-order/test/*.test.mjs
 ```
 
-Useful caller journey:
+Caller journey:
 
 ```bash
 node tools/managed-useful-jobs-order/bin/orders.mjs create \
   --request tools/managed-useful-jobs-order/fixtures/orders/ord-1.json \
   --store /tmp/managed-order-store \
-  --out-dir /tmp/managed-order-out
+  --out-dir /tmp/managed-order-out \
+  --wrapper-root "$MANAGED_ORDER_WRAPPER_ROOT"
 ```
 
-Optional loopback listener (not Express, not mounted on the live app):
+## Tests
 
-```bash
-node tools/managed-useful-jobs-order/bin/orders.mjs listen --port 0 --store /tmp/managed-order-store
-# POST http://127.0.0.1:<port>/managed/useful-jobs/v1/orders
-```
+Executed from repo root after implementation. See `experiments/wave5/d04/RECEIPT.md`
+for counts from this worker.
 
-## Counts
+## Integration limits
 
-Executed from repo root, Node v22.14.0, 2026-09-11:
-
-```bash
-node --test tools/managed-useful-jobs-order/test/*.test.mjs
-```
-
-**12 tests, 5 suites, 12 pass, 0 fail, 0 skip.** Duration about 1.2s after kit extract cache.
-
-Breakdown:
-
-| Suite | Tests | Class |
-| --- | --- | --- |
-| public CLI journey | 1 | local-runtime (spawn `bin/orders.mjs` + useful-jobs CLI) |
-| seeded fail-closed public CLI | 5 | fixture refusals via the same CLI |
-| 127.0.0.1 test listener | 2 | local-runtime HTTP on loopback |
-| real local Postgres order store | 1 | local-runtime disposable `initdb` cluster |
-| owned-path hygiene | 3 | fixture / source scan |
-
-Dependencies: Node >= 22; in-repo `pg` (root `package.json`); `tar`; published archive at `client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz`. Postgres suite needs `/usr/lib/postgresql/16/bin/{initdb,pg_ctl}` (present in this run). No network to samedaydesk.com.
-
-## Seeded failures
-
-- example true as payable (`fixtures/orders/example-true.json`)
-- archive sha mismatch (`fixtures/orders/sha-mismatch.json`)
-- omitted orderId (`fixtures/orders/omit-order-id.json`)
-- hitting extract URL (`fixtures/orders/extract-url.json`)
-- SAMPLE hashes claimed as customer (`fixtures/orders/sample-as-customer.json`)
-
-## Honestly untested
-
-- External acceptance against https://samedaydesk.com or agents.samedaydesk.com (out of scope; no POST)
-- Live settlement, facilitator, catalog publication, deploy
-- F08 CLI spawn (contrast only; optional envelope not produced)
-- Sibling W4 mailbox/ticket modules (consume via injected store/engine adapters later)
-
-## Integration notes
-
-Missing sibling W4 work did not block this package. Engine adapter spawns the
-published useful-jobs CLI. Order store is file or injected Postgres. Root owns
-later HTTP/catalog binding.
+- Tested D01 `6bed72dd22a396134aa5c957933b42c3a5746698`. Later D01 amendments are a
+  remaining binding; this client does not claim a future sibling's behavior.
+- Order `termsHash` and D01 `receipt.inputsDigest` are unlike documents.
+- No live catalog, Express mount, price change, spend, or default-branch push.

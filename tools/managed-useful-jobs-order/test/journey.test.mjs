@@ -27,6 +27,13 @@ describe("public CLI journey: api-upgrade-brief ord-1", { timeout: 180_000 }, ()
     assert.equal(body.acceptanceClass, "local-runtime");
     assert.equal(body.liveCatalogItem, false);
     assert.equal(body.productionExpressRoute, false);
+    assert.equal(body.competingRunner, false);
+    assert.equal(body.termsSchema, "samedaydesk.useful-jobs-order-terms.v1");
+    assert.equal(body.wrapper.contract, "samedaydesk.paid-useful-jobs.execution.v1");
+    assert.equal(body.wrapper.receipt.schema, "samedaydesk.paid-useful-jobs.receipt.v1");
+    assert.equal(body.wrapper.transport, "ok");
+    assert.equal(body.wrapper.delivery.complete, true);
+    assert.notEqual(body.termsSchema, body.wrapper.receipt.schema);
     assert.deepEqual(
       body.outputs.map((row) => row.name),
       ["upgrade-brief.json", "upgrade-brief.md"],

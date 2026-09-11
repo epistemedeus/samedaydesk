@@ -5,19 +5,19 @@ import { OrderRefuse, formatRefuse } from "./errors.mjs";
 import { loadCatalog } from "./catalog.mjs";
 import { hasOrderId, normalizeRequest } from "./contract.mjs";
 import { fileDigest, hashTerms } from "./digest.mjs";
-import { createUsefulJobsEngine } from "./engine.mjs";
 import { findExtractUrl } from "./extract-guard.mjs";
-import { ensureUsefulJobsKit, verifyArchiveFile } from "./kit.mjs";
 import { CONSUMER_CONTRACT_SCHEMA, ORDER_TERMS_SCHEMA, OWNED_DIR, loadPins } from "./pins.mjs";
 import { inspectSample, collectLabeledSampleDigests } from "./sample-guard.mjs";
 import { createFileStore } from "./store-file.mjs";
+import { loadExecutionContract, EXECUTION_CONTRACT_PIN, TESTED_D01_SHA } from "./wrapper-client.mjs";
+import { pidAlive, sleep } from "./pid.mjs";
 
 function earlyRefuse(raw) {
   const extractHit = findExtractUrl(raw);
   if (extractHit) {
     throw new OrderRefuse(
       "f-extract",
-      "request targets extract URL; this runner is not GET /extract and does not change extract 0.005 USDC",
+      "request targets extract URL; this client is not GET /extract and does not change extract 0.005 USDC",
       { falsifier: "F-EXTRACT", detail: { hit: extractHit } },
     );
   }
@@ -41,7 +41,7 @@ function earlyRefuse(raw) {
   if (raw?.sold === true || raw?.charged === true) {
     throw new OrderRefuse(
       "nonsettling-prototype",
-      "Wave 4 payments are nonsettling prototypes; sold and charged stay false",
+      "Wave payments are nonsettling prototypes; sold and charged stay false",
       { falsifier: "F-DEMAND" },
     );
   }
@@ -52,7 +52,7 @@ function earlyRefuse(raw) {
   }
 }
 
-function buildTerms(request, pins) {
+export function buildTerms(request, pins) {
   return {
     schema: ORDER_TERMS_SCHEMA,
     engineId: request.engineId,
@@ -67,6 +67,152 @@ function buildTerms(request, pins) {
       .map(({ flag, sha256, bytes }) => ({ flag, sha256, bytes }))
       .sort((a, b) => a.flag.localeCompare(b.flag)),
   };
+}
+
+function offerInputs(request) {
+  return Object.fromEntries(request.inputs.map((inp) => [inp.key, inp.resolvedPath]));
+}
+
+function isTransportFailure(offer) {
+  const transport = offer?.transport;
+  if (transport && transport !== "ok" && transport !== "rejected") return true;
+  const code = offer?.code;
+  return (
+    code === "kit-acquisition-failed" ||
+    code === "engine-crash" ||
+    code === "engine-timeout" ||
+    code === "internal-error"
+  );
+}
+
+function mapWrapperRefuse(offer, raw) {
+  const code = offer?.code || "engine-refused";
+  let falsifier = null;
+  if (code === "sample-not-a-sale" || offer?.sample) falsifier = "F-SAMPLE";
+  if (code === "missing-required-inputs" || code === "input-malformed" || code === "input-missing-file") {
+    falsifier = "F-INPUT";
+  }
+  const httpStatus = isTransportFailure(offer) ? 503 : 400;
+  return new OrderRefuse(code, offer?.error || "D01 execution refused", {
+    falsifier,
+    httpStatus,
+    detail: {
+      contract: offer?.contract || EXECUTION_CONTRACT_PIN,
+      transport: offer?.transport || null,
+      analysis: offer?.analysis || null,
+      delivery: offer?.delivery || null,
+      executionId: offer?.executionId || null,
+      orderId: raw?.orderId ?? null,
+    },
+  });
+}
+
+async function waitWhileHeld(store, orderId) {
+  const started = Date.now();
+  while (Date.now() - started < 120_000) {
+    const rec = await store.get(orderId);
+    if (!rec || rec.status === "complete") return rec;
+    if (!pidAlive(rec.holderPid)) return rec;
+    await sleep(50);
+  }
+  throw new OrderRefuse("reservation-timeout", "timed out waiting for in-flight order", {
+    httpStatus: 504,
+    detail: { orderId },
+  });
+}
+
+async function acquireReservation(store, record) {
+  for (;;) {
+    const outcome = await store.reserve(record);
+    if (outcome.kind === "held") {
+      await waitWhileHeld(store, record.orderId);
+      continue;
+    }
+    return outcome;
+  }
+}
+
+function mapOutputs(offer) {
+  return (offer.outputs || []).map((row) => ({
+    name: row.name,
+    bytes: row.bytes,
+    sha256: row.sha256,
+  }));
+}
+
+function buildSuccessResult({ request, pins, termsHash, offer, outDir }) {
+  return {
+    schema: CONSUMER_CONTRACT_SCHEMA,
+    ok: true,
+    orderId: request.orderId,
+    engineId: request.engineId,
+    archiveSha256: pins.archiveSha256,
+    archiveBytes: pins.archiveBytes,
+    enginePin: {
+      package: pins.package,
+      version: pins.version,
+      sha256: pins.archiveSha256,
+      bytes: pins.archiveBytes,
+      cli: pins.cli,
+    },
+    inputs: request.inputs.map(({ flag, path, sha256, bytes }) => ({ flag, path, sha256, bytes })),
+    inputSha256: request.inputs.map((inp) => inp.sha256),
+    outputs: mapOutputs(offer),
+    sold: false,
+    charged: false,
+    purchaseAuthority: false,
+    schedulerDaemon: false,
+    example: false,
+    sample: Boolean(offer.sample),
+    fundingState: request.fundingState,
+    termsHash,
+    termsSchema: ORDER_TERMS_SCHEMA,
+    replayed: false,
+    acceptanceClass: "local-runtime",
+    liveCatalogItem: false,
+    productionExpressRoute: false,
+    competingRunner: false,
+    outDir: offer.outDir || outDir || null,
+    wrapper: {
+      contract: offer.contract || EXECUTION_CONTRACT_PIN,
+      testedD01Sha: TESTED_D01_SHA,
+      executionId: offer.executionId || null,
+      transport: offer.transport || null,
+      analysis: offer.analysis || null,
+      delivery: offer.delivery || null,
+      receipt: offer.receipt || null,
+    },
+  };
+}
+
+function applyFundingCheck(wrapper, raw, request) {
+  if (typeof wrapper.classifyFunding === "function") {
+    const funding = wrapper.classifyFunding(
+      {
+        funding: request.fundingState,
+        fundingIntent: request.fundingState,
+        payment: raw.payment && typeof raw.payment === "object" ? raw.payment : null,
+        sold: raw.sold,
+        settle: raw.settle,
+        liveSettle: raw.liveSettle,
+      },
+      { sample: false },
+    );
+    if (funding.fundingState === "rejected") {
+      throw new OrderRefuse(funding.code || "funding-rejected", funding.message || "funding rejected", {
+        detail: { funding, contract: wrapper.version },
+      });
+    }
+    return funding;
+  }
+  if (request.fundingState === "reserved-fixture" && !(raw.payment && typeof raw.payment === "object")) {
+    throw new OrderRefuse(
+      "reserved-fixture-requires-payment",
+      "reserved-fixture requires a recognized fixture payment object; fundingIntent alone is not a reservation",
+      { detail: { contract: wrapper.version } },
+    );
+  }
+  return { fundingState: request.fundingState, sold: false };
 }
 
 async function createOrderStrict(raw, options = {}) {
@@ -99,13 +245,8 @@ async function createOrderStrict(raw, options = {}) {
     });
   }
 
-  verifyArchiveFile(pins);
-
   const extraLabeled = collectLabeledSampleDigests(join(OWNED_DIR, "fixtures/labeled-sample"));
-  const sample = inspectSample(request, {
-    kitRoot: options.kitRoot || null,
-    extraLabeledDigests: extraLabeled,
-  });
+  const sample = inspectSample(request, { extraLabeledDigests: extraLabeled });
   if (sample.sample) {
     throw new OrderRefuse(
       "sample-not-customer",
@@ -141,100 +282,10 @@ async function createOrderStrict(raw, options = {}) {
     throw new Error("createOrder requires an injected store adapter");
   }
 
-  const existing = await store.get(request.orderId);
-  if (existing) {
-    if (existing.termsHash !== termsHash) {
-      throw new OrderRefuse(
-        "f-order",
-        "orderId is immutable; swapped files require a new orderId",
-        {
-          falsifier: "F-ORDER",
-          httpStatus: 409,
-          detail: {
-            orderId: request.orderId,
-            storedTermsHash: existing.termsHash,
-            requestedTermsHash: termsHash,
-          },
-        },
-      );
-    }
-    return { ...existing.result, replayed: true };
-  }
+  const wrapper = await loadExecutionContract(options);
+  applyFundingCheck(wrapper, raw, request);
 
-  const kit = options.kitRoot || ensureUsefulJobsKit(pins);
-  const kitSample = inspectSample(request, { kitRoot: kit, extraLabeledDigests: extraLabeled });
-  if (kitSample.sample) {
-    throw new OrderRefuse(
-      "sample-not-customer",
-      "SAMPLE / labeled-example hashes cannot be claimed as customer work",
-      { falsifier: "F-SAMPLE", detail: { reasons: kitSample.reasons } },
-    );
-  }
-
-  const outDir = options.outDir || mkdtempSync(join(tmpdir(), "managed-order-out-"));
-  mkdirSync(outDir, { recursive: true });
-  const engine = options.engine || createUsefulJobsEngine({ kit, pins });
-  const run = await engine.run({
-    engineId: request.engineId,
-    inputs: request.inputs,
-    outDir,
-    example: false,
-  });
-  if (!run.ok) {
-    throw new OrderRefuse("engine-refused", run.error || "useful-jobs CLI refused", {
-      detail: {
-        status: run.status,
-        json: run.json,
-        stderr: String(run.stderr || "").slice(0, 800),
-      },
-    });
-  }
-
-  const outputs = [];
-  for (const name of request.outputs) {
-    const path = join(outDir, name);
-    if (!existsSync(path)) {
-      throw new OrderRefuse("missing-catalog-output", `engine did not write catalog output ${name}`, {
-        detail: { outDir, name },
-      });
-    }
-    const actual = fileDigest(path);
-    outputs.push({ name, bytes: actual.bytes, sha256: actual.sha256 });
-  }
-
-  const result = {
-    schema: CONSUMER_CONTRACT_SCHEMA,
-    ok: true,
-    orderId: request.orderId,
-    engineId: request.engineId,
-    archiveSha256: pins.archiveSha256,
-    archiveBytes: pins.archiveBytes,
-    enginePin: {
-      package: pins.package,
-      version: pins.version,
-      sha256: pins.archiveSha256,
-      bytes: pins.archiveBytes,
-      cli: pins.cli,
-    },
-    inputs: request.inputs.map(({ flag, path, sha256, bytes }) => ({ flag, path, sha256, bytes })),
-    inputSha256: request.inputs.map((inp) => inp.sha256),
-    outputs,
-    sold: false,
-    charged: false,
-    purchaseAuthority: false,
-    schedulerDaemon: false,
-    example: false,
-    sample: false,
-    fundingState: request.fundingState,
-    termsHash,
-    replayed: false,
-    acceptanceClass: "local-runtime",
-    liveCatalogItem: false,
-    productionExpressRoute: false,
-    outDir,
-  };
-
-  const put = await store.put({
+  const reservation = await acquireReservation(store, {
     orderId: request.orderId,
     termsHash,
     engineId: request.engineId,
@@ -243,14 +294,70 @@ async function createOrderStrict(raw, options = {}) {
       engineId: request.engineId,
       orderId: request.orderId,
       enginePin: request.enginePin,
-      inputs: result.inputs,
+      inputs: request.inputs.map(({ flag, path, sha256, bytes }) => ({ flag, path, sha256, bytes })),
       fundingState: request.fundingState,
     },
-    result,
   });
-  if (put.replayed) {
-    return { ...put.record.result, replayed: true };
+
+  if (reservation.kind === "conflict") {
+    throw new OrderRefuse(
+      "f-order",
+      "orderId is immutable; swapped files require a new orderId",
+      {
+        falsifier: "F-ORDER",
+        httpStatus: 409,
+        detail: {
+          orderId: request.orderId,
+          storedTermsHash: reservation.record.termsHash,
+          requestedTermsHash: termsHash,
+        },
+      },
+    );
   }
+  if (reservation.kind === "replay") {
+    return { ...reservation.record.result, replayed: true };
+  }
+
+  const outDir = options.outDir || mkdtempSync(join(tmpdir(), "managed-order-out-"));
+  mkdirSync(outDir, { recursive: true });
+
+  await store.recordExecution({
+    orderId: request.orderId,
+    termsHash,
+    wrapperKind: wrapper.kind,
+    contract: wrapper.version,
+  });
+
+  const offer = await wrapper.runPaidOffer({
+    jobId: request.engineId,
+    inputs: offerInputs(request),
+    example: false,
+    fundingIntent: request.fundingState,
+    funding: request.fundingState,
+    payment: raw.payment && typeof raw.payment === "object" ? raw.payment : undefined,
+    outDir,
+  });
+
+  if (!offer?.ok) {
+    const err = mapWrapperRefuse(offer, raw);
+    if (isTransportFailure(offer)) {
+      throw err;
+    }
+    const refused = formatRefuse(err, raw);
+    refused.wrapper = {
+      contract: offer?.contract || wrapper.version,
+      testedD01Sha: TESTED_D01_SHA,
+      executionId: offer?.executionId || null,
+      transport: offer?.transport || null,
+      analysis: offer?.analysis || null,
+      delivery: offer?.delivery || null,
+    };
+    await store.complete(request.orderId, refused);
+    return refused;
+  }
+
+  const result = buildSuccessResult({ request, pins, termsHash, offer, outDir });
+  await store.complete(request.orderId, result);
   return result;
 }
 
