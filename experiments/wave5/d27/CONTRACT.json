@@ -1,0 +1,39 @@
+{
+  "schema": "samedaydesk.wave5.d27.independent-runtime-trial.v1",
+  "outcome": "Recruited independent-runtime trial kit and first execution",
+  "selectedOffer": "vendor-budget-impact",
+  "expectedOutputs": ["budget-impact.json", "budget-impact.md"],
+  "runtime": "python3",
+  "buyerClass": ["owner-qa", "recruited-independent", "unknown"],
+  "kind": [
+    "honesty-refuse",
+    "transport-failure",
+    "wrapper-refusal",
+    "sample-not-sale",
+    "incomplete-delivery",
+    "useful-refusal",
+    "useful-no-change",
+    "useful-change",
+    "useful-partial"
+  ],
+  "testedImplementation": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "ref": "fable/f08-paid-wrappers",
+    "pr": 52,
+    "paths": ["server/paid-useful-jobs/"]
+  },
+  "readOnlyPins": {
+    "d01Contract": {
+      "sha": "6bed72dd22a396134aa5c957933b42c3a5746698",
+      "ref": "codex/w5-d01-20260911",
+      "claimed": false
+    },
+    "co14PythonClient": {
+      "sha": "4641173163616b76608cbb3beb503f2d94369b25",
+      "consumed": false
+    }
+  },
+  "integrationOwner": "W5-D01",
+  "remainingBinding": "D01 execution.v1 transport/analysis/delivery fields are not on this PR52 CLI JSON. D08 must consume the wrapper CLI rather than acquire engines itself. D24 clean-environment install is unbound. D25/D26 buyer-journey and price-floor are unbound. Recruited (non-owner) runtime execution is a Root field step. This kit does not claim those siblings."
+}

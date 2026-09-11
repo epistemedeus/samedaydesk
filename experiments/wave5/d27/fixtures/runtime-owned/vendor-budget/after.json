@@ -1,0 +1,9 @@
+{
+  "label": "independent-runtime-owned",
+  "note": "Owned by the D27 Python trial runtime. Not a SAMPLE kit fixture, not a live quote, not a recruited buyer.",
+  "rows": [
+    { "field": "runtime-alpha-input", "value": 2.4, "unit": "USD/1M-tokens" },
+    { "field": "runtime-alpha-output", "value": 9.5, "unit": "USD/1M-tokens" },
+    { "field": "runtime-alpha-embed", "value": 0.2, "unit": "USD/1M-tokens" }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "samedaydesk-w5-d27-independent-runtime-trial",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22",
+    "python": ">=3.10"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "trial": "node bin/d27-trial.mjs",
+    "first-execution": "node bin/d27-trial.mjs first-execution --buyer-class owner-qa"
+  }
+}

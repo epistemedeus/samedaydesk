@@ -1,0 +1,14 @@
+W5-D27 recruited independent-runtime trial kit
+
+Copyright (c) 2026 SameDayDesk / epistemedeus
+License: MIT. See LICENSE in this directory.
+
+This package consumes the SDS PR52 paid wrapper CLI
+(`server/paid-useful-jobs/bin/cli.mjs`) as the current pinned
+execute implementation. It does not copy that wrapper, the
+useful-jobs engine archive, or the W4-commerce-14 Python
+client (`tools/python-useful-jobs-client/`). Engine work stays
+in the published archive the wrapper already extracts.
+
+The independent runtime is `runtime/trial.py`. It only
+subprocess-invokes the wrapper CLI with caller-owned files.
