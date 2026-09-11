@@ -3,7 +3,7 @@
 **Task:** W5-D04  
 **Repo:** `epistemedeus/samedaydesk`  
 **Branch:** `cursor/w5-d04-co20-managed-order-client-removing-its-competing-runner-979c`  
-**Head:** see git after push  
+**Head:** `86f65ceb12f32a96f28d6c216965754999cbc02b`  
 **StartingRef:** `13d1fc023ce235b1611dc868caf5dd84fe5f11c7`  
 **PR:** https://github.com/epistemedeus/samedaydesk/pull/107  
 **Pilot source:** `epistemedeus/pilot@95b3f3a47f5b1b69bd237e4c978fc3376221365d`  
