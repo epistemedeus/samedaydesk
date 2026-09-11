@@ -1,0 +1,23 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "note": "Two records share path /terms after SDS identity. Collision is breaking.",
+  "routes": [
+    {
+      "path": "/for-agents/useful-jobs",
+      "title": "Offline useful jobs for agent callers | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents/useful-jobs"
+    },
+    {
+      "path": "/terms",
+      "title": "Terms of Service | SameDayDesk",
+      "canonical": "https://samedaydesk.com/terms"
+    },
+    {
+      "path": "/terms",
+      "title": "Terms of Service (duplicate) | SameDayDesk",
+      "canonical": "https://samedaydesk.com/legal/terms"
+    }
+  ]
+}
