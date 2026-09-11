@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { test } from "node:test";
 import { loadCatalog } from "../lib/catalog.mjs";
 import { invokeEngine } from "../lib/invoke.mjs";
-import { invoke, pinFixture, tmpOut } from "./helpers.mjs";
+import { engineRoot, invoke, pinFixture, tmpOut } from "./helpers.mjs";
 
 test("lockfile journey writes pin-delta matching catalog schema", () => {
   const outDir = tmpOut("lock-pos");
@@ -45,7 +46,7 @@ test("HTML lockfile is a valid refusal, not wrapper success", () => {
   assert.equal(result.spawn.status, 2);
 });
 
-test("integrity-only pin change is actionable", () => {
+test("integrity-only pin change is actionable via pin fields", () => {
   const outDir = tmpOut("lock-int");
   const result = invoke("lockfile-pin-delta", {
     before: pinFixture("lockfile-pin-delta", "integrity-only/before.json"),
@@ -53,9 +54,34 @@ test("integrity-only pin change is actionable", () => {
   }, { outDir });
   assert.equal(result.outcome.kind, "analysis");
   assert.equal(result.stdoutJson.status, "actionable");
+  assert.equal(result.engineSource, "in-tree");
   const brief = JSON.parse(readFileSync(join(outDir, "pin-delta.json"), "utf8"));
+  assert.equal(brief.equality, "pin-fields");
   assert.deepEqual(brief.changed[0].changeKinds, ["integrity"]);
   assert.notEqual(brief.changed[0].before.termsHash, brief.changed[0].after.termsHash);
+});
+
+test("resolved-only git pin change is actionable", () => {
+  const result = invoke("lockfile-pin-delta", {
+    before: pinFixture("lockfile-pin-delta", "git-resolved/before.json"),
+    after: pinFixture("lockfile-pin-delta", "git-resolved/after.json"),
+  });
+  assert.equal(result.outcome.kind, "analysis");
+  assert.equal(result.stdoutJson.status, "actionable");
+  assert.ok(result.stdoutJson.counts.changed >= 1);
+});
+
+test("constant hasher cannot hide an integrity-only pin change", async () => {
+  const { root } = engineRoot("lockfile-pin-delta");
+  const { compareLockfileTexts, createHashTermsAdapter } = await import(
+    pathToFileURL(join(root, "lib/index.mjs")).href
+  );
+  const before = readFileSync(pinFixture("lockfile-pin-delta", "integrity-only/before.json"), "utf8");
+  const after = readFileSync(pinFixture("lockfile-pin-delta", "integrity-only/after.json"), "utf8");
+  const constant = createHashTermsAdapter(() => "constant-injected-hash");
+  const constantReport = compareLockfileTexts(before, after, { hashPinTerms: constant.hashPinTerms });
+  assert.equal(constantReport.counts.changed, 1);
+  assert.deepEqual(constantReport.changed[0].changeKinds, ["integrity"]);
 });
 
 test("catalog matcher fails when a promised output name is absent", () => {

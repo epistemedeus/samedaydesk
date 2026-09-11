@@ -2,7 +2,9 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { CatalogRefuse, firstOffer, loadCatalog, selectedEngines } from "../lib/catalog.mjs";
+import { jobCatalogContract } from "../lib/contract.mjs";
 import { invokeEngine } from "../lib/invoke.mjs";
+import { D01_INJECTION } from "../lib/d01-adapter.mjs";
 
 function parseArgs(argv) {
   const out = { _: [] };
@@ -22,13 +24,15 @@ function parseArgs(argv) {
 }
 
 function usage() {
-  return `w5-m01 engine catalog — thin invoker for D01
+  return `w5-m01 useful-engine consumer
 
 Commands:
   list
+  contract
   describe <engine-id>
-  invoke <engine-id> --out-dir DIR [--before PATH --after PATH --used PATH --job PATH --fields LIST --clock ISO --example]
+  run|invoke <engine-id> --out-dir DIR [--before PATH --after PATH --used PATH --job PATH --fields LIST --clock ISO --example]
 
+Executes each selected engine's published CLI. Does not copy compare algorithms.
 First offer: lockfile-pin-delta
 Does not edit the live useful-jobs catalog or paid-useful-jobs wrapper.
 `;
@@ -52,20 +56,28 @@ try {
           ok: true,
           schema: catalog.schema,
           firstOffer: catalog.firstOffer,
+          source: catalog.source,
           selected: selectedEngines(catalog).map((engine) => ({
             id: engine.id,
             owner: engine.owner,
             pin: engine.pin.sha,
+            source: engine.pin.source,
             firstOffer: engine.firstOffer === true,
           })),
           wrapperJobIds: catalog.wrapperPin.currentJobIds,
           liveSettlement: "out-of-scope",
           d01Binding: catalog.d01Binding.status,
+          d01Injection: D01_INJECTION.status,
         },
         null,
         2,
       )}\n`,
     );
+    process.exit(0);
+  }
+
+  if (cmd === "contract") {
+    process.stdout.write(`${JSON.stringify(jobCatalogContract(catalog), null, 2)}\n`);
     process.exit(0);
   }
 
@@ -80,7 +92,7 @@ try {
     process.exit(0);
   }
 
-  if (cmd !== "invoke") {
+  if (cmd !== "invoke" && cmd !== "run") {
     process.stderr.write(`unknown command ${cmd}\n`);
     process.stdout.write(usage());
     process.exit(2);
@@ -98,19 +110,23 @@ try {
     engineId,
     outDir,
     example: args.example === true,
-    mode: args.job ? "job" : args.fields ? "compare" : undefined,
+    mode: args.job && !args.before ? "job" : args.fields || args.clock ? "compare" : undefined,
     inputs: {
-      before: args.before ? resolve(String(args.before)) : undefined,
-      after: args.after ? resolve(String(args.after)) : undefined,
+      before: args.before && !String(args.before).startsWith("http") ? resolve(String(args.before)) : args.before,
+      after: args.after && !String(args.after).startsWith("http") ? resolve(String(args.after)) : args.after,
       used: args.used ? resolve(String(args.used)) : undefined,
       job: args.job ? resolve(String(args.job)) : undefined,
       fields: args.fields,
       clock: args.clock,
       maxBytes: args["max-bytes"],
+      maxChanges: args["max-changes"],
+      maxSources: args["max-sources"],
+      maxStaleMs: args["max-stale-ms"],
+      maxJsonDepth: args["max-json-depth"],
     },
   });
   mkdirSync(outDir, { recursive: true });
-  writeFileSync(joinWrite(outDir, "catalog-receipt.json"), `${JSON.stringify(publicReceipt(result), null, 2)}\n`);
+  writeFileSync(`${outDir}/catalog-receipt.json`, `${JSON.stringify(publicReceipt(result), null, 2)}\n`);
   process.stdout.write(`${JSON.stringify(publicReceipt(result), null, 2)}\n`);
   process.exit(result.ok || result.outcome.kind === "refused" ? (result.ok ? 0 : 2) : 1);
 } catch (err) {
@@ -122,10 +138,6 @@ try {
   }
   process.stdout.write(`${JSON.stringify({ ok: false, code: "internal-error", error: String(err.message || err) })}\n`);
   process.exit(1);
-}
-
-function joinWrite(dir, name) {
-  return `${dir}/${name}`;
 }
 
 function publicReceipt(result) {

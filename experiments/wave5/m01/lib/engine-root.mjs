@@ -1,7 +1,8 @@
-import { existsSync, mkdirSync, rmSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { CACHE_ROOT, REPO_ROOT } from "./paths.mjs";
+import { mkdirSync, rmSync } from "node:fs";
 
 function sleep(ms) {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
@@ -61,6 +62,10 @@ export function engineBin(engine, root) {
   return join(root, engine.cli.relativeBin);
 }
 
+export function inTreeEngineRoot(engine) {
+  return join(REPO_ROOT, ownedPath(engine));
+}
+
 export function ensureEngineRoot(engine) {
   const mapped = envRoots()[engine.id];
   if (mapped) {
@@ -69,6 +74,12 @@ export function ensureEngineRoot(engine) {
       throw new Error(`W5_M01_ENGINE_ROOTS[${engine.id}] missing ${engine.cli.relativeBin}`);
     }
     return { root: mapped, source: "env", sha: engine.pin.sha };
+  }
+
+  const inTree = inTreeEngineRoot(engine);
+  const inTreeBin = engineBin(engine, inTree);
+  if (existsSync(inTreeBin)) {
+    return { root: inTree, source: "in-tree", sha: engine.pin.sha };
   }
 
   const dest = join(CACHE_ROOT, engine.pin.sha);

@@ -1,44 +1,43 @@
-# FEATURE-MAP — W5-M01 engine catalog for D01
+# FEATURE-MAP — W5-M01 useful-engine composition for D01
 
-SameDayDesk Wave5 catalog owner. Writes only `experiments/wave5/m01/`.
+SameDayDesk Wave5 catalog owner. Writes `experiments/wave5/m01/` plus the transferred engine trees under `tools/`. Does not write `server/paid-useful-jobs/` or root `package.json`.
 
 ## Caller goal
 
-Publish one selected-engine catalog D01 can consume. First advertised analysis offer is **lockfile-pin-delta**. Schema, route, and page-change stay selected but are not the first SKU. SDS52's six useful-jobs remain the existing wrapper; this package does not edit the live catalog or `server/paid-useful-jobs/`.
+Run the four terminal engines from supplied inputs through their published CLIs, export a stable job catalog, and give D01 a thin adapter. First advertised offer remains **lockfile-pin-delta**.
 
 ## Entrypoint
 
 | Item | Value |
 | --- | --- |
-| Contract | `experiments/wave5/m01/catalog.json` |
-| Export | `experiments/wave5/m01/index.mjs` (`loadCatalog`, `invokeEngine`) |
-| CLI | `node experiments/wave5/m01/bin/catalog.mjs list\|describe\|invoke` |
+| Contract | `experiments/wave5/m01/catalog.json` + `CONTRACT.md` |
+| Export | `experiments/wave5/m01/index.mjs` (`runCatalogJob`, `runCatalogPaidOffer`, `runEngineForD01`) |
+| CLI | `node experiments/wave5/m01/bin/run-job.mjs <engine-id> --out-dir DIR --before …` |
 | Tests | `node --test --test-concurrency=1 experiments/wave5/m01/test/*.test.mjs` |
 
-`invoke` spawns the pinned engine CLI and checks promised stdout/stderr plus output files. It is not a second paid runner and does not settle.
+`run` / `invoke` spawn the in-tree engine CLI. They do not reimplement pin, schema, route, or page compare.
 
-## Pins tested here
+## Engines on this branch
 
-| Engine | Owner | Pin | Outputs |
-| --- | --- | --- | --- |
-| lockfile-pin-delta (first offer) | W5-M03 | `e81efc8ab71b1bde88eca743d297149e61bbb6f2` | `pin-delta.json`, `pin-delta.md` |
-| json-schema-webhook-drift | W5-M02 | `94c7bfdfeaa99f5e70f341504df3051cc7717f91` | `drift-brief.json`, `drift-brief.md` |
-| route-table-diff | W5-M04 | `7387eb677abd442dfab9081cb0ad95451fd2a762` | `route-diff.json`, `route-diff.md` |
-| page-change-offline-job | W5-M05 | `91b57334818ecd7940cb854e9864f3b1749d1d1d` | `page-change.json`, `page-change.md` |
+| Engine | Import SHA | Outputs |
+| --- | --- | --- |
+| lockfile-pin-delta (first offer) | `fba9d14872bc4c04214e527b9edfb30c2123c9e7` | `pin-delta.json`, `pin-delta.md` |
+| json-schema-webhook-drift | `27482b712a7221e5079d70df85c5dd5608dc70eb` plus items boolean fix | `drift-brief.json`, `drift-brief.md` |
+| route-table-diff | `886c81d824e0a24e2faa5b821b1cd0ca46ae0859` | `route-diff.json`, `route-diff.md` |
+| page-change-offline-job | `fec7bc04ac4419f8e7ce40f2613314e6953af6bc` | `page-change.json`, `page-change.md` |
 
-Wrapper contrast: SDS52 `aeef964fa188443078958d9d6d393afae1d542ee`.
+Independent corpora (read-only): M06 `4875dba8`, M07 `b4de86d4`, M08 `902ff58d`, M09 `da4c3e1c` from Pilot `9529591d` TERMINALS.json.
 
-## Outcome kinds
+## First-SKU justification (independent cases)
 
-| Kind | Meaning |
-| --- | --- |
-| `analysis` | Engine exited 0, stdout `ok:true`, promised files exist. Status may be actionable, informational, partial, unchanged, or incomplete. |
-| `refused` | Engine refused on the stream named in the catalog. Valid product output. |
-| `incomplete-delivery` | Transport looked successful but a promised output file is missing. |
-| `transport-failure` | Crash, missing binary, or non-JSON. Not a domain verdict. |
+Lockfile first: M07 20/20 domain match on this tree. Version/integrity explained, resolved-only closed, noise omitted, unsupported formats refuse, constant hasher cannot hide integrity.
 
-Page-change refusals on this pin are **stderr** `{ok:false,code,message}`. The other three refuse on stdout with `refused:true`.
+Not first: schema is used-path JSON Schema only; route does not claim Next.js-shaped catalogs and treats collisions as analysis; page-change never claims a fresh live fetch and `claims.complete` can be false on a useful changed walk.
 
-## Remaining integration
+## D01
 
-D01 has not imported this catalog into `runPaidOffer`. M02–M05 may amend engine semantics; consumers must re-pin. Do not force `tableDigest` equality for route permutations, or terms hashes across unlike schemas.
+D01 `6bed72dd` / kernel `bccf34b3` owns the wrapper. Current DI cannot select these engines (`unknown-job`). Adapter: `lib/d01-adapter.mjs`. Exact injection is in `CONTRACT.md`. Not a sale.
+
+## Remaining
+
+No live catalog rewrite. No settlement. Page-change stderr must be parsed as catalogued. `--max-sources 1` still drops later semantic rows as incomplete analysis.

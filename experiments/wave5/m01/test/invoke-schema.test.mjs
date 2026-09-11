@@ -35,7 +35,7 @@ test("OpenAPI documents are refused as not-this-job, not analysis success", () =
   assert.equal(result.refuseJson.refused, true);
 });
 
-test("JSON Schema boolean false is literal structural-change on this pin", () => {
+test("JSON Schema boolean false is boolean-schema-tightened", () => {
   const outDir = tmpOut("schema-false");
   const result = invoke("json-schema-webhook-drift", {
     before: join(OWNED_FIXTURES, "schema/false-before.json"),
@@ -45,34 +45,34 @@ test("JSON Schema boolean false is literal structural-change on this pin", () =>
   assert.equal(result.outcome.kind, "analysis");
   const brief = JSON.parse(readFileSync(join(outDir, "drift-brief.json"), "utf8"));
   assert.equal(brief.status, "actionable");
-  assert.equal(brief.impact.breaking[0].reason, "structural-change");
-  assert.equal(brief.impact.breaking[0].after.kind, "literal");
-  assert.equal(brief.impact.breaking[0].after.jsonType, "boolean");
+  assert.equal(brief.impact.breaking[0].reason, "boolean-schema-tightened");
+  assert.equal(brief.impact.breaking[0].after.kind, "boolean-schema");
+  assert.equal(brief.impact.breaking[0].after.allows, false);
 });
 
-test("$ref sibling type is ignored on this pin", () => {
+test("$ref sibling type is a used-path type-change, not ignored", () => {
   const result = invoke("json-schema-webhook-drift", {
     before: join(OWNED_FIXTURES, "schema/ref-before.json"),
     after: join(OWNED_FIXTURES, "schema/ref-after.json"),
     used: join(OWNED_FIXTURES, "schema/used-x.json"),
   });
   assert.equal(result.outcome.kind, "analysis");
-  assert.equal(result.stdoutJson.status, "informational");
-  assert.equal(result.stdoutJson.breaking, 0);
+  assert.equal(result.stdoutJson.status, "actionable");
+  assert.equal(result.stdoutJson.breaking, 1);
 });
 
-test("non-integer minimum edit is unchanged on this pin", () => {
+test("non-integer minimum edit is numeric-tightened", () => {
   const result = invoke("json-schema-webhook-drift", {
     before: join(OWNED_FIXTURES, "schema/min-before.json"),
     after: join(OWNED_FIXTURES, "schema/min-after.json"),
     used: join(OWNED_FIXTURES, "schema/used-n.json"),
   });
   assert.equal(result.outcome.kind, "analysis");
-  assert.equal(result.stdoutJson.status, "informational");
-  assert.equal(result.stdoutJson.breaking, 0);
+  assert.equal(result.stdoutJson.status, "actionable");
+  assert.equal(result.stdoutJson.breaking, 1);
 });
 
-test("required-field change at document root pointer empty string is breaking", () => {
+test("required-field change at document root pointer empty string is required-added", () => {
   const outDir = tmpOut("schema-req");
   const result = invoke("json-schema-webhook-drift", {
     before: join(OWNED_FIXTURES, "schema/required-before.json"),
@@ -82,7 +82,7 @@ test("required-field change at document root pointer empty string is breaking", 
   assert.equal(result.outcome.kind, "analysis");
   const brief = JSON.parse(readFileSync(join(outDir, "drift-brief.json"), "utf8"));
   assert.equal(brief.status, "actionable");
-  assert.ok(brief.impact.breaking.length >= 1);
+  assert.equal(brief.impact.breaking[0].reason, "required-added");
   assert.deepEqual(brief.impact.breaking[0].before.required, ["a"]);
   assert.deepEqual(brief.impact.breaking[0].after.required, ["a", "b"]);
 });

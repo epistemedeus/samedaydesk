@@ -63,3 +63,22 @@ test("tiny max-bytes is input_bounds refusal, not truncated success", () => {
   assert.equal(result.refuseJson.code, "input_bounds");
   assert.equal(result.spawn.status, 2);
 });
+
+test("stale snapshots stay analysis with freshness stale, not a crash", () => {
+  const result = invokeEngine({
+    engineId: "page-change-offline-job",
+    outDir: tmpOut("page-stale"),
+    mode: "compare",
+    inputs: {
+      before: pinFixture("page-change-offline-job", "unchanged/before.json"),
+      after: pinFixture("page-change-offline-job", "unchanged/after.json"),
+      fields: "title,description",
+      clock: "2026-09-08T12:00:00.000Z",
+      maxStaleMs: 1000,
+    },
+  });
+  assert.equal(result.outcome.kind, "analysis");
+  assert.equal(result.stdoutJson.report.verdict, "unchanged");
+  assert.equal(result.stdoutJson.report.freshness, "stale");
+  assert.equal(result.stdoutJson.ok, true);
+});

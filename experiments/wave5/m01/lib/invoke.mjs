@@ -5,6 +5,7 @@ import { CatalogRefuse, getEngine, loadCatalog } from "./catalog.mjs";
 import { classifyInvocation, parseJsonPayload, streamText } from "./classify.mjs";
 import { engineBin, ensureEngineRoot } from "./engine-root.mjs";
 import { matchCatalogPromise } from "./schema-match.mjs";
+import { optionalFlagArgv, usefulStatus } from "./contract.mjs";
 
 function substitute(token, values) {
   const match = String(token).match(/^\{([a-zA-Z]+)\}$/);
@@ -31,9 +32,8 @@ function argvFor(engine, request) {
   }
   const template = request.mode === "compare" && engine.cli.compareArgv ? engine.cli.compareArgv : engine.cli.argv;
   const argv = template.map((token) => substitute(token, values));
-  if (request.inputs?.maxBytes != null) {
-    argv.push("--max-bytes", String(request.inputs.maxBytes));
-  }
+  argv.push(...optionalFlagArgv(request.inputs || {}));
+  if (Array.isArray(request.extraArgv)) argv.push(...request.extraArgv);
   return argv;
 }
 
@@ -105,7 +105,10 @@ export function invokeEngine(request = {}) {
     engineId: engine.id,
     pinSha: located.sha,
     engineSource: located.source,
-    outcome,
+    outcome: {
+      ...outcome,
+      analysis: outcome.analysis ?? usefulStatus(engine, stdoutDoc),
+    },
     schemaMatch,
     stdoutJson: stdoutDoc,
     refuseJson: engine.refuse.stream === "stderr" ? refuseDoc : stdoutDoc,
@@ -117,4 +120,8 @@ export function invokeEngine(request = {}) {
       bin,
     },
   };
+}
+
+export function runCatalogJob(request = {}) {
+  return invokeEngine(request);
 }
