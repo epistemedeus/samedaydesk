@@ -95,10 +95,6 @@ export function classifyConsumerOutcome(payload) {
   if (payload.transport) {
     const analysis = payload.analysis?.outcome || payload.analysis?.status || payload.analysis || "not-run";
     const complete = payload.delivery?.complete === true;
-    const useful =
-      payload.transport === "ok" &&
-      complete &&
-      (payload.ok === true || analysis === "informational" || analysis === "refused" || analysis === "completed" || analysis === "actionable");
     return {
       transport: payload.transport,
       analysis,

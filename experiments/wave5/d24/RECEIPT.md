@@ -3,7 +3,7 @@
 **Task:** W5-D24  
 **Repo:** `epistemedeus/samedaydesk`  
 **Branch:** `cursor/w5-d24-clean-environment-cli-package-consumer-acceptance-ffdb`  
-**HEAD:** this branch (`cursor/w5-d24-clean-environment-cli-package-consumer-acceptance-ffdb`)  
+**Tested consumer:** `b62a5213fa397f809bcf0d7d1e54c0c6b9b8b893`  
 **StartingRef:** `aeef964fa188443078958d9d6d393afae1d542ee` (SDS PR52)  
 **PR:** https://github.com/epistemedeus/samedaydesk/pull/103 (draft)  
 **Pilot packet:** `epistemedeus/pilot@95b3f3a47f5b1b69bd237e4c978fc3376221365d`  
@@ -19,7 +19,7 @@ Does not copy those kernels into this branch. Sibling trees are fetched read-onl
 
 | Input | SHA / note |
 | --- | --- |
-| D01 | `6bed72dd22a396134aa5c957933b42c3a5746698` (`samedaydesk.paid-useful-jobs.execution.v1`, PR 74) |
+| D01 | `6bed72dd22a396134aa5c957933b42c3a5746698` (`samedaydesk.paid-useful-jobs.execution.v1`, PR 74 at that commit) |
 | D07 | `5620dcda5a0cd25892914717f8680c12d887632d` (PR 77) |
 | Co14 / D08 pin | `4641173163616b76608cbb3beb503f2d94369b25` (W5-D08 branch unpublished) |
 | D03 (D07 adapter only) | `58cba6324c1d9793d344bc13154b8b2380e8166f` (not vendored) |
@@ -31,15 +31,13 @@ Does not copy those kernels into this branch. Sibling trees are fetched read-onl
 node --test --test-concurrency=1 experiments/wave5/d24/test/*.test.mjs
 ```
 
-**PASS — 21 pass, 0 fail, 0 skip, 0 cancelled.** Node v22.14.0, Python 3.12.3. Duration ~5.3s after prefix cache.
-
-Also executed:
+Also:
 
 ```bash
 node experiments/wave5/d24/bin/clean-env.mjs accept --prefix "$prefix"
 ```
 
-`ok: true`. Isolation true. Co14 and D01 `ok: true`. D07 export/import `ok: true`. Files: `budget-impact.json`, `budget-impact.md`, `receipt.json`, `job-artifacts.zip`. No Postgres. Missing deps were not skipped.
+Counts and `accept` outcome are recorded after the re-run on this worker.
 
 ensurepip is absent on this image (`python3 -m venv` cannot create pip). Install uses a copied Co14 tree plus `bin/samedaydesk-useful-jobs` wrapper. That is the documented Co14 PYTHONPATH path, not a second engine.
 
@@ -63,13 +61,14 @@ Reproduced on the installed CLIs:
 ## Integration limits
 
 - D01 still needs catalog/kit/archive at `REPO_ROOT` relatives. Mini-layout works. Not an npm package.
+- D01 PR74 later head `e2f951cae7bb299df2283b9c181bb0d369fc26af` (freeze inspected bytes, receipts bind `runOutDir`) was not the tested pin. Remaining bind for Root / D01, not claimed here.
 - D08 Wave5 unpublished. Remaining: include `pins.json` in the wheel, bind `list` to extracted catalog, timeout/`kill` on `spawn_node`.
 - D07 completeness vs D03 `receipt.json` stays unbound unless D03 is injected.
 - No live origin GET, spend, deploy, or recruited runtime. Those are D27 / Root field steps.
 
 ## pstack
 
-Plugin cache: `9717366` `68d834d9ca8f34c375ecb8057bfbcde5396a01f8`. Skills read: setup-pstack, principle-prove-it-works, principle-boundary-discipline, principle-subtract-before-you-add, principle-make-operations-idempotent, figure-it-out, principle-test-behavior-not-implementation, principle-fix-root-causes. `~/.cursor/rules/pstack-models.mdc` absent. Slash not invoked. No extra Cloud/Task agents.
+Plugin cache: `9717366` `68d834d9ca8f34c375ecb8057bfbcde5396a01f8`. Skills read in full: setup-pstack, principle-prove-it-works, principle-test-behavior-not-implementation, principle-boundary-discipline, principle-subtract-before-you-add, principle-fix-root-causes, principle-make-operations-idempotent, figure-it-out, principle-never-block-on-the-human. `~/.cursor/rules/pstack-models.mdc` absent (setup-pstack writes that only after a confirmed role map; not done here). Slash commands not invoked. No extra Cloud/Task agents.
 
 ## Stop
 
