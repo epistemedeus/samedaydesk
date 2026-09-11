@@ -2,7 +2,7 @@
 
 **Date:** 11 September 2026
 **Branch:** `codex/w4-commerce-14-20260911`
-**HEAD:** `e8672bb8a5c38410b3f12771e5870566bebc131f`
+**HEAD:** `2de845277f5a6eebef676494d3abd095ad428f87` (10/10 tests; later receipt-only commits may follow)
 **Base:** `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545` (PR51 useful-jobs public integration)
 **Compare:** https://github.com/epistemedeus/samedaydesk/compare/main...codex/w4-commerce-14-20260911
 
