@@ -75,12 +75,25 @@ export function wouldSettleIfGuardOmitted(paymentPayload, requirements) {
   return true;
 }
 
+function isSaleLikeFunding(request, { payment, intent, settleRequested }) {
+  return (
+    intent === "live-sale" ||
+    intent === "sale" ||
+    intent === "reserved-fixture" ||
+    settleRequested ||
+    request?.sold === true ||
+    Boolean(payment)
+  );
+}
+
 export function classifyFunding(request, { sample = false } = {}) {
   const payment = request?.payment && typeof request.payment === "object" ? request.payment : null;
   const intent = request?.fundingIntent || request?.funding || (payment ? "reserved-fixture" : "unfunded");
   const settleRequested = request?.settle === true || request?.liveSettle === true;
 
-  if (sample && (intent === "live-sale" || intent === "sale" || settleRequested || request?.sold === true)) {
+  // SAMPLE / --example / kit SAMPLE provenance cannot reserve fixture funds or
+  // be treated as a sale. Unfunded labeled sample output remains allowed.
+  if (sample && isSaleLikeFunding(request, { payment, intent, settleRequested })) {
     return {
       fundingState: "rejected",
       sold: false,

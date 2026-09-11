@@ -7,7 +7,8 @@ import { runPaidOffer } from "../lib/wrapper.mjs";
 import { createLocalNonSettlingResourceServer, attachContinuity } from "../lib/envelope.mjs";
 import { wouldSettleIfGuardOmitted } from "../lib/funding.mjs";
 import { MAX_INPUT_BYTES } from "../lib/pins.mjs";
-import { callerBudget, loadReservedPayment } from "./helpers.mjs";
+import { callerBudget, copyKitListing, loadReservedPayment } from "./helpers.mjs";
+import { ensureUsefulJobsKit } from "../lib/engine.mjs";
 
 describe("seeded fail-closed cases", { timeout: 60_000 }, () => {
   it("(a) SAMPLE/--example treated as a live sale is rejected", async () => {
@@ -24,6 +25,60 @@ describe("seeded fail-closed cases", { timeout: 60_000 }, () => {
     assert.equal(result.code, "sample-not-a-sale");
     assert.equal(result.liveSettleAttempted, false);
     assert.equal(result.sample, true);
+  });
+
+  it("(a2) SAMPLE/--example with reserved-fixture payment is not a sale", async () => {
+    const result = await runPaidOffer({
+      jobId: "vendor-budget-impact",
+      example: true,
+      fundingIntent: "reserved-fixture",
+      payment: loadReservedPayment(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.fundingState, "rejected");
+    assert.equal(result.sold, false);
+    assert.equal(result.code, "sample-not-a-sale");
+    assert.equal(result.liveSettleAttempted, false);
+    assert.equal(result.sample, true);
+    assert.equal(result.liveSettleAllowed, false);
+  });
+
+  it("(a3) kit SAMPLE path with reserved-fixture payment is not a sale", async () => {
+    const kit = ensureUsefulJobsKit();
+    const result = await runPaidOffer({
+      jobId: "vendor-budget-impact",
+      inputs: {
+        before: join(kit, "samples/pricing/caller-alpha/before.json"),
+        after: join(kit, "samples/pricing/caller-alpha/after.json"),
+      },
+      fundingIntent: "reserved-fixture",
+      payment: loadReservedPayment(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.fundingState, "rejected");
+    assert.equal(result.sold, false);
+    assert.equal(result.code, "sample-not-a-sale");
+    assert.equal(result.sample, true);
+    assert.ok(result.sampleReasons.some((r) => r.startsWith("kit-samples-path:")));
+    assert.equal(result.liveSettleAttempted, false);
+  });
+
+  it("(a4) copied SAMPLE-labelled listing with reserved-fixture payment is not a sale", async () => {
+    const work = mkdtempSync(join(tmpdir(), "puj-sample-listing-"));
+    const listing = copyKitListing(join(work, "listing"));
+    const result = await runPaidOffer({
+      jobId: "listing-repair-packet",
+      inputs: listing,
+      fundingIntent: "reserved-fixture",
+      payment: loadReservedPayment(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.fundingState, "rejected");
+    assert.equal(result.sold, false);
+    assert.equal(result.code, "sample-not-a-sale");
+    assert.equal(result.sample, true);
+    assert.ok(result.sampleReasons.includes("json-sample-label:input"));
+    assert.equal(result.liveSettleAttempted, false);
   });
 
   it("(b) missing required input is rejected", async () => {

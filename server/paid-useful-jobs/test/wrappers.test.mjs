@@ -92,6 +92,11 @@ describe("paid useful-job wrappers", { timeout: 180_000 }, () => {
     });
     assert.equal(packet.ok, true, packet.error);
     assert.ok(packet.outputs.some((o) => o.name === "repair-packet.json"));
+    // Copied listing JSON still carries sampleLabel SAMPLE; unfunded is allowed,
+    // reserved-fixture payment is not (see seeded-failures a4).
+    assert.equal(packet.sample, true);
+    assert.equal(packet.fundingState, "unfunded");
+    assert.equal(packet.sold, false);
   });
 
   it("example flag produces labeled sample output and is not a sale", async () => {

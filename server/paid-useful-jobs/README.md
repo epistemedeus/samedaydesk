@@ -55,6 +55,7 @@ Seeded fail-closed cases:
 1. SAMPLE/`--example` treated as a live sale
 2. Missing required input
 3. Fixture payload that would settle if the fixture guard were omitted
+4. SAMPLE/`--example` / kit SAMPLE path / SAMPLE-labelled copy with reserved-fixture payment (not a sale; `sold` stays false)
 
 ## Funding states
 
