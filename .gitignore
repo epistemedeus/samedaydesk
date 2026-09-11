@@ -43,3 +43,6 @@ tools/recurring-job-recipes/artifacts/**
 
 # Verified-feed refresh candidates stay local until review.
 client/tmp/
+
+# Consumer evidence refresh local outputs.
+tools/consumer-evidence-refresh/out/

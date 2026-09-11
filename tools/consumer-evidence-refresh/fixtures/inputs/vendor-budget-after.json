@@ -1,0 +1,6 @@
+{
+  "rows": [
+    { "field": "redacted-sku-alpha-units", "value": 12, "unit": "count" },
+    { "field": "redacted-sku-beta-units", "value": 4, "unit": "count" }
+  ]
+}

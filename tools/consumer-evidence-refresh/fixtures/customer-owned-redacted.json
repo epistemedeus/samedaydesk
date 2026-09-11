@@ -1,0 +1,23 @@
+{
+  "schema": "samedaydesk.consumer-evidence-refresh.case.v1",
+  "caseId": "cust-redacted-alpha",
+  "customer_owned": true,
+  "label": "customer",
+  "clock": "2026-09-11T18:00:00.000Z",
+  "notes": "operator-redacted-alpha-marker-do-not-copy",
+  "jobs": [
+    {
+      "artifactId": "release-brief",
+      "in": "inputs/release-brief.json"
+    }
+  ],
+  "optionalInputClasses": [
+    {
+      "id": "vendor-budget-impact",
+      "kind": "customer_quantities",
+      "before": "inputs/vendor-budget-before.json",
+      "after": "inputs/vendor-budget-after.json"
+    }
+  ],
+  "payment": { "attempted": false }
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "samedaydesk.consumer-evidence-refresh.case.v1",
+  "caseId": "cust-as-sale",
+  "customer_owned": true,
+  "label": "customer",
+  "clock": "2026-09-11T18:00:00.000Z",
+  "sold": true,
+  "jobs": [
+    {
+      "artifactId": "release-brief",
+      "in": "../inputs/release-brief.json"
+    }
+  ],
+  "payment": { "attempted": true }
+}

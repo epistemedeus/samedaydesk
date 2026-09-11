@@ -1,0 +1,83 @@
+{
+  "schema": "s137.release-brief.input.v1",
+  "clock": "2026-09-11T18:00:00.000Z",
+  "evidenceClass": "synthetic",
+  "jobId": "R2-CONSUMER-JOBS-02",
+  "artifactKind": "release-brief",
+  "subject": {
+    "name": "redacted-product-alpha",
+    "repository": "example.invalid/redacted-product-alpha"
+  },
+  "sources": [
+    {
+      "id": "cit-announced",
+      "plane": "announced",
+      "lane": "announced",
+      "kind": "github-release-notes",
+      "path": "sources/redacted-alpha/announced.json",
+      "sha256": "e139c42d3a6c2baa3b498248d06f62fccbf3857b1244afb4adc1d270920e8a7b",
+      "contentSha256": "e139c42d3a6c2baa3b498248d06f62fccbf3857b1244afb4adc1d270920e8a7b",
+      "evidenceClass": "synthetic",
+      "identity": {
+        "role": "claimed",
+        "tag": "v1.2.0",
+        "version": "1.2.0",
+        "commitSha": "ccdead08cda773fe7ca3abc54e8b1a5bc94151f7"
+      },
+      "payload": {
+        "name": "v1.2.0",
+        "body": "Announcement for redacted-product-alpha v1.2.0. This lane records the announcement only.",
+        "draft": false,
+        "prerelease": false,
+        "published_at": "2026-09-09T18:00:00.000Z",
+        "created_at": "2026-09-09T17:58:00.000Z",
+        "target_commitish": "ccdead08cda773fe7ca3abc54e8b1a5bc94151f7"
+      }
+    },
+    {
+      "id": "cit-shipped",
+      "plane": "shipped",
+      "lane": "shipped",
+      "kind": "git-tag",
+      "path": "sources/redacted-alpha/shipped.json",
+      "sha256": "b228936ce19bcb0eacdf877c8f4a0523b9da5e919d2eece3ddb0def0d17ceaf6",
+      "contentSha256": "b228936ce19bcb0eacdf877c8f4a0523b9da5e919d2eece3ddb0def0d17ceaf6",
+      "evidenceClass": "synthetic",
+      "identity": {
+        "role": "observed",
+        "tag": "v1.2.0",
+        "version": "1.2.0",
+        "commitSha": "ccdead08cda773fe7ca3abc54e8b1a5bc94151f7"
+      },
+      "payload": {
+        "ref": "refs/tags/v1.2.0",
+        "object": {
+          "type": "commit",
+          "sha": "ccdead08cda773fe7ca3abc54e8b1a5bc94151f7"
+        },
+        "tagged_at": "2026-09-09T17:55:00.000Z"
+      }
+    },
+    {
+      "id": "cit-tested",
+      "plane": "tested",
+      "lane": "tested",
+      "kind": "ci-log",
+      "path": "sources/redacted-alpha/tested.json",
+      "sha256": "9ff0419f183df7e9508f519df4d1107516fbf8e2a13debb01e4c7264fb741fe8",
+      "contentSha256": "9ff0419f183df7e9508f519df4d1107516fbf8e2a13debb01e4c7264fb741fe8",
+      "evidenceClass": "synthetic",
+      "identity": {
+        "role": "observed",
+        "commitSha": "ccdead08cda773fe7ca3abc54e8b1a5bc94151f7"
+      },
+      "payload": {
+        "name": "ci",
+        "status": "completed",
+        "conclusion": "success",
+        "completed_at": "2026-09-09T17:50:00.000Z",
+        "head_sha": "ccdead08cda773fe7ca3abc54e8b1a5bc94151f7"
+      }
+    }
+  ]
+}

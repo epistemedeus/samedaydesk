@@ -1,0 +1,14 @@
+{
+  "schema": "samedaydesk.consumer-evidence-refresh.case.v1",
+  "caseId": "sample-as-customer",
+  "customer_owned": true,
+  "label": "SAMPLE",
+  "clock": "2026-09-11T18:00:00.000Z",
+  "jobs": [
+    {
+      "artifactId": "release-brief",
+      "in": "../inputs/release-brief.json"
+    }
+  ],
+  "payment": { "attempted": false }
+}
