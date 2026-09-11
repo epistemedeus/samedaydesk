@@ -7,7 +7,9 @@ Offline lockfile pin-delta job for SameDayDesk. Root-assigned branch `codex/w4-c
 - Repo: `epistemedeus/samedaydesk`
 - Starting ref: `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545`
 - Feature branch: `codex/w4-commerce-11-20260911`
-- Feature head: `811cd990` wait no, get full hash first.
+- Feature head: `7f8a5f6803d7709f646eb47a69306e4767febfe9` (implementation `811cd99012f95f2df25183d35ed112d448ba534a`)
+- Compare: https://github.com/epistemedeus/samedaydesk/compare/main...codex/w4-commerce-11-20260911
+- Draft PR: ManagePullRequest registered for operator approval (user settings blocked automatic open). Compare URL is the integration handle until the draft exists.
 - Owned path only: `tools/lockfile-pin-delta/`
 - Input refs checked on that starting tree:
   - `package-lock.json` present, `lockfileVersion` 3, `packages` map. Not modified.
