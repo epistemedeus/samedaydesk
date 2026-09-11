@@ -7,6 +7,7 @@ import { sha256Bytes } from "../lib/digest.mjs";
 import { materializeVerifiedArtifacts } from "../lib/pickup.mjs";
 import {
   ACK_SCHEMA,
+  D01_EXECUTION_CONTRACT,
   D01_RECEIPT_SCHEMA,
   ENVELOPE_SCHEMA,
   MAILBOX_TERMS_VERSION,
@@ -315,12 +316,14 @@ describe("published export", () => {
     assert.equal(mod.ENVELOPE_SCHEMA, ENVELOPE_SCHEMA);
     assert.equal(mod.PICKUP_SCHEMA, PICKUP_SCHEMA);
     assert.equal(mod.ACK_SCHEMA, ACK_SCHEMA);
-    assert.equal(mod.D01_RESULT_CONTRACT.schema, D01_RECEIPT_SCHEMA);
-    assert.notEqual(mod.MAILBOX_TERMS_VERSION, D01_RECEIPT_SCHEMA);
+    assert.equal(mod.D01_RESULT_CONTRACT.contract, D01_EXECUTION_CONTRACT);
+    assert.equal(mod.D01_RESULT_CONTRACT.receiptSchema, D01_RECEIPT_SCHEMA);
+    assert.notEqual(mod.MAILBOX_TERMS_VERSION, D01_EXECUTION_CONTRACT);
     assert.match(MAILBOX_TERMS_VERSION, /^sha256:[0-9a-f]{64}$/);
     assert.equal(typeof mod.pickup, "function");
     assert.equal(typeof mod.acknowledge, "function");
-    assert.equal(typeof mod.seedFromD01Receipt, "function");
+    assert.equal(typeof mod.seedFromD01Execution, "function");
+    assert.notEqual(mod.ENVELOPE_SCHEMA, D01_EXECUTION_CONTRACT);
     assert.notEqual(mod.ENVELOPE_SCHEMA, D01_RECEIPT_SCHEMA);
   });
 });

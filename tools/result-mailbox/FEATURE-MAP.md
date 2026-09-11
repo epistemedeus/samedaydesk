@@ -15,7 +15,7 @@
 | --- | --- |
 | Envelope schema | Owned here. Not F08 `paid-useful-jobs.receipt.v1`. |
 | Engine | Spawn PR51 `node bin/useful-jobs.mjs` from the published archive. |
-| D01 result | Thin seed from PR52 receipt pin `aeef964fa188443078958d9d6d393afae1d542ee`. Does not import wrapper.mjs. |
+| D01 result | Thin seed from execution.v1 pin `6bed72dd22a396134aa5c957933b42c3a5746698`. Does not import wrapper.mjs. Useful analysis refusal with complete artifacts is retrievable; crash and missing output are not. |
 | termsVersion | I01 content hash `sha256:` + 64 hex. Integer rejected. Hasher pinned from Neo PR54. Unlike F08 receipt schema; hashes not forced equal. |
 | Expiry | Labelled `--clock` vs `expiresAt`. No daemon. |
 | Pickup vs ack | Pickup copies verified buffers and never sets `deliveredToBuyer`. `ack` is the delivered acknowledgment. |
@@ -30,5 +30,5 @@
 | Class | What |
 | --- | --- |
 | Fixture | SAMPLE `--example` envelope; hand-written invalid envelopes (integer termsVersion); refused D01 receipt JSON. |
-| Local-runtime | Spawn useful-jobs 1.0.0 against this module's caller pricing files; pickup copies those bytes; two-request CLI isolation; PR52 wrapper process for receipt seed. |
+| Local-runtime | Spawn useful-jobs 1.0.0 against this module's caller pricing files; pickup copies those bytes; two-request CLI isolation; D01 execution.v1 CLI/library from pin `6bed72dd22a396134aa5c957933b42c3a5746698`. |
 | External | Not run. No live payment, hosted mailbox, or Postgres. |

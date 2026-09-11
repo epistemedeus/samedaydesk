@@ -33,15 +33,19 @@ Pickup is not delivery. `--delivered` on pickup is refused (SAMPLE:
 
 ## D01 result contract (consumed, not vendored)
 
-Current pin tested: SDS PR52 `aeef964fa188443078958d9d6d393afae1d542ee`
-(`samedaydesk.paid-useful-jobs.receipt.v1`). Seed with `--from-d01-receipt`
-plus the receipt `outDir`. This mailbox does not import `wrapper.mjs`.
-D01 may amend the wrapper; remaining binding is receipt schema + output
-bytes, not a claimed future D01 runtime.
+Current pin tested: SDS `6bed72dd22a396134aa5c957933b42c3a5746698`
+(`samedaydesk.paid-useful-jobs.execution.v1`). Nested receipt remains
+`samedaydesk.paid-useful-jobs.receipt.v1` and is not mailbox envelope terms.
+Seed with `--from-d01-execution` (or `--from-d01-receipt` for a receipt that
+carries `contract` + `delivery`). This mailbox does not import `wrapper.mjs`.
 
-A refused or `engineResult.ok === false` receipt is not stored as a
-retrievable useful delivery. That is a valid analysis/transport outcome,
-not a mailbox crash.
+Retrievable means `transport === "ok"` and `delivery.complete === true`.
+Useful analysis `refused` / `informational` with complete artifacts can be
+put, picked up, and acknowledged. Crash, timeout, acquisition failure, missing
+output, and unknown jobs cannot. Pickup is still not delivery.
+
+aeef964 receipt.v1 without `contract`/`delivery` is rejected. Do not assume
+that older pin's `engineResult.ok === false` gate.
 
 ## Honesty
 

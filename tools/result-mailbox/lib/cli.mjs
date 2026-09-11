@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import { failBody, MailboxError } from "./errors.mjs";
 import { pickup } from "./pickup.mjs";
 import { acknowledge } from "./ack.mjs";
-import { seedFromD01Receipt } from "./d01-receipt.mjs";
+import { seedFromD01Execution } from "./d01-receipt.mjs";
 import { seedBySpawningEngine, seedFromOutDir } from "./seed.mjs";
 import { parseClock } from "./expiry.mjs";
 import { DEFAULT_TTL_SECONDS } from "./pins.mjs";
@@ -12,7 +12,7 @@ function usage() {
   return `result-mailbox — pickup completed useful-job artifacts (non-settling prototype)
 
 Commands:
-  seed   Write an envelope from a useful-jobs out-dir, D01 receipt, or spawned PR51 engine
+  seed   Write an envelope from a useful-jobs out-dir, D01 execution.v1 result, or spawned PR51 engine
   pickup Copy artifacts by requestId, verify sha256, label expiry, write pickup.json
   ack    Record delivered acknowledgment for one requestId (not a pickup)
 
@@ -81,18 +81,22 @@ export function runCli(argv, { stdout = process.stdout, stderr = process.stderr 
       mkdirSync(mailbox, { recursive: true });
 
       let body;
-      if (args["from-d01-receipt"]) {
-        const receiptPath = resolve(String(args["from-d01-receipt"]));
-        const receipt = JSON.parse(readFileSync(receiptPath, "utf8"));
+      if (args["from-d01-execution"] || args["from-d01-receipt"]) {
+        const resultPath = resolve(
+          String(args["from-d01-execution"] || args["from-d01-receipt"]),
+        );
+        const execution = JSON.parse(readFileSync(resultPath, "utf8"));
         const outDir = args["from-out-dir"]
           ? resolve(String(args["from-out-dir"]))
-          : receipt.outDir
-            ? resolve(String(receipt.outDir))
-            : undefined;
-        body = seedFromD01Receipt({
+          : execution.outDir
+            ? resolve(String(execution.outDir))
+            : execution.receipt?.outDir
+              ? resolve(String(execution.receipt.outDir))
+              : undefined;
+        body = seedFromD01Execution({
           mailbox,
           requestId,
-          receipt,
+          execution,
           outDir,
           clock,
           expiresAt,

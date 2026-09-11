@@ -45,8 +45,9 @@ export const SCHEMA_VERSION = 1;
 export const I01_HASHER_PIN = "819fa637ecf5e5177c84efc16fcaa18d57017631";
 export const I01_HASHER_PR = 54;
 export const F08_PIN = "bae3e7cd5034b21019fb272a99d88db964b831ee";
+export const D01_EXECUTION_CONTRACT = "samedaydesk.paid-useful-jobs.execution.v1";
 export const D01_RECEIPT_SCHEMA = "samedaydesk.paid-useful-jobs.receipt.v1";
-export const D01_RECEIPT_PIN = "aeef964fa188443078958d9d6d393afae1d542ee";
+export const D01_RECEIPT_PIN = "6bed72dd22a396134aa5c957933b42c3a5746698";
 export const D01_RECEIPT_PR = 52;
 export const STARTING_REF = "baf09dc591c83aec94e0cf42c5c64076fc5b98e3";
 

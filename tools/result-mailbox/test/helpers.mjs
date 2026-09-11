@@ -2,7 +2,7 @@ import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { REPO_ROOT } from "../lib/pins.mjs";
 
 export const here = dirname(fileURLToPath(import.meta.url));
@@ -29,10 +29,13 @@ export function runMailbox(args, extra = {}) {
 }
 
 export function ensureD01PinCheckout() {
-  const pin = "aeef964fa188443078958d9d6d393afae1d542ee";
+  const pin = "6bed72dd22a396134aa5c957933b42c3a5746698";
   const dest = join(tmpdir(), `sds-d01-${pin.slice(0, 12)}`);
-  const wrapperCli = join(dest, "server/paid-useful-jobs/bin/cli.mjs");
-  if (existsSync(wrapperCli)) return dest;
+  const reused = "/tmp/ro-worktrees/sds-d01-6bed72dd";
+  const wrapperCliAt = (root) => join(root, "server/paid-useful-jobs/bin/cli.mjs");
+  if (existsSync(wrapperCliAt(reused))) return reused;
+  if (existsSync(wrapperCliAt(dest))) return dest;
+  const wrapperCli = wrapperCliAt(dest);
   const fetch = spawnSync("git", ["fetch", "origin", pin], {
     cwd: REPO_ROOT,
     encoding: "utf8",
@@ -55,6 +58,11 @@ export function ensureD01PinCheckout() {
     );
   }
   return dest;
+}
+
+export async function loadD01Library(pinRoot = ensureD01PinCheckout()) {
+  const href = pathToFileURL(join(pinRoot, "server/paid-useful-jobs/index.mjs")).href;
+  return import(href);
 }
 
 export function runD01Wrapper(pinRoot, args, extra = {}) {

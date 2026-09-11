@@ -9,8 +9,9 @@ other's artifacts.
 This module owns the envelope schema. It does not import F08/D01 wrapper
 source. Engines come from the published PR51 archive
 `client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz`.
-D01 results are consumed as `samedaydesk.paid-useful-jobs.receipt.v1` plus
-the receipt out-dir (current pin PR52 `aeef964fa188443078958d9d6d393afae1d542ee`).
+D01 results are consumed as `samedaydesk.paid-useful-jobs.execution.v1`
+(current pin `6bed72dd22a396134aa5c957933b42c3a5746698`) plus the execution
+out-dir. Nested receipt.v1 is validated, not assumed from aeef964.
 Payments are non-settling prototypes. Expiry is a timestamp comparison against
 `--clock`, not a daemon. Result-reuse is a different tool: it projects
 observations, it does not hand back job outputs.
@@ -69,11 +70,15 @@ node --test tools/result-mailbox/test/*.test.mjs
 
 - Fixture: SAMPLE / `--example` kit run. Not a buyer delivery.
 - Local-runtime: spawn of the published useful-jobs CLI against caller files;
-  D01 binding spawns PR52 wrapper from a read-only pin worktree.
+  D01 binding spawns `server/paid-useful-jobs` CLI/library from pin
+  `6bed72dd22a396134aa5c957933b42c3a5746698` (execution.v1).
 - External acceptance: not claimed. No live payment, hosted HTTP mailbox,
   or Postgres store.
 
-I01 content-hash `termsVersion` (`sha256:` + 64 hex) is required. Integer
-`termsVersion` is rejected. Mailbox terms are not F08 receipt terms.
-D01 wrapper amendments remain a later binding; this package reports the
-PR52 pin it actually ran.
+`--funding reserved-fixture` requires `--payment` with a recognized fixture object
+(same rule in the CLI and `runPaidOffer`). Intent alone is not a reservation.
+
+I01 termsVersion `samedaydesk.mailbox.i01-private-result-mailbox.v1`
+(`sha256:8a014f7d6db9a5a2a9010d9f7cc84e51abeac911d3c225ff7ef619a6f3a0f0c0`)
+is the I01 private-mailbox terms string. It is not
+`samedaydesk.x402.pay.v1` and is not a payment, Stripe, or x402 receipt.
