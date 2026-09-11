@@ -10,10 +10,11 @@ export function formatMarkdown(diff) {
     `Published route table: **no**`,
     `SAMPLE fixture: **${diff.sample ? "yes" : "no"}**`,
     `Evidence class: before=${diff.evidenceClass.before}, after=${diff.evidenceClass.after}`,
+    `Outcome: **${diff.outcome}**. Breaking: **${diff.breaking ? "yes" : "no"}**. Order changed: **${diff.orderChanged ? "yes" : "no"}**.`,
     `Before digest: \`${diff.tableDigest.before}\``,
     `After digest: \`${diff.tableDigest.after}\``,
     "",
-    `Added: ${diff.counts.added}. Removed: ${diff.counts.removed}. Changed (canonical or robots): ${diff.counts.changed}.`,
+    `Added: ${diff.counts.added}. Removed: ${diff.counts.removed}. Changed (canonical or robots): ${diff.counts.changed}. Collisions: ${diff.counts.collisions}.`,
     "",
     "## Added",
     "",
@@ -39,6 +40,16 @@ export function formatMarkdown(diff) {
     lines.push("", "## Title-only (not a canonical/robots change)", "");
     for (const item of diff.titleOnly) {
       lines.push(`- \`${item.path}\` ${item.before} -> ${item.after}`);
+    }
+  }
+  if (diff.collisions.length) {
+    lines.push("", "## Collisions (breaking)", "");
+    for (const item of diff.collisions) {
+      if (item.kind === "canonical") {
+        lines.push(`- canonical \`${item.canonical}\` paths ${item.paths.map((p) => `\`${p}\``).join(", ")} (${item.side})`);
+      } else {
+        lines.push(`- path \`${item.path}\` appears ${item.indexes.length} times (${item.side})`);
+      }
     }
   }
   lines.push(

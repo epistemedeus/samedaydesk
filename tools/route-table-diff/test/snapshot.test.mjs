@@ -31,7 +31,7 @@ test("copied PUBLIC_SHELLS snapshot matches live spa-route-shells at the pinned 
 });
 
 test("this module does not import shell writers or edit homepage generators", () => {
-  const files = ["bin/route-diff.mjs", "lib/index.mjs", "lib/catalog.mjs", "lib/io.mjs", "lib/diff.mjs"];
+    const files = ["bin/route-diff.mjs", "lib/index.mjs", "lib/catalog.mjs", "lib/io.mjs", "lib/diff.mjs", "lib/identity.mjs"];
   for (const rel of files) {
     const source = readFileSync(join(here, "..", rel), "utf8");
     assert.equal(source.includes("writeRouteShells"), false, rel);

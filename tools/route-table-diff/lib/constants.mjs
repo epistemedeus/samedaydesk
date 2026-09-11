@@ -9,9 +9,16 @@ export const JOURNEY_BEFORE = join(FIXTURES_DIR, "journey", "before.json");
 export const JOURNEY_AFTER = join(FIXTURES_DIR, "journey", "after.json");
 export const SAMPLE_BEFORE = join(FIXTURES_DIR, "SAMPLE", "before.json");
 export const SAMPLE_AFTER = join(FIXTURES_DIR, "SAMPLE", "after.json");
+export const COMPARISON_PERMUTED = join(FIXTURES_DIR, "comparison", "permuted.json");
+export const COMPARISON_REMOVED = join(FIXTURES_DIR, "comparison", "removed-privacy.json");
+export const COMPARISON_COLLISION_PATH = join(FIXTURES_DIR, "comparison", "collision-duplicate-path.json");
+export const COMPARISON_SLASH_ALIAS = join(FIXTURES_DIR, "comparison", "slash-alias.json");
+export const COMPARISON_COLLISION_ENCODED = join(FIXTURES_DIR, "comparison", "collision-encoded-path.json");
+export const COMPARISON_COLLISION_CANONICAL = join(FIXTURES_DIR, "comparison", "collision-canonical.json");
 
 export const SCHEMA_TABLE = "samedaydesk.route-table.v1";
 export const SCHEMA_DIFF = "samedaydesk.route-diff.v1";
+export const SCHEMA_DIGEST = "samedaydesk.route-table.digest.v2";
 
 /** Pinned homepage identity from server/lib/spa-route-shells.js at startingRef. Homepage is not a crawler shell. */
 export const SITE_ORIGIN = "https://samedaydesk.com";
@@ -49,4 +56,6 @@ export const LATER_BINDINGS = Object.freeze({
   listingRepairPacket:
     "listing-repair-packet diagnoses listing/route snapshots. Consume it later through an injected adapter. This job diffs caller route catalogs only.",
   spaRouteShellsWriter: "Never bind. This job does not write route shells or homepages.",
+  integrationOwner:
+    "W5-M01 owns wrapper/catalog wiring. This module publishes the comparison contract only. Do not claim a future sibling's behavior.",
 });

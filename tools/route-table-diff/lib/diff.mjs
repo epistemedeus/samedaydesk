@@ -1,8 +1,49 @@
 import { tableDigest } from "./digest.mjs";
 import { SCHEMA_DIFF } from "./constants.mjs";
+import { routeIdentityKey } from "./identity.mjs";
 
 function robotsOf(route) {
   return route.robots ?? null;
+}
+
+function publicRoute(route) {
+  return {
+    path: route.path,
+    canonical: route.canonical,
+    title: route.title,
+    robots: robotsOf(route),
+  };
+}
+
+function pathSequence(routes) {
+  return routes.map((route) => route.path);
+}
+
+function identitySet(records) {
+  return [...records].map(routeIdentityKey).sort();
+}
+
+export function classifyRouteDiff({
+  collisions = [],
+  removed = [],
+  changed = [],
+  added = [],
+  titleOnly = [],
+  orderChanged = false,
+} = {}) {
+  if ((collisions && collisions.length) || (removed && removed.length)) {
+    return { breaking: true, outcome: "breaking" };
+  }
+  if ((changed && changed.length) || (added && added.length)) {
+    return { breaking: false, outcome: "changed" };
+  }
+  if (titleOnly && titleOnly.length) {
+    return { breaking: false, outcome: "title-only" };
+  }
+  if (orderChanged) {
+    return { breaking: false, outcome: "permutation" };
+  }
+  return { breaking: false, outcome: "no-change" };
 }
 
 export function diffRouteTables(before, after, meta = {}) {
@@ -15,10 +56,10 @@ export function diffRouteTables(before, after, meta = {}) {
   const titleOnly = [];
 
   for (const route of after.routes) {
-    if (!beforeMap.has(route.path)) added.push(route);
+    if (!beforeMap.has(route.path)) added.push(publicRoute(route));
   }
   for (const route of before.routes) {
-    if (!afterMap.has(route.path)) removed.push(route);
+    if (!afterMap.has(route.path)) removed.push(publicRoute(route));
   }
   for (const route of after.routes) {
     const prev = beforeMap.get(route.path);
@@ -42,6 +83,29 @@ export function diffRouteTables(before, after, meta = {}) {
     }
   }
 
+  const collisions = [
+    ...(before.collisions || []).map((item) => ({ ...item, side: "before" })),
+    ...(after.collisions || []).map((item) => ({ ...item, side: "after" })),
+  ];
+
+  const beforeRecords = before.records || before.routes;
+  const afterRecords = after.records || after.routes;
+  const sameIdentities =
+    JSON.stringify(identitySet(beforeRecords)) === JSON.stringify(identitySet(afterRecords));
+  const orderChanged =
+    JSON.stringify(pathSequence(before.routes)) !== JSON.stringify(pathSequence(after.routes)) &&
+    sameIdentities &&
+    collisions.length === 0;
+
+  const classified = classifyRouteDiff({
+    collisions,
+    removed,
+    changed,
+    added,
+    titleOnly,
+    orderChanged,
+  });
+
   const evidenceClass = {
     before: meta.beforeClass || (before.sample ? "fixture" : "caller"),
     after: meta.afterClass || (after.sample ? "fixture" : "caller"),
@@ -53,24 +117,32 @@ export function diffRouteTables(before, after, meta = {}) {
     publishedRouteTable: false,
     sample: Boolean(before.sample || after.sample || meta.example),
     evidenceClass,
+    breaking: classified.breaking,
+    outcome: classified.outcome,
+    orderChanged,
     tableDigest: {
-      before: tableDigest(before.routes),
-      after: tableDigest(after.routes),
+      before: tableDigest(beforeRecords),
+      after: tableDigest(afterRecords),
     },
     counts: {
       added: added.length,
       removed: removed.length,
       changed: changed.length,
       titleOnly: titleOnly.length,
+      collisions: collisions.length,
     },
     added,
     removed,
     changed,
     titleOnly,
+    collisions,
     notes: [
+      "Permutation of the same routes is not a breaking change. tableDigest is order-independent.",
+      "breaking is true only for route collisions (duplicate path or shared canonical after SDS identity) or removals.",
       "changed lists canonical or robots only. Title-only edits are titleOnly, not a canonical/robots change.",
       "This artifact is not a published SDS route table and does not rewrite the homepage or spa-route-shells.js.",
       "Fixture, local-runtime, and external stay distinct. Local HTTP loopback is local-runtime. SAMPLE is fixture.",
+      "A collision or valid no-change report is an analysis outcome, not a transport or engine failure.",
     ],
   };
 }

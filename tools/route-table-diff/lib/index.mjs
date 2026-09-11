@@ -12,11 +12,12 @@ import { formatMarkdown } from "./report.mjs";
 import { refused } from "./errors.mjs";
 
 export { RouteDiffError, toPublicError } from "./errors.mjs";
-export { loadCatalogDocument } from "./catalog.mjs";
-export { diffRouteTables } from "./diff.mjs";
+export { loadCatalogDocument, refuseUnsupportedCatalog } from "./catalog.mjs";
+export { classifyRouteDiff, diffRouteTables } from "./diff.mjs";
 export { formatMarkdown } from "./report.mjs";
-export { LATER_BINDINGS, SOURCE_PIN, PUBLIC_SHELL_PATHS } from "./constants.mjs";
+export { LATER_BINDINGS, SOURCE_PIN, PUBLIC_SHELL_PATHS, SCHEMA_DIGEST } from "./constants.mjs";
 export { contentHash, tableDigest } from "./digest.mjs";
+export { canonicalIdentity, normalizeRoutePath } from "./identity.mjs";
 
 function transportClass(locator, catalog) {
   if (isHttpLocator(locator)) return "local-runtime";

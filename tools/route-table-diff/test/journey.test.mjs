@@ -50,6 +50,10 @@ test("journey: useful-jobs v2 is added and /terms canonical change is listed", a
   assert.match(json.tableDigest.before, /^sha256:[a-f0-9]{64}$/);
   assert.match(json.tableDigest.after, /^sha256:[a-f0-9]{64}$/);
   assert.notEqual(json.tableDigest.before, json.tableDigest.after);
+  assert.equal(json.breaking, false);
+  assert.equal(json.outcome, "changed");
+  assert.equal(result.breaking, false);
+  assert.equal(result.outcome, "changed");
 });
 
 test("library API matches the CLI journey without writing shells", async () => {
@@ -91,4 +95,6 @@ test("title-only edits are not canonical/robots changes", async () => {
   assert.equal(diff.counts.changed, 0);
   assert.equal(diff.counts.titleOnly, 1);
   assert.equal(diff.titleOnly[0].path, "/for-agents/useful-jobs");
+  assert.equal(diff.breaking, false);
+  assert.equal(diff.outcome, "title-only");
 });

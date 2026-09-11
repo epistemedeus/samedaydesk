@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
-import { CONTENT_HASH_RE } from "./constants.mjs";
+import { CONTENT_HASH_RE, SCHEMA_DIGEST } from "./constants.mjs";
 import { refused } from "./errors.mjs";
+import { compareRouteIdentity } from "./identity.mjs";
 
 export function canonicalJson(value) {
   return JSON.stringify(sortKeys(value));
@@ -47,13 +48,16 @@ export function refuseIntegerTermsVersion(catalog) {
 }
 
 export function tableDigest(routes) {
-  return contentHash({
-    schema: "samedaydesk.route-table.digest.v1",
-    routes: routes.map((route) => ({
+  const sorted = [...(routes || [])]
+    .map((route) => ({
       path: route.path,
       canonical: route.canonical,
       title: route.title,
       robots: route.robots ?? null,
-    })),
+    }))
+    .sort(compareRouteIdentity);
+  return contentHash({
+    schema: SCHEMA_DIGEST,
+    routes: sorted,
   });
 }

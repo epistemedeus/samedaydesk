@@ -66,10 +66,21 @@ try {
       evidenceClass: result.evidenceClass,
       counts: result.counts,
       tableDigest: result.tableDigest,
+      breaking: result.breaking,
+      outcome: result.outcome,
+      orderChanged: result.orderChanged,
       outDir: result.outDir || null,
       outputs: result.outputs || null,
       added: result.added.map((route) => route.path),
+      removed: result.removed.map((route) => route.path),
       changed: result.changed.map((item) => ({ path: item.path, fields: item.fields })),
+      collisions: result.collisions.map((item) => ({
+        kind: item.kind,
+        side: item.side,
+        path: item.path || null,
+        canonical: item.canonical || null,
+        paths: item.paths || null,
+      })),
     })}\n`,
   );
 } catch (err) {
@@ -82,6 +93,7 @@ function usage() {
 
 Read two JSON route catalogs {path, canonical, title, robots?} and write
 route-diff.json / route-diff.md (added, removed, changed canonical or robots).
+Permutation of the same routes is not breaking. Collisions and removals are.
 
   node tools/route-table-diff/bin/route-diff.mjs --before <file-or-loopback-url> --after <file-or-loopback-url> --out-dir <dir>
   node tools/route-table-diff/bin/route-diff.mjs --example --out-dir <dir>
@@ -90,7 +102,7 @@ Does not edit spa-route-shells.js, homepages, or live listings.
 Does not fetch public hosts. Loopback http://127.0.0.1 is local-runtime, not external acceptance.
 SAMPLE / --example is a fixture, not the published route table.
 --published with SAMPLE is refused. --rewrite-homepage is refused.
-Path-less records are refused.
+Path-less records are refused. Unlike OpenAPI/page maps are refused, not hashed equal.
 
 Node >= 22. No extra npm packages. Payments: none (nonsettling prototype; paid=false).`;
 }

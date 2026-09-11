@@ -1,10 +1,38 @@
-import { HOME_CANONICAL, HOME_PATH, HOME_TITLE, SCHEMA_TABLE, SITE_ORIGIN } from "./constants.mjs";
+import { SCHEMA_TABLE } from "./constants.mjs";
 import { refuseIntegerTermsVersion } from "./digest.mjs";
 import { refused } from "./errors.mjs";
+import { assertNotHomeTitle, canonicalIdentity, normalizeRoutePath } from "./identity.mjs";
 
 const SAMPLE_MARKERS = ["sample", "samplelabel", "label", "kind", "sourcekind", "authority"];
 
+function looksLikeOpenApi(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return false;
+  if (typeof raw.openapi === "string" || typeof raw.swagger === "string") return true;
+  return raw.paths != null && typeof raw.paths === "object" && !Array.isArray(raw.paths);
+}
+
+export function refuseUnsupportedCatalog(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return;
+  const hasSdsList = Array.isArray(raw.routes) || Array.isArray(raw.catalog);
+  if (hasSdsList) return;
+  if (looksLikeOpenApi(raw)) {
+    refused(
+      "unsupported_catalog",
+      "OpenAPI path maps are not SDS route catalogs. This job compares {path, canonical, title, robots?} records only and does not force unlike schemas equal.",
+      { format: "openapi" },
+    );
+  }
+  if (raw.pages && typeof raw.pages === "object" && !Array.isArray(raw.pages)) {
+    refused(
+      "unsupported_catalog",
+      "Framework page maps are not SDS route catalogs. Provide routes or catalog arrays of {path, canonical, title, robots?} records.",
+      { format: "pages-map" },
+    );
+  }
+}
+
 export function extractRouteList(raw) {
+  refuseUnsupportedCatalog(raw);
   if (Array.isArray(raw)) return { envelope: { schema: SCHEMA_TABLE }, routes: raw };
   if (!raw || typeof raw !== "object") {
     refused("invalid_catalog", "Route catalog must be a JSON object or array of route records");
@@ -54,63 +82,42 @@ export function claimsHomepageRewrite(envelope, options = {}) {
 }
 
 export function normalizePath(path) {
-  if (path == null || path === "") {
-    refused("pathless_record", "Path-less route records are refused", { path });
-  }
-  if (typeof path !== "string" || path.trim() === "") {
-    refused("pathless_record", "Path-less route records are refused", { path });
-  }
-  const trimmed = path.trim();
-  if (!trimmed.startsWith("/")) {
-    refused("invalid_path", `Route path must start with /: ${trimmed}`, { path: trimmed });
-  }
-  return trimmed;
+  return normalizeRoutePath(path);
+}
+
+function isFrameworkRecord(record) {
+  if (!record || typeof record !== "object") return false;
+  const hasSdsFields = typeof record.canonical === "string" || typeof record.title === "string";
+  if (hasSdsFields) return false;
+  return (
+    Object.prototype.hasOwnProperty.call(record, "method") ||
+    Object.prototype.hasOwnProperty.call(record, "handler") ||
+    Object.prototype.hasOwnProperty.call(record, "operationId") ||
+    Object.prototype.hasOwnProperty.call(record, "component")
+  );
 }
 
 export function normalizeRoute(record, index) {
   if (!record || typeof record !== "object" || Array.isArray(record)) {
     refused("invalid_record", "Catalog entry must be an object", { index });
   }
+  if (isFrameworkRecord(record)) {
+    refused(
+      "unsupported_catalog",
+      "Framework route records need an SDS adapter. This job does not invent canonical or title from method, handler, or operationId fields.",
+      { index, path: record.path ?? null },
+    );
+  }
   if (!Object.prototype.hasOwnProperty.call(record, "path") || record.path == null || record.path === "") {
     refused("pathless_record", "Path-less route records are refused", { index, record });
   }
-  const path = normalizePath(record.path);
-  if (path === HOME_PATH) {
-    refused("homepage_rewrite_refused", "Homepage path / is not a crawler shell and cannot be rewritten by this job", {
-      path,
-    });
-  }
-  if (path.endsWith("/") || path.includes("?") || path.includes("#")) {
-    refused("invalid_path", "Route path must be exact and extensionless (no trailing slash, query, or hash)", {
-      path,
-    });
-  }
+  const path = normalizeRoutePath(record.path);
   const title = record.title;
   if (typeof title !== "string" || title.trim().length === 0) {
     refused("missing_title", `Route ${path} is missing title`, { path });
   }
-  const canonical = record.canonical;
-  if (typeof canonical !== "string" || canonical.trim().length === 0) {
-    refused("missing_canonical", `Route ${path} is missing canonical`, { path });
-  }
-  let canonicalUrl;
-  try {
-    canonicalUrl = new URL(canonical);
-  } catch {
-    refused("invalid_canonical", `Route ${path} canonical is not a URL`, { path, canonical });
-  }
-  if (canonicalUrl.href === HOME_CANONICAL || (canonicalUrl.origin === SITE_ORIGIN && canonicalUrl.pathname === HOME_PATH)) {
-    refused("homepage_rewrite_refused", "Catalog claims homepage canonical; this job does not rewrite the homepage", {
-      path,
-      canonical: canonicalUrl.href,
-    });
-  }
-  if (title.trim() === HOME_TITLE) {
-    refused("homepage_rewrite_refused", "Catalog reuses homepage title; this job does not rewrite the homepage", {
-      path,
-      title,
-    });
-  }
+  assertNotHomeTitle(title, path);
+  const canonical = canonicalIdentity(record.canonical, { path });
   let robots = record.robots;
   if (robots == null || robots === "") robots = null;
   else if (typeof robots !== "string") {
@@ -119,9 +126,10 @@ export function normalizeRoute(record, index) {
 
   return {
     path,
-    canonical: canonicalUrl.href,
+    canonical,
     title: title.trim(),
     robots,
+    index,
   };
 }
 
@@ -143,13 +151,50 @@ export function loadCatalogDocument(raw, locator, options = {}) {
       { locator },
     );
   }
-  const seen = new Set();
-  const normalized = [];
+  const byPath = new Map();
+  const records = [];
+  const unique = [];
+  const collisions = [];
   for (let i = 0; i < routes.length; i += 1) {
     const route = normalizeRoute(routes[i], i);
-    if (seen.has(route.path)) refused("duplicate_path", `Duplicate path ${route.path}`, { path: route.path });
-    seen.add(route.path);
-    normalized.push(route);
+    records.push(route);
+    if (!byPath.has(route.path)) {
+      byPath.set(route.path, [route]);
+      unique.push(route);
+    } else {
+      byPath.get(route.path).push(route);
+    }
+  }
+  for (const [path, group] of byPath) {
+    if (group.length > 1) {
+      collisions.push({
+        kind: "path",
+        path,
+        indexes: group.map((route) => route.index),
+        records: group.map((route) => ({
+          path: route.path,
+          canonical: route.canonical,
+          title: route.title,
+          robots: route.robots,
+        })),
+      });
+    }
+  }
+  const byCanonical = new Map();
+  for (const route of unique) {
+    const group = byCanonical.get(route.canonical) || [];
+    group.push(route);
+    byCanonical.set(route.canonical, group);
+  }
+  for (const [canonical, group] of byCanonical) {
+    if (group.length > 1) {
+      collisions.push({
+        kind: "canonical",
+        canonical,
+        paths: group.map((route) => route.path),
+        indexes: group.map((route) => route.index),
+      });
+    }
   }
   return {
     schema: typeof envelope.schema === "string" ? envelope.schema : SCHEMA_TABLE,
@@ -158,6 +203,8 @@ export function loadCatalogDocument(raw, locator, options = {}) {
     publishedClaim,
     publishedRouteTable: false,
     envelope,
-    routes: normalized,
+    records,
+    routes: unique,
+    collisions,
   };
 }
