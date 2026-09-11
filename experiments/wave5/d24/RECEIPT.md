@@ -4,6 +4,8 @@
 **Repo:** `epistemedeus/samedaydesk`  
 **Branch:** `cursor/w5-d24-clean-environment-cli-package-consumer-acceptance-ffdb`  
 **Tested consumer:** `b62a5213fa397f809bcf0d7d1e54c0c6b9b8b893`  
+**This revision:** `caf6005ca848d3d57585986eb0a6ac61f2323980`  
+
 **StartingRef:** `aeef964fa188443078958d9d6d393afae1d542ee` (SDS PR52)  
 **PR:** https://github.com/epistemedeus/samedaydesk/pull/103 (draft)  
 **Pilot packet:** `epistemedeus/pilot@95b3f3a47f5b1b69bd237e4c978fc3376221365d`  
@@ -37,7 +39,9 @@ Also:
 node experiments/wave5/d24/bin/clean-env.mjs accept --prefix "$prefix"
 ```
 
-Counts and `accept` outcome are recorded after the re-run on this worker.
+**PASS — 21 pass, 0 fail, 0 skip, 0 cancelled.** Node v22.14.0, Python 3.12.3. Duration 5.372s (cached prefix).
+
+`accept --prefix` on this worker: `ok: true`. Isolation true (prefix copy, not SDS checkout). Co14 and D01 `ok: true` for caller `vendor-budget-impact`. D07 export/import `ok: true`. Retrieved: `budget-impact.json`, `budget-impact.md`, `receipt.json`, `job-artifacts.zip`. No Postgres. Missing deps were not skipped.
 
 ensurepip is absent on this image (`python3 -m venv` cannot create pip). Install uses a copied Co14 tree plus `bin/samedaydesk-useful-jobs` wrapper. That is the documented Co14 PYTHONPATH path, not a second engine.
 
@@ -61,7 +65,7 @@ Reproduced on the installed CLIs:
 ## Integration limits
 
 - D01 still needs catalog/kit/archive at `REPO_ROOT` relatives. Mini-layout works. Not an npm package.
-- D01 PR74 later head `e2f951cae7bb299df2283b9c181bb0d369fc26af` (freeze inspected bytes, receipts bind `runOutDir`) was not the tested pin. Remaining bind for Root / D01, not claimed here.
+- D01 PR74 later head `e2f951cae7bb299df2283b9c181bb0d369fc26af` (freeze inspected bytes, receipts bind `runOutDir`) is not the recorded pin. Spot-check only: missing-required-inputs stayed `transport=rejected`; caller `vendor-budget-impact` returned `ok` with complete delivery. Full 21-test suite was not re-run on that head.
 - D08 Wave5 unpublished. Remaining: include `pins.json` in the wheel, bind `list` to extracted catalog, timeout/`kill` on `spawn_node`.
 - D07 completeness vs D03 `receipt.json` stays unbound unless D03 is injected.
 - No live origin GET, spend, deploy, or recruited runtime. Those are D27 / Root field steps.
