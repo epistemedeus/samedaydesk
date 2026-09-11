@@ -1,0 +1,10 @@
+W5-D15 input/execute race harness
+
+Copyright (c) 2026 SameDayDesk / epistemedeus
+License: MIT. See LICENSE in this directory.
+
+This package consumes the SDS PR52 paid wrapper
+(`server/paid-useful-jobs/`) as the current pinned execute
+implementation. It does not copy that wrapper or the useful-jobs
+engine archive. Engine work stays in the published archive the
+wrapper already extracts.

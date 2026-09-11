@@ -1,0 +1,15 @@
+{
+  "schema": "samedaydesk.wave5.d15.input-execute-race.v1",
+  "outcome": "Deterministic input/execute race harness",
+  "testedImplementation": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "ref": "fable/f08-paid-wrappers",
+    "pr": 52,
+    "paths": ["server/paid-useful-jobs/"]
+  },
+  "integrationOwner": "W5-D01",
+  "refuseCode": "input-changed-after-preflight",
+  "bind": ["frozen", "verify-live", "live-observe"],
+  "remainingBinding": "materializeInputs aliases caller file paths into runEngineJob. D01 should copy inspected bytes into the work directory at materialize time, or refuse when live digest drifts before execute. This harness does not claim a future D01 freeze."
+}
