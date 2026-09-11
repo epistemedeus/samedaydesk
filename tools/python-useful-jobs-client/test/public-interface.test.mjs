@@ -73,7 +73,10 @@ test("list and help run via subprocess Node after verifying the committed tarbal
   assert.equal(help.status, 0, help.stderr + help.stdout);
   const helpBody = parseJson(help);
   assert.equal(helpBody.ok, true);
-  assert.match(helpBody.engineStdout, /vendor-budget-impact|--before|--after|--example/i);
+  assert.match(helpBody.engineStdout, /vendor-budget-impact/);
+  assert.match(helpBody.engineStdout, /--before/);
+  assert.match(helpBody.engineStdout, /--after/);
+  assert.match(helpBody.engineStdout, /--example/);
 });
 
 test("unknown job is refused before claiming a sale", () => {

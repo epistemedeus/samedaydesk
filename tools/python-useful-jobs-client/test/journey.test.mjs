@@ -8,11 +8,7 @@ import { ARCHIVE, JOB_IDS, kitPin, parseJson, py, pyAsync, serveBytes } from "./
 test("journey: example SAMPLE then caller files copied from samples/pricing/a", () => {
   const work = mkdtempSync(join(tmpdir(), "uj-py-journey-"));
   try {
-    const exampleOut = join(work, "example-out");
-    const example = py(
-      ["run", "vendor-budget-impact", "--example", "--out-dir", exampleOut],
-      { cwd: work },
-    );
+    const example = py(["run", "vendor-budget-impact", "--example"], { cwd: work });
     assert.equal(example.status, 0, example.stderr + example.stdout);
     const exampleBody = parseJson(example);
     assert.equal(exampleBody.ok, true);
@@ -24,6 +20,8 @@ test("journey: example SAMPLE then caller files copied from samples/pricing/a", 
     assert.equal(exampleBody.kind, "fixture");
     assert.equal(exampleBody.acceptanceClass, "fixture");
     assert.equal(exampleBody.source, "committed-file");
+    const exampleOut = exampleBody.outDir;
+    assert.ok(exampleOut, "example run must report outDir");
     assert.equal(existsSync(join(exampleOut, "budget-impact.json")), true);
     assert.equal(existsSync(join(exampleOut, "budget-impact.md")), true);
     assert.equal(exampleBody.outputsExist, true);

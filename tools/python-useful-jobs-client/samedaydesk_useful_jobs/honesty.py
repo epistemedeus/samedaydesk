@@ -28,12 +28,13 @@ def inspect_argv(argv: Iterable[str]) -> tuple[bool, tuple[str, ...], list[str]]
     i = 0
     while i < len(args):
         item = args[i]
-        if item == "--example":
+        if item == "--example" or item.startswith("--example="):
             example = True
             passthrough.append(item)
             i += 1
             continue
-        if item in SALE_FLAGS:
+        flag_name = item.split("=", 1)[0]
+        if item in SALE_FLAGS or flag_name in SALE_FLAGS:
             sale_reasons.append(item)
             i += 1
             continue

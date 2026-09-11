@@ -2,8 +2,9 @@
 
 **Date:** 11 September 2026
 **Branch:** `codex/w4-commerce-14-20260911`
-**HEAD:** pending this revision
+**HEAD:** pending commit on `codex/w4-commerce-14-20260911`
 **Base:** `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545` (PR51 useful-jobs public integration)
+**Compare:** https://github.com/epistemedeus/samedaydesk/compare/main...codex/w4-commerce-14-20260911
 
 ## What
 
@@ -29,16 +30,23 @@ Missing Node is `missing-node`, not a payment error.
 
 ```bash
 PYTHONPATH=tools/python-useful-jobs-client python3 -m samedaydesk_useful_jobs run vendor-budget-impact --example
-# then copy kit samples/pricing/a into caller before.json / after.json and run without --example
+# copy kit samples/pricing/a to caller before.json / after.json, then run without --example
+PYTHONPATH=tools/python-useful-jobs-client python3 -m samedaydesk_useful_jobs run vendor-budget-impact \
+  --before ./before.json --after ./after.json --out-dir ./out/budget
 ```
+
+Executed in tests: SAMPLE envelope (`label=SAMPLE`, `sold=false`),
+`budget-impact.json` / `budget-impact.md` exist; caller copy from
+`samples/pricing/a` writes the same outputs with `caller-input` (not SAMPLE-as-sale).
+Local HTTP serving the committed bytes acquires (`source=origin-http`).
 
 ## Seeded failures
 
-| Case | Must reject |
+| Case | Result |
 | --- | --- |
 | same-size archive with flipped byte | `wrong-digest`, no extract |
 | `--example --sold` | `sample-as-sale` |
-| PATH without `node` | `missing-node` |
+| PATH without `node` | `missing-node` (not a payment error) |
 | `--origin` serving same-size wrong bytes | `wrong-digest`, no extract |
 
 ## Tests
@@ -47,7 +55,7 @@ PYTHONPATH=tools/python-useful-jobs-client python3 -m samedaydesk_useful_jobs ru
 node --test --test-concurrency=1 tools/python-useful-jobs-client/test/*.test.mjs
 ```
 
-**Status:** not yet executed in this revision (filled after the first test run).
+**PASS — 10 tests, 0 fail** (`duration_ms` 2053). Worker: Python 3.12.3, Node v22.14.0.
 
 Dependencies: Python 3, Node 22, committed PR51 tarball. No pip. No Postgres
 (this client has no database). Local HTTP is used for `--origin` only.
@@ -56,9 +64,10 @@ Dependencies: Python 3, Node 22, committed PR51 tarball. No pip. No Postgres
 
 - Live `https://samedaydesk.com` GET (F18 already proved live GET; this client
   uses the committed file plus local HTTP)
+- Origin connection-refused / non-200 (mismatch and matching local HTTP are tested)
 - F08 paid-wrapper integration
 - Windows
-- Python versions older than the worker image (3.12.3 here)
+- Python older than 3.12.3 on this worker
 
 ## Next integration owner
 
