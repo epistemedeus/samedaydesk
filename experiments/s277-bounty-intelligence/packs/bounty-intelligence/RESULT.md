@@ -1,7 +1,7 @@
 # S277 RESULT — bounty-intelligence pack
 
 Branch: `codex/s277-bounty-intelligence-20260911`
-Head: `4e2470f` (implementation; RESULT/export stamp follows)
+Head: `8f15961330fd59ed7fcc2f61832a04343725f004`
 Parent model: `grok-4.6` effort `xhigh` (native Grok Heavy; no API-key substitution)
 Projected pack: `experiments/s277-bounty-intelligence/packs/bounty-intelligence/`
 Transplant: `PACK-EXPORT.patch` (pack-root-relative) for neomorphic-io `packs/bounty-intelligence`
