@@ -3,6 +3,7 @@
 **Task:** W5-M11
 **Repo:** epistemedeus/samedaydesk
 **Branch:** `cursor/w5-m11-caller-supplied-example-corpus-replacing-fixture-only-demonstrations-660b`
+**HEAD:** `de8a0e5da652d45bc66eb87f243c337a83778349`
 **Owned path:** `experiments/wave5/m11/`
 **Starting pin:** `aeef964fa188443078958d9d6d393afae1d542ee` (SDS PR52 `fable/f08-paid-wrappers`)
 **Tested implementation:** PR52 `server/paid-useful-jobs/bin/cli.mjs`
