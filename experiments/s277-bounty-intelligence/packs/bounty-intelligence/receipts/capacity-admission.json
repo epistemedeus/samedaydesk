@@ -1,0 +1,21 @@
+{
+  "event": "capacity_admission",
+  "at": "2026-09-11T15:38:22Z",
+  "plannedNativeChildSlices": 6,
+  "expandBeyond6": false,
+  "nodeTestProcessCountIsNotHeavyConcurrency": true,
+  "noRecurringWatcher": true,
+  "resources": {
+    "memAvailablePct": 65.25,
+    "diskFreePct": 96.27,
+    "cpus": 4
+  },
+  "children": [
+    { "id": "C1", "slice": "vendor-shape-audit", "exclusive": "tests/c1-vendor-shape.test.mjs" },
+    { "id": "C2", "slice": "rank-policy", "exclusive": "tests/c2-rank-policy.test.mjs" },
+    { "id": "C3", "slice": "experience-events-interop", "exclusive": "tests/c3-experience-events.test.mjs" },
+    { "id": "C4", "slice": "bounded-live-probes", "exclusive": "receipts/children/c4-probes.json" },
+    { "id": "C5", "slice": "html-renderer", "exclusive": "tests/c5-html.test.mjs" },
+    { "id": "C6", "slice": "pack-export-interop", "exclusive": "scripts/export-pack.mjs + PACK-EXPORT.patch" }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "event": "parent_start",
+  "assignment": "S277",
+  "pack": "bounty-intelligence",
+  "at": "2026-09-11T15:24:34Z",
+  "model": "grok-4.6",
+  "effort": "xhigh",
+  "cli": "native grok-4.6 --effort xhigh (Grok Heavy parent; no API-key substitution)",
+  "branch": "codex/s277-bounty-intelligence-20260911",
+  "headAtStart": "5b97d1b02e786acd1895cfa1508087ae3f7a1545",
+  "workspace": "/workspace/experiments/s277-bounty-intelligence/packs/bounty-intelligence",
+  "publication": "epistemedeus/samedaydesk projected pack; neomorphic-io inaccessible to this VM token",
+  "host": {
+    "hostname": "cursor",
+    "kernel": "6.12.94+",
+    "cpus": 4,
+    "loadavg": "1.00 1.01 1.00 2/486 224655"
+  },
+  "resources": {
+    "memTotalKiB": 16398384,
+    "memAvailableKiB": 10722684,
+    "memFreeKiB": 5469604,
+    "memAvailablePct": 65.39,
+    "memFreePct": 33.35,
+    "diskTotalBytes": 271992209408,
+    "diskUsedBytes": 10149470208,
+    "diskFreeBytes": 261825961984,
+    "diskFreePct": 96.26
+  },
+  "admissionReserves": {
+    "ramAvailableMeets25pct": true,
+    "diskFreeMeets20pct": true,
+    "plannedNativeChildSlices": 6,
+    "expandBeyond6": false,
+    "reason": "RAM available ~65%, disk free ~96%. Six substantial slices; no extra filler."
+  },
+  "constraints": {
+    "noMerge": true,
+    "noDeploy": true,
+    "noPay": true,
+    "noHomepageNavChange": true,
+    "cashBankedUsdcNotProfit": "8.105",
+    "lowRewardHypothesisUsdc": "0.10"
+  }
+}

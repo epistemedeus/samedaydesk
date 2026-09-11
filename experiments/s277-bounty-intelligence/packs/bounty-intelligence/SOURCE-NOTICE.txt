@@ -1,0 +1,11 @@
+S277 bounty-intelligence pack.
+
+Projected publication path: packs/bounty-intelligence/
+Host repository for this VM: epistemedeus/samedaydesk (experiments/s277-bounty-intelligence/).
+Target epistemedeus/neomorphic-io is not visible to this VM's GitHub token.
+
+This tree wraps vendor/external-job-intake adapter shapes. It is not those
+vendors, not a hosted exchange, and not claim/payment authority.
+
+Live captures are bounded keyless GETs with timestamps. Fixture success is
+not external completion.

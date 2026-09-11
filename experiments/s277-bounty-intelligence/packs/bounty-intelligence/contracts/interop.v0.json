@@ -1,0 +1,29 @@
+{
+  "$id": "s277.bounty-intelligence.interop.v0",
+  "title": "Interop draft v0 projection",
+  "type": "object",
+  "required": ["schema", "taskId", "termsVersion", "reward", "funding", "payout", "idempotencyKey"],
+  "properties": {
+    "schema": { "const": "s277.bounty-intelligence.interop.v0" },
+    "dataLabel": { "type": "string" },
+    "taskId": { "type": "string", "description": "opaque" },
+    "termsVersion": { "type": "string", "description": "immutable for a terms snapshot" },
+    "reward": {
+      "type": "object",
+      "properties": {
+        "amount": { "type": ["string", "null"], "description": "atomic decimal string, never float" },
+        "asset": { "type": ["string", "null"] },
+        "network": { "type": ["string", "null"] },
+        "unknown": { "type": "boolean" }
+      }
+    },
+    "funding": { "enum": ["unfunded", "reserved", "released", "unknown"] },
+    "contributorPublicId": { "type": ["string", "null"] },
+    "payoutDestination": { "type": ["string", "null"] },
+    "reservation": { "type": "object" },
+    "submission": { "type": "object" },
+    "verdict": { "type": "object" },
+    "payout": { "enum": ["none", "owed", "queued", "submitted", "confirmed", "failed", "unknown"] },
+    "idempotencyKey": { "type": "string" }
+  }
+}
