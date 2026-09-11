@@ -17,7 +17,7 @@ Commands:
 
 Binds engineId, archive pin, buyer-echoed input digests, immutable orderId,
 and catalog output names. Spawns useful-jobs CLI from the published archive.
-Does not POST to samedaydesk.com. Does not mount server/routes. sold=false.
+Does not POST to samedaydesk.com. Loopback listener only; not a live app route. sold=false.
 `;
 }
 
@@ -62,7 +62,7 @@ async function cmdCreate(argv) {
 async function cmdListen(argv) {
   const store = await makeStore(argv);
   const port = Number(argValue(argv, "--port") || 0);
-  const listener = createListener({ store });
+  const listener = createListener({ store, requestDir: process.cwd() });
   const { origin, port: bound } = await listener.listen(Number.isInteger(port) ? port : 0);
   process.stdout.write(
     `${JSON.stringify({ ok: true, origin, port: bound, host: "127.0.0.1", productionExpress: false }, null, 2)}\n`,

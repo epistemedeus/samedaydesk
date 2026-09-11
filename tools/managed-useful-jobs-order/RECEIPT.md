@@ -11,7 +11,7 @@ Payments in this wave are nonsettling prototypes (`sold: false`, `charged: false
 | Feature branch | `codex/w4-commerce-20-20260911` |
 | Starting ref | `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545` |
 | Owned path | `tools/managed-useful-jobs-order/` |
-| Head | (filled after commit) |
+| Head | branch `codex/w4-commerce-20-20260911` (see git rev-parse after clone) |
 | Consumer contract pin | epistemedeus/pilot `c621646897e6fe1dccf0e5993aea63b5bc1f6bd3` |
 | F13 brief pin | epistemedeus/pilot `4188f794aada5cb15ec0f75d298096e97650f038` |
 | Archive pin | sha256 `6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51`, 2522418 bytes |
@@ -47,7 +47,25 @@ node tools/managed-useful-jobs-order/bin/orders.mjs listen --port 0 --store /tmp
 
 ## Counts
 
-Filled after `node --test` on this branch.
+Executed from repo root, Node v22.14.0, 2026-09-11:
+
+```bash
+node --test tools/managed-useful-jobs-order/test/*.test.mjs
+```
+
+**12 tests, 5 suites, 12 pass, 0 fail, 0 skip.** Duration about 1.2s after kit extract cache.
+
+Breakdown:
+
+| Suite | Tests | Class |
+| --- | --- | --- |
+| public CLI journey | 1 | local-runtime (spawn `bin/orders.mjs` + useful-jobs CLI) |
+| seeded fail-closed public CLI | 5 | fixture refusals via the same CLI |
+| 127.0.0.1 test listener | 2 | local-runtime HTTP on loopback |
+| real local Postgres order store | 1 | local-runtime disposable `initdb` cluster |
+| owned-path hygiene | 3 | fixture / source scan |
+
+Dependencies: Node >= 22; in-repo `pg` (root `package.json`); `tar`; published archive at `client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz`. Postgres suite needs `/usr/lib/postgresql/16/bin/{initdb,pg_ctl}` (present in this run). No network to samedaydesk.com.
 
 ## Seeded failures
 

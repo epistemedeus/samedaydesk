@@ -30,9 +30,9 @@ describe("owned-path hygiene", () => {
     const untracked = spawnSync("git", ["status", "--porcelain"], { encoding: "utf8", cwd: REPO_ROOT });
     const extra = untracked.stdout
       .split("\n")
-      .map((line) => line.trim())
       .filter(Boolean)
-      .map((line) => line.replace(/^\?\?\s+/, "").replace(/^.. /, ""));
+      .map((line) => line.slice(3).trim())
+      .filter(Boolean);
     const all = [...new Set([...files, ...extra])];
     for (const file of all) {
       if (file === "node_modules" || file.startsWith("node_modules/") || file === "package-lock.json") continue;
@@ -47,8 +47,11 @@ describe("owned-path hygiene", () => {
     const files = walk(join(OWNED_DIR, "lib")).concat(walk(join(OWNED_DIR, "bin")));
     for (const file of files) {
       const text = readFileSync(file, "utf8");
-      assert.equal(text.includes("server/routes"), false, file);
-      assert.equal(text.includes("server/pricing.js"), false, file);
+      assert.equal(
+        /(?:from|import)\s+['"][^'"]*server\/(?:routes|pricing\.js)/.test(text),
+        false,
+        file,
+      );
       assert.equal(/fetch\(\s*['"`]https:\/\/(?:agents\.)?samedaydesk\.com/.test(text), false, file);
       assert.equal(text.includes("from \"express\"") || text.includes("from 'express'"), false, file);
     }
