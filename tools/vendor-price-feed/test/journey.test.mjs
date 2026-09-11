@@ -10,6 +10,7 @@ describe("literal user journey", () => {
     assert.equal(body.ok, true);
     assert.equal(body.command, "journey");
     assert.equal(body.purchaseAuthority, false);
+    assert.equal(body.purchaseAuthorized, false);
     assert.equal(body.liveCatalogWritten, false);
 
     const first = body.steps.ingest;

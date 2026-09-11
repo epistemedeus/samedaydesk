@@ -16,6 +16,7 @@ try {
           code: "error",
           error: err.message,
           purchaseAuthority: false,
+          purchaseAuthorized: false,
           liveCatalogWritten: false,
         };
   process.stdout.write(`${JSON.stringify(body)}\n`);

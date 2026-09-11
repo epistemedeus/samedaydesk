@@ -61,6 +61,7 @@ describe("seeded fail-closed cases", () => {
     assert.equal(body.ok, false);
     assert.equal(body.code, "sample-not-upstream");
     assert.equal(body.sample, true);
+    assert.equal(body.purchaseAuthorized, false);
 
     const cli = runCli(["ingest", "--file", fixture("sample-as-upstream.json")], { storeDir });
     assert.equal(cli.status, 2);
@@ -92,6 +93,7 @@ describe("seeded fail-closed cases", () => {
     assert.equal(body.ok, false);
     assert.equal(body.code, "live-sds-price-mutation");
     assert.equal(body.liveCatalogWritten, false);
+    assert.equal(body.purchaseAuthorized, false);
 
     const flagged = ingestOrRefuse(load("ok.json"), storeDir, { "write-live": true });
     assert.equal(flagged.ok, false);

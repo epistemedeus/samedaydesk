@@ -5,6 +5,7 @@ export function refuse(code, error, extra = {}) {
     code,
     error,
     purchaseAuthority: false,
+    purchaseAuthorized: false,
     liveCatalogWritten: false,
     ...extra,
   };
@@ -15,6 +16,7 @@ export function ok(extra = {}) {
     ok: true,
     refused: false,
     purchaseAuthority: false,
+    purchaseAuthorized: false,
     liveCatalogWritten: false,
     ...extra,
   };

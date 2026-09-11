@@ -71,6 +71,7 @@ export function runJourney({ fixturePath, storeDir = null, flags = {} } = {}) {
     command: "journey",
     storeDir: dir,
     purchaseAuthority: false,
+    purchaseAuthorized: false,
     liveCatalogWritten: false,
     olderDigest: ingest.id,
     currentDigest: ingestLater.id,

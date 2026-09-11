@@ -36,6 +36,7 @@ export function ingestObservation(input, { storeDir, flags = {}, now = null } = 
       observation,
       record: existing,
       purchaseAuthority: false,
+      purchaseAuthorized: false,
       liveCatalogWritten: false,
       idempotent: true,
     };
@@ -112,6 +113,7 @@ export function ingestObservation(input, { storeDir, flags = {}, now = null } = 
     current: listCurrent(store).map(publicRecord),
     stale: listStale(store).map(publicRecord),
     purchaseAuthority: false,
+    purchaseAuthorized: false,
     liveCatalogWritten: false,
     idempotent: false,
   };
@@ -139,6 +141,7 @@ export function listCurrentResult(storeDir) {
     currentIds: current.map((row) => row.id),
     staleIds: stale.map((row) => row.id),
     purchaseAuthority: false,
+    purchaseAuthorized: false,
     liveCatalogWritten: false,
   };
 }
