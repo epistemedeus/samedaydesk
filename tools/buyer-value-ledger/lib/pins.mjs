@@ -85,4 +85,5 @@ export const ERROR_CODES = Object.freeze({
   JOIN_WITHOUT_EXACT_OPERATION_ID: "cross_source_join_without_exact_key",
   ARCHIVE_PIN_MISMATCH: "archive_pin_mismatch",
   ENGINE_SPAWN_FAILED: "engine_spawn_failed",
+  UNRELATED_PAYMENT: "unrelated_or_unbound_payment",
 });

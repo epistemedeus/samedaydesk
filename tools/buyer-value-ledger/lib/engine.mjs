@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
+import { hashRequest, sha256Bytes } from "./hash-terms.mjs";
 import {
   USEFUL_JOBS_ARCHIVE_BYTES,
   USEFUL_JOBS_ARCHIVE_FREEZE,
@@ -68,14 +69,33 @@ export function measureOutputs(outDir, outputNames) {
     const filePath = join(outDir, name);
     const present = existsSync(filePath);
     let bytes = 0;
+    let sha256 = null;
     if (present) {
-      bytes = statSync(filePath).size;
-      outputBytes += bytes;
+      const st = statSync(filePath);
+      if (st.isFile()) {
+        const buf = readFileSync(filePath);
+        bytes = buf.length;
+        sha256 = sha256Bytes(buf);
+        outputBytes += bytes;
+      }
     }
-    outputs.push({ name, present, bytes });
+    outputs.push({ name, present, bytes, sha256 });
   }
-  const usableOutput = names.length > 0 && outputs.every((item) => item.present && item.bytes > 0);
-  return { outputs, outputBytes, usableOutput };
+  const usableOutput =
+    names.length > 0 && outputs.every((item) => item.present && item.bytes > 0 && item.sha256);
+  const outputsDigest = hashRequest(
+    outputs.map((item) => ({ name: item.name, bytes: item.bytes, sha256: item.sha256 })),
+  );
+  return { outputs, outputBytes, outputsDigest, usableOutput };
+}
+
+export function producedThisRun(before, after) {
+  if (!after?.outputs?.length) return false;
+  return after.outputs.every((item, index) => {
+    if (!item.present || !item.sha256) return false;
+    const prev = before?.outputs?.[index];
+    return !prev?.sha256 || prev.sha256 !== item.sha256;
+  });
 }
 
 /**
@@ -115,6 +135,7 @@ export function createEngineAdapter({ ensureKit = ensureUsefulJobsKit, spawn = s
         error: result.error || null,
         kit,
         kitSource: ensured.kitSource,
+        kitVerified: ensured.kitVerified === true,
         cli,
         args,
         durationMs,

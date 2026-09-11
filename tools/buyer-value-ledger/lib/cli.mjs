@@ -8,10 +8,11 @@ import { loadPublicCatalog, engineProvenance } from "./engine.mjs";
 import { fetchArchiveHttp } from "./kit.mjs";
 
 export function usage() {
-  return `Buyer value ledger (W4-commerce-16).
-Wraps a spawned useful-jobs run with a clock. Records durationMs, output bytes,
+  return `Buyer value ledger (W5-D13 / Co16).
+Wraps a spawned useful-jobs run with a clock. Records durationMs, output digests,
 and required buyerClass: owner-qa | fixture-buyer | unknown.
 Never infers organic or independent demand. Never treats 8.105 USDC as this job's revenue.
+Wrong-source cache, unrelated payment, and failed results are not useful paid work.
 
 node bin/value.mjs run vendor-budget-impact --buyer-class owner-qa --example --ledger ./ledger.json --out-dir ./out/example
 node bin/value.mjs run vendor-budget-impact --buyer-class owner-qa --before ./before.json --after ./after.json --ledger ./ledger.json --out-dir ./out/caller
@@ -53,6 +54,7 @@ export function parseArgs(argv) {
       else if (key === "operation-id") out.operationId = value;
       else if (key === "include-operation") out.includeOperation = value;
       else if (key === "archive-origin") out.archiveOrigin = value;
+      else if (key === "archive-file") out.archiveFile = value;
       else out.flags[key] = value;
     } else if (!out.command) {
       out.command = arg;
@@ -134,6 +136,8 @@ export async function runCli(argv, { cwd = process.cwd(), adapters } = {}) {
           durationMs: row.durationMs,
           outputBytes: row.outputBytes,
           usableOutput: row.usableOutput,
+          usefulPaidWork: row.usefulPaidWork === true,
+          outcomeKind: row.outcomeKind || null,
         })),
         ledger,
         honesty: honestyEnvelope(),
@@ -159,10 +163,35 @@ export async function runCli(argv, { cwd = process.cwd(), adapters } = {}) {
       files[key] = resolveMaybe(value, cwd);
     }
 
+    if (args.archiveOrigin && args.archiveFile) {
+      return printJson(
+        refuse(ERROR_CODES.MISSING_REQUIRED_INPUTS, "use only one of --archive-origin or --archive-file"),
+        2,
+        pretty,
+      );
+    }
+
     let kitOptions = {};
-    if (args.archiveOrigin) {
-      const fetched = await fetchArchiveHttp(args.archiveOrigin);
-      kitOptions = { buffer: fetched.buf, kitSource: "local-http" };
+    try {
+      if (args.archiveOrigin) {
+        const fetched = await fetchArchiveHttp(args.archiveOrigin);
+        kitOptions = { buffer: fetched.buf, kitSource: "local-http" };
+      } else if (args.archiveFile) {
+        kitOptions = {
+          archivePath: resolveMaybe(args.archiveFile, cwd),
+          kitSource: "local-file",
+        };
+      }
+    } catch (err) {
+      return printJson(
+        refuse(err.code || ERROR_CODES.ARCHIVE_PIN_MISMATCH, err.message, {
+          usefulPaidWork: false,
+          kitVerified: false,
+          blockers: ["wrong_source_cache"],
+        }),
+        2,
+        pretty,
+      );
     }
 
     const result = await runLabelledJob(

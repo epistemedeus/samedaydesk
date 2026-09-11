@@ -12,8 +12,16 @@ import { hashRequest, hashTermsProvenance, sha256File } from "./hash-terms.mjs";
 import { inspectBuyerClass, refuse } from "./labels.mjs";
 import { honestyEnvelope } from "./revenue.mjs";
 import { appendRow } from "./ledger.mjs";
-import { createEngineAdapter, getCatalogJob, engineProvenance, measureOutputs } from "./engine.mjs";
+import {
+  createEngineAdapter,
+  getCatalogJob,
+  engineProvenance,
+  measureOutputs,
+  producedThisRun,
+} from "./engine.mjs";
 import { createSettlementAdapter, joinSettlement } from "./settlements.mjs";
+import { classifyOutcome, classifyUsefulPaidWork, isAnalysisOutcome } from "./outcome.mjs";
+import { d01BindingNote } from "./d01.mjs";
 import { insertRow as postgresInsert } from "./postgres.mjs";
 
 function fileDigest(filePath) {
@@ -35,6 +43,29 @@ function canonicalRequest({ jobId, buyerClass, example, files }) {
     buyerClass,
     example: Boolean(example),
     inputs,
+  };
+}
+
+function mapPaidOffer(offer, durationMs) {
+  const engineJson = offer?.engine || {
+    ok: offer?.ok === true,
+    status: offer?.code || offer?.receipt?.engineResult?.status || null,
+    refused: offer?.refused === true,
+    digest: offer?.receipt?.engineResult?.digest || null,
+  };
+  return {
+    status: offer?.ok === true || offer?.engine?.ok === true || engineJson.ok === true ? 0 : offer?.ok === false ? 1 : 1,
+    stdout: "",
+    stderr: offer?.error || offer?.receipt?.error || "",
+    json: engineJson,
+    error: null,
+    kit: null,
+    kitSource: "d01-wrapper",
+    kitVerified: true,
+    durationMs,
+    startedAt: new Date(Date.now() - durationMs).toISOString(),
+    endedAt: new Date().toISOString(),
+    d01Receipt: offer?.receipt || null,
   };
 }
 
@@ -70,19 +101,83 @@ export async function runLabelledJob(request = {}, adapters = {}) {
 
   const engine = adapters.engine || createEngineAdapter();
   const settlements = adapters.settlements || createSettlementAdapter();
-  const work = request.outDir || mkdtempSync(join(tmpdir(), `bvl-${jobId}-`));
-  mkdirSync(work, { recursive: true });
+  let work;
+  try {
+    work = request.outDir || mkdtempSync(join(tmpdir(), `bvl-${jobId}-`));
+    mkdirSync(work, { recursive: true });
+  } catch (err) {
+    return {
+      ok: false,
+      refused: false,
+      code: ERROR_CODES.ENGINE_SPAWN_FAILED,
+      message: err.message,
+      outcomeKind: "transport_failure",
+      usefulPaidWork: false,
+      usefulDelivery: false,
+      independentDemand: false,
+      organicDemand: false,
+      jobRevenueUsdc: null,
+      purchaseAuthority: false,
+    };
+  }
 
-  const spawned = await engine.run(jobId, {
-    files,
-    example,
-    outDir: work,
-    kitOptions: request.kitOptions || {},
+  const canonical = canonicalRequest({ jobId, buyerClass: labelled.buyerClass, example, files });
+  const requestHash = hashRequest(canonical);
+  const beforeOutputs = measureOutputs(work, job.outputs);
+
+  let spawned;
+  try {
+    if (adapters.paidOffer) {
+      const started = process.hrtime.bigint();
+      const offer = await adapters.paidOffer({
+        jobId,
+        example,
+        inputs: files,
+        files,
+        outDir: work,
+      });
+      const durationMs = Math.max(0, Number(process.hrtime.bigint() - started) / 1e6);
+      spawned = mapPaidOffer(offer, durationMs);
+    } else {
+      spawned = await engine.run(jobId, {
+        files,
+        example,
+        outDir: work,
+        kitOptions: request.kitOptions || {},
+      });
+    }
+  } catch (err) {
+    if (err.code === ERROR_CODES.ARCHIVE_PIN_MISMATCH) {
+      return refuse(ERROR_CODES.ARCHIVE_PIN_MISMATCH, err.message, {
+        outcomeKind: "transport_failure",
+        usefulPaidWork: false,
+        usefulDelivery: false,
+        kitVerified: false,
+        blockers: ["wrong_source_cache"],
+      });
+    }
+    spawned = {
+      status: null,
+      stdout: "",
+      stderr: String(err.message || err),
+      json: null,
+      error: err,
+      kitSource: "unknown",
+      kitVerified: false,
+      durationMs: 0,
+      startedAt: new Date().toISOString(),
+      endedAt: new Date().toISOString(),
+    };
+  }
+
+  const outcomeKind = classifyOutcome({
+    status: spawned.status,
+    json: spawned.json,
+    error: spawned.error,
   });
-
-  const engineOk = spawned.status === 0 && spawned.json?.ok === true;
   const measured = measureOutputs(work, job.outputs);
-  const usableOutput = engineOk && measured.usableOutput;
+  const produced = producedThisRun(beforeOutputs, measured);
+  const usableOutput = isAnalysisOutcome(outcomeKind) && produced && measured.usableOutput;
 
   let settlementRecords = [];
   if (adapters.settlementRecords) {
@@ -94,11 +189,21 @@ export async function runLabelledJob(request = {}, adapters = {}) {
 
   const settlementJoin = joinSettlement({
     operationId: request.operationId || request["operation-id"] || null,
+    jobId,
+    outcomeKind,
     records: settlementRecords,
   });
 
-  const canonical = canonicalRequest({ jobId, buyerClass: labelled.buyerClass, example, files });
-  const requestHash = hashRequest(canonical);
+  const paid = classifyUsefulPaidWork({
+    kitVerified: spawned.kitVerified !== false,
+    outcomeKind,
+    producedThisRun: produced,
+    usableOutput,
+    settlementJoin,
+    sample: example,
+    buyerClass: labelled.buyerClass,
+    purchaseAuthority: false,
+  });
 
   const row = {
     schema: SCHEMA_ROW,
@@ -109,27 +214,35 @@ export async function runLabelledJob(request = {}, adapters = {}) {
     independentDemand: false,
     organicDemand: false,
     prohibitedInferences: [...PROHIBITED_INFERENCES],
-    durationMs: Math.round(spawned.durationMs),
+    durationMs: Math.round(spawned.durationMs || 0),
     outputBytes: measured.outputBytes,
     outputs: measured.outputs,
+    outputsDigest: measured.outputsDigest,
     usableOutput,
+    producedThisRun: produced,
+    outcomeKind,
+    usefulDelivery: paid.usefulDelivery,
+    usefulPaidWork: paid.usefulPaidWork,
+    paidWorkBlockers: paid.blockers,
     engine: {
-      ok: engineOk,
+      ok: isAnalysisOutcome(outcomeKind),
       status: spawned.json?.status || null,
       exitCode: spawned.status,
       digest: spawned.json?.digest || null,
       ...engineProvenance(),
       kitSource: spawned.kitSource,
+      kitVerified: spawned.kitVerified === true,
     },
     settlementJoin,
     jobRevenueUsdc: null,
     citedBankedUsdcIsNotJobRevenue: true,
     requestHash,
     hashTerms: hashTermsProvenance(),
+    d01: d01BindingNote(),
     evidence: {
       callerInputs: example ? "example-sample" : "fixture",
-      jobExecution: "local-runtime",
-      kitSource: spawned.kitSource === "local-http" ? "local-http" : "local-file",
+      jobExecution: adapters.paidOffer ? "d01-wrapper-pin" : "local-runtime",
+      kitSource: spawned.kitSource === "local-http" ? "local-http" : adapters.paidOffer ? "d01-wrapper" : "local-file",
       externalAcceptance: false,
     },
     purchaseAuthority: false,
@@ -148,8 +261,11 @@ export async function runLabelledJob(request = {}, adapters = {}) {
   }
 
   return {
-    ok: engineOk,
-    refused: !engineOk,
+    ok: isAnalysisOutcome(outcomeKind),
+    refused: outcomeKind === "analysis_refusal",
+    outcomeKind,
+    usefulPaidWork: paid.usefulPaidWork,
+    usefulDelivery: paid.usefulDelivery,
     row,
     ledgerPath: request.ledgerPath || null,
     honesty: honestyEnvelope({ kitSource: spawned.kitSource }),

@@ -5,6 +5,7 @@ import {
   ERROR_CODES,
   SETTLEMENT_FIXTURE_EARLY_X402,
 } from "./pins.mjs";
+import { isAnalysisOutcome } from "./outcome.mjs";
 
 export async function importEvidenceRecords(libPath = EVIDENCE_RECORDS_LIB) {
   return import(libPath);
@@ -41,15 +42,32 @@ export function operationIdOf(record) {
   return null;
 }
 
+export function settlementJobId(record) {
+  if (typeof record?.jobId === "string" && record.jobId.length > 0) return record.jobId;
+  if (typeof record?.settlement?.jobId === "string" && record.settlement.jobId.length > 0) {
+    return record.settlement.jobId;
+  }
+  return null;
+}
+
 /**
- * Join a labelled run to a settlement fixture only with an exact operationId.
- * Missing or non-matching ids stay unknown. Never infers demand from the join.
+ * Join a labelled run to a settlement only with exact operationId AND job
+ * correspondence. Evidence-records settlement schema has no jobId, so those
+ * fixtures stay unbound. Do not hash settlement terms to the request hash.
  */
-export function joinSettlement({ operationId, records = [] } = {}) {
+export function joinSettlement({
+  operationId,
+  jobId = null,
+  outcomeKind = null,
+  records = [],
+} = {}) {
   if (operationId == null || operationId === "") {
     return {
       matched: false,
+      operationIdFound: false,
       unknown: true,
+      boundToThisJob: false,
+      thisJobPayment: false,
       reason: "no_operation_id",
       operationId: null,
       jobRevenueUsdc: null,
@@ -58,7 +76,10 @@ export function joinSettlement({ operationId, records = [] } = {}) {
   if (typeof operationId !== "string") {
     return {
       matched: false,
+      operationIdFound: false,
       unknown: true,
+      boundToThisJob: false,
+      thisJobPayment: false,
       reason: "invalid_operation_id",
       operationId: null,
       code: ERROR_CODES.JOIN_WITHOUT_EXACT_OPERATION_ID,
@@ -70,7 +91,10 @@ export function joinSettlement({ operationId, records = [] } = {}) {
   if (hits.length !== 1) {
     return {
       matched: false,
+      operationIdFound: false,
       unknown: true,
+      boundToThisJob: false,
+      thisJobPayment: false,
       reason: hits.length === 0 ? "no_exact_operation_id" : "ambiguous_operation_id",
       operationId,
       jobRevenueUsdc: null,
@@ -79,10 +103,28 @@ export function joinSettlement({ operationId, records = [] } = {}) {
 
   const { record, validation } = hits[0];
   const settlement = record.settlement;
+  const settlementJob = settlementJobId(record);
+  const boundToThisJob = Boolean(jobId && settlementJob && settlementJob === jobId);
+  const deliveryKnown =
+    typeof settlement.validDeliveryStatus === "string" &&
+    settlement.validDeliveryStatus.length > 0 &&
+    settlement.validDeliveryStatus !== "unknown";
+  const thisJobPayment =
+    boundToThisJob &&
+    deliveryKnown &&
+    isAnalysisOutcome(outcomeKind) &&
+    validation?.ok === true;
+
   return {
-    matched: true,
-    unknown: false,
+    matched: boundToThisJob,
+    operationIdFound: true,
+    unknown: !boundToThisJob,
+    boundToThisJob,
+    thisJobPayment,
+    reason: boundToThisJob ? "bound_job_and_operation" : "unrelated_or_unbound_payment",
     operationId,
+    settlementJobId: settlementJob,
+    requestedJobId: jobId || null,
     settlementBuyerClass: settlement.buyerClass,
     amountUsdc: settlement.amountUsdc,
     validDeliveryStatus: settlement.validDeliveryStatus,
@@ -90,7 +132,9 @@ export function joinSettlement({ operationId, records = [] } = {}) {
     evidenceValid: validation?.ok === true,
     independentDemand: false,
     jobRevenueUsdc: null,
-    note: "settlement fixture joined by exact operationId; not this job's revenue",
+    note: boundToThisJob
+      ? "settlement bound by exact operationId and jobId; not live paid work"
+      : "operationId observed but not this job's settlement; not this job's revenue",
   };
 }
 
@@ -100,5 +144,6 @@ export function earlyX402Pin() {
     operationId: EARLY_X402_OPERATION_ID,
     amountUsdc: EARLY_X402_AMOUNT_USDC,
     jobRevenue: false,
+    boundToVendorBudgetImpact: false,
   };
 }

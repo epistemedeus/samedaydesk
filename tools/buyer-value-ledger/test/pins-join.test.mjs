@@ -61,8 +61,11 @@ describe("pins, hash terms, and exact settlement join", () => {
     assert.equal(miss.matched, false);
     assert.equal(miss.unknown, true);
 
-    const hit = joinSettlement({ operationId: EARLY_X402_OPERATION_ID, records });
-    assert.equal(hit.matched, true);
+    const hit = joinSettlement({ operationId: EARLY_X402_OPERATION_ID, jobId: "vendor-budget-impact", records });
+    assert.equal(hit.operationIdFound, true);
+    assert.equal(hit.matched, false);
+    assert.equal(hit.boundToThisJob, false);
+    assert.equal(hit.thisJobPayment, false);
     assert.equal(hit.amountUsdc, "0.040");
     assert.equal(hit.jobRevenueUsdc, null);
     assert.equal(hit.independentDemand, false);
@@ -85,9 +88,13 @@ describe("pins, hash terms, and exact settlement join", () => {
     ]);
     assert.equal(result.status, 0, result.stderr + result.stdout);
     const json = JSON.parse(result.stdout);
-    assert.equal(json.row.settlementJoin.matched, true);
+    assert.equal(json.row.settlementJoin.operationIdFound, true);
     assert.equal(json.row.settlementJoin.operationId, EARLY_X402_OPERATION_ID);
+    assert.equal(json.row.settlementJoin.boundToThisJob, false);
+    assert.equal(json.row.settlementJoin.thisJobPayment, false);
+    assert.equal(json.row.settlementJoin.matched, false);
     assert.equal(json.row.jobRevenueUsdc, null);
     assert.equal(json.row.settlementJoin.jobRevenueUsdc, null);
+    assert.equal(json.usefulPaidWork, false);
   });
 });

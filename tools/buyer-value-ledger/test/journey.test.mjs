@@ -55,7 +55,10 @@ describe("public CLI journey: owner-qa vendor-budget-impact example vs caller", 
     assert.equal(exampleJson.row.jobRevenueUsdc, null);
     assert.equal(exampleJson.row.citedBankedUsdcIsNotJobRevenue, true);
     assert.equal(exampleJson.row.usableOutput, true);
+    assert.equal(exampleJson.usefulPaidWork, false);
+    assert.equal(exampleJson.row.usefulDelivery, true);
     assert.equal(exampleJson.row.outputBytes > 0, true);
+    assert.ok(exampleJson.row.outputs.every((item) => typeof item.sha256 === "string" && item.sha256.length === 64));
     assert.equal(Number.isInteger(exampleJson.row.durationMs), true);
     assert.equal(exampleJson.row.durationMs >= 0, true);
     assert.equal(exampleJson.row.evidence.jobExecution, "local-runtime");

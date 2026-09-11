@@ -1,16 +1,16 @@
 # FEATURE-MAP — buyer value ledger (W4-commerce-16)
 
-Own directory: `tools/buyer-value-ledger/` only.
+Own directory: `tools/buyer-value-ledger/` plus Wave5 receipt `experiments/wave5/d13/RECEIPT.md`.
 
 ## Preflight (this checkout)
 
 | Looked for | Result |
 | --- | --- |
-| SDS `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545` | Attached. Write branch `codex/w4-commerce-16-20260911`. |
+| SDS `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545` | Attached. Wave5 branch continues Co16 head `aa306e2`. |
 | useful-jobs catalog + archive | `client/public/for-agents/useful-jobs/catalog.json` and `useful-jobs-1.0.0.tar.gz` (2522418 B, sha256 `6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51`). |
-| evidence-records closed sets | `tools/evidence-records/lib.mjs` imported; settlements joined only on exact `operationId`. |
+| evidence-records closed sets | `tools/evidence-records/lib.mjs` imported; operationId observed only binds as this job when settlement `jobId` matches. |
 | I01 Neo PR54 earned-work | **Not attached.** Hash terms follow published S275 `crypto.hashRequest` (stable-JSON SHA-256). No competing kernel copy. |
-| F08 `server/paid-useful-jobs/` | Excluded. Not rewritten. Engines spawned as `node bin/useful-jobs.mjs run <id>`. |
+| SDS52 / D01 `server/paid-useful-jobs/` | Not copied. Optional import of `runPaidOffer` at pin `aeef964`. Default spawn remains useful-jobs CLI. |
 | F01 managed API brief | Not copied. |
 | `server/pricing.js`, homepages | **Not edited**. |
 
@@ -25,7 +25,11 @@ Own directory: `tools/buyer-value-ledger/` only.
 | Refuse fixture-buyer as independent | `fixtures/reject/fixture-buyer-as-independent.json` | `run … --buyer-class fixture-buyer --independent-demand` | `fixture_buyer_is_not_independent` | same | None |
 | Refuse settlement-as-revenue | `fixtures/reject/sum-early-x402-as-job-revenue.json` | `node bin/value.mjs revenue --include-operation early-x402-revenue` | `settlement_is_not_job_revenue` | same | None |
 | Refuse 8.105 as job revenue | `fixtures/reject/cited-banked-as-job-revenue.json` | `revenue --cited-banked-usdc` | `cited_banked_usdc_is_not_job_revenue` | same | None |
-| Exact operationId join | evidence-records fixture | `run … --operation-id early-x402-revenue` | join matched, `jobRevenueUsdc` null | `test/pins-join.test.mjs` | None |
+| Refuse wrong-source cache/archive | `--archive-file` / `--archive-origin` | CLI run with unpinned bytes after a warm cache | `archive_pin_mismatch`, `usefulPaidWork=false` | `test/binding.test.mjs` | None |
+| Unrelated settlement is not this job | `--operation-id early-x402-revenue` | exact operationId found, `boundToThisJob=false` | `test/binding.test.mjs`, `test/pins-join.test.mjs` | None |
+| Failed result / leftover files | crash adapter or non-directory `--out-dir` | `outcomeKind=engine_failure` or `transport_failure` | `test/binding.test.mjs` | None |
+| Valid analysis refusal vs crash | invalid caller JSON | `outcomeKind=analysis_refusal`, not a crash | `test/binding.test.mjs` | None |
+| Thin D01 consumer | SDS52 pin `aeef964` worktree | `runPaidOffer` imported, wrapper not copied | `test/d01-consumer.test.mjs` | None |
 | Local HTTP archive pin | `lib/kit.mjs` | `--archive-origin http://127.0.0.1:<port>` | `kitSource=local-http`, not live site | `test/local-http.test.mjs` | None |
 | Real local Postgres row | disposable `initdb` | library `runLabelledJob({ postgres })` | one row, `independent_demand=false` | `test/postgres.test.mjs` | None |
 
@@ -37,7 +41,11 @@ Own directory: `tools/buyer-value-ledger/` only.
 | `lib/run.mjs` | Clock wrap + row |
 | `lib/labels.mjs` | Required run buyerClass |
 | `lib/engine.mjs` | Injected useful-jobs spawn |
-| `lib/settlements.mjs` | Injected evidence-records join |
+| `lib/index.mjs` | Published contract: `runLabelledJob`, `joinSettlement`, `classifyUsefulPaidWork` |
+| `CONTRACT.md` | Interface for D01 and other consumers |
+| `lib/outcome.mjs` | Transport vs analysis vs paid-work blockers |
+| `lib/d01.mjs` | Current SDS52 pin import, no wrapper copy |
+| `lib/settlements.mjs` | Injected evidence-records join; job-bound vs observed operationId |
 | `lib/hash-terms.mjs` | I01/S275 request hash |
 | `lib/postgres.mjs` | Optional real Postgres store |
 | `fixtures/` | Caller files + seeded rejects |

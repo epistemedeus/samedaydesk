@@ -1,5 +1,9 @@
 # RECEIPT — W4-commerce-16 buyer value ledger
 
+W5-D13 continuation is in `experiments/wave5/d13/RECEIPT.md` (21/21 tests, including CLI/HTTP/Postgres). This file remains the W4 export receipt.
+
+Tool: `tools/buyer-value-ledger/`
+
 Tool: `tools/buyer-value-ledger/`
 Branch: `codex/w4-commerce-16-20260911`
 Date: 2026-09-11

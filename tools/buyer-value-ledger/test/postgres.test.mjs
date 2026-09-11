@@ -12,10 +12,11 @@ import { runLabelledJob } from "../lib/run.mjs";
 
 describe("real local Postgres ledger store", () => {
   test("disposable initdb cluster stores a labelled owner-qa row", async (t) => {
-    if (!postgresAvailable()) {
-      t.skip("postgresql initdb/pg_ctl not on this host");
-      return;
-    }
+    assert.equal(
+      postgresAvailable(),
+      true,
+      "postgresql initdb/pg_ctl required on this host; missing dependency is incomplete, not a skip",
+    );
 
     const cluster = startDisposableCluster();
     t.after(() => cluster.stop());
@@ -34,6 +35,8 @@ describe("real local Postgres ledger store", () => {
     assert.equal(result.ok, true, JSON.stringify(result));
     assert.equal(result.row.independentDemand, false);
     assert.equal(result.row.jobRevenueUsdc, null);
+    assert.equal(result.usefulPaidWork, false);
+    assert.equal(result.row.usefulPaidWork, false);
 
     const rows = selectRows(cluster);
     assert.equal(rows.length, 1);
