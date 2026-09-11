@@ -1,0 +1,22 @@
+{
+  "name": "@samedaydesk/wave5-m18-changed-page-trial",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "W5-M18 reproducible changed-page trial. Spawns the pinned page-change CLI, verifies a useful changed fact against captured extract-batch bytes, and evaluates capture freshness at query time. Does not vendor the engine or fetch live pages.",
+  "bin": {
+    "w5-m18-trial": "./bin/trial.mjs"
+  },
+  "exports": {
+    ".": "./lib/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "trial": "node ./bin/trial.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}

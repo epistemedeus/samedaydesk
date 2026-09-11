@@ -1,0 +1,17 @@
+{
+  "id": "unchanged",
+  "label": "owner-qa",
+  "fields": ["title", "description"],
+  "clock": "2026-09-11T18:00:00.000Z",
+  "limits": { "maxStaleMs": 86400000 },
+  "before": "before.json",
+  "after": "after.json",
+  "facts": [
+    {
+      "kind": "unchanged",
+      "sourceKey": "https://vendor.example.invalid/alpha",
+      "field": "title",
+      "before": "Alpha v1"
+    }
+  ]
+}
