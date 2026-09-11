@@ -5,7 +5,7 @@
 **Branch:** `cursor/w5-d03-co17-output-completeness-identity-validator-reused-by-consumers-0b90`
 **Owned paths:** `tools/job-output-atomicity/`, `experiments/wave5/d03/RECEIPT.md`
 **Starting ref:** `58cba6324c1d9793d344bc13154b8b2380e8166f`
-**HEAD:** `132ca866d9843f3bde1ac4da95d5007742b4510f`
+**Draft PR:** https://github.com/epistemedeus/samedaydesk/pull/112
 **Compare:** https://github.com/epistemedeus/samedaydesk/compare/main...cursor/w5-d03-co17-output-completeness-identity-validator-reused-by-consumers-0b90
 **Integration owner:** W5-D01
 **Cloud run:** `bc-a421f8f1-0886-469c-bcb6-a8d82fed8ec3`
