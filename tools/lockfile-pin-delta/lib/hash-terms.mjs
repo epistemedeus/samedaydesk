@@ -1,19 +1,17 @@
 import { createHash } from "node:crypto";
 
 /**
- * Integrated pin-terms hash.
- *
- * I01 (earned-work) hashes whole terms, not one field. Original F01
- * (API-upgrade brief) is a different job and is not copied here. When that
- * I01 hasher is published, inject it through createHashTermsAdapter; until
- * then this local contract is canonical JSON of {name, version, integrity}
- * then SHA-256 hex. Integrity-only edits therefore change the hash.
+ * Pin-triple hasher. I01 hashes whole earned-work terms; that document is
+ * not this triple and must not be injected as pin equality.
  */
+export const PIN_IDENTITY_FIELDS = Object.freeze(["name", "version", "integrity", "resolved"]);
+
 export function canonicalPinTerms(triple = {}) {
   return {
     name: normalizeTerm(triple.name),
     version: normalizeTerm(triple.version),
     integrity: normalizeIntegrity(triple.integrity),
+    resolved: normalizeTerm(triple.resolved),
   };
 }
 
@@ -30,6 +28,18 @@ export function createHashTermsAdapter(hashPinTerms = defaultHashPinTerms) {
       return String(hashPinTerms(canonicalPinTerms(triple)));
     },
   };
+}
+
+export function pinFieldsEqual(before, after) {
+  const a = canonicalPinTerms(before);
+  const b = canonicalPinTerms(after);
+  return PIN_IDENTITY_FIELDS.every((field) => a[field] === b[field]);
+}
+
+export function pinChangeKinds(before, after) {
+  const a = canonicalPinTerms(before);
+  const b = canonicalPinTerms(after);
+  return PIN_IDENTITY_FIELDS.filter((field) => a[field] !== b[field]);
 }
 
 export function stableStringify(value) {

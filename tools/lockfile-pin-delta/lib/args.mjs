@@ -21,7 +21,9 @@ export function usage() {
 
 Compare two package-lock.json files (lockfileVersion 2 or 3) and emit
 pin-delta.json plus pin-delta.md of added, removed, and changed
-name+version+integrity triples. Unchanged packages are omitted.
+name+version+integrity+resolved pins. Unchanged packages are omitted.
+Pin equality uses those lockfile fields. An injected hasher cannot hide
+a byte difference or invent one.
 
   node bin/lockfile-delta.mjs --before <lock> --after <lock> [--out-dir <dir>]
   node bin/lockfile-delta.mjs --example [--out-dir <dir>]

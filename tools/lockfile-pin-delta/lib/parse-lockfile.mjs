@@ -23,6 +23,23 @@ function asIntegrity(value) {
   return typeof value === "string" && value.trim() !== "" ? value.trim() : null;
 }
 
+function asResolved(value) {
+  if (typeof value !== "string") return null;
+  const text = value.trim();
+  return text === "" ? null : text;
+}
+
+export function gitCommitFromResolved(resolved) {
+  if (typeof resolved !== "string" || resolved === "") return null;
+  const looksGit = /(?:^git\+|github:|\.git(?:#|$))/i.test(resolved);
+  if (!looksGit) return null;
+  const hashIdx = resolved.lastIndexOf("#");
+  if (hashIdx < 0) return null;
+  const frag = resolved.slice(hashIdx + 1).trim();
+  if (!/^[0-9a-f]{7,40}$/i.test(frag)) return null;
+  return frag.toLowerCase();
+}
+
 function asVersion(value) {
   if (value == null) return null;
   const text = String(value).trim();
@@ -53,7 +70,15 @@ function pinFromPackagesEntry(id, entry, hashPinTerms) {
   const name = asVersion(entry.name) || nameFromPackagesKey(id);
   const version = asVersion(entry.version);
   const integrity = asIntegrity(entry.integrity);
-  const pin = { id, name, version, integrity };
+  const resolved = asResolved(entry.resolved);
+  const pin = {
+    id,
+    name,
+    version,
+    integrity,
+    resolved,
+    gitCommit: gitCommitFromResolved(resolved),
+  };
   pin.termsHash = hashPinTerms(pin);
   pin.missingIntegrity = integrity == null;
   return pin;
@@ -77,7 +102,15 @@ function walkDependencies(deps, prefix, hashPinTerms, pins) {
     const id = prefix ? `${prefix}/node_modules/${name}` : `node_modules/${name}`;
     const version = asVersion(entry.version);
     const integrity = asIntegrity(entry.integrity);
-    const pin = { id, name, version, integrity };
+    const resolved = asResolved(entry.resolved);
+    const pin = {
+      id,
+      name,
+      version,
+      integrity,
+      resolved,
+      gitCommit: gitCommitFromResolved(resolved),
+    };
     pin.termsHash = hashPinTerms(pin);
     pin.missingIntegrity = integrity == null;
     pins.push(pin);

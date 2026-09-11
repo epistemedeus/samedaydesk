@@ -7,7 +7,8 @@ function shortIntegrity(value) {
 function pinLine(pin) {
   const name = pin.name || pin.id;
   const version = pin.version || "(no version)";
-  return `\`${name}@${version}\` at \`${pin.id}\` integrity ${shortIntegrity(pin.integrity)}`;
+  const resolved = pin.resolved || "(no resolved)";
+  return `\`${name}@${version}\` at \`${pin.id}\` integrity ${shortIntegrity(pin.integrity)} resolved ${resolved}`;
 }
 
 export function toMarkdown(report) {
@@ -42,6 +43,12 @@ export function toMarkdown(report) {
       }
       if (item.changeKinds.includes("name")) {
         lines.push(`  - name: ${item.before.name} -> ${item.after.name}`);
+      }
+      if (item.changeKinds.includes("resolved")) {
+        lines.push(`  - resolved: ${item.before.resolved} -> ${item.after.resolved}`);
+        if (item.before.gitCommit || item.after.gitCommit) {
+          lines.push(`  - gitCommit: ${item.before.gitCommit} -> ${item.after.gitCommit}`);
+        }
       }
       lines.push(`  - termsHash: ${item.before.termsHash} -> ${item.after.termsHash}`);
     }

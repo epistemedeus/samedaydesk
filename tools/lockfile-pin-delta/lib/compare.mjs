@@ -1,13 +1,5 @@
-import { createHashTermsAdapter } from "./hash-terms.mjs";
+import { createHashTermsAdapter, pinChangeKinds, pinFieldsEqual } from "./hash-terms.mjs";
 import { parseLockfileText } from "./parse-lockfile.mjs";
-
-function changeKinds(before, after) {
-  const kinds = [];
-  if (before.name !== after.name) kinds.push("name");
-  if (before.version !== after.version) kinds.push("version");
-  if (before.integrity !== after.integrity) kinds.push("integrity");
-  return kinds;
-}
 
 function publicPin(pin) {
   return {
@@ -15,6 +7,8 @@ function publicPin(pin) {
     name: pin.name,
     version: pin.version,
     integrity: pin.integrity,
+    resolved: pin.resolved ?? null,
+    gitCommit: pin.gitCommit ?? null,
     termsHash: pin.termsHash,
     missingIntegrity: pin.missingIntegrity,
   };
@@ -42,7 +36,7 @@ export function comparePinMaps(beforeExtract, afterExtract) {
       removed.push(publicPin(b));
       continue;
     }
-    if (b.termsHash === a.termsHash) {
+    if (pinFieldsEqual(b, a)) {
       unchanged += 1;
       continue;
     }
@@ -51,7 +45,7 @@ export function comparePinMaps(beforeExtract, afterExtract) {
       name: a.name || b.name,
       before: publicPin(b),
       after: publicPin(a),
-      changeKinds: changeKinds(b, a),
+      changeKinds: pinChangeKinds(b, a),
     });
   }
 
@@ -67,6 +61,7 @@ export function comparePinMaps(beforeExtract, afterExtract) {
     purchaseAuthority: false,
     paidValueClaim: false,
     settlement: "nonsettling-prototype",
+    equality: "pin-fields",
     lockfileVersion: {
       before: beforeExtract.lockfileVersion,
       after: afterExtract.lockfileVersion,

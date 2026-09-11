@@ -26,7 +26,7 @@ try {
       appId: "lockfile-pin-delta",
       status: art.status,
       provenance: art.provenance,
-      digest: art.changed[0]?.after?.termsHash || null,
+      digest: art.reportSha256,
       counts: art.counts,
       outDir: art.outDir,
       purchaseAuthority: false,

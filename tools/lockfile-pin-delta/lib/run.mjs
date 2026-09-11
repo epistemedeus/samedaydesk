@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { cliRefuse } from "./errors.mjs";
 import { parseArgs } from "./args.mjs";
@@ -145,6 +145,7 @@ export function runLockfileDelta(argv, options = {}) {
   fs.writeFileSync(mdPath, toMarkdown(report));
   report.outDir = outDir;
   report.outputs = ["pin-delta.json", "pin-delta.md"];
+  report.reportSha256 = createHash("sha256").update(fs.readFileSync(jsonPath)).digest("hex");
   return report;
 }
 
