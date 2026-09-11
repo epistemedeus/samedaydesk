@@ -1,0 +1,27 @@
+job-input-preflight notices
+==========================
+
+This package preflights caller files against the published SameDayDesk
+useful-jobs catalog (PR51). It does not run the job engine and does not
+grant purchase, network, or scheduler authority.
+
+Pinned published inputs (read-only):
+- client/public/for-agents/useful-jobs/catalog.json
+- client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz
+- client/src/data/usefulJobsKit.json
+
+The 8 MiB cap is aligned with useful-jobs 1.0.0 lib/validate-next-run.mjs
+(MAX_LOCAL_INPUT_BYTES). Tests extract that archive and spawn
+`node --eval` against the extracted module. This directory does not copy
+F08 server/paid-useful-jobs/lib/input-guard.mjs (1 MiB Express-aligned cap)
+or a competing useful-jobs kernel.
+
+Fixture JSON under fixtures/vendor-budget-impact/ is a labeled SAMPLE copy
+of kit samples/pricing/a. Not a live quote or customer demand.
+
+I01 (Neo PR54) hash-terms identity is `sha256:` + 64 hex. Integer digest
+values are rejected. Bare 64-hex from validate-next-run currentInputs.sha256
+is accepted as input.
+
+Useful-jobs LICENSE/NOTICE inside the pinned archive remain authoritative
+for that package. This module is MIT (see LICENSE).
