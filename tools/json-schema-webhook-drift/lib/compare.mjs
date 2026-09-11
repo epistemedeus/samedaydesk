@@ -64,6 +64,15 @@ function stableLiteral(value) {
   return JSON.stringify(value);
 }
 
+function fingerprintItems(items) {
+  if (items === undefined) return null;
+  if (typeof items === "boolean") return { kind: "boolean-schema", allows: items };
+  if (items && typeof items === "object" && !Array.isArray(items)) {
+    return { kind: "schema-object", type: normalizeType(items.type) };
+  }
+  return { kind: "unknown" };
+}
+
 function schemaObjectFingerprint(node) {
   return {
     kind: "schema-object",
@@ -82,7 +91,11 @@ function schemaObjectFingerprint(node) {
       node.properties && typeof node.properties === "object" && !Array.isArray(node.properties)
         ? Object.keys(node.properties).sort()
         : null,
-    itemsType: node.items && typeof node.items === "object" ? normalizeType(node.items.type) : null,
+    items: fingerprintItems(node.items),
+    itemsType:
+      node.items && typeof node.items === "object" && !Array.isArray(node.items)
+        ? normalizeType(node.items.type)
+        : null,
     minLength: encodeNumber(node.minLength),
     maxLength: encodeNumber(node.maxLength),
     minimum: encodeNumber(node.minimum),
@@ -272,6 +285,17 @@ function classifyAdditionalProperties(before, after) {
   return null;
 }
 
+function classifyItems(before, after) {
+  const beforeItems = before.items;
+  const afterItems = after.items;
+  if (JSON.stringify(beforeItems) === JSON.stringify(afterItems)) return null;
+  if (beforeItems && afterItems) {
+    const booleanClass = classifyBooleanSchema(beforeItems, afterItems);
+    if (booleanClass && booleanClass.reason !== "structural-equal") return booleanClass;
+  }
+  return { class: "breaking", reason: "structural-change" };
+}
+
 const OTHER_KEYS = ["format", "enum", "constJson", "propertiesKeys", "itemsType", "nullable"];
 
 function classifySchemaConstraints(before, after) {
@@ -286,6 +310,8 @@ function classifySchemaConstraints(before, after) {
   if (numeric) deltas.push(numeric);
   const additional = classifyAdditionalProperties(before, after);
   if (additional) deltas.push(additional);
+  const items = classifyItems(before, after);
+  if (items) deltas.push(items);
 
   const restChanged = OTHER_KEYS.some((key) => JSON.stringify(before[key]) !== JSON.stringify(after[key]));
   const tightening = deltas.find((delta) => delta.class === "breaking");

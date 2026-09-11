@@ -182,6 +182,20 @@ test("CLI: float minimum 0.5 to 0.1 is compatible numeric-weakened", () => {
   assert.equal(row.after.minimum, "0.1");
 });
 
+test("CLI: array items true to false is breaking boolean-schema-tightened", () => {
+  const { r, summary, brief } = runCase("items-true-to-false");
+  assert.equal(r.status, 0, r.stderr || r.stdout);
+  assert.equal(summary.ok, true);
+  assert.equal(summary.breaking, 1);
+  const row = firstRow(brief, "breaking");
+  assert.equal(row.pointer, "/properties/vals");
+  assert.equal(row.reason, "boolean-schema-tightened");
+  assert.equal(row.before.items.kind, "boolean-schema");
+  assert.equal(row.before.items.allows, true);
+  assert.equal(row.after.items.kind, "boolean-schema");
+  assert.equal(row.after.items.allows, false);
+});
+
 test("CLI: exclusiveMinimum 0 to 1 is numeric-tightened", () => {
   const { r, summary, brief } = runCase("numeric-exclusive-tighten");
   assert.equal(r.status, 0);

@@ -53,6 +53,7 @@ Public export: `lib/contract.mjs`. CLI stdout keeps `ok: true` and exit 0 for a 
 | --- | --- | --- |
 | JSON Schema `false` → `true`, or `false` → a schema object | `compatible` | `boolean-schema-weakened` |
 | `true` → `false`, schema object → `false`, or `true` → a schema object | `breaking` | `boolean-schema-tightened` |
+| Array `items` boolean `true` → `false` (used path is the array schema) | `breaking` | `boolean-schema-tightened` |
 | Constraint keyword beside `$ref` (draft 2019-09 siblings apply) | same directional classes | e.g. `numeric-tightened` |
 | Annotation-only `$ref` siblings (`description`, `title`, `$comment`) | `unchanged` | instance set unchanged |
 | `required` name added | `breaking` | `required-added` |
