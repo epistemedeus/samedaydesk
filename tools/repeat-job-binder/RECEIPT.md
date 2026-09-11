@@ -12,5 +12,4 @@ cd tools/repeat-job-binder
 npm test
 ```
 
-Contract: `lib/contract.mjs`. Frozen current inputs live under
-`frozen-current/`. Transport failure is not `status: actionable`.
+**PR:** https://github.com/epistemedeus/samedaydesk/pull/94

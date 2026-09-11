@@ -4,7 +4,8 @@
 **Repo:** `epistemedeus/samedaydesk`  
 **Branch:** `cursor/w5-d09-co03-repeat-job-binder-using-frozen-previous-current-input-references-22a5`  
 **Implementation HEAD:** `605c7a179eb6ae13e013c458942426dd3d6abf8c`  
-**Branch tip:** see `git rev-parse HEAD` on this branch after push.  
+**Branch tip:** `70516772acb2cecf096ced2a11c9951a43ef8eb9`  
+**PR:** https://github.com/epistemedeus/samedaydesk/pull/94  
 **Starting ref:** `7c55738cc5730985b709282af6c24e10f0a8442f`  
 **Owned paths:** `tools/repeat-job-binder/`, `experiments/wave5/d09/RECEIPT.md`
 
