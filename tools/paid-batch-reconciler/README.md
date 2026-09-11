@@ -1,18 +1,23 @@
-# Fixture paid-batch reconciler (W4-commerce-08)
+# Fixture paid-batch reconciler (W5-D12 / Co08)
 
-Local **non-settling** batch ledger around the six PR51 useful-jobs engines.
-F08 `runPaidOffers` is a sequential loop; this package is the ledger: item-level
-price, outcome, and fundingState, with partial-failure reconciliation.
+Local **non-settling** batch ledger around SDS PR52 `runPaidOffer`.
+This package is the ledger: item-level price, outcome, fundingState, and
+partial-failure reconciliation. It does not spawn a second useful-jobs kernel.
 
-`sold` is always false. Fixture price is labelled **0.02 USDC** and is not
-published to the live catalog. Live extract remains **0.005**; seller-integrity-audit
+`sold` is always false. Fixture price is labelled **0.02 USDC** per item and is
+not published to the live catalog. Live extract remains **0.005**; seller-integrity-audit
 remains **0.01**. Live settlement is out of scope.
+
+Runner pin tested: SDS PR52 `aeef964fa188443078958d9d6d393afae1d542ee`.
+Set `F08_PIN_ROOT` to a checkout of that commit (or a later D01 tree that still
+exports `runPaidOffer`). Missing runner is `runner-unavailable`, not a pass.
 
 ## Journey (copy-paste, offline)
 
-Node >= 22, from the repository root:
+Node >= 22, from the repository root, with `F08_PIN_ROOT` set:
 
 ```bash
+export F08_PIN_ROOT=/tmp/sds-pr52-aeef964
 node tools/paid-batch-reconciler/bin/batch.mjs run \
   tools/paid-batch-reconciler/fixtures/batches/partial-vendor-budget.json \
   --out-dir /tmp/paid-batch-partial
@@ -20,26 +25,21 @@ node tools/paid-batch-reconciler/bin/batch.mjs run \
 
 Expected ledger: one `vendor-budget-impact` completed, one rejected
 (`missing-required-inputs` for the missing `--after`), batch `status: partial`,
-`sold: false`, both item prices `kind: fixture` / `0.02`.
+`sold: false`, distinct `chargeId` / `price.itemId` per item, both prices
+`kind: fixture` / `0.02`.
 
 ## Tests
 
 ```bash
-node --test tools/paid-batch-reconciler/test/*.test.mjs
-```
-
-Optional F08 pin (not on main):
-
-```bash
-F08_PIN_ROOT=/path/to/samedaydesk@bae3e7cd5034b21019fb272a99d88db964b831ee \
+F08_PIN_ROOT=/tmp/sds-pr52-aeef964 \
   node --test tools/paid-batch-reconciler/test/*.test.mjs
 ```
 
-Postgres 16 local binaries (`/usr/lib/postgresql/16/bin`) are used for the
-real-cluster test. If they are missing, that test skips and is recorded as
-untested local-runtime, not as a fixture fake.
+Tests create the PR52 worktree when `F08_PIN_ROOT` is unset. Postgres 16
+binaries (`/usr/lib/postgresql/16/bin`) are required for the persist test.
+Missing runner or Postgres is incomplete, not a skipped green.
 
-## Bindings Root still owns
+## Bindings W5-D01 still owns
 
-- F08 paid wrappers (`server/paid-useful-jobs`, pin `bae3e7cd`) via `F08_PIN_ROOT`
-- I01 hasher is vendored from Neo PR54 (`819fa637`); integer `termsVersion` is rejected
+- SDS PR52 / D01 `server/paid-useful-jobs` (`runPaidOffer`, `classifyFunding`)
+- This ledger reports the pin SHA it imported. It does not claim later D01 amendments.

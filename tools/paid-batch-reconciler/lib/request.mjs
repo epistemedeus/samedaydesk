@@ -1,10 +1,10 @@
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { dirname, isAbsolute, resolve } from "node:path";
-import { REQUEST_SCHEMA, MAX_INPUT_BYTES } from "./pins.mjs";
+import { REQUEST_SCHEMA, MAX_INPUT_BYTES, F08_PIN_SHA, FALLBACK_RUNNERS, KNOWN_RUNNERS } from "./pins.mjs";
 import { getJob, requiredKeys } from "./catalog.mjs";
 import { filesFromItem } from "./sample.mjs";
-import { fixturePaymentTemplate } from "./funding.mjs";
 import { integerTermsVersionRejected } from "./terms.mjs";
+import { confineExistingPath, isSafeItemId, looksJsonText } from "./confine.mjs";
 
 function isPlainObject(value) {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -23,7 +23,7 @@ function resolveMaybePath(value, baseDir) {
   if (typeof value !== "string") return value;
   const trimmed = value.trim();
   if (!trimmed) return value;
-  if (trimmed.startsWith("{") || trimmed.startsWith("[")) return value;
+  if (looksJsonText(trimmed)) return value;
   const abs = isAbsolute(trimmed) ? trimmed : resolve(baseDir, trimmed);
   return abs;
 }
@@ -31,13 +31,54 @@ function resolveMaybePath(value, baseDir) {
 function loadPayment(item, baseDir) {
   if (isPlainObject(item.payment)) return item.payment;
   if (typeof item.payment === "string") {
+    if (looksJsonText(item.payment)) {
+      try {
+        return JSON.parse(item.payment);
+      } catch (err) {
+        throw new BatchRefuse("payment-unreadable", `payment JSON is malformed: ${err.message}`);
+      }
+    }
     const path = resolveMaybePath(item.payment, baseDir);
-    return JSON.parse(readFileSync(path, "utf8"));
-  }
-  if ((item.funding === "reserved-fixture" || item.fundingIntent === "reserved-fixture") && !item.payment) {
-    return fixturePaymentTemplate();
+    const confined = confineExistingPath(path);
+    if (!confined.ok) {
+      throw new BatchRefuse("traversing-item", "payment path escapes the repository input root", {
+        path,
+        resolved: confined.path,
+      });
+    }
+    try {
+      return JSON.parse(readFileSync(confined.path, "utf8"));
+    } catch (err) {
+      throw new BatchRefuse("payment-unreadable", err.message, { path: confined.path });
+    }
   }
   return null;
+}
+
+function confineFiles(source, baseDir) {
+  const files = {};
+  for (const [key, value] of Object.entries(source)) {
+    if (value == null || value === false || value === "") continue;
+    if (typeof value !== "string") {
+      files[key] = value;
+      continue;
+    }
+    if (looksJsonText(value)) {
+      files[key] = value;
+      continue;
+    }
+    const abs = resolveMaybePath(value, baseDir);
+    const confined = confineExistingPath(abs);
+    if (!confined.ok) {
+      throw new BatchRefuse("traversing-item", `Input ${key} escapes the repository input root`, {
+        key,
+        path: value,
+        resolved: confined.path,
+      });
+    }
+    files[key] = confined.path;
+  }
+  return files;
 }
 
 export function parseBatchRequest(raw, { baseDir = process.cwd() } = {}) {
@@ -58,6 +99,18 @@ export function parseBatchRequest(raw, { baseDir = process.cwd() } = {}) {
     throw new BatchRefuse("empty-batch", "items[] is required");
   }
 
+  const runner = raw.runner || "paid-useful-jobs";
+  if (FALLBACK_RUNNERS.includes(runner)) {
+    throw new BatchRefuse(
+      "fallback-runner-refused",
+      "This ledger consumes SDS PR52 runPaidOffer; a second useful-jobs kernel is not a fallback",
+      { runner, pin: F08_PIN_SHA },
+    );
+  }
+  if (!KNOWN_RUNNERS.includes(runner)) {
+    throw new BatchRefuse("unknown-runner", `Unsupported runner ${runner}`, { runner });
+  }
+
   const items = raw.items.map((item, index) => {
     if (!isPlainObject(item)) {
       throw new BatchRefuse("invalid-item", `items[${index}] must be an object`);
@@ -66,20 +119,23 @@ export function parseBatchRequest(raw, { baseDir = process.cwd() } = {}) {
     if (!engineId) {
       throw new BatchRefuse("missing-engine", `items[${index}] requires engineId`);
     }
+    const id = item.id || `item-${index + 1}-${engineId}`;
+    if (!isSafeItemId(id)) {
+      throw new BatchRefuse("traversing-item", "Item id must be a single non-traversing path segment", {
+        id,
+        index,
+      });
+    }
     let job;
     try {
       job = getJob(engineId);
     } catch {
       job = null;
     }
-    const files = {};
-    const source = filesFromItem(item);
-    for (const [key, value] of Object.entries(source)) {
-      files[key] = resolveMaybePath(value, baseDir);
-    }
+    const files = confineFiles(filesFromItem(item), baseDir);
     const payment = loadPayment(item, baseDir);
     return {
-      id: item.id || `item-${index + 1}-${engineId}`,
+      id,
       index,
       engineId,
       job,
@@ -99,9 +155,18 @@ export function parseBatchRequest(raw, { baseDir = process.cwd() } = {}) {
     };
   });
 
+  const seen = new Set();
+  for (const item of items) {
+    if (seen.has(item.id)) {
+      throw new BatchRefuse("duplicate-item", `Duplicate item id ${item.id}`, { id: item.id });
+    }
+    seen.add(item.id);
+  }
+
   return {
     schema: REQUEST_SCHEMA,
-    runner: raw.runner || "useful-jobs",
+    runner: "paid-useful-jobs",
+    runnerPin: F08_PIN_SHA,
     publishToLiveCatalog: raw.publishToLiveCatalog === true,
     items,
     raw,
@@ -125,7 +190,7 @@ export function missingRequired(item) {
     };
   }
   for (const [key, filePath] of Object.entries(item.files)) {
-    if (typeof filePath !== "string") continue;
+    if (typeof filePath !== "string" || looksJsonText(filePath)) continue;
     if (!existsSync(filePath)) {
       return {
         code: "input-missing-file",

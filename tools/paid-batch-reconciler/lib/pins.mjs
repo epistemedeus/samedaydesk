@@ -29,8 +29,11 @@ export const USEFUL_JOBS_CATALOG_PATH = join(
 );
 
 export const SDS_MAIN_SHA = "5b97d1b02e786acd1895cfa1508087ae3f7a1545";
-export const F08_PIN_SHA = "bae3e7cd5034b21019fb272a99d88db964b831ee";
+export const F08_PIN_SHA = "aeef964fa188443078958d9d6d393afae1d542ee";
 export const F08_PIN_REF = "fable/f08-paid-wrappers";
+export const F08_PIN_PR = 52;
+export const FALLBACK_RUNNERS = Object.freeze(["useful-jobs", "engines", "local-engine"]);
+export const KNOWN_RUNNERS = Object.freeze(["paid-useful-jobs", "f08", `paid-useful-jobs@${F08_PIN_SHA}`]);
 export const I01_NEO_PR = 54;
 export const I01_NEO_SHA = "819fa637ecf5e5177c84efc16fcaa18d57017631";
 export const I01_GOLDEN_TERMS_VERSION =

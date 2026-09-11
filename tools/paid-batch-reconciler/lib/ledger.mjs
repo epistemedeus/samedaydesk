@@ -1,20 +1,28 @@
-import { existsSync, mkdirSync, mkdtempSync } from "node:fs";
+import { mkdirSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
-import { LEDGER_SCHEMA, TERMS_SHAPE_VERSION } from "./pins.mjs";
-import { getJob } from "./catalog.mjs";
+import { F08_PIN_SHA, LEDGER_SCHEMA, TERMS_SHAPE_VERSION } from "./pins.mjs";
 import { inspectSample } from "./sample.mjs";
-import { classifyFunding } from "./funding.mjs";
+import { isSaleLikeItem } from "./funding.mjs";
 import { fixturePrice, livePriceMutation } from "./prices.mjs";
-import { ensureUsefulJobsKit, runEngineJob } from "./engines.mjs";
 import { buildBatchTerms, termsVersionForBatch } from "./terms.mjs";
 import { loadF08Module, mapF08ResultToItem, resolveF08Root } from "./adapters.mjs";
-import { BatchRefuse, missingRequired, parseBatchRequest } from "./request.mjs";
+import { BatchRefuse, parseBatchRequest } from "./request.mjs";
 
-function itemRejection({ id, engineId, code, message, detail, sample = false, sampleReasons = [], fundingState = "rejected" }) {
+function itemRejection({
+  id,
+  engineId,
+  code,
+  message,
+  detail,
+  sample = false,
+  sampleReasons = [],
+  fundingState = "rejected",
+}) {
   return {
     id,
+    chargeId: id,
     engineId,
     outcome: "rejected",
     fundingState,
@@ -24,15 +32,17 @@ function itemRejection({ id, engineId, code, message, detail, sample = false, sa
     purchaseAuthority: false,
     liveSettleAttempted: false,
     liveSettleAllowed: false,
-    price: fixturePrice(engineId),
+    price: fixturePrice(engineId, id),
     code,
     error: message,
     detail: detail || null,
     outputs: [],
+    runner: "paid-useful-jobs",
+    runnerPin: F08_PIN_SHA,
   };
 }
 
-async function runOneItem(item, { kit, offerAdapter, outRoot }) {
+async function runOneItem(item, { offerAdapter, outRoot }) {
   const priceHit = livePriceMutation(item, item);
   if (priceHit) {
     return itemRejection({
@@ -52,30 +62,13 @@ async function runOneItem(item, { kit, offerAdapter, outRoot }) {
     });
   }
 
-  const sampleInfo = inspectSample(item, { kitRoot: kit });
-  const funding = classifyFunding(item, { sample: sampleInfo.sample });
-  if (funding.fundingState === "rejected") {
+  const sampleInfo = inspectSample(item);
+  if (sampleInfo.sample && isSaleLikeItem(item)) {
     return itemRejection({
       id: item.id,
       engineId: item.engineId,
-      code: funding.code,
-      message: funding.message,
-      detail: {
-        wouldSettleIfGuardOmitted: funding.wouldSettleIfGuardOmitted || false,
-      },
-      sample: sampleInfo.sample,
-      sampleReasons: sampleInfo.reasons,
-    });
-  }
-
-  const missing = missingRequired(item);
-  if (missing) {
-    return itemRejection({
-      id: item.id,
-      engineId: item.engineId,
-      code: missing.code,
-      message: missing.message,
-      detail: missing,
+      code: "sample-not-a-sale",
+      message: "SAMPLE/--example inputs produce labeled sample output and cannot be treated as a paid sale",
       sample: sampleInfo.sample,
       sampleReasons: sampleInfo.reasons,
     });
@@ -84,60 +77,30 @@ async function runOneItem(item, { kit, offerAdapter, outRoot }) {
   const itemOut = join(outRoot, item.id);
   mkdirSync(itemOut, { recursive: true });
 
-  if (offerAdapter?.runPaidOffer) {
-    const mapped = mapF08ResultToItem(
-      item.engineId,
-      await offerAdapter.runPaidOffer({
-        jobId: item.engineId,
-        inputs: item.files,
-        example: item.example,
-        fundingIntent: item.fundingIntent || item.funding,
-        payment: item.payment,
-        settle: item.settle,
-        outDir: itemOut,
-      }),
-    );
-    return {
-      id: item.id,
-      ...mapped,
-      sold: false,
-      purchaseAuthority: false,
-      liveSettleAttempted: false,
-      liveSettleAllowed: false,
-      price: fixturePrice(item.engineId),
-      sample: mapped.sample || sampleInfo.sample,
-      sampleReasons: mapped.sampleReasons?.length ? mapped.sampleReasons : sampleInfo.reasons,
-    };
-  }
-
-  const engine = runEngineJob(item.engineId, {
-    files: item.files,
+  const result = await offerAdapter.runPaidOffer({
+    jobId: item.engineId,
+    inputs: item.files,
     example: item.example,
+    fundingIntent: item.fundingIntent || item.funding,
+    payment: item.payment,
+    settle: item.settle,
     outDir: itemOut,
   });
-  const job = getJob(item.engineId);
-  const outputFiles = job.outputs
-    .map((name) => ({ name, path: join(itemOut, name) }))
-    .filter((f) => existsSync(f.path));
-
-  const engineFailed = engine.status !== 0 || !engine.json || engine.json.ok === false;
+  const mapped = mapF08ResultToItem(item.engineId, result);
   return {
     id: item.id,
-    engineId: item.engineId,
-    outcome: engineFailed ? "rejected" : "completed",
-    fundingState: funding.fundingState,
+    chargeId: item.id,
+    ...mapped,
     sold: false,
-    sample: sampleInfo.sample,
-    sampleReasons: sampleInfo.reasons,
     purchaseAuthority: false,
     liveSettleAttempted: false,
     liveSettleAllowed: false,
-    price: fixturePrice(item.engineId),
-    code: engineFailed ? engine.json?.code || "engine-refused" : null,
-    error: engineFailed ? engine.json?.error || engine.stderr || "engine refused" : null,
-    outputs: outputFiles,
-    runner: "useful-jobs",
-    engine: engine.json,
+    price: fixturePrice(item.engineId, item.id),
+    sample: mapped.sample || sampleInfo.sample,
+    sampleReasons: mapped.sampleReasons?.length ? mapped.sampleReasons : sampleInfo.reasons,
+    runner: "paid-useful-jobs",
+    runnerPin: F08_PIN_SHA,
+    detail: result?.detail || null,
   };
 }
 
@@ -149,25 +112,21 @@ function batchStatus(items) {
   return "partial";
 }
 
-function ledgerEnvelope({ items, request, batchId, persistKind }) {
+function ledgerEnvelope({ items, batchId, persistKind, terms, termsVersion }) {
   const status = batchStatus(items);
-  const terms = buildBatchTerms({
-    itemCount: items.length,
-    engineIds: items.map((i) => i.engineId),
-    termsRevision: 0,
-  });
-  const termsVersion = termsVersionForBatch(terms);
   return {
     schema: LEDGER_SCHEMA,
     schemaVersion: TERMS_SHAPE_VERSION,
     batchId,
     termsVersion,
     termsRevision: 0,
+    charges: terms.charges,
     status,
     sold: false,
     purchaseAuthority: false,
     liveSettlement: "out-of-scope",
-    runner: request.runner,
+    runner: "paid-useful-jobs",
+    runnerPin: F08_PIN_SHA,
     persistKind,
     counts: {
       items: items.length,
@@ -180,73 +139,88 @@ function ledgerEnvelope({ items, request, batchId, persistKind }) {
   };
 }
 
+function rejectedEnvelope({ code, error, detail, persistKind, batchId }) {
+  return {
+    schema: LEDGER_SCHEMA,
+    schemaVersion: TERMS_SHAPE_VERSION,
+    batchId: batchId || randomUUID(),
+    termsVersion: null,
+    status: "rejected",
+    sold: false,
+    purchaseAuthority: false,
+    liveSettlement: "out-of-scope",
+    runner: "paid-useful-jobs",
+    runnerPin: F08_PIN_SHA,
+    persistKind,
+    code,
+    error,
+    detail: detail || null,
+    items: [],
+    charges: [],
+    anySold: false,
+    liveCatalogWritten: false,
+  };
+}
+
 /**
- * Batch ledger: item-level price/outcome/fundingState. One rejection cannot
- * mark siblings sold. F08 runPaidOffers is a sequential loop; this is the ledger.
+ * Batch ledger: item-level price/outcome/fundingState. Consumes SDS PR52
+ * runPaidOffer + classifyFunding. One rejection cannot mark siblings sold.
  */
 export async function runBatch(raw, options = {}) {
   const baseDir = options.baseDir || process.cwd();
+  const persistKind = options.persistKind || "memory";
   let request;
   try {
     request = parseBatchRequest(raw, { baseDir });
   } catch (err) {
     if (err instanceof BatchRefuse) {
-      return {
-        schema: LEDGER_SCHEMA,
-        schemaVersion: TERMS_SHAPE_VERSION,
-        batchId: options.batchId || randomUUID(),
-        termsVersion: null,
-        status: "rejected",
-        sold: false,
-        purchaseAuthority: false,
-        liveSettlement: "out-of-scope",
+      return rejectedEnvelope({
         code: err.code,
         error: err.message,
         detail: err.detail,
-        items: [],
-        anySold: false,
-        liveCatalogWritten: false,
-      };
+        persistKind,
+        batchId: options.batchId,
+      });
     }
     throw err;
   }
 
   if (request.publishToLiveCatalog) {
-    return {
-      schema: LEDGER_SCHEMA,
-      schemaVersion: TERMS_SHAPE_VERSION,
-      batchId: options.batchId || randomUUID(),
-      status: "rejected",
-      sold: false,
+    return rejectedEnvelope({
       code: "live-price-mutation-refused",
       error: "Fixture prices are not published to the live catalog",
-      items: [],
-      anySold: false,
-      liveCatalogWritten: false,
-    };
+      persistKind,
+    });
   }
 
-  const kit = ensureUsefulJobsKit();
-  let offerAdapter = options.offerAdapter || null;
-  if (!offerAdapter && (request.runner === "f08" || options.useF08)) {
-    const root = resolveF08Root(options.f08Root);
-    const mod = await loadF08Module(root);
-    if (mod?.runPaidOffer) offerAdapter = { runPaidOffer: mod.runPaidOffer, root };
+  const root = resolveF08Root(options.f08Root);
+  const offerAdapter = options.offerAdapter || (await loadF08Module(root));
+  if (!offerAdapter?.runPaidOffer) {
+    return rejectedEnvelope({
+      code: "runner-unavailable",
+      error: `SDS PR52 runPaidOffer is required (pin ${F08_PIN_SHA}); missing runner is incomplete, not a useful-jobs fallback`,
+      detail: { pin: F08_PIN_SHA, env: "F08_PIN_ROOT" },
+      persistKind,
+    });
   }
 
   const outRoot = options.outDir || mkdtempSync(join(tmpdir(), "paid-batch-"));
   mkdirSync(outRoot, { recursive: true });
 
+  const terms = buildBatchTerms({ items: request.items });
+  const termsVersion = termsVersionForBatch(terms);
+
   const items = [];
   for (const item of request.items) {
-    items.push(await runOneItem(item, { kit, offerAdapter, outRoot }));
+    items.push(await runOneItem(item, { offerAdapter, outRoot }));
   }
 
   const ledger = ledgerEnvelope({
     items,
-    request,
     batchId: options.batchId || randomUUID(),
-    persistKind: options.persistKind || "memory",
+    persistKind,
+    terms,
+    termsVersion,
   });
 
   if (options.persist) {

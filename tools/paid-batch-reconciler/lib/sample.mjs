@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
+import { looksJsonText } from "./confine.mjs";
 
 function isPlainObject(value) {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -35,6 +36,16 @@ export function inspectSample(item, { kitRoot = null } = {}) {
   for (const [key, value] of Object.entries(files)) {
     if (value == null || value === false || value === "") continue;
     if (typeof value === "string") {
+      if (looksJsonText(value)) {
+        try {
+          const hits = [];
+          walkJsonSampleHits(JSON.parse(value), hits);
+          if (hits.length) reasons.push(`json-sample-label:${key}`);
+        } catch {
+          /* not json */
+        }
+        continue;
+      }
       const abs = resolve(value);
       if (existsSync(abs)) {
         if (siblingSampleMarker(abs)) reasons.push(`sibling-marker:${key}`);

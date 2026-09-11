@@ -8,13 +8,14 @@ import {
   LIVE_SELLER_INTEGRITY_AUDIT_PRICE_USDC,
 } from "./pins.mjs";
 
-export function fixturePrice(engineId) {
+export function fixturePrice(engineId, itemId) {
   return {
     labelled: true,
     live: false,
     publishedToLiveCatalog: false,
     kind: "fixture",
     engineId,
+    itemId: itemId || null,
     amountUsdc: FIXTURE_PRICE_USDC,
     amountAtomic: FIXTURE_PRICE_ATOMIC,
     payTo: FIXTURE_PAY_TO,

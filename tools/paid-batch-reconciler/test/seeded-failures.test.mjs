@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { runBatch } from "../lib/ledger.mjs";
-import { wouldSettleIfGuardOmitted } from "../lib/funding.mjs";
+import { loadF08Module, resolveF08Root } from "../lib/adapters.mjs";
 import {
   LIVE_EXTRACT_PRICE_USDC,
   LIVE_SELLER_INTEGRITY_AUDIT_PRICE_USDC,
@@ -63,7 +63,8 @@ describe("seeded fail-closed cases", { timeout: 120_000 }, () => {
 
   it("live-settle payment payload is refused; sold stays false", async () => {
     const payment = liveSettlePayload();
-    assert.equal(wouldSettleIfGuardOmitted(payment, payment.accepted), true);
+    const pin = await loadF08Module(resolveF08Root());
+    assert.equal(pin.wouldSettleIfGuardOmitted(payment, payment.accepted), true);
     const files = callerBudget();
 
     const omitted = await runBatch({

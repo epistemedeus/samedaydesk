@@ -30,6 +30,8 @@ function parseArgs(argv) {
 function usage() {
   return `paid-batch-reconciler — fixture batch ledger (not live sales)
 
+Consumes SDS PR52 runPaidOffer (pin aeef964). Set F08_PIN_ROOT to that checkout.
+
 Commands:
   run <request.json> [--out-dir dir]
   serve [--host 127.0.0.1] [--port 8798]
@@ -37,10 +39,11 @@ Commands:
 
 Request JSON:
   { "schema": "${REQUEST_SCHEMA}", "items": [
-      { "engineId": "vendor-budget-impact", "files": { "before": "...", "after": "..." },
+      { "id": "item-a", "engineId": "vendor-budget-impact", "files": { "before": "...", "after": "..." },
         "funding": "reserved-fixture", "payment": "fixtures/payment/reserved-fixture.json" }
     ] }
 
+Duplicate or traversing item ids/paths are refused. reserved-fixture requires a payment object.
 Live settlement is out of scope. SAMPLE is never a paid sale. sold stays false.
 `;
 }

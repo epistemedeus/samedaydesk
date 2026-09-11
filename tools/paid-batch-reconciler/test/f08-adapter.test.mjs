@@ -1,22 +1,17 @@
 import assert from "node:assert/strict";
-import { existsSync } from "node:fs";
 import { describe, it } from "node:test";
-import { f08IndexPath, loadF08Module, mapF08ResultToItem } from "../lib/adapters.mjs";
+import { loadF08Module, resolveF08Root } from "../lib/adapters.mjs";
 import { runBatch } from "../lib/ledger.mjs";
 import { callerBudget, loadReservedPayment } from "./helpers.mjs";
 import { F08_PIN_SHA } from "../lib/pins.mjs";
 
-const defaultWorktree = "/tmp/sds-f08-pin";
-
-describe("optional F08 adapter (absent on main)", { timeout: 120_000 }, () => {
-  it("consumes pinned F08 runPaidOffer when F08_PIN_ROOT is present", async (t) => {
-    const root = process.env.F08_PIN_ROOT || (existsSync(f08IndexPath(defaultWorktree)) ? defaultWorktree : null);
-    if (!root) {
-      t.skip("F08 not on main; set F08_PIN_ROOT to the bae3e7cd worktree for this optional binding");
-      return;
-    }
+describe("consumed PR52 runner (required, not skipped)", { timeout: 120_000 }, () => {
+  it("imports runPaidOffer from pin aeef964 and maps a mixed batch", async () => {
+    const root = resolveF08Root();
+    assert.ok(root, "F08_PIN_ROOT / PR52 worktree is required");
     const mod = await loadF08Module(root);
-    assert.ok(mod?.runPaidOffer, "F08 public export runPaidOffer");
+    assert.equal(typeof mod.runPaidOffer, "function");
+    assert.equal(typeof mod.classifyFunding, "function");
     const files = callerBudget();
     const f08 = await mod.runPaidOffer({
       jobId: "vendor-budget-impact",
@@ -25,13 +20,13 @@ describe("optional F08 adapter (absent on main)", { timeout: 120_000 }, () => {
       payment: loadReservedPayment(),
     });
     assert.equal(f08.sold, false);
-    const mapped = mapF08ResultToItem("vendor-budget-impact", f08);
-    assert.equal(mapped.sold, false);
-    assert.equal(mapped.outcome, f08.ok ? "completed" : "rejected");
+
+    const intentOnly = mod.classifyFunding({ fundingIntent: "reserved-fixture" });
+    assert.equal(intentOnly.fundingState, "rejected");
+    assert.equal(intentOnly.code, "reserved-fixture-requires-payment");
 
     const ledger = await runBatch(
       {
-        runner: "f08",
         items: [
           {
             id: "f08-ok",
@@ -49,13 +44,15 @@ describe("optional F08 adapter (absent on main)", { timeout: 120_000 }, () => {
           },
         ],
       },
-      { f08Root: root, useF08: true },
+      { f08Root: root },
     );
     assert.equal(ledger.sold, false);
     assert.equal(ledger.status, "partial");
-    assert.equal(ledger.items[0].runner, "f08-pin");
+    assert.equal(ledger.runner, "paid-useful-jobs");
+    assert.equal(ledger.runnerPin, F08_PIN_SHA);
+    assert.equal(ledger.items[0].runner, "paid-useful-jobs");
     assert.equal(ledger.items[0].sold, false);
     assert.equal(ledger.items[1].outcome, "rejected");
-    assert.equal(F08_PIN_SHA, "bae3e7cd5034b21019fb272a99d88db964b831ee");
+    assert.equal(F08_PIN_SHA, "aeef964fa188443078958d9d6d393afae1d542ee");
   });
 });

@@ -62,7 +62,6 @@ export function createPaidBatchServer(options = {}) {
           persistKind: persist ? "postgres" : "http-memory",
           baseDir: options.baseDir || process.cwd(),
           f08Root: options.f08Root,
-          useF08: options.useF08,
         });
         store.set(ledger.batchId, ledger);
         send(res, ledger.status === "rejected" && !ledger.items.length ? 400 : 200, ledger);
