@@ -21,6 +21,10 @@ test("CLI journey from pack directory matches the literal user journey", () => {
   assert.equal(result.status, 0, result.stderr || result.stdout);
   const report = JSON.parse(result.stdout);
   assert.equal(report.ok, true);
+  assert.equal(report.purchaseAuthorized, false);
+  assert.equal(report.sold, false);
+  assert.equal(report.livePrices.extract, "$0.005");
+  assert.equal(report.livePrices.sellerIntegrityAudit, "$0.01");
   assert.equal(report.steps[1].diagnostic.drift, "missing_hint");
   assert.equal(report.steps[1].diagnostic.signed, false);
   assert.equal(report.steps[2].unchanged, true);

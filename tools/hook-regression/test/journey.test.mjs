@@ -13,6 +13,12 @@ test("literal journey: intact payload + missing bazaar hint → missing_hint sig
   });
   assert.equal(report.ok, true);
   assert.equal(report.command, "journey");
+  assert.equal(report.purchaseAuthorized, false);
+  assert.equal(report.sold, false);
+  assert.equal(report.installLiveHooks, false);
+  assert.equal(report.livePricesUnchanged, true);
+  assert.equal(report.livePrices.extract, "$0.005");
+  assert.equal(report.livePrices.sellerIntegrityAudit, "$0.01");
   assert.equal(report.steps[0].id, "intact_payload");
   assert.deepEqual(report.steps[0].diagnostics.find((row) => row.field === "payload"), {
     field: "payload",

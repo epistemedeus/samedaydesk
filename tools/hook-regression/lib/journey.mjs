@@ -4,6 +4,8 @@ import { omitHint, authorityFingerprint, signedPayloadUnchanged } from "./author
 import { planOmittedHintFill } from "./plan-fill.mjs";
 import { loadH4Fixtures } from "./h4.mjs";
 import { MERCHANT_PIN, PR54_RULES } from "./rules.mjs";
+import { assertLivePricesUnchanged } from "./guardrails.mjs";
+import { CHANGE_LIVE_PRICES } from "./failures.mjs";
 
 export function runJourney({ fixturePath }) {
   const loaded = loadFixture(fixturePath);
@@ -33,6 +35,23 @@ export function runJourney({ fixturePath }) {
 
   const h4 = loadH4Fixtures();
 
+  let live;
+  try {
+    live = assertLivePricesUnchanged();
+  } catch (err) {
+    return {
+      ok: false,
+      command: "journey",
+      purchaseAuthorized: false,
+      sold: false,
+      rejected: true,
+      failure: CHANGE_LIVE_PRICES,
+      error: err.message,
+      merchantPin: MERCHANT_PIN,
+      rules: PR54_RULES,
+    };
+  }
+
   const ok =
     bazaarDiag?.drift === "missing_hint" &&
     bazaarDiag?.signed === false &&
@@ -51,6 +70,14 @@ export function runJourney({ fixturePath }) {
     h4Imported: h4.present,
     h4Source: h4.present ? h4.sources : null,
     fixture: loaded.basename,
+    purchaseAuthorized: false,
+    sold: false,
+    installLiveHooks: false,
+    livePricesUnchanged: true,
+    livePrices: {
+      extract: live.extract,
+      sellerIntegrityAudit: live.sellerIntegrityAudit,
+    },
     steps: [
       {
         id: "intact_payload",
