@@ -1,0 +1,28 @@
+{
+  "id": "W5-D17",
+  "slot": "D17",
+  "repo": "epistemedeus/samedaydesk",
+  "schema": "samedaydesk.wave5.d17.domain-outcome.v1",
+  "startingRef": "aeef964fa188443078958d9d6d393afae1d542ee",
+  "testedImplementation": {
+    "kind": "current-pinned-SDS52-wrapper",
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "ref": "fable/f08-paid-wrappers",
+    "pr": 52,
+    "entry": "server/paid-useful-jobs/bin/cli.mjs",
+    "library": "server/paid-useful-jobs/index.mjs"
+  },
+  "engineArchive": {
+    "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+    "bytes": 2522418,
+    "package": "useful-jobs",
+    "version": "1.0.0"
+  },
+  "integrationOwner": "W5-D01",
+  "engineCatalogOwner": "W5-M01",
+  "remainingBinding": [
+    "D01 should stamp domainOutcome from this contract on receipts; do not treat wrapper.ok as the analysis layer.",
+    "M01 must keep engine envelope status in actionable|informational|partial|refused or publish an explicit map. D17 does not claim a future catalog."
+  ]
+}

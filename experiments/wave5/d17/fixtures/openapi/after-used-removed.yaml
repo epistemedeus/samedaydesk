@@ -1,0 +1,17 @@
+openapi: 3.0.3
+info:
+  title: Desk API
+  version: "1.0.1"
+paths:
+  /unused:
+    get:
+      operationId: unusedOp
+      responses:
+        "200":
+          description: ok
+  /webhook:
+    post:
+      operationId: unusedWebhook
+      responses:
+        "200":
+          description: ok

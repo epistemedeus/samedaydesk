@@ -1,0 +1,13 @@
+W5-D17 domain-outcome contract
+=============================
+
+This package classifies SameDayDesk paid-useful-job wrapper results. It does
+not reimplement the engines, does not vendor the useful-jobs archive, and is
+not a second runner.
+
+Consumed implementations (licenses stay with those works):
+- SDS PR52 wrapper under server/paid-useful-jobs/ (this repository)
+- Published useful-jobs 1.0.0 archive (client/public/for-agents/useful-jobs/),
+  MIT, nested vendor-pins retain their own LICENSE/NOTICE
+
+D17 owned files in this directory are MIT (see LICENSE).

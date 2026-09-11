@@ -1,0 +1,20 @@
+{
+  "name": "@samedaydesk/wave5-d17-domain-outcome",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Domain-outcome contract for SameDayDesk paid useful-job reports: change, no-change, and refusal distinct from transport/engine failure and incomplete delivery.",
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    ".": "./src/index.mjs",
+    "./classify": "./src/classify.mjs"
+  },
+  "bin": {
+    "classify-domain-outcome": "./bin/classify-domain-outcome.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs"
+  }
+}
