@@ -1,0 +1,110 @@
+openapi: 3.0.3
+info:
+  title: SAMPLE Inventory API (caller-alpha after)
+  description: Imaginary SAMPLE OpenAPI. Not a customer system. After removes DELETE and changes POST body.
+  version: 1.1.0
+  license:
+    name: MIT
+servers:
+  - url: https://sample.example/inventory
+paths:
+  /inventory:
+    get:
+      operationId: listInventory
+      summary: List inventory rows
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InventoryItem"
+    post:
+      operationId: createInventory
+      summary: Create inventory row
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InventoryCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryItem"
+  /inventory/{sku}:
+    get:
+      operationId: getInventory
+      summary: Get one inventory row
+      parameters:
+        - $ref: "#/components/parameters/Sku"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryItem"
+        "404":
+          description: Not found
+  /inventory/{sku}/history:
+    get:
+      operationId: getInventoryHistory
+      summary: Get inventory change history
+      parameters:
+        - $ref: "#/components/parameters/Sku"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    at:
+                      type: string
+                      format: date-time
+                    quantity:
+                      type: integer
+components:
+  parameters:
+    Sku:
+      name: sku
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    InventoryCreate:
+      type: object
+      required: [sku, quantity, warehouseId]
+      properties:
+        sku:
+          type: string
+        quantity:
+          type: integer
+          minimum: 0
+        warehouseId:
+          type: string
+          description: Required warehouse pin added in 1.1.0
+    InventoryItem:
+      type: object
+      required: [sku, quantity, warehouseId]
+      properties:
+        sku:
+          type: string
+        quantity:
+          type: integer
+          minimum: 0
+        warehouseId:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time

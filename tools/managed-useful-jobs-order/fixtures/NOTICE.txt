@@ -1,0 +1,22 @@
+Fixture provenance
+==================
+
+Caller OpenAPI files under fixtures/caller/api-upgrade-brief/ are copies of
+useful-jobs 1.0.0 samples/openapi/a (no SAMPLE.txt). The F13 journey uses them
+as local caller inputs, not as billed SAMPLE work.
+
+fixtures/caller/api-upgrade-brief-swap/used.json is samples/openapi/b/used.json
+(different digest) for the immutable-orderId swapped-files refusal.
+
+fixtures/labeled-sample/openapi-caller-alpha/ is a copy of
+samples/openapi/caller-alpha including SAMPLE.txt. Those hashes must not be
+claimed as customer work.
+
+Upstream package: useful-jobs 1.0.0 from
+client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz
+sha256 6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51
+LICENSE: MIT (useful-jobs archive LICENSE). Nested vendor-pins retain their
+original licenses inside the archive. This module does not relicense them.
+
+samedaydesk.useful-jobs-consumer.v1.json is a pinned copy of the Wave 4 packet
+at epistemedeus/pilot@c621646897e6fe1dccf0e5993aea63b5bc1f6bd3.

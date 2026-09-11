@@ -1,0 +1,11 @@
+{
+  "sample": true,
+  "label": "SAMPLE caller-alpha used pins - not a customer",
+  "operations": [
+    { "method": "post", "path": "/inventory" },
+    { "method": "get", "path": "/inventory/{sku}" },
+    { "method": "delete", "path": "/inventory/{sku}" },
+    { "method": "get", "path": "/inventory/{sku}/history" }
+  ],
+  "pinNote": "SAMPLE used-operation pins for inventory upgrade demo"
+}
