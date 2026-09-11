@@ -1,0 +1,13 @@
+W5-M14 human-readable result preview and machine-first quickstart
+
+Copyright (c) 2026 SameDayDesk / epistemedeus
+License: MIT. See LICENSE in this directory.
+
+This package is a thin consumer of the SDS PR52 paid wrapper
+(`server/paid-useful-jobs/`) and the published useful-jobs catalog.
+It does not copy that wrapper, D01 contract.mjs, or the engine archive.
+Engines stay in `client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz`.
+
+Tested wrapper: SDS PR52 `aeef964fa188443078958d9d6d393afae1d542ee`.
+D01 `samedaydesk.paid-useful-jobs.execution.v1` was read read-only and is a
+remaining integration binding, not this result.

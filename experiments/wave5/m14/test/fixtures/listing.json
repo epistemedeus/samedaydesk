@@ -1,0 +1,6 @@
+{
+  "schema": "pilot.s185.distribution_repair_input.v1",
+  "identity": { "provider": "fixture", "jobRef": "m14-listing" },
+  "discovery": { "captureStatus": "ok" },
+  "record": { "note": "shape-only fixture for choose, not a live listing" }
+}

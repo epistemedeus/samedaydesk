@@ -1,0 +1,5 @@
+{
+  "operations": [
+    { "method": "get", "path": "/hours" }
+  ]
+}

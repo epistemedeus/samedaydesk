@@ -1,0 +1,34 @@
+{
+  "task": "W5-M14",
+  "schema": "samedaydesk.wave5.m14.pin.v1",
+  "repo": "epistemedeus/samedaydesk",
+  "ownedPaths": ["experiments/wave5/m14/"],
+  "testedImplementation": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "ref": "fable/f08-paid-wrappers",
+    "pr": 52,
+    "paths": ["server/paid-useful-jobs/", "client/public/for-agents/useful-jobs/"]
+  },
+  "engines": {
+    "package": "useful-jobs",
+    "version": "1.0.0",
+    "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+    "archiveBytes": 2522418
+  },
+  "d01ContractReadOnly": {
+    "sha": "6bed72dd22a396134aa5c957933b42c3a5746698",
+    "ref": "codex/w5-d01-20260911",
+    "version": "samedaydesk.paid-useful-jobs.execution.v1",
+    "usedAsExecutor": false,
+    "note": "Read CONTRACT.md and lib/contract.mjs read-only. This kit still executes SDS52 runPaidOffer / cli.mjs."
+  },
+  "m01": {
+    "exportedOnThisBranch": false,
+    "note": "Catalog remains PR51 useful-jobs 1.0.0 via PR52 JOBS."
+  },
+  "d24": {
+    "exportedOnThisBranch": false,
+    "note": "Clean-environment package install is not this result. This kit needs the repo checkout."
+  }
+}
