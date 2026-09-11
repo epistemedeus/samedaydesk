@@ -1,0 +1,43 @@
+{
+  "comment": "G02 SAMPLE intact Exact EVM v2 payload with unsigned resource and bazaar hints present. Fixture only. Shape imported from H4 G06 intact-payload.json when that pack is present.",
+  "requirements": {
+    "scheme": "exact",
+    "network": "eip155:8453"
+  },
+  "declared": {
+    "resource": {
+      "url": "https://agents.samedaydesk.com/extract"
+    },
+    "extensions": {
+      "bazaar": {
+        "info": {
+          "resource": { "url": "https://agents.samedaydesk.com/extract" }
+        }
+      }
+    }
+  },
+  "paymentPayload": {
+    "x402Version": 2,
+    "resource": {
+      "url": "https://agents.samedaydesk.com/extract"
+    },
+    "extensions": {
+      "bazaar": {
+        "info": {
+          "resource": { "url": "https://agents.samedaydesk.com/extract" }
+        }
+      }
+    },
+    "payload": {
+      "authorization": {
+        "from": "0x0000000000000000000000000000000000000001",
+        "to": "0x0000000000000000000000000000000000000002",
+        "value": "5000",
+        "validAfter": "0",
+        "validBefore": "9999999999",
+        "nonce": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "signature": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  }
+}

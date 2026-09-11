@@ -1,0 +1,46 @@
+{
+  "comment": "SEED: rewrite signed payload.payload to 'fix' discovery. Must be rejected.",
+  "attempt": "rewrite-payload-to-fix-discovery",
+  "rewritePayload": true,
+  "paymentPayload": {
+    "x402Version": 2,
+    "resource": {
+      "url": "https://agents.samedaydesk.com/extract"
+    },
+    "payload": {
+      "authorization": {
+        "from": "0x0000000000000000000000000000000000000001",
+        "to": "0x0000000000000000000000000000000000000002",
+        "value": "5000",
+        "validAfter": "0",
+        "validBefore": "9999999999",
+        "nonce": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "signature": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  "rewrittenPayload": {
+    "x402Version": 2,
+    "resource": {
+      "url": "https://agents.samedaydesk.com/extract"
+    },
+    "extensions": {
+      "bazaar": {
+        "info": {
+          "resource": { "url": "https://agents.samedaydesk.com/extract" }
+        }
+      }
+    },
+    "payload": {
+      "authorization": {
+        "from": "0x0000000000000000000000000000000000000001",
+        "to": "0x0000000000000000000000000000000000000002",
+        "value": "5000",
+        "validAfter": "0",
+        "validBefore": "9999999999",
+        "nonce": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "signature": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  }
+}

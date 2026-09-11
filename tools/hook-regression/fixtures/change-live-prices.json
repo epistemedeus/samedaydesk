@@ -1,0 +1,6 @@
+{
+  "comment": "SEED: change live extract/seller-integrity-audit prices. Must be rejected.",
+  "attempt": "change-live-prices",
+  "extract": "$0.006",
+  "seller-integrity-audit": "$0.02"
+}

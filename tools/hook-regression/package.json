@@ -1,0 +1,18 @@
+{
+  "name": "@samedaydesk/hook-regression",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "G02 presence-only hook regression: freeze merchant PR54 indexing rules as diagnostics. Does not install live ResourceServer hooks, change prices, or edit H4.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "hook-regression": "./bin/hook-regression.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "journey": "node bin/hook-regression.mjs journey --fixture fixtures/ok-payload.json",
+    "diagnose": "node bin/hook-regression.mjs diagnose --fixture fixtures/ok-payload.json"
+  }
+}

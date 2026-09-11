@@ -1,0 +1,6 @@
+{
+  "comment": "SEED: edit H4 owned directory. Must be rejected. G02 may import H4 fixtures/rules, never write them.",
+  "attempt": "edit-h4-directory",
+  "action": "write",
+  "path": "experiments/cursor-wave-20260911/h4-precise-repairs/src/diagnostics.ts"
+}
