@@ -1,0 +1,10 @@
+Copied from I01 / Neo PR54 for hasher golden replay only.
+
+repo: epistemedeus/neomorphic-io
+ref: fable/integration-earned-work
+sha: 819fa637ecf5e5177c84efc16fcaa18d57017631
+path: packs/funded-task-terms/fixtures/golden/complete.terms.json
+
+This is a funded-task-terms document, not a job-request ticket.
+Used to prove the pinned hasher matches I01. Original F01 integer
+termsVersion is not accepted.
