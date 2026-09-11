@@ -6,7 +6,7 @@
 | Entrypoint | `tools/job-output-atomicity/` (`lib/verify.mjs`, `bin/verify-complete.mjs`) |
 | Command | `node tools/job-output-atomicity/bin/verify-complete.mjs --root <dir>` |
 | State | `complete` / `partial` / `unknown`. Never treats missing receipt or truncated JSON as complete. `sold` remains false. |
-| Tests | `node --test tools/job-output-atomicity/test/*.test.mjs` |
+| Tests | `node --test --test-concurrency=1 tools/job-output-atomicity/test/*.test.mjs` |
 | Account prerequisite | None. Offline wrapper + local disk. Optional loopback HTTP. No wallet, facilitator, or live settle. |
 | Producer | Injected F08 CLI from worktree `aeef964` (`fable/f08-paid-wrappers`). I02 owns producer amendments. |
 | Hash identity | I01 Neo PR54 `hashTermsVersion` (`sha256:` + 64 hex), vendored hasher only, not the earned-work kernel. |

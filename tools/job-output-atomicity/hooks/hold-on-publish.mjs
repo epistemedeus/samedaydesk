@@ -4,6 +4,7 @@
  * Does not amend F08 source.
  */
 import fs from "node:fs";
+import { syncBuiltinESMExports } from "node:module";
 import { basename } from "node:path";
 
 const origWriteFileSync = fs.writeFileSync;
@@ -60,3 +61,5 @@ fs.writeFileSync = function writeFileSyncHeld(file, data, options) {
   }
   return origWriteFileSync.call(fs, file, data, options);
 };
+
+syncBuiltinESMExports();

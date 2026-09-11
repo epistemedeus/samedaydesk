@@ -26,7 +26,7 @@ worktree and spawn that CLI. They write outputs only under `$TMPDIR`.
 
 ```bash
 git fetch origin fable/f08-paid-wrappers
-node --test tools/job-output-atomicity/test/*.test.mjs
+node --test --test-concurrency=1 tools/job-output-atomicity/test/*.test.mjs
 ```
 
 Override the wrapper tree with `F08_ROOT` if a local checkout already has

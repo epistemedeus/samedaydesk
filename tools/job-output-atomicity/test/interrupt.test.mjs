@@ -26,7 +26,15 @@ describe("interrupted wrapper publication", { timeout: 180_000 }, () => {
     });
 
     const notified = await waitForFile(notifyPath, { timeoutMs: 90_000 });
-    assert.equal(notified, true, "wrapper never reached receipt publication");
+    if (!notified) {
+      killProcessGroup(launched.pid);
+      const closed = await launched.wait({ killAfterMs: 1_000 });
+      assert.equal(
+        notified,
+        true,
+        `wrapper never reached receipt publication: status=${closed.status} signal=${closed.signal}\n${closed.stderr}\n${closed.stdout}`,
+      );
+    }
     killProcessGroup(launched.pid);
     const closed = await launched.wait({ killAfterMs: 2_000 });
     const leftover = await waitUntilGone(launched.runId, { timeoutMs: 5_000 });
@@ -64,7 +72,15 @@ describe("interrupted wrapper publication", { timeout: 180_000 }, () => {
     });
 
     const notified = await waitForFile(notifyPath, { timeoutMs: 90_000 });
-    assert.equal(notified, true, "wrapper never reached partial receipt write");
+    if (!notified) {
+      killProcessGroup(launched.pid);
+      const closed = await launched.wait({ killAfterMs: 1_000 });
+      assert.equal(
+        notified,
+        true,
+        `wrapper never reached partial receipt write: status=${closed.status} signal=${closed.signal}\n${closed.stderr}\n${closed.stdout}`,
+      );
+    }
     killProcessGroup(launched.pid);
     await launched.wait({ killAfterMs: 2_000 });
     const leftover = await waitUntilGone(launched.runId, { timeoutMs: 5_000 });

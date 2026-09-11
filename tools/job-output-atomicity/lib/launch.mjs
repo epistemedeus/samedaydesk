@@ -59,10 +59,10 @@ export function launchPaidWrapper({
 
   const runId = extraEnv.JOA_RUN_ID || randomUUID();
   const env = { ...process.env, ...extraEnv, JOA_RUN_ID: runId };
+  const nodeArgs = [...prepared.args];
   if (hold) {
     const importUrl = pathToFileURL(HOLD_HOOK).href;
-    const prior = env.NODE_OPTIONS ? `${env.NODE_OPTIONS} ` : "";
-    env.NODE_OPTIONS = `${prior}--import ${importUrl}`;
+    nodeArgs.unshift("--import", importUrl);
     env.JOA_HOLD_NAMES = (hold.names || ["receipt.json"]).join(",");
     env.JOA_HOLD_MS = String(hold.ms ?? 20_000);
     if (hold.partial) env.JOA_PARTIAL = "1";
@@ -79,7 +79,7 @@ export function launchPaidWrapper({
   };
 
   if (!detached) {
-    const result = spawnSync(process.execPath, prepared.args, spawnOpts);
+    const result = spawnSync(process.execPath, nodeArgs, spawnOpts);
     return {
       runId,
       status: result.status,
@@ -87,14 +87,14 @@ export function launchPaidWrapper({
       stdout: result.stdout || "",
       stderr: result.stderr || "",
       pid: result.pid || null,
-      args: prepared.args,
+      args: nodeArgs,
       jobId: prepared.jobId,
       f08Root,
       testedSha: F08_TESTED_SHA,
     };
   }
 
-  const child = spawn(process.execPath, prepared.args, {
+  const child = spawn(process.execPath, nodeArgs, {
     cwd: f08Root,
     env,
     detached: true,
@@ -129,7 +129,7 @@ export function launchPaidWrapper({
           stdout: info.stdout,
           stderr: info.stderr,
           pid: child.pid,
-          args: prepared.args,
+          args: nodeArgs,
           jobId: prepared.jobId,
           f08Root,
           testedSha: F08_TESTED_SHA,
@@ -151,7 +151,7 @@ export function launchPaidWrapper({
       });
     });
 
-  return { child, runId, wait, pid: child.pid, args: prepared.args, jobId: prepared.jobId };
+  return { child, runId, wait, pid: child.pid, args: nodeArgs, jobId: prepared.jobId };
 }
 
 export async function loadF08Digest(f08Root) {
