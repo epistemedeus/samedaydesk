@@ -1,0 +1,29 @@
+{
+  "id": "F18-sample",
+  "title": "SAMPLE / fixture completion is not customer use",
+  "disposition": "fixed_with_regression",
+  "inSdsScope": true,
+  "saleState": "not_a_sale",
+  "provenance": "fixture",
+  "authorized": false,
+  "kind": "regression",
+  "evaluator": "f18-sample",
+  "briefPath": "briefs/_child-06-f18-sample.md",
+  "notes": "Keep H4 fixture-becomes-sale. Extra SAMPLE shapes (label, sampleLabel, exampleMode, --example, sourceKind=sample) cannot complete as provenance=customer. intake.ts/failures.ts left unchanged; strengthening lives in src/f18-sample.ts.",
+  "facts": {
+    "failureCode": "fixture-becomes-sale",
+    "module": "src/f18-sample.ts",
+    "intakeTsUnchanged": true,
+    "failuresTsUnchanged": true,
+    "extraSampleShapes": [
+      { "label": "SAMPLE" },
+      { "sampleLabel": "SAMPLE" },
+      { "exampleMode": true },
+      { "flags": ["--example"] },
+      { "sourceKind": "sample" }
+    ],
+    "sampleCompletionCannotFlipProvenanceToCustomer": true,
+    "existingSampleExampleIntakeStillRejected": "fixtures/sample-example-intake.json",
+    "canaryAuthorizedFalseMustNotSettle": true
+  }
+}

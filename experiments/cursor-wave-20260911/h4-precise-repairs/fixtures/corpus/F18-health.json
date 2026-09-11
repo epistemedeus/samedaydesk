@@ -1,0 +1,58 @@
+{
+  "id": "F18-health",
+  "title": "GET /health unsupported on agents gateway; /healthz is the live probe",
+  "disposition": "reproduced",
+  "inSdsScope": true,
+  "saleState": "not_a_sale",
+  "provenance": "fixture",
+  "authorized": false,
+  "kind": "reproduction",
+  "evaluator": "f18-health",
+  "briefPath": "briefs/_child-03-f18-health.md",
+  "notes": "F18 reproduction: GET /health is unsupported on https://agents.samedaydesk.com. LIVE_INVENTORY health in client/src/data/machineEntry.mjs is GATEWAY_ORIGIN + /healthz. SDS Express GET /api/health via server/routes/health.js remains valid app health and is not this defect. Do not rewrite SDS /api/health. Do not mutate production routes.",
+  "facts": {
+    "agentsGatewayOrigin": "https://agents.samedaydesk.com",
+    "unsupportedPath": "/health",
+    "liveProbePath": "/healthz",
+    "sdsExpressOrigin": "https://samedaydesk.com",
+    "sdsExpressPath": "/api/health",
+    "sdsHealthRoute": "server/routes/health.js router.get(\"/health\")",
+    "sdsHealthMount": "server/app.js app.use(\"/api\", healthRouter)",
+    "liveInventoryHealthHref": "https://agents.samedaydesk.com/healthz",
+    "c31RecipeHealth": "https://agents.samedaydesk.com/recipes/page-change/health",
+    "rewriteSdsApiHealth": false,
+    "productionRoutesMutated": false,
+    "recordedProbes": [
+      {
+        "origin": "https://agents.samedaydesk.com",
+        "path": "/health",
+        "method": "GET",
+        "status": 404,
+        "supported": false,
+        "liveProbe": false,
+        "surface": "agents-gateway",
+        "source": "fixture"
+      },
+      {
+        "origin": "https://agents.samedaydesk.com",
+        "path": "/healthz",
+        "method": "GET",
+        "status": 200,
+        "supported": true,
+        "liveProbe": true,
+        "surface": "agents-gateway",
+        "source": "fixture"
+      },
+      {
+        "origin": "https://samedaydesk.com",
+        "path": "/api/health",
+        "method": "GET",
+        "status": 200,
+        "supported": true,
+        "liveProbe": false,
+        "surface": "sds-express",
+        "source": "fixture"
+      }
+    ]
+  }
+}

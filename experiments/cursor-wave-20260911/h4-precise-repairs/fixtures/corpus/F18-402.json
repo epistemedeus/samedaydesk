@@ -1,0 +1,33 @@
+{
+  "id": "F18-402",
+  "title": "unpaid 402 (10000 / 5000 atomic) is unpaid-held, not success",
+  "disposition": "fixed_with_regression",
+  "inSdsScope": true,
+  "saleState": "not_a_sale",
+  "provenance": "fixture",
+  "authorized": false,
+  "kind": "regression",
+  "evaluator": "f18-402",
+  "briefPath": "briefs/_child-05-f18-402.md",
+  "notes": "F18 live journeys: 28 probes / 0 mismatches / 2 unpaid-held. GET /extract 402 atomic 5000 and GET /commerce/seller-integrity-audit 402 atomic 10000 are unpaid-held, not success. Treating 402 as success is rejected (unpaid-402-is-not-success). Pack never claims a live paid settlement.",
+  "facts": {
+    "liveHttp": false,
+    "liveSettle": false,
+    "status": 402,
+    "extractAmountAtomic": "5000",
+    "sellerIntegrityAuditAmountAtomic": "10000",
+    "extractRoute": "/extract",
+    "sellerIntegrityAuditRoute": "/commerce/seller-integrity-audit",
+    "network": "eip155:8453",
+    "outcome": "unpaid-held",
+    "success": false,
+    "paid": false,
+    "settled": false,
+    "f18LiveJourneys": {
+      "probes": 28,
+      "mismatches": 0,
+      "unpaidHeld": 2
+    },
+    "regressionCode": "unpaid-402-is-not-success"
+  }
+}

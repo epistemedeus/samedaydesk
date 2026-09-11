@@ -1,0 +1,32 @@
+{
+  "id": "F18-bytes",
+  "title": "gzip/br Content-Length is not the decoded JSON byte pin",
+  "disposition": "reproduced",
+  "inSdsScope": true,
+  "saleState": "not_a_sale",
+  "provenance": "fixture",
+  "authorized": false,
+  "kind": "reproduction",
+  "evaluator": "f18-bytes",
+  "briefPath": "briefs/_child-04-f18-bytes.md",
+  "notes": "Live F18 journeys: compressed Content-Length is the gzip/br body size. The JSON pin is utf8 Buffer.byteLength of the decoded text. Pack-local zlib reproduction only; no live HTTP and no SDS route change.",
+  "facts": {
+    "liveHttp": false,
+    "jsonText": "{\"id\":\"F18-bytes\",\"route\":\"/extract\",\"status\":\"ok\",\"price\":{\"display\":\"$0.005\",\"amountAtomic\":\"5000\"},\"finding\":\"gzip/br Content-Length is not the decoded JSON byte pin\",\"tags\":[\"gzip\",\"br\",\"content-length\",\"json-pin\"]}",
+    "decodedBytes": 219,
+    "sha256": "011fc4d1e59e26e10377cbe7aa40a65037f735a688703236f2813fb41ef0c1ef",
+    "gzip": {
+      "contentLength": 191,
+      "decodedBytes": 219,
+      "match": false,
+      "encoding": "gzip"
+    },
+    "br": {
+      "contentLength": 144,
+      "decodedBytes": 219,
+      "match": false,
+      "encoding": "br"
+    },
+    "code": "compressed-length-is-not-json-pin"
+  }
+}
