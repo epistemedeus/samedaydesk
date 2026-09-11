@@ -1,0 +1,21 @@
+{
+  "name": "@samedaydesk/h4-precise-repairs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Family G precise-repair intake, presence-only metadata diagnostics, and unauthorized canary design. Fixtures only; not a sale.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "h4-precise-repairs": "./bin/h4-precise-repairs.ts"
+  },
+  "scripts": {
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "intake": "node --experimental-strip-types bin/h4-precise-repairs.ts intake",
+    "diagnose": "node --experimental-strip-types bin/h4-precise-repairs.ts diagnose",
+    "canary": "node --experimental-strip-types bin/h4-precise-repairs.ts canary",
+    "subjects": "node --experimental-strip-types bin/h4-precise-repairs.ts subjects",
+    "proposal": "node --experimental-strip-types bin/h4-precise-repairs.ts proposal"
+  }
+}

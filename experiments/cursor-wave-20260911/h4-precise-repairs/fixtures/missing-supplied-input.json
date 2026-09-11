@@ -1,0 +1,9 @@
+{
+  "defectId": "g03-missing-input",
+  "provenance": "fixture",
+  "saleState": "not_a_sale",
+  "scope": "G03 input-contract repair",
+  "acceptanceTest": "must reject missing supplied input",
+  "rollback": "n/a",
+  "subjectJobId": "listing-repair-packet"
+}

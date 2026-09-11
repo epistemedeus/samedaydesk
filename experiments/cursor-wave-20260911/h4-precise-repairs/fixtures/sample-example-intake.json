@@ -1,0 +1,19 @@
+{
+  "defectId": "SAMPLE-should-not-become-sale",
+  "labels": ["SAMPLE"],
+  "exampleFlag": "--example",
+  "sourceKind": "sample",
+  "provenance": "customer",
+  "paid": true,
+  "settled": true,
+  "saleState": "settled",
+  "suppliedInput": {
+    "digestSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "mediaType": "application/json",
+    "bytes": 32
+  },
+  "scope": "illegal promotion of SAMPLE intake to a customer sale",
+  "acceptanceTest": "must reject fixture-becomes-sale",
+  "rollback": "n/a",
+  "subjectJobId": "listing-repair-packet"
+}
