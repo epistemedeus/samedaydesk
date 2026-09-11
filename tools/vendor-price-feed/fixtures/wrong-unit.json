@@ -1,0 +1,9 @@
+{
+  "sourceUrl": "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz#samples/pricing/a/after.json?field=grok-4.6-input",
+  "observedAt": "2026-09-10T19:35:03.000Z",
+  "unit": "USD/1M-Tokens",
+  "amount": "3.0",
+  "effectiveDate": "2026-09-10",
+  "priorObservationId": null,
+  "provenance": "fixture"
+}

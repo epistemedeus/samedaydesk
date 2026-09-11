@@ -1,0 +1,9 @@
+{
+  "sourceUrl": "https://agents.samedaydesk.com/extract",
+  "observedAt": "2026-09-10T19:35:03.000Z",
+  "unit": "USD/1M-tokens",
+  "amount": "0.02",
+  "effectiveDate": "2026-09-10",
+  "priorObservationId": null,
+  "provenance": "fixture"
+}
