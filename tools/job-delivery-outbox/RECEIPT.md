@@ -2,7 +2,9 @@
 
 **Repo:** `epistemedeus/samedaydesk`
 **Branch:** `cursor/w5-d06-co09-delivery-outbox-with-precise-destination-and-terms-mapping-4f5e`
+**Head:** `ab2b138d6cef03a6af7033645fc5b6bb6a7a3f67`
 **Starting ref:** `828d8942fb1631aba92a9116dc9fbde0ee1dd258`
+**PR:** https://github.com/epistemedeus/samedaydesk/pull/84 (draft)
 **Owned paths:** `tools/job-delivery-outbox/`, `experiments/wave5/d06/RECEIPT.md`
 **Integration owner:** W5-D01
 **Stop:** tested isolated outbox + draft PR; no daemon, deploy, or spend
@@ -28,6 +30,8 @@ Reproduced REVIEW-INTEGRATION Co09 predictions at Co09 head `828d8942`. Origin-o
 cd tools/job-delivery-outbox && npm install
 node --test --test-concurrency=1 test/*.test.mjs
 ```
+
+**PASS — 19 tests, 0 fail, 0 skip** (`node --test --test-concurrency=1 test/*.test.mjs`, Node v22.14.0, PostgreSQL 16 `initdb`, SDS52 CLI from read-only worktree).
 
 pstack: relevant skills read (`principle-prove-it-works`, `principle-test-behavior-not-implementation`, `tdd`, `principle-boundary-discipline`, `principle-make-operations-idempotent`, `principle-subtract-before-you-add`, `principle-fix-root-causes`, `principle-laziness-protocol`, `no-comments`, `blast-radius`, `setup-pstack`). Actual model: Cursor Grok 4.6 xhigh (`cursor-grok-4.6-xhigh`). No extra Cloud agents. `~/.cursor/rules/pstack-models.mdc` not present; parent run used included Grok 4.6 xhigh.
 
