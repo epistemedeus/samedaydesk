@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { copyFileSync, mkdirSync, readFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 import { compareCatalogOutputs } from "../lib/compare.mjs";
@@ -71,6 +71,31 @@ test("fixture: byte-identical catalog files are identical", () => {
   assert.equal(r.classification, "identical");
   assert.equal(r.jsonIdentical, true);
   assert.equal(readFileSync(join(a, "upgrade-brief.json")).equals(readFileSync(join(b, "upgrade-brief.json"))), true);
+});
+
+test("markdown body change is identity-break; timestamp chatter is not proof of equivalence", () => {
+  const fx = join(harnessRoot, "fixtures/labelled-drift");
+  const { a, b } = pairDirs("orh-md-body-", {
+    "upgrade-brief.json": join(fx, "upgrade-brief.json"),
+    "upgrade-brief.md": join(fx, "upgrade-brief.md"),
+  }, {
+    "upgrade-brief.json": join(fx, "upgrade-brief.b.json"),
+    "upgrade-brief.md": join(fx, "upgrade-brief.md"),
+  });
+  writeFileSync(
+    join(b, "upgrade-brief.md"),
+    "# API upgrade brief\n\nStatus: **informational**\n\nTHIS BODY IS DIFFERENT AND NOT A TIMESTAMP\n",
+  );
+  const r = compareCatalogOutputs({
+    outA: a,
+    outB: b,
+    outputNames: ["upgrade-brief.json", "upgrade-brief.md"],
+  });
+  assert.equal(r.classification, "identity-break");
+  assert.equal(r.jsonIdentical, true);
+  assert.equal(r.files.find((f) => f.name === "upgrade-brief.md").bytesEqual, false);
+  assert.equal(r.files.find((f) => f.name === "upgrade-brief.md").timestampChatterOnly, false);
+  assert.equal(r.files.find((f) => f.name === "upgrade-brief.md").jsonIdentical, false);
 });
 
 test("non-catalog extra files are ignored", () => {
