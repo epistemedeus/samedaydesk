@@ -4,6 +4,7 @@ Repo: `epistemedeus/samedaydesk`
 Owned path: `experiments/wave5/m17/`
 Feature branch: `cursor/w5-m17-reproducible-api-route-change-trial-a46a`
 Starting ref: `fable/f08-paid-wrappers` `aeef964fa188443078958d9d6d393afae1d542ee`
+Feature tip: `31d9c55793f81fb8407c40655f7c3d9161114a88`
 Integration owner: W5-M01
 Label: owner-qa dry run. Not a sale, not a customer, not field execution.
 
@@ -58,5 +59,7 @@ No M04 engine patch (not an owned path). The named ordering/custom-catalog predi
 2. M08: parsers for claimed extra frameworks, plus explicit reject of unsupported formats.
 3. D24: install this kit plus the M04 pin in a clean environment and replay `npm test`.
 4. Field (F): run `bin/trial.mjs run` on another allowed project only after an offer/account is actually ready. Do not fabricate customers.
+
+Draft PR: automatic open was registered for operator approval. Compare: https://github.com/epistemedeus/samedaydesk/compare/fable/f08-paid-wrappers...cursor/w5-m17-reproducible-api-route-change-trial-a46a
 
 No deploy, spend, payout, or unsolicited messages from this worker.
