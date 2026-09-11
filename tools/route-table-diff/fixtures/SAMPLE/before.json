@@ -1,0 +1,26 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "sample",
+  "label": "SAMPLE",
+  "sampleLabel": "SAMPLE",
+  "publishedRouteTable": false,
+  "callerProvenance": {
+    "syntheticFixture": true,
+    "sampleLabel": "SAMPLE",
+    "notCustomer": true,
+    "notMarketFact": true
+  },
+  "note": "Labeled SAMPLE. Not the published SDS route table.",
+  "routes": [
+    {
+      "path": "/for-agents/useful-jobs",
+      "title": "Offline useful jobs for agent callers | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents/useful-jobs"
+    },
+    {
+      "path": "/terms",
+      "title": "Terms of Service | SameDayDesk",
+      "canonical": "https://samedaydesk.com/terms"
+    }
+  ]
+}
