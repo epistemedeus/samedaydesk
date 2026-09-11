@@ -1,8 +1,8 @@
 import path from "node:path";
 import { existsSync, readFileSync } from "node:fs";
 import { refuse } from "./refuse.mjs";
-import { NEXT_RUN_SCHEMAS, SUPPORTED_FAMILIES } from "./pins.mjs";
-import { parseFileSha256 } from "./digest.mjs";
+import { NEXT_RUN_SCHEMAS, SUPPORTED_FAMILIES, parserMatchesFamily } from "./pins.mjs";
+import { parseFileSha256, sha256File } from "./digest.mjs";
 import { assertTermsVersionClaim } from "./hash.mjs";
 
 function readJson(filePath) {
@@ -83,6 +83,43 @@ function firstAfterSha(declared, verified) {
   return verified?.after?.sha256 || declared?.after?.sha256 || null;
 }
 
+function currentInputSha(slot) {
+  if (slot == null || typeof slot !== "object") return null;
+  return slot.sha256 ? parseFileSha256(slot.sha256, { label: "currentInputs sha256" }) : null;
+}
+
+export function assertNextRunFrozen({ family, kind, nextRun, path: ticketPath }) {
+  const next = nextRun;
+  if (!next) return;
+  if (next.parser && !parserMatchesFamily(family, next.parser)) {
+    throw refuse("family-parser-mismatch", "next-run family does not match parser", {
+      family,
+      parser: next.parser,
+      path: ticketPath,
+    });
+  }
+  if (kind !== "next-run-manifest") return;
+  const spec = SUPPORTED_FAMILIES[family];
+  const current = next.currentInputs;
+  if (!current || typeof current !== "object" || Array.isArray(current)) {
+    throw refuse(
+      "unchecked-next-manifest",
+      "next-run currentInputs must freeze previous input references",
+      { path: ticketPath },
+    );
+  }
+  for (const slot of spec.requiredSlots) {
+    const sha = currentInputSha(current[slot]);
+    if (!sha) {
+      throw refuse(
+        "unchecked-next-manifest",
+        `next-run currentInputs.${slot}.sha256 is required as the frozen previous reference`,
+        { path: ticketPath, slot },
+      );
+    }
+  }
+}
+
 export function loadTicket(filePath) {
   if (!filePath || filePath === true) {
     throw refuse("missing-required-inputs", "Caller mode requires --ticket");
@@ -136,13 +173,15 @@ export function loadTicket(filePath) {
     );
   }
 
-  const family = repeatJob?.family || nextRun?.family || nextRun?.parser || raw.family || null;
+  const family = repeatJob?.family || nextRun?.family || raw.family || null;
   if (!family || !SUPPORTED_FAMILIES[family]) {
     throw refuse("unsupported-family", "binder supports openapi-used-ops and pricing-row-unit", {
       family,
       supported: Object.keys(SUPPORTED_FAMILIES),
     });
   }
+
+  assertNextRunFrozen({ family, kind, nextRun, path: abs });
 
   const declared = {
     before: declaredFromSlot(
@@ -184,6 +223,7 @@ export function loadTicket(filePath) {
     inputPaths,
     firstAfterSha256: firstAfterSha(declared, verified),
     firstBeforeSha256: verified?.before?.sha256 || declared?.before?.sha256 || null,
+    ticketSha256: sha256File(abs),
     identityVerified: repeatJob?.identityVerification?.verified === true || raw.identityVerified === true,
     schedulerDaemon: false,
   };

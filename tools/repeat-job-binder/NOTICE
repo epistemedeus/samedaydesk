@@ -17,6 +17,12 @@ It consumes the published PR51 archives already on SameDayDesk main:
   sha256 9814feabcda58c1f4a494a8919d9c6c2ac7d35b094ce5218261f976196c045ea
   Nested s134/s163 vendor licenses remain inside that archive.
 
+Optional D01/PR52 wrapper CLI (not copied into this directory):
+
+- epistemedeus/samedaydesk@aeef964fa188443078958d9d6d393afae1d542ee
+  server/paid-useful-jobs/bin/cli.mjs
+  Injected with --paid-wrapper-bin. Nested licenses stay with that tree.
+
 I01 hash-terms contract (content-hash termsVersion, integer termsVersion
 refused) is an isolated adapter of:
 

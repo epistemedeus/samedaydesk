@@ -12,7 +12,7 @@ export function boundTerms({ family, engineKind, catalogJob, verification, first
     return { sha256: v.actual.sha256, bytes: v.actual.bytes };
   };
   return {
-    schema: "w4.repeat-job-binder.terms.v1",
+    schema: "w5.repeat-job-binder.terms.v1",
     schemaVersion: 1,
     family,
     engineKind,
@@ -38,6 +38,8 @@ export function buildSecondRun({
   outDir,
   engineKind,
   catalogJob,
+  frozen = null,
+  classified = null,
 }) {
   const afterActual = verification.verifiedInputs.after?.actual?.sha256 || null;
   const beforeActual = verification.verifiedInputs.before?.actual?.sha256 || null;
@@ -53,9 +55,20 @@ export function buildSecondRun({
     Boolean(ticket.firstAfterSha256) &&
     Boolean(afterActual) &&
     ticket.firstAfterSha256 !== afterActual;
+  const transportOk = classified ? classified.transport === "ok" : status !== "actionable";
+  const analysisOutcome = classified?.analysisOutcome || null;
+  const slotRef = (slot) =>
+    frozen?.[slot]
+      ? {
+          sha256: frozen[slot].sha256,
+          bytes: frozen[slot].bytes,
+          frozenPath: frozen[slot].frozenPath,
+          sourcePath: frozen[slot].sourcePath,
+        }
+      : null;
 
   const record = {
-    schema: "w4.repeat-job-binder.second-run.v1",
+    schema: "w5.repeat-job-binder.second-run.v1",
     binder: "repeat-job-binder",
     status,
     family,
@@ -70,6 +83,23 @@ export function buildSecondRun({
     identityVerification: {
       state: verification.state,
       verified: verification.state === "verified",
+    },
+    transport: {
+      ok: status === "informational" ? null : Boolean(transportOk),
+      exitCode: engineResult?.exitCode ?? null,
+    },
+    analysisOutcome,
+    frozen: {
+      previous: {
+        ticketSha256: ticket.ticketSha256 || null,
+        beforeSha256: ticket.firstBeforeSha256 || null,
+        afterSha256: ticket.firstAfterSha256 || null,
+      },
+      current: {
+        before: slotRef("before"),
+        after: slotRef("after"),
+        used: slotRef("used"),
+      },
     },
     firstRun: {
       ticketKind: ticket.kind,
@@ -90,7 +120,8 @@ export function buildSecondRun({
             exitCode: engineResult.exitCode,
             outDir: engineResult.outDir,
             outputs: engineResult.outputs,
-            ok: engineResult.ok !== false && !engineResult.refused,
+            argv: engineResult.argv || null,
+            ok: classified ? classified.transport === "ok" && classified.analysisOutcome !== "refused" : false,
           }
         : null,
     },
@@ -112,6 +143,7 @@ export function buildSecondRun({
         secondAfter: afterActual,
         engineKind,
         engineJob: engineResult?.jobId || null,
+        analysisOutcome,
       }),
     )
     .digest("hex");
@@ -124,6 +156,8 @@ export function toMarkdown(record) {
     "# Repeat-job binder second run",
     "",
     `Status: **${record.status}**`,
+    `Transport: **${record.transport?.ok === true ? "ok" : record.transport?.ok === false ? "failed" : "n/a"}**`,
+    `Analysis: \`${record.analysisOutcome || "n/a"}\``,
     `Family: \`${record.family}\``,
     `Engine: \`${record.engineKind}${record.catalogJob ? ` / ${record.catalogJob}` : ""}\``,
     `Terms: \`${record.termsVersion}\``,
@@ -133,6 +167,7 @@ export function toMarkdown(record) {
     "",
     `First after sha256: \`${record.firstRun.afterSha256 || "n/a"}\``,
     `Second after sha256: \`${record.secondRun.afterSha256 || "n/a"}\``,
+    `Frozen current after: \`${record.frozen?.current?.after?.frozenPath || "n/a"}\``,
     "",
     "Not a scheduler. Not cron. SAMPLE is not live recurrence. Not a sale.",
     "",

@@ -36,13 +36,14 @@ function cacheRoot() {
  * Extract pinned PR51 archives into a read-only-use cache. Never copies a
  * competing kernel into ownedPaths. Tests and the CLI share this cache.
  */
-export function extractPinnedKits({ usefulJobsRoot, recordRepeatBin } = {}) {
+export function extractPinnedKits({ usefulJobsRoot, recordRepeatBin, paidWrapperBin = null } = {}) {
   if (usefulJobsRoot && recordRepeatBin) {
     return {
       usefulJobsRoot,
       usefulJobsCli: join(usefulJobsRoot, USEFUL_JOBS_CLI),
       recordRepeatRoot: null,
       recordRepeatBin,
+      paidWrapperBin,
       cached: true,
     };
   }
@@ -101,6 +102,7 @@ export function extractPinnedKits({ usefulJobsRoot, recordRepeatBin } = {}) {
     usefulJobsCli: ujCli,
     recordRepeatRoot: rrRoot,
     recordRepeatBin: rrBin,
+    paidWrapperBin,
     cached: true,
     cache,
   };

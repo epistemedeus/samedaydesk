@@ -66,9 +66,15 @@ test("journey: repeat-job-record on samples/repeat/a, then binder with changed a
   assert.match(catalog.json.termsVersion, /^sha256:[0-9a-f]{64}$/);
 
   const second = readJson(path.join(catalogOut, "second-run.json"));
-  assert.equal(second.schema, "w4.repeat-job-binder.second-run.v1");
+  assert.equal(second.schema, "w5.repeat-job-binder.second-run.v1");
   assert.equal(second.secondRun.afterSha256, newSha);
   assert.equal(second.firstRun.afterSha256, firstAfterSha);
+  assert.equal(second.analysisOutcome, "completed");
+  assert.equal(second.transport.ok, true);
+  assert.equal(second.frozen.previous.afterSha256, firstAfterSha);
+  assert.equal(second.frozen.current.after.sha256, newSha);
+  assert.ok(second.frozen.current.after.frozenPath.includes("frozen-current"));
+  assert.notEqual(second.frozen.current.after.frozenPath, after);
   assert.notEqual(second.digest, recorded.json.digest);
   assert.equal(fs.existsSync(path.join(catalogOut, "engine/budget-impact.json")), true);
   assert.equal(fs.existsSync(path.join(catalogOut, "second-run.md")), true);
