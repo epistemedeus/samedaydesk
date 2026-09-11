@@ -36,6 +36,6 @@ describe("sibling ownership is not rewritten", () => {
   it("does not invent a paying maintainer in owned copy", () => {
     const readme = readFileSync(join(OWNED_DIR, "README.md"), "utf8");
     assert.doesNotMatch(readme, /paying customer exists/i);
-    assert.match(readme, /Not a live second-customer purchase/);
+    assert.match(readme, /not a live second-customer purchase/i);
   });
 });

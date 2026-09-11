@@ -2,7 +2,7 @@
   "schema": "samedaydesk.cross-runtime-commission.fixture.v1",
   "id": "fail-sample-commission",
   "jobId": "listing-repair-packet",
-  "input": "fixtures/listing/sample/listing.json",
+  "input": "fixtures/listing/labelled-sample/listing.json",
   "commissionedCustomer": true,
   "sold": true,
   "completionLabel": "commissioned-customer",

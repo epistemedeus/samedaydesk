@@ -70,7 +70,7 @@ function rejection({ code, message, detail, sample = false, sampleReasons = [], 
   };
 }
 
-function assertJourneyGuards(request, sampleInfo) {
+function assertJourneyGuards(request) {
   if (wantsF08Wrappers(request)) {
     throw new CommissionRefuse(
       "f08-wrappers-out-of-scope",
@@ -94,14 +94,6 @@ function assertJourneyGuards(request, sampleInfo) {
       "invented-paying-maintainer",
       "this scaffold does not invent a paying maintainer",
       { path: maintainer.path },
-    );
-  }
-
-  if (sampleInfo.sample && wantsCommissionedCustomer(request)) {
-    throw new CommissionRefuse(
-      "sample-not-commissioned-customer-work",
-      "SAMPLE/demo is not commissioned customer work",
-      { sampleReasons: sampleInfo.reasons },
     );
   }
 }
@@ -151,23 +143,33 @@ function decideIndependence({ runtimes, environments, request, demo }) {
 
 function comparablePair(runs) {
   if (runs.length < 2) {
-    return { comparable: false, reason: "fewer-than-two-runtimes" };
+    return { comparable: false, reason: "fewer-than-two-runtimes", resultDigestMatch: false };
   }
   const digests = new Set(runs.map((run) => run.input.sha256));
   if (digests.size !== 1) {
-    return { comparable: false, reason: "input-digest-mismatch" };
+    return { comparable: false, reason: "input-digest-mismatch", resultDigestMatch: false };
   }
   const jobs = new Set(runs.map((run) => run.jobId));
   if (jobs.size !== 1) {
-    return { comparable: false, reason: "job-mismatch" };
+    return { comparable: false, reason: "job-mismatch", resultDigestMatch: false };
   }
   const ok = runs.every((run) => run.ok);
-  if (!ok) return { comparable: false, reason: "runtime-not-ok" };
-  const engineDigests = new Set(runs.map((run) => run.result?.digest || null));
-  if (engineDigests.size !== 1) {
-    return { comparable: true, reason: "same-input-digest-results-differ", resultDigestMatch: false };
-  }
-  return { comparable: true, reason: "same-input-digest", resultDigestMatch: true };
+  if (!ok) return { comparable: false, reason: "runtime-not-ok", resultDigestMatch: false };
+  const fingerprints = new Set(
+    runs.map((run) =>
+      JSON.stringify({
+        engineStatus: run.result?.engineStatus || null,
+        actions: run.result?.stdoutJson?.actions ?? null,
+        appId: run.result?.stdoutJson?.appId || null,
+      }),
+    ),
+  );
+  const resultDigestMatch = fingerprints.size === 1;
+  return {
+    comparable: true,
+    reason: resultDigestMatch ? "same-input-digest-and-engine-status" : "same-input-digest-results-differ",
+    resultDigestMatch,
+  };
 }
 
 export function runJourney(request = {}) {
@@ -191,10 +193,10 @@ export function runJourney(request = {}) {
     return rejection({ code: err.code || "unknown-job", message: err.message, demo });
   }
 
-  const sampleInfo = inspectSample(request);
+  let sampleState = { sample: false, reasons: [] };
 
   try {
-    assertJourneyGuards(request, sampleInfo);
+    assertJourneyGuards(request);
     const kit = ensureUsefulJobsKit();
     const inputPath = resolveExisting(request.input, [
       request.cwd || process.cwd(),
@@ -205,14 +207,12 @@ export function runJourney(request = {}) {
       throw new CommissionRefuse("missing-input", "listing-repair-packet requires --input");
     }
 
-    const sampleOnDisk = inspectSample({ ...request, input: inputPath }, { kitRoot: kit });
-    const sample = sampleInfo.sample || sampleOnDisk.sample;
-    const sampleReasons = [...new Set([...sampleInfo.reasons, ...sampleOnDisk.reasons])];
-    if (sample && wantsCommissionedCustomer(request)) {
+    sampleState = inspectSample({ ...request, input: inputPath }, { kitRoot: kit });
+    if (sampleState.sample && wantsCommissionedCustomer(request)) {
       throw new CommissionRefuse(
         "sample-not-commissioned-customer-work",
         "SAMPLE/demo is not commissioned customer work",
-        { sampleReasons },
+        { sampleReasons: sampleState.reasons },
       );
     }
 
@@ -309,8 +309,8 @@ export function runJourney(request = {}) {
       independent: independence.independent,
       independentReason: independence.reason,
       demo,
-      sample,
-      sampleReasons,
+      sample: sampleState.sample,
+      sampleReasons: sampleState.reasons,
       commissionedCustomer: false,
       payingMaintainer: false,
       purchaseAuthority: false,
@@ -330,16 +330,16 @@ export function runJourney(request = {}) {
         code: err.code,
         message: err.message,
         detail: err.detail,
-        sample: sampleInfo.sample,
-        sampleReasons: sampleInfo.reasons,
+        sample: sampleState.sample || err.code === "sample-not-commissioned-customer-work",
+        sampleReasons: err.detail?.sampleReasons || sampleState.reasons,
         demo,
       });
     }
     return rejection({
       code: "internal-error",
       message: err.message || String(err),
-      sample: sampleInfo.sample,
-      sampleReasons: sampleInfo.reasons,
+      sample: sampleState.sample,
+      sampleReasons: sampleState.reasons,
       demo,
     });
   }

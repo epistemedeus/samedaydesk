@@ -1,5 +1,5 @@
-import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { dirname, relative, resolve } from "node:path";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { dirname, join, relative, resolve } from "node:path";
 
 function isPlainObject(value) {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -25,7 +25,17 @@ function siblingSampleMarker(filePath) {
   const dir = dirname(filePath);
   if (!existsSync(dir)) return null;
   const names = readdirSync(dir);
-  return names.find((n) => /^SAMPLE(\.|$)/i.test(n) || /\.SAMPLE\./i.test(n)) || null;
+  return (
+    names.find((n) => {
+      const abs = join(dir, n);
+      try {
+        if (!statSync(abs).isFile()) return false;
+      } catch {
+        return false;
+      }
+      return /^SAMPLE(\.|$)/i.test(n) || /\.SAMPLE\./i.test(n);
+    }) || null
+  );
 }
 
 /**

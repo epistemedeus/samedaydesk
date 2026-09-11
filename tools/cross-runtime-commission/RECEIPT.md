@@ -45,7 +45,9 @@ node bin/cross-runtime.mjs journey --fixture fixtures/ok.json
 npm run test:cross-runtime-commission
 ```
 
-See the following commit for pass counts.
+**PASS** — 14 tests, 0 fail (`node --test --test-concurrency=1 tools/cross-runtime-commission/test/*.test.mjs`).
+
+Literal journey: `cd tools/cross-runtime-commission && node bin/cross-runtime.mjs journey --fixture fixtures/ok.json` exits 0. Two labelled runtimes share one input digest; `independent` is true for local vs container-fixture and false when only cwd differs. Demo-labelled single-runtime does not claim `independent: true`.
 
 ## Hard stops honored
 
