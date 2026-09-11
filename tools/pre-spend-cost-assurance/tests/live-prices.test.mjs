@@ -23,10 +23,12 @@ describe("live SDS prices are unchanged", () => {
 
   test("Mcp.tsx extract remains $0.005 and seller_integrity_audit $0.01", () => {
     const mcp = readFileSync(path.join(REPO_ROOT, "client/src/pages/Mcp.tsx"), "utf8");
-    assert.match(mcp, /name: "extract"/);
-    assert.match(mcp, /price: "\$0\.005"/);
-    assert.match(mcp, /name: "seller_integrity_audit"/);
-    assert.match(mcp, /price: "\$0\.01"/);
+    const extractAt = mcp.indexOf('name: "extract"');
+    assert.ok(extractAt >= 0);
+    assert.match(mcp.slice(extractAt, extractAt + 80), /price: "\$0\.005"/);
+    const sia = mcp.indexOf('name: "seller_integrity_audit"');
+    assert.ok(sia >= 0);
+    assert.match(mcp.slice(sia, sia + 80), /price: "\$0\.01"/);
   });
 
   test("unpaid catalog and OpenAPI still list the live amounts", () => {
