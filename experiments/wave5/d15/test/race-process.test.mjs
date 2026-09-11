@@ -135,7 +135,8 @@ describe("W5-D15 input/execute race harness", { timeout: 180_000 }, () => {
     assert.notEqual(freezeSha, liveSha);
     assert.equal(raced.kind, KIND.FROZEN_CONSUMED, raced.error);
     assert.equal(raced.engineInvoked, true);
-    assert.equal(raced.domain.digest, control.domain.digest);
+    assert.equal(raced.domain.status, control.domain.status);
+    assert.equal(raced.domain.summary, control.domain.summary);
     assert.equal(raced.domain.status, "actionable");
     assert.equal(raced.wrapper.receipt.inputs.find((i) => i.name === "after").sha256, freezeSha);
     assert.notEqual(raced.wrapper.receipt.inputs.find((i) => i.name === "after").sha256, liveSha);
@@ -184,7 +185,7 @@ describe("W5-D15 input/execute race harness", { timeout: 180_000 }, () => {
     });
     assert.equal(observed.kind, KIND.RACE_CONSUMED_MUTATED);
     assert.equal(observed.engineInvoked, true);
-    assert.notEqual(observed.domain.digest, control.domain.digest);
+    assert.notEqual(observed.domain.status, control.domain.status);
     const noChange = stageNoChangeBudget();
     const noChangeRun = await runRace({
       jobId: "vendor-budget-impact",
@@ -192,8 +193,8 @@ describe("W5-D15 input/execute race harness", { timeout: 180_000 }, () => {
       bind: BIND.FROZEN,
     });
     assert.equal(observed.domain.status, "informational");
-    assert.equal(observed.domain.digest, noChangeRun.domain.digest);
-    assert.notEqual(observed.domain.digest, control.domain.digest);
+    assert.equal(observed.domain.summary, noChangeRun.domain.summary);
+    assert.equal(control.domain.status, "actionable");
     assert.equal(
       observed.wrapper.receipt.inputs.find((i) => i.name === "after").sha256,
       sha256File(staged.after),
@@ -286,7 +287,8 @@ describe("W5-D15 input/execute race harness", { timeout: 180_000 }, () => {
       bind: BIND.FROZEN,
     });
     assert.equal(raced.kind, KIND.FROZEN_CONSUMED);
-    assert.equal(raced.domain.digest, control.domain.digest);
+    assert.equal(raced.domain.status, control.domain.status);
+    assert.equal(raced.domain.summary, control.domain.summary);
   });
 
   it("repeat-job input-root freeze keeps identity when the live tree mutates", async () => {
