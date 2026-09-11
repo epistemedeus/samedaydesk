@@ -1,0 +1,23 @@
+{
+  "name": "@samedaydesk/pre-spend-cost-assurance",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "W3-10/E06 pre-spend cost assurance. Lists tools, accounts, and a decimal-string cap without authorizing purchase. No settle/prepare, no live SDS price change.",
+  "bin": {
+    "pre-spend": "./bin/pre-spend.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "journey": "node ./bin/pre-spend.mjs journey --fixture fixtures/ok.json",
+    "assure": "node ./bin/pre-spend.mjs assure --plan fixtures/ok-plan.json"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "UNLICENSED"
+}

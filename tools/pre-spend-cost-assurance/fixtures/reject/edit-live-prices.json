@@ -1,0 +1,23 @@
+{
+  "schema": "samedaydesk.pre-spend-cost-assurance.plan.v1",
+  "id": "edit-live-prices",
+  "purchaseAuthorized": false,
+  "editLivePrices": true,
+  "network": "eip155:8453",
+  "currency": "USDC",
+  "lines": [
+    {
+      "tool": "extract",
+      "route": "/extract",
+      "amountAtomic": "50000",
+      "amount": "0.05"
+    }
+  ],
+  "proposedPrices": [
+    {
+      "tool": "extract",
+      "amount": "0.05",
+      "amountAtomic": "50000"
+    }
+  ]
+}
