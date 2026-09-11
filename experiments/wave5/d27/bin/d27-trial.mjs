@@ -67,6 +67,10 @@ if (cmd === "listen") {
   process.on("SIGTERM", stop);
   process.on("SIGINT", stop);
 } else if (cmd === "first-execution") {
+  if (args["buyer-class"] && args["buyer-class"] !== "owner-qa") {
+    process.stderr.write("first-execution is owner-qa only; recruited-independent needs operator evidence via run\n");
+    process.exit(2);
+  }
   const result = runFirstExecution({
     outDir: args["out-dir"] ? resolve(String(args["out-dir"])) : undefined,
     pythonBin: args.python,

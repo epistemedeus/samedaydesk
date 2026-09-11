@@ -283,6 +283,12 @@ describe("W5-D27 independent-runtime trial kit", { timeout: 180_000 }, () => {
     }
   });
 
+  it("first-execution rejects recruited-independent (owner-qa only)", () => {
+    const r = spawnTrial(["first-execution", "--buyer-class", "recruited-independent"]);
+    assert.equal(r.status, 2, r.stderr + r.stdout);
+    assert.match(String(r.stderr), /owner-qa only/);
+  });
+
   it("Python trial runtime does not vendor the Co14 client", () => {
     const text = readFileSync(PYTHON_TRIAL, "utf8");
     assert.equal(text.includes("samedaydesk_useful_jobs"), false);
