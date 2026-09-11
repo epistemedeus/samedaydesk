@@ -2,7 +2,7 @@
 
 Repo: `epistemedeus/samedaydesk`
 Feature branch: `cursor/w5-d05-co02-private-result-mailbox-with-request-bound-pickup-1284`
-Head: tested commit on this branch (pin commit may follow)
+Head: `38d09206a9d6d7cfb6b30dd4fc456d53ea53c266` (tests and receipt body; branch tip may be one pin commit later)
 Draft PR: https://github.com/epistemedeus/samedaydesk/pull/76
 Compare: https://github.com/epistemedeus/samedaydesk/compare/main...cursor/w5-d05-co02-private-result-mailbox-with-request-bound-pickup-1284
 StartingRef: `baf09dc591c83aec94e0cf42c5c64076fc5b98e3`
