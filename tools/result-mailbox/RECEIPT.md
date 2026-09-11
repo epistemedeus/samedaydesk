@@ -3,6 +3,7 @@
 Repo: `epistemedeus/samedaydesk`
 Feature branch: `cursor/w5-d05-co02-private-result-mailbox-with-request-bound-pickup-1284`
 Draft PR: https://github.com/epistemedeus/samedaydesk/pull/76
+Head: `d43e0152300f7a838c7531057f7e3aa2d91cca79`
 StartingRef: `baf09dc591c83aec94e0cf42c5c64076fc5b98e3`
 Owned path: `tools/result-mailbox/`
 Integration owner: W5-D01
