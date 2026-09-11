@@ -1,0 +1,26 @@
+{
+  "id": "failed-engine-crash",
+  "kind": "wrapper-result",
+  "at": "2026-09-11T22:01:30.000Z",
+  "callerKey": "caller-crash",
+  "offerId": "vendor-budget-impact",
+  "jobId": "vendor-budget-impact",
+  "jobIndex": 1,
+  "buyerClass": "owner-qa",
+  "result": {
+    "ok": false,
+    "refused": true,
+    "jobId": "vendor-budget-impact",
+    "code": "engine-crash",
+    "fundingState": "unfunded",
+    "sold": false,
+    "sample": false,
+    "purchaseAuthority": false,
+    "outputs": [],
+    "engine": {
+      "status": 1,
+      "stderr": "spawn failed",
+      "json": null
+    }
+  }
+}

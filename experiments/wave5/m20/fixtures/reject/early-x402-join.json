@@ -1,0 +1,16 @@
+{
+  "id": "early-x402-as-return",
+  "kind": "settlement-join",
+  "callerKey": "caller-paid",
+  "jobId": "vendor-budget-impact",
+  "jobIndex": 2,
+  "priorId": "first-useful",
+  "operationId": "early-x402-revenue",
+  "settlement": {
+    "operationId": "early-x402-revenue",
+    "amountUsdc": "0.040",
+    "buyerClass": "unknown",
+    "validDeliveryStatus": "unknown",
+    "transaction": "0xbbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+}

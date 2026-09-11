@@ -1,0 +1,8 @@
+{
+  "kind": "disclosure",
+  "schema": "sdd.offer-disclosure.v1",
+  "body": {
+    "text": "non-live fixture wrapper",
+    "priceUsdc": "0.02"
+  }
+}

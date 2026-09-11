@@ -1,0 +1,8 @@
+{
+  "kind": "kernel",
+  "schema": "i01.earned-work-terms.v1",
+  "body": {
+    "text": "non-live fixture wrapper",
+    "priceUsdc": "0.02"
+  }
+}

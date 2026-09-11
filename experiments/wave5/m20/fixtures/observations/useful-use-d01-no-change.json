@@ -1,0 +1,32 @@
+{
+  "id": "d01-useful-no-change",
+  "kind": "wrapper-result",
+  "at": "2026-09-11T22:02:30.000Z",
+  "callerKey": "caller-d01",
+  "offerId": "vendor-budget-impact",
+  "jobId": "vendor-budget-impact",
+  "jobIndex": 1,
+  "buyerClass": "owner-qa",
+  "result": {
+    "ok": true,
+    "jobId": "vendor-budget-impact",
+    "fundingState": "unfunded",
+    "sold": false,
+    "sample": false,
+    "purchaseAuthority": false,
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+    "transport": "ok",
+    "analysis": { "status": "informational", "outcome": "informational", "identityVerified": null },
+    "delivery": {
+      "status": "complete",
+      "complete": true,
+      "expected": ["budget-impact.json", "budget-impact.md"],
+      "present": ["budget-impact.json", "budget-impact.md"],
+      "missing": []
+    },
+    "outputs": [
+      { "name": "budget-impact.json" },
+      { "name": "budget-impact.md" }
+    ]
+  }
+}

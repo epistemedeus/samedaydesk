@@ -1,0 +1,61 @@
+{
+  "observations": [
+    {
+      "id": "sibling-d27",
+      "kind": "sibling-receipt",
+      "slot": "W5-D27",
+      "present": false,
+      "path": "experiments/wave5/d27/RECEIPT.md"
+    },
+    {
+      "id": "presented-noreply",
+      "kind": "offer-presented",
+      "at": "2026-09-11T22:00:00.000Z",
+      "callerKey": "caller-silent",
+      "offerId": "listing-repair-packet",
+      "jobId": "listing-repair-packet",
+      "actorClass": "unknown"
+    },
+    {
+      "id": "failed-missing-inputs",
+      "kind": "wrapper-result",
+      "at": "2026-09-11T22:01:00.000Z",
+      "callerKey": "caller-friction",
+      "offerId": "vendor-budget-impact",
+      "jobId": "vendor-budget-impact",
+      "jobIndex": 1,
+      "buyerClass": "unknown",
+      "result": {
+        "ok": false,
+        "refused": true,
+        "jobId": "vendor-budget-impact",
+        "code": "missing-required-inputs",
+        "fundingState": "rejected",
+        "sold": false,
+        "sample": false,
+        "purchaseAuthority": false,
+        "outputs": []
+      }
+    },
+    {
+      "id": "useful-change",
+      "kind": "wrapper-result",
+      "at": "2026-09-11T22:02:00.000Z",
+      "callerKey": "caller-a",
+      "offerId": "vendor-budget-impact",
+      "jobId": "vendor-budget-impact",
+      "jobIndex": 1,
+      "buyerClass": "owner-qa",
+      "result": {
+        "ok": true,
+        "jobId": "vendor-budget-impact",
+        "fundingState": "unfunded",
+        "sold": false,
+        "sample": false,
+        "purchaseAuthority": false,
+        "outputs": [{ "name": "budget-impact.json" }, { "name": "budget-impact.md" }],
+        "engine": { "ok": true, "status": "actionable" }
+      }
+    }
+  ]
+}

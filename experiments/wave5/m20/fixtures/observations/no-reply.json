@@ -1,0 +1,9 @@
+{
+  "id": "presented-noreply",
+  "kind": "offer-presented",
+  "at": "2026-09-11T22:00:00.000Z",
+  "callerKey": "caller-silent",
+  "offerId": "vendor-budget-impact",
+  "jobId": "vendor-budget-impact",
+  "actorClass": "unknown"
+}

@@ -1,0 +1,22 @@
+{
+  "id": "failed-missing-inputs",
+  "kind": "wrapper-result",
+  "at": "2026-09-11T22:01:00.000Z",
+  "callerKey": "caller-friction",
+  "offerId": "vendor-budget-impact",
+  "jobId": "vendor-budget-impact",
+  "jobIndex": 1,
+  "buyerClass": "unknown",
+  "result": {
+    "ok": false,
+    "refused": true,
+    "jobId": "vendor-budget-impact",
+    "code": "missing-required-inputs",
+    "error": "Caller mode requires --before, --after",
+    "fundingState": "rejected",
+    "sold": false,
+    "sample": false,
+    "purchaseAuthority": false,
+    "outputs": []
+  }
+}

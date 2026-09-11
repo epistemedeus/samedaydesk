@@ -1,0 +1,42 @@
+{
+  "observations": [
+    {
+      "id": "first-useful",
+      "kind": "wrapper-result",
+      "at": "2026-09-11T22:04:00.000Z",
+      "callerKey": "caller-paid",
+      "offerId": "vendor-budget-impact",
+      "jobId": "vendor-budget-impact",
+      "jobIndex": 1,
+      "buyerClass": "unknown",
+      "result": {
+        "ok": true,
+        "jobId": "vendor-budget-impact",
+        "fundingState": "unfunded",
+        "sold": false,
+        "sample": false,
+        "purchaseAuthority": false,
+        "outputs": [{ "name": "budget-impact.json" }, { "name": "budget-impact.md" }],
+        "engine": { "ok": true, "status": "actionable" }
+      }
+    },
+    {
+      "id": "second-paid-join",
+      "kind": "settlement-join",
+      "at": "2026-09-11T22:05:00.000Z",
+      "callerKey": "caller-paid",
+      "jobId": "vendor-budget-impact",
+      "offerId": "vendor-budget-impact",
+      "jobIndex": 2,
+      "priorId": "first-useful",
+      "operationId": "vendor-budget-impact:caller-paid:2",
+      "settlement": {
+        "operationId": "vendor-budget-impact:caller-paid:2",
+        "amountUsdc": "0.02",
+        "buyerClass": "independent",
+        "validDeliveryStatus": "buyer_owned_output_delivered",
+        "transaction": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    }
+  ]
+}
