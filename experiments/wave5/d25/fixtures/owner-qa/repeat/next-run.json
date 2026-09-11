@@ -1,0 +1,39 @@
+{
+  "recipeId": "pricing-row-unit",
+  "family": "pricing-row-unit",
+  "parser": "s134-pricing-table-change",
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "retain": [
+    "units",
+    "coverage",
+    "sourceUrl",
+    "license",
+    "citations"
+  ],
+  "schema": "s176.next-run-manifest.v1",
+  "sourceMeta": {
+    "note": "Owner QA next-run for the D25 buyer-journey harness. Not a kit fixture."
+  },
+  "currentInputs": {
+    "before": {
+      "path": "./before.json",
+      "bytes": 265,
+      "sha256": "fa1d0878d26c5966a4ea78096b85a1b07bf03f2506b98a9bbc5e87336b51af14",
+      "observedAt": "owner-qa",
+      "attribution": "owner-qa"
+    },
+    "after": {
+      "path": "./after.json",
+      "bytes": 338,
+      "sha256": "83fe67c3b827a8bff4dad44f56c9219f084e4c7daa982ecb21515b2178c61993",
+      "observedAt": "owner-qa",
+      "attribution": "owner-qa"
+    },
+    "used": null
+  },
+  "paidValueClaim": false,
+  "freeOffline": true
+}

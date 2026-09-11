@@ -1,0 +1,15 @@
+{
+  "name": "@samedaydesk/w5-d25-buyer-journey",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Owner-QA buyer journey harness: public offer, supplied input, delivery, and return against SDS PR52.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "journey": "node bin/buyer-journey.mjs journey",
+    "offer": "node bin/buyer-journey.mjs offer"
+  }
+}

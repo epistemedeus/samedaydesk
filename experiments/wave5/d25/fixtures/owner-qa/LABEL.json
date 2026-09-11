@@ -1,0 +1,8 @@
+{
+  "label": "owner-qa",
+  "customer": false,
+  "recruited": false,
+  "independentDemand": false,
+  "settlement": false,
+  "note": "Controlled harness inputs. Not a customer, recruited buyer, or independent demand signal."
+}
