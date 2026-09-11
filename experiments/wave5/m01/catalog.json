@@ -1,0 +1,263 @@
+{
+  "schema": "samedaydesk.wave5.m01.engine-catalog.v1",
+  "id": "w5-m01",
+  "assignment": "W5-M01",
+  "consumer": "W5-D01",
+  "firstOffer": "lockfile-pin-delta",
+  "firstOfferRationale": "Clearest supplied-input job on current pins: two npm lockfiles in, pin-delta.json/md out, valid no-change is informational, HTML/SAMPLE refuse on stdout. Schema/route/page stay selected for later SKUs, not the first advertised offer.",
+  "liveCatalog": {
+    "path": "client/public/for-agents/useful-jobs/catalog.json",
+    "action": "not-edited",
+    "note": "PR51 six useful-jobs remain D01's existing SDS52 wrapper. This catalog does not republish or replace them."
+  },
+  "wrapperPin": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "ref": "fable/f08-paid-wrappers",
+    "pr": 52,
+    "path": "server/paid-useful-jobs/",
+    "cli": "node server/paid-useful-jobs/bin/cli.mjs",
+    "currentJobIds": [
+      "api-upgrade-brief",
+      "vendor-budget-impact",
+      "feed-agenda",
+      "evidence-ci-annotation",
+      "listing-repair-packet",
+      "repeat-job-record"
+    ]
+  },
+  "d01Binding": {
+    "status": "catalog-exported-not-imported",
+    "testedWrapperSha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "remaining": "D01 owns server/paid-useful-jobs/. It has not imported this catalog. Do not claim runPaidOffer will invoke lockfile-pin-delta until D01 binds this file. M02-M05 may amend engine semantics at their owned paths; re-pin before treating a newer sibling as this catalog."
+  },
+  "engines": [
+    {
+      "id": "lockfile-pin-delta",
+      "owner": "W5-M03",
+      "selected": true,
+      "firstOffer": true,
+      "wave4": "W4-commerce-11",
+      "pin": {
+        "repo": "epistemedeus/samedaydesk",
+        "sha": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+        "ownedPath": "tools/lockfile-pin-delta/",
+        "packageName": "@samedaydesk/lockfile-pin-delta"
+      },
+      "cli": {
+        "relativeBin": "bin/lockfile-delta.mjs",
+        "argv": ["--before", "{before}", "--after", "{after}", "--out-dir", "{outDir}"],
+        "requiredInputs": ["before", "after"],
+        "exampleArgv": ["--example", "--out-dir", "{outDir}"],
+        "exampleIsRefuse": false
+      },
+      "outputs": [
+        {
+          "name": "pin-delta.json",
+          "schema": "samedaydesk.lockfile-pin-delta.v1",
+          "requiredKeys": ["schema", "ok", "status", "appId", "added", "removed", "changed", "counts", "purchaseAuthority"]
+        },
+        {
+          "name": "pin-delta.md",
+          "mediaType": "text/markdown"
+        }
+      ],
+      "stdout": {
+        "stream": "stdout",
+        "requiredKeys": ["ok", "appId", "status", "counts", "purchaseAuthority", "settlement"],
+        "analysisStatuses": ["actionable", "informational", "partial"]
+      },
+      "refuse": {
+        "stream": "stdout",
+        "exitCode": 2,
+        "requiredKeys": ["ok", "refused", "code", "error"],
+        "ok": false,
+        "refused": true
+      },
+      "analysisField": "status",
+      "notes": [
+        "Stdout is a summary; schema lives on pin-delta.json.",
+        "Integrity-only edits are changed with changeKinds including integrity.",
+        "Constant injected hasher is M03 remaining; this pin hashes name+version+integrity locally."
+      ]
+    },
+    {
+      "id": "json-schema-webhook-drift",
+      "owner": "W5-M02",
+      "selected": true,
+      "firstOffer": false,
+      "wave4": "W4-commerce-10",
+      "pin": {
+        "repo": "epistemedeus/samedaydesk",
+        "sha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+        "ownedPath": "tools/json-schema-webhook-drift/",
+        "packageName": "@samedaydesk/json-schema-webhook-drift"
+      },
+      "cli": {
+        "relativeBin": "bin/webhook-drift.mjs",
+        "argv": ["--before", "{before}", "--after", "{after}", "--used", "{used}", "--out-dir", "{outDir}"],
+        "requiredInputs": ["before", "after", "used"],
+        "exampleArgv": ["--example", "--out-dir", "{outDir}"],
+        "exampleIsRefuse": false
+      },
+      "outputs": [
+        {
+          "name": "drift-brief.json",
+          "schema": "samedaydesk.json-schema-webhook-drift.v1",
+          "requiredKeys": ["schema", "ok", "status", "kind", "impact", "usedOnly", "notOpenApi"]
+        },
+        {
+          "name": "drift-brief.md",
+          "mediaType": "text/markdown"
+        }
+      ],
+      "stdout": {
+        "stream": "stdout",
+        "requiredKeys": ["ok", "appId", "status", "kind", "outputs", "purchaseAuthority", "breaking", "unknown"],
+        "analysisStatuses": ["actionable", "informational", "partial"]
+      },
+      "refuse": {
+        "stream": "stdout",
+        "exitCode": 2,
+        "requiredKeys": ["ok", "refused", "code", "error"],
+        "ok": false,
+        "refused": true
+      },
+      "analysisField": "status",
+      "currentPinSemantics": {
+        "falseSchema": "JSON Schema boolean false is fingerprinted as literal boolean, class breaking/structural-change, not a dedicated false-schema keyword class",
+        "refSiblings": "$ref target is compared; sibling keywords on the $ref object are ignored",
+        "numericBounds": "minimum/maximum fingerprints keep integers only; non-integer bound edits can be informational/unchanged",
+        "usedOnly": true
+      },
+      "notes": [
+        "Not OpenAPI. OpenAPI documents refuse not-this-job-openapi.",
+        "M02 owns false-schema / $ref-sibling / required / numeric classification amendments. This catalog describes the listed pin only."
+      ]
+    },
+    {
+      "id": "route-table-diff",
+      "owner": "W5-M04",
+      "selected": true,
+      "firstOffer": false,
+      "wave4": "W4-commerce-12",
+      "pin": {
+        "repo": "epistemedeus/samedaydesk",
+        "sha": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+        "ownedPath": "tools/route-table-diff/",
+        "packageName": null,
+        "binPresent": "bin/route-diff.mjs"
+      },
+      "cli": {
+        "relativeBin": "bin/route-diff.mjs",
+        "argv": ["--before", "{before}", "--after", "{after}", "--out-dir", "{outDir}"],
+        "requiredInputs": ["before", "after", "outDir"],
+        "exampleArgv": ["--example", "--out-dir", "{outDir}"],
+        "exampleIsRefuse": false,
+        "httpLocators": "loopback http://127.0.0.1|localhost|::1 only"
+      },
+      "outputs": [
+        {
+          "name": "route-diff.json",
+          "schema": "samedaydesk.route-diff.v1",
+          "requiredKeys": ["schema", "ok", "counts", "added", "removed", "changed", "titleOnly", "tableDigest", "publishedRouteTable"]
+        },
+        {
+          "name": "route-diff.md",
+          "mediaType": "text/markdown"
+        }
+      ],
+      "stdout": {
+        "stream": "stdout",
+        "requiredKeys": ["ok", "schema", "counts", "added", "changed", "outputs", "tableDigest", "publishedRouteTable"],
+        "omittedFromStdout": ["removed", "titleOnly"],
+        "analysisStatuses": null
+      },
+      "refuse": {
+        "stream": "stdout",
+        "exitCode": 2,
+        "requiredKeys": ["ok", "refused", "code", "error"],
+        "ok": false,
+        "refused": true
+      },
+      "analysisField": "counts",
+      "currentPinSemantics": {
+        "permutation": "Path-keyed diff treats reorder as counts.added=0,removed=0,changed=0,titleOnly=0. tableDigest hashes array order and is not forced equal.",
+        "titleOnly": "Title edits are titleOnly, not changed.",
+        "homepage": "Path / is refused as homepage_rewrite_refused."
+      },
+      "notes": [
+        "Stdout omits removed/titleOnly; those exist on route-diff.json.",
+        "--out-dir is required; missing_out_dir is a valid refusal."
+      ]
+    },
+    {
+      "id": "page-change-offline-job",
+      "owner": "W5-M05",
+      "selected": true,
+      "firstOffer": false,
+      "wave4": "W4-commerce-13",
+      "pin": {
+        "repo": "epistemedeus/samedaydesk",
+        "sha": "91b57334818ecd7940cb854e9864f3b1749d1d1d",
+        "ownedPath": "tools/page-change-offline-job/",
+        "packageName": "@samedaydesk/page-change-offline-job"
+      },
+      "cli": {
+        "relativeBin": "bin/page-change.mjs",
+        "argv": ["job", "--job", "{job}", "--out-dir", "{outDir}"],
+        "compareArgv": [
+          "compare",
+          "--before",
+          "{before}",
+          "--after",
+          "{after}",
+          "--fields",
+          "{fields}",
+          "--clock",
+          "{clock}",
+          "--out-dir",
+          "{outDir}"
+        ],
+        "requiredInputs": ["job"],
+        "exampleArgv": ["--example"],
+        "exampleIsRefuse": true
+      },
+      "outputs": [
+        {
+          "name": "page-change.json",
+          "schema": "pilot/page-change-brief/v1",
+          "schemaPath": "report.schema",
+          "requiredKeys": ["job", "report"]
+        },
+        {
+          "name": "page-change.md",
+          "mediaType": "text/markdown"
+        }
+      ],
+      "stdout": {
+        "stream": "stdout",
+        "requiredKeys": ["ok", "job", "report", "written"],
+        "analysisStatuses": ["changed", "unchanged", "reordered", "incomplete", "ambiguous", "incomparable"]
+      },
+      "refuse": {
+        "stream": "stderr",
+        "exitCode": 2,
+        "requiredKeys": ["ok", "code", "message"],
+        "ok": false,
+        "refused": null,
+        "note": "This pin writes refusals to stderr as {ok:false,code,message}. It does not emit refused:true or error on stdout."
+      },
+      "analysisField": "report.verdict",
+      "currentPinSemantics": {
+        "truncation": "Oversize input refuses input_bounds on stderr. Truncated compare, if it runs, uses verdict incomplete. Do not treat ok:true as complete delivery; read report.claims.complete.",
+        "example": "--example is sample_as_delivered_watch, not a labeled sample brief.",
+        "completeVsUseful": "A changed fixture can have usefulOutputProven true and complete false."
+      },
+      "notes": [
+        "D01 wrapper that only parses stdout JSON will miss this pin's refusals unless it also reads stderr as this catalog specifies.",
+        "M05 owns truncation/depth honesty amendments. This catalog describes the listed pin only."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "@samedaydesk/wave5-m01-engine-catalog",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "W5-M01 selected engine catalog for D01. Thin invoker over pinned M02-M05 CLIs. Not a second paid runner.",
+  "exports": {
+    ".": "./index.mjs",
+    "./catalog.json": "./catalog.json",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "w5-m01-catalog": "./bin/catalog.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "catalog": "node bin/catalog.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
