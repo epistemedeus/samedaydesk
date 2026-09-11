@@ -1,0 +1,23 @@
+{
+  "name": "@samedaydesk/job-delivery-outbox",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "Crash-safe local outbox for useful-job result callbacks. Non-settling prototype. No daemon, production webhook, or payment.",
+  "license": "MIT",
+  "exports": {
+    ".": "./lib/index.mjs"
+  },
+  "bin": {
+    "job-delivery-outbox": "./bin/outbox.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs"
+  },
+  "dependencies": {
+    "pg": "^8.23.0"
+  }
+}
