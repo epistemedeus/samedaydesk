@@ -39,6 +39,7 @@
     "test:browser-s79": "node --test tools/browser-smoke/s79-two-origin.test.mjs",
     "browser-s79": "node tools/browser-smoke/s79-two-origin.mjs",
     "test:result-reuse": "node --test tools/result-reuse/test/export.test.mjs",
+    "test:cold-start-assessment": "node --test --test-concurrency=1 tools/cold-start-assessment/test/*.test.mjs",
     "test:public-entry": "node --test scripts/public-entry.test.mjs",
     "test:recurring-job-recipes": "node --test tools/recurring-job-recipes/test/*.test.mjs",
     "recurring-job-recipes": "node tools/recurring-job-recipes/cli.mjs",
