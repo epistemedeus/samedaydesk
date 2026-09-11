@@ -56,6 +56,6 @@ export function contractRecord() {
     refuseCode: REFUSE_CODE,
     bind: Object.values(BIND),
     remainingBinding:
-      "Product pin e2f951ca snapshots file bytes before inspect. Inspect-to-execute and post-stage caller mutation must consume those bytes or refuse without a wrong receipt. 6bed72dd still executes inspect-window mutations. SDS52 aeef964 still aliases live caller paths. Concurrent caller outDir last-writer-wins on the published copy; receipts at e2f951ca bind runOutDir. Freeze-shim runs are not product acceptance.",
+      "Product pin e2f951ca snapshots file bytes before inspect. Inspect-to-execute, post-stage, and outDir-getter caller mutation consumed those bytes with a matching receipt and stable domain. 6bed72dd still executes inspect-window mutations. SDS52 aeef964 still aliases live caller paths. Concurrent caller outDir last-writer-wins on the published copy; receipts at e2f951ca bind runOutDir. Freeze-shim runs are not product acceptance.",
   };
 }
