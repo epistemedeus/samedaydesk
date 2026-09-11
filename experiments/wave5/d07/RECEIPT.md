@@ -4,6 +4,9 @@ Repo: `epistemedeus/samedaydesk`
 Assignment: W5-D07
 Starting ref: `f16db42ed48a358ad088b54dc565d39461034704`
 Feature branch: `codex/w5-d07-20260911`
+Head: `0a6e8b5babdc63a0a2e3fecd395429a38c55c055`
+Draft PR: https://github.com/epistemedeus/samedaydesk/pull/77
+Compare: https://github.com/epistemedeus/samedaydesk/compare/main...codex/w5-d07-20260911
 Owned paths: `tools/job-artifact-export/`, `experiments/wave5/d07/RECEIPT.md`
 Integration owner: W5-D01
 
