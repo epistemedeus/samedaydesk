@@ -7,6 +7,7 @@ Co11 lockfile pin and Git resolution comparison on SameDayDesk.
 - Repo: `epistemedeus/samedaydesk`
 - Starting ref: `e81efc8ab71b1bde88eca743d297149e61bbb6f2` (`codex/w4-commerce-11-20260911`)
 - Feature branch: `cursor/w5-m03-co11-lockfile-pin-resolution-comparison-712b`
+- Implementation commit: `a410d49e` (field equality). Receipt commit follows.
 - Owned paths: `tools/lockfile-pin-delta/`, `experiments/wave5/m03/RECEIPT.md`
 - Secondary ref (read-only worktree `/tmp/sds-pr52-aeef964-ro`): PR52 `aeef964fa188443078958d9d6d393afae1d542ee`. Wrapper and catalog do not list this job. No wrapper source was copied.
 - Exact GitHub `compare.mjs` / `hash-terms.mjs` at `e81efc8` matched the checkout.
