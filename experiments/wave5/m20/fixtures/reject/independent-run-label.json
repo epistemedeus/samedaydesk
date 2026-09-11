@@ -1,0 +1,7 @@
+{
+  "id": "bad-independent",
+  "kind": "wrapper-result",
+  "buyerClass": "independent",
+  "jobId": "vendor-budget-impact",
+  "result": { "ok": true, "jobId": "vendor-budget-impact", "sold": false, "outputs": [] }
+}

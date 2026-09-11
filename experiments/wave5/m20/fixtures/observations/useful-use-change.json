@@ -1,0 +1,26 @@
+{
+  "id": "useful-change",
+  "kind": "wrapper-result",
+  "at": "2026-09-11T22:02:00.000Z",
+  "callerKey": "caller-a",
+  "offerId": "vendor-budget-impact",
+  "jobId": "vendor-budget-impact",
+  "jobIndex": 1,
+  "buyerClass": "owner-qa",
+  "result": {
+    "ok": true,
+    "jobId": "vendor-budget-impact",
+    "fundingState": "unfunded",
+    "sold": false,
+    "sample": false,
+    "purchaseAuthority": false,
+    "outputs": [
+      { "name": "budget-impact.json" },
+      { "name": "budget-impact.md" }
+    ],
+    "engine": {
+      "ok": true,
+      "status": "actionable"
+    }
+  }
+}

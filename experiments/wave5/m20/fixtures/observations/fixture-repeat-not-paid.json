@@ -1,0 +1,27 @@
+{
+  "id": "repeat-fixture",
+  "kind": "wrapper-result",
+  "at": "2026-09-11T22:03:00.000Z",
+  "callerKey": "caller-a",
+  "offerId": "vendor-budget-impact",
+  "jobId": "vendor-budget-impact",
+  "jobIndex": 2,
+  "priorId": "useful-change",
+  "buyerClass": "fixture-buyer",
+  "result": {
+    "ok": true,
+    "jobId": "vendor-budget-impact",
+    "fundingState": "reserved-fixture",
+    "sold": false,
+    "sample": false,
+    "purchaseAuthority": false,
+    "outputs": [
+      { "name": "budget-impact.json" },
+      { "name": "budget-impact.md" }
+    ],
+    "engine": {
+      "ok": true,
+      "status": "actionable"
+    }
+  }
+}

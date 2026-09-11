@@ -1,0 +1,36 @@
+W5-M20 first-use / drop-off / repeat-job readout
+===============================================
+
+Pilot-authored files in this directory are MIT (LICENSE).
+
+This kit consumes existing interfaces. It does not copy another useful-jobs
+kernel, paid wrapper, buyer-value ledger, repeat-job binder, failed-delivery
+dossier, or D01 executor.
+
+Pins (read-only):
+
+- SDS PR52 `aeef964fa188443078958d9d6d393afae1d542ee`
+  `server/paid-useful-jobs` `runPaidOffer`. Live settlement remains out of scope.
+  useful-jobs 1.0.0 archive licenses stay in that archive.
+
+- W4-commerce-16 `aa306e291adfdd499ca971af01625ccc4bfee5c4`
+  Run buyerClass closed set `owner-qa | fixture-buyer | unknown`.
+  Settlement classes `independent | owner | sponsored | unknown` are a
+  different document. This kit does not vendor `tools/buyer-value-ledger/`.
+
+- W4-commerce-03 `7c55738cc5730985b709282af6c24e10f0a8442f`
+  Repeat-job binder is the second-run owner. This kit records whether a
+  later job happened. It does not copy `tools/repeat-job-binder/`.
+
+- W4-commerce-06 `f76235f32c5fe19d22f381c4b0eaab82962a56b7`
+  Failed-delivery evidence stays in that packer. This kit classifies use.
+
+- W5-D01 execution contract `samedaydesk.paid-useful-jobs.execution.v1`
+  Read-only at `6bed72dd22a396134aa5c957933b42c3a5746698`. Not in this
+  branch. Remaining binding: re-run against that kernel after M01 integrates it.
+
+Disclosure, kernel terms, settlement ledger, and wrapper receipts are different
+documents. This kit never forces their hashes equal.
+
+8.105 USDC banked observation and `early-x402-revenue` are not this job's
+paid return. SAMPLE / --example is not a sale. reserved-fixture is not settled.

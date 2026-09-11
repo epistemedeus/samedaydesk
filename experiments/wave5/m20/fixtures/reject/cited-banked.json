@@ -1,0 +1,17 @@
+{
+  "id": "cited-banked",
+  "kind": "settlement-join",
+  "callerKey": "caller-paid",
+  "jobId": "vendor-budget-impact",
+  "jobIndex": 2,
+  "priorId": "first-useful",
+  "operationId": "vendor-budget-impact:caller-paid:2",
+  "citedBankedUsdc": true,
+  "settlement": {
+    "operationId": "vendor-budget-impact:caller-paid:2",
+    "amountUsdc": "8.105",
+    "buyerClass": "unknown",
+    "validDeliveryStatus": "unknown",
+    "transaction": "0xccccccccccccccccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+}

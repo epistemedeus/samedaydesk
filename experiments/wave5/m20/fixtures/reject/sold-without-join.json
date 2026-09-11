@@ -1,0 +1,19 @@
+{
+  "id": "sold-without-join",
+  "kind": "wrapper-result",
+  "callerKey": "caller-a",
+  "jobId": "vendor-budget-impact",
+  "jobIndex": 2,
+  "priorId": "useful-change",
+  "buyerClass": "unknown",
+  "result": {
+    "ok": true,
+    "jobId": "vendor-budget-impact",
+    "fundingState": "unfunded",
+    "sold": true,
+    "sample": false,
+    "purchaseAuthority": true,
+    "outputs": [{ "name": "budget-impact.json" }],
+    "engine": { "ok": true, "status": "actionable" }
+  }
+}

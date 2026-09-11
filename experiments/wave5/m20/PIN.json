@@ -1,0 +1,17 @@
+{
+  "id": "W5-M20",
+  "contract": "samedaydesk.wave5.m20.readout.v1",
+  "repo": "epistemedeus/samedaydesk",
+  "ownedPath": "experiments/wave5/m20/",
+  "tested": {
+    "sds52": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "wrapperExport": "runPaidOffer",
+    "executionContractOnThisCheckout": null,
+    "w4commerce16": "aa306e291adfdd499ca971af01625ccc4bfee5c4",
+    "w4commerce03": "7c55738cc5730985b709282af6c24e10f0a8442f",
+    "w4commerce06": "f76235f32c5fe19d22f381c4b0eaab82962a56b7",
+    "d01ReadOnly": "6bed72dd22a396134aa5c957933b42c3a5746698",
+    "pilotPacket": "95b3f3a47f5b1b69bd237e4c978fc3376221365d"
+  },
+  "remainingBinding": "Re-run against W5-D01 samedaydesk.paid-useful-jobs.execution.v1 after M01 wires it. Consume D27 and M15-M19 receipts when those owned paths exist. Do not claim those siblings' future behavior."
+}

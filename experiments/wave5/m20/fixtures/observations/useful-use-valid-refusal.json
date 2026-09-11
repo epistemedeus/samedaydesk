@@ -1,0 +1,30 @@
+{
+  "id": "useful-refusal",
+  "kind": "wrapper-result",
+  "at": "2026-09-11T22:02:15.000Z",
+  "callerKey": "caller-refusal",
+  "offerId": "vendor-budget-impact",
+  "jobId": "vendor-budget-impact",
+  "jobIndex": 1,
+  "buyerClass": "owner-qa",
+  "result": {
+    "ok": false,
+    "refused": true,
+    "jobId": "vendor-budget-impact",
+    "code": "engine-refused",
+    "fundingState": "unfunded",
+    "sold": false,
+    "sample": false,
+    "purchaseAuthority": false,
+    "outputs": [],
+    "engine": {
+      "status": 0,
+      "json": {
+        "ok": false,
+        "refused": true,
+        "status": "refused",
+        "code": "incompatible-input"
+      }
+    }
+  }
+}
