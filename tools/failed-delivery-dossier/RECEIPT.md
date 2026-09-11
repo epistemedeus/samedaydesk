@@ -2,6 +2,7 @@
 
 Tool: `tools/failed-delivery-dossier/`
 Branch: `cursor/w5-d21-co06-useful-failure-dossier-with-actual-observed-source-status-2890`
+HEAD: `8e1e5ff470a60bc83a08792d3d725842cbd8eeef`
 Base: `f76235f32c5fe19d22f381c4b0eaab82962a56b7`
 Repo: `epistemedeus/samedaydesk`
 Date: 2026-09-11
