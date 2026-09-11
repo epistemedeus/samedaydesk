@@ -4,7 +4,6 @@ Repo: `epistemedeus/samedaydesk`
 Owned path: `experiments/wave5/m08/`
 Feature branch: `cursor/w5-m08-independent-route-consumers-for-claimed-supported-frameworks-c2e5`
 Feature tip: `b3f89470dc87e413c779c8ca11fc038da25409df`
-Branch HEAD at receipt close: see git of this file's commit.
 Draft PR: https://github.com/epistemedeus/samedaydesk/pull/89
 Starting ref: SDS52 `aeef964fa188443078958d9d6d393afae1d542ee`
 Engine tested: Co12 / W5-M04 pin `7387eb677abd442dfab9081cb0ad95451fd2a762` (`codex/w4-commerce-12-20260911`, PR 64)
