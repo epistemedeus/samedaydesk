@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { getJob } from "../../../server/paid-useful-jobs/index.mjs";
+import { getJob } from "../../../../server/paid-useful-jobs/index.mjs";
 
 export const SCHEMA = "samedaydesk.wave5.d17.domain-outcome.v1";
 

@@ -5,8 +5,8 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
-import { cacheRoot } from "../../../server/paid-useful-jobs/lib/engine.mjs";
-import { USEFUL_JOBS_ARCHIVE_PATH } from "../../../server/paid-useful-jobs/lib/pins.mjs";
+import { cacheRoot } from "../../../../server/paid-useful-jobs/lib/engine.mjs";
+import { USEFUL_JOBS_ARCHIVE_PATH } from "../../../../server/paid-useful-jobs/lib/pins.mjs";
 import { OUTCOMES, SCHEMA } from "../src/classify.mjs";
 import { REPO_ROOT } from "../src/run-wrapper-cli.mjs";
 import {

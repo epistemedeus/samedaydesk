@@ -3,7 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
-export const REPO_ROOT = join(here, "../../..");
+export const REPO_ROOT = join(here, "../../../..");
 export const WRAPPER_CLI = join(REPO_ROOT, "server/paid-useful-jobs/bin/cli.mjs");
 
 function parseStdout(stdout) {
