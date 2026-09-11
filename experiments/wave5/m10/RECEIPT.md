@@ -5,7 +5,9 @@
 **Repo:** `epistemedeus/samedaydesk`
 **Branch:** `cursor/w5-m10-co18-recipe-catalog-join-actually-consuming-both-named-input-sources-61ed`
 **Starting ref:** `bb795f6dad362a0ac187fe896d636e62fa1d932e` (W4-commerce-18)
-**HEAD:** `dd75673` (filled with full sha after this receipt commit)
+**Implementation:** `dd75673069d2c675edccb66793fc84933bde519e`
+**Branch tip:** `7f87ffa9a1185bdfaaeb9807893eca0b11b68cfb`
+**PR:** ManagePullRequest draft registered; this environment defers creation to user approval (no PR number). Compare: https://github.com/epistemedeus/samedaydesk/compare/codex/w4-commerce-18-20260911...cursor/w5-m10-co18-recipe-catalog-join-actually-consuming-both-named-input-sources-61ed?expand=1
 **Secondary pin (read-only worktree):** PR52 `aeef964fa188443078958d9d6d393afae1d542ee`
 
 ## Current-source findings (reproduced)
@@ -42,3 +44,7 @@ Postgres: not a join surface; CLI report has no store. `initdb` absent on this i
 - Postgres is not a surface of this join. CLI report has no payment store. `initdb` is absent here; that is not a skipped required gate.
 - Live `agents.samedaydesk.com` catalog fetch was not run. Loopback HTTP of named files was.
 - PR52 `runPaidOffer` was not invoked; this package is the read-only join, not another paid runner.
+
+## pstack / model
+
+Marketplace plugin `9717366` pin `68d834d9ca8f34c375ecb8057bfbcde5396a01f8` present. Read `setup-pstack`, `swarm`, `tdd`, `principle-prove-it-works`, `principle-test-behavior-not-implementation`, `principle-subtract-before-you-add`, `principle-fix-root-causes`, `principle-boundary-discipline`. `swarm` has `disable-model-invocation: true`; no extra Cloud agents. No `~/.cursor/rules/pstack-models.mdc`. Run model `cursor-grok-4.6-xhigh`.
