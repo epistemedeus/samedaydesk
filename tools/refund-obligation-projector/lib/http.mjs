@@ -1,6 +1,6 @@
 import http from "node:http";
 import { URL } from "node:url";
-import { refusalPayload } from "./refuse.mjs";
+import { isRefusal, refusalPayload } from "./refuse.mjs";
 
 export function createProjectionServer({ project, host = "127.0.0.1", port = 0 } = {}) {
   if (typeof project !== "function") {
@@ -23,15 +23,26 @@ export function createProjectionServer({ project, host = "127.0.0.1", port = 0 }
         mode: "read_only",
         stripeRefundsCalled: false,
         obligationsPostedAsPaid: false,
+        citedBankedUsdcAttached: false,
       });
       return;
     }
     if (url.pathname === "/projection" || url.pathname === "/projection.json") {
       try {
-        const result = project();
+        const result = project({
+          operationId: url.searchParams.get("operationId"),
+        });
         writeJson(res, result.ok ? 200 : 400, result);
       } catch (error) {
-        writeJson(res, 400, refusalPayload(error));
+        if (isRefusal(error)) {
+          writeJson(res, 400, refusalPayload(error));
+          return;
+        }
+        writeJson(res, 500, {
+          ok: false,
+          code: "projector_transport_error",
+          message: error instanceof Error ? error.message : String(error),
+        });
       }
       return;
     }

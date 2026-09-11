@@ -4,15 +4,32 @@ import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { refuse } from "./refuse.mjs";
 
-export const DEFAULT_PG_BIN = process.env.REFUND_PG_BIN || "/usr/lib/postgresql/16/bin";
+const PG_BIN_CANDIDATES = [
+  process.env.REFUND_PG_BIN,
+  "/usr/lib/postgresql/16/bin",
+  "/usr/lib/postgresql/17/bin",
+  "/usr/lib/postgresql/15/bin",
+].filter(Boolean);
 
-export function postgresBinaries(pgBin = DEFAULT_PG_BIN) {
+export const DEFAULT_PG_BIN = PG_BIN_CANDIDATES[0] || "/usr/lib/postgresql/16/bin";
+
+export function postgresBinaries(pgBin = resolvePgBin()) {
+  if (!pgBin) {
+    return { initdb: null, pgCtl: null, psql: null, available: false };
+  }
   const initdb = join(pgBin, "initdb");
   const pgCtl = join(pgBin, "pg_ctl");
   const psql =
     process.env.REFUND_PSQL ||
     (existsSync("/usr/bin/psql") ? "/usr/bin/psql" : join(pgBin, "psql"));
   return { initdb, pgCtl, psql, available: existsSync(initdb) && existsSync(pgCtl) && existsSync(psql) };
+}
+
+function resolvePgBin() {
+  for (const dir of PG_BIN_CANDIDATES) {
+    if (existsSync(join(dir, "initdb")) && existsSync(join(dir, "pg_ctl"))) return dir;
+  }
+  return null;
 }
 
 function run(cmd, args, env = {}, input) {
@@ -43,6 +60,8 @@ export function startDisposableCluster() {
     "projector_accept",
     "--auth-local=trust",
     "--auth-host=trust",
+    "--locale=C",
+    "--encoding=UTF8",
   ]);
   if (init.status !== 0) {
     rmSync(dir, { recursive: true, force: true });
@@ -91,7 +110,10 @@ CREATE TABLE refund_obligation_projections (
   amount_usdc text NOT NULL,
   buyer_class text NOT NULL,
   delivery text NOT NULL,
+  outcome_kind text NOT NULL CHECK (outcome_kind IN ('analysis', 'operational_error', 'engine_failure', 'transport_failure', 'unknown')),
   refund_claim text NOT NULL CHECK (refund_claim IN ('none', 'unknown', 'not-offered')),
+  refund_claim_source text NOT NULL CHECK (refund_claim_source IN ('explicit_policy', 'no_policy', 'no_matching_rule')),
+  policy_id text,
   paid_out boolean NOT NULL DEFAULT false,
   CONSTRAINT never_paid_out CHECK (paid_out = false),
   CONSTRAINT never_payable_claim CHECK (refund_claim <> 'payable')
@@ -106,18 +128,27 @@ export function insertProjection(cluster, projection) {
   if (projection.paidOut || projection.obligationsPostedAsPaid) {
     refuse("post_paid_refused", "this projector never posts obligations as paid");
   }
+  if (projection.citedBankedUsdcAttached) {
+    refuse(
+      "cited_banked_usdc_is_not_job_revenue",
+      "this projector never stores the banked settlement observation on a job row",
+    );
+  }
   for (const row of projection.records) {
     if (row.paidOut) {
       refuse("post_paid_refused", "this projector never posts obligations as paid");
     }
     const sql = `INSERT INTO refund_obligation_projections
-      (operation_id, amount_usdc, buyer_class, delivery, refund_claim, paid_out)
+      (operation_id, amount_usdc, buyer_class, delivery, outcome_kind, refund_claim, refund_claim_source, policy_id, paid_out)
       VALUES (
         ${literal(row.operationId)},
         ${literal(row.amountUsdc)},
         ${literal(row.buyerClass)},
         ${literal(row.delivery)},
+        ${literal(row.outcomeKind)},
         ${literal(row.refundClaim)},
+        ${literal(row.refundClaimSource)},
+        ${row.policyId == null ? "NULL" : literal(row.policyId)},
         false
       );`;
     cluster.psql(sql);

@@ -5,8 +5,7 @@
     "mode": "read_only",
     "nonsettling": true,
     "evidenceKind": "fixture",
-    "citedBankedUsdc": "8.105",
-    "citedBankedSpendable": false,
+    "citedBankedUsdcAttached": false,
     "payableAsserted": false,
     "stripeRefundsCalled": false,
     "obligationsPostedAsPaid": false,
@@ -18,7 +17,10 @@
         "amountUsdc": "0.010",
         "buyerClass": "unknown",
         "delivery": "seller_http_200_repair_required_no_buyer_owned_output_enforcement",
-        "refundClaim": "not-offered",
+        "outcomeKind": "operational_error",
+        "refundClaim": "unknown",
+        "refundClaimSource": "no_policy",
+        "policyId": null,
         "paidOut": false
       },
       {
@@ -26,7 +28,10 @@
         "amountUsdc": "0.040",
         "buyerClass": "unknown",
         "delivery": "unknown",
+        "outcomeKind": "unknown",
         "refundClaim": "unknown",
+        "refundClaimSource": "no_policy",
+        "policyId": null,
         "paidOut": false
       },
       {
@@ -34,7 +39,10 @@
         "amountUsdc": "8.000",
         "buyerClass": "independent",
         "delivery": "platform_accepted_and_paid",
-        "refundClaim": "none",
+        "outcomeKind": "analysis",
+        "refundClaim": "unknown",
+        "refundClaimSource": "no_policy",
+        "policyId": null,
         "paidOut": false
       },
       {
@@ -42,7 +50,10 @@
         "amountUsdc": "0.050",
         "buyerClass": "unknown",
         "delivery": "seller_http_200_and_listing_marked_x402_verified",
+        "outcomeKind": "analysis",
         "refundClaim": "unknown",
+        "refundClaimSource": "no_policy",
+        "policyId": null,
         "paidOut": false
       },
       {
@@ -50,7 +61,10 @@
         "amountUsdc": "0.005",
         "buyerClass": "independent",
         "delivery": "buyer_attested_delivered_six_fields_raw_ref_null",
-        "refundClaim": "none",
+        "outcomeKind": "analysis",
+        "refundClaim": "unknown",
+        "refundClaimSource": "no_policy",
+        "policyId": null,
         "paidOut": false
       }
     ]

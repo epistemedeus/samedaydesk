@@ -1,12 +1,12 @@
 {
   "name": "samedaydesk-refund-obligation-projector",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "engines": {
     "node": ">=22"
   },
-  "description": "W4-commerce-07 read-only refund and obligation projector from evidence-records. Nonsettling prototype. Never calls Stripe refunds. Never posts obligations as paid. 8.105 USDC is historical, not spendable.",
+  "description": "W5-D22 / Co07 refund-policy projector from explicit policy and actual job facts. Operational error does not invent policy. Banked 8.105 USDC is not a job dossier field. Never calls Stripe refunds. Never posts obligations as paid.",
   "bin": {
     "refund-obligation-project": "./bin/project.mjs"
   },

@@ -1,0 +1,7 @@
+{
+  "schema": "samedaydesk.refund-policy.v1",
+  "policyId": "sdd-integer-terms",
+  "termsVersion": 1,
+  "defaultClaim": "unknown",
+  "rules": []
+}

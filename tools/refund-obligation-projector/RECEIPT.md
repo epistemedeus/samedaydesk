@@ -1,26 +1,20 @@
-# W4-commerce-07 RECEIPT — refund and obligation projector
+# W5-D22 RECEIPT — Co07 refund-policy projector
 
 **Date:** 11 September 2026
-**Branch:** `codex/w4-commerce-07-20260911`
-**HEAD:** `6d57566822c3e416910d121caee76cd825021027`
-**Base:** `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545`
-**Owned path:** `tools/refund-obligation-projector/`
-**Integration owner:** Root
+**Branch:** `cursor/w5-d22-co07-refund-policy-projection-from-explicit-policy-and-actual-job-facts-8a04`
+**Base:** `f19a021a82a4ff59fd3b510fda11e603e6885686`
+**Owned paths:** `tools/refund-obligation-projector/`, `experiments/wave5/d22/RECEIPT.md`
+**Integration owner:** W5-D01
 
 ## What
 
-Read-only projector from published evidence-record settlement fixtures.
-Output is `projection.json` with per-record
-`{operationId, amountUsdc, buyerClass, delivery, refundClaim}` where
-`refundClaim` is `none | unknown | not-offered`. Never calls Stripe refunds.
-Never posts obligations as paid. 8.105 USDC is cited and not spendable.
+Read-only projector. `refundClaim` is `none | unknown | not-offered`.
+`none` and `not-offered` require an explicit `samedaydesk.refund-policy.v1`
+document. Operational delivery status is preserved as a job fact
+(`outcomeKind`). It does not invent policy. Customer dossiers omit the
+banked 8.105 USDC observation.
 
-Pinned agent402 delivery on current SDS main is
-`seller_http_200_repair_required_no_buyer_owned_output_enforcement`, not a
-stale `repair_required` enum. I01 Neo PR54
-(`819fa637ecf5e5177c84efc16fcaa18d57017631`) owns earned-work
-content-hash `termsVersion`. This pack injects that kind check and does not
-copy the F01 kernel.
+Never calls Stripe refunds. Never posts obligations as paid.
 
 ## Commands
 
@@ -31,14 +25,15 @@ cd tools/refund-obligation-projector && npm test
 
 Node 22.14.0. No extra npm packages. Local Postgres tests use
 `/usr/lib/postgresql/16/bin` (`initdb`, `pg_ctl`) and `/usr/bin/psql`.
-HTTP tests bind `127.0.0.1`.
+HTTP tests bind `127.0.0.1`. Missing Postgres is a failed gate, not a skip.
 
 ## Journey (fixture)
 
-Five published settlement rows. agent402 is `not-offered` with
-`repair_required` preserved in `delivery`. `paidOut` is false on every row.
-`citedBankedUsdc` is `8.105` with `citedBankedSpendable: false`.
-`revenueAcrossBuyerClass` is null.
+Five published settlement rows with no policy file. agent402 keeps
+`seller_http_200_repair_required_no_buyer_owned_output_enforcement`,
+`outcomeKind: operational_error`, and `refundClaim: unknown`.
+`paidOut` is false on every row. `citedBankedUsdcAttached` is false.
+The dossier for agent402 does not contain 8.105.
 
 ## Seeded failures
 
@@ -47,26 +42,29 @@ Five published settlement rows. agent402 is `not-offered` with
 | `fixtures/seeded/organic-incentivized-trial.json` | `organic_label_for_controlled_or_incentivized_traffic` |
 | `--sum-as-revenue` / `asRevenue()` | `sum_across_buyer_class_as_revenue` |
 | `--execute-refund` | `execute_refund_refused` |
-| `--terms-version 1` | `integer_terms_version` |
+| `--terms-version 1` / integer policy terms | `integer_terms_version` |
 | `--post-paid` | `post_paid_refused` |
+| `--attach-cited-banked` | `cited_banked_usdc_is_not_job_revenue` |
+| D13 ledger `jobRevenueUsdc: "8.105"` | `cited_banked_usdc_is_not_job_revenue` |
 | HTTP `POST /refund` | `execute_refund_refused` |
+| HTTP unexpected throw | `projector_transport_error` (500) |
 | Postgres `UPDATE ... paid_out = true` | `never_paid_out` |
 
 ## Tests
 
-**PASS** — 18 tests, 0 fail, 0 skipped (`node --test --test-concurrency=1 test/*.test.mjs`).
+**PASS.** 31 tests, 0 fail, 0 skipped (`cd tools/refund-obligation-projector && npm test`).
 
 | Kind | Covered |
 | --- | --- |
-| fixture | published settlements + seeded JSON |
-| local-runtime | CLI `--listen` + `GET /projection`; disposable Postgres 16 |
+| fixture | published settlements, explicit policy files, D13 pin ledger, PR52 receipt fields |
+| local-runtime | CLI `--listen` + `GET /projection` dossier; disposable Postgres 16 (required) |
 | external | not executed (Stripe, TaskMarket, I01 HTTP, live refunds) |
 
 ## Untested
 
 Live Stripe refunds, TaskMarket refund flows, I01 earned-work HTTP/Postgres
-service, injecting Neo `hashTermsVersion` as a real import (adapter pin only),
-and any production deploy.
+service, injecting Neo `hashTermsVersion` as a real import, Wave5 D13
+amended ledger (tested W4 pin only), and any production deploy.
 
 ## Hard stops
 

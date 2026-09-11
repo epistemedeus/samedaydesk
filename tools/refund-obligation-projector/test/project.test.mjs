@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { createAdapters } from "../lib/adapters.mjs";
 import { classifyRefundClaim } from "../lib/claim.mjs";
+import { CITED_BANKED_USDC } from "../lib/contract.mjs";
 import { asRevenue, projectDir, projectRecords } from "../lib/project.mjs";
 import { ProjectorRefusal } from "../lib/refuse.mjs";
 import { I01_TERMS_PIN, isIntegerTermsVersion, isTermsVersionHash } from "../lib/terms.mjs";
@@ -38,7 +39,7 @@ test("committed golden matches the published-fixture journey", () => {
   assert.deepEqual(golden, { ok: true, projection: report.projection });
 });
 
-test("journey: published settlement fixtures project without paid-out rows", () => {
+test("journey: published settlement fixtures project without paid-out rows or invented policy", () => {
   const report = projectDir();
   assert.equal(report.ok, true, JSON.stringify(report.rejected));
   const projection = report.projection;
@@ -46,8 +47,9 @@ test("journey: published settlement fixtures project without paid-out rows", () 
   assert.equal(projection.mode, "read_only");
   assert.equal(projection.nonsettling, true);
   assert.equal(projection.evidenceKind, "fixture");
-  assert.equal(projection.citedBankedUsdc, "8.105");
-  assert.equal(projection.citedBankedSpendable, false);
+  assert.equal(projection.citedBankedUsdcAttached, false);
+  assert.equal(Object.hasOwn(projection, "citedBankedUsdc"), false);
+  assert.equal(JSON.stringify(projection).includes(CITED_BANKED_USDC), false);
   assert.equal(projection.payableAsserted, false);
   assert.equal(projection.stripeRefundsCalled, false);
   assert.equal(projection.obligationsPostedAsPaid, false);
@@ -64,16 +66,17 @@ test("journey: published settlement fixtures project without paid-out rows", () 
     agent402.delivery,
     "seller_http_200_repair_required_no_buyer_owned_output_enforcement",
   );
-  assert.match(agent402.delivery, /repair_required/);
-  assert.ok(agent402.refundClaim === "not-offered" || agent402.refundClaim === "unknown");
-  assert.equal(agent402.refundClaim, "not-offered");
+  assert.equal(agent402.outcomeKind, "operational_error");
+  assert.equal(agent402.refundClaim, "unknown");
+  assert.equal(agent402.refundClaimSource, "no_policy");
   assert.equal(agent402.paidOut, false);
 
   assert.equal(byId["early-x402-revenue"].refundClaim, "unknown");
   assert.equal(byId["early-x402-revenue"].delivery, "unknown");
-  assert.equal(byId["frantic-42-revenue-2026-06-25"].refundClaim, "none");
+  assert.equal(byId["frantic-42-revenue-2026-06-25"].refundClaim, "unknown");
   assert.equal(byId["frantic-42-revenue-2026-06-25"].buyerClass, "independent");
-  assert.equal(byId["what-agents-buy-independent-benchmark-2026-08-30"].refundClaim, "none");
+  assert.equal(byId["frantic-42-revenue-2026-06-25"].outcomeKind, "analysis");
+  assert.equal(byId["what-agents-buy-independent-benchmark-2026-08-30"].refundClaim, "unknown");
   assert.equal(byId["payapi-verification-revenue-2026-08-09"].refundClaim, "unknown");
 
   for (const row of projection.records) {
@@ -85,12 +88,14 @@ test("journey: published settlement fixtures project without paid-out rows", () 
   }
 });
 
-test("stripe intake_required is not-offered and is not a live Stripe refund", () => {
+test("stripe intake_required without policy is unknown, not a live Stripe refund", () => {
   const record = adapters.evidence.loadJson(join(seeded, "stripe-intake-required.json"));
   const report = projectRecords([record], adapters);
   assert.equal(report.ok, true, JSON.stringify(report.rejected));
-  assert.equal(report.projection.records[0].refundClaim, "not-offered");
+  assert.equal(report.projection.records[0].refundClaim, "unknown");
+  assert.equal(report.projection.records[0].refundClaimSource, "no_policy");
   assert.equal(report.projection.records[0].delivery, "intake_required");
+  assert.equal(report.projection.records[0].outcomeKind, "operational_error");
   assert.equal(report.projection.stripeRefundsCalled, false);
 });
 
@@ -142,7 +147,7 @@ test("post-paid obligation writes are refused", () => {
   );
 });
 
-test("classifyRefundClaim preserves the current agent402 delivery token", () => {
+test("classifyRefundClaim keeps the agent402 delivery token as a job fact, not a policy", () => {
   const record = settlementRecords().find(
     (item) => item.recordId === "agent402-external-validation-purchase-2026-08-29",
   );
@@ -150,5 +155,5 @@ test("classifyRefundClaim preserves the current agent402 delivery token", () => 
     record.settlement.validDeliveryStatus,
     "seller_http_200_repair_required_no_buyer_owned_output_enforcement",
   );
-  assert.equal(classifyRefundClaim(record), "not-offered");
+  assert.equal(classifyRefundClaim(record), "unknown");
 });
