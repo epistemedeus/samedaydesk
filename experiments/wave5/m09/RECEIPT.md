@@ -6,7 +6,9 @@ Root-named identity: `codex/w5-m09-20260911`
 Date: 2026-09-11
 Node: v22.14.0
 Base: SDS PR52 `aeef964fa188443078958d9d6d393afae1d542ee`
+Implementation: `a0ea65fe8a56d39aaf60d4fe633af28d62949f9e`
 Engine pin tested: Co13 `91b57334818ecd7940cb854e9864f3b1749d1d1d` `tools/page-change-offline-job/` (read-only worktree; not vendored)
+Compare: https://github.com/epistemedeus/samedaydesk/compare/aeef964fa188443078958d9d6d393afae1d542ee...cursor/w5-m09-independent-page-snapshots-with-meaningful-vs-irrelevant-change-controls-d8cf
 
 ## Outcome
 
