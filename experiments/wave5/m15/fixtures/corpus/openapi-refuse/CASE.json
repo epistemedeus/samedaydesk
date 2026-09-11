@@ -1,0 +1,11 @@
+{
+  "id": "openapi-refuse",
+  "synthetic": true,
+  "reviewFinding": "not this job",
+  "prediction": {
+    "kind": "analysis",
+    "analysisStatus": "refused",
+    "refuseCode": "not-this-job-openapi"
+  },
+  "note": "Valid refusal. OpenAPI belongs to api-upgrade-brief. Do not label this engine-failure."
+}

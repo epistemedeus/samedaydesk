@@ -1,0 +1,50 @@
+{
+  "assignment": "W5-M15",
+  "schema": "samedaydesk.wave5.m15.pins.v1",
+  "schemaVersion": 1,
+  "testedAt": "2026-09-11T22:53:00Z",
+  "sds52": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "ref": "fable/f08-paid-wrappers",
+    "pr": 52,
+    "role": "starting checkout / paid-wrapper contrast. This kit does not wrap F08."
+  },
+  "m02": {
+    "wave4Id": "W4-commerce-10",
+    "wave5Id": "W5-M02",
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "94c7bfdfeaa99f5e70f341504df3051cc7717f91",
+    "ref": "codex/w4-commerce-10-20260911",
+    "pr": 59,
+    "ownedPath": "tools/json-schema-webhook-drift/",
+    "cli": "bin/webhook-drift.mjs",
+    "package": "@samedaydesk/json-schema-webhook-drift",
+    "status": "pinned-current-implementation",
+    "note": "M02 may later amend finding-10 semantics. This kit records behavior at this SHA only."
+  },
+  "m06": {
+    "id": "W5-M06",
+    "status": "not-exported",
+    "ownedPath": "experiments/wave5/m06/",
+    "note": "Independent schema corpus is a remaining integration binding. M15 ships an interim witness set under fixtures/corpus/."
+  },
+  "d24": {
+    "id": "W5-D24",
+    "status": "not-exported",
+    "ownedPath": "experiments/wave5/d24/",
+    "note": "Clean published-package install is remaining. This kit stages M02 via git archive into an isolated directory."
+  },
+  "catalog": {
+    "id": "useful-jobs-catalog",
+    "status": "not-bound",
+    "note": "api-upgrade-brief is OpenAPI. This trial is JSON Schema used-path drift, not that job."
+  },
+  "postgres": "not-applicable",
+  "field": {
+    "status": "owner-dry-run",
+    "messagesSent": false,
+    "spend": false,
+    "maintainerUsefulness": "unknown"
+  }
+}

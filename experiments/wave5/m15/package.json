@@ -1,0 +1,17 @@
+{
+  "name": "@samedaydesk/w5-m15-schema-change-trial",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "W5-M15 owner dry-run field kit: run the pinned JSON Schema used-path drift CLI on a permitted real revision pair. Not a competing engine. Nonsettling. Maintainer usefulness stays unknown until received.",
+  "bin": {
+    "schema-change-trial": "./bin/schema-change-trial.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "trial": "node bin/schema-change-trial.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

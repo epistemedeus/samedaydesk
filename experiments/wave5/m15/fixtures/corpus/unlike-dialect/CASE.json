@@ -1,0 +1,11 @@
+{
+  "id": "unlike-dialect",
+  "synthetic": true,
+  "reviewFinding": "unlike schemas need mappings rather than forced equality",
+  "prediction": {
+    "kind": "analysis",
+    "analysisStatus": "informational",
+    "breakingCount": 0
+  },
+  "note": "Draft-07 vs 2020-12 on the same used property type. Current M02 does not fingerprint $schema. termsVersion still differs because input digests bind file bytes. The kit must not force those hashes equal."
+}

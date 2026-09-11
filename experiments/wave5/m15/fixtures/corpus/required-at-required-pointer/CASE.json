@@ -1,0 +1,11 @@
+{
+  "id": "required-at-required-pointer",
+  "synthetic": true,
+  "reviewFinding": "commerce-10 required-field changes",
+  "prediction": {
+    "kind": "analysis",
+    "analysisStatus": "informational",
+    "breakingCount": 0
+  },
+  "note": "Pointer /required hits a JSON array. Current M02 fingerprints arrays as literal jsonType only, so required-item add/remove is not classified here."
+}

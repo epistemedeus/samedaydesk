@@ -1,0 +1,11 @@
+This kit stages `@samedaydesk/json-schema-webhook-drift` at
+`94c7bfdfeaa99f5e70f341504df3051cc7717f91` at runtime. That package includes a
+pinned I01 hasher under `vendor/i01-hash-terms/` (MIT). The hasher is not copied
+into `experiments/wave5/m15/` source.
+
+SchemaStore `package.json` schema snapshots under
+`fixtures/real-pairs/schemastore-package-sideEffects/` are Apache License 2.0.
+The license text is in that directory's `LICENSE`. Those files are analysis
+inputs. They are not a SchemaStore engine.
+
+SameDayDesk `verified.schema.json` snapshots are MIT, same as this kit.

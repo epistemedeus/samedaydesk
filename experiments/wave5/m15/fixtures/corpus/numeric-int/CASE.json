@@ -1,0 +1,12 @@
+{
+  "id": "numeric-int",
+  "synthetic": true,
+  "reviewFinding": "commerce-10 numeric boundaries",
+  "prediction": {
+    "kind": "analysis",
+    "analysisStatus": "actionable",
+    "breakingPointer": "/properties/amount",
+    "breakingReason": "structural-change"
+  },
+  "note": "Integer minimum 0 to 10 is visible in current M02 fingerprints."
+}

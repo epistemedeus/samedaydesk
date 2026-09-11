@@ -1,0 +1,12 @@
+{
+  "id": "required-at-root",
+  "synthetic": true,
+  "reviewFinding": "commerce-10 required-field changes",
+  "prediction": {
+    "kind": "analysis",
+    "analysisStatus": "actionable",
+    "breakingPointer": "",
+    "breakingReason": "structural-change"
+  },
+  "note": "RFC 6901 document root is the empty pointer. Current M02 then fingerprints the object required list and reports structural-change."
+}

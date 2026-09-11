@@ -1,0 +1,11 @@
+{
+  "id": "numeric-frac",
+  "synthetic": true,
+  "reviewFinding": "commerce-10 numeric boundaries",
+  "prediction": {
+    "kind": "analysis",
+    "analysisStatus": "informational",
+    "breakingCount": 0
+  },
+  "note": "Current M02 stores only integer min/max. A 0.5 to 1.5 change is not classified. Remaining M02 binding, not an M15 engine fork."
+}

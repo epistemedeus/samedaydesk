@@ -1,0 +1,31 @@
+{
+  "id": "schemastore-package-sideEffects",
+  "label": "SchemaStore package.json sideEffects type widening",
+  "synthetic": false,
+  "permission": "public-apache-2.0-local-analysis-copy",
+  "sourceUrl": "https://github.com/SchemaStore/schemastore",
+  "license": "Apache-2.0",
+  "licenseFile": "LICENSE",
+  "path": "src/schemas/json/package.json",
+  "before": {
+    "commit": "f4d7fd9c9ceb291b29e955f46f69c1f245df5bf9",
+    "html": "https://github.com/SchemaStore/schemastore/commit/f4d7fd9c9ceb291b29e955f46f69c1f245df5bf9",
+    "message": "feat: add Webpack-related `sideEffects` property to package.json (#6161)",
+    "date": "2026-08-05",
+    "bytes": 46043,
+    "sha256": "24cd88448efe48876e905716fe4ccfe4c047cc1537ab44a7954f5634f0e36f3b"
+  },
+  "after": {
+    "commit": "2a3fb60353a27f92599cf22e9fc1fa63066f5c2a",
+    "html": "https://github.com/SchemaStore/schemastore/commit/2a3fb60353a27f92599cf22e9fc1fa63066f5c2a",
+    "message": "fix: allow string array for `sideEffects` field (#6170)",
+    "date": "2026-08-06",
+    "bytes": 46233,
+    "sha256": "253629b45a7ad82407acf7da5dd5171acd862ab6176a75dd221bc88d124742f9"
+  },
+  "usedPointers": ["/properties/sideEffects", "/properties/name"],
+  "usedRationale": "/properties/sideEffects is the changed consumer field. /properties/name is an unchanged control. Unused SchemaStore properties are ignored by the engine.",
+  "retrieval": "GitHub Contents API at the two commits. Snapshots are analysis inputs, not a SchemaStore kernel copy.",
+  "messagesToMaintainer": "not-sent",
+  "maintainerUsefulness": "unknown"
+}

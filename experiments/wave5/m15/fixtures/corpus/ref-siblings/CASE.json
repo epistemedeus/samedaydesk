@@ -1,0 +1,12 @@
+{
+  "id": "ref-siblings",
+  "synthetic": true,
+  "reviewFinding": "commerce-10 $ref siblings",
+  "prediction": {
+    "kind": "analysis",
+    "analysisStatus": "informational",
+    "breakingCount": 0,
+    "unchangedCount": 1
+  },
+  "note": "Sibling type on a $ref node is ignored by current M02, which follows $ref only. Valid analysis of current engine, not an M15 kernel rewrite."
+}

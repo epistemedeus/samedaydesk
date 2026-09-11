@@ -1,0 +1,26 @@
+{
+  "id": "sds-verified-feed",
+  "label": "SameDayDesk x402 verified-feed schema: qa field removed",
+  "synthetic": false,
+  "permission": "owner-project-local-analysis",
+  "sourceUrl": "https://github.com/epistemedeus/samedaydesk",
+  "license": "MIT",
+  "path": "client/public/x402/verified.schema.json",
+  "before": {
+    "commit": "3c96d3137f815035ed4a6467d28c8041916a9aa8",
+    "message": "Constrain verified feed to current owner evidence",
+    "bytes": 3923,
+    "sha256": "3e73050002aa7e54a821615273b20a68cc44080f8338c6ee8834e15aec187c30"
+  },
+  "after": {
+    "commit": "f0b69ad26f2e3d30e19ee2559f85bdac45793334",
+    "message": "Use public inspection copy on the verified x402 route list",
+    "bytes": 3651,
+    "sha256": "1c1a10ed61ff399bf8c25a08754a5898ea1f31e2a6c451eecd9e9f78ad8ade19"
+  },
+  "usedPointers": ["/properties/qa", "/properties/schemaVersion", "/required"],
+  "usedRationale": "/properties/qa was removed. /properties/schemaVersion is an unchanged control. /required also changed in the document; current M02 fingerprints an array pointer as a literal type only, so that control records current-engine behavior.",
+  "retrieval": "git show of epistemedeus/samedaydesk at the two commits.",
+  "messagesToMaintainer": "not-sent",
+  "maintainerUsefulness": "unknown"
+}
