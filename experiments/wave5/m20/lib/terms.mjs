@@ -2,6 +2,13 @@ import { createHash } from "node:crypto";
 import { ERROR_CODES, TERMS_KINDS } from "./pins.mjs";
 import { refuse } from "./refuse.mjs";
 
+function omitIdentity(doc) {
+  const rest = { ...doc };
+  delete rest.kind;
+  delete rest.schema;
+  return rest;
+}
+
 function stableStringify(value) {
   if (value === null || typeof value !== "object") return JSON.stringify(value);
   if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
@@ -17,8 +24,10 @@ export function hashTermsDocument(doc = {}) {
     });
   }
   const schema = typeof doc.schema === "string" ? doc.schema : null;
-  const body = doc.body ?? doc;
-  const sha256 = createHash("sha256").update(stableStringify(body), "utf8").digest("hex");
+  const body = Object.prototype.hasOwnProperty.call(doc, "body") ? doc.body : omitIdentity(doc);
+  const sha256 = createHash("sha256")
+    .update(stableStringify({ kind, schema, body }), "utf8")
+    .digest("hex");
   return {
     ok: true,
     kind,

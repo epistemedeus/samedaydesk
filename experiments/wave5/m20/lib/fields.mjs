@@ -8,7 +8,9 @@ export function engineJsonOf(result) {
   const engine = result?.engine;
   if (!isPlainObject(engine)) return null;
   if (isPlainObject(engine.json)) return engine.json;
-  if (typeof engine.ok === "boolean" || engine.status != null || engine.refused === true) return engine;
+  const processLike = typeof engine.status === "number" && ("stderr" in engine || "stdout" in engine || "json" in engine);
+  if (processLike) return isPlainObject(engine.json) ? engine.json : null;
+  if (typeof engine.ok === "boolean" || engine.refused === true) return engine;
   return null;
 }
 
