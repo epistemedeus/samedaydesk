@@ -1,0 +1,22 @@
+W5-D28 journey release packet, readback, and first return-job measurement.
+
+This tree is a thin consumer of the SDS52 paid useful-jobs CLI/library. It does
+not vendor another execution kernel, Co03 binder, or Co17 verifier.
+
+Tested implementation (this branch):
+  epistemedeus/samedaydesk@aeef964fa188443078958d9d6d393afae1d542ee
+  fable/f08-paid-wrappers (PR52)
+  server/paid-useful-jobs/bin/cli.mjs
+  useful-jobs-1.0.0.tar.gz sha256 6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51
+  2522418 bytes
+
+Observed remaining integration binding (read-only, not copied here):
+  W5-D01 execution.v1 6bed72dd22a396134aa5c957933b42c3a5746698
+    https://github.com/epistemedeus/samedaydesk/pull/74
+  W4-commerce-03 repeat-job-binder 7c55738cc5730985b709282af6c24e10f0a8442f
+    tools/repeat-job-binder/  PR62
+  W4-commerce-17 job-output-atomicity 58cba6324c1d9793d344bc13154b8b2380e8166f
+    tools/job-output-atomicity/  PR69
+
+License: MIT (this directory). SDS52 wrapper and useful-jobs archive remain
+under their own repository licenses. Do not treat fixture payments as live sales.
