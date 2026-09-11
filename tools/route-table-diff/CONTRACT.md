@@ -44,7 +44,7 @@ Collision is an analysis finding (`ok: true`, `breaking: true`), not a missing e
 
 ## Tested version
 
-Tested at the commit that added this file on branch `cursor/w5-m04-co12-route-table-comparison-faa0`. Starting ref `7387eb677abd442dfab9081cb0ad95451fd2a762`. PR52 wrapper pin `aeef964fa188443078958d9d6d393afae1d542ee` was read only. This engine is not invoked by that wrapper.
+Tested implementation `386b8f9fc4745afdc520d1e650d520280936eb39` on branch `cursor/w5-m04-co12-route-table-comparison-faa0`. Starting ref `7387eb677abd442dfab9081cb0ad95451fd2a762`. PR52 wrapper pin `aeef964fa188443078958d9d6d393afae1d542ee` was read only. This engine is not invoked by that wrapper.
 
 ## Remaining integration binding
 
