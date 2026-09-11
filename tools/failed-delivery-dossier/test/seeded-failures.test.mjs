@@ -97,4 +97,16 @@ describe("seeded fail-closed cases", () => {
     assert.equal(result.ok, false);
     assert.equal(result.code, ERROR_CODES.INTEGER_TERMS_VERSION);
   });
+
+  test("CLI pack of official-source fixture exits 2", () => {
+    const r = run([
+      "pack",
+      "--extract-unpaid",
+      "tools/failed-delivery-dossier/fixtures/seeded-failures/official-source-without-evidence.json",
+    ]);
+    assert.equal(r.status, 2, r.stderr + r.stdout);
+    const json = JSON.parse(r.stdout);
+    assert.equal(json.code, ERROR_CODES.OFFICIAL_SOURCE_WITHOUT_EVIDENCE);
+    assert.equal(json.sold, false);
+  });
 });

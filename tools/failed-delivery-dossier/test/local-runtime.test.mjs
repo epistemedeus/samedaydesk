@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, test } from "node:test";
 import { packDossier } from "../lib/pack.mjs";
-import { CHECKOUT_TEST_PATH, F08_RECEIPT_PATH, F08_SHA, WRAPPER_RECEIPT_SCHEMA } from "../lib/pins.mjs";
+import { CHECKOUT_TEST_PATH, F08_SHA, SDS52_SHA, WRAPPER_RECEIPT_SCHEMA } from "../lib/pins.mjs";
+import { runPinChecks } from "../lib/source-status.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..");
@@ -41,6 +42,10 @@ describe("local-runtime vs fixture classes", () => {
     assert.equal(json.packed.sold, false);
     assert.equal(json.packed.evidence[0].sourceKind, "checkout-intake");
     assert.equal(json.packed.evidence[0].origin.class, "local-runtime");
+    assert.equal(json.packed.evidence[0].observationStatus, "observed");
+    assert.equal(json.packed.evidence[0].observedHttpStatus, 200);
+    assert.equal(json.packed.evidence[0].outcomeKind, "incomplete-delivery");
+    assert.notEqual(json.packed.evidence[0].outcomeKind, "transport-failure");
   });
 
   test("published checkout HTTP test still asserts fulfillmentPending and intake_required", () => {
@@ -50,17 +55,18 @@ describe("local-runtime vs fixture classes", () => {
     assert.match(src, /http:\/\/127\.0\.0\.1/);
   });
 
-  test("F08 pin worktree (optional) still emits schema samedaydesk.paid-useful-jobs.receipt.v1", (t) => {
-    const worktree = process.env.F08_READONLY_WORKTREE || "/tmp/f08-paid-wrappers-bae3e7cd";
-    const receiptFile = join(worktree, F08_RECEIPT_PATH);
-    if (!existsSync(receiptFile)) {
-      t.diagnostic(`F08 worktree absent at ${worktree}; fixture-only for this machine`);
-      return;
-    }
-    const src = readFileSync(receiptFile, "utf8");
-    assert.match(src, new RegExp(WRAPPER_RECEIPT_SCHEMA.replace(/\./g, "\\.")));
-    const head = spawnSync("git", ["-C", worktree, "rev-parse", "HEAD"], { encoding: "utf8" });
-    assert.equal(head.stdout.trim(), F08_SHA);
+  test("F08 capture pin and SDS52 current pin are verified distinct worktrees, never a passing skip", () => {
+    const checks = runPinChecks();
+    const f08 = checks.find((row) => row.id === "f08-pin-worktree");
+    const sds52 = checks.find((row) => row.id === "sds52-pin-worktree");
+    assert.equal(f08.status, "observed", f08.detail);
+    assert.equal(f08.pass, true, f08.detail);
+    assert.equal(f08.sha, F08_SHA);
+    assert.equal(sds52.status, "observed", sds52.detail);
+    assert.equal(sds52.pass, true, sds52.detail);
+    assert.equal(sds52.sha, SDS52_SHA);
+    assert.notEqual(F08_SHA, SDS52_SHA);
+    assert.match(readFileSync(`${process.env.F08_READONLY_WORKTREE || "/tmp/ro-worktrees/f08-bae3e7cd"}/server/paid-useful-jobs/lib/receipt.mjs`, "utf8"), new RegExp(WRAPPER_RECEIPT_SCHEMA.replace(/\./g, "\\.")));
   });
 
   test("copied checkout fixture is labelled fixture, not local-runtime proof", () => {
@@ -76,5 +82,8 @@ describe("local-runtime vs fixture classes", () => {
     });
     assert.equal(packed.ok, true);
     assert.equal(packed.evidence[0].origin.class, "fixture");
+    assert.equal(packed.evidence[0].observationStatus, "fixture");
+    assert.equal(packed.evidence[0].observedHttpStatus, null);
+    assert.equal(packed.evidence[0].outcomeKind, "incomplete-delivery");
   });
 });

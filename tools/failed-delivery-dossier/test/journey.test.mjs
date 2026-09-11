@@ -55,6 +55,14 @@ describe("literal caller journey", () => {
     assert.equal(json.honesty.paymentRetried, false);
     assert.equal(json.honesty.paymentSignatureSent, false);
     assert.equal(json.honesty.stripeCalled, false);
+    const extract = json.evidence.find((row) => row.sourceKind === "extract-unpaid");
+    assert.equal(extract.observationStatus, "fixture");
+    assert.equal(extract.observedHttpStatus, null);
+    assert.equal(extract.outcomeKind, "runtime-stop");
+    const live = json.honesty.checks.find((row) => row.id === "live-extract-http");
+    assert.equal(live.status, "unrun");
+    assert.equal(live.pass, false);
+    assert.equal(json.honesty.readyForRelease, false);
   });
 
   test("library packFromPaths matches the CLI journey", async () => {

@@ -1,10 +1,9 @@
 {
   "expectedStatus": 402,
-  "httpStatus": 402,
   "paid": false,
   "sold": false,
   "success": false,
-  "note": "Copied from fixtures/buyer-runtimes/catalog.json contract plus agent402 contract state. HTTP 402 is unpaid, not delivery.",
+  "note": "Catalog/contract expectation only. HTTP 402 is not observed. Do not treat expectedStatus as a captured response.",
   "contract": {
     "x402Version": 2,
     "scheme": "exact",

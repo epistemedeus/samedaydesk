@@ -1,7 +1,8 @@
 import { packDossier, packFromPaths } from "./pack.mjs";
-import { ERROR_CODES, SOURCE_KINDS } from "./pins.mjs";
+import { ERROR_CODES, REPO_ROOT, SOURCE_KINDS } from "./pins.mjs";
 import { honestyEnvelope } from "./honesty.mjs";
 import { loadJsonFile, resolveInputPath } from "./json.mjs";
+import { runPinChecks } from "./source-status.mjs";
 
 export function usage() {
   return `Failed-delivery evidence dossier (read-only).
@@ -15,6 +16,7 @@ node tools/failed-delivery-dossier/bin/dossier.mjs pack \\
   --checkout-intake fixtures/checkout-intake/fulfillment-pending-verify.json \\
   --extract-unpaid fixtures/extract-unpaid/agent402-stop.json
 
+node tools/failed-delivery-dossier/bin/dossier.mjs --verify-pins
 node tools/failed-delivery-dossier/bin/dossier.mjs --refund   # refused, exit 2
 `;
 }
@@ -29,6 +31,7 @@ export function parseArgs(argv) {
     else if (arg === "--send-payment-signature" || arg === "--payment-signature") out.flags.paymentSignature = true;
     else if (arg === "--stripe" || arg === "--call-stripe") out.flags.stripe = true;
     else if (arg === "--as-revenue") out.flags.asRevenue = true;
+    else if (arg === "--verify-pins") out.flags.verifyPins = true;
     else if (arg === "--wrapper-receipt") out.wrapperReceipt = argv[++i];
     else if (arg === "--checkout-intake") out.checkoutIntake = argv[++i];
     else if (arg === "--extract-unpaid") out.extractUnpaid = argv[++i];
@@ -80,6 +83,32 @@ export async function runCli(argv, { cwd = process.cwd() } = {}) {
   if (args.flags.asRevenue) {
     return printJson(packDossier({ asRevenue: true }, { flags: { asRevenue: true } }), 2);
   }
+
+  const pinChecks = args.flags.verifyPins ? runPinChecks({ repoRoot: REPO_ROOT }) : null;
+  if (args.flags.verifyPins && !args.wrapperReceipt && !args.checkoutIntake && !args.extractUnpaid && !args.command) {
+    const payload = {
+      ok: pinChecks.every((check) => check.status !== "unrun" && check.pass === true),
+      sold: false,
+      honesty: honestyEnvelope({
+        checks: pinChecks,
+        sourceStatus: {
+          f08Capture: {
+            sha: pinChecks[0]?.sha || null,
+            status: pinChecks[0]?.pass ? "verified" : pinChecks[0]?.status,
+            evidence: pinChecks[0]?.got ? { gitHead: pinChecks[0].got } : null,
+          },
+          sds52: {
+            sha: pinChecks[1]?.sha || null,
+            status: pinChecks[1]?.pass ? "verified" : pinChecks[1]?.status,
+            evidence: pinChecks[1]?.got ? { gitHead: pinChecks[1].got } : null,
+          },
+        },
+      }),
+      pinChecks,
+    };
+    const incomplete = pinChecks.some((check) => check.status === "unrun" || check.pass !== true);
+    return printJson(payload, incomplete ? 2 : 0);
+  }
   if (args.revenueTotalPath) {
     const loaded = loadJsonFile(resolveInputPath(args.revenueTotalPath, cwd));
     if (!loaded.ok) return printJson(loaded.result, 2);
@@ -115,6 +144,10 @@ export async function runCli(argv, { cwd = process.cwd() } = {}) {
       2,
     );
   }
-  const result = await packFromPaths(spec, { cwd, flags: args.flags });
+  const result = await packFromPaths(spec, {
+    cwd,
+    flags: args.flags,
+    ...(pinChecks ? { pinChecks } : {}),
+  });
   return printJson(result, result.ok ? 0 : 2);
 }

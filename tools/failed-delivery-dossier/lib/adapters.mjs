@@ -2,6 +2,7 @@ import {
   AGENT402_STOP_PATH,
   CHECKOUT_TEST_PATH,
   ERROR_CODES,
+  EXTRACT_CATALOG_PATH,
   F08_SHA,
   FULFILL_PATH,
   FUNDING_STATES_PACKABLE,
@@ -11,6 +12,13 @@ import {
 import { isPlainObject } from "./json.mjs";
 import { refuse } from "./refuse.mjs";
 import { hasPaymentSignaturePayload } from "./guards.mjs";
+import {
+  classifyExtractHttp,
+  extractWhyNotInHand,
+  httpCaptureOf,
+  originClassOf,
+  processCaptureOf,
+} from "./observation.mjs";
 
 function evidence({ sourceKind, whyNotInHand, body, extra = {} }) {
   return {
@@ -58,6 +66,8 @@ export function parseWrapperReceipt(item) {
     fundingState === "rejected"
       ? `F08 wrapper refused (${receipt.code || result?.code || "rejected"}); sold is false; delivery is not in hand`
       : "F08 wrapper ran unfunded; sold is false; this is not a paid delivery in hand";
+  const proc = processCaptureOf(item);
+  const originClass = proc?.class || originClassOf(item) || "fixture";
   return {
     ok: true,
     evidence: evidence({
@@ -68,8 +78,12 @@ export function parseWrapperReceipt(item) {
         fundingState,
         sample: Boolean(receipt.sample || result?.sample),
         code: receipt.code || result?.code || null,
+        observationStatus: proc ? "observed" : "fixture",
+        observedHttpStatus: null,
+        outcomeKind: "valid-analysis",
+        cli: proc,
         origin: {
-          class: "fixture",
+          class: originClass,
           pin: F08_SHA,
           schema: WRAPPER_RECEIPT_SCHEMA,
         },
@@ -100,6 +114,8 @@ export function parseCheckoutIntake(item) {
   if (verify.sold === true || order?.sold === true) {
     return refuse(ERROR_CODES.SOLD_CLAIM, "checkout-intake sold must not be true");
   }
+  const capture = httpCaptureOf(item);
+  const originClass = capture?.class || originClassOf(item) || item.originClass || "fixture";
   return {
     ok: true,
     evidence: evidence({
@@ -114,8 +130,12 @@ export function parseCheckoutIntake(item) {
       extra: {
         fulfillmentPending: true,
         orderStatus: order?.status || "intake_required",
+        observationStatus: capture ? "observed" : "fixture",
+        observedHttpStatus: capture ? capture.status : null,
+        outcomeKind: "incomplete-delivery",
+        http: capture,
         origin: {
-          class: item.originClass || "fixture",
+          class: originClass,
           copiedFrom: [CHECKOUT_TEST_PATH, FULFILL_PATH, "server/routes/checkout.js"],
         },
       },
@@ -135,33 +155,46 @@ export function parseExtractUnpaid(item) {
     );
   }
   const stop = body.state === "stop";
-  const unpaid402 = body.expectedStatus === 402 || body.httpStatus === 402 || body.httpStatus === "402";
+  const classified = stop ? null : classifyExtractHttp({ body, item });
   const contractAmount = isPlainObject(body.contract) ? body.contract.amount : body.amount;
-  if (!stop && !unpaid402) {
+  if (!stop && !classified) {
     return refuse(
       ERROR_CODES.EXTRACT_SHAPE,
-      "extract-unpaid requires Agent402 state stop or an unpaid HTTP 402 contract fixture",
+      "extract-unpaid requires Agent402 state stop, an expected unpaid 402 fixture, or a captured HTTP status",
+    );
+  }
+  if (classified?.notFailedDelivery) {
+    return refuse(
+      ERROR_CODES.NOT_FAILED_DELIVERY,
+      `observed HTTP ${classified.observedHttpStatus} is not a failed unpaid extract`,
     );
   }
   if (body.sold === true || body.paid === true || body.success === true) {
     return refuse(ERROR_CODES.SOLD_CLAIM, "extract unpaid-stop is not a sale or success");
   }
+  const capture = classified?.capture || null;
+  const originClass = capture?.class || originClassOf(item) || "fixture";
   return {
     ok: true,
     evidence: evidence({
       sourceKind: "extract-unpaid",
-      whyNotInHand: stop
-        ? body.recorded ||
-          "Buyer runtime stopped unpaid. No PAYMENT-SIGNATURE sent; extract output is not in hand."
-        : "Unpaid extract HTTP 402. 402 is a paywall, not delivery.",
+      whyNotInHand: extractWhyNotInHand({
+        stop,
+        recorded: body.recorded,
+        classified,
+      }),
       body,
       extra: {
         state: body.state || null,
-        expectedStatus: unpaid402 ? 402 : null,
+        expectedStatus: stop ? null : classified?.expectedStatus ?? null,
+        observedHttpStatus: stop ? null : classified?.observedHttpStatus ?? null,
+        observationStatus: stop ? "fixture" : classified.observationStatus,
+        outcomeKind: stop ? "runtime-stop" : classified.outcomeKind,
         amountAtomic: contractAmount || null,
+        http: capture,
         origin: {
-          class: "fixture",
-          copiedFrom: stop ? AGENT402_STOP_PATH : "fixtures/buyer-runtimes/catalog.json",
+          class: originClass,
+          copiedFrom: stop ? AGENT402_STOP_PATH : capture ? capture.path : EXTRACT_CATALOG_PATH,
         },
       },
     }),

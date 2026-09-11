@@ -7,8 +7,19 @@ import {
   isSampleLabelledDelivered,
 } from "./guards.mjs";
 import { isPlainObject, loadJsonFile, resolveInputPath } from "./json.mjs";
-import { DOSSIER_SCHEMA, ERROR_CODES, SOURCE_KINDS } from "./pins.mjs";
+import {
+  DOSSIER_SCHEMA,
+  ERROR_CODES,
+  F08_SHA,
+  LIVE_EXTRACT_ATOMIC,
+  LIVE_EXTRACT_PRICE_USDC,
+  SDS52_SHA,
+  SDS_MAIN_SHA,
+  SOURCE_KINDS,
+} from "./pins.mjs";
 import { refuse } from "./refuse.mjs";
+import { refuseBadObservationClaim } from "./observation.mjs";
+import { buildHonestyChecks } from "./source-status.mjs";
 
 function asItems(input) {
   if (Array.isArray(input.items)) return input.items;
@@ -69,6 +80,8 @@ export function packDossier(input = {}, options = {}) {
     if (!isPlainObject(body)) {
       return refuse(ERROR_CODES.INVALID_JSON, `${sourceKind} body must be a JSON object`);
     }
+    const claim = refuseBadObservationClaim(item, body);
+    if (claim) return claim;
     if (isSampleLabelledDelivered(body)) {
       return refuse(
         ERROR_CODES.SAMPLE_LABELLED_DELIVERED,
@@ -97,6 +110,28 @@ export function packDossier(input = {}, options = {}) {
   }
 
   const kinds = evidence.map((row) => row.sourceKind);
+  const checks = buildHonestyChecks(evidence, options);
+  const observed402 = evidence.some(
+    (row) => row.observationStatus === "observed" && row.observedHttpStatus === 402,
+  );
+  const expected402 = evidence.some(
+    (row) => row.observationStatus === "expected" && row.expectedStatus === 402,
+  );
+  const liveExternal = evidence.some(
+    (row) => row.origin?.class === "external" && row.observationStatus === "observed",
+  );
+  const pinEvidence = Object.fromEntries(
+    (options.pinChecks || [])
+      .filter((check) => check.id === "f08-pin-worktree" || check.id === "sds52-pin-worktree")
+      .map((check) => [
+        check.id === "f08-pin-worktree" ? "f08Capture" : "sds52",
+        {
+          sha: check.sha || null,
+          status: check.status === "observed" && check.pass ? "verified" : check.status,
+          evidence: check.got ? { gitHead: check.got, file: check.file } : null,
+        },
+      ]),
+  );
   return {
     ok: true,
     schema: DOSSIER_SCHEMA,
@@ -104,7 +139,38 @@ export function packDossier(input = {}, options = {}) {
     deliveryInHand: false,
     evidence,
     sourceKinds: kinds,
-    honesty: honestyEnvelope({ itemCount: evidence.length }),
+    honesty: honestyEnvelope({
+      itemCount: evidence.length,
+      checks,
+      liveExtractUnpaid: {
+        amount: LIVE_EXTRACT_PRICE_USDC,
+        amountAtomic: LIVE_EXTRACT_ATOMIC,
+        observationStatus: liveExternal ? "observed" : "unrun",
+        observedHttpStatus: liveExternal ? 402 : null,
+        localRuntime402: observed402,
+        expected402Only: expected402 && !observed402 && !liveExternal,
+        note: liveExternal
+          ? "External extract HTTP was captured. Catalog amount is unchanged."
+          : observed402
+            ? "Local-runtime HTTP 402 was captured. Live production extract remains unrun."
+            : expected402
+              ? "Catalog or fixture expects HTTP 402. That expectation is not an observed response."
+              : "Catalog amount is expected. Live extract HTTP was not observed.",
+      },
+      sourceStatus: {
+        sdsMain: { sha: SDS_MAIN_SHA, status: "claimed", evidence: null },
+        f08Capture: pinEvidence.f08Capture || {
+          sha: F08_SHA,
+          status: "fixture",
+          evidence: null,
+        },
+        sds52: pinEvidence.sds52 || {
+          sha: SDS52_SHA,
+          status: "claimed",
+          evidence: null,
+        },
+      },
+    }),
   };
 }
 

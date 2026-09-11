@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "W4-commerce-06 read-only failed-delivery evidence packer. Labels wrapper-receipt, checkout-intake, and extract-unpaid sources. Never refunds or retries payment.",
+  "description": "W5-D21 / Co06 read-only failed-delivery evidence packer. Expected 402 is never observed. Unrun checks are not passing skips. Never refunds or retries payment.",
   "bin": {
     "failed-delivery-dossier": "./bin/dossier.mjs"
   },

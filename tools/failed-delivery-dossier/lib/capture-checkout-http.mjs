@@ -115,6 +115,7 @@ if (isMain) {
       {
         sourceKind: "checkout-intake",
         originClass: "local-runtime",
+        http: capture.http,
         body: { verify: capture.verify, order: capture.order },
       },
     ],

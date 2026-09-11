@@ -1,6 +1,7 @@
 /**
- * W4-commerce-06 pins. Own directory only.
- * F08 receipt shape is pinned read-only. Checkout and extract fixtures are
+ * W4-commerce-06 / W5-D21 pins. Own directory only.
+ * F08 receipt capture pin and SDS52 current wrapper pin are distinct.
+ * Do not force those hashes equal. Checkout and extract fixtures are
  * copied from published SDS main. I01 owns earned-work termsVersion hashes.
  */
 import { dirname, join } from "node:path";
@@ -21,6 +22,12 @@ export const F08_SHA = "bae3e7cd5034b21019fb272a99d88db964b831ee";
 export const F08_RECEIPT_PATH = "server/paid-useful-jobs/lib/receipt.mjs";
 export const F08_SEEDED_PATH = "server/paid-useful-jobs/test/seeded-failures.test.mjs";
 export const F08_DIR = "server/paid-useful-jobs/";
+
+/** Current SDS PR52 wrapper pin. Unlike F08_SHA (fixture capture). Do not force equal. */
+export const SDS52_REPO = "epistemedeus/samedaydesk";
+export const SDS52_REF = "fable/f08-paid-wrappers";
+export const SDS52_PR = 52;
+export const SDS52_SHA = "aeef964fa188443078958d9d6d393afae1d542ee";
 
 export const CHECKOUT_TEST_PATH = "server/scripts/test-checkout-http-lifecycle.js";
 export const FULFILL_PATH = "server/lib/fulfill.js";
@@ -66,6 +73,8 @@ export const ERROR_CODES = Object.freeze({
   CHECKOUT_SHAPE: "checkout_intake_shape",
   EXTRACT_SHAPE: "extract_unpaid_shape",
   SOLD_CLAIM: "sold_claim_refused",
+  CLAIMED_OBSERVED_WITHOUT_CAPTURE: "claimed_observed_without_capture",
+  OFFICIAL_SOURCE_WITHOUT_EVIDENCE: "official_source_without_evidence",
 });
 
 export const MUTATION_BOUNDARY =
