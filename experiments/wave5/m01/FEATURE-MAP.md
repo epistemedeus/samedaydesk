@@ -1,6 +1,6 @@
 # FEATURE-MAP — W5-M01 useful-engine composition for D01
 
-SameDayDesk Wave5 catalog owner. Writes `experiments/wave5/m01/` plus the transferred engine trees under `tools/`. Does not write `server/paid-useful-jobs/` or root `package.json`.
+SameDayDesk catalog owner. Writes `experiments/wave5/m01/` plus the transferred engine trees under `tools/`. D01 owns `server/paid-useful-jobs/` as the paid-offer consumer.
 
 ## Caller goal
 
@@ -36,7 +36,7 @@ Not first: schema is used-path JSON Schema only; route does not claim Next.js-sh
 
 ## D01
 
-D01 `6bed72dd` / kernel `bccf34b3` owns the wrapper. Current DI cannot select these engines (`unknown-job`). Adapter: `lib/d01-adapter.mjs`. Exact injection is in `CONTRACT.md`. Not a sale.
+D01 default executor now overlays these engines (`createM01AwareGetJob` + `runEngineForD01`). Adapter: `lib/d01-adapter.mjs`. Not a sale.
 
 ## Remaining
 
