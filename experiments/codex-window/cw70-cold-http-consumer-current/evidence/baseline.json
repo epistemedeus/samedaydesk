@@ -1,0 +1,30 @@
+{
+  "source": "abd861927cda6e3501b4a35289a4b284695cc493",
+  "wrongIdentity": {
+    "kind": "analysis-outcome",
+    "ok": true,
+    "analysis": null,
+    "transport": null,
+    "body": {
+      "ok": true,
+      "executionId": "unrelated",
+      "jobId": "wrong-job",
+      "outputs": [],
+      "delivery": {
+        "complete": false
+      }
+    }
+  },
+  "lostResponseTicket": {
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+    "origin": "http://127.0.0.1:12345",
+    "jobId": "vendor-budget-impact",
+    "retrieval": null,
+    "executionId": null,
+    "submitted": {},
+    "classify": {
+      "kind": "http-transport-failure"
+    },
+    "httpStatus": 0
+  }
+}
