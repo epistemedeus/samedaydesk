@@ -1,0 +1,148 @@
+{
+  "ok": false,
+  "refused": true,
+  "jobId": "lockfile-pin-delta",
+  "code": "html-input",
+  "error": "before is HTML, not a package-lock.json",
+  "fundingState": "unfunded",
+  "sold": false,
+  "sample": false,
+  "sampleReasons": [],
+  "purchaseAuthority": false,
+  "liveSettleAttempted": false,
+  "liveSettleAllowed": false,
+  "outputs": [],
+  "engine": {
+    "ok": false,
+    "refused": true,
+    "code": "html-input",
+    "error": "before is HTML, not a package-lock.json",
+    "status": "refused",
+    "detail": {
+      "label": "before"
+    },
+    "purchaseAuthority": false
+  },
+  "runOutDir": "/tmp/cw63-controls/puj-lockfile-pin-delta-out-NEqahX",
+  "executionId": "ba0976fe-7d32-44fd-95c3-3024f535ca20",
+  "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+  "transport": "ok",
+  "analysis": {
+    "status": "refused",
+    "outcome": "refused",
+    "identityVerified": null
+  },
+  "delivery": {
+    "status": "not-attempted",
+    "complete": false,
+    "expected": [
+      "pin-delta.json",
+      "pin-delta.md"
+    ],
+    "present": [],
+    "missing": [
+      "pin-delta.json",
+      "pin-delta.md"
+    ],
+    "unexpected": []
+  },
+  "receipt": {
+    "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+    "jobId": "lockfile-pin-delta",
+    "engine": {
+      "package": "@samedaydesk/lockfile-pin-delta",
+      "version": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "purchaseAuthority": false,
+      "cli": "node bin/lockfile-delta.mjs",
+      "archiveSha256": "74f36bc50971fd3dfbce48168ddd102ce124b1574d519cef854858a2b2cc6a9a",
+      "archiveBytes": 196,
+      "sourceRepo": "epistemedeus/samedaydesk",
+      "sourceCommit": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "ownedPath": "tools/lockfile-pin-delta/",
+      "source": "in-tree",
+      "catalogPin": {
+        "sha256": "74f36bc50971fd3dfbce48168ddd102ce124b1574d519cef854858a2b2cc6a9a",
+        "bytes": 196,
+        "version": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+        "package": "@samedaydesk/lockfile-pin-delta"
+      },
+      "executable": {
+        "sha256": "aead6e33f6a748a40c4f252022916dae5049356566517817b5994940d20bbcc6",
+        "bytes": 1318,
+        "bin": "/workspace/pilot/tmp/cw63-astra-failure-policy-integration-20260912/src/tools/lockfile-pin-delta/bin/lockfile-delta.mjs",
+        "source": "in-tree"
+      }
+    },
+    "inputsDigest": "295dd02c61956d12149f1fb7fc25ec99cc78796f5867fd13460a7613af8d0b52",
+    "outputsDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "inputs": [
+      {
+        "name": "before",
+        "kind": "file",
+        "bytes": 151,
+        "sha256": "ef84d828eb2d89d2cbf78db0c2855fa500530323c04de9c80984210973ae0635"
+      },
+      {
+        "name": "after",
+        "kind": "file",
+        "bytes": 802,
+        "sha256": "bfa5b4a508690df66532aed4ed0362181b4b304c7170d7598d45b1473a197bf9"
+      }
+    ],
+    "inputRoot": null,
+    "outputs": [],
+    "fundingState": "unfunded",
+    "sold": false,
+    "sample": false,
+    "sampleReasons": [],
+    "purchaseAuthority": false,
+    "liveSettlement": "out-of-scope",
+    "fixturePrice": {
+      "labelled": true,
+      "live": false,
+      "publishedToLiveCatalog": false,
+      "jobId": "lockfile-pin-delta",
+      "amountUsdc": "0.02",
+      "amountAtomic": "20000",
+      "payTo": "0x0000000000000000000000000000000000000F08",
+      "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+    },
+    "payment": {
+      "fixture": false,
+      "purchaseAuthority": false,
+      "liveSettleAttempted": false,
+      "liveSettleAllowed": false,
+      "fundingState": "unfunded"
+    },
+    "continuity": null,
+    "engineResult": {
+      "ok": false,
+      "status": "refused",
+      "digest": null,
+      "refused": true,
+      "identityVerified": null
+    },
+    "outDir": "/tmp/cw63-controls/puj-lockfile-pin-delta-out-NEqahX",
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+    "transport": "ok",
+    "analysis": {
+      "status": "refused",
+      "outcome": "refused",
+      "identityVerified": null
+    },
+    "delivery": {
+      "status": "not-attempted",
+      "complete": false,
+      "expected": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "present": [],
+      "missing": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "unexpected": []
+    }
+  }
+}

@@ -1,0 +1,553 @@
+TAP version 13
+# Subtest: honest enforcement claims
+    # Subtest: CLI enforcement contract never claims OS isolation
+    ok 1 - CLI enforcement contract never claims OS isolation
+      ---
+      duration_ms: 103.4815
+      type: 'test'
+      ...
+    # Subtest: CLI probe-extract detects a local /extract payment-shaped attempt
+    ok 2 - CLI probe-extract detects a local /extract payment-shaped attempt
+      ---
+      duration_ms: 188.309616
+      type: 'test'
+      ...
+    # Subtest: CLI probe-extract still detects the merchant extract URL shape without a live GET
+    ok 3 - CLI probe-extract still detects the merchant extract URL shape without a live GET
+      ---
+      duration_ms: 98.630406
+      type: 'test'
+      ...
+    # Subtest: CLI probe with PAYMENT-SIGNATURE is a detected payment attempt
+    ok 4 - CLI probe with PAYMENT-SIGNATURE is a detected payment attempt
+      ---
+      duration_ms: 93.049137
+      type: 'test'
+      ...
+    # Subtest: unhooked fetch to a local dummy /extract escapes and is not claimed as OS isolation
+    ok 5 - unhooked fetch to a local dummy /extract escapes and is not claimed as OS isolation
+      ---
+      duration_ms: 105.911064
+      type: 'test'
+      ...
+    # Subtest: unhooked probe refuses a remote URL instead of live-GET
+    ok 6 - unhooked probe refuses a remote URL instead of live-GET
+      ---
+      duration_ms: 0.595366
+      type: 'test'
+      ...
+    # Subtest: CLI observe-must-not-run is a text scan, not OS proof
+    ok 7 - CLI observe-must-not-run is a text scan, not OS proof
+      ---
+      duration_ms: 302.673993
+      type: 'test'
+      ...
+    # Subtest: copying mustNotRun is not treated as preservation
+    ok 8 - copying mustNotRun is not treated as preservation
+      ---
+      duration_ms: 0.37372
+      type: 'test'
+      ...
+    # Subtest: sequential intercepts keep separate logs and do not mutate parent HONESTY_INTERCEPT_LOG
+    ok 9 - sequential intercepts keep separate logs and do not mutate parent HONESTY_INTERCEPT_LOG
+      ---
+      duration_ms: 18.178393
+      type: 'test'
+      ...
+    1..9
+ok 1 - honest enforcement claims
+  ---
+  duration_ms: 913.248177
+  type: 'suite'
+  ...
+# Subtest: inspect
+    # Subtest: flags extract and batch, not useful-jobs public paths
+    ok 1 - flags extract and batch, not useful-jobs public paths
+      ---
+      duration_ms: 1.459316
+      type: 'test'
+      ...
+    # Subtest: does not claim a useful-jobs public path is a payment attempt
+    ok 2 - does not claim a useful-jobs public path is a payment attempt
+      ---
+      duration_ms: 1.289303
+      type: 'test'
+      ...
+    1..2
+ok 2 - inspect
+  ---
+  duration_ms: 3.589169
+  type: 'suite'
+  ...
+# Subtest: literal user journey
+    # Subtest: listing-repair-packet --example: purchaseAuthority false, no extract URL, mustNotRun preserved
+    ok 1 - listing-repair-packet --example: purchaseAuthority false, no extract URL, mustNotRun preserved
+      ---
+      duration_ms: 613.603432
+      type: 'test'
+      ...
+    # Subtest: library report matches CLI on --example
+    ok 2 - library report matches CLI on --example
+      ---
+      duration_ms: 475.693236
+      type: 'test'
+      ...
+    # Subtest: caller run via --input kit sample still has no extract URL
+    ok 3 - caller run via --input kit sample still has no extract URL
+      ---
+      duration_ms: 424.514039
+      type: 'test'
+      ...
+    # Subtest: writes JSON when --out is set
+    ok 4 - writes JSON when --out is set
+      ---
+      duration_ms: 581.191426
+      type: 'test'
+      ...
+    # Subtest: buyer-runtimes unpaid construct is still the extract GET without payment headers
+    ok 5 - buyer-runtimes unpaid construct is still the extract GET without payment headers
+      ---
+      duration_ms: 2.34942
+      type: 'test'
+      ...
+    1..5
+ok 3 - literal user journey
+  ---
+  duration_ms: 2098.894221
+  type: 'suite'
+  ...
+# Subtest: local HTTP intercept (not a live merchant GET)
+    # Subtest: local intercept blocks GET /extract without paying
+    ok 1 - local intercept blocks GET /extract without paying
+      ---
+      duration_ms: 26.394999
+      type: 'test'
+      ...
+    # Subtest: PAYMENT-SIGNATURE on local intercept is blocked
+    ok 2 - PAYMENT-SIGNATURE on local intercept is blocked
+      ---
+      duration_ms: 8.12548
+      type: 'test'
+      ...
+    # Subtest: PATH curl stub refuses extract URLs
+    ok 3 - PATH curl stub refuses extract URLs
+      ---
+      duration_ms: 90.752991
+      type: 'test'
+      ...
+    # Subtest: F18 contrast fixture is unpaid 402, not external acceptance
+    ok 4 - F18 contrast fixture is unpaid 402, not external acceptance
+      ---
+      duration_ms: 0.830457
+      type: 'test'
+      ...
+    1..4
+ok 4 - local HTTP intercept (not a live merchant GET)
+  ---
+  duration_ms: 127.080014
+  type: 'suite'
+  ...
+# Subtest: seeded failures
+    # Subtest: stub that fetches agents.samedaydesk.com/extract is caught
+    ok 1 - stub that fetches agents.samedaydesk.com/extract is caught
+      ---
+      duration_ms: 194.180772
+      type: 'test'
+      ...
+    # Subtest: library probeExtractFetch catches the stub
+    ok 2 - library probeExtractFetch catches the stub
+      ---
+      duration_ms: 93.107429
+      type: 'test'
+      ...
+    # Subtest: wrapping useful-jobs with a paid retry is refused
+    ok 3 - wrapping useful-jobs with a paid retry is refused
+      ---
+      duration_ms: 100.41384
+      type: 'test'
+      ...
+    # Subtest: library refusePaidRetry refuses the fixture wrap
+    ok 4 - library refusePaidRetry refuses the fixture wrap
+      ---
+      duration_ms: 1.360496
+      type: 'test'
+      ...
+    # Subtest: integer F01 termsVersion is rejected; I01 sha256: hash is accepted
+    ok 5 - integer F01 termsVersion is rejected; I01 sha256: hash is accepted
+      ---
+      duration_ms: 1.053394
+      type: 'test'
+      ...
+    1..5
+ok 5 - seeded failures
+  ---
+  duration_ms: 391.175593
+  type: 'suite'
+  ...
+# Subtest: literal caller journey
+    # Subtest: CLI pack lists three evidence items with distinct source kinds and sold false
+    ok 1 - CLI pack lists three evidence items with distinct source kinds and sold false
+      ---
+      duration_ms: 57.161591
+      type: 'test'
+      ...
+    # Subtest: library packFromPaths matches the CLI journey
+    ok 2 - library packFromPaths matches the CLI journey
+      ---
+      duration_ms: 1.893618
+      type: 'test'
+      ...
+    # Subtest: unfunded F08 receipt packs as wrapper-receipt with sold false
+    ok 3 - unfunded F08 receipt packs as wrapper-receipt with sold false
+      ---
+      duration_ms: 0.406226
+      type: 'test'
+      ...
+    # Subtest: copied stop.json still matches the published buyer-runtime fixture
+    ok 4 - copied stop.json still matches the published buyer-runtime fixture
+      ---
+      duration_ms: 0.386486
+      type: 'test'
+      ...
+    1..4
+ok 6 - literal caller journey
+  ---
+  duration_ms: 61.661484
+  type: 'suite'
+  ...
+# Subtest: local-runtime vs fixture classes
+    # Subtest: local HTTP checkout verify returns fulfillmentPending and packs as checkout-intake
+    ok 1 - local HTTP checkout verify returns fulfillmentPending and packs as checkout-intake
+      ---
+      duration_ms: 429.203022
+      type: 'test'
+      ...
+    # Subtest: published checkout HTTP test still asserts fulfillmentPending and intake_required
+    ok 2 - published checkout HTTP test still asserts fulfillmentPending and intake_required
+      ---
+      duration_ms: 0.684614
+      type: 'test'
+      ...
+    # Subtest: F08 and SDS52 historical source pins are distinct, without executing old runtimes
+    ok 3 - F08 and SDS52 historical source pins are distinct, without executing old runtimes
+      ---
+      duration_ms: 862.531192
+      type: 'test'
+      ...
+    # Subtest: copied checkout fixture is labelled fixture, not local-runtime proof
+    ok 4 - copied checkout fixture is labelled fixture, not local-runtime proof
+      ---
+      duration_ms: 1.312913
+      type: 'test'
+      ...
+    1..4
+ok 7 - local-runtime vs fixture classes
+  ---
+  duration_ms: 1294.868804
+  type: 'suite'
+  ...
+# Subtest: Co06 observation honesty
+    # Subtest: unrun optional check is never a pass or observed, even if matched is set
+    ok 1 - unrun optional check is never a pass or observed, even if matched is set
+      ---
+      duration_ms: 0.714366
+      type: 'test'
+      ...
+    # Subtest: CLI pack of catalog 402 fixture is expected, not observed
+    ok 2 - CLI pack of catalog 402 fixture is expected, not observed
+      ---
+      duration_ms: 55.496981
+      type: 'test'
+      ...
+    # Subtest: claimed httpStatus 402 without capture is expected, not observed
+    ok 3 - claimed httpStatus 402 without capture is expected, not observed
+      ---
+      duration_ms: 1.646276
+      type: 'test'
+      ...
+    # Subtest: claimed official source without evidence is refused
+    ok 4 - claimed official source without evidence is refused
+      ---
+      duration_ms: 0.41846
+      type: 'test'
+      ...
+    # Subtest: claimed observed HTTP without capture is refused
+    ok 5 - claimed observed HTTP without capture is refused
+      ---
+      duration_ms: 0.320536
+      type: 'test'
+      ...
+    # Subtest: local HTTP 402 capture is observed paywall and live extract stays unrun
+    ok 6 - local HTTP 402 capture is observed paywall and live extract stays unrun
+      ---
+      duration_ms: 120.375507
+      type: 'test'
+      ...
+    # Subtest: CLI --verify-pins observes F08 capture pin and SDS52 current pin as distinct SHAs
+    ok 7 - CLI --verify-pins observes F08 capture pin and SDS52 current pin as distinct SHAs
+      ---
+      duration_ms: 55.622533
+      type: 'test'
+      ...
+    # Subtest: current checkout CLI sample refusal is distinct from transport failure
+    ok 8 - current checkout CLI sample refusal is distinct from transport failure
+      ---
+      duration_ms: 113.520511
+      type: 'test'
+      ...
+    1..8
+ok 8 - Co06 observation honesty
+  ---
+  duration_ms: 349.240527
+  type: 'suite'
+  ...
+# Subtest: seeded fail-closed cases
+    # Subtest: SAMPLE receipt labelled delivered is refused
+    ok 1 - SAMPLE receipt labelled delivered is refused
+      ---
+      duration_ms: 2.343346
+      type: 'test'
+      ...
+    # Subtest: mixing buyerClass into a revenue total is refused
+    ok 2 - mixing buyerClass into a revenue total is refused
+      ---
+      duration_ms: 0.297869
+      type: 'test'
+      ...
+    # Subtest: CLI --refund exits 2 and does not refund
+    ok 3 - CLI --refund exits 2 and does not refund
+      ---
+      duration_ms: 53.246701
+      type: 'test'
+      ...
+    # Subtest: CLI pack --refund still exits 2
+    ok 4 - CLI pack --refund still exits 2
+      ---
+      duration_ms: 66.444938
+      type: 'test'
+      ...
+    # Subtest: retry payment and PAYMENT-SIGNATURE flags exit 2
+    ok 5 - retry payment and PAYMENT-SIGNATURE flags exit 2
+      ---
+      duration_ms: 114.683132
+      type: 'test'
+      ...
+    # Subtest: CLI --revenue-total mixing buyerClass exits 2
+    ok 6 - CLI --revenue-total mixing buyerClass exits 2
+      ---
+      duration_ms: 56.45053
+      type: 'test'
+      ...
+    # Subtest: integer termsVersion is refused (I01 hash contract)
+    ok 7 - integer termsVersion is refused (I01 hash contract)
+      ---
+      duration_ms: 0.693813
+      type: 'test'
+      ...
+    # Subtest: CLI pack of official-source fixture exits 2
+    ok 8 - CLI pack of official-source fixture exits 2
+      ---
+      duration_ms: 51.535799
+      type: 'test'
+      ...
+    1..8
+ok 9 - seeded fail-closed cases
+  ---
+  duration_ms: 347.075112
+  type: 'suite'
+  ...
+# Subtest: CLI writes projection.json for the published settlement fixtures
+ok 10 - CLI writes projection.json for the published settlement fixtures
+  ---
+  duration_ms: 145.876555
+  type: 'test'
+  ...
+# Subtest: seeded failure: --execute-refund is refused
+ok 11 - seeded failure: --execute-refund is refused
+  ---
+  duration_ms: 105.508692
+  type: 'test'
+  ...
+# Subtest: seeded failure: --sum-as-revenue is refused
+ok 12 - seeded failure: --sum-as-revenue is refused
+  ---
+  duration_ms: 110.387813
+  type: 'test'
+  ...
+# Subtest: seeded failure: --post-paid is refused
+ok 13 - seeded failure: --post-paid is refused
+  ---
+  duration_ms: 115.163081
+  type: 'test'
+  ...
+# Subtest: seeded failure: integer --terms-version is refused
+ok 14 - seeded failure: integer --terms-version is refused
+  ---
+  duration_ms: 108.154449
+  type: 'test'
+  ...
+# Subtest: CLI --listen is a real local HTTP path including a per-job dossier
+ok 15 - CLI --listen is a real local HTTP path including a per-job dossier
+  ---
+  duration_ms: 187.278715
+  type: 'test'
+  ...
+# Subtest: local HTTP GET /projection is a real server path, not a fake in-memory double
+ok 16 - local HTTP GET /projection is a real server path, not a fake in-memory double
+  ---
+  duration_ms: 44.81562
+  type: 'test'
+  ...
+# Subtest: local HTTP POST refund is refused
+ok 17 - local HTTP POST refund is refused
+  ---
+  duration_ms: 16.280919
+  type: 'test'
+  ...
+# Subtest: local HTTP unexpected throw is transport 500, not an invented refundClaim
+ok 18 - local HTTP unexpected throw is transport 500, not an invented refundClaim
+  ---
+  duration_ms: 8.424926
+  type: 'test'
+  ...
+# Subtest: Co07: operational repair_required does not invent not-offered without policy
+ok 19 - Co07: operational repair_required does not invent not-offered without policy
+  ---
+  duration_ms: 3.938845
+  type: 'test'
+  ...
+# Subtest: Co07: explicit policy can mark the same job not-offered
+ok 20 - Co07: explicit policy can mark the same job not-offered
+  ---
+  duration_ms: 7.557596
+  type: 'test'
+  ...
+# Subtest: Co07: customer dossier omits unrelated banked 8.105 USDC
+ok 21 - Co07: customer dossier omits unrelated banked 8.105 USDC
+  ---
+  duration_ms: 103.430354
+  type: 'test'
+  ...
+# Subtest: Co07 CLI: --attach-cited-banked is refused
+ok 22 - Co07 CLI: --attach-cited-banked is refused
+  ---
+  duration_ms: 116.249
+  type: 'test'
+  ...
+# Subtest: Co07 CLI: explicit attested-delivery policy yields none; without it the same facts stay unknown
+ok 23 - Co07 CLI: explicit attested-delivery policy yields none; without it the same facts stay unknown
+  ---
+  duration_ms: 362.096577
+  type: 'test'
+  ...
+# Subtest: unlike terms hashes are not forced equal
+ok 24 - unlike terms hashes are not forced equal
+  ---
+  duration_ms: 5.185833
+  type: 'test'
+  ...
+# Subtest: D13 pin ledger engine_failure overlays outcomeKind and still does not invent policy
+ok 25 - D13 pin ledger engine_failure overlays outcomeKind and still does not invent policy
+  ---
+  duration_ms: 162.358668
+  type: 'test'
+  ...
+# Subtest: D13 pin ledger that treats 8.105 as job revenue is refused
+ok 26 - D13 pin ledger that treats 8.105 as job revenue is refused
+  ---
+  duration_ms: 1.60965
+  type: 'test'
+  ...
+# Subtest: PR52 receipt valid refusal is analysis, not a projector crash; engine failure stays distinct
+ok 27 - PR52 receipt valid refusal is analysis, not a projector crash; engine failure stays distinct
+  ---
+  duration_ms: 113.491841
+  type: 'test'
+  ...
+# Subtest: stripe intake_required becomes not-offered only with explicit policy
+ok 28 - stripe intake_required becomes not-offered only with explicit policy
+  ---
+  duration_ms: 1.602238
+  type: 'test'
+  ...
+# Subtest: integer policy termsVersion is refused at the CLI
+ok 29 - integer policy termsVersion is refused at the CLI
+  ---
+  duration_ms: 98.190946
+  type: 'test'
+  ...
+# Subtest: local Postgres is required and stores unknown claims without paid_out
+ok 30 - local Postgres is required and stores unknown claims without paid_out
+  ---
+  duration_ms: 1210.733013
+  type: 'test'
+  ...
+# Subtest: local Postgres stores an explicit-policy not-offered row
+ok 31 - local Postgres stores an explicit-policy not-offered row
+  ---
+  duration_ms: 1137.059826
+  type: 'test'
+  ...
+# Subtest: I01 termsVersion is a content hash; integers are rejected
+ok 32 - I01 termsVersion is a content hash; integers are rejected
+  ---
+  duration_ms: 1.194672
+  type: 'test'
+  ...
+# Subtest: committed golden matches the published-fixture journey
+ok 33 - committed golden matches the published-fixture journey
+  ---
+  duration_ms: 13.2615
+  type: 'test'
+  ...
+# Subtest: journey: published settlement fixtures project without paid-out rows or invented policy
+ok 34 - journey: published settlement fixtures project without paid-out rows or invented policy
+  ---
+  duration_ms: 1.66798
+  type: 'test'
+  ...
+# Subtest: stripe intake_required without policy is unknown, not a live Stripe refund
+ok 35 - stripe intake_required without policy is unknown, not a live Stripe refund
+  ---
+  duration_ms: 0.55712
+  type: 'test'
+  ...
+# Subtest: seeded failure: organic label on incentivized_trial is refused
+ok 36 - seeded failure: organic label on incentivized_trial is refused
+  ---
+  duration_ms: 0.687277
+  type: 'test'
+  ...
+# Subtest: seeded failure: summing independent and owner as revenue is refused
+ok 37 - seeded failure: summing independent and owner as revenue is refused
+  ---
+  duration_ms: 0.945872
+  type: 'test'
+  ...
+# Subtest: seeded failure: execute-refund is refused and Stripe is not called
+ok 38 - seeded failure: execute-refund is refused and Stripe is not called
+  ---
+  duration_ms: 0.36628
+  type: 'test'
+  ...
+# Subtest: post-paid obligation writes are refused
+ok 39 - post-paid obligation writes are refused
+  ---
+  duration_ms: 0.27465
+  type: 'test'
+  ...
+# Subtest: classifyRefundClaim keeps the agent402 delivery token as a job fact, not a policy
+ok 40 - classifyRefundClaim keeps the agent402 delivery token as a job fact, not a policy
+  ---
+  duration_ms: 0.463954
+  type: 'test'
+  ...
+1..40
+# tests 80
+# suites 9
+# pass 80
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11204.139674

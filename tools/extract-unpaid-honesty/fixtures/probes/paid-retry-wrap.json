@@ -1,0 +1,14 @@
+{
+  "kind": "useful-jobs-paid-retry-wrap",
+  "engineId": "listing-repair-packet",
+  "wrapUsefulJobs": true,
+  "paidRetry": true,
+  "onUnpaid402": {
+    "retry": true,
+    "url": "https://agents.samedaydesk.com/extract?url=https://example.com",
+    "headers": {
+      "PAYMENT-SIGNATURE": "fixture-not-a-real-signature"
+    }
+  },
+  "note": "Seeded failure: wrapping useful-jobs with a paid extract retry. Must be refused. Not a payment."
+}

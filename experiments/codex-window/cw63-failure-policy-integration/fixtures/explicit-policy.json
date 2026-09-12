@@ -1,0 +1,17 @@
+{
+  "schema": "samedaydesk.refund-policy.v1",
+  "policyId": "cw63-local-control-unfunded-refusal",
+  "defaultClaim": "unknown",
+  "rules": [
+    {
+      "match": {
+        "sourceKind": "wrapper-receipt",
+        "jobId": "lockfile-pin-delta",
+        "outcomeKind": "refusal",
+        "fundingState": "unfunded",
+        "settlementStatus": "not-attempted"
+      },
+      "claim": "not-offered"
+    }
+  ]
+}

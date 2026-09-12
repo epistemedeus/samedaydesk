@@ -1,0 +1,131 @@
+TAP version 13
+# Subtest: actual wrapper refusal remains executed analysis, with no settlement amount or policy
+ok 1 - actual wrapper refusal remains executed analysis, with no settlement amount or policy
+  ---
+  duration_ms: 5.245263
+  type: 'test'
+  ...
+# Subtest: actual no-change is derived from engine counts and hash-verified complete files
+ok 2 - actual no-change is derived from engine counts and hash-verified complete files
+  ---
+  duration_ms: 2.32062
+  type: 'test'
+  ...
+# Subtest: explicit exact policy affects claim only and a policy requiring unbound terms remains unknown
+ok 3 - explicit exact policy affects claim only and a policy requiring unbound terms remains unknown
+  ---
+  duration_ms: 2.198981
+  type: 'test'
+  ...
+# Subtest: jobId never becomes a settlement operationId and missing legacy execution stays unknown
+ok 4 - jobId never becomes a settlement operationId and missing legacy execution stays unknown
+  ---
+  duration_ms: 0.538986
+  type: 'test'
+  ...
+# Subtest: catalog expectation, unpaid 402 and checkout missing intake remain non-execution context
+ok 5 - catalog expectation, unpaid 402 and checkout missing intake remain non-execution context
+  ---
+  duration_ms: 1.898919
+  type: 'test'
+  ...
+# Subtest: external 500 is never rewritten to 402 and checkout is not live extract evidence
+ok 6 - external 500 is never rewritten to 402 and checkout is not live extract evidence
+  ---
+  duration_ms: 0.773357
+  type: 'test'
+  ...
+# Subtest: projection recomputes wrapper and context summaries from retained source
+ok 7 - projection recomputes wrapper and context summaries from retained source
+  ---
+  duration_ms: 0.578053
+  type: 'test'
+  ...
+# Subtest: contradictory wrapper and receipt fields are refused
+ok 8 - contradictory wrapper and receipt fields are refused
+  ---
+  duration_ms: 0.522743
+  type: 'test'
+  ...
+# Subtest: seeded transport-failure stays distinct through actual wrapper and projector
+ok 9 - seeded transport-failure stays distinct through actual wrapper and projector
+  ---
+  duration_ms: 80.4994
+  type: 'test'
+  ...
+# Subtest: seeded missing-body stays distinct through actual wrapper and projector
+ok 10 - seeded missing-body stays distinct through actual wrapper and projector
+  ---
+  duration_ms: 76.475056
+  type: 'test'
+  ...
+# Subtest: quoted payment text is observation and never a detected request
+ok 11 - quoted payment text is observation and never a detected request
+  ---
+  duration_ms: 3.183791
+  type: 'test'
+  ...
+# Subtest: a script echoing the guard error cannot manufacture an intercepted request
+ok 12 - a script echoing the guard error cannot manufacture an intercepted request
+  ---
+  duration_ms: 103.110077
+  type: 'test'
+  ...
+# Subtest: D23 spawn failure, missing body and valid refusal have separate classifications
+ok 13 - D23 spawn failure, missing body and valid refusal have separate classifications
+  ---
+  duration_ms: 0.223774
+  type: 'test'
+  ...
+# Subtest: real Postgres preserves actual classifications and rejects payout and missing facts
+not ok 14 - real Postgres preserves actual classifications and rejects payout and missing facts
+  ---
+  duration_ms: 1118.31363
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw63-astra-failure-policy-integration-20260912/src/experiments/codex-window/cw63-failure-policy-integration/test/integration.test.mjs:144:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /failed_job_nonpayable/. Input:
+    
+    'Error: ERROR:  new row for relation "failed_job_policy_projections" violates check constraint "failed_job_explicit_claim"\n' +
+      'DETAIL:  Failing row contains (sha256:f02ee3dd272b893ea23ed02e534f03fa19db6f3df4d7e98f5b9251182..., no-policy, {"jobId": "lockfile-pin-delta", "paidOut": false, "delivery": "n...).\n'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+  error: |-
+    ERROR:  new row for relation "failed_job_policy_projections" violates check constraint "failed_job_explicit_claim"
+    DETAIL:  Failing row contains (sha256:f02ee3dd272b893ea23ed02e534f03fa19db6f3df4d7e98f5b9251182..., no-policy, {"jobId": "lockfile-pin-delta", "paidOut": false, "delivery": "n...).
+    
+  stack: |-
+    Object.psql (file:///workspace/pilot/tmp/cw63-astra-failure-policy-integration-20260912/src/tools/refund-obligation-projector/lib/postgres.mjs:104:15)
+    file:///workspace/pilot/tmp/cw63-astra-failure-policy-integration-20260912/src/experiments/codex-window/cw63-failure-policy-integration/test/integration.test.mjs:156:33
+    getActual (node:assert:609:5)
+    Function.throws (node:assert:757:24)
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw63-astra-failure-policy-integration-20260912/src/experiments/codex-window/cw63-failure-policy-integration/test/integration.test.mjs:156:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw63-astra-failure-policy-integration-20260912/src/experiments/codex-window/cw63-failure-policy-integration/test/integration.test.mjs:156:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 13
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1871.388474

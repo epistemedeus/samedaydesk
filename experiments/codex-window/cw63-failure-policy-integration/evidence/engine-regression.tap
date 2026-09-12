@@ -1,0 +1,881 @@
+TAP version 13
+# Subtest: indexing continuity (merchant PR54 hook pattern)
+    # Subtest: accepts v2 exact eip155 only
+    ok 1 - accepts v2 exact eip155 only
+      ---
+      duration_ms: 2.022576
+      type: 'test'
+      ...
+    # Subtest: uses public origin + path and ignores Host
+    ok 2 - uses public origin + path and ignores Host
+      ---
+      duration_ms: 0.276522
+      type: 'test'
+      ...
+    # Subtest: plans atomic fills for omitted resource and bazaar without mutating until apply
+    ok 3 - plans atomic fills for omitted resource and bazaar without mutating until apply
+      ---
+      duration_ms: 1.352798
+      type: 'test'
+      ...
+    # Subtest: retains wrong-typed resource/bazaar without declining
+    ok 4 - retains wrong-typed resource/bazaar without declining
+      ---
+      duration_ms: 0.183302
+      type: 'test'
+      ...
+    # Subtest: skips v1 without mutation
+    ok 5 - skips v1 without mutation
+      ---
+      duration_ms: 0.244824
+      type: 'test'
+      ...
+    # Subtest: registers onBeforeVerify/onBeforeSettle and does not reassign verify/settle
+    ok 6 - registers onBeforeVerify/onBeforeSettle and does not reassign verify/settle
+      ---
+      duration_ms: 0.679853
+      type: 'test'
+      ...
+    # Subtest: local envelope never live-settles
+    ok 7 - local envelope never live-settles
+      ---
+      duration_ms: 0.821249
+      type: 'test'
+      ...
+    # Subtest: buildDeclaredIndexing uses resolver only
+    ok 8 - buildDeclaredIndexing uses resolver only
+      ---
+      duration_ms: 0.215954
+      type: 'test'
+      ...
+    1..8
+ok 1 - indexing continuity (merchant PR54 hook pattern)
+  ---
+  duration_ms: 6.841319
+  type: 'suite'
+  ...
+# Subtest: real HTTP process binds keys to canonical requests and current file bytes
+ok 2 - real HTTP process binds keys to canonical requests and current file bytes
+  ---
+  duration_ms: 858.495009
+  type: 'test'
+  ...
+# Subtest: malformed result URL does not terminate the actual HTTP process
+ok 3 - malformed result URL does not terminate the actual HTTP process
+  ---
+  duration_ms: 140.01932
+  type: 'test'
+  ...
+# Subtest: HTTP validates request objects and bounded execution IDs
+ok 4 - HTTP validates request objects and bounded execution IDs
+  ---
+  duration_ms: 143.089802
+  type: 'test'
+  ...
+# Subtest: concurrent identical keys coalesce while changed pending requests conflict
+ok 5 - concurrent identical keys coalesce while changed pending requests conflict
+  ---
+  duration_ms: 30.206392
+  type: 'test'
+  ...
+# Subtest: expired cache entries never rerun and full cache refuses admission
+ok 6 - expired cache entries never rerun and full cache refuses admission
+  ---
+  duration_ms: 38.389745
+  type: 'test'
+  ...
+# Subtest: an execution exception is retained instead of rerunning the same key
+ok 7 - an execution exception is retained instead of rerunning the same key
+  ---
+  duration_ms: 5.980602
+  type: 'test'
+  ...
+# Subtest: mailbox rejects wrong nested job on real execution bytes
+ok 8 - mailbox rejects wrong nested job on real execution bytes
+  ---
+  duration_ms: 349.106937
+  type: 'test'
+  ...
+# Subtest: mailbox rejects nested incomplete on real execution bytes
+ok 9 - mailbox rejects nested incomplete on real execution bytes
+  ---
+  duration_ms: 0.379419
+  type: 'test'
+  ...
+# Subtest: mailbox rejects nested failed transport on real execution bytes
+ok 10 - mailbox rejects nested failed transport on real execution bytes
+  ---
+  duration_ms: 0.44954
+  type: 'test'
+  ...
+# Subtest: mailbox rejects nested output digest on real execution bytes
+ok 11 - mailbox rejects nested output digest on real execution bytes
+  ---
+  duration_ms: 0.67288
+  type: 'test'
+  ...
+# Subtest: mailbox rejects missing outer digest on real execution bytes
+ok 12 - mailbox rejects missing outer digest on real execution bytes
+  ---
+  duration_ms: 0.254256
+  type: 'test'
+  ...
+# Subtest: mailbox rejects wrong outer job on real execution bytes
+ok 13 - mailbox rejects wrong outer job on real execution bytes
+  ---
+  duration_ms: 0.279909
+  type: 'test'
+  ...
+# Subtest: atomicity verifier rejects a complete-byte receipt declaring timeout
+ok 14 - atomicity verifier rejects a complete-byte receipt declaring timeout
+  ---
+  duration_ms: 1.986941
+  type: 'test'
+  ...
+# Subtest: mailbox key binds TTL, sample and engine identity, not only output bytes
+ok 15 - mailbox key binds TTL, sample and engine identity, not only output bytes
+  ---
+  duration_ms: 4.783024
+  type: 'test'
+  ...
+# Subtest: two real seed processes cannot publish mixed artifact generations
+ok 16 - two real seed processes cannot publish mixed artifact generations
+  ---
+  duration_ms: 158.4934
+  type: 'test'
+  ...
+# Subtest: SIGKILL mid-publication leaves no readable partial slot; a fresh process can retry
+ok 17 - SIGKILL mid-publication leaves no readable partial slot; a fresh process can retry
+  ---
+  duration_ms: 171.196548
+  type: 'test'
+  ...
+# Subtest: supplied-input delivery composition
+    # Subtest: CLI journey: preflight→order→execute→completeness→mailbox plus disjoint second job
+    ok 1 - CLI journey: preflight→order→execute→completeness→mailbox plus disjoint second job
+      ---
+      duration_ms: 837.941242
+      type: 'test'
+      ...
+    # Subtest: mounted HTTP execute-url is the same delivery kit
+    ok 2 - mounted HTTP execute-url is the same delivery kit
+      ---
+      duration_ms: 404.03275
+      type: 'test'
+      ...
+    # Subtest: runOutDir remains receipt authority after stale published copy
+    ok 3 - runOutDir remains receipt authority after stale published copy
+      ---
+      duration_ms: 318.734214
+      type: 'test'
+      ...
+    # Subtest: schema-invalid pricing rows fail at preflight and would fail at D01 entry
+    ok 4 - schema-invalid pricing rows fail at preflight and would fail at D01 entry
+      ---
+      duration_ms: 2.725705
+      type: 'test'
+      ...
+    # Subtest: identical before/after is useful no-change delivery
+    ok 5 - identical before/after is useful no-change delivery
+      ---
+      duration_ms: 313.874539
+      type: 'test'
+      ...
+    # Subtest: idempotent lost-response recovery replays the same orderId
+    ok 6 - idempotent lost-response recovery replays the same orderId
+      ---
+      duration_ms: 438.597676
+      type: 'test'
+      ...
+    # Subtest: concurrent reserve of the same orderId keeps one result
+    ok 7 - concurrent reserve of the same orderId keeps one result
+      ---
+      duration_ms: 450.086209
+      type: 'test'
+      ...
+    # Subtest: malformed JSON is refused at preflight before order
+    ok 8 - malformed JSON is refused at preflight before order
+      ---
+      duration_ms: 1.625877
+      type: 'test'
+      ...
+    # Subtest: 1MiB+1 is input-oversize at preflight, not a useful order
+    ok 9 - 1MiB+1 is input-oversize at preflight, not a useful order
+      ---
+      duration_ms: 5.966657
+      type: 'test'
+      ...
+    # Subtest: SAMPLE sibling is disguised-sample at preflight, not a sale
+    ok 10 - SAMPLE sibling is disguised-sample at preflight, not a sale
+      ---
+      duration_ms: 3.015791
+      type: 'test'
+      ...
+    # Subtest: missing artifact in isolated runOutDir is not complete
+    ok 11 - missing artifact in isolated runOutDir is not complete
+      ---
+      duration_ms: 337.045473
+      type: 'test'
+      ...
+    # Subtest: D01 --example SAMPLE can seed the mailbox but is not a buyer delivery
+    ok 12 - D01 --example SAMPLE can seed the mailbox but is not a buyer delivery
+      ---
+      duration_ms: 469.757006
+      type: 'test'
+      ...
+    1..12
+ok 18 - supplied-input delivery composition
+  ---
+  duration_ms: 3585.479776
+  type: 'suite'
+  ...
+# Subtest: W5-D01 execution contract
+    # Subtest: inline JSON SAMPLE string is a sample, not a reserved-fixture sale
+    ok 1 - inline JSON SAMPLE string is a sample, not a reserved-fixture sale
+      ---
+      duration_ms: 12.959234
+      type: 'test'
+      ...
+    # Subtest: stale caller outDir is overwritten with this run's bytes, not claimed as delivery
+    ok 2 - stale caller outDir is overwritten with this run's bytes, not claimed as delivery
+      ---
+      duration_ms: 373.896257
+      type: 'test'
+      ...
+    # Subtest: CLI --out-dir with stale files publishes this run, exit 0
+    ok 3 - CLI --out-dir with stale files publishes this run, exit 0
+      ---
+      duration_ms: 443.627835
+      type: 'test'
+      ...
+    # Subtest: createExecutor acquireKit throw is kit-acquisition-failed, not uncaught
+    ok 4 - createExecutor acquireKit throw is kit-acquisition-failed, not uncaught
+      ---
+      duration_ms: 1.312057
+      type: 'test'
+      ...
+    # Subtest: engine ok without writing expected files is missing-output, not success
+    ok 5 - engine ok without writing expected files is missing-output, not success
+      ---
+      duration_ms: 2.118166
+      type: 'test'
+      ...
+    # Subtest: engine throw is engine-crash, not a delivered analysis
+    ok 6 - engine throw is engine-crash, not a delivered analysis
+      ---
+      duration_ms: 1.386362
+      type: 'test'
+      ...
+    # Subtest: missing engine JSON is engine-crash, not missing-output claimed from caller dir
+    ok 7 - missing engine JSON is engine-crash, not missing-output claimed from caller dir
+      ---
+      duration_ms: 1.520424
+      type: 'test'
+      ...
+    # Subtest: timeout is timeout transport, not delivery
+    ok 8 - timeout is timeout transport, not delivery
+      ---
+      duration_ms: 1.442782
+      type: 'test'
+      ...
+    # Subtest: valid analysis refusal with complete artifacts is useful delivery
+    ok 9 - valid analysis refusal with complete artifacts is useful delivery
+      ---
+      duration_ms: 1.603702
+      type: 'test'
+      ...
+    # Subtest: mutated caller file after staging is not what the engine consumes
+    ok 10 - mutated caller file after staging is not what the engine consumes
+      ---
+      duration_ms: 316.939578
+      type: 'test'
+      ...
+    # Subtest: local HTTP POST /execute then GET /results/:id retrieves the same execution
+    ok 11 - local HTTP POST /execute then GET /results/:id retrieves the same execution
+      ---
+      duration_ms: 422.085519
+      type: 'test'
+      ...
+    # Subtest: serve-execution.mjs process binds loopback and answers /health
+    ok 12 - serve-execution.mjs process binds loopback and answers /health
+      ---
+      duration_ms: 116.230585
+      type: 'test'
+      ...
+    # Subtest: request inputs getter is evaluated once; live mutate on later reads is not executed
+    ok 13 - request inputs getter is evaluated once; live mutate on later reads is not executed
+      ---
+      duration_ms: 341.433305
+      type: 'test'
+      ...
+    # Subtest: second getter path is not the executed input
+    ok 14 - second getter path is not the executed input
+      ---
+      duration_ms: 317.609276
+      type: 'test'
+      ...
+    # Subtest: live filesystem change after input snapshot is not executed
+    ok 15 - live filesystem change after input snapshot is not executed
+      ---
+      duration_ms: 330.627924
+      type: 'test'
+      ...
+    # Subtest: shared caller outDir: receipt describes this runOutDir, not another writer's publication
+    ok 16 - shared caller outDir: receipt describes this runOutDir, not another writer's publication
+      ---
+      duration_ms: 3.668727
+      type: 'test'
+      ...
+    # Subtest: two CLI processes sharing --out-dir keep distinct run receipts
+    ok 17 - two CLI processes sharing --out-dir keep distinct run receipts
+      ---
+      duration_ms: 400.333822
+      type: 'test'
+      ...
+    # Subtest: schema-invalid vendor-budget rows are refused at service entry, not useful
+    ok 18 - schema-invalid vendor-budget rows are refused at service entry, not useful
+      ---
+      duration_ms: 1.049007
+      type: 'test'
+      ...
+    # Subtest: CLI schema-invalid pricing JSON is not a useful delivery
+    ok 19 - CLI schema-invalid pricing JSON is not a useful delivery
+      ---
+      duration_ms: 77.109036
+      type: 'test'
+      ...
+    # Subtest: createExecutor catalog/getJob injection still overrides the default overlay
+    ok 20 - createExecutor catalog/getJob injection still overrides the default overlay
+      ---
+      duration_ms: 1.670513
+      type: 'test'
+      ...
+    # Subtest: createExecutor({ catalog }) is enough without a getJob function
+    ok 21 - createExecutor({ catalog }) is enough without a getJob function
+      ---
+      duration_ms: 1.094467
+      type: 'test'
+      ...
+    1..21
+ok 19 - W5-D01 execution contract
+  ---
+  duration_ms: 3173.92152
+  type: 'suite'
+  ...
+# Subtest: literal user journey
+    # Subtest: in-repo engines → supplied input → wrapper → usable output + receipt
+    ok 1 - in-repo engines → supplied input → wrapper → usable output + receipt
+      ---
+      duration_ms: 385.347695
+      type: 'test'
+      ...
+    # Subtest: unknown job id is a structured rejection, not an uncaught throw
+    ok 2 - unknown job id is a structured rejection, not an uncaught throw
+      ---
+      duration_ms: 69.890007
+      type: 'test'
+      ...
+    # Subtest: --example with reserved-fixture payment is not a sale
+    ok 3 - --example with reserved-fixture payment is not a sale
+      ---
+      duration_ms: 66.98608
+      type: 'test'
+      ...
+    # Subtest: CLI repeat-job-record --input-root directory exits 0 with verified identity
+    ok 4 - CLI repeat-job-record --input-root directory exits 0 with verified identity
+      ---
+      duration_ms: 315.334031
+      type: 'test'
+      ...
+    # Subtest: CLI and library classify reserved-fixture without payment the same
+    ok 5 - CLI and library classify reserved-fixture without payment the same
+      ---
+      duration_ms: 91.395825
+      type: 'test'
+      ...
+    # Subtest: CLI and library reserved-fixture with fixture payment match
+    ok 6 - CLI and library reserved-fixture with fixture payment match
+      ---
+      duration_ms: 744.749698
+      type: 'test'
+      ...
+    1..6
+ok 20 - literal user journey
+  ---
+  duration_ms: 1675.02631
+  type: 'suite'
+  ...
+# Subtest: listing-repair provider-neutral boundary
+    # Subtest: treats grexal and agensi incomplete capture as partial
+    ok 1 - treats grexal and agensi incomplete capture as partial
+      ---
+      duration_ms: 0.746667
+      type: 'test'
+      ...
+    # Subtest: does not promote unknown provider + incomplete capture to actionable
+    ok 2 - does not promote unknown provider + incomplete capture to actionable
+      ---
+      duration_ms: 1.061216
+      type: 'test'
+      ...
+    # Subtest: keeps supported complete diagnosed captures actionable
+    ok 3 - keeps supported complete diagnosed captures actionable
+      ---
+      duration_ms: 0.194434
+      type: 'test'
+      ...
+    # Subtest: refuses a complete capture with an unsupported declared provider
+    ok 4 - refuses a complete capture with an unsupported declared provider
+      ---
+      duration_ms: 0.248165
+      type: 'test'
+      ...
+    # Subtest: refuses grexal vs agensi identity mismatch on complete capture
+    ok 5 - refuses grexal vs agensi identity mismatch on complete capture
+      ---
+      duration_ms: 0.112639
+      type: 'test'
+      ...
+    # Subtest: maps missing provider + engine unknown to partial, ignoring ok:true
+    ok 6 - maps missing provider + engine unknown to partial, ignoring ok:true
+      ---
+      duration_ms: 0.114203
+      type: 'test'
+      ...
+    # Subtest: does not treat engine ok:true as actionable without diagnosed
+    ok 7 - does not treat engine ok:true as actionable without diagnosed
+      ---
+      duration_ms: 0.179582
+      type: 'test'
+      ...
+    1..7
+ok 21 - listing-repair provider-neutral boundary
+  ---
+  duration_ms: 3.633993
+  type: 'suite'
+  ...
+# Subtest: existing live prices and signature authority stay unchanged
+    # Subtest: does not publish fixture prices onto live catalog pins
+    ok 1 - does not publish fixture prices onto live catalog pins
+      ---
+      duration_ms: 0.949023
+      type: 'test'
+      ...
+    # Subtest: Mcp.tsx extract remains $0.005 and seller-integrity-audit pin remains 0.01
+    ok 2 - Mcp.tsx extract remains $0.005 and seller-integrity-audit pin remains 0.01
+      ---
+      duration_ms: 1.58824
+      type: 'test'
+      ...
+    # Subtest: engine archive identity is archive sha/bytes, not a version string
+    ok 3 - engine archive identity is archive sha/bytes, not a version string
+      ---
+      duration_ms: 1.352879
+      type: 'test'
+      ...
+    1..3
+ok 22 - existing live prices and signature authority stay unchanged
+  ---
+  duration_ms: 4.991999
+  type: 'suite'
+  ...
+# Subtest: M01 engines on the D01 delivery kit
+    # Subtest: published getJob selects lockfile with m01; default runPaidOffer runs it
+    ok 1 - published getJob selects lockfile with m01; default runPaidOffer runs it
+      ---
+      duration_ms: 74.229715
+      type: 'test'
+      ...
+    # Subtest: CLI deliver lockfile from a workdir that is not the checkout
+    ok 2 - CLI deliver lockfile from a workdir that is not the checkout
+      ---
+      duration_ms: 213.879603
+      type: 'test'
+      ...
+    # Subtest: fresh caller can select all four engines without test injection
+    ok 3 - fresh caller can select all four engines without test injection
+      ---
+      duration_ms: 349.148786
+      type: 'test'
+      ...
+    # Subtest: same lockfile bytes are useful no-change; changed lockfile is actionable
+    ok 4 - same lockfile bytes are useful no-change; changed lockfile is actionable
+      ---
+      duration_ms: 127.015489
+      type: 'test'
+      ...
+    # Subtest: HTML lockfile is an unsupported-format refuse, not unknown-job
+    ok 5 - HTML lockfile is an unsupported-format refuse, not unknown-job
+      ---
+      duration_ms: 60.225016
+      type: 'test'
+      ...
+    # Subtest: malformed JSON is refused at preflight
+    ok 6 - malformed JSON is refused at preflight
+      ---
+      duration_ms: 1.624646
+      type: 'test'
+      ...
+    # Subtest: 1MiB+1 is input-oversize at preflight
+    ok 7 - 1MiB+1 is input-oversize at preflight
+      ---
+      duration_ms: 5.805002
+      type: 'test'
+      ...
+    # Subtest: OpenAPI bytes are the wrong artifact for json-schema-webhook-drift
+    ok 8 - OpenAPI bytes are the wrong artifact for json-schema-webhook-drift
+      ---
+      duration_ms: 64.339444
+      type: 'test'
+      ...
+    # Subtest: input bytes freeze once; later caller mutation is not consumed
+    ok 9 - input bytes freeze once; later caller mutation is not consumed
+      ---
+      duration_ms: 57.355166
+      type: 'test'
+      ...
+    # Subtest: runOutDir remains receipt identity after stale publishedDir substitution
+    ok 10 - runOutDir remains receipt identity after stale publishedDir substitution
+      ---
+      duration_ms: 61.119925
+      type: 'test'
+      ...
+    # Subtest: idempotent replay and swapped-file conflict reuse the order kernel
+    ok 11 - idempotent replay and swapped-file conflict reuse the order kernel
+      ---
+      duration_ms: 70.653564
+      type: 'test'
+      ...
+    # Subtest: missing pin-delta.md in runOutDir is not complete
+    ok 12 - missing pin-delta.md in runOutDir is not complete
+      ---
+      duration_ms: 59.118104
+      type: 'test'
+      ...
+    # Subtest: vendor-budget-impact remains a useful published job on the same kit
+    ok 13 - vendor-budget-impact remains a useful published job on the same kit
+      ---
+      duration_ms: 308.17491
+      type: 'test'
+      ...
+    1..13
+ok 23 - M01 engines on the D01 delivery kit
+  ---
+  duration_ms: 1454.401086
+  type: 'suite'
+  ...
+# Subtest: page nested captures freeze at prepare
+    # Subtest: overwrite after.json after preflight still executes inspect bytes and binds them
+    ok 1 - overwrite after.json after preflight still executes inspect bytes and binds them
+      ---
+      duration_ms: 96.981317
+      type: 'test'
+      ...
+    1..1
+ok 24 - page nested captures freeze at prepare
+  ---
+  duration_ms: 97.756425
+  type: 'suite'
+  ...
+# Subtest: seeded fail-closed cases
+    # Subtest: (a) SAMPLE/--example treated as a live sale is rejected
+    ok 1 - (a) SAMPLE/--example treated as a live sale is rejected
+      ---
+      duration_ms: 2.808281
+      type: 'test'
+      ...
+    # Subtest: (a2) SAMPLE/--example with reserved-fixture payment is not a sale
+    ok 2 - (a2) SAMPLE/--example with reserved-fixture payment is not a sale
+      ---
+      duration_ms: 0.544562
+      type: 'test'
+      ...
+    # Subtest: (a3) kit SAMPLE path with reserved-fixture payment is not a sale
+    ok 3 - (a3) kit SAMPLE path with reserved-fixture payment is not a sale
+      ---
+      duration_ms: 2.430849
+      type: 'test'
+      ...
+    # Subtest: (a4) copied SAMPLE-labelled listing with reserved-fixture payment is not a sale
+    ok 4 - (a4) copied SAMPLE-labelled listing with reserved-fixture payment is not a sale
+      ---
+      duration_ms: 1.282722
+      type: 'test'
+      ...
+    # Subtest: (b) missing required input is rejected
+    ok 5 - (b) missing required input is rejected
+      ---
+      duration_ms: 0.768459
+      type: 'test'
+      ...
+    # Subtest: (c) fixture payload that would settle if the guard were omitted is refused live settle
+    ok 6 - (c) fixture payload that would settle if the guard were omitted is refused live settle
+      ---
+      duration_ms: 2.924015
+      type: 'test'
+      ...
+    # Subtest: oversize input is rejected
+    ok 7 - oversize input is rejected
+      ---
+      duration_ms: 3.115311
+      type: 'test'
+      ...
+    # Subtest: malformed JSON input is rejected
+    ok 8 - malformed JSON input is rejected
+      ---
+      duration_ms: 0.880736
+      type: 'test'
+      ...
+    # Subtest: reserved-fixture without a fixture payment is not a reservation
+    ok 9 - reserved-fixture without a fixture payment is not a reservation
+      ---
+      duration_ms: 1.228346
+      type: 'test'
+      ...
+    1..9
+ok 25 - seeded fail-closed cases
+  ---
+  duration_ms: 17.359555
+  type: 'suite'
+  ...
+# Subtest: Sol closeout remaining boundaries
+    # Subtest: F01: JSON plus promised files then nonzero exit is not a complete D01 delivery
+    ok 1 - F01: JSON plus promised files then nonzero exit is not a complete D01 delivery
+      ---
+      duration_ms: 11.554997
+      type: 'test'
+      ...
+    # Subtest: F01: real process exit 1 after writing JSON is engine-crash through createExecutor
+    ok 2 - F01: real process exit 1 after writing JSON is engine-crash through createExecutor
+      ---
+      duration_ms: 47.021563
+      type: 'test'
+      ...
+    # Subtest: F01: real process timeout is timeout through D01 even with JSON on disk
+    ok 3 - F01: real process timeout is timeout through D01 even with JSON on disk
+      ---
+      duration_ms: 255.741615
+      type: 'test'
+      ...
+    # Subtest: F01: schemaMatch failure is not a complete D01 delivery
+    ok 4 - F01: schemaMatch failure is not a complete D01 delivery
+      ---
+      duration_ms: 3.115275
+      type: 'test'
+      ...
+    # Subtest: F01: classifyTransport treats timedOut as timeout even when JSON is present
+    ok 5 - F01: classifyTransport treats timedOut as timeout even when JSON is present
+      ---
+      duration_ms: 0.269941
+      type: 'test'
+      ...
+    # Subtest: F02: fileBytes frozen at preflight survive mutation after order digest check
+    ok 6 - F02: fileBytes frozen at preflight survive mutation after order digest check
+      ---
+      duration_ms: 70.794733
+      type: 'test'
+      ...
+    # Subtest: F03: absolute and ../ page captures are refused at preflight
+    ok 7 - F03: absolute and ../ page captures are refused at preflight
+      ---
+      duration_ms: 2.43891
+      type: 'test'
+      ...
+    # Subtest: F03: executor copies captures under workDir and does not rewrite the caller job
+    ok 8 - F03: executor copies captures under workDir and does not rewrite the caller job
+      ---
+      duration_ms: 1.521068
+      type: 'test'
+      ...
+    # Subtest: F04: mailbox copies verified buffers, not a later reopen of mutated files
+    ok 9 - F04: mailbox copies verified buffers, not a later reopen of mutated files
+      ---
+      duration_ms: 2.501433
+      type: 'test'
+      ...
+    # Subtest: F04: seedFromD01Execution uses the verified buffers
+    ok 10 - F04: seedFromD01Execution uses the verified buffers
+      ---
+      duration_ms: 1.571668
+      type: 'test'
+      ...
+    # Subtest: F05: deliverSuppliedInput keeps repeat-job-record --input-root
+    ok 11 - F05: deliverSuppliedInput keeps repeat-job-record --input-root
+      ---
+      duration_ms: 267.981436
+      type: 'test'
+      ...
+    # Subtest: F06: transport failure completes the reservation so retry is a replay not a hang
+    ok 12 - F06: transport failure completes the reservation so retry is a replay not a hang
+      ---
+      duration_ms: 6.896288
+      type: 'test'
+      ...
+    # Subtest: F06: lost HTTP POST recovers the pre-known executionId
+    ok 13 - F06: lost HTTP POST recovers the pre-known executionId
+      ---
+      duration_ms: 104.69594
+      type: 'test'
+      ...
+    # Subtest: F07: same requestId with different artifacts conflicts; identical seed replays
+    ok 14 - F07: same requestId with different artifacts conflicts; identical seed replays
+      ---
+      duration_ms: 1.874248
+      type: 'test'
+      ...
+    # Subtest: F08: used-path pattern add is breaking, not silent unchanged
+    ok 15 - F08: used-path pattern add is breaking, not silent unchanged
+      ---
+      duration_ms: 1.541287
+      type: 'test'
+      ...
+    # Subtest: F09: M01 receipt provenance includes executable bytes of the bin actually run
+    ok 16 - F09: M01 receipt provenance includes executable bytes of the bin actually run
+      ---
+      duration_ms: 59.954742
+      type: 'test'
+      ...
+    # Subtest: F10: partial extract without .ready is not promoted on the next acquisition
+    ok 17 - F10: partial extract without .ready is not promoted on the next acquisition
+      ---
+      duration_ms: 40.318853
+      type: 'test'
+      ...
+    # Subtest: F10: .ready without CLI is wiped and re-extracted
+    ok 18 - F10: .ready without CLI is wiped and re-extracted
+      ---
+      duration_ms: 37.510888
+      type: 'test'
+      ...
+    1..18
+ok 26 - Sol closeout remaining boundaries
+  ---
+  duration_ms: 920.338033
+  type: 'suite'
+  ...
+# Subtest: cold CLI field pair: openai-gpt35-turbo-20230613-20240125
+ok 27 - cold CLI field pair: openai-gpt35-turbo-20230613-20240125
+  ---
+  duration_ms: 306.121133
+  type: 'test'
+  ...
+# Subtest: cold CLI field pair: openai-embedding-3-small-added-20240125
+ok 28 - cold CLI field pair: openai-embedding-3-small-added-20240125
+  ---
+  duration_ms: 297.456356
+  type: 'test'
+  ...
+# Subtest: cold CLI field pair: anthropic-sonnet35-prompt-cache-20241217
+ok 29 - cold CLI field pair: anthropic-sonnet35-prompt-cache-20241217
+  ---
+  duration_ms: 305.593731
+  type: 'test'
+  ...
+# Subtest: cold CLI field pair: cloudflare-workers-r2-classA-added
+ok 30 - cold CLI field pair: cloudflare-workers-r2-classA-added
+  ---
+  duration_ms: 312.774339
+  type: 'test'
+  ...
+# Subtest: cold CLI field pair: anthropic-haiku3-unchanged-20240304-20241217
+ok 31 - cold CLI field pair: anthropic-haiku3-unchanged-20240304-20241217
+  ---
+  duration_ms: 313.714414
+  type: 'test'
+  ...
+# Subtest: cold CLI field pair: control-unit-label-unconverted
+ok 32 - cold CLI field pair: control-unit-label-unconverted
+  ---
+  duration_ms: 300.801501
+  type: 'test'
+  ...
+# Subtest: released 1.4.0 regression control actually reproduces the added-row defect
+ok 33 - released 1.4.0 regression control actually reproduces the added-row defect
+  ---
+  duration_ms: 362.982774
+  type: 'test'
+  ...
+# Subtest: same-unit raw values and arithmetic appear in JSON and Markdown, not a bill
+ok 34 - same-unit raw values and arithmetic appear in JSON and Markdown, not a bill
+  ---
+  duration_ms: 318.695023
+  type: 'test'
+  ...
+# Subtest: removed row retains its before value with no savings conclusion
+ok 35 - removed row retains its before value with no savings conclusion
+  ---
+  duration_ms: 361.435997
+  type: 'test'
+  ...
+# Subtest: mixed add/remove/change names all three, including zero-valued fields
+ok 36 - mixed add/remove/change names all three, including zero-valued fields
+  ---
+  duration_ms: 314.394487
+  type: 'test'
+  ...
+# Subtest: unit change with changed number remains partial with no numerical comparison
+ok 37 - unit change with changed number remains partial with no numerical comparison
+  ---
+  duration_ms: 335.755288
+  type: 'test'
+  ...
+# Subtest: cold CLI refuses missing field
+ok 38 - cold CLI refuses missing field
+  ---
+  duration_ms: 109.328615
+  type: 'test'
+  ...
+# Subtest: cold CLI refuses missing value
+ok 39 - cold CLI refuses missing value
+  ---
+  duration_ms: 113.8205
+  type: 'test'
+  ...
+# Subtest: cold CLI refuses missing unit
+ok 40 - cold CLI refuses missing unit
+  ---
+  duration_ms: 123.942063
+  type: 'test'
+  ...
+# Subtest: cold CLI refuses blank unit
+ok 41 - cold CLI refuses blank unit
+  ---
+  duration_ms: 110.643447
+  type: 'test'
+  ...
+# Subtest: cold CLI refuses nonnumeric value
+ok 42 - cold CLI refuses nonnumeric value
+  ---
+  duration_ms: 108.793998
+  type: 'test'
+  ...
+# Subtest: archive wrapper and caller contract equal authoritative source bytes
+ok 43 - archive wrapper and caller contract equal authoritative source bytes
+  ---
+  duration_ms: 1.986388
+  type: 'test'
+  ...
+# Subtest: all old archive and pin mirrors stay immutable to recorded base
+ok 44 - all old archive and pin mirrors stay immutable to recorded base
+  ---
+  duration_ms: 51.219841
+  type: 'test'
+  ...
+# Subtest: public discovery, catalog, site card, and archive agree
+ok 45 - public discovery, catalog, site card, and archive agree
+  ---
+  duration_ms: 2.897085
+  type: 'test'
+  ...
+# Subtest: finite inputs with overflowing subtraction remain partial and omit the delta
+ok 46 - finite inputs with overflowing subtraction remain partial and omit the delta
+  ---
+  duration_ms: 352.848407
+  type: 'test'
+  ...
+# Subtest: actual HTTP cold-start consumer downloads, verifies, then runs the field input
+ok 47 - actual HTTP cold-start consumer downloads, verifies, then runs the field input
+  ---
+  duration_ms: 456.858979
+  type: 'test'
+  ...

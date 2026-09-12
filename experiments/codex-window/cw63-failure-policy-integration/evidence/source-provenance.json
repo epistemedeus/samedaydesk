@@ -1,0 +1,632 @@
+{
+  "repo": "epistemedeus/samedaydesk",
+  "base": "76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be",
+  "hostProvider": "Grok VM/node_grok_bot_vm",
+  "hostnameIsNotProviderIdentity": true,
+  "imports": [
+    {
+      "donor": "D21",
+      "commit": "01a2290865853552c5bfcedf26193d5acf026897",
+      "onlyImportedPath": "tools/failed-delivery-dossier",
+      "files": [
+        {
+          "path": "tools/failed-delivery-dossier/FEATURE-MAP.md",
+          "donorBlob": "0d0c33e9eb5fc0f26eda809751d81772ad91bd8d",
+          "currentBlob": "0d0c33e9eb5fc0f26eda809751d81772ad91bd8d",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/LICENSE",
+          "donorBlob": "746cc0f2a3da7503d68ac1a7e8d0c29758169449",
+          "currentBlob": "746cc0f2a3da7503d68ac1a7e8d0c29758169449",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/RECEIPT.md",
+          "donorBlob": "d8414dd3246b955c126b0cff48ddd9f1d6bbf581",
+          "currentBlob": "d8414dd3246b955c126b0cff48ddd9f1d6bbf581",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/bin/dossier.mjs",
+          "donorBlob": "81eeef7ceb34c81743cec96924cac33a53b033ba",
+          "currentBlob": "81eeef7ceb34c81743cec96924cac33a53b033ba",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/fixtures/ORIGINS.json",
+          "donorBlob": "f38a99208f4cbe79f8271d05fafb69231c994129",
+          "currentBlob": "f38a99208f4cbe79f8271d05fafb69231c994129",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/fixtures/checkout-intake/fulfillment-pending-verify.json",
+          "donorBlob": "e8472899306a916cfec362cb452185e4adca113f",
+          "currentBlob": "e8472899306a916cfec362cb452185e4adca113f",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/fixtures/extract-unpaid/agent402-stop.json",
+          "donorBlob": "c434a723fdbaa430cd0c5000f8ae6424cb35053b",
+          "currentBlob": "c434a723fdbaa430cd0c5000f8ae6424cb35053b",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/fixtures/extract-unpaid/claimed-http-402-unobserved.json",
+          "donorBlob": "0ae5865b3becd986d48841020aae32cd90661889",
+          "currentBlob": "0ae5865b3becd986d48841020aae32cd90661889",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/fixtures/extract-unpaid/extract-402-contract.json",
+          "donorBlob": "242df484c2765a02110c7208d12c3fcb3999ac57",
+          "currentBlob": "242df484c2765a02110c7208d12c3fcb3999ac57",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/fixtures/seeded-failures/buyerclass-revenue-total.json",
+          "donorBlob": "cf297d97f55e8411c19021c684879e6b13f40d8e",
+          "currentBlob": "cf297d97f55e8411c19021c684879e6b13f40d8e",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/fixtures/seeded-failures/claimed-observed-without-capture.json",
+          "donorBlob": "c738707ba0ab2587ed8542b6367907921ba070bb",
+          "currentBlob": "c738707ba0ab2587ed8542b6367907921ba070bb",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/fixtures/seeded-failures/official-source-without-evidence.json",
+          "donorBlob": "768e04c30db0764c87bd7ff25231509847e643cd",
+          "currentBlob": "768e04c30db0764c87bd7ff25231509847e643cd",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/fixtures/seeded-failures/sample-labelled-delivered.json",
+          "donorBlob": "34f34c60a1778295af22d6fdb8dcbbaeab0035f0",
+          "currentBlob": "34f34c60a1778295af22d6fdb8dcbbaeab0035f0",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/fixtures/wrapper-receipt/rejected-sample-not-a-sale.json",
+          "donorBlob": "946812718e28b1a67d2696d3fc6df9347002e2e4",
+          "currentBlob": "946812718e28b1a67d2696d3fc6df9347002e2e4",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/fixtures/wrapper-receipt/unfunded-vendor-budget-impact.json",
+          "donorBlob": "5804041f4adeddceb0b67a71e6b4ba761b17d2e1",
+          "currentBlob": "5804041f4adeddceb0b67a71e6b4ba761b17d2e1",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/lib/adapters.mjs",
+          "donorBlob": "28d121f9c07ada6ecad59a1942de3acb52837503",
+          "currentBlob": "6dd776a89b873e431b82f733e674b32e54d8150a",
+          "repaired": true
+        },
+        {
+          "path": "tools/failed-delivery-dossier/lib/capture-checkout-http.mjs",
+          "donorBlob": "defa56b4dacb6ae0b1e9f799fcfdc4d0b2f70cc9",
+          "currentBlob": "defa56b4dacb6ae0b1e9f799fcfdc4d0b2f70cc9",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/lib/capture-extract-402-http.mjs",
+          "donorBlob": "080217a1fe75fe1f7d0b2f9bf0bd537e6f3812fe",
+          "currentBlob": "080217a1fe75fe1f7d0b2f9bf0bd537e6f3812fe",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/lib/cli.mjs",
+          "donorBlob": "0dd300b92c01b4f648c49f7dfa539ead824daea4",
+          "currentBlob": "0dd300b92c01b4f648c49f7dfa539ead824daea4",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/lib/guards.mjs",
+          "donorBlob": "05026cb2bcb6c6cce73fb412fa564829398d6893",
+          "currentBlob": "05026cb2bcb6c6cce73fb412fa564829398d6893",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/lib/honesty.mjs",
+          "donorBlob": "6b15f865d4ff12dcb4cc8a67285b2d79baadb9a4",
+          "currentBlob": "6b15f865d4ff12dcb4cc8a67285b2d79baadb9a4",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/lib/index.mjs",
+          "donorBlob": "e74d3a2dd221e61b0e446b1b6179a27bae23e053",
+          "currentBlob": "e74d3a2dd221e61b0e446b1b6179a27bae23e053",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/lib/json.mjs",
+          "donorBlob": "7a863e654f43e48b9a3f92449498cff19dc85101",
+          "currentBlob": "7a863e654f43e48b9a3f92449498cff19dc85101",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/lib/later-bindings.mjs",
+          "donorBlob": "d1c45cc906283ed6f9af6c5335aed058ea0daa43",
+          "currentBlob": "d1c45cc906283ed6f9af6c5335aed058ea0daa43",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/lib/observation.mjs",
+          "donorBlob": "103ee45d154818dc23c3dbb23bdbf9d9eed0ae39",
+          "currentBlob": "f023fc2b1fcc718bf8fdaf4633be8b036296b31b",
+          "repaired": true
+        },
+        {
+          "path": "tools/failed-delivery-dossier/lib/pack.mjs",
+          "donorBlob": "8da8fccb4bf0577e591e22597d308d4b39898c30",
+          "currentBlob": "8ede1754bc220f27aadfd90d36443769d3b3a491",
+          "repaired": true
+        },
+        {
+          "path": "tools/failed-delivery-dossier/lib/pins.mjs",
+          "donorBlob": "fc9fb0fde4a1b4c4111fcecf01c4d98ee4cf3c48",
+          "currentBlob": "fc9fb0fde4a1b4c4111fcecf01c4d98ee4cf3c48",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/lib/refuse.mjs",
+          "donorBlob": "7fb0d350683889e53c5fb3dba04f349a07d54714",
+          "currentBlob": "7fb0d350683889e53c5fb3dba04f349a07d54714",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/lib/source-status.mjs",
+          "donorBlob": "e1695ea3573a0c9dd2f5a0bba21523c1bd43d870",
+          "currentBlob": "cd8f896c2328e70d81be20e518df06fb6e56f65c",
+          "repaired": true
+        },
+        {
+          "path": "tools/failed-delivery-dossier/package.json",
+          "donorBlob": "e0223c200c66ded158927a415718b67aedc94728",
+          "currentBlob": "e0223c200c66ded158927a415718b67aedc94728",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/test/journey.test.mjs",
+          "donorBlob": "928d1f50782bef0efcff929804b1c0f363bc0d5a",
+          "currentBlob": "928d1f50782bef0efcff929804b1c0f363bc0d5a",
+          "repaired": false
+        },
+        {
+          "path": "tools/failed-delivery-dossier/test/local-runtime.test.mjs",
+          "donorBlob": "8697937d173f6276f500e06e8dfd832cd5a08eea",
+          "currentBlob": "8740ed353794a0dec14fc415cda87dc60bd7e783",
+          "repaired": true
+        },
+        {
+          "path": "tools/failed-delivery-dossier/test/observation.test.mjs",
+          "donorBlob": "1fb43afdf82762b1eb891a3f589a71419a234e55",
+          "currentBlob": "7254048af835e2b2177f5670c9d973d8a982419b",
+          "repaired": true
+        },
+        {
+          "path": "tools/failed-delivery-dossier/test/seeded-failures.test.mjs",
+          "donorBlob": "2672fa75d8dcc58863471e0ad0e5d8fa107e8430",
+          "currentBlob": "2672fa75d8dcc58863471e0ad0e5d8fa107e8430",
+          "repaired": false
+        }
+      ]
+    },
+    {
+      "donor": "D22",
+      "commit": "6c7bf7fdbc360f215864e4c8aee4c7bb03e194ff",
+      "onlyImportedPath": "tools/refund-obligation-projector",
+      "files": [
+        {
+          "path": "tools/refund-obligation-projector/FEATURE-MAP.md",
+          "donorBlob": "5ccfd66df1d28ff6f57de8d056bbbc1feda18567",
+          "currentBlob": "5ccfd66df1d28ff6f57de8d056bbbc1feda18567",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/RECEIPT.md",
+          "donorBlob": "a2f4836e10ef0b066984e13ccf949c15195b4f54",
+          "currentBlob": "a2f4836e10ef0b066984e13ccf949c15195b4f54",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/bin/project.mjs",
+          "donorBlob": "45cba45d1127db5cb9e2ad73e54876146e9650af",
+          "currentBlob": "139211055f2cc56ef706eb91525d3a3fb830dbe7",
+          "repaired": true
+        },
+        {
+          "path": "tools/refund-obligation-projector/fixtures/golden/projection.json",
+          "donorBlob": "7baa18ee15471935e704c345c3dce548abeb7b27",
+          "currentBlob": "7baa18ee15471935e704c345c3dce548abeb7b27",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/fixtures/ledger/cited-banked-as-job-revenue.json",
+          "donorBlob": "2ca15e75b03794e83bda8b13dba7b33cf3ae60d3",
+          "currentBlob": "2ca15e75b03794e83bda8b13dba7b33cf3ae60d3",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/fixtures/ledger/d13-pin-engine-failure.json",
+          "donorBlob": "42341dfa4f183185f1c8f7c818914f86b7052dec",
+          "currentBlob": "42341dfa4f183185f1c8f7c818914f86b7052dec",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/fixtures/policy/agent402-not-offered.json",
+          "donorBlob": "9a2b157fdb4fc83f778da3878fe965a670012dd8",
+          "currentBlob": "9a2b157fdb4fc83f778da3878fe965a670012dd8",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/fixtures/policy/attested-delivery-none.json",
+          "donorBlob": "6b9c5399ec4681495ca26eb6f0380f19661796c1",
+          "currentBlob": "6b9c5399ec4681495ca26eb6f0380f19661796c1",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/fixtures/policy/integer-terms.json",
+          "donorBlob": "8aa4477ba8c9b458b7ba493972bfa56aa9a2c1ec",
+          "currentBlob": "8aa4477ba8c9b458b7ba493972bfa56aa9a2c1ec",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/fixtures/policy/other-hash-terms.json",
+          "donorBlob": "bc05134b9c8e63a7c9baaf8ac6f8118beff7b7ff",
+          "currentBlob": "bc05134b9c8e63a7c9baaf8ac6f8118beff7b7ff",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/fixtures/policy/stripe-intake-not-offered.json",
+          "donorBlob": "dc5ebc127e6140438951c88e98b5b7c21d414045",
+          "currentBlob": "dc5ebc127e6140438951c88e98b5b7c21d414045",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/fixtures/receipt/engine-failure.json",
+          "donorBlob": "4404cb909e084dd1d5b410ca9151105479274705",
+          "currentBlob": "4404cb909e084dd1d5b410ca9151105479274705",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/fixtures/receipt/valid-refusal.json",
+          "donorBlob": "216e7b2b8f0a70eb21454e25591bb1778af2a9da",
+          "currentBlob": "216e7b2b8f0a70eb21454e25591bb1778af2a9da",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/fixtures/seeded/organic-incentivized-trial.json",
+          "donorBlob": "8c36bb08661dca78c8911c24a45f35f1511c4800",
+          "currentBlob": "8c36bb08661dca78c8911c24a45f35f1511c4800",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/fixtures/seeded/stripe-intake-required.json",
+          "donorBlob": "1371379a73627305062c61546544297a1d60ac6b",
+          "currentBlob": "1371379a73627305062c61546544297a1d60ac6b",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/lib/adapters.mjs",
+          "donorBlob": "356c97ba86a96ed4277967b88673e2b72b519c55",
+          "currentBlob": "356c97ba86a96ed4277967b88673e2b72b519c55",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/lib/claim.mjs",
+          "donorBlob": "62cfacd369cc8d78e1855e621c17235c6a1175a2",
+          "currentBlob": "62cfacd369cc8d78e1855e621c17235c6a1175a2",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/lib/contract.mjs",
+          "donorBlob": "9031d299c5452653564a6ca2df64ddbc52dbede3",
+          "currentBlob": "9031d299c5452653564a6ca2df64ddbc52dbede3",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/lib/facts.mjs",
+          "donorBlob": "8837bbb0b648a8eeeac5850fbad32ef37ef7d4f9",
+          "currentBlob": "523dffb32d132d19dd54a1f3722f779b150c92d5",
+          "repaired": true
+        },
+        {
+          "path": "tools/refund-obligation-projector/lib/http.mjs",
+          "donorBlob": "d3c00e118f640ef7ccdbc550e878c4206375354e",
+          "currentBlob": "d3c00e118f640ef7ccdbc550e878c4206375354e",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/lib/policy.mjs",
+          "donorBlob": "37c8636e84e87050f6728f5f407e04ff6fff1961",
+          "currentBlob": "975ccbc485450a9b4315fb92f2cfffbf19503f4d",
+          "repaired": true
+        },
+        {
+          "path": "tools/refund-obligation-projector/lib/postgres.mjs",
+          "donorBlob": "c6c239068e360e8dbb066fcd8782695300b31518",
+          "currentBlob": "79e23a9a4bb1b31f3db4fedd8d8df45329f11de6",
+          "repaired": true
+        },
+        {
+          "path": "tools/refund-obligation-projector/lib/project.mjs",
+          "donorBlob": "58eea32ba3825b2550e04aa063a47f59ddf930f0",
+          "currentBlob": "58eea32ba3825b2550e04aa063a47f59ddf930f0",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/lib/refuse.mjs",
+          "donorBlob": "736768befd4fd1b7a0c37359ebde35d4f7332b55",
+          "currentBlob": "736768befd4fd1b7a0c37359ebde35d4f7332b55",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/lib/terms.mjs",
+          "donorBlob": "c0cd5c0412eef86e961c36f089b621d2f4a5efde",
+          "currentBlob": "c0cd5c0412eef86e961c36f089b621d2f4a5efde",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/package.json",
+          "donorBlob": "b6fdfd64997af090227ecd1675cf2b338b3132d9",
+          "currentBlob": "b6fdfd64997af090227ecd1675cf2b338b3132d9",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/test/cli.test.mjs",
+          "donorBlob": "1a9e0505554fc9d9ba7640963fec00d5a1d9e6ce",
+          "currentBlob": "1a9e0505554fc9d9ba7640963fec00d5a1d9e6ce",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/test/http.test.mjs",
+          "donorBlob": "90af4c0a2226ce4f65d15f7a0099d99883018fa9",
+          "currentBlob": "90af4c0a2226ce4f65d15f7a0099d99883018fa9",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/test/policy.test.mjs",
+          "donorBlob": "971f7b792af40eae71f00f4e7d001c93a6e04c39",
+          "currentBlob": "971f7b792af40eae71f00f4e7d001c93a6e04c39",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/test/postgres.test.mjs",
+          "donorBlob": "6ac81ad02624ccc12ac471a53cdecd3e12befa69",
+          "currentBlob": "6ac81ad02624ccc12ac471a53cdecd3e12befa69",
+          "repaired": false
+        },
+        {
+          "path": "tools/refund-obligation-projector/test/project.test.mjs",
+          "donorBlob": "8df38e50dc93f78a525df62311d7c5d3d0b2990b",
+          "currentBlob": "8df38e50dc93f78a525df62311d7c5d3d0b2990b",
+          "repaired": false
+        }
+      ]
+    },
+    {
+      "donor": "D23",
+      "commit": "8fe0b808a2a0e269b7731ca738361890d02501d6",
+      "onlyImportedPath": "tools/extract-unpaid-honesty",
+      "files": [
+        {
+          "path": "tools/extract-unpaid-honesty/FEATURE-MAP.md",
+          "donorBlob": "93ea3d6cf1f7bb6d0842fe96d1e7b31c9054d271",
+          "currentBlob": "93ea3d6cf1f7bb6d0842fe96d1e7b31c9054d271",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/NOTICE",
+          "donorBlob": "7c3d46d4205108184ac78b61342c9041331313d8",
+          "currentBlob": "7c3d46d4205108184ac78b61342c9041331313d8",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/RECEIPT.md",
+          "donorBlob": "e3ea664d99c703fdeb9ce4acb355e9fb914f57e9",
+          "currentBlob": "e3ea664d99c703fdeb9ce4acb355e9fb914f57e9",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/bin/honesty.mjs",
+          "donorBlob": "5d4da9921c604cb0d4ce8532203bc7ff159c68b9",
+          "currentBlob": "5d4da9921c604cb0d4ce8532203bc7ff159c68b9",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/fixtures/contrast/f18-merchant-extract-402.json",
+          "donorBlob": "89c37ef0516d76abc084cceb61f828b5a8a7e019",
+          "currentBlob": "89c37ef0516d76abc084cceb61f828b5a8a7e019",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/fixtures/probes/fetch-extract.mjs",
+          "donorBlob": "22a61b60ce8a19016ae75ed531ebc1a8c53887b1",
+          "currentBlob": "22a61b60ce8a19016ae75ed531ebc1a8c53887b1",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/fixtures/probes/must-not-run-echo.mjs",
+          "donorBlob": "d6624b7e344e7d7e49fb6b1da40ac00e7b2304b0",
+          "currentBlob": "d6624b7e344e7d7e49fb6b1da40ac00e7b2304b0",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/fixtures/probes/paid-retry-wrap.json",
+          "donorBlob": "c943a46a38bf0cd1ed3b60f12adad938ca2869f8",
+          "currentBlob": "c943a46a38bf0cd1ed3b60f12adad938ca2869f8",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/fixtures/probes/payment-header-fetch.mjs",
+          "donorBlob": "c870a3b52c28f09a76618ceea356c4d62b70b4ec",
+          "currentBlob": "c870a3b52c28f09a76618ceea356c4d62b70b4ec",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/lib/enforcement.mjs",
+          "donorBlob": "5b6a18a75f2400deb239942d964e11dfef57e32b",
+          "currentBlob": "e33897f25ea216f5ef578b787c0ed36200a186e9",
+          "repaired": true
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/lib/fetch-guard.mjs",
+          "donorBlob": "e031c710f9b1549bf40cc99f564ebd3600159bb1",
+          "currentBlob": "e031c710f9b1549bf40cc99f564ebd3600159bb1",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/lib/hash-terms.mjs",
+          "donorBlob": "addbcdcfb8f23f6f558ea1840788c2a609e07b00",
+          "currentBlob": "addbcdcfb8f23f6f558ea1840788c2a609e07b00",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/lib/honesty.mjs",
+          "donorBlob": "1ff714c3a275fb362c43adc2350276cb15b6f855",
+          "currentBlob": "0f2fbef88ad6e742815c66e4b3779d814b276e9a",
+          "repaired": true
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/lib/inspect.mjs",
+          "donorBlob": "23cb0f13c50849122e53acda60e1a49c828403f8",
+          "currentBlob": "23cb0f13c50849122e53acda60e1a49c828403f8",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/lib/intercept.mjs",
+          "donorBlob": "efaac2eef72bbae730ae6df4e096662fbf344e84",
+          "currentBlob": "8b09b83302542b87198558f03676bd4aefe2cb7e",
+          "repaired": true
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/lib/kit.mjs",
+          "donorBlob": "ff925d63595a1810bdad5cb8c10e283d9da62d37",
+          "currentBlob": "ff925d63595a1810bdad5cb8c10e283d9da62d37",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/lib/load.mjs",
+          "donorBlob": "848e2dd412fadd5764851bd94c6d8002d9d62b15",
+          "currentBlob": "848e2dd412fadd5764851bd94c6d8002d9d62b15",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/lib/net-stub.mjs",
+          "donorBlob": "61070695e6e0734f5e35985ba759f0eae1a05bcf",
+          "currentBlob": "61070695e6e0734f5e35985ba759f0eae1a05bcf",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/lib/parse-json.mjs",
+          "donorBlob": "0a765e97dc3057abedd48428b417bb2f05b3600e",
+          "currentBlob": "0a765e97dc3057abedd48428b417bb2f05b3600e",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/lib/pins.mjs",
+          "donorBlob": "c08b24ab46cd1d67209c19597d96ee87df073854",
+          "currentBlob": "c08b24ab46cd1d67209c19597d96ee87df073854",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/lib/refuse.mjs",
+          "donorBlob": "a00be3617d1dacba2c3f4ab7ab6bb1f13e98dec8",
+          "currentBlob": "a00be3617d1dacba2c3f4ab7ab6bb1f13e98dec8",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/lib/report.mjs",
+          "donorBlob": "0b05adbee0d88b605bcf97c9947a760f8441aed9",
+          "currentBlob": "738277749da16c21ebc63866d38a7846e363ec5e",
+          "repaired": true
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/lib/spawn.mjs",
+          "donorBlob": "ff8dcdf62fe95c294901361b113b6e06b8356ab2",
+          "currentBlob": "ff8dcdf62fe95c294901361b113b6e06b8356ab2",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/package.json",
+          "donorBlob": "a81832f1c85108ba52f9a8d9291b17281810ca53",
+          "currentBlob": "a81832f1c85108ba52f9a8d9291b17281810ca53",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/test/enforcement.test.mjs",
+          "donorBlob": "fb8202d7b77cd0deac024f600b987b4699af3008",
+          "currentBlob": "fb8202d7b77cd0deac024f600b987b4699af3008",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/test/helpers.mjs",
+          "donorBlob": "0bb0c8131a1c484ee23f55841542cec72199737b",
+          "currentBlob": "0bb0c8131a1c484ee23f55841542cec72199737b",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/test/inspect.test.mjs",
+          "donorBlob": "996a5445dc3c3dc7180035c53a00bfe985a6a253",
+          "currentBlob": "996a5445dc3c3dc7180035c53a00bfe985a6a253",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/test/journey.test.mjs",
+          "donorBlob": "7a5f1c1bd5775bc3179bbb313e8328e8625c7e79",
+          "currentBlob": "7a5f1c1bd5775bc3179bbb313e8328e8625c7e79",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/test/local-http.test.mjs",
+          "donorBlob": "374e7969e00e0869e29b5cc6a84000d8fed08b6b",
+          "currentBlob": "374e7969e00e0869e29b5cc6a84000d8fed08b6b",
+          "repaired": false
+        },
+        {
+          "path": "tools/extract-unpaid-honesty/test/seeded-failures.test.mjs",
+          "donorBlob": "3681f27d91f489232248bd7920e903e9a4a3f259",
+          "currentBlob": "3681f27d91f489232248bd7920e903e9a4a3f259",
+          "repaired": false
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "server/paid-useful-jobs",
+      "baseTree": "42f7ca74d1dabb7f1b709183849578fd984c2555",
+      "latestLocalCommit": "b426f85353c8027fd451b29c6593685739babe28",
+      "changedFromBase": false
+    },
+    {
+      "path": "vendor/neomorphic-correspondence",
+      "baseTree": "3b4e543c381f34edf76575b888305c3c9779668f",
+      "latestLocalCommit": "eb3677123c55b0401e3d7c354925dd0e9c5f634d",
+      "changedFromBase": false
+    },
+    {
+      "path": "experiments/wave5/m01",
+      "baseTree": "826fc6a6fbb602ae8a0ad96ca6d58d099272baf8",
+      "latestLocalCommit": "817a00ca226a94b0e198b29fcd06245b2a92adec",
+      "changedFromBase": false
+    },
+    {
+      "path": "tools/lockfile-pin-delta",
+      "baseTree": "5f0d836b8ef516dbdb03e82ed3bb8856e7cdc53b",
+      "latestLocalCommit": "9940ebd56bff70bdbc8d7a450c370115c107ee71",
+      "changedFromBase": false
+    },
+    {
+      "path": "client/public/for-agents/useful-jobs",
+      "baseTree": "d5f0cfd9b7ffc53fded6a5f10e592c290f1c3911",
+      "latestLocalCommit": "565a02ab4547b236a75bb5c0553346ca922116b6",
+      "changedFromBase": false
+    }
+  ],
+  "latestExternalDependencyHeads": "not fetched; acceptance applies only to the recorded immutable base"
+}

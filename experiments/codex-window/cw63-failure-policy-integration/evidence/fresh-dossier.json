@@ -1,0 +1,426 @@
+{
+  "ok": true,
+  "schema": "samedaydesk.failed-delivery-dossier.v1",
+  "sold": false,
+  "deliveryInHand": false,
+  "evidence": [
+    {
+      "sourceKind": "wrapper-receipt",
+      "sold": false,
+      "deliveryInHand": false,
+      "whyNotInHand": "F08 wrapper ran unfunded; sold is false; this is not a paid delivery in hand",
+      "body": {
+        "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+        "jobId": "lockfile-pin-delta",
+        "engine": {
+          "package": "@samedaydesk/lockfile-pin-delta",
+          "version": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+          "purchaseAuthority": false,
+          "cli": "node bin/lockfile-delta.mjs",
+          "archiveSha256": "74f36bc50971fd3dfbce48168ddd102ce124b1574d519cef854858a2b2cc6a9a",
+          "archiveBytes": 196,
+          "sourceRepo": "epistemedeus/samedaydesk",
+          "sourceCommit": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+          "ownedPath": "tools/lockfile-pin-delta/",
+          "source": "in-tree",
+          "catalogPin": {
+            "sha256": "74f36bc50971fd3dfbce48168ddd102ce124b1574d519cef854858a2b2cc6a9a",
+            "bytes": 196,
+            "version": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+            "package": "@samedaydesk/lockfile-pin-delta"
+          },
+          "executable": {
+            "sha256": "aead6e33f6a748a40c4f252022916dae5049356566517817b5994940d20bbcc6",
+            "bytes": 1318,
+            "bin": "/workspace/pilot/tmp/cw63-astra-failure-policy-integration-20260912/src/tools/lockfile-pin-delta/bin/lockfile-delta.mjs",
+            "source": "in-tree"
+          }
+        },
+        "inputsDigest": "12c48d927a409e29280d1e840d627e5ebc577cfa0c91d52cd2bc3703aff95498",
+        "outputsDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "inputs": [
+          {
+            "name": "before",
+            "kind": "file",
+            "bytes": 151,
+            "sha256": "ef84d828eb2d89d2cbf78db0c2855fa500530323c04de9c80984210973ae0635"
+          },
+          {
+            "name": "after",
+            "kind": "file",
+            "bytes": 802,
+            "sha256": "49ce5ed7db7568fede01a3fb901191c92015ec1484926591e038e797b85428d6"
+          }
+        ],
+        "inputRoot": null,
+        "outputs": [],
+        "fundingState": "unfunded",
+        "sold": false,
+        "sample": false,
+        "sampleReasons": [],
+        "purchaseAuthority": false,
+        "liveSettlement": "out-of-scope",
+        "fixturePrice": {
+          "labelled": true,
+          "live": false,
+          "publishedToLiveCatalog": false,
+          "jobId": "lockfile-pin-delta",
+          "amountUsdc": "0.02",
+          "amountAtomic": "20000",
+          "payTo": "0x0000000000000000000000000000000000000F08",
+          "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+        },
+        "payment": {
+          "fixture": false,
+          "purchaseAuthority": false,
+          "liveSettleAttempted": false,
+          "liveSettleAllowed": false,
+          "fundingState": "unfunded"
+        },
+        "continuity": null,
+        "engineResult": {
+          "ok": false,
+          "status": "refused",
+          "digest": null,
+          "refused": true,
+          "identityVerified": null
+        },
+        "outDir": "/tmp/cw63-integration-test-xKSnEP/puj-lockfile-pin-delta-out-b2XUCu",
+        "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+        "transport": "ok",
+        "analysis": {
+          "status": "refused",
+          "outcome": "refused",
+          "identityVerified": null
+        },
+        "delivery": {
+          "status": "not-attempted",
+          "complete": false,
+          "expected": [
+            "pin-delta.json",
+            "pin-delta.md"
+          ],
+          "present": [],
+          "missing": [
+            "pin-delta.json",
+            "pin-delta.md"
+          ],
+          "unexpected": []
+        }
+      },
+      "fundingState": "unfunded",
+      "sample": false,
+      "code": "html-input",
+      "observationStatus": "observed",
+      "observedHttpStatus": null,
+      "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+      "executionId": "953d03d3-f4a2-4038-8afd-83199c0a9f03",
+      "operationId": null,
+      "jobId": "lockfile-pin-delta",
+      "outcomeKind": "refusal",
+      "executionStatus": "executed",
+      "transport": "ok",
+      "analysisOutcome": "refused",
+      "delivery": {
+        "status": "not-attempted",
+        "complete": false,
+        "expected": [
+          "pin-delta.json",
+          "pin-delta.md"
+        ],
+        "present": [],
+        "missing": [
+          "pin-delta.json",
+          "pin-delta.md"
+        ],
+        "unexpected": []
+      },
+      "paymentClassification": {
+        "fundingState": "unfunded",
+        "fixture": false,
+        "settlementStatus": "not-attempted",
+        "buyerClass": "unknown",
+        "amountUsdc": null
+      },
+      "execution": {
+        "ok": false,
+        "refused": true,
+        "jobId": "lockfile-pin-delta",
+        "code": "html-input",
+        "error": "before is HTML, not a package-lock.json",
+        "fundingState": "unfunded",
+        "sold": false,
+        "sample": false,
+        "sampleReasons": [],
+        "purchaseAuthority": false,
+        "liveSettleAttempted": false,
+        "liveSettleAllowed": false,
+        "outputs": [],
+        "engine": {
+          "ok": false,
+          "refused": true,
+          "code": "html-input",
+          "error": "before is HTML, not a package-lock.json",
+          "status": "refused",
+          "detail": {
+            "label": "before"
+          },
+          "purchaseAuthority": false
+        },
+        "runOutDir": "/tmp/cw63-integration-test-xKSnEP/puj-lockfile-pin-delta-out-b2XUCu",
+        "executionId": "953d03d3-f4a2-4038-8afd-83199c0a9f03",
+        "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+        "transport": "ok",
+        "analysis": {
+          "status": "refused",
+          "outcome": "refused",
+          "identityVerified": null
+        },
+        "delivery": {
+          "status": "not-attempted",
+          "complete": false,
+          "expected": [
+            "pin-delta.json",
+            "pin-delta.md"
+          ],
+          "present": [],
+          "missing": [
+            "pin-delta.json",
+            "pin-delta.md"
+          ],
+          "unexpected": []
+        },
+        "receipt": {
+          "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+          "jobId": "lockfile-pin-delta",
+          "engine": {
+            "package": "@samedaydesk/lockfile-pin-delta",
+            "version": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+            "purchaseAuthority": false,
+            "cli": "node bin/lockfile-delta.mjs",
+            "archiveSha256": "74f36bc50971fd3dfbce48168ddd102ce124b1574d519cef854858a2b2cc6a9a",
+            "archiveBytes": 196,
+            "sourceRepo": "epistemedeus/samedaydesk",
+            "sourceCommit": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+            "ownedPath": "tools/lockfile-pin-delta/",
+            "source": "in-tree",
+            "catalogPin": {
+              "sha256": "74f36bc50971fd3dfbce48168ddd102ce124b1574d519cef854858a2b2cc6a9a",
+              "bytes": 196,
+              "version": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+              "package": "@samedaydesk/lockfile-pin-delta"
+            },
+            "executable": {
+              "sha256": "aead6e33f6a748a40c4f252022916dae5049356566517817b5994940d20bbcc6",
+              "bytes": 1318,
+              "bin": "/workspace/pilot/tmp/cw63-astra-failure-policy-integration-20260912/src/tools/lockfile-pin-delta/bin/lockfile-delta.mjs",
+              "source": "in-tree"
+            }
+          },
+          "inputsDigest": "12c48d927a409e29280d1e840d627e5ebc577cfa0c91d52cd2bc3703aff95498",
+          "outputsDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "inputs": [
+            {
+              "name": "before",
+              "kind": "file",
+              "bytes": 151,
+              "sha256": "ef84d828eb2d89d2cbf78db0c2855fa500530323c04de9c80984210973ae0635"
+            },
+            {
+              "name": "after",
+              "kind": "file",
+              "bytes": 802,
+              "sha256": "49ce5ed7db7568fede01a3fb901191c92015ec1484926591e038e797b85428d6"
+            }
+          ],
+          "inputRoot": null,
+          "outputs": [],
+          "fundingState": "unfunded",
+          "sold": false,
+          "sample": false,
+          "sampleReasons": [],
+          "purchaseAuthority": false,
+          "liveSettlement": "out-of-scope",
+          "fixturePrice": {
+            "labelled": true,
+            "live": false,
+            "publishedToLiveCatalog": false,
+            "jobId": "lockfile-pin-delta",
+            "amountUsdc": "0.02",
+            "amountAtomic": "20000",
+            "payTo": "0x0000000000000000000000000000000000000F08",
+            "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+          },
+          "payment": {
+            "fixture": false,
+            "purchaseAuthority": false,
+            "liveSettleAttempted": false,
+            "liveSettleAllowed": false,
+            "fundingState": "unfunded"
+          },
+          "continuity": null,
+          "engineResult": {
+            "ok": false,
+            "status": "refused",
+            "digest": null,
+            "refused": true,
+            "identityVerified": null
+          },
+          "outDir": "/tmp/cw63-integration-test-xKSnEP/puj-lockfile-pin-delta-out-b2XUCu",
+          "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+          "transport": "ok",
+          "analysis": {
+            "status": "refused",
+            "outcome": "refused",
+            "identityVerified": null
+          },
+          "delivery": {
+            "status": "not-attempted",
+            "complete": false,
+            "expected": [
+              "pin-delta.json",
+              "pin-delta.md"
+            ],
+            "present": [],
+            "missing": [
+              "pin-delta.json",
+              "pin-delta.md"
+            ],
+            "unexpected": []
+          }
+        }
+      },
+      "cli": {
+        "class": "local-runtime",
+        "exitCode": 2,
+        "argv": null
+      },
+      "origin": {
+        "class": "local-runtime",
+        "pin": null,
+        "engine": {
+          "package": "@samedaydesk/lockfile-pin-delta",
+          "version": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+          "purchaseAuthority": false,
+          "cli": "node bin/lockfile-delta.mjs",
+          "archiveSha256": "74f36bc50971fd3dfbce48168ddd102ce124b1574d519cef854858a2b2cc6a9a",
+          "archiveBytes": 196,
+          "sourceRepo": "epistemedeus/samedaydesk",
+          "sourceCommit": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+          "ownedPath": "tools/lockfile-pin-delta/",
+          "source": "in-tree",
+          "catalogPin": {
+            "sha256": "74f36bc50971fd3dfbce48168ddd102ce124b1574d519cef854858a2b2cc6a9a",
+            "bytes": 196,
+            "version": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+            "package": "@samedaydesk/lockfile-pin-delta"
+          },
+          "executable": {
+            "sha256": "aead6e33f6a748a40c4f252022916dae5049356566517817b5994940d20bbcc6",
+            "bytes": 1318,
+            "bin": "/workspace/pilot/tmp/cw63-astra-failure-policy-integration-20260912/src/tools/lockfile-pin-delta/bin/lockfile-delta.mjs",
+            "source": "in-tree"
+          }
+        },
+        "schema": "samedaydesk.paid-useful-jobs.receipt.v1"
+      }
+    }
+  ],
+  "sourceKinds": [
+    "wrapper-receipt"
+  ],
+  "honesty": {
+    "sold": false,
+    "purchaseAuthority": false,
+    "liveSettlement": "out-of-scope",
+    "refundAttempted": false,
+    "paymentRetried": false,
+    "paymentSignatureSent": false,
+    "stripeCalled": false,
+    "readyForRelease": false,
+    "termsVersionKind": "sha256-content-hash",
+    "i01TermsOwner": "https://github.com/epistemedeus/neomorphic-io/pull/54",
+    "i01GoldenTermsVersion": "sha256:c82f232dd9d63261b91d32234abf3e0f655d99182cde7c66b7de5c8c787ea31f",
+    "f08": {
+      "directory": "server/paid-useful-jobs/",
+      "pin": "bae3e7cd5034b21019fb272a99d88db964b831ee",
+      "rewritten": false,
+      "role": "fixture-capture",
+      "equalsSds52": false
+    },
+    "sds52": {
+      "pin": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "ref": "fable/f08-paid-wrappers",
+      "pr": 52,
+      "rewritten": false,
+      "role": "current-wrapper"
+    },
+    "sdsMain": "5b97d1b02e786acd1895cfa1508087ae3f7a1545",
+    "sourceStatus": {
+      "sdsMain": {
+        "sha": "5b97d1b02e786acd1895cfa1508087ae3f7a1545",
+        "status": "claimed",
+        "evidence": null
+      },
+      "f08Capture": {
+        "sha": "bae3e7cd5034b21019fb272a99d88db964b831ee",
+        "status": "fixture",
+        "evidence": null
+      },
+      "sds52": {
+        "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+        "status": "claimed",
+        "evidence": null
+      }
+    },
+    "liveExtractUnpaid": {
+      "amount": "0.005",
+      "amountAtomic": "5000",
+      "observationStatus": "unrun",
+      "observedHttpStatus": null,
+      "observedHttpStatuses": [],
+      "localRuntime402": false,
+      "expected402Only": false,
+      "note": "Catalog amount is expected. Live extract HTTP was not observed."
+    },
+    "checks": [
+      {
+        "id": "extract-http-402",
+        "status": "unrun",
+        "pass": false,
+        "observed": false,
+        "detail": "no extract-unpaid 402 item in this pack"
+      },
+      {
+        "id": "live-extract-http",
+        "status": "unrun",
+        "pass": false,
+        "observed": false,
+        "detail": "Production extract GET is unrun unless origin.class is external with captured status. Local-runtime 402 is not live extract."
+      },
+      {
+        "id": "postgres",
+        "status": "unrun",
+        "pass": false,
+        "observed": false,
+        "detail": "not used by this packer; absence is incomplete coverage, not a skipped passing gate"
+      },
+      {
+        "id": "f08-pin-worktree",
+        "status": "unrun",
+        "pass": false,
+        "observed": false,
+        "detail": "unrun until --verify-pins; not a passing skip"
+      },
+      {
+        "id": "sds52-pin-worktree",
+        "status": "unrun",
+        "pass": false,
+        "observed": false,
+        "detail": "unrun until --verify-pins; not a passing skip"
+      }
+    ],
+    "mutationBoundary": "Read-only packer. Feature-branch tool only. No refund, payment retry, Stripe call, PAYMENT-SIGNATURE, deploy, or live settlement.",
+    "itemCount": 1
+  }
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "flag": "--execute-refund",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "code": "execute_refund_refused",
+    "expectedRefusal": true
+  },
+  {
+    "flag": "--post-paid",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "code": "post_paid_refused",
+    "expectedRefusal": true
+  },
+  {
+    "flag": "--sum-as-revenue",
+    "expectedExit": 1,
+    "actualExit": 1,
+    "code": "sum_across_buyer_class_as_revenue",
+    "expectedRefusal": true
+  }
+]

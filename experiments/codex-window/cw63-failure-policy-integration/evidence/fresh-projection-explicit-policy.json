@@ -1,0 +1,45 @@
+{
+  "ok": true,
+  "projection": {
+    "schema": "samedaydesk.failed-job-policy-projection.v1",
+    "mode": "read_only",
+    "nonsettling": true,
+    "paidOut": false,
+    "payableAsserted": false,
+    "stripeRefundsCalled": false,
+    "obligationsPostedAsPaid": false,
+    "citedBankedUsdcAttached": false,
+    "revenueAcrossBuyerClass": null,
+    "records": [
+      {
+        "evidenceId": "sha256:db64bf7ed823f65a469ffe7324e037a06abf0b187c0c25500a2c626b3591a1a4",
+        "executionId": "953d03d3-f4a2-4038-8afd-83199c0a9f03",
+        "operationId": null,
+        "jobId": "lockfile-pin-delta",
+        "outcomeKind": "refusal",
+        "executionStatus": "executed",
+        "transport": "ok",
+        "analysisOutcome": "refused",
+        "delivery": "not-attempted",
+        "paymentClassification": {
+          "fundingState": "unfunded",
+          "fixture": false,
+          "settlementStatus": "not-attempted",
+          "buyerClass": "unknown",
+          "amountUsdc": null
+        },
+        "amountUsdc": null,
+        "buyerClass": "unknown",
+        "refundClaim": "not-offered",
+        "refundClaimSource": "explicit_policy",
+        "policyId": "cw63-local-control-unfunded-refusal",
+        "paidOut": false,
+        "sourceObservation": {
+          "status": "observed",
+          "class": "local-runtime"
+        }
+      }
+    ],
+    "contextEvidence": []
+  }
+}

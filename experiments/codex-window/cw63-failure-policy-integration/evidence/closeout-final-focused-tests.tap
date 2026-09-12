@@ -1,0 +1,285 @@
+TAP version 13
+# Subtest: actual wrapper refusal remains executed analysis, with no settlement amount or policy
+ok 1 - actual wrapper refusal remains executed analysis, with no settlement amount or policy
+  ---
+  duration_ms: 4.309563
+  type: 'test'
+  ...
+# Subtest: fresh projector CLI consumes the dossier and refuses refund, payout and revenue controls
+ok 2 - fresh projector CLI consumes the dossier and refuses refund, payout and revenue controls
+  ---
+  duration_ms: 490.665912
+  type: 'test'
+  ...
+# Subtest: actual no-change is derived from engine counts and hash-verified complete files
+ok 3 - actual no-change is derived from engine counts and hash-verified complete files
+  ---
+  duration_ms: 1.573381
+  type: 'test'
+  ...
+# Subtest: explicit exact policy affects claim only and a policy requiring unbound terms remains unknown
+ok 4 - explicit exact policy affects claim only and a policy requiring unbound terms remains unknown
+  ---
+  duration_ms: 1.597108
+  type: 'test'
+  ...
+# Subtest: jobId never becomes a settlement operationId and missing legacy execution stays unknown
+ok 5 - jobId never becomes a settlement operationId and missing legacy execution stays unknown
+  ---
+  duration_ms: 0.350796
+  type: 'test'
+  ...
+# Subtest: catalog expectation, unpaid 402 and checkout missing intake remain non-execution context
+ok 6 - catalog expectation, unpaid 402 and checkout missing intake remain non-execution context
+  ---
+  duration_ms: 1.95187
+  type: 'test'
+  ...
+# Subtest: external 500 is never rewritten to 402 and checkout is not live extract evidence
+ok 7 - external 500 is never rewritten to 402 and checkout is not live extract evidence
+  ---
+  duration_ms: 0.452943
+  type: 'test'
+  ...
+# Subtest: projection recomputes wrapper and context summaries from retained source
+ok 8 - projection recomputes wrapper and context summaries from retained source
+  ---
+  duration_ms: 0.454865
+  type: 'test'
+  ...
+# Subtest: contradictory wrapper and receipt fields are refused
+ok 9 - contradictory wrapper and receipt fields are refused
+  ---
+  duration_ms: 0.75124
+  type: 'test'
+  ...
+# Subtest: seeded transport-failure stays distinct through actual wrapper and projector
+ok 10 - seeded transport-failure stays distinct through actual wrapper and projector
+  ---
+  duration_ms: 82.873423
+  type: 'test'
+  ...
+# Subtest: seeded missing-body stays distinct through actual wrapper and projector
+ok 11 - seeded missing-body stays distinct through actual wrapper and projector
+  ---
+  duration_ms: 84.059089
+  type: 'test'
+  ...
+# Subtest: quoted payment text is observation and never a detected request
+ok 12 - quoted payment text is observation and never a detected request
+  ---
+  duration_ms: 3.600561
+  type: 'test'
+  ...
+# Subtest: a script echoing the guard error cannot manufacture an intercepted request
+ok 13 - a script echoing the guard error cannot manufacture an intercepted request
+  ---
+  duration_ms: 101.453013
+  type: 'test'
+  ...
+# Subtest: D23 spawn failure, missing body and valid refusal have separate classifications
+ok 14 - D23 spawn failure, missing body and valid refusal have separate classifications
+  ---
+  duration_ms: 0.138011
+  type: 'test'
+  ...
+# Subtest: real Postgres preserves actual classifications and rejects payout and missing facts
+ok 15 - real Postgres preserves actual classifications and rejects payout and missing facts
+  ---
+  duration_ms: 1076.339091
+  type: 'test'
+  ...
+# Subtest: honest enforcement claims
+    # Subtest: CLI enforcement contract never claims OS isolation
+    ok 1 - CLI enforcement contract never claims OS isolation
+      ---
+      duration_ms: 96.126933
+      type: 'test'
+      ...
+    # Subtest: CLI probe-extract detects a local /extract payment-shaped attempt
+    ok 2 - CLI probe-extract detects a local /extract payment-shaped attempt
+      ---
+      duration_ms: 242.244375
+      type: 'test'
+      ...
+    # Subtest: CLI probe-extract still detects the merchant extract URL shape without a live GET
+    ok 3 - CLI probe-extract still detects the merchant extract URL shape without a live GET
+      ---
+      duration_ms: 135.196663
+      type: 'test'
+      ...
+    # Subtest: CLI probe with PAYMENT-SIGNATURE is a detected payment attempt
+    ok 4 - CLI probe with PAYMENT-SIGNATURE is a detected payment attempt
+      ---
+      duration_ms: 98.784447
+      type: 'test'
+      ...
+    # Subtest: unhooked fetch to a local dummy /extract escapes and is not claimed as OS isolation
+    ok 5 - unhooked fetch to a local dummy /extract escapes and is not claimed as OS isolation
+      ---
+      duration_ms: 118.13905
+      type: 'test'
+      ...
+    # Subtest: unhooked probe refuses a remote URL instead of live-GET
+    ok 6 - unhooked probe refuses a remote URL instead of live-GET
+      ---
+      duration_ms: 0.957931
+      type: 'test'
+      ...
+    # Subtest: CLI observe-must-not-run is a text scan, not OS proof
+    ok 7 - CLI observe-must-not-run is a text scan, not OS proof
+      ---
+      duration_ms: 282.348537
+      type: 'test'
+      ...
+    # Subtest: copying mustNotRun is not treated as preservation
+    ok 8 - copying mustNotRun is not treated as preservation
+      ---
+      duration_ms: 0.470413
+      type: 'test'
+      ...
+    # Subtest: sequential intercepts keep separate logs and do not mutate parent HONESTY_INTERCEPT_LOG
+    ok 9 - sequential intercepts keep separate logs and do not mutate parent HONESTY_INTERCEPT_LOG
+      ---
+      duration_ms: 19.156745
+      type: 'test'
+      ...
+    1..9
+ok 16 - honest enforcement claims
+  ---
+  duration_ms: 995.319082
+  type: 'suite'
+  ...
+# Subtest: inspect
+    # Subtest: flags extract and batch, not useful-jobs public paths
+    ok 1 - flags extract and batch, not useful-jobs public paths
+      ---
+      duration_ms: 1.372822
+      type: 'test'
+      ...
+    # Subtest: does not claim a useful-jobs public path is a payment attempt
+    ok 2 - does not claim a useful-jobs public path is a payment attempt
+      ---
+      duration_ms: 1.269888
+      type: 'test'
+      ...
+    1..2
+ok 17 - inspect
+  ---
+  duration_ms: 3.531388
+  type: 'suite'
+  ...
+# Subtest: literal user journey
+    # Subtest: listing-repair-packet --example: purchaseAuthority false, no extract URL, mustNotRun preserved
+    ok 1 - listing-repair-packet --example: purchaseAuthority false, no extract URL, mustNotRun preserved
+      ---
+      duration_ms: 534.99245
+      type: 'test'
+      ...
+    # Subtest: library report matches CLI on --example
+    ok 2 - library report matches CLI on --example
+      ---
+      duration_ms: 457.800788
+      type: 'test'
+      ...
+    # Subtest: caller run via --input kit sample still has no extract URL
+    ok 3 - caller run via --input kit sample still has no extract URL
+      ---
+      duration_ms: 455.073674
+      type: 'test'
+      ...
+    # Subtest: writes JSON when --out is set
+    ok 4 - writes JSON when --out is set
+      ---
+      duration_ms: 564.743404
+      type: 'test'
+      ...
+    # Subtest: buyer-runtimes unpaid construct is still the extract GET without payment headers
+    ok 5 - buyer-runtimes unpaid construct is still the extract GET without payment headers
+      ---
+      duration_ms: 1.617654
+      type: 'test'
+      ...
+    1..5
+ok 18 - literal user journey
+  ---
+  duration_ms: 2015.466271
+  type: 'suite'
+  ...
+# Subtest: local HTTP intercept (not a live merchant GET)
+    # Subtest: local intercept blocks GET /extract without paying
+    ok 1 - local intercept blocks GET /extract without paying
+      ---
+      duration_ms: 29.455607
+      type: 'test'
+      ...
+    # Subtest: PAYMENT-SIGNATURE on local intercept is blocked
+    ok 2 - PAYMENT-SIGNATURE on local intercept is blocked
+      ---
+      duration_ms: 9.793258
+      type: 'test'
+      ...
+    # Subtest: PATH curl stub refuses extract URLs
+    ok 3 - PATH curl stub refuses extract URLs
+      ---
+      duration_ms: 105.460105
+      type: 'test'
+      ...
+    # Subtest: F18 contrast fixture is unpaid 402, not external acceptance
+    ok 4 - F18 contrast fixture is unpaid 402, not external acceptance
+      ---
+      duration_ms: 0.743849
+      type: 'test'
+      ...
+    1..4
+ok 19 - local HTTP intercept (not a live merchant GET)
+  ---
+  duration_ms: 146.57729
+  type: 'suite'
+  ...
+# Subtest: seeded failures
+    # Subtest: stub that fetches agents.samedaydesk.com/extract is caught
+    ok 1 - stub that fetches agents.samedaydesk.com/extract is caught
+      ---
+      duration_ms: 210.456034
+      type: 'test'
+      ...
+    # Subtest: library probeExtractFetch catches the stub
+    ok 2 - library probeExtractFetch catches the stub
+      ---
+      duration_ms: 107.050601
+      type: 'test'
+      ...
+    # Subtest: wrapping useful-jobs with a paid retry is refused
+    ok 3 - wrapping useful-jobs with a paid retry is refused
+      ---
+      duration_ms: 126.643546
+      type: 'test'
+      ...
+    # Subtest: library refusePaidRetry refuses the fixture wrap
+    ok 4 - library refusePaidRetry refuses the fixture wrap
+      ---
+      duration_ms: 1.869333
+      type: 'test'
+      ...
+    # Subtest: integer F01 termsVersion is rejected; I01 sha256: hash is accepted
+    ok 5 - integer F01 termsVersion is rejected; I01 sha256: hash is accepted
+      ---
+      duration_ms: 1.450693
+      type: 'test'
+      ...
+    1..5
+ok 20 - seeded failures
+  ---
+  duration_ms: 448.748921
+  type: 'suite'
+  ...
+1..20
+# tests 40
+# suites 5
+# pass 40
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6498.365013

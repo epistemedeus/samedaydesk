@@ -1,0 +1,8 @@
+{
+  "observed": true,
+  "expectedStatus": 402,
+  "paid": false,
+  "sold": false,
+  "success": false,
+  "note": "Claims observed HTTP 402 without a captured status."
+}

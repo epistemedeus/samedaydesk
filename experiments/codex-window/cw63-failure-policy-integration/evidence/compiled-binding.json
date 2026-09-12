@@ -1,0 +1,10 @@
+{
+  "path": "vendor/neomorphic-correspondence/dist/crypto.js",
+  "sha256": "8040a04c4f7d88c6a8351cc77045fa34eb7248a159d65bf433931273ef72a868",
+  "imported": true,
+  "hashTermsVersionExportPresent": false,
+  "binding": "unavailable at requested base; terms remain unverified",
+  "wrapper": "server/paid-useful-jobs/bin/cli.mjs",
+  "wrapperBuild": "native Node ESM; no compile step required",
+  "provider": "Grok VM/node_grok_bot_vm"
+}

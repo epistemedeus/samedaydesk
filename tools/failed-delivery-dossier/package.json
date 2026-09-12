@@ -1,0 +1,22 @@
+{
+  "name": "@samedaydesk/failed-delivery-dossier",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "W5-D21 / Co06 read-only failed-delivery evidence packer. Expected 402 is never observed. Unrun checks are not passing skips. Never refunds or retries payment.",
+  "bin": {
+    "failed-delivery-dossier": "./bin/dossier.mjs"
+  },
+  "exports": {
+    ".": "./lib/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "pack": "node ./bin/dossier.mjs pack --wrapper-receipt fixtures/wrapper-receipt/rejected-sample-not-a-sale.json --checkout-intake fixtures/checkout-intake/fulfillment-pending-verify.json --extract-unpaid fixtures/extract-unpaid/agent402-stop.json"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}
