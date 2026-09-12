@@ -1,0 +1,17 @@
+{
+  "name": "@samedaydesk/wave5-d16-final-lifecycle",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Independent final-input process/output check of useful-jobs 1.2.0 and D01 PR74. Not a second runner.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "d16-final-lifecycle": "./bin/final-lifecycle.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 --test-timeout=120000 test/*.test.mjs",
+    "harness": "node bin/final-lifecycle.mjs"
+  }
+}
