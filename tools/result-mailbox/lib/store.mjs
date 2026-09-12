@@ -1,4 +1,5 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { createHash, randomUUID } from "node:crypto";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { assertRequestId, parseEnvelope } from "./envelope.mjs";
 import { refuse } from "./errors.mjs";
@@ -66,48 +67,78 @@ export function ackRecordPath(mailbox, requestId) {
   return join(envelopeDir(mailbox, requestId), "ack.json");
 }
 
-function artifactIdentity(envelope) {
-  const rows = Array.isArray(envelope?.artifacts) ? envelope.artifacts : [];
-  return rows
-    .map((row) => `${row.name}:${row.sha256}:${row.bytes}`)
-    .sort()
-    .join("|");
+function canonical(value) {
+  if (Array.isArray(value)) return value.map(canonical);
+  if (value && typeof value === "object") return Object.fromEntries(Object.keys(value).sort().filter((key) => value[key] !== undefined).map((key) => [key, canonical(value[key])]));
+  return value;
 }
-
+function deliveryIdentity(envelope) {
+  // Acknowledgment is mutable progress; provenance, TTL and sample terms are not.
+  const { deliveredToBuyer, acknowledgedAt, ...identity } = envelope;
+  identity.artifacts = [...identity.artifacts].sort((a, b) => a.name.localeCompare(b.name));
+  return JSON.stringify(canonical(identity));
+}
+function digest(buf) { return createHash("sha256").update(buf).digest("hex"); }
+function verifiedFiles(envelope, files) {
+  if (!Array.isArray(files) || files.length !== envelope.artifacts.length) throw refuse("invalid-artifact", "Artifact files must exactly match envelope");
+  const names = new Set();
+  return files.map((file) => {
+    const listed = envelope.artifacts.find((a) => a.name === file.name);
+    if (!listed || names.has(file.name)) throw refuse("invalid-artifact", "Unexpected or duplicate artifact file");
+    names.add(file.name);
+    if (!file.buf && (!file.path || !lstatSync(file.path).isFile())) throw refuse("invalid-artifact", "Artifact source must be a regular file");
+    const buf = file.buf ? Buffer.from(file.buf) : readFileSync(file.path);
+    if (buf.length !== listed.bytes || digest(buf) !== listed.sha256) throw refuse("digest-mismatch", "Artifact bytes differ from envelope identity");
+    return { name: file.name, buf };
+  });
+}
 export function writeEnvelopeFiles({ mailbox, envelope, files }) {
+  envelope = parseEnvelope(envelope);
+  const prepared = verifiedFiles(envelope, files);
   const dir = envelopeDir(mailbox, envelope.requestId);
   const arts = artifactsDir(mailbox, envelope.requestId);
   const path = join(dir, "envelope.json");
-  if (existsSync(path)) {
-    const existing = parseEnvelope(JSON.parse(readFileSync(path, "utf8")));
-    const sameJob = existing.jobId === envelope.jobId;
-    const sameArtifacts = artifactIdentity(existing) === artifactIdentity(envelope);
-    if (sameJob && sameArtifacts) {
-      return { dir, envelopePath: path, artifactsDir: arts, replayed: true, envelope: existing };
+  const replay = () => {
+    const existing = readEnvelope(mailbox, envelope.requestId).envelope;
+    if (deliveryIdentity(existing) !== deliveryIdentity(envelope)) {
+      throw refuse("request-id-conflict", "requestId already holds different delivery bytes or terms", {
+        status: "request-id-conflict", detail: { requestId: envelope.requestId },
+      });
     }
-    throw refuse("request-id-conflict", "requestId already holds a different delivery", {
-      status: "request-id-conflict",
-      detail: { requestId: envelope.requestId, existingJobId: existing.jobId, incomingJobId: envelope.jobId },
-    });
-  }
-  mkdirSync(arts, { recursive: true });
-  for (const file of files) {
-    const dest = join(arts, file.name);
-    const buf = file.buf ? Buffer.from(file.buf) : readFileSync(file.path);
-    writeFileSync(dest, buf);
-  }
-  writeFileSync(path, `${JSON.stringify(envelope, null, 2)}\n`);
-  return { dir, envelopePath: path, artifactsDir: arts };
+    verifiedFiles(existing, existing.artifacts.map((a) => ({ name: a.name, path: join(arts, a.name) })));
+    return { dir, envelopePath: path, artifactsDir: arts, replayed: true, envelope: existing };
+  };
+  if (existsSync(path)) return replay();
+  mkdirSync(mailboxRoot(mailbox), { recursive: true });
+  const stage = mkdtempSync(join(mailboxRoot(mailbox), "." + envelope.requestId + ".stage-"));
+  try {
+    const stagedArtifacts = join(stage, "artifacts");
+    mkdirSync(stagedArtifacts);
+    for (const file of prepared) writeFileSync(join(stagedArtifacts, file.name), file.buf);
+    writeFileSync(join(stage, "envelope.json"), JSON.stringify(envelope, null, 2) + "\n");
+    try { renameSync(stage, dir); }
+    catch (err) {
+      if (existsSync(path)) return replay();
+      if (existsSync(dir)) throw refuse("incomplete-existing-delivery", "An older incomplete slot is preserved; no new delivery was published");
+      throw err;
+    }
+    return { dir, envelopePath: path, artifactsDir: arts };
+  } finally { rmSync(stage, { recursive: true, force: true }); }
+}
+function writeAtomic(path, value) {
+  mkdirSync(dirname(path), { recursive: true });
+  const temporary = path + "." + process.pid + "." + randomUUID() + ".tmp";
+  try { writeFileSync(temporary, JSON.stringify(value, null, 2) + "\n"); renameSync(temporary, path); }
+  finally { rmSync(temporary, { force: true }); }
 }
 
 export function writeEnvelope(mailbox, envelope) {
   const path = envelopePath(mailbox, envelope.requestId);
-  mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, `${JSON.stringify(envelope, null, 2)}\n`);
+  parseEnvelope(envelope);
+  writeAtomic(path, envelope);
   return path;
 }
 
 export function writeJson(filePath, value) {
-  mkdirSync(dirname(filePath), { recursive: true });
-  writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`);
+  writeAtomic(filePath, value);
 }

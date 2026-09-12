@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto";
-import { existsSync, mkdirSync, mkdtempSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { OrderRefuse, formatRefuse } from "./errors.mjs";
 import { loadCatalog, jobById } from "./catalog.mjs";
 import { hasOrderId, normalizeRequest } from "./contract.mjs";
-import { fileDigest, hashTerms } from "./digest.mjs";
+import { sha256Bytes, hashTerms } from "./digest.mjs";
 import { findExtractUrl } from "./extract-guard.mjs";
 import { CONSUMER_CONTRACT_SCHEMA, ORDER_TERMS_SCHEMA, OWNED_DIR, loadPins } from "./pins.mjs";
 import { inspectSample, collectLabeledSampleDigests } from "./sample-guard.mjs";
@@ -133,6 +133,32 @@ async function acquireReservation(store, record) {
     }
     return outcome;
   }
+}
+
+function invalidExecutionResult(offer, { request, job, executionId, contract }) {
+  if (!offer?.ok) return null;
+  const complete = (value) => value?.transport === "ok" && value?.delivery?.complete === true;
+  if (offer.contract !== contract || offer.jobId !== request.engineId || offer.executionId !== executionId || !complete(offer)) {
+    return "execution contract, job, identity or completion does not match this order";
+  }
+  const receipt = offer.receipt;
+  if (!receipt || receipt.contract !== contract || receipt.jobId !== request.engineId || !complete(receipt) ||
+      (receipt.executionId != null && receipt.executionId !== executionId)) {
+    return "nested receipt contradicts this order or is incomplete";
+  }
+  if (receipt.engine?.archiveSha256 !== request.enginePin.sha256 || receipt.engine?.archiveBytes !== request.enginePin.bytes) {
+    return "nested receipt engine pin does not match this order";
+  }
+  const expected = job.outputs || [];
+  const rows = offer.outputs;
+  const nested = receipt.outputs;
+  const validRows = (list) => Array.isArray(list) && list.length === expected.length &&
+    new Set(list.map((r) => r?.name)).size === expected.length &&
+    list.every((r) => r && expected.includes(r.name) && Number.isSafeInteger(r.bytes) && r.bytes >= 0 && /^[a-f0-9]{64}$/.test(r.sha256 || ""));
+  if (!validRows(rows) || !validRows(nested) || rows.some((r) => !nested.some((n) => n.name === r.name && n.bytes === r.bytes && n.sha256 === r.sha256))) {
+    return "output identities are missing, wrong for this job or contradictory";
+  }
+  return null;
 }
 
 function mapOutputs(offer) {
@@ -274,6 +300,7 @@ async function createOrderStrict(raw, options = {}) {
     );
   }
 
+  const frozenBytes = {};
   for (const inp of request.inputs) {
     if (!existsSync(inp.resolvedPath)) {
       throw new OrderRefuse("missing-input-file", `input file not found for ${inp.flag}`, {
@@ -282,7 +309,8 @@ async function createOrderStrict(raw, options = {}) {
       });
     }
     if (inp.kind === "directory") continue;
-    const actual = fileDigest(inp.resolvedPath);
+    const buffer = readFileSync(inp.resolvedPath);
+    const actual = { sha256: sha256Bytes(buffer), bytes: buffer.length };
     if (actual.sha256 !== inp.sha256 || actual.bytes !== inp.bytes) {
       throw new OrderRefuse(
         "f-input",
@@ -292,6 +320,25 @@ async function createOrderStrict(raw, options = {}) {
           detail: { flag: inp.flag, claimed: { sha256: inp.sha256, bytes: inp.bytes }, actual },
         },
       );
+    }
+    frozenBytes[inp.key] = buffer;
+    if (inp.key === "job-before") frozenBytes["job:before"] = buffer;
+    if (inp.key === "job-after") frozenBytes["job:after"] = buffer;
+  }
+
+  // Bind the executed bytes to the same bytes admitted into immutable terms.
+  // Do not let caller overrides or a later filesystem mutation change execution.
+  for (const [key, value] of Object.entries(raw.fileBytes || {})) {
+    const bound = frozenBytes[key];
+    const provided = Buffer.isBuffer(value) || value instanceof Uint8Array
+      ? Buffer.from(value)
+      : typeof value === "string" ? Buffer.from(value)
+        : value?.type === "Buffer" && Array.isArray(value.data) && value.data.every((n) => Number.isInteger(n) && n >= 0 && n <= 255)
+          ? Buffer.from(value.data) : null;
+    if (!bound || !provided || !bound.equals(provided)) {
+      throw new OrderRefuse("f-input", "fileBytes must match a declared and verified input", {
+        falsifier: "F-INPUT", detail: { key },
+      });
     }
   }
 
@@ -355,7 +402,7 @@ async function createOrderStrict(raw, options = {}) {
     offer = await wrapper.runPaidOffer({
       jobId: request.engineId,
       inputs: offerInputs(request),
-      fileBytes: raw.fileBytes && typeof raw.fileBytes === "object" ? raw.fileBytes : undefined,
+      fileBytes: frozenBytes,
       example: false,
       fundingIntent: request.fundingState,
       funding: request.fundingState,
@@ -386,6 +433,14 @@ async function createOrderStrict(raw, options = {}) {
     }
   }
 
+  const contradiction = invalidExecutionResult(offer, {
+    request, job, executionId, contract: wrapper.version || EXECUTION_CONTRACT_PIN,
+  });
+  if (contradiction) {
+    offer = { ok: false, code: "invalid-execution-result", error: contradiction,
+      contract: wrapper.version || EXECUTION_CONTRACT_PIN, executionId,
+      transport: "engine-crash", delivery: { complete: false } };
+  }
   if (!offer?.ok) {
     const err = mapWrapperRefuse(offer, raw);
     const refused = formatRefuse(err, raw);
