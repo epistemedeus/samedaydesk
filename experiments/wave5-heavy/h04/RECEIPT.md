@@ -105,7 +105,7 @@ node experiments/wave5/m01/bin/catalog.mjs contract
 
 ## Payment-example-match (additive)
 
-Owned: `experiments/wave5-heavy/h04/payment-example-match/`. Accept-pack history above is unchanged.
+Owned: `experiments/wave5-heavy/h04/payment-example-match/`. Accept-pack history above is unchanged. Content commit `89096211c5640495aab95298fa4fb70914317717`.
 
 Question: do the four GET `/extract` paid-success request digests match a publicly advertised demo?
 
