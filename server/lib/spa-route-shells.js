@@ -100,6 +100,7 @@ export const SPA_ROUTE_SHELLS = Object.freeze([
       </p>
       <ul>
         <li><a href="https://samedaydesk.com/research/agent402-seller-integrity-validation-2026-08-29.json">Agent402 validation receipt</a></li>
+        <li><a href="https://samedaydesk.com/x402/seller-conformance/?resolved=gentech-defi-slash-20260912">Gentech DeFi resolved diagnostic case</a></li>
         <li><a href="https://samedaydesk.com/x402/verified">Inspected x402 route list</a></li>
         <li><a href="https://samedaydesk.com/x402">Agent payment infrastructure</a></li>
       </ul>
