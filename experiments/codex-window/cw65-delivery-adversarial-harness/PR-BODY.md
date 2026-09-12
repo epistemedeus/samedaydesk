@@ -1,0 +1,5 @@
+Preserve exact D16/D18/D19/D20 consumer sources and an unfinished current-core cross-process acceptance foundation for native Grok Heavy. The foundation adds serial orchestration, independent negative controls, raw evidence, and partial isolation/order/mailbox interruption cases without changing shared runtime code.
+
+This is a foundation handoff, not readiness. Eleven syntax checks and nine independent controls pass. One small current-vendor probe fails in the harness oracle because it requires `receipt.executionId`, which the current successful CLI response omits. The other 20 proposed cases have not run. The original failure, outputs, dependency hashes, and exact remaining repair plan are tracked in `experiments/codex-window/cw65-delivery-adversarial-harness/GROK-HANDOFF.md` and adjacent evidence.
+
+Tested core base: `76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be`. Upstream integration was observed at `30345f69f16aca93bb95511ee4da62975c98cc04` and remains unconsumed. Runtime files, releases, default branches, and other consumers are unchanged. Keep draft for the next owner.
