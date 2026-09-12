@@ -1,7 +1,7 @@
 {
   "schema": "useful-jobs.catalog.v1",
   "package": "useful-jobs",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "runtime": {
     "node": ">=22",
     "network": "offline-first",
@@ -168,7 +168,7 @@
     {
       "id": "vendor-budget-impact",
       "title": "Vendor Budget Impact",
-      "summary": "Scan curated pricing-row before/after JSON for field and unit deltas. No purchase authority.",
+      "summary": "Compare caller-supplied pricing snapshots for added, removed, changed and incomparable-unit rows. Not a bill calculator or live quote.",
       "cli": [
         "node",
         "bin/useful-jobs.mjs",
@@ -186,7 +186,7 @@
       "sampleAvailable": true,
       "exampleFlag": "--example",
       "freeSample": true,
-      "notes": "Conflicting/unknown upstream evidence stays partial even without a known delta."
+      "notes": "Supply dated snapshots with stable field identity and matching units. Added/removed rows describe snapshot coverage, not confirmed SKU launches/retirements. Same-unit numeric deltas are per listed unit, not savings. No usage, free-tier, tax, tariff or currency conversion."
     },
     {
       "id": "feed-agenda",
