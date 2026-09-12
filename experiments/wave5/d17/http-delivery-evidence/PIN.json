@@ -1,0 +1,47 @@
+{
+  "id": "W5-D17-http-delivery-evidence",
+  "slot": "D17",
+  "repo": "epistemedeus/samedaydesk",
+  "schema": "samedaydesk.wave5.d17.http-response-validation.v1",
+  "historicalPaidSuccess": {
+    "schema": "samedaydesk.commerce-paid-success-evidence.request/response.v1",
+    "recordVersion": 1,
+    "validatorVerdict": "not_checked",
+    "validatorAuthority": "none",
+    "validatorSource": "http_runtime_not_checked",
+    "runtimeAttribution": "http",
+    "responseDigestDomain": "samedaydesk.commerce-paid-success-evidence.response.v1\u0000"
+  },
+  "merchant": {
+    "kind": "current-pinned-x402-url-extractor",
+    "repo": "epistemedeus/x402-url-extractor",
+    "sha": "a143898dd1ec35c097ca7eb0b472f30dad1ee319",
+    "ref": "master",
+    "pr": 54,
+    "note": "Accepted merchant PR54 / Railway SUCCESS. H01 owns merchant edits. D17 tests spawn a disposable copy only."
+  },
+  "sdsWrapperPin": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "ref": "fable/f08-paid-wrappers",
+    "pr": 52,
+    "note": "Orthogonal to this HTTP package. Do not relaunch SDS52 domain-outcome classifier work."
+  },
+  "productionFinding": {
+    "kind": "paid_http_not_useful_delivery",
+    "route": "GET /extract",
+    "count": 4,
+    "amountAtomicEach": "5000",
+    "payerClass": "unclassified",
+    "origin": "external HTTP, direct-or-unattributed",
+    "validatorVerdict": "not_checked",
+    "validatorAuthority": "none",
+    "validatorSource": "http_runtime_not_checked",
+    "rawPrivateInputs": "none retained or required"
+  },
+  "integrationOwner": "H01",
+  "remainingBinding": [
+    "H01 must keep v1 not_checked rows readable after any validator constant change; optional validation is a sibling versioned record joined by method+resource+responseDigest.",
+    "Root must not count simulated facilitator settlement or schema-pass as independent buyer usefulness or banked revenue."
+  ]
+}

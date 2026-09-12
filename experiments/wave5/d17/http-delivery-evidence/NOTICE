@@ -1,0 +1,19 @@
+W5-D17 HTTP response-contract evidence
+====================================
+
+This package extends SameDayDesk merchant paid-success capture with an
+optional versioned HTTP response-validation record. It does not replace
+historical v1 `not_checked` rows, does not vendor the merchant kernel, and
+is not a second revenue ledger.
+
+Consumed implementations (licenses stay with those works):
+- epistemedeus/x402-url-extractor at a143898dd1ec35c097ca7eb0b472f30dad1ee319
+  (read-only pin for disposable tests; H01 owns merchant edits)
+- SameDayDesk tools/evidence-records field discipline (join keys, closed
+  enums, prohibited inferences). This package does not add a sourceKind to
+  that catalog.
+
+MCP typed telemetry is HTTP-incompatible identity. This package does not
+treat MCP tool names as HTTP extract buyers.
+
+D17 owned files in this directory are MIT (see LICENSE).

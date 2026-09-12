@@ -1,0 +1,19 @@
+{
+  "name": "@samedaydesk/wave5-d17-http-delivery-evidence",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Versioned HTTP response-contract evidence for paid extract/read/batch. Binds caller-observed bytes to merchant-declared schemas without claiming usefulness or revenue.",
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "bin": {
+    "validate-http-delivery": "./bin/validate-http-delivery.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs"
+  }
+}
