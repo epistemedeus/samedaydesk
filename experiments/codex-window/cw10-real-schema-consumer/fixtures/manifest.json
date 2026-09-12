@@ -6,13 +6,106 @@
     "path": "payload-schemas/api.github.com/organization/renamed.schema.json",
     "beforeCommit": "237b6924bcbfd2d0d36e7233d36c2c6bc21fa2a2",
     "changeCommit": "e69d6eca4e5f1505afacd0677c4303877caca0d6",
-    "afterCommit": "7dd7fa56498a827a08b71919fae89428f5e8e283",
+    "afterCommit": "e69d6eca4e5f1505afacd0677c4303877caca0d6",
     "sha256": {
       "beforeSchema": "a4279b20ad344c45a6cc0e918e22a813f941299385a1a29d57828425ab3cffeb",
-      "afterSchema": "6b2c35a130ca405175f00b33529bed54bbe810ac76009dc2cf9cec217d137323",
-      "currentRenamedExample": "6ab3231816d7c1999b4a514b750103c29eaeba020aa712c94c6a2f7a7fec6ee2",
-      "currentMemberAddedExample": "5b41fd635f3c3d4afaf2ca11fb391eed4267894066f41bf576b2b885876a680d"
-    }
+      "afterSchema": "91e352ce3e3dcdfba75fe8e3cf6ece9b8f9ac4cb58255462c7480a5b55ff8292",
+      "changeRenamedExample": "d3b64f0cea36265847ca913e1fc99423595b9f80c602115867bb05e236c162c6",
+      "parentMemberAddedExample": "5b41fd635f3c3d4afaf2ca11fb391eed4267894066f41bf576b2b885876a680d"
+    },
+    "historicalAfterCommit": "7dd7fa56498a827a08b71919fae89428f5e8e283",
+    "files": [
+      {
+        "file": "fixtures/upstream/organization-renamed/before/schema.json",
+        "commit": "237b6924bcbfd2d0d36e7233d36c2c6bc21fa2a2",
+        "path": "payload-schemas/api.github.com/organization/renamed.schema.json",
+        "sha256": "a4279b20ad344c45a6cc0e918e22a813f941299385a1a29d57828425ab3cffeb",
+        "bytes": 585,
+        "id": "organization$renamed"
+      },
+      {
+        "file": "fixtures/upstream/organization-renamed/before/common/membership.schema.json",
+        "commit": "237b6924bcbfd2d0d36e7233d36c2c6bc21fa2a2",
+        "path": "payload-schemas/api.github.com/common/membership.schema.json",
+        "sha256": "b229d084054325a84e5570218f8db1268df645b750109bca12193f8d1ab41080",
+        "bytes": 767,
+        "id": "common/membership.schema.json"
+      },
+      {
+        "file": "fixtures/upstream/organization-renamed/before/common/user.schema.json",
+        "commit": "237b6924bcbfd2d0d36e7233d36c2c6bc21fa2a2",
+        "path": "payload-schemas/api.github.com/common/user.schema.json",
+        "sha256": "0de74d34566304971f28c8b2050fb6dc37e3bed8d594f53633cd0467ed2e0639",
+        "bytes": 1610,
+        "id": "common/user.schema.json"
+      },
+      {
+        "file": "fixtures/upstream/organization-renamed/before/common/installation-lite.schema.json",
+        "commit": "237b6924bcbfd2d0d36e7233d36c2c6bc21fa2a2",
+        "path": "payload-schemas/api.github.com/common/installation-lite.schema.json",
+        "sha256": "dd5a5db8d9371fad9ef4ef1eca469c07b3d57506771be3e7ce3ed9d38cf48e0d",
+        "bytes": 395,
+        "id": "common/installation-lite.schema.json"
+      },
+      {
+        "file": "fixtures/upstream/organization-renamed/before/common/organization.schema.json",
+        "commit": "237b6924bcbfd2d0d36e7233d36c2c6bc21fa2a2",
+        "path": "payload-schemas/api.github.com/common/organization.schema.json",
+        "sha256": "6e99963948d3376d127a27ea8bf8a95035ea1cbd1698193692cb0767af5e31af",
+        "bytes": 1110,
+        "id": "common/organization.schema.json"
+      },
+      {
+        "file": "fixtures/upstream/organization-renamed/after/schema.json",
+        "commit": "e69d6eca4e5f1505afacd0677c4303877caca0d6",
+        "path": "payload-schemas/api.github.com/organization/renamed.schema.json",
+        "sha256": "91e352ce3e3dcdfba75fe8e3cf6ece9b8f9ac4cb58255462c7480a5b55ff8292",
+        "bytes": 872,
+        "id": "organization$renamed"
+      },
+      {
+        "file": "fixtures/upstream/organization-renamed/after/common/user.schema.json",
+        "commit": "e69d6eca4e5f1505afacd0677c4303877caca0d6",
+        "path": "payload-schemas/api.github.com/common/user.schema.json",
+        "sha256": "0de74d34566304971f28c8b2050fb6dc37e3bed8d594f53633cd0467ed2e0639",
+        "bytes": 1610,
+        "id": "common/user.schema.json"
+      },
+      {
+        "file": "fixtures/upstream/organization-renamed/after/common/installation-lite.schema.json",
+        "commit": "e69d6eca4e5f1505afacd0677c4303877caca0d6",
+        "path": "payload-schemas/api.github.com/common/installation-lite.schema.json",
+        "sha256": "dd5a5db8d9371fad9ef4ef1eca469c07b3d57506771be3e7ce3ed9d38cf48e0d",
+        "bytes": 395,
+        "id": "common/installation-lite.schema.json"
+      },
+      {
+        "file": "fixtures/upstream/organization-renamed/after/common/organization.schema.json",
+        "commit": "e69d6eca4e5f1505afacd0677c4303877caca0d6",
+        "path": "payload-schemas/api.github.com/common/organization.schema.json",
+        "sha256": "6e99963948d3376d127a27ea8bf8a95035ea1cbd1698193692cb0767af5e31af",
+        "bytes": 1110,
+        "id": "common/organization.schema.json"
+      },
+      {
+        "file": "fixtures/source-examples/change-renamed.payload.json",
+        "commit": "e69d6eca4e5f1505afacd0677c4303877caca0d6",
+        "path": "payload-examples/api.github.com/organization/renamed.payload.json",
+        "sha256": "d3b64f0cea36265847ca913e1fc99423595b9f80c602115867bb05e236c162c6",
+        "bytes": 1954
+      },
+      {
+        "file": "fixtures/source-examples/parent-member-added.payload.json",
+        "commit": "237b6924bcbfd2d0d36e7233d36c2c6bc21fa2a2",
+        "path": "payload-examples/api.github.com/organization/member_added.payload.json",
+        "sha256": "5b41fd635f3c3d4afaf2ca11fb391eed4267894066f41bf576b2b885876a680d",
+        "bytes": 3087
+      }
+    ],
+    "verifiedParent": "237b6924bcbfd2d0d36e7233d36c2c6bc21fa2a2",
+    "changeDate": "2022-12-29T21:52:15Z",
+    "historicalAfterSchemaSha256": "6b2c35a130ca405175f00b33529bed54bbe810ac76009dc2cf9cec217d137323",
+    "historicalAfterSemanticallyEqual": true
   },
   "subject": "GitHub organization.renamed webhook",
   "dialect": "http://json-schema.org/draft-07/schema",
@@ -55,8 +148,8 @@
     ]
   },
   "coverage": {
-    "engine": "Version 1.4.0 fingerprints /required as only an array value and therefore misses required-member additions. Selecting the root instead refuses on this official schema's relative references. The additionalProperties pointer is a same-value control. This fixture is a bounded false-negative counterexample, not a claim of broader dialect coverage.",
-    "witness": "AJV validates complete fixtures under JSON Schema Draft 7 with the checked-in transitive local references. The old fixture is composed from official Octokit payload examples and is not asserted to be a captured customer delivery.",
+    "engine": "Released 1.4.0 and CW14 8b752017 report the schema keyword pointer /required as an unchanged generic array. Root selection of the full schema refuses on relative resource refs. A labeled root-keyword projection is supported and detects the break; it is not the full upstream schema.",
+    "witness": "Ajv validates complete fixtures under Draft7 with every pinned reference and supported format. The old fixture is composed from the exact change renamed example and exact parent member_added example. No parent renamed example exists at that upstream path (HTTP 404); this is a schema acceptance witness, not a captured old renamed delivery.",
     "formats": "AJV formats are enabled; the SameDayDesk classification is not used to claim format compatibility."
   }
 }

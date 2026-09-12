@@ -1,6 +1,10 @@
 {
   "action": "renamed",
-  "changes": { "login": { "from": "Octocoders" } },
+  "changes": {
+    "login": {
+      "from": "Octocoders"
+    }
+  },
   "organization": {
     "login": "Octocoders",
     "id": 38302899,

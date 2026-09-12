@@ -5,8 +5,8 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const examples = path.join(root, "fixtures", "source-examples");
-const migrated = JSON.parse(fs.readFileSync(path.join(examples, "current-renamed.payload.json"), "utf8"));
-const memberAdded = JSON.parse(fs.readFileSync(path.join(examples, "current-member-added.payload.json"), "utf8"));
+const migrated = JSON.parse(fs.readFileSync(path.join(examples, "change-renamed.payload.json"), "utf8"));
+const memberAdded = JSON.parse(fs.readFileSync(path.join(examples, "parent-member-added.payload.json"), "utf8"));
 const saved = { ...migrated, membership: memberAdded.membership };
 delete saved.changes;
 const payloadRoot = path.join(root, "fixtures", "payloads");

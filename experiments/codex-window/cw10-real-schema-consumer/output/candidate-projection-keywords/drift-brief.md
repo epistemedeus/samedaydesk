@@ -24,4 +24,5 @@ Nonsettling prototype. purchaseAuthority=false. sold=false. customerBrief=false.
 ## Unknown used paths
 - none
 
-_termsVersion: sha256:ae032bc37975a67bd5978d6c6836a399665b4e101b06e98f082f1e6cb91eb3c8_
+_termsVersion: sha256:a10679a3b7ace910a4eaac77377157d02086478e17decd3454c04f12f23d062b_
+

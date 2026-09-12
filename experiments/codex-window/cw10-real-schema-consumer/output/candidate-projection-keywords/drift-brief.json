@@ -19,12 +19,12 @@
   },
   "provenance": "caller-input",
   "inputs": {
-    "before": "sha256:a4279b20ad344c45a6cc0e918e22a813f941299385a1a29d57828425ab3cffeb",
-    "after": "sha256:6b2c35a130ca405175f00b33529bed54bbe810ac76009dc2cf9cec217d137323",
-    "used": "sha256:b8208d14ecf2fa9677afbf583a33e1afdaa44c4499d5f53781aa3cfba8abe698",
-    "beforeBytes": 585,
-    "afterBytes": 850,
-    "usedBytes": 69
+    "before": "sha256:789041f827f11161214f52ac53e69d5fe8f660481856a5496876b1ed2288a19e",
+    "after": "sha256:ac559ed79366744573d2dcb35184ce53e0fd360a9ee22190931cab0a82b02895",
+    "used": "sha256:8afdfadbaebc2ac1a82c51c22a6ca2fedaa5015fe2b6d55db9d9f7de2347361e",
+    "beforeBytes": 325,
+    "afterBytes": 319,
+    "usedBytes": 57
   },
   "impact": {
     "breaking": [],
@@ -59,5 +59,5 @@
     "notMarketFact": true,
     "notCustomerDemand": true
   },
-  "termsVersion": "sha256:ae032bc37975a67bd5978d6c6836a399665b4e101b06e98f082f1e6cb91eb3c8"
+  "termsVersion": "sha256:a10679a3b7ace910a4eaac77377157d02086478e17decd3454c04f12f23d062b"
 }

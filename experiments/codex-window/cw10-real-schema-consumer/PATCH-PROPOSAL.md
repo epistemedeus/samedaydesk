@@ -1,28 +1,35 @@
-# Patch proposal for the shared engine owner
+# Remaining regression for the CW14 engine owner
 
-This directory does not modify the released engine or its source.
+At exact CW14 head `8b75201761a8b58a6d00f16d9eb825c15fc5b68b`, the
+`organization.renamed` required-member swap still reports `informational` when
+`/required` is selected. The full source documents are classified as
+`json-schema`; hashes in the returned brief match the actual upstream files.
+This is not a webhook-example detection accident.
 
-## Reproduction
+`fingerprintSchemaNode()` reduces selected arrays to `{kind: "literal",
+jsonType: "array"}`. `classifyPair()` then sees equal fingerprints. It has lost
+the string members before comparison. Passing the schema's whole root refuses
+on relative external resource `$ref`s, so that is not a full-schema workaround.
 
-The official `octokit/webhooks` Draft 7 schema replaced `membership` with
-`changes` in the root `required` array for `organization.renamed`. With
-`/required` declared as used, useful-jobs 1.4.0 reports `informational` and zero
-breaking rows. AJV (Another JSON Schema Validator) proves that
-`saved-membership.json` is valid before the change and invalid after it.
+The [small derived regression](fixtures/regression/README.md) removes that
+reference limitation without claiming to be the full official schema. Both
+release and CW14 recognize its root-level change as breaking, but both miss the
+same `/required` selection. The complete Ajv witness establishes a real change
+to the set of accepted request bodies.
 
-Selecting the empty root pointer is not a usable consumer workaround for this
-pair: the released engine refuses because the root fingerprint encounters the
-schema's relative `$ref` values.
+A correction should preserve the selected keyword's document context before
+fingerprinting. A selected `required` keyword should compare string members as
+a set, including unchanged reorderings. An added required name may be breaking;
+a removed required name by itself weakens the requirement. Do not reuse this
+rule for arbitrary arrays in webhook examples or for an array-valued `enum` or
+`const`. Malformed keywords must be refused or unknown. Where interactions
+prevent an inclusion proof, explicit unknown is preferable to silent equality.
 
-## Narrow proposed correction
+This source change also removes `properties.membership` under
+`additionalProperties: false`: membership becomes forbidden. It adds the
+required nested `changes.login.from` structure. The concrete old-valid/new-invalid
+body proves that this specific combined change breaks backward acceptance;
+required-name removal alone does not establish that conclusion.
 
-When the selected pointer resolves to a `required` keyword, compare its string
-members as a set rather than fingerprinting it as a generic JSON array:
-
-- after minus before: `breaking`, reason `required-added`;
-- before minus after: `compatible`, reason `required-removed`;
-- order-only change: `unchanged`.
-
-Keep existing refusal behavior for malformed non-string members. Add this exact
-fixture as a regression test. A broader root-level reference resolver is a
-separate change and is not required to fix this false negative.
+No shared engine edit is included. CW14 owns the semantic fix and its API
+contract; this consumer supplies a pinned reproduction and candidate readback.

@@ -1,29 +1,797 @@
 {
-  "schema": "cw10.real-schema-consumer.report.v1",
-  "ok": true,
+  "schema": "cw10.real-schema-consumer.report.v2",
   "source": {
     "repository": "octokit/webhooks",
     "license": "MIT",
     "path": "payload-schemas/api.github.com/organization/renamed.schema.json",
     "beforeCommit": "237b6924bcbfd2d0d36e7233d36c2c6bc21fa2a2",
     "changeCommit": "e69d6eca4e5f1505afacd0677c4303877caca0d6",
-    "afterCommit": "7dd7fa56498a827a08b71919fae89428f5e8e283",
+    "afterCommit": "e69d6eca4e5f1505afacd0677c4303877caca0d6",
     "sha256": {
       "beforeSchema": "a4279b20ad344c45a6cc0e918e22a813f941299385a1a29d57828425ab3cffeb",
-      "afterSchema": "6b2c35a130ca405175f00b33529bed54bbe810ac76009dc2cf9cec217d137323",
-      "currentRenamedExample": "6ab3231816d7c1999b4a514b750103c29eaeba020aa712c94c6a2f7a7fec6ee2",
-      "currentMemberAddedExample": "5b41fd635f3c3d4afaf2ca11fb391eed4267894066f41bf576b2b885876a680d"
+      "afterSchema": "91e352ce3e3dcdfba75fe8e3cf6ece9b8f9ac4cb58255462c7480a5b55ff8292",
+      "changeRenamedExample": "d3b64f0cea36265847ca913e1fc99423595b9f80c602115867bb05e236c162c6",
+      "parentMemberAddedExample": "5b41fd635f3c3d4afaf2ca11fb391eed4267894066f41bf576b2b885876a680d"
+    },
+    "historicalAfterCommit": "7dd7fa56498a827a08b71919fae89428f5e8e283",
+    "files": [
+      {
+        "file": "fixtures/upstream/organization-renamed/before/schema.json",
+        "commit": "237b6924bcbfd2d0d36e7233d36c2c6bc21fa2a2",
+        "path": "payload-schemas/api.github.com/organization/renamed.schema.json",
+        "sha256": "a4279b20ad344c45a6cc0e918e22a813f941299385a1a29d57828425ab3cffeb",
+        "bytes": 585,
+        "id": "organization$renamed"
+      },
+      {
+        "file": "fixtures/upstream/organization-renamed/before/common/membership.schema.json",
+        "commit": "237b6924bcbfd2d0d36e7233d36c2c6bc21fa2a2",
+        "path": "payload-schemas/api.github.com/common/membership.schema.json",
+        "sha256": "b229d084054325a84e5570218f8db1268df645b750109bca12193f8d1ab41080",
+        "bytes": 767,
+        "id": "common/membership.schema.json"
+      },
+      {
+        "file": "fixtures/upstream/organization-renamed/before/common/user.schema.json",
+        "commit": "237b6924bcbfd2d0d36e7233d36c2c6bc21fa2a2",
+        "path": "payload-schemas/api.github.com/common/user.schema.json",
+        "sha256": "0de74d34566304971f28c8b2050fb6dc37e3bed8d594f53633cd0467ed2e0639",
+        "bytes": 1610,
+        "id": "common/user.schema.json"
+      },
+      {
+        "file": "fixtures/upstream/organization-renamed/before/common/installation-lite.schema.json",
+        "commit": "237b6924bcbfd2d0d36e7233d36c2c6bc21fa2a2",
+        "path": "payload-schemas/api.github.com/common/installation-lite.schema.json",
+        "sha256": "dd5a5db8d9371fad9ef4ef1eca469c07b3d57506771be3e7ce3ed9d38cf48e0d",
+        "bytes": 395,
+        "id": "common/installation-lite.schema.json"
+      },
+      {
+        "file": "fixtures/upstream/organization-renamed/before/common/organization.schema.json",
+        "commit": "237b6924bcbfd2d0d36e7233d36c2c6bc21fa2a2",
+        "path": "payload-schemas/api.github.com/common/organization.schema.json",
+        "sha256": "6e99963948d3376d127a27ea8bf8a95035ea1cbd1698193692cb0767af5e31af",
+        "bytes": 1110,
+        "id": "common/organization.schema.json"
+      },
+      {
+        "file": "fixtures/upstream/organization-renamed/after/schema.json",
+        "commit": "e69d6eca4e5f1505afacd0677c4303877caca0d6",
+        "path": "payload-schemas/api.github.com/organization/renamed.schema.json",
+        "sha256": "91e352ce3e3dcdfba75fe8e3cf6ece9b8f9ac4cb58255462c7480a5b55ff8292",
+        "bytes": 872,
+        "id": "organization$renamed"
+      },
+      {
+        "file": "fixtures/upstream/organization-renamed/after/common/user.schema.json",
+        "commit": "e69d6eca4e5f1505afacd0677c4303877caca0d6",
+        "path": "payload-schemas/api.github.com/common/user.schema.json",
+        "sha256": "0de74d34566304971f28c8b2050fb6dc37e3bed8d594f53633cd0467ed2e0639",
+        "bytes": 1610,
+        "id": "common/user.schema.json"
+      },
+      {
+        "file": "fixtures/upstream/organization-renamed/after/common/installation-lite.schema.json",
+        "commit": "e69d6eca4e5f1505afacd0677c4303877caca0d6",
+        "path": "payload-schemas/api.github.com/common/installation-lite.schema.json",
+        "sha256": "dd5a5db8d9371fad9ef4ef1eca469c07b3d57506771be3e7ce3ed9d38cf48e0d",
+        "bytes": 395,
+        "id": "common/installation-lite.schema.json"
+      },
+      {
+        "file": "fixtures/upstream/organization-renamed/after/common/organization.schema.json",
+        "commit": "e69d6eca4e5f1505afacd0677c4303877caca0d6",
+        "path": "payload-schemas/api.github.com/common/organization.schema.json",
+        "sha256": "6e99963948d3376d127a27ea8bf8a95035ea1cbd1698193692cb0767af5e31af",
+        "bytes": 1110,
+        "id": "common/organization.schema.json"
+      },
+      {
+        "file": "fixtures/source-examples/change-renamed.payload.json",
+        "commit": "e69d6eca4e5f1505afacd0677c4303877caca0d6",
+        "path": "payload-examples/api.github.com/organization/renamed.payload.json",
+        "sha256": "d3b64f0cea36265847ca913e1fc99423595b9f80c602115867bb05e236c162c6",
+        "bytes": 1954
+      },
+      {
+        "file": "fixtures/source-examples/parent-member-added.payload.json",
+        "commit": "237b6924bcbfd2d0d36e7233d36c2c6bc21fa2a2",
+        "path": "payload-examples/api.github.com/organization/member_added.payload.json",
+        "sha256": "5b41fd635f3c3d4afaf2ca11fb391eed4267894066f41bf576b2b885876a680d",
+        "bytes": 3087
+      }
+    ],
+    "verifiedParent": "237b6924bcbfd2d0d36e7233d36c2c6bc21fa2a2",
+    "changeDate": "2022-12-29T21:52:15Z",
+    "historicalAfterSchemaSha256": "6b2c35a130ca405175f00b33529bed54bbe810ac76009dc2cf9cec217d137323",
+    "historicalAfterSemanticallyEqual": true
+  },
+  "release": {
+    "pin": {
+      "name": "useful-jobs-1.4.0",
+      "bytes": 2575215,
+      "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+      "sourceCommit": "817a00ca226a94b0e198b29fcd06245b2a92adec",
+      "url": "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz"
+    },
+    "acquisition": "local pinned archive",
+    "keywordPointers": {
+      "exit": 0,
+      "kind": "json-schema",
+      "inputs": {
+        "before": "sha256:a4279b20ad344c45a6cc0e918e22a813f941299385a1a29d57828425ab3cffeb",
+        "after": "sha256:91e352ce3e3dcdfba75fe8e3cf6ece9b8f9ac4cb58255462c7480a5b55ff8292",
+        "used": "sha256:b8208d14ecf2fa9677afbf583a33e1afdaa44c4499d5f53781aa3cfba8abe698",
+        "beforeBytes": 585,
+        "afterBytes": 872,
+        "usedBytes": 69
+      },
+      "status": "informational",
+      "impact": {
+        "breaking": [],
+        "compatible": [],
+        "added": [],
+        "deleted": [],
+        "unknown": [],
+        "unchangedCount": 2,
+        "informationalCount": 0,
+        "ignoredUnused": true
+      },
+      "termsVersion": "sha256:811e940a7e6a205721673330502de750a0ccf82e05c810cb884d3d640c4ea5b1"
+    },
+    "rawRoot": {
+      "exit": 2,
+      "refusal": {
+        "ok": false,
+        "refused": true,
+        "code": "remote-ref-refused",
+        "error": "Remote $ref is not resolved (no network, no file fetch)",
+        "detail": {
+          "refs": [
+            {
+              "pointer": "",
+              "before": [
+                "common/membership.schema.json",
+                "common/user.schema.json",
+                "common/installation-lite.schema.json",
+                "common/organization.schema.json"
+              ],
+              "after": [
+                "common/user.schema.json",
+                "common/installation-lite.schema.json",
+                "common/organization.schema.json"
+              ]
+            }
+          ]
+        },
+        "customerBrief": false,
+        "sample": false,
+        "purchaseAuthority": false,
+        "sold": false,
+        "payment": {
+          "settling": false,
+          "prototype": true,
+          "paid": false
+        },
+        "schema": "samedaydesk.json-schema-webhook-drift.v1",
+        "schemaVersion": 2,
+        "notOpenApi": true,
+        "notApiUpgradeBrief": true
+      }
+    },
+    "rootProjection": {
+      "exit": 0,
+      "kind": "json-schema",
+      "inputs": {
+        "before": "sha256:789041f827f11161214f52ac53e69d5fe8f660481856a5496876b1ed2288a19e",
+        "after": "sha256:ac559ed79366744573d2dcb35184ce53e0fd360a9ee22190931cab0a82b02895",
+        "used": "sha256:7cd1608326f8128db842fbc1b867a97a8e64241f181d4019deec9573d67c9d9e",
+        "beforeBytes": 325,
+        "afterBytes": 319,
+        "usedBytes": 31
+      },
+      "status": "actionable",
+      "impact": {
+        "breaking": [
+          {
+            "pointer": "",
+            "class": "breaking",
+            "reason": "required-changed",
+            "before": {
+              "kind": "schema-object",
+              "type": "object",
+              "format": null,
+              "enum": null,
+              "constJson": null,
+              "required": [
+                "action",
+                "membership",
+                "organization",
+                "sender"
+              ],
+              "additionalProperties": {
+                "kind": "boolean-schema",
+                "allows": false
+              },
+              "properties": {
+                "action": {
+                  "kind": "schema-object",
+                  "type": null,
+                  "format": null,
+                  "enum": null,
+                  "constJson": null,
+                  "required": null,
+                  "additionalProperties": null,
+                  "properties": null,
+                  "propertiesKeys": null,
+                  "items": null,
+                  "itemsType": null,
+                  "minLength": null,
+                  "maxLength": null,
+                  "minimum": null,
+                  "maximum": null,
+                  "exclusiveMinimum": null,
+                  "exclusiveMaximum": null,
+                  "minItems": null,
+                  "maxItems": null,
+                  "pattern": null,
+                  "nullable": false,
+                  "unsupportedKeywords": null
+                },
+                "installation": {
+                  "kind": "schema-object",
+                  "type": null,
+                  "format": null,
+                  "enum": null,
+                  "constJson": null,
+                  "required": null,
+                  "additionalProperties": null,
+                  "properties": null,
+                  "propertiesKeys": null,
+                  "items": null,
+                  "itemsType": null,
+                  "minLength": null,
+                  "maxLength": null,
+                  "minimum": null,
+                  "maximum": null,
+                  "exclusiveMinimum": null,
+                  "exclusiveMaximum": null,
+                  "minItems": null,
+                  "maxItems": null,
+                  "pattern": null,
+                  "nullable": false,
+                  "unsupportedKeywords": null
+                },
+                "membership": {
+                  "kind": "schema-object",
+                  "type": null,
+                  "format": null,
+                  "enum": null,
+                  "constJson": null,
+                  "required": null,
+                  "additionalProperties": null,
+                  "properties": null,
+                  "propertiesKeys": null,
+                  "items": null,
+                  "itemsType": null,
+                  "minLength": null,
+                  "maxLength": null,
+                  "minimum": null,
+                  "maximum": null,
+                  "exclusiveMinimum": null,
+                  "exclusiveMaximum": null,
+                  "minItems": null,
+                  "maxItems": null,
+                  "pattern": null,
+                  "nullable": false,
+                  "unsupportedKeywords": null
+                },
+                "organization": {
+                  "kind": "schema-object",
+                  "type": null,
+                  "format": null,
+                  "enum": null,
+                  "constJson": null,
+                  "required": null,
+                  "additionalProperties": null,
+                  "properties": null,
+                  "propertiesKeys": null,
+                  "items": null,
+                  "itemsType": null,
+                  "minLength": null,
+                  "maxLength": null,
+                  "minimum": null,
+                  "maximum": null,
+                  "exclusiveMinimum": null,
+                  "exclusiveMaximum": null,
+                  "minItems": null,
+                  "maxItems": null,
+                  "pattern": null,
+                  "nullable": false,
+                  "unsupportedKeywords": null
+                },
+                "sender": {
+                  "kind": "schema-object",
+                  "type": null,
+                  "format": null,
+                  "enum": null,
+                  "constJson": null,
+                  "required": null,
+                  "additionalProperties": null,
+                  "properties": null,
+                  "propertiesKeys": null,
+                  "items": null,
+                  "itemsType": null,
+                  "minLength": null,
+                  "maxLength": null,
+                  "minimum": null,
+                  "maximum": null,
+                  "exclusiveMinimum": null,
+                  "exclusiveMaximum": null,
+                  "minItems": null,
+                  "maxItems": null,
+                  "pattern": null,
+                  "nullable": false,
+                  "unsupportedKeywords": null
+                }
+              },
+              "propertiesKeys": [
+                "action",
+                "installation",
+                "membership",
+                "organization",
+                "sender"
+              ],
+              "items": null,
+              "itemsType": null,
+              "minLength": null,
+              "maxLength": null,
+              "minimum": null,
+              "maximum": null,
+              "exclusiveMinimum": null,
+              "exclusiveMaximum": null,
+              "minItems": null,
+              "maxItems": null,
+              "pattern": null,
+              "nullable": false,
+              "unsupportedKeywords": null
+            },
+            "after": {
+              "kind": "schema-object",
+              "type": "object",
+              "format": null,
+              "enum": null,
+              "constJson": null,
+              "required": [
+                "action",
+                "changes",
+                "organization",
+                "sender"
+              ],
+              "additionalProperties": {
+                "kind": "boolean-schema",
+                "allows": false
+              },
+              "properties": {
+                "action": {
+                  "kind": "schema-object",
+                  "type": null,
+                  "format": null,
+                  "enum": null,
+                  "constJson": null,
+                  "required": null,
+                  "additionalProperties": null,
+                  "properties": null,
+                  "propertiesKeys": null,
+                  "items": null,
+                  "itemsType": null,
+                  "minLength": null,
+                  "maxLength": null,
+                  "minimum": null,
+                  "maximum": null,
+                  "exclusiveMinimum": null,
+                  "exclusiveMaximum": null,
+                  "minItems": null,
+                  "maxItems": null,
+                  "pattern": null,
+                  "nullable": false,
+                  "unsupportedKeywords": null
+                },
+                "changes": {
+                  "kind": "schema-object",
+                  "type": null,
+                  "format": null,
+                  "enum": null,
+                  "constJson": null,
+                  "required": null,
+                  "additionalProperties": null,
+                  "properties": null,
+                  "propertiesKeys": null,
+                  "items": null,
+                  "itemsType": null,
+                  "minLength": null,
+                  "maxLength": null,
+                  "minimum": null,
+                  "maximum": null,
+                  "exclusiveMinimum": null,
+                  "exclusiveMaximum": null,
+                  "minItems": null,
+                  "maxItems": null,
+                  "pattern": null,
+                  "nullable": false,
+                  "unsupportedKeywords": null
+                },
+                "installation": {
+                  "kind": "schema-object",
+                  "type": null,
+                  "format": null,
+                  "enum": null,
+                  "constJson": null,
+                  "required": null,
+                  "additionalProperties": null,
+                  "properties": null,
+                  "propertiesKeys": null,
+                  "items": null,
+                  "itemsType": null,
+                  "minLength": null,
+                  "maxLength": null,
+                  "minimum": null,
+                  "maximum": null,
+                  "exclusiveMinimum": null,
+                  "exclusiveMaximum": null,
+                  "minItems": null,
+                  "maxItems": null,
+                  "pattern": null,
+                  "nullable": false,
+                  "unsupportedKeywords": null
+                },
+                "organization": {
+                  "kind": "schema-object",
+                  "type": null,
+                  "format": null,
+                  "enum": null,
+                  "constJson": null,
+                  "required": null,
+                  "additionalProperties": null,
+                  "properties": null,
+                  "propertiesKeys": null,
+                  "items": null,
+                  "itemsType": null,
+                  "minLength": null,
+                  "maxLength": null,
+                  "minimum": null,
+                  "maximum": null,
+                  "exclusiveMinimum": null,
+                  "exclusiveMaximum": null,
+                  "minItems": null,
+                  "maxItems": null,
+                  "pattern": null,
+                  "nullable": false,
+                  "unsupportedKeywords": null
+                },
+                "sender": {
+                  "kind": "schema-object",
+                  "type": null,
+                  "format": null,
+                  "enum": null,
+                  "constJson": null,
+                  "required": null,
+                  "additionalProperties": null,
+                  "properties": null,
+                  "propertiesKeys": null,
+                  "items": null,
+                  "itemsType": null,
+                  "minLength": null,
+                  "maxLength": null,
+                  "minimum": null,
+                  "maximum": null,
+                  "exclusiveMinimum": null,
+                  "exclusiveMaximum": null,
+                  "minItems": null,
+                  "maxItems": null,
+                  "pattern": null,
+                  "nullable": false,
+                  "unsupportedKeywords": null
+                }
+              },
+              "propertiesKeys": [
+                "action",
+                "changes",
+                "installation",
+                "organization",
+                "sender"
+              ],
+              "items": null,
+              "itemsType": null,
+              "minLength": null,
+              "maxLength": null,
+              "minimum": null,
+              "maximum": null,
+              "exclusiveMinimum": null,
+              "exclusiveMaximum": null,
+              "minItems": null,
+              "maxItems": null,
+              "pattern": null,
+              "nullable": false,
+              "unsupportedKeywords": null
+            }
+          }
+        ],
+        "compatible": [],
+        "added": [],
+        "deleted": [],
+        "unknown": [],
+        "unchangedCount": 0,
+        "informationalCount": 0,
+        "ignoredUnused": true
+      },
+      "termsVersion": "sha256:03d344b6e8d642ecb04f3f017169216eac2b037071f6d20b49d7d62b74aceedf"
+    },
+    "projectionKeywordPointers": {
+      "exit": 0,
+      "kind": "json-schema",
+      "inputs": {
+        "before": "sha256:789041f827f11161214f52ac53e69d5fe8f660481856a5496876b1ed2288a19e",
+        "after": "sha256:ac559ed79366744573d2dcb35184ce53e0fd360a9ee22190931cab0a82b02895",
+        "used": "sha256:8afdfadbaebc2ac1a82c51c22a6ca2fedaa5015fe2b6d55db9d9f7de2347361e",
+        "beforeBytes": 325,
+        "afterBytes": 319,
+        "usedBytes": 57
+      },
+      "status": "informational",
+      "impact": {
+        "breaking": [],
+        "compatible": [],
+        "added": [],
+        "deleted": [],
+        "unknown": [],
+        "unchangedCount": 2,
+        "informationalCount": 0,
+        "ignoredUnused": true
+      },
+      "termsVersion": "sha256:a10679a3b7ace910a4eaac77377157d02086478e17decd3454c04f12f23d062b"
     }
   },
-  "archive": {
-    "version": "1.4.0",
-    "cli": "bin/useful-jobs.mjs",
-    "result": {
+  "candidate": {
+    "head": "8b75201761a8b58a6d00f16d9eb825c15fc5b68b",
+    "tree": "8948a1a9220acdf1baba191d296755c4c3543cc9",
+    "execution": "immutable git archive in consumer-owned temporary directory",
+    "keywordPointers": {
+      "exit": 0,
+      "kind": "json-schema",
+      "inputs": {
+        "before": "sha256:a4279b20ad344c45a6cc0e918e22a813f941299385a1a29d57828425ab3cffeb",
+        "after": "sha256:91e352ce3e3dcdfba75fe8e3cf6ece9b8f9ac4cb58255462c7480a5b55ff8292",
+        "used": "sha256:b8208d14ecf2fa9677afbf583a33e1afdaa44c4499d5f53781aa3cfba8abe698",
+        "beforeBytes": 585,
+        "afterBytes": 872,
+        "usedBytes": 69
+      },
       "status": "informational",
-      "breaking": 0,
-      "compatible": 0,
-      "unknown": 0,
-      "termsVersion": "sha256:ae032bc37975a67bd5978d6c6836a399665b4e101b06e98f082f1e6cb91eb3c8"
+      "impact": {
+        "breaking": [],
+        "compatible": [],
+        "added": [],
+        "deleted": [],
+        "unknown": [],
+        "unchangedCount": 2,
+        "informationalCount": 0,
+        "ignoredUnused": true
+      },
+      "termsVersion": "sha256:811e940a7e6a205721673330502de750a0ccf82e05c810cb884d3d640c4ea5b1"
+    },
+    "rawRoot": {
+      "exit": 2,
+      "refusal": {
+        "ok": false,
+        "refused": true,
+        "code": "remote-ref-refused",
+        "error": "Remote $ref is not resolved (no network, no file fetch)",
+        "detail": {
+          "refs": [
+            {
+              "pointer": "",
+              "before": [
+                "common/membership.schema.json",
+                "common/user.schema.json",
+                "common/installation-lite.schema.json",
+                "common/organization.schema.json"
+              ],
+              "after": [
+                "common/user.schema.json",
+                "common/installation-lite.schema.json",
+                "common/organization.schema.json"
+              ]
+            }
+          ]
+        },
+        "customerBrief": false,
+        "sample": false,
+        "purchaseAuthority": false,
+        "sold": false,
+        "payment": {
+          "settling": false,
+          "prototype": true,
+          "paid": false
+        },
+        "schema": "samedaydesk.json-schema-webhook-drift.v1",
+        "schemaVersion": 2,
+        "notOpenApi": true,
+        "notApiUpgradeBrief": true
+      }
+    },
+    "rootProjection": {
+      "exit": 0,
+      "kind": "json-schema",
+      "inputs": {
+        "before": "sha256:789041f827f11161214f52ac53e69d5fe8f660481856a5496876b1ed2288a19e",
+        "after": "sha256:ac559ed79366744573d2dcb35184ce53e0fd360a9ee22190931cab0a82b02895",
+        "used": "sha256:7cd1608326f8128db842fbc1b867a97a8e64241f181d4019deec9573d67c9d9e",
+        "beforeBytes": 325,
+        "afterBytes": 319,
+        "usedBytes": 31
+      },
+      "status": "actionable",
+      "impact": {
+        "breaking": [
+          {
+            "pointer": "",
+            "class": "breaking",
+            "reason": "required-changed",
+            "before": {
+              "kind": "schema-object",
+              "type": "object",
+              "format": null,
+              "enum": null,
+              "constJson": null,
+              "required": [
+                "action",
+                "membership",
+                "organization",
+                "sender"
+              ],
+              "additionalProperties": {
+                "kind": "boolean-schema",
+                "allows": false
+              },
+              "properties": {
+                "action": {
+                  "kind": "boolean-schema",
+                  "allows": true
+                },
+                "installation": {
+                  "kind": "boolean-schema",
+                  "allows": true
+                },
+                "membership": {
+                  "kind": "boolean-schema",
+                  "allows": true
+                },
+                "organization": {
+                  "kind": "boolean-schema",
+                  "allows": true
+                },
+                "sender": {
+                  "kind": "boolean-schema",
+                  "allows": true
+                }
+              },
+              "propertiesKeys": [
+                "action",
+                "installation",
+                "membership",
+                "organization",
+                "sender"
+              ],
+              "items": null,
+              "itemsType": null,
+              "minLength": null,
+              "maxLength": null,
+              "minimum": null,
+              "maximum": null,
+              "exclusiveMinimum": null,
+              "exclusiveMaximum": null,
+              "minItems": null,
+              "maxItems": null,
+              "pattern": null,
+              "nullable": false,
+              "unsupportedKeywords": null
+            },
+            "after": {
+              "kind": "schema-object",
+              "type": "object",
+              "format": null,
+              "enum": null,
+              "constJson": null,
+              "required": [
+                "action",
+                "changes",
+                "organization",
+                "sender"
+              ],
+              "additionalProperties": {
+                "kind": "boolean-schema",
+                "allows": false
+              },
+              "properties": {
+                "action": {
+                  "kind": "boolean-schema",
+                  "allows": true
+                },
+                "changes": {
+                  "kind": "boolean-schema",
+                  "allows": true
+                },
+                "installation": {
+                  "kind": "boolean-schema",
+                  "allows": true
+                },
+                "organization": {
+                  "kind": "boolean-schema",
+                  "allows": true
+                },
+                "sender": {
+                  "kind": "boolean-schema",
+                  "allows": true
+                }
+              },
+              "propertiesKeys": [
+                "action",
+                "changes",
+                "installation",
+                "organization",
+                "sender"
+              ],
+              "items": null,
+              "itemsType": null,
+              "minLength": null,
+              "maxLength": null,
+              "minimum": null,
+              "maximum": null,
+              "exclusiveMinimum": null,
+              "exclusiveMaximum": null,
+              "minItems": null,
+              "maxItems": null,
+              "pattern": null,
+              "nullable": false,
+              "unsupportedKeywords": null
+            }
+          }
+        ],
+        "compatible": [],
+        "added": [],
+        "deleted": [],
+        "unknown": [],
+        "unchangedCount": 0,
+        "informationalCount": 0,
+        "ignoredUnused": true
+      },
+      "termsVersion": "sha256:15726d80eba52c1df8cd8735e88046c82fd92a01ee32e8f45a817715be57cf2f"
+    },
+    "projectionKeywordPointers": {
+      "exit": 0,
+      "kind": "json-schema",
+      "inputs": {
+        "before": "sha256:789041f827f11161214f52ac53e69d5fe8f660481856a5496876b1ed2288a19e",
+        "after": "sha256:ac559ed79366744573d2dcb35184ce53e0fd360a9ee22190931cab0a82b02895",
+        "used": "sha256:8afdfadbaebc2ac1a82c51c22a6ca2fedaa5015fe2b6d55db9d9f7de2347361e",
+        "beforeBytes": 325,
+        "afterBytes": 319,
+        "usedBytes": 57
+      },
+      "status": "informational",
+      "impact": {
+        "breaking": [],
+        "compatible": [],
+        "added": [],
+        "deleted": [],
+        "unknown": [],
+        "unchangedCount": 2,
+        "informationalCount": 0,
+        "ignoredUnused": true
+      },
+      "termsVersion": "sha256:a10679a3b7ace910a4eaac77377157d02086478e17decd3454c04f12f23d062b"
     }
   },
   "witness": {
@@ -76,13 +844,273 @@
         }
       ],
       "afterErrors": null
+    },
+    "add-changes-only": {
+      "beforeValid": false,
+      "afterValid": false,
+      "beforeErrors": [
+        {
+          "instancePath": "",
+          "schemaPath": "#/additionalProperties",
+          "keyword": "additionalProperties",
+          "params": {
+            "additionalProperty": "changes"
+          },
+          "message": "must NOT have additional properties"
+        }
+      ],
+      "afterErrors": [
+        {
+          "instancePath": "",
+          "schemaPath": "#/additionalProperties",
+          "keyword": "additionalProperties",
+          "params": {
+            "additionalProperty": "membership"
+          },
+          "message": "must NOT have additional properties"
+        }
+      ]
+    },
+    "remove-membership-only": {
+      "beforeValid": false,
+      "afterValid": false,
+      "beforeErrors": [
+        {
+          "instancePath": "",
+          "schemaPath": "#/required",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "membership"
+          },
+          "message": "must have required property 'membership'"
+        }
+      ],
+      "afterErrors": [
+        {
+          "instancePath": "",
+          "schemaPath": "#/required",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "changes"
+          },
+          "message": "must have required property 'changes'"
+        }
+      ]
+    },
+    "invalid-uri-control": {
+      "beforeValid": false,
+      "afterValid": false,
+      "beforeErrors": [
+        {
+          "instancePath": "",
+          "schemaPath": "#/required",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "membership"
+          },
+          "message": "must have required property 'membership'"
+        },
+        {
+          "instancePath": "",
+          "schemaPath": "#/additionalProperties",
+          "keyword": "additionalProperties",
+          "params": {
+            "additionalProperty": "changes"
+          },
+          "message": "must NOT have additional properties"
+        },
+        {
+          "instancePath": "/organization/url",
+          "schemaPath": "common/organization.schema.json/properties/url/format",
+          "keyword": "format",
+          "params": {
+            "format": "uri"
+          },
+          "message": "must match format \"uri\""
+        }
+      ],
+      "afterErrors": [
+        {
+          "instancePath": "/organization/url",
+          "schemaPath": "common/organization.schema.json/properties/url/format",
+          "keyword": "format",
+          "params": {
+            "format": "uri"
+          },
+          "message": "must match format \"uri\""
+        }
+      ]
+    },
+    "invalid-changes-from-control": {
+      "beforeValid": false,
+      "afterValid": false,
+      "beforeErrors": [
+        {
+          "instancePath": "",
+          "schemaPath": "#/required",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "membership"
+          },
+          "message": "must have required property 'membership'"
+        },
+        {
+          "instancePath": "",
+          "schemaPath": "#/additionalProperties",
+          "keyword": "additionalProperties",
+          "params": {
+            "additionalProperty": "changes"
+          },
+          "message": "must NOT have additional properties"
+        }
+      ],
+      "afterErrors": [
+        {
+          "instancePath": "/changes/login/from",
+          "schemaPath": "#/properties/changes/properties/login/properties/from/type",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          },
+          "message": "must be string"
+        }
+      ]
+    },
+    "invalid-optional-installation-control": {
+      "beforeValid": false,
+      "afterValid": false,
+      "beforeErrors": [
+        {
+          "instancePath": "",
+          "schemaPath": "#/required",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "membership"
+          },
+          "message": "must have required property 'membership'"
+        },
+        {
+          "instancePath": "",
+          "schemaPath": "#/additionalProperties",
+          "keyword": "additionalProperties",
+          "params": {
+            "additionalProperty": "changes"
+          },
+          "message": "must NOT have additional properties"
+        },
+        {
+          "instancePath": "/installation",
+          "schemaPath": "common/installation-lite.schema.json/required",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "node_id"
+          },
+          "message": "must have required property 'node_id'"
+        },
+        {
+          "instancePath": "/installation/id",
+          "schemaPath": "common/installation-lite.schema.json/properties/id/type",
+          "keyword": "type",
+          "params": {
+            "type": "integer"
+          },
+          "message": "must be integer"
+        }
+      ],
+      "afterErrors": [
+        {
+          "instancePath": "/installation",
+          "schemaPath": "common/installation-lite.schema.json/required",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "node_id"
+          },
+          "message": "must have required property 'node_id'"
+        },
+        {
+          "instancePath": "/installation/id",
+          "schemaPath": "common/installation-lite.schema.json/properties/id/type",
+          "keyword": "type",
+          "params": {
+            "type": "integer"
+          },
+          "message": "must be integer"
+        }
+      ]
     }
   },
+  "closure": {
+    "before": {
+      "resources": [
+        "common/installation-lite.schema.json",
+        "common/membership.schema.json",
+        "common/organization.schema.json",
+        "common/user.schema.json",
+        "organization$renamed"
+      ],
+      "refs": [
+        "common/installation-lite.schema.json",
+        "common/membership.schema.json",
+        "common/organization.schema.json",
+        "common/user.schema.json",
+        "user.schema.json"
+      ],
+      "formats": [
+        "uri",
+        "uri-template"
+      ],
+      "dialect": "http://json-schema.org/draft-07/schema",
+      "network": false
+    },
+    "after": {
+      "resources": [
+        "common/installation-lite.schema.json",
+        "common/organization.schema.json",
+        "common/user.schema.json",
+        "organization$renamed"
+      ],
+      "refs": [
+        "common/installation-lite.schema.json",
+        "common/organization.schema.json",
+        "common/user.schema.json"
+      ],
+      "formats": [
+        "uri",
+        "uri-template"
+      ],
+      "dialect": "http://json-schema.org/draft-07/schema",
+      "network": false
+    }
+  },
+  "validator": {
+    "name": "Ajv",
+    "version": "8.17.1",
+    "formats": "3.0.1",
+    "dataMutation": false
+  },
+  "releaseTests": {
+    "tests": 15,
+    "pass": 15,
+    "fail": 0,
+    "skipped": 0,
+    "workers": 1,
+    "heapMB": 768,
+    "tarOptions": "--no-same-owner",
+    "port": 55547,
+    "sourceModified": false
+  },
+  "acceptance": {
+    "auditPassed": true,
+    "compatible": false,
+    "gateExit": 1,
+    "mode": "audit",
+    "releaseKeywordFalseNegative": true,
+    "candidateKeywordFalseNegative": true,
+    "evidenceClass": "self-authored consumer regression using official schemas and a separate Ajv implementation; not independent production use or demand"
+  },
   "decision": {
-    "stoppedWorking": [
-      "saved-membership.json"
-    ],
-    "minimalMigration": {
+    "changedRequestSemantics": "The parent schema accepts the saved membership request. The exact next revision rejects it only for missing changes and forbidden membership. Both migration operations are necessary and sufficient for this payload.",
+    "migration": {
       "jsonPatch": [
         {
           "op": "add",
@@ -99,12 +1127,7 @@
         }
       ]
     },
-    "effect": "The before-valid payload becomes current-valid after replacing membership with changes.login.from.",
-    "engineDisposition": "confirmed-false-negative: released 1.4.0 reports informational with zero breaking rows"
-  },
-  "coverage": {
-    "engine": "Version 1.4.0 fingerprints /required as only an array value and therefore misses required-member additions. Selecting the root instead refuses on this official schema's relative references. The additionalProperties pointer is a same-value control. This fixture is a bounded false-negative counterexample, not a claim of broader dialect coverage.",
-    "witness": "AJV validates complete fixtures under JSON Schema Draft 7 with the checked-in transitive local references. The old fixture is composed from official Octokit payload examples and is not asserted to be a captured customer delivery.",
-    "formats": "AJV formats are enabled; the SameDayDesk classification is not used to claim format compatibility."
+    "scope": "Backward compatibility of accepted webhook request bodies under the declared Draft7 schemas. This 2022 schema correction does not prove GitHub ever delivered the composed legacy event.",
+    "projection": "Derived root required/properties/additionalProperties regression relaxes all property values. Raw schema root remains unsupported because relative external resource refs are refused."
   }
 }
