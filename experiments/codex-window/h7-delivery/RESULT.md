@@ -89,7 +89,7 @@ Optional later: dedicated PG 55590/55591/55592/55595; CW64 pin refresh against a
 
 ## Git / PR
 
-Implementation HEAD: `6d96e4e264e5bf18795f43aa4edcc0e453b8fdae` on `codex/h7-delivery-20260912` (six commits after import `fe8057f`).
+Branch tip: `7e540d1f30efd9841ba107ecaa7269562fe8560e` on `codex/h7-delivery-20260912` (import `fe8057f` plus seven implementation/stamp commits).
 
 Draft PR via `gh pr create` returned GraphQL **Resource not accessible by integration** (`createPullRequest`). Compare URL (review this, not a silent `main` merge):
 
