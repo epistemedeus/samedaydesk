@@ -183,6 +183,7 @@ Optional later: dedicated PG 55590/55591/55592/55595; CW64 pin refresh against a
 ## Git / PR
 
 Reproduction source SHA: `4c4298713f8caba4fd34541797097b0f4b97f03c`.
+Classification commit: `7d2b6f20955a00c2b66c7cfe6177c960fed63bb0`.
 
 Draft PRs (already open; this branch push updates 145, does not merge):
 
