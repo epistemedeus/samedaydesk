@@ -1,5 +1,18 @@
 # S260 useful-jobs source review (independent)
 
+## Current public download (1.1.0)
+
+- Public archive: `useful-jobs-1.1.0.tar.gz` **2577606** bytes
+- SHA256: `de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534`
+- Kit mirror `/kit/useful-jobs-1.1.0.tar.gz`
+- Catalog lists ten jobs; lockfile-pin-delta first
+- Previous 1.0.0 URLs remain byte-identical (below)
+- H04 public inputs (pin `37dd4b42cf21dc2031715971971bb2426a7beb80`) are copied under `samples/`
+- Pack: `server/paid-useful-jobs/scripts/build-useful-jobs-archive.mjs`
+- Not a paid HTTP merchant route
+
+## Historical 1.0.0 pins (unchanged URLs)
+
 ## Pins replayed
 - Pilot tip: `0e473974554de9bfdba90676b6d3d710c10a2671` (`codex/s254-useful-applications-package-20260910`)
 - Archive freeze: `318130daaf19490e2f8af7c23131b42fe20e6cde`

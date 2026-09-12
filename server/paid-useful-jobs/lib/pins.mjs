@@ -10,24 +10,28 @@ const here = dirname(fileURLToPath(import.meta.url));
 export const OWNED_DIR = join(here, "..");
 export const REPO_ROOT = join(here, "../../..");
 
-const kit = JSON.parse(
-  readFileSync(join(REPO_ROOT, "client/src/data/usefulJobsKit.json"), "utf8"),
+const archiveMeta = JSON.parse(
+  readFileSync(
+    join(REPO_ROOT, "client/public/for-agents/useful-jobs/useful-jobs-1.0.0.sha256.json"),
+    "utf8",
+  ),
 );
 
-export const USEFUL_JOBS_PACKAGE = kit.packageId;
-export const USEFUL_JOBS_VERSION = kit.version;
-export const USEFUL_JOBS_ROOT_NAME = kit.rootName;
-export const USEFUL_JOBS_CLI = kit.cli;
-export const USEFUL_JOBS_ARCHIVE_SHA256 = kit.sha256;
-export const USEFUL_JOBS_ARCHIVE_BYTES = kit.bytes;
-export const USEFUL_JOBS_PURCHASE_AUTHORITY = kit.purchaseAuthority;
-export const USEFUL_JOBS_ARCHIVE_REL = kit.archive.replace(/^\//, "");
+/** SDS52 / PR51 wrapper extract stays on 1.0.0. Current public download is 1.1.0. */
+export const USEFUL_JOBS_PACKAGE = "useful-jobs";
+export const USEFUL_JOBS_VERSION = "1.0.0";
+export const USEFUL_JOBS_ROOT_NAME = archiveMeta.name;
+export const USEFUL_JOBS_CLI = "bin/useful-jobs.mjs";
+export const USEFUL_JOBS_ARCHIVE_SHA256 = archiveMeta.sha256;
+export const USEFUL_JOBS_ARCHIVE_BYTES = archiveMeta.bytes;
+export const USEFUL_JOBS_PURCHASE_AUTHORITY = false;
+export const USEFUL_JOBS_ARCHIVE_REL = "for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz";
 export const USEFUL_JOBS_ARCHIVE_PATH = join(REPO_ROOT, "client/public", USEFUL_JOBS_ARCHIVE_REL);
-export const USEFUL_JOBS_SOURCE_REPO = kit.sourceRepo;
-export const USEFUL_JOBS_SOURCE_COMMIT = kit.sourceCommit;
-export const USEFUL_JOBS_ARCHIVE_FREEZE = kit.archiveFreeze;
-export const USEFUL_JOBS_REVIEWED_SOURCE = kit.reviewedSource;
-export const USEFUL_JOBS_NODE = kit.node;
+export const USEFUL_JOBS_SOURCE_REPO = "epistemedeus/pilot";
+export const USEFUL_JOBS_SOURCE_COMMIT = archiveMeta.sourceCommit;
+export const USEFUL_JOBS_ARCHIVE_FREEZE = archiveMeta.archiveFreeze;
+export const USEFUL_JOBS_REVIEWED_SOURCE = "318130daaf19490e2f8af7c23131b42fe20e6cde";
+export const USEFUL_JOBS_NODE = ">=22";
 
 /** Existing live offers. Do not modify these files or values from this feature. */
 export const LIVE_EXTRACT_PRICE_USDC = "0.005";

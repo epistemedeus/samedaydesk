@@ -64,7 +64,7 @@ if (cmd === "help" || cmd === "--help" || cmd === "-h") {
 }
 
 if (cmd === "list") {
-  const jobs = [...listedOfferIds(), ...JOB_IDS];
+  const jobs = [...new Set([...listedOfferIds(), ...JOB_IDS])];
   process.stdout.write(
     `${JSON.stringify({ ok: true, firstOffer: FIRST_OFFER, jobs, liveSettlement: "out-of-scope" }, null, 2)}\n`,
   );

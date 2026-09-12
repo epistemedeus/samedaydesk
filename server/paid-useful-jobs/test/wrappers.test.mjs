@@ -191,7 +191,9 @@ describe("paid useful-job wrappers", { timeout: 180_000 }, () => {
     assert.equal(batch.results[1].fundingState, "rejected");
     assert.equal(batch.results[1].code, "missing-required-inputs");
     assert.equal(batch.results[0].fundingState, "reserved-fixture");
-    assert.equal(JOB_IDS.length, 6);
+    assert.equal(JOB_IDS.length, 10);
+    assert.equal(JOB_IDS[0], "lockfile-pin-delta");
+    assert.ok(JOB_IDS.includes("api-upgrade-brief"));
   });
 
   it("accepts inline JSON objects as caller input", async () => {

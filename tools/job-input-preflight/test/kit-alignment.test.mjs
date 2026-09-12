@@ -14,13 +14,12 @@ import { JOURNEY_ARGS, runCli, runCliAsync, writePaddedPricingJson } from "./hel
 const pin = JSON.parse(readFileSync(path.join(FIXTURES, "catalog-pin.json"), "utf8"));
 const kit = JSON.parse(readFileSync(DEFAULT_KIT_JSON, "utf8"));
 
-test("local-runtime: published archive bytes/sha256 match kit pin and catalog-pin", () => {
+test("local-runtime: published 1.0.0 archive bytes/sha256 match catalog-pin", () => {
   const buf = readFileSync(DEFAULT_ARCHIVE);
-  assert.equal(buf.length, kit.bytes);
   assert.equal(buf.length, pin.archive.bytes);
-  assert.equal(createHash("sha256").update(buf).digest("hex"), kit.sha256);
-  assert.equal(kit.sha256, pin.archive.sha256);
+  assert.equal(createHash("sha256").update(buf).digest("hex"), pin.archive.sha256);
   assert.equal(kit.purchaseAuthority, false);
+  assert.notEqual(kit.version, "1.0.0");
 });
 
 test("extracted kit: MAX_LOCAL_INPUT_BYTES via node --eval (not a copied kernel)", () => {

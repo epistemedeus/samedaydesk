@@ -1,7 +1,8 @@
 /**
  * Merged useful-jobs.catalog.v1 for this tree's delivery kit.
- * Published PR51 jobs stay as-is. Selected M01 engines are appended so
- * preflight / order / completeness can look them up without a second kernel.
+ * Published catalog jobs stay in place. Selected M01 engines overlay by id
+ * (no duplicates if the public catalog already lists them) so preflight /
+ * order / completeness can look them up without a second kernel.
  */
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -60,10 +61,20 @@ export function loadDeliveryCatalog() {
   const m01 = loadM01Catalog();
   const first = firstOffer(m01);
   const rest = selectedEngines(m01).filter((engine) => engine.id !== first.id);
+  const overlay = [first, ...rest].map(toDeliveryJob);
+  const overlayIds = new Set(overlay.map((job) => job.id));
+  const byId = new Map();
+  for (const job of published.jobs || []) byId.set(job.id, { ...job });
+  for (const job of overlay) {
+    const existing = byId.get(job.id);
+    byId.set(job.id, existing ? { ...existing, ...job, m01: true } : job);
+  }
+  const remaining = (published.jobs || []).filter((job) => !overlayIds.has(job.id));
+  const jobs = [...overlay.map((job) => byId.get(job.id)), ...remaining.map((job) => byId.get(job.id))];
   return {
     ...published,
     schema: CATALOG_SCHEMA,
-    jobs: [...published.jobs, ...[first, ...rest].map(toDeliveryJob)],
+    jobs,
     firstOffer: m01.firstOffer || FIRST_OFFER,
   };
 }

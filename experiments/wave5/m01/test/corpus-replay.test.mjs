@@ -7,7 +7,7 @@ test("first offer stays lockfile after independent corpus replay", () => {
   const catalog = loadCatalog();
   assert.equal(catalog.firstOffer, "lockfile-pin-delta");
   assert.match(catalog.firstOfferRationale, /M07/);
-  assert.equal(catalog.liveCatalog.action, "not-edited");
+  assert.equal(catalog.liveCatalog.action, "republished-in-useful-jobs-1.1.0");
 });
 
 test("schema used-path type-change remains actionable analysis", () => {

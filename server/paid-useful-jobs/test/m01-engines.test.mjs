@@ -50,14 +50,10 @@ function lockInputs(work, { same = false } = {}) {
 }
 
 describe("M01 engines on the D01 delivery kit", { timeout: 240_000 }, () => {
-  it("published getJob still hides lockfile; default runPaidOffer selects it", async () => {
-    let hidden = false;
-    try {
-      getJob("lockfile-pin-delta");
-    } catch (err) {
-      hidden = err.code === "unknown-job";
-    }
-    assert.equal(hidden, true);
+  it("published getJob selects lockfile with m01; default runPaidOffer runs it", async () => {
+    const published = getJob("lockfile-pin-delta");
+    assert.equal(published.id, "lockfile-pin-delta");
+    assert.equal(published.m01, true);
 
     const work = workDir("default-lock");
     const inputs = lockInputs(work);

@@ -560,7 +560,7 @@ export const CONSUMER_REPEAT_SHELL = Object.freeze({
 export const USEFUL_JOBS_PATH = "/for-agents/useful-jobs";
 export const USEFUL_JOBS_TITLE = "Offline useful jobs for agent callers | SameDayDesk";
 export const USEFUL_JOBS_DESCRIPTION =
-  "Six offline jobs for API changes, budgets, feeds, and delivery evidence. Acquire with bash, curl, python3, tar, and mktemp; then run on local Node 22. Verify size and sha256 before extract. Samples are labeled SAMPLE. Callers supply their own files. Free local package; not hosted execution.";
+  "Ten offline jobs: lockfile pin-delta first, plus JSON Schema drift, route-table diff, page-change, and the original six for API changes, budgets, feeds, and delivery evidence. Acquire with bash, curl, python3, tar, and mktemp; then run on local Node 22. Verify size and sha256 before extract. Samples are labeled SAMPLE. page-change --example is refused. Callers supply their own files. Free local package; not hosted execution.";
 export const USEFUL_JOBS_CANONICAL = `${SITE_ORIGIN}${USEFUL_JOBS_PATH}`;
 export const USEFUL_JOBS_ARCHIVE = USEFUL_JOBS_KIT.archive;
 export const USEFUL_JOBS_ARCHIVE_SHA256 = USEFUL_JOBS_KIT.sha256;
@@ -594,7 +594,7 @@ export function buildUsefulJobsColdStart({
   rootName = USEFUL_JOBS_ROOT,
   cli = USEFUL_JOBS_CLI,
 } = {}) {
-  const tgzName = "useful-jobs-1.0.0.tar.gz";
+  const tgzName = String(archivePath).split("/").filter(Boolean).pop() || `${rootName}.tar.gz`;
   return [
     "useful_jobs_acquire() {",
     "  local origin=\"${USEFUL_JOBS_ORIGIN:-${1:-" + siteOrigin + "}}\"",
@@ -624,10 +624,15 @@ export const USEFUL_JOBS_INSTALL = Object.freeze([USEFUL_JOBS_COLD_START]);
 export const USEFUL_JOBS_LIST_HELP = [
   "node \"$kit/bin/useful-jobs.mjs\" list",
   "node \"$kit/bin/useful-jobs.mjs\" help",
+  "node \"$kit/bin/useful-jobs.mjs\" help lockfile-pin-delta",
   "node \"$kit/bin/useful-jobs.mjs\" help api-upgrade-brief",
 ].join("\n");
 
 export const USEFUL_JOBS_EXAMPLES = [
+  "node \"$kit/bin/useful-jobs.mjs\" run lockfile-pin-delta --example",
+  "node \"$kit/bin/useful-jobs.mjs\" run json-schema-webhook-drift --example",
+  "node \"$kit/bin/useful-jobs.mjs\" run route-table-diff --example --out-dir \"$PWD/out/route-example\"",
+  "node \"$kit/bin/useful-jobs.mjs\" run page-change-offline-job --job \"$kit/samples/page/h04-page-01/job.json\" --out-dir \"$PWD/out/page-h04\"",
   "node \"$kit/bin/useful-jobs.mjs\" run api-upgrade-brief --example",
   "node \"$kit/bin/useful-jobs.mjs\" run vendor-budget-impact --example",
   "node \"$kit/bin/useful-jobs.mjs\" run feed-agenda --example",
@@ -637,6 +642,10 @@ export const USEFUL_JOBS_EXAMPLES = [
 ].join("\n");
 
 export const USEFUL_JOBS_CALLER_USE = [
+  "node \"$kit/bin/useful-jobs.mjs\" run lockfile-pin-delta \\",
+  "  --before \"$kit/samples/lockfile/h04-pub-lock-01/before.json\" \\",
+  "  --after \"$kit/samples/lockfile/h04-pub-lock-01/after.json\" \\",
+  "  --out-dir \"$PWD/out/h04-lock\"",
   "node \"$kit/bin/useful-jobs.mjs\" run api-upgrade-brief \\",
   "  --before \"$kit/samples/openapi/caller-alpha/before.yaml\" \\",
   "  --after \"$kit/samples/openapi/caller-alpha/after.yaml\" \\",
@@ -662,12 +671,13 @@ export const USEFUL_JOBS_REPEAT_USE = [
 export const USEFUL_JOBS_CRAWLER_HTML = `
       <h1>Offline useful jobs for agent callers</h1>
       <p>
-        Turn changing files into useful next steps. SameDayDesk publishes six offline
-        jobs for API changes, budgets, feeds, and delivery evidence. Acquire the archive
+        Turn changing files into useful next steps. SameDayDesk publishes ten offline
+        jobs: lockfile pin-delta first, plus JSON Schema drift, route-table diff, page-change,
+        and the original six for API changes, budgets, feeds, and delivery evidence. Acquire the archive
         with <code>bash</code>, <code>curl</code>, <code>python3</code>, <code>tar</code>,
         and <code>mktemp</code>; then run on local Node 22. Labeled samples need
-        <code>--example</code>. Callers supply their own files. Free local package; it does
-        not start hosted extract on <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>.
+        <code>--example</code> except page-change, which refuses it. Callers supply their own files. Free local package; it does
+        not start hosted extract on <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>. Not a paid HTTP merchant route.
       </p>
       <p>
         Machine discovery:

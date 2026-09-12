@@ -1,27 +1,35 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 import { test } from "node:test";
 import { createExecutor, getJob, runPaidOffer } from "../../../../server/paid-useful-jobs/index.mjs";
+import { createJobLookup } from "../../../../server/paid-useful-jobs/lib/jobs.mjs";
 import {
   assessDelivery,
   classifyAnalysis,
   classifyTransport,
 } from "../../../../server/paid-useful-jobs/lib/contract.mjs";
 import { D01_INJECTION, runCatalogPaidOffer, runEngineForD01 } from "../lib/d01-adapter.mjs";
-import { MODULE_ROOT } from "../lib/paths.mjs";
+import { LIVE_CATALOG_PATH, MODULE_ROOT } from "../lib/paths.mjs";
 import { pinFixture, tmpOut } from "./helpers.mjs";
+
+const d01Contract = { assessDelivery, classifyAnalysis, classifyTransport };
+const PR51_IDS = [
+  "api-upgrade-brief",
+  "vendor-budget-impact",
+  "feed-agenda",
+  "evidence-ci-annotation",
+  "listing-repair-packet",
+  "repeat-job-record",
+];
 
 const d01Contract = { assessDelivery, classifyAnalysis, classifyTransport };
 
 test("default D01 executor selects lockfile-pin-delta without test injection", async () => {
-  let unknown = false;
-  try {
-    getJob("lockfile-pin-delta");
-  } catch (err) {
-    unknown = err.code === "unknown-job";
-  }
-  assert.equal(unknown, true);
+  const job = getJob("lockfile-pin-delta");
+  assert.equal(job.id, "lockfile-pin-delta");
+  assert.equal(job.m01, true);
 
   const outDir = tmpOut("d01-default-lock");
   const result = await runPaidOffer({
@@ -41,8 +49,12 @@ test("default D01 executor selects lockfile-pin-delta without test injection", a
 });
 
 test("PR51-only getJob injection still cannot select lockfile-pin-delta", async () => {
+  const published = JSON.parse(readFileSync(LIVE_CATALOG_PATH, "utf8"));
+  const pr51 = createJobLookup({
+    jobs: published.jobs.filter((job) => PR51_IDS.includes(job.id)),
+  });
   const execute = createExecutor({
-    getJob,
+    getJob: pr51.getJob,
     acquireKit: () => MODULE_ROOT,
     runEngine: runEngineForD01,
   });

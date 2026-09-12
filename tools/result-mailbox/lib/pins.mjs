@@ -7,9 +7,6 @@ const here = dirname(fileURLToPath(import.meta.url));
 export const OWNED_DIR = join(here, "..");
 export const REPO_ROOT = join(here, "../../..");
 
-const kit = JSON.parse(
-  readFileSync(join(REPO_ROOT, "client/src/data/usefulJobsKit.json"), "utf8"),
-);
 const archiveMeta = JSON.parse(
   readFileSync(
     join(REPO_ROOT, "client/public/for-agents/useful-jobs/useful-jobs-1.0.0.sha256.json"),
@@ -17,26 +14,20 @@ const archiveMeta = JSON.parse(
   ),
 );
 
-export const USEFUL_JOBS_PACKAGE = kit.packageId;
-export const USEFUL_JOBS_VERSION = kit.version;
-export const USEFUL_JOBS_ROOT_NAME = kit.rootName;
-export const USEFUL_JOBS_CLI = kit.cli;
-export const USEFUL_JOBS_ARCHIVE_SHA256 = kit.sha256;
-export const USEFUL_JOBS_ARCHIVE_BYTES = kit.bytes;
-export const USEFUL_JOBS_PURCHASE_AUTHORITY = kit.purchaseAuthority;
-export const USEFUL_JOBS_ARCHIVE_REL = String(kit.archive).replace(/^\//, "");
+/** SDS52 extract stays on 1.0.0. Public current download is useful-jobs 1.1.0. */
+export const USEFUL_JOBS_PACKAGE = "useful-jobs";
+export const USEFUL_JOBS_VERSION = "1.0.0";
+export const USEFUL_JOBS_ROOT_NAME = archiveMeta.name;
+export const USEFUL_JOBS_CLI = "bin/useful-jobs.mjs";
+export const USEFUL_JOBS_ARCHIVE_SHA256 = archiveMeta.sha256;
+export const USEFUL_JOBS_ARCHIVE_BYTES = archiveMeta.bytes;
+export const USEFUL_JOBS_PURCHASE_AUTHORITY = false;
+export const USEFUL_JOBS_ARCHIVE_REL = "for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz";
 export const USEFUL_JOBS_ARCHIVE_PATH = join(REPO_ROOT, "client/public", USEFUL_JOBS_ARCHIVE_REL);
 export const USEFUL_JOBS_CATALOG_PATH = join(
   REPO_ROOT,
   "client/public/for-agents/useful-jobs/catalog.json",
 );
-
-if (archiveMeta.sha256 !== USEFUL_JOBS_ARCHIVE_SHA256) {
-  throw new Error("useful-jobs kit sha256 disagrees with archive metadata");
-}
-if (archiveMeta.bytes !== USEFUL_JOBS_ARCHIVE_BYTES) {
-  throw new Error("useful-jobs kit bytes disagree with archive metadata");
-}
 
 export const ENVELOPE_SCHEMA = "samedaydesk.result-mailbox.envelope.v1";
 export const PICKUP_SCHEMA = "samedaydesk.result-mailbox.pickup.v1";

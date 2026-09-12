@@ -6,8 +6,10 @@ ResourceServer; live settlement is out of scope. Fixture payments are labelled
 
 The default / recommended first offer is **lockfile-pin-delta**: compare two
 caller-supplied npm `package-lock.json` files and write `pin-delta.json` plus
-`pin-delta.md`. The six published useful-jobs from the `useful-jobs` 1.0.0
-archive remain selectable with the same kernel.
+`pin-delta.md`. The six published useful-jobs from the `useful-jobs` **1.0.0**
+archive remain selectable with the same kernel (SDS52 extract). The four
+engines are also in the public **1.1.0** download; that archive does not replace
+1.0.0 URLs. This tree is not a live paid merchant.
 
 Execution contract `samedaydesk.paid-useful-jobs.execution.v1` is documented in
 [`CONTRACT.md`](CONTRACT.md). `ok` means transport succeeded and this run's

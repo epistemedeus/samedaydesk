@@ -8,8 +8,8 @@
   "source": "in-tree",
   "liveCatalog": {
     "path": "client/public/for-agents/useful-jobs/catalog.json",
-    "action": "not-edited",
-    "note": "PR51 six useful-jobs remain D01's existing SDS52 wrapper. This catalog does not republish or replace them."
+    "action": "republished-in-useful-jobs-1.1.0",
+    "note": "PR51 six useful-jobs remain in the public catalog after the four selected engines. Version 1.0.0 archive URLs are unchanged. This M01 catalog is still the in-tree engine identity pin."
   },
   "wrapperPin": {
     "repo": "epistemedeus/samedaydesk",
