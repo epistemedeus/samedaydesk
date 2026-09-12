@@ -111,72 +111,117 @@ function routeTable(routes) {
   };
 }
 
-function listingInput({ inputId, jobRef, currentIncomplete = false, mismatch = false }) {
+function listingRoutes() {
+  return {
+    docs: { path: "/docs", url: "https://example.test/d15/docs", status: 200, accessibility: "ok", title: "Docs" },
+    pricing: { path: "/pricing", url: "https://example.test/d15/pricing", status: 200, accessibility: "ok", title: "Pricing" },
+    blog: { path: "/old-blog", url: "https://example.test/d15/old-blog", status: 200, accessibility: "ok", title: "Old Blog" },
+    home: { path: "/", url: "https://example.test/d15/", status: 200, accessibility: "ok", title: "Home" },
+  };
+}
+
+function listingInput({ inputId, jobRef, kind }) {
   const identity = {
-    provider: "d15cold",
+    provider: "grexal",
     jobRef,
     sharedEvidenceId: jobRef,
     sourceTag: "catalog",
   };
-  const baselineRoutes = [
-    { path: "/docs", url: "https://example.test/docs", status: 200, accessibility: "ok", title: "Docs" },
-    { path: "/pricing", url: "https://example.test/pricing", status: 200, accessibility: "ok", title: "Pricing" },
-  ];
-  const currentRoutes = currentIncomplete
-    ? [{ path: "/docs", url: "https://example.test/docs", status: 200, accessibility: "ok", title: "Docs" }]
-    : [
-        { path: "/docs", url: "https://example.test/docs", status: 301, finalUrl: "https://example.test/documentation", redirectLocation: "https://example.test/documentation", accessibility: "ok", title: "Docs Redirect" },
-        { path: "/changelog", url: "https://example.test/changelog", status: 200, accessibility: "ok", title: "Changelog" },
-      ];
-  const current = {
-    label: "current-d15",
-    capturedAt: "2026-09-12T00:00:00.000Z",
-    routes: currentRoutes,
-    captureIncomplete: currentIncomplete,
-    coverageComplete: !currentIncomplete,
+  const r = listingRoutes();
+  const completeBaseline = [r.home, r.docs, r.blog, r.pricing];
+  let current;
+  if (kind === "partial") {
+    current = {
+      label: "current-d15-partial",
+      capturedAt: "2026-09-12T00:00:00.000Z",
+      captureIncomplete: true,
+      partialCoverage: true,
+      coverageComplete: false,
+      routes: [r.home, r.docs],
+    };
+  } else if (kind === "same") {
+    current = {
+      label: "current-d15-same",
+      capturedAt: "2026-09-12T00:00:00.000Z",
+      captureIncomplete: false,
+      coverageComplete: true,
+      routes: completeBaseline,
+    };
+  } else {
+    current = {
+      label: "current-d15-change",
+      capturedAt: "2026-09-12T00:00:00.000Z",
+      captureIncomplete: false,
+      coverageComplete: true,
+      routes: [
+        r.home,
+        {
+          path: "/docs",
+          url: "https://example.test/d15/docs",
+          status: 301,
+          finalUrl: "https://example.test/d15/documentation",
+          redirectLocation: "https://example.test/d15/documentation",
+          accessibility: "ok",
+          title: "Docs Redirect",
+        },
+        { path: "/changelog", url: "https://example.test/d15/changelog", status: 200, accessibility: "ok", title: "Changelog" },
+      ],
+    };
+  }
+  const discovery = {
+    captureStatus: "ok",
+    catalogComplete: kind !== "partial",
+    listing: {
+      url: "https://example.test/d15/listing",
+      agentId: "d15-cold-agent",
+      listingStatus: "PUBLIC_ACTIVE",
+      freeVsPriced: "discovery_free_run_priced",
+    },
   };
-  if (currentIncomplete) current.partialCoverage = true;
+  if (kind === "mismatch") {
+    discovery.identity = {
+      provider: "agensi",
+      jobRef: "d15-agensi-ops-1",
+      sharedEvidenceId: "d15-agensi-ops-1",
+      sourceTag: "agensi",
+    };
+    discovery.acquisitionEvidence = [
+      {
+        id: "acq-agensi-presented",
+        kind: "linkPresented",
+        sourceTag: "agensi",
+        provider: "agensi",
+        linkId: "d15-agensi-pending",
+        jobRef: "d15-agensi-ops-1:/docs",
+        sharedEvidenceId: "d15-agensi-ops-1:/docs",
+        at: "2026-09-12T00:00:00.000Z",
+        impliesBuyerIntent: false,
+        note: "Independent agensi snapshot must not join grexal record",
+      },
+    ];
+  }
   return {
     schema: "pilot.s185.distribution_repair_input.v1",
     inputId,
     clock: "2026-09-12T00:00:00.000Z",
     identity,
-    discovery: {
-      captureStatus: "ok",
-      catalogComplete: !currentIncomplete,
-      listing: {
-        url: "https://example.test/listing/d15-cold",
-        agentId: "d15-cold-agent",
-        listingStatus: "PUBLIC_ACTIVE",
-        freeVsPriced: "discovery_free_run_priced",
-      },
-      ...(mismatch
-        ? {
-            identity: {
-              provider: "other-vendor",
-              jobRef: "other-ops-1",
-              sharedEvidenceId: "other-ops-1",
-              sourceTag: "other",
-            },
-          }
-        : {}),
-    },
+    discovery,
     record: {
       routeRegressionInput: {
         schema: "x402.r2.record.route_regression_input.v1",
         reportId: inputId,
-        title: "D15 independent listing snapshot",
+        feedId: inputId,
+        title: kind === "partial" ? "Partial incomplete current capture (cannot prove removal)" : "D15 independent listing snapshot",
         demo: true,
         sourceLabel: "independent-cold-customer",
         baseline: {
           label: "baseline-d15",
           capturedAt: "2026-09-01T00:00:00.000Z",
-          routes: baselineRoutes,
+          routes: completeBaseline,
         },
         current,
-        feedId: inputId,
       },
-      ...(mismatch ? { identity } : {}),
+      ...(kind === "mismatch" ? { identity } : {}),
     },
     callerProvenance: {
       suppliedBy: "cold-customer",
@@ -192,7 +237,7 @@ function evidencePacket({ jobId, decision, findings }) {
     jobId,
     artifactKind: "freshness-receipt",
     clock: "2026-09-12T00:00:00.000Z",
-    evidenceClass: "caller-supplied",
+    evidenceClass: "synthetic",
     offline: true,
     payment: { attempted: false },
     cost: { assignmentSpendUsd: 0, note: "Independent cold-customer packet. Not a purchase." },
@@ -386,7 +431,15 @@ export function ensureIndependentInputs() {
       afterChange: write(join(root, "schema/after-change.json"), schemaAfter),
       afterSame: write(join(root, "schema/after-same.json"), schemaBefore),
       used: write(join(root, "schema/used.json"), { pointers: ["/properties/event"] }),
-      openapi: write(join(root, "schema/openapi.yaml"), OPENAPI_BEFORE),
+      openapi: write(join(root, "schema/openapi.json"), {
+        openapi: "3.0.3",
+        info: { title: "D15 Cold OpenAPI", version: "1.0.0" },
+        paths: {
+          "/widgets": {
+            get: { responses: { "200": { description: "ok" } } },
+          },
+        },
+      }),
     },
     route: {
       before: write(join(root, "route/before.json"), routesBefore),
@@ -430,34 +483,12 @@ export function ensureIndependentInputs() {
       foreign: write(join(root, "evidence/foreign.json"), { status: "pass" }),
     },
     listing: {
-      change: write(join(root, "listing/change.json"), listingInput({ inputId: "d15-listing-change", jobRef: "d15-listing-change" })),
-      same: write(
-        join(root, "listing/same.json"),
-        listingInput({
-          inputId: "d15-listing-same",
-          jobRef: "d15-listing-same",
-        }),
-      ),
-      partial: write(
-        join(root, "listing/partial.json"),
-        listingInput({ inputId: "d15-listing-partial", jobRef: "d15-listing-partial", currentIncomplete: true }),
-      ),
-      mismatch: write(
-        join(root, "listing/mismatch.json"),
-        listingInput({ inputId: "d15-listing-mismatch", jobRef: "d15-listing-mismatch", mismatch: true }),
-      ),
+      change: write(join(root, "listing/change.json"), listingInput({ inputId: "d15-listing-change", jobRef: "d15-listing-change", kind: "change" })),
+      same: write(join(root, "listing/same.json"), listingInput({ inputId: "d15-listing-same", jobRef: "d15-listing-same", kind: "same" })),
+      partial: write(join(root, "listing/partial.json"), listingInput({ inputId: "d15-listing-partial", jobRef: "d15-listing-partial", kind: "partial" })),
+      mismatch: write(join(root, "listing/mismatch.json"), listingInput({ inputId: "d15-listing-mismatch", jobRef: "d15-listing-mismatch", kind: "mismatch" })),
     },
   };
-
-  const sameListing = listingInput({ inputId: "d15-listing-same", jobRef: "d15-listing-same" });
-  sameListing.record.routeRegressionInput.current = {
-    label: "current-d15-same",
-    capturedAt: "2026-09-12T00:00:00.000Z",
-    routes: sameListing.record.routeRegressionInput.baseline.routes,
-    captureIncomplete: false,
-    coverageComplete: true,
-  };
-  paths.listing.same = write(join(root, "listing/same.json"), sameListing);
 
   const sentinelDir = join(root, "page-sentinels");
   const jobRelDir = join(root, "page-job-rel");

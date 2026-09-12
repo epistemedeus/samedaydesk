@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import { copyFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
 import { classifyCold } from "../lib/classify.mjs";
-import { COLD_RUNS, ensureCold110 } from "../lib/cold-root.mjs";
+import { COLD_INPUTS, COLD_RUNS, ensureCold110 } from "../lib/cold-root.mjs";
 import { ensureIndependentInputs } from "../lib/inputs.mjs";
 import { invokeUsefulJobs, runJob, runJobAsync } from "../lib/invoke.mjs";
 import { expectProcessOk, expectRefusal, outDir } from "./helpers.mjs";
@@ -114,6 +114,25 @@ describe("decisive cold-customer cases", () => {
 
   it("uses nonzero exit 2 for missing required inputs", () => {
     expectRefusal(runJob("lockfile-pin-delta", ["--out-dir", outDir("lock-missing")]), /missing-required-inputs/i);
+  });
+
+  it("unknown listing provider does not keep incomplete capture as partial", () => {
+    const fx = ensureIndependentInputs();
+    const input = JSON.parse(readFileSync(fx.listing.partial, "utf8"));
+    input.identity.provider = "d15cold";
+    const path = join(COLD_INPUTS, "listing/unknown-provider-partial.json");
+    mkdirSync(join(COLD_INPUTS, "listing"), { recursive: true });
+    writeFileSync(path, `${JSON.stringify(input, null, 2)}\n`);
+    const out = outDir("listing-unknown-provider");
+    const classified = expectProcessOk(
+      runJob("listing-repair-packet", ["--input", path, "--out-dir", out]),
+      { jobId: "listing-repair-packet", out },
+    );
+    assert.equal(
+      classified.analysisStatus,
+      "actionable",
+      "observed: unknown provider + captureIncomplete is actionable; advertised incomplete capture is partial",
+    );
   });
 
   it("reuses H04 lock-02, lock-03, and page-02 only as extra coverage", () => {

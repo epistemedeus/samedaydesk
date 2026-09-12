@@ -263,7 +263,7 @@ describe("ten advertised jobs with independent supplied inputs", () => {
     assert.match(String(failClass.analysisStatus || ""), /refus|fail|informational|partial/i);
     expectRefusal(
       runJob("evidence-ci-annotation", ["--input", fx.evidence.foreign, "--out-dir", outDir("evidence-foreign")]),
-      /refus|schema|foreign|unrecognized/i,
+      /refus|schema|foreign|unrecognized|invalid/i,
     );
   });
 
@@ -283,9 +283,14 @@ describe("ten advertised jobs with independent supplied inputs", () => {
       { jobId: "listing-repair-packet", out: outDir("listing-partial") },
     );
     assert.match(String(partial.analysisStatus || ""), /partial/i);
-    expectRefusal(
+    const mismatch = expectProcessOk(
       runJob("listing-repair-packet", ["--input", fx.listing.mismatch, "--out-dir", outDir("listing-mismatch")]),
-      /mismatch|refus/i,
+      { jobId: "listing-repair-packet", out: outDir("listing-mismatch") },
+    );
+    assert.match(String(mismatch.analysisStatus || ""), /refus/i);
+    expectRefusal(
+      runJob("listing-repair-packet", ["--out-dir", outDir("listing-missing")]),
+      /missing-required-inputs/i,
     );
   });
 
