@@ -33,7 +33,7 @@ export function normalizeFields(input) {
 
 export function normalizeTitleFact(value) {
   if (typeof value !== "string") return value;
-  return value.replace(/[ \t]+/g, " ").trim();
+  return value.normalize("NFC").replace(/[ \t]+/g, " ").trim();
 }
 
 export function pickPresent(data, fields) {

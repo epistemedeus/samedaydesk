@@ -1,6 +1,6 @@
 {
   "name": "@samedaydesk/page-change-offline-job",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "type": "module",
   "description": "W4-commerce-13 offline compare of two already-held samedaydesk.extract-batch.v0 JSON files. Emits page-change.json/md. Does not fetch, pay, or import merchant compare.mjs.",
