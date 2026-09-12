@@ -3,7 +3,7 @@
 **Slot:** W5-D17 (HTTP extension, authority-gap fix)
 **Repo:** epistemedeus/samedaydesk
 **Branch:** `cursor/w5-d17-domain-outcome-contract-tests-for-successful-change-no-change-refusal-reports-5d04`
-**Head:** (set after tests)
+**Tested head:** `2885bd86be95f89f1ae6cc0363f10f03aaeff164`
 **Owned path:** `experiments/wave5/d17/http-delivery-evidence/` only
 **Merchant pin:** epistemedeus/x402-url-extractor `a143898dd1ec35c097ca7eb0b472f30dad1ee319` (PR54)
 **Canonical HTTP sources:** `extractMcpOutputSchema`, `readMcpOutputSchema`, `extractBatchOutputSchema()` (not `extractBatchMcpOutputSchema`)
@@ -16,7 +16,30 @@
 node --test --test-concurrency=1 experiments/wave5/d17/http-delivery-evidence/test/*.test.mjs
 ```
 
-**PASS pending this revision** — disposable merchant `a143898d` plus fake xpay facilitator. Not mocks of extract. Postgres unused; not a skipped gate.
+**PASS** — 20 pass, 0 fail, 0 skipped (Node v22.14.0). Real disposable merchant
+process plus fake xpay facilitator. Not mocks of extract. Postgres unused; not a
+skipped gate.
+
+| Case | Result |
+| --- | --- |
+| Live `extractMcpOutputSchema.safeParse` vs generated adapter | agree on valid extract, 403 success envelope, timeout catch (outside success schema) |
+| HTTP batch vs MCP Zod | extra quote field holds on `extractBatchOutputSchema()`, fails MCP snapshot |
+| HTTP 200 + nonempty text without declared fields | `invalid` / `malformed_body` |
+| Missing / malformed body | `unknown` / `invalid`, never `pass` |
+| Declared extract of public example HTML | `pass` / `full_bounded_capture`, `usefulness: unknown` |
+| External 403 HTML with block copy | `pass` / `source_refusal`; live Zod holds |
+| Source refusal plus truncation | principal `source_refusal`; both bounded counters set |
+| Schema-shaped HTTP 500 | `invalid` / `merchant_http_failure`, not `pass` |
+| PUT `/extract` and GET `/scan` | `unknown` / `unsupported_target` |
+| Text excerpt truncation | `truncated_partial` |
+| `unsupported_encoding` | `unsupported_content`; live Zod fails |
+| Source timeout | `transport_failure`; live Zod fails |
+| Bounded oversized capture | stored length clamped; never `full_bounded_capture` |
+| Caller SHA-256(domain \|\| bytes) | equals merchant retained `responseDigest` |
+| Historical v1 `not_checked` with current constant `validated` | still readable and joined |
+| Store canonicalization | counts/digests/outcome/refs only; non-finite fields rejected |
+| Restart/readback | old v1 row and new validation file both survive |
+| Fake facilitator settle `0x333…` | `settlementClass: simulated`, not revenue |
 
 ## Production finding (Root)
 
@@ -41,5 +64,5 @@ from the same bytes already hashed. Root joins on method + resource + digest.
 - Buyer-attested usefulness, classified payers, and independent demand.
 - MCP typed telemetry (intentionally not used as HTTP identity).
 
-No default-branch push, deploy, spend, API billing, Cloud workers, overage,
-or usage reset.
+No default-branch push, deploy, spend, API billing, extra Cloud workers,
+overage, or usage reset.
