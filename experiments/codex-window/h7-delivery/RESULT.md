@@ -12,6 +12,7 @@ Native Grok Heavy (`grok-4.6`, effort xhigh) on Cursor Cloud VM. Hostname `curso
 | Repair SHA | `080cc62e7bc83f76431d916df34aea6d30875401` (publication rollback + interrupted-run guard; byte-identical trees to `c6f1464` for those files) |
 | Archive pin (immutable 1.4.3) | `8a811bbadba7edc6c926b319b0839cd2f01e5896` |
 | Overlay source packed into 1.4.4 | `e9528c3b1195f5ab5d388b73465c31bd422f5d3d` |
+| 1.4.4 package commit | `74a3c11f366c4e02148f5f51913152bb4aad9b3a` |
 | Pin fix (vendor-temp) | `e122c26657977ce3a2d41642095e999db1125b53` |
 | Previous pin (ancestor, **not** release-ready) | `6007fcfa27074f9a594248e47296f1afa4f8385d` |
 | Unpublished 1.4.3 archive | **2615491** bytes, sha256 `a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09` — **does not contain wrapper.mjs**; git blob `f85c326…` **byte-identical**; **not labeled fixed** |

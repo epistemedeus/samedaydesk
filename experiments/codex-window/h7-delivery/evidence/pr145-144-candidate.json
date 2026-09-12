@@ -6,6 +6,7 @@
   "runtimePin": "c6f1464222169f2d32247c978dc5007d82a2aa03",
   "repairSha": "080cc62e7bc83f76431d916df34aea6d30875401",
   "overlaySourceCommit": "e9528c3b1195f5ab5d388b73465c31bd422f5d3d",
+  "packageCommit": "74a3c11f366c4e02148f5f51913152bb4aad9b3a",
   "catalogVersion": "1.4.4",
   "candidate": {
     "name": "useful-jobs-1.4.4",
