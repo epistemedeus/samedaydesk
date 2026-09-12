@@ -1,0 +1,14 @@
+W5-D15 cold-download-110
+
+Copyright (c) 2026 SameDayDesk / epistemedeus
+License: MIT. See LICENSE in this directory.
+
+This package executes the public useful-jobs 1.1.0 archive as a cold
+customer. It does not copy or edit the D01 kernel, homepage, or wrapper
+sources. Independent inputs live under /tmp/d15-cold-inputs. The
+archive itself remains at D01 pin 5579cfde.
+
+`--example` and packaged samples are fixture funding, not payment.
+Supported refusal (exit 2) is not a defect. Analysis status is not
+process success. Timeout is recorded only where the public kit
+advertises it.
