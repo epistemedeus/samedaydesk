@@ -19,5 +19,9 @@ version metadata (1.4.1 versus 1.4.2) among its 35 files. No runtime source refr
 merge, deploy, release, signing, payment or new admission was performed.
 
 No owned runtime processes or reproducible extracts remain to clean up. Root
-checkpoint is `CHECKPOINT.json` at the assignment workdir. Export/readback details
-will be recorded here after the scoped feature push and draft PR are confirmed.
+checkpoint is `CHECKPOINT.json` at the assignment workdir. Scoped source/evidence commit `0faf749fd9071aced83dfd64c2e6de013a2a0a46`
+was pushed to `codex/cw70-cold-http-consumer-current-20260912`.
+Draft PR: https://github.com/epistemedeus/samedaydesk/pull/139, targeting
+`codex/useful-jobs-core-integration-20260912`. The final branch head is recorded
+in the workdir checkpoint after this closeout record is committed and read back.
+No implementation remains authorized for Astra in this assignment.

@@ -21,6 +21,10 @@ fail. No real HTTP runtime, engine, PostgreSQL, Firebase, or full test suite was
 launched during this assignment. These are local owner probes, not independent
 use, deployment, settlement, or completed delivery evidence.
 
+Draft PR: https://github.com/epistemedeus/samedaydesk/pull/139.
+Source/evidence checkpoint: `0faf749fd9071aced83dfd64c2e6de013a2a0a46`;
+follow-up closeout commits contain documentation only. Continue the same branch.
+
 ## Exact inputs and dependency mismatch
 
 - Repository: `epistemedeus/samedaydesk`.
