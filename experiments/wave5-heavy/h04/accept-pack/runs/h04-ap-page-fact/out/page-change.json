@@ -195,7 +195,7 @@
       "comparedWithClock": "2026-09-12T12:00:00.000Z",
       "beforeSha256": "208af4c73ea68e00690ad39564f9dcf170e9a97345d0b2dee3c3806db4c4ef07",
       "afterSha256": "157e1e42b55d354f2960637e608186dfb90575283d49600d9edf937e398c05b9",
-      "elapsedMs": 1.339607,
+      "elapsedMs": 1.377943,
       "digestSha256": "2de1d27364cf03179ae3ac181e81e42a1a79b87646ae2cc98f328b793b697297"
     }
   }

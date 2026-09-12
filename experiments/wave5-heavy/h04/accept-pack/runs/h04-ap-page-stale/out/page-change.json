@@ -152,7 +152,7 @@
       "comparedWithClock": "2026-09-12T12:00:00.000Z",
       "beforeSha256": "e8b1c59be2799e2d20d1df2441527a4358436903d40502f13f0baaba23960306",
       "afterSha256": "c1fca41056adeb4250d365707973f2eb0918c59a15b7b9b0404dc782e5fab2cc",
-      "elapsedMs": 1.217938,
+      "elapsedMs": 1.201574,
       "digestSha256": "024a53dbfd4e48c668750f4fdf752d550a750a4627bc35b51692c0f2a9026f4d"
     }
   }

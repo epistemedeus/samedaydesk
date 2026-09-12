@@ -30,7 +30,7 @@
     "appId": "lockfile-pin-delta",
     "status": "informational",
     "provenance": "caller-supplied",
-    "digest": "86e9ea2836ca78afa00c75dc44120bdab8ade09eb6487a0496df921c34a72d3b",
+    "digest": "f669efab446e655d6103de16ff12b3b503c32de80cc3060e37ba46bc1e504985",
     "counts": {
       "beforePins": 22,
       "afterPins": 22,
