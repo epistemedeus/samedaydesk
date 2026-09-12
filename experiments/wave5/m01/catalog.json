@@ -28,12 +28,12 @@
     ]
   },
   "d01Binding": {
-    "status": "adapter-exported-injection-required",
+    "status": "wired-in-d01-default-executor",
     "testedWrapperSha": "6bed72dd22a396134aa5c957933b42c3a5746698",
     "testedKernelSha": "bccf34b3816ebe20d43823d0978308fd10f9bb33",
     "contract": "samedaydesk.paid-useful-jobs.execution.v1",
     "adapter": "experiments/wave5/m01/lib/d01-adapter.mjs",
-    "remaining": "D01 createExecutor injects acquireKit and runEngine only. getJob and materializeInputs are hardcoded to the PR51 live catalog, so lockfile-pin-delta is unknown-job before runEngine runs. Exact small change is documented in CONTRACT.md. This package does not write server/paid-useful-jobs/."
+    "remaining": "D01 default createExecutor now injects createM01AwareGetJob, runEngineForD01, and PR51 getJob fallback. Fresh callers can select the four engines without test injection. runCatalogPaidOffer is not the consumer path."
   },
   "corpora": {
     "terminals": "epistemedeus/pilot@9529591d7fc381b09f34944d46decdc092aee16f overview/research/cursor-wave5-20260911/TERMINALS.json",

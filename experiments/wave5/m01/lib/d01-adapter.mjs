@@ -7,12 +7,12 @@ import { invokeEngine } from "./invoke.mjs";
 import { MODULE_ROOT } from "./paths.mjs";
 
 export const D01_INJECTION = Object.freeze({
-  status: "required",
+  status: "wired-in-d01-default-executor",
   contract: "samedaydesk.paid-useful-jobs.execution.v1",
   testedWrapperSha: "6bed72dd22a396134aa5c957933b42c3a5746698",
   files: ["server/paid-useful-jobs/lib/wrapper.mjs", "server/paid-useful-jobs/lib/input-guard.mjs"],
   reason:
-    "createExecutor injects acquireKit and runEngine only. getJob and materializeInputs always read the PR51 live catalog, so selected M01 engines are unknown-job before runEngine runs.",
+    "Historical createExecutor injected acquireKit and runEngine only. Current D01 default executor binds createM01AwareGetJob, runEngineForD01, and PR51 getJob fallback so selected engines are not unknown-job.",
   consumption:
     "createExecutor({ getJob: createM01AwareGetJob(d01GetJob), runEngine: runEngineForD01, acquireKit: () => MODULE_ROOT })",
   wrapperHunk: `export function createExecutor(deps = {}) {

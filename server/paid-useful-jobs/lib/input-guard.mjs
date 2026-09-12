@@ -1,5 +1,5 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
-import { extname, join, resolve } from "node:path";
+import { dirname, extname, isAbsolute, join, resolve } from "node:path";
 import { MAX_INPUT_BYTES } from "./pins.mjs";
 import { getJob, optionalKeys, requiredKeys } from "./jobs.mjs";
 import { sha256Bytes } from "./digest.mjs";
@@ -35,6 +35,7 @@ export function freezeRequest(request = {}) {
       }
     }
   }
+  freezeJobDocumentSiblings(inputs, fileBytes);
   return {
     jobId: request.jobId,
     example: request.example,
@@ -59,6 +60,58 @@ function looksJsonText(value) {
   if (typeof value !== "string") return false;
   const t = value.trim();
   return (t.startsWith("{") && t.endsWith("}")) || (t.startsWith("[") && t.endsWith("]"));
+}
+
+function freezeJobDocumentSiblings(inputs, fileBytes) {
+  const jobPath = inputs.job;
+  if (typeof jobPath !== "string" || looksJsonText(jobPath)) return;
+  const abs = resolve(jobPath);
+  if (!existsSync(abs) || !statSync(abs).isFile()) return;
+  let spec;
+  try {
+    spec = JSON.parse((fileBytes.job || readFileSync(abs)).toString("utf8"));
+  } catch {
+    return;
+  }
+  if (!spec || typeof spec !== "object" || Array.isArray(spec)) return;
+  const dir = dirname(abs);
+  for (const key of ["before", "after"]) {
+    const rel = spec[key];
+    if (typeof rel !== "string" || rel === "" || /^https?:\/\//i.test(rel)) continue;
+    const sibling = isAbsolute(rel) ? resolve(rel) : resolve(dir, rel);
+    if (existsSync(sibling) && statSync(sibling).isFile()) {
+      fileBytes[`job:${key}`] = readFileSync(sibling);
+    }
+  }
+}
+
+function stageJobDocumentSiblings(request, workDir, sourcePath, jobBytes) {
+  let spec;
+  try {
+    spec = JSON.parse(jobBytes.toString("utf8"));
+  } catch {
+    return;
+  }
+  if (!spec || typeof spec !== "object" || Array.isArray(spec)) return;
+  const srcDir = dirname(sourcePath);
+  for (const key of ["before", "after"]) {
+    const rel = spec[key];
+    if (typeof rel !== "string" || rel === "" || /^https?:\/\//i.test(rel)) continue;
+    const dest = join(workDir, rel);
+    mkdirSync(dirname(dest), { recursive: true });
+    const frozen = request.fileBytes?.[`job:${key}`];
+    if (frozen) {
+      assertNotOversize(`job:${key}`, frozen.length);
+      writeFileSync(dest, frozen);
+      continue;
+    }
+    const src = isAbsolute(rel) ? resolve(rel) : resolve(srcDir, rel);
+    if (existsSync(src) && statSync(src).isFile()) {
+      const sibling = readFileSync(src);
+      assertNotOversize(`job:${key}`, sibling.length);
+      writeFileSync(dest, sibling);
+    }
+  }
 }
 
 function assertNotOversize(key, bytes) {
@@ -144,6 +197,7 @@ export function materializeInputs(jobId, request, workDir, { getJob: getJobFn = 
       validateStagedInput(job, key, buf);
       filePath = join(workDir, `${key}.json`);
       writeFileSync(filePath, text);
+      if (key === "job") stageJobDocumentSiblings(request, workDir, filePath, buf);
     } else if (typeof value === "string" && looksJsonText(value)) {
       bytes = Buffer.byteLength(value, "utf8");
       assertNotOversize(key, bytes);
@@ -156,6 +210,7 @@ export function materializeInputs(jobId, request, workDir, { getJob: getJobFn = 
       validateStagedInput(job, key, buf);
       filePath = join(workDir, `${key}.json`);
       writeFileSync(filePath, value.endsWith("\n") ? value : `${value}\n`);
+      if (key === "job") stageJobDocumentSiblings(request, workDir, filePath, buf);
     } else if (typeof value === "string") {
       filePath = resolve(value);
       if (!existsSync(filePath)) {
@@ -181,6 +236,7 @@ export function materializeInputs(jobId, request, workDir, { getJob: getJobFn = 
       validateStagedInput(job, key, buf);
       const staged = join(workDir, `${key}${extname(filePath) || ""}`);
       writeFileSync(staged, buf);
+      if (key === "job") stageJobDocumentSiblings(request, workDir, filePath, buf);
       files[key] = staged;
       entries.push({
         name: key,

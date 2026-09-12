@@ -1,5 +1,8 @@
 export { JOBS, JOB_IDS, getJob, createJobLookup } from "./lib/jobs.mjs";
 export { runPaidOffer, runPaidOffers, createExecutor } from "./lib/wrapper.mjs";
+export { loadDeliveryCatalog, FIRST_OFFER, listedOfferIds } from "./lib/delivery-catalog.mjs";
+export { createM01AwareGetJob, runEngineForD01 } from "../../experiments/wave5/m01/lib/d01-adapter.mjs";
+export { MODULE_ROOT as M01_MODULE_ROOT } from "../../experiments/wave5/m01/lib/paths.mjs";
 export {
   EXECUTION_CONTRACT_VERSION,
   assessDelivery,
@@ -7,7 +10,7 @@ export {
   classifyAnalysis,
 } from "./lib/contract.mjs";
 export { createExecutionServer, listenExecutionServer } from "./lib/http.mjs";
-export { deliverSuppliedInput, deliverDisjointSecondJob, runPreflightStage } from "./lib/delivery-kit.mjs";
+export { deliverSuppliedInput, deliverDisjointSecondJob, runPreflightStage, orderRequestFromPreflight } from "./lib/delivery-kit.mjs";
 export { ensureUsefulJobsKit, runEngineJob, engineProvenance, engineArchiveIdentity } from "./lib/engine.mjs";
 export { validateStagedInput } from "./lib/input-schema.mjs";
 export { repoHead } from "./lib/git-head.mjs";

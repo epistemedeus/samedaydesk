@@ -531,7 +531,7 @@ describe("W5-D01 execution contract", { timeout: 180_000 }, () => {
     assert.equal(body.ok, false);
   });
 
-  it("createExecutor catalog/getJob injection does not wait on M01", async () => {
+  it("createExecutor catalog/getJob injection still overrides the default overlay", async () => {
     const lookup = createJobLookup({ jobs: JOBS.map((j) => ({ ...j })) });
     let seen = null;
     const execute = createExecutor({

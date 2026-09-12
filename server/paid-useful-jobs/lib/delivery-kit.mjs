@@ -14,12 +14,12 @@ import { DEFAULT_CATALOG } from "../../../tools/job-input-preflight/lib/roots.mj
 import { runCreateOrder, defaultFileStore } from "../../../tools/managed-useful-jobs-order/lib/create-order.mjs";
 import { loadPins } from "../../../tools/managed-useful-jobs-order/lib/pins.mjs";
 import { verifyComplete } from "../../../tools/job-output-atomicity/index.mjs";
-import { CATALOG_PATH } from "../../../tools/job-output-atomicity/lib/pins.mjs";
 import { seedFromD01Execution } from "../../../tools/result-mailbox/lib/d01-receipt.mjs";
 import { pickup } from "../../../tools/result-mailbox/lib/pickup.mjs";
 import { acknowledge } from "../../../tools/result-mailbox/lib/ack.mjs";
 import { EXECUTION_CONTRACT_VERSION } from "./contract.mjs";
 import { createExecutionServer, listenExecutionServer } from "./http.mjs";
+import { loadDeliveryCatalog, pinForDeliveryJob } from "./delivery-catalog.mjs";
 
 const CLOCK = "2026-09-11T23:00:00Z";
 const EXPIRES = "2026-09-12T23:00:00Z";
@@ -33,12 +33,20 @@ function flagsFromInputs(inputs = {}) {
   return flags;
 }
 
-export async function runPreflightStage({ jobId, inputs, catalogPath = DEFAULT_CATALOG, outDir = null } = {}) {
-  const catalog = await loadCatalog(catalogPath);
-  const job = findJob(catalog, jobId);
+export async function runPreflightStage({
+  jobId,
+  inputs,
+  catalogPath = DEFAULT_CATALOG,
+  catalog = null,
+  outDir = null,
+} = {}) {
+  const resolved =
+    catalog ||
+    (catalogPath === DEFAULT_CATALOG ? loadDeliveryCatalog() : await loadCatalog(catalogPath));
+  const job = findJob(resolved, jobId);
   try {
     return preflight({
-      catalog,
+      catalog: resolved,
       job,
       flags: flagsFromInputs(inputs),
       outDir,
@@ -49,14 +57,16 @@ export async function runPreflightStage({ jobId, inputs, catalogPath = DEFAULT_C
   }
 }
 
-function orderRequestFromPreflight(pre, { orderId, fundingState, payment }) {
+export function orderRequestFromPreflight(pre, { orderId, fundingState, payment, catalog = null } = {}) {
   const pins = loadPins();
+  const job = catalog?.jobs?.find((row) => row.id === pre.job) || null;
+  const enginePin = pinForDeliveryJob(job, pins);
   const inputs = [];
   for (const [key, rec] of Object.entries(pre.inputs || {})) {
     if (!rec || rec.kind === "directory") continue;
     inputs.push({
       flag: rec.flag || `--${key}`,
-      path: rec.stagedPath,
+      path: key === "job" && rec.path ? rec.path : rec.stagedPath,
       sha256: rec.sha256,
       bytes: rec.bytes,
     });
@@ -64,12 +74,13 @@ function orderRequestFromPreflight(pre, { orderId, fundingState, payment }) {
   return {
     engineId: pre.job,
     orderId,
-    archiveSha256: pins.archiveSha256,
-    archiveBytes: pins.archiveBytes,
+    archiveSha256: enginePin.sha256,
+    archiveBytes: enginePin.bytes,
     enginePin: {
-      sha256: pins.archiveSha256,
-      bytes: pins.archiveBytes,
-      version: pins.version,
+      sha256: enginePin.sha256,
+      bytes: enginePin.bytes,
+      version: enginePin.version,
+      package: enginePin.package,
     },
     example: false,
     sold: false,
@@ -116,8 +127,14 @@ export async function deliverSuppliedInput({
       executeUrl = origin;
     }
 
+    const deliveryCatalog = loadDeliveryCatalog();
     const preOut = mkdtempSync(join(tmpdir(), "sds-deliver-pre-"));
-    const preflightResult = await runPreflightStage({ jobId, inputs, outDir: preOut });
+    const preflightResult = await runPreflightStage({
+      jobId,
+      inputs,
+      catalog: deliveryCatalog,
+      outDir: preOut,
+    });
     if (!preflightResult?.ok) {
       return {
         ok: false,
@@ -133,11 +150,17 @@ export async function deliverSuppliedInput({
     mkdirSync(published, { recursive: true });
     const mailboxDir = mailbox || mkdtempSync(join(tmpdir(), "sds-deliver-mail-"));
 
-    const raw = orderRequestFromPreflight(preflightResult, { orderId, fundingState, payment });
+    const raw = orderRequestFromPreflight(preflightResult, {
+      orderId,
+      fundingState,
+      payment,
+      catalog: deliveryCatalog,
+    });
     const order = await runCreateOrder(rawWithPayment(raw, payment), {
       store: orderStore,
       outDir: published,
       executeUrl,
+      catalog: deliveryCatalog,
     });
 
     if (!order?.ok) {
@@ -153,9 +176,13 @@ export async function deliverSuppliedInput({
     }
 
     const runOutDir = deliveryRoot(order);
+    const job = deliveryCatalog.jobs.find((row) => row.id === jobId) || null;
+    const enginePin = pinForDeliveryJob(job, loadPins());
     const completeness = verifyComplete({
       root: runOutDir,
-      catalogPath: CATALOG_PATH,
+      catalog: deliveryCatalog,
+      expectedArchiveSha256: enginePin.sha256,
+      expectedArchiveBytes: enginePin.bytes,
       evidenceClass: "local-runtime",
     });
 

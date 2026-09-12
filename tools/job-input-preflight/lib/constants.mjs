@@ -79,6 +79,14 @@ export const ENGINE_OUTPUT_NAMES = Object.freeze([
   "repair-packet.md",
   "repeat-job.json",
   "repeat-job.md",
+  "pin-delta.json",
+  "pin-delta.md",
+  "drift-brief.json",
+  "drift-brief.md",
+  "route-diff.json",
+  "route-diff.md",
+  "page-change.json",
+  "page-change.md",
 ]);
 
 export const PREFLIGHT_RESULT_NAME = "preflight.json";

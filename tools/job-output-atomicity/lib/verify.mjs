@@ -247,7 +247,7 @@ export function verifyComplete(options = {}) {
 
   let catalog;
   try {
-    catalog = loadCatalog(options.catalogPath);
+    catalog = options.catalog || loadCatalog(options.catalogPath);
   } catch (err) {
     return verdict({
       classification: "unknown",

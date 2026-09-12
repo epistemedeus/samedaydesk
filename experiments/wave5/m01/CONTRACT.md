@@ -4,7 +4,7 @@
 **Job contract export:** `samedaydesk.wave5.m01.job-catalog.v1`  
 **D01 execution contract (read-only):** `samedaydesk.paid-useful-jobs.execution.v1` at `6bed72dd22a396134aa5c957933b42c3a5746698`
 
-This package executes the four imported engine CLIs. It does not copy their compare kernels and does not write `server/paid-useful-jobs/` or root `package.json`.
+This package executes the four imported engine CLIs. It does not copy their compare kernels. D01 owns the paid-offer consumer (`server/paid-useful-jobs/`).
 
 ## Consumer
 
@@ -35,45 +35,18 @@ Unlike hashes are not forced equal. Route permutation now has equal `digest.v2`.
 
 `lockfile-pin-delta` from independent M07 cases on this tree: 20/20 domain match, constant hasher cannot hide integrity, unsupported formats refuse.
 
-## D01 bind (exact small change)
+## D01 bind
 
-Unpatched D01 `createExecutor` injects `acquireKit` and `runEngine` only. `getJob` and `materializeInputs` always load the PR51 six-job catalog, so `lockfile-pin-delta` is `unknown-job` before `runEngine` runs.
-
-Required in D01 (not applied here):
-
-`server/paid-useful-jobs/lib/wrapper.mjs` inside `createExecutor`:
+D01 default `createExecutor` / `runPaidOffer` now injects:
 
 ```js
-const resolveJob = deps.getJob || getJob;
-// ...
-job = resolveJob(jobId);
-const materialized = materializeInputs(jobId, request, join(work, "inputs"), { getJob: resolveJob });
-```
-
-`server/paid-useful-jobs/lib/input-guard.mjs`:
-
-```js
-export function materializeInputs(jobId, request, workDir, deps = {}) {
-  const job = (deps.getJob || getJob)(jobId);
-```
-
-Then D01 can select these engines:
-
-```js
-import { createExecutor, getJob } from "./index.mjs";
-import {
-  createM01AwareGetJob,
-  runEngineForD01,
-} from "../../../experiments/wave5/m01/lib/d01-adapter.mjs";
-import { MODULE_ROOT } from "../../../experiments/wave5/m01/lib/paths.mjs";
-
 export const runPaidOffer = createExecutor({
   getJob: createM01AwareGetJob(getJob),
   runEngine: runEngineForD01,
-  acquireKit: () => MODULE_ROOT,
 });
 ```
 
-Optional: if `analysis.outcome === "refused"`, return the engine refuse code instead of `missing-output` when promised files were never written.
+PR51 jobs still resolve through `getJob` and the useful-jobs archive CLI.
+`runCatalogPaidOffer` is not the consumer path. `sold` stays false.
 
-Until that lands, consume `runCatalogPaidOffer` from this directory. That is not an already-integrated sale. `sold` stays false.
+Optional: if `analysis.outcome === "refused"`, D01 returns the engine refuse code instead of `missing-output` when promised files were never written.

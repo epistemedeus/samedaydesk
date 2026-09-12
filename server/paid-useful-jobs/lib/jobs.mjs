@@ -13,6 +13,7 @@ const FLAG_TO_KEY = {
   "--input": "input",
   "--next-run": "next-run",
   "--input-root": "input-root",
+  "--job": "job",
 };
 
 export function flagToKey(flag) {
@@ -37,13 +38,16 @@ function freezeJob(job) {
     outputs: Object.freeze([...(job.outputs || [])]),
     exampleFlag: job.exampleFlag || "--example",
     notes: job.notes || "",
+    m01: job.m01 === true,
+    pin: job.pin || null,
+    enginePin: job.enginePin || null,
   });
 }
 
 /**
- * Smallest engine-catalog injection seam. M01 is not on this tree.
- * createExecutor({ catalog }) / createExecutor({ getJob }) bind a lookup
- * without waiting on a later catalog owner.
+ * Published useful-jobs lookup. M01 engines overlay via createM01AwareGetJob
+ * on the default executor; createExecutor({ catalog }) / createExecutor({ getJob })
+ * still bind a test lookup.
  */
 export function createJobLookup(source) {
   const jobsRaw = Array.isArray(source?.jobs) ? source.jobs : Array.isArray(source) ? source : [];

@@ -5,8 +5,12 @@
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { JOB_IDS, JOB_BY_ID } from "../lib/jobs.mjs";
+import { JOB_IDS, getJob as pr51GetJob } from "../lib/jobs.mjs";
 import { runPaidOffer } from "../lib/wrapper.mjs";
+import { createM01AwareGetJob } from "../../../experiments/wave5/m01/lib/d01-adapter.mjs";
+import { FIRST_OFFER, listedOfferIds } from "../lib/delivery-catalog.mjs";
+
+const resolveJob = createM01AwareGetJob(pr51GetJob);
 
 function parseArgs(argv) {
   const out = { _: [] };
@@ -34,6 +38,11 @@ Commands:
 
 Examples:
   node server/paid-useful-jobs/bin/cli.mjs list
+  node server/paid-useful-jobs/bin/cli.mjs run lockfile-pin-delta \\
+    --before "$BEFORE_LOCKFILE" \\
+    --after "$AFTER_LOCKFILE" \\
+    --out-dir /tmp/paid-lockfile
+
   node server/paid-useful-jobs/bin/cli.mjs run vendor-budget-impact \\
     --before server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/before.json \\
     --after server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/after.json \\
@@ -55,7 +64,10 @@ if (cmd === "help" || cmd === "--help" || cmd === "-h") {
 }
 
 if (cmd === "list") {
-  process.stdout.write(`${JSON.stringify({ ok: true, jobs: JOB_IDS, liveSettlement: "out-of-scope" }, null, 2)}\n`);
+  const jobs = [...listedOfferIds(), ...JOB_IDS];
+  process.stdout.write(
+    `${JSON.stringify({ ok: true, firstOffer: FIRST_OFFER, jobs, liveSettlement: "out-of-scope" }, null, 2)}\n`,
+  );
   process.exit(0);
 }
 
@@ -72,7 +84,12 @@ if (!jobId) {
   process.exit(2);
 }
 
-const job = JOB_BY_ID[jobId];
+let job = null;
+try {
+  job = resolveJob(jobId);
+} catch {
+  job = null;
+}
 const inputs = {};
 if (job) {
   for (const flag of [...job.requiredInputs, ...(job.optionalInputs || [])]) {
@@ -80,6 +97,7 @@ if (job) {
     if (args[key]) inputs[key] = resolve(String(args[key]));
   }
 }
+if (args["job-file"]) inputs.job = resolve(String(args["job-file"]));
 
 let payment = null;
 if (args.payment) {

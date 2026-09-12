@@ -35,6 +35,7 @@ export function buildReceipt({
   engineJson,
   continuity,
   payment,
+  provenance = null,
 }) {
   void kit;
   const outputs = (outputFiles || []).map((f) => fileEntry(f.name, f.path));
@@ -44,7 +45,7 @@ export function buildReceipt({
   return {
     schema: "samedaydesk.paid-useful-jobs.receipt.v1",
     jobId,
-    engine: engineProvenance(),
+    engine: provenance || engineProvenance(),
     inputsDigest: digestNamedBytes(inputs),
     outputsDigest: digestNamedBytes(outputs),
     inputs,

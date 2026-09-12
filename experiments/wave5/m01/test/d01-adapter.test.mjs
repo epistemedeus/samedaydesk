@@ -2,25 +2,47 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 import { test } from "node:test";
+import { createExecutor, getJob, runPaidOffer } from "../../../../server/paid-useful-jobs/index.mjs";
+import {
+  assessDelivery,
+  classifyAnalysis,
+  classifyTransport,
+} from "../../../../server/paid-useful-jobs/lib/contract.mjs";
 import { D01_INJECTION, runCatalogPaidOffer, runEngineForD01 } from "../lib/d01-adapter.mjs";
-import { ensureD01Root, importD01 } from "../lib/d01-root.mjs";
 import { MODULE_ROOT } from "../lib/paths.mjs";
 import { pinFixture, tmpOut } from "./helpers.mjs";
 
-test("unpatched D01 createExecutor cannot select lockfile-pin-delta", async () => {
-  const located = ensureD01Root();
-  const d01 = await importD01(located.root);
-  assert.equal(d01.contract.EXECUTION_CONTRACT_VERSION, "samedaydesk.paid-useful-jobs.execution.v1");
-  let unknown;
+const d01Contract = { assessDelivery, classifyAnalysis, classifyTransport };
+
+test("default D01 executor selects lockfile-pin-delta without test injection", async () => {
+  let unknown = false;
   try {
-    d01.jobs.getJob("lockfile-pin-delta");
-    unknown = false;
+    getJob("lockfile-pin-delta");
   } catch (err) {
     unknown = err.code === "unknown-job";
   }
   assert.equal(unknown, true);
 
-  const execute = d01.wrapper.createExecutor({
+  const outDir = tmpOut("d01-default-lock");
+  const result = await runPaidOffer({
+    jobId: "lockfile-pin-delta",
+    inputs: {
+      before: pinFixture("lockfile-pin-delta", "journey/before.json"),
+      after: pinFixture("lockfile-pin-delta", "journey/after.json"),
+    },
+    outDir,
+  });
+  assert.equal(result.ok, true, result.error);
+  assert.equal(result.sold, false);
+  assert.equal(result.jobId, "lockfile-pin-delta");
+  assert.equal(result.analysis.outcome, "actionable");
+  assert.equal(result.delivery.complete, true);
+  assert.equal(D01_INJECTION.status, "wired-in-d01-default-executor");
+});
+
+test("PR51-only getJob injection still cannot select lockfile-pin-delta", async () => {
+  const execute = createExecutor({
+    getJob,
     acquireKit: () => MODULE_ROOT,
     runEngine: runEngineForD01,
   });
@@ -35,12 +57,9 @@ test("unpatched D01 createExecutor cannot select lockfile-pin-delta", async () =
   assert.equal(result.ok, false);
   assert.equal(result.sold, false);
   assert.equal(result.code, "unknown-job");
-  assert.equal(D01_INJECTION.files.includes("server/paid-useful-jobs/lib/wrapper.mjs"), true);
 });
 
 test("adapter maps lockfile journey through D01 classify helpers", async () => {
-  const located = ensureD01Root();
-  const d01 = await importD01(located.root);
   const outDir = tmpOut("d01-lock");
   const result = await runCatalogPaidOffer(
     {
@@ -51,7 +70,7 @@ test("adapter maps lockfile journey through D01 classify helpers", async () => {
       },
       outDir,
     },
-    d01.contract,
+    d01Contract,
   );
   assert.equal(result.sold, false);
   assert.equal(result.purchaseAuthority, false);
@@ -62,8 +81,6 @@ test("adapter maps lockfile journey through D01 classify helpers", async () => {
 });
 
 test("adapter preserves HTML lockfile refusal instead of calling it a crash", async () => {
-  const located = ensureD01Root();
-  const d01 = await importD01(located.root);
   const result = await runCatalogPaidOffer(
     {
       jobId: "lockfile-pin-delta",
@@ -73,7 +90,7 @@ test("adapter preserves HTML lockfile refusal instead of calling it a crash", as
       },
       outDir: tmpOut("d01-html"),
     },
-    d01.contract,
+    d01Contract,
   );
   assert.equal(result.ok, false);
   assert.equal(result.sold, false);

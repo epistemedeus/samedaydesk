@@ -7,6 +7,8 @@ import { freezeRequest, materializeInputs, WrapperRefuse } from "./input-guard.m
 import { inspectSample, wantsLiveSale } from "./sample-guard.mjs";
 import { classifyFunding, isFixturePayment, wouldSettleIfGuardOmitted } from "./funding.mjs";
 import { engineProvenance, ensureUsefulJobsKit, runEngineJob } from "./engine.mjs";
+import { createM01AwareGetJob, runEngineForD01 } from "../../../experiments/wave5/m01/lib/d01-adapter.mjs";
+import { isM01JobId, m01ReceiptProvenance } from "./delivery-catalog.mjs";
 import { applyEnvelopeContinuity, declaredRouteMetadata } from "./envelope.mjs";
 import { getLastIndexingContinuityDiagnostic } from "./continuity.mjs";
 import { buildReceipt } from "./receipt.mjs";
@@ -110,15 +112,31 @@ function persistReceipt(runOutDir, receipt, publishedDir = null) {
   }
 }
 
+function defaultResolveJob(deps) {
+  if (deps.getJob) return deps.getJob;
+  if (deps.catalog) return createJobLookup(deps.catalog).getJob;
+  return createM01AwareGetJob(defaultGetJob);
+}
+
+function runRoutedEngine(jobId, opts) {
+  if (isM01JobId(jobId)) return runEngineForD01(jobId, opts);
+  return runEngineJob(jobId, opts);
+}
+
+function provenanceFor(job) {
+  if (job?.m01) return m01ReceiptProvenance(job) || engineProvenance();
+  return engineProvenance();
+}
+
 /**
  * One execution kernel. CLI, library, and local HTTP stay thin.
+ * Default executor selects PR51 jobs and the four M01 engines.
  * Inject acquireKit / runEngine / getJob / catalog only in tests or composition.
  */
 export function createExecutor(deps = {}) {
   const acquireKit = deps.acquireKit || ensureUsefulJobsKit;
-  const runEngine = deps.runEngine || runEngineJob;
-  const resolveJob =
-    deps.getJob || (deps.catalog ? createJobLookup(deps.catalog).getJob : defaultGetJob);
+  const runEngine = deps.runEngine || runRoutedEngine;
+  const resolveJob = defaultResolveJob(deps);
 
   return async function runPaidOffer(request = {}) {
     const frozen = freezeRequest(request);
@@ -289,6 +307,7 @@ export function createExecutor(deps = {}) {
               engineJson: engine.json,
               continuity,
               payment,
+              provenance: provenanceFor(job),
             }),
             {
               contract: EXECUTION_CONTRACT_VERSION,
@@ -313,6 +332,7 @@ export function createExecutor(deps = {}) {
           engineJson: engine.json,
           continuity,
           payment,
+          provenance: provenanceFor(job),
         });
         receipt.outDir = runOutDir;
         receipt.contract = EXECUTION_CONTRACT_VERSION;
@@ -320,12 +340,17 @@ export function createExecutor(deps = {}) {
         receipt.analysis = analysis;
         receipt.delivery = delivery;
         persistReceipt(runOutDir, receipt, frozen.outDir || null);
+        const refusedIncomplete = analysis.outcome === "refused";
+        const code = refusedIncomplete ? engine.json?.code || "refused" : "missing-output";
+        const error = refusedIncomplete
+          ? engine.json?.error || engine.json?.message || `engine refused: ${code}`
+          : `This run did not produce expected outputs: ${(delivery.missing || []).join(", ")}`;
         return {
           ok: false,
           refused: true,
           jobId,
-          code: "missing-output",
-          error: `This run did not produce expected outputs: ${(delivery.missing || []).join(", ")}`,
+          code,
+          error,
           fundingState: funding.fundingState,
           sold: false,
           sample: sampleInfo.sample || example,
@@ -357,6 +382,7 @@ export function createExecutor(deps = {}) {
         engineJson: engine.json,
         continuity,
         payment,
+        provenance: provenanceFor(job),
       });
       receipt.outDir = runOutDir;
       receipt.publishedDir = frozen.outDir || null;

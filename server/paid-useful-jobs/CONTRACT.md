@@ -26,7 +26,7 @@ import {
 CLI (repo root):
 
 ```bash
-node server/paid-useful-jobs/bin/cli.mjs run <job-id> [--before …] [--out-dir dir]
+node server/paid-useful-jobs/bin/cli.mjs run lockfile-pin-delta [--before …] [--out-dir dir]
 ```
 
 Local HTTP (loopback only):
@@ -76,20 +76,25 @@ requires a `rows` array of `{field, value, unit}` objects. Preflight may refuse
 the same bytes first; the kernel still refuses them if they arrive here.
 
 `createExecutor({ catalog })` or `createExecutor({ getJob })` is the catalog
-injection seam. M01 is not on this tree.
+injection seam. The default executor overlays the four selected engines
+(`lockfile-pin-delta`, `json-schema-webhook-drift`, `route-table-diff`,
+`page-change-offline-job`) via `createM01AwareGetJob` and `runEngineForD01`.
+Published useful-jobs stay on `getJob` + the useful-jobs archive CLI.
 
 ## Delivery composition
 
 ```bash
 node server/paid-useful-jobs/bin/deliver.mjs \
-  --job vendor-budget-impact \
-  --before server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/before.json \
-  --after server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/after.json
+  --job lockfile-pin-delta \
+  --before "$BEFORE_LOCKFILE" \
+  --after "$AFTER_LOCKFILE"
 ```
 
-That path is preflight → managed-order → executor → `verifyComplete(runOutDir)`
-→ mailbox pickup/ack. `--second-after` runs a disjoint second job. `--http`
-mounts loopback `POST /execute` for the order client.
+Accepted lockfile inputs: npm `package-lock.json` lockfileVersion 2 or 3.
+Not yarn/pnpm/bun/HTML/package.json-only. That path is preflight →
+managed-order → executor → `verifyComplete(runOutDir)` → mailbox pickup/ack.
+`--second-after` runs a disjoint second job. `--http` mounts loopback
+`POST /execute` for the order client.
 
 ## Tests
 
@@ -100,4 +105,5 @@ npm run test:job-output-atomicity
 npm run test:managed-useful-jobs-order
 npm run test:result-mailbox
 npm run test:d28-journey
+npm run test:m01-catalog
 ```

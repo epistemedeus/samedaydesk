@@ -78,6 +78,28 @@ export function validateStagedInput(job, key, buffer) {
     return { encoding: "directory" };
   }
 
+  if (job.m01 === true) {
+    const parsed = parseJsonDocument(text);
+    if (parsed.jsonl) {
+      throw refuse("input-jsonl-not-document", "JSONL is not this job's input document", {
+        key,
+        job: jobId,
+      });
+    }
+    if (parsed.ok && parsed.value != null && typeof parsed.value === "object") {
+      return { encoding: "json", json: true };
+    }
+    const trimmed = text.trim();
+    if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+      throw refuse("input-malformed", "JSON input is not valid JSON", {
+        key,
+        job: jobId,
+        error: String(parsed.error?.message || parsed.error || "parse failed"),
+      });
+    }
+    return { encoding: "bytes", json: false };
+  }
+
   if (jobId === "feed-agenda") {
     const parsed = parseJsonDocument(text);
     if (parsed.jsonl) {

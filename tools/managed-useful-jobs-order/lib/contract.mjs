@@ -126,6 +126,10 @@ export function normalizeRequest(raw, { catalog, pins, requestDir = null } = {})
   }
   const bytes = asInt(bytesRaw, "archiveBytes");
   const version = String(pinSrc.version || raw.engineVersion || pins.version || USEFUL_JOBS_VERSION);
+  const pkg =
+    typeof pinSrc.package === "string" && pinSrc.package
+      ? pinSrc.package
+      : pins.package;
 
   const inputs = normalizeInputs(raw, requestDir);
   const allowed = new Set(allowedFlags(job));
@@ -160,7 +164,7 @@ export function normalizeRequest(raw, { catalog, pins, requestDir = null } = {})
     purchaseAuthority: raw.purchaseAuthority === true,
     schedulerDaemon: raw.schedulerDaemon === true,
     fundingState,
-    enginePin: { sha256, bytes, version },
+    enginePin: { sha256, bytes, version, package: pkg },
     archiveSha256: sha256,
     archiveBytes: bytes,
     inputs,

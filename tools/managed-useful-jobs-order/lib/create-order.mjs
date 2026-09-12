@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { OrderRefuse, formatRefuse } from "./errors.mjs";
-import { loadCatalog } from "./catalog.mjs";
+import { loadCatalog, jobById } from "./catalog.mjs";
 import { hasOrderId, normalizeRequest } from "./contract.mjs";
 import { fileDigest, hashTerms } from "./digest.mjs";
 import { findExtractUrl } from "./extract-guard.mjs";
@@ -59,7 +59,7 @@ export function buildTerms(request, pins) {
     engineId: request.engineId,
     orderId: request.orderId,
     enginePin: {
-      package: pins.package,
+      package: request.enginePin.package || pins.package,
       version: request.enginePin.version,
       sha256: request.enginePin.sha256,
       bytes: request.enginePin.bytes,
@@ -90,7 +90,7 @@ function mapWrapperRefuse(offer, raw) {
   const code = offer?.code || "engine-refused";
   let falsifier = null;
   if (code === "sample-not-a-sale" || offer?.sample) falsifier = "F-SAMPLE";
-  if (code === "missing-required-inputs" || code === "input-malformed" || code === "input-missing-file" || code === "input-schema-mismatch" || code === "input-jsonl-not-document") {
+  if (code === "missing-required-inputs" || code === "input-malformed" || code === "input-missing-file" || code === "input-schema-mismatch" || code === "input-jsonl-not-document" || code === "html-input" || code === "package-json-only" || code === "not-this-job-openapi" || code === "unsupported_catalog" || code === "unrecognized_batch_artifact" || code === "live_fetch_url" || code === "input_bounds") {
     falsifier = "F-INPUT";
   }
   const httpStatus = isTransportFailure(offer) ? 503 : 400;
@@ -148,13 +148,13 @@ function buildSuccessResult({ request, pins, termsHash, offer, outDir }) {
     ok: true,
     orderId: request.orderId,
     engineId: request.engineId,
-    archiveSha256: pins.archiveSha256,
-    archiveBytes: pins.archiveBytes,
+    archiveSha256: request.enginePin.sha256,
+    archiveBytes: request.enginePin.bytes,
     enginePin: {
-      package: pins.package,
-      version: pins.version,
-      sha256: pins.archiveSha256,
-      bytes: pins.archiveBytes,
+      package: request.enginePin.package || pins.package,
+      version: request.enginePin.version,
+      sha256: request.enginePin.sha256,
+      bytes: request.enginePin.bytes,
       cli: pins.cli,
     },
     inputs: request.inputs.map(({ flag, path, sha256, bytes }) => ({ flag, path, sha256, bytes })),
@@ -228,24 +228,38 @@ async function createOrderStrict(raw, options = {}) {
     pins,
     requestDir: options.requestDir || null,
   });
+  const job = jobById(catalog, request.engineId);
+  const expectedPin = job?.enginePin?.sha256
+    ? {
+        sha256: job.enginePin.sha256,
+        bytes: job.enginePin.bytes,
+        version: job.enginePin.version,
+        package: job.enginePin.package || pins.package,
+      }
+    : {
+        sha256: pins.archiveSha256,
+        bytes: pins.archiveBytes,
+        version: pins.version,
+        package: pins.package,
+      };
 
-  if (request.enginePin.sha256 !== pins.archiveSha256 || request.enginePin.bytes !== pins.archiveBytes) {
+  if (request.enginePin.sha256 !== expectedPin.sha256 || request.enginePin.bytes !== expectedPin.bytes) {
     throw new OrderRefuse(
       "f-pin",
-      "engine pin does not match the published useful-jobs archive sha256/bytes",
+      "engine pin does not match the catalog engine identity",
       {
         falsifier: "F-PIN",
         detail: {
           requested: request.enginePin,
-          expected: { sha256: pins.archiveSha256, bytes: pins.archiveBytes },
+          expected: expectedPin,
         },
       },
     );
   }
-  if (request.enginePin.version !== pins.version) {
-    throw new OrderRefuse("f-pin", "engine pin version is not useful-jobs 1.0.0", {
+  if (request.enginePin.version !== expectedPin.version) {
+    throw new OrderRefuse("f-pin", "engine pin version does not match the catalog engine identity", {
       falsifier: "F-PIN",
-      detail: { requested: request.enginePin.version, expected: pins.version },
+      detail: { requested: request.enginePin.version, expected: expectedPin.version },
     });
   }
 
@@ -293,7 +307,7 @@ async function createOrderStrict(raw, options = {}) {
     orderId: request.orderId,
     termsHash,
     engineId: request.engineId,
-    archiveSha256: pins.archiveSha256,
+    archiveSha256: request.enginePin.sha256,
     request: {
       engineId: request.engineId,
       orderId: request.orderId,

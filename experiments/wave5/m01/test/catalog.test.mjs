@@ -34,20 +34,16 @@ test("CLI list firstOffer is lockfile and wrapper jobs stay the SDS52 six", () =
     listed.selected.filter((row) => row.firstOffer).map((row) => row.id).join(),
     "lockfile-pin-delta",
   );
-  assert.equal(listed.d01Binding, "adapter-exported-injection-required");
+  assert.equal(listed.d01Binding, "wired-in-d01-default-executor");
 
   const wrapper = spawnSync(process.execPath, [WRAPPER_CLI, "list"], { encoding: "utf8" });
   assert.equal(wrapper.status, 0, wrapper.stderr);
   const wrapperList = JSON.parse(wrapper.stdout);
-  assert.deepEqual(wrapperList.jobs, [
-    "api-upgrade-brief",
-    "vendor-budget-impact",
-    "feed-agenda",
-    "evidence-ci-annotation",
-    "listing-repair-packet",
-    "repeat-job-record",
-  ]);
-  assert.equal(wrapperList.jobs.includes("lockfile-pin-delta"), false);
+  assert.equal(wrapperList.firstOffer, "lockfile-pin-delta");
+  assert.equal(wrapperList.jobs[0], "lockfile-pin-delta");
+  assert.equal(wrapperList.jobs.includes("lockfile-pin-delta"), true);
+  assert.equal(wrapperList.jobs.includes("vendor-budget-impact"), true);
+  assert.equal(wrapperList.jobs.includes("page-change-offline-job"), true);
 });
 
 test("contract export lists accepted inputs and output files", () => {

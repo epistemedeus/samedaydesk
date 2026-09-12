@@ -4,7 +4,7 @@
  */
 import { resolve } from "node:path";
 import { deliverDisjointSecondJob, deliverSuppliedInput } from "../lib/delivery-kit.mjs";
-import { REPO_ROOT } from "../lib/pins.mjs";
+import { FIRST_OFFER } from "../lib/delivery-catalog.mjs";
 
 function parseArgs(argv) {
   const out = { _: [] };
@@ -26,16 +26,26 @@ function parseArgs(argv) {
 function usage() {
   return `paid-useful-jobs delivery kit — preflight → order → execute → completeness → mailbox
 
+Recommended first offer (npm package-lock v2/v3 JSON):
+
 node server/paid-useful-jobs/bin/deliver.mjs \\
-  --job vendor-budget-impact \\
-  --before server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/before.json \\
-  --after server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/after.json
+  --job lockfile-pin-delta \\
+  --before "$BEFORE_LOCKFILE" \\
+  --after "$AFTER_LOCKFILE"
+
+Accepted lockfile inputs: npm package-lock.json lockfileVersion 2 or 3.
+Not yarn.lock, pnpm-lock.yaml, bun.lock, package.json-only, or HTML.
+
+Other selectable engines: json-schema-webhook-drift (--before --after --used),
+route-table-diff (--before --after), page-change-offline-job (--job-file).
+Published useful-jobs (vendor-budget-impact and the other five) stay selectable.
 
 Options:
   --second-after FILE   run a disjoint second job with the same before file
   --http                 mount loopback execution.v1 HTTP for the first job
   --mailbox DIR          mailbox root
   --out-dir DIR          published copy (not receipt authority)
+  --job-file FILE        page-change job document (inputs.job)
 `;
 }
 
@@ -45,21 +55,17 @@ if (args.help || args._[0] === "help") {
   process.exit(0);
 }
 
-const jobId = args.job || args._[0] || "vendor-budget-impact";
-const before = args.before ? resolve(String(args.before)) : joinDefault("before.json");
-const after = args.after ? resolve(String(args.after)) : joinDefault("after.json");
-
-function joinDefault(name) {
-  return resolve(
-    REPO_ROOT,
-    "server/paid-useful-jobs/fixtures/caller/vendor-budget-impact",
-    name,
-  );
-}
-
-const inputs = { before, after };
+const jobId = args.job || args._[0] || FIRST_OFFER;
+const inputs = {};
+if (args.before) inputs.before = resolve(String(args.before));
+if (args.after) inputs.after = resolve(String(args.after));
 if (args.used) inputs.used = resolve(String(args.used));
 if (args.input) inputs.input = resolve(String(args.input));
+if (args["next-run"]) inputs["next-run"] = resolve(String(args["next-run"]));
+if (args["input-root"]) inputs["input-root"] = resolve(String(args["input-root"]));
+if (args["job-file"] || args["job-json"]) {
+  inputs.job = resolve(String(args["job-file"] || args["job-json"]));
+}
 
 const common = {
   jobId,
@@ -72,7 +78,7 @@ const common = {
 let result;
 if (args["second-after"]) {
   result = await deliverDisjointSecondJob(common, {
-    before,
+    before: inputs.before,
     after: resolve(String(args["second-after"])),
   });
 } else {

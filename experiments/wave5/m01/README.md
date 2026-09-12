@@ -12,4 +12,4 @@ node experiments/wave5/m01/bin/run-job.mjs lockfile-pin-delta \
 node --test --test-concurrency=1 experiments/wave5/m01/test/*.test.mjs
 ```
 
-Does not edit the live useful-jobs catalog, homepages, `server/paid-useful-jobs/`, or root `package.json`. D01 bind requires the small `getJob` injection in `CONTRACT.md`.
+Does not edit the live useful-jobs catalog. D01 `server/paid-useful-jobs/` is the paid-offer consumer.
