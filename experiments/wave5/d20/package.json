@@ -1,0 +1,14 @@
+{
+  "name": "@samedaydesk/wave5-d20-delivery-interruption",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "Black-box interruption harness across the result mailbox and delivery outbox CLIs. Non-settling prototype. Does not reimplement either kernel.",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs"
+  }
+}

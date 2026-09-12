@@ -1,0 +1,33 @@
+{
+  "module": "experiments/wave5/d18",
+  "wave": "W5-D18",
+  "outcome": "Artifact contamination harness across sequential and simultaneous jobs",
+  "proof": "Stale/foreign/partial artifact sets cannot satisfy another job",
+  "ownedPaths": ["experiments/wave5/d18/"],
+  "integrationOwner": "W5-D01",
+  "d01": {
+    "repo": "epistemedeus/samedaydesk",
+    "pr": 52,
+    "ref": "fable/f08-paid-wrappers",
+    "testedSha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "cli": "server/paid-useful-jobs/bin/cli.mjs",
+    "note": "Current pinned wrapper. Wave5 D01 may amend server/paid-useful-jobs. This harness does not copy or replace that kernel."
+  },
+  "d03": {
+    "repo": "epistemedeus/samedaydesk",
+    "pr": 69,
+    "ref": "codex/w4-commerce-17-20260911",
+    "testedSha": "58cba6324c1d9793d344bc13154b8b2380e8166f",
+    "path": "tools/job-output-atomicity",
+    "cli": "tools/job-output-atomicity/bin/verify-complete.mjs",
+    "export": "verifyComplete",
+    "note": "Current Co17 completeness validator. Wave5 D03 may amend it. Tests import that SHA via a read-only worktree or D03_ROOT, never a vendored copy."
+  },
+  "archive": {
+    "package": "useful-jobs",
+    "version": "1.0.0",
+    "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+    "bytes": 2522418
+  },
+  "catalog": "client/public/for-agents/useful-jobs/catalog.json"
+}

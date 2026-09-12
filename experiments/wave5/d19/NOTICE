@@ -1,0 +1,15 @@
+W5-D19 notices
+==============
+
+This harness consumes pinned SameDayDesk packages. It does not relicense them
+and does not copy their kernels into this directory.
+
+- useful-jobs 1.0.0: MIT (archive LICENSE / NOTICE inside the published tarball).
+- W4-commerce-20 managed-useful-jobs-order at sha 13d1fc023ce235b1611dc868caf5dd84fe5f11c7
+- W4-commerce-16 buyer-value-ledger at sha aa306e291adfdd499ca971af01625ccc4bfee5c4
+  (MIT LICENSE in that directory; evidence-records imported, not forked)
+- SDS PR52 wrapper at aeef964fa188443078958d9d6d393afae1d542ee is the starting
+  checkout. D01 owns later contract amendments. This slot does not rewrite it.
+
+No purchase, live settlement, or organic-demand authority is granted here.
+Banked 8.105 USDC is not a job's revenue. sold and charged stay false.

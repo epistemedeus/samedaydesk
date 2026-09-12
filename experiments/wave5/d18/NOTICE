@@ -1,0 +1,11 @@
+W5-D18 artifact contamination harness.
+
+Consumes, and does not copy:
+
+- SameDayDesk paid wrappers (PR52 / D01) under server/paid-useful-jobs/
+- Co17 output completeness validator (PR69 / D03) at
+  tools/job-output-atomicity, pin 58cba6324c1d9793d344bc13154b8b2380e8166f
+
+Keep those owners' licenses with those trees. This directory is a thin
+consumer/harness. It is not a second paid-job runner and not a second
+completeness kernel.
