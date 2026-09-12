@@ -38,6 +38,7 @@ Given two local JSON documents (JSON Schema **or** webhook payload examples) and
 
 | Input | Kind |
 | --- | --- |
+| Top-level boolean | `json-schema` |
 | `$schema` or JSON Schema `type` + `properties` / `$defs` / `definitions` | `json-schema` |
 | Other JSON object/array (event payload) | `webhook-example` |
 | `openapi` / `swagger` | refuse `not-this-job-openapi` |
@@ -58,14 +59,20 @@ Public export: `lib/contract.mjs`. CLI stdout keeps `ok: true` and exit 0 for a 
 | Annotation-only `$ref` siblings (`description`, `title`, `$comment`) | `unchanged` | instance set unchanged |
 | `required` name added | `breaking` | `required-added` |
 | `required` name removed | `compatible` | `required-removed` |
-| Numeric bound tightened, including non-integers and `exclusiveMinimum`/`exclusiveMaximum` | `breaking` | `numeric-tightened` (non-integer bounds are decimal strings in fingerprints because the pinned I01 hasher rejects non-integer JSON numbers) |
+| Empty `required`, `minLength: 0`, or `minItems: 0` and their omitted defaults | `unchanged` | same instance set |
+| Numeric bound tightened, including cross-key `minimum` / `exclusiveMinimum`, non-integers, and upper bounds | `breaking` | `numeric-tightened` (non-integer bounds are decimal strings in fingerprints because the pinned I01 hasher rejects non-integer JSON numbers) |
 | Numeric bound weakened | `compatible` | `numeric-weakened` |
 | Type change with a smaller instance set (including `number` → `integer`, or dropping a type from a union) | `breaking` | `type-tightened` or `type-change` |
 | Type change with a larger instance set (`integer` → `number`, `string` → `["string","null"]`) | `compatible` | `type-weakened` |
 | `type: "string"` vs `type: ["string"]` | `unchanged` | same instance set |
 | Enum widen / reorder | `compatible` / `unchanged` | `enum-weakened` / equal set |
 | Enum narrow | `breaking` | `enum-tightened` |
-| Nested `properties` / `items` / `additionalProperties` schema at the used node | same directional classes | used `""` walks nested supported keywords |
+| `const` removed | `compatible` | `const-removed` |
+| Omitted, `true`, or empty-schema `items` / `additionalProperties` | `unchanged` | Draft 2020-12 allow-all default |
+| Nested `properties` / `items` / `additionalProperties` schema at the used node | same directional classes | optional properties compare against their effective `additionalProperties`; used `""` walks nested supported keywords |
+| Chained local `$ref` with constraint siblings | same directional classes | every local hop retains its siblings |
+| Mixed constraints without an inclusion proof | `unknown` | `constraint-interaction-unsupported` |
+| Changed `format` without a known assertion vocabulary | `unknown` | `format-semantics-unsupported` |
 | `allOf` / `prefixItems` / other unadvertised combinators | `unknown` | `unsupported-keyword` (not certain unchanged) |
 | OpenAPI `nullable` (not a Draft 2020-12 keyword) | `unknown` | `unsupported-nullable` when the annotation differs |
 
@@ -80,6 +87,7 @@ node --test --test-concurrency=1 tools/json-schema-webhook-drift/test/*.test.mjs
 | Class | What |
 | --- | --- |
 | Fixture | Journey type-change; boolean `false`/`true` schemas; `$ref` constraint siblings; required added/removed; float numeric tighten/weaken; unknown-both; static remote `$ref`; SAMPLE `--example`; webhook payload; integer termsVersion; OpenAPI; HTML; YAML; kind mismatch |
+| Oracle witness | Ajv 8.17.1 Draft 2020-12 snapshot over a bounded 17-value pool; CLI runs use a new cold output directory per case; Ajv is not a product dependency |
 | Local-runtime | HTTP server serving a `$ref` URL; CLI refuse; request count 0 |
 | External | Not run. No catalog bind. No live customer webhook. |
 
