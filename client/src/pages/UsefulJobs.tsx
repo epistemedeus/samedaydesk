@@ -62,7 +62,7 @@ export default function UsefulJobs() {
             Archive <code>{USEFUL_JOBS_ARCHIVE}</code> ({USEFUL_JOBS_ARCHIVE_BYTES} bytes). sha256{" "}
             <code>{USEFUL_JOBS_ARCHIVE_SHA256}</code>. Source <code>{USEFUL_JOBS_SOURCE_REPO}</code>{" "}
             at <code>{USEFUL_JOBS_SOURCE_COMMIT}</code>. Archive freeze{" "}
-            <code>{USEFUL_JOBS_ARCHIVE_FREEZE}</code>. Reviewed source{" "}
+            <code>{USEFUL_JOBS_ARCHIVE_FREEZE}</code>. Earlier base review source{" "}
             <code>{USEFUL_JOBS_REVIEWED_SOURCE}</code>. Discovery:{" "}
             <a className={styles.inlineLink} href={`${SITE_ORIGIN}${USEFUL_JOBS_DISCOVERY}`}>
               {SITE_ORIGIN}

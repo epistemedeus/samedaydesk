@@ -95,6 +95,7 @@ for (const relative of ["client/public/discovery/useful-jobs.json", "client/src/
   const current = json(file);
   const replaced = readFileSync(file, "utf8").replaceAll(current.version, version).replaceAll(current.sha256, pin.sha256).replaceAll(String(current.bytes), String(pin.bytes));
   const value = JSON.parse(replaced);
+  if (value.description === summary) delete value.description;
   value.sourceRepo = pin.sourceRepo;
   value.sourceCommit = pin.sourceCommit;
   value.archiveFreeze = pin.sourceCommit;
