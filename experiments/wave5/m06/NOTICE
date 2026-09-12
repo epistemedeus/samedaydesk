@@ -1,0 +1,12 @@
+W5-M06 independent JSON Schema compatibility corpus.
+
+This package owns witnesses, specified Draft 2020-12 instance-set
+semantics, and a thin replay of the current pinned Co10 CLI. It does not
+vendor `tools/json-schema-webhook-drift/` or a second comparison kernel.
+
+Pinned engine: epistemedeus/samedaydesk@94c7bfdfeaa99f5e70f341504df3051cc7717f91
+PR 59. That tree includes `vendor/i01-hash-terms/LICENSE` (MIT). Invoke it
+from a read-only worktree or `W5_M02_ENGINE_ROOT`. Do not copy the engine
+into this directory.
+
+Remaining integration owner: W5-M02 (engine semantics) then W5-M01 (catalog).

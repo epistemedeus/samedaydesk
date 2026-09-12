@@ -1,0 +1,808 @@
+{
+  "schema": "samedaydesk.wave5.m06.corpus.v1",
+  "specifiedDialect": "https://json-schema.org/draft/2020-12/schema",
+  "cases": [
+    {
+      "id": "type-change-used",
+      "finding": "REVIEW-INTEGRATION commerce-10 happy path still required as a positive control",
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "type"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number" },
+          "debug": { "type": "string" }
+        },
+        "required": ["amount"]
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "type": "string" },
+          "debug": { "type": "string" }
+        },
+        "required": ["amount"]
+      },
+      "used": { "pointers": ["/properties/amount"] },
+      "witnesses": {
+        "validBeforeInvalidAfter": { "amount": 12 },
+        "invalidBoth": {}
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "unknown": 0,
+        "usedClass": "breaking",
+        "reason": "type-change"
+      }
+    },
+    {
+      "id": "unused-path-only",
+      "finding": "REVIEW-INTEGRATION commerce-10 unused paths must not drive the used-path result",
+      "transport": "compare",
+      "specified": {
+        "relation": "compatible",
+        "change": "unchanged",
+        "applicator": "used-path"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number" },
+          "debug": { "type": "string" }
+        },
+        "required": ["amount"]
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number" },
+          "debug": { "type": "number" }
+        },
+        "required": ["amount"]
+      },
+      "used": { "pointers": ["/properties/amount"] },
+      "witnesses": {
+        "validBoth": { "amount": 3 },
+        "invalidBoth": {}
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "informational",
+        "breaking": 0,
+        "unknown": 0,
+        "usedClass": "unchanged"
+      }
+    },
+    {
+      "id": "false-schema-true-to-false",
+      "finding": "REVIEW-INTEGRATION commerce-10 false schemas",
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "boolean-schema"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": { "payload": true },
+        "required": ["payload"]
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": { "payload": false },
+        "required": ["payload"]
+      },
+      "used": { "pointers": ["/properties/payload"] },
+      "witnesses": {
+        "validBeforeInvalidAfter": { "payload": { "kept": true } },
+        "invalidBoth": {}
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "informational",
+        "breaking": 0,
+        "unknown": 0,
+        "usedClass": "unchanged",
+        "gap": "boolean true and false both fingerprint as jsonType boolean"
+      }
+    },
+    {
+      "id": "false-schema-false-to-true",
+      "finding": "REVIEW-INTEGRATION commerce-10 weakening boolean schema",
+      "transport": "compare",
+      "specified": {
+        "relation": "compatible",
+        "change": "weakening",
+        "applicator": "boolean-schema"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": { "payload": false },
+        "required": ["payload"]
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": { "payload": true },
+        "required": ["payload"]
+      },
+      "used": { "pointers": ["/properties/payload"] },
+      "witnesses": {
+        "invalidBeforeValidAfter": { "payload": 1 },
+        "invalidBoth": {}
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "informational",
+        "breaking": 0,
+        "unknown": 0,
+        "usedClass": "unchanged",
+        "gap": "weakening is silent because boolean schemas compare equal"
+      }
+    },
+    {
+      "id": "false-schema-false-to-false",
+      "finding": "REVIEW-INTEGRATION commerce-10 false schemas identical control",
+      "transport": "compare",
+      "specified": {
+        "relation": "compatible",
+        "change": "unchanged",
+        "applicator": "boolean-schema"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": { "payload": false },
+        "required": ["payload"]
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": { "payload": false },
+        "required": ["payload"]
+      },
+      "used": { "pointers": ["/properties/payload"] },
+      "witnesses": {
+        "invalidBoth": { "payload": 1 }
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "informational",
+        "breaking": 0,
+        "unknown": 0,
+        "usedClass": "unchanged"
+      }
+    },
+    {
+      "id": "items-true-to-false",
+      "finding": "REVIEW-INTEGRATION commerce-10 false schemas on items",
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "boolean-schema"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "vals": { "type": "array", "items": true }
+        },
+        "required": ["vals"]
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "vals": { "type": "array", "items": false }
+        },
+        "required": ["vals"]
+      },
+      "used": { "pointers": ["/properties/vals"] },
+      "witnesses": {
+        "validBeforeInvalidAfter": { "vals": [1] },
+        "validBoth": { "vals": [] }
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "informational",
+        "breaking": 0,
+        "unknown": 0,
+        "usedClass": "unchanged",
+        "gap": "boolean items are dropped from itemsType"
+      }
+    },
+    {
+      "id": "numeric-integer-minimum-raised",
+      "finding": "REVIEW-INTEGRATION commerce-10 numeric boundaries integer control",
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "minimum"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number", "minimum": 0 }
+        },
+        "required": ["amount"]
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number", "minimum": 10 }
+        },
+        "required": ["amount"]
+      },
+      "used": { "pointers": ["/properties/amount"] },
+      "witnesses": {
+        "validBeforeInvalidAfter": { "amount": 5 },
+        "validBoth": { "amount": 10 }
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "unknown": 0,
+        "usedClass": "breaking",
+        "reason": "structural-change"
+      }
+    },
+    {
+      "id": "numeric-float-minimum-raised",
+      "finding": "REVIEW-INTEGRATION commerce-10 numeric boundaries",
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "minimum"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number", "minimum": 0.5 }
+        },
+        "required": ["amount"]
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number", "minimum": 1.5 }
+        },
+        "required": ["amount"]
+      },
+      "used": { "pointers": ["/properties/amount"] },
+      "witnesses": {
+        "validBeforeInvalidAfter": { "amount": 1.0 },
+        "validBoth": { "amount": 2 }
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "informational",
+        "breaking": 0,
+        "unknown": 0,
+        "usedClass": "unchanged",
+        "gap": "intOrNull drops non-integer minimum"
+      }
+    },
+    {
+      "id": "exclusive-minimum-added",
+      "finding": "REVIEW-INTEGRATION commerce-10 numeric boundaries exclusiveMinimum",
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "exclusiveMinimum"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number", "minimum": 0 }
+        },
+        "required": ["amount"]
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number", "minimum": 0, "exclusiveMinimum": 0 }
+        },
+        "required": ["amount"]
+      },
+      "used": { "pointers": ["/properties/amount"] },
+      "witnesses": {
+        "validBeforeInvalidAfter": { "amount": 0 },
+        "validBoth": { "amount": 0.1 }
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "informational",
+        "breaking": 0,
+        "unknown": 0,
+        "usedClass": "unchanged",
+        "gap": "exclusiveMinimum is absent from the fingerprint"
+      }
+    },
+    {
+      "id": "ref-sibling-minimum-added",
+      "finding": "REVIEW-INTEGRATION commerce-10 $ref siblings",
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "ref-siblings"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "$ref": "#/$defs/Num" }
+        },
+        "required": ["amount"],
+        "$defs": { "Num": { "type": "number" } }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "$ref": "#/$defs/Num", "minimum": 10 }
+        },
+        "required": ["amount"],
+        "$defs": { "Num": { "type": "number" } }
+      },
+      "used": { "pointers": ["/properties/amount"] },
+      "witnesses": {
+        "validBeforeInvalidAfter": { "amount": 5 },
+        "validBoth": { "amount": 10 }
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "informational",
+        "breaking": 0,
+        "unknown": 0,
+        "usedClass": "unchanged",
+        "gap": "local $ref resolve drops sibling keywords"
+      }
+    },
+    {
+      "id": "ref-retarget-type",
+      "finding": "Co10 receipt: local $ref retarget implemented without a dedicated fixture",
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "ref"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "$ref": "#/$defs/Amount" }
+        },
+        "required": ["amount"],
+        "$defs": {
+          "Amount": { "type": "number" },
+          "Id": { "type": "string" }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "$ref": "#/$defs/Id" }
+        },
+        "required": ["amount"],
+        "$defs": {
+          "Amount": { "type": "number" },
+          "Id": { "type": "string" }
+        }
+      },
+      "used": { "pointers": ["/properties/amount"] },
+      "witnesses": {
+        "validBeforeInvalidAfter": { "amount": 12 }
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "unknown": 0,
+        "usedClass": "breaking",
+        "reason": "structural-change"
+      }
+    },
+    {
+      "id": "required-field-added",
+      "finding": "REVIEW-INTEGRATION commerce-10 required fields",
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "required"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "amount": { "type": "number" }
+        },
+        "required": ["id"]
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "amount": { "type": "number" }
+        },
+        "required": ["id", "amount"]
+      },
+      "used": { "pointers": [""] },
+      "witnesses": {
+        "validBeforeInvalidAfter": { "id": "a" },
+        "validBoth": { "id": "a", "amount": 1 }
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "unknown": 0,
+        "usedClass": "breaking",
+        "reason": "structural-change"
+      }
+    },
+    {
+      "id": "required-field-removed",
+      "finding": "REVIEW-INTEGRATION commerce-10 weakening required",
+      "transport": "compare",
+      "specified": {
+        "relation": "compatible",
+        "change": "weakening",
+        "applicator": "required"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "amount": { "type": "number" }
+        },
+        "required": ["id", "amount"]
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "amount": { "type": "number" }
+        },
+        "required": ["id"]
+      },
+      "used": { "pointers": [""] },
+      "witnesses": {
+        "invalidBeforeValidAfter": { "id": "a" },
+        "validBoth": { "id": "a", "amount": 1 }
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "unknown": 0,
+        "usedClass": "breaking",
+        "reason": "structural-change",
+        "gap": "weakening required is classified as breaking"
+      }
+    },
+    {
+      "id": "required-order-only",
+      "finding": "REVIEW-INTEGRATION commerce-10 required fields order is not a change",
+      "transport": "compare",
+      "specified": {
+        "relation": "compatible",
+        "change": "unchanged",
+        "applicator": "required"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "amount": { "type": "number" }
+        },
+        "required": ["amount", "id"]
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "amount": { "type": "number" }
+        },
+        "required": ["id", "amount"]
+      },
+      "used": { "pointers": [""] },
+      "witnesses": {
+        "validBoth": { "id": "a", "amount": 1 },
+        "invalidBoth": { "id": "a" }
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "informational",
+        "breaking": 0,
+        "unknown": 0,
+        "usedClass": "unchanged"
+      }
+    },
+    {
+      "id": "additional-properties-false-to-true",
+      "finding": "REVIEW-INTEGRATION commerce-10 weakening additionalProperties",
+      "transport": "compare",
+      "specified": {
+        "relation": "compatible",
+        "change": "weakening",
+        "applicator": "additionalProperties"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": { "id": { "type": "string" } },
+        "required": ["id"],
+        "additionalProperties": false
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": { "id": { "type": "string" } },
+        "required": ["id"],
+        "additionalProperties": true
+      },
+      "used": { "pointers": [""] },
+      "witnesses": {
+        "invalidBeforeValidAfter": { "id": "a", "extra": true },
+        "validBoth": { "id": "a" }
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "unknown": 0,
+        "usedClass": "breaking",
+        "reason": "structural-change",
+        "gap": "weakening additionalProperties is classified as breaking"
+      }
+    },
+    {
+      "id": "additional-properties-true-to-false",
+      "finding": "REVIEW-INTEGRATION commerce-10 strengthening additionalProperties",
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "additionalProperties"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": { "id": { "type": "string" } },
+        "required": ["id"],
+        "additionalProperties": true
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": { "id": { "type": "string" } },
+        "required": ["id"],
+        "additionalProperties": false
+      },
+      "used": { "pointers": [""] },
+      "witnesses": {
+        "validBeforeInvalidAfter": { "id": "a", "extra": true },
+        "validBoth": { "id": "a" }
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "unknown": 0,
+        "usedClass": "breaking",
+        "reason": "structural-change"
+      }
+    },
+    {
+      "id": "description-only",
+      "finding": "annotation-only change is not instance-set change",
+      "transport": "compare",
+      "specified": {
+        "relation": "compatible",
+        "change": "unchanged",
+        "applicator": "annotation"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number", "description": "old" }
+        },
+        "required": ["amount"]
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number", "description": "new" }
+        },
+        "required": ["amount"]
+      },
+      "used": { "pointers": ["/properties/amount"] },
+      "witnesses": {
+        "validBoth": { "amount": 1 },
+        "invalidBoth": { "amount": "1" }
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "informational",
+        "breaking": 0,
+        "unknown": 0,
+        "usedClass": "unchanged"
+      }
+    },
+    {
+      "id": "const-changed",
+      "finding": "REVIEW-INTEGRATION commerce-10 semantic fixture not a happy snapshot",
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "const"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": { "kind": { "const": "charge" } },
+        "required": ["kind"]
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": { "kind": { "const": "refund" } },
+        "required": ["kind"]
+      },
+      "used": { "pointers": ["/properties/kind"] },
+      "witnesses": {
+        "validBeforeInvalidAfter": { "kind": "charge" },
+        "invalidBoth": { "kind": "other" }
+      },
+      "pin": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "unknown": 0,
+        "usedClass": "breaking",
+        "reason": "structural-change"
+      }
+    },
+    {
+      "id": "integer-terms-refuse",
+      "finding": "unlike terms schemas: integer termsVersion is a valid refusal, not I01 hash equality",
+      "transport": "refuse",
+      "specified": {
+        "relation": "refuse",
+        "change": "input",
+        "applicator": "termsVersion"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": { "amount": { "type": "number" } },
+        "required": ["amount"]
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": { "amount": { "type": "string" } },
+        "required": ["amount"]
+      },
+      "used": { "pointers": ["/properties/amount"], "termsVersion": 1 },
+      "pin": {
+        "ok": false,
+        "refused": true,
+        "exitCode": 2,
+        "code": "invalid_input",
+        "breaking": 0,
+        "unknown": 0,
+        "usedClass": "refuse"
+      }
+    },
+    {
+      "id": "remote-ref-refuse",
+      "finding": "remote $ref is a valid refusal, not a compatibility class",
+      "transport": "refuse",
+      "specified": {
+        "relation": "refuse",
+        "change": "input",
+        "applicator": "remote-ref"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "$ref": "https://example.invalid/num.json" }
+        },
+        "required": ["amount"]
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": { "$ref": "https://example.invalid/num.json" }
+        },
+        "required": ["amount"]
+      },
+      "used": { "pointers": ["/properties/amount"] },
+      "pin": {
+        "ok": false,
+        "refused": true,
+        "exitCode": 2,
+        "code": "remote-ref-refused",
+        "breaking": 0,
+        "unknown": 0,
+        "usedClass": "refuse"
+      }
+    }
+  ]
+}
