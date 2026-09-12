@@ -1,0 +1,15 @@
+{
+  "name": "cw69-caller",
+  "lockfileVersion": 3,
+  "packages": {
+    "": {
+      "name": "cw69-caller",
+      "version": "1.0.0"
+    },
+    "node_modules/cw69-dependency": {
+      "version": "2.1.0",
+      "integrity": "sha512-YmVmb3Jl",
+      "resolved": "https://registry.npmjs.org/cw69-dependency/-/cw69-dependency-2.1.0.tgz"
+    }
+  }
+}

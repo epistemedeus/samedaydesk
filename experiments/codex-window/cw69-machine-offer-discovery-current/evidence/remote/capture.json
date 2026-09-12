@@ -1,0 +1,47 @@
+[
+  {
+    "name": "openapi",
+    "url": "https://agents.samedaydesk.com/openapi.json",
+    "method": "GET",
+    "status": 200,
+    "capturedAt": "2026-09-12T07:06:47.348215+00:00",
+    "sha256": "053fa318276524d5cd12696f5508bbde2506e18fd83c654ff12b879aed9f6cd9",
+    "bytes": 138614
+  },
+  {
+    "name": "mcp-version",
+    "url": "https://registry.modelcontextprotocol.io/v0.1/servers/io.github.epistemedeus%2Fx402-data-gateway/versions/1.23.49",
+    "method": "GET",
+    "status": 200,
+    "capturedAt": "2026-09-12T07:06:47.447608+00:00",
+    "sha256": "be7b6a591a9cd001399f2c36167599654b95cbf6010836561072ab6b8912282e",
+    "bytes": 710
+  },
+  {
+    "name": "x402",
+    "url": "https://agents.samedaydesk.com/.well-known/x402",
+    "method": "GET",
+    "status": 200,
+    "capturedAt": "2026-09-12T07:06:47.586784+00:00",
+    "sha256": "21ab333a3bffbd44f799c15b9a5712d0e18f984326b8ba166b8db7d3e6ca24fc",
+    "bytes": 57751
+  },
+  {
+    "name": "health",
+    "url": "https://agents.samedaydesk.com/health",
+    "method": "GET",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "name": "lockfile-challenge",
+    "url": "https://agents.samedaydesk.com/lockfile-pin-delta",
+    "method": "POST",
+    "status": 402,
+    "capturedAt": "2026-09-12T07:07:39.815316+00:00",
+    "sha256": "5024a7a6dc29a68b95d5cad03baa0129cb2fd8dabc9aa2140e46ba454ccba3c4",
+    "bytes": 15718,
+    "requestSha256": "82650316d080cdeff319d595142fac0f97e668d60cc24c955241bdee37c8fcb7",
+    "authorizationSent": false,
+    "paymentSent": false
+  }
+]
