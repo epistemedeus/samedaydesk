@@ -109,7 +109,7 @@ Optional later: dedicated PG 55590/55591/55592/55595; CW64 pin refresh against a
 
 ## Git / PR
 
-Branch tip after pin rebind merge: `559fa3b94dce6ad0fdc11af1952957a6b44d8746` (consumer work retained; pin `8a811bba` merged). A follow-up commit will stamp this RESULT.
+Branch tip: `63e2d8a0793cb962c323ba3a54eff8df22f9aed8` (pin merge `559fa3b` plus consumer rebind).
 
 Draft PR via `gh pr create` returned GraphQL **Resource not accessible by integration** (`createPullRequest`). Compare URL (review this, not a silent `main` merge):
 

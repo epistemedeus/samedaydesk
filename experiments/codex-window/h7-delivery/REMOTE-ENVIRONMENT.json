@@ -44,7 +44,7 @@
     "runtimePinBranch": "codex/vendor-temp-lifecycle-20260912",
     "basedOn": "30345f69f16aca93bb95511ee4da62975c98cc04",
     "importHeadAtStart": "fe8057f395bc665b629e12dbff0db0c264f0eb46",
-    "implementationHead": "559fa3b94dce6ad0fdc11af1952957a6b44d8746",
+    "implementationHead": "63e2d8a0793cb962c323ba3a54eff8df22f9aed8",
     "draftPr": "GraphQL createPullRequest not accessible by integration (403)",
     "compareUrl": "https://github.com/epistemedeus/samedaydesk/compare/8a811bbadba7edc6c926b319b0839cd2f01e5896...codex/h7-delivery-20260912"
   },
