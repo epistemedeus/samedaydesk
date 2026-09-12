@@ -1,0 +1,7 @@
+{
+  "ownerStatus": 200,
+  "foreignStatus": 403,
+  "sameExecution": false,
+  "credentials": "synthetic markers only",
+  "documentedScope": "loopback process-local adapter has no authenticated principal contract"
+}

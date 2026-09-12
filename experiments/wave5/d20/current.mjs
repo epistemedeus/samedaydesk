@@ -121,7 +121,7 @@ export const cases = [
   ['d20-current-outbox', async ctx => {
     const {
       completedCallerReceipt, parseCli, runCli, spawnReceiver, stopChild,
-    } = await import('../../../../tools/job-delivery-outbox/test/helpers.mjs');
+    } = await import('../../../tools/job-delivery-outbox/test/helpers.mjs');
     const store = ctx.path('outbox-store');
     const outDir = ctx.path('outbox-job-out');
     const recvDir = ctx.path('outbox-receiver');

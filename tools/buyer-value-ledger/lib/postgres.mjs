@@ -128,7 +128,11 @@ export function insertRow(cluster, row) {
   if (!row || row.schema !== SCHEMA_ROW) {
     throw new Error("postgres insert requires a ledger row");
   }
-  const json = JSON.stringify(row);
+  const stored = {
+    ...row,
+    evidence: { ...(row.evidence || {}), postgres: "local-runtime" },
+  };
+  const json = JSON.stringify(stored);
   const tag = "bvljson";
   if (json.includes(`$${tag}$`)) {
     throw new Error("row JSON collides with postgres dollar-quote tag");

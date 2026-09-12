@@ -55,7 +55,7 @@ test("local-runtime postgres: enqueue, loopback ack, reopen client, one acknowle
   const cluster = startDisposableCluster();
   const dir = tmpSpace("outbox-pg-j-");
   const receipt = completedCallerReceipt(join(dir, "out"));
-  const receiver = await spawnReceiver(["--mode", "ack"]);
+  const receiver = await spawnReceiver(["--mode", "ack", "--store-dir", join(dir, "recv")]);
   const pgConfig = {
     host: cluster.socketDir,
     port: cluster.port,

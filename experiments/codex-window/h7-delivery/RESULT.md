@@ -7,12 +7,14 @@ Native Grok Heavy (`grok-4.6`, effort xhigh) on Cursor Cloud VM. Hostname `curso
 | Item | Value |
 | --- | --- |
 | Repo | `epistemedeus/samedaydesk` |
-| Feature branch | `codex/h7-delivery-20260912` |
-| Runtime pin | `8a811bbadba7edc6c926b319b0839cd2f01e5896` (useful-jobs **1.4.3 unpublished**) |
-| Pin fix | `e122c26657977ce3a2d41642095e999db1125b53` (duplicate application signal-handler invocation) |
+| Feature branch | `codex/h7-delivery-20260912` (PR145) |
+| Integration source | `c6f1464222169f2d32247c978dc5007d82a2aa03` (SDS PR146 into `codex/useful-jobs-core-integration-20260912`) |
+| Repair SHA | `080cc62e7bc83f76431d916df34aea6d30875401` (publication rollback + interrupted-run guard; byte-identical trees to `c6f1464` for those files) |
+| Archive pin (immutable 1.4.3) | `8a811bbadba7edc6c926b319b0839cd2f01e5896` |
+| Pin fix (vendor-temp) | `e122c26657977ce3a2d41642095e999db1125b53` |
 | Previous pin (ancestor, **not** release-ready) | `6007fcfa27074f9a594248e47296f1afa4f8385d` |
-| Unpublished 1.4.3 archive | **2615491** bytes, sha256 `a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09` |
-| Pin branch | `codex/vendor-temp-lifecycle-20260912` |
+| Unpublished 1.4.3 archive | **2615491** bytes, sha256 `a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09` — **does not contain wrapper publication/interrupt fixes**; not overwritten; no 1.4.4 packaged |
+| Pin branch | `codex/useful-jobs-core-integration-20260912` (consumers previously stacked on vendor-temp `8a811bba`) |
 | Based on | `30345f69f16aca93bb95511ee4da62975c98cc04` |
 | Start HEAD (import only) | `fe8057f395bc665b629e12dbff0db0c264f0eb46` |
 | Rebind merge | `559fa3b` (`8a811bba` into consumer branch; no donor-history rewrite) |
@@ -22,12 +24,57 @@ Native Grok Heavy (`grok-4.6`, effort xhigh) on Cursor Cloud VM. Hostname `curso
 | M01 / lockfile-pin-delta | in-tree source-identity pin (not forced equal to the 1.0.0 archive) |
 | Node | v22.22.2 |
 | Grok CLI | `/home/ubuntu/.grok/bin/grok` 1.0.25 |
-| Protected trees vs pin | `server/paid-useful-jobs` and `client/public/for-agents/useful-jobs` match `8a811bba`. Other protected trees unchanged from `6007fcfa`. |
+| Protected trees | `client/public/for-agents/useful-jobs` 1.4.3 archive blob still `f85c326…` / `a18ab918…` (same as `8a811bba`). Wrapper + `create-order.mjs` match `c6f1464`/`080cc62`. HTTP adapter gained process-local Authorization principal binding. |
 | CW64 | read-only (`tools/python-useful-jobs-client/` not edited) |
 | Old package archives | immutable |
 | Core runtime / release builder / CW63 / H6D | not edited |
 
-Envelope `executionId` is **top-level**. `receipt.v1` may omit nested `executionId`. `fileEntry()` rows include absolute `path` and omit `kind`. Named-byte projection is `name` / `kind` (default file) / `bytes` / `sha256`. HTTP `POST /execute` + `GET /results/:id` has **no artifact download route**. HTTP `path` is not acquisition authority.
+Envelope `executionId` is **top-level**. `receipt.v1` may omit nested `executionId`. `fileEntry()` rows include absolute `path` and omit `kind`. Named-byte projection is `name` / `kind` (default file) / `bytes` / `sha256`. HTTP `POST /execute` + `GET /results/:id` has **no artifact download route**. HTTP `path` is not acquisition authority. When `Authorization` is present on execute, GET `/results/:id` with a different principal is **403 `principal-mismatch`**. Unauthenticated existing clients are unchanged.
+
+## PR145 rebind onto integration `c6f1464` (this turn)
+
+Merged PR146 / `080cc62` into this consumer branch without rewriting consumer history. Compact receipt: `evidence/pr145-c6f1464-rebind.json`. Integration, **not** production.
+
+**Known-bad control:** listing the 1.4.3 tarball shows `lib/common.mjs` and **no** `lib/wrapper.mjs`. Do not claim the immutable archive contains the newest wrapper fixes. Do not overwrite its bytes. No new packaged version was required (wrapper is in-tree source).
+
+### Commands and counts
+
+| Pack | Pass | Fail | Incomplete | Notes |
+| --- | --- | --- | --- | --- |
+| `vendor-temp-lifecycle.test.mjs` | 9 | 0 | 0 | PR143 leak correction still holds |
+| `packaged-vendor-lifecycle.test.mjs` | 2 | 0 | 0 | packaged 1.4.3 vendor scratch, not wrapper |
+| `publication-rollback.test.mjs` | 5 | 0 | 0 | Root's 5 publication cases |
+| `interrupt-before-complete.test.mjs` | 1 | 0 | 0 | Root's interrupt guard |
+| `concurrent-resume.test.mjs` | 2 | 0 | 0 | Root's concurrent resume |
+| managed-order `postgres.test.mjs` port **55595** | 2 | 0 | 0 | real initdb/`pg` |
+| buyer-value-ledger `postgres.test.mjs` | 1 | 0 | 0 | stamped `evidence.postgres=local-runtime` |
+| outbox `postgres.test.mjs` | 1 | 0 | 0 | receiver now has required `--store-dir` |
+| HTTP principal unit | 1 | 0 | 0 | 403 other-Bearer |
+| CW65 `--only d18-publication-rollback` | 1 | 0 | 0 | `--only` EXIT 3, `ready:false`, `runtimeUnchanged` |
+| CW65 `--only d20-order-interrupt-before-complete` | 1 | 0 | 0 | same |
+| CW65 `--only d19-http-principal-boundary` | 1 | 0 | 0 | previously incomplete |
+| CW65 `--only d19-current-ledger` | 1 | 0 | 0 | sibling ledger, `usefulPaidWork` false |
+| CW65 `--only d20-current-outbox` | 1 | 0 | 0 | sibling outbox; ack ≠ buyer acceptance |
+| CW70 current-runtime HTTP | 11 | 0 | 0 | portable unsupported + local acquire |
+| H7 cold journey | 1 | 0 | 0 | pin `c6f1464`; archive pin `8a811bba` |
+
+CW65 `--only` never grants global `ready`. Evidence under `cw65-delivery-adversarial-harness/evidence/h7-c6f1464-*`.
+
+### What can ship independently vs what remains
+
+**Can ship as integration (not production main):**
+- PR143 vendor-temp leak correction (`8a811bba` / archive `a18ab918`)
+- PR146 wrapper publication rollback + interrupted-run guard (`080cc62` / `c6f1464`)
+- These two are independent of later consumer polish
+
+**PR145 consumer rebind** is useful stacked integration: consumers preserved, pins name `c6f1464` as source and `8a811bba` as archive identity. **Do not default-merge.**
+
+**Still cannot ship as production delivery / sale:**
+- HTTP has no artifact download route; portable remains `unsupported-portable-acquisition` (honest) with explicit `--local-artifacts` / `--acquire-to`
+- Process-local HTTP cache; restart does not recover IDs
+- `usefulPaidWork` false; `sold`/`purchaseAuthority` false; callback ack is not buyer acceptance
+- No live pay; cash $0
+- Immutable 1.4.3 package still lacks wrapper source fixes (documented, not a 1.4.4)
 
 ## Tests (honest)
 
@@ -144,15 +191,15 @@ Assertions for d18/d20 were **not** rewritten. No owned H7 consumer code defect 
 
 Session `01a094f5-dde1-70e1-ad54-481c90a8cd67`. Inclusion: **Grok stream-end input may be uncached; `usage.json` input includes cache.** Do **not** mix with historical customer-job revenue evidence (including any recorded 2.85 figure). H10 economics were not touched. Cash $0.
 
-`usage.json` at stamp (`/home/ubuntu/.grok/sessions/%2Ftmp%2Fh7%2Fwt/01a094f5-dde1-70e1-ad54-481c90a8cd67/usage.json`), last closed **2026-09-12T11:11:51Z**, **turnCount 2**. This PR145-completion turn is **turn 3** and is **not yet in `usage.json`** (stream-end writes after close).
+`usage.json` at this write (`/home/ubuntu/.grok/sessions/%2Ftmp%2Fh7%2Fwt/01a094f5-dde1-70e1-ad54-481c90a8cd67/usage.json`), last closed **2026-09-12T12:17:22Z**, **turnCount 3**. This `c6f1464` rebind is **turn 4** and is **not yet in `usage.json`**.
 
 | Scope | input (includes cache) | cachedRead | output | reasoning | modelCalls | costUsdTicks |
 | --- | --- | --- | --- | --- | --- | --- |
-| Session through turn 2 | 45245704 | 43258496 | 314294 | 274423 | 253 | 136291155600 |
+| Session through turn 3 | 49590678 | 47390336 | 337251 | 290790 | 275 | 149531959200 |
 | Turn 1 | 37509511 | 35593472 | 299003 | 263052 | 232 | 108638302800 |
 | Turn 2 | 7736193 | 7665024 | 15291 | 11371 | 21 | 27652852800 |
 
-Uncached-equivalent input through turn 2 (input − cachedRead) = **1,987,208**. Primary model `grok-4.6-build`. Ticks are not a customer invoice.
+Uncached-equivalent input through turn 3 (input − cachedRead) = **2,200,342**. Primary model `grok-4.6-build`. Ticks are not a customer invoice. Not original-guide COGS.
 
 ## Unsupported boundaries
 
@@ -161,43 +208,32 @@ Uncached-equivalent input through turn 2 (input − cachedRead) = **1,987,208**.
 - Process-local execution cache is not durable across server restart; same-ID replay is not exactly-once recovery.
 - GET does not prove caller payment/accepted terms or frozen request hash.
 - Directory / rewritten job-document inputs remain `unbound-input-shape` in desk/replay.
-- No authenticated HTTP principal (CW65 incomplete gate).
+- Loopback HTTP principal is process-local Authorization binding only; not an authenticated production identity provider.
 - No live payment, no sale, callback ack is not buyer acceptance.
-- Postgres lanes untested.
+- Publication is not crash-atomic (documented on the repair).
 - Multi-host / hostile filesystem / power-loss durability not claimed.
 - Hosted transfer to an independent external customer not claimed (receiver still uses an operator-provided bundle dir).
-- CW65 ledger/outbox cases remain incomplete independent gates (sibling slices exist; that is not CW65 acceptance).
 - Child count is not product acceptance.
 
 ## Next integration owner
 
-See **Exact next owner** above. Short form:
+**Root / integration reviewer** of stacked draft **PR145** on `codex/useful-jobs-core-integration-20260912`. Review consumer rebind + HTTP principal; do **not** merge to public `main`. PR143 and PR146 repairs can land independently of leftover consumer polish.
 
-1. Land **PR143** independently (vendor-temp leak correction). Do not wait on d18/d20 or PR145 consumers.
-2. `tools/managed-useful-jobs-order` owner for d20 (second engine after before-complete interrupt) — only if Root authorizes that exact `8a811bba` repair.
-3. `server/paid-useful-jobs` wrapper owner for d18 (`publishCompleteOutputs` overwrite) — only if Root authorizes that exact `8a811bba` repair.
-4. Keep **PR145** draft and stacked. No default merge.
-
-Optional later: dedicated PG 55590/55591/55592/55595; CW64 pin refresh against a future shipped archive (this client remains 1.4.1 packaged); consolidating CW39 zipapp vs D08 Python entry.
+Optional later: CW64 pin refresh against a future shipped archive (this client remains 1.4.1 packaged); a **new** useful-jobs package version if wrapper source must be distributed as a tarball (1.4.3 must stay immutable).
 
 ## Git / PR
 
-Reproduction source SHA: `4c4298713f8caba4fd34541797097b0f4b97f03c`.
-Classification commit: `7d2b6f20955a00c2b66c7cfe6177c960fed63bb0`.
+Implementation controls SHA: `80aeb7be9e2c2e180641196a92f371edb9cf2eb9`.
+Integration source: `c6f1464222169f2d32247c978dc5007d82a2aa03`.
+Repair: `080cc62e7bc83f76431d916df34aea6d30875401`.
+Archive identity: `8a811bbadba7edc6c926b319b0839cd2f01e5896`.
 
-Draft PRs (already open; this branch push updates 145, does not merge):
+Draft PRs (branch push updates 145, does not merge):
 
-- PR143 https://github.com/epistemedeus/samedaydesk/pull/143 — `8a811bbadba7edc6c926b319b0839cd2f01e5896` (vendor-temp leak correction; **can ship independently**)
-- PR145 https://github.com/epistemedeus/samedaydesk/pull/145 — stacked on `codex/vendor-temp-lifecycle-20260912` (H7 consumers + this classification)
+- PR143 https://github.com/epistemedeus/samedaydesk/pull/143 — vendor-temp leak correction; **can ship independently**
+- PR146 https://github.com/epistemedeus/samedaydesk/pull/146 — **merged** into integration at `c6f1464`
+- PR145 https://github.com/epistemedeus/samedaydesk/pull/145 — consumer rebind; stacked draft
 
-Compare URL (review this, not a silent `main` merge):
+Compare (review this, not a silent `main` merge):
 
-https://github.com/epistemedeus/samedaydesk/compare/8a811bbadba7edc6c926b319b0839cd2f01e5896...codex/h7-delivery-20260912
-
-Prior (pre-rebind) compare against the ancestor pin:
-
-https://github.com/epistemedeus/samedaydesk/compare/6007fcfa27074f9a594248e47296f1afa4f8385d...codex/h7-delivery-20260912
-
-Pin-branch compare:
-
-https://github.com/epistemedeus/samedaydesk/compare/codex/vendor-temp-lifecycle-20260912...codex/h7-delivery-20260912
+https://github.com/epistemedeus/samedaydesk/compare/c6f1464222169f2d32247c978dc5007d82a2aa03...codex/h7-delivery-20260912

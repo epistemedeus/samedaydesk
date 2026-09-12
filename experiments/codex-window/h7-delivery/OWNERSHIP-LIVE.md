@@ -6,9 +6,11 @@ Recorded 2026-09-12 on Cursor Cloud VM. Hostname `cursor` is not provider identi
 
 - Branch: `codex/h7-delivery-20260912`
 - HEAD at start: `fe8057f395bc665b629e12dbff0db0c264f0eb46` (import of CW60/61/62/65/70 onto pin)
-- Runtime pin: `8a811bbadba7edc6c926b319b0839cd2f01e5896` (useful-jobs 1.4.3 unpublished)
+- Integration source: `c6f1464222169f2d32247c978dc5007d82a2aa03` (PR146)
+- Repair SHA: `080cc62e7bc83f76431d916df34aea6d30875401`
+- Archive pin (immutable 1.4.3, no wrapper fixes): `8a811bbadba7edc6c926b319b0839cd2f01e5896`
 - Previous pin (ancestor, not release-ready): `6007fcfa27074f9a594248e47296f1afa4f8385d`
-- Archive: 2615491 bytes, sha256 `a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09`
+- Archive: 2615491 bytes, sha256 `a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09` (not overwritten; no 1.4.4)
 - Diff vs pin: 613 files, owned consumer/experiment trees only
 - Protected trees match pin exactly: `server/paid-useful-jobs`, `tools/result-mailbox`, `tools/job-output-atomicity`, `tools/lockfile-pin-delta`, `experiments/wave5/m01`, `client/public/for-agents/useful-jobs`
 
@@ -39,10 +41,9 @@ CW64 is inspect-only. Children do **not** git commit. Parent commits at phase bo
 
 ## PR143 vs later witnesses (PR145 completion)
 
-- **Can ship independently:** PR143 vendor-temp leak correction (`8a811bba`, unpublished 1.4.3 `a18ab918`, 9/9 vendor-temp tests). Not blocked by d18/d20, HTTP principal, ledger/outbox incomplete gates, or PR145 consumers.
-- **Does not block PR143:** `d18-publication-rollback` (owner: `server/paid-useful-jobs/lib/wrapper.mjs` `publishCompleteOutputs`); `d20-order-interrupt-before-complete` (owner: `tools/managed-useful-jobs-order`); CW65 incomplete gates `d19-http-principal-boundary`, `d19-current-ledger`, `d20-current-outbox`.
-- Reproduced on pin `8a811bba` at source `4c42987`. Do not treat stale `6007fcfa` failures as current evidence. Do not edit wrapper or managed-order from this consumer charter unless Root authorizes those exact repairs.
-- `usefulPaidWork` remains false. Cash $0. Draft PR145: https://github.com/epistemedeus/samedaydesk/pull/145 — update via branch push, no default merge.
+- **Can ship independently as integration:** PR143 vendor-temp leak correction; PR146 wrapper/order repairs at `c6f1464`/`080cc62`.
+- **PR145** rebound onto that integration; consumers preserved. HTTP principal, ledger, outbox, portable, and real PG controls ran on this branch. Not production main.
+- Immutable 1.4.3 archive does **not** contain wrapper fixes. `usefulPaidWork` remains false. Cash $0. Draft PR145: https://github.com/epistemedeus/samedaydesk/pull/145 — update via branch push, no default merge.
 
 ## Test serialization
 
