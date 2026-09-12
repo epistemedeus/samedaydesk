@@ -7,7 +7,7 @@ if (args.help) {
   process.stdout.write(`Local loopback test receiver for job-delivery-outbox.
 Not a production webhook.
 
-node tools/job-delivery-outbox/bin/loopback-receiver.mjs [--mode ack|close-after-store|ack-wrong-path|ack-wrong-digest|ack-event-only|empty-body] [--path /callback] [--delay-ms N] [--store-dir DIR] [--port N]
+node tools/job-delivery-outbox/bin/loopback-receiver.mjs [--mode ack|close-after-store|ack-wrong-path|ack-wrong-digest|ack-wrong-terms|ack-event-only|empty-body] [--path /callback] [--delay-ms N] [--store-dir DIR] [--port N]
 `);
   process.exit(0);
 }

@@ -6,8 +6,25 @@ import { atomicWriteJson } from './atomic-write.mjs';
 import { callbackDestination } from './loopback.mjs';
 import { assertCallbackIdentity } from './callback-identity.mjs';
 import { hashBody, stableStringify } from './hash-terms.mjs';
+import { outputRefs } from './receipt-shape.mjs';
 import { importJobArtifacts } from '../../job-artifact-export/lib/import.mjs';
 import { assertUnlinkedPath } from '../../job-artifact-export/lib/publication.mjs';
+
+function namedOutputsEqual(receipt, payloadOutputs) {
+  const fromReceipt = outputRefs(receipt || { outputs: [] });
+  const fromPayload = outputRefs({ outputs: Array.isArray(payloadOutputs) ? payloadOutputs : [] });
+  if (fromReceipt.length !== fromPayload.length) return false;
+  const byName = new Map(fromPayload.map((row) => [row.name, row]));
+  for (const row of fromReceipt) {
+    const other = byName.get(row.name);
+    if (!other) return false;
+    if (other.kind !== row.kind || other.bytes !== row.bytes || other.sha256 !== row.sha256) return false;
+    const leftPath = row.kind === 'directory' ? row.path : undefined;
+    const rightPath = other.kind === 'directory' ? other.path : undefined;
+    if (leftPath !== rightPath) return false;
+  }
+  return stableStringify(fromReceipt) === stableStringify(fromPayload);
+}
 
 export function startLoopbackReceiver({ host = '127.0.0.1', port = 0, mode = 'ack', delayMs = 0,
   storeDir = null, path = '/callback', bundleDir = null } = {}) {
@@ -46,7 +63,7 @@ export function startLoopbackReceiver({ host = '127.0.0.1', port = 0, mode = 'ac
           if (!bundle.binding || bundle.manifest.termsVersion !== payload.artifact.termsVersion ||
               bundle.binding.execution.receiptSha256 !== payload.artifact.receiptSha256 ||
               bundle.binding.receipt.outputsDigest !== payload.outputsDigest ||
-              stableStringify(bundle.binding.receipt.outputs) !== stableStringify(payload.outputs) ||
+              !namedOutputsEqual(bundle.binding.receipt, payload.outputs) ||
               bundle.binding.receipt.jobId !== payload.jobId ||
               bundle.binding.receipt.sample !== payload.sample ||
               `${bundle.binding.receipt.engine.archiveSha256}:${bundle.binding.receipt.engine.archiveBytes}` !== payload.engineArchiveIdentity) {
@@ -75,7 +92,8 @@ export function startLoopbackReceiver({ host = '127.0.0.1', port = 0, mode = 'ac
           const ack = { schema: ACK_SCHEMA, ack: true, eventId: payload.eventId,
             callbackPath: mode === 'ack-wrong-path' ? '/not-the-callback' : req.url,
             outputsDigest: mode === 'ack-wrong-digest' ? 'f'.repeat(64) : payload.outputsDigest,
-            termsHash: payload.termsHash, zipSha256: payload.artifact?.zipSha256 || null,
+            termsHash: mode === 'ack-wrong-terms' ? '0'.repeat(64) : payload.termsHash,
+            zipSha256: payload.artifact?.zipSha256 || null,
             exportTermsVersion: payload.artifact?.termsVersion || null,
             buyerAccepted: false, sale: false, receivedAt: record.receivedAt };
           if (mode === 'ack-event-only') { delete ack.callbackPath; delete ack.outputsDigest; }

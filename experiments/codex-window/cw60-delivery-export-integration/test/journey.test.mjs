@@ -6,6 +6,7 @@ import { mkdtempSync, cpSync, readFileSync, writeFileSync, rmSync, readdirSync, 
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
+import { withFileLock } from '../../../../tools/job-delivery-outbox/lib/file-lock.mjs';
 const ROOT = process.cwd();
 const EXPORT = 'tools/job-artifact-export/bin/export.mjs';
 const OUTBOX = 'tools/job-delivery-outbox/bin/outbox.mjs';
@@ -14,6 +15,10 @@ const RECEIVER = 'tools/job-delivery-outbox/bin/loopback-receiver.mjs';
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const json = path => JSON.parse(readFileSync(path, 'utf8'));
 const save = (path, value) => writeFileSync(path, JSON.stringify(value, null, 2));
+const clip = (text, n = 1200) => {
+  const value = String(text || '');
+  return value.length <= n ? value : `${value.slice(0, n)}…`;
+};
 function command(bin, args, expected = 0) {
   const result = spawnSync(process.execPath, [bin, ...args], { cwd: ROOT, encoding: 'utf8', timeout: 15000, maxBuffer: 1024 * 1024 });
   assert.equal(result.status, expected, `${bin}: ${result.stdout}\n${result.stderr}`);
@@ -35,13 +40,13 @@ function current(t, same = false) {
   return { root, execution, receiptPath, bundle, store: join(root, 'outbox') };
 }
 async function stop(child) {
-  if (child.exitCode !== null || child.signalCode) return;
+  if (!child || child.exitCode !== null || child.signalCode) return;
   const exited = once(child, 'exit'); child.kill('SIGTERM');
   const timer = setTimeout(() => child.kill('SIGKILL'), 2000);
   await exited; clearTimeout(timer);
 }
-async function receiver(t, p, mode = 'ack', extra = []) {
-  const store = join(p.root, `receiver-${mode}-${Math.random().toString(16).slice(2)}`);
+async function receiver(t, p, mode = 'ack', extra = [], reuse = null) {
+  const store = reuse?.store || join(p.root, `receiver-${mode}-${Math.random().toString(16).slice(2)}`);
   const child = spawn(process.execPath, [RECEIVER, '--mode', mode, '--store-dir', store,
     '--bundle-dir', join(p.root, 'bundle'), '--path', '/bound?revision=1', ...extra], { stdio: ['ignore', 'pipe', 'pipe'] });
   t.after(() => stop(child));
@@ -62,9 +67,27 @@ function deliver(p, eventId, expected = 0) {
   return command(OUTBOX, ['deliver-once', '--store', p.store, '--event-id', eventId, '--opt-in', '--timeout-ms', '2000'], expected);
 }
 const records = r => readdirSync(r.store).filter(name => name.endsWith('.json'));
-async function until(predicate) {
+async function until(predicate, diagnose) {
   const deadline = Date.now() + 5000;
-  while (!predicate()) { if (Date.now() > deadline) throw new Error('condition timeout'); await new Promise(r => setTimeout(r, 10)); }
+  while (!predicate()) {
+    if (Date.now() > deadline) {
+      const extra = typeof diagnose === 'function' ? await diagnose() : (diagnose || '');
+      throw new Error(extra ? `condition timeout: ${extra}` : 'condition timeout');
+    }
+    await new Promise(r => setTimeout(r, 10));
+  }
+}
+async function receiverRefusal(url, eventId, payload) {
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-outbox-event-id': eventId },
+      body: JSON.stringify(payload),
+    });
+    return `${response.status} ${clip(await response.text())}`;
+  } catch (error) {
+    return `probe-failed ${error.message}`;
+  }
 }
 
 test('cold current wrapper → existing mailbox → exact export → independent receiver; commit precedes ack and replay is idempotent', async t => {
@@ -85,7 +108,12 @@ test('cold current wrapper → existing mailbox → exact export → independent
   t.after(() => stop(sender)); let stdout = '', stderr = '';
   sender.stdout.on('data', c => { stdout += c; }); sender.stderr.on('data', c => { stderr += c; });
   const senderExit = once(sender, 'exit');
-  await until(() => records(r).length === 1);
+  try {
+    await until(() => records(r).length === 1, async () =>
+      `sender=${clip(stdout)}${clip(stderr)} store=${existsSync(r.store) ? readdirSync(r.store).join(',') : 'missing'} receiver=${await receiverRefusal(r.url, eventId, queued.event.payload)}`);
+  } catch (error) {
+    throw error;
+  }
   const committed = json(join(r.store, records(r)[0]));
   assert.equal(committed.committed, true);
   assert.equal(json(join(p.store, 'outbox.json')).events[eventId].deliveryState, 'unknown');
@@ -98,7 +126,7 @@ test('cold current wrapper → existing mailbox → exact export → independent
   assert.equal(delivered.event.sold, false); assert.equal(delivered.event.buyerAccepted, false);
   assert.equal(enqueue(p, r.url).duplicate, true);
   assert.equal(deliver(p, eventId).network, false);
-  const replay = await fetch(r.url, { method: 'POST', headers: { 'x-outbox-event-id': eventId }, body: JSON.stringify(queued.event.payload) });
+  const replay = await fetch(r.url, { method: 'POST', headers: { 'content-type': 'application/json', 'x-outbox-event-id': eventId }, body: JSON.stringify(queued.event.payload) });
   assert.equal(replay.status, 200); assert.equal(records(r).length, 1);
   const reconciled = command(OUTBOX, ['reconcile', '--store', p.store]); assert.equal(reconciled.counts.delivered, 1);
   if (process.env.CW60_EVIDENCE) save(join(process.env.CW60_EVIDENCE, 'cold-journey.json'), {
@@ -112,12 +140,13 @@ test('cold current wrapper → existing mailbox → exact export → independent
   });
 });
 
-for (const mode of ['empty-body', 'close-after-store', 'ack-wrong-path', 'ack-wrong-digest', 'ack-event-only']) {
+for (const mode of ['empty-body', 'close-after-store', 'ack-wrong-path', 'ack-wrong-digest', 'ack-wrong-terms', 'ack-event-only']) {
   test(`independent receiver ${mode} cannot create false completion`, async t => {
     const p = current(t); const r = await receiver(t, p, mode);
     const q = enqueue(p, r.url); const result = deliver(p, q.event.eventId);
-    assert.equal(result.deliveryState, mode === 'close-after-store' ? 'unknown' : 'failed');
-    assert.equal(records(r).length, 1); assert.equal(result.event.callbackAcknowledged, false);
+    assert.equal(result.deliveryState, mode === 'close-after-store' ? 'unknown' : 'failed', JSON.stringify(result));
+    assert.equal(records(r).length, 1, `store=${readdirSync(r.store).join(',')} result=${JSON.stringify(result)}`);
+    assert.equal(result.event.callbackAcknowledged, false);
     assert.equal(deliver(p, q.event.eventId, 2).ok, false);
     const rec = command(OUTBOX, ['reconcile', '--store', p.store]); assert.equal(rec.counts.delivered, 0);
   });
@@ -143,6 +172,63 @@ test('different receiver process has an independent commit and destination ident
   assert.equal(deliver(p, qb.event.eventId).deliveryState, 'delivered'); assert.equal(records(a).length, 1); assert.equal(records(b).length, 1);
 });
 
+test('receiver restart replays the committed record without a second generation', async t => {
+  const p = current(t); const r = await receiver(t, p);
+  const q = enqueue(p, r.url);
+  assert.equal(deliver(p, q.event.eventId).deliveryState, 'delivered');
+  assert.equal(records(r).length, 1);
+  const first = json(join(r.store, records(r)[0]));
+  await stop(r.child);
+  await new Promise(ok => setTimeout(ok, 50));
+  const again = await receiver(t, p, 'ack', ['--port', String(r.port)], { store: r.store });
+  assert.equal(again.port, r.port);
+  const replay = await fetch(again.url, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'x-outbox-event-id': q.event.eventId },
+    body: JSON.stringify(q.event.payload),
+  });
+  assert.equal(replay.status, 200, await replay.text());
+  assert.equal(records(again).length, 1);
+  const second = json(join(again.store, records(again)[0]));
+  assert.equal(second.artifactOut, first.artifactOut);
+  assert.equal(second.bodyHash, first.bodyHash);
+});
+
+test('sender crash after attempt commit stays unknown and is not auto-replayed', async t => {
+  const p = current(t); const r = await receiver(t, p, 'ack', ['--delay-ms', '20000']);
+  const q = enqueue(p, r.url);
+  const ready = join(p.root, 'attempt-ready.json');
+  const sender = spawn(process.execPath, [OUTBOX, 'deliver-once', '--store', p.store, '--event-id', q.event.eventId,
+    '--opt-in', '--attempt-ready', ready, '--timeout-ms', '25000'], { cwd: ROOT, stdio: ['ignore', 'pipe', 'pipe'] });
+  t.after(() => stop(sender));
+  await until(() => existsSync(ready));
+  sender.kill('SIGTERM');
+  await once(sender, 'exit');
+  const event = json(join(p.store, 'outbox.json')).events[q.event.eventId];
+  assert.equal(event.deliveryState, 'unknown');
+  assert.equal(event.callbackAcknowledged, false);
+  assert.equal(event.attempts[0].outcome, 'unknown');
+  assert.equal(deliver(p, q.event.eventId, 2).code, 'unknown-outcome-no-auto-replay');
+  const rec = command(OUTBOX, ['reconcile', '--store', p.store]);
+  assert.equal(rec.counts.delivered, 0);
+  assert.equal(rec.counts.unknown, 1);
+});
+
+test('file-lock ownership is pid+token specific and released after a store write', async t => {
+  const p = current(t); const r = await receiver(t, p);
+  const q = enqueue(p, r.url);
+  assert.equal(existsSync(join(p.store, 'outbox.json.lock')), false);
+  assert.equal(deliver(p, q.event.eventId).deliveryState, 'delivered');
+  assert.equal(existsSync(join(p.store, 'outbox.json.lock')), false);
+  const foreignDir = mkdtempSync(join(tmpdir(), 'cw60-lock-'));
+  t.after(() => rmSync(foreignDir, { recursive: true, force: true }));
+  const lockPath = join(foreignDir, 'outbox.json.lock');
+  const foreign = { pid: 1, at: Date.now(), token: 'foreign-owner' };
+  writeFileSync(lockPath, JSON.stringify(foreign));
+  assert.throws(() => withFileLock(lockPath, () => 'stolen'), err => err.code === 'outbox_lock_timeout');
+  assert.deepEqual(JSON.parse(readFileSync(lockPath, 'utf8')), foreign);
+});
+
 test('current no-change analysis stays exportable and retrievable', t => {
   const p = current(t, true);
   assert.equal(p.execution.analysis.status, 'informational');
@@ -156,8 +242,13 @@ test('partial current receipt, changed exact output, missing bundle and swapped 
   assert.equal(noBundle.code, 'bundle-required');
   const receipt = json(p.receiptPath); receipt.delivery.complete = false; save(p.receiptPath, receipt);
   assert.equal(enqueue(p, url, [], 2).code, 'receipt-not-completed');
-  assert.equal(command(EXPORT, ['export', '--in-dir', p.execution.runOutDir, '--out', join(p.root, 'partial')], 2).ok, false);
+  const partial = command(EXPORT, ['export', '--in-dir', p.execution.runOutDir, '--out', join(p.root, 'partial')], 2);
+  assert.equal(partial.ok, false);
+  assert.equal(partial.code, 'd01-missing-output');
   receipt.delivery.complete = true; save(p.receiptPath, receipt);
+  writeFileSync(join(p.execution.runOutDir, 'foreign.bin'), 'not-listed');
+  assert.equal(command(EXPORT, ['export', '--in-dir', p.execution.runOutDir, '--out', join(p.root, 'foreign')], 2).code, 'foreign-output');
+  rmSync(join(p.execution.runOutDir, 'foreign.bin'));
   writeFileSync(join(p.execution.runOutDir, receipt.outputs[0].name), 'changed');
   assert.equal(command(EXPORT, ['export', '--in-dir', p.execution.runOutDir, '--out', join(p.root, 'changed')], 2).code, 'receipt-output-mismatch');
   receipt.sample = !receipt.sample; save(p.receiptPath, receipt);

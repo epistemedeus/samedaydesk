@@ -1,0 +1,124 @@
+=== boundaries ===
+(node:321532) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:321538) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: import recomputes immutable terms even when zip checksum is refreshed
+ok 1 - import recomputes immutable terms even when zip checksum is refreshed
+  ---
+  duration_ms: 32.205993
+  type: 'test'
+  ...
+# Subtest: import preserves an existing linked destination
+ok 2 - import preserves an existing linked destination
+  ---
+  duration_ms: 18.311699
+  type: 'test'
+  ...
+# Subtest: import refuses a populated destination and leaves it unchanged
+ok 3 - import refuses a populated destination and leaves it unchanged
+  ---
+  duration_ms: 21.319018
+  type: 'test'
+  ...
+# Subtest: export refuses hardlinked inputs
+ok 4 - export refuses hardlinked inputs
+  ---
+  duration_ms: 2.687479
+  type: 'test'
+  ...
+# Subtest: export refuses symlink inputs
+ok 5 - export refuses symlink inputs
+  ---
+  duration_ms: 1.523088
+  type: 'test'
+  ...
+# Subtest: export refuses hidden and partial filenames
+ok 6 - export refuses hidden and partial filenames
+  ---
+  duration_ms: 3.448532
+  type: 'test'
+  ...
+# Subtest: zip refuses duplicate members
+ok 7 - zip refuses duplicate members
+  ---
+  duration_ms: 0.242797
+  type: 'test'
+  ...
+# Subtest: zip refuses local/central path disagreement
+ok 8 - zip refuses local/central path disagreement
+  ---
+  duration_ms: 0.15141
+  type: 'test'
+  ...
+# Subtest: zip refuses Unix symbolic link attributes
+ok 9 - zip refuses Unix symbolic link attributes
+  ---
+  duration_ms: 0.214709
+  type: 'test'
+  ...
+# Subtest: zip refuses path traversal and absolute members
+ok 10 - zip refuses path traversal and absolute members
+  ---
+  duration_ms: 0.251964
+  type: 'test'
+  ...
+# Subtest: zip refuses trailing hidden bytes after the end-of-central-directory
+ok 11 - zip refuses trailing hidden bytes after the end-of-central-directory
+  ---
+  duration_ms: 0.131248
+  type: 'test'
+  ...
+# Subtest: truncated zip does not create a destination
+ok 12 - truncated zip does not create a destination
+  ---
+  duration_ms: 17.141671
+  type: 'test'
+  ...
+# Subtest: import refuses a foreign zip member even when the checksum is refreshed
+ok 13 - import refuses a foreign zip member even when the checksum is refreshed
+  ---
+  duration_ms: 18.912683
+  type: 'test'
+  ...
+# Subtest: import refuses JSONL digest change even when zip checksum is refreshed
+ok 14 - import refuses JSONL digest change even when zip checksum is refreshed
+  ---
+  duration_ms: 16.264637
+  type: 'test'
+  ...
+# Subtest: import refuses member byte changes even when zip checksum is refreshed
+ok 15 - import refuses member byte changes even when zip checksum is refreshed
+  ---
+  duration_ms: 16.266545
+  type: 'test'
+  ...
+# Subtest: partial current receipt maps mailbox refusal to ExportRefuse exit 2
+ok 16 - partial current receipt maps mailbox refusal to ExportRefuse exit 2
+  ---
+  duration_ms: 1.536154
+  type: 'test'
+  ...
+# Subtest: killed staging writer leaves no visible destination or leftover stage
+ok 17 - killed staging writer leaves no visible destination or leftover stage
+  ---
+  duration_ms: 3.406519
+  type: 'test'
+  ...
+# Subtest: receiver rejects a same-origin request at a different path
+ok 18 - receiver rejects a same-origin request at a different path
+  ---
+  duration_ms: 26.247328
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 290.172314
+exit:0

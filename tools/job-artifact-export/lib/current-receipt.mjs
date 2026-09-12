@@ -4,14 +4,18 @@ import { engineProvenance } from '../../../server/paid-useful-jobs/lib/engine.mj
 import { assertD01ExecutionRetrievable } from '../../result-mailbox/lib/d01-receipt.mjs';
 import { verifyComplete } from '../../job-output-atomicity/index.mjs';
 import { sha256Hex, sha256Prefixed } from './pins.mjs';
-import { refuse } from './refuse.mjs';
+import { refuse, mapMailboxRefuse } from './refuse.mjs';
 
 export function currentReceiptBinding(files) {
   const entry = files.find(f => (f.path || f.name) === 'receipt.json');
   if (!entry) return null;
   let receipt;
   try { receipt = JSON.parse(entry.data); } catch { throw refuse('invalid-receipt', 'Receipt is not complete JSON'); }
-  assertD01ExecutionRetrievable(receipt);
+  try {
+    assertD01ExecutionRetrievable(receipt);
+  } catch (err) {
+    throw mapMailboxRefuse(err);
+  }
   if (receipt.outputsDigest !== digestNamedBytes(receipt.outputs)) throw refuse("receipt-output-mismatch", "Receipt output digest differs from named bytes");
   const catalog = loadDeliveryCatalog();
   const job = catalog.jobs.find(j => j.id === receipt.jobId);
