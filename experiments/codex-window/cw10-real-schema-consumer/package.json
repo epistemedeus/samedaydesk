@@ -1,0 +1,17 @@
+{
+  "name": "cw10-real-schema-consumer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "fixture:generate": "node bin/generate-fixture.mjs",
+    "check": "node bin/check.mjs",
+    "test": "node --max-old-space-size=768 --test --test-concurrency=1 test/*.test.mjs",
+    "sources:verify": "node bin/verify-sources.mjs",
+    "audit": "node bin/check.mjs --mode audit"
+  },
+  "dependencies": {
+    "ajv": "8.17.1",
+    "ajv-formats": "3.0.1"
+  }
+}
