@@ -96,8 +96,12 @@ test("CLI: changed after is analyzed from frozen-current, not the live path", ()
     out,
   ]);
   assert.equal(bound.json.ok, true, bound.stdout);
-  assert.equal(bound.json.status, "actionable");
-  assert.equal(bound.json.analysisOutcome, "completed");
+  // samples/pricing/a after.json spells grok-4.6-input unit "USD/1M-Tokens"
+  // while before.json uses "USD/1M-tokens". Independent analysis of that
+  // sample is partial even after mutating gpt-4.1-input. Do not map partial
+  // to actionable.
+  assert.equal(bound.json.status, "analysis-partial");
+  assert.equal(bound.json.analysisOutcome, "partial");
   assert.equal(bound.json.transport.ok, true);
   const second = readJson(path.join(out, "second-run.json"));
   const frozenAfter = second.frozen.current.after.frozenPath;
@@ -108,7 +112,48 @@ test("CLI: changed after is analyzed from frozen-current, not the live path", ()
   assert.ok(second.secondRun.engine.argv.includes(frozenAfter));
   assert.equal(fs.existsSync(path.join(out, "engine/budget-impact.json")), true);
   const art = readJson(path.join(out, "engine/budget-impact.json"));
+  assert.equal(art.status, "partial");
   assert.notEqual(art.status, "refused");
+});
+
+test("CLI: clean comparable units with numeric change are actionable from frozen-current", () => {
+  const work = fs.mkdtempSync(path.join(os.tmpdir(), "w5-d09-cli-clean-"));
+  const ctx = firstTicket(work);
+  // Keep the ticket's declared before bytes. Build after from that same document
+  // with only a numeric field change so units stay comparable.
+  const after = path.join(work, "clean-after.json");
+  const doc = readJson(ctx.before);
+  doc.rows = doc.rows.map((row) =>
+    row.field === "gpt-4.1-input" ? { ...row, value: 4 } : row,
+  );
+  writeJson(after, doc);
+  const newSha = sha256File(after);
+  const out = path.join(work, "second");
+  const bound = runBind([
+    "--ticket",
+    ctx.ticket,
+    "--before",
+    ctx.before,
+    "--after",
+    after,
+    "--declare-after-sha256",
+    newSha,
+    "--engine",
+    "catalog",
+    "--out-dir",
+    out,
+  ]);
+  assert.equal(bound.json.ok, true, bound.stdout);
+  assert.equal(bound.json.status, "actionable");
+  assert.equal(bound.json.analysisOutcome, "completed");
+  const art = readJson(path.join(out, "engine/budget-impact.json"));
+  assert.equal(art.status, "actionable");
+  assert.equal(art.underlying.counts.fieldChanges, 1);
+  assert.equal(art.underlying.counts.conflicting, 0);
+  assert.equal(art.underlying.counts.unknown, 0);
+  const frozenAfter = readJson(path.join(out, "second-run.json")).frozen.current.after.frozenPath;
+  fs.writeFileSync(after, '{"tampered-after-bind":true}\n');
+  assert.equal(sha256File(frozenAfter), newSha);
 });
 
 test("CLI: previous-run output cannot be reused as the new after", () => {

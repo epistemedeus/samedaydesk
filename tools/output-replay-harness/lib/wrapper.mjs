@@ -17,12 +17,13 @@ const sameNames = (rows, names) => Array.isArray(rows) && rows.length === names.
   new Set(rows.map((r) => typeof r === 'string' ? r : r.name)).size === names.length &&
   names.every((name) => rows.some((r) => (typeof r === 'string' ? r : r.name) === name));
 
-export function validateWrapperRun(run, { jobId, outputNames, inputHashes, outDir }) {
+export function validateWrapperRun(run, { jobId, outputNames, inputHashes, outDir, expectedEngine = null }) {
   const body = run.json;
   if (run.status !== 0 || run.error || run.signal) {
     throw replayRefuse('nonzero-engine-exit', 'Wrapper process did not exit successfully', {
       status: run.status, signal: run.signal, error: run.error,
       transport: body?.transport, analysis: body?.analysis, delivery: body?.delivery,
+      stdout: run.stdout, stderr: run.stderr, pid: run.pid,
     });
   }
   const receipt = body?.receipt;
@@ -31,6 +32,18 @@ export function validateWrapperRun(run, { jobId, outputNames, inputHashes, outDi
       receipt?.jobId !== jobId || receipt?.transport !== 'ok' ||
       !isDeepStrictEqual(body.analysis, receipt.analysis)) {
     throw replayRefuse('wrapper-contract-mismatch', 'Wrapper result does not bind a successful execution.v1 delivery');
+  }
+  if (expectedEngine) {
+    const engine = receipt.engine || {};
+    if (expectedEngine.archiveSha256 && engine.archiveSha256 !== expectedEngine.archiveSha256) {
+      throw replayRefuse('engine-pin-mismatch', 'Wrapper engine archive identity differs from the expected pin');
+    }
+    if (expectedEngine.archiveBytes != null && engine.archiveBytes !== expectedEngine.archiveBytes) {
+      throw replayRefuse('engine-pin-mismatch', 'Wrapper engine archive size differs from the expected pin');
+    }
+    if (expectedEngine.sourceCommit && engine.sourceCommit !== expectedEngine.sourceCommit) {
+      throw replayRefuse('engine-pin-mismatch', 'Wrapper engine source commit differs from the expected pin');
+    }
   }
   for (const delivery of [body.delivery, receipt.delivery]) {
     if (delivery?.complete !== true || delivery.status !== 'complete' ||
@@ -98,7 +111,7 @@ function bindArtifactIdentity(file, { jobId, inputHashes, runtime }) {
   return { ...file, identityBytes: Buffer.from(JSON.stringify(art)) };
 }
 
-export function runWrapperJob(jobId, { files = {}, outDir, outputNames, inputHashes, wrapperBin = WRAPPER_BIN, timeoutMs = 90_000 } = {}) {
+export function runWrapperJob(jobId, { files = {}, outDir, outputNames, inputHashes, wrapperBin = WRAPPER_BIN, timeoutMs = 90_000, expectedEngine = null } = {}) {
   const runtime = mkdtempSync(join(tmpdir(), 'output-replay-wrapper-'));
   const args = ['run', jobId];
   for (const [key, file] of Object.entries(files)) args.push(`--${key}`, file);
@@ -112,9 +125,14 @@ export function runWrapperJob(jobId, { files = {}, outDir, outputNames, inputHas
     try { json = JSON.parse(child.stdout); } catch { /* validation refuses */ }
     const run = { status: child.status, signal: child.signal, error: child.error?.message,
       pid: child.pid, stdout: child.stdout || '', stderr: child.stderr || '', json, cli: resolve(wrapperBin), args };
-    const captured = validateWrapperRun(run, { jobId, outputNames, inputHashes, outDir });
-    run.capture = captured.map((file) => bindArtifactIdentity(file, { jobId, inputHashes, runtime }));
-    return run;
+    try {
+      const captured = validateWrapperRun(run, { jobId, outputNames, inputHashes, outDir, expectedEngine });
+      run.capture = captured.map((file) => bindArtifactIdentity(file, { jobId, inputHashes, runtime }));
+      return run;
+    } catch (err) {
+      err.run = run;
+      throw err;
+    }
   } finally {
     rmSync(runtime, { recursive: true, force: true });
   }

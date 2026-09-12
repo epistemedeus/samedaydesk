@@ -1,4 +1,4 @@
-import { writeFileSync } from 'node:fs';
+import { chmodSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { loadPublicCatalog, findJob, catalogOutputNames, requiredInputKeys, optionalInputKeys } from './catalog.mjs';
@@ -40,10 +40,20 @@ export function replayWrapper(request) {
   const frozenA = freezeInputs(inspectedA, join(locations.outA.real, '.replay-inputs'));
   const frozenB = freezeInputs(inspectedB, join(locations.outB.real, '.replay-inputs'));
   if (typeof request.afterInspect === 'function') request.afterInspect();
-  const run = (frozen, outDir) => runWrapperJob(job.id, {
-    files: frozen.files, inputHashes: frozen.hashes, outputNames, outDir,
-    wrapperBin: request.paidWrapperBin || request['paid-wrapper-bin'] || WRAPPER_BIN,
-  });
+  const run = (frozen, outDir) => {
+    try {
+      const result = runWrapperJob(job.id, {
+        files: frozen.files, inputHashes: frozen.hashes, outputNames, outDir,
+        wrapperBin: request.paidWrapperBin || request['paid-wrapper-bin'] || WRAPPER_BIN,
+        expectedEngine: request.expectedEngine || null,
+      });
+      persistWrapperEvidence(outDir, result);
+      return result;
+    } catch (err) {
+      if (err.run) persistWrapperEvidence(outDir, err.run);
+      throw err;
+    }
+  };
   const runA = run(frozenA, locations.outA.real);
   if (typeof request.betweenRuns === 'function') request.betweenRuns({ outA: locations.outA.real, outB: locations.outB.real });
   const runB = run(frozenB, locations.outB.real);
@@ -79,9 +89,22 @@ export function replayWrapper(request) {
       outDir: r.json.outDir, wrapperBin: r.cli, engine: r.json.receipt.engine })),
     identityRule: compared.identityRule + ' Reviewed legacy caller paths bind staged bytes; path-dependent digests are verified before normalization. Partial/refused analysis never verifies identity.',
   };
-  for (const [index, r] of [runA, runB].entries()) {
-    const out = index === 0 ? locations.outA.real : locations.outB.real;
-    writeFileSync(join(out, 'wrapper-process.json'), JSON.stringify({ status: r.status, pid: r.pid, stdout: r.stdout, stderr: r.stderr }, null, 2) + '\n', { flag: 'wx' });
-  }
   return report;
+}
+
+function persistWrapperEvidence(outDir, run) {
+  mkdirSync(outDir, { recursive: true });
+  writeFileSync(join(outDir, 'wrapper-process.json'), `${JSON.stringify({
+    status: run.status, pid: run.pid, signal: run.signal || null, error: run.error || null,
+    stdout: run.stdout, stderr: run.stderr, cli: run.cli, args: run.args,
+  }, null, 2)}\n`, { flag: 'wx' });
+  if (!Array.isArray(run.capture)) return;
+  const capDir = join(outDir, '.replay-capture');
+  mkdirSync(capDir, { recursive: true });
+  for (const file of run.capture) {
+    if (!file.exists || !file.bytes) continue;
+    const dest = join(capDir, file.name);
+    writeFileSync(dest, file.bytes, { flag: 'wx' });
+    chmodSync(dest, 0o444);
+  }
 }

@@ -71,8 +71,9 @@ test(`D01 wrapper pin ${D01_PIN_SHA} analyzes frozen changed after`, () => {
   ]);
   assert.equal(bound.json.ok, true, bound.stdout);
   assert.equal(bound.json.engineKind, "d01-wrapper");
-  assert.equal(bound.json.status, "actionable");
-  assert.equal(bound.json.analysisOutcome, "completed");
+  // Same samples/pricing/a unit-spelling conflict as the catalog CLI control.
+  assert.equal(bound.json.status, "analysis-partial");
+  assert.equal(bound.json.analysisOutcome, "partial");
   assert.equal(bound.json.transport.ok, true);
   const second = readJson(path.join(out, "second-run.json"));
   assert.equal(second.frozen.current.after.sha256, newSha);

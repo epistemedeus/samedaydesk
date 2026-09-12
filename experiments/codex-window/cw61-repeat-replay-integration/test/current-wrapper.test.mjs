@@ -58,6 +58,10 @@ test('current wrapper: two real processes use both inspected snapshots despite l
   assert.equal(r.terms.inputsA.before.sha256, beforeHash);
   assert.equal(r.terms.inputsB.after.sha256, afterHash);
   assert.equal(hash(join(c.request.outB, '.replay-inputs/after.json')), afterHash);
+  assert.equal(readFileSync(join(c.request.outA, 'budget-impact.md'), 'utf8'), 'changed after capture\n');
+  assert.notEqual(readFileSync(join(c.request.outA, '.replay-capture/budget-impact.md'), 'utf8'), 'changed after capture\n');
+  assert.equal(existsSync(join(c.request.outA, 'wrapper-process.json')), true);
+  assert.equal(existsSync(join(c.request.outB, 'wrapper-process.json')), true);
   for (const dir of [c.request.outA, c.request.outB]) {
     const report = read(join(dir, 'budget-impact.json'));
     assert.equal(report.status, 'actionable');
@@ -109,6 +113,8 @@ test('real wrapper input refusal cannot become a successful replay', () => {
   assert.throws(() => replay(c.request), (err) => err.code === 'nonzero-engine-exit' &&
     err.detail.status === 2 && err.detail.transport === 'rejected' && err.detail.delivery.complete === false);
   assert.equal(existsSync(join(c.request.outB, 'budget-impact.json')), false);
+  assert.equal(existsSync(join(c.request.outA, 'wrapper-process.json')), true);
+  assert.match(read(join(c.request.outA, 'wrapper-process.json')).stdout || '', /rejected|ok/);
 });
 
 for (const alias of ['same', 'dot', 'symlink', 'nested', 'symlink-parent']) test(`current wrapper refuses ${alias} output aliases before execution`, () => {
@@ -190,6 +196,17 @@ test('public binder CLI runs the current wrapper without old kit injection', () 
 test('binder preserves refusal details from actual current wrapper', async () => {
   const c = context('refused');
   await assert.rejects(bind(binderArgs(c)), (err) => err.code === 'nonzero-engine-exit' && err.detail.transport === 'rejected');
+});
+
+test('legacy engine added-row no-budget-delta is a witnessed semantic defect, not readiness', () => {
+  const c = context('added');
+  const r = replay(c.request);
+  assertRealRuns(r);
+  const report = read(join(c.request.outA, 'budget-impact.json'));
+  assert.equal(report.underlying.counts.added, 1);
+  assert.equal(report.actions[0].kind, 'no-budget-delta');
+  assert.equal(report.status, 'actionable');
+  assert.equal(r.semanticCorrectnessVerified, false);
 });
 
 test('wrapper receipt contradictions are rejected independently of parser success', () => {

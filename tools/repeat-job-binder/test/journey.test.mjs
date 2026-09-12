@@ -57,7 +57,10 @@ test("journey: repeat-job-record on samples/repeat/a, then binder with changed a
     catalogOut,
   ]);
   assert.equal(catalog.json.ok, true, catalog.stdout);
-  assert.equal(catalog.json.status, "actionable");
+  // Independent expected analysis of samples/pricing/a plus the gpt-4.1-input
+  // mutation is partial: after.json keeps a unit-spelling conflict
+  // (USD/1M-Tokens vs USD/1M-tokens) on grok-4.6-input.
+  assert.equal(catalog.json.status, "analysis-partial");
   assert.equal(catalog.json.family, "pricing-row-unit");
   assert.equal(catalog.json.engineKind, "catalog");
   assert.equal(catalog.json.distinctFromFirst, true);
@@ -69,7 +72,7 @@ test("journey: repeat-job-record on samples/repeat/a, then binder with changed a
   assert.equal(second.schema, "w5.repeat-job-binder.second-run.v1");
   assert.equal(second.secondRun.afterSha256, newSha);
   assert.equal(second.firstRun.afterSha256, firstAfterSha);
-  assert.equal(second.analysisOutcome, "completed");
+  assert.equal(second.analysisOutcome, "partial");
   assert.equal(second.transport.ok, true);
   assert.equal(second.frozen.previous.afterSha256, firstAfterSha);
   assert.equal(second.frozen.current.after.sha256, newSha);
@@ -80,6 +83,7 @@ test("journey: repeat-job-record on samples/repeat/a, then binder with changed a
   assert.equal(fs.existsSync(path.join(catalogOut, "second-run.md")), true);
   const engineArt = readJson(path.join(catalogOut, "engine/budget-impact.json"));
   assert.equal(engineArt.appId, "vendor-budget-impact");
+  assert.equal(engineArt.status, "partial");
   assert.notEqual(engineArt.status, "refused");
 
   const vpOut = path.join(work, "second-vendor-pin");
