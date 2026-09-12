@@ -1,0 +1,29 @@
+{
+  "repository": "epistemedeus/samedaydesk",
+  "branch": "codex/cw64-installed-client-current-runtime-20260912",
+  "sourceHead": "dc618933ced736c9d2534222f4a5ad050ea8a9b0",
+  "PR": "https://github.com/epistemedeus/samedaydesk/pull/142",
+  "draft": true,
+  "baseBranch": "codex/useful-jobs-core-integration-20260912",
+  "observedBaseHead": "30345f69f16aca93bb95511ee4da62975c98cc04",
+  "integrationBase": "76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be",
+  "scopedSourceFilesVerified": 44,
+  "tests": {
+    "consumerNodeEntries": {
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "nestedPythonTests": 12
+    },
+    "shippedArchive": {
+      "passed": 15,
+      "failed": 0
+    }
+  },
+  "notes": [
+    "Initial draft base main included inherited integration history; retargeted to existing integration branch, leaving source and dependency pins unchanged.",
+    "Initial commit was refused for missing author identity; retried with verified account noreply identity as invocation-only Git options, without signing or config changes.",
+    "Raw evidence logs preserve original trailing whitespace.",
+    "Final export receipt commit follows this source commit."
+  ]
+}

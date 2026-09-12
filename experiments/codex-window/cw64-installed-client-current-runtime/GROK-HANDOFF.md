@@ -10,6 +10,8 @@ Cursor inference, nested model CLI, or agent delegation was used.
 ## Exact inputs and exported paths
 
 - Repository: `epistemedeus/samedaydesk`.
+- Exported implementation commit: `dc618933ced736c9d2534222f4a5ad050ea8a9b0`.
+- Draft PR: https://github.com/epistemedeus/samedaydesk/pull/142.
 - Existing branch: `codex/cw64-installed-client-current-runtime-20260912`.
 - Integration base: `76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be`.
 - Imported only `tools/python-useful-jobs-client/` from completed D08
@@ -27,6 +29,12 @@ Cursor inference, nested model CLI, or agent delegation was used.
 - Exact dependency hashes and environment: `evidence/dependencies.json`.
 - At closeout, remote `main` was observed at
   `ad9bc7b448cf1f635ff1488affbe206aaf981ac0`; it was not imported or changed.
+
+The draft is stacked on existing `codex/useful-jobs-core-integration-20260912`,
+observed at `30345f69f16aca93bb95511ee4da62975c98cc04` (eight commits ahead of
+the requested integration base). Those later source changes were not imported
+or tested here. Retargeting from main removed inherited integration history
+from the PR diff; readback verified all 44 initial source/evidence files are scoped.
 
 Only the client directory and this experiment directory are changed. Shared
 runtime, engines, public archives and unrelated evidence remain untouched.
