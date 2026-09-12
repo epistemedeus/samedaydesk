@@ -1,0 +1,10 @@
+{
+  "id": "stripe-card-us-standard",
+  "kind": "card",
+  "currency": "usd",
+  "percentBps": 290,
+  "fixedUsd": "0.30",
+  "source": "https://stripe.com/pricing",
+  "retrievedAt": "2026-09-11",
+  "quote": "2.9% + $0.30 per successful transaction for domestic cards"
+}

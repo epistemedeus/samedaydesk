@@ -1,0 +1,19 @@
+{
+  "name": "@samedaydesk/wave5-d26-price-floor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "W5-D26 cost/price-floor kit for live POST /lockfile-pin-delta at 0.005 USDC plus historical F08 0.003 T3 scenario. No live settlement.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "price-floor": "./bin/price-floor.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "journey": "node bin/price-floor.mjs journey",
+    "profile": "node bin/price-floor.mjs profile",
+    "listen": "node bin/price-floor.mjs listen"
+  }
+}

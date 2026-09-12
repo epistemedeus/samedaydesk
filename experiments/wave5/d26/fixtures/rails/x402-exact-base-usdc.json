@@ -1,0 +1,16 @@
+{
+  "id": "x402-exact-base-usdc",
+  "kind": "x402-exact",
+  "scheme": "exact",
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "usdcDecimals": 6,
+  "facilitator": "coinbase_cdp",
+  "verifyUsd": "0",
+  "freeTierMonthlyOnchain": 1000,
+  "usageBasedUsdPerOnchainTx": "0.001",
+  "decisiveTier": "usage-based",
+  "source": "https://docs.cdp.coinbase.com/x402/core-concepts/facilitator",
+  "retrievedAt": "2026-09-11",
+  "quote": "The first 1,000 onchain Facilitator transactions each month are free, then each additional onchain transaction costs $0.001. Payment verification is always free. With exact, each accepted payment settles in one onchain transaction."
+}
