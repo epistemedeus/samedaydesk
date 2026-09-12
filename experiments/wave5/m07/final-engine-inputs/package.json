@@ -1,0 +1,17 @@
+{
+  "name": "@samedaydesk/wave5-m07-final-engine-inputs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Independent npm lockfile v2/v3 identity replay on the shipped merchant engine and public kit 1.2.0. Not a second pin-delta kernel. Not inherited M07 corpus replay.",
+  "bin": {
+    "m07-final-engine-inputs": "./bin/replay-final.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "replay": "node bin/replay-final.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

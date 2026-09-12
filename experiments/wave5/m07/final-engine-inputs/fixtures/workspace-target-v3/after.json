@@ -1,0 +1,29 @@
+{
+  "name": "m07-final-workspace",
+  "version": "0.1.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "m07-final-workspace",
+      "version": "0.1.0"
+    },
+    "node_modules/@neomorphic/correspondence": {
+      "resolved": "vendor/neomorphic-correspondence",
+      "link": true
+    },
+    "node_modules/zod": {
+      "version": "3.25.76",
+      "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
+      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
+      "license": "MIT"
+    },
+    "vendor/neomorphic-correspondence": {
+      "name": "@neomorphic/correspondence",
+      "version": "0.2.0",
+      "engines": {
+        "node": "22.x"
+      }
+    }
+  }
+}
