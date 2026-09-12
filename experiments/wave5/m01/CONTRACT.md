@@ -4,21 +4,29 @@
 **Job contract export:** `samedaydesk.wave5.m01.job-catalog.v1`  
 **D01 execution contract (read-only):** `samedaydesk.paid-useful-jobs.execution.v1` at `6bed72dd22a396134aa5c957933b42c3a5746698`
 
-This package executes the four imported engine CLIs. It does not copy their compare kernels. D01 owns the paid-offer consumer (`server/paid-useful-jobs/`).
+This package executes the four imported engine CLIs. It does not copy their compare kernels. D01 owns the paid-offer consumer (`server/paid-useful-jobs/`). Fresh callers select engines through that consumer, not `runCatalogPaidOffer`.
 
 ## Consumer
 
-```bash
-node experiments/wave5/m01/bin/run-job.mjs lockfile-pin-delta \
-  --before tools/lockfile-pin-delta/fixtures/journey/before.json \
-  --after tools/lockfile-pin-delta/fixtures/journey/after.json \
-  --out-dir "$OUT"
+D01 default `createExecutor` / `runPaidOffer` / `bin/deliver.mjs` injects `createM01AwareGetJob` and `runEngineForD01`. Supply caller lockfiles (not fixture paths from this repository):
 
+```bash
+node server/paid-useful-jobs/bin/deliver.mjs \
+  --job lockfile-pin-delta \
+  --before "$BEFORE_LOCKFILE" \
+  --after "$AFTER_LOCKFILE"
+```
+
+Accepted lockfile inputs: npm `package-lock.json` with `lockfileVersion` 2 or 3. Equality uses `name`, `version`, `integrity`, and `resolved`. Not yarn/pnpm/bun/HTML or package.json-only.
+
+Catalog package CLI (not the paid-offer path):
+
+```bash
 node experiments/wave5/m01/bin/catalog.mjs contract
 node --test --test-concurrency=1 experiments/wave5/m01/test/*.test.mjs
 ```
 
-Library: `runCatalogJob` / `invokeEngine` from `experiments/wave5/m01/index.mjs`.
+Library: `runCatalogJob` / `invokeEngine` from `experiments/wave5/m01/index.mjs`. `runCatalogPaidOffer` is an adapter remaining for tests, not the consumer.
 
 ## Outcome mapping
 
