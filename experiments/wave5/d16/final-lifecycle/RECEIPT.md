@@ -5,6 +5,7 @@ Independent final-input check of the real release candidate. Not a second kernel
 **Date:** 12 September 2026  
 **Slot:** W5-D16 final-input  
 **Owned paths:** `experiments/wave5/d16/final-lifecycle/`  
+**This branch head:** `5b44a8c39ceafdd548778b3a3b9d2e2dc21f9cd8`  
 **Next owner:** W5-D01 (Root publishes after reconciliation)
 
 ## Exact source
