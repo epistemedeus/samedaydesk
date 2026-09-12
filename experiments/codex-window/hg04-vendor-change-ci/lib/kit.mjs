@@ -54,9 +54,11 @@ export function resolveReleasedArchive({ archivePath = null, pins = loadPins() }
 
 export function runVendorBudgetImpact({ kitDir, beforePath, afterPath, outDir }) {
   mkdirSync(outDir, { recursive: true });
+  const runDir = mkdtempSync(join(tmpdir(), "hg04-run-"));
+  try {
   const proc = spawnSync(
     process.execPath,
-    [join(kitDir, "bin/useful-jobs.mjs"), "run", "vendor-budget-impact", "--before", beforePath, "--after", afterPath, "--out-dir", outDir],
+    [join(kitDir, "bin/useful-jobs.mjs"), "run", "vendor-budget-impact", "--before", beforePath, "--after", afterPath, "--out-dir", runDir],
     {
       encoding: "utf8",
       cwd: kitDir,
@@ -72,9 +74,13 @@ export function runVendorBudgetImpact({ kitDir, beforePath, afterPath, outDir })
   }
   const artifactPath = join(outDir, "budget-impact.json");
   const markdownPath = join(outDir, "budget-impact.md");
-  const artifact = existsSync(artifactPath) ? JSON.parse(readFileSync(artifactPath, "utf8")) : null;
-  const markdown = existsSync(markdownPath) ? readFileSync(markdownPath, "utf8") : null;
+  const freshArtifact = join(runDir, "budget-impact.json"), freshMarkdown = join(runDir, "budget-impact.md");
+  const artifact = proc.status === 0 && existsSync(freshArtifact) ? JSON.parse(readFileSync(freshArtifact, "utf8")) : null;
+  const markdown = proc.status === 0 && existsSync(freshMarkdown) ? readFileSync(freshMarkdown, "utf8") : null;
+  if (artifact) writeFileSync(artifactPath, JSON.stringify(artifact, null, 2) + "\n");
+  if (markdown) writeFileSync(markdownPath, markdown);
   return { proc, receipt, artifact, markdown, artifactPath, markdownPath };
+  } finally { rmSync(runDir, { recursive: true, force: true }); }
 }
 
 export function writeJson(path, value) {

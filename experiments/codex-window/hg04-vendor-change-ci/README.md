@@ -1,5 +1,8 @@
 # hg04 vendor-change-ci
 
+Current consumer review: [CW51 receipt](REVIEW-CW51.md). The committed
+`artifact/` directory preserves the original HG04 evidence snapshot.
+
 CI consumer of released useful-jobs **vendor-budget-impact** for a caller who
 already holds a dated upstream pricing-row pair.
 
@@ -34,7 +37,9 @@ Draft 1.4.1 (PR 119, not default, not treated as live):
 
 - sha256 `b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d`
 - bytes `2575456`
-- Use only with `--allow-candidate` after a URL verifies those bytes.
+- Obtain only after verifying those bytes. The CI run path is restricted to
+  released 1.4.0 and refuses candidate selection; it never substitutes another
+  version silently. Candidate/public archive promotion belongs to its owner.
 
 ## Run
 
@@ -58,7 +63,16 @@ node bin/vendor-change-ci.mjs run \
   --out-dir ./out/budget
 ```
 
-`--update-baseline` is refused.
+`--update-baseline` is refused. An explicitly requested missing baseline fails
+with `hold-baseline`. Input/baseline paths may not overlap generated outputs.
+Each kit invocation reads only a fresh temporary output directory; failed
+processes cannot reuse a prior successful artifact. Caller-supplied `--kit-dir`
+runs are labeled unverified and never inherit the released archive's hash.
+
+The Python entry point forwards to the Node decision path. Both already require
+Node for the released kit, and now share exact baseline, coverage, arithmetic,
+relative-path, and refusal behavior. A partial before or after capture and
+non-finite arithmetic stay partial. Missing explicit source files are errors.
 
 ## Fixtures
 

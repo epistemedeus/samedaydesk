@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { existsSync, readFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { existsSync, readFileSync, realpathSync, statSync } from "node:fs";
+import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expectedPath, fixtureDir, loadPins } from "../lib/paths.mjs";
 import { baselineView, evaluatePair, machineAction } from "../lib/truth.mjs";
@@ -64,6 +64,8 @@ if (version === pins.candidate.version && !args["allow-candidate"]) {
   fail("candidate-not-default", "1.4.1 is a draft PR pin. Pass --allow-candidate after a verifying obtain, or use 1.4.0.");
 }
 
+if (version !== pins.released.version) fail("candidate-run-unavailable", "This consumer runs only the pinned released archive; it must not silently substitute 1.4.0 for a selected candidate.");
+
 let beforePath = args.before;
 let afterPath = args.after;
 let sourcePath = args.source || null;
@@ -81,9 +83,21 @@ if (!beforePath || !afterPath) {
 
 const before = readJson(beforePath, "before");
 const after = readJson(afterPath, "after");
-const source = sourcePath && existsSync(resolve(sourcePath)) ? readJson(sourcePath, "source") : null;
+const source = sourcePath ? readJson(sourcePath, "source") : null;
 const usage = args.usage ? readJson(args.usage, "usage") : null;
 const outDir = resolve(args["out-dir"] || join(process.cwd(), "out", "vendor-change-ci"));
+function canonicalPath(path) {
+  let existing = resolve(path); const rest = [];
+  while (!existsSync(existing)) { rest.unshift(basename(existing)); existing = dirname(existing); }
+  return join(realpathSync(existing), ...rest);
+}
+const protectedPaths = new Set([before.path, after.path, source?.path, usage?.path, baselineFile].filter(Boolean).map(canonicalPath));
+const fileIdentity = (path) => { if (!existsSync(path)) return null; const s = statSync(path); return s.dev + ":" + s.ino; };
+const protectedIdentities = new Set([...protectedPaths].map(fileIdentity).filter(Boolean));
+for (const name of ["vendor-change-ci.json", "vendor-change-ci.md", "machine-action.json", "kit/budget-impact.json", "kit/budget-impact.md"]) {
+  const output = join(outDir, name);
+  if (protectedPaths.has(canonicalPath(output)) || protectedIdentities.has(fileIdentity(output))) fail("input-output-overlap", "Output paths must not overwrite inputs or a frozen baseline.");
+}
 
 let kitHandle;
 try {
@@ -126,7 +140,7 @@ const expected = baselineFile || (args.fixture ? expectedPath(String(args.fixtur
 const baseline = expected ? compareBaseline(view, expected) : { compared: false, matched: null, updated: false, path: null };
 const action = machineAction({
   wrapperStatus: evalResult.wrapperStatus,
-  baselineMatched: baseline.compared ? baseline.matched : true,
+  baselineMatched: expected ? baseline.matched : true,
   invoiceClaim: evalResult.billing.invoiceClaim,
 });
 
@@ -142,10 +156,12 @@ const result = {
         ? "Capture or unit evidence is non-final. Do not treat missing fields as retirements or bills."
         : `List-price row scan with kit status ${evalResult.kitStatus}. Review field deltas; this is not a bill.`,
   kit: {
-    version: kitHandle.spec.version,
-    status: kitHandle.spec.status,
-    sha256: kitHandle.spec.sha256,
-    bytes: kitHandle.spec.bytes,
+    version: args["kit-dir"] ? null : kitHandle.spec.version,
+    status: args["kit-dir"] ? "unverified-directory" : kitHandle.spec.status,
+    verifiedArchive: !args["kit-dir"],
+    source: args["kit-dir"] ? "caller-supplied-unverified-directory" : "verified-pinned-archive",
+    sha256: args["kit-dir"] ? null : kitHandle.spec.sha256,
+    bytes: args["kit-dir"] ? null : kitHandle.spec.bytes,
   },
   inputs: { before: before.path, after: after.path, source: source?.path || null, usage: usage?.path || null },
   truth: {
@@ -154,9 +170,11 @@ const result = {
     coverage: evalResult.coverage,
     membership: evalResult.membership,
     conflicts: evalResult.conflicts,
+    arithmeticOverflow: evalResult.arithmeticOverflow,
   },
   independentArithmetic: evalResult.independentArithmetic,
   kitReceipt: kitRun.receipt,
+  kitExecution: { exitCode: kitRun.proc.status, signal: kitRun.proc.signal, error: kitRun.proc.error?.code || null },
   kitActions: kitRun.artifact?.actions || [],
   kitCounts,
   kitDigest: kitRun.artifact?.digest || null,

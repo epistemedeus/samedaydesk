@@ -101,16 +101,16 @@ export function coverageTruth({ beforeParsed, afterParsed, source }) {
     : [];
   const afterFields = new Set(afterParsed.fields);
   const missingDeclared = declared.filter((f) => !afterFields.has(f)).sort();
-  const captureIncomplete = afterParsed.capture?.complete === false || source?.capture?.complete === false;
+  const captureIncomplete = beforeParsed.capture?.complete === false || afterParsed.capture?.complete === false || source?.capture?.complete === false;
   const complete = !captureIncomplete && missingDeclared.length === 0;
   return {
     complete,
-    captureComplete: afterParsed.capture?.complete !== false && source?.capture?.complete !== false,
+    captureComplete: beforeParsed.capture?.complete !== false && afterParsed.capture?.complete !== false && source?.capture?.complete !== false,
     declaredFields: declared,
     missingDeclared,
     note: complete
       ? "Declared fields are present in the after snapshot."
-      : "After snapshot is an incomplete capture; missing fields are coverage holes, not retirements.",
+      : "A supplied snapshot is an incomplete capture; missing fields are coverage holes, not retirements or confirmed additions.",
   };
 }
 
@@ -206,13 +206,18 @@ export function evaluatePair({ beforeJson, afterJson, source = null, usage = nul
   const unit = unitTruth(before.rows, after.rows);
   const coverage = coverageTruth({ beforeParsed: before, afterParsed: after, source });
   const arithmetic = independentArithmetic(before.rows, after.rows);
+  const beforeIndex = indexByField(before.rows), afterIndex = indexByField(after.rows);
+  const arithmeticOverflow = unit.comparable.some(({ field }) => {
+    const b = beforeIndex.get(field), a = afterIndex.get(field);
+    return b.length === 1 && a.length === 1 && !Number.isFinite(a[0].value - b[0].value);
+  });
   const usageInfo = loadUsage(usage);
   const billing = invoiceAndForecast(usageInfo);
   const kitStatus = kitArtifact?.status || null;
   const wrapperStatus = decideWrapperStatus({
     schemaOk,
     unitComparable: unit.unitComparable,
-    coverageComplete: coverage.complete,
+    coverageComplete: coverage.complete && !arithmeticOverflow,
     conflicts,
     kitStatus,
   });
@@ -223,6 +228,7 @@ export function evaluatePair({ beforeJson, afterJson, source = null, usage = nul
     membership,
     conflicts,
     independentArithmetic: arithmetic,
+    arithmeticOverflow,
     usage: usageInfo,
     billing,
     wrapperStatus,
@@ -260,7 +266,8 @@ export function baselineView(evalResult, kitCounts, action) {
 
 function roundDelta(value) {
   if (typeof value !== "number" || !Number.isFinite(value)) return value;
-  return Math.round(value * 1e12) / 1e12;
+  const scaled = value * 1e12;
+  return Number.isFinite(scaled) ? Math.round(scaled) / 1e12 : value;
 }
 
 export function comparableBaseline(view) {
