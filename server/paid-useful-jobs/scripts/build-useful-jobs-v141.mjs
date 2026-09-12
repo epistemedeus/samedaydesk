@@ -63,7 +63,7 @@ const pkg = json(join(stage, "package.json"));
 pkg.version = version;
 writeJson(join(stage, "package.json"), pkg);
 let readme = readFileSync(join(stage, "README.md"), "utf8");
-readme = readme.replaceAll(prevName, name).replaceAll("useful-jobs " + prevVersion, "useful-jobs " + version);
+readme = readme.replaceAll(prevVersion, version);
 readme += "\n## 1.4.1 pricing-row qualification\n\n" + summary + " " + notes + "\n\nPrevious 1.4.0 remains byte-identical at /for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz.\n";
 writeFileSync(join(stage, "README.md"), readme);
 writeFileSync(join(stage, "NOTICE"), readFileSync(join(stage, "NOTICE"), "utf8") + "\n1.4.1 vendor-row overlay: expose added/removed fields and comparable list-price values. No live fetch, bill estimate, tariff engine, or purchase authority.\n");
