@@ -67,7 +67,7 @@ test("local HTTP: parser accepts lockfile bytes served by a loopback server (tes
     res.setHeader("content-type", "application/json");
     res.end(text);
   });
-  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  await new Promise((resolve) => server.listen(Number(process.env.LOCKFILE_TEST_PORT || 0), "127.0.0.1", resolve));
   const { port } = server.address();
   try {
     const res = await fetch(`http://127.0.0.1:${port}/package-lock.json`);
@@ -142,7 +142,7 @@ test("local HTTP: git-resolved after lock bytes compare to before file", async (
     res.setHeader("content-type", "application/json");
     res.end(afterBytes);
   });
-  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  await new Promise((resolve) => server.listen(Number(process.env.LOCKFILE_TEST_PORT || 0), "127.0.0.1", resolve));
   const { port } = server.address();
   try {
     const res = await fetch(`http://127.0.0.1:${port}/package-lock.json`);

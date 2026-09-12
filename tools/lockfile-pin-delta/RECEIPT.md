@@ -1,3 +1,5 @@
+Current independent audit: [CW43-AUDIT.md](CW43-AUDIT.md). The dated receipts below are historical.
+
 # W4-commerce-11 receipt
 
 Historical implementation receipt. The CW15 semantics hardening in the current
