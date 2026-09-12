@@ -318,7 +318,10 @@ describe("M01 engines on the D01 delivery kit", { timeout: 240_000 }, () => {
     assert.equal(replay.termsHash, first.termsHash);
 
     const swappedWork = workDir("conflict");
-    const swapped = lockInputs(swappedWork);
+    const swapped = {
+      before: copyFile(join(LOCK, "journey/before.json"), join(swappedWork, "before.json")),
+      after: copyFile(join(LOCK, "journey/before.json"), join(swappedWork, "after.json")),
+    };
     const preB = await runPreflightStage({
       jobId: "lockfile-pin-delta",
       inputs: swapped,

@@ -20,7 +20,7 @@ test("catalog loads with exactly one first offer from in-tree engines", () => {
   assert.equal(catalog.d01Binding.testedWrapperSha, "6bed72dd22a396134aa5c957933b42c3a5746698");
 });
 
-test("CLI list firstOffer is lockfile and wrapper jobs stay the SDS52 six", () => {
+test("CLI list firstOffer is lockfile and D01 list includes overlay plus published jobs", () => {
   const catalogCli = spawnSync(process.execPath, [join(MODULE_ROOT, "bin/catalog.mjs"), "list"], {
     cwd: REPO_ROOT,
     encoding: "utf8",

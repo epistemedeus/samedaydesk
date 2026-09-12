@@ -203,6 +203,10 @@ export function seedFromD01Execution({
       transport: checked.transport,
     },
     payment,
+    expectedOutputNames:
+      Array.isArray(checked.delivery?.expected) && checked.delivery.expected.length
+        ? checked.delivery.expected
+        : files.map((f) => f.name),
   });
   seeded.d01 = {
     contract: D01_EXECUTION_CONTRACT,

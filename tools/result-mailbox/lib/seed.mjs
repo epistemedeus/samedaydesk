@@ -13,9 +13,12 @@ import { fileArtifact, statBytes } from "./digest.mjs";
 import { inspectSample } from "./sample.mjs";
 import { writeEnvelopeFiles } from "./store.mjs";
 
-function expectedOutputs(jobId) {
-  const catalog = JSON.parse(readFileSync(USEFUL_JOBS_CATALOG_PATH, "utf8"));
-  const job = (catalog.jobs || []).find((j) => j.id === jobId);
+function expectedOutputs(jobId, catalog = null) {
+  const source =
+    catalog && typeof catalog === "object"
+      ? catalog
+      : JSON.parse(readFileSync(typeof catalog === "string" ? catalog : USEFUL_JOBS_CATALOG_PATH, "utf8"));
+  const job = (source.jobs || []).find((j) => j.id === jobId);
   if (!job) throw refuse("unknown-job", `unknown useful-job ${jobId}`);
   if (!Array.isArray(job.outputs) || job.outputs.length < 1) {
     throw refuse("missing-engine-output", `job ${jobId} declares no outputs`);
@@ -53,10 +56,15 @@ export function seedFromOutDir({
   engine = null,
   engineResult = null,
   payment = null,
+  catalog = null,
+  expectedOutputNames = null,
 }) {
   parseClock(clock, "clock");
   const exp = expiresAt || addSeconds(clock, ttlSeconds);
-  const names = expectedOutputs(jobId);
+  const names =
+    Array.isArray(expectedOutputNames) && expectedOutputNames.length
+      ? expectedOutputNames
+      : expectedOutputs(jobId, catalog);
   const files = collectOutputs(resolve(outDir), names);
   const sampleInfo = inspectSample({
     example: sample,

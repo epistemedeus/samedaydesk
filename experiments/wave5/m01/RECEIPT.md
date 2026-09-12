@@ -42,6 +42,6 @@ Independent replay vs imported engines: M06 specified-agree 20/20 (0 gaps after 
 
 ## D01
 
-Unpatched `createExecutor` cannot select these engines (`unknown-job`). Adapter: `experiments/wave5/m01/lib/d01-adapter.mjs`. Exact `getJob` injection: `CONTRACT.md`. Not a sale.
+D01 default executor overlays these engines (`createM01AwareGetJob` + `runEngineForD01`). `runCatalogPaidOffer` is not the consumer path. Not a sale.
 
 No live settlement, payout, homepage, or default-branch push.
