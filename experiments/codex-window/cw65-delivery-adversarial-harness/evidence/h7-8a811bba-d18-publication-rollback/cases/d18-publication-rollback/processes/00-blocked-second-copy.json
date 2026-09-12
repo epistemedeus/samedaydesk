@@ -1,0 +1,23 @@
+{
+  "pid": 341039,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/server/paid-useful-jobs/bin/cli.mjs",
+    "run",
+    "vendor-budget-impact",
+    "--before",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-8a811bba-d18-publication-rollback/cases/d18-publication-rollback/inputs/rollback-before.json",
+    "--after",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-8a811bba-d18-publication-rollback/cases/d18-publication-rollback/inputs/rollback-after.json",
+    "--out-dir",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-8a811bba-d18-publication-rollback/cases/d18-publication-rollback/existing-publication"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-u6W3t9/d18-publication-rollback",
+  "startedAt": "2026-09-12T12:09:12.041Z",
+  "endedAt": "2026-09-12T12:09:12.346Z",
+  "status": 2,
+  "signal": null,
+  "timedOut": false
+}

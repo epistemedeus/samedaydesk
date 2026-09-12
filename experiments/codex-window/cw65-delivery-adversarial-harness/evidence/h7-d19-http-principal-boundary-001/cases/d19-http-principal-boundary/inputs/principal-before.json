@@ -1,0 +1,10 @@
+{
+  "label": "cw65-caller-principal",
+  "rows": [
+    {
+      "field": "principal-input",
+      "value": 2,
+      "unit": "USD/1M-tokens"
+    }
+  ]
+}

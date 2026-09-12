@@ -1,0 +1,73 @@
+{
+  "schema": "samedaydesk.useful-jobs.hash-terms.v1",
+  "package": "useful-jobs",
+  "version": "1.4.1",
+  "sha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+  "bytes": 2575456,
+  "rootName": "useful-jobs-1.4.1",
+  "cli": "bin/useful-jobs.mjs",
+  "archiveRel": "client/public/for-agents/useful-jobs/useful-jobs-1.4.1.tar.gz",
+  "archivePublicPath": "/for-agents/useful-jobs/useful-jobs-1.4.1.tar.gz",
+  "catalogRel": "client/public/for-agents/useful-jobs/catalog.json",
+  "kitJsonRel": "client/src/data/usefulJobsKit.json",
+  "node": ">=22",
+  "purchaseAuthority": false,
+  "sourceRepo": "epistemedeus/samedaydesk",
+  "sourceCommit": "b046a2074fedfff85ca18aa7ebe9e3d42b87c95e",
+  "archiveFreeze": "b046a2074fedfff85ca18aa7ebe9e3d42b87c95e",
+  "reviewedSource": "817a00ca226a94b0e198b29fcd06245b2a92adec",
+  "jobs": [
+    "lockfile-pin-delta",
+    "json-schema-webhook-drift",
+    "route-table-diff",
+    "page-change-offline-job",
+    "api-upgrade-brief",
+    "vendor-budget-impact",
+    "feed-agenda",
+    "evidence-ci-annotation",
+    "listing-repair-packet",
+    "repeat-job-record"
+  ],
+  "jobOutputs": {
+    "lockfile-pin-delta": [
+      "pin-delta.json",
+      "pin-delta.md"
+    ],
+    "json-schema-webhook-drift": [
+      "drift-brief.json",
+      "drift-brief.md"
+    ],
+    "route-table-diff": [
+      "route-diff.json",
+      "route-diff.md"
+    ],
+    "page-change-offline-job": [
+      "page-change.json",
+      "page-change.md"
+    ],
+    "api-upgrade-brief": [
+      "upgrade-brief.json",
+      "upgrade-brief.md"
+    ],
+    "vendor-budget-impact": [
+      "budget-impact.json",
+      "budget-impact.md"
+    ],
+    "feed-agenda": [
+      "agenda.json",
+      "agenda.ics"
+    ],
+    "evidence-ci-annotation": [
+      "annotations.json",
+      "annotations.md"
+    ],
+    "listing-repair-packet": [
+      "repair-packet.json",
+      "repair-packet.md"
+    ],
+    "repeat-job-record": [
+      "repeat-job.json",
+      "repeat-job.md"
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "label": "cw65-caller-interrupt",
+  "rows": [
+    {
+      "field": "interrupt-input",
+      "value": 2,
+      "unit": "USD/1M-tokens"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "status": 403,
+  "body": {
+    "ok": false,
+    "code": "principal-mismatch",
+    "error": "Result is bound to a different HTTP principal in this process",
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1"
+  },
+  "raw": "{\"ok\":false,\"code\":\"principal-mismatch\",\"error\":\"Result is bound to a different HTTP principal in this process\",\"contract\":\"samedaydesk.paid-useful-jobs.execution.v1\"}"
+}

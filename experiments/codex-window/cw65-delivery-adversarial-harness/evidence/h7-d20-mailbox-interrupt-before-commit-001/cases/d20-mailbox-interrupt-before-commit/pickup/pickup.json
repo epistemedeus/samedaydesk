@@ -1,0 +1,39 @@
+{
+  "schema": "samedaydesk.result-mailbox.pickup.v1",
+  "ok": true,
+  "refused": false,
+  "status": "retrieved",
+  "deliveredToBuyer": false,
+  "acknowledged": false,
+  "sample": false,
+  "sampleReasons": [],
+  "requestId": "cw65-mail",
+  "jobId": "vendor-budget-impact",
+  "retrievedAt": "2026-09-12T07:00:00.000Z",
+  "expiry": {
+    "expiresAt": "2026-09-13T07:00:00Z",
+    "clock": "2026-09-12T07:00:00.000Z",
+    "state": "unexpired",
+    "expired": false
+  },
+  "artifacts": [
+    {
+      "name": "budget-impact.json",
+      "bytes": 1345,
+      "sha256": "c2b38ead07937c56ed0f7044880e715959aa6192bc7d585bcd69f7af0124b263",
+      "ok": true
+    },
+    {
+      "name": "budget-impact.md",
+      "bytes": 357,
+      "sha256": "815782b8e057cc79dd22f534b7fff6223d232520b81475e386a55adb6e388440",
+      "ok": true
+    }
+  ],
+  "outDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-interrupt-before-commit-001/cases/d20-mailbox-interrupt-before-commit/pickup",
+  "purchaseAuthority": false,
+  "sold": false,
+  "liveSettlement": "out-of-scope",
+  "termsVersion": "sha256:8a014f7d6db9a5a2a9010d9f7cc84e51abeac911d3c225ff7ef619a6f3a0f0c0",
+  "evidenceClass": "local-runtime"
+}

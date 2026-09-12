@@ -1,0 +1,10 @@
+{
+  "label": "cw65-caller-same-order",
+  "rows": [
+    {
+      "field": "same-order-input",
+      "value": 3,
+      "unit": "USD/1M-tokens"
+    }
+  ]
+}

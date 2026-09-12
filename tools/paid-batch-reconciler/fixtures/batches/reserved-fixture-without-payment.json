@@ -1,0 +1,14 @@
+{
+  "schema": "samedaydesk.paid-batch-reconciler.request.v1",
+  "items": [
+    {
+      "id": "no-payment",
+      "engineId": "vendor-budget-impact",
+      "files": {
+        "before": "../caller/vendor-budget-impact/before.json",
+        "after": "../caller/vendor-budget-impact/after.json"
+      },
+      "funding": "reserved-fixture"
+    }
+  ]
+}

@@ -1,0 +1,446 @@
+[
+  {
+    "commit": "59c2d08b1af4c0c885275f86b76702114a79c713",
+    "scope": "tools/repeat-job-binder",
+    "files": [
+      {
+        "path": "tools/repeat-job-binder/.gitignore",
+        "sourceBlob": "743b37ecf8b0b55ffd855c3563319aadd416b570",
+        "workingSha256": "6d7a2d7fc1a7fdb8ce01834cafe270627b161f2220f689b4ed9394a1b4883c88",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/FEATURE-MAP.md",
+        "sourceBlob": "f64b42b2af419270f1bacf63d70be53d9ecd51ad",
+        "workingSha256": "fbf14be473133add8b6ac599deebe8398702a0cd09a27fee70450f0276ccc090",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/LICENSE",
+        "sourceBlob": "746cc0f2a3da7503d68ac1a7e8d0c29758169449",
+        "workingSha256": "95be89e5cdd69c625aa28c290fda0b4804b8992f40e5fb1b2a5e9322393f7706",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/NOTICE",
+        "sourceBlob": "12969e5863df511821da1da33966bfd4e013376f",
+        "workingSha256": "9902c197046083d6605eec9289e299c39039a0870e205c424477827547b3c446",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/README.md",
+        "sourceBlob": "9ac9cd82db085ac5c42b90e919e2c9ef8c3ceecf",
+        "workingSha256": "00dd8451d63f7e9a73977c8b249ff68ad65a09e7e2e23c4560f843a8f32ec04d",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/RECEIPT.md",
+        "sourceBlob": "a83c3f906c46ec70da5e7a92dda64bf21b34cdcd",
+        "workingSha256": "0f4fd287b64adfd58a6384a702b92facc75402be37bac4f7aa6e5722dc7319eb",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/bin/bind.mjs",
+        "sourceBlob": "f584e2dd38433d43e1b0927e6972cd288c7e0b6c",
+        "workingSha256": "2b9546fab3563ec46d5894223cbbb717a08d811ae439e5ad7376e272d2ee12dc",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/fixtures/i01/SOURCE.txt",
+        "sourceBlob": "e38898148695ae329ab99ba24dc21a99502d004a",
+        "workingSha256": "17a0c2327020516c77485fd378ecebb30326b72cb6242a4aaace22a895a9cd50",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/fixtures/i01/complete.terms.json",
+        "sourceBlob": "896bb4b2401af9cc59980774316bb78b1918c538",
+        "workingSha256": "d9f39eac85c984dedbdc0f94e0fe275b725b2663b8b3968997ba2303901b338b",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/fixtures/integer-terms-version.json",
+        "sourceBlob": "905cdc3e161b7fb1ff67ae057f8170dc272af7c6",
+        "workingSha256": "0c4d64269c49508d6c3329760576194ffc8a4a9880d0ad730ffa02dd0dd924ae",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/fixtures/nonzero-engine/bin/useful-jobs.mjs",
+        "sourceBlob": "a9da9a3c44c12f95ccb1baaf855340763fcdbf6d",
+        "workingSha256": "7432da595db24d50e28cd01028576ee13b0a6c45d2819aa18ba6f02cccedad6c",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/fixtures/parser-mismatch.json",
+        "sourceBlob": "02134a4b818439560c1d58b48d744592b7a8e80f",
+        "workingSha256": "bb0b134fb52970bb004ed60fcc8f5ca3517ce45c6003e189ee09ef0e83564514",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/fixtures/sample-as-live.json",
+        "sourceBlob": "76171d73215b7f067b86ca78ef385cd9b6928184",
+        "workingSha256": "4c4a81213a8bc20aa88386b61a5a2ab548e94fcf6202a06f2782f91a8d8eec18",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/fixtures/scheduler-daemon.json",
+        "sourceBlob": "372921a23a3d62ca855bbc39d6aba4024bb08566",
+        "workingSha256": "06af78d5881d7d35400d9918277c9effbfd665490da1e2ef0dae061aaca25a7a",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/fixtures/unchecked-next-manifest.json",
+        "sourceBlob": "cf079dff71fb2c4214017cef6b73b5a1042777b4",
+        "workingSha256": "abfa9a2025ca609c528d67d8578da8284e989681e5669ea65cff001027cc86f5",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/lib/args.mjs",
+        "sourceBlob": "1b67d1bd7ac42b1ddb4bb92a53767c7d36d6bfd3",
+        "workingSha256": "17a75ec31a4f483a5f4004710d31e5c2ae8fe4c02bee5c1dd5404d291d56289a",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/lib/bind.mjs",
+        "sourceBlob": "8beac19b563c01af67ee52fc6ccfd7ee86cb50c4",
+        "workingSha256": "8c6184cdc137b9092bac14b1d53a651f3761b047112ee18c306d4cf3f0b510bd",
+        "modifiedFromImport": true
+      },
+      {
+        "path": "tools/repeat-job-binder/lib/canonical.mjs",
+        "sourceBlob": "5b1acea5394bffe1d240342e19fe5a9acba59dd7",
+        "workingSha256": "c5da90bbb049101b69cb0167c6e47f6b409e19ebd97af3717f372505d22bd649",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/lib/contract.mjs",
+        "sourceBlob": "deba75b1874c238d8b4744558630b139f5be838a",
+        "workingSha256": "e8e3fddb8cfa6fc13e166d10a2b96292c9fa5da79c1972133c1fa13e1d95118b",
+        "modifiedFromImport": true
+      },
+      {
+        "path": "tools/repeat-job-binder/lib/digest.mjs",
+        "sourceBlob": "a99e05b6ee02e999b615efa19219b2d70728638e",
+        "workingSha256": "0c6d8f3d5c9b157d6d3c351e92d0e91acf6a473d59ccfbf0327379dab01169fd",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/lib/engines.mjs",
+        "sourceBlob": "6b7e26e88d4c8a98078ac956c591067ac83f05b5",
+        "workingSha256": "c765f7b289c2122660cb84f7c4ea3a419c499051ef503ca9206bacfd567bd662",
+        "modifiedFromImport": true
+      },
+      {
+        "path": "tools/repeat-job-binder/lib/extract.mjs",
+        "sourceBlob": "013fb3a20829f7792f32982a470ae9211e61a8df",
+        "workingSha256": "aca4dca8929c9f869caaffe670036c82032eb0bf00116f2fa26542709d487f4f",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/lib/freeze.mjs",
+        "sourceBlob": "6b183ddf4b46ca739b617c8522bcf39f4d1e40ca",
+        "workingSha256": "bc242a74f76060df72b4ba663c57c23b2ba559e1b2276b3831a3b43a85e1aaaa",
+        "modifiedFromImport": true
+      },
+      {
+        "path": "tools/repeat-job-binder/lib/hash.mjs",
+        "sourceBlob": "5cdabed6f9fa1cdb2e631b58196aac0aa7451499",
+        "workingSha256": "8d1c0301393749452aaf4db96c54bd0b48dce2ece90b5cfd609541dbb1d6498a",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/lib/pins.mjs",
+        "sourceBlob": "f414cef89b6730a0d6850f0196937b8e932c71c1",
+        "workingSha256": "ec71ec38d6ba723d02ae65fe9a6bf6a6af8aa56152c13e978ae524fd8abf56c6",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/lib/refuse.mjs",
+        "sourceBlob": "37137e31200160db7b863aa37b8bcfc0f44f0be1",
+        "workingSha256": "64a3e2796518724e5878f67da4919a5fe6751a1a91f91e9f4a6a96f8a9e8e246",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/lib/second-run.mjs",
+        "sourceBlob": "59b61716eb26dc2d00b672af8377ccfc48f0ae35",
+        "workingSha256": "6e12e284892af1509ef580515e9b81c65068a697deb17e7bfe5d9c073617d6c6",
+        "modifiedFromImport": true
+      },
+      {
+        "path": "tools/repeat-job-binder/lib/ticket.mjs",
+        "sourceBlob": "a7fd2f7270b6c68f8881c42afc5ee8d9dddc2fc9",
+        "workingSha256": "07d103225f698e865555753734b16d49ff5a7a1a4498fa784ff9f4a15909b8c0",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/lib/verify.mjs",
+        "sourceBlob": "209bbf7c8d72d59fea74117cf2be5e47aa31fdd2",
+        "workingSha256": "1a934492a941df0e6f69c24c31cadb4e68b629176690799f2da952197fea8d4d",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/package.json",
+        "sourceBlob": "bd51a2c29555c6a3508495cc92b099253a2cd26f",
+        "workingSha256": "deffa2577213e75abcd8724a2b332131cecf53458c9c92263fcc87c2a87f5b91",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/test/d01-wrapper.integration.mjs",
+        "sourceBlob": "a73282ec17ca12bfac55dd54b4a206d555d8d348",
+        "workingSha256": "5cf09a9ef23272bc2af2b8551ce89be1e691f57088b6145785a4abe7ebba84f7",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/test/frozen-refs.test.mjs",
+        "sourceBlob": "98d298d0411eeebcc08f63c28c5e0301b7640775",
+        "workingSha256": "503189e59e0d3dd16cc5a5c6bf58656aa12ac321afd57c66c1cc469921a8f79f",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/test/helpers.mjs",
+        "sourceBlob": "72f28bcc39bea066fea62b7f24a0dd1957de8c99",
+        "workingSha256": "6ba9774502a3a2f34fa2b6946d3d3265040db01cdaad4b99226e51a2e05f0dce",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/test/journey.test.mjs",
+        "sourceBlob": "e6ec0fb341bcc63b77dc5b6b71655e6dee372a13",
+        "workingSha256": "463c62219059c9ba944dad5da0a4179ceb45ae15fa58705eac2e0aaf72c3e39b",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/test/local-http-catalog.test.mjs",
+        "sourceBlob": "44b96ff33f72eda40fd5c99a2a048f563302ce4e",
+        "workingSha256": "f6327f2f003465f0f0a247766dabde5cf90a2cc65dbf399dd87498d2b8ed6a45",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/test/missing-files.test.mjs",
+        "sourceBlob": "444c19ff85937a480df156804a164bd23a53873c",
+        "workingSha256": "d039552106f440de3313ba7474796a2341f416dd2b365df07c7cbd38056ce8b7",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/test/pins.test.mjs",
+        "sourceBlob": "e6fa51945d0f487aa547beb0c54120ab822315a3",
+        "workingSha256": "4f1d554841154772d64789400e0eaf902c72f977cdae4cb60162f59c8935520f",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/test/seeded-failures.test.mjs",
+        "sourceBlob": "e998b5bfdbcefd4fe7e02ee6658221b63190caa8",
+        "workingSha256": "2f761ac65ce03a747e1c265872426b23f346783c13753c61b5928a2298ef62c7",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/repeat-job-binder/test/terms-hash.test.mjs",
+        "sourceBlob": "7fe00b0863c739cec2f9c3f64acd3e4d5b1dfcaa",
+        "workingSha256": "3adc387ca41c34990ba51a96944f6613dd8432fb9d16995155d1d7cfe0cae2de",
+        "modifiedFromImport": false
+      }
+    ]
+  },
+  {
+    "commit": "d876795009a8feea4f0e579c8b716e38fab23eed",
+    "scope": "tools/output-replay-harness",
+    "files": [
+      {
+        "path": "tools/output-replay-harness/FEATURE-MAP.md",
+        "sourceBlob": "628b073f797d990d3e726d147fd55bc8efa8c8fd",
+        "workingSha256": "e57185a432ff0ca12766e717ad2f6c50987bdbaa7720f1854ec95bd01fdc7ee3",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/RECEIPT.md",
+        "sourceBlob": "3296a6621b4393cfa32ae9265f4f9d4a445daf53",
+        "workingSha256": "54f9d5dee80f991409b6aaf63838b50a1f41c70704f2ab89e0f4875a93d7b7f4",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/bin/replay.mjs",
+        "sourceBlob": "592e5b374c6fa8a3806882270dda38691e880836",
+        "workingSha256": "31e3ffb82df52b7712041c79e1a966bb98a3fe6c82b5830f5558766e4eb2f27a",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/fixtures/ARCHIVE-AFTER-YAML.txt",
+        "sourceBlob": "f8d4a860b6e36661e70bfe4d311e1d33a1d48411",
+        "workingSha256": "0fde8204e50decff9d7d1bc8964fafc2a189182879e20e6a5b6c477815d019b6",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/fixtures/identity-break/upgrade-brief.json",
+        "sourceBlob": "15f4faeab61a4e8ef23d9136de013057b9be71dd",
+        "workingSha256": "9b177a7dabdcee378ef8376f50c2be4bf0f4fd4aab8774dff985d85205d976f4",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/fixtures/labelled-drift/upgrade-brief.b.json",
+        "sourceBlob": "fd93805082f2b3479b73505766eb1db8c77429a3",
+        "workingSha256": "efc446a689dcbe51ac960a38abfa8ec58143236a1440ba0c6c9e17798748079f",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/fixtures/labelled-drift/upgrade-brief.b.md",
+        "sourceBlob": "73ef555808a3e9c2d5038911e2b688839664934d",
+        "workingSha256": "b1f085a1046fc91f338b2291ce580fcbd9a9486760efa182964d30fc466eae04",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/fixtures/labelled-drift/upgrade-brief.json",
+        "sourceBlob": "d19edaf156b658f58bfe13825c1509ce266f59a8",
+        "workingSha256": "b93f8d4140657c3a05f3c9dfbac0ff95929437cef289feccd809a5683f83fb85",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/fixtures/labelled-drift/upgrade-brief.md",
+        "sourceBlob": "9ab83b8100f6399f602c03df1155d3a84136c95d",
+        "workingSha256": "e32cf8b428c78354678f6127b2b9690b0e46a33f191da9753ea3cc12388310e7",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/index.mjs",
+        "sourceBlob": "6da79b6830c7477490771a6a95b4030a06796649",
+        "workingSha256": "db5dec6a5b08fe010a993d068103ff03c1b095a548597bffaeb89995659ffec7",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/lib/args.mjs",
+        "sourceBlob": "35e000da930da33414305c28d2819a902fb295ac",
+        "workingSha256": "e47d3c6311aee7b382a031ae2759e5ec63a87946b33f6afe5ea246c0be0064f1",
+        "modifiedFromImport": true
+      },
+      {
+        "path": "tools/output-replay-harness/lib/catalog.mjs",
+        "sourceBlob": "bed09d9cd1e98cb2fb9ab933f73ec24a99a1d485",
+        "workingSha256": "3c2e181858394417cdd4179bfc9428db75fc8a5fa57a63945d52a4d55e2e3ca8",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/lib/compare.mjs",
+        "sourceBlob": "6b8f6be3222c02bdd11f429c257500e2c471b121",
+        "workingSha256": "bf39ee496f82c41dad51210579ace1ff8cc64d8b6c92c29b45b7e8205716e0e9",
+        "modifiedFromImport": true
+      },
+      {
+        "path": "tools/output-replay-harness/lib/digest.mjs",
+        "sourceBlob": "85cc49b2ae6f8127b43e34d233925e1552b836ee",
+        "workingSha256": "4308a22dc68d59eca05f5db9e0dcda0fc99ff814f12f70179f637d6fde097574",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/lib/engine.mjs",
+        "sourceBlob": "1865f51425d8989672543c73cf1dcf52b8b24061",
+        "workingSha256": "d4fdc57a7c4b78dbae1e1163131012c12f8bf6ddddae90a28510b775d4877604",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/lib/kit.mjs",
+        "sourceBlob": "93d9eb6bee1efe36908efd10eeea8b01dfa2e16b",
+        "workingSha256": "751b01efc7c9428a050a74f6681f373ff1ab00ec53eb28503833ac31882bf019",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/lib/locations.mjs",
+        "sourceBlob": "6f196d9b3c25ea6dcd4ebc3e15c1f447dad19cb0",
+        "workingSha256": "32252d659014d7c47ba68a8f56a4fd263565453544c637c7efd594ddcbbed0a0",
+        "modifiedFromImport": true
+      },
+      {
+        "path": "tools/output-replay-harness/lib/pins.mjs",
+        "sourceBlob": "81a7290ef7b3a0346b1a5ef115974b3d640cbbb3",
+        "workingSha256": "b5fe188006d7f07c3e91535b7cf8b08aa19e4c17ec553e4b509d3147eff8f7a0",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/lib/replay.mjs",
+        "sourceBlob": "cfa2a88e6e9a471de0ac2ed6990b0c856e85a5c4",
+        "workingSha256": "4df6bd586e0cbec2fe261a162a462a0891ee4fd5a9c0e3433f9b879a6b03fe4d",
+        "modifiedFromImport": true
+      },
+      {
+        "path": "tools/output-replay-harness/lib/sample.mjs",
+        "sourceBlob": "cdd0d83cf995037dcda9c7d975968a053331abf5",
+        "workingSha256": "c8f41e0d6dcb27f7a2d197b03fabc1dc7f5c800aa8122fc7b4f445d545820074",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/lib/terms.mjs",
+        "sourceBlob": "60c2f5209166e6cad666ac2db0d3d64cf2572de7",
+        "workingSha256": "9d111013d9b5458c65406dddd1c5f5ea0c4144a50c5ddb193333e069dcc65433",
+        "modifiedFromImport": true
+      },
+      {
+        "path": "tools/output-replay-harness/package.json",
+        "sourceBlob": "8435024a7cf85de27786913a22e3bc43c46af241",
+        "workingSha256": "f9fe08cc7c120c12c5846e1edfb34034f8ee4d4b5294324fb507051bfbe08b9d",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/test/compare.test.mjs",
+        "sourceBlob": "71b6f48073295586549aaff80ecbab74cfa4492f",
+        "workingSha256": "86d9923d159b516b2c14f2803c13f87ca4197aee078544c64fd8961a62ebc174",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/test/disjoint-locations.test.mjs",
+        "sourceBlob": "5567f3c82a181dc270af01162db193e6776a1830",
+        "workingSha256": "6f61ad9ccd0275b06c70ab47af01233c617827af486892f421853c1106bfdb44",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/test/helpers.mjs",
+        "sourceBlob": "9e47c8dda28ba4e246d948881eb749e02a0515bc",
+        "workingSha256": "36e4f430d24479d8237c345e8e6d6b30a228facf39048a827619593ca6e70c4a",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/test/http-archive.test.mjs",
+        "sourceBlob": "986ac917b4752574dfe0e41fa831710425023fe3",
+        "workingSha256": "1f234f9e966a3ab6eb2678a59213ea682f619997d742c4fb460f9b6473b56333",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/test/journey.test.mjs",
+        "sourceBlob": "1303609a6eb7ebf2c0003a6e0f0392a8d5eedaa3",
+        "workingSha256": "3d5efbc4eef2a3dbca3e8e3a53b7686e26eb8a5163e4a4d63f7b38a4e34aefad",
+        "modifiedFromImport": true
+      },
+      {
+        "path": "tools/output-replay-harness/test/terms.test.mjs",
+        "sourceBlob": "36e6a8c32f9319daf58374e215cebce01897c401",
+        "workingSha256": "92e2880940cce92f2d29d8375d831f803434b9d75a66f363f0848b3d3adf210a",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/vendor/funded-task-terms/LICENSE",
+        "sourceBlob": "069b59afc55d1354ee6e0342d1a9b22aa7e98ee5",
+        "workingSha256": "9fac723cb7efb91568af7917aefef87dcd773b15f74d7d2692178083f3e0a9a8",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/vendor/funded-task-terms/PIN.json",
+        "sourceBlob": "d907c0c32c219df2f91c75d92cb3da990cd9218a",
+        "workingSha256": "e624456aa0867923dbc19f0aa6dbae636d69cee462a64544c682e37772a845fa",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/vendor/funded-task-terms/canonical.mjs",
+        "sourceBlob": "400459f528d3a3a85483be448237c6216b2aa458",
+        "workingSha256": "28c46048f76a275d9747565d56ea126edb698ed655a2bd1c749a1257f65df5ab",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/vendor/funded-task-terms/fixtures/golden/complete.terms.json",
+        "sourceBlob": "896bb4b2401af9cc59980774316bb78b1918c538",
+        "workingSha256": "d9f39eac85c984dedbdc0f94e0fe275b725b2663b8b3968997ba2303901b338b",
+        "modifiedFromImport": false
+      },
+      {
+        "path": "tools/output-replay-harness/vendor/funded-task-terms/hash.mjs",
+        "sourceBlob": "1e45ef8a7aa9e3a135a089e76e2c9048e05a02c7",
+        "workingSha256": "4d6b3c57f4cc89289ccf98b6534ce39f028cf0f3b387380d6eb6d48302ed1a20",
+        "modifiedFromImport": false
+      }
+    ]
+  }
+]

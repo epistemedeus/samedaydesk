@@ -1,0 +1,15 @@
+{
+  "pid": 355811,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/experiments/wave5/d16/fixtures/broken-engines/decoy-json.mjs"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-V3vRUr/control-decoy-json",
+  "startedAt": "2026-09-12T13:24:55.959Z",
+  "endedAt": "2026-09-12T13:24:55.988Z",
+  "status": 0,
+  "signal": null,
+  "timedOut": false
+}

@@ -1,0 +1,169 @@
+{
+  "ok": true,
+  "jobId": "vendor-budget-impact",
+  "title": "Vendor Budget Impact",
+  "fundingState": "unfunded",
+  "sold": false,
+  "sample": false,
+  "sampleReasons": [],
+  "purchaseAuthority": false,
+  "outputs": [
+    {
+      "name": "budget-impact.json",
+      "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-9hJuOk/d19-http-body-and-key/puj-vendor-budget-impact-out-guaovB/budget-impact.json",
+      "bytes": 1313,
+      "sha256": "9d0795c6351b25d942e670197ee932bfb17117b092f6175f16038075ed990106"
+    },
+    {
+      "name": "budget-impact.md",
+      "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-9hJuOk/d19-http-body-and-key/puj-vendor-budget-impact-out-guaovB/budget-impact.md",
+      "bytes": 353,
+      "sha256": "9d0179d7ea8049bfa025a607c5d3a8e199673f2ee18c5f298b8d542ea28a076a"
+    }
+  ],
+  "receipt": {
+    "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+    "jobId": "vendor-budget-impact",
+    "engine": {
+      "package": "useful-jobs",
+      "version": "1.0.0",
+      "purchaseAuthority": false,
+      "cli": "node bin/useful-jobs.mjs run <id>",
+      "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "archiveBytes": 2522418,
+      "sourceRepo": "epistemedeus/pilot",
+      "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+      "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+      "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+    },
+    "inputsDigest": "c6c0473d2b7622f091382b105ac374186b2be6e436f81c8a1b6c7e677e1af79d",
+    "outputsDigest": "e5c876e8c0c3420f0f6388391f9612dd7b87556ded2335930ef1fa46110fb657",
+    "inputs": [
+      {
+        "name": "before",
+        "kind": "file",
+        "bytes": 140,
+        "sha256": "155be5df9654be8b19e6dd48b69698a980fc305206c25bea5e6b5488d1ae4e22"
+      },
+      {
+        "name": "after",
+        "kind": "file",
+        "bytes": 140,
+        "sha256": "6ae0f18370865ba9454de7df255a636656ca6492bcc53d6a2bad5ac78ea1c2d0"
+      }
+    ],
+    "inputRoot": null,
+    "outputs": [
+      {
+        "name": "budget-impact.json",
+        "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-9hJuOk/d19-http-body-and-key/puj-vendor-budget-impact-out-guaovB/budget-impact.json",
+        "bytes": 1313,
+        "sha256": "9d0795c6351b25d942e670197ee932bfb17117b092f6175f16038075ed990106"
+      },
+      {
+        "name": "budget-impact.md",
+        "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-9hJuOk/d19-http-body-and-key/puj-vendor-budget-impact-out-guaovB/budget-impact.md",
+        "bytes": 353,
+        "sha256": "9d0179d7ea8049bfa025a607c5d3a8e199673f2ee18c5f298b8d542ea28a076a"
+      }
+    ],
+    "fundingState": "unfunded",
+    "sold": false,
+    "sample": false,
+    "sampleReasons": [],
+    "purchaseAuthority": false,
+    "liveSettlement": "out-of-scope",
+    "fixturePrice": {
+      "labelled": true,
+      "live": false,
+      "publishedToLiveCatalog": false,
+      "jobId": "vendor-budget-impact",
+      "amountUsdc": "0.02",
+      "amountAtomic": "20000",
+      "payTo": "0x0000000000000000000000000000000000000F08",
+      "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+    },
+    "payment": {
+      "fixture": false,
+      "purchaseAuthority": false,
+      "liveSettleAttempted": false,
+      "liveSettleAllowed": false,
+      "fundingState": "unfunded"
+    },
+    "continuity": null,
+    "engineResult": {
+      "ok": true,
+      "status": "actionable",
+      "digest": "65572eee8037322d",
+      "refused": false,
+      "identityVerified": null
+    },
+    "outDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-9hJuOk/d19-http-body-and-key/puj-vendor-budget-impact-out-guaovB",
+    "publishedDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-http-body-and-key-001/cases/d19-http-body-and-key/published/http",
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+    "transport": "ok",
+    "analysis": {
+      "status": "actionable",
+      "outcome": "actionable",
+      "identityVerified": null
+    },
+    "delivery": {
+      "status": "complete",
+      "complete": true,
+      "expected": [
+        "budget-impact.json",
+        "budget-impact.md"
+      ],
+      "present": [
+        "budget-impact.json",
+        "budget-impact.md"
+      ],
+      "missing": [],
+      "unexpected": [],
+      "publishedDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-http-body-and-key-001/cases/d19-http-body-and-key/published/http"
+    },
+    "runOutDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-9hJuOk/d19-http-body-and-key/puj-vendor-budget-impact-out-guaovB"
+  },
+  "engine": {
+    "ok": true,
+    "appId": "vendor-budget-impact",
+    "status": "actionable",
+    "digest": "65572eee8037322d",
+    "outDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-9hJuOk/d19-http-body-and-key/puj-vendor-budget-impact-out-guaovB",
+    "purchaseAuthority": false
+  },
+  "liveSettlement": "out-of-scope",
+  "executionId": "cw65-http",
+  "runOutDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-9hJuOk/d19-http-body-and-key/puj-vendor-budget-impact-out-guaovB",
+  "outDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-http-body-and-key-001/cases/d19-http-body-and-key/published/http",
+  "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+  "transport": "ok",
+  "analysis": {
+    "status": "actionable",
+    "outcome": "actionable",
+    "identityVerified": null
+  },
+  "delivery": {
+    "status": "complete",
+    "complete": true,
+    "expected": [
+      "budget-impact.json",
+      "budget-impact.md"
+    ],
+    "present": [
+      "budget-impact.json",
+      "budget-impact.md"
+    ],
+    "missing": [],
+    "unexpected": [],
+    "publishedDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-http-body-and-key-001/cases/d19-http-body-and-key/published/http"
+  },
+  "retrieval": {
+    "id": "cw65-http",
+    "path": "/results/cw65-http"
+  },
+  "cache": {
+    "scope": "process-local",
+    "expiresAt": 1789292787332
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "ok": true,
+  "classification": "complete",
+  "code": null,
+  "error": null,
+  "liveSettlement": "out-of-scope",
+  "purchaseAuthority": false,
+  "sold": false,
+  "testedProducer": {
+    "repo": "epistemedeus/samedaydesk",
+    "ref": "codex/w5-d01-20260911",
+    "sha": "fe8057f395bc665b629e12dbff0db0c264f0eb46",
+    "cli": "server/paid-useful-jobs/bin/cli.mjs"
+  },
+  "root": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-kbbID2/d18-simultaneous-same-publication/puj-vendor-budget-impact-out-Kvv7vK",
+  "receiptPath": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-kbbID2/d18-simultaneous-same-publication/puj-vendor-budget-impact-out-Kvv7vK/receipt.json",
+  "jobId": "vendor-budget-impact",
+  "fundingState": "unfunded",
+  "sample": false,
+  "outputsDigest": "0a77da4ceb6f5fd42934a624c59ece9298e854ea1336e3f4084fd4c1c9b8caf2",
+  "termsVersion": "sha256:6ab400d6bdee0cdb678f48777afe1ef942d499e5cb4cc4ab0bea26afc0e1e898",
+  "receiptTermsVersion": null,
+  "identity": {
+    "schema": "samedaydesk.job-output-atomicity.identity.v1",
+    "jobId": "vendor-budget-impact",
+    "outputs": [
+      {
+        "name": "budget-impact.json",
+        "bytes": 1338,
+        "sha256": "sha256:0c18a73e178551cee269e997f1448fbae6e12d508487b845802317bca55af1ec"
+      },
+      {
+        "name": "budget-impact.md",
+        "bytes": 354,
+        "sha256": "sha256:b049a9a365e97f247db91e40d362c6f01c2a40e1d8439ded2f4c338b500b1d3e"
+      }
+    ],
+    "outputsDigest": "0a77da4ceb6f5fd42934a624c59ece9298e854ea1336e3f4084fd4c1c9b8caf2",
+    "engineArchiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51"
+  },
+  "outputs": [
+    {
+      "name": "budget-impact.json",
+      "kind": "file",
+      "bytes": 1338,
+      "sha256": "0c18a73e178551cee269e997f1448fbae6e12d508487b845802317bca55af1ec",
+      "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-kbbID2/d18-simultaneous-same-publication/puj-vendor-budget-impact-out-Kvv7vK/budget-impact.json"
+    },
+    {
+      "name": "budget-impact.md",
+      "kind": "file",
+      "bytes": 354,
+      "sha256": "b049a9a365e97f247db91e40d362c6f01c2a40e1d8439ded2f4c338b500b1d3e",
+      "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-kbbID2/d18-simultaneous-same-publication/puj-vendor-budget-impact-out-Kvv7vK/budget-impact.md"
+    }
+  ],
+  "evidenceClass": "local-runtime",
+  "producerNotes": [
+    {
+      "code": "absolute-path-not-portable",
+      "name": "budget-impact.json",
+      "declaredPath": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-kbbID2/d18-simultaneous-same-publication/puj-vendor-budget-impact-out-Kvv7vK/budget-impact.json",
+      "binding": "basename-under-root"
+    },
+    {
+      "code": "absolute-path-not-portable",
+      "name": "budget-impact.md",
+      "declaredPath": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-kbbID2/d18-simultaneous-same-publication/puj-vendor-budget-impact-out-Kvv7vK/budget-impact.md",
+      "binding": "basename-under-root"
+    }
+  ],
+  "receiptSchema": "samedaydesk.paid-useful-jobs.receipt.v1",
+  "analysisOk": true,
+  "analysisStatus": "actionable",
+  "analysisRefused": false
+}

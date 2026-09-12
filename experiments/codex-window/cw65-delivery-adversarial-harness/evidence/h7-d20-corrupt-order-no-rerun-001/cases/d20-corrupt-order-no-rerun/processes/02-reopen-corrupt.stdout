@@ -1,0 +1,22 @@
+{
+  "schema": "samedaydesk.useful-jobs-consumer.v1",
+  "ok": false,
+  "orderId": "cw65-corrupt",
+  "engineId": "vendor-budget-impact",
+  "sold": false,
+  "charged": false,
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "sample": false,
+  "code": "corrupt-replay",
+  "error": "order store record is not JSON",
+  "falsifier": "F-ORDER",
+  "detail": {
+    "orderId": "cw65-corrupt",
+    "error": "Expected property name or '}' in JSON at position 1 (line 1 column 2)"
+  },
+  "httpStatus": 409,
+  "liveCatalogItem": false,
+  "productionExpressRoute": false,
+  "acceptanceClass": "fixture"
+}

@@ -1,0 +1,5 @@
+{
+  "mode": "verify",
+  "jobId": "vendor-budget-impact",
+  "root": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-current-verifier-corruption-001/cases/d18-current-verifier-corruption/corruptions/changed-bytes"
+}

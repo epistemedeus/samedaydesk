@@ -1,0 +1,316 @@
+TAP version 13
+# Subtest: fixture: generatedAt-only JSON plus markdown timestamps is labelled-drift
+ok 1 - fixture: generatedAt-only JSON plus markdown timestamps is labelled-drift
+  ---
+  duration_ms: 5.281715
+  type: 'test'
+  ...
+# Subtest: fixture: identity JSON change is identity-break even with generatedAt present
+ok 2 - fixture: identity JSON change is identity-break even with generatedAt present
+  ---
+  duration_ms: 1.929157
+  type: 'test'
+  ...
+# Subtest: fixture: byte-identical catalog files are identical
+ok 3 - fixture: byte-identical catalog files are identical
+  ---
+  duration_ms: 2.190211
+  type: 'test'
+  ...
+# Subtest: markdown body change is identity-break; timestamp chatter is not proof of equivalence
+ok 4 - markdown body change is identity-break; timestamp chatter is not proof of equivalence
+  ---
+  duration_ms: 1.2496
+  type: 'test'
+  ...
+# Subtest: non-catalog extra files are ignored
+ok 5 - non-catalog extra files are ignored
+  ---
+  duration_ms: 1.089697
+  type: 'test'
+  ...
+# Subtest: public CLI: identical --out-a/--out-b with changed after refuses overlapping dirs
+ok 6 - public CLI: identical --out-a/--out-b with changed after refuses overlapping dirs
+  ---
+  duration_ms: 105.919007
+  type: 'test'
+  ...
+# Subtest: public CLI: symlink alias of out-b onto out-a refuses overlapping dirs
+ok 7 - public CLI: symlink alias of out-b onto out-a refuses overlapping dirs
+  ---
+  duration_ms: 98.514723
+  type: 'test'
+  ...
+# Subtest: replay: mutating out-a after run A cannot erase same-input comparison evidence
+ok 8 - replay: mutating out-a after run A cannot erase same-input comparison evidence
+  ---
+  duration_ms: 921.386301
+  type: 'test'
+  ...
+# Subtest: assertDisjointOutputDirs is a tested public export
+ok 9 - assertDisjointOutputDirs is a tested public export
+  ---
+  duration_ms: 2.184197
+  type: 'test'
+  ...
+# Subtest: committed public archive pin matches usefulJobsKit.json
+ok 10 - committed public archive pin matches usefulJobsKit.json
+  ---
+  duration_ms: 7.179178
+  type: 'test'
+  ...
+# Subtest: public catalog outputs match the extracted archive catalog
+ok 11 - public catalog outputs match the extracted archive catalog
+  ---
+  duration_ms: 1.936189
+  type: 'test'
+  ...
+# Subtest: local HTTP: good archive extracts; wrong digest never extracts
+ok 12 - local HTTP: good archive extracts; wrong digest never extracts
+  ---
+  duration_ms: 94.112555
+  type: 'test'
+  ...
+# Subtest: journey: replay api-upgrade-brief on archive samples/openapi/a twice via public CLI
+ok 13 - journey: replay api-upgrade-brief on archive samples/openapi/a twice via public CLI
+  ---
+  duration_ms: 952.20937
+  type: 'test'
+  ...
+# Subtest: changing the live after path between runs cannot alter frozen replay inputs
+ok 14 - changing the live after path between runs cannot alter frozen replay inputs
+  ---
+  duration_ms: 852.294124
+  type: 'test'
+  ...
+# Subtest: seeded failure: --example cannot report identityVerified as a customer replay
+ok 15 - seeded failure: --example cannot report identityVerified as a customer replay
+  ---
+  duration_ms: 1026.004703
+  type: 'test'
+  ...
+# Subtest: SAMPLE caller-alpha sibling marker stays sample even if JSON identity holds
+ok 16 - SAMPLE caller-alpha sibling marker stays sample even if JSON identity holds
+  ---
+  duration_ms: 907.32231
+  type: 'test'
+  ...
+# Subtest: missing required caller inputs refuse closed
+ok 17 - missing required caller inputs refuse closed
+  ---
+  duration_ms: 131.575578
+  type: 'test'
+  ...
+# Subtest: CLI --after-b is identity-break on the public interface
+ok 18 - CLI --after-b is identity-break on the public interface
+  ---
+  duration_ms: 1092.205173
+  type: 'test'
+  ...
+# Subtest: I01 golden fixture hashes to the pinned content-hash termsVersion
+ok 19 - I01 golden fixture hashes to the pinned content-hash termsVersion
+  ---
+  duration_ms: 2.324521
+  type: 'test'
+  ...
+# Subtest: integer termsVersion is dropped and cannot be a public claim key
+ok 20 - integer termsVersion is dropped and cannot be a public claim key
+  ---
+  duration_ms: 0.786334
+  type: 'test'
+  ...
+# Subtest: replay terms hasher refuses a non-hash public termsVersion
+ok 21 - replay terms hasher refuses a non-hash public termsVersion
+  ---
+  duration_ms: 0.174804
+  type: 'test'
+  ...
+# Subtest: contract export names frozen refs and transport/analysis split
+ok 22 - contract export names frozen refs and transport/analysis split
+  ---
+  duration_ms: 0.765842
+  type: 'test'
+  ...
+# Subtest: frozen copy is independent of later source mutation
+ok 23 - frozen copy is independent of later source mutation
+  ---
+  duration_ms: 2.849958
+  type: 'test'
+  ...
+# Subtest: CLI: changed after is analyzed from frozen-current, not the live path
+not ok 24 - CLI: changed after is analyzed from frozen-current, not the live path
+  ---
+  duration_ms: 719.985465
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw61-astra-repeat-replay-integration-20260912/src/tools/repeat-job-binder/test/frozen-refs.test.mjs:80:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'analysis-partial'
+    - 'actionable'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'actionable'
+  actual: 'analysis-partial'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw61-astra-repeat-replay-integration-20260912/src/tools/repeat-job-binder/test/frozen-refs.test.mjs:99:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: CLI: previous-run output cannot be reused as the new after
+ok 25 - CLI: previous-run output cannot be reused as the new after
+  ---
+  duration_ms: 284.928459
+  type: 'test'
+  ...
+# Subtest: CLI: reused first-run out-dir is refused
+ok 26 - CLI: reused first-run out-dir is refused
+  ---
+  duration_ms: 324.697551
+  type: 'test'
+  ...
+# Subtest: CLI: nonzero catalog JSON that looks successful is a transport failure
+ok 27 - CLI: nonzero catalog JSON that looks successful is a transport failure
+  ---
+  duration_ms: 367.298883
+  type: 'test'
+  ...
+# Subtest: CLI: valid analysis-refused is delivered, not a crash and not actionable
+ok 28 - CLI: valid analysis-refused is delivered, not a crash and not actionable
+  ---
+  duration_ms: 616.573679
+  type: 'test'
+  ...
+# Subtest: CLI: changed after that is domain-identical to before is valid no-change analysis
+ok 29 - CLI: changed after that is domain-identical to before is valid no-change analysis
+  ---
+  duration_ms: 656.655764
+  type: 'test'
+  ...
+# Subtest: journey: repeat-job-record on samples/repeat/a, then binder with changed after
+not ok 30 - journey: repeat-job-record on samples/repeat/a, then binder with changed after
+  ---
+  duration_ms: 691.288079
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw61-astra-repeat-replay-integration-20260912/src/tools/repeat-job-binder/test/journey.test.mjs:16:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'analysis-partial'
+    - 'actionable'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'actionable'
+  actual: 'analysis-partial'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw61-astra-repeat-replay-integration-20260912/src/tools/repeat-job-binder/test/journey.test.mjs:60:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: openapi-used-ops catalog second use from published caller-beta fixture (not live)
+ok 31 - openapi-used-ops catalog second use from published caller-beta fixture (not live)
+  ---
+  duration_ms: 657.254004
+  type: 'test'
+  ...
+# Subtest: local HTTP serves committed catalog.json (local-runtime, not external acceptance)
+ok 32 - local HTTP serves committed catalog.json (local-runtime, not external acceptance)
+  ---
+  duration_ms: 24.734636
+  type: 'test'
+  ...
+# Subtest: missing after file stays informational, not a verified second use
+ok 33 - missing after file stays informational, not a verified second use
+  ---
+  duration_ms: 334.309705
+  type: 'test'
+  ...
+# Subtest: PR51 useful-jobs archive pin matches committed bytes and sha256
+ok 34 - PR51 useful-jobs archive pin matches committed bytes and sha256
+  ---
+  duration_ms: 4.810404
+  type: 'test'
+  ...
+# Subtest: PR51 record-repeat vendor-pin archive matches committed bytes and sha256
+ok 35 - PR51 record-repeat vendor-pin archive matches committed bytes and sha256
+  ---
+  duration_ms: 1.742594
+  type: 'test'
+  ...
+# Subtest: schedulerDaemon true in a forged manifest refuses
+ok 36 - schedulerDaemon true in a forged manifest refuses
+  ---
+  duration_ms: 65.723766
+  type: 'test'
+  ...
+# Subtest: SAMPLE labelled as live recurrence refuses (forged ticket)
+ok 37 - SAMPLE labelled as live recurrence refuses (forged ticket)
+  ---
+  duration_ms: 68.064825
+  type: 'test'
+  ...
+# Subtest: published SAMPLE caller-alpha with --live-recurrence refuses
+ok 38 - published SAMPLE caller-alpha with --live-recurrence refuses
+  ---
+  duration_ms: 77.065794
+  type: 'test'
+  ...
+# Subtest: stale digest vs new bytes refuses
+ok 39 - stale digest vs new bytes refuses
+  ---
+  duration_ms: 283.189866
+  type: 'test'
+  ...
+# Subtest: unchecked next-run without frozen currentInputs refuses
+ok 40 - unchecked next-run without frozen currentInputs refuses
+  ---
+  duration_ms: 66.469571
+  type: 'test'
+  ...
+# Subtest: next-run family/parser mismatch refuses
+ok 41 - next-run family/parser mismatch refuses
+  ---
+  duration_ms: 67.266321
+  type: 'test'
+  ...
+# Subtest: cron install flags refuse
+ok 42 - cron install flags refuse
+  ---
+  duration_ms: 61.587349
+  type: 'test'
+  ...
+# Subtest: I01 golden termsVersion is sha256:+64hex and hasher matches Neo PR54 pin
+ok 43 - I01 golden termsVersion is sha256:+64hex and hasher matches Neo PR54 pin
+  ---
+  duration_ms: 2.652128
+  type: 'test'
+  ...
+# Subtest: forged integer termsVersion ticket refuses (original F01 key is not a claim)
+ok 44 - forged integer termsVersion ticket refuses (original F01 key is not a claim)
+  ---
+  duration_ms: 61.246154
+  type: 'test'
+  ...
+1..44
+# tests 44
+# suites 0
+# pass 42
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 12791.285868

@@ -1,0 +1,16 @@
+{
+  "name": "@samedaydesk/w5-d14-http-consumer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Thin HTTP consumer of paid useful-jobs execution.v1 on CURRENT 1.4.3. Not a second server. HTTP path is not acquisition authority.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "sds-http-consumer": "./bin/http-consumer.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs"
+  }
+}

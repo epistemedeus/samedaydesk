@@ -1,0 +1,16 @@
+{
+  "pid": 320153,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/workers/current.mjs",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-order-interrupt-reserved-001/cases/d20-order-interrupt-reserved/requests/first.json"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-fex4Mv/d20-order-interrupt-reserved",
+  "startedAt": "2026-09-12T09:47:47.057Z",
+  "endedAt": "2026-09-12T09:47:47.167Z",
+  "status": null,
+  "signal": "SIGKILL",
+  "timedOut": false
+}

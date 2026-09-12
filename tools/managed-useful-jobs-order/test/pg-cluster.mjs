@@ -33,7 +33,8 @@ export function startDisposablePostgres() {
   const pgdata = join(dir, "pgdata");
   const socketDir = join(dir, "socket");
   mkdirSync(socketDir, { recursive: true });
-  const port = 55000 + Math.floor(Math.random() * 4000);
+  const requested = Number(process.env.MANAGED_ORDER_PG_PORT);
+  const port = Number.isInteger(requested) && requested > 0 ? requested : 55000 + Math.floor(Math.random() * 4000);
   const logFile = join(dir, "pg.log");
 
   const init = run(INITDB, ["-D", pgdata, "-U", "managed_order", "--auth-local=trust", "--auth-host=trust"]);

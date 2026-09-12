@@ -1,0 +1,18 @@
+{
+  "name": "samedaydesk-repeat-job-binder",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "W5-D09 Co03 catalog-facing binder: frozen previous/current input refs, changed local inputs, second-run record. Not a scheduler daemon. Payments nonsettling.",
+  "bin": {
+    "repeat-job-binder": "./bin/bind.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "test:d01": "node --test --test-concurrency=1 test/d01-wrapper.integration.mjs",
+    "bind": "node bin/bind.mjs"
+  }
+}

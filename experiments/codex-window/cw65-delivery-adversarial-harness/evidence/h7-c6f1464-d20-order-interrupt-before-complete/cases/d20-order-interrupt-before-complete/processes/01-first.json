@@ -1,0 +1,16 @@
+{
+  "pid": 356054,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/workers/current.mjs",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-c6f1464-d20-order-interrupt-before-complete/cases/d20-order-interrupt-before-complete/requests/first.json"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-77rCGN/d20-order-interrupt-before-complete",
+  "startedAt": "2026-09-12T13:24:57.677Z",
+  "endedAt": "2026-09-12T13:24:58.032Z",
+  "status": null,
+  "signal": "SIGKILL",
+  "timedOut": false
+}

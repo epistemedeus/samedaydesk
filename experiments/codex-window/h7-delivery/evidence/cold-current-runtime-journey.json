@@ -1,0 +1,48 @@
+{
+  "pin": "c6f1464222169f2d32247c978dc5007d82a2aa03",
+  "archivePin": "8a811bbadba7edc6c926b319b0839cd2f01e5896",
+  "repairSha": "080cc62e7bc83f76431d916df34aea6d30875401",
+  "catalog": "1.4.3",
+  "lockfile": {
+    "jobId": "lockfile-pin-delta",
+    "executionId": "68527bfd-1a1e-4b8d-9dc9-a97c2b508252",
+    "transport": "ok",
+    "sold": false
+  },
+  "export": {
+    "zipSha256": "sha256:8ba359d9224a215f654237302cd1f3e406f99e273ec44b72e1b23a46923c86a4",
+    "completeness": {
+      "bound": true,
+      "consumer": "tools/job-output-atomicity/index.mjs (current source)",
+      "ok": true,
+      "classification": "complete",
+      "code": null
+    }
+  },
+  "outbox": {
+    "deliveryState": "delivered",
+    "commitBeforeAck": true,
+    "sold": false
+  },
+  "replay": {
+    "pids": [
+      358018,
+      358064
+    ],
+    "executionIds": [
+      "9bd31119-e3dc-4566-b71b-df4b3c46f5f7",
+      "619d6c2f-c6de-4a83-b158-7b63916056e3"
+    ]
+  },
+  "batch": {
+    "ok": true,
+    "usefulPaidWork": false
+  },
+  "http": {
+    "executionId": "h7-cold-http",
+    "portable": "unsupported-portable-acquisition",
+    "local": "local-acquired",
+    "httpArtifactsDelivered": false
+  },
+  "wrapperBin": "/tmp/h7/wt/server/paid-useful-jobs/bin/cli.mjs"
+}

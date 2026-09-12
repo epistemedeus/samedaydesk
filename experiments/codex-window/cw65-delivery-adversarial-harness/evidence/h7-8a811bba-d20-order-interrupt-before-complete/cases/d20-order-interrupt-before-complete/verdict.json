@@ -1,0 +1,11 @@
+{
+  "id": "d20-order-interrupt-before-complete",
+  "startedAt": "2026-09-12T12:09:10.128Z",
+  "endedAt": "2026-09-12T12:09:11.085Z",
+  "status": "fail",
+  "error": {
+    "message": "ambiguous order automatically reran a completed real engine\n\n2 !== 1\n",
+    "code": "ERR_ASSERTION",
+    "stack": "AssertionError [ERR_ASSERTION]: ambiguous order automatically reran a completed real engine\n\n2 !== 1\n\n    at file:///tmp/h7/wt/experiments/wave5/d20/current.mjs:71:39\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async TestContext.<anonymous> (file:///tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/test/acceptance.test.mjs:14:11)\n    at async Test.run (node:internal/test_runner/test:1054:7)\n    at async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "mode": "order-request",
+  "orderId": "cw65-alpha",
+  "fixture": {
+    "jobId": "vendor-budget-impact",
+    "inputs": {
+      "before": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-distinct-orders-001/cases/d19-distinct-orders/inputs/order-alpha-before.json",
+      "after": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-distinct-orders-001/cases/d19-distinct-orders/inputs/order-alpha-after.json"
+    },
+    "outputs": [
+      "budget-impact.json",
+      "budget-impact.md"
+    ],
+    "inputHashes": {
+      "before": "975c7db5c90cae86fca69520aabae53c14c5a1e493a2d7c1fcc7cec24c35c13d",
+      "after": "98c91e62a17c3f81153d96b046ce017091b2a8fbbbc312291842b7c76eb1f7f0"
+    }
+  }
+}

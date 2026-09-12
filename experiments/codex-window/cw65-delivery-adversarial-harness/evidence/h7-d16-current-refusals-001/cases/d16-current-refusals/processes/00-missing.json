@@ -1,0 +1,21 @@
+{
+  "pid": 317739,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/server/paid-useful-jobs/bin/cli.mjs",
+    "run",
+    "vendor-budget-impact",
+    "--before",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d16-current-refusals-001/cases/d16-current-refusals/inputs/missing-before.json",
+    "--out-dir",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d16-current-refusals-001/cases/d16-current-refusals/published/missing"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-WtaDDR/d16-current-refusals",
+  "startedAt": "2026-09-12T09:46:24.886Z",
+  "endedAt": "2026-09-12T09:46:24.937Z",
+  "status": 2,
+  "signal": null,
+  "timedOut": false
+}

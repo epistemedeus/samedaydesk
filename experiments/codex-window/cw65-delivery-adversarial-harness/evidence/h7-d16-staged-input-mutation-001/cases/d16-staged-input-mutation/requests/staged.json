@@ -1,0 +1,17 @@
+{
+  "mode": "execute",
+  "request": {
+    "jobId": "vendor-budget-impact",
+    "executionId": "cw65-frozen",
+    "inputs": {
+      "before": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d16-staged-input-mutation-001/cases/d16-staged-input-mutation/inputs/frozen-before.json",
+      "after": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d16-staged-input-mutation-001/cases/d16-staged-input-mutation/inputs/frozen-after.json"
+    },
+    "outDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d16-staged-input-mutation-001/cases/d16-staged-input-mutation/published/frozen"
+  },
+  "barrier": {
+    "stage": "staged-inputs",
+    "ready": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d16-staged-input-mutation-001/cases/d16-staged-input-mutation/staged.json",
+    "release": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d16-staged-input-mutation-001/cases/d16-staged-input-mutation/release"
+  }
+}

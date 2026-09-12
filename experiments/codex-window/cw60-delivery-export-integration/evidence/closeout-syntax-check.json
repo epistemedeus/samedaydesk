@@ -1,0 +1,299 @@
+{
+  "kind": "syntax-only, not readiness",
+  "files": [
+    {
+      "path": "tools/job-delivery-outbox/bin/loopback-receiver.mjs",
+      "sha256": "3d15f80eee9af7c8dd54bf07a891f844bf538cec7776f508ab3a363f42fa3498",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/bin/outbox.mjs",
+      "sha256": "f112f93cf88e6722e00306a3f9bf292bc5700120a1c9a89312b720b106e61dee",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/atomic-write.mjs",
+      "sha256": "43383d20664a9e0b1faa022c9c33d3e340afcc1b2660c1d2612ac0fe6f4ddb49",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/callback-identity.mjs",
+      "sha256": "46863b04d28a643b9411bc271280150f27c07005ed1c541138ecef82679d8e8e",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/cli.mjs",
+      "sha256": "3a66c7959ba715caf64ec64d07b6de16fad31a9ace78d13fbfe7ff0a8fa5f9e3",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/contract.mjs",
+      "sha256": "124ee600a0021f4f998abf628e0b86405e0bb720264a26f5a3cdb8b85a332891",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/errors.mjs",
+      "sha256": "9141693e6ea9b7f2e52bc5f2380f42c34a180224ef2468331b8ae8f3631c4ec5",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/file-lock.mjs",
+      "sha256": "342c92857b832e899934e8494e7a2364a338baabe0ca69a5aa372e468fd4c4c6",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/hash-terms.mjs",
+      "sha256": "9a054df0c7506b53770b324bc194e75a46b4ca6691997e509b7c97d86c1e0ea5",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/http-post.mjs",
+      "sha256": "83d213739a2b793e2ea32268a8fb1cc336d6adec9447d2d9dc7c9ea98415525e",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/index.mjs",
+      "sha256": "5ab961ef28334b59cf8216965dda242932d8605c55d3fbb7fe4d80d34c52b3b0",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/kit.mjs",
+      "sha256": "b5e287c79d14b4ca6ded0d81d662b33293435d7bd66759239342c08a33feaf4c",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/loopback.mjs",
+      "sha256": "37280ee5715d5aac625fda33cb817a5926d20c482b756e7ed106bbccf63e4e60",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/outbox.mjs",
+      "sha256": "1c81b5ad372be0a3a4284d0881b6a71a567e8d1a50559d30c6a8f8623cbf7d99",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/pins.mjs",
+      "sha256": "aa17c2135a74d06f6ebd0875892caba0d0871ddb13adea71b15bd6f6d88bf641",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/receipt-shape.mjs",
+      "sha256": "491b2dc820ff925528ab60f8575c4551a4dc709a9b58e689d6a13ba188982bdb",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/receiver.mjs",
+      "sha256": "05fc4be68f712c37f4d97f975dd02fbc2b119377a50db31235ee2f3102c3687a",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/redact.mjs",
+      "sha256": "ece39bc5b657d351e124c76ba9ae9872066b31bd64012ca31f2ee8fdd8e5e5b8",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/sha256.mjs",
+      "sha256": "944a626aa20fc05bcfe8ceb01ec31fb98c431bec9f8d4d95f1b028ecdd0cb2c6",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/store-file.mjs",
+      "sha256": "866582193b06ced09d4127f56d8bfdf3ffebea9c3fff35adf9b5ab9d2033d840",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/lib/store-postgres.mjs",
+      "sha256": "f54d61f3cd13cbc2fbb2ae05fc1e84053c4924596dd5c0b871779fcc23a06afd",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/test/destination-terms.test.mjs",
+      "sha256": "79ab04ca8f7da4392d2b6fbed17c194e404282aea6eef7d3d6caa73281fe8d59",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/test/f08-pin-receipt.test.mjs",
+      "sha256": "70d09d50a649cd42af1d52392c6312050c2693c536a84f003b33e74797687ecf",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/test/helpers.mjs",
+      "sha256": "9946f72f34bc998d8c6aaa64e26296d7c90c397f50332ff5e5e7a75b626a93ea",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/test/journey.test.mjs",
+      "sha256": "ee59316dba808f1ba3326b0b895ad64e3f77deb6a7a369de34a72137c981114f",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/test/postgres.test.mjs",
+      "sha256": "7563b0c02dbdaf77d748d4c1aad48fb713ab2eb401a7bb020e232601f180d163",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-delivery-outbox/test/seeded-failures.test.mjs",
+      "sha256": "45804eb41c8497ac11f7b7956f8e52a60245cc297ecad362aa268cd36e36ee35",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/bin/export.mjs",
+      "sha256": "fb6cad24b90b45e4d396fd9500075597da0c6e90a15f805e3ef697ca61f9bcdb",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/lib/catalog.mjs",
+      "sha256": "4762ea549dbaf219fa9842a469864defc81c0a574d36109ace25f6c9a60634c2",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/lib/cli.mjs",
+      "sha256": "71cfc36ffd9e14b62e6776e9505de862770bc8c6a2c0ee83f4929f28e7269e8c",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/lib/contract.mjs",
+      "sha256": "35603a834982f9e46bbde8a442f18595f0e944a370d107537254ec44d0c62230",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/lib/current-receipt.mjs",
+      "sha256": "31c4722c1d5a2ff289cb79badba0f8c2ce3e8b1a4f558e449a2603516b4ba677",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/lib/d03-adapter.mjs",
+      "sha256": "ed09277a2817fcc6bc43f148c027fb52eda8cd84b756a74935987bf8f8bfa680",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/lib/export.mjs",
+      "sha256": "7bedd8f1f25c3515bf44adf57ab4a0f80bf6f118c4203ff228a673956167209e",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/lib/hash-terms.mjs",
+      "sha256": "b88cfaac95ae92853dbf2eec10c003cdf104af3d6f7c5b7299d3d922aa431357",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/lib/import.mjs",
+      "sha256": "46d9ac5d2c3c5a2ec5a099e6d8238ffee13b4745c36f72392731d78315e44b9d",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/lib/labels.mjs",
+      "sha256": "547d897be2a27627ddab1e1531ab43e7a3674900158ce18cdb3a753e60591284",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/lib/pins.mjs",
+      "sha256": "8d3ad889388b8f0f62ee43492d9701aa6cb58dd1cb995df550f4eeeaecaf658a",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/lib/publication.mjs",
+      "sha256": "78636595556727feba94515df74e33eee7233d2f517dac7d4644e4163aa25448",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/lib/refuse.mjs",
+      "sha256": "b6cc994d5817a8359b0853671cd6a05cf4d25956f3455e8545c20fa02b14eff4",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/lib/scan.mjs",
+      "sha256": "cea0065832cc68bdf93b65440d6fe347c9245587a5d4feca22b6bd146bde75b9",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/lib/zip.mjs",
+      "sha256": "ebb57b80b3453b3ab5845273f2fe231c7e816bdb006adc8ee587e945816cdd87",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/test/export.test.mjs",
+      "sha256": "897d1664847fb93667850b08afffcb715756fafae3e075515319be8ea777efa1",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/test/helpers.mjs",
+      "sha256": "b6db755b6ebede0875d1192d214d0aa25f67b0659590c767abbcd35188165911",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/test/import.test.mjs",
+      "sha256": "619f95fc943b9a79c7646434969e4dab81a92822d72fbb6ea7b806e66669698b",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/vendor/funded-task-terms-hash/canonical.mjs",
+      "sha256": "70bfd59889f35d4fecd0001bc20d632d1c8a8cd2e21e5b9f5ce0cede70b4546f",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "tools/job-artifact-export/vendor/funded-task-terms-hash/hash.mjs",
+      "sha256": "8d71667ec1f7eee36173b8ed36a8e728fcce2d05bbc14ea05cdf4d67f32bc622",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "experiments/codex-window/cw60-delivery-export-integration/test/boundaries.test.mjs",
+      "sha256": "732f8c121af95f214d8f16f9aae25e2bb4b61a49fd93574cd68140a63f1172d6",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "path": "experiments/codex-window/cw60-delivery-export-integration/test/journey.test.mjs",
+      "sha256": "1872326b027c98359822dd633bbcf75e9ebd998796ca5a061252372265033145",
+      "exitCode": 0,
+      "error": null
+    }
+  ]
+}

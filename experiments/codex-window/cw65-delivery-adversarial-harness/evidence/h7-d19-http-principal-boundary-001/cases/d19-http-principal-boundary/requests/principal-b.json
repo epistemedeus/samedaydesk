@@ -1,0 +1,8 @@
+{
+  "mode": "http",
+  "origin": "http://127.0.0.1:44459",
+  "path": "/results/cw65-principal",
+  "headers": {
+    "authorization": "Bearer cw65-synthetic-principal-b"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "status": 404,
+  "body": {
+    "ok": false,
+    "code": "not-found",
+    "error": "Execution not found in this process",
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1"
+  },
+  "raw": "{\"ok\":false,\"code\":\"not-found\",\"error\":\"Execution not found in this process\",\"contract\":\"samedaydesk.paid-useful-jobs.execution.v1\"}"
+}

@@ -1,0 +1,164 @@
+(node:328322) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:328328) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: consumed pin is 6007fcfa; M01 source-identity is not the 1.0.0 archive
+ok 1 - consumed pin is 6007fcfa; M01 source-identity is not the 1.0.0 archive
+  ---
+  duration_ms: 1.596158
+  type: 'test'
+  ...
+# Subtest: current core -> desk -> batch -> value (library), exact rows and replay
+ok 2 - current core -> desk -> batch -> value (library), exact rows and replay
+  ---
+  duration_ms: 671.801496
+  type: 'test'
+  ...
+# Subtest: current core -> desk -> batch -> value (http), exact rows and replay
+ok 3 - current core -> desk -> batch -> value (http), exact rows and replay
+  ---
+  duration_ms: 916.268943
+  type: 'test'
+  ...
+# Subtest: actual desk and batch HTTP endpoints retain failure and restart reconciliation
+ok 4 - actual desk and batch HTTP endpoints retain failure and restart reconciliation
+  ---
+  duration_ms: 1055.613752
+  type: 'test'
+  ...
+# Subtest: kill after core execution, restart both processes, never dispatch the ambiguous request again
+ok 5 - kill after core execution, restart both processes, never dispatch the ambiguous request again
+  ---
+  duration_ms: 805.484788
+  type: 'test'
+  ...
+# Subtest: interrupted batch preserves every planned row without resuming dispatch
+ok 6 - interrupted batch preserves every planned row without resuming dispatch
+  ---
+  duration_ms: 573.182269
+  type: 'test'
+  ...
+# Subtest: concurrent OS desk writers admit exactly one execution for the same request
+ok 7 - concurrent OS desk writers admit exactly one execution for the same request
+  ---
+  duration_ms: 658.492372
+  type: 'test'
+  ...
+# Subtest: concurrent same-order input substitution admits only one identity
+ok 8 - concurrent same-order input substitution admits only one identity
+  ---
+  duration_ms: 570.093515
+  type: 'test'
+  ...
+# Subtest: reject current-core result substitution: execution-id
+ok 9 - reject current-core result substitution: execution-id
+  ---
+  duration_ms: 309.309858
+  type: 'test'
+  ...
+# Subtest: reject current-core result substitution: input-receipt
+ok 10 - reject current-core result substitution: input-receipt
+  ---
+  duration_ms: 294.776692
+  type: 'test'
+  ...
+# Subtest: reject current-core result substitution: nested-delivery
+ok 11 - reject current-core result substitution: nested-delivery
+  ---
+  duration_ms: 296.001656
+  type: 'test'
+  ...
+# Subtest: reject current-core result substitution: funding
+ok 12 - reject current-core result substitution: funding
+  ---
+  duration_ms: 298.020253
+  type: 'test'
+  ...
+# Subtest: reject current-core result substitution: output-bytes
+ok 13 - reject current-core result substitution: output-bytes
+  ---
+  duration_ms: 310.510884
+  type: 'test'
+  ...
+# Subtest: stored output replacement invalidates desk, batch and value reads
+ok 14 - stored output replacement invalidates desk, batch and value reads
+  ---
+  duration_ms: 319.145301
+  type: 'test'
+  ...
+# Subtest: caller bytes are frozen before dispatch even if source file changes
+ok 15 - caller bytes are frozen before dispatch even if source file changes
+  ---
+  duration_ms: 308.327277
+  type: 'test'
+  ...
+# Subtest: stated settlement unknown cannot become zero, delivery or retry
+ok 16 - stated settlement unknown cannot become zero, delivery or retry
+  ---
+  duration_ms: 13.097945
+  type: 'test'
+  ...
+# Subtest: stated settlement possible-spend cannot become zero, delivery or retry
+ok 17 - stated settlement possible-spend cannot become zero, delivery or retry
+  ---
+  duration_ms: 12.260507
+  type: 'test'
+  ...
+# Subtest: stated settlement settled cannot become zero, delivery or retry
+ok 18 - stated settlement settled cannot become zero, delivery or retry
+  ---
+  duration_ms: 15.399225
+  type: 'test'
+  ...
+# Subtest: batch identity binds bytes, order and stated settlement; duplicate IDs refuse before execution
+ok 19 - batch identity binds bytes, order and stated settlement; duplicate IDs refuse before execution
+  ---
+  duration_ms: 310.062425
+  type: 'test'
+  ...
+# Subtest: corrupt admission is retained and refused on reads and repeated creates
+ok 20 - corrupt admission is retained and refused on reads and repeated creates
+  ---
+  duration_ms: 9.903238
+  type: 'test'
+  ...
+# Subtest: duplicate events deduplicate and concurrent distinct value writers lose no rows
+ok 21 - duplicate events deduplicate and concurrent distinct value writers lose no rows
+  ---
+  duration_ms: 989.355114
+  type: 'test'
+  ...
+# Subtest: unknown-to-final measurement preserves original evidence as a distinct observation
+ok 22 - unknown-to-final measurement preserves original evidence as a distinct observation
+  ---
+  duration_ms: 304.304675
+  type: 'test'
+  ...
+# Subtest: actual consumer CLIs share durable request identity and measure existing batch without another run
+ok 23 - actual consumer CLIs share durable request identity and measure existing batch without another run
+  ---
+  duration_ms: 581.709674
+  type: 'test'
+  ...
+# Subtest: pre-admission validation leaves no durable row; async executor is unknown spend
+ok 24 - pre-admission validation leaves no durable row; async executor is unknown spend
+  ---
+  duration_ms: 24.971386
+  type: 'test'
+  ...
+# Subtest: persist callback runs on replay reconciliation
+ok 25 - persist callback runs on replay reconciliation
+  ---
+  duration_ms: 304.601729
+  type: 'test'
+  ...
+1..25
+# tests 25
+# suites 0
+# pass 25
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10036.073443

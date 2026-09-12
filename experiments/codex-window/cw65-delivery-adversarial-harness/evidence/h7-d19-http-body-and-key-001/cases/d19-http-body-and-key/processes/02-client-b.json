@@ -1,0 +1,16 @@
+{
+  "pid": 318035,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/workers/current.mjs",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-http-body-and-key-001/cases/d19-http-body-and-key/requests/client-b.json"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-9hJuOk/d19-http-body-and-key",
+  "startedAt": "2026-09-12T09:46:26.979Z",
+  "endedAt": "2026-09-12T09:46:27.342Z",
+  "status": 0,
+  "signal": null,
+  "timedOut": false
+}

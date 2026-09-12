@@ -1,0 +1,161 @@
+{
+  "ok": true,
+  "jobId": "vendor-budget-impact",
+  "title": "Vendor Budget Impact",
+  "fundingState": "unfunded",
+  "sold": false,
+  "sample": false,
+  "sampleReasons": [],
+  "purchaseAuthority": false,
+  "outputs": [
+    {
+      "name": "budget-impact.json",
+      "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-BImdAE/d18-current-verifier-corruption/puj-vendor-budget-impact-out-XuZ66z/budget-impact.json",
+      "bytes": 1335,
+      "sha256": "c2a140f8b1c94c4fce29ac08fb57a9a3286e802d89c1cf2aca7f2b7f402846cc"
+    },
+    {
+      "name": "budget-impact.md",
+      "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-BImdAE/d18-current-verifier-corruption/puj-vendor-budget-impact-out-XuZ66z/budget-impact.md",
+      "bytes": 355,
+      "sha256": "b4b603f0e0c31859baf5e95be143223a61841809642ffc105ecb8e2bde08b10d"
+    }
+  ],
+  "receipt": {
+    "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+    "jobId": "vendor-budget-impact",
+    "engine": {
+      "package": "useful-jobs",
+      "version": "1.0.0",
+      "purchaseAuthority": false,
+      "cli": "node bin/useful-jobs.mjs run <id>",
+      "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "archiveBytes": 2522418,
+      "sourceRepo": "epistemedeus/pilot",
+      "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+      "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+      "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+    },
+    "inputsDigest": "d533e03b9d893d3a4cfacdbe5f79ee5d53fe625e38c615fd004748b86c217d31",
+    "outputsDigest": "68d6ffeba0729325347a46c21780d6e9334e8bd19ddda44a7a6261409609d716",
+    "inputs": [
+      {
+        "name": "before",
+        "kind": "file",
+        "bytes": 144,
+        "sha256": "c8d9b3ec046667d8d620b418d9fdb73ba7a4984287010479e6f1b9ed98874dc8"
+      },
+      {
+        "name": "after",
+        "kind": "file",
+        "bytes": 144,
+        "sha256": "dfa2331f0c2a9162bbcedd698e327ed2cde10f468a726975a83ee1ee40f939ab"
+      }
+    ],
+    "inputRoot": null,
+    "outputs": [
+      {
+        "name": "budget-impact.json",
+        "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-BImdAE/d18-current-verifier-corruption/puj-vendor-budget-impact-out-XuZ66z/budget-impact.json",
+        "bytes": 1335,
+        "sha256": "c2a140f8b1c94c4fce29ac08fb57a9a3286e802d89c1cf2aca7f2b7f402846cc"
+      },
+      {
+        "name": "budget-impact.md",
+        "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-BImdAE/d18-current-verifier-corruption/puj-vendor-budget-impact-out-XuZ66z/budget-impact.md",
+        "bytes": 355,
+        "sha256": "b4b603f0e0c31859baf5e95be143223a61841809642ffc105ecb8e2bde08b10d"
+      }
+    ],
+    "fundingState": "unfunded",
+    "sold": false,
+    "sample": false,
+    "sampleReasons": [],
+    "purchaseAuthority": false,
+    "liveSettlement": "out-of-scope",
+    "fixturePrice": {
+      "labelled": true,
+      "live": false,
+      "publishedToLiveCatalog": false,
+      "jobId": "vendor-budget-impact",
+      "amountUsdc": "0.02",
+      "amountAtomic": "20000",
+      "payTo": "0x0000000000000000000000000000000000000F08",
+      "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+    },
+    "payment": {
+      "fixture": false,
+      "purchaseAuthority": false,
+      "liveSettleAttempted": false,
+      "liveSettleAllowed": false,
+      "fundingState": "unfunded"
+    },
+    "continuity": null,
+    "engineResult": {
+      "ok": true,
+      "status": "actionable",
+      "digest": "529e66313bc59171",
+      "refused": false,
+      "identityVerified": null
+    },
+    "outDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-BImdAE/d18-current-verifier-corruption/puj-vendor-budget-impact-out-XuZ66z",
+    "publishedDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-current-verifier-corruption-001/cases/d18-current-verifier-corruption/published/good",
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+    "transport": "ok",
+    "analysis": {
+      "status": "actionable",
+      "outcome": "actionable",
+      "identityVerified": null
+    },
+    "delivery": {
+      "status": "complete",
+      "complete": true,
+      "expected": [
+        "budget-impact.json",
+        "budget-impact.md"
+      ],
+      "present": [
+        "budget-impact.json",
+        "budget-impact.md"
+      ],
+      "missing": [],
+      "unexpected": [],
+      "publishedDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-current-verifier-corruption-001/cases/d18-current-verifier-corruption/published/good"
+    },
+    "runOutDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-BImdAE/d18-current-verifier-corruption/puj-vendor-budget-impact-out-XuZ66z"
+  },
+  "engine": {
+    "ok": true,
+    "appId": "vendor-budget-impact",
+    "status": "actionable",
+    "digest": "529e66313bc59171",
+    "outDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-BImdAE/d18-current-verifier-corruption/puj-vendor-budget-impact-out-XuZ66z",
+    "purchaseAuthority": false
+  },
+  "liveSettlement": "out-of-scope",
+  "executionId": "596ae085-3058-42ba-adf3-adca3f0adeef",
+  "runOutDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-BImdAE/d18-current-verifier-corruption/puj-vendor-budget-impact-out-XuZ66z",
+  "outDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-current-verifier-corruption-001/cases/d18-current-verifier-corruption/published/good",
+  "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+  "transport": "ok",
+  "analysis": {
+    "status": "actionable",
+    "outcome": "actionable",
+    "identityVerified": null
+  },
+  "delivery": {
+    "status": "complete",
+    "complete": true,
+    "expected": [
+      "budget-impact.json",
+      "budget-impact.md"
+    ],
+    "present": [
+      "budget-impact.json",
+      "budget-impact.md"
+    ],
+    "missing": [],
+    "unexpected": [],
+    "publishedDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-current-verifier-corruption-001/cases/d18-current-verifier-corruption/published/good"
+  }
+}

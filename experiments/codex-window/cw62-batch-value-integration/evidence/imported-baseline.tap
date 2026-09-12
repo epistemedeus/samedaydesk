@@ -1,0 +1,841 @@
+TAP version 13
+# Subtest: W5-D13 proof: wrong-source, unrelated payment, failed result
+    # Subtest: CLI refuses a wrong archive file after a warm pin cache
+    ok 1 - CLI refuses a wrong archive file after a warm pin cache
+      ---
+      duration_ms: 596.339119
+      type: 'test'
+      ...
+    # Subtest: CLI HTTP wrong-source archive cannot become useful paid work
+    ok 2 - CLI HTTP wrong-source archive cannot become useful paid work
+      ---
+      duration_ms: 135.092712
+      type: 'test'
+      ...
+    # Subtest: library wrong buffer after cache still refuses instead of reusing the pin kit
+    ok 3 - library wrong buffer after cache still refuses instead of reusing the pin kit
+      ---
+      duration_ms: 7.782763
+      type: 'test'
+      ...
+    # Subtest: CLI unrelated early-x402 operationId is not this job's paid work
+    ok 4 - CLI unrelated early-x402 operationId is not this job's paid work
+      ---
+      duration_ms: 429.617531
+      type: 'test'
+      ...
+    # Subtest: CLI valid analysis refusal is not a crash and is not useful paid work
+    not ok 5 - CLI valid analysis refusal is not a crash and is not useful paid work
+      ---
+      duration_ms: 228.052556
+      type: 'test'
+      location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/buyer-value-ledger/test/binding.test.mjs:176:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        {
+          "ok": false,
+          "refused": false,
+          "outcomeKind": "engine_failure",
+          "usefulPaidWork": false,
+          "usefulDelivery": false,
+          "row": {
+            "schema": "samedaydesk.buyer-value-ledger.row.v1",
+            "runId": "bvl_d888ed375a5bb8e2",
+            "jobId": "vendor-budget-impact",
+            "buyerClass": "owner-qa",
+            "sample": false,
+            "independentDemand": false,
+            "organicDemand": false,
+            "prohibitedInferences": [
+              "analytics_count_is_independent_demand",
+              "catalog_presence_is_demand",
+              "cross_source_join_without_exact_key"
+            ],
+            "durationMs": 113,
+            "outputBytes": 0,
+            "outputs": [
+              {
+                "name": "budget-impact.json",
+                "present": false,
+                "bytes": 0,
+                "sha256": null
+              },
+              {
+                "name": "budget-impact.md",
+                "present": false,
+                "bytes": 0,
+                "sha256": null
+              }
+            ],
+            "outputsDigest": "25ce935a12ba878e39827487e7b470d476d3082701e0c1a2536def51755365b9",
+            "usableOutput": false,
+            "producedThisRun": false,
+            "outcomeKind": "engine_failure",
+            "usefulDelivery": false,
+            "usefulPaidWork": false,
+            "paidWorkBlockers": [
+              "failed_result",
+              "unrelated_or_unbound_payment",
+              "labelled_run_is_not_paid_work",
+              "nonsettling_prototype"
+            ],
+            "engine": {
+              "ok": false,
+              "status": null,
+              "exitCode": 2,
+              "digest": null,
+              "package": "useful-jobs",
+              "version": "1.4.1",
+              "purchaseAuthority": false,
+              "cli": "node bin/useful-jobs.mjs run <id>",
+              "archiveSha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+              "archiveBytes": 2575456,
+              "sourceCommit": "b046a2074fedfff85ca18aa7ebe9e3d42b87c95e",
+              "archiveFreeze": "b046a2074fedfff85ca18aa7ebe9e3d42b87c95e",
+              "kitSource": "local-file",
+              "kitVerified": true
+            },
+            "settlementJoin": {
+              "matched": false,
+              "operationIdFound": true,
+              "unknown": true,
+              "boundToThisJob": false,
+              "thisJobPayment": false,
+              "reason": "unrelated_or_unbound_payment",
+              "operationId": "early-x402-revenue",
+              "settlementJobId": null,
+              "requestedJobId": "vendor-budget-impact",
+              "settlementBuyerClass": "unknown",
+              "amountUsdc": "0.040",
+              "validDeliveryStatus": "unknown",
+              "recordId": "early-x402-revenue",
+              "evidenceValid": true,
+              "independentDemand": false,
+              "jobRevenueUsdc": null,
+              "note": "operationId observed but not this job's settlement; not this job's revenue"
+            },
+            "jobRevenueUsdc": null,
+            "citedBankedUsdcIsNotJobRevenue": true,
+            "requestHash": "36a3192759da4d4dd46d3c2055ebe112dbca99c9fcb8ed4133be823597c55b11",
+            "hashTerms": {
+              "owner": "I01",
+              "sourcePin": "5de66179a551a76c7ea6be5a0de8a6918ca3c528",
+              "sourcePath": "services/earned-work/src/crypto.ts",
+              "algorithm": "sha256",
+              "encoding": "utf8",
+              "canonicalization": "sorted-keys-json",
+              "competingKernelCopied": false
+            },
+            "d01": {
+              "integrationOwner": "W5-D01",
+              "repo": "epistemedeus/samedaydesk",
+              "pin": "aeef964fa188443078958d9d6d393afae1d542ee",
+              "ref": "fable/f08-paid-wrappers",
+              "exportPath": "server/paid-useful-jobs/index.mjs",
+              "available": false,
+              "root": null,
+              "remaining": "Default labelled runs spawn pinned useful-jobs 1.0.0. Optional BUYER_VALUE_LEDGER_D01_ROOT imports runPaidOffer from this pin. This ledger does not copy the wrapper and does not claim later D01 amendments."
+            },
+            "evidence": {
+              "callerInputs": "fixture",
+              "jobExecution": "local-runtime",
+              "kitSource": "local-file",
+              "externalAcceptance": false
+            },
+            "purchaseAuthority": false,
+            "sdsMainPin": "5b97d1b02e786acd1895cfa1508087ae3f7a1545",
+            "startedAt": "2026-09-12T06:59:10.699Z",
+            "endedAt": "2026-09-12T06:59:10.812Z",
+            "outDir": "/tmp/bvl-refuse-83LEGA/out"
+          },
+          "ledgerPath": null,
+          "honesty": {
+            "purchaseAuthority": false,
+            "purchaseAuthorized": false,
+            "independentDemand": false,
+            "organicDemand": false,
+            "jobRevenueUsdc": null,
+            "citedBankedUsdc": "8.105",
+            "citedBankedUsdcIsNotJobRevenue": true,
+            "proposedEnvelopeUsdc": "2",
+            "proposedEnvelopeIsNotJobRevenue": true,
+            "payments": "nonsettling-prototype",
+            "readyForRelease": false,
+            "i01EarnedWork": "not-this-family",
+            "kitSource": "local-file"
+          },
+          "engineStdout": "{\"ok\":false,\"refused\":true,\"code\":\"error\",\"error\":\"Unexpected token 'o', \\\"not json\\n\\\" is not valid JSON\",\"detail\":null}\n",
+          "engineStderr": ""
+        }
+        
+        
+        2 !== 0
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 2
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/buyer-value-ledger/test/binding.test.mjs:194:12)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    # Subtest: CLI engine crash on a non-directory out-dir is not a valid refusal or paid work
+    ok 6 - CLI engine crash on a non-directory out-dir is not a valid refusal or paid work
+      ---
+      duration_ms: 95.215652
+      type: 'test'
+      ...
+    # Subtest: failed spawn with leftover files and unrelated payment is not useful paid work
+    ok 7 - failed spawn with leftover files and unrelated payment is not useful paid work
+      ---
+      duration_ms: 6.576359
+      type: 'test'
+      ...
+    # Subtest: input digest is taken before spawn, not after a mutated caller file
+    ok 8 - input digest is taken before spawn, not after a mutated caller file
+      ---
+      duration_ms: 2.014717
+      type: 'test'
+      ...
+    # Subtest: bound overlay settlement still does not force terms hash equality or paid work
+    ok 9 - bound overlay settlement still does not force terms hash equality or paid work
+      ---
+      duration_ms: 0.396048
+      type: 'test'
+      ...
+    1..9
+not ok 1 - W5-D13 proof: wrong-source, unrelated payment, failed result
+  ---
+  duration_ms: 1502.840552
+  type: 'suite'
+  location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/buyer-value-ledger/test/binding.test.mjs:68:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: local HTTP adapter (not live Express)
+    # Subtest: create/status/list over 127.0.0.1 against the real desk library
+    not ok 1 - create/status/list over 127.0.0.1 against the real desk library
+      ---
+      duration_ms: 34.727604
+      type: 'test'
+      location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/http-local.test.mjs:8:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+        
+        400 !== 200
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 200
+      actual: 400
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/http-local.test.mjs:21:14)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async Promise.all (index 0)
+        async Suite.run (node:internal/test_runner/test:1442:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    1..1
+not ok 2 - local HTTP adapter (not live Express)
+  ---
+  duration_ms: 36.103527
+  type: 'suite'
+  location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/http-local.test.mjs:7:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: literal caller journey
+    # Subtest: create vendor-budget-impact from F08 caller fixtures: queued->completed, stable requestId, outputs listed, sold false
+    not ok 1 - create vendor-budget-impact from F08 caller fixtures: queued->completed, stable requestId, outputs listed, sold false
+      ---
+      duration_ms: 63.264327
+      type: 'test'
+      location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/journey.test.mjs:8:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        {
+          "ok": false,
+          "refused": true,
+          "code": "engine-pin-mismatch",
+          "error": "useful-jobs archive size 2522418 != 2575456",
+          "detail": {
+            "bytes": 2522418,
+            "expected": 2575456
+          },
+          "engineId": "vendor-budget-impact",
+          "requestId": null,
+          "sold": false,
+          "purchaseAuthority": false,
+          "fundingState": "rejected",
+          "liveSettleAllowed": false,
+          "liveSettleAttempted": false
+        }
+        
+        
+        2 !== 0
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 2
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/journey.test.mjs:20:12)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Test.start (node:internal/test_runner/test:944:17)
+        node:internal/test_runner/test:1440:71
+        node:internal/per_context/primordials:466:82
+        new Promise (<anonymous>)
+        new SafePromise (node:internal/per_context/primordials:435:3)
+        node:internal/per_context/primordials:466:9
+        Array.map (<anonymous>)
+      ...
+    # Subtest: create --defer records queued without completing; later create runs the same requestId
+    not ok 2 - create --defer records queued without completing; later create runs the same requestId
+      ---
+      duration_ms: 59.802619
+      type: 'test'
+      location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/journey.test.mjs:75:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        {
+          "ok": false,
+          "refused": true,
+          "code": "engine-pin-mismatch",
+          "error": "useful-jobs archive size 2522418 != 2575456",
+          "detail": {
+            "bytes": 2522418,
+            "expected": 2575456
+          },
+          "engineId": "vendor-budget-impact",
+          "requestId": null,
+          "sold": false,
+          "purchaseAuthority": false,
+          "fundingState": "rejected",
+          "liveSettleAllowed": false,
+          "liveSettleAttempted": false
+        }
+        
+        
+        2 !== 0
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 2
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/journey.test.mjs:88:12)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        async Promise.all (index 0)
+        async Suite.run (node:internal/test_runner/test:1442:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    1..2
+not ok 3 - literal caller journey
+  ---
+  duration_ms: 124.078565
+  type: 'suite'
+  location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/journey.test.mjs:7:1'
+  failureType: 'subtestsFailed'
+  error: '2 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: honest replay and isolated outputs
+    # Subtest: SDS52 wrapper CLI list is a real process at the pinned head
+    ok 1 - SDS52 wrapper CLI list is a real process at the pinned head
+      ---
+      duration_ms: 73.879671
+      type: 'test'
+      ...
+    # Subtest: CLI: rejected replay remains rejected and never returns ok true
+    not ok 2 - CLI: rejected replay remains rejected and never returns ok true
+      ---
+      duration_ms: 4.830082
+      type: 'test'
+      location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/replay-honesty.test.mjs:39:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+        + actual - expected
+        
+        + undefined
+        - 'rejected'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'rejected'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/replay-honesty.test.mjs:47:12)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        async Promise.all (index 0)
+        async Suite.run (node:internal/test_runner/test:1442:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: HTTP POST of a rejected replay is 400 and stays rejected
+    not ok 3 - HTTP POST of a rejected replay is 400 and stays rejected
+      ---
+      duration_ms: 2.909091
+      type: 'test'
+      location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/replay-honesty.test.mjs:73:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+        + actual - expected
+        
+        + undefined
+        - 'rejected'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'rejected'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/replay-honesty.test.mjs:80:12)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    # Subtest: CLI: clean request succeeds without stale bytes from a prior result dir
+    not ok 4 - CLI: clean request succeeds without stale bytes from a prior result dir
+      ---
+      duration_ms: 59.932033
+      type: 'test'
+      location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/replay-honesty.test.mjs:111:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        {
+          "ok": false,
+          "refused": true,
+          "code": "engine-pin-mismatch",
+          "error": "useful-jobs archive size 2522418 != 2575456",
+          "detail": {
+            "bytes": 2522418,
+            "expected": 2575456
+          },
+          "engineId": "vendor-budget-impact",
+          "requestId": null,
+          "sold": false,
+          "purchaseAuthority": false,
+          "fundingState": "rejected",
+          "liveSettleAllowed": false,
+          "liveSettleAttempted": false
+        }
+        
+        
+        2 !== 0
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 2
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/replay-honesty.test.mjs:124:12)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    # Subtest: HTTP: subset engine plus leftover catalog names cannot complete
+    not ok 5 - HTTP: subset engine plus leftover catalog names cannot complete
+      ---
+      duration_ms: 2.976565
+      type: 'test'
+      location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/replay-honesty.test.mjs:160:3'
+      failureType: 'testCodeFailure'
+      error: 'The "path" argument must be of type string. Received null'
+      code: 'ERR_INVALID_ARG_TYPE'
+      name: 'TypeError'
+      stack: |-
+        join (node:path:1354:7)
+        TestContext.<anonymous> (file:///workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/replay-honesty.test.mjs:173:19)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    # Subtest: valid analysis refusal with complete artifacts is not a transport crash
+    not ok 6 - valid analysis refusal with complete artifacts is not a transport crash
+      ---
+      duration_ms: 3.002229
+      type: 'test'
+      location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/replay-honesty.test.mjs:199:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+        
+        false !== true
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: true
+      actual: false
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/replay-honesty.test.mjs:215:12)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    1..6
+not ok 4 - honest replay and isolated outputs
+  ---
+  duration_ms: 148.733606
+  type: 'suite'
+  location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/replay-honesty.test.mjs:23:1'
+  failureType: 'subtestsFailed'
+  error: '5 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: seeded fail-closed cases
+    # Subtest: --example cannot become status completed as a sale
+    not ok 1 - --example cannot become status completed as a sale
+      ---
+      duration_ms: 60.193335
+      type: 'test'
+      location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/seeded-failures.test.mjs:11:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        {
+          "ok": false,
+          "refused": true,
+          "code": "engine-pin-mismatch",
+          "error": "useful-jobs archive size 2522418 != 2575456",
+          "detail": {
+            "bytes": 2522418,
+            "expected": 2575456
+          },
+          "engineId": "vendor-budget-impact",
+          "requestId": null,
+          "sold": false,
+          "purchaseAuthority": false,
+          "fundingState": "rejected",
+          "liveSettleAllowed": false,
+          "liveSettleAttempted": false
+        }
+        
+        
+        2 !== 0
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 2
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/seeded-failures.test.mjs:14:12)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Test.start (node:internal/test_runner/test:944:17)
+        node:internal/test_runner/test:1440:71
+        node:internal/per_context/primordials:466:82
+        new Promise (<anonymous>)
+        new SafePromise (node:internal/per_context/primordials:435:3)
+        node:internal/per_context/primordials:466:9
+        Array.map (<anonymous>)
+      ...
+    # Subtest: SAMPLE kit path cannot become status completed as a sale
+    not ok 2 - SAMPLE kit path cannot become status completed as a sale
+      ---
+      duration_ms: 2.900154
+      type: 'test'
+      location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/seeded-failures.test.mjs:24:3'
+      failureType: 'testCodeFailure'
+      error: 'useful-jobs archive size 2522418 != 2575456'
+      code: 'engine-pin-mismatch'
+      name: 'DeskRefuse'
+      stack: |-
+        refuse (file:///workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/lib/refuse.mjs:12:10)
+        ensureUsefulJobsKit (file:///workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/lib/engine.mjs:57:15)
+        TestContext.<anonymous> (file:///workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/seeded-failures.test.mjs:25:17)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        async Promise.all (index 0)
+        async Suite.run (node:internal/test_runner/test:1442:7)
+      ...
+    # Subtest: missing required flag refuses
+    not ok 3 - missing required flag refuses
+      ---
+      duration_ms: 61.134407
+      type: 'test'
+      location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/seeded-failures.test.mjs:46:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+        + actual - expected
+        
+        + 'engine-pin-mismatch'
+        - 'missing-required-inputs'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'missing-required-inputs'
+      actual: 'engine-pin-mismatch'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/seeded-failures.test.mjs:53:12)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    # Subtest: unknown job id refuses
+    ok 4 - unknown job id refuses
+      ---
+      duration_ms: 64.536255
+      type: 'test'
+      ...
+    # Subtest: store path escape via requestId refuses
+    ok 5 - store path escape via requestId refuses
+      ---
+      duration_ms: 60.370928
+      type: 'test'
+      ...
+    # Subtest: integer termsVersion is rejected (I01 hash contract, not original F01)
+    not ok 6 - integer termsVersion is rejected (I01 hash contract, not original F01)
+      ---
+      duration_ms: 63.352603
+      type: 'test'
+      location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/seeded-failures.test.mjs:77:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+        + actual - expected
+        
+        + 'engine-pin-mismatch'
+        - 'invalid_input'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'invalid_input'
+      actual: 'engine-pin-mismatch'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/seeded-failures.test.mjs:95:12)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    # Subtest: same orderId must not swap files
+    not ok 7 - same orderId must not swap files
+      ---
+      duration_ms: 60.557419
+      type: 'test'
+      location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/seeded-failures.test.mjs:98:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        {
+          "ok": false,
+          "refused": true,
+          "code": "engine-pin-mismatch",
+          "error": "useful-jobs archive size 2522418 != 2575456",
+          "detail": {
+            "bytes": 2522418,
+            "expected": 2575456
+          },
+          "engineId": "vendor-budget-impact",
+          "requestId": null,
+          "sold": false,
+          "purchaseAuthority": false,
+          "fundingState": "rejected",
+          "liveSettleAllowed": false,
+          "liveSettleAttempted": false
+        }
+        
+        
+        2 !== 0
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 2
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/seeded-failures.test.mjs:112:12)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    # Subtest: digest mismatch on declared input sha256 refuses
+    not ok 8 - digest mismatch on declared input sha256 refuses
+      ---
+      duration_ms: 3.316499
+      type: 'test'
+      location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/seeded-failures.test.mjs:138:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+        + actual - expected
+        
+        + 'engine-pin-mismatch'
+        - 'digest-mismatch'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'digest-mismatch'
+      actual: 'engine-pin-mismatch'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/seeded-failures.test.mjs:149:12)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    1..8
+not ok 5 - seeded fail-closed cases
+  ---
+  duration_ms: 377.896207
+  type: 'suite'
+  location: '/workspace/pilot/tmp/cw62-astra-batch-value-integration-20260912/src/tools/job-request-desk/test/seeded-failures.test.mjs:10:1'
+  failureType: 'subtestsFailed'
+  error: '6 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: I01 content-hash terms contract
+    # Subtest: replays Neo PR54 golden termsVersion
+    ok 1 - replays Neo PR54 golden termsVersion
+      ---
+      duration_ms: 1.244652
+      type: 'test'
+      ...
+    # Subtest: rejects integer termsVersion (original F01 dual-key)
+    ok 2 - rejects integer termsVersion (original F01 dual-key)
+      ---
+      duration_ms: 0.454593
+      type: 'test'
+      ...
+    # Subtest: job-request terms are content-hashed, not integer
+    ok 3 - job-request terms are content-hashed, not integer
+      ---
+      duration_ms: 0.309777
+      type: 'test'
+      ...
+    1..3
+ok 6 - I01 content-hash terms contract
+  ---
+  duration_ms: 2.848433
+  type: 'suite'
+  ...
+# Subtest: batch identity: duplicate/traversing refused; mixed charges stay distinct
+    # Subtest: CLI rejects duplicate item ids without selling anything
+    ok 1 - CLI rejects duplicate item ids without selling anything
+      ---
+      duration_ms: 92.480452
+      type: 'test'
+      ...
+    # Subtest: CLI rejects traversing item ids
+    ok 2 - CLI rejects traversing item ids
+      ---
+      duration_ms: 100.198687
+      type: 'test'
+      ...
+    # Subtest: CLI rejects traversing file paths
+    ok 3 - CLI rejects traversing file paths
+      ---
+      duration_ms: 126.563886
+      type: 'test'
+      ...
+    # Subtest: CLI rejects encoded traversal item ids
+    ok 4 - CLI rejects encoded traversal item ids
+      ---
+      duration_ms: 120.009909
+      type: 'test'
+      ...
+    # Subtest: CLI refuses synthesized reserved-fixture without a payment object
+    ok 5 - CLI refuses synthesized reserved-fixture without a payment object
+      ---
+      duration_ms: 97.578054
+      type: 'test'
+      ...
+    # Subtest: CLI refuses useful-jobs as a fallback runner
+    ok 6 - CLI refuses useful-jobs as a fallback runner
+      ---
+      duration_ms: 83.752196
+      type: 'test'
+      ...
+    # Subtest: CLI mixed completed items keep distinct item and charge identities
+    ok 7 - CLI mixed completed items keep distinct item and charge identities
+      ---
+      duration_ms: 803.004186
+      type: 'test'
+      ...
+    # Subtest: HTTP POST /batch rejects duplicates and accepts a mixed ledger
+    ok 8 - HTTP POST /batch rejects duplicates and accepts a mixed ledger
+      ---
+      duration_ms: 383.99684
+      type: 'test'
+      ...
+    # Subtest: inline JSON SAMPLE cannot be a reserved-fixture sale
+    ok 9 - inline JSON SAMPLE cannot be a reserved-fixture sale
+      ---
+      duration_ms: 1.459813
+      type: 'test'
+      ...
+    # Subtest: does not force ledger termsVersion equal to the runner receipt hash
+    ok 10 - does not force ledger termsVersion equal to the runner receipt hash
+      ---
+      duration_ms: 1439.51848
+      type: 'test'
+      ...
+    1..10
+ok 7 - batch identity: duplicate/traversing refused; mixed charges stay distinct
+  ---
+  duration_ms: 3250.877722
+  type: 'suite'
+  ...
+1..7
+# tests 39
+# suites 7
+# pass 24
+# fail 15
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6851.377834

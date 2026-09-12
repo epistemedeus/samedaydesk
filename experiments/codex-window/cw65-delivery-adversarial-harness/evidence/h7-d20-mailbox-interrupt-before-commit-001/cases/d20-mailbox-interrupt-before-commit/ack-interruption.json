@@ -1,0 +1,8 @@
+{
+  "pid": 320974,
+  "source": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-interrupt-before-commit-001/cases/d20-mailbox-interrupt-before-commit/mailbox/cw65-mail/envelope.json.320974.f3b7693b-15e8-4868-8616-16f075fcb1e1.tmp",
+  "destination": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-interrupt-before-commit-001/cases/d20-mailbox-interrupt-before-commit/mailbox/cw65-mail/envelope.json",
+  "timing": "after",
+  "signal": "SIGKILL",
+  "stdoutBytes": 0
+}

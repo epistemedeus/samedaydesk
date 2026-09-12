@@ -1,0 +1,10 @@
+{
+  "label": "cw65-caller-corrupt",
+  "rows": [
+    {
+      "field": "corrupt-input",
+      "value": 3,
+      "unit": "USD/1M-tokens"
+    }
+  ]
+}

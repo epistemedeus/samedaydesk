@@ -1,0 +1,184 @@
+{
+  "ok": true,
+  "jobId": "lockfile-pin-delta",
+  "title": "lockfile-pin-delta",
+  "fundingState": "unfunded",
+  "sold": false,
+  "sample": false,
+  "sampleReasons": [],
+  "purchaseAuthority": false,
+  "outputs": [
+    {
+      "name": "pin-delta.json",
+      "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-FJtMME/d16-current-lockfile/puj-lockfile-pin-delta-out-K0vz3N/pin-delta.json",
+      "bytes": 2424,
+      "sha256": "16099d755ba0cd1c2c534bf4a5a5c77855c79e7afa5809675b6783363dfb07e0"
+    },
+    {
+      "name": "pin-delta.md",
+      "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-FJtMME/d16-current-lockfile/puj-lockfile-pin-delta-out-K0vz3N/pin-delta.md",
+      "bytes": 776,
+      "sha256": "f10413e4b74e926fc2d14a2da92cd4ab73a8c69edc5dbf171e8cf8e5bcf12d88"
+    }
+  ],
+  "receipt": {
+    "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+    "jobId": "lockfile-pin-delta",
+    "engine": {
+      "package": "@samedaydesk/lockfile-pin-delta",
+      "version": "5f0f189fd3e88eabfeca2b95b2da644e58374372",
+      "purchaseAuthority": false,
+      "cli": "node bin/lockfile-delta.mjs",
+      "archiveSha256": "367ca7096bcced4a0475a6d55a44147c9cae1a36f4295c30cd1e94c0ebbd174e",
+      "archiveBytes": 196,
+      "sourceRepo": "epistemedeus/samedaydesk",
+      "sourceCommit": "5f0f189fd3e88eabfeca2b95b2da644e58374372",
+      "ownedPath": "tools/lockfile-pin-delta/",
+      "source": "in-tree",
+      "catalogPin": {
+        "sha256": "367ca7096bcced4a0475a6d55a44147c9cae1a36f4295c30cd1e94c0ebbd174e",
+        "bytes": 196,
+        "version": "5f0f189fd3e88eabfeca2b95b2da644e58374372",
+        "package": "@samedaydesk/lockfile-pin-delta"
+      },
+      "executable": {
+        "sha256": "caa8ffc224c05ec813e47d9cecba6d3e5a8db408a46ebc3983bb493fe102db75",
+        "bytes": 1336,
+        "bin": "/tmp/h7/wt/tools/lockfile-pin-delta/bin/lockfile-delta.mjs",
+        "source": "in-tree"
+      }
+    },
+    "inputsDigest": "5e7d80423c4e8b6ea5deb1a73fca52d4223b85d6ba7bf0f7bc6bb4c1e481935b",
+    "outputsDigest": "dd71a46ca04839219120335bab99e6504dcb86fc2079fa41c8ec9f600b9de99f",
+    "inputs": [
+      {
+        "name": "before",
+        "kind": "file",
+        "bytes": 390,
+        "sha256": "79e813668ccb2200351113c5f84d314a4c7def82576e6fb9a797f84b42923027"
+      },
+      {
+        "name": "after",
+        "kind": "file",
+        "bytes": 390,
+        "sha256": "84b96387241d6851831bbbd05dcb1e370ea7a52a363e9c1dd284bcff16f04020"
+      }
+    ],
+    "inputRoot": null,
+    "outputs": [
+      {
+        "name": "pin-delta.json",
+        "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-FJtMME/d16-current-lockfile/puj-lockfile-pin-delta-out-K0vz3N/pin-delta.json",
+        "bytes": 2424,
+        "sha256": "16099d755ba0cd1c2c534bf4a5a5c77855c79e7afa5809675b6783363dfb07e0"
+      },
+      {
+        "name": "pin-delta.md",
+        "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-FJtMME/d16-current-lockfile/puj-lockfile-pin-delta-out-K0vz3N/pin-delta.md",
+        "bytes": 776,
+        "sha256": "f10413e4b74e926fc2d14a2da92cd4ab73a8c69edc5dbf171e8cf8e5bcf12d88"
+      }
+    ],
+    "fundingState": "unfunded",
+    "sold": false,
+    "sample": false,
+    "sampleReasons": [],
+    "purchaseAuthority": false,
+    "liveSettlement": "out-of-scope",
+    "fixturePrice": {
+      "labelled": true,
+      "live": false,
+      "publishedToLiveCatalog": false,
+      "jobId": "lockfile-pin-delta",
+      "amountUsdc": "0.02",
+      "amountAtomic": "20000",
+      "payTo": "0x0000000000000000000000000000000000000F08",
+      "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+    },
+    "payment": {
+      "fixture": false,
+      "purchaseAuthority": false,
+      "liveSettleAttempted": false,
+      "liveSettleAllowed": false,
+      "fundingState": "unfunded"
+    },
+    "continuity": null,
+    "engineResult": {
+      "ok": true,
+      "status": "partial",
+      "digest": "16099d755ba0cd1c2c534bf4a5a5c77855c79e7afa5809675b6783363dfb07e0",
+      "refused": false,
+      "identityVerified": null
+    },
+    "outDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-FJtMME/d16-current-lockfile/puj-lockfile-pin-delta-out-K0vz3N",
+    "publishedDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d16-current-lockfile-001/cases/d16-current-lockfile/published/lockfile",
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+    "transport": "ok",
+    "analysis": {
+      "status": "partial",
+      "outcome": "partial",
+      "identityVerified": null
+    },
+    "delivery": {
+      "status": "complete",
+      "complete": true,
+      "expected": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "present": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "missing": [],
+      "unexpected": [],
+      "publishedDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d16-current-lockfile-001/cases/d16-current-lockfile/published/lockfile"
+    },
+    "runOutDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-FJtMME/d16-current-lockfile/puj-lockfile-pin-delta-out-K0vz3N"
+  },
+  "engine": {
+    "ok": true,
+    "appId": "lockfile-pin-delta",
+    "status": "partial",
+    "provenance": "caller-supplied",
+    "digest": "16099d755ba0cd1c2c534bf4a5a5c77855c79e7afa5809675b6783363dfb07e0",
+    "counts": {
+      "beforePins": 1,
+      "afterPins": 1,
+      "added": 0,
+      "removed": 0,
+      "changed": 1,
+      "unchanged": 0,
+      "missingIntegrity": 1
+    },
+    "outDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-FJtMME/d16-current-lockfile/puj-lockfile-pin-delta-out-K0vz3N",
+    "purchaseAuthority": false,
+    "settlement": "nonsettling-prototype"
+  },
+  "liveSettlement": "out-of-scope",
+  "executionId": "1f159b35-3f1c-45e9-a85e-897245bb381f",
+  "runOutDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-FJtMME/d16-current-lockfile/puj-lockfile-pin-delta-out-K0vz3N",
+  "outDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d16-current-lockfile-001/cases/d16-current-lockfile/published/lockfile",
+  "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+  "transport": "ok",
+  "analysis": {
+    "status": "partial",
+    "outcome": "partial",
+    "identityVerified": null
+  },
+  "delivery": {
+    "status": "complete",
+    "complete": true,
+    "expected": [
+      "pin-delta.json",
+      "pin-delta.md"
+    ],
+    "present": [
+      "pin-delta.json",
+      "pin-delta.md"
+    ],
+    "missing": [],
+    "unexpected": [],
+    "publishedDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d16-current-lockfile-001/cases/d16-current-lockfile/published/lockfile"
+  }
+}

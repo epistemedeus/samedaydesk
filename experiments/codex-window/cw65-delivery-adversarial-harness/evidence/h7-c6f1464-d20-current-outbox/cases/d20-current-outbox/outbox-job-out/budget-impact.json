@@ -1,0 +1,74 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "vendor-budget-impact",
+  "status": "actionable",
+  "summary": "Pricing-row scan: added=1 removed=0 fieldChanges=2 unitChanges=0 conflicting=0 unknown=0",
+  "actions": [
+    {
+      "priority": "medium",
+      "kind": "review-price-field",
+      "fieldKey": "desk-chat-input",
+      "beforeValue": 1,
+      "afterValue": 1.5,
+      "unit": "USD/1M-tokens",
+      "delta": 0.5,
+      "note": "Same-unit list-price field change in supplied snapshots. Delta is after minus before per stated unit, not a bill change or live quote."
+    },
+    {
+      "priority": "medium",
+      "kind": "review-price-field",
+      "fieldKey": "desk-chat-output",
+      "beforeValue": 4,
+      "afterValue": 6,
+      "unit": "USD/1M-tokens",
+      "delta": 2,
+      "note": "Same-unit list-price field change in supplied snapshots. Delta is after minus before per stated unit, not a bill change or live quote."
+    },
+    {
+      "priority": "medium",
+      "kind": "review-added-price-field",
+      "fieldKey": "desk-embed",
+      "afterValue": 0.12,
+      "unit": "USD/1M-tokens",
+      "note": "Field appears in the after snapshot. Check source coverage and SKU identity; this does not establish a new vendor offering, a replacement, or a bill increase."
+    }
+  ],
+  "gaps": [],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "before": "/tmp/h7/wt/tools/job-delivery-outbox/fixtures/caller/vendor-budget-impact/before.json",
+    "after": "/tmp/h7/wt/tools/job-delivery-outbox/fixtures/caller/vendor-budget-impact/after.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "family": "pricing-row-unit",
+    "counts": {
+      "beforeRows": 2,
+      "afterRows": 3,
+      "added": 1,
+      "removed": 0,
+      "fieldChanges": 2,
+      "unitChanges": 0,
+      "conflicting": 0,
+      "unchanged": 0,
+      "unknown": 0
+    },
+    "ok": true
+  },
+  "generatedAt": "2026-09-12T13:25:23.817Z",
+  "purchaseAuthority": false,
+  "scope": {
+    "kind": "supplied-pricing-row-diff",
+    "billCalculation": false,
+    "liveQuote": false,
+    "unitsConverted": false,
+    "sourceCoverageVerified": false,
+    "note": "Caller supplies dated snapshots with stable field identity and comparable units. Actual usage and all tariff terms are required for a bill estimate."
+  },
+  "digest": "4ad94dfd79e44d68"
+}

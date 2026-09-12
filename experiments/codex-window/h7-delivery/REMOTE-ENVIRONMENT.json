@@ -1,0 +1,155 @@
+{
+  "schema": "h7-remote-environment/v1",
+  "observedAtUtc": "2026-09-12T14:05:00Z",
+  "persistence": {
+    "observed": [
+      "This Cursor Cloud VM retained H6D worktree /tmp/h6d/wt and grok sessions under ~/.grok/sessions after the previous controller turn.",
+      "H7 uses a disjoint worktree /tmp/h7/wt sharing Git objects with /tmp/h6d/wt.",
+      "Hostname `cursor` is not provider identity.",
+      "Native parent session 01a094f5-dde1-70e1-ad54-481c90a8cd67 implemented on this VM without --resume of H6D.",
+      "Same-session pin correction consumed 8a811bba (fix e122c266) without a new parent.",
+      "PR145 completion reproduced d18/d20 on 8a811bba at 4c42987; PR143 vendor-temp leak correction is not blocked by those witnesses.",
+      "Same session rebound PR145 consumers onto integration c6f1464 (PR146 / repair 080cc62). Immutable 1.4.3 archive a18ab918 unchanged. H7-witness /tmp/h7-witness/wt left at 080cc62."
+    ],
+    "untestedPromises": [
+      "Replacement VM from Git + documented auth without copying private home.",
+      "Resume after host reboot or new agentId.",
+      "grok leader.sock (none at inspect)."
+    ]
+  },
+  "provider": "cursor-cloud",
+  "agentId": "bc-ec55ab26-6e23-4562-9c7a-649331bdba1f",
+  "hostnameIsNotProvider": true,
+  "hostnameObserved": "cursor",
+  "controllerId": "bc-ec55ab26-6e23-4562-9c7a-649331bdba1f",
+  "nativeParentSessionId": "01a094f5-dde1-70e1-ad54-481c90a8cd67",
+  "measured": {
+    "cpu": { "nproc": 4, "model": "Intel(R) Xeon(R) Processor" },
+    "ram": { "memTotalKiB": 16398384, "memAvailableKiBAtH7Admit": 10564036, "memAvailableKiBAtCloseout": 10453652, "memAvailableKiBAtPinRebind": 10462112, "memAvailableKiBAtPr145Completion": 10467960, "memAvailableKiBAtC6f1464Rebind": 10435544 },
+    "disk": { "size": "254G", "used": "18G", "avail": "237G", "usePercent": "7%" }
+  },
+  "workRoots": {
+    "h7Scratch": "/tmp/h7",
+    "h7Worktree": "/tmp/h7/wt",
+    "h7Logs": "/tmp/h7/heavy-logs",
+    "h7RuntimeTmp": "/tmp/h7/runtime-tmp",
+    "h6dDisjoint": "/tmp/h6d/wt",
+    "h7WitnessDisjoint": "/tmp/h7-witness/wt",
+    "cursorWorkspaceUnrelated": "/workspace"
+  },
+  "repo": {
+    "name": "epistemedeus/samedaydesk",
+    "branch": "codex/h7-delivery-20260912",
+    "runtimePin": "c6f1464222169f2d32247c978dc5007d82a2aa03",
+    "repairSha": "080cc62e7bc83f76431d916df34aea6d30875401",
+    "archivePin": "8a811bbadba7edc6c926b319b0839cd2f01e5896",
+    "runtimePinFix": "e122c26657977ce3a2d41642095e999db1125b53",
+    "previousRuntimePinNotReleaseReady": "6007fcfa27074f9a594248e47296f1afa4f8385d",
+    "unpublished143": { "bytes": 2615491, "sha256": "a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09", "containsWrapperFixes": false },
+    "newPackagedRuntime": null,
+    "runtimePinBranch": "codex/useful-jobs-core-integration-20260912",
+    "basedOn": "30345f69f16aca93bb95511ee4da62975c98cc04",
+    "importHeadAtStart": "fe8057f395bc665b629e12dbff0db0c264f0eb46",
+    "implementationHead": "d375760a560a6adf0ca392af94c900623e53bd0a",
+    "controlsHead": "80aeb7be9e2c2e180641196a92f371edb9cf2eb9",
+    "reproductionHead": "4c4298713f8caba4fd34541797097b0f4b97f03c",
+    "classificationHead": "7d2b6f20955a00c2b66c7cfe6177c960fed63bb0",
+    "draftPr143": "https://github.com/epistemedeus/samedaydesk/pull/143",
+    "mergedPr146": "https://github.com/epistemedeus/samedaydesk/pull/146",
+    "draftPr145": "https://github.com/epistemedeus/samedaydesk/pull/145",
+    "draftPr": "https://github.com/epistemedeus/samedaydesk/pull/145 (stacked draft; do not default-merge)",
+    "compareUrl": "https://github.com/epistemedeus/samedaydesk/compare/c6f1464222169f2d32247c978dc5007d82a2aa03...codex/h7-delivery-20260912",
+    "shipIndependently": {
+      "pr143VendorTempLeakCorrection": true,
+      "pr146IntegrationRepairs": true,
+      "pr145ConsumerStack": false,
+      "currentRuntimeDeliveryReady": false,
+      "productionMain": false
+    },
+    "knownBad": [
+      "claiming 1.4.3 archive contains wrapper publication/interrupt fixes",
+      "6007fcfa as release-ready 1.4.3"
+    ],
+    "nextOwner": [
+      "Root/integration reviewer of draft PR145 on useful-jobs-core-integration",
+      "PR143 and PR146 can remain independently landable as integration, not production main"
+    ]
+  },
+  "nativeGrok": {
+    "binary": "/home/ubuntu/.grok/bin/grok",
+    "version": "1.0.25 (f7e67d6988e2) [stable]",
+    "model": "grok-4.6",
+    "effort": "xhigh"
+  },
+  "installedCommands": {
+    "grok": { "present": true, "version": "1.0.25" },
+    "node": { "present": true, "version": "v22.22.2" },
+    "codex": { "present": false, "note": "not installed to fill inventory" },
+    "cursor": { "present": false, "note": "not installed to fill inventory" }
+  },
+  "auth": {
+    "grokComLoggedIn": true,
+    "nativeSubscriptionOnly": true,
+    "apiBilledSubstituteUsed": false,
+    "storeLocation": "/home/ubuntu/.grok/auth.json",
+    "credentialsNotInGit": true
+  },
+  "children": {
+    "note": "Child count is not product acceptance.",
+    "maxConcurrent": 3,
+    "ids": [
+      { "slice": "CW60", "id": "01a094fa-af89-79a3-b23c-5d401974b23d" },
+      { "slice": "CW62", "id": "01a094fa-af89-79a3-b23c-5d5692a0d56c" },
+      { "slice": "CW70", "id": "01a094fa-af89-79a3-b23c-5d640d7118c6" }
+    ],
+    "parentOwnedSlices": ["CW61", "CW65", "H7-journey"]
+  },
+  "commands": {
+    "start": "nohup grok --prompt-file /tmp/h7/heavy-logs/parent.prompt.md -m grok-4.6 --effort xhigh --output-format json --always-approve --cwd /tmp/h7/wt > /tmp/h7/heavy-logs/parent.stdout.json 2> /tmp/h7/heavy-logs/parent.stderr.log & echo $! > /tmp/h7/heavy-logs/parent.pid",
+    "resumeAfterDeadUnfinished": "grok --resume 01a094f5-dde1-70e1-ad54-481c90a8cd67 --prompt-file /tmp/h7/heavy-logs/parent.prompt.md -m grok-4.6 --effort xhigh --output-format json --always-approve --cwd /tmp/h7/wt",
+    "resumeNote": "conversation-only; do not pass --restore-code; never resume H6D session into this charter",
+    "sessionList": "grok sessions list",
+    "collect": [
+      "ps -p $(cat /tmp/h7/heavy-logs/parent.pid) || echo H7_PARENT_DEAD",
+      "git -C /tmp/h7/wt status -sb && git -C /tmp/h7/wt log -8 --oneline",
+      "test -f /tmp/h7/wt/experiments/codex-window/h7-delivery/RESULT.md",
+      "git -C /tmp/h7/wt push -u origin codex/h7-delivery-20260912"
+    ]
+  },
+  "scratchCleanup": {
+    "policy": "clean only H7 owned completed scratch; never delete /tmp/h6d or other jobs",
+    "doNotTouch": ["tmux s176-usage", "/workspace", "/tmp/h6d", "/tmp/h7-witness", "private homes"]
+  },
+  "h6dCollected": {
+    "session": "01a09456-c82b-7b41-ad58-e5557da52ed3",
+    "branch": "codex/wave6-h6d-20260912",
+    "tip": "b54eaa0ae8cb756cdb82b2b923a9468c3893061c",
+    "implementationHead": "424ee59bd772d77109d1ec6cdd7517333c101b83",
+    "tests": "173 pass / 0 fail",
+    "leftIntact": true
+  },
+  "cashUsd": 0,
+  "nativeUsage": {
+    "sessionId": "01a094f5-dde1-70e1-ad54-481c90a8cd67",
+    "inclusion": "usage.json input includes cache; Grok stream-end input may be uncached",
+    "notCustomerJobs": true,
+    "notH10Economics": true,
+    "historical285NotMixed": true,
+    "usageJsonPath": "/home/ubuntu/.grok/sessions/%2Ftmp%2Fh7%2Fwt/01a094f5-dde1-70e1-ad54-481c90a8cd67/usage.json",
+    "lastClosedTurnAtUtc": "2026-09-12T12:17:22Z",
+    "closedTurnCount": 3,
+    "thisTurn": 4,
+    "thisTurnInUsageJson": false,
+    "primaryModelId": "grok-4.6-build",
+    "sessionThroughTurn3": {
+      "inputTokensIncludesCache": 49590678,
+      "cachedReadTokens": 47390336,
+      "uncachedEquivalentInput": 2200342,
+      "outputTokens": 337251,
+      "reasoningTokens": 290790,
+      "totalTokens": 49927929,
+      "modelCalls": 275,
+      "costUsdTicks": 149531959200
+    }
+  }
+}

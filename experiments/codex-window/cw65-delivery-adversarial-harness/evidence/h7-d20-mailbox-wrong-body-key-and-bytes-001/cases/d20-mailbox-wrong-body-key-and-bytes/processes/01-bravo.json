@@ -1,0 +1,23 @@
+{
+  "pid": 319100,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/server/paid-useful-jobs/bin/cli.mjs",
+    "run",
+    "vendor-budget-impact",
+    "--before",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-wrong-body-key-and-bytes-001/cases/d20-mailbox-wrong-body-key-and-bytes/inputs/bravo-before.json",
+    "--after",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-wrong-body-key-and-bytes-001/cases/d20-mailbox-wrong-body-key-and-bytes/inputs/bravo-after.json",
+    "--out-dir",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-wrong-body-key-and-bytes-001/cases/d20-mailbox-wrong-body-key-and-bytes/published/bravo"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-bXP5gV/d20-mailbox-wrong-body-key-and-bytes",
+  "startedAt": "2026-09-12T09:47:28.220Z",
+  "endedAt": "2026-09-12T09:47:28.489Z",
+  "status": 0,
+  "signal": null,
+  "timedOut": false
+}
