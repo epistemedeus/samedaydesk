@@ -1,0 +1,15 @@
+{
+  "id": "h04-page-01",
+  "title": "Watch JSON-LD validator title, description, and headings",
+  "clock": "2026-09-11T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "limits": {
+    "maxStaleMs": 86400000
+  },
+  "before": "./before.json",
+  "after": "./after.json"
+}

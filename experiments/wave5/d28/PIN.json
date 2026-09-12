@@ -1,0 +1,52 @@
+{
+  "schema": "samedaydesk.wave5.d28.pin.v1",
+  "kit": "samedaydesk.wave5.d28.journey-release.v1",
+  "task": "W5-D28",
+  "repo": "epistemedeus/samedaydesk",
+  "testedImplementation": {
+    "id": "W5-D01",
+    "ref": "codex/w5-d01-20260911",
+    "sha": "in-repo",
+    "pr": 74,
+    "cli": "server/paid-useful-jobs/bin/cli.mjs",
+    "library": "server/paid-useful-jobs/index.mjs",
+    "receiptSchema": "samedaydesk.paid-useful-jobs.receipt.v1",
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+    "note": "Rebound to this tree's execution.v1. SDS52 aeef964 is historical."
+  },
+  "remainingBinding": {
+    "id": "W5-D01",
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+    "sha": "in-repo",
+    "pr": 74,
+    "onThisBranch": true
+  },
+  "selectedConsumers": [
+    {
+      "id": "W4-commerce-03",
+      "path": "tools/repeat-job-binder/",
+      "sha": "7c55738cc5730985b709282af6c24e10f0a8442f",
+      "pr": 62,
+      "onThisBranch": false
+    },
+    {
+      "id": "W4-commerce-17",
+      "path": "tools/job-output-atomicity/",
+      "sha": "in-repo",
+      "pr": 112,
+      "onThisBranch": true
+    }
+  ],
+  "engineArchive": {
+    "package": "useful-jobs",
+    "version": "1.0.0",
+    "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+    "bytes": 2522418,
+    "rel": "client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz"
+  },
+  "jobId": "vendor-budget-impact",
+  "cashUsd": 0,
+  "purchaseAuthority": false,
+  "liveSettlement": "out-of-scope",
+  "deployed": false
+}

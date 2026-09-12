@@ -1,0 +1,8 @@
+{
+  "id": "rfq-and-vendor-page-watch-unchanged",
+  "title": "Same selected fields, different jobIds, no content delta",
+  "clock": "2026-09-08T12:00:00.000Z",
+  "fields": ["title", "description"],
+  "before": "./before.json",
+  "after": "./after.json"
+}

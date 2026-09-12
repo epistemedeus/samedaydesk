@@ -1,0 +1,10 @@
+{
+  "id": "payment-retry-watch",
+  "title": "Must refuse automatic payment replay",
+  "clock": "2026-09-08T12:00:00.000Z",
+  "fields": ["title", "description", "headings"],
+  "before": "../customer-job/before.json",
+  "after": "../customer-job/after.json",
+  "retryPayment": true,
+  "payment": { "replay": true, "charged": true }
+}

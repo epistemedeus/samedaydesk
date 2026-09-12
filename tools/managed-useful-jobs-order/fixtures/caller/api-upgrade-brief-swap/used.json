@@ -1,0 +1,9 @@
+{
+  "operations": [
+    {
+      "method": "get",
+      "path": "/museum-hours"
+    }
+  ],
+  "pinNote": "selected used operations for upgrade-impact recipe"
+}

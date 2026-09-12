@@ -1,0 +1,12 @@
+{
+  "schema": "samedaydesk.wave5.d28.live-return-evidence.v1",
+  "label": "owner-qa",
+  "jobId": "vendor-budget-impact",
+  "receiptSha256": "REPLACE_WITH_ACTUAL_RECEIPT_SHA256",
+  "sold": false,
+  "invented": false,
+  "deployedArtifact": "absent",
+  "returnSignal": "observed",
+  "observedAt": null,
+  "note": "Example shape only. Do not treat this file as a live observation."
+}

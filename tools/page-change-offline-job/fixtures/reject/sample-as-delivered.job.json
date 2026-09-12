@@ -1,0 +1,12 @@
+{
+  "id": "SAMPLE",
+  "label": "SAMPLE",
+  "sample": true,
+  "example": true,
+  "deliveredWatch": true,
+  "title": "Must not treat SAMPLE as a delivered watch",
+  "clock": "2026-09-08T12:00:00.000Z",
+  "fields": ["title", "description", "headings"],
+  "before": "../customer-job/before.json",
+  "after": "../customer-job/after.json"
+}

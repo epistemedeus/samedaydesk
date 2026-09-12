@@ -1,0 +1,34 @@
+{
+  "engineId": "api-upgrade-brief",
+  "example": false,
+  "sold": false,
+  "purchaseAuthority": false,
+  "fundingState": "unfunded",
+  "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+  "archiveBytes": 2522418,
+  "enginePin": {
+    "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+    "bytes": 2522418,
+    "version": "1.0.0"
+  },
+  "inputs": [
+    {
+      "flag": "--before",
+      "path": "../caller/api-upgrade-brief/before.yaml",
+      "sha256": "a69971e692307229a08af28edc51a02eff43804f4fc9a66710ea619f6e6f498a",
+      "bytes": 23115
+    },
+    {
+      "flag": "--after",
+      "path": "../caller/api-upgrade-brief/after.yaml",
+      "sha256": "2d88e96a1860382fa86e15af892c50d95ae81d53324ac9b07aa9e6a72a8974aa",
+      "bytes": 23137
+    },
+    {
+      "flag": "--used",
+      "path": "../caller/api-upgrade-brief/used.json",
+      "sha256": "cfdd22247388923afa24e02178ad3879a4808666bbcb287fb15c6228f19ed579",
+      "bytes": 472
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+H04 public caller inputs (pin 37dd4b42cf21dc2031715971971bb2426a7beb80).
+
+These files are copied into the useful-jobs 1.1.0 archive under samples/.
+They are not a live checkout of experiments/wave5-heavy/h04/. Offline
+jobs read only the packaged copies.
+
+- lockfile/h04-pub-lock-01 — mocha package-lock excerpt (lockfileVersion 3)
+- schema/h04-schema-01 — used JSON Schema pointers
+- routes/h04-route-01 — samedaydesk.route-table.v1 catalogs
+- page/h04-page-01 — held extract-batch job.json + sibling before/after
