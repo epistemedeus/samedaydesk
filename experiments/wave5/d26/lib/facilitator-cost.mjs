@@ -6,8 +6,9 @@ import { refuse, throwRefuse } from "./refuse.mjs";
 /**
  * Settlement fee for one attempt.
  * CDP: verify always free; Exact settle is one onchain tx after the 1000/month free tier.
- * xpay: fee schedule unknown; default merchant path. Do not apply $0.001.
- * Failed/refused HTTP >=400 with execute-before-settle: settleCalls === 0 => fee 0 on CDP.
+ * xpay: fee schedule unknown; merchant SOURCE default only. Production was observed cdp.
+ * Failed/refused HTTP >=400 with execute-before-settle: settleCalls === 0 => fee 0 on this CDP model.
+ * Local timeout HTTP 503 settle 0 is not a CDP invoice, remaining quota, or account balance.
  */
 export function facilitatorAttemptCost({
   facilitator = "xpay",
@@ -37,7 +38,7 @@ export function facilitatorAttemptCost({
       settleCalls: settles,
       verifyCalls: verifies,
       appliesCdp001: false,
-      note: "Merchant default FACILITATOR=xpay. CDP usage-based $0.001/onchain tx does not apply unless production is FACILITATOR=cdp.",
+      note: "xpay is the merchant SOURCE default (FACILITATOR=xpay → https://facilitator.xpay.sh). Production was observed FACILITATOR=cdp. Do not invent an xpay fee or treat xpay as the live facilitator.",
     };
   }
 
@@ -66,7 +67,7 @@ export function facilitatorAttemptCost({
       source: rail.source,
       retrievedAt: rail.retrievedAt,
       appliesCdp001: true,
-      note: "Applies only if production FACILITATOR=cdp. Verify is free. Zero settle calls => zero CDP facilitator fee.",
+      note: "Production Railway allowlist observed FACILITATOR=cdp 2026-09-12 ~02:00 UTC, so this official schedule is the production fee model. Remaining free-tier quota and account balance were not read. Local timeout HTTP 503 with settle=0 is not a CDP fee invoice. Verify is free. Zero settle calls => zero CDP facilitator fee on this model.",
     };
   }
 

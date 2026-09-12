@@ -12,6 +12,7 @@
   "sourceInMerchant": "server.js FACILITATOR default xpay; FACILITATOR_URL or https://facilitator.xpay.sh",
   "merchantSha": "ca38205279f0d543515b81b7261909e55ea2600f",
   "retrievedAt": "2026-09-12",
-  "quote": "Merchant source default is FACILITATOR=xpay with no account and no API key. Official CDP Facilitator pricing does not apply to xpay unless production is switched to FACILITATOR=cdp.",
-  "note": "Fee schedule unpublished in this kit. Treat as unknown, not zero."
+  "quote": "Merchant SOURCE default is FACILITATOR=xpay with no account and no API key. Production Railway allowlist observed 2026-09-12 ~02:00 UTC is FACILITATOR=cdp. Official CDP Facilitator pricing is the production fee model. xpay remains source-default only.",
+  "note": "Fee schedule unpublished in this kit. Treat as unknown, not zero, and not the live facilitator.",
+  "notProductionFacilitator": true
 }

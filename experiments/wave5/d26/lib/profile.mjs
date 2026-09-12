@@ -10,6 +10,7 @@ import {
   MERCHANT_SHA,
   MERCHANT_VERSION,
   OWNED_DIR,
+  PRODUCTION_RAILWAY_OBSERVATION,
   SCHEMA_PROFILE,
 } from "./pins.mjs";
 import { loadH04Pairs } from "./corpus.mjs";
@@ -323,7 +324,12 @@ export async function runLockfileProfile({
       durationSeconds: 30 * 24 * 3600,
     });
 
-    const recommendation = recommendLiveLockfileOffer({ rows, allocatedHour, allocatedMonth });
+    const recommendation = recommendLiveLockfileOffer({
+      rows,
+      allocatedHour,
+      allocatedMonth,
+      localSuccessfulMeanWallMs: mean(successful, "wallMs"),
+    });
     const sourceExport = buildSourceExport({ environment, merchantRoot, h04Root });
 
     const report = {
@@ -335,6 +341,7 @@ export async function runLockfileProfile({
       certifiedNoLoss: false,
       priceChange: false,
       notProductionCapacity: true,
+      productionRailwayObservation: PRODUCTION_RAILWAY_OBSERVATION,
       offer: {
         path: LIVE_LOCKFILE_PATH,
         method: "POST",
@@ -364,7 +371,8 @@ export async function runLockfileProfile({
         successfulMeanCpu: mean(successful, "cpuMs"),
         refusedMeanWall: mean(refused, "wallMs"),
         failedMeanWall: mean(failed, "wallMs"),
-        note: "Measured on this VM against the mounted handler. 5000ms is the worker ceiling, not the average.",
+        notProductionLatency: true,
+        note: "Measured on this VM against the mounted handler. Mean local wall is not production latency. 5000ms is the worker ceiling, not the average. Local timeout 503 settle 0 is not a CDP fee invoice.",
       },
       allocated: {
         hour: allocatedHour,

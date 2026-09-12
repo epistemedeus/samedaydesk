@@ -20,7 +20,29 @@
     "defaultUrl": "https://facilitator.xpay.sh",
     "cdpUrl": "https://api.cdp.coinbase.com/platform/v2/x402",
     "file": "server.js",
-    "note": "FACILITATOR=xpay default; FACILITATOR=cdp requires CDP keys (not used). Tests inject FACILITATOR_URL to a fake facilitator."
+    "sourceDefaultNotProduction": true,
+    "note": "SOURCE default FACILITATOR=xpay → https://facilitator.xpay.sh. Local tests inject FACILITATOR=xpay and FACILITATOR_URL=<fake> so handlers run without credentials. That is measurement transport, not the production facilitator."
+  },
+  "facilitatorProductionObserved": {
+    "observedAt": "2026-09-12T02:00:00Z",
+    "observer": "root-authenticated-cli",
+    "merchantSha": "ca38205279f0d543515b81b7261909e55ea2600f",
+    "merchantVersion": "1.23.47",
+    "allowlistedVariables": {
+      "FACILITATOR": "cdp",
+      "EXTRACT_BATCH_ENABLED": "1",
+      "LOCKFILE_PIN_DELTA_ENABLED": "1"
+    },
+    "productionFacilitator": "cdp",
+    "sourceDefault": "xpay",
+    "sourceDefaultNotProduction": true,
+    "noOtherValuesExposed": true,
+    "noMutation": true,
+    "cdpAccountBalanceUnread": true,
+    "cdpFreeTierRemainingUnread": true,
+    "railwayPlanUnread": true,
+    "extractBatchAlsoOnSameProcess": true,
+    "note": "Root read of the live Railway service allowlisted variables on 2026-09-12 ~02:00 UTC. Production is FACILITATOR=cdp. CDP keys, remaining free-tier quota, account balance, and Railway plan were not read and are not claimed."
   },
   "lockfileHandler": {
     "config": "lockfile-pin-delta-config.mjs",
@@ -204,11 +226,17 @@
       "verifyUsd": "0",
       "usageBasedUsdPerOnchainTx": "0.001",
       "freeTierMonthlyOnchain": 1000,
-      "appliesOnlyIf": "FACILITATOR=cdp"
+      "freeTierIsNotUnitCost": true,
+      "productionObservedFacilitator": "cdp",
+      "remainingQuotaUnread": true,
+      "accountBalanceUnread": true,
+      "localTimeout503Settle0IsNotCdpFeeProof": true,
+      "appliesBecause": "production Railway allowlist FACILITATOR=cdp observed 2026-09-12T02:00:00Z"
     },
     "xpay": {
       "feeSchedule": "unknown",
-      "defaultInMerchantSource": true
+      "defaultInMerchantSource": true,
+      "notProductionFacilitator": true
     }
   },
   "measurementMethod": {
@@ -230,6 +258,7 @@
     "merchantInstall": "cp merchant pin into a disposable worktree; npm install --omit=dev (not on Mac, not into SDS)",
     "h04Worktree": "git fetch <sds> 7026dc9ad4bc9bef6c68cf0654fff5a6d2c54bbc && git worktree add --detach <dir> 7026dc9ad4bc9bef6c68cf0654fff5a6d2c54bbc",
     "command": "node bin/price-floor.mjs profile --buyer-class owner-qa",
+    "rebindWithoutRemount": "node bin/price-floor.mjs rebind-measured",
     "tests": "node --test --test-concurrency=1 test/*.test.mjs"
   }
 }

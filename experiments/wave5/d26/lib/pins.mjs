@@ -74,6 +74,28 @@ export const MERCHANT_FACILITATOR_DEFAULT_URL = "https://facilitator.xpay.sh";
 export const MERCHANT_FACILITATOR_CDP_URL = "https://api.cdp.coinbase.com/platform/v2/x402";
 export const DEFAULT_MERCHANT_ROOT = process.env.D26_MERCHANT_ROOT || "/tmp/d26-merchant";
 
+/**
+ * Root read of the live Railway service allowlisted variables. No other
+ * values exposed. No mutation. Balance, free-tier remaining count, and
+ * Railway plan were not read.
+ */
+export const PRODUCTION_RAILWAY_OBSERVATION = Object.freeze({
+  observedAt: "2026-09-12T02:00:00Z",
+  observer: "root-authenticated-cli",
+  merchantSha: MERCHANT_SHA,
+  merchantVersion: MERCHANT_VERSION,
+  allowlistedVariables: Object.freeze({
+    FACILITATOR: "cdp",
+    EXTRACT_BATCH_ENABLED: "1",
+    LOCKFILE_PIN_DELTA_ENABLED: "1",
+  }),
+  noOtherValuesExposed: true,
+  noMutation: true,
+  cdpAccountBalanceUnread: true,
+  cdpFreeTierRemainingUnread: true,
+  railwayPlanUnread: true,
+});
+
 export const H04_REPO = "epistemedeus/samedaydesk";
 export const H04_SHA = "7026dc9ad4bc9bef6c68cf0654fff5a6d2c54bbc";
 export const H04_LABEL = "W5-H04 useful-job benchmark corpus";

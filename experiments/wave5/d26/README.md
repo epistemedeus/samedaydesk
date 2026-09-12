@@ -21,7 +21,15 @@ injectable fake facilitator, runs H04 public lockfile pairs plus controlled
 near-limit/timeout/refusal cases, and records CPU, wall, peak RSS, output
 bytes, and settle counts. Concurrency 1/6/12 is a latency comparison, not a
 loadtest. Writes `measured/profile.json`, `measured/profile.csv`, and a
-compact 0.005 recommendation that does **not** claim no-loss.
+compact 0.005 recommendation that does **not** claim no-loss. Mean local
+wall is not production latency. Production Railway allowlist is
+`FACILITATOR=cdp`; merchant source default remains `xpay`.
+
+To rebind an already-captured `measured/profile.json` without remounting:
+
+```bash
+node bin/price-floor.mjs rebind-measured
+```
 
 ## Historical F08 assumed scenario (not the live offer)
 

@@ -1,5 +1,6 @@
 import { writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { rebindMeasuredFiles } from "./rebind-measured.mjs";
 import {
   DEFAULT_H04_ROOT,
   DEFAULT_MERCHANT_ROOT,
@@ -42,6 +43,7 @@ export function usage() {
 Commands:
   profile [--merchant-root DIR] [--h04-root DIR] [--out-dir DIR]
   lockfile-offer   (same as profile; prints the 0.005 recommendation)
+  rebind-measured [--in measured/profile.json] [--out-dir measured]
   source-export
   journey [--buyer-class owner-qa] [--proposed 0.003] [--rail x402-exact-base-usdc]
   measure --job vendor-budget-impact [--example]
@@ -52,6 +54,9 @@ Commands:
 profile mounts epistemedeus/x402-url-extractor POST /lockfile-pin-delta
 (ca382052, $0.005, x402-only) against a fake facilitator in a disposable
 worktree. It is latency/cost evidence, not a live payment or public loadtest.
+
+rebind-measured reapplies the current offer/source model to an already
+captured profile.json. It does not remount the handler or repeat CPU/wall/RSS.
 
 journey is the HISTORICAL F08 0.003 T3/60s assumed scenario. It is not the
 live lockfile offer and is not a Railway measurement.
@@ -154,6 +159,34 @@ export async function main(argv = process.argv.slice(2)) {
       const body = err instanceof ExperimentRefuse
         ? refuse(err.code, err.message, err.detail)
         : refuse(ERROR_CODES.WRAPPER_FAILURE_IS_NOT_COST_BASIS, err.message || String(err));
+      process.stdout.write(`${JSON.stringify(body, null, 2)}\n`);
+      return 2;
+    }
+  }
+
+  if (cmd === "rebind-measured") {
+    const outDir = args["out-dir"] ? resolve(String(args["out-dir"])) : join(OWNED_DIR, "measured");
+    const inPath = args.in ? resolve(String(args.in)) : join(outDir, "profile.json");
+    try {
+      const rebound = rebindMeasuredFiles({ inPath, outDir });
+      process.stdout.write(`${JSON.stringify({
+        ok: true,
+        remounted: false,
+        repeatedProfile: false,
+        priceChange: false,
+        inPath,
+        outDir,
+        reboundAt: rebound.reboundAt,
+        reboundFromCapturedAt: rebound.reboundFromCapturedAt,
+        productionFacilitator: rebound.recommendation.facilitator.productionFacilitator,
+        sourceDefault: rebound.recommendation.facilitator.sourceDefault,
+        recommendation: rebound.recommendation.summary,
+      }, null, 2)}\n`);
+      return 0;
+    } catch (err) {
+      const body = err instanceof ExperimentRefuse
+        ? refuse(err.code, err.message, err.detail)
+        : refuse(ERROR_CODES.MISSING_MEASUREMENT, err.message || String(err));
       process.stdout.write(`${JSON.stringify(body, null, 2)}\n`);
       return 2;
     }
