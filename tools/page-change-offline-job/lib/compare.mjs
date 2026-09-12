@@ -304,6 +304,7 @@ export async function comparePageChange({
   report.claims.paymentImpliesUsefulOutput = false;
   const time = observationFreshness({
     observedAt: afterBatch.observation.artifactObservedAt,
+    observedAts: matched.matched.map((pair) => pair.after.observation.completedAt),
     clock: requiredClock,
     maxStaleMs: limits.maxStaleMs,
   });
