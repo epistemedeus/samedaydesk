@@ -103,6 +103,18 @@ node experiments/wave5/m01/bin/run-job.mjs lockfile-pin-delta \
 node experiments/wave5/m01/bin/catalog.mjs contract
 ```
 
+## Payment-example-match (additive)
+
+Owned: `experiments/wave5-heavy/h04/payment-example-match/`. Accept-pack history above is unchanged.
+
+Question: do the four GET `/extract` paid-success request digests match a publicly advertised demo?
+
+- Framer reproduced from merchant pin `a143898dd1ec35c097ca7eb0b472f30dad1ee319`.
+- **Triple digest** `2f7eb0c0…a670` **matches** published target `/extract?url=https%3A%2F%2Fexample.com` (x402 catalog / customer-x402 README). Unencoded `https://example.com` and path-only `/extract` do not match.
+- **Fourth digest** `6312daa4…62ad` **unresolved** in the finite public corpus.
+- Implication: treat the three identical purchases as sample/benchmark/demo bytes, not organic demand. Improve published supplied-input examples; next first-party measurement is **D17**, not new surveillance.
+- Run: `cd experiments/wave5-heavy/h04/payment-example-match && node --test test/*.test.mjs && node replay.mjs`
+
 ## PR / compare
 
 | Field | Value |

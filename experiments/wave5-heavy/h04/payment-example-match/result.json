@@ -1,0 +1,36 @@
+{
+  "assignment": "W5-H04-payment-example-match",
+  "productionPin": "a143898dd1ec35c097ca7eb0b472f30dad1ee319",
+  "observedDigests": {
+    "triple": "2f7eb0c0de992712235554d87055c72386555b312017623406340683d237a670",
+    "fourth": "6312daa4489344e3d144e25ba53da4940279e96492dd6a85316dff1802d962ad"
+  },
+  "candidateCount": 11,
+  "uniqueTargets": [
+    "/extract?url=https%3A%2F%2Fexample.com",
+    "/extract?url=https://example.com",
+    "/extract"
+  ],
+  "matches": [
+    {
+      "observed": "triple",
+      "digest": "2f7eb0c0de992712235554d87055c72386555b312017623406340683d237a670",
+      "target": "/extract?url=https%3A%2F%2Fexample.com",
+      "candidateIds": [
+        "x402-manifest-encoded-example-com",
+        "customer-x402-preflight-encoded-example-com",
+        "presence-x402-catalog-encoded"
+      ],
+      "proves": "published-example-bytes-only"
+    }
+  ],
+  "unresolved": [
+    {
+      "observed": "fourth",
+      "digest": "6312daa4489344e3d144e25ba53da4940279e96492dd6a85316dff1802d962ad",
+      "note": "No finite published GET /extract demo in this corpus hashes to this digest."
+    }
+  ],
+  "coverageNote": "Published SDS/merchant/x402/AgentCash/buyer-runtime GET /extract demos as local files. Placeholders excluded. Encoding variants included only when both appear in publications.",
+  "productImplication": "The repeated digest is the percent-encoded public example.com GET /extract. Treat those three paid-success rows as sample/benchmark/demo traffic. Improve published supplied-input examples and ask for useful-result feedback without manufacturing organic revenue. Fourth digest stays unresolved; next first-party measurement is D17, not new surveillance."
+}

@@ -1,0 +1,111 @@
+{
+  "scope": "What Agents Buy / AgentCash / Coinbase x402 buyer-runtime GET /extract publications already in local files",
+  "searched": [
+    "docs/lqdist1-distribution-audit/",
+    "fixtures/buyer-runtimes/",
+    "tools/evidence-records/"
+  ],
+  "notFound": [
+    "tools/evidence-records has no concrete GET /extract URL (WAB receipt 0.005 USDC with no request-target; payapi-verification names GET /extract without a URL)"
+  ],
+  "candidates": [
+    {
+      "id": "wab-preflight-path-only",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract",
+      "target": "/extract",
+      "targetRule": "What Agents Buy preflight-x402 URL is origin path with no query",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "docs/lqdist1-distribution-audit/COMMANDS.md",
+        "quote": "const urls = [\n  \"https://agents.samedaydesk.com/extract\","
+      },
+      "publishNote": "2026-09-03 What Agents Buy preflight-x402@0.2.0; same URL in per-route-table.json coverage.what_agents_buy.preflightUrls and tools/lqdist1-distribution-audit/lib.mjs WAB_PREFLIGHT_URLS"
+    },
+    {
+      "id": "agentcash-check-path-only",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract",
+      "target": "/extract",
+      "targetRule": "AgentCash check command uses origin path with no query",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "docs/lqdist1-distribution-audit/COMMANDS.md",
+        "quote": "npx --yes @agentcash/discovery@1.7.5 check https://agents.samedaydesk.com/extract --json"
+      },
+      "publishNote": "2026-09-03 AgentCash @agentcash/discovery@1.7.5 check of /extract; discover lists path /extract with no example query"
+    },
+    {
+      "id": "lqdist1-curl-unencoded-example-com",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract?url=https://example.com",
+      "target": "/extract?url=https://example.com",
+      "targetRule": "curl single-quoted URL as written in COMMANDS.md; request-target path+query unencoded",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "docs/lqdist1-distribution-audit/COMMANDS.md",
+        "quote": "curl -sS -D - 'https://agents.samedaydesk.com/extract?url=https://example.com'"
+      },
+      "publishNote": "2026-09-03 unpaid OpenAPI-example probe in the same WAB/AgentCash audit COMMANDS.md"
+    },
+    {
+      "id": "buyer-runtimes-catalog-unencoded",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract?url=https://example.com",
+      "target": "/extract?url=https://example.com",
+      "targetRule": "exampleUrl field as published (unencoded query)",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "fixtures/buyer-runtimes/catalog.json",
+        "quote": "\"exampleUrl\": \"https://agents.samedaydesk.com/extract?url=https://example.com\""
+      },
+      "publishNote": "2026-09-09 buyer replay catalog used by Coinbase x402 construct"
+    },
+    {
+      "id": "coinbase-x402-construct-unencoded",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract?url=https://example.com",
+      "target": "/extract?url=https://example.com",
+      "targetRule": "Coinbase x402 construct fixture url field; published encoding is literal : and /",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "fixtures/buyer-runtimes/coinbase-x402/states/construct.json",
+        "quote": "\"url\": \"https://agents.samedaydesk.com/extract?url=https://example.com\""
+      },
+      "publishNote": "2026-09-03 Coinbase x402 wrapFetchWithPayment unpaid construct; caller Request unchanged"
+    },
+    {
+      "id": "coinbase-x402-discover-bazaar-path-only",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract",
+      "target": "/extract",
+      "targetRule": "Bazaar observed.resource is origin path with no query",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "fixtures/buyer-runtimes/coinbase-x402/states/discover.json",
+        "quote": "\"resource\": \"https://agents.samedaydesk.com/extract\""
+      },
+      "publishNote": "2026-09-03 Coinbase x402 discover bazaar_search observed resource; well-known surface lists exampleQuery url=https://example.com but does not publish a concatenated request-target"
+    },
+    {
+      "id": "x402-manifest-encoded-example-com",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+      "target": "/extract?url=https%3A%2F%2Fexample.com",
+      "targetRule": "URL pathname+search keeps published percent-encoding of : and /",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "docs/lqdist1-distribution-audit/evidence/x402-manifest-bounded.json",
+        "quote": "\"url\":\"https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com\""
+      },
+      "publishNote": "2026-09-03 well-known x402 resource URL read by Coinbase x402 discover seller_well_known_x402"
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "schema": "w5-h04.payment-example-match.corpus.v1",
+  "question": "Do the four GET /extract paid-success request digests match any exact publicly advertised demo request?",
+  "productionPin": "a143898dd1ec35c097ca7eb0b472f30dad1ee319",
+  "framer": {
+    "file": "commerce-events.mjs",
+    "domain": "samedaydesk.commerce-paid-success-evidence.request.v1\\0",
+    "target": "req.originalUrl if string else req.url (path+query, not absolute origin)",
+    "emptyGetBody": "Buffer.alloc(0) when rawBody known empty"
+  },
+  "note": "Finite published GET /extract demos only. A match proves byte identity with that example, not payer identity. Templates with <placeholders> are excluded.",
+  "candidates": [
+    {
+      "id": "x402-manifest-encoded-example-com",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+      "target": "/extract?url=https%3A%2F%2Fexample.com",
+      "targetRule": "URL pathname+search keeps published percent-encoding of : and /",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "docs/lqdist1-distribution-audit/evidence/x402-manifest-bounded.json",
+        "pinOrCommit": "ebdd516229e9747ca2a48e129b8cbdb1d0b68c66",
+        "quote": "resources[0].url https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com"
+      },
+      "publishNote": "2026-09-03 unpaid distribution evidence; also merchant OpenAPI runtimeUrl and examples/customer-x402 README at a143898"
+    },
+    {
+      "id": "customer-x402-preflight-encoded-example-com",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+      "target": "/extract?url=https%3A%2F%2Fexample.com",
+      "targetRule": "quoted --url in merchant pin README; same encoded query as x402 resource URL",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/x402-url-extractor",
+        "path": "examples/customer-x402/README.md",
+        "pinOrCommit": "a143898dd1ec35c097ca7eb0b472f30dad1ee319",
+        "quote": "npm run preflight -- --get --url 'https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com'"
+      },
+      "publishNote": "2026-09-10 merchant pin a143898"
+    },
+    {
+      "id": "llms-txt-unencoded-example-com",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract?url=https://example.com",
+      "target": "/extract?url=https://example.com",
+      "targetRule": "published with literal : and / in the query value (not percent-encoded)",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "client/public/llms.txt",
+        "pinOrCommit": "abeb54eca9a71abe117898e8fe7de7e55e9d917f",
+        "quote": "GET https://agents.samedaydesk.com/extract?url=https://example.com"
+      },
+      "publishNote": "2026-09-10 S260 useful-jobs surface"
+    },
+    {
+      "id": "lqdist1-curl-unencoded-example-com",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract?url=https://example.com",
+      "target": "/extract?url=https://example.com",
+      "targetRule": "curl single-quoted URL as written in COMMANDS.md; request-target path+query unencoded",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "docs/lqdist1-distribution-audit/COMMANDS.md",
+        "pinOrCommit": "ebdd516229e9747ca2a48e129b8cbdb1d0b68c66",
+        "quote": "curl -sS -D - 'https://agents.samedaydesk.com/extract?url=https://example.com'"
+      },
+      "publishNote": "2026-09-03 distribution audit commands"
+    },
+    {
+      "id": "buyer-runtimes-catalog-unencoded",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract?url=https://example.com",
+      "target": "/extract?url=https://example.com",
+      "targetRule": "exampleUrl field as published (unencoded query)",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "fixtures/buyer-runtimes/catalog.json",
+        "pinOrCommit": "1fb6c0f3c3c00c4868656f45198d2c52df5a29de",
+        "quote": "exampleUrl https://agents.samedaydesk.com/extract?url=https://example.com"
+      },
+      "publishNote": "2026-09-09 buyer replay pin"
+    },
+    {
+      "id": "coinbase-x402-construct-unencoded",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract?url=https://example.com",
+      "target": "/extract?url=https://example.com",
+      "targetRule": "Coinbase x402 construct fixture url field",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "fixtures/buyer-runtimes/coinbase-x402/states/construct.json",
+        "pinOrCommit": "1fb6c0f3c3c00c4868656f45198d2c52df5a29de",
+        "quote": "url https://agents.samedaydesk.com/extract?url=https://example.com"
+      },
+      "publishNote": "2026-09-09 buyer replay pin"
+    },
+    {
+      "id": "agent402-construct-unencoded",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract?url=https://example.com",
+      "target": "/extract?url=https://example.com",
+      "targetRule": "Agent402 construct fixture url field",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "fixtures/buyer-runtimes/agent402/states/construct.json",
+        "pinOrCommit": "1fb6c0f3c3c00c4868656f45198d2c52df5a29de",
+        "quote": "url https://agents.samedaydesk.com/extract?url=https://example.com"
+      },
+      "publishNote": "2026-09-09 buyer replay pin"
+    },
+    {
+      "id": "presence-x402-catalog-encoded",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+      "target": "/extract?url=https%3A%2F%2Fexample.com",
+      "targetRule": "Bazaar/x402 catalog resource.url percent-encoded query",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "fixtures/presence/catalog/x402.json",
+        "pinOrCommit": "766e80f6d1a833126ea0c61205fb658636fcdd34",
+        "quote": "resource.url https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com"
+      },
+      "publishNote": "2026-09-03 presence refresh"
+    },
+    {
+      "id": "wab-preflight-path-only",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract",
+      "target": "/extract",
+      "targetRule": "What Agents Buy preflight-x402 URL is origin path with no query",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "docs/lqdist1-distribution-audit/COMMANDS.md",
+        "pinOrCommit": "ebdd516229e9747ca2a48e129b8cbdb1d0b68c66",
+        "quote": "https://agents.samedaydesk.com/extract in WAB preflight url list"
+      },
+      "publishNote": "2026-09-03 What Agents Buy preflight-x402@0.2.0"
+    },
+    {
+      "id": "agentcash-check-path-only",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract",
+      "target": "/extract",
+      "targetRule": "AgentCash check command uses origin path with no query",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "docs/lqdist1-distribution-audit/COMMANDS.md",
+        "pinOrCommit": "ebdd516229e9747ca2a48e129b8cbdb1d0b68c66",
+        "quote": "npx --yes @agentcash/discovery@1.7.5 check https://agents.samedaydesk.com/extract --json"
+      },
+      "publishNote": "2026-09-03 AgentCash check of /extract paywall"
+    },
+    {
+      "id": "agent402-paywall-path-only",
+      "method": "GET",
+      "publishedUrl": "https://agents.samedaydesk.com/extract",
+      "target": "/extract",
+      "targetRule": "seller snapshot paywall.url path-only",
+      "rawBody": "",
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "docs/lqdist1-distribution-audit/evidence/agent402-seller-bounded.json",
+        "pinOrCommit": "ebdd516229e9747ca2a48e129b8cbdb1d0b68c66",
+        "quote": "paywall.url https://agents.samedaydesk.com/extract"
+      },
+      "publishNote": "2026-09-03 Agent402 seller snapshot"
+    }
+  ]
+}
