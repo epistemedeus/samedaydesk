@@ -1,9 +1,14 @@
 # CW69 foundation handoff
 
-Status: **foundation, not READY**. The quota reset was reported by the user;
+Status: **adapter implemented on this branch (H7-DISCOVERY, 2026-09-12)**.
+The remaining-work list below is the foundation snapshot and stays historically
+accurate. Verification, live GET notes, and limits are in [RESULT.md](RESULT.md).
+No READY, payment, or catalog publication is claimed.
+
+Earlier foundation closeout: the quota reset was reported by the user;
 the controller classified CW69 as foundation-handoff. Implementation stopped
-at that boundary. No current discover → describe → invoke adapter exists yet.
-No successful useful-output execution is claimed by this foundation.
+at that boundary until this native parent. The snapshot below describes that
+handoff, not the current adapter.
 
 Next integration owner: **native Grok Heavy, CW69**. One owner completes the
 remaining adapter on an actual Cursor Cloud host. The exporting host's hostname

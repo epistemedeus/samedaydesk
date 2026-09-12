@@ -1,0 +1,41 @@
+{
+  "hostname": "cursor",
+  "providerIdentity": "Cursor Cloud VM; hostname is not provider identity and is not Grok/pilot-vm",
+  "uname": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "cpus": 4,
+  "memTotalKiB": 16398384,
+  "memAvailableKiB": 9338680,
+  "swap": 0,
+  "loadavg": "0.22 0.09 0.09 1/776 940046",
+  "node": "v22.23.2",
+  "npm": "10.9.8",
+  "cwd": "/tmp/h7-cw69",
+  "repo": "epistemedeus/samedaydesk",
+  "branch": "codex/cw69-machine-offer-discovery-current-20260912",
+  "headAtHandoff": "3547e7c19f3e220275ccb59d547495eafa76bcb1",
+  "NODE_OPTIONS": "--max-old-space-size=768",
+  "postgresql17": {
+    "status": "incomplete",
+    "toolchain": "absent",
+    "pathsTried": [
+      "/workspace/pilot/toolchain/postgresql-17",
+      "/usr/lib/postgresql/17"
+    ],
+    "note": "SQL gate incomplete; no shared cluster started"
+  },
+  "firebaseEmulator": "not-started",
+  "gitAccess": {
+    "ghAccount": "cursor",
+    "samedaydesk": "cloned",
+    "neomorphic-io": "unknown",
+    "ein-llc-lean": "unknown",
+    "note": "Private repos 404 via cursor gh/https. No SSH keys or alternate PAT found. No invented trees."
+  },
+  "preservedPids": {
+    "h6a": 933379,
+    "h1r": 321434
+  },
+  "session": "8f7a3c21-6b04-4e91-a2d5-20260912d7c9",
+  "controller": "bc-718a8144-1601-4b97-a68f-0082ba8620c8",
+  "nativeTask": "H7-DISCOVERY"
+}
