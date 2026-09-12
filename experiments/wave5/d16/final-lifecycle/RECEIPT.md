@@ -26,6 +26,7 @@ PR74 and PR114 archives are byte-identical. Kit extract is 1.2.0. D01 `lib/pins.
 ```bash
 cd experiments/wave5/d16/final-lifecycle
 SDS_D01_ROOT=/tmp/sds-d01-ro node --test --test-concurrency=1 --test-timeout=120000 test/*.test.mjs
+# 11/11 pass, 0 fail, 0 skip. Node v22.14.0
 node bin/final-lifecycle.mjs test
 ```
 
@@ -44,7 +45,7 @@ Release-candidate process/output truth: **FAIL** on three lifecycle gaps. Isolat
 | Isolated four new engines | `lockfile-pin-delta`, `json-schema-webhook-drift`, `route-table-diff`, `page-change-offline-job`: exit 0, whole-document `ok: true`, both promised files in this run's directory, `purchaseAuthority` not true |
 | Original-six compat | `vendor-budget-impact` with D01 caller fixtures (not SAMPLE kit rows): exit 0, `ok: true`, `purchaseAuthority: false` |
 | Unsupported lockfile v1 | exit 2, `code: unsupported-lockfile-version`, no `pin-delta.json`. Not a crash-hidden success |
-| `page-change --example` | exit 2, `code: sample_as_delivered_watch`. Documented refusal, not a lifecycle bug |
+| `page-change --example` | exit 2, stderr whole-document `code: sample_as_delivered_watch` (stdout empty). Documented refusal, not a lifecycle bug |
 | Complete lockfile reuse of `--out-dir` | Overwrites both files; `generatedAt` is this run |
 | Vendor-budget existing outputs | `lib/cli-runtime.mjs` sibling-diverts; stdout `outDir` is the sibling; requested dir still stale. CLI does not claim the stale dir |
 | Cold reinstall | `tar -xzf` run lockfile; delete extract; second `tar -xzf`; second lockfile exit 0 with both files |

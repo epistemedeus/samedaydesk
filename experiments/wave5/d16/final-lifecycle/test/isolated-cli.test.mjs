@@ -3,6 +3,7 @@ import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { after, describe, it } from "node:test";
 import { COMPAT_ORIGINAL_SIX, FOUR_NEW, PINNED_IMPLEMENTATION } from "../lib/contract.mjs";
+import { parseStdoutJson } from "../lib/json.mjs";
 import { isolateDir, requirePinnedTree, sharedColdKit, wipeSharedKit } from "../lib/kit.mjs";
 import { JOBS, outputRoot, outputsPresent, runUsefulJobs } from "../lib/jobs.mjs";
 
@@ -62,8 +63,9 @@ describe("public 1.2.0 CLI isolated success (four new + original-six compat)", {
     const out = isolateDir("w5-d16-final-page-ex-");
     const r = runUsefulJobs(kit, ["run", "page-change-offline-job", "--example", "--out-dir", out]);
     assert.equal(r.status, 2);
-    assert.equal(r.json?.ok, false);
-    assert.equal(r.json?.code, "sample_as_delivered_watch");
+    const refuse = parseStdoutJson(r.stderr).json || parseStdoutJson(r.stdout).json;
+    assert.equal(refuse?.ok, false);
+    assert.equal(refuse?.code, "sample_as_delivered_watch");
     assert.equal(existsSync(join(out, "page-change.json")), false);
   });
 
