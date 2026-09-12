@@ -1,0 +1,29 @@
+test_all_sample_capable_jobs_and_page_contract (test_review.Review.test_all_sample_capable_jobs_and_page_contract) ... ok
+test_archive_path_type_duplicate_and_expansion_controls (test_review.Review.test_archive_path_type_duplicate_and_expansion_controls) ... ok
+test_corrupted_real_success_never_publishes (test_review.Review.test_corrupted_real_success_never_publishes) ... ok
+test_destination_occupancy_and_atomic_races (test_review.Review.test_destination_occupancy_and_atomic_races) ... ok
+test_explicit_archive_does_not_depend_on_surrounding_checkout (test_review.Review.test_explicit_archive_does_not_depend_on_surrounding_checkout) ... ok
+test_malformed_transport_and_foreign_output (test_review.Review.test_malformed_transport_and_foreign_output) ... ok
+test_nonzero_cannot_publish_success_including_124 (test_review.Review.test_nonzero_cannot_publish_success_including_124) ... ok
+test_output_symlink_hardlink_and_extra_file (test_review.Review.test_output_symlink_hardlink_and_extra_file) ... ok
+test_parent_swap_cannot_redirect_output (test_review.Review.test_parent_swap_cannot_redirect_output) ... ok
+test_process_timeout_normal_exit_and_literal_argv (test_review.Review.test_process_timeout_normal_exit_and_literal_argv) ... ok
+test_real_partial_and_refused_budget_are_distinct (test_review.Review.test_real_partial_and_refused_budget_are_distinct) ... FAIL
+test_relative_paths_and_equals_with_literal_shell_characters (test_review.Review.test_relative_paths_and_equals_with_literal_shell_characters) ... ok
+
+======================================================================
+FAIL: test_real_partial_and_refused_budget_are_distinct (test_review.Review.test_real_partial_and_refused_budget_are_distinct)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/test_review.py", line 96, in test_real_partial_and_refused_budget_are_distinct
+    self.assertEqual(result['domainStatus'], 'partial')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'actionable' != 'partial'
+- actionable
++ partial
+
+
+----------------------------------------------------------------------
+Ran 12 tests in 11.645s
+
+FAILED (failures=1)
