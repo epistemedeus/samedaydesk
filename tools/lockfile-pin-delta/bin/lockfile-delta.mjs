@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Offline lockfile pin-delta. Parses package-lock.json only.
+ * Bounded offline lockfile pin-delta. Parses npm package-lock.json v2/v3 only.
  * Does not spawn npm, does not audit, does not purchase.
  */
 import { CliRefuse } from "../lib/errors.mjs";

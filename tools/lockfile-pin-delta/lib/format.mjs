@@ -50,6 +50,11 @@ export function toMarkdown(report) {
           lines.push(`  - gitCommit: ${item.before.gitCommit} -> ${item.after.gitCommit}`);
         }
       }
+      for (const field of ["link", "optional", "devOptional", "os", "cpu", "libc"]) {
+        if (item.changeKinds.includes(field)) {
+          lines.push(`  - ${field}: ${JSON.stringify(item.before[field])} -> ${JSON.stringify(item.after[field])}`);
+        }
+      }
       lines.push(`  - termsHash: ${item.before.termsHash} -> ${item.after.termsHash}`);
     }
     lines.push("");
