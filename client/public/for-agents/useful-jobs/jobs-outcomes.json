@@ -1,7 +1,7 @@
 {
   "schema": "useful-jobs.outcomes.v1",
   "package": "useful-jobs",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "freeSampleStatus": "labeled-samples-via-explicit-example-flag",
   "jobs": [
     {
@@ -77,7 +77,7 @@
     },
     {
       "id": "listing-repair-packet",
-      "outcome": "Owner repair packet with source-linked guidance from listing/route diagnosis snapshots. Partial evidence stays non-final.",
+      "outcome": "Owner repair packet with source-linked guidance from listing/route diagnosis snapshots. Incomplete capture stays partial for every provider. Unsupported providers are refused when capture is complete. Partial evidence stays non-final.",
       "requiredFiles": ["listing diagnosis JSON"],
       "requiredFlags": ["--input"],
       "outputs": ["repair-packet.json", "repair-packet.md"],

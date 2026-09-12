@@ -1,7 +1,7 @@
 {
   "schema": "useful-jobs.catalog.v1",
   "package": "useful-jobs",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "runtime": {
     "node": ">=22",
     "network": "offline-first",
@@ -149,7 +149,7 @@
       "sampleAvailable": true,
       "exampleFlag": "--example",
       "freeSample": true,
-      "notes": "Partial/incomplete evidence stays non-final; no global unlisting claim."
+      "notes": "Partial/incomplete evidence stays non-final for every identity.provider, including unknown names. A declared provider other than grexal|agensi is refused (unsupported-provider) when capture is complete. Engine ok:true is not actionable evidence. No global unlisting claim."
     },
     {
       "id": "repeat-job-record",
