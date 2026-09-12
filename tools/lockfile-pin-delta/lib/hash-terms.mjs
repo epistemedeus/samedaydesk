@@ -1,10 +1,21 @@
 import { createHash } from "node:crypto";
 
 /**
- * Pin-triple hasher. I01 hashes whole earned-work terms; that document is
- * not this triple and must not be injected as pin equality.
+ * Pin and install-boundary hasher. I01 hashes whole earned-work terms; that
+ * document is not this pin record and must not be injected as equality.
  */
-export const PIN_IDENTITY_FIELDS = Object.freeze(["name", "version", "integrity", "resolved"]);
+export const PIN_IDENTITY_FIELDS = Object.freeze([
+  "name",
+  "version",
+  "integrity",
+  "resolved",
+  "link",
+  "optional",
+  "devOptional",
+  "os",
+  "cpu",
+  "libc",
+]);
 
 export function canonicalPinTerms(triple = {}) {
   return {
@@ -12,6 +23,12 @@ export function canonicalPinTerms(triple = {}) {
     version: normalizeTerm(triple.version),
     integrity: normalizeIntegrity(triple.integrity),
     resolved: normalizeTerm(triple.resolved),
+    link: triple.link === true,
+    optional: triple.optional === true,
+    devOptional: triple.devOptional === true,
+    os: normalizeBoundaryList(triple.os),
+    cpu: normalizeBoundaryList(triple.cpu),
+    libc: normalizeBoundaryList(triple.libc),
   };
 }
 
@@ -33,13 +50,20 @@ export function createHashTermsAdapter(hashPinTerms = defaultHashPinTerms) {
 export function pinFieldsEqual(before, after) {
   const a = canonicalPinTerms(before);
   const b = canonicalPinTerms(after);
-  return PIN_IDENTITY_FIELDS.every((field) => a[field] === b[field]);
+  return PIN_IDENTITY_FIELDS.every((field) => termFieldEqual(a[field], b[field]));
 }
 
 export function pinChangeKinds(before, after) {
   const a = canonicalPinTerms(before);
   const b = canonicalPinTerms(after);
-  return PIN_IDENTITY_FIELDS.filter((field) => a[field] !== b[field]);
+  return PIN_IDENTITY_FIELDS.filter((field) => !termFieldEqual(a[field], b[field]));
+}
+
+function termFieldEqual(a, b) {
+  if (Array.isArray(a) && Array.isArray(b)) {
+    return a.length === b.length && a.every((value, index) => value === b[index]);
+  }
+  return a === b;
 }
 
 export function stableStringify(value) {
@@ -56,6 +80,11 @@ function normalizeIntegrity(value) {
   if (typeof value !== "string") return null;
   const text = value.trim();
   return text === "" ? null : text;
+}
+
+function normalizeBoundaryList(value) {
+  if (!Array.isArray(value)) return null;
+  return [...new Set(value.map((item) => String(item)))].sort();
 }
 
 function sortValue(value) {

@@ -9,6 +9,12 @@ function publicPin(pin) {
     integrity: pin.integrity,
     resolved: pin.resolved ?? null,
     gitCommit: pin.gitCommit ?? null,
+    link: pin.link === true,
+    optional: pin.optional === true,
+    devOptional: pin.devOptional === true,
+    os: pin.os ?? null,
+    cpu: pin.cpu ?? null,
+    libc: pin.libc ?? null,
     termsHash: pin.termsHash,
     missingIntegrity: pin.missingIntegrity,
   };
