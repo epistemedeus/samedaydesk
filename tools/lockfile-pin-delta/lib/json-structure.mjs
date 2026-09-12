@@ -4,6 +4,7 @@ export const JSON_LIMITS = Object.freeze({
   maxInputBytes: 16 * 1024 * 1024,
   maxDepth: 128,
   maxMembers: 100_000,
+  maxArrayElements: 100_000,
   maxKeyChars: 4_096,
 });
 
@@ -40,6 +41,7 @@ export function inspectJsonStructure(text, { label = "lockfile" } = {}) {
 
   let i = 0;
   let members = 0;
+  let arrayElements = 0;
 
   const refuseSyntax = (message) => {
     throw cliRefuse("parse-error", `${label} is not JSON: ${message} at offset ${i}`, {
@@ -167,6 +169,10 @@ export function inspectJsonStructure(text, { label = "lockfile" } = {}) {
       }
       let index = 0;
       while (i < raw.length) {
+        arrayElements += 1;
+        if (arrayElements > JSON_LIMITS.maxArrayElements) {
+          resourceLimit(label, "json-array-elements", JSON_LIMITS.maxArrayElements, arrayElements);
+        }
         parseValue(depth + 1, shortPath(`${path}[${index}]`));
         index += 1;
         whitespace();
@@ -200,5 +206,5 @@ export function inspectJsonStructure(text, { label = "lockfile" } = {}) {
   parseValue(0, "$");
   whitespace();
   if (i !== raw.length) refuseSyntax("unexpected trailing content");
-  return { bytes, members };
+  return { bytes, members, arrayElements };
 }

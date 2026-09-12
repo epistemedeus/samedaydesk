@@ -5,6 +5,26 @@ import { assertJsonInputSize, inspectJsonStructure } from "./json-structure.mjs"
 const HTML_RE = /^\s*(<!DOCTYPE\s+html|<html[\s>]|<head[\s>]|<body[\s>])/i;
 const MAX_PINS = 50_000;
 const MAX_PIN_TERM_CHARS = 16_384;
+const MAX_PIN_ID_CHARS = 4_096;
+const MAX_TOTAL_PIN_ID_CHARS = 16 * 1024 * 1024;
+
+function checkEntry(id, entry) {
+  if (!isPlainObject(entry)) {
+    throw cliRefuse("invalid-lockfile-entry", "package entries must be objects", { id });
+  }
+}
+
+function checkPinId(id, budget) {
+  budget.chars += id.length;
+  if (id.length > MAX_PIN_ID_CHARS || budget.chars > MAX_TOTAL_PIN_ID_CHARS) {
+    const individual = id.length > MAX_PIN_ID_CHARS;
+    throw cliRefuse("resource-limit", "lockfile exceeds the expanded pin ID limit", {
+      resource: individual ? "pin-id-chars" : "total-pin-id-chars",
+      limit: individual ? MAX_PIN_ID_CHARS : MAX_TOTAL_PIN_ID_CHARS,
+      observed: individual ? id.length : budget.chars,
+    });
+  }
+}
 
 export function looksLikeHtml(text) {
   return HTML_RE.test(String(text || ""));
@@ -81,12 +101,19 @@ function asBoundaryList(value, field, id) {
       field,
     });
   }
+  if (value.some((item) => item.length > MAX_PIN_TERM_CHARS)) {
+    throw cliRefuse("resource-limit", `${id}.${field} exceeds the pin-term limit`, {
+      id, field, limit: MAX_PIN_TERM_CHARS,
+    });
+  }
   return [...new Set(value)].sort();
 }
 
 export function gitCommitFromResolved(resolved) {
   if (typeof resolved !== "string" || resolved === "") return null;
-  const looksGit = /(?:^git\+|github:|\.git(?:#|$))/i.test(resolved);
+  // npm's canonical Git resolutions carry a Git protocol. A .git pathname
+  // or github: text inside a tarball URL query does not establish a Git source.
+  const looksGit = /^(?:git(?:\+(?:ssh|https?|file|ftp|rsync))?:|github:|gitlab:|bitbucket:)/i.test(resolved);
   if (!looksGit) return null;
   const hashIdx = resolved.lastIndexOf("#");
   if (hashIdx < 0) return null;
@@ -129,6 +156,8 @@ function pinFromPackagesEntry(id, entry, hashPinTerms) {
     resolved,
     gitCommit: gitCommitFromResolved(resolved),
     link,
+    dev: asBoolean(entry.dev, "dev", id),
+    peer: asBoolean(entry.peer, "peer", id),
     optional: asBoolean(entry.optional, "optional", id),
     devOptional: asBoolean(entry.devOptional, "devOptional", id),
     os: asBoundaryList(entry.os, "os", id),
@@ -142,9 +171,11 @@ function pinFromPackagesEntry(id, entry, hashPinTerms) {
 
 function collectFromPackages(packages, hashPinTerms) {
   const pins = [];
+  const budget = { chars: 0 };
   for (const [id, entry] of Object.entries(packages)) {
+    checkEntry(id, entry);
     if (id === "") continue;
-    if (!isPlainObject(entry)) continue;
+    checkPinId(id, budget);
     if (pins.length >= MAX_PINS) {
       throw cliRefuse("resource-limit", `lockfile exceeds the pin-count limit (${MAX_PINS})`, {
         resource: "pins",
@@ -158,13 +189,14 @@ function collectFromPackages(packages, hashPinTerms) {
 
 function walkDependencies(deps, hashPinTerms, pins) {
   const pending = [{ deps, prefix: "" }];
+  const budget = { chars: 0 };
   while (pending.length) {
     const { deps: current, prefix } = pending.pop();
-    if (!isPlainObject(current)) continue;
+    checkEntry(prefix, current);
     const entries = Object.entries(current);
     for (let index = entries.length - 1; index >= 0; index -= 1) {
       const [name, entry] = entries[index];
-      if (!isPlainObject(entry)) continue;
+      checkEntry(name, entry);
       if (pins.length >= MAX_PINS) {
         throw cliRefuse("resource-limit", `lockfile exceeds the pin-count limit (${MAX_PINS})`, {
           resource: "pins",
@@ -172,28 +204,9 @@ function walkDependencies(deps, hashPinTerms, pins) {
         });
       }
       const id = prefix ? `${prefix}/node_modules/${name}` : `node_modules/${name}`;
-      const version = asOptionalString(entry.version, "version", id);
-      const integrity = asOptionalString(entry.integrity, "integrity", id);
-      const resolved = asOptionalString(entry.resolved, "resolved", id);
-      const link = asBoolean(entry.link, "link", id);
-      const pin = {
-        id,
-        name,
-        version,
-        integrity,
-        resolved,
-        gitCommit: gitCommitFromResolved(resolved),
-        link,
-        optional: asBoolean(entry.optional, "optional", id),
-        devOptional: asBoolean(entry.devOptional, "devOptional", id),
-        os: asBoundaryList(entry.os, "os", id),
-        cpu: asBoundaryList(entry.cpu, "cpu", id),
-        libc: asBoundaryList(entry.libc, "libc", id),
-      };
-      pin.termsHash = hashPinTerms(pin);
-      pin.missingIntegrity = integrity == null && !link;
-      pins.push(pin);
-      if (entry.dependencies) pending.push({ deps: entry.dependencies, prefix: id });
+      checkPinId(id, budget);
+      pins.push(pinFromPackagesEntry(id, { ...entry, name }, hashPinTerms));
+      if (Object.hasOwn(entry, "dependencies")) pending.push({ deps: entry.dependencies, prefix: id });
     }
   }
 }
@@ -244,6 +257,9 @@ export function extractPins(doc, { hashPinTerms } = {}) {
   }
   const hasPackages = isPlainObject(doc.packages);
   const hasDependencies = isPlainObject(doc.dependencies);
+  if (Object.hasOwn(doc, "packages") && !hasPackages) {
+    throw cliRefuse("invalid-lockfile-entry", "packages must be an object", {});
+  }
   if (!hasPackages && !hasDependencies) {
     throw cliRefuse("missing-packages-and-dependencies", "lockfile has neither packages nor dependencies maps", {
       lockfileVersion: doc.lockfileVersion,

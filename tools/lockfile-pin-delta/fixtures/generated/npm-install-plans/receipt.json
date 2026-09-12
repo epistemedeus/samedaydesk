@@ -1,0 +1,54 @@
+{
+  "oracle": "npm ci actual filesystem readback",
+  "node": "v22.23.2",
+  "npm": "10.9.8",
+  "network": "offline",
+  "scripts": false,
+  "omit": [
+    "dev",
+    "peer",
+    "optional"
+  ],
+  "cases": [
+    {
+      "fixture": "v2-dependencies",
+      "lockfileVersion": 2,
+      "installed": true
+    },
+    {
+      "fixture": "v2-devDependencies",
+      "lockfileVersion": 2,
+      "installed": false
+    },
+    {
+      "fixture": "v2-peerDependencies",
+      "lockfileVersion": 2,
+      "installed": false
+    },
+    {
+      "fixture": "v2-optionalDependencies",
+      "lockfileVersion": 2,
+      "installed": false
+    },
+    {
+      "fixture": "v3-dependencies",
+      "lockfileVersion": 3,
+      "installed": true
+    },
+    {
+      "fixture": "v3-devDependencies",
+      "lockfileVersion": 3,
+      "installed": false
+    },
+    {
+      "fixture": "v3-peerDependencies",
+      "lockfileVersion": 3,
+      "installed": false
+    },
+    {
+      "fixture": "v3-optionalDependencies",
+      "lockfileVersion": 3,
+      "installed": false
+    }
+  ]
+}
