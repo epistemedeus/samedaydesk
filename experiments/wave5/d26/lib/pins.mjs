@@ -19,6 +19,10 @@ export { REPO_ROOT };
 export const ASSIGNMENT_ID = "W5-D26";
 export const SCHEMA_EXPERIMENT = "samedaydesk.wave5.d26.experiment.v1";
 export const SCHEMA_OFFER = "samedaydesk.wave5.d26.proposed-offer.v1";
+export const SCHEMA_PROFILE = "samedaydesk.wave5.d26.lockfile-profile.v1";
+export const SCHEMA_LIVE_OFFER = "samedaydesk.wave5.d26.lockfile-offer.v1";
+export const SCHEMA_SOURCE_EXPORT = "samedaydesk.wave5.d26.source-export.v1";
+export const SCHEMA_ENVIRONMENT = "samedaydesk.wave5.d26.environment.v1";
 
 export const TESTED_SDS_SHA = "aeef964fa188443078958d9d6d393afae1d542ee";
 export const TESTED_SDS_REF = "fable/f08-paid-wrappers";
@@ -51,10 +55,52 @@ export const PROPOSED_JOB_ID = "vendor-budget-impact";
 export const CONFIRM_JOB_ID = "feed-agenda";
 
 /**
- * Distinct from live extract 0.005, SIA 0.01, and fixture 0.02.
- * Must clear usage-based CDP fee plus conservative 60s compute model.
+ * Historical assumed F08 wrapper scenario only. Not the live lockfile offer.
+ * Distinct from live extract / lockfile-pin-delta 0.005, SIA 0.01, and fixture 0.02.
  */
 export const PROPOSED_PRICE_USDC = "0.003";
+
+/** Live merchant POST /lockfile-pin-delta (x402-only). Do not rewrite. */
+export const LIVE_LOCKFILE_PRICE_USDC = "0.005";
+export const LIVE_LOCKFILE_PRICE_ATOMIC = "5000";
+export const LIVE_LOCKFILE_PATH = "/lockfile-pin-delta";
+export const LIVE_LOCKFILE_METHOD = "POST";
+
+export const MERCHANT_REPO = "epistemedeus/x402-url-extractor";
+export const MERCHANT_SHA = "ca38205279f0d543515b81b7261909e55ea2600f";
+export const MERCHANT_VERSION = "1.23.47";
+export const MERCHANT_FACILITATOR_DEFAULT = "xpay";
+export const MERCHANT_FACILITATOR_DEFAULT_URL = "https://facilitator.xpay.sh";
+export const MERCHANT_FACILITATOR_CDP_URL = "https://api.cdp.coinbase.com/platform/v2/x402";
+export const DEFAULT_MERCHANT_ROOT = process.env.D26_MERCHANT_ROOT || "/tmp/d26-merchant";
+
+export const H04_REPO = "epistemedeus/samedaydesk";
+export const H04_SHA = "7026dc9ad4bc9bef6c68cf0654fff5a6d2c54bbc";
+export const H04_LABEL = "W5-H04 useful-job benchmark corpus";
+export const DEFAULT_H04_ROOT = process.env.D26_H04_ROOT || "/tmp/readonly-refs/sds-h04";
+
+export const RAILWAY_RAIL_ID = "railway-usage-per-second";
+export const XPAY_RAIL_ID = "x402-xpay-unknown";
+export const USD12_DECIMALS = 12;
+
+export const RAILWAY_MODEL = Object.freeze({
+  id: RAILWAY_RAIL_ID,
+  cpuUsdPerVcpuSecond: "0.00000772",
+  memoryUsdPerGbSecond: "0.00000386",
+  volumeUsdPerGbSecond: "0.00000006",
+  egressUsdPerGb: "0.05",
+  billing: "per-second-actual-use",
+  onDemandMinimumSeconds: 0,
+  accountPlan: "unknown",
+  includedUsageUsd: "unknown",
+  source: "https://railway.com/pricing.md",
+  plansSource: "https://docs.railway.com/reference/pricing/plans",
+  retrievedAt: "2026-09-12",
+  quote:
+    "Railway charges per-second for the CPU, memory, and disk your services actually use. Memory $0.00000386 per GB/s. CPU $0.00000772 per vCPU/s. Egress $0.05 per GB.",
+  note:
+    "Attribution from this VM's measured CPU/RSS, not a Railway invoice or production-capacity claim. Account plan, remaining included credits, and idle replica size are unknown.",
+});
 
 export const X402_RAIL_ID = "x402-exact-base-usdc";
 export const STRIPE_RAIL_ID = "stripe-card-us-standard";
@@ -67,11 +113,14 @@ export const COMPUTE_MODEL = Object.freeze({
   usdPerVcpuHour: "0.05",
   onDemandMinimumSeconds: 60,
   vcpuAssumed: 1,
+  historicalAssumedScenario: true,
+  notLiveLockfileOffer: true,
   source: "https://aws.amazon.com/ec2/pricing/on-demand/",
   retrievedAt: "2026-09-11",
   quote:
     "For T2 and T3 instances in Unlimited mode, CPU Credits are charged at: $0.05 per vCPU-Hour for Linux, RHEL and SLES. On-Demand Linux is billed per second with a 60 second minimum.",
-  note: "Cost model, not this VM invoice. Fixed Hostinger monthly hosting is not allocated per job.",
+  note:
+    "HISTORICAL assumed scenario for the F08 0.003 wrapper kit. Not Railway. Not this VM invoice. A 60s minimum is not a 60s average and is not the live lockfile-pin-delta cost basis.",
 });
 
 export const USD_USDC_PEG = Object.freeze({
@@ -124,4 +173,12 @@ export const ERROR_CODES = Object.freeze({
   PROPOSED_BELOW_FLOOR: "proposed-below-floor",
   MISSING_MEASUREMENT: "missing-measurement",
   LIVE_PRICE_REWRITE_REFUSED: "live-price-rewrite-refused",
+  MERCHANT_ROOT_MISSING: "merchant-root-missing",
+  H04_CORPUS_MISSING: "h04-corpus-missing",
+  CORPUS_DIGEST_MISMATCH: "corpus-digest-mismatch",
+  HISTORICAL_SCENARIO_IS_NOT_LIVE_LOCKFILE: "historical-scenario-is-not-live-lockfile",
+  XPAY_FEE_SCHEDULE_UNKNOWN: "xpay-fee-schedule-unknown",
+  RAILWAY_PLAN_UNKNOWN: "railway-plan-unknown",
+  NO_LOSS_NOT_PROVEN: "no-loss-not-proven",
+  HEADROOM_SKIPPED: "headroom-skipped",
 });

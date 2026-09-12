@@ -13,6 +13,8 @@ describe("local HTTP experiment", { timeout: 180_000 }, () => {
       assert.equal(healthBody.ok, true);
       assert.equal(healthBody.testedSha, TESTED_SDS_SHA);
       assert.equal(healthBody.liveSettleAttempted, false);
+      assert.equal(healthBody.historicalAssumedScenario, true);
+      assert.equal(healthBody.liveLockfileOffer, false);
 
       const res = await fetch(`${held.url}/experiment`, {
         method: "POST",
@@ -26,6 +28,8 @@ describe("local HTTP experiment", { timeout: 180_000 }, () => {
       const body = await res.json();
       assert.equal(body.ok, true);
       assert.equal(body.certified, true);
+      assert.equal(body.historicalAssumedScenario, true);
+      assert.equal(body.liveLockfileOffer, false);
       assert.equal(body.nonLossmaking, true);
       assert.equal(body.sold, false);
       assert.equal(body.offer.proposedPriceUsdc, "0.003000");

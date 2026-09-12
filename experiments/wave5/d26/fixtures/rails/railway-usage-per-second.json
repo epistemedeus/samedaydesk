@@ -1,0 +1,18 @@
+{
+  "id": "railway-usage-per-second",
+  "kind": "hosting-usage",
+  "billing": "per-second-actual-use",
+  "onDemandMinimumSeconds": 0,
+  "cpuUsdPerVcpuSecond": "0.00000772",
+  "memoryUsdPerGbSecond": "0.00000386",
+  "volumeUsdPerGbSecond": "0.00000006",
+  "egressUsdPerGb": "0.05",
+  "accountPlan": "unknown",
+  "includedUsageUsd": "unknown",
+  "freebiesUnknown": true,
+  "source": "https://railway.com/pricing.md",
+  "plansSource": "https://docs.railway.com/reference/pricing/plans",
+  "retrievedAt": "2026-09-12",
+  "quote": "Railway charges per-second for the CPU, memory, and disk your services actually use. Memory $0.00000386 per GB/s (~$10 per GB-month). CPU $0.00000772 per vCPU/s (~$20 per vCPU-month). Egress $0.05 per GB. Hobby $5/mo includes $5 usage; Pro $20/mo includes $20; Free $1/mo. Included usage is capacity, not durable unit cost.",
+  "note": "This merchant account's Railway plan, remaining included credits, and idle replica size are unknown. Do not treat a 60s AWS On-Demand minimum as Railway billing."
+}

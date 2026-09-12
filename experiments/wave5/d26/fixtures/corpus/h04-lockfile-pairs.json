@@ -1,0 +1,89 @@
+{
+  "corpusSha": "7026dc9ad4bc9bef6c68cf0654fff5a6d2c54bbc",
+  "corpusRepo": "epistemedeus/samedaydesk",
+  "label": "W5-H04 public pinned lockfile input pairs",
+  "pairs": [
+    {
+      "id": "h04-pub-lock-01",
+      "family": "lockfile-public",
+      "kind": "integrity-source",
+      "rel": "experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-01",
+      "before": { "name": "before.json", "bytes": 1389, "sha256": "4ccaff95d1650f788c864f2d7a58206a4e6bd9b2b1d207ec89653f185b86b932" },
+      "after": { "name": "after.json", "bytes": 1575, "sha256": "7e4e0597dd5efcd46f42c96dcc0185f1512aadd727aad283d192401cae42c829" }
+    },
+    {
+      "id": "h04-pub-lock-02",
+      "family": "lockfile-public",
+      "kind": "resolved-url",
+      "rel": "experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-02",
+      "before": { "name": "before.json", "bytes": 1500, "sha256": "62ec4b4ed6072b58b9e0cb5b61c0530d697c8eed4e1520d9cc2bc61604a1eec0" },
+      "after": { "name": "after.json", "bytes": 1503, "sha256": "8d2024511363b9daa8f9bbd7665dbd0c901356479c32f1a8e55165770c7a420b" }
+    },
+    {
+      "id": "h04-pub-lock-03",
+      "family": "lockfile-public",
+      "kind": "addition",
+      "rel": "experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-03",
+      "before": { "name": "before.json", "bytes": 780, "sha256": "c3ecbdd0bbd0ea35a6abf2b50159b9ca0e02be321f5a4b3e83081e65f38fcc22" },
+      "after": { "name": "after.json", "bytes": 1418, "sha256": "d3ea2057f1a3b5372ee449d04c6e03ce05626c3161ca9d76f5a987f29ea613e4" }
+    },
+    {
+      "id": "h04-lock-pub-b04-removal",
+      "family": "lockfile-public",
+      "kind": "dependency-removal",
+      "rel": "experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b04-removal",
+      "before": { "name": "before.json", "bytes": 10957, "sha256": "059a32626ca344e2c8b886857ce933eb174a94f2afdfd16ffa8cf193185ef8b8" },
+      "after": { "name": "after.json", "bytes": 7518, "sha256": "2347d285638d58957172e1e784f7ef293e705d4f20397d28a208f2c2f5db37eb" }
+    },
+    {
+      "id": "h04-lock-pub-b05-normalize",
+      "family": "lockfile-public",
+      "kind": "normalization-noise",
+      "rel": "experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b05-normalize",
+      "before": { "name": "before.json", "bytes": 15559, "sha256": "7451c2e070e18b34a7d0690a87a4acd50b8f62b8800f12addb30289ba28b1425" },
+      "after": { "name": "after.json", "bytes": 19117, "sha256": "de32500dbeefe8bb5374857c4ea19c831104e506afe503ebf1d65fc5a1ae2680" }
+    },
+    {
+      "id": "h04-lock-pub-b06-refuse",
+      "family": "lockfile-public",
+      "kind": "yarn.lock-refusal",
+      "rel": "experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b06-refuse",
+      "httpMode": "leading-8192-bytes",
+      "httpModeNote": "Full yarn.lock is 813432 bytes and would exceed the merchant 256KiB request ceiling (413). HTTP body uses the leading 8192 bytes so the handler can refuse parse-error instead of payload_too_large.",
+      "before": { "name": "yarn.lock", "bytes": 813432, "sha256": "9c4eca915296cc1e71d975680a01dfd8b42a3bc0dde74fad0abb31201a7c83a5" },
+      "after": { "name": "yarn.lock", "bytes": 813432, "sha256": "9c4eca915296cc1e71d975680a01dfd8b42a3bc0dde74fad0abb31201a7c83a5" }
+    },
+    {
+      "id": "h04-lock-pub-b07-large",
+      "family": "lockfile-public",
+      "kind": "realistic-large-lockfileVersion-3",
+      "rel": "experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b07-large",
+      "before": { "name": "before.json", "bytes": 72380, "sha256": "d51849d016d28f67aae0a99eeb6b4dd810c1c0069ced4094eb127a5301ed8fac" },
+      "after": { "name": "after.json", "bytes": 72380, "sha256": "d51849d016d28f67aae0a99eeb6b4dd810c1c0069ced4094eb127a5301ed8fac" }
+    },
+    {
+      "id": "h04-lock-01",
+      "family": "lockfile-sds",
+      "kind": "change",
+      "rel": "experiments/wave5-heavy/h04/examples/lockfile/h04-lock-01",
+      "before": { "name": "before.json", "bytes": 45528, "sha256": "08166f190bee2ebf0a1e5b0848cc44d0e1a71fa2236c2322a9a5903ce1d3b8e2" },
+      "after": { "name": "after.json", "bytes": 45568, "sha256": "55ad4283e8d502b093889d1d8134cee48eece634d3ebd005782d4e96c35002c3" }
+    },
+    {
+      "id": "h04-lock-02",
+      "family": "lockfile-sds",
+      "kind": "integrity-only",
+      "rel": "experiments/wave5-heavy/h04/examples/lockfile/h04-lock-02",
+      "before": { "name": "before.json", "bytes": 1305, "sha256": "b2b60e6baee64862710c16242b5ba7e1b7ee49de6155c5159321ca311ceb5fe8" },
+      "after": { "name": "after.json", "bytes": 1367, "sha256": "d9bd59f88dfb7eddafbc10cb1bb4ac95a7096d4db98799c71fe350ccd3c621dd" }
+    },
+    {
+      "id": "h04-lock-03",
+      "family": "lockfile-sds",
+      "kind": "no-change-control",
+      "rel": "experiments/wave5-heavy/h04/examples/lockfile/h04-lock-03",
+      "before": { "name": "before.json", "bytes": 71902, "sha256": "f198dc320cb91af50837233853ec491ca52c98107c462cdc218221d7d7347a2e" },
+      "after": { "name": "after.json", "bytes": 85194, "sha256": "c801019a0eb39977749a9f9513ed03a1ec5fa29d655a8c29f983ca90f724aab2" }
+    }
+  ]
+}

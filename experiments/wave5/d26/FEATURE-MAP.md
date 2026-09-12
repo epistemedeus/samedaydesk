@@ -6,33 +6,32 @@ Own directory: `experiments/wave5/d26/` only.
 
 | Looked for | Result |
 | --- | --- |
-| SDS PR52 `aeef964fa188443078958d9d6d393afae1d542ee` | Attached. Current F08 wrappers consumed, not rewritten. |
-| F08 `server/paid-useful-jobs/` | CLI `bin/cli.mjs` + `runPaidOffer` are the current D01-equivalent interface. |
-| W4-commerce-16 `aa306e291adfdd499ca971af01625ccc4bfee5c4` | Read-only worktree. Duration/label honesty reused. Source not copied. |
-| W5-D01 / W5-D25 owned paths | Absent on this branch. Remaining integration bindings recorded on the receipt. |
+| Live merchant `epistemedeus/x402-url-extractor@ca38205279f0d543515b81b7261909e55ea2600f` v1.23.47 | Read-only pin. `POST /lockfile-pin-delta` at 5000 atomic USDC, x402-only, Railway. Not rewritten. |
+| SDS H04 corpus `7026dc9ad4bc9bef6c68cf0654fff5a6d2c54bbc` | Read-only worktree. Public lockfile pairs under `experiments/wave5-heavy/h04/examples/lockfile-public/` plus SDS lock family. Digests in `fixtures/corpus/h04-lockfile-pairs.json`. |
+| SDS PR52 `aeef964fa188443078958d9d6d393afae1d542ee` | Still attached for the historical F08 0.003 journey. |
+| Railway + CDP official pricing | Retrieved 2026-09-12. Account plan / xpay fees unknown. |
 | Homepages, live catalog, `payTo` | Not edited. |
 
 ## User goals
 
 | User goal | Entrypoint | Command | State | Tests | Account / spend |
 | --- | --- | --- | --- | --- | --- |
-| Measure F08 job cost and emit one non-lossmaking proposed offer | `bin/price-floor.mjs` | `node bin/price-floor.mjs journey --buyer-class owner-qa` | `certified=true`, `sold=false`, `publishedToLiveCatalog=false` | `test/journey.test.mjs` | None |
-| Local HTTP experiment | `lib/http.mjs` | `POST /experiment` on `127.0.0.1` | same JSON as CLI | `test/http.test.mjs` | None |
-| Refuse SAMPLE as cost basis | `--example` | `journey --example` | `sample-is-not-cost-basis` | `test/seeded-failures.test.mjs` | None |
-| Refuse Stripe fees as x402 certification | `--rail stripe-card-us-standard --certify-as-x402` | same | `unlike-rail-certification` | same | None |
-| Show Stripe micropayment is loss-making | `floor --rail stripe-card-us-standard --proposed 0.003` | `nonLossmaking=false` | same | None |
-| Refuse 8.105 as cost cover | `--cited-banked-as-cost-cover` | `cited-banked-is-not-cost-cover` | same | None |
-| Keep live extract / SIA pins | catalog files | read-only assert | `test/live-prices.test.mjs` | None |
+| Measure mounted lockfile handler cost/latency | `lib/profile.mjs` | `node bin/price-floor.mjs profile` | `certifiedNoLoss=false`, `priceChange=false` | `test/zero-failed-settle.test.mjs` | Fake facilitator only |
+| Compact 0.005 recommendation | `lib/lockfile-offer.mjs` | printed by `profile` | keep 0.005; no-loss not proven | `test/lockfile-offer.test.mjs` | None |
+| Exact source export | `lib/source-export.mjs` | `node bin/price-floor.mjs source-export` | merchant SHA, H04 digests, fee docs | same | None |
+| Historical F08 0.003 T3/60s scenario | `lib/experiment.mjs` | `journey --buyer-class owner-qa` | `historicalAssumedScenario=true`, not live lockfile | `test/journey.test.mjs` | None |
+| Atomic USDC / Railway conversions | `lib/money.mjs`, `lib/railway-fees.mjs` | unit tests | 0.005=5000; no 60s Railway minimum | `test/money.test.mjs`, `test/lockfile-offer.test.mjs` | None |
 
 ## Files
 
 | Path | Role |
 | --- | --- |
 | `bin/price-floor.mjs` | Public CLI |
-| `lib/experiment.mjs` | Measure + fee + floor + one proposed offer |
-| `lib/measure.mjs` | Real F08 CLI process |
-| `lib/fees.mjs` | CDP usage-based Exact fee and Stripe card counterfactual |
-| `lib/floor.mjs` | Atomic USDC floor |
-| `lib/http.mjs` | Loopback JSON server |
-| `fixtures/rails/` | Documented fee schedules |
+| `lib/profile.mjs` | Mounted handler + fake facilitator + 1/6/12 |
+| `lib/merchant-harness.mjs` | Disposable merchant spawn |
+| `lib/railway-fees.mjs` | Per-second Railway CPU/RAM attribution |
+| `lib/facilitator-cost.mjs` | CDP vs xpay; success vs failed settle |
+| `lib/lockfile-offer.mjs` | Keep-0.005 recommendation |
+| `historical/f08-t3-assumed-scenario.md` | Preserved stage-1 report |
+| `measured/` | Replayable JSON/CSV after `profile` |
 | `test/*.test.mjs` | `node:test` |

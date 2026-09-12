@@ -10,6 +10,10 @@ describe("W5-D26 journey against current F08 CLI", { timeout: 180_000 }, () => {
     const body = parseOut(spawned);
     assert.equal(body.ok, true);
     assert.equal(body.certified, true);
+    assert.equal(body.historicalAssumedScenario, true);
+    assert.equal(body.liveLockfileOffer, false);
+    assert.equal(body.computeModelIsNotRailway, true);
+    assert.equal(body.notMeasuredProductionCost, true);
     assert.equal(body.nonLossmaking, true);
     assert.equal(body.sold, false);
     assert.equal(body.publishedToLiveCatalog, false);
@@ -40,8 +44,11 @@ describe("W5-D26 journey against current F08 CLI", { timeout: 180_000 }, () => {
     assert.ok(body.confirm.durationMs > 0);
     assert.equal(body.confirm.floor.paymentFeeUsdc, "0.001000");
     assert.equal(body.testedImplementation.sha, TESTED_SDS_SHA);
+    assert.equal(body.computeModel.historicalAssumedScenario, true);
+    assert.equal(body.computeModel.notLiveLockfileOffer, true);
     assert.match(body.remainingBindings["W5-D01"], /F08/);
     assert.match(body.remainingBindings["W5-D25"], /not on this branch/);
+    assert.match(body.remainingBindings["live-lockfile-pin-delta"], /5000 atomic/);
     assert.equal(PROPOSED_PRICE_USDC, "0.003");
   });
 

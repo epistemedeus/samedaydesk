@@ -1,12 +1,23 @@
 import { writeFileSync } from "node:fs";
-import { resolve } from "node:path";
-import { ERROR_CODES, PROPOSED_JOB_ID, PROPOSED_PRICE_USDC, X402_RAIL_ID } from "./pins.mjs";
-import { refuse } from "./refuse.mjs";
+import { join, resolve } from "node:path";
+import {
+  DEFAULT_H04_ROOT,
+  DEFAULT_MERCHANT_ROOT,
+  ERROR_CODES,
+  OWNED_DIR,
+  PROPOSED_JOB_ID,
+  PROPOSED_PRICE_USDC,
+  X402_RAIL_ID,
+} from "./pins.mjs";
+import { refuse, ExperimentRefuse } from "./refuse.mjs";
 import { listRails } from "./rails.mjs";
 import { measureJob } from "./measure.mjs";
 import { priceFloor } from "./floor.mjs";
 import { runExperiment } from "./experiment.mjs";
 import { listen } from "./http.mjs";
+import { runLockfileProfile } from "./profile.mjs";
+import { buildSourceExport } from "./source-export.mjs";
+import { captureEnvironment } from "./env-capture.mjs";
 
 function parseArgs(argv) {
   const out = { _: [] };
@@ -29,15 +40,21 @@ export function usage() {
   return `price-floor — W5-D26 service-cost / price-floor kit (not a live sale)
 
 Commands:
+  profile [--merchant-root DIR] [--h04-root DIR] [--out-dir DIR]
+  lockfile-offer   (same as profile; prints the 0.005 recommendation)
+  source-export
   journey [--buyer-class owner-qa] [--proposed 0.003] [--rail x402-exact-base-usdc]
   measure --job vendor-budget-impact [--example]
   floor --duration-ms N --proposed 0.003 [--rail x402-exact-base-usdc]
   list-rails
   listen [--port 0]
 
-Journey runs the current F08 CLI on caller files, applies CDP usage-based
-Exact fees plus a conservative AWS T3 CPU-credit compute model, and emits one
-non-live proposed offer. Live settlement is out of scope.
+profile mounts epistemedeus/x402-url-extractor POST /lockfile-pin-delta
+(ca382052, $0.005, x402-only) against a fake facilitator in a disposable
+worktree. It is latency/cost evidence, not a live payment or public loadtest.
+
+journey is the HISTORICAL F08 0.003 T3/60s assumed scenario. It is not the
+live lockfile offer and is not a Railway measurement.
 `;
 }
 
@@ -104,6 +121,51 @@ export async function main(argv = process.argv.slice(2)) {
     if (args.out) writeJson(resolve(String(args.out)), result);
     process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
     return result.ok && result.certified ? 0 : 2;
+  }
+
+  if (cmd === "profile" || cmd === "lockfile-offer") {
+    try {
+      const outDir = args["out-dir"] ? resolve(String(args["out-dir"])) : join(OWNED_DIR, "measured");
+      const result = await runLockfileProfile({
+        merchantRoot: args["merchant-root"] ? resolve(String(args["merchant-root"])) : DEFAULT_MERCHANT_ROOT,
+        h04Root: args["h04-root"] ? resolve(String(args["h04-root"])) : DEFAULT_H04_ROOT,
+        outDir,
+      });
+      const body = {
+        ok: true,
+        certifiedNoLoss: false,
+        liveLockfileOffer: true,
+        historicalAssumedScenario: false,
+        priceChange: false,
+        outDir: result.outDir,
+        recommendation: result.report.recommendation,
+        counts: result.report.counts,
+        latencyMs: result.report.latencyMs,
+        allocated: {
+          hourUsd: result.report.allocated.hour.variableUsd,
+          monthUsd: result.report.allocated.monthApprox30d.variableUsd,
+          idleRssBytes: result.report.idleRssBytes,
+        },
+      };
+      if (args.out) writeJson(resolve(String(args.out)), result.report);
+      process.stdout.write(`${JSON.stringify(body, null, 2)}\n`);
+      return 0;
+    } catch (err) {
+      const body = err instanceof ExperimentRefuse
+        ? refuse(err.code, err.message, err.detail)
+        : refuse(ERROR_CODES.WRAPPER_FAILURE_IS_NOT_COST_BASIS, err.message || String(err));
+      process.stdout.write(`${JSON.stringify(body, null, 2)}\n`);
+      return 2;
+    }
+  }
+
+  if (cmd === "source-export") {
+    const merchantRoot = args["merchant-root"] ? resolve(String(args["merchant-root"])) : DEFAULT_MERCHANT_ROOT;
+    const h04Root = args["h04-root"] ? resolve(String(args["h04-root"])) : DEFAULT_H04_ROOT;
+    const environment = captureEnvironment({ merchantRoot, h04Root });
+    const body = buildSourceExport({ environment, merchantRoot, h04Root });
+    process.stdout.write(`${JSON.stringify(body, null, 2)}\n`);
+    return 0;
   }
 
   if (cmd === "listen") {

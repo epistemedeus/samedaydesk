@@ -2,23 +2,32 @@ W5-D26 price-floor notices
 ==========================
 
 This kit measures the published SameDayDesk paid useful-job wrappers and
-applies documented payment-fee schedules. It does not relicense those works
+the live merchant lockfile-pin-delta handler, and applies documented
+payment-fee and hosting-fee schedules. It does not relicense those works
 and does not copy W4-commerce-16 buyer-value-ledger or any earned-work kernel.
 
+- epistemedeus/x402-url-extractor ca38205279f0d543515b81b7261909e55ea2600f
+  (version 1.23.47): consumed as a disposable worktree. Not rewritten.
+- SDS H04 corpus 7026dc9ad4bc9bef6c68cf0654fff5a6d2c54bbc: lockfile input
+  pairs read in place. Digests recorded. Bytes not vendored into this kit
+  except the tiny controlled near-limit generators.
 - server/paid-useful-jobs (SDS PR52 aeef964fa188443078958d9d6d393afae1d542ee):
-  consumed as the current implementation. MIT as published in that tree.
-- useful-jobs 1.0.0 archive: engines stay in the wrapper extract path.
+  consumed as the historical F08 assumed scenario. MIT as published in that tree.
 - Coinbase CDP Facilitator pricing is quoted from
   https://docs.cdp.coinbase.com/x402/core-concepts/facilitator (retrieved
-  2026-09-11). Not a CDP product.
+  2026-09-12). Not a CDP product. Applies only if FACILITATOR=cdp.
+- Railway per-second CPU/memory pricing is quoted from
+  https://railway.com/pricing.md and
+  https://docs.railway.com/reference/pricing/plans (retrieved 2026-09-12).
+  Not a Railway invoice. Account plan unknown.
 - Stripe standard US domestic card pricing is quoted from
   https://stripe.com/pricing (retrieved 2026-09-11). Not a Stripe product.
 - AWS T2/T3 Unlimited Linux CPU-credit rate is quoted from
   https://aws.amazon.com/ec2/pricing/on-demand/ (retrieved 2026-09-11).
-  That rate is a cost model, not this machine's invoice.
+  Historical assumed scenario only. Not Railway.
 
 No purchase, live settlement, catalog publication, or organic-demand
 authority is granted here. Owner-qa runs are not customers. Banked 8.105 USDC
 is not this job's revenue or cost cover. Fixture wrapper 0.02 USDC is not a
-live price. Live extract 0.005 USDC and seller-integrity-audit 0.01 USDC are
-not rewritten.
+live price. Live extract 0.005 USDC, live lockfile-pin-delta 0.005 USDC, and
+seller-integrity-audit 0.01 USDC are not rewritten.

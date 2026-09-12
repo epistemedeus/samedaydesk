@@ -30,6 +30,8 @@ export function createExperimentServer() {
           assignment: ASSIGNMENT_ID,
           liveSettleAttempted: false,
           testedSha: TESTED_SDS_SHA,
+          historicalAssumedScenario: true,
+          liveLockfileOffer: false,
         });
       }
       if (req.method === "POST" && url.pathname === "/experiment") {

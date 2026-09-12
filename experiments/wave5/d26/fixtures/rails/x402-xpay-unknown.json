@@ -1,0 +1,17 @@
+{
+  "id": "x402-xpay-unknown",
+  "kind": "x402-exact",
+  "scheme": "exact",
+  "network": "eip155:8453",
+  "facilitator": "xpay",
+  "defaultUrl": "https://facilitator.xpay.sh",
+  "verifyUsd": "unknown",
+  "usageBasedUsdPerOnchainTx": "unknown",
+  "freeTierMonthlyOnchain": "unknown",
+  "accountRequired": false,
+  "sourceInMerchant": "server.js FACILITATOR default xpay; FACILITATOR_URL or https://facilitator.xpay.sh",
+  "merchantSha": "ca38205279f0d543515b81b7261909e55ea2600f",
+  "retrievedAt": "2026-09-12",
+  "quote": "Merchant source default is FACILITATOR=xpay with no account and no API key. Official CDP Facilitator pricing does not apply to xpay unless production is switched to FACILITATOR=cdp.",
+  "note": "Fee schedule unpublished in this kit. Treat as unknown, not zero."
+}

@@ -7,6 +7,8 @@ describe("money units", () => {
   it("parses USDC 6dp and Stripe cents 2dp as unlike amounts", () => {
     assert.equal(parseDecimal("0.003", 6), 3000n);
     assert.equal(formatUsdc(3000n), "0.003000");
+    assert.equal(parseDecimal("0.005", 6), 5000n);
+    assert.equal(formatUsdc(5000n), "0.005000");
     assert.equal(usdcAtomic("0.30").unit, "usdc-atomic");
     assert.equal(usdCents("0.30").unit, "usd-cents");
     assert.equal(usdcAtomic("0.30").value, 300000n);
@@ -14,7 +16,7 @@ describe("money units", () => {
     assert.notEqual(usdcAtomic("0.30").value, usdCents("0.30").value);
   });
 
-  it("60s T3 unlimited Linux model is 834 USDC atomic", () => {
+  it("historical 60s T3 unlimited Linux model is 834 USDC atomic", () => {
     assert.equal(computeCostAtomic(1), 834n);
     assert.equal(computeCostAtomic(60_000), 834n);
     assert.equal(formatUsdc(834n), "0.000834");

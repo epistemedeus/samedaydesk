@@ -34,6 +34,8 @@ function remainingBindings() {
     "W5-D25":
       "Buyer-journey harness experiments/wave5/d25/ is not on this branch. Two owner-qa F08 CLI jobs here are a current-interface stand-in, not D25 acceptance.",
     "W5-M12": "Machine-readable capability/pricing description remains a later consumer of this floor.",
+    "live-lockfile-pin-delta":
+      "POST /lockfile-pin-delta at 5000 atomic USDC on merchant ca382052 is a separate live offer. This F08 0.003 T3/60s journey is a historical assumed scenario, not that measurement.",
   };
 }
 
@@ -170,6 +172,10 @@ export function runExperiment(request = {}) {
       liveExtractPriceUsdc: LIVE_EXTRACT_PRICE_USDC,
       liveSellerIntegrityAuditPriceUsdc: LIVE_SELLER_INTEGRITY_AUDIT_PRICE_USDC,
       distinctFromLiveExtract: proposedAtomic !== liveExtractAtomic,
+      historicalAssumedScenario: true,
+      liveLockfileOffer: false,
+      computeModelIsNotRailway: true,
+      notMeasuredProductionCost: true,
     };
 
     return {
@@ -178,6 +184,10 @@ export function runExperiment(request = {}) {
       assignment: ASSIGNMENT_ID,
       certified,
       nonLossmaking: offer.nonLossmaking,
+      historicalAssumedScenario: true,
+      liveLockfileOffer: false,
+      computeModelIsNotRailway: true,
+      notMeasuredProductionCost: true,
       sold: false,
       publishedToLiveCatalog: false,
       liveSettleAttempted: false,
