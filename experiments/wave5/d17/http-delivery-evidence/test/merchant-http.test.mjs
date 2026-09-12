@@ -3,6 +3,7 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { pathToFileURL } from "node:url";
 
 import {
   DELIVERY,
@@ -15,6 +16,7 @@ import {
 } from "../src/index.mjs";
 import {
   FAKE_SETTLE_TX,
+  MERCHANT_ROOT,
   MERCHANT_SHA,
   PRICE_ATOMIC,
   PAY_TO,
@@ -55,11 +57,15 @@ test("disposable merchant: request, caller digest, capture, restart, and negativ
   );
 
   merchant = await startMerchant({ dataDir, facilitatorUrl: facilitator.url });
+  const { extractMcpOutputSchema } = await import(
+    pathToFileURL(path.join(MERCHANT_ROOT, "extract.mjs")).href
+  );
 
   const ok = await paidGet(merchant.base, "/extract", "https://ok.example/");
   assert.equal(ok.paid.status, 200, ok.bytes.toString("utf8").slice(0, 500));
   assert.equal(ok.accepted.amount, PRICE_ATOMIC);
   assert.equal(ok.accepted.payTo, PAY_TO);
+  assert.equal(extractMcpOutputSchema.safeParse(ok.body).success, true);
   const callerDigest = digestResponseBytes(ok.bytes);
   const okRecord = recordFromObservedResponse({
     method: "GET",
@@ -87,7 +93,9 @@ test("disposable merchant: request, caller digest, capture, restart, and negativ
   assert.equal(blocked.paid.status, 200);
   assert.equal(blocked.body.status, 403);
   assert.equal(blocked.body.sourceOk, false);
+  assert.equal(extractMcpOutputSchema.safeParse(blocked.body).success, true);
   assert.equal(blockedRecord.deliveryClass, DELIVERY.SOURCE_REFUSAL);
+  assert.equal(blockedRecord.counters.sourceRefusalMarks, 1);
   assert.notEqual(blockedRecord.deliveryClass, DELIVERY.FULL_BOUNDED_CAPTURE);
   assert.equal(blockedRecord.usefulness, "unknown");
 
@@ -113,6 +121,7 @@ test("disposable merchant: request, caller digest, capture, restart, and negativ
     settlementReference: FAKE_SETTLE_TX,
   });
   assert.equal(gzip.body.ok, false);
+  assert.equal(extractMcpOutputSchema.safeParse(gzip.body).success, false);
   assert.equal(gzipRecord.deliveryClass, DELIVERY.UNSUPPORTED_CONTENT);
 
   const timedOut = await paidGet(merchant.base, "/extract", "https://slow.example/");
@@ -125,6 +134,7 @@ test("disposable merchant: request, caller digest, capture, restart, and negativ
     settlementReference: FAKE_SETTLE_TX,
   });
   assert.equal(timedOut.body.error.code, "timeout");
+  assert.equal(extractMcpOutputSchema.safeParse(timedOut.body).success, false);
   assert.equal(timeoutRecord.deliveryClass, DELIVERY.TRANSPORT_FAILURE);
 
   const rows = await waitForPaidEvidence(dataDir, 6);

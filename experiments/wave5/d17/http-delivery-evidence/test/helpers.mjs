@@ -282,20 +282,100 @@ export function validExtractBody(overrides = {}) {
       hasCanonical: true,
       schemaTypes: [],
     },
-    capture: {
-      method: "http-get-no-javascript",
-      javascriptExecuted: false,
-      maxBodyBytes: 3_000_000,
-      textExcerptLimitChars: 1200,
-      markdownLimitChars: null,
-      bodyBytes: 128,
-      bodyTruncated: false,
-      textTruncated: false,
-      charset: "utf-8",
-      charsetSource: "content-type",
-    },
+    capture: extractCapture(),
     fetchedAt: "2026-09-11T00:00:00.000Z",
     ...overrides,
+  };
+}
+
+export function extractCapture(overrides = {}) {
+  return {
+    method: "http-get-no-javascript",
+    javascriptExecuted: false,
+    maxBodyBytes: 3_000_000,
+    textExcerptLimitChars: 1200,
+    markdownLimitChars: null,
+    bodyBytes: 128,
+    bodyTruncated: false,
+    textTruncated: false,
+    charset: "utf-8",
+    charsetSource: "content-type",
+    ...overrides,
+  };
+}
+
+export function validReadBody(overrides = {}) {
+  return {
+    ok: true,
+    requestedUrl: "https://ok.example/",
+    finalUrl: "https://ok.example/",
+    url: "https://ok.example/",
+    status: 200,
+    sourceOk: true,
+    error: null,
+    title: "Example Domain",
+    markdown: "# Example Domain\n\nPublic example page.",
+    wordCount: 6,
+    truncated: false,
+    capture: extractCapture({
+      textExcerptLimitChars: null,
+      markdownLimitChars: 40_000,
+    }),
+    fetchedAt: "2026-09-11T00:00:00.000Z",
+    ...overrides,
+  };
+}
+
+export function validBatchBody(overrides = {}) {
+  return {
+    ok: true,
+    product: "samedaydesk-extract-batch",
+    schemaVersion: "samedaydesk.extract-batch.v0",
+    quote: {
+      amountAtomic: "10000",
+      displayUsdc: "0.01",
+      meaning: "up to five public URLs",
+    },
+    jobId: "ab".repeat(32),
+    jobStatus: "completed",
+    stopReason: null,
+    partial: false,
+    sources: [{
+      id: "1",
+      source: "https://ok.example/",
+      status: "success",
+      data: {},
+      notes: [],
+      error: null,
+      provenance: null,
+    }],
+    accounting: {},
+    costInputs: {},
+    charged: true,
+    boundary: {},
+    ...overrides,
+  };
+}
+
+/** Merchant GET /extract catch envelope (HTTP 200). Outside extractMcpOutputSchema. */
+export function merchantCatchEnvelope({
+  url = "https://slow.example/",
+  code = "timeout",
+  message = "aborted",
+} = {}) {
+  return {
+    ok: false,
+    url,
+    requestedUrl: url,
+    finalUrl: null,
+    status: null,
+    sourceOk: false,
+    error: { code, message },
+    capture: extractCapture({
+      bodyBytes: 0,
+      charset: null,
+      charsetSource: "default-utf-8",
+    }),
   };
 }
 

@@ -4,6 +4,25 @@ Schema `samedaydesk.wave5.d17.http-response-validation.v1`. Thin extension of
 merchant paid-success capture at x402-url-extractor `a143898d`. Not a second
 ledger. Not MCP identity.
 
+## Canonical HTTP body contracts
+
+Runtime validation loads `src/canonical-contracts.generated.json`, a pin-time
+export of the merchant serving contracts. It does not import `extract.mjs`
+(that module performs fetches). H01 same-repo binds the live parsers.
+
+| HTTP route | Body producer | Schema that describes the HTTP success body |
+| --- | --- | --- |
+| GET `/extract` | `server.js` `res.json(await extract(url))` | `extractMcpOutputSchema` (Zod). Named MCP because the MCP tool reuses the same object. |
+| GET `/read` | `res.json(await readMarkdown(url))` | `readMcpOutputSchema` |
+| POST `/extract/batch` | OpenAPI `extractBatchOutputSchema()` | **JSON Schema** `extractBatchOutputSchema()`. MCP uses a Zod sibling `extractBatchMcpOutputSchema`. HTTP validation must not use the MCP Zod object. |
+
+Catch `ok: false` envelopes (timeout, `unsupported_encoding`, fetch/redirect)
+are produced at merchant HTTP 200 and sit **outside** the success Zod schema.
+Those envelopes are classified by `error.code`, not as success-schema pass.
+
+Unsupported method/resource (`PUT /extract`, `GET /scan`) stays
+`unknown` / `unsupported_target`. It is not an invalid extract success.
+
 ## Historical v1 (do not drop)
 
 Merchant `commerce-paid-success-evidence.ndjson` rows with `v: 1` and
@@ -14,32 +33,43 @@ not drop them.
 
 Join key: `method` + `route`/`resource` + `responseDigest`.
 
-## New optional record
+## Layers (do not collapse)
 
-One versioned sibling row per observed HTTP response. Bound to the exact
-bytes the caller received (SHA-256 over merchant domain
-`samedaydesk.commerce-paid-success-evidence.response.v1` plus those bytes).
-Never a later reread. Never a fabricated digest.
+1. **Merchant transport** — actual HTTP status on the paid response.
+   Completed delivery requires a 2xx integer status. A success-schema body
+   inside HTTP 500 is `merchant_http_failure`, not `pass` /
+   `full_bounded_capture`.
+2. **Declared-schema conformance** — `schemaConformance` on the evaluator
+   (`holds` / `fails` / `not_applicable`). Stored as bounded
+   `counters.schemaErrors` (0 means holds when applicable). Shape is not
+   buyer usefulness.
+3. **Domain capture** — source refusal, truncation, or full bounded capture.
+   `usefulness` stays `unknown`.
 
-Server schema validation is merchant-declared contract evidence. It is
-not independent verification, operator identity, or buyer-attested
-usefulness. `usefulness` stays `unknown`.
+Truncation and source refusal may coexist. Principal `deliveryClass` is
+`source_refusal` when `sourceOk === false` on a completed 2xx success
+envelope. `counters.truncateMarks` and `counters.sourceRefusalMarks` both
+remain. Do not report `truncated_partial` as the class in that case.
 
-## Delivery class (one field)
+## Delivery class (principal outcome)
 
 | `deliveryClass` | Meaning |
 | --- | --- |
-| `full_bounded_capture` | Declared extract/read/batch success schema holds, source accepted, no truncation marks. |
-| `source_refusal` | Schema holds; source HTTP refusal (`sourceOk: false`). Includes 403/error pages with nonempty text. |
-| `truncated_partial` | Schema holds; body or text truncation or batch `partial`. |
-| `unsupported_content` | Typed failure envelope `unsupported_encoding`. |
-| `transport_failure` | Typed failure envelope `timeout`. |
-| `engine_failure` | Typed fetch/redirect/invalid_response/ssrf failure. |
-| `malformed_body` | Bytes present; JSON or declared success schema fails. |
+| `full_bounded_capture` | Merchant HTTP 2xx, declared success schema holds, source accepted, no truncation/oversized marks. |
+| `source_refusal` | Merchant HTTP 2xx, success schema holds, `sourceOk: false`. Truncation marks may also be set. |
+| `truncated_partial` | Merchant HTTP 2xx, success schema holds, truncation/partial/oversized, source not refused. |
+| `unsupported_content` | Typed catch envelope `unsupported_encoding` (success schema fails). |
+| `transport_failure` | Typed catch envelope `timeout`. |
+| `engine_failure` | Typed fetch/redirect/invalid_response/ssrf catch. |
+| `malformed_body` | Bytes present; JSON or declared success schema fails (and not a typed catch). |
 | `missing_body` | No bytes. Verdict `unknown`. |
+| `merchant_http_failure` | Merchant HTTP status missing or not 2xx. Schema may still hold. Not completed delivery. |
+| `unsupported_target` | Method/resource is not GET `/extract`, GET `/read`, or POST `/extract/batch`. Verdict `unknown`. |
 
 HTTP 200 and nonempty text do not imply `full_bounded_capture` or useful
-delivery. Missing/malformed body is never `pass`.
+delivery. Missing/malformed body is never `pass`. Observed bodies larger
+than `MAX_RESPONSE_BYTES` (10,485,760) are digested in full, stored length
+is clamped, and the class is never `full_bounded_capture`.
 
 ## Settlement class
 
@@ -51,7 +81,10 @@ delivery. Missing/malformed body is never `pass`.
 
 ## Counters (bounded 0-99)
 
-`schemaErrors`, `requiredPresent`, `truncateMarks`. No flag sprawl.
+`schemaErrors`, `requiredPresent`, `truncateMarks`, `sourceRefusalMarks`.
+Missing `sourceRefusalMarks` on read defaults to 0. Store rows keep only
+counts, digests, outcome, and refs. No private response bytes, parsed bodies,
+or unbounded error strings.
 
 ## Invoke
 

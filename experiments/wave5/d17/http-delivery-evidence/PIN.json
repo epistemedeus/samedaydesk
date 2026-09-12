@@ -37,7 +37,30 @@
     "validatorVerdict": "not_checked",
     "validatorAuthority": "none",
     "validatorSource": "http_runtime_not_checked",
-    "rawPrivateInputs": "none retained or required"
+    "rawPrivateInputs": "none retained or required",
+    "amountUsdcEach": "0.005",
+    "note": "5000 atomic USDC = 0.005 USDC, not 5000 USDC. Do not backfill bodies or buyer identity."
+  },
+  "canonicalHttpContracts": {
+    "/extract": {
+      "httpHandler": "server.js GET /extract res.json(await extract(url))",
+      "schemaExport": "extractMcpOutputSchema",
+      "schemaKind": "zod",
+      "note": "HTTP success body is extract(). Export is named MCP because MCP reuses the same Zod object."
+    },
+    "/read": {
+      "httpHandler": "server.js GET /read res.json(await readMarkdown(url))",
+      "schemaExport": "readMcpOutputSchema",
+      "schemaKind": "zod"
+    },
+    "/extract/batch": {
+      "httpHandler": "OpenAPI extractBatchOutputSchema()",
+      "schemaExport": "extractBatchOutputSchema",
+      "schemaKind": "json-schema",
+      "not": "extractBatchMcpOutputSchema"
+    },
+    "generated": "src/canonical-contracts.generated.json",
+    "generator": "scripts/export-canonical-contracts.mjs (pin-time; not a runtime import of extract.mjs)"
   },
   "integrationOwner": "H01",
   "remainingBinding": [

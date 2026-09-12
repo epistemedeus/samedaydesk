@@ -10,9 +10,10 @@ import {
   DELIVERY,
   openStore,
   recordFromObservedResponse,
+  canonicalizeValidationRecord,
   joinKey,
 } from "../src/index.mjs";
-import { historicalV1Row, validExtractBody } from "./helpers.mjs";
+import { historicalV1Row, merchantCatchEnvelope, validExtractBody } from "./helpers.mjs";
 
 test("optional validation records survive restart and still join unchanged v1 rows", async () => {
   const dir = await mkdtemp(path.join(tmpdir(), "d17-http-store-"));
@@ -60,6 +61,9 @@ test("optional validation records survive restart and still join unchanged v1 ro
     assert.equal(joinedAgain[0].validations.length, 1);
     assert.equal(joinedAgain[0].validations[0].recordId, record.recordId);
     assert.equal(joinedAgain[0].historical.validatorSource, "http_runtime_not_checked");
+    assert.equal(joinedAgain[0].validations[0].counters.sourceRefusalMarks, 0);
+    assert.equal(Object.hasOwn(joinedAgain[0].validations[0], "parsed"), false);
+    assert.equal(JSON.stringify(joinedAgain[0].validations[0]).includes("ok.example"), false);
 
     const fabricated = recordFromObservedResponse({
       method: "GET",
@@ -74,6 +78,40 @@ test("optional validation records survive restart and still join unchanged v1 ro
     const matched = afterFabricated.find((row) => row.historical?.id === v1.id);
     assert.equal(matched.validations.some((item) => item.responseDigest === record.responseDigest), true);
     assert.equal(matched.validations.some((item) => item.responseDigest === fabricated.responseDigest), false);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test("store persists counts/digests/outcome/refs and not catch-envelope URLs", async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), "d17-http-store-secret-"));
+  try {
+    const timeout = recordFromObservedResponse({
+      method: "GET",
+      resource: RESOURCES.EXTRACT,
+      responseBytes: Buffer.from(JSON.stringify(merchantCatchEnvelope({
+        url: "https://slow.example/",
+        code: "timeout",
+        message: "aborted after https://slow.example/",
+      }))),
+      merchantHttpStatus: 200,
+      settlementClass: SETTLEMENT_CLASS.SIMULATED,
+    });
+    const store = openStore(dir);
+    const written = await store.appendValidation(timeout);
+    const serialized = JSON.stringify(written);
+    assert.equal(written.deliveryClass, DELIVERY.TRANSPORT_FAILURE);
+    assert.equal(Object.hasOwn(written, "parsed"), false);
+    assert.equal(Object.hasOwn(written, "responseBytes"), false);
+    assert.equal(serialized.includes("slow.example"), false);
+    assert.equal(serialized.includes("aborted after"), false);
+    assert.throws(() => canonicalizeValidationRecord({
+      ...written,
+      merchantHttpStatus: Number.POSITIVE_INFINITY,
+    }));
+    const reread = await openStore(dir).readValidations();
+    assert.equal(reread[0].recordId, written.recordId);
+    assert.equal(reread[0].counters.sourceRefusalMarks, 1);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
