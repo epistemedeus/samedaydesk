@@ -1,7 +1,7 @@
 {
   "schema": "useful-jobs.catalog.v1",
   "package": "useful-jobs",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "runtime": {
     "node": ">=22",
     "network": "offline-first",
