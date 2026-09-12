@@ -50,6 +50,7 @@ Kit ships MIT `LICENSE`, `NOTICE`, `licenses/vendor/`, `catalog.json` 1.1.0 with
 | Independent negatives | **12** | Exit 2 supported refusals |
 | H04 extra (not independent) | **3** | lock-02, lock-03, page-02 |
 | Analysis defect (unknown listing provider) | **1** | Incomplete capture with `provider: "d15cold"` is `actionable`, not `partial` |
+| Fixture `--example` | **1** | Funding/sample, not payment, not independent |
 | Legacy 1.0.0 still runs | **1** | Independent vendor-budget change on the 1.0.0 archive |
 | Harness tests | **25 pass / 0 fail** | `node --test experiments/wave5/d15/cold-download-110/test/*.test.mjs` |
 | Race tests (untouched) | **20 pass / 0 fail** | `node --test experiments/wave5/d15/test/*.test.mjs` |
