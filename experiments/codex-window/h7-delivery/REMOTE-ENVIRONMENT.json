@@ -39,7 +39,10 @@
     "runtimePin": "6007fcfa27074f9a594248e47296f1afa4f8385d",
     "runtimePinBranch": "codex/vendor-temp-lifecycle-20260912",
     "basedOn": "30345f69f16aca93bb95511ee4da62975c98cc04",
-    "importHeadAtStart": "fe8057f395bc665b629e12dbff0db0c264f0eb46"
+    "importHeadAtStart": "fe8057f395bc665b629e12dbff0db0c264f0eb46",
+    "implementationHead": "6d96e4e264e5bf18795f43aa4edcc0e453b8fdae",
+    "draftPr": "GraphQL createPullRequest not accessible by integration (403)",
+    "compareUrl": "https://github.com/epistemedeus/samedaydesk/compare/6007fcfa27074f9a594248e47296f1afa4f8385d...codex/h7-delivery-20260912"
   },
   "nativeGrok": {
     "binary": "/home/ubuntu/.grok/bin/grok",

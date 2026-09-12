@@ -89,4 +89,12 @@ Optional later: dedicated PG 55590/55591/55592/55595; CW64 pin refresh against a
 
 ## Git / PR
 
-Implementation commits land on `codex/h7-delivery-20260912`. Draft PR authorized; if GitHub returns 403, the compare URL is recorded here after push.
+Implementation HEAD: `6d96e4e264e5bf18795f43aa4edcc0e453b8fdae` on `codex/h7-delivery-20260912` (six commits after import `fe8057f`).
+
+Draft PR via `gh pr create` returned GraphQL **Resource not accessible by integration** (`createPullRequest`). Compare URL (review this, not a silent `main` merge):
+
+https://github.com/epistemedeus/samedaydesk/compare/6007fcfa27074f9a594248e47296f1afa4f8385d...codex/h7-delivery-20260912
+
+Pin-branch compare:
+
+https://github.com/epistemedeus/samedaydesk/compare/codex/vendor-temp-lifecycle-20260912...codex/h7-delivery-20260912
