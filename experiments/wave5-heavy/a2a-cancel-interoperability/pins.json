@@ -1,0 +1,35 @@
+{
+  "schema": "samedaydesk.w5_a2a_cancel.pins.v1",
+  "sdk": {
+    "package": "@a2a-js/sdk",
+    "version": "1.1.0",
+    "resolved": "https://registry.npmjs.org/@a2a-js/sdk/-/sdk-1.1.0.tgz",
+    "integrity": "sha512-/Mhzw9C6VW7pFbY2Rq0pnrjT0Fy9PV0c46A7Gx1ppRlYq2u/6OV/bNRIoVBKChb8UZ8bE0WzzCc0pIr2CdmG+w==",
+    "gitHeadPublished": "eeffd69c983b6501cac912c693b69c034977455c",
+    "homepage": "https://github.com/a2aproject/a2a-js",
+    "spec": "https://a2a-protocol.org/v1.0.0/specification/#315-cancel-task",
+    "sample": "src/samples/agents/cancellable-agent at gitHead"
+  },
+  "sds": {
+    "repo": "epistemedeus/samedaydesk",
+    "defaultBranchResolved": "main",
+    "base": "5b97d1b02e786acd1895cfa1508087ae3f7a1545"
+  },
+  "productionCard": {
+    "url": "https://agentverse-a2a-production.up.railway.app/.well-known/agent-card.json",
+    "role": "discovery-only, streaming false, not used by this experiment",
+    "touched": false
+  },
+  "e01": {
+    "sha": "4542e80ca2ceb08d7da2cba1e482cae97bb57830",
+    "note": "Read-only. No cancel lifecycle. reject is owner occupancy release, not A2A cancel."
+  },
+  "c01": {
+    "sha": "1f8a70ecb8ba6cb0e27e39f92ea3771cc3de0683",
+    "note": "Read-only. Rooms carry opaque taskId; they do not cancel processes."
+  },
+  "pr108": {
+    "head": "1716b5bd707d46dc44ce65bdb9db50a7ebaba313",
+    "interpretation": "Compared a fresh kernel GET against a stale snapshot. Not incremental benefit over a direct current-status read."
+  }
+}

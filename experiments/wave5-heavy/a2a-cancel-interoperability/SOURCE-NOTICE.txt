@@ -1,0 +1,15 @@
+W5 A2A cancel interoperability
+
+Owned path: experiments/wave5-heavy/a2a-cancel-interoperability/ only.
+SDS default branch resolved as main (5b97d1b0). Not assumed.
+
+Consumes official npm @a2a-js/sdk@1.1.0 (gitHead eeffd69c983b6501cac912c693b69c034977455c)
+and Express as the SDK's documented peer for @a2a-js/sdk/server/express.
+
+Does not edit the production Agentverse A2A card, merchant adapter,
+E01 kernel, C01 rooms, or Neo PR108.
+
+The production SameDayDesk A2A card is discovery-only (streaming false).
+This fixture is local JSON-RPC with streaming and cancelTask.
+
+MIT applies to files in this directory. Apache-2.0 applies to @a2a-js/sdk.
