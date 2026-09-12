@@ -1,6 +1,6 @@
 import { CLOCK_RE, ERROR_CODES } from "./constants.mjs";
 
-function utcInstantMs(value) {
+export function utcInstantMs(value) {
   if (typeof value !== "string" || !CLOCK_RE.test(value)) return null;
   const milliseconds = Date.parse(value);
   if (!Number.isFinite(milliseconds)) return null;

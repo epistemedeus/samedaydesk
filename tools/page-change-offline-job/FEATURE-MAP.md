@@ -1,6 +1,53 @@
 # FEATURE-MAP — offline extract-batch page-change job (W4-commerce-13 / W5-M05)
 
-Own directory: `tools/page-change-offline-job/` only. Contract export: `PAGE_CHANGE_OFFLINE_CONTRACT` from `lib/index.mjs`. Engine `0.1.2`.
+Own directory: `tools/page-change-offline-job/` only. Contract export: `PAGE_CHANGE_OFFLINE_CONTRACT` from `lib/index.mjs`. Engine `0.1.3`.
+
+## CW34 independent source audit, 2026-09-12
+
+Base: PR120 head `46a82f9d0863336c341176eee55ebb9c8de27484`, fetched from
+`refs/pull/120/head`. The historical preflight below is not a current ref map.
+`test/independent-audit.test.mjs` authors raw JSON fact pairs independently of
+the existing customer and HTML fixtures. It exercises the actual CLI plus 96
+deterministic mixed-JSON pairs (seed `0x34a57a`, 480 library comparisons) for
+equality, key ordering, reversal, and repeatability.
+
+| Witness | Current behavior |
+| --- | --- |
+| `0.1` vs `0.10000000000000002` | Distinct fractional facts remain changed |
+| `19.9900` vs `1.999e1` | Equivalent decimal spellings remain unchanged |
+| `0.1` vs `0.10000000000000001`, integer rounding, underflow, overflow | File input refused with exit 2 `input_precision`; no rounded unchanged claim |
+| Literal `__proto__` member or key containing `/` and `~` | Member preserved; removal has an escaped JSON Pointer |
+| `"1"` vs `1` | Change includes `beforeType`/`afterType`; Markdown names the type change |
+| Partial row or non-null provider error with top-level success | Held facts remain comparable, but source-specific coverage issues prevent complete/current claims |
+| Source reorder omitted at the change cap | `maxChanges` and incomplete completeness, including cap zero |
+| Exactly one change followed by equal siblings at cap one | Complete if the remaining analysis fits the walk bounds |
+| Equal deep objects and arrays | Equality cannot skip the depth/node budget |
+| Job-file limits and in-memory library inputs | Same validated limits; library maxBytes enforced and non-finite numbers refused |
+| Timestamps with and without milliseconds | Latest valid timestamp selected chronologically; invalid row time still makes freshness unknown |
+| Source-order excerpts and non-BMP Unicode | Display byte cap respected without splitting a code point |
+
+Numbers use JavaScript Number semantics only after the original file token has
+the same decimal value as its shortest runtime serialization. This is a
+round-trip acceptance boundary, not arbitrary-precision arithmetic. File
+validation covers the entire document, including unselected metadata. Library
+callers supplying `beforeJson`/`afterJson` have already parsed their numbers;
+the engine cannot recover precision lost before that call. Exact higher
+precision values must be supplied as string facts on both sides.
+
+Depth starts at the selected-fields object (zero), counts actual child levels,
+and includes empty member names. Node limits apply per matched source pair to
+recursive comparisons and inspected array/subtree values on each side. They
+bound analysis, not the initial JSON parse; maxBytes bounds held input size.
+Change limits apply across rows and the source reorder. Excerpt limits are
+display-only; full accepted values remain in the JSON evidence. Limits default
+to 131072 bytes, depth 16, 4096 nodes, 64 changes, 200 excerpt bytes, 32 sources,
+11 fields, and no freshness horizon. All limits are non-negative safe integers;
+only `maxStaleMs` also accepts null to disable its horizon.
+
+`changed` and `semantic` describe selected held JSON content or types. Neither
+establishes business importance, browser visibility, or a live page event.
+Missing top-level selected facts remain unknown coverage; removing a member
+inside a present selected object remains an explicit removal.
 
 ## Preflight (this checkout)
 
@@ -69,7 +116,6 @@ Own directory: `tools/page-change-offline-job/` only. Contract export: `PAGE_CHA
 - Neo hasher golden `complete.terms.json` (different terms body than this job)
 - C1 URL-guard host normalization (identity is the stored `source` string)
 - `claims.fresh` becoming true (this job never re-fetches)
-- Equal hostile deep JSON that equality-skips children without counting nodes
 - General browser visibility, CSS, or JavaScript semantics. The job compares selected facts already present in held extract JSON; the HTML witnesses test fixture provenance and are not accepted as CLI inputs.
 - Dynamic-counter classification. A counter included in a selected extracted fact remains a literal content change; this engine does not claim that any change is a business event.
 - External customer delivery
