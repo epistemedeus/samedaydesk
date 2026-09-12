@@ -1,0 +1,15 @@
+{
+  "pid": 281353,
+  "command": "/workspace/pilot/toolchain/node-v22.23.2-linux-x64/bin/node",
+  "args": [
+    "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src/experiments/wave5/d16/fixtures/broken-engines/empty-stdout.mjs"
+  ],
+  "cwd": "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src",
+  "heapMB": 768,
+  "tmpdir": "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/scratch-closeout/cw65-owned-lgYH2q/control-empty-stdout",
+  "startedAt": "2026-09-12T09:15:28.957Z",
+  "endedAt": "2026-09-12T09:15:28.992Z",
+  "status": 0,
+  "signal": null,
+  "timedOut": false
+}
