@@ -69,17 +69,20 @@ function stdoutJson(run) {
   return JSON.parse(text);
 }
 
-test("1.3.0 archive identity is current and 1.2.0 is unchanged", () => {
+test("1.4.0 archive identity is current and 1.3.0/1.2.0 are unchanged", () => {
   const buf = readFileSync(publicArchive);
   assert.equal(buf.length, USEFUL_JOBS_ARCHIVE_BYTES);
   assert.equal(sha256(buf), USEFUL_JOBS_ARCHIVE_SHA256);
-  assert.equal(USEFUL_JOBS_ROOT, "useful-jobs-1.3.0");
-  const prev = readFileSync(join(root, "client/public/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz"));
-  assert.equal(prev.length, 2579117);
-  assert.equal(sha256(prev), "dec31ea66f1605fb9578c7d15c9583b130c6e2c0b82b5e6b93422381a04461eb");
+  assert.equal(USEFUL_JOBS_ROOT, "useful-jobs-1.4.0");
+  const prev13 = readFileSync(join(root, "client/public/for-agents/useful-jobs/useful-jobs-1.3.0.tar.gz"));
+  assert.equal(prev13.length, 2574904);
+  assert.equal(sha256(prev13), "bc4db0ec83109852b8fdbd542d10d515c0053a30dd9b93836c9ad7c738510b6c");
+  const prev12 = readFileSync(join(root, "client/public/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz"));
+  assert.equal(prev12.length, 2579117);
+  assert.equal(sha256(prev12), "dec31ea66f1605fb9578c7d15c9583b130c6e2c0b82b5e6b93422381a04461eb");
 });
 
-test("cold 1.3.0 lockfile positive and HTML refusal", () => {
+test("cold 1.4.0 lockfile positive and HTML refusal", () => {
   const { outside, kit } = extractOutside();
   try {
     const fx = ensureIndependentInputs(join(outside, "independent-inputs"));
@@ -204,7 +207,7 @@ process.exit(1);
   }
 });
 
-test("cold 1.3.0: ten advertised jobs independent positive and refusal smokes", () => {
+test("cold 1.4.0: ten advertised jobs independent positive and refusal smokes", () => {
   const { outside, kit } = extractOutside();
   try {
     const fx = ensureIndependentInputs(join(outside, "independent-inputs"));
