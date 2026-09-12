@@ -8,6 +8,7 @@ import {
   D01_RECEIPT_PR,
   D01_RECEIPT_SCHEMA,
   SHA256_HEX_RE,
+  USEFUL_JOBS_CATALOG_PATH,
 } from "./pins.mjs";
 import { seedFromOutDir } from "./seed.mjs";
 
@@ -33,10 +34,10 @@ function assertOutputSchema(item) {
   if (item.name.includes("/") || item.name.includes("\\") || item.name === "." || item.name === "..") {
     throw refuse("invalid-d01-execution", `D01 output name is not a basename: ${item.name}`);
   }
-  if (item.bytes != null && (!Number.isSafeInteger(item.bytes) || item.bytes < 0)) {
+  if (!Number.isSafeInteger(item.bytes) || item.bytes < 0) {
     throw refuse("invalid-d01-execution", `D01 output ${item.name} bytes must be a non-negative integer`);
   }
-  if (item.sha256 != null && (typeof item.sha256 !== "string" || !SHA256_HEX_RE.test(item.sha256))) {
+  if (typeof item.sha256 !== "string" || !SHA256_HEX_RE.test(item.sha256)) {
     throw refuse("invalid-d01-execution", `D01 output ${item.name} sha256 must be 64 lowercase hex`);
   }
   return item;
@@ -46,7 +47,7 @@ export function asD01Execution(value) {
   if (!isPlainObject(value)) {
     throw refuse("invalid-d01-execution", "D01 execution result must be a JSON object");
   }
-  if (value.contract === D01_EXECUTION_CONTRACT && typeof value.jobId === "string") {
+  if (value.schema !== D01_RECEIPT_SCHEMA && value.contract === D01_EXECUTION_CONTRACT && typeof value.jobId === "string") {
     return value;
   }
   if (
@@ -121,6 +122,28 @@ export function assertD01ExecutionRetrievable(execution) {
     throw refuse("d01-missing-output", "D01 execution lists no outputs");
   }
   outputs.forEach(assertOutputSchema);
+  if (outputs.length !== exec.outputs.length || new Set(outputs.map((o) => o.name)).size !== outputs.length) {
+    throw refuse("invalid-d01-execution", "Output identity contains invalid or duplicate rows");
+  }
+  const catalog = JSON.parse(readFileSync(USEFUL_JOBS_CATALOG_PATH, "utf8"));
+  const job = catalog.jobs.find((j) => j.id === exec.jobId);
+  if (!job || job.outputs.length !== outputs.length || job.outputs.some((name) => !outputs.some((o) => o.name === name))) {
+    throw refuse("invalid-d01-execution", "D01 output names do not match the authoritative job catalog");
+  }
+  if (exec.receipt) {
+    const nested = exec.receipt;
+    if (nested.jobId !== exec.jobId || nested.contract !== exec.contract ||
+        nested.transport !== "ok" || nested.delivery?.complete !== true ||
+        (nested.executionId && exec.executionId && nested.executionId !== exec.executionId)) {
+      throw refuse("invalid-d01-execution", "Nested receipt contradicts execution identity or completion");
+    }
+    const nestedOutputs = listedOutputs(nested);
+    nestedOutputs.forEach(assertOutputSchema);
+    if (nestedOutputs.length !== outputs.length || new Set(nestedOutputs.map((o) => o.name)).size !== outputs.length ||
+        outputs.some((o) => !nestedOutputs.some((n) => n.name === o.name && n.bytes === o.bytes && n.sha256 === o.sha256))) {
+      throw refuse("invalid-d01-execution", "Nested receipt output identity differs from execution");
+    }
+  }
   const expected = Array.isArray(exec.delivery.expected) ? exec.delivery.expected : outputs.map((o) => o.name);
   for (const name of expected) {
     if (!outputs.some((o) => o.name === name)) {

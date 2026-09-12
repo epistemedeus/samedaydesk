@@ -55,12 +55,8 @@ export function compareDocuments({ beforeDoc, afterDoc, usedSpec, kind }) {
       uncertainties.push({ code: "invalid-json-pointer", pointer });
       continue;
     }
-    const beforeFp = beforeHit.present
-      ? fingerprintUsedNode(beforeHit.value, beforeDoc, kind)
-      : { kind: "absent" };
-    const afterFp = afterHit.present
-      ? fingerprintUsedNode(afterHit.value, afterDoc, kind)
-      : { kind: "absent" };
+    const beforeFp = fingerprintUsedNode(beforeHit.value, beforeDoc, kind, pointer);
+    const afterFp = fingerprintUsedNode(afterHit.value, afterDoc, kind, pointer);
     const classified = classifyPair(beforeFp, afterFp);
     const row = {
       pointer,

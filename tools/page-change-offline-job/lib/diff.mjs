@@ -1,21 +1,18 @@
-import { canonicalize, isPlainObject } from "./canonical.mjs";
-import { DEFAULT_LIMITS } from "./constants.mjs";
+import { isPlainObject } from "./canonical.mjs";
+import { normalizeLimits } from "./limits.mjs";
+
+const ABSENT = Symbol("absent JSON member");
 
 function display(value) {
-  if (typeof value === "string") return value;
-  return JSON.stringify(value);
+  return typeof value === "string" ? value : JSON.stringify(value);
 }
 
-function sameMultiset(before, after) {
-  if (before.length !== after.length) return false;
-  const left = [...before].sort();
-  const right = [...after].sort();
-  return left.join("\0") === right.join("\0");
+function jsonType(value) {
+  return value === null ? "null" : Array.isArray(value) ? "array" : typeof value;
 }
 
-function pathDepth(path) {
-  if (!path) return 0;
-  return path.split("/").filter(Boolean).length;
+function sameList(before, after) {
+  return before.length === after.length && before.every((value, i) => value === after[i]);
 }
 
 function markTruncated(changes, limitHit) {
@@ -33,26 +30,25 @@ function pushChange(changes, maxChanges, change) {
 
 export function excerpt(value, maxExcerptBytes) {
   if (value === undefined) return undefined;
-  const text = typeof value === "string" ? value : JSON.stringify(value);
-  const bytes = Buffer.byteLength(text, "utf8");
-  if (bytes <= maxExcerptBytes) return text;
-  let cut = text;
-  while (Buffer.byteLength(cut, "utf8") > maxExcerptBytes) cut = cut.slice(0, Math.max(0, cut.length - 1));
+  const text = display(value);
+  if (Buffer.byteLength(text, "utf8") <= maxExcerptBytes) return text;
+  let cut = "";
+  let bytes = 0;
+  for (const character of text) {
+    bytes += Buffer.byteLength(character, "utf8");
+    if (bytes > maxExcerptBytes) break;
+    cut += character;
+  }
   return cut;
 }
 
 export function diffJson(before, after, limitsInput = {}) {
-  const limits = {
-    maxChanges: limitsInput.maxChanges ?? DEFAULT_LIMITS.maxChanges,
-    maxExcerptBytes: limitsInput.maxExcerptBytes ?? DEFAULT_LIMITS.maxExcerptBytes,
-    maxJsonDepth: limitsInput.maxJsonDepth ?? DEFAULT_LIMITS.maxJsonDepth,
-    maxJsonNodes: limitsInput.maxJsonNodes ?? DEFAULT_LIMITS.maxJsonNodes,
-  };
+  const limits = normalizeLimits(limitsInput);
   const changes = [];
   const stats = { nodes: 0 };
-  visit(before, after, "", changes, limits, stats);
+  visit(before, after, "", 0, changes, limits, stats);
   return {
-    changes: changes.slice(0, limits.maxChanges).map((change) => ({
+    changes: changes.map((change) => ({
       ...change,
       beforeEvidence: change.before === undefined ? undefined : excerpt(change.before, limits.maxExcerptBytes),
       afterEvidence: change.after === undefined ? undefined : excerpt(change.after, limits.maxExcerptBytes),
@@ -65,91 +61,90 @@ export function diffJson(before, after, limitsInput = {}) {
   };
 }
 
-function visit(before, after, path, changes, limits, stats) {
-  stats.nodes += 1;
-  if (stats.nodes > limits.maxJsonNodes) {
+function enter(depth, changes, limits, stats) {
+  if (stats.nodes >= limits.maxJsonNodes) {
     markTruncated(changes, "maxJsonNodes");
-    return;
+    return false;
   }
-  if (pathDepth(path) > limits.maxJsonDepth) {
+  stats.nodes += 1;
+  if (depth > limits.maxJsonDepth) {
     markTruncated(changes, "maxJsonDepth");
-    return;
+    return false;
   }
-  try {
-    if (canonicalize(before) === canonicalize(after)) return;
-  } catch {
-    pushChange(changes, limits.maxChanges, {
-      class: "semantic",
-      op: "replace",
-      path: path || "/",
-      before: display(before),
-      after: display(after),
-    });
-    return;
-  }
+  return true;
+}
 
-  if (Array.isArray(before) && Array.isArray(after)) {
-    const beforeKeys = before.map((item) => canonicalize(item));
-    const afterKeys = after.map((item) => canonicalize(item));
-    if (sameMultiset(beforeKeys, afterKeys) && beforeKeys.join("\0") !== afterKeys.join("\0")) {
-      pushChange(changes, limits.maxChanges, {
-        class: "order",
-        op: "reorder",
-        path: path || "/",
-        before: JSON.stringify(before),
-        after: JSON.stringify(after),
-      });
-      return;
+// Array equality/order needs canonical element keys. Inspect their children
+// within the same walk budget; never stringify an uninspected deep subtree.
+function boundedKey(value, depth, changes, limits, stats, entered = false) {
+  if (!entered && !enter(depth, changes, limits, stats)) return undefined;
+  if (Array.isArray(value)) {
+    const keys = arrayKeys(value, depth, changes, limits, stats);
+    return keys === undefined ? undefined : `[${keys.join(",")}]`;
+  }
+  if (isPlainObject(value)) {
+    const parts = [];
+    for (const key of Object.keys(value).sort()) {
+      const child = boundedKey(value[key], depth + 1, changes, limits, stats);
+      if (child === undefined) return undefined;
+      parts.push(`${JSON.stringify(key)}:${child}`);
     }
-    pushChange(changes, limits.maxChanges, {
-      class: "semantic",
-      op: "replace",
-      path: path || "/",
-      before: display(before),
-      after: display(after),
-    });
-    return;
+    return `{${parts.join(",")}}`;
   }
+  return JSON.stringify(value);
+}
 
+function arrayKeys(value, depth, changes, limits, stats) {
+  const keys = [];
+  for (const item of value) {
+    const key = boundedKey(item, depth + 1, changes, limits, stats);
+    if (key === undefined) return undefined;
+    keys.push(key);
+  }
+  return keys;
+}
+
+function record(before, after, path, changes, limits, order = false) {
+  pushChange(changes, limits.maxChanges, {
+    class: order ? "order" : "semantic",
+    op: order ? "reorder" : before === ABSENT ? "add" : after === ABSENT ? "remove" : "replace",
+    path: path || "/",
+    ...(before === ABSENT ? {} : { before: display(before), beforeType: jsonType(before) }),
+    ...(after === ABSENT ? {} : { after: display(after), afterType: jsonType(after) }),
+  });
+}
+
+function visit(before, after, path, depth, changes, limits, stats) {
+  if (!enter(depth, changes, limits, stats)) return;
   if (isPlainObject(before) && isPlainObject(after)) {
     const keys = [...new Set([...Object.keys(before), ...Object.keys(after)])].sort();
     for (const key of keys) {
-      if (changes.length >= limits.maxChanges) {
-        markTruncated(changes, "maxChanges");
+      const segment = key.replace(/~/g, "~0").replace(/\//g, "~1");
+      visit(
+        Object.hasOwn(before, key) ? before[key] : ABSENT,
+        Object.hasOwn(after, key) ? after[key] : ABSENT,
+        `${path}/${segment}`, depth + 1, changes, limits, stats,
+      );
+      if (stats.nodes >= limits.maxJsonNodes && key !== keys.at(-1)) {
+        markTruncated(changes, "maxJsonNodes");
         return;
       }
-      const childPath = `${path}/${key}`;
-      const hasBefore = Object.hasOwn(before, key);
-      const hasAfter = Object.hasOwn(after, key);
-      if (!hasBefore) {
-        pushChange(changes, limits.maxChanges, {
-          class: "semantic",
-          op: "add",
-          path: childPath,
-          after: display(after[key]),
-        });
-        continue;
-      }
-      if (!hasAfter) {
-        pushChange(changes, limits.maxChanges, {
-          class: "semantic",
-          op: "replace",
-          path: childPath,
-          before: display(before[key]),
-          after: display(null),
-        });
-        continue;
-      }
-      visit(before[key], after[key], childPath, changes, limits, stats);
     }
     return;
   }
-
-  pushChange(changes, limits.maxChanges, {
-    class: "semantic",
-    op: "replace",
-    path: path || "/",
-    before: display(before),
-    after: display(after),
-  });
+  if (Array.isArray(before) && Array.isArray(after)) {
+    const left = arrayKeys(before, depth, changes, limits, stats);
+    const right = arrayKeys(after, depth, changes, limits, stats);
+    if (left === undefined || right === undefined || sameList(left, right)) return;
+    record(before, after, path, changes, limits, sameList([...left].sort(), [...right].sort()));
+    return;
+  }
+  // JSON scalar equality is type-sensitive; containers and added/removed
+  // subtrees must still be bounded before their full evidence is serialized.
+  if (before === after) return;
+  for (const value of [before, after]) {
+    if (value !== ABSENT && (Array.isArray(value) || isPlainObject(value))
+        && boundedKey(value, depth, changes, limits, stats, true) === undefined) return;
+  }
+  record(before, after, path, changes, limits);
 }

@@ -25,17 +25,58 @@ export function readBoundedFile(path, maxBytes = DEFAULT_LIMITS.maxBytes) {
   }
 }
 
+// Compare decimal meanings, allowing 19.9900 == 1.999e1. Refuse a token that
+// JavaScript would silently round, overflow, or underflow instead of certifying
+// the rounded value as an unchanged held fact. This is not arbitrary precision.
+function decimalIdentity(literal) {
+  const [coefficient, exponent = "0"] = literal.toLowerCase().split("e");
+  const fractionLength = coefficient.split(".")[1]?.length ?? 0;
+  let digits = coefficient.replace(/[-.]/g, "").replace(/^0+/, "");
+  if (!digits) return "0";
+  const trailingZeros = digits.match(/0+$/)?.[0].length ?? 0;
+  digits = digits.slice(0, digits.length - trailingZeros);
+  const power = Number(exponent) - fractionLength + trailingZeros;
+  if (!Number.isSafeInteger(power)) return null;
+  return `${coefficient.startsWith("-") ? "-" : ""}${digits}e${power}`;
+}
+
 export function readBoundedJson(path, maxBytes = DEFAULT_LIMITS.maxBytes) {
   const file = readBoundedFile(path, maxBytes);
   let parsed;
   try {
-    parsed = JSON.parse(file.bytes.toString("utf8"));
-  } catch {
+    parsed = JSON.parse(file.bytes.toString("utf8"), (key, value, context) => {
+      if (typeof value === "number" && (!Number.isFinite(value)
+          || decimalIdentity(context.source) !== decimalIdentity(String(value)))) {
+        throw Object.assign(new Error("input JSON number loses decimal precision in this runtime; supply an exact string fact instead"), {
+          code: ERROR_CODES.INPUT_PRECISION,
+        });
+      }
+      return value;
+    });
+  } catch (cause) {
+    if (cause.code === ERROR_CODES.INPUT_PRECISION) throw cause;
     const error = new Error("input is not JSON");
     error.code = ERROR_CODES.UNRECOGNIZED_BATCH;
     throw error;
   }
   return { ...file, parsed };
+}
+
+export function inMemoryJson(body, maxBytes, path = null) {
+  const text = JSON.stringify(body, (key, value) => {
+    if (typeof value === "number" && !Number.isFinite(value)) {
+      throw Object.assign(new Error("input JSON numbers must be finite"), { code: ERROR_CODES.INPUT_PRECISION });
+    }
+    if (["undefined", "bigint", "function", "symbol"].includes(typeof value)) {
+      throw Object.assign(new Error("input must contain only JSON values"), { code: ERROR_CODES.UNRECOGNIZED_BATCH });
+    }
+    return value;
+  });
+  const byteLength = Buffer.byteLength(text);
+  if (byteLength > maxBytes) {
+    throw Object.assign(new Error(`input exceeds the ${maxBytes}-byte limit`), { code: ERROR_CODES.INPUT_BOUNDS });
+  }
+  return { parsed: body, byteLength, path, sha256: sha256Hex(Buffer.from(text)) };
 }
 
 export function resolveJobPath(jobDir, value) {

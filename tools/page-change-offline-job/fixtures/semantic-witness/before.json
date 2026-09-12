@@ -1,0 +1,42 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": null,
+  "jobId": "semantic-witness-before",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "plan",
+      "source": "https://plans.example/business",
+      "status": "success",
+      "data": {
+        "title": "Café plan · $19.99",
+        "openGraph": {
+          "product:price:currency": "USD",
+          "product:price:amount": 19.99,
+          "product:availability": "in_stock"
+        },
+        "links": [
+          { "text": "Terms", "href": "/terms?v=1" }
+        ],
+        "text": "Business plan Price $19.99. Available now. Terms"
+      },
+      "notes": [],
+      "error": null,
+      "provenance": {
+        "transport": "held",
+        "completedAt": "2026-09-12T05:55:00.000Z",
+        "fetchedAt": "2026-09-12T05:54:59.000Z",
+        "finalUrl": "https://plans.example/business",
+        "httpStatus": 200
+      }
+    }
+  ],
+  "accounting": {},
+  "costInputs": {},
+  "charged": false,
+  "boundary": {}
+}

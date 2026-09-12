@@ -3,6 +3,7 @@ export function renderMarkdown(report, { job } = {}) {
     "# Page-change brief",
     "",
     "Offline compare of already-held `samedaydesk.extract-batch.v0` JSON. Does not fetch, pay, or import merchant `compare.mjs`.",
+    "A semantic change describes selected JSON content or types; it does not establish business importance or a live page event.",
     "",
     `- verdict: **${report.verdict}**`,
     `- schema: ${report.schema}`,
@@ -29,6 +30,9 @@ export function renderMarkdown(report, { job } = {}) {
     lines.push("## Changes", "");
     for (const change of report.changes) {
       lines.push(`- ${change.class} ${change.op} \`${change.path}\` \`${change.sourceKey ?? ""}\``);
+      if (change.beforeType && change.afterType && change.beforeType !== change.afterType) {
+        lines.push(`  - type: ${change.beforeType} to ${change.afterType}`);
+      }
       if (change.beforeEvidence !== undefined) lines.push(`  - before: ${change.beforeEvidence}`);
       if (change.afterEvidence !== undefined) lines.push(`  - after: ${change.afterEvidence}`);
       if (change.evidenceTruncated) lines.push("  - display excerpt truncated; comparison used the full selected-field values");
@@ -39,7 +43,7 @@ export function renderMarkdown(report, { job } = {}) {
   }
   if (report.coverageUnknown.length) {
     lines.push("## Coverage unknown", "");
-    lines.push("Absent selected field is coverage unknown, not deletion.", "");
+    lines.push("Incomplete or absent coverage is not evidence of deletion or unchanged content.", "");
     for (const item of report.coverageUnknown) {
       lines.push(`- ${item.sourceKey ?? item.side ?? ""} ${item.field ?? item.code ?? item.reason}`);
     }

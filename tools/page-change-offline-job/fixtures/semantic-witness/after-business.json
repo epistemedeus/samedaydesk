@@ -1,0 +1,42 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": null,
+  "jobId": "semantic-witness-after-business",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "plan",
+      "source": "https://plans.example/business",
+      "status": "success",
+      "data": {
+        "title": "Café plan · $24.99",
+        "openGraph": {
+          "product:price:currency": "USD",
+          "product:price:amount": 24.99,
+          "product:availability": "out_of_stock"
+        },
+        "links": [
+          { "text": "Terms", "href": "/terms?v=2" }
+        ],
+        "text": "Business plan Price $24.99. Out of stock. Terms"
+      },
+      "notes": [],
+      "error": null,
+      "provenance": {
+        "transport": "held",
+        "completedAt": "2026-09-12T05:59:30.000Z",
+        "fetchedAt": "2026-09-12T05:59:29.000Z",
+        "finalUrl": "https://plans.example/business",
+        "httpStatus": 200
+      }
+    }
+  ],
+  "accounting": {},
+  "costInputs": {},
+  "charged": false,
+  "boundary": {}
+}

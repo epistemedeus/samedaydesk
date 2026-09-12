@@ -167,14 +167,15 @@ test("public discovery, catalog, site card, and archive agree", () => {
   const read = (p) => JSON.parse(readFileSync(join(repo, p)));
   const discovery = read("client/public/discovery/useful-jobs.json");
   const card = read("client/src/data/usefulJobsKit.json");
-  const pin = read("client/public/for-agents/useful-jobs/useful-jobs-1.4.1.sha256.json");
+  const pin = read("client/public/for-agents/useful-jobs/useful-jobs-" + discovery.version + ".sha256.json");
+  const latestKit = extract(discovery.version);
   for (const metadata of [discovery, card]) {
-    assert.equal(metadata.version, "1.4.1");
+    assert.equal(metadata.version, discovery.version);
     assert.equal(metadata.sha256, pin.sha256);
     assert.equal(metadata.bytes, pin.bytes);
   }
-  assert.deepEqual(read("client/public/for-agents/useful-jobs/catalog.json"), JSON.parse(readFileSync(join(kit, "catalog.json"))));
-  assert.deepEqual(read("client/public/for-agents/useful-jobs/jobs-outcomes.json"), JSON.parse(readFileSync(join(kit, "jobs-outcomes.json"))));
+  assert.deepEqual(read("client/public/for-agents/useful-jobs/catalog.json"), JSON.parse(readFileSync(join(latestKit, "catalog.json"))));
+  assert.deepEqual(read("client/public/for-agents/useful-jobs/jobs-outcomes.json"), JSON.parse(readFileSync(join(latestKit, "jobs-outcomes.json"))));
 });
 
 test("finite inputs with overflowing subtraction remain partial and omit the delta", () => {
@@ -204,7 +205,7 @@ test("actual HTTP cold-start consumer downloads, verifies, then runs the field i
     const coldKit = acquired.stdout.trim();
     assert.ok(coldKit.startsWith(root + "/"));
     assert.deepEqual(requests, [discovery.archive.path]);
-    assert.equal(hash(readFileSync(join(coldKit, "../useful-jobs-1.4.1.tar.gz"))), discovery.sha256);
+    assert.equal(hash(readFileSync(join(coldKit, "../useful-jobs-" + discovery.version + ".tar.gz"))), discovery.sha256);
     const p = pair("openai-embedding-3-small-added-20240125");
     const result = run(p.before, p.after, coldKit);
     good(result, "actionable");

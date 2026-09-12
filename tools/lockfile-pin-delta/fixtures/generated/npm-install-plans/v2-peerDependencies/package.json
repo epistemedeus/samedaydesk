@@ -1,0 +1,7 @@
+{
+  "name": "oracle-root",
+  "version": "1.0.0",
+  "peerDependencies": {
+    "oracle-pin": "file:../oracle-pin-1.0.0.tgz"
+  }
+}

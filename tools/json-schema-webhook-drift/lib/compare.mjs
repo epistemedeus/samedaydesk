@@ -1,5 +1,6 @@
 import { jsonType } from "./kind.mjs";
-import { remoteRefsInNode, resolveLocalRef } from "./refs.mjs";
+import { getAtPointer, parseJsonPointer } from "./pointer.mjs";
+import { remoteRefsInNode, resolveLocalRefTarget } from "./refs.mjs";
 
 const CONSTRAINT_SIBLING_KEYS = new Set([
   "type",
@@ -68,6 +69,24 @@ function typeAllows(list, jsonType) {
   return list.includes(jsonType);
 }
 
+function typeCanBe(type, jsonType) {
+  const list = typeList(type);
+  if (jsonType === "number") {
+    return list === null || list.includes("number") || list.includes("integer");
+  }
+  return typeAllows(list, jsonType);
+}
+
+function typeAllowsValue(type, value) {
+  const list = typeList(type);
+  if (list === null) return true;
+  const valueType = jsonType(value);
+  if (valueType === "number" && Number.isInteger(value)) {
+    return list.includes("integer") || list.includes("number");
+  }
+  return list.includes(valueType);
+}
+
 function typeInstanceSubset(beforeType, afterType) {
   const before = typeList(beforeType);
   const after = typeList(afterType);
@@ -121,7 +140,8 @@ function decodeBound(value) {
 
 function sortedStrings(value) {
   if (!Array.isArray(value)) return null;
-  return [...value].map(String).sort();
+  const sorted = [...value].map(String).sort();
+  return sorted.length ? sorted : null;
 }
 
 function stableLiteral(value) {
@@ -129,19 +149,31 @@ function stableLiteral(value) {
   return JSON.stringify(value);
 }
 
+function trueSchemaFingerprint() {
+  return { kind: "boolean-schema", allows: true };
+}
+
+function isTrueSchemaFingerprint(value) {
+  return value?.kind === "boolean-schema" && value.allows === true;
+}
+
 function fingerprintItems(items, doc, depth) {
   if (items === undefined) return null;
-  if (typeof items === "boolean") return { kind: "boolean-schema", allows: items };
+  if (items === true) return trueSchemaFingerprint();
+  if (items === false) return { kind: "boolean-schema", allows: false };
   if (items && typeof items === "object" && !Array.isArray(items)) {
-    return fingerprintSchemaNode(items, doc, depth + 1);
+    const fp = fingerprintSchemaNode(items, doc, depth + 1);
+    return isTrueSchemaFingerprint(fp) ? null : fp;
   }
   return { kind: "unknown" };
 }
 
 function fingerprintAdditionalProperties(value, doc, depth) {
-  if (typeof value === "boolean") return { kind: "boolean-schema", allows: value };
+  if (value === true) return trueSchemaFingerprint();
+  if (value === false) return { kind: "boolean-schema", allows: false };
   if (value && typeof value === "object" && !Array.isArray(value)) {
-    return fingerprintSchemaNode(value, doc, depth + 1);
+    const fp = fingerprintSchemaNode(value, doc, depth + 1);
+    return isTrueSchemaFingerprint(fp) ? null : fp;
   }
   if (value === undefined) return null;
   return { kind: "unknown" };
@@ -158,43 +190,101 @@ function fingerprintProperties(properties, doc, depth) {
 
 function schemaObjectFingerprint(node, doc, depth) {
   const unsupported = unsupportedKeywords(node);
-  return {
+  const type = normalizeType(node.type);
+  const objectRelevant = typeCanBe(type, "object");
+  const arrayRelevant = typeCanBe(type, "array");
+  const stringRelevant = typeCanBe(type, "string");
+  const numberRelevant = typeCanBe(type, "number");
+  const hasConst = Object.prototype.hasOwnProperty.call(node, "const");
+  if (hasConst && !typeAllowsValue(type, node.const)) {
+    return { kind: "boolean-schema", allows: false };
+  }
+  const enumValues = Array.isArray(node.enum)
+    ? node.enum.filter((value) => typeAllowsValue(type, value)).map(stableLiteral).sort()
+    : null;
+  if (Array.isArray(node.enum) && node.enum.length > 0 && enumValues.length === 0) {
+    return { kind: "boolean-schema", allows: false };
+  }
+
+  const additionalProperties = objectRelevant
+    ? fingerprintAdditionalProperties(node.additionalProperties, doc, depth)
+    : null;
+  let properties = objectRelevant ? fingerprintProperties(node.properties, doc, depth) : null;
+  if (properties && (additionalProperties === null || isTrueSchemaFingerprint(additionalProperties))) {
+    properties = Object.fromEntries(
+      Object.entries(properties).filter(([, value]) => !isTrueSchemaFingerprint(value)),
+    );
+    if (Object.keys(properties).length === 0) properties = null;
+  }
+
+  const fp = {
     kind: "schema-object",
-    type: normalizeType(node.type),
+    type,
     format: typeof node.format === "string" ? node.format : null,
-    enum: Array.isArray(node.enum) ? [...node.enum].map(stableLiteral).sort() : null,
-    constJson: Object.prototype.hasOwnProperty.call(node, "const") ? stableLiteral(node.const) : null,
-    required: sortedStrings(node.required),
-    additionalProperties: fingerprintAdditionalProperties(node.additionalProperties, doc, depth),
-    properties: fingerprintProperties(node.properties, doc, depth),
-    propertiesKeys:
-      node.properties && typeof node.properties === "object" && !Array.isArray(node.properties)
-        ? Object.keys(node.properties).sort()
-        : null,
-    items: fingerprintItems(node.items, doc, depth),
+    enum: enumValues,
+    constJson: hasConst ? stableLiteral(node.const) : null,
+    required: objectRelevant ? sortedStrings(node.required) : null,
+    additionalProperties,
+    properties,
+    propertiesKeys: properties ? Object.keys(properties).sort() : null,
+    items: arrayRelevant ? fingerprintItems(node.items, doc, depth) : null,
     itemsType:
-      node.items && typeof node.items === "object" && !Array.isArray(node.items)
+      arrayRelevant && node.items && typeof node.items === "object" && !Array.isArray(node.items)
         ? normalizeType(node.items.type)
         : null,
-    minLength: encodeNumber(node.minLength),
-    maxLength: encodeNumber(node.maxLength),
-    minimum: encodeNumber(node.minimum),
-    maximum: encodeNumber(node.maximum),
-    exclusiveMinimum: boundOrNull(node.exclusiveMinimum),
-    exclusiveMaximum: boundOrNull(node.exclusiveMaximum),
-    minItems: encodeNumber(node.minItems),
-    maxItems: encodeNumber(node.maxItems),
-    pattern: typeof node.pattern === "string" ? node.pattern : null,
+    minLength: stringRelevant && encodeNumber(node.minLength) !== 0 ? encodeNumber(node.minLength) : null,
+    maxLength: stringRelevant ? encodeNumber(node.maxLength) : null,
+    minimum: numberRelevant ? encodeNumber(node.minimum) : null,
+    maximum: numberRelevant ? encodeNumber(node.maximum) : null,
+    exclusiveMinimum: numberRelevant ? boundOrNull(node.exclusiveMinimum) : null,
+    exclusiveMaximum: numberRelevant ? boundOrNull(node.exclusiveMaximum) : null,
+    minItems: arrayRelevant && encodeNumber(node.minItems) !== 0 ? encodeNumber(node.minItems) : null,
+    maxItems: arrayRelevant ? encodeNumber(node.maxItems) : null,
+    pattern: stringRelevant && typeof node.pattern === "string" ? node.pattern : null,
     nullable: node.nullable === true,
     unsupportedKeywords: unsupported.length ? unsupported : null,
   };
+
+  const { kind, nullable, unsupportedKeywords: unsupportedList, ...constraints } = fp;
+  void kind;
+  if (
+    !nullable &&
+    !unsupportedList &&
+    Object.values(constraints).every((value) => value === null || isTrueSchemaFingerprint(value))
+  ) {
+    return trueSchemaFingerprint();
+  }
+  return fp;
 }
 
 function emptySchemaFingerprint() {
-  return schemaObjectFingerprint({});
+  return {
+    kind: "schema-object",
+    type: null,
+    format: null,
+    enum: null,
+    constJson: null,
+    required: null,
+    additionalProperties: null,
+    properties: null,
+    propertiesKeys: null,
+    items: null,
+    itemsType: null,
+    minLength: null,
+    maxLength: null,
+    minimum: null,
+    maximum: null,
+    exclusiveMinimum: null,
+    exclusiveMaximum: null,
+    minItems: null,
+    maxItems: null,
+    pattern: null,
+    nullable: false,
+    unsupportedKeywords: null,
+  };
 }
 
-function fingerprintSiblingConstraints(node) {
+function fingerprintSiblingConstraints(node, doc, depth) {
   const rest = {};
   let any = false;
   for (const key of Object.keys(node)) {
@@ -205,7 +295,7 @@ function fingerprintSiblingConstraints(node) {
     }
   }
   if (!any) return null;
-  return schemaObjectFingerprint(rest, null, 0);
+  return schemaObjectFingerprint(rest, doc, depth);
 }
 
 export function fingerprintSchemaNode(node, doc, depth = 0) {
@@ -226,7 +316,7 @@ export function fingerprintSchemaNode(node, doc, depth = 0) {
   }
 
   if (typeof node.$ref === "string") {
-    const resolved = resolveLocalRef(doc, node.$ref);
+    const resolved = resolveLocalRefTarget(doc, node.$ref);
     if (resolved.remote) {
       return { kind: "remote-ref", refuse: true, refs: [node.$ref] };
     }
@@ -240,7 +330,7 @@ export function fingerprintSchemaNode(node, doc, depth = 0) {
       };
     }
     const target = fingerprintSchemaNode(resolved.value, doc, depth + 1);
-    const siblings = fingerprintSiblingConstraints(node);
+    const siblings = fingerprintSiblingConstraints(node, doc, depth);
     const out = { kind: "local-ref", ref: node.$ref, target };
     if (siblings) out.siblings = siblings;
     const unsupported = unsupportedKeywords(node);
@@ -260,7 +350,27 @@ export function fingerprintExampleNode(node) {
   };
 }
 
-export function fingerprintUsedNode(node, doc, kind) {
+function schemaLocation(tokens) {
+  const maps = new Set(["properties", "patternProperties", "$defs", "definitions", "dependentSchemas"]);
+  const singles = new Set(["items", "additionalProperties", "contains", "not", "if", "then", "else", "propertyNames", "unevaluatedProperties", "unevaluatedItems"]);
+  const lists = new Set(["allOf", "anyOf", "oneOf", "prefixItems"]);
+  for (let i = 0; i < tokens.length;) {
+    if (maps.has(tokens[i]) && i + 1 < tokens.length) i += 2;
+    else if (lists.has(tokens[i]) && /^\d+$/.test(tokens[i + 1] || "")) i += 2;
+    else if (singles.has(tokens[i])) i++;
+    else return false;
+  }
+  return true;
+}
+
+export function fingerprintUsedNode(node, doc, kind, pointer = null) {
+  const tokens = typeof pointer === "string" ? parseJsonPointer(pointer).tokens : null;
+  if (kind === "json-schema" && tokens?.at(-1) === "required" && schemaLocation(tokens.slice(0, -1))) {
+    const parent = getAtPointer(doc, pointer.slice(0, pointer.lastIndexOf("/"))).value;
+    if (!parent || typeof parent !== "object" || Array.isArray(parent) ||
+        (node !== undefined && (!Array.isArray(node) || node.some((v) => typeof v !== "string") || new Set(node).size !== node.length))) return { kind: "invalid-selected-required" };
+    return fingerprintSchemaNode({ type: parent.type, required: node || [] }, doc);
+  }
   if (kind === "json-schema") return fingerprintSchemaNode(node, doc);
   return fingerprintExampleNode(node);
 }
@@ -279,16 +389,13 @@ function applyHonesty(classified, beforeFp, afterFp) {
     ...((afterFp && afterFp.unsupportedKeywords) || []),
   ];
   const unique = [...new Set(keywords)];
-  const certainUnsafe =
-    classified.class === "breaking" || classified.class === "deleted" || classified.class === "added";
-  if (unique.length && !certainUnsafe && classified.class !== "remote-ref") {
+  if (unique.length && classified.class !== "remote-ref") {
     return { class: "unknown", reason: "unsupported-keyword", keywords: unique };
   }
   if (
     beforeFp?.kind === "schema-object" &&
     afterFp?.kind === "schema-object" &&
-    Boolean(beforeFp.nullable) !== Boolean(afterFp.nullable) &&
-    !certainUnsafe
+    Boolean(beforeFp.nullable) !== Boolean(afterFp.nullable)
   ) {
     return { class: "unknown", reason: "unsupported-nullable" };
   }
@@ -323,57 +430,61 @@ function classifyRequired(before, after) {
   return null;
 }
 
-function compareLowerBound(beforeRaw, after) {
-  const before = decodeBound(beforeRaw);
-  const decodedAfter = decodeBound(after);
-  if (before && typeof before === "object" && before.incomparable) return "incomparable";
-  if (decodedAfter && typeof decodedAfter === "object" && decodedAfter.incomparable) return "incomparable";
-  if (typeof before === "number" && typeof decodedAfter === "number") {
-    if (decodedAfter > before) return "tighter";
-    if (decodedAfter < before) return "weaker";
-    return "same";
-  }
-  if (typeof before === "boolean" && typeof decodedAfter === "boolean") {
-    if (decodedAfter === before) return "same";
-    return decodedAfter ? "tighter" : "weaker";
-  }
-  if (before === null && decodedAfter === null) return "same";
-  if (before === null && decodedAfter !== null) return "tighter";
-  if (before !== null && decodedAfter === null) return "weaker";
-  return "incomparable";
+function effectiveBound(fp, inclusiveKey, exclusiveKey, lower) {
+  const inclusive = decodeBound(fp[inclusiveKey]);
+  const exclusive = exclusiveKey ? decodeBound(fp[exclusiveKey]) : null;
+  if (typeof inclusive === "boolean" || typeof exclusive === "boolean") return { incomparable: true };
+  if (inclusive && typeof inclusive === "object") return { incomparable: true };
+  if (exclusive && typeof exclusive === "object") return { incomparable: true };
+  if (inclusive === null && exclusive === null) return null;
+  if (inclusive === null) return { value: exclusive, exclusive: true };
+  if (exclusive === null) return { value: inclusive, exclusive: false };
+  if (inclusive === exclusive) return { value: inclusive, exclusive: true };
+  const exclusiveWins = lower ? exclusive > inclusive : exclusive < inclusive;
+  return exclusiveWins
+    ? { value: exclusive, exclusive: true }
+    : { value: inclusive, exclusive: false };
 }
 
-function compareUpperBound(beforeRaw, after) {
-  const before = decodeBound(beforeRaw);
-  const decodedAfter = decodeBound(after);
-  if (before && typeof before === "object" && before.incomparable) return "incomparable";
-  if (decodedAfter && typeof decodedAfter === "object" && decodedAfter.incomparable) return "incomparable";
-  if (typeof before === "number" && typeof decodedAfter === "number") {
-    if (decodedAfter < before) return "tighter";
-    if (decodedAfter > before) return "weaker";
-    return "same";
+function compareEffectiveBound(before, after, lower) {
+  if (before?.incomparable || after?.incomparable) return "incomparable";
+  if (before === null && after === null) return "same";
+  if (before === null) return "tighter";
+  if (after === null) return "weaker";
+  if (before.value === after.value) {
+    if (before.exclusive === after.exclusive) return "same";
+    return after.exclusive ? "tighter" : "weaker";
   }
-  if (typeof before === "boolean" && typeof decodedAfter === "boolean") {
-    if (decodedAfter === before) return "same";
-    return decodedAfter ? "tighter" : "weaker";
-  }
-  if (before === null && decodedAfter === null) return "same";
-  if (before === null && decodedAfter !== null) return "tighter";
-  if (before !== null && decodedAfter === null) return "weaker";
-  return "incomparable";
+  if (lower) return after.value > before.value ? "tighter" : "weaker";
+  return after.value < before.value ? "tighter" : "weaker";
 }
 
-const LOWER_BOUNDS = ["minimum", "exclusiveMinimum", "minLength", "minItems"];
-const UPPER_BOUNDS = ["maximum", "exclusiveMaximum", "maxLength", "maxItems"];
+function intervalIsEmpty(lower, upper) {
+  if (!lower || !upper || lower.incomparable || upper.incomparable) return false;
+  return lower.value > upper.value ||
+    (lower.value === upper.value && (lower.exclusive || upper.exclusive));
+}
+
+function boundDirections(before, after, lowerKey, upperKey, exclusiveLowerKey = null, exclusiveUpperKey = null) {
+  const beforeLower = effectiveBound(before, lowerKey, exclusiveLowerKey, true);
+  const afterLower = effectiveBound(after, lowerKey, exclusiveLowerKey, true);
+  const beforeUpper = effectiveBound(before, upperKey, exclusiveUpperKey, false);
+  const afterUpper = effectiveBound(after, upperKey, exclusiveUpperKey, false);
+  if (intervalIsEmpty(beforeLower, beforeUpper) || intervalIsEmpty(afterLower, afterUpper)) {
+    return ["incomparable"];
+  }
+  return [
+    compareEffectiveBound(beforeLower, afterLower, true),
+    compareEffectiveBound(beforeUpper, afterUpper, false),
+  ];
+}
 
 function classifyNumeric(before, after) {
-  const directions = [];
-  for (const key of LOWER_BOUNDS) {
-    directions.push(compareLowerBound(before[key], after[key]));
-  }
-  for (const key of UPPER_BOUNDS) {
-    directions.push(compareUpperBound(before[key], after[key]));
-  }
+  const directions = [
+    ...boundDirections(before, after, "minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum"),
+    ...boundDirections(before, after, "minLength", "maxLength"),
+    ...boundDirections(before, after, "minItems", "maxItems"),
+  ];
   if (directions.includes("incomparable")) {
     return { class: "unknown", reason: "numeric-incomparable" };
   }
@@ -384,37 +495,21 @@ function classifyNumeric(before, after) {
   return null;
 }
 
-function additionalPropertiesRank(value) {
-  if (value === false || (value?.kind === "boolean-schema" && value.allows === false)) return 0;
-  if (value && typeof value === "object") return 1;
-  return 2;
-}
-
 function classifyAdditionalProperties(before, after) {
-  const beforeAp = before.additionalProperties;
-  const afterAp = after.additionalProperties;
+  const beforeAp = before.additionalProperties || trueSchemaFingerprint();
+  const afterAp = after.additionalProperties || trueSchemaFingerprint();
   if (JSON.stringify(beforeAp) === JSON.stringify(afterAp)) return null;
-  if (beforeAp && afterAp && typeof beforeAp === "object" && typeof afterAp === "object") {
-    if (beforeAp.kind === "boolean-schema" && afterAp.kind === "boolean-schema") {
-      return classifyBooleanSchema(beforeAp, afterAp);
-    }
-    return classifyPair(beforeAp, afterAp);
-  }
-  const beforeRank = additionalPropertiesRank(beforeAp);
-  const afterRank = additionalPropertiesRank(afterAp);
-  if (afterRank < beforeRank) return { class: "breaking", reason: "additionalProperties-tightened" };
-  if (afterRank > beforeRank) return { class: "compatible", reason: "additionalProperties-weakened" };
-  return null;
+  const row = classifyPair(beforeAp, afterAp);
+  if (row.class === "breaking") return { ...row, reason: "additionalProperties-tightened" };
+  if (row.class === "compatible") return { ...row, reason: "additionalProperties-weakened" };
+  return row;
 }
 
 function classifyItems(before, after) {
-  const beforeItems = before.items;
-  const afterItems = after.items;
+  const beforeItems = before.items || trueSchemaFingerprint();
+  const afterItems = after.items || trueSchemaFingerprint();
   if (JSON.stringify(beforeItems) === JSON.stringify(afterItems)) return null;
-  if (beforeItems && afterItems) {
-    return classifyPair(beforeItems, afterItems);
-  }
-  return { class: "breaking", reason: "structural-change" };
+  return classifyPair(beforeItems, afterItems);
 }
 
 function classifyPattern(before, after) {
@@ -439,6 +534,13 @@ function classifyEnum(before, after) {
   return { class: "compatible", reason: "enum-weakened" };
 }
 
+function classifyConst(before, after) {
+  if (before.constJson === after.constJson) return null;
+  if (before.constJson === null) return { class: "breaking", reason: "structural-change" };
+  if (after.constJson === null) return { class: "compatible", reason: "const-removed" };
+  return { class: "breaking", reason: "structural-change" };
+}
+
 function classifyProperties(before, after) {
   const beforeProps = before.properties || null;
   const afterProps = after.properties || null;
@@ -447,8 +549,8 @@ function classifyProperties(before, after) {
   const names = new Set([...Object.keys(beforeProps || {}), ...Object.keys(afterProps || {})]);
   let worst = null;
   for (const name of names) {
-    const left = beforeProps?.[name] || { kind: "absent" };
-    const right = afterProps?.[name] || { kind: "absent" };
+    const left = beforeProps?.[name] || before.additionalProperties || trueSchemaFingerprint();
+    const right = afterProps?.[name] || after.additionalProperties || trueSchemaFingerprint();
     const row = classifyPair(left, right);
     if (!row || row.class === "unchanged") continue;
     worst = worst ? combineClass(worst, row) : row;
@@ -456,12 +558,12 @@ function classifyProperties(before, after) {
   return worst;
 }
 
-const OTHER_KEYS = ["format", "constJson", "itemsType"];
-
 function classifySchemaConstraints(before, after) {
   if (before.kind !== "schema-object" || after.kind !== "schema-object") return null;
   const deltas = [];
-  const typeDelta = classifyTypeDirection(before.type, after.type);
+  const sameFiniteEnum = before.enum && after.enum && JSON.stringify(before.enum) === JSON.stringify(after.enum);
+  const sameConst = before.constJson !== null && before.constJson === after.constJson;
+  const typeDelta = sameFiniteEnum || sameConst ? null : classifyTypeDirection(before.type, after.type);
   if (typeDelta) deltas.push(typeDelta);
   const required = classifyRequired(before, after);
   if (required) deltas.push(required);
@@ -473,23 +575,37 @@ function classifySchemaConstraints(before, after) {
   if (items) deltas.push(items);
   const enumerated = classifyEnum(before, after);
   if (enumerated) deltas.push(enumerated);
+  const constant = classifyConst(before, after);
+  if (constant) deltas.push(constant);
   const pattern = classifyPattern(before, after);
   if (pattern) deltas.push(pattern);
   const properties = classifyProperties(before, after);
   if (properties) deltas.push(properties);
 
-  const restChanged = OTHER_KEYS.some((key) => JSON.stringify(before[key]) !== JSON.stringify(after[key]));
+  const finiteConstraintPresent = Boolean(
+    before.enum || after.enum || before.constJson !== null || after.constJson !== null
+  );
+  const otherConstraintDelta = Boolean(
+    typeDelta || required || numeric || additional || items || pattern || properties
+  );
+  if (finiteConstraintPresent && (otherConstraintDelta || (enumerated && constant))) {
+    return { class: "unknown", reason: "constraint-interaction-unsupported" };
+  }
+
   const tightening = deltas.find((delta) => delta.class === "breaking");
+  const weakening = deltas.find((delta) => delta.class === "compatible");
+  if (tightening && weakening) {
+    return { class: "unknown", reason: "constraint-interaction-unsupported" };
+  }
   if (tightening) return tightening;
   if (deltas.some((delta) => delta.class === "unknown")) {
     return deltas.find((delta) => delta.class === "unknown");
   }
-  if (restChanged) return { class: "breaking", reason: "structural-change" };
-  const weakening = deltas.find((delta) => delta.class === "compatible");
+  if (before.format !== after.format) return { class: "unknown", reason: "format-semantics-unsupported" };
   if (weakening) return weakening;
   const added = deltas.find((delta) => delta.class === "added" || delta.class === "deleted");
   if (added) return added;
-  return null;
+  return { class: "unchanged", reason: "structural-equal" };
 }
 
 function classifyBooleanSchema(beforeFp, afterFp) {
@@ -528,6 +644,12 @@ const CLASS_SEVERITY = {
 };
 
 function combineClass(target, siblings) {
+  if (
+    (target.class === "breaking" && siblings.class === "compatible") ||
+    (target.class === "compatible" && siblings.class === "breaking")
+  ) {
+    return { class: "unknown", reason: "constraint-interaction-unsupported" };
+  }
   const targetRank = CLASS_SEVERITY[target.class] ?? 5;
   const siblingRank = CLASS_SEVERITY[siblings.class] ?? 5;
   if (targetRank <= siblingRank) return target;
@@ -542,6 +664,9 @@ function unwrapRef(fp) {
 }
 
 export function classifyPair(beforeFp, afterFp) {
+  if (beforeFp?.kind === "invalid-selected-required" || afterFp?.kind === "invalid-selected-required") {
+    return { class: "unknown", reason: "invalid-required-keyword" };
+  }
   if (beforeFp?.refuse || afterFp?.refuse) {
     return { class: "remote-ref", reason: "remote-ref" };
   }

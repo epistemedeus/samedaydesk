@@ -1,4 +1,10 @@
+Current independent audit: [CW43-AUDIT.md](CW43-AUDIT.md). The dated receipts below are historical.
+
 # W4-commerce-11 receipt
+
+Historical implementation receipt. The CW15 semantics hardening in the current
+feature tree supersedes the tested-format and link-stub notes below; current
+behavior and limits are authoritative in `FEATURE-MAP.md`.
 
 Offline lockfile pin-delta job for SameDayDesk. Root-assigned branch `codex/w4-commerce-11-20260911`. Integration owner: Root.
 
@@ -66,7 +72,8 @@ Postgres is not part of this job. No local Postgres server was used or faked.
 
 ## Honestly untested
 
-- yarn.lock / pnpm-lock.yaml
+- Yarn/pnpm semantic parsing. Generated pnpm 12 and Yarn 1 locks now have an
+  explicit `unsupported-lockfile-format` refusal rather than a generic JSON error.
 - lockfileVersion 4+
 - Binding a published I01 `hashRequest` (adapter is ready; sibling not on this main)
 - Catalog / useful-jobs public page listing (outside ownedPaths)

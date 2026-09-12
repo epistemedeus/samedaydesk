@@ -10,6 +10,7 @@ import { parseLockfileText } from "./parse-lockfile.mjs";
 import { comparePinMaps } from "./compare.mjs";
 import { toMarkdown } from "./format.mjs";
 import { createHashTermsAdapter } from "./hash-terms.mjs";
+import { JSON_LIMITS } from "./json-structure.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 export const ROOT = path.resolve(HERE, "..");
@@ -17,13 +18,63 @@ export const JOURNEY_BEFORE = path.join(ROOT, "fixtures/journey/before.json");
 export const JOURNEY_AFTER = path.join(ROOT, "fixtures/journey/after.json");
 
 function readText(filePath, label) {
+  let fd;
   try {
-    return fs.readFileSync(filePath, "utf8");
+    // Opening a FIFO read-only can block before fstat gets a chance to refuse it.
+    fd = fs.openSync(filePath, fs.constants.O_RDONLY | fs.constants.O_NONBLOCK);
+    const stat = fs.fstatSync(fd);
+    if (!stat.isFile()) {
+      throw cliRefuse("invalid-input-file", `${label} is not a regular file: ${filePath}`, {
+        label,
+        path: filePath,
+      });
+    }
+    if (stat.size > JSON_LIMITS.maxInputBytes) {
+      throw cliRefuse("resource-limit", `${label} exceeds the input-bytes limit (${JSON_LIMITS.maxInputBytes})`, {
+        label,
+        path: filePath,
+        resource: "input-bytes",
+        limit: JSON_LIMITS.maxInputBytes,
+        observed: stat.size,
+      });
+    }
+    let bytes = Buffer.allocUnsafe(
+      Math.min(Math.max(stat.size + 1, 64 * 1024), JSON_LIMITS.maxInputBytes + 1),
+    );
+    let total = 0;
+    while (total <= JSON_LIMITS.maxInputBytes) {
+      if (total === bytes.length) {
+        const grown = Buffer.allocUnsafe(
+          Math.min(bytes.length * 2, JSON_LIMITS.maxInputBytes + 1),
+        );
+        bytes.copy(grown, 0, 0, total);
+        bytes = grown;
+      }
+      const count = fs.readSync(fd, bytes, total, bytes.length - total, null);
+      if (count === 0) break;
+      total += count;
+    }
+    if (total > JSON_LIMITS.maxInputBytes) {
+      throw cliRefuse("resource-limit", `${label} exceeds the input-bytes limit (${JSON_LIMITS.maxInputBytes})`, {
+        label,
+        path: filePath,
+        resource: "input-bytes",
+        limit: JSON_LIMITS.maxInputBytes,
+        observed: total,
+      });
+    }
+    try {
+      return new TextDecoder("utf-8", { fatal: true }).decode(bytes.subarray(0, total));
+    } catch {
+      throw cliRefuse("parse-error", `${label} is not valid UTF-8`, { label });
+    }
   } catch (err) {
     if (err && err.code === "ENOENT") {
       throw cliRefuse("missing-input-file", `${label} not found: ${filePath}`, { path: filePath });
     }
     throw err;
+  } finally {
+    if (fd !== undefined) fs.closeSync(fd);
   }
 }
 
@@ -63,6 +114,25 @@ function resolveOutDir(args, sourcePaths) {
       outDir,
       sources,
     });
+  }
+  for (const name of ["pin-delta.json", "pin-delta.md"]) {
+    const output = path.join(outDir, name);
+    const aliasesSource = sources.some((source) => {
+      if (realpathOrAbs(output) === source) return true;
+      try {
+        const a = fs.statSync(output);
+        const b = fs.statSync(source);
+        return a.dev === b.dev && a.ino === b.ino;
+      } catch (err) {
+        if (err.code === "ENOENT") return false;
+        throw err;
+      }
+    });
+    if (aliasesSource) {
+      throw cliRefuse("out-dir-collides-with-input", "Output artifact would overwrite a source input", {
+        output,
+      });
+    }
   }
   fs.mkdirSync(outDir, { recursive: true });
   return outDir;
@@ -138,7 +208,7 @@ export function runLockfileDelta(argv, options = {}) {
   report.provenance = classifyProvenance(beforePath, afterPath, exampleMode);
   report.generatedAt = new Date().toISOString();
 
-  const outDir = options.outDir || resolveOutDir(args, [beforePath, afterPath]);
+  const outDir = resolveOutDir({ ...args, ...(options.outDir ? { "out-dir": options.outDir } : {}) }, [beforePath, afterPath]);
   const jsonPath = path.join(outDir, "pin-delta.json");
   const mdPath = path.join(outDir, "pin-delta.md");
   fs.writeFileSync(jsonPath, `${JSON.stringify(report, null, 2)}\n`);

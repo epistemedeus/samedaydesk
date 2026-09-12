@@ -19,6 +19,10 @@ function cloneProvidedBytes(src) {
     if (Buffer.isBuffer(value)) out[key] = Buffer.from(value);
     else if (typeof value === "string") out[key] = Buffer.from(value);
     else if (value instanceof Uint8Array) out[key] = Buffer.from(value);
+    // JSON's standard Buffer representation preserves exact frozen bytes on HTTP.
+    else if (value?.type === "Buffer" && Array.isArray(value.data) &&
+      value.data.length <= MAX_INPUT_BYTES &&
+      value.data.every((n) => Number.isInteger(n) && n >= 0 && n <= 255)) out[key] = Buffer.from(value.data);
   }
   return out;
 }

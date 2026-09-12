@@ -4,7 +4,7 @@ export const REPORT_SCHEMA = "pilot/page-change-brief/v1";
 export const EXTRACT_PRODUCT = "samedaydesk-extract-batch";
 export const EXTRACT_SCHEMA = "samedaydesk.extract-batch.v0";
 export const ENGINE_ID = "samedaydesk.page-change-offline-job";
-export const ENGINE_VERSION = "0.1.1";
+export const ENGINE_VERSION = "0.1.3";
 export const TERMS_SCHEMA = "samedaydesk.page-change-offline-job.terms.v0";
 export const TERMS_SCHEMA_VERSION = 1;
 export const TERMS_VERSION_PREFIX = "sha256:";
@@ -83,6 +83,7 @@ export const ERROR_CODES = Object.freeze({
   FIELDS_REQUIRED: "fields_required",
   UNSUPPORTED_FIELD: "unsupported_field",
   INPUT_BOUNDS: "input_bounds",
+  INPUT_PRECISION: "input_precision",
   UNRECOGNIZED_BATCH: "unrecognized_batch_artifact",
   USAGE: "usage",
 });

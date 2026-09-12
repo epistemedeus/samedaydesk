@@ -59,6 +59,9 @@ test("contract export lists the public classes and reasons consumers can pin", (
   assert.equal(CLASSIFICATION_REASONS.booleanSchemaWeakened, "boolean-schema-weakened");
   assert.equal(CLASSIFICATION_REASONS.requiredRemoved, "required-removed");
   assert.equal(CLASSIFICATION_REASONS.numericTightened, "numeric-tightened");
+  assert.equal(CLASSIFICATION_REASONS.constRemoved, "const-removed");
+  assert.equal(CLASSIFICATION_REASONS.formatSemanticsUnsupported, "format-semantics-unsupported");
+  assert.equal(CLASSIFICATION_REASONS.constraintInteractionUnsupported, "constraint-interaction-unsupported");
 });
 
 test("CLI: false schema to true is compatible, exit 0, not a refuse", () => {

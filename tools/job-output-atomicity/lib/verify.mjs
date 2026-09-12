@@ -233,6 +233,15 @@ export function verifyComplete(options = {}) {
     });
   }
 
+  if (receipt.contract === "samedaydesk.paid-useful-jobs.execution.v1" &&
+      (receipt.transport !== "ok" || receipt.delivery?.complete !== true)) {
+    return verdict({
+      classification: "partial", code: "execution-not-complete",
+      message: "Execution receipt declares failed transport or incomplete delivery",
+      extra: { root, jobId: receipt.jobId || null, evidenceClass, ...analysis },
+    });
+  }
+
   const listed = Array.isArray(receipt.outputs) ? receipt.outputs : [];
   for (const entry of listed) {
     if (!listedEntryName(entry)) {

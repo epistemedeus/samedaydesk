@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
-import { mkdtempSync, readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -10,8 +10,9 @@ const beforePath = join(PACKAGE_ROOT, "fixtures/customer-job/before.json");
 const afterPath = join(PACKAGE_ROOT, "fixtures/customer-job/after.json");
 
 function listen(server) {
-  return new Promise((resolve) => {
-    server.listen(0, "127.0.0.1", () => resolve(server.address()));
+  return new Promise((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(55541, "127.0.0.1", () => resolve(server.address()));
   });
 }
 
@@ -47,31 +48,12 @@ test("local HTTP: URL input is refused and the server is not contacted", async (
   }
 });
 
-test("Postgres is not part of this job public interface", async () => {
-  // Honest local-runtime distinction: this offline compare has no SQL surface.
-  // Do not invent a database adapter as proof. Probe only.
-  let probed = "not_probed";
-  try {
-    const { default: net } = await import("node:net");
-    probed = await new Promise((resolve) => {
-      const socket = net.connect({ host: "127.0.0.1", port: 5432 });
-      const timer = setTimeout(() => {
-        socket.destroy();
-        resolve("port_5432_no_accept_within_250ms");
-      }, 250);
-      socket.once("connect", () => {
-        clearTimeout(timer);
-        socket.end();
-        resolve("port_5432_open");
-      });
-      socket.once("error", (error) => {
-        clearTimeout(timer);
-        resolve(`port_5432_${error.code || "error"}`);
-      });
-    });
-  } catch (error) {
-    probed = `probe_failed:${error.message}`;
+test("offline engine has no database dependency or socket client", () => {
+  const manifest = JSON.parse(readFileSync(join(PACKAGE_ROOT, "package.json"), "utf8"));
+  assert.deepEqual(manifest.dependencies ?? {}, {});
+  for (const name of readdirSync(join(PACKAGE_ROOT, "lib"))) {
+    if (!name.endsWith(".mjs")) continue;
+    const source = readFileSync(join(PACKAGE_ROOT, "lib", name), "utf8");
+    assert.doesNotMatch(source, /(?:from\s*|import\s*\()["'](?:pg|postgres|mysql|sqlite|node:net|node:tls)["']/);
   }
-  assert.ok(typeof probed === "string");
-  assert.notEqual(probed, "used_as_page_change_store");
 });

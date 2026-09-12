@@ -19,6 +19,7 @@ export const COMPARISON_COLLISION_CANONICAL = join(FIXTURES_DIR, "comparison", "
 export const SCHEMA_TABLE = "samedaydesk.route-table.v1";
 export const SCHEMA_DIFF = "samedaydesk.route-diff.v1";
 export const SCHEMA_DIGEST = "samedaydesk.route-table.digest.v2";
+export const SCHEMA_EXPRESS_DIGEST = "samedaydesk.route-table.express.digest.v1";
 
 /** Pinned homepage identity from server/lib/spa-route-shells.js at startingRef. Homepage is not a crawler shell. */
 export const SITE_ORIGIN = "https://samedaydesk.com";

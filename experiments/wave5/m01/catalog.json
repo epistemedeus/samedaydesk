@@ -52,7 +52,7 @@
       "wave4": "W4-commerce-11",
       "pin": {
         "repo": "epistemedeus/samedaydesk",
-        "sha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+        "sha": "5f0f189fd3e88eabfeca2b95b2da644e58374372",
         "ownedPath": "tools/lockfile-pin-delta/",
         "packageName": "@samedaydesk/lockfile-pin-delta",
         "source": "in-tree"
@@ -112,11 +112,11 @@
       "wave4": "W4-commerce-10",
       "pin": {
         "repo": "epistemedeus/samedaydesk",
-        "sha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+        "sha": "989ea8155ee547546cb63b6ba97bc814b313fc20",
         "ownedPath": "tools/json-schema-webhook-drift/",
         "packageName": "@samedaydesk/json-schema-webhook-drift",
         "source": "in-tree",
-        "integrationFix": "boolean array items true to false is boolean-schema-tightened (M06 items-true-to-false)"
+        "integrationFix": "CW14 instance-set semantics plus independently witnessed selected-required keyword membership"
       },
       "cli": {
         "relativeBin": "bin/webhook-drift.mjs",
@@ -175,7 +175,7 @@
       "wave4": "W4-commerce-12",
       "pin": {
         "repo": "epistemedeus/samedaydesk",
-        "sha": "886c81d824e0a24e2faa5b821b1cd0ca46ae0859",
+        "sha": "989ea8155ee547546cb63b6ba97bc814b313fc20",
         "ownedPath": "tools/route-table-diff/",
         "packageName": null,
         "binPresent": "bin/route-diff.mjs",
@@ -238,10 +238,10 @@
       "wave4": "W4-commerce-13",
       "pin": {
         "repo": "epistemedeus/samedaydesk",
-        "sha": "fec7bc04ac4419f8e7ce40f2613314e6953af6bc",
+        "sha": "e38f385a63c767f315409460bd51c57895fa4ed1",
         "ownedPath": "tools/page-change-offline-job/",
         "packageName": "@samedaydesk/page-change-offline-job",
-        "engineVersion": "0.1.1",
+        "engineVersion": "0.1.3",
         "source": "in-tree"
       },
       "cli": {

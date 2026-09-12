@@ -7,6 +7,7 @@ function isSchemaType(value) {
 }
 
 export function detectKind(doc) {
+  if (typeof doc === "boolean") return "json-schema";
   if (doc === null || typeof doc !== "object") return "invalid";
   if (Array.isArray(doc)) return "webhook-example";
   if (typeof doc.openapi === "string" || typeof doc.swagger === "string") return "openapi";
@@ -32,5 +33,11 @@ export function looksLikeHtmlOrMarkup(text) {
 
 export function looksLikeYamlDocument(text) {
   const trimmed = String(text ?? "").trim();
+  try {
+    JSON.parse(trimmed);
+    return false;
+  } catch {
+    // Continue with the intentionally small YAML/plain-text refusal heuristic.
+  }
   return trimmed.startsWith("---") || (trimmed.length > 0 && !trimmed.startsWith("{") && !trimmed.startsWith("["));
 }

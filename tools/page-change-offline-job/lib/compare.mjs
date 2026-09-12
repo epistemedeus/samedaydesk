@@ -1,13 +1,14 @@
-import { DEFAULT_LIMITS, ENGINE_ID, ENGINE_VERSION, ERROR_CODES, REPORT_SCHEMA } from "./constants.mjs";
+import { ENGINE_ID, ENGINE_VERSION, ERROR_CODES, REPORT_SCHEMA } from "./constants.mjs";
 import { requireClock, observationFreshness } from "./clock.mjs";
 import { normalizeFields, pickPresent } from "./fields.mjs";
 import { hashJobTerms, jobTermsBody, sha256Hex } from "./hash-terms.mjs";
 import { matchBatches } from "./match.mjs";
 import { parseExtractBatch } from "./parse-batch.mjs";
-import { diffJson } from "./diff.mjs";
+import { diffJson, excerpt } from "./diff.mjs";
 import { refuseLiveFetch, refusePaymentRetry, refuseQuoteAsSuccess, refuseSampleAsDelivered } from "./refuse.mjs";
-import { readBoundedJson } from "./io.mjs";
+import { inMemoryJson, readBoundedJson } from "./io.mjs";
 import { stableStringify } from "./canonical.mjs";
+import { normalizeLimits } from "./limits.mjs";
 
 function classifyVerdict({ missing, failed, unknown, duplicates, coverageUnknown, semantic, order, truncated, matched }) {
   if (duplicates.length) return "ambiguous";
@@ -21,15 +22,6 @@ function classifyVerdict({ missing, failed, unknown, duplicates, coverageUnknown
 
 function noteLimit(hits, name) {
   if (name && !hits.includes(name)) hits.push(name);
-}
-
-function normalizeLimits(input = {}) {
-  return {
-    ...DEFAULT_LIMITS,
-    ...Object.fromEntries(
-      Object.entries(input).filter(([, value]) => value !== undefined),
-    ),
-  };
 }
 
 export async function comparePageChange({
@@ -65,11 +57,11 @@ export async function comparePageChange({
   }
 
   const started = process.hrtime.bigint();
-  const beforeFile = beforeJson
-    ? { parsed: beforeJson, sha256: sha256Hex(Buffer.from(JSON.stringify(beforeJson))), byteLength: Buffer.byteLength(JSON.stringify(beforeJson)), path: beforePath ?? null }
+  const beforeFile = beforeJson !== undefined
+    ? inMemoryJson(beforeJson, limits.maxBytes, beforePath)
     : readBoundedJson(beforePath, limits.maxBytes);
-  const afterFile = afterJson
-    ? { parsed: afterJson, sha256: sha256Hex(Buffer.from(JSON.stringify(afterJson))), byteLength: Buffer.byteLength(JSON.stringify(afterJson)), path: afterPath ?? null }
+  const afterFile = afterJson !== undefined
+    ? inMemoryJson(afterJson, limits.maxBytes, afterPath)
     : readBoundedJson(afterPath, limits.maxBytes);
 
   refuseQuoteAsSuccess(beforeFile.parsed, { treatQuoteAsSuccess });
@@ -207,6 +199,8 @@ export async function comparePageChange({
   const coverageUnknown = [
     ...beforeBatch.issues.map((code) => ({ side: "before", code })),
     ...afterBatch.issues.map((code) => ({ side: "after", code })),
+    ...[["before", beforeBatch], ["after", afterBatch]].flatMap(([side, batch]) =>
+      batch.rows.flatMap((row) => row.coverageIssues.map((code) => ({ side, sourceKey: row.sourceKey, code })))),
   ];
   const limitsHit = [];
   let diffTruncated = beforeBatch.truncated || afterBatch.truncated;
@@ -253,17 +247,26 @@ export async function comparePageChange({
     }
   }
 
-  if (matched.order.reordered && changes.length < limits.maxChanges) {
-    changes.push({
-      class: "order",
-      op: "reorder",
-      path: "/sources",
-      sourceKey: null,
-      before: matched.order.before,
-      after: matched.order.after,
-      beforeEvidence: JSON.stringify(matched.order.before),
-      afterEvidence: JSON.stringify(matched.order.after),
-    });
+  if (matched.order.reordered) {
+    if (changes.length >= limits.maxChanges) {
+      diffTruncated = true;
+      noteLimit(limitsHit, "maxChanges");
+    } else {
+      changes.push({
+        class: "order",
+        op: "reorder",
+        path: "/sources",
+        sourceKey: null,
+        before: matched.order.before,
+        after: matched.order.after,
+        beforeType: "array",
+        afterType: "array",
+        beforeEvidence: excerpt(matched.order.before, limits.maxExcerptBytes),
+        afterEvidence: excerpt(matched.order.after, limits.maxExcerptBytes),
+        evidenceTruncated: [matched.order.before, matched.order.after].some((value) =>
+          Buffer.byteLength(JSON.stringify(value)) > limits.maxExcerptBytes),
+      });
+    }
   }
 
   const semantic = changes.some((change) => change.class === "semantic");
@@ -304,6 +307,7 @@ export async function comparePageChange({
   report.claims.paymentImpliesUsefulOutput = false;
   const time = observationFreshness({
     observedAt: afterBatch.observation.artifactObservedAt,
+    observedAts: matched.matched.map((pair) => pair.after.observation.completedAt),
     clock: requiredClock,
     maxStaleMs: limits.maxStaleMs,
   });
@@ -368,6 +372,8 @@ function digestBody(report) {
       sourceKey: change.sourceKey,
       before: change.before,
       after: change.after,
+      beforeType: change.beforeType,
+      afterType: change.afterType,
     })),
     provenance: {
       comparedWithClock: report.provenance.comparedWithClock,
