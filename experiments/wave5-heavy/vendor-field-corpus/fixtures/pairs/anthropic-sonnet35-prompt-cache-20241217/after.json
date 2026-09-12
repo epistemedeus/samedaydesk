@@ -1,0 +1,25 @@
+{
+  "note": "Official Anthropic Claude 3.5 Sonnet plus prompt-cache write/read, 2024-12-17.",
+  "rows": [
+    {
+      "field": "claude-3.5-sonnet-input",
+      "value": 3,
+      "unit": "USD/MTok"
+    },
+    {
+      "field": "claude-3.5-sonnet-output",
+      "value": 15,
+      "unit": "USD/MTok"
+    },
+    {
+      "field": "claude-3.5-sonnet-cache-write",
+      "value": 3.75,
+      "unit": "USD/MTok"
+    },
+    {
+      "field": "claude-3.5-sonnet-cache-read",
+      "value": 0.3,
+      "unit": "USD/MTok"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "label": "hypothetical-usage",
+  "notACustomerInvoice": true,
+  "notMeasuredBill": true,
+  "pair": "openai-gpt35-turbo-20230613-20240125",
+  "usage": {
+    "inputTokens": 10000000,
+    "outputTokens": 2000000
+  },
+  "tariffShape": "standard unpinned GPT-3.5 Turbo list at USD/1K-tokens; no batch, cache, or fine-tune",
+  "arithmetic": {
+    "beforeUsd": 19.0,
+    "afterUsd": 8.0,
+    "deltaUsd": -11.0,
+    "input": {
+      "before": "10000000/1000 * 0.0015 = 15",
+      "after": "10000000/1000 * 0.0005 = 5"
+    },
+    "output": {
+      "before": "2000000/1000 * 0.002 = 4",
+      "after": "2000000/1000 * 0.0015 = 3"
+    }
+  },
+  "missingBeforeAnyBill": [
+    "actual token counts from a provider receipt",
+    "batch versus standard channel",
+    "fine-tuned SKU",
+    "cached input tokens",
+    "tax and committed spend tiers"
+  ]
+}

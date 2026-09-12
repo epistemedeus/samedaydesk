@@ -1,0 +1,23 @@
+{
+  "status": "actionable",
+  "counts": {
+    "added": 2,
+    "removed": 0,
+    "fieldChanges": 0,
+    "unitChanges": 0
+  },
+  "actionKinds": ["no-budget-delta"],
+  "wrapperDefect": "added-sku-reported-as-no-budget-delta",
+  "independentArithmetic": [
+    {
+      "field": "claude-3.5-sonnet-cache-write",
+      "after": 3.75,
+      "check": "1.25 * 3.00 base input = 3.75"
+    },
+    {
+      "field": "claude-3.5-sonnet-cache-read",
+      "after": 0.3,
+      "check": "0.10 * 3.00 base input = 0.30"
+    }
+  ]
+}
