@@ -36,10 +36,17 @@ if (previous.bytes !== prevBytes || previous.sha256 !== prevSha) throw new Error
 const work = mkdtempSync(join(repo, "tmp-useful-jobs-1.4.3-stage-"));
 const cleanup = () => rmSync(work, { recursive: true, force: true });
 process.once("exit", cleanup);
-for (const signal of ["SIGINT", "SIGTERM"]) process.once(signal, () => {
-  cleanup();
-  process.kill(process.pid, signal);
-});
+for (const signal of ["SIGINT", "SIGTERM"]) {
+  const onSignal = () => {
+    const applicationHandlesSignal = process.listeners(signal).some(listener => listener !== onSignal);
+    cleanup();
+    if (!applicationHandlesSignal) {
+      process.removeListener(signal, onSignal);
+      process.kill(process.pid, signal);
+    }
+  };
+  process.prependListener(signal, onSignal);
+}
 function exec(command, args) {
   const r = spawnSync(command, args, { cwd: repo, encoding: "utf8" });
   if (r.status !== 0) throw new Error(r.stderr || command + " failed");
