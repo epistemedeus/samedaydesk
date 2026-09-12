@@ -19,7 +19,7 @@ import {
   joinKey,
   parseNdjson,
 } from "./historical.mjs";
-import { contractNameForResource } from "./contract.mjs";
+import { MAX_RESPONSE_BYTES, contractNameForResource } from "./contract.mjs";
 
 export const VALIDATION_FILENAME = "http-response-validation.v1.ndjson";
 
@@ -161,7 +161,7 @@ export function recordFromObservedResponse({
     resource,
     contractName: evaluated.contractName || contractNameForResource(resource),
     responseDigest: digest,
-    responseByteLength: bytes.length,
+    responseByteLength: Math.min(bytes.length, MAX_RESPONSE_BYTES),
     merchantHttpStatus: evaluated.merchantHttpStatus,
     settlementClass,
     settlementReference,
@@ -197,9 +197,10 @@ export function canonicalizeValidationRecord(value) {
     deliveryClass: value.deliveryClass,
     usefulness: value.usefulness,
     counters: {
-      schemaErrors: Number(value.counters?.schemaErrors),
-      requiredPresent: Number(value.counters?.requiredPresent),
-      truncateMarks: Number(value.counters?.truncateMarks),
+      schemaErrors: counterOrDefault(value.counters?.schemaErrors),
+      requiredPresent: counterOrDefault(value.counters?.requiredPresent),
+      truncateMarks: counterOrDefault(value.counters?.truncateMarks),
+      sourceRefusalMarks: counterOrDefault(value.counters?.sourceRefusalMarks),
     },
     prohibitedInferences: Array.isArray(value.prohibitedInferences)
       ? [...value.prohibitedInferences]
@@ -223,15 +224,9 @@ export function assertValidationRecord(value) {
     throw new Error("invalid contractName");
   }
   if (!DIGEST_RE.test(value.responseDigest)) throw new Error("invalid responseDigest");
-  if (!Number.isInteger(value.responseByteLength) || value.responseByteLength < 0 || value.responseByteLength > 10_485_760) {
-    throw new Error("invalid responseByteLength");
-  }
-  if (value.merchantHttpStatus !== null && (
-    !Number.isInteger(value.merchantHttpStatus)
-    || value.merchantHttpStatus < 100
-    || value.merchantHttpStatus > 599
-  )) {
-    throw new Error("invalid merchantHttpStatus");
+  requireFiniteInteger(value.responseByteLength, "responseByteLength", 0, MAX_RESPONSE_BYTES);
+  if (value.merchantHttpStatus !== null) {
+    requireFiniteInteger(value.merchantHttpStatus, "merchantHttpStatus", 100, 599);
   }
   if (!SETTLEMENTS.has(value.settlementClass)) throw new Error("invalid settlementClass");
   if (value.settlementReference !== null && !TX_RE.test(value.settlementReference)) {
@@ -243,9 +238,13 @@ export function assertValidationRecord(value) {
   if (value.validatorSource !== VALIDATOR_SOURCE) throw new Error("invalid validatorSource");
   if (typeof value.deliveryClass !== "string") throw new Error("invalid deliveryClass");
   if (value.usefulness !== USEFULNESS_UNKNOWN) throw new Error("usefulness must remain unknown");
-  for (const name of ["schemaErrors", "requiredPresent", "truncateMarks"]) {
-    const n = value.counters[name];
-    if (!Number.isInteger(n) || n < 0 || n > 99) throw new Error(`invalid counter ${name}`);
+  const counterKeys = Object.keys(value.counters).sort();
+  const expectedCounters = ["requiredPresent", "schemaErrors", "sourceRefusalMarks", "truncateMarks"];
+  if (counterKeys.length !== expectedCounters.length || counterKeys.some((key, i) => key !== expectedCounters[i])) {
+    throw new Error("validation counters have unexpected keys");
+  }
+  for (const name of expectedCounters) {
+    requireFiniteInteger(value.counters[name], `counter ${name}`, 0, 99);
   }
   if (!Array.isArray(value.prohibitedInferences) || value.prohibitedInferences.length < 4) {
     throw new Error("prohibitedInferences required");
@@ -261,6 +260,20 @@ export function assertValidationRecord(value) {
 
 function makeRecordId() {
   return `hrv_${randomUUID().replaceAll("-", "")}`;
+}
+
+function counterOrDefault(value) {
+  if (value === undefined) return 0;
+  requireFiniteInteger(value, "counter", 0, 99);
+  return value;
+}
+
+function requireFiniteInteger(value, label, min, max) {
+  if (typeof value !== "number" || !Number.isFinite(value) || !Number.isInteger(value)) {
+    throw new Error(`invalid ${label}`);
+  }
+  if (value < min || value > max) throw new Error(`invalid ${label}`);
+  return value;
 }
 
 function isPlainObject(value) {

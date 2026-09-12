@@ -1,8 +1,10 @@
 import {
   RESOURCES,
+  MAX_RESPONSE_BYTES,
   boundCounter,
   checkDeclaredContract,
   contractNameForResource,
+  isSupportedTarget,
   parseJsonBytes,
 } from "./contract.mjs";
 
@@ -17,12 +19,20 @@ export const DELIVERY = Object.freeze({
   ENGINE_FAILURE: "engine_failure",
   MALFORMED_BODY: "malformed_body",
   MISSING_BODY: "missing_body",
+  MERCHANT_HTTP_FAILURE: "merchant_http_failure",
+  UNSUPPORTED_TARGET: "unsupported_target",
 });
 
 export const VERDICT = Object.freeze({
   PASS: "pass",
   INVALID: "invalid",
   UNKNOWN: "unknown",
+});
+
+export const SCHEMA_CONFORMANCE = Object.freeze({
+  HOLDS: "holds",
+  FAILS: "fails",
+  NOT_APPLICABLE: "not_applicable",
 });
 
 export const SETTLEMENT_CLASS = Object.freeze({
@@ -42,6 +52,8 @@ export const PROHIBITED_INFERENCES = Object.freeze([
   "simulated_settlement_is_revenue",
   "not_checked_is_validated",
   "mcp_tool_is_http_buyer",
+  "schema_shaped_http_500_is_completed_delivery",
+  "truncate_class_hides_source_refusal",
 ]);
 
 const ENGINE_CODES = new Set([
@@ -51,53 +63,29 @@ const ENGINE_CODES = new Set([
   "ssrf_blocked",
 ]);
 
-export function classifyParsedBody({ resource, parsed, contract }) {
-  if (!parsed.ok && parsed.reason === "missing_body") {
-    return wrap(VERDICT.UNKNOWN, DELIVERY.MISSING_BODY, contract);
-  }
-  if (!parsed.ok) {
-    return wrap(VERDICT.INVALID, DELIVERY.MALFORMED_BODY, contract);
-  }
+export function isCompletedMerchantHttp(status) {
+  return Number.isInteger(status) && status >= 200 && status < 300;
+}
 
-  const body = parsed.value;
-  const failureCode = failureCodeOf(body);
-  if (body && body.ok === false) {
-    if (failureCode === "unsupported_encoding") {
-      return wrap(VERDICT.INVALID, DELIVERY.UNSUPPORTED_CONTENT, contract);
-    }
-    if (failureCode === "timeout") {
-      return wrap(VERDICT.INVALID, DELIVERY.TRANSPORT_FAILURE, contract);
-    }
-    if (ENGINE_CODES.has(failureCode)) {
-      return wrap(VERDICT.INVALID, DELIVERY.ENGINE_FAILURE, contract);
-    }
-    if (!contract.ok) {
-      return wrap(VERDICT.INVALID, DELIVERY.MALFORMED_BODY, contract);
-    }
-    return wrap(VERDICT.INVALID, DELIVERY.ENGINE_FAILURE, contract);
-  }
-
-  if (!contract.ok) {
-    return wrap(VERDICT.INVALID, DELIVERY.MALFORMED_BODY, contract);
-  }
-
-  const truncateMarks = truncateMarksOf(body, resource);
-  if (truncateMarks > 0) {
-    return wrap(VERDICT.PASS, DELIVERY.TRUNCATED_PARTIAL, contract, truncateMarks);
-  }
-  if (body.sourceOk === false) {
-    return wrap(VERDICT.PASS, DELIVERY.SOURCE_REFUSAL, contract, truncateMarks);
-  }
-  if (resource === RESOURCES.EXTRACT_BATCH) {
-    if (body.ok === true && body.partial === false) {
-      return wrap(VERDICT.PASS, DELIVERY.FULL_BOUNDED_CAPTURE, contract, truncateMarks);
-    }
-    return wrap(VERDICT.PASS, DELIVERY.TRUNCATED_PARTIAL, contract, truncateMarks);
-  }
-  if (body.sourceOk === true) {
-    return wrap(VERDICT.PASS, DELIVERY.FULL_BOUNDED_CAPTURE, contract, truncateMarks);
-  }
-  return wrap(VERDICT.UNKNOWN, DELIVERY.MALFORMED_BODY, contract, truncateMarks);
+/**
+ * Domain class of a parsed body after transport and schema layers have already
+ * been applied. Prefer evaluateResponseBytes for HTTP evidence.
+ */
+export function classifyParsedBody({
+  resource,
+  parsed,
+  contract,
+  merchantHttpStatus = 200,
+  oversized = false,
+} = {}) {
+  return classifyLayers({
+    method: resource === RESOURCES.EXTRACT_BATCH ? "POST" : "GET",
+    resource,
+    parsed,
+    contract,
+    merchantHttpStatus,
+    oversized,
+  });
 }
 
 export function evaluateResponseBytes({
@@ -114,11 +102,17 @@ export function evaluateResponseBytes({
   const bytes = Buffer.isBuffer(responseBytes) || responseBytes instanceof Uint8Array
     ? Buffer.from(responseBytes)
     : Buffer.alloc(0);
+  const oversized = bytes.length > MAX_RESPONSE_BYTES;
   const parsed = parseJsonBytes(bytes);
-  const contract = parsed.ok
-    ? checkDeclaredContract(resource, parsed.value)
-    : { ok: false, schemaErrors: 1, requiredPresent: 0, codes: [parsed.reason || "missing_body"] };
-  const classified = classifyParsedBody({ resource, parsed, contract });
+  const contract = contractFor({ method, resource, parsed });
+  const classified = classifyLayers({
+    method,
+    resource,
+    parsed,
+    contract,
+    merchantHttpStatus,
+    oversized,
+  });
   return {
     schemaVersion: SCHEMA,
     contractName: contractNameForResource(resource),
@@ -131,10 +125,191 @@ export function evaluateResponseBytes({
     capturedAt,
     recordId,
     bytesLength: bytes.length,
+    storedByteLength: Math.min(bytes.length, MAX_RESPONSE_BYTES),
     parsed,
     contract,
     ...classified,
   };
+}
+
+function contractFor({ method, resource, parsed }) {
+  if (!isSupportedTarget(method, resource)) {
+    return {
+      ok: false,
+      unsupported: true,
+      schemaErrors: 0,
+      requiredPresent: 0,
+      codes: [resource && method ? "unsupported_target" : "unsupported_target"],
+    };
+  }
+  if (!parsed.ok) {
+    return {
+      ok: false,
+      schemaErrors: parsed.reason === "missing_body" ? 0 : 1,
+      requiredPresent: 0,
+      codes: [parsed.reason || "missing_body"],
+    };
+  }
+  return checkDeclaredContract(resource, parsed.value, method);
+}
+
+function classifyLayers({
+  method,
+  resource,
+  parsed,
+  contract,
+  merchantHttpStatus,
+  oversized,
+}) {
+  const truncateMarks = boundCounter(
+    (parsed.ok ? truncateMarksOf(parsed.value, resource) : 0) + (oversized ? 1 : 0),
+  );
+  const sourceRefusalMarks = boundCounter(
+    parsed.ok && parsed.value?.sourceOk === false ? 1 : 0,
+  );
+
+  if (!isSupportedTarget(method, resource)) {
+    return wrap({
+      verdict: VERDICT.UNKNOWN,
+      deliveryClass: DELIVERY.UNSUPPORTED_TARGET,
+      contract,
+      truncateMarks,
+      sourceRefusalMarks: 0,
+      schemaConformance: SCHEMA_CONFORMANCE.NOT_APPLICABLE,
+    });
+  }
+
+  if (!parsed.ok && parsed.reason === "missing_body") {
+    return wrap({
+      verdict: VERDICT.UNKNOWN,
+      deliveryClass: DELIVERY.MISSING_BODY,
+      contract,
+      truncateMarks,
+      sourceRefusalMarks: 0,
+      schemaConformance: SCHEMA_CONFORMANCE.NOT_APPLICABLE,
+    });
+  }
+  if (!parsed.ok) {
+    return wrap({
+      verdict: VERDICT.INVALID,
+      deliveryClass: DELIVERY.MALFORMED_BODY,
+      contract,
+      truncateMarks,
+      sourceRefusalMarks: 0,
+      schemaConformance: SCHEMA_CONFORMANCE.NOT_APPLICABLE,
+    });
+  }
+
+  const body = parsed.value;
+  const schemaConformance = contract.ok
+    ? SCHEMA_CONFORMANCE.HOLDS
+    : SCHEMA_CONFORMANCE.FAILS;
+
+  if (!isCompletedMerchantHttp(merchantHttpStatus)) {
+    return wrap({
+      verdict: VERDICT.INVALID,
+      deliveryClass: DELIVERY.MERCHANT_HTTP_FAILURE,
+      contract,
+      truncateMarks,
+      sourceRefusalMarks,
+      schemaConformance,
+    });
+  }
+
+  const typedFailure = typedFailureDelivery(body);
+  if (typedFailure) {
+    return wrap({
+      verdict: VERDICT.INVALID,
+      deliveryClass: typedFailure,
+      contract,
+      truncateMarks,
+      sourceRefusalMarks,
+      schemaConformance: SCHEMA_CONFORMANCE.FAILS,
+    });
+  }
+
+  if (!contract.ok) {
+    return wrap({
+      verdict: VERDICT.INVALID,
+      deliveryClass: DELIVERY.MALFORMED_BODY,
+      contract,
+      truncateMarks,
+      sourceRefusalMarks,
+      schemaConformance: SCHEMA_CONFORMANCE.FAILS,
+    });
+  }
+
+  if (resource === RESOURCES.EXTRACT_BATCH) {
+    if (body.ok === true && body.partial === false && truncateMarks === 0) {
+      return wrap({
+        verdict: VERDICT.PASS,
+        deliveryClass: DELIVERY.FULL_BOUNDED_CAPTURE,
+        contract,
+        truncateMarks,
+        sourceRefusalMarks: 0,
+        schemaConformance: SCHEMA_CONFORMANCE.HOLDS,
+      });
+    }
+    return wrap({
+      verdict: VERDICT.PASS,
+      deliveryClass: DELIVERY.TRUNCATED_PARTIAL,
+      contract,
+      truncateMarks: boundCounter(Math.max(truncateMarks, body.partial === true ? 1 : truncateMarks)),
+      sourceRefusalMarks: 0,
+      schemaConformance: SCHEMA_CONFORMANCE.HOLDS,
+    });
+  }
+
+  if (body.sourceOk === false) {
+    return wrap({
+      verdict: VERDICT.PASS,
+      deliveryClass: DELIVERY.SOURCE_REFUSAL,
+      contract,
+      truncateMarks,
+      sourceRefusalMarks: boundCounter(Math.max(1, sourceRefusalMarks)),
+      schemaConformance: SCHEMA_CONFORMANCE.HOLDS,
+    });
+  }
+
+  if (truncateMarks > 0) {
+    return wrap({
+      verdict: VERDICT.PASS,
+      deliveryClass: DELIVERY.TRUNCATED_PARTIAL,
+      contract,
+      truncateMarks,
+      sourceRefusalMarks: 0,
+      schemaConformance: SCHEMA_CONFORMANCE.HOLDS,
+    });
+  }
+
+  if (body.sourceOk === true) {
+    return wrap({
+      verdict: VERDICT.PASS,
+      deliveryClass: DELIVERY.FULL_BOUNDED_CAPTURE,
+      contract,
+      truncateMarks: 0,
+      sourceRefusalMarks: 0,
+      schemaConformance: SCHEMA_CONFORMANCE.HOLDS,
+    });
+  }
+
+  return wrap({
+    verdict: VERDICT.UNKNOWN,
+    deliveryClass: DELIVERY.MALFORMED_BODY,
+    contract,
+    truncateMarks,
+    sourceRefusalMarks,
+    schemaConformance: SCHEMA_CONFORMANCE.HOLDS,
+  });
+}
+
+function typedFailureDelivery(body) {
+  if (!body || typeof body !== "object" || body.ok !== false) return null;
+  const code = failureCodeOf(body);
+  if (code === "unsupported_encoding") return DELIVERY.UNSUPPORTED_CONTENT;
+  if (code === "timeout") return DELIVERY.TRANSPORT_FAILURE;
+  if (ENGINE_CODES.has(code)) return DELIVERY.ENGINE_FAILURE;
+  return null;
 }
 
 function failureCodeOf(body) {
@@ -156,17 +331,26 @@ function truncateMarksOf(body, resource) {
   return boundCounter(marks);
 }
 
-function wrap(verdict, deliveryClass, contract, truncateMarks = 0) {
+function wrap({
+  verdict,
+  deliveryClass,
+  contract,
+  truncateMarks = 0,
+  sourceRefusalMarks = 0,
+  schemaConformance,
+}) {
   return {
     validatorVerdict: verdict,
     validatorAuthority: VALIDATOR_AUTHORITY,
     validatorSource: VALIDATOR_SOURCE,
     deliveryClass,
     usefulness: USEFULNESS_UNKNOWN,
+    schemaConformance,
     counters: {
       schemaErrors: boundCounter(contract.schemaErrors),
       requiredPresent: boundCounter(contract.requiredPresent),
       truncateMarks: boundCounter(truncateMarks),
+      sourceRefusalMarks: boundCounter(sourceRefusalMarks),
     },
   };
 }
