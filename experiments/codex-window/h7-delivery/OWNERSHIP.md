@@ -7,7 +7,9 @@ Native parent owns all implementation/tests. Do not resume H6D session `01a09456
 
 - Repo: `epistemedeus/samedaydesk`
 - Branch pin: `codex/vendor-temp-lifecycle-20260912`
-- HEAD: `6007fcfa27074f9a594248e47296f1afa4f8385d` (1.4.3 vendor lifecycle candidate)
+- HEAD: `8a811bbadba7edc6c926b319b0839cd2f01e5896` (1.4.3 unpublished; cooperative signal cleanup)
+- Previous candidate (ancestor, not release-ready): `6007fcfa27074f9a594248e47296f1afa4f8385d`
+- Fix: `e122c26657977ce3a2d41642095e999db1125b53` (duplicate application signal-handler invocation)
 - Based on: `30345f69f16aca93bb95511ee4da62975c98cc04`
 - Feature branch: `codex/h7-delivery-20260912`
 - Worktree: `/tmp/h7/wt` (disjoint from `/tmp/h6d/wt`)

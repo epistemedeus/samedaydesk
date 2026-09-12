@@ -9,7 +9,7 @@ import { EXECUTION_CONTRACT_VERSION } from '../../../server/paid-useful-jobs/lib
 import { isM01JobId, m01ReceiptProvenance } from '../../../server/paid-useful-jobs/lib/delivery-catalog.mjs';
 import { digest, bytesDigest, fault } from './durable.mjs';
 
-export const CURRENT_CORE_BASE = '6007fcfa27074f9a594248e47296f1afa4f8385d';
+export const CURRENT_CORE_BASE = '8a811bbadba7edc6c926b319b0839cd2f01e5896';
 export const CURRENT_CATALOG_VERSION = '1.4.3';
 export { EXECUTION_CONTRACT_VERSION };
 

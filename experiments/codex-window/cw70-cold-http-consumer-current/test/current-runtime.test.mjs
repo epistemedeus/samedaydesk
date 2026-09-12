@@ -73,7 +73,7 @@ describe("CW70 cold CURRENT runtime via in-tree serve-execution.mjs", { timeout:
   const runtime = spawnExecutionHttp();
   after(() => runtime.stop());
 
-  it("health names execution.v1 on pin 6007fcfa / 1.4.3", async () => {
+  it("health names execution.v1 on pin 8a811bba / 1.4.3", async () => {
     const origin = await runtime.originPromise;
     const health = await getHealth(origin);
     assert.equal(health.status, 200);

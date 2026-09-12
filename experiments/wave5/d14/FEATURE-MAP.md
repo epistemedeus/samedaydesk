@@ -9,5 +9,5 @@
 | Ticket | Caller `executionId` is chosen and persisted atomically before POST. |
 | Acquisition | Host `path` is not authority. Default `unsupported-portable-acquisition`. Optional `--local-artifacts` / `--acquire-to`. `httpArtifactsDelivered` is always false. |
 | Tests | `node --test --test-concurrency=1 experiments/wave5/d14/test/*.test.mjs experiments/codex-window/cw70-cold-http-consumer-current/test/*.test.mjs` |
-| Runtime pin | `6007fcfa27074f9a594248e47296f1afa4f8385d` (catalog 1.4.3) |
+| Runtime pin | `8a811bbadba7edc6c926b319b0839cd2f01e5896` (catalog 1.4.3 unpublished) |
 | Account prerequisite | None. Loopback only. No wallet or live catalog. |

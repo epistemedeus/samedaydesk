@@ -1,19 +1,19 @@
 # CW62 H7 slice status
 
-Status: **acceptance pack green against pin `6007fcfa` (useful-jobs 1.4.3)**. Not a release, merge, or payment claim.
+Status: **acceptance pack green against pin `8a811bba` (useful-jobs 1.4.3 unpublished)**. Prior closeout used ancestor `6007fcfa`, which is not release-ready. Not a release, merge, or payment claim.
 
 Hostname `cursor` is not provider identity. Shared runtime was not edited.
 
 ## Pin actually consumed
 
-- Runtime pin: `6007fcfa27074f9a594248e47296f1afa4f8385d`
+- Runtime pin: `8a811bbadba7edc6c926b319b0839cd2f01e5896`
 - Catalog version: **1.4.3**
 - Execution contract: `samedaydesk.paid-useful-jobs.execution.v1`
 - Envelope `executionId` is top-level; `receipt.v1` is not required to nest `executionId`
 - Named-byte compare uses `name` / `kind` (default `file`) / `bytes` / `sha256` (fileEntry path omitted)
 - vendor-budget-impact receipts use the **1.0.0 wrapper archive** (`6bf65039…`, 2522418 B)
 - M01 jobs use **source-identity** pins; the two identities are not forced equal
-- `CURRENT_CORE_BASE` is `6007fcfa…`. Tests were **not** claimed against `76f0fab`
+- `CURRENT_CORE_BASE` is `8a811bba…`. Tests were **not** claimed against `76f0fab` or the non-release-ready `6007fcfa` archive.
 - `usefulPaidWork` remains false; `jobRevenueUsdc` remains null
 - HTTP execution cache is process-local (restart does not replay)
 

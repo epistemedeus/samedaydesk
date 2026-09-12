@@ -6,7 +6,7 @@ Observed 2026-09-12 on Cursor Cloud VM. Hostname `cursor` is not provider identi
 
 - Branch: `codex/h7-delivery-20260912`
 - HEAD observed (do not commit): `fe8057f395bc665b629e12dbff0db0c264f0eb46`
-- Runtime pin: `6007fcfa27074f9a594248e47296f1afa4f8385d` (useful-jobs **1.4.3**)
+- Runtime pin: `8a811bbadba7edc6c926b319b0839cd2f01e5896` (useful-jobs **1.4.3 unpublished**; previous `6007fcfa` is an ancestor and not release-ready)
 - Catalog/contract used: `samedaydesk.paid-useful-jobs.execution.v1`; envelope `executionId` is top-level
 - Node: v22.22.2
 

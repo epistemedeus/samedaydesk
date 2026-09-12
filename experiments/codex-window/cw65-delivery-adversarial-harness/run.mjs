@@ -54,7 +54,7 @@ writeJson(join(evidence, 'manifest.json'), { schema: 'cw65.current-core-acceptan
   repoHead: git('rev-parse', 'HEAD'), coreBase: base, branch: git('branch', '--show-current'), hostname: hostname(),
   node: process.version, execPath: process.execPath, concurrency: 1, heapMB: 768, http: 'ephemeral loopback',
   postgres: 'not requested; optional dedicated 55595 lane not run', only, scratch,
-  runtimePin: '6007fcfa27074f9a594248e47296f1afa4f8385d',
+  runtimePin: '8a811bbadba7edc6c926b319b0839cd2f01e5896',
   uncommittedOwned: dirty, otherSlicesOnBranchCount: otherSlicesOnBranch.length,
   ownershipCheck: 'uncommitted runtime paths refuse; sibling H7 consumer dirtiness vs HEAD and vs IMPORTS base is recorded, not a runner failure',
   runtimeHashes: before, harnessHashes: harnessHashes(),

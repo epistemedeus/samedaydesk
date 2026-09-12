@@ -1,6 +1,6 @@
 # CW65 H7 slice status (parent-owned harness)
 
-Runtime pin consumed: `6007fcfa27074f9a594248e47296f1afa4f8385d` (useful-jobs 1.4.3).
+Runtime pin consumed: `8a811bbadba7edc6c926b319b0839cd2f01e5896` (useful-jobs 1.4.3 unpublished). Previous `6007fcfa` evidence remains historical. Rebind probe: `evidence/h7-pin-8a811bba-vendor-001` (`d16-current-vendor` pass).
 PG 55595: **untested** (not required by executed cases).
 Do not git-commit from this file; parent commits.
 

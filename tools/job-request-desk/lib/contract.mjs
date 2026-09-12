@@ -14,7 +14,7 @@ export const DESK_CONTRACT = Object.freeze({
   catalogVersion: "1.4.3",
   integrationOwner: "CW62",
   remainingBinding:
-    "Consumes samedaydesk.paid-useful-jobs.execution.v1 at 6007fcfa (useful-jobs 1.4.3). vendor-budget-impact uses the 1.0.0 wrapper archive; M01 jobs use source-identity pins. HTTP execution cache is process-local.",
+    "Consumes samedaydesk.paid-useful-jobs.execution.v1 at 8a811bba (useful-jobs 1.4.3 unpublished). vendor-budget-impact uses the 1.0.0 wrapper archive; M01 jobs use source-identity pins. HTTP execution cache is process-local.",
   replay: Object.freeze({
     queuedResumes: true,
     rejectedStaysRejected: true,

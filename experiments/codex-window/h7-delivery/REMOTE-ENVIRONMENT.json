@@ -1,12 +1,13 @@
 {
   "schema": "h7-remote-environment/v1",
-  "observedAtUtc": "2026-09-12T10:41:16Z",
+  "observedAtUtc": "2026-09-12T11:10:23Z",
   "persistence": {
     "observed": [
       "This Cursor Cloud VM retained H6D worktree /tmp/h6d/wt and grok sessions under ~/.grok/sessions after the previous controller turn.",
       "H7 uses a disjoint worktree /tmp/h7/wt sharing Git objects with /tmp/h6d/wt.",
       "Hostname `cursor` is not provider identity.",
-      "Native parent session 01a094f5-dde1-70e1-ad54-481c90a8cd67 implemented on this VM without --resume of H6D."
+      "Native parent session 01a094f5-dde1-70e1-ad54-481c90a8cd67 implemented on this VM without --resume of H6D.",
+      "Same-session pin correction consumed 8a811bba (fix e122c266) without a new parent."
     ],
     "untestedPromises": [
       "Replacement VM from Git + documented auth without copying private home.",
@@ -22,7 +23,7 @@
   "nativeParentSessionId": "01a094f5-dde1-70e1-ad54-481c90a8cd67",
   "measured": {
     "cpu": { "nproc": 4, "model": "Intel(R) Xeon(R) Processor" },
-    "ram": { "memTotalKiB": 16398384, "memAvailableKiBAtH7Admit": 10564036, "memAvailableKiBAtCloseout": 10453652 },
+    "ram": { "memTotalKiB": 16398384, "memAvailableKiBAtH7Admit": 10564036, "memAvailableKiBAtCloseout": 10453652, "memAvailableKiBAtPinRebind": 10462112 },
     "disk": { "size": "254G", "used": "15G", "avail": "240G", "usePercent": "6%" }
   },
   "workRoots": {
@@ -36,13 +37,16 @@
   "repo": {
     "name": "epistemedeus/samedaydesk",
     "branch": "codex/h7-delivery-20260912",
-    "runtimePin": "6007fcfa27074f9a594248e47296f1afa4f8385d",
+    "runtimePin": "8a811bbadba7edc6c926b319b0839cd2f01e5896",
+    "runtimePinFix": "e122c26657977ce3a2d41642095e999db1125b53",
+    "previousRuntimePinNotReleaseReady": "6007fcfa27074f9a594248e47296f1afa4f8385d",
+    "unpublished143": { "bytes": 2615491, "sha256": "a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09" },
     "runtimePinBranch": "codex/vendor-temp-lifecycle-20260912",
     "basedOn": "30345f69f16aca93bb95511ee4da62975c98cc04",
     "importHeadAtStart": "fe8057f395bc665b629e12dbff0db0c264f0eb46",
-    "implementationHead": "7e540d1f30efd9841ba107ecaa7269562fe8560e",
+    "implementationHead": "559fa3b94dce6ad0fdc11af1952957a6b44d8746",
     "draftPr": "GraphQL createPullRequest not accessible by integration (403)",
-    "compareUrl": "https://github.com/epistemedeus/samedaydesk/compare/6007fcfa27074f9a594248e47296f1afa4f8385d...codex/h7-delivery-20260912"
+    "compareUrl": "https://github.com/epistemedeus/samedaydesk/compare/8a811bbadba7edc6c926b319b0839cd2f01e5896...codex/h7-delivery-20260912"
   },
   "nativeGrok": {
     "binary": "/home/ubuntu/.grok/bin/grok",

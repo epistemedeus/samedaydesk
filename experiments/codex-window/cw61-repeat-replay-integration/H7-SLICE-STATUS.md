@@ -1,6 +1,6 @@
 # CW61 H7 slice status (parent-owned while CW60/62/70 children run)
 
-Runtime pin consumed: `6007fcfa27074f9a594248e47296f1afa4f8385d` (useful-jobs 1.4.3).
+Runtime pin consumed: `8a811bbadba7edc6c926b319b0839cd2f01e5896` (useful-jobs 1.4.3 unpublished). Previous `6007fcfa` is an ancestor and not release-ready.
 PG 55591: **untested**.
 Do not git-commit from this file; parent commits.
 

@@ -8,17 +8,21 @@ Native Grok Heavy (`grok-4.6`, effort xhigh) on Cursor Cloud VM. Hostname `curso
 | --- | --- |
 | Repo | `epistemedeus/samedaydesk` |
 | Feature branch | `codex/h7-delivery-20260912` |
-| Runtime pin | `6007fcfa27074f9a594248e47296f1afa4f8385d` (useful-jobs **1.4.3**) |
+| Runtime pin | `8a811bbadba7edc6c926b319b0839cd2f01e5896` (useful-jobs **1.4.3 unpublished**) |
+| Pin fix | `e122c26657977ce3a2d41642095e999db1125b53` (duplicate application signal-handler invocation) |
+| Previous pin (ancestor, **not** release-ready) | `6007fcfa27074f9a594248e47296f1afa4f8385d` |
+| Unpublished 1.4.3 archive | **2615491** bytes, sha256 `a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09` |
 | Pin branch | `codex/vendor-temp-lifecycle-20260912` |
 | Based on | `30345f69f16aca93bb95511ee4da62975c98cc04` |
 | Start HEAD (import only) | `fe8057f395bc665b629e12dbff0db0c264f0eb46` |
+| Rebind merge | `559fa3b` (`8a811bba` into consumer branch; no donor-history rewrite) |
 | Execution contract | `samedaydesk.paid-useful-jobs.execution.v1` |
 | Public catalog | `client/public/for-agents/useful-jobs/catalog.json` version **1.4.3** |
 | Legacy wrapper extract | useful-jobs **1.0.0** archive `6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51` / 2,522,418 bytes |
 | M01 / lockfile-pin-delta | in-tree source-identity pin (not forced equal to the 1.0.0 archive) |
 | Node | v22.22.2 |
 | Grok CLI | `/home/ubuntu/.grok/bin/grok` 1.0.25 |
-| Protected trees vs pin | `server/paid-useful-jobs`, `tools/result-mailbox`, `tools/job-output-atomicity`, `tools/lockfile-pin-delta`, `experiments/wave5/m01`, `client/public/for-agents/useful-jobs` **unchanged** |
+| Protected trees vs pin | `server/paid-useful-jobs` and `client/public/for-agents/useful-jobs` match `8a811bba`. Other protected trees unchanged from `6007fcfa`. |
 | CW64 | read-only (`tools/python-useful-jobs-client/` not edited) |
 | Old package archives | immutable |
 | Core runtime / release builder / CW63 / H6D | not edited |
@@ -46,6 +50,22 @@ All invocations used `NODE_OPTIONS=--max-old-space-size=768`, `--test-concurrenc
 | CW70 | combined owned tests | 36 | 0 | 0 | includes foundation + current-runtime HTTP |
 | H7 | `h7-delivery/test/cold-journey.test.mjs` | 1 | 0 | 0 | chained freeze→execute→export/ack→replay/batch→HTTP |
 
+### Rebind to `8a811bba` (this turn)
+
+Cause: duplicate application signal-handler invocation. Merged pin head `8a811bba` (fix `e122c266`) onto the consumer branch without rewriting consumer commits and without merging unrelated donor histories. Unpublished 1.4.3 archive verified **2615491** bytes, sha256 `a18ab918…cf62b09`. Old `6007fcfa` archive is not release-ready (fails the four new signal tests). 28 prior released archive/pin files unchanged.
+
+| Pack | Result |
+| --- | --- |
+| `server/paid-useful-jobs/tests/vendor-temp-lifecycle.test.mjs` | **9/9** (includes four application-handler-without-redelivery tests) |
+| `server/paid-useful-jobs/tests/packaged-vendor-lifecycle.test.mjs` | **2/2** (nested 9/9 on extracted 1.4.3 + packaged CLI cancel) |
+| H7 cold journey | **1/1** (receipt pin `8a811bba`) |
+| CW60 journey | **14/14** |
+| CW62 acceptance | **25/25** (consumed pin assertion is `8a811bba`) |
+| CW70 foundation + current-runtime + D14 | **36/36** |
+| CW61 frozen-refs (partial+clean-units) | **2/2** |
+| CW61 current-wrapper | **19/19** |
+| CW65 `--only d16-current-vendor` | pass, `runtimeUnchanged: true`, `ready: false` (`evidence/h7-pin-8a811bba-vendor-001`) |
+
 PG **55590 / 55591 / 55592 / 55595**: **untested** (no executed case required a cluster).
 
 Donor package suites that still assume old CLI pins, `f08Root` overrides, or git-fetched D01 were **not** bulk-run as current acceptance.
@@ -56,7 +76,7 @@ Donor package suites that still assume old CLI pins, `f08Root` overrides, or git
 
 2. **CW61 repeat/replay.** Two inherited catalog tests expected `actionable` on `samples/pricing/a` after mutating `gpt-4.1-input`. Independent analysis of that sample is **partial** (`USD/1M-Tokens` vs `USD/1M-tokens` on grok-4.6-input). Status mapping was not reversed. New clean-units control is `actionable`. Durable `.replay-capture/` + `wrapper-process.json` per run including refusal of run A. Legacy added-row `no-budget-delta` is a witnessed engine semantic defect, not readiness.
 
-3. **CW62 batch/value.** Harness import root was five `../` segments; test dir is four levels down. Rebound `CURRENT_CORE_BASE` to `6007fcfa`. Named-byte projection; M01 vs 1.0.0 archive identity branched. Desk→batch→value library and HTTP, kill/restart, interrupted batch, concurrent writers, substitutions, value event replay. `usefulPaidWork` remains false.
+3. **CW62 batch/value.** Harness import root was five `../` segments; test dir is four levels down. Rebound `CURRENT_CORE_BASE` first to `6007fcfa`, then to `8a811bba`. Named-byte projection; M01 vs 1.0.0 archive identity branched. Desk→batch→value library and HTTP, kill/restart, interrupted batch, concurrent writers, substitutions, value event replay. `usefulPaidWork` remains false.
 
 4. **CW70 cold HTTP consumer.** Ticket persists caller `executionId` before POST. Incomplete HTTP 200 `ok:true` is not analysis success. Redirects `error`. Foreign-origin retrieval refused. **`unsupported-portable-acquisition`** when only host paths exist. Explicit `fetch --local-artifacts DIR --acquire-to DIR`. In-tree `serve-execution.mjs` only; spawn-d01 git-fetch fallback removed. `httpArtifactsDelivered` stays false.
 
@@ -89,9 +109,13 @@ Optional later: dedicated PG 55590/55591/55592/55595; CW64 pin refresh against a
 
 ## Git / PR
 
-Branch tip: `7e540d1f30efd9841ba107ecaa7269562fe8560e` on `codex/h7-delivery-20260912` (import `fe8057f` plus seven implementation/stamp commits).
+Branch tip after pin rebind merge: `559fa3b94dce6ad0fdc11af1952957a6b44d8746` (consumer work retained; pin `8a811bba` merged). A follow-up commit will stamp this RESULT.
 
 Draft PR via `gh pr create` returned GraphQL **Resource not accessible by integration** (`createPullRequest`). Compare URL (review this, not a silent `main` merge):
+
+https://github.com/epistemedeus/samedaydesk/compare/8a811bbadba7edc6c926b319b0839cd2f01e5896...codex/h7-delivery-20260912
+
+Prior (pre-rebind) compare against the ancestor pin:
 
 https://github.com/epistemedeus/samedaydesk/compare/6007fcfa27074f9a594248e47296f1afa4f8385d...codex/h7-delivery-20260912
 

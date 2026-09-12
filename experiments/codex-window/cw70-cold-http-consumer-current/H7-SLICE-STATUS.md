@@ -1,7 +1,7 @@
 # CW70 H7 slice status — cold HTTP consumer of CURRENT 1.4.3
 
 Recorded 2026-09-12 on Cursor Cloud VM. Hostname `cursor` is not provider identity.
-Runtime pin: `6007fcfa27074f9a594248e47296f1afa4f8385d` (useful-jobs **1.4.3**).
+Runtime pin: `8a811bbadba7edc6c926b319b0839cd2f01e5896` (useful-jobs **1.4.3 unpublished**). Previous `6007fcfa` is an ancestor and not release-ready.
 Branch: `codex/h7-delivery-20260912`. No git commit from this child.
 
 ## What landed

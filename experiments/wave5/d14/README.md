@@ -1,7 +1,7 @@
 # Thin HTTP consumer for execution.v1 (W5-D14 / CW70)
 
 Fetch-only client of `samedaydesk.paid-useful-jobs.execution.v1` on useful-jobs
-**1.4.3** (runtime pin `6007fcfa27074f9a594248e47296f1afa4f8385d`). It is not a
+**1.4.3 unpublished** (runtime pin `8a811bbadba7edc6c926b319b0839cd2f01e5896`). It is not a
 second useful-jobs server and it does not vendor the wrapper.
 
 ## How to submit caller JSON and fetch the result

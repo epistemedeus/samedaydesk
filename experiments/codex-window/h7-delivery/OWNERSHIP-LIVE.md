@@ -6,7 +6,9 @@ Recorded 2026-09-12 on Cursor Cloud VM. Hostname `cursor` is not provider identi
 
 - Branch: `codex/h7-delivery-20260912`
 - HEAD at start: `fe8057f395bc665b629e12dbff0db0c264f0eb46` (import of CW60/61/62/65/70 onto pin)
-- Runtime pin: `6007fcfa27074f9a594248e47296f1afa4f8385d` (useful-jobs 1.4.3)
+- Runtime pin: `8a811bbadba7edc6c926b319b0839cd2f01e5896` (useful-jobs 1.4.3 unpublished)
+- Previous pin (ancestor, not release-ready): `6007fcfa27074f9a594248e47296f1afa4f8385d`
+- Archive: 2615491 bytes, sha256 `a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09`
 - Diff vs pin: 613 files, owned consumer/experiment trees only
 - Protected trees match pin exactly: `server/paid-useful-jobs`, `tools/result-mailbox`, `tools/job-output-atomicity`, `tools/lockfile-pin-delta`, `experiments/wave5/m01`, `client/public/for-agents/useful-jobs`
 

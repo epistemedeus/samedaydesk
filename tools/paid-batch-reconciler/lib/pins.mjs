@@ -30,7 +30,7 @@ export const USEFUL_JOBS_CATALOG_PATH = join(
 
 export const SDS_MAIN_SHA = "5b97d1b02e786acd1895cfa1508087ae3f7a1545";
 export const F08_PIN_SHA = "aeef964fa188443078958d9d6d393afae1d542ee";
-export const CURRENT_RUNTIME_PIN = "6007fcfa27074f9a594248e47296f1afa4f8385d";
+export const CURRENT_RUNTIME_PIN = "8a811bbadba7edc6c926b319b0839cd2f01e5896";
 export const F08_PIN_REF = "codex/vendor-temp-lifecycle-20260912";
 export const F08_PIN_PR = 52;
 export const FALLBACK_RUNNERS = Object.freeze(["useful-jobs", "engines", "local-engine"]);

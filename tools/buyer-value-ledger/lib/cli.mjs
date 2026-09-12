@@ -9,7 +9,7 @@ import { CURRENT_CORE_BASE, EXECUTION_CONTRACT_VERSION, archiveEnginePin } from 
 
 export function usage() {
   return `Buyer value ledger.
-Measures durable desk/batch tickets from the current execution.v1 core (6007fcfa / useful-jobs 1.4.3).
+Measures durable desk/batch tickets from the current execution.v1 core (8a811bba / useful-jobs 1.4.3 unpublished).
 Required buyerClass: owner-qa | fixture-buyer | unknown.
 Never infers organic or independent demand. Never treats 8.105 USDC as this job's revenue.
 Archive-origin/file overrides are refused. Failed and unknown results are not useful paid work.
