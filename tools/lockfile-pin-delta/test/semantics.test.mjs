@@ -262,7 +262,7 @@ function oracleDelta(before, after) {
   };
 }
 
-test("bounded structural oracle agrees across 120 pin and boundary mutations", () => {
+test("bounded structural cross-check agrees across 120 pin and boundary mutations", () => {
   const base = {
     name: "oracle",
     lockfileVersion: 3,

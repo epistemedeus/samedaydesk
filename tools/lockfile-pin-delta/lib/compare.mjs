@@ -10,6 +10,8 @@ function publicPin(pin) {
     resolved: pin.resolved ?? null,
     gitCommit: pin.gitCommit ?? null,
     link: pin.link === true,
+    dev: pin.dev === true,
+    peer: pin.peer === true,
     optional: pin.optional === true,
     devOptional: pin.devOptional === true,
     os: pin.os ?? null,
