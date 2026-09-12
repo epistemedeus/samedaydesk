@@ -69,3 +69,36 @@ for (const signal of ["SIGTERM", "SIGINT"]) test(`${signal} cleans scratch and p
   assert.equal(receivedSignal, signal);
   assert.equal(existsSync(owned), false);
 });
+
+for (const signal of ["SIGTERM", "SIGINT"]) for (const registration of ["on", "once"]) {
+  test(`${signal} preserves an existing ${registration} application handler without redelivery`, async (t) => {
+    const f = fixture(t);
+    const code = f.prelude + `
+      let calls=0, timer;
+      process.${registration}(${JSON.stringify(signal)}, () => {
+        calls++;
+        timer ||= setTimeout(() => {console.log(JSON.stringify({calls})); process.exit(37);}, 80);
+      });
+      console.log(ensureVendorsExtracted());
+      setInterval(()=>{}, 1000);
+    `;
+    const child = spawn(process.execPath, ["--input-type=module", "-e", code], {
+      env: f.env, stdio: ["ignore", "pipe", "pipe"],
+    });
+    t.after(() => { if (child.exitCode === null && child.signalCode === null) child.kill("SIGKILL"); });
+    const timeout = setTimeout(() => child.kill("SIGKILL"), 5000);
+    t.after(() => clearTimeout(timeout));
+    let output = "";
+    child.stdout.on("data", chunk => { output += chunk.toString(); });
+    const ready = await once(child.stdout, "data");
+    const owned = ready[0].toString().trim();
+    assert.equal(existsSync(owned), true);
+    const exited = once(child, "exit");
+    child.kill(signal);
+    const [codeStatus, receivedSignal] = await exited;
+    assert.equal(codeStatus, 37, `application exit changed: ${receivedSignal}; output=${output}`);
+    assert.equal(receivedSignal, null);
+    assert.equal(JSON.parse(output.trim().split("\n").at(-1)).calls, 1);
+    assert.equal(existsSync(owned), false);
+  });
+}

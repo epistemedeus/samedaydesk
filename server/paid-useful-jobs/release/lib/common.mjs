@@ -25,11 +25,17 @@ function registerVendorCleanup() {
   cleanupRegistered = true;
   process.once("exit", cleanupVendors);
   for (const signal of ["SIGINT", "SIGTERM"]) {
-    process.once(signal, () => {
+    const onSignal = () => {
+      // Observe before pre-existing once handlers remove themselves. An
+      // application handler owns its exit/retry policy; never re-send to it.
+      const applicationHandlesSignal = process.listeners(signal).some(listener => listener !== onSignal);
       cleanupVendors();
-      // The once handler is already detached, so preserve normal signal exit.
-      process.kill(process.pid, signal);
-    });
+      if (!applicationHandlesSignal) {
+        process.removeListener(signal, onSignal);
+        process.kill(process.pid, signal);
+      }
+    };
+    process.prependListener(signal, onSignal);
   }
 }
 
