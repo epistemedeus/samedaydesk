@@ -1,19 +1,12 @@
-import { createHash } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { ConsumerRefuse } from "./errors.mjs";
+import { digestNamedBytes, sha256Bytes } from "./digest-named.mjs";
+import { JOB_EXPECTED_OUTPUTS } from "./pins.mjs";
+import { assertExecutionId } from "./origin.mjs";
 
-export class ConsumerRefuse extends Error {
-  constructor(code, message, detail = {}) {
-    super(message);
-    this.name = "ConsumerRefuse";
-    this.code = code;
-    this.detail = detail;
-  }
-}
-
-export function sha256Bytes(buf) {
-  return createHash("sha256").update(buf).digest("hex");
-}
+export { ConsumerRefuse, sha256Bytes };
 
 export function looksJsonText(value) {
   if (typeof value !== "string") return false;
@@ -29,6 +22,16 @@ export function stagedSha256(text) {
   return sha256Bytes(Buffer.from(stagedText(text), "utf8"));
 }
 
+export function generateExecutionId() {
+  return randomUUID();
+}
+
+export function freezeRequestRecord(request) {
+  const text = JSON.stringify(request);
+  const buf = Buffer.from(text, "utf8");
+  return { text, bytes: buf.length, sha256: sha256Bytes(buf) };
+}
+
 export function encodeInputFile(key, filePath) {
   const abs = resolve(filePath);
   const buf = readFileSync(abs);
@@ -36,7 +39,7 @@ export function encodeInputFile(key, filePath) {
   if (!looksJsonText(text)) {
     throw new ConsumerRefuse(
       "non-json-inline",
-      `Input ${key} is not JSON text. D01 POST /execute currently materializes JSON objects or JSON strings. Non-JSON bytes still need a D01 envelope.`,
+      `Input ${key} is not JSON text. POST /execute currently materializes JSON objects or JSON strings. Non-JSON bytes still need an envelope.`,
       { key, path: abs, bytes: buf.length },
     );
   }
@@ -63,10 +66,12 @@ export function encodeExecuteRequest({
   fundingIntent,
   payment = null,
   example = false,
+  executionId,
 }) {
   if (!jobId) {
     throw new ConsumerRefuse("missing-job", "jobId is required");
   }
+  const id = executionId == null ? generateExecutionId() : assertExecutionId(executionId);
   const inputs = {};
   const submitted = {};
   for (const [key, filePath] of Object.entries(files)) {
@@ -79,11 +84,18 @@ export function encodeExecuteRequest({
       stagedSha256: encoded.stagedSha256,
     };
   }
-  const request = { jobId, inputs };
+  const request = { jobId, inputs, executionId: id };
   if (fundingIntent) request.fundingIntent = fundingIntent;
   if (example === true) request.example = true;
   if (payment && typeof payment === "object") request.payment = payment;
-  return { request, submitted };
+  const frozen = freezeRequestRecord(request);
+  return {
+    request,
+    submitted,
+    frozen,
+    executionId: id,
+    expectedOutputs: JOB_EXPECTED_OUTPUTS[jobId] || [],
+  };
 }
 
 export function assertNoFilesystemPaths(request, forbiddenSubstrings) {
@@ -98,4 +110,15 @@ export function assertNoFilesystemPaths(request, forbiddenSubstrings) {
       );
     }
   }
+}
+
+export function digestFromSubmitted(submitted = {}) {
+  return digestNamedBytes(
+    Object.entries(submitted).map(([name, row]) => ({
+      name,
+      kind: "file",
+      bytes: row.bytes,
+      sha256: row.stagedSha256,
+    })),
+  );
 }

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Thin HTTP consumer of the D01 paid useful-jobs execution contract. Not a second server.",
+  "description": "Thin HTTP consumer of paid useful-jobs execution.v1 on CURRENT 1.4.3. Not a second server. HTTP path is not acquisition authority.",
   "engines": {
     "node": ">=22"
   },

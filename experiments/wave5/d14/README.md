@@ -1,21 +1,23 @@
-# Thin HTTP consumer for D01 execution (W5-D14)
+# Thin HTTP consumer for execution.v1 (W5-D14 / CW70)
 
-This package is a fetch-only client of `samedaydesk.paid-useful-jobs.execution.v1`.
-It is not a second useful-jobs server and it does not vendor the wrapper.
+Fetch-only client of `samedaydesk.paid-useful-jobs.execution.v1` on useful-jobs
+**1.4.3** (runtime pin `6007fcfa27074f9a594248e47296f1afa4f8385d`). It is not a
+second useful-jobs server and it does not vendor the wrapper.
 
 ## How to submit caller JSON and fetch the result
 
-1. Start D01 loopback from the D01 checkout (not this folder):
+1. Start the in-tree loopback (not this folder, not a newly written server):
 
 ```bash
 node server/paid-useful-jobs/bin/serve-execution.mjs
 ```
 
-The process prints one JSON line with `origin`.
+The process prints one JSON line with `origin`. Cache is process-local and is
+not durable across restart.
 
-2. From the SameDayDesk repository root, submit caller-owned JSON files. The
-client sends the file bytes in `POST /execute`. It does not send filesystem
-paths.
+2. Submit caller-owned JSON. The client chooses/validates `executionId`, reads
+UTF-8 JSON once, persists the ticket **atomically before POST**, then sends
+bytes (not filesystem paths) to `POST /execute`.
 
 ```bash
 node experiments/wave5/d14/bin/http-consumer.mjs submit \
@@ -26,7 +28,9 @@ node experiments/wave5/d14/bin/http-consumer.mjs submit \
   --ticket /tmp/w5-d14-ticket.json
 ```
 
-3. In a second process, fetch that execution:
+3. In a second process, fetch that execution. Retrieval uses the ticket's
+caller-owned id at the ticket origin only (`GET /results/:id`). It does not
+rerun the job and does not take the id from a lost POST response.
 
 ```bash
 node experiments/wave5/d14/bin/http-consumer.mjs fetch \
@@ -34,25 +38,56 @@ node experiments/wave5/d14/bin/http-consumer.mjs fetch \
   --out /tmp/w5-d14-result.json
 ```
 
-`fetch` uses `GET /results/:id` from the ticket. It does not rerun the job.
+HTTP `path` fields are **host paths, not acquisition authority**. This server
+has no artifact download route. `fetch` without local copies surfaces
+`unsupported-portable-acquisition` and keeps `httpArtifactsDelivered: false`.
+The vendor HTTP summary is metadata, not `budget-impact.json`.
+
+Explicit local acquisition (caller-selected copies only; never an artifact HTTP
+server):
+
+```bash
+node experiments/wave5/d14/bin/http-consumer.mjs fetch \
+  --ticket /tmp/w5-d14-ticket.json \
+  --out /tmp/w5-d14-result.json \
+  --local-artifacts /path/to/copies \
+  --acquire-to /path/to/dest
+```
+
+Local acquire checks exact names, bytes, sha256, containment, and rejects
+symlinks. Destination publish is atomic. Source is `local`;
+`httpArtifactsDelivered` stays false.
 
 ## Classify outcomes
 
-The client labels HTTP failures separately from D01 contract JSON:
+- `http-transport-failure` — no contract JSON (refused, timeout, redirect,
+  400/404/409/410/413/503, non-JSON, oversize).
+- `execution-transport-failure` — HTTP 200 with engine crash/timeout/acquisition-failed.
+- `contract-refusal` — HTTP 200 `ok: false` (unknown-job, sample-not-a-sale, …).
+- `incomplete-delivery` — HTTP 200 `ok: true` with incomplete outputs. Not analysis success.
+- `analysis-outcome` — HTTP 200 `ok: true` with complete delivery. A useful
+  no-change report is not a crash.
+- `ticket-mismatch` — GET body failed ticket-bound verification.
 
-- `http-transport-failure` means the request did not return contract JSON (refused connection, HTTP 400/404/5xx).
-- `execution-transport-failure` means HTTP 200 with D01 `transport` of crash, timeout, or acquisition-failed.
-- `contract-refusal` means HTTP 200 with `ok: false` for a truthful wrapper refusal such as `sample-not-a-sale` or `unknown-job`.
-- `analysis-outcome` means HTTP 200 with `ok: true`. A useful no-change or refusal report from the engine is not a crash.
+GET does not echo caller payment/accepted terms or the server frozen request
+hash. Local `declaredTerms` are not remote cryptographic proof. Recomputed
+hashes on a substituted GET are not caller identity.
 
 ## Tests
 
 ```bash
-node --test --test-concurrency=1 experiments/wave5/d14/test/*.test.mjs
+NODE_OPTIONS=--max-old-space-size=768 node --test --test-concurrency=1 \
+  experiments/wave5/d14/test/*.test.mjs \
+  experiments/codex-window/cw70-cold-http-consumer-current/test/*.test.mjs
 ```
 
-Tests spawn D01 `serve-execution.mjs` at pin `6bed72dd22a396134aa5c957933b42c3a5746698` when this branch does not contain that file. Missing D01 HTTP is a failed run, not a skip.
+Tests launch in-tree `server/paid-useful-jobs/bin/serve-execution.mjs`. They do
+not git-fetch historical D01 pins.
 
 ## Limits
 
-Non-JSON inputs (XML, YAML) are refused here. D01 `POST /execute` still treats a non-JSON string as a filesystem path. GET `/results/:id` returns the contract object, including output sha256. Artifact file bytes stay on the D01 host path until D01 adds an HTTP payload.
+Non-JSON inputs are refused here. `POST /execute` still treats a non-JSON string
+as a filesystem path. GET `/results/:id` returns contract JSON including output
+sha256 and host `path`. Artifact file bytes stay on the host until the caller
+imports copies. Same-ID replay is process-local, not durable exactly-once
+recovery across restart.

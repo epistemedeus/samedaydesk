@@ -1,64 +1,53 @@
-# W5-D14 RECEIPT — thin real HTTP consumer
+# W5-D14 RECEIPT — thin real HTTP consumer (CW70 repair)
 
-**Task:** W5-D14
+**Task:** W5-D14 / CW70 cold HTTP consumer of CURRENT runtime
 **Repo:** `epistemedeus/samedaydesk`
-**Branch:** `cursor/w5-d14-thin-real-http-consumer-example-not-a-second-server-a0d3`
-**Assignment branch name:** `codex/w5-d14-20260911`
-**PR:** https://github.com/epistemedeus/samedaydesk/pull/100 (draft)
-**StartingRef / SDS52:** `aeef964fa188443078958d9d6d393afae1d542ee` (PR52)
-**Tested D01 HTTP:** `6bed72dd22a396134aa5c957933b42c3a5746698` (`codex/w5-d01-20260911`, draft PR74)
-**Tested D01 kernel SHA:** `bccf34b3816ebe20d43823d0978308fd10f9bb33`
+**Feature branch:** `codex/h7-delivery-20260912`
+**Runtime pin:** `6007fcfa27074f9a594248e47296f1afa4f8385d` (useful-jobs **1.4.3**)
 **Contract:** `samedaydesk.paid-useful-jobs.execution.v1`
-**Pilot source:** `epistemedeus/pilot@95b3f3a47f5b1b69bd237e4c978fc3376221365d`
-**Owned paths:** `experiments/wave5/d14/`
+**Owned paths:** `experiments/wave5/d14/` `experiments/codex-window/cw70-cold-http-consumer-current/`
+
+Historical D14 import and original receipts remain in
+`experiments/codex-window/cw70-cold-http-consumer-current/evidence/source/`
+(immutable). Historical SDS52/D01-pin claims below are provenance, not current
+acceptance.
 
 ## What
 
-Fetch-only consumer of D01 loopback HTTP. `submit` reads caller JSON files and
-POSTs those bytes to `POST /execute`. A second process `fetch`es
-`GET /results/:id`. No wrapper, engine, or ResourceServer is copied here.
+Fetch-only consumer of in-tree `serve-execution.mjs`. `submit` validates
+executionId, freezes caller JSON, writes the ticket, then POSTs. `fetch` is a
+separate process that GETs `/results/:id` from the ticket origin only. No
+wrapper/engine copy. No artifact download client pretending to be a server.
 
-## Current-source findings
+## Current-source findings (this pin)
 
-SDS52 `aeef964` `server/paid-useful-jobs/lib/envelope.mjs` still declares
-`https://samedaydesk.com/paid-useful-jobs/<id>` with `live: false`. SDS Express
-`POST /execute` is not that contract (tested against `createSdsApp`).
-
-D01 at `6bed72d` publishes `GET /health`, `POST /execute`, `GET /results/:id`.
-Its in-tree HTTP test posts filesystem paths. This consumer sends JSON text
-instead, so an independent process does not share disk paths with the server.
-
-D01 GET still returns output `path` values on the server host. This consumer
-treats the contract JSON (executionId, input sha256, outputsDigest) as the
-fetched result. It does not claim HTTP payload bytes for `.md` / `.json`
-artifacts.
-
-Non-JSON job inputs remain a D01 binding: a non-JSON string is still a path
-in `materializeInputs`.
+- `POST /execute` accepts optional caller `executionId`; binds request hash;
+  same request replays; different request 409 `execution-id-conflict`.
+- `GET /results/:id`: missing 404, expired 410, cache full 503.
+- Cache is process-local, 24h default, 1024 entries, not durable across restart.
+- No artifact download route. No bearer auth in this server.
+- HTTP 200 can carry `ok: false`, missing outputs, or engine transport failure.
+- Complete no-change can be successful delivery (`analysis-outcome`).
+- Output `path` fields are host paths, not client acquisition authority.
+- GET does not echo caller payment/accepted terms or frozen request hash.
+- Vendor HTTP summary is not the full `budget-impact.json` artifact.
 
 ## Tests
 
 ```bash
-node --test --test-concurrency=1 experiments/wave5/d14/test/*.test.mjs
+NODE_OPTIONS=--max-old-space-size=768 node --test --test-concurrency=1 \
+  experiments/wave5/d14/test/*.test.mjs \
+  experiments/codex-window/cw70-cold-http-consumer-current/test/*.test.mjs
 ```
 
-**PASS** — 11 pass, 0 fail, 0 skipped, 0 cancelled. Suites: SDS52 HTTP 4,
-D01 HTTP 7. Includes two CLI processes (submit then fetch), D01
-`serve-execution.mjs`, and `createSdsApp`. Missing Express is a failed import,
-not a skip. Postgres is not required.
-
-Node v22.14.0.
+See `experiments/codex-window/cw70-cold-http-consumer-current/H7-SLICE-STATUS.md`
+for the latest pass/fail counts. Spawn uses in-tree
+`server/paid-useful-jobs/bin/serve-execution.mjs`. git-fetch of historical D01
+is forbidden.
 
 ## Integration limits
 
-- Tested D01 `execution.v1` at `6bed72dd22a396134aa5c957933b42c3a5746698`. Not a later sibling.
-- Remaining D01 binding: live/public HTTP, non-JSON byte envelope, output payload on GET.
-- Root/journey owner still starts D01 `serve-execution.mjs` and points `--base` at its origin. No production deploy.
+- Not a later sibling of this pin. Not durable exactly-once across restart.
+- Remaining binding: live/public HTTP, non-JSON byte envelope, no GET artifact payload.
+- `unsupported-portable-acquisition` is the honest portable result when only host paths exist.
 - No live settlement, catalog publication, or new spend.
-
-## pstack
-
-Plugin cache `68d834d9ca8f34c375ecb8057bfbcde5396a01f8` contains poteto-mode and
-setup-pstack. `~/.cursor/rules/pstack-models.mdc` is absent. Skills were read
-from that cache. Literal slash commands were not invoked. No extra Cloud
-agents. Parent run model: Cursor Grok 4.6 xhigh (`cursor-grok-4.6-xhigh`).
