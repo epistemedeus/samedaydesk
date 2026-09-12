@@ -6,6 +6,9 @@ Isolated native session (same H6D parent identity, **not** the terminal H7 deliv
 - CWD: `/tmp/h7-witness/wt`
 - Branch: `codex/h7-d18-d20-repair-20260912`
 - Base / vendor pin: `8a811bbadba7edc6c926b319b0839cd2f01e5896` (PR143, fix `e122c266`)
+- Implementation head: `5bdbe5ac1b59ecc406700f2a6247f50ab27681d4`
+- Compare (on PR143): https://github.com/epistemedeus/samedaydesk/compare/codex/vendor-temp-lifecycle-20260912...codex/h7-d18-d20-repair-20260912
+- Draft PR: GitHub App token cannot `createPullRequest` (403); compare URL is the handoff.
 - H6D worktree `/tmp/h6d/wt` left at `b54eaa0ae8cb756cdb82b2b923a9468c3893061c` (not dirtied)
 - H7 delivery session `01a094f5-dde1-70e1-ad54-481c90a8cd67` not resumed
 - TMPDIR: `/tmp/h7-witness/runtime-tmp`
