@@ -1,0 +1,123 @@
+{
+  "schema": "samedaydesk.lockfile-pin-delta.v1",
+  "appId": "lockfile-pin-delta",
+  "ok": true,
+  "status": "actionable",
+  "purchaseAuthority": false,
+  "paidValueClaim": false,
+  "settlement": "nonsettling-prototype",
+  "equality": "pin-fields",
+  "lockfileVersion": {
+    "before": 3,
+    "after": 3
+  },
+  "mapSource": {
+    "before": "packages",
+    "after": "packages"
+  },
+  "counts": {
+    "beforePins": 5,
+    "afterPins": 5,
+    "added": 0,
+    "removed": 0,
+    "changed": 3,
+    "unchanged": 2,
+    "missingIntegrity": 0
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "node_modules/ansi-wrap",
+      "name": "ansi-wrap",
+      "before": {
+        "id": "node_modules/ansi-wrap",
+        "name": "ansi-wrap",
+        "version": "0.1.0",
+        "integrity": "sha1-qCJQ3bABXponyoLoLqYDu/pF768=",
+        "resolved": "https://registry.npmjs.org/ansi-wrap/-/ansi-wrap-0.1.0.tgz",
+        "gitCommit": null,
+        "termsHash": "1e17644f488e6a52c041e333256f0f3eea94ad8998bc34884dc6085995247669",
+        "missingIntegrity": false
+      },
+      "after": {
+        "id": "node_modules/ansi-wrap",
+        "name": "ansi-wrap",
+        "version": "0.1.0",
+        "integrity": "sha512-ZyznvL8k/FZeQHr2T6LzcJ/+vBApDnMNZvfVFy3At0knswWd6rJ3/0Hhmpu8oqa6C92npmozs890sX9Dl6q+Qw==",
+        "resolved": "https://registry.npmjs.org/ansi-wrap/-/ansi-wrap-0.1.0.tgz",
+        "gitCommit": null,
+        "termsHash": "b264dae74d982ace0a5dabf10d2fa0344286ff3c83ca83f441735a6180586a53",
+        "missingIntegrity": false
+      },
+      "changeKinds": [
+        "integrity"
+      ]
+    },
+    {
+      "id": "node_modules/archy",
+      "name": "archy",
+      "before": {
+        "id": "node_modules/archy",
+        "name": "archy",
+        "version": "1.0.0",
+        "integrity": "sha1-+cjBN1fMHde8N5rHeyxipcKGjEA=",
+        "resolved": "https://registry.npmjs.org/archy/-/archy-1.0.0.tgz",
+        "gitCommit": null,
+        "termsHash": "cabca9c2a7fe713894630e1f0a358b554ec2403d547cb8b24900236b0a337b9a",
+        "missingIntegrity": false
+      },
+      "after": {
+        "id": "node_modules/archy",
+        "name": "archy",
+        "version": "1.0.0",
+        "integrity": "sha512-Xg+9RwCg/0p32teKdGMPTPnVXKD0w3DfHnFTficozsAgsvq2XenPJq/MYpzzQ/v8zrOyJn6Ds39VA4JIDwFfqw==",
+        "resolved": "https://registry.npmjs.org/archy/-/archy-1.0.0.tgz",
+        "gitCommit": null,
+        "termsHash": "3d4f6dfc4a1a8fb4e380b5840f4d2ef43e0d23db7df1bb6737b18f5bb3c831a0",
+        "missingIntegrity": false
+      },
+      "changeKinds": [
+        "integrity"
+      ]
+    },
+    {
+      "id": "node_modules/array-uniq",
+      "name": "array-uniq",
+      "before": {
+        "id": "node_modules/array-uniq",
+        "name": "array-uniq",
+        "version": "1.0.3",
+        "integrity": "sha1-r2rId6Jcx/dOBYiUdThY39sk/bY=",
+        "resolved": "https://registry.npmjs.org/array-uniq/-/array-uniq-1.0.3.tgz",
+        "gitCommit": null,
+        "termsHash": "f35de7382c00ace41ef566a086336dcc707bcbccf0afcbf841871390b5e15d7c",
+        "missingIntegrity": false
+      },
+      "after": {
+        "id": "node_modules/array-uniq",
+        "name": "array-uniq",
+        "version": "1.0.3",
+        "integrity": "sha512-MNha4BWQ6JbwhFhj03YK552f7cb3AzoE8SzeljgChvL1dl3IcvggXVz1DilzySZkCja+CXuZbdW7yATchWn8/Q==",
+        "resolved": "https://registry.npmjs.org/array-uniq/-/array-uniq-1.0.3.tgz",
+        "gitCommit": null,
+        "termsHash": "0dc121985611e7f8ae8e3e58ba4d305b48fbb2f6fc1274d639eef64f4ab13e03",
+        "missingIntegrity": false
+      },
+      "changeKinds": [
+        "integrity"
+      ]
+    }
+  ],
+  "gaps": [],
+  "caller": {
+    "before": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-01/before.json",
+    "after": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-01/after.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notCustomerDemand": true,
+    "notMarketFact": true
+  },
+  "provenance": "caller-supplied",
+  "generatedAt": "2026-09-12T00:23:02.434Z"
+}
