@@ -1,3 +1,7 @@
+> Historical CW06 implementation receipt. The CW39 audit and repairs are recorded
+> in [CW39-REVIEW.md](CW39-REVIEW.md); the historical test counts below are not
+> the current candidate's verification receipt.
+
 # CW06 execution receipt
 
 ## Result

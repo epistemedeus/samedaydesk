@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "samedaydesk-cw06-useful-jobs"
-version = "1.0.0"
+version = "1.0.1"
 description = "Pinned stdin consumer for the released SameDayDesk useful-jobs 1.4.0 Node CLI"
 requires-python = ">=3.11"
 license = { text = "MIT" }
@@ -14,4 +14,3 @@ cw06-useful-jobs = "cw06_useful_jobs.consumer:main"
 
 [tool.setuptools]
 packages = ["cw06_useful_jobs"]
-
