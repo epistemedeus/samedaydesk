@@ -3,6 +3,7 @@
 Parent native session: `01a09456-c82b-7b41-ad58-e5557da52ed3`  
 Model: `grok-4.6` · effort `xhigh`  
 Branch: `codex/wave6-h6d-20260912`  
+Implementation head: `424ee59bd772d77109d1ec6cdd7517333c101b83`  
 Baseline pin: `ad9bc7b448cf1f635ff1488affbe206aaf981ac0`  
 Owned path: `experiments/wave6/h6d-real-consumers/`  
 useful-jobs **1.4.0** `2575215` bytes sha256 `2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f`
