@@ -82,7 +82,9 @@ the consumer test preload assigns the release download test's loopback listener
 to port 55547. No release source, assertions or vendor pins are changed.
 
 `npm run sources:verify` is a separate explicit network check of all immutable
-upstream URLs and the change commit's parent. Normal tests and CI need no
+upstream URLs, Work's original later-head root, and the change commit's parent.
+If the public commit API rate-limits, it reuses authenticated `gh` for public
+commit IDs without reading or printing credentials. Normal tests and CI need no
 upstream schema fetch; npm installation still needs its registry or cache.
 
 ## Pins and evidence limits

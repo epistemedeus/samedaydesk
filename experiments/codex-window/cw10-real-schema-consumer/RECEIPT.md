@@ -21,6 +21,9 @@ Scope: `experiments/codex-window/cw10-real-schema-consumer/` only.
 - Read-only CI command: **exit 0**; it also verifies compatibility-gate **exit 1**.
 - All 11 upstream files independently fetched from exact official commits and
   matched for bytes and SHA-256; the official API confirms the adjacent parent.
+  Work's original later-head root also matches its claimed hash and is
+  semantically equal to the exact change root. Public API rate limiting was
+  handled with the existing authenticated read-only `gh api` route.
 - Full Ajv Draft7 closure: 5 before + 4 after resources compile without network;
   URI and URI-template formats enabled; legacy/migrated and negative controls
   pass their asserted outcomes.
