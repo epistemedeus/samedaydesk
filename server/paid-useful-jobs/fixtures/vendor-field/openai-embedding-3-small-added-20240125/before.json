@@ -1,0 +1,10 @@
+{
+  "note": "Official OpenAI text-embedding-ada-002 list price still sold on 2024-01-25.",
+  "rows": [
+    {
+      "field": "text-embedding-ada-002",
+      "value": 0.0001,
+      "unit": "USD/1K-tokens"
+    }
+  ]
+}
