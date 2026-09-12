@@ -16,7 +16,7 @@ test("catalog loads with exactly one first offer from in-tree engines", () => {
     selectedEngines(catalog).map((engine) => engine.id),
     ["lockfile-pin-delta", "json-schema-webhook-drift", "route-table-diff", "page-change-offline-job"],
   );
-  assert.equal(catalog.engines[0].pin.sha, "fba9d14872bc4c04214e527b9edfb30c2123c9e7");
+  assert.equal(catalog.engines[0].pin.sha, "5f0f189fd3e88eabfeca2b95b2da644e58374372");
   assert.equal(catalog.d01Binding.testedWrapperSha, "6bed72dd22a396134aa5c957933b42c3a5746698");
 });
 
