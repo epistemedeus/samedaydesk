@@ -73,7 +73,9 @@ export function startMutator(filePath) {
        const f = process.env.JOA_MUTATE_FILE;
        let n = 0;
        for (;;) {
-         writeFileSync(f, "mutated-" + String(n++) + "\\n");
+         const n1 = n++;
+         writeFileSync(f, "mutated-" + String(n1) + "\\n");
+         writeFileSync(f, "mutated-" + String(n++) + "\\n" + "x".repeat(65536));
        }`,
     ],
     {
