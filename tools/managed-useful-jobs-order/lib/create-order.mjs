@@ -65,6 +65,7 @@ export function buildTerms(request, pins) {
       bytes: request.enginePin.bytes,
     },
     inputs: request.inputs
+      .filter((inp) => inp.kind !== "directory")
       .map(({ flag, sha256, bytes }) => ({ flag, sha256, bytes }))
       .sort((a, b) => a.flag.localeCompare(b.flag)),
   };
@@ -157,8 +158,8 @@ function buildSuccessResult({ request, pins, termsHash, offer, outDir }) {
       bytes: request.enginePin.bytes,
       cli: pins.cli,
     },
-    inputs: request.inputs.map(({ flag, path, sha256, bytes }) => ({ flag, path, sha256, bytes })),
-    inputSha256: request.inputs.map((inp) => inp.sha256),
+    inputs: request.inputs.map(({ flag, path, sha256, bytes, kind }) => ({ flag, path, sha256, bytes, kind })),
+    inputSha256: request.inputs.filter((inp) => inp.kind !== "directory").map((inp) => inp.sha256),
     outputs: mapOutputs(offer),
     sold: false,
     charged: false,
@@ -280,6 +281,7 @@ async function createOrderStrict(raw, options = {}) {
         detail: { flag: inp.flag, path: inp.resolvedPath },
       });
     }
+    if (inp.kind === "directory") continue;
     const actual = fileDigest(inp.resolvedPath);
     if (actual.sha256 !== inp.sha256 || actual.bytes !== inp.bytes) {
       throw new OrderRefuse(
@@ -339,39 +341,64 @@ async function createOrderStrict(raw, options = {}) {
   const outDir = options.outDir || mkdtempSync(join(tmpdir(), "managed-order-out-"));
   mkdirSync(outDir, { recursive: true });
 
+  const executionId = raw.executionId || randomUUID();
   await store.recordExecution({
     orderId: request.orderId,
     termsHash,
     wrapperKind: wrapper.kind,
     contract: wrapper.version,
+    executionId,
   });
 
-  const offer = await wrapper.runPaidOffer({
-    jobId: request.engineId,
-    inputs: offerInputs(request),
-    fileBytes: raw.fileBytes && typeof raw.fileBytes === "object" ? raw.fileBytes : undefined,
-    example: false,
-    fundingIntent: request.fundingState,
-    funding: request.fundingState,
-    payment: raw.payment && typeof raw.payment === "object" ? raw.payment : undefined,
-    outDir,
-  });
+  let offer;
+  try {
+    offer = await wrapper.runPaidOffer({
+      jobId: request.engineId,
+      inputs: offerInputs(request),
+      fileBytes: raw.fileBytes && typeof raw.fileBytes === "object" ? raw.fileBytes : undefined,
+      example: false,
+      fundingIntent: request.fundingState,
+      funding: request.fundingState,
+      payment: raw.payment && typeof raw.payment === "object" ? raw.payment : undefined,
+      outDir,
+      executionId,
+    });
+  } catch (err) {
+    if (wrapper.executeUrl && executionId) {
+      try {
+        const recovered = await fetch(`${String(wrapper.executeUrl).replace(/\/$/, "")}/results/${encodeURIComponent(executionId)}`);
+        if (recovered.ok) offer = await recovered.json();
+      } catch {
+        offer = null;
+      }
+    }
+    if (!offer) {
+      const failed = formatRefuse(
+        new OrderRefuse(err.code || "engine-crash", err.message || "execution failed", {
+          httpStatus: 503,
+          detail: { executionId, orderId: request.orderId },
+        }),
+        raw,
+      );
+      failed.wrapper = { executionId, contract: wrapper.version, testedD01Sha: TESTED_D01_SHA };
+      await store.complete(request.orderId, failed);
+      return failed;
+    }
+  }
 
   if (!offer?.ok) {
     const err = mapWrapperRefuse(offer, raw);
-    if (isTransportFailure(offer)) {
-      throw err;
-    }
     const refused = formatRefuse(err, raw);
     refused.wrapper = {
       contract: offer?.contract || wrapper.version,
       testedD01Sha: TESTED_D01_SHA,
-      executionId: offer?.executionId || null,
+      executionId: offer?.executionId || executionId,
       transport: offer?.transport || null,
       analysis: offer?.analysis || null,
       delivery: offer?.delivery || null,
     };
     await store.complete(request.orderId, refused);
+    if (isTransportFailure(offer)) refused.httpStatus = refused.httpStatus || 503;
     return refused;
   }
 

@@ -64,6 +64,12 @@ export function classifyTransport({ acquireError = false, engine = null, crashed
   if (timeout || engine?.timedOut) return "timeout";
   if (crashed) return "engine-crash";
   if (!engine) return "internal-error";
+  if (engine.schemaMatch && engine.schemaMatch.ok === false) return "engine-crash";
+  if (engine.outcomeKind === "transport-failure") return "engine-crash";
+  if (typeof engine.status === "number" && engine.status !== 0) {
+    if (engine.json?.refused === true) return "ok";
+    return "engine-crash";
+  }
   if (engine.json) return "ok";
   return "engine-crash";
 }

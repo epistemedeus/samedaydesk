@@ -64,7 +64,15 @@ export function orderRequestFromPreflight(pre, { orderId, fundingState, payment,
   const inputs = [];
   const fileBytes = {};
   for (const [key, rec] of Object.entries(pre.inputs || {})) {
-    if (!rec || rec.kind === "directory") continue;
+    if (!rec) continue;
+    if (rec.kind === "directory") {
+      inputs.push({
+        flag: rec.flag || `--${key}`,
+        path: rec.path,
+        kind: "directory",
+      });
+      continue;
+    }
     const staged = rec.stagedPath && existsSync(rec.stagedPath) ? rec.stagedPath : null;
     const buf = staged ? readFileSync(staged) : null;
     if (buf) {

@@ -10,7 +10,6 @@ import {
   SHA256_HEX_RE,
 } from "./pins.mjs";
 import { seedFromOutDir } from "./seed.mjs";
-import { writeEnvelope } from "./store.mjs";
 
 export const D01_RESULT_CONTRACT = Object.freeze({
   owner: "W5-D01",
@@ -135,7 +134,7 @@ export function assertD01Receipt(receipt) {
   return assertD01ExecutionRetrievable(receipt);
 }
 
-function verifyOutputBytes(outDir, listed) {
+export function verifyOutputBytes(outDir, listed) {
   const files = [];
   for (const item of listed) {
     const path = join(outDir, item.name);
@@ -184,6 +183,15 @@ export function seedFromD01Execution({
     throw refuse("d01-missing-output", "D01 execution seed requires outDir");
   }
   const files = verifyOutputBytes(resolve(resolvedOut), listedOutputs(checked));
+  const d01 = {
+    contract: D01_EXECUTION_CONTRACT,
+    pin: D01_RECEIPT_PIN,
+    executionId: checked.executionId || null,
+    transport: checked.transport,
+    analysis: checked.analysis || null,
+    deliveryComplete: true,
+    outputIdentity: files.map((f) => ({ name: f.name, bytes: f.bytes, sha256: f.sha256 })),
+  };
   const seeded = seedFromOutDir({
     mailbox,
     requestId,
@@ -207,18 +215,10 @@ export function seedFromD01Execution({
       Array.isArray(checked.delivery?.expected) && checked.delivery.expected.length
         ? checked.delivery.expected
         : files.map((f) => f.name),
+    preloadedFiles: files,
+    extraEnvelope: { d01 },
   });
-  seeded.d01 = {
-    contract: D01_EXECUTION_CONTRACT,
-    pin: D01_RECEIPT_PIN,
-    executionId: checked.executionId || null,
-    transport: checked.transport,
-    analysis: checked.analysis || null,
-    deliveryComplete: true,
-    outputIdentity: files.map((f) => ({ name: f.name, bytes: f.bytes, sha256: f.sha256 })),
-  };
-  seeded.envelope.d01 = seeded.d01;
-  writeEnvelope(mailbox, seeded.envelope);
+  seeded.d01 = seeded.envelope?.d01 || d01;
   return seeded;
 }
 

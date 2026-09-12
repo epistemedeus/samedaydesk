@@ -33,18 +33,22 @@ export function kitPath(root = cacheRoot()) {
 /**
  * Extract the committed public useful-jobs archive. Reuses engines; does not reimplement jobs.
  */
+function kitIsReady(ready, cli) {
+  return existsSync(ready) && existsSync(cli);
+}
+
 export function ensureUsefulJobsKit() {
   const dest = cacheRoot();
   const kit = kitPath(dest);
   const ready = join(dest, ".ready");
   const cli = join(kit, USEFUL_JOBS_CLI);
-  if (existsSync(ready) && existsSync(cli)) return kit;
+  if (kitIsReady(ready, cli)) return kit;
 
   mkdirSync(dest, { recursive: true });
   const lockPath = join(dest, ".extracting");
   let gotLock = false;
   for (let i = 0; i < 120; i += 1) {
-    if (existsSync(ready) && existsSync(cli)) return kit;
+    if (kitIsReady(ready, cli)) return kit;
     try {
       mkdirSync(lockPath);
       gotLock = true;
@@ -54,12 +58,14 @@ export function ensureUsefulJobsKit() {
     }
   }
   if (!gotLock) {
-    if (existsSync(cli)) return kit;
+    if (kitIsReady(ready, cli)) return kit;
     throw new Error("timeout waiting for useful-jobs archive extract");
   }
 
   try {
-    if (!existsSync(cli)) {
+    if (!kitIsReady(ready, cli)) {
+      if (existsSync(kit)) rmSync(kit, { recursive: true, force: true });
+      rmSync(ready, { force: true });
       const buf = readFileSync(USEFUL_JOBS_ARCHIVE_PATH);
       if (buf.length !== USEFUL_JOBS_ARCHIVE_BYTES) {
         throw new Error(`useful-jobs archive size ${buf.length} != ${USEFUL_JOBS_ARCHIVE_BYTES}`);
@@ -70,8 +76,9 @@ export function ensureUsefulJobsKit() {
       }
       const tar = spawnSync("tar", ["-xzf", USEFUL_JOBS_ARCHIVE_PATH, "-C", dest], { encoding: "utf8" });
       if (tar.status !== 0) throw new Error(tar.stderr || "tar extract failed");
+      if (!existsSync(cli)) throw new Error("useful-jobs extract missing CLI");
+      writeFileSync(ready, `${USEFUL_JOBS_ARCHIVE_SHA256}\n`);
     }
-    writeFileSync(ready, `${USEFUL_JOBS_ARCHIVE_SHA256}\n`);
     return kit;
   } finally {
     rmSync(lockPath, { recursive: true, force: true });

@@ -1,4 +1,5 @@
-import { copyFileSync, existsSync, mkdirSync, mkdtempSync, statSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { CatalogRefuse, getEngine, loadCatalog } from "./catalog.mjs";
@@ -70,8 +71,23 @@ function engineJsonForD01(engine, result) {
       ...refuse,
     };
   }
-  if (result.outcome.kind === "transport-failure") {
-    return result.stdoutJson;
+  if (result.spawn.timedOut || result.outcome.kind === "transport-failure") {
+    const stdout = result.stdoutJson || {};
+    return {
+      ...stdout,
+      ok: false,
+      refused: false,
+      code: result.spawn.timedOut ? "engine-timeout" : result.outcome.code || "engine-crash",
+    };
+  }
+  if (result.schemaMatch && result.schemaMatch.ok === false) {
+    return {
+      ...(result.stdoutJson || {}),
+      ok: false,
+      refused: false,
+      code: "output-schema-mismatch",
+      schemaMatch: result.schemaMatch,
+    };
   }
   const stdout = result.stdoutJson || {};
   return {
@@ -100,6 +116,16 @@ export function runEngineForD01(jobId, { files = {}, example = false, outDir, ti
   });
   const json = engineJsonForD01(engine, result);
   const timedOut = result.spawn.timedOut === true || result.spawn.errorCode === "ETIMEDOUT";
+  let executable = null;
+  if (result.spawn.bin && existsSync(result.spawn.bin)) {
+    const buf = readFileSync(result.spawn.bin);
+    executable = {
+      bin: result.spawn.bin,
+      sha256: createHash("sha256").update(buf).digest("hex"),
+      bytes: buf.length,
+      source: result.engineSource || null,
+    };
+  }
   return {
     status: result.spawn.status,
     stdout: result.spawn.stdout || "",
@@ -111,6 +137,10 @@ export function runEngineForD01(jobId, { files = {}, example = false, outDir, ti
     cli: result.spawn.bin,
     args: result.spawn.argv,
     m01: result,
+    schemaMatch: result.schemaMatch || null,
+    outcomeKind: result.outcome?.kind || null,
+    executable,
+    engineSource: result.engineSource || null,
   };
 }
 

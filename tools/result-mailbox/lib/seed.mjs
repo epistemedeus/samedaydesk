@@ -58,6 +58,8 @@ export function seedFromOutDir({
   payment = null,
   catalog = null,
   expectedOutputNames = null,
+  preloadedFiles = null,
+  extraEnvelope = null,
 }) {
   parseClock(clock, "clock");
   const exp = expiresAt || addSeconds(clock, ttlSeconds);
@@ -65,37 +67,49 @@ export function seedFromOutDir({
     Array.isArray(expectedOutputNames) && expectedOutputNames.length
       ? expectedOutputNames
       : expectedOutputs(jobId, catalog);
-  const files = collectOutputs(resolve(outDir), names);
+  const files = Array.isArray(preloadedFiles) && preloadedFiles.length
+    ? preloadedFiles.map((file) => ({
+        name: file.name,
+        path: file.path,
+        buf: file.buf,
+        bytes: file.bytes,
+        sha256: file.sha256,
+      }))
+    : collectOutputs(resolve(outDir), names);
   const sampleInfo = inspectSample({
     example: sample,
     files: files.map((f) => f.path),
     engineJson: engineResult,
   });
   const isSample = sample || sampleInfo.sample;
-  const envelope = buildEnvelope({
-    requestId,
-    jobId,
-    completedAt: clock,
-    expiresAt: exp,
-    sample: isSample,
-    sampleReasons: sampleReasons.length ? sampleReasons : sampleInfo.reasons,
-    deliveredToBuyer: false,
-    artifacts: files,
-    engine: engine || kitEngineProvenance(),
-    engineResult,
-    payment,
-  });
+  const envelope = {
+    ...buildEnvelope({
+      requestId,
+      jobId,
+      completedAt: clock,
+      expiresAt: exp,
+      sample: isSample,
+      sampleReasons: sampleReasons.length ? sampleReasons : sampleInfo.reasons,
+      deliveredToBuyer: false,
+      artifacts: files,
+      engine: engine || kitEngineProvenance(),
+      engineResult,
+      payment,
+    }),
+    ...(extraEnvelope && typeof extraEnvelope === "object" ? extraEnvelope : {}),
+  };
   const written = writeEnvelopeFiles({ mailbox, envelope, files });
   return {
     ok: true,
     status: "seeded",
     deliveredToBuyer: false,
-    sample: envelope.sample,
-    requestId: envelope.requestId,
+    replayed: written.replayed === true,
+    sample: (written.envelope || envelope).sample,
+    requestId: (written.envelope || envelope).requestId,
     jobId,
     envelopePath: written.envelopePath,
     artifactsDir: written.artifactsDir,
-    envelope,
+    envelope: written.envelope || envelope,
     evidenceClass: "local-runtime",
   };
 }

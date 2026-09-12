@@ -4,7 +4,16 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 
-const PG_BIN = process.env.MANAGED_ORDER_PG_BIN || "/usr/lib/postgresql/16/bin";
+function detectPgBin() {
+  if (process.env.MANAGED_ORDER_PG_BIN) return process.env.MANAGED_ORDER_PG_BIN;
+  for (const version of ["16", "17", "15"]) {
+    const dir = `/usr/lib/postgresql/${version}/bin`;
+    if (existsSync(join(dir, "initdb")) && existsSync(join(dir, "pg_ctl"))) return dir;
+  }
+  return "/usr/lib/postgresql/16/bin";
+}
+
+const PG_BIN = detectPgBin();
 const INITDB = join(PG_BIN, "initdb");
 const PG_CTL = join(PG_BIN, "pg_ctl");
 

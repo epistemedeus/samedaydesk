@@ -53,6 +53,18 @@ function normalizeOneInput(entry, requestDir) {
       detail: { flag },
     });
   }
+  const key = flagToKey(flag);
+  if (entry.kind === "directory" || key === "input-root") {
+    return {
+      flag,
+      key,
+      path: String(pathValue),
+      resolvedPath,
+      kind: "directory",
+      sha256: null,
+      bytes: null,
+    };
+  }
   const sha256 = normalizeSha256(entry.sha256);
   if (!sha256) {
     throw new OrderRefuse("missing-input-digest", `input ${flag} must include buyer sha256`, {
@@ -66,7 +78,7 @@ function normalizeOneInput(entry, requestDir) {
       detail: { flag, bytes },
     });
   }
-  return { flag, key: flagToKey(flag), path: String(pathValue), resolvedPath, sha256, bytes };
+  return { flag, key, path: String(pathValue), resolvedPath, sha256, bytes };
 }
 
 function normalizeInputs(raw, requestDir) {

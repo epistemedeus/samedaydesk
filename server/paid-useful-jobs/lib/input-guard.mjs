@@ -1,5 +1,5 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
-import { dirname, extname, isAbsolute, join, resolve } from "node:path";
+import { dirname, extname, isAbsolute, join, resolve, sep } from "node:path";
 import { MAX_INPUT_BYTES } from "./pins.mjs";
 import { getJob, optionalKeys, requiredKeys } from "./jobs.mjs";
 import { sha256Bytes } from "./digest.mjs";
@@ -105,6 +105,19 @@ function freezeJobDocumentSiblings(inputs, fileBytes) {
   }
 }
 
+function boundDest(workDir, name) {
+  const dest = join(workDir, name);
+  const root = resolve(workDir);
+  const resolved = resolve(dest);
+  if (resolved !== root && !resolved.startsWith(`${root}${sep}`)) {
+    throw refuse("input-path-escapes-root", "Staged capture path escapes the work directory", {
+      path: dest,
+      root,
+    });
+  }
+  return dest;
+}
+
 function stageJobDocumentSiblings(request, workDir, sourcePath, jobBytes) {
   let spec;
   try {
@@ -114,23 +127,32 @@ function stageJobDocumentSiblings(request, workDir, sourcePath, jobBytes) {
   }
   if (!spec || typeof spec !== "object" || Array.isArray(spec)) return;
   const srcDir = dirname(sourcePath);
+  let rewritten = false;
   for (const key of ["before", "after"]) {
     const rel = spec[key];
     if (typeof rel !== "string" || rel === "" || /^https?:\/\//i.test(rel)) continue;
-    const dest = join(workDir, rel);
+    const destName = `${key}.json`;
+    const dest = boundDest(workDir, destName);
     mkdirSync(dirname(dest), { recursive: true });
-    const frozen = request.fileBytes?.[`job:${key}`];
+    const frozen = request.fileBytes?.[`job:${key}`] || request.fileBytes?.[`job-${key}`];
     if (frozen) {
       assertNotOversize(`job:${key}`, frozen.length);
       writeFileSync(dest, frozen);
-      continue;
+    } else {
+      const src = isAbsolute(rel) ? resolve(rel) : resolve(srcDir, rel);
+      if (existsSync(src) && statSync(src).isFile()) {
+        const sibling = readFileSync(src);
+        assertNotOversize(`job:${key}`, sibling.length);
+        writeFileSync(dest, sibling);
+      }
     }
-    const src = isAbsolute(rel) ? resolve(rel) : resolve(srcDir, rel);
-    if (existsSync(src) && statSync(src).isFile()) {
-      const sibling = readFileSync(src);
-      assertNotOversize(`job:${key}`, sibling.length);
-      writeFileSync(dest, sibling);
+    if (spec[key] !== destName) {
+      spec[key] = destName;
+      rewritten = true;
     }
+  }
+  if (rewritten && existsSync(sourcePath) && statSync(sourcePath).isFile()) {
+    writeFileSync(sourcePath, `${JSON.stringify(spec, null, 2)}\n`);
   }
 }
 
@@ -256,7 +278,7 @@ export function materializeInputs(jobId, request, workDir, { getJob: getJobFn = 
       validateStagedInput(job, key, buf);
       const staged = join(workDir, `${key}${extname(filePath) || ""}`);
       writeFileSync(staged, buf);
-      if (key === "job") stageJobDocumentSiblings(request, workDir, filePath, buf);
+      if (key === "job") stageJobDocumentSiblings(request, workDir, staged, buf);
       files[key] = staged;
       entries.push({
         name: key,

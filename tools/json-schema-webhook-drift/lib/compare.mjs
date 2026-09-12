@@ -19,6 +19,7 @@ const CONSTRAINT_SIBLING_KEYS = new Set([
   "minItems",
   "maxItems",
   "nullable",
+  "pattern",
 ]);
 
 const UNSUPPORTED_KEYWORDS = Object.freeze([
@@ -183,6 +184,7 @@ function schemaObjectFingerprint(node, doc, depth) {
     exclusiveMaximum: boundOrNull(node.exclusiveMaximum),
     minItems: encodeNumber(node.minItems),
     maxItems: encodeNumber(node.maxItems),
+    pattern: typeof node.pattern === "string" ? node.pattern : null,
     nullable: node.nullable === true,
     unsupportedKeywords: unsupported.length ? unsupported : null,
   };
@@ -415,6 +417,15 @@ function classifyItems(before, after) {
   return { class: "breaking", reason: "structural-change" };
 }
 
+function classifyPattern(before, after) {
+  const left = before.pattern || null;
+  const right = after.pattern || null;
+  if (left === right) return null;
+  if (!left && right) return { class: "breaking", reason: "pattern-added" };
+  if (left && !right) return { class: "compatible", reason: "pattern-removed" };
+  return { class: "unknown", reason: "pattern-changed" };
+}
+
 function classifyEnum(before, after) {
   if (!before.enum && !after.enum) return null;
   if (!before.enum && after.enum) return { class: "breaking", reason: "enum-added" };
@@ -462,6 +473,8 @@ function classifySchemaConstraints(before, after) {
   if (items) deltas.push(items);
   const enumerated = classifyEnum(before, after);
   if (enumerated) deltas.push(enumerated);
+  const pattern = classifyPattern(before, after);
+  if (pattern) deltas.push(pattern);
   const properties = classifyProperties(before, after);
   if (properties) deltas.push(properties);
 

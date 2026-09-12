@@ -66,16 +66,36 @@ export function ackRecordPath(mailbox, requestId) {
   return join(envelopeDir(mailbox, requestId), "ack.json");
 }
 
+function artifactIdentity(envelope) {
+  const rows = Array.isArray(envelope?.artifacts) ? envelope.artifacts : [];
+  return rows
+    .map((row) => `${row.name}:${row.sha256}:${row.bytes}`)
+    .sort()
+    .join("|");
+}
+
 export function writeEnvelopeFiles({ mailbox, envelope, files }) {
   const dir = envelopeDir(mailbox, envelope.requestId);
   const arts = artifactsDir(mailbox, envelope.requestId);
+  const path = join(dir, "envelope.json");
+  if (existsSync(path)) {
+    const existing = parseEnvelope(JSON.parse(readFileSync(path, "utf8")));
+    const sameJob = existing.jobId === envelope.jobId;
+    const sameArtifacts = artifactIdentity(existing) === artifactIdentity(envelope);
+    if (sameJob && sameArtifacts) {
+      return { dir, envelopePath: path, artifactsDir: arts, replayed: true, envelope: existing };
+    }
+    throw refuse("request-id-conflict", "requestId already holds a different delivery", {
+      status: "request-id-conflict",
+      detail: { requestId: envelope.requestId, existingJobId: existing.jobId, incomingJobId: envelope.jobId },
+    });
+  }
   mkdirSync(arts, { recursive: true });
   for (const file of files) {
     const dest = join(arts, file.name);
     const buf = file.buf ? Buffer.from(file.buf) : readFileSync(file.path);
     writeFileSync(dest, buf);
   }
-  const path = join(dir, "envelope.json");
   writeFileSync(path, `${JSON.stringify(envelope, null, 2)}\n`);
   return { dir, envelopePath: path, artifactsDir: arts };
 }

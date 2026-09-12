@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
@@ -50,17 +51,32 @@ function asContract(mod, { wrapperRoot, executeUrl = null } = {}) {
     createExecutor: typeof mod.createExecutor === "function" ? mod.createExecutor : null,
     async runPaidOffer(request) {
       if (executeUrl) {
-        const res = await fetch(`${executeUrl.replace(/\/$/, "")}/execute`, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(request),
-        });
+        const origin = executeUrl.replace(/\/$/, "");
+        const executionId = request.executionId || randomUUID();
+        const payload = { ...request, executionId };
+        let res;
+        try {
+          res = await fetch(`${origin}/execute`, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+        } catch (err) {
+          const recovered = await fetch(`${origin}/results/${encodeURIComponent(executionId)}`);
+          if (recovered.ok) return recovered.json();
+          throw new OrderRefuse("engine-crash", "D01 /execute failed and result was not recoverable", {
+            httpStatus: 503,
+            detail: { executionId, error: String(err?.message || err) },
+          });
+        }
         let body;
         try {
           body = await res.json();
         } catch (err) {
+          const recovered = await fetch(`${origin}/results/${encodeURIComponent(executionId)}`);
+          if (recovered.ok) return recovered.json();
           throw new OrderRefuse("invalid-json", "D01 /execute did not return JSON", {
-            detail: { status: res.status, error: String(err?.message || err) },
+            detail: { status: res.status, error: String(err?.message || err), executionId },
           });
         }
         if (res.status === 400 && body?.code === "invalid-json") {

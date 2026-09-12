@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Build useful-jobs 1.3.0 from the published 1.2.0 archive plus engine/CLI
- * overlays. Does not overwrite 1.0.0, 1.1.0, or 1.2.0 archives.
+ * Build useful-jobs 1.4.0 from the published 1.3.0 archive plus schema
+ * overlay. Does not overwrite 1.0.0, 1.1.0, 1.2.0, or 1.3.0 archives.
  * No network. No node_modules. Does not pack the Pilot repo or research trees.
  */
 import { createHash } from "node:crypto";
@@ -13,11 +13,13 @@ import { spawnSync } from "node:child_process";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const OWNED = join(HERE, "..");
 const REPO_ROOT = join(OWNED, "../..");
-const VERSION = "1.3.0";
+const VERSION = "1.4.0";
 const STAGE_NAME = `useful-jobs-${VERSION}`;
-const PREV = "useful-jobs-1.2.0";
-const PREV_ARCHIVE = join(REPO_ROOT, "client/public/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz");
-const PREV_PIN = join(REPO_ROOT, "client/public/for-agents/useful-jobs/useful-jobs-1.2.0.sha256.json");
+const PREV = "useful-jobs-1.3.0";
+const PREV_ARCHIVE = join(REPO_ROOT, "client/public/for-agents/useful-jobs/useful-jobs-1.3.0.tar.gz");
+const PREV_PIN = join(REPO_ROOT, "client/public/for-agents/useful-jobs/useful-jobs-1.3.0.sha256.json");
+const PIN_120_ARCHIVE = join(REPO_ROOT, "client/public/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz");
+const PIN_120_JSON = join(REPO_ROOT, "client/public/for-agents/useful-jobs/useful-jobs-1.2.0.sha256.json");
 const PIN_110_ARCHIVE = join(REPO_ROOT, "client/public/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz");
 const PIN_110_JSON = join(REPO_ROOT, "client/public/for-agents/useful-jobs/useful-jobs-1.1.0.sha256.json");
 const PIN_100_ARCHIVE = join(REPO_ROOT, "client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz");
@@ -31,17 +33,13 @@ const PIN_100_SHA = "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033
 const PIN_100_BYTES = 2522418;
 const PIN_110_SHA = "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534";
 const PIN_110_BYTES = 2577606;
-const PREV_SHA = "dec31ea66f1605fb9578c7d15c9583b130c6e2c0b82b5e6b93422381a04461eb";
-const PREV_BYTES = 2579117;
+const PIN_120_SHA = "dec31ea66f1605fb9578c7d15c9583b130c6e2c0b82b5e6b93422381a04461eb";
+const PIN_120_BYTES = 2579117;
+const PREV_SHA = "bc4db0ec83109852b8fdbd542d10d515c0053a30dd9b93836c9ad7c738510b6c";
+const PREV_BYTES = 2574904;
 
 function sha256(buf) {
   return createHash("sha256").update(buf).digest("hex");
-}
-
-function mustCopy(src, dest) {
-  if (!existsSync(src)) throw new Error(`missing ${src}`);
-  mkdirSync(dirname(dest), { recursive: true });
-  cpSync(src, dest, { recursive: true });
 }
 
 function copyFile(src, dest) {
@@ -68,28 +66,31 @@ assertPin(PIN_110_ARCHIVE, PIN_110_BYTES, PIN_110_SHA, "useful-jobs-1.1.0");
 if (pin110.sha256 !== PIN_110_SHA || pin110.bytes !== PIN_110_BYTES) {
   throw new Error("1.1.0 sha256.json disagrees with archive bytes");
 }
-const prevPin = JSON.parse(readFileSync(PREV_PIN, "utf8"));
-assertPin(PREV_ARCHIVE, PREV_BYTES, PREV_SHA, "useful-jobs-1.2.0");
-if (prevPin.sha256 !== PREV_SHA || prevPin.bytes !== PREV_BYTES) {
+const pin120 = JSON.parse(readFileSync(PIN_120_JSON, "utf8"));
+assertPin(PIN_120_ARCHIVE, PIN_120_BYTES, PIN_120_SHA, "useful-jobs-1.2.0");
+if (pin120.sha256 !== PIN_120_SHA || pin120.bytes !== PIN_120_BYTES) {
   throw new Error("1.2.0 sha256.json disagrees with archive bytes");
 }
+const prevPin = JSON.parse(readFileSync(PREV_PIN, "utf8"));
+assertPin(PREV_ARCHIVE, PREV_BYTES, PREV_SHA, "useful-jobs-1.3.0");
+if (prevPin.sha256 !== PREV_SHA || prevPin.bytes !== PREV_BYTES) {
+  throw new Error("1.3.0 sha256.json disagrees with archive bytes");
+}
 
-const work = join(REPO_ROOT, "tmp-useful-jobs-1.3.0-stage");
+const work = join(REPO_ROOT, "tmp-useful-jobs-1.4.0-stage");
 rmSync(work, { recursive: true, force: true });
 mkdirSync(work, { recursive: true });
 
 const extract = spawnSync("tar", ["-xzf", PREV_ARCHIVE, "-C", work], { encoding: "utf8" });
-if (extract.status !== 0) throw new Error(extract.stderr || "tar extract 1.2.0 failed");
+if (extract.status !== 0) throw new Error(extract.stderr || "tar extract 1.3.0 failed");
 
 const prevRoot = join(work, PREV);
 const stage = join(work, STAGE_NAME);
 if (!existsSync(join(prevRoot, "bin/useful-jobs.mjs"))) {
-  throw new Error("1.2.0 extract missing bin/useful-jobs.mjs");
+  throw new Error("1.3.0 extract missing bin/useful-jobs.mjs");
 }
 cpSync(prevRoot, stage, { recursive: true });
 
-copyFile(join(RELEASE, "bin/useful-jobs.mjs"), join(stage, "bin/useful-jobs.mjs"));
-copyFile(join(RELEASE, "lib/owned-spawn.mjs"), join(stage, "lib/owned-spawn.mjs"));
 copyFile(
   join(TOOLS, "json-schema-webhook-drift/lib/compare.mjs"),
   join(stage, "engines/json-schema-webhook-drift/lib/compare.mjs"),
@@ -98,12 +99,8 @@ copyFile(
   join(TOOLS, "json-schema-webhook-drift/lib/contract.mjs"),
   join(stage, "engines/json-schema-webhook-drift/lib/contract.mjs"),
 );
-copyFile(
-  join(TOOLS, "page-change-offline-job/lib/fields.mjs"),
-  join(stage, "engines/page-change-offline-job/lib/fields.mjs"),
-);
-copyFile(join(RELEASE, "catalog-1.3.0.json"), join(stage, "catalog.json"));
-copyFile(join(RELEASE, "jobs-outcomes-1.3.0.json"), join(stage, "jobs-outcomes.json"));
+copyFile(join(RELEASE, "catalog-1.4.0.json"), join(stage, "catalog.json"));
+copyFile(join(RELEASE, "jobs-outcomes-1.4.0.json"), join(stage, "jobs-outcomes.json"));
 
 const pkg = JSON.parse(readFileSync(join(stage, "package.json"), "utf8"));
 pkg.version = VERSION;
@@ -111,30 +108,25 @@ writeFileSync(join(stage, "package.json"), `${JSON.stringify(pkg, null, 2)}\n`);
 
 const allowlist = `${readFileSync(join(stage, "PACKAGING-ALLOWLIST.txt"), "utf8").trim()}
 
-1.3.0 overlay (this version only):
-- bin/useful-jobs.mjs process-group spawn and complete-only publish for four M01 jobs
-- lib/owned-spawn.mjs
-- engines/json-schema-webhook-drift/lib/compare.mjs + contract.mjs (Draft 2020-12 used-path subset)
-- engines/page-change-offline-job/lib/fields.mjs (title ASCII space-run noise)
+1.4.0 overlay (this version only):
+- engines/json-schema-webhook-drift/lib/compare.mjs + contract.mjs
+  (used-path pattern add/remove/change)
 
-Do not re-nest useful-jobs-1.2.0.tar.gz, useful-jobs-1.1.0.tar.gz, or useful-jobs-1.0.0.tar.gz.
-Keep 1.0.0, 1.1.0, and 1.2.0 URLs byte-identical.
+Do not re-nest useful-jobs-1.3.0.tar.gz, useful-jobs-1.2.0.tar.gz,
+useful-jobs-1.1.0.tar.gz, or useful-jobs-1.0.0.tar.gz.
+Keep 1.0.0, 1.1.0, 1.2.0, and 1.3.0 URLs byte-identical.
 `;
 writeFileSync(join(stage, "PACKAGING-ALLOWLIST.txt"), allowlist);
 
 const notice = `${readFileSync(join(stage, "NOTICE"), "utf8").trim()}
 
-1.3.0 delivery integration
---------------------------
-- Public CLI reaps its own process group on timeout or SIGTERM.
-- lockfile/schema/route/page jobs publish promised files to caller --out-dir
-  only when the run completes. A crash after one file does not mix generations
-  into the caller directory.
-- JSON Schema used-path drift follows Draft 2020-12 instance-set for a small
-  supported subset. Unadvertised combinators are unknown. OpenAPI nullable is
-  unknown, not JSON Schema.
-- Page-change title ASCII space-run noise is not a selected-field change.
+1.4.0 delivery closeout
+-----------------------
+- JSON Schema used-path fingerprints include pattern. Adding a pattern on a
+  used path is breaking, not silent unchanged. Pattern removal is compatible.
+  A changed pattern is unknown rather than a guessed instance-set proof.
 
+Previous version 1.3.0 remains at /for-agents/useful-jobs/useful-jobs-1.3.0.tar.gz
 Previous version 1.2.0 remains at /for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz
 Previous version 1.1.0 remains at /for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz
 Previous version 1.0.0 remains at /for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz
@@ -142,22 +134,22 @@ Previous version 1.0.0 remains at /for-agents/useful-jobs/useful-jobs-1.0.0.tar.
 writeFileSync(join(stage, "NOTICE"), `${notice}\n`);
 
 let readme = readFileSync(join(stage, "README.md"), "utf8");
-readme = readme.replaceAll("useful-jobs 1.2.0", `useful-jobs ${VERSION}`);
-readme = readme.replaceAll("useful-jobs-1.2.0", STAGE_NAME);
+readme = readme.replaceAll("useful-jobs 1.3.0", `useful-jobs ${VERSION}`);
+readme = readme.replaceAll("useful-jobs-1.3.0", STAGE_NAME);
 readme = readme.replace(
-  "From the 1.2.0 release archive (after you unpack it):",
   "From the 1.3.0 release archive (after you unpack it):",
+  "From the 1.4.0 release archive (after you unpack it):",
 );
 readme = readme.replace(
-  "Public 1.2.0 cold-prefix checks live in the SameDayDesk tree",
   "Public 1.3.0 cold-prefix checks live in the SameDayDesk tree",
+  "Public 1.4.0 cold-prefix checks live in the SameDayDesk tree",
 );
-if (!readme.includes("useful-jobs-1.2.0.tar.gz")) {
+if (!readme.includes("useful-jobs-1.3.0.tar.gz")) {
   readme = readme.replace(
-    "Previous version 1.1.0 remains at `/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz`",
-    `Previous version 1.2.0 remains at \`/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz\`
+    "Previous version 1.2.0 remains at `/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz`",
+    `Previous version 1.3.0 remains at \`/for-agents/useful-jobs/useful-jobs-1.3.0.tar.gz\`
 (${PREV_BYTES} bytes, sha256 \`${PREV_SHA}\`).
-Previous version 1.1.0 remains at \`/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz\``,
+Previous version 1.2.0 remains at \`/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz\``,
   );
 }
 writeFileSync(join(stage, "README.md"), readme);
@@ -187,7 +179,7 @@ const pin = {
   sourceCommit,
   previous: {
     name: PREV,
-    archive: "useful-jobs-1.2.0.tar.gz",
+    archive: "useful-jobs-1.3.0.tar.gz",
     bytes: PREV_BYTES,
     sha256: PREV_SHA,
   },
@@ -205,8 +197,14 @@ const pin = {
       sha256: PIN_110_SHA,
     },
     {
-      name: PREV,
+      name: "useful-jobs-1.2.0",
       archive: "useful-jobs-1.2.0.tar.gz",
+      bytes: PIN_120_BYTES,
+      sha256: PIN_120_SHA,
+    },
+    {
+      name: PREV,
+      archive: "useful-jobs-1.3.0.tar.gz",
       bytes: PREV_BYTES,
       sha256: PREV_SHA,
     },
@@ -218,8 +216,8 @@ copyFile(archivePath, join(PUBLIC_DIR, `${STAGE_NAME}.tar.gz`));
 writeFileSync(join(PUBLIC_DIR, `${STAGE_NAME}.sha256.json`), `${JSON.stringify(pin, null, 2)}\n`);
 copyFile(archivePath, join(KIT_DIR, `${STAGE_NAME}.tar.gz`));
 writeFileSync(join(KIT_DIR, `${STAGE_NAME}.sha256.json`), `${JSON.stringify(pin, null, 2)}\n`);
-copyFile(join(RELEASE, "catalog-1.3.0.json"), join(PUBLIC_DIR, "catalog.json"));
-copyFile(join(RELEASE, "jobs-outcomes-1.3.0.json"), join(PUBLIC_DIR, "jobs-outcomes.json"));
+copyFile(join(RELEASE, "catalog-1.4.0.json"), join(PUBLIC_DIR, "catalog.json"));
+copyFile(join(RELEASE, "jobs-outcomes-1.4.0.json"), join(PUBLIC_DIR, "jobs-outcomes.json"));
 
 const still100 = readFileSync(join(PUBLIC_DIR, "useful-jobs-1.0.0.tar.gz"));
 if (still100.length !== PIN_100_BYTES || sha256(still100) !== PIN_100_SHA) {
@@ -230,8 +228,12 @@ if (still110.length !== PIN_110_BYTES || sha256(still110) !== PIN_110_SHA) {
   throw new Error("1.1.0 public archive was mutated");
 }
 const still120 = readFileSync(join(PUBLIC_DIR, "useful-jobs-1.2.0.tar.gz"));
-if (still120.length !== PREV_BYTES || sha256(still120) !== PREV_SHA) {
+if (still120.length !== PIN_120_BYTES || sha256(still120) !== PIN_120_SHA) {
   throw new Error("1.2.0 public archive was mutated");
+}
+const still130 = readFileSync(join(PUBLIC_DIR, "useful-jobs-1.3.0.tar.gz"));
+if (still130.length !== PREV_BYTES || sha256(still130) !== PREV_SHA) {
+  throw new Error("1.3.0 public archive was mutated");
 }
 
 process.stdout.write(`${JSON.stringify({ ok: true, ...pin, publicPath: join(PUBLIC_DIR, `${STAGE_NAME}.tar.gz`) }, null, 2)}\n`);

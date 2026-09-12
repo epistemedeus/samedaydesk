@@ -123,8 +123,8 @@ function runRoutedEngine(jobId, opts) {
   return runEngineJob(jobId, opts);
 }
 
-function provenanceFor(job) {
-  if (job?.m01) return m01ReceiptProvenance(job) || engineProvenance();
+function provenanceFor(job, engine = null) {
+  if (job?.m01) return m01ReceiptProvenance(job, engine?.executable) || engineProvenance();
   return engineProvenance();
 }
 
@@ -307,7 +307,7 @@ export function createExecutor(deps = {}) {
               engineJson: engine.json,
               continuity,
               payment,
-              provenance: provenanceFor(job),
+              provenance: provenanceFor(job, engine),
             }),
             {
               contract: EXECUTION_CONTRACT_VERSION,
@@ -332,7 +332,7 @@ export function createExecutor(deps = {}) {
           engineJson: engine.json,
           continuity,
           payment,
-          provenance: provenanceFor(job),
+          provenance: provenanceFor(job, engine),
         });
         receipt.outDir = runOutDir;
         receipt.contract = EXECUTION_CONTRACT_VERSION;
@@ -382,7 +382,7 @@ export function createExecutor(deps = {}) {
         engineJson: engine.json,
         continuity,
         payment,
-        provenance: provenanceFor(job),
+        provenance: provenanceFor(job, engine),
       });
       receipt.outDir = runOutDir;
       receipt.publishedDir = frozen.outDir || null;

@@ -1,0 +1,189 @@
+{
+  "schema": "useful-jobs.outcomes.v1",
+  "package": "useful-jobs",
+  "version": "1.4.0",
+  "freeSampleStatus": "labeled-samples-via-explicit-example-flag",
+  "jobs": [
+    {
+      "id": "lockfile-pin-delta",
+      "outcome": "Pin-delta of npm package-lock name, version, integrity, and resolved. Not yarn/pnpm/bun. No purchase.",
+      "requiredFiles": [
+        "before package-lock JSON",
+        "after package-lock JSON"
+      ],
+      "requiredFlags": [
+        "--before",
+        "--after"
+      ],
+      "outputs": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "freeSample": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "json-schema-webhook-drift",
+      "outcome": "Used-pointer drift brief for JSON Schema or webhook-example JSON. Not an OpenAPI upgrade brief.",
+      "requiredFiles": [
+        "before JSON",
+        "after JSON",
+        "used pointers JSON"
+      ],
+      "requiredFlags": [
+        "--before",
+        "--after",
+        "--used"
+      ],
+      "outputs": [
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "freeSample": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "route-table-diff",
+      "outcome": "Route-table added/removed/changed report. SAMPLE is not the published SDS table. Homepage rewrite refused.",
+      "requiredFiles": [
+        "before route catalog JSON",
+        "after route catalog JSON"
+      ],
+      "requiredFlags": [
+        "--before",
+        "--after",
+        "--out-dir"
+      ],
+      "outputs": [
+        "route-diff.json",
+        "route-diff.md"
+      ],
+      "freeSample": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "page-change-offline-job",
+      "outcome": "Page-change brief from two already-held extract-batch JSON files. Does not fetch. --example is refused.",
+      "requiredFiles": [
+        "job document JSON with sibling before/after"
+      ],
+      "requiredFlags": [
+        "--job",
+        "--out-dir"
+      ],
+      "outputs": [
+        "page-change.json",
+        "page-change.md"
+      ],
+      "freeSample": false
+    },
+    {
+      "id": "api-upgrade-brief",
+      "outcome": "Upgrade brief listing retire/migrate and breaking-change actions for used OpenAPI operations that differ between before and after snapshots.",
+      "requiredFiles": [
+        "before OpenAPI",
+        "after OpenAPI",
+        "used-operations JSON"
+      ],
+      "requiredFlags": [
+        "--before",
+        "--after",
+        "--used"
+      ],
+      "outputs": [
+        "upgrade-brief.json",
+        "upgrade-brief.md"
+      ],
+      "freeSample": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "vendor-budget-impact",
+      "outcome": "Budget-impact report of unit and field deltas across curated pricing-row JSON. Partial when upstream evidence conflicts or is unknown. No purchase authority.",
+      "requiredFiles": [
+        "before pricing JSON",
+        "after pricing JSON"
+      ],
+      "requiredFlags": [
+        "--before",
+        "--after"
+      ],
+      "outputs": [
+        "budget-impact.json",
+        "budget-impact.md"
+      ],
+      "freeSample": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "feed-agenda",
+      "outcome": "Agenda JSON plus ICS events derived from RSS/Atom before/after item deltas. Sample feeds are not live deadlines.",
+      "requiredFiles": [
+        "before feed XML",
+        "after feed XML"
+      ],
+      "requiredFlags": [
+        "--before",
+        "--after"
+      ],
+      "outputs": [
+        "agenda.json",
+        "agenda.ics"
+      ],
+      "freeSample": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "evidence-ci-annotation",
+      "outcome": "GitHub-style CI annotations from a schema-compatible evidence packet. Caller-supplied packets stay unattested; never kit-produced trusted action.",
+      "requiredFiles": [
+        "evidence packet JSON"
+      ],
+      "requiredFlags": [
+        "--input"
+      ],
+      "outputs": [
+        "annotations.json",
+        "annotations.md"
+      ],
+      "freeSample": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "listing-repair-packet",
+      "outcome": "Owner repair packet with source-linked guidance from listing/route diagnosis snapshots. Incomplete capture stays partial for every provider. Unsupported providers are refused when capture is complete. Partial evidence stays non-final.",
+      "requiredFiles": [
+        "listing diagnosis JSON"
+      ],
+      "requiredFlags": [
+        "--input"
+      ],
+      "outputs": [
+        "repair-packet.json",
+        "repair-packet.md"
+      ],
+      "freeSample": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "repeat-job-record",
+      "outcome": "Operator next-run record with local byte verification of declared inputs. Digest mismatch refuses; missing files stay informational/unverified. Not a scheduler daemon.",
+      "requiredFiles": [
+        "next-run manifest JSON",
+        "declared input files when verifying"
+      ],
+      "requiredFlags": [
+        "--next-run"
+      ],
+      "optionalFlags": [
+        "--input-root"
+      ],
+      "outputs": [
+        "repeat-job.json",
+        "repeat-job.md"
+      ],
+      "freeSample": true,
+      "exampleFlag": "--example"
+    }
+  ]
+}

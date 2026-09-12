@@ -96,7 +96,7 @@ export function pinForDeliveryJob(job, pins) {
   };
 }
 
-export function m01ReceiptProvenance(job) {
+export function m01ReceiptProvenance(job, executable = null) {
   const catalog = loadM01Catalog();
   const engine = (catalog.engines || []).find((row) => row.id === job.id);
   if (!engine) return null;
@@ -111,7 +111,11 @@ export function m01ReceiptProvenance(job) {
     sourceRepo: engine.pin.repo,
     sourceCommit: engine.pin.sha,
     ownedPath: engine.pin.ownedPath,
-    source: "in-tree",
+    source: executable?.source || "in-tree",
+    catalogPin: pin,
+    executable: executable
+      ? { sha256: executable.sha256, bytes: executable.bytes, bin: executable.bin, source: executable.source }
+      : null,
   };
 }
 

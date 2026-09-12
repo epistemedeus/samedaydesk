@@ -2,6 +2,7 @@
  * Thin local HTTP adapter over the D01 execution contract.
  * Not a second runner and not a public deploy. D14 owns an independent consumer.
  */
+import { randomUUID } from "node:crypto";
 import { createServer } from "node:http";
 import { EXECUTION_CONTRACT_VERSION } from "./contract.mjs";
 import { runPaidOffer } from "./wrapper.mjs";
@@ -40,7 +41,11 @@ export function createExecutionServer({ execute = runPaidOffer } = {}) {
         end(404, { ok: false, code: "not-found", contract: EXECUTION_CONTRACT_VERSION });
         return;
       }
-      end(200, row);
+      Promise.resolve(row)
+        .then((result) => end(200, result))
+        .catch((err) =>
+          end(500, { ok: false, code: "internal-error", error: err.message, contract: EXECUTION_CONTRACT_VERSION }),
+        );
       return;
     }
 
@@ -59,10 +64,27 @@ export function createExecutionServer({ execute = runPaidOffer } = {}) {
             });
             return;
           }
-          const result = await execute(request);
-          const id = result.executionId || result.receipt?.inputsDigest || result.jobId || "anonymous";
-          store.set(id, result);
-          end(200, { ...result, retrieval: { id, path: `/results/${id}` } });
+          const executionId = request.executionId || randomUUID();
+          request.executionId = executionId;
+          if (store.has(executionId)) {
+            const existing = await Promise.resolve(store.get(executionId));
+            end(200, { ...existing, retrieval: { id: executionId, path: `/results/${executionId}` } });
+            return;
+          }
+          const pending = Promise.resolve(execute(request)).then(
+            (result) => {
+              const stored = { ...result, executionId: result.executionId || executionId };
+              store.set(executionId, stored);
+              return stored;
+            },
+            (err) => {
+              store.delete(executionId);
+              throw err;
+            },
+          );
+          store.set(executionId, pending);
+          const stored = await pending;
+          end(200, { ...stored, retrieval: { id: executionId, path: `/results/${executionId}` } });
         })
         .catch((err) => {
           end(500, {
