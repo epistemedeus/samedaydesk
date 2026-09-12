@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, test } from "node:test";
-import { EARLY_X402_OPERATION_ID, USEFUL_JOBS_ARCHIVE_BYTES, USEFUL_JOBS_ARCHIVE_SHA256 } from "../lib/pins.mjs";
+import { EARLY_X402_OPERATION_ID, USEFUL_JOBS_ARCHIVE_BYTES, USEFUL_JOBS_ARCHIVE_PATH, USEFUL_JOBS_ARCHIVE_SHA256 } from "../lib/pins.mjs";
 import { hashRequest } from "../lib/hash-terms.mjs";
 import { createSettlementAdapter, joinSettlement } from "../lib/settlements.mjs";
 import { loadPublicCatalog } from "../lib/engine.mjs";
@@ -26,7 +26,7 @@ function run(args) {
 
 describe("pins, hash terms, and exact settlement join", () => {
   test("committed useful-jobs archive matches the public pin", () => {
-    const buf = readFileSync(join(REPO, "client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz"));
+    const buf = readFileSync(USEFUL_JOBS_ARCHIVE_PATH);
     const pin = verifyArchiveBuffer(buf);
     assert.equal(pin.bytes, USEFUL_JOBS_ARCHIVE_BYTES);
     assert.equal(pin.sha256, USEFUL_JOBS_ARCHIVE_SHA256);

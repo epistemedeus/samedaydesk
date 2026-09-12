@@ -1,16 +1,17 @@
 {
   "pin": "c6f1464222169f2d32247c978dc5007d82a2aa03",
-  "archivePin": "8a811bbadba7edc6c926b319b0839cd2f01e5896",
+  "archivePin": "e9528c3b1195f5ab5d388b73465c31bd422f5d3d",
+  "previousArchivePin143": "8a811bbadba7edc6c926b319b0839cd2f01e5896",
   "repairSha": "080cc62e7bc83f76431d916df34aea6d30875401",
-  "catalog": "1.4.3",
+  "catalog": "1.4.4",
   "lockfile": {
     "jobId": "lockfile-pin-delta",
-    "executionId": "68527bfd-1a1e-4b8d-9dc9-a97c2b508252",
+    "executionId": "7bdeb8e2-bd2d-4d3c-b12e-8f50ab2d92df",
     "transport": "ok",
     "sold": false
   },
   "export": {
-    "zipSha256": "sha256:8ba359d9224a215f654237302cd1f3e406f99e273ec44b72e1b23a46923c86a4",
+    "zipSha256": "sha256:93e520075cfe7acfba4760ea671fd5dcb04d38df60a98c5cb13e2a789978ce5a",
     "completeness": {
       "bound": true,
       "consumer": "tools/job-output-atomicity/index.mjs (current source)",
@@ -26,12 +27,12 @@
   },
   "replay": {
     "pids": [
-      358018,
-      358064
+      362256,
+      362302
     ],
     "executionIds": [
-      "9bd31119-e3dc-4566-b71b-df4b3c46f5f7",
-      "619d6c2f-c6de-4a83-b158-7b63916056e3"
+      "c2ca095f-7e5e-4e9b-a42e-d2f4f0528592",
+      "691e6137-7d17-4154-b442-5cd3d9b2e064"
     ]
   },
   "batch": {

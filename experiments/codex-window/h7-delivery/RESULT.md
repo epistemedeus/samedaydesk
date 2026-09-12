@@ -11,27 +11,58 @@ Native Grok Heavy (`grok-4.6`, effort xhigh) on Cursor Cloud VM. Hostname `curso
 | Integration source | `c6f1464222169f2d32247c978dc5007d82a2aa03` (SDS PR146 into `codex/useful-jobs-core-integration-20260912`) |
 | Repair SHA | `080cc62e7bc83f76431d916df34aea6d30875401` (publication rollback + interrupted-run guard; byte-identical trees to `c6f1464` for those files) |
 | Archive pin (immutable 1.4.3) | `8a811bbadba7edc6c926b319b0839cd2f01e5896` |
+| Overlay source packed into 1.4.4 | `e9528c3b1195f5ab5d388b73465c31bd422f5d3d` |
 | Pin fix (vendor-temp) | `e122c26657977ce3a2d41642095e999db1125b53` |
 | Previous pin (ancestor, **not** release-ready) | `6007fcfa27074f9a594248e47296f1afa4f8385d` |
-| Unpublished 1.4.3 archive | **2615491** bytes, sha256 `a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09` — **does not contain wrapper publication/interrupt fixes**; not overwritten; no 1.4.4 packaged |
+| Unpublished 1.4.3 archive | **2615491** bytes, sha256 `a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09` — **does not contain wrapper.mjs**; git blob `f85c326…` **byte-identical**; **not labeled fixed** |
+| Unpublished 1.4.4 candidate | **5252886** bytes, sha256 `ff4934096e2ba2c95f52c9e364647b455009c36710723f754f3f63ea0dcb5aac` — **does** include SDS wrapper publication rollback + interrupt overlay |
 | Pin branch | `codex/useful-jobs-core-integration-20260912` (consumers previously stacked on vendor-temp `8a811bba`) |
 | Based on | `30345f69f16aca93bb95511ee4da62975c98cc04` |
 | Start HEAD (import only) | `fe8057f395bc665b629e12dbff0db0c264f0eb46` |
 | Rebind merge | `559fa3b` (`8a811bba` into consumer branch; no donor-history rewrite) |
 | Execution contract | `samedaydesk.paid-useful-jobs.execution.v1` |
-| Public catalog | `client/public/for-agents/useful-jobs/catalog.json` version **1.4.3** |
+| Public catalog | `client/public/for-agents/useful-jobs/catalog.json` version **1.4.4** |
 | Legacy wrapper extract | useful-jobs **1.0.0** archive `6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51` / 2,522,418 bytes |
 | M01 / lockfile-pin-delta | in-tree source-identity pin (not forced equal to the 1.0.0 archive) |
 | Node | v22.22.2 |
 | Grok CLI | `/home/ubuntu/.grok/bin/grok` 1.0.25 |
-| Protected trees | `client/public/for-agents/useful-jobs` 1.4.3 archive blob still `f85c326…` / `a18ab918…` (same as `8a811bba`). Wrapper + `create-order.mjs` match `c6f1464`/`080cc62`. HTTP adapter gained process-local Authorization principal binding. |
+| Protected trees | `client/public/for-agents/useful-jobs` 1.4.3 archive blob still `f85c326…` / `a18ab918…`. 1.4.4 is a new sibling archive. Wrapper + `create-order.mjs` match `c6f1464`/`080cc62`. HTTP adapter gained process-local Authorization principal binding. |
 | CW64 | read-only (`tools/python-useful-jobs-client/` not edited) |
 | Old package archives | immutable |
 | Core runtime / release builder / CW63 / H6D | not edited |
 
 Envelope `executionId` is **top-level**. `receipt.v1` may omit nested `executionId`. `fileEntry()` rows include absolute `path` and omit `kind`. Named-byte projection is `name` / `kind` (default file) / `bytes` / `sha256`. HTTP `POST /execute` + `GET /results/:id` has **no artifact download route**. HTTP `path` is not acquisition authority. When `Authorization` is present on execute, GET `/results/:id` with a different principal is **403 `principal-mismatch`**. Unauthenticated existing clients are unchanged.
 
-## PR145 rebind onto integration `c6f1464` (this turn)
+## 1.4.4 candidate package (this turn)
+
+Do **not** label unpublished 1.4.3 `a18ab918` as fixed. That tarball is still **2615491** bytes, git blob `f85c326…`, listing has `lib/common.mjs` and **no** `wrapper.mjs`.
+
+New candidate **1.4.4** was packed with `server/paid-useful-jobs/scripts/build-useful-jobs-v144.mjs` from the 1.4.3 base plus SDS overlay at repo-relative paths (`server/paid-useful-jobs/lib/wrapper.mjs`, `tools/managed-useful-jobs-order/lib/create-order.mjs`) and a nested 1.0.0 identity archive (`6bf65039…`, 2522418 B). Catalog/kit/discovery copies sit next to `client/public/for-agents/useful-jobs/` and `client/public/kit/`. `purchaseAuthority` remains false. Compact receipt: `evidence/pr145-144-candidate.json`.
+
+Gates were run against **extracted candidate bytes** (not source-only) plus H7 consumer source (d14 CLI). Host `node_modules/pg` was symlinked only for the extracted Postgres import; `pg` is not vendored in the tarball.
+
+| Pack | Pass | Fail | Notes |
+| --- | --- | --- | --- |
+| `packaged-144-execution.test.mjs` (extracted 1.4.4) | 8 | 0 | 1.4.3 a18ab918 unchanged; wrapper rollback; interrupt no second engine; cold acquire+SDS execute; HTTP 403 principal-mismatch; PG **55595**; d14 portable unsupported then local acquire |
+| `vendor-temp-lifecycle.test.mjs` | 9 | 0 | PR143 leak correction still holds |
+| `packaged-vendor-lifecycle.test.mjs` | 2 | 0 | packaged **1.4.3** vendor scratch, not wrapper |
+| `publication-rollback.test.mjs` in-tree | 5 | 0 | positive control |
+| `interrupt-before-complete.test.mjs` in-tree | 1 | 0 | positive control |
+| d14 `http-consumer.test.mjs` | 12 | 0 | consumer source pin `c6f1464` / catalog **1.4.4** |
+| H7 cold journey | 1 | 0 | consumer source; catalog **1.4.4**; portable unsupported + local acquire |
+
+**Ready (candidate package, not production):** extracted 1.4.4 includes and executes publication rollback + interrupt; cold install, real PG 55595, HTTP principal, and portable gates passed against candidate bytes and d14 consumer source; 1.4.3 left byte-identical.
+
+**Missing / not this package:**
+- No product deploy, main merge, sale, or payment-authority change. Cash $0.
+- HTTP still has no artifact download route; portable remains `unsupported-portable-acquisition` with explicit `--local-artifacts` / `--acquire-to`.
+- Process-local HTTP cache; restart does not recover IDs.
+- Extracted `store-postgres.mjs` `import 'pg'` needs a host driver (not packed).
+- Extracted SDS wrapper M01 jobs still resolve `tools/<id>` (kit CLI uses `engines/<id>`).
+- Ledger CLI `--operation-id` still stamps H7 unbound `settlementJoin` (no `operationIdFound`); pre-existing honesty, not a 1.4.4 extract miss.
+- PR145 remains a stacked draft. Do not default-merge.
+
+## PR145 rebind onto integration `c6f1464` (prior turn)
 
 Merged PR146 / `080cc62` into this consumer branch without rewriting consumer history. Compact receipt: `evidence/pr145-c6f1464-rebind.json`. Integration, **not** production.
 
@@ -56,7 +87,7 @@ Merged PR146 / `080cc62` into this consumer branch without rewriting consumer hi
 | CW65 `--only d19-current-ledger` | 1 | 0 | 0 | sibling ledger, `usefulPaidWork` false |
 | CW65 `--only d20-current-outbox` | 1 | 0 | 0 | sibling outbox; ack ≠ buyer acceptance |
 | CW70 current-runtime HTTP | 11 | 0 | 0 | portable unsupported + local acquire |
-| H7 cold journey | 1 | 0 | 0 | pin `c6f1464`; archive pin `8a811bba` |
+| H7 cold journey | 1 | 0 | 0 | pin `c6f1464`; catalog later moved to 1.4.4 |
 
 CW65 `--only` never grants global `ready`. Evidence under `cw65-delivery-adversarial-harness/evidence/h7-c6f1464-*`.
 
@@ -74,7 +105,7 @@ CW65 `--only` never grants global `ready`. Evidence under `cw65-delivery-adversa
 - Process-local HTTP cache; restart does not recover IDs
 - `usefulPaidWork` false; `sold`/`purchaseAuthority` false; callback ack is not buyer acceptance
 - No live pay; cash $0
-- Immutable 1.4.3 package still lacks wrapper source fixes (documented, not a 1.4.4)
+- Immutable 1.4.3 package still lacks wrapper source fixes (documented; 1.4.4 is a new sibling candidate, not a rewrite of `a18ab918`)
 
 ## Tests (honest)
 

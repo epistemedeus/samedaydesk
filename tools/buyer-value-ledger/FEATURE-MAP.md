@@ -7,7 +7,7 @@ Own directory: `tools/buyer-value-ledger/` plus Wave5 receipt `experiments/wave5
 | Looked for | Result |
 | --- | --- |
 | SDS `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545` | Attached. Wave5 branch continues Co16 head `aa306e2`. |
-| useful-jobs catalog + archive | Catalog 1.4.3 unpublished. vendor-budget-impact receipts use the 1.0.0 wrapper archive (`6bf65039…`, 2522418 B). M01 jobs use source-identity pins. Runtime pin `8a811bba`. |
+| useful-jobs catalog + archive | Catalog 1.4.4 unpublished overlay. vendor-budget-impact receipts use the 1.0.0 wrapper archive (`6bf65039…`, 2522418 B). M01 jobs use source-identity pins. Runtime pin `c6f1464`. Immutable 1.4.3 `a18ab918` does not contain wrapper.mjs. |
 | evidence-records closed sets | `tools/evidence-records/lib.mjs` imported; operationId observed only binds as this job when settlement `jobId` matches. |
 | I01 Neo PR54 earned-work | **Not attached.** Hash terms follow published S275 `crypto.hashRequest` (stable-JSON SHA-256). No competing kernel copy. |
 | Current core `server/paid-useful-jobs/` | Read-only import of execution.v1 through the request desk. Archive-origin/file overrides are refused. |

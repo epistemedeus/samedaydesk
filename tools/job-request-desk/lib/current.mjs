@@ -13,9 +13,11 @@ import { digest, bytesDigest, fault } from './durable.mjs';
 export const CURRENT_CORE_BASE = 'c6f1464222169f2d32247c978dc5007d82a2aa03';
 /** Repair SHA merged by PR146. Byte-identical to CURRENT_CORE_BASE trees for wrapper/order. */
 export const CURRENT_REPAIR_SHA = '080cc62e7bc83f76431d916df34aea6d30875401';
-/** Immutable unpublished 1.4.3 archive identity. Does not contain wrapper publication/interrupt fixes. */
-export const CURRENT_ARCHIVE_PIN = '8a811bbadba7edc6c926b319b0839cd2f01e5896';
-export const CURRENT_CATALOG_VERSION = '1.4.3';
+/** Overlay source packed into unpublished 1.4.4 (wrapper/interrupt included). */
+export const CURRENT_ARCHIVE_PIN = 'e9528c3b1195f5ab5d388b73465c31bd422f5d3d';
+/** Immutable unpublished 1.4.3 identity a18ab918. Does not contain wrapper.mjs; leave byte-identical. */
+export const PREVIOUS_ARCHIVE_PIN_143 = '8a811bbadba7edc6c926b319b0839cd2f01e5896';
+export const CURRENT_CATALOG_VERSION = '1.4.4';
 export { EXECUTION_CONTRACT_VERSION };
 
 /** fileEntry() includes absolute path and omits kind. Compare name/kind/bytes/sha256 only. */

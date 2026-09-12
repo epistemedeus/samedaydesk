@@ -11,10 +11,10 @@ export const DESK_CONTRACT = Object.freeze({
   testedCore: CURRENT_RUNTIME_PIN,
   testedSds52: CURRENT_RUNTIME_PIN,
   historicalSds52: SDS52_HISTORICAL_PIN,
-  catalogVersion: "1.4.3",
+  catalogVersion: "1.4.4",
   integrationOwner: "CW62",
   remainingBinding:
-    "Consumes samedaydesk.paid-useful-jobs.execution.v1 at integration c6f1464 (repair 080cc62). Unpublished 1.4.3 archive identity remains 8a811bba and does not contain wrapper publication/interrupt fixes. vendor-budget-impact uses the 1.0.0 wrapper archive; M01 jobs use source-identity pins. HTTP execution cache is process-local.",
+    "Consumes samedaydesk.paid-useful-jobs.execution.v1 at integration c6f1464 (repair 080cc62). Unpublished 1.4.4 candidate includes wrapper publication/interrupt overlay. Immutable 1.4.3 archive identity 8a811bba / a18ab918 does not contain wrapper.mjs and is not labeled fixed. vendor-budget-impact uses the 1.0.0 wrapper archive; M01 jobs use source-identity pins. HTTP execution cache is process-local.",
   replay: Object.freeze({
     queuedResumes: true,
     rejectedStaysRejected: true,

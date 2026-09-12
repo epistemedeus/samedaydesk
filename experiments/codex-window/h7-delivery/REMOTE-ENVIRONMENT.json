@@ -9,7 +9,8 @@
       "Native parent session 01a094f5-dde1-70e1-ad54-481c90a8cd67 implemented on this VM without --resume of H6D.",
       "Same-session pin correction consumed 8a811bba (fix e122c266) without a new parent.",
       "PR145 completion reproduced d18/d20 on 8a811bba at 4c42987; PR143 vendor-temp leak correction is not blocked by those witnesses.",
-      "Same session rebound PR145 consumers onto integration c6f1464 (PR146 / repair 080cc62). Immutable 1.4.3 archive a18ab918 unchanged. H7-witness /tmp/h7-witness/wt left at 080cc62."
+      "Same session rebound PR145 consumers onto integration c6f1464 (PR146 / repair 080cc62). Immutable 1.4.3 archive a18ab918 unchanged. H7-witness /tmp/h7-witness/wt left at 080cc62.",
+      "Same session packed unpublished 1.4.4 candidate ff493409 / 5252886 B with SDS wrapper/interrupt overlay from e9528c3. 1.4.3 a18ab918 / git blob f85c326 left byte-identical and not labeled fixed."
     ],
     "untestedPromises": [
       "Replacement VM from Git + documented auth without copying private home.",
@@ -42,11 +43,12 @@
     "branch": "codex/h7-delivery-20260912",
     "runtimePin": "c6f1464222169f2d32247c978dc5007d82a2aa03",
     "repairSha": "080cc62e7bc83f76431d916df34aea6d30875401",
-    "archivePin": "8a811bbadba7edc6c926b319b0839cd2f01e5896",
+    "archivePin": "e9528c3b1195f5ab5d388b73465c31bd422f5d3d",
+    "archivePin143": "8a811bbadba7edc6c926b319b0839cd2f01e5896",
     "runtimePinFix": "e122c26657977ce3a2d41642095e999db1125b53",
     "previousRuntimePinNotReleaseReady": "6007fcfa27074f9a594248e47296f1afa4f8385d",
-    "unpublished143": { "bytes": 2615491, "sha256": "a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09", "containsWrapperFixes": false },
-    "newPackagedRuntime": null,
+    "unpublished143": { "bytes": 2615491, "sha256": "a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09", "containsWrapperFixes": false, "labeledFixed": false, "gitBlob": "f85c32615c6746fb86575257bf669358fa61d7e1" },
+    "newPackagedRuntime": { "version": "1.4.4", "bytes": 5252886, "sha256": "ff4934096e2ba2c95f52c9e364647b455009c36710723f754f3f63ea0dcb5aac", "containsWrapperFixes": true, "overlaySourceCommit": "e9528c3b1195f5ab5d388b73465c31bd422f5d3d" },
     "runtimePinBranch": "codex/useful-jobs-core-integration-20260912",
     "basedOn": "30345f69f16aca93bb95511ee4da62975c98cc04",
     "importHeadAtStart": "fe8057f395bc665b629e12dbff0db0c264f0eb46",

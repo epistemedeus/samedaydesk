@@ -1,0 +1,51 @@
+{
+  "schema": "h7.pr145-144-candidate.v1",
+  "session": "01a094f5-dde1-70e1-ad54-481c90a8cd67",
+  "branch": "codex/h7-delivery-20260912",
+  "draftPr": "https://github.com/epistemedeus/samedaydesk/pull/145",
+  "runtimePin": "c6f1464222169f2d32247c978dc5007d82a2aa03",
+  "repairSha": "080cc62e7bc83f76431d916df34aea6d30875401",
+  "overlaySourceCommit": "e9528c3b1195f5ab5d388b73465c31bd422f5d3d",
+  "catalogVersion": "1.4.4",
+  "candidate": {
+    "name": "useful-jobs-1.4.4",
+    "bytes": 5252886,
+    "sha256": "ff4934096e2ba2c95f52c9e364647b455009c36710723f754f3f63ea0dcb5aac",
+    "containsWrapperFixes": true,
+    "wrapperPath": "useful-jobs-1.4.4/server/paid-useful-jobs/lib/wrapper.mjs",
+    "interruptPath": "useful-jobs-1.4.4/tools/managed-useful-jobs-order/lib/create-order.mjs",
+    "nestedIdentity": {
+      "name": "useful-jobs-1.0.0",
+      "bytes": 2522418,
+      "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51"
+    }
+  },
+  "immutable143": {
+    "name": "useful-jobs-1.4.3",
+    "bytes": 2615491,
+    "sha256": "a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09",
+    "gitBlob": "f85c32615c6746fb86575257bf669358fa61d7e1",
+    "containsWrapperFixes": false,
+    "labeledFixed": false
+  },
+  "gates": {
+    "packaged144Extracted": { "pass": 8, "fail": 0 },
+    "vendorTemp": { "pass": 9, "fail": 0 },
+    "packaged143": { "pass": 2, "fail": 0 },
+    "publicationRollbackInTree": { "pass": 5, "fail": 0 },
+    "interruptInTree": { "pass": 1, "fail": 0 },
+    "d14Unit": { "pass": 12, "fail": 0 },
+    "h7ColdJourney": { "pass": 1, "fail": 0 },
+    "pgPort": 55595
+  },
+  "payment": {
+    "usefulPaidWork": false,
+    "sold": false,
+    "purchaseAuthority": false,
+    "cashUsd": 0
+  },
+  "knownBad": [
+    "claiming 1.4.3 archive a18ab918 contains wrapper publication/interrupt fixes",
+    "6007fcfa as release-ready 1.4.3"
+  ]
+}

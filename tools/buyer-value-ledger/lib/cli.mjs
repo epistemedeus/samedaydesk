@@ -9,7 +9,7 @@ import { CURRENT_CORE_BASE, EXECUTION_CONTRACT_VERSION, archiveEnginePin } from 
 
 export function usage() {
   return `Buyer value ledger.
-Measures durable desk/batch tickets from the current execution.v1 core (integration c6f1464; unpublished 1.4.3 archive identity 8a811bba).
+Measures durable desk/batch tickets from the current execution.v1 core (integration c6f1464; unpublished 1.4.4 candidate; 1.4.3 a18ab918 remains immutable and does not contain wrapper.mjs).
 Required buyerClass: owner-qa | fixture-buyer | unknown.
 Never infers organic or independent demand. Never treats 8.105 USDC as this job's revenue.
 Archive-origin/file overrides are refused. Failed and unknown results are not useful paid work.
