@@ -8,6 +8,11 @@ import {
   sellerRepairBriefUrl,
   sellerRepairScopeMailto,
 } from "../data/sellerRepairBriefs";
+import {
+  findSellerResolvedCase,
+  sellerResolvedCaseUrl,
+  sellerResolvedCases,
+} from "../data/sellerResolvedCases";
 import { track } from "../lib/posthog";
 import { sellerRepairFixedScopeUrl } from "../lib/sellerRepairHandoff";
 import styles from "./SellerConformance.module.css";
@@ -40,14 +45,23 @@ function restoreAttribute(el: Element | null, attribute: string, previous: strin
 export default function SellerConformance() {
   const [searchParams] = useSearchParams();
   const selectedBrief = findSellerRepairBrief(searchParams.get("finding"));
+  const selectedResolved = findSellerResolvedCase(searchParams.get("resolved"));
   const checkoutReturned = searchParams.get("checkout") === "returned" && selectedBrief !== null;
   const pageTitle = selectedBrief
     ? `${selectedBrief.seller} repair brief | SameDayDesk`
-    : PAGE_TITLE;
+    : selectedResolved
+      ? `${selectedResolved.seller} resolved diagnostic | SameDayDesk`
+      : PAGE_TITLE;
   const pageDescription = selectedBrief
     ? `${selectedBrief.seller}: inspect one credential-free finding for ${selectedBrief.method} ${selectedBrief.route}, the exact repair boundary, and the fixed one-route scope.`
-    : PAGE_DESCRIPTION;
-  const pageUrl = selectedBrief ? sellerRepairBriefUrl(selectedBrief.id) : PAGE_URL;
+    : selectedResolved
+      ? `${selectedResolved.seller}: inspect one resolved diagnostic for ${selectedResolved.method} ${selectedResolved.route}. Not a repair sale.`
+      : PAGE_DESCRIPTION;
+  const pageUrl = selectedBrief
+    ? sellerRepairBriefUrl(selectedBrief.id)
+    : selectedResolved
+      ? sellerResolvedCaseUrl(selectedResolved.id)
+      : PAGE_URL;
 
   useEffect(() => {
     const previousTitle = document.title;
@@ -223,6 +237,92 @@ export default function SellerConformance() {
             </div>
           </section>
         ) : null}
+
+        {selectedResolved ? (
+          <section className={styles.repairBrief} aria-labelledby="resolved-case-title">
+            <div className={styles.briefHead}>
+              <div>
+                <p className="eyebrow">Resolved diagnostic case · {selectedResolved.id}</p>
+                <h2 id="resolved-case-title">{selectedResolved.seller}</h2>
+              </div>
+              <dl className={styles.briefMeta}>
+                <div>
+                  <dt>Observed</dt>
+                  <dd>{selectedResolved.observedAt}</dd>
+                </div>
+                <div>
+                  <dt>Route</dt>
+                  <dd><code>{selectedResolved.method} {selectedResolved.route}</code></dd>
+                </div>
+                <div>
+                  <dt>Status</dt>
+                  <dd>Repaired. Not a repair sale.</dd>
+                </div>
+              </dl>
+            </div>
+            <p className={styles.prose}>{selectedResolved.summary}</p>
+            <div className={styles.comparison}>
+              <div>
+                <h3>What holds</h3>
+                <ul>
+                  {selectedResolved.facts.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </div>
+              <div>
+                <h3>What this is not</h3>
+                <ul>
+                  {selectedResolved.distinctions.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </div>
+            </div>
+            <div className={styles.offerCard}>
+              <span>{selectedResolved.firstStep.label}</span>
+              <pre>
+                <code>{selectedResolved.firstStep.command}</code>
+              </pre>
+              <p>{selectedResolved.firstStep.note}</p>
+              <span>{selectedResolved.paidFollowOn.product} · {selectedResolved.paidFollowOn.livePrice} live</span>
+              <pre>
+                <code>{selectedResolved.paidFollowOn.command}</code>
+              </pre>
+              <p>{selectedResolved.paidFollowOn.note}</p>
+            </div>
+            <div className={styles.actions}>
+              {selectedResolved.evidence.map((item) => (
+                <a
+                  className={styles.secondary}
+                  href={item.href}
+                  key={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        <section className={styles.section} aria-labelledby="resolved-index-title">
+          <div className={styles.sectionHead}>
+            <p className="eyebrow">Resolved diagnostic cases</p>
+            <h2 id="resolved-index-title">Repaired public examples, not purchase leads</h2>
+          </div>
+          <p className={styles.prose}>
+            These cases already have a maintainer repair. They are inspection evidence. They are
+            not $490 repair briefs and they do not start checkout.
+          </p>
+          <ul className={styles.briefIndex}>
+            {sellerResolvedCases.map((item) => (
+              <li key={item.id}>
+                <a href={sellerResolvedCaseUrl(item.id)}>
+                  <strong>{item.seller}</strong>
+                  <span><code>{item.method} {item.route}</code> · resolved {item.observedAt}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
 
         <section className={styles.section} aria-labelledby="brief-index-title">
           <div className={styles.sectionHead}>

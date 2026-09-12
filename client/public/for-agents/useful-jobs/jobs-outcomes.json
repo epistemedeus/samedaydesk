@@ -1,9 +1,44 @@
 {
   "schema": "useful-jobs.outcomes.v1",
   "package": "useful-jobs",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "freeSampleStatus": "labeled-samples-via-explicit-example-flag",
   "jobs": [
+    {
+      "id": "lockfile-pin-delta",
+      "outcome": "Pin-delta of npm package-lock name, version, integrity, and resolved. Not yarn/pnpm/bun. No purchase.",
+      "requiredFiles": ["before package-lock JSON", "after package-lock JSON"],
+      "requiredFlags": ["--before", "--after"],
+      "outputs": ["pin-delta.json", "pin-delta.md"],
+      "freeSample": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "json-schema-webhook-drift",
+      "outcome": "Used-pointer drift brief for JSON Schema or webhook-example JSON. Not an OpenAPI upgrade brief.",
+      "requiredFiles": ["before JSON", "after JSON", "used pointers JSON"],
+      "requiredFlags": ["--before", "--after", "--used"],
+      "outputs": ["drift-brief.json", "drift-brief.md"],
+      "freeSample": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "route-table-diff",
+      "outcome": "Route-table added/removed/changed report. SAMPLE is not the published SDS table. Homepage rewrite refused.",
+      "requiredFiles": ["before route catalog JSON", "after route catalog JSON"],
+      "requiredFlags": ["--before", "--after", "--out-dir"],
+      "outputs": ["route-diff.json", "route-diff.md"],
+      "freeSample": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "page-change-offline-job",
+      "outcome": "Page-change brief from two already-held extract-batch JSON files. Does not fetch. --example is refused.",
+      "requiredFiles": ["job document JSON with sibling before/after"],
+      "requiredFlags": ["--job", "--out-dir"],
+      "outputs": ["page-change.json", "page-change.md"],
+      "freeSample": false
+    },
     {
       "id": "api-upgrade-brief",
       "outcome": "Upgrade brief listing retire/migrate and breaking-change actions for used OpenAPI operations that differ between before and after snapshots.",
@@ -42,7 +77,7 @@
     },
     {
       "id": "listing-repair-packet",
-      "outcome": "Owner repair packet with source-linked guidance from listing/route diagnosis snapshots. Partial evidence stays non-final.",
+      "outcome": "Owner repair packet with source-linked guidance from listing/route diagnosis snapshots. Incomplete capture stays partial for every provider. Unsupported providers are refused when capture is complete. Partial evidence stays non-final.",
       "requiredFiles": ["listing diagnosis JSON"],
       "requiredFlags": ["--input"],
       "outputs": ["repair-packet.json", "repair-packet.md"],

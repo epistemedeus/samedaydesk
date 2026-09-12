@@ -20,6 +20,10 @@ import {
   RECURRING_QUICKSTART,
   BUYER_SETUP_QUICKSTART,
 } from "../data/machineEntry.mjs";
+import {
+  GENTECH_DEFI_RESOLVED_CASE,
+  sellerResolvedCasePath,
+} from "../data/sellerResolvedCases";
 import styles from "./Mcp.module.css";
 
 export default function ForAgents() {
@@ -216,14 +220,15 @@ export default function ForAgents() {
         <section className={styles.section} aria-labelledby="useful-jobs-title">
           <div className={styles.sectionHead}>
             <p className="eyebrow">Offline package · useful jobs</p>
-            <h2 id="useful-jobs-title">Run six local useful jobs on files you already hold</h2>
+            <h2 id="useful-jobs-title">Run local useful jobs on files you already hold</h2>
           </div>
           <p className={styles.jobCopy}>
-            Download one Node 22 archive for API upgrade briefs, vendor budget impact, feed
+            Download one Node 22 archive for lockfile pin-delta, JSON Schema drift, route-table
+            diff, page-change, plus the original six: API upgrade briefs, vendor budget impact, feed
             agendas, evidence CI annotations, listing repair packets, and repeat job records.
-            Verify size and sha256 before extract. Labeled samples need <code>--example</code>.
-            Ordinary callers supply their own files. No purchase or scheduler authority. Details
-            and cold-start commands:{" "}
+            Verify size and sha256 before extract. Labeled samples need <code>--example</code> except
+            page-change. Ordinary callers supply their own files. No purchase or scheduler
+            authority. Details and cold-start commands:{" "}
             <Link className={styles.inlineLink} to="/for-agents/useful-jobs">
               /for-agents/useful-jobs
             </Link>
@@ -269,12 +274,23 @@ export default function ForAgents() {
               Health, the HTTP catalog, the x402 manifest, OpenAPI, and MCP are the current inventories.
               Human Stripe offers stay on the homepage. This page does not sell those SKUs.
             </p>
+            <p>
+              {GENTECH_DEFI_RESOLVED_CASE.seller}{" "}
+              <code>{GENTECH_DEFI_RESOLVED_CASE.method} {GENTECH_DEFI_RESOLVED_CASE.route}</code>
+              {" "}is a resolved diagnostic case, not a repair sale.
+            </p>
             <div className={styles.actions}>
               <Link className={styles.primary} to="/x402">
                 Other machine services
               </Link>
               <Link className={styles.secondary} to="/x402/seller-conformance">
                 Seller conformance proof
+              </Link>
+              <Link
+                className={styles.secondary}
+                to={sellerResolvedCasePath(GENTECH_DEFI_RESOLVED_CASE.id)}
+              >
+                Gentech resolved diagnostic
               </Link>
               <Link className={styles.secondary} to="/x402/verified">
                 Inspected route list

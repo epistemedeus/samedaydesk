@@ -18,6 +18,8 @@ test("seller-conformance UI delegates the fixed scope to Neomorphic without star
   assert.match(source, /sellerRepairFixedScopeUrl\(selectedBrief\.id\)/);
   assert.doesNotMatch(source, /requestSellerRepairCheckoutUrl|seller_repair_checkout_started|seller-repair-session/);
   assert.match(source, /LIVE_AUDIT_URL/);
+  assert.doesNotMatch(source, /sellerRepairFixedScopeUrl\(selectedResolved/);
+  assert.match(source, /Not a repair sale/);
 });
 
 test("known seller finding is preserved in the canonical Neomorphic fixed-scope URL", () => {

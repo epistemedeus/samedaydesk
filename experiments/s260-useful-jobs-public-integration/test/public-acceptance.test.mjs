@@ -31,6 +31,7 @@ import {
   USEFUL_JOBS_LIST_HELP,
   USEFUL_JOBS_OUTCOMES,
   USEFUL_JOBS_REPEAT_USE,
+  USEFUL_JOBS_ROOT,
   USEFUL_JOBS_RUNTIME,
   USEFUL_JOBS_SHELL,
 } from "../../../client/src/data/machineEntry.mjs";
@@ -107,11 +108,11 @@ function serveArchive({ status = 200, body = null, path = USEFUL_JOBS_ARCHIVE } 
 
 function extractTo(dir) {
   mkdirSync(dir, { recursive: true });
-  const dest = join(dir, "useful-jobs-1.0.0.tar.gz");
+  const dest = join(dir, `${USEFUL_JOBS_ROOT}.tar.gz`);
   copyFileSync(publicArchive, dest);
   const tar = spawnSync("tar", ["-xzf", dest, "-C", dir], { encoding: "utf8" });
   assert.equal(tar.status, 0, tar.stderr);
-  return join(dir, "useful-jobs-1.0.0");
+  return join(dir, USEFUL_JOBS_ROOT);
 }
 
 function runCli(kit, args, cwd) {
@@ -127,10 +128,42 @@ test("committed public archive matches pinned bytes and sha256", () => {
   assert.equal(buf.length, USEFUL_JOBS_ARCHIVE_BYTES);
   assert.equal(sha256(buf), USEFUL_JOBS_ARCHIVE_SHA256);
   const pin = JSON.parse(
-    readFileSync(join(root, "client/public/kit/useful-jobs-1.0.0.sha256.json"), "utf8"),
+    readFileSync(join(root, "client/public/kit/useful-jobs-1.2.0.sha256.json"), "utf8"),
   );
   assert.equal(pin.sha256, USEFUL_JOBS_ARCHIVE_SHA256);
   assert.equal(pin.bytes, USEFUL_JOBS_ARCHIVE_BYTES);
+});
+
+test("previous 1.1.0 public archive stays at original URL, size, and sha256", () => {
+  const prev = join(root, "client/public/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz");
+  const kit = join(root, "client/public/kit/useful-jobs-1.1.0.tar.gz");
+  const pin = JSON.parse(
+    readFileSync(join(root, "client/public/for-agents/useful-jobs/useful-jobs-1.1.0.sha256.json"), "utf8"),
+  );
+  assert.equal(existsSync(prev), true);
+  assert.equal(existsSync(kit), true);
+  const buf = readFileSync(prev);
+  assert.equal(buf.length, 2577606);
+  assert.equal(sha256(buf), "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534");
+  assert.equal(sha256(readFileSync(kit)), pin.sha256);
+  assert.equal(pin.bytes, 2577606);
+  assert.equal(pin.sha256, "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534");
+});
+
+test("previous 1.0.0 public archive stays at original URL, size, and sha256", () => {
+  const prev = join(root, "client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz");
+  const kit = join(root, "client/public/kit/useful-jobs-1.0.0.tar.gz");
+  const pin = JSON.parse(
+    readFileSync(join(root, "client/public/for-agents/useful-jobs/useful-jobs-1.0.0.sha256.json"), "utf8"),
+  );
+  assert.equal(existsSync(prev), true);
+  assert.equal(existsSync(kit), true);
+  const buf = readFileSync(prev);
+  assert.equal(buf.length, 2522418);
+  assert.equal(sha256(buf), "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51");
+  assert.equal(sha256(readFileSync(kit)), pin.sha256);
+  assert.equal(pin.bytes, 2522418);
+  assert.equal(pin.sha256, "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51");
 });
 
 test("discovery, catalog, outcomes, and page share one archive pin and commands", () => {
@@ -183,7 +216,7 @@ test("discovery, catalog, outcomes, and page share one archive pin and commands"
   assert.match(page, /USEFUL_JOBS_ACQUIRE_TOOLS/);
   assert.match(page, /USEFUL_JOBS_RUNTIME/);
   assert.match(page, /Turn changing files into/);
-  assert.match(page, /Six offline jobs for API changes, budgets, feeds, and delivery evidence/);
+  assert.match(page, /Ten offline jobs: lockfile pin-delta first/);
   assert.match(page, /Acquisition tools/);
   assert.match(page, /Free local package only/);
   assert.match(crawler, /Turn changing files into useful next steps/i);
@@ -347,8 +380,8 @@ test("true concurrent acquisitions use async spawn and both succeed", async () =
     assert.equal(b.status, 0, b.stderr);
     assert.equal(JSON.parse(a.stdout).ok, true);
     assert.equal(JSON.parse(b.stdout).ok, true);
-    assert.equal(existsSync(join(work, "a-out/useful-jobs-1.0.0/bin/useful-jobs.mjs")), true);
-    assert.equal(existsSync(join(work, "b-out/useful-jobs-1.0.0/bin/useful-jobs.mjs")), true);
+    assert.equal(existsSync(join(work, `a-out/${USEFUL_JOBS_ROOT}/bin/useful-jobs.mjs`)), true);
+    assert.equal(existsSync(join(work, `b-out/${USEFUL_JOBS_ROOT}/bin/useful-jobs.mjs`)), true);
     assert.ok(elapsed < 20_000, `unexpectedly slow concurrent acquire: ${elapsed}ms`);
   } finally {
     await srv.stop();
@@ -356,11 +389,12 @@ test("true concurrent acquisitions use async spawn and both succeed", async () =
   }
 });
 
-test("unpack outside checkout: list/help, six examples, two callers, missing refuse, changed repeat", () => {
+test("unpack outside checkout: list/help, advertised jobs, two callers, missing refuse, changed repeat", () => {
   const outside = mkdtempSync(join(tmpdir(), "uj-outside-"));
   try {
     const kit = extractTo(outside);
     assert.equal(kit.startsWith(root), false);
+    const catalog = JSON.parse(readFileSync(join(kit, "catalog.json"), "utf8"));
 
     const list = runCli(kit, ["list"]);
     assert.equal(list.status, 0, list.stderr);
@@ -370,11 +404,33 @@ test("unpack outside checkout: list/help, six examples, two callers, missing ref
     assert.equal(help.status, 0, help.stderr);
     assert.match(help.stdout, /useful-jobs/);
 
-    for (const id of JOBS) {
-      const r = runCli(kit, ["run", id, "--example"]);
-      assert.equal(r.status, 0, `${id}: ${r.stderr}\n${r.stdout}`);
-      assert.match(r.stdout, /"ok"\s*:\s*true/);
+    for (const job of catalog.jobs) {
+      let r;
+      if (job.sampleAvailable) {
+        const args = ["run", job.id, "--example"];
+        if (job.requiredInputs?.includes("--out-dir") || job.id === "route-table-diff") {
+          args.push("--out-dir", join(outside, `out-example-${job.id}`));
+        }
+        r = runCli(kit, args);
+        assert.equal(r.status, 0, `${job.id}: ${r.stderr}\n${r.stdout}`);
+        assert.match(r.stdout, /"ok"\s*:\s*true/);
+      } else {
+        r = runCli(kit, ["run", job.id, "--example"]);
+        assert.notEqual(r.status, 0, `${job.id} --example should refuse`);
+        assert.match(r.stdout + r.stderr, /sample_as_delivered_watch|SAMPLE/);
+      }
     }
+
+    const page = runCli(kit, [
+      "run",
+      "page-change-offline-job",
+      "--job",
+      join(kit, "samples/page/h04-page-01/job.json"),
+      "--out-dir",
+      join(outside, "out-page"),
+    ]);
+    assert.equal(page.status, 0, page.stderr + page.stdout);
+    assert.match(page.stdout, /"ok"\s*:\s*true/);
 
     const alpha = runCli(kit, [
       "run",
@@ -546,7 +602,7 @@ test("published install recipe: good HTTP extracts and invokes node under if/&&"
       const kitLine = String(r.stdout)
         .trim()
         .split("\n")
-        .find((l) => l.includes("useful-jobs-1.0.0"));
+        .find((l) => l.includes(USEFUL_JOBS_ROOT));
       assert.ok(kitLine, `${wrap} stdout should print kit path; got ${r.stdout}`);
       assert.ok(existsSync(join(kitLine, "bin/useful-jobs.mjs")), kitLine);
       assert.match(readFileSync(spy.tarLog, "utf8"), /tar/);

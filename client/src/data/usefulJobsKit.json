@@ -1,29 +1,59 @@
 {
   "packageId": "useful-jobs",
-  "version": "1.0.0",
-  "archive": "/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz",
-  "kitArchive": "/kit/useful-jobs-1.0.0.tar.gz",
-  "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
-  "bytes": 2522418,
+  "version": "1.2.0",
+  "archive": "/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz",
+  "kitArchive": "/kit/useful-jobs-1.2.0.tar.gz",
+  "sha256": "dec31ea66f1605fb9578c7d15c9583b130c6e2c0b82b5e6b93422381a04461eb",
+  "bytes": 2579117,
   "discovery": "/discovery/useful-jobs.json",
   "catalog": "/for-agents/useful-jobs/catalog.json",
   "outcomes": "/for-agents/useful-jobs/jobs-outcomes.json",
-  "sourceRepo": "epistemedeus/pilot",
-  "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
-  "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
-  "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+  "sourceRepo": "epistemedeus/samedaydesk",
+  "sourceCommit": "e9759e14c0cb264cc926339a9deb0e3fee993215",
+  "archiveFreeze": "e9759e14c0cb264cc926339a9deb0e3fee993215",
+  "reviewedSource": "d2a0d0b2798e9a3951c43fe16dd64215207c3d9b",
   "node": ">=22",
   "offline": true,
   "purchaseAuthority": false,
   "schedulerDaemon": false,
-  "rootName": "useful-jobs-1.0.0",
+  "rootName": "useful-jobs-1.2.0",
   "cli": "bin/useful-jobs.mjs",
   "jobs": [
+    "lockfile-pin-delta",
+    "json-schema-webhook-drift",
+    "route-table-diff",
+    "page-change-offline-job",
     "api-upgrade-brief",
     "vendor-budget-impact",
     "feed-agenda",
     "evidence-ci-annotation",
     "listing-repair-packet",
     "repeat-job-record"
+  ],
+  "previous": {
+    "version": "1.1.0",
+    "archive": "/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz",
+    "kitArchive": "/kit/useful-jobs-1.1.0.tar.gz",
+    "sha256": "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534",
+    "bytes": 2577606,
+    "rootName": "useful-jobs-1.1.0"
+  },
+  "immutableArchives": [
+    {
+      "version": "1.0.0",
+      "archive": "/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz",
+      "kitArchive": "/kit/useful-jobs-1.0.0.tar.gz",
+      "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "bytes": 2522418,
+      "rootName": "useful-jobs-1.0.0"
+    },
+    {
+      "version": "1.1.0",
+      "archive": "/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz",
+      "kitArchive": "/kit/useful-jobs-1.1.0.tar.gz",
+      "sha256": "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534",
+      "bytes": 2577606,
+      "rootName": "useful-jobs-1.1.0"
+    }
   ]
 }
