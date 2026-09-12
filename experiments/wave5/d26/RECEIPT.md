@@ -79,7 +79,7 @@ cd experiments/wave5/d26 && node --test --test-concurrency=1 test/*.test.mjs
 
 Also: `node bin/price-floor.mjs profile` writes `measured/`.
 
-Tests: **32 pass, 0 fail** (`node --test --test-concurrency=1 test/*.test.mjs`).
+Tests: **38 pass, 0 fail** (`node --test --test-concurrency=1 test/*.test.mjs`).
 
 ## pstack / model
 
