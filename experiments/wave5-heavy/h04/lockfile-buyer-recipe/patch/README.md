@@ -1,8 +1,15 @@
 # Merchant patch packet (Root transfer)
 
 Pin: `ca38205279f0d543515b81b7261909e55ea2600f`.
-Do not apply from this SDS branch onto the live merchant. Root copies
-these exact consumer paths.
+
+**Applied** on merchant branch `codex/w5-lockfile-customer-client-20260912`:
+customer-x402 one-path POST admission + buyer README. Combined patch below
+still contains H01-only hunks — do not re-apply those on the client branch.
+
+**Deferred for H01** (see `PENDING-H01.md`):
+
+- `mcp-tool-metadata.mjs`
+- `lockfile-pin-delta-config.mjs`
 
 ## Targets
 
