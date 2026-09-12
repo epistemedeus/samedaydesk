@@ -1,0 +1,37 @@
+TAP version 13
+# Subtest: nested generatedAt is semantic report data
+ok 1 - nested generatedAt is semantic report data
+  ---
+  duration_ms: 2.533801
+  type: 'test'
+  ...
+# Subtest: a report deadline timestamp is semantic, even in Markdown
+ok 2 - a report deadline timestamp is semantic, even in Markdown
+  ---
+  duration_ms: 0.709569
+  type: 'test'
+  ...
+# Subtest: identical invalid JSON cannot verify output identity
+ok 3 - identical invalid JSON cannot verify output identity
+  ---
+  duration_ms: 0.536711
+  type: 'test'
+  ...
+# Subtest: nested output directories are overlapping locations
+ok 4 - nested output directories are overlapping locations
+  ---
+  duration_ms: 0.717631
+  type: 'test'
+  ...
+# Subtest: partial analysis remains partial
+ok 5 - partial analysis remains partial
+  ---
+  duration_ms: 0.153308
+  type: 'test'
+  ...
+# Subtest: freezing inputs cannot follow a preexisting destination symlink
+ok 6 - freezing inputs cannot follow a preexisting destination symlink
+  ---
+  duration_ms: 0.661301
+  type: 'test'
+  ...
