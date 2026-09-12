@@ -42,7 +42,12 @@
     "m08": "902ff58db33e699b3ad7e1e35947342940b0e902",
     "m09": "da4c3e1c7299d735c16509172b0802b08deff962"
   },
-  "outcomeKinds": ["analysis", "refused", "incomplete-delivery", "transport-failure"],
+  "outcomeKinds": [
+    "analysis",
+    "refused",
+    "incomplete-delivery",
+    "transport-failure"
+  ],
   "engines": [
     {
       "id": "lockfile-pin-delta",
@@ -59,21 +64,62 @@
       },
       "cli": {
         "relativeBin": "bin/lockfile-delta.mjs",
-        "argv": ["--before", "{before}", "--after", "{after}", "--out-dir", "{outDir}"],
-        "requiredInputs": ["before", "after"],
-        "exampleArgv": ["--example", "--out-dir", "{outDir}"],
+        "argv": [
+          "--before",
+          "{before}",
+          "--after",
+          "{after}",
+          "--out-dir",
+          "{outDir}"
+        ],
+        "requiredInputs": [
+          "before",
+          "after"
+        ],
+        "exampleArgv": [
+          "--example",
+          "--out-dir",
+          "{outDir}"
+        ],
         "exampleIsRefuse": false
       },
       "acceptedInputs": {
-        "formats": ["npm-package-lock-v2", "npm-package-lock-v3"],
-        "equality": ["name", "version", "integrity", "resolved"],
-        "notHashedTogether": ["yarn.lock", "pnpm-lock.yaml", "bun.lock", "composer.lock", "Cargo.lock", "package.json", "html"]
+        "formats": [
+          "npm-package-lock-v2",
+          "npm-package-lock-v3"
+        ],
+        "equality": [
+          "name",
+          "version",
+          "integrity",
+          "resolved"
+        ],
+        "notHashedTogether": [
+          "yarn.lock",
+          "pnpm-lock.yaml",
+          "bun.lock",
+          "composer.lock",
+          "Cargo.lock",
+          "package.json",
+          "html"
+        ]
       },
       "outputs": [
         {
           "name": "pin-delta.json",
           "schema": "samedaydesk.lockfile-pin-delta.v1",
-          "requiredKeys": ["schema", "ok", "status", "appId", "added", "removed", "changed", "counts", "purchaseAuthority", "equality"]
+          "requiredKeys": [
+            "schema",
+            "ok",
+            "status",
+            "appId",
+            "added",
+            "removed",
+            "changed",
+            "counts",
+            "purchaseAuthority",
+            "equality"
+          ]
         },
         {
           "name": "pin-delta.md",
@@ -82,13 +128,29 @@
       ],
       "stdout": {
         "stream": "stdout",
-        "requiredKeys": ["ok", "appId", "status", "counts", "purchaseAuthority", "settlement"],
-        "analysisStatuses": ["actionable", "informational", "partial"]
+        "requiredKeys": [
+          "ok",
+          "appId",
+          "status",
+          "counts",
+          "purchaseAuthority",
+          "settlement"
+        ],
+        "analysisStatuses": [
+          "actionable",
+          "informational",
+          "partial"
+        ]
       },
       "refuse": {
         "stream": "stdout",
         "exitCode": 2,
-        "requiredKeys": ["ok", "refused", "code", "error"],
+        "requiredKeys": [
+          "ok",
+          "refused",
+          "code",
+          "error"
+        ],
         "ok": false,
         "refused": true
       },
@@ -112,29 +174,67 @@
       "wave4": "W4-commerce-10",
       "pin": {
         "repo": "epistemedeus/samedaydesk",
-        "sha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+        "sha": "989ea8155ee547546cb63b6ba97bc814b313fc20",
         "ownedPath": "tools/json-schema-webhook-drift/",
         "packageName": "@samedaydesk/json-schema-webhook-drift",
         "source": "in-tree",
-        "integrationFix": "boolean array items true to false is boolean-schema-tightened (M06 items-true-to-false)"
+        "integrationFix": "CW14 instance-set semantics plus independently witnessed selected-required keyword membership"
       },
       "cli": {
         "relativeBin": "bin/webhook-drift.mjs",
-        "argv": ["--before", "{before}", "--after", "{after}", "--used", "{used}", "--out-dir", "{outDir}"],
-        "requiredInputs": ["before", "after", "used"],
-        "exampleArgv": ["--example", "--out-dir", "{outDir}"],
+        "argv": [
+          "--before",
+          "{before}",
+          "--after",
+          "{after}",
+          "--used",
+          "{used}",
+          "--out-dir",
+          "{outDir}"
+        ],
+        "requiredInputs": [
+          "before",
+          "after",
+          "used"
+        ],
+        "exampleArgv": [
+          "--example",
+          "--out-dir",
+          "{outDir}"
+        ],
         "exampleIsRefuse": false
       },
       "acceptedInputs": {
-        "formats": ["json-schema", "webhook-example"],
-        "used": { "pointers": ["JSON Pointers"] },
-        "notThisJob": ["openapi", "swagger", "html", "yaml", "remote-$ref"]
+        "formats": [
+          "json-schema",
+          "webhook-example"
+        ],
+        "used": {
+          "pointers": [
+            "JSON Pointers"
+          ]
+        },
+        "notThisJob": [
+          "openapi",
+          "swagger",
+          "html",
+          "yaml",
+          "remote-$ref"
+        ]
       },
       "outputs": [
         {
           "name": "drift-brief.json",
           "schema": "samedaydesk.json-schema-webhook-drift.v1",
-          "requiredKeys": ["schema", "ok", "status", "kind", "impact", "usedOnly", "notOpenApi"]
+          "requiredKeys": [
+            "schema",
+            "ok",
+            "status",
+            "kind",
+            "impact",
+            "usedOnly",
+            "notOpenApi"
+          ]
         },
         {
           "name": "drift-brief.md",
@@ -143,13 +243,31 @@
       ],
       "stdout": {
         "stream": "stdout",
-        "requiredKeys": ["ok", "appId", "status", "kind", "outputs", "purchaseAuthority", "breaking", "unknown"],
-        "analysisStatuses": ["actionable", "informational", "partial"]
+        "requiredKeys": [
+          "ok",
+          "appId",
+          "status",
+          "kind",
+          "outputs",
+          "purchaseAuthority",
+          "breaking",
+          "unknown"
+        ],
+        "analysisStatuses": [
+          "actionable",
+          "informational",
+          "partial"
+        ]
       },
       "refuse": {
         "stream": "stdout",
         "exitCode": 2,
-        "requiredKeys": ["ok", "refused", "code", "error"],
+        "requiredKeys": [
+          "ok",
+          "refused",
+          "code",
+          "error"
+        ],
         "ok": false,
         "refused": true
       },
@@ -175,7 +293,7 @@
       "wave4": "W4-commerce-12",
       "pin": {
         "repo": "epistemedeus/samedaydesk",
-        "sha": "886c81d824e0a24e2faa5b821b1cd0ca46ae0859",
+        "sha": "989ea8155ee547546cb63b6ba97bc814b313fc20",
         "ownedPath": "tools/route-table-diff/",
         "packageName": null,
         "binPresent": "bin/route-diff.mjs",
@@ -183,22 +301,66 @@
       },
       "cli": {
         "relativeBin": "bin/route-diff.mjs",
-        "argv": ["--before", "{before}", "--after", "{after}", "--out-dir", "{outDir}"],
-        "requiredInputs": ["before", "after", "outDir"],
-        "exampleArgv": ["--example", "--out-dir", "{outDir}"],
+        "argv": [
+          "--before",
+          "{before}",
+          "--after",
+          "{after}",
+          "--out-dir",
+          "{outDir}"
+        ],
+        "requiredInputs": [
+          "before",
+          "after",
+          "outDir"
+        ],
+        "exampleArgv": [
+          "--example",
+          "--out-dir",
+          "{outDir}"
+        ],
         "exampleIsRefuse": false,
         "httpLocators": "loopback http://127.0.0.1|localhost|::1 only"
       },
       "acceptedInputs": {
-        "formats": ["routes-wrapper", "catalog-wrapper", "raw-array", "loopback-http-json"],
-        "record": ["path", "canonical", "title", "robots?"],
-        "notClaimed": ["nextjs", "express-path-params", "openapi", "html", "yaml", "https-url"]
+        "formats": [
+          "routes-wrapper",
+          "catalog-wrapper",
+          "raw-array",
+          "loopback-http-json"
+        ],
+        "record": [
+          "path",
+          "canonical",
+          "title",
+          "robots?"
+        ],
+        "notClaimed": [
+          "nextjs",
+          "express-path-params",
+          "openapi",
+          "html",
+          "yaml",
+          "https-url"
+        ]
       },
       "outputs": [
         {
           "name": "route-diff.json",
           "schema": "samedaydesk.route-diff.v1",
-          "requiredKeys": ["schema", "ok", "counts", "added", "removed", "changed", "titleOnly", "tableDigest", "publishedRouteTable", "outcome", "breaking"]
+          "requiredKeys": [
+            "schema",
+            "ok",
+            "counts",
+            "added",
+            "removed",
+            "changed",
+            "titleOnly",
+            "tableDigest",
+            "publishedRouteTable",
+            "outcome",
+            "breaking"
+          ]
         },
         {
           "name": "route-diff.md",
@@ -207,13 +369,36 @@
       ],
       "stdout": {
         "stream": "stdout",
-        "requiredKeys": ["ok", "schema", "counts", "added", "removed", "changed", "outputs", "tableDigest", "publishedRouteTable", "outcome", "breaking"],
-        "analysisStatuses": ["no-change", "permutation", "title-only", "changed", "breaking"]
+        "requiredKeys": [
+          "ok",
+          "schema",
+          "counts",
+          "added",
+          "removed",
+          "changed",
+          "outputs",
+          "tableDigest",
+          "publishedRouteTable",
+          "outcome",
+          "breaking"
+        ],
+        "analysisStatuses": [
+          "no-change",
+          "permutation",
+          "title-only",
+          "changed",
+          "breaking"
+        ]
       },
       "refuse": {
         "stream": "stdout",
         "exitCode": 2,
-        "requiredKeys": ["ok", "refused", "code", "error"],
+        "requiredKeys": [
+          "ok",
+          "refused",
+          "code",
+          "error"
+        ],
         "ok": false,
         "refused": true
       },
@@ -238,15 +423,21 @@
       "wave4": "W4-commerce-13",
       "pin": {
         "repo": "epistemedeus/samedaydesk",
-        "sha": "fec7bc04ac4419f8e7ce40f2613314e6953af6bc",
+        "sha": "e38f385a63c767f315409460bd51c57895fa4ed1",
         "ownedPath": "tools/page-change-offline-job/",
         "packageName": "@samedaydesk/page-change-offline-job",
-        "engineVersion": "0.1.1",
+        "engineVersion": "0.1.3",
         "source": "in-tree"
       },
       "cli": {
         "relativeBin": "bin/page-change.mjs",
-        "argv": ["job", "--job", "{job}", "--out-dir", "{outDir}"],
+        "argv": [
+          "job",
+          "--job",
+          "{job}",
+          "--out-dir",
+          "{outDir}"
+        ],
         "compareArgv": [
           "compare",
           "--before",
@@ -260,22 +451,48 @@
           "--out-dir",
           "{outDir}"
         ],
-        "requiredInputs": ["job"],
-        "exampleArgv": ["--example"],
+        "requiredInputs": [
+          "job"
+        ],
+        "exampleArgv": [
+          "--example"
+        ],
         "exampleIsRefuse": true,
-        "optionalFlags": ["max-bytes", "max-stale-ms", "max-sources", "max-changes", "max-json-depth", "max-json-nodes", "max-excerpt-bytes"]
+        "optionalFlags": [
+          "max-bytes",
+          "max-stale-ms",
+          "max-sources",
+          "max-changes",
+          "max-json-depth",
+          "max-json-nodes",
+          "max-excerpt-bytes"
+        ]
       },
       "acceptedInputs": {
-        "formats": ["samedaydesk.extract-batch.v0"],
-        "fields": ["title", "description", "headings"],
-        "notThisJob": ["live-url", "payment-retry", "quote-as-success", "sample-as-delivered-watch"]
+        "formats": [
+          "samedaydesk.extract-batch.v0"
+        ],
+        "fields": [
+          "title",
+          "description",
+          "headings"
+        ],
+        "notThisJob": [
+          "live-url",
+          "payment-retry",
+          "quote-as-success",
+          "sample-as-delivered-watch"
+        ]
       },
       "outputs": [
         {
           "name": "page-change.json",
           "schema": "pilot/page-change-brief/v1",
           "schemaPath": "report.schema",
-          "requiredKeys": ["job", "report"]
+          "requiredKeys": [
+            "job",
+            "report"
+          ]
         },
         {
           "name": "page-change.md",
@@ -284,13 +501,29 @@
       ],
       "stdout": {
         "stream": "stdout",
-        "requiredKeys": ["ok", "job", "report", "written"],
-        "analysisStatuses": ["changed", "unchanged", "reordered", "incomplete", "ambiguous", "incomparable"]
+        "requiredKeys": [
+          "ok",
+          "job",
+          "report",
+          "written"
+        ],
+        "analysisStatuses": [
+          "changed",
+          "unchanged",
+          "reordered",
+          "incomplete",
+          "ambiguous",
+          "incomparable"
+        ]
       },
       "refuse": {
         "stream": "stderr",
         "exitCode": 2,
-        "requiredKeys": ["ok", "code", "message"],
+        "requiredKeys": [
+          "ok",
+          "code",
+          "message"
+        ],
         "ok": false,
         "refused": null,
         "note": "Refusals are stderr {ok:false,code,message}. They do not emit refused:true on stdout."
