@@ -1,0 +1,13 @@
+{
+  "name": "@samedaydesk/wave5-m08-final-engine-inputs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Independent final-input check of useful-jobs 1.2.0 route-table-diff through the shipped CLI. Not a second kernel.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs"
+  }
+}

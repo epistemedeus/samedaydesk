@@ -1,0 +1,18 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "note": "Caller-owned method/handler records from D01 vendor/neomorphic-correspondence/dist/app.js. No canonical or title. SDS does not claim HTTP method identity.",
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "46f2b7f55a7fb780333073a5197b64b8fde64a33",
+    "extractedFrom": ["vendor/neomorphic-correspondence/dist/app.js"]
+  },
+  "routes": [
+    { "path": "/healthz", "method": "GET", "handler": "healthz" },
+    { "path": "/v1/projects", "method": "POST", "handler": "createProject" },
+    { "path": "/v1/projects/:projectId", "method": "GET", "handler": "getProject" },
+    { "path": "/v1/projects/:projectId/events", "method": "GET", "handler": "listEvents" },
+    { "path": "/v1/projects/:projectId/events", "method": "POST", "handler": "createEvent" }
+  ]
+}

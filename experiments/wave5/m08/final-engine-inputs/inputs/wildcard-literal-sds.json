@@ -1,0 +1,13 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "note": "Caller-owned Next-shaped path with SDS title+canonical. SDS does not claim wildcard or App Router parsing. The brackets are a literal path string.",
+  "routes": [
+    {
+      "path": "/tools/[slug]",
+      "title": "Caller-owned literal bracket path | SameDayDesk",
+      "canonical": "https://samedaydesk.com/tools/[slug]"
+    }
+  ]
+}

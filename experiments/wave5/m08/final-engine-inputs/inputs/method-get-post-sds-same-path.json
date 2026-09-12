@@ -1,0 +1,25 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "note": "GET and POST on the same SDS path with title+canonical. Method is not an identity key. Expect a path collision, not two routes and not unsupported_catalog.",
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "46f2b7f55a7fb780333073a5197b64b8fde64a33",
+    "extractedFrom": ["vendor/neomorphic-correspondence/dist/app.js"]
+  },
+  "routes": [
+    {
+      "path": "/v1/projects/:projectId/events",
+      "method": "GET",
+      "title": "List correspondence events",
+      "canonical": "https://samedaydesk.com/v1/projects/:projectId/events"
+    },
+    {
+      "path": "/v1/projects/:projectId/events",
+      "method": "POST",
+      "title": "Create correspondence event",
+      "canonical": "https://samedaydesk.com/v1/projects/:projectId/events"
+    }
+  ]
+}

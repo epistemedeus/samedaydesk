@@ -1,0 +1,13 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "note": "Homepage path must be refused. This check never writes spa-route-shells.js or index.html.",
+  "routes": [
+    {
+      "path": "/",
+      "title": "Not the homepage title",
+      "canonical": "https://samedaydesk.com/x402"
+    }
+  ]
+}

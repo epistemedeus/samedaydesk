@@ -1,0 +1,29 @@
+{
+  "id": "W5-M08-final-engine-inputs",
+  "outcome": "Independent final-input check of the useful-jobs 1.2.0 route-table-diff reader through the shipped CLI",
+  "ownedPath": "experiments/wave5/m08/final-engine-inputs/",
+  "notASecondKernel": true,
+  "implementation": {
+    "repo": "epistemedeus/samedaydesk",
+    "pr": 74,
+    "sha": "46f2b7f55a7fb780333073a5197b64b8fde64a33",
+    "ref": "codex/w5-d01-20260911"
+  },
+  "publicKit": {
+    "repo": "epistemedeus/samedaydesk",
+    "pr": 114,
+    "sha": "9ae0febd8c184c0cbbb5e481ba31ac620e89b869",
+    "archive": "client/public/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz",
+    "bytes": 2579117,
+    "sha256": "dec31ea66f1605fb9578c7d15c9583b130c6e2c0b82b5e6b93422381a04461eb",
+    "packageVersion": "1.2.0",
+    "cli": ["node", "bin/useful-jobs.mjs", "run", "route-table-diff"],
+    "enginePin": "886c81d824e0a24e2faa5b821b1cd0ca46ae0859",
+    "enginePath": "engines/route-table-diff/"
+  },
+  "m04ContractTestedImplementation": "386b8f9fc4745afdc520d1e650d520280936eb39",
+  "priorM08ConsumerPin": "7387eb677abd442dfab9081cb0ad95451fd2a762",
+  "paid": false,
+  "settled": false,
+  "purchaseAuthority": false
+}
