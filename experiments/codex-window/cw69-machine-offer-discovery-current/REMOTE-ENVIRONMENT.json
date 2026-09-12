@@ -28,9 +28,17 @@
   "gitAccess": {
     "ghAccount": "cursor",
     "samedaydesk": "cloned",
-    "neomorphic-io": "unknown",
-    "ein-llc-lean": "unknown",
-    "note": "Private repos 404 via cursor gh/https. No SSH keys or alternate PAT found. No invented trees."
+    "neomorphic-io": "unknown-remote-404",
+    "ein-llc-lean": "unknown-remote-404",
+    "pilotInputs": {
+      "cw59": "445008c5ca44b0e1b75b21053e7c7ff646b10451",
+      "cw68": "7a4587e8c88670f9af8b6e03ea537ac409f55a69"
+    },
+    "pilotOutputs": {
+      "cw59": "codex/h7-output-cw59-20260912@e0e5a3dbcd858a9e8567f2f0bd38a9bd14a6da9f",
+      "cw68": "codex/h7-output-cw68-20260912@bf2ff92dbdca795db823d1c964ea397ede77bc19"
+    },
+    "note": "Private remotes still 404. Work used Root-projected Pilot exact trees. Output branches must not merge to Pilot main."
   },
   "preservedPids": {
     "h6a": 933379,

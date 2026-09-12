@@ -1,20 +1,20 @@
 # H7 cross-repo result (written from the CW69 worktree)
 
-This file is the Git-readable cross-repo note for H7-DISCOVERY. CW59 and CW68
-could not be cloned on this host, so they have no owned experiment commits here.
+Original private remotes still **404** for GitHub account `cursor`. Root later
+projected exact trees into Pilot. This parent implemented owned deltas on
+writable copies and exported them to **private Pilot output branches**. Do not
+merge those branches into Pilot main.
 
-| Capability | Repo | Access on this VM | Work |
+| Capability | Source | This VM | Git-readable result |
 | --- | --- | --- | --- |
-| CW69 | `epistemedeus/samedaydesk` (public) | cloned at `3547e7c` then extended | Adapter implemented. See [RESULT.md](RESULT.md). |
-| CW59 | `epistemedeus/neomorphic-io` (private) | **unknown** | Not started. `gh`/https as GitHub account `cursor` returns 404. No SSH keys, PAT, or readable mirror. Tree not invented. |
-| CW68 | `epistemedeus/ein-llc-lean` (private) | **unknown** | Not started. Same 404. Tree not invented. |
+| CW69 | `epistemedeus/samedaydesk` public | `/tmp/h7-cw69` | PR https://github.com/epistemedeus/samedaydesk/pull/141 @ `f20fbab` |
+| CW59 | `neomorphic-io@e7b31919` via Pilot input `445008c` tree `bbb02695` | implemented locally `103a5a67`; original remote still 404 | Pilot `codex/h7-output-cw59-20260912` @ `e0e5a3d` (base `codex/inputs-h7-cw59-20260912`) |
+| CW68 | `ein-llc-lean@c3db9061` via Pilot input `7a4587e` tree `682a12fd` | implemented locally `452569ee`; original remote still 404 | Pilot `codex/h7-output-cw68-20260912` @ `bf2ff92` (base `codex/inputs-h7-cw68-20260912`) |
 
-Unknown access is unknown, not zero coverage and not a skipped SQL/test gate
-inside those repos.
+## Parent re-runs
 
-Next integration owner for CW59/CW68: an agent with repository read/write on
-those private remotes. Do not treat this file as a substitute clone.
+- CW59 focused suite: **45 pass / 0 fail**. SQL/PG17 **incomplete** (toolchain absent).
+- CW68 `run-tests.sh`: **40 pass / 0 fail**. Compiled API / Firebase emulator **incomplete** / not started.
+- CW69 adapter suite: **19 pass / 0 fail** (earlier in this session).
 
-PostgreSQL 17 toolchain was absent (`/workspace/pilot/toolchain/postgresql-17`
-and `/usr/lib/postgresql/17`). SQL gate: **incomplete**. No shared cluster started.
-CW69 did not require PG.
+H6A and H1R were left running. No default merge, deploy, payment, or customer contact.
