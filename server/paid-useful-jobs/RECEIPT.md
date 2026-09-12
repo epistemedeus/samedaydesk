@@ -39,7 +39,7 @@ This is a usable **offline execution kit**. H01's merchant route is still not
 deployed. No new public paid HTTP endpoint is claimed. `sold` stays false.
 
 Remote checks on this public-download revision (Node v22.14.0):
-`test:useful-jobs-public` 15, `test:paid-useful-jobs` 80, `test:m01-catalog` 40,
+`test:useful-jobs-public` 19, `test:paid-useful-jobs` 87, `test:m01-catalog` 40,
 `test:job-input-preflight` 39, `test:job-output-atomicity` 26,
 `test:managed-useful-jobs-order` 21, `test:result-mailbox` 21,
 `test:d28-journey` 18, `test:spa-route-shells` 9. 0 fail.

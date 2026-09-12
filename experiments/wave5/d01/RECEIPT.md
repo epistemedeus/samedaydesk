@@ -44,8 +44,8 @@ Live front door: `server/paid-useful-jobs/RECEIPT.md`.
 
 | Script | Result |
 | --- | --- |
-| `npm run test:useful-jobs-public` | **15 pass** |
-| `npm run test:paid-useful-jobs` | **80 pass** |
+| `npm run test:useful-jobs-public` | **19 pass** |
+| `npm run test:paid-useful-jobs` | **87 pass** |
 | `npm run test:job-input-preflight` | **39 pass** |
 | `npm run test:job-output-atomicity` | **26 pass** |
 | `npm run test:managed-useful-jobs-order` | **21 pass** (disposable Postgres 16) |

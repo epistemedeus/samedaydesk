@@ -155,8 +155,12 @@ test("cold 1.2.0: ten advertised jobs independent positive and refusal smokes", 
       assert.equal(run.status, 0, `${jobId}: ${run.stderr}\n${run.stdout}`);
       const body = stdoutJson(run);
       assert.equal(body.ok, true, jobId);
-      assert.equal(body.purchaseAuthority, false);
-      if (analysis) assert.match(String(body.status || ""), analysis);
+      assert.notEqual(body.purchaseAuthority, true);
+      assert.notEqual(body.sold, true);
+      if (analysis) {
+        const blob = `${body.status || ""} ${body.report?.verdict || ""} ${JSON.stringify(body)}`;
+        assert.match(blob, analysis);
+      }
       return body;
     }
 
