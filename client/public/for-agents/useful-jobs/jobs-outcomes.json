@@ -1,7 +1,7 @@
 {
   "schema": "useful-jobs.outcomes.v1",
   "package": "useful-jobs",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "freeSampleStatus": "labeled-samples-via-explicit-example-flag",
   "jobs": [
     {
@@ -99,7 +99,7 @@
     },
     {
       "id": "vendor-budget-impact",
-      "outcome": "Budget-impact report of unit and field deltas across curated pricing-row JSON. Partial when upstream evidence conflicts or is unknown. No purchase authority.",
+      "outcome": "Compare caller-supplied pricing snapshots for added, removed, changed and incomparable-unit rows. Not a bill calculator or live quote. Conflicting/unknown evidence stays partial. No purchase authority.",
       "requiredFiles": [
         "before pricing JSON",
         "after pricing JSON"

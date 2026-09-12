@@ -1,22 +1,22 @@
 {
   "packageId": "useful-jobs",
-  "version": "1.4.0",
-  "archive": "/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz",
-  "kitArchive": "/kit/useful-jobs-1.4.0.tar.gz",
-  "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
-  "bytes": 2575215,
+  "version": "1.4.1",
+  "archive": "/for-agents/useful-jobs/useful-jobs-1.4.1.tar.gz",
+  "kitArchive": "/kit/useful-jobs-1.4.1.tar.gz",
+  "sha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+  "bytes": 2575456,
   "discovery": "/discovery/useful-jobs.json",
   "catalog": "/for-agents/useful-jobs/catalog.json",
   "outcomes": "/for-agents/useful-jobs/jobs-outcomes.json",
   "sourceRepo": "epistemedeus/samedaydesk",
-  "sourceCommit": "817a00ca226a94b0e198b29fcd06245b2a92adec",
-  "archiveFreeze": "817a00ca226a94b0e198b29fcd06245b2a92adec",
+  "sourceCommit": "87aab8943ec96c6b0f77b8da73641f1633c21a68",
+  "archiveFreeze": "87aab8943ec96c6b0f77b8da73641f1633c21a68",
   "reviewedSource": "817a00ca226a94b0e198b29fcd06245b2a92adec",
   "node": ">=22",
   "offline": true,
   "purchaseAuthority": false,
   "schedulerDaemon": false,
-  "rootName": "useful-jobs-1.4.0",
+  "rootName": "useful-jobs-1.4.1",
   "cli": "bin/useful-jobs.mjs",
   "jobs": [
     "lockfile-pin-delta",
@@ -31,12 +31,12 @@
     "repeat-job-record"
   ],
   "previous": {
-    "version": "1.3.0",
-    "archive": "/for-agents/useful-jobs/useful-jobs-1.3.0.tar.gz",
-    "kitArchive": "/kit/useful-jobs-1.3.0.tar.gz",
-    "sha256": "bc4db0ec83109852b8fdbd542d10d515c0053a30dd9b93836c9ad7c738510b6c",
-    "bytes": 2574904,
-    "rootName": "useful-jobs-1.3.0"
+    "version": "1.4.0",
+    "archive": "/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz",
+    "kitArchive": "/kit/useful-jobs-1.4.0.tar.gz",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215,
+    "rootName": "useful-jobs-1.4.0"
   },
   "immutableArchives": [
     {
@@ -70,6 +70,18 @@
       "sha256": "bc4db0ec83109852b8fdbd542d10d515c0053a30dd9b93836c9ad7c738510b6c",
       "bytes": 2574904,
       "rootName": "useful-jobs-1.3.0"
+    },
+    {
+      "version": "1.4.0",
+      "archive": "/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz",
+      "kitArchive": "/kit/useful-jobs-1.4.0.tar.gz",
+      "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+      "bytes": 2575215,
+      "rootName": "useful-jobs-1.4.0"
     }
-  ]
+  ],
+  "overlaySourceFiles": {
+    "server/paid-useful-jobs/release/apps/vendor-budget-impact/cli.mjs": "8429c6c3cdb959293bf892f455daebaf2970a165de1448c7992c79fc92fdccc7",
+    "server/paid-useful-jobs/release/apps/vendor-budget-impact/CALLER.md": "46a3f1607436168cf08f135db07d2248a9ff2129a28f3a93f91f62ddf1d067c5"
+  }
 }
