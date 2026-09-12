@@ -1,0 +1,26 @@
+{
+  "name": "m07-resolved-reg-app",
+  "version": "1.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "m07-resolved-reg-app",
+      "version": "1.0.0",
+      "dependencies": {
+        "m07-alpha": "1.0.0",
+        "m07-beta": "2.0.0"
+      }
+    },
+    "node_modules/m07-alpha": {
+      "version": "1.0.0",
+      "resolved": "https://example.invalid/mirror/m07-alpha-1.0.0.tgz",
+      "integrity": "sha512-m07-alpha-1.0.0"
+    },
+    "node_modules/m07-beta": {
+      "version": "2.0.0",
+      "resolved": "https://example.invalid/m07-beta-2.0.0.tgz",
+      "integrity": "sha512-m07-beta-2.0.0"
+    }
+  }
+}

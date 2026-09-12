@@ -1,0 +1,17 @@
+{
+  "name": "@samedaydesk/wave5-m07-lock-fixtures",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Independent package-manager lock fixtures replayed on the current Co11 CLI. Not a second pin-delta kernel.",
+  "bin": {
+    "m07-lock-replay": "./bin/replay.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "replay": "node bin/replay.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

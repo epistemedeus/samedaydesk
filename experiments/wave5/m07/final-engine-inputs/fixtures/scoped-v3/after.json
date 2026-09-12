@@ -1,0 +1,24 @@
+{
+  "name": "m07-final-scoped",
+  "version": "1.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "m07-final-scoped",
+      "version": "1.0.0"
+    },
+    "node_modules/@stablelib/base64": {
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/@stablelib/base64/-/base64-1.0.1.tgz",
+      "integrity": "sha512-1bnPQqSxSuc3Ii6MhBysoWCg58j97aUjuCSZrGSmDxNqtytIi0k8utUenAwTZN4V5mXXYGsVUI9zeBqy+jBOSQ==",
+      "license": "MIT"
+    },
+    "node_modules/@supabase/auth-js": {
+      "version": "2.108.3",
+      "resolved": "https://registry.npmjs.org/@supabase/auth-js/-/auth-js-2.108.3.tgz",
+      "integrity": "sha512-m07finalScopedAuthJsVersionBumpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+      "license": "MIT"
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "id": "W5-M07-final-engine-inputs",
+  "outcome": "npm lockfile v2/v3 identity semantics on the shipped merchant engine and public kit 1.2.0",
+  "notInheritedCoverage": [
+    "experiments/wave5/m07/test/*.test.mjs",
+    "experiments/wave5/m07/corpus/cases.json",
+    "kit samples/lockfile/h04-pub-lock-01"
+  ],
+  "merchant": {
+    "repo": "epistemedeus/x402-url-extractor",
+    "sha": "ca38205279f0d543515b81b7261909e55ea2600f",
+    "ownedPath": "vendor/lockfile-pin-delta/",
+    "cli": "bin/lockfile-delta.mjs",
+    "sourceProjection": {
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "path": "tools/lockfile-pin-delta/"
+    }
+  },
+  "d01": {
+    "repo": "epistemedeus/samedaydesk",
+    "pr": 74,
+    "sha": "46f2b7f55a7fb780333073a5197b64b8fde64a33",
+    "ownedPath": "tools/lockfile-pin-delta/",
+    "tree": "5f0d836b8ef516dbdb03e82ed3bb8856e7cdc53b"
+  },
+  "publicKit": {
+    "repo": "epistemedeus/samedaydesk",
+    "pr": 114,
+    "sha": "9ae0febd8c184c0cbbb5e481ba31ac620e89b869",
+    "archive": "client/public/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz",
+    "bytes": 2579117,
+    "sha256": "dec31ea66f1605fb9578c7d15c9583b130c6e2c0b82b5e6b93422381a04461eb",
+    "cli": ["bin/useful-jobs.mjs", "run", "lockfile-pin-delta"],
+    "enginePath": "engines/lockfile-pin-delta/"
+  },
+  "pinIdentity": ["name", "version", "integrity", "resolved"],
+  "kernelSha256": {
+    "lib/hash-terms.mjs": "14f6994c9641d38915f2dc2783beb84612bd409c025fd05b21c9bc5d04a77494",
+    "lib/compare.mjs": "2d437b7684ebe3b19259f42122c1f08446441a6d4806d4f3acdc0bb7d28c8a81",
+    "lib/parse-lockfile.mjs": "d5e5be6d9f79eba5ab31e744fcb31391bef3ffda176acce186c0a01c0f7670a0",
+    "lib/run.mjs": "abb72763dd91fc1d3039d51df65cbde61eecbb58eebc2af00d24a71ee2b0d27e",
+    "bin/lockfile-delta.mjs": "aead6e33f6a748a40c4f252022916dae5049356566517817b5994940d20bbcc6"
+  }
+}

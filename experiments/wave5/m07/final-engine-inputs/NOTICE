@@ -1,0 +1,8 @@
+W5-M07 final-engine-inputs.
+
+Independent identity replay against the shipped lockfile-pin-delta engine.
+Owns only this subdirectory. Does not copy tools/lockfile-pin-delta or
+vendor/lockfile-pin-delta. Does not re-run experiments/wave5/m07/test/*.test.mjs
+as proof. Flaws found here are OWNERQA, never a payable N-BTY003 claim.
+
+License: MIT, same grant as other SameDayDesk experiment packages.

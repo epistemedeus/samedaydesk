@@ -1,0 +1,24 @@
+{
+  "name": "m07-v2-deps-app",
+  "version": "1.0.0",
+  "lockfileVersion": 2,
+  "dependencies": {
+    "m07-v2a": {
+      "version": "1.0.0",
+      "resolved": "https://example.invalid/m07-v2a-1.0.0.tgz",
+      "integrity": "sha512-m07-v2a-1.0.0",
+      "dependencies": {
+        "m07-nested": {
+          "version": "9.0.0",
+          "resolved": "https://example.invalid/m07-nested-9.0.0.tgz",
+          "integrity": "sha512-m07-nested-9.0.0"
+        }
+      }
+    },
+    "m07-v2b": {
+      "version": "4.0.0",
+      "resolved": "https://example.invalid/m07-v2b-4.0.0.tgz",
+      "integrity": "sha512-m07-v2b-4.0.0"
+    }
+  }
+}

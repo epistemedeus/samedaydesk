@@ -1,0 +1,176 @@
+{
+  "schema": "samedaydesk.wave5.m07.final-engine-inputs.v1",
+  "engines": ["merchant", "kit"],
+  "claimedFormats": ["npm-package-lock-v2", "npm-package-lock-v3"],
+  "pinIdentity": ["name", "version", "integrity", "resolved"],
+  "cases": [
+    {
+      "id": "alias-v3-integrity",
+      "format": "npm-package-lock-v3",
+      "mutation": "alias-integrity",
+      "before": "fixtures/alias-v3/before.json",
+      "after": "fixtures/alias-v3/after.json",
+      "domain": {
+        "outcome": "explained-change",
+        "pin": {
+          "id": "node_modules/string-width-cjs",
+          "name": "string-width",
+          "changeKinds": ["integrity"],
+          "before": {
+            "version": "4.2.3",
+            "integrity": "sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g=="
+          },
+          "after": {
+            "version": "4.2.3",
+            "integrity": "sha512-m07finalAliasCjsIntegrityOnlyAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
+          }
+        },
+        "omitIds": ["node_modules/string-width"],
+        "forbidNames": ["string-width-cjs"]
+      }
+    },
+    {
+      "id": "alias-v2-integrity",
+      "format": "npm-package-lock-v2",
+      "mutation": "alias-integrity-packages-over-dependencies",
+      "before": "fixtures/alias-v2/before.json",
+      "after": "fixtures/alias-v2/after.json",
+      "domain": {
+        "outcome": "explained-change",
+        "pin": {
+          "id": "node_modules/string-width-cjs",
+          "name": "string-width",
+          "changeKinds": ["integrity"],
+          "before": {
+            "version": "4.2.3",
+            "integrity": "sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g=="
+          },
+          "after": {
+            "version": "4.2.3",
+            "integrity": "sha512-m07finalAliasCjsIntegrityOnlyAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
+          }
+        },
+        "omitIds": ["node_modules/string-width"],
+        "forbidNames": ["string-width-cjs"]
+      }
+    },
+    {
+      "id": "scoped-v3-version",
+      "format": "npm-package-lock-v3",
+      "mutation": "scoped-version-integrity-resolved",
+      "before": "fixtures/scoped-v3/before.json",
+      "after": "fixtures/scoped-v3/after.json",
+      "domain": {
+        "outcome": "explained-change",
+        "pin": {
+          "id": "node_modules/@supabase/auth-js",
+          "name": "@supabase/auth-js",
+          "changeKinds": ["integrity", "resolved", "version"],
+          "before": {
+            "version": "2.108.2",
+            "integrity": "sha512-tNaQmBgodDZwgB40mRwVbxFy8IDYwjdpcZ0BYrWiwlULCSQoJj4QoG4zgJT7QRPXcqipefNOzvO/qAu4dF98ag==",
+            "resolved": "https://registry.npmjs.org/@supabase/auth-js/-/auth-js-2.108.2.tgz"
+          },
+          "after": {
+            "version": "2.108.3",
+            "integrity": "sha512-m07finalScopedAuthJsVersionBumpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+            "resolved": "https://registry.npmjs.org/@supabase/auth-js/-/auth-js-2.108.3.tgz"
+          }
+        },
+        "omitIds": ["node_modules/@stablelib/base64"],
+        "forbidNames": ["auth-js"]
+      }
+    },
+    {
+      "id": "nested-same-name-v3",
+      "format": "npm-package-lock-v3",
+      "mutation": "one-nested-copy",
+      "before": "fixtures/nested-same-name-v3/before.json",
+      "after": "fixtures/nested-same-name-v3/after.json",
+      "domain": {
+        "outcome": "explained-change",
+        "pin": {
+          "id": "node_modules/body-parser/node_modules/content-type",
+          "name": "content-type",
+          "changeKinds": ["integrity", "resolved", "version"],
+          "before": { "version": "2.0.0" },
+          "after": { "version": "2.0.1" }
+        },
+        "omitIds": ["node_modules/type-is/node_modules/content-type"]
+      }
+    },
+    {
+      "id": "workspace-link-stub-v3",
+      "format": "npm-package-lock-v3",
+      "mutation": "link-stub-resolved",
+      "before": "fixtures/workspace-link-stub-v3/before.json",
+      "after": "fixtures/workspace-link-stub-v3/after.json",
+      "domain": {
+        "outcome": "supported-unknown",
+        "finding": "link-stub-skipped",
+        "omitIds": ["node_modules/zod", "vendor/neomorphic-correspondence"]
+      }
+    },
+    {
+      "id": "workspace-target-v3",
+      "format": "npm-package-lock-v3",
+      "mutation": "workspace-target-version",
+      "before": "fixtures/workspace-target-v3/before.json",
+      "after": "fixtures/workspace-target-v3/after.json",
+      "domain": {
+        "outcome": "explained-change",
+        "pin": {
+          "id": "vendor/neomorphic-correspondence",
+          "name": "@neomorphic/correspondence",
+          "changeKinds": ["version"],
+          "before": { "version": "0.1.0" },
+          "after": { "version": "0.2.0" }
+        },
+        "omitIds": ["node_modules/zod"],
+        "forbidNames": ["neomorphic-correspondence"]
+      }
+    },
+    {
+      "id": "pin-noise-control-v3",
+      "format": "npm-package-lock-v3",
+      "mutation": "license-engines-dev-optional",
+      "before": "fixtures/pin-noise-control-v3/before.json",
+      "after": "fixtures/pin-noise-control-v3/after.json",
+      "domain": {
+        "outcome": "no-material-change",
+        "omitIds": [
+          "node_modules/@stablelib/base64",
+          "node_modules/string-width-cjs",
+          "node_modules/body-parser/node_modules/content-type"
+        ]
+      }
+    },
+    {
+      "id": "scoped-resolved-integrity-v3",
+      "format": "npm-package-lock-v3",
+      "mutation": "resolved-and-integrity",
+      "before": "fixtures/scoped-resolved-integrity-v3/before.json",
+      "after": "fixtures/scoped-resolved-integrity-v3/after.json",
+      "domain": {
+        "outcome": "explained-change",
+        "pin": {
+          "id": "node_modules/@stablelib/base64",
+          "name": "@stablelib/base64",
+          "changeKinds": ["integrity", "resolved"],
+          "before": {
+            "version": "1.0.1",
+            "resolved": "https://registry.npmjs.org/@stablelib/base64/-/base64-1.0.1.tgz",
+            "integrity": "sha512-1bnPQqSxSuc3Ii6MhBysoWCg58j97aUjuCSZrGSmDxNqtytIi0k8utUenAwTZN4V5mXXYGsVUI9zeBqy+jBOSQ=="
+          },
+          "after": {
+            "version": "1.0.1",
+            "resolved": "https://registry.npmjs.org/@stablelib/base64/-/base64-1.0.1-rehosted.tgz",
+            "integrity": "sha512-m07finalScopedResolvedAndIntegrityAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
+          }
+        },
+        "omitIds": ["node_modules/@supabase/auth-js"],
+        "forbidNames": ["base64"]
+      }
+    }
+  ]
+}

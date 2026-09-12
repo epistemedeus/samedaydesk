@@ -1,0 +1,319 @@
+{
+  "schema": "samedaydesk.wave5.m07.lock-corpus.v1",
+  "enginePin": "e81efc8ab71b1bde88eca743d297149e61bbb6f2",
+  "claimedFormats": ["npm-package-lock-v2", "npm-package-lock-v3"],
+  "unlikeFormatsNotHashedTogether": true,
+  "cases": [
+    {
+      "id": "npm-v3-version",
+      "format": "npm-package-lock-v3",
+      "claimedSupported": true,
+      "mutation": "version",
+      "before": "fixtures/npm-v3-version/before.json",
+      "after": "fixtures/npm-v3-version/after.json",
+      "domain": {
+        "outcome": "explained-change",
+        "pins": [
+          {
+            "name": "m07-alpha",
+            "changeKinds": ["integrity", "version"],
+            "before": { "version": "1.0.0", "integrity": "sha512-m07-alpha-1.0.0" },
+            "after": { "version": "1.1.0", "integrity": "sha512-m07-alpha-1.1.0" }
+          }
+        ],
+        "omit": ["m07-beta"]
+      },
+      "engineAtPin": { "kind": "match", "status": "actionable" }
+    },
+    {
+      "id": "npm-v3-integrity",
+      "format": "npm-package-lock-v3",
+      "claimedSupported": true,
+      "mutation": "integrity",
+      "before": "fixtures/npm-v3-integrity/before.json",
+      "after": "fixtures/npm-v3-integrity/after.json",
+      "domain": {
+        "outcome": "explained-change",
+        "pins": [
+          {
+            "name": "m07-alpha",
+            "changeKinds": ["integrity"],
+            "before": { "version": "1.0.0", "integrity": "sha512-m07-alpha-1.0.0" },
+            "after": { "version": "1.0.0", "integrity": "sha512-m07-alpha-1.0.0-b" }
+          }
+        ],
+        "omit": ["m07-beta"]
+      },
+      "engineAtPin": { "kind": "match", "status": "actionable" }
+    },
+    {
+      "id": "npm-v3-resolved-git",
+      "format": "npm-package-lock-v3",
+      "claimedSupported": true,
+      "mutation": "resolved-git",
+      "before": "fixtures/npm-v3-resolved-git/before.json",
+      "after": "fixtures/npm-v3-resolved-git/after.json",
+      "domain": {
+        "outcome": "explained-change",
+        "pins": [
+          {
+            "name": "m07-git",
+            "changeKinds": ["resolved"],
+            "before": {
+              "version": "1.0.0",
+              "resolved": "git+https://github.com/example-invalid/m07-git.git#aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "integrity": "sha512-m07-git-1.0.0"
+            },
+            "after": {
+              "version": "1.0.0",
+              "resolved": "git+https://github.com/example-invalid/m07-git.git#bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "integrity": "sha512-m07-git-1.0.0"
+            }
+          }
+        ],
+        "omit": ["m07-beta"]
+      },
+      "engineAtPin": {
+        "kind": "gap",
+        "finding": "resolved-source-omitted",
+        "status": "informational"
+      }
+    },
+    {
+      "id": "npm-v3-resolved-registry",
+      "format": "npm-package-lock-v3",
+      "claimedSupported": true,
+      "mutation": "resolved-registry",
+      "before": "fixtures/npm-v3-resolved-registry/before.json",
+      "after": "fixtures/npm-v3-resolved-registry/after.json",
+      "domain": {
+        "outcome": "explained-change",
+        "pins": [
+          {
+            "name": "m07-alpha",
+            "changeKinds": ["resolved"],
+            "before": {
+              "version": "1.0.0",
+              "resolved": "https://registry.npmjs.org/m07-alpha/-/m07-alpha-1.0.0.tgz",
+              "integrity": "sha512-m07-alpha-1.0.0"
+            },
+            "after": {
+              "version": "1.0.0",
+              "resolved": "https://example.invalid/mirror/m07-alpha-1.0.0.tgz",
+              "integrity": "sha512-m07-alpha-1.0.0"
+            }
+          }
+        ],
+        "omit": ["m07-beta"]
+      },
+      "engineAtPin": {
+        "kind": "gap",
+        "finding": "resolved-source-omitted",
+        "status": "informational"
+      }
+    },
+    {
+      "id": "npm-v3-git-version-field",
+      "format": "npm-package-lock-v3",
+      "claimedSupported": true,
+      "mutation": "version-git",
+      "before": "fixtures/npm-v3-git-version-field/before.json",
+      "after": "fixtures/npm-v3-git-version-field/after.json",
+      "domain": {
+        "outcome": "explained-change",
+        "pins": [
+          {
+            "name": "m07-git",
+            "changeKinds": ["version"],
+            "before": {
+              "version": "git+https://github.com/example-invalid/m07-git.git#aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "after": {
+              "version": "git+https://github.com/example-invalid/m07-git.git#bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            }
+          }
+        ],
+        "omit": ["m07-beta"]
+      },
+      "engineAtPin": { "kind": "match", "status": "actionable" }
+    },
+    {
+      "id": "npm-v3-noise-root-meta",
+      "format": "npm-package-lock-v3",
+      "claimedSupported": true,
+      "mutation": "noise",
+      "before": "fixtures/npm-v3-noise-root-meta/before.json",
+      "after": "fixtures/npm-v3-noise-root-meta/after.json",
+      "domain": {
+        "outcome": "no-material-change",
+        "omit": ["m07-alpha", "m07-beta"]
+      },
+      "engineAtPin": { "kind": "match", "status": "informational" }
+    },
+    {
+      "id": "npm-v2-version",
+      "format": "npm-package-lock-v2",
+      "claimedSupported": true,
+      "mutation": "version",
+      "before": "fixtures/npm-v2-version/before.json",
+      "after": "fixtures/npm-v2-version/after.json",
+      "domain": {
+        "outcome": "explained-change",
+        "pins": [
+          {
+            "name": "m07-v2a",
+            "changeKinds": ["integrity", "version"],
+            "before": { "version": "1.0.0", "integrity": "sha512-m07-v2a-1.0.0" },
+            "after": { "version": "1.1.0", "integrity": "sha512-m07-v2a-1.1.0" }
+          }
+        ],
+        "omit": ["m07-v2b"]
+      },
+      "engineAtPin": { "kind": "match", "status": "actionable" }
+    },
+    {
+      "id": "npm-v2-deps-nested",
+      "format": "npm-package-lock-v2-dependencies",
+      "claimedSupported": true,
+      "mutation": "version",
+      "before": "fixtures/npm-v2-deps-nested/before.json",
+      "after": "fixtures/npm-v2-deps-nested/after.json",
+      "domain": {
+        "outcome": "explained-change",
+        "pins": [
+          {
+            "name": "m07-nested",
+            "changeKinds": ["integrity", "version"],
+            "before": { "version": "9.0.0", "integrity": "sha512-m07-nested-9.0.0" },
+            "after": { "version": "9.0.1", "integrity": "sha512-m07-nested-9.0.1" }
+          }
+        ],
+        "omit": ["m07-v2b"]
+      },
+      "engineAtPin": { "kind": "match", "status": "actionable" }
+    },
+    {
+      "id": "npm-v2-stale-deps-map",
+      "format": "npm-package-lock-v2",
+      "claimedSupported": true,
+      "mutation": "noise",
+      "before": "fixtures/npm-v2-stale-deps-map/before.json",
+      "after": "fixtures/npm-v2-stale-deps-map/after.json",
+      "domain": {
+        "outcome": "no-material-change",
+        "omit": ["m07-v2a", "m07-v2b"]
+      },
+      "engineAtPin": { "kind": "match", "status": "informational" }
+    },
+    {
+      "id": "npm-v1-unsupported",
+      "format": "npm-package-lock-v1",
+      "claimedSupported": false,
+      "mutation": "unsupported",
+      "before": "fixtures/npm-v1-unsupported/before.json",
+      "after": "fixtures/npm-v1-unsupported/after.json",
+      "domain": { "outcome": "valid-refusal", "refuseCode": "unsupported-lockfile-version" },
+      "engineAtPin": { "kind": "valid-refusal" }
+    },
+    {
+      "id": "npm-v4-unsupported",
+      "format": "npm-package-lock-v4",
+      "claimedSupported": false,
+      "mutation": "unsupported",
+      "before": "fixtures/npm-v4-unsupported/before.json",
+      "after": "fixtures/npm-v4-unsupported/after.json",
+      "domain": { "outcome": "valid-refusal", "refuseCode": "unsupported-lockfile-version" },
+      "engineAtPin": { "kind": "valid-refusal" }
+    },
+    {
+      "id": "yarn-classic",
+      "format": "yarn-lock-v1",
+      "claimedSupported": false,
+      "mutation": "unsupported",
+      "before": "fixtures/yarn-classic/before.lock",
+      "after": "fixtures/yarn-classic/after.lock",
+      "domain": { "outcome": "valid-refusal", "refuseCode": "parse-error" },
+      "engineAtPin": { "kind": "valid-refusal" }
+    },
+    {
+      "id": "yarn-berry",
+      "format": "yarn-lock-berry",
+      "claimedSupported": false,
+      "mutation": "unsupported",
+      "before": "fixtures/yarn-berry/before.lock",
+      "after": "fixtures/yarn-berry/after.lock",
+      "domain": { "outcome": "valid-refusal", "refuseCode": "parse-error" },
+      "engineAtPin": { "kind": "valid-refusal" }
+    },
+    {
+      "id": "pnpm-yaml",
+      "format": "pnpm-lock-yaml",
+      "claimedSupported": false,
+      "mutation": "unsupported",
+      "before": "fixtures/pnpm-yaml/before.yaml",
+      "after": "fixtures/pnpm-yaml/after.yaml",
+      "domain": { "outcome": "valid-refusal", "refuseCode": "parse-error" },
+      "engineAtPin": { "kind": "valid-refusal" }
+    },
+    {
+      "id": "pnpm-json-v9",
+      "format": "pnpm-lock-json-v9",
+      "claimedSupported": false,
+      "mutation": "unsupported",
+      "before": "fixtures/pnpm-json-v9/before.json",
+      "after": "fixtures/pnpm-json-v9/after.json",
+      "domain": { "outcome": "valid-refusal", "refuseCode": "unsupported-lockfile-version" },
+      "engineAtPin": { "kind": "valid-refusal" }
+    },
+    {
+      "id": "bun-lock",
+      "format": "bun-lock",
+      "claimedSupported": false,
+      "mutation": "unsupported",
+      "before": "fixtures/bun-lock/before.lock",
+      "after": "fixtures/bun-lock/after.lock",
+      "domain": { "outcome": "valid-refusal", "refuseCode": "unsupported-lockfile-version" },
+      "engineAtPin": { "kind": "valid-refusal" }
+    },
+    {
+      "id": "composer-lock",
+      "format": "composer-lock",
+      "claimedSupported": false,
+      "mutation": "unsupported",
+      "before": "fixtures/composer-lock/before.json",
+      "after": "fixtures/composer-lock/after.json",
+      "domain": { "outcome": "valid-refusal", "refuseCode": "not-a-lockfile" },
+      "engineAtPin": { "kind": "valid-refusal" }
+    },
+    {
+      "id": "cargo-lock",
+      "format": "cargo-lock",
+      "claimedSupported": false,
+      "mutation": "unsupported",
+      "before": "fixtures/cargo-lock/before.lock",
+      "after": "fixtures/cargo-lock/after.lock",
+      "domain": { "outcome": "valid-refusal", "refuseCode": "parse-error" },
+      "engineAtPin": { "kind": "valid-refusal" }
+    },
+    {
+      "id": "html",
+      "format": "html",
+      "claimedSupported": false,
+      "mutation": "unsupported",
+      "before": "fixtures/html/not-a-lock.html",
+      "after": "fixtures/html/after.json",
+      "domain": { "outcome": "valid-refusal", "refuseCode": "html-input" },
+      "engineAtPin": { "kind": "valid-refusal" }
+    },
+    {
+      "id": "package-json-only",
+      "format": "package-json",
+      "claimedSupported": false,
+      "mutation": "unsupported",
+      "before": "fixtures/package-json-only/package.json",
+      "after": "fixtures/package-json-only/after.json",
+      "domain": { "outcome": "valid-refusal", "refuseCode": "package-json-only" },
+      "engineAtPin": { "kind": "valid-refusal" }
+    }
+  ]
+}
