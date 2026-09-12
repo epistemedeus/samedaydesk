@@ -107,6 +107,6 @@ node experiments/wave5/m01/bin/catalog.mjs contract
 
 | Field | Value |
 | --- | --- |
-| Head | packaging-fix for truncated `accept-pack/runs/summary.json` (count=27); SHA stamped after commit |
+| Head | `c0d2e3976fcd257a718b30ee1351757ad6ebe333` (accept-pack summary restore; count=27) |
 | Draft PR | `gh pr create` GraphQL **Resource not accessible by integration** (unchanged) |
 | Compare | https://github.com/epistemedeus/samedaydesk/compare/main...codex/w5-h04-20260911 |
