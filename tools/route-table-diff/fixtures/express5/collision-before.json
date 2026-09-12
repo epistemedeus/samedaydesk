@@ -1,0 +1,9 @@
+{
+  "schema": "samedaydesk.route-table.express.v1",
+  "framework": { "name": "express", "major": 5 },
+  "settings": { "caseSensitive": false, "strict": false },
+  "routes": [
+    { "method": "GET", "path": "/users/:id" },
+    { "method": "POST", "path": "/users/new" }
+  ]
+}
