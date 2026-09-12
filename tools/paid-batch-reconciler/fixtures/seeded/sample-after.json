@@ -1,0 +1,8 @@
+{
+  "label": "SAMPLE",
+  "sampleLabel": "SAMPLE",
+  "note": "Seeded SAMPLE. Not a customer sale.",
+  "rows": [
+    { "field": "sample-only", "value": 2, "unit": "USD/1M-tokens" }
+  ]
+}

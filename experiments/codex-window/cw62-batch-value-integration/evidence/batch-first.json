@@ -1,0 +1,829 @@
+{
+  "schema": "samedaydesk.paid-batch-ledger.v2",
+  "sold": false,
+  "anySold": false,
+  "purchaseAuthority": false,
+  "usefulPaidWork": false,
+  "jobRevenueUsdc": null,
+  "liveSettlement": "out-of-scope",
+  "liveCatalogWritten": false,
+  "retryAllowed": false,
+  "batchId": "batch-e42e80034bcc2a9d6c80f970589b52f0993a007b38d9092fe9a377515b3f1d83",
+  "batchHash": "6772d03e5b2f177970919267f97c6c938ca9b6401feb84a8c76b89f8aa84027e",
+  "terms": {
+    "schema": "samedaydesk.paid-batch-reconciler.terms.v1",
+    "schemaVersion": 1,
+    "termsRevision": 0,
+    "sold": false,
+    "purchaseAuthority": false,
+    "liveSettlement": "out-of-scope",
+    "fixturePriceUsdc": "0.02",
+    "fixturePriceAtomic": "20000",
+    "itemCount": 2,
+    "charges": [
+      {
+        "itemId": "ok-caller-pair",
+        "engineId": "vendor-budget-impact",
+        "amountUsdc": "0.02",
+        "amountAtomic": "20000",
+        "kind": "fixture"
+      },
+      {
+        "itemId": "missing-after",
+        "engineId": "vendor-budget-impact",
+        "amountUsdc": "0.02",
+        "amountAtomic": "20000",
+        "kind": "fixture"
+      }
+    ],
+    "batchId": "batch-e42e80034bcc2a9d6c80f970589b52f0993a007b38d9092fe9a377515b3f1d83",
+    "requests": [
+      {
+        "id": "ok-caller-pair",
+        "engineId": "vendor-budget-impact",
+        "requestId": "1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb",
+        "inputDigest": "924c2df5878b394a142b4c90fa7756a9bd8ed2095d8f74712e7d506d85ca6198",
+        "requestDigest": "0fe94e0a26928d3fc6bf381ffacd9d4bd458bec69e9d46c0b65bc5a245043b88",
+        "fundingIntent": "reserved-fixture",
+        "settlement": {
+          "stated": {
+            "state": "not-attempted"
+          },
+          "state": "not-attempted",
+          "amountUsdc": null,
+          "evidenceClass": "caller-statement",
+          "verifiedSettlement": false
+        }
+      },
+      {
+        "id": "missing-after",
+        "engineId": "vendor-budget-impact",
+        "requestId": "8ed67779e86d9249b77c908535bcbc0aaf41afd9e59edae63a33a674b4d59409",
+        "inputDigest": "6a23d94a21da65da48d286a5a7c456d28b35a36ef8038746dd3e33fd16498b67",
+        "requestDigest": "3fde578b415fe758095f44beaff6442f4847399707e25c0ee9e1132b9c84c800",
+        "fundingIntent": "reserved-fixture",
+        "settlement": {
+          "stated": {
+            "state": "not-attempted"
+          },
+          "state": "not-attempted",
+          "amountUsdc": null,
+          "evidenceClass": "caller-statement",
+          "verifiedSettlement": false
+        }
+      }
+    ]
+  },
+  "termsVersion": "sha256:6772d03e5b2f177970919267f97c6c938ca9b6401feb84a8c76b89f8aa84027e",
+  "charges": [
+    {
+      "itemId": "ok-caller-pair",
+      "engineId": "vendor-budget-impact",
+      "amountUsdc": "0.02",
+      "amountAtomic": "20000",
+      "kind": "fixture"
+    },
+    {
+      "itemId": "missing-after",
+      "engineId": "vendor-budget-impact",
+      "amountUsdc": "0.02",
+      "amountAtomic": "20000",
+      "kind": "fixture"
+    }
+  ],
+  "runner": "paid-useful-jobs",
+  "runnerPin": "76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be",
+  "persistKind": "durable-file",
+  "status": "partial",
+  "ok": false,
+  "complete": false,
+  "counts": {
+    "items": 2,
+    "completed": 1,
+    "rejected": 1,
+    "unknown": 0,
+    "notAttempted": 0
+  },
+  "items": [
+    {
+      "sold": false,
+      "anySold": false,
+      "purchaseAuthority": false,
+      "usefulPaidWork": false,
+      "jobRevenueUsdc": null,
+      "liveSettlement": "out-of-scope",
+      "liveCatalogWritten": false,
+      "retryAllowed": false,
+      "id": "ok-caller-pair",
+      "chargeId": "batch-e42e80034bcc2a9d6c80f970589b52f0993a007b38d9092fe9a377515b3f1d83:ok-caller-pair",
+      "engineId": "vendor-budget-impact",
+      "requestId": "1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb",
+      "inputDigest": "924c2df5878b394a142b4c90fa7756a9bd8ed2095d8f74712e7d506d85ca6198",
+      "executionId": "cw62-1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb",
+      "attempt": {
+        "executionId": "cw62-1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb",
+        "startedAt": "2026-09-12T07:06:55.197Z"
+      },
+      "outcome": "completed",
+      "code": null,
+      "fundingState": "reserved-fixture",
+      "settlement": {
+        "stated": {
+          "state": "not-attempted"
+        },
+        "state": "not-attempted",
+        "amountUsdc": null,
+        "evidenceClass": "simulated-core-and-caller-statement",
+        "verifiedSettlement": false
+      },
+      "outputs": [
+        {
+          "name": "budget-impact.json",
+          "path": "/tmp/cw62-batch-smoke/desk/results/1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb/budget-impact.json",
+          "bytes": 1391,
+          "sha256": "00da53bd4d77807cb71d76bde0faa090e7224d95671f2f0b6938deef3cfa2a57",
+          "requestId": "1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb",
+          "executionId": "cw62-1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb"
+        },
+        {
+          "name": "budget-impact.md",
+          "path": "/tmp/cw62-batch-smoke/desk/results/1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb/budget-impact.md",
+          "bytes": 476,
+          "sha256": "a47c3a29252d718f6a14cff7ccd39bf8bf8f3b27b6717575957ab3dccf50ec08",
+          "requestId": "1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb",
+          "executionId": "cw62-1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb"
+        }
+      ],
+      "resultDigest": "a9434c17c3de2d8ac11dd3373ec666b91a3390fd8ea461aa3909636a3925bf85",
+      "sample": false,
+      "analysisOutcome": "actionable",
+      "outcomeKind": "analysis-completed",
+      "price": {
+        "labelled": true,
+        "live": false,
+        "publishedToLiveCatalog": false,
+        "kind": "fixture",
+        "engineId": "vendor-budget-impact",
+        "itemId": "batch-e42e80034bcc2a9d6c80f970589b52f0993a007b38d9092fe9a377515b3f1d83:ok-caller-pair",
+        "amountUsdc": "0.02",
+        "amountAtomic": "20000",
+        "payTo": "0x0000000000000000000000000000000000000F08",
+        "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+      },
+      "runner": "paid-useful-jobs",
+      "runnerPin": "76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be",
+      "ticket": {
+        "schema": "samedaydesk.job-request-desk.ticket.v1",
+        "schemaVersion": 2,
+        "requestId": "1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb",
+        "bindingDigest": "1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb",
+        "orderId": "batch:batch-e42e80034bcc2a9d6c80f970589b52f0993a007b38d9092fe9a377515b3f1d83:item:ok-caller-pair",
+        "engineId": "vendor-budget-impact",
+        "terms": {
+          "schema": "samedaydesk.job-request-desk.terms.v2",
+          "engineId": "vendor-budget-impact",
+          "orderId": "batch:batch-e42e80034bcc2a9d6c80f970589b52f0993a007b38d9092fe9a377515b3f1d83:item:ok-caller-pair",
+          "example": false,
+          "inputs": [
+            {
+              "name": "after",
+              "bytes": 378,
+              "sha256": "84ed5feffc33d2b4189a1d8715031b1c33eeb34329b172ec1e952bc7455520cf"
+            },
+            {
+              "name": "before",
+              "bytes": 300,
+              "sha256": "588ecf35d19fec6030b9aac578cba037a992bf3e10c2248377b6dffb2fbfe1c6"
+            }
+          ],
+          "invalidInputs": null,
+          "fundingIntent": "reserved-fixture",
+          "payment": {
+            "fixture": true,
+            "purchaseAuthority": false,
+            "label": "fixture",
+            "live": false,
+            "x402Version": 2,
+            "accepted": {
+              "scheme": "exact",
+              "network": "eip155:8453",
+              "amount": "20000",
+              "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+              "payTo": "0x0000000000000000000000000000000000000F08",
+              "maxTimeoutSeconds": 300
+            },
+            "payload": {
+              "authorization": {
+                "from": "0x00000000000000000000000000000000000000F1",
+                "to": "0x0000000000000000000000000000000000000F08",
+                "value": "20000",
+                "validAfter": "0",
+                "validBefore": "9999999999",
+                "nonce": "0xc08fixture000000000000000000000000000000000000000000000000000001"
+              },
+              "signature": "0xababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababab"
+            }
+          },
+          "buyerClass": "owner-qa",
+          "statedSettlement": {
+            "state": "not-attempted"
+          },
+          "live": {
+            "sold": false,
+            "settle": false,
+            "liveSettle": false
+          },
+          "coreBase": "76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be",
+          "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+          "enginePin": {
+            "package": "useful-jobs",
+            "version": "1.4.1",
+            "sha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+            "bytes": 2575456,
+            "cli": "bin/useful-jobs.mjs",
+            "purchaseAuthority": false,
+            "schedulerDaemon": false
+          }
+        },
+        "termsVersion": "sha256:1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb",
+        "enginePin": {
+          "package": "useful-jobs",
+          "version": "1.4.1",
+          "sha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+          "bytes": 2575456,
+          "cli": "bin/useful-jobs.mjs",
+          "purchaseAuthority": false,
+          "schedulerDaemon": false
+        },
+        "coreBase": "76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be",
+        "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+        "inputs": [
+          {
+            "name": "after",
+            "flag": "--after",
+            "bytes": 378,
+            "sha256": "84ed5feffc33d2b4189a1d8715031b1c33eeb34329b172ec1e952bc7455520cf"
+          },
+          {
+            "name": "before",
+            "flag": "--before",
+            "bytes": 300,
+            "sha256": "588ecf35d19fec6030b9aac578cba037a992bf3e10c2248377b6dffb2fbfe1c6"
+          }
+        ],
+        "settlement": {
+          "stated": {
+            "state": "not-attempted"
+          },
+          "state": "not-attempted",
+          "amountUsdc": null,
+          "evidenceClass": "simulated-core-and-caller-statement",
+          "verifiedSettlement": false
+        },
+        "fundingState": "reserved-fixture",
+        "outputs": [
+          {
+            "name": "budget-impact.json",
+            "path": "/tmp/cw62-batch-smoke/desk/results/1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb/budget-impact.json",
+            "bytes": 1391,
+            "sha256": "00da53bd4d77807cb71d76bde0faa090e7224d95671f2f0b6938deef3cfa2a57",
+            "requestId": "1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb",
+            "executionId": "cw62-1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb"
+          },
+          {
+            "name": "budget-impact.md",
+            "path": "/tmp/cw62-batch-smoke/desk/results/1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb/budget-impact.md",
+            "bytes": 476,
+            "sha256": "a47c3a29252d718f6a14cff7ccd39bf8bf8f3b27b6717575957ab3dccf50ec08",
+            "requestId": "1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb",
+            "executionId": "cw62-1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb"
+          }
+        ],
+        "resultUri": "file:///tmp/cw62-batch-smoke/desk/results/1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb",
+        "status": "completed",
+        "executionOk": true,
+        "statusHistory": [
+          {
+            "status": "queued",
+            "at": "2026-09-12T07:06:55.195Z"
+          },
+          {
+            "status": "running",
+            "at": "2026-09-12T07:06:55.198Z"
+          },
+          {
+            "status": "completed",
+            "at": "2026-09-12T07:06:55.608Z"
+          }
+        ],
+        "createdAt": "2026-09-12T07:06:55.195Z",
+        "updatedAt": "2026-09-12T07:06:55.608Z",
+        "sold": false,
+        "purchaseAuthority": false,
+        "usefulPaidWork": false,
+        "independentDemand": false,
+        "jobRevenueUsdc": null,
+        "retryAllowed": false,
+        "executionId": "cw62-1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb",
+        "holderPid": 187813,
+        "startedAt": "2026-09-12T07:06:55.197Z",
+        "outcomeKind": "analysis-completed",
+        "analysisOutcome": "actionable",
+        "sample": false,
+        "execution": {
+          "ok": true,
+          "jobId": "vendor-budget-impact",
+          "title": "Vendor Budget Impact",
+          "fundingState": "reserved-fixture",
+          "sold": false,
+          "sample": false,
+          "sampleReasons": [],
+          "purchaseAuthority": false,
+          "outputs": [
+            {
+              "name": "budget-impact.json",
+              "path": "/tmp/puj-vendor-budget-impact-out-L3PyW1/budget-impact.json",
+              "bytes": 1391,
+              "sha256": "00da53bd4d77807cb71d76bde0faa090e7224d95671f2f0b6938deef3cfa2a57"
+            },
+            {
+              "name": "budget-impact.md",
+              "path": "/tmp/puj-vendor-budget-impact-out-L3PyW1/budget-impact.md",
+              "bytes": 476,
+              "sha256": "a47c3a29252d718f6a14cff7ccd39bf8bf8f3b27b6717575957ab3dccf50ec08"
+            }
+          ],
+          "receipt": {
+            "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+            "jobId": "vendor-budget-impact",
+            "engine": {
+              "package": "useful-jobs",
+              "version": "1.0.0",
+              "purchaseAuthority": false,
+              "cli": "node bin/useful-jobs.mjs run <id>",
+              "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+              "archiveBytes": 2522418,
+              "sourceRepo": "epistemedeus/pilot",
+              "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+              "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+              "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+            },
+            "inputsDigest": "87c6dbe8bda886512054ad4a6acb1d5f04d7a1aaeffa2c114c920ced5dbce178",
+            "outputsDigest": "d6e0262b858e40c65139ce8b16296875934da830fde7f438f9dafc729e97462c",
+            "inputs": [
+              {
+                "name": "before",
+                "kind": "file",
+                "bytes": 300,
+                "sha256": "588ecf35d19fec6030b9aac578cba037a992bf3e10c2248377b6dffb2fbfe1c6"
+              },
+              {
+                "name": "after",
+                "kind": "file",
+                "bytes": 378,
+                "sha256": "84ed5feffc33d2b4189a1d8715031b1c33eeb34329b172ec1e952bc7455520cf"
+              }
+            ],
+            "inputRoot": null,
+            "outputs": [
+              {
+                "name": "budget-impact.json",
+                "path": "/tmp/puj-vendor-budget-impact-out-L3PyW1/budget-impact.json",
+                "bytes": 1391,
+                "sha256": "00da53bd4d77807cb71d76bde0faa090e7224d95671f2f0b6938deef3cfa2a57"
+              },
+              {
+                "name": "budget-impact.md",
+                "path": "/tmp/puj-vendor-budget-impact-out-L3PyW1/budget-impact.md",
+                "bytes": 476,
+                "sha256": "a47c3a29252d718f6a14cff7ccd39bf8bf8f3b27b6717575957ab3dccf50ec08"
+              }
+            ],
+            "fundingState": "reserved-fixture",
+            "sold": false,
+            "sample": false,
+            "sampleReasons": [],
+            "purchaseAuthority": false,
+            "liveSettlement": "out-of-scope",
+            "fixturePrice": {
+              "labelled": true,
+              "live": false,
+              "publishedToLiveCatalog": false,
+              "jobId": "vendor-budget-impact",
+              "amountUsdc": "0.02",
+              "amountAtomic": "20000",
+              "payTo": "0x0000000000000000000000000000000000000F08",
+              "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+            },
+            "payment": {
+              "fixture": true,
+              "purchaseAuthority": false,
+              "liveSettleAttempted": false,
+              "liveSettleAllowed": false,
+              "fundingState": "reserved-fixture"
+            },
+            "continuity": {
+              "declared": {
+                "live": false,
+                "publishedToLiveCatalog": false,
+                "resource": {
+                  "url": "https://samedaydesk.com/paid-useful-jobs/vendor-budget-impact",
+                  "description": "Non-live fixture wrapper for useful-job vendor-budget-impact. Not a live catalog offer.",
+                  "mimeType": "application/json",
+                  "serviceName": "SameDayDesk",
+                  "tags": [
+                    "fixture",
+                    "useful-jobs",
+                    "not-live"
+                  ]
+                },
+                "extensions": {
+                  "bazaar": {
+                    "info": {
+                      "input": {
+                        "type": "http",
+                        "method": "POST",
+                        "bodyType": "json"
+                      }
+                    },
+                    "schema": {
+                      "type": "object"
+                    }
+                  }
+                }
+              },
+              "provenance": {
+                "resource": "present",
+                "bazaar": "present",
+                "untouchedAuthority": true,
+                "declinedPayment": false
+              },
+              "filledResource": {
+                "url": "https://samedaydesk.com/paid-useful-jobs/vendor-budget-impact",
+                "description": "Non-live fixture wrapper for useful-job vendor-budget-impact. Not a live catalog offer.",
+                "mimeType": "application/json",
+                "serviceName": "SameDayDesk",
+                "tags": [
+                  "fixture",
+                  "useful-jobs",
+                  "not-live"
+                ]
+              },
+              "filledBazaar": {
+                "info": {
+                  "input": {
+                    "type": "http",
+                    "method": "POST",
+                    "bodyType": "json"
+                  }
+                },
+                "schema": {
+                  "type": "object"
+                }
+              },
+              "fixture": true,
+              "wouldSettleIfGuardOmitted": true
+            },
+            "engineResult": {
+              "ok": true,
+              "status": "actionable",
+              "digest": "09aed73d354972df",
+              "refused": false,
+              "identityVerified": null
+            },
+            "outDir": "/tmp/puj-vendor-budget-impact-out-L3PyW1",
+            "publishedDir": "/tmp/cw62-batch-smoke/desk/results/1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb",
+            "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+            "transport": "ok",
+            "analysis": {
+              "status": "actionable",
+              "outcome": "actionable",
+              "identityVerified": null
+            },
+            "delivery": {
+              "status": "complete",
+              "complete": true,
+              "expected": [
+                "budget-impact.json",
+                "budget-impact.md"
+              ],
+              "present": [
+                "budget-impact.json",
+                "budget-impact.md"
+              ],
+              "missing": [],
+              "unexpected": [],
+              "publishedDir": "/tmp/cw62-batch-smoke/desk/results/1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb"
+            },
+            "runOutDir": "/tmp/puj-vendor-budget-impact-out-L3PyW1"
+          },
+          "engine": {
+            "ok": true,
+            "appId": "vendor-budget-impact",
+            "status": "actionable",
+            "digest": "09aed73d354972df",
+            "outDir": "/tmp/puj-vendor-budget-impact-out-L3PyW1",
+            "purchaseAuthority": false
+          },
+          "liveSettlement": "out-of-scope",
+          "executionId": "cw62-1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb",
+          "runOutDir": "/tmp/puj-vendor-budget-impact-out-L3PyW1",
+          "outDir": "/tmp/cw62-batch-smoke/desk/results/1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb",
+          "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+          "transport": "ok",
+          "analysis": {
+            "status": "actionable",
+            "outcome": "actionable",
+            "identityVerified": null
+          },
+          "delivery": {
+            "status": "complete",
+            "complete": true,
+            "expected": [
+              "budget-impact.json",
+              "budget-impact.md"
+            ],
+            "present": [
+              "budget-impact.json",
+              "budget-impact.md"
+            ],
+            "missing": [],
+            "unexpected": [],
+            "publishedDir": "/tmp/cw62-batch-smoke/desk/results/1fd89f05b0297d3b02237b48e23091d69b07d481a1aee6c28f48c0f7d75c59eb"
+          }
+        },
+        "resultDigest": "a9434c17c3de2d8ac11dd3373ec666b91a3390fd8ea461aa3909636a3925bf85",
+        "code": null,
+        "ok": true,
+        "refused": false,
+        "replay": false
+      }
+    },
+    {
+      "sold": false,
+      "anySold": false,
+      "purchaseAuthority": false,
+      "usefulPaidWork": false,
+      "jobRevenueUsdc": null,
+      "liveSettlement": "out-of-scope",
+      "liveCatalogWritten": false,
+      "retryAllowed": false,
+      "id": "missing-after",
+      "chargeId": "batch-e42e80034bcc2a9d6c80f970589b52f0993a007b38d9092fe9a377515b3f1d83:missing-after",
+      "engineId": "vendor-budget-impact",
+      "requestId": "8ed67779e86d9249b77c908535bcbc0aaf41afd9e59edae63a33a674b4d59409",
+      "inputDigest": "6a23d94a21da65da48d286a5a7c456d28b35a36ef8038746dd3e33fd16498b67",
+      "executionId": "cw62-8ed67779e86d9249b77c908535bcbc0aaf41afd9e59edae63a33a674b4d59409",
+      "attempt": {
+        "executionId": "cw62-8ed67779e86d9249b77c908535bcbc0aaf41afd9e59edae63a33a674b4d59409",
+        "startedAt": "2026-09-12T07:06:55.611Z"
+      },
+      "outcome": "rejected",
+      "code": "missing-required-inputs",
+      "fundingState": "rejected",
+      "settlement": {
+        "stated": {
+          "state": "not-attempted"
+        },
+        "state": "not-attempted",
+        "amountUsdc": null,
+        "evidenceClass": "simulated-core-and-caller-statement",
+        "verifiedSettlement": false
+      },
+      "outputs": [],
+      "resultDigest": "b577fd8920230aa8abef847b7eb9dbc2c4f15aba1a1c48e8a1bffb5f0929887f",
+      "sample": false,
+      "analysisOutcome": "not-run",
+      "outcomeKind": "rejected",
+      "price": {
+        "labelled": true,
+        "live": false,
+        "publishedToLiveCatalog": false,
+        "kind": "fixture",
+        "engineId": "vendor-budget-impact",
+        "itemId": "batch-e42e80034bcc2a9d6c80f970589b52f0993a007b38d9092fe9a377515b3f1d83:missing-after",
+        "amountUsdc": "0.02",
+        "amountAtomic": "20000",
+        "payTo": "0x0000000000000000000000000000000000000F08",
+        "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+      },
+      "runner": "paid-useful-jobs",
+      "runnerPin": "76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be",
+      "ticket": {
+        "schema": "samedaydesk.job-request-desk.ticket.v1",
+        "schemaVersion": 2,
+        "requestId": "8ed67779e86d9249b77c908535bcbc0aaf41afd9e59edae63a33a674b4d59409",
+        "bindingDigest": "8ed67779e86d9249b77c908535bcbc0aaf41afd9e59edae63a33a674b4d59409",
+        "orderId": "batch:batch-e42e80034bcc2a9d6c80f970589b52f0993a007b38d9092fe9a377515b3f1d83:item:missing-after",
+        "engineId": "vendor-budget-impact",
+        "terms": {
+          "schema": "samedaydesk.job-request-desk.terms.v2",
+          "engineId": "vendor-budget-impact",
+          "orderId": "batch:batch-e42e80034bcc2a9d6c80f970589b52f0993a007b38d9092fe9a377515b3f1d83:item:missing-after",
+          "example": false,
+          "inputs": [
+            {
+              "name": "before",
+              "bytes": 300,
+              "sha256": "588ecf35d19fec6030b9aac578cba037a992bf3e10c2248377b6dffb2fbfe1c6"
+            }
+          ],
+          "invalidInputs": null,
+          "fundingIntent": "reserved-fixture",
+          "payment": {
+            "fixture": true,
+            "purchaseAuthority": false,
+            "label": "fixture",
+            "live": false,
+            "x402Version": 2,
+            "accepted": {
+              "scheme": "exact",
+              "network": "eip155:8453",
+              "amount": "20000",
+              "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+              "payTo": "0x0000000000000000000000000000000000000F08",
+              "maxTimeoutSeconds": 300
+            },
+            "payload": {
+              "authorization": {
+                "from": "0x00000000000000000000000000000000000000F1",
+                "to": "0x0000000000000000000000000000000000000F08",
+                "value": "20000",
+                "validAfter": "0",
+                "validBefore": "9999999999",
+                "nonce": "0xc08fixture000000000000000000000000000000000000000000000000000001"
+              },
+              "signature": "0xababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababab"
+            }
+          },
+          "buyerClass": "owner-qa",
+          "statedSettlement": {
+            "state": "not-attempted"
+          },
+          "live": {
+            "sold": false,
+            "settle": false,
+            "liveSettle": false
+          },
+          "coreBase": "76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be",
+          "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+          "enginePin": {
+            "package": "useful-jobs",
+            "version": "1.4.1",
+            "sha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+            "bytes": 2575456,
+            "cli": "bin/useful-jobs.mjs",
+            "purchaseAuthority": false,
+            "schedulerDaemon": false
+          }
+        },
+        "termsVersion": "sha256:8ed67779e86d9249b77c908535bcbc0aaf41afd9e59edae63a33a674b4d59409",
+        "enginePin": {
+          "package": "useful-jobs",
+          "version": "1.4.1",
+          "sha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+          "bytes": 2575456,
+          "cli": "bin/useful-jobs.mjs",
+          "purchaseAuthority": false,
+          "schedulerDaemon": false
+        },
+        "coreBase": "76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be",
+        "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+        "inputs": [
+          {
+            "name": "before",
+            "flag": "--before",
+            "bytes": 300,
+            "sha256": "588ecf35d19fec6030b9aac578cba037a992bf3e10c2248377b6dffb2fbfe1c6"
+          }
+        ],
+        "settlement": {
+          "stated": {
+            "state": "not-attempted"
+          },
+          "state": "not-attempted",
+          "amountUsdc": null,
+          "evidenceClass": "simulated-core-and-caller-statement",
+          "verifiedSettlement": false
+        },
+        "fundingState": "rejected",
+        "outputs": [],
+        "resultUri": "file:///tmp/cw62-batch-smoke/desk/results/8ed67779e86d9249b77c908535bcbc0aaf41afd9e59edae63a33a674b4d59409",
+        "status": "rejected",
+        "executionOk": false,
+        "statusHistory": [
+          {
+            "status": "queued",
+            "at": "2026-09-12T07:06:55.609Z"
+          },
+          {
+            "status": "running",
+            "at": "2026-09-12T07:06:55.612Z"
+          },
+          {
+            "status": "rejected",
+            "at": "2026-09-12T07:06:55.679Z"
+          }
+        ],
+        "createdAt": "2026-09-12T07:06:55.609Z",
+        "updatedAt": "2026-09-12T07:06:55.679Z",
+        "sold": false,
+        "purchaseAuthority": false,
+        "usefulPaidWork": false,
+        "independentDemand": false,
+        "jobRevenueUsdc": null,
+        "retryAllowed": false,
+        "executionId": "cw62-8ed67779e86d9249b77c908535bcbc0aaf41afd9e59edae63a33a674b4d59409",
+        "holderPid": 187813,
+        "startedAt": "2026-09-12T07:06:55.611Z",
+        "outcomeKind": "rejected",
+        "analysisOutcome": "not-run",
+        "sample": false,
+        "execution": {
+          "ok": false,
+          "refused": true,
+          "jobId": "vendor-budget-impact",
+          "code": "missing-required-inputs",
+          "error": "Caller mode requires --before, --after; use --example only for labeled SAMPLE runs (not a sale)",
+          "detail": {
+            "missing": [
+              "after"
+            ],
+            "required": [
+              "before",
+              "after"
+            ]
+          },
+          "fundingState": "rejected",
+          "sold": false,
+          "sample": false,
+          "sampleReasons": [],
+          "purchaseAuthority": false,
+          "liveSettleAttempted": false,
+          "liveSettleAllowed": false,
+          "outputs": [],
+          "executionId": "cw62-8ed67779e86d9249b77c908535bcbc0aaf41afd9e59edae63a33a674b4d59409",
+          "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+          "transport": "rejected",
+          "analysis": {
+            "status": "not-run",
+            "outcome": "not-run",
+            "identityVerified": null
+          },
+          "delivery": {
+            "status": "not-attempted",
+            "complete": false,
+            "expected": [],
+            "present": [],
+            "missing": [],
+            "unexpected": []
+          },
+          "receipt": {
+            "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+            "jobId": "vendor-budget-impact",
+            "engine": {
+              "package": "useful-jobs",
+              "version": "1.0.0",
+              "purchaseAuthority": false,
+              "cli": "node bin/useful-jobs.mjs run <id>",
+              "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+              "archiveBytes": 2522418,
+              "sourceRepo": "epistemedeus/pilot",
+              "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+              "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+              "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+            },
+            "fundingState": "rejected",
+            "sold": false,
+            "sample": false,
+            "sampleReasons": [],
+            "purchaseAuthority": false,
+            "liveSettlement": "out-of-scope",
+            "code": "missing-required-inputs",
+            "error": "Caller mode requires --before, --after; use --example only for labeled SAMPLE runs (not a sale)",
+            "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+            "transport": "rejected",
+            "analysis": {
+              "status": "not-run",
+              "outcome": "not-run",
+              "identityVerified": null
+            },
+            "delivery": {
+              "status": "not-attempted",
+              "complete": false,
+              "expected": [],
+              "present": [],
+              "missing": [],
+              "unexpected": []
+            }
+          }
+        },
+        "resultDigest": "b577fd8920230aa8abef847b7eb9dbc2c4f15aba1a1c48e8a1bffb5f0929887f",
+        "code": "missing-required-inputs",
+        "ok": false,
+        "refused": true,
+        "replay": false
+      }
+    }
+  ]
+}
