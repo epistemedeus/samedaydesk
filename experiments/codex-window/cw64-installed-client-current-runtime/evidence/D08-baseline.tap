@@ -1,0 +1,674 @@
+TAP version 13
+# Subtest: fresh pip install console script runs the real useful-jobs CLI
+not ok 1 - fresh pip install console script runs the real useful-jobs CLI
+  ---
+  duration_ms: 0.447849
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:36:1'
+  failureType: 'hookFailed'
+  error: |-
+    error: externally-managed-environment
+    
+    × This environment is externally managed
+    ╰─> To install Python packages system-wide, try apt install
+        python3-xyz, where xyz is the package you are trying to
+        install.
+        
+        If you wish to install a non-Debian-packaged Python package,
+        create a virtual environment using python3 -m venv path/to/venv.
+        Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+        sure you have python3-full installed.
+        
+        If you wish to install a non-Debian packaged Python application,
+        it may be easiest to use pipx install xyz, which will manage a
+        virtual environment for you. Make sure you have pipx installed.
+        
+        See /usr/share/doc/python3.13/README.venv for more information.
+    
+    note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+    hint: See PEP 668 for the detailed specification.
+    
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:25:10)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    TestHook.run (node:internal/util:580:20)
+    Test.createHook (node:internal/test_runner/test:872:33)
+    node:internal/test_runner/harness:335:12
+    file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:22:1
+    ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+  ...
+# Subtest: catalog without archive or kit refuses instead of a constant job list
+not ok 2 - catalog without archive or kit refuses instead of a constant job list
+  ---
+  duration_ms: 0.082082
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:58:1'
+  failureType: 'hookFailed'
+  error: |-
+    error: externally-managed-environment
+    
+    × This environment is externally managed
+    ╰─> To install Python packages system-wide, try apt install
+        python3-xyz, where xyz is the package you are trying to
+        install.
+        
+        If you wish to install a non-Debian-packaged Python package,
+        create a virtual environment using python3 -m venv path/to/venv.
+        Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+        sure you have python3-full installed.
+        
+        If you wish to install a non-Debian packaged Python application,
+        it may be easiest to use pipx install xyz, which will manage a
+        virtual environment for you. Make sure you have pipx installed.
+        
+        See /usr/share/doc/python3.13/README.venv for more information.
+    
+    note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+    hint: See PEP 668 for the detailed specification.
+    
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:25:10)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    TestHook.run (node:internal/util:580:20)
+    Test.createHook (node:internal/test_runner/test:872:33)
+    node:internal/test_runner/harness:335:12
+    file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:22:1
+    ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+  ...
+# Subtest: installed catalog reads the extracted catalog, not pins-only constants
+not ok 3 - installed catalog reads the extracted catalog, not pins-only constants
+  ---
+  duration_ms: 0.060001
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:73:1'
+  failureType: 'hookFailed'
+  error: |-
+    error: externally-managed-environment
+    
+    × This environment is externally managed
+    ╰─> To install Python packages system-wide, try apt install
+        python3-xyz, where xyz is the package you are trying to
+        install.
+        
+        If you wish to install a non-Debian-packaged Python package,
+        create a virtual environment using python3 -m venv path/to/venv.
+        Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+        sure you have python3-full installed.
+        
+        If you wish to install a non-Debian packaged Python application,
+        it may be easiest to use pipx install xyz, which will manage a
+        virtual environment for you. Make sure you have pipx installed.
+        
+        See /usr/share/doc/python3.13/README.venv for more information.
+    
+    note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+    hint: See PEP 668 for the detailed specification.
+    
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:25:10)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    TestHook.run (node:internal/util:580:20)
+    Test.createHook (node:internal/test_runner/test:872:33)
+    node:internal/test_runner/harness:335:12
+    file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:22:1
+    ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+  ...
+# Subtest: tar filter TypeError refuses instead of unfiltered extractall
+not ok 4 - tar filter TypeError refuses instead of unfiltered extractall
+  ---
+  duration_ms: 0.089985
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:89:1'
+  failureType: 'hookFailed'
+  error: |-
+    error: externally-managed-environment
+    
+    × This environment is externally managed
+    ╰─> To install Python packages system-wide, try apt install
+        python3-xyz, where xyz is the package you are trying to
+        install.
+        
+        If you wish to install a non-Debian-packaged Python package,
+        create a virtual environment using python3 -m venv path/to/venv.
+        Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+        sure you have python3-full installed.
+        
+        If you wish to install a non-Debian packaged Python application,
+        it may be easiest to use pipx install xyz, which will manage a
+        virtual environment for you. Make sure you have pipx installed.
+        
+        See /usr/share/doc/python3.13/README.venv for more information.
+    
+    note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+    hint: See PEP 668 for the detailed specification.
+    
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:25:10)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    TestHook.run (node:internal/util:580:20)
+    Test.createHook (node:internal/test_runner/test:872:33)
+    node:internal/test_runner/harness:335:12
+    file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:22:1
+    ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+  ...
+# Subtest: unsafe archive members fail extract without writing outside dest
+not ok 5 - unsafe archive members fail extract without writing outside dest
+  ---
+  duration_ms: 0.062063
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:138:1'
+  failureType: 'hookFailed'
+  error: |-
+    error: externally-managed-environment
+    
+    × This environment is externally managed
+    ╰─> To install Python packages system-wide, try apt install
+        python3-xyz, where xyz is the package you are trying to
+        install.
+        
+        If you wish to install a non-Debian-packaged Python package,
+        create a virtual environment using python3 -m venv path/to/venv.
+        Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+        sure you have python3-full installed.
+        
+        If you wish to install a non-Debian packaged Python application,
+        it may be easiest to use pipx install xyz, which will manage a
+        virtual environment for you. Make sure you have pipx installed.
+        
+        See /usr/share/doc/python3.13/README.venv for more information.
+    
+    note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+    hint: See PEP 668 for the detailed specification.
+    
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:25:10)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    TestHook.run (node:internal/util:580:20)
+    Test.createHook (node:internal/test_runner/test:872:33)
+    node:internal/test_runner/harness:335:12
+    file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:22:1
+    ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+  ...
+# Subtest: real CLI success with deleted outputs is missing-output, not complete, and leaves no orphan
+not ok 6 - real CLI success with deleted outputs is missing-output, not complete, and leaves no orphan
+  ---
+  duration_ms: 0.035994
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:195:1'
+  failureType: 'hookFailed'
+  error: |-
+    error: externally-managed-environment
+    
+    × This environment is externally managed
+    ╰─> To install Python packages system-wide, try apt install
+        python3-xyz, where xyz is the package you are trying to
+        install.
+        
+        If you wish to install a non-Debian-packaged Python package,
+        create a virtual environment using python3 -m venv path/to/venv.
+        Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+        sure you have python3-full installed.
+        
+        If you wish to install a non-Debian packaged Python application,
+        it may be easiest to use pipx install xyz, which will manage a
+        virtual environment for you. Make sure you have pipx installed.
+        
+        See /usr/share/doc/python3.13/README.venv for more information.
+    
+    note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+    hint: See PEP 668 for the detailed specification.
+    
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:25:10)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    TestHook.run (node:internal/util:580:20)
+    Test.createHook (node:internal/test_runner/test:872:33)
+    node:internal/test_runner/harness:335:12
+    file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:22:1
+    ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+  ...
+# Subtest: hanging node times out, is killed, and does not remain as an orphan
+not ok 7 - hanging node times out, is killed, and does not remain as an orphan
+  ---
+  duration_ms: 0.084741
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:250:1'
+  failureType: 'hookFailed'
+  error: |-
+    error: externally-managed-environment
+    
+    × This environment is externally managed
+    ╰─> To install Python packages system-wide, try apt install
+        python3-xyz, where xyz is the package you are trying to
+        install.
+        
+        If you wish to install a non-Debian-packaged Python package,
+        create a virtual environment using python3 -m venv path/to/venv.
+        Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+        sure you have python3-full installed.
+        
+        If you wish to install a non-Debian packaged Python application,
+        it may be easiest to use pipx install xyz, which will manage a
+        virtual environment for you. Make sure you have pipx installed.
+        
+        See /usr/share/doc/python3.13/README.venv for more information.
+    
+    note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+    hint: See PEP 668 for the detailed specification.
+    
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:25:10)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    TestHook.run (node:internal/util:580:20)
+    Test.createHook (node:internal/test_runner/test:872:33)
+    node:internal/test_runner/harness:335:12
+    file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:22:1
+    ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+  ...
+# Subtest: journey: example SAMPLE then caller files copied from samples/pricing/a
+not ok 8 - journey: example SAMPLE then caller files copied from samples/pricing/a
+  ---
+  duration_ms: 98.027012
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/journey.test.mjs:8:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {
+      "ok": false,
+      "refused": true,
+      "code": "pin-mismatch",
+      "error": "packaged hash terms differ from current usefulJobsKit.json; kit is authoritative",
+      "sold": false,
+      "purchaseAuthority": false,
+      "payment": false,
+      "extracted": false,
+      "executed": false,
+      "fields": [
+        "sha256",
+        "bytes",
+        "jobs",
+        "rootName"
+      ],
+      "kitSha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+      "kitBytes": 2575456
+    }
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/journey.test.mjs:12:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: identical caller files still deliver outputs (valid no-change is not missing-output)
+not ok 9 - identical caller files still deliver outputs (valid no-change is not missing-output)
+  ---
+  duration_ms: 75.904565
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/journey.test.mjs:75:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    join (node:path:1354:7)
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/journey.test.mjs:82:18)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: local HTTP origin with matching committed bytes acquires (not live public GET)
+not ok 10 - local HTTP origin with matching committed bytes acquires (not live public GET)
+  ---
+  duration_ms: 95.926826
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/journey.test.mjs:109:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {
+      "ok": false,
+      "refused": true,
+      "code": "pin-mismatch",
+      "error": "packaged hash terms differ from current usefulJobsKit.json; kit is authoritative",
+      "sold": false,
+      "purchaseAuthority": false,
+      "payment": false,
+      "extracted": false,
+      "executed": false,
+      "fields": [
+        "sha256",
+        "bytes",
+        "jobs",
+        "rootName"
+      ],
+      "kitSha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+      "kitBytes": 2575456
+    }
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/journey.test.mjs:118:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: importable JOB_IDS and hash terms bind the current kit and archive
+not ok 11 - importable JOB_IDS and hash terms bind the current kit and archive
+  ---
+  duration_ms: 3.318767
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/public-interface.test.mjs:19:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 2522418
+    - 2575456
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2575456
+  actual: 2522418
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/public-interface.test.mjs:23:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: catalog and version commands expose the published job ids
+not ok 12 - catalog and version commands expose the published job ids
+  ---
+  duration_ms: 85.158743
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/public-interface.test.mjs:43:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/public-interface.test.mjs:45:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: list and help run via subprocess Node after verifying the committed tarball
+not ok 13 - list and help run via subprocess Node after verifying the committed tarball
+  ---
+  duration_ms: 76.180795
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/public-interface.test.mjs:59:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {
+      "ok": false,
+      "refused": true,
+      "code": "pin-mismatch",
+      "error": "packaged hash terms differ from current usefulJobsKit.json; kit is authoritative",
+      "sold": false,
+      "purchaseAuthority": false,
+      "payment": false,
+      "extracted": false,
+      "executed": false,
+      "fields": [
+        "sha256",
+        "bytes",
+        "jobs",
+        "rootName"
+      ],
+      "kitSha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+      "kitBytes": 2575456
+    }
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/public-interface.test.mjs:61:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: unknown job is refused before claiming a sale
+ok 14 - unknown job is refused before claiming a sale
+  ---
+  duration_ms: 78.8552
+  type: 'test'
+  ...
+# Subtest: wrong sha256 refuses before extract or Node
+not ok 15 - wrong sha256 refuses before extract or Node
+  ---
+  duration_ms: 7.673259
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/seeded-failures.test.mjs:16:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 2522418
+    - 2575456
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2575456
+  actual: 2522418
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/seeded-failures.test.mjs:23:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: treating --example as sold is refused as sample-as-sale
+ok 16 - treating --example as sold is refused as sample-as-sale
+  ---
+  duration_ms: 75.489997
+  type: 'test'
+  ...
+# Subtest: missing node binary is labelled missing-node, not a payment error
+not ok 17 - missing node binary is labelled missing-node, not a payment error
+  ---
+  duration_ms: 84.077819
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/seeded-failures.test.mjs:60:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'pin-mismatch'
+    - 'missing-node'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'missing-node'
+  actual: 'pin-mismatch'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/seeded-failures.test.mjs:72:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: empty engine job list is catalog-mismatch, not a constant catalog
+not ok 18 - empty engine job list is catalog-mismatch, not a constant catalog
+  ---
+  duration_ms: 82.748801
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/seeded-failures.test.mjs:84:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'pin-mismatch'
+    - 'catalog-mismatch'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'catalog-mismatch'
+  actual: 'pin-mismatch'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/seeded-failures.test.mjs:100:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: optional --origin with mismatched bytes refuses before extract
+not ok 19 - optional --origin with mismatched bytes refuses before extract
+  ---
+  duration_ms: 126.419292
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/seeded-failures.test.mjs:107:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'pin-mismatch'
+    - 'wrong-digest'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'wrong-digest'
+  actual: 'pin-mismatch'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/seeded-failures.test.mjs:120:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 2
+# fail 17
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1801.869969

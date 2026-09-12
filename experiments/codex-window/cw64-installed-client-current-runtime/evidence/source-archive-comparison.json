@@ -1,0 +1,124 @@
+{
+  "base": "76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be",
+  "archiveVersion": "1.4.1",
+  "sameFileCount": 66,
+  "differentFileCount": 23,
+  "differentFiles": [
+    {
+      "path": "tools/json-schema-webhook-drift/lib/cli.mjs",
+      "archiveSha256": "af5252df147c05cf321c4f29585563dfc12a6a193cc2adc72937d501c4b7176b",
+      "integrationSourceSha256": "f1b64750ec56c8d24e3367970ce0abd97ed09e6a8335a4c51512f527376eb51a"
+    },
+    {
+      "path": "tools/json-schema-webhook-drift/lib/compare.mjs",
+      "archiveSha256": "d2e1a1cdd38c332030b37bfbf90f2dcd34930f392f45143b3dd17b4a28de4098",
+      "integrationSourceSha256": "e1af0de0416ee632171f51b3327a9efe48811a40ae5069779b0882195d2c815f"
+    },
+    {
+      "path": "tools/json-schema-webhook-drift/lib/contract.mjs",
+      "archiveSha256": "e65d6a2ea5da79ab4b717768cb6f74f218d28a39804e94a0ea6ab3a633de6629",
+      "integrationSourceSha256": "08777039b34f29968a620e72c5cfec472be7d70679e70ec835032c5aa716639a"
+    },
+    {
+      "path": "tools/json-schema-webhook-drift/lib/kind.mjs",
+      "archiveSha256": "22e9d52082d0dfb79ba9919349856fb6028304773545ef5f167036d1b7bf9205",
+      "integrationSourceSha256": "83522c74eaff4c235f863991265c93fa0b4199eb1a7f54619dbfb6d41d1db3ed"
+    },
+    {
+      "path": "tools/json-schema-webhook-drift/lib/refs.mjs",
+      "archiveSha256": "03ecd90588bf4b31912bb2414df3c66896b5b86da48d1ae8a2e82a1f48a8b048",
+      "integrationSourceSha256": "2c90eb1116643ad53f1c24ce45c751250528e431c00a2e8c8f7691fbf4162485"
+    },
+    {
+      "path": "tools/page-change-offline-job/lib/canonical.mjs",
+      "archiveSha256": "cd213930a3559fbe7572f8e3fb8d2bec7790b1121342ad870ff384a13af6af5a",
+      "integrationSourceSha256": "5c91351b32428ef105d0cb738bfc5b5f36682885e9649f7fb7db85454b64e2a0"
+    },
+    {
+      "path": "tools/page-change-offline-job/lib/clock.mjs",
+      "archiveSha256": "cbd3e0a90b176b386c55076bad7933e74f437968db56a0ea3a1b5436bc79fae6",
+      "integrationSourceSha256": "90240c6595cceea2b1d9562db04b44a6966a4080454e630e9ddd5cb47843648f"
+    },
+    {
+      "path": "tools/page-change-offline-job/lib/compare.mjs",
+      "archiveSha256": "9af76831f7aad264578d07aa0d2fc373bffbc0479e55b963d0f57844301d9651",
+      "integrationSourceSha256": "fe22b567a061b06bb68f8ea7e32470786477c6ecf0cd7814f6bb5b512f3b03a3"
+    },
+    {
+      "path": "tools/page-change-offline-job/lib/constants.mjs",
+      "archiveSha256": "724f35bf76182838e0c2185b4c657ac1170d90a92f9af5ed6865ac85be8350dd",
+      "integrationSourceSha256": "298b2955d3a4a8c34fb28260436825461008886aa85394b904aaf0340942f9df"
+    },
+    {
+      "path": "tools/page-change-offline-job/lib/diff.mjs",
+      "archiveSha256": "152801b70e991b4abcbd1b11d29f2e7fb14885d18f8c8a72a52ee92b5ae0bed7",
+      "integrationSourceSha256": "4fbdb6476b21d7300a8e9d9287831402724a41f212f379771a053192022094fa"
+    },
+    {
+      "path": "tools/page-change-offline-job/lib/fields.mjs",
+      "archiveSha256": "9e5e86521df513b5380b4bd29988f68104f3b4f1783dab74e3bb00ad0893264c",
+      "integrationSourceSha256": "6cecbf65e7848c9fe08a94200f5eedcad2adef02a1324e13f5a86ca8b62c31b3"
+    },
+    {
+      "path": "tools/page-change-offline-job/lib/io.mjs",
+      "archiveSha256": "4db05d72663bd7212edad1115711db162a4efc7a37b3e52496070f8fb6e0fb7b",
+      "integrationSourceSha256": "4aefdf2771f9133953481671cdcaccbb0d00c39381471a083fd0588d0cdc90ca"
+    },
+    {
+      "path": "tools/page-change-offline-job/lib/parse-batch.mjs",
+      "archiveSha256": "3efad435ed48ab2c920e6700c951541f52d2cb4a4c7c4667cb9c6310e3622fbb",
+      "integrationSourceSha256": "ad66b2695364395b3f97c150a1db6a00e89f6d850ee3f480febc3033e862e549"
+    },
+    {
+      "path": "tools/page-change-offline-job/lib/render.mjs",
+      "archiveSha256": "b388db8f6a0e1d675007dec3f5f2f2f59cd87e95ae3e3bda0d2852ae6cb4440a",
+      "integrationSourceSha256": "36f7d25bde07fe6336d3726d30971a5f62e5732f5a9ea93801fad5d5a918eb41"
+    },
+    {
+      "path": "tools/page-change-offline-job/package.json",
+      "archiveSha256": "59877bd4fbabd1e38f47a7b47e2b20edf59a540cf7fa681fde478017599a7d82",
+      "integrationSourceSha256": "a638d5777ff10a7dd2de119924f132ee71db147f8e4b8ad2fdcb410107a81503"
+    },
+    {
+      "path": "tools/route-table-diff/bin/route-diff.mjs",
+      "archiveSha256": "3e558c1c3a23d2e11854cd33236435bf333a52b6fbea4f2a82591119e55ec03e",
+      "integrationSourceSha256": "45b00a17e80f466b74083e1b207cd356c49533a296326887dfad455e6eedc1df"
+    },
+    {
+      "path": "tools/route-table-diff/lib/catalog.mjs",
+      "archiveSha256": "67e6ca001fe33fa92ff5928da13c45d4e771d5ebee6fbeac218f6acbfde148cf",
+      "integrationSourceSha256": "4e7d97f7e9af4122221c8dda82efcbdeb49dc85af6da2f9595c9548e1d639804"
+    },
+    {
+      "path": "tools/route-table-diff/lib/constants.mjs",
+      "archiveSha256": "e6efef92190b3f5cbdf131906fd5be92c51868274b603ac91c29b7c91e5c886d",
+      "integrationSourceSha256": "8a2755a7b16f0cad8bc53ece59a21832d0d9ccc062ba68c01451e7e80ea181be"
+    },
+    {
+      "path": "tools/route-table-diff/lib/diff.mjs",
+      "archiveSha256": "d5857aded2fb5073098351c79b3e3ff599f0b1f6ff864eb6286b7cef8ab47426",
+      "integrationSourceSha256": "11f88ba21d296e0a13ffc1cb576469e0b39a0cdcbf79de84917c384558c722f7"
+    },
+    {
+      "path": "tools/route-table-diff/lib/digest.mjs",
+      "archiveSha256": "415b0818d7a5a4c36ed52d9c0ec2029cbff1b65541048bb6871187593c29ec47",
+      "integrationSourceSha256": "e032c8202e1035f433c6534dd0b69b7a71134e109f56b508f400e7b07236d640"
+    },
+    {
+      "path": "tools/route-table-diff/lib/identity.mjs",
+      "archiveSha256": "b50ea47587ac567cd837ab2a0e5098af90c3c09822562286656569a695eb59fc",
+      "integrationSourceSha256": "19f4dd622beadfc4eba220e020c4b56b5c44d12fa02a4eaff57206e916f19d2c"
+    },
+    {
+      "path": "tools/route-table-diff/lib/index.mjs",
+      "archiveSha256": "bb3c077dc3e12a29c2656f3d3d0cf768a1fd8d9b3434f10f9c18d75014c3521e",
+      "integrationSourceSha256": "b75086a3c409126d301f0ae5fc82e84ffa0e1985477022ea512e8fbc98ecb5ef"
+    },
+    {
+      "path": "tools/route-table-diff/lib/report.mjs",
+      "archiveSha256": "f7455b883a255d877225d8f1383d4b46cb53bd70418c4ab0b93ba8e1b7be217e",
+      "integrationSourceSha256": "9babaa20d04b397817b3ac813901fd3c34243b7b1a61cc3f1199ccc8e20260f2"
+    }
+  ],
+  "meaning": "Client executes shipped archive bytes. Different integration source files are read-only and are not silently substituted."
+}
