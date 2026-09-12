@@ -1,0 +1,109 @@
+{
+  "schema": "h6d-remote-environment/v1",
+  "observedAtUtc": "2026-09-12T09:11:00Z",
+  "persistence": {
+    "observed": [
+      "Native grok sessions persist on this VM disk under ~/.grok/sessions (live parent dir mtime advancing while PID 289586 runs).",
+      "Worktree /tmp/h6d/wt and heavy-logs survive this Cloud agent turn; parent was already running after an earlier Cursor cancel.",
+      "Hostname `cursor` is not a provider identity (this is a Cursor Cloud VM)."
+    ],
+    "untestedPromises": [
+      "Replacement VM boot from Git + documented auth only (full private home copy not required, not proven here).",
+      "Session resume after a host reboot or new agentId.",
+      "grok leader.sock (none present at inspect)."
+    ]
+  },
+  "provider": "cursor-cloud",
+  "agentId": "bc-ec55ab26-6e23-4562-9c7a-649331bdba1f",
+  "hostnameIsNotProvider": true,
+  "hostnameObserved": "cursor",
+  "measured": {
+    "cpu": {
+      "nproc": 4,
+      "model": "Intel(R) Xeon(R) Processor",
+      "threadsPerCore": 1
+    },
+    "ram": {
+      "memTotalKiB": 16398384,
+      "memAvailableKiB": 10421524,
+      "memFreeKiB": 2455512,
+      "reserveNote": "MemAvailable ~63% of MemTotal at inspect; 25% reserve not breached"
+    },
+    "disk": {
+      "rootFs": "/dev/vdc",
+      "size": "254G",
+      "used": "12G",
+      "avail": "242G",
+      "usePercent": "5%"
+    }
+  },
+  "workRoots": {
+    "h6dScratch": "/tmp/h6d",
+    "h6dWorktree": "/tmp/h6d/wt",
+    "h6dLogs": "/tmp/h6d/heavy-logs",
+    "cursorWorkspaceUnrelated": "/workspace",
+    "doNotMixWorkspaceBranch": "fable/h4r-defect-corpus"
+  },
+  "repo": {
+    "name": "epistemedeus/samedaydesk",
+    "branch": "codex/wave6-h6d-20260912",
+    "commitObserved": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+    "ownedPath": "experiments/wave6/h6d-real-consumers/",
+    "gitStatusAtInspect": "uncommitted ?? experiments/wave6/; pack RESULT.md not yet present; do not push until native parent finishes"
+  },
+  "nativeGrok": {
+    "binary": "/home/ubuntu/.grok/bin/grok",
+    "version": "1.0.25 (f7e67d6988e2) [stable]",
+    "modelRequested": "grok-4.6",
+    "effort": "xhigh",
+    "catalogNote": "grok models listed grok-4.6 (default) and grok-4.5; effort alias --effort / --reasoning-effort; xhigh used on live parent CLI"
+  },
+  "installedCommands": {
+    "grok": { "present": true, "path": "/home/ubuntu/.grok/bin/grok", "version": "1.0.25" },
+    "node": { "present": true, "version": "v22.22.2" },
+    "codex": { "present": false, "note": "not on PATH; not installed to fill inventory" },
+    "cursor": { "present": false, "note": "not on PATH; not installed to fill inventory" }
+  },
+  "auth": {
+    "grokComLoggedIn": true,
+    "nativeSubscriptionOnly": true,
+    "apiBilledSubstituteUsed": false,
+    "storeLocation": "/home/ubuntu/.grok/auth.json",
+    "credentialsNotInGit": true
+  },
+  "liveParentAtInspect": {
+    "kind": "existing",
+    "pid": 289586,
+    "startedUtc": "2026-09-12T08:43:46Z",
+    "sessionId": "01a09456-c82b-7b41-ad58-e5557da52ed3",
+    "staleSessionDirNotLive": "01a09456-4bec-7771-9108-accebe862a1c",
+    "cwd": "/tmp/h6d/wt",
+    "promptFile": "/tmp/h6d/heavy-logs/parent.prompt.md",
+    "stdout": "/tmp/h6d/heavy-logs/parent.stdout.json",
+    "stderr": "/tmp/h6d/heavy-logs/parent.stderr.log",
+    "cli": "grok --prompt-file /tmp/h6d/heavy-logs/parent.prompt.md -m grok-4.6 --effort xhigh --output-format json --always-approve --cwd /tmp/h6d/wt"
+  },
+  "commands": {
+    "doNotLaunchSecondParentWhilePidAlive": true,
+    "startOnceIfNeverStarted": "nohup grok --prompt-file /tmp/h6d/heavy-logs/parent.prompt.md -m grok-4.6 --effort xhigh --output-format json --always-approve --cwd /tmp/h6d/wt > /tmp/h6d/heavy-logs/parent.stdout.json 2> /tmp/h6d/heavy-logs/parent.stderr.log & echo $! > /tmp/h6d/heavy-logs/parent.pid",
+    "resumeAfterDeadUnfinished": "grok --resume 01a09456-c82b-7b41-ad58-e5557da52ed3 --prompt-file /tmp/h6d/heavy-logs/collect.prompt.md -m grok-4.6 --effort xhigh --output-format json --always-approve --cwd /tmp/h6d/wt",
+    "resumeNote": "conversation-only; do not pass --restore-code",
+    "sessionList": "grok sessions list",
+    "collect": [
+      "ps -p 289586 || echo PARENT_DEAD",
+      "git -C /tmp/h6d/wt status -sb && git -C /tmp/h6d/wt log -5 --oneline",
+      "test -f /tmp/h6d/wt/experiments/wave6/h6d-real-consumers/RESULT.md && test -f /tmp/h6d/wt/experiments/wave6/h6d-real-consumers/REMOTE-ENVIRONMENT.json",
+      "cd /tmp/h6d/wt/experiments/wave6/h6d-real-consumers && npm test",
+      "git -C /tmp/h6d/wt add experiments/wave6/h6d-real-consumers && git -C /tmp/h6d/wt commit -m 'H6D: real-consumer pack + remote environment' && git -C /tmp/h6d/wt push -u origin codex/wave6-h6d-20260912"
+    ]
+  },
+  "scratchCleanup": {
+    "policy": "clean only this controller's reproducible completed scratch; never kill live native parent or delete /tmp/h6d while unfinished",
+    "ownCompleted": "Auto poller 291063 already stopped; do not restart timer/heartbeat",
+    "doNotTouch": ["tmux s176-usage", "/workspace fable/h4r-defect-corpus", "other owners' grok sessions"]
+  },
+  "phaseCheckpoint": {
+    "whenParentExits": "copy this file into experiments/wave6/h6d-real-consumers/REMOTE-ENVIRONMENT.json if parent did not write one; include in RESULT; run tests; push task branch; draft PR",
+    "copyFrom": "/tmp/h6d/heavy-logs/REMOTE-ENVIRONMENT.json"
+  }
+}
