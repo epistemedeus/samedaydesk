@@ -38,7 +38,9 @@ Live front door: `server/paid-useful-jobs/RECEIPT.md`.
 | HTML lockfile | `html-input` |
 | Missing required input | `missing-required-inputs` |
 | Deleted `pin-delta.md` after a green run | advertised output absent (completeness `missing-output` on the in-tree kit) |
+| Previous 1.1.0 URL | still 2577606 / `de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534` |
 | Previous 1.0.0 URL | still 2522418 / `6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51` |
+| D15 listing unknown+incomplete | `partial` (not actionable) |
 
 ### Remote checks (Node v22.14.0)
 
