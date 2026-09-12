@@ -1,4 +1,4 @@
-# FEATURE-MAP — SPA route-table comparison (W5-M04 / Co12)
+# FEATURE-MAP - route-table comparison (W5-M04 / Co12 / CW16)
 
 Offline job. Reads two caller JSON catalogs and writes `route-diff.json` plus `route-diff.md`. Does not edit `server/lib/spa-route-shells.js`, homepages, or live listings.
 
@@ -10,10 +10,21 @@ Offline job. Reads two caller JSON catalogs and writes `route-diff.json` plus `r
 | Permutation vs collision/removal | same | same, fixtures under `fixtures/comparison/` | Permutation: `breaking=false`, equal digest. Collision or removal: `breaking=true`, exit 0 | `test/comparison.test.mjs` |
 | Labeled SAMPLE run | same | `--example --out-dir <dir>` | `publishedRouteTable: false`, `sample: true`, `evidenceClass: fixture` | `test/seeded-failures.test.mjs` |
 | Local HTTP catalogs | same | `--before http://127.0.0.1:<port>/before.json --after http://127.0.0.1:<port>/after.json` | `evidenceClass: local-runtime`. Not external acceptance. | `test/local-http.test.mjs`, permutation case in `test/comparison.test.mjs` |
+| Express 5 matcher subset | same | Explicit `framework` plus boolean case/strict settings and `{method,path}` routes | Method-aware added/removed routes; request collisions include an actual matcher witness | `test/express5.test.mjs`, `fixtures/express5/` |
 
 Record shape: `{ path, canonical, title, robots? }`. Wrapper `{ schema, routes: [...] }` is preferred. A raw array is accepted. Contract: `CONTRACT.md`.
 
-`changed` is canonical or robots only. Title-only edits are `titleOnly`. `breaking` is true only for collisions (duplicate path or shared canonical after SDS identity) or removals. Array permutation is not breaking. `tableDigest` is order-independent (`digest.v2`).
+`changed` is canonical or robots only. Title-only edits are `titleOnly`.
+`breaking` is true only for collisions or removals. Array permutation is not
+breaking. `tableDigest` is order-independent (`digest.v2` for SDS,
+`express.digest.v1` for Express).
+
+For Express 5, parameter/wildcard names, method spelling case, literal case
+when routing is case-insensitive, and declared trailing slash when routing is
+non-strict are identity aliases. Methods remain distinct, with Express's GET
+to HEAD fallback included in collision matching. Static/parameter and wildcard
+overlaps are breaking only when the tool emits a concrete request witness.
+Digest schema is `samedaydesk.route-table.express.digest.v1`.
 
 ## Seeded refusals
 
@@ -25,6 +36,7 @@ Record shape: `{ path, canonical, title, robots? }`. Wrapper `{ schema, routes: 
 | Integer `termsVersion` | `integer_terms_version_refused` | `fixtures/failures/integer-terms-version.json` |
 | Public HTTPS catalog | `external_catalog_refused` | `https://samedaydesk.com/...` |
 | OpenAPI / framework catalog | `unsupported_catalog` | `fixtures/failures/unsupported-openapi.json`, `unsupported-framework-record.json` |
+| Express grammar outside the proved subset | `unsupported_express_path` | `fixtures/failures/unsupported-express-path.json` |
 
 ## Evidence classes
 

@@ -98,3 +98,24 @@ test("title-only edits are not canonical/robots changes", async () => {
   assert.equal(diff.breaking, false);
   assert.equal(diff.outcome, "title-only");
 });
+
+test("literal colon remains ordinary SDS path data outside the explicit Express parser", async () => {
+  const catalog = {
+    schema: "samedaydesk.route-table.v1",
+    routes: [
+      {
+        path: "/clock:noon",
+        title: "Clock at noon | SameDayDesk",
+        canonical: "https://samedaydesk.com/clock:noon",
+      },
+    ],
+  };
+  const diff = await runRouteDiff({
+    before: "memory://before-colon",
+    after: "memory://after-colon",
+    adapters: { readFileJson: () => catalog },
+  });
+  assert.equal(diff.catalogKind, "sds");
+  assert.equal(diff.breaking, false);
+  assert.equal(diff.outcome, "no-change");
+});

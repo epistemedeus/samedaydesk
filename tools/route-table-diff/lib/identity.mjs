@@ -129,6 +129,7 @@ export function assertNotHomeTitle(title, path) {
 }
 
 export function routeIdentityKey(route) {
+  if (route.kind === "express") return route.matchKey;
   return JSON.stringify({
     path: route.path,
     canonical: route.canonical,
@@ -138,6 +139,12 @@ export function routeIdentityKey(route) {
 }
 
 export function compareRouteIdentity(a, b) {
+  if (a.kind === "express" || b.kind === "express") {
+    const ak = routeIdentityKey(a);
+    const bk = routeIdentityKey(b);
+    if (ak !== bk) return ak < bk ? -1 : 1;
+    return 0;
+  }
   if (a.path !== b.path) return a.path < b.path ? -1 : 1;
   if (a.canonical !== b.canonical) return a.canonical < b.canonical ? -1 : 1;
   if (a.title !== b.title) return a.title < b.title ? -1 : 1;

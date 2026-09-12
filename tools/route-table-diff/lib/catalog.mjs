@@ -1,6 +1,7 @@
 import { SCHEMA_TABLE } from "./constants.mjs";
 import { refuseIntegerTermsVersion } from "./digest.mjs";
 import { refused } from "./errors.mjs";
+import { findExpressCollisions, frameworkConfigOf, normalizeExpressRoute } from "./express.mjs";
 import { assertNotHomeTitle, canonicalIdentity, normalizeRoutePath } from "./identity.mjs";
 
 const SAMPLE_MARKERS = ["sample", "samplelabel", "label", "kind", "sourcekind", "authority"];
@@ -97,10 +98,11 @@ function isFrameworkRecord(record) {
   );
 }
 
-export function normalizeRoute(record, index) {
+export function normalizeRoute(record, index, framework = null) {
   if (!record || typeof record !== "object" || Array.isArray(record)) {
     refused("invalid_record", "Catalog entry must be an object", { index });
   }
+  if (framework?.kind === "express") return normalizeExpressRoute(record, index, framework);
   if (isFrameworkRecord(record)) {
     refused(
       "unsupported_catalog",
@@ -151,49 +153,55 @@ export function loadCatalogDocument(raw, locator, options = {}) {
       { locator },
     );
   }
+  const framework = frameworkConfigOf(envelope);
   const byPath = new Map();
   const records = [];
   const unique = [];
   const collisions = [];
   for (let i = 0; i < routes.length; i += 1) {
-    const route = normalizeRoute(routes[i], i);
+    const route = normalizeRoute(routes[i], i, framework);
     records.push(route);
-    if (!byPath.has(route.path)) {
-      byPath.set(route.path, [route]);
+    const identity = route.matchKey ?? route.path;
+    if (!byPath.has(identity)) {
+      byPath.set(identity, [route]);
       unique.push(route);
     } else {
-      byPath.get(route.path).push(route);
+      byPath.get(identity).push(route);
     }
   }
-  for (const [path, group] of byPath) {
-    if (group.length > 1) {
-      collisions.push({
-        kind: "path",
-        path,
-        indexes: group.map((route) => route.index),
-        records: group.map((route) => ({
-          path: route.path,
-          canonical: route.canonical,
-          title: route.title,
-          robots: route.robots,
-        })),
-      });
+  if (framework?.kind === "express") {
+    collisions.push(...findExpressCollisions(records));
+  } else {
+    for (const [path, group] of byPath) {
+      if (group.length > 1) {
+        collisions.push({
+          kind: "path",
+          path,
+          indexes: group.map((route) => route.index),
+          records: group.map((route) => ({
+            path: route.path,
+            canonical: route.canonical,
+            title: route.title,
+            robots: route.robots,
+          })),
+        });
+      }
     }
-  }
-  const byCanonical = new Map();
-  for (const route of unique) {
-    const group = byCanonical.get(route.canonical) || [];
-    group.push(route);
-    byCanonical.set(route.canonical, group);
-  }
-  for (const [canonical, group] of byCanonical) {
-    if (group.length > 1) {
-      collisions.push({
-        kind: "canonical",
-        canonical,
-        paths: group.map((route) => route.path),
-        indexes: group.map((route) => route.index),
-      });
+    const byCanonical = new Map();
+    for (const route of unique) {
+      const group = byCanonical.get(route.canonical) || [];
+      group.push(route);
+      byCanonical.set(route.canonical, group);
+    }
+    for (const [canonical, group] of byCanonical) {
+      if (group.length > 1) {
+        collisions.push({
+          kind: "canonical",
+          canonical,
+          paths: group.map((route) => route.path),
+          indexes: group.map((route) => route.index),
+        });
+      }
     }
   }
   return {
@@ -202,6 +210,8 @@ export function loadCatalogDocument(raw, locator, options = {}) {
     sample,
     publishedClaim,
     publishedRouteTable: false,
+    kind: framework?.kind ?? "sds",
+    framework,
     envelope,
     records,
     routes: unique,

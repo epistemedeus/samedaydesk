@@ -1,12 +1,21 @@
 import { tableDigest } from "./digest.mjs";
 import { SCHEMA_DIFF } from "./constants.mjs";
 import { routeIdentityKey } from "./identity.mjs";
+import { refused } from "./errors.mjs";
+import { sameFrameworkConfig } from "./express.mjs";
 
 function robotsOf(route) {
   return route.robots ?? null;
 }
 
 function publicRoute(route) {
+  if (route.kind === "express") {
+    return {
+      method: route.method,
+      path: route.path,
+      matchSignature: route.matchSignature,
+    };
+  }
   return {
     path: route.path,
     canonical: route.canonical,
@@ -16,7 +25,11 @@ function publicRoute(route) {
 }
 
 function pathSequence(routes) {
-  return routes.map((route) => route.path);
+  return routes.map((route) => route.matchKey ?? route.path);
+}
+
+function routeMapKey(route) {
+  return route.matchKey ?? route.path;
 }
 
 function identitySet(records) {
@@ -47,8 +60,23 @@ export function classifyRouteDiff({
 }
 
 export function diffRouteTables(before, after, meta = {}) {
-  const beforeMap = new Map(before.routes.map((route) => [route.path, route]));
-  const afterMap = new Map(after.routes.map((route) => [route.path, route]));
+  if (before.kind !== after.kind) {
+    refused(
+      "incompatible_catalogs",
+      "SDS and framework catalogs cannot be forced into one route identity comparison.",
+      { before: before.kind ?? "unknown", after: after.kind ?? "unknown" },
+    );
+  }
+  if (before.kind === "express" && !sameFrameworkConfig(before.framework, after.framework)) {
+    refused(
+      "incompatible_catalogs",
+      "Express framework version and caseSensitive/strict settings must match across a comparison.",
+      { before: before.framework, after: after.framework },
+    );
+  }
+
+  const beforeMap = new Map(before.routes.map((route) => [routeMapKey(route), route]));
+  const afterMap = new Map(after.routes.map((route) => [routeMapKey(route), route]));
 
   const added = [];
   const removed = [];
@@ -56,30 +84,32 @@ export function diffRouteTables(before, after, meta = {}) {
   const titleOnly = [];
 
   for (const route of after.routes) {
-    if (!beforeMap.has(route.path)) added.push(publicRoute(route));
+    if (!beforeMap.has(routeMapKey(route))) added.push(publicRoute(route));
   }
   for (const route of before.routes) {
-    if (!afterMap.has(route.path)) removed.push(publicRoute(route));
+    if (!afterMap.has(routeMapKey(route))) removed.push(publicRoute(route));
   }
-  for (const route of after.routes) {
-    const prev = beforeMap.get(route.path);
-    if (!prev) continue;
-    const fields = [];
-    if (prev.canonical !== route.canonical) fields.push("canonical");
-    if (robotsOf(prev) !== robotsOf(route)) fields.push("robots");
-    if (fields.length) {
-      changed.push({
-        path: route.path,
-        fields,
-        before: { canonical: prev.canonical, robots: robotsOf(prev), title: prev.title },
-        after: { canonical: route.canonical, robots: robotsOf(route), title: route.title },
-      });
-    } else if (prev.title !== route.title) {
-      titleOnly.push({
-        path: route.path,
-        before: prev.title,
-        after: route.title,
-      });
+  if (before.kind !== "express") {
+    for (const route of after.routes) {
+      const prev = beforeMap.get(routeMapKey(route));
+      if (!prev) continue;
+      const fields = [];
+      if (prev.canonical !== route.canonical) fields.push("canonical");
+      if (robotsOf(prev) !== robotsOf(route)) fields.push("robots");
+      if (fields.length) {
+        changed.push({
+          path: route.path,
+          fields,
+          before: { canonical: prev.canonical, robots: robotsOf(prev), title: prev.title },
+          after: { canonical: route.canonical, robots: robotsOf(route), title: route.title },
+        });
+      } else if (prev.title !== route.title) {
+        titleOnly.push({
+          path: route.path,
+          before: prev.title,
+          after: route.title,
+        });
+      }
     }
   }
 
@@ -117,6 +147,8 @@ export function diffRouteTables(before, after, meta = {}) {
     publishedRouteTable: false,
     sample: Boolean(before.sample || after.sample || meta.example),
     evidenceClass,
+    catalogKind: before.kind,
+    framework: before.kind === "express" ? before.framework : null,
     breaking: classified.breaking,
     outcome: classified.outcome,
     orderChanged,
@@ -138,8 +170,9 @@ export function diffRouteTables(before, after, meta = {}) {
     collisions,
     notes: [
       "Permutation of the same routes is not a breaking change. tableDigest is order-independent.",
-      "breaking is true only for route collisions (duplicate path or shared canonical after SDS identity) or removals.",
+      "breaking is true only for route collisions or removals. Express collisions include an exact method/path matcher witness.",
       "changed lists canonical or robots only. Title-only edits are titleOnly, not a canonical/robots change.",
+      "Express 5 comparison requires explicit caseSensitive/strict settings and supports only its documented matcher-proved subset; other formats refuse.",
       "This artifact is not a published SDS route table and does not rewrite the homepage or spa-route-shells.js.",
       "Fixture, local-runtime, and external stay distinct. Local HTTP loopback is local-runtime. SAMPLE is fixture.",
       "A collision or valid no-change report is an analysis outcome, not a transport or engine failure.",

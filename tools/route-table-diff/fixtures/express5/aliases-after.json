@@ -1,0 +1,11 @@
+{
+  "schema": "samedaydesk.route-table.express.v1",
+  "framework": { "name": "express", "major": "5.2.1" },
+  "settings": { "caseSensitive": false, "strict": false },
+  "routes": [
+    { "method": "get", "path": "/users/:userId" },
+    { "method": "post", "path": "/orders/:id" },
+    { "method": "delete", "path": "/clock\\:noon" },
+    { "method": "patch", "path": "/*rest" }
+  ]
+}
