@@ -5,7 +5,9 @@ import { mkdtempSync, readFileSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { spawnSync } from "node:child_process";
+import { spawnSync, execFile } from "node:child_process";
+import { createServer } from "node:http";
+import { promisify } from "node:util";
 
 const own = join(dirname(fileURLToPath(import.meta.url)), "..");
 const repo = join(own, "../..");
@@ -173,4 +175,43 @@ test("public discovery, catalog, site card, and archive agree", () => {
   }
   assert.deepEqual(read("client/public/for-agents/useful-jobs/catalog.json"), JSON.parse(readFileSync(join(kit, "catalog.json"))));
   assert.deepEqual(read("client/public/for-agents/useful-jobs/jobs-outcomes.json"), JSON.parse(readFileSync(join(kit, "jobs-outcomes.json"))));
+});
+
+test("finite inputs with overflowing subtraction remain partial and omit the delta", () => {
+  const result = run({ rows: [{ field: "edge", value: -1e308, unit: "USD/unit" }] }, { rows: [{ field: "edge", value: 1e308, unit: "USD/unit" }] });
+  good(result, "partial");
+  assert.equal(result.artifact.actions[0].delta, undefined);
+  assert.equal(result.artifact.actions[0].beforeValue, -1e308);
+  assert.equal(result.artifact.actions[0].afterValue, 1e308);
+  assert.ok(result.artifact.gaps.some((g) => g.includes("non-finite numeric list-price delta")));
+});
+test("actual HTTP cold-start consumer downloads, verifies, then runs the field input", async () => {
+  const discovery = JSON.parse(readFileSync(join(repo, "client/public/discovery/useful-jobs.json")));
+  const payload = readFileSync(join(repo, "client/public", discovery.archive.path));
+  const requests = [];
+  const server = createServer((request, response) => {
+    requests.push(request.url);
+    if (request.url !== discovery.archive.path) { response.writeHead(404); response.end(); return; }
+    response.writeHead(200, { "content-type": "application/gzip", "content-length": payload.length });
+    response.end(payload);
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  try {
+    const origin = "http://127.0.0.1:" + server.address().port;
+    const acquired = await promisify(execFile)("bash", ["-lc", discovery.coldStart], {
+      cwd: root, env: { ...process.env, TMPDIR: root, USEFUL_JOBS_ORIGIN: origin }, timeout: 60_000, maxBuffer: 1024 * 1024,
+    });
+    const coldKit = acquired.stdout.trim();
+    assert.ok(coldKit.startsWith(root + "/"));
+    assert.deepEqual(requests, [discovery.archive.path]);
+    assert.equal(hash(readFileSync(join(coldKit, "../useful-jobs-1.4.1.tar.gz"))), discovery.sha256);
+    const p = pair("openai-embedding-3-small-added-20240125");
+    const result = run(p.before, p.after, coldKit);
+    good(result, "actionable");
+    assert.equal(result.artifact.actions[0].kind, "review-added-price-field");
+    assert.equal(result.artifact.actions[0].afterValue, 0.00002);
+  } finally {
+    server.closeAllConnections();
+    await new Promise((resolve) => server.close(resolve));
+  }
 });

@@ -149,7 +149,11 @@ export default function UsefulJobs() {
               <strong>
                 <code>vendor-budget-impact</code>.
               </strong>{" "}
-              Scan curated pricing-row JSON for field/unit deltas. Inputs:{" "}
+              Compare your two dated pricing snapshots for added, removed, changed and
+              incomparable-unit rows. Same-unit changes show before/after values and a
+              per-unit difference. Added or missing rows do not prove a SKU launch or
+              retirement. This is not a bill calculator or live quote; you supply the
+              snapshots and source coverage. Inputs:{" "}
               <code>--before --after</code>. Outputs: <code>budget-impact.json/.md</code>.
             </li>
             <li>

@@ -92,10 +92,23 @@ writeJson(join(pub, "catalog.json"), catalog);
 writeJson(join(pub, "jobs-outcomes.json"), outcomes);
 for (const relative of ["client/public/discovery/useful-jobs.json", "client/src/data/usefulJobsKit.json"]) {
   const file = join(repo, relative);
-  const replaced = readFileSync(file, "utf8").replaceAll(prevVersion, version).replaceAll(prevSha, pin.sha256).replaceAll(String(prevBytes), String(pin.bytes));
+  const current = json(file);
+  const replaced = readFileSync(file, "utf8").replaceAll(current.version, version).replaceAll(current.sha256, pin.sha256).replaceAll(String(current.bytes), String(pin.bytes));
   const value = JSON.parse(replaced);
+  value.sourceRepo = pin.sourceRepo;
+  value.sourceCommit = pin.sourceCommit;
+  value.archiveFreeze = pin.sourceCommit;
+  value.overlaySourceFiles = sourceFiles;
+  const old140 = {
+    version: prevVersion, archive: "/for-agents/useful-jobs/" + prevName + ".tar.gz",
+    kitArchive: "/kit/" + prevName + ".tar.gz", sha256: prevSha, bytes: prevBytes, rootName: prevName,
+  };
+  value.previous = old140;
+  if (Array.isArray(value.immutableArchives)) {
+    value.immutableArchives = value.immutableArchives.filter((a) => a.version !== prevVersion && a.version !== version);
+    value.immutableArchives.push(old140);
+  }
   if (relative.includes("/discovery/")) {
-    value.description = summary;
     value.vendorPricingScope = { billCalculation: false, unitsConverted: false, liveQuote: false, sourceCoverageVerified: false };
   }
   writeJson(file, value);

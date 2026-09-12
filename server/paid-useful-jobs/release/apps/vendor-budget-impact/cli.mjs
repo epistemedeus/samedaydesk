@@ -33,7 +33,10 @@ export function buildImpact(underlying, caller) {
   const added = inner.added || [];
   const removed = inner.removed || [];
   const refused = underlying?.ok === false || inner.ok === false;
-  const partial = (counts.conflicting || 0) > 0 || (counts.unknown || 0) > 0;
+  const nonFiniteDeltas = fieldChanges.filter((f) =>
+    Number.isFinite(f.beforeValue) && Number.isFinite(f.afterValue)
+    && !Number.isFinite(f.afterValue - f.beforeValue));
+  const partial = (counts.conflicting || 0) > 0 || (counts.unknown || 0) > 0 || nonFiniteDeltas.length > 0;
   const hasDelta =
     (counts.unitChanges || unitChanges.length) +
       (counts.fieldChanges || fieldChanges.length) +
@@ -61,7 +64,7 @@ export function buildImpact(underlying, caller) {
       beforeValue: f.beforeValue,
       afterValue: f.afterValue,
       unit: f.unit,
-      ...(typeof f.unit === "string" && f.unit.trim() && Number.isFinite(f.beforeValue) && Number.isFinite(f.afterValue)
+      ...(typeof f.unit === "string" && f.unit.trim() && Number.isFinite(f.beforeValue) && Number.isFinite(f.afterValue) && Number.isFinite(f.afterValue - f.beforeValue)
         ? { delta: f.afterValue - f.beforeValue } : {}),
       note: "Same-unit list-price field change in supplied snapshots. Delta is after minus before per stated unit, not a bill change or live quote.",
     });
@@ -104,7 +107,11 @@ export function buildImpact(underlying, caller) {
       ? "Pricing compare refused"
       : `Pricing-row scan: added=${counts.added || added.length} removed=${counts.removed || removed.length} fieldChanges=${counts.fieldChanges || fieldChanges.length} unitChanges=${counts.unitChanges || unitChanges.length} conflicting=${counts.conflicting || 0} unknown=${counts.unknown || 0}`,
     actions,
-    gaps: partial ? ["conflicting or unknown pricing rows present; treat impact as non-final"] : [],
+    gaps: [
+      ...((counts.conflicting || 0) > 0 || (counts.unknown || 0) > 0
+        ? ["conflicting or unknown pricing rows present; treat impact as non-final"] : []),
+      ...(nonFiniteDeltas.length ? ["non-finite numeric list-price delta; compare supplied values manually"] : []),
+    ],
     underlying: { family: "pricing-row-unit", counts, ok: !refused },
     caller: labelSample(caller),
   });
