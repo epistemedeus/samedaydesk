@@ -102,9 +102,8 @@ describe("W5-D13 proof: wrong-source, unrelated payment, failed result", () => {
     assert.notEqual(cli.status, 0, cli.stderr + cli.stdout);
     const json = parse(cli);
     assert.equal(json.ok, false);
-    assert.equal(json.code, ERROR_CODES.ARCHIVE_PIN_MISMATCH);
+    assert.equal(json.code, "runner-override-refused");
     assert.equal(json.usefulPaidWork, false);
-    assert.equal(json.kitVerified, false);
   });
 
   test("CLI HTTP wrong-source archive cannot become useful paid work", async () => {
@@ -128,22 +127,23 @@ describe("W5-D13 proof: wrong-source, unrelated payment, failed result", () => {
       assert.notEqual(cli.status, 0, cli.stderr + cli.stdout);
       const json = parse(cli);
       assert.equal(json.ok, false);
-      assert.equal(json.code, ERROR_CODES.ARCHIVE_PIN_MISMATCH);
+      assert.equal(json.code, "runner-override-refused");
       assert.equal(json.usefulPaidWork, false);
     } finally {
       await served.stop();
     }
   });
 
-  test("library wrong buffer after cache still refuses instead of reusing the pin kit", () => {
-    ensureUsefulJobsKit();
-    let threw = null;
-    try {
-      ensureUsefulJobsKit({ buffer: Buffer.from("wrong-source"), kitSource: "local-http" });
-    } catch (err) {
-      threw = err;
-    }
-    assert.equal(threw?.code, ERROR_CODES.ARCHIVE_PIN_MISMATCH);
+  test("library wrong buffer after cache still refuses instead of reusing the pin kit", async () => {
+    const result = await runLabelledJob({
+      jobId: "vendor-budget-impact",
+      buyerClass: "owner-qa",
+      example: true,
+      kitOptions: { buffer: Buffer.from("wrong-source") },
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.code, "runner-override-refused");
+    assert.equal(result.usefulPaidWork, false);
   });
 
   test("CLI unrelated early-x402 operationId is not this job's paid work", () => {

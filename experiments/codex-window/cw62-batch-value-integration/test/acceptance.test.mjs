@@ -1,48 +1,75 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { fork, spawnSync } from 'node:child_process';
-import { once } from 'node:events';
-import { existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
-import { openDesk, prepareRequest } from '../../../../../tools/job-request-desk/lib/desk.mjs';
-import { runCurrent } from '../../../../../tools/job-request-desk/lib/current.mjs';
-import { digest } from '../../../../../tools/job-request-desk/lib/durable.mjs';
-import { runBatch, readBatch } from '../../../../../tools/paid-batch-reconciler/lib/ledger.mjs';
-import { measureBatch, measureRequest, runLabelledJob } from '../../../../../tools/buyer-value-ledger/lib/run.mjs';
-import { appendRow, loadLedger } from '../../../../../tools/buyer-value-ledger/lib/ledger.mjs';
+import { openDesk } from '../../../../tools/job-request-desk/lib/desk.mjs';
+import { CURRENT_CORE_BASE, archiveEnginePin, enginePinForJob, runCurrent } from '../../../../tools/job-request-desk/lib/current.mjs';
+import { getJob } from '../../../../tools/job-request-desk/lib/catalog.mjs';
+import { runBatch, readBatch } from '../../../../tools/paid-batch-reconciler/lib/ledger.mjs';
+import { measureBatch, measureRequest } from '../../../../tools/buyer-value-ledger/lib/run.mjs';
+import { appendRow, loadLedger } from '../../../../tools/buyer-value-ledger/lib/ledger.mjs';
 
-const root = fileURLToPath(new URL('../../../../../', import.meta.url));
+const root = fileURLToPath(new URL('../../../../', import.meta.url));
 const worker = fileURLToPath(new URL('./worker.mjs', import.meta.url));
 const fixture = join(root, 'tools/job-request-desk/fixtures/caller/vendor-budget-impact');
 function caller(extra = {}) { return { engineId: 'vendor-budget-impact', inputs: { before: join(fixture, 'before.json'), after: join(fixture, 'after.json') }, buyerClass: 'owner-qa', ...extra }; }
 function work(t) { const dir = mkdtempSync(join(tmpdir(), 'cw62-accept-')); t.after(() => rmSync(dir, { recursive: true, force: true })); return dir; }
-function start(t, dir, mode, options) {
+function start(t, dir, mode, options, { forceKill = false } = {}) {
   const config = join(dir, `${mode}-${Math.random().toString(16).slice(2)}.json`);
   writeFileSync(config, JSON.stringify(options));
   const child = fork(worker, [mode, config], { silent: true, detached: true, env: { ...process.env, NODE_OPTIONS: '--max-old-space-size=768', TMPDIR: dir } });
   let stderr = ''; child.stderr.on('data', c => { stderr += c; });
   const received = new Promise((res, rej) => {
     child.once('message', res); child.once('error', rej);
-    child.once('exit', code => { if (code !== 0) rej(new Error(`worker ${mode} exited ${code}: ${stderr.slice(-1500)}`)); });
+    child.once('exit', code => { if (code !== 0 && code !== null) rej(new Error(`worker ${mode} exited ${code}: ${stderr.slice(-1500)}`)); });
   });
-  // Observe rejection even if a deliberate crash occurs after a marker, before await.
   received.catch(() => {});
-  const stop = () => { try { process.kill(-child.pid, 'SIGKILL'); } catch (err) { if (err.code !== 'ESRCH') throw err; } };
-  t.after(stop);
+  const waitExit = () => new Promise(resolve => {
+    if (child.exitCode != null || child.signalCode) return resolve();
+    child.once('exit', () => resolve());
+  });
+  const kill = (sig) => {
+    if (!child.pid) return;
+    try { process.kill(-child.pid, sig); }
+    catch (err) {
+      if (err.code !== 'ESRCH') throw err;
+      try { process.kill(child.pid, sig); } catch (err2) { if (err2.code !== 'ESRCH') throw err2; }
+    }
+  };
+  const stop = async ({ force = forceKill } = {}) => {
+    kill(force ? 'SIGKILL' : 'SIGTERM');
+    if (!force) {
+      const timed = await Promise.race([waitExit().then(() => 'exited'), new Promise(r => setTimeout(() => r('timeout'), 2000))]);
+      if (timed === 'timeout') kill('SIGKILL');
+    }
+    await Promise.race([waitExit(), new Promise(r => setTimeout(r, 1000))]);
+  };
+  t.after(() => stop({ force: true }));
   return { child, received, stop };
 }
 async function until(fn) { const end = Date.now() + 12_000; while (!fn()) { if (Date.now() > end) throw new Error('timed out waiting for process marker'); await new Promise(r => setTimeout(r, 20)); } }
 async function json(origin, path, body) { const response = await fetch(origin + path, body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(15_000) } : undefined); return { status: response.status, body: await response.json() }; }
 function eventCount(file) { return existsSync(file) ? readFileSync(file, 'utf8').trim().split('\n').filter(Boolean).length : 0; }
 
+test('consumed pin is 6007fcfa; M01 source-identity is not the 1.0.0 archive', () => {
+  assert.equal(CURRENT_CORE_BASE, '6007fcfa27074f9a594248e47296f1afa4f8385d');
+  const archive = archiveEnginePin();
+  const m01 = enginePinForJob(getJob('lockfile-pin-delta'));
+  assert.equal(archive.identityKind, 'wrapper-archive-identity');
+  assert.equal(m01.identityKind, 'current-source-identity');
+  assert.notEqual(archive.sha256, m01.sha256);
+  assert.equal(archive.bytes, 2522418);
+  assert.equal(enginePinForJob(getJob('vendor-budget-impact')).sha256, archive.sha256);
+});
+
 for (const mode of ['library', 'http']) test(`current core -> desk -> batch -> value (${mode}), exact rows and replay`, { timeout: 40_000 }, async t => {
   const dir = work(t), storeDir = join(dir, 'store'), events = join(dir, 'events');
   let executionOrigin;
   if (mode === 'http') executionOrigin = (await start(t, dir, 'core', { events }).received).origin;
   const raw = { batchId: 'two-rows', items: [{ id: 'a', ...caller() }, { id: 'b', ...caller({ funding: 'reserved-fixture', payment: { fixture: true, scheme: 'exact', network: 'eip155:8453', payload: { fixture: true } } }) }] };
-  // Use the exact shared funding fixture.
   raw.items[1].payment = JSON.parse(readFileSync(join(root, 'server/paid-useful-jobs/fixtures/payment/reserved-fixture.json')));
   const opts = { storeDir, deskOptions: { executionOrigin } };
   const batch = await runBatch(raw, opts);
@@ -55,6 +82,8 @@ for (const mode of ['library', 'http']) test(`current core -> desk -> batch -> v
     assert.equal(item.ticket.execution.receipt.inputsDigest.length, 64);
     assert.equal(item.settlement.verifiedSettlement, false); assert.equal(item.settlement.amountUsdc, null);
     assert.equal(item.outputs.every(o => o.executionId === item.executionId && o.requestId === item.requestId), true);
+    assert.equal(item.ticket.coreBase, CURRENT_CORE_BASE);
+    assert.equal(item.usefulPaidWork, false);
   }
   const replay = await runBatch(raw, opts);
   assert.equal(replay.replay, true); assert.deepEqual(replay.items.map(i => i.executionId), batch.items.map(i => i.executionId));
@@ -82,7 +111,7 @@ test('actual desk and batch HTTP endpoints retain failure and restart reconcilia
   const s = start(t, dir, 'batch-server', batchOpts), info = await s.received;
   const posted = await json(info.origin, '/batch', { batchId: 'partial', items: [{ id: 'good', ...caller() }, { id: 'bad', ...request }] });
   assert.equal(posted.body.status, 'partial'); assert.equal(posted.body.ok, false); assert.equal(posted.body.counts.items, 2);
-  s.stop();
+  await s.stop();
   const second = await start(t, dir, 'batch-server', batchOpts).received;
   const got = await json(second.origin, '/batch/partial');
   assert.equal(got.body.batchHash, posted.body.batchHash); assert.equal(got.body.items[1].outcome, 'rejected');
@@ -93,10 +122,10 @@ test('kill after core execution, restart both processes, never dispatch the ambi
   const server = start(t, dir, 'core', { events, holdAfter: marker, release });
   const core = await server.received;
   const request = caller({ orderId: 'lost-reply', statedSettlement: { state: 'simulated' } });
-  const process1 = start(t, dir, 'desk', { storeDir, request, executionOrigin: core.origin });
+  const process1 = start(t, dir, 'desk', { storeDir, request, executionOrigin: core.origin }, { forceKill: true });
   await until(() => existsSync(marker));
-  process1.stop(); writeFileSync(release, 'release');
-  await new Promise(r => setTimeout(r, 60)); server.stop();
+  await process1.stop({ force: true }); writeFileSync(release, 'release');
+  await new Promise(r => setTimeout(r, 60)); await server.stop({ force: true });
   const events2 = join(dir, 'events2'), core2 = await start(t, dir, 'core', { events: events2 }).received;
   const replay = await start(t, dir, 'desk', { storeDir, request, executionOrigin: core2.origin }).received;
   assert.equal(replay.status, 'unknown'); assert.equal(replay.ok, false); assert.equal(replay.retryAllowed, false);
@@ -108,14 +137,16 @@ test('interrupted batch preserves every planned row without resuming dispatch', 
   const dir = work(t), storeDir = join(dir, 'store'), marker = join(dir, 'executed'), events = join(dir, 'events');
   const core = await start(t, dir, 'core', { events, holdAfter: marker, release: join(dir, 'release') }).received;
   const request = { batchId: 'interrupted', items: [{ id: 'first', ...caller() }, { id: 'second', ...caller() }] };
-  const writer = start(t, dir, 'batch', { storeDir, request, deskOptions: { executionOrigin: core.origin } });
-  await until(() => existsSync(marker)); writer.stop();
+  const writer = start(t, dir, 'batch', { storeDir, request, deskOptions: { executionOrigin: core.origin } }, { forceKill: true });
+  await until(() => existsSync(marker)); await writer.stop({ force: true });
   const replay = await runBatch(request, { storeDir });
   assert.equal(replay.ok, false); assert.equal(replay.counts.items, 2);
   assert.deepEqual(replay.items.map(i => i.outcome), ['unknown', 'not-attempted']);
   assert.equal(replay.items[0].settlement.amountUsdc, null); assert.equal(replay.items[1].executionId, null); assert.equal(eventCount(events), 1);
   const values = measureBatch({ batchId: request.batchId, storeDir });
   assert.equal(values.rows.length, 2); assert.equal(values.rows.every(r => !r.usefulDelivery && r.jobRevenueUsdc === null), true);
+  assert.equal(values.rows[0].buyerClass, 'owner-qa');
+  assert.equal(values.rows[1].buyerClass, 'owner-qa');
 });
 
 test('concurrent OS desk writers admit exactly one execution for the same request', { timeout: 40_000 }, async t => {
@@ -211,6 +242,23 @@ test('duplicate events deduplicate and concurrent distinct value writers lose no
   assert.equal(measureRequest({ storeDir, requestId: ticket.requestId, buyerClass: 'fixture-buyer' }).code, 'buyer-class-conflict');
 });
 
+test('unknown-to-final measurement preserves original evidence as a distinct observation', async t => {
+  const dir = work(t), storeDir = join(dir, 'store'), ledgerPath = join(dir, 'obs.json');
+  const desk = openDesk(storeDir);
+  const queued = desk.createRequest(caller({ orderId: 'observe', defer: true }));
+  const unknown = measureRequest({ storeDir, requestId: queued.requestId, buyerClass: 'owner-qa', ledgerPath });
+  assert.equal(unknown.row.usefulDelivery, false);
+  const finished = desk.createRequest(caller({ orderId: 'observe' }));
+  assert.equal(finished.ok, true);
+  const again = measureRequest({ storeDir, requestId: finished.requestId, buyerClass: 'owner-qa', ledgerPath });
+  assert.equal(again.row.usefulDelivery, true);
+  assert.notEqual(again.row.runId, unknown.row.runId);
+  const loaded = loadLedger(ledgerPath);
+  assert.equal(loaded.rows.length, 2);
+  assert.equal(loaded.rows.some(r => r.usefulDelivery === false), true);
+  assert.equal(loaded.rows.some(r => r.usefulDelivery === true), true);
+});
+
 test('actual consumer CLIs share durable request identity and measure existing batch without another run', t => {
   const dir = work(t), storeDir = join(dir, 'batch'), reqPath = join(dir, 'request.json'), ledgerPath = join(dir, 'value.json');
   writeFileSync(reqPath, JSON.stringify({ batchId: 'cli-batch', items: [{ id: 'cli', ...caller() }] }));
@@ -220,4 +268,26 @@ test('actual consumer CLIs share durable request identity and measure existing b
   assert.equal(value.status, 0, value.stderr + value.stdout);
   assert.equal(JSON.parse(value.stdout).rows[0].usefulPaidWork, false);
   assert.equal(readdirSync(join(storeDir, 'desk', 'attempts')).filter(n => n.endsWith('.json')).length, 1);
+});
+
+test('pre-admission validation leaves no durable row; async executor is unknown spend', t => {
+  const dir = work(t), storeDir = join(dir, 'store');
+  const desk = openDesk(storeDir);
+  const integer = desk.createRequest(caller({ orderId: 'int-terms', termsVersion: '1' }));
+  assert.equal(integer.ok, false); assert.equal(integer.code, 'invalid_input'); assert.equal(integer.requestId, undefined);
+  assert.equal(readdirSync(join(storeDir, 'tickets')).filter(n => n.endsWith('.json')).length, 0);
+  const asyncDesk = openDesk(join(dir, 'async'), { execute: () => Promise.resolve({ ok: true }) });
+  const hung = asyncDesk.createRequest(caller({ orderId: 'async' }));
+  assert.equal(hung.status, 'unknown'); assert.equal(hung.settlement.amountUsdc, null); assert.equal(hung.retryAllowed, false);
+});
+
+test('persist callback runs on replay reconciliation', async t => {
+  const dir = work(t), storeDir = join(dir, 'store');
+  const seen = [];
+  const persist = async ledger => { seen.push(ledger.status); };
+  const raw = { batchId: 'persist-replay', items: [{ id: 'a', ...caller() }] };
+  const first = await runBatch(raw, { storeDir, persist });
+  assert.equal(first.ok, true); assert.equal(seen.length, 1);
+  const replay = await runBatch(raw, { storeDir, persist });
+  assert.equal(replay.replay, true); assert.equal(seen.length, 2);
 });

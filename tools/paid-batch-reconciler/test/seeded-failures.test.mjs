@@ -9,6 +9,18 @@ import {
 import { callerBudget, journeyRequest, liveSettlePayload, loadReservedPayment, sampleBudget } from "./helpers.mjs";
 
 describe("seeded fail-closed cases", { timeout: 120_000 }, () => {
+  it("runner override cannot dispatch and cannot look like a sale", async () => {
+    const ledger = await runBatch(
+      { items: [{ id: "override", engineId: "vendor-budget-impact", files: callerBudget() }] },
+      { f08Root: "/tmp" },
+    );
+    assert.equal(ledger.ok, false);
+    assert.equal(ledger.sold, false);
+    assert.equal(ledger.code, "runner-override-refused");
+    assert.equal(ledger.items.length, 0);
+    assert.equal(ledger.jobRevenueUsdc, null);
+  });
+
   it("SAMPLE item as sale is rejected; sibling stays unsold fixture", async () => {
     const files = callerBudget();
     const ledger = await runBatch({

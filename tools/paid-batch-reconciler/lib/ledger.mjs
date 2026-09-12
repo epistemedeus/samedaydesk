@@ -15,12 +15,14 @@ function summarize(manifest, desk, root) {
   const items = manifest.planned.map(plan => {
     const blocked = readDocument(join(root, 'refusals', `${plan.requestId}.json`));
     const ticket = blocked || desk.getRequest(plan.requestId);
-    const missing = ticket.code === 'unknown-request';
+    const missing = !blocked && ticket.code === 'unknown-request';
     const outcome = missing ? 'not-attempted' : ticket.executionOk && ticket.ok ? 'completed' : ticket.status === 'unknown' || !ticket.status ? 'unknown' : 'rejected';
+    const buyerClass = ticket.terms?.buyerClass || plan.buyerClass || null;
     return { ...honesty, id: plan.id, chargeId: `${manifest.batchId}:${plan.id}`, engineId: plan.engineId, requestId: plan.requestId, inputDigest: plan.inputDigest,
       executionId: ticket.executionId || null, attempt: ticket.executionId ? { executionId: ticket.executionId, startedAt: ticket.startedAt } : null,
       outcome, code: missing ? 'batch-item-not-attempted' : ticket.code || null, fundingState: ticket.fundingState || plan.fundingIntent,
-      settlement: ticket.settlement || plan.settlement, outputs: outcome === 'completed' ? ticket.outputs : [], resultDigest: ticket.resultDigest || (missing ? null : digest(ticket)),
+      settlement: ticket.settlement || plan.settlement, buyerClass,
+      outputs: outcome === 'completed' ? ticket.outputs : [], resultDigest: ticket.resultDigest || (missing ? null : digest(ticket)),
       sample: ticket.sample === true, analysisOutcome: ticket.analysisOutcome || null, outcomeKind: ticket.outcomeKind || null,
       price: fixturePrice(plan.engineId, `${manifest.batchId}:${plan.id}`), runner: 'paid-useful-jobs', runnerPin: CURRENT_CORE_BASE,
       ticket: missing ? null : ticket };
@@ -61,8 +63,10 @@ export async function runBatch(raw, options = {}) {
     const planned = plans.map(plan => {
       plan.deskRequest.orderId = `batch:${batchId}:item:${plan.item.id}`;
       plan.snapshot = prepareRequest(plan.deskRequest);
+      if (plan.snapshot.frozen) plan.deskRequest.fileBytes = plan.snapshot.frozen.fileBytes;
       return { id: plan.item.id, engineId: plan.item.engineId, requestId: plan.snapshot.requestId,
-        inputDigest: digest(plan.snapshot.entries), requestDigest: digest(plan.item.raw), fundingIntent: plan.snapshot.terms.fundingIntent, settlement: plan.snapshot.settlement };
+        inputDigest: digest(plan.snapshot.entries), requestDigest: digest(plan.item.raw), fundingIntent: plan.snapshot.terms.fundingIntent,
+        settlement: plan.snapshot.settlement, buyerClass: plan.snapshot.terms.buyerClass };
     });
     const terms = { ...buildBatchTerms({ items: request.items }), batchId, requests: planned };
     const batchHash = digest(terms);
@@ -75,15 +79,17 @@ export async function runBatch(raw, options = {}) {
     if (!createDocument(path, manifest)) {
       const previous = readDocument(path);
       if (previous.batchHash !== batchHash) throw fault('batch-id-conflict');
-      return { ...readBatch(batchId, options), replay: true };
+      // Replay reconciles only. Interrupted dispatch cannot resume unknown work.
+      const ledger = { ...readBatch(batchId, options), replay: true };
+      if (options.persist) await options.persist(ledger);
+      return ledger;
     }
-    // Publication of the manifest is the only permission to dispatch its items.
-    // A second process may reconcile completed rows, but never takes over dispatch.
     const desk = openDesk(join(root, 'desk'), options.deskOptions);
     for (const plan of plans) {
       if (plan.preflightError) {
         putImmutable(join(root, 'refusals', `${plan.snapshot.requestId}.json`), { ...honesty, ok: false, status: 'rejected', executionOk: false,
-          requestId: plan.snapshot.requestId, code: plan.preflightError.code, settlement: plan.snapshot.settlement, fundingState: 'rejected' });
+          requestId: plan.snapshot.requestId, code: plan.preflightError.code, settlement: plan.snapshot.settlement, fundingState: 'rejected',
+          buyerClass: plan.snapshot.terms.buyerClass, terms: { buyerClass: plan.snapshot.terms.buyerClass } });
       } else {
         desk.createRequest(plan.deskRequest);
       }

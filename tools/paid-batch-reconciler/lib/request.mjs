@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { dirname, isAbsolute, resolve } from "node:path";
-import { REQUEST_SCHEMA, MAX_INPUT_BYTES, F08_PIN_SHA, FALLBACK_RUNNERS, KNOWN_RUNNERS } from "./pins.mjs";
+import { REQUEST_SCHEMA, MAX_INPUT_BYTES, F08_PIN_SHA, CURRENT_RUNTIME_PIN, FALLBACK_RUNNERS, KNOWN_RUNNERS } from "./pins.mjs";
 import { getJob, requiredKeys } from "./catalog.mjs";
 import { filesFromItem } from "./sample.mjs";
 import { integerTermsVersionRejected } from "./terms.mjs";
@@ -103,7 +103,7 @@ export function parseBatchRequest(raw, { baseDir = process.cwd() } = {}) {
   if (FALLBACK_RUNNERS.includes(runner)) {
     throw new BatchRefuse(
       "fallback-runner-refused",
-      "This ledger consumes SDS PR52 runPaidOffer; a second useful-jobs kernel is not a fallback",
+      "This ledger consumes the current execution.v1 core through the request desk; a second useful-jobs kernel is not a fallback",
       { runner, pin: F08_PIN_SHA },
     );
   }
@@ -166,7 +166,7 @@ export function parseBatchRequest(raw, { baseDir = process.cwd() } = {}) {
   return {
     schema: REQUEST_SCHEMA,
     runner: "paid-useful-jobs",
-    runnerPin: F08_PIN_SHA,
+    runnerPin: CURRENT_RUNTIME_PIN,
     publishToLiveCatalog: raw.publishToLiveCatalog === true,
     items,
     raw,

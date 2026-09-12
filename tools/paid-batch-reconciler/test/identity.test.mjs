@@ -7,8 +7,7 @@ import { describe, it } from "node:test";
 import { CLI, OWNED, REPO_ROOT, callerBudget, loadReservedPayment } from "./helpers.mjs";
 import { runBatch } from "../lib/ledger.mjs";
 import { createPaidBatchServer, listenLocal } from "../lib/http.mjs";
-import { loadF08Module, resolveF08Root } from "../lib/adapters.mjs";
-import { F08_PIN_SHA } from "../lib/pins.mjs";
+import { CURRENT_RUNTIME_PIN } from "../lib/pins.mjs";
 import { isTermsVersionHash } from "../lib/terms.mjs";
 
 function cliRun(requestPath) {
@@ -108,18 +107,18 @@ describe("batch identity: duplicate/traversing refused; mixed charges stay disti
     assert.equal(ledger.status, "completed");
     assert.equal(ledger.sold, false);
     assert.equal(ledger.runner, "paid-useful-jobs");
-    assert.equal(ledger.runnerPin, F08_PIN_SHA);
+    assert.equal(ledger.runnerPin, CURRENT_RUNTIME_PIN);
     assert.equal(ledger.items.length, 2);
     assert.equal(ledger.charges.length, 2);
     const a = ledger.items.find((i) => i.id === "charge-a");
     const b = ledger.items.find((i) => i.id === "charge-b");
     assert.equal(a.outcome, "completed");
     assert.equal(b.outcome, "completed");
-    assert.equal(a.chargeId, "charge-a");
-    assert.equal(b.chargeId, "charge-b");
+    assert.equal(a.chargeId, `${ledger.batchId}:charge-a`);
+    assert.equal(b.chargeId, `${ledger.batchId}:charge-b`);
     assert.notEqual(a.chargeId, b.chargeId);
-    assert.equal(a.price.itemId, "charge-a");
-    assert.equal(b.price.itemId, "charge-b");
+    assert.equal(a.price.itemId, `${ledger.batchId}:charge-a`);
+    assert.equal(b.price.itemId, `${ledger.batchId}:charge-b`);
     assert.equal(a.price.amountUsdc, "0.02");
     assert.equal(b.price.amountUsdc, "0.02");
     assert.equal(ledger.charges[0].itemId, "charge-a");
@@ -203,8 +202,8 @@ describe("batch identity: duplicate/traversing refused; mixed charges stay disti
       const body = await mixed.json();
       assert.equal(body.status, "partial");
       assert.equal(body.sold, false);
-      assert.equal(body.items[0].chargeId, "http-ok");
-      assert.equal(body.items[1].chargeId, "http-missing");
+      assert.equal(body.items[0].chargeId, `${body.batchId}:http-ok`);
+      assert.equal(body.items[1].chargeId, `${body.batchId}:http-missing`);
       assert.notEqual(body.items[0].chargeId, body.items[1].chargeId);
       assert.equal(body.items[0].outcome, "completed");
       assert.equal(body.items[1].outcome, "rejected");

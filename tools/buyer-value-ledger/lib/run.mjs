@@ -13,13 +13,22 @@ function rowFor(ticket, buyerClass, batch = null) {
   const usefulDelivery = ticket.ok === true && ticket.executionOk === true && ticket.outputs?.length > 0;
   const outcomeKind = usefulDelivery ? ticket.outcomeKind === 'analysis-refused' ? 'analysis_refusal' : /unchanged|no.change|informational/.test(ticket.analysisOutcome || '') ? 'analysis_no_change' : 'analysis_success' : ticket.status === 'unknown' ? 'execution_unknown' : 'engine_failure';
   const outputs = usefulDelivery ? ticket.outputs : [];
+  const outputsDigest = usefulDelivery ? digest(outputs.map(({ name, bytes, sha256 }) => ({ name, bytes, sha256 }))) : null;
+  const observation = {
+    status: ticket.status || null,
+    resultDigest: ticket.resultDigest || null,
+    outputsDigest,
+    usefulDelivery,
+    outcomeKind,
+    code: ticket.code || null,
+  };
   return {
-    schema: SCHEMA_ROW, runId: `bvl_${digest({ requestId: ticket.requestId, executionId: ticket.executionId || null, buyerClass, batch })}`,
+    schema: SCHEMA_ROW, runId: `bvl_${digest({ requestId: ticket.requestId, executionId: ticket.executionId || null, buyerClass, batch, observation })}`,
     requestId: ticket.requestId, requestHash: ticket.bindingDigest || ticket.requestId, executionId: ticket.executionId || null,
     resultDigest: ticket.resultDigest || null, jobId: ticket.engineId, batch, buyerClass,
     sample: ticket.sample === true, outcomeKind, status: ticket.status, code: ticket.code || null,
-    outputs, outputBytes: outputs.reduce((sum, o) => sum + o.bytes, 0), outputsDigest: usefulDelivery ? digest(outputs.map(({ name, bytes, sha256 }) => ({ name, bytes, sha256 }))) : null,
-    durationMs: ticket.startedAt && ticket.updatedAt ? Math.max(0, Date.parse(ticket.updatedAt) - Date.parse(ticket.startedAt)) : null,
+    outputs, outputBytes: outputs.reduce((sum, o) => sum + o.bytes, 0), outputsDigest,
+    durationMs: Number.isFinite(Date.parse(ticket.startedAt)) && Number.isFinite(Date.parse(ticket.updatedAt)) ? Math.max(0, Date.parse(ticket.updatedAt) - Date.parse(ticket.startedAt)) : null,
     startedAt: ticket.startedAt || null, endedAt: ticket.updatedAt || null, usableOutput: usefulDelivery, producedThisRun: usefulDelivery, usefulDelivery,
     usefulPaidWork: false, purchaseAuthority: false, independentDemand: false, organicDemand: false, jobRevenueUsdc: null, retryAllowed: false,
     paidWorkBlockers: ['owner-or-caller-qa', 'nonsettling-execution', 'no-independent-payment-evidence'],
@@ -34,7 +43,7 @@ export function measureRequest({ storeDir, requestId, buyerClass, ledgerPath, po
   if (!labelled.ok) return labelled;
   const ticket = openDesk(storeDir).getRequest(requestId);
   if (!ticket.requestId) return refuse(ticket.code || 'unknown-request', ticket.error || 'Request unavailable');
-  if (ticket.terms?.buyerClass !== buyerClass) return refuse('buyer-class-conflict', 'Value classification must match the admitted request');
+  if (ticket.terms?.buyerClass && ticket.terms.buyerClass !== buyerClass) return refuse('buyer-class-conflict', 'Value classification must match the admitted request');
   const row = rowFor(ticket, buyerClass, batch);
   if (ledgerPath) appendRow(ledgerPath, row);
   if (postgres) postgresInsert(postgres, row);
@@ -46,12 +55,17 @@ export function measureBatch({ batchId, storeDir, ledgerPath } = {}) {
   const batch = readBatch(batchId, { storeDir });
   if (!batch) throw fault('batch-not-found');
   const rows = batch.items.map(item => {
-    if (!item.ticket?.terms) {
-      const row = rowFor({ requestId: item.requestId, engineId: item.engineId, status: item.outcome, settlement: item.settlement, fundingState: item.fundingState }, 'owner-qa', { batchId, itemId: item.id });
-      if (ledgerPath) appendRow(ledgerPath, row);
-      return row;
+    const buyerClass = item.ticket?.terms?.buyerClass || item.buyerClass;
+    if (item.ticket?.schema === 'samedaydesk.job-request-desk.ticket.v1' && item.requestId) {
+      return measureRequest({ storeDir: join(storeDir, 'desk'), requestId: item.requestId, buyerClass, ledgerPath, batch: { batchId, itemId: item.id } }).row;
     }
-    return measureRequest({ storeDir: join(storeDir, 'desk'), requestId: item.requestId, buyerClass: item.ticket.terms.buyerClass, ledgerPath, batch: { batchId, itemId: item.id } }).row;
+    const row = rowFor({
+      requestId: item.requestId, engineId: item.engineId, status: item.outcome, settlement: item.settlement,
+      fundingState: item.fundingState, code: item.code, executionId: item.executionId, resultDigest: item.resultDigest,
+      terms: buyerClass ? { buyerClass } : null,
+    }, buyerClass || 'unknown', { batchId, itemId: item.id });
+    if (ledgerPath) appendRow(ledgerPath, row);
+    return row;
   });
   return { ok: batch.ok, complete: batch.complete, batchId, rows, usefulPaidWork: false, jobRevenueUsdc: null };
 }

@@ -6,10 +6,65 @@ import { freezeRequest } from '../../../server/paid-useful-jobs/lib/input-guard.
 import { engineProvenance } from '../../../server/paid-useful-jobs/lib/engine.mjs';
 import { digestNamedBytes } from '../../../server/paid-useful-jobs/lib/digest.mjs';
 import { EXECUTION_CONTRACT_VERSION } from '../../../server/paid-useful-jobs/lib/contract.mjs';
+import { isM01JobId, m01ReceiptProvenance } from '../../../server/paid-useful-jobs/lib/delivery-catalog.mjs';
 import { digest, bytesDigest, fault } from './durable.mjs';
 
-export const CURRENT_CORE_BASE = '76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be';
+export const CURRENT_CORE_BASE = '6007fcfa27074f9a594248e47296f1afa4f8385d';
+export const CURRENT_CATALOG_VERSION = '1.4.3';
 export { EXECUTION_CONTRACT_VERSION };
+
+/** fileEntry() includes absolute path and omits kind. Compare name/kind/bytes/sha256 only. */
+export function namedByteProjection(rows = []) {
+  return [...rows]
+    .map(entry => ({
+      name: entry.name,
+      kind: entry.kind || 'file',
+      bytes: entry.bytes ?? null,
+      sha256: entry.sha256 ?? null,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+export function archiveEnginePin() {
+  const pin = engineProvenance();
+  return {
+    package: pin.package,
+    version: pin.version,
+    sha256: pin.archiveSha256,
+    bytes: pin.archiveBytes,
+    cli: pin.cli,
+    purchaseAuthority: false,
+    schedulerDaemon: false,
+    identityKind: 'wrapper-archive-identity',
+    sourceCommit: pin.sourceCommit,
+    archiveSha256: pin.archiveSha256,
+    archiveBytes: pin.archiveBytes,
+  };
+}
+
+export function enginePinForJob(job) {
+  const jobId = typeof job === 'string' ? job : job?.id;
+  const m01 = Boolean(job && typeof job === 'object' && job.m01) || (jobId ? isM01JobId(jobId) : false);
+  if (m01 && jobId) {
+    const provenance = m01ReceiptProvenance(typeof job === 'object' && job.id ? job : { id: jobId }) || engineProvenance();
+    return {
+      package: provenance.package,
+      version: provenance.version,
+      sha256: provenance.archiveSha256,
+      bytes: provenance.archiveBytes,
+      cli: provenance.cli,
+      purchaseAuthority: false,
+      schedulerDaemon: false,
+      identityKind: 'current-source-identity',
+      sourceCommit: provenance.sourceCommit,
+      archiveSha256: provenance.archiveSha256,
+      archiveBytes: provenance.archiveBytes,
+      ownedPath: provenance.ownedPath,
+    };
+  }
+  return archiveEnginePin();
+}
+
 export function freezeConsumerRequest(request) {
   const frozen = freezeRequest({ ...request, jobId: request.engineId || request.jobId, inputs: request.inputs || request.files || {} });
   const entries = Object.entries(frozen.inputs).filter(([, v]) => v !== undefined && v !== null && v !== false && v !== '').map(([name, value]) => {
@@ -29,7 +84,7 @@ export function freezeConsumerRequest(request) {
     frozen.fileBytes[name] = Buffer.from(buf);
     return { name, flag: `--${name}`, bytes: buf.length, sha256: bytesDigest(buf) };
   }).sort((a, b) => a.name.localeCompare(b.name));
-  // All admitted bytes are carried to the core; the original paths are provenance only.
+  // Admitted bytes travel with the request; original paths are provenance only.
   return { frozen, entries };
 }
 
@@ -44,31 +99,42 @@ export function runCurrent(request, { executionOrigin } = {}) {
 
 function same(a, b) { return digest(a) === digest(b); }
 function requireFact(condition, code) { if (!condition) throw fault(code); }
-function summaries(rows) { return [...rows].map(({ name, bytes, sha256 }) => ({ name, bytes, sha256 })).sort((a, b) => a.name.localeCompare(b.name)); }
+
 export function validateExecution(result, { job, requestId, executionId, entries, outDir, fundingIntent, example }) {
-  requireFact(result?.contract === EXECUTION_CONTRACT_VERSION && result.receipt?.contract === EXECUTION_CONTRACT_VERSION, 'execution-contract-mismatch');
-  requireFact(result.executionId === executionId && result.jobId === job.id && result.receipt.jobId === job.id, 'execution-identity-mismatch');
-  const receipt = result.receipt;
-  requireFact(result.sold === false && receipt.sold === false && result.purchaseAuthority === false && receipt.purchaseAuthority === false, 'unexpected-purchase-authority');
+  requireFact(result && typeof result === 'object' && !Array.isArray(result), 'execution-unknown');
+  requireFact(result.contract === EXECUTION_CONTRACT_VERSION, 'execution-contract-mismatch');
+  const receipt = result.receipt || {};
+  // receipt.v1 does not require nested executionId. Wrapper may stamp receipt.contract/transport/delivery.
+  if (receipt.contract != null) requireFact(receipt.contract === EXECUTION_CONTRACT_VERSION, 'execution-contract-mismatch');
+  requireFact(result.executionId === executionId && result.jobId === job.id, 'execution-identity-mismatch');
+  if (receipt.jobId != null) requireFact(receipt.jobId === job.id, 'execution-identity-mismatch');
+  if (receipt.executionId != null) requireFact(receipt.executionId === executionId, 'execution-identity-mismatch');
+  requireFact(result.sold === false && receipt.sold !== true && result.purchaseAuthority === false && receipt.purchaseAuthority !== true, 'unexpected-purchase-authority');
   requireFact(result.liveSettleAttempted !== true && receipt.payment?.liveSettleAttempted !== true, 'possible-spend');
-  requireFact(result.transport === receipt.transport && same(result.analysis, receipt.analysis), 'contradictory-execution');
-  requireFact(result.fundingState === receipt.fundingState, 'contradictory-funding');
+  if (receipt.transport != null) requireFact(result.transport === receipt.transport, 'contradictory-execution');
+  if (receipt.analysis != null) requireFact(same(result.analysis, receipt.analysis), 'contradictory-execution');
+  if (receipt.fundingState != null) requireFact(result.fundingState === receipt.fundingState, 'contradictory-funding');
   const expectedFunding = fundingIntent || 'unfunded';
   requireFact(result.fundingState === 'rejected' || result.fundingState === expectedFunding, 'funding-identity-mismatch');
-  if (result.ok !== true) return { complete: false, code: result.code || 'execution-failed', outcomeKind: result.analysis?.outcome === 'refused' ? 'analysis-refused' : result.transport, outputs: [] };
+  if (result.ok !== true) {
+    if ((result.outputs?.length || 0) > 0 && result.delivery?.complete === true && result.outputs.length === job.outputs.length) {
+      throw fault('contradictory-execution');
+    }
+    return { complete: false, code: result.code || 'execution-failed', outcomeKind: result.analysis?.outcome === 'refused' ? 'analysis-refused' : result.transport, outputs: [] };
+  }
   requireFact(result.transport === 'ok' && result.delivery?.complete === true && receipt.delivery?.complete === true, 'incomplete-delivery');
   for (const delivery of [result.delivery, receipt.delivery]) {
     requireFact(delivery.status === 'complete' && same([...delivery.expected].sort(), [...job.outputs].sort()) && same([...delivery.present].sort(), [...job.outputs].sort()) && delivery.missing?.length === 0, 'catalog-delivery-mismatch');
   }
   requireFact(Array.isArray(result.outputs) && Array.isArray(receipt.outputs) && result.outputs.length === job.outputs.length && new Set(result.outputs.map(o => o.name)).size === job.outputs.length, 'output-set-mismatch');
-  requireFact(same(summaries(result.outputs), summaries(receipt.outputs)), 'receipt-output-mismatch');
-  requireFact(receipt.outputsDigest === digestNamedBytes(result.outputs), 'outputs-digest-mismatch');
+  requireFact(same(namedByteProjection(result.outputs), namedByteProjection(receipt.outputs)), 'receipt-output-mismatch');
+  requireFact(receipt.outputsDigest === digestNamedBytes(namedByteProjection(result.outputs)), 'outputs-digest-mismatch');
   if (!example) {
-    requireFact(Array.isArray(receipt.inputs) && same(summaries(entries), summaries(receipt.inputs)), 'input-identity-mismatch');
-    requireFact(receipt.inputsDigest === digestNamedBytes(entries), 'inputs-digest-mismatch');
+    requireFact(Array.isArray(receipt.inputs) && same(namedByteProjection(entries), namedByteProjection(receipt.inputs)), 'input-identity-mismatch');
+    requireFact(receipt.inputsDigest === digestNamedBytes(namedByteProjection(entries)), 'inputs-digest-mismatch');
   }
-  const pin = engineProvenance();
-  requireFact(receipt.engine?.archiveSha256 === pin.archiveSha256 && receipt.engine?.archiveBytes === pin.archiveBytes && receipt.engine?.sourceCommit === pin.sourceCommit, 'engine-pin-mismatch');
+  const expected = enginePinForJob(job);
+  requireFact(receipt.engine?.archiveSha256 === expected.archiveSha256 && receipt.engine?.archiveBytes === expected.archiveBytes && receipt.engine?.sourceCommit === expected.sourceCommit, 'engine-pin-mismatch');
   const outputs = job.outputs.map(name => {
     requireFact(/^[a-zA-Z0-9._-]+$/.test(name), 'unsafe-output-name');
     const declared = result.outputs.find(o => o.name === name);
@@ -87,4 +153,11 @@ export function verifyStoredOutputs(ticket) {
     const buf = readFileSync(out.path);
     if (buf.length !== out.bytes || bytesDigest(buf) !== out.sha256) throw fault('stored-output-bytes-mismatch');
   }
+}
+
+export function verifyStoredTicket(ticket) {
+  if (!ticket) return;
+  if (ticket.execution?.executionId && ticket.execution.executionId !== ticket.executionId) throw fault('execution-identity-mismatch');
+  if (ticket.resultDigest && ticket.execution && digest(ticket.execution) !== ticket.resultDigest) throw fault('result-digest-mismatch');
+  if (ticket.executionOk) verifyStoredOutputs(ticket);
 }

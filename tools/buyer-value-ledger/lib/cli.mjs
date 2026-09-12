@@ -1,21 +1,22 @@
 import { resolve } from "node:path";
-import { ERROR_CODES, I01_OWNER, I01_PIN_NOTE, SDS_MAIN_PIN } from "./pins.mjs";
+import { ERROR_CODES, I01_OWNER, I01_PIN_NOTE, SDS_MAIN_PIN, CURRENT_RUNTIME_PIN, CURRENT_CATALOG_VERSION } from "./pins.mjs";
 import { inspectBuyerClass, refuse } from "./labels.mjs";
 import { attributeJobRevenue, honestyEnvelope } from "./revenue.mjs";
 import { loadLedger } from "./ledger.mjs";
 import { runLabelledJob, measureBatch } from "./run.mjs";
-import { loadPublicCatalog, engineProvenance } from "./engine.mjs";
-import { fetchArchiveHttp } from "./kit.mjs";
+import { loadPublicCatalog } from "./engine.mjs";
+import { CURRENT_CORE_BASE, EXECUTION_CONTRACT_VERSION, archiveEnginePin } from "../../job-request-desk/lib/current.mjs";
 
 export function usage() {
-  return `Buyer value ledger (W5-D13 / Co16).
-Wraps a spawned useful-jobs run with a clock. Records durationMs, output digests,
-and required buyerClass: owner-qa | fixture-buyer | unknown.
+  return `Buyer value ledger.
+Measures durable desk/batch tickets from the current execution.v1 core (6007fcfa / useful-jobs 1.4.3).
+Required buyerClass: owner-qa | fixture-buyer | unknown.
 Never infers organic or independent demand. Never treats 8.105 USDC as this job's revenue.
-Wrong-source cache, unrelated payment, and failed results are not useful paid work.
+Archive-origin/file overrides are refused. Failed and unknown results are not useful paid work.
 
 node bin/value.mjs run vendor-budget-impact --buyer-class owner-qa --example --ledger ./ledger.json --out-dir ./out/example
 node bin/value.mjs run vendor-budget-impact --buyer-class owner-qa --before ./before.json --after ./after.json --ledger ./ledger.json --out-dir ./out/caller
+node bin/value.mjs batch --batch-id ID --store DIR --ledger ./ledger.json
 node bin/value.mjs show --ledger ./ledger.json
 node bin/value.mjs revenue --include-operation early-x402-revenue   # refused
 node bin/value.mjs revenue --cited-banked-usdc                       # refused
@@ -99,10 +100,15 @@ export async function runCli(argv, { cwd = process.cwd(), adapters } = {}) {
       {
         ok: true,
         sdsMainPin: SDS_MAIN_PIN,
+        currentCore: CURRENT_CORE_BASE || CURRENT_RUNTIME_PIN,
+        catalogVersion: CURRENT_CATALOG_VERSION,
+        executionContract: EXECUTION_CONTRACT_VERSION,
         i01: { owner: I01_OWNER, note: I01_PIN_NOTE },
-        engine: engineProvenance(),
+        engine: archiveEnginePin(),
+        engineIdentity: "wrapper-archive-identity for vendor-budget-impact; M01 jobs use source-identity pins",
         catalogJobs: loadPublicCatalog().jobs.map((job) => job.id),
         honesty: honestyEnvelope(),
+        usefulPaidWork: false,
       },
       0,
       pretty,
@@ -202,7 +208,7 @@ export async function runCli(argv, { cwd = process.cwd(), adapters } = {}) {
   }
 
   return printJson(
-    refuse(ERROR_CODES.UNKNOWN_COMMAND, "command must be run, show, revenue, or status"),
+    refuse(ERROR_CODES.UNKNOWN_COMMAND, "command must be run, show, revenue, status, or batch"),
     2,
     pretty,
   );

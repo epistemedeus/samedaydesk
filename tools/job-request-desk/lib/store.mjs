@@ -16,6 +16,10 @@ export function createJsonStore(storeDir) {
   const root = resolve(storeDir);
   for (const sub of ['tickets', 'attempts', 'results', 'final', 'orders']) mkdirSync(join(root, sub), { recursive: true });
   const path = (sub, id) => join(root, sub, `${assertRequestId(id)}.json`);
+  const unknownView = (admitted, attempt) => ({
+    ...admitted, ...attempt, status: 'unknown', ok: false, code: 'execution-unknown', executionOk: false, retryAllowed: false,
+    settlement: { ...(admitted?.settlement || {}), state: 'unknown', amountUsdc: null },
+  });
   const store = {
     kind: 'immutable-file', root,
     ticketPath: id => path('tickets', id),
@@ -37,21 +41,33 @@ export function createJsonStore(storeDir) {
     finish(ticket) { return putImmutable(path('final', ticket.requestId), ticket); },
     read(id) {
       const admitted = readDocument(path('tickets', id));
-      if (!admitted) return null;
-      if (admitted.requestId !== id || !admitted.bindingDigest) throw fault('unbound-legacy-ticket');
+      const attempt = readDocument(path('attempts', id));
       const final = readDocument(path('final', id));
+      if (!admitted) {
+        if (attempt || final) throw fault('missing-admission');
+        return null;
+      }
+      if (admitted.requestId !== id || !admitted.bindingDigest) throw fault('unbound-legacy-ticket');
       if (final) {
         if (final.requestId !== id || final.bindingDigest !== admitted.bindingDigest) throw fault('corrupt-record');
+        if (final.executionId && attempt?.executionId && final.executionId !== attempt.executionId) throw fault('corrupt-record');
         return final;
       }
-      const attempt = readDocument(path('attempts', id));
       if (!attempt) return admitted;
-      // No lease expiry or process-liveness guess grants permission to retry.
-      return { ...admitted, ...attempt, status: 'unknown', ok: false, code: 'execution-unknown', executionOk: false, retryAllowed: false, settlement: { ...admitted.settlement, state: 'unknown', amountUsdc: null } };
+      // An attempt without a final result is unknown spend. No lease expiry retries it.
+      return unknownView(admitted, attempt);
     },
     findByOrderId(orderId) {
       const ref = readDocument(join(root, 'orders', digest(orderId) + '.json'));
-      return ref ? store.read(ref.requestId) || ref : null;
+      if (!ref) return null;
+      try {
+        return store.read(ref.requestId) || { ...ref, status: 'queued' };
+      } catch (err) {
+        if (err.code === 'missing-admission' || err.code === 'corrupt-record') {
+          return { requestId: ref.requestId, orderId: ref.orderId, code: err.code, status: 'unknown' };
+        }
+        throw err;
+      }
     },
     list() { return readdirSync(join(root, 'tickets')).filter(n => /^[a-f0-9]{64}\.json$/.test(n)).map(n => store.read(n.slice(0, -5))); },
   };

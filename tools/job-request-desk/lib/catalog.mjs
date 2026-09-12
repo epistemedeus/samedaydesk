@@ -24,6 +24,9 @@ export const JOBS = Object.freeze(
       outputs: Object.freeze([...job.outputs]),
       exampleFlag: job.exampleFlag || "--example",
       notes: job.notes || "",
+      m01: job.m01 === true,
+      pin: job.pin || null,
+      enginePin: job.enginePin || null,
     }),
   ),
 );
