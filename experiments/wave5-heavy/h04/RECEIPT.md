@@ -117,7 +117,7 @@ Question: do the four GET `/extract` paid-success request digests match a public
 
 ## Lockfile-buyer-recipe (additive)
 
-Owned: `experiments/wave5-heavy/h04/lockfile-buyer-recipe/`. Accept-pack and `payment-example-match/` are unchanged. Merchant pin `ca38205279f0d543515b81b7261909e55ea2600f`.
+Owned: `experiments/wave5-heavy/h04/lockfile-buyer-recipe/`. Accept-pack and `payment-example-match/` are unchanged. Merchant pin `ca38205279f0d543515b81b7261909e55ea2600f`. Content commit `53fa1e82f2ce1cc20f7020e12fc9cf9960c87bbc`.
 
 Unpatched generic POST customer-x402 **refuses** `/lockfile-pin-delta` (`authorization path must be /extract/batch`). Purchase/preflight/reconcile already bind exact body bytes after inspect + `--approve`. Preferred artifact is **both**: recipe on that client + tiny merchant patch (authorization routing + discoverability). Proofs: mounted merchant, fake facilitator, throwaway signer; cases change / no-change / timeout-unknown / replay-negative. No live payment. Optional Hermes AgentSkills drop-in (no native payer).
 
