@@ -14,7 +14,7 @@
     "test:hosted-startup": "node --test server/scripts/test-hosted-startup.js",
     "start": "node server/index.js",
     "lint": "npm --prefix client run lint",
-    "test:seller-repair-briefs": "node --test client/scripts/sellerRepairBriefs.test.ts",
+    "test:seller-repair-briefs": "node --test client/scripts/sellerRepairBriefs.test.ts client/scripts/sellerResolvedCases.test.ts",
     "test:verified-feed": "node --test client/scripts/generateVerifiedFeed.test.mjs client/scripts/refreshVerifiedFeed.test.mjs",
     "verified-feed:write": "node client/scripts/writeVerifiedFeed.mjs",
     "verified-feed:refresh": "node client/scripts/refreshVerifiedFeed.mjs",

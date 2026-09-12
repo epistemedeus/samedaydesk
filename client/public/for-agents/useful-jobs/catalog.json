@@ -1,21 +1,165 @@
 {
   "schema": "useful-jobs.catalog.v1",
   "package": "useful-jobs",
-  "version": "1.0.0",
+  "version": "1.4.0",
   "runtime": {
     "node": ">=22",
     "network": "offline-first",
     "purchaseAuthority": false,
     "schedulerDaemon": false
   },
+  "firstOffer": "lockfile-pin-delta",
   "jobs": [
+    {
+      "id": "lockfile-pin-delta",
+      "title": "Lockfile Pin Delta",
+      "summary": "Compare npm package-lock.json pins (name, version, integrity, resolved) and emit a pin delta.",
+      "cli": [
+        "node",
+        "bin/useful-jobs.mjs",
+        "run",
+        "lockfile-pin-delta"
+      ],
+      "requiredInputs": [
+        "--before",
+        "--after"
+      ],
+      "optionalInputs": [
+        "--out-dir"
+      ],
+      "outputs": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "sampleAvailable": true,
+      "exampleFlag": "--example",
+      "freeSample": true,
+      "m01": true,
+      "pin": {
+        "repo": "epistemedeus/samedaydesk",
+        "sha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+        "ownedPath": "tools/lockfile-pin-delta/",
+        "packageName": "@samedaydesk/lockfile-pin-delta",
+        "source": "in-tree"
+      },
+      "notes": "npm lockfileVersion 2 or 3 only. HTML, package.json-only, yarn/pnpm/bun, and SAMPLE-as-customer refuse. Public CLI isolates --out-dir and publishes both promised files only when the run completes."
+    },
+    {
+      "id": "json-schema-webhook-drift",
+      "title": "JSON Schema Webhook Drift",
+      "summary": "Compare used JSON Pointers on JSON Schema or webhook-example JSON. Not OpenAPI.",
+      "cli": [
+        "node",
+        "bin/useful-jobs.mjs",
+        "run",
+        "json-schema-webhook-drift"
+      ],
+      "requiredInputs": [
+        "--before",
+        "--after",
+        "--used"
+      ],
+      "optionalInputs": [
+        "--out-dir"
+      ],
+      "outputs": [
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "sampleAvailable": true,
+      "exampleFlag": "--example",
+      "freeSample": true,
+      "m01": true,
+      "pin": {
+        "repo": "epistemedeus/samedaydesk",
+        "sha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+        "ownedPath": "tools/json-schema-webhook-drift/",
+        "packageName": "@samedaydesk/json-schema-webhook-drift",
+        "source": "in-tree"
+      },
+      "notes": "Not OpenAPI. OpenAPI documents refuse not-this-job-openapi. Remote $ref is refused. Draft 2020-12 used-path instance-set for a supported subset: type unions, integer/number, enum, nested properties/items/additionalProperties. Unadvertised combinators (allOf, prefixItems) are unknown, not certain unchanged. OpenAPI nullable is unknown."
+    },
+    {
+      "id": "route-table-diff",
+      "title": "Route Table Diff",
+      "summary": "Diff two JSON route catalogs and write added, removed, and changed routes. Does not edit published shells.",
+      "cli": [
+        "node",
+        "bin/useful-jobs.mjs",
+        "run",
+        "route-table-diff"
+      ],
+      "requiredInputs": [
+        "--before",
+        "--after",
+        "--out-dir"
+      ],
+      "outputs": [
+        "route-diff.json",
+        "route-diff.md"
+      ],
+      "sampleAvailable": true,
+      "exampleFlag": "--example",
+      "freeSample": true,
+      "m01": true,
+      "pin": {
+        "repo": "epistemedeus/samedaydesk",
+        "sha": "886c81d824e0a24e2faa5b821b1cd0ca46ae0859",
+        "ownedPath": "tools/route-table-diff/",
+        "binPresent": "bin/route-diff.mjs",
+        "source": "in-tree"
+      },
+      "notes": "--out-dir is required. SAMPLE is not the published SDS route table. Homepage rewrite is refused. Loopback HTTP only; no public fetch."
+    },
+    {
+      "id": "page-change-offline-job",
+      "title": "Page Change Offline Job",
+      "summary": "Compare two already-held extract-batch JSON files on selected fields. Does not fetch or pay.",
+      "cli": [
+        "node",
+        "bin/useful-jobs.mjs",
+        "run",
+        "page-change-offline-job"
+      ],
+      "requiredInputs": [
+        "--job",
+        "--out-dir"
+      ],
+      "outputs": [
+        "page-change.json",
+        "page-change.md"
+      ],
+      "sampleAvailable": false,
+      "freeSample": false,
+      "m01": true,
+      "pin": {
+        "repo": "epistemedeus/samedaydesk",
+        "sha": "fec7bc04ac4419f8e7ce40f2613314e6953af6bc",
+        "ownedPath": "tools/page-change-offline-job/",
+        "packageName": "@samedaydesk/page-change-offline-job",
+        "source": "in-tree"
+      },
+      "notes": "--example is refused (sample_as_delivered_watch). Supply a held job document. Clock is required. Title ASCII space-run noise is not a selected-field change. This job never re-fetches. Not a hosted extract endpoint."
+    },
     {
       "id": "api-upgrade-brief",
       "title": "API Upgrade Brief",
       "summary": "Compare before/after OpenAPI against used-operation pins and emit an upgrade brief.",
-      "cli": ["node", "bin/useful-jobs.mjs", "run", "api-upgrade-brief"],
-      "requiredInputs": ["--before", "--after", "--used"],
-      "outputs": ["upgrade-brief.json", "upgrade-brief.md"],
+      "cli": [
+        "node",
+        "bin/useful-jobs.mjs",
+        "run",
+        "api-upgrade-brief"
+      ],
+      "requiredInputs": [
+        "--before",
+        "--after",
+        "--used"
+      ],
+      "outputs": [
+        "upgrade-brief.json",
+        "upgrade-brief.md"
+      ],
       "sampleAvailable": true,
       "exampleFlag": "--example",
       "freeSample": true,
@@ -25,9 +169,20 @@
       "id": "vendor-budget-impact",
       "title": "Vendor Budget Impact",
       "summary": "Scan curated pricing-row before/after JSON for field and unit deltas. No purchase authority.",
-      "cli": ["node", "bin/useful-jobs.mjs", "run", "vendor-budget-impact"],
-      "requiredInputs": ["--before", "--after"],
-      "outputs": ["budget-impact.json", "budget-impact.md"],
+      "cli": [
+        "node",
+        "bin/useful-jobs.mjs",
+        "run",
+        "vendor-budget-impact"
+      ],
+      "requiredInputs": [
+        "--before",
+        "--after"
+      ],
+      "outputs": [
+        "budget-impact.json",
+        "budget-impact.md"
+      ],
       "sampleAvailable": true,
       "exampleFlag": "--example",
       "freeSample": true,
@@ -37,9 +192,20 @@
       "id": "feed-agenda",
       "title": "Feed Agenda",
       "summary": "Turn RSS/Atom before/after deltas into an agenda JSON plus ICS.",
-      "cli": ["node", "bin/useful-jobs.mjs", "run", "feed-agenda"],
-      "requiredInputs": ["--before", "--after"],
-      "outputs": ["agenda.json", "agenda.ics"],
+      "cli": [
+        "node",
+        "bin/useful-jobs.mjs",
+        "run",
+        "feed-agenda"
+      ],
+      "requiredInputs": [
+        "--before",
+        "--after"
+      ],
+      "outputs": [
+        "agenda.json",
+        "agenda.ics"
+      ],
       "sampleAvailable": true,
       "exampleFlag": "--example",
       "freeSample": true,
@@ -49,9 +215,19 @@
       "id": "evidence-ci-annotation",
       "title": "Evidence CI Annotation",
       "summary": "Format a schema-compatible evidence packet into GitHub-style CI annotations.",
-      "cli": ["node", "bin/useful-jobs.mjs", "run", "evidence-ci-annotation"],
-      "requiredInputs": ["--input"],
-      "outputs": ["annotations.json", "annotations.md"],
+      "cli": [
+        "node",
+        "bin/useful-jobs.mjs",
+        "run",
+        "evidence-ci-annotation"
+      ],
+      "requiredInputs": [
+        "--input"
+      ],
+      "outputs": [
+        "annotations.json",
+        "annotations.md"
+      ],
       "sampleAvailable": true,
       "exampleFlag": "--example",
       "freeSample": true,
@@ -61,22 +237,44 @@
       "id": "listing-repair-packet",
       "title": "Listing Repair Packet",
       "summary": "Diagnose listing/route snapshots into a source-linked owner repair packet.",
-      "cli": ["node", "bin/useful-jobs.mjs", "run", "listing-repair-packet"],
-      "requiredInputs": ["--input"],
-      "outputs": ["repair-packet.json", "repair-packet.md"],
+      "cli": [
+        "node",
+        "bin/useful-jobs.mjs",
+        "run",
+        "listing-repair-packet"
+      ],
+      "requiredInputs": [
+        "--input"
+      ],
+      "outputs": [
+        "repair-packet.json",
+        "repair-packet.md"
+      ],
       "sampleAvailable": true,
       "exampleFlag": "--example",
       "freeSample": true,
-      "notes": "Partial/incomplete evidence stays non-final; no global unlisting claim."
+      "notes": "Partial/incomplete evidence stays non-final for every identity.provider, including unknown names. A declared provider other than grexal|agensi is refused (unsupported-provider) when capture is complete. Engine ok:true is not actionable evidence. No global unlisting claim."
     },
     {
       "id": "repeat-job-record",
       "title": "Repeat Job Record",
       "summary": "Build an operator-schedulable next-run record with local byte verification. Not a daemon.",
-      "cli": ["node", "bin/useful-jobs.mjs", "run", "repeat-job-record"],
-      "requiredInputs": ["--next-run"],
-      "optionalInputs": ["--input-root"],
-      "outputs": ["repeat-job.json", "repeat-job.md"],
+      "cli": [
+        "node",
+        "bin/useful-jobs.mjs",
+        "run",
+        "repeat-job-record"
+      ],
+      "requiredInputs": [
+        "--next-run"
+      ],
+      "optionalInputs": [
+        "--input-root"
+      ],
+      "outputs": [
+        "repeat-job.json",
+        "repeat-job.md"
+      ],
       "sampleAvailable": true,
       "exampleFlag": "--example",
       "freeSample": true,
