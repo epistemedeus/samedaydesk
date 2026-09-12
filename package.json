@@ -55,6 +55,7 @@
     "test:lqdist1": "node --test tools/lqdist1-distribution-audit/test.mjs",
     "lqdist1:rebuild": "node tools/lqdist1-distribution-audit/rebuild-from-evidence.mjs --write",
     "test:buyer-runtimes": "node --test tools/buyer-runtimes/test.mjs",
+    "test:cross-runtime-commission": "node --test --test-concurrency=1 tools/cross-runtime-commission/test/*.test.mjs",
     "presence:refresh": "node tools/presence/refresh.mjs",
     "test:presence": "node --test tools/presence/test.mjs tools/presence/registry-consumer.test.mjs tools/presence/for-agents-cold-read.test.mjs",
     "bazaar-tracker": "node tools/bazaar-tracker/cli.mjs",

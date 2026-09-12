@@ -1,0 +1,11 @@
+{
+  "schema": "samedaydesk.cross-runtime-commission.fixture.v1",
+  "id": "ok",
+  "jobId": "listing-repair-packet",
+  "input": "fixtures/listing/caller-ok.json",
+  "runtimes": [
+    { "label": "node22-local", "kind": "local" },
+    { "label": "node22-container-fixture", "kind": "container-fixture" }
+  ],
+  "notes": "Caller-supplied listing fixture (not SAMPLE). Two labelled runtimes. Not a live second-customer purchase."
+}
