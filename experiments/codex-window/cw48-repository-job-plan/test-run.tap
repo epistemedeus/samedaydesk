@@ -1,0 +1,220 @@
+TAP version 13
+# Subtest: actual multi-language Git repository selects all five released jobs; actual CLI produces every promised output
+ok 1 - actual multi-language Git repository selects all five released jobs; actual CLI produces every promised output
+  ---
+  duration_ms: 1304.64057
+  type: 'test'
+  ...
+# Subtest: portable CLI from another cwd and relocated bundle; no untracked or working tree bytes consumed
+ok 2 - portable CLI from another cwd and relocated bundle; no untracked or working tree bytes consumed
+  ---
+  duration_ms: 413.124751
+  type: 'test'
+  ...
+# Subtest: npm v1 refuses
+ok 3 - npm v1 refuses
+  ---
+  duration_ms: 130.71309
+  type: 'test'
+  ...
+# Subtest: package manifest not lockfile
+ok 4 - package manifest not lockfile
+  ---
+  duration_ms: 132.842088
+  type: 'test'
+  ...
+# Subtest: OpenAPI not schema migration
+ok 5 - OpenAPI not schema migration
+  ---
+  duration_ms: 141.434175
+  type: 'test'
+  ...
+# Subtest: OpenAPI not route catalog
+ok 6 - OpenAPI not route catalog
+  ---
+  duration_ms: 151.396353
+  type: 'test'
+  ...
+# Subtest: remote schema refs
+ok 7 - remote schema refs
+  ---
+  duration_ms: 152.267915
+  type: 'test'
+  ...
+# Subtest: missing used pins
+ok 8 - missing used pins
+  ---
+  duration_ms: 146.752837
+  type: 'test'
+  ...
+# Subtest: bad vendor rows
+ok 9 - bad vendor rows
+  ---
+  duration_ms: 175.28399
+  type: 'test'
+  ...
+# Subtest: page not merchant capture
+ok 10 - page not merchant capture
+  ---
+  duration_ms: 146.63106
+  type: 'test'
+  ...
+# Subtest: missing clock
+ok 11 - missing clock
+  ---
+  duration_ms: 134.419725
+  type: 'test'
+  ...
+# Subtest: yarn.lock is unsupported, never unchanged
+ok 12 - yarn.lock is unsupported, never unchanged
+  ---
+  duration_ms: 121.948704
+  type: 'test'
+  ...
+# Subtest: pnpm-lock.yaml is unsupported, never unchanged
+ok 13 - pnpm-lock.yaml is unsupported, never unchanged
+  ---
+  duration_ms: 113.951726
+  type: 'test'
+  ...
+# Subtest: Cargo.lock is unsupported, never unchanged
+ok 14 - Cargo.lock is unsupported, never unchanged
+  ---
+  duration_ms: 144.848987
+  type: 'test'
+  ...
+# Subtest: poetry.lock is unsupported, never unchanged
+ok 15 - poetry.lock is unsupported, never unchanged
+  ---
+  duration_ms: 130.337916
+  type: 'test'
+  ...
+# Subtest: Gemfile.lock is unsupported, never unchanged
+ok 16 - Gemfile.lock is unsupported, never unchanged
+  ---
+  duration_ms: 128.858703
+  type: 'test'
+  ...
+# Subtest: go.sum is unsupported, never unchanged
+ok 17 - go.sum is unsupported, never unchanged
+  ---
+  duration_ms: 127.929637
+  type: 'test'
+  ...
+# Subtest: unknown schema combinator is unknown in actual current CLI output
+ok 18 - unknown schema combinator is unknown in actual current CLI output
+  ---
+  duration_ms: 310.288305
+  type: 'test'
+  ...
+# Subtest: page absent selected field is coverage unknown, not no-change
+ok 19 - page absent selected field is coverage unknown, not no-change
+  ---
+  duration_ms: 298.600843
+  type: 'test'
+  ...
+# Subtest: moving branch refused, immutable commits survive working tree mutation
+ok 20 - moving branch refused, immutable commits survive working tree mutation
+  ---
+  duration_ms: 48.647468
+  type: 'test'
+  ...
+# Subtest: symlink Git modes refused and worktree symlink never followed
+ok 21 - symlink Git modes refused and worktree symlink never followed
+  ---
+  duration_ms: 122.449313
+  type: 'test'
+  ...
+# Subtest: SAMPLE sibling survives Git staging boundary
+ok 22 - SAMPLE sibling survives Git staging boundary
+  ---
+  duration_ms: 141.964981
+  type: 'test'
+  ...
+# Subtest: binary .json never parsed as ordinary text
+ok 23 - binary .json never parsed as ordinary text
+  ---
+  duration_ms: 148.290091
+  type: 'test'
+  ...
+# Subtest: malformed UTF8 refuses
+ok 24 - malformed UTF8 refuses
+  ---
+  duration_ms: 152.601282
+  type: 'test'
+  ...
+# Subtest: byte bounds refuse before oversized read
+ok 25 - byte bounds refuse before oversized read
+  ---
+  duration_ms: 135.6319
+  type: 'test'
+  ...
+# Subtest: total bytes bounded without partial no-change claim
+ok 26 - total bytes bounded without partial no-change claim
+  ---
+  duration_ms: 120.020249
+  type: 'test'
+  ...
+# Subtest: row bounds refuse rather than truncate
+ok 27 - row bounds refuse rather than truncate
+  ---
+  duration_ms: 137.730659
+  type: 'test'
+  ...
+# Subtest: changed file bound refuses whole plan
+ok 28 - changed file bound refuses whole plan
+  ---
+  duration_ms: 42.588561
+  type: 'test'
+  ...
+# Subtest: new/deleted/renamed files require explicit pair, never synthetic empty snapshots
+ok 29 - new/deleted/renamed files require explicit pair, never synthetic empty snapshots
+  ---
+  duration_ms: 126.560322
+  type: 'test'
+  ...
+# Subtest: live-required stops; no generic models substitute
+ok 30 - live-required stops; no generic models substitute
+  ---
+  duration_ms: 137.178854
+  type: 'test'
+  ...
+# Subtest: policy deny wins over heuristic
+ok 31 - policy deny wins over heuristic
+  ---
+  duration_ms: 131.08692
+  type: 'test'
+  ...
+# Subtest: no diff has precise Git meaning only
+ok 32 - no diff has precise Git meaning only
+  ---
+  duration_ms: 114.219261
+  type: 'test'
+  ...
+# Subtest: tampered or symlinked staged files fail pinned verification
+ok 33 - tampered or symlinked staged files fail pinned verification
+  ---
+  duration_ms: 133.531041
+  type: 'test'
+  ...
+# Subtest: existing output and symlink parent never overwritten
+ok 34 - existing output and symlink parent never overwritten
+  ---
+  duration_ms: 59.782196
+  type: 'test'
+  ...
+# Subtest: strict policy and path authority
+ok 35 - strict policy and path authority
+  ---
+  duration_ms: 0.630217
+  type: 'test'
+  ...
+1..35
+# tests 35
+# suites 0
+# pass 35
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6264.111524

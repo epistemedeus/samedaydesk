@@ -1,0 +1,320 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:samedaydesk:repository-job-plan:v1",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "samedaydesk.repository-job-plan.v1"
+    },
+    "mode": {
+      "const": "dry-run"
+    },
+    "status": {
+      "enum": [
+        "ready",
+        "ready_with_stops",
+        "blocked",
+        "no_git_changes"
+      ]
+    },
+    "source": {
+      "type": "object"
+    },
+    "implementation": {
+      "type": "object"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "policySha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "release": {
+      "type": "object"
+    },
+    "authority": {
+      "type": "object",
+      "properties": {
+        "executionAuthorized": {
+          "const": false
+        },
+        "networkUsed": {
+          "const": false
+        },
+        "uploadAllowed": {
+          "const": false
+        },
+        "signingAllowed": {
+          "const": false
+        },
+        "paymentAllowed": {
+          "const": false
+        },
+        "costCapAtomic": {
+          "const": "0"
+        },
+        "plannedCostAtomic": {
+          "const": "0"
+        },
+        "costBasis": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "executionAuthorized",
+        "networkUsed",
+        "uploadAllowed",
+        "signingAllowed",
+        "paymentAllowed",
+        "costCapAtomic",
+        "plannedCostAtomic",
+        "costBasis"
+      ],
+      "additionalProperties": false
+    },
+    "semanticNoChangeProven": {
+      "const": false
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "status",
+          "state",
+          "suggestions",
+          "selectedId",
+          "stopCode"
+        ]
+      }
+    },
+    "selected": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "job": {
+            "enum": [
+              "lockfile-pin-delta",
+              "json-schema-webhook-drift",
+              "route-table-diff",
+              "vendor-budget-impact",
+              "page-change-offline-job"
+            ]
+          },
+          "operation": {
+            "const": "free-offline"
+          },
+          "preflight": {
+            "type": "object"
+          },
+          "inputs": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "object"
+            }
+          },
+          "rows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "command": {
+            "type": "object",
+            "properties": {
+              "cwd": {
+                "type": "string"
+              },
+              "argv": {
+                "type": "array",
+                "minItems": 6,
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "cwd",
+              "argv"
+            ],
+            "additionalProperties": false
+          },
+          "expectedOutputs": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "outputMeaning": {
+            "type": "string"
+          },
+          "limits": {
+            "type": "string"
+          },
+          "routeAdvice": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stop": {
+            "type": "string"
+          },
+          "approval": {
+            "type": "string"
+          },
+          "costAtomic": {
+            "const": "0"
+          }
+        },
+        "required": [
+          "id",
+          "path",
+          "job",
+          "operation",
+          "preflight",
+          "inputs",
+          "rows",
+          "command",
+          "expectedOutputs",
+          "outputMeaning",
+          "limits",
+          "routeAdvice",
+          "stop",
+          "approval",
+          "costAtomic"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "stops": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "code"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "totals": {
+      "type": "object",
+      "properties": {
+        "changedFiles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "inputBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rows": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "changedFiles",
+        "inputBytes",
+        "rows"
+      ],
+      "additionalProperties": false
+    },
+    "liveContract": {
+      "type": "object",
+      "properties": {
+        "available": {
+          "const": false
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "available",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "nextAction": {
+      "type": "string"
+    },
+    "integrity": {
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "path",
+              "bytes",
+              "sha256"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "algorithm",
+        "files"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema",
+    "mode",
+    "status",
+    "source",
+    "implementation",
+    "policy",
+    "policySha256",
+    "release",
+    "authority",
+    "semanticNoChangeProven",
+    "changes",
+    "selected",
+    "stops",
+    "totals",
+    "liveContract",
+    "nextAction",
+    "integrity"
+  ],
+  "additionalProperties": false
+}

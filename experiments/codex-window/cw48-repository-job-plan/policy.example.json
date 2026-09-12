@@ -1,0 +1,10 @@
+{
+  "schema": "samedaydesk.repository-task-policy.v1",
+  "callerOwned": true,
+  "mode": "dry-run",
+  "execution": "offline",
+  "costCapAtomic": "0",
+  "allowedJobs": ["lockfile-pin-delta", "json-schema-webhook-drift", "route-table-diff", "vendor-budget-impact", "page-change-offline-job"],
+  "limits": {"maxFileBytes": 1048576, "maxTotalBytes": 8388608, "maxChangedFiles": 256, "maxRows": 2000, "maxJsonNodes": 50000, "maxJsonDepth": 64},
+  "bindings": []
+}
