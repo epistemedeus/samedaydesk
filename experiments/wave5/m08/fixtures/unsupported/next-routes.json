@@ -1,0 +1,12 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "publishedRouteTable": false,
+  "note": "Next.js app-router style dynamic path. Co12 at 7387eb67 accepts this JSON; W5-M08 must refuse it as an unsupported framework.",
+  "routes": [
+    {
+      "path": "/blog/[slug]",
+      "title": "Blog post",
+      "canonical": "https://example.com/blog/[slug]"
+    }
+  ]
+}

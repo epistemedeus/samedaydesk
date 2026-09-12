@@ -1,0 +1,96 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "note": "Same D01 SDS identities, reverse array order. Digest.v2 must treat this as permutation, not a route change.",
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "46f2b7f55a7fb780333073a5197b64b8fde64a33",
+    "extractedFrom": [
+      "server/lib/spa-route-shells.js",
+      "client/src/data/machineEntry.mjs"
+    ],
+    "homepageExcluded": true
+  },
+  "routes": [
+    {
+      "path": "/checkout",
+      "title": "Checkout | SameDayDesk",
+      "canonical": "https://samedaydesk.com/checkout",
+      "robots": "noindex,follow"
+    },
+    {
+      "path": "/dashboard",
+      "title": "Account dashboard | SameDayDesk",
+      "canonical": "https://samedaydesk.com/dashboard",
+      "robots": "noindex,follow"
+    },
+    {
+      "path": "/signup",
+      "title": "Create an account | SameDayDesk",
+      "canonical": "https://samedaydesk.com/signup",
+      "robots": "noindex,follow"
+    },
+    {
+      "path": "/login",
+      "title": "Log in | SameDayDesk",
+      "canonical": "https://samedaydesk.com/login",
+      "robots": "noindex,follow"
+    },
+    {
+      "path": "/privacy",
+      "title": "Privacy Policy | SameDayDesk",
+      "canonical": "https://samedaydesk.com/privacy"
+    },
+    {
+      "path": "/terms",
+      "title": "Terms of Service | SameDayDesk",
+      "canonical": "https://samedaydesk.com/terms"
+    },
+    {
+      "path": "/for-agents/useful-jobs",
+      "title": "Offline useful jobs for agent callers | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents/useful-jobs"
+    },
+    {
+      "path": "/for-agents/consumer-repeat",
+      "title": "Run local consumer evidence jobs offline | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents/consumer-repeat"
+    },
+    {
+      "path": "/for-agents/distribution-repair",
+      "title": "Diagnose why a listed tool cannot run | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents/distribution-repair"
+    },
+    {
+      "path": "/for-agents/record-repeat",
+      "title": "Compare OpenAPI, prices, keyed CSV, and feeds offline | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents/record-repeat"
+    },
+    {
+      "path": "/for-agents",
+      "title": "Practical agent jobs | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents"
+    },
+    {
+      "path": "/tools/ai-readiness",
+      "title": "Free AI Readiness Checker — is your site visible to ChatGPT & Perplexity? | SameDayDesk",
+      "canonical": "https://samedaydesk.com/tools/ai-readiness"
+    },
+    {
+      "path": "/x402/verified",
+      "title": "Inspected x402 routes | SameDayDesk",
+      "canonical": "https://samedaydesk.com/x402/verified"
+    },
+    {
+      "path": "/x402/seller-conformance",
+      "title": "Seller conformance proof | SameDayDesk",
+      "canonical": "https://samedaydesk.com/x402/seller-conformance"
+    },
+    {
+      "path": "/x402",
+      "title": "Agent Payment Infrastructure: x402 and MPP | SameDayDesk",
+      "canonical": "https://samedaydesk.com/x402"
+    }
+  ]
+}

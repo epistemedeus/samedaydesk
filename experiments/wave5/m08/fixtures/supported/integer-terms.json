@@ -1,0 +1,12 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "termsVersion": 1,
+  "publishedRouteTable": false,
+  "routes": [
+    {
+      "path": "/terms",
+      "title": "Terms of Service | SameDayDesk",
+      "canonical": "https://samedaydesk.com/terms"
+    }
+  ]
+}

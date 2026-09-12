@@ -1,0 +1,4 @@
+routes:
+  - path: /terms
+    title: Terms
+    canonical: https://samedaydesk.com/terms

@@ -1,0 +1,12 @@
+{
+  "openapi": "3.0.3",
+  "info": { "title": "Independent OpenAPI fixture", "version": "0.0.0" },
+  "paths": {
+    "/terms": {
+      "get": {
+        "operationId": "getTerms",
+        "responses": { "200": { "description": "ok" } }
+      }
+    }
+  }
+}

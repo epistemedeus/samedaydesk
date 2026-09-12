@@ -1,0 +1,28 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "publishedRouteTable": false,
+  "authority": "caller",
+  "note": "Same records as routes-before.json, reversed. Permutation is not a semantic route change.",
+  "routes": [
+    {
+      "path": "/privacy",
+      "title": "Privacy Policy | SameDayDesk",
+      "canonical": "https://samedaydesk.com/privacy"
+    },
+    {
+      "path": "/terms",
+      "title": "Terms of Service | SameDayDesk",
+      "canonical": "https://samedaydesk.com/terms"
+    },
+    {
+      "path": "/for-agents/useful-jobs",
+      "title": "Offline useful jobs for agent callers | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents/useful-jobs"
+    },
+    {
+      "path": "/for-agents",
+      "title": "Practical agent jobs | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents"
+    }
+  ]
+}

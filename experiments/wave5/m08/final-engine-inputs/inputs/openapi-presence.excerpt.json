@@ -1,0 +1,27 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SameDayDesk machine commerce gateway",
+    "version": "1.23.40",
+    "description": "Compact excerpt of D01 fixtures/presence/catalog/openapi.json. Not an SDS route catalog."
+  },
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "46f2b7f55a7fb780333073a5197b64b8fde64a33",
+    "extractedFrom": ["fixtures/presence/catalog/openapi.json"]
+  },
+  "paths": {
+    "/v0/cards.json": {
+      "get": {
+        "summary": "Free incident-backed platform health cards. Categories are not calibrated scores.",
+        "operationId": "listPlatformHealthCards"
+      }
+    },
+    "/v0/commerce-demand.json": {
+      "get": {
+        "summary": "Privacy-safe aggregate external machine-commerce observations.",
+        "operationId": "getCommerceDemand"
+      }
+    }
+  }
+}

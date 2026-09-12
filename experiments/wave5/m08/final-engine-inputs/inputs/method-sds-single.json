@@ -1,0 +1,13 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "note": "Single SDS identity for the correspondence events path. Pair with method-get-post-sds-same-path.json.",
+  "routes": [
+    {
+      "path": "/v1/projects/:projectId/events",
+      "title": "Correspondence events",
+      "canonical": "https://samedaydesk.com/v1/projects/:projectId/events"
+    }
+  ]
+}
