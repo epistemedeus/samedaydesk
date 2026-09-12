@@ -1,0 +1,28 @@
+{
+  "id": "openai-gpt35-turbo-20230613-20240125",
+  "kind": "public-provider-revision",
+  "capture": { "complete": true, "method": "dated-official-posts" },
+  "declaredFields": ["gpt-3.5-turbo-input", "gpt-3.5-turbo-output"],
+  "decisionQuestion": "Did the unpinned GPT-3.5 Turbo list price move between two dated official posts, same field names, same unit?",
+  "fetchedAt": "2026-09-12T06:19:00Z",
+  "before": {
+    "url": "https://openai.com/index/function-calling-and-other-api-updates/",
+    "date": "2023-06-13",
+    "publisher": "OpenAI",
+    "quote": "Developers can now use this model for just $0.0015 per 1K input tokens and $0.002 per 1K output tokens",
+    "extraction": "Primary page fetched 2026-09-12. The sentence is the GPT-3.5 Turbo list price on that dated post after a stated 25% input cut. Rows keep USD per 1K tokens. Not converted to 1M tokens. Not a current price."
+  },
+  "after": {
+    "url": "https://openai.com/index/new-embedding-models-and-api-updates/",
+    "date": "2024-01-25",
+    "publisher": "OpenAI",
+    "quote": "Input prices for the new model are reduced by 50% to $0.0005 /1K tokens and output prices are reduced by 25% to $0.0015 /1K tokens.",
+    "extraction": "Primary page fetched 2026-09-12. After-row dollars are the explicit $0.0005 / $0.0015 per 1K figures for gpt-3.5-turbo-0125. The 50% / 25% claims are versus then-current 0613, not versus the June 2023 dollars. This pair is two dated list snapshots of the unpinned GPT-3.5 Turbo alias."
+  },
+  "limits": [
+    "Historical dated list snapshots, not current OpenAI prices.",
+    "0125 is a new snapshot id; the alias auto-upgraded two weeks after launch.",
+    "Does not include batch, fine-tuned, cached, or usage receipts.",
+    "No usage is supplied, so this is not a bill, invoice, or forecast."
+  ]
+}

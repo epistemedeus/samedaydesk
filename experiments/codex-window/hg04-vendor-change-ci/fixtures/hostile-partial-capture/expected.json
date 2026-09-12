@@ -1,0 +1,44 @@
+{
+  "schema": "samedaydesk.hg04.vendor-change-ci.baseline.v1",
+  "id": "hostile-partial-capture",
+  "wrapperStatus": "partial",
+  "kitStatus": "actionable",
+  "truth": {
+    "schemaOk": true,
+    "unitComparable": true,
+    "coverageComplete": false,
+    "membership": {
+      "added": [],
+      "removed": ["gpt-3.5-turbo-output"],
+      "shared": ["gpt-3.5-turbo-input"]
+    }
+  },
+  "kitCounts": {
+    "added": 0,
+    "removed": 1,
+    "fieldChanges": 1,
+    "unitChanges": 0,
+    "conflicting": 0,
+    "unknown": 0
+  },
+  "independentArithmetic": [
+    {
+      "field": "gpt-3.5-turbo-input",
+      "before": 0.0015,
+      "after": 0.0005,
+      "delta": -0.001,
+      "unit": "USD/1K-tokens"
+    }
+  ],
+  "invoiceClaim": false,
+  "forecast": false,
+  "purchaseAuthority": false,
+  "machineActionKind": "resolve-partial-capture",
+  "ci": "fail",
+  "updateBaseline": false,
+  "notes": [
+    "Released 1.4.0 may call this actionable because one shared field changed.",
+    "Wrapper status stays partial: declared output field is missing and capture.complete is false.",
+    "Removed membership is a coverage hole, not a retirement or bill reduction."
+  ]
+}

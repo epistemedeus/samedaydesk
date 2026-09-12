@@ -1,0 +1,27 @@
+{
+  "id": "hostile-partial-capture",
+  "kind": "hostile-partial-capture",
+  "capture": { "complete": false, "method": "truncated-html-extract" },
+  "declaredFields": ["gpt-3.5-turbo-input", "gpt-3.5-turbo-output"],
+  "decisionQuestion": "Does an incomplete scrape of a public pricing post stay non-final instead of looking like a price cut plus a retirement?",
+  "fetchedAt": "2026-09-12T06:19:00Z",
+  "before": {
+    "url": "https://openai.com/index/function-calling-and-other-api-updates/",
+    "date": "2023-06-13",
+    "publisher": "OpenAI",
+    "quote": "Developers can now use this model for just $0.0015 per 1K input tokens and $0.002 per 1K output tokens",
+    "extraction": "Same dated before snapshot as the complete public pair. Both input and output rows are present."
+  },
+  "after": {
+    "url": "https://openai.com/index/new-embedding-models-and-api-updates/",
+    "date": "2024-01-25",
+    "publisher": "OpenAI",
+    "quote": "Input prices for the new model are reduced by 50% to $0.0005 /1K tokens and output prices are reduced by 25% to $0.0015 /1K tokens.",
+    "extraction": "Hostile capture: only the input dollar figure was kept. The output price from the same sentence was dropped. capture.complete is false. Missing output is a coverage hole, not a vendor retirement."
+  },
+  "limits": [
+    "This fixture is intentionally incomplete.",
+    "Released 1.4.0 vendor-budget-impact may still report actionable fieldChanges plus removed counts.",
+    "The CI wrapper must mark coverage incomplete, keep status partial, and must not update the baseline."
+  ]
+}
