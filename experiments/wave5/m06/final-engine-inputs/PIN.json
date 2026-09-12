@@ -1,0 +1,42 @@
+{
+  "id": "W5-M06-final-engine-inputs",
+  "outcome": "Independent JSON Schema/webhook compatibility counterexamples on the shipped release-candidate CLI",
+  "owningPath": "experiments/wave5/m06/final-engine-inputs/",
+  "doesNotVendorEngine": true,
+  "startingCorpus": {
+    "path": "experiments/wave5/m06/",
+    "sha": "6f23b6f330a1891c939429384fba342f7efc4a3b",
+    "note": "Co10 94c7bfd prototype replay. Not re-run as independent coverage here."
+  },
+  "implementation": {
+    "owner": "D01",
+    "repo": "epistemedeus/samedaydesk",
+    "pr": 74,
+    "sha": "46f2b7f55a7fb780333073a5197b64b8fde64a33",
+    "ref": "codex/w5-d01-20260911",
+    "enginePath": "tools/json-schema-webhook-drift/"
+  },
+  "publicKit": {
+    "repo": "epistemedeus/samedaydesk",
+    "pr": 114,
+    "sha": "9ae0febd8c184c0cbbb5e481ba31ac620e89b869",
+    "ref": "codex/w5-sds-public-release-20260911",
+    "archive": "client/public/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz",
+    "bytes": 2579117,
+    "sha256": "dec31ea66f1605fb9578c7d15c9583b130c6e2c0b82b5e6b93422381a04461eb",
+    "package": "useful-jobs-1.2.0",
+    "defaultCli": ["node", "bin/useful-jobs.mjs", "run", "json-schema-webhook-drift"]
+  },
+  "enginePin": {
+    "catalogSha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+    "compareRel": "engines/json-schema-webhook-drift/lib/compare.mjs",
+    "compareSha256": "71d2379f865e46d16f63f4f25fcb6d840d5f1f1d22fd4a2e3e216868c5b590b6",
+    "note": "D01 tools/json-schema-webhook-drift/lib/compare.mjs equals the public kit file."
+  },
+  "defaultCommand": "cd \"$KIT\" && node bin/useful-jobs.mjs run json-schema-webhook-drift --before <json-file> --after <json-file> --used <json-file> --out-dir <dir>",
+  "purchaseAuthority": false,
+  "payment": {
+    "settling": false,
+    "prototype": true
+  }
+}

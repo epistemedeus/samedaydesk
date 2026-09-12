@@ -1,0 +1,17 @@
+{
+  "name": "@samedaydesk/wave5-m06-final-engine-inputs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Independent final-input JSON Schema compatibility check of the shipped useful-jobs 1.2.0 CLI. Not a second drift engine.",
+  "bin": {
+    "schema-compat-final-inputs": "./bin/check.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "check": "node bin/check.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

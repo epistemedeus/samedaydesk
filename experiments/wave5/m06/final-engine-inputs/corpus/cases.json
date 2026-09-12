@@ -1,0 +1,1262 @@
+{
+  "schema": "samedaydesk.wave5.m06.final-engine-inputs.v1",
+  "specifiedDialect": "https://json-schema.org/draft/2020-12/schema",
+  "defaultCli": [
+    "node",
+    "bin/useful-jobs.mjs",
+    "run",
+    "json-schema-webhook-drift"
+  ],
+  "note": "Independent of experiments/wave5/m06/test/*.test.mjs. Do not re-run that suite as coverage here.",
+  "cases": [
+    {
+      "id": "C1-no-change",
+      "family": "control",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "compatible",
+        "change": "unchanged",
+        "applicator": "used-path"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/amount"
+        ]
+      },
+      "witnesses": {
+        "validBoth": 1.5
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "informational",
+        "breaking": 0,
+        "compatible": 0,
+        "usedClass": "unchanged",
+        "reason": "structural-equal"
+      }
+    },
+    {
+      "id": "C2-useful-type-change",
+      "family": "control",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "type"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "string"
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number"
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/amount"
+        ]
+      },
+      "witnesses": {
+        "validBeforeInvalidAfter": "12"
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "compatible": 0,
+        "usedClass": "breaking",
+        "reason": "type-change"
+      }
+    },
+    {
+      "id": "C3-unused-sibling",
+      "family": "control",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "compatible",
+        "change": "unchanged",
+        "applicator": "used-path"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number"
+          },
+          "note": {
+            "type": "number"
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/amount"
+        ]
+      },
+      "witnesses": {
+        "validBoth": 3
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "informational",
+        "breaking": 0,
+        "compatible": 0,
+        "usedClass": "unchanged",
+        "reason": "structural-equal"
+      }
+    },
+    {
+      "id": "C4-description-only",
+      "family": "control",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "compatible",
+        "change": "unchanged",
+        "applicator": "description"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "old"
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "new"
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/amount"
+        ]
+      },
+      "witnesses": {
+        "validBoth": 1
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "informational",
+        "breaking": 0,
+        "compatible": 0,
+        "usedClass": "unchanged",
+        "reason": "structural-equal"
+      }
+    },
+    {
+      "id": "C5-kit-sample",
+      "family": "control",
+      "advertised": true,
+      "transport": "kit-sample",
+      "kitSample": "samples/schema/h04-schema-01",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "type"
+      },
+      "witnesses": {
+        "validBeforeInvalidAfter": true
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "compatible": 0,
+        "usedClass": "breaking",
+        "reason": "type-change"
+      }
+    },
+    {
+      "id": "C6-example",
+      "family": "control",
+      "advertised": true,
+      "transport": "example",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "type"
+      },
+      "witnesses": {
+        "validBeforeInvalidAfter": 1
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "compatible": 0,
+        "usedClass": "breaking",
+        "reason": "type-change"
+      }
+    },
+    {
+      "id": "C7-missing-inputs",
+      "family": "control",
+      "advertised": true,
+      "transport": "missing",
+      "specified": {
+        "relation": "refuse",
+        "change": "missing-required-inputs",
+        "applicator": "cli"
+      },
+      "observed": {
+        "ok": false,
+        "refused": true,
+        "exitCode": 2,
+        "code": "missing-required-inputs"
+      }
+    },
+    {
+      "id": "E1-enum-widen",
+      "family": "enum",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "compatible",
+        "change": "weakening",
+        "applicator": "enum"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "a"
+            ]
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/status"
+        ]
+      },
+      "witnesses": {
+        "validBoth": "a",
+        "invalidBeforeValidAfter": "b"
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "compatible": 0,
+        "usedClass": "breaking",
+        "reason": "structural-change"
+      }
+    },
+    {
+      "id": "E2-enum-narrow",
+      "family": "enum",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "enum"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "a"
+            ]
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/status"
+        ]
+      },
+      "witnesses": {
+        "validBoth": "a",
+        "validBeforeInvalidAfter": "b"
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "compatible": 0,
+        "usedClass": "breaking",
+        "reason": "structural-change"
+      }
+    },
+    {
+      "id": "E3-enum-reorder",
+      "family": "enum",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "compatible",
+        "change": "unchanged",
+        "applicator": "enum"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "b",
+              "a"
+            ]
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/status"
+        ]
+      },
+      "witnesses": {
+        "validBoth": "a"
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "informational",
+        "breaking": 0,
+        "compatible": 0,
+        "usedClass": "unchanged",
+        "reason": "structural-equal"
+      }
+    },
+    {
+      "id": "N1-nullable-false-to-true",
+      "family": "nullable",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "compatible",
+        "change": "weakening",
+        "applicator": "nullable"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "nullable": false
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/note"
+        ]
+      },
+      "witnesses": {
+        "validBoth": "ok",
+        "invalidBeforeValidAfter": null
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "compatible": 0,
+        "usedClass": "breaking",
+        "reason": "structural-change"
+      }
+    },
+    {
+      "id": "N2-nullable-true-to-false",
+      "family": "nullable",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "nullable"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "nullable": false
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/note"
+        ]
+      },
+      "witnesses": {
+        "validBoth": "ok",
+        "validBeforeInvalidAfter": null
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "compatible": 0,
+        "usedClass": "breaking",
+        "reason": "structural-change"
+      }
+    },
+    {
+      "id": "N3-type-string-to-string-null",
+      "family": "type-direction",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "compatible",
+        "change": "weakening",
+        "applicator": "type"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/note"
+        ]
+      },
+      "witnesses": {
+        "validBoth": "ok",
+        "invalidBeforeValidAfter": null
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "compatible": 0,
+        "usedClass": "breaking",
+        "reason": "type-change"
+      }
+    },
+    {
+      "id": "N4-type-string-null-to-string",
+      "family": "type-direction",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "type"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/note"
+        ]
+      },
+      "witnesses": {
+        "validBoth": "ok",
+        "validBeforeInvalidAfter": null
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "compatible": 0,
+        "usedClass": "breaking",
+        "reason": "type-change"
+      }
+    },
+    {
+      "id": "T1-integer-to-number",
+      "family": "type-direction",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "compatible",
+        "change": "weakening",
+        "applicator": "type"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer"
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number"
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/amount"
+        ]
+      },
+      "witnesses": {
+        "validBoth": 2,
+        "invalidBeforeValidAfter": 1.5
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "compatible": 0,
+        "usedClass": "breaking",
+        "reason": "type-change"
+      }
+    },
+    {
+      "id": "T2-number-to-integer",
+      "family": "type-direction",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "type"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number"
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer"
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/amount"
+        ]
+      },
+      "witnesses": {
+        "validBoth": 2,
+        "validBeforeInvalidAfter": 1.5
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "compatible": 0,
+        "usedClass": "breaking",
+        "reason": "type-change"
+      }
+    },
+    {
+      "id": "T3-type-string-vs-array-string",
+      "family": "type-direction",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "compatible",
+        "change": "unchanged",
+        "applicator": "type"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": [
+              "string"
+            ]
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/note"
+        ]
+      },
+      "witnesses": {
+        "validBoth": "x"
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "compatible": 0,
+        "usedClass": "breaking",
+        "reason": "type-change"
+      }
+    },
+    {
+      "id": "O1-nested-type-at-root-used",
+      "family": "nested-object",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "properties"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          ""
+        ]
+      },
+      "witnesses": {
+        "validBeforeInvalidAfter": {
+          "amount": 1,
+          "note": "n"
+        }
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "informational",
+        "breaking": 0,
+        "compatible": 0,
+        "usedClass": "unchanged",
+        "reason": "structural-equal"
+      }
+    },
+    {
+      "id": "O2-nested-type-at-leaf-used",
+      "family": "nested-object",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "type"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/amount"
+        ]
+      },
+      "witnesses": {
+        "validBeforeInvalidAfter": 1
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "compatible": 0,
+        "usedClass": "breaking",
+        "reason": "type-change"
+      }
+    },
+    {
+      "id": "O3-additionalProperties-schema-type",
+      "family": "additionalProperties",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "additionalProperties"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": {
+          "type": "string"
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": {
+          "type": "number"
+        }
+      },
+      "used": {
+        "pointers": [
+          ""
+        ]
+      },
+      "witnesses": {
+        "validBoth": {
+          "id": "a"
+        },
+        "validBeforeInvalidAfter": {
+          "id": "a",
+          "extra": "x"
+        }
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "informational",
+        "breaking": 0,
+        "compatible": 0,
+        "usedClass": "unchanged",
+        "reason": "structural-equal"
+      }
+    },
+    {
+      "id": "O4-items-minLength-tighten",
+      "family": "items",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "items"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 5
+            }
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/tags"
+        ]
+      },
+      "witnesses": {
+        "validBoth": [
+          "hello"
+        ],
+        "validBeforeInvalidAfter": [
+          "ab"
+        ]
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "informational",
+        "breaking": 0,
+        "compatible": 0,
+        "usedClass": "unchanged",
+        "reason": "structural-equal"
+      }
+    },
+    {
+      "id": "R1-ref-nested-under-root-used",
+      "family": "ref",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "$ref"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "$ref": "#/$defs/A"
+          }
+        },
+        "$defs": {
+          "A": {
+            "type": "number"
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "$ref": "#/$defs/A"
+          }
+        },
+        "$defs": {
+          "A": {
+            "type": "string"
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          ""
+        ]
+      },
+      "witnesses": {
+        "validBeforeInvalidAfter": {
+          "amount": 1
+        }
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "informational",
+        "breaking": 0,
+        "compatible": 0,
+        "usedClass": "unchanged",
+        "reason": "structural-equal"
+      }
+    },
+    {
+      "id": "R2-ref-node-used",
+      "family": "ref",
+      "advertised": true,
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "$ref"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "$ref": "#/$defs/A"
+          }
+        },
+        "$defs": {
+          "A": {
+            "type": "number"
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "$ref": "#/$defs/A"
+          }
+        },
+        "$defs": {
+          "A": {
+            "type": "string"
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/amount"
+        ]
+      },
+      "witnesses": {
+        "validBeforeInvalidAfter": 1
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "actionable",
+        "breaking": 1,
+        "compatible": 0,
+        "usedClass": "breaking",
+        "reason": "type-change"
+      }
+    },
+    {
+      "id": "U1-allOf-minLength-added",
+      "family": "combinator",
+      "advertised": false,
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "allOf"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "allOf": [
+              {
+                "minLength": 5
+              }
+            ]
+          }
+        }
+      },
+      "used": {
+        "pointers": [
+          "/properties/note"
+        ]
+      },
+      "witnesses": {
+        "validBeforeInvalidAfter": "hi"
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "informational",
+        "breaking": 0,
+        "compatible": 0,
+        "usedClass": "unchanged",
+        "reason": "structural-equal"
+      }
+    },
+    {
+      "id": "U3-prefixItems-type-change",
+      "family": "combinator",
+      "advertised": false,
+      "transport": "compare",
+      "specified": {
+        "relation": "incompatible",
+        "change": "strengthening",
+        "applicator": "prefixItems"
+      },
+      "before": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "prefixItems": [
+          {
+            "type": "string"
+          }
+        ]
+      },
+      "after": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "prefixItems": [
+          {
+            "type": "number"
+          }
+        ]
+      },
+      "used": {
+        "pointers": [
+          ""
+        ]
+      },
+      "witnesses": {
+        "validBeforeInvalidAfter": [
+          "x"
+        ]
+      },
+      "observed": {
+        "ok": true,
+        "refused": false,
+        "exitCode": 0,
+        "unknown": 0,
+        "status": "informational",
+        "breaking": 0,
+        "compatible": 0,
+        "usedClass": "unchanged",
+        "reason": "structural-equal"
+      }
+    }
+  ]
+}

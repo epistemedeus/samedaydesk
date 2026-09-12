@@ -1,0 +1,11 @@
+W5-M06 final-engine-inputs.
+
+Independent used-path JSON Schema compatibility probes against the
+shipped useful-jobs 1.2.0 default CLI. This directory does not vendor
+`tools/json-schema-webhook-drift/` or the public archive.
+
+Parent Co10 corpus: experiments/wave5/m06/. That replay is not independent
+coverage of the release candidate.
+
+Next owner of engine semantics: W5-M02 / D01. Root publishes after
+reconciliation. This slot does not merge or deploy.
