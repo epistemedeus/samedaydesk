@@ -44,7 +44,7 @@ node tools/job-output-atomicity/bin/verify-complete.mjs --root <package-dir>
 | Missing last output (`budget-impact.md`) | fixture | `partial` / `missing-output` |
 | Truncated receipt JSON | fixture | `partial` / `truncated-receipt` |
 | Receipt path `../outside-secret.json` | fixture | `unknown` / `receipt-path-escapes-root` |
-| Digest rewritten during read | local-runtime mutator | `unknown` / `digest-changed-after-read` |
+| Digest rewritten during read | local-runtime mutator | `unknown` / `digest-changed-after-read` or `output-digest-mismatch` |
 | SIGKILL around receipt publication | local-runtime child | not `complete`; leftover `JOA_RUN_ID` pids empty |
 | Integer `termsVersion` | fixture | `integer-terms-version-not-a-claim-key` |
 

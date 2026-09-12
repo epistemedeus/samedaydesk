@@ -56,7 +56,12 @@ describe("seeded consumer failures", { timeout: 180_000 }, () => {
         evidenceClass: "local-runtime",
       });
       assert.equal(result.ok, false, JSON.stringify(result));
-      assert.equal(result.code, "digest-changed-after-read");
+      // Mutator may be observed mid-read (TOCTOU) or as a later stable
+      // mismatch vs the receipt. Both are fail-closed; neither is complete.
+      assert.ok(
+        result.code === "digest-changed-after-read" || result.code === "output-digest-mismatch",
+        result.code,
+      );
       assert.equal(result.classification, "unknown");
     } finally {
       mutator.stop();

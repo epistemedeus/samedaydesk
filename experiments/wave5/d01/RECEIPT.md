@@ -22,6 +22,37 @@ URLs stay. SDS52 wrappers still extract 1.0.0. No new paid HTTP merchant route.
 
 Live front door: `server/paid-useful-jobs/RECEIPT.md`.
 
+### Cold-caller (extract outside checkout, packaged assets only)
+
+`npm run test:useful-jobs-public` — **15 pass**. Extract root is not the SDS checkout. Catalog inside the tarball is version 1.1.0 and lists the same ten ids as `client/public/for-agents/useful-jobs/catalog.json` and `node bin/useful-jobs.mjs list`.
+
+| Case | Result |
+| --- | --- |
+| H04 lockfile / schema / route / page (`37dd4b42`) | exit 0, advertised outputs present |
+| Original six `--example` | exit 0 (packaged SAMPLE) |
+| `page-change-offline-job --example` | refused `sample_as_delivered_watch` |
+| Malformed JSON lockfile | refuse (parse/json) |
+| HTML lockfile | `html-input` |
+| Missing required input | `missing-required-inputs` |
+| Deleted `pin-delta.md` after a green run | advertised output absent (completeness `missing-output` on the in-tree kit) |
+| Previous 1.0.0 URL | still 2522418 / `6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51` |
+
+### Remote checks (Node v22.14.0)
+
+| Script | Result |
+| --- | --- |
+| `npm run test:useful-jobs-public` | **15 pass** |
+| `npm run test:paid-useful-jobs` | **80 pass** |
+| `npm run test:job-input-preflight` | **39 pass** |
+| `npm run test:job-output-atomicity` | **26 pass** |
+| `npm run test:managed-useful-jobs-order` | **21 pass** (disposable Postgres 16) |
+| `npm run test:result-mailbox` | **21 pass** |
+| `npm run test:d28-journey` | **18 pass** |
+| `npm run test:m01-catalog` | **40 pass** |
+| `npm run test:spa-route-shells` | **9 pass** |
+
+SDS52 extract / D04 `loadPins()` stay on **1.0.0**. Public kit json / discovery / UsefulJobs page pin **1.1.0**. No paid HTTP merchant claim.
+
 ## Historical composition (pre-1.1.0 public download)
 
 The following described the in-repo delivery kit **before** the public 1.1.0
