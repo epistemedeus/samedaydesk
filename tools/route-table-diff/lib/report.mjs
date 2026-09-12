@@ -1,4 +1,5 @@
 function lineForRoute(route) {
+  if (route.method) return `- \`${route.method} ${route.path}\``;
   const robots = route.robots ? ` robots=${route.robots}` : "";
   return `- \`${route.path}\` canonical=${route.canonical}${robots}`;
 }
@@ -10,6 +11,7 @@ export function formatMarkdown(diff) {
     `Published route table: **no**`,
     `SAMPLE fixture: **${diff.sample ? "yes" : "no"}**`,
     `Evidence class: before=${diff.evidenceClass.before}, after=${diff.evidenceClass.after}`,
+    `Catalog kind: **${diff.catalogKind}**${diff.framework ? ` (Express ${diff.framework.major}, caseSensitive=${diff.framework.caseSensitive}, strict=${diff.framework.strict})` : ""}`,
     `Outcome: **${diff.outcome}**. Breaking: **${diff.breaking ? "yes" : "no"}**. Order changed: **${diff.orderChanged ? "yes" : "no"}**.`,
     `Before digest: \`${diff.tableDigest.before}\``,
     `After digest: \`${diff.tableDigest.after}\``,
@@ -47,6 +49,9 @@ export function formatMarkdown(diff) {
     for (const item of diff.collisions) {
       if (item.kind === "canonical") {
         lines.push(`- canonical \`${item.canonical}\` paths ${item.paths.map((p) => `\`${p}\``).join(", ")} (${item.side})`);
+      } else if (item.kind === "request") {
+        const patterns = item.patterns.map((route) => `\`${route.method} ${route.path}\``).join(" and ");
+        lines.push(`- ${patterns} both match witness \`${item.witness.method} ${item.witness.path}\` (${item.side})`);
       } else {
         lines.push(`- path \`${item.path}\` appears ${item.indexes.length} times (${item.side})`);
       }

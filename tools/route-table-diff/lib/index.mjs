@@ -15,9 +15,10 @@ export { RouteDiffError, toPublicError } from "./errors.mjs";
 export { loadCatalogDocument, refuseUnsupportedCatalog } from "./catalog.mjs";
 export { classifyRouteDiff, diffRouteTables } from "./diff.mjs";
 export { formatMarkdown } from "./report.mjs";
-export { LATER_BINDINGS, SOURCE_PIN, PUBLIC_SHELL_PATHS, SCHEMA_DIGEST } from "./constants.mjs";
+export { LATER_BINDINGS, SOURCE_PIN, PUBLIC_SHELL_PATHS, SCHEMA_DIGEST, SCHEMA_EXPRESS_DIGEST } from "./constants.mjs";
 export { contentHash, tableDigest } from "./digest.mjs";
 export { canonicalIdentity, normalizeRoutePath } from "./identity.mjs";
+export { parseExpressPath } from "./express.mjs";
 
 function transportClass(locator, catalog) {
   if (isHttpLocator(locator)) return "local-runtime";

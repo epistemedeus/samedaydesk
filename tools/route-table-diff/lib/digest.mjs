@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { CONTENT_HASH_RE, SCHEMA_DIGEST } from "./constants.mjs";
+import { CONTENT_HASH_RE, SCHEMA_DIGEST, SCHEMA_EXPRESS_DIGEST } from "./constants.mjs";
 import { refused } from "./errors.mjs";
 import { compareRouteIdentity } from "./identity.mjs";
 
@@ -48,16 +48,24 @@ export function refuseIntegerTermsVersion(catalog) {
 }
 
 export function tableDigest(routes) {
-  const sorted = [...(routes || [])]
-    .map((route) => ({
+  const input = [...(routes || [])];
+  const framework = input.some((route) => route.kind === "express");
+  const sorted = input
+    .sort(compareRouteIdentity)
+    .map((route) => route.kind === "express" ? ({
+      framework: route.framework,
+      caseSensitive: route.caseSensitive,
+      strict: route.strict,
+      method: route.method,
+      matchSignature: route.matchSignature,
+    }) : ({
       path: route.path,
       canonical: route.canonical,
       title: route.title,
       robots: route.robots ?? null,
-    }))
-    .sort(compareRouteIdentity);
+    }));
   return contentHash({
-    schema: SCHEMA_DIGEST,
+    schema: framework ? SCHEMA_EXPRESS_DIGEST : SCHEMA_DIGEST,
     routes: sorted,
   });
 }

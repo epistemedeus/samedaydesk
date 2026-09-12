@@ -1,0 +1,8 @@
+{
+  "schema": "samedaydesk.route-table.express.v1",
+  "framework": { "name": "express", "major": 5 },
+  "settings": { "caseSensitive": true, "strict": true },
+  "routes": [
+    { "method": "GET", "path": "/case/" }
+  ]
+}

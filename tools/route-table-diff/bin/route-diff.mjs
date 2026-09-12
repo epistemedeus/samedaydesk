@@ -64,6 +64,8 @@ try {
       publishedRouteTable: result.publishedRouteTable,
       sample: result.sample,
       evidenceClass: result.evidenceClass,
+      catalogKind: result.catalogKind,
+      framework: result.framework,
       counts: result.counts,
       tableDigest: result.tableDigest,
       breaking: result.breaking,
@@ -71,8 +73,8 @@ try {
       orderChanged: result.orderChanged,
       outDir: result.outDir || null,
       outputs: result.outputs || null,
-      added: result.added.map((route) => route.path),
-      removed: result.removed.map((route) => route.path),
+      added: result.added.map(cliRoute),
+      removed: result.removed.map(cliRoute),
       changed: result.changed.map((item) => ({ path: item.path, fields: item.fields })),
       collisions: result.collisions.map((item) => ({
         kind: item.kind,
@@ -80,6 +82,10 @@ try {
         path: item.path || null,
         canonical: item.canonical || null,
         paths: item.paths || null,
+        method: item.method || null,
+        witness: item.witness || null,
+        patterns: item.patterns || null,
+        indexes: item.indexes || null,
       })),
     })}\n`,
   );
@@ -88,11 +94,18 @@ try {
   process.exit(err.exitCode || 2);
 }
 
+function cliRoute(route) {
+  return route.method ? { method: route.method, path: route.path } : route.path;
+}
+
 function usage() {
-  return `SPA route-table diff (offline).
+  return `Route-table diff (offline).
 
 Read two JSON route catalogs {path, canonical, title, robots?} and write
 route-diff.json / route-diff.md (added, removed, changed canonical or robots).
+Explicit Express 5 catalogs use {framework:{name:"express",major:5},
+settings:{caseSensitive,strict},routes:[{method,path}]} and report witnessed
+request collisions. Unsupported framework/path grammar is refused.
 Permutation of the same routes is not breaking. Collisions and removals are.
 
   node tools/route-table-diff/bin/route-diff.mjs --before <file-or-loopback-url> --after <file-or-loopback-url> --out-dir <dir>
