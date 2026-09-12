@@ -89,7 +89,46 @@ function rejection({
   };
 }
 
-function publishCompleteOutputs(runOutDir, callerOutDir, expectedNames) {
+function asPublicationRefuse(err) {
+  if (err instanceof WrapperRefuse) return err;
+  return new WrapperRefuse("publication-failed", err.message || String(err), {
+    cause: String(err?.message || err),
+  });
+}
+
+function rollbackPublication({ backups, installedNew, hooks = {} }) {
+  const errors = [];
+  for (const { dest, name } of [...installedNew].reverse()) {
+    try {
+      if (typeof hooks.beforeRestore === "function") {
+        hooks.beforeRestore({ dest, bak: null, name, kind: "remove-new" });
+      }
+      if (existsSync(dest) && statSync(dest).isFile()) unlinkSync(dest);
+    } catch (err) {
+      errors.push({ dest, name, op: "remove-new", error: String(err?.message || err) });
+    }
+  }
+  for (const { dest, bak, name } of [...backups].reverse()) {
+    try {
+      if (typeof hooks.beforeRestore === "function") {
+        hooks.beforeRestore({ dest, bak, name, kind: "restore" });
+      }
+      if (existsSync(dest) && statSync(dest).isFile()) unlinkSync(dest);
+      if (existsSync(bak)) renameSync(bak, dest);
+    } catch (err) {
+      errors.push({ dest, bak, name, op: "restore", error: String(err?.message || err) });
+    }
+  }
+  return { ok: errors.length === 0, errors };
+}
+
+/**
+ * Copy expected outputs into callerOutDir. Not crash-atomic.
+ * Incoming bytes and caller backups live in separate unique subtrees.
+ * On failure, restore preexisting files and remove destinations that did not exist.
+ * If restore cannot finish, keep the workspace and throw rollback-incomplete.
+ */
+export function publishCompleteOutputs(runOutDir, callerOutDir, expectedNames, hooks = {}) {
   if (!callerOutDir) return runOutDir;
   mkdirSync(callerOutDir, { recursive: true });
   const names = expectedNames.filter((name) => {
@@ -109,44 +148,56 @@ function publishCompleteOutputs(runOutDir, callerOutDir, expectedNames) {
     }
   }
 
-  const stage = mkdtempSync(join(callerOutDir, ".puj-publish-"));
+  const workspace = mkdtempSync(join(callerOutDir, ".puj-publish-"));
+  const incoming = join(workspace, "incoming");
+  const backupsDir = join(workspace, "backups");
+  mkdirSync(incoming);
+  mkdirSync(backupsDir);
+
   const backups = [];
+  const installedNew = [];
+  let retainWorkspace = false;
+
   try {
     for (const name of names) {
-      copyFileSync(join(runOutDir, name), join(stage, name));
+      copyFileSync(join(runOutDir, name), join(incoming, name));
     }
-    for (const name of names) {
+    for (let index = 0; index < names.length; index += 1) {
+      const name = names[index];
       const dest = join(callerOutDir, name);
-      const staged = join(stage, name);
-      if (existsSync(dest)) {
-        const bak = `${dest}.${process.pid}.bak`;
+      const staged = join(incoming, name);
+      const existed = existsSync(dest);
+      if (existed) {
+        const bak = join(backupsDir, `${String(index).padStart(2, "0")}-${randomUUID()}`);
         renameSync(dest, bak);
-        backups.push({ dest, bak });
+        backups.push({ dest, bak, name });
+      } else {
+        installedNew.push({ dest, name });
       }
       renameSync(staged, dest);
-    }
-    for (const { bak } of backups) {
-      try {
-        unlinkSync(bak);
-      } catch {
-        /* leftover backup is not a published job name */
+      if (typeof hooks.afterInstall === "function") {
+        hooks.afterInstall({ index, name, dest, existed });
       }
     }
   } catch (err) {
-    for (const { dest, bak } of backups.reverse()) {
-      try {
-        if (existsSync(dest) && statSync(dest).isFile()) unlinkSync(dest);
-        if (existsSync(bak)) renameSync(bak, dest);
-      } catch {
-        /* best-effort restore of the pre-publication bytes */
-      }
+    const rb = rollbackPublication({ backups, installedNew, hooks });
+    if (!rb.ok) {
+      retainWorkspace = true;
+      throw new WrapperRefuse(
+        "rollback-incomplete",
+        "publication rollback could not restore every caller destination; recovery data kept",
+        {
+          recoveryDir: workspace,
+          errors: rb.errors,
+          cause: String(err?.message || err),
+        },
+      );
     }
-    if (err instanceof WrapperRefuse) throw err;
-    throw new WrapperRefuse("publication-failed", err.message || String(err), {
-      cause: String(err?.message || err),
-    });
+    throw asPublicationRefuse(err);
   } finally {
-    rmSync(stage, { recursive: true, force: true });
+    if (!retainWorkspace) {
+      rmSync(workspace, { recursive: true, force: true });
+    }
   }
   return callerOutDir;
 }
@@ -430,7 +481,12 @@ export function createExecutor(deps = {}) {
         };
       }
 
-      const publishedDir = publishCompleteOutputs(runOutDir, frozen.outDir, expected);
+      const publishedDir = publishCompleteOutputs(
+        runOutDir,
+        frozen.outDir,
+        expected,
+        deps.publicationHooks || {},
+      );
       const receipt = buildReceipt({
         jobId,
         kit,

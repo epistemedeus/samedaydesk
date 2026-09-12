@@ -14,6 +14,7 @@
 | Model | grok-4.6 effort xhigh |
 | Branch | `codex/h7-d18-d20-repair-20260912` |
 | Pin | `8a811bbadba7edc6c926b319b0839cd2f01e5896` |
+| d18 amendment | unique backup subtree; remove new dests on rollback; `rollback-incomplete` keeps recoveryDir |
 | H6D tree | `/tmp/h6d/wt` @ `b54eaa0ae8cb756cdb82b2b923a9468c3893061c` (read-only this turn) |
 | H7 evidence tree | `/tmp/h7/wt` @ `e68187b2461cacdbd397cf4225a1755a17e94113` (read-only) |
 | Postgres | not started (55590–55595 untested; `pg` module missing in this checkout) |
