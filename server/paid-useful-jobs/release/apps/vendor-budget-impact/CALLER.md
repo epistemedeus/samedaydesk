@@ -43,6 +43,9 @@ human review. Stdout supplies status, digest and outDir.
   delta. Units are not converted. Conflicting/unknown evidence stays partial.
 - no-budget-delta: no detected row deltas. It does not prove bills are unchanged.
 
+A subtraction outside the finite numeric range is omitted, with partial status
+and an explicit numeric-delta gap. Raw supplied values remain visible.
+
 Actions are advisory. purchaseAuthority is always false. scope explicitly marks
 billCalculation, liveQuote, unitsConverted and sourceCoverageVerified false.
 
