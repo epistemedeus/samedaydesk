@@ -39,3 +39,15 @@ export function resolveLocalRef(doc, ref, depth = 0, stack = []) {
   }
   return { ok: true, ref, value: hit.value };
 }
+
+export function resolveLocalRefTarget(doc, ref) {
+  if (!isLocalRef(ref)) {
+    return { ok: false, remote: true, ref };
+  }
+  const pointer = pointerFromLocalRef(ref);
+  const hit = getAtPointer(doc, pointer);
+  if (!hit.present) {
+    return { ok: false, missing: true, ref };
+  }
+  return { ok: true, ref, value: hit.value };
+}
