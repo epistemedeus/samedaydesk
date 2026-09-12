@@ -1,0 +1,17 @@
+{
+  "mode": "execute",
+  "request": {
+    "jobId": "vendor-budget-impact",
+    "executionId": "cw65-bravo",
+    "inputs": {
+      "before": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-simultaneous-same-publication-001/cases/d18-simultaneous-same-publication/inputs/bravo-before.json",
+      "after": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-simultaneous-same-publication-001/cases/d18-simultaneous-same-publication/inputs/bravo-after.json"
+    },
+    "outDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-simultaneous-same-publication-001/cases/d18-simultaneous-same-publication/shared-publication"
+  },
+  "barrier": {
+    "stage": "staged-inputs",
+    "ready": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-simultaneous-same-publication-001/cases/d18-simultaneous-same-publication/bravo-ready.json",
+    "release": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-simultaneous-same-publication-001/cases/d18-simultaneous-same-publication/bravo-release"
+  }
+}

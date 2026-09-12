@@ -1,0 +1,26 @@
+{
+  "pid": 320958,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/tools/result-mailbox/bin/mailbox.mjs",
+    "seed",
+    "--mailbox",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-interrupt-before-commit-001/cases/d20-mailbox-interrupt-before-commit/mailbox",
+    "--request-id",
+    "cw65-mail",
+    "--job-id",
+    "vendor-budget-impact",
+    "--from-d01-execution",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-interrupt-before-commit-001/cases/d20-mailbox-interrupt-before-commit/execution-delivery.json",
+    "--clock",
+    "2026-09-12T07:00:00.000Z"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-88g0Vz/d20-mailbox-interrupt-before-commit",
+  "startedAt": "2026-09-12T09:48:08.751Z",
+  "endedAt": "2026-09-12T09:48:08.802Z",
+  "status": 0,
+  "signal": null,
+  "timedOut": false
+}

@@ -1,0 +1,15 @@
+{
+  "pid": 317569,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/experiments/wave5/d16/fixtures/broken-engines/ok-false.mjs"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-FJtMME/control-ok-false",
+  "startedAt": "2026-09-12T09:46:23.538Z",
+  "endedAt": "2026-09-12T09:46:23.565Z",
+  "status": 2,
+  "signal": null,
+  "timedOut": false
+}

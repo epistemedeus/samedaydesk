@@ -1,0 +1,28 @@
+{
+  "ok": true,
+  "request": {
+    "orderId": "cw65-alpha",
+    "engineId": "vendor-budget-impact",
+    "fundingState": "unfunded",
+    "enginePin": {
+      "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "bytes": 2522418,
+      "version": "1.0.0",
+      "package": "useful-jobs"
+    },
+    "inputs": [
+      {
+        "flag": "--before",
+        "path": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-distinct-orders-001/cases/d19-distinct-orders/inputs/order-alpha-before.json",
+        "sha256": "975c7db5c90cae86fca69520aabae53c14c5a1e493a2d7c1fcc7cec24c35c13d",
+        "bytes": 154
+      },
+      {
+        "flag": "--after",
+        "path": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-distinct-orders-001/cases/d19-distinct-orders/inputs/order-alpha-after.json",
+        "sha256": "98c91e62a17c3f81153d96b046ce017091b2a8fbbbc312291842b7c76eb1f7f0",
+        "bytes": 154
+      }
+    ]
+  }
+}

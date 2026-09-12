@@ -1,0 +1,24 @@
+{
+  "pid": 319184,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/tools/result-mailbox/bin/mailbox.mjs",
+    "pickup",
+    "--mailbox",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-wrong-body-key-and-bytes-001/cases/d20-mailbox-wrong-body-key-and-bytes/mailbox",
+    "--request-id",
+    "cw65-mail",
+    "--out",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-wrong-body-key-and-bytes-001/cases/d20-mailbox-wrong-body-key-and-bytes/corrupt-pickup",
+    "--clock",
+    "2026-09-12T07:00:00.000Z"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-bXP5gV/d20-mailbox-wrong-body-key-and-bytes",
+  "startedAt": "2026-09-12T09:47:28.738Z",
+  "endedAt": "2026-09-12T09:47:28.789Z",
+  "status": 2,
+  "signal": null,
+  "timedOut": false
+}

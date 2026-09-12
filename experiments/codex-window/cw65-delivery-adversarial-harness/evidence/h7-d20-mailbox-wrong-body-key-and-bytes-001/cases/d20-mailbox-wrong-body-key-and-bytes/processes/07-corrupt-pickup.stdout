@@ -1,0 +1,32 @@
+{
+  "ok": false,
+  "refused": true,
+  "code": "digest-mismatch",
+  "error": "artifact budget-impact.json failed digest verification",
+  "status": "digest-mismatch",
+  "deliveredToBuyer": false,
+  "sample": false,
+  "purchaseAuthority": false,
+  "sold": false,
+  "liveSettlement": "out-of-scope",
+  "detail": null,
+  "requestId": "cw65-mail",
+  "retrievedAt": "2026-09-12T07:00:00.000Z",
+  "expiry": {
+    "expiresAt": "2026-09-13T07:00:00Z",
+    "clock": "2026-09-12T07:00:00.000Z",
+    "state": "unexpired",
+    "expired": false
+  },
+  "jobId": "vendor-budget-impact",
+  "artifacts": [
+    {
+      "name": "budget-impact.json",
+      "expectedBytes": 1344,
+      "expectedSha256": "bcd236d2a619932884fa0daab1981a7f3e901bddfcfcf2580ff350d59f114fe7",
+      "actualBytes": 17,
+      "actualSha256": "203bc9989dac260e57d3245270cd5e53b2cb7585464c43eda41ab4a51c71b3cd",
+      "ok": false
+    }
+  ]
+}

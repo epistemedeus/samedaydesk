@@ -1,0 +1,12 @@
+{
+  "expected": "rejected",
+  "observed": {
+    "kind": "engine-refused-json",
+    "accepted": false,
+    "hiddenByWrapperSuccess": false,
+    "domainOutcome": null,
+    "code": "missing-required-inputs",
+    "engineError": "engine closed"
+  },
+  "readinessEvidence": false
+}

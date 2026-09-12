@@ -1,0 +1,16 @@
+{
+  "schema": "samedaydesk.result-mailbox.pickup.v1",
+  "ok": false,
+  "refused": true,
+  "code": "unknown-request",
+  "error": "unknown requestId cw65-mail",
+  "status": "unknown-request",
+  "deliveredToBuyer": false,
+  "sample": false,
+  "purchaseAuthority": false,
+  "sold": false,
+  "liveSettlement": "out-of-scope",
+  "detail": null,
+  "requestId": "cw65-mail",
+  "retrievedAt": "2026-09-12T07:00:00.000Z"
+}

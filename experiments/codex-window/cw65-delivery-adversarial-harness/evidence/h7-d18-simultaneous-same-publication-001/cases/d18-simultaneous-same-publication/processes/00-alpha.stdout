@@ -1,0 +1,161 @@
+{
+  "ok": true,
+  "jobId": "vendor-budget-impact",
+  "title": "Vendor Budget Impact",
+  "fundingState": "unfunded",
+  "sold": false,
+  "sample": false,
+  "sampleReasons": [],
+  "purchaseAuthority": false,
+  "outputs": [
+    {
+      "name": "budget-impact.json",
+      "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-kbbID2/d18-simultaneous-same-publication/puj-vendor-budget-impact-out-RtolUT/budget-impact.json",
+      "bytes": 1338,
+      "sha256": "9371023d9d4afc901c3bd846052e1a4e7799ab44c138a28f542a3c684d33d718"
+    },
+    {
+      "name": "budget-impact.md",
+      "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-kbbID2/d18-simultaneous-same-publication/puj-vendor-budget-impact-out-RtolUT/budget-impact.md",
+      "bytes": 354,
+      "sha256": "dbe59473cdf79fce207c88f632bc62aad6e04d9b59d410fbb95b93f36c65e39c"
+    }
+  ],
+  "receipt": {
+    "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+    "jobId": "vendor-budget-impact",
+    "engine": {
+      "package": "useful-jobs",
+      "version": "1.0.0",
+      "purchaseAuthority": false,
+      "cli": "node bin/useful-jobs.mjs run <id>",
+      "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "archiveBytes": 2522418,
+      "sourceRepo": "epistemedeus/pilot",
+      "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+      "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+      "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+    },
+    "inputsDigest": "a0fbd0ef60c18877d98df0e3af9ee42303197170c95fe4cce085bf94d82cae09",
+    "outputsDigest": "0a795c771d5c9567450bae0b2294ec7e1d71ab9e6fc6f063e6db15654c7001a3",
+    "inputs": [
+      {
+        "name": "before",
+        "kind": "file",
+        "bytes": 142,
+        "sha256": "a927c6dcea6a55d6d5045781bc26b65e5dbbadd964afddf86717d12d088a3bc5"
+      },
+      {
+        "name": "after",
+        "kind": "file",
+        "bytes": 142,
+        "sha256": "746d34c32a89139bdb49bf888723f5d2c4bfedefb6e30adb96c52bb907bd7277"
+      }
+    ],
+    "inputRoot": null,
+    "outputs": [
+      {
+        "name": "budget-impact.json",
+        "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-kbbID2/d18-simultaneous-same-publication/puj-vendor-budget-impact-out-RtolUT/budget-impact.json",
+        "bytes": 1338,
+        "sha256": "9371023d9d4afc901c3bd846052e1a4e7799ab44c138a28f542a3c684d33d718"
+      },
+      {
+        "name": "budget-impact.md",
+        "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-kbbID2/d18-simultaneous-same-publication/puj-vendor-budget-impact-out-RtolUT/budget-impact.md",
+        "bytes": 354,
+        "sha256": "dbe59473cdf79fce207c88f632bc62aad6e04d9b59d410fbb95b93f36c65e39c"
+      }
+    ],
+    "fundingState": "unfunded",
+    "sold": false,
+    "sample": false,
+    "sampleReasons": [],
+    "purchaseAuthority": false,
+    "liveSettlement": "out-of-scope",
+    "fixturePrice": {
+      "labelled": true,
+      "live": false,
+      "publishedToLiveCatalog": false,
+      "jobId": "vendor-budget-impact",
+      "amountUsdc": "0.02",
+      "amountAtomic": "20000",
+      "payTo": "0x0000000000000000000000000000000000000F08",
+      "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+    },
+    "payment": {
+      "fixture": false,
+      "purchaseAuthority": false,
+      "liveSettleAttempted": false,
+      "liveSettleAllowed": false,
+      "fundingState": "unfunded"
+    },
+    "continuity": null,
+    "engineResult": {
+      "ok": true,
+      "status": "actionable",
+      "digest": "9f45946753fade5e",
+      "refused": false,
+      "identityVerified": null
+    },
+    "outDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-kbbID2/d18-simultaneous-same-publication/puj-vendor-budget-impact-out-RtolUT",
+    "publishedDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-simultaneous-same-publication-001/cases/d18-simultaneous-same-publication/shared-publication",
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+    "transport": "ok",
+    "analysis": {
+      "status": "actionable",
+      "outcome": "actionable",
+      "identityVerified": null
+    },
+    "delivery": {
+      "status": "complete",
+      "complete": true,
+      "expected": [
+        "budget-impact.json",
+        "budget-impact.md"
+      ],
+      "present": [
+        "budget-impact.json",
+        "budget-impact.md"
+      ],
+      "missing": [],
+      "unexpected": [],
+      "publishedDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-simultaneous-same-publication-001/cases/d18-simultaneous-same-publication/shared-publication"
+    },
+    "runOutDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-kbbID2/d18-simultaneous-same-publication/puj-vendor-budget-impact-out-RtolUT"
+  },
+  "engine": {
+    "ok": true,
+    "appId": "vendor-budget-impact",
+    "status": "actionable",
+    "digest": "9f45946753fade5e",
+    "outDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-kbbID2/d18-simultaneous-same-publication/puj-vendor-budget-impact-out-RtolUT",
+    "purchaseAuthority": false
+  },
+  "liveSettlement": "out-of-scope",
+  "executionId": "cw65-alpha",
+  "runOutDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-kbbID2/d18-simultaneous-same-publication/puj-vendor-budget-impact-out-RtolUT",
+  "outDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-simultaneous-same-publication-001/cases/d18-simultaneous-same-publication/shared-publication",
+  "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+  "transport": "ok",
+  "analysis": {
+    "status": "actionable",
+    "outcome": "actionable",
+    "identityVerified": null
+  },
+  "delivery": {
+    "status": "complete",
+    "complete": true,
+    "expected": [
+      "budget-impact.json",
+      "budget-impact.md"
+    ],
+    "present": [
+      "budget-impact.json",
+      "budget-impact.md"
+    ],
+    "missing": [],
+    "unexpected": [],
+    "publishedDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-simultaneous-same-publication-001/cases/d18-simultaneous-same-publication/shared-publication"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "schema": "samedaydesk.useful-jobs-consumer.v1",
+  "ok": false,
+  "orderId": "cw65-same-order",
+  "engineId": "vendor-budget-impact",
+  "sold": false,
+  "charged": false,
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "sample": false,
+  "code": "f-input",
+  "error": "buyer-echoed input digest does not match local file bytes",
+  "falsifier": "F-INPUT",
+  "detail": {
+    "flag": "--before",
+    "claimed": {
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 152
+    },
+    "actual": {
+      "sha256": "28f85230bc1c1d9f8145c269a58b22d427bfd8052d8afdda0ecca07ec7cf92c2",
+      "bytes": 152
+    }
+  },
+  "httpStatus": 400,
+  "liveCatalogItem": false,
+  "productionExpressRoute": false,
+  "acceptanceClass": "fixture"
+}

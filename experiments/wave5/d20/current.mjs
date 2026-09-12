@@ -20,10 +20,14 @@ function verifyPickup(pickup, result) {
   assert.equal(pickup.ok, true, JSON.stringify(pickup));
   assert.equal(pickup.status, 'retrieved'); assert.equal(pickup.deliveredToBuyer, false);
   assert.equal(pickup.sold, false);
+  assert.ok(pickup.outDir, 'current mailbox pickup exposes outDir, not per-artifact path');
   for (const row of result.outputs) {
     const copy = pickup.artifacts.find(a => a.name === row.name);
     assert.equal(copy.sha256, row.sha256); assert.equal(copy.bytes, row.bytes);
-    assert.equal(sha256(readFileSync(copy.path)), row.sha256);
+    assert.equal(copy.name.includes('/'), false);
+    assert.equal(copy.name.includes('\\'), false);
+    assert.equal(copy.path, undefined);
+    assert.equal(sha256(readFileSync(join(pickup.outDir, copy.name))), row.sha256);
   }
 }
 async function interruptRename(ctx, label, args, destination, timing) {
@@ -115,6 +119,6 @@ export const cases = [
     assert.deepEqual(readFileSync(envelopePath), original);
   }],
   ['d20-current-outbox', async () => {
-    missing('No tools/job-delivery-outbox in current integration tree. Callback attempt durability, acknowledgment body/key binding and unknown-outcome replay cannot be accepted from Co09 historical fixtures.');
+    missing('job-delivery-outbox is a sibling H7 slice, not a completed CW65 independent countercheck. Callback attempt durability, acknowledgment body/key binding and unknown-outcome replay cannot be accepted from Co09 historical fixtures.');
   }],
 ];

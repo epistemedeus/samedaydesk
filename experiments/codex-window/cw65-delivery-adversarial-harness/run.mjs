@@ -20,11 +20,19 @@ const git = (...args) => {
 };
 const base = readJson(join(PACK, 'IMPORTS.json')).base;
 const owned = path => /^experiments\/wave5\/d(?:16|18|19|20)\//.test(path) || path.startsWith('experiments/codex-window/cw65-delivery-adversarial-harness/');
-const changed = git('diff', '--name-only', base).split('\n').filter(Boolean);
-if (changed.some(p => !owned(p))) throw new Error('Changes outside CW65 ownership: ' + changed.filter(p => !owned(p)).join(', '));
+const split = text => text.split('\n').filter(Boolean);
+const dirty = [...new Set([
+  ...split(git('diff', '--name-only', 'HEAD')),
+  ...split(git('diff', '--cached', '--name-only', 'HEAD')),
+  ...split(git('ls-files', '--others', '--exclude-standard')),
+])];
+const vsImportBase = split(git('diff', '--name-only', base));
+const otherSlicesOnBranch = vsImportBase.filter(p => !owned(p));
 const runtimePaths = ['server/paid-useful-jobs', 'tools/managed-useful-jobs-order', 'tools/result-mailbox',
   'tools/job-output-atomicity', 'tools/job-input-preflight', 'tools/lockfile-pin-delta', 'tools/json-schema-webhook-drift',
   'tools/route-table-diff', 'tools/page-change-offline-job', 'experiments/wave5/m01', 'client/public/for-agents/useful-jobs'];
+const runtimeDirty = dirty.filter(p => runtimePaths.some(root => p === root || p.startsWith(root + '/')));
+if (runtimeDirty.length) throw new Error('Uncommitted runtime changes (CW65 must not edit shared runtime): ' + runtimeDirty.join(', '));
 function runtimeHashes() {
   return Object.fromEntries(git('ls-files', '--', ...runtimePaths).split('\n').filter(Boolean).map(path => [path, sha256(readFileSync(join(REPO, path)))]));
 }
@@ -46,6 +54,9 @@ writeJson(join(evidence, 'manifest.json'), { schema: 'cw65.current-core-acceptan
   repoHead: git('rev-parse', 'HEAD'), coreBase: base, branch: git('branch', '--show-current'), hostname: hostname(),
   node: process.version, execPath: process.execPath, concurrency: 1, heapMB: 768, http: 'ephemeral loopback',
   postgres: 'not requested; optional dedicated 55595 lane not run', only, scratch,
+  runtimePin: '6007fcfa27074f9a594248e47296f1afa4f8385d',
+  uncommittedOwned: dirty, otherSlicesOnBranchCount: otherSlicesOnBranch.length,
+  ownershipCheck: 'uncommitted runtime paths refuse; sibling H7 consumer dirtiness vs HEAD and vs IMPORTS base is recorded, not a runner failure',
   runtimeHashes: before, harnessHashes: harnessHashes(),
   historicalSources: 'IMPORTS.json; preserved only, no historical pin loader executed' });
 
@@ -70,10 +81,18 @@ try {
     const path = join(casesRoot, id, 'verdict.json'); return existsSync(path) ? [readJson(path)] : [];
   });
   const runtimeUnchanged = JSON.stringify(before) === JSON.stringify(runtimeHashes());
-  const summary = { ready: controls.status === 0 && acceptance.status === 0 && runtimeUnchanged && verdicts.length > 0,
+  const selected = only ? verdicts.find(v => v.id === only) || null : null;
+  const selectedOnly = Boolean(only);
+  const acceptancePass = verdicts.filter(v => v.status === 'pass').length;
+  const acceptanceFail = verdicts.filter(v => v.status === 'fail').length;
+  const acceptanceIncomplete = verdicts.filter(v => v.status === 'incomplete').length;
+  // A filtered --only run never grants global readiness, even if the selected case passes.
+  const ready = !selectedOnly && controls.status === 0 && acceptance.status === 0 && runtimeUnchanged
+    && verdicts.length > 0 && acceptanceFail === 0 && acceptanceIncomplete === 0 && acceptancePass === verdicts.length;
+  const summary = { ready, selectedOnly, selected: selected ? { id: selected.id, status: selected.status } : null,
     controls: { status: controls.status === 0 ? 'pass' : 'fail', readinessCredit: 0, raw: 'controls.tap' },
-    acceptance: { pass: verdicts.filter(v => v.status === 'pass').length, fail: verdicts.filter(v => v.status === 'fail').length,
-      incomplete: verdicts.filter(v => v.status === 'incomplete').length, process: acceptance, raw: 'acceptance.tap' },
+    acceptance: { pass: acceptancePass, fail: acceptanceFail,
+      incomplete: acceptanceIncomplete, process: acceptance, raw: 'acceptance.tap' },
     runtimeUnchanged, cases: verdicts.map(({ id, status, error }) => ({ id, status, message: error?.message || null })) };
   writeJson(join(evidence, 'summary.json'), summary);
   process.stdout.write(JSON.stringify({ ...summary, cases: undefined, evidence }, null, 2) + '\n');

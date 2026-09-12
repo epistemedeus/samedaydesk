@@ -37,7 +37,11 @@ test('independent identity oracle rejects foreign execution, inputs, nested dige
       inputs: [{ name: 'before', sha256: 'a'.repeat(64) }], outputs: [{ ...row }] } };
   const expected = { jobId: 'control', executionId: 'control-a', outputs: ['report.json'], inputHashes: { before: 'a'.repeat(64) } };
   assertComplete(valid, expected);
-  for (const mutate of [r => { r.executionId = 'control-b'; }, r => { r.receipt.inputs[0].sha256 = 'b'.repeat(64); },
+  const absentNestedId = structuredClone(valid);
+  delete absentNestedId.receipt.executionId;
+  assertComplete(absentNestedId, expected);
+  for (const mutate of [r => { r.executionId = 'control-b'; }, r => { r.receipt.executionId = 'control-b'; },
+    r => { r.receipt.inputs[0].sha256 = 'b'.repeat(64); },
     r => { r.receipt.outputs[0].sha256 = '0'.repeat(64); }, r => { r.outputs.push({ ...row }); }, r => { r.sold = true; }]) {
     const bad = structuredClone(valid); mutate(bad); assert.throws(() => assertComplete(bad, expected));
   }

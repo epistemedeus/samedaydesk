@@ -1,0 +1,10 @@
+{
+  "expected": "rejected",
+  "observed": {
+    "kind": "engine-missing-json",
+    "accepted": false,
+    "hiddenByWrapperSuccess": true,
+    "domainOutcome": null
+  },
+  "readinessEvidence": false
+}

@@ -27,7 +27,11 @@ export function assertComplete(body, { jobId, outputs, executionId, inputHashes 
   assert.equal(body.sample, false);
   assert.ok(root, 'isolated output directory required');
   assert.equal(body.receipt?.jobId, jobId);
-  assert.equal(body.receipt?.executionId, body.executionId);
+  // Current execution.v1 places executionId on the envelope. Nested receipt.v1
+  // may omit it; a present nested id must match the envelope (contradiction control).
+  if (body.receipt?.executionId !== undefined && body.receipt.executionId !== null) {
+    assert.equal(body.receipt.executionId, body.executionId);
+  }
   assert.equal(body.receipt?.contract, CONTRACT);
   assert.equal(body.receipt?.transport, 'ok');
   assert.equal(body.receipt?.delivery?.complete, true);

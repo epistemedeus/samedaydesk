@@ -1,0 +1,23 @@
+{
+  "schema": "samedaydesk.useful-jobs-consumer.v1",
+  "ok": false,
+  "orderId": "cw65-same-order",
+  "engineId": "vendor-budget-impact",
+  "sold": false,
+  "charged": false,
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "sample": false,
+  "code": "f-order",
+  "error": "orderId is immutable; swapped files require a new orderId",
+  "falsifier": "F-ORDER",
+  "detail": {
+    "orderId": "cw65-same-order",
+    "storedTermsHash": "5043bb1ecd917188cf1b029468b949cb3f71dad022d5588e223e90d172dc92c2",
+    "requestedTermsHash": "ef2f0a43277324c75b22fd2528ee6cc8d1f15896193735a16354f45ddd725220"
+  },
+  "httpStatus": 409,
+  "liveCatalogItem": false,
+  "productionExpressRoute": false,
+  "acceptanceClass": "fixture"
+}

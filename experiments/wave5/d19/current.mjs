@@ -81,6 +81,6 @@ export const cases = [
     assert.deepEqual(logs(store).map(r => r.orderId).sort(), [a.orderId, b.orderId].sort());
   }],
   ['d19-current-ledger', async () => {
-    missing('No tools/buyer-value-ledger in current integration tree. Historical Co16 loaders are excluded; ledger persistence and settlement binding are untested.');
+    missing('buyer-value-ledger is a sibling H7 slice, not a completed CW65 independent countercheck. Historical Co16 loaders are excluded; ledger persistence and settlement binding remain incomplete here.');
   }],
 ];
