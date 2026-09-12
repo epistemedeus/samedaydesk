@@ -5,9 +5,9 @@
   "bytes": 2575456,
   "sha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
   "node": ">=22",
-  "builtAt": "2026-09-12T06:10:48.462Z",
+  "builtAt": "2026-09-12T06:10:49.779Z",
   "sourceRepo": "epistemedeus/samedaydesk",
-  "sourceCommit": "87aab8943ec96c6b0f77b8da73641f1633c21a68",
+  "sourceCommit": "b046a2074fedfff85ca18aa7ebe9e3d42b87c95e",
   "sourceFiles": {
     "server/paid-useful-jobs/release/apps/vendor-budget-impact/cli.mjs": "8429c6c3cdb959293bf892f455daebaf2970a165de1448c7992c79fc92fdccc7",
     "server/paid-useful-jobs/release/apps/vendor-budget-impact/CALLER.md": "46a3f1607436168cf08f135db07d2248a9ff2129a28f3a93f91f62ddf1d067c5"
