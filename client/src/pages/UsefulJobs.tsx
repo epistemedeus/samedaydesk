@@ -45,9 +45,11 @@ export default function UsefulJobs() {
             <span className="lime">useful next steps</span>
           </h1>
           <p className={styles.lead}>
-            Six offline jobs for API changes, budgets, feeds, and delivery evidence. Download
-            one archive, verify size and sha256, then run labeled <code>--example</code> samples
-            or your own files on local Node 22.
+            Ten offline jobs: lockfile pin-delta first, plus JSON Schema drift, route-table
+            diff, page-change, and the original six for API changes, budgets, feeds, and delivery
+            evidence. Download one archive, verify size and sha256, then run labeled{" "}
+            <code>--example</code> samples or your own files on local Node 22. Page-change refuses{" "}
+            <code>--example</code>.
           </p>
         </header>
 
@@ -102,10 +104,40 @@ export default function UsefulJobs() {
             <h2 id="jobs-title">When each job is useful</h2>
           </div>
           <p className={styles.jobCopy}>
-            <code>node bin/useful-jobs.mjs</code> routes six offline jobs. Labeled samples require
-            an explicit <code>--example</code> flag. Ordinary callers must supply their own files.
+            <code>node bin/useful-jobs.mjs</code> routes ten offline jobs. Labeled samples require
+            an explicit <code>--example</code> flag except <code>page-change-offline-job</code>,
+            which refuses it. Ordinary callers must supply their own files. This is a local
+            download, not a paid HTTP endpoint.
           </p>
           <ol className={styles.flow}>
+            <li>
+              <strong>
+                <code>lockfile-pin-delta</code>.
+              </strong>{" "}
+              Compare npm <code>package-lock.json</code> pins (name, version, integrity, resolved).
+              Inputs: <code>--before --after</code>. Outputs: <code>pin-delta.json/.md</code>.
+            </li>
+            <li>
+              <strong>
+                <code>json-schema-webhook-drift</code>.
+              </strong>{" "}
+              Used JSON Pointer drift on JSON Schema or webhook-example JSON. Not OpenAPI. Inputs:{" "}
+              <code>--before --after --used</code>. Outputs: <code>drift-brief.json/.md</code>.
+            </li>
+            <li>
+              <strong>
+                <code>route-table-diff</code>.
+              </strong>{" "}
+              Diff two JSON route catalogs. Requires <code>--out-dir</code>. Does not edit
+              published shells.
+            </li>
+            <li>
+              <strong>
+                <code>page-change-offline-job</code>.
+              </strong>{" "}
+              Compare two already-held extract-batch JSON files. Inputs:{" "}
+              <code>--job --out-dir</code>. <code>--example</code> is refused.
+            </li>
             <li>
               <strong>
                 <code>api-upgrade-brief</code>.
@@ -186,9 +218,13 @@ export default function UsefulJobs() {
               <Link className={styles.inlineLink} to="/for-agents">
                 /for-agents
               </Link>
-              . Partial vendor or listing evidence stays non-final. Evidence CI annotations from
-              caller packets stay unattested. Repeat job records are operator documents, not a
-              running scheduler.
+              . It is not a live paid merchant route. Partial vendor or listing evidence stays
+              non-final. Evidence CI annotations from caller packets stay unattested. Repeat job
+              records are operator documents, not a running scheduler. Version 1.0.0 remains at{" "}
+              <a className={styles.inlineLink} href="/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz">
+                useful-jobs-1.0.0.tar.gz
+              </a>
+              .
             </p>
             <div className={styles.actions}>
               <Link className={styles.primary} to="/for-agents">
