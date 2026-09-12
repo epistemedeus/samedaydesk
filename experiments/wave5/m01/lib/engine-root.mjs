@@ -66,6 +66,15 @@ export function inTreeEngineRoot(engine) {
   return join(REPO_ROOT, ownedPath(engine));
 }
 
+/** Packaged kit layout. Same relativeBin as in-tree tools/<id>; not a per-job alias. */
+export function packagedEngineRoot(engine) {
+  return join(REPO_ROOT, "engines", engine.id);
+}
+
+function hasGitDir(root = REPO_ROOT) {
+  return existsSync(join(root, ".git"));
+}
+
 export function ensureEngineRoot(engine) {
   const mapped = envRoots()[engine.id];
   if (mapped) {
@@ -82,11 +91,23 @@ export function ensureEngineRoot(engine) {
     return { root: inTree, source: "in-tree", sha: engine.pin.sha };
   }
 
+  const packaged = packagedEngineRoot(engine);
+  const packagedBin = engineBin(engine, packaged);
+  if (existsSync(packagedBin)) {
+    return { root: packaged, source: "packaged-engines", sha: engine.pin.sha };
+  }
+
   const dest = join(CACHE_ROOT, engine.pin.sha);
   const root = join(dest, ownedPath(engine));
   const bin = engineBin(engine, root);
   if (existsSync(bin)) {
     return { root, source: "git-archive-cache", sha: engine.pin.sha };
+  }
+
+  if (!hasGitDir()) {
+    throw new Error(
+      `engine ${engine.id} missing ${engine.cli.relativeBin} at in-tree ${inTreeBin} and packaged ${packagedBin}; git fetch is not a packaged-runtime acquisition path`,
+    );
   }
 
   if (existsSync(dest)) rmSync(dest, { recursive: true, force: true });
