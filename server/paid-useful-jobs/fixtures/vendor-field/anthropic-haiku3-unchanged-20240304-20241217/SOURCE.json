@@ -1,0 +1,24 @@
+{
+  "id": "anthropic-haiku3-unchanged-20240304-20241217",
+  "kind": "unchanged-list-price",
+  "structure": "usd-per-mtok",
+  "decisionQuestion": "Did Claude 3 Haiku base list prices move between launch and the prompt-cache table?",
+  "before": {
+    "url": "https://www.anthropic.com/news/claude-3-family",
+    "date": "2024-03-04",
+    "publisher": "Anthropic",
+    "quote": "Cost [Input $/million tokens | Output $/million tokens] $0.25 | $1.25",
+    "extraction": "Official Claude 3 family announcement dated March 4, 2024. Haiku row is the $0.25 input / $1.25 output per million tokens pair in that cost table."
+  },
+  "after": {
+    "url": "https://www.anthropic.com/news/prompt-caching",
+    "date": "2024-12-17",
+    "publisher": "Anthropic",
+    "quote": "Claude 3 Haiku Fastest, most cost-effective model 200K context window Input $0.25 / MTok Prompt caching $0.30 / MTok - Cache write $0.03 / MTok - Cache read Output $1.25 / MTok",
+    "extraction": "Official prompt-caching post still lists Haiku base input/output as $0.25 / $1.25 MTok. This pair keeps only those two base fields so the engine can report informational unchanged. Cache write/read are a different pair."
+  },
+  "limits": [
+    "Haiku 3.5 / 4.5 are different SKUs and are not substituted here.",
+    "A later retirement of Haiku 3 is out of this window."
+  ]
+}

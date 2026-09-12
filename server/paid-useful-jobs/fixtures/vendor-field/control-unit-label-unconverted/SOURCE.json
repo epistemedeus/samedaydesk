@@ -1,0 +1,24 @@
+{
+  "id": "control-unit-label-unconverted",
+  "kind": "incomparable-unit-control",
+  "structure": "mixed-token-units",
+  "decisionQuestion": "Does the engine refuse to treat an unconverted unit relabel as a numeric list-price change?",
+  "before": {
+    "url": "https://openai.com/index/new-embedding-models-and-api-updates/",
+    "date": "2024-01-25",
+    "publisher": "OpenAI",
+    "quote": "Input prices for the new model are reduced by 50% to $0.0005 /1K tokens",
+    "extraction": "Control before-row copies the official $0.0005 / 1K input figure. This control is not a vendor event."
+  },
+  "after": {
+    "url": "https://openai.com/index/new-embedding-models-and-api-updates/",
+    "date": "2024-01-25",
+    "publisher": "control constructed from the same official dollar figure",
+    "quote": "Input prices for the new model are reduced by 50% to $0.0005 /1K tokens",
+    "extraction": "After-row keeps value 0.0005 and only changes the unit label to USD/1M-tokens without multiplying by 1000. A converted after-value would be 0.50 USD/1M-tokens. The control asks whether the engine compares the unconverted number."
+  },
+  "limits": [
+    "Not a published vendor price change.",
+    "Marks the incomparable-unit path the CALLER.md already warns about."
+  ]
+}
