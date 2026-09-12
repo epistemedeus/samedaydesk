@@ -1,0 +1,15 @@
+{
+  "note": "ada-002 remains listed; text-embedding-3-small added at official $0.00002 / 1k tokens.",
+  "rows": [
+    {
+      "field": "text-embedding-ada-002",
+      "value": 0.0001,
+      "unit": "USD/1K-tokens"
+    },
+    {
+      "field": "text-embedding-3-small",
+      "value": 0.00002,
+      "unit": "USD/1K-tokens"
+    }
+  ]
+}

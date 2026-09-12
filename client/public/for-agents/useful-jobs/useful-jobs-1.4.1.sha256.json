@@ -1,0 +1,54 @@
+{
+  "schema": "useful-jobs.release-archive.v1",
+  "name": "useful-jobs-1.4.1",
+  "archive": "useful-jobs-1.4.1.tar.gz",
+  "bytes": 2575456,
+  "sha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+  "node": ">=22",
+  "builtAt": "2026-09-12T06:10:49.779Z",
+  "sourceRepo": "epistemedeus/samedaydesk",
+  "sourceCommit": "b046a2074fedfff85ca18aa7ebe9e3d42b87c95e",
+  "sourceFiles": {
+    "server/paid-useful-jobs/release/apps/vendor-budget-impact/cli.mjs": "8429c6c3cdb959293bf892f455daebaf2970a165de1448c7992c79fc92fdccc7",
+    "server/paid-useful-jobs/release/apps/vendor-budget-impact/CALLER.md": "46a3f1607436168cf08f135db07d2248a9ff2129a28f3a93f91f62ddf1d067c5"
+  },
+  "nestedPinsVerified": true,
+  "previous": {
+    "name": "useful-jobs-1.4.0",
+    "archive": "useful-jobs-1.4.0.tar.gz",
+    "bytes": 2575215,
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f"
+  },
+  "immutable": [
+    {
+      "name": "useful-jobs-1.0.0",
+      "archive": "useful-jobs-1.0.0.tar.gz",
+      "bytes": 2522418,
+      "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51"
+    },
+    {
+      "name": "useful-jobs-1.1.0",
+      "archive": "useful-jobs-1.1.0.tar.gz",
+      "bytes": 2577606,
+      "sha256": "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534"
+    },
+    {
+      "name": "useful-jobs-1.2.0",
+      "archive": "useful-jobs-1.2.0.tar.gz",
+      "bytes": 2579117,
+      "sha256": "dec31ea66f1605fb9578c7d15c9583b130c6e2c0b82b5e6b93422381a04461eb"
+    },
+    {
+      "name": "useful-jobs-1.3.0",
+      "archive": "useful-jobs-1.3.0.tar.gz",
+      "bytes": 2574904,
+      "sha256": "bc4db0ec83109852b8fdbd542d10d515c0053a30dd9b93836c9ad7c738510b6c"
+    },
+    {
+      "name": "useful-jobs-1.4.0",
+      "archive": "useful-jobs-1.4.0.tar.gz",
+      "bytes": 2575215,
+      "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f"
+    }
+  ]
+}

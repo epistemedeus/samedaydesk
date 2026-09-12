@@ -1,25 +1,25 @@
 {
   "schema": "samedaydesk.for-agents.useful-jobs.v1",
   "package": "useful-jobs",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "title": "Offline useful jobs package",
   "summary": "Ten offline jobs: lockfile pin-delta first, plus JSON Schema drift, route-table diff, page-change, and the original six for API changes, budgets, feeds, and delivery evidence. Acquire with bash, curl, python3, tar, and mktemp; then run on local Node 22. Verify size and sha256 before extract. Samples are labeled SAMPLE. page-change --example is refused. Callers supply their own files. Free local package; not hosted execution.",
   "page": "https://samedaydesk.com/for-agents/useful-jobs",
-  "archiveUrl": "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz",
+  "archiveUrl": "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.1.tar.gz",
   "archive": {
-    "path": "/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz",
-    "url": "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz",
-    "kitPath": "/kit/useful-jobs-1.4.0.tar.gz",
-    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
-    "bytes": 2575215
+    "path": "/for-agents/useful-jobs/useful-jobs-1.4.1.tar.gz",
+    "url": "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.1.tar.gz",
+    "kitPath": "/kit/useful-jobs-1.4.1.tar.gz",
+    "sha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+    "bytes": 2575456
   },
   "previous": {
-    "version": "1.3.0",
-    "archive": "/for-agents/useful-jobs/useful-jobs-1.3.0.tar.gz",
-    "kitArchive": "/kit/useful-jobs-1.3.0.tar.gz",
-    "sha256": "bc4db0ec83109852b8fdbd542d10d515c0053a30dd9b93836c9ad7c738510b6c",
-    "bytes": 2574904,
-    "rootName": "useful-jobs-1.3.0"
+    "version": "1.4.0",
+    "archive": "/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz",
+    "kitArchive": "/kit/useful-jobs-1.4.0.tar.gz",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215,
+    "rootName": "useful-jobs-1.4.0"
   },
   "immutableArchives": [
     {
@@ -53,10 +53,18 @@
       "sha256": "bc4db0ec83109852b8fdbd542d10d515c0053a30dd9b93836c9ad7c738510b6c",
       "bytes": 2574904,
       "rootName": "useful-jobs-1.3.0"
+    },
+    {
+      "version": "1.4.0",
+      "archive": "/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz",
+      "kitArchive": "/kit/useful-jobs-1.4.0.tar.gz",
+      "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+      "bytes": 2575215,
+      "rootName": "useful-jobs-1.4.0"
     }
   ],
-  "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
-  "bytes": 2575215,
+  "sha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+  "bytes": 2575456,
   "node": ">=22",
   "offline": true,
   "purchaseAuthority": false,
@@ -82,9 +90,9 @@
     "repeat-job-record"
   ],
   "install": [
-    "useful_jobs_acquire() {\n  local origin=\"${USEFUL_JOBS_ORIGIN:-${1:-https://samedaydesk.com}}\"\n  local bytes=2575215\n  local sha=2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f\n  local work tgz root\n  work=$(mktemp -d \"${TMPDIR:-/tmp}/useful-jobs.XXXXXX\") || return 1\n  tgz=\"$work/useful-jobs-1.4.0.tar.gz\"\n  root=\"$work/useful-jobs-1.4.0\"\n  curl -fsSL --max-time 60 -o \"$tgz\" \"$origin/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz\" || { rm -rf \"$work\"; return 1; }\n  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); n=len(b); e=int(sys.argv[2]); (n==e) or sys.exit((sys.stderr.write(\"size %s != %s\\n\" % (n, e)) or 1)); h=hashlib.sha256(b).hexdigest(); (h==sys.argv[3]) or sys.exit((sys.stderr.write(\"sha256 %s != %s\\n\" % (h, sys.argv[3])) or 1))' \"$tgz\" \"$bytes\" \"$sha\" || { rm -rf \"$work\"; return 1; }\n  tar -xzf \"$tgz\" -C \"$work\" || { rm -rf \"$work\"; return 1; }\n  [ -f \"$root/bin/useful-jobs.mjs\" ] || { rm -rf \"$work\"; return 1; }\n  (cd \"$root\" && node bin/useful-jobs.mjs list >&2) || { rm -rf \"$work\"; return 1; }\n  printf '%s\\n' \"$root\"\n  return 0\n}\nkit=$(useful_jobs_acquire) || exit 1\nprintf '%s\\n' \"$kit\""
+    "useful_jobs_acquire() {\n  local origin=\"${USEFUL_JOBS_ORIGIN:-${1:-https://samedaydesk.com}}\"\n  local bytes=2575456\n  local sha=b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d\n  local work tgz root\n  work=$(mktemp -d \"${TMPDIR:-/tmp}/useful-jobs.XXXXXX\") || return 1\n  tgz=\"$work/useful-jobs-1.4.1.tar.gz\"\n  root=\"$work/useful-jobs-1.4.1\"\n  curl -fsSL --max-time 60 -o \"$tgz\" \"$origin/for-agents/useful-jobs/useful-jobs-1.4.1.tar.gz\" || { rm -rf \"$work\"; return 1; }\n  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); n=len(b); e=int(sys.argv[2]); (n==e) or sys.exit((sys.stderr.write(\"size %s != %s\\n\" % (n, e)) or 1)); h=hashlib.sha256(b).hexdigest(); (h==sys.argv[3]) or sys.exit((sys.stderr.write(\"sha256 %s != %s\\n\" % (h, sys.argv[3])) or 1))' \"$tgz\" \"$bytes\" \"$sha\" || { rm -rf \"$work\"; return 1; }\n  tar -xzf \"$tgz\" -C \"$work\" || { rm -rf \"$work\"; return 1; }\n  [ -f \"$root/bin/useful-jobs.mjs\" ] || { rm -rf \"$work\"; return 1; }\n  (cd \"$root\" && node bin/useful-jobs.mjs list >&2) || { rm -rf \"$work\"; return 1; }\n  printf '%s\\n' \"$root\"\n  return 0\n}\nkit=$(useful_jobs_acquire) || exit 1\nprintf '%s\\n' \"$kit\""
   ],
-  "coldStart": "useful_jobs_acquire() {\n  local origin=\"${USEFUL_JOBS_ORIGIN:-${1:-https://samedaydesk.com}}\"\n  local bytes=2575215\n  local sha=2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f\n  local work tgz root\n  work=$(mktemp -d \"${TMPDIR:-/tmp}/useful-jobs.XXXXXX\") || return 1\n  tgz=\"$work/useful-jobs-1.4.0.tar.gz\"\n  root=\"$work/useful-jobs-1.4.0\"\n  curl -fsSL --max-time 60 -o \"$tgz\" \"$origin/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz\" || { rm -rf \"$work\"; return 1; }\n  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); n=len(b); e=int(sys.argv[2]); (n==e) or sys.exit((sys.stderr.write(\"size %s != %s\\n\" % (n, e)) or 1)); h=hashlib.sha256(b).hexdigest(); (h==sys.argv[3]) or sys.exit((sys.stderr.write(\"sha256 %s != %s\\n\" % (h, sys.argv[3])) or 1))' \"$tgz\" \"$bytes\" \"$sha\" || { rm -rf \"$work\"; return 1; }\n  tar -xzf \"$tgz\" -C \"$work\" || { rm -rf \"$work\"; return 1; }\n  [ -f \"$root/bin/useful-jobs.mjs\" ] || { rm -rf \"$work\"; return 1; }\n  (cd \"$root\" && node bin/useful-jobs.mjs list >&2) || { rm -rf \"$work\"; return 1; }\n  printf '%s\\n' \"$root\"\n  return 0\n}\nkit=$(useful_jobs_acquire) || exit 1\nprintf '%s\\n' \"$kit\"",
+  "coldStart": "useful_jobs_acquire() {\n  local origin=\"${USEFUL_JOBS_ORIGIN:-${1:-https://samedaydesk.com}}\"\n  local bytes=2575456\n  local sha=b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d\n  local work tgz root\n  work=$(mktemp -d \"${TMPDIR:-/tmp}/useful-jobs.XXXXXX\") || return 1\n  tgz=\"$work/useful-jobs-1.4.1.tar.gz\"\n  root=\"$work/useful-jobs-1.4.1\"\n  curl -fsSL --max-time 60 -o \"$tgz\" \"$origin/for-agents/useful-jobs/useful-jobs-1.4.1.tar.gz\" || { rm -rf \"$work\"; return 1; }\n  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); n=len(b); e=int(sys.argv[2]); (n==e) or sys.exit((sys.stderr.write(\"size %s != %s\\n\" % (n, e)) or 1)); h=hashlib.sha256(b).hexdigest(); (h==sys.argv[3]) or sys.exit((sys.stderr.write(\"sha256 %s != %s\\n\" % (h, sys.argv[3])) or 1))' \"$tgz\" \"$bytes\" \"$sha\" || { rm -rf \"$work\"; return 1; }\n  tar -xzf \"$tgz\" -C \"$work\" || { rm -rf \"$work\"; return 1; }\n  [ -f \"$root/bin/useful-jobs.mjs\" ] || { rm -rf \"$work\"; return 1; }\n  (cd \"$root\" && node bin/useful-jobs.mjs list >&2) || { rm -rf \"$work\"; return 1; }\n  printf '%s\\n' \"$root\"\n  return 0\n}\nkit=$(useful_jobs_acquire) || exit 1\nprintf '%s\\n' \"$kit\"",
   "acquireTools": [
     "bash",
     "curl",
@@ -95,5 +103,18 @@
   "runtime": "Node >= 22 (offline after extract)",
   "freeOffline": true,
   "paidHostedClaim": false,
-  "note": "Free local package. Paid hosted extract on /for-agents stays a separate product and is not started by these jobs. No new public paid HTTP merchant route is claimed. Acquire tools are host utilities for download/verify/extract only; offline runs need Node >= 22 after extract. Version 1.3.0 remains at /for-agents/useful-jobs/useful-jobs-1.3.0.tar.gz. Version 1.2.0 remains at /for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz. Version 1.1.0 remains at /for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz. Version 1.0.0 remains at /for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz."
+  "note": "Free local package. Paid hosted extract on /for-agents stays a separate product and is not started by these jobs. No new public paid HTTP merchant route is claimed. Acquire tools are host utilities for download/verify/extract only; offline runs need Node >= 22 after extract. Version 1.3.0 remains at /for-agents/useful-jobs/useful-jobs-1.3.0.tar.gz. Version 1.2.0 remains at /for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz. Version 1.1.0 remains at /for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz. Version 1.0.0 remains at /for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz.",
+  "vendorPricingScope": {
+    "billCalculation": false,
+    "unitsConverted": false,
+    "liveQuote": false,
+    "sourceCoverageVerified": false
+  },
+  "sourceRepo": "epistemedeus/samedaydesk",
+  "sourceCommit": "b046a2074fedfff85ca18aa7ebe9e3d42b87c95e",
+  "archiveFreeze": "b046a2074fedfff85ca18aa7ebe9e3d42b87c95e",
+  "overlaySourceFiles": {
+    "server/paid-useful-jobs/release/apps/vendor-budget-impact/cli.mjs": "8429c6c3cdb959293bf892f455daebaf2970a165de1448c7992c79fc92fdccc7",
+    "server/paid-useful-jobs/release/apps/vendor-budget-impact/CALLER.md": "46a3f1607436168cf08f135db07d2248a9ff2129a28f3a93f91f62ddf1d067c5"
+  }
 }

@@ -62,7 +62,7 @@ export default function UsefulJobs() {
             Archive <code>{USEFUL_JOBS_ARCHIVE}</code> ({USEFUL_JOBS_ARCHIVE_BYTES} bytes). sha256{" "}
             <code>{USEFUL_JOBS_ARCHIVE_SHA256}</code>. Source <code>{USEFUL_JOBS_SOURCE_REPO}</code>{" "}
             at <code>{USEFUL_JOBS_SOURCE_COMMIT}</code>. Archive freeze{" "}
-            <code>{USEFUL_JOBS_ARCHIVE_FREEZE}</code>. Reviewed source{" "}
+            <code>{USEFUL_JOBS_ARCHIVE_FREEZE}</code>. Earlier base review source{" "}
             <code>{USEFUL_JOBS_REVIEWED_SOURCE}</code>. Discovery:{" "}
             <a className={styles.inlineLink} href={`${SITE_ORIGIN}${USEFUL_JOBS_DISCOVERY}`}>
               {SITE_ORIGIN}
@@ -149,7 +149,11 @@ export default function UsefulJobs() {
               <strong>
                 <code>vendor-budget-impact</code>.
               </strong>{" "}
-              Scan curated pricing-row JSON for field/unit deltas. Inputs:{" "}
+              Compare your two dated pricing snapshots for added, removed, changed and
+              incomparable-unit rows. Same-unit changes show before/after values and a
+              per-unit difference. Added or missing rows do not prove a SKU launch or
+              retirement. This is not a bill calculator or live quote; you supply the
+              snapshots and source coverage. Inputs:{" "}
               <code>--before --after</code>. Outputs: <code>budget-impact.json/.md</code>.
             </li>
             <li>
