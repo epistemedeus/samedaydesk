@@ -1,4 +1,4 @@
-import { canonicalize, isPlainObject } from "./canonical.mjs";
+import { isPlainObject, stableStringify } from "./canonical.mjs";
 import { DEFAULT_LIMITS } from "./constants.mjs";
 
 function display(value) {
@@ -76,7 +76,9 @@ function visit(before, after, path, changes, limits, stats) {
     return;
   }
   try {
-    if (canonicalize(before) === canonicalize(after)) return;
+    // Extraction JSON can contain fractional numbers. The terms canonicalizer is
+    // intentionally integer-only, so it must not define equality for page facts.
+    if (stableStringify(before) === stableStringify(after)) return;
   } catch {
     pushChange(changes, limits.maxChanges, {
       class: "semantic",
@@ -89,8 +91,8 @@ function visit(before, after, path, changes, limits, stats) {
   }
 
   if (Array.isArray(before) && Array.isArray(after)) {
-    const beforeKeys = before.map((item) => canonicalize(item));
-    const afterKeys = after.map((item) => canonicalize(item));
+    const beforeKeys = before.map((item) => stableStringify(item));
+    const afterKeys = after.map((item) => stableStringify(item));
     if (sameMultiset(beforeKeys, afterKeys) && beforeKeys.join("\0") !== afterKeys.join("\0")) {
       pushChange(changes, limits.maxChanges, {
         class: "order",
@@ -133,10 +135,9 @@ function visit(before, after, path, changes, limits, stats) {
       if (!hasAfter) {
         pushChange(changes, limits.maxChanges, {
           class: "semantic",
-          op: "replace",
+          op: "remove",
           path: childPath,
           before: display(before[key]),
-          after: display(null),
         });
         continue;
       }

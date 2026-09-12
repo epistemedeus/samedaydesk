@@ -53,6 +53,8 @@ export function parseExtractBatch(body, limits, { treatQuoteAsSuccess = false } 
   const issues = [];
   if (body.product !== EXTRACT_PRODUCT) issues.push("merchant_product_mismatch");
   if (body.schemaVersion !== EXTRACT_SCHEMA) issues.push("merchant_schema_mismatch");
+  if (body.partial === true) issues.push("merchant_batch_partial");
+  if (body.ok === false) issues.push("merchant_batch_not_ok");
   const missingTop = missingKeys(body, EXTRACT_TOP_FIELDS);
   if (missingTop.length) issues.push("merchant_required_keys_missing");
   if (!Array.isArray(body.sources)) issues.push("merchant_sources_missing");

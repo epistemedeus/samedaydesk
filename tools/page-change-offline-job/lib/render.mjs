@@ -39,7 +39,7 @@ export function renderMarkdown(report, { job } = {}) {
   }
   if (report.coverageUnknown.length) {
     lines.push("## Coverage unknown", "");
-    lines.push("Absent selected field is coverage unknown, not deletion.", "");
+    lines.push("Incomplete or absent coverage is not evidence of deletion or unchanged content.", "");
     for (const item of report.coverageUnknown) {
       lines.push(`- ${item.sourceKey ?? item.side ?? ""} ${item.field ?? item.code ?? item.reason}`);
     }
