@@ -1,4 +1,14 @@
-import { copyFileSync, existsSync, mkdirSync, mkdtempSync, statSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  renameSync,
+  rmSync,
+  statSync,
+  unlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
@@ -82,11 +92,61 @@ function rejection({
 function publishCompleteOutputs(runOutDir, callerOutDir, expectedNames) {
   if (!callerOutDir) return runOutDir;
   mkdirSync(callerOutDir, { recursive: true });
-  for (const name of expectedNames) {
+  const names = expectedNames.filter((name) => {
     const src = join(runOutDir, name);
-    if (existsSync(src) && statSync(src).isFile()) {
-      copyFileSync(src, join(callerOutDir, name));
+    return existsSync(src) && statSync(src).isFile();
+  });
+  if (names.length === 0) return callerOutDir;
+
+  for (const name of names) {
+    const dest = join(callerOutDir, name);
+    if (existsSync(dest) && !statSync(dest).isFile()) {
+      throw new WrapperRefuse(
+        "publication-failed",
+        `cannot publish ${name}: destination exists and is not a file`,
+        { name, dest },
+      );
     }
+  }
+
+  const stage = mkdtempSync(join(callerOutDir, ".puj-publish-"));
+  const backups = [];
+  try {
+    for (const name of names) {
+      copyFileSync(join(runOutDir, name), join(stage, name));
+    }
+    for (const name of names) {
+      const dest = join(callerOutDir, name);
+      const staged = join(stage, name);
+      if (existsSync(dest)) {
+        const bak = `${dest}.${process.pid}.bak`;
+        renameSync(dest, bak);
+        backups.push({ dest, bak });
+      }
+      renameSync(staged, dest);
+    }
+    for (const { bak } of backups) {
+      try {
+        unlinkSync(bak);
+      } catch {
+        /* leftover backup is not a published job name */
+      }
+    }
+  } catch (err) {
+    for (const { dest, bak } of backups.reverse()) {
+      try {
+        if (existsSync(dest) && statSync(dest).isFile()) unlinkSync(dest);
+        if (existsSync(bak)) renameSync(bak, dest);
+      } catch {
+        /* best-effort restore of the pre-publication bytes */
+      }
+    }
+    if (err instanceof WrapperRefuse) throw err;
+    throw new WrapperRefuse("publication-failed", err.message || String(err), {
+      cause: String(err?.message || err),
+    });
+  } finally {
+    rmSync(stage, { recursive: true, force: true });
   }
   return callerOutDir;
 }
