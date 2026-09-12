@@ -1,0 +1,39 @@
+{
+  "id": "h04-ap-route-params",
+  "engineId": "route-table-diff",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "route-table-diff",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/route/h04-ap-route-params/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/route/h04-ap-route-params/after.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-route-params/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "durationMs": 81,
+  "stdoutBytes": 1651,
+  "stderrBytes": 0,
+  "outDirFiles": [
+    "catalog-receipt.json",
+    "route-diff.json",
+    "route-diff.md"
+  ],
+  "promised": [
+    "route-diff.json",
+    "route-diff.md"
+  ],
+  "delivery": {
+    "kind": "analysis",
+    "pass": true,
+    "analysis": "breaking"
+  },
+  "outcomeKind": "analysis",
+  "analysis": "breaking",
+  "refuseCode": null
+}

@@ -1,0 +1,63 @@
+{
+  "ok": false,
+  "engineId": "json-schema-webhook-drift",
+  "pinSha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+  "engineSource": "in-tree",
+  "outcome": {
+    "kind": "refused",
+    "transportOk": true,
+    "code": "not-this-job-openapi",
+    "analysis": null
+  },
+  "schemaMatch": {
+    "ok": true,
+    "mismatches": [],
+    "outputs": []
+  },
+  "stdoutJson": {
+    "ok": false,
+    "refused": true,
+    "code": "not-this-job-openapi",
+    "error": "OpenAPI documents belong to api-upgrade-brief / s134 openapi-impact, not this job",
+    "detail": {
+      "beforeKind": "openapi",
+      "afterKind": "openapi"
+    },
+    "customerBrief": false,
+    "sample": false,
+    "purchaseAuthority": false,
+    "sold": false,
+    "payment": {
+      "settling": false,
+      "prototype": true,
+      "paid": false
+    },
+    "schema": "samedaydesk.json-schema-webhook-drift.v1",
+    "schemaVersion": 2,
+    "notOpenApi": true,
+    "notApiUpgradeBrief": true
+  },
+  "refuseJson": {
+    "ok": false,
+    "refused": true,
+    "code": "not-this-job-openapi",
+    "error": "OpenAPI documents belong to api-upgrade-brief / s134 openapi-impact, not this job",
+    "detail": {
+      "beforeKind": "openapi",
+      "afterKind": "openapi"
+    },
+    "customerBrief": false,
+    "sample": false,
+    "purchaseAuthority": false,
+    "sold": false,
+    "payment": {
+      "settling": false,
+      "prototype": true,
+      "paid": false
+    },
+    "schema": "samedaydesk.json-schema-webhook-drift.v1",
+    "schemaVersion": 2,
+    "notOpenApi": true,
+    "notApiUpgradeBrief": true
+  }
+}

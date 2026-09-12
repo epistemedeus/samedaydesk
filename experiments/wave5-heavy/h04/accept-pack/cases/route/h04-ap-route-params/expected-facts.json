@@ -1,0 +1,143 @@
+{
+  "schema": "h04.accept-pack.route.expected-facts.v1",
+  "id": "h04-ap-route-params",
+  "family": "api-routes",
+  "method": "raw-json-parse",
+  "notFromEngine": true,
+  "computedFrom": "exact before.json/after.json bytes",
+  "sourceKind": "synthetic-mechanism",
+  "inputsHashed": {
+    "before": "c3ee1171eb0ad6d55a96e36c730bdd628932509d35dcca66c1eebddfe578b6a7",
+    "after": "1cf4662b41600c0461a7f0f73afc27b906138dccd5ba28b62c03a48b82a4688c"
+  },
+  "wrapper": {
+    "beforeSchema": "samedaydesk.route-table.v1",
+    "afterSchema": "samedaydesk.route-table.v1",
+    "publishedRouteTable": {
+      "before": false,
+      "after": false
+    }
+  },
+  "beforePaths": [
+    "/api/warehouse/status",
+    "/api/items/:sku"
+  ],
+  "afterPaths": [
+    "/api/warehouse/status",
+    "/api/items/{sku}"
+  ],
+  "identityKeysEqual": false,
+  "orderChanged": false,
+  "recordShapes": {
+    "before": [
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      }
+    ],
+    "after": [
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      }
+    ]
+  },
+  "counts": {
+    "beforeRoutes": 2,
+    "afterRoutes": 2,
+    "uniqueBeforePaths": 2,
+    "uniqueAfterPaths": 2,
+    "added": 1,
+    "removed": 1,
+    "changed": 0,
+    "titleOnly": 0,
+    "collisions": 0
+  },
+  "added": [
+    "/api/items/{sku}"
+  ],
+  "removed": [
+    "/api/items/:sku"
+  ],
+  "changed": [],
+  "titleOnly": [],
+  "collisions": [],
+  "predictedFromRaw": {
+    "m01Kind": "analysis",
+    "refuseCode": null,
+    "outcome": "breaking",
+    "breaking": true
+  },
+  "paramSpelling": {
+    "beforePath": "/api/items/:sku",
+    "afterPath": "/api/items/{sku}",
+    "rawStringsEqual": false,
+    "engineQuestion": "two paths vs one",
+    "oracle": "raw path strings are distinct; do not unify colon vs brace",
+    "rawPathsAreTwoNotOne": true
+  },
+  "sdsIdentityFields": [
+    "path",
+    "canonical",
+    "title",
+    "robots"
+  ],
+  "sourceFacts": [
+    {
+      "id": "colon-vs-brace-sku",
+      "op": "path-spelling",
+      "before": "/api/items/:sku",
+      "after": "/api/items/{sku}",
+      "rawStringsEqual": false,
+      "titleOnly": false
+    },
+    {
+      "id": "warehouse-status-unchanged",
+      "op": "unchanged",
+      "path": "/api/warehouse/status",
+      "titleOnly": false,
+      "before": "/api/warehouse/status",
+      "after": "/api/warehouse/status"
+    }
+  ]
+}

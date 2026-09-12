@@ -1,0 +1,43 @@
+{
+  "schema": "samedaydesk.lockfile-pin-delta.v1",
+  "appId": "lockfile-pin-delta",
+  "ok": true,
+  "status": "partial",
+  "purchaseAuthority": false,
+  "paidValueClaim": false,
+  "settlement": "nonsettling-prototype",
+  "equality": "pin-fields",
+  "lockfileVersion": {
+    "before": 3,
+    "after": 3
+  },
+  "mapSource": {
+    "before": "packages",
+    "after": "packages"
+  },
+  "counts": {
+    "beforePins": 160,
+    "afterPins": 160,
+    "added": 0,
+    "removed": 0,
+    "changed": 0,
+    "unchanged": 160,
+    "missingIntegrity": 1
+  },
+  "added": [],
+  "removed": [],
+  "changed": [],
+  "gaps": [
+    "one or more pins lack integrity; treat this delta as partial"
+  ],
+  "caller": {
+    "before": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b07-large/before.json",
+    "after": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b07-large/after.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notCustomerDemand": true,
+    "notMarketFact": true
+  },
+  "provenance": "caller-supplied",
+  "generatedAt": "2026-09-12T00:21:55.616Z"
+}

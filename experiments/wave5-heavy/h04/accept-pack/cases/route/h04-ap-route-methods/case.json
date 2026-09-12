@@ -1,0 +1,24 @@
+{
+  "id": "h04-ap-route-methods",
+  "family": "api-routes",
+  "pack": "accept-pack",
+  "title": "Method/handler records without canonical refuse unsupported_catalog",
+  "kind": "unsupported_catalog",
+  "sourceKind": "synthetic-mechanism",
+  "engineId": "route-table-diff",
+  "m01EngineId": "route-table-diff",
+  "engines": ["route-table-diff"],
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "changedFact": "GET /health vs PUT /health in method/handler records that lack canonical and title. Catalog contract refuses this shape as unsupported_catalog rather than inventing SDS identity.",
+  "usefulNoChange": false,
+  "expectedRefusal": true,
+  "expectedRefuseCode": "unsupported_catalog",
+  "expectedOutcome": "unsupported_catalog",
+  "expectedBreaking": false,
+  "expectedM01Kind": "refused",
+  "notDuplicated": ["h04-route-01", "h04-route-03", "tools/route-table-diff/fixtures/*"]
+}

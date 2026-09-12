@@ -1,0 +1,1 @@
+Schema `--before` is the truncated byte `{`. That is not valid JSON. json-schema-webhook-drift must refuse `parse-error` (or `not-json`) with exit 2. After/used exist only to satisfy required argv; they are not compared after the parse refuse.

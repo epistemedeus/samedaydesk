@@ -1,0 +1,117 @@
+{
+  "schema": "samedaydesk.json-schema-webhook-drift.v1",
+  "schemaVersion": 2,
+  "kind": "json-schema",
+  "usedOnly": true,
+  "notOpenApi": true,
+  "notApiUpgradeBrief": true,
+  "purchaseAuthority": false,
+  "sold": false,
+  "customerBrief": false,
+  "sample": false,
+  "exampleMode": false,
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "payment": {
+    "settling": false,
+    "prototype": true,
+    "paid": false
+  },
+  "provenance": "caller-input",
+  "inputs": {
+    "before": "sha256:026feb768fe2f14ed74f1e67520c9ae53169a039a99cc6ef7e1638d0cdfc3c12",
+    "after": "sha256:eda7351512144fce3b200c3a5f43cd9dbde364416b1fe96d2a55940d9290c195",
+    "used": "sha256:24464090b6ca1b45d7868633d7791532e8282ca2a591becc11f5a7d084b077d5",
+    "beforeBytes": 617,
+    "afterBytes": 621,
+    "usedBytes": 44
+  },
+  "impact": {
+    "breaking": [
+      {
+        "pointer": "/properties/laneMarks",
+        "class": "breaking",
+        "reason": "boolean-schema-tightened",
+        "before": {
+          "kind": "schema-object",
+          "type": "array",
+          "format": null,
+          "enum": null,
+          "constJson": null,
+          "required": null,
+          "additionalProperties": null,
+          "propertiesKeys": null,
+          "items": {
+            "kind": "boolean-schema",
+            "allows": true
+          },
+          "itemsType": null,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "exclusiveMinimum": null,
+          "exclusiveMaximum": null,
+          "minItems": null,
+          "maxItems": null,
+          "nullable": false
+        },
+        "after": {
+          "kind": "schema-object",
+          "type": "array",
+          "format": null,
+          "enum": null,
+          "constJson": null,
+          "required": null,
+          "additionalProperties": null,
+          "propertiesKeys": null,
+          "items": {
+            "kind": "boolean-schema",
+            "allows": false
+          },
+          "itemsType": null,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "exclusiveMinimum": null,
+          "exclusiveMaximum": null,
+          "minItems": null,
+          "maxItems": null,
+          "nullable": false
+        }
+      }
+    ],
+    "compatible": [],
+    "added": [],
+    "deleted": [],
+    "unknown": [],
+    "unchangedCount": 0,
+    "informationalCount": 0,
+    "ignoredUnused": true
+  },
+  "status": "actionable",
+  "ok": true,
+  "appId": "json-schema-webhook-drift",
+  "summary": "Used-path drift: 1 breaking, 0 compatible, 0 deleted, 0 unknown. Unused paths ignored.",
+  "uncertainties": [],
+  "laterIntegrationBindings": [
+    {
+      "id": "useful-jobs-catalog",
+      "status": "not-bound",
+      "note": "PR51 catalog is contrast only. Root owns catalog admission."
+    },
+    {
+      "id": "i01-hash-terms",
+      "status": "pinned-hasher",
+      "note": "Neo PR54 hashTermsVersion contract. Earned-work kernel not imported."
+    }
+  ],
+  "caller": {
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "termsVersion": "sha256:09d8dd6303b61713c51b4364564de866deabf6a0ba07d28bf71496ac30be5cc1"
+}

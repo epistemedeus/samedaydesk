@@ -1,0 +1,12 @@
+{
+  "source": "raw-bytes",
+  "notEngineStdout": true,
+  "parseableAsNpmLock": false,
+  "format": "html",
+  "startsWith": "<!DOCTYPE html",
+  "reason": "HTML doctype matches lockfile-pin-delta looksLikeHtml; classifyLockfileText throws html-input before JSON.parse.",
+  "notCopiedFrom": [
+    "tools/lockfile-pin-delta/fixtures/html/not-a-lock.html",
+    "W4 SAMPLE"
+  ]
+}

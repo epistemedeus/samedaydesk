@@ -1,0 +1,4 @@
+{
+  "expected": false,
+  "reason": "valid npm lockfileVersion 3 pair; engine must not refuse. Delivery failure is missing promised output after a successful spawn."
+}

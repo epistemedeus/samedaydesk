@@ -1,0 +1,26 @@
+{
+  "id": "h04-ap-unsup-https-route",
+  "family": "unsupported",
+  "title": "HTTPS route catalog locator is external and must be refused",
+  "kind": "unsupported-format",
+  "semantic": "external-https-catalog",
+  "engines": ["route-table-diff"],
+  "engineId": "route-table-diff",
+  "m01EngineId": "route-table-diff",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "locatorKind": "https-url",
+  "doNotResolveInputs": true,
+  "inputs": {
+    "before": "https://example.com/routes.json",
+    "after": "https://example.com/routes.json"
+  },
+  "changedFact": "Caller points route-table-diff at https://example.com/routes.json. Only loopback http:// catalogs are accepted. Engine must refuse external_catalog_refused without fetching the public host.",
+  "expectedStatus": "refused",
+  "expectedRefusal": {
+    "expected": true,
+    "engineId": "route-table-diff",
+    "exitCode": 2,
+    "code": "external_catalog_refused",
+    "acceptedCodes": ["external_catalog_refused"]
+  }
+}

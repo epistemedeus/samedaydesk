@@ -1,0 +1,24 @@
+{
+  "id": "h04-ap-route-dup",
+  "family": "api-routes",
+  "pack": "accept-pack",
+  "title": "After catalog duplicates path /inventory/lots",
+  "kind": "collision",
+  "sourceKind": "synthetic-mechanism",
+  "engineId": "route-table-diff",
+  "m01EngineId": "route-table-diff",
+  "engines": ["route-table-diff"],
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "changedFact": "after.json lists path /inventory/lots twice (second row uses a different title and canonical). Collision is a breaking analysis finding, not a crash.",
+  "usefulNoChange": false,
+  "expectedRefusal": false,
+  "expectedOutcome": "breaking",
+  "expectedBreaking": true,
+  "expectedM01Kind": "analysis",
+  "expectedCollisionPath": "/inventory/lots",
+  "notDuplicated": ["h04-route-01", "h04-route-03", "tools/route-table-diff/fixtures/*"]
+}

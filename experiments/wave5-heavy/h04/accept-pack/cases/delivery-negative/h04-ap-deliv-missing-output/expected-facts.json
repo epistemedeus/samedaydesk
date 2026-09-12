@@ -1,0 +1,27 @@
+{
+  "source": "raw-packages-parse",
+  "notEngineStdout": true,
+  "pinIdentity": ["name", "version", "integrity", "resolved"],
+  "mapSource": "packages",
+  "lockfileVersion": { "before": 3, "after": 3 },
+  "counts": {
+    "beforePins": 1,
+    "afterPins": 1,
+    "added": 0,
+    "removed": 0,
+    "changed": 1,
+    "unchanged": 0,
+    "missingIntegrity": 0
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "node_modules/h04-ap-caller-pin",
+      "name": "h04-ap-caller-pin",
+      "before": "h04-ap-caller-pin@1.0.0",
+      "after": "h04-ap-caller-pin@1.0.1",
+      "changeKinds": ["version", "integrity", "resolved"]
+    }
+  ]
+}

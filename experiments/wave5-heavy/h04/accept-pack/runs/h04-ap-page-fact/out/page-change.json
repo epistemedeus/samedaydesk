@@ -1,0 +1,202 @@
+{
+  "job": {
+    "id": "h04-ap-page-fact",
+    "title": "Watch /for-agents title, description, and headings",
+    "fields": [
+      "title",
+      "description",
+      "headings"
+    ]
+  },
+  "report": {
+    "schema": "pilot/page-change-brief/v1",
+    "kind": "merchant_extract_batch",
+    "verdict": "changed",
+    "fields": [
+      "title",
+      "description",
+      "headings"
+    ],
+    "claims": {
+      "noChangeProven": false,
+      "contentUnchangedProven": false,
+      "comparable": true,
+      "complete": true,
+      "current": false,
+      "fresh": false,
+      "usefulOutputProven": true,
+      "paymentImpliesUsefulOutput": false
+    },
+    "freshness": "unknown",
+    "snapshot": {
+      "schema": "pilot/change-digest/v1",
+      "verdict": "changed",
+      "claims": {
+        "noChangeProven": false,
+        "current": false,
+        "comparable": true,
+        "fresh": false
+      },
+      "freshness": "unknown",
+      "before": {
+        "status": "present",
+        "mediaType": "application/json",
+        "observedAt": "2026-09-03T12:00:43.000Z",
+        "truncated": false,
+        "byteLength": 2312,
+        "sha256": "208af4c73ea68e00690ad39564f9dcf170e9a97345d0b2dee3c3806db4c4ef07",
+        "source": {
+          "kind": "file",
+          "role": "before"
+        },
+        "issues": []
+      },
+      "after": {
+        "status": "present",
+        "mediaType": "application/json",
+        "observedAt": "2026-09-10T15:22:42.000Z",
+        "truncated": false,
+        "byteLength": 3029,
+        "sha256": "157e1e42b55d354f2960637e608186dfb90575283d49600d9edf937e398c05b9",
+        "source": {
+          "kind": "file",
+          "role": "after"
+        },
+        "issues": []
+      },
+      "limitsHit": []
+    },
+    "summary": {
+      "matched": 1,
+      "missing": 0,
+      "failed": 0,
+      "unknown": 0,
+      "duplicates": 0,
+      "coverageUnknown": 0,
+      "semantic": 4,
+      "order": 0
+    },
+    "rows": {
+      "matched": [
+        {
+          "sourceKey": "https://samedaydesk.com/for-agents",
+          "source": "https://samedaydesk.com/for-agents",
+          "before": {
+            "id": "item-001",
+            "status": "success"
+          },
+          "after": {
+            "id": "item-001",
+            "status": "success"
+          }
+        }
+      ],
+      "missing": [],
+      "failed": [],
+      "unknown": [],
+      "duplicates": []
+    },
+    "coverageUnknown": [],
+    "changes": [
+      {
+        "class": "semantic",
+        "op": "replace",
+        "path": "/description",
+        "before": "Connect agents to SameDayDesk machine services through documented x402, MPP, MCP, and HTTP interfaces.",
+        "after": "Obtain bounded observations, compare or record already-held JSON, then optionally export a reuse reference. Schema-valid export is user-selected unverified evidence. Purchasing never requires publishing.",
+        "beforeEvidence": "Connect agents to SameDayDesk machine services through documented x402, MPP, MCP, and HTTP interfaces.",
+        "afterEvidence": "Obtain bounded observations, compare or record already-held JSON, then optionally export a reuse reference. Schema-valid export is user-selected unverified evidence. Purchasing never requires publishi",
+        "evidenceTruncated": true,
+        "sourceKey": "https://samedaydesk.com/for-agents"
+      },
+      {
+        "class": "semantic",
+        "op": "replace",
+        "path": "/headings/h1",
+        "before": "[\"SameDayDesk interfaces for agents\"]",
+        "after": "[\"Obtain observations, use offline jobs, or opt-in reuse\"]",
+        "beforeEvidence": "[\"SameDayDesk interfaces for agents\"]",
+        "afterEvidence": "[\"Obtain observations, use offline jobs, or opt-in reuse\"]",
+        "evidenceTruncated": false,
+        "sourceKey": "https://samedaydesk.com/for-agents"
+      },
+      {
+        "class": "semantic",
+        "op": "add",
+        "path": "/headings/h2",
+        "after": "[\"Job 1. Obtain bounded extracted observations\",\"Job 2. Compare explicit fields from two already-held observations\",\"Job 3. Map already-held JSON into buyer records\",\"Job 4. Opt-in reuse of an already produced result\",\"Job 5. Recurring page, issue, and buyer-setup recipes\",\"Live merchant inventory\"]",
+        "afterEvidence": "[\"Job 1. Obtain bounded extracted observations\",\"Job 2. Compare explicit fields from two already-held observations\",\"Job 3. Map already-held JSON into buyer records\",\"Job 4. Opt-in reuse of an already",
+        "evidenceTruncated": true,
+        "sourceKey": "https://samedaydesk.com/for-agents"
+      },
+      {
+        "class": "semantic",
+        "op": "replace",
+        "path": "/title",
+        "before": "Agent payment infrastructure | SameDayDesk",
+        "after": "Practical agent jobs | SameDayDesk",
+        "beforeEvidence": "Agent payment infrastructure | SameDayDesk",
+        "afterEvidence": "Practical agent jobs | SameDayDesk",
+        "evidenceTruncated": false,
+        "sourceKey": "https://samedaydesk.com/for-agents"
+      }
+    ],
+    "observations": {
+      "before": {
+        "jobId": "f99bee22415101bc9f152924460d68998010568279c7c65f1aeedcb27b216a6d",
+        "jobStatus": "completed",
+        "charged": false,
+        "ok": true,
+        "snapshotObservedAt": null,
+        "artifactObservedAt": "2026-09-03T12:00:43.000Z",
+        "rows": [
+          {
+            "sourceKey": "https://samedaydesk.com/for-agents",
+            "itemId": "item-001",
+            "requestedAt": "2026-09-03T12:00:42.000Z",
+            "completedAt": "2026-09-03T12:00:43.000Z",
+            "fetchedAt": "2026-09-03T12:00:42.000Z",
+            "requestedAtIsNotFreshness": true,
+            "fetchedAtIsNotFreshness": true
+          }
+        ]
+      },
+      "after": {
+        "jobId": "63719c03b05243bd37e5de664ebd3762923ba062b58992925d1ce01c18cd0f9f",
+        "jobStatus": "completed",
+        "charged": false,
+        "ok": true,
+        "snapshotObservedAt": null,
+        "artifactObservedAt": "2026-09-10T15:22:42.000Z",
+        "rows": [
+          {
+            "sourceKey": "https://samedaydesk.com/for-agents",
+            "itemId": "item-001",
+            "requestedAt": "2026-09-10T15:22:41.000Z",
+            "completedAt": "2026-09-10T15:22:42.000Z",
+            "fetchedAt": "2026-09-10T15:22:41.000Z",
+            "requestedAtIsNotFreshness": true,
+            "fetchedAtIsNotFreshness": true
+          }
+        ]
+      },
+      "note": "Source URL identity is separate from two-time observation identity. fetchedAt and completedAt are observation metadata, not content freshness."
+    },
+    "provenance": {
+      "engine": "samedaydesk.page-change-offline-job",
+      "engineVersion": "0.1.1",
+      "merchantCompareImported": false,
+      "networkUsed": false,
+      "paymentAttempted": false,
+      "purchaseAuthorized": false,
+      "evidenceClass": "fixture",
+      "termsVersion": "sha256:efda2874213169a9f69d4605661acb2838599450afbcb00787799fe03657047b",
+      "termsHasher": "i01-integrated-hash-terms",
+      "comparedWithClock": "2026-09-12T12:00:00.000Z",
+      "beforeSha256": "208af4c73ea68e00690ad39564f9dcf170e9a97345d0b2dee3c3806db4c4ef07",
+      "afterSha256": "157e1e42b55d354f2960637e608186dfb90575283d49600d9edf937e398c05b9",
+      "elapsedMs": 1.339607,
+      "digestSha256": "2de1d27364cf03179ae3ac181e81e42a1a79b87646ae2cc98f328b793b697297"
+    }
+  }
+}

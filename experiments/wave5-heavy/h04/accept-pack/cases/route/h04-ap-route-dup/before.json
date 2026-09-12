@@ -1,0 +1,30 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "sourceKind": "synthetic-mechanism",
+  "note": "Caller-owned synthetic SDS-shaped catalog with unique paths. Not extracted from spa-route-shells.js. Not copied from tools/route-table-diff/fixtures. Homepage / excluded.",
+  "routes": [
+    {
+      "path": "/inventory/bins",
+      "title": "Inventory bins | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/inventory/bins"
+    },
+    {
+      "path": "/inventory/lots",
+      "title": "Inventory lots | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/inventory/lots"
+    },
+    {
+      "path": "/inventory/holds",
+      "title": "Inventory holds | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/inventory/holds"
+    },
+    {
+      "path": "/inventory/cycle-counts",
+      "title": "Inventory cycle counts | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/inventory/cycle-counts",
+      "robots": "noindex,follow"
+    }
+  ]
+}

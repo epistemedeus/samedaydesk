@@ -1,0 +1,37 @@
+{
+  "id": "h04-ap-page-stale",
+  "family": "page",
+  "engineId": "page-change-offline-job",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "title": "Held /terms snapshots older than --max-stale-ms stay analysis with freshness=stale",
+  "kind": "stale-freshness",
+  "mode": "job",
+  "inputs": {
+    "job": "./job.json"
+  },
+  "extraArgs": [
+    "--max-stale-ms",
+    "1000"
+  ],
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "publicUrl": "https://samedaydesk.com/terms",
+  "changedFact": "Selected title, description, and h1 on /terms are identical. After provenance completedAt 2026-01-01T00:00:01.000Z is older than clock 2026-09-12T12:00:00.000Z minus 1000ms. Expected analysis freshness=stale, claims.fresh false, not a crash or live re-fetch.",
+  "expectedOutcome": "analysis",
+  "expectedVerdict": "unchanged",
+  "expectedFreshness": "stale",
+  "expectedRefusal": false,
+  "usefulNoChange": true,
+  "claimsFresh": false,
+  "claimsCurrent": false,
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "path": "server/lib/spa-route-shells.js",
+    "route": "/terms",
+    "sha": "1caa18e3e25aac98985afa0d7ffdad1b4121042e",
+    "note": "Public /terms selected fields are unchanged since 1caa18e. Observation timestamps are wrapper provenance, not a fresh-download claim."
+  }
+}

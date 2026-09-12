@@ -1,0 +1,6 @@
+{
+  "before": "https://example.com/routes.json",
+  "after": "https://example.com/routes.json",
+  "kind": "https-url",
+  "note": "Pass these strings as --before/--after. Do not path-resolve them. Do not fetch. Engine refuses HTTPS as external_catalog_refused."
+}

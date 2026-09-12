@@ -1,0 +1,4 @@
+{
+  "expected": false,
+  "reason": "HTML is not an npm lockfile; must refuse before any pin compare"
+}

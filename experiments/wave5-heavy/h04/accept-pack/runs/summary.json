@@ -1,0 +1,1067 @@
+{
+  "ok": true,
+  "command": "run",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "count": 27,
+  "loadErrors": [],
+  "deliveryFails": 0,
+  "refused": 9,
+  "analysis": 18,
+  "runs": [
+    {
+      "id": "h04-ap-deliv-missing-output",
+      "engineId": "lockfile-pin-delta",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/delivery-negative/h04-ap-deliv-missing-output/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/delivery-negative/h04-ap-deliv-missing-output/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-deliv-missing-output/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 87,
+      "stdoutBytes": 1314,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "promised": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "actionable"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "actionable",
+      "refuseCode": null
+    },
+    {
+      "id": "h04-ap-page-bounds",
+      "engineId": "page-change-offline-job",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "page-change-offline-job",
+        "--job",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/page/h04-ap-page-bounds/job.json",
+        "--max-bytes",
+        "200",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-page-bounds/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 2,
+      "durationMs": 79,
+      "stdoutBytes": 481,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json"
+      ],
+      "promised": [
+        "page-change.json",
+        "page-change.md"
+      ],
+      "delivery": {
+        "kind": "refused",
+        "pass": true,
+        "code": "input_bounds",
+        "note": "Product refusal is a useful output, not a delivery failure."
+      },
+      "outcomeKind": "refused",
+      "analysis": null,
+      "refuseCode": "input_bounds"
+    },
+    {
+      "id": "h04-ap-page-fact",
+      "engineId": "page-change-offline-job",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "page-change-offline-job",
+        "--job",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/page/h04-ap-page-fact/job.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-page-fact/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 86,
+      "stdoutBytes": 8833,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "page-change.json",
+        "page-change.md"
+      ],
+      "promised": [
+        "page-change.json",
+        "page-change.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "changed"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "changed",
+      "refuseCode": null
+    },
+    {
+      "id": "h04-ap-page-liveurl",
+      "engineId": "page-change-offline-job",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "page-change-offline-job",
+        "--job",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/page/h04-ap-page-liveurl/job.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-page-liveurl/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 2,
+      "durationMs": 83,
+      "stdoutBytes": 536,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json"
+      ],
+      "promised": [
+        "page-change.json",
+        "page-change.md"
+      ],
+      "delivery": {
+        "kind": "refused",
+        "pass": true,
+        "code": "live_fetch_url",
+        "note": "Product refusal is a useful output, not a delivery failure."
+      },
+      "outcomeKind": "refused",
+      "analysis": null,
+      "refuseCode": "live_fetch_url"
+    },
+    {
+      "id": "h04-ap-page-noise",
+      "engineId": "page-change-offline-job",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "page-change-offline-job",
+        "--job",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/page/h04-ap-page-noise/job.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-page-noise/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 79,
+      "stdoutBytes": 6168,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "page-change.json",
+        "page-change.md"
+      ],
+      "promised": [
+        "page-change.json",
+        "page-change.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "unchanged"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "unchanged",
+      "refuseCode": null
+    },
+    {
+      "id": "h04-ap-page-stale",
+      "engineId": "page-change-offline-job",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "page-change-offline-job",
+        "--job",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/page/h04-ap-page-stale/job.json",
+        "--max-stale-ms",
+        "1000",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-page-stale/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 87,
+      "stdoutBytes": 6136,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "page-change.json",
+        "page-change.md"
+      ],
+      "promised": [
+        "page-change.json",
+        "page-change.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "unchanged"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "unchanged",
+      "refuseCode": null
+    },
+    {
+      "id": "h04-ap-route-dup",
+      "engineId": "route-table-diff",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "route-table-diff",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/route/h04-ap-route-dup/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/route/h04-ap-route-dup/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-route-dup/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 80,
+      "stdoutBytes": 1737,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "route-diff.json",
+        "route-diff.md"
+      ],
+      "promised": [
+        "route-diff.json",
+        "route-diff.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "breaking"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "breaking",
+      "refuseCode": null
+    },
+    {
+      "id": "h04-ap-route-methods",
+      "engineId": "route-table-diff",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "route-table-diff",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/route/h04-ap-route-methods/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/route/h04-ap-route-methods/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-route-methods/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 2,
+      "durationMs": 84,
+      "stdoutBytes": 961,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json"
+      ],
+      "promised": [
+        "route-diff.json",
+        "route-diff.md"
+      ],
+      "delivery": {
+        "kind": "refused",
+        "pass": true,
+        "code": "unsupported_catalog",
+        "note": "Product refusal is a useful output, not a delivery failure."
+      },
+      "outcomeKind": "refused",
+      "analysis": null,
+      "refuseCode": "unsupported_catalog"
+    },
+    {
+      "id": "h04-ap-route-params",
+      "engineId": "route-table-diff",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "route-table-diff",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/route/h04-ap-route-params/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/route/h04-ap-route-params/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-route-params/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 81,
+      "stdoutBytes": 1651,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "route-diff.json",
+        "route-diff.md"
+      ],
+      "promised": [
+        "route-diff.json",
+        "route-diff.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "breaking"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "breaking",
+      "refuseCode": null
+    },
+    {
+      "id": "h04-ap-route-reorder",
+      "engineId": "route-table-diff",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "route-table-diff",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/route/h04-ap-route-reorder/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/route/h04-ap-route-reorder/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-route-reorder/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 82,
+      "stdoutBytes": 1601,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "route-diff.json",
+        "route-diff.md"
+      ],
+      "promised": [
+        "route-diff.json",
+        "route-diff.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "permutation"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "permutation",
+      "refuseCode": null
+    },
+    {
+      "id": "h04-ap-schema-false",
+      "engineId": "json-schema-webhook-drift",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "json-schema-webhook-drift",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-false/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-false/after.json",
+        "--used",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-false/used.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-schema-false/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 80,
+      "stdoutBytes": 1321,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "promised": [
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "actionable"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "actionable",
+      "refuseCode": null
+    },
+    {
+      "id": "h04-ap-schema-numeric",
+      "engineId": "json-schema-webhook-drift",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "json-schema-webhook-drift",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-numeric/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-numeric/after.json",
+        "--used",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-numeric/used.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-schema-numeric/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 78,
+      "stdoutBytes": 1327,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "promised": [
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "actionable"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "actionable",
+      "refuseCode": null
+    },
+    {
+      "id": "h04-ap-schema-openapi-yaml",
+      "engineId": "json-schema-webhook-drift",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "json-schema-webhook-drift",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-openapi-yaml/before.yaml",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-openapi-yaml/after.yaml",
+        "--used",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-openapi-yaml/used.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-schema-openapi-yaml/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 2,
+      "durationMs": 76,
+      "stdoutBytes": 1443,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json"
+      ],
+      "promised": [
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "delivery": {
+        "kind": "refused",
+        "pass": true,
+        "code": "not-json",
+        "note": "Product refusal is a useful output, not a delivery failure."
+      },
+      "outcomeKind": "refused",
+      "analysis": null,
+      "refuseCode": "not-json"
+    },
+    {
+      "id": "h04-ap-schema-ref-annote",
+      "engineId": "json-schema-webhook-drift",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "json-schema-webhook-drift",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-ref-annote/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-ref-annote/after.json",
+        "--used",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-ref-annote/used.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-schema-ref-annote/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 80,
+      "stdoutBytes": 1342,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "promised": [
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "informational"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "informational",
+      "refuseCode": null
+    },
+    {
+      "id": "h04-ap-schema-ref-sib",
+      "engineId": "json-schema-webhook-drift",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "json-schema-webhook-drift",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-ref-sib/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-ref-sib/after.json",
+        "--used",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-ref-sib/used.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-schema-ref-sib/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 79,
+      "stdoutBytes": 1327,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "promised": [
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "actionable"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "actionable",
+      "refuseCode": null
+    },
+    {
+      "id": "h04-ap-schema-required",
+      "engineId": "json-schema-webhook-drift",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "json-schema-webhook-drift",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-required/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-required/after.json",
+        "--used",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-required/used.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-schema-required/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 81,
+      "stdoutBytes": 1336,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "promised": [
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "informational"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "informational",
+      "refuseCode": null
+    },
+    {
+      "id": "h04-ap-unsup-corrupt-json",
+      "engineId": "json-schema-webhook-drift",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "json-schema-webhook-drift",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/unsupported/h04-ap-unsup-corrupt-json/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/unsupported/h04-ap-unsup-corrupt-json/after.json",
+        "--used",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/unsupported/h04-ap-unsup-corrupt-json/used.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-unsup-corrupt-json/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 2,
+      "durationMs": 82,
+      "stdoutBytes": 1532,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json"
+      ],
+      "promised": [
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "delivery": {
+        "kind": "refused",
+        "pass": true,
+        "code": "parse-error",
+        "note": "Product refusal is a useful output, not a delivery failure."
+      },
+      "outcomeKind": "refused",
+      "analysis": null,
+      "refuseCode": "parse-error"
+    },
+    {
+      "id": "h04-ap-unsup-html-lock",
+      "engineId": "lockfile-pin-delta",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/unsupported/h04-ap-unsup-html-lock/page.html",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/unsupported/h04-ap-unsup-html-lock/page.html",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-unsup-html-lock/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 2,
+      "durationMs": 78,
+      "stdoutBytes": 776,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json"
+      ],
+      "promised": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "delivery": {
+        "kind": "refused",
+        "pass": true,
+        "code": "html-input",
+        "note": "Product refusal is a useful output, not a delivery failure."
+      },
+      "outcomeKind": "refused",
+      "analysis": null,
+      "refuseCode": "html-input"
+    },
+    {
+      "id": "h04-ap-unsup-https-route",
+      "engineId": "route-table-diff",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "route-table-diff",
+        "--before",
+        "https://example.com/routes.json",
+        "--after",
+        "https://example.com/routes.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-unsup-https-route/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 2,
+      "durationMs": 78,
+      "stdoutBytes": 920,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json"
+      ],
+      "promised": [
+        "route-diff.json",
+        "route-diff.md"
+      ],
+      "delivery": {
+        "kind": "refused",
+        "pass": true,
+        "code": "external_catalog_refused",
+        "note": "Product refusal is a useful output, not a delivery failure."
+      },
+      "outcomeKind": "refused",
+      "analysis": null,
+      "refuseCode": "external_catalog_refused"
+    },
+    {
+      "id": "h04-ap-unsup-openapi-json",
+      "engineId": "json-schema-webhook-drift",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "json-schema-webhook-drift",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/unsupported/h04-ap-unsup-openapi-json/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/unsupported/h04-ap-unsup-openapi-json/after.json",
+        "--used",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/unsupported/h04-ap-unsup-openapi-json/used.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-unsup-openapi-json/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 2,
+      "durationMs": 78,
+      "stdoutBytes": 1569,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json"
+      ],
+      "promised": [
+        "drift-brief.json",
+        "drift-brief.md"
+      ],
+      "delivery": {
+        "kind": "refused",
+        "pass": true,
+        "code": "not-this-job-openapi",
+        "note": "Product refusal is a useful output, not a delivery failure."
+      },
+      "outcomeKind": "refused",
+      "analysis": null,
+      "refuseCode": "not-this-job-openapi"
+    },
+    {
+      "id": "h04-pub-lock-01",
+      "engineId": "lockfile-pin-delta",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-01/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-01/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-pub-lock-01/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 78,
+      "stdoutBytes": 1278,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "promised": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "actionable"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "actionable",
+      "refuseCode": null
+    },
+    {
+      "id": "h04-pub-lock-02",
+      "engineId": "lockfile-pin-delta",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-02/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-02/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-pub-lock-02/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 77,
+      "stdoutBytes": 1278,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "promised": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "actionable"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "actionable",
+      "refuseCode": null
+    },
+    {
+      "id": "h04-pub-lock-03",
+      "engineId": "lockfile-pin-delta",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-03/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-a/h04-pub-lock-03/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-pub-lock-03/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 82,
+      "stdoutBytes": 1278,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "promised": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "actionable"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "actionable",
+      "refuseCode": null
+    },
+    {
+      "id": "h04-lock-pub-b04-removal",
+      "engineId": "lockfile-pin-delta",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b04-removal/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b04-removal/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-lock-pub-b04-removal/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 78,
+      "stdoutBytes": 1308,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "promised": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "actionable"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "actionable",
+      "refuseCode": null
+    },
+    {
+      "id": "h04-lock-pub-b05-normalize",
+      "engineId": "lockfile-pin-delta",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b05-normalize/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b05-normalize/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-lock-pub-b05-normalize/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 83,
+      "stdoutBytes": 1320,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "promised": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "informational"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "informational",
+      "refuseCode": null
+    },
+    {
+      "id": "h04-lock-pub-b06-refuse",
+      "engineId": "lockfile-pin-delta",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b06-refuse/yarn.lock",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b06-refuse/yarn.lock",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-lock-pub-b06-refuse/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 2,
+      "durationMs": 80,
+      "stdoutBytes": 855,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json"
+      ],
+      "promised": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "delivery": {
+        "kind": "refused",
+        "pass": true,
+        "code": "parse-error",
+        "note": "Product refusal is a useful output, not a delivery failure."
+      },
+      "outcomeKind": "refused",
+      "analysis": null,
+      "refuseCode": "parse-error"
+    },
+    {
+      "id": "h04-lock-pub-b07-large",
+      "engineId": "lockfile-pin-delta",
+      "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+      "argv": [
+        "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+        "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+        "lockfile-pin-delta",
+        "--before",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b07-large/before.json",
+        "--after",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b07-large/after.json",
+        "--out-dir",
+        "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-lock-pub-b07-large/out"
+      ],
+      "cwd": "/tmp/w5-h04/ro-m01",
+      "exitCode": 0,
+      "durationMs": 86,
+      "stdoutBytes": 1299,
+      "stderrBytes": 0,
+      "outDirFiles": [
+        "catalog-receipt.json",
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "promised": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ],
+      "delivery": {
+        "kind": "analysis",
+        "pass": true,
+        "analysis": "partial"
+      },
+      "outcomeKind": "analysis",
+      "analysis": "partial",
+      "refuseCode": null
+    }
+  ]
+}

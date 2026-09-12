@@ -1,0 +1,31 @@
+{
+  "id": "h04-ap-page-noise",
+  "family": "page",
+  "engineId": "page-change-offline-job",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "title": "SkillGuard selected fields identical under provenance/key-order/unselected noise",
+  "kind": "no-change-control",
+  "mode": "job",
+  "inputs": {
+    "job": "./job.json"
+  },
+  "extraArgs": [],
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "publicUrl": "https://samedaydesk.com/skillguard",
+  "changedFact": "Selected title, description, and headings on https://samedaydesk.com/skillguard are identical. Wrapper jobId, provenance timestamps, JSON key order, unused data.text/generatedAt/assetHash change.",
+  "expectedOutcome": "analysis",
+  "expectedVerdict": "unchanged",
+  "expectedRefusal": false,
+  "usefulNoChange": true,
+  "claimsFresh": false,
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "path": "client/public/skillguard.html",
+    "selectedFieldsSha": "ff381d2b46e9beec1475212df2eb610a7b01229b",
+    "note": "Public HTML selected fields are unchanged from ff381d2 through HEAD. Wrapper noise is a labeled synthetic mechanism perturbation, not a live re-fetch."
+  }
+}

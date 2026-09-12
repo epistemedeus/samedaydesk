@@ -1,0 +1,69 @@
+{
+  "ok": true,
+  "engineId": "route-table-diff",
+  "pinSha": "886c81d824e0a24e2faa5b821b1cd0ca46ae0859",
+  "engineSource": "in-tree",
+  "outcome": {
+    "kind": "analysis",
+    "transportOk": true,
+    "code": null,
+    "analysis": "breaking"
+  },
+  "schemaMatch": {
+    "ok": true,
+    "mismatches": [],
+    "outputs": [
+      {
+        "name": "route-diff.json",
+        "path": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-route-dup/out/route-diff.json",
+        "exists": true
+      },
+      {
+        "name": "route-diff.md",
+        "path": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-route-dup/out/route-diff.md",
+        "exists": true
+      }
+    ]
+  },
+  "stdoutJson": {
+    "ok": true,
+    "schema": "samedaydesk.route-diff.v1",
+    "publishedRouteTable": false,
+    "sample": false,
+    "evidenceClass": {
+      "before": "caller",
+      "after": "caller"
+    },
+    "counts": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "titleOnly": 0,
+      "collisions": 1
+    },
+    "tableDigest": {
+      "before": "sha256:7a6427fc8aad2460f7aad6a0b6a990161e3e9fa857738e3f30f529a214a22e10",
+      "after": "sha256:239d447eb29f06d5c44fa62f729dd7b14d18626b845a9bba0e96649a6efc6833"
+    },
+    "breaking": true,
+    "outcome": "breaking",
+    "orderChanged": false,
+    "outDir": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-route-dup/out",
+    "outputs": [
+      "route-diff.json",
+      "route-diff.md"
+    ],
+    "added": [],
+    "removed": [],
+    "changed": [],
+    "collisions": [
+      {
+        "kind": "path",
+        "side": "after",
+        "path": "/inventory/lots",
+        "canonical": null,
+        "paths": null
+      }
+    ]
+  }
+}

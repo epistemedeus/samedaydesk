@@ -1,0 +1,25 @@
+{
+  "id": "h04-ap-unsup-openapi-json",
+  "family": "unsupported",
+  "title": "JSON OpenAPI document is not this schema-webhook job",
+  "kind": "unsupported-format",
+  "semantic": "json-openapi-not-this-job",
+  "engines": ["json-schema-webhook-drift"],
+  "engineId": "json-schema-webhook-drift",
+  "m01EngineId": "json-schema-webhook-drift",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json",
+    "used": "./used.json"
+  },
+  "changedFact": "Caller feeds a JSON OpenAPI 3.0.3 document with empty paths to json-schema-webhook-drift. Engine must refuse not-this-job-openapi instead of mapping it into a JSON Schema checker. This is JSON, not YAML.",
+  "expectedStatus": "refused",
+  "expectedRefusal": {
+    "expected": true,
+    "engineId": "json-schema-webhook-drift",
+    "exitCode": 2,
+    "code": "not-this-job-openapi",
+    "acceptedCodes": ["not-this-job-openapi"]
+  }
+}

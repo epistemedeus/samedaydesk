@@ -1,0 +1,10 @@
+{
+  "expected": true,
+  "engineId": "lockfile-pin-delta",
+  "exitCode": 2,
+  "ok": false,
+  "refused": true,
+  "code": "html-input",
+  "acceptedCodes": ["html-input", "parse-error"],
+  "consumerAction": "Do not parse HTML as npm lockfile pins."
+}

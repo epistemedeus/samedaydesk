@@ -1,0 +1,10 @@
+{
+  "expected": true,
+  "engineId": "route-table-diff",
+  "exitCode": 2,
+  "ok": false,
+  "refused": true,
+  "code": "external_catalog_refused",
+  "acceptedCodes": ["external_catalog_refused"],
+  "consumerAction": "Do not fetch https://example.com/routes.json. Only loopback http:// catalogs are in-job."
+}

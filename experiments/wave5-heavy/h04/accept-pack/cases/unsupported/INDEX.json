@@ -1,0 +1,105 @@
+{
+  "family": "unsupported",
+  "pack": "accept-pack",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "owned": "experiments/wave5-heavy/h04/accept-pack/cases/unsupported/",
+  "notARunner": true,
+  "existingNotDuplicated": [
+    {
+      "id": "h04-lock-pub-b06-refuse",
+      "path": "experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b06-refuse",
+      "engineId": "lockfile-pin-delta",
+      "kind": "unsupported-format",
+      "semantic": "yarn.lock-refusal",
+      "code": "parse-error",
+      "exitCode": 2,
+      "note": "yarn.lock refuse already exists at examples/lockfile-public/set-b/h04-lock-pub-b06-refuse. Do not duplicate here."
+    }
+  ],
+  "cases": [
+    {
+      "id": "h04-ap-unsup-openapi-json",
+      "path": "h04-ap-unsup-openapi-json/",
+      "engineId": "json-schema-webhook-drift",
+      "kind": "unsupported-format",
+      "semantic": "json-openapi-not-this-job",
+      "expectedStatus": "refused",
+      "code": "not-this-job-openapi",
+      "acceptedCodes": ["not-this-job-openapi"],
+      "exitCode": 2,
+      "note": "JSON OpenAPI (openapi 3.0.3, empty paths). YAML OpenAPI already refuses as not-json; this case is JSON.",
+      "engineVerified": {
+        "m01": {
+          "exitCode": 2,
+          "refused": true,
+          "code": "not-this-job-openapi",
+          "outcome": "refused",
+          "runs": "/tmp/w5-h04/h04-ap-unsup-runs/h04-ap-unsup-openapi-json/"
+        }
+      }
+    },
+    {
+      "id": "h04-ap-unsup-html-lock",
+      "path": "h04-ap-unsup-html-lock/",
+      "engineId": "lockfile-pin-delta",
+      "kind": "unsupported-format",
+      "semantic": "html-as-lockfile",
+      "expectedStatus": "refused",
+      "code": "html-input",
+      "acceptedCodes": ["html-input", "parse-error"],
+      "exitCode": 2,
+      "note": "Tiny caller HTML, not W4 SAMPLE html/not-a-lock.html.",
+      "engineVerified": {
+        "m01": {
+          "exitCode": 2,
+          "refused": true,
+          "code": "html-input",
+          "outcome": "refused",
+          "runs": "/tmp/w5-h04/h04-ap-unsup-runs/h04-ap-unsup-html-lock/"
+        }
+      }
+    },
+    {
+      "id": "h04-ap-unsup-https-route",
+      "path": "h04-ap-unsup-https-route/",
+      "engineId": "route-table-diff",
+      "kind": "unsupported-format",
+      "semantic": "external-https-catalog",
+      "expectedStatus": "refused",
+      "code": "external_catalog_refused",
+      "acceptedCodes": ["external_catalog_refused"],
+      "exitCode": 2,
+      "note": "Pass locators as https://example.com/routes.json (do not path-resolve the URL).",
+      "engineVerified": {
+        "m01": {
+          "exitCode": 2,
+          "refused": true,
+          "code": "external_catalog_refused",
+          "outcome": "refused",
+          "runs": "/tmp/w5-h04/h04-ap-unsup-runs/h04-ap-unsup-https-route/"
+        }
+      }
+    },
+    {
+      "id": "h04-ap-unsup-corrupt-json",
+      "path": "h04-ap-unsup-corrupt-json/",
+      "engineId": "json-schema-webhook-drift",
+      "kind": "unsupported-format",
+      "semantic": "truncated-json",
+      "expectedStatus": "refused",
+      "code": "parse-error",
+      "acceptedCodes": ["parse-error", "not-json"],
+      "exitCode": 2,
+      "note": "Truncated `{` as schema before. Engine parse.mjs throws parse-error (not YAML not-json).",
+      "engineVerified": {
+        "m01": {
+          "exitCode": 2,
+          "refused": true,
+          "code": "parse-error",
+          "outcome": "refused",
+          "runs": "/tmp/w5-h04/h04-ap-unsup-runs/h04-ap-unsup-corrupt-json/"
+        }
+      }
+    }
+  ]
+}

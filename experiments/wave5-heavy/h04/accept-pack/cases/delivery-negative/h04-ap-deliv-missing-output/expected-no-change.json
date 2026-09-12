@@ -1,0 +1,4 @@
+{
+  "expected": false,
+  "reason": "h04-ap-caller-pin version+integrity+resolved change; engine analysis would be actionable"
+}

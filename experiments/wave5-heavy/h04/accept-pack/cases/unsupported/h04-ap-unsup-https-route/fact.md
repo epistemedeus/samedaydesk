@@ -1,0 +1,1 @@
+Route catalog locators `https://example.com/routes.json` (before and after) are external HTTPS, not loopback `http://127.0.0.1|localhost|::1`. route-table-diff must refuse `external_catalog_refused` (exit 2) and must not fetch example.com.

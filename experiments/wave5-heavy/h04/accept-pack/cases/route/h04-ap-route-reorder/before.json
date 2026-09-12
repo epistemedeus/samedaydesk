@@ -1,0 +1,40 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "sourceKind": "synthetic-mechanism",
+  "note": "Caller-owned synthetic SDS-shaped catalog. Not extracted from spa-route-shells.js. Not copied from tools/route-table-diff/fixtures. Homepage / excluded.",
+  "routes": [
+    {
+      "path": "/kit/solana-pulse",
+      "title": "Solana pulse kit | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/kit/solana-pulse"
+    },
+    {
+      "path": "/docs-lab/indexnow",
+      "title": "IndexNow lab notes | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/docs-lab/indexnow"
+    },
+    {
+      "path": "/guides/agent-payments",
+      "title": "Agent payment guide | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/guides/agent-payments"
+    },
+    {
+      "path": "/reports/observatory-capture",
+      "title": "Observatory capture report | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/reports/observatory-capture"
+    },
+    {
+      "path": "/research/cdp-bazaar",
+      "title": "CDP Bazaar research | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/research/cdp-bazaar"
+    },
+    {
+      "path": "/lab/feed-agenda",
+      "title": "Feed agenda lab | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/lab/feed-agenda",
+      "robots": "noindex,follow"
+    }
+  ]
+}

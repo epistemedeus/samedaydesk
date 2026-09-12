@@ -1,0 +1,151 @@
+{
+  "schema": "h04.accept-pack.route.expected-facts.v1",
+  "id": "h04-ap-route-methods",
+  "family": "api-routes",
+  "method": "raw-json-parse",
+  "notFromEngine": true,
+  "computedFrom": "exact before.json/after.json bytes",
+  "sourceKind": "synthetic-mechanism",
+  "inputsHashed": {
+    "before": "5d7e20d9c7327542127f6789dded60d20ec5ebc8a54bba191be88db80753b6cf",
+    "after": "7fc31c585506314c720fe8e2c77493ae1ebcd8173fd5947387731acc61cb4fb1"
+  },
+  "wrapper": {
+    "beforeSchema": "samedaydesk.route-table.v1",
+    "afterSchema": "samedaydesk.route-table.v1",
+    "publishedRouteTable": {
+      "before": false,
+      "after": false
+    }
+  },
+  "beforePaths": [
+    "/health",
+    "/webhooks/stripe"
+  ],
+  "afterPaths": [
+    "/health",
+    "/webhooks/stripe"
+  ],
+  "identityKeysEqual": true,
+  "orderChanged": false,
+  "recordShapes": {
+    "before": [
+      {
+        "keys": [
+          "method",
+          "path"
+        ],
+        "hasPath": true,
+        "hasCanonical": false,
+        "hasTitle": false,
+        "hasMethod": true,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "handler",
+          "method",
+          "path"
+        ],
+        "hasPath": true,
+        "hasCanonical": false,
+        "hasTitle": false,
+        "hasMethod": true,
+        "hasHandler": true
+      }
+    ],
+    "after": [
+      {
+        "keys": [
+          "method",
+          "path"
+        ],
+        "hasPath": true,
+        "hasCanonical": false,
+        "hasTitle": false,
+        "hasMethod": true,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "handler",
+          "method",
+          "path"
+        ],
+        "hasPath": true,
+        "hasCanonical": false,
+        "hasTitle": false,
+        "hasMethod": true,
+        "hasHandler": true
+      }
+    ]
+  },
+  "counts": {
+    "beforeRoutes": 2,
+    "afterRoutes": 2,
+    "uniqueBeforePaths": 2,
+    "uniqueAfterPaths": 2,
+    "added": 0,
+    "removed": 0,
+    "changed": 0,
+    "titleOnly": 0,
+    "collisions": 0
+  },
+  "added": [],
+  "removed": [],
+  "changed": [],
+  "titleOnly": [],
+  "collisions": [],
+  "predictedFromRaw": {
+    "m01Kind": "refused",
+    "refuseCode": "unsupported_catalog",
+    "outcome": "unsupported_catalog",
+    "breaking": false
+  },
+  "methodHandler": {
+    "beforeMethods": [
+      {
+        "method": "GET",
+        "path": "/health",
+        "handler": null
+      },
+      {
+        "method": "POST",
+        "path": "/webhooks/stripe",
+        "handler": "stripeWebhook"
+      }
+    ],
+    "afterMethods": [
+      {
+        "method": "PUT",
+        "path": "/health",
+        "handler": null
+      },
+      {
+        "method": "POST",
+        "path": "/webhooks/stripe",
+        "handler": "stripeWebhook"
+      }
+    ],
+    "canonicalPresent": false,
+    "titlePresent": false,
+    "sdsIdentityOmitsMethod": true,
+    "note": "SDS identity keys omit method; GET vs PUT would look unchanged if accepted. Record shape refuses first."
+  },
+  "sdsIdentityFields": [
+    "path",
+    "canonical",
+    "title",
+    "robots"
+  ],
+  "sourceFacts": [
+    {
+      "id": "method-handler-shape",
+      "op": "unsupported_catalog",
+      "before": "GET /health + POST /webhooks/stripe handler stripeWebhook",
+      "after": "PUT /health + POST /webhooks/stripe handler stripeWebhook",
+      "canonical": "absent",
+      "title": "absent"
+    }
+  ]
+}

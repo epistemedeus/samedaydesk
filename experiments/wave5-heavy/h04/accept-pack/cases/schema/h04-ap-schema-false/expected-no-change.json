@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": false,
+  "why": "Used array schema /properties/laneMarks items boolean true → false tightens the instance set; consumers sending any item will fail."
+}

@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": true,
+  "why": "Selected title, description, h1, and h2 list are identical; unused text/generatedAt/assetHash, provenance timestamps, and JSON key order are noise."
+}

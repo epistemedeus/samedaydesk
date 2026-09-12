@@ -1,0 +1,40 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "sourceKind": "synthetic-mechanism",
+  "note": "Same six SDS-shaped records as before.json in a non-reverse permutation. Identity fields unchanged. Not copied from tools/route-table-diff/fixtures.",
+  "routes": [
+    {
+      "path": "/guides/agent-payments",
+      "title": "Agent payment guide | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/guides/agent-payments"
+    },
+    {
+      "path": "/lab/feed-agenda",
+      "title": "Feed agenda lab | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/lab/feed-agenda",
+      "robots": "noindex,follow"
+    },
+    {
+      "path": "/research/cdp-bazaar",
+      "title": "CDP Bazaar research | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/research/cdp-bazaar"
+    },
+    {
+      "path": "/kit/solana-pulse",
+      "title": "Solana pulse kit | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/kit/solana-pulse"
+    },
+    {
+      "path": "/reports/observatory-capture",
+      "title": "Observatory capture report | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/reports/observatory-capture"
+    },
+    {
+      "path": "/docs-lab/indexnow",
+      "title": "IndexNow lab notes | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/docs-lab/indexnow"
+    }
+  ]
+}

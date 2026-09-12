@@ -1,0 +1,42 @@
+{
+  "family": "delivery-negative",
+  "pack": "accept-pack",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "owned": "experiments/wave5-heavy/h04/accept-pack/cases/delivery-negative/",
+  "notARunner": true,
+  "classify": {
+    "module": "experiments/wave5/m01/lib/classify.mjs",
+    "fn": "classifyInvocation",
+    "kind": "incomplete-delivery",
+    "code": "missing-promised-output"
+  },
+  "cases": [
+    {
+      "id": "h04-ap-deliv-missing-output",
+      "path": "h04-ap-deliv-missing-output/",
+      "engineId": "lockfile-pin-delta",
+      "kind": "delivery-negative",
+      "semantic": "missing-promised-pin-delta",
+      "wouldSucceed": true,
+      "expectedEngineKind": "analysis",
+      "expectedDeliveryKind": "incomplete-delivery",
+      "code": "missing-promised-output",
+      "promised": ["pin-delta.json", "pin-delta.md"],
+      "missingOutputMustFail": true,
+      "note": "Tiny valid lock pair would succeed. If promised pin-delta.json is absent after stdout ok:true, runner must fail delivery. Do not patch M01.",
+      "engineVerified": {
+        "m01": {
+          "exitCode": 0,
+          "outcome": "analysis",
+          "status": "actionable",
+          "promisedWritten": ["pin-delta.json", "pin-delta.md"],
+          "classifyIfPinDeltaJsonMissing": {
+            "kind": "incomplete-delivery",
+            "code": "missing-promised-output"
+          },
+          "runs": "/tmp/w5-h04/h04-ap-unsup-runs/h04-ap-deliv-missing-output/"
+        }
+      }
+    }
+  ]
+}

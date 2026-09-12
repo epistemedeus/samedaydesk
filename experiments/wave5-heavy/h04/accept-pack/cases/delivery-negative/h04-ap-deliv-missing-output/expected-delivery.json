@@ -1,0 +1,18 @@
+{
+  "promised": ["pin-delta.json", "pin-delta.md"],
+  "missingOutputMustFail": true,
+  "engineId": "lockfile-pin-delta",
+  "wouldSucceed": {
+    "outcomeKind": "analysis",
+    "exitCode": 0,
+    "stdoutOk": true,
+    "status": "actionable"
+  },
+  "ifPromisedMissing": {
+    "classifyInvocation": {
+      "kind": "incomplete-delivery",
+      "code": "missing-promised-output",
+      "transportOk": true
+    }
+  }
+}

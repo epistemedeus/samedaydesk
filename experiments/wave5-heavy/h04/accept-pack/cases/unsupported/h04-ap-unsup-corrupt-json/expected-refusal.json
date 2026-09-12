@@ -1,0 +1,10 @@
+{
+  "expected": true,
+  "engineId": "json-schema-webhook-drift",
+  "exitCode": 2,
+  "ok": false,
+  "refused": true,
+  "code": "parse-error",
+  "acceptedCodes": ["parse-error", "not-json"],
+  "consumerAction": "Do not invent a schema from truncated JSON."
+}

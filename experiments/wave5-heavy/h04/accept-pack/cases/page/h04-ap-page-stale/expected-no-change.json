@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": true,
+  "why": "Selected title, description, and h1 on /terms are identical. The useful output is freshness=stale on the held after observation, not a selected-field change and not a live download."
+}

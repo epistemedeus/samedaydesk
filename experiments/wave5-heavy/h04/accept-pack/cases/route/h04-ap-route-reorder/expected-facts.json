@@ -1,0 +1,244 @@
+{
+  "schema": "h04.accept-pack.route.expected-facts.v1",
+  "id": "h04-ap-route-reorder",
+  "family": "api-routes",
+  "method": "raw-json-parse",
+  "notFromEngine": true,
+  "computedFrom": "exact before.json/after.json bytes",
+  "sourceKind": "synthetic-mechanism",
+  "inputsHashed": {
+    "before": "4a764bc59b34b240220b5cf7564f6d56d3c8c102456a4fbf7682d7aa6c439ada",
+    "after": "d98dddb18777e71b172e9ce082119c4da1a34094af271a4f37bc45ccd7acc07e"
+  },
+  "wrapper": {
+    "beforeSchema": "samedaydesk.route-table.v1",
+    "afterSchema": "samedaydesk.route-table.v1",
+    "publishedRouteTable": {
+      "before": false,
+      "after": false
+    }
+  },
+  "beforePaths": [
+    "/kit/solana-pulse",
+    "/docs-lab/indexnow",
+    "/guides/agent-payments",
+    "/reports/observatory-capture",
+    "/research/cdp-bazaar",
+    "/lab/feed-agenda"
+  ],
+  "afterPaths": [
+    "/guides/agent-payments",
+    "/lab/feed-agenda",
+    "/research/cdp-bazaar",
+    "/kit/solana-pulse",
+    "/reports/observatory-capture",
+    "/docs-lab/indexnow"
+  ],
+  "identityKeysEqual": true,
+  "orderChanged": true,
+  "recordShapes": {
+    "before": [
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "robots",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      }
+    ],
+    "after": [
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "robots",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      }
+    ]
+  },
+  "counts": {
+    "beforeRoutes": 6,
+    "afterRoutes": 6,
+    "uniqueBeforePaths": 6,
+    "uniqueAfterPaths": 6,
+    "added": 0,
+    "removed": 0,
+    "changed": 0,
+    "titleOnly": 0,
+    "collisions": 0
+  },
+  "added": [],
+  "removed": [],
+  "changed": [],
+  "titleOnly": [],
+  "collisions": [],
+  "predictedFromRaw": {
+    "m01Kind": "analysis",
+    "refuseCode": null,
+    "outcome": "permutation",
+    "breaking": false
+  },
+  "sdsIdentityFields": [
+    "path",
+    "canonical",
+    "title",
+    "robots"
+  ],
+  "sourceFacts": [
+    {
+      "id": "reorder-same-identity",
+      "op": "permutation",
+      "titleOnly": false,
+      "before": [
+        "/kit/solana-pulse",
+        "/docs-lab/indexnow",
+        "/guides/agent-payments",
+        "/reports/observatory-capture",
+        "/research/cdp-bazaar",
+        "/lab/feed-agenda"
+      ],
+      "after": [
+        "/guides/agent-payments",
+        "/lab/feed-agenda",
+        "/research/cdp-bazaar",
+        "/kit/solana-pulse",
+        "/reports/observatory-capture",
+        "/docs-lab/indexnow"
+      ],
+      "identityKeysEqual": true,
+      "orderChanged": true
+    }
+  ]
+}

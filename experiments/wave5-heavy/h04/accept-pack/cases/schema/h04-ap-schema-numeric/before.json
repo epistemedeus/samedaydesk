@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://accept-pack.local/h04/crane-load-sample.schema.json",
+  "title": "Quay crane load sample",
+  "type": "object",
+  "required": ["craneId", "tonnes"],
+  "properties": {
+    "craneId": {
+      "type": "string"
+    },
+    "tonnes": {
+      "type": "number",
+      "description": "Live spreader load in metric tonnes.",
+      "exclusiveMinimum": 0.5
+    },
+    "operatorMemo": {
+      "type": "string",
+      "description": "Cab memo, unused by the load pin."
+    }
+  }
+}

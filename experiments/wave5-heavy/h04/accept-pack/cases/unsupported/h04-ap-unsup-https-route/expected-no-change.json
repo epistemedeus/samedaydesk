@@ -1,0 +1,4 @@
+{
+  "expected": false,
+  "reason": "External HTTPS catalog must refuse before any route compare"
+}

@@ -1,0 +1,1 @@
+Caller JSON OpenAPI `{ "openapi": "3.0.3", "paths": {} }` is valid JSON, not YAML. `detectKind` classifies it as openapi. json-schema-webhook-drift must refuse `not-this-job-openapi` (exit 2) instead of walking `/paths` as JSON Schema.

@@ -1,0 +1,9 @@
+{
+  "expected": true,
+  "codes": ["not-json"],
+  "observedCode": "not-json",
+  "acceptedAlternateCodes": ["not-this-job-openapi"],
+  "error": "before is not JSON (YAML/plain text refused; no YAML parser in this job)",
+  "neverAnalysisSuccess": true,
+  "neverKind": "json-schema"
+}

@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": true,
+  "why": "Used /properties/berthCode $ref target is identical; only description/title annotation siblings changed."
+}

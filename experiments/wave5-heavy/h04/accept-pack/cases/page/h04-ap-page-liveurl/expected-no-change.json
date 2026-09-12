@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": false,
+  "why": "Job refuses live_fetch_url before any selected-field compare."
+}

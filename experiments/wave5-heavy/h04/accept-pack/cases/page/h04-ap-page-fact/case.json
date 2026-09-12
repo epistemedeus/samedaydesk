@@ -1,0 +1,32 @@
+{
+  "id": "h04-ap-page-fact",
+  "family": "page",
+  "engineId": "page-change-offline-job",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "title": "Public /for-agents title, h1, and description rewrite",
+  "kind": "change",
+  "mode": "job",
+  "inputs": {
+    "job": "./job.json"
+  },
+  "extraArgs": [],
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "publicUrl": "https://samedaydesk.com/for-agents",
+  "changedFact": "Selected title, h1, and description on https://samedaydesk.com/for-agents change from Agent payment infrastructure / SameDayDesk interfaces for agents to Practical agent jobs / Obtain observations, use offline jobs, or opt-in reuse.",
+  "expectedOutcome": "analysis",
+  "expectedVerdict": "changed",
+  "expectedRefusal": false,
+  "claimsFresh": false,
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "beforeSha": "3c96d3137f815035ed4a6467d28c8041916a9aa8",
+    "afterSha": "b663e53771a325d439f24a2a2ccdc94e5250a352",
+    "beforePath": "server/lib/spa-route-shells.js",
+    "afterPath": "client/src/data/machineEntry.mjs",
+    "route": "/for-agents"
+  }
+}

@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": false,
+  "why": "Used /properties/tonnes exclusiveMinimum 0.5 → 1.0 (JSON 1.0 parses as 1) shrinks the allowed load interval."
+}

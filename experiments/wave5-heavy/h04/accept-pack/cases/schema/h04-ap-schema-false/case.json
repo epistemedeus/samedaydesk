@@ -1,0 +1,17 @@
+{
+  "id": "h04-ap-schema-false",
+  "engineId": "json-schema-webhook-drift",
+  "kind": "change",
+  "label": "synthetic-mechanism",
+  "title": "Array items boolean true → false at a used pointer",
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json",
+    "used": "./used.json"
+  },
+  "expected": {
+    "refusal": false,
+    "usefulNoChange": false,
+    "analysisHint": "actionable breaking boolean-schema-tightened at /properties/laneMarks (items true→false)"
+  }
+}

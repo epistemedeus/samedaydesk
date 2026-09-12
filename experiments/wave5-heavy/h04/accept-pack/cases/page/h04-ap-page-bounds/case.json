@@ -1,0 +1,36 @@
+{
+  "id": "h04-ap-page-bounds",
+  "family": "page",
+  "engineId": "page-change-offline-job",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "title": "Oversize held extract-batch refuses input_bounds",
+  "kind": "refusal",
+  "mode": "job",
+  "inputs": {
+    "job": "./job.json"
+  },
+  "extraArgs": [
+    "--max-bytes",
+    "200"
+  ],
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "publicUrl": "https://samedaydesk.com/privacy",
+  "changedFact": "before.json (2188 bytes) and after.json (2185 bytes) exceed --max-bytes 200. Engine must refuse input_bounds on STDERR (exit 2), not emit a truncated success.",
+  "expectedOutcome": "refused",
+  "expectedRefusal": true,
+  "expectedRefusalCode": "input_bounds",
+  "expectedRefusalStream": "stderr",
+  "expectedExitCode": 2,
+  "claimsFresh": false,
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "path": "server/lib/spa-route-shells.js",
+    "route": "/privacy",
+    "sha": "1caa18e3e25aac98985afa0d7ffdad1b4121042e",
+    "note": "Public /privacy selected fields are the held payload. The refusal is the max-bytes bound, not a page-content verdict."
+  }
+}

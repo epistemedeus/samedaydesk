@@ -1,0 +1,15 @@
+{
+  "id": "h04-ap-page-bounds",
+  "title": "Refuse oversize extract-batch input via max-bytes",
+  "clock": "2026-09-12T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "limits": {
+    "maxBytes": 200
+  },
+  "before": "./before.json",
+  "after": "./after.json"
+}

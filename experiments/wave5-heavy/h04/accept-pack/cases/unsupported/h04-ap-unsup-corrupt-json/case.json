@@ -1,0 +1,25 @@
+{
+  "id": "h04-ap-unsup-corrupt-json",
+  "family": "unsupported",
+  "title": "Truncated `{` is not parseable JSON Schema",
+  "kind": "unsupported-format",
+  "semantic": "truncated-json",
+  "engines": ["json-schema-webhook-drift"],
+  "engineId": "json-schema-webhook-drift",
+  "m01EngineId": "json-schema-webhook-drift",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json",
+    "used": "./used.json"
+  },
+  "changedFact": "Schema before is a truncated `{` (not valid JSON). json-schema-webhook-drift must refuse parse-error or not-json instead of emitting a drift brief.",
+  "expectedStatus": "refused",
+  "expectedRefusal": {
+    "expected": true,
+    "engineId": "json-schema-webhook-drift",
+    "exitCode": 2,
+    "code": "parse-error",
+    "acceptedCodes": ["parse-error", "not-json"]
+  }
+}

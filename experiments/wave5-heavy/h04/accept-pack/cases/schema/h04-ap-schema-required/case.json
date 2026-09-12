@@ -1,0 +1,17 @@
+{
+  "id": "h04-ap-schema-required",
+  "engineId": "json-schema-webhook-drift",
+  "kind": "change",
+  "label": "synthetic-mechanism",
+  "title": "required array loses used field pilotOnBoard",
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json",
+    "used": "./used.json"
+  },
+  "expected": {
+    "refusal": false,
+    "usefulNoChange": false,
+    "analysisHint": "analysis compatible required-removed at /properties/berth (pilotOnBoard dropped from required; still present in properties)"
+  }
+}

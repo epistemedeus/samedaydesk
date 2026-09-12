@@ -1,0 +1,10 @@
+{
+  "expected": true,
+  "refuse": true,
+  "code": "unsupported_catalog",
+  "reasons": [
+    "Records are {method,path} / {method,path,handler} without canonical or title.",
+    "M01 route-table-diff catalog acceptedInputs.record is path, canonical, title, robots?.",
+    "Method/handler records refuse unsupported_catalog; GET→PUT must not be invented as SDS identity."
+  ]
+}

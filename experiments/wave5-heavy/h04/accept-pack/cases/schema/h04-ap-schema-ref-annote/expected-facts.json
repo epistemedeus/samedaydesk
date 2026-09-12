@@ -1,0 +1,44 @@
+{
+  "schema": "h04.accept-pack.schema.expected-facts.v1",
+  "id": "h04-ap-schema-ref-annote",
+  "computedFrom": "raw-parse",
+  "notFromEngine": true,
+  "label": "synthetic-mechanism",
+  "inputsHashed": {
+    "used": "62650a3fb00d5c6be2af1869e1fbe6e96d1eac03a73117f24ec34be698b0cae2",
+    "before": "8ca80a93a78d0590c5ceab1af9c37994f8ca995c2d1fe7f6a00a05828a201f3f",
+    "after": "428dd5bfbc555aed07940f4204e57cf286702f850cf78e19a02b99c1aa5fa32f"
+  },
+  "usedPointers": [
+    "/properties/berthCode"
+  ],
+  "sourceFacts": [
+    {
+      "id": "berthCode-ref-annotation",
+      "op": "unchanged-instance-set",
+      "used": true,
+      "pointer": "/properties/berthCode",
+      "beforeRef": "#/$defs/BerthCode",
+      "afterRef": "#/$defs/BerthCode",
+      "refUnchanged": true,
+      "targetUnchanged": true,
+      "constraintSiblingsUnchanged": true,
+      "beforeDescription": "Wharf berth identifier.",
+      "afterDescription": "ISO-style wharf berth identifier (docs only).",
+      "beforeTitle": null,
+      "afterTitle": "Berth code",
+      "instanceSet": "unchanged",
+      "analysisHint": "unchanged"
+    }
+  ],
+  "ignoredUnused": [
+    {
+      "pointer": "/properties/radioChannel/description",
+      "op": "changed",
+      "used": false,
+      "before": "Unused VHF channel.",
+      "after": "VHF channel (reworded; unused).",
+      "why": "annotation-only unused path"
+    }
+  ]
+}

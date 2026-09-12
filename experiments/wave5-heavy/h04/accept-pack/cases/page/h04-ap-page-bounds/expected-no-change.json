@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": false,
+  "why": "Job refuses input_bounds before any selected-field compare."
+}

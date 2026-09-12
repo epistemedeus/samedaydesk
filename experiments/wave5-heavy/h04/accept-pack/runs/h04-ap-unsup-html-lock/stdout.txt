@@ -1,0 +1,37 @@
+{
+  "ok": false,
+  "engineId": "lockfile-pin-delta",
+  "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+  "engineSource": "in-tree",
+  "outcome": {
+    "kind": "refused",
+    "transportOk": true,
+    "code": "html-input",
+    "analysis": null
+  },
+  "schemaMatch": {
+    "ok": true,
+    "mismatches": [],
+    "outputs": []
+  },
+  "stdoutJson": {
+    "ok": false,
+    "refused": true,
+    "code": "html-input",
+    "error": "before is HTML, not a package-lock.json",
+    "detail": {
+      "label": "before"
+    },
+    "purchaseAuthority": false
+  },
+  "refuseJson": {
+    "ok": false,
+    "refused": true,
+    "code": "html-input",
+    "error": "before is HTML, not a package-lock.json",
+    "detail": {
+      "label": "before"
+    },
+    "purchaseAuthority": false
+  }
+}

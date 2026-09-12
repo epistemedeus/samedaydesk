@@ -1,0 +1,10 @@
+{
+  "source": "raw-bytes",
+  "notEngineStdout": true,
+  "documentKind": "openapi",
+  "media": "application/json",
+  "openapi": "3.0.3",
+  "paths": {},
+  "reason": "JSON object has string openapi plus paths map. detectKind returns openapi. json-schema-webhook-drift must refuse not-this-job-openapi.",
+  "notYaml": true
+}

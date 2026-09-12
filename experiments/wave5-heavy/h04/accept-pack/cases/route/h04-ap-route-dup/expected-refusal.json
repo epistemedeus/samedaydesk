@@ -1,0 +1,7 @@
+{
+  "expected": false,
+  "refuse": false,
+  "reasons": [],
+  "code": null,
+  "note": "Duplicate path is an analysis collision, not unsupported_catalog or a transport crash."
+}

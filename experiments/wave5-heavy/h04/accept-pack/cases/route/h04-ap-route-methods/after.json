@@ -1,0 +1,18 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "sourceKind": "synthetic-mechanism",
+  "note": "Same method/handler catalog shape as before.json with GET /health changed to PUT /health. Still no canonical or title. A method change must not be invented as SDS identity. Not copied from tools/route-table-diff/fixtures.",
+  "routes": [
+    {
+      "method": "PUT",
+      "path": "/health"
+    },
+    {
+      "method": "POST",
+      "path": "/webhooks/stripe",
+      "handler": "stripeWebhook"
+    }
+  ]
+}

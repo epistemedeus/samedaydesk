@@ -1,0 +1,75 @@
+{
+  "schema": "samedaydesk.route-diff.v1",
+  "ok": true,
+  "publishedRouteTable": false,
+  "sample": false,
+  "evidenceClass": {
+    "before": "caller",
+    "after": "caller"
+  },
+  "breaking": true,
+  "outcome": "breaking",
+  "orderChanged": false,
+  "tableDigest": {
+    "before": "sha256:7a6427fc8aad2460f7aad6a0b6a990161e3e9fa857738e3f30f529a214a22e10",
+    "after": "sha256:239d447eb29f06d5c44fa62f729dd7b14d18626b845a9bba0e96649a6efc6833"
+  },
+  "counts": {
+    "added": 0,
+    "removed": 0,
+    "changed": 0,
+    "titleOnly": 0,
+    "collisions": 1
+  },
+  "added": [],
+  "removed": [],
+  "changed": [],
+  "titleOnly": [],
+  "collisions": [
+    {
+      "kind": "path",
+      "path": "/inventory/lots",
+      "indexes": [
+        1,
+        4
+      ],
+      "records": [
+        {
+          "path": "/inventory/lots",
+          "canonical": "https://h04-ap-route.test/inventory/lots",
+          "title": "Inventory lots | H04 accept-pack",
+          "robots": null
+        },
+        {
+          "path": "/inventory/lots",
+          "canonical": "https://h04-ap-route.test/inventory/lots-alias",
+          "title": "Inventory lots (alias row) | H04 accept-pack",
+          "robots": null
+        }
+      ],
+      "side": "after"
+    }
+  ],
+  "notes": [
+    "Permutation of the same routes is not a breaking change. tableDigest is order-independent.",
+    "breaking is true only for route collisions (duplicate path or shared canonical after SDS identity) or removals.",
+    "changed lists canonical or robots only. Title-only edits are titleOnly, not a canonical/robots change.",
+    "This artifact is not a published SDS route table and does not rewrite the homepage or spa-route-shells.js.",
+    "Fixture, local-runtime, and external stay distinct. Local HTTP loopback is local-runtime. SAMPLE is fixture.",
+    "A collision or valid no-change report is an analysis outcome, not a transport or engine failure."
+  ],
+  "locators": {
+    "before": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/route/h04-ap-route-dup/before.json",
+    "after": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/route/h04-ap-route-dup/after.json"
+  },
+  "laterBindings": {
+    "publicShellsLiveExport": "Unbound. Inject a reader of PUBLIC_SHELLS / SPA_ROUTE_SHELLS. Do not edit spa-route-shells.js.",
+    "hashTermsVersion": "I01 / Neo PR54 owns hashTermsVersion (sha256: + 64 hex). This job hashes route tables only and does not import the earned-work kernel.",
+    "listingRepairPacket": "listing-repair-packet diagnoses listing/route snapshots. Consume it later through an injected adapter. This job diffs caller route catalogs only.",
+    "spaRouteShellsWriter": "Never bind. This job does not write route shells or homepages.",
+    "integrationOwner": "W5-M01 owns wrapper/catalog wiring. This module publishes the comparison contract only. Do not claim a future sibling's behavior."
+  },
+  "nonsettling": true,
+  "paid": false,
+  "settled": false
+}

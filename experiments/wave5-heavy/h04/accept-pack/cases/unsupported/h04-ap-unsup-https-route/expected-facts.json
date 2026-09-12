@@ -1,0 +1,9 @@
+{
+  "source": "locator-string",
+  "notEngineStdout": true,
+  "before": "https://example.com/routes.json",
+  "after": "https://example.com/routes.json",
+  "protocol": "https:",
+  "host": "example.com",
+  "reason": "assertLoopbackHttp refuses non-http: protocols as external_catalog_refused. No network fetch."
+}

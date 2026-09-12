@@ -1,0 +1,159 @@
+{
+  "job": {
+    "id": "h04-ap-page-stale",
+    "title": "Same /terms selected fields with provenance older than max-stale-ms",
+    "fields": [
+      "title",
+      "description",
+      "headings"
+    ]
+  },
+  "report": {
+    "schema": "pilot/page-change-brief/v1",
+    "kind": "merchant_extract_batch",
+    "verdict": "unchanged",
+    "fields": [
+      "title",
+      "description",
+      "headings"
+    ],
+    "claims": {
+      "noChangeProven": true,
+      "contentUnchangedProven": true,
+      "comparable": true,
+      "complete": true,
+      "current": false,
+      "fresh": false,
+      "usefulOutputProven": true,
+      "paymentImpliesUsefulOutput": false
+    },
+    "freshness": "stale",
+    "snapshot": {
+      "schema": "pilot/change-digest/v1",
+      "verdict": "unchanged",
+      "claims": {
+        "noChangeProven": true,
+        "current": false,
+        "comparable": true,
+        "fresh": false
+      },
+      "freshness": "stale",
+      "before": {
+        "status": "present",
+        "mediaType": "application/json",
+        "observedAt": "2025-12-31T00:00:01.000Z",
+        "truncated": false,
+        "byteLength": 2166,
+        "sha256": "e8b1c59be2799e2d20d1df2441527a4358436903d40502f13f0baaba23960306",
+        "source": {
+          "kind": "file",
+          "role": "before"
+        },
+        "issues": []
+      },
+      "after": {
+        "status": "present",
+        "mediaType": "application/json",
+        "observedAt": "2026-01-01T00:00:01.000Z",
+        "truncated": false,
+        "byteLength": 2163,
+        "sha256": "c1fca41056adeb4250d365707973f2eb0918c59a15b7b9b0404dc782e5fab2cc",
+        "source": {
+          "kind": "file",
+          "role": "after"
+        },
+        "issues": []
+      },
+      "limitsHit": []
+    },
+    "summary": {
+      "matched": 1,
+      "missing": 0,
+      "failed": 0,
+      "unknown": 0,
+      "duplicates": 0,
+      "coverageUnknown": 0,
+      "semantic": 0,
+      "order": 0
+    },
+    "rows": {
+      "matched": [
+        {
+          "sourceKey": "https://samedaydesk.com/terms",
+          "source": "https://samedaydesk.com/terms",
+          "before": {
+            "id": "item-001",
+            "status": "success"
+          },
+          "after": {
+            "id": "item-001",
+            "status": "success"
+          }
+        }
+      ],
+      "missing": [],
+      "failed": [],
+      "unknown": [],
+      "duplicates": []
+    },
+    "coverageUnknown": [],
+    "changes": [],
+    "observations": {
+      "before": {
+        "jobId": "e2d757438526276fdf24d6e68a91ea0b578dc78e70c7e3087ec2c9397d090107",
+        "jobStatus": "completed",
+        "charged": false,
+        "ok": true,
+        "snapshotObservedAt": null,
+        "artifactObservedAt": "2025-12-31T00:00:01.000Z",
+        "rows": [
+          {
+            "sourceKey": "https://samedaydesk.com/terms",
+            "itemId": "item-001",
+            "requestedAt": "2025-12-31T00:00:00.000Z",
+            "completedAt": "2025-12-31T00:00:01.000Z",
+            "fetchedAt": "2025-12-31T00:00:00.000Z",
+            "requestedAtIsNotFreshness": true,
+            "fetchedAtIsNotFreshness": true
+          }
+        ]
+      },
+      "after": {
+        "jobId": "9ce1c75c9855a3f929ad36106fc6728efb93b9fb9b33542b64a98d331fd4635b",
+        "jobStatus": "completed",
+        "charged": false,
+        "ok": true,
+        "snapshotObservedAt": null,
+        "artifactObservedAt": "2026-01-01T00:00:01.000Z",
+        "rows": [
+          {
+            "sourceKey": "https://samedaydesk.com/terms",
+            "itemId": "item-001",
+            "requestedAt": "2026-01-01T00:00:00.000Z",
+            "completedAt": "2026-01-01T00:00:01.000Z",
+            "fetchedAt": "2026-01-01T00:00:00.000Z",
+            "requestedAtIsNotFreshness": true,
+            "fetchedAtIsNotFreshness": true
+          }
+        ]
+      },
+      "note": "Source URL identity is separate from two-time observation identity. fetchedAt and completedAt are observation metadata, not content freshness."
+    },
+    "provenance": {
+      "engine": "samedaydesk.page-change-offline-job",
+      "engineVersion": "0.1.1",
+      "merchantCompareImported": false,
+      "networkUsed": false,
+      "paymentAttempted": false,
+      "purchaseAuthorized": false,
+      "evidenceClass": "fixture",
+      "termsVersion": "sha256:94fadb38687faabfbce497d186d75a691817e85eae11e70ae98babb5c0b601e0",
+      "termsHasher": "i01-integrated-hash-terms",
+      "comparedWithClock": "2026-09-12T12:00:00.000Z",
+      "beforeSha256": "e8b1c59be2799e2d20d1df2441527a4358436903d40502f13f0baaba23960306",
+      "afterSha256": "c1fca41056adeb4250d365707973f2eb0918c59a15b7b9b0404dc782e5fab2cc",
+      "elapsedMs": 1.217938,
+      "digestSha256": "024a53dbfd4e48c668750f4fdf752d550a750a4627bc35b51692c0f2a9026f4d"
+    }
+  }
+}

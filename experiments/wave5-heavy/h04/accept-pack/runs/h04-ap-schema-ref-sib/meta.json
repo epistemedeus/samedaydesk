@@ -1,0 +1,41 @@
+{
+  "id": "h04-ap-schema-ref-sib",
+  "engineId": "json-schema-webhook-drift",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "json-schema-webhook-drift",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-ref-sib/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-ref-sib/after.json",
+    "--used",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/schema/h04-ap-schema-ref-sib/used.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-schema-ref-sib/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "durationMs": 79,
+  "stdoutBytes": 1327,
+  "stderrBytes": 0,
+  "outDirFiles": [
+    "catalog-receipt.json",
+    "drift-brief.json",
+    "drift-brief.md"
+  ],
+  "promised": [
+    "drift-brief.json",
+    "drift-brief.md"
+  ],
+  "delivery": {
+    "kind": "analysis",
+    "pass": true,
+    "analysis": "actionable"
+  },
+  "outcomeKind": "analysis",
+  "analysis": "actionable",
+  "refuseCode": null
+}

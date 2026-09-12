@@ -1,0 +1,23 @@
+{
+  "ok": false,
+  "engineId": "page-change-offline-job",
+  "pinSha": "fec7bc04ac4419f8e7ce40f2613314e6953af6bc",
+  "engineSource": "in-tree",
+  "outcome": {
+    "kind": "refused",
+    "transportOk": true,
+    "code": "input_bounds",
+    "analysis": null
+  },
+  "schemaMatch": {
+    "ok": true,
+    "mismatches": [],
+    "outputs": []
+  },
+  "stdoutJson": null,
+  "refuseJson": {
+    "ok": false,
+    "code": "input_bounds",
+    "message": "input exceeds the 200-byte limit"
+  }
+}

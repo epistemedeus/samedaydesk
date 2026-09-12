@@ -1,0 +1,23 @@
+{
+  "ok": false,
+  "engineId": "page-change-offline-job",
+  "pinSha": "fec7bc04ac4419f8e7ce40f2613314e6953af6bc",
+  "engineSource": "in-tree",
+  "outcome": {
+    "kind": "refused",
+    "transportOk": true,
+    "code": "live_fetch_url",
+    "analysis": null
+  },
+  "schemaMatch": {
+    "ok": true,
+    "mismatches": [],
+    "outputs": []
+  },
+  "stdoutJson": null,
+  "refuseJson": {
+    "ok": false,
+    "code": "live_fetch_url",
+    "message": "live fetch URL input is refused; supply already-held local extract-batch JSON files"
+  }
+}

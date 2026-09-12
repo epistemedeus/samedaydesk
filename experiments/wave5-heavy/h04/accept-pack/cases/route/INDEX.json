@@ -1,0 +1,169 @@
+{
+  "family": "api-routes",
+  "pack": "accept-pack",
+  "ownedPath": "experiments/wave5-heavy/h04/accept-pack/cases/route/",
+  "engine": "route-table-diff",
+  "m01EngineId": "route-table-diff",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "enginePinSha": "886c81d824e0a24e2faa5b821b1cd0ca46ae0859",
+  "cli": "node experiments/wave5/m01/bin/run-job.mjs route-table-diff --before --after --out-dir",
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "runsRoot": "/tmp/w5-h04/h04-ap-route-runs",
+  "sourceKind": "synthetic-mechanism",
+  "notExtractedFrom": "server/lib/spa-route-shells.js",
+  "notCopied": [
+    "tools/route-table-diff/fixtures/*",
+    "experiments/wave5-heavy/h04/examples/api-routes/h04-route-01",
+    "experiments/wave5-heavy/h04/examples/api-routes/h04-route-03"
+  ],
+  "oracles": "Independent domain facts from raw before.json/after.json (path/canonical/title/robots). Engine stdout is recorded as actual, not copied into expected-facts.json.",
+  "count": 4,
+  "cases": [
+    {
+      "id": "h04-ap-route-reorder",
+      "kind": "reorder-control",
+      "path": "h04-ap-route-reorder/",
+      "sourceKind": "synthetic-mechanism",
+      "usefulNoChange": true,
+      "expectedRefusal": false,
+      "expected": {
+        "m01Kind": "analysis",
+        "outcome": "permutation",
+        "breaking": false,
+        "added": 0,
+        "removed": 0,
+        "changed": 0,
+        "collisions": 0,
+        "orderChanged": true,
+        "identityKeysEqual": true
+      },
+      "actual": {
+        "exitCode": 0,
+        "m01Kind": "analysis",
+        "outcome": "permutation",
+        "breaking": false,
+        "ok": true,
+        "orderChanged": true,
+        "counts": {
+          "added": 0,
+          "removed": 0,
+          "changed": 0,
+          "titleOnly": 0,
+          "collisions": 0
+        },
+        "tableDigestEqual": true,
+        "tableDigest": "sha256:f49fbf3b747fffbb8c2e9ce677f6bcd6418ab28e190e4c17b40cc58b00992e92",
+        "runDir": "/tmp/w5-h04/h04-ap-route-runs/h04-ap-route-reorder"
+      },
+      "match": true
+    },
+    {
+      "id": "h04-ap-route-dup",
+      "kind": "collision",
+      "path": "h04-ap-route-dup/",
+      "sourceKind": "synthetic-mechanism",
+      "usefulNoChange": false,
+      "expectedRefusal": false,
+      "expected": {
+        "m01Kind": "analysis",
+        "outcome": "breaking",
+        "breaking": true,
+        "crash": false,
+        "collisionKind": "path",
+        "collisionPath": "/inventory/lots",
+        "collisionSide": "after",
+        "collisionIndexes": [1, 4]
+      },
+      "actual": {
+        "exitCode": 0,
+        "m01Kind": "analysis",
+        "outcome": "breaking",
+        "breaking": true,
+        "ok": true,
+        "crash": false,
+        "counts": {
+          "added": 0,
+          "removed": 0,
+          "changed": 0,
+          "titleOnly": 0,
+          "collisions": 1
+        },
+        "collisions": [
+          {
+            "kind": "path",
+            "side": "after",
+            "path": "/inventory/lots",
+            "indexes": [1, 4]
+          }
+        ],
+        "runDir": "/tmp/w5-h04/h04-ap-route-runs/h04-ap-route-dup"
+      },
+      "match": true
+    },
+    {
+      "id": "h04-ap-route-params",
+      "kind": "param-spelling",
+      "path": "h04-ap-route-params/",
+      "sourceKind": "synthetic-mechanism",
+      "usefulNoChange": false,
+      "expectedRefusal": false,
+      "oracle": "raw path strings /api/items/:sku and /api/items/{sku} are distinct",
+      "expected": {
+        "m01Kind": "analysis",
+        "rawPathsDistinct": true,
+        "engineTreatsAs": "two-paths",
+        "outcome": "breaking",
+        "breaking": true,
+        "added": ["/api/items/{sku}"],
+        "removed": ["/api/items/:sku"],
+        "collisions": 0
+      },
+      "actual": {
+        "exitCode": 0,
+        "m01Kind": "analysis",
+        "engineTreatsAs": "two-paths",
+        "outcome": "breaking",
+        "breaking": true,
+        "ok": true,
+        "added": ["/api/items/{sku}"],
+        "removed": ["/api/items/:sku"],
+        "counts": {
+          "added": 1,
+          "removed": 1,
+          "changed": 0,
+          "titleOnly": 0,
+          "collisions": 0
+        },
+        "runDir": "/tmp/w5-h04/h04-ap-route-runs/h04-ap-route-params"
+      },
+      "match": true
+    },
+    {
+      "id": "h04-ap-route-methods",
+      "kind": "unsupported_catalog",
+      "path": "h04-ap-route-methods/",
+      "sourceKind": "synthetic-mechanism",
+      "usefulNoChange": false,
+      "expectedRefusal": true,
+      "expected": {
+        "m01Kind": "refused",
+        "code": "unsupported_catalog",
+        "outcome": "unsupported_catalog",
+        "accepted": false
+      },
+      "actual": {
+        "exitCode": 2,
+        "m01Kind": "refused",
+        "code": "unsupported_catalog",
+        "ok": false,
+        "refused": true,
+        "accepted": false,
+        "error": "Framework route records need an SDS adapter. This job does not invent canonical or title from method, handler, or operationId fields.",
+        "detail": { "index": 0, "path": "/health" },
+        "promisedOutputsWritten": false,
+        "runDir": "/tmp/w5-h04/h04-ap-route-runs/h04-ap-route-methods"
+      },
+      "match": true
+    }
+  ]
+}

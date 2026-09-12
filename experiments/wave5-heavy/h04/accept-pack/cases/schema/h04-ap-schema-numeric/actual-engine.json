@@ -1,0 +1,95 @@
+{
+  "engineId": "json-schema-webhook-drift",
+  "compositionCwd": "/tmp/w5-h04/ro-m01",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "cli": "node experiments/wave5/m01/bin/run-job.mjs json-schema-webhook-drift --before --after --used --out-dir",
+  "outDir": "/tmp/w5-h04/h04-ap-schema-runs/h04-ap-schema-numeric",
+  "pinSha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+  "engineSource": "in-tree",
+  "catalogOk": true,
+  "outcome": {
+    "kind": "analysis",
+    "transportOk": true,
+    "code": null,
+    "analysis": "actionable"
+  },
+  "engineStdout": {
+    "ok": true,
+    "appId": "json-schema-webhook-drift",
+    "status": "actionable",
+    "termsVersion": "sha256:9761727f41559639664f1739126547ba67dd34b5c43e81143e3ae8315e931dca",
+    "kind": "json-schema",
+    "customerBrief": false,
+    "sample": false,
+    "exampleMode": false,
+    "purchaseAuthority": false,
+    "sold": false,
+    "outDir": "/tmp/w5-h04/h04-ap-schema-runs/h04-ap-schema-numeric",
+    "outputs": [
+      "drift-brief.json",
+      "drift-brief.md"
+    ],
+    "breaking": 1,
+    "compatible": 0,
+    "unknown": 0
+  },
+  "refuseCode": null,
+  "briefImpact": {
+    "status": "actionable",
+    "kind": "json-schema",
+    "breaking": [
+      {
+        "pointer": "/properties/tonnes",
+        "class": "breaking",
+        "reason": "numeric-tightened",
+        "before": {
+          "kind": "schema-object",
+          "type": "number",
+          "format": null,
+          "enum": null,
+          "constJson": null,
+          "required": null,
+          "additionalProperties": null,
+          "propertiesKeys": null,
+          "items": null,
+          "itemsType": null,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "exclusiveMinimum": "0.5",
+          "exclusiveMaximum": null,
+          "minItems": null,
+          "maxItems": null,
+          "nullable": false
+        },
+        "after": {
+          "kind": "schema-object",
+          "type": "number",
+          "format": null,
+          "enum": null,
+          "constJson": null,
+          "required": null,
+          "additionalProperties": null,
+          "propertiesKeys": null,
+          "items": null,
+          "itemsType": null,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "exclusiveMinimum": 1,
+          "exclusiveMaximum": null,
+          "minItems": null,
+          "maxItems": null,
+          "nullable": false
+        }
+      }
+    ],
+    "compatible": [],
+    "unchangedCount": 0,
+    "informationalCount": 0,
+    "unknown": []
+  },
+  "stderr": null
+}

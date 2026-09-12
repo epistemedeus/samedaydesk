@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://accept-pack.local/h04/container-seal.schema.json",
+  "title": "Container seal code",
+  "$defs": {
+    "HarborSealId": {
+      "type": "string",
+      "pattern": "^[A-Z0-9]+$"
+    }
+  },
+  "type": "object",
+  "required": ["seal"],
+  "properties": {
+    "seal": {
+      "$ref": "#/$defs/HarborSealId",
+      "minLength": 4
+    },
+    "clerkInitials": {
+      "type": "string",
+      "description": "Unused clerk mark."
+    }
+  }
+}

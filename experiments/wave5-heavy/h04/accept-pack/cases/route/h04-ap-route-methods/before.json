@@ -1,0 +1,18 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "sourceKind": "synthetic-mechanism",
+  "note": "Caller-owned method/handler records without canonical or title. M01 catalog says this shape refuses unsupported_catalog. Not extracted from spa-route-shells.js. Not copied from tools/route-table-diff/fixtures.",
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/health"
+    },
+    {
+      "method": "POST",
+      "path": "/webhooks/stripe",
+      "handler": "stripeWebhook"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "expected": true,
+  "code": "input_bounds",
+  "ok": false,
+  "stream": "stderr",
+  "exitCode": 2,
+  "refusedKey": null,
+  "messageIncludes": "input exceeds the 200-byte limit"
+}

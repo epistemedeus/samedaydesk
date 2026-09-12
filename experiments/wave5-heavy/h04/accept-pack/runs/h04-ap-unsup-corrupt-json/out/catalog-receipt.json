@@ -1,0 +1,63 @@
+{
+  "ok": false,
+  "engineId": "json-schema-webhook-drift",
+  "pinSha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+  "engineSource": "in-tree",
+  "outcome": {
+    "kind": "refused",
+    "transportOk": true,
+    "code": "parse-error",
+    "analysis": null
+  },
+  "schemaMatch": {
+    "ok": true,
+    "mismatches": [],
+    "outputs": []
+  },
+  "stdoutJson": {
+    "ok": false,
+    "refused": true,
+    "code": "parse-error",
+    "error": "before is not valid JSON",
+    "detail": {
+      "label": "before",
+      "error": "Expected property name or '}' in JSON at position 1 (line 1 column 2)"
+    },
+    "customerBrief": false,
+    "sample": false,
+    "purchaseAuthority": false,
+    "sold": false,
+    "payment": {
+      "settling": false,
+      "prototype": true,
+      "paid": false
+    },
+    "schema": "samedaydesk.json-schema-webhook-drift.v1",
+    "schemaVersion": 2,
+    "notOpenApi": true,
+    "notApiUpgradeBrief": true
+  },
+  "refuseJson": {
+    "ok": false,
+    "refused": true,
+    "code": "parse-error",
+    "error": "before is not valid JSON",
+    "detail": {
+      "label": "before",
+      "error": "Expected property name or '}' in JSON at position 1 (line 1 column 2)"
+    },
+    "customerBrief": false,
+    "sample": false,
+    "purchaseAuthority": false,
+    "sold": false,
+    "payment": {
+      "settling": false,
+      "prototype": true,
+      "paid": false
+    },
+    "schema": "samedaydesk.json-schema-webhook-drift.v1",
+    "schemaVersion": 2,
+    "notOpenApi": true,
+    "notApiUpgradeBrief": true
+  }
+}

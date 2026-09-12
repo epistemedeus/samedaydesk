@@ -1,0 +1,47 @@
+{
+  "engineId": "json-schema-webhook-drift",
+  "compositionCwd": "/tmp/w5-h04/ro-m01",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "cli": "node experiments/wave5/m01/bin/run-job.mjs json-schema-webhook-drift --before --after --used --out-dir",
+  "outDir": "/tmp/w5-h04/h04-ap-schema-runs/h04-ap-schema-ref-annote",
+  "pinSha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+  "engineSource": "in-tree",
+  "catalogOk": true,
+  "outcome": {
+    "kind": "analysis",
+    "transportOk": true,
+    "code": null,
+    "analysis": "informational"
+  },
+  "engineStdout": {
+    "ok": true,
+    "appId": "json-schema-webhook-drift",
+    "status": "informational",
+    "termsVersion": "sha256:24d1d73cc523990ee6d00e17e7dbcc93ac73fa2a50bfba315eb5e1ab6a9e37db",
+    "kind": "json-schema",
+    "customerBrief": false,
+    "sample": false,
+    "exampleMode": false,
+    "purchaseAuthority": false,
+    "sold": false,
+    "outDir": "/tmp/w5-h04/h04-ap-schema-runs/h04-ap-schema-ref-annote",
+    "outputs": [
+      "drift-brief.json",
+      "drift-brief.md"
+    ],
+    "breaking": 0,
+    "compatible": 0,
+    "unknown": 0
+  },
+  "refuseCode": null,
+  "briefImpact": {
+    "status": "informational",
+    "kind": "json-schema",
+    "breaking": [],
+    "compatible": [],
+    "unchangedCount": 1,
+    "informationalCount": 0,
+    "unknown": []
+  },
+  "stderr": null
+}

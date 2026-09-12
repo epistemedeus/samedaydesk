@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://accept-pack.local/h04/berth-assignment.schema.json",
+  "title": "Berth assignment",
+  "type": "object",
+  "required": ["voyageId", "berth"],
+  "properties": {
+    "voyageId": {
+      "type": "string"
+    },
+    "berth": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gateCode", "wharfName", "pilotOnBoard"],
+      "properties": {
+        "gateCode": { "type": "string" },
+        "wharfName": { "type": "string" },
+        "pilotOnBoard": { "type": "boolean" }
+      }
+    },
+    "nightRemarks": {
+      "type": "string",
+      "description": "Unused overnight log."
+    }
+  }
+}

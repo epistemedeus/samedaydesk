@@ -1,0 +1,1 @@
+Tiny caller lockfileVersion 3 pair changes `h04-ap-caller-pin` 1.0.0→1.0.1 (version, integrity, resolved). The engine run would succeed and promise `pin-delta.json` + `pin-delta.md`. If those files are missing, M01 `classifyInvocation` is `incomplete-delivery` / `missing-promised-output` and the accept-pack runner must fail even when stdout is `ok: true`.

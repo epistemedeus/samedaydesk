@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": false,
+  "why": "after.json repeats path /inventory/lots. Unique path set is unchanged, but a path collision is a breaking analysis finding."
+}

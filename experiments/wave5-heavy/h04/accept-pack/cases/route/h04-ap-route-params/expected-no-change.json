@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": false,
+  "why": "Raw path strings /api/items/:sku and /api/items/{sku} differ. Treating them as one parameterized route would hide a catalog spelling change."
+}

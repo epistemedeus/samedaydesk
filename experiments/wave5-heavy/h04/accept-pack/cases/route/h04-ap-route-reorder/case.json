@@ -1,0 +1,23 @@
+{
+  "id": "h04-ap-route-reorder",
+  "family": "api-routes",
+  "pack": "accept-pack",
+  "title": "Same SDS-shaped routes in a different array order",
+  "kind": "reorder-control",
+  "sourceKind": "synthetic-mechanism",
+  "engineId": "route-table-diff",
+  "m01EngineId": "route-table-diff",
+  "engines": ["route-table-diff"],
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "changedFact": "Six caller-owned routes keep path/canonical/title/robots; only JSON array order changes (non-reverse permutation).",
+  "usefulNoChange": true,
+  "expectedRefusal": false,
+  "expectedOutcome": "permutation",
+  "expectedBreaking": false,
+  "expectedM01Kind": "analysis",
+  "notDuplicated": ["h04-route-01", "h04-route-03", "tools/route-table-diff/fixtures/*"]
+}

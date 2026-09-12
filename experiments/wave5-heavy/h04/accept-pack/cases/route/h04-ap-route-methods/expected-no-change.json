@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": false,
+  "why": "Method/handler catalogs are an unsupported shape. A GET→PUT rewrite is not a useful no-change SDS identity report."
+}

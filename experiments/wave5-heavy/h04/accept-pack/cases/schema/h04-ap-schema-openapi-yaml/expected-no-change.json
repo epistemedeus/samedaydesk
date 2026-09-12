@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": false,
+  "why": "OpenAPI YAML is unsupported input. Refusal is the useful output; a no-change JSON Schema brief would be a false success."
+}

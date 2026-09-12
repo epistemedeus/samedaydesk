@@ -1,0 +1,37 @@
+{
+  "ok": false,
+  "engineId": "route-table-diff",
+  "pinSha": "886c81d824e0a24e2faa5b821b1cd0ca46ae0859",
+  "engineSource": "in-tree",
+  "outcome": {
+    "kind": "refused",
+    "transportOk": true,
+    "code": "unsupported_catalog",
+    "analysis": null
+  },
+  "schemaMatch": {
+    "ok": true,
+    "mismatches": [],
+    "outputs": []
+  },
+  "stdoutJson": {
+    "ok": false,
+    "refused": true,
+    "code": "unsupported_catalog",
+    "error": "Framework route records need an SDS adapter. This job does not invent canonical or title from method, handler, or operationId fields.",
+    "detail": {
+      "index": 0,
+      "path": "/health"
+    }
+  },
+  "refuseJson": {
+    "ok": false,
+    "refused": true,
+    "code": "unsupported_catalog",
+    "error": "Framework route records need an SDS adapter. This job does not invent canonical or title from method, handler, or operationId fields.",
+    "detail": {
+      "index": 0,
+      "path": "/health"
+    }
+  }
+}

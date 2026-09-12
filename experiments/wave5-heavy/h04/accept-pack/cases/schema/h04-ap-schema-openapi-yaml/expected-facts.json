@@ -1,0 +1,39 @@
+{
+  "schema": "h04.accept-pack.schema.expected-facts.v1",
+  "id": "h04-ap-schema-openapi-yaml",
+  "computedFrom": "raw-parse",
+  "notFromEngine": true,
+  "label": "synthetic-mechanism",
+  "inputsHashed": {
+    "used": "07253d387cdf115bf9468d2d4947ebc1aa6ff89501a50b19f436c4c487c441d2",
+    "before": "fb1e8384acc34e43ddfa5a780bb26684ba2e752ddc2684a6f57163a3140842fb",
+    "after": "4bc1f57b6f0067201ce9c0fcb0f9d0c6c7291480276105b6006cbf4fdbbf131a"
+  },
+  "usedPointers": [
+    "/paths/~1v1~1cranes~1{craneId}~1load"
+  ],
+  "parse": {
+    "beforeStartsWith": "---\nopenapi: 3.0.3\ninfo:",
+    "afterStartsWith": "---\nopenapi: 3.0.3\ninfo:",
+    "beforeLooksLikeJson": false,
+    "afterLooksLikeJson": false,
+    "beforeLooksLikeYaml": true,
+    "afterLooksLikeYaml": true,
+    "beforeHasOpenapiKey": true,
+    "afterHasOpenapiKey": true
+  },
+  "sourceFacts": [
+    {
+      "id": "openapi-yaml-not-json-schema",
+      "op": "unsupported",
+      "used": false,
+      "documentKind": "openapi-yaml",
+      "openapiVersion": "3.0.3",
+      "beforeHasGetLoad": true,
+      "afterAddsPost": true,
+      "analysisHint": "refuse not-json or not-this-job-openapi",
+      "never": "json-schema-analysis-success"
+    }
+  ],
+  "ignoredUnused": []
+}

@@ -1,0 +1,9 @@
+{
+  "expected": true,
+  "code": "live_fetch_url",
+  "ok": false,
+  "stream": "stderr",
+  "exitCode": 2,
+  "refusedKey": null,
+  "messageIncludes": "live fetch URL input is refused"
+}

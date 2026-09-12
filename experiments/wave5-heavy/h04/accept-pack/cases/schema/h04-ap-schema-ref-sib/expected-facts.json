@@ -1,0 +1,42 @@
+{
+  "schema": "h04.accept-pack.schema.expected-facts.v1",
+  "id": "h04-ap-schema-ref-sib",
+  "computedFrom": "raw-parse",
+  "notFromEngine": true,
+  "label": "synthetic-mechanism",
+  "inputsHashed": {
+    "used": "adb63f9d6411912cf331fe72799f9520d0af099dd478c6e29b2f248e1b460765",
+    "before": "94aae5b8126cd771c7cd91e670401cc41a3491313572859f909006629427e27d",
+    "after": "1e7f6a1530d2d7fbd6fa57ff814be3af51ee358a86be6ee8aac1e0b91bc498c5"
+  },
+  "usedPointers": [
+    "/properties/seal"
+  ],
+  "sourceFacts": [
+    {
+      "id": "seal-ref-minLength",
+      "op": "changed",
+      "used": true,
+      "pointer": "/properties/seal",
+      "keyword": "minLength",
+      "beforeRef": "#/$defs/HarborSealId",
+      "afterRef": "#/$defs/HarborSealId",
+      "refUnchanged": true,
+      "beforeMinLength": 4,
+      "afterMinLength": 8,
+      "targetUnchanged": true,
+      "instanceSet": "tightened",
+      "analysisHint": "numeric-tightened"
+    }
+  ],
+  "ignoredUnused": [
+    {
+      "pointer": "/properties/clerkInitials/description",
+      "op": "changed",
+      "used": false,
+      "before": "Unused clerk mark.",
+      "after": "Clerk mark (reworded; unused).",
+      "why": "annotation-only unused path"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "expected": true,
+  "engineId": "json-schema-webhook-drift",
+  "exitCode": 2,
+  "ok": false,
+  "refused": true,
+  "code": "not-this-job-openapi",
+  "acceptedCodes": ["not-this-job-openapi"],
+  "consumerAction": "Do not treat OpenAPI JSON as JSON Schema / webhook drift. Route to api-upgrade-brief / s134 openapi-impact."
+}

@@ -1,0 +1,40 @@
+{
+  "id": "h04-ap-unsup-openapi-json",
+  "engineId": "json-schema-webhook-drift",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "json-schema-webhook-drift",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/unsupported/h04-ap-unsup-openapi-json/before.json",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/unsupported/h04-ap-unsup-openapi-json/after.json",
+    "--used",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/unsupported/h04-ap-unsup-openapi-json/used.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-unsup-openapi-json/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 2,
+  "durationMs": 78,
+  "stdoutBytes": 1569,
+  "stderrBytes": 0,
+  "outDirFiles": [
+    "catalog-receipt.json"
+  ],
+  "promised": [
+    "drift-brief.json",
+    "drift-brief.md"
+  ],
+  "delivery": {
+    "kind": "refused",
+    "pass": true,
+    "code": "not-this-job-openapi",
+    "note": "Product refusal is a useful output, not a delivery failure."
+  },
+  "outcomeKind": "refused",
+  "analysis": null,
+  "refuseCode": "not-this-job-openapi"
+}

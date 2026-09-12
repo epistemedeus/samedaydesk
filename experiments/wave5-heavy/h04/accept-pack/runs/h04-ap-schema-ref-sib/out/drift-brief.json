@@ -1,0 +1,161 @@
+{
+  "schema": "samedaydesk.json-schema-webhook-drift.v1",
+  "schemaVersion": 2,
+  "kind": "json-schema",
+  "usedOnly": true,
+  "notOpenApi": true,
+  "notApiUpgradeBrief": true,
+  "purchaseAuthority": false,
+  "sold": false,
+  "customerBrief": false,
+  "sample": false,
+  "exampleMode": false,
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "payment": {
+    "settling": false,
+    "prototype": true,
+    "paid": false
+  },
+  "provenance": "caller-input",
+  "inputs": {
+    "before": "sha256:94aae5b8126cd771c7cd91e670401cc41a3491313572859f909006629427e27d",
+    "after": "sha256:1e7f6a1530d2d7fbd6fa57ff814be3af51ee358a86be6ee8aac1e0b91bc498c5",
+    "used": "sha256:adb63f9d6411912cf331fe72799f9520d0af099dd478c6e29b2f248e1b460765",
+    "beforeBytes": 510,
+    "afterBytes": 522,
+    "usedBytes": 39
+  },
+  "impact": {
+    "breaking": [
+      {
+        "pointer": "/properties/seal",
+        "class": "breaking",
+        "reason": "numeric-tightened",
+        "before": {
+          "kind": "local-ref",
+          "ref": "#/$defs/HarborSealId",
+          "target": {
+            "kind": "schema-object",
+            "type": "string",
+            "format": null,
+            "enum": null,
+            "constJson": null,
+            "required": null,
+            "additionalProperties": null,
+            "propertiesKeys": null,
+            "items": null,
+            "itemsType": null,
+            "minLength": null,
+            "maxLength": null,
+            "minimum": null,
+            "maximum": null,
+            "exclusiveMinimum": null,
+            "exclusiveMaximum": null,
+            "minItems": null,
+            "maxItems": null,
+            "nullable": false
+          },
+          "siblings": {
+            "kind": "schema-object",
+            "type": null,
+            "format": null,
+            "enum": null,
+            "constJson": null,
+            "required": null,
+            "additionalProperties": null,
+            "propertiesKeys": null,
+            "items": null,
+            "itemsType": null,
+            "minLength": 4,
+            "maxLength": null,
+            "minimum": null,
+            "maximum": null,
+            "exclusiveMinimum": null,
+            "exclusiveMaximum": null,
+            "minItems": null,
+            "maxItems": null,
+            "nullable": false
+          }
+        },
+        "after": {
+          "kind": "local-ref",
+          "ref": "#/$defs/HarborSealId",
+          "target": {
+            "kind": "schema-object",
+            "type": "string",
+            "format": null,
+            "enum": null,
+            "constJson": null,
+            "required": null,
+            "additionalProperties": null,
+            "propertiesKeys": null,
+            "items": null,
+            "itemsType": null,
+            "minLength": null,
+            "maxLength": null,
+            "minimum": null,
+            "maximum": null,
+            "exclusiveMinimum": null,
+            "exclusiveMaximum": null,
+            "minItems": null,
+            "maxItems": null,
+            "nullable": false
+          },
+          "siblings": {
+            "kind": "schema-object",
+            "type": null,
+            "format": null,
+            "enum": null,
+            "constJson": null,
+            "required": null,
+            "additionalProperties": null,
+            "propertiesKeys": null,
+            "items": null,
+            "itemsType": null,
+            "minLength": 8,
+            "maxLength": null,
+            "minimum": null,
+            "maximum": null,
+            "exclusiveMinimum": null,
+            "exclusiveMaximum": null,
+            "minItems": null,
+            "maxItems": null,
+            "nullable": false
+          }
+        }
+      }
+    ],
+    "compatible": [],
+    "added": [],
+    "deleted": [],
+    "unknown": [],
+    "unchangedCount": 0,
+    "informationalCount": 0,
+    "ignoredUnused": true
+  },
+  "status": "actionable",
+  "ok": true,
+  "appId": "json-schema-webhook-drift",
+  "summary": "Used-path drift: 1 breaking, 0 compatible, 0 deleted, 0 unknown. Unused paths ignored.",
+  "uncertainties": [],
+  "laterIntegrationBindings": [
+    {
+      "id": "useful-jobs-catalog",
+      "status": "not-bound",
+      "note": "PR51 catalog is contrast only. Root owns catalog admission."
+    },
+    {
+      "id": "i01-hash-terms",
+      "status": "pinned-hasher",
+      "note": "Neo PR54 hashTermsVersion contract. Earned-work kernel not imported."
+    }
+  ],
+  "caller": {
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "termsVersion": "sha256:9c0e6608cfe959cc625adc23d599f86f408a063fcb956dde9475f45231bd9e52"
+}

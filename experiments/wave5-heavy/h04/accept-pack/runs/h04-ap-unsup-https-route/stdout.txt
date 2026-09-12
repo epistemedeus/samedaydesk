@@ -1,0 +1,35 @@
+{
+  "ok": false,
+  "engineId": "route-table-diff",
+  "pinSha": "886c81d824e0a24e2faa5b821b1cd0ca46ae0859",
+  "engineSource": "in-tree",
+  "outcome": {
+    "kind": "refused",
+    "transportOk": true,
+    "code": "external_catalog_refused",
+    "analysis": null
+  },
+  "schemaMatch": {
+    "ok": true,
+    "mismatches": [],
+    "outputs": []
+  },
+  "stdoutJson": {
+    "ok": false,
+    "refused": true,
+    "code": "external_catalog_refused",
+    "error": "Only loopback http:// catalogs are accepted. HTTPS and public hosts are external, not local-runtime.",
+    "detail": {
+      "url": "https://example.com/routes.json"
+    }
+  },
+  "refuseJson": {
+    "ok": false,
+    "refused": true,
+    "code": "external_catalog_refused",
+    "error": "Only loopback http:// catalogs are accepted. HTTPS and public hosts are external, not local-runtime.",
+    "detail": {
+      "url": "https://example.com/routes.json"
+    }
+  }
+}

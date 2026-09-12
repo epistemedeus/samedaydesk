@@ -1,0 +1,86 @@
+{
+  "family": "schema",
+  "engineId": "json-schema-webhook-drift",
+  "owned": "experiments/wave5-heavy/h04/accept-pack/cases/schema/",
+  "label": "synthetic-mechanism",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "cli": "node experiments/wave5/m01/bin/run-job.mjs json-schema-webhook-drift --before --after --used --out-dir",
+  "notCopiedFrom": [
+    "tools/json-schema-webhook-drift/fixtures",
+    "experiments/wave5/m01/fixtures/schema",
+    "examples/schema-webhook/h04-schema-01"
+  ],
+  "count": 6,
+  "ids": [
+    "h04-ap-schema-false",
+    "h04-ap-schema-numeric",
+    "h04-ap-schema-required",
+    "h04-ap-schema-ref-sib",
+    "h04-ap-schema-ref-annote",
+    "h04-ap-schema-openapi-yaml"
+  ],
+  "cases": [
+    {
+      "id": "h04-ap-schema-false",
+      "kind": "change",
+      "label": "synthetic-mechanism",
+      "expectedRefusal": false,
+      "refusalCodes": [],
+      "usefulNoChange": false,
+      "expectedOutcome": "analysis",
+      "fact": "Used /properties/laneMarks items boolean true → false tightens the array instance set (boolean-schema-tightened)."
+    },
+    {
+      "id": "h04-ap-schema-numeric",
+      "kind": "change",
+      "label": "synthetic-mechanism",
+      "expectedRefusal": false,
+      "refusalCodes": [],
+      "usefulNoChange": false,
+      "expectedOutcome": "analysis",
+      "fact": "Used /properties/tonnes exclusiveMinimum 0.5 → 1.0 (JSON 1.0 parses as 1) tightens the exclusive lower bound (numeric-tightened)."
+    },
+    {
+      "id": "h04-ap-schema-required",
+      "kind": "change",
+      "label": "synthetic-mechanism",
+      "expectedRefusal": false,
+      "refusalCodes": [],
+      "usefulNoChange": false,
+      "expectedOutcome": "analysis",
+      "fact": "Used /properties/berth required lost pilotOnBoard; property keys unchanged (compatible required-removed)."
+    },
+    {
+      "id": "h04-ap-schema-ref-sib",
+      "kind": "change",
+      "label": "synthetic-mechanism",
+      "expectedRefusal": false,
+      "refusalCodes": [],
+      "usefulNoChange": false,
+      "expectedOutcome": "analysis",
+      "fact": "Used /properties/seal $ref #/$defs/HarborSealId sibling minLength 4 → 8; target unchanged (numeric-tightened)."
+    },
+    {
+      "id": "h04-ap-schema-ref-annote",
+      "kind": "no-change-control",
+      "label": "synthetic-mechanism",
+      "expectedRefusal": false,
+      "refusalCodes": [],
+      "usefulNoChange": true,
+      "expectedOutcome": "analysis",
+      "fact": "Used /properties/berthCode $ref target identical; only description/title annotation siblings changed (unchanged instance set)."
+    },
+    {
+      "id": "h04-ap-schema-openapi-yaml",
+      "kind": "unsupported",
+      "label": "synthetic-mechanism",
+      "expectedRefusal": true,
+      "refusalCodes": ["not-json"],
+      "acceptedAlternateCodes": ["not-this-job-openapi"],
+      "observedRefuseCode": "not-json",
+      "usefulNoChange": false,
+      "expectedOutcome": "refused",
+      "fact": "Tiny OpenAPI 3.0.3 YAML (--- / openapi: 3.0.3) must refuse not-json; never JSON Schema analysis success."
+    }
+  ]
+}

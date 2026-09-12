@@ -1,0 +1,17 @@
+{
+  "id": "h04-ap-schema-ref-annote",
+  "engineId": "json-schema-webhook-drift",
+  "kind": "no-change-control",
+  "label": "synthetic-mechanism",
+  "title": "$ref annotation-only description/title sibling (instance set unchanged)",
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json",
+    "used": "./used.json"
+  },
+  "expected": {
+    "refusal": false,
+    "usefulNoChange": true,
+    "analysisHint": "analysis informational unchanged at /properties/berthCode (description/title siblings; $ref target identical)"
+  }
+}

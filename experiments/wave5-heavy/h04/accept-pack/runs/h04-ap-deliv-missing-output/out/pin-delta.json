@@ -1,0 +1,71 @@
+{
+  "schema": "samedaydesk.lockfile-pin-delta.v1",
+  "appId": "lockfile-pin-delta",
+  "ok": true,
+  "status": "actionable",
+  "purchaseAuthority": false,
+  "paidValueClaim": false,
+  "settlement": "nonsettling-prototype",
+  "equality": "pin-fields",
+  "lockfileVersion": {
+    "before": 3,
+    "after": 3
+  },
+  "mapSource": {
+    "before": "packages",
+    "after": "packages"
+  },
+  "counts": {
+    "beforePins": 1,
+    "afterPins": 1,
+    "added": 0,
+    "removed": 0,
+    "changed": 1,
+    "unchanged": 0,
+    "missingIntegrity": 0
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "node_modules/h04-ap-caller-pin",
+      "name": "h04-ap-caller-pin",
+      "before": {
+        "id": "node_modules/h04-ap-caller-pin",
+        "name": "h04-ap-caller-pin",
+        "version": "1.0.0",
+        "integrity": "sha512-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+        "resolved": "https://registry.npmjs.org/h04-ap-caller-pin/-/h04-ap-caller-pin-1.0.0.tgz",
+        "gitCommit": null,
+        "termsHash": "1efa99165a670133be25e275ab51a88fcdc3faa8a078f41ce8f24f31b9c078a2",
+        "missingIntegrity": false
+      },
+      "after": {
+        "id": "node_modules/h04-ap-caller-pin",
+        "name": "h04-ap-caller-pin",
+        "version": "1.0.1",
+        "integrity": "sha512-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB==",
+        "resolved": "https://registry.npmjs.org/h04-ap-caller-pin/-/h04-ap-caller-pin-1.0.1.tgz",
+        "gitCommit": null,
+        "termsHash": "a2a70d58399f03d2be9783b4a5f1667271c6e2fd9fe7b43508d6d083f2cb0eae",
+        "missingIntegrity": false
+      },
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ]
+    }
+  ],
+  "gaps": [],
+  "caller": {
+    "before": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/delivery-negative/h04-ap-deliv-missing-output/before.json",
+    "after": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/delivery-negative/h04-ap-deliv-missing-output/after.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notCustomerDemand": true,
+    "notMarketFact": true
+  },
+  "provenance": "caller-supplied",
+  "generatedAt": "2026-09-12T00:21:53.470Z"
+}

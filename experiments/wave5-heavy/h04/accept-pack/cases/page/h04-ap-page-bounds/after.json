@@ -1,0 +1,73 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Caller-owned held extract-batch wrapper over git-show HTML facts. Not a live fetch, quote-as-success, or payment."
+  },
+  "jobId": "d284d1d26a60bf3ef5a8f1f76348592558eb3a616d03052649aac411a656f831",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "https://samedaydesk.com/privacy",
+      "status": "success",
+      "data": {
+        "title": "Privacy Policy | SameDayDesk",
+        "description": "Read how SameDayDesk handles information associated with its website and services.",
+        "headings": {
+          "h1": [
+            "Privacy Policy"
+          ]
+        },
+        "text": "Privacy information for the SameDayDesk website and services."
+      },
+      "notes": [
+        "held git show HEAD:server/lib/spa-route-shells.js /privacy"
+      ],
+      "error": null,
+      "finalUrl": "https://samedaydesk.com/privacy",
+      "httpStatus": 200,
+      "provenance": {
+        "transport": "held-git-show",
+        "requestedAt": "2026-09-12T12:00:00.000Z",
+        "completedAt": "2026-09-12T12:00:01.000Z",
+        "fetchedAt": "2026-09-12T12:00:00.000Z",
+        "finalUrl": "https://samedaydesk.com/privacy",
+        "httpStatus": 200,
+        "note": "Observation timestamps record when this wrapper was produced from git show. They are not page-content freshness."
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 1,
+    "bytes": 1900,
+    "wallMs": 8,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 1900,
+    "requests": 1,
+    "wallMs": 8,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "Held git-show extraction; not socket billing."
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

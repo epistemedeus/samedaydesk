@@ -1,0 +1,35 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "sourceKind": "synthetic-mechanism",
+  "note": "Same unique paths as before.json plus a second /inventory/lots record (duplicate path after SDS identity). Collision must be analysis, not a crash. Not copied from tools/route-table-diff/fixtures.",
+  "routes": [
+    {
+      "path": "/inventory/bins",
+      "title": "Inventory bins | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/inventory/bins"
+    },
+    {
+      "path": "/inventory/lots",
+      "title": "Inventory lots | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/inventory/lots"
+    },
+    {
+      "path": "/inventory/holds",
+      "title": "Inventory holds | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/inventory/holds"
+    },
+    {
+      "path": "/inventory/cycle-counts",
+      "title": "Inventory cycle counts | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/inventory/cycle-counts",
+      "robots": "noindex,follow"
+    },
+    {
+      "path": "/inventory/lots",
+      "title": "Inventory lots (alias row) | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/inventory/lots-alias"
+    }
+  ]
+}

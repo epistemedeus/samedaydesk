@@ -1,0 +1,51 @@
+{
+  "schema": "h04.accept-pack.schema.expected-facts.v1",
+  "id": "h04-ap-schema-required",
+  "computedFrom": "raw-parse",
+  "notFromEngine": true,
+  "label": "synthetic-mechanism",
+  "inputsHashed": {
+    "used": "4e233394b1ba9451331cbef90b310f8bf3f771c0c203e9c13f5b28ec86db9237",
+    "before": "54866f6b4d2e8a5682779f4711c363f1460b5abb1368a94e9c167e214e6587b8",
+    "after": "ac57345046f0a1fb0a5c0967035b5e3ccca506e2ab95eb729829051206c39f49"
+  },
+  "usedPointers": [
+    "/properties/berth"
+  ],
+  "sourceFacts": [
+    {
+      "id": "berth-required-removed",
+      "op": "changed",
+      "used": true,
+      "pointer": "/properties/berth",
+      "keyword": "required",
+      "beforeRequired": [
+        "gateCode",
+        "wharfName",
+        "pilotOnBoard"
+      ],
+      "afterRequired": [
+        "gateCode",
+        "wharfName"
+      ],
+      "removedNames": [
+        "pilotOnBoard"
+      ],
+      "addedNames": [],
+      "propertyKeysUnchanged": true,
+      "removedStillInProperties": true,
+      "instanceSet": "weakened",
+      "analysisHint": "required-removed"
+    }
+  ],
+  "ignoredUnused": [
+    {
+      "pointer": "/properties/nightRemarks/description",
+      "op": "changed",
+      "used": false,
+      "before": "Unused overnight log.",
+      "after": "Overnight log (reworded; unused).",
+      "why": "annotation-only unused path"
+    }
+  ]
+}

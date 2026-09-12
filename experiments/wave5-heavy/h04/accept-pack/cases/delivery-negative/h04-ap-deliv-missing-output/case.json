@@ -1,0 +1,26 @@
+{
+  "id": "h04-ap-deliv-missing-output",
+  "family": "delivery-negative",
+  "title": "Missing promised pin-delta.json must fail delivery",
+  "kind": "delivery-negative",
+  "semantic": "missing-promised-pin-delta",
+  "engines": ["lockfile-pin-delta"],
+  "engineId": "lockfile-pin-delta",
+  "m01EngineId": "lockfile-pin-delta",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "changedFact": "h04-ap-caller-pin 1.0.0→1.0.1 (version+integrity+resolved). A complete lockfile-pin-delta run would write pin-delta.json and pin-delta.md with stdout ok:true. If pin-delta.json is then absent, M01 classifyInvocation is incomplete-delivery / missing-promised-output and the accept-pack runner must fail.",
+  "wouldSucceed": true,
+  "expectedEngineKind": "analysis",
+  "expectedDeliveryKind": "incomplete-delivery",
+  "expectedStatus": "incomplete-delivery",
+  "deliveryNegative": {
+    "promised": ["pin-delta.json", "pin-delta.md"],
+    "missingOutputMustFail": true,
+    "classifyKind": "incomplete-delivery",
+    "classifyCode": "missing-promised-output"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "id": "h04-ap-page-stale",
+  "family": "page",
+  "kind": "stale-freshness",
+  "method": "raw-bytes",
+  "claims": {
+    "fresh": false,
+    "current": false
+  },
+  "freshness": "stale",
+  "expectedVerdict": "unchanged",
+  "quotedSourceMdShas": {
+    "repo": "epistemedeus/samedaydesk",
+    "path": "server/lib/spa-route-shells.js",
+    "route": "/terms",
+    "sha": "1caa18e3e25aac98985afa0d7ffdad1b4121042e"
+  },
+  "inputsHashed": {
+    "before": "e8b1c59be2799e2d20d1df2441527a4358436903d40502f13f0baaba23960306",
+    "after": "c1fca41056adeb4250d365707973f2eb0918c59a15b7b9b0404dc782e5fab2cc",
+    "job": "4ebb2344bd2ae4de5e278afe65794ab9a627c965b14fca800841b65b8c0705c4"
+  },
+  "clock": "2026-09-12T12:00:00.000Z",
+  "maxStaleMs": 1000,
+  "afterCompletedAt": "2026-01-01T00:00:01.000Z",
+  "sourceFacts": [
+    {
+      "id": "title",
+      "op": "unchanged",
+      "field": "title",
+      "before": "Terms of Service | SameDayDesk",
+      "after": "Terms of Service | SameDayDesk"
+    },
+    {
+      "id": "description",
+      "op": "unchanged",
+      "field": "description",
+      "before": "Read the terms that govern use of the SameDayDesk website and services.",
+      "after": "Read the terms that govern use of the SameDayDesk website and services."
+    },
+    {
+      "id": "headings.h1",
+      "op": "unchanged",
+      "field": "headings",
+      "path": "/headings/h1",
+      "before": "Terms of Service",
+      "after": "Terms of Service"
+    }
+  ],
+  "note": "Freshness is the held after-observation versus the job clock. This job never re-fetches. claims.fresh must stay false."
+}

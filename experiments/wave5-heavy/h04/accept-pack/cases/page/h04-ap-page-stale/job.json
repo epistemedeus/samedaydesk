@@ -1,0 +1,15 @@
+{
+  "id": "h04-ap-page-stale",
+  "title": "Same /terms selected fields with provenance older than max-stale-ms",
+  "clock": "2026-09-12T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "limits": {
+    "maxStaleMs": 1000
+  },
+  "before": "./before.json",
+  "after": "./after.json"
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://accept-pack.local/h04/berth-code-ref.schema.json",
+  "title": "Berth code via $ref",
+  "$defs": {
+    "BerthCode": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 12
+    }
+  },
+  "type": "object",
+  "required": ["berthCode"],
+  "properties": {
+    "berthCode": {
+      "$ref": "#/$defs/BerthCode",
+      "description": "Wharf berth identifier."
+    },
+    "radioChannel": {
+      "type": "string",
+      "description": "Unused VHF channel."
+    }
+  }
+}

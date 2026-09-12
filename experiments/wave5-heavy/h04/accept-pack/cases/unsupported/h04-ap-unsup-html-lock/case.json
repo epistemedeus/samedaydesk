@@ -1,0 +1,24 @@
+{
+  "id": "h04-ap-unsup-html-lock",
+  "family": "unsupported",
+  "title": "HTML page is not a package-lock.json",
+  "kind": "unsupported-format",
+  "semantic": "html-as-lockfile",
+  "engines": ["lockfile-pin-delta"],
+  "engineId": "lockfile-pin-delta",
+  "m01EngineId": "lockfile-pin-delta",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "inputs": {
+    "before": "./page.html",
+    "after": "./page.html"
+  },
+  "changedFact": "Caller supplies a tiny HTML document as lockfile before/after. lockfile-pin-delta must refuse html-input (or parse-error) instead of emitting pin-delta.json.",
+  "expectedStatus": "refused",
+  "expectedRefusal": {
+    "expected": true,
+    "engineId": "lockfile-pin-delta",
+    "exitCode": 2,
+    "code": "html-input",
+    "acceptedCodes": ["html-input", "parse-error"]
+  }
+}

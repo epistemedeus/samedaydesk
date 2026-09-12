@@ -1,0 +1,19 @@
+{
+  "id": "h04-ap-page-liveurl",
+  "family": "page",
+  "kind": "refusal",
+  "method": "raw-bytes",
+  "claims": {
+    "fresh": false
+  },
+  "networkUsed": false,
+  "inputsHashed": {
+    "before": "203c1665d63858f4a28efa5d8d82c1b28bd669ed5e697f1eadb4cf616489dc76",
+    "after": "0806f20aaf7ab93e0236e664d819007d532ee32a9bc9bbd8a1a71ad06d7292ce",
+    "job": "d5d2a49ba7c8b3cb673f8c9fb4ff2b488ded6d6cf50d03df793eadbe039f4447"
+  },
+  "jobBefore": "http://127.0.0.1:9/h04-ap-page-liveurl-before.json",
+  "jobAfter": "http://127.0.0.1:9/h04-ap-page-liveurl-after.json",
+  "sourceFacts": [],
+  "note": "No selected-field compare. job.before/after are http URL strings. claims.fresh stays false; this job never re-fetches."
+}

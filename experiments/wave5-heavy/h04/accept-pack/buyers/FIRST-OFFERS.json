@@ -1,0 +1,22 @@
+[
+  {
+    "id": "lockfile-pin-delta",
+    "rank": 1,
+    "why": "M01 firstOffer. H04 public set: mocha integrity sha1→sha512 (h04-pub-lock-01), mocha resolved http→https, axios add, webpack-cli remove 8 pins, npm/cli noise informational, berry yarn.lock refuse exit 2. Not a CVE scanner; no advisory join."
+  },
+  {
+    "id": "json-schema-webhook-drift",
+    "rank": 2,
+    "why": "h04-schema-01 exclusiveMinimum boolean→number is the only used-path type-change that invalidates existing emitters (actionable; unused keywords omitted). schema-02 unused additive and schema-03 no-change do not. Not OpenAPI."
+  },
+  {
+    "id": "page-change-offline-job",
+    "rank": 3,
+    "why": "h04-page-03 changes /x402/verified from OpenAPI+schema+Bazaar agree to 7-day CDP Bazaar freshness (verdict=changed; title/h1 held). Same SHAs as route-03 (0/0/0/0). Offline extracts; never a fresh fetch."
+  },
+  {
+    "id": "route-table-diff",
+    "rank": 4,
+    "why": "h04-route-01 adds /for-agents/useful-jobs (breaking=no). Additive catalog/SEO, not a used-op break. SAMPLE is not the published table."
+  }
+]

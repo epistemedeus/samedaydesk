@@ -1,0 +1,192 @@
+{
+  "ok": true,
+  "engineId": "page-change-offline-job",
+  "pinSha": "fec7bc04ac4419f8e7ce40f2613314e6953af6bc",
+  "engineSource": "in-tree",
+  "outcome": {
+    "kind": "analysis",
+    "transportOk": true,
+    "code": null,
+    "analysis": "unchanged"
+  },
+  "schemaMatch": {
+    "ok": true,
+    "mismatches": [],
+    "outputs": [
+      {
+        "name": "page-change.json",
+        "path": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-page-noise/out/page-change.json",
+        "exists": true
+      },
+      {
+        "name": "page-change.md",
+        "path": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-page-noise/out/page-change.md",
+        "exists": true
+      }
+    ]
+  },
+  "stdoutJson": {
+    "ok": true,
+    "job": {
+      "id": "h04-ap-page-noise",
+      "title": "Watch skillguard title, description, and headings across unused-field noise",
+      "fields": [
+        "title",
+        "description",
+        "headings"
+      ]
+    },
+    "report": {
+      "schema": "pilot/page-change-brief/v1",
+      "kind": "merchant_extract_batch",
+      "verdict": "unchanged",
+      "fields": [
+        "title",
+        "description",
+        "headings"
+      ],
+      "claims": {
+        "noChangeProven": true,
+        "contentUnchangedProven": true,
+        "comparable": true,
+        "complete": true,
+        "current": false,
+        "fresh": false,
+        "usefulOutputProven": true,
+        "paymentImpliesUsefulOutput": false
+      },
+      "freshness": "unknown",
+      "snapshot": {
+        "schema": "pilot/change-digest/v1",
+        "verdict": "unchanged",
+        "claims": {
+          "noChangeProven": true,
+          "current": false,
+          "comparable": true,
+          "fresh": false
+        },
+        "freshness": "unknown",
+        "before": {
+          "status": "present",
+          "mediaType": "application/json",
+          "observedAt": "2026-08-30T13:09:16.000Z",
+          "truncated": false,
+          "byteLength": 2894,
+          "sha256": "699671f58bce1c49188c323664c4875f08d1dc17ecd7839fa2f41b96a6e10e5e",
+          "source": {
+            "kind": "file",
+            "role": "before"
+          },
+          "issues": []
+        },
+        "after": {
+          "status": "present",
+          "mediaType": "application/json",
+          "observedAt": "2026-09-12T11:58:01.500Z",
+          "truncated": false,
+          "byteLength": 3088,
+          "sha256": "1750e264b80b9e3301d3196d8f24a35534ef80b9d9ad105d7d92cd529c74877c",
+          "source": {
+            "kind": "file",
+            "role": "after"
+          },
+          "issues": []
+        },
+        "limitsHit": []
+      },
+      "summary": {
+        "matched": 1,
+        "missing": 0,
+        "failed": 0,
+        "unknown": 0,
+        "duplicates": 0,
+        "coverageUnknown": 0,
+        "semantic": 0,
+        "order": 0
+      },
+      "rows": {
+        "matched": [
+          {
+            "sourceKey": "https://samedaydesk.com/skillguard",
+            "source": "https://samedaydesk.com/skillguard",
+            "before": {
+              "id": "item-001",
+              "status": "success"
+            },
+            "after": {
+              "id": "item-001",
+              "status": "success"
+            }
+          }
+        ],
+        "missing": [],
+        "failed": [],
+        "unknown": [],
+        "duplicates": []
+      },
+      "coverageUnknown": [],
+      "changes": [],
+      "observations": {
+        "before": {
+          "jobId": "40180382170eae68a2a7351c9ead66eacee6bb75439985dc1a249b4bd999842f",
+          "jobStatus": "completed",
+          "charged": false,
+          "ok": true,
+          "snapshotObservedAt": null,
+          "artifactObservedAt": "2026-08-30T13:09:16.000Z",
+          "rows": [
+            {
+              "sourceKey": "https://samedaydesk.com/skillguard",
+              "itemId": "item-001",
+              "requestedAt": "2026-08-30T13:09:15.000Z",
+              "completedAt": "2026-08-30T13:09:16.000Z",
+              "fetchedAt": "2026-08-30T13:09:15.200Z",
+              "requestedAtIsNotFreshness": true,
+              "fetchedAtIsNotFreshness": true
+            }
+          ]
+        },
+        "after": {
+          "jobId": "0e8deaa69585bc79b290c40d5fb103153c9ec4f026baddd2e7ad7bcc39ed98fb",
+          "jobStatus": "completed",
+          "charged": false,
+          "ok": true,
+          "snapshotObservedAt": null,
+          "artifactObservedAt": "2026-09-12T11:58:01.500Z",
+          "rows": [
+            {
+              "sourceKey": "https://samedaydesk.com/skillguard",
+              "itemId": "item-001",
+              "requestedAt": "2026-09-12T11:58:00.000Z",
+              "completedAt": "2026-09-12T11:58:01.500Z",
+              "fetchedAt": "2026-09-12T11:58:00.400Z",
+              "requestedAtIsNotFreshness": true,
+              "fetchedAtIsNotFreshness": true
+            }
+          ]
+        },
+        "note": "Source URL identity is separate from two-time observation identity. fetchedAt and completedAt are observation metadata, not content freshness."
+      },
+      "provenance": {
+        "engine": "samedaydesk.page-change-offline-job",
+        "engineVersion": "0.1.1",
+        "merchantCompareImported": false,
+        "networkUsed": false,
+        "paymentAttempted": false,
+        "purchaseAuthorized": false,
+        "evidenceClass": "fixture",
+        "termsVersion": "sha256:8f8f60162b3705e01759717ba3f26e0d7cc047192d1bf7eba5e4f4049ee0eb22",
+        "termsHasher": "i01-integrated-hash-terms",
+        "comparedWithClock": "2026-09-12T12:00:00.000Z",
+        "beforeSha256": "699671f58bce1c49188c323664c4875f08d1dc17ecd7839fa2f41b96a6e10e5e",
+        "afterSha256": "1750e264b80b9e3301d3196d8f24a35534ef80b9d9ad105d7d92cd529c74877c",
+        "elapsedMs": 1.198065,
+        "digestSha256": "1d98c297a093d924ba25eb07409a7c933d04491b24543fe978dc9c4d37319d58"
+      }
+    },
+    "written": {
+      "jsonPath": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-page-noise/out/page-change.json",
+      "mdPath": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-page-noise/out/page-change.md"
+    }
+  }
+}

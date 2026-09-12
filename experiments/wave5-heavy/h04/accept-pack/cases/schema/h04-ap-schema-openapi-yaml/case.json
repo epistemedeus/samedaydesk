@@ -1,0 +1,17 @@
+{
+  "id": "h04-ap-schema-openapi-yaml",
+  "engineId": "json-schema-webhook-drift",
+  "kind": "unsupported",
+  "label": "synthetic-mechanism",
+  "title": "OpenAPI 3.0.3 YAML must refuse, never JSON Schema success",
+  "inputs": {
+    "before": "./before.yaml",
+    "after": "./after.yaml",
+    "used": "./used.json"
+  },
+  "expected": {
+    "refusal": true,
+    "usefulNoChange": false,
+    "analysisHint": "refuse not-json (YAML, no parser) or not-this-job-openapi; never kind json-schema analysis success"
+  }
+}

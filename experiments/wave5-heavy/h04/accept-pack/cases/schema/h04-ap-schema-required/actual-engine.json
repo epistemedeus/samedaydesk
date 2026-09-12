@@ -1,0 +1,110 @@
+{
+  "engineId": "json-schema-webhook-drift",
+  "compositionCwd": "/tmp/w5-h04/ro-m01",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "cli": "node experiments/wave5/m01/bin/run-job.mjs json-schema-webhook-drift --before --after --used --out-dir",
+  "outDir": "/tmp/w5-h04/h04-ap-schema-runs/h04-ap-schema-required",
+  "pinSha": "27482b712a7221e5079d70df85c5dd5608dc70eb",
+  "engineSource": "in-tree",
+  "catalogOk": true,
+  "outcome": {
+    "kind": "analysis",
+    "transportOk": true,
+    "code": null,
+    "analysis": "informational"
+  },
+  "engineStdout": {
+    "ok": true,
+    "appId": "json-schema-webhook-drift",
+    "status": "informational",
+    "termsVersion": "sha256:f00440e60529bdaecce3751fc5f16f9bce3df4c907806d7f4ae754a0534b393a",
+    "kind": "json-schema",
+    "customerBrief": false,
+    "sample": false,
+    "exampleMode": false,
+    "purchaseAuthority": false,
+    "sold": false,
+    "outDir": "/tmp/w5-h04/h04-ap-schema-runs/h04-ap-schema-required",
+    "outputs": [
+      "drift-brief.json",
+      "drift-brief.md"
+    ],
+    "breaking": 0,
+    "compatible": 1,
+    "unknown": 0
+  },
+  "refuseCode": null,
+  "briefImpact": {
+    "status": "informational",
+    "kind": "json-schema",
+    "breaking": [],
+    "compatible": [
+      {
+        "pointer": "/properties/berth",
+        "class": "compatible",
+        "reason": "required-removed",
+        "before": {
+          "kind": "schema-object",
+          "type": "object",
+          "format": null,
+          "enum": null,
+          "constJson": null,
+          "required": [
+            "gateCode",
+            "pilotOnBoard",
+            "wharfName"
+          ],
+          "additionalProperties": false,
+          "propertiesKeys": [
+            "gateCode",
+            "pilotOnBoard",
+            "wharfName"
+          ],
+          "items": null,
+          "itemsType": null,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "exclusiveMinimum": null,
+          "exclusiveMaximum": null,
+          "minItems": null,
+          "maxItems": null,
+          "nullable": false
+        },
+        "after": {
+          "kind": "schema-object",
+          "type": "object",
+          "format": null,
+          "enum": null,
+          "constJson": null,
+          "required": [
+            "gateCode",
+            "wharfName"
+          ],
+          "additionalProperties": false,
+          "propertiesKeys": [
+            "gateCode",
+            "pilotOnBoard",
+            "wharfName"
+          ],
+          "items": null,
+          "itemsType": null,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "exclusiveMinimum": null,
+          "exclusiveMaximum": null,
+          "minItems": null,
+          "maxItems": null,
+          "nullable": false
+        }
+      }
+    ],
+    "unchangedCount": 0,
+    "informationalCount": 0,
+    "unknown": []
+  },
+  "stderr": null
+}

@@ -1,0 +1,36 @@
+{
+  "id": "h04-ap-page-liveurl",
+  "engineId": "page-change-offline-job",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "page-change-offline-job",
+    "--job",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/page/h04-ap-page-liveurl/job.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-page-liveurl/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 2,
+  "durationMs": 83,
+  "stdoutBytes": 536,
+  "stderrBytes": 0,
+  "outDirFiles": [
+    "catalog-receipt.json"
+  ],
+  "promised": [
+    "page-change.json",
+    "page-change.md"
+  ],
+  "delivery": {
+    "kind": "refused",
+    "pass": true,
+    "code": "live_fetch_url",
+    "note": "Product refusal is a useful output, not a delivery failure."
+  },
+  "outcomeKind": "refused",
+  "analysis": null,
+  "refuseCode": "live_fetch_url"
+}

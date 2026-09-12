@@ -1,0 +1,30 @@
+{
+  "id": "h04-ap-page-liveurl",
+  "family": "page",
+  "engineId": "page-change-offline-job",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "title": "http(s) before/after strings refuse live_fetch_url with no network",
+  "kind": "refusal",
+  "mode": "job",
+  "inputs": {
+    "job": "./job.json"
+  },
+  "extraArgs": [],
+  "doNotSubstituteLocalFilesForJobUrls": true,
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "changedFact": "job.json before/after are http://127.0.0.1:9/... URL strings as if a live fetch were requested. Engine must refuse live_fetch_url on STDERR (exit 2) without opening a socket and without reading the sibling held JSON files.",
+  "expectedOutcome": "refused",
+  "expectedRefusal": true,
+  "expectedRefusalCode": "live_fetch_url",
+  "expectedRefusalStream": "stderr",
+  "expectedExitCode": 2,
+  "networkUsed": false,
+  "claimsFresh": false,
+  "source": {
+    "note": "Mechanism case. Loopback port 9 URLs guarantee no public network even if a caller bug attempted a fetch. Local before.json/after.json are unused held snapshots."
+  }
+}

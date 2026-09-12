@@ -1,0 +1,12 @@
+{
+  "id": "h04-ap-page-noise",
+  "title": "Watch skillguard title, description, and headings across unused-field noise",
+  "clock": "2026-09-12T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "before": "./before.json",
+  "after": "./after.json"
+}

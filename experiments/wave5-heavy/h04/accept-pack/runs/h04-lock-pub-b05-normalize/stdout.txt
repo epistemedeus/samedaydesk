@@ -1,0 +1,47 @@
+{
+  "ok": true,
+  "engineId": "lockfile-pin-delta",
+  "pinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+  "engineSource": "in-tree",
+  "outcome": {
+    "kind": "analysis",
+    "transportOk": true,
+    "code": null,
+    "analysis": "informational"
+  },
+  "schemaMatch": {
+    "ok": true,
+    "mismatches": [],
+    "outputs": [
+      {
+        "name": "pin-delta.json",
+        "path": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-lock-pub-b05-normalize/out/pin-delta.json",
+        "exists": true
+      },
+      {
+        "name": "pin-delta.md",
+        "path": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-lock-pub-b05-normalize/out/pin-delta.md",
+        "exists": true
+      }
+    ]
+  },
+  "stdoutJson": {
+    "ok": true,
+    "appId": "lockfile-pin-delta",
+    "status": "informational",
+    "provenance": "caller-supplied",
+    "digest": "86e9ea2836ca78afa00c75dc44120bdab8ade09eb6487a0496df921c34a72d3b",
+    "counts": {
+      "beforePins": 22,
+      "afterPins": 22,
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "unchanged": 22,
+      "missingIntegrity": 0
+    },
+    "outDir": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-lock-pub-b05-normalize/out",
+    "purchaseAuthority": false,
+    "settlement": "nonsettling-prototype"
+  }
+}

@@ -1,0 +1,4 @@
+{
+  "expected": false,
+  "reason": "OpenAPI is not this job; must refuse before any used-path compare"
+}

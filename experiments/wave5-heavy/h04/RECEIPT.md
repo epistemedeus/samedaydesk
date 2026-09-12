@@ -7,7 +7,7 @@
 | Owned path | `experiments/wave5-heavy/h04/` only |
 | Native model | `grok-4.6-build` |
 | Parent session | `03efef00-6fd3-4435-b2d1-1b32a46661b8` |
-| Child count chosen | **9** first delivery + **6** M01 continuation (15 native children total) |
+| Child count chosen | **9** first + **6** M01 replay + **6** accept-pack (**21** native children total) |
 | Pilot pin | `95b3f3a47f5b1b69bd237e4c978fc3376221365d` |
 
 ## Child session ids
@@ -22,7 +22,18 @@
 8. `01a092b3-0d0c-7702-9cbb-e56b82beb1f8` — extra tests + SDS52 OpenAPI run
 9. `01a092b3-0d0c-7702-9cbb-e57ac61fd344` — persist child engine artifacts into `runs/`
 
-### M01 continuation children (this resume)
+### Accept-pack children (this resume)
+
+16. `01a092f3-b423-7d32-b253-4f32948e6961` — schema accept cases
+17. `01a092f3-b423-7d32-b253-4f4afca5c375` — route accept cases
+18. `01a092f3-b423-7d32-b253-4f5cf2b4c6ad` — page accept cases
+19. `01a092f3-b423-7d32-b253-4f664fe4b88c` — unsupported + delivery-negative cases
+20. `01a092f3-b423-7d32-b253-4f70b9c56bcc` — buyer paragraphs / first offers
+21. `01a092f3-b423-7d32-b253-4f8b63f4fc2b` — generatedAt-only digest helper
+
+Accept-pack `run`: 27 cases, 18 analysis, 9 refused, 0 deliveryFails. `delivery-negative` pass. Tests **29 pass**.
+
+### M01 continuation children (prior resume)
 
 10. `01a092c7-66cf-7532-8e7c-eac8259c2724` — M01 composition CLI inventory
 11. `01a092c7-66cf-7532-8e7c-ead0ea041b1d` — raw-byte oracles for 12 examples
@@ -49,7 +60,7 @@ useful-jobs archive sha256 `6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6
 
 ## Tests / coverage
 
-`cd experiments/wave5-heavy/h04 && npm test` → **22 pass, 0 fail**. Prior W4/SDS52 `run`: 12/12 fact match. M01 `m01` replay: 18 CLI runs (11 original + 7 public lockfile) + 1 mapping skip (`h04-route-02`). Measurements: `runs/measurements/m01-replay.json` (wall-clock ms and output bytes; not a hosting bill).
+`cd experiments/wave5-heavy/h04 && npm test` → **29 pass, 0 fail**. Accept-pack `run`: 27 cases (18 analysis, 9 refused, 0 deliveryFails). `delivery-negative` pass. M01 replay measurements remain under `runs/measurements/m01-replay.json`.
 
 ## Strongest offer candidates
 

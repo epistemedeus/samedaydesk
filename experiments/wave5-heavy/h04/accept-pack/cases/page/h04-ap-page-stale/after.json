@@ -1,0 +1,73 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Caller-owned held extract-batch wrapper over git-show HTML facts. Not a live fetch, quote-as-success, or payment."
+  },
+  "jobId": "9ce1c75c9855a3f929ad36106fc6728efb93b9fb9b33542b64a98d331fd4635b",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "https://samedaydesk.com/terms",
+      "status": "success",
+      "data": {
+        "title": "Terms of Service | SameDayDesk",
+        "description": "Read the terms that govern use of the SameDayDesk website and services.",
+        "headings": {
+          "h1": [
+            "Terms of Service"
+          ]
+        },
+        "text": "Terms for use of the SameDayDesk website and services."
+      },
+      "notes": [
+        "held git show HEAD:server/lib/spa-route-shells.js /terms"
+      ],
+      "error": null,
+      "finalUrl": "https://samedaydesk.com/terms",
+      "httpStatus": 200,
+      "provenance": {
+        "transport": "held-git-show",
+        "requestedAt": "2026-01-01T00:00:00.000Z",
+        "completedAt": "2026-01-01T00:00:01.000Z",
+        "fetchedAt": "2026-01-01T00:00:00.000Z",
+        "finalUrl": "https://samedaydesk.com/terms",
+        "httpStatus": 200,
+        "note": "Observation timestamps record when this wrapper was produced from git show. They are not page-content freshness."
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 1,
+    "bytes": 1800,
+    "wallMs": 7,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 1800,
+    "requests": 1,
+    "wallMs": 7,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "Held git-show extraction; not socket billing."
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

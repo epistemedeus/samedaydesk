@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": false,
+  "why": "Used /properties/berth required array lost pilotOnBoard. Compatible weakening, still a used-path change a caller should see."
+}

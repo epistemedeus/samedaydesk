@@ -71,6 +71,20 @@ CLI vs library: counts/status/outcome match on h04-lock-01; full `pin-delta.json
 
 Lockfile remains the first offer: M01 catalog `firstOffer=lockfile-pin-delta`; this replay shows add/remove/integrity/resolved/noise/refuse/large all produce honest analysis or refuse without claiming CVEs.
 
+## Cold-caller accept-pack
+
+Entrypoint: `accept-pack/bin/accept.mjs` (`list` / `run` / `delivery-negative`).
+
+| Family | New cases | Notes |
+| --- | --- | --- |
+| lockfile-public | 7 preserved | Not multiplied |
+| schema | 6 | false items, numeric exclusiveMinimum, required-removed, $ref sibling, $ref annotation no-change, OpenAPI YAML refuse |
+| route | 4 | permutation, duplicate-path breaking, `:sku` vs `{sku}` two paths, method records unsupported_catalog |
+| page | 5 | /for-agents fact change, SkillGuard noise, input_bounds, stale freshness, live_fetch_url |
+| unsupported | 4 | JSON OpenAPI not-this-job-openapi, HTML lock, HTTPS catalog, corrupt JSON |
+
+Refusal is useful. Missing promised outputs fail delivery (`delivery-negative`). Digest helper strips only `generatedAt`. Buyers: `accept-pack/buyers/BUYERS.md`.
+
 ## Later integration
 
 Root / W5-D01 may bind these examples into the SDS52 supplied-input contract. Do not publish wrapper prices to the live catalog from this directory.

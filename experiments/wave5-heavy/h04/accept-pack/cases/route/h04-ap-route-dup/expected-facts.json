@@ -1,0 +1,207 @@
+{
+  "schema": "h04.accept-pack.route.expected-facts.v1",
+  "id": "h04-ap-route-dup",
+  "family": "api-routes",
+  "method": "raw-json-parse",
+  "notFromEngine": true,
+  "computedFrom": "exact before.json/after.json bytes",
+  "sourceKind": "synthetic-mechanism",
+  "inputsHashed": {
+    "before": "cfe4ddfdc57ccde98b2477b3a6a8baa4f0fbd692a68437d6ccddeb53d03989b3",
+    "after": "f72311cdc391debbd7add463a91ae7e8d3fe69c2b915bda6229f57eb33898975"
+  },
+  "wrapper": {
+    "beforeSchema": "samedaydesk.route-table.v1",
+    "afterSchema": "samedaydesk.route-table.v1",
+    "publishedRouteTable": {
+      "before": false,
+      "after": false
+    }
+  },
+  "beforePaths": [
+    "/inventory/bins",
+    "/inventory/lots",
+    "/inventory/holds",
+    "/inventory/cycle-counts"
+  ],
+  "afterPaths": [
+    "/inventory/bins",
+    "/inventory/lots",
+    "/inventory/holds",
+    "/inventory/cycle-counts",
+    "/inventory/lots"
+  ],
+  "identityKeysEqual": false,
+  "orderChanged": false,
+  "recordShapes": {
+    "before": [
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "robots",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      }
+    ],
+    "after": [
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "robots",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      },
+      {
+        "keys": [
+          "canonical",
+          "path",
+          "title"
+        ],
+        "hasPath": true,
+        "hasCanonical": true,
+        "hasTitle": true,
+        "hasMethod": false,
+        "hasHandler": false
+      }
+    ]
+  },
+  "counts": {
+    "beforeRoutes": 4,
+    "afterRoutes": 5,
+    "uniqueBeforePaths": 4,
+    "uniqueAfterPaths": 4,
+    "added": 0,
+    "removed": 0,
+    "changed": 0,
+    "titleOnly": 0,
+    "collisions": 1
+  },
+  "added": [],
+  "removed": [],
+  "changed": [],
+  "titleOnly": [],
+  "collisions": [
+    {
+      "kind": "path",
+      "side": "after",
+      "path": "/inventory/lots",
+      "count": 2,
+      "indexes": [
+        1,
+        4
+      ]
+    }
+  ],
+  "predictedFromRaw": {
+    "m01Kind": "analysis",
+    "refuseCode": null,
+    "outcome": "breaking",
+    "breaking": true
+  },
+  "sdsIdentityFields": [
+    "path",
+    "canonical",
+    "title",
+    "robots"
+  ],
+  "sourceFacts": [
+    {
+      "id": "duplicate-inventory-lots",
+      "op": "collision",
+      "path": "/inventory/lots",
+      "side": "after",
+      "count": 2,
+      "indexes": [
+        1,
+        4
+      ],
+      "titleOnly": false,
+      "before": "once",
+      "after": "twice"
+    }
+  ]
+}

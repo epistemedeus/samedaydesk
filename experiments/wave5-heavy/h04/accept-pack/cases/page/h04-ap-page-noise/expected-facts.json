@@ -1,0 +1,76 @@
+{
+  "id": "h04-ap-page-noise",
+  "family": "page",
+  "kind": "no-change-control",
+  "method": "raw-bytes",
+  "claims": {
+    "fresh": false
+  },
+  "quotedSourceMdShas": {
+    "repo": "epistemedeus/samedaydesk",
+    "path": "client/public/skillguard.html",
+    "selectedFieldsSha": "ff381d2b46e9beec1475212df2eb610a7b01229b"
+  },
+  "inputsHashed": {
+    "before": "699671f58bce1c49188c323664c4875f08d1dc17ecd7839fa2f41b96a6e10e5e",
+    "after": "1750e264b80b9e3301d3196d8f24a35534ef80b9d9ad105d7d92cd529c74877c",
+    "job": "1a4e317f0c2c649cd6ff3fbf714f7dded62505c1fe575d4b0820d3c01b004764"
+  },
+  "expectedVerdict": "unchanged",
+  "sourceFacts": [
+    {
+      "id": "title",
+      "op": "unchanged",
+      "field": "title",
+      "before": "SkillGuard: scan a Claude Code skill or MCP server for malware before you install it",
+      "after": "SkillGuard: scan a Claude Code skill or MCP server for malware before you install it"
+    },
+    {
+      "id": "description",
+      "op": "unchanged",
+      "field": "description",
+      "before": "A free CLI that statically scans Claude Code skills, plugins, and MCP servers for env-var exfiltration, install-time shell hooks, prompt injection, and committed malware, before you install. Never runs the scanned code. Paid deep audit + continuous watch available.",
+      "after": "A free CLI that statically scans Claude Code skills, plugins, and MCP servers for env-var exfiltration, install-time shell hooks, prompt injection, and committed malware, before you install. Never runs the scanned code. Paid deep audit + continuous watch available."
+    },
+    {
+      "id": "headings.h1",
+      "op": "unchanged",
+      "field": "headings",
+      "path": "/headings/h1",
+      "before": "Scan a Claude Code skill or MCP server for malware before you install it.",
+      "after": "Scan a Claude Code skill or MCP server for malware before you install it."
+    },
+    {
+      "id": "headings.h2",
+      "op": "unchanged",
+      "field": "headings",
+      "path": "/headings/h2",
+      "before": "What it catches | Stop worrying about what you install | Safe by design",
+      "after": "What it catches | Stop worrying about what you install | Safe by design"
+    }
+  ],
+  "ignoredUnused": [
+    {
+      "field": "data.text",
+      "why": "appends footer attribution; not a selected title/description/headings field"
+    },
+    {
+      "field": "data.generatedAt",
+      "before": "2026-08-30T13:09:15.000Z",
+      "after": "2026-09-12T11:58:00.000Z"
+    },
+    {
+      "field": "data.assetHash",
+      "before": "ff381d2",
+      "after": "37dd4b4"
+    },
+    {
+      "field": "provenance.fetchedAt",
+      "why": "wrapper timestamps, not page content"
+    },
+    {
+      "field": "json-key-order",
+      "why": "object key order is not a selected field; canonicalize sorts keys"
+    }
+  ]
+}

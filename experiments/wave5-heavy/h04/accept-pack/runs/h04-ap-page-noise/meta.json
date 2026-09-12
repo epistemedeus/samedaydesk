@@ -1,0 +1,37 @@
+{
+  "id": "h04-ap-page-noise",
+  "engineId": "page-change-offline-job",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "page-change-offline-job",
+    "--job",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/page/h04-ap-page-noise/job.json",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-ap-page-noise/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 0,
+  "durationMs": 79,
+  "stdoutBytes": 6168,
+  "stderrBytes": 0,
+  "outDirFiles": [
+    "catalog-receipt.json",
+    "page-change.json",
+    "page-change.md"
+  ],
+  "promised": [
+    "page-change.json",
+    "page-change.md"
+  ],
+  "delivery": {
+    "kind": "analysis",
+    "pass": true,
+    "analysis": "unchanged"
+  },
+  "outcomeKind": "analysis",
+  "analysis": "unchanged",
+  "refuseCode": null
+}

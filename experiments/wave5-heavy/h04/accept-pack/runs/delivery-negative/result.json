@@ -1,0 +1,28 @@
+{
+  "ok": true,
+  "command": "delivery-negative",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "caseId": "h04-pub-lock-01",
+  "before": {
+    "kind": "analysis",
+    "pass": true,
+    "analysis": "actionable"
+  },
+  "simulated": {
+    "simulated": true,
+    "removed": "pin-delta.json",
+    "missing": [
+      "pin-delta.json"
+    ],
+    "deliveryMustFail": true
+  },
+  "after": {
+    "kind": "incomplete-delivery",
+    "pass": false,
+    "analysis": "actionable",
+    "missing": [
+      "pin-delta.json"
+    ]
+  },
+  "note": "Missing promised pin-delta.json must fail delivery. M01 engines were not patched."
+}

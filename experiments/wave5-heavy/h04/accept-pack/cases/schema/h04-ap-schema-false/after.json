@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://accept-pack.local/h04/quay-lane-ticket.schema.json",
+  "title": "Quay lane ticket",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["ticketId", "laneMarks"],
+  "properties": {
+    "ticketId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "laneMarks": {
+      "type": "array",
+      "description": "Painted lane identifiers collected by the handheld scanner.",
+      "items": false
+    },
+    "stewardNote": {
+      "type": "string",
+      "description": "Shift steward annotation (wording only)."
+    }
+  }
+}

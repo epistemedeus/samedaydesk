@@ -1,0 +1,19 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "sourceKind": "synthetic-mechanism",
+  "note": "Caller-owned synthetic catalog. Path /api/items/:sku is the colon-parameter spelling. Not extracted from spa-route-shells.js. Not copied from tools/route-table-diff/fixtures. Homepage / excluded.",
+  "routes": [
+    {
+      "path": "/api/warehouse/status",
+      "title": "Warehouse status | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/api/warehouse/status"
+    },
+    {
+      "path": "/api/items/:sku",
+      "title": "Item by SKU (colon param) | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/api/items/:sku"
+    }
+  ]
+}

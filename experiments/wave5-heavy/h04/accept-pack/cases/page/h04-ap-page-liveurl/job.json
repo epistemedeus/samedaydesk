@@ -1,0 +1,12 @@
+{
+  "id": "h04-ap-page-liveurl",
+  "title": "Refuse http(s) before/after as live fetch",
+  "clock": "2026-09-12T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "before": "http://127.0.0.1:9/h04-ap-page-liveurl-before.json",
+  "after": "http://127.0.0.1:9/h04-ap-page-liveurl-after.json"
+}

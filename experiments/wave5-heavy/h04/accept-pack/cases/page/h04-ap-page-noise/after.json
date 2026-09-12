@@ -1,0 +1,81 @@
+{
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  },
+  "charged": false,
+  "costInputs": {
+    "admittedBodyBytes": 5100,
+    "requests": 1,
+    "wallMs": 16,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "Held git-show extraction; not socket billing."
+  },
+  "accounting": {
+    "requests": 1,
+    "bytes": 5100,
+    "wallMs": 16,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "sources": [
+    {
+      "provenance": {
+        "transport": "held-git-show",
+        "requestedAt": "2026-09-12T11:58:00.000Z",
+        "completedAt": "2026-09-12T11:58:01.500Z",
+        "fetchedAt": "2026-09-12T11:58:00.400Z",
+        "finalUrl": "https://samedaydesk.com/skillguard",
+        "httpStatus": 200,
+        "note": "Observation timestamps record when this wrapper was produced from git show. They are not page-content freshness."
+      },
+      "httpStatus": 200,
+      "finalUrl": "https://samedaydesk.com/skillguard",
+      "error": null,
+      "notes": [
+        "held git show HEAD:client/public/skillguard.html",
+        "synthetic-mechanism: JSON key order, provenance timestamps, unused text/generatedAt/assetHash"
+      ],
+      "data": {
+        "generatedAt": "2026-09-12T11:58:00.000Z",
+        "assetHash": "37dd4b4",
+        "text": "The skill/MCP ecosystem is exploding, and so is the attack surface. SkillGuard statically scans any skill, plugin, or MCP server for the patterns attackers actually use, in seconds. Free, no signup, and it never runs the code it's inspecting. By SameDayDesk. github.com/epistemedeus/skillguard. Also try the free AI-readiness checker.",
+        "headings": {
+          "h2": [
+            "What it catches",
+            "Stop worrying about what you install",
+            "Safe by design"
+          ],
+          "h1": [
+            "Scan a Claude Code skill or MCP server for malware before you install it."
+          ]
+        },
+        "description": "A free CLI that statically scans Claude Code skills, plugins, and MCP servers for env-var exfiltration, install-time shell hooks, prompt injection, and committed malware, before you install. Never runs the scanned code. Paid deep audit + continuous watch available.",
+        "title": "SkillGuard: scan a Claude Code skill or MCP server for malware before you install it"
+      },
+      "status": "success",
+      "source": "https://samedaydesk.com/skillguard",
+      "id": "item-001"
+    }
+  ],
+  "partial": false,
+  "stopReason": null,
+  "jobStatus": "completed",
+  "jobId": "0e8deaa69585bc79b290c40d5fb103153c9ec4f026baddd2e7ad7bcc39ed98fb",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Caller-owned held extract-batch wrapper over git-show HTML facts. Not a live fetch, quote-as-success, or payment."
+  },
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "product": "samedaydesk-extract-batch",
+  "ok": true
+}

@@ -1,0 +1,88 @@
+{
+  "family": "page",
+  "engineId": "page-change-offline-job",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "cli": "node experiments/wave5/m01/bin/run-job.mjs page-change-offline-job --job <job.json> --out-dir DIR",
+  "preferJobMode": true,
+  "claimsFreshNeverTrue": true,
+  "notCopiedFrom": [
+    "tools/page-change-offline-job/fixtures/",
+    "rfq.example",
+    "Q3 widget RFQ",
+    "h04-page-01 schema-validator rename",
+    "h04-page-03 /x402/verified 7-day copy"
+  ],
+  "note": "Caller-owned samedaydesk.extract-batch.v0 wrappers. Selected facts match git-show public SDS HTML/shell copy. claims.fresh is false in every oracle; this job never re-fetches.",
+  "cases": [
+    {
+      "id": "h04-ap-page-fact",
+      "kind": "change",
+      "dir": "./h04-ap-page-fact/",
+      "expectedOutcome": "analysis",
+      "expectedVerdict": "changed",
+      "expectedRefusal": false,
+      "claimsFresh": false,
+      "publicUrl": "https://samedaydesk.com/for-agents",
+      "changedFact": "/for-agents title/h1/description rewrite (3c96d31 → b663e53)"
+    },
+    {
+      "id": "h04-ap-page-noise",
+      "kind": "no-change-control",
+      "dir": "./h04-ap-page-noise/",
+      "expectedOutcome": "analysis",
+      "expectedVerdict": "unchanged",
+      "expectedRefusal": false,
+      "usefulNoChange": true,
+      "claimsFresh": false,
+      "publicUrl": "https://samedaydesk.com/skillguard",
+      "changedFact": "skillguard selected fields identical; provenance/key-order/unselected noise"
+    },
+    {
+      "id": "h04-ap-page-bounds",
+      "kind": "refusal",
+      "dir": "./h04-ap-page-bounds/",
+      "expectedOutcome": "refused",
+      "expectedRefusal": true,
+      "expectedRefusalCode": "input_bounds",
+      "expectedRefusalStream": "stderr",
+      "expectedExitCode": 2,
+      "extraArgs": [
+        "--max-bytes",
+        "200"
+      ],
+      "claimsFresh": false,
+      "publicUrl": "https://samedaydesk.com/privacy",
+      "changedFact": "held extract-batch exceeds max-bytes 200"
+    },
+    {
+      "id": "h04-ap-page-stale",
+      "kind": "stale-freshness",
+      "dir": "./h04-ap-page-stale/",
+      "expectedOutcome": "analysis",
+      "expectedVerdict": "unchanged",
+      "expectedFreshness": "stale",
+      "expectedRefusal": false,
+      "usefulNoChange": true,
+      "extraArgs": [
+        "--max-stale-ms",
+        "1000"
+      ],
+      "claimsFresh": false,
+      "publicUrl": "https://samedaydesk.com/terms",
+      "changedFact": "/terms selected fields identical; after provenance older than max-stale-ms"
+    },
+    {
+      "id": "h04-ap-page-liveurl",
+      "kind": "refusal",
+      "dir": "./h04-ap-page-liveurl/",
+      "expectedOutcome": "refused",
+      "expectedRefusal": true,
+      "expectedRefusalCode": "live_fetch_url",
+      "expectedRefusalStream": "stderr",
+      "expectedExitCode": 2,
+      "networkUsed": false,
+      "claimsFresh": false,
+      "changedFact": "job before/after are http URL strings; refuse without network"
+    }
+  ]
+}

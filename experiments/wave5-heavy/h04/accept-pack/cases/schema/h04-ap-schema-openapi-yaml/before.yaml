@@ -1,0 +1,25 @@
+---
+openapi: 3.0.3
+info:
+  title: Quay crane telemetry
+  version: 0.2.0
+paths:
+  /v1/cranes/{craneId}/load:
+    get:
+      summary: Current spreader load
+      parameters:
+        - name: craneId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Load sample
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tonnes:
+                    type: number

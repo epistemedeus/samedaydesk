@@ -1,0 +1,19 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "sourceKind": "synthetic-mechanism",
+  "note": "Same stable /api/warehouse/status. Item path spelling changed to brace-parameter /api/items/{sku}. Oracle compares raw path strings; engine must not silently unify colon vs brace. Not copied from tools/route-table-diff/fixtures.",
+  "routes": [
+    {
+      "path": "/api/warehouse/status",
+      "title": "Warehouse status | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/api/warehouse/status"
+    },
+    {
+      "path": "/api/items/{sku}",
+      "title": "Item by SKU (brace param) | H04 accept-pack",
+      "canonical": "https://h04-ap-route.test/api/items/{sku}"
+    }
+  ]
+}

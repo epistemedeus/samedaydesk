@@ -1,0 +1,1 @@
+Tiny caller HTML (DOCTYPE + html/head/body) is not npm lockfileVersion 2/3 JSON. lockfile-pin-delta must refuse `html-input` (exit 2). `parse-error` is an accepted alternate if HTML detection is skipped, but the current engine matches `html-input`.

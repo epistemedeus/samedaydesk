@@ -1,0 +1,81 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Caller-owned held extract-batch wrapper over git-show HTML facts. Not a live fetch, quote-as-success, or payment."
+  },
+  "jobId": "63719c03b05243bd37e5de664ebd3762923ba062b58992925d1ce01c18cd0f9f",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "https://samedaydesk.com/for-agents",
+      "status": "success",
+      "data": {
+        "title": "Practical agent jobs | SameDayDesk",
+        "description": "Obtain bounded observations, compare or record already-held JSON, then optionally export a reuse reference. Schema-valid export is user-selected unverified evidence. Purchasing never requires publishing.",
+        "headings": {
+          "h1": [
+            "Obtain observations, use offline jobs, or opt-in reuse"
+          ],
+          "h2": [
+            "Job 1. Obtain bounded extracted observations",
+            "Job 2. Compare explicit fields from two already-held observations",
+            "Job 3. Map already-held JSON into buyer records",
+            "Job 4. Opt-in reuse of an already produced result",
+            "Job 5. Recurring page, issue, and buyer-setup recipes",
+            "Live merchant inventory"
+          ]
+        },
+        "text": "SameDayDesk sells a bounded POST /extract/batch attempt: one to five public HTTPS URLs, caller-selected fields, 0.01 USDC. A later comparison of two already-held JSON artifacts is free, local, and does not fetch. Paid freshness and offline comparison stay distinct. Installation grants no payment authority."
+      },
+      "notes": [
+        "held git show b663e53:client/src/data/machineEntry.mjs FOR_AGENTS_SHELL"
+      ],
+      "error": null,
+      "finalUrl": "https://samedaydesk.com/for-agents",
+      "httpStatus": 200,
+      "provenance": {
+        "transport": "held-git-show",
+        "requestedAt": "2026-09-10T15:22:41.000Z",
+        "completedAt": "2026-09-10T15:22:42.000Z",
+        "fetchedAt": "2026-09-10T15:22:41.000Z",
+        "finalUrl": "https://samedaydesk.com/for-agents",
+        "httpStatus": 200,
+        "note": "Observation timestamps record when this wrapper was produced from git show. They are not page-content freshness."
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 1,
+    "bytes": 4200,
+    "wallMs": 11,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 4200,
+    "requests": 1,
+    "wallMs": 11,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "Held git-show extraction; not socket billing."
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

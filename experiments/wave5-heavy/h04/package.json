@@ -8,6 +8,7 @@
     "test": "node --test test/*.test.mjs",
     "benchmark": "node bin/h04-benchmark.mjs run",
     "m01": "node bin/h04-benchmark.mjs m01",
+    "accept": "node accept-pack/bin/accept.mjs run",
     "smoke": "node bin/h04-benchmark.mjs smoke"
   }
 }

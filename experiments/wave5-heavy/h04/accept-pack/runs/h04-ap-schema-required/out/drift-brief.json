@@ -1,0 +1,126 @@
+{
+  "schema": "samedaydesk.json-schema-webhook-drift.v1",
+  "schemaVersion": 2,
+  "kind": "json-schema",
+  "usedOnly": true,
+  "notOpenApi": true,
+  "notApiUpgradeBrief": true,
+  "purchaseAuthority": false,
+  "sold": false,
+  "customerBrief": false,
+  "sample": false,
+  "exampleMode": false,
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "payment": {
+    "settling": false,
+    "prototype": true,
+    "paid": false
+  },
+  "provenance": "caller-input",
+  "inputs": {
+    "before": "sha256:54866f6b4d2e8a5682779f4711c363f1460b5abb1368a94e9c167e214e6587b8",
+    "after": "sha256:ac57345046f0a1fb0a5c0967035b5e3ccca506e2ab95eb729829051206c39f49",
+    "used": "sha256:4e233394b1ba9451331cbef90b310f8bf3f771c0c203e9c13f5b28ec86db9237",
+    "beforeBytes": 696,
+    "afterBytes": 692,
+    "usedBytes": 40
+  },
+  "impact": {
+    "breaking": [],
+    "compatible": [
+      {
+        "pointer": "/properties/berth",
+        "class": "compatible",
+        "reason": "required-removed",
+        "before": {
+          "kind": "schema-object",
+          "type": "object",
+          "format": null,
+          "enum": null,
+          "constJson": null,
+          "required": [
+            "gateCode",
+            "pilotOnBoard",
+            "wharfName"
+          ],
+          "additionalProperties": false,
+          "propertiesKeys": [
+            "gateCode",
+            "pilotOnBoard",
+            "wharfName"
+          ],
+          "items": null,
+          "itemsType": null,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "exclusiveMinimum": null,
+          "exclusiveMaximum": null,
+          "minItems": null,
+          "maxItems": null,
+          "nullable": false
+        },
+        "after": {
+          "kind": "schema-object",
+          "type": "object",
+          "format": null,
+          "enum": null,
+          "constJson": null,
+          "required": [
+            "gateCode",
+            "wharfName"
+          ],
+          "additionalProperties": false,
+          "propertiesKeys": [
+            "gateCode",
+            "pilotOnBoard",
+            "wharfName"
+          ],
+          "items": null,
+          "itemsType": null,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "exclusiveMinimum": null,
+          "exclusiveMaximum": null,
+          "minItems": null,
+          "maxItems": null,
+          "nullable": false
+        }
+      }
+    ],
+    "added": [],
+    "deleted": [],
+    "unknown": [],
+    "unchangedCount": 0,
+    "informationalCount": 0,
+    "ignoredUnused": true
+  },
+  "status": "informational",
+  "ok": true,
+  "appId": "json-schema-webhook-drift",
+  "summary": "Used-path drift: 1 compatible weakening change(s). Valid analysis, not a transport failure.",
+  "uncertainties": [],
+  "laterIntegrationBindings": [
+    {
+      "id": "useful-jobs-catalog",
+      "status": "not-bound",
+      "note": "PR51 catalog is contrast only. Root owns catalog admission."
+    },
+    {
+      "id": "i01-hash-terms",
+      "status": "pinned-hasher",
+      "note": "Neo PR54 hashTermsVersion contract. Earned-work kernel not imported."
+    }
+  ],
+  "caller": {
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "termsVersion": "sha256:f00440e60529bdaecce3751fc5f16f9bce3df4c907806d7f4ae754a0534b393a"
+}

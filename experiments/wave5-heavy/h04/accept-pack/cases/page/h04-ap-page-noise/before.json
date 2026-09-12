@@ -1,0 +1,80 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Caller-owned held extract-batch wrapper over git-show HTML facts. Not a live fetch, quote-as-success, or payment."
+  },
+  "jobId": "40180382170eae68a2a7351c9ead66eacee6bb75439985dc1a249b4bd999842f",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "https://samedaydesk.com/skillguard",
+      "status": "success",
+      "data": {
+        "title": "SkillGuard: scan a Claude Code skill or MCP server for malware before you install it",
+        "description": "A free CLI that statically scans Claude Code skills, plugins, and MCP servers for env-var exfiltration, install-time shell hooks, prompt injection, and committed malware, before you install. Never runs the scanned code. Paid deep audit + continuous watch available.",
+        "headings": {
+          "h1": [
+            "Scan a Claude Code skill or MCP server for malware before you install it."
+          ],
+          "h2": [
+            "What it catches",
+            "Stop worrying about what you install",
+            "Safe by design"
+          ]
+        },
+        "text": "The skill/MCP ecosystem is exploding, and so is the attack surface. SkillGuard statically scans any skill, plugin, or MCP server for the patterns attackers actually use, in seconds. Free, no signup, and it never runs the code it's inspecting.",
+        "generatedAt": "2026-08-30T13:09:15.000Z",
+        "assetHash": "ff381d2"
+      },
+      "notes": [
+        "held git show ff381d2:client/public/skillguard.html"
+      ],
+      "error": null,
+      "finalUrl": "https://samedaydesk.com/skillguard",
+      "httpStatus": 200,
+      "provenance": {
+        "transport": "held-git-show",
+        "requestedAt": "2026-08-30T13:09:15.000Z",
+        "completedAt": "2026-08-30T13:09:16.000Z",
+        "fetchedAt": "2026-08-30T13:09:15.200Z",
+        "finalUrl": "https://samedaydesk.com/skillguard",
+        "httpStatus": 200,
+        "note": "Observation timestamps record when this wrapper was produced from git show. They are not page-content freshness."
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 1,
+    "bytes": 4800,
+    "wallMs": 13,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 4800,
+    "requests": 1,
+    "wallMs": 13,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "Held git-show extraction; not socket billing."
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

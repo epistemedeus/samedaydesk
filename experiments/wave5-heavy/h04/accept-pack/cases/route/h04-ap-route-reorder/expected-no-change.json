@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": true,
+  "why": "Same six {path,canonical,title,robots} records; only array order changes. Identity is equal. Engine permutation (or no-change if order is ignored) is a useful non-breaking result."
+}

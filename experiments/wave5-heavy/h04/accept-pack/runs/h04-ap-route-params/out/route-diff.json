@@ -1,0 +1,65 @@
+{
+  "schema": "samedaydesk.route-diff.v1",
+  "ok": true,
+  "publishedRouteTable": false,
+  "sample": false,
+  "evidenceClass": {
+    "before": "caller",
+    "after": "caller"
+  },
+  "breaking": true,
+  "outcome": "breaking",
+  "orderChanged": false,
+  "tableDigest": {
+    "before": "sha256:a7f402d6083ca75b26d000142c6d671e492dcb6046f2514d13f071a8444b1db9",
+    "after": "sha256:92ba8f856f4c630191bc23c810bf2ef5e6ccfd5c03b721456821c16a1009933c"
+  },
+  "counts": {
+    "added": 1,
+    "removed": 1,
+    "changed": 0,
+    "titleOnly": 0,
+    "collisions": 0
+  },
+  "added": [
+    {
+      "path": "/api/items/{sku}",
+      "canonical": "https://h04-ap-route.test/api/items/{sku}",
+      "title": "Item by SKU (brace param) | H04 accept-pack",
+      "robots": null
+    }
+  ],
+  "removed": [
+    {
+      "path": "/api/items/:sku",
+      "canonical": "https://h04-ap-route.test/api/items/:sku",
+      "title": "Item by SKU (colon param) | H04 accept-pack",
+      "robots": null
+    }
+  ],
+  "changed": [],
+  "titleOnly": [],
+  "collisions": [],
+  "notes": [
+    "Permutation of the same routes is not a breaking change. tableDigest is order-independent.",
+    "breaking is true only for route collisions (duplicate path or shared canonical after SDS identity) or removals.",
+    "changed lists canonical or robots only. Title-only edits are titleOnly, not a canonical/robots change.",
+    "This artifact is not a published SDS route table and does not rewrite the homepage or spa-route-shells.js.",
+    "Fixture, local-runtime, and external stay distinct. Local HTTP loopback is local-runtime. SAMPLE is fixture.",
+    "A collision or valid no-change report is an analysis outcome, not a transport or engine failure."
+  ],
+  "locators": {
+    "before": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/route/h04-ap-route-params/before.json",
+    "after": "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/cases/route/h04-ap-route-params/after.json"
+  },
+  "laterBindings": {
+    "publicShellsLiveExport": "Unbound. Inject a reader of PUBLIC_SHELLS / SPA_ROUTE_SHELLS. Do not edit spa-route-shells.js.",
+    "hashTermsVersion": "I01 / Neo PR54 owns hashTermsVersion (sha256: + 64 hex). This job hashes route tables only and does not import the earned-work kernel.",
+    "listingRepairPacket": "listing-repair-packet diagnoses listing/route snapshots. Consume it later through an injected adapter. This job diffs caller route catalogs only.",
+    "spaRouteShellsWriter": "Never bind. This job does not write route shells or homepages.",
+    "integrationOwner": "W5-M01 owns wrapper/catalog wiring. This module publishes the comparison contract only. Do not claim a future sibling's behavior."
+  },
+  "nonsettling": true,
+  "paid": false,
+  "settled": false
+}

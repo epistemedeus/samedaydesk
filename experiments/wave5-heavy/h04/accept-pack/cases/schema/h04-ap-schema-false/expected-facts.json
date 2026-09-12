@@ -1,0 +1,51 @@
+{
+  "schema": "h04.accept-pack.schema.expected-facts.v1",
+  "id": "h04-ap-schema-false",
+  "computedFrom": "raw-parse",
+  "notFromEngine": true,
+  "label": "synthetic-mechanism",
+  "inputsHashed": {
+    "used": "24464090b6ca1b45d7868633d7791532e8282ca2a591becc11f5a7d084b077d5",
+    "before": "026feb768fe2f14ed74f1e67520c9ae53169a039a99cc6ef7e1638d0cdfc3c12",
+    "after": "eda7351512144fce3b200c3a5f43cd9dbde364416b1fe96d2a55940d9290c195"
+  },
+  "usedPointers": [
+    "/properties/laneMarks"
+  ],
+  "sourceFacts": [
+    {
+      "id": "laneMarks-items-boolean",
+      "op": "changed",
+      "used": true,
+      "pointer": "/properties/laneMarks",
+      "keyword": "items",
+      "itemsPointer": "/properties/laneMarks/items",
+      "beforeType": "object",
+      "afterType": "object",
+      "beforeItems": true,
+      "afterItems": false,
+      "beforeItemsType": "boolean",
+      "afterItemsType": "boolean",
+      "instanceSet": "tightened",
+      "analysisHint": "boolean-schema-tightened"
+    }
+  ],
+  "ignoredUnused": [
+    {
+      "pointer": "/properties/stewardNote/description",
+      "op": "changed",
+      "used": false,
+      "before": "Free-text note for the shift steward.",
+      "after": "Shift steward annotation (wording only).",
+      "why": "annotation-only unused path"
+    },
+    {
+      "pointer": "/additionalProperties",
+      "op": "unchanged",
+      "used": false,
+      "before": true,
+      "after": true,
+      "why": "root additionalProperties stays true; not the used finding"
+    }
+  ]
+}

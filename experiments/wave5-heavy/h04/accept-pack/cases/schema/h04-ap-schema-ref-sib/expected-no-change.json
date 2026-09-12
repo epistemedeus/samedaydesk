@@ -1,0 +1,4 @@
+{
+  "usefulNoChange": false,
+  "why": "Used /properties/seal keeps $ref #/$defs/HarborSealId but minLength sibling 4 → 8 tightens allowed seal strings."
+}

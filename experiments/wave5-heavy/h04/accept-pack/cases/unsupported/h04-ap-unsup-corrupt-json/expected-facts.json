@@ -1,0 +1,7 @@
+{
+  "source": "raw-bytes",
+  "notEngineStdout": true,
+  "beforeText": "{",
+  "validJson": false,
+  "reason": "Truncated `{` is not JSON.parse-able. parseJsonDocument throws parse-error (looksLikeYamlDocument is false because the text starts with `{`). not-json is the YAML/plain-text refuse and is accepted as an alternate."
+}

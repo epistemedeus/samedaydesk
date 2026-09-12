@@ -1,0 +1,27 @@
+{
+  "id": "h04-ap-route-params",
+  "family": "api-routes",
+  "pack": "accept-pack",
+  "title": "Colon vs brace path parameter spelling as distinct raw strings",
+  "kind": "param-spelling",
+  "sourceKind": "synthetic-mechanism",
+  "engineId": "route-table-diff",
+  "m01EngineId": "route-table-diff",
+  "engines": ["route-table-diff"],
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "changedFact": "Raw path /api/items/:sku is replaced by /api/items/{sku}; /api/warehouse/status is unchanged. Oracle treats the two spellings as different strings.",
+  "usefulNoChange": false,
+  "expectedRefusal": false,
+  "expectedRawPathsDistinct": true,
+  "engineTreatsParamSpellingsAs": "two-paths",
+  "expectedOutcome": "breaking",
+  "expectedBreaking": true,
+  "expectedAdded": ["/api/items/{sku}"],
+  "expectedRemoved": ["/api/items/:sku"],
+  "expectedM01Kind": "analysis",
+  "notDuplicated": ["h04-route-01", "h04-route-03", "tools/route-table-diff/fixtures/*"]
+}

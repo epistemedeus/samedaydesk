@@ -1,0 +1,72 @@
+{
+  "id": "h04-ap-page-fact",
+  "family": "page",
+  "kind": "change",
+  "method": "raw-bytes",
+  "claims": {
+    "fresh": false
+  },
+  "quotedSourceMdShas": {
+    "repo": "epistemedeus/samedaydesk",
+    "beforePath": "server/lib/spa-route-shells.js",
+    "afterPath": "client/src/data/machineEntry.mjs",
+    "beforeSha": "3c96d3137f815035ed4a6467d28c8041916a9aa8",
+    "afterSha": "b663e53771a325d439f24a2a2ccdc94e5250a352",
+    "route": "/for-agents"
+  },
+  "inputsHashed": {
+    "before": "208af4c73ea68e00690ad39564f9dcf170e9a97345d0b2dee3c3806db4c4ef07",
+    "after": "157e1e42b55d354f2960637e608186dfb90575283d49600d9edf937e398c05b9",
+    "job": "be3fe2fe02470f58ca160ee80a31c5b0529b96d4650d577072e620301da86e09"
+  },
+  "expectedVerdict": "changed",
+  "sourceFacts": [
+    {
+      "id": "title",
+      "op": "changed",
+      "field": "title",
+      "before": "Agent payment infrastructure | SameDayDesk",
+      "after": "Practical agent jobs | SameDayDesk"
+    },
+    {
+      "id": "description",
+      "op": "changed",
+      "field": "description",
+      "before": "Connect agents to SameDayDesk machine services through documented x402, MPP, MCP, and HTTP interfaces.",
+      "after": "Obtain bounded observations, compare or record already-held JSON, then optionally export a reuse reference. Schema-valid export is user-selected unverified evidence. Purchasing never requires publishing."
+    },
+    {
+      "id": "headings.h1",
+      "op": "changed",
+      "field": "headings",
+      "path": "/headings/h1",
+      "before": "SameDayDesk interfaces for agents",
+      "after": "Obtain observations, use offline jobs, or opt-in reuse"
+    },
+    {
+      "id": "headings.h2",
+      "op": "changed",
+      "field": "headings",
+      "path": "/headings/h2",
+      "before": null,
+      "after": [
+        "Job 1. Obtain bounded extracted observations",
+        "Job 2. Compare explicit fields from two already-held observations",
+        "Job 3. Map already-held JSON into buyer records",
+        "Job 4. Opt-in reuse of an already produced result",
+        "Job 5. Recurring page, issue, and buyer-setup recipes",
+        "Live merchant inventory"
+      ]
+    }
+  ],
+  "ignoredUnused": [
+    {
+      "field": "data.text",
+      "why": "crawler lead paragraph is not a selected title/description/headings field"
+    },
+    {
+      "field": "provenance.fetchedAt",
+      "why": "wrapper timestamps, not page-content freshness"
+    }
+  ]
+}

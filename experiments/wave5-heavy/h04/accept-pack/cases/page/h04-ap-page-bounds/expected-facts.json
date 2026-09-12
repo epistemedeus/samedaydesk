@@ -1,0 +1,50 @@
+{
+  "id": "h04-ap-page-bounds",
+  "family": "page",
+  "kind": "refusal",
+  "method": "raw-bytes",
+  "claims": {
+    "fresh": false
+  },
+  "quotedSourceMdShas": {
+    "repo": "epistemedeus/samedaydesk",
+    "path": "server/lib/spa-route-shells.js",
+    "route": "/privacy",
+    "sha": "1caa18e3e25aac98985afa0d7ffdad1b4121042e"
+  },
+  "inputsHashed": {
+    "before": "1ae57fe7389ff334c7baf7af5e1e728c1d80165764dc61666224007dc568648d",
+    "after": "40367175b83e16dca506b42873e657dc445b1ca53f94ff9b44a1070d21f62d8f",
+    "job": "0ccc3f7234ee308f3d5dde034f4d4ea04aa7abc68e57615880ba0ec6ec35d33f"
+  },
+  "inputBytes": {
+    "before": 2188,
+    "after": 2185,
+    "maxBytes": 200
+  },
+  "sourceFacts": [
+    {
+      "id": "title",
+      "op": "unchanged",
+      "field": "title",
+      "before": "Privacy Policy | SameDayDesk",
+      "after": "Privacy Policy | SameDayDesk"
+    },
+    {
+      "id": "description",
+      "op": "unchanged",
+      "field": "description",
+      "before": "Read how SameDayDesk handles information associated with its website and services.",
+      "after": "Read how SameDayDesk handles information associated with its website and services."
+    },
+    {
+      "id": "headings.h1",
+      "op": "unchanged",
+      "field": "headings",
+      "path": "/headings/h1",
+      "before": "Privacy Policy",
+      "after": "Privacy Policy"
+    }
+  ],
+  "note": "Oracle records the held privacy facts and the byte ceiling. Compare must not run; claims.fresh stays false."
+}

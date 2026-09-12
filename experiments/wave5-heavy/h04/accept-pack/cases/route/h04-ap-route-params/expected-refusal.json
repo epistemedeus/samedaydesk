@@ -1,0 +1,7 @@
+{
+  "expected": false,
+  "refuse": false,
+  "reasons": [],
+  "code": null,
+  "note": "Colon vs brace parameter paths are still SDS-shaped {path,canonical,title} records."
+}

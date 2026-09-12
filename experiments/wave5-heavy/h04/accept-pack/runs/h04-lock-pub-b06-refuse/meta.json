@@ -1,0 +1,38 @@
+{
+  "id": "h04-lock-pub-b06-refuse",
+  "engineId": "lockfile-pin-delta",
+  "compositionSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "observedSha": "a20232b0f777b0f737cdffefb64a9ca9d9c9ba0e",
+  "argv": [
+    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+    "/tmp/w5-h04/ro-m01/experiments/wave5/m01/bin/run-job.mjs",
+    "lockfile-pin-delta",
+    "--before",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b06-refuse/yarn.lock",
+    "--after",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/examples/lockfile-public/set-b/h04-lock-pub-b06-refuse/yarn.lock",
+    "--out-dir",
+    "/tmp/w5-h04/wt/experiments/wave5-heavy/h04/accept-pack/runs/h04-lock-pub-b06-refuse/out"
+  ],
+  "cwd": "/tmp/w5-h04/ro-m01",
+  "exitCode": 2,
+  "durationMs": 80,
+  "stdoutBytes": 855,
+  "stderrBytes": 0,
+  "outDirFiles": [
+    "catalog-receipt.json"
+  ],
+  "promised": [
+    "pin-delta.json",
+    "pin-delta.md"
+  ],
+  "delivery": {
+    "kind": "refused",
+    "pass": true,
+    "code": "parse-error",
+    "note": "Product refusal is a useful output, not a delivery failure."
+  },
+  "outcomeKind": "refused",
+  "analysis": null,
+  "refuseCode": "parse-error"
+}
