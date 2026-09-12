@@ -199,9 +199,11 @@ export function classifyHttp(status, charged) {
 }
 
 let paymentSeq = 0;
-export function nextPaymentId(prefix = "d26") {
+export function nextPaymentId(label = "d26") {
   paymentSeq += 1;
-  return `${prefix}_${String(paymentSeq).padStart(18, "0")}`.slice(0, 24);
+  const n = String(paymentSeq).padStart(12, "0");
+  const tag = String(label).replace(/[^a-z0-9]/gi, "").slice(0, 8) || "case";
+  return `lockfile_${tag}_${n}`;
 }
 
 export { LIVE_LOCKFILE_PATH };

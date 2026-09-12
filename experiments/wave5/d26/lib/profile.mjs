@@ -45,12 +45,22 @@ async function postLockfile(base, body, headers = {}) {
   }
   return {
     status: res.status,
+    headers: res.headers,
     raw,
     json,
     requestBytes,
     outputBytes: raw.length,
     charged: json?.charged === true,
   };
+}
+
+function uniquifyBody(body, token) {
+  if (!body || typeof body.before !== "object" || body.before == null) return body;
+  const before = { ...body.before, _d26: String(token) };
+  const after = typeof body.after === "object" && body.after != null
+    ? { ...body.after, _d26: String(token) }
+    : body.after;
+  return { before, after };
 }
 
 function rowFromAttempt({
@@ -208,7 +218,16 @@ export async function runLockfileProfile({
       const settle0 = facilitator.calls.settle;
       const ids = Array.from({ length: n }, () => nextPaymentId("c"));
       const wave = await measureDuring(merchant.pid, () => Promise.all(
-        ids.map((id) => completeAttempt(merchant, concurrencyBody, id)),
+        ids.map(async (id, index) => {
+          const started = process.hrtime.bigint();
+          const attempt = await completeAttempt(
+            merchant,
+            uniquifyBody(concurrencyBody, `${n}-${index + 1}-${id}`),
+            id,
+          );
+          attempt.ownWallMs = Number(process.hrtime.bigint() - started) / 1e6;
+          return attempt;
+        }),
       ));
       const verifyCalls = facilitator.calls.verify - verify0;
       const settleCalls = facilitator.calls.settle - settle0;
@@ -222,14 +241,14 @@ export async function runLockfileProfile({
           classification: classifyHttp(final.status, final.charged),
           httpStatus: final.status,
           charged: final.charged,
-          wallMs: wave.wallMs,
+          wallMs: attempt.ownWallMs,
           cpuMs: null,
           peakRssBytes: wave.peakRssBytes,
           requestBytes: final.requestBytes,
           outputBytes: final.outputBytes,
           verifyCalls: null,
           settleCalls: null,
-          note: "Per-request facilitator counts are not attributed under concurrent waves; see the wave row.",
+          note: "Per-request facilitator counts are not attributed under concurrent waves; see the wave row. Body is uniquified so replay 409 is not the measurement.",
         });
       });
       rows.push({
@@ -282,11 +301,12 @@ export async function runLockfileProfile({
       }));
     }
 
-    const successful = rows.filter((r) => r.classification === "successful");
-    const refused = rows.filter((r) => r.classification === "refused");
-    const failed = rows.filter((r) => r.classification === "failed");
-    const failedSettles = rows.filter((r) => r.classification === "failed" && Number(r.settleCalls) > 0);
-    const refusedSettles = rows.filter((r) => r.classification === "refused" && Number(r.settleCalls) > 0);
+    const serial = rows.filter((r) => r.family !== "concurrency" && r.family !== "concurrency-wave");
+    const successful = serial.filter((r) => r.classification === "successful");
+    const refused = serial.filter((r) => r.classification === "refused");
+    const failed = serial.filter((r) => r.classification === "failed");
+    const failedSettles = serial.filter((r) => r.classification === "failed" && Number(r.settleCalls) > 0);
+    const refusedSettles = serial.filter((r) => r.classification === "refused" && Number(r.settleCalls) > 0);
 
     const mean = (list, key) => {
       const nums = list.map((r) => Number(r[key])).filter((n) => Number.isFinite(n));
@@ -330,6 +350,9 @@ export async function runLockfileProfile({
       idleRssBytes: idle.rssBytes,
       counts: {
         rows: rows.length,
+        serialSuccessful: successful.length,
+        serialRefused: refused.length,
+        serialFailed: failed.length,
         successful: successful.length,
         refused: refused.length,
         failed: failed.length,

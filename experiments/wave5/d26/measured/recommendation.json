@@ -1,0 +1,60 @@
+{
+  "schema": "samedaydesk.wave5.d26.lockfile-offer.v1",
+  "assignment": "W5-D26",
+  "liveLockfileOffer": true,
+  "historicalAssumedScenario": false,
+  "priceUsdc": "0.005",
+  "priceAtomic": "5000",
+  "priceChange": false,
+  "certifiedNoLoss": false,
+  "nonLossmaking": false,
+  "code": "no-loss-not-proven",
+  "recommendation": "keep-current-0.005-without-no-loss-claim",
+  "summary": "Keep the live POST /lockfile-pin-delta quote at 0.005 USDC (5000 atomic). Do not change the price from this kit. Per-request Railway variable cost on this VM is far below 5000 atomic after ceiling, but that is not a no-loss proof: Railway plan/credits, idle replica, xpay fees, and production mix are unmeasured. Do not substitute the historical F08 0.003 T3/60s scenario.",
+  "variable": {
+    "thisVmMaxSuccessfulRailwayCeilAtomic": "1",
+    "cdpUsageBasedPerSuccessfulSettleAtomic": "1000",
+    "cdpPlusThisVmCeilVs5000": "5000 covers CDP $0.001 plus this-VM Railway ceiling IF production is CDP and idle/xpay/plan stay out of the unit",
+    "note": "Variable compute is measured CPU/RSS attribution on this VM, not Railway's bill. Ceiling to 1 atomic USDC still dwarfs sub-atomic Railway seconds."
+  },
+  "failedVersusSuccessful": {
+    "executeBeforeSettle": "HTTP >=400 cancels settlement (charged false). Refused and failed attempts should have zero settle calls.",
+    "refusedWithSettle": 0,
+    "failedWithSettle": 0,
+    "railwayStillBurnsOnRefuseAndFail": true,
+    "timeoutCeilingMs": 5000,
+    "timeoutIsNotAverage": true,
+    "timeoutMeasuredWallMs": 5065.022093,
+    "timeoutSettleCalls": 0
+  },
+  "allocatedFixed": {
+    "thisVmIdleRssHourUsd": "0.002447109008",
+    "thisVmIdleRssMonthUsd": "1.761918486328",
+    "accountPlan": "unknown",
+    "includedUsageUsd": "unknown",
+    "note": "Allocated cost dominates if the replica stays up. Do not treat Hobby/Pro included credits as unit-cost cover. Production replica size is unknown."
+  },
+  "facilitator": {
+    "sourceDefault": "xpay",
+    "xpayFee": "unknown",
+    "cdpFeeIfEnabled": "verify free; $0.001 per onchain settle after 1000/month free tier (tier is not unit cost)"
+  },
+  "timeoutDecision": "Keep the 5000ms worker ceiling until production mix and measured H04 walls show saturation. A max of 5000ms is not a 5000ms average. Do not raise or lower it from this kit without those measurements.",
+  "mustMeasureBeforeNoLoss": [
+    "Railway account plan and remaining included usage credits (unknown here; credits are not unit cost).",
+    "Production FACILITATOR setting (source default is xpay; CDP $0.001 applies only if FACILITATOR=cdp).",
+    "xpay facilitator fee schedule if production stays on xpay (unpublished here, not zero).",
+    "Idle replica RSS and CPU on Railway (allocated/fixed), not only per-request VM ticks.",
+    "Railway dashboard CPU-seconds, GB-seconds, and egress for this service.",
+    "Mix of successful vs refused vs timeout attempts in production (timeouts burn ~5s compute with no settle).",
+    "Whether execute-before-settle remains true for HTTP >=400 in the deployed build."
+  ],
+  "coversFloorClaim": false,
+  "publishedToLiveCatalog": false,
+  "liveSettleAttempted": false,
+  "offer": {
+    "proposedPriceUsdc": "0.005000",
+    "proposedPriceAtomic": "5000",
+    "keepCurrentOffer": true
+  }
+}

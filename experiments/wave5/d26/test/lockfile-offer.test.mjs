@@ -10,6 +10,7 @@ import {
 } from "../lib/railway-fees.mjs";
 import { facilitatorAttemptCost } from "../lib/facilitator-cost.mjs";
 import { recommendLiveLockfileOffer } from "../lib/lockfile-offer.mjs";
+import { nextPaymentId } from "../lib/merchant-harness.mjs";
 
 describe("live lockfile 0.005 / Railway units", () => {
   it("0.005 USDC is 5000 atomic and is the live lockfile quote", () => {
@@ -55,6 +56,12 @@ describe("live lockfile 0.005 / Railway units", () => {
     assert.equal(xpay.feeKnown, false);
     assert.equal(xpay.appliesCdp001, false);
     assert.equal(xpay.settleFeeUsdc, null);
+  });
+
+  it("payment identifiers stay unique when labels are long", () => {
+    const ids = new Set(Array.from({ length: 40 }, () => nextPaymentId("h04-pub-lock-01")));
+    assert.equal(ids.size, 40);
+    for (const id of ids) assert.ok(id.startsWith("lockfile_"));
   });
 
   it("current 0.005 offer is not certified no-loss", () => {

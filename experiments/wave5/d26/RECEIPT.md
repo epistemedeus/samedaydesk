@@ -26,17 +26,31 @@ the live lockfile route, plus a labelled historical F08 assumed scenario.
 Keep **$0.005 / 5000 atomic**. Do not change the price from this kit. Do not
 claim no-loss.
 
-Per-request Railway CPU+RAM on this VM is far below 5000 atomic (per-second
-rates, no 60s minimum). That is attribution, not a Railway invoice. Default
-merchant facilitator is **xpay** (fee unknown). CDP $0.001/onchain settle
-applies only if production is `FACILITATOR=cdp`. Failed and refused attempts
-must not settle (`execute-before-settle`); they still burn compute. Idle
-replica RAM is the likely dominant allocated cost and is unmeasured in
-production. Railway plan and included credits are unknown and are not unit
-cost.
+This-VM serial successes on the mounted handler were ~38–74ms wall (mean
+~48ms). H04 large (72KiB) was ~51ms. Near-128KiB admitted lockfile was
+~41ms. None of that approaches the 5000ms worker ceiling. Timeout with
+`WORKER_HOLD_MS=6000` was ~5065ms wall, HTTP 503, settle 0. Yarn/HTML/path
+and oversize cases refused in ~1–3ms with settle 0. Failed and refused
+settle counts were zero (`execute-before-settle`).
+
+Concurrency against uniquified b04 bodies (not a loadtest): wave wall
+1-way ~39ms (settle 1), 6-way ~96ms (settle 6), 12-way ~178ms (settle 12).
+Peak RSS rose from ~189MB idle to ~401MB at 12-way.
+
+Per-request Railway CPU+RAM on this VM ceils to 1 USDC atomic. That is
+attribution, not a Railway invoice. Default merchant facilitator is
+**xpay** (fee unknown). CDP $0.001/onchain settle applies only if
+production is `FACILITATOR=cdp`. Idle replica RAM on this process
+(~189MB) attributes to about $0.0024/hour or ~$1.76/30d at official
+per-second memory rates. Railway plan and included credits are unknown
+and are not unit cost.
 
 What must still be measured before saying no-loss is listed on
-`measured/recommendation.json`. Timeout 5000ms is a ceiling, not an average.
+`measured/recommendation.json`. Timeout 5000ms is a ceiling, not an
+average; H04 walls here do not justify changing it.
+
+Replayable artifacts: `measured/profile.json`, `measured/profile.csv`,
+`measured/environment.json`, `measured/source-export.json`.
 
 ## Historical assumed scenario (preserved, not current)
 
@@ -52,6 +66,8 @@ cd experiments/wave5/d26 && node --test --test-concurrency=1 test/*.test.mjs
 ```
 
 Also: `node bin/price-floor.mjs profile` writes `measured/`.
+
+Tests: **32 pass, 0 fail** (`node --test --test-concurrency=1 test/*.test.mjs`).
 
 ## pstack / model
 

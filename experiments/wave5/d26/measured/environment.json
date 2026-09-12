@@ -1,0 +1,37 @@
+{
+  "schema": "samedaydesk.wave5.d26.environment.v1",
+  "capturedAt": "2026-09-12T01:48:47.197Z",
+  "hostname": "cursor",
+  "platform": "linux",
+  "arch": "x64",
+  "node": "v22.14.0",
+  "execPath": "/exec-daemon/node",
+  "pid": 8423,
+  "cwd": "/agent/repos/samedaydesk/experiments/wave5/d26",
+  "clkTck": 100,
+  "cpuCount": 4,
+  "cpuModel": "Intel(R) Xeon(R) Processor",
+  "loadavg": [
+    0.53,
+    0.19,
+    0.06
+  ],
+  "memTotalBytes": 16791945216,
+  "memFreeBytes": 5852844032,
+  "memAvailableBytes": 7301242880,
+  "merchantRoot": "/tmp/d26-merchant",
+  "merchantSha": "ca38205279f0d543515b81b7261909e55ea2600f",
+  "merchantVersion": "1.23.47",
+  "h04Root": "/tmp/readonly-refs/sds-h04",
+  "h04Sha": "7026dc9ad4bc9bef6c68cf0654fff5a6d2c54bbc",
+  "method": {
+    "handler": "spawn merchant server.js against injectable fake facilitator on 127.0.0.1",
+    "cpu": "/proc/<pid>/stat utime+stime plus reaped cutime/cstime and live descendant self ticks",
+    "rss": "polled /proc status VmRSS for merchant plus descendants during the request",
+    "wall": "process.hrtime.bigint around fetch",
+    "notProductionCapacity": true,
+    "noPublicEndpointLoad": true,
+    "noLivePayment": true
+  },
+  "osRelease": "PRETTY_NAME=\"Ubuntu 24.04.4 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.4 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo"
+}
