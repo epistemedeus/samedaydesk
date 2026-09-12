@@ -1,0 +1,28 @@
+{
+  "schema": "s176.next-run-manifest.v1",
+  "family": "pricing-row-unit",
+  "parser": "s134-openapi-impact",
+  "schedulerDaemon": false,
+  "sourceMeta": {
+    "note": "Forged next-run whose parser does not match family. Binder must refuse."
+  },
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "currentInputs": {
+    "before": {
+      "path": "./before.json",
+      "bytes": 1,
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "after": {
+      "path": "./after.json",
+      "bytes": 1,
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "used": null
+  },
+  "paidValueClaim": false,
+  "freeOffline": true
+}

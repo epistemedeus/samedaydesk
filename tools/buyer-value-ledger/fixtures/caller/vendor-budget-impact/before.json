@@ -1,0 +1,14 @@
+{
+  "rows": [
+    {
+      "field": "w4-commerce-16-input",
+      "value": 4.0,
+      "unit": "USD/1M-tokens"
+    },
+    {
+      "field": "w4-commerce-16-output",
+      "value": 12.0,
+      "unit": "USD/1M-tokens"
+    }
+  ]
+}

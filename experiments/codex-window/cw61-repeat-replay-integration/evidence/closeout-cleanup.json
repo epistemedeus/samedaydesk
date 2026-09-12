@@ -1,0 +1,17 @@
+{
+  "removed": [
+    {
+      "path": "experiments/codex-window/cw61-repeat-replay-integration/evidence/initial-wrapper/s242-vendors-VPbZ9r",
+      "files": 1321,
+      "reason": "completed reproducible extract only; input/output evidence retained"
+    },
+    {
+      "path": "experiments/codex-window/cw61-repeat-replay-integration/evidence/initial-wrapper/sds-paid-useful-jobs-6bf650391fad4fa6",
+      "files": 105,
+      "reason": "completed reproducible extract only; input/output evidence retained"
+    }
+  ],
+  "assignmentTmpdir": "../.closeout-tmp",
+  "assignmentTmpdirEntries": 0,
+  "unrelatedProcessesTerminated": false
+}

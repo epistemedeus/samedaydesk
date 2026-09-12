@@ -1,0 +1,161 @@
+{
+  "ok": true,
+  "jobId": "vendor-budget-impact",
+  "title": "Vendor Budget Impact",
+  "fundingState": "unfunded",
+  "sold": false,
+  "sample": false,
+  "sampleReasons": [],
+  "purchaseAuthority": false,
+  "outputs": [
+    {
+      "name": "budget-impact.json",
+      "path": "/tmp/puj-vendor-budget-impact-out-o0GNOD/budget-impact.json",
+      "bytes": 1387,
+      "sha256": "e32ee96fb47a6783aceeb483be3bad3eb9975d16099cf85184f7e1859b6b2e6e"
+    },
+    {
+      "name": "budget-impact.md",
+      "path": "/tmp/puj-vendor-budget-impact-out-o0GNOD/budget-impact.md",
+      "bytes": 472,
+      "sha256": "4627b09fe0f64a7ae8655a112b79da743d3000cdf40f5452e8c946d20be7116c"
+    }
+  ],
+  "receipt": {
+    "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+    "jobId": "vendor-budget-impact",
+    "engine": {
+      "package": "useful-jobs",
+      "version": "1.0.0",
+      "purchaseAuthority": false,
+      "cli": "node bin/useful-jobs.mjs run <id>",
+      "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "archiveBytes": 2522418,
+      "sourceRepo": "epistemedeus/pilot",
+      "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+      "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+      "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+    },
+    "inputsDigest": "41b190e6a80bb828fd26c597c0e8c7d2778fdad31f58e25cd0dbc000c535417c",
+    "outputsDigest": "bc3b4393b212586a6b606dea5f9d4911a610684683b830db7c3f6e5a86eb42cc",
+    "inputs": [
+      {
+        "name": "before",
+        "kind": "file",
+        "bytes": 281,
+        "sha256": "c477e516ce555fd9b80bf5f3c25fc9d3389fb79db32ab1f5d601b355d7328499"
+      },
+      {
+        "name": "after",
+        "kind": "file",
+        "bytes": 352,
+        "sha256": "5fe4ec1dbf3945ddb008f63ffee78cfea02559afa68b185eb80e57c42dbb3ee9"
+      }
+    ],
+    "inputRoot": null,
+    "outputs": [
+      {
+        "name": "budget-impact.json",
+        "path": "/tmp/puj-vendor-budget-impact-out-o0GNOD/budget-impact.json",
+        "bytes": 1387,
+        "sha256": "e32ee96fb47a6783aceeb483be3bad3eb9975d16099cf85184f7e1859b6b2e6e"
+      },
+      {
+        "name": "budget-impact.md",
+        "path": "/tmp/puj-vendor-budget-impact-out-o0GNOD/budget-impact.md",
+        "bytes": 472,
+        "sha256": "4627b09fe0f64a7ae8655a112b79da743d3000cdf40f5452e8c946d20be7116c"
+      }
+    ],
+    "fundingState": "unfunded",
+    "sold": false,
+    "sample": false,
+    "sampleReasons": [],
+    "purchaseAuthority": false,
+    "liveSettlement": "out-of-scope",
+    "fixturePrice": {
+      "labelled": true,
+      "live": false,
+      "publishedToLiveCatalog": false,
+      "jobId": "vendor-budget-impact",
+      "amountUsdc": "0.02",
+      "amountAtomic": "20000",
+      "payTo": "0x0000000000000000000000000000000000000F08",
+      "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+    },
+    "payment": {
+      "fixture": false,
+      "purchaseAuthority": false,
+      "liveSettleAttempted": false,
+      "liveSettleAllowed": false,
+      "fundingState": "unfunded"
+    },
+    "continuity": null,
+    "engineResult": {
+      "ok": true,
+      "status": "actionable",
+      "digest": "73d2bbe40b11ccb5",
+      "refused": false,
+      "identityVerified": null
+    },
+    "outDir": "/tmp/puj-vendor-budget-impact-out-o0GNOD",
+    "publishedDir": "/tmp/cw60-probe-20260912",
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+    "transport": "ok",
+    "analysis": {
+      "status": "actionable",
+      "outcome": "actionable",
+      "identityVerified": null
+    },
+    "delivery": {
+      "status": "complete",
+      "complete": true,
+      "expected": [
+        "budget-impact.json",
+        "budget-impact.md"
+      ],
+      "present": [
+        "budget-impact.json",
+        "budget-impact.md"
+      ],
+      "missing": [],
+      "unexpected": [],
+      "publishedDir": "/tmp/cw60-probe-20260912"
+    },
+    "runOutDir": "/tmp/puj-vendor-budget-impact-out-o0GNOD"
+  },
+  "engine": {
+    "ok": true,
+    "appId": "vendor-budget-impact",
+    "status": "actionable",
+    "digest": "73d2bbe40b11ccb5",
+    "outDir": "/tmp/puj-vendor-budget-impact-out-o0GNOD",
+    "purchaseAuthority": false
+  },
+  "liveSettlement": "out-of-scope",
+  "executionId": "addc2aed-ea07-4a30-9128-e9ccc73c96c7",
+  "runOutDir": "/tmp/puj-vendor-budget-impact-out-o0GNOD",
+  "outDir": "/tmp/cw60-probe-20260912",
+  "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+  "transport": "ok",
+  "analysis": {
+    "status": "actionable",
+    "outcome": "actionable",
+    "identityVerified": null
+  },
+  "delivery": {
+    "status": "complete",
+    "complete": true,
+    "expected": [
+      "budget-impact.json",
+      "budget-impact.md"
+    ],
+    "present": [
+      "budget-impact.json",
+      "budget-impact.md"
+    ],
+    "missing": [],
+    "unexpected": [],
+    "publishedDir": "/tmp/cw60-probe-20260912"
+  }
+}

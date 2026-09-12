@@ -1,0 +1,7 @@
+The imported request desk, batch reconciler and value ledger were tested against an older wrapper. This draft preserves a partial integration that routes execution through the current repository core, adds immutable request/attempt records, and makes partial batches and value measurement carry request identity and unknown settlement state.
+
+**Foundation handoff only; not ready.** Native Grok Heavy owns the remaining implementation in the three consumer paths and `experiments/codex-window/cw62-batch-value-integration/`. Shared runtime and engines remain unchanged at base `76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be`; the remote integration branch has advanced and is not validated by this export.
+
+Validation: 75 owned JavaScript modules pass syntax checks. One actual-process desk smoke completed; one two-item batch smoke retained one completion and one rejection with `ok: false`. The new acceptance harness fails during import before its test bodies; the exact reproducer and preserved TAP log are in the handoff. No Postgres or complete journey acceptance is claimed. Historical imported-source baseline: 24 passed, 15 failed, 0 skipped.
+
+See `experiments/codex-window/cw62-batch-value-integration/GROK-HANDOFF.md` for exact source refs, implemented interfaces, known failures, ordered remaining work and process/control acceptance commands. All measurements are caller/owner QA, not revenue. No payment, signing, release or default merge is included.

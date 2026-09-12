@@ -1,0 +1,11 @@
+{
+  "id": "d16-current-vendor",
+  "startedAt": "2026-09-12T09:15:29.645Z",
+  "endedAt": "2026-09-12T09:15:30.134Z",
+  "status": "fail",
+  "error": {
+    "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- '4ad52f15-fcc0-4f96-8666-681cede5051f'\n",
+    "code": "ERR_ASSERTION",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- '4ad52f15-fcc0-4f96-8666-681cede5051f'\n\n    at assertComplete (file:///workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src/experiments/codex-window/cw65-delivery-adversarial-harness/lib/oracle.mjs:30:10)\n    at Context.verify (file:///workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src/experiments/codex-window/cw65-delivery-adversarial-harness/lib/context.mjs:104:12)\n    at fixture.jobId (file:///workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src/experiments/wave5/d16/current.mjs:8:43)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async TestContext.<anonymous> (file:///workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src/experiments/codex-window/cw65-delivery-adversarial-harness/test/acceptance.test.mjs:14:11)\n    at async Test.run (node:internal/test_runner/test:1054:7)\n    at async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)"
+  }
+}

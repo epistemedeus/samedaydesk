@@ -1,0 +1,38 @@
+[
+  {
+    "path": "tools/job-delivery-outbox",
+    "donor": "8fad41afa47da20696f2e49032793c7a778dc695",
+    "donorTree": "0d5d3c1a8189a1f00e714baa3eeb9ab3f4daa4d2",
+    "modifiedFromDonor": [
+      "tools/job-delivery-outbox/bin/loopback-receiver.mjs",
+      "tools/job-delivery-outbox/lib/cli.mjs",
+      "tools/job-delivery-outbox/lib/hash-terms.mjs",
+      "tools/job-delivery-outbox/lib/http-post.mjs",
+      "tools/job-delivery-outbox/lib/outbox.mjs",
+      "tools/job-delivery-outbox/lib/receipt-shape.mjs",
+      "tools/job-delivery-outbox/lib/receiver.mjs",
+      "tools/job-delivery-outbox/lib/store-file.mjs"
+    ],
+    "added": [
+      "tools/job-delivery-outbox/lib/callback-identity.mjs"
+    ],
+    "historicalReceiptsUnmodified": true
+  },
+  {
+    "path": "tools/job-artifact-export",
+    "donor": "5620dcda5a0cd25892914717f8680c12d887632d",
+    "donorTree": "b38aab5d13933bb094d62f110771a8bd46dd5aa4",
+    "modifiedFromDonor": [
+      "tools/job-artifact-export/lib/export.mjs",
+      "tools/job-artifact-export/lib/import.mjs",
+      "tools/job-artifact-export/lib/pins.mjs",
+      "tools/job-artifact-export/lib/scan.mjs",
+      "tools/job-artifact-export/lib/zip.mjs"
+    ],
+    "added": [
+      "tools/job-artifact-export/lib/current-receipt.mjs",
+      "tools/job-artifact-export/lib/publication.mjs"
+    ],
+    "historicalReceiptsUnmodified": true
+  }
+]

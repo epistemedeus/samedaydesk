@@ -1,0 +1,21 @@
+{
+  "name": "@samedaydesk/wave5-d16-engine-lifecycle",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "W5-D16 engine lifecycle failure harness for the PR52 paid wrapper. Not a second job runner.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "d16-engine-lifecycle": "./bin/lifecycle-harness.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-timeout=120000 test/*.test.mjs",
+    "harness": "node bin/lifecycle-harness.mjs",
+    "positive": "node bin/lifecycle-harness.mjs positive"
+  },
+  "exports": {
+    ".": "./index.mjs"
+  }
+}

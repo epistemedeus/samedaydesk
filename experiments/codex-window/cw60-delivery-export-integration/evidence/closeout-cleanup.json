@@ -1,0 +1,13 @@
+{
+  "removedExactCompletedProbeDirectories": [
+    "/tmp/cw60-probe-20260912",
+    "/tmp/puj-vendor-budget-impact-out-o0GNOD"
+  ],
+  "preserved": [],
+  "assignmentTmp": {
+    "path": "/workspace/pilot/tmp/cw60-astra-delivery-export-integration-20260912/.closeout-tmp",
+    "entries": []
+  },
+  "activeOwnedTestProcesses": [],
+  "otherProcessesSignalled": false
+}

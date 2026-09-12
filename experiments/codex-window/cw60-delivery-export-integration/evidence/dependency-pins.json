@@ -1,0 +1,48 @@
+{
+  "base": "76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be",
+  "donors": {
+    "D06": "8fad41afa47da20696f2e49032793c7a778dc695",
+    "D07": "5620dcda5a0cd25892914717f8680c12d887632d"
+  },
+  "protectedDependencies": [
+    {
+      "path": "server/paid-useful-jobs",
+      "gitTreeEntry": "040000 tree 42f7ca74d1dabb7f1b709183849578fd984c2555\tserver/paid-useful-jobs"
+    },
+    {
+      "path": "tools/result-mailbox",
+      "gitTreeEntry": "040000 tree a8834fe006a6df1983d23836e394c6b0bc44e31d\ttools/result-mailbox"
+    },
+    {
+      "path": "tools/job-output-atomicity",
+      "gitTreeEntry": "040000 tree 186ccba0b25896075d142aa10641164fb805ccce\ttools/job-output-atomicity"
+    },
+    {
+      "path": "tools/lockfile-pin-delta",
+      "gitTreeEntry": "040000 tree 5f0d836b8ef516dbdb03e82ed3bb8856e7cdc53b\ttools/lockfile-pin-delta"
+    },
+    {
+      "path": "experiments/wave5/m01",
+      "gitTreeEntry": "040000 tree 826fc6a6fbb602ae8a0ad96ca6d58d099272baf8\texperiments/wave5/m01"
+    },
+    {
+      "path": "client/src/data/usefulJobsKit.json",
+      "gitTreeEntry": "100644 blob fba59eda6d309c34cac109f1773edac2a699c8b6\tclient/src/data/usefulJobsKit.json"
+    },
+    {
+      "path": "client/public/for-agents/useful-jobs/catalog.json",
+      "gitTreeEntry": "100644 blob 860e593fbeac9bc350b426bf5ebfe6dde32622d2\tclient/public/for-agents/useful-jobs/catalog.json"
+    }
+  ],
+  "remoteMainObserved": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+  "remoteMainImported": false,
+  "provider": "Grok VM/node_grok_bot_vm",
+  "hostname": "cursor",
+  "node": "v22.23.2",
+  "publicKit": {
+    "version": "1.4.1",
+    "archive": "/for-agents/useful-jobs/useful-jobs-1.4.1.tar.gz",
+    "sha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+    "bytes": 2575456
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "integrationBase": "76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be",
+  "consumerImport": "feaa2f8791a693bd9c3ef5211e752307e188b96c",
+  "readOnlyPriorConsumer": "d92a6201306799e75e1dfada981c87e11f6ea746",
+  "provider": "Grok VM/node_grok_bot_vm",
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.41",
+  "python": "3.13.5",
+  "node": "v22.23.2",
+  "archive": {
+    "path": "client/public/for-agents/useful-jobs/useful-jobs-1.4.1.tar.gz",
+    "version": "1.4.1",
+    "bytes": 2575456,
+    "sha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+    "sourceCommit": "b046a2074fedfff85ca18aa7ebe9e3d42b87c95e"
+  },
+  "readOnlyFiles": {
+    "client/src/data/usefulJobsKit.json": "a0114c1c0d32eafa665983354a75b2ae8061ba6f98698388f4b4f1142a5f8d93",
+    "server/paid-useful-jobs/release/bin/useful-jobs.mjs": "996ddcaf090355f27745c06fbacd2207eaf24673955cae5f8ba5fa36285fbc31",
+    "server/paid-useful-jobs/release/lib/owned-spawn.mjs": "c61dfda02f3a9e5ef70067b45ea2e3126de70edbc1f89b4d4aa404a8fb983cfb"
+  }
+}
