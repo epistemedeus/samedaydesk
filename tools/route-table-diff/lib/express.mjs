@@ -108,6 +108,10 @@ function staticSegment(segment, path, caseSensitive) {
     }
     value += char;
   }
+  // Witness paths must survive HTTP URL parsing verbatim.
+  if (!/^[A-Za-z0-9._~!$&'()*+,;=:@%+-]*$/.test(value)) {
+    refused("unsupported_express_path", "Express literal is outside the HTTP-witness-safe ASCII subset.", { path });
+  }
   return { kind: "literal", value: caseSensitive ? value : value.toLowerCase() };
 }
 

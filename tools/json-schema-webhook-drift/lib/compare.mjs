@@ -1,4 +1,5 @@
 import { jsonType } from "./kind.mjs";
+import { getAtPointer, parseJsonPointer } from "./pointer.mjs";
 import { remoteRefsInNode, resolveLocalRefTarget } from "./refs.mjs";
 
 const CONSTRAINT_SIBLING_KEYS = new Set([
@@ -349,7 +350,27 @@ export function fingerprintExampleNode(node) {
   };
 }
 
-export function fingerprintUsedNode(node, doc, kind) {
+function schemaLocation(tokens) {
+  const maps = new Set(["properties", "patternProperties", "$defs", "definitions", "dependentSchemas"]);
+  const singles = new Set(["items", "additionalProperties", "contains", "not", "if", "then", "else", "propertyNames", "unevaluatedProperties", "unevaluatedItems"]);
+  const lists = new Set(["allOf", "anyOf", "oneOf", "prefixItems"]);
+  for (let i = 0; i < tokens.length;) {
+    if (maps.has(tokens[i]) && i + 1 < tokens.length) i += 2;
+    else if (lists.has(tokens[i]) && /^\d+$/.test(tokens[i + 1] || "")) i += 2;
+    else if (singles.has(tokens[i])) i++;
+    else return false;
+  }
+  return true;
+}
+
+export function fingerprintUsedNode(node, doc, kind, pointer = null) {
+  const tokens = typeof pointer === "string" ? parseJsonPointer(pointer).tokens : null;
+  if (kind === "json-schema" && tokens?.at(-1) === "required" && schemaLocation(tokens.slice(0, -1))) {
+    const parent = getAtPointer(doc, pointer.slice(0, pointer.lastIndexOf("/"))).value;
+    if (!parent || typeof parent !== "object" || Array.isArray(parent) ||
+        (node !== undefined && (!Array.isArray(node) || node.some((v) => typeof v !== "string") || new Set(node).size !== node.length))) return { kind: "invalid-selected-required" };
+    return fingerprintSchemaNode({ type: parent.type, required: node || [] }, doc);
+  }
   if (kind === "json-schema") return fingerprintSchemaNode(node, doc);
   return fingerprintExampleNode(node);
 }
@@ -643,6 +664,9 @@ function unwrapRef(fp) {
 }
 
 export function classifyPair(beforeFp, afterFp) {
+  if (beforeFp?.kind === "invalid-selected-required" || afterFp?.kind === "invalid-selected-required") {
+    return { class: "unknown", reason: "invalid-required-keyword" };
+  }
   if (beforeFp?.refuse || afterFp?.refuse) {
     return { class: "remote-ref", reason: "remote-ref" };
   }
