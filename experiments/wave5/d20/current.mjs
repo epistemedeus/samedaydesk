@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { cpSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { CLOCK, MAILBOX, PACK, fixture, readJson, until } from '../../codex-window/cw65-delivery-adversarial-harness/lib/context.mjs';
-import { assertRefused, missing, sha256 } from '../../codex-window/cw65-delivery-adversarial-harness/lib/oracle.mjs';
+import { assertRefused, sha256 } from '../../codex-window/cw65-delivery-adversarial-harness/lib/oracle.mjs';
 import { configFor, logs, orderRequest } from '../d19/current.mjs';
 
 async function job(ctx, name = 'delivery') {
@@ -118,7 +118,41 @@ export const cases = [
     assertRefused(await ctx.mailbox('reseed-corrupt', seedArgs(ctx, a, id)), 'digest-mismatch');
     assert.deepEqual(readFileSync(envelopePath), original);
   }],
-  ['d20-current-outbox', async () => {
-    missing('job-delivery-outbox is a sibling H7 slice, not a completed CW65 independent countercheck. Callback attempt durability, acknowledgment body/key binding and unknown-outcome replay cannot be accepted from Co09 historical fixtures.');
+  ['d20-current-outbox', async ctx => {
+    const {
+      completedCallerReceipt, parseCli, runCli, spawnReceiver, stopChild,
+    } = await import('../../../../tools/job-delivery-outbox/test/helpers.mjs');
+    const store = ctx.path('outbox-store');
+    const outDir = ctx.path('outbox-job-out');
+    const recvDir = ctx.path('outbox-receiver');
+    const receipt = completedCallerReceipt(outDir);
+    const receiptPath = ctx.json('outbox-receipt', receipt);
+    assert.equal(receipt.sold, false);
+    assert.equal(receipt.purchaseAuthority, false);
+    const receiver = await spawnReceiver(['--mode', 'ack', '--store-dir', recvDir]);
+    try {
+      const enq = parseCli(runCli(['enqueue', '--store', store, '--receipt', receiptPath, '--callback-url', receiver.url]));
+      assert.equal(enq.ok, true, JSON.stringify(enq));
+      assert.equal(enq.event.sold, false);
+      assert.equal(enq.event.deliveryState, 'queued');
+      const deliver = parseCli(runCli(['deliver-once', '--store', store, '--event-id', enq.event.eventId, '--opt-in']));
+      assert.equal(deliver.ok, true, JSON.stringify(deliver));
+      assert.equal(deliver.event.deliveryState, 'delivered');
+      assert.equal(deliver.event.callbackAcknowledged, true);
+      assert.equal(deliver.event.buyerAccepted, false, 'callback ack is not buyer acceptance');
+      assert.equal(deliver.event.sale, false);
+      assert.equal(deliver.event.sold, false);
+      const unknown = runCli(['status', '--store', store, '--event-id', 'cw65-unknown-event']);
+      assert.equal(unknown.status, 2);
+      const unknownBody = parseCli(unknown);
+      assert.equal(unknownBody.code, 'event-not-found');
+      const dup = parseCli(runCli([
+        'enqueue', '--store', store, '--receipt', receiptPath, '--callback-url', receiver.url, '--event-id', enq.event.eventId,
+      ]));
+      assert.equal(dup.duplicate, true);
+      ctx.json('outbox-witness', { enq, deliver, unknown: unknownBody, duplicate: dup.duplicate, sold: false, buyerAccepted: false });
+    } finally {
+      stopChild(receiver.child);
+    }
   }],
 ];

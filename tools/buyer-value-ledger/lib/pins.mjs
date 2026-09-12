@@ -11,7 +11,8 @@ const kit = JSON.parse(
 );
 
 export const SDS_MAIN_PIN = "5b97d1b02e786acd1895cfa1508087ae3f7a1545";
-export const CURRENT_RUNTIME_PIN = "8a811bbadba7edc6c926b319b0839cd2f01e5896";
+export const CURRENT_RUNTIME_PIN = "c6f1464222169f2d32247c978dc5007d82a2aa03";
+export const CURRENT_ARCHIVE_PIN = "8a811bbadba7edc6c926b319b0839cd2f01e5896";
 export const CURRENT_CATALOG_VERSION = "1.4.3";
 export const SCHEMA_LEDGER = "samedaydesk.buyer-value-ledger.v1";
 export const SCHEMA_ROW = "samedaydesk.buyer-value-ledger.row.v1";

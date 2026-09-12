@@ -9,7 +9,12 @@ import { EXECUTION_CONTRACT_VERSION } from '../../../server/paid-useful-jobs/lib
 import { isM01JobId, m01ReceiptProvenance } from '../../../server/paid-useful-jobs/lib/delivery-catalog.mjs';
 import { digest, bytesDigest, fault } from './durable.mjs';
 
-export const CURRENT_CORE_BASE = '8a811bbadba7edc6c926b319b0839cd2f01e5896';
+/** Integration source of wrapper + order repairs (PR146 / 080cc62). */
+export const CURRENT_CORE_BASE = 'c6f1464222169f2d32247c978dc5007d82a2aa03';
+/** Repair SHA merged by PR146. Byte-identical to CURRENT_CORE_BASE trees for wrapper/order. */
+export const CURRENT_REPAIR_SHA = '080cc62e7bc83f76431d916df34aea6d30875401';
+/** Immutable unpublished 1.4.3 archive identity. Does not contain wrapper publication/interrupt fixes. */
+export const CURRENT_ARCHIVE_PIN = '8a811bbadba7edc6c926b319b0839cd2f01e5896';
 export const CURRENT_CATALOG_VERSION = '1.4.3';
 export { EXECUTION_CONTRACT_VERSION };
 

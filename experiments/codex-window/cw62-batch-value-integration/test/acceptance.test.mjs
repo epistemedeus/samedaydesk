@@ -54,8 +54,8 @@ async function until(fn) { const end = Date.now() + 12_000; while (!fn()) { if (
 async function json(origin, path, body) { const response = await fetch(origin + path, body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(15_000) } : undefined); return { status: response.status, body: await response.json() }; }
 function eventCount(file) { return existsSync(file) ? readFileSync(file, 'utf8').trim().split('\n').filter(Boolean).length : 0; }
 
-test('consumed pin is 8a811bba; M01 source-identity is not the 1.0.0 archive', () => {
-  assert.equal(CURRENT_CORE_BASE, '8a811bbadba7edc6c926b319b0839cd2f01e5896');
+test('consumed pin is integration c6f1464; M01 source-identity is not the 1.0.0 archive', () => {
+  assert.equal(CURRENT_CORE_BASE, 'c6f1464222169f2d32247c978dc5007d82a2aa03');
   const archive = archiveEnginePin();
   const m01 = enginePinForJob(getJob('lockfile-pin-delta'));
   assert.equal(archive.identityKind, 'wrapper-archive-identity');

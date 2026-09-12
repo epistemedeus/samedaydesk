@@ -7,7 +7,7 @@ import { ConsumerRefuse, encodeInputFile } from "../lib/encode-inputs.mjs";
 import { createTicket, readTicket } from "../lib/ticket.mjs";
 import { verifyTicketBoundResult } from "../lib/verify.mjs";
 import { resolveRetrieval } from "../lib/origin.mjs";
-import { EXECUTION_CONTRACT_VERSION, RUNTIME_PIN } from "../lib/pins.mjs";
+import { EXECUTION_CONTRACT_VERSION, RUNTIME_PIN, ARCHIVE_PIN } from "../lib/pins.mjs";
 import { createServer } from "node:http";
 import { closeServer, listen, runCli, runCliAsync, tmpWork } from "./helpers.mjs";
 import { resolveServeRoot } from "./spawn-d01.mjs";
@@ -23,7 +23,8 @@ describe("W5-D14 unit client (no engine, no git fetch)", { timeout: 30_000 }, ()
     assert.equal(/spawnSync\(\s*["']git["']/.test(spawnSrc), false);
     assert.equal(spawnSrc.includes("git fetch"), false);
     assert.equal(spawnSrc.includes("worktree add"), false);
-    assert.match(RUNTIME_PIN, /^8a811bba/);
+    assert.match(RUNTIME_PIN, /^c6f1464/);
+    assert.match(ARCHIVE_PIN, /^8a811bba/);
   });
 
   it("consumer refuses non-JSON bytes instead of sending a shared-disk path", () => {

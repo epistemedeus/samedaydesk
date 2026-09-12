@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { fixture, executionRequest, readJson, until } from '../../codex-window/cw65-delivery-adversarial-harness/lib/context.mjs';
+import { spawnSync } from 'node:child_process';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { fixture, executionRequest, readJson, until, REPO } from '../../codex-window/cw65-delivery-adversarial-harness/lib/context.mjs';
 import { assertRefused, missing, parseProcess } from '../../codex-window/cw65-delivery-adversarial-harness/lib/oracle.mjs';
 
 export async function orderRequest(ctx, label, f) {
@@ -80,7 +82,37 @@ export const cases = [
     assert.notEqual(ra.wrapper.receipt.inputsDigest, rb.wrapper.receipt.inputsDigest);
     assert.deepEqual(logs(store).map(r => r.orderId).sort(), [a.orderId, b.orderId].sort());
   }],
-  ['d19-current-ledger', async () => {
-    missing('buyer-value-ledger is a sibling H7 slice, not a completed CW65 independent countercheck. Historical Co16 loaders are excluded; ledger persistence and settlement binding remain incomplete here.');
+  ['d19-current-ledger', async ctx => {
+    const ledger = ctx.path('ledger.json');
+    const outDir = ctx.path('value-out');
+    mkdirSync(outDir, { recursive: true });
+    const bin = join(REPO, 'tools/buyer-value-ledger/bin/value.mjs');
+    const before = join(REPO, 'tools/buyer-value-ledger/fixtures/caller/vendor-budget-impact/before.json');
+    const after = join(REPO, 'tools/buyer-value-ledger/fixtures/caller/vendor-budget-impact/after.json');
+    const run = spawnSync(process.execPath, [
+      bin, 'run', 'vendor-budget-impact',
+      '--buyer-class', 'owner-qa',
+      '--before', before, '--after', after,
+      '--ledger', ledger, '--out-dir', outDir,
+    ], { encoding: 'utf8', cwd: REPO, timeout: 120_000, maxBuffer: 8 * 1024 * 1024 });
+    assert.equal(run.status, 0, run.stderr + run.stdout);
+    const measured = JSON.parse(run.stdout);
+    assert.equal(measured.ok, true, JSON.stringify(measured));
+    assert.equal(measured.usefulPaidWork, false);
+    assert.equal(measured.row.purchaseAuthority, false);
+    assert.equal(measured.row.jobRevenueUsdc, null);
+    assert.equal(measured.row.independentDemand, false);
+    assert.equal(measured.honesty.purchaseAuthority, false);
+    const shown = spawnSync(process.execPath, [bin, 'show', '--ledger', ledger], {
+      encoding: 'utf8', cwd: REPO, timeout: 30_000,
+    });
+    assert.equal(shown.status, 0, shown.stderr + shown.stdout);
+    const persisted = JSON.parse(shown.stdout);
+    assert.equal(persisted.ok, true);
+    assert.equal(persisted.rowCount, 1);
+    assert.equal(persisted.independentDemand, false);
+    assert.equal(persisted.samples[0].usefulPaidWork, false);
+    ctx.json('ledger-witness', { measured, persisted, usefulPaidWork: false, sold: false });
+    assert.ok(existsSync(ledger), 'ledger file must persist');
   }],
 ];

@@ -174,7 +174,9 @@ test('H7 cold current-runtime journey: freeze → execute → export/ack → rep
 
   if (process.env.H7_EVIDENCE) {
     writeFileSync(join(process.env.H7_EVIDENCE, 'cold-current-runtime-journey.json'), JSON.stringify({
-      pin: '8a811bbadba7edc6c926b319b0839cd2f01e5896',
+      pin: 'c6f1464222169f2d32247c978dc5007d82a2aa03',
+      archivePin: '8a811bbadba7edc6c926b319b0839cd2f01e5896',
+      repairSha: '080cc62e7bc83f76431d916df34aea6d30875401',
       catalog: '1.4.3',
       lockfile: { jobId: execution.jobId, executionId: execution.executionId, transport: execution.transport, sold: false },
       export: { zipSha256: bundle.zipSha256, completeness: bundle.completeness },

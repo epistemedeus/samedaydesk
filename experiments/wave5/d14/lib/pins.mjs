@@ -8,7 +8,8 @@ export const REPO_ROOT = join(here, "../../../..");
 
 export const EXECUTION_CONTRACT_VERSION = "samedaydesk.paid-useful-jobs.execution.v1";
 export const CATALOG_VERSION = "1.4.3";
-export const RUNTIME_PIN = "8a811bbadba7edc6c926b319b0839cd2f01e5896";
+export const RUNTIME_PIN = "c6f1464222169f2d32247c978dc5007d82a2aa03";
+export const ARCHIVE_PIN = "8a811bbadba7edc6c926b319b0839cd2f01e5896";
 
 /** Historical D01 pin. Spawn must not git-fetch this. */
 export const D01_PIN = "6bed72dd22a396134aa5c957933b42c3a5746698";
