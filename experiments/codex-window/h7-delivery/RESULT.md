@@ -224,6 +224,7 @@ Optional later: CW64 pin refresh against a future shipped archive (this client r
 ## Git / PR
 
 Implementation controls SHA: `80aeb7be9e2c2e180641196a92f371edb9cf2eb9`.
+Closeout SHA: `d375760a560a6adf0ca392af94c900623e53bd0a`.
 Integration source: `c6f1464222169f2d32247c978dc5007d82a2aa03`.
 Repair: `080cc62e7bc83f76431d916df34aea6d30875401`.
 Archive identity: `8a811bbadba7edc6c926b319b0839cd2f01e5896`.
