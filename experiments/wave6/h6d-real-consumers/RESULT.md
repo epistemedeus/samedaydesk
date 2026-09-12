@@ -4,6 +4,9 @@ Parent native session: `01a09456-c82b-7b41-ad58-e5557da52ed3`
 Model: `grok-4.6` · effort `xhigh`  
 Branch: `codex/wave6-h6d-20260912`  
 Implementation head: `424ee59bd772d77109d1ec6cdd7517333c101b83`  
+Tip: `a6c3b81e8e1981985fb152f9998aaecfb79eedd3`  
+Compare: https://github.com/epistemedeus/samedaydesk/compare/main...codex/wave6-h6d-20260912  
+Draft PR: GitHub App token cannot `createPullRequest` (403); compare URL is the handoff.  
 Baseline pin: `ad9bc7b448cf1f635ff1488affbe206aaf981ac0`  
 Owned path: `experiments/wave6/h6d-real-consumers/`  
 useful-jobs **1.4.0** `2575215` bytes sha256 `2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f`
@@ -64,4 +67,4 @@ Not used: OpenAI routes, octokit `organization.renamed`, H04 mocha/axios lock ex
 
 ## Next remaining proof
 
-GitHub-hosted CI on the draft PR (this VM already ran 173/173). Engine regression artifacts stay artifacts unless an engine-owning assignment takes them. No live merchant or paid extract claim.
+GitHub-hosted CI once a human/App with `pull_requests: write` opens the draft from the compare URL (this VM already ran 173/173). Engine regression artifacts stay artifacts unless an engine-owning assignment takes them. No live merchant or paid extract claim.
