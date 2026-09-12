@@ -1,0 +1,5 @@
+out/
+artifact/tmp/
+*.log
+artifact/openai/kit-*
+artifact/hostile/kit-*
