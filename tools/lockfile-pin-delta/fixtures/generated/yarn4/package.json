@@ -1,0 +1,9 @@
+{
+  "name": "yarn-berry-format-probe",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "yarn@4.9.4",
+  "dependencies": {
+    "is-number": "7.0.0"
+  }
+}

@@ -14,3 +14,4 @@ export { compareLockfileTexts, comparePinMaps } from "./compare.mjs";
 export { toMarkdown } from "./format.mjs";
 export { runLockfileDelta, ROOT, JOURNEY_BEFORE, JOURNEY_AFTER } from "./run.mjs";
 export { isSampleLabeled } from "./sample.mjs";
+export { assertJsonInputSize, inspectJsonStructure, JSON_LIMITS } from "./json-structure.mjs";

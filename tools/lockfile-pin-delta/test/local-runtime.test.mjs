@@ -22,7 +22,9 @@ test("local-runtime: SDS package-lock.json is lockfileVersion 3 with packages ma
   assert.equal(zod.version, "3.25.76");
   assert.match(zod.integrity, /^sha512-/);
   const link = parsed.pins.find((p) => p.id === "node_modules/@neomorphic/correspondence");
-  assert.equal(link, undefined, "link stubs are not pins");
+  assert.equal(link?.link, true, "workspace link resolution is an explicit pin boundary");
+  assert.equal(link?.resolved, "vendor/neomorphic-correspondence");
+  assert.equal(link?.missingIntegrity, false, "integrity is not applicable to a link stub");
 });
 
 test("local-runtime: self-compare of SDS lock omits unchanged names and stays nonsettling", () => {
