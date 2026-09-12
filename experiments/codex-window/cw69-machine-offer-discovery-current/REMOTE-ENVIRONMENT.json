@@ -13,6 +13,7 @@
   "repo": "epistemedeus/samedaydesk",
   "branch": "codex/cw69-machine-offer-discovery-current-20260912",
   "headAtHandoff": "3547e7c19f3e220275ccb59d547495eafa76bcb1",
+  "implementedHead": "c4cf459df45f54571ab578d92290fb15071859de",
   "NODE_OPTIONS": "--max-old-space-size=768",
   "postgresql17": {
     "status": "incomplete",

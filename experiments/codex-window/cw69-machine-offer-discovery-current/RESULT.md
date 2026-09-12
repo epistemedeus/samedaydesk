@@ -4,6 +4,7 @@ Status: **adapter complete for the one executable path** (`lockfile-pin-delta`).
 Not a production READY claim, not a paid execution, not a catalog publication.
 
 Handoff HEAD: `3547e7c19f3e220275ccb59d547495eafa76bcb1`.
+Implemented HEAD: `c4cf459df45f54571ab578d92290fb15071859de`.
 Integrated runtime pin: `a9aaa0f8a3bb996948e6033f743b62c4e5417882`.
 Draft PR: https://github.com/epistemedeus/samedaydesk/pull/141
 Base remains `codex/useful-jobs-core-integration-20260912` @ `30345f69`.
