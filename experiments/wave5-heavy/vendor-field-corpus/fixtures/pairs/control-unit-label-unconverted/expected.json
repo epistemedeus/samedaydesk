@@ -1,0 +1,11 @@
+{
+  "status": "partial",
+  "counts": {
+    "added": 0,
+    "removed": 0,
+    "fieldChanges": 0,
+    "unitChanges": 1,
+    "conflicting": 1
+  },
+  "actionKinds": ["normalize-unit-before-budgeting"]
+}

@@ -1,0 +1,15 @@
+{
+  "note": "Official OpenAI gpt-3.5-turbo-0125 list price, 2024-01-25. Curated rows, not a bill.",
+  "rows": [
+    {
+      "field": "gpt-3.5-turbo-input",
+      "value": 0.0005,
+      "unit": "USD/1K-tokens"
+    },
+    {
+      "field": "gpt-3.5-turbo-output",
+      "value": 0.0015,
+      "unit": "USD/1K-tokens"
+    }
+  ]
+}
