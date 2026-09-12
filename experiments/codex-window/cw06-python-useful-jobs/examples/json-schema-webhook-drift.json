@@ -1,0 +1,18 @@
+{
+  "schema": "samedaydesk.cw06.stdin-request.v1",
+  "job": "json-schema-webhook-drift",
+  "inputs": {
+    "before": {
+      "filename": "schema before.json",
+      "text": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"event\":{\"type\":\"string\",\"enum\":[\"créé\"]},\"count\":{\"type\":\"integer\"}},\"required\":[\"event\"]}\n"
+    },
+    "after": {
+      "filename": "schema after.json",
+      "text": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"event\":{\"type\":\"string\",\"enum\":[\"créé\",\"updated\"]},\"count\":{\"type\":\"number\"}},\"required\":[\"event\"]}\n"
+    },
+    "used": {
+      "filename": "used pointers.json",
+      "text": "{\"pointers\":[\"/properties/event\",\"/properties/count\",\"/properties/callerOnlyUnknown\"]}\n"
+    }
+  }
+}
