@@ -1,0 +1,60 @@
+{
+  "id": "W5-M09-final-engine-inputs",
+  "outcome": "Independent page-change fact usefulness on the shipped useful-jobs 1.2.0 CLI, not a second engine or a replay of experiments/wave5/m09 Co13 tests",
+  "ownedPaths": ["experiments/wave5/m09/final-engine-inputs/"],
+  "doNotOwn": [
+    "experiments/wave5/d15/",
+    "tools/page-change-offline-job/",
+    "client/public/"
+  ],
+  "d15": {
+    "owns": "input-freeze and path-mutation tests",
+    "pin": "9c9a3f471604fcbad2d0810b8898c358c70ee2c7",
+    "note": "This package does not duplicate freeze or path-mutation coverage."
+  },
+  "implementation": {
+    "repo": "epistemedeus/samedaydesk",
+    "pr": 74,
+    "sha": "46f2b7f55a7fb780333073a5197b64b8fde64a33",
+    "ref": "codex/w5-d01-20260911"
+  },
+  "publicKit": {
+    "repo": "epistemedeus/samedaydesk",
+    "pr": 114,
+    "sha": "9ae0febd8c184c0cbbb5e481ba31ac620e89b869",
+    "ref": "codex/w5-sds-public-release-20260911",
+    "archive": "client/public/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz",
+    "bytes": 2579117,
+    "sha256": "dec31ea66f1605fb9578c7d15c9583b130c6e2c0b82b5e6b93422381a04461eb",
+    "package": "useful-jobs",
+    "version": "1.2.0",
+    "jobCount": 10,
+    "jobId": "page-change-offline-job"
+  },
+  "engine": {
+    "packageName": "@samedaydesk/page-change-offline-job",
+    "version": "0.1.1",
+    "catalogPin": "fec7bc04ac4419f8e7ce40f2613314e6953af6bc",
+    "reportSchema": "pilot/page-change-brief/v1",
+    "extractSchema": "samedaydesk.extract-batch.v0",
+    "cli": "node bin/useful-jobs.mjs run page-change-offline-job --job PATH --out-dir DIR"
+  },
+  "pages": [
+    {
+      "path": "client/public/reports/ai-search-readiness-leaderboard-2026.html",
+      "beforeSha": "c26fcd30395fd5a9be835458578d6eef65950857",
+      "afterSha": "4d1ba68dc751bb1a23bb32aa28613884785e7139"
+    },
+    {
+      "path": "client/public/tools/schema-validator.html",
+      "beforeSha": "4052f0fbf41c8b48823c6a3d58b6cd89c715abe1",
+      "afterSha": "374a565784bcd4ec89eeda7fedbb9610fed77473"
+    }
+  ],
+  "clock": "2026-09-11T12:00:00.000Z",
+  "nextOwner": "Root reconciles; engine defects to W5-M05; catalog binding W5-M01",
+  "env": {
+    "kitRoot": "USEFUL_JOBS_KIT_ROOT",
+    "kitTar": "USEFUL_JOBS_KIT_TAR"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "id": "failed-capture",
+  "title": "After row status=failure is incomplete/failed, not a silent deletion of 189 companies",
+  "clock": "2026-09-11T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description"
+  ],
+  "before": "./before.json",
+  "after": "./after.json"
+}

@@ -1,0 +1,25 @@
+{
+  "transportOk": true,
+  "exitCode": 0,
+  "verdict": "incomplete",
+  "requiredPaths": [],
+  "forbiddenOps": [
+    "add",
+    "replace"
+  ],
+  "coverageField": "canonical",
+  "coverageReason": "absent_field_is_coverage_unknown_not_deletion",
+  "tokenPairs": [],
+  "claims": {
+    "usefulOutputProven": false,
+    "contentUnchangedProven": false,
+    "complete": false,
+    "noChangeProven": false,
+    "comparable": true,
+    "fresh": false
+  },
+  "engineVersion": "0.1.1",
+  "claimsFresh": false,
+  "paymentImpliesUsefulOutput": false,
+  "networkUsed": false
+}

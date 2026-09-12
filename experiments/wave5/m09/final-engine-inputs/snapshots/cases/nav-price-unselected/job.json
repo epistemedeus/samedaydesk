@@ -1,0 +1,10 @@
+{
+  "id": "nav-price-unselected",
+  "title": "Identical $39 Fix Pack and nav links on the leaderboard pair; selecting only links is unchanged",
+  "clock": "2026-09-11T12:00:00.000Z",
+  "fields": [
+    "links"
+  ],
+  "before": "./before.json",
+  "after": "./after.json"
+}

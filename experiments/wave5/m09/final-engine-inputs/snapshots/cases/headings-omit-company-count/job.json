@@ -1,0 +1,10 @@
+{
+  "id": "headings-omit-company-count",
+  "title": "Selected headings omit the 136→189 title number; honest unchanged, not a silent miss of a selected fact",
+  "clock": "2026-09-11T12:00:00.000Z",
+  "fields": [
+    "headings"
+  ],
+  "before": "./before.json",
+  "after": "./after.json"
+}

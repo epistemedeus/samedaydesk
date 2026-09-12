@@ -1,0 +1,11 @@
+{
+  "id": "whitespace-title",
+  "title": "Caller-owned extra space in the 189 title is noise, not a number/date/status fact",
+  "clock": "2026-09-11T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description"
+  ],
+  "before": "./before.json",
+  "after": "./after.json"
+}

@@ -1,0 +1,33 @@
+{
+  "transportOk": true,
+  "exitCode": 0,
+  "verdict": "changed",
+  "requiredPaths": [
+    "/title",
+    "/description",
+    "/headings/h1"
+  ],
+  "forbiddenPaths": [
+    "/headings/h2",
+    "/links"
+  ],
+  "tokenPairs": [
+    {
+      "kind": "status",
+      "before": "JSON-LD / Schema Validator",
+      "after": "JSON-LD Validator & Schema Checker"
+    }
+  ],
+  "claims": {
+    "usefulOutputProven": true,
+    "contentUnchangedProven": false,
+    "complete": true,
+    "noChangeProven": false,
+    "comparable": true,
+    "fresh": false
+  },
+  "engineVersion": "0.1.1",
+  "claimsFresh": false,
+  "paymentImpliesUsefulOutput": false,
+  "networkUsed": false
+}

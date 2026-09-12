@@ -1,0 +1,64 @@
+{
+  "ok": false,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Caller-owned held extract-batch wrapper over git-show HTML facts. Not a live fetch, quote-as-success, or payment."
+  },
+  "jobId": "0839f21b52ca23595594cb710e11d848a28dbf2d7196be08298c2e0b946e1079",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": true,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html",
+      "status": "failure",
+      "data": null,
+      "notes": [],
+      "error": {
+        "message": "held capture failed; not a live retry"
+      },
+      "finalUrl": "https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html",
+      "httpStatus": 0,
+      "provenance": {
+        "transport": "held-git-show",
+        "requestedAt": "2026-06-24T01:44:58.000Z",
+        "completedAt": "2026-06-24T01:44:58.000Z",
+        "fetchedAt": "2026-06-24T01:44:58.000Z",
+        "finalUrl": "https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html",
+        "httpStatus": 0,
+        "note": "Observation timestamps record when this wrapper was produced from git show. They are not page-content freshness."
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 1,
+    "bytes": 0,
+    "wallMs": 1,
+    "retries": 0,
+    "succeeded": 0,
+    "partial": 0,
+    "failed": 1,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 0,
+    "requests": 1,
+    "wallMs": 1,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "Held git-show extraction; not socket billing."
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

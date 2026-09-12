@@ -1,0 +1,12 @@
+{
+  "id": "identical-replay",
+  "title": "Same 189 selected fields twice; jobId/timestamp noise is not a page change",
+  "clock": "2026-09-11T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "before": "./before.json",
+  "after": "./after.json"
+}

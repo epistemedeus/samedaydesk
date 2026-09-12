@@ -1,0 +1,51 @@
+{
+  "transportOk": true,
+  "exitCode": 0,
+  "verdict": "changed",
+  "requiredPaths": [
+    "/title",
+    "/description"
+  ],
+  "forbiddenPaths": [
+    "/headings",
+    "/headings/h1",
+    "/headings/h2",
+    "/links"
+  ],
+  "tokenPairs": [
+    {
+      "kind": "number",
+      "before": "136",
+      "after": "189"
+    },
+    {
+      "kind": "number",
+      "before": "7",
+      "after": "10"
+    },
+    {
+      "kind": "status",
+      "before": "Healthtech and fintech score worst",
+      "after": "Healthtech, media, and consumer apps score worst"
+    },
+    {
+      "kind": "status",
+      "before": "Klarna an F",
+      "after": "Klarna and Ars Technica an F"
+    }
+  ],
+  "unchangedDateToken": "2026",
+  "claims": {
+    "usefulOutputProven": true,
+    "contentUnchangedProven": false,
+    "complete": true,
+    "noChangeProven": false,
+    "comparable": true,
+    "fresh": false,
+    "paymentImpliesUsefulOutput": false
+  },
+  "engineVersion": "0.1.1",
+  "claimsFresh": false,
+  "paymentImpliesUsefulOutput": false,
+  "networkUsed": false
+}

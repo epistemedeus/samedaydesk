@@ -1,0 +1,12 @@
+{
+  "id": "schema-validator-in-bounds",
+  "title": "Real schema-validator title/description/h1 rewrite is changed with those paths",
+  "clock": "2026-09-11T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "before": "./before.json",
+  "after": "./after.json"
+}

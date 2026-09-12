@@ -1,0 +1,10 @@
+{
+  "id": "ambiguous-duplicate-source",
+  "title": "Duplicate source identity with conflicting titles must be ambiguous, not one silent replace",
+  "clock": "2026-09-11T12:00:00.000Z",
+  "fields": [
+    "title"
+  ],
+  "before": "./before.json",
+  "after": "./after.json"
+}

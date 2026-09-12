@@ -1,0 +1,22 @@
+{
+  "transportOk": true,
+  "exitCode": 0,
+  "verdict": "changed",
+  "maxChanges": 1,
+  "complete": false,
+  "limitsHit": "maxChanges",
+  "requiredPaths": [],
+  "tokenPairs": [],
+  "claims": {
+    "usefulOutputProven": true,
+    "contentUnchangedProven": false,
+    "complete": false,
+    "noChangeProven": false,
+    "comparable": true,
+    "fresh": false
+  },
+  "engineVersion": "0.1.1",
+  "claimsFresh": false,
+  "paymentImpliesUsefulOutput": false,
+  "networkUsed": false
+}

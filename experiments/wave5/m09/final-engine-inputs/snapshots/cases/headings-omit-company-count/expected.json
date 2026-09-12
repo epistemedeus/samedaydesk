@@ -1,0 +1,24 @@
+{
+  "transportOk": true,
+  "exitCode": 0,
+  "verdict": "unchanged",
+  "requiredPaths": [],
+  "forbiddenPaths": [
+    "/title",
+    "/description"
+  ],
+  "tokenPairs": [],
+  "claims": {
+    "usefulOutputProven": true,
+    "contentUnchangedProven": true,
+    "complete": true,
+    "noChangeProven": true,
+    "comparable": true,
+    "fresh": false
+  },
+  "note": "Unselected title numbers are not a bug. Field choice left the company-count fact out.",
+  "engineVersion": "0.1.1",
+  "claimsFresh": false,
+  "paymentImpliesUsefulOutput": false,
+  "networkUsed": false
+}

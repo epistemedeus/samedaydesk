@@ -1,0 +1,104 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Caller-owned held extract-batch wrapper over git-show HTML facts. Not a live fetch, quote-as-success, or payment."
+  },
+  "jobId": "453b28a2bac3bb50dd0592695c0beaeaa3f61215000a0eec05ab99169ecb3187",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "https://samedaydesk.com/tools/schema-validator.html",
+      "status": "success",
+      "data": {
+        "title": "Free JSON-LD Validator & Schema Checker | SameDayDesk",
+        "description": "Paste JSON-LD to check JSON syntax, @context, @type, and recommended fields for common Schema.org types. Runs in your browser. Free, no signup.",
+        "headings": {
+          "h1": [
+            "Free JSON-LD Validator & Schema Checker"
+          ],
+          "h2": [
+            "Want valid structured data installed on your real pages?"
+          ]
+        },
+        "canonical": "https://samedaydesk.com/tools/schema-validator.html",
+        "links": [
+          {
+            "href": "https://samedaydesk.com/tools/ai-readiness",
+            "text": "Run the free AI-readiness check first"
+          },
+          {
+            "href": "https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e",
+            "text": "Get the Fix Pack · $39"
+          },
+          {
+            "href": "https://samedaydesk.com/tools/schema-generator.html",
+            "text": "Generate schema"
+          },
+          {
+            "href": "https://samedaydesk.com/",
+            "text": "SameDayDesk"
+          },
+          {
+            "href": "https://samedaydesk.com/tools/schema-generator.html",
+            "text": "JSON-LD generator"
+          },
+          {
+            "href": "https://samedaydesk.com/tools/ai-crawler-checker.html",
+            "text": "AI crawler checker"
+          },
+          {
+            "href": "https://samedaydesk.com/tools/meta-tag-generator.html",
+            "text": "meta tag generator"
+          }
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "finalUrl": "https://samedaydesk.com/tools/schema-validator.html",
+      "httpStatus": 200,
+      "provenance": {
+        "transport": "held-git-show",
+        "requestedAt": "2026-09-02T11:18:42.000Z",
+        "completedAt": "2026-09-02T11:18:42.000Z",
+        "fetchedAt": "2026-09-02T11:18:42.000Z",
+        "finalUrl": "https://samedaydesk.com/tools/schema-validator.html",
+        "httpStatus": 200,
+        "note": "Observation timestamps record when this wrapper was produced from git show. They are not page-content freshness."
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 1,
+    "bytes": 0,
+    "wallMs": 1,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 0,
+    "requests": 1,
+    "wallMs": 1,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "Held git-show extraction; not socket billing."
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

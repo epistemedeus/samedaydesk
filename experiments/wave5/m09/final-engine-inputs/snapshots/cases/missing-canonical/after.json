@@ -1,0 +1,112 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Caller-owned held extract-batch wrapper over git-show HTML facts. Not a live fetch, quote-as-success, or payment."
+  },
+  "jobId": "c22c6c8a1087b7a50e43cb988b6e17c0c56c3cf83b433111b33622d54ab6fc24",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html",
+      "status": "success",
+      "data": {
+        "title": "AI-Search Readiness Leaderboard 2026 — 189 companies scored across 10 industries",
+        "description": "A sortable leaderboard of how 189 well-known companies score on AI-search readiness (ChatGPT, Perplexity, Google AI) across 10 industries. Healthtech, media, and consumer apps score worst; GitHub and OpenAI got a D, Klarna and Ars Technica an F. Filter, sort, free checker.",
+        "headings": {
+          "h1": [
+            "AI-Search Readiness Leaderboard 2026"
+          ],
+          "h2": [
+            "Average score by industry",
+            "Where does your site rank?"
+          ]
+        },
+        "links": [
+          {
+            "href": "https://samedaydesk.com/tools/ai-readiness",
+            "text": "check your own site"
+          },
+          {
+            "href": "https://samedaydesk.com/tools/ai-readiness",
+            "text": "Run the free check"
+          },
+          {
+            "href": "https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e",
+            "text": "Get the Fix Pack · $39"
+          },
+          {
+            "href": "https://samedaydesk.com/reports/ai-search-readiness-saas-2026.html",
+            "text": "SaaS"
+          },
+          {
+            "href": "https://samedaydesk.com/reports/ai-search-readiness-ecommerce-2026.html",
+            "text": "e-commerce"
+          },
+          {
+            "href": "https://samedaydesk.com/reports/ai-search-readiness-marketing-agencies-2026.html",
+            "text": "marketing agencies"
+          },
+          {
+            "href": "https://samedaydesk.com/reports/ai-search-readiness-ai-startups-2026.html",
+            "text": "AI startups"
+          },
+          {
+            "href": "https://samedaydesk.com/",
+            "text": "SameDayDesk"
+          },
+          {
+            "href": "https://samedaydesk.com/tools/free-seo-ai-tools.html",
+            "text": "free SEO & AI-search tools"
+          }
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "finalUrl": "https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html",
+      "httpStatus": 200,
+      "provenance": {
+        "transport": "held-git-show",
+        "requestedAt": "2026-06-24T01:45:00.000Z",
+        "completedAt": "2026-06-24T01:45:00.000Z",
+        "fetchedAt": "2026-06-24T01:45:00.000Z",
+        "finalUrl": "https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html",
+        "httpStatus": 200,
+        "note": "Observation timestamps record when this wrapper was produced from git show. They are not page-content freshness."
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 1,
+    "bytes": 0,
+    "wallMs": 1,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 0,
+    "requests": 1,
+    "wallMs": 1,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "Held git-show extraction; not socket billing."
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

@@ -1,0 +1,43 @@
+# Caller-owned snapshots — provenance
+
+Not a crawl. Not the kit sample `samples/page/h04-page-01/`. Not the Northshore Co13 corpus under `experiments/wave5/m09/snapshots/`.
+
+HTML was read with `git show` on the PR114 worktree (`9ae0febd8c184c0cbbb5e481ba31ac620e89b869`). Title, description, headings, canonical, and links were copied into `samedaydesk.extract-batch.v0` wrappers. Observation timestamps are commit times, not page freshness.
+
+## Real page pair A — number / date / status
+
+```sh
+git show c26fcd30395fd5a9be835458578d6eef65950857:client/public/reports/ai-search-readiness-leaderboard-2026.html
+git show 4d1ba68dc751bb1a23bb32aa28613884785e7139:client/public/reports/ai-search-readiness-leaderboard-2026.html
+```
+
+Selected-field facts written before the engine call:
+
+- number: 136 → 189 companies; 7 → 10 industries (title and description)
+- date: year 2026 present on both titles (not a date change)
+- status: “Healthtech and fintech score worst; GitHub got a D, Klarna an F” → “Healthtech, media, and consumer apps score worst; GitHub and OpenAI got a D, Klarna and Ars Technica an F”
+- headings h1/h2 unchanged
+- nav / $39 Fix Pack links unchanged
+
+## Real page pair B — schema-validator copy rewrite
+
+```sh
+git show 4052f0fbf41c8b48823c6a3d58b6cd89c715abe1:client/public/tools/schema-validator.html
+git show 374a565784bcd4ec89eeda7fedbb9610fed77473:client/public/tools/schema-validator.html
+```
+
+Title, description, and h1 change. h2 and the seven links (including $39) stay the same.
+
+## Caller-owned derivatives (same public URLs, no fetch)
+
+- whitespace-title: extra ASCII space in the 189 title
+- nav-links-reorder: reversed schema-validator `links`
+- missing-canonical: selected `canonical` omitted from both extracts
+- failed-capture: after row `status=failure`
+- identical-replay: same 189 facts, different jobId / fetchedAt
+- ambiguous-duplicate-source: two after rows with the same source URL and conflicting titles
+- max-changes-omits-sibling: pair B with shipped `--max-changes 1`
+
+D15 owns input-freeze / path-mutation. Those tests are not repeated here.
+
+Expected fact diffs live in each case `expected.json`, written by `bin/materialize.mjs` from `lib/corpus.mjs` before any engine spawn.

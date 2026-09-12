@@ -1,0 +1,12 @@
+{
+  "id": "max-changes-omits-sibling",
+  "title": "Shipped --max-changes 1 must declare the omitted sibling; not a complete two-field watch",
+  "clock": "2026-09-11T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "before": "./before.json",
+  "after": "./after.json"
+}

@@ -1,0 +1,21 @@
+{
+  "transportOk": true,
+  "exitCode": 0,
+  "verdict": "ambiguous",
+  "requiredPaths": [],
+  "duplicateSource": "https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html",
+  "silentReplaceForbidden": true,
+  "tokenPairs": [],
+  "claims": {
+    "usefulOutputProven": false,
+    "contentUnchangedProven": false,
+    "complete": false,
+    "noChangeProven": false,
+    "comparable": true,
+    "fresh": false
+  },
+  "engineVersion": "0.1.1",
+  "claimsFresh": false,
+  "paymentImpliesUsefulOutput": false,
+  "networkUsed": false
+}

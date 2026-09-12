@@ -1,0 +1,10 @@
+{
+  "id": "nav-links-reorder",
+  "title": "Caller-owned reverse of schema-validator links is order noise, not a semantic replace",
+  "clock": "2026-09-11T12:00:00.000Z",
+  "fields": [
+    "links"
+  ],
+  "before": "./before.json",
+  "after": "./after.json"
+}
