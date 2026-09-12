@@ -69,10 +69,13 @@ export function spawnDeliver({
 
 export function deliverArgs(jobId, inputs, extra = []) {
   const args = ["--job", jobId];
-  if (inputs.before) args.push("--before", inputs.before);
-  if (inputs.after) args.push("--after", inputs.after);
-  if (inputs.used) args.push("--used", inputs.used);
-  if (inputs.job) args.push("--job-file", inputs.job);
+  if (inputs.job) {
+    args.push("--job-file", inputs.job);
+  } else {
+    if (inputs.before) args.push("--before", inputs.before);
+    if (inputs.after) args.push("--after", inputs.after);
+    if (inputs.used) args.push("--used", inputs.used);
+  }
   if (inputs.outDir) args.push("--out-dir", inputs.outDir);
   args.push(...extra);
   return args;
