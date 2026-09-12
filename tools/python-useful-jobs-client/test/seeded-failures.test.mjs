@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync, chmodSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -76,6 +76,29 @@ test("missing node binary is labelled missing-node, not a payment error", () => 
     assert.match(body.error, /binary|PATH|not found/i);
     assertNoPaymentStory(body);
     assert.doesNotMatch(body.code, /payment|402|sold/i);
+  } finally {
+    rmSync(work, { recursive: true, force: true });
+  }
+});
+
+test("empty engine job list is catalog-mismatch, not a constant catalog", () => {
+  const work = mkdtempSync(join(tmpdir(), "uj-py-empty-list-"));
+  try {
+    const fake = join(work, "empty-list-node");
+    writeFileSync(
+      fake,
+      `#!/usr/bin/env node
+process.stdout.write(JSON.stringify({ ok: true, jobs: [] }) + "\\n");
+`,
+    );
+    chmodSync(fake, 0o755);
+    const r = py(["list"], { env: { USEFUL_JOBS_NODE: fake } });
+    assert.notEqual(r.status, 0);
+    const body = parseJson(r);
+    assert.equal(body.ok, false);
+    assert.equal(body.refused, true);
+    assert.equal(body.code, "catalog-mismatch");
+    assert.deepEqual(body.listed, []);
   } finally {
     rmSync(work, { recursive: true, force: true });
   }

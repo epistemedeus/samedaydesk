@@ -5,7 +5,7 @@ from __future__ import annotations
 import sys
 from typing import Sequence
 
-from .acquire import acquire, acquired_payload
+from .acquire import acquire, acquired_payload, catalog_payload
 from .jobs import help_job, list_jobs, run_job
 from .pins import HASH_TERMS, JOB_IDS
 from .refuse import ClientRefuse, emit, emit_refuse
@@ -104,30 +104,15 @@ def main(argv: Sequence[str] | None = None) -> int:
             emit(payload, _exit_for(payload))
 
         if command == "catalog":
-            emit(
-                {
-                    "ok": True,
-                    "command": "catalog",
-                    "jobs": list(JOB_IDS),
-                    "outputs": {key: list(names) for key, names in HASH_TERMS.job_outputs.items()},
-                    "hashTerms": {
-                        "sha256": HASH_TERMS.sha256,
-                        "bytes": HASH_TERMS.bytes,
-                        "package": HASH_TERMS.package,
-                        "version": HASH_TERMS.version,
-                        "cli": HASH_TERMS.cli,
-                    },
-                    "sold": False,
-                    "purchaseAuthority": False,
-                }
-            )
+            kit = acquire(archive=archive, origin=origin)
+            emit(catalog_payload(kit))
 
         if command == "version":
             emit(
                 {
                     "ok": True,
                     "command": "version",
-                    "client": "samedaydesk_useful_jobs 1.0.0",
+                    "client": "samedaydesk_useful_jobs 1.0.1",
                     "package": HASH_TERMS.package,
                     "version": HASH_TERMS.version,
                     "sha256": HASH_TERMS.sha256,

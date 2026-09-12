@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import ctypes
 import json
 import os
+import signal
 import shutil
 import subprocess
 from pathlib import Path
@@ -13,6 +15,8 @@ from .acquire import AcquiredKit, acquire
 from .honesty import inspect_argv, refuse_sale_intent, sample_envelope
 from .pins import HASH_TERMS, JOB_IDS
 from .refuse import ClientRefuse
+
+PR_SET_PDEATHSIG = 1
 
 
 def resolve_node_bin(explicit: str | None = None) -> str:
@@ -41,18 +45,78 @@ def resolve_node_bin(explicit: str | None = None) -> str:
     return str(path if path.is_file() else shutil.which(candidate))
 
 
+def _timeout_seconds() -> float:
+    raw = os.environ.get("USEFUL_JOBS_TIMEOUT_SEC") or "120"
+    try:
+        value = float(raw)
+    except ValueError:
+        return 120.0
+    return value if value > 0 else 120.0
+
+
+def _child_preexec() -> None:
+    os.setsid()
+    try:
+        libc = ctypes.CDLL("libc.so.6", use_errno=True)
+        libc.prctl(PR_SET_PDEATHSIG, signal.SIGKILL)
+        if os.getppid() == 1:
+            os.kill(os.getpid(), signal.SIGKILL)
+    except Exception:
+        return
+
+
+def _kill_process_group(proc: subprocess.Popen[str]) -> None:
+    if proc.pid is None:
+        return
+    try:
+        os.killpg(proc.pid, signal.SIGKILL)
+    except (ProcessLookupError, PermissionError, OSError):
+        try:
+            proc.kill()
+        except Exception:
+            pass
+    try:
+        proc.wait(timeout=3)
+    except Exception:
+        pass
+
+
 def spawn_node(kit: AcquiredKit, args: list[str], *, node_bin: str | None = None) -> subprocess.CompletedProcess[str]:
     binary = resolve_node_bin(node_bin)
     cli = kit.kit_root / HASH_TERMS.cli
     command = [binary, str(cli), *args]
+    timeout_sec = _timeout_seconds()
+    proc: subprocess.Popen[str] | None = None
     try:
-        return subprocess.run(
+        proc = subprocess.Popen(
             command,
             cwd=os.getcwd(),
-            capture_output=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             text=True,
             env=os.environ.copy(),
+            preexec_fn=_child_preexec,
         )
+        try:
+            stdout, stderr = proc.communicate(timeout=timeout_sec)
+        except subprocess.TimeoutExpired:
+            _kill_process_group(proc)
+            try:
+                stdout, stderr = proc.communicate(timeout=5)
+            except Exception:
+                stdout, stderr = "", ""
+            raise ClientRefuse(
+                "engine-timeout",
+                f"node CLI exceeded {timeout_sec}s and was killed",
+                missing="none",
+                extracted=True,
+                executed=True,
+                engineStatus=-1,
+                timedOut=True,
+            )
+        return subprocess.CompletedProcess(command, proc.returncode, stdout, stderr)
+    except ClientRefuse:
+        raise
     except FileNotFoundError as err:
         raise ClientRefuse(
             "missing-node",
@@ -63,6 +127,9 @@ def spawn_node(kit: AcquiredKit, args: list[str], *, node_bin: str | None = None
             extracted=True,
             executed=False,
         ) from err
+    finally:
+        if proc is not None and proc.poll() is None:
+            _kill_process_group(proc)
 
 
 def _parse_engine_json(stdout: str) -> Any:
@@ -114,9 +181,9 @@ def list_jobs(
     result = spawn_node(kit, ["list", "--json"])
     engine = _parse_engine_json(result.stdout)
     ids = []
-    if isinstance(engine, dict) and engine.get("ok") and isinstance(engine.get("jobs"), list):
-        ids = [job.get("id") for job in engine["jobs"] if isinstance(job, dict)]
-    if ids and tuple(ids) != HASH_TERMS.jobs:
+    if isinstance(engine, dict) and isinstance(engine.get("jobs"), list):
+        ids = [job.get("id") for job in engine["jobs"] if isinstance(job, dict) and job.get("id")]
+    if tuple(ids) != HASH_TERMS.jobs:
         raise ClientRefuse(
             "catalog-mismatch",
             "node list job ids differ from published hash terms",
@@ -124,11 +191,12 @@ def list_jobs(
             expected=list(JOB_IDS),
             extracted=True,
             executed=True,
+            engineStatus=result.returncode,
         )
     return {
         "ok": result.returncode == 0,
         "command": "list",
-        "jobs": list(JOB_IDS),
+        "jobs": ids,
         "engine": engine,
         "kitRoot": str(kit.kit_root),
         "source": kit.source,
@@ -210,8 +278,34 @@ def run_job(
             )
     outputs = _outputs_exist(job_id, out_dir)
     expected = list(HASH_TERMS.outputs_for(job_id))
+    missing = [name for name in expected if name not in outputs]
+    if result.returncode != 0:
+        outcome = "engine-crash" if engine is None else "engine-refused"
+    elif engine_ok and missing:
+        outcome = "missing-output"
+    elif engine_ok:
+        outcome = "complete"
+    elif isinstance(engine, dict) and engine.get("ok") is False:
+        outcome = "analysis-refusal"
+    else:
+        outcome = "engine-refused"
+    if engine_ok and result.returncode == 0 and missing:
+        raise ClientRefuse(
+            "missing-output",
+            "engine claimed success but expected output files are missing",
+            job=job_id,
+            outDir=out_dir,
+            outputsExpected=expected,
+            outputsFound=outputs,
+            missing=missing,
+            engine=engine,
+            extracted=True,
+            executed=True,
+            outcome=outcome,
+            engineStatus=result.returncode,
+        )
     payload = {
-        "ok": result.returncode == 0 and engine_ok,
+        "ok": result.returncode == 0 and engine_ok and not missing,
         "command": "run",
         "job": job_id,
         "outDir": out_dir,
@@ -227,10 +321,11 @@ def run_job(
         "bytes": kit.bytes,
         "extracted": True,
         "executed": True,
+        "outcome": outcome,
         "acceptanceClass": envelope["kind"],
         **envelope,
     }
-    if result.returncode != 0:
+    if result.returncode != 0 or not engine_ok:
         payload["ok"] = False
         payload["refused"] = True
         if isinstance(engine, dict) and engine.get("code"):

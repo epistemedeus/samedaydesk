@@ -72,6 +72,40 @@ test("journey: example SAMPLE then caller files copied from samples/pricing/a", 
   }
 });
 
+test("identical caller files still deliver outputs (valid no-change is not missing-output)", () => {
+  const work = mkdtempSync(join(tmpdir(), "uj-py-nochange-"));
+  try {
+    const acquire = parseJson(py(["acquire"]));
+    const kitRoot = acquire.kitRoot;
+    const before = join(work, "before.json");
+    const after = join(work, "after.json");
+    copyFileSync(join(kitRoot, "samples/pricing/a/before.json"), before);
+    copyFileSync(join(kitRoot, "samples/pricing/a/before.json"), after);
+    const out = join(work, "out");
+    const r = py([
+      "run",
+      "vendor-budget-impact",
+      "--before",
+      before,
+      "--after",
+      after,
+      "--out-dir",
+      out,
+    ]);
+    assert.equal(r.status, 0, r.stderr + r.stdout);
+    const body = parseJson(r);
+    assert.equal(body.ok, true);
+    assert.equal(body.outcome, "complete");
+    assert.equal(body.outputsExist, true);
+    assert.equal(existsSync(join(out, "budget-impact.json")), true);
+    assert.equal(existsSync(join(out, "budget-impact.md")), true);
+    const artifact = JSON.parse(readFileSync(join(out, "budget-impact.json"), "utf8"));
+    assert.equal(artifact.purchaseAuthority, false);
+  } finally {
+    rmSync(work, { recursive: true, force: true });
+  }
+});
+
 test("local HTTP origin with matching committed bytes acquires (not live public GET)", async () => {
   const work = mkdtempSync(join(tmpdir(), "uj-py-origin-ok-"));
   const good = readFileSync(ARCHIVE);

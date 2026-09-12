@@ -24,9 +24,21 @@ Both size and digest must match before extract. Current pin from
 - jobs: `api-upgrade-brief`, `vendor-budget-impact`, `feed-agenda`,
   `evidence-ci-annotation`, `listing-repair-packet`, `repeat-job-record`
 
-## Run (no install)
+## Install
 
-From the repository root:
+From the repository root (uses the same published hash terms; `pins.json` is
+packaged with the wheel):
+
+```bash
+python3 -m pip install tools/python-useful-jobs-client
+samedaydesk-useful-jobs run vendor-budget-impact --example
+```
+
+Set `SAMEDAYDESK_ROOT` to the SameDayDesk checkout, or pass `--archive` to a
+file whose sha256 and bytes match. A catalog/list/run with no archive and no
+kit JSON refuses `missing-archive`; it does not print a constant job list.
+
+## Run without install
 
 ```bash
 PYTHONPATH=tools/python-useful-jobs-client python3 -m samedaydesk_useful_jobs acquire
@@ -51,6 +63,12 @@ Optional `--origin URL` fetches `{origin}/for-agents/useful-jobs/useful-jobs-1.0
 and still verifies sha256 and bytes. Mismatch refuses before extract. Default
 acquire uses the committed tarball, not live HTTP.
 
+Unsafe archive members (`..`, absolute paths, links) refuse before extract.
+The client never falls back to unfiltered `tarfile.extractall`. Missing
+expected outputs after an engine `ok` refuse as `missing-output`. Node
+subprocesses are process-group killed on timeout (`USEFUL_JOBS_TIMEOUT_SEC`,
+default 120).
+
 ## Import
 
 ```python
@@ -63,6 +81,8 @@ result = run_job("vendor-budget-impact", ["--example"], kit=kit)
 ## Tests
 
 Python 3 and Node 22. No Postgres. Local HTTP is used only for `--origin`.
+A fresh `pip install --user` of this directory is required by
+`test/installed-cli.test.mjs`.
 
 ```bash
 node --test --test-concurrency=1 tools/python-useful-jobs-client/test/*.test.mjs
@@ -76,9 +96,9 @@ cd tools/python-useful-jobs-client && npm test
 
 ## Later integration
 
-Root owns wiring to F08 paid Node wrappers and any live origin. This client
-consumes the published archive through a file locator or an injected origin
-fetcher. It does not copy the earned-work kernel.
+W5-D01 owns the PR52 paid wrapper at `aeef964fa188443078958d9d6d393afae1d542ee`.
+This client consumes the published useful-jobs Node CLI from the verified
+archive. It does not vendor that wrapper or the earned-work kernel.
 
 ## License
 
