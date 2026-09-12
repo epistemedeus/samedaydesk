@@ -1,0 +1,556 @@
+--- a/examples/customer-x402/src/authorization.mjs
++++ b/examples/customer-x402/src/authorization.mjs
+@@ -8,8 +8,10 @@
+ } from "./batch-admission.mjs";
+ import {
+   DEFAULT_BATCH_REQUIRED_OUTPUT,
++  DEFAULT_LOCKFILE_REQUIRED_OUTPUT,
+   DEFAULT_REQUIRED_OUTPUT,
+   LIVE_BATCH_METHOD,
++  LIVE_LOCKFILE_METHOD,
+   LIVE_METHOD,
+ } from "./constants.mjs";
+ 
+@@ -158,10 +160,101 @@
+   };
+ }
+ 
++const LOCKFILE_MAX_REQUEST_JSON_BYTES = 256 * 1024;
++const LOCKFILE_ALLOWED_BODY_KEYS = Object.freeze(["before", "after"]);
++
++function admitLockfilePair(value, label) {
++  if (value == null || typeof value !== "object" || Array.isArray(value)) {
++    fail(`${label} must be a JSON object (not a path or string)`, label);
++  }
++  return value;
++}
++
++function admitLockfileBody(input) {
++  let bodyRaw;
++  let parsed;
++  if (typeof input.bodyRaw === "string") {
++    if (Buffer.byteLength(input.bodyRaw) > LOCKFILE_MAX_REQUEST_JSON_BYTES) {
++      fail("bodyRaw exceeds request byte ceiling", "body");
++    }
++    try {
++      parsed = JSON.parse(input.bodyRaw);
++    } catch {
++      fail("bodyRaw must be valid JSON", "body");
++    }
++    bodyRaw = input.bodyRaw;
++    if (input.body !== undefined) {
++      const fromBody = JSON.stringify({ before: input.body.before, after: input.body.after });
++      if (fromBody !== bodyRaw) fail("body does not match authorized bodyRaw", "body");
++    }
++  } else if (input.body && typeof input.body === "object" && !Array.isArray(input.body)) {
++    parsed = input.body;
++    bodyRaw = JSON.stringify({ before: parsed.before, after: parsed.after });
++    if (Buffer.byteLength(bodyRaw) > LOCKFILE_MAX_REQUEST_JSON_BYTES) {
++      fail("lockfile body exceeds request byte ceiling", "body");
++    }
++  } else {
++    fail("lockfile authorization requires body {before, after} or bodyRaw", "body");
++  }
++  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
++    fail("body must be a JSON object", "body");
++  }
++  const extra = Object.keys(parsed).filter((key) => !LOCKFILE_ALLOWED_BODY_KEYS.includes(key));
++  if (extra.length) fail(`unexpected field: ${extra[0]}`, extra[0]);
++  admitLockfilePair(parsed.before, "before");
++  admitLockfilePair(parsed.after, "after");
++  const digest = bodyDigestFor(bodyRaw);
++  if (input.bodyDigest !== undefined && input.bodyDigest !== digest) {
++    fail("body digest drifted after approval", "body");
++  }
++  return Object.freeze({
++    bodyRaw,
++    bodyDigest: digest,
++    bodyBytes: Buffer.byteLength(bodyRaw),
++  });
++}
++
++function normalizePostLockfileAuthorization(input) {
++  const method = String(input.method || LIVE_LOCKFILE_METHOD).toUpperCase();
++  if (method !== "POST") fail("lockfile authorization method must be POST", "method");
++  const url = normalizeHttpsUrl(input.url, "url");
++  if (url.pathname !== "/lockfile-pin-delta") fail("authorization path must be /lockfile-pin-delta", "url");
++  if (url.search) fail("lockfile authorization URL must not include a query string", "url");
++  const admitted = admitLockfileBody(input);
++  return {
++    method,
++    url: url.toString(),
++    origin: url.origin,
++    path: url.pathname,
++    query: "",
++    bodyRaw: admitted.bodyRaw,
++    bodyDigest: admitted.bodyDigest,
++    bodyBytes: admitted.bodyBytes,
++    batch: null,
++    lockfile: true,
++    requiredOutput: normalizeRequiredOutput(
++      input.requiredOutput || DEFAULT_LOCKFILE_REQUIRED_OUTPUT,
++      { batch: false },
++    ),
++  };
++}
++
++function postRouteFor(input) {
++  let preview;
++  try {
++    preview = new URL(String(input.url || ""));
++  } catch {
++    fail("url must be an absolute HTTPS URL", "url");
++  }
++  if (preview.pathname === "/lockfile-pin-delta") return normalizePostLockfileAuthorization(input);
++  return normalizePostBatchAuthorization(input);
++}
++
+ /**
+  * Bind the exact customer-authorized purchase shape before any wallet access.
+  * HTTP payment credentials must never be transplanted into mcp:// resources.
+  * POST /extract/batch also binds exact request body bytes and selected fields.
++ * POST /lockfile-pin-delta binds exact {before, after} body bytes the same way.
+  */
+ export function normalizeAuthorization(input) {
+   if (!input || typeof input !== "object" || Array.isArray(input)) {
+@@ -188,7 +281,7 @@
+   }
+ 
+   const route = method === "POST"
+-    ? normalizePostBatchAuthorization(input)
++    ? postRouteFor(input)
+     : normalizeGetAuthorization(input);
+ 
+   return Object.freeze({
+--- a/examples/customer-x402/src/constants.mjs
++++ b/examples/customer-x402/src/constants.mjs
+@@ -6,14 +6,18 @@
+ export const LIVE_EXTRACT_URL =
+   `${LIVE_ORIGIN}${LIVE_EXTRACT_PATH}?url=${encodeURIComponent(LIVE_EXAMPLE_TARGET)}`;
+ export const LIVE_EXTRACT_BATCH_URL = `${LIVE_ORIGIN}${LIVE_EXTRACT_BATCH_PATH}`;
++export const LIVE_LOCKFILE_PATH = "/lockfile-pin-delta";
++export const LIVE_LOCKFILE_URL = `${LIVE_ORIGIN}${LIVE_LOCKFILE_PATH}`;
+ 
+ export const LIVE_NETWORK = "eip155:8453";
+ export const LIVE_ASSET = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+ export const LIVE_RECIPIENT = "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee";
+ export const LIVE_AMOUNT_ATOMIC = "5000";
+ export const LIVE_BATCH_AMOUNT_ATOMIC = "10000";
++export const LIVE_LOCKFILE_AMOUNT_ATOMIC = "5000";
+ export const LIVE_METHOD = "GET";
+ export const LIVE_BATCH_METHOD = "POST";
++export const LIVE_LOCKFILE_METHOD = "POST";
+ 
+ export const LIVE_BATCH_PRODUCT = "samedaydesk-extract-batch";
+ export const LIVE_BATCH_SCHEMA_VERSION = "samedaydesk.extract-batch.v0";
+@@ -67,6 +71,19 @@
+   maxResponseBytes: 128 * 1024,
+ });
+ 
++export const DEFAULT_LOCKFILE_REQUIRED_OUTPUT = Object.freeze({
++  mediaType: "application/json",
++  requiredFields: Object.freeze([
++    "ok",
++    "product",
++    "schemaVersion",
++    "charged",
++    "analysis",
++    "quote.amountAtomic",
++  ]),
++  maxResponseBytes: 160 * 1024,
++});
++
+ export const DEFAULT_AUTHORIZATION = Object.freeze({
+   method: LIVE_METHOD,
+   url: LIVE_EXTRACT_URL,
+@@ -99,6 +116,20 @@
+   requiredOutput: DEFAULT_BATCH_REQUIRED_OUTPUT,
+ });
+ 
++/** Template only. Inspect live 402 terms before --approve. Not a default command. */
++export const DEFAULT_LOCKFILE_AUTHORIZATION = Object.freeze({
++  method: LIVE_LOCKFILE_METHOD,
++  url: LIVE_LOCKFILE_URL,
++  network: LIVE_NETWORK,
++  asset: LIVE_ASSET,
++  recipient: LIVE_RECIPIENT,
++  amountCapAtomic: LIVE_LOCKFILE_AMOUNT_ATOMIC,
++  assetName: "USD Coin",
++  assetVersion: "2",
++  maxTimeoutSeconds: 300,
++  requiredOutput: DEFAULT_LOCKFILE_REQUIRED_OUTPUT,
++});
++
+ export const OUTCOMES = Object.freeze({
+   PREFLIGHT_OK: "preflight_ok",
+   AUTHORIZATION_REFUSED: "authorization_refused",
+--- a/examples/customer-x402/bin/cli.mjs
++++ b/examples/customer-x402/bin/cli.mjs
+@@ -6,6 +6,7 @@
+   DEFAULT_BATCH_AUTHORIZATION,
+   LIVE_EXTRACT_BATCH_URL,
+   LIVE_EXTRACT_URL,
++  LIVE_LOCKFILE_URL,
+ } from "../src/constants.mjs";
+ import {
+   AttemptReceiptError,
+@@ -47,6 +48,9 @@
+   - Default commands never read wallet credentials, sign, send payment headers, or pay.
+   - Default route is POST ${LIVE_EXTRACT_BATCH_URL} with fixture public HTTPS URLs.
+   - Local batch admission runs before any fetch or wallet lookup.
++  - POST ${LIVE_LOCKFILE_URL} uses the same inspect/--approve/reconcile path once
++    --authorization binds that HTTPS URL and exact {before, after} body bytes.
++    Default commands still do not pay lockfile. See fixtures/authorization-lockfile.json.
+   - --approve binds exact HTTPS URL, method, body bytes, network, asset, recipient,
+     amount cap, and buyer-required output before invoking @x402/fetch.
+   - Without --attempt-receipt, unsigned EIP-3009 nonce/validBefore are not retained.
+--- a/examples/customer-x402/README.md
++++ b/examples/customer-x402/README.md
+@@ -55,6 +55,46 @@
+ npm run preflight -- --get --url 'https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com'
+ ```
+ 
++## Lockfile pin-delta (same client; not the default command)
++
++`POST https://agents.samedaydesk.com/lockfile-pin-delta` is a live x402-only
++compare of two caller-supplied npm `package-lock.json` objects (5000 atomic
++USDC). It is **paid convenience**, not a second payment stack.
++
++Distinguish:
++
++- **Free local kit 1.1.0** (`tools/lockfile-pin-delta` / `vendor/lockfile-pin-delta`):
++  offline `node bin/lockfile-delta.mjs --before <lock> --after <lock>`. No wallet.
++- **Analysis scope:** added / removed / changed name+version+integrity+resolved
++  pins. Identical pins are informational, not failure. Not an install, audit,
++  or npm registry fetch.
++- **No vulnerability guarantee:** a pin-delta is not a CVE proof. This client
++  does not join advisories.
++- **Paid HTTP:** one bounded compare after an inspected 402 and explicit
++  `--approve` with the caller's **already configured** wallet.
++
++`examples/lockfile-pin-delta-buyer/cli.mjs` only forwards a precomputed
++`PAYMENT_SIGNATURE`. Ordinary agents should use this customer-x402 client
++instead of inventing signatures.
++
++Credential-free inspect (never touches a wallet):
++
++```bash
++npm run preflight -- --authorization ./fixtures/authorization-lockfile.json
++```
++
++Explicit approved purchase (existing wallet / expenditure authority only):
++
++```bash
++npm run purchase -- --approve \
++  --authorization ./fixtures/authorization-lockfile.json \
++  --private-key-env CUSTOMER_X402_PRIVATE_KEY \
++  --attempt-receipt ./attempt-receipt.json
++```
++
++Unknown transport after a signed send is **not** permission to pay again.
++Reconcile the attempt receipt; do not mint a new authorization.
++
+ ## Explicit approved purchase
+ 
+ Bind exact HTTPS origin/path/query, method, serialized body bytes (batch),
+--- a/examples/customer-x402/fixtures/authorization-lockfile.json
++++ b/examples/customer-x402/fixtures/authorization-lockfile.json
+@@ -0,0 +1,109 @@
++{
++  "method": "POST",
++  "url": "https://agents.samedaydesk.com/lockfile-pin-delta",
++  "network": "eip155:8453",
++  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
++  "recipient": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
++  "amountCapAtomic": "5000",
++  "assetName": "USD Coin",
++  "assetVersion": "2",
++  "maxTimeoutSeconds": 300,
++  "requiredOutput": {
++    "mediaType": "application/json",
++    "requiredFields": [
++      "ok",
++      "product",
++      "schemaVersion",
++      "charged",
++      "analysis",
++      "quote.amountAtomic"
++    ],
++    "maxResponseBytes": 163840
++  },
++  "body": {
++    "before": {
++      "name": "mocha",
++      "version": "10.2.0",
++      "lockfileVersion": 3,
++      "requires": true,
++      "packages": {
++        "": {
++          "name": "mocha",
++          "version": "10.2.0"
++        },
++        "node_modules/archy": {
++          "version": "1.0.0",
++          "resolved": "https://registry.npmjs.org/archy/-/archy-1.0.0.tgz",
++          "integrity": "sha1-+cjBN1fMHde8N5rHeyxipcKGjEA=",
++          "dev": true
++        },
++        "node_modules/ansi-wrap": {
++          "version": "0.1.0",
++          "resolved": "https://registry.npmjs.org/ansi-wrap/-/ansi-wrap-0.1.0.tgz",
++          "integrity": "sha1-qCJQ3bABXponyoLoLqYDu/pF768=",
++          "dev": true
++        },
++        "node_modules/array-uniq": {
++          "version": "1.0.3",
++          "resolved": "https://registry.npmjs.org/array-uniq/-/array-uniq-1.0.3.tgz",
++          "integrity": "sha1-r2rId6Jcx/dOBYiUdThY39sk/bY=",
++          "dev": true
++        },
++        "node_modules/@colors/colors": {
++          "version": "1.5.0",
++          "resolved": "https://registry.npmjs.org/@colors/colors/-/colors-1.5.0.tgz",
++          "integrity": "sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==",
++          "dev": true
++        },
++        "node_modules/@hapi/hoek": {
++          "version": "8.5.1",
++          "resolved": "https://registry.npmjs.org/@hapi/hoek/-/hoek-8.5.1.tgz",
++          "integrity": "sha512-yN7kbciD87WzLGc5539Tn0sApjyiGHAJgKvG9W8C7O+6c7qmoQMfVs0W4bX17eqz6C78QJqqFrtgdK5EWf6Qow==",
++          "dev": true
++        }
++      }
++    },
++    "after": {
++      "name": "mocha",
++      "version": "10.2.0",
++      "lockfileVersion": 3,
++      "requires": true,
++      "packages": {
++        "": {
++          "name": "mocha",
++          "version": "10.2.0"
++        },
++        "node_modules/archy": {
++          "version": "1.0.0",
++          "resolved": "https://registry.npmjs.org/archy/-/archy-1.0.0.tgz",
++          "integrity": "sha512-Xg+9RwCg/0p32teKdGMPTPnVXKD0w3DfHnFTficozsAgsvq2XenPJq/MYpzzQ/v8zrOyJn6Ds39VA4JIDwFfqw==",
++          "dev": true
++        },
++        "node_modules/ansi-wrap": {
++          "version": "0.1.0",
++          "resolved": "https://registry.npmjs.org/ansi-wrap/-/ansi-wrap-0.1.0.tgz",
++          "integrity": "sha512-ZyznvL8k/FZeQHr2T6LzcJ/+vBApDnMNZvfVFy3At0knswWd6rJ3/0Hhmpu8oqa6C92npmozs890sX9Dl6q+Qw==",
++          "dev": true
++        },
++        "node_modules/array-uniq": {
++          "version": "1.0.3",
++          "resolved": "https://registry.npmjs.org/array-uniq/-/array-uniq-1.0.3.tgz",
++          "integrity": "sha512-MNha4BWQ6JbwhFhj03YK552f7cb3AzoE8SzeljgChvL1dl3IcvggXVz1DilzySZkCja+CXuZbdW7yATchWn8/Q==",
++          "dev": true
++        },
++        "node_modules/@colors/colors": {
++          "version": "1.5.0",
++          "resolved": "https://registry.npmjs.org/@colors/colors/-/colors-1.5.0.tgz",
++          "integrity": "sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==",
++          "dev": true
++        },
++        "node_modules/@hapi/hoek": {
++          "version": "8.5.1",
++          "resolved": "https://registry.npmjs.org/@hapi/hoek/-/hoek-8.5.1.tgz",
++          "integrity": "sha512-yN7kbciD87WzLGc5539Tn0sApjyiGHAJgKvG9W8C7O+6c7qmoQMfVs0W4bX17eqz6C78QJqqFrtgdK5EWf6Qow==",
++          "dev": true
++        }
++      }
++    }
++  }
++}
+--- a/examples/customer-x402/fixtures/authorization-lockfile-no-change.json
++++ b/examples/customer-x402/fixtures/authorization-lockfile-no-change.json
+@@ -0,0 +1,109 @@
++{
++  "method": "POST",
++  "url": "https://agents.samedaydesk.com/lockfile-pin-delta",
++  "network": "eip155:8453",
++  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
++  "recipient": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
++  "amountCapAtomic": "5000",
++  "assetName": "USD Coin",
++  "assetVersion": "2",
++  "maxTimeoutSeconds": 300,
++  "requiredOutput": {
++    "mediaType": "application/json",
++    "requiredFields": [
++      "ok",
++      "product",
++      "schemaVersion",
++      "charged",
++      "analysis",
++      "quote.amountAtomic"
++    ],
++    "maxResponseBytes": 163840
++  },
++  "body": {
++    "before": {
++      "name": "mocha",
++      "version": "10.2.0",
++      "lockfileVersion": 3,
++      "requires": true,
++      "packages": {
++        "": {
++          "name": "mocha",
++          "version": "10.2.0"
++        },
++        "node_modules/archy": {
++          "version": "1.0.0",
++          "resolved": "https://registry.npmjs.org/archy/-/archy-1.0.0.tgz",
++          "integrity": "sha1-+cjBN1fMHde8N5rHeyxipcKGjEA=",
++          "dev": true
++        },
++        "node_modules/ansi-wrap": {
++          "version": "0.1.0",
++          "resolved": "https://registry.npmjs.org/ansi-wrap/-/ansi-wrap-0.1.0.tgz",
++          "integrity": "sha1-qCJQ3bABXponyoLoLqYDu/pF768=",
++          "dev": true
++        },
++        "node_modules/array-uniq": {
++          "version": "1.0.3",
++          "resolved": "https://registry.npmjs.org/array-uniq/-/array-uniq-1.0.3.tgz",
++          "integrity": "sha1-r2rId6Jcx/dOBYiUdThY39sk/bY=",
++          "dev": true
++        },
++        "node_modules/@colors/colors": {
++          "version": "1.5.0",
++          "resolved": "https://registry.npmjs.org/@colors/colors/-/colors-1.5.0.tgz",
++          "integrity": "sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==",
++          "dev": true
++        },
++        "node_modules/@hapi/hoek": {
++          "version": "8.5.1",
++          "resolved": "https://registry.npmjs.org/@hapi/hoek/-/hoek-8.5.1.tgz",
++          "integrity": "sha512-yN7kbciD87WzLGc5539Tn0sApjyiGHAJgKvG9W8C7O+6c7qmoQMfVs0W4bX17eqz6C78QJqqFrtgdK5EWf6Qow==",
++          "dev": true
++        }
++      }
++    },
++    "after": {
++      "name": "mocha",
++      "version": "10.2.0",
++      "lockfileVersion": 3,
++      "requires": true,
++      "packages": {
++        "": {
++          "name": "mocha",
++          "version": "10.2.0"
++        },
++        "node_modules/archy": {
++          "version": "1.0.0",
++          "resolved": "https://registry.npmjs.org/archy/-/archy-1.0.0.tgz",
++          "integrity": "sha1-+cjBN1fMHde8N5rHeyxipcKGjEA=",
++          "dev": true
++        },
++        "node_modules/ansi-wrap": {
++          "version": "0.1.0",
++          "resolved": "https://registry.npmjs.org/ansi-wrap/-/ansi-wrap-0.1.0.tgz",
++          "integrity": "sha1-qCJQ3bABXponyoLoLqYDu/pF768=",
++          "dev": true
++        },
++        "node_modules/array-uniq": {
++          "version": "1.0.3",
++          "resolved": "https://registry.npmjs.org/array-uniq/-/array-uniq-1.0.3.tgz",
++          "integrity": "sha1-r2rId6Jcx/dOBYiUdThY39sk/bY=",
++          "dev": true
++        },
++        "node_modules/@colors/colors": {
++          "version": "1.5.0",
++          "resolved": "https://registry.npmjs.org/@colors/colors/-/colors-1.5.0.tgz",
++          "integrity": "sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==",
++          "dev": true
++        },
++        "node_modules/@hapi/hoek": {
++          "version": "8.5.1",
++          "resolved": "https://registry.npmjs.org/@hapi/hoek/-/hoek-8.5.1.tgz",
++          "integrity": "sha512-yN7kbciD87WzLGc5539Tn0sApjyiGHAJgKvG9W8C7O+6c7qmoQMfVs0W4bX17eqz6C78QJqqFrtgdK5EWf6Qow==",
++          "dev": true
++        }
++      }
++    }
++  }
++}
+--- a/examples/lockfile-pin-delta-buyer/README.md
++++ b/examples/lockfile-pin-delta-buyer/README.md
+@@ -29,9 +29,48 @@
+ Without `PAYMENT_SIGNATURE` or `AUTHORIZATION` this prints the unpaid
+ challenge. Do not paste production credentials into tests.
+ 
++## Ordinary already-authorized wallet (preferred)
++
++This CLI does **not** sign. It only attaches a caller-supplied
++`PAYMENT_SIGNATURE`. Do not invent raw signatures.
++
++Use the existing `examples/customer-x402` client for inspect → `--approve` →
++attempt-receipt → read-only reconcile, with the caller's **already configured**
++wallet:
++
++```bash
++cd examples/customer-x402
++npm ci
++npm run preflight -- --authorization ./fixtures/authorization-lockfile.json
++npm run purchase -- --approve \
++  --authorization ./fixtures/authorization-lockfile.json \
++  --private-key-env CUSTOMER_X402_PRIVATE_KEY \
++  --attempt-receipt ./attempt-receipt.json
++```
++
++That path binds exact HTTPS URL, method, `{before, after}` body bytes, network,
++asset, recipient, and amount cap before any signer access. Payment is not the
++default.
++
++### Free local kit vs paid HTTP
++
++- **Free local kit 1.1.0** (`tools/lockfile-pin-delta`): same pin-delta analysis
++  offline. No wallet, no x402.
++- **Analysis scope:** name+version+integrity+resolved pins only. Identical pins
++  are informational.
++- **No vulnerability guarantee:** pin-delta is not a CVE proof and does not join
++  advisories.
++- **Paid convenience:** live `POST /lockfile-pin-delta` at 5000 atomic USDC,
++  x402-only. Charge is the bounded compare, not an install or audit.
++
++Hermes can load AgentSkills; it has **no** native SameDayDesk payer. Do not
++copy a wallet into a skill. Signing stays in customer-x402.
++
+ ## Not in this example
+ 
+ - Production settle or money movement
++- Silent wallet creation or keys in prompts
+ - Caller file paths in the HTTP body
+ - npm install / audit
+ - Flipping the engine `sold` flag
++- A second payment after an unknown outcome
+--- a/mcp-tool-metadata.mjs
++++ b/mcp-tool-metadata.mjs
+@@ -9,7 +9,7 @@
+   },
+   lockfile_pin_delta: {
+     title: "Inspect Lockfile Pin Delta",
+-    description: "Inspect two caller-supplied npm package-lock.json objects and return added, removed, and changed name+version+integrity+resolved pins. Supply JSON `before` and `after` lockfile objects, not filesystem paths, URLs, or commands. An identical pin set is informational, not a failure. HTML, package.json, and unsupported lockfileVersion values are refused before payment. This is not an npm install, audit, or purchase. Initial live release accepts x402 only.",
++    description: "Inspect two caller-supplied npm package-lock.json objects and return added, removed, and changed name+version+integrity+resolved pins. Supply JSON `before` and `after` lockfile objects, not filesystem paths, URLs, or commands. An identical pin set is informational, not a failure. HTML, package.json, and unsupported lockfileVersion values are refused before payment. This is not an npm install, audit, or purchase. Analysis scope is pin fields only; it is not a vulnerability guarantee or CVE proof. Free local kit 1.1.0 runs the same compare offline; paid HTTP is convenience at the live x402-only quote. Ordinary wallets sign through examples/customer-x402 (inspect, explicit approve, attempt-receipt, read-only reconcile), not a precomputed signature. Initial live release accepts x402 only.",
+   },
+   read: {
+     title: "Read Web Page as Markdown",
+--- a/lockfile-pin-delta-config.mjs
++++ b/lockfile-pin-delta-config.mjs
+@@ -24,10 +24,10 @@
+ export const LOCKFILE_PIN_DELTA_PAYMENT_PROTOCOLS = Object.freeze(["x402"]);
+ 
+ export const LOCKFILE_PIN_DELTA_DESCRIPTION =
+-  "Compare two caller-supplied npm package-lock.json objects (lockfileVersion 2 or 3) and return added, removed, and changed name+version+integrity+resolved pins. HTTP JSON only: no filesystem paths, commands, or network fetch. Identical pins are informational, not failure. Charge is the bounded compare, not an install, audit, or purchase. Initial live release accepts x402 only.";
++  "Compare two caller-supplied npm package-lock.json objects (lockfileVersion 2 or 3) and return added, removed, and changed name+version+integrity+resolved pins. HTTP JSON only: no filesystem paths, commands, or network fetch. Identical pins are informational, not failure. Charge is the bounded compare, not an install, audit, or purchase. Free local kit 1.1.0 is the same analysis offline; paid HTTP is convenience, not a vulnerability guarantee. Initial live release accepts x402 only.";
+ 
+ export const LOCKFILE_PIN_DELTA_QUOTE_MEANING =
+-  "Flat USDC quote for one bounded compare of two caller-supplied npm package-lock.json objects. Default $0.005 matches live GET /extract. Charge is the compare, not an install, audit, or proven margin. Pay with x402; MPP is not accepted on this route.";
++  "Flat USDC quote for one bounded compare of two caller-supplied npm package-lock.json objects. Default $0.005 matches live GET /extract. Charge is the compare, not an install, audit, proven margin, or CVE proof. Pay with x402; MPP is not accepted on this route. Free local kit 1.1.0 remains available without payment.";
+ 
+ /**
+  * Explicit production feature flag. Default off. Never inferred from

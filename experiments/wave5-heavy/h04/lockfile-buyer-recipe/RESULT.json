@@ -1,0 +1,36 @@
+{
+  "assignment": "W5-H04-lockfile-buyer-recipe",
+  "branch": "codex/w5-h04-20260911",
+  "ownedPath": "experiments/wave5-heavy/h04/lockfile-buyer-recipe/",
+  "merchantPin": "ca38205279f0d543515b81b7261909e55ea2600f",
+  "genericPostClientSupportsLockfile": true,
+  "genericPostClientUnpatchedRefusesLockfile": true,
+  "preferredArtifact": "both",
+  "patchTargets": [
+    "examples/customer-x402/src/authorization.mjs",
+    "examples/customer-x402/src/constants.mjs",
+    "examples/customer-x402/bin/cli.mjs",
+    "examples/customer-x402/README.md",
+    "examples/customer-x402/fixtures/authorization-lockfile.json",
+    "examples/customer-x402/fixtures/authorization-lockfile-no-change.json",
+    "examples/lockfile-pin-delta-buyer/README.md",
+    "mcp-tool-metadata.mjs",
+    "lockfile-pin-delta-config.mjs"
+  ],
+  "testsPass": true,
+  "testCounts": { "pass": 9, "fail": 0 },
+  "harness": {
+    "mountedMerchant": true,
+    "fakeFacilitator": true,
+    "throwawaySigner": true,
+    "cases": ["change", "no-change", "timeout-unknown", "replay-negative"]
+  },
+  "skillOptional": {
+    "included": true,
+    "loader": "official Hermes agent.skill_utils drop-in (disposable HERMES_HOME)"
+  },
+  "smallestRemainingIntegrationAction": "Root applies patch/ onto merchant pin ca38205 (customer-x402 POST /lockfile-pin-delta authorization + discoverability). H01 owns live merchant measurement.",
+  "livePayment": false,
+  "h01Untouched": true,
+  "unpatchedRefusal": "authorization path must be /extract/batch"
+}

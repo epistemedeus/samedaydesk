@@ -1,0 +1,15 @@
+{
+  "merchantPin": "ca38205279f0d543515b81b7261909e55ea2600f",
+  "reason": "Unpatched examples/customer-x402 normalizeAuthorization routes every POST through /extract/batch admission. purchase.mjs/preflight.mjs already send exact bodyRaw after inspect + one --approve.",
+  "files": [
+    "examples/customer-x402/src/authorization.mjs",
+    "examples/customer-x402/src/constants.mjs",
+    "examples/customer-x402/bin/cli.mjs",
+    "examples/customer-x402/README.md",
+    "examples/customer-x402/fixtures/authorization-lockfile.json",
+    "examples/customer-x402/fixtures/authorization-lockfile-no-change.json",
+    "examples/lockfile-pin-delta-buyer/README.md",
+    "mcp-tool-metadata.mjs",
+    "lockfile-pin-delta-config.mjs"
+  ]
+}

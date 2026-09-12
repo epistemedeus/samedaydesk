@@ -115,6 +115,14 @@ Question: do the four GET `/extract` paid-success request digests match a public
 - Implication: treat the three identical purchases as sample/benchmark/demo bytes, not organic demand. Improve published supplied-input examples; next first-party measurement is **D17**, not new surveillance.
 - Run: `cd experiments/wave5-heavy/h04/payment-example-match && node --test test/*.test.mjs && node replay.mjs`
 
+## Lockfile-buyer-recipe (additive)
+
+Owned: `experiments/wave5-heavy/h04/lockfile-buyer-recipe/`. Accept-pack and `payment-example-match/` are unchanged. Merchant pin `ca38205279f0d543515b81b7261909e55ea2600f`.
+
+Unpatched generic POST customer-x402 **refuses** `/lockfile-pin-delta` (`authorization path must be /extract/batch`). Purchase/preflight/reconcile already bind exact body bytes after inspect + `--approve`. Preferred artifact is **both**: recipe on that client + tiny merchant patch (authorization routing + discoverability). Proofs: mounted merchant, fake facilitator, throwaway signer; cases change / no-change / timeout-unknown / replay-negative. No live payment. Optional Hermes AgentSkills drop-in (no native payer).
+
+Run: `cd experiments/wave5-heavy/h04/lockfile-buyer-recipe && npm test` → **9 pass, 0 fail**. Parent `experiments/wave5-heavy/h04` `npm test` remains **29 pass**.
+
 ## PR / compare
 
 | Field | Value |
