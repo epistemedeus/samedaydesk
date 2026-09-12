@@ -11,7 +11,7 @@ stay false.
 | Order immutability (F-ORDER) | Same orderId with swapped files refuses; same files replay | journey + Postgres |
 | Concurrent reserve | Two processes, one execution journal line, one order | `test/concurrent-resume.test.mjs` |
 | Interrupted resume | Dead reserved holder is adopted once; no second order | concurrent-resume |
-| Archive pin (F-PIN) | Requested sha256/bytes must match published archive pin | seeded sha-mismatch |
+| Archive pin (F-PIN) | Requested sha256/bytes must match SDS52 1.0.0 extract pin (not the 1.1.0 public download) | seeded sha-mismatch |
 | SAMPLE / `--example` (F-SAMPLE) | example:true is not payable; labeled SAMPLE hashes cannot be claimed as customer | seeded failures |
 | Extract relabel (F-EXTRACT) | Request with agents extract URL refuses | seeded + HTTP POST |
 | Omitted funding vs omitted terms | reserved-fixture without payment ≠ missing enginePin | seeded failures |

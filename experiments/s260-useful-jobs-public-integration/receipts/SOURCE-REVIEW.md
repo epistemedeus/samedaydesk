@@ -44,6 +44,6 @@ Published tarball is runtime / docs / samples / licenses / vendor-pins only. No 
 ## SDS surface owned by this branch
 - Page `/for-agents/useful-jobs` + directory link from `/for-agents` only
 - Discovery `/discovery/useful-jobs.json`, catalog + outcomes beside archive
-- Kit mirror `/kit/useful-jobs-1.0.0.tar.gz`
+- Kit mirror `/kit/useful-jobs-1.1.0.tar.gz` (previous `/kit/useful-jobs-1.0.0.tar.gz` unchanged)
 - Cold start stdout is sole kit path; list on stderr
 - No homepage offer change; no deploy in this PR

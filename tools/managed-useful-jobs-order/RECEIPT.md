@@ -53,6 +53,11 @@ npm run test:managed-useful-jobs-order
 
 Missing deps were not skipped. `sold`/`charged` stay false.
 
+SDS52 extract pin stays **1.0.0** (`useful-jobs-1.0.0.sha256.json` /
+`fixtures/samedaydesk.useful-jobs-consumer.v1.json`). The public current download
+is useful-jobs **1.1.0**; this client must not follow `usefulJobsKit.json` for
+the original-six archive hash.
+
 ## Integration limits
 
 - Tested D01 is this tree's `execution.v1` (PR 74). Historical pin `6bed72dd` is not spawned.

@@ -24,8 +24,6 @@ const PR51_IDS = [
   "repeat-job-record",
 ];
 
-const d01Contract = { assessDelivery, classifyAnalysis, classifyTransport };
-
 test("default D01 executor selects lockfile-pin-delta without test injection", async () => {
   const job = getJob("lockfile-pin-delta");
   assert.equal(job.id, "lockfile-pin-delta");
