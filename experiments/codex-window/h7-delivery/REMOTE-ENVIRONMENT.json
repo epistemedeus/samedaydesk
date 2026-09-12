@@ -1,13 +1,14 @@
 {
   "schema": "h7-remote-environment/v1",
-  "observedAtUtc": "2026-09-12T11:10:23Z",
+  "observedAtUtc": "2026-09-12T12:15:00Z",
   "persistence": {
     "observed": [
       "This Cursor Cloud VM retained H6D worktree /tmp/h6d/wt and grok sessions under ~/.grok/sessions after the previous controller turn.",
       "H7 uses a disjoint worktree /tmp/h7/wt sharing Git objects with /tmp/h6d/wt.",
       "Hostname `cursor` is not provider identity.",
       "Native parent session 01a094f5-dde1-70e1-ad54-481c90a8cd67 implemented on this VM without --resume of H6D.",
-      "Same-session pin correction consumed 8a811bba (fix e122c266) without a new parent."
+      "Same-session pin correction consumed 8a811bba (fix e122c266) without a new parent.",
+      "PR145 completion reproduced d18/d20 on 8a811bba at 4c42987; PR143 vendor-temp leak correction is not blocked by those witnesses."
     ],
     "untestedPromises": [
       "Replacement VM from Git + documented auth without copying private home.",
@@ -23,8 +24,8 @@
   "nativeParentSessionId": "01a094f5-dde1-70e1-ad54-481c90a8cd67",
   "measured": {
     "cpu": { "nproc": 4, "model": "Intel(R) Xeon(R) Processor" },
-    "ram": { "memTotalKiB": 16398384, "memAvailableKiBAtH7Admit": 10564036, "memAvailableKiBAtCloseout": 10453652, "memAvailableKiBAtPinRebind": 10462112 },
-    "disk": { "size": "254G", "used": "15G", "avail": "240G", "usePercent": "6%" }
+    "ram": { "memTotalKiB": 16398384, "memAvailableKiBAtH7Admit": 10564036, "memAvailableKiBAtCloseout": 10453652, "memAvailableKiBAtPinRebind": 10462112, "memAvailableKiBAtPr145Completion": 10467960 },
+    "disk": { "size": "254G", "used": "15G", "avail": "239G", "usePercent": "6%" }
   },
   "workRoots": {
     "h7Scratch": "/tmp/h7",
@@ -44,9 +45,34 @@
     "runtimePinBranch": "codex/vendor-temp-lifecycle-20260912",
     "basedOn": "30345f69f16aca93bb95511ee4da62975c98cc04",
     "importHeadAtStart": "fe8057f395bc665b629e12dbff0db0c264f0eb46",
-    "implementationHead": "63e2d8a0793cb962c323ba3a54eff8df22f9aed8",
-    "draftPr": "GraphQL createPullRequest not accessible by integration (403)",
-    "compareUrl": "https://github.com/epistemedeus/samedaydesk/compare/8a811bbadba7edc6c926b319b0839cd2f01e5896...codex/h7-delivery-20260912"
+    "implementationHead": "4c4298713f8caba4fd34541797097b0f4b97f03c",
+    "reproductionHead": "4c4298713f8caba4fd34541797097b0f4b97f03c",
+    "draftPr143": "https://github.com/epistemedeus/samedaydesk/pull/143",
+    "draftPr145": "https://github.com/epistemedeus/samedaydesk/pull/145",
+    "draftPr": "https://github.com/epistemedeus/samedaydesk/pull/145 (stacked draft; do not default-merge)",
+    "compareUrl": "https://github.com/epistemedeus/samedaydesk/compare/8a811bbadba7edc6c926b319b0839cd2f01e5896...codex/h7-delivery-20260912",
+    "shipIndependently": {
+      "pr143VendorTempLeakCorrection": true,
+      "pr145ConsumerStack": false,
+      "currentRuntimeDeliveryReady": false
+    },
+    "knownBadOnCurrentPin": [
+      "d20-order-interrupt-before-complete",
+      "d18-publication-rollback"
+    ],
+    "doesNotBlockPr143": [
+      "d20-order-interrupt-before-complete",
+      "d18-publication-rollback",
+      "d19-http-principal-boundary",
+      "d19-current-ledger",
+      "d20-current-outbox"
+    ],
+    "nextOwner": [
+      "PR143 release owner of codex/vendor-temp-lifecycle-20260912 (land independently)",
+      "tools/managed-useful-jobs-order owner for d20 if Root authorizes 8a811bba repair",
+      "server/paid-useful-jobs wrapper owner for d18 if Root authorizes 8a811bba repair",
+      "PR145 remains stacked draft"
+    ]
   },
   "nativeGrok": {
     "binary": "/home/ubuntu/.grok/bin/grok",
@@ -101,5 +127,28 @@
     "tests": "173 pass / 0 fail",
     "leftIntact": true
   },
-  "cashUsd": 0
+  "cashUsd": 0,
+  "nativeUsage": {
+    "sessionId": "01a094f5-dde1-70e1-ad54-481c90a8cd67",
+    "inclusion": "usage.json input includes cache; Grok stream-end input may be uncached",
+    "notCustomerJobs": true,
+    "notH10Economics": true,
+    "historical285NotMixed": true,
+    "usageJsonPath": "/home/ubuntu/.grok/sessions/%2Ftmp%2Fh7%2Fwt/01a094f5-dde1-70e1-ad54-481c90a8cd67/usage.json",
+    "lastClosedTurnAtUtc": "2026-09-12T11:11:51Z",
+    "closedTurnCount": 2,
+    "thisTurn": 3,
+    "thisTurnInUsageJson": false,
+    "primaryModelId": "grok-4.6-build",
+    "sessionThroughTurn2": {
+      "inputTokensIncludesCache": 45245704,
+      "cachedReadTokens": 43258496,
+      "uncachedEquivalentInput": 1987208,
+      "outputTokens": 314294,
+      "reasoningTokens": 274423,
+      "totalTokens": 45559998,
+      "modelCalls": 253,
+      "costUsdTicks": 136291155600
+    }
+  }
 }

@@ -1,0 +1,71 @@
+{
+  "ok": false,
+  "refused": true,
+  "jobId": "vendor-budget-impact",
+  "code": "internal-error",
+  "error": "EISDIR: illegal operation on a directory, copyfile '/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-u6W3t9/d18-publication-rollback/puj-vendor-budget-impact-out-PKB8Rv/budget-impact.md' -> '/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-8a811bba-d18-publication-rollback/cases/d18-publication-rollback/existing-publication/budget-impact.md'",
+  "detail": null,
+  "fundingState": "rejected",
+  "sold": false,
+  "sample": false,
+  "sampleReasons": [],
+  "purchaseAuthority": false,
+  "liveSettleAttempted": false,
+  "liveSettleAllowed": false,
+  "outputs": [],
+  "executionId": "0f8aaaba-d10d-4426-888c-7ba7ccd7bc30",
+  "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+  "transport": "internal-error",
+  "analysis": {
+    "status": "not-run",
+    "outcome": "not-run",
+    "identityVerified": null
+  },
+  "delivery": {
+    "status": "not-attempted",
+    "complete": false,
+    "expected": [],
+    "present": [],
+    "missing": [],
+    "unexpected": []
+  },
+  "receipt": {
+    "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+    "jobId": "vendor-budget-impact",
+    "engine": {
+      "package": "useful-jobs",
+      "version": "1.0.0",
+      "purchaseAuthority": false,
+      "cli": "node bin/useful-jobs.mjs run <id>",
+      "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "archiveBytes": 2522418,
+      "sourceRepo": "epistemedeus/pilot",
+      "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+      "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+      "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+    },
+    "fundingState": "rejected",
+    "sold": false,
+    "sample": false,
+    "sampleReasons": [],
+    "purchaseAuthority": false,
+    "liveSettlement": "out-of-scope",
+    "code": "internal-error",
+    "error": "EISDIR: illegal operation on a directory, copyfile '/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-u6W3t9/d18-publication-rollback/puj-vendor-budget-impact-out-PKB8Rv/budget-impact.md' -> '/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-8a811bba-d18-publication-rollback/cases/d18-publication-rollback/existing-publication/budget-impact.md'",
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+    "transport": "internal-error",
+    "analysis": {
+      "status": "not-run",
+      "outcome": "not-run",
+      "identityVerified": null
+    },
+    "delivery": {
+      "status": "not-attempted",
+      "complete": false,
+      "expected": [],
+      "present": [],
+      "missing": [],
+      "unexpected": []
+    }
+  }
+}

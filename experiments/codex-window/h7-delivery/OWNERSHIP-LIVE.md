@@ -37,6 +37,13 @@ Recorded 2026-09-12 on Cursor Cloud VM. Hostname `cursor` is not provider identi
 
 CW64 is inspect-only. Children do **not** git commit. Parent commits at phase boundaries.
 
+## PR143 vs later witnesses (PR145 completion)
+
+- **Can ship independently:** PR143 vendor-temp leak correction (`8a811bba`, unpublished 1.4.3 `a18ab918`, 9/9 vendor-temp tests). Not blocked by d18/d20, HTTP principal, ledger/outbox incomplete gates, or PR145 consumers.
+- **Does not block PR143:** `d18-publication-rollback` (owner: `server/paid-useful-jobs/lib/wrapper.mjs` `publishCompleteOutputs`); `d20-order-interrupt-before-complete` (owner: `tools/managed-useful-jobs-order`); CW65 incomplete gates `d19-http-principal-boundary`, `d19-current-ledger`, `d20-current-outbox`.
+- Reproduced on pin `8a811bba` at source `4c42987`. Do not treat stale `6007fcfa` failures as current evidence. Do not edit wrapper or managed-order from this consumer charter unless Root authorizes those exact repairs.
+- `usefulPaidWork` remains false. Cash $0. Draft PR145: https://github.com/epistemedeus/samedaydesk/pull/145 — update via branch push, no default merge.
+
 ## Test serialization
 
 Use `flock` on `/tmp/h7/runtime-tmp/test.lock` for any `node --test` / wrapper spawn / DB.

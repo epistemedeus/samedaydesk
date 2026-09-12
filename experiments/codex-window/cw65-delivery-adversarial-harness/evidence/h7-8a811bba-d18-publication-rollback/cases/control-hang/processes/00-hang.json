@@ -1,0 +1,15 @@
+{
+  "pid": 341019,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/experiments/wave5/d16/fixtures/broken-engines/hang.mjs"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-u6W3t9/control-hang",
+  "startedAt": "2026-09-12T12:09:11.679Z",
+  "endedAt": "2026-09-12T12:09:11.931Z",
+  "status": null,
+  "signal": "SIGTERM",
+  "timedOut": true
+}

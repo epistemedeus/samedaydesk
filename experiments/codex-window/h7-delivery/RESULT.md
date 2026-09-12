@@ -86,6 +86,74 @@ Donor package suites that still assume old CLI pins, `f08Root` overrides, or git
 
 6. **H7 chained cold journey.** `experiments/codex-window/h7-delivery/test/cold-journey.test.mjs` plus `evidence/cold-current-runtime-journey.json`: lockfile-pin-delta freeze/execute/export/outbox, vendor replay, two-row batch/value (`usefulPaidWork: false`), HTTP ticket `h7-cold-http` with portable unsupported then local acquire.
 
+## PR145 completion: ship vs block (this turn)
+
+Stacked draft **PR145** (`codex/h7-delivery-20260912`) sits on **PR143** (`codex/vendor-temp-lifecycle-20260912` exact `8a811bba`). Reproductions below were run on current pin `8a811bba` at source SHA **`4c4298713f8caba4fd34541797097b0f4b97f03c`**. Stale `6007fcfa` failures are not current evidence. Compact witness: `evidence/pr145-8a811bba-witnesses.json`.
+
+Payment/authority on every path here: `usefulPaidWork` false, `sold`/`charged`/`purchaseAuthority` false, `fundingState` unfunded or rejected, `acceptanceClass: local-runtime`, ack ≠ buyer acceptance, no live pay, cash $0. HTTP portable acquisition remains `unsupported-portable-acquisition`.
+
+### Commands (this turn)
+
+| Command | Result |
+| --- | --- |
+| `node experiments/codex-window/cw65-delivery-adversarial-harness/run.mjs --only d20-order-interrupt-before-complete --evidence .../h7-8a811bba-d20-order-interrupt-before-complete` | **fail**, EXIT 2, controls pass, `runtimeUnchanged: true`, `ready: false` (`--only`) |
+| `node experiments/codex-window/cw65-delivery-adversarial-harness/run.mjs --only d18-publication-rollback --evidence .../h7-8a811bba-d18-publication-rollback` | **fail**, EXIT 2, controls pass, `runtimeUnchanged: true`, `ready: false` (`--only`) |
+| `flock /tmp/h7/runtime-tmp/test.lock node --test --test-concurrency=1 server/paid-useful-jobs/tests/vendor-temp-lifecycle.test.mjs` | **9/9 pass** (known-good for PR143; four application-handler-without-redelivery cases included) |
+
+Heap 768, `--test-concurrency=1`, TMPDIR under `/tmp/h7/runtime-tmp` or owned `.cw65-owned-tmp`. PG 55590–55595 not started (these cases did not request a cluster). No processes torn down except this invocation’s CW65 scratch.
+
+### Known-bad / known-good control
+
+| Control | Pin | Result | Meaning |
+| --- | --- | --- | --- |
+| Four application-handler-without-redelivery tests | `6007fcfa` (ancestor) | fail | old unpublished 1.4.3 **not** release-ready |
+| Same four + full vendor-temp pack | `8a811bba` | **9/9 pass** this turn | PR143 leak correction holds |
+| `d20-order-interrupt-before-complete` | `8a811bba` at `4c42987` | **fail** | managed-order second engine; **not** the vendor-temp leak |
+| `d18-publication-rollback` | `8a811bba` at `4c42987` | **fail** | wrapper non-atomic publication; **not** the vendor-temp leak |
+
+PR143 changed 10 files (`release/lib/common.mjs`, `build-useful-jobs-v143.mjs`, kit/catalog 1.4.3 archives, `usefulJobsKit.json`, packaged + vendor-temp tests). `wrapper.mjs` and `tools/managed-useful-jobs-order` are **byte-identical** to `8a811bba` (`a991d18c…` / `cdca4a36…`). H7 did not edit them.
+
+### What can ship independently
+
+**PR143 vendor-temp leak correction can ship without waiting on PR145 or on d18/d20.** It is a proven cleanup of duplicate application signal-handler invocation. Archive **2615491** bytes, sha256 `a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09`. Do not hold a safe cleanup fix for later consumer witnesses.
+
+H7 consumer journeys on PR145 (CW60/61/62/70 + cold journey) are useful on this pin and stay stacked as draft PR145. They are **not** a release of d18/d20 and **not** a payment product.
+
+### What still cannot ship as “current-runtime delivery ready”
+
+| Witness | Status | Blocks PR143? | Owner (do not repair from this consumer charter unless Root authorizes the exact reproduced fix) |
+| --- | --- | --- | --- |
+| `d20-order-interrupt-before-complete` | fail on `8a811bba` | **no** | `tools/managed-useful-jobs-order`: `recordExecution` increments `executions.jsonl` independently of `store.complete`. Reopen after SIGKILL at before-complete ran a second real engine (`before: 1` → `after: 2`, `replayed: false`). First executionId `1ec7e90e-77b4-4c1d-b1f7-1a8073b47827`; reopen `653c2020-d399-4cdf-98a0-7858b8ddf423`. Engine archive is legacy 1.0.0 `6bf65039…`, not unpublished 1.4.3. |
+| `d18-publication-rollback` | fail on `8a811bba` | **no** | `server/paid-useful-jobs/lib/wrapper.mjs` `publishCompleteOutputs()`: sequential `copyFileSync` with no staging/rollback. First caller artifact overwritten (34-byte “previous caller-owned publication\\n” → 1323-byte `s233.useful-application.artifact.v1`); second name was a directory (`EISDIR`); `result.ok` false; `sold` false. executionId `0f8aaaba-d10d-4426-888c-7ba7ccd7bc30`. |
+| `d19-http-principal-boundary` | incomplete | **no** | HTTP adapter has no authenticated principal. Independent gate, later feature. |
+| `d19-current-ledger` | incomplete | **no** | CW65 will not accept sibling `buyer-value-ledger` as its own countercheck. |
+| `d20-current-outbox` | incomplete | **no** | CW65 will not accept sibling `job-delivery-outbox` as its own countercheck. |
+| PG 55590 / 55591 / 55592 / 55595 | untested | **no** | No executed case required a cluster. |
+| HTTP portable artifacts | `unsupported-portable-acquisition` | **no** | Honest: no download route. Explicit local acquire only. |
+
+Assertions for d18/d20 were **not** rewritten. No owned H7 consumer code defect remained that this charter should patch; CW60/61/62/70 journeys already pass on `8a811bba`. Shared upstream files stay with their named owner.
+
+### Exact next owner
+
+1. **Root / paid-useful-jobs release owner of `codex/vendor-temp-lifecycle-20260912`**: merge or land **PR143** independently. Next owner of that cleanup is **not** H7 and **not** the d18/d20 suppliers.
+2. **`tools/managed-useful-jobs-order` owner**: d20 before-complete interrupt → second engine. Repair only if Root authorizes this exact `8a811bba` reproduction.
+3. **`server/paid-useful-jobs` wrapper owner**: d18 non-atomic `publishCompleteOutputs`. Repair only if Root authorizes this exact `8a811bba` reproduction.
+4. **PR145 (`codex/h7-delivery-20260912`)**: remain draft, stacked on PR143. Do not default-merge. Consumer path is useful; it is not “delivery ready” while d18/d20 fail.
+
+## Native usage (code-building / review; not customer jobs)
+
+Session `01a094f5-dde1-70e1-ad54-481c90a8cd67`. Inclusion: **Grok stream-end input may be uncached; `usage.json` input includes cache.** Do **not** mix with historical customer-job revenue evidence (including any recorded 2.85 figure). H10 economics were not touched. Cash $0.
+
+`usage.json` at stamp (`/home/ubuntu/.grok/sessions/%2Ftmp%2Fh7%2Fwt/01a094f5-dde1-70e1-ad54-481c90a8cd67/usage.json`), last closed **2026-09-12T11:11:51Z**, **turnCount 2**. This PR145-completion turn is **turn 3** and is **not yet in `usage.json`** (stream-end writes after close).
+
+| Scope | input (includes cache) | cachedRead | output | reasoning | modelCalls | costUsdTicks |
+| --- | --- | --- | --- | --- | --- | --- |
+| Session through turn 2 | 45245704 | 43258496 | 314294 | 274423 | 253 | 136291155600 |
+| Turn 1 | 37509511 | 35593472 | 299003 | 263052 | 232 | 108638302800 |
+| Turn 2 | 7736193 | 7665024 | 15291 | 11371 | 21 | 27652852800 |
+
+Uncached-equivalent input through turn 2 (input − cachedRead) = **1,987,208**. Primary model `grok-4.6-build`. Ticks are not a customer invoice.
+
 ## Unsupported boundaries
 
 - HTTP has no artifact download route; portable acquisition is `unsupported-portable-acquisition`.
@@ -103,15 +171,25 @@ Donor package suites that still assume old CLI pins, `f08Root` overrides, or git
 
 ## Next integration owner
 
-**Grok Heavy integration reviewer**, then the **vendor/runtime owner** for the two preserved CW65 witnesses (`managed-useful-jobs-order` second engine run after before-complete interrupt; wrapper publication overwrite on failed second copy). Do not edit those cores from this consumer charter.
+See **Exact next owner** above. Short form:
+
+1. Land **PR143** independently (vendor-temp leak correction). Do not wait on d18/d20 or PR145 consumers.
+2. `tools/managed-useful-jobs-order` owner for d20 (second engine after before-complete interrupt) — only if Root authorizes that exact `8a811bba` repair.
+3. `server/paid-useful-jobs` wrapper owner for d18 (`publishCompleteOutputs` overwrite) — only if Root authorizes that exact `8a811bba` repair.
+4. Keep **PR145** draft and stacked. No default merge.
 
 Optional later: dedicated PG 55590/55591/55592/55595; CW64 pin refresh against a future shipped archive (this client remains 1.4.1 packaged); consolidating CW39 zipapp vs D08 Python entry.
 
 ## Git / PR
 
-Branch tip: `63e2d8a0793cb962c323ba3a54eff8df22f9aed8` (pin merge `559fa3b` plus consumer rebind).
+Reproduction source SHA: `4c4298713f8caba4fd34541797097b0f4b97f03c`.
 
-Draft PR via `gh pr create` returned GraphQL **Resource not accessible by integration** (`createPullRequest`). Compare URL (review this, not a silent `main` merge):
+Draft PRs (already open; this branch push updates 145, does not merge):
+
+- PR143 https://github.com/epistemedeus/samedaydesk/pull/143 — `8a811bbadba7edc6c926b319b0839cd2f01e5896` (vendor-temp leak correction; **can ship independently**)
+- PR145 https://github.com/epistemedeus/samedaydesk/pull/145 — stacked on `codex/vendor-temp-lifecycle-20260912` (H7 consumers + this classification)
+
+Compare URL (review this, not a silent `main` merge):
 
 https://github.com/epistemedeus/samedaydesk/compare/8a811bbadba7edc6c926b319b0839cd2f01e5896...codex/h7-delivery-20260912
 

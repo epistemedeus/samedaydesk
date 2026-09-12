@@ -1,0 +1,19 @@
+{
+  "mode": "order-request",
+  "orderId": "cw65-interrupt",
+  "fixture": {
+    "jobId": "vendor-budget-impact",
+    "inputs": {
+      "before": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-8a811bba-d20-order-interrupt-before-complete/cases/d20-order-interrupt-before-complete/inputs/interrupt-before.json",
+      "after": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-8a811bba-d20-order-interrupt-before-complete/cases/d20-order-interrupt-before-complete/inputs/interrupt-after.json"
+    },
+    "outputs": [
+      "budget-impact.json",
+      "budget-impact.md"
+    ],
+    "inputHashes": {
+      "before": "0aaac5bbae2de4cdc5bd2ba942b0f49a91d544250cee837dfd83236b884bd7bc",
+      "after": "ba8d74b8eac7428c8b26c852e19e5ebe0c2eeebf489a73498d1f71c8fca47b35"
+    }
+  }
+}
