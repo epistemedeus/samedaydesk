@@ -17,7 +17,7 @@ const archiveMeta = JSON.parse(
   ),
 );
 
-/** SDS52 / PR51 wrapper extract stays on 1.0.0. Current public download is 1.1.0. */
+/** SDS52 / PR51 wrapper extract stays on 1.0.0. Current public download is 1.2.0. */
 export const USEFUL_JOBS_PACKAGE = "useful-jobs";
 export const USEFUL_JOBS_VERSION = "1.0.0";
 export const USEFUL_JOBS_ROOT_NAME = archiveMeta.name;

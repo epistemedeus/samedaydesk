@@ -1,6 +1,6 @@
 # Paid useful-jobs — current integration receipt
 
-**Current:** W5-D01 public useful-jobs **1.1.0** download on `codex/w5-d01-20260911` (PR74).  
+**Current:** W5-D01 public useful-jobs **1.2.0** download on `codex/w5-d01-20260911` (PR74).  
 **Contract:** `samedaydesk.paid-useful-jobs.execution.v1`  
 **Kernel freeze:** `e2f951cae7bb299df2283b9c181bb0d369fc26af`
 
@@ -10,27 +10,30 @@ description as current.
 
 ## Current public download
 
-Customers obtain the four engines from a **new** versioned archive. Version
-**1.0.0 URLs are unchanged**.
+Customers obtain the four engines from a **new** versioned archive. Versions
+**1.0.0 and 1.1.0 URLs are unchanged**.
 
 | Asset | Path |
 | --- | --- |
-| Current archive | `client/public/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz` |
-| Current pin | `client/public/for-agents/useful-jobs/useful-jobs-1.1.0.sha256.json` |
-| Kit mirror | `client/public/kit/useful-jobs-1.1.0.tar.gz` |
+| Current archive | `client/public/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz` |
+| Current pin | `client/public/for-agents/useful-jobs/useful-jobs-1.2.0.sha256.json` |
+| Kit mirror | `client/public/kit/useful-jobs-1.2.0.tar.gz` |
 | Catalog / outcomes | `client/public/for-agents/useful-jobs/catalog.json`, `jobs-outcomes.json` |
 | Discovery | `client/public/discovery/useful-jobs.json` |
+| Previous 1.1.0 | `client/public/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz` (2577606 bytes, sha256 `de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534`) |
 | Previous 1.0.0 | `client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz` (2522418 bytes, sha256 `6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51`) |
 
-Archive **2577606** bytes, sha256 `de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534`.
-Root `useful-jobs-1.1.0`. Cold CLI: `node bin/useful-jobs.mjs`.
+Archive **2579117** bytes, sha256 `dec31ea66f1605fb9578c7d15c9583b130c6e2c0b82b5e6b93422381a04461eb`.
+Root `useful-jobs-1.2.0`. Cold CLI: `node bin/useful-jobs.mjs`.
 
 Pack recipe: `node server/paid-useful-jobs/scripts/build-useful-jobs-archive.mjs`
-(extract 1.0.0, add engine runtimes + compatibility apps, H04 public samples).
+(extract immutable 1.1.0, overlay listing-repair-packet). 1.2.0 does not
+re-vendor engines. Incomplete listing capture stays partial for every
+`identity.provider`; unsupported complete providers are refused.
 
 SDS52 wrappers (`ensureUsefulJobsKit`) still extract **1.0.0** for the original
 six jobs. The four engines run in-tree via `runEngineForD01` (identity pin), not
-the 1.1.0 tarball.
+the 1.2.0 tarball.
 
 This is a usable **offline execution kit**. H01's merchant route is still not
 deployed. No new public paid HTTP endpoint is claimed. `sold` stays false.
@@ -42,7 +45,7 @@ Remote checks on this public-download revision (Node v22.14.0):
 `test:d28-journey` 18, `test:spa-route-shells` 9. 0 fail.
 
 D04 `loadPins()` reads `useful-jobs-1.0.0.sha256.json` (SDS52 extract), not
-`usefulJobsKit.json` (now 1.1.0).
+`usefulJobsKit.json` (now 1.2.0).
 
 Consumer command (repo tree, unfunded/local):
 
@@ -53,7 +56,7 @@ node server/paid-useful-jobs/bin/deliver.mjs \
   --after "$AFTER_LOCKFILE"
 ```
 
-Public archive command (after verify/extract of 1.1.0):
+Public archive command (after verify/extract of 1.2.0):
 
 ```bash
 node bin/useful-jobs.mjs run lockfile-pin-delta \

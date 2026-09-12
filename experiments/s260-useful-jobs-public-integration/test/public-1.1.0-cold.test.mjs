@@ -14,16 +14,14 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
-import {
-  USEFUL_JOBS_ARCHIVE,
-  USEFUL_JOBS_ARCHIVE_BYTES,
-  USEFUL_JOBS_ARCHIVE_SHA256,
-  USEFUL_JOBS_ROOT,
-} from "../../../client/src/data/machineEntry.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "../../..");
-const publicArchive = join(root, "client/public", USEFUL_JOBS_ARCHIVE.replace(/^\//, ""));
+const PIN_110_SHA = "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534";
+const PIN_110_BYTES = 2577606;
+const publicArchive = join(root, "client/public/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz");
+const kitArchive = join(root, "client/public/kit/useful-jobs-1.1.0.tar.gz");
+const ROOT_NAME = "useful-jobs-1.1.0";
 
 function sha256(buf) {
   return createHash("sha256").update(buf).digest("hex");
@@ -31,12 +29,12 @@ function sha256(buf) {
 
 function extractOutside() {
   const outside = mkdtempSync(join(tmpdir(), "uj-110-cold-"));
-  copyFileSync(publicArchive, join(outside, `${USEFUL_JOBS_ROOT}.tar.gz`));
-  const tar = spawnSync("tar", ["-xzf", join(outside, `${USEFUL_JOBS_ROOT}.tar.gz`), "-C", outside], {
+  copyFileSync(publicArchive, join(outside, `${ROOT_NAME}.tar.gz`));
+  const tar = spawnSync("tar", ["-xzf", join(outside, `${ROOT_NAME}.tar.gz`), "-C", outside], {
     encoding: "utf8",
   });
   assert.equal(tar.status, 0, tar.stderr);
-  const kit = join(outside, USEFUL_JOBS_ROOT);
+  const kit = join(outside, ROOT_NAME);
   assert.equal(kit.startsWith(root), false);
   assert.equal(existsSync(join(kit, "bin/useful-jobs.mjs")), true);
   return { outside, kit };
@@ -49,26 +47,30 @@ function runCli(kit, args) {
   });
 }
 
-test("1.1.0 archive bytes match kit pin and catalog version", () => {
+test("1.1.0 archive bytes stay pinned and are not the current catalog", () => {
   const buf = readFileSync(publicArchive);
-  assert.equal(buf.length, USEFUL_JOBS_ARCHIVE_BYTES);
-  assert.equal(sha256(buf), USEFUL_JOBS_ARCHIVE_SHA256);
-  const catalog = JSON.parse(
-    readFileSync(join(root, "client/public/for-agents/useful-jobs/catalog.json"), "utf8"),
-  );
+  assert.equal(buf.length, PIN_110_BYTES);
+  assert.equal(sha256(buf), PIN_110_SHA);
+  assert.equal(sha256(readFileSync(kitArchive)), PIN_110_SHA);
   const pin = JSON.parse(
     readFileSync(join(root, "client/public/for-agents/useful-jobs/useful-jobs-1.1.0.sha256.json"), "utf8"),
   );
-  assert.equal(catalog.version, "1.1.0");
-  assert.equal(catalog.jobs.length, 10);
-  assert.equal(catalog.jobs[0].id, "lockfile-pin-delta");
-  assert.equal(pin.sha256, USEFUL_JOBS_ARCHIVE_SHA256);
-  assert.equal(pin.bytes, buf.length);
+  assert.equal(pin.sha256, PIN_110_SHA);
+  assert.equal(pin.bytes, PIN_110_BYTES);
+  const liveCatalog = JSON.parse(
+    readFileSync(join(root, "client/public/for-agents/useful-jobs/catalog.json"), "utf8"),
+  );
+  assert.notEqual(liveCatalog.version, "1.1.0");
 });
 
-test("cold extract: H04 public inputs for all four new engines", () => {
+test("cold extract 1.1.0: H04 public inputs for all four new engines", () => {
   const { outside, kit } = extractOutside();
   try {
+    const catalog = JSON.parse(readFileSync(join(kit, "catalog.json"), "utf8"));
+    assert.equal(catalog.version, "1.1.0");
+    assert.equal(catalog.jobs.length, 10);
+    assert.equal(catalog.jobs[0].id, "lockfile-pin-delta");
+
     const lock = runCli(kit, [
       "run",
       "lockfile-pin-delta",
@@ -131,7 +133,7 @@ test("cold extract: H04 public inputs for all four new engines", () => {
   }
 });
 
-test("cold extract: malformed JSON, HTML lockfile, missing inputs, missing advertised output", () => {
+test("cold extract 1.1.0: malformed JSON, HTML lockfile, missing inputs, missing advertised output", () => {
   const { outside, kit } = extractOutside();
   try {
     const bad = join(outside, "malformed.json");

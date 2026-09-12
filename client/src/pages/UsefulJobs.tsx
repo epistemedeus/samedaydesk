@@ -220,7 +220,11 @@ export default function UsefulJobs() {
               </Link>
               . It is not a live paid merchant route. Partial vendor or listing evidence stays
               non-final. Evidence CI annotations from caller packets stay unattested. Repeat job
-              records are operator documents, not a running scheduler. Version 1.0.0 remains at{" "}
+              records are operator documents, not a running scheduler. Version 1.1.0 remains at{" "}
+              <a className={styles.inlineLink} href="/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz">
+                useful-jobs-1.1.0.tar.gz
+              </a>
+              . Version 1.0.0 remains at{" "}
               <a className={styles.inlineLink} href="/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz">
                 useful-jobs-1.0.0.tar.gz
               </a>

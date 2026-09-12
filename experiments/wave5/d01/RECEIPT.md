@@ -7,16 +7,19 @@
 **Contract:** `samedaydesk.paid-useful-jobs.execution.v1`  
 **Kernel freeze:** `e2f951cae7bb299df2283b9c181bb0d369fc26af`
 
-## Current (public 1.1.0 download)
+## Current (public 1.2.0 download)
 
-The four engines are in the public useful-jobs **1.1.0** archive. Version 1.0.0
-URLs stay. SDS52 wrappers still extract 1.0.0. No new paid HTTP merchant route.
+The four engines are in the public useful-jobs **1.1.0** archive and remain in
+**1.2.0**. Version 1.0.0 and 1.1.0 URLs stay. SDS52 wrappers still extract 1.0.0.
+No new paid HTTP merchant route. 1.2.0 overlays listing-repair-packet so
+incomplete capture cannot become actionable via an unknown provider.
 
 | Item | Value |
 | --- | --- |
-| Archive | `client/public/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz` |
-| Bytes / sha256 | 2577606 / `de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534` |
-| Previous | `useful-jobs-1.0.0.tar.gz` 2522418 / `6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51` |
+| Archive | `client/public/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz` |
+| Bytes / sha256 | 2579117 / `dec31ea66f1605fb9578c7d15c9583b130c6e2c0b82b5e6b93422381a04461eb` |
+| Previous 1.1.0 | `useful-jobs-1.1.0.tar.gz` 2577606 / `de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534` |
+| Previous 1.0.0 | `useful-jobs-1.0.0.tar.gz` 2522418 / `6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51` |
 | H04 inputs | pin `37dd4b42cf21dc2031715971971bb2426a7beb80` copied into `samples/` |
 | Pack | `server/paid-useful-jobs/scripts/build-useful-jobs-archive.mjs` |
 
@@ -24,7 +27,7 @@ Live front door: `server/paid-useful-jobs/RECEIPT.md`.
 
 ### Cold-caller (extract outside checkout, packaged assets only)
 
-`npm run test:useful-jobs-public` — **15 pass**. Extract root is not the SDS checkout. Catalog inside the tarball is version 1.1.0 and lists the same ten ids as `client/public/for-agents/useful-jobs/catalog.json` and `node bin/useful-jobs.mjs list`.
+`npm run test:useful-jobs-public` — extract root is not the SDS checkout. Catalog inside the tarball is version 1.2.0 and lists the same ten ids as `client/public/for-agents/useful-jobs/catalog.json` and `node bin/useful-jobs.mjs list`.
 
 | Case | Result |
 | --- | --- |
@@ -51,7 +54,7 @@ Live front door: `server/paid-useful-jobs/RECEIPT.md`.
 | `npm run test:m01-catalog` | **40 pass** |
 | `npm run test:spa-route-shells` | **9 pass** |
 
-SDS52 extract / D04 `loadPins()` stay on **1.0.0**. Public kit json / discovery / UsefulJobs page pin **1.1.0**. No paid HTTP merchant claim.
+SDS52 extract / D04 `loadPins()` stay on **1.0.0**. Public kit json / discovery / UsefulJobs page pin **1.2.0**. No paid HTTP merchant claim.
 
 ## Historical composition (pre-1.1.0 public download)
 

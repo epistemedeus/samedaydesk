@@ -7,7 +7,7 @@ export const OWNED_DIR = join(here, "..");
 export const REPO_ROOT = join(here, "../../..");
 
 /**
- * SDS52 extract stays on 1.0.0. Public current download is 1.1.0.
+ * SDS52 extract stays on 1.0.0. Public current download is 1.2.0.
  * Do not follow client/src/data/usefulJobsKit.json for this pin.
  */
 const archiveMeta = JSON.parse(
