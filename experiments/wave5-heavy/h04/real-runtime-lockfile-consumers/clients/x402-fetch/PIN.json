@@ -1,0 +1,16 @@
+{
+  "id": "x402-fetch",
+  "role": "official-coinbase-client",
+  "label": "Official @x402/fetch + @x402/evm (x402-foundation)",
+  "repository": "https://github.com/x402-foundation/x402",
+  "packages": {
+    "@x402/fetch": "2.25.0",
+    "@x402/evm": "2.25.0",
+    "@x402/extensions": "2.25.0"
+  },
+  "install": "npm install @x402/fetch@2.25.0 @x402/evm@2.25.0 @x402/extensions@2.25.0",
+  "wallet": true,
+  "fundlessInspect": false,
+  "reconcile": false,
+  "notes": "wrapFetchWithPayment clones the Request so POST body bytes are reused on the paid retry. It auto-pays on 402 (no --approve). Lockfile requires the official payment-identifier extension; stock fetch package does not register it. processPaymentResult recovered=true mints a second payload."
+}

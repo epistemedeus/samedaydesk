@@ -1,0 +1,59 @@
+{
+  "assignment": "W5-H04-real-runtime-lockfile-consumers",
+  "merchantPin": "7aaf00410900dc41fb523d1b7b4469b40ded7981",
+  "merchantVersion": "1.23.48",
+  "liveUnpaid": {
+    "url": "https://agents.samedaydesk.com/lockfile-pin-delta",
+    "status": 402,
+    "amountAtomic": "5000",
+    "network": "eip155:8453",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+  },
+  "clients": [
+    {
+      "id": "customer-x402",
+      "role": "control",
+      "pin": "7aaf004",
+      "supported": true,
+      "inspect": true,
+      "payLocal": true,
+      "reconcile": true,
+      "notes": "Adopt for agents with an existing wallet."
+    },
+    {
+      "id": "x402-fetch",
+      "role": "official-coinbase-client",
+      "pin": "2.25.0",
+      "supported": true,
+      "inspect": false,
+      "payLocal": true,
+      "reconcile": false,
+      "notes": "Body bind yes. Auto-pays 402. Requires official payment-identifier extension. recovered may second-sign."
+    },
+    {
+      "id": "agentcash-discovery",
+      "role": "fundless-inspect",
+      "pin": "1.7.5",
+      "supported": true,
+      "inspect": true,
+      "payLocal": false,
+      "reconcile": false,
+      "notes": "Cannot sign. Empty body 400. Valid body live 402."
+    }
+  ],
+  "testsPass": true,
+  "testCounts": { "pass": 7, "fail": 0 },
+  "liveUnpaidOnly": true,
+  "paidExternal": false,
+  "adoptionRecommendation": "Use examples/customer-x402 @ 1.23.48 for wallets; AgentCash 1.7.5 for fundless inspect; do not treat stock wrapFetchWithPayment as an approve/reconcile recipe.",
+  "remainingLiveBuyerUnknowns": [
+    "Whether Agent402 router will dispatch this POST after settlement-floor (not a payer here).",
+    "Whether @agentcash/discovery 1.8.0 CLI grows a --body flag (1.7.5 has none).",
+    "Whether production funded wallets besides this VM have completed a live paid lockfile (out of scope; no live payment)."
+  ],
+  "childSessionIds": [
+    "01a0937c-0d45-7c60-bff2-5870a1768b3d",
+    "01a0937c-0d45-7c60-bff2-588fe074a2de"
+  ]
+}

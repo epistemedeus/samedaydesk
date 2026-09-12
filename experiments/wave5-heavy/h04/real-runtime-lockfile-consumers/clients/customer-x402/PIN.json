@@ -1,0 +1,17 @@
+{
+  "id": "customer-x402",
+  "role": "control",
+  "label": "SameDayDesk examples/customer-x402 (merged merchant 1.23.48)",
+  "source": "https://github.com/epistemedeus/x402-url-extractor/tree/7aaf00410900dc41fb523d1b7b4469b40ded7981/examples/customer-x402",
+  "merchantPin": "7aaf00410900dc41fb523d1b7b4469b40ded7981",
+  "packages": {
+    "@x402/fetch": "2.16.0",
+    "@x402/evm": "2.16.0",
+    "@x402/extensions": "2.16.0",
+    "viem": "2.55.11"
+  },
+  "install": "cd examples/customer-x402 && npm ci",
+  "wallet": true,
+  "fundlessInspect": true,
+  "reconcile": true
+}

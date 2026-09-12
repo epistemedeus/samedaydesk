@@ -1,0 +1,183 @@
+{
+  "version": "1.7.5",
+  "checkOpenApiOnly": {
+    "found": true,
+    "advisories": [
+      {
+        "method": "POST",
+        "source": "openapi",
+        "authMode": "paid",
+        "estimatedPrice": "0.005 USD",
+        "currency": "USD",
+        "protocols": [
+          "x402"
+        ],
+        "paymentOptionsCount": 0,
+        "x402": null,
+        "hasPaymentRequiredBody": false
+      }
+    ]
+  },
+  "attachProbeNoBody": {
+    "advisories": [
+      {
+        "method": "POST",
+        "source": "openapi",
+        "authMode": "paid",
+        "estimatedPrice": "0.005 USD",
+        "currency": "USD",
+        "protocols": [
+          "x402"
+        ],
+        "paymentOptionsCount": 0,
+        "x402": null,
+        "hasPaymentRequiredBody": false
+      }
+    ]
+  },
+  "checkEmptyBody": {
+    "found": true,
+    "advisories": [
+      {
+        "method": "OPTIONS",
+        "source": "probe",
+        "authMode": "unprotected",
+        "paymentOptionsCount": 0,
+        "x402": null,
+        "hasPaymentRequiredBody": false
+      }
+    ]
+  },
+  "getProbeEmptyBody": {
+    "ok": true,
+    "rows": [
+      {
+        "method": "OPTIONS",
+        "path": "/lockfile-pin-delta",
+        "authHint": "unprotected",
+        "hasPaymentRequiredBody": false
+      }
+    ]
+  },
+  "checkValidBody": {
+    "found": true,
+    "advisories": [
+      {
+        "method": "POST",
+        "source": "probe",
+        "authMode": "paid",
+        "paymentOptionsCount": 1,
+        "x402": {
+          "version": 2,
+          "network": "eip155:8453",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "amount": "5000",
+          "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+        },
+        "hasPaymentRequiredBody": true
+      },
+      {
+        "method": "OPTIONS",
+        "source": "probe",
+        "authMode": "unprotected",
+        "paymentOptionsCount": 0,
+        "x402": null,
+        "hasPaymentRequiredBody": false
+      }
+    ]
+  },
+  "checkValidBodyPostFull": {
+    "method": "POST",
+    "source": "probe",
+    "authMode": "paid",
+    "paymentOptionsCount": 1,
+    "x402": {
+      "version": 2,
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "amount": "5000",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+    },
+    "hasPaymentRequiredBody": true,
+    "paymentOptions": [
+      {
+        "protocol": "x402",
+        "version": 2,
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "amount": "5000",
+        "scheme": "exact",
+        "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+        "maxTimeoutSeconds": 300
+      }
+    ],
+    "paymentRequiredAccepts": [
+      {
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "amount": "5000",
+        "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+        "scheme": "exact"
+      }
+    ],
+    "x402Version": 2
+  },
+  "getProbeValidBody": {
+    "ok": true,
+    "rows": [
+      {
+        "method": "POST",
+        "path": "/lockfile-pin-delta",
+        "authHint": "paid",
+        "hasPaymentRequiredBody": true
+      },
+      {
+        "method": "OPTIONS",
+        "path": "/lockfile-pin-delta",
+        "authHint": "unprotected",
+        "hasPaymentRequiredBody": false
+      }
+    ]
+  },
+  "rawStatusEmpty": {
+    "label": "empty-{}",
+    "status": 400,
+    "paymentRequiredHeader": null,
+    "wwwAuthenticate": null,
+    "bodyKeys": [
+      "ok",
+      "product",
+      "schemaVersion",
+      "error",
+      "code",
+      "charged",
+      "analysis",
+      "transport",
+      "boundary"
+    ],
+    "acceptsPreview": null,
+    "errorSnippet": "{\"ok\":false,\"product\":\"samedaydesk-lockfile-pin-delta\",\"schemaVersion\":\"samedaydesk.lockfile-pin-delta-http.v0\",\"error\":\"before is required\",\"code\":\"invalid_lockfile_input\",\"charged\":false,\"analysis\":\"not-run\",\"transport\":\"rejected\",\"boundary\":{\"filesystemInput\":false,\"networkFetch\":false,\"arbitrary"
+  },
+  "rawStatusValid": {
+    "label": "valid-lockfile",
+    "status": 402,
+    "paymentRequiredHeader": "present",
+    "wwwAuthenticate": null,
+    "bodyKeys": [
+      "x402Version",
+      "error",
+      "resource",
+      "accepts",
+      "extensions"
+    ],
+    "acceptsPreview": [
+      {
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "amount": "5000",
+        "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+      }
+    ],
+    "errorSnippet": null
+  }
+}

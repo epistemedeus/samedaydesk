@@ -1,0 +1,14 @@
+{
+  "id": "agentcash-discovery",
+  "role": "fundless-inspect",
+  "label": "@agentcash/discovery",
+  "packages": {
+    "@agentcash/discovery": "1.7.5"
+  },
+  "npmLatestAtProbe": "1.8.0",
+  "install": "npm install @agentcash/discovery@1.7.5 --save-exact",
+  "wallet": false,
+  "fundlessInspect": true,
+  "reconcile": false,
+  "notes": "CLI check has no --body. Empty POST {} is HTTP 400 before 402; JS check with sampleInputBody {before,after} reaches live 402 at 5000 atomic. Cannot sign or pay."
+}

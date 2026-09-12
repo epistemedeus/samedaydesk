@@ -1,0 +1,61 @@
+{
+  "packages+versions": {
+    "@x402/fetch": "2.25.0",
+    "@x402/evm": "2.25.0",
+    "@x402/core": "2.25.0 (transitive)",
+    "viem": "2.56.3",
+    "disposableDir": "/tmp/w5-h04/rr-x402fetch-hfAe"
+  },
+  "wrapFetchWithPayment body-retry behavior": {
+    "reusesSameRequestBodyOnPaidRetry": true,
+    "file:line": "/tmp/w5-h04/rr-x402fetch-hfAe/node_modules/@x402/fetch/dist/esm/index.mjs:8-10,55-62",
+    "mechanism": "new Request(input,init); clonedRequest=request.clone(); unpaid fetch(request); on 402, set PAYMENT-SIGNATURE on clonedRequest then fetch(clonedRequest.clone()) — Request.clone() preserves body stream bytes",
+    "controlledProof": {
+      "script": "/tmp/w5-h04/rr-x402fetch-hfAe/proof-body-retry.mjs",
+      "bodyRetrySameBytes": true,
+      "bodySha256": "89b0e267b73cb73b345302799a72ac786e788c5281f509c9525105e9aae52035",
+      "attempts": 2,
+      "paidHeader": "payment-signature",
+      "livePaidHit": false
+    }
+  },
+  "live unpaid 402 terms": {
+    "url": "https://agents.samedaydesk.com/lockfile-pin-delta",
+    "method": "POST",
+    "status": 402,
+    "paymentHeaderSent": false,
+    "amount": "5000",
+    "network": "eip155:8453",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "assetLabel": "Base USDC",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "scheme": "exact",
+    "maxTimeoutSeconds": 300,
+    "extra": { "name": "USD Coin", "version": "2" },
+    "x402Version": 2
+  },
+  "native capabilities": {
+    "inspect": false,
+    "approve-gate": false,
+    "amountCap": true,
+    "bodyBind": true,
+    "reconcile": false,
+    "notes": {
+      "inspect": "wrapFetchWithPayment has no inspect-only / dry-run mode; it auto-creates and sends payment on 402. Unpaid inspect requires calling plain fetch outside the wrapper.",
+      "approve-gate": "No first-class --approve. Closest native: x402Client.onBeforePaymentCreation abort hook or PaymentPolicy filter — still not an inspect-then-explicit-approve purchase flow.",
+      "amountCap": "x402Client SpendControls.maxAmountPerPayment (DEFAULT_MAX_AMOUNT_PER_PAYMENT=\"$1\") enforced before policies; setSpendControls / config.spendControls. Not customer-x402 amountCapAtomic authorization binding.",
+      "bodyBind": "Transport-level: Request.clone() keeps exact POST body bytes on paid retry (proven). No auth-layer body-hash binding like customer-x402 authorization.",
+      "reconcile": "processPaymentResult recovered retry exists; no attempt-receipt schema, no reconcile CLI, no used/unused/expired confirmation vs finality."
+    }
+  },
+  "unsupported": [
+    "default unpaid inspect path inside wrapFetchWithPayment",
+    "explicit approve gate before signing/sending payment (customer-x402 --approve)",
+    "authorization object with amountCapAtomic + exact body/url/method binding",
+    "attempt-receipt persistence (samedaydesk.customer-x402.attempt-receipt.v1)",
+    "reconcile against RPC for used vs unused/expired/canceled with confirmation≠finality",
+    "purchase --attempt-receipt CLI / fundless inspection receipt workflow"
+  ],
+  "no keys": true,
+  "conclusion": "Current official @x402/fetch@2.25.0 + @x402/evm@2.25.0 CAN transport-consume POST /lockfile-pin-delta with exact body bytes on the paid retry (body reuse via Request.clone). They do NOT natively provide customer-x402's inspect / --approve / amountCapAtomic auth / attempt-receipt / reconcile stack — those remain gaps requiring the SDS customer-x402 wrapper or equivalent app policy."
+}

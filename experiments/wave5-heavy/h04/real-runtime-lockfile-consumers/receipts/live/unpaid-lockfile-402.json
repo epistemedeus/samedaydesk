@@ -1,0 +1,16 @@
+{
+  "command": "POST https://agents.samedaydesk.com/lockfile-pin-delta with JSON {before, after}; no payment header",
+  "paid": false,
+  "httpStatus": 402,
+  "openapiVersion": "1.23.48",
+  "price": { "amount": "0.005", "currency": "USD", "mode": "fixed" },
+  "accept": {
+    "scheme": "exact",
+    "network": "eip155:8453",
+    "amount": "5000",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "extra": { "name": "USD Coin", "version": "2" }
+  },
+  "resourceUrl": "https://agents.samedaydesk.com/lockfile-pin-delta"
+}

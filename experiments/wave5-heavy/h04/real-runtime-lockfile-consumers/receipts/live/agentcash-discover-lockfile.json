@@ -1,0 +1,20 @@
+{
+  "package": "@agentcash/discovery@1.7.5",
+  "command": "npx @agentcash/discovery@1.7.5 discover https://agents.samedaydesk.com --json",
+  "paid": false,
+  "lockfile": {
+    "resourceKey": "https://agents.samedaydesk.com POST /lockfile-pin-delta",
+    "origin": "https://agents.samedaydesk.com",
+    "method": "POST",
+    "path": "/lockfile-pin-delta",
+    "summary": "Compare two caller-supplied npm package-lock.json objects (lockfileVersion 2 or 3) and return added, removed, and changed name+version+integrity+resolved pins. HTTP JSON only: no filesystem paths, commands, or network fetch. Identical pins are informational, not failure. Charge is the bounded compare, not an install, audit, or purchase. Initial live release accepts x402 only.",
+    "source": "openapi",
+    "trustTier": "origin_hosted",
+    "authHint": "paid",
+    "priceHint": "0.005 USD",
+    "protocols": [
+      "x402"
+    ]
+  },
+  "found": true
+}

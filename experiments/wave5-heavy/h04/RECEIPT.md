@@ -123,6 +123,12 @@ Unpatched generic POST customer-x402 **refuses** `/lockfile-pin-delta` (`authori
 
 Run: `cd experiments/wave5-heavy/h04/lockfile-buyer-recipe && npm test` → **9 pass, 0 fail**. Parent `experiments/wave5-heavy/h04` `npm test` remains **29 pass**.
 
+## Real-runtime lockfile consumers (additive)
+
+Owned: `experiments/wave5-heavy/h04/real-runtime-lockfile-consumers/`. Merchant pin `7aaf004` / 1.23.48. Live unpaid 402 at 5000 atomic. No live payment.
+
+Three current clients: **customer-x402** (control, adopt for wallets), official **@x402/fetch 2.25.0** (body bind; needs payment-identifier extension; auto-pay / recovered second payload), **@agentcash/discovery 1.7.5** (fundless inspect only). Tests **7 pass**. H01/D01 untouched.
+
 ## PR / compare
 
 | Field | Value |
