@@ -31,13 +31,22 @@ export function normalizeFields(input) {
   return Object.freeze(unique);
 }
 
+export function normalizeTitleFact(value) {
+  if (typeof value !== "string") return value;
+  return value.replace(/[ \t]+/g, " ").trim();
+}
+
 export function pickPresent(data, fields) {
   if (!isPlainObject(data)) return { present: {}, absent: [...fields] };
   const present = Object.create(null);
   const absent = [];
   for (const field of fields) {
-    if (Object.hasOwn(data, field)) present[field] = data[field];
-    else absent.push(field);
+    if (!Object.hasOwn(data, field)) {
+      absent.push(field);
+      continue;
+    }
+    const value = data[field];
+    present[field] = field === "title" ? normalizeTitleFact(value) : value;
   }
   return { present, absent };
 }

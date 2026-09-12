@@ -19,6 +19,8 @@ export const IMPACT_CLASSES = Object.freeze([
 
 export const CLASSIFICATION_REASONS = Object.freeze({
   typeChange: "type-change",
+  typeWeakened: "type-weakened",
+  typeTightened: "type-tightened",
   requiredAdded: "required-added",
   requiredRemoved: "required-removed",
   requiredChanged: "required-changed",
@@ -29,6 +31,12 @@ export const CLASSIFICATION_REASONS = Object.freeze({
   booleanSchemaWeakened: "boolean-schema-weakened",
   additionalPropertiesTightened: "additionalProperties-tightened",
   additionalPropertiesWeakened: "additionalProperties-weakened",
+  enumWeakened: "enum-weakened",
+  enumTightened: "enum-tightened",
+  enumAdded: "enum-added",
+  enumRemoved: "enum-removed",
+  unsupportedKeyword: "unsupported-keyword",
+  unsupportedNullable: "unsupported-nullable",
   structuralChange: "structural-change",
   structuralEqual: "structural-equal",
   absentInBoth: "absent-in-both",

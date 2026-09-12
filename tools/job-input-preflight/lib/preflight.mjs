@@ -17,6 +17,7 @@ import { validateStagedInput } from "./input-schema.mjs";
 import { assertExecutionInputBytes, flagToKey, readBoundedRegularFile, resolveInputPath } from "./paths.mjs";
 import { refuse } from "./refuse.mjs";
 import { inspectStagedSample } from "./sample.mjs";
+import { isJobDocumentKey, stageJobDocumentCaptures } from "./job-document.mjs";
 import { copySiblingSampleMarkers, ensureStagedDir, writeStagedBytes } from "./stage.mjs";
 
 function loadDeclaredInputs(raw) {
@@ -248,6 +249,13 @@ export function preflight(options) {
     item.stagedPath = writeStagedBytes(stagedDir, item);
     if (item.path) copySiblingSampleMarkers(item.path, stagedDir);
   }
+
+  const nestedCaptures = [];
+  for (const item of staged) {
+    if (item.kind !== "file" || !isJobDocumentKey(item.key)) continue;
+    nestedCaptures.push(...stageJobDocumentCaptures(item, stagedDir));
+  }
+  staged.push(...nestedCaptures);
 
   for (const item of staged) {
     if (item.kind !== "file") continue;

@@ -33,12 +33,14 @@ export const D01_INJECTION = Object.freeze({
 
 export function toD01Job(engine) {
   const required = (engine.cli.requiredInputs || []).filter((key) => key !== "outDir");
+  const optional = ["--example"];
+  if (engine.id === "page-change-offline-job") optional.push("--job-before", "--job-after");
   return {
     id: engine.id,
     title: engine.id,
     summary: engine.notes?.[0] || engine.id,
     requiredInputs: Object.freeze(required.map((key) => `--${key}`)),
-    optionalInputs: Object.freeze(["--example"]),
+    optionalInputs: Object.freeze(optional),
     outputs: Object.freeze(engine.outputs.map((row) => row.name)),
     exampleFlag: "--example",
     notes: engine.notes?.join(" ") || "",
@@ -97,13 +99,14 @@ export function runEngineForD01(jobId, { files = {}, example = false, outDir, ti
     },
   });
   const json = engineJsonForD01(engine, result);
+  const timedOut = result.spawn.timedOut === true || result.spawn.errorCode === "ETIMEDOUT";
   return {
     status: result.spawn.status,
     stdout: result.spawn.stdout || "",
     stderr: result.spawn.stderr || "",
     json,
-    timedOut: false,
-    signal: null,
+    timedOut,
+    signal: result.spawn.signal || null,
     kit: MODULE_ROOT,
     cli: result.spawn.bin,
     args: result.spawn.argv,

@@ -21,6 +21,7 @@ Own directory: `tools/page-change-offline-job/` only. Contract export: `PAGE_CHA
 | --- | --- | --- | --- | --- | --- |
 | Compare held extract-batch snapshots | published customer-job JSON | `node bin/page-change.mjs journey` | `verdict=changed`, `freshness=observed` when job `maxStaleMs` fits, `current=false` because coverage is incomplete | `test/journey.test.mjs`, `test/bounded-analysis.test.mjs` | None |
 | Unchanged selected fields | `fixtures/unchanged/` | `job --job fixtures/unchanged/job.json` | `verdict=unchanged` | same | None |
+| Title ASCII space-run noise | extra space in a title string | compare `title,description` | `verdict=unchanged`; other fields stay literal | `test/title-whitespace.test.mjs` | None |
 | Source-list reorder only | SDS merchant reordered fixtures | library `comparePageChange` | `verdict=reordered` | same | None |
 | Truncated change list | `--max-changes 2` | compare | `verdict=changed`, `complete=false`, `limitsHit` includes `maxChanges` | `test/bounded-analysis.test.mjs` | None |
 | Depth bound with surviving title change | `--max-json-depth 2` | compare | title semantic change kept, `complete=false`, `maxJsonDepth` | same | None |

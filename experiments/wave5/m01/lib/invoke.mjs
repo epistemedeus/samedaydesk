@@ -76,7 +76,9 @@ export function invokeEngine(request = {}) {
     encoding: "utf8",
     timeout: request.timeoutMs || 120_000,
     maxBuffer: 8 * 1024 * 1024,
+    killSignal: "SIGTERM",
   });
+  const timedOut = Boolean(spawnResult.error && spawnResult.error.code === "ETIMEDOUT");
 
   const stdoutDoc = parseJsonPayload(spawnResult.stdout);
   const refuseText = streamText(spawnResult, engine.refuse.stream);
@@ -118,6 +120,9 @@ export function invokeEngine(request = {}) {
       stderr: spawnResult.stderr || "",
       argv,
       bin,
+      signal: spawnResult.signal || null,
+      timedOut,
+      errorCode: spawnResult.error?.code || null,
     },
   };
 }

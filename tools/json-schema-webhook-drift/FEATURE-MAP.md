@@ -60,7 +60,14 @@ Public export: `lib/contract.mjs`. CLI stdout keeps `ok: true` and exit 0 for a 
 | `required` name removed | `compatible` | `required-removed` |
 | Numeric bound tightened, including non-integers and `exclusiveMinimum`/`exclusiveMaximum` | `breaking` | `numeric-tightened` (non-integer bounds are decimal strings in fingerprints because the pinned I01 hasher rejects non-integer JSON numbers) |
 | Numeric bound weakened | `compatible` | `numeric-weakened` |
-| Type change | `breaking` | `type-change` |
+| Type change with a smaller instance set (including `number` → `integer`, or dropping a type from a union) | `breaking` | `type-tightened` or `type-change` |
+| Type change with a larger instance set (`integer` → `number`, `string` → `["string","null"]`) | `compatible` | `type-weakened` |
+| `type: "string"` vs `type: ["string"]` | `unchanged` | same instance set |
+| Enum widen / reorder | `compatible` / `unchanged` | `enum-weakened` / equal set |
+| Enum narrow | `breaking` | `enum-tightened` |
+| Nested `properties` / `items` / `additionalProperties` schema at the used node | same directional classes | used `""` walks nested supported keywords |
+| `allOf` / `prefixItems` / other unadvertised combinators | `unknown` | `unsupported-keyword` (not certain unchanged) |
+| OpenAPI `nullable` (not a Draft 2020-12 keyword) | `unknown` | `unsupported-nullable` when the annotation differs |
 
 Unlike schema documents are not forced to equal hashes. `termsVersion` remains the I01 content hash of this brief.
 

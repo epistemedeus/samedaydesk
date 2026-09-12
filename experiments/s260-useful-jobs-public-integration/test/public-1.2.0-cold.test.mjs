@@ -6,17 +6,14 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
-import {
-  USEFUL_JOBS_ARCHIVE,
-  USEFUL_JOBS_ARCHIVE_BYTES,
-  USEFUL_JOBS_ARCHIVE_SHA256,
-  USEFUL_JOBS_ROOT,
-} from "../../../client/src/data/machineEntry.mjs";
 import { ensureIndependentInputs, listingInput } from "../lib/independent-inputs.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "../../..");
-const publicArchive = join(root, "client/public", USEFUL_JOBS_ARCHIVE.replace(/^\//, ""));
+const USEFUL_JOBS_ROOT = "useful-jobs-1.2.0";
+const USEFUL_JOBS_ARCHIVE_BYTES = 2579117;
+const USEFUL_JOBS_ARCHIVE_SHA256 = "dec31ea66f1605fb9578c7d15c9583b130c6e2c0b82b5e6b93422381a04461eb";
+const publicArchive = join(root, "client/public/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz");
 
 function sha256(buf) {
   return createHash("sha256").update(buf).digest("hex");
@@ -52,22 +49,25 @@ function packetStatus(outDir) {
   return JSON.parse(readFileSync(join(outDir, "repair-packet.json"), "utf8")).status;
 }
 
-test("1.2.0 archive bytes match current kit pin and catalog version", () => {
+test("1.2.0 archive bytes remain the immutable previous pin", () => {
   const buf = readFileSync(publicArchive);
   assert.equal(buf.length, USEFUL_JOBS_ARCHIVE_BYTES);
   assert.equal(sha256(buf), USEFUL_JOBS_ARCHIVE_SHA256);
   assert.equal(USEFUL_JOBS_ROOT, "useful-jobs-1.2.0");
-  const catalog = JSON.parse(
-    readFileSync(join(root, "client/public/for-agents/useful-jobs/catalog.json"), "utf8"),
-  );
   const pin = JSON.parse(
     readFileSync(join(root, "client/public/for-agents/useful-jobs/useful-jobs-1.2.0.sha256.json"), "utf8"),
   );
-  assert.equal(catalog.version, "1.2.0");
-  assert.equal(catalog.jobs.length, 10);
-  assert.equal(catalog.jobs[0].id, "lockfile-pin-delta");
   assert.equal(pin.sha256, USEFUL_JOBS_ARCHIVE_SHA256);
   assert.equal(pin.bytes, buf.length);
+  const { outside, kit } = extractOutside();
+  try {
+    const catalog = JSON.parse(readFileSync(join(kit, "catalog.json"), "utf8"));
+    assert.equal(catalog.version, "1.2.0");
+    assert.equal(catalog.jobs.length, 10);
+    assert.equal(catalog.jobs[0].id, "lockfile-pin-delta");
+  } finally {
+    rmSync(outside, { recursive: true, force: true });
+  }
 });
 
 test("cold 1.2.0 listing-repair: unknown and declared providers, partial/full, mismatch", () => {

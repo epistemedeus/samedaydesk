@@ -3,7 +3,7 @@
  * preflight → managed-order → execution.v1 → artifact completeness → mailbox.
  * Isolated runOutDir is delivery identity. publishedDir is last-writer copy.
  */
-import { mkdirSync, mkdtempSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
@@ -62,8 +62,17 @@ export function orderRequestFromPreflight(pre, { orderId, fundingState, payment,
   const job = catalog?.jobs?.find((row) => row.id === pre.job) || null;
   const enginePin = pinForDeliveryJob(job, pins);
   const inputs = [];
+  const fileBytes = {};
   for (const [key, rec] of Object.entries(pre.inputs || {})) {
     if (!rec || rec.kind === "directory") continue;
+    const staged = rec.stagedPath && existsSync(rec.stagedPath) ? rec.stagedPath : null;
+    const buf = staged ? readFileSync(staged) : null;
+    if (buf) {
+      fileBytes[key] = buf;
+      if (key === "job-before") fileBytes["job:before"] = buf;
+      if (key === "job-after") fileBytes["job:after"] = buf;
+      if (key === "job") fileBytes.job = buf;
+    }
     inputs.push({
       flag: rec.flag || `--${key}`,
       path: key === "job" && rec.path ? rec.path : rec.stagedPath,
@@ -88,6 +97,7 @@ export function orderRequestFromPreflight(pre, { orderId, fundingState, payment,
     fundingState: fundingState || "unfunded",
     payment: payment || undefined,
     inputs,
+    fileBytes,
   };
 }
 

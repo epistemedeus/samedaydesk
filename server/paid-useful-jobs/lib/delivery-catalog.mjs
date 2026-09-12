@@ -47,7 +47,7 @@ export function toDeliveryJob(engine) {
     title: engine.id,
     summary: engine.notes?.[0] || engine.id,
     requiredInputs: [...d01.requiredInputs],
-    optionalInputs: [],
+    optionalInputs: engine.id === "page-change-offline-job" ? ["--job-before", "--job-after"] : [],
     outputs: [...d01.outputs],
     m01: true,
     pin: engine.pin,

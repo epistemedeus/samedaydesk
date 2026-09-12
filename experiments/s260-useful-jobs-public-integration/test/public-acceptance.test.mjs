@@ -128,10 +128,25 @@ test("committed public archive matches pinned bytes and sha256", () => {
   assert.equal(buf.length, USEFUL_JOBS_ARCHIVE_BYTES);
   assert.equal(sha256(buf), USEFUL_JOBS_ARCHIVE_SHA256);
   const pin = JSON.parse(
-    readFileSync(join(root, "client/public/kit/useful-jobs-1.2.0.sha256.json"), "utf8"),
+    readFileSync(join(root, "client/public/kit/useful-jobs-1.3.0.sha256.json"), "utf8"),
   );
   assert.equal(pin.sha256, USEFUL_JOBS_ARCHIVE_SHA256);
   assert.equal(pin.bytes, USEFUL_JOBS_ARCHIVE_BYTES);
+});
+
+test("previous 1.2.0 public archive stays at original URL, size, and sha256", () => {
+  const prev = join(root, "client/public/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz");
+  const kit = join(root, "client/public/kit/useful-jobs-1.2.0.tar.gz");
+  const pin = JSON.parse(
+    readFileSync(join(root, "client/public/for-agents/useful-jobs/useful-jobs-1.2.0.sha256.json"), "utf8"),
+  );
+  assert.equal(existsSync(prev), true);
+  assert.equal(existsSync(kit), true);
+  const buf = readFileSync(prev);
+  assert.equal(buf.length, 2579117);
+  assert.equal(sha256(buf), "dec31ea66f1605fb9578c7d15c9583b130c6e2c0b82b5e6b93422381a04461eb");
+  assert.equal(sha256(readFileSync(kit)), pin.sha256);
+  assert.equal(pin.bytes, 2579117);
 });
 
 test("previous 1.1.0 public archive stays at original URL, size, and sha256", () => {

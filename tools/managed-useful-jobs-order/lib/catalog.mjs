@@ -32,8 +32,12 @@ export function flagToKey(flag) {
   return name;
 }
 
+export function isReferencedCaptureFlag(value) {
+  return /^--job-(before|after)$/.test(String(value || ""));
+}
+
 export function isFlag(value) {
-  return FLAG_RE.test(String(value || ""));
+  return FLAG_RE.test(String(value || "")) || isReferencedCaptureFlag(value);
 }
 
 export function loadPinnedRuntime() {

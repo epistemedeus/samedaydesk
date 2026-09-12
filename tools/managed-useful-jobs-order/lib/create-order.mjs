@@ -349,6 +349,7 @@ async function createOrderStrict(raw, options = {}) {
   const offer = await wrapper.runPaidOffer({
     jobId: request.engineId,
     inputs: offerInputs(request),
+    fileBytes: raw.fileBytes && typeof raw.fileBytes === "object" ? raw.fileBytes : undefined,
     example: false,
     fundingIntent: request.fundingState,
     funding: request.fundingState,

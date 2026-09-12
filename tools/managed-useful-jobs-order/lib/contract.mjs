@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { OrderRefuse } from "./errors.mjs";
-import { allowedFlags, flagToKey, isFlag, jobById, requiredFlags } from "./catalog.mjs";
+import { allowedFlags, flagToKey, isFlag, isReferencedCaptureFlag, jobById, requiredFlags } from "./catalog.mjs";
 import { assertSha256, normalizeSha256 } from "./digest.mjs";
 import { MAX_INPUT_BYTES, USEFUL_JOBS_VERSION } from "./pins.mjs";
 
@@ -134,11 +134,10 @@ export function normalizeRequest(raw, { catalog, pins, requestDir = null } = {})
   const inputs = normalizeInputs(raw, requestDir);
   const allowed = new Set(allowedFlags(job));
   for (const inp of inputs) {
-    if (!allowed.has(inp.flag)) {
-      throw new OrderRefuse("unexpected-input-flag", `flag ${inp.flag} is not in the catalog contract for ${engineId}`, {
-        detail: { flag: inp.flag, allowed: [...allowed] },
-      });
-    }
+    if (allowed.has(inp.flag) || isReferencedCaptureFlag(inp.flag)) continue;
+    throw new OrderRefuse("unexpected-input-flag", `flag ${inp.flag} is not in the catalog contract for ${engineId}`, {
+      detail: { flag: inp.flag, allowed: [...allowed] },
+    });
   }
   const missing = requiredFlags(job).filter((flag) => !inputs.some((inp) => inp.flag === flag));
   if (missing.length) {

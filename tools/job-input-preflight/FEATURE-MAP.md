@@ -22,6 +22,7 @@
 | Size bound | 1 MiB+1 under kit cap is `input-oversize`; exact 1 MiB is accepted | `test/kit-alignment.test.mjs`, `test/d01-execution-bind.test.mjs` |
 | D01 consume | In-repo `inspectSample` detects inline JSON SAMPLE; this CLI still refuses | `test/d01-consume.test.mjs` |
 | D01 bind | Same staged paths/bytes through `bin/cli.mjs` and `runPaidOffer` | `test/d01-execution-bind.test.mjs` |
+| Page job captures | Nested `before`/`after` files referenced by `--job` are staged at preflight; symlink escape is refused | `test/job-document-freeze.test.mjs` |
 | Local-runtime | Real `catalog.json` + archive sha/bytes; extract kit 8 MiB cap | `test/kit-alignment.test.mjs` |
 | Local HTTP | Serve the real catalog on `127.0.0.1` | same file |
 | External | Not claimed | No live samedaydesk.com or payment |

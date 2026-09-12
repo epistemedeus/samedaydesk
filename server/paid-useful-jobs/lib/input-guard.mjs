@@ -12,10 +12,21 @@ export { WrapperRefuse, refuse };
  * Evaluate caller getters once. Later inspect/materialize/execute must
  * use this object, not the live request.
  */
+function cloneProvidedBytes(src) {
+  const out = {};
+  if (!src || typeof src !== "object") return out;
+  for (const [key, value] of Object.entries(src)) {
+    if (Buffer.isBuffer(value)) out[key] = Buffer.from(value);
+    else if (typeof value === "string") out[key] = Buffer.from(value);
+    else if (value instanceof Uint8Array) out[key] = Buffer.from(value);
+  }
+  return out;
+}
+
 export function freezeRequest(request = {}) {
   const inputsSrc = request.inputs;
   const inputs = {};
-  const fileBytes = {};
+  const fileBytes = cloneProvidedBytes(request.fileBytes);
   if (inputsSrc && typeof inputsSrc === "object" && !Array.isArray(inputsSrc)) {
     for (const [key, value] of Object.entries(inputsSrc)) {
       if (value && typeof value === "object") {
@@ -27,6 +38,7 @@ export function freezeRequest(request = {}) {
       } else {
         inputs[key] = value;
       }
+      if (fileBytes[key]) continue;
       if (typeof value === "string" && !looksJsonText(value)) {
         const abs = resolve(value);
         if (existsSync(abs) && statSync(abs).isFile()) {
@@ -74,13 +86,21 @@ function freezeJobDocumentSiblings(inputs, fileBytes) {
     return;
   }
   if (!spec || typeof spec !== "object" || Array.isArray(spec)) return;
+  if (!fileBytes.job) fileBytes.job = readFileSync(abs);
   const dir = dirname(abs);
   for (const key of ["before", "after"]) {
+    const frozenKey = `job:${key}`;
+    if (fileBytes[frozenKey]) continue;
+    const alt = fileBytes[`job-${key}`];
+    if (alt) {
+      fileBytes[frozenKey] = alt;
+      continue;
+    }
     const rel = spec[key];
     if (typeof rel !== "string" || rel === "" || /^https?:\/\//i.test(rel)) continue;
     const sibling = isAbsolute(rel) ? resolve(rel) : resolve(dir, rel);
     if (existsSync(sibling) && statSync(sibling).isFile()) {
-      fileBytes[`job:${key}`] = readFileSync(sibling);
+      fileBytes[frozenKey] = readFileSync(sibling);
     }
   }
 }

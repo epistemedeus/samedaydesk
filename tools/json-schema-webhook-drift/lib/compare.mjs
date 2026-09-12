@@ -21,10 +21,74 @@ const CONSTRAINT_SIBLING_KEYS = new Set([
   "nullable",
 ]);
 
+const UNSUPPORTED_KEYWORDS = Object.freeze([
+  "allOf",
+  "anyOf",
+  "oneOf",
+  "not",
+  "if",
+  "then",
+  "else",
+  "prefixItems",
+  "unevaluatedItems",
+  "unevaluatedProperties",
+  "patternProperties",
+  "propertyNames",
+  "dependentSchemas",
+  "dependentRequired",
+  "contains",
+  "minContains",
+  "maxContains",
+  "$dynamicRef",
+  "$recursiveRef",
+]);
+
+const MAX_FP_DEPTH = 8;
+
 function normalizeType(type) {
   if (typeof type === "string") return type;
-  if (Array.isArray(type)) return [...type].map(String).sort();
+  if (Array.isArray(type)) {
+    const list = [...new Set(type.map(String))].sort();
+    if (list.length === 1) return list[0];
+    return list;
+  }
   return null;
+}
+
+function typeList(type) {
+  const normalized = normalizeType(type);
+  if (normalized == null) return null;
+  return Array.isArray(normalized) ? normalized : [normalized];
+}
+
+function typeAllows(list, jsonType) {
+  if (list == null) return true;
+  if (jsonType === "integer") return list.includes("integer") || list.includes("number");
+  return list.includes(jsonType);
+}
+
+function typeInstanceSubset(beforeType, afterType) {
+  const before = typeList(beforeType);
+  const after = typeList(afterType);
+  const checks = ["null", "boolean", "object", "array", "string", "number", "integer"];
+  return checks.every((jsonType) => !typeAllows(before, jsonType) || typeAllows(after, jsonType));
+}
+
+function classifyTypeDirection(beforeType, afterType) {
+  const before = typeList(beforeType);
+  const after = typeList(afterType);
+  if (JSON.stringify(before) === JSON.stringify(after)) return null;
+  const beforeSubset = typeInstanceSubset(beforeType, afterType);
+  const afterSubset = typeInstanceSubset(afterType, beforeType);
+  if (beforeSubset && afterSubset) return null;
+  if (beforeSubset && !afterSubset) return { class: "compatible", reason: "type-weakened" };
+  if (!beforeSubset && afterSubset) return { class: "breaking", reason: "type-tightened" };
+  return { class: "breaking", reason: "type-change" };
+}
+
+function unsupportedKeywords(node) {
+  if (!node || typeof node !== "object" || Array.isArray(node)) return [];
+  return UNSUPPORTED_KEYWORDS.filter((key) => Object.prototype.hasOwnProperty.call(node, key));
 }
 
 function numberOrNull(value) {
@@ -64,16 +128,35 @@ function stableLiteral(value) {
   return JSON.stringify(value);
 }
 
-function fingerprintItems(items) {
+function fingerprintItems(items, doc, depth) {
   if (items === undefined) return null;
   if (typeof items === "boolean") return { kind: "boolean-schema", allows: items };
   if (items && typeof items === "object" && !Array.isArray(items)) {
-    return { kind: "schema-object", type: normalizeType(items.type) };
+    return fingerprintSchemaNode(items, doc, depth + 1);
   }
   return { kind: "unknown" };
 }
 
-function schemaObjectFingerprint(node) {
+function fingerprintAdditionalProperties(value, doc, depth) {
+  if (typeof value === "boolean") return { kind: "boolean-schema", allows: value };
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    return fingerprintSchemaNode(value, doc, depth + 1);
+  }
+  if (value === undefined) return null;
+  return { kind: "unknown" };
+}
+
+function fingerprintProperties(properties, doc, depth) {
+  if (!properties || typeof properties !== "object" || Array.isArray(properties)) return null;
+  const out = {};
+  for (const key of Object.keys(properties).sort()) {
+    out[key] = fingerprintSchemaNode(properties[key], doc, depth + 1);
+  }
+  return out;
+}
+
+function schemaObjectFingerprint(node, doc, depth) {
+  const unsupported = unsupportedKeywords(node);
   return {
     kind: "schema-object",
     type: normalizeType(node.type),
@@ -81,17 +164,13 @@ function schemaObjectFingerprint(node) {
     enum: Array.isArray(node.enum) ? [...node.enum].map(stableLiteral).sort() : null,
     constJson: Object.prototype.hasOwnProperty.call(node, "const") ? stableLiteral(node.const) : null,
     required: sortedStrings(node.required),
-    additionalProperties:
-      typeof node.additionalProperties === "boolean"
-        ? node.additionalProperties
-        : node.additionalProperties === undefined
-          ? null
-          : "schema",
+    additionalProperties: fingerprintAdditionalProperties(node.additionalProperties, doc, depth),
+    properties: fingerprintProperties(node.properties, doc, depth),
     propertiesKeys:
       node.properties && typeof node.properties === "object" && !Array.isArray(node.properties)
         ? Object.keys(node.properties).sort()
         : null,
-    items: fingerprintItems(node.items),
+    items: fingerprintItems(node.items, doc, depth),
     itemsType:
       node.items && typeof node.items === "object" && !Array.isArray(node.items)
         ? normalizeType(node.items.type)
@@ -105,6 +184,7 @@ function schemaObjectFingerprint(node) {
     minItems: encodeNumber(node.minItems),
     maxItems: encodeNumber(node.maxItems),
     nullable: node.nullable === true,
+    unsupportedKeywords: unsupported.length ? unsupported : null,
   };
 }
 
@@ -123,16 +203,19 @@ function fingerprintSiblingConstraints(node) {
     }
   }
   if (!any) return null;
-  return schemaObjectFingerprint(rest);
+  return schemaObjectFingerprint(rest, null, 0);
 }
 
-export function fingerprintSchemaNode(node, doc) {
+export function fingerprintSchemaNode(node, doc, depth = 0) {
   if (node === undefined) return { kind: "absent" };
   if (typeof node === "boolean") {
     return { kind: "boolean-schema", allows: node };
   }
   if (node === null || typeof node !== "object" || Array.isArray(node)) {
     return { kind: "literal", jsonType: jsonType(node) };
+  }
+  if (depth > MAX_FP_DEPTH) {
+    return { kind: "truncated-depth", unsupportedKeywords: ["depth"] };
   }
 
   const remote = remoteRefsInNode(node);
@@ -154,14 +237,16 @@ export function fingerprintSchemaNode(node, doc) {
         truncated: Boolean(resolved.truncated),
       };
     }
-    const target = fingerprintSchemaNode(resolved.value, doc);
+    const target = fingerprintSchemaNode(resolved.value, doc, depth + 1);
     const siblings = fingerprintSiblingConstraints(node);
     const out = { kind: "local-ref", ref: node.$ref, target };
     if (siblings) out.siblings = siblings;
+    const unsupported = unsupportedKeywords(node);
+    if (unsupported.length) out.unsupportedKeywords = unsupported;
     return out;
   }
 
-  return schemaObjectFingerprint(node);
+  return schemaObjectFingerprint(node, doc, depth);
 }
 
 export function fingerprintExampleNode(node) {
@@ -179,7 +264,33 @@ export function fingerprintUsedNode(node, doc, kind) {
 }
 
 function fpKey(fp) {
-  return JSON.stringify(fp ?? null);
+  if (!fp) return JSON.stringify(null);
+  const { nullable, unsupportedKeywords, ...rest } = fp;
+  void nullable;
+  void unsupportedKeywords;
+  return JSON.stringify(rest);
+}
+
+function applyHonesty(classified, beforeFp, afterFp) {
+  const keywords = [
+    ...((beforeFp && beforeFp.unsupportedKeywords) || []),
+    ...((afterFp && afterFp.unsupportedKeywords) || []),
+  ];
+  const unique = [...new Set(keywords)];
+  const certainUnsafe =
+    classified.class === "breaking" || classified.class === "deleted" || classified.class === "added";
+  if (unique.length && !certainUnsafe && classified.class !== "remote-ref") {
+    return { class: "unknown", reason: "unsupported-keyword", keywords: unique };
+  }
+  if (
+    beforeFp?.kind === "schema-object" &&
+    afterFp?.kind === "schema-object" &&
+    Boolean(beforeFp.nullable) !== Boolean(afterFp.nullable) &&
+    !certainUnsafe
+  ) {
+    return { class: "unknown", reason: "unsupported-nullable" };
+  }
+  return classified;
 }
 
 function typeChanged(beforeFp, afterFp) {
@@ -272,14 +383,23 @@ function classifyNumeric(before, after) {
 }
 
 function additionalPropertiesRank(value) {
-  if (value === false) return 0;
-  if (value === "schema") return 1;
+  if (value === false || (value?.kind === "boolean-schema" && value.allows === false)) return 0;
+  if (value && typeof value === "object") return 1;
   return 2;
 }
 
 function classifyAdditionalProperties(before, after) {
-  const beforeRank = additionalPropertiesRank(before.additionalProperties);
-  const afterRank = additionalPropertiesRank(after.additionalProperties);
+  const beforeAp = before.additionalProperties;
+  const afterAp = after.additionalProperties;
+  if (JSON.stringify(beforeAp) === JSON.stringify(afterAp)) return null;
+  if (beforeAp && afterAp && typeof beforeAp === "object" && typeof afterAp === "object") {
+    if (beforeAp.kind === "boolean-schema" && afterAp.kind === "boolean-schema") {
+      return classifyBooleanSchema(beforeAp, afterAp);
+    }
+    return classifyPair(beforeAp, afterAp);
+  }
+  const beforeRank = additionalPropertiesRank(beforeAp);
+  const afterRank = additionalPropertiesRank(afterAp);
   if (afterRank < beforeRank) return { class: "breaking", reason: "additionalProperties-tightened" };
   if (afterRank > beforeRank) return { class: "compatible", reason: "additionalProperties-weakened" };
   return null;
@@ -290,20 +410,48 @@ function classifyItems(before, after) {
   const afterItems = after.items;
   if (JSON.stringify(beforeItems) === JSON.stringify(afterItems)) return null;
   if (beforeItems && afterItems) {
-    const booleanClass = classifyBooleanSchema(beforeItems, afterItems);
-    if (booleanClass && booleanClass.reason !== "structural-equal") return booleanClass;
+    return classifyPair(beforeItems, afterItems);
   }
   return { class: "breaking", reason: "structural-change" };
 }
 
-const OTHER_KEYS = ["format", "enum", "constJson", "propertiesKeys", "itemsType", "nullable"];
+function classifyEnum(before, after) {
+  if (!before.enum && !after.enum) return null;
+  if (!before.enum && after.enum) return { class: "breaking", reason: "enum-added" };
+  if (before.enum && !after.enum) return { class: "compatible", reason: "enum-removed" };
+  const beforeSet = new Set(before.enum);
+  const afterSet = new Set(after.enum);
+  const lost = [...beforeSet].filter((value) => !afterSet.has(value));
+  const gained = [...afterSet].filter((value) => !beforeSet.has(value));
+  if (!lost.length && !gained.length) return null;
+  if (lost.length) return { class: "breaking", reason: "enum-tightened" };
+  return { class: "compatible", reason: "enum-weakened" };
+}
+
+function classifyProperties(before, after) {
+  const beforeProps = before.properties || null;
+  const afterProps = after.properties || null;
+  if (!beforeProps && !afterProps) return null;
+  if (JSON.stringify(beforeProps) === JSON.stringify(afterProps)) return null;
+  const names = new Set([...Object.keys(beforeProps || {}), ...Object.keys(afterProps || {})]);
+  let worst = null;
+  for (const name of names) {
+    const left = beforeProps?.[name] || { kind: "absent" };
+    const right = afterProps?.[name] || { kind: "absent" };
+    const row = classifyPair(left, right);
+    if (!row || row.class === "unchanged") continue;
+    worst = worst ? combineClass(worst, row) : row;
+  }
+  return worst;
+}
+
+const OTHER_KEYS = ["format", "constJson", "itemsType"];
 
 function classifySchemaConstraints(before, after) {
   if (before.kind !== "schema-object" || after.kind !== "schema-object") return null;
-  if (JSON.stringify(before.type) !== JSON.stringify(after.type)) {
-    return { class: "breaking", reason: "type-change" };
-  }
   const deltas = [];
+  const typeDelta = classifyTypeDirection(before.type, after.type);
+  if (typeDelta) deltas.push(typeDelta);
   const required = classifyRequired(before, after);
   if (required) deltas.push(required);
   const numeric = classifyNumeric(before, after);
@@ -312,6 +460,10 @@ function classifySchemaConstraints(before, after) {
   if (additional) deltas.push(additional);
   const items = classifyItems(before, after);
   if (items) deltas.push(items);
+  const enumerated = classifyEnum(before, after);
+  if (enumerated) deltas.push(enumerated);
+  const properties = classifyProperties(before, after);
+  if (properties) deltas.push(properties);
 
   const restChanged = OTHER_KEYS.some((key) => JSON.stringify(before[key]) !== JSON.stringify(after[key]));
   const tightening = deltas.find((delta) => delta.class === "breaking");
@@ -322,6 +474,8 @@ function classifySchemaConstraints(before, after) {
   if (restChanged) return { class: "breaking", reason: "structural-change" };
   const weakening = deltas.find((delta) => delta.class === "compatible");
   if (weakening) return weakening;
+  const added = deltas.find((delta) => delta.class === "added" || delta.class === "deleted");
+  if (added) return added;
   return null;
 }
 
@@ -388,21 +542,26 @@ export function classifyPair(beforeFp, afterFp) {
     return { class: "deleted", reason: "present-before-only" };
   }
   if (fpKey(beforeFp) === fpKey(afterFp)) {
-    return { class: "unchanged", reason: "structural-equal" };
+    return applyHonesty({ class: "unchanged", reason: "structural-equal" }, beforeFp, afterFp);
   }
   if (beforeFp.kind === "local-ref" || afterFp.kind === "local-ref") {
     const before = unwrapRef(beforeFp);
     const after = unwrapRef(afterFp);
-    return combineClass(classifyPair(before.target, after.target), classifyPair(before.siblings, after.siblings));
+    return applyHonesty(
+      combineClass(classifyPair(before.target, after.target), classifyPair(before.siblings, after.siblings)),
+      beforeFp,
+      afterFp,
+    );
   }
   const booleanClass = classifyBooleanSchema(beforeFp, afterFp);
-  if (booleanClass) return booleanClass;
+  if (booleanClass) return applyHonesty(booleanClass, beforeFp, afterFp);
   if (beforeFp.kind === "schema-object" && afterFp.kind === "schema-object") {
     const directional = classifySchemaConstraints(beforeFp, afterFp);
-    if (directional) return directional;
+    if (directional) return applyHonesty(directional, beforeFp, afterFp);
   }
   if (typeChanged(beforeFp, afterFp)) {
-    return { class: "breaking", reason: "type-change" };
+    const directed = classifyTypeDirection(beforeFp.type, afterFp.type);
+    return applyHonesty(directed || { class: "breaking", reason: "type-change" }, beforeFp, afterFp);
   }
   if (beforeFp.kind === "example-value" && afterFp.kind === "example-value") {
     return { class: "informational", reason: "value-change" };
@@ -410,5 +569,8 @@ export function classifyPair(beforeFp, afterFp) {
   if (beforeFp.kind === "unresolved-local-ref" || afterFp.kind === "unresolved-local-ref") {
     return { class: "unknown", reason: "unresolved-local-ref" };
   }
-  return { class: "breaking", reason: "structural-change" };
+  if (beforeFp.kind === "truncated-depth" || afterFp.kind === "truncated-depth") {
+    return { class: "unknown", reason: "unsupported-keyword", keywords: ["depth"] };
+  }
+  return applyHonesty({ class: "breaking", reason: "structural-change" }, beforeFp, afterFp);
 }
