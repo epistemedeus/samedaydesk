@@ -1,0 +1,11 @@
+{
+  "id": "L01-commander-lockfile",
+  "family": "lockfile",
+  "jobId": "lockfile-pin-delta",
+  "repo": "tj/commander.js",
+  "license": "MIT",
+  "path": "package-lock.json",
+  "beforeShaFull": "9098b4863ef7678b9d138ae0f04afd949287510c",
+  "afterShaFull": "d785d8b3b9448952ef023a8cd26a0a3923a90458",
+  "hint": "Official npm lockfileVersion 2/3 pair. Candidate: 9098b4863ef7 (Update dependencies #2506) \u2192 d785d8b3b944 (Update dependencies #2518, 2026-05-22). Prove actual name+version+integrity+resolved pin deltas. Excerpt packages if large; record full-blob sha256. Control: identical after=before. Negative: yarn.lock or package.json-only refuse."
+}

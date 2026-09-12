@@ -1,0 +1,40 @@
+{
+  "consumerId": "S02-octokit-pr-opened",
+  "family": "schemaWebhook",
+  "jobId": "json-schema-webhook-drift",
+  "receivingIntegrationOwner": "H6D-parent",
+  "receiving": [
+    "H6D parent catalog",
+    "bin/select-job.mjs"
+  ],
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/S02-octokit-pr-opened/",
+  "writeExclusive": true,
+  "kit": {
+    "name": "useful-jobs",
+    "version": "1.4.0",
+    "archive": "client/public/kit/useful-jobs-1.4.0.tar.gz",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215,
+    "extractedTo": "vendor/useful-jobs-1.4.0/"
+  },
+  "exactInputs": {
+    "before": "fixtures/official/opened.before.json",
+    "after": "fixtures/official/opened.after.json",
+    "used": "fixtures/used/used.json",
+    "usedControl": "fixtures/used/used-control.json",
+    "negativeOpenApi": "fixtures/negative/openapi.json"
+  },
+  "usedPointers": [
+    "/pull_request/auto_merge",
+    "/action"
+  ],
+  "outputs": [
+    "drift-brief.json",
+    "drift-brief.md"
+  ],
+  "outcome": "Used-pointer drift on the official octokit/webhooks pull_request opened webhook EXAMPLE json: /pull_request/auto_merge is added (absent before, present null after); /action remains \"opened\" as an unchanged control. Kind is webhook-example, not JSON Schema combinators and not OpenAPI.",
+  "forbiddenNotUsed": [
+    "organization.renamed",
+    "payload-examples/api.github.com/create/payload.json"
+  ]
+}

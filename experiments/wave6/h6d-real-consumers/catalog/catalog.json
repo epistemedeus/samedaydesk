@@ -1,0 +1,632 @@
+{
+  "schema": "h6d.real-consumers.catalog.v1",
+  "assignment": "H6D-useful-job-real-corpus-distribution",
+  "usefulJobs": "1.4.0",
+  "baselinePin": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "migrations": {
+    "openapi-to-sds-route-table": {
+      "equivalent": false,
+      "from": "OpenAPI/Swagger path + method (+ operationId)",
+      "to": "samedaydesk.route-table.v1 {path, canonical, title, robots?}",
+      "dropped": [
+        "httpMethod",
+        "operationId",
+        "parameters",
+        "requestBody",
+        "responses"
+      ],
+      "note": "route-table-diff refuses OpenAPI path maps. A projection is caller-owned and not a published SDS table."
+    },
+    "html-to-extract-batch": {
+      "equivalent": false,
+      "from": "HTML/markdown/JSON-LD vendor page bytes",
+      "to": "samedaydesk.extract-batch.v0 selected fields",
+      "dropped": [
+        "unselected markup",
+        "live freshness",
+        "payment"
+      ],
+      "note": "page-change-offline-job never fetches. claims.fresh stays false. Clock is required."
+    },
+    "yarn-to-npm-lock": {
+      "equivalent": false,
+      "from": "yarn.lock / pnpm-lock.yaml / bun.lockb",
+      "to": "npm package-lock.json lockfileVersion 2 or 3",
+      "dropped": [
+        "entire foreign lock format"
+      ],
+      "note": "lockfile-pin-delta refuses yarn/pnpm/bun. That refuse is the product, not a conversion."
+    },
+    "openapi-as-json-schema": {
+      "equivalent": false,
+      "from": "OpenAPI document",
+      "to": "json-schema-webhook-drift used JSON Pointers",
+      "dropped": [
+        "paths",
+        "operations"
+      ],
+      "note": "json-schema-webhook-drift refuses OpenAPI with not-this-job-openapi. Use api-upgrade-brief for used operations."
+    }
+  },
+  "jobs": [
+    {
+      "id": "L01-commander-lockfile",
+      "family": "lockfile",
+      "jobId": "lockfile-pin-delta",
+      "repo": "tj/commander.js",
+      "path": "package-lock.json",
+      "ready": true,
+      "testsPass": true,
+      "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/L01-commander-lockfile/",
+      "migrationEquivalent": false,
+      "source": {
+        "repo": "tj/commander.js",
+        "path": "package-lock.json",
+        "license": "MIT",
+        "beforeSha": "9098b4863ef7678b9d138ae0f04afd949287510c",
+        "afterSha": "d785d8b3b9448952ef023a8cd26a0a3923a90458",
+        "beforeCommit": "Update dependencies (#2506)",
+        "afterCommit": "Update dependencies (#2518)",
+        "lockfileVersion": 3,
+        "bytes": {
+          "before": 94671,
+          "after": 95153,
+          "license": 1098
+        },
+        "sha256": {
+          "before": "58f7587d6e2aaa12b3f82914c38af3774dabd1c6de2a5ca26741d4f2c3bbf528",
+          "after": "1ad36cdbfbbac6513de58c34772e4769670e6c484a7a2927b5e13a3ade0941d5",
+          "license": "04512a63dce4d2d506ad612dc0bd7681ccf6e3655f7b6eaef7dfac8323d1ec0b"
+        }
+      }
+    },
+    {
+      "id": "L02-yargs-lockfile",
+      "family": "lockfile",
+      "jobId": "lockfile-pin-delta",
+      "repo": "yargs/yargs",
+      "path": "package-lock.json",
+      "ready": true,
+      "testsPass": true,
+      "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/L02-yargs-lockfile/",
+      "migrationEquivalent": false,
+      "source": {
+        "repo": "yargs/yargs",
+        "path": "package-lock.json",
+        "license": "MIT",
+        "beforeSha": "4153e0f097aeaf43a71a2530db6dda51dff2c544",
+        "afterSha": "8878a894111e3fe7c98d84af546c0f34fa017492",
+        "retrievedAt": "2026-09-12T06:50:23.000Z",
+        "method": "github-rest-contents+raw",
+        "sha256": {
+          "before": "fbab2725e79189189ff45ccef1cdee7b7400af5bdb7197b407c2aea118177130",
+          "after": "06b3c838d9452ee690ca42a706a597b285da6542f7f2d28117133dc404edac40"
+        }
+      }
+    },
+    {
+      "id": "L03-glob-lockfile",
+      "family": "lockfile",
+      "jobId": "lockfile-pin-delta",
+      "repo": "isaacs/node-glob",
+      "path": "package-lock.json",
+      "ready": true,
+      "testsPass": true,
+      "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/L03-glob-lockfile/",
+      "migrationEquivalent": false,
+      "source": {
+        "repo": "isaacs/node-glob",
+        "path": "package-lock.json",
+        "beforeSha": "aee5a632c5c29d82dd5be14b0344ad52209bcaba",
+        "afterSha": "7df583d631ff191e2f71a62b383926c0bd83ccda",
+        "license": "BlueOak-1.0.0",
+        "licenseHintWas": "ISC",
+        "beforeBytes": 204135,
+        "afterBytes": 204058,
+        "beforeSha256": "bd6ebe7138e0167883e29a6bf6a184de4d70de76fc88b3b68849a41789a3d0e9",
+        "afterSha256": "f88c43da0826c60a5b6c150134cb69640b3af75ef66b1e066db8ba9da99d9c15"
+      }
+    },
+    {
+      "id": "L04-winston-lockfile",
+      "family": "lockfile",
+      "jobId": "lockfile-pin-delta",
+      "repo": "winstonjs/winston",
+      "path": "package-lock.json",
+      "ready": true,
+      "testsPass": true,
+      "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/L04-winston-lockfile/",
+      "migrationEquivalent": false,
+      "source": {
+        "repo": "winstonjs/winston",
+        "path": "package-lock.json",
+        "license": "MIT",
+        "beforeSha": "4b963a9f5b1ef24efb6250354a108b80c0c6e7d9",
+        "afterSha": "96dccd6e32174c658149189abb6edb13572281b4",
+        "fallbackUsed": false
+      }
+    },
+    {
+      "id": "P01-nodejs-org-sitejson",
+      "family": "pageSnapshots",
+      "jobId": "page-change-offline-job",
+      "repo": "nodejs/nodejs.org",
+      "path": "apps/site/site.json",
+      "ready": true,
+      "testsPass": true,
+      "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/P01-nodejs-org-sitejson/",
+      "migrationEquivalent": false,
+      "source": {
+        "repo": "nodejs/nodejs.org",
+        "path": "apps/site/site.json",
+        "license": "MIT",
+        "beforeSha": "aad2540a476ff94fa8419dc3a0a5e37c413b2ee1",
+        "afterSha": "71f7fdc56a1c9381abc5da60d991c089f8891893",
+        "beforeDate": "2026-07-29T14:26:33Z",
+        "afterDate": "2026-08-19T21:34:28Z"
+      }
+    },
+    {
+      "id": "P02-express-docs",
+      "family": "pageSnapshots",
+      "jobId": "page-change-offline-job",
+      "repo": "expressjs/expressjs.com",
+      "path": "docs/content.md",
+      "ready": true,
+      "testsPass": true,
+      "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/P02-express-docs/",
+      "migrationEquivalent": false,
+      "source": {
+        "repo": "expressjs/expressjs.com",
+        "path": "docs/content.md",
+        "beforeSha": "ba98cc468032c95cb397b11895537b1c893ac63a",
+        "afterSha": "be31ea3fc5ba9e0d1b96d300894145ca4f6af57c",
+        "license": "CC-BY-4.0",
+        "licenseSpdx": "CC-BY-4.0",
+        "method": "github-contents-api+raw",
+        "retrievedAt": "2026-09-12T06:53:00.000Z",
+        "liveFetch": false
+      }
+    },
+    {
+      "id": "P03-spdx-mit-html",
+      "family": "pageSnapshots",
+      "jobId": "page-change-offline-job",
+      "repo": "spdx/license-list-data",
+      "path": "html/MIT.html plus optional jsonld/MIT.jsonld as structured sibling",
+      "ready": true,
+      "testsPass": true,
+      "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/P03-spdx-mit-html/",
+      "migrationEquivalent": false,
+      "source": {
+        "repo": "spdx/license-list-data",
+        "path": "html/MIT.html plus optional jsonld/MIT.jsonld as structured sibling",
+        "beforeSha": "f75839ee25cde2383fab299f6d8fc94a442f444b",
+        "afterSha": "7e10095e0c9028c9e7109df00d15db46411a3378",
+        "beforeDate": "2024-12-19T09:39:35Z",
+        "afterDate": "2026-04-10T14:35:52Z",
+        "license": "CC-BY-3.0 AND original MIT license-text terms (SPDX license-list NOTICE)"
+      }
+    },
+    {
+      "id": "P04-sds-useful-jobs-page",
+      "family": "pageSnapshots",
+      "jobId": "page-change-offline-job",
+      "repo": "epistemedeus/samedaydesk",
+      "path": "client/src/pages/UsefulJobs.tsx (and first-byte shell title if present)",
+      "ready": true,
+      "testsPass": true,
+      "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/P04-sds-useful-jobs-page/",
+      "migrationEquivalent": false,
+      "source": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "client/src/pages/UsefulJobs.tsx",
+        "shellPath": "client/src/data/machineEntry.mjs",
+        "pagePath": "/for-agents/useful-jobs",
+        "beforeSha": "abeb54eca9a71abe117898e8fe7de7e55e9d917f",
+        "afterSha": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+        "license": "MIT (in-tree kit LICENSE; SDS root LICENSE absent at both SHAs)",
+        "method": "local-git-show",
+        "network": false
+      }
+    },
+    {
+      "id": "R01-github-rest-routes",
+      "family": "apiRoutes",
+      "jobId": "api-upgrade-brief",
+      "repo": "github/rest-api-description",
+      "path": "descriptions/api.github.com/api.github.com.yaml (or .json) — store ONLY a tiny used-ops subset, not the full spec",
+      "ready": true,
+      "testsPass": true,
+      "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/R01-github-rest-routes/",
+      "migrationEquivalent": false,
+      "source": {
+        "repo": "github/rest-api-description",
+        "license": "MIT",
+        "path": "descriptions/api.github.com/api.github.com.yaml",
+        "beforeSha": "f5d6d10f019dd94650dec88de32057f299411304",
+        "afterSha": "e16cc2584c6d32e8cd4d461759e1475e79327d6c",
+        "beforeDate": "2026-09-11T16:56:47Z",
+        "afterDate": "2026-09-12T04:12:34Z",
+        "fullBlobStored": false,
+        "fullBlob": {
+          "beforeYaml": {
+            "bytes": 9843603,
+            "sha256": "7254025ca236412eec84f215ad61e706ede8ddffc00826ec6b61f553b6bd1e94"
+          },
+          "afterYaml": {
+            "bytes": 9858123,
+            "sha256": "51fa18cb44368560881cf1e6f7efe82ffe82f2bafb3c66df2bb650619b64bf07"
+          }
+        }
+      }
+    },
+    {
+      "id": "R02-stripe-openapi-routes",
+      "family": "apiRoutes",
+      "jobId": "api-upgrade-brief",
+      "repo": "stripe/openapi",
+      "path": "openapi/spec3.yaml (prefer yaml); excerpt used ops only",
+      "ready": true,
+      "testsPass": true,
+      "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/R02-stripe-openapi-routes/",
+      "migrationEquivalent": false,
+      "source": {
+        "repo": "stripe/openapi",
+        "path": "openapi/spec3.yaml",
+        "license": "MIT",
+        "beforeSha": "af5309cae53e5f666f9686dfed306d6d3b5fdc67",
+        "afterSha": "30d3391cc09a0f67ad29bee002f570811b19e1da",
+        "fullBlobSha256": {
+          "before.yaml": "707de00b0616e606fa4a388ce840ff6cb2dd0bafe7abb1c2cc6da8b6d8a2f76e",
+          "after.yaml": "2e0ce56f026b1862dd772061c839a2c8ca9cc3e180f8bb22d7694b8ba214d203"
+        }
+      }
+    },
+    {
+      "id": "R03-moby-engine-api",
+      "family": "apiRoutes",
+      "jobId": "route-table-diff",
+      "repo": "moby/moby",
+      "path": "api/swagger.yaml",
+      "ready": true,
+      "testsPass": true,
+      "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/R03-moby-engine-api/",
+      "migrationEquivalent": false,
+      "source": {
+        "repo": "moby/moby",
+        "path": "api/swagger.yaml",
+        "license": "Apache-2.0",
+        "beforeSha": "235d2876f80fff1ee13378646a4d41a4c670a052",
+        "afterSha": "2803839c3f30344de950e35dfe5cc4e1e170cb0d",
+        "beforeBytes": 473773,
+        "afterBytes": 473773,
+        "beforeSha256": "abd97457e0c5aa5646f466516de9daf7bd81722c0ab96a47fb2ac393023cbab6",
+        "afterSha256": "f09a22ad220d551dca5d6c402052204d3e9fd1f16943cd78ba6677ea1266616f"
+      }
+    },
+    {
+      "id": "R04-slack-web-api",
+      "family": "apiRoutes",
+      "jobId": "api-upgrade-brief",
+      "repo": "slackapi/slack-api-specs",
+      "path": "web-api/slack_web_openapi_v2.json",
+      "ready": true,
+      "testsPass": true,
+      "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/R04-slack-web-api/",
+      "migrationEquivalent": false,
+      "source": {
+        "repo": "slackapi/slack-api-specs",
+        "path": "web-api/slack_web_openapi_v2.json",
+        "license": "MIT",
+        "beforeSha": "3f1e8b4a03855cb29cffbfcaf60195e5867780ea",
+        "afterSha": "dfea73e06d146c368d7f94b52ac90796dc4e27e1",
+        "beforeBytes": 1360907,
+        "afterBytes": 1237332,
+        "beforeSha256": "b026c31dddfe96d9ff2d32832c0c18538eb9c94db66c824c8bcbac546032e856",
+        "afterSha256": "742a5c977180a829df8767cf57bc417d99b3713583aee83741efb9c08ca731e7",
+        "dialect": "swagger-2.0",
+        "infoVersion": {
+          "before": "1.5.0",
+          "after": "1.7.0"
+        }
+      }
+    },
+    {
+      "id": "S01-jsonschema-recursive-anchor",
+      "family": "schemaWebhook",
+      "jobId": "json-schema-webhook-drift",
+      "repo": "json-schema-org/json-schema-spec",
+      "path": "schema.json",
+      "ready": true,
+      "testsPass": true,
+      "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/S01-jsonschema-recursive-anchor/",
+      "migrationEquivalent": false,
+      "source": {
+        "repo": "json-schema-org/json-schema-spec",
+        "path": "schema.json",
+        "beforeSha": "63fbd7bf561a6ef04a38fd63589a3d93d1c149ff",
+        "afterSha": "c028e943ab213531f55e60ff6a2b1202f5d443c6",
+        "license": "AFL or BSD (README at SHA; LICENSE file absent)",
+        "usedPointer": "/properties/$recursiveAnchor/type"
+      }
+    },
+    {
+      "id": "S02-octokit-pr-opened",
+      "family": "schemaWebhook",
+      "jobId": "json-schema-webhook-drift",
+      "repo": "octokit/webhooks",
+      "path": "payload-examples/api.github.com/pull_request/opened.payload.json",
+      "ready": true,
+      "testsPass": true,
+      "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/S02-octokit-pr-opened/",
+      "migrationEquivalent": false,
+      "source": {
+        "consumerId": "S02-octokit-pr-opened",
+        "family": "schemaWebhook",
+        "jobId": "json-schema-webhook-drift",
+        "repo": "octokit/webhooks",
+        "repoUrl": "https://github.com/octokit/webhooks",
+        "license": "MIT",
+        "licenseSpdx": "MIT",
+        "licenseCopyright": "Copyright (c) 2018 Gregor Martynus",
+        "path": "payload-examples/api.github.com/pull_request/opened.payload.json",
+        "beforeSha": "e3e60cb5336a261199d30f33f080017160df5d4d",
+        "afterSha": "0f5bd1859ef98b4b7513f415d3ec739f0819850c",
+        "beforeShaFull": "e3e60cb5336a261199d30f33f080017160df5d4d",
+        "afterShaFull": "0f5bd1859ef98b4b7513f415d3ec739f0819850c",
+        "candidateBeforeShaShort": "e3e60cb5336a",
+        "candidateAfterShaShort": "0f5bd1859ef9",
+        "beforeShaConfirmedLacksUsedPointer": true,
+        "afterShaAddsUsedPointer": true,
+        "immediateParentSha": "c7f0d67c07feac24862b294ac219afee5fe62b1b",
+        "immediateParentLacksUsedPointer": true,
+        "usedPointers": [
+          "/pull_request/auto_merge",
+          "/action"
+        ],
+        "controlPointer": "/action",
+        "addedPointer": "/pull_request/auto_merge",
+        "kind": "webhook-example",
+        "retrievedAt": "2026-09-12T06:51:00.000Z",
+        "method": "GitHub raw.githubusercontent.com for payload and LICENSE bytes; GitHub REST API for commits, contents metadata (file content omitted), license metadata, and path commit list. No live webhook delivery.",
+        "gitBlobs": {
+          "before": "a4b4fbadacfa5144f0bdff65d5e3e59b662e053b",
+          "after": "24579861a25974010bace8514fb980e242a470e1",
+          "parent": "62f32fa458ad6b465180420eaa6ea1084990a6a1",
+          "license": "10ee38a00efae67142a0a624206acf8f7bd73d80"
+        },
+        "pathWalk": [
+          {
+            "sha": "0f5bd1859ef98b4b7513f415d3ec739f0819850c",
+            "date": "2021-03-20T23:30:43Z",
+            "message": "fix: add `auto_merge` property to `PullRequest` interface (#408)",
+            "role": "after"
+          },
+          {
+            "sha": "ad77d7a8583c40badfa525403b848aed3f4a8b43",
+            "date": "2021-01-20T01:56:54Z",
+            "message": "feat: common label schema (#303)",
+            "role": "intervening-path-commit"
+          },
+          {
+            "sha": "da605011ba87c84f0575c11f7591dce612a345e7",
+            "date": "2021-01-11T19:40:32Z",
+            "message": "chore: format payload and schema jsons with prettier consistently (#260)",
+            "role": "intervening-path-commit"
+          },
+          {
+            "sha": "e3e60cb5336a261199d30f33f080017160df5d4d",
+            "date": "2021-01-11T17:51:03Z",
+            "message": "feat: adjust structure of schema & examples for payloads to be unions (#252) thanks @G-Rath",
+            "role": "before-candidate-confirmed"
+          }
+        ],
+        "kit": {
+          "name": "useful-jobs",
+          "version": "1.4.0",
+          "archive": "/tmp/h6d/wt/client/public/kit/useful-jobs-1.4.0.tar.gz",
+          "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+          "bytes": 2575215,
+          "extractedTo": "vendor/useful-jobs-1.4.0/"
+        },
+        "fixtures": {
+          "fixtures/official/opened.before.json": {
+            "path": "fixtures/official/opened.before.json",
+            "bytes": 27482,
+            "sha256": "c7ad0961ec4c8dbe48a3322db7aa2653f232bb48f47d7c18f93d16c91f6bf800"
+          },
+          "fixtures/official/opened.after.json": {
+            "path": "fixtures/official/opened.after.json",
+            "bytes": 27542,
+            "sha256": "7518acf79b9c347efa17e37e2c1dd3ce8dddf0c521094ec6e57648cd324ad5ce"
+          },
+          "fixtures/official/opened.parent.json": {
+            "path": "fixtures/official/opened.parent.json",
+            "bytes": 27518,
+            "sha256": "08190743817a838b5327415a6087ffe4bb938950a5a2a9cc7b038e37c144009a"
+          },
+          "fixtures/official/LICENSE": {
+            "path": "fixtures/official/LICENSE",
+            "bytes": 1076,
+            "sha256": "e68f8081cee4fcf84619364e6cbf0eb3b2e4100907a56d6c5912a6f090bb09ae"
+          },
+          "fixtures/official/commit.before.json": {
+            "path": "fixtures/official/commit.before.json",
+            "bytes": 2040,
+            "sha256": "483eda88c5fc7ec52c158907c55612f6f9331882e4adae2b0268908ee3b1ff28"
+          },
+          "fixtures/official/commit.after.json": {
+            "path": "fixtures/official/commit.after.json",
+            "bytes": 2196,
+            "sha256": "1a7be59e05002c9e6f67219da764a0785bb709ee2cb1f5f0d0505548043e9c1b"
+          },
+          "fixtures/official/commit.parent.json": {
+            "path": "fixtures/official/commit.parent.json",
+            "bytes": 1226,
+            "sha256": "29b0b4d82e1273efef204aad0782f8c698fb1629f2945fac575ae92a70fc38b6"
+          },
+          "fixtures/official/contents.before.json": {
+            "path": "fixtures/official/contents.before.json",
+            "bytes": 979,
+            "sha256": "311aab4b305c2987fa19ce3ead7ae744e6dc460164e342a915eb2688d3316f69"
+          },
+          "fixtures/official/contents.after.json": {
+            "path": "fixtures/official/contents.after.json",
+            "bytes": 979,
+            "sha256": "efed47f473e04a0fcb6c57f12dc0ead8533a8d754ad77f638de71dbc696e7f91"
+          },
+          "fixtures/official/contents.parent.json": {
+            "path": "fixtures/official/contents.parent.json",
+            "bytes": 979,
+            "sha256": "314f4f76fb17e5cebdefbb90bd7b4904f17ca700cc3fb79cea837f013bcf700d"
+          },
+          "fixtures/official/path-commits.json": {
+            "path": "fixtures/official/path-commits.json",
+            "bytes": 2859,
+            "sha256": "2a8b23c1e6ce4f8642db0191945355deead447cfe67b01101b2423734e2404b9"
+          },
+          "fixtures/official/github-license-api.json": {
+            "path": "fixtures/official/github-license-api.json",
+            "bytes": 615,
+            "sha256": "6011736055675dda7a2811abcea0cd3e9aecde923fea1caced4bceed4289e33c"
+          },
+          "fixtures/used/used.json": {
+            "path": "fixtures/used/used.json",
+            "bytes": 70,
+            "sha256": "0db8d0ebd6c51b0080cfd308c3d9ca754f83f029d55f485c3f0b9472c1e75e0c"
+          },
+          "fixtures/used/used-control.json": {
+            "path": "fixtures/used/used-control.json",
+            "bytes": 38,
+            "sha256": "3bbd9f0b9f52984acd7654f036be2ad71eb7bf1b28650a16ab726ff9d056b282"
+          },
+          "fixtures/negative/openapi.json": {
+            "path": "fixtures/negative/openapi.json",
+            "bytes": 309,
+            "sha256": "0be75c7d328459de34337b5ffc568e3a40f0a54064e91545cafd94f8957a93de"
+          }
+        },
+        "forbiddenNotUsed": [
+          "organization.renamed",
+          "payload-examples/api.github.com/create/payload.json"
+        ]
+      }
+    },
+    {
+      "id": "S03-cyclonedx-bom-schema",
+      "family": "schemaWebhook",
+      "jobId": "json-schema-webhook-drift",
+      "repo": "CycloneDX/specification",
+      "path": "schema/bom-1.6.schema.json",
+      "ready": true,
+      "testsPass": true,
+      "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/S03-cyclonedx-bom-schema/",
+      "migrationEquivalent": false,
+      "source": {
+        "id": "S03-cyclonedx-bom-schema",
+        "family": "schemaWebhook",
+        "jobId": "json-schema-webhook-drift",
+        "repo": "CycloneDX/specification",
+        "repoUrl": "https://github.com/CycloneDX/specification",
+        "license": "Apache-2.0",
+        "licensePath": "LICENSE",
+        "licenseNote": "LICENSE at recorded SHAs is Apache License 2.0. Assignment hinted Apache-2.0 or CDDL; CDDL was not present in LICENSE.",
+        "path": "schema/bom-1.6.schema.json",
+        "beforeSha": "80db0257f1182a2d4220b3a2ab6970f4bab824df",
+        "afterSha": "0bd48c88d1b1877c7a3536252e06893850763190",
+        "beforeShaFull": "80db0257f1182a2d4220b3a2ab6970f4bab824df",
+        "afterShaFull": "0bd48c88d1b1877c7a3536252e06893850763190",
+        "retrievedAt": "2026-09-12T06:57:00Z",
+        "method": "GitHub REST commits + git matching-refs/tags + raw.githubusercontent.com GET",
+        "pairs": {
+          "typoSameFilename": {
+            "path": "schema/bom-1.6.schema.json",
+            "beforeSha": "80db0257f1182a2d4220b3a2ab6970f4bab824df",
+            "afterSha": "0bd48c88d1b1877c7a3536252e06893850763190",
+            "delta": "annotation-only: contentType description plan→plain; refType $comment staring→starting",
+            "structuralUsedPointersUnchanged": true
+          },
+          "officialTagsDifferentFilenames": {
+            "before": {
+              "tag": "1.5",
+              "sha": "c320fc0f0b46873864927d9d5684eea7ba439728",
+              "path": "schema/bom-1.5.schema.json"
+            },
+            "after": {
+              "tag": "1.6",
+              "sha": "55343ba19dee1785acf1ce9191540d5fd7b590db",
+              "path": "schema/bom-1.6.schema.json"
+            },
+            "delta": "component type enum gained cryptographic-asset; properties/declarations and cryptoProperties added; component required unchanged"
+          }
+        },
+        "fixtures": [
+          {
+            "path": "fixtures/official/bom-1.6.80db0257f118.json",
+            "bytes": 262664,
+            "sha256": "d26777d246211e1fac7160949b8769c5176f13f5eeb658d3136354d67c0a73e4",
+            "sourceUrl": "https://raw.githubusercontent.com/CycloneDX/specification/80db0257f1182a2d4220b3a2ab6970f4bab824df/schema/bom-1.6.schema.json"
+          },
+          {
+            "path": "fixtures/official/bom-1.6.0bd48c88d1b1.json",
+            "bytes": 262666,
+            "sha256": "18f57f7482593bad9f21b4feed09084640cbeff419d62ad5090c5ceccca5b37d",
+            "sourceUrl": "https://raw.githubusercontent.com/CycloneDX/specification/0bd48c88d1b1877c7a3536252e06893850763190/schema/bom-1.6.schema.json"
+          },
+          {
+            "path": "fixtures/official/bom-1.5.c320fc0f0b46.json",
+            "bytes": 164769,
+            "sha256": "067f7824b08653839ea050ae9e09ca48375eadc2652b0e2a299476e7db90335b",
+            "sourceUrl": "https://raw.githubusercontent.com/CycloneDX/specification/c320fc0f0b46873864927d9d5684eea7ba439728/schema/bom-1.5.schema.json"
+          },
+          {
+            "path": "fixtures/official/bom-1.6.55343ba19dee.json",
+            "bytes": 252625,
+            "sha256": "3e92dddbc30cf7f6a02b80f0942b1a4cfd4fb1c26f1dfc4310afa9d613cafb93",
+            "sourceUrl": "https://raw.githubusercontent.com/CycloneDX/specification/55343ba19dee1785acf1ce9191540d5fd7b590db/schema/bom-1.6.schema.json"
+          },
+          {
+            "path": "fixtures/official/LICENSE",
+            "bytes": 11341,
+            "sha256": "6c29f22a4a7385285c6f579ec9f33c5e989f00739d6b257243a0b082ec9447ae",
+            "sourceUrl": "https://raw.githubusercontent.com/CycloneDX/specification/0bd48c88d1b1877c7a3536252e06893850763190/LICENSE"
+          }
+        ],
+        "kit": {
+          "id": "useful-jobs-1.4.0",
+          "archive": "/tmp/h6d/wt/client/public/kit/useful-jobs-1.4.0.tar.gz",
+          "bytes": 2575215,
+          "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+          "extract": "vendor/useful-jobs-1.4.0/"
+        }
+      }
+    },
+    {
+      "id": "S04-spdx-json-schema",
+      "family": "schemaWebhook",
+      "jobId": "json-schema-webhook-drift",
+      "repo": "spdx/spdx-spec",
+      "path": "schemas/spdx-schema-2-3.json vs schemas/spdx-schema-3-0-1.json",
+      "ready": true,
+      "testsPass": true,
+      "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/S04-spdx-json-schema/",
+      "migrationEquivalent": false,
+      "source": {
+        "repo": "spdx/spdx-spec",
+        "beforeSha": "61a7a341f2533d6e084c48c88463da63f05e1af0",
+        "afterSha": "61a7a341f2533d6e084c48c88463da63f05e1af0",
+        "sameCommitVersionPair": true,
+        "path": "schemas/spdx-schema-2-3.json vs schemas/spdx-schema-3-0-1.json",
+        "license": "Community-Spec-1.0; CC-BY-3.0 (pre-existing portions); MIT (bin/pull-license-list.py)"
+      }
+    }
+  ],
+  "counts": {
+    "listed": 16,
+    "ready": 16,
+    "testsPass": 16
+  }
+}

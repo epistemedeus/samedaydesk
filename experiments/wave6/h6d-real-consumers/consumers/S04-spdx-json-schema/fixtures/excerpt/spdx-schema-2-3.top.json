@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://spdx.org/rdf/terms/2.3",
+  "title": "SPDX 2.3",
+  "type": "object",
+  "required": [
+    "SPDXID",
+    "creationInfo",
+    "dataLicense",
+    "name",
+    "spdxVersion"
+  ],
+  "additionalProperties": false,
+  "propertyKeys": [
+    "SPDXID",
+    "annotations",
+    "comment",
+    "creationInfo",
+    "dataLicense",
+    "documentDescribes",
+    "documentNamespace",
+    "externalDocumentRefs",
+    "files",
+    "hasExtractedLicensingInfos",
+    "name",
+    "packages",
+    "relationships",
+    "revieweds",
+    "snippets",
+    "spdxVersion"
+  ],
+  "name": {
+    "description": "Identify name of this SpdxElement.",
+    "type": "string"
+  },
+  "spdxVersion": {
+    "description": "Provide a reference number that can be used to understand how to parse and interpret the rest of the file. It will enable both future changes to the specification and to support backward compatibility. The version number consists of a major and minor version indicator. The major field will be incremented when incompatible changes between versions are made (one or more sections are created, modified or deleted). The minor field will be incremented when backwards compatible changes are made.",
+    "type": "string"
+  },
+  "fullBlob": "fixtures/official/spdx-schema-2-3.json",
+  "sha256": "ca7fd7cc2c8107c3b6b5976058bb72363e8c072f0e446609d4fe7234860c2894",
+  "bytes": 45305
+}

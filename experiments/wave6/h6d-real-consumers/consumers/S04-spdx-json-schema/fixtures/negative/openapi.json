@@ -1,0 +1,19 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Negative JSON OpenAPI — not JSON Schema",
+    "version": "0.0.0"
+  },
+  "paths": {
+    "/pets": {
+      "get": {
+        "operationId": "listPets",
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "sha": "8878a894111e3fe7c98d84af546c0f34fa017492",
+  "html_url": "https://github.com/yargs/yargs/commit/8878a894111e3fe7c98d84af546c0f34fa017492",
+  "message": "chore(main): release 18.1.0 (#2475)\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+  "author": {
+    "name": "github-actions[bot]",
+    "email": "41898282+github-actions[bot]@users.noreply.github.com",
+    "date": "2026-07-26T03:06:55Z"
+  },
+  "committer": {
+    "name": "GitHub",
+    "email": "noreply@github.com",
+    "date": "2026-07-26T03:06:55Z"
+  }
+}

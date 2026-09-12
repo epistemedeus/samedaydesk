@@ -1,0 +1,33 @@
+{
+  "identity": "method+path",
+  "note": "Official full-document requestBody nested diffs on used ops that exist in both snapshots. Independent of useful-jobs fingerprint depth.",
+  "ops": [
+    {
+      "method": "POST",
+      "path": "/v1/payment_intents",
+      "field": "requestBody.content.application/x-www-form-urlencoded.schema.properties.allowed_payment_method_types.items.enum",
+      "enumAdded": [
+        "touch_n_go"
+      ],
+      "enumRemoved": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/payment_intents/{intent}/confirm",
+      "field": "requestBody.content.application/x-www-form-urlencoded.schema.properties.allowed_payment_method_types.items.enum",
+      "enumAdded": [
+        "touch_n_go"
+      ],
+      "enumRemoved": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/customers/{customer}/subscriptions",
+      "field": "requestBody nested properties",
+      "propsAdded": [
+        "payment_settings.payment_method_options.billie"
+      ],
+      "propsRemoved": []
+    }
+  ]
+}

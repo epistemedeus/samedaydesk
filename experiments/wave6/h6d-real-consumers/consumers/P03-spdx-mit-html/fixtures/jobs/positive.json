@@ -1,0 +1,17 @@
+{
+  "id": "P03-spdx-mit-html-positive",
+  "title": "SPDX MIT html/jsonld publisher pair 2024-12-19 → 2026-04-10",
+  "clock": "2026-09-12T12:00:00.000Z",
+  "fields": [
+    "title",
+    "headings",
+    "text",
+    "jsonLd"
+  ],
+  "before": "../held/before.json",
+  "after": "../held/after.json",
+  "notes": [
+    "Held extract-batch. Not a live fetch. HTML is not extract-batch.",
+    "claims.fresh must stay false. charged false."
+  ]
+}

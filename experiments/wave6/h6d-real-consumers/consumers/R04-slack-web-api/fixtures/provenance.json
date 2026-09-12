@@ -1,0 +1,156 @@
+{
+  "repo": "slackapi/slack-api-specs",
+  "path": "web-api/slack_web_openapi_v2.json",
+  "license": "MIT",
+  "spdx": "MIT",
+  "archived": true,
+  "defaultBranch": "master",
+  "retrievedAt": "2026-09-12T06:55:52Z",
+  "method": "GitHub REST commits+contents API and raw.githubusercontent.com GET of two historical SHAs. No scraping of unrelated trees.",
+  "not": [
+    "OpenAI",
+    "octokit organization.renamed"
+  ],
+  "before": {
+    "commitSha": "3f1e8b4a03855cb29cffbfcaf60195e5867780ea",
+    "commitDate": "2020-04-03T18:05:46Z",
+    "commitMessage": "bring in the updates",
+    "infoVersion": "1.5.0",
+    "bytes": 1360907,
+    "sha256": "b026c31dddfe96d9ff2d32832c0c18538eb9c94db66c824c8bcbac546032e856",
+    "gitBlobSha": "0973bf2b89414e2e1a227752af15d863b3c9fc6a",
+    "htmlUrl": "https://github.com/slackapi/slack-api-specs/blob/3f1e8b4a03855cb29cffbfcaf60195e5867780ea/web-api/slack_web_openapi_v2.json",
+    "rawUrl": "https://raw.githubusercontent.com/slackapi/slack-api-specs/3f1e8b4a03855cb29cffbfcaf60195e5867780ea/web-api/slack_web_openapi_v2.json",
+    "operationCount": 185
+  },
+  "after": {
+    "commitSha": "dfea73e06d146c368d7f94b52ac90796dc4e27e1",
+    "commitDate": "2020-10-06T21:27:48Z",
+    "commitMessage": "October 2020 spec updates",
+    "infoVersion": "1.7.0",
+    "bytes": 1237332,
+    "sha256": "742a5c977180a829df8767cf57bc417d99b3713583aee83741efb9c08ca731e7",
+    "gitBlobSha": "72c5dfb431e05f5d6fa2aa28ebcd60d503a67886",
+    "htmlUrl": "https://github.com/slackapi/slack-api-specs/blob/dfea73e06d146c368d7f94b52ac90796dc4e27e1/web-api/slack_web_openapi_v2.json",
+    "rawUrl": "https://raw.githubusercontent.com/slackapi/slack-api-specs/dfea73e06d146c368d7f94b52ac90796dc4e27e1/web-api/slack_web_openapi_v2.json",
+    "operationCount": 174
+  },
+  "licenseFile": {
+    "path": "LICENSE",
+    "bytes": 1065,
+    "sha256": "5fca42e1431e247c120ab9c787ff16a26a538633852821e4865d05fe4cfea98e",
+    "gitBlobSha": "4c4907b159ed25001dc9a217cd709dfdafd7e08b",
+    "htmlUrl": "https://github.com/slackapi/slack-api-specs/blob/dfea73e06d146c368d7f94b52ac90796dc4e27e1/LICENSE"
+  },
+  "readme": {
+    "path": "README.md",
+    "fullBytes": 3228,
+    "fullSha256": "6317f236f16f25f1521c2c7b244e8bde503c2ddf323107207e78635496e79ec2",
+    "storedExcerpt": "fixtures/README.excerpt.md"
+  },
+  "delta": {
+    "before": 185,
+    "after": 174,
+    "added": 32,
+    "removed": 43,
+    "unchanged": 142,
+    "examplesAdded": [
+      "/conversations.mark",
+      "/admin.conversations.create",
+      "/calls.add"
+    ],
+    "examplesRemoved": [
+      "/channels.list",
+      "/channels.info"
+    ],
+    "stable": [
+      "/chat.postMessage",
+      "/users.info",
+      "/conversations.list"
+    ]
+  },
+  "storedFixtures": [
+    {
+      "path": "fixtures/sds/before.json",
+      "bytes": 1609,
+      "sha256": "3dfd1a6300d12578a16ef6cba32d91c83f8a5490568d0e2df42d88798eeaafa2"
+    },
+    {
+      "path": "fixtures/sds/after.json",
+      "bytes": 1829,
+      "sha256": "56131e146f0de37feb0115dd2c376a6a8fb20e87c67db828d5187898f342a8d4"
+    },
+    {
+      "path": "fixtures/sds/control-identical.json",
+      "bytes": 1609,
+      "sha256": "3dfd1a6300d12578a16ef6cba32d91c83f8a5490568d0e2df42d88798eeaafa2"
+    },
+    {
+      "path": "fixtures/negative/yarn.lock",
+      "bytes": 149,
+      "sha256": "9ad8c9aea88c2d4cc68791255bbbdff48b94decca9647497e78454af1b89fa46"
+    },
+    {
+      "path": "fixtures/negative/raw-swagger.json",
+      "bytes": 14361,
+      "sha256": "5b3c4f7ee723d104ec26dfc0c92463a4da97ffe06664f399eb2be9ecc38ac073"
+    },
+    {
+      "path": "fixtures/negative/live-url.txt",
+      "bytes": 100,
+      "sha256": "5a3e49e82d11e315135bfe8b6a26fe282cb58a92a10c491a735c9b6cd05b1877"
+    },
+    {
+      "path": "fixtures/negative/openapi-as-schema.json",
+      "bytes": 375,
+      "sha256": "b60f8334b9103c11754e9a341b6a14409a983e65c800e2aaa870d5606ca47368"
+    },
+    {
+      "path": "fixtures/LICENSE",
+      "bytes": 1065,
+      "sha256": "5fca42e1431e247c120ab9c787ff16a26a538633852821e4865d05fe4cfea98e"
+    },
+    {
+      "path": "fixtures/README.excerpt.md",
+      "bytes": 2023,
+      "sha256": "ed0abfa099598e4a45bee42ffd98df93fc08a1b84932c5b5db75b96271564e91"
+    },
+    {
+      "path": "fixtures/openapi/before.excerpt.json",
+      "bytes": 11453,
+      "sha256": "2426d163c6293418f018acc234d776bf82ada85c652d47603a4ab2a9db0fc425"
+    },
+    {
+      "path": "fixtures/openapi/after.excerpt.json",
+      "bytes": 14628,
+      "sha256": "e4105db0cdf1f7a9f075ae910ee3ee369931965585931ae97e57b75299904a11"
+    },
+    {
+      "path": "fixtures/openapi/used.json",
+      "bytes": 807,
+      "sha256": "7e1a34e6b90f1b524bbac20ed0b8f66e3fdaec5a44b31df5a690511b8a11f0a1"
+    },
+    {
+      "path": "fixtures/openapi/used-control.json",
+      "bytes": 418,
+      "sha256": "3c656487beb2566305dee31c57ca8bda092828c1e43e23db70e5f1eb5c423c2d"
+    },
+    {
+      "path": "fixtures/operations/before.json",
+      "bytes": 33257,
+      "sha256": "abe106c3b191077a2db3c6082991d821b305dcb2aa6ce06c87556a59ce0986f5"
+    },
+    {
+      "path": "fixtures/operations/after.json",
+      "bytes": 32908,
+      "sha256": "4b842c032d2ba16afd462f844c630a1080d133f1b571696fbb1eb327bf0daecd"
+    },
+    {
+      "path": "fixtures/operations/delta.json",
+      "bytes": 6220,
+      "sha256": "7e14b32bcc87a53ca8c10983c94ac69815573451915fb039def4433657ba390c"
+    }
+  ],
+  "fullOfficialBlobsNotStored": true,
+  "note": "Full official OpenAPI blobs are ~1.2–1.4 MiB; only sha256/bytes + bounded excerpts + method+path indexes are stored."
+}

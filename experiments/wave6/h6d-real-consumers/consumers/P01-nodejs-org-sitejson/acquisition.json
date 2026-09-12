@@ -1,0 +1,44 @@
+{
+  "id": "P01-nodejs-org-sitejson",
+  "repo": "nodejs/nodejs.org",
+  "htmlUrl": "https://github.com/nodejs/nodejs.org",
+  "path": "apps/site/site.json",
+  "license": "MIT",
+  "licenseSpdx": "MIT",
+  "licenseUrl": "https://github.com/nodejs/nodejs.org/blob/71f7fdc56a1c9381abc5da60d991c089f8891893/LICENSE",
+  "beforeSha": "aad2540a476ff94fa8419dc3a0a5e37c413b2ee1",
+  "afterSha": "71f7fdc56a1c9381abc5da60d991c089f8891893",
+  "beforeShaFull": "aad2540a476ff94fa8419dc3a0a5e37c413b2ee1",
+  "afterShaFull": "71f7fdc56a1c9381abc5da60d991c089f8891893",
+  "beforeDate": "2026-07-29T14:26:33Z",
+  "afterDate": "2026-08-19T21:34:28Z",
+  "beforeSubject": "Blog: announce successful Node.js security release (#9045)",
+  "afterSubject": "Add Next 10 survey as badge (#9110)",
+  "beforeBlobSha": "4e63228b157a24b64cc8b09c4e0619ecaf61f8f9",
+  "afterBlobSha": "94f8835767196cffaf8a7e0a8fd44038fb3a0c53",
+  "retrievedAt": "2026-09-12T00:00:00.000Z",
+  "method": "GitHub REST commits + contents + license API; raw.githubusercontent.com for decoded site.json bytes. No live nodejs.org fetch.",
+  "bytes": {
+    "fixtures/official/site.before.json": 1397,
+    "fixtures/official/site.after.json": 1433,
+    "fixtures/official/LICENSE": 1101,
+    "fixtures/batches/before.json": 3632,
+    "fixtures/batches/after.json": 3681
+  },
+  "sha256": {
+    "fixtures/official/site.before.json": "e1efb807efdc83fe7637a294d0e2faee1f7c4c1e3a8e30112614ac395007bdeb",
+    "fixtures/official/site.after.json": "8b6948b93b60fc1c546eff87d3802eb98b7d44feec698247b2a90ad8178430d0",
+    "fixtures/official/LICENSE": "521edd5b3dddc33947eb8c5e988eeca99c986ea0f70cd6817ab8e553895feaf3",
+    "fixtures/batches/before.json": "3ae191b9ef4dae2f1f62a7723b26f465f8a395bdd5d12602a64207fd9dab2f45",
+    "fixtures/batches/after.json": "d88e7a0a43bd9bd0636f6e495aec910202445a23908223842fcdbc460362e6e3"
+  },
+  "usefulJobs": {
+    "version": "1.4.0",
+    "archive": "client/public/kit/useful-jobs-1.4.0.tar.gz",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215,
+    "extractedTo": "vendor/useful-jobs-1.4.0/"
+  },
+  "purchaseAuthority": false,
+  "liveFetch": false
+}

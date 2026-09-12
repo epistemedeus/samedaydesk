@@ -1,0 +1,16 @@
+The SPDX Specification is provided under the Community Specification License 1.0 (Community-Spec-1.0), a copy of which is included below.
+
+Pre-existing portions of the SPDX Specification from copyright holders who have not subsequently contributed under the Community Specification License 1.0 are provided under Creative Commons Attribution 3.0 Unported (CC-BY-3.0), a copy of which is included below.
+
+/bin/pull-license-list.py is licensed under the MIT License (MIT), a copy of which is included below.
+
+= = = = =
+
+Community Specification License 1.0
+
+The Purpose of this License. This License sets forth the terms under which 1) Contributor will participate in and contribute to the development of specifications, standards, best practices, guidelines, and other similar materials under this Working Group, and 2) how the materials developed under this License may be used.  It is not intended for source code.  Capitalized terms are defined in the License's last section.
+
+1. Copyright.
+
+1.1. Copyright License. Contributor grants everyone a non-sublicensable, perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as expressly stated in this License) copyright license, without any obligation for accounting, to reproduce, prepare derivative works of, publicly display, publicly perform, and distribute any materials it submits to the full extent of its copyright interest in those materials. Contributor also acknowledges that the Working Group may exercise copyright rights in the Specification, including the rights to submit the Specification to another standards organization.
+

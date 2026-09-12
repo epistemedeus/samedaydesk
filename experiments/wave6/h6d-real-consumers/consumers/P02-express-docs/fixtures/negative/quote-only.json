@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Quote without sources is not page-change success."
+  }
+}

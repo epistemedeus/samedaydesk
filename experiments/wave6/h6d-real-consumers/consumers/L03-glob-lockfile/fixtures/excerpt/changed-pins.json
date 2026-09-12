@@ -1,0 +1,742 @@
+{
+  "schema": "h6d.l03.changed-pins.v1",
+  "repo": "isaacs/node-glob",
+  "path": "package-lock.json",
+  "beforeSha": "aee5a632c5c29d82dd5be14b0344ad52209bcaba",
+  "afterSha": "7df583d631ff191e2f71a62b383926c0bd83ccda",
+  "counts": {
+    "beforePins": 403,
+    "afterPins": 403,
+    "added": 0,
+    "removed": 0,
+    "changed": 29,
+    "unchanged": 374
+  },
+  "highlights": {
+    "uuid": {
+      "id": "node_modules/uuid",
+      "before": {
+        "id": "node_modules/uuid",
+        "name": "uuid",
+        "version": "8.3.2",
+        "integrity": "sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==",
+        "resolved": "https://registry.npmjs.org/uuid/-/uuid-8.3.2.tgz"
+      },
+      "after": {
+        "id": "node_modules/uuid",
+        "name": "uuid",
+        "version": "14.0.0",
+        "integrity": "sha512-Qo+uWgilfSmAhXCMav1uYFynlQO7fMFiMVZsQqZRMIXp0O7rR7qjkj+cPvBHLgBqi960QCoo/PH2/6ZtVqKvrg==",
+        "resolved": "https://registry.npmjs.org/uuid/-/uuid-14.0.0.tgz"
+      },
+      "changed": true
+    },
+    "tap": {
+      "id": "node_modules/tap",
+      "before": {
+        "id": "node_modules/tap",
+        "name": "tap",
+        "version": "21.7.1",
+        "integrity": "sha512-LvH6mQTJvSgGivaPh5lkxkj66FOYy26ofY3HAFjBLVJbBLSHnjFmamqgdwSd57bgZzSaZ/pGn9U7xS7fyS8FPw==",
+        "resolved": "https://registry.npmjs.org/tap/-/tap-21.7.1.tgz"
+      },
+      "after": {
+        "id": "node_modules/tap",
+        "name": "tap",
+        "version": "21.7.2",
+        "integrity": "sha512-i5dPkJcojXqrbo+liVpRGvhxN0/h+oweqxHmoztIJ5+E2//11mVUL6D0dU2ugriFUNdjdI7G9GR7nW6koEeYlA==",
+        "resolved": "https://registry.npmjs.org/tap/-/tap-21.7.2.tgz"
+      },
+      "changed": true
+    },
+    "minimatch": {
+      "id": "node_modules/minimatch",
+      "before": {
+        "id": "node_modules/minimatch",
+        "name": "minimatch",
+        "version": "10.2.5",
+        "integrity": "sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==",
+        "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.5.tgz"
+      },
+      "after": {
+        "id": "node_modules/minimatch",
+        "name": "minimatch",
+        "version": "10.2.5",
+        "integrity": "sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==",
+        "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.5.tgz"
+      },
+      "changed": false
+    }
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "node_modules/@tapjs/after",
+      "name": "@tapjs/after",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/after",
+        "name": "@tapjs/after",
+        "version": "3.3.7",
+        "integrity": "sha512-nLO1GrhMSR4gZnAtytL4+AR2zxlXoPyr8Wrnr318vkIA4CDQcwR1MH9LFx7Nx3kPu6TzbPLwBdmgGrjYvHpr8Q==",
+        "resolved": "https://registry.npmjs.org/@tapjs/after/-/after-3.3.7.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/after",
+        "name": "@tapjs/after",
+        "version": "3.3.8",
+        "integrity": "sha512-4DKqCH/xGU7SJAxlHzxxd0uhGy5bYMRg5PiFDs92XL6ajkU1jGvKvxoLMVXkDdcIcncD8qLoaiJNsNBFHFKVJQ==",
+        "resolved": "https://registry.npmjs.org/@tapjs/after/-/after-3.3.8.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/after-each",
+      "name": "@tapjs/after-each",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/after-each",
+        "name": "@tapjs/after-each",
+        "version": "4.3.7",
+        "integrity": "sha512-lQNFOQfryhFOCHiaJz1e7qypYycrsAqKb2uPjeof+3z11pGHBWeo8vaHwpBOSABq6nxxJjnp+c7L9OdpYqAkyQ==",
+        "resolved": "https://registry.npmjs.org/@tapjs/after-each/-/after-each-4.3.7.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/after-each",
+        "name": "@tapjs/after-each",
+        "version": "4.3.8",
+        "integrity": "sha512-rbQGqUej2OhOf56PvEMnF5JiEP1SIluxoaBl95j20thsgfXOK5DUCrRRqW8ORx6iGV+6u1KyT8SVIySMXQIsnw==",
+        "resolved": "https://registry.npmjs.org/@tapjs/after-each/-/after-each-4.3.8.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/asserts",
+      "name": "@tapjs/asserts",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/asserts",
+        "name": "@tapjs/asserts",
+        "version": "4.3.7",
+        "integrity": "sha512-bYxwUtEXAplSpEcUdFc5r7rTtalt75XF5ABqQnkoHz8Q/AilQIZcbYp2F8eE5STHoJyFJzBAkt6FdsA7YfULpg==",
+        "resolved": "https://registry.npmjs.org/@tapjs/asserts/-/asserts-4.3.7.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/asserts",
+        "name": "@tapjs/asserts",
+        "version": "4.3.8",
+        "integrity": "sha512-FHuhyii/b0hc7wbCTqNoWp5lXuB2PhRR367JjU9op+jf/amt9C3du5rubCo5FyfnL3Mey/EGr68m54urk24LVA==",
+        "resolved": "https://registry.npmjs.org/@tapjs/asserts/-/asserts-4.3.8.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/before",
+      "name": "@tapjs/before",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/before",
+        "name": "@tapjs/before",
+        "version": "4.3.7",
+        "integrity": "sha512-AsZm8jxgAuFvlg7TU61rXchCHR7y/0Nh6Uu5WdZDybxjHEFs2Zq+fro6Iy3Sxh1cZgpYODVJRzGFQdxhuvFKgg==",
+        "resolved": "https://registry.npmjs.org/@tapjs/before/-/before-4.3.7.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/before",
+        "name": "@tapjs/before",
+        "version": "4.3.8",
+        "integrity": "sha512-g6dm5K9wV+Mqn+B9kJNA9deOarz1gKIuMKFmx4njAYE0cm5dcQJ4I4K1l5nySpNVkXO/E+v1+iBIwehRzd1PdQ==",
+        "resolved": "https://registry.npmjs.org/@tapjs/before/-/before-4.3.8.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/before-each",
+      "name": "@tapjs/before-each",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/before-each",
+        "name": "@tapjs/before-each",
+        "version": "4.3.7",
+        "integrity": "sha512-5opxpcI7DEgDrgxg/Z/FpL2fu4qZNO/x01y+YuEfnX5AAn6jhruHCf0AYI8AYKXp/wT0ne7HWGnlh6jRhIwnlQ==",
+        "resolved": "https://registry.npmjs.org/@tapjs/before-each/-/before-each-4.3.7.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/before-each",
+        "name": "@tapjs/before-each",
+        "version": "4.3.8",
+        "integrity": "sha512-iZgtOp+KjkGayEUi53hQ8DfJEqNHyJ7xIr/26UY1FFOE5yFxpgy1Ue/eo1hFzzbTCDKLsRcQxiAuyv0/MI29cA==",
+        "resolved": "https://registry.npmjs.org/@tapjs/before-each/-/before-each-4.3.8.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/chdir",
+      "name": "@tapjs/chdir",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/chdir",
+        "name": "@tapjs/chdir",
+        "version": "3.3.7",
+        "integrity": "sha512-9WWqlJgaNAzfg/cLQC6qKzdvtAdbCnPzJAWeLjyJAwTGBzK2IYbdtQ7837dgSHH5AgrRR+3HyFl2Z+oVw1ahJQ==",
+        "resolved": "https://registry.npmjs.org/@tapjs/chdir/-/chdir-3.3.7.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/chdir",
+        "name": "@tapjs/chdir",
+        "version": "3.3.8",
+        "integrity": "sha512-3WTjbY+KXGcROM+tePTj2+UgJESQ0ysWgF2tENwjhm9Looy642sAUHpuLrW3MGKMbJGix5L9eRSRHnahQHcREA==",
+        "resolved": "https://registry.npmjs.org/@tapjs/chdir/-/chdir-3.3.8.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/config",
+      "name": "@tapjs/config",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/config",
+        "name": "@tapjs/config",
+        "version": "5.6.1",
+        "integrity": "sha512-ZjtdPn6C5AWTRN7RGiPMVCRY1dhgj/sl/ZPE9mYbjTaBp03NJjQlanhvHL3Fz5dmSA1mtLyWKvLSgh+8YzDGAA==",
+        "resolved": "https://registry.npmjs.org/@tapjs/config/-/config-5.6.1.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/config",
+        "name": "@tapjs/config",
+        "version": "5.6.2",
+        "integrity": "sha512-5Ya7e9ACZluEfkmwCr8tLa967rYd/CUjGheu2VSiLTcgG/12qwooFYnhIP0Lpc95h7GUS9oWUz+5QERDDSnr3w==",
+        "resolved": "https://registry.npmjs.org/@tapjs/config/-/config-5.6.2.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/core",
+      "name": "@tapjs/core",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/core",
+        "name": "@tapjs/core",
+        "version": "4.5.5",
+        "integrity": "sha512-nIZ2NeU+326NVehZfR/3NjTMmet/nnTbt4b3bV8m347wiAZ0fiYAOD3dJP5lCThUg8j9iLRL6m77usmaTplShg==",
+        "resolved": "https://registry.npmjs.org/@tapjs/core/-/core-4.5.5.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/core",
+        "name": "@tapjs/core",
+        "version": "4.5.6",
+        "integrity": "sha512-eBPsRSBhx+vddAjcyhP90hCVgj+vlAlZor/FLo2TIe02JAEzpkJTSAvxm4u/oOzAMYClYp6DrjCVPF42Nh+q8A==",
+        "resolved": "https://registry.npmjs.org/@tapjs/core/-/core-4.5.6.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/error-serdes",
+      "name": "@tapjs/error-serdes",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/error-serdes",
+        "name": "@tapjs/error-serdes",
+        "version": "4.3.1",
+        "integrity": "sha512-/zfBC+rM9kQouYpF+/jiPxRxH5ZufXMJbLX6jYCSRKrHv366SIxMNxv1+l3gCY/7ZwPSO8W/0gp7BbdJuHuMGw==",
+        "resolved": "https://registry.npmjs.org/@tapjs/error-serdes/-/error-serdes-4.3.1.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/error-serdes",
+        "name": "@tapjs/error-serdes",
+        "version": "4.3.2",
+        "integrity": "sha512-NNJTvozk0rY4Vhf94SECEYSO38/eQvbZvZSrmzrmD2cj5YYx7l+7qQC0fcgYpIzwlA31kciesbhnV8rINiKejg==",
+        "resolved": "https://registry.npmjs.org/@tapjs/error-serdes/-/error-serdes-4.3.2.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/filter",
+      "name": "@tapjs/filter",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/filter",
+        "name": "@tapjs/filter",
+        "version": "4.3.7",
+        "integrity": "sha512-oUBVMnpnvDDZpFWXpq/kc4l/pqywfa1h2r39wcFyFmXwI07yXwAESVFIMwnAIloTrlf7+K0kuHiBuZDWPE1tuA==",
+        "resolved": "https://registry.npmjs.org/@tapjs/filter/-/filter-4.3.7.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/filter",
+        "name": "@tapjs/filter",
+        "version": "4.3.8",
+        "integrity": "sha512-Xvr8WEtwF9oX2uTRrEQ/h50pZSf74zDmZxvuyYNVcUq3BClwYgKYnzTuRKudMGXttFPY+maUC14FWNks7aAoDg==",
+        "resolved": "https://registry.npmjs.org/@tapjs/filter/-/filter-4.3.8.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/fixture",
+      "name": "@tapjs/fixture",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/fixture",
+        "name": "@tapjs/fixture",
+        "version": "4.3.7",
+        "integrity": "sha512-3F41LLGBEBr3WvhCGx7GtuJiuSkSJedDH7Tfk+2yMot//bqx6NpB5HhNX1KMgKgzl9YCoKgYG+LEHhfetmijgg==",
+        "resolved": "https://registry.npmjs.org/@tapjs/fixture/-/fixture-4.3.7.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/fixture",
+        "name": "@tapjs/fixture",
+        "version": "4.3.8",
+        "integrity": "sha512-AsirrmF7sar3hNfcKG7+XLFjYY8Nax0ozyagoSkq41usfY/pW4F0KHQhmyMqXEYq+nrUHwtpdB/U+iCeLICIkw==",
+        "resolved": "https://registry.npmjs.org/@tapjs/fixture/-/fixture-4.3.8.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/intercept",
+      "name": "@tapjs/intercept",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/intercept",
+        "name": "@tapjs/intercept",
+        "version": "4.3.7",
+        "integrity": "sha512-TDhUcWDJe/507VENKp1qdZhObboe24KFR4saavNdJr+/EgXpCrpwrc2KT2tRjuxT65ewXnLmKzGWOwc5iwT55A==",
+        "resolved": "https://registry.npmjs.org/@tapjs/intercept/-/intercept-4.3.7.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/intercept",
+        "name": "@tapjs/intercept",
+        "version": "4.3.8",
+        "integrity": "sha512-JilNW+sQg6P71hKu7GRlE0pM4ervPYvwnOesZuwuOvFktYH/OJcXaJyRqWMxczDMJ38TCmKdH2EUyYrqBhVTMw==",
+        "resolved": "https://registry.npmjs.org/@tapjs/intercept/-/intercept-4.3.8.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/mock",
+      "name": "@tapjs/mock",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/mock",
+        "name": "@tapjs/mock",
+        "version": "4.4.5",
+        "integrity": "sha512-t4Nggiw6UoV/l80k1hClLjqK2yP7LbVjww5TR+EQPKo65yiSSNCe4OkjBFOT36vZRUJuy3qkPFBp8rK9w5XSeg==",
+        "resolved": "https://registry.npmjs.org/@tapjs/mock/-/mock-4.4.5.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/mock",
+        "name": "@tapjs/mock",
+        "version": "4.4.6",
+        "integrity": "sha512-LC2LWo2C+MnRKyMosVYkmoVplg+yK2Jgjprfu2YK7koemkVOCxNw50VL+UedqeIAAmnVl8LsJAiXYHzhz+67bg==",
+        "resolved": "https://registry.npmjs.org/@tapjs/mock/-/mock-4.4.6.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/node-serialize",
+      "name": "@tapjs/node-serialize",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/node-serialize",
+        "name": "@tapjs/node-serialize",
+        "version": "4.3.7",
+        "integrity": "sha512-k9mMAUS0GIMT6Vr1LrpFmCpmstwJAtt/XoGLTHF+VY9/hqlZ11xp9qTZmcVR0tO+hmA7PZWLActuOSzYG1u5UA==",
+        "resolved": "https://registry.npmjs.org/@tapjs/node-serialize/-/node-serialize-4.3.7.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/node-serialize",
+        "name": "@tapjs/node-serialize",
+        "version": "4.3.8",
+        "integrity": "sha512-WJKrNf72ksqvTHyhtTGPt19tq7cGD6dNoEX+wm3jgw4ERJXQ0hXheqXlUcSLehiitVKQHhPZfHEVxRNmLfzTVg==",
+        "resolved": "https://registry.npmjs.org/@tapjs/node-serialize/-/node-serialize-4.3.8.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/processinfo",
+      "name": "@tapjs/processinfo",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/processinfo",
+        "name": "@tapjs/processinfo",
+        "version": "3.1.9",
+        "integrity": "sha512-yIbYH9ROI5m5F2B5Hpk6t89OkHBrDbL3qncPO9OfPuSvJsvAIDG91I0hxGQNohdaxmqz5L4QiIYc5Y0KmtLzCQ==",
+        "resolved": "https://registry.npmjs.org/@tapjs/processinfo/-/processinfo-3.1.9.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/processinfo",
+        "name": "@tapjs/processinfo",
+        "version": "3.1.10",
+        "integrity": "sha512-Vj3BiHIqal+mYKT8y/aEPHLX7jUXeMDckLwgeVBbRDXso0EbAMiMGUXpxD7ibZyp4HUUL4bSNnHfXi6HPrE8jQ==",
+        "resolved": "https://registry.npmjs.org/@tapjs/processinfo/-/processinfo-3.1.10.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/reporter",
+      "name": "@tapjs/reporter",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/reporter",
+        "name": "@tapjs/reporter",
+        "version": "4.4.7",
+        "integrity": "sha512-wqMW+sBuqcCojoZ3huG7+PAFc5DAxcLuQXrTW9/5FyKzOjdrbQY0ZCLb0wp3CHd2LMxc0Uob+ofGUiRdCtrCnw==",
+        "resolved": "https://registry.npmjs.org/@tapjs/reporter/-/reporter-4.4.7.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/reporter",
+        "name": "@tapjs/reporter",
+        "version": "4.4.8",
+        "integrity": "sha512-KTX1bRGWBAiLmskxNe5dRc/PNHkceSKaAoXymJwbw7yAjsGx7b6otHkojVd0J5M3xxKv8buQDqbaraSGCjFCPA==",
+        "resolved": "https://registry.npmjs.org/@tapjs/reporter/-/reporter-4.4.8.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/run",
+      "name": "@tapjs/run",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/run",
+        "name": "@tapjs/run",
+        "version": "4.5.5",
+        "integrity": "sha512-GpELTWPsgjIAW5zW54nBmrbyPYPfYtGMoSBG1N2hVifmP1TIEW5K8vZYc8bm+vKsdMYrmmjLzc/7vKDl4CG8Fg==",
+        "resolved": "https://registry.npmjs.org/@tapjs/run/-/run-4.5.5.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/run",
+        "name": "@tapjs/run",
+        "version": "4.5.6",
+        "integrity": "sha512-gy6+NS9LbtYjW3T32Y0ZFtVHNl1OHUHpxVePBllMlDEVsZL/SHQLZB7YTbmDU2sdyyj+JBDL+DkxIBG07cLJRw==",
+        "resolved": "https://registry.npmjs.org/@tapjs/run/-/run-4.5.6.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/snapshot",
+      "name": "@tapjs/snapshot",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/snapshot",
+        "name": "@tapjs/snapshot",
+        "version": "4.3.7",
+        "integrity": "sha512-35Y9Ua3iY9KgNOyfpy7U0rD8aq1lEeuKoKuY82rXYIztzLoibpnlRSFNKAtE4wo5NxyWgqWDOb8qovz8KfP66g==",
+        "resolved": "https://registry.npmjs.org/@tapjs/snapshot/-/snapshot-4.3.7.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/snapshot",
+        "name": "@tapjs/snapshot",
+        "version": "4.3.8",
+        "integrity": "sha512-1orUe6mmgVoes4zP2odk/qU3DuxdtukpKr/5BpfQ8tkqUMKyvYgv4r0+T0q7g96bgc7C2N1v9+Gj7uujGyeCOA==",
+        "resolved": "https://registry.npmjs.org/@tapjs/snapshot/-/snapshot-4.3.8.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/spawn",
+      "name": "@tapjs/spawn",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/spawn",
+        "name": "@tapjs/spawn",
+        "version": "4.3.7",
+        "integrity": "sha512-9ib7KpYfdrtIqTuypYTiNNyTGKjUD4QmagK2oNM7Yluekd4BbIUIwwDNTqvYpKIJ8k+BK/Um1O35hI9JcKHeuw==",
+        "resolved": "https://registry.npmjs.org/@tapjs/spawn/-/spawn-4.3.7.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/spawn",
+        "name": "@tapjs/spawn",
+        "version": "4.3.8",
+        "integrity": "sha512-WV3o++lvdyce4VCJAVF1fyKqfRHGof+ddwWoewxPp5T3Tb3mn5Goq9FFAYwaoHE5OmKM7CsEMWKyBMtCOI78+g==",
+        "resolved": "https://registry.npmjs.org/@tapjs/spawn/-/spawn-4.3.8.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/stack",
+      "name": "@tapjs/stack",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/stack",
+        "name": "@tapjs/stack",
+        "version": "4.3.2",
+        "integrity": "sha512-v48WNjNCASTFbAHSsmNxnbdPwSCcsYL6w9niZSndCJlCWU4YgHyGx6QaYpsNrIyym2cXQltbIGSMygnDG+BGbQ==",
+        "resolved": "https://registry.npmjs.org/@tapjs/stack/-/stack-4.3.2.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/stack",
+        "name": "@tapjs/stack",
+        "version": "4.3.3",
+        "integrity": "sha512-7T64b+OIyU0WitBzu8ksfwt+EvtSrh6aHYhQD0lImrDqxw2Jdwvd43F6sEFXiAA+sO/d0ERUn+OJW3zYNpygTg==",
+        "resolved": "https://registry.npmjs.org/@tapjs/stack/-/stack-4.3.3.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/stdin",
+      "name": "@tapjs/stdin",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/stdin",
+        "name": "@tapjs/stdin",
+        "version": "4.3.7",
+        "integrity": "sha512-UXbaIx9gUAb9fjZen+yrPDUNRecd1lCSUTtPv9rhd+9pstkuBDOUsOgraGdOv4aKTbBC7/pbx+4KqcugBI2fog==",
+        "resolved": "https://registry.npmjs.org/@tapjs/stdin/-/stdin-4.3.7.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/stdin",
+        "name": "@tapjs/stdin",
+        "version": "4.3.8",
+        "integrity": "sha512-EW6UIE6owtx/KI5r7JxB+Acg0KkzZqwf7lzwzga9DV9JmYNaFlAacz5ZuQiWQi5vazfXV4n33LE1vFKHsNuHFA==",
+        "resolved": "https://registry.npmjs.org/@tapjs/stdin/-/stdin-4.3.8.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/test",
+      "name": "@tapjs/test",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/test",
+        "name": "@tapjs/test",
+        "version": "4.4.5",
+        "integrity": "sha512-WDKCDd4XxFcA6fTjoUk4plDtLnA0sV9RHW13erXkJAUGN7j8Ai50IWCmf1ZfZFmd3MHwfaF50573gVN20dhX5g==",
+        "resolved": "https://registry.npmjs.org/@tapjs/test/-/test-4.4.5.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/test",
+        "name": "@tapjs/test",
+        "version": "4.4.6",
+        "integrity": "sha512-cWLvqUAUz8s81LMGjhqMKpE0pYVo66CyVhyzxuZph1ffscifSyqB9yL2MRGGLShyUJbde27RoQQ8Zvl+rdjv6A==",
+        "resolved": "https://registry.npmjs.org/@tapjs/test/-/test-4.4.6.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/typescript",
+      "name": "@tapjs/typescript",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/typescript",
+        "name": "@tapjs/typescript",
+        "version": "3.5.7",
+        "integrity": "sha512-h9DAgtB/cSu2VGbutLhAKGGJQHdFyXizZ6I9JdvE/MT/J15CwDgpuNm2JJlxCETe0paZU99T/KnuT+MXa8qHxA==",
+        "resolved": "https://registry.npmjs.org/@tapjs/typescript/-/typescript-3.5.7.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/typescript",
+        "name": "@tapjs/typescript",
+        "version": "3.5.8",
+        "integrity": "sha512-rwWFItrxgUQjBJGJc1JPcxJzWh3s50E3pi/tmdgs+enTWN4sewjJQ6QcvmYN8hPdqU3XXOyELv3+hiBXd3Rtyw==",
+        "resolved": "https://registry.npmjs.org/@tapjs/typescript/-/typescript-3.5.8.tgz"
+      }
+    },
+    {
+      "id": "node_modules/@tapjs/worker",
+      "name": "@tapjs/worker",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/@tapjs/worker",
+        "name": "@tapjs/worker",
+        "version": "4.3.7",
+        "integrity": "sha512-MiXG2mrBZrAGd+YQ1LnerGadnwWEhr8CURL9Xw8A0IAxb/GZvkW0WTlXxYXkvNOw0IjrVy1mkKp1vM3zIkrD6Q==",
+        "resolved": "https://registry.npmjs.org/@tapjs/worker/-/worker-4.3.7.tgz"
+      },
+      "after": {
+        "id": "node_modules/@tapjs/worker",
+        "name": "@tapjs/worker",
+        "version": "4.3.8",
+        "integrity": "sha512-WhQb0EvA7GOCGVnZOYn8dHmUUpPu18WhEqgFcPLy+focse7qVMOtK7ZyGJjwbaIk15VPrQ2Qm82LQaBZgyF5fw==",
+        "resolved": "https://registry.npmjs.org/@tapjs/worker/-/worker-4.3.8.tgz"
+      }
+    },
+    {
+      "id": "node_modules/tap",
+      "name": "tap",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/tap",
+        "name": "tap",
+        "version": "21.7.1",
+        "integrity": "sha512-LvH6mQTJvSgGivaPh5lkxkj66FOYy26ofY3HAFjBLVJbBLSHnjFmamqgdwSd57bgZzSaZ/pGn9U7xS7fyS8FPw==",
+        "resolved": "https://registry.npmjs.org/tap/-/tap-21.7.1.tgz"
+      },
+      "after": {
+        "id": "node_modules/tap",
+        "name": "tap",
+        "version": "21.7.2",
+        "integrity": "sha512-i5dPkJcojXqrbo+liVpRGvhxN0/h+oweqxHmoztIJ5+E2//11mVUL6D0dU2ugriFUNdjdI7G9GR7nW6koEeYlA==",
+        "resolved": "https://registry.npmjs.org/tap/-/tap-21.7.2.tgz"
+      }
+    },
+    {
+      "id": "node_modules/tap-parser",
+      "name": "tap-parser",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/tap-parser",
+        "name": "tap-parser",
+        "version": "18.3.3",
+        "integrity": "sha512-dPcpxuYdaN1uEwYGJ5eJSc+XzkJBzgnlhGkxoAhVGjuEMpiGh4e305Z4pVZXFSMYZGoRnD211c45HeYygVa6Cg==",
+        "resolved": "https://registry.npmjs.org/tap-parser/-/tap-parser-18.3.3.tgz"
+      },
+      "after": {
+        "id": "node_modules/tap-parser",
+        "name": "tap-parser",
+        "version": "18.3.4",
+        "integrity": "sha512-CiqzdpWn2CvONcWp7UNMF9/rCPJwCz0es+qykkgJruu1Y/rAS8A5MEQujmjx9NErfst3dGiZJU3lDS2jBsgbPA==",
+        "resolved": "https://registry.npmjs.org/tap-parser/-/tap-parser-18.3.4.tgz"
+      }
+    },
+    {
+      "id": "node_modules/tap-yaml",
+      "name": "tap-yaml",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/tap-yaml",
+        "name": "tap-yaml",
+        "version": "4.4.1",
+        "integrity": "sha512-SEcvFLmY731oUBGGhRKdkb+Ebk1F101PFHdKdO///1SeO4FqWl1x1vnrgvxLtSS9qhs0hp7Ca2r4lXhwmiUi2g==",
+        "resolved": "https://registry.npmjs.org/tap-yaml/-/tap-yaml-4.4.1.tgz"
+      },
+      "after": {
+        "id": "node_modules/tap-yaml",
+        "name": "tap-yaml",
+        "version": "4.4.2",
+        "integrity": "sha512-03mQI7QhfVZHJqGgFyxNTgUbgsG41ZzpWSb7k1Gangmf9hF71Jpb0Fczs7KtOdUDaHx+KxlPUdM2pQJaijebGA==",
+        "resolved": "https://registry.npmjs.org/tap-yaml/-/tap-yaml-4.4.2.tgz"
+      }
+    },
+    {
+      "id": "node_modules/tcompare",
+      "name": "tcompare",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/tcompare",
+        "name": "tcompare",
+        "version": "9.3.1",
+        "integrity": "sha512-FtGhC5MfbMIZzn1SBg8UlveJGpCFdota5QJ3vPzroc1RPeUOSn3XOfTzkJuo+mwdVMqNQrd2hY4OLjNI5r/cTQ==",
+        "resolved": "https://registry.npmjs.org/tcompare/-/tcompare-9.3.1.tgz"
+      },
+      "after": {
+        "id": "node_modules/tcompare",
+        "name": "tcompare",
+        "version": "9.3.2",
+        "integrity": "sha512-jSZmZPiMTBDZkV0Li/nNeOkCLtOViC/xgWdvzYheSU9RJt6F1EVUKZUJuH+QqN6tjVJrUXAeWpPNy+aLzfAjCQ==",
+        "resolved": "https://registry.npmjs.org/tcompare/-/tcompare-9.3.2.tgz"
+      }
+    },
+    {
+      "id": "node_modules/uuid",
+      "name": "uuid",
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ],
+      "before": {
+        "id": "node_modules/uuid",
+        "name": "uuid",
+        "version": "8.3.2",
+        "integrity": "sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==",
+        "resolved": "https://registry.npmjs.org/uuid/-/uuid-8.3.2.tgz"
+      },
+      "after": {
+        "id": "node_modules/uuid",
+        "name": "uuid",
+        "version": "14.0.0",
+        "integrity": "sha512-Qo+uWgilfSmAhXCMav1uYFynlQO7fMFiMVZsQqZRMIXp0O7rR7qjkj+cPvBHLgBqi960QCoo/PH2/6ZtVqKvrg==",
+        "resolved": "https://registry.npmjs.org/uuid/-/uuid-14.0.0.tgz"
+      }
+    }
+  ]
+}

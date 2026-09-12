@@ -1,0 +1,72 @@
+{
+  "id": "P03-spdx-mit-html",
+  "status": "pass",
+  "testsPass": true,
+  "testCounts": {
+    "pass": 15,
+    "fail": 0,
+    "skip": 0
+  },
+  "family": "pageSnapshots",
+  "jobId": "page-change-offline-job",
+  "usefulJobs": "1.4.0",
+  "usefulJobsSha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/P03-spdx-mit-html/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "networkOnJobPath": false,
+  "source": {
+    "repo": "spdx/license-list-data",
+    "path": "html/MIT.html plus optional jsonld/MIT.jsonld as structured sibling",
+    "beforeSha": "f75839ee25cde2383fab299f6d8fc94a442f444b",
+    "afterSha": "7e10095e0c9028c9e7109df00d15db46411a3378",
+    "beforeDate": "2024-12-19T09:39:35Z",
+    "afterDate": "2026-04-10T14:35:52Z",
+    "license": "CC-BY-3.0 AND original MIT license-text terms (SPDX license-list NOTICE)"
+  },
+  "engineVsWitness": {
+    "positive": {
+      "engineVerdict": "changed",
+      "enginePaths": ["/jsonLd/seeAlso", "/text"],
+      "witnessChanged": ["text", "jsonLd"],
+      "witnessUnchanged": ["title", "headings"],
+      "claimsFresh": false,
+      "agree": true
+    },
+    "controlIdentical": {
+      "engineVerdict": "unchanged",
+      "witnessChanged": [],
+      "claimsFresh": false,
+      "agree": true
+    },
+    "controlTitleHeadings": {
+      "engineVerdict": "unchanged",
+      "witnessChanged": [],
+      "note": "real publisher pair; selected title/headings unchanged while generator CrossRef timestamps were excluded",
+      "claimsFresh": false,
+      "agree": true
+    }
+  },
+  "negatives": {
+    "missingClock": "clock_required",
+    "quoteAsSuccess": "quote_as_success",
+    "example": "sample_as_delivered_watch",
+    "liveUrl": "live_fetch_url"
+  },
+  "migration": {
+    "id": "html-to-extract-batch",
+    "equivalent": false
+  },
+  "honesty": [
+    "HTML is not extract-batch; wrap is caller-owned and labeled non-equivalent.",
+    "No live fetch, payment, or scheduler on the job path.",
+    "claims.fresh stays false. charged false.",
+    "--example / SAMPLE is refused (sample_as_delivered_watch).",
+    "Quote is not page-change success.",
+    "No token arbitrage / profit / customer / paid-call claims.",
+    "Did not use SDS schema-validator.html, resources.html, or /x402/verified.",
+    "Did not treat kit samples/ as customer work."
+  ],
+  "regressionArtifact": null
+}

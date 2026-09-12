@@ -1,0 +1,10 @@
+{
+  "pointers": [
+    "/definitions/attachment/properties/contentType/description",
+    "/definitions/refType/$comment",
+    "/definitions/attachment/properties/contentType",
+    "/definitions/refType/type",
+    "/definitions/refType/minLength",
+    "/required"
+  ]
+}

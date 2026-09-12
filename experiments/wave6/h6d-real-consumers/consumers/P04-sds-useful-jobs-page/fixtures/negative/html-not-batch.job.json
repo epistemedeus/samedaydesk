@@ -1,0 +1,12 @@
+{
+  "id": "p04-sds-useful-jobs-page-negative-html-not-batch",
+  "title": "Negative: raw TSX/HTML is not extract-batch.v0",
+  "clock": "2026-09-12T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "before": "../raw/UsefulJobs.before.tsx",
+  "after": "../raw/UsefulJobs.after.tsx"
+}

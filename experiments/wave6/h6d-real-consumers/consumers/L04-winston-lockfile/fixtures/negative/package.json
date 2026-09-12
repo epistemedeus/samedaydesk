@@ -1,0 +1,8 @@
+{
+  "name": "winston",
+  "version": "3.19.0",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^3.2.3"
+  }
+}

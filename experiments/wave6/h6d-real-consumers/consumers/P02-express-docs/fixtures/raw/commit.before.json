@@ -1,0 +1,27 @@
+{
+  "sha": "ba98cc468032c95cb397b11895537b1c893ac63a",
+  "html_url": "https://github.com/expressjs/expressjs.com/commit/ba98cc468032c95cb397b11895537b1c893ac63a",
+  "commit": {
+    "author": {
+      "name": "Sebastian Beltran",
+      "email": "bjohansebas@gmail.com",
+      "date": "2026-06-15T02:17:28Z"
+    },
+    "committer": {
+      "name": "GitHub",
+      "email": "noreply@github.com",
+      "date": "2026-06-15T02:17:28Z"
+    },
+    "message": "feat: add remark plugin to rewrite localized links in Markdown content (#2193)"
+  },
+  "parents": [
+    {
+      "sha": "718cc3daa67d8ad19a98a84bf6b82974431bddcf"
+    }
+  ],
+  "stats": {
+    "total": 4701,
+    "additions": 2744,
+    "deletions": 1957
+  }
+}

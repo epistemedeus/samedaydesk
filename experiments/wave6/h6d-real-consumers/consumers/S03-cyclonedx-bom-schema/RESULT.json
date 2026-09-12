@@ -1,0 +1,66 @@
+{
+  "assignment": "S03-cyclonedx-bom-schema",
+  "family": "schemaWebhook",
+  "jobId": "json-schema-webhook-drift",
+  "status": "completed",
+  "testsPass": true,
+  "testCommand": "NODE_OPTIONS=--max-old-space-size=768 node --test test/consumer.test.mjs",
+  "testCounts": { "pass": 11, "fail": 0, "skip": 0 },
+  "license": "Apache-2.0",
+  "repo": "CycloneDX/specification",
+  "sourcePins": {
+    "pairA": {
+      "path": "schema/bom-1.6.schema.json",
+      "beforeSha": "80db0257f1182a2d4220b3a2ab6970f4bab824df",
+      "afterSha": "0bd48c88d1b1877c7a3536252e06893850763190",
+      "engineStatus": "informational",
+      "engine": "6 used pointers unchanged (annotation-only file delta)",
+      "witness": "literal change at contentType description, refType $comment, and contentType object; required/type/minLength unchanged",
+      "validUnchanged": true
+    },
+    "pairB": {
+      "before": {
+        "tag": "1.5",
+        "sha": "c320fc0f0b46873864927d9d5684eea7ba439728",
+        "path": "schema/bom-1.5.schema.json"
+      },
+      "after": {
+        "tag": "1.6",
+        "sha": "55343ba19dee1785acf1ce9191540d5fd7b590db",
+        "path": "schema/bom-1.6.schema.json"
+      },
+      "engineStatus": "actionable",
+      "engine": {
+        "compatible": [{ "pointer": "/definitions/component/properties/type", "reason": "enum-weakened" }],
+        "added": [
+          "/properties/declarations",
+          "/definitions/component/properties/cryptoProperties"
+        ],
+        "breaking": [],
+        "unchangedCount": 3
+      },
+      "witnessAgreesOnUsedStructuralDelta": true
+    }
+  },
+  "engineVsWitness": {
+    "pairA": "disagreement on annotation/literal pointers: witness changed, engine structural-equal/unchanged. Recorded in regression-artifact.json. Engine unmodified. Informational status is valid for instance-set.",
+    "pairB": "agreement: enum-weakened type; declarations and cryptoProperties added; component required and contentType unchanged"
+  },
+  "honesty": {
+    "notOpenApi": true,
+    "notCustomer": true,
+    "purchaseAuthority": false,
+    "sold": false,
+    "noLiveFetch": true,
+    "noInventedRequiredBreak": true,
+    "rootRequiredDroppedVersionIn1.6": "compatible required-removal at BOM root; not used as a breaking claim",
+    "sampleNotUsedAsCustomer": true
+  },
+  "kit": {
+    "version": "1.4.0",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215
+  },
+  "receivingIntegrationOwner": "H6D-parent",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/S03-cyclonedx-bom-schema/"
+}

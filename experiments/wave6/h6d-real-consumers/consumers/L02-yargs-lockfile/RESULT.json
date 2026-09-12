@@ -1,0 +1,68 @@
+{
+  "id": "L02-yargs-lockfile",
+  "family": "lockfile",
+  "jobId": "lockfile-pin-delta",
+  "status": "complete",
+  "testsPass": true,
+  "testCounts": {
+    "pass": 6,
+    "fail": 0,
+    "skip": 0
+  },
+  "testCommand": "NODE_OPTIONS=--max-old-space-size=768 node --test test/consumer.test.mjs",
+  "source": {
+    "repo": "yargs/yargs",
+    "path": "package-lock.json",
+    "license": "MIT",
+    "beforeSha": "4153e0f097aeaf43a71a2530db6dda51dff2c544",
+    "afterSha": "8878a894111e3fe7c98d84af546c0f34fa017492",
+    "retrievedAt": "2026-09-12T06:50:23.000Z",
+    "method": "github-rest-contents+raw",
+    "sha256": {
+      "before": "fbab2725e79189189ff45ccef1cdee7b7400af5bdb7197b407c2aea118177130",
+      "after": "06b3c838d9452ee690ca42a706a597b285da6542f7f2d28117133dc404edac40"
+    }
+  },
+  "engineVsWitness": {
+    "agree": true,
+    "status": "informational",
+    "counts": {
+      "beforePins": 562,
+      "afterPins": 562,
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "unchanged": 562
+    },
+    "rootVersion": {
+      "before": "18.0.0",
+      "after": "18.1.0",
+      "treatedAsRegistryPin": false
+    },
+    "regressionArtifact": null
+  },
+  "yarnRefuse": {
+    "witnessCode": "yarn-lockfile",
+    "engineCode": "parse-error",
+    "engineExit": 2,
+    "bothRefuse": true,
+    "note": "Not a pin-fact disagreement. yarn.lock is not JSON; engine refuses closed as parse-error. Witness names the format. No engine edit."
+  },
+  "honesty": [
+    "Official pair is yargs/yargs, not mocha/axios/express/debug/prettier/got/webpack-cli/npm-cli lockfiles.",
+    "All 562 registry pins are identical; only local project version 18.0.0→18.1.0 changes. That is a proven informational outcome, not a fabricated pin bump.",
+    "packages[\"\"] is not treated as a registry pin.",
+    "yarn.lock is not converted to package-lock.json (non-equivalent; refuse is the product).",
+    "No purchaseAuthority, no live registry, no npm install, no SAMPLE-as-customer.",
+    "useful-jobs 1.4.0 engines were not modified."
+  ],
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/L02-yargs-lockfile/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "kit": {
+    "version": "1.4.0",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215
+  }
+}

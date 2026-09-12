@@ -1,0 +1,14 @@
+{
+  "id": "P03-spdx-mit-html-control-title-headings",
+  "title": "Control: title/headings unchanged across publisher builds",
+  "clock": "2026-09-12T12:00:00.000Z",
+  "fields": [
+    "title",
+    "headings"
+  ],
+  "before": "../held/before.json",
+  "after": "../held/after.json",
+  "notes": [
+    "Generator noise (CrossRef timestamps) is not a selected field. Title/headings stay MIT License."
+  ]
+}

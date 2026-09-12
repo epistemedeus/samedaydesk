@@ -1,0 +1,15 @@
+{
+  "id": "p04-sds-useful-jobs-page-control-identical",
+  "title": "Control: identical held useful-jobs extract-batch (before=after)",
+  "clock": "2026-09-12T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "limits": {
+    "maxStaleMs": 86400000
+  },
+  "before": "../held/before.json",
+  "after": "../held/before.json"
+}

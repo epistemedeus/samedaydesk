@@ -1,0 +1,216 @@
+{
+  "assignment": "H6D-useful-job-real-corpus-distribution",
+  "parentSessionId": "01a09456-c82b-7b41-ad58-e5557da52ed3",
+  "baselinePin": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+  "usefulJobs": "1.4.0",
+  "usefulJobsSha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/",
+  "kitArchive": "client/public/kit/useful-jobs-1.4.0.tar.gz",
+  "children": [
+    {
+      "id": "L01-commander-lockfile",
+      "family": "lockfile",
+      "jobId": "lockfile-pin-delta",
+      "repo": "tj/commander.js",
+      "license": "MIT",
+      "path": "package-lock.json",
+      "beforeShaFull": "9098b4863ef7",
+      "afterShaFull": "d785d8b3b944",
+      "hint": "Official npm lockfileVersion 2/3 pair. Candidate: 9098b4863ef7 (Update dependencies #2506) \u2192 d785d8b3b944 (Update dependencies #2518, 2026-05-22). Prove actual name+version+integrity+resolved pin deltas. Excerpt packages if large; record full-blob sha256. Control: identical after=before. Negative: yarn.lock or package.json-only refuse."
+    },
+    {
+      "id": "L02-yargs-lockfile",
+      "family": "lockfile",
+      "jobId": "lockfile-pin-delta",
+      "repo": "yargs/yargs",
+      "license": "MIT",
+      "path": "package-lock.json",
+      "beforeShaFull": "4153e0f097ae",
+      "afterShaFull": "8878a894111e",
+      "hint": "Candidate: 4153e0f097ae (chore: improve build robustness #2554, 2026-07-11) \u2192 8878a894111e (chore(main): release 18.1.0 #2475, 2026-07-26). Independent witness on packages pins. Do not use mocha/axios/express/debug/prettier/got."
+    },
+    {
+      "id": "L03-glob-lockfile",
+      "family": "lockfile",
+      "jobId": "lockfile-pin-delta",
+      "repo": "isaacs/node-glob",
+      "license": "ISC",
+      "path": "package-lock.json",
+      "beforeShaFull": "aee5a632c5c2",
+      "afterShaFull": "7df583d631ff",
+      "hint": "Candidate: aee5a632c5c2 (update stuff) \u2192 7df583d631ff (update tap, for newer uuid, 2026-05-01). Expect tap/uuid pin movement. Excerpt OK."
+    },
+    {
+      "id": "L04-winston-lockfile",
+      "family": "lockfile",
+      "jobId": "lockfile-pin-delta",
+      "repo": "winstonjs/winston",
+      "license": "MIT",
+      "path": "package-lock.json",
+      "beforeShaFull": "4b963a9f5b1e",
+      "afterShaFull": "96dccd6e3217",
+      "hint": "Candidate: 4b963a9f5b1e \u2192 96dccd6e3217 (Bump async from 3.2.5 to 3.2.6 #2621). Prove async pin version+integrity+resolved. Fallback: koajs/koa minimatch 3.1.2\u21923.1.5 (4b12945e2e5d) if winston pair is identical pins."
+    },
+    {
+      "id": "S01-jsonschema-recursive-anchor",
+      "family": "schemaWebhook",
+      "jobId": "json-schema-webhook-drift",
+      "repo": "json-schema-org/json-schema-spec",
+      "license": "Apache-2.0 OR BSD-3-Clause (record actual LICENSE at SHA)",
+      "path": "schema.json",
+      "beforeShaFull": "63fbd7bf561a",
+      "afterShaFull": "c028e943ab21",
+      "hint": "JSON Schema meta-schema. Candidate: 63fbd7bf561a (fix broken reference) \u2192 c028e943ab21 (fix the type for $recursiveAnchor). Used pointers MUST include the changed keyword (e.g. /$recursiveAnchor or /properties/$recursiveAnchor \u2014 verify). Do NOT reuse H04 exclusiveMinimum pair d4c5b3a2\u21924b495a29. Not OpenAPI. Remote $ref refuse as negative."
+    },
+    {
+      "id": "S02-octokit-pr-opened",
+      "family": "schemaWebhook",
+      "jobId": "json-schema-webhook-drift",
+      "repo": "octokit/webhooks",
+      "license": "MIT",
+      "path": "payload-examples/api.github.com/pull_request/opened.payload.json",
+      "beforeShaFull": "e3e60cb5336a",
+      "afterShaFull": "0f5bd1859ef9",
+      "hint": "Webhook EXAMPLE json (not OpenAPI). Candidate fact: pull_request.auto_merge added in 0f5bd1859ef9. Confirm before SHA actually lacks the used pointer; if e3e60cb5336a is wrong, walk commits on that path. Used pointers: /pull_request/auto_merge (and a stable unchanged pointer as control). FORBIDDEN: organization.renamed; create/payload.json (H04). Control: used pointer that did not change. Negative: OpenAPI document \u2192 not-this-job-openapi."
+    },
+    {
+      "id": "S03-cyclonedx-bom-schema",
+      "family": "schemaWebhook",
+      "jobId": "json-schema-webhook-drift",
+      "repo": "CycloneDX/specification",
+      "license": "Apache-2.0 or CDDL (record actual)",
+      "path": "schema/bom-1.6.schema.json",
+      "beforeShaFull": "80db0257f118",
+      "afterShaFull": "0bd48c88d1b1",
+      "hint": "Official CycloneDX JSON Schema. 80db0257f118 \u2192 0bd48c88d1b1 (typo/content-type). If used structural pointers are unchanged, that is a VALID control-like positive of 'compatible/unchanged' \u2014 still ship a second used pointer that DID change across tags 1.5 (c320fc0f0b46 schema/bom-1.5.schema.json) vs 1.6 (55343ba19dee schema/bom-1.6.schema.json) as the version-pair, documenting they are official spec versions not the same filename. Do not invent required-field breaks."
+    },
+    {
+      "id": "S04-spdx-json-schema",
+      "family": "schemaWebhook",
+      "jobId": "json-schema-webhook-drift",
+      "repo": "spdx/spdx-spec",
+      "license": "Community-Spec-1.0 / CC-BY-3.0 (record actual LICENSE)",
+      "path": "schemas/spdx-schema-2-3.json vs schemas/spdx-schema-3-0-1.json",
+      "beforeShaFull": "61a7a341f253",
+      "afterShaFull": "61a7a341f253",
+      "hint": "Maintained official SPDX JSON schemas in one repo (2.3 vs 3.0.1). Same restore commit may hold both files \u2014 that is a versioned schema pair, not a fake git delta. Used pointers that exist in both (e.g. SPDX version / name fields) plus pointers only in 3.x. Independent witness. Negative: YAML OpenAPI."
+    },
+    {
+      "id": "R01-github-rest-routes",
+      "family": "apiRoutes",
+      "jobId": "api-upgrade-brief",
+      "repo": "github/rest-api-description",
+      "license": "MIT",
+      "path": "descriptions/api.github.com/api.github.com.yaml (or .json) \u2014 store ONLY a tiny used-ops subset, not the full spec",
+      "beforeShaFull": "f5d6d10f019d",
+      "afterShaFull": "e16cc2584c6d",
+      "hint": "Actual GitHub REST OpenAPI, 2026-09-11 \u2192 2026-09-12. NOT OpenAI. Extract \u226415 used operations (issues/pulls/git blobs) into before/after YAML plus used.json {method,path}. Run api-upgrade-brief. Independent witness = set of method+path (+ optional operationId). Optional: project path list into SDS route-table.v1 {path,canonical,title} for route-table-diff, labeled non-equivalent (method is dropped). Do not store multi-MB specs in git; keep bounded excerpts + full-blob sha256."
+    },
+    {
+      "id": "R02-stripe-openapi-routes",
+      "family": "apiRoutes",
+      "jobId": "api-upgrade-brief",
+      "repo": "stripe/openapi",
+      "license": "MIT or Apache-2.0 (record actual)",
+      "path": "openapi/spec3.yaml (prefer yaml); excerpt used ops only",
+      "beforeShaFull": "af5309cae53e",
+      "afterShaFull": "30d3391cc09a",
+      "hint": "Stripe OpenAPI GA spec 2026-07-29 \u2192 2026-08-26. Used ops around /v1/customers /v1/charges /v1/payment_intents \u2014 NOT OpenAI. Bounded excerpts. Independent witness on method+path. Honesty: not a runtime compatibility proof."
+    },
+    {
+      "id": "R03-moby-engine-api",
+      "family": "apiRoutes",
+      "jobId": "route-table-diff",
+      "repo": "moby/moby",
+      "license": "Apache-2.0",
+      "path": "api/swagger.yaml",
+      "beforeShaFull": "235d2876f80f",
+      "afterShaFull": "2803839c3f30",
+      "hint": "Docker Engine API swagger 2026-09-02 umask \u2192 2026-09-03 Healthcheck name align. Swagger 2.0 is NOT an SDS route catalog: project paths to samedaydesk.route-table.v1 {path,canonical,title,robots?} with authority:caller publishedRouteTable:false. If you also try api-upgrade-brief and it refuses swagger2, record regression-artifact.json \u2014 do not edit the engine. Independent witness on swagger paths. Negative: feed raw swagger to route-table-diff and expect unsupported_catalog."
+    },
+    {
+      "id": "R04-slack-web-api",
+      "family": "apiRoutes",
+      "jobId": "api-upgrade-brief",
+      "repo": "slackapi/slack-api-specs",
+      "license": "MIT or Apache-2.0 (record actual)",
+      "path": "web-api/slack_web_openapi_v2.json",
+      "beforeShaFull": "walk commits on web-api/slack_web_openapi_v2.json",
+      "afterShaFull": "HEAD of that path vs previous OpenAPI-changing commit",
+      "hint": "Slack Web API OpenAPI v2 (NOT OpenAI, NOT octokit organization.renamed). If only swagger2 and api-upgrade-brief refuses, project chat.postMessage / users.info / conversations.list paths into SDS catalogs for route-table-diff and keep the refusal as regression-artifact. Find two official SHAs with a real path/method delta. Bounded excerpts."
+    },
+    {
+      "id": "P01-nodejs-org-sitejson",
+      "family": "pageSnapshots",
+      "jobId": "page-change-offline-job",
+      "repo": "nodejs/nodejs.org",
+      "license": "MIT",
+      "path": "apps/site/site.json",
+      "beforeShaFull": "aad2540a476f",
+      "afterShaFull": "71f7fdc56a1c",
+      "hint": "Permitted structured vendor snapshot: Node.js site.json 2026-07-29 security-release blog \u2192 2026-08-19 Next 10 survey badge. Wrap BOTH revisions into samedaydesk.extract-batch.v0 held batches (product samedaydesk-extract-batch, clock required, claims.fresh false, charged false, no live URL/--fetch). Selected fields from SUPPORTED_FIELDS that actually exist in the JSON (title/description/text/jsonLd as mapped). --example is refused. Control: identical batches. Negative: missing clock or live_fetch_url."
+    },
+    {
+      "id": "P02-express-docs",
+      "family": "pageSnapshots",
+      "jobId": "page-change-offline-job",
+      "repo": "expressjs/expressjs.com",
+      "license": "CC-BY-4.0 or MIT (record actual)",
+      "path": "docs/content.md",
+      "beforeShaFull": "ba98cc468032",
+      "afterShaFull": "be31ea3fc5ba",
+      "hint": "Express docs content.md CodeTabs addition. Derive title/headings/text from the markdown into extract-batch.v0. Not a live fetch. Independent witness on selected fields. Do not use SDS schema-validator/resources/x402-verified pages."
+    },
+    {
+      "id": "P03-spdx-mit-html",
+      "family": "pageSnapshots",
+      "jobId": "page-change-offline-job",
+      "repo": "spdx/license-list-data",
+      "license": "CC-BY-3.0 AND SPDX license-list terms (record NOTICE)",
+      "path": "html/MIT.html plus optional jsonld/MIT.jsonld as structured sibling",
+      "beforeShaFull": "f75839ee25cd",
+      "afterShaFull": "7e10095e0c90",
+      "hint": "Official SPDX MIT license HTML 2024-12-19 \u2192 2026-04-10 publisher builds. Held extract-batch over title/headings/text/jsonLd. Structured vendor snapshot, not scraping. Control: unchanged selected field if only generator noise. Negative: quote-as-success or missing clock."
+    },
+    {
+      "id": "P04-sds-useful-jobs-page",
+      "family": "pageSnapshots",
+      "jobId": "page-change-offline-job",
+      "repo": "epistemedeus/samedaydesk",
+      "license": "MIT (in-tree)",
+      "path": "client/src/pages/UsefulJobs.tsx (and first-byte shell title if present)",
+      "beforeShaFull": "abeb54eca9a71abe117898e8fe7de7e55e9d917f",
+      "afterShaFull": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+      "hint": "Held SDS useful-jobs page 1.3 surface \u2192 1.4.0 overlay. git show both SHAs; wrap title/description/headings. NOT H04 schema-validator.html, resources.html, or /x402/verified. Clock required. claims.fresh false. Local git only."
+    }
+  ],
+  "admitFirst": [
+    "L01-commander-lockfile",
+    "L02-yargs-lockfile",
+    "L03-glob-lockfile",
+    "L04-winston-lockfile",
+    "S01-jsonschema-recursive-anchor",
+    "S02-octokit-pr-opened",
+    "S03-cyclonedx-bom-schema",
+    "S04-spdx-json-schema",
+    "R01-github-rest-routes",
+    "R02-stripe-openapi-routes",
+    "R03-moby-engine-api",
+    "R04-slack-web-api"
+  ],
+  "expandLater": [
+    "P01-nodejs-org-sitejson",
+    "P02-express-docs",
+    "P03-spdx-mit-html",
+    "P04-sds-useful-jobs-page"
+  ],
+  "doNotRepeat": [
+    "OpenAI routes",
+    "octokit organization.renamed",
+    "H04 mocha/axios lock excerpts",
+    "H04 webpack-cli/npm-cli/yarn.lock set-b",
+    "H04 schema-validator.html / resources.html / x402/verified",
+    "W5-M06..M09 corpora",
+    "HG04 CI wrapper"
+  ]
+}

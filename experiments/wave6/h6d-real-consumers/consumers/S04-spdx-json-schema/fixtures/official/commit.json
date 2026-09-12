@@ -1,0 +1,7 @@
+{
+  "sha": "61a7a341f2533d6e084c48c88463da63f05e1af0",
+  "html_url": "https://github.com/spdx/spdx-spec/commit/61a7a341f2533d6e084c48c88463da63f05e1af0",
+  "message": "Restore schemas directory\n\nThe directory is referenced in official documents and should be kept accessible:\n\n- https://www.iana.org/assignments/media-types/application/spdx+json\n- https://spdx.github.io/spdx-spec/v2.3/conformance/#44-standard-data-format-requirements\n\nFor backward compatibility reason, the file `spdx-schema.json` should point to SPDX 2 version.\n\nSigned-off-by: Arthit Suriyawongkul <arthit@gmail.com>",
+  "date": "2026-04-24T14:28:03Z",
+  "author": "Arthit Suriyawongkul"
+}

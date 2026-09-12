@@ -1,0 +1,30 @@
+{
+  "repo": "yargs/yargs",
+  "path": "package-lock.json",
+  "licensePath": "LICENSE",
+  "license": "MIT",
+  "retrievedAt": "2026-09-12T06:50:23.000Z",
+  "method": "github-rest-contents+raw",
+  "before": {
+    "commit": "4153e0f097aeaf43a71a2530db6dda51dff2c544",
+    "gitBlobSha": "b27cda064344e90087b00b4209e6e4197c093007",
+    "size": 281077,
+    "sha256": "fbab2725e79189189ff45ccef1cdee7b7400af5bdb7197b407c2aea118177130",
+    "html_url": "https://github.com/yargs/yargs/blob/4153e0f097aeaf43a71a2530db6dda51dff2c544/package-lock.json",
+    "download_url": "https://raw.githubusercontent.com/yargs/yargs/4153e0f097aeaf43a71a2530db6dda51dff2c544/package-lock.json"
+  },
+  "after": {
+    "commit": "8878a894111e3fe7c98d84af546c0f34fa017492",
+    "gitBlobSha": "e646b04f1649c1a12a5547a92bb911543bcab993",
+    "size": 281077,
+    "sha256": "06b3c838d9452ee690ca42a706a597b285da6542f7f2d28117133dc404edac40",
+    "html_url": "https://github.com/yargs/yargs/blob/8878a894111e3fe7c98d84af546c0f34fa017492/package-lock.json",
+    "download_url": "https://raw.githubusercontent.com/yargs/yargs/8878a894111e3fe7c98d84af546c0f34fa017492/package-lock.json"
+  },
+  "licenseBlob": {
+    "gitBlobSha": "b0145ca0b03bdc922de70dbaf5ae87c3a244c413",
+    "size": 1146,
+    "sha256": "2f1a503bfab84b3ba7393627308b3274501e459e3b5185bbb56bbf16cb1602d4",
+    "identicalAtBothShas": true
+  }
+}

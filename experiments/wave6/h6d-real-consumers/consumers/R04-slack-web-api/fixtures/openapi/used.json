@@ -1,0 +1,38 @@
+{
+  "label": "R04 Slack Web API used-operation pins (not a customer; not OpenAI; not octokit organization.renamed)",
+  "operations": [
+    {
+      "method": "post",
+      "path": "/chat.postMessage"
+    },
+    {
+      "method": "get",
+      "path": "/users.info"
+    },
+    {
+      "method": "get",
+      "path": "/conversations.list"
+    },
+    {
+      "method": "post",
+      "path": "/conversations.mark"
+    },
+    {
+      "method": "get",
+      "path": "/channels.list"
+    },
+    {
+      "method": "get",
+      "path": "/channels.info"
+    },
+    {
+      "method": "post",
+      "path": "/admin.conversations.create"
+    },
+    {
+      "method": "post",
+      "path": "/calls.add"
+    }
+  ],
+  "pinNote": "Bounded used-ops covering stable methods plus real add/remove between 1.5.0 and 1.7.0 specs"
+}

@@ -1,0 +1,17 @@
+{
+  "sha": "f75839ee25cde2383fab299f6d8fc94a442f444b",
+  "html_url": "https://github.com/spdx/license-list-data/commit/f75839ee25cde2383fab299f6d8fc94a442f444b",
+  "commit": {
+    "message": "License list build b27cee3 using license list publisher 3.0.0",
+    "author": {
+      "name": "License Publisher (maintained by Gary O'Neall)",
+      "date": "2024-12-19T09:39:35Z"
+    },
+    "committer": {
+      "name": "License Publisher (maintained by Gary O'Neall)",
+      "date": "2024-12-19T09:39:35Z"
+    }
+  },
+  "filesOmitted": true,
+  "note": "files[] omitted; publisher builds touch hundreds of generated licenses"
+}

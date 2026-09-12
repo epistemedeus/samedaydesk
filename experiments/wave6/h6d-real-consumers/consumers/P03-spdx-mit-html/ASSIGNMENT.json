@@ -1,0 +1,11 @@
+{
+  "id": "P03-spdx-mit-html",
+  "family": "pageSnapshots",
+  "jobId": "page-change-offline-job",
+  "repo": "spdx/license-list-data",
+  "license": "CC-BY-3.0 AND SPDX license-list terms (record NOTICE)",
+  "path": "html/MIT.html plus optional jsonld/MIT.jsonld as structured sibling",
+  "beforeShaFull": "f75839ee25cd",
+  "afterShaFull": "7e10095e0c90",
+  "hint": "Official SPDX MIT license HTML 2024-12-19 \u2192 2026-04-10 publisher builds. Held extract-batch over title/headings/text/jsonLd. Structured vendor snapshot, not scraping. Control: unchanged selected field if only generator noise. Negative: quote-as-success or missing clock."
+}

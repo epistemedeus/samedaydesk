@@ -1,0 +1,3 @@
+Bounded used-ops excerpt of stripe/openapi openapi/spec3.yaml.
+Full GA specs are multi-megabyte; do not store them. Full-blob sha256 is in fixtures/provenance/full-blob.json.
+Files are JSON-encoded OpenAPI 3.0.0 (valid YAML 1.2). Fixture OpenAPI, not live Stripe.

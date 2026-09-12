@@ -1,0 +1,66 @@
+{
+  "schema": "h6d.consumer-result.v1",
+  "id": "L03-glob-lockfile",
+  "family": "lockfile",
+  "jobId": "lockfile-pin-delta",
+  "status": "pass",
+  "testsPass": true,
+  "testCounts": {
+    "pass": 13,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "testCommand": "NODE_OPTIONS=--max-old-space-size=768 node --test test/consumer.test.mjs",
+  "source": {
+    "repo": "isaacs/node-glob",
+    "path": "package-lock.json",
+    "beforeSha": "aee5a632c5c29d82dd5be14b0344ad52209bcaba",
+    "afterSha": "7df583d631ff191e2f71a62b383926c0bd83ccda",
+    "license": "BlueOak-1.0.0",
+    "licenseHintWas": "ISC",
+    "beforeBytes": 204135,
+    "afterBytes": 204058,
+    "beforeSha256": "bd6ebe7138e0167883e29a6bf6a184de4d70de76fc88b3b68849a41789a3d0e9",
+    "afterSha256": "f88c43da0826c60a5b6c150134cb69640b3af75ef66b1e066db8ba9da99d9c15"
+  },
+  "engineVsWitness": {
+    "agree": true,
+    "status": "actionable",
+    "counts": {
+      "beforePins": 403,
+      "afterPins": 403,
+      "added": 0,
+      "removed": 0,
+      "changed": 29,
+      "unchanged": 374,
+      "missingIntegrity": 0
+    },
+    "tap": {
+      "id": "node_modules/tap",
+      "before": "21.7.1",
+      "after": "21.7.2"
+    },
+    "uuid": {
+      "id": "node_modules/uuid",
+      "before": "8.3.2",
+      "after": "14.0.0"
+    },
+    "regressionArtifact": false
+  },
+  "kit": {
+    "version": "1.4.0",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215
+  },
+  "purchaseAuthority": false,
+  "honesty": [
+    "Assignment hinted ISC; LICENSE.md and package.json at both SHAs are BlueOak-1.0.0.",
+    "Pin movement proven from stored package-lock.json bytes, not invented from the commit message.",
+    "SAMPLE / --example / H04 mocha/axios lock excerpts were not used as this pair.",
+    "yarn.lock is refused, not converted (yarn-to-npm-lock is non-equivalent and not applied).",
+    "Job path does not fetch, install, audit, or purchase.",
+    "Independent witness does not import kit engine compare/oracle.",
+    "Engine agreed with witness; no regression-artifact.json."
+  ]
+}

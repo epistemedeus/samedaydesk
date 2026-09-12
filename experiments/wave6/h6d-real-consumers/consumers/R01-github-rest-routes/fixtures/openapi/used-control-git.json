@@ -1,0 +1,30 @@
+{
+  "note": "Control pin list: git blob/commit/tree/ref ops only. Label schema delta is unused.",
+  "operations": [
+    {
+      "method": "get",
+      "path": "/repos/{owner}/{repo}/git/blobs/{file_sha}",
+      "operationId": "git/get-blob"
+    },
+    {
+      "method": "post",
+      "path": "/repos/{owner}/{repo}/git/blobs",
+      "operationId": "git/create-blob"
+    },
+    {
+      "method": "get",
+      "path": "/repos/{owner}/{repo}/git/commits/{commit_sha}",
+      "operationId": "git/get-commit"
+    },
+    {
+      "method": "get",
+      "path": "/repos/{owner}/{repo}/git/trees/{tree_sha}",
+      "operationId": "git/get-tree"
+    },
+    {
+      "method": "post",
+      "path": "/repos/{owner}/{repo}/git/refs",
+      "operationId": "git/create-ref"
+    }
+  ]
+}

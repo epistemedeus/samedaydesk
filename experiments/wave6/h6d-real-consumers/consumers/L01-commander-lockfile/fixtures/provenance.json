@@ -1,0 +1,62 @@
+{
+  "schema": "h6d.fixture-provenance.v1",
+  "repo": "tj/commander.js",
+  "path": "package-lock.json",
+  "license": "MIT",
+  "retrievedAt": "2026-09-12T06:54:31Z",
+  "method": "GET https://raw.githubusercontent.com/tj/commander.js/<sha>/package-lock.json and LICENSE; GET https://api.github.com/repos/tj/commander.js/commits/<short-sha> to resolve full SHAs",
+  "fullBlobs": {
+    "before.package-lock.json": {
+      "rel": "official/before.package-lock.json",
+      "gitSha": "9098b4863ef7678b9d138ae0f04afd949287510c",
+      "gitBlobSha": "08d0bef28aad911a9b7336eb851d35d5b8881807",
+      "bytes": 94671,
+      "sha256": "58f7587d6e2aaa12b3f82914c38af3774dabd1c6de2a5ca26741d4f2c3bbf528",
+      "lockfileVersion": 3,
+      "sourceUrl": "https://raw.githubusercontent.com/tj/commander.js/9098b4863ef7678b9d138ae0f04afd949287510c/package-lock.json"
+    },
+    "after.package-lock.json": {
+      "rel": "official/after.package-lock.json",
+      "gitSha": "d785d8b3b9448952ef023a8cd26a0a3923a90458",
+      "gitBlobSha": "f48132b8c306b257e0db6204a77153bac1311ee6",
+      "bytes": 95153,
+      "sha256": "1ad36cdbfbbac6513de58c34772e4769670e6c484a7a2927b5e13a3ade0941d5",
+      "lockfileVersion": 3,
+      "sourceUrl": "https://raw.githubusercontent.com/tj/commander.js/d785d8b3b9448952ef023a8cd26a0a3923a90458/package-lock.json"
+    },
+    "LICENSE": {
+      "rel": "official/LICENSE",
+      "gitSha": "d785d8b3b9448952ef023a8cd26a0a3923a90458",
+      "bytes": 1098,
+      "sha256": "04512a63dce4d2d506ad612dc0bd7681ccf6e3655f7b6eaef7dfac8323d1ec0b",
+      "sourceUrl": "https://raw.githubusercontent.com/tj/commander.js/d785d8b3b9448952ef023a8cd26a0a3923a90458/LICENSE"
+    }
+  },
+  "excerpts": {
+    "note": "packages subset of pins that changed or were added; not a substitute for full-blob sha256 above",
+    "before-changed-packages.json": {
+      "bytes": 7369,
+      "sha256": "3d787aa695898ba06cfea77d6d956591b3c2a02b3fe579de941b909b521d7e4a"
+    },
+    "after-changed-packages.json": {
+      "bytes": 7638,
+      "sha256": "365146d0b1b0c5be5817cfd69de1f3146b16865ebaed73d5a3936edbc863ff1a"
+    },
+    "expected-delta.json": {
+      "bytes": 26483,
+      "sha256": "caa9a85628123b67769392aad7ca40492e4056471362d53db74a9a09456b9a18"
+    }
+  },
+  "negatives": {
+    "yarn.lock": {
+      "bytes": 291,
+      "sha256": "790300f5cd45e49685ea209a3afd4405b826e8472474f011c41894ca6d5a531e",
+      "note": "synthetic yarn v1 lock; not H04 webpack-cli/npm-cli"
+    },
+    "package.json": {
+      "bytes": 1636,
+      "sha256": "d2bb4e4b85da726720963e876a2e086b273a646601cb4263070c07d067bf3e42",
+      "note": "official commander package.json at after SHA; package.json-only refuse"
+    }
+  }
+}

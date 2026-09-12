@@ -1,0 +1,11 @@
+{
+  "id": "S01-jsonschema-recursive-anchor",
+  "family": "schemaWebhook",
+  "jobId": "json-schema-webhook-drift",
+  "repo": "json-schema-org/json-schema-spec",
+  "license": "Apache-2.0 OR BSD-3-Clause (record actual LICENSE at SHA)",
+  "path": "schema.json",
+  "beforeShaFull": "63fbd7bf561a",
+  "afterShaFull": "c028e943ab21",
+  "hint": "JSON Schema meta-schema. Candidate: 63fbd7bf561a (fix broken reference) \u2192 c028e943ab21 (fix the type for $recursiveAnchor). Used pointers MUST include the changed keyword (e.g. /$recursiveAnchor or /properties/$recursiveAnchor \u2014 verify). Do NOT reuse H04 exclusiveMinimum pair d4c5b3a2\u21924b495a29. Not OpenAPI. Remote $ref refuse as negative."
+}

@@ -1,0 +1,10 @@
+{
+  "pointers": [
+    "/definitions/component/properties/type",
+    "/properties/declarations",
+    "/definitions/component/properties/cryptoProperties",
+    "/definitions/component/required",
+    "/definitions/attachment/properties/contentType",
+    "/definitions/refType/type"
+  ]
+}

@@ -1,0 +1,656 @@
+{
+  "pathCount": 98,
+  "operationCount": 108,
+  "multiMethodPaths": [
+    "/containers/{id}/archive",
+    "/_ping",
+    "/volumes/{name}",
+    "/networks/{id}",
+    "/nodes/{id}",
+    "/services/{id}",
+    "/secrets/{id}",
+    "/configs/{id}"
+  ],
+  "paths": [
+    "/containers/json",
+    "/containers/create",
+    "/containers/{id}/json",
+    "/containers/{id}/top",
+    "/containers/{id}/logs",
+    "/containers/{id}/changes",
+    "/containers/{id}/export",
+    "/containers/{id}/stats",
+    "/containers/{id}/resize",
+    "/containers/{id}/start",
+    "/containers/{id}/stop",
+    "/containers/{id}/restart",
+    "/containers/{id}/kill",
+    "/containers/{id}/update",
+    "/containers/{id}/rename",
+    "/containers/{id}/pause",
+    "/containers/{id}/unpause",
+    "/containers/{id}/attach",
+    "/containers/{id}/attach/ws",
+    "/containers/{id}/wait",
+    "/containers/{id}",
+    "/containers/{id}/archive",
+    "/containers/prune",
+    "/images/json",
+    "/build",
+    "/build/prune",
+    "/images/create",
+    "/images/{name}/json",
+    "/images/{name}/attestations",
+    "/images/{name}/history",
+    "/images/{name}/push",
+    "/images/{name}/tag",
+    "/images/{name}",
+    "/images/search",
+    "/images/prune",
+    "/auth",
+    "/info",
+    "/version",
+    "/_ping",
+    "/commit",
+    "/events",
+    "/system/df",
+    "/images/{name}/get",
+    "/images/get",
+    "/images/load",
+    "/containers/{id}/exec",
+    "/exec/{id}/start",
+    "/exec/{id}/resize",
+    "/exec/{id}/json",
+    "/volumes",
+    "/volumes/create",
+    "/volumes/{name}",
+    "/volumes/prune",
+    "/networks",
+    "/networks/{id}",
+    "/networks/create",
+    "/networks/{id}/connect",
+    "/networks/{id}/disconnect",
+    "/networks/prune",
+    "/plugins",
+    "/plugins/privileges",
+    "/plugins/pull",
+    "/plugins/{name}/json",
+    "/plugins/{name}",
+    "/plugins/{name}/enable",
+    "/plugins/{name}/disable",
+    "/plugins/{name}/upgrade",
+    "/plugins/create",
+    "/plugins/{name}/push",
+    "/plugins/{name}/set",
+    "/nodes",
+    "/nodes/{id}",
+    "/nodes/{id}/update",
+    "/swarm",
+    "/swarm/init",
+    "/swarm/join",
+    "/swarm/leave",
+    "/swarm/update",
+    "/swarm/unlockkey",
+    "/swarm/unlock",
+    "/services",
+    "/services/create",
+    "/services/{id}",
+    "/services/{id}/update",
+    "/services/{id}/logs",
+    "/tasks",
+    "/tasks/{id}",
+    "/tasks/{id}/logs",
+    "/secrets",
+    "/secrets/create",
+    "/secrets/{id}",
+    "/secrets/{id}/update",
+    "/configs",
+    "/configs/create",
+    "/configs/{id}",
+    "/configs/{id}/update",
+    "/distribution/{name}/json",
+    "/session"
+  ],
+  "operations": [
+    {
+      "method": "GET",
+      "path": "/containers/json",
+      "operationId": "ContainerList"
+    },
+    {
+      "method": "POST",
+      "path": "/containers/create",
+      "operationId": "ContainerCreate"
+    },
+    {
+      "method": "GET",
+      "path": "/containers/{id}/json",
+      "operationId": "ContainerInspect"
+    },
+    {
+      "method": "GET",
+      "path": "/containers/{id}/top",
+      "operationId": "ContainerTop"
+    },
+    {
+      "method": "GET",
+      "path": "/containers/{id}/logs",
+      "operationId": "ContainerLogs"
+    },
+    {
+      "method": "GET",
+      "path": "/containers/{id}/changes",
+      "operationId": "ContainerChanges"
+    },
+    {
+      "method": "GET",
+      "path": "/containers/{id}/export",
+      "operationId": "ContainerExport"
+    },
+    {
+      "method": "GET",
+      "path": "/containers/{id}/stats",
+      "operationId": "ContainerStats"
+    },
+    {
+      "method": "POST",
+      "path": "/containers/{id}/resize",
+      "operationId": "ContainerResize"
+    },
+    {
+      "method": "POST",
+      "path": "/containers/{id}/start",
+      "operationId": "ContainerStart"
+    },
+    {
+      "method": "POST",
+      "path": "/containers/{id}/stop",
+      "operationId": "ContainerStop"
+    },
+    {
+      "method": "POST",
+      "path": "/containers/{id}/restart",
+      "operationId": "ContainerRestart"
+    },
+    {
+      "method": "POST",
+      "path": "/containers/{id}/kill",
+      "operationId": "ContainerKill"
+    },
+    {
+      "method": "POST",
+      "path": "/containers/{id}/update",
+      "operationId": "ContainerUpdate"
+    },
+    {
+      "method": "POST",
+      "path": "/containers/{id}/rename",
+      "operationId": "ContainerRename"
+    },
+    {
+      "method": "POST",
+      "path": "/containers/{id}/pause",
+      "operationId": "ContainerPause"
+    },
+    {
+      "method": "POST",
+      "path": "/containers/{id}/unpause",
+      "operationId": "ContainerUnpause"
+    },
+    {
+      "method": "POST",
+      "path": "/containers/{id}/attach",
+      "operationId": "ContainerAttach"
+    },
+    {
+      "method": "GET",
+      "path": "/containers/{id}/attach/ws",
+      "operationId": "ContainerAttachWebsocket"
+    },
+    {
+      "method": "POST",
+      "path": "/containers/{id}/wait",
+      "operationId": "ContainerWait"
+    },
+    {
+      "method": "DELETE",
+      "path": "/containers/{id}",
+      "operationId": "ContainerDelete"
+    },
+    {
+      "method": "GET",
+      "path": "/containers/{id}/archive",
+      "operationId": "ContainerArchive"
+    },
+    {
+      "method": "PUT",
+      "path": "/containers/{id}/archive",
+      "operationId": "PutContainerArchive"
+    },
+    {
+      "method": "HEAD",
+      "path": "/containers/{id}/archive",
+      "operationId": "ContainerArchiveInfo"
+    },
+    {
+      "method": "POST",
+      "path": "/containers/prune",
+      "operationId": "ContainerPrune"
+    },
+    {
+      "method": "GET",
+      "path": "/images/json",
+      "operationId": "ImageList"
+    },
+    {
+      "method": "POST",
+      "path": "/build",
+      "operationId": "ImageBuild"
+    },
+    {
+      "method": "POST",
+      "path": "/build/prune",
+      "operationId": "BuildPrune"
+    },
+    {
+      "method": "POST",
+      "path": "/images/create",
+      "operationId": "ImageCreate"
+    },
+    {
+      "method": "GET",
+      "path": "/images/{name}/json",
+      "operationId": "ImageInspect"
+    },
+    {
+      "method": "GET",
+      "path": "/images/{name}/attestations",
+      "operationId": "ImageAttestations"
+    },
+    {
+      "method": "GET",
+      "path": "/images/{name}/history",
+      "operationId": "ImageHistory"
+    },
+    {
+      "method": "POST",
+      "path": "/images/{name}/push",
+      "operationId": "ImagePush"
+    },
+    {
+      "method": "POST",
+      "path": "/images/{name}/tag",
+      "operationId": "ImageTag"
+    },
+    {
+      "method": "DELETE",
+      "path": "/images/{name}",
+      "operationId": "ImageDelete"
+    },
+    {
+      "method": "GET",
+      "path": "/images/search",
+      "operationId": "ImageSearch"
+    },
+    {
+      "method": "POST",
+      "path": "/images/prune",
+      "operationId": "ImagePrune"
+    },
+    {
+      "method": "POST",
+      "path": "/auth",
+      "operationId": "SystemAuth"
+    },
+    {
+      "method": "GET",
+      "path": "/info",
+      "operationId": "SystemInfo"
+    },
+    {
+      "method": "GET",
+      "path": "/version",
+      "operationId": "SystemVersion"
+    },
+    {
+      "method": "GET",
+      "path": "/_ping",
+      "operationId": "SystemPing"
+    },
+    {
+      "method": "HEAD",
+      "path": "/_ping",
+      "operationId": "SystemPingHead"
+    },
+    {
+      "method": "POST",
+      "path": "/commit",
+      "operationId": "ImageCommit"
+    },
+    {
+      "method": "GET",
+      "path": "/events",
+      "operationId": "SystemEvents"
+    },
+    {
+      "method": "GET",
+      "path": "/system/df",
+      "operationId": "SystemDataUsage"
+    },
+    {
+      "method": "GET",
+      "path": "/images/{name}/get",
+      "operationId": "ImageGet"
+    },
+    {
+      "method": "GET",
+      "path": "/images/get",
+      "operationId": "ImageGetAll"
+    },
+    {
+      "method": "POST",
+      "path": "/images/load",
+      "operationId": "ImageLoad"
+    },
+    {
+      "method": "POST",
+      "path": "/containers/{id}/exec",
+      "operationId": "ContainerExec"
+    },
+    {
+      "method": "POST",
+      "path": "/exec/{id}/start",
+      "operationId": "ExecStart"
+    },
+    {
+      "method": "POST",
+      "path": "/exec/{id}/resize",
+      "operationId": "ExecResize"
+    },
+    {
+      "method": "GET",
+      "path": "/exec/{id}/json",
+      "operationId": "ExecInspect"
+    },
+    {
+      "method": "GET",
+      "path": "/volumes",
+      "operationId": "VolumeList"
+    },
+    {
+      "method": "POST",
+      "path": "/volumes/create",
+      "operationId": "VolumeCreate"
+    },
+    {
+      "method": "GET",
+      "path": "/volumes/{name}",
+      "operationId": "VolumeInspect"
+    },
+    {
+      "method": "PUT",
+      "path": "/volumes/{name}",
+      "operationId": "VolumeUpdate"
+    },
+    {
+      "method": "DELETE",
+      "path": "/volumes/{name}",
+      "operationId": "VolumeDelete"
+    },
+    {
+      "method": "POST",
+      "path": "/volumes/prune",
+      "operationId": "VolumePrune"
+    },
+    {
+      "method": "GET",
+      "path": "/networks",
+      "operationId": "NetworkList"
+    },
+    {
+      "method": "GET",
+      "path": "/networks/{id}",
+      "operationId": "NetworkInspect"
+    },
+    {
+      "method": "DELETE",
+      "path": "/networks/{id}",
+      "operationId": "NetworkDelete"
+    },
+    {
+      "method": "POST",
+      "path": "/networks/create",
+      "operationId": "NetworkCreate"
+    },
+    {
+      "method": "POST",
+      "path": "/networks/{id}/connect",
+      "operationId": "NetworkConnect"
+    },
+    {
+      "method": "POST",
+      "path": "/networks/{id}/disconnect",
+      "operationId": "NetworkDisconnect"
+    },
+    {
+      "method": "POST",
+      "path": "/networks/prune",
+      "operationId": "NetworkPrune"
+    },
+    {
+      "method": "GET",
+      "path": "/plugins",
+      "operationId": "PluginList"
+    },
+    {
+      "method": "GET",
+      "path": "/plugins/privileges",
+      "operationId": "GetPluginPrivileges"
+    },
+    {
+      "method": "POST",
+      "path": "/plugins/pull",
+      "operationId": "PluginPull"
+    },
+    {
+      "method": "GET",
+      "path": "/plugins/{name}/json",
+      "operationId": "PluginInspect"
+    },
+    {
+      "method": "DELETE",
+      "path": "/plugins/{name}",
+      "operationId": "PluginDelete"
+    },
+    {
+      "method": "POST",
+      "path": "/plugins/{name}/enable",
+      "operationId": "PluginEnable"
+    },
+    {
+      "method": "POST",
+      "path": "/plugins/{name}/disable",
+      "operationId": "PluginDisable"
+    },
+    {
+      "method": "POST",
+      "path": "/plugins/{name}/upgrade",
+      "operationId": "PluginUpgrade"
+    },
+    {
+      "method": "POST",
+      "path": "/plugins/create",
+      "operationId": "PluginCreate"
+    },
+    {
+      "method": "POST",
+      "path": "/plugins/{name}/push",
+      "operationId": "PluginPush"
+    },
+    {
+      "method": "POST",
+      "path": "/plugins/{name}/set",
+      "operationId": "PluginSet"
+    },
+    {
+      "method": "GET",
+      "path": "/nodes",
+      "operationId": "NodeList"
+    },
+    {
+      "method": "GET",
+      "path": "/nodes/{id}",
+      "operationId": "NodeInspect"
+    },
+    {
+      "method": "DELETE",
+      "path": "/nodes/{id}",
+      "operationId": "NodeDelete"
+    },
+    {
+      "method": "POST",
+      "path": "/nodes/{id}/update",
+      "operationId": "NodeUpdate"
+    },
+    {
+      "method": "GET",
+      "path": "/swarm",
+      "operationId": "SwarmInspect"
+    },
+    {
+      "method": "POST",
+      "path": "/swarm/init",
+      "operationId": "SwarmInit"
+    },
+    {
+      "method": "POST",
+      "path": "/swarm/join",
+      "operationId": "SwarmJoin"
+    },
+    {
+      "method": "POST",
+      "path": "/swarm/leave",
+      "operationId": "SwarmLeave"
+    },
+    {
+      "method": "POST",
+      "path": "/swarm/update",
+      "operationId": "SwarmUpdate"
+    },
+    {
+      "method": "GET",
+      "path": "/swarm/unlockkey",
+      "operationId": "SwarmUnlockkey"
+    },
+    {
+      "method": "POST",
+      "path": "/swarm/unlock",
+      "operationId": "SwarmUnlock"
+    },
+    {
+      "method": "GET",
+      "path": "/services",
+      "operationId": "ServiceList"
+    },
+    {
+      "method": "POST",
+      "path": "/services/create",
+      "operationId": "ServiceCreate"
+    },
+    {
+      "method": "GET",
+      "path": "/services/{id}",
+      "operationId": "ServiceInspect"
+    },
+    {
+      "method": "DELETE",
+      "path": "/services/{id}",
+      "operationId": "ServiceDelete"
+    },
+    {
+      "method": "POST",
+      "path": "/services/{id}/update",
+      "operationId": "ServiceUpdate"
+    },
+    {
+      "method": "GET",
+      "path": "/services/{id}/logs",
+      "operationId": "ServiceLogs"
+    },
+    {
+      "method": "GET",
+      "path": "/tasks",
+      "operationId": "TaskList"
+    },
+    {
+      "method": "GET",
+      "path": "/tasks/{id}",
+      "operationId": "TaskInspect"
+    },
+    {
+      "method": "GET",
+      "path": "/tasks/{id}/logs",
+      "operationId": "TaskLogs"
+    },
+    {
+      "method": "GET",
+      "path": "/secrets",
+      "operationId": "SecretList"
+    },
+    {
+      "method": "POST",
+      "path": "/secrets/create",
+      "operationId": "SecretCreate"
+    },
+    {
+      "method": "GET",
+      "path": "/secrets/{id}",
+      "operationId": "SecretInspect"
+    },
+    {
+      "method": "DELETE",
+      "path": "/secrets/{id}",
+      "operationId": "SecretDelete"
+    },
+    {
+      "method": "POST",
+      "path": "/secrets/{id}/update",
+      "operationId": "SecretUpdate"
+    },
+    {
+      "method": "GET",
+      "path": "/configs",
+      "operationId": "ConfigList"
+    },
+    {
+      "method": "POST",
+      "path": "/configs/create",
+      "operationId": "ConfigCreate"
+    },
+    {
+      "method": "GET",
+      "path": "/configs/{id}",
+      "operationId": "ConfigInspect"
+    },
+    {
+      "method": "DELETE",
+      "path": "/configs/{id}",
+      "operationId": "ConfigDelete"
+    },
+    {
+      "method": "POST",
+      "path": "/configs/{id}/update",
+      "operationId": "ConfigUpdate"
+    },
+    {
+      "method": "GET",
+      "path": "/distribution/{name}/json",
+      "operationId": "DistributionInspect"
+    },
+    {
+      "method": "POST",
+      "path": "/session",
+      "operationId": "Session"
+    }
+  ]
+}

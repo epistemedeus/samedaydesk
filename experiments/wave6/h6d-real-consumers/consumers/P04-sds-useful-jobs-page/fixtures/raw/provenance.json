@@ -1,0 +1,86 @@
+{
+  "schema": "h6d.p04.provenance.v1",
+  "repo": "epistemedeus/samedaydesk",
+  "method": "local-git-show",
+  "network": false,
+  "beforeSha": "abeb54eca9a71abe117898e8fe7de7e55e9d917f",
+  "afterSha": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+  "blobs": {
+    "before": {
+      "client/src/pages/UsefulJobs.tsx": {
+        "gitPath": "client/src/pages/UsefulJobs.tsx",
+        "commit": "abeb54eca9a71abe117898e8fe7de7e55e9d917f",
+        "gitBlobSha1": "c39270b86b17f25544c1dbfb131a8e61484818b3",
+        "bytes": 8369,
+        "sha256": "b1818a2e4e76c8bac182cb3ec99585dc9e8ab9e082d0a560db33e24c1e288a93"
+      },
+      "client/src/data/machineEntry.mjs": {
+        "gitPath": "client/src/data/machineEntry.mjs",
+        "commit": "abeb54eca9a71abe117898e8fe7de7e55e9d917f",
+        "gitBlobSha1": "04dacc506f3208654b6dbfc7da58e28cf452c0ea",
+        "bytes": 38178,
+        "sha256": "2eeb72f76bdd932eaf9b62447ae3200cda2fd849debf224621dac16820cf2ce0"
+      },
+      "server/lib/spa-route-shells.js": {
+        "gitPath": "server/lib/spa-route-shells.js",
+        "commit": "abeb54eca9a71abe117898e8fe7de7e55e9d917f",
+        "gitBlobSha1": "c65501e24cc2229818de0a06e6ad027d9819c8cc",
+        "bytes": 20346,
+        "sha256": "eda45d97624bbbef649d89b9e753cfe61ae561ac216607a47434138b7cc56aa0"
+      }
+    },
+    "after": {
+      "client/src/pages/UsefulJobs.tsx": {
+        "gitPath": "client/src/pages/UsefulJobs.tsx",
+        "commit": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+        "gitBlobSha1": "603f8012115ab67bbb3550216bfbf88dbc82d0d9",
+        "bytes": 10287,
+        "sha256": "1401dfd46246e3e005f33d014f801a52f9d0a180e76d08835791789bfcb9de78"
+      },
+      "client/src/data/machineEntry.mjs": {
+        "gitPath": "client/src/data/machineEntry.mjs",
+        "commit": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+        "gitBlobSha1": "17d1af20bf577cb8238b9c0c2ef7fca440a5557f",
+        "bytes": 39711,
+        "sha256": "25f81be95fa9c86e28343ba5f5c8db5951e839e9f8afe9ed3b7ad23ce71ebf84"
+      },
+      "server/lib/spa-route-shells.js": {
+        "gitPath": "server/lib/spa-route-shells.js",
+        "commit": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+        "gitBlobSha1": "7b6211786ea6406503c80c4c12ca7d4d8e309de2",
+        "bytes": 20501,
+        "sha256": "4b7527adc951075cf6a5ba1507434833ca9456502892a09e684fa32968532362"
+      }
+    }
+  },
+  "stored": {
+    "fixtures/raw/LICENSE.kit-mit.txt": {
+      "bytes": 1106,
+      "sha256": "fa970560dc52345f61b1710dde20210405a2f226acb34e3956cbc14aa64ff7af"
+    },
+    "fixtures/raw/UsefulJobs.after.tsx": {
+      "bytes": 10287,
+      "sha256": "1401dfd46246e3e005f33d014f801a52f9d0a180e76d08835791789bfcb9de78"
+    },
+    "fixtures/raw/UsefulJobs.before.tsx": {
+      "bytes": 8369,
+      "sha256": "b1818a2e4e76c8bac182cb3ec99585dc9e8ab9e082d0a560db33e24c1e288a93"
+    },
+    "fixtures/raw/commit.after.json": {
+      "bytes": 439,
+      "sha256": "10b21507c1ecc25233f46e90274b695d25f71ff72a49c3ba6932585f2267353a"
+    },
+    "fixtures/raw/commit.before.json": {
+      "bytes": 408,
+      "sha256": "5a7a83ae1a11573f281b791d2d38b61ae70b85937fc15100d26f27ea0ef708ee"
+    },
+    "fixtures/raw/machineEntry.useful-jobs.after.excerpt.mjs": {
+      "bytes": 3771,
+      "sha256": "419282645fae98fa9a02d5bcacf3343a2316d7c1898a2bb347ee68839d8ed7dd"
+    },
+    "fixtures/raw/machineEntry.useful-jobs.before.excerpt.mjs": {
+      "bytes": 3496,
+      "sha256": "fca49b85fe883a43567c4d12b4fe4e5085da6a70ad80cecc6d83259d28b4bbc1"
+    }
+  }
+}

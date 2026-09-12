@@ -1,0 +1,112 @@
+{
+  "schema": "h6d.acquisition.v1",
+  "id": "L03-glob-lockfile",
+  "family": "lockfile",
+  "jobId": "lockfile-pin-delta",
+  "repo": "isaacs/node-glob",
+  "path": "package-lock.json",
+  "beforeSha": "aee5a632c5c29d82dd5be14b0344ad52209bcaba",
+  "afterSha": "7df583d631ff191e2f71a62b383926c0bd83ccda",
+  "license": "BlueOak-1.0.0",
+  "licenseHintWas": "ISC",
+  "licenseNote": "package.json license and LICENSE.md at both SHAs are Blue Oak Model License 1.0.0, not ISC.",
+  "retrievedAt": "2026-09-12T06:53:16Z",
+  "method": "GitHub REST commits + contents API and raw.githubusercontent.com; bytes stored locally; job path is offline",
+  "purchaseAuthority": false,
+  "networkOnJobPath": false,
+  "commits": {
+    "before": {
+      "sha": "aee5a632c5c29d82dd5be14b0344ad52209bcaba",
+      "message": "update stuff",
+      "committedAt": "2026-05-01T17:51:42Z",
+      "htmlUrl": "https://github.com/isaacs/node-glob/commit/aee5a632c5c29d82dd5be14b0344ad52209bcaba"
+    },
+    "after": {
+      "sha": "7df583d631ff191e2f71a62b383926c0bd83ccda",
+      "message": "update tap, for newer uuid",
+      "committedAt": "2026-05-01T17:53:57Z",
+      "htmlUrl": "https://github.com/isaacs/node-glob/commit/7df583d631ff191e2f71a62b383926c0bd83ccda",
+      "parents": ["aee5a632c5c29d82dd5be14b0344ad52209bcaba"],
+      "files": ["package-lock.json"]
+    }
+  },
+  "gitBlobs": {
+    "beforePackageLock": {
+      "sha": "59550e4250a09436aced1e823f5fe6bfa096e4a2",
+      "size": 204135
+    },
+    "afterPackageLock": {
+      "sha": "d97c70810ebc748614c6a6a364119579fcdb0308",
+      "size": 204058
+    },
+    "licenseMd": {
+      "sha": "881248b6d7f0ca2c4f65c41c0af5e02bb0680601",
+      "size": 1764
+    }
+  },
+  "bytes": {
+    "before": 204135,
+    "after": 204058,
+    "licenseMd": 1764,
+    "packageJson": 2849
+  },
+  "sha256": {
+    "before": "bd6ebe7138e0167883e29a6bf6a184de4d70de76fc88b3b68849a41789a3d0e9",
+    "after": "f88c43da0826c60a5b6c150134cb69640b3af75ef66b1e066db8ba9da99d9c15",
+    "licenseMd": "a49c9ba464796f65b59fca3f1e6ca40912df1e859f575383223f7ec6c5baae09",
+    "packageJson": "c6e8e925c5b497217143cfed58b26f49f84b2373bf83c23c914de1761bf06712"
+  },
+  "fixtures": [
+    {
+      "path": "fixtures/official/package-lock.before.json",
+      "role": "official-before",
+      "bytes": 204135,
+      "sha256": "bd6ebe7138e0167883e29a6bf6a184de4d70de76fc88b3b68849a41789a3d0e9"
+    },
+    {
+      "path": "fixtures/official/package-lock.after.json",
+      "role": "official-after",
+      "bytes": 204058,
+      "sha256": "f88c43da0826c60a5b6c150134cb69640b3af75ef66b1e066db8ba9da99d9c15"
+    },
+    {
+      "path": "fixtures/excerpt/package-lock.before.excerpt.json",
+      "role": "bounded-excerpt-before",
+      "bytes": 21888,
+      "sha256": "a335c49b0d25d073ade983023ade9ec16b5ca9a597a452d216707e2906c083bd",
+      "fullBlobSha256": "bd6ebe7138e0167883e29a6bf6a184de4d70de76fc88b3b68849a41789a3d0e9"
+    },
+    {
+      "path": "fixtures/excerpt/package-lock.after.excerpt.json",
+      "role": "bounded-excerpt-after",
+      "bytes": 21811,
+      "sha256": "a877c29a86c220f208971e1b1acd485bb2cc7af12afe0489b234bca2edc951f7",
+      "fullBlobSha256": "f88c43da0826c60a5b6c150134cb69640b3af75ef66b1e066db8ba9da99d9c15"
+    },
+    {
+      "path": "fixtures/excerpt/changed-pins.json",
+      "role": "independent-changed-pin-table",
+      "bytes": 27016,
+      "sha256": "4f581699053ee2f86b4585391cfc3557a65ad17b586073159089f05159dbd4fe"
+    },
+    {
+      "path": "fixtures/license/LICENSE.md",
+      "role": "license-at-sha",
+      "bytes": 1764,
+      "sha256": "a49c9ba464796f65b59fca3f1e6ca40912df1e859f575383223f7ec6c5baae09"
+    },
+    {
+      "path": "fixtures/license/package.json",
+      "role": "package-json-at-sha",
+      "bytes": 2849,
+      "sha256": "c6e8e925c5b497217143cfed58b26f49f84b2373bf83c23c914de1761bf06712"
+    }
+  ],
+  "kit": {
+    "package": "useful-jobs",
+    "version": "1.4.0",
+    "archive": "/tmp/h6d/wt/client/public/kit/useful-jobs-1.4.0.tar.gz",
+    "bytes": 2575215,
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f"
+  }
+}

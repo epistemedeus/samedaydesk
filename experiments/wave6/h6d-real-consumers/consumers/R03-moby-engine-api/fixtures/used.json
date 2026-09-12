@@ -1,0 +1,21 @@
+{
+  "operations": [
+    {
+      "method": "get",
+      "path": "/containers/json"
+    },
+    {
+      "method": "post",
+      "path": "/containers/create"
+    },
+    {
+      "method": "get",
+      "path": "/containers/{id}/json"
+    },
+    {
+      "method": "post",
+      "path": "/services/create"
+    }
+  ],
+  "pinNote": "Used Engine API operations around container list/create/inspect and swarm service create (TaskSpec Healthcheck rename lives under services)."
+}

@@ -1,0 +1,30 @@
+{
+  "id": "S01-jsonschema-recursive-anchor",
+  "family": "schemaWebhook",
+  "jobId": "json-schema-webhook-drift",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/S01-jsonschema-recursive-anchor/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "receiver": "H6D parent catalog + bin/select-job.mjs",
+  "exactInputs": {
+    "before": "fixtures/official/schema.before.json",
+    "after": "fixtures/official/schema.after.json",
+    "used": "fixtures/used/used-positive.json",
+    "flags": ["--before", "--after", "--used", "--out-dir"]
+  },
+  "outcome": {
+    "outputs": ["drift-brief.json", "drift-brief.md"],
+    "usedPointer": "/properties/$recursiveAnchor/type",
+    "fact": "$recursiveAnchor type keyword added (boolean) between 63fbd7bf561a6ef04a38fd63589a3d93d1c149ff and c028e943ab213531f55e60ff6a2b1202f5d443c6",
+    "engineStatus": "actionable",
+    "engineClassAtTypePointer": "added",
+    "notOpenApi": true,
+    "notRuntimeCompatibilityProof": true
+  },
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "migration": {
+    "equivalent": false,
+    "id": "openapi-as-json-schema",
+    "note": "OpenAPI documents refuse not-this-job-openapi. This consumer is JSON Schema meta-schema used pointers, not OpenAPI operations."
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "id": "P01-nodejs-org-sitejson",
+  "status": "pass",
+  "testsPass": true,
+  "testCounts": {
+    "pass": 9,
+    "fail": 0,
+    "skipped": 0
+  },
+  "family": "pageSnapshots",
+  "jobId": "page-change-offline-job",
+  "usefulJobs": "1.4.0",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/P01-nodejs-org-sitejson/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "source": {
+    "repo": "nodejs/nodejs.org",
+    "path": "apps/site/site.json",
+    "license": "MIT",
+    "beforeSha": "aad2540a476ff94fa8419dc3a0a5e37c413b2ee1",
+    "afterSha": "71f7fdc56a1c9381abc5da60d991c089f8891893",
+    "beforeDate": "2026-07-29T14:26:33Z",
+    "afterDate": "2026-08-19T21:34:28Z"
+  },
+  "engine": {
+    "verdict": "changed",
+    "complete": true,
+    "claimsFresh": false,
+    "charged": false,
+    "networkUsed": false,
+    "merchantCompareImported": false,
+    "usefulOutputProven": true,
+    "paymentImpliesUsefulOutput": false,
+    "summary": {
+      "matched": 1,
+      "semantic": 3,
+      "coverageUnknown": 0
+    },
+    "changePaths": ["/headings/h2", "/jsonLd/hasPart", "/text"]
+  },
+  "witness": {
+    "fact": "selected fields changed: text, jsonLd, headings",
+    "changed": ["text", "jsonLd", "headings"],
+    "unchanged": ["title", "description"],
+    "added": [],
+    "removed": [],
+    "unknown": [],
+    "primarySource": "websiteBadges.index Discover/New migration guides → Be Heard/Take the Node.js User Survey 2026"
+  },
+  "engineAgreesWithWitness": true,
+  "regressionArtifact": null,
+  "control": {
+    "verdict": "unchanged",
+    "noChangeProven": true,
+    "claimsFresh": false
+  },
+  "negatives": {
+    "missingClock": "clock_required",
+    "liveFetchUrl": "live_fetch_url",
+    "example": "sample_as_delivered_watch"
+  },
+  "migration": {
+    "id": "html-to-extract-batch",
+    "equivalent": false
+  },
+  "honesty": [
+    "site.json vendor snapshot is not HTML and is not a live page fetch",
+    "mapping onto extract-batch selected fields is a labeled non-equivalent projection",
+    "claims.fresh stays false; charged is false; clock is required",
+    "--example is refused (sample_as_delivered_watch)",
+    "no live URL / --fetch on the job path",
+    "not SDS schema-validator.html, resources.html, or /x402/verified",
+    "title and description are unchanged; the selected-field change is the Next 10 survey badge",
+    "no payment, credits, signing, or site publication",
+    "independent witness does not import kit engines"
+  ]
+}

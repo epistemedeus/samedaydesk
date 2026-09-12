@@ -1,0 +1,11 @@
+{
+  "id": "R02-stripe-openapi-routes",
+  "family": "apiRoutes",
+  "jobId": "api-upgrade-brief",
+  "repo": "stripe/openapi",
+  "license": "MIT or Apache-2.0 (record actual)",
+  "path": "openapi/spec3.yaml (prefer yaml); excerpt used ops only",
+  "beforeShaFull": "af5309cae53e",
+  "afterShaFull": "30d3391cc09a",
+  "hint": "Stripe OpenAPI GA spec 2026-07-29 \u2192 2026-08-26. Used ops around /v1/customers /v1/charges /v1/payment_intents \u2014 NOT OpenAI. Bounded excerpts. Independent witness on method+path. Honesty: not a runtime compatibility proof."
+}

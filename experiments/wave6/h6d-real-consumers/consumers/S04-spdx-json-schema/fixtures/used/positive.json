@@ -1,0 +1,13 @@
+{
+  "pointers": [
+    "/type",
+    "/$schema",
+    "/properties",
+    "/properties/name",
+    "/properties/spdxVersion",
+    "/properties/@context",
+    "/$defs",
+    "/oneOf"
+  ],
+  "note": "Pointers that exist in both SPDX 2.3 and 3.0.1 JSON Schemas (/type, /$schema, /properties) plus 2.3 name/spdxVersion fields and 3.x-only /$defs, /oneOf, /properties/@context. Not OpenAPI."
+}

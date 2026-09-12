@@ -1,0 +1,55 @@
+{
+  "schema": "h6d.acquisition.v1",
+  "id": "R02-stripe-openapi-routes",
+  "repo": "stripe/openapi",
+  "sourceUrl": "https://github.com/stripe/openapi",
+  "path": "openapi/spec3.yaml",
+  "beforeSha": "af5309cae53e5f666f9686dfed306d6d3b5fdc67",
+  "afterSha": "30d3391cc09a0f67ad29bee002f570811b19e1da",
+  "license": "MIT",
+  "licenseUrl": "https://github.com/stripe/openapi/blob/master/LICENSE",
+  "retrievedAt": "2026-09-12T06:51:00Z",
+  "method": "GitHub REST API commits/contents + raw.githubusercontent.com GET of official bytes",
+  "purchaseAuthority": false,
+  "liveStripe": false,
+  "bytes": {
+    "before.yaml": 6364174,
+    "after.yaml": 6409430,
+    "license": 1095
+  },
+  "sha256": {
+    "before.yaml": "707de00b0616e606fa4a388ce840ff6cb2dd0bafe7abb1c2cc6da8b6d8a2f76e",
+    "after.yaml": "2e0ce56f026b1862dd772061c839a2c8ca9cc3e180f8bb22d7694b8ba214d203",
+    "license": "8c1ce883f4eee7b531e0b7872dbfc72d410ced87dfff9501305de05ca8d203e5",
+    "excerptBefore": "182caeb8913cea45a5d371ca5c16abae6b3b861cbaf145af065ac986cef17a54",
+    "excerptAfter": "2b2dde6b666be91e9ece5e73907d6db9879fb0ca1a44b23b9c42c7394cb19162",
+    "used": "f1ed0f1855dfb7f442eda45d05b8d0e91f946dad5506fed2ba0b149ba87445d7"
+  },
+  "gitBlobSha": {
+    "before.yaml": "af83746c4127e796001c415467aab22bdba49e8d",
+    "after.yaml": "18566899c6efa112dc63563f1446ca430906642c",
+    "license": "edf2d132d8bb95146e05585c3a782d059298b46b"
+  },
+  "commits": {
+    "before": {
+      "sha": "af5309cae53e5f666f9686dfed306d6d3b5fdc67",
+      "date": "2026-07-29T18:38:34Z",
+      "htmlUrl": "https://github.com/stripe/openapi/commit/af5309cae53e5f666f9686dfed306d6d3b5fdc67"
+    },
+    "after": {
+      "sha": "30d3391cc09a0f67ad29bee002f570811b19e1da",
+      "date": "2026-08-26T17:57:44Z",
+      "htmlUrl": "https://github.com/stripe/openapi/commit/30d3391cc09a0f67ad29bee002f570811b19e1da"
+    }
+  },
+  "stored": {
+    "excerpts": [
+      "fixtures/openapi/before.yaml",
+      "fixtures/openapi/after.yaml",
+      "fixtures/used.json",
+      "fixtures/LICENSE"
+    ],
+    "fullSpecsStored": false,
+    "fullBlobProvenance": "fixtures/provenance/full-blob.json"
+  }
+}

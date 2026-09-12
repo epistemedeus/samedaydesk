@@ -1,0 +1,11 @@
+{
+  "id": "P02-express-docs",
+  "family": "pageSnapshots",
+  "jobId": "page-change-offline-job",
+  "repo": "expressjs/expressjs.com",
+  "license": "CC-BY-4.0 or MIT (record actual)",
+  "path": "docs/content.md",
+  "beforeShaFull": "ba98cc468032",
+  "afterShaFull": "be31ea3fc5ba",
+  "hint": "Express docs content.md CodeTabs addition. Derive title/headings/text from the markdown into extract-batch.v0. Not a live fetch. Independent witness on selected fields. Do not use SDS schema-validator/resources/x402-verified pages."
+}

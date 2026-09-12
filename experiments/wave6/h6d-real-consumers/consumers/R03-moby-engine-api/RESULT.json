@@ -1,0 +1,85 @@
+{
+  "id": "R03-moby-engine-api",
+  "status": "complete",
+  "testsPass": true,
+  "testCounts": {
+    "pass": 11,
+    "fail": 0,
+    "skipped": 0
+  },
+  "testCommand": "NODE_OPTIONS=--max-old-space-size=768 node --test test/consumer.test.mjs",
+  "family": "apiRoutes",
+  "jobId": "route-table-diff",
+  "secondaryJobId": "api-upgrade-brief",
+  "usefulJobs": "1.4.0",
+  "usefulJobsSha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/R03-moby-engine-api/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "source": {
+    "repo": "moby/moby",
+    "path": "api/swagger.yaml",
+    "license": "Apache-2.0",
+    "beforeSha": "235d2876f80fff1ee13378646a4d41a4c670a052",
+    "afterSha": "2803839c3f30344de950e35dfe5cc4e1e170cb0d",
+    "beforeBytes": 473773,
+    "afterBytes": 473773,
+    "beforeSha256": "abd97457e0c5aa5646f466516de9daf7bd81722c0ab96a47fb2ac393023cbab6",
+    "afterSha256": "f09a22ad220d551dca5d6c402052204d3e9fd1f16943cd78ba6677ea1266616f"
+  },
+  "engine": {
+    "job": "route-table-diff",
+    "outcome": "no-change",
+    "breaking": false,
+    "publishedRouteTable": false,
+    "sample": false,
+    "counts": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "titleOnly": 0,
+      "collisions": 0
+    },
+    "tableDigest": {
+      "before": "sha256:6afc5c8fc06aa29d13b32d91519349b1c117417cd8ff81217556efc752d6b822",
+      "after": "sha256:6afc5c8fc06aa29d13b32d91519349b1c117417cd8ff81217556efc752d6b822"
+    }
+  },
+  "witness": {
+    "fact": "swagger-path-set",
+    "added": [],
+    "removed": [],
+    "changed": [],
+    "unchangedCount": 98,
+    "operationCount": 108,
+    "agreesWithEngineOnPathSet": true
+  },
+  "secondary": {
+    "job": "api-upgrade-brief",
+    "swagger2Refused": false,
+    "status": "informational",
+    "summary": "No used-operation structural delta",
+    "regressionArtifact": false,
+    "note": "api-upgrade-brief accepted Swagger 2.0. No regression-artifact.json (refusal did not occur). Not a runtime compatibility proof."
+  },
+  "negative": {
+    "rawSwaggerJson": "unsupported_catalog",
+    "rawSwaggerYaml": "invalid_catalog"
+  },
+  "migration": {
+    "id": "openapi-to-sds-route-table",
+    "equivalent": false,
+    "authority": "caller",
+    "publishedRouteTable": false
+  },
+  "honesty": [
+    "Swagger 2.0 is not an SDS route catalog. Projection drops methods, parameters, and definitions.",
+    "Official pair path set is unchanged. HealthCheck→Healthcheck is a TaskSpec definition property rename.",
+    "HostConfig.Umask is present in both SHAs (added in the before commit).",
+    "route-table-diff no-change matches the independent path-set witness. That is the official-pair fact, not a missed path add.",
+    "No token, payment, customer, or live-fetch claims. purchaseAuthority=false.",
+    "Engines were not edited."
+  ],
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "networkOnJobPath": false
+}

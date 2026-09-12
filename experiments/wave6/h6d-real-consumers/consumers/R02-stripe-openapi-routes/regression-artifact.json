@@ -1,0 +1,57 @@
+{
+  "schema": "h6d.regression-artifact.v1",
+  "engineUnmodified": true,
+  "kit": "useful-jobs-1.4.0",
+  "jobId": "api-upgrade-brief",
+  "family": "openapi-used-ops",
+  "inputs": {
+    "before": "fixtures/openapi/before.yaml",
+    "after": "fixtures/openapi/after.yaml",
+    "used": "fixtures/used.json"
+  },
+  "exit": 0,
+  "stdout": {
+    "ok": true,
+    "appId": "api-upgrade-brief",
+    "status": "partial",
+    "digest": "80406499046673ab",
+    "actions": 1
+  },
+  "engineClaim": {
+    "briefStatus": "partial",
+    "summary": "No used-operation structural delta",
+    "actions": [
+      {
+        "priority": "low",
+        "kind": "no-used-op-delta",
+        "note": "No structural delta on used operations; not a runtime compatibility proof"
+      }
+    ],
+    "gaps": "57 missing-local-ref entries because bounded excerpts omit the component schema graph"
+  },
+  "provenFact": {
+    "source": "stripe/openapi openapi/spec3.yaml",
+    "beforeSha": "af5309cae53e5f666f9686dfed306d6d3b5fdc67",
+    "afterSha": "30d3391cc09a0f67ad29bee002f570811b19e1da",
+    "methodPathPresence": "unchanged for the 13 used ops",
+    "nestedRequestBody": [
+      "POST /v1/payment_intents allowed_payment_method_types.items.enum added touch_n_go",
+      "POST /v1/payment_intents/{intent}/confirm same enum add",
+      "POST /v1/customers/{customer}/subscriptions added payment_settings.payment_method_options.billie"
+    ],
+    "evidence": "fixtures/observed-nested-deltas.json"
+  },
+  "independentWitness": {
+    "fact": "openapi-method-path",
+    "added": [],
+    "removed": [],
+    "changed": [
+      "POST /v1/payment_intents",
+      "POST /v1/payment_intents/{intent}/confirm",
+      "POST /v1/customers/{customer}/subscriptions"
+    ],
+    "note": "Changed = used operation object digest differs. Identity remains method+path."
+  },
+  "classification": "fingerprint-depth-and-omitted-components",
+  "note": "Engine requestBody fingerprint uses property type/format/ref/enum at depth 1, so items.enum and nested billie do not become impact.changed. Omitted component $refs become assessment-gaps. Kit engine left unmodified. Not a runtime compatibility proof."
+}

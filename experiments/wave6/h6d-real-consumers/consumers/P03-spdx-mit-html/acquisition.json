@@ -1,0 +1,127 @@
+{
+  "schema": "h6d.acquisition.v1",
+  "id": "P03-spdx-mit-html",
+  "repo": "spdx/license-list-data",
+  "htmlUrl": "https://github.com/spdx/license-list-data",
+  "path": "html/MIT.html plus optional jsonld/MIT.jsonld as structured sibling",
+  "beforeSha": "f75839ee25cde2383fab299f6d8fc94a442f444b",
+  "afterSha": "7e10095e0c9028c9e7109df00d15db46411a3378",
+  "beforeDate": "2024-12-19T09:39:35Z",
+  "afterDate": "2026-04-10T14:35:52Z",
+  "license": "CC-BY-3.0 AND original MIT license-text terms (SPDX license-list NOTICE)",
+  "licenseNotes": [
+    "GitHub license API 404; repo license field null (NOASSERTION).",
+    "No LICENSE or NOTICE file at repository root.",
+    "accessingLicenses.md Tech Report License: CC-BY-3.0.",
+    "README: generated data from license-list-XML / LicenseListPublisher.",
+    "MIT license text remains MIT License terms."
+  ],
+  "retrievedAt": "2026-09-12T06:53:00.000Z",
+  "method": "GitHub REST API commits + contents (metadata) and raw.githubusercontent.com (file bytes). User-Agent h6d-p03-spdx-mit-html. No live page fetch on the job path.",
+  "usefulJobs": {
+    "version": "1.4.0",
+    "archive": "client/public/kit/useful-jobs-1.4.0.tar.gz",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215
+  },
+  "blobs": {
+    "htmlBefore": {
+      "gitSha": "f75839ee25cde2383fab299f6d8fc94a442f444b",
+      "gitBlobSha": "5b4bb0b9203f6394e666ff0816ccefa1a56da699",
+      "bytes": 2909,
+      "sha256": "b749d91c8afaf1c3400b0a8a23eacebddcea0a6fbe7303b70430cc7254a3f6c3"
+    },
+    "htmlAfter": {
+      "gitSha": "7e10095e0c9028c9e7109df00d15db46411a3378",
+      "gitBlobSha": "17dcd22e6320f2adefc25ba8b5dae9527f7f9f21",
+      "bytes": 2956,
+      "sha256": "7dffa7ddfbc27ff214bca363629533cfd081e08fc8c15cfc021bef4e89a71c6a"
+    },
+    "jsonldBefore": {
+      "gitSha": "f75839ee25cde2383fab299f6d8fc94a442f444b",
+      "gitBlobSha": "c80efa3b827b2edaa01b657b18e982b9bdb7a1ca",
+      "bytes": 8118,
+      "sha256": "5eae282a5c584bc58ab5d5b34857c88406230c8049f7294495236fed28d7f973"
+    },
+    "jsonldAfter": {
+      "gitSha": "7e10095e0c9028c9e7109df00d15db46411a3378",
+      "gitBlobSha": "f438287762278a75d40ca243a7c31d919dd61b25",
+      "bytes": 10473,
+      "sha256": "b38bd3237ca64348c3861dc6a8f98a5809720b3c8165c57fb2fa7d9f1a8be902"
+    }
+  },
+  "files": [
+    {
+      "path": "fixtures/official/html.MIT.f75839ee25cd.html",
+      "bytes": 2909,
+      "sha256": "b749d91c8afaf1c3400b0a8a23eacebddcea0a6fbe7303b70430cc7254a3f6c3"
+    },
+    {
+      "path": "fixtures/official/html.MIT.7e10095e0c90.html",
+      "bytes": 2956,
+      "sha256": "7dffa7ddfbc27ff214bca363629533cfd081e08fc8c15cfc021bef4e89a71c6a"
+    },
+    {
+      "path": "fixtures/official/jsonld.MIT.f75839ee25cd.jsonld",
+      "bytes": 8118,
+      "sha256": "5eae282a5c584bc58ab5d5b34857c88406230c8049f7294495236fed28d7f973"
+    },
+    {
+      "path": "fixtures/official/jsonld.MIT.7e10095e0c90.jsonld",
+      "bytes": 10473,
+      "sha256": "b38bd3237ca64348c3861dc6a8f98a5809720b3c8165c57fb2fa7d9f1a8be902"
+    },
+    {
+      "path": "fixtures/official/README.md",
+      "bytes": 6696,
+      "sha256": "9d5e2eaa0daa05418074f90201d1e320fd3792018fe1a2ffdc3ebf69c9fffc44"
+    },
+    {
+      "path": "fixtures/official/NOTICE.md",
+      "bytes": 1225,
+      "sha256": "b99bec7725b5349e04bc73db64c0327d0378d3ca7a847e5e687c0f905f536009"
+    },
+    {
+      "path": "fixtures/official/commit.before.json",
+      "bytes": 620,
+      "sha256": "e55b6aac328140e3bc9e853fc02934e8356ae1bd5fbb1a1780fb18e208875546"
+    },
+    {
+      "path": "fixtures/official/commit.after.json",
+      "bytes": 620,
+      "sha256": "7aaf46e74d6074c79665434ad3b5cc36931035a63abdb875c538d739ea58ed5a"
+    },
+    {
+      "path": "fixtures/official/contents.html.before.json",
+      "bytes": 563,
+      "sha256": "c5b085c951f1805639ccd474ddf084fcbec3b4f899b40e0a5f1ae67adc13dd28"
+    },
+    {
+      "path": "fixtures/official/contents.html.after.json",
+      "bytes": 563,
+      "sha256": "c68bd2a24ef39ff8d9daf214135f8ad56b5265436daa1dc25f483bb3b11a3753"
+    },
+    {
+      "path": "fixtures/official/contents.jsonld.before.json",
+      "bytes": 577,
+      "sha256": "d8876d39b9406d87dd6fc8220477f5732dab50a16c3ff3da24d6c09202779f59"
+    },
+    {
+      "path": "fixtures/official/contents.jsonld.after.json",
+      "bytes": 578,
+      "sha256": "92ccf96b32e7e9b2f620c8a08ed576aacbde222ec019bf99f77104d90dfb153c"
+    },
+    {
+      "path": "fixtures/held/before.json",
+      "bytes": 4043,
+      "sha256": "924b46c8903ad0ce3700fc691142917a739addb24aea929605c07a7de721b079"
+    },
+    {
+      "path": "fixtures/held/after.json",
+      "bytes": 4220,
+      "sha256": "4c7981b0bd2d55aaa3a9c1487f629d0947942bf0a238bbc48b1a3d3fcebc2559"
+    }
+  ],
+  "purchaseAuthority": false,
+  "liveFetch": false
+}

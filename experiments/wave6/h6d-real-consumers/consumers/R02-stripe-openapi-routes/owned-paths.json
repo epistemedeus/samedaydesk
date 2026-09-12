@@ -1,0 +1,33 @@
+{
+  "id": "R02-stripe-openapi-routes",
+  "family": "apiRoutes",
+  "jobId": "api-upgrade-brief",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/R02-stripe-openapi-routes/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "receiving": {
+    "catalog": "experiments/wave6/h6d-real-consumers/catalog/ASSIGNMENT.json",
+    "selectJob": "experiments/wave6/h6d-real-consumers/bin/select-job.mjs"
+  },
+  "exactInputs": {
+    "before": "fixtures/openapi/before.yaml",
+    "after": "fixtures/openapi/after.yaml",
+    "used": "fixtures/used.json"
+  },
+  "outputs": [
+    "upgrade-brief.json",
+    "upgrade-brief.md"
+  ],
+  "outcome": "Offline api-upgrade-brief over bounded Stripe OpenAPI used ops around /v1/customers, /v1/charges, and /v1/payment_intents.",
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "liveStripe": false,
+  "migration": {
+    "id": "openapi-to-sds-route-table",
+    "equivalent": false,
+    "from": "OpenAPI path + method (+ operationId)",
+    "to": "samedaydesk.route-table.v1 {path, canonical, title, robots?}",
+    "dropped": ["httpMethod", "operationId", "parameters", "requestBody", "responses"],
+    "applied": false,
+    "note": "This consumer stays on api-upgrade-brief method+path. OpenAPI path maps are not SDS route catalogs."
+  }
+}

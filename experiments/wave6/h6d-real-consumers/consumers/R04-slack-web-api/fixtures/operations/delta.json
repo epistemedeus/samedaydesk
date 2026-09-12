@@ -1,0 +1,335 @@
+{
+  "beforeSha": "3f1e8b4a03855cb29cffbfcaf60195e5867780ea",
+  "afterSha": "dfea73e06d146c368d7f94b52ac90796dc4e27e1",
+  "counts": {
+    "before": 185,
+    "after": 174,
+    "added": 32,
+    "removed": 43,
+    "unchanged": 142
+  },
+  "added": [
+    {
+      "method": "GET",
+      "path": "/admin.conversations.ekm.listOriginalConnectedChannelInfo"
+    },
+    {
+      "method": "GET",
+      "path": "/admin.conversations.getConversationPrefs"
+    },
+    {
+      "method": "GET",
+      "path": "/admin.conversations.getTeams"
+    },
+    {
+      "method": "GET",
+      "path": "/admin.conversations.restrictAccess.listGroups"
+    },
+    {
+      "method": "GET",
+      "path": "/admin.conversations.search"
+    },
+    {
+      "method": "GET",
+      "path": "/admin.usergroups.listChannels"
+    },
+    {
+      "method": "GET",
+      "path": "/apps.event.authorizations.list"
+    },
+    {
+      "method": "GET",
+      "path": "/calls.info"
+    },
+    {
+      "method": "GET",
+      "path": "/workflows.stepCompleted"
+    },
+    {
+      "method": "GET",
+      "path": "/workflows.stepFailed"
+    },
+    {
+      "method": "GET",
+      "path": "/workflows.updateStep"
+    },
+    {
+      "method": "POST",
+      "path": "/admin.conversations.archive"
+    },
+    {
+      "method": "POST",
+      "path": "/admin.conversations.convertToPrivate"
+    },
+    {
+      "method": "POST",
+      "path": "/admin.conversations.create"
+    },
+    {
+      "method": "POST",
+      "path": "/admin.conversations.delete"
+    },
+    {
+      "method": "POST",
+      "path": "/admin.conversations.disconnectShared"
+    },
+    {
+      "method": "POST",
+      "path": "/admin.conversations.invite"
+    },
+    {
+      "method": "POST",
+      "path": "/admin.conversations.rename"
+    },
+    {
+      "method": "POST",
+      "path": "/admin.conversations.restrictAccess.addGroup"
+    },
+    {
+      "method": "POST",
+      "path": "/admin.conversations.restrictAccess.removeGroup"
+    },
+    {
+      "method": "POST",
+      "path": "/admin.conversations.setConversationPrefs"
+    },
+    {
+      "method": "POST",
+      "path": "/admin.conversations.unarchive"
+    },
+    {
+      "method": "POST",
+      "path": "/admin.usergroups.addChannels"
+    },
+    {
+      "method": "POST",
+      "path": "/admin.usergroups.addTeams"
+    },
+    {
+      "method": "POST",
+      "path": "/admin.usergroups.removeChannels"
+    },
+    {
+      "method": "POST",
+      "path": "/admin.users.session.invalidate"
+    },
+    {
+      "method": "POST",
+      "path": "/calls.add"
+    },
+    {
+      "method": "POST",
+      "path": "/calls.end"
+    },
+    {
+      "method": "POST",
+      "path": "/calls.participants.add"
+    },
+    {
+      "method": "POST",
+      "path": "/calls.participants.remove"
+    },
+    {
+      "method": "POST",
+      "path": "/calls.update"
+    },
+    {
+      "method": "POST",
+      "path": "/conversations.mark"
+    }
+  ],
+  "removed": [
+    {
+      "method": "GET",
+      "path": "/channels.history"
+    },
+    {
+      "method": "GET",
+      "path": "/channels.info"
+    },
+    {
+      "method": "GET",
+      "path": "/channels.list"
+    },
+    {
+      "method": "GET",
+      "path": "/channels.replies"
+    },
+    {
+      "method": "GET",
+      "path": "/groups.history"
+    },
+    {
+      "method": "GET",
+      "path": "/groups.info"
+    },
+    {
+      "method": "GET",
+      "path": "/groups.list"
+    },
+    {
+      "method": "GET",
+      "path": "/groups.replies"
+    },
+    {
+      "method": "GET",
+      "path": "/im.history"
+    },
+    {
+      "method": "GET",
+      "path": "/im.list"
+    },
+    {
+      "method": "GET",
+      "path": "/im.replies"
+    },
+    {
+      "method": "GET",
+      "path": "/mpim.history"
+    },
+    {
+      "method": "GET",
+      "path": "/mpim.list"
+    },
+    {
+      "method": "GET",
+      "path": "/mpim.replies"
+    },
+    {
+      "method": "POST",
+      "path": "/channels.archive"
+    },
+    {
+      "method": "POST",
+      "path": "/channels.create"
+    },
+    {
+      "method": "POST",
+      "path": "/channels.invite"
+    },
+    {
+      "method": "POST",
+      "path": "/channels.join"
+    },
+    {
+      "method": "POST",
+      "path": "/channels.kick"
+    },
+    {
+      "method": "POST",
+      "path": "/channels.leave"
+    },
+    {
+      "method": "POST",
+      "path": "/channels.mark"
+    },
+    {
+      "method": "POST",
+      "path": "/channels.rename"
+    },
+    {
+      "method": "POST",
+      "path": "/channels.setPurpose"
+    },
+    {
+      "method": "POST",
+      "path": "/channels.setTopic"
+    },
+    {
+      "method": "POST",
+      "path": "/channels.unarchive"
+    },
+    {
+      "method": "POST",
+      "path": "/groups.archive"
+    },
+    {
+      "method": "POST",
+      "path": "/groups.create"
+    },
+    {
+      "method": "POST",
+      "path": "/groups.createChild"
+    },
+    {
+      "method": "POST",
+      "path": "/groups.invite"
+    },
+    {
+      "method": "POST",
+      "path": "/groups.kick"
+    },
+    {
+      "method": "POST",
+      "path": "/groups.leave"
+    },
+    {
+      "method": "POST",
+      "path": "/groups.mark"
+    },
+    {
+      "method": "POST",
+      "path": "/groups.open"
+    },
+    {
+      "method": "POST",
+      "path": "/groups.rename"
+    },
+    {
+      "method": "POST",
+      "path": "/groups.setPurpose"
+    },
+    {
+      "method": "POST",
+      "path": "/groups.setTopic"
+    },
+    {
+      "method": "POST",
+      "path": "/groups.unarchive"
+    },
+    {
+      "method": "POST",
+      "path": "/im.close"
+    },
+    {
+      "method": "POST",
+      "path": "/im.mark"
+    },
+    {
+      "method": "POST",
+      "path": "/im.open"
+    },
+    {
+      "method": "POST",
+      "path": "/mpim.close"
+    },
+    {
+      "method": "POST",
+      "path": "/mpim.mark"
+    },
+    {
+      "method": "POST",
+      "path": "/mpim.open"
+    }
+  ],
+  "stableExamples": [
+    {
+      "method": "POST",
+      "path": "/chat.postMessage",
+      "presentBefore": true,
+      "presentAfter": true
+    },
+    {
+      "method": "GET",
+      "path": "/users.info",
+      "presentBefore": true,
+      "presentAfter": true
+    },
+    {
+      "method": "GET",
+      "path": "/conversations.list",
+      "presentBefore": true,
+      "presentAfter": true
+    }
+  ]
+}

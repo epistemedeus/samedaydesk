@@ -1,0 +1,12 @@
+{
+  "id": "p04-sds-useful-jobs-page-negative-live-url",
+  "title": "Negative: live URL as before path",
+  "clock": "2026-09-12T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "before": "https://samedaydesk.com/for-agents/useful-jobs",
+  "after": "../held/after.json"
+}

@@ -1,0 +1,138 @@
+{
+  "phase": "h6d_post_spawn_12",
+  "ts": "2026-09-12T06:49:32.191979+00:00",
+  "parentSessionId": "01a09456-c82b-7b41-ad58-e5557da52ed3",
+  "childrenStarted": 12,
+  "childIds": [
+    "01a09460-9b10-7690-9e59-a735507c071e",
+    "01a09460-9b10-7690-9e59-a74809f7eeee",
+    "01a09460-9b10-7690-9e59-a75bd2cc4cd7",
+    "01a09460-9b10-7690-9e59-a76eb806e174",
+    "01a09460-9b10-7690-9e59-a772f46d67ca",
+    "01a09460-9b10-7690-9e59-a782f4968305",
+    "01a09460-9b10-7690-9e59-a79f1bdd7933",
+    "01a09460-9b10-7690-9e59-a7acde3cd288",
+    "01a09460-9b10-7690-9e59-a7b0bfc37b2d",
+    "01a09460-9b10-7690-9e59-a7c0277e91ea",
+    "01a09460-9b10-7690-9e59-a7d55e176672",
+    "01a09460-9b10-7690-9e59-a7e6b0922672"
+  ],
+  "MemTotal_kB": 16398384,
+  "MemAvailable_kB": 10445792,
+  "MemFree_kB": 3525536,
+  "availablePct": 63.7,
+  "loadavg": [
+    "1.16",
+    "1.04",
+    "1.01"
+  ],
+  "nproc": 4,
+  "grokLikeCount": 5,
+  "grokLike": [
+    {
+      "rss_kB": 218220,
+      "pid": "289586",
+      "comm": "grok",
+      "args": "grok --prompt-file /tmp/h6d/heavy-logs/parent.prompt.md -m grok-4.6 --effort xhigh --output-format json --always-approve --cwd /tmp/h6d/wt"
+    },
+    {
+      "rss_kB": 10716,
+      "pid": "291480",
+      "comm": "bash",
+      "args": "/bin/bash -O extglob -c snap=$(command cat <&3); builtin shopt -s extglob 2>/dev/null; builtin shopt -s expand_aliases 2>/dev/null; builtin eval -- \"$snap\"; builtin export GROK_AGE"
+    },
+    {
+      "rss_kB": 8888,
+      "pid": "291113",
+      "comm": "bash",
+      "args": "/bin/bash -O extglob -c snap=$(command cat <&3) && builtin shopt -s extglob && builtin eval -- \"$snap\" && { builtin set +u 2>/dev/null || true; builtin eval \"${__CURSOR_SANDBOX_ENV"
+    },
+    {
+      "rss_kB": 7376,
+      "pid": "246035",
+      "comm": "bash",
+      "args": "/bin/bash -O extglob -c snap=$(command cat <&3) && builtin shopt -s extglob && builtin eval -- \"$snap\" && { builtin set +u 2>/dev/null || true; builtin eval \"${__CURSOR_SANDBOX_ENV"
+    },
+    {
+      "rss_kB": 3724,
+      "pid": "291063",
+      "comm": "bash",
+      "args": "bash -c  PARENT_PID=$(cat /tmp/h6d/heavy-logs/parent.pid) PARENT_SID=01a09456-c82b-7b41-ad58-e5557da52ed3 LOG=/tmp/h6d/heavy-logs/poll.log for i in $(seq 1 90); do   if ! ps -p $PA"
+    }
+  ],
+  "topRss": [
+    {
+      "rss_kB": 288864,
+      "pid": "7817",
+      "comm": "chrome",
+      "args": "/opt/google/chrome/chrome --no-sandbox --test-type --disable-dev-shm-usage --use-gl=angle --use-angle=swiftshader-webgl --password-store=basic --no-first-run --no-default-browser-c"
+    },
+    {
+      "rss_kB": 258164,
+      "pid": "237568",
+      "comm": "chrome",
+      "args": "/opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/ubuntu/.config/google-chrome --change-stack-guard-on-fork=enable "
+    },
+    {
+      "rss_kB": 243060,
+      "pid": "278",
+      "comm": "node",
+      "args": "/exec-daemon/node /exec-daemon/index.js serve --port 26053 --pty-websocket-port 26054 --auth-token 9e8e8d51dfe6649daeeae0afcf4adfc85ff6a5ce5d1ac2efae26112efd63b897 --rg-path /exec-"
+    },
+    {
+      "rss_kB": 230616,
+      "pid": "8177",
+      "comm": "chrome",
+      "args": "/opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/ubuntu/.config/google-chrome --change-stack-guard-on-fork=enable "
+    },
+    {
+      "rss_kB": 229824,
+      "pid": "12236",
+      "comm": "chrome",
+      "args": "/opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/ubuntu/.config/google-chrome --change-stack-guard-on-fork=enable "
+    },
+    {
+      "rss_kB": 228808,
+      "pid": "221631",
+      "comm": "chrome",
+      "args": "/opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/ubuntu/.config/google-chrome --change-stack-guard-on-fork=enable "
+    },
+    {
+      "rss_kB": 218220,
+      "pid": "289586",
+      "comm": "grok",
+      "args": "grok --prompt-file /tmp/h6d/heavy-logs/parent.prompt.md -m grok-4.6 --effort xhigh --output-format json --always-approve --cwd /tmp/h6d/wt"
+    },
+    {
+      "rss_kB": 139368,
+      "pid": "8063",
+      "comm": "chrome",
+      "args": "/opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/ubuntu/.config/google-chrome --change-stack-guard-on-fork=enable "
+    },
+    {
+      "rss_kB": 124332,
+      "pid": "7859",
+      "comm": "chrome",
+      "args": "/opt/google/chrome/chrome --type=gpu-process --no-sandbox --disable-dev-shm-usage --ozone-platform=x11 --use-angle=swiftshader-webgl --crashpad-handler-pid=0 --enable-crash-reporte"
+    },
+    {
+      "rss_kB": 119812,
+      "pid": "7864",
+      "comm": "chrome",
+      "args": "/opt/google/chrome/chrome --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --no-sandbox --disable-dev-shm-usage --use-angle=s"
+    },
+    {
+      "rss_kB": 113720,
+      "pid": "7759",
+      "comm": "node",
+      "args": "node /workspace/client/node_modules/.bin/vite preview --host 127.0.0.1 --port 4173"
+    },
+    {
+      "rss_kB": 109804,
+      "pid": "933",
+      "comm": "xfwm4",
+      "args": "xfwm4"
+    }
+  ],
+  "reserveRule": "expand to 16 only if ~25% MemAvailable remains after 12 admitted"
+}

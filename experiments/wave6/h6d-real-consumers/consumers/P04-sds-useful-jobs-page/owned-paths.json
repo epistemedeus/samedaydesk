@@ -1,0 +1,74 @@
+{
+  "schema": "h6d.owned-paths.v1",
+  "id": "P04-sds-useful-jobs-page",
+  "family": "pageSnapshots",
+  "jobId": "page-change-offline-job",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/P04-sds-useful-jobs-page/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "networkOnJobPath": false,
+  "liveFetch": false,
+  "charged": false,
+  "claimsFresh": false,
+  "exampleRefused": true,
+  "migration": {
+    "id": "html-to-extract-batch",
+    "equivalent": false,
+    "from": "UsefulJobs.tsx + first-byte USEFUL_JOBS_SHELL title/description",
+    "to": "samedaydesk.extract-batch.v0 selected fields title,description,headings",
+    "dropped": [
+      "unselected markup",
+      "live freshness",
+      "payment",
+      "React runtime",
+      "archive sha256 body copy"
+    ],
+    "note": "page-change-offline-job never fetches. claims.fresh stays false. Clock is required. HTML/TSX is not extract-batch."
+  },
+  "exactInputs": {
+    "job": "fixtures/held/job.json",
+    "before": "fixtures/held/before.json",
+    "after": "fixtures/held/after.json",
+    "fields": ["title", "description", "headings"],
+    "clock": "2026-09-12T12:00:00.000Z",
+    "cli": [
+      "node",
+      "bin/useful-jobs.mjs",
+      "run",
+      "page-change-offline-job",
+      "--job",
+      "fixtures/held/job.json",
+      "--out-dir",
+      "<out-dir>"
+    ]
+  },
+  "controlInputs": {
+    "job": "fixtures/control/job.json",
+    "note": "identical before=after held S260 batch"
+  },
+  "negativeInputs": {
+    "missingClock": "fixtures/negative/missing-clock.job.json",
+    "liveUrl": "fixtures/negative/live-url.job.json",
+    "htmlNotBatch": "fixtures/negative/html-not-batch.job.json"
+  },
+  "forbidden": [
+    "client/public/tools/schema-validator.html",
+    "client/public/resources.html",
+    "/x402/verified"
+  ],
+  "kit": {
+    "archive": "/tmp/h6d/wt/client/public/kit/useful-jobs-1.4.0.tar.gz",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215,
+    "extract": "vendor/useful-jobs-1.4.0/"
+  },
+  "outcome": {
+    "expectedVerdict": "changed",
+    "title": "unchanged",
+    "description": "changed",
+    "headings": "changed",
+    "claims.fresh": false,
+    "charged": false
+  }
+}

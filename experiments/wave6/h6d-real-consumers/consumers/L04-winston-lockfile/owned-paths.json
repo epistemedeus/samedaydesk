@@ -1,0 +1,62 @@
+{
+  "schema": "h6d.owned-paths.v1",
+  "id": "L04-winston-lockfile",
+  "family": "lockfile",
+  "jobId": "lockfile-pin-delta",
+  "receivingIntegrationOwner": "H6D-parent",
+  "receiving": {
+    "catalog": "experiments/wave6/h6d-real-consumers/catalog/ASSIGNMENT.json",
+    "selectJob": "experiments/wave6/h6d-real-consumers/bin/select-job.mjs"
+  },
+  "exclusiveDir": "experiments/wave6/h6d-real-consumers/consumers/L04-winston-lockfile/",
+  "ownedPaths": [
+    "experiments/wave6/h6d-real-consumers/consumers/L04-winston-lockfile/"
+  ],
+  "doNotWrite": [
+    "engines/",
+    "client/public/kit/",
+    "experiments/wave6/h6d-real-consumers/consumers/L01-commander-lockfile/",
+    "experiments/wave6/h6d-real-consumers/consumers/L02-yargs-lockfile/",
+    "experiments/wave6/h6d-real-consumers/consumers/L03-glob-lockfile/"
+  ],
+  "outcome": "npm lockfile-pin-delta of winstonjs/winston package-lock.json: async@3.2.5 → async@3.2.6 with integrity and resolved URL change (PR #2621).",
+  "exactInputs": {
+    "before": "fixtures/official/before/package-lock.json",
+    "after": "fixtures/official/after/package-lock.json",
+    "flags": ["--before", "--after", "--out-dir"],
+    "job": "lockfile-pin-delta",
+    "usefulJobs": "1.4.0"
+  },
+  "outputs": ["pin-delta.json", "pin-delta.md"],
+  "source": {
+    "repo": "winstonjs/winston",
+    "path": "package-lock.json",
+    "beforeSha": "4b963a9f5b1ef24efb6250354a108b80c0c6e7d9",
+    "afterSha": "96dccd6e32174c658149189abb6edb13572281b4",
+    "license": "MIT"
+  },
+  "control": {
+    "kind": "identical-before-after",
+    "inputs": {
+      "before": "fixtures/official/after/package-lock.json",
+      "after": "fixtures/official/after/package-lock.json"
+    }
+  },
+  "negative": {
+    "kind": "yarn.lock",
+    "input": "fixtures/negative/yarn.lock",
+    "engineCode": "parse-error",
+    "witnessCode": "yarn-lockfile",
+    "migration": "yarn-to-npm-lock",
+    "equivalent": false
+  },
+  "migration": null,
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "claims": {
+    "customer": false,
+    "paidCall": false,
+    "tokenArbitrage": false,
+    "liveFetch": false
+  }
+}

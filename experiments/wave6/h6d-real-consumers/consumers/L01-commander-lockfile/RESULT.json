@@ -1,0 +1,88 @@
+{
+  "schema": "h6d.consumer-result.v1",
+  "id": "L01-commander-lockfile",
+  "family": "lockfile",
+  "jobId": "lockfile-pin-delta",
+  "status": "pass",
+  "testsPass": true,
+  "testCounts": {
+    "pass": 6,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "testCommand": "NODE_OPTIONS=--max-old-space-size=768 node --test test/consumer.test.mjs",
+  "usefulJobs": "1.4.0",
+  "usefulJobsSha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+  "source": {
+    "repo": "tj/commander.js",
+    "path": "package-lock.json",
+    "license": "MIT",
+    "beforeSha": "9098b4863ef7678b9d138ae0f04afd949287510c",
+    "afterSha": "d785d8b3b9448952ef023a8cd26a0a3923a90458",
+    "beforeCommit": "Update dependencies (#2506)",
+    "afterCommit": "Update dependencies (#2518)",
+    "lockfileVersion": 3,
+    "bytes": { "before": 94671, "after": 95153, "license": 1098 },
+    "sha256": {
+      "before": "58f7587d6e2aaa12b3f82914c38af3774dabd1c6de2a5ca26741d4f2c3bbf528",
+      "after": "1ad36cdbfbbac6513de58c34772e4769670e6c484a7a2927b5e13a3ade0941d5",
+      "license": "04512a63dce4d2d506ad612dc0bd7681ccf6e3655f7b6eaef7dfac8323d1ec0b"
+    }
+  },
+  "pinDelta": {
+    "beforePins": 203,
+    "afterPins": 204,
+    "added": 1,
+    "removed": 0,
+    "changed": 25,
+    "unchanged": 178,
+    "addedPins": ["@humanfs/types@0.15.0"],
+    "spotlight": {
+      "typescript": "6.0.2 -> 6.0.3",
+      "eslint": "10.2.0 -> 10.4.0",
+      "prettier": "3.8.2 -> 3.8.3",
+      "@eslint/config-helpers": "0.5.5 -> 0.6.0"
+    }
+  },
+  "engineVsWitness": {
+    "positive": {
+      "agree": true,
+      "engineStatus": "actionable",
+      "witnessFact": "actionable",
+      "counts": { "added": 1, "removed": 0, "changed": 25, "unchanged": 178 }
+    },
+    "identicalControl": {
+      "agree": true,
+      "engineStatus": "informational",
+      "witnessFact": "identical",
+      "note": "Labels differ; both report added=removed=changed=0, unchanged=203."
+    },
+    "negativeYarn": {
+      "agreeOnRefuse": true,
+      "engineCode": "parse-error",
+      "witnessCode": "yarn-lock",
+      "engineExit": 2,
+      "note": "See regression-artifact.json. Engine still refuses yarn; code is JSON parse-error, not a dedicated yarn-lock id."
+    },
+    "negativePackageJsonOnly": {
+      "agree": true,
+      "engineCode": "package-json-only",
+      "witnessCode": "package-json-only",
+      "engineExit": 2
+    }
+  },
+  "honesty": [
+    "purchaseAuthority is false. No sale, settlement, or paid-call claim.",
+    "Job path is offline local files. Acquisition used GitHub raw/API once; adapter does not fetch.",
+    "yarn.lock is not converted to package-lock.json (labeled non-equivalent refuse).",
+    "package.json-only is refused.",
+    "--example / SAMPLE / H04 mocha-axios lock excerpts were not used as this pair.",
+    "Independent witness does not import kit engine compare modules.",
+    "Engine bytes were not edited. Yarn refuse-code naming is recorded in regression-artifact.json."
+  ],
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "receivingIntegrationOwner": "H6D-parent"
+}

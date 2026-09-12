@@ -1,0 +1,48 @@
+{
+  "id": "P01-nodejs-org-sitejson",
+  "family": "pageSnapshots",
+  "jobId": "page-change-offline-job",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/P01-nodejs-org-sitejson/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "networkOnJobPath": false,
+  "inputs": {
+    "job": "fixtures/jobs/positive.json",
+    "controlJob": "fixtures/jobs/control.json",
+    "before": "fixtures/batches/before.json",
+    "after": "fixtures/batches/after.json",
+    "fields": ["title", "description", "text", "jsonLd", "headings"],
+    "clock": "2026-09-12T12:00:00.000Z",
+    "cli": "vendor/useful-jobs-1.4.0/bin/useful-jobs.mjs",
+    "flags": ["run", "page-change-offline-job", "--job", "--out-dir"]
+  },
+  "outputs": ["page-change.json", "page-change.md"],
+  "negativeInputs": {
+    "missingClock": "fixtures/negative/missing-clock.json",
+    "liveFetchUrl": "fixtures/negative/live-fetch-url.json",
+    "exampleFlag": "--example"
+  },
+  "source": {
+    "repo": "nodejs/nodejs.org",
+    "path": "apps/site/site.json",
+    "beforeSha": "aad2540a476ff94fa8419dc3a0a5e37c413b2ee1",
+    "afterSha": "71f7fdc56a1c9381abc5da60d991c089f8891893",
+    "license": "MIT"
+  },
+  "migration": {
+    "id": "html-to-extract-batch",
+    "equivalent": false,
+    "from": "nodejs/nodejs.org apps/site/site.json vendor snapshot (title, description, websiteBanners, websiteBadges)",
+    "to": "samedaydesk.extract-batch.v0 selected fields title, description, text, jsonLd, headings",
+    "dropped": [
+      "favicon",
+      "accentColor",
+      "rssFeeds",
+      "unselected markup",
+      "live freshness",
+      "payment"
+    ],
+    "note": "Caller-owned mapping. page-change-offline-job never fetches. claims.fresh stays false. Clock is required. Not SDS schema-validator.html, resources.html, or /x402/verified."
+  }
+}

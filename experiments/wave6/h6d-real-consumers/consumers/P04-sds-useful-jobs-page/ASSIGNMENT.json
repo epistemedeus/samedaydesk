@@ -1,0 +1,11 @@
+{
+  "id": "P04-sds-useful-jobs-page",
+  "family": "pageSnapshots",
+  "jobId": "page-change-offline-job",
+  "repo": "epistemedeus/samedaydesk",
+  "license": "MIT (in-tree)",
+  "path": "client/src/pages/UsefulJobs.tsx (and first-byte shell title if present)",
+  "beforeShaFull": "abeb54eca9a71abe117898e8fe7de7e55e9d917f",
+  "afterShaFull": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+  "hint": "Held SDS useful-jobs page 1.3 surface \u2192 1.4.0 overlay. git show both SHAs; wrap title/description/headings. NOT H04 schema-validator.html, resources.html, or /x402/verified. Clock required. claims.fresh false. Local git only."
+}

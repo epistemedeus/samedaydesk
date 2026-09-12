@@ -1,0 +1,11 @@
+{
+  "id": "P01-nodejs-org-sitejson",
+  "family": "pageSnapshots",
+  "jobId": "page-change-offline-job",
+  "repo": "nodejs/nodejs.org",
+  "license": "MIT",
+  "path": "apps/site/site.json",
+  "beforeShaFull": "aad2540a476f",
+  "afterShaFull": "71f7fdc56a1c",
+  "hint": "Permitted structured vendor snapshot: Node.js site.json 2026-07-29 security-release blog \u2192 2026-08-19 Next 10 survey badge. Wrap BOTH revisions into samedaydesk.extract-batch.v0 held batches (product samedaydesk-extract-batch, clock required, claims.fresh false, charged false, no live URL/--fetch). Selected fields from SUPPORTED_FIELDS that actually exist in the JSON (title/description/text/jsonLd as mapped). --example is refused. Control: identical batches. Negative: missing clock or live_fetch_url."
+}

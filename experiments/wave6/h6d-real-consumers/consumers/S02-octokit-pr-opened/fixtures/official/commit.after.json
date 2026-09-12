@@ -1,0 +1,48 @@
+{
+  "sha": "0f5bd1859ef98b4b7513f415d3ec739f0819850c",
+  "html_url": "https://github.com/octokit/webhooks/commit/0f5bd1859ef98b4b7513f415d3ec739f0819850c",
+  "commit": {
+    "author": {
+      "name": "Gareth Jones",
+      "email": "Jones258@Gmail.com",
+      "date": "2021-03-20T23:30:43Z"
+    },
+    "committer": {
+      "name": "GitHub",
+      "email": "noreply@github.com",
+      "date": "2021-03-20T23:30:43Z"
+    },
+    "message": "fix: add `auto_merge` property to `PullRequest` interface (#408)",
+    "tree": {
+      "sha": "63478f3b1fda1824a50cf0bc0a43c35650fb3bce",
+      "url": "https://api.github.com/repos/octokit/webhooks/git/trees/63478f3b1fda1824a50cf0bc0a43c35650fb3bce"
+    },
+    "url": "https://api.github.com/repos/octokit/webhooks/git/commits/0f5bd1859ef98b4b7513f415d3ec739f0819850c"
+  },
+  "parents": [
+    {
+      "sha": "c7f0d67c07feac24862b294ac219afee5fe62b1b",
+      "html_url": "https://github.com/octokit/webhooks/commit/c7f0d67c07feac24862b294ac219afee5fe62b1b"
+    }
+  ],
+  "stats": {
+    "total": 55,
+    "additions": 55,
+    "deletions": 0
+  },
+  "files": [
+    {
+      "sha": "24579861a25974010bace8514fb980e242a470e1",
+      "filename": "payload-examples/api.github.com/pull_request/opened.payload.json",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1,
+      "blob_url": "https://github.com/octokit/webhooks/blob/0f5bd1859ef98b4b7513f415d3ec739f0819850c/payload-examples%2Fapi.github.com%2Fpull_request%2Fopened.payload.json",
+      "raw_url": "https://github.com/octokit/webhooks/raw/0f5bd1859ef98b4b7513f415d3ec739f0819850c/payload-examples%2Fapi.github.com%2Fpull_request%2Fopened.payload.json",
+      "contents_url": "https://api.github.com/repos/octokit/webhooks/contents/payload-examples%2Fapi.github.com%2Fpull_request%2Fopened.payload.json?ref=0f5bd1859ef98b4b7513f415d3ec739f0819850c",
+      "patch": "@@ -365,6 +365,7 @@\n       }\n     },\n     \"author_association\": \"OWNER\",\n+    \"auto_merge\": null,\n     \"active_lock_reason\": null,\n     \"draft\": false,\n     \"merged\": false,"
+    }
+  ],
+  "note": "Slimmed GitHub commits API response; only the official payload path file is retained."
+}

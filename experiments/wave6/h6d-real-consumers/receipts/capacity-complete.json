@@ -1,0 +1,18 @@
+{
+  "phase": "h6d_completion_boundary",
+  "ts": "2026-09-12T09:13:57.230543+00:00",
+  "parentSessionId": "01a09456-c82b-7b41-ad58-e5557da52ed3",
+  "MemTotal_kB": 16398384,
+  "MemAvailable_kB": 10409564,
+  "MemFree_kB": 1889552,
+  "availablePct": 63.48,
+  "usedApprox_kB": 5988820,
+  "loadavg": [
+    "1.53",
+    "1.23",
+    "1.13"
+  ],
+  "nproc": 4,
+  "peakConcurrentClaim": 16,
+  "note": "One-shot completion snapshot. Admission availablePct 64.17; after-12 63.70; expand 63.46. Memory never approached 25% reserve."
+}

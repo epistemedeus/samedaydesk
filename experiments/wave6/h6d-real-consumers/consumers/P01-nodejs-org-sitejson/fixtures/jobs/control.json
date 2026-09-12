@@ -1,0 +1,15 @@
+{
+  "id": "p01-nodejs-org-sitejson-control",
+  "title": "Identical before/after held batches",
+  "clock": "2026-09-12T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description",
+    "text",
+    "jsonLd",
+    "headings"
+  ],
+  "before": "../batches/before.json",
+  "after": "../batches/before.json",
+  "purchaseAuthority": false
+}

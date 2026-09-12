@@ -1,0 +1,40 @@
+{
+  "schema": "h6d.owned-paths.v1",
+  "id": "L03-glob-lockfile",
+  "family": "lockfile",
+  "jobId": "lockfile-pin-delta",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/L03-glob-lockfile/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "receiving": {
+    "catalog": "experiments/wave6/h6d-real-consumers/catalog/ASSIGNMENT.json",
+    "selectJob": "experiments/wave6/h6d-real-consumers/bin/select-job.mjs"
+  },
+  "outcome": "Pin-delta of npm package-lock name, version, integrity, and resolved for isaacs/node-glob aee5a632c5c29d82dd5be14b0344ad52209bcaba → 7df583d631ff191e2f71a62b383926c0bd83ccda. Not yarn/pnpm/bun. No purchase.",
+  "exactInputs": {
+    "before": "experiments/wave6/h6d-real-consumers/consumers/L03-glob-lockfile/fixtures/official/package-lock.before.json",
+    "after": "experiments/wave6/h6d-real-consumers/consumers/L03-glob-lockfile/fixtures/official/package-lock.after.json",
+    "flags": ["--before", "--after", "--out-dir"]
+  },
+  "outputs": ["pin-delta.json", "pin-delta.md"],
+  "source": {
+    "repo": "isaacs/node-glob",
+    "path": "package-lock.json",
+    "beforeSha": "aee5a632c5c29d82dd5be14b0344ad52209bcaba",
+    "afterSha": "7df583d631ff191e2f71a62b383926c0bd83ccda",
+    "license": "BlueOak-1.0.0"
+  },
+  "provenPins": {
+    "tap": { "id": "node_modules/tap", "before": "21.7.1", "after": "21.7.2" },
+    "uuid": { "id": "node_modules/uuid", "before": "8.3.2", "after": "14.0.0" },
+    "counts": { "added": 0, "removed": 0, "changed": 29, "unchanged": 374 }
+  },
+  "migration": {
+    "id": "yarn-to-npm-lock",
+    "equivalent": false,
+    "applied": false,
+    "note": "This consumer uses npm package-lock.json lockfileVersion 3. yarn.lock is a negative refuse, not a conversion."
+  },
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "sampleAsCustomer": false
+}

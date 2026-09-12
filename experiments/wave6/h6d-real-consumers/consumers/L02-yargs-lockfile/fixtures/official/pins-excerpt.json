@@ -1,0 +1,73 @@
+{
+  "note": "Bounded excerpt of representative registry pins. Full lockfiles stored beside this file; root packages[''] version 18.0.0\u219218.1.0 is not a registry pin.",
+  "lockfileVersion": 3,
+  "root": {
+    "name": "yargs",
+    "license": "MIT",
+    "beforeVersion": "18.0.0",
+    "afterVersion": "18.1.0",
+    "treatedAsRegistryPin": false
+  },
+  "registryPinCount": {
+    "before": 562,
+    "after": 562
+  },
+  "pins": [
+    {
+      "id": "node_modules/cliui",
+      "version": "9.0.1",
+      "resolved": "https://registry.npmjs.org/cliui/-/cliui-9.0.1.tgz",
+      "integrity": "sha512-k7ndgKhwoQveBL+/1tqGJYNz097I7WOvwbmmU2AR5+magtbjPWQTS1C5vzGkBC8Ym8UWRzfKUzUUqFLypY4Q+w==",
+      "identicalInAfter": true
+    },
+    {
+      "id": "node_modules/yargs-parser",
+      "version": "22.0.0",
+      "resolved": "https://registry.npmjs.org/yargs-parser/-/yargs-parser-22.0.0.tgz",
+      "integrity": "sha512-rwu/ClNdSMpkSrUb+d6BRsSkLUq1fmfsY6TOpYzTwvwkg1/NRG85KBy3kq++A8LKQwX6lsu+aWad+2khvuXrqw==",
+      "identicalInAfter": true
+    },
+    {
+      "id": "node_modules/escalade",
+      "version": "3.2.0",
+      "resolved": "https://registry.npmjs.org/escalade/-/escalade-3.2.0.tgz",
+      "integrity": "sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==",
+      "identicalInAfter": true
+    },
+    {
+      "id": "node_modules/string-width",
+      "version": "8.2.1",
+      "resolved": "https://registry.npmjs.org/string-width/-/string-width-8.2.1.tgz",
+      "integrity": "sha512-IIaP0g3iy9Cyy18w3M9YcaDudujEAVHKt3a3QJg1+sr/oX96TbaGUubG0hJyCjCBThFH+tFpcIyoUHUn1ogaLA==",
+      "identicalInAfter": true
+    },
+    {
+      "id": "node_modules/y18n",
+      "version": "5.0.8",
+      "resolved": "https://registry.npmjs.org/y18n/-/y18n-5.0.8.tgz",
+      "integrity": "sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==",
+      "identicalInAfter": true
+    },
+    {
+      "id": "node_modules/get-caller-file",
+      "version": "2.0.5",
+      "resolved": "https://registry.npmjs.org/get-caller-file/-/get-caller-file-2.0.5.tgz",
+      "integrity": "sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==",
+      "identicalInAfter": true
+    },
+    {
+      "id": "node_modules/c8",
+      "version": "11.0.0",
+      "resolved": "https://registry.npmjs.org/c8/-/c8-11.0.0.tgz",
+      "integrity": "sha512-e/uRViGHSVIJv7zsaDKM7VRn2390TgHXqUSvYwPHBQaU6L7E9L0n9JbdkwdYPvshDT0KymBmmlwSpms3yBaMNg==",
+      "identicalInAfter": true
+    },
+    {
+      "id": "node_modules/hashish",
+      "version": "0.0.4",
+      "resolved": "https://registry.npmjs.org/hashish/-/hashish-0.0.4.tgz",
+      "integrity": "sha512-xyD4XgslstNAs72ENaoFvgMwtv8xhiDtC2AtzCG+8yF7W/Knxxm9BX+e2s25mm+HxMKh0rBmXVOEGF3zNImXvA==",
+      "identicalInAfter": true
+    }
+  ]
+}

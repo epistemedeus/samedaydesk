@@ -1,0 +1,81 @@
+{
+  "schema": "h6d.acquisition.v1",
+  "id": "R01-github-rest-routes",
+  "family": "apiRoutes",
+  "jobId": "api-upgrade-brief",
+  "repo": "github/rest-api-description",
+  "repoUrl": "https://github.com/github/rest-api-description",
+  "beforeSha": "f5d6d10f019dd94650dec88de32057f299411304",
+  "afterSha": "e16cc2584c6d32e8cd4d461759e1475e79327d6c",
+  "path": "descriptions/api.github.com/api.github.com.yaml",
+  "pathJson": "descriptions/api.github.com/api.github.com.json",
+  "license": "MIT",
+  "licensePath": "LICENSE.md",
+  "retrievedAt": "2026-09-12T06:58:38Z",
+  "method": "github-api+raw",
+  "bytes": {
+    "beforeYaml": 9843603,
+    "afterYaml": 9858123,
+    "beforeJson": 12939954,
+    "afterJson": 12958925,
+    "license": 1063,
+    "subsetBefore": 187714,
+    "subsetAfter": 189586
+  },
+  "sha256": {
+    "beforeYaml": "7254025ca236412eec84f215ad61e706ede8ddffc00826ec6b61f553b6bd1e94",
+    "afterYaml": "51fa18cb44368560881cf1e6f7efe82ffe82f2bafb3c66df2bb650619b64bf07",
+    "beforeJson": "d779aab588af4c00bf3945342937358f715242f4c62390c3d27919ef840afbee",
+    "afterJson": "4340ac8202faa2cfe78eee40e0ff38fd08375ed6ed8507bfc43f720f0ee6df95",
+    "license": "3243761cbac07e6d169a5a2f4e7c25cc544da85248e735df74c3672e055cc87b",
+    "subsetBefore": "8a25fb335b2dcc049b6d0e6c6b3ca52097ab4ae0ee0d87081f68f9a50df9baa8",
+    "subsetAfter": "63681f235cc7124c2377443ca1cc13c8c801d70de805f7fae00cef3e4912d7f5"
+  },
+  "gitBlobSha": {
+    "beforeYaml": "5f3f175337fa8debc4bff807bf3915e6f12cf56f",
+    "afterYaml": "6a0c96aed0564c545744607ba745113a1c44db68",
+    "beforeJson": "67aebc6f48043ce5f4d151247be5b347ac7869b6",
+    "afterJson": "76261e8184764c6da524954c392ad6578cc0c039",
+    "license": "b50625eb63949013cae604b1cadd42cfa1eaf825"
+  },
+  "commits": {
+    "before": {
+      "short": "f5d6d10f019d",
+      "sha": "f5d6d10f019dd94650dec88de32057f299411304",
+      "message": "Update OpenAPI 3.0 Descriptions",
+      "committedAt": "2026-09-11T16:56:47Z",
+      "url": "https://github.com/github/rest-api-description/commit/f5d6d10f019dd94650dec88de32057f299411304"
+    },
+    "after": {
+      "short": "e16cc2584c6d",
+      "sha": "e16cc2584c6d32e8cd4d461759e1475e79327d6c",
+      "message": "Update OpenAPI 3.0 Descriptions",
+      "committedAt": "2026-09-12T04:12:34Z",
+      "url": "https://github.com/github/rest-api-description/commit/e16cc2584c6d32e8cd4d461759e1475e79327d6c"
+    }
+  },
+  "sourceUrls": {
+    "beforeYaml": "https://raw.githubusercontent.com/github/rest-api-description/f5d6d10f019dd94650dec88de32057f299411304/descriptions/api.github.com/api.github.com.yaml",
+    "afterYaml": "https://raw.githubusercontent.com/github/rest-api-description/e16cc2584c6d32e8cd4d461759e1475e79327d6c/descriptions/api.github.com/api.github.com.yaml",
+    "beforeJson": "https://raw.githubusercontent.com/github/rest-api-description/f5d6d10f019dd94650dec88de32057f299411304/descriptions/api.github.com/api.github.com.json",
+    "afterJson": "https://raw.githubusercontent.com/github/rest-api-description/e16cc2584c6d32e8cd4d461759e1475e79327d6c/descriptions/api.github.com/api.github.com.json",
+    "license": "https://raw.githubusercontent.com/github/rest-api-description/e16cc2584c6d32e8cd4d461759e1475e79327d6c/LICENSE.md"
+  },
+  "fixtures": {
+    "before": "fixtures/openapi/before.yaml",
+    "after": "fixtures/openapi/after.yaml",
+    "used": "fixtures/openapi/used.json",
+    "usedControl": "fixtures/openapi/used-control-git.json",
+    "license": "fixtures/official/LICENSE.md",
+    "fullBlob": "fixtures/official/full-blob.json",
+    "projectionBefore": "fixtures/projection/before.route-table.json",
+    "projectionAfter": "fixtures/projection/after.route-table.json"
+  },
+  "usedOperations": 15,
+  "fullSpecStored": false,
+  "openapi": "3.0.3",
+  "purchaseAuthority": false,
+  "networkOnJobPath": false,
+  "notOpenAI": true,
+  "notOctokitOrganizationRenamed": true
+}

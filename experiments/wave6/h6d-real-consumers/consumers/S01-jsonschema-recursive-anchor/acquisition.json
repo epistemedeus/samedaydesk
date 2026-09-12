@@ -1,0 +1,91 @@
+{
+  "id": "S01-jsonschema-recursive-anchor",
+  "family": "schemaWebhook",
+  "jobId": "json-schema-webhook-drift",
+  "repo": "json-schema-org/json-schema-spec",
+  "repoUrl": "https://github.com/json-schema-org/json-schema-spec",
+  "path": "schema.json",
+  "beforeSha": "63fbd7bf561a6ef04a38fd63589a3d93d1c149ff",
+  "afterSha": "c028e943ab213531f55e60ff6a2b1202f5d443c6",
+  "beforeShaPrefix": "63fbd7bf561a",
+  "afterShaPrefix": "c028e943ab21",
+  "beforeTitle": "fix broken reference",
+  "afterTitle": "fix the type for $recursiveAnchor",
+  "beforeUrl": "https://github.com/json-schema-org/json-schema-spec/commit/63fbd7bf561a6ef04a38fd63589a3d93d1c149ff",
+  "afterUrl": "https://github.com/json-schema-org/json-schema-spec/commit/c028e943ab213531f55e60ff6a2b1202f5d443c6",
+  "license": "AFL or BSD (unversioned README statement; LICENSE file absent at both SHAs)",
+  "licenseAtSha": {
+    "spdx": null,
+    "licenseFile": null,
+    "readmePath": "README.md",
+    "readmeStatement": "The source material in this repository is licensed under the AFL or BSD license.",
+    "assignmentHintNotUsed": "Apache-2.0 OR BSD-3-Clause",
+    "laterMainNotInTree": {
+      "sha": "51326f80900357fe3069beb4f5f575db24c1b9a7",
+      "note": "Specifies BSD-3-Clause and AFL-3.0; GitHub compare vs afterSha is diverged; LICENSE bytes are not in the after tree"
+    }
+  },
+  "retrievedAt": "2026-09-12T06:50:00Z",
+  "method": "GitHub REST commits API + raw.githubusercontent.com (schema.json, README.md)",
+  "usedPointers": {
+    "positive": [
+      "/properties/$recursiveAnchor/type",
+      "/properties/$recursiveRef/type",
+      "/title"
+    ],
+    "keywordObject": [
+      "/properties/$recursiveAnchor"
+    ],
+    "control": [
+      "/properties/$recursiveRef/type",
+      "/title",
+      "/type"
+    ],
+    "verified": {
+      "/properties/$recursiveAnchor": "keyword object present in both; type axis absent → boolean; before has remote $ref",
+      "/properties/$recursiveAnchor/type": "absent before; JSON string boolean after",
+      "/$recursiveAnchor": "not a root keyword; absent in both"
+    }
+  },
+  "notH04ExclusiveMinimum": {
+    "forbiddenBeforePrefix": "d4c5b3a2",
+    "forbiddenAfterPrefix": "4b495a29"
+  },
+  "bytes": {
+    "fixtures/official/schema.before.json": 2435,
+    "fixtures/official/schema.after.json": 2413,
+    "fixtures/official/README.md": 6771,
+    "fixtures/official/commit.before.json": 4413,
+    "fixtures/official/commit.after.json": 4424,
+    "fixtures/official/license-readme-excerpt.txt": 93,
+    "fixtures/used/used-positive.json": 116,
+    "fixtures/used/used-keyword.json": 59,
+    "fixtures/used/used-control.json": 88,
+    "fixtures/negative/openapi.json": 293,
+    "fixtures/negative/remote-ref.json": 178,
+    "fixtures/negative/used-remote.json": 45
+  },
+  "sha256": {
+    "fixtures/official/schema.before.json": "a5b3239c1785903a0edb2e1e8cae3e6da4128bb80ab33cf0ce962b5920e3470d",
+    "fixtures/official/schema.after.json": "d53747379d6c5b18a555c87918a588ca4311bfc03ff46bb57ce2714f0692e462",
+    "fixtures/official/README.md": "7872b5b3f12c622edf5ec7eb8f598332864366f177bb869282bd335a605a842e",
+    "fixtures/official/commit.before.json": "7a29c54e33dd8fbc8d25470e2f7988ac5a60c29eb6b0f4fc4c1ec2fe6c3e8292",
+    "fixtures/official/commit.after.json": "33d148fe0b4ce136df973586912c0d22f24f7e36397db21e43426ec4c643db92",
+    "fixtures/official/license-readme-excerpt.txt": "00a1624fa78fa88e8e5f0e106f429a2388a138e33e5de1a0a2bd07ae70d72a85",
+    "fixtures/used/used-positive.json": "c4e8358720a076fc2e5208c9ca06b7b0d7f48e34cd54647215defd62562a19de",
+    "fixtures/used/used-keyword.json": "9086a1a40d885e5f22274fd6b40a59fa7359280a5e3f7e9815e02499d3f9eae2",
+    "fixtures/used/used-control.json": "faf3dec08e5ddb8e560d5179a2ca64fca683109051199e199818d5ac7821db2e",
+    "fixtures/negative/openapi.json": "896208733f9b8adf51f929e9453a84a0e787d37ef6988b552381fc0fc6104d16",
+    "fixtures/negative/remote-ref.json": "6b0b9aef23cd2ad585aba4f6ae55ec6ff8f69c773cd120c4f5b485b7291ffb56",
+    "fixtures/negative/used-remote.json": "53f12b089aa5c0572b66d0c08f2ef2423fb3cc73cd0434b5a0d63bb0ced4e712"
+  },
+  "kit": {
+    "version": "1.4.0",
+    "archive": "client/public/kit/useful-jobs-1.4.0.tar.gz",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215,
+    "extractedTo": "vendor/useful-jobs-1.4.0/"
+  },
+  "purchaseAuthority": false,
+  "schedulerDaemon": false
+}

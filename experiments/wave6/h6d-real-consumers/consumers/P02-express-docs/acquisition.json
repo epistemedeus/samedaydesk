@@ -1,0 +1,49 @@
+{
+  "schema": "h6d.consumer.acquisition.v1",
+  "repo": "expressjs/expressjs.com",
+  "owner": "expressjs",
+  "name": "expressjs.com",
+  "path": "docs/content.md",
+  "beforeSha": "ba98cc468032c95cb397b11895537b1c893ac63a",
+  "afterSha": "be31ea3fc5ba9e0d1b96d300894145ca4f6af57c",
+  "beforeShort": "ba98cc468032",
+  "afterShort": "be31ea3fc5ba",
+  "license": "CC-BY-4.0",
+  "licenseSpdx": "CC-BY-4.0",
+  "licenseFile": "LICENSE.md",
+  "licenseName": "Creative Commons Attribution 4.0 International",
+  "method": "github-contents-api+raw",
+  "retrievedAt": "2026-09-12T06:53:00.000Z",
+  "liveFetch": false,
+  "purchaseAuthority": false,
+  "clock": "2026-09-12T12:00:00.000Z",
+  "selectedFields": [
+    "title",
+    "headings",
+    "text"
+  ],
+  "bytes": {
+    "fixtures/raw/content.before.md": 10653,
+    "fixtures/raw/content.after.md": 11579,
+    "fixtures/raw/LICENSE.md": 18693,
+    "fixtures/raw/commit.before.json": 708,
+    "fixtures/raw/commit.after.json": 712
+  },
+  "sha256": {
+    "fixtures/raw/content.before.md": "f0cc5a783749bd138649db258629055f0376ca2219005d86a8cc99c69482b29b",
+    "fixtures/raw/content.after.md": "429e711995345d5af7a931d510d9c87fdd9e5816fa38955c3e262a74060bfbd5",
+    "fixtures/raw/LICENSE.md": "58064ebb41520d178054dea1a0bae72f48ced50607a6a8fbff6d381f80da8713",
+    "fixtures/raw/commit.before.json": "588e94252da0fdd7ca8e337627980c4f6e2639566902a853102fff449d91bc8b",
+    "fixtures/raw/commit.after.json": "74bf621b8f8a354e60275864f9d0cbbb345b86174f44c11ee3814004f7ead2ee"
+  },
+  "gitBlobSha": {
+    "before": "72310e75916f0a471f1f6cbb78ccb3e2ef346c50",
+    "after": "78ef7528842381e24fe92ede57391ba4bdb1f49e"
+  },
+  "urls": {
+    "beforeRaw": "https://raw.githubusercontent.com/expressjs/expressjs.com/ba98cc468032c95cb397b11895537b1c893ac63a/docs/content.md",
+    "afterRaw": "https://raw.githubusercontent.com/expressjs/expressjs.com/be31ea3fc5ba9e0d1b96d300894145ca4f6af57c/docs/content.md",
+    "beforeCommit": "https://github.com/expressjs/expressjs.com/commit/ba98cc468032c95cb397b11895537b1c893ac63a",
+    "afterCommit": "https://github.com/expressjs/expressjs.com/commit/be31ea3fc5ba9e0d1b96d300894145ca4f6af57c"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "jobId": "json-schema-webhook-drift",
+  "kitVersion": "1.4.0",
+  "kitSha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+  "engineModified": false,
+  "consumerId": "S04-spdx-json-schema",
+  "note": "Engine fingerprints non-object used nodes by jsonType only, and fingerprints a properties-map node as a schema-object without reading sibling map keys. Independent witness uses RFC 6901 + canonical JSON equality. Engine still reports the added/deleted 2.3 vs 3.x field pointers correctly. Unknown is not treated as failure.",
+  "inputs": {
+    "before": "fixtures/official/spdx-schema-2-3.json",
+    "after": "fixtures/official/spdx-schema-3-0-1.json",
+    "used": "fixtures/used/positive.json",
+    "beforeSha256": "ca7fd7cc2c8107c3b6b5976058bb72363e8c072f0e446609d4fe7234860c2894",
+    "afterSha256": "19d65705ee474fb99467b5e006e05cab61b561974da34ff0e4a188bcf039387c"
+  },
+  "command": [
+    "node",
+    "vendor/useful-jobs-1.4.0/bin/useful-jobs.mjs",
+    "run",
+    "json-schema-webhook-drift",
+    "--before",
+    "fixtures/official/spdx-schema-2-3.json",
+    "--after",
+    "fixtures/official/spdx-schema-3-0-1.json",
+    "--used",
+    "fixtures/used/positive.json",
+    "--out-dir",
+    "<caller-out-dir>"
+  ],
+  "exit": 0,
+  "stdout": {
+    "ok": true,
+    "appId": "json-schema-webhook-drift",
+    "status": "actionable",
+    "kind": "json-schema",
+    "customerBrief": false,
+    "sample": false,
+    "exampleMode": false,
+    "purchaseAuthority": false,
+    "sold": false,
+    "outputs": ["drift-brief.json", "drift-brief.md"],
+    "breaking": 0,
+    "compatible": 0,
+    "unknown": 0
+  },
+  "engineAgreed": {
+    "added": [
+      "/properties/@context",
+      "/$defs",
+      "/oneOf"
+    ],
+    "deleted": [
+      "/properties/name",
+      "/properties/spdxVersion"
+    ],
+    "unchanged": [
+      "/type"
+    ]
+  },
+  "disagreements": [
+    {
+      "pointer": "/$schema",
+      "witness": "changed",
+      "engine": "unchanged",
+      "beforeValue": "http://json-schema.org/draft-07/schema#",
+      "afterValue": "https://json-schema.org/draft/2020-12/schema",
+      "reason": "Engine literal fingerprint is {kind:literal,jsonType:string} and ignores the URI string."
+    },
+    {
+      "pointer": "/properties",
+      "witness": "changed",
+      "engine": "unchanged",
+      "reason": "Used node is the properties map itself. Engine schema-object fingerprint reads node.properties, not sibling keys (SPDXID/name/spdxVersion vs @context)."
+    }
+  ]
+}

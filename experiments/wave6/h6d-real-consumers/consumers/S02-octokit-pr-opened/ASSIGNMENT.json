@@ -1,0 +1,11 @@
+{
+  "id": "S02-octokit-pr-opened",
+  "family": "schemaWebhook",
+  "jobId": "json-schema-webhook-drift",
+  "repo": "octokit/webhooks",
+  "license": "MIT",
+  "path": "payload-examples/api.github.com/pull_request/opened.payload.json",
+  "beforeShaFull": "e3e60cb5336a",
+  "afterShaFull": "0f5bd1859ef9",
+  "hint": "Webhook EXAMPLE json (not OpenAPI). Candidate fact: pull_request.auto_merge added in 0f5bd1859ef9. Confirm before SHA actually lacks the used pointer; if e3e60cb5336a is wrong, walk commits on that path. Used pointers: /pull_request/auto_merge (and a stable unchanged pointer as control). FORBIDDEN: organization.renamed; create/payload.json (H04). Control: used pointer that did not change. Negative: OpenAPI document \u2192 not-this-job-openapi."
+}

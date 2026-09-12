@@ -1,0 +1,21 @@
+---
+openapi: 3.0.3
+info:
+  title: Negative YAML OpenAPI — not JSON Schema
+  version: "0.0.0"
+  description: json-schema-webhook-drift refuses OpenAPI. This fixture is YAML, not JSON.
+paths:
+  /pets:
+    get:
+      summary: list pets
+      operationId: listPets
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string

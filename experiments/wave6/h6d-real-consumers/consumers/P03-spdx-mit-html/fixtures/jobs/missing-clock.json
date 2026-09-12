@@ -1,0 +1,12 @@
+{
+  "id": "P03-spdx-mit-html-missing-clock",
+  "title": "Negative: missing clock",
+  "fields": [
+    "title",
+    "headings",
+    "text",
+    "jsonLd"
+  ],
+  "before": "../held/before.json",
+  "after": "../held/after.json"
+}

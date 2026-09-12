@@ -1,0 +1,101 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Caller-owned held extract-batch wrapper over already-retrieved expressjs.com docs/content.md. Not a live fetch, quote-as-success, or payment. Markdown-to-extract-batch is a labeled non-equivalent projection."
+  },
+  "jobId": "9459f9b3c1d20ef65d4bc21039d05dfd988f6b3412b39c1ecb743b2558f1e85c",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-after",
+      "source": "held:expressjs/expressjs.com:docs/content.md",
+      "status": "success",
+      "data": {
+        "title": "Content",
+        "headings": {
+          "h1": [
+            "Content"
+          ],
+          "h2": [
+            "Collections",
+            "Frontmatter Schema",
+            "Using Components in Content (MDX)",
+            "Code Tabs",
+            "API Reference",
+            "Versioning",
+            "Internal Links"
+          ],
+          "h3": [
+            "Available Components",
+            "Example",
+            "Structure",
+            "URL Patterns",
+            "Version Structure",
+            "How Versioning Works",
+            "Adding Version Specific Content",
+            "Adding a New Version",
+            "Global Pages (Non-Versioned)",
+            "How to write a link"
+          ],
+          "h4": [
+            "Structure",
+            "Adding a Global Page"
+          ]
+        },
+        "text": "Content\nThe site uses Astro's Content Collections to manage documentation and resources. The configuration is defined in src/content.config.ts.\nCollections\nCollection Location Description\n---------- -------------------- --------------------------------------------------------------\ndocs src/content/docs/ Versioned documentation pages (guides)\napi src/content/api/ Versioned API reference documentation\npages src/content/pages/ Global pages: non-versioned docs, resources, support, and more\nblog src/content/blog/ Blog posts\n[!NOTE]\nFor a guide on writing and publishing blog posts, see How to write a blog post.\nFrontmatter Schema\nEach content file requires frontmatter with the following properties:\nUsing Components in Content (MDX)\nContent files that need to use interactive components must use the .mdx extension instead of .md. MDX allows you to import and use Astro components directly inside your markdown content.\nAvailable Components\nComponent Import Description\n--------- -------------------------------------------------------------- -----------------------------------------------------------\nAlert import Alert from '@components/primitives/Alert/Alert.astro' Contextual alerts with info, warning, and alert types\nExample\nComponent imports must be placed after the frontmatter block and before the content where they are used. Do not place imports inside the frontmatter (---) block.\nCode Tabs\nShow the same snippet as CommonJS / ESM / TypeScript variants behind a tab strip. Tag each fenced code block with a dialect language and the tabs are built for you — consecutive tagged blocks are grouped into a single CodeTabs, and its import is injected automatically (no manual import needed).\nFence Tab label Highlighted as\n----- ---------- --------------\ncjs CommonJS JavaScript\nmjs ESM JavaScript\nts TypeScript TypeScript\nFor labels other than these dialects, tag the blocks with tab=\"...\" instead:\nAPI Reference\nThe API reference lives in its own collection at src/content/api/, organized by version. Unlike docs, the API collection is not language-scoped — it is only available in English.\nStructure\nURL Patterns\n- Versioned: /en/5x/api/application → Express 5.x application API\n- Non-versioned: /en/api/application → Defaults to Express 5.x\nVersioning\nThe Express.js documentation supports multiple versions. Content is organized by version in both the docs and api collections.\nVersion Structure\nHow Versioning Works\nThe version list, prefixes, and default version are defined once in src/config/versions.ts\n(VERSIONS, VERSION_PREFIXES, DEFAULT_VERSION) and consumed everywhere else.\n- Default Version: 5x is the current default version (isDefault: true in VERSIONS)\n- Supported Versions: 5x, 4x, 3x\n- URL Patterns:\n- Versioned: /en/5x/api/ → Express 5.x API docs\n- Non-versioned: /en/api/ → Defaults to Express 5.x\nAdding Version Specific Content\n1. Create your content file in the appropriate version directory:\n```\nsrc/content/docs/en/5x/guide/my-new-page.md\n```\n2. The versioning system (configured in src/pages/[lang]/[...slug].astro) will automatically:\n- Serve the page at /en/5x/guide/my-new-page\n- Create non-versioned aliases for default version content\nAdding a New Version\nTo add support for a new Express version (e.g., 6x):\n1. Create content directories:\n- src/content/docs/en/6x/ — Guides and documentation\n- src/content/api/6x/ — API reference\n2. Update the version type in src/config/types.ts:\n```typescript\nexport type VersionPrefix = '6x' '5x' '4x' '3x';\n```\n3. Add the version to src/config/versions.ts — the single source of truth for the\nversion list, prefixes, and default version:\n```typescript\nexport const VERSIONS: VersionOption[] = [\n{ id: '6x', label: 'v6.x', isDefault: true },\n{ id: '5x', label: 'v5.x' },\n{ id: '4x', label: 'v4.x' },\n{ id: '3x', label: 'v3.x (deprecated)', isDeprecated: true },\n];\n```\nDEFAULT_VERSION and VERSION_PREFIXES are derived from this array, and the routing\n(src/pages/[lang]/[...slug].astro), the sidebar, and the link-localization plugins all\nread from it — so you don't update the version in those places anymore.\n4. Update menu versioning in src/config/menu/main.ts:\n- Add '6x' to the versioned arrays\n5. Review omitFrom entries in src/config/menu/api.ts:\n- Determine which API features exist or are deprecated in the new version\nGlobal Pages (Non-Versioned)\nSome documentation pages are shared across all versions and don't belong to a specific Express version (e.g., security updates, migration guides, performance best practices). These pages live in the pages collection instead of docs.\nStructure\nPages with a slug starting with resources/ are treated as resource pages and won't show \"Docs\" in the breadcrumbs.\nAdding a Global Page\n1. Create your content file in src/content/pages/:\n```\nsrc/content/pages/en/guide/my-global-page.md\n```\n2. Add the menu item in src/config/menu/docs.ts with global: true:\n```typescript\n{\nhref: /guide/my-global-page,\nlabel: 'menu.myGlobalPage',\nariaLabel: 'menu.myGlobalPageAria',\nglobal: true,\n}\n```\nThe global: true flag tells the sidebar to generate the link without a version prefix and prevents the version switcher from modifying its URL.\nInternal Links\nWrite internal links without a language prefix (and usually without a version) — just the\nsection path. Two plugins localize them at build time so every page links within its own language\nand version:\n- src/plugins/remark-rewrite-localized-links.mjs — Markdown links text.\n- src/plugins/rehype-rewrite-localized-links.mjs — raw HTML/JSX anchors <a href=\"/...\"> (e.g.\ncards that wrap a <Card> component), which Markdown link syntax can't express.\nBoth share the logic — and the defaults — in src/plugins/rewrite-localized-links-core.mjs\n(DEFAULT_PREFIXES = localizable sections, DEFAULT_VERSIONED_SECTIONS = sections that carry a\nversion; the latest version comes from src/config/versions.ts and the unversioned \"global\" pages\nare derived from the menu). They're registered in astro.config.mjs with no options needed.\nHow to write a link\nFor a link authored in a Spanish, 5.x page:\nWrite this Renders as Why\n----------------------- --------------------------- --------------------------------------------\n/api/express /es/5x/api/express/ versioned section → file version injected\n/guide/routing /es/5x/guide/routing/ versioned docs page → file version injected\n/guide/migrating-5 /es/guide/migrating-5/ \"global\" page → no versioned URL, stays bare\n/4x/api/express /es/4x/api/express/ explicit version is preserved\n/resources/middleware /es/resources/middleware/ resources is never versioned\nRules:\n- Always omit the language. The plugin prepends the current page's language. Never write\n/en/... — translations sync from Crowdin verbatim, so a hardcoded language would make translated\npages link back to English.\n- Versioned sections (api, starter, guide, advanced) carry a version: the link's own\nversion is kept, or the source file's version (in docs/api) — or the latest (DEFAULT_VERSION)\nfrom a non-versioned collection — is injected when the link omits one. Write /api/express or\n/guide/routing; in a 5.x file both resolve under /…/5x/….\n- \"Global\" pages are the exception. A handful of guide/advanced pages live in the unversioned\npages collection (migrating-5, best-practice-performance, …) and have no versioned URL, so\nlinks to them always stay unversioned. This list is derived from the menu items flagged\nglobal: true (in src/config/menu/) — no manual upkeep. (Adding a global page already requires\nthat flag; see Adding a Global Page.)\n- resources, support, blog are never versioned; links are language-only.\n- External URLs, relative links (./x), pure anchors (#x) and already-localized links (/en/...)\nare left untouched."
+      },
+      "notes": [
+        "Derived title/headings/text from ATX markdown. Unselected markup is dropped.",
+        "gitSha=be31ea3fc5ba9e0d1b96d300894145ca4f6af57c",
+        "gitBlobSha=78ef7528842381e24fe92ede57391ba4bdb1f49e",
+        "markdownSha256=429e711995345d5af7a931d510d9c87fdd9e5816fa38955c3e262a74060bfbd5"
+      ],
+      "error": null,
+      "provenance": {
+        "transport": "held-github-raw",
+        "requestedAt": "2026-09-12T06:53:00.000Z",
+        "completedAt": "2026-09-12T06:53:00.000Z",
+        "fetchedAt": "2026-09-12T06:53:00.000Z",
+        "gitSha": "be31ea3fc5ba9e0d1b96d300894145ca4f6af57c",
+        "path": "docs/content.md",
+        "markdownBytes": 11579,
+        "markdownSha256": "429e711995345d5af7a931d510d9c87fdd9e5816fa38955c3e262a74060bfbd5",
+        "gitBlobSha": "78ef7528842381e24fe92ede57391ba4bdb1f49e",
+        "note": "Observation timestamps record when this wrapper was produced from already-held GitHub raw bytes. They are not page-content freshness."
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 1,
+    "bytes": 11579,
+    "wallMs": 0,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 11579,
+    "requests": 1,
+    "wallMs": 0,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "Held GitHub-raw extraction; not socket billing."
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

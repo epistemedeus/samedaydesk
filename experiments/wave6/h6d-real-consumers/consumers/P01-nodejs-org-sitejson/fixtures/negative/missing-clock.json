@@ -1,0 +1,13 @@
+{
+  "id": "p01-nodejs-org-sitejson-missing-clock",
+  "title": "Missing clock must refuse",
+  "fields": [
+    "title",
+    "description",
+    "text",
+    "jsonLd",
+    "headings"
+  ],
+  "before": "../batches/before.json",
+  "after": "../batches/after.json"
+}

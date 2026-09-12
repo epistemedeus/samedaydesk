@@ -1,0 +1,39 @@
+{
+  "id": "R04-slack-web-api",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/R04-slack-web-api/",
+  "family": "apiRoutes",
+  "jobId": "api-upgrade-brief",
+  "secondaryJobId": "route-table-diff",
+  "receivingIntegrationOwner": "H6D-parent",
+  "selectJob": "bin/select-job.mjs",
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "networkOnJobPath": false,
+  "not": ["OpenAI", "octokit organization.renamed"],
+  "outcome": "Official Slack Web API swagger 2.0 pair (1.5.0 → 1.7.0) produces a used-ops upgrade brief: retire GET /channels.list and GET /channels.info; consider POST /conversations.mark, POST /admin.conversations.create, POST /calls.add. Stable used pins POST /chat.postMessage, GET /users.info, GET /conversations.list have no structural delta on the excerpts.",
+  "exactInputs": {
+    "before": "fixtures/openapi/before.excerpt.json",
+    "after": "fixtures/openapi/after.excerpt.json",
+    "used": "fixtures/openapi/used.json",
+    "usedControl": "fixtures/openapi/used-control.json",
+    "sdsBefore": "fixtures/sds/before.json",
+    "sdsAfter": "fixtures/sds/after.json",
+    "officialIndexBefore": "fixtures/operations/before.json",
+    "officialIndexAfter": "fixtures/operations/after.json"
+  },
+  "source": {
+    "repo": "slackapi/slack-api-specs",
+    "path": "web-api/slack_web_openapi_v2.json",
+    "license": "MIT",
+    "beforeSha": "3f1e8b4a03855cb29cffbfcaf60195e5867780ea",
+    "afterSha": "dfea73e06d146c368d7f94b52ac90796dc4e27e1"
+  },
+  "migration": {
+    "id": "openapi-to-sds-route-table",
+    "equivalent": false,
+    "from": "OpenAPI/Swagger path + method (+ operationId)",
+    "to": "samedaydesk.route-table.v1 {path, canonical, title, robots?}",
+    "dropped": ["httpMethod", "operationId", "parameters", "requestBody", "responses"],
+    "note": "Primary job is api-upgrade-brief on swagger 2.0 excerpts (engine accepted). SDS catalogs are a labeled non-equivalent projection for route-table-diff. Raw OpenAPI path maps are refused by route-table-diff."
+  }
+}

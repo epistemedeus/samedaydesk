@@ -1,0 +1,66 @@
+{
+  "schema": "h6d.acquisition.v1",
+  "id": "L01-commander-lockfile",
+  "family": "lockfile",
+  "jobId": "lockfile-pin-delta",
+  "repo": "tj/commander.js",
+  "repoUrl": "https://github.com/tj/commander.js",
+  "beforeSha": "9098b4863ef7678b9d138ae0f04afd949287510c",
+  "afterSha": "d785d8b3b9448952ef023a8cd26a0a3923a90458",
+  "path": "package-lock.json",
+  "license": "MIT",
+  "licensePath": "LICENSE",
+  "retrievedAt": "2026-09-12T06:54:31Z",
+  "method": "github-api+raw",
+  "bytes": {
+    "before": 94671,
+    "after": 95153,
+    "license": 1098
+  },
+  "sha256": {
+    "before": "58f7587d6e2aaa12b3f82914c38af3774dabd1c6de2a5ca26741d4f2c3bbf528",
+    "after": "1ad36cdbfbbac6513de58c34772e4769670e6c484a7a2927b5e13a3ade0941d5",
+    "license": "04512a63dce4d2d506ad612dc0bd7681ccf6e3655f7b6eaef7dfac8323d1ec0b"
+  },
+  "gitBlobSha": {
+    "before": "08d0bef28aad911a9b7336eb851d35d5b8881807",
+    "after": "f48132b8c306b257e0db6204a77153bac1311ee6"
+  },
+  "lockfileVersion": {
+    "before": 3,
+    "after": 3
+  },
+  "commits": {
+    "before": {
+      "short": "9098b4863ef7",
+      "sha": "9098b4863ef7678b9d138ae0f04afd949287510c",
+      "message": "Update dependencies (#2506)",
+      "committedAt": "2026-04-13T22:33:18Z",
+      "url": "https://github.com/tj/commander.js/commit/9098b4863ef7678b9d138ae0f04afd949287510c"
+    },
+    "after": {
+      "short": "d785d8b3b944",
+      "sha": "d785d8b3b9448952ef023a8cd26a0a3923a90458",
+      "message": "Update dependencies (#2518)",
+      "committedAt": "2026-05-22T05:14:05Z",
+      "parent": "9098b4863ef7678b9d138ae0f04afd949287510c",
+      "url": "https://github.com/tj/commander.js/commit/d785d8b3b9448952ef023a8cd26a0a3923a90458"
+    }
+  },
+  "sourceUrls": {
+    "before": "https://raw.githubusercontent.com/tj/commander.js/9098b4863ef7678b9d138ae0f04afd949287510c/package-lock.json",
+    "after": "https://raw.githubusercontent.com/tj/commander.js/d785d8b3b9448952ef023a8cd26a0a3923a90458/package-lock.json",
+    "license": "https://raw.githubusercontent.com/tj/commander.js/d785d8b3b9448952ef023a8cd26a0a3923a90458/LICENSE"
+  },
+  "fixtures": {
+    "before": "fixtures/official/before.package-lock.json",
+    "after": "fixtures/official/after.package-lock.json",
+    "license": "fixtures/official/LICENSE",
+    "excerptBefore": "fixtures/excerpt/before-changed-packages.json",
+    "excerptAfter": "fixtures/excerpt/after-changed-packages.json",
+    "expectedDelta": "fixtures/excerpt/expected-delta.json",
+    "provenance": "fixtures/provenance.json"
+  },
+  "purchaseAuthority": false,
+  "networkOnJobPath": false
+}

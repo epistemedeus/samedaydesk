@@ -1,0 +1,80 @@
+{
+  "note": "Caller-owned used-operation pins from github/rest-api-description. Not a customer. Not OpenAI.",
+  "operations": [
+    {
+      "method": "get",
+      "path": "/repos/{owner}/{repo}/issues",
+      "operationId": "issues/list-for-repo"
+    },
+    {
+      "method": "get",
+      "path": "/repos/{owner}/{repo}/issues/{issue_number}",
+      "operationId": "issues/get"
+    },
+    {
+      "method": "post",
+      "path": "/repos/{owner}/{repo}/issues",
+      "operationId": "issues/create"
+    },
+    {
+      "method": "get",
+      "path": "/repos/{owner}/{repo}/issues/{issue_number}/labels",
+      "operationId": "issues/list-labels-on-issue"
+    },
+    {
+      "method": "get",
+      "path": "/repos/{owner}/{repo}/labels/{name}",
+      "operationId": "issues/get-label"
+    },
+    {
+      "method": "post",
+      "path": "/repos/{owner}/{repo}/labels",
+      "operationId": "issues/create-label"
+    },
+    {
+      "method": "get",
+      "path": "/repos/{owner}/{repo}/pulls",
+      "operationId": "pulls/list"
+    },
+    {
+      "method": "get",
+      "path": "/repos/{owner}/{repo}/pulls/{pull_number}",
+      "operationId": "pulls/get"
+    },
+    {
+      "method": "post",
+      "path": "/repos/{owner}/{repo}/pulls",
+      "operationId": "pulls/create"
+    },
+    {
+      "method": "put",
+      "path": "/repos/{owner}/{repo}/pulls/{pull_number}/merge",
+      "operationId": "pulls/merge"
+    },
+    {
+      "method": "get",
+      "path": "/repos/{owner}/{repo}/git/blobs/{file_sha}",
+      "operationId": "git/get-blob"
+    },
+    {
+      "method": "post",
+      "path": "/repos/{owner}/{repo}/git/blobs",
+      "operationId": "git/create-blob"
+    },
+    {
+      "method": "get",
+      "path": "/repos/{owner}/{repo}/git/commits/{commit_sha}",
+      "operationId": "git/get-commit"
+    },
+    {
+      "method": "get",
+      "path": "/repos/{owner}/{repo}/git/trees/{tree_sha}",
+      "operationId": "git/get-tree"
+    },
+    {
+      "method": "post",
+      "path": "/repos/{owner}/{repo}/git/refs",
+      "operationId": "git/create-ref"
+    }
+  ]
+}

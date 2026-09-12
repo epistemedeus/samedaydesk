@@ -1,0 +1,18 @@
+{
+  "label": "control unused-pointer: only ops present and stable in both snapshots",
+  "operations": [
+    {
+      "method": "post",
+      "path": "/chat.postMessage"
+    },
+    {
+      "method": "get",
+      "path": "/users.info"
+    },
+    {
+      "method": "get",
+      "path": "/conversations.list"
+    }
+  ],
+  "pinNote": "Control pin: these three exist in both SHAs; used-op structural delta should be empty"
+}

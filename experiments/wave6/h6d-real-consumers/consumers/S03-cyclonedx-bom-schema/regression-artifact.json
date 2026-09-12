@@ -1,0 +1,77 @@
+{
+  "id": "S03-cyclonedx-bom-schema",
+  "jobId": "json-schema-webhook-drift",
+  "kit": "useful-jobs-1.4.0",
+  "engineUnmodified": true,
+  "title": "Annotation/literal used pointers classified unchanged by schema instance-set fingerprint",
+  "provenPrimarySourceFact": {
+    "path": "schema/bom-1.6.schema.json",
+    "beforeSha": "80db0257f1182a2d4220b3a2ab6970f4bab824df",
+    "afterSha": "0bd48c88d1b1877c7a3536252e06893850763190",
+    "pointers": {
+      "/definitions/attachment/properties/contentType/description": {
+        "beforeSnippet": "text/plain for plan text documents",
+        "afterSnippet": "text/plain for plain text documents"
+      },
+      "/definitions/refType/$comment": {
+        "beforeSnippet": "staring with 'urn:cdx:'",
+        "afterSnippet": "starting with 'urn:cdx:'"
+      }
+    }
+  },
+  "inputs": {
+    "before": "/tmp/h6d/wt/experiments/wave6/h6d-real-consumers/consumers/S03-cyclonedx-bom-schema/fixtures/official/bom-1.6.80db0257f118.json",
+    "after": "/tmp/h6d/wt/experiments/wave6/h6d-real-consumers/consumers/S03-cyclonedx-bom-schema/fixtures/official/bom-1.6.0bd48c88d1b1.json",
+    "used": "/tmp/h6d/wt/experiments/wave6/h6d-real-consumers/consumers/S03-cyclonedx-bom-schema/fixtures/used/used-typo.json",
+    "outDir": "/tmp/s03-reg-waWu"
+  },
+  "exitCode": 0,
+  "stdoutJson": {
+    "ok": true,
+    "appId": "json-schema-webhook-drift",
+    "status": "informational",
+    "termsVersion": "sha256:20747f69ec3b44cdec9cc6c20b93d6a9483254a60ae52675e6d3235420976791",
+    "kind": "json-schema",
+    "customerBrief": false,
+    "sample": false,
+    "exampleMode": false,
+    "purchaseAuthority": false,
+    "sold": false,
+    "outDir": "/tmp/s03-reg-waWu",
+    "outputs": [
+      "drift-brief.json",
+      "drift-brief.md"
+    ],
+    "breaking": 0,
+    "compatible": 0,
+    "unknown": 0
+  },
+  "briefImpact": {
+    "status": "informational",
+    "summary": "No structural used-path drift. Not a runtime compatibility proof.",
+    "breaking": [],
+    "compatible": [],
+    "added": [],
+    "deleted": [],
+    "unknown": [],
+    "unchangedCount": 6
+  },
+  "witness": {
+    "fact": "used JSON Pointer literal delta: 3 changed, 3 unchanged",
+    "changed": [
+      "/definitions/attachment/properties/contentType/description",
+      "/definitions/refType/$comment",
+      "/definitions/attachment/properties/contentType"
+    ],
+    "unchanged": [
+      "/definitions/refType/type",
+      "/definitions/refType/minLength",
+      "/required"
+    ],
+    "added": [],
+    "removed": [],
+    "unknown": []
+  },
+  "interpretation": "Engine fingerprint omits description/$comment and stores only jsonType for literal nodes, so annotation-only used pointers are structural-equal. Pair A informational status remains valid for instance-set. Not a license to invent a required-field break. Engine not modified.",
+  "pairAStructuralStatusValid": true
+}

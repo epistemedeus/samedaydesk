@@ -1,0 +1,18 @@
+{
+  "name": "spec3.json",
+  "path": "openapi/spec3.json",
+  "sha": "92c4d0de7cafefbb253ab4b31bb970b4cb89b4a3",
+  "size": 7967776,
+  "url": "https://api.github.com/repos/stripe/openapi/contents/openapi/spec3.json?ref=af5309cae53e5f666f9686dfed306d6d3b5fdc67",
+  "html_url": "https://github.com/stripe/openapi/blob/af5309cae53e5f666f9686dfed306d6d3b5fdc67/openapi/spec3.json",
+  "git_url": "https://api.github.com/repos/stripe/openapi/git/blobs/92c4d0de7cafefbb253ab4b31bb970b4cb89b4a3",
+  "download_url": "https://raw.githubusercontent.com/stripe/openapi/af5309cae53e5f666f9686dfed306d6d3b5fdc67/openapi/spec3.json",
+  "type": "file",
+  "content": "",
+  "encoding": "none",
+  "_links": {
+    "self": "https://api.github.com/repos/stripe/openapi/contents/openapi/spec3.json?ref=af5309cae53e5f666f9686dfed306d6d3b5fdc67",
+    "git": "https://api.github.com/repos/stripe/openapi/git/blobs/92c4d0de7cafefbb253ab4b31bb970b4cb89b4a3",
+    "html": "https://github.com/stripe/openapi/blob/af5309cae53e5f666f9686dfed306d6d3b5fdc67/openapi/spec3.json"
+  }
+}

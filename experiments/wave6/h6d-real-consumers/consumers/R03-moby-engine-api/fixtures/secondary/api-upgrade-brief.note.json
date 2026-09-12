@@ -1,0 +1,14 @@
+{
+  "job": "api-upgrade-brief",
+  "swagger2Refused": false,
+  "status": "informational",
+  "summary": "No used-operation structural delta",
+  "note": "Secondary job accepted official Swagger 2.0 YAML. It did not refuse swagger2, so no regression-artifact.json was written. Not a runtime compatibility proof. HostConfig.Umask and TaskSpec HealthCheck rename sit in definitions; used-ops fingerprint did not report a structural delta on the pinned operations.",
+  "used": [
+    { "method": "get", "path": "/containers/json" },
+    { "method": "post", "path": "/containers/create" },
+    { "method": "get", "path": "/containers/{id}/json" },
+    { "method": "post", "path": "/services/create" }
+  ],
+  "enginesEdited": false
+}

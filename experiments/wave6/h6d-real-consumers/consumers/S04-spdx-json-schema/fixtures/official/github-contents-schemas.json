@@ -1,0 +1,17 @@
+{
+  "repo": "spdx/spdx-spec",
+  "ref": "61a7a341f2533d6e084c48c88463da63f05e1af0",
+  "api": "https://api.github.com/repos/spdx/spdx-spec/contents/schemas?ref=61a7a341f2533d6e084c48c88463da63f05e1af0",
+  "files": [
+    {
+      "name": "spdx-schema-2-3.json",
+      "gitSha": "0ca1c7b56bebb10fb637285698e401342b4910d6",
+      "size": 45305
+    },
+    {
+      "name": "spdx-schema-3-0-1.json",
+      "gitSha": "d61124dbb66435d1ac05ebcee1e08cdcf3269af5",
+      "size": 235595
+    }
+  ]
+}

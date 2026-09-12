@@ -1,0 +1,18 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "S02 negative fixture (not an official API, not a customer document)",
+    "version": "0.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    }
+  }
+}

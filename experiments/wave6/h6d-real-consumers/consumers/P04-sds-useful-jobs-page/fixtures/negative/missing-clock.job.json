@@ -1,0 +1,14 @@
+{
+  "id": "p04-sds-useful-jobs-page-negative-missing-clock",
+  "title": "Negative: missing clock",
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "limits": {
+    "maxStaleMs": 86400000
+  },
+  "before": "../held/before.json",
+  "after": "../held/after.json"
+}

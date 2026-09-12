@@ -1,0 +1,43 @@
+{
+  "id": "P02-express-docs",
+  "family": "pageSnapshots",
+  "jobId": "page-change-offline-job",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/P02-express-docs/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "liveFetch": false,
+  "claimsFresh": false,
+  "charged": false,
+  "outcome": "Held extract-batch compare of expressjs.com docs/content.md ba98cc468032c95cb397b11895537b1c893ac63a → be31ea3fc5ba9e0d1b96d300894145ca4f6af57c. Independent witness: h2 Code Tabs added; title Content unchanged.",
+  "exactInputs": {
+    "job": "fixtures/held/job.json",
+    "before": "fixtures/held/before.json",
+    "after": "fixtures/held/after.json",
+    "controlJob": "fixtures/held/job-control.json",
+    "negativeMissingClock": "fixtures/negative/job-missing-clock.json",
+    "fields": ["title", "headings", "text"],
+    "clock": "2026-09-12T12:00:00.000Z"
+  },
+  "ownedArtifacts": [
+    "SOURCE.md",
+    "acquisition.json",
+    "witness.mjs",
+    "adapter.mjs",
+    "md-facts.mjs",
+    "held-batch.mjs",
+    "owned-paths.json",
+    "fixtures/",
+    "test/consumer.test.mjs",
+    "RESULT.json",
+    "RESULT.md"
+  ],
+  "migration": {
+    "id": "html-to-extract-batch",
+    "equivalent": false,
+    "from": "GitHub-held markdown (docs/content.md)",
+    "to": "samedaydesk.extract-batch.v0 selected fields title/headings/text",
+    "dropped": ["unselected markup", "live freshness", "payment", "fenced code interiors"],
+    "note": "page-change-offline-job never fetches. claims.fresh stays false. Clock is required. --example is refused."
+  }
+}

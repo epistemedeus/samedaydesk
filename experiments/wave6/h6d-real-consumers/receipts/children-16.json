@@ -1,0 +1,25 @@
+{
+  "phase": "expand-16",
+  "parentSessionId": "01a09456-c82b-7b41-ad58-e5557da52ed3",
+  "peakConcurrentClaim": 16,
+  "wave1": [
+    {"id": "L01-commander-lockfile", "subagentId": "01a09460-9b10-7690-9e59-a735507c071e"},
+    {"id": "L02-yargs-lockfile", "subagentId": "01a09460-9b10-7690-9e59-a74809f7eeee"},
+    {"id": "L03-glob-lockfile", "subagentId": "01a09460-9b10-7690-9e59-a75bd2cc4cd7"},
+    {"id": "L04-winston-lockfile", "subagentId": "01a09460-9b10-7690-9e59-a76eb806e174"},
+    {"id": "S01-jsonschema-recursive-anchor", "subagentId": "01a09460-9b10-7690-9e59-a772f46d67ca"},
+    {"id": "S02-octokit-pr-opened", "subagentId": "01a09460-9b10-7690-9e59-a782f4968305"},
+    {"id": "S03-cyclonedx-bom-schema", "subagentId": "01a09460-9b10-7690-9e59-a79f1bdd7933"},
+    {"id": "S04-spdx-json-schema", "subagentId": "01a09460-9b10-7690-9e59-a7acde3cd288"},
+    {"id": "R01-github-rest-routes", "subagentId": "01a09460-9b10-7690-9e59-a7b0bfc37b2d"},
+    {"id": "R02-stripe-openapi-routes", "subagentId": "01a09460-9b10-7690-9e59-a7c0277e91ea"},
+    {"id": "R03-moby-engine-api", "subagentId": "01a09460-9b10-7690-9e59-a7d55e176672"},
+    {"id": "R04-slack-web-api", "subagentId": "01a09460-9b10-7690-9e59-a7e6b0922672"}
+  ],
+  "wave2": [
+    {"id": "P01-nodejs-org-sitejson", "subagentId": "01a09463-2aa2-70a1-a5ff-143d866fa743"},
+    {"id": "P02-express-docs", "subagentId": "01a09463-2aa2-70a1-a5ff-14437eb09696"},
+    {"id": "P03-spdx-mit-html", "subagentId": "01a09463-2aa2-70a1-a5ff-1450180dfc58"},
+    {"id": "P04-sds-useful-jobs-page", "subagentId": "01a09463-2aa2-70a1-a5ff-14690a6696f9"}
+  ]
+}

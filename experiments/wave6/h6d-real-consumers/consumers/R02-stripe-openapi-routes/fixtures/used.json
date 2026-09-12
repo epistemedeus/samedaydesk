@@ -1,0 +1,63 @@
+{
+  "label": "H6D R02 used Stripe v1 operations (fixture OpenAPI, not live Stripe)",
+  "sourceRepo": "stripe/openapi",
+  "sourcePath": "openapi/spec3.yaml",
+  "beforeSha": "af5309cae53e5f666f9686dfed306d6d3b5fdc67",
+  "afterSha": "30d3391cc09a0f67ad29bee002f570811b19e1da",
+  "purchaseAuthority": false,
+  "operations": [
+    {
+      "method": "get",
+      "path": "/v1/customers"
+    },
+    {
+      "method": "post",
+      "path": "/v1/customers"
+    },
+    {
+      "method": "get",
+      "path": "/v1/customers/{customer}"
+    },
+    {
+      "method": "post",
+      "path": "/v1/customers/{customer}"
+    },
+    {
+      "method": "delete",
+      "path": "/v1/customers/{customer}"
+    },
+    {
+      "method": "get",
+      "path": "/v1/charges"
+    },
+    {
+      "method": "post",
+      "path": "/v1/charges"
+    },
+    {
+      "method": "get",
+      "path": "/v1/charges/{charge}"
+    },
+    {
+      "method": "get",
+      "path": "/v1/payment_intents"
+    },
+    {
+      "method": "post",
+      "path": "/v1/payment_intents"
+    },
+    {
+      "method": "get",
+      "path": "/v1/payment_intents/{intent}"
+    },
+    {
+      "method": "post",
+      "path": "/v1/payment_intents/{intent}/confirm"
+    },
+    {
+      "method": "post",
+      "path": "/v1/customers/{customer}/subscriptions"
+    }
+  ],
+  "pinNote": "Used method+path pins around /v1/customers, /v1/charges, /v1/payment_intents. Not OpenAI."
+}

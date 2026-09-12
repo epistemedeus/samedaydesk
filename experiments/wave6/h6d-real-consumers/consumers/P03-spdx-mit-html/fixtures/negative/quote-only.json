@@ -1,0 +1,41 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Quote is not page-change success."
+  },
+  "jobId": "quote-not-success",
+  "jobStatus": "quoted",
+  "stopReason": null,
+  "partial": false,
+  "accounting": {
+    "requests": 0,
+    "bytes": 0,
+    "wallMs": 0,
+    "retries": 0,
+    "succeeded": 0,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 0,
+    "requests": 0,
+    "wallMs": 0,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "quote only"
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

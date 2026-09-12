@@ -1,0 +1,14 @@
+{
+  "id": "p01-nodejs-org-sitejson-live-url",
+  "title": "Live URL must refuse",
+  "clock": "2026-09-12T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description",
+    "text",
+    "jsonLd",
+    "headings"
+  ],
+  "before": "https://nodejs.org/",
+  "after": "../batches/after.json"
+}

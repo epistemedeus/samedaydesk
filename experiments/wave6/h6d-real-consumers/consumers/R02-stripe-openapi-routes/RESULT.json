@@ -1,0 +1,57 @@
+{
+  "id": "R02-stripe-openapi-routes",
+  "family": "apiRoutes",
+  "jobId": "api-upgrade-brief",
+  "status": "complete",
+  "testsPass": true,
+  "testCounts": {
+    "pass": 10,
+    "fail": 0,
+    "skip": 0
+  },
+  "testCommand": "NODE_OPTIONS=--max-old-space-size=768 node --test test/consumer.test.mjs",
+  "source": {
+    "repo": "stripe/openapi",
+    "path": "openapi/spec3.yaml",
+    "license": "MIT",
+    "beforeSha": "af5309cae53e5f666f9686dfed306d6d3b5fdc67",
+    "afterSha": "30d3391cc09a0f67ad29bee002f570811b19e1da",
+    "fullBlobSha256": {
+      "before.yaml": "707de00b0616e606fa4a388ce840ff6cb2dd0bafe7abb1c2cc6da8b6d8a2f76e",
+      "after.yaml": "2e0ce56f026b1862dd772061c839a2c8ca9cc3e180f8bb22d7694b8ba214d203"
+    }
+  },
+  "engineVsWitness": {
+    "engine": {
+      "status": "partial",
+      "summary": "No used-operation structural delta",
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "gaps": 57
+    },
+    "witness": {
+      "fact": "openapi-method-path",
+      "added": [],
+      "removed": [],
+      "changed": [
+        "POST /v1/payment_intents",
+        "POST /v1/payment_intents/{intent}/confirm",
+        "POST /v1/customers/{customer}/subscriptions"
+      ],
+      "unchangedCount": 10
+    },
+    "agree": "Used method+path set is identical (no add/remove).",
+    "disagree": "Witness marks three used ops changed on full operation-object digest (nested requestBody). Engine fingerprint does not, and reports partial because excerpt omits component $refs.",
+    "regressionArtifact": "regression-artifact.json"
+  },
+  "honesty": [
+    "Fixture OpenAPI, not live Stripe, not a customer, not purchase authority.",
+    "Not a runtime compatibility proof.",
+    "OpenAPI method+path is not SDS route-table.v1 {path,canonical,title}.",
+    "Not OpenAI.",
+    "useful-jobs SAMPLE --example trees were not used as the official pair."
+  ],
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/R02-stripe-openapi-routes/",
+  "receivingIntegrationOwner": "H6D-parent"
+}

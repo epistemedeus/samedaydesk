@@ -1,0 +1,14 @@
+{
+  "id": "openapi-to-sds-route-table",
+  "equivalent": false,
+  "from": "OpenAPI 3 path + method (+ operationId)",
+  "to": "samedaydesk.route-table.v1 {path, canonical, title}",
+  "dropped": [
+    "httpMethod",
+    "operationId",
+    "parameters",
+    "requestBody",
+    "responses"
+  ],
+  "note": "route-table-diff refuses OpenAPI path maps. This projection is caller-owned and not a published SDS table."
+}

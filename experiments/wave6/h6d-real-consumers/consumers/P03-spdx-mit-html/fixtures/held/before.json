@@ -1,0 +1,92 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Caller-owned held extract-batch wrapper over GitHub-retrieved SPDX html/MIT.html + jsonld/MIT.jsonld. Not a live fetch, quote-as-success, or payment. HTML is not extract-batch."
+  },
+  "jobId": "61245a281a59787c7ded298e3b693d240f8956203de3bb77608e8bcca3fa34a4",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "held:spdx/license-list-data/html/MIT.html",
+      "status": "success",
+      "data": {
+        "title": "MIT License",
+        "headings": {
+          "h1": [
+            "MIT License"
+          ]
+        },
+        "text": "MIT License Copyright (c) <year> <copyright holders> Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \" Software \"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software , and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice (including the next paragraph) shall be included in all copies or substantial portions of the Software . THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE .",
+        "jsonLd": {
+          "id": "http://spdx.org/licenses/MIT",
+          "type": "spdx:ListedLicense",
+          "name": "MIT License",
+          "licenseId": "MIT",
+          "isOsiApproved": true,
+          "isFsfLibre": true,
+          "isDeprecatedLicenseId": false,
+          "seeAlso": [
+            "https://opensource.org/license/mit/"
+          ]
+        }
+      },
+      "notes": [
+        "structured vendor snapshot; not scraping",
+        "selected fields: title, headings, text, jsonLd",
+        "jsonLd drops CrossRef timestamps and blank-node generator noise"
+      ],
+      "error": null,
+      "provenance": {
+        "transport": "held-github-raw+contents",
+        "repo": "spdx/license-list-data",
+        "gitSha": "f75839ee25cde2383fab299f6d8fc94a442f444b",
+        "blobSha": {
+          "html": "5b4bb0b9203f6394e666ff0816ccefa1a56da699",
+          "jsonld": "c80efa3b827b2edaa01b657b18e982b9bdb7a1ca"
+        },
+        "htmlPath": "html/MIT.html",
+        "jsonldPath": "jsonld/MIT.jsonld",
+        "htmlSha256": "b749d91c8afaf1c3400b0a8a23eacebddcea0a6fbe7303b70430cc7254a3f6c3",
+        "jsonldSha256": "5eae282a5c584bc58ab5d5b34857c88406230c8049f7294495236fed28d7f973",
+        "requestedAt": "2024-12-19T09:39:35.000Z",
+        "completedAt": "2024-12-19T09:39:35.000Z",
+        "fetchedAt": "2024-12-19T09:39:35.000Z",
+        "note": "Observation timestamps record when this wrapper was produced from held bytes. They are not page-content freshness."
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 0,
+    "bytes": 11027,
+    "wallMs": 0,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 11027,
+    "requests": 0,
+    "wallMs": 0,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "Held GitHub retrieval; not socket billing."
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

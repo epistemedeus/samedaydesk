@@ -1,0 +1,81 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "equivalentToOpenApi": false,
+  "dropped": [
+    "httpMethod",
+    "operationId",
+    "parameters",
+    "requestBody",
+    "responses"
+  ],
+  "note": "Non-equivalent projection of OpenAPI path+method into SDS route-table.v1. HTTP method is dropped; GET+POST on one path collapse. Not the published SDS table. Not a homepage rewrite.",
+  "routes": [
+    {
+      "path": "/repos/{owner}/{repo}/issues",
+      "canonical": "https://api.github.com/repos/{owner}/{repo}/issues",
+      "title": "issues/list-for-repo (also POST dropped)"
+    },
+    {
+      "path": "/repos/{owner}/{repo}/issues/{issue_number}",
+      "canonical": "https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}",
+      "title": "issues/get"
+    },
+    {
+      "path": "/repos/{owner}/{repo}/issues/{issue_number}/labels",
+      "canonical": "https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}/labels",
+      "title": "issues/list-labels-on-issue"
+    },
+    {
+      "path": "/repos/{owner}/{repo}/labels/{name}",
+      "canonical": "https://api.github.com/repos/{owner}/{repo}/labels/{name}",
+      "title": "issues/get-label"
+    },
+    {
+      "path": "/repos/{owner}/{repo}/labels",
+      "canonical": "https://api.github.com/repos/{owner}/{repo}/labels",
+      "title": "issues/create-label"
+    },
+    {
+      "path": "/repos/{owner}/{repo}/pulls",
+      "canonical": "https://api.github.com/repos/{owner}/{repo}/pulls",
+      "title": "pulls/list (also POST dropped)"
+    },
+    {
+      "path": "/repos/{owner}/{repo}/pulls/{pull_number}",
+      "canonical": "https://api.github.com/repos/{owner}/{repo}/pulls/{pull_number}",
+      "title": "pulls/get"
+    },
+    {
+      "path": "/repos/{owner}/{repo}/pulls/{pull_number}/merge",
+      "canonical": "https://api.github.com/repos/{owner}/{repo}/pulls/{pull_number}/merge",
+      "title": "pulls/merge"
+    },
+    {
+      "path": "/repos/{owner}/{repo}/git/blobs/{file_sha}",
+      "canonical": "https://api.github.com/repos/{owner}/{repo}/git/blobs/{file_sha}",
+      "title": "git/get-blob"
+    },
+    {
+      "path": "/repos/{owner}/{repo}/git/blobs",
+      "canonical": "https://api.github.com/repos/{owner}/{repo}/git/blobs",
+      "title": "git/create-blob"
+    },
+    {
+      "path": "/repos/{owner}/{repo}/git/commits/{commit_sha}",
+      "canonical": "https://api.github.com/repos/{owner}/{repo}/git/commits/{commit_sha}",
+      "title": "git/get-commit"
+    },
+    {
+      "path": "/repos/{owner}/{repo}/git/trees/{tree_sha}",
+      "canonical": "https://api.github.com/repos/{owner}/{repo}/git/trees/{tree_sha}",
+      "title": "git/get-tree"
+    },
+    {
+      "path": "/repos/{owner}/{repo}/git/refs",
+      "canonical": "https://api.github.com/repos/{owner}/{repo}/git/refs",
+      "title": "git/create-ref"
+    }
+  ]
+}

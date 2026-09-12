@@ -1,0 +1,18 @@
+{
+  "sha": "e16cc2584c6d32e8cd4d461759e1475e79327d6c",
+  "html_url": "https://github.com/github/rest-api-description/commit/e16cc2584c6d32e8cd4d461759e1475e79327d6c",
+  "message": "Update OpenAPI 3.0 Descriptions",
+  "author": {
+    "name": "github-openapi-bot",
+    "email": "security+github-openapi-bot@github.com",
+    "date": "2026-09-12T04:12:34Z"
+  },
+  "committer": {
+    "name": "github-openapi-bot",
+    "email": "security+github-openapi-bot@github.com",
+    "date": "2026-09-12T04:12:34Z"
+  },
+  "parents": [
+    "a60c117767df8fa250e5147f79e4e2aac813cbee"
+  ]
+}

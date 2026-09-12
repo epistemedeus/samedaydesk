@@ -1,0 +1,14 @@
+{
+  "name": "opened.payload.json",
+  "path": "payload-examples/api.github.com/pull_request/opened.payload.json",
+  "sha": "62f32fa458ad6b465180420eaa6ea1084990a6a1",
+  "size": 27518,
+  "url": "https://api.github.com/repos/octokit/webhooks/contents/payload-examples/api.github.com/pull_request/opened.payload.json?ref=c7f0d67c07feac24862b294ac219afee5fe62b1b",
+  "html_url": "https://github.com/octokit/webhooks/blob/c7f0d67c07feac24862b294ac219afee5fe62b1b/payload-examples/api.github.com/pull_request/opened.payload.json",
+  "git_url": "https://api.github.com/repos/octokit/webhooks/git/blobs/62f32fa458ad6b465180420eaa6ea1084990a6a1",
+  "download_url": "https://raw.githubusercontent.com/octokit/webhooks/c7f0d67c07feac24862b294ac219afee5fe62b1b/payload-examples/api.github.com/pull_request/opened.payload.json",
+  "type": "file",
+  "encoding_omitted": true,
+  "content_omitted": true,
+  "note": "GitHub contents API metadata only; file bytes stored separately as raw JSON."
+}

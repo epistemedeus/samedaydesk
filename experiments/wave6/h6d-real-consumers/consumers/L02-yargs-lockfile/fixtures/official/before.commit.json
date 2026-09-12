@@ -1,0 +1,15 @@
+{
+  "sha": "4153e0f097aeaf43a71a2530db6dda51dff2c544",
+  "html_url": "https://github.com/yargs/yargs/commit/4153e0f097aeaf43a71a2530db6dda51dff2c544",
+  "message": "chore: improve build robustness (#2554)\n\n- pin GitHub actions\n- add package-lock.json\n- add CI test with updated direct dependencies\n- lint changes from updates\n- in CI stop overriding npm version\n- in CI use \"npm ci\" instead of \"npm install\"",
+  "author": {
+    "name": "John Gee",
+    "email": "john@ruru.gen.nz",
+    "date": "2026-07-11T01:41:42Z"
+  },
+  "committer": {
+    "name": "GitHub",
+    "email": "noreply@github.com",
+    "date": "2026-07-11T01:41:42Z"
+  }
+}

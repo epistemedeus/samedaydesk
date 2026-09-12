@@ -1,0 +1,18 @@
+{
+  "name": "spec3.yaml",
+  "path": "openapi/spec3.yaml",
+  "sha": "af83746c4127e796001c415467aab22bdba49e8d",
+  "size": 6364174,
+  "url": "https://api.github.com/repos/stripe/openapi/contents/openapi/spec3.yaml?ref=af5309cae53e5f666f9686dfed306d6d3b5fdc67",
+  "html_url": "https://github.com/stripe/openapi/blob/af5309cae53e5f666f9686dfed306d6d3b5fdc67/openapi/spec3.yaml",
+  "git_url": "https://api.github.com/repos/stripe/openapi/git/blobs/af83746c4127e796001c415467aab22bdba49e8d",
+  "download_url": "https://raw.githubusercontent.com/stripe/openapi/af5309cae53e5f666f9686dfed306d6d3b5fdc67/openapi/spec3.yaml",
+  "type": "file",
+  "content": "",
+  "encoding": "none",
+  "_links": {
+    "self": "https://api.github.com/repos/stripe/openapi/contents/openapi/spec3.yaml?ref=af5309cae53e5f666f9686dfed306d6d3b5fdc67",
+    "git": "https://api.github.com/repos/stripe/openapi/git/blobs/af83746c4127e796001c415467aab22bdba49e8d",
+    "html": "https://github.com/stripe/openapi/blob/af5309cae53e5f666f9686dfed306d6d3b5fdc67/openapi/spec3.yaml"
+  }
+}

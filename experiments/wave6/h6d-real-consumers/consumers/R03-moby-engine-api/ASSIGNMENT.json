@@ -1,0 +1,11 @@
+{
+  "id": "R03-moby-engine-api",
+  "family": "apiRoutes",
+  "jobId": "route-table-diff",
+  "repo": "moby/moby",
+  "license": "Apache-2.0",
+  "path": "api/swagger.yaml",
+  "beforeShaFull": "235d2876f80f",
+  "afterShaFull": "2803839c3f30",
+  "hint": "Docker Engine API swagger 2026-09-02 umask \u2192 2026-09-03 Healthcheck name align. Swagger 2.0 is NOT an SDS route catalog: project paths to samedaydesk.route-table.v1 {path,canonical,title,robots?} with authority:caller publishedRouteTable:false. If you also try api-upgrade-brief and it refuses swagger2, record regression-artifact.json \u2014 do not edit the engine. Independent witness on swagger paths. Negative: feed raw swagger to route-table-diff and expect unsupported_catalog."
+}

@@ -1,0 +1,18 @@
+{
+  "name": "LICENSE",
+  "path": "LICENSE",
+  "sha": "edf2d132d8bb95146e05585c3a782d059298b46b",
+  "size": 1095,
+  "url": "https://api.github.com/repos/stripe/openapi/contents/LICENSE?ref=30d3391cc09a0f67ad29bee002f570811b19e1da",
+  "html_url": "https://github.com/stripe/openapi/blob/30d3391cc09a0f67ad29bee002f570811b19e1da/LICENSE",
+  "git_url": "https://api.github.com/repos/stripe/openapi/git/blobs/edf2d132d8bb95146e05585c3a782d059298b46b",
+  "download_url": "https://raw.githubusercontent.com/stripe/openapi/30d3391cc09a0f67ad29bee002f570811b19e1da/LICENSE",
+  "type": "file",
+  "content": "VGhlIE1JVCBMaWNlbnNlCgpDb3B5cmlnaHQgKGMpIDIwMTEtIFN0cmlwZSwg\nSW5jLiAoaHR0cHM6Ly9zdHJpcGUuY29tKQoKUGVybWlzc2lvbiBpcyBoZXJl\nYnkgZ3JhbnRlZCwgZnJlZSBvZiBjaGFyZ2UsIHRvIGFueSBwZXJzb24gb2J0\nYWluaW5nIGEgY29weQpvZiB0aGlzIHNvZnR3YXJlIGFuZCBhc3NvY2lhdGVk\nIGRvY3VtZW50YXRpb24gZmlsZXMgKHRoZSAiU29mdHdhcmUiKSwgdG8gZGVh\nbAppbiB0aGUgU29mdHdhcmUgd2l0aG91dCByZXN0cmljdGlvbiwgaW5jbHVk\naW5nIHdpdGhvdXQgbGltaXRhdGlvbiB0aGUgcmlnaHRzCnRvIHVzZSwgY29w\neSwgbW9kaWZ5LCBtZXJnZSwgcHVibGlzaCwgZGlzdHJpYnV0ZSwgc3VibGlj\nZW5zZSwgYW5kL29yIHNlbGwKY29waWVzIG9mIHRoZSBTb2Z0d2FyZSwgYW5k\nIHRvIHBlcm1pdCBwZXJzb25zIHRvIHdob20gdGhlIFNvZnR3YXJlIGlzCmZ1\ncm5pc2hlZCB0byBkbyBzbywgc3ViamVjdCB0byB0aGUgZm9sbG93aW5nIGNv\nbmRpdGlvbnM6CgpUaGUgYWJvdmUgY29weXJpZ2h0IG5vdGljZSBhbmQgdGhp\ncyBwZXJtaXNzaW9uIG5vdGljZSBzaGFsbCBiZSBpbmNsdWRlZCBpbgphbGwg\nY29waWVzIG9yIHN1YnN0YW50aWFsIHBvcnRpb25zIG9mIHRoZSBTb2Z0d2Fy\nZS4KClRIRSBTT0ZUV0FSRSBJUyBQUk9WSURFRCAiQVMgSVMiLCBXSVRIT1VU\nIFdBUlJBTlRZIE9GIEFOWSBLSU5ELCBFWFBSRVNTIE9SCklNUExJRUQsIElO\nQ0xVRElORyBCVVQgTk9UIExJTUlURUQgVE8gVEhFIFdBUlJBTlRJRVMgT0Yg\nTUVSQ0hBTlRBQklMSVRZLApGSVRORVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVS\nUE9TRSBBTkQgTk9OSU5GUklOR0VNRU5ULiBJTiBOTyBFVkVOVCBTSEFMTCBU\nSEUKQVVUSE9SUyBPUiBDT1BZUklHSFQgSE9MREVSUyBCRSBMSUFCTEUgRk9S\nIEFOWSBDTEFJTSwgREFNQUdFUyBPUiBPVEhFUgpMSUFCSUxJVFksIFdIRVRI\nRVIgSU4gQU4gQUNUSU9OIE9GIENPTlRSQUNULCBUT1JUIE9SIE9USEVSV0lT\nRSwgQVJJU0lORyBGUk9NLApPVVQgT0YgT1IgSU4gQ09OTkVDVElPTiBXSVRI\nIFRIRSBTT0ZUV0FSRSBPUiBUSEUgVVNFIE9SIE9USEVSIERFQUxJTkdTIElO\nClRIRSBTT0ZUV0FSRS4K\n",
+  "encoding": "base64",
+  "_links": {
+    "self": "https://api.github.com/repos/stripe/openapi/contents/LICENSE?ref=30d3391cc09a0f67ad29bee002f570811b19e1da",
+    "git": "https://api.github.com/repos/stripe/openapi/git/blobs/edf2d132d8bb95146e05585c3a782d059298b46b",
+    "html": "https://github.com/stripe/openapi/blob/30d3391cc09a0f67ad29bee002f570811b19e1da/LICENSE"
+  }
+}

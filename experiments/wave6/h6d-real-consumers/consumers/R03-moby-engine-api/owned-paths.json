@@ -1,0 +1,52 @@
+{
+  "id": "R03-moby-engine-api",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/R03-moby-engine-api/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "receiving": {
+    "catalog": "experiments/wave6/h6d-real-consumers/lib/catalog.mjs",
+    "selectJob": "experiments/wave6/h6d-real-consumers/bin/select-job.mjs"
+  },
+  "family": "apiRoutes",
+  "jobId": "route-table-diff",
+  "secondaryJobId": "api-upgrade-brief",
+  "usefulJobs": "1.4.0",
+  "repo": "moby/moby",
+  "path": "api/swagger.yaml",
+  "license": "Apache-2.0",
+  "beforeSha": "235d2876f80fff1ee13378646a4d41a4c670a052",
+  "afterSha": "2803839c3f30344de950e35dfe5cc4e1e170cb0d",
+  "inputs": {
+    "primary": {
+      "job": "route-table-diff",
+      "before": "fixtures/projected/before.route-table.json",
+      "after": "fixtures/projected/after.route-table.json",
+      "flags": ["--before", "--after", "--out-dir"]
+    },
+    "negative": {
+      "job": "route-table-diff",
+      "before": "fixtures/negative/swagger2.official.json",
+      "after": "fixtures/negative/swagger2.official.json",
+      "expect": "unsupported_catalog"
+    },
+    "secondary": {
+      "job": "api-upgrade-brief",
+      "before": "fixtures/raw/before.swagger.yaml",
+      "after": "fixtures/raw/after.swagger.yaml",
+      "used": "fixtures/used.json"
+    }
+  },
+  "migration": {
+    "id": "openapi-to-sds-route-table",
+    "equivalent": false,
+    "from": "Swagger 2.0 path + method (+ operationId, parameters, definitions)",
+    "to": "samedaydesk.route-table.v1 {path, canonical, title, robots?}",
+    "dropped": ["httpMethod", "operationId", "parameters", "requestBody", "responses", "definitions"],
+    "authority": "caller",
+    "publishedRouteTable": false,
+    "note": "route-table-diff refuses OpenAPI/Swagger path maps. Projection is caller-owned and not a published SDS table."
+  },
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "networkOnJobPath": false,
+  "sampleAsCustomer": false
+}

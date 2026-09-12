@@ -1,0 +1,35 @@
+{
+  "sha": "c7f0d67c07feac24862b294ac219afee5fe62b1b",
+  "html_url": "https://github.com/octokit/webhooks/commit/c7f0d67c07feac24862b294ac219afee5fe62b1b",
+  "commit": {
+    "author": {
+      "name": "Octokit Bot",
+      "email": "33075676+octokitbot@users.noreply.github.com",
+      "date": "2021-03-19T14:07:57Z"
+    },
+    "committer": {
+      "name": "GitHub",
+      "email": "noreply@github.com",
+      "date": "2021-03-19T14:07:57Z"
+    },
+    "message": "feat: add description for {CreateEvent, DeleteEvent}#pusher_type (#405)",
+    "tree": {
+      "sha": "eb84916bc69e374f7ac3cebd6e4b819ec920f38f",
+      "url": "https://api.github.com/repos/octokit/webhooks/git/trees/eb84916bc69e374f7ac3cebd6e4b819ec920f38f"
+    },
+    "url": "https://api.github.com/repos/octokit/webhooks/git/commits/c7f0d67c07feac24862b294ac219afee5fe62b1b"
+  },
+  "parents": [
+    {
+      "sha": "09110bfc718758e37585d12abb3cbbe179623bf4",
+      "html_url": "https://github.com/octokit/webhooks/commit/09110bfc718758e37585d12abb3cbbe179623bf4"
+    }
+  ],
+  "stats": {
+    "total": 40,
+    "additions": 38,
+    "deletions": 2
+  },
+  "files": [],
+  "note": "Slimmed GitHub commits API response; only the official payload path file is retained."
+}

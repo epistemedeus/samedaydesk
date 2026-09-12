@@ -1,0 +1,11 @@
+{
+  "id": "R01-github-rest-routes",
+  "family": "apiRoutes",
+  "jobId": "api-upgrade-brief",
+  "repo": "github/rest-api-description",
+  "license": "MIT",
+  "path": "descriptions/api.github.com/api.github.com.yaml (or .json) \u2014 store ONLY a tiny used-ops subset, not the full spec",
+  "beforeShaFull": "f5d6d10f019d",
+  "afterShaFull": "e16cc2584c6d",
+  "hint": "Actual GitHub REST OpenAPI, 2026-09-11 \u2192 2026-09-12. NOT OpenAI. Extract \u226415 used operations (issues/pulls/git blobs) into before/after YAML plus used.json {method,path}. Run api-upgrade-brief. Independent witness = set of method+path (+ optional operationId). Optional: project path list into SDS route-table.v1 {path,canonical,title} for route-table-diff, labeled non-equivalent (method is dropped). Do not store multi-MB specs in git; keep bounded excerpts + full-blob sha256."
+}

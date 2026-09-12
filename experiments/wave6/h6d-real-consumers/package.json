@@ -1,0 +1,16 @@
+{
+  "name": "@samedaydesk/h6d-real-consumers",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "H6D real OSS useful-jobs 1.4.0 consumer integrations (offline, no purchase authority)",
+  "scripts": {
+    "test": "NODE_OPTIONS=--max-old-space-size=768 node --test test/*.test.mjs consumers/*/test/*.test.mjs",
+    "test:parent": "NODE_OPTIONS=--max-old-space-size=768 node --test test/*.test.mjs",
+    "select": "NODE_OPTIONS=--max-old-space-size=768 node bin/select-job.mjs",
+    "list": "NODE_OPTIONS=--max-old-space-size=768 node bin/select-job.mjs list"
+  }
+}

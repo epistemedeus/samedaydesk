@@ -1,0 +1,41 @@
+            - `since`=(`<container id>` or `<container name>`)
+            - `status=`(`created`|`restarting`|`running`|`removing`|`paused`|`exited`|`dead`)
+            - `volume`=(`<volume name>` or `<mount point destination>`)
+          type: "string"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ContainerSummary"
+        400:
+          description: "bad parameter"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      tags: ["Container"]
+  /containers/create:
+    post:
+      summary: "Create a container"
+      operationId: "ContainerCreate"
+      consumes:
+        - "application/json"
+        - "application/octet-stream"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "name"
+          in: "query"
+          description: |
+            Assign the specified name to the container. Must match
+            `/?[a-zA-Z0-9][a-zA-Z0-9_.-]+`.
+          type: "string"
+          pattern: "^/?[a-zA-Z0-9][a-zA-Z0-9_.-]+$"
+        - name: "platform"
+          in: "query"
+          description: |
+            Platform in the format `os[/arch[/variant]]` used for image lookup.

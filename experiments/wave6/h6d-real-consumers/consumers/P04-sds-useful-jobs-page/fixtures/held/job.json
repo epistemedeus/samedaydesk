@@ -1,0 +1,21 @@
+{
+  "id": "p04-sds-useful-jobs-page",
+  "title": "Watch SDS /for-agents/useful-jobs title, description, and headings (S260 surface \u2192 1.4.0 overlay)",
+  "clock": "2026-09-12T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "limits": {
+    "maxStaleMs": 86400000
+  },
+  "before": "./before.json",
+  "after": "./after.json",
+  "purchaseAuthority": false,
+  "network": false,
+  "notes": [
+    "Clock required. claims.fresh false. charged false. --example refused.",
+    "Local git only. Not a live fetch."
+  ]
+}

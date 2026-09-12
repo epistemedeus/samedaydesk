@@ -1,0 +1,19 @@
+{
+  "phase": "admit-12",
+  "parentSessionId": "01a09456-c82b-7b41-ad58-e5557da52ed3",
+  "peakConcurrentClaim": 12,
+  "children": [
+    {"id": "L01-commander-lockfile", "subagentId": "01a09460-9b10-7690-9e59-a735507c071e"},
+    {"id": "L02-yargs-lockfile", "subagentId": "01a09460-9b10-7690-9e59-a74809f7eeee"},
+    {"id": "L03-glob-lockfile", "subagentId": "01a09460-9b10-7690-9e59-a75bd2cc4cd7"},
+    {"id": "L04-winston-lockfile", "subagentId": "01a09460-9b10-7690-9e59-a76eb806e174"},
+    {"id": "S01-jsonschema-recursive-anchor", "subagentId": "01a09460-9b10-7690-9e59-a772f46d67ca"},
+    {"id": "S02-octokit-pr-opened", "subagentId": "01a09460-9b10-7690-9e59-a782f4968305"},
+    {"id": "S03-cyclonedx-bom-schema", "subagentId": "01a09460-9b10-7690-9e59-a79f1bdd7933"},
+    {"id": "S04-spdx-json-schema", "subagentId": "01a09460-9b10-7690-9e59-a7acde3cd288"},
+    {"id": "R01-github-rest-routes", "subagentId": "01a09460-9b10-7690-9e59-a7b0bfc37b2d"},
+    {"id": "R02-stripe-openapi-routes", "subagentId": "01a09460-9b10-7690-9e59-a7c0277e91ea"},
+    {"id": "R03-moby-engine-api", "subagentId": "01a09460-9b10-7690-9e59-a7d55e176672"},
+    {"id": "R04-slack-web-api", "subagentId": "01a09460-9b10-7690-9e59-a7e6b0922672"}
+  ]
+}

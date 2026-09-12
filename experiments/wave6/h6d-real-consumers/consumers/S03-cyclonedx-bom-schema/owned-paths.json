@@ -1,0 +1,72 @@
+{
+  "id": "S03-cyclonedx-bom-schema",
+  "family": "schemaWebhook",
+  "jobId": "json-schema-webhook-drift",
+  "receivingIntegrationOwner": "H6D-parent",
+  "receivingBindings": [
+    "experiments/wave6/h6d-real-consumers/catalog/",
+    "experiments/wave6/h6d-real-consumers/bin/select-job.mjs"
+  ],
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/S03-cyclonedx-bom-schema/",
+  "writeExclusive": true,
+  "outcome": {
+    "pairA": "informational / structural used pointers unchanged on schema/bom-1.6.schema.json 80db0257f1182a2d4220b3a2ab6970f4bab824df → 0bd48c88d1b1877c7a3536252e06893850763190 (annotation typos only)",
+    "pairB": "actionable used-path drift across official tags 1.5 vs 1.6: enum-weakened component type; added /properties/declarations and /definitions/component/properties/cryptoProperties",
+    "notBreakingRequiredAdd": true
+  },
+  "exactInputs": {
+    "job": "json-schema-webhook-drift",
+    "requiredFlags": ["--before", "--after", "--used"],
+    "optionalFlags": ["--out-dir"],
+    "pairA": {
+      "before": "fixtures/official/bom-1.6.80db0257f118.json",
+      "after": "fixtures/official/bom-1.6.0bd48c88d1b1.json",
+      "used": "fixtures/used/used-typo.json"
+    },
+    "pairB": {
+      "before": "fixtures/official/bom-1.5.c320fc0f0b46.json",
+      "after": "fixtures/official/bom-1.6.55343ba19dee.json",
+      "used": "fixtures/used/used-version-pair.json"
+    },
+    "controlIdentical": {
+      "before": "fixtures/official/bom-1.6.0bd48c88d1b1.json",
+      "after": "fixtures/official/bom-1.6.0bd48c88d1b1.json",
+      "used": "fixtures/used/used-typo.json"
+    },
+    "controlUnchangedPointers": {
+      "before": "fixtures/official/bom-1.5.c320fc0f0b46.json",
+      "after": "fixtures/official/bom-1.6.55343ba19dee.json",
+      "used": "fixtures/used/used-version-control.json"
+    },
+    "negative": {
+      "openapi": "fixtures/negative/openapi.json",
+      "remoteRef": "fixtures/negative/remote-ref.json",
+      "yarnLock": "fixtures/negative/yarn.lock"
+    }
+  },
+  "ownedFiles": [
+    "SOURCE.md",
+    "acquisition.json",
+    "witness.mjs",
+    "adapter.mjs",
+    "owned-paths.json",
+    "test/consumer.test.mjs",
+    "fixtures/",
+    "RESULT.json",
+    "RESULT.md",
+    "regression-artifact.json"
+  ],
+  "kit": {
+    "version": "1.4.0",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "vendor": "vendor/useful-jobs-1.4.0/"
+  },
+  "honesty": {
+    "notOpenApi": true,
+    "notCustomer": true,
+    "purchaseAuthority": false,
+    "sold": false,
+    "noLiveFetch": true,
+    "noRequiredFieldBreakInvented": true
+  }
+}

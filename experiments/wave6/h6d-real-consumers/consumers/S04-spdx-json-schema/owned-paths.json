@@ -1,0 +1,40 @@
+{
+  "id": "S04-spdx-json-schema",
+  "family": "schemaWebhook",
+  "jobId": "json-schema-webhook-drift",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/S04-spdx-json-schema/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "selectJob": "experiments/wave6/h6d-real-consumers/bin/select-job.mjs",
+  "outcome": "Used-pointer drift brief for official SPDX JSON Schema 2.3 vs 3.0.1 stored together at restore commit 61a7a341f2533d6e084c48c88463da63f05e1af0. Versioned official pair, not a fake git delta. Not OpenAPI.",
+  "exactInputs": {
+    "before": "fixtures/official/spdx-schema-2-3.json",
+    "after": "fixtures/official/spdx-schema-3-0-1.json",
+    "used": "fixtures/used/positive.json"
+  },
+  "outputs": ["drift-brief.json", "drift-brief.md"],
+  "controlInputs": {
+    "identical": {
+      "before": "fixtures/official/spdx-schema-2-3.json",
+      "after": "fixtures/official/spdx-schema-2-3.json",
+      "used": "fixtures/used/control-identical.json"
+    },
+    "unchangedPointer": {
+      "before": "fixtures/official/spdx-schema-2-3.json",
+      "after": "fixtures/official/spdx-schema-3-0-1.json",
+      "used": "fixtures/used/control-unchanged-pointer.json"
+    }
+  },
+  "negativeInputs": {
+    "yamlOpenApi": "fixtures/negative/openapi.yaml",
+    "jsonOpenApi": "fixtures/negative/openapi.json"
+  },
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "equivalentToOpenApiUpgrade": false,
+  "sameCommitVersionPair": true,
+  "migration": {
+    "id": "openapi-as-json-schema",
+    "equivalent": false,
+    "note": "json-schema-webhook-drift refuses OpenAPI. YAML OpenAPI is not-json; JSON OpenAPI is not-this-job-openapi."
+  }
+}

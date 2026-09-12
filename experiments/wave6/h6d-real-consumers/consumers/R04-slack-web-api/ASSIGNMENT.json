@@ -1,0 +1,11 @@
+{
+  "id": "R04-slack-web-api",
+  "family": "apiRoutes",
+  "jobId": "api-upgrade-brief",
+  "repo": "slackapi/slack-api-specs",
+  "license": "MIT or Apache-2.0 (record actual)",
+  "path": "web-api/slack_web_openapi_v2.json",
+  "beforeShaFull": "walk commits on web-api/slack_web_openapi_v2.json",
+  "afterShaFull": "HEAD of that path vs previous OpenAPI-changing commit",
+  "hint": "Slack Web API OpenAPI v2 (NOT OpenAI, NOT octokit organization.renamed). If only swagger2 and api-upgrade-brief refuses, project chat.postMessage / users.info / conversations.list paths into SDS catalogs for route-table-diff and keep the refusal as regression-artifact. Find two official SHAs with a real path/method delta. Bounded excerpts."
+}

@@ -1,0 +1,8 @@
+consumers/*/vendor/
+consumers/*/tmp/
+consumers/*/tmp-out/
+consumers/*/tmp-smoke/
+consumers/*/work/
+consumers/*/out/
+**/.tmp/
+**/node_modules/

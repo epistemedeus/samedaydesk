@@ -1,0 +1,15 @@
+{
+  "id": "p01-nodejs-org-sitejson-positive",
+  "title": "Node.js site.json security-release banner vs Next 10 survey badge",
+  "clock": "2026-09-12T12:00:00.000Z",
+  "fields": [
+    "title",
+    "description",
+    "text",
+    "jsonLd",
+    "headings"
+  ],
+  "before": "../batches/before.json",
+  "after": "../batches/after.json",
+  "purchaseAuthority": false
+}

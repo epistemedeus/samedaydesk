@@ -1,0 +1,60 @@
+{
+  "schema": "h6d.acquisition.v1",
+  "id": "L02-yargs-lockfile",
+  "family": "lockfile",
+  "jobId": "lockfile-pin-delta",
+  "repo": "yargs/yargs",
+  "repoUrl": "https://github.com/yargs/yargs",
+  "path": "package-lock.json",
+  "license": "MIT",
+  "licensePath": "LICENSE",
+  "beforeSha": "4153e0f097aeaf43a71a2530db6dda51dff2c544",
+  "afterSha": "8878a894111e3fe7c98d84af546c0f34fa017492",
+  "beforeShaFull": "4153e0f097aeaf43a71a2530db6dda51dff2c544",
+  "afterShaFull": "8878a894111e3fe7c98d84af546c0f34fa017492",
+  "retrievedAt": "2026-09-12T06:50:23.000Z",
+  "method": "github-rest-contents+raw",
+  "networkOnJobPath": false,
+  "purchaseAuthority": false,
+  "bytes": {
+    "before": 281077,
+    "after": 281077,
+    "license": 1146
+  },
+  "sha256": {
+    "before": "fbab2725e79189189ff45ccef1cdee7b7400af5bdb7197b407c2aea118177130",
+    "after": "06b3c838d9452ee690ca42a706a597b285da6542f7f2d28117133dc404edac40",
+    "license": "2f1a503bfab84b3ba7393627308b3274501e459e3b5185bbb56bbf16cb1602d4"
+  },
+  "gitBlobSha": {
+    "before": "b27cda064344e90087b00b4209e6e4197c093007",
+    "after": "e646b04f1649c1a12a5547a92bb911543bcab993",
+    "license": "b0145ca0b03bdc922de70dbaf5ae87c3a244c413"
+  },
+  "stored": {
+    "before": "fixtures/official/package-lock.before.json",
+    "after": "fixtures/official/package-lock.after.json",
+    "license": "fixtures/official/LICENSE",
+    "excerpt": "fixtures/official/pins-excerpt.json",
+    "blobMeta": "fixtures/official/blob-meta.json"
+  },
+  "commit": {
+    "before": {
+      "sha": "4153e0f097aeaf43a71a2530db6dda51dff2c544",
+      "html_url": "https://github.com/yargs/yargs/commit/4153e0f097aeaf43a71a2530db6dda51dff2c544",
+      "message": "chore: improve build robustness (#2554)",
+      "date": "2026-07-11T01:41:42Z"
+    },
+    "after": {
+      "sha": "8878a894111e3fe7c98d84af546c0f34fa017492",
+      "html_url": "https://github.com/yargs/yargs/commit/8878a894111e3fe7c98d84af546c0f34fa017492",
+      "message": "chore(main): release 18.1.0 (#2475)",
+      "date": "2026-07-26T03:06:55Z"
+    }
+  },
+  "pinFact": {
+    "lockfileVersion": { "before": 3, "after": 3 },
+    "registryPins": { "before": 562, "after": 562, "added": 0, "removed": 0, "changed": 0, "unchanged": 562 },
+    "rootVersion": { "before": "18.0.0", "after": "18.1.0", "treatedAsRegistryPin": false }
+  }
+}

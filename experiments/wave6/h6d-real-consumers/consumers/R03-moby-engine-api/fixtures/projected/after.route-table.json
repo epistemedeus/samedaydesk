@@ -1,0 +1,520 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "equivalent": false,
+  "projection": "openapi-to-sds-route-table",
+  "note": "Caller-owned non-equivalent projection of moby/moby api/swagger.yaml (Swagger 2.0) into SDS route-table.v1. HTTP methods, operationId, parameters, request bodies, responses, and definitions are dropped. Not the published SDS route table. Homepage / is absent in this Engine API.",
+  "dropped": [
+    "httpMethod",
+    "operationId",
+    "parameters",
+    "requestBody",
+    "responses",
+    "definitions",
+    "consumes",
+    "produces"
+  ],
+  "source": {
+    "repo": "moby/moby",
+    "path": "api/swagger.yaml",
+    "sha": "2803839c3f30344de950e35dfe5cc4e1e170cb0d",
+    "side": "after",
+    "license": "Apache-2.0",
+    "swagger": "2.0",
+    "apiVersion": "1.56",
+    "basePath": "/v1.56"
+  },
+  "routes": [
+    {
+      "path": "/containers/json",
+      "title": "List containers",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/json"
+    },
+    {
+      "path": "/containers/create",
+      "title": "Create a container",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/create"
+    },
+    {
+      "path": "/containers/{id}/json",
+      "title": "Inspect a container",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/json"
+    },
+    {
+      "path": "/containers/{id}/top",
+      "title": "List processes running inside a container",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/top"
+    },
+    {
+      "path": "/containers/{id}/logs",
+      "title": "Get container logs",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/logs"
+    },
+    {
+      "path": "/containers/{id}/changes",
+      "title": "Get changes on a container\u2019s filesystem",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/changes"
+    },
+    {
+      "path": "/containers/{id}/export",
+      "title": "Export a container",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/export"
+    },
+    {
+      "path": "/containers/{id}/stats",
+      "title": "Get container stats based on resource usage",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/stats"
+    },
+    {
+      "path": "/containers/{id}/resize",
+      "title": "Resize a container TTY",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/resize"
+    },
+    {
+      "path": "/containers/{id}/start",
+      "title": "Start a container",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/start"
+    },
+    {
+      "path": "/containers/{id}/stop",
+      "title": "Stop a container",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/stop"
+    },
+    {
+      "path": "/containers/{id}/restart",
+      "title": "Restart a container",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/restart"
+    },
+    {
+      "path": "/containers/{id}/kill",
+      "title": "Kill a container",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/kill"
+    },
+    {
+      "path": "/containers/{id}/update",
+      "title": "Update a container",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/update"
+    },
+    {
+      "path": "/containers/{id}/rename",
+      "title": "Rename a container",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/rename"
+    },
+    {
+      "path": "/containers/{id}/pause",
+      "title": "Pause a container",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/pause"
+    },
+    {
+      "path": "/containers/{id}/unpause",
+      "title": "Unpause a container",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/unpause"
+    },
+    {
+      "path": "/containers/{id}/attach",
+      "title": "Attach to a container",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/attach"
+    },
+    {
+      "path": "/containers/{id}/attach/ws",
+      "title": "Attach to a container via a websocket",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/attach/ws"
+    },
+    {
+      "path": "/containers/{id}/wait",
+      "title": "Wait for a container",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/wait"
+    },
+    {
+      "path": "/containers/{id}",
+      "title": "Remove a container",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}"
+    },
+    {
+      "path": "/containers/{id}/archive",
+      "title": "Get an archive of a filesystem resource in a container",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/archive"
+    },
+    {
+      "path": "/containers/prune",
+      "title": "Delete stopped containers",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/prune"
+    },
+    {
+      "path": "/images/json",
+      "title": "List Images",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/images/json"
+    },
+    {
+      "path": "/build",
+      "title": "Build an image",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/build"
+    },
+    {
+      "path": "/build/prune",
+      "title": "Delete builder cache",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/build/prune"
+    },
+    {
+      "path": "/images/create",
+      "title": "Create an image",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/images/create"
+    },
+    {
+      "path": "/images/{name}/json",
+      "title": "Inspect an image",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/images/{name}/json"
+    },
+    {
+      "path": "/images/{name}/attestations",
+      "title": "Get attestation statements for an image",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/images/{name}/attestations"
+    },
+    {
+      "path": "/images/{name}/history",
+      "title": "Get the history of an image",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/images/{name}/history"
+    },
+    {
+      "path": "/images/{name}/push",
+      "title": "Push an image",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/images/{name}/push"
+    },
+    {
+      "path": "/images/{name}/tag",
+      "title": "Tag an image",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/images/{name}/tag"
+    },
+    {
+      "path": "/images/{name}",
+      "title": "Remove an image",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/images/{name}"
+    },
+    {
+      "path": "/images/search",
+      "title": "Search images",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/images/search"
+    },
+    {
+      "path": "/images/prune",
+      "title": "Delete unused images",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/images/prune"
+    },
+    {
+      "path": "/auth",
+      "title": "Check auth configuration",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/auth"
+    },
+    {
+      "path": "/info",
+      "title": "Get system information",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/info"
+    },
+    {
+      "path": "/version",
+      "title": "Get version",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/version"
+    },
+    {
+      "path": "/_ping",
+      "title": "Ping",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/_ping"
+    },
+    {
+      "path": "/commit",
+      "title": "Create a new image from a container",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/commit"
+    },
+    {
+      "path": "/events",
+      "title": "Monitor events",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/events"
+    },
+    {
+      "path": "/system/df",
+      "title": "Get data usage information",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/system/df"
+    },
+    {
+      "path": "/images/{name}/get",
+      "title": "Export an image",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/images/{name}/get"
+    },
+    {
+      "path": "/images/get",
+      "title": "Export several images",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/images/get"
+    },
+    {
+      "path": "/images/load",
+      "title": "Import images",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/images/load"
+    },
+    {
+      "path": "/containers/{id}/exec",
+      "title": "Create an exec instance",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/containers/{id}/exec"
+    },
+    {
+      "path": "/exec/{id}/start",
+      "title": "Start an exec instance",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/exec/{id}/start"
+    },
+    {
+      "path": "/exec/{id}/resize",
+      "title": "Resize an exec instance",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/exec/{id}/resize"
+    },
+    {
+      "path": "/exec/{id}/json",
+      "title": "Inspect an exec instance",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/exec/{id}/json"
+    },
+    {
+      "path": "/volumes",
+      "title": "List volumes",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/volumes"
+    },
+    {
+      "path": "/volumes/create",
+      "title": "Create a volume",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/volumes/create"
+    },
+    {
+      "path": "/volumes/{name}",
+      "title": "Inspect a volume",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/volumes/{name}"
+    },
+    {
+      "path": "/volumes/prune",
+      "title": "Delete unused volumes",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/volumes/prune"
+    },
+    {
+      "path": "/networks",
+      "title": "List networks",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/networks"
+    },
+    {
+      "path": "/networks/{id}",
+      "title": "Inspect a network",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/networks/{id}"
+    },
+    {
+      "path": "/networks/create",
+      "title": "Create a network",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/networks/create"
+    },
+    {
+      "path": "/networks/{id}/connect",
+      "title": "Connect a container to a network",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/networks/{id}/connect"
+    },
+    {
+      "path": "/networks/{id}/disconnect",
+      "title": "Disconnect a container from a network",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/networks/{id}/disconnect"
+    },
+    {
+      "path": "/networks/prune",
+      "title": "Delete unused networks",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/networks/prune"
+    },
+    {
+      "path": "/plugins",
+      "title": "List plugins",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/plugins"
+    },
+    {
+      "path": "/plugins/privileges",
+      "title": "Get plugin privileges",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/plugins/privileges"
+    },
+    {
+      "path": "/plugins/pull",
+      "title": "Install a plugin",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/plugins/pull"
+    },
+    {
+      "path": "/plugins/{name}/json",
+      "title": "Inspect a plugin",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/plugins/{name}/json"
+    },
+    {
+      "path": "/plugins/{name}",
+      "title": "Remove a plugin",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/plugins/{name}"
+    },
+    {
+      "path": "/plugins/{name}/enable",
+      "title": "Enable a plugin",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/plugins/{name}/enable"
+    },
+    {
+      "path": "/plugins/{name}/disable",
+      "title": "Disable a plugin",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/plugins/{name}/disable"
+    },
+    {
+      "path": "/plugins/{name}/upgrade",
+      "title": "Upgrade a plugin",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/plugins/{name}/upgrade"
+    },
+    {
+      "path": "/plugins/create",
+      "title": "Create a plugin",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/plugins/create"
+    },
+    {
+      "path": "/plugins/{name}/push",
+      "title": "Push a plugin",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/plugins/{name}/push"
+    },
+    {
+      "path": "/plugins/{name}/set",
+      "title": "Configure a plugin",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/plugins/{name}/set"
+    },
+    {
+      "path": "/nodes",
+      "title": "List nodes",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/nodes"
+    },
+    {
+      "path": "/nodes/{id}",
+      "title": "Inspect a node",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/nodes/{id}"
+    },
+    {
+      "path": "/nodes/{id}/update",
+      "title": "Update a node",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/nodes/{id}/update"
+    },
+    {
+      "path": "/swarm",
+      "title": "Inspect swarm",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/swarm"
+    },
+    {
+      "path": "/swarm/init",
+      "title": "Initialize a new swarm",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/swarm/init"
+    },
+    {
+      "path": "/swarm/join",
+      "title": "Join an existing swarm",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/swarm/join"
+    },
+    {
+      "path": "/swarm/leave",
+      "title": "Leave a swarm",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/swarm/leave"
+    },
+    {
+      "path": "/swarm/update",
+      "title": "Update a swarm",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/swarm/update"
+    },
+    {
+      "path": "/swarm/unlockkey",
+      "title": "Get the unlock key",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/swarm/unlockkey"
+    },
+    {
+      "path": "/swarm/unlock",
+      "title": "Unlock a locked manager",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/swarm/unlock"
+    },
+    {
+      "path": "/services",
+      "title": "List services",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/services"
+    },
+    {
+      "path": "/services/create",
+      "title": "Create a service",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/services/create"
+    },
+    {
+      "path": "/services/{id}",
+      "title": "Inspect a service",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/services/{id}"
+    },
+    {
+      "path": "/services/{id}/update",
+      "title": "Update a service",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/services/{id}/update"
+    },
+    {
+      "path": "/services/{id}/logs",
+      "title": "Get service logs",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/services/{id}/logs"
+    },
+    {
+      "path": "/tasks",
+      "title": "List tasks",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/tasks"
+    },
+    {
+      "path": "/tasks/{id}",
+      "title": "Inspect a task",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/tasks/{id}"
+    },
+    {
+      "path": "/tasks/{id}/logs",
+      "title": "Get task logs",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/tasks/{id}/logs"
+    },
+    {
+      "path": "/secrets",
+      "title": "List secrets",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/secrets"
+    },
+    {
+      "path": "/secrets/create",
+      "title": "Create a secret",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/secrets/create"
+    },
+    {
+      "path": "/secrets/{id}",
+      "title": "Inspect a secret",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/secrets/{id}"
+    },
+    {
+      "path": "/secrets/{id}/update",
+      "title": "Update a Secret",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/secrets/{id}/update"
+    },
+    {
+      "path": "/configs",
+      "title": "List configs",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/configs"
+    },
+    {
+      "path": "/configs/create",
+      "title": "Create a config",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/configs/create"
+    },
+    {
+      "path": "/configs/{id}",
+      "title": "Inspect a config",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/configs/{id}"
+    },
+    {
+      "path": "/configs/{id}/update",
+      "title": "Update a Config",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/configs/{id}/update"
+    },
+    {
+      "path": "/distribution/{name}/json",
+      "title": "Get image information from the registry",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/distribution/{name}/json"
+    },
+    {
+      "path": "/session",
+      "title": "Initialize interactive session",
+      "canonical": "https://docs.docker.com/reference/api/engine/version/v1.56/session"
+    }
+  ]
+}

@@ -1,0 +1,639 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Docker Engine API",
+    "version": "1.56"
+  },
+  "basePath": "/v1.56",
+  "paths": {
+    "/containers/json": {
+      "get": {
+        "operationId": "ContainerList",
+        "summary": "List containers"
+      }
+    },
+    "/containers/create": {
+      "post": {
+        "operationId": "ContainerCreate",
+        "summary": "Create a container"
+      }
+    },
+    "/containers/{id}/json": {
+      "get": {
+        "operationId": "ContainerInspect",
+        "summary": "Inspect a container"
+      }
+    },
+    "/containers/{id}/top": {
+      "get": {
+        "operationId": "ContainerTop",
+        "summary": "List processes running inside a container"
+      }
+    },
+    "/containers/{id}/logs": {
+      "get": {
+        "operationId": "ContainerLogs",
+        "summary": "Get container logs"
+      }
+    },
+    "/containers/{id}/changes": {
+      "get": {
+        "operationId": "ContainerChanges",
+        "summary": "Get changes on a container\u2019s filesystem"
+      }
+    },
+    "/containers/{id}/export": {
+      "get": {
+        "operationId": "ContainerExport",
+        "summary": "Export a container"
+      }
+    },
+    "/containers/{id}/stats": {
+      "get": {
+        "operationId": "ContainerStats",
+        "summary": "Get container stats based on resource usage"
+      }
+    },
+    "/containers/{id}/resize": {
+      "post": {
+        "operationId": "ContainerResize",
+        "summary": "Resize a container TTY"
+      }
+    },
+    "/containers/{id}/start": {
+      "post": {
+        "operationId": "ContainerStart",
+        "summary": "Start a container"
+      }
+    },
+    "/containers/{id}/stop": {
+      "post": {
+        "operationId": "ContainerStop",
+        "summary": "Stop a container"
+      }
+    },
+    "/containers/{id}/restart": {
+      "post": {
+        "operationId": "ContainerRestart",
+        "summary": "Restart a container"
+      }
+    },
+    "/containers/{id}/kill": {
+      "post": {
+        "operationId": "ContainerKill",
+        "summary": "Kill a container"
+      }
+    },
+    "/containers/{id}/update": {
+      "post": {
+        "operationId": "ContainerUpdate",
+        "summary": "Update a container"
+      }
+    },
+    "/containers/{id}/rename": {
+      "post": {
+        "operationId": "ContainerRename",
+        "summary": "Rename a container"
+      }
+    },
+    "/containers/{id}/pause": {
+      "post": {
+        "operationId": "ContainerPause",
+        "summary": "Pause a container"
+      }
+    },
+    "/containers/{id}/unpause": {
+      "post": {
+        "operationId": "ContainerUnpause",
+        "summary": "Unpause a container"
+      }
+    },
+    "/containers/{id}/attach": {
+      "post": {
+        "operationId": "ContainerAttach",
+        "summary": "Attach to a container"
+      }
+    },
+    "/containers/{id}/attach/ws": {
+      "get": {
+        "operationId": "ContainerAttachWebsocket",
+        "summary": "Attach to a container via a websocket"
+      }
+    },
+    "/containers/{id}/wait": {
+      "post": {
+        "operationId": "ContainerWait",
+        "summary": "Wait for a container"
+      }
+    },
+    "/containers/{id}": {
+      "delete": {
+        "operationId": "ContainerDelete",
+        "summary": "Remove a container"
+      }
+    },
+    "/containers/{id}/archive": {
+      "get": {
+        "operationId": "ContainerArchive",
+        "summary": "Get an archive of a filesystem resource in a container"
+      },
+      "put": {
+        "operationId": "PutContainerArchive",
+        "summary": "Extract an archive of files or folders to a directory in a container"
+      },
+      "head": {
+        "operationId": "ContainerArchiveInfo",
+        "summary": "Get information about files in a container"
+      }
+    },
+    "/containers/prune": {
+      "post": {
+        "operationId": "ContainerPrune",
+        "summary": "Delete stopped containers"
+      }
+    },
+    "/images/json": {
+      "get": {
+        "operationId": "ImageList",
+        "summary": "List Images"
+      }
+    },
+    "/build": {
+      "post": {
+        "operationId": "ImageBuild",
+        "summary": "Build an image"
+      }
+    },
+    "/build/prune": {
+      "post": {
+        "operationId": "BuildPrune",
+        "summary": "Delete builder cache"
+      }
+    },
+    "/images/create": {
+      "post": {
+        "operationId": "ImageCreate",
+        "summary": "Create an image"
+      }
+    },
+    "/images/{name}/json": {
+      "get": {
+        "operationId": "ImageInspect",
+        "summary": "Inspect an image"
+      }
+    },
+    "/images/{name}/attestations": {
+      "get": {
+        "operationId": "ImageAttestations",
+        "summary": "Get attestation statements for an image"
+      }
+    },
+    "/images/{name}/history": {
+      "get": {
+        "operationId": "ImageHistory",
+        "summary": "Get the history of an image"
+      }
+    },
+    "/images/{name}/push": {
+      "post": {
+        "operationId": "ImagePush",
+        "summary": "Push an image"
+      }
+    },
+    "/images/{name}/tag": {
+      "post": {
+        "operationId": "ImageTag",
+        "summary": "Tag an image"
+      }
+    },
+    "/images/{name}": {
+      "delete": {
+        "operationId": "ImageDelete",
+        "summary": "Remove an image"
+      }
+    },
+    "/images/search": {
+      "get": {
+        "operationId": "ImageSearch",
+        "summary": "Search images"
+      }
+    },
+    "/images/prune": {
+      "post": {
+        "operationId": "ImagePrune",
+        "summary": "Delete unused images"
+      }
+    },
+    "/auth": {
+      "post": {
+        "operationId": "SystemAuth",
+        "summary": "Check auth configuration"
+      }
+    },
+    "/info": {
+      "get": {
+        "operationId": "SystemInfo",
+        "summary": "Get system information"
+      }
+    },
+    "/version": {
+      "get": {
+        "operationId": "SystemVersion",
+        "summary": "Get version"
+      }
+    },
+    "/_ping": {
+      "get": {
+        "operationId": "SystemPing",
+        "summary": "Ping"
+      },
+      "head": {
+        "operationId": "SystemPingHead",
+        "summary": "Ping"
+      }
+    },
+    "/commit": {
+      "post": {
+        "operationId": "ImageCommit",
+        "summary": "Create a new image from a container"
+      }
+    },
+    "/events": {
+      "get": {
+        "operationId": "SystemEvents",
+        "summary": "Monitor events"
+      }
+    },
+    "/system/df": {
+      "get": {
+        "operationId": "SystemDataUsage",
+        "summary": "Get data usage information"
+      }
+    },
+    "/images/{name}/get": {
+      "get": {
+        "operationId": "ImageGet",
+        "summary": "Export an image"
+      }
+    },
+    "/images/get": {
+      "get": {
+        "operationId": "ImageGetAll",
+        "summary": "Export several images"
+      }
+    },
+    "/images/load": {
+      "post": {
+        "operationId": "ImageLoad",
+        "summary": "Import images"
+      }
+    },
+    "/containers/{id}/exec": {
+      "post": {
+        "operationId": "ContainerExec",
+        "summary": "Create an exec instance"
+      }
+    },
+    "/exec/{id}/start": {
+      "post": {
+        "operationId": "ExecStart",
+        "summary": "Start an exec instance"
+      }
+    },
+    "/exec/{id}/resize": {
+      "post": {
+        "operationId": "ExecResize",
+        "summary": "Resize an exec instance"
+      }
+    },
+    "/exec/{id}/json": {
+      "get": {
+        "operationId": "ExecInspect",
+        "summary": "Inspect an exec instance"
+      }
+    },
+    "/volumes": {
+      "get": {
+        "operationId": "VolumeList",
+        "summary": "List volumes"
+      }
+    },
+    "/volumes/create": {
+      "post": {
+        "operationId": "VolumeCreate",
+        "summary": "Create a volume"
+      }
+    },
+    "/volumes/{name}": {
+      "get": {
+        "operationId": "VolumeInspect",
+        "summary": "Inspect a volume"
+      },
+      "put": {
+        "operationId": "VolumeUpdate",
+        "summary": "\"Update a volume. Valid only for Swarm cluster volumes\"\n"
+      },
+      "delete": {
+        "operationId": "VolumeDelete",
+        "summary": "Remove a volume"
+      }
+    },
+    "/volumes/prune": {
+      "post": {
+        "operationId": "VolumePrune",
+        "summary": "Delete unused volumes"
+      }
+    },
+    "/networks": {
+      "get": {
+        "operationId": "NetworkList",
+        "summary": "List networks"
+      }
+    },
+    "/networks/{id}": {
+      "get": {
+        "operationId": "NetworkInspect",
+        "summary": "Inspect a network"
+      },
+      "delete": {
+        "operationId": "NetworkDelete",
+        "summary": "Remove a network"
+      }
+    },
+    "/networks/create": {
+      "post": {
+        "operationId": "NetworkCreate",
+        "summary": "Create a network"
+      }
+    },
+    "/networks/{id}/connect": {
+      "post": {
+        "operationId": "NetworkConnect",
+        "summary": "Connect a container to a network"
+      }
+    },
+    "/networks/{id}/disconnect": {
+      "post": {
+        "operationId": "NetworkDisconnect",
+        "summary": "Disconnect a container from a network"
+      }
+    },
+    "/networks/prune": {
+      "post": {
+        "operationId": "NetworkPrune",
+        "summary": "Delete unused networks"
+      }
+    },
+    "/plugins": {
+      "get": {
+        "operationId": "PluginList",
+        "summary": "List plugins"
+      }
+    },
+    "/plugins/privileges": {
+      "get": {
+        "operationId": "GetPluginPrivileges",
+        "summary": "Get plugin privileges"
+      }
+    },
+    "/plugins/pull": {
+      "post": {
+        "operationId": "PluginPull",
+        "summary": "Install a plugin"
+      }
+    },
+    "/plugins/{name}/json": {
+      "get": {
+        "operationId": "PluginInspect",
+        "summary": "Inspect a plugin"
+      }
+    },
+    "/plugins/{name}": {
+      "delete": {
+        "operationId": "PluginDelete",
+        "summary": "Remove a plugin"
+      }
+    },
+    "/plugins/{name}/enable": {
+      "post": {
+        "operationId": "PluginEnable",
+        "summary": "Enable a plugin"
+      }
+    },
+    "/plugins/{name}/disable": {
+      "post": {
+        "operationId": "PluginDisable",
+        "summary": "Disable a plugin"
+      }
+    },
+    "/plugins/{name}/upgrade": {
+      "post": {
+        "operationId": "PluginUpgrade",
+        "summary": "Upgrade a plugin"
+      }
+    },
+    "/plugins/create": {
+      "post": {
+        "operationId": "PluginCreate",
+        "summary": "Create a plugin"
+      }
+    },
+    "/plugins/{name}/push": {
+      "post": {
+        "operationId": "PluginPush",
+        "summary": "Push a plugin"
+      }
+    },
+    "/plugins/{name}/set": {
+      "post": {
+        "operationId": "PluginSet",
+        "summary": "Configure a plugin"
+      }
+    },
+    "/nodes": {
+      "get": {
+        "operationId": "NodeList",
+        "summary": "List nodes"
+      }
+    },
+    "/nodes/{id}": {
+      "get": {
+        "operationId": "NodeInspect",
+        "summary": "Inspect a node"
+      },
+      "delete": {
+        "operationId": "NodeDelete",
+        "summary": "Delete a node"
+      }
+    },
+    "/nodes/{id}/update": {
+      "post": {
+        "operationId": "NodeUpdate",
+        "summary": "Update a node"
+      }
+    },
+    "/swarm": {
+      "get": {
+        "operationId": "SwarmInspect",
+        "summary": "Inspect swarm"
+      }
+    },
+    "/swarm/init": {
+      "post": {
+        "operationId": "SwarmInit",
+        "summary": "Initialize a new swarm"
+      }
+    },
+    "/swarm/join": {
+      "post": {
+        "operationId": "SwarmJoin",
+        "summary": "Join an existing swarm"
+      }
+    },
+    "/swarm/leave": {
+      "post": {
+        "operationId": "SwarmLeave",
+        "summary": "Leave a swarm"
+      }
+    },
+    "/swarm/update": {
+      "post": {
+        "operationId": "SwarmUpdate",
+        "summary": "Update a swarm"
+      }
+    },
+    "/swarm/unlockkey": {
+      "get": {
+        "operationId": "SwarmUnlockkey",
+        "summary": "Get the unlock key"
+      }
+    },
+    "/swarm/unlock": {
+      "post": {
+        "operationId": "SwarmUnlock",
+        "summary": "Unlock a locked manager"
+      }
+    },
+    "/services": {
+      "get": {
+        "operationId": "ServiceList",
+        "summary": "List services"
+      }
+    },
+    "/services/create": {
+      "post": {
+        "operationId": "ServiceCreate",
+        "summary": "Create a service"
+      }
+    },
+    "/services/{id}": {
+      "get": {
+        "operationId": "ServiceInspect",
+        "summary": "Inspect a service"
+      },
+      "delete": {
+        "operationId": "ServiceDelete",
+        "summary": "Delete a service"
+      }
+    },
+    "/services/{id}/update": {
+      "post": {
+        "operationId": "ServiceUpdate",
+        "summary": "Update a service"
+      }
+    },
+    "/services/{id}/logs": {
+      "get": {
+        "operationId": "ServiceLogs",
+        "summary": "Get service logs"
+      }
+    },
+    "/tasks": {
+      "get": {
+        "operationId": "TaskList",
+        "summary": "List tasks"
+      }
+    },
+    "/tasks/{id}": {
+      "get": {
+        "operationId": "TaskInspect",
+        "summary": "Inspect a task"
+      }
+    },
+    "/tasks/{id}/logs": {
+      "get": {
+        "operationId": "TaskLogs",
+        "summary": "Get task logs"
+      }
+    },
+    "/secrets": {
+      "get": {
+        "operationId": "SecretList",
+        "summary": "List secrets"
+      }
+    },
+    "/secrets/create": {
+      "post": {
+        "operationId": "SecretCreate",
+        "summary": "Create a secret"
+      }
+    },
+    "/secrets/{id}": {
+      "get": {
+        "operationId": "SecretInspect",
+        "summary": "Inspect a secret"
+      },
+      "delete": {
+        "operationId": "SecretDelete",
+        "summary": "Delete a secret"
+      }
+    },
+    "/secrets/{id}/update": {
+      "post": {
+        "operationId": "SecretUpdate",
+        "summary": "Update a Secret"
+      }
+    },
+    "/configs": {
+      "get": {
+        "operationId": "ConfigList",
+        "summary": "List configs"
+      }
+    },
+    "/configs/create": {
+      "post": {
+        "operationId": "ConfigCreate",
+        "summary": "Create a config"
+      }
+    },
+    "/configs/{id}": {
+      "get": {
+        "operationId": "ConfigInspect",
+        "summary": "Inspect a config"
+      },
+      "delete": {
+        "operationId": "ConfigDelete",
+        "summary": "Delete a config"
+      }
+    },
+    "/configs/{id}/update": {
+      "post": {
+        "operationId": "ConfigUpdate",
+        "summary": "Update a Config"
+      }
+    },
+    "/distribution/{name}/json": {
+      "get": {
+        "operationId": "DistributionInspect",
+        "summary": "Get image information from the registry"
+      }
+    },
+    "/session": {
+      "post": {
+        "operationId": "Session",
+        "summary": "Initialize interactive session"
+      }
+    }
+  },
+  "x-note": "Official Swagger 2.0 path map from moby/moby api/swagger.yaml; operation bodies truncated. Still a swagger path map, not an SDS route catalog."
+}

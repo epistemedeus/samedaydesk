@@ -1,0 +1,94 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Caller-owned held extract-batch wrapper over GitHub-retrieved SPDX html/MIT.html + jsonld/MIT.jsonld. Not a live fetch, quote-as-success, or payment. HTML is not extract-batch."
+  },
+  "jobId": "253262f90739e394636b23c2111dc86269814cfa84fefc3fe5cea3280408a74d",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "held:spdx/license-list-data/html/MIT.html",
+      "status": "success",
+      "data": {
+        "title": "MIT License",
+        "headings": {
+          "h1": [
+            "MIT License"
+          ]
+        },
+        "text": "MIT License Copyright (c) <year> <copyright holders> Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \" Software \"), to deal in the Software without restriction, including without limitation on the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software , and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice (including the next paragraph) shall be included in all copies or substantial portions of the Software . THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE .",
+        "jsonLd": {
+          "id": "http://spdx.org/licenses/MIT",
+          "type": "spdx:ListedLicense",
+          "name": "MIT License",
+          "licenseId": "MIT",
+          "isOsiApproved": true,
+          "isFsfLibre": true,
+          "isDeprecatedLicenseId": false,
+          "seeAlso": [
+            "http://opensource.org/licenses/MIT",
+            "https://gitlab.freedesktop.org/xorg/xserver/-/blob/dd5c2595a42d3ff0c4f18d9b53d1f6c3fd934fd4/COPYING#L365-389",
+            "https://opensource.org/license/mit/"
+          ]
+        }
+      },
+      "notes": [
+        "structured vendor snapshot; not scraping",
+        "selected fields: title, headings, text, jsonLd",
+        "jsonLd drops CrossRef timestamps and blank-node generator noise"
+      ],
+      "error": null,
+      "provenance": {
+        "transport": "held-github-raw+contents",
+        "repo": "spdx/license-list-data",
+        "gitSha": "7e10095e0c9028c9e7109df00d15db46411a3378",
+        "blobSha": {
+          "html": "17dcd22e6320f2adefc25ba8b5dae9527f7f9f21",
+          "jsonld": "f438287762278a75d40ca243a7c31d919dd61b25"
+        },
+        "htmlPath": "html/MIT.html",
+        "jsonldPath": "jsonld/MIT.jsonld",
+        "htmlSha256": "7dffa7ddfbc27ff214bca363629533cfd081e08fc8c15cfc021bef4e89a71c6a",
+        "jsonldSha256": "b38bd3237ca64348c3861dc6a8f98a5809720b3c8165c57fb2fa7d9f1a8be902",
+        "requestedAt": "2026-04-10T14:35:52.000Z",
+        "completedAt": "2026-04-10T14:35:52.000Z",
+        "fetchedAt": "2026-04-10T14:35:52.000Z",
+        "note": "Observation timestamps record when this wrapper was produced from held bytes. They are not page-content freshness."
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 0,
+    "bytes": 13429,
+    "wallMs": 0,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 13429,
+    "requests": 0,
+    "wallMs": 0,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "Held GitHub retrieval; not socket billing."
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

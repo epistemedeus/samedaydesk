@@ -1,0 +1,86 @@
+{
+  "id": "R04-slack-web-api",
+  "status": "complete",
+  "testsPass": true,
+  "testCounts": {
+    "pass": 14,
+    "fail": 0,
+    "skip": 0
+  },
+  "testCommand": "NODE_OPTIONS=--max-old-space-size=768 node --test test/consumer.test.mjs",
+  "family": "apiRoutes",
+  "jobId": "api-upgrade-brief",
+  "secondaryJobId": "route-table-diff",
+  "swagger2Refused": false,
+  "regressionArtifact": null,
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "networkOnJobPath": false,
+  "source": {
+    "repo": "slackapi/slack-api-specs",
+    "path": "web-api/slack_web_openapi_v2.json",
+    "license": "MIT",
+    "beforeSha": "3f1e8b4a03855cb29cffbfcaf60195e5867780ea",
+    "afterSha": "dfea73e06d146c368d7f94b52ac90796dc4e27e1",
+    "beforeBytes": 1360907,
+    "afterBytes": 1237332,
+    "beforeSha256": "b026c31dddfe96d9ff2d32832c0c18538eb9c94db66c824c8bcbac546032e856",
+    "afterSha256": "742a5c977180a829df8767cf57bc417d99b3713583aee83741efb9c08ca731e7",
+    "dialect": "swagger-2.0",
+    "infoVersion": {
+      "before": "1.5.0",
+      "after": "1.7.0"
+    }
+  },
+  "engineVsWitness": {
+    "primary": {
+      "job": "api-upgrade-brief",
+      "engine": {
+        "ok": true,
+        "status": "actionable",
+        "summary": "Used-ops delta: +3/~0/-2",
+        "removed": ["GET /channels.info", "GET /channels.list"],
+        "added": ["POST /admin.conversations.create", "POST /calls.add", "POST /conversations.mark"],
+        "unchangedUsed": ["POST /chat.postMessage", "GET /users.info", "GET /conversations.list"]
+      },
+      "witness": {
+        "fact": "openapi-method-path",
+        "added": 3,
+        "removed": 2,
+        "changed": 0,
+        "unchanged": 3
+      },
+      "agree": true,
+      "note": "Engine ran on bounded swagger 2.0 excerpts of eight used operations, not the 1.2MiB official blobs."
+    },
+    "officialFullIndex": {
+      "job": "independent-witness-only",
+      "added": 32,
+      "removed": 43,
+      "unchanged": 142,
+      "agree": true,
+      "note": "Method+path set from stored indexes of the full official blobs."
+    },
+    "sdsProjection": {
+      "job": "route-table-diff",
+      "equivalent": false,
+      "engineOutcome": "breaking",
+      "addedPaths": ["/admin.conversations.create", "/calls.add", "/conversations.mark"],
+      "removedPaths": ["/channels.info", "/channels.list"],
+      "agree": true,
+      "note": "Non-equivalent: HTTP method and operationId are dropped. This Slack RPC spec happens to be one method per path."
+    }
+  },
+  "honesty": [
+    "No token, profit, customer, or paid-call claims.",
+    "Not OpenAI. Not octokit organization.renamed. Not a useful-jobs SAMPLE pair.",
+    "Slack Web API spec is OpenAPI 2.0 (swagger: 2.0). api-upgrade-brief 1.4.0 accepted JSON excerpts; no swagger2 refusal, so no regression-artifact.json.",
+    "OpenAPI path+method is not SDS {path,canonical,title}. SDS catalogs are a labeled caller-owned projection with publishedRouteTable=false.",
+    "route-table-diff refuses raw OpenAPI path maps (unsupported_catalog) and non-loopback URLs (external_catalog_refused).",
+    "Full official blobs were hashed then discarded; git stores bounded excerpts plus method+path indexes.",
+    "yarn.lock is not OpenAPI. Independent witness returns not-openapi. api-upgrade-brief does not refuse closed; it reports unknown-dialect/partial and must not be read as the Slack channels.* retirement.",
+    "Job path does not fetch. purchaseAuthority=false."
+  ],
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/R04-slack-web-api/",
+  "receivingIntegrationOwner": "H6D-parent"
+}

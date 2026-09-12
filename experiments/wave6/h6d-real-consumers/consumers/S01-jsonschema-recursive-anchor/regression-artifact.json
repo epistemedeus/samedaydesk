@@ -1,0 +1,73 @@
+{
+  "jobId": "json-schema-webhook-drift",
+  "kit": "useful-jobs-1.4.0",
+  "engineUnmodified": true,
+  "consumer": "S01-jsonschema-recursive-anchor",
+  "note": "Engine sources were not edited. Unknown or refuse is not retry permission.",
+  "cases": [
+    {
+      "id": "keyword-object-remote-ref-refuse",
+      "inputs": {
+        "before": "fixtures/official/schema.before.json",
+        "after": "fixtures/official/schema.after.json",
+        "used": "fixtures/used/used-keyword.json",
+        "pointers": ["/properties/$recursiveAnchor"]
+      },
+      "exit": 2,
+      "engine": {
+        "ok": false,
+        "refused": true,
+        "code": "remote-ref-refused",
+        "error": "Remote $ref is not resolved (no network, no file fetch)",
+        "detail": {
+          "refs": [
+            {
+              "pointer": "/properties/$recursiveAnchor",
+              "before": ["meta/core#/$defs/anchorString"],
+              "after": []
+            }
+          ]
+        }
+      },
+      "independentWitness": {
+        "fact": "changed",
+        "changed": ["/properties/$recursiveAnchor"],
+        "beforeType": null,
+        "afterType": "boolean",
+        "beforeRef": "meta/core#/$defs/anchorString"
+      },
+      "provenFact": "Official meta-schema changed $recursiveAnchor from a remote $ref to type boolean. Witness records a type-axis change at /properties/$recursiveAnchor.",
+      "engineVsFact": "Engine refuses the keyword-object pointer because the before node contains a remote $ref. Specified refuse, so the official keyword object cannot be classified. Comparable pointer /properties/$recursiveAnchor/type does not contain $ref and is classified added."
+    },
+    {
+      "id": "added-path-summary-omitted",
+      "inputs": {
+        "before": "fixtures/official/schema.before.json",
+        "after": "fixtures/official/schema.after.json",
+        "used": "fixtures/used/used-positive.json",
+        "pointers": [
+          "/properties/$recursiveAnchor/type",
+          "/properties/$recursiveRef/type",
+          "/title"
+        ]
+      },
+      "exit": 0,
+      "engineStatus": "actionable",
+      "engineImpactAdded": [
+        {
+          "pointer": "/properties/$recursiveAnchor/type",
+          "class": "added",
+          "reason": "present-after-only"
+        }
+      ],
+      "engineSummary": "No structural used-path drift. Not a runtime compatibility proof.",
+      "independentWitness": {
+        "fact": "changed",
+        "added": ["/properties/$recursiveAnchor/type"],
+        "unchanged": ["/properties/$recursiveRef/type", "/title"]
+      },
+      "provenFact": "Used pointer /properties/$recursiveAnchor/type is present after only (JSON string boolean). That is used-path drift.",
+      "engineVsFact": "classifyPair marks the pointer added and status becomes actionable, but summarize() ignores impact.added and emits 'No structural used-path drift'."
+    }
+  ]
+}

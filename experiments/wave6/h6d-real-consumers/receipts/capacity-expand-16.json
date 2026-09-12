@@ -1,0 +1,18 @@
+{
+  "phase": "h6d_expand_to_16",
+  "ts": "2026-09-12T06:52:02.138475+00:00",
+  "parentSessionId": "01a09456-c82b-7b41-ad58-e5557da52ed3",
+  "after12AvailablePct": 63.38,
+  "MemTotal_kB": 16398384,
+  "MemAvailable_kB": 10406428,
+  "availablePct": 63.46,
+  "rule": "~25% effective reserve remaining after 12 admitted \u2192 expand to 16",
+  "decision": "expand",
+  "adding": [
+    "P01-nodejs-org-sitejson",
+    "P02-express-docs",
+    "P03-spdx-mit-html",
+    "P04-sds-useful-jobs-page"
+  ],
+  "peakConcurrentTarget": 16
+}

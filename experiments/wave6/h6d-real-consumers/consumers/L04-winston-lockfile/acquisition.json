@@ -1,0 +1,85 @@
+{
+  "schema": "h6d.acquisition.v1",
+  "id": "L04-winston-lockfile",
+  "family": "lockfile",
+  "jobId": "lockfile-pin-delta",
+  "repo": "winstonjs/winston",
+  "repoUrl": "https://github.com/winstonjs/winston",
+  "license": "MIT",
+  "licenseFile": "LICENSE",
+  "path": "package-lock.json",
+  "beforeSha": "4b963a9f5b1ef24efb6250354a108b80c0c6e7d9",
+  "afterSha": "96dccd6e32174c658149189abb6edb13572281b4",
+  "beforeShaFull": "4b963a9f5b1ef24efb6250354a108b80c0c6e7d9",
+  "afterShaFull": "96dccd6e32174c658149189abb6edb13572281b4",
+  "beforeShaShort": "4b963a9f5b1e",
+  "afterShaShort": "96dccd6e3217",
+  "parentOfAfter": "4b963a9f5b1ef24efb6250354a108b80c0c6e7d9",
+  "commitSubject": "Bump async from 3.2.5 to 3.2.6 (#2621)",
+  "pr": 2621,
+  "commitUrls": {
+    "before": "https://github.com/winstonjs/winston/commit/4b963a9f5b1ef24efb6250354a108b80c0c6e7d9",
+    "after": "https://github.com/winstonjs/winston/commit/96dccd6e32174c658149189abb6edb13572281b4"
+  },
+  "retrievedAt": "2026-09-12T06:50:11Z",
+  "method": "GitHub REST API commits + contents + raw.githubusercontent.com",
+  "userAgent": "h6d-l04",
+  "fallbackUsed": false,
+  "fallbackCandidate": {
+    "repo": "koajs/koa",
+    "path": "package-lock.json",
+    "hint": "minimatch 3.1.2→3.1.5 at 4b12945e2e5d vs parent",
+    "used": false
+  },
+  "bytes": {
+    "before": 279571,
+    "after": 279592,
+    "license": 1058
+  },
+  "sha256": {
+    "before": "8375bf80b1905e1011e076abb9e625e76b933296ef36c9b926c5d182b8abd199",
+    "after": "916fbc5f044cc713a78f57f7c59c90ab5404c90374190e7a8f7ffb875fc70cf0",
+    "license": "e61f2ace04e689d21ba1a7bc54d933bcb6e35ebeb887fb5831b880be5de192a7"
+  },
+  "gitBlobSha": {
+    "before": "33e9d79c4d40329c16569202731b7eb5709ae219",
+    "after": "0a17e82c0a0ee8cfafba50dfda3079d5de8b7773",
+    "license": "948d80dd6c0cc10501702616c37da9e361aea069"
+  },
+  "lockfileVersion": {
+    "before": 3,
+    "after": 3
+  },
+  "pinFact": {
+    "id": "node_modules/async",
+    "name": "async",
+    "changeKinds": ["version", "integrity", "resolved"],
+    "before": {
+      "version": "3.2.5",
+      "integrity": "sha512-baNZyqaaLhyLVKm/DlvdW051MSgO6b8eVfIezl9E5PqWxFgzLm/wQntEW4zOytVburDEr0JlALEpdOFwvErLsg==",
+      "resolved": "https://registry.npmjs.org/async/-/async-3.2.5.tgz"
+    },
+    "after": {
+      "version": "3.2.6",
+      "integrity": "sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==",
+      "resolved": "https://registry.npmjs.org/async/-/async-3.2.6.tgz"
+    }
+  },
+  "fixtures": {
+    "before": "fixtures/official/before/package-lock.json",
+    "after": "fixtures/official/after/package-lock.json",
+    "license": "fixtures/official/LICENSE",
+    "excerpt": "fixtures/excerpts/async-pin.json",
+    "provenance": "fixtures/provenance/commits.json",
+    "negativeYarn": "fixtures/negative/yarn.lock"
+  },
+  "usefulJobs": {
+    "version": "1.4.0",
+    "archiveSha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "archiveBytes": 2575215,
+    "extract": "vendor/useful-jobs-1.4.0/"
+  },
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "networkOnJobPath": false
+}

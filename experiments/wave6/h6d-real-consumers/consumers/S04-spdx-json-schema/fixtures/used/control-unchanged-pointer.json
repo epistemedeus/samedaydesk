@@ -1,0 +1,6 @@
+{
+  "pointers": [
+    "/type"
+  ],
+  "note": "Control: used pointer /type is the string object in both official schemas. Unused 3.x fields are ignored."
+}

@@ -1,0 +1,13 @@
+{
+  "name": "swagger.yaml",
+  "path": "api/swagger.yaml",
+  "sha": "8ed37b2501cd487be6cdf7df42513a1ca8093008",
+  "size": 473773,
+  "url": "https://api.github.com/repos/moby/moby/contents/api/swagger.yaml?ref=2803839c3f30344de950e35dfe5cc4e1e170cb0d",
+  "html_url": "https://github.com/moby/moby/blob/2803839c3f30344de950e35dfe5cc4e1e170cb0d/api/swagger.yaml",
+  "git_url": "https://api.github.com/repos/moby/moby/git/blobs/8ed37b2501cd487be6cdf7df42513a1ca8093008",
+  "download_url": "https://raw.githubusercontent.com/moby/moby/2803839c3f30344de950e35dfe5cc4e1e170cb0d/api/swagger.yaml",
+  "type": "file",
+  "encoding": "base64",
+  "contentOmitted": true
+}

@@ -1,0 +1,14 @@
+{
+  "label": "control unused-pointer plus one real used op",
+  "operations": [
+    {
+      "method": "get",
+      "path": "/v1/customers"
+    },
+    {
+      "method": "post",
+      "path": "/v1/openai/chat/completions"
+    }
+  ],
+  "pinNote": "Second pin is absent in Stripe excerpts on purpose. Not OpenAI."
+}

@@ -1,0 +1,92 @@
+{
+  "id": "P02-express-docs",
+  "family": "pageSnapshots",
+  "jobId": "page-change-offline-job",
+  "status": "complete",
+  "testsPass": true,
+  "testCounts": {
+    "pass": 12,
+    "fail": 0,
+    "skip": 0
+  },
+  "source": {
+    "repo": "expressjs/expressjs.com",
+    "path": "docs/content.md",
+    "beforeSha": "ba98cc468032c95cb397b11895537b1c893ac63a",
+    "afterSha": "be31ea3fc5ba9e0d1b96d300894145ca4f6af57c",
+    "license": "CC-BY-4.0",
+    "licenseSpdx": "CC-BY-4.0",
+    "method": "github-contents-api+raw",
+    "retrievedAt": "2026-09-12T06:53:00.000Z",
+    "liveFetch": false
+  },
+  "engine": {
+    "id": "samedaydesk.page-change-offline-job",
+    "version": "0.1.1",
+    "verdict": "changed",
+    "claims": {
+      "noChangeProven": false,
+      "contentUnchangedProven": false,
+      "comparable": true,
+      "complete": true,
+      "current": false,
+      "fresh": false,
+      "usefulOutputProven": true,
+      "paymentImpliesUsefulOutput": false
+    },
+    "freshness": "unknown",
+    "summary": {
+      "matched": 1,
+      "semantic": 2,
+      "order": 0,
+      "coverageUnknown": 0
+    },
+    "changePaths": [
+      { "class": "semantic", "op": "replace", "path": "/headings/h2" },
+      { "class": "semantic", "op": "replace", "path": "/text" }
+    ],
+    "networkUsed": false,
+    "comparedWithClock": "2026-09-12T12:00:00.000Z",
+    "termsVersion": "sha256:9283cd7e19a10636f9a95aade098b34f82f78dec490eadc38694db45caed912d",
+    "beforeBatchSha256": "e0d0e8378eb9bb93ad4133fee22138521399dd413c9f3123610dd58f7f935204",
+    "afterBatchSha256": "5f3406e71c15dcfa4009b6559de46a45b1b0fe026c694e44fb627ae7a474cf87"
+  },
+  "witness": {
+    "fact": "expressjs.com docs/content.md gained h2 Code Tabs; title Content is unchanged; text changed. Not a live fetch.",
+    "changed": ["headings", "text"],
+    "unchanged": ["title"],
+    "added": ["h2:Code Tabs"],
+    "removed": [],
+    "unknown": []
+  },
+  "engineAgreesWithWitness": true,
+  "control": {
+    "verdict": "unchanged",
+    "noChangeProven": true,
+    "claimsFresh": false
+  },
+  "negatives": {
+    "missingClock": "clock_required",
+    "example": "sample_as_delivered_watch",
+    "liveFetchUrl": "live_fetch_url"
+  },
+  "honesty": {
+    "liveFetch": false,
+    "exampleRefused": true,
+    "claimsFresh": false,
+    "charged": false,
+    "purchaseAuthority": false,
+    "schedulerDaemon": false,
+    "migrationEquivalent": false,
+    "migration": "html-to-extract-batch",
+    "notSdsSchemaValidator": true,
+    "tokenArbitrage": false
+  },
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/P02-express-docs/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "kit": {
+    "version": "1.4.0",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215
+  }
+}

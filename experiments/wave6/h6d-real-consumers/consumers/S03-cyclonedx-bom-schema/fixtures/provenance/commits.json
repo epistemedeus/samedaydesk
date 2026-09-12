@@ -1,0 +1,50 @@
+{
+  "repo": "CycloneDX/specification",
+  "license": {
+    "spdx": "Apache-2.0",
+    "path": "LICENSE",
+    "note": "LICENSE at both recorded SHAs is Apache License 2.0. No CDDL text in that file. Schema $comment also states Apache License 2.0.",
+    "retrievedFrom": "https://raw.githubusercontent.com/CycloneDX/specification/0bd48c88d1b1877c7a3536252e06893850763190/LICENSE"
+  },
+  "pairA": {
+    "path": "schema/bom-1.6.schema.json",
+    "before": {
+      "sha": "80db0257f1182a2d4220b3a2ab6970f4bab824df",
+      "html_url": "https://github.com/CycloneDX/specification/commit/80db0257f1182a2d4220b3a2ab6970f4bab824df",
+      "date": "2026-02-07T21:34:15Z",
+      "message": "fix(schema): clarify ratings description for prioritization decisions",
+      "author": "fahed dorgaa"
+    },
+    "after": {
+      "sha": "0bd48c88d1b1877c7a3536252e06893850763190",
+      "html_url": "https://github.com/CycloneDX/specification/commit/0bd48c88d1b1877c7a3536252e06893850763190",
+      "date": "2026-02-25T06:42:12Z",
+      "message": "fix(schema): correct typos in content-type text and refType comment",
+      "author": "Mehrn0ush"
+    },
+    "relationship": "Assigned SHA pair on the same filename. Not parent/child. File-level JSON diff between the two trees is two annotation strings only."
+  },
+  "pairB": {
+    "note": "Official git tags, different filenames.",
+    "before": {
+      "tag": "1.5",
+      "ref": "refs/tags/1.5",
+      "sha": "c320fc0f0b46873864927d9d5684eea7ba439728",
+      "html_url": "https://github.com/CycloneDX/specification/commit/c320fc0f0b46873864927d9d5684eea7ba439728",
+      "date": "2023-06-26T02:44:27Z",
+      "message": "Merge pull request #231 from CycloneDX/v1.5-dev",
+      "path": "schema/bom-1.5.schema.json"
+    },
+    "after": {
+      "tag": "1.6",
+      "ref": "refs/tags/1.6",
+      "sha": "55343ba19dee1785acf1ce9191540d5fd7b590db",
+      "html_url": "https://github.com/CycloneDX/specification/commit/55343ba19dee1785acf1ce9191540d5fd7b590db",
+      "date": "2024-04-09T05:16:16Z",
+      "message": "Bump",
+      "path": "schema/bom-1.6.schema.json"
+    }
+  },
+  "retrievedAt": "2026-09-12T06:57:00Z",
+  "method": "GitHub REST commits + git matching-refs/tags + raw.githubusercontent.com file GET. No scrape beyond these four schema blobs and LICENSE."
+}

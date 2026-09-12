@@ -1,0 +1,51 @@
+{
+  "schema": "h6d.p04.wrap-facts.v1",
+  "source": "https://samedaydesk.com/for-agents/useful-jobs",
+  "path": "/for-agents/useful-jobs",
+  "fields": [
+    "title",
+    "description",
+    "headings"
+  ],
+  "clock": "2026-09-12T12:00:00.000Z",
+  "migrationEquivalent": false,
+  "before": {
+    "title": "Offline useful jobs for agent callers | SameDayDesk",
+    "description": "Download one Node 22 offline package with six local jobs: API upgrade brief, vendor budget impact, feed agenda, evidence CI annotation, listing repair packet, and repeat job record. Verify size and sha256 before extract. Samples are labeled SAMPLE. Callers supply their own files. No purchase or scheduler authority.",
+    "headings": {
+      "h1": [
+        "Six local jobs on your files, no purchase authority"
+      ],
+      "h2": [
+        "Download, then verify before extract",
+        "When each job is useful",
+        "What this package does not claim"
+      ]
+    }
+  },
+  "after": {
+    "title": "Offline useful jobs for agent callers | SameDayDesk",
+    "description": "Ten offline jobs: lockfile pin-delta first, plus JSON Schema drift, route-table diff, page-change, and the original six for API changes, budgets, feeds, and delivery evidence. Acquire with bash, curl, python3, tar, and mktemp; then run on local Node 22. Verify size and sha256 before extract. Samples are labeled SAMPLE. page-change --example is refused. Callers supply their own files. Free local package; not hosted execution.",
+    "headings": {
+      "h1": [
+        "Turn changing files into useful next steps"
+      ],
+      "h2": [
+        "Download, then verify before extract",
+        "When each job is useful",
+        "What this package covers"
+      ]
+    }
+  },
+  "expected": {
+    "title": "unchanged",
+    "description": "changed",
+    "headings": "changed",
+    "verdict": "changed"
+  },
+  "forbidden": [
+    "client/public/tools/schema-validator.html",
+    "client/public/resources.html",
+    "/x402/verified"
+  ]
+}

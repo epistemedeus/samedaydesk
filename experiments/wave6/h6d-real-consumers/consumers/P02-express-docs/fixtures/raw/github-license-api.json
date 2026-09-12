@@ -1,0 +1,14 @@
+{
+  "name": "LICENSE.md",
+  "path": "LICENSE.md",
+  "sha": "a0f5888d427a8f4128dfc6153772902316cdc21a",
+  "size": 18693,
+  "html_url": "https://github.com/expressjs/expressjs.com/blob/main/LICENSE.md",
+  "license": {
+    "key": "cc-by-4.0",
+    "name": "Creative Commons Attribution 4.0 International",
+    "spdx_id": "CC-BY-4.0",
+    "url": "https://api.github.com/licenses/cc-by-4.0",
+    "node_id": "MDc6TGljZW5zZTI1"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "id": "p02-express-docs-control-identical",
+  "title": "Control: identical held extract-batch (before vs before)",
+  "clock": "2026-09-12T12:00:00.000Z",
+  "fields": [
+    "title",
+    "headings",
+    "text"
+  ],
+  "before": "./before.json",
+  "after": "./before.json"
+}

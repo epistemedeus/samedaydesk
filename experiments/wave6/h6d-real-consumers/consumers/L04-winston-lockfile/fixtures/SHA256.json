@@ -1,0 +1,37 @@
+{
+  "official/before/package-lock.json": {
+    "bytes": 279571,
+    "sha256": "8375bf80b1905e1011e076abb9e625e76b933296ef36c9b926c5d182b8abd199",
+    "gitBlobSha": "33e9d79c4d40329c16569202731b7eb5709ae219"
+  },
+  "official/after/package-lock.json": {
+    "bytes": 279592,
+    "sha256": "916fbc5f044cc713a78f57f7c59c90ab5404c90374190e7a8f7ffb875fc70cf0",
+    "gitBlobSha": "0a17e82c0a0ee8cfafba50dfda3079d5de8b7773"
+  },
+  "official/LICENSE": {
+    "bytes": 1058,
+    "sha256": "e61f2ace04e689d21ba1a7bc54d933bcb6e35ebeb887fb5831b880be5de192a7",
+    "gitBlobSha": "948d80dd6c0cc10501702616c37da9e361aea069"
+  },
+  "negative/yarn.lock": {
+    "bytes": 276,
+    "sha256": "519ae26fc1c47bc904c91c20f11826d7a5198954bae506042ca3e46845d87a5c"
+  },
+  "negative/not-a-lockfile.html": {
+    "bytes": 106,
+    "sha256": "5770311208c55c4450dd5c4f20739a48701dbfbe2457c35db61531ce5cfdd4bd"
+  },
+  "negative/package.json": {
+    "bytes": 114,
+    "sha256": "01e574bfd57efded6327b037c56424ca48e681c96e7bae6c91fabba1bbb446ad"
+  },
+  "excerpts/async-pin.json": {
+    "bytes": 1518,
+    "sha256": "b35364199ae17dfe6d3b08acc960a559e2395edd8b171ff05e3edfeb183b8cee"
+  },
+  "provenance/commits.json": {
+    "bytes": 5726,
+    "sha256": "9ced2c00e13a8a8fc0e3909884a2c33e73e6368d9c46df482e9c19220a2697d3"
+  }
+}

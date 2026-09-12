@@ -1,0 +1,17 @@
+{
+  "name": "LICENSE",
+  "path": "LICENSE",
+  "sha": "10ee38a00efae67142a0a624206acf8f7bd73d80",
+  "size": 1076,
+  "html_url": "https://github.com/octokit/webhooks/blob/0f5bd1859ef98b4b7513f415d3ec739f0819850c/LICENSE",
+  "download_url": "https://raw.githubusercontent.com/octokit/webhooks/0f5bd1859ef98b4b7513f415d3ec739f0819850c/LICENSE",
+  "license": {
+    "key": "mit",
+    "name": "MIT License",
+    "spdx_id": "MIT",
+    "url": "https://api.github.com/licenses/mit",
+    "node_id": "MDc6TGljZW5zZTEz"
+  },
+  "content_omitted": true,
+  "note": "GitHub license API metadata; LICENSE bytes stored separately."
+}

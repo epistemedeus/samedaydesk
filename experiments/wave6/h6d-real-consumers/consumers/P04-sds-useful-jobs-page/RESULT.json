@@ -1,0 +1,104 @@
+{
+  "schema": "h6d.consumer-result.v1",
+  "id": "P04-sds-useful-jobs-page",
+  "status": "pass",
+  "testsPass": true,
+  "testCounts": {
+    "pass": 11,
+    "fail": 0,
+    "skip": 0,
+    "todo": 0
+  },
+  "testCommand": "NODE_OPTIONS=--max-old-space-size=768 node --test test/consumer.test.mjs",
+  "family": "pageSnapshots",
+  "jobId": "page-change-offline-job",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/P04-sds-useful-jobs-page/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "source": {
+    "repo": "epistemedeus/samedaydesk",
+    "path": "client/src/pages/UsefulJobs.tsx",
+    "shellPath": "client/src/data/machineEntry.mjs",
+    "pagePath": "/for-agents/useful-jobs",
+    "beforeSha": "abeb54eca9a71abe117898e8fe7de7e55e9d917f",
+    "afterSha": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+    "license": "MIT (in-tree kit LICENSE; SDS root LICENSE absent at both SHAs)",
+    "method": "local-git-show",
+    "network": false
+  },
+  "kit": {
+    "version": "1.4.0",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215
+  },
+  "clock": "2026-09-12T12:00:00.000Z",
+  "fields": ["title", "description", "headings"],
+  "engine": {
+    "id": "samedaydesk.page-change-offline-job",
+    "version": "0.1.1",
+    "verdict": "changed",
+    "claims": {
+      "fresh": false,
+      "current": true,
+      "complete": true,
+      "comparable": true,
+      "usefulOutputProven": true,
+      "paymentImpliesUsefulOutput": false
+    },
+    "freshness": "observed",
+    "summary": {
+      "matched": 1,
+      "semantic": 3,
+      "coverageUnknown": 0
+    },
+    "changePaths": ["/description", "/headings/h1", "/headings/h2"],
+    "charged": false,
+    "networkUsed": false,
+    "beforeSha256": "4c976546706d15022783acfa054be6ab21ec367142a22ea86a3645ebba1a0c8d",
+    "afterSha256": "ba8868bef2b2d3c5b37b317c7379c5d456ffd62794b38336ec483330f0a155a7",
+    "termsVersion": "sha256:7862065dae93c7d186fbfa97bb0d69157deed7b5e2483a1e97b2a4f59e134e3b"
+  },
+  "witness": {
+    "independent": true,
+    "importedKitEngine": false,
+    "fact": "changed",
+    "unchanged": ["title"],
+    "changed": ["description", "headings"],
+    "agreesWithEngine": true
+  },
+  "control": {
+    "job": "fixtures/control/job.json",
+    "engineVerdict": "unchanged",
+    "witnessFact": "unchanged"
+  },
+  "negative": {
+    "missingClock": {
+      "job": "fixtures/negative/missing-clock.job.json",
+      "exit": 2,
+      "code": "clock_required"
+    },
+    "example": {
+      "flag": "--example",
+      "exit": 2,
+      "code": "sample_as_delivered_watch"
+    },
+    "liveUrl": {
+      "job": "fixtures/negative/live-url.job.json",
+      "exit": 2,
+      "code": "live_fetch_url"
+    }
+  },
+  "migration": {
+    "id": "html-to-extract-batch",
+    "equivalent": false
+  },
+  "honesty": [
+    "No live fetch, payment, scheduler, or token/profit claims.",
+    "claims.fresh stays false; freshness=observed is clock vs held completedAt, not live page freshness.",
+    "charged false. Quote amountAtomic 0 is not success.",
+    "First-byte shell title is unchanged; description and React headings change.",
+    "Not H04 schema-validator.html, resources.html, or /x402/verified.",
+    "HTML/TSX is not extract-batch. --example is refused."
+  ],
+  "regressionArtifact": null,
+  "purchaseAuthority": false
+}

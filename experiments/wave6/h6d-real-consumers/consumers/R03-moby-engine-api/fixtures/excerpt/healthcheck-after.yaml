@@ -1,0 +1,25 @@
+            type: "array"
+            items:
+              $ref: "#/definitions/Mount"
+          StopSignal:
+            description: "Signal to stop the container."
+            type: "string"
+          StopGracePeriod:
+            description: |
+              Amount of time to wait for the container to terminate before
+              forcefully killing it.
+            type: "integer"
+            format: "int64"
+          Healthcheck:
+            $ref: "#/definitions/HealthConfig"
+          Hosts:
+            type: "array"
+            description: |
+              A list of hostname/IP mappings to add to the container's `hosts`
+              file. The format of extra hosts is specified in the
+              [hosts(5)](http://man7.org/linux/man-pages/man5/hosts.5.html)
+              man page:
+
+                  IP_address canonical_hostname [aliases...]
+            items:
+              type: "string"

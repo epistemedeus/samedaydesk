@@ -1,0 +1,151 @@
+{
+  "consumerId": "S02-octokit-pr-opened",
+  "family": "schemaWebhook",
+  "jobId": "json-schema-webhook-drift",
+  "repo": "octokit/webhooks",
+  "repoUrl": "https://github.com/octokit/webhooks",
+  "license": "MIT",
+  "licenseSpdx": "MIT",
+  "licenseCopyright": "Copyright (c) 2018 Gregor Martynus",
+  "path": "payload-examples/api.github.com/pull_request/opened.payload.json",
+  "beforeSha": "e3e60cb5336a261199d30f33f080017160df5d4d",
+  "afterSha": "0f5bd1859ef98b4b7513f415d3ec739f0819850c",
+  "beforeShaFull": "e3e60cb5336a261199d30f33f080017160df5d4d",
+  "afterShaFull": "0f5bd1859ef98b4b7513f415d3ec739f0819850c",
+  "candidateBeforeShaShort": "e3e60cb5336a",
+  "candidateAfterShaShort": "0f5bd1859ef9",
+  "beforeShaConfirmedLacksUsedPointer": true,
+  "afterShaAddsUsedPointer": true,
+  "immediateParentSha": "c7f0d67c07feac24862b294ac219afee5fe62b1b",
+  "immediateParentLacksUsedPointer": true,
+  "usedPointers": [
+    "/pull_request/auto_merge",
+    "/action"
+  ],
+  "controlPointer": "/action",
+  "addedPointer": "/pull_request/auto_merge",
+  "kind": "webhook-example",
+  "retrievedAt": "2026-09-12T06:51:00.000Z",
+  "method": "GitHub raw.githubusercontent.com for payload and LICENSE bytes; GitHub REST API for commits, contents metadata (file content omitted), license metadata, and path commit list. No live webhook delivery.",
+  "gitBlobs": {
+    "before": "a4b4fbadacfa5144f0bdff65d5e3e59b662e053b",
+    "after": "24579861a25974010bace8514fb980e242a470e1",
+    "parent": "62f32fa458ad6b465180420eaa6ea1084990a6a1",
+    "license": "10ee38a00efae67142a0a624206acf8f7bd73d80"
+  },
+  "pathWalk": [
+    {
+      "sha": "0f5bd1859ef98b4b7513f415d3ec739f0819850c",
+      "date": "2021-03-20T23:30:43Z",
+      "message": "fix: add `auto_merge` property to `PullRequest` interface (#408)",
+      "role": "after"
+    },
+    {
+      "sha": "ad77d7a8583c40badfa525403b848aed3f4a8b43",
+      "date": "2021-01-20T01:56:54Z",
+      "message": "feat: common label schema (#303)",
+      "role": "intervening-path-commit"
+    },
+    {
+      "sha": "da605011ba87c84f0575c11f7591dce612a345e7",
+      "date": "2021-01-11T19:40:32Z",
+      "message": "chore: format payload and schema jsons with prettier consistently (#260)",
+      "role": "intervening-path-commit"
+    },
+    {
+      "sha": "e3e60cb5336a261199d30f33f080017160df5d4d",
+      "date": "2021-01-11T17:51:03Z",
+      "message": "feat: adjust structure of schema & examples for payloads to be unions (#252) thanks @G-Rath",
+      "role": "before-candidate-confirmed"
+    }
+  ],
+  "kit": {
+    "name": "useful-jobs",
+    "version": "1.4.0",
+    "archive": "/tmp/h6d/wt/client/public/kit/useful-jobs-1.4.0.tar.gz",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215,
+    "extractedTo": "vendor/useful-jobs-1.4.0/"
+  },
+  "fixtures": {
+    "fixtures/official/opened.before.json": {
+      "path": "fixtures/official/opened.before.json",
+      "bytes": 27482,
+      "sha256": "c7ad0961ec4c8dbe48a3322db7aa2653f232bb48f47d7c18f93d16c91f6bf800"
+    },
+    "fixtures/official/opened.after.json": {
+      "path": "fixtures/official/opened.after.json",
+      "bytes": 27542,
+      "sha256": "7518acf79b9c347efa17e37e2c1dd3ce8dddf0c521094ec6e57648cd324ad5ce"
+    },
+    "fixtures/official/opened.parent.json": {
+      "path": "fixtures/official/opened.parent.json",
+      "bytes": 27518,
+      "sha256": "08190743817a838b5327415a6087ffe4bb938950a5a2a9cc7b038e37c144009a"
+    },
+    "fixtures/official/LICENSE": {
+      "path": "fixtures/official/LICENSE",
+      "bytes": 1076,
+      "sha256": "e68f8081cee4fcf84619364e6cbf0eb3b2e4100907a56d6c5912a6f090bb09ae"
+    },
+    "fixtures/official/commit.before.json": {
+      "path": "fixtures/official/commit.before.json",
+      "bytes": 2040,
+      "sha256": "483eda88c5fc7ec52c158907c55612f6f9331882e4adae2b0268908ee3b1ff28"
+    },
+    "fixtures/official/commit.after.json": {
+      "path": "fixtures/official/commit.after.json",
+      "bytes": 2196,
+      "sha256": "1a7be59e05002c9e6f67219da764a0785bb709ee2cb1f5f0d0505548043e9c1b"
+    },
+    "fixtures/official/commit.parent.json": {
+      "path": "fixtures/official/commit.parent.json",
+      "bytes": 1226,
+      "sha256": "29b0b4d82e1273efef204aad0782f8c698fb1629f2945fac575ae92a70fc38b6"
+    },
+    "fixtures/official/contents.before.json": {
+      "path": "fixtures/official/contents.before.json",
+      "bytes": 979,
+      "sha256": "311aab4b305c2987fa19ce3ead7ae744e6dc460164e342a915eb2688d3316f69"
+    },
+    "fixtures/official/contents.after.json": {
+      "path": "fixtures/official/contents.after.json",
+      "bytes": 979,
+      "sha256": "efed47f473e04a0fcb6c57f12dc0ead8533a8d754ad77f638de71dbc696e7f91"
+    },
+    "fixtures/official/contents.parent.json": {
+      "path": "fixtures/official/contents.parent.json",
+      "bytes": 979,
+      "sha256": "314f4f76fb17e5cebdefbb90bd7b4904f17ca700cc3fb79cea837f013bcf700d"
+    },
+    "fixtures/official/path-commits.json": {
+      "path": "fixtures/official/path-commits.json",
+      "bytes": 2859,
+      "sha256": "2a8b23c1e6ce4f8642db0191945355deead447cfe67b01101b2423734e2404b9"
+    },
+    "fixtures/official/github-license-api.json": {
+      "path": "fixtures/official/github-license-api.json",
+      "bytes": 615,
+      "sha256": "6011736055675dda7a2811abcea0cd3e9aecde923fea1caced4bceed4289e33c"
+    },
+    "fixtures/used/used.json": {
+      "path": "fixtures/used/used.json",
+      "bytes": 70,
+      "sha256": "0db8d0ebd6c51b0080cfd308c3d9ca754f83f029d55f485c3f0b9472c1e75e0c"
+    },
+    "fixtures/used/used-control.json": {
+      "path": "fixtures/used/used-control.json",
+      "bytes": 38,
+      "sha256": "3bbd9f0b9f52984acd7654f036be2ad71eb7bf1b28650a16ab726ff9d056b282"
+    },
+    "fixtures/negative/openapi.json": {
+      "path": "fixtures/negative/openapi.json",
+      "bytes": 309,
+      "sha256": "0be75c7d328459de34337b5ffc568e3a40f0a54064e91545cafd94f8957a93de"
+    }
+  },
+  "forbiddenNotUsed": [
+    "organization.renamed",
+    "payload-examples/api.github.com/create/payload.json"
+  ]
+}

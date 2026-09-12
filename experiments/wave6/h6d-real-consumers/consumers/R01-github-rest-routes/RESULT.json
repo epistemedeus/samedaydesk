@@ -1,0 +1,79 @@
+{
+  "schema": "h6d.consumer-result.v1",
+  "id": "R01-github-rest-routes",
+  "family": "apiRoutes",
+  "jobId": "api-upgrade-brief",
+  "usefulJobs": "1.4.0",
+  "status": "pass",
+  "testsPass": true,
+  "testCounts": {
+    "pass": 8,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "testCommand": "NODE_OPTIONS=--max-old-space-size=768 node --test test/consumer.test.mjs",
+  "source": {
+    "repo": "github/rest-api-description",
+    "license": "MIT",
+    "path": "descriptions/api.github.com/api.github.com.yaml",
+    "beforeSha": "f5d6d10f019dd94650dec88de32057f299411304",
+    "afterSha": "e16cc2584c6d32e8cd4d461759e1475e79327d6c",
+    "beforeDate": "2026-09-11T16:56:47Z",
+    "afterDate": "2026-09-12T04:12:34Z",
+    "fullBlobStored": false,
+    "fullBlob": {
+      "beforeYaml": {
+        "bytes": 9843603,
+        "sha256": "7254025ca236412eec84f215ad61e706ede8ddffc00826ec6b61f553b6bd1e94"
+      },
+      "afterYaml": {
+        "bytes": 9858123,
+        "sha256": "51fa18cb44368560881cf1e6f7efe82ffe82f2bafb3c66df2bb650619b64bf07"
+      }
+    }
+  },
+  "engine": {
+    "jobId": "api-upgrade-brief",
+    "status": "actionable",
+    "summary": "Used-ops delta: +0/~2/-0",
+    "changedOps": [
+      "GET /repos/{owner}/{repo}/labels/{name}",
+      "POST /repos/{owner}/{repo}/labels"
+    ]
+  },
+  "witness": {
+    "equality": "method+path+operationId",
+    "status": "informational",
+    "counts": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "unchanged": 15,
+      "unknown": 0
+    }
+  },
+  "engineVsWitness": {
+    "agreeOnSetIdentity": true,
+    "agreeOnSchemaFingerprint": false,
+    "note": "Witness is method+path+operationId set (unchanged). Engine fingerprints responses and flags label.required archived_at/archived_by. Different dimensions; not a kit regression. Not a runtime compatibility proof."
+  },
+  "projection": {
+    "equivalent": false,
+    "schema": "samedaydesk.route-table.v1",
+    "routeTableDiffOutcome": "no-change",
+    "openapiFedToRouteTableDiff": "unsupported_catalog"
+  },
+  "honesty": [
+    "Not OpenAI routes",
+    "Not Octokit organization.renamed",
+    "Not a runtime compatibility proof",
+    "No purchase authority",
+    "No network on the job path",
+    "OpenAPI path+method is not SDS {path,canonical,title}",
+    "Full multi-MB specs are hashed, not committed"
+  ],
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "regressionArtifact": false
+}

@@ -1,0 +1,245 @@
+{
+  "pairA_typo_same_filename": {
+    "path": "schema/bom-1.6.schema.json",
+    "beforeSha": "80db0257f1182a2d4220b3a2ab6970f4bab824df",
+    "afterSha": "0bd48c88d1b1877c7a3536252e06893850763190",
+    "note": "File-level diff is two annotation strings only. No required/type/enum/properties structural change.",
+    "pointers": {
+      "/definitions/attachment/properties/contentType/description": {
+        "before": {
+          "present": true,
+          "value": "Specifies the format and nature of the data being attached, helping systems correctly interpret and process the content. Common content type examples include `application/json` for JSON data and `text/plain` for plan text documents.\n [RFC 2045 section 5.1](https://www.ietf.org/rfc/rfc2045.html#section-5.1) outlines the structure and use of content types. For a comprehensive list of registered content types, refer to the [IANA media types registry](https://www.iana.org/assignments/media-types/media-types.xhtml)."
+        },
+        "after": {
+          "present": true,
+          "value": "Specifies the format and nature of the data being attached, helping systems correctly interpret and process the content. Common content type examples include `application/json` for JSON data and `text/plain` for plain text documents.\n [RFC 2045 section 5.1](https://www.ietf.org/rfc/rfc2045.html#section-5.1) outlines the structure and use of content types. For a comprehensive list of registered content types, refer to the [IANA media types registry](https://www.iana.org/assignments/media-types/media-types.xhtml)."
+        }
+      },
+      "/definitions/refType/$comment": {
+        "before": {
+          "present": true,
+          "value": "TODO (breaking change): add a format constraint that prevents the value from staring with 'urn:cdx:'"
+        },
+        "after": {
+          "present": true,
+          "value": "TODO (breaking change): add a format constraint that prevents the value from starting with 'urn:cdx:'"
+        }
+      },
+      "/definitions/attachment/properties/contentType": {
+        "before": {
+          "present": true,
+          "keys": [
+            "default",
+            "description",
+            "examples",
+            "title",
+            "type"
+          ],
+          "type": "string",
+          "title": "Content-Type",
+          "description": "Specifies the format and nature of the data being attached, helping systems correctly interpret and process the content. Common content type examples include `application/json` for JSON data and `text/plain` for plan text documents.\n [RFC 2045 section 5.1](https://www.ietf.org/rfc/rfc2045.html#section-5.1) outlines the structure and use of content types. For a comprehensive list of registered cont\u2026"
+        },
+        "after": {
+          "present": true,
+          "keys": [
+            "default",
+            "description",
+            "examples",
+            "title",
+            "type"
+          ],
+          "type": "string",
+          "title": "Content-Type",
+          "description": "Specifies the format and nature of the data being attached, helping systems correctly interpret and process the content. Common content type examples include `application/json` for JSON data and `text/plain` for plain text documents.\n [RFC 2045 section 5.1](https://www.ietf.org/rfc/rfc2045.html#section-5.1) outlines the structure and use of content types. For a comprehensive list of registered con\u2026"
+        }
+      },
+      "/required": {
+        "before": {
+          "present": true,
+          "value": [
+            "bomFormat",
+            "specVersion"
+          ]
+        },
+        "after": {
+          "present": true,
+          "value": [
+            "bomFormat",
+            "specVersion"
+          ]
+        }
+      },
+      "/definitions/refType/type": {
+        "before": {
+          "present": true,
+          "value": "string"
+        },
+        "after": {
+          "present": true,
+          "value": "string"
+        }
+      }
+    }
+  },
+  "pairB_official_tags_different_filenames": {
+    "before": {
+      "tag": "1.5",
+      "sha": "c320fc0f0b46873864927d9d5684eea7ba439728",
+      "path": "schema/bom-1.5.schema.json"
+    },
+    "after": {
+      "tag": "1.6",
+      "sha": "55343ba19dee1785acf1ce9191540d5fd7b590db",
+      "path": "schema/bom-1.6.schema.json"
+    },
+    "note": "Maintained official spec versions, not the same filename. Root required dropped 'version' (compatible removal, not a breaking required-add). Component required stays [type, name]. Component type enum gained cryptographic-asset. declarations and cryptoProperties added in 1.6.",
+    "pointers": {
+      "/definitions/component/properties/type/enum": {
+        "before": {
+          "present": true,
+          "value": [
+            "application",
+            "framework",
+            "library",
+            "container",
+            "platform",
+            "operating-system",
+            "device",
+            "device-driver",
+            "firmware",
+            "file",
+            "machine-learning-model",
+            "data"
+          ]
+        },
+        "after": {
+          "present": true,
+          "value": [
+            "application",
+            "framework",
+            "library",
+            "container",
+            "platform",
+            "operating-system",
+            "device",
+            "device-driver",
+            "firmware",
+            "file",
+            "machine-learning-model",
+            "data",
+            "cryptographic-asset"
+          ]
+        }
+      },
+      "/properties/declarations": {
+        "before": {
+          "present": false
+        },
+        "after": {
+          "present": true,
+          "keys": [
+            "additionalProperties",
+            "description",
+            "properties",
+            "title",
+            "type"
+          ],
+          "type": "object",
+          "title": "Declarations",
+          "propertyKeys": [
+            "affirmation",
+            "assessors",
+            "attestations",
+            "claims",
+            "evidence",
+            "signature",
+            "targets"
+          ]
+        }
+      },
+      "/definitions/component/properties/cryptoProperties": {
+        "before": {
+          "present": false
+        },
+        "after": {
+          "present": true,
+          "keys": [
+            "$ref",
+            "title"
+          ],
+          "title": "Cryptographic Properties"
+        }
+      },
+      "/definitions/component/required": {
+        "before": {
+          "present": true,
+          "value": [
+            "type",
+            "name"
+          ]
+        },
+        "after": {
+          "present": true,
+          "value": [
+            "type",
+            "name"
+          ]
+        }
+      },
+      "/required": {
+        "before": {
+          "present": true,
+          "value": [
+            "bomFormat",
+            "specVersion",
+            "version"
+          ]
+        },
+        "after": {
+          "present": true,
+          "value": [
+            "bomFormat",
+            "specVersion"
+          ]
+        },
+        "honesty": "version removed from BOM-root required in 1.6. Compatible weakening, not a breaking required-field add. Not used as a breaking claim."
+      },
+      "/definitions/attachment/properties/contentType": {
+        "before": {
+          "present": true,
+          "keys": [
+            "default",
+            "description",
+            "title",
+            "type"
+          ],
+          "type": "string",
+          "title": "Content-Type",
+          "description": "Specifies the content type of the text. Defaults to text/plain if not specified."
+        },
+        "after": {
+          "present": true,
+          "keys": [
+            "default",
+            "description",
+            "title",
+            "type"
+          ],
+          "type": "string",
+          "title": "Content-Type",
+          "description": "Specifies the content type of the text. Defaults to text/plain if not specified."
+        }
+      },
+      "/$id": {
+        "before": {
+          "present": true,
+          "value": "http://cyclonedx.org/schema/bom-1.5.schema.json"
+        },
+        "after": {
+          "present": true,
+          "value": "http://cyclonedx.org/schema/bom-1.6.schema.json"
+        }
+      }
+    }
+  }
+}

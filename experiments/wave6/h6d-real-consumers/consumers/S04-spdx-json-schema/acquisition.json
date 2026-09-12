@@ -1,0 +1,55 @@
+{
+  "id": "S04-spdx-json-schema",
+  "repo": "spdx/spdx-spec",
+  "repoUrl": "https://github.com/spdx/spdx-spec",
+  "beforeSha": "61a7a341f2533d6e084c48c88463da63f05e1af0",
+  "afterSha": "61a7a341f2533d6e084c48c88463da63f05e1af0",
+  "sameCommitVersionPair": true,
+  "path": {
+    "before": "schemas/spdx-schema-2-3.json",
+    "after": "schemas/spdx-schema-3-0-1.json"
+  },
+  "license": "Community-Spec-1.0; CC-BY-3.0 (pre-existing portions); MIT (bin/pull-license-list.py)",
+  "licenseFile": "LICENSE",
+  "retrievedAt": "2026-09-12T06:54:12Z",
+  "method": "GitHub Contents API + raw.githubusercontent.com GET at pin SHA",
+  "commit": {
+    "sha": "61a7a341f2533d6e084c48c88463da63f05e1af0",
+    "htmlUrl": "https://github.com/spdx/spdx-spec/commit/61a7a341f2533d6e084c48c88463da63f05e1af0",
+    "date": "2026-04-24T14:28:03Z",
+    "message": "Restore schemas directory"
+  },
+  "bytes": {
+    "spdx-schema-2-3.json": 45305,
+    "spdx-schema-3-0-1.json": 235595,
+    "LICENSE": 35886
+  },
+  "sha256": {
+    "spdx-schema-2-3.json": "ca7fd7cc2c8107c3b6b5976058bb72363e8c072f0e446609d4fe7234860c2894",
+    "spdx-schema-3-0-1.json": "19d65705ee474fb99467b5e006e05cab61b561974da34ff0e4a188bcf039387c",
+    "LICENSE": "8b9e88199429dc9fc3c87604bdb9008c640829a3b5f6b8bd40ba3d0e8b5ca987",
+    "schemas-README.md": "f500752c6059642d801bbfd92c5f9c00ab7995baa6b2f73e9b5eeb79e8206d8f",
+    "used/positive.json": "6ce4b95b85572e893478a23c3985848887c268663df034ccd8e5626a07bf95ac"
+  },
+  "gitBlobSha": {
+    "spdx-schema-2-3.json": "0ca1c7b56bebb10fb637285698e401342b4910d6",
+    "spdx-schema-3-0-1.json": "d61124dbb66435d1ac05ebcee1e08cdcf3269af5",
+    "LICENSE": "67eb4983a9b2e6b91e0c6596ed219a2b617faa5e"
+  },
+  "urls": {
+    "contents": "https://api.github.com/repos/spdx/spdx-spec/contents/schemas?ref=61a7a341f2533d6e084c48c88463da63f05e1af0",
+    "beforeRaw": "https://raw.githubusercontent.com/spdx/spdx-spec/61a7a341f2533d6e084c48c88463da63f05e1af0/schemas/spdx-schema-2-3.json",
+    "afterRaw": "https://raw.githubusercontent.com/spdx/spdx-spec/61a7a341f2533d6e084c48c88463da63f05e1af0/schemas/spdx-schema-3-0-1.json",
+    "licenseRaw": "https://raw.githubusercontent.com/spdx/spdx-spec/61a7a341f2533d6e084c48c88463da63f05e1af0/LICENSE"
+  },
+  "kit": {
+    "package": "useful-jobs",
+    "version": "1.4.0",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215,
+    "archive": "client/public/kit/useful-jobs-1.4.0.tar.gz",
+    "extractedTo": "vendor/useful-jobs-1.4.0/"
+  },
+  "purchaseAuthority": false,
+  "networkOnJobPath": false
+}

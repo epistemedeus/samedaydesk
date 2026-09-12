@@ -1,0 +1,46 @@
+{
+  "schema": "h6d.regression-artifact.v1",
+  "id": "L01-commander-lockfile",
+  "jobId": "lockfile-pin-delta",
+  "usefulJobs": "1.4.0",
+  "engineUnmodified": true,
+  "pinFactsOnOfficialPair": "agree",
+  "findings": [
+    {
+      "id": "yarn-lock-refused-as-parse-error",
+      "severity": "classification-code",
+      "blocking": false,
+      "provenFact": "fixtures/negative/yarn.lock is a yarn v1 lockfile, not npm package-lock.json lockfileVersion 2/3. Independent witness classifies it as yarn-lock and refuses.",
+      "engineBehavior": "useful-jobs 1.4.0 lockfile-pin-delta also refuses (exit 2, refused true) but the refuse code is parse-error because the file is not JSON. There is no dedicated yarn-lock/pnpm/bun code in engines/lockfile-pin-delta/lib/parse-lockfile.mjs.",
+      "agreement": "Both refuse; yarn is not accepted as a pin map. Outcome matches catalog honesty (yarn is not this job). Code string differs.",
+      "inputs": {
+        "before": "fixtures/negative/yarn.lock",
+        "after": "fixtures/official/after.package-lock.json"
+      },
+      "engine": {
+        "exit": 2,
+        "stdout": "{\"ok\":false,\"refused\":true,\"code\":\"parse-error\",\"error\":\"before is not JSON: Unexpected token '#', \\\"# THIS IS \\\"... is not valid JSON\",\"detail\":{\"label\":\"before\"},\"purchaseAuthority\":false}\n",
+        "stderr": "",
+        "stdoutJson": {
+          "ok": false,
+          "refused": true,
+          "code": "parse-error",
+          "error": "before is not JSON: Unexpected token '#', \"# THIS IS \"... is not valid JSON",
+          "detail": { "label": "before" },
+          "purchaseAuthority": false
+        }
+      },
+      "witness": {
+        "fact": "refused",
+        "code": "yarn-lock",
+        "error": "before is yarn.lock, not npm package-lock.json",
+        "changed": [],
+        "unchanged": [],
+        "added": [],
+        "removed": [],
+        "unknown": []
+      },
+      "note": "Not an engine source edit. Catalog yarn/pnpm/bun refuse is satisfied by closed refuse. package.json-only uses the dedicated code and agrees with the witness."
+    }
+  ]
+}

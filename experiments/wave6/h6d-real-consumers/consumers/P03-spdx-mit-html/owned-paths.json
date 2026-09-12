@@ -1,0 +1,49 @@
+{
+  "id": "P03-spdx-mit-html",
+  "family": "pageSnapshots",
+  "jobId": "page-change-offline-job",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/P03-spdx-mit-html/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "networkOnJobPath": false,
+  "migration": {
+    "id": "html-to-extract-batch",
+    "equivalent": false,
+    "from": "SPDX html/MIT.html snippet + jsonld/MIT.jsonld publisher bytes",
+    "to": "samedaydesk.extract-batch.v0 selected fields title/headings/text/jsonLd",
+    "dropped": [
+      "unselected markup",
+      "CrossRef timestamps",
+      "blank-node ids",
+      "live freshness",
+      "payment"
+    ],
+    "note": "HTML is not extract-batch. page-change-offline-job never fetches. claims.fresh stays false. Clock is required."
+  },
+  "inputs": {
+    "positiveJob": "fixtures/jobs/positive.json",
+    "controlIdenticalJob": "fixtures/jobs/control-identical.json",
+    "controlTitleHeadingsJob": "fixtures/jobs/control-title-headings.json",
+    "before": "fixtures/held/before.json",
+    "after": "fixtures/held/after.json",
+    "fields": ["title", "headings", "text", "jsonLd"],
+    "clock": "2026-09-12T12:00:00.000Z",
+    "officialHtmlBefore": "fixtures/official/html.MIT.f75839ee25cd.html",
+    "officialHtmlAfter": "fixtures/official/html.MIT.7e10095e0c90.html",
+    "officialJsonldBefore": "fixtures/official/jsonld.MIT.f75839ee25cd.jsonld",
+    "officialJsonldAfter": "fixtures/official/jsonld.MIT.7e10095e0c90.jsonld"
+  },
+  "outputs": ["page-change.json", "page-change.md"],
+  "kit": {
+    "version": "1.4.0",
+    "cli": "vendor/useful-jobs-1.4.0/bin/useful-jobs.mjs",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215
+  },
+  "outcome": {
+    "positive": "engine verdict changed on /text and /jsonLd/seeAlso; title/headings unchanged",
+    "control": "identical batches and title/headings-only on the real pair are unchanged (generator noise excluded)",
+    "negative": "quote-as-success, missing clock, --example, and live URL refuse closed"
+  }
+}

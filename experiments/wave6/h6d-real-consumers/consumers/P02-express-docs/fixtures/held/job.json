@@ -1,0 +1,12 @@
+{
+  "id": "p02-express-docs-codetabs",
+  "title": "Express docs content.md CodeTabs addition (held extract-batch)",
+  "clock": "2026-09-12T12:00:00.000Z",
+  "fields": [
+    "title",
+    "headings",
+    "text"
+  ],
+  "before": "./before.json",
+  "after": "./after.json"
+}

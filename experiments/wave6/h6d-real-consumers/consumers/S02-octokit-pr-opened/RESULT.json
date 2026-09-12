@@ -1,0 +1,70 @@
+{
+  "consumerId": "S02-octokit-pr-opened",
+  "family": "schemaWebhook",
+  "jobId": "json-schema-webhook-drift",
+  "status": "pass",
+  "testsPass": true,
+  "testCounts": {
+    "pass": 10,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "total": 10
+  },
+  "testCommand": "NODE_OPTIONS=--max-old-space-size=768 node --test test/consumer.test.mjs",
+  "sourcePins": {
+    "repo": "octokit/webhooks",
+    "path": "payload-examples/api.github.com/pull_request/opened.payload.json",
+    "beforeSha": "e3e60cb5336a261199d30f33f080017160df5d4d",
+    "afterSha": "0f5bd1859ef98b4b7513f415d3ec739f0819850c",
+    "license": "MIT",
+    "beforeConfirmedLacksUsedPointer": true,
+    "immediateParentSha": "c7f0d67c07feac24862b294ac219afee5fe62b1b"
+  },
+  "usedPointers": {
+    "added": "/pull_request/auto_merge",
+    "controlUnchanged": "/action"
+  },
+  "engineVsWitness": {
+    "agree": true,
+    "witnessFact": "octokit pull_request.opened webhook example: /pull_request/auto_merge added; /action unchanged",
+    "engineKind": "webhook-example",
+    "engineStatusPositive": "actionable",
+    "engineAdded": [
+      {
+        "pointer": "/pull_request/auto_merge",
+        "class": "added",
+        "reason": "present-after-only"
+      }
+    ],
+    "engineUnchangedCountPositive": 1,
+    "engineStatusControlIdentical": "informational",
+    "engineStatusControlUnusedPointer": "informational",
+    "engineNegative": {
+      "code": "not-this-job-openapi",
+      "exitNonZero": true
+    },
+    "note": "Public drift-brief lists added rows with pointers but only unchangedCount for unchanged used paths. Witness lists both pointer sets. No engine source edit. No regression-artifact.json."
+  },
+  "kit": {
+    "name": "useful-jobs",
+    "version": "1.4.0",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215,
+    "extractedTo": "vendor/useful-jobs-1.4.0/"
+  },
+  "honesty": [
+    "Webhook EXAMPLE json, not OpenAPI and not JSON Schema exclusiveMinimum.",
+    "Assigned before SHA e3e60cb5336a lacks /pull_request/auto_merge; path walk confirms the key is first added in 0f5bd1859ef9.",
+    "Intervening prettier/label-schema commits may change unused fields; the job ignores unused paths.",
+    "Did not use organization.renamed or create/payload.json.",
+    "Did not treat kit --example / samples as customer work.",
+    "No purchaseAuthority, sold, customer, paid-call, or live-fetch claims.",
+    "Independent witness does not import kit engine compare/oracle.",
+    "OpenAPI negative is a local refuse fixture, not an official pair."
+  ],
+  "regressionArtifact": false,
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/S02-octokit-pr-opened/",
+  "receivingIntegrationOwner": "H6D-parent"
+}

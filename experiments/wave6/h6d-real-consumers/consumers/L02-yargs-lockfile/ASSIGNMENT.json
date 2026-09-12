@@ -1,0 +1,11 @@
+{
+  "id": "L02-yargs-lockfile",
+  "family": "lockfile",
+  "jobId": "lockfile-pin-delta",
+  "repo": "yargs/yargs",
+  "license": "MIT",
+  "path": "package-lock.json",
+  "beforeShaFull": "4153e0f097ae",
+  "afterShaFull": "8878a894111e",
+  "hint": "Candidate: 4153e0f097ae (chore: improve build robustness #2554, 2026-07-11) \u2192 8878a894111e (chore(main): release 18.1.0 #2475, 2026-07-26). Independent witness on packages pins. Do not use mocha/axios/express/debug/prettier/got."
+}

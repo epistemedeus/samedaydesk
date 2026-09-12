@@ -1,0 +1,48 @@
+{
+  "sha": "e3e60cb5336a261199d30f33f080017160df5d4d",
+  "html_url": "https://github.com/octokit/webhooks/commit/e3e60cb5336a261199d30f33f080017160df5d4d",
+  "commit": {
+    "author": {
+      "name": "Gareth Jones",
+      "email": "Jones258@Gmail.com",
+      "date": "2021-01-11T17:51:03Z"
+    },
+    "committer": {
+      "name": "GitHub",
+      "email": "noreply@github.com",
+      "date": "2021-01-11T17:51:03Z"
+    },
+    "message": "feat: adjust structure of schema & examples for payloads to be unions (#252) thanks @G-Rath",
+    "tree": {
+      "sha": "1c12871c5eb802c910ea5215764cc70989554b54",
+      "url": "https://api.github.com/repos/octokit/webhooks/git/trees/1c12871c5eb802c910ea5215764cc70989554b54"
+    },
+    "url": "https://api.github.com/repos/octokit/webhooks/git/commits/e3e60cb5336a261199d30f33f080017160df5d4d"
+  },
+  "parents": [
+    {
+      "sha": "7f410fcfeea300d82fcf4ec840bbec3430a60dc4",
+      "html_url": "https://github.com/octokit/webhooks/commit/7f410fcfeea300d82fcf4ec840bbec3430a60dc4"
+    }
+  ],
+  "stats": {
+    "total": 25819,
+    "additions": 25186,
+    "deletions": 633
+  },
+  "files": [
+    {
+      "sha": "a4b4fbadacfa5144f0bdff65d5e3e59b662e053b",
+      "filename": "payload-examples/api.github.com/pull_request/opened.payload.json",
+      "status": "renamed",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0,
+      "blob_url": "https://github.com/octokit/webhooks/blob/e3e60cb5336a261199d30f33f080017160df5d4d/payload-examples%2Fapi.github.com%2Fpull_request%2Fopened.payload.json",
+      "raw_url": "https://github.com/octokit/webhooks/raw/e3e60cb5336a261199d30f33f080017160df5d4d/payload-examples%2Fapi.github.com%2Fpull_request%2Fopened.payload.json",
+      "contents_url": "https://api.github.com/repos/octokit/webhooks/contents/payload-examples%2Fapi.github.com%2Fpull_request%2Fopened.payload.json?ref=e3e60cb5336a261199d30f33f080017160df5d4d",
+      "patch": null
+    }
+  ],
+  "note": "Slimmed GitHub commits API response; only the official payload path file is retained."
+}

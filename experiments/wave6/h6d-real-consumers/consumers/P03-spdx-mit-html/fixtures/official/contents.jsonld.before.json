@@ -1,0 +1,12 @@
+{
+  "name": "MIT.jsonld",
+  "path": "jsonld/MIT.jsonld",
+  "sha": "c80efa3b827b2edaa01b657b18e982b9bdb7a1ca",
+  "size": 8118,
+  "html_url": "https://github.com/spdx/license-list-data/blob/f75839ee25cde2383fab299f6d8fc94a442f444b/jsonld/MIT.jsonld",
+  "git_url": "https://api.github.com/repos/spdx/license-list-data/git/blobs/c80efa3b827b2edaa01b657b18e982b9bdb7a1ca",
+  "download_url": "https://raw.githubusercontent.com/spdx/license-list-data/f75839ee25cde2383fab299f6d8fc94a442f444b/jsonld/MIT.jsonld",
+  "type": "file",
+  "encodingOmitted": true,
+  "contentOmitted": true
+}

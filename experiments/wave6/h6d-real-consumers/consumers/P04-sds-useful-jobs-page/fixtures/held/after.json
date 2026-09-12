@@ -1,0 +1,94 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Caller-owned held extract-batch wrapper over local git-show UsefulJobs.tsx + first-byte USEFUL_JOBS_SHELL title/description. Not a live fetch, quote-as-success, payment, or hosted extract."
+  },
+  "jobId": "16400cc6c35d701c001ebdf6a2fb8a9e60f72b9389573fb2de9d83fe2606ef74",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "https://samedaydesk.com/for-agents/useful-jobs",
+      "status": "success",
+      "data": {
+        "title": "Offline useful jobs for agent callers | SameDayDesk",
+        "description": "Ten offline jobs: lockfile pin-delta first, plus JSON Schema drift, route-table diff, page-change, and the original six for API changes, budgets, feeds, and delivery evidence. Acquire with bash, curl, python3, tar, and mktemp; then run on local Node 22. Verify size and sha256 before extract. Samples are labeled SAMPLE. page-change --example is refused. Callers supply their own files. Free local package; not hosted execution.",
+        "headings": {
+          "h1": [
+            "Turn changing files into useful next steps"
+          ],
+          "h2": [
+            "Download, then verify before extract",
+            "When each job is useful",
+            "What this package covers"
+          ]
+        }
+      },
+      "notes": [
+        "html-to-extract-batch projection is not equivalent: unselected markup, live freshness, and payment are dropped.",
+        "title/description from first-byte USEFUL_JOBS_SHELL; headings from UsefulJobs.tsx h1/h2.",
+        "Not H04 schema-validator.html, resources.html, or /x402/verified."
+      ],
+      "error": null,
+      "finalUrl": "https://samedaydesk.com/for-agents/useful-jobs",
+      "httpStatus": null,
+      "provenance": {
+        "transport": "held-git-show",
+        "requestedAt": "2026-09-12T04:31:34.000Z",
+        "completedAt": "2026-09-12T04:31:34.000Z",
+        "fetchedAt": "2026-09-12T04:31:34.000Z",
+        "finalUrl": "https://samedaydesk.com/for-agents/useful-jobs",
+        "httpStatus": null,
+        "pageBlob": {
+          "gitPath": "client/src/pages/UsefulJobs.tsx",
+          "commit": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+          "bytes": 10287,
+          "sha256": "1401dfd46246e3e005f33d014f801a52f9d0a180e76d08835791789bfcb9de78",
+          "gitBlobSha1": "603f8012115ab67bbb3550216bfbf88dbc82d0d9"
+        },
+        "shellBlob": {
+          "gitPath": "client/src/data/machineEntry.mjs",
+          "commit": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+          "bytes": 39711,
+          "sha256": "25f81be95fa9c86e28343ba5f5c8db5951e839e9f8afe9ed3b7ad23ce71ebf84",
+          "gitBlobSha1": "17d1af20bf577cb8238b9c0c2ef7fca440a5557f",
+          "excerpt": "fixtures/raw/machineEntry.useful-jobs.after.excerpt.mjs"
+        },
+        "note": "Observation timestamps record when this wrapper was produced from git show. They are not page-content freshness. claims.fresh stays false."
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 1,
+    "bytes": 10287,
+    "wallMs": 0,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 10287,
+    "requests": 1,
+    "wallMs": 0,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "Held git-show extraction; not socket billing."
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

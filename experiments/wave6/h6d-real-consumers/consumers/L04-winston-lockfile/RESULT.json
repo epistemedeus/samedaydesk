@@ -1,0 +1,80 @@
+{
+  "schema": "h6d.consumer-result.v1",
+  "id": "L04-winston-lockfile",
+  "family": "lockfile",
+  "jobId": "lockfile-pin-delta",
+  "status": "pass",
+  "testsPass": true,
+  "testCounts": {
+    "pass": 6,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "testCommand": "NODE_OPTIONS=--max-old-space-size=768 node --test test/consumer.test.mjs",
+  "usefulJobs": "1.4.0",
+  "usefulJobsSha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+  "source": {
+    "repo": "winstonjs/winston",
+    "path": "package-lock.json",
+    "license": "MIT",
+    "beforeSha": "4b963a9f5b1ef24efb6250354a108b80c0c6e7d9",
+    "afterSha": "96dccd6e32174c658149189abb6edb13572281b4",
+    "fallbackUsed": false
+  },
+  "pinFact": {
+    "id": "node_modules/async",
+    "name": "async",
+    "changeKinds": ["version", "integrity", "resolved"],
+    "before": {
+      "version": "3.2.5",
+      "integrity": "sha512-baNZyqaaLhyLVKm/DlvdW051MSgO6b8eVfIezl9E5PqWxFgzLm/wQntEW4zOytVburDEr0JlALEpdOFwvErLsg==",
+      "resolved": "https://registry.npmjs.org/async/-/async-3.2.5.tgz"
+    },
+    "after": {
+      "version": "3.2.6",
+      "integrity": "sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==",
+      "resolved": "https://registry.npmjs.org/async/-/async-3.2.6.tgz"
+    }
+  },
+  "engineVsWitness": {
+    "agree": true,
+    "positive": {
+      "engineStatus": "actionable",
+      "witnessStatus": "actionable",
+      "changed": 1,
+      "added": 0,
+      "removed": 0,
+      "unchanged": 612,
+      "asyncChangeKinds": ["version", "integrity", "resolved"]
+    },
+    "control": {
+      "engineStatus": "informational",
+      "witnessStatus": "informational",
+      "changed": 0,
+      "added": 0,
+      "removed": 0,
+      "unchanged": 613
+    },
+    "negativeYarn": {
+      "engineCode": "parse-error",
+      "witnessCode": "yarn-lockfile",
+      "engineRefused": true,
+      "witnessRefused": true,
+      "note": "yarn.lock is non-JSON so the engine refuse code is parse-error; witness classifies the yarn header independently. Both refuse. Not a pin-fact disagreement."
+    }
+  },
+  "regressionArtifact": false,
+  "honesty": [
+    "Official winstonjs/winston pair; koajs/koa fallback not used.",
+    "Pin equality is name+version+integrity+resolved. After pin also adds license MIT, ignored.",
+    "Name async is inferred from packages key node_modules/async; the entry has no name field.",
+    "Not H04 mocha/axios lock excerpts; not webpack-cli/npm-cli/yarn.lock set-b.",
+    "yarn.lock is not npm package-lock.json (labeled non-equivalent; refuse is the product).",
+    "purchaseAuthority=false. No live fetch, payment, scheduler, or customer claim.",
+    "Kit engines were not edited."
+  ],
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "receivingIntegrationOwner": "H6D-parent"
+}

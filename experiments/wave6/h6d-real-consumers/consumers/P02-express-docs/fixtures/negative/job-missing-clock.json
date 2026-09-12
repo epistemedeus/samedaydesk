@@ -1,0 +1,11 @@
+{
+  "id": "p02-express-docs-missing-clock",
+  "title": "Negative: held extract-batch without clock",
+  "fields": [
+    "title",
+    "headings",
+    "text"
+  ],
+  "before": "../held/before.json",
+  "after": "../held/after.json"
+}

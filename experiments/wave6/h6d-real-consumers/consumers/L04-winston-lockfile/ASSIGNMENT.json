@@ -1,0 +1,11 @@
+{
+  "id": "L04-winston-lockfile",
+  "family": "lockfile",
+  "jobId": "lockfile-pin-delta",
+  "repo": "winstonjs/winston",
+  "license": "MIT",
+  "path": "package-lock.json",
+  "beforeShaFull": "4b963a9f5b1e",
+  "afterShaFull": "96dccd6e3217",
+  "hint": "Candidate: 4b963a9f5b1e \u2192 96dccd6e3217 (Bump async from 3.2.5 to 3.2.6 #2621). Prove async pin version+integrity+resolved. Fallback: koajs/koa minimatch 3.1.2\u21923.1.5 (4b12945e2e5d) if winston pair is identical pins."
+}

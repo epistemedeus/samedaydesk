@@ -1,0 +1,45 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "equivalentToOpenApi": false,
+  "migration": "openapi-to-sds-route-table",
+  "note": "Caller-owned non-equivalent projection of Slack Web API swagger 2.0 paths. HTTP method, operationId, parameters, requestBody, and responses are dropped. Not the published SDS route table. Homepage / excluded.",
+  "source": {
+    "repo": "slackapi/slack-api-specs",
+    "sha": "3f1e8b4a03855cb29cffbfcaf60195e5867780ea",
+    "path": "web-api/slack_web_openapi_v2.json",
+    "fullBlobSha256": "b026c31dddfe96d9ff2d32832c0c18538eb9c94db66c824c8bcbac546032e856",
+    "fullBytes": 1360907,
+    "extractedFrom": [
+      "web-api/slack_web_openapi_v2.json"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/channels.info",
+      "canonical": "https://slack.com/api/channels.info",
+      "title": "channels_info: Slack Web API /channels.info"
+    },
+    {
+      "path": "/channels.list",
+      "canonical": "https://slack.com/api/channels.list",
+      "title": "channels_list: Slack Web API /channels.list"
+    },
+    {
+      "path": "/chat.postMessage",
+      "canonical": "https://slack.com/api/chat.postMessage",
+      "title": "chat_postMessage: Slack Web API /chat.postMessage"
+    },
+    {
+      "path": "/conversations.list",
+      "canonical": "https://slack.com/api/conversations.list",
+      "title": "conversations_list: Slack Web API /conversations.list"
+    },
+    {
+      "path": "/users.info",
+      "canonical": "https://slack.com/api/users.info",
+      "title": "users_info: Slack Web API /users.info"
+    }
+  ]
+}

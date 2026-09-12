@@ -1,0 +1,103 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Caller-owned held extract-batch wrapper over official GitHub site.json bytes. Not a live fetch, quote-as-success, or payment."
+  },
+  "jobId": "held-nodejs-org-sitejson-71f7fdc56a1c",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "nodejs.org/apps/site/site.json",
+      "status": "success",
+      "data": {
+        "title": "Node.js",
+        "description": "Node.js® is a free, open-source, cross-platform JavaScript runtime environment that lets developers create servers, web apps, command line tools and scripts.",
+        "text": "July 2026 security releases are available\nBe Heard\nTake the Node.js User Survey 2026",
+        "headings": {
+          "h1": [
+            "Node.js"
+          ],
+          "h2": [
+            "July 2026 security releases are available",
+            "Be Heard"
+          ]
+        },
+        "jsonLd": {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "Node.js",
+          "description": "Node.js® is a free, open-source, cross-platform JavaScript runtime environment that lets developers create servers, web apps, command line tools and scripts.",
+          "hasPart": [
+            {
+              "@type": "WebPageElement",
+              "name": "index-banner",
+              "text": "July 2026 security releases are available",
+              "url": "https://nodejs.org/en/blog/vulnerability/july-2026-security-releases",
+              "startDate": "2026-07-29T00:00:00.000Z",
+              "endDate": "2026-08-05T00:00:00.000Z"
+            },
+            {
+              "@type": "WebPageElement",
+              "name": "index-badge",
+              "headline": "Be Heard",
+              "text": "Take the Node.js User Survey 2026",
+              "url": "https://linuxfoundation.surveymonkey.com/r/nodejs-users-2026",
+              "startDate": "2026-08-17T00:00:00.000Z",
+              "endDate": "2026-09-18T00:00:00.000Z"
+            }
+          ]
+        }
+      },
+      "notes": [
+        "Caller-owned mapping of site.json title/description plus banner/badge copy onto selected fields. Not a live page fetch."
+      ],
+      "error": null,
+      "provenance": {
+        "transport": "held-github-contents",
+        "requestedAt": "2026-08-19T21:34:28.000Z",
+        "completedAt": "2026-08-19T21:34:28.000Z",
+        "fetchedAt": "2026-08-19T21:34:28.000Z",
+        "gitSha": "71f7fdc56a1c9381abc5da60d991c089f8891893",
+        "blobSha": "94f8835767196cffaf8a7e0a8fd44038fb3a0c53",
+        "path": "apps/site/site.json",
+        "byteLength": 1433,
+        "sha256": "8b6948b93b60fc1c546eff87d3802eb98b7d44feec698247b2a90ad8178430d0",
+        "note": "Observation timestamps record when this wrapper was produced from held GitHub bytes. They are not page-content freshness."
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 1,
+    "bytes": 1433,
+    "wallMs": 0,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 1433,
+    "requests": 1,
+    "wallMs": 0,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "Held GitHub contents extraction; not socket billing."
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

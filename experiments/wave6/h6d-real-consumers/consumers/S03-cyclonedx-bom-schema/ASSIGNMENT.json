@@ -1,0 +1,11 @@
+{
+  "id": "S03-cyclonedx-bom-schema",
+  "family": "schemaWebhook",
+  "jobId": "json-schema-webhook-drift",
+  "repo": "CycloneDX/specification",
+  "license": "Apache-2.0 or CDDL (record actual)",
+  "path": "schema/bom-1.6.schema.json",
+  "beforeShaFull": "80db0257f118",
+  "afterShaFull": "0bd48c88d1b1",
+  "hint": "Official CycloneDX JSON Schema. 80db0257f118 \u2192 0bd48c88d1b1 (typo/content-type). If used structural pointers are unchanged, that is a VALID control-like positive of 'compatible/unchanged' \u2014 still ship a second used pointer that DID change across tags 1.5 (c320fc0f0b46 schema/bom-1.5.schema.json) vs 1.6 (55343ba19dee schema/bom-1.6.schema.json) as the version-pair, documenting they are official spec versions not the same filename. Do not invent required-field breaks."
+}

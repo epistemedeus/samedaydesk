@@ -1,0 +1,107 @@
+{
+  "retrievedAt": "2026-09-12T06:50:11Z",
+  "method": "GET https://api.github.com/repos/winstonjs/winston/commits/{sha} and raw.githubusercontent.com",
+  "userAgent": "h6d-l04",
+  "afterCommit": {
+    "sha": "96dccd6e32174c658149189abb6edb13572281b4",
+    "html_url": "https://github.com/winstonjs/winston/commit/96dccd6e32174c658149189abb6edb13572281b4",
+    "commit": {
+      "message": "Bump async from 3.2.5 to 3.2.6 (#2621)\n\nBumps [async](https://github.com/caolan/async) from 3.2.5 to 3.2.6.\n- [Release notes](https://github.com/caolan/async/releases)\n- [Changelog](https://github.com/caolan/async/blob/master/CHANGELOG.md)\n- [Commits](https://github.com/caolan/async/compare/v3.2.5...v3.2.6)\n\n---\nupdated-dependencies:\n- dependency-name: async\n  dependency-version: 3.2.6\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+      "author": {
+        "name": "dependabot[bot]",
+        "email": "49699333+dependabot[bot]@users.noreply.github.com",
+        "date": "2026-07-12T04:49:11Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-07-12T04:49:11Z"
+      }
+    },
+    "parents": [
+      {
+        "sha": "4b963a9f5b1ef24efb6250354a108b80c0c6e7d9",
+        "html_url": "https://github.com/winstonjs/winston/commit/4b963a9f5b1ef24efb6250354a108b80c0c6e7d9"
+      }
+    ],
+    "stats": {
+      "total": 7,
+      "additions": 4,
+      "deletions": 3
+    },
+    "files": [
+      {
+        "filename": "package-lock.json",
+        "status": "modified",
+        "sha": "0a17e82c0a0ee8cfafba50dfda3079d5de8b7773",
+        "additions": 4,
+        "deletions": 3,
+        "changes": 7,
+        "raw_url": "https://github.com/winstonjs/winston/raw/96dccd6e32174c658149189abb6edb13572281b4/package-lock.json",
+        "blob_url": "https://github.com/winstonjs/winston/blob/96dccd6e32174c658149189abb6edb13572281b4/package-lock.json",
+        "patch": "@@ -3716,9 +3716,10 @@\n \t\t\t}\n \t\t},\n \t\t\"node_modules/async\": {\n-\t\t\t\"version\": \"3.2.5\",\n-\t\t\t\"resolved\": \"https://registry.npmjs.org/async/-/async-3.2.5.tgz\",\n-\t\t\t\"integrity\": \"sha512-baNZyqaaLhyLVKm/DlvdW051MSgO6b8eVfIezl9E5PqWxFgzLm/wQntEW4zOytVburDEr0JlALEpdOFwvErLsg==\"\n+\t\t\t\"version\": \"3.2.6\",\n+\t\t\t\"resolved\": \"https://registry.npmjs.org/async/-/async-3.2.6.tgz\",\n+\t\t\t\"integrity\": \"sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==\",\n+\t\t\t\"license\": \"MIT\"\n \t\t},\n \t\t\"node_modules/babel-jest\": {\n \t\t\t\"version\": \"30.4.1\","
+      }
+    ]
+  },
+  "beforeCommit": {
+    "sha": "4b963a9f5b1ef24efb6250354a108b80c0c6e7d9",
+    "html_url": "https://github.com/winstonjs/winston/commit/4b963a9f5b1ef24efb6250354a108b80c0c6e7d9",
+    "commit": {
+      "message": "Bump @babel/preset-env from 7.25.4 to 7.29.7 (#2617)\n\nBumps [@babel/preset-env](https://github.com/babel/babel/tree/HEAD/packages/babel-preset-env) from 7.25.4 to 7.29.7.\n- [Release notes](https://github.com/babel/babel/releases)\n- [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/babel/babel/commits/v7.29.7/packages/babel-preset-env)\n\n---\nupdated-dependencies:\n- dependency-name: \"@babel/preset-env\"\n  dependency-version: 7.29.7\n  dependency-type: direct:development\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+      "author": {
+        "name": "dependabot[bot]",
+        "email": "49699333+dependabot[bot]@users.noreply.github.com",
+        "date": "2026-06-15T19:17:54Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-06-15T19:17:54Z"
+      }
+    },
+    "parents": [
+      {
+        "sha": "bd7185a8731847500b5d6ceca92f709437d72969",
+        "html_url": "https://github.com/winstonjs/winston/commit/bd7185a8731847500b5d6ceca92f709437d72969"
+      }
+    ],
+    "stats": {
+      "total": 1374,
+      "additions": 717,
+      "deletions": 657
+    },
+    "files": [
+      {
+        "filename": "package-lock.json",
+        "status": "modified",
+        "sha": "33e9d79c4d40329c16569202731b7eb5709ae219",
+        "additions": 717,
+        "deletions": 657,
+        "changes": 1374,
+        "raw_url": "https://github.com/winstonjs/winston/raw/4b963a9f5b1ef24efb6250354a108b80c0c6e7d9/package-lock.json",
+        "blob_url": "https://github.com/winstonjs/winston/blob/4b963a9f5b1ef24efb6250354a108b80c0c6e7d9/package-lock.json",
+        "patch": null
+      }
+    ]
+  },
+  "contents": {
+    "beforePackageLock": {
+      "ref": "4b963a9f5b1ef24efb6250354a108b80c0c6e7d9",
+      "gitBlobSha": "33e9d79c4d40329c16569202731b7eb5709ae219",
+      "size": 279571,
+      "html_url": "https://github.com/winstonjs/winston/blob/4b963a9f5b1ef24efb6250354a108b80c0c6e7d9/package-lock.json"
+    },
+    "afterPackageLock": {
+      "ref": "96dccd6e32174c658149189abb6edb13572281b4",
+      "gitBlobSha": "0a17e82c0a0ee8cfafba50dfda3079d5de8b7773",
+      "size": 279592,
+      "html_url": "https://github.com/winstonjs/winston/blob/96dccd6e32174c658149189abb6edb13572281b4/package-lock.json"
+    },
+    "license": {
+      "ref": "96dccd6e32174c658149189abb6edb13572281b4",
+      "gitBlobSha": "948d80dd6c0cc10501702616c37da9e361aea069",
+      "size": 1058,
+      "html_url": "https://github.com/winstonjs/winston/blob/96dccd6e32174c658149189abb6edb13572281b4/LICENSE"
+    }
+  }
+}

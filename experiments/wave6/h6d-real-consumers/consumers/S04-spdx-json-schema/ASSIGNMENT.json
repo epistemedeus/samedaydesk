@@ -1,0 +1,11 @@
+{
+  "id": "S04-spdx-json-schema",
+  "family": "schemaWebhook",
+  "jobId": "json-schema-webhook-drift",
+  "repo": "spdx/spdx-spec",
+  "license": "Community-Spec-1.0 / CC-BY-3.0 (record actual LICENSE)",
+  "path": "schemas/spdx-schema-2-3.json vs schemas/spdx-schema-3-0-1.json",
+  "beforeShaFull": "61a7a341f253",
+  "afterShaFull": "61a7a341f253",
+  "hint": "Maintained official SPDX JSON schemas in one repo (2.3 vs 3.0.1). Same restore commit may hold both files \u2014 that is a versioned schema pair, not a fake git delta. Used pointers that exist in both (e.g. SPDX version / name fields) plus pointers only in 3.x. Independent witness. Negative: YAML OpenAPI."
+}

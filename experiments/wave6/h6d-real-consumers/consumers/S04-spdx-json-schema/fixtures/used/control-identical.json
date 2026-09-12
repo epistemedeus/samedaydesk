@@ -1,0 +1,11 @@
+{
+  "pointers": [
+    "/type",
+    "/$schema",
+    "/properties/name",
+    "/properties/spdxVersion",
+    "/properties/@context",
+    "/$defs"
+  ],
+  "note": "Same used list on identical SPDX 2.3 documents. 3.x-only pointers are absent in both (unknown, not deleted). Existing 2.3 pointers are unchanged."
+}

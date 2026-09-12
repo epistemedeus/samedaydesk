@@ -1,0 +1,7 @@
+{
+  "pointers": [
+    "/definitions/component/required",
+    "/definitions/attachment/properties/contentType",
+    "/definitions/refType/type"
+  ]
+}

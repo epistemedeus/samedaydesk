@@ -1,0 +1,27 @@
+{
+  "sha": "be31ea3fc5ba9e0d1b96d300894145ca4f6af57c",
+  "html_url": "https://github.com/expressjs/expressjs.com/commit/be31ea3fc5ba9e0d1b96d300894145ca4f6af57c",
+  "commit": {
+    "author": {
+      "name": "Sebastian Beltran",
+      "email": "bjohansebas@gmail.com",
+      "date": "2026-06-21T18:00:42Z"
+    },
+    "committer": {
+      "name": "GitHub",
+      "email": "noreply@github.com",
+      "date": "2026-06-21T18:00:42Z"
+    },
+    "message": "feat: add CodeTabs component for displaying code snippets in multiple\u2026 (#2399)"
+  },
+  "parents": [
+    {
+      "sha": "e26d1dce605d7ce9f6e04ea114039e5ae772275a"
+    }
+  ],
+  "stats": {
+    "total": 2082,
+    "additions": 1982,
+    "deletions": 100
+  }
+}

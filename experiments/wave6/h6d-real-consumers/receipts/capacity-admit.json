@@ -1,0 +1,22 @@
+{
+  "phase": "h6d_pre_admit_12",
+  "ts": "2026-09-12T06:46:27.263810+00:00",
+  "parentSessionId": "01a09456-c82b-7b41-ad58-e5557da52ed3",
+  "model": "grok-4.6",
+  "nproc": 4,
+  "loadavg": [
+    "1.00",
+    "1.01",
+    "1.00"
+  ],
+  "MemTotal_kB": 16398384,
+  "MemAvailable_kB": 10522716,
+  "MemFree_kB": 3606604,
+  "Buffers_kB": 530764,
+  "Cached_kB": 5899260,
+  "availablePct": 64.17,
+  "plannedConcurrent": 12,
+  "expandTo16IfReservePct": 25,
+  "nodeHeapMb": 768,
+  "note": "Recorded immediately before spawning 12 exclusive native children. No recurring monitor."
+}

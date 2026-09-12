@@ -1,0 +1,14 @@
+{
+  "name": "LICENSE",
+  "path": "LICENSE",
+  "sha": "896a53b840d2b7a256ef1b3afc493251889a68b9",
+  "size": 1101,
+  "html_url": "https://github.com/nodejs/nodejs.org/blob/71f7fdc56a1c/LICENSE",
+  "license": {
+    "key": "mit",
+    "name": "MIT License",
+    "spdx_id": "MIT",
+    "url": "https://api.github.com/licenses/mit",
+    "node_id": "MDc6TGljZW5zZTEz"
+  }
+}

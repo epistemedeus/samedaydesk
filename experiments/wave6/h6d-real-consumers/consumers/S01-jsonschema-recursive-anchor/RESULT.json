@@ -1,0 +1,59 @@
+{
+  "id": "S01-jsonschema-recursive-anchor",
+  "status": "complete",
+  "testsPass": true,
+  "testCounts": {
+    "pass": 9,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "testCommand": "NODE_OPTIONS=--max-old-space-size=768 node --test test/consumer.test.mjs",
+  "family": "schemaWebhook",
+  "jobId": "json-schema-webhook-drift",
+  "usefulJobs": "1.4.0",
+  "source": {
+    "repo": "json-schema-org/json-schema-spec",
+    "path": "schema.json",
+    "beforeSha": "63fbd7bf561a6ef04a38fd63589a3d93d1c149ff",
+    "afterSha": "c028e943ab213531f55e60ff6a2b1202f5d443c6",
+    "license": "AFL or BSD (README at SHA; LICENSE file absent)",
+    "usedPointer": "/properties/$recursiveAnchor/type"
+  },
+  "engineVsWitness": {
+    "typePointer": {
+      "pointer": "/properties/$recursiveAnchor/type",
+      "witness": "added",
+      "engine": "added / present-after-only / status=actionable",
+      "agree": true
+    },
+    "keywordObject": {
+      "pointer": "/properties/$recursiveAnchor",
+      "witness": "changed (type absent → boolean)",
+      "engine": "remote-ref-refused exit 2",
+      "agree": false,
+      "regression": "regression-artifact.json#keyword-object-remote-ref-refuse"
+    },
+    "summaryText": {
+      "witness": "used-path drift (type keyword added)",
+      "engineSummary": "No structural used-path drift. Not a runtime compatibility proof.",
+      "engineStatus": "actionable",
+      "agree": false,
+      "regression": "regression-artifact.json#added-path-summary-omitted"
+    }
+  },
+  "honesty": [
+    "Not OpenAPI. OpenAPI fixtures refuse not-this-job-openapi.",
+    "Remote $ref is refused (negative) and also blocks the official keyword-object pointer.",
+    "Not the H04 exclusiveMinimum pair.",
+    "Not a runtime compatibility proof.",
+    "purchaseAuthority=false. No live fetch, payment, or scheduler.",
+    "SAMPLE/--example was not used as customer work.",
+    "Assignment license hint Apache-2.0 OR BSD-3-Clause is not the text at these SHAs.",
+    "Engine unmodified; disagreements recorded in regression-artifact.json."
+  ],
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/S01-jsonschema-recursive-anchor/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "purchaseAuthority": false,
+  "schedulerDaemon": false
+}

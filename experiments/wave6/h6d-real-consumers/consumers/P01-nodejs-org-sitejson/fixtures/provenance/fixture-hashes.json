@@ -1,0 +1,25 @@
+{
+  "fixtures/official/site.before.json": {
+    "bytes": 1397,
+    "sha256": "e1efb807efdc83fe7637a294d0e2faee1f7c4c1e3a8e30112614ac395007bdeb",
+    "gitBlobSha": "4e63228b157a24b64cc8b09c4e0619ecaf61f8f9"
+  },
+  "fixtures/official/site.after.json": {
+    "bytes": 1433,
+    "sha256": "8b6948b93b60fc1c546eff87d3802eb98b7d44feec698247b2a90ad8178430d0",
+    "gitBlobSha": "94f8835767196cffaf8a7e0a8fd44038fb3a0c53"
+  },
+  "fixtures/official/LICENSE": {
+    "bytes": 1101,
+    "sha256": "521edd5b3dddc33947eb8c5e988eeca99c986ea0f70cd6817ab8e553895feaf3",
+    "gitBlobSha": "896a53b840d2b7a256ef1b3afc493251889a68b9"
+  },
+  "fixtures/batches/before.json": {
+    "bytes": 3632,
+    "sha256": "3ae191b9ef4dae2f1f62a7723b26f465f8a395bdd5d12602a64207fd9dab2f45"
+  },
+  "fixtures/batches/after.json": {
+    "bytes": 3681,
+    "sha256": "d88e7a0a43bd9bd0636f6e495aec910202445a23908223842fcdbc460362e6e3"
+  }
+}

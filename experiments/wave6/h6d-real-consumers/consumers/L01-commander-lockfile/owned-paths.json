@@ -1,0 +1,41 @@
+{
+  "schema": "h6d.owned-paths.v1",
+  "id": "L01-commander-lockfile",
+  "family": "lockfile",
+  "jobId": "lockfile-pin-delta",
+  "usefulJobs": "1.4.0",
+  "outcome": "Pin-delta of tj/commander.js package-lock.json name+version+integrity+resolved between Update dependencies #2506 and #2518 (lockfileVersion 3).",
+  "receivingIntegrationOwner": "H6D-parent",
+  "receiving": {
+    "owner": "H6D-parent",
+    "catalog": "experiments/wave6/h6d-real-consumers/catalog/ASSIGNMENT.json",
+    "selectJob": "experiments/wave6/h6d-real-consumers/bin/select-job.mjs"
+  },
+  "ownedPaths": [
+    "experiments/wave6/h6d-real-consumers/consumers/L01-commander-lockfile/"
+  ],
+  "exactInputs": {
+    "repo": "tj/commander.js",
+    "path": "package-lock.json",
+    "beforeSha": "9098b4863ef7678b9d138ae0f04afd949287510c",
+    "afterSha": "d785d8b3b9448952ef023a8cd26a0a3923a90458",
+    "beforeFixture": "fixtures/official/before.package-lock.json",
+    "afterFixture": "fixtures/official/after.package-lock.json",
+    "lockfileVersion": 3
+  },
+  "outputs": [
+    "pin-delta.json",
+    "pin-delta.md"
+  ],
+  "adapter": "adapter.mjs",
+  "witness": "witness.mjs",
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "networkOnJobPath": false,
+  "sampleAsCustomer": false,
+  "migration": {
+    "id": "yarn-to-npm-lock",
+    "equivalent": false,
+    "note": "yarn.lock / package.json-only are refused, not converted into package-lock.json."
+  }
+}

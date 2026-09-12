@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "not a webhook schema; this is an OpenAPI document mislabeled",
+  "openapi": "3.0.3",
+  "paths": {
+    "/chat.postMessage": {
+      "post": {
+        "operationId": "chat_postMessage",
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    }
+  }
+}

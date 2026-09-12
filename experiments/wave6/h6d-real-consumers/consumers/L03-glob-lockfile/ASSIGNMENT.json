@@ -1,0 +1,12 @@
+{
+  "id": "L03-glob-lockfile",
+  "family": "lockfile",
+  "jobId": "lockfile-pin-delta",
+  "repo": "isaacs/node-glob",
+  "license": "BlueOak-1.0.0",
+  "licenseHintWas": "ISC",
+  "path": "package-lock.json",
+  "beforeShaFull": "aee5a632c5c29d82dd5be14b0344ad52209bcaba",
+  "afterShaFull": "7df583d631ff191e2f71a62b383926c0bd83ccda",
+  "hint": "Candidate: aee5a632c5c2 (update stuff) → 7df583d631ff (update tap, for newer uuid, 2026-05-01). Expect tap/uuid pin movement. Excerpt OK. License at SHA is BlueOak-1.0.0, not the ISC hint."
+}

@@ -1,0 +1,39 @@
+{
+  "id": "L02-yargs-lockfile",
+  "family": "lockfile",
+  "jobId": "lockfile-pin-delta",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/L02-yargs-lockfile/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "receiving": [
+    "H6D parent catalog",
+    "bin/select-job.mjs"
+  ],
+  "outcome": "Official yargs package-lock.json 18.0.0→18.1.0: 562 registry pins unchanged on name+version+integrity+resolved; root project version is not a registry pin. Engine status informational.",
+  "exactInputs": {
+    "before": "fixtures/official/package-lock.before.json",
+    "after": "fixtures/official/package-lock.after.json",
+    "beforeSha": "4153e0f097aeaf43a71a2530db6dda51dff2c544",
+    "afterSha": "8878a894111e3fe7c98d84af546c0f34fa017492",
+    "path": "package-lock.json",
+    "repo": "yargs/yargs"
+  },
+  "outputs": [
+    "pin-delta.json",
+    "pin-delta.md"
+  ],
+  "kit": {
+    "package": "useful-jobs",
+    "version": "1.4.0",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215,
+    "extract": "vendor/useful-jobs-1.4.0/"
+  },
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "networkOnJobPath": false,
+  "migration": {
+    "id": "yarn-to-npm-lock",
+    "equivalent": false,
+    "note": "yarn.lock / pnpm / bun are refused; this consumer does not convert them."
+  }
+}

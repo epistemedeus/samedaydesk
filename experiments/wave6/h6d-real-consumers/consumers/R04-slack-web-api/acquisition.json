@@ -1,0 +1,58 @@
+{
+  "repo": "slackapi/slack-api-specs",
+  "path": "web-api/slack_web_openapi_v2.json",
+  "license": "MIT",
+  "spdx": "MIT",
+  "archived": true,
+  "defaultBranch": "master",
+  "beforeSha": "3f1e8b4a03855cb29cffbfcaf60195e5867780ea",
+  "afterSha": "dfea73e06d146c368d7f94b52ac90796dc4e27e1",
+  "retrievedAt": "2026-09-12T06:55:52Z",
+  "method": "GitHub REST commits+contents API and raw.githubusercontent.com GET of two historical SHAs. No unrelated-tree scrape.",
+  "not": ["OpenAI", "octokit organization.renamed", "useful-jobs SAMPLE"],
+  "bytes": {
+    "before": 1360907,
+    "after": 1237332,
+    "license": 1065
+  },
+  "sha256": {
+    "before": "b026c31dddfe96d9ff2d32832c0c18538eb9c94db66c824c8bcbac546032e856",
+    "after": "742a5c977180a829df8767cf57bc417d99b3713583aee83741efb9c08ca731e7",
+    "license": "5fca42e1431e247c120ab9c787ff16a26a538633852821e4865d05fe4cfea98e"
+  },
+  "gitBlobSha": {
+    "before": "0973bf2b89414e2e1a227752af15d863b3c9fc6a",
+    "after": "72c5dfb431e05f5d6fa2aa28ebcd60d503a67886",
+    "license": "4c4907b159ed25001dc9a217cd709dfdafd7e08b"
+  },
+  "commit": {
+    "before": {
+      "sha": "3f1e8b4a03855cb29cffbfcaf60195e5867780ea",
+      "date": "2020-04-03T18:05:46Z",
+      "message": "bring in the updates",
+      "infoVersion": "1.5.0",
+      "operationCount": 185
+    },
+    "after": {
+      "sha": "dfea73e06d146c368d7f94b52ac90796dc4e27e1",
+      "date": "2020-10-06T21:27:48Z",
+      "message": "October 2020 spec updates",
+      "infoVersion": "1.7.0",
+      "operationCount": 174
+    }
+  },
+  "delta": {
+    "added": 32,
+    "removed": 43,
+    "unchanged": 142,
+    "stableExamples": ["/chat.postMessage", "/users.info", "/conversations.list"],
+    "addedExamples": ["/conversations.mark", "/admin.conversations.create", "/calls.add"],
+    "removedExamples": ["/channels.list", "/channels.info"]
+  },
+  "fullOfficialBlobsNotStored": true,
+  "usefulJobs": {
+    "version": "1.4.0",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215
+  }
+}

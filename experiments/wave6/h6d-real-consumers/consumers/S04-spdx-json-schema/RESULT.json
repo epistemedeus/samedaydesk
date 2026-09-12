@@ -1,0 +1,70 @@
+{
+  "id": "S04-spdx-json-schema",
+  "status": "pass",
+  "testsPass": true,
+  "testCounts": {
+    "pass": 11,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "testCommand": "NODE_OPTIONS=--max-old-space-size=768 node --test test/consumer.test.mjs",
+  "family": "schemaWebhook",
+  "jobId": "json-schema-webhook-drift",
+  "usefulJobs": "1.4.0",
+  "usefulJobsSha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+  "ownedPath": "experiments/wave6/h6d-real-consumers/consumers/S04-spdx-json-schema/",
+  "receivingIntegrationOwner": "H6D-parent",
+  "purchaseAuthority": false,
+  "source": {
+    "repo": "spdx/spdx-spec",
+    "beforeSha": "61a7a341f2533d6e084c48c88463da63f05e1af0",
+    "afterSha": "61a7a341f2533d6e084c48c88463da63f05e1af0",
+    "sameCommitVersionPair": true,
+    "path": "schemas/spdx-schema-2-3.json vs schemas/spdx-schema-3-0-1.json",
+    "license": "Community-Spec-1.0; CC-BY-3.0 (pre-existing portions); MIT (bin/pull-license-list.py)"
+  },
+  "engineVsWitness": {
+    "agree": {
+      "added": ["/properties/@context", "/$defs", "/oneOf"],
+      "removed": ["/properties/name", "/properties/spdxVersion"],
+      "unchanged": ["/type"]
+    },
+    "disagree": [
+      {
+        "pointer": "/$schema",
+        "witness": "changed",
+        "engine": "unchanged"
+      },
+      {
+        "pointer": "/properties",
+        "witness": "changed",
+        "engine": "unchanged"
+      }
+    ],
+    "engineModified": false,
+    "regressionArtifact": "regression-artifact.json"
+  },
+  "positive": {
+    "engineStatus": "actionable",
+    "kind": "json-schema",
+    "sample": false
+  },
+  "control": {
+    "identicalStatus": "partial",
+    "unchangedTypeStatus": "informational"
+  },
+  "negative": {
+    "yamlOpenApi": "not-json",
+    "jsonOpenApi": "not-this-job-openapi",
+    "missingUsed": "missing-required-inputs"
+  },
+  "honesty": [
+    "Versioned official SPDX 2.3 vs 3.0.1 pair at one restore commit; not a fake git delta.",
+    "Not OpenAPI. YAML OpenAPI refuses as not-json (no YAML parser). JSON OpenAPI refuses not-this-job-openapi.",
+    "Not a runtime compatibility proof.",
+    "SAMPLE/--example is not this pair.",
+    "purchaseAuthority=false. No live fetch on the job path.",
+    "Engine left unmodified; literal/$properties-map fingerprint gaps recorded in regression-artifact.json."
+  ]
+}
