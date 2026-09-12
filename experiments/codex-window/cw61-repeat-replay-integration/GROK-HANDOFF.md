@@ -19,6 +19,12 @@ Next integration owner: **native Grok Heavy, CW61 repeat/replay consumer owner**
 
 All paths in this handoff are repository-relative unless they name a file beside this checkout. The evidence directory is `experiments/codex-window/cw61-repeat-replay-integration/evidence/`. Absolute temporary paths inside preserved receipts are historical observations. They are not required inputs on a fresh VM. The custom `fixtures/` and `.replay-inputs/` evidence bytes are committed.
 
+## Export and review boundary
+
+Draft PR: https://github.com/epistemedeus/samedaydesk/pull/138. Foundation source commit: `e760812bb3193d7f01442916d2f06bf266b93660`; its parent is the exact assigned `76f0fab...` integration head. That commit changes 132 files, exclusively within the three owned paths. A later documentation-only closeout commit records this readback.
+
+GitHub reports **738 files** in the draft PR against `main` because the assigned integration baseline already contains other owners' unmerged work. This draft is a source handoff, not a scoped default-branch merge candidate. Review this assignment using `git diff 76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be..HEAD -- tools/repeat-job-binder tools/output-replay-harness experiments/codex-window/cw61-repeat-replay-integration`. The next integrator must select only these completed consumer paths after acceptance. Do not merge the draft's inherited runtime/engine diff into another head. No baseline branch was rewritten or updated to hide this divergence.
+
 ## Implemented foundation and interfaces
 
 Exclusive writable paths remain:
