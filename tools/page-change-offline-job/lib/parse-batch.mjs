@@ -9,6 +9,7 @@ import {
 } from "./constants.mjs";
 import { isPlainObject } from "./canonical.mjs";
 import { refuseQuoteAsSuccess } from "./refuse.mjs";
+import { utcInstantMs } from "./clock.mjs";
 
 function missingKeys(object, required) {
   return required.filter((key) => !Object.hasOwn(object, key));
@@ -39,6 +40,10 @@ function rowFrom(item, sourceKey) {
     provenance: item.provenance ?? null,
     observation: observationFrom(item),
     comparable: COMPARABLE_STATUSES.includes(status) && isPlainObject(item.data),
+    coverageIssues: [
+      ...(status === "partial" ? ["merchant_source_partial"] : []),
+      ...(item.error != null ? ["merchant_source_error"] : []),
+    ],
   };
 }
 
@@ -101,7 +106,9 @@ export function parseExtractBatch(body, limits, { treatQuoteAsSuccess = false } 
 
   const completed = rows
     .map((row) => row.observation.completedAt)
-    .filter((value) => typeof value === "string");
+    .map((value) => ({ value, time: utcInstantMs(value) }))
+    .filter(({ time }) => time !== null)
+    .sort((a, b) => a.time - b.time);
 
   return {
     kind: "merchant_extract_batch",
@@ -116,7 +123,7 @@ export function parseExtractBatch(body, limits, { treatQuoteAsSuccess = false } 
     issues: [...new Set(issues)],
     truncated,
     observation: {
-      artifactObservedAt: completed.length ? completed.sort().at(-1) : null,
+      artifactObservedAt: completed.at(-1)?.value ?? null,
       jobId: body.jobId ?? null,
       note: "Observation timestamps record when a batch row was produced. They are not page-content freshness.",
     },

@@ -38,7 +38,8 @@ export function stableStringify(value) {
 function sortKeys(value) {
   if (Array.isArray(value)) return value.map(sortKeys);
   if (isPlainObject(value)) {
-    const out = {};
+    // A held JSON key named __proto__ is data, not a prototype setter.
+    const out = Object.create(null);
     for (const key of Object.keys(value).sort()) out[key] = sortKeys(value[key]);
     return out;
   }

@@ -1,5 +1,49 @@
 # RECEIPT — W4-commerce-13 offline extract-batch page-change job
 
+## CW34 audit amendment, 2026-09-12
+
+Native Astra read and tested PR120 source at
+`46a82f9d0863336c341176eee55ebb9c8de27484` in the isolated remote VM clone on
+`codex/cw34-page-engine-final-20260912`. Engine version is now `0.1.3`.
+The dated implementation receipts below remain historical.
+
+The independent audit adds raw JSON CLI pairs and a deterministic 96-pair
+metamorphic audit, using Node's strict deep equality rather than the engine's
+canonicalizer as the equality oracle. Reproduced defects cover numeric
+information loss, metadata member identity, mixed-type evidence, partial/error
+row completeness, change/depth/node/excerpt bounds, job-limit validation,
+in-memory byte bounds, and observation timestamp ordering. See the current
+`FEATURE-MAP.md` for exact semantics and limits.
+
+Verification is native-agent execution on Node v22.23.2 with
+`NODE_OPTIONS=--max-old-space-size=768`, test concurrency 1, and isolated temp
+directories. The original 35-test suite passed before edits; its inherited
+local-runtime test attempted a TCP connection to port 5432, without SQL or
+database writes. That probe is removed. Subsequent tests use only the reserved
+HTTP port 55541 for a zero-hit refusal check and a static database-dependency
+check. No shared database is needed or accessed by the repaired suite.
+
+The final source suite has 67 tests. The five M01 page-engine invocation tests
+also pass when `W5_M01_ENGINE_ROOTS` explicitly maps `page-change-offline-job`
+to this checkout. This proves invocation of the current CLI, not a rebuilt
+distribution archive, paid-wrapper execution, or an independent controller
+rerun. No sibling engine, wrapper, catalog pin, archive, deployment, live
+extraction, payment, or outreach was changed.
+
+```sh
+NODE_OPTIONS=--max-old-space-size=768 npm test
+# From the repository root, with W5_M01_ENGINE_ROOTS mapped to this engine:
+NODE_OPTIONS=--max-old-space-size=768 node --test --test-concurrency=1 \
+  experiments/wave5/m01/test/invoke-page.test.mjs
+```
+
+Integration: review the CW34 draft stacked on PR120, then carry this owned
+directory into the integration branch and explicitly rebuild/repin any frozen
+distribution. Keep consumers tolerant of additive type evidence and the new
+`input_precision` refusal. No merge or deployment is performed here.
+
+## Historical receipts
+
 W5-M05 amendment: see `experiments/wave5/m05/RECEIPT.md`. Engine `0.1.1` on
 `cursor/w5-m05-co13-bounded-page-change-analysis-266c`. Contract export
 `PAGE_CHANGE_OFFLINE_CONTRACT`. Tests: 26/26.
