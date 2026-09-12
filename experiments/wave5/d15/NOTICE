@@ -1,0 +1,9 @@
+W5-D15 input/execute race harness
+
+Copyright (c) 2026 SameDayDesk / epistemedeus
+License: MIT. See LICENSE in this directory.
+
+This package replays D01 `execution.v1` and SDS PR52 wrappers from
+read-only git worktrees. It does not copy those kernels or the
+useful-jobs engine archive. Freeze-shim `--bind frozen` is not
+product acceptance.

@@ -1,0 +1,11 @@
+W5-D15 final-input-freeze
+
+Copyright (c) 2026 SameDayDesk / epistemedeus
+License: MIT. See LICENSE in this directory.
+
+Independent prepare-to-execute check of D01 delivery at
+46f2b7f55a7fb780333073a5197b64b8fde64a33 using the product
+`bin/deliver.mjs` consumer. Read-only product worktree. No D01
+production edits, purchases, mailbox customer files, or public-kit
+reimplementation. Nested page captures are semantic inputs of
+page-change-offline-job even though the catalog only lists `--job`.

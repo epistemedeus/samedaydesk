@@ -1,0 +1,26 @@
+{
+  "schema": "samedaydesk.wave5.d15.input-execute-race.v1",
+  "outcome": "Deterministic input/execute race harness",
+  "executionContract": "samedaydesk.paid-useful-jobs.execution.v1",
+  "testedImplementation": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "e2f951cae7bb299df2283b9c181bb0d369fc26af",
+    "paths": ["server/paid-useful-jobs/"],
+    "note": "execution.v1 kernel replayed from a read-only worktree. Freeze-shim runs are not product acceptance."
+  },
+  "previousKernel": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "6bed72dd22a396134aa5c957933b42c3a5746698",
+    "note": "Inspect-to-materialize still consumed mutated bytes. Kept as a runnable negative pin."
+  },
+  "negativeBaseline": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "ref": "fable/f08-paid-wrappers",
+    "pr": 52
+  },
+  "integrationOwner": "W5-D01",
+  "refuseCode": "input-changed-after-preflight",
+  "bind": ["frozen", "verify-live", "live-observe"],
+  "remainingBinding": "Product pin e2f951ca snapshots file bytes before inspect. Inspect-to-execute, post-stage, and outDir-getter caller mutation consumed those bytes with a matching receipt and stable domain. 6bed72dd still executes inspect-window mutations. SDS52 aeef964 still aliases live caller paths. Concurrent caller outDir last-writer-wins on the published copy; receipts at e2f951ca bind runOutDir. Freeze-shim runs are not product acceptance."
+}

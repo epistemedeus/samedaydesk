@@ -1,0 +1,28 @@
+{
+  "schema": "samedaydesk.wave5.d15.final-input-freeze.v1",
+  "outcome": "Prepare-to-execute freeze check of D01 deliver.mjs at 46f2b7f",
+  "executionContract": "samedaydesk.paid-useful-jobs.execution.v1",
+  "testedImplementation": {
+    "repo": "epistemedeus/samedaydesk",
+    "sha": "46f2b7f55a7fb780333073a5197b64b8fde64a33",
+    "pr": 74,
+    "command": "node server/paid-useful-jobs/bin/deliver.mjs --job lockfile-pin-delta --before \"$BEFORE\" --after \"$AFTER\"",
+    "publicArchive": {
+      "sha": "9ae0febd8c184c0cbbb5e481ba31ac620e89b869",
+      "pr": 114,
+      "path": "client/public/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz",
+      "bytes": 2579117,
+      "sha256": "dec31ea66f1605fb9578c7d15c9583b130c6e2c0b82b5e6b93422381a04461eb"
+    }
+  },
+  "notThisAssignment": [
+    "Sol four-core engine source review at d2a0d0b2",
+    "Root ten-job public smoke (npm run test:useful-jobs-public)",
+    "Prior D15 cli.mjs vendor-budget race at e2f951ca",
+    "Cold-download 1.1.0 ten-job re-run"
+  ],
+  "integrationOwner": "W5-D01",
+  "publishOwner": "Root",
+  "verdict": "fail-page-nested-captures",
+  "remainingBinding": "Catalog lock/schema/route files freeze at prepare via stagedPath. Page job.json is fail-closed f-input if mutated. Nested page before/after captures are snapshotted at execute freezeRequest, not at preflight; order/receipt/mailbox do not list those sha256s. Exact repro: overwrite customer-job after.json after preflight on deliver.mjs --job-file."
+}
