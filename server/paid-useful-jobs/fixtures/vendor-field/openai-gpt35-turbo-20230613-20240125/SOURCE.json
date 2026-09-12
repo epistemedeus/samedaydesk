@@ -1,0 +1,25 @@
+{
+  "id": "openai-gpt35-turbo-20230613-20240125",
+  "kind": "same-field-list-price",
+  "structure": "usd-per-1k-tokens",
+  "decisionQuestion": "Did the GPT-3.5 Turbo list price for the unpinned chat alias move enough to reopen a token-budget?",
+  "before": {
+    "url": "https://openai.com/index/function-calling-and-other-api-updates/",
+    "date": "2023-06-13",
+    "publisher": "OpenAI",
+    "quote": "Developers can now use this model for just $0.0015 per 1K input tokens and $0.002 per 1K output tokens",
+    "extraction": "Official product post dated June 13, 2023. The sentence is the new GPT-3.5 Turbo list price after a stated 25% input cut. Rows use those explicit dollars and the published unit USD per 1K tokens. Not converted to 1M tokens."
+  },
+  "after": {
+    "url": "https://openai.com/index/new-embedding-models-and-api-updates/",
+    "date": "2024-01-25",
+    "publisher": "OpenAI",
+    "quote": "Next week we are introducing a new GPT-3.5 Turbo model, gpt-3.5-turbo-0125 ... Input prices for the new model are reduced by 50% to $0.0005 /1K tokens and output prices are reduced by 25% to $0.0015 /1K tokens. Customers using the unpinned gpt-3.5-turbo model alias will be automatically upgraded from gpt-3.5-turbo-0613 to gpt-3.5-turbo-0125",
+    "extraction": "Official product post dated January 25, 2024. After-row dollars are the explicit $0.0005 / $0.0015 per 1K figures. The 50% / 25% claims are versus the then-current 0613 snapshot, not versus the June 2023 dollars, so this pair is two dated list snapshots of the unpinned GPT-3.5 Turbo alias, not a single advertised percentage."
+  },
+  "limits": [
+    "0125 is a new snapshot id; the alias auto-upgrades two weeks after launch.",
+    "Does not include batch, fine-tuned, cached, or non-English-function-call caveats.",
+    "Not a measured customer bill."
+  ]
+}
