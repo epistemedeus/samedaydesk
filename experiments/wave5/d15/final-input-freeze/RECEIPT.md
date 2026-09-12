@@ -77,6 +77,7 @@ This is not an engine crash and not an unsupported-format refuse. Trusted local 
 2. Run the product CLI `--job-file job.json` once: analysis `actionable`, verdict `changed`.
 3. Run again with the preload. After preflight, overwrite `after.json` with `before.json`.
 4. Delivery stays `ok` / mailbox complete. Analysis becomes `informational`, `page-change.json` verdict `unchanged`.
+   This run: inspect `after.json` `a7fdf95f161c67529a7254b1d2e1c4efa068506ac01edaee3c2561a5d09c9bd6`; live overlay `23833bf7b28ca27a074cb9d73daaa2ec3beed14a55d767567c5fab50b66605f4`.
 5. `order.inputs` / `receipt.inputs` / `inputSha256` list only `--job` (job.json digest). Nested before/after sha256s are absent from the order, the execution receipt, and the mailbox envelope.
 
 Cause in shipped code (`46f2b7f` `server/paid-useful-jobs/lib/delivery-kit.mjs`): `orderRequestFromPreflight` uses `rec.path` for `key === "job"` so sibling resolution can see the original directory. Preflight stages only `job.json`. Wrapper `freezeRequest` snapshots `job:before` / `job:after` at execute, not at prepare. Mailbox `seedFromD01Execution` stores output artifacts, not input captures.

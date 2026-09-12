@@ -22,5 +22,7 @@
     "Cold-download 1.1.0 ten-job re-run"
   ],
   "integrationOwner": "W5-D01",
-  "publishOwner": "Root"
+  "publishOwner": "Root",
+  "verdict": "fail-page-nested-captures",
+  "remainingBinding": "Catalog lock/schema/route files freeze at prepare via stagedPath. Page job.json is fail-closed f-input if mutated. Nested page before/after captures are snapshotted at execute freezeRequest, not at preflight; order/receipt/mailbox do not list those sha256s. Exact repro: overwrite customer-job after.json after preflight on deliver.mjs --job-file."
 }
