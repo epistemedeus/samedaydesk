@@ -1,0 +1,16 @@
+Pinned isolated hasher (not an earned-work kernel copy)
+
+repo: epistemedeus/neomorphic-io
+ref: fable/integration-earned-work
+sha: 819fa637ecf5e5177c84efc16fcaa18d57017631
+pr: https://github.com/epistemedeus/neomorphic-io/pull/54
+paths:
+  packs/funded-task-terms/src/hash.mjs
+  packs/funded-task-terms/src/canonical.mjs
+  packs/funded-task-terms/LICENSE
+golden termsVersion: sha256:c82f232dd9d63261b91d32234abf3e0f655d99182cde7c66b7de5c8c787ea31f
+
+Not copied: F01 exclusive-occupancy kernel, money adapters, HTTP/Postgres
+earned-work service, or original integer termsVersion dual-key.
+I01 integrated contract: termsVersion is sha256: + 64 hex; schemaVersion
+is the integer shape version; integer termsVersion is rejected.

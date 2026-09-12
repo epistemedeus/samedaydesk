@@ -1,0 +1,21 @@
+job-request-desk notices
+========================
+
+This module is a local ticket store around the published useful-jobs 1.0.0
+CLI and the SDS52 paid wrapper. It does not relicense nested work.
+
+- useful-jobs 1.0.0 archive (PR51): MIT + NOTICE inside
+  client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz
+  sha256 6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51
+- I01 hasher: MIT, lib/vendor/funded-task-terms/LICENSE
+  (Neo PR54 819fa637ecf5e5177c84efc16fcaa18d57017631)
+- F08 caller fixtures copied from bae3e7cd5034b21019fb272a99d88db964b831ee
+  (read-only). The F08/SDS52 wrapper kernel is not copied into this tree.
+- SDS52 wrapper consumed at aeef964fa188443078958d9d6d393afae1d542ee
+  (PR52). Locate via SDS52_WRAPPER_ROOT, in-repo server/paid-useful-jobs after
+  D01 merge, or a git worktree of that pin.
+
+No purchase, network, scheduler, or live-settle authority.
+Samples are not sales. sold is always false.
+Rejected tickets stay refused on replay.
+
