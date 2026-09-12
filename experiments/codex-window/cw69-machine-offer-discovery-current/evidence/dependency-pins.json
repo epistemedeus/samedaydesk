@@ -1,0 +1,506 @@
+{
+  "repository": "epistemedeus/samedaydesk",
+  "integratedBase": "a9aaa0f8a3bb996948e6033f743b62c4e5417882",
+  "observedHead": "a9aaa0f8a3bb996948e6033f743b62c4e5417882",
+  "nodeVersion": "v22.23.2",
+  "declaredM01Pins": [
+    {
+      "id": "lockfile-pin-delta",
+      "pin": {
+        "repo": "epistemedeus/samedaydesk",
+        "sha": "5f0f189fd3e88eabfeca2b95b2da644e58374372",
+        "ownedPath": "tools/lockfile-pin-delta/",
+        "packageName": "@samedaydesk/lockfile-pin-delta",
+        "source": "in-tree"
+      },
+      "cli": {
+        "relativeBin": "bin/lockfile-delta.mjs",
+        "argv": [
+          "--before",
+          "{before}",
+          "--after",
+          "{after}",
+          "--out-dir",
+          "{outDir}"
+        ],
+        "requiredInputs": [
+          "before",
+          "after"
+        ],
+        "exampleArgv": [
+          "--example",
+          "--out-dir",
+          "{outDir}"
+        ],
+        "exampleIsRefuse": false
+      },
+      "outputs": [
+        {
+          "name": "pin-delta.json",
+          "schema": "samedaydesk.lockfile-pin-delta.v1",
+          "requiredKeys": [
+            "schema",
+            "ok",
+            "status",
+            "appId",
+            "added",
+            "removed",
+            "changed",
+            "counts",
+            "purchaseAuthority",
+            "equality"
+          ]
+        },
+        {
+          "name": "pin-delta.md",
+          "mediaType": "text/markdown"
+        }
+      ],
+      "integratedPathTree": "35766ed38eb05312764579f0c9817d34600f7ad9",
+      "declaredPinPathTree": "35766ed38eb05312764579f0c9817d34600f7ad9",
+      "declaredPinMatchesIntegratedPath": true
+    },
+    {
+      "id": "json-schema-webhook-drift",
+      "pin": {
+        "repo": "epistemedeus/samedaydesk",
+        "sha": "989ea8155ee547546cb63b6ba97bc814b313fc20",
+        "ownedPath": "tools/json-schema-webhook-drift/",
+        "packageName": "@samedaydesk/json-schema-webhook-drift",
+        "source": "in-tree",
+        "integrationFix": "CW14 instance-set semantics plus independently witnessed selected-required keyword membership"
+      },
+      "cli": {
+        "relativeBin": "bin/webhook-drift.mjs",
+        "argv": [
+          "--before",
+          "{before}",
+          "--after",
+          "{after}",
+          "--used",
+          "{used}",
+          "--out-dir",
+          "{outDir}"
+        ],
+        "requiredInputs": [
+          "before",
+          "after",
+          "used"
+        ],
+        "exampleArgv": [
+          "--example",
+          "--out-dir",
+          "{outDir}"
+        ],
+        "exampleIsRefuse": false
+      },
+      "outputs": [
+        {
+          "name": "drift-brief.json",
+          "schema": "samedaydesk.json-schema-webhook-drift.v1",
+          "requiredKeys": [
+            "schema",
+            "ok",
+            "status",
+            "kind",
+            "impact",
+            "usedOnly",
+            "notOpenApi"
+          ]
+        },
+        {
+          "name": "drift-brief.md",
+          "mediaType": "text/markdown"
+        }
+      ],
+      "integratedPathTree": "03ff8830c06e63b2d1c8bd52380eac783d4c6dfe",
+      "declaredPinPathTree": "03ff8830c06e63b2d1c8bd52380eac783d4c6dfe",
+      "declaredPinMatchesIntegratedPath": true
+    },
+    {
+      "id": "route-table-diff",
+      "pin": {
+        "repo": "epistemedeus/samedaydesk",
+        "sha": "989ea8155ee547546cb63b6ba97bc814b313fc20",
+        "ownedPath": "tools/route-table-diff/",
+        "packageName": null,
+        "binPresent": "bin/route-diff.mjs",
+        "source": "in-tree"
+      },
+      "cli": {
+        "relativeBin": "bin/route-diff.mjs",
+        "argv": [
+          "--before",
+          "{before}",
+          "--after",
+          "{after}",
+          "--out-dir",
+          "{outDir}"
+        ],
+        "requiredInputs": [
+          "before",
+          "after",
+          "outDir"
+        ],
+        "exampleArgv": [
+          "--example",
+          "--out-dir",
+          "{outDir}"
+        ],
+        "exampleIsRefuse": false,
+        "httpLocators": "loopback http://127.0.0.1|localhost|::1 only"
+      },
+      "outputs": [
+        {
+          "name": "route-diff.json",
+          "schema": "samedaydesk.route-diff.v1",
+          "requiredKeys": [
+            "schema",
+            "ok",
+            "counts",
+            "added",
+            "removed",
+            "changed",
+            "titleOnly",
+            "tableDigest",
+            "publishedRouteTable",
+            "outcome",
+            "breaking"
+          ]
+        },
+        {
+          "name": "route-diff.md",
+          "mediaType": "text/markdown"
+        }
+      ],
+      "integratedPathTree": "649b5d0cd011a9b007d3b0358e54b2b82957b00e",
+      "declaredPinPathTree": "649b5d0cd011a9b007d3b0358e54b2b82957b00e",
+      "declaredPinMatchesIntegratedPath": true
+    },
+    {
+      "id": "page-change-offline-job",
+      "pin": {
+        "repo": "epistemedeus/samedaydesk",
+        "sha": "e38f385a63c767f315409460bd51c57895fa4ed1",
+        "ownedPath": "tools/page-change-offline-job/",
+        "packageName": "@samedaydesk/page-change-offline-job",
+        "engineVersion": "0.1.3",
+        "source": "in-tree"
+      },
+      "cli": {
+        "relativeBin": "bin/page-change.mjs",
+        "argv": [
+          "job",
+          "--job",
+          "{job}",
+          "--out-dir",
+          "{outDir}"
+        ],
+        "compareArgv": [
+          "compare",
+          "--before",
+          "{before}",
+          "--after",
+          "{after}",
+          "--fields",
+          "{fields}",
+          "--clock",
+          "{clock}",
+          "--out-dir",
+          "{outDir}"
+        ],
+        "requiredInputs": [
+          "job"
+        ],
+        "exampleArgv": [
+          "--example"
+        ],
+        "exampleIsRefuse": true,
+        "optionalFlags": [
+          "max-bytes",
+          "max-stale-ms",
+          "max-sources",
+          "max-changes",
+          "max-json-depth",
+          "max-json-nodes",
+          "max-excerpt-bytes"
+        ]
+      },
+      "outputs": [
+        {
+          "name": "page-change.json",
+          "schema": "pilot/page-change-brief/v1",
+          "schemaPath": "report.schema",
+          "requiredKeys": [
+            "job",
+            "report"
+          ]
+        },
+        {
+          "name": "page-change.md",
+          "mediaType": "text/markdown"
+        }
+      ],
+      "integratedPathTree": "723ec937361020c787b39eedfc7de0ebbb0f57af",
+      "declaredPinPathTree": "723ec937361020c787b39eedfc7de0ebbb0f57af",
+      "declaredPinMatchesIntegratedPath": true
+    }
+  ],
+  "files": [
+    {
+      "path": "client/public/discovery/useful-jobs.json",
+      "bytes": 7773,
+      "sha256": "66262791ccb69ae2d1c8ff713a051ddef6a22c83969d603f3af1c6ab97cc0629"
+    },
+    {
+      "path": "client/public/for-agents/useful-jobs/catalog.json",
+      "bytes": 9041,
+      "sha256": "e813959e11d9f7ff6db9948d777449ca38d1aa064e8d4c2953f7fc3a0babbc01"
+    },
+    {
+      "path": "client/public/for-agents/useful-jobs/useful-jobs-1.0.0.sha256.json",
+      "bytes": 435,
+      "sha256": "f240b4172851f68d0bde84fd76600f13211be42056379716cf92d444f5a196e4"
+    },
+    {
+      "path": "experiments/wave5/m01/catalog.json",
+      "bytes": 13427,
+      "sha256": "bccd02e0890c4e573f0af95cef651e884f67b3cc0ea079e1e1175ef37f1d6512"
+    },
+    {
+      "path": "experiments/wave5/m01/lib/catalog.mjs",
+      "bytes": 1993,
+      "sha256": "055b3c111aa9362663339ced5612231845ece87331ce7b681a1fe0978b3688a9"
+    },
+    {
+      "path": "experiments/wave5/m01/lib/classify.mjs",
+      "bytes": 2721,
+      "sha256": "7f8eb151c734bc90f34bb4714fafcd527850a9f4879b4840f1baedceb3497ee5"
+    },
+    {
+      "path": "experiments/wave5/m01/lib/contract.mjs",
+      "bytes": 3122,
+      "sha256": "e8e0f3341a97e2674ab267d0c1f1c920b3a97e3289bf7331d050cc93a9848d16"
+    },
+    {
+      "path": "experiments/wave5/m01/lib/d01-adapter.mjs",
+      "bytes": 10450,
+      "sha256": "d6a2fe32830b2490dda65c44216230724b80e9e06c3191e3eef0fda130537d30"
+    },
+    {
+      "path": "experiments/wave5/m01/lib/d01-root.mjs",
+      "bytes": 2656,
+      "sha256": "9cb83c3bf845bd8bae5fcc4b78f07759ae896f20c9a2c53d737f298b77876285"
+    },
+    {
+      "path": "experiments/wave5/m01/lib/engine-root.mjs",
+      "bytes": 3229,
+      "sha256": "c0d683f5f3a51d5adadfefa3ace4d2619f98421596e0dec4f98187d356ccbd17"
+    },
+    {
+      "path": "experiments/wave5/m01/lib/invoke.mjs",
+      "bytes": 4445,
+      "sha256": "c555836cb8f3b49ea6809a3cccd6f2840b73623ea0c3470d6cd670f149f8a87f"
+    },
+    {
+      "path": "experiments/wave5/m01/lib/paths.mjs",
+      "bytes": 556,
+      "sha256": "86db7a304aac9afc1332c16b5ce35968ccd4dce566a540ca622f9d789a496a80"
+    },
+    {
+      "path": "experiments/wave5/m01/lib/schema-match.mjs",
+      "bytes": 2280,
+      "sha256": "c32fdcfb6cc2c25b8752499347018883c42e187839e0d5afa69ef71ea8f02287"
+    },
+    {
+      "path": "server/paid-useful-jobs/bin/cli.mjs",
+      "bytes": 3828,
+      "sha256": "9f64c5aa19f0b4dafaa7bdb8e4b870f0f103f998ae83200d65f4f709b5032439"
+    },
+    {
+      "path": "server/paid-useful-jobs/bin/deliver.mjs",
+      "bytes": 2980,
+      "sha256": "720ffea676025a96277afd6bf7e04f0b7c05aae554b4036d9a10f4ee858ed493"
+    },
+    {
+      "path": "server/paid-useful-jobs/bin/serve-execution.mjs",
+      "bytes": 630,
+      "sha256": "85a6dc1aac6ace51178fb97b840d7c2a19903f58552ebf7087eddecbbedb6ded"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/continuity.mjs",
+      "bytes": 8705,
+      "sha256": "3029a7b6127f304b3e4a59cc62c312fbb81fd34550cd2b247f2cd037175ebb1a"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/contract.mjs",
+      "bytes": 3603,
+      "sha256": "a3dd954d237e13d0f4eeb403c454a95b9dd910cca0019e88d30ff3b5e9066d73"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/delivery-catalog.mjs",
+      "bytes": 4190,
+      "sha256": "bf4d47e20ba40bcdd47f32d4e63107e3c07d23b018ee827db5d48a9de4b938b4"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/delivery-kit.mjs",
+      "bytes": 10462,
+      "sha256": "75bc1c501ceb18a35aac56f1eae04da3d288952fe024b62b07af8563c564f80f"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/digest.mjs",
+      "bytes": 1125,
+      "sha256": "52466854ced65b7eaff275902604c0507d722829d4423c3aa586773a4da3b2c5"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/engine.mjs",
+      "bytes": 5192,
+      "sha256": "3707d7f5673f4cb9746c657572f3bd30c714ee9bfd696741baff30f0f9e7cffd"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/envelope.mjs",
+      "bytes": 3447,
+      "sha256": "c0725291e8c4f8933f7300faabecca6fe063ee1d3fe9da6553c39826f5f2e95c"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/errors.mjs",
+      "bytes": 296,
+      "sha256": "df7baf906ce3e730fe5b94ab13251f347301124f5eee649da3c4f106cc066d2b"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/funding.mjs",
+      "bytes": 5518,
+      "sha256": "7a16fd2126499a927363cb9997b6a87eed1813eaa093fe7b8621880e1493ff11"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/git-head.mjs",
+      "bytes": 375,
+      "sha256": "c199c97ff4d7b3065b32d166fb1213652e70cef53f3d6272e6fb37f190cc4137"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/http.mjs",
+      "bytes": 7594,
+      "sha256": "be6ca0d1b9fd38b3593cf8cff2db945a27998bbfff981145112f0ca9a00f367a"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/input-guard.mjs",
+      "bytes": 11082,
+      "sha256": "f63e28615d0b8c862f6267e9b22e4a521398fe52f7753b866b316075523d00d6"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/input-schema.mjs",
+      "bytes": 5796,
+      "sha256": "7ac96a709377ab0136b5f870b93042c2ffaaa03d3bbc7b95c8cfcc5caf696eb8"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/jobs.mjs",
+      "bytes": 2261,
+      "sha256": "801d91967a2248e3c0b7ddec2573a2cf08763806161be76c362333206c996c73"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/jsonl.mjs",
+      "bytes": 847,
+      "sha256": "b5bb5cffa4e6747d5e2370b169102009c44cb7d83560a356fffb3a56a90a8420"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/pins.mjs",
+      "bytes": 2859,
+      "sha256": "8a2bf48808d0bf2a39bcda5d08cdddebb8e05f391b7ac157e4a124c391d3bbfc"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/receipt.mjs",
+      "bytes": 2317,
+      "sha256": "50fbee08e5abe7d4533f5aefe9dcdf5f097c7fd3d682b46d46feb05980c2e5b7"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/sample-guard.mjs",
+      "bytes": 4257,
+      "sha256": "ec39801d6a6454f75c918011e5cf400fc2f19d0134afad1b881e1e4699b986d1"
+    },
+    {
+      "path": "server/paid-useful-jobs/lib/wrapper.mjs",
+      "bytes": 14485,
+      "sha256": "eaf17e5893fac4c1a43e42d3cb558f04ca11ca965dcc530fd665748a3b441743"
+    },
+    {
+      "path": "tools/job-input-preflight/lib/constants.mjs",
+      "bytes": 3007,
+      "sha256": "8eb16827b6554a55e7e33fe619e2bdc5c627b293c30c0376d2d02fae634794dd"
+    },
+    {
+      "path": "tools/job-input-preflight/lib/roots.mjs",
+      "bytes": 700,
+      "sha256": "a7e5f8d31a9fbd754d039a5a5ea5ab6e1f3efce3143c8a8f0309f5123e22dc97"
+    },
+    {
+      "path": "tools/lockfile-pin-delta/bin/lockfile-delta.mjs",
+      "bytes": 1336,
+      "sha256": "caa8ffc224c05ec813e47d9cecba6d3e5a8db408a46ebc3983bb493fe102db75"
+    },
+    {
+      "path": "tools/lockfile-pin-delta/lib/args.mjs",
+      "bytes": 1389,
+      "sha256": "a84378c0b2e5666ed77734ad802048bd894b435f42280774b9b563aaa3ffcfe7"
+    },
+    {
+      "path": "tools/lockfile-pin-delta/lib/compare.mjs",
+      "bytes": 3165,
+      "sha256": "5334c9cbdf9405e6cb97b763688a1871b8866bdb062d2595823f99994f61378a"
+    },
+    {
+      "path": "tools/lockfile-pin-delta/lib/errors.mjs",
+      "bytes": 310,
+      "sha256": "1c85418f2599141216057a0e5a28b07f33216a36a86fc322d7ebd0863680665f"
+    },
+    {
+      "path": "tools/lockfile-pin-delta/lib/format.mjs",
+      "bytes": 3110,
+      "sha256": "053b86f96a961594975a552df610c02c40f2fb3cb8c818ead9e9390ec403bcdc"
+    },
+    {
+      "path": "tools/lockfile-pin-delta/lib/hash-terms.mjs",
+      "bytes": 2841,
+      "sha256": "3862e3390df8da12bfa14b546f67cc77244aa7ab8ad633610d721b287dc27056"
+    },
+    {
+      "path": "tools/lockfile-pin-delta/lib/index.mjs",
+      "bytes": 732,
+      "sha256": "ef786943553de07ac9b8f843efa6c1b912cb5332723595d98bd478f0b63572ba"
+    },
+    {
+      "path": "tools/lockfile-pin-delta/lib/json-structure.mjs",
+      "bytes": 6085,
+      "sha256": "22f7b8251a3f3834f37e06612a1fa1db5257c23479cf361f23aa14639d318ddb"
+    },
+    {
+      "path": "tools/lockfile-pin-delta/lib/parse-lockfile.mjs",
+      "bytes": 10059,
+      "sha256": "6a5299e0e0a471224862f3ae1c1ba54ddecbed8592a188f6012f2b71cc85276e"
+    },
+    {
+      "path": "tools/lockfile-pin-delta/lib/run.mjs",
+      "bytes": 8204,
+      "sha256": "97b9846433650d72739022c26f7184ad6badf46d2df37295080b8a3c3b3a73f5"
+    },
+    {
+      "path": "tools/lockfile-pin-delta/lib/sample.mjs",
+      "bytes": 982,
+      "sha256": "ce5f895ebc126af42d185cefd01501d605dfb2bdd790db747196f85f7e3ea9dd"
+    }
+  ],
+  "scope": "Inspection snapshot, not a complete executable closure or an implemented invocation binding. Files match integratedBase. In-tree execution can differ from declared source pins; bind actual executable bytes in the remaining adapter.",
+  "remoteMainObservedAtCloseout": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+  "sourceRefreshPerformed": false,
+  "remoteIntegrationObservedAtCloseout": {
+    "branch": "codex/useful-jobs-core-integration-20260912",
+    "head": "30345f69f16aca93bb95511ee4da62975c98cc04",
+    "stagedArchiveVersion": "1.4.2",
+    "inspectedScopeChangedPaths": [
+      "client/public/discovery/useful-jobs.json",
+      "client/public/for-agents/useful-jobs/catalog.json",
+      "experiments/wave5/m01/test/catalog.test.mjs",
+      "server/paid-useful-jobs/test/vendor-row-output.test.mjs"
+    ],
+    "action": "recorded only; frozen base retained"
+  }
+}

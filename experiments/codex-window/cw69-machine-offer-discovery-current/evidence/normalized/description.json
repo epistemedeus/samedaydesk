@@ -1,0 +1,141 @@
+{
+  "schema": "cw69.machine-offer-description.v1",
+  "jobId": "lockfile-pin-delta",
+  "discoveryFingerprint": "5cba81ae1fcc96e4dbaa44c442f19ed87e44a744a8680cb9626304679b2ae0a5",
+  "identity": {
+    "schema": "cw69.lockfile-pin-delta.identity.v1",
+    "jobId": "lockfile-pin-delta",
+    "catalog": {
+      "sha256": "e813959e11d9f7ff6db9948d777449ca38d1aa064e8d4c2953f7fc3a0babbc01",
+      "bytes": 9041,
+      "version": "1.4.1",
+      "publicPinSha": "fba9d14872bc4c04214e527b9edfb30c2123c9e7"
+    },
+    "publicArchive": {
+      "kind": "source-capture",
+      "version": "1.4.1",
+      "sha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+      "bytes": 2575456,
+      "purchaseAuthority": false
+    },
+    "engine": {
+      "kind": "source-capture",
+      "pinSha": "5f0f189fd3e88eabfeca2b95b2da644e58374372",
+      "ownedPath": "tools/lockfile-pin-delta/",
+      "binPath": "tools/lockfile-pin-delta/bin/lockfile-delta.mjs",
+      "binSha256": "caa8ffc224c05ec813e47d9cecba6d3e5a8db408a46ebc3983bb493fe102db75",
+      "binBytes": 1336,
+      "treeSha256": "d095aad3a389a584146f33d641a555b5ffe0d3f2349014332284c95906294184",
+      "treeFileCount": 85
+    },
+    "runtime": {
+      "kind": "source-capture",
+      "cliPath": "server/paid-useful-jobs/bin/cli.mjs",
+      "cliSha256": "9f64c5aa19f0b4dafaa7bdb8e4b870f0f103f998ae83200d65f4f709b5032439",
+      "cliBytes": 3828,
+      "listJobCount": 10,
+      "firstOffer": "lockfile-pin-delta",
+      "listSha256": "565214af556e344c7edef606cde42ab2d63ad53c2dca5123eb64e21cf595208a",
+      "requiredInputs": [
+        "--before",
+        "--after"
+      ],
+      "optionalInputs": [
+        "--example"
+      ],
+      "outputs": [
+        "pin-delta.json",
+        "pin-delta.md"
+      ]
+    },
+    "wrapperArchive": {
+      "kind": "source-capture",
+      "version": "1.0.0",
+      "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "bytes": 2522418,
+      "note": "Legacy wrapper archive acquisition remains 1.0.0; selected M01 execution uses the in-tree engine."
+    },
+    "m01": {
+      "catalogSha256": "bccd02e0890c4e573f0af95cef651e884f67b3cc0ea079e1e1175ef37f1d6512",
+      "catalogBytes": 13427,
+      "pinSha": "5f0f189fd3e88eabfeca2b95b2da644e58374372"
+    },
+    "merchant": {
+      "kind": "hosted-evidence",
+      "version": "1.23.49",
+      "serverName": "io.github.epistemedeus/x402-data-gateway",
+      "remote": "https://agents.samedaydesk.com/mcp",
+      "route": "/lockfile-pin-delta",
+      "url": "https://agents.samedaydesk.com/lockfile-pin-delta",
+      "methods": [
+        "post"
+      ],
+      "getSupported": false,
+      "operationId": "compareLockfilePinDelta",
+      "protocols": [
+        "x402"
+      ],
+      "mppOnThisRoute": false,
+      "captureStatus": 402,
+      "authorizationSent": false,
+      "paymentSent": false,
+      "isLatestCaptureField": true,
+      "isLatestAuthority": false,
+      "openapiSha256": "053fa318276524d5cd12696f5508bbde2506e18fd83c654ff12b879aed9f6cd9",
+      "mcpSha256": "be7b6a591a9cd001399f2c36167599654b95cbf6010836561072ab6b8912282e",
+      "x402Sha256": "21ab333a3bffbd44f799c15b9a5712d0e18f984326b8ba166b8db7d3e6ca24fc",
+      "challengeSha256": "5024a7a6dc29a68b95d5cad03baa0129cb2fd8dabc9aa2140e46ba454ccba3c4",
+      "requestSha256": "82650316d080cdeff319d595142fac0f97e668d60cc24c955241bdee37c8fcb7",
+      "publishedPriceUsdc": "0.005",
+      "challengeAmountAtomic": "5000"
+    },
+    "consumers": {
+      "m12Commit": "440c2c901329402b6bbaaafa29e1eb0b95dd6f01",
+      "m13Commit": "71a7335708669ceb6e460c36dc4eb6625ce7cad4",
+      "note": "Imported evidence; not rewritten by this adapter."
+    },
+    "publicDiscovery": {
+      "sha256": "66262791ccb69ae2d1c8ff713a051ddef6a22c83969d603f3af1c6ab97cc0629",
+      "bytes": 7773
+    },
+    "pinsDistinct": {
+      "publicCatalogPin": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "integratedEnginePin": "5f0f189fd3e88eabfeca2b95b2da644e58374372",
+      "wrapperArchiveVersion": "1.0.0",
+      "publicArchiveVersion": "1.4.1",
+      "merchantVersion": "1.23.49",
+      "publicPinEqualsIntegrated": false,
+      "expectedPublicCatalogPin": "fba9d14872bc4c04214e527b9edfb30c2123c9e7",
+      "expectedIntegratedEnginePin": "5f0f189fd3e88eabfeca2b95b2da644e58374372"
+    }
+  },
+  "caller": {
+    "before": {
+      "sha256": "0eacdaa94ed11b8f8ea50ddab4a907ea286430cbfd0c2b86ce46fcf1b8a507d3",
+      "bytes": 343
+    },
+    "after": {
+      "sha256": "0c23765b739e326ca54c02e7beca8d05c3ba7f6bfcd5fc4b7907e96def5b0ebe",
+      "bytes": 343
+    },
+    "method": "local-cli",
+    "acquisition": "offline-local-run"
+  },
+  "callerFingerprint": "aadb00fbb4a6af21af60033e72d3507638ebf68a4145322e21f7a8be98234530",
+  "sample": {
+    "sample": false,
+    "reasons": [],
+    "detector": {
+      "bounded": true,
+      "algorithm": "canonical-json-sha256+metadata+sidecar+example-flag",
+      "knownSampleCount": 6,
+      "note": "Renamed or reformatted copies of known samples match. Unrelated caller lockfiles are not samples."
+    }
+  },
+  "promisedOutputs": [
+    "pin-delta.json",
+    "pin-delta.md"
+  ],
+  "purchaseAuthority": false,
+  "sold": false
+}

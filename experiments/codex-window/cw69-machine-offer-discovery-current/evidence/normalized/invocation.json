@@ -1,0 +1,106 @@
+{
+  "schema": "cw69.machine-offer-invocation.v1",
+  "ok": true,
+  "refused": false,
+  "jobId": "lockfile-pin-delta",
+  "discoveryFingerprint": "5cba81ae1fcc96e4dbaa44c442f19ed87e44a744a8680cb9626304679b2ae0a5",
+  "callerFingerprint": "aadb00fbb4a6af21af60033e72d3507638ebf68a4145322e21f7a8be98234530",
+  "admitted": {
+    "before": {
+      "sha256": "0eacdaa94ed11b8f8ea50ddab4a907ea286430cbfd0c2b86ce46fcf1b8a507d3",
+      "bytes": 343
+    },
+    "after": {
+      "sha256": "0c23765b739e326ca54c02e7beca8d05c3ba7f6bfcd5fc4b7907e96def5b0ebe",
+      "bytes": 343
+    }
+  },
+  "engine": {
+    "pinSha": "5f0f189fd3e88eabfeca2b95b2da644e58374372",
+    "binSha256": "caa8ffc224c05ec813e47d9cecba6d3e5a8db408a46ebc3983bb493fe102db75",
+    "sourceCommit": "5f0f189fd3e88eabfeca2b95b2da644e58374372",
+    "executable": {
+      "sha256": "caa8ffc224c05ec813e47d9cecba6d3e5a8db408a46ebc3983bb493fe102db75",
+      "bytes": 1336,
+      "bin": "/tmp/h7-cw69/tools/lockfile-pin-delta/bin/lockfile-delta.mjs",
+      "source": "in-tree"
+    }
+  },
+  "spawn": {
+    "status": 0,
+    "code": null,
+    "outcome": "success",
+    "failureClass": "analysis"
+  },
+  "transport": "ok",
+  "analysis": {
+    "status": "actionable",
+    "outcome": "actionable",
+    "identityVerified": null
+  },
+  "delivery": {
+    "status": "complete",
+    "complete": true,
+    "expected": [
+      "pin-delta.json",
+      "pin-delta.md"
+    ],
+    "present": [
+      "pin-delta.json",
+      "pin-delta.md"
+    ],
+    "missing": [],
+    "unexpected": [],
+    "publishedDir": "/tmp/h7-cw69-tmp/cw69-test-itDoY5/out"
+  },
+  "payment": {
+    "sold": false,
+    "purchaseAuthority": false,
+    "liveSettlement": "out-of-scope",
+    "fundingState": "unfunded"
+  },
+  "artifacts": [
+    {
+      "name": "pin-delta.json",
+      "sha256": "28d5eca2674f1cd8f93f9f1e29f8e3eed5ea8c65431c9484d3495a7bfcf7565c",
+      "bytes": 2382,
+      "missing": false
+    },
+    {
+      "name": "pin-delta.md",
+      "sha256": "edb7be575166adf83737e65f0f78587f939665310b53420e1d2e94ea6ff31be5",
+      "bytes": 802,
+      "missing": false
+    }
+  ],
+  "receipt": {
+    "sha256": "7d55cd96a47b8518ec055e71650743b94d9860f333634a9b2e8c3f481fcf6d5c",
+    "bytes": 3663,
+    "jobId": "lockfile-pin-delta"
+  },
+  "engineStatus": "actionable",
+  "purchaseAuthority": false,
+  "sold": false,
+  "sample": {
+    "sample": false,
+    "reasons": [],
+    "detector": {
+      "bounded": true,
+      "algorithm": "canonical-json-sha256+metadata+sidecar+example-flag",
+      "knownSampleCount": 6,
+      "note": "Renamed or reformatted copies of known samples match. Unrelated caller lockfiles are not samples."
+    }
+  },
+  "code": null,
+  "pinDelta": {
+    "schema": "samedaydesk.lockfile-pin-delta.v1",
+    "status": "actionable",
+    "changed": 1,
+    "added": 0,
+    "removed": 0,
+    "changedNames": [
+      "cw69-dependency"
+    ],
+    "purchaseAuthority": false
+  }
+}

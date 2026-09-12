@@ -1,0 +1,63 @@
+{
+  "kind": "live-get-observation",
+  "identityRemainsHostedEvidence": true,
+  "isLatestAuthority": false,
+  "observations": [
+    {
+      "name": "openapi",
+      "url": "https://agents.samedaydesk.com/openapi.json",
+      "expectStatus": 200,
+      "method": "GET",
+      "status": 200,
+      "sha256": "053fa318276524d5cd12696f5508bbde2506e18fd83c654ff12b879aed9f6cd9",
+      "bytes": 138614,
+      "kind": "live-get",
+      "expectedStatus": 200,
+      "statusMatch": true,
+      "capturedSha256": "053fa318276524d5cd12696f5508bbde2506e18fd83c654ff12b879aed9f6cd9",
+      "matchesCapture": true
+    },
+    {
+      "name": "mcp-version",
+      "url": "https://registry.modelcontextprotocol.io/v0.1/servers/io.github.epistemedeus%2Fx402-data-gateway/versions/1.23.49",
+      "expectStatus": 200,
+      "method": "GET",
+      "status": 200,
+      "sha256": "be7b6a591a9cd001399f2c36167599654b95cbf6010836561072ab6b8912282e",
+      "bytes": 710,
+      "kind": "live-get",
+      "expectedStatus": 200,
+      "statusMatch": true,
+      "capturedSha256": "be7b6a591a9cd001399f2c36167599654b95cbf6010836561072ab6b8912282e",
+      "matchesCapture": true
+    },
+    {
+      "name": "x402",
+      "url": "https://agents.samedaydesk.com/.well-known/x402",
+      "expectStatus": 200,
+      "method": "GET",
+      "status": 200,
+      "sha256": "127d76eee4cec0d878b3768c02ef65b7502fb47cd99a877862c70893c42b954f",
+      "bytes": 57751,
+      "kind": "live-get",
+      "expectedStatus": 200,
+      "statusMatch": true,
+      "capturedSha256": "21ab333a3bffbd44f799c15b9a5712d0e18f984326b8ba166b8db7d3e6ca24fc",
+      "matchesCapture": false
+    },
+    {
+      "name": "health",
+      "url": "https://agents.samedaydesk.com/health",
+      "expectStatus": 404,
+      "method": "GET",
+      "status": 404,
+      "sha256": "1d19012f89fe0550cda475cc8d0e3e80128453cc9ff2c37915136a75631b1993",
+      "bytes": 145,
+      "kind": "live-get",
+      "expectedStatus": 404,
+      "statusMatch": true,
+      "capturedSha256": null,
+      "matchesCapture": null
+    }
+  ]
+}

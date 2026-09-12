@@ -1,0 +1,34 @@
+TAP version 13
+# Subtest: all 42 imported consumer files retain their original source bytes
+ok 1 - all 42 imported consumer files retain their original source bytes
+  ---
+  duration_ms: 3.446531
+  type: 'test'
+  ...
+# Subtest: inspected dependency bytes still match the recorded integrated base
+ok 2 - inspected dependency bytes still match the recorded integrated base
+  ---
+  duration_ms: 3.621147
+  type: 'test'
+  ...
+# Subtest: the current CLI lists ten jobs; stable identity survives an unrelated first item
+ok 3 - the current CLI lists ten jobs; stable identity survives an unrelated first item
+  ---
+  duration_ms: 76.751573
+  type: 'test'
+  ...
+# Subtest: recorded merchant 1.23.49 and unpaid challenge remain separate from local execution
+ok 4 - recorded merchant 1.23.49 and unpaid challenge remain separate from local execution
+  ---
+  duration_ms: 5.122053
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 189.2261

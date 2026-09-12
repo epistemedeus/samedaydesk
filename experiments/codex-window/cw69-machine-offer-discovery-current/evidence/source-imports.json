@@ -1,0 +1,224 @@
+[
+  {
+    "commit": "440c2c901329402b6bbaaafa29e1eb0b95dd6f01",
+    "ownedPath": "experiments/wave5/m12/",
+    "files": [
+      {
+        "path": "experiments/wave5/m12/CONTRACT.md",
+        "bytes": 2144,
+        "sha256": "e814f31fe706401ae193260db91cc526e2c4457acc2112371fe125ce255c8ad6"
+      },
+      {
+        "path": "experiments/wave5/m12/FEATURE-MAP.md",
+        "bytes": 1187,
+        "sha256": "c534a665083731dea23488a2fe67fdeeea57364233b04d4f6c81f53e6bbac547"
+      },
+      {
+        "path": "experiments/wave5/m12/LICENSE",
+        "bytes": 1083,
+        "sha256": "963be8cfbe494ba3fff8988a2d86a37f57ed46106b97778ad63293dfcfce1c32"
+      },
+      {
+        "path": "experiments/wave5/m12/NOTICE",
+        "bytes": 522,
+        "sha256": "f46c5affcd7f25bf1e4a389bc10aaa5689bf437336152a38b7ab1645c4993789"
+      },
+      {
+        "path": "experiments/wave5/m12/PIN.json",
+        "bytes": 1479,
+        "sha256": "d4128bc58e74606ce7267d6822d8ca4b01cf8652f24ce35ffa563422dfda6c86"
+      },
+      {
+        "path": "experiments/wave5/m12/README.md",
+        "bytes": 699,
+        "sha256": "02ea245c49bf5d1d9decae4565775a94e4d8a3fa46e15c38105ce2d0f938d716"
+      },
+      {
+        "path": "experiments/wave5/m12/RECEIPT.md",
+        "bytes": 3284,
+        "sha256": "fe771346fd5206e96ccd52f4ba58178df6721278f39d6b95e82ff9d2db2e411c"
+      },
+      {
+        "path": "experiments/wave5/m12/bin/describe.mjs",
+        "bytes": 1035,
+        "sha256": "727d577fba3afb4bb070b0074996eb13f82f8d6b56645ae5c9e8b474d1f8cdb0"
+      },
+      {
+        "path": "experiments/wave5/m12/bin/serve.mjs",
+        "bytes": 494,
+        "sha256": "440d4333dd308a4bb8966a9119875a0ed29d291867542bfc05d390bd1d654c0b"
+      },
+      {
+        "path": "experiments/wave5/m12/bin/verify.mjs",
+        "bytes": 1316,
+        "sha256": "4901bc053ec437b152cb1fb4f3e5ee5b06cf6aa571f2738e8feddf1c9460ef47"
+      },
+      {
+        "path": "experiments/wave5/m12/index.mjs",
+        "bytes": 394,
+        "sha256": "ce7b6eef7fbdd3889206fe69abad256f9b5a90c45ef4f73cb1ce90ae944a3765"
+      },
+      {
+        "path": "experiments/wave5/m12/lib/classify.mjs",
+        "bytes": 3450,
+        "sha256": "be3ec239708c1a2e4d229dc9246b06b259ce53fc235f20daab9927b47dbca363"
+      },
+      {
+        "path": "experiments/wave5/m12/lib/describe.mjs",
+        "bytes": 5910,
+        "sha256": "ea52a5fb58e8a38fc2242d4001cc30a45653b7148d8d0e076f858aacf83423ec"
+      },
+      {
+        "path": "experiments/wave5/m12/lib/http.mjs",
+        "bytes": 1473,
+        "sha256": "457530fd76dda134664275b066911afa507951d64d785010e0f3083a2ac4b320"
+      },
+      {
+        "path": "experiments/wave5/m12/lib/paths.mjs",
+        "bytes": 1142,
+        "sha256": "5165d0912fa300fb1d791893563b25430fcad663c62ab44b3ec8e00a1d56fea4"
+      },
+      {
+        "path": "experiments/wave5/m12/lib/schema.mjs",
+        "bytes": 445,
+        "sha256": "b518f193f8513be551291b326505da149b1908e6e7f8d0c9c2f52c0c28c71e0d"
+      },
+      {
+        "path": "experiments/wave5/m12/lib/sources.mjs",
+        "bytes": 3743,
+        "sha256": "6b4034d5c61978045012234032a93e749e633288d9b29374728c91dd24d49043"
+      },
+      {
+        "path": "experiments/wave5/m12/lib/verify.mjs",
+        "bytes": 13766,
+        "sha256": "0b113c7901a983f1c9cc048bf4c0e731f128b9a3c0e23049b2029c939ba90420"
+      },
+      {
+        "path": "experiments/wave5/m12/package.json",
+        "bytes": 582,
+        "sha256": "288b366ba708b0011032ffeaa80baab7ea0f70ef187692b1ec0e564486253b44"
+      },
+      {
+        "path": "experiments/wave5/m12/test/advertised-mismatch.test.mjs",
+        "bytes": 4348,
+        "sha256": "e7a46b3a394ea62ff430b51b058c315c60abf579b9f6c532625bac9aaee7dafa"
+      },
+      {
+        "path": "experiments/wave5/m12/test/cli-describe-verify.test.mjs",
+        "bytes": 4352,
+        "sha256": "9fcb6636f5b0865dbda977b644b89186d3dbaf01f367449ecf37839404912c2a"
+      },
+      {
+        "path": "experiments/wave5/m12/test/sibling-bindings.test.mjs",
+        "bytes": 3468,
+        "sha256": "517c01bcd3106144d7ffe94d5e5d6e12b9a235e65cae11d698d3c0f15ab64b45"
+      }
+    ]
+  },
+  {
+    "commit": "71a7335708669ceb6e460c36dc4eb6625ce7cad4",
+    "ownedPath": "experiments/wave5/m13/",
+    "files": [
+      {
+        "path": "experiments/wave5/m13/FEATURE-MAP.md",
+        "bytes": 706,
+        "sha256": "1ae3c1fed7ab0f10423a86aa7882ccf46f0a4615ffa45c2255c848beac0d8249"
+      },
+      {
+        "path": "experiments/wave5/m13/LICENSE",
+        "bytes": 1083,
+        "sha256": "95be89e5cdd69c625aa28c290fda0b4804b8992f40e5fb1b2a5e9322393f7706"
+      },
+      {
+        "path": "experiments/wave5/m13/README.md",
+        "bytes": 2456,
+        "sha256": "4bdcdfa4b756748a84c01d718b3510205072ef7548a2683bd157b2474890ca5b"
+      },
+      {
+        "path": "experiments/wave5/m13/RECEIPT.md",
+        "bytes": 3213,
+        "sha256": "af8af21a36f52d0132f17b6459863357a314f78ecc180fc14b41017d5d82bec3"
+      },
+      {
+        "path": "experiments/wave5/m13/bin/discover-invoke.mjs",
+        "bytes": 2899,
+        "sha256": "4079ecd39dbc5166296aef93e22ebe6883a22e318dd627d2d0dac5b50ddbcb82"
+      },
+      {
+        "path": "experiments/wave5/m13/fixtures/PROVENANCE.md",
+        "bytes": 1137,
+        "sha256": "0d823a3ac8711a9deec6c7de1be4a1ca1853a6a4ea634991a11ac1374ac1a5d1"
+      },
+      {
+        "path": "experiments/wave5/m13/package.json",
+        "bytes": 619,
+        "sha256": "62be8ec179ecf46e9d6c1350bbae45b607b0d70038f21a96c0e6c43ce1eeec22"
+      },
+      {
+        "path": "experiments/wave5/m13/src/classify.mjs",
+        "bytes": 2404,
+        "sha256": "3f426cb6d9f85a94c092566a6c65dece45fcec965623cdc17758f4ef894f6933"
+      },
+      {
+        "path": "experiments/wave5/m13/src/discover.mjs",
+        "bytes": 7971,
+        "sha256": "e8b200c75cc1402dd65f7f3a4eaa98ed5678648cb4f702a1292c6717fbd2f6ef"
+      },
+      {
+        "path": "experiments/wave5/m13/src/identity.mjs",
+        "bytes": 878,
+        "sha256": "65e65366487ba6179d6e81dd707382b1102a5ce1584df95cb173a880a24e98f9"
+      },
+      {
+        "path": "experiments/wave5/m13/src/index.mjs",
+        "bytes": 3377,
+        "sha256": "673a707d488c6aa1cc7f37b94b7cb8d32fae146f433c1c0026a4000f8d221813"
+      },
+      {
+        "path": "experiments/wave5/m13/src/invoke.mjs",
+        "bytes": 1789,
+        "sha256": "1ca57be9c9e1dc5fead5e11d2a8b97a733aa1116239f0434ab3e9c2aa079e9c6"
+      },
+      {
+        "path": "experiments/wave5/m13/src/load-json.mjs",
+        "bytes": 1065,
+        "sha256": "a92161a8046147683342855a3dc333efc18f1dc9863ecabe47eead32eb985e38"
+      },
+      {
+        "path": "experiments/wave5/m13/src/paths.mjs",
+        "bytes": 1897,
+        "sha256": "d9b4d5dbb040496b7d0d46f30428f8085bf7bd8ae79f15ab446aa6b459694552"
+      },
+      {
+        "path": "experiments/wave5/m13/test/discover.test.mjs",
+        "bytes": 4397,
+        "sha256": "75d1aa8e771933dfd91288003778c16c67e06bf4595c73d0839701ffda4d0346"
+      },
+      {
+        "path": "experiments/wave5/m13/test/http-discover.test.mjs",
+        "bytes": 4619,
+        "sha256": "9bad42d1b9bccc8cc6858cbeb9703906ba7274316565222ad1e1f9181fb56336"
+      },
+      {
+        "path": "experiments/wave5/m13/test/identity.test.mjs",
+        "bytes": 1187,
+        "sha256": "9d4aceacba1614af95f1ca050678ac9aa752cc27965a24232059abe9320df580"
+      },
+      {
+        "path": "experiments/wave5/m13/test/journey.test.mjs",
+        "bytes": 4393,
+        "sha256": "da71f45ebec309ef0e7e5cf8ba8f441b0b91da49090293bac384c020d68dfa7c"
+      },
+      {
+        "path": "experiments/wave5/m13/test/refusal.test.mjs",
+        "bytes": 4181,
+        "sha256": "5a017eba8189e9cf5a498603d970bf2f9c77ff6b94c42c76149b682bf59f82b6"
+      },
+      {
+        "path": "experiments/wave5/m13/test/secret-scan.test.mjs",
+        "bytes": 1036,
+        "sha256": "668571c4a0499bf7f668a7f6471fbf4a8ec78d631edd075e15bb4341b44a1608"
+      }
+    ]
+  }
+]
