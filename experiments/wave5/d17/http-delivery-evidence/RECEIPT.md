@@ -3,6 +3,7 @@
 **Slot:** W5-D17 (HTTP extension)
 **Repo:** epistemedeus/samedaydesk
 **Branch:** `cursor/w5-d17-domain-outcome-contract-tests-for-successful-change-no-change-refusal-reports-5d04`
+**Head:** `e7fca97`
 **Owned path:** `experiments/wave5/d17/http-delivery-evidence/` only
 **Merchant pin:** epistemedeus/x402-url-extractor `a143898dd1ec35c097ca7eb0b472f30dad1ee319` (PR54)
 **SDS wrapper pin (orthogonal):** `aeef964fa188443078958d9d6d393afae1d542ee`
