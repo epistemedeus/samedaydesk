@@ -53,7 +53,13 @@
       "git -C /tmp/h21/wt ls-remote origin refs/heads/codex/h21-package-release-gate-20260913"
     ],
     "draftPrLookup": "gh pr list --repo epistemedeus/samedaydesk --head codex/h21-package-release-gate-20260913 --state all --json number,url,isDraft,baseRefName",
-    "reviewBase": "codex/h7-delivery-20260912"
+    "reviewBase": "codex/h7-delivery-20260912",
+    "draftPr": {
+      "created": false,
+      "classification": "GitHub integration permission refusal; not a product test failure or Git push failure",
+      "attemptedBase": "codex/h7-delivery-20260912",
+      "exactError": "pull request create failed: GraphQL: Resource not accessible by integration (createPullRequest)"
+    }
   },
   "reauthOnFreshVm": [
     "Reauthenticate GitHub with the VM-approved Git credential flow before cloning the private repository.",
