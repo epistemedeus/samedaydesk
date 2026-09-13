@@ -6,6 +6,7 @@
   "runtimePin": "c6f1464222169f2d32247c978dc5007d82a2aa03",
   "repairSha": "080cc62e7bc83f76431d916df34aea6d30875401",
   "overlaySourceCommit": "5078eb9d220deb66bc4d50095038efc2e5b95faa",
+  "packageCommit": "7f9c1623d836aa761186b0ceba8dc98f1ea11fc4",
   "catalogVersion": "1.4.5",
   "reproducedOn144": {
     "m01Lockfile": {
