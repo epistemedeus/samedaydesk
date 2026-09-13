@@ -61,28 +61,34 @@ export function createResponseSemaphore({ max = 8, timeoutMs = 30_000 } = {}) {
     get timeoutMs() {
       return limitMs;
     },
-    tryAcquire(req, res) {
+    tryAcquire(req, res, { onTimeout } = {}) {
       if (active >= cap) return null;
       active += 1;
       let released = false;
+      let timer = null;
       const release = () => {
         if (released) return;
         released = true;
         active -= 1;
         if (timer != null) clearTimeout(timer);
+        timer = null;
         try {
           req?.socket?.setTimeout?.(0);
         } catch {
           /* already closed */
         }
       };
-      const timer = setTimeout(() => {
+      timer = setTimeout(() => {
         try {
-          if (!res.writableEnded && !res.destroyed) res.destroy();
+          onTimeout?.();
+        } catch {
+          /* abort already in flight */
+        }
+        try {
+          if (!res.writableFinished && !res.destroyed) res.destroy();
         } catch {
           /* already closed */
         }
-        release();
       }, limitMs);
       try {
         req?.socket?.setNoDelay?.(true);
@@ -324,17 +330,28 @@ export function createAcquisitionHttpHandler({
       endJson(res, 503, errorBody("capacity-exhausted", "pending download count is at the configured bound"));
       return true;
     }
-    const held = responses.tryAcquire(req, res);
+
+    const ac = new AbortController();
+    const onAbort = (reason) => {
+      if (ac.signal.aborted) return;
+      if (reason !== undefined) ac.abort(reason);
+      else ac.abort();
+    };
+    const held = responses.tryAcquire(req, res, {
+      onTimeout: () =>
+        onAbort(
+          Object.assign(new Error("HTTP response exceeded the response-timeout bound"), {
+            code: "timeout",
+          }),
+        ),
+    });
     if (!held) {
       endJson(res, 503, errorBody("capacity-exhausted", "active HTTP response count is at the configured bound"));
       return true;
     }
 
-    const ac = new AbortController();
-    const onAbort = () => {
-      if (!ac.signal.aborted) ac.abort();
-    };
-    req.on("aborted", onAbort);
+    const onReqAborted = () => onAbort();
+    req.on("aborted", onReqAborted);
     res.on("close", () => {
       if (!res.writableEnded && !res.destroyed) onAbort();
     });
@@ -432,7 +449,7 @@ export function createAcquisitionHttpHandler({
       endJson(res, status, errorBody(code, err.message || "acquisition failed", { state: err.state || null }));
       return true;
     } finally {
-      req.off?.("aborted", onAbort);
+      req.off?.("aborted", onReqAborted);
     }
   }
   handleAcquisition.responseSemaphore = responses;

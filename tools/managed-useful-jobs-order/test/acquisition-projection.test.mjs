@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "node:test";
 import {
+  digestNamedOutputs,
   hashFrozenRequestV1,
   hashHttpRequestAcquisitionV1,
   hashPublicationIdentityV1,
@@ -12,7 +13,7 @@ import {
 } from "../lib/acquisition-identity.mjs";
 import { FROZEN_REQUEST_HASH_VERSION } from "../lib/acquisition-constants.mjs";
 import { encodeExecuteRequest } from "../../../experiments/wave5/d14/lib/encode-inputs.mjs";
-import { createTicket, requestHashFromSubmitted } from "../../../experiments/wave5/d14/lib/ticket.mjs";
+import { createTicket, requestHashFromSubmitted, updateTicketAfterPost } from "../../../experiments/wave5/d14/lib/ticket.mjs";
 import { resultIdentityHash } from "../../../experiments/wave5/d14/lib/digest-named.mjs";
 import { verifyTicketBoundResult } from "../../../experiments/wave5/d14/lib/verify.mjs";
 
@@ -136,5 +137,34 @@ describe("H32 materialized-input and publicationIdentityV1", () => {
       retrieval: { id: "exec-env", path: "/results/exec-env" },
     });
     assert.equal(verified.ok, true, JSON.stringify(verified.failures));
+
+    const mutatedOutputs = [
+      { name: "budget-impact.json", kind: "file", bytes: 9, sha256: "e".repeat(64) },
+      { name: "budget-impact.md", kind: "file", bytes: 9, sha256: "f".repeat(64) },
+    ];
+    const mutated = {
+      ...getBody,
+      outputs: mutatedOutputs,
+      outputsDigest: digestNamedOutputs(mutatedOutputs),
+      publicationIdentitySha256: publicationSha,
+    };
+    const pinned = updateTicketAfterPost(ticket, { status: 200, body: postBody, bodySha256: resultIdentityHash(postBody) });
+    assert.equal(pinned.publicationIdentitySha256, publicationSha);
+    const claimedMismatch = updateTicketAfterPost(ticket, {
+      status: 200,
+      body: { ...postBody, ...mutated, publicationIdentitySha256: publicationSha },
+      bodySha256: "aa".repeat(32),
+    });
+    assert.notEqual(claimedMismatch.publicationIdentitySha256, publicationSha);
+    assert.equal(claimedMismatch.claimedPublicationIdentityMismatch.claimed, publicationSha);
+
+    const failed = verifyTicketBoundResult(pinned, mutated, {
+      retrieval: { id: "exec-env", path: "/results/exec-env" },
+    });
+    assert.equal(failed.ok, false);
+    assert.ok(
+      failed.failures.some((row) => row.code === "publication-identity-mismatch"),
+      JSON.stringify(failed.failures),
+    );
   });
 });

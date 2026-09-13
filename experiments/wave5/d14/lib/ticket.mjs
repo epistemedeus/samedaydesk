@@ -134,14 +134,20 @@ export function updateTicketAfterPost(ticket, posted) {
   };
   if (posted?.status === 200 && posted.body && typeof posted.body === "object") {
     const fields = publicationFieldsFromBody(posted.body);
-    let publicationIdentitySha256 = posted.body.publicationIdentitySha256 || null;
-    if (!publicationIdentitySha256 && fields) {
+    let derived = null;
+    if (fields) {
       try {
-        publicationIdentitySha256 = hashPublicationIdentityV1(fields);
+        derived = hashPublicationIdentityV1(fields);
       } catch {
-        publicationIdentitySha256 = null;
+        derived = null;
       }
     }
+    const claimed = posted.body.publicationIdentitySha256 || null;
+    if (claimed && derived && claimed !== derived) {
+      next.claimedPublicationIdentityMismatch = { claimed, derived };
+    }
+    // Always pin the hash of current fields. Never persist a claimed-only hash.
+    const publicationIdentitySha256 = derived;
     next.postIdentity = {
       httpStatus: posted.status,
       bodySha256: posted.bodySha256 || resultIdentityHash(posted.body),

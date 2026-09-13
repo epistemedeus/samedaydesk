@@ -430,6 +430,75 @@ describe("HA2 acquisition HTTP", { timeout: 60_000 }, () => {
     }
   });
 
+  it("server response timer aborts the held HA1 reader, releases permits on close, and a follow-up GET succeeds", async () => {
+    const { service, seams } = await fileService({ maxConcurrentReads: 1, maxQueuedReads: 0 });
+    const published = await admitAndPublish(service, { executionId: "exec-http-resptimeout" });
+    const host = await startHosted({
+      service,
+      seams,
+      maxPendingDownloads: 8,
+      maxActiveResponses: 1,
+      responseTimeoutMs: 40,
+    });
+    let sawAbort = false;
+    let abortCode = null;
+    let markAdmitted;
+    const admitted = new Promise((resolve) => {
+      markAdmitted = resolve;
+    });
+    service.hooks.beforeOpen = ({ signal }) =>
+      new Promise((_resolve, reject) => {
+        markAdmitted();
+        const onAbort = () => {
+          sawAbort = true;
+          abortCode = signal.reason?.code || null;
+          reject(signal.reason || new Error("aborted"));
+        };
+        if (signal.aborted) {
+          onAbort();
+          return;
+        }
+        signal.addEventListener("abort", onAbort, { once: true });
+      });
+    try {
+      const hdrs = headers("token-a", published.requestHash, {
+        "x-artifact-sha256": published.pair.outputs[0].sha256,
+      });
+      const first = fetch(`${host.origin}/results/${published.executionId}/artifacts/pin-delta.json`, {
+        headers: hdrs,
+      });
+      first.catch(() => {});
+      await admitted;
+      assert.equal(service.maxConcurrentReads.active, 1);
+      await until(() => sawAbort, "reader aborted by response timer", 800);
+      assert.equal(sawAbort, true);
+      assert.equal(abortCode, "timeout");
+      await until(
+        () => service.maxConcurrentReads.active === 0 && service.maxConcurrentReads.queued === 0,
+        "HA1 permits returned after response timeout",
+        800,
+      );
+      await until(
+        () => host.acquisitionHandler.responseSemaphore.active === 0,
+        "response semaphore released on finish/close, not by the timer callback",
+        800,
+      );
+      await first.catch(() => {});
+      service.hooks.beforeOpen = null;
+      const follow = await fetch(`${host.origin}/results/${published.executionId}/artifacts/pin-delta.json`, {
+        headers: hdrs,
+      });
+      assert.equal(follow.status, 200);
+      assert.equal(host.executeCalls(), 0);
+      assert.equal(seams.calls.enqueue, 0);
+      assert.equal(seams.calls.settlePayment, 0);
+      assert.equal(seams.calls.runPaidOffer, 0);
+    } finally {
+      service.hooks.beforeOpen = null;
+      await close(host.server);
+    }
+  });
+
   it("pre-aborted fetch AbortController rejects locally before the request is sent (does not prove in-flight server cancellation)", async () => {
     const { service, seams } = await fileService({ maxConcurrentReads: 1, maxQueuedReads: 0 });
     const published = await admitAndPublish(service, { executionId: "exec-http-preabort" });

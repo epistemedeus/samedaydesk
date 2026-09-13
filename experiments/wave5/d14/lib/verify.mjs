@@ -232,22 +232,40 @@ export function verifyTicketBoundResult(ticket, body, { retrieval, httpStatus } 
     ticket.postIdentity?.publicationIdentitySha256 || ticket.publicationIdentitySha256 || null;
   if (pinnedPublication) {
     const fields = publicationFieldsFromBody(body);
-    let actual = body.publicationIdentitySha256 || null;
-    if (!actual && fields) {
+    let derived = null;
+    if (fields) {
       try {
-        actual = hashPublicationIdentityV1(fields);
+        derived = hashPublicationIdentityV1(fields);
       } catch {
-        actual = null;
+        derived = null;
       }
     }
-    postIdentityMatch = actual === pinnedPublication;
-    if (!postIdentityMatch) {
+    if (!fields || !derived) {
       addFailure(
         failures,
         "publication-identity-mismatch",
-        "GET publicationIdentityV1 does not match the pinned successful POST publication",
-        { expected: pinnedPublication, actual },
+        "GET body is missing fields required to derive publicationIdentityV1",
+        { expected: pinnedPublication, actual: derived },
       );
+    } else {
+      const claimed = body.publicationIdentitySha256 || null;
+      if (claimed && claimed !== derived) {
+        addFailure(
+          failures,
+          "publication-identity-mismatch",
+          "GET publicationIdentitySha256 does not match the hash of the current envelope fields",
+          { expected: derived, actual: claimed },
+        );
+      }
+      postIdentityMatch = derived === pinnedPublication;
+      if (!postIdentityMatch) {
+        addFailure(
+          failures,
+          "publication-identity-mismatch",
+          "GET publicationIdentityV1 does not match the pinned successful POST publication",
+          { expected: pinnedPublication, actual: derived },
+        );
+      }
     }
   } else if (ticket.postIdentity?.bodySha256 && !hostedAvailable) {
     postIdentityMatch = identityHash === ticket.postIdentity.bodySha256;

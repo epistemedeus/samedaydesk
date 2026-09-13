@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { createServer } from "node:http";
+import http, { createServer } from "node:http";
 import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -21,6 +21,7 @@ import {
 } from "../../../../tools/managed-useful-jobs-order/test/acquisition-helpers.mjs";
 import { FROZEN_REQUEST_HASH_VERSION } from "../../../../tools/managed-useful-jobs-order/lib/acquisition-constants.mjs";
 import {
+  digestNamedOutputs,
   hashHttpRequestAcquisitionV1,
   hashPublicationIdentityV1,
   publicationFieldsFromBody,
@@ -135,8 +136,87 @@ async function reopenFileHost(dir, seams, executeCalls) {
   return { store, service, host };
 }
 
+function listenProxy(handler) {
+  return new Promise((resolve) => {
+    const server = http.createServer(handler);
+    server.listen(0, "127.0.0.1", () => {
+      const addr = server.address();
+      resolve({
+        server,
+        origin: `http://127.0.0.1:${addr.port}`,
+        close: () => closeServer(server),
+      });
+    });
+  });
+}
+
+function proxyUpstream(req, upstreamOrigin, onResponse) {
+  const upstream = new URL(upstreamOrigin);
+  const up = http.request(
+    {
+      hostname: upstream.hostname,
+      port: upstream.port,
+      path: req.url,
+      method: req.method,
+      headers: { ...req.headers, host: upstream.host },
+    },
+    onResponse,
+  );
+  up.on("error", () => {
+    try {
+      req.socket?.destroy();
+    } catch {
+      /* already closed */
+    }
+  });
+  req.pipe(up);
+  return up;
+}
+
+async function startLostReplyProxy(upstreamOrigin) {
+  return listenProxy((req, res) => {
+    proxyUpstream(req, upstreamOrigin, (upRes) => {
+      const chunks = [];
+      upRes.on("data", (c) => chunks.push(c));
+      upRes.on("end", () => {
+        void Buffer.concat(chunks);
+        if (!res.destroyed) res.destroy();
+      });
+      upRes.on("error", () => {
+        if (!res.destroyed) res.destroy();
+      });
+    });
+  });
+}
+
+async function startMutatingJsonProxy(upstreamOrigin, mutate) {
+  return listenProxy((req, res) => {
+    proxyUpstream(req, upstreamOrigin, (upRes) => {
+      const chunks = [];
+      upRes.on("data", (c) => chunks.push(c));
+      upRes.on("end", () => {
+        let body = Buffer.concat(chunks);
+        const type = String(upRes.headers["content-type"] || "");
+        if (type.includes("application/json")) {
+          try {
+            body = Buffer.from(`${JSON.stringify(mutate(JSON.parse(body.toString("utf8"))))}\n`);
+          } catch {
+            /* keep upstream bytes */
+          }
+        }
+        const headers = { ...upRes.headers, "content-length": String(body.length) };
+        delete headers["transfer-encoding"];
+        if (!res.headersSent && !res.destroyed) {
+          res.writeHead(upRes.statusCode, headers);
+          res.end(body);
+        }
+      });
+    });
+  });
+}
+
 describe("H32 D14 submit → HA1 publish → restart → hosted fetch", { timeout: 180_000 }, () => {
-  it("vendor-budget-impact: no-newline multibyte submit, dropped reply, file restart, second directory", async () => {
+  it("vendor-budget-impact: no-newline multibyte submit, pre-POST ticket survives an unpersisted successful response, file restart, second directory", async () => {
     const { service, store, seams, dir } = await fileService({ maxConcurrentReads: 4 });
     const executeCalls = { n: 0 };
     let host = await startComposed({ store, service, seams, executeCalls });
@@ -237,6 +317,154 @@ describe("H32 D14 submit → HA1 publish → restart → hosted fetch", { timeou
       assert.equal(cliBody.purchaseAuthority, false);
       assert.equal(executeCalls.n, beforeGet.execute);
     } finally {
+      await host.close();
+    }
+  });
+
+  it("CLI submit through a proxy that drops the downstream 200 after HA1 commit; restart then CLI fetch --acquire-to without a second execute", async () => {
+    const { service, store, seams, dir } = await fileService({ maxConcurrentReads: 4 });
+    const executeCalls = { n: 0 };
+    let host = await startComposed({ store, service, seams, executeCalls });
+    let proxy;
+    try {
+      const inputs = writeJobInputs("vendor-budget-impact", { newline: false, multibyte: true });
+      proxy = await startLostReplyProxy(host.origin);
+      const ticketPath = join(inputs.work, "ticket.json");
+      const submit = await runCliAsync(
+        [
+          "submit",
+          "--base",
+          proxy.origin,
+          "--job",
+          "vendor-budget-impact",
+          "--before",
+          inputs.beforePath,
+          "--after",
+          inputs.afterPath,
+          "--ticket",
+          ticketPath,
+          "--authorization",
+          "token-a",
+        ],
+        { timeout: 180_000, env: { D14_TIMEOUT_MS: "120000" } },
+      );
+      assert.notEqual(submit.status, 0, `${submit.stdout}\n${submit.stderr}`);
+      const dropped = JSON.parse(readFileSync(ticketPath, "utf8"));
+      assert.ok(dropped.requestHash);
+      assert.equal(dropped.executionId, dropped.request.executionId);
+      assert.equal(dropped.commitStatus === "accepted", false);
+      assert.equal(executeCalls.n, 1);
+      const beforeFetch = { ...seams.calls, execute: executeCalls.n };
+
+      await proxy.close();
+      proxy = null;
+      await host.close();
+      const reopened = await reopenFileHost(dir, seams, executeCalls);
+      host = reopened.host;
+      dropped.origin = host.origin;
+      writeTicketAtomic(ticketPath, dropped);
+
+      const dest = join(inputs.work, "cli-lost-reply-acquired");
+      const cliOut = join(inputs.work, "cli-lost-reply-out.json");
+      const fetchProc = await runCliAsync(
+        [
+          "fetch",
+          "--ticket",
+          ticketPath,
+          "--out",
+          cliOut,
+          "--acquire-to",
+          dest,
+          "--authorization",
+          "token-a",
+        ],
+        { env: { D14_TIMEOUT_MS: "30000" } },
+      );
+      assert.equal(fetchProc.status, 0, `${fetchProc.stdout}\n${fetchProc.stderr}`);
+      const cliBody = JSON.parse(fetchProc.stdout);
+      assert.equal(cliBody.acquisition.code, "http-acquired");
+      assert.equal(cliBody.purchaseAuthority, false);
+      for (const name of JOB_EXPECTED_OUTPUTS["vendor-budget-impact"]) {
+        assert.equal(existsSync(join(dest, name)), true, name);
+      }
+      assert.equal(executeCalls.n, beforeFetch.execute);
+      assert.equal(seams.calls.enqueue, beforeFetch.enqueue);
+      assert.equal(seams.calls.settlePayment, beforeFetch.settlePayment);
+      assert.equal(seams.calls.runPaidOffer, beforeFetch.runPaidOffer);
+    } finally {
+      if (proxy) await proxy.close();
+      await host.close();
+    }
+  });
+
+  it("CLI metadata fetch refuses a GET that keeps the pinned publication hash after substituting output tuples", async () => {
+    const { service, store, seams } = await fileService({ maxConcurrentReads: 4 });
+    const host = await startComposed({ store, service, seams });
+    let proxy;
+    try {
+      const inputs = writeJobInputs("lockfile-pin-delta", { newline: true, multibyte: false });
+      const encoded = encodeExecuteRequest({
+        jobId: "lockfile-pin-delta",
+        files: { before: inputs.beforePath, after: inputs.afterPath },
+      });
+      const ticket = createTicket({
+        origin: host.origin,
+        request: encoded.request,
+        submitted: encoded.submitted,
+        frozen: encoded.frozen,
+      });
+      const ticketPath = join(inputs.work, "ticket.json");
+      const posted = await postExecute(host.origin, encoded.request, {
+        authorization: "Bearer token-a",
+        timeoutMs: 120_000,
+      });
+      assert.equal(posted.status, 200, JSON.stringify(posted.body));
+      const next = updateTicketAfterPost(ticket, posted);
+      writeTicketAtomic(ticketPath, next);
+      assert.ok(next.publicationIdentitySha256);
+      const pinned = next.publicationIdentitySha256;
+      proxy = await startMutatingJsonProxy(host.origin, (body) => {
+        if (!body || body.state !== "available") return body;
+        const outputs = [
+          { name: "pin-delta.json", kind: "file", bytes: 9, sha256: "e".repeat(64) },
+          { name: "pin-delta.md", kind: "file", bytes: 9, sha256: "f".repeat(64) },
+        ];
+        return {
+          ...body,
+          outputs,
+          outputsDigest: digestNamedOutputs(outputs),
+          publicationIdentitySha256: pinned,
+        };
+      });
+      next.origin = proxy.origin;
+      writeTicketAtomic(ticketPath, next);
+      const cliOut = join(inputs.work, "cli-mutated-meta.json");
+      const proc = await runCliAsync(
+        ["fetch", "--ticket", ticketPath, "--out", cliOut, "--authorization", "token-a"],
+        { env: { D14_TIMEOUT_MS: "15000" } },
+      );
+      assert.notEqual(proc.status, 0, proc.stdout);
+      const cliBody = JSON.parse(proc.stdout);
+      assert.equal(cliBody.classify?.code || cliBody.verified?.failures?.[0]?.code, "publication-identity-mismatch");
+      const local = verifyTicketBoundResult(next, {
+        ...posted.body,
+        state: "available",
+        outputs: [
+          { name: "pin-delta.json", kind: "file", bytes: 9, sha256: "e".repeat(64) },
+          { name: "pin-delta.md", kind: "file", bytes: 9, sha256: "f".repeat(64) },
+        ],
+        outputsDigest: digestNamedOutputs([
+          { name: "pin-delta.json", kind: "file", bytes: 9, sha256: "e".repeat(64) },
+          { name: "pin-delta.md", kind: "file", bytes: 9, sha256: "f".repeat(64) },
+        ]),
+        publicationIdentitySha256: pinned,
+      });
+      assert.equal(local.ok, false);
+      assert.ok(local.failures.some((row) => row.code === "publication-identity-mismatch"));
+      const derived = hashPublicationIdentityV1(publicationFieldsFromBody(posted.body));
+      assert.equal(pinned, derived);
+    } finally {
+      if (proxy) await proxy.close();
       await host.close();
     }
   });
