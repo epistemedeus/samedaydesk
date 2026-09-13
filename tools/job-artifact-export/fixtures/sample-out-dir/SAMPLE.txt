@@ -1,0 +1,2 @@
+Labeled SAMPLE fixture for seeded customer-delivery refusal. Not a customer. Not local-runtime proof.
+The local-runtime journey uses useful-jobs feed-agenda on samples/feed/a instead of this directory.

@@ -1,0 +1,13 @@
+job-artifact-export notices
+===========================
+
+Pilot-authored CLI, tests, and fixtures in this directory are MIT (LICENSE).
+
+The isolated hasher under vendor/funded-task-terms-hash/ is MIT, pinned from
+epistemedeus/neomorphic-io@819fa637ecf5e5177c84efc16fcaa18d57017631
+packs/funded-task-terms (Neo PR54 / I01). See that vendor LICENSE and PIN.json.
+It is not a copy of services/earned-work and not original F01 occupancy.
+
+useful-jobs 1.0.0 remains a separate archive with its own LICENSE/NOTICE.
+This exporter reads completed out-dirs and the published catalog/kit pin. It
+does not relicense that archive.
