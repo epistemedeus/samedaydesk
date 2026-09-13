@@ -1,0 +1,2 @@
+SAMPLE - not a customer brief, live webhook, sale, or purchase authority.
+Fixture only. Nonsettling prototype.
