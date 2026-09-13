@@ -1,0 +1,39 @@
+{
+  "recipeId": "pricing-row-unit",
+  "family": "pricing-row-unit",
+  "parser": "s134-pricing-table-change",
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "retain": [
+    "units",
+    "coverage",
+    "sourceUrl",
+    "license",
+    "citations"
+  ],
+  "schema": "s176.next-run-manifest.v1",
+  "sourceMeta": {
+    "note": "Caller next-run for --input-root wrapper tests. Paths resolve against input-root/. Not a SAMPLE kit fixture."
+  },
+  "currentInputs": {
+    "before": {
+      "path": "./before.json",
+      "bytes": 281,
+      "sha256": "c477e516ce555fd9b80bf5f3c25fc9d3389fb79db32ab1f5d601b355d7328499",
+      "observedAt": "caller",
+      "attribution": "caller-supplied"
+    },
+    "after": {
+      "path": "./after.json",
+      "bytes": 352,
+      "sha256": "5fe4ec1dbf3945ddb008f63ffee78cfea02559afa68b185eb80e57c42dbb3ee9",
+      "observedAt": "caller",
+      "attribution": "caller-supplied"
+    },
+    "used": null
+  },
+  "paidValueClaim": false,
+  "freeOffline": true
+}

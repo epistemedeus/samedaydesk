@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>tag:sds.paid-useful-jobs,2026:feed-agenda/caller</id>
+  <title>Caller release notes</title>
+  <updated>2026-09-11T12:00:00Z</updated>
+  <link rel="self" href="https://example.test/caller/notes.atom"/>
+  <entry>
+    <id>tag:sds.paid-useful-jobs,2026:caller/stable</id>
+    <title>Stable Guide</title>
+    <updated>2026-09-08T10:00:00Z</updated>
+    <link rel="alternate" href="https://example.test/caller/stable"/>
+    <summary>Unchanged across the pair.</summary>
+  </entry>
+  <entry>
+    <id>tag:sds.paid-useful-jobs,2026:caller/new</id>
+    <title>New Item</title>
+    <updated>2026-09-11T09:00:00Z</updated>
+    <link rel="alternate" href="https://example.test/caller/new"/>
+    <summary>Present only in after.xml.</summary>
+  </entry>
+</feed>

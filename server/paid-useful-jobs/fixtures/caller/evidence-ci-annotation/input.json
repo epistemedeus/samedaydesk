@@ -1,0 +1,36 @@
+{
+  "schema": "s137.consumer-evidence.packet.v1",
+  "jobId": "caller-freshness",
+  "artifactKind": "freshness-receipt",
+  "clock": "2026-09-11T12:00:00.000Z",
+  "evidenceClass": "fixture",
+  "offline": true,
+  "payment": { "attempted": false },
+  "cost": {
+    "assignmentSpendUsd": 0,
+    "note": "Caller-supplied evidence packet for wrapper tests. Offline transform only."
+  },
+  "sources": [
+    { "id": "src-freshness", "kind": "http-headers", "path": "caller/freshness/" }
+  ],
+  "findings": [
+    {
+      "id": "headers-present",
+      "summary": "etag and last-modified present on caller capture",
+      "citationIds": ["cit-headers"]
+    }
+  ],
+  "citations": [
+    { "id": "cit-headers", "kind": "http-headers", "path": "caller/freshness/http-headers.json" }
+  ],
+  "decision": "pass",
+  "limitations": [],
+  "verificationClaims": [],
+  "claims": {
+    "inventsFacts": false,
+    "paidEndpoint": false,
+    "legalAttestation": false,
+    "modelAsOracle": false,
+    "assertsCustomerDemand": false
+  }
+}
