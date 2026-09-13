@@ -1,5 +1,7 @@
 # Public website release (codex/w5-sds-public-release-20260911)
 
+Current public useful-jobs on this tree after H25 is **1.4.7** (see `experiments/codex-window/h25-offline147-promotion/`). This file keeps the original 1.1.0 website-transfer receipt.
+
 Narrow transfer onto verified SDS `main` `5b97d1b02e786acd1895cfa1508087ae3f7a1545`.
 This branch does not merge D01 paid-useful-jobs, private-order, or funding runtime.
 

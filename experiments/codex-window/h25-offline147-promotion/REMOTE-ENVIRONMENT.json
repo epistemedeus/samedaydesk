@@ -1,0 +1,58 @@
+{
+  "schema": "h25.remote-environment.v1",
+  "observedAtUtc": "2026-09-13T10:21:00Z",
+  "cwd": "/tmp/h25/wt",
+  "hostname": "cursor",
+  "hostnameIsNotProviderIdentity": true,
+  "controller": {
+    "kind": "Cursor Cloud",
+    "agentId": "bc-ec55ab26-6e23-4562-9c7a-649331bdba1f",
+    "implementsProduct": false
+  },
+  "runtime": {
+    "kind": "native Grok CLI",
+    "grokBinary": "/home/ubuntu/.grok/bin/grok",
+    "grokVersion": "1.0.25 (f7e67d6988e2) [stable]",
+    "model": "grok-4.6",
+    "effort": "xhigh",
+    "argv": "grok --session-id da4d24f2-628a-4df5-9b51-596bfc1d6313 --prompt-file /tmp/h25/heavy-logs/H25.prompt.md -m grok-4.6 --effort xhigh --output-format json --always-approve --cwd /tmp/h25/wt",
+    "sessionId": "da4d24f2-628a-4df5-9b51-596bfc1d6313",
+    "newParent": true,
+    "didNotResume": [
+      "01a094f5-dde1-70e1-ad54-481c90a8cd67",
+      "01a09456-c82b-7b41-ad58-e5557da52ed3",
+      "01a09a0f-1261-74f0-b1b0-0e7fb0c2a86b"
+    ],
+    "node": "v22.22.2",
+    "authStoreLocation": "/home/ubuntu/.grok/auth.json",
+    "loggedIn": true,
+    "authKind": "grok.com-subscription",
+    "apiKeyBilling": false
+  },
+  "git": {
+    "repository": "https://github.com/epistemedeus/samedaydesk.git",
+    "branch": "codex/h25-offline147-promotion-20260913",
+    "baseMain": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+    "repairSourcePin": "27f0730604adf236e0f3ad818a30b5f43be6e656",
+    "compareUrl": "https://github.com/epistemedeus/samedaydesk/compare/main...codex/h25-offline147-promotion-20260913",
+    "localHead": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+    "remoteHead": null,
+    "prCreated": false
+  },
+  "replay": {
+    "tmpdir": "/tmp/h25/runtime-tmp",
+    "flock": "/tmp/h25/runtime-tmp/test.lock",
+    "nodeOptions": "--max-old-space-size=768",
+    "testConcurrency": 1
+  },
+  "boundaries": {
+    "cashUsd": 0,
+    "purchaseAuthority": false,
+    "paidHostedClaim": false,
+    "mainMerge": false,
+    "deploy": false,
+    "livePayments": false,
+    "protectedTreesEdited": false,
+    "h21TapReplayed": false
+  }
+}
