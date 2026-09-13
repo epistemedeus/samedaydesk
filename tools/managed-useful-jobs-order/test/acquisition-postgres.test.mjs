@@ -18,7 +18,7 @@ import {
   availableResult,
   frozenHash,
   pairFor,
-  snapshotSideEffects,
+  createForbiddenSeamSpies,
   termsHash,
 } from "./acquisition-helpers.mjs";
 
@@ -232,9 +232,14 @@ describe("HA1 real PostgreSQL durable retrieval", { timeout: 180_000 }, () => {
         schema: "ha1_ttl",
         artifactRoot: artifacts,
       });
-      const service = createAcquisitionService({ store, artifactRoot: artifacts });
+      const seams = createForbiddenSeamSpies();
+      const service = createAcquisitionService({
+        store,
+        artifactRoot: artifacts,
+        forbiddenSeams: seams.spies,
+      });
       const first = await admitAndPublish(service, { executionId: "exec-pg-ttl" });
-      const before = snapshotSideEffects(service.reader);
+      const before = { ...seams.calls };
       const expired = await service.reader.get(
         { principalId: PRINCIPAL_A, executionId: first.executionId, requestHash: first.requestHash },
         SERVER_EXPIRED,
@@ -254,8 +259,10 @@ describe("HA1 real PostgreSQL durable retrieval", { timeout: 180_000 }, () => {
           ),
         (err) => err instanceof AcquisitionRefuse && err.state === "expired",
       );
-      assert.equal(service.reader.sideEffects.runCreateOrder, before.runCreateOrder);
-      assert.equal(service.reader.sideEffects.enqueue, 0);
+      assert.equal(seams.calls.runCreateOrder, before.runCreateOrder);
+      assert.equal(seams.calls.enqueue, 0);
+      assert.throws(() => seams.spies.enqueue(), /forbidden seam enqueue/);
+      assert.equal(seams.calls.enqueue, 1);
     } finally {
       if (store) await store.close().catch(() => {});
       cluster.stop();

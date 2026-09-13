@@ -3,7 +3,7 @@ import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createFileStore } from "../lib/store-file.mjs";
-import { createAcquisitionService } from "../lib/acquisition.mjs";
+import { createAcquisitionService, createForbiddenSeamSpies } from "../lib/acquisition.mjs";
 import {
   digestNamedOutputs,
   hashFrozenRequestV1,
@@ -95,14 +95,17 @@ export function availableResult({
 export async function fileService(options = {}) {
   const dir = options.dir || tmpDir("ha1-file-");
   const store = createFileStore(dir, { maxAdmissions: options.maxAdmissions });
+  const seams = options.seams || createForbiddenSeamSpies();
   const service = createAcquisitionService({
     store,
     artifactRoot: store.artifactRoot,
     maxAdmissions: options.maxAdmissions,
     maxConcurrentReads: options.maxConcurrentReads || 4,
     openTimeoutMs: options.openTimeoutMs || 30_000,
+    clock: options.clock || null,
+    forbiddenSeams: seams.spies,
   });
-  return { dir, store, service, reader: service.reader, writer: service.writer };
+  return { dir, store, service, reader: service.reader, writer: service.writer, seams };
 }
 
 export async function admitAndPublish(service, overrides = {}) {
@@ -173,8 +176,8 @@ export function writeTempInputs() {
   };
 }
 
-export function snapshotSideEffects(reader) {
-  return { ...reader.sideEffects };
+export function snapshotSeamCalls(seams) {
+  return { ...seams.calls };
 }
 
 export function unchanged(before, after) {
@@ -183,3 +186,5 @@ export function unchanged(before, after) {
   }
   return true;
 }
+
+export { createForbiddenSeamSpies };

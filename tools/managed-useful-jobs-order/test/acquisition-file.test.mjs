@@ -18,15 +18,15 @@ import {
   fileService,
   frozenHash,
   pairFor,
-  snapshotSideEffects,
+  snapshotSeamCalls,
   termsHash,
   unchanged,
 } from "./acquisition-helpers.mjs";
 
 describe("HA1 file-store durable retrieval", { timeout: 60_000 }, () => {
   it("publishes two promised outputs and retrieves them by principal+executionId+requestHash", async () => {
-    const { service, reader } = await fileService();
-    const before = snapshotSideEffects(reader);
+    const { service, reader, seams } = await fileService();
+    const before = snapshotSeamCalls(seams);
     const { executionId, requestHash, pair, result } = await admitAndPublish(service);
     const got = await reader.get(
       { principalId: PRINCIPAL_A, executionId, requestHash },
@@ -45,11 +45,11 @@ describe("HA1 file-store durable retrieval", { timeout: 60_000 }, () => {
     );
     assert.equal(opened.metadata.bytes, pair.outputs[0].bytes);
     assert.equal(Buffer.from(opened.bytes).toString("utf8"), Buffer.from(pair.files[0].bytes).toString("utf8"));
-    assert.ok(unchanged(before, reader.sideEffects));
+    assert.ok(unchanged(before, seams.calls));
   });
 
-  it("GET miss/pending/expired/restarted IDs leaves execution/payment/outbox counters unchanged", async () => {
-    const { service, reader, dir } = await fileService();
+  it("GET miss/pending/expired/restarted IDs does not invoke injected engine/payment/outbox spies", async () => {
+    const { service, reader, dir, seams } = await fileService();
     const pendingId = "exec-pending-1";
     const requestHash = frozenHash("lockfile-pin-delta", "pending");
     await service.admit({
@@ -67,7 +67,7 @@ describe("HA1 file-store durable retrieval", { timeout: 60_000 }, () => {
       { principalId: PRINCIPAL_A, executionId: published.executionId, requestHash: published.requestHash },
       SERVER_LATER,
     );
-    const before = snapshotSideEffects(reader);
+    const before = snapshotSeamCalls(seams);
     const miss = await reader.get(
       { principalId: PRINCIPAL_A, executionId: "exec-missing", requestHash },
       SERVER_LATER,
@@ -85,14 +85,14 @@ describe("HA1 file-store durable retrieval", { timeout: 60_000 }, () => {
     assert.equal(expired.state, "expired");
     const restarted = createAcquisitionService({
       store: createFileStore(dir),
+      forbiddenSeams: seams.spies,
     });
     const afterRestart = await restarted.reader.get(
       { principalId: PRINCIPAL_A, executionId: pendingId, requestHash },
       SERVER_LATER,
     );
     assert.equal(afterRestart.state, "pending");
-    assert.ok(unchanged(before, reader.sideEffects));
-    assert.ok(unchanged(before, restarted.reader.sideEffects));
+    assert.ok(unchanged(before, seams.calls));
     assert.equal(typeof reader.runCreateOrder, "undefined");
   });
 
@@ -174,7 +174,7 @@ describe("HA1 file-store durable retrieval", { timeout: 60_000 }, () => {
   });
 
   it("identical retry after commit returns identical and recovers the same record", async () => {
-    const { service, reader, dir } = await fileService();
+    const { service, reader, dir, seams } = await fileService();
     const first = await admitAndPublish(service, { executionId: "exec-retry-1" });
     assert.equal(first.outcome, "created");
     const retry = await service.publishCompleted(first.result, first.pair.files);
@@ -198,11 +198,11 @@ describe("HA1 file-store durable retrieval", { timeout: 60_000 }, () => {
       SERVER_LATER,
     );
     assert.equal(opened.metadata.sha256, first.pair.outputs[1].sha256);
-    assert.equal(reader.sideEffects.engineStarts, 0);
+    assert.equal(seams.calls.engineStarts, 0);
   });
 
-  it("precommit pending never becomes available and does not start an engine", async () => {
-    const { service, reader } = await fileService();
+  it("precommit pending never becomes available and does not invoke an injected engine spy", async () => {
+    const { service, reader, seams } = await fileService();
     const executionId = "exec-precommit";
     const requestHash = frozenHash("lockfile-pin-delta", "pre");
     await service.admit({
@@ -225,8 +225,8 @@ describe("HA1 file-store durable retrieval", { timeout: 60_000 }, () => {
         ),
       (err) => err instanceof AcquisitionRefuse && err.state === "pending",
     );
-    assert.equal(reader.sideEffects.runPaidOffer, 0);
-    assert.equal(reader.sideEffects.engineStarts, 0);
+    assert.equal(seams.calls.runPaidOffer, 0);
+    assert.equal(seams.calls.engineStarts, 0);
   });
 
   it("expiry is persisted, checked on every read, survives restart, and keeps a tombstone after byte deletion", async () => {
@@ -447,16 +447,18 @@ describe("HA1 file-store durable retrieval", { timeout: 60_000 }, () => {
     assert.equal(withFrozen.state, "available");
   });
 
-  it("reader has no Range/redirect/HTTP/D14 surface and does not enqueue or acknowledge", async () => {
-    const { reader } = await fileService();
+  it("reader has no Range/redirect/HTTP/D14 surface and does not invoke injected enqueue/ack spies", async () => {
+    const { reader, seams } = await fileService();
     assert.equal(reader.openVerifiedRange, undefined);
     assert.equal(reader.redirect, undefined);
     assert.equal(reader.acquireToDirectory, undefined);
     assert.equal(reader.enqueue, undefined);
     assert.equal(reader.acknowledge, undefined);
-    assert.equal(reader.sideEffects.enqueue, 0);
-    assert.equal(reader.sideEffects.acknowledge, 0);
-    assert.equal(reader.sideEffects.deliverOnce, 0);
-    assert.equal(reader.sideEffects.settlePayment, 0);
+    assert.equal(seams.calls.enqueue, 0);
+    assert.equal(seams.calls.acknowledge, 0);
+    assert.equal(seams.calls.deliverOnce, 0);
+    assert.equal(seams.calls.settlePayment, 0);
+    assert.throws(() => seams.spies.enqueue(), /forbidden seam enqueue/);
+    assert.equal(seams.calls.enqueue, 1);
   });
 });

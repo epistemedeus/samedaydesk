@@ -26,8 +26,13 @@ GET binding = {
   requestHash,                 // X-Request-SHA256; version samedaydesk.acquisition-frozen-request.v1
 }
 openVerified adds { name, sha256 }  // promised basename + X-Artifact-SHA256
-serverNow                          // injected trusted clock at the HTTP boundary
+serverNow                          // one injected sample; not fresh after a wait
+clock()                            // required at the trusted boundary; re-sample after gate wait
 ```
+
+**Clock contract (HA1 will not implement HTTP):** `serverNow` is a single sample. After `openVerified` waits on the read gate, a frozen request-start timestamp is `uncertain-clock`, not "now". Inject `createAcquisitionService({ clock })` and/or `openVerified(..., { clock })` that returns current trusted UTC. Re-sample after the wait and after bytes are opened. Do not use request-supplied time. Do not claim a frozen snapshot is fresh.
+
+Optional `openVerified(..., { openTimeoutMs, signal })` bounds queue + operation with an operation-local timer (default 30s). Abort/timeout releases the read permit. `active <= maxConcurrentReads`.
 
 Do not treat HTTP `frozenIdentity()` hash as `requestHash` unless HA1 `hashesReconciled` was set for that versioned canonicalization. Managed-order `termsHash` is a different field.
 
@@ -49,6 +54,6 @@ Do not treat HTTP `frozenIdentity()` hash as `requestHash` unless HA1 `hashesRec
 
 ## Tests HA2 still owes
 
-Path/race/bounds at the HTTP layer, abort of the socket, spies that GET does not touch engine/payment/outbox, 404 vs 409 split above. HA1 already covers durable restart, PG, tombstones, hostile files, and known-bad missing seam.
+Path/race/bounds at the HTTP layer, abort of the socket, **live** spies that GET does not call `runCreateOrder` / `runPaidOffer` / settlement / outbox (inject incrementing functions; do not assert a self-zero object), 404 vs 409 split above. Re-sample `clock()` on queued downloads so expiry cannot be authorized with request-start time. HA1 already covers durable restart, PG, tombstones, hostile files, FIFO-replace nonblocking open, short-bound gate timeouts, and known-bad missing seam.
 
 Suggested exclusive files: `server/paid-useful-jobs/lib/acquisition-http.mjs`, `lib/http.mjs`, `bin/serve-execution.mjs`, `tests/acquisition-http*.test.mjs`.

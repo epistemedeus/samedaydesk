@@ -20,6 +20,7 @@ const STATUS = {
   "uncertain-clock": 503,
   "store-unavailable": 503,
   aborted: 499,
+  timeout: 504,
   "missing-admission": 409,
   "untrusted-principal": 400,
   "untrusted-clock": 400,

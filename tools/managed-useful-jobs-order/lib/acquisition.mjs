@@ -7,7 +7,7 @@ import {
   HA1_JOB_IDS,
   REQUEST_HASH_ALGORITHM,
 } from "./acquisition-constants.mjs";
-import { acquisitionRefuse } from "./acquisition-errors.mjs";
+import { AcquisitionRefuse, acquisitionRefuse } from "./acquisition-errors.mjs";
 import { assertArtifactName, assertRetrievalBinding, assertSha256 } from "./acquisition-binding.mjs";
 import { addTtl, assertClockSane, parseServerClock } from "./acquisition-clock.mjs";
 import {
@@ -21,58 +21,158 @@ import {
 } from "./acquisition-identity.mjs";
 import { purgeArtifactDir, readVerifiedBytes, writeVerifiedArtifacts } from "./acquisition-bytes.mjs";
 
-function createReadGate(max) {
+export const FORBIDDEN_SEAM_NAMES = Object.freeze([
+  "runCreateOrder",
+  "runPaidOffer",
+  "settlePayment",
+  "deliverOnce",
+  "enqueue",
+  "acknowledge",
+  "engineStarts",
+]);
+
+export function createForbiddenSeamSpies() {
+  const calls = Object.fromEntries(FORBIDDEN_SEAM_NAMES.map((name) => [name, 0]));
+  const spies = {};
+  for (const name of FORBIDDEN_SEAM_NAMES) {
+    spies[name] = () => {
+      calls[name] += 1;
+      throw new Error(`forbidden seam ${name} invoked`);
+    };
+  }
+  return { calls, spies };
+}
+
+function abortError(signal) {
+  const reason = signal?.reason;
+  if (reason instanceof AcquisitionRefuse) return reason;
+  return acquisitionRefuse("aborted", "artifact open aborted; handle released");
+}
+
+function throwIfAborted(signal) {
+  if (signal?.aborted) throw abortError(signal);
+}
+
+export function createReadGate(max) {
   let active = 0;
   const waiters = [];
+
+  function makeRelease() {
+    let released = false;
+    return () => {
+      if (released) return;
+      released = true;
+      const next = waiters.shift();
+      if (next) next.grant();
+      else active -= 1;
+    };
+  }
+
   return {
     get active() {
       return active;
     },
+    get queued() {
+      return waiters.length;
+    },
+    get max() {
+      return max;
+    },
     async acquire(signal) {
-      if (signal?.aborted) {
-        throw acquisitionRefuse("aborted", "read gate released without acquiring");
-      }
+      throwIfAborted(signal);
       if (active < max) {
         active += 1;
-        return () => {
-          active -= 1;
-          const next = waiters.shift();
-          if (next) next();
-        };
+        return { release: makeRelease(), waited: false };
       }
       await new Promise((resolve, reject) => {
-        const waiter = () => {
-          signal?.removeEventListener?.("abort", onAbort);
-          resolve();
+        let settled = false;
+        const entry = {
+          grant() {
+            if (settled) return;
+            settled = true;
+            cleanup();
+            resolve();
+          },
         };
         const onAbort = () => {
-          const idx = waiters.indexOf(waiter);
+          if (settled) return;
+          settled = true;
+          const idx = waiters.indexOf(entry);
           if (idx >= 0) waiters.splice(idx, 1);
-          reject(acquisitionRefuse("aborted", "read gate wait aborted"));
+          cleanup();
+          reject(abortError(signal));
         };
-        waiters.push(waiter);
+        function cleanup() {
+          signal?.removeEventListener?.("abort", onAbort);
+        }
+        waiters.push(entry);
+        if (signal?.aborted) {
+          onAbort();
+          return;
+        }
         signal?.addEventListener?.("abort", onAbort, { once: true });
       });
-      active += 1;
-      return () => {
-        active -= 1;
-        const next = waiters.shift();
-        if (next) next();
-      };
+      if (signal?.aborted) {
+        makeRelease()();
+        throw abortError(signal);
+      }
+      return { release: makeRelease(), waited: true };
     },
   };
 }
 
-function emptySideEffects() {
-  return {
-    runCreateOrder: 0,
-    runPaidOffer: 0,
-    settlePayment: 0,
-    deliverOnce: 0,
-    enqueue: 0,
-    acknowledge: 0,
-    engineStarts: 0,
+export function createOpenDeadline(timeoutMs, externalSignal) {
+  const ac = new AbortController();
+  let timer = null;
+  let cleaned = false;
+  const onExternal = () => {
+    if (!ac.signal.aborted) ac.abort(externalSignal.reason);
   };
+  if (externalSignal) {
+    if (externalSignal.aborted) ac.abort(externalSignal.reason);
+    else externalSignal.addEventListener("abort", onExternal, { once: true });
+  }
+  if (!ac.signal.aborted) {
+    timer = setTimeout(() => {
+      if (!ac.signal.aborted) {
+        ac.abort(
+          acquisitionRefuse("timeout", `artifact open exceeded the ${timeoutMs}-millisecond bound`, {
+            detail: { timeoutMs },
+          }),
+        );
+      }
+    }, timeoutMs);
+  }
+  return {
+    signal: ac.signal,
+    dispose() {
+      if (cleaned) return;
+      cleaned = true;
+      if (timer != null) clearTimeout(timer);
+      timer = null;
+      externalSignal?.removeEventListener?.("abort", onExternal);
+    },
+  };
+}
+
+async function raceAbort(work, signal) {
+  throwIfAborted(signal);
+  let onAbort;
+  try {
+    return await Promise.race([
+      Promise.resolve(work),
+      new Promise((_, reject) => {
+        onAbort = () => reject(abortError(signal));
+        if (signal.aborted) {
+          onAbort();
+          return;
+        }
+        signal.addEventListener("abort", onAbort, { once: true });
+      }),
+    ]);
+  } finally {
+    if (onAbort) signal.removeEventListener("abort", onAbort);
+  }
 }
 
 function classifyGet(record, binding, serverNow) {
@@ -106,6 +206,8 @@ export function createAcquisitionService({
   maxConcurrentReads = DEFAULT_MAX_CONCURRENT_READS,
   ttlSeconds = DEFAULT_TTL_SECONDS,
   openTimeoutMs = DEFAULT_OPEN_TIMEOUT_MS,
+  clock = null,
+  forbiddenSeams = null,
 } = {}) {
   if (!store || typeof store.admitAcquisition !== "function") {
     throw acquisitionRefuse(
@@ -118,17 +220,33 @@ export function createAcquisitionService({
     throw acquisitionRefuse("store-unavailable", "acquisition requires a private artifact root");
   }
   const cap = Number.isSafeInteger(maxAdmissions) && maxAdmissions > 0 ? maxAdmissions : DEFAULT_MAX_ADMISSIONS;
-  const gate = createReadGate(
+  const readCap =
     Number.isSafeInteger(maxConcurrentReads) && maxConcurrentReads > 0
       ? maxConcurrentReads
-      : DEFAULT_MAX_CONCURRENT_READS,
-  );
+      : DEFAULT_MAX_CONCURRENT_READS;
+  const gate = createReadGate(readCap);
   const timeoutMs =
     Number.isSafeInteger(openTimeoutMs) && openTimeoutMs > 0 ? openTimeoutMs : DEFAULT_OPEN_TIMEOUT_MS;
-  const sideEffects = emptySideEffects();
   const hooks = {
     afterOpenFd: null,
+    beforeOpen: null,
+    betweenLstatAndOpen: null,
   };
+  const seamSpies = forbiddenSeams && typeof forbiddenSeams === "object" ? forbiddenSeams : null;
+
+  function sampleClock(serverNow, extra, waited) {
+    const fn = extra?.clock || clock;
+    if (typeof fn === "function") {
+      return parseServerClock(fn(), "serverNow").iso;
+    }
+    if (waited) {
+      throw acquisitionRefuse(
+        "uncertain-clock",
+        "open waited on the read gate; a frozen serverNow is not a fresh trusted clock. Inject clock() at the service boundary and re-sample after the wait.",
+      );
+    }
+    return parseServerClock(serverNow, "serverNow").iso;
+  }
 
   async function load(executionId) {
     try {
@@ -260,15 +378,18 @@ export function createAcquisitionService({
   async function openVerified(binding, serverNow, extra = {}) {
     const bound = assertRetrievalBinding(binding);
     const sha256 = assertSha256(binding.sha256, "artifact sha256");
-    const started = Date.now();
-    const signal = extra.signal;
-    const release = await gate.acquire(signal);
+    const operationTimeoutMs =
+      Number.isSafeInteger(extra.openTimeoutMs) && extra.openTimeoutMs > 0 ? extra.openTimeoutMs : timeoutMs;
+    const deadline = createOpenDeadline(operationTimeoutMs, extra.signal);
+    let release = null;
     try {
-      if (Date.now() - started > timeoutMs) {
-        throw acquisitionRefuse("aborted", "artifact open exceeded the 30-second bound");
-      }
-      const record = await load(bound.executionId);
-      const classified = classifyGet(record, bound, serverNow);
+      throwIfAborted(deadline.signal);
+      const acquired = await gate.acquire(deadline.signal);
+      release = acquired.release;
+      throwIfAborted(deadline.signal);
+      const now = sampleClock(serverNow, extra, acquired.waited);
+      const record = await raceAbort(load(bound.executionId), deadline.signal);
+      const classified = classifyGet(record, bound, now);
       if (classified.state === "not-found") {
         throw acquisitionRefuse("not-found", "no available artifact for this binding", { state: "not-found" });
       }
@@ -289,18 +410,21 @@ export function createAcquisitionService({
         });
       }
       if (typeof hooks.beforeOpen === "function") {
-        await hooks.beforeOpen({ signal, binding: bound });
+        await raceAbort(hooks.beforeOpen({ signal: deadline.signal, binding: bound }), deadline.signal);
       }
+      throwIfAborted(deadline.signal);
       const opened = readVerifiedBytes(root, bound.executionId, expected, {
-        signal,
+        signal: deadline.signal,
         afterOpen: hooks.afterOpenFd,
+        betweenLstatAndOpen: hooks.betweenLstatAndOpen,
       });
+      const nowAfter = sampleClock(serverNow, extra, acquired.waited);
       assertClockSane({
-        serverNow,
+        serverNow: nowAfter,
         createdAt: classified.record.createdAt,
         expiresAt: classified.record.expiresAt,
       });
-      const again = classifyGet(await load(bound.executionId), bound, serverNow);
+      const again = classifyGet(await raceAbort(load(bound.executionId), deadline.signal), bound, nowAfter);
       if (again.state !== "available") {
         throw acquisitionRefuse(again.state || "integrity-failed", "access closed after bytes were opened", {
           state: again.state,
@@ -308,14 +432,15 @@ export function createAcquisitionService({
       }
       return { metadata: expected, bytes: opened.bytes };
     } finally {
-      release();
+      deadline.dispose();
+      if (release) release();
     }
   }
 
   const reader = {
     get,
     openVerified,
-    sideEffects,
+    forbiddenSeams: seamSpies,
   };
   const writer = {
     publishCompleted,
@@ -329,11 +454,11 @@ export function createAcquisitionService({
     admit,
     publishCompleted,
     expire,
-    sideEffects,
     hooks,
     artifactRoot: root,
     maxAdmissions: cap,
     maxConcurrentReads: gate,
+    forbiddenSeams: seamSpies,
   };
 }
 

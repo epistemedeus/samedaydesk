@@ -17,8 +17,11 @@ import { MAX_FILE_BYTES } from "./acquisition-constants.mjs";
 import { acquisitionRefuse } from "./acquisition-errors.mjs";
 import { sha256Bytes } from "./acquisition-identity.mjs";
 
-const { O_RDONLY, O_WRONLY, O_CREAT, O_EXCL, O_NOFOLLOW } = constants;
-const READ_FLAGS = O_RDONLY | O_NOFOLLOW;
+const { O_RDONLY, O_WRONLY, O_CREAT, O_EXCL, O_NOFOLLOW, O_NONBLOCK } = constants;
+if (!O_NONBLOCK) {
+  throw new Error("HA1 artifact open requires O_NONBLOCK so a FIFO replace cannot block the process");
+}
+const READ_FLAGS = O_RDONLY | O_NOFOLLOW | O_NONBLOCK;
 const WRITE_FLAGS = O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW;
 
 function assertInsideRoot(root, target) {
@@ -98,6 +101,11 @@ function openNoFollow(path, flags, mode) {
         state: "integrity-failed",
       });
     }
+    if (err?.code === "ENXIO" || err?.code === "EAGAIN" || err?.code === "EWOULDBLOCK" || err?.code === "ENOTSUP") {
+      throw acquisitionRefuse("hostile-path", "nonblocking open refused; path is not a regular file", {
+        state: "integrity-failed",
+      });
+    }
     throw err;
   }
 }
@@ -156,7 +164,7 @@ export function writeVerifiedArtifacts(artifactRoot, executionId, files) {
   }
 }
 
-export function readVerifiedBytes(artifactRoot, executionId, expected, { signal, afterOpen } = {}) {
+export function readVerifiedBytes(artifactRoot, executionId, expected, { signal, afterOpen, betweenLstatAndOpen } = {}) {
   if (signal?.aborted) {
     throw acquisitionRefuse("aborted", "artifact open aborted before bytes were exposed");
   }
@@ -178,7 +186,12 @@ export function readVerifiedBytes(artifactRoot, executionId, expected, { signal,
   if (pathBefore.isSymbolicLink()) {
     throw acquisitionRefuse("hostile-path", "artifact path is a symlink");
   }
+  if (typeof pathBefore.isFIFO === "function" && pathBefore.isFIFO()) {
+    throw acquisitionRefuse("hostile-path", "artifact path is a FIFO");
+  }
   assertRegularNoLink(pathBefore, expected.name);
+
+  if (typeof betweenLstatAndOpen === "function") betweenLstatAndOpen(path);
 
   const fd = openNoFollow(path, READ_FLAGS);
   try {
@@ -187,6 +200,11 @@ export function readVerifiedBytes(artifactRoot, executionId, expected, { signal,
     }
     if (typeof afterOpen === "function") afterOpen(fd, path);
     const fdStat = fstatSync(fd);
+    if (typeof fdStat.isFIFO === "function" && fdStat.isFIFO()) {
+      throw acquisitionRefuse("hostile-path", "opened fd is a FIFO; refusing to block or expose bytes", {
+        state: "integrity-failed",
+      });
+    }
     assertRegularNoLink(fdStat, expected.name);
     const pathAfter = lstatSync(path);
     if (pathAfter.isSymbolicLink()) {

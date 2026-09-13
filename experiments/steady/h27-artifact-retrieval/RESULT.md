@@ -1,5 +1,21 @@
 # H27 HA1 — durable result retrieval foundation
 
+## Boundary repair (same session)
+
+Root findings reproduced with known-bad controls, then fixed. No HA2 HTTP.
+
+1. **Read-gate timeout.** Queue wait and operation lifetime now share an operation-local deadline (`createOpenDeadline` + abortable `createReadGate`). Permits transfer (`active <= cap`). Already-aborted and racing abort drop the waiter without a permit. Tests use 40ms bounds; none wait 30s.
+2. **FIFO replace race.** Artifact `open` is `O_RDONLY|O_NOFOLLOW|O_NONBLOCK`; fd is fstat'd before read. Known-bad child using blocking open is SIGKILL'd under a 1.5s parent cap and does not print `OPENED`.
+3. **Spies.** Injected `forbiddenSeams` increment when called and throw. The reader never invokes them. Self-declared zero objects are not used as proof. Create-order replay still uses `wrapper.runs()` as a live engine counter.
+
+Trusted clock: a frozen `serverNow` is one sample. After a gate wait, HA1 requires `clock()` (or `extra.clock`) re-sampled at the service boundary; otherwise `uncertain-clock`. Not request-supplied time.
+
+Repair TAP (this VM): HA1 **39 pass / 0 fail**, H21 skeleton **10 TODO**. Regression: hygiene 3, interrupt 1, existing postgres 2.
+
+---
+
+## Original closeout
+
 Native Grok Heavy (`grok-4.6`, effort `xhigh`) on Cursor Cloud. Hostname `cursor` is not provider identity. grok.com subscription only (`LOCATION=/home/ubuntu/.grok/auth.json`, logged-in true). Cash $0. `purchaseAuthority: false`. No main merge, deploy, or charge.
 
 New parent session. Did not `--resume` H25 `da4d24f2-628a-4df5-9b51-596bfc1d6313`, H7 `01a094f5-dde1-70e1-ad54-481c90a8cd67`, H6D `01a09456-c82b-7b41-ad58-e5557da52ed3`, or Astra `01a09a0f-1261-74f0-b1b0-0e7fb0c2a86b`.
@@ -51,7 +67,7 @@ Not edited: public archives, catalog, pages, HTTP routes, auth-provider configur
 
 Trusted server clock is injected (`serverNow`). Creation/expiry persist once. GET cannot extend TTL. Request-body principal/token/clock is refused. HTTP frozen-request hash and managed-order `termsHash` are stored as distinct fields unless `hashesReconciled === true`.
 
-Reader `sideEffects` (`runCreateOrder`, `runPaidOffer`, `settlePayment`, `deliverOnce`, `enqueue`, `acknowledge`, `engineStarts`) stay 0 across miss/pending/expired/restarted reads.
+Injected `forbiddenSeams` spies (`runCreateOrder`, `runPaidOffer`, `settlePayment`, `deliverOnce`, `enqueue`, `acknowledge`, `engineStarts`) increment when invoked. The reader does not invoke them. That is not a self-initialized zero object.
 
 ## Commands and counts
 
@@ -64,20 +80,22 @@ flock /tmp/h27/runtime-tmp/test.lock node --test --test-reporter=tap --test-conc
   tools/managed-useful-jobs-order/test/acquisition-hostile.test.mjs \
   tools/managed-useful-jobs-order/test/acquisition-known-bad.test.mjs \
   tools/managed-useful-jobs-order/test/acquisition-hooks.test.mjs \
+  tools/managed-useful-jobs-order/test/acquisition-timeout.test.mjs \
   tools/managed-useful-jobs-order/test/acquisition-postgres.test.mjs \
   experiments/codex-window/h21-package-release-gate/test/hosted-acquisition.skeleton.test.mjs
 ```
 
 | Pack | Pass | Fail | Todo | Notes |
 | --- | --- | --- | --- | --- |
-| `acquisition-file.test.mjs` | 14 | 0 | 0 | restart, identity, expiry/tombstone, capacity, hash distinction, counters |
-| `acquisition-hooks.test.mjs` | 3 | 0 | 0 | admit-before-engine; precommit no second engine; sold/purchaseAuthority false |
-| `acquisition-hostile.test.mjs` | 7 | 0 | 0 | names, symlink/hardlink/fifo/device, path-swap, bounds, abort, parent symlink |
-| `acquisition-known-bad.test.mjs` | 4 | 0 | 0 | process-local missing seam; body principal; request clock; H21 still 10 TODOs in source |
+| `acquisition-file.test.mjs` | 14 | 0 | 0 | restart, identity, expiry/tombstone, capacity, hash distinction, injected spies |
+| `acquisition-hooks.test.mjs` | 3 | 0 | 0 | admit-before-engine; precommit no second engine; `wrapper.runs()` live counter |
+| `acquisition-hostile.test.mjs` | 8 | 0 | 0 | names, links, path-swap, FIFO-replace race + killed known-bad child |
+| `acquisition-known-bad.test.mjs` | 5 | 0 | 0 | missing seam; body principal; request clock; spy increment control; H21 TODOs |
+| `acquisition-timeout.test.mjs` | 6 | 0 | 0 | 40ms queue/op deadlines; abort; cap; frozen clock after wait; clock re-sample |
 | `acquisition-postgres.test.mjs` | 3 | 0 | 0 | isolated `initdb`/`pg_ctl`, unused port, teardown in `finally` |
 | H21 `hosted-acquisition.skeleton.test.mjs` | 0 | 0 | **10** | still design TODOs; not HA1 passes |
-| **HA1 executed assertions** | **31** | **0** | — | counted separately from the ten TODOs |
-| Combined TAP | 31 | 0 | 10 | `# tests 41` `# pass 31` `# fail 0` `# todo 10` |
+| **HA1 executed assertions** | **39** | **0** | — | counted separately from the ten TODOs |
+| Combined TAP | 39 | 0 | 10 | `# tests 49` `# pass 39` `# fail 0` `# todo 10` |
 
 Regression (not counted as HA1):
 

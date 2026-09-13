@@ -4,7 +4,11 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
 import { AcquisitionRefuse } from "../lib/acquisition-errors.mjs";
-import { createAcquisitionService, createProcessLocalMissingSeam } from "../lib/acquisition.mjs";
+import {
+  createAcquisitionService,
+  createForbiddenSeamSpies,
+  createProcessLocalMissingSeam,
+} from "../lib/acquisition.mjs";
 import { createFileStore } from "../lib/store-file.mjs";
 import { runCreateOrder } from "../lib/create-order.mjs";
 import {
@@ -91,6 +95,41 @@ describe("HA1 known-bad controls for the missing seam", { timeout: 60_000 }, () 
     );
     assert.equal(refused.ok, false);
     assert.equal(refused.code, "untrusted-clock");
+  });
+
+  it("injected engine/payment/outbox spies increment when called; the reader does not call them", async () => {
+    const seams = createForbiddenSeamSpies();
+    assert.equal(seams.calls.runCreateOrder, 0);
+    assert.throws(() => seams.spies.runCreateOrder(), /forbidden seam runCreateOrder/);
+    assert.equal(seams.calls.runCreateOrder, 1);
+    const { service, reader } = await fileService({ seams });
+    seams.calls.runCreateOrder = 0;
+    const first = await admitAndPublish(service, { executionId: "exec-spy" });
+    await reader.get(
+      { principalId: PRINCIPAL_A, executionId: first.executionId, requestHash: first.requestHash },
+      SERVER_LATER,
+    );
+    await reader.openVerified(
+      {
+        principalId: PRINCIPAL_A,
+        executionId: first.executionId,
+        requestHash: first.requestHash,
+        name: "pin-delta.json",
+        sha256: first.pair.outputs[0].sha256,
+      },
+      SERVER_LATER,
+    );
+    assert.equal(seams.calls.runCreateOrder, 0);
+    assert.equal(seams.calls.runPaidOffer, 0);
+    assert.equal(seams.calls.enqueue, 0);
+    const src = readFileSync(join(here, "../lib/acquisition.mjs"), "utf8");
+    assert.equal(
+      /forbiddenSeams\.\w+\(/.test(src),
+      false,
+      "reader must not invoke injected forbiddenSeams",
+    );
+    assert.equal(/\brunCreateOrder\(/.test(src), false);
+    assert.equal(/\brunPaidOffer\(/.test(src), false);
   });
 
   it("H21 skeleton still records ten TODO obligations, counted separately from HA1", () => {

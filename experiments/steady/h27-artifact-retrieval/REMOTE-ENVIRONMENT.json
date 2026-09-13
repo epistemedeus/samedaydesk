@@ -55,14 +55,15 @@
     "pgPort": "Unused port chosen by startDisposablePostgres (55000 + random 4000). listen_addresses empty. Teardown on success and failure.",
     "commands": [
       "cd /tmp/h27/wt/tools/managed-useful-jobs-order && npm ci --omit=dev --no-fund --no-audit",
-      "TMPDIR=/tmp/h27/runtime-tmp NODE_OPTIONS=--max-old-space-size=768 flock /tmp/h27/runtime-tmp/test.lock node --test --test-reporter=tap --test-concurrency=1 tools/managed-useful-jobs-order/test/acquisition-file.test.mjs tools/managed-useful-jobs-order/test/acquisition-hostile.test.mjs tools/managed-useful-jobs-order/test/acquisition-known-bad.test.mjs tools/managed-useful-jobs-order/test/acquisition-hooks.test.mjs tools/managed-useful-jobs-order/test/acquisition-postgres.test.mjs experiments/codex-window/h21-package-release-gate/test/hosted-acquisition.skeleton.test.mjs"
+      "TMPDIR=/tmp/h27/runtime-tmp NODE_OPTIONS=--max-old-space-size=768 flock /tmp/h27/runtime-tmp/test.lock node --test --test-reporter=tap --test-concurrency=1 tools/managed-useful-jobs-order/test/acquisition-file.test.mjs tools/managed-useful-jobs-order/test/acquisition-hostile.test.mjs tools/managed-useful-jobs-order/test/acquisition-known-bad.test.mjs tools/managed-useful-jobs-order/test/acquisition-hooks.test.mjs tools/managed-useful-jobs-order/test/acquisition-timeout.test.mjs tools/managed-useful-jobs-order/test/acquisition-postgres.test.mjs experiments/codex-window/h21-package-release-gate/test/hosted-acquisition.skeleton.test.mjs"
     ],
     "acceptance": {
-      "ha1Pass": 31,
+      "ha1Pass": 39,
       "ha1Fail": 0,
       "ha1Cancelled": 0,
       "ha1Skipped": 0,
-      "h21SkeletonTodoExcluded": 10
+      "h21SkeletonTodoExcluded": 10,
+      "boundaryRepair": "read-gate deadline, FIFO O_NONBLOCK open, injected seam spies"
     }
   },
   "boundaries": {

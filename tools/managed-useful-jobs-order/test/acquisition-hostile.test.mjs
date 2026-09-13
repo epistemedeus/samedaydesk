@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import {
   linkSync,
   renameSync,
@@ -9,6 +9,7 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
+import { tmpDir } from "./acquisition-helpers.mjs";
 import { AcquisitionRefuse } from "../lib/acquisition-errors.mjs";
 import { MAX_FILE_BYTES } from "../lib/acquisition-constants.mjs";
 import { sha256Bytes } from "../lib/acquisition-identity.mjs";
@@ -233,7 +234,91 @@ describe("HA1 hostile paths and bounds", { timeout: 60_000 }, () => {
       SERVER_LATER,
     );
     assert.equal(opened.metadata.sha256, first.pair.outputs[0].sha256);
-    assert.equal(reader.sideEffects.engineStarts, 0);
+    assert.equal(service.maxConcurrentReads.active, 0);
+  });
+
+  it("FIFO replace between lstat and open does not block; known-bad blocking open is killed", async () => {
+    const { service, store, reader } = await fileService();
+    const first = await admitAndPublish(service, { executionId: "exec-fifo-race" });
+    const path = join(store.artifactRoot, first.executionId, "pin-delta.json");
+    const backup = `${path}.bak`;
+    service.hooks.betweenLstatAndOpen = (openPath) => {
+      renameSync(openPath, backup);
+      const made = spawnSync("mkfifo", [openPath], { encoding: "utf8" });
+      assert.equal(made.status, 0, made.stderr);
+    };
+    const t0 = Date.now();
+    await assert.rejects(
+      () =>
+        reader.openVerified(
+          {
+            principalId: PRINCIPAL_A,
+            executionId: first.executionId,
+            requestHash: first.requestHash,
+            name: "pin-delta.json",
+            sha256: first.pair.outputs[0].sha256,
+          },
+          SERVER_LATER,
+        ),
+      (err) => err instanceof AcquisitionRefuse && err.code === "hostile-path",
+    );
+    assert.ok(Date.now() - t0 < 1000, "nonblocking FIFO open must return quickly");
+    service.hooks.betweenLstatAndOpen = null;
+    unlinkSync(path);
+    renameSync(backup, path);
+
+    const probeDir = tmpDir("ha1-fifo-block-");
+    const probePath = join(probeDir, "probe");
+    writeFileSync(probePath, "regular\n");
+    const script = join(probeDir, "block-open.mjs");
+    writeFileSync(
+      script,
+      `import { constants, lstatSync, openSync, readSync } from "node:fs";
+const path = process.argv[2];
+lstatSync(path);
+process.stdout.write("STATTED\\n");
+readSync(0, Buffer.alloc(1), 0, 1, null);
+openSync(path, constants.O_RDONLY | constants.O_NOFOLLOW);
+process.stdout.write("OPENED\\n");
+`,
+    );
+    const child = spawn(process.execPath, [script, probePath], {
+      stdio: ["pipe", "pipe", "pipe"],
+    });
+    let out = "";
+    child.stdout.setEncoding("utf8");
+    child.stdout.on("data", (chunk) => {
+      out += chunk;
+    });
+    const hardKill = setTimeout(() => {
+      if (child.exitCode == null && child.signalCode == null) child.kill("SIGKILL");
+    }, 1500);
+    try {
+      await new Promise((resolve, reject) => {
+        const t = setTimeout(() => reject(new Error("child never statt'ed")), 500);
+        const check = () => {
+          if (out.includes("STATTED")) {
+            clearTimeout(t);
+            resolve();
+          }
+        };
+        child.stdout.on("data", check);
+        check();
+      });
+      unlinkSync(probePath);
+      const fifo = spawnSync("mkfifo", [probePath], { encoding: "utf8" });
+      assert.equal(fifo.status, 0, fifo.stderr);
+      child.stdin.write("x");
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      assert.equal(out.includes("OPENED"), false, "known-bad blocking open must still be blocked");
+      assert.equal(child.exitCode, null);
+      child.kill("SIGKILL");
+      await new Promise((resolve) => child.once("close", resolve));
+      assert.equal(out.includes("OPENED"), false);
+    } finally {
+      clearTimeout(hardKill);
+      if (child.exitCode == null && child.signalCode == null) child.kill("SIGKILL");
+    }
   });
 
   it("parent symlink boundaries refuse", async () => {

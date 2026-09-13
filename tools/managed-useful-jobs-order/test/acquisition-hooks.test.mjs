@@ -12,7 +12,7 @@ import {
   PRINCIPAL_B,
   SERVER_LATER,
   SERVER_NOW,
-  snapshotSideEffects,
+  createForbiddenSeamSpies,
   tmpDir,
   writeTempInputs,
 } from "./acquisition-helpers.mjs";
@@ -67,7 +67,12 @@ describe("HA1 create-order reservation and completion hooks", { timeout: 60_000 
     const storeDir = tmpDir("ha1-hook-store-");
     const outDir = tmpDir("ha1-hook-out-");
     const store = createFileStore(storeDir);
-    const service = createAcquisitionService({ store, artifactRoot: store.artifactRoot });
+    const seams = createForbiddenSeamSpies();
+    const service = createAcquisitionService({
+      store,
+      artifactRoot: store.artifactRoot,
+      forbiddenSeams: seams.spies,
+    });
     const inputs = writeTempInputs();
     const json = Buffer.from('{"ok":true,"job":"lockfile-pin-delta"}\n');
     const md = Buffer.from("# lockfile-pin-delta\n");
@@ -88,7 +93,7 @@ describe("HA1 create-order reservation and completion hooks", { timeout: 60_000 
       files,
       enginePin: inputs.request.enginePin,
     });
-    const before = snapshotSideEffects(service.reader);
+    const before = { ...seams.calls };
     const result = await runCreateOrder(
       { ...inputs.request, executionId },
       {
@@ -119,8 +124,9 @@ describe("HA1 create-order reservation and completion hooks", { timeout: 60_000 
       SERVER_LATER,
     );
     assert.equal(Buffer.from(opened.bytes).toString("utf8"), json.toString("utf8"));
-    assert.equal(service.reader.sideEffects.runCreateOrder, before.runCreateOrder);
-    assert.equal(service.reader.sideEffects.enqueue, 0);
+    assert.equal(seams.calls.runCreateOrder, before.runCreateOrder);
+    assert.equal(seams.calls.enqueue, 0);
+    assert.equal(wrapper.runs(), 1);
 
     const replay = await runCreateOrder(
       { ...inputs.request, executionId },
