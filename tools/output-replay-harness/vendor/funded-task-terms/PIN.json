@@ -1,0 +1,18 @@
+{
+  "role": "isolated-pinned-dependency",
+  "notAKernel": true,
+  "sourceRepo": "epistemedeus/neomorphic-io",
+  "sourceRef": "fable/integration-earned-work",
+  "sourceSha": "819fa637ecf5e5177c84efc16fcaa18d57017631",
+  "pullRequest": 54,
+  "module": "packs/funded-task-terms",
+  "files": {
+    "canonical.mjs": "packs/funded-task-terms/src/canonical.mjs",
+    "hash.mjs": "packs/funded-task-terms/src/hash.mjs",
+    "LICENSE": "packs/funded-task-terms/LICENSE",
+    "fixtures/golden/complete.terms.json": "packs/funded-task-terms/fixtures/golden/complete.terms.json"
+  },
+  "goldenTermsVersion": "sha256:c82f232dd9d63261b91d32234abf3e0f655d99182cde7c66b7de5c8c787ea31f",
+  "contract": "termsVersion is sha256: + 64 lowercase hex. schemaVersion stays an integer shape version. Integer termsVersion is not a public claim key.",
+  "laterBinding": "Root may replace this pin with a direct import of packs/funded-task-terms after I01 lands on Neo main. Do not cherry-pick original F01 occupancy kernel."
+}

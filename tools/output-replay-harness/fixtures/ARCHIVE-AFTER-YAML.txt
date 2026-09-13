@@ -1,0 +1,7 @@
+a/after.yaml and b/after.yaml in useful-jobs 1.0.0 are byte-identical
+(sha256 prefix 2d88e96a1860382f). Swapping those two files does not change
+catalog JSON identity.
+
+The seeded identity-break therefore overwrites after.yaml with
+samples/openapi/caller-alpha/after.yaml (different OpenAPI bytes) between
+runs, which the pinned engine classifies as an actionable used-ops delta.
