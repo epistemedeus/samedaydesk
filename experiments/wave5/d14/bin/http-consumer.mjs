@@ -5,7 +5,8 @@ import { ConsumerRefuse, assertNoFilesystemPaths, encodeExecuteRequest } from ".
 import { getHealth, getResult, postExecute } from "../lib/client.mjs";
 import { createTicket, readTicket, updateTicketAfterPost, writeTicketAtomic } from "../lib/ticket.mjs";
 import { verifyTicketBoundResult } from "../lib/verify.mjs";
-import { acquireLocalArtifacts, portableAcquisitionUnsupported } from "../lib/acquire.mjs";
+import { acquireHttpArtifacts, acquireLocalArtifacts, portableAcquisitionUnsupported } from "../lib/acquire.mjs";
+import { FROZEN_REQUEST_HASH_VERSION } from "../../../../tools/managed-useful-jobs-order/lib/acquisition-constants.mjs";
 import { EXECUTION_CONTRACT_VERSION } from "../lib/pins.mjs";
 import { assertExecutionId, originsEqual, parseHttpOrigin } from "../lib/origin.mjs";
 
@@ -36,6 +37,8 @@ Commands:
          [--example] --ticket ticket.json
   fetch --ticket ticket.json [--base URL] --out result.json
         [--local-artifacts DIR --acquire-to DIR]
+        [--acquire-to DIR]  hosted HA2 download when the ticket has requestHash
+        [--authorization Bearer-or-token]
 
 submit reads caller UTF-8 JSON once, chooses/validates executionId, persists the
 ticket atomically, then POSTs /execute. Retrieval identity does not come from the
@@ -54,6 +57,7 @@ function exitForClassify(classify) {
   if (classify?.kind === "http-transport-failure") return 3;
   if (classify?.kind === "execution-transport-failure") return 2;
   if (classify?.kind === "analysis-outcome" && classify.ok === true) return 0;
+  if (classify?.kind === "available-result" && classify.ok === true) return 0;
   return 2;
 }
 
@@ -169,14 +173,25 @@ try {
     }
     const localDir = args["local-artifacts"] ? resolve(String(args["local-artifacts"])) : null;
     const destDir = args["acquire-to"] ? resolve(String(args["acquire-to"])) : null;
-    if ((localDir && !destDir) || (destDir && !localDir)) {
+    if (localDir && !destDir) {
       throw new ConsumerRefuse(
         "missing-local-acquire",
         "fetch local acquisition requires both --local-artifacts DIR and --acquire-to DIR",
       );
     }
+    const authorization = args.authorization
+      ? String(args.authorization).startsWith("Bearer ")
+        ? String(args.authorization)
+        : `Bearer ${args.authorization}`
+      : process.env.D14_AUTHORIZATION || null;
+    const headers = {};
+    if (ticket.requestHash) {
+      headers["x-request-sha256"] = ticket.requestHash;
+      headers["x-request-hash-version"] = ticket.requestHashVersion || FROZEN_REQUEST_HASH_VERSION;
+    }
+    if (authorization) headers.authorization = authorization;
 
-    const got = await getResult(origin, ticket.executionId, { timeoutMs: timeoutMs(15_000) });
+    const got = await getResult(origin, ticket.executionId, { timeoutMs: timeoutMs(15_000), headers });
     let classify = got.classify;
     const verified = got.body ? verifyTicketBoundResult(ticket, got.body, { retrieval: got.retrieval, httpStatus: got.status }) : {
       ok: false,
@@ -185,7 +200,7 @@ try {
       identityHash: null,
       postIdentityMatch: null,
     };
-    if (classify.kind === "analysis-outcome" && !verified.ok) {
+    if ((classify.kind === "analysis-outcome" || classify.kind === "available-result") && !verified.ok) {
       classify = {
         kind: "ticket-mismatch",
         code: verified.failures[0]?.code || "ticket-mismatch",
@@ -196,7 +211,7 @@ try {
 
     let acquisition = portableAcquisitionUnsupported();
     if (localDir && destDir) {
-      if (classify.kind !== "analysis-outcome") {
+      if (classify.kind !== "analysis-outcome" && classify.kind !== "available-result") {
         throw new ConsumerRefuse("acquire-without-analysis", "local acquisition requires a verified analysis-outcome", {
           classify,
         });
@@ -208,9 +223,27 @@ try {
         localDir,
         destDir,
       });
+      acquisition.httpArtifactsDelivered = false;
+    } else if (destDir && !localDir) {
+      if (classify.kind !== "available-result" || !verified.ok) {
+        throw new ConsumerRefuse("acquire-without-available", "hosted acquisition requires a verified available result", {
+          classify,
+        });
+      }
+      if (!ticket.requestHash) {
+        throw new ConsumerRefuse("missing-request-hash", "ticket.requestHash must be persisted before hosted acquire");
+      }
+      acquisition = await acquireHttpArtifacts({
+        origin,
+        executionId: ticket.executionId,
+        requestHash: ticket.requestHash,
+        expectedNames: ticket.expectedOutputs || got.body.outputs.map((row) => row.name),
+        destDir,
+        authorization,
+      });
     }
-    acquisition.httpArtifactsDelivered = false;
 
+    const httpArtifactsDelivered = acquisition.code === "http-acquired";
     const result = {
       contract: got.body?.contract || ticket.contract || EXECUTION_CONTRACT_VERSION,
       origin,
@@ -221,10 +254,13 @@ try {
       verified,
       acquisition,
       result: got.body,
-      httpArtifactsDelivered: false,
+      httpArtifactsDelivered,
+      purchaseAuthority: false,
+      sold: false,
     };
     writeTicketAtomic(String(args.out), result);
-    const analysisOk = classify.kind === "analysis-outcome" && classify.ok === true;
+    const analysisOk =
+      (classify.kind === "analysis-outcome" || classify.kind === "available-result") && classify.ok === true;
     process.stdout.write(
       `${JSON.stringify(
         {
@@ -232,14 +268,17 @@ try {
           classify,
           executionId: ticket.executionId,
           acquisition,
-          httpArtifactsDelivered: false,
+          httpArtifactsDelivered,
           verified: { ok: verified.ok, failures: verified.failures },
+          purchaseAuthority: false,
+          sold: false,
         },
         null,
         2,
       )}\n`,
     );
     if (localDir && acquisition.code !== "local-acquired") process.exit(2);
+    if (destDir && !localDir && acquisition.code !== "http-acquired") process.exit(2);
     process.exit(exitForClassify(classify));
   }
 

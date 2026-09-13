@@ -79,11 +79,15 @@ export async function createPostgresStore({
   schema = "managed_useful_jobs_order",
   artifactRoot = null,
   maxAdmissions = DEFAULT_MAX_ADMISSIONS,
+  statementTimeoutMs = 30_000,
 } = {}) {
   const client = new pg.Client(connectionString ? { connectionString } : clientConfig);
   await client.connect();
   await client.query(`CREATE SCHEMA IF NOT EXISTS ${quoteIdent(schema)}`);
   await client.query(`SET search_path TO ${quoteIdent(schema)}`);
+  if (Number.isSafeInteger(statementTimeoutMs) && statementTimeoutMs > 0) {
+    await client.query(`SET statement_timeout = ${statementTimeoutMs}`);
+  }
   await client.query(SQL);
   await client.query(ACQUISITION_SQL);
   const cap =

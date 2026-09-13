@@ -1,3 +1,4 @@
+import { basename } from "node:path";
 import { ConsumerRefuse } from "./errors.mjs";
 import { EXECUTION_ID_RE } from "./pins.mjs";
 
@@ -16,6 +17,20 @@ export function assertExecutionId(id) {
 
 export function resultsPathFor(id) {
   return `/results/${encodeURIComponent(assertExecutionId(id))}`;
+}
+
+export function assertArtifactBasename(name) {
+  if (typeof name !== "string" || name === "" || name !== basename(name)) {
+    throw new ConsumerRefuse("invalid-artifact-name", "artifact name must be a basename", { name });
+  }
+  if (name === "." || name === ".." || name.includes("\0") || name.includes("%") || name.includes("\\")) {
+    throw new ConsumerRefuse("invalid-artifact-name", "artifact name is not a canonical basename", { name });
+  }
+  return name;
+}
+
+export function artifactsPathFor(id, name) {
+  return `${resultsPathFor(id)}/artifacts/${encodeURIComponent(assertArtifactBasename(name))}`;
 }
 
 export function parseHttpOrigin(origin) {
@@ -132,6 +147,21 @@ export function resolveRetrieval(origin, retrievalPath) {
     throw new ConsumerRefuse("invalid-retrieval", "retrieval path canonicalization mismatch");
   }
   return { origin: parsed.origin, id, path, url: url.href };
+}
+
+export function resolveArtifact(origin, executionId, name) {
+  const parsed = parseHttpOrigin(origin);
+  const id = assertExecutionId(executionId);
+  const artifactName = assertArtifactBasename(name);
+  const path = artifactsPathFor(id, artifactName);
+  const url = new URL(path, parsed.url);
+  if (url.origin !== parsed.url.origin || url.search || url.hash || url.username || url.password) {
+    throw new ConsumerRefuse("foreign-origin", "artifact URL escaped ticket origin");
+  }
+  if (url.pathname !== path) {
+    throw new ConsumerRefuse("invalid-retrieval", "artifact path canonicalization mismatch");
+  }
+  return { origin: parsed.origin, id, name: artifactName, path, url: url.href };
 }
 
 export function originResourceUrl(origin, resourcePath) {

@@ -1,6 +1,6 @@
 import { MAX_HTTP_BODY_BYTES } from "./pins.mjs";
 import { ConsumerRefuse } from "./errors.mjs";
-import { assertExecutionId, originResourceUrl, resolveRetrieval } from "./origin.mjs";
+import { assertExecutionId, originResourceUrl, resolveArtifact, resolveRetrieval } from "./origin.mjs";
 import { resultIdentityHash, sha256Text } from "./digest-named.mjs";
 import { ticketFromSubmit } from "./ticket.mjs";
 
@@ -104,10 +104,34 @@ export function classifyHttpExchange({ fetchError, status, body, parseError, con
       body,
     };
   }
+  if (status === 202) {
+    return {
+      kind: "pending-result",
+      code: body?.code || "pending",
+      httpStatus: status,
+      body,
+    };
+  }
   if (status === 410) {
     return {
       kind: "http-transport-failure",
       code: body?.code || "execution-expired",
+      httpStatus: status,
+      body,
+    };
+  }
+  if (status === 416) {
+    return {
+      kind: "http-transport-failure",
+      code: body?.code || "range-not-supported",
+      httpStatus: status,
+      body,
+    };
+  }
+  if (status === 422) {
+    return {
+      kind: "http-transport-failure",
+      code: body?.code || "integrity-failed",
       httpStatus: status,
       body,
     };
@@ -157,6 +181,14 @@ export function classifyHttpExchange({ fetchError, status, body, parseError, con
       analysis: body.analysis || null,
       transport: transport || null,
       delivery: body.delivery,
+      body,
+    };
+  }
+  if (body.ok === true && body.state === "available") {
+    return {
+      kind: "available-result",
+      ok: true,
+      code: "available",
       body,
     };
   }
@@ -344,7 +376,7 @@ export async function postExecute(
 export async function getResult(
   origin,
   retrievalPath,
-  { fetchImpl = fetch, timeoutMs = 15_000, bodyTimeoutMs = 15_000, maxBodyBytes = MAX_HTTP_BODY_BYTES } = {},
+  { fetchImpl = fetch, timeoutMs = 15_000, bodyTimeoutMs = 15_000, maxBodyBytes = MAX_HTTP_BODY_BYTES, headers = {} } = {},
 ) {
   let target;
   try {
@@ -355,6 +387,7 @@ export async function getResult(
   try {
     const response = await fetchImpl(target.url, {
       method: "GET",
+      headers,
       ...FETCH_DEFAULTS,
       signal: AbortSignal.timeout(timeoutMs),
     });
@@ -362,6 +395,74 @@ export async function getResult(
     return { ...classifiedResult(read), retrieval: { id: target.id, path: target.path, origin: target.origin } };
   } catch (fetchError) {
     return { status: 0, body: null, bodySha256: null, classify: classifyHttpExchange({ fetchError }) };
+  }
+}
+
+export async function getArtifact(
+  origin,
+  executionId,
+  name,
+  {
+    fetchImpl = fetch,
+    timeoutMs = 15_000,
+    maxBodyBytes = MAX_HTTP_BODY_BYTES,
+    headers = {},
+  } = {},
+) {
+  let target;
+  try {
+    target = resolveArtifact(origin, executionId, name);
+  } catch (err) {
+    return {
+      status: 0,
+      bytes: null,
+      classify: {
+        kind: "http-transport-failure",
+        code: err instanceof ConsumerRefuse ? err.code : "invalid-retrieval",
+        error: err.message,
+      },
+    };
+  }
+  try {
+    const response = await fetchImpl(target.url, {
+      method: "GET",
+      headers,
+      ...FETCH_DEFAULTS,
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+    if (response.status >= 300 && response.status < 400) {
+      return {
+        status: response.status,
+        bytes: null,
+        classify: { kind: "http-transport-failure", code: "redirect-disallowed", httpStatus: response.status },
+      };
+    }
+    if (response.status !== 200) {
+      const read = await readJsonResponse(response, { maxBodyBytes, bodyTimeoutMs: timeoutMs });
+      return {
+        status: response.status,
+        bytes: null,
+        classify: classifyHttpExchange(read),
+        body: read.body,
+      };
+    }
+    const buf = Buffer.from(await response.arrayBuffer());
+    if (buf.length > maxBodyBytes) {
+      return {
+        status: response.status,
+        bytes: null,
+        classify: { kind: "http-transport-failure", code: "response-too-large", httpStatus: response.status },
+      };
+    }
+    return {
+      status: 200,
+      bytes: buf,
+      headers: response.headers,
+      classify: { kind: "artifact-bytes", ok: true, httpStatus: 200 },
+      retrieval: { id: target.id, path: target.path, name: target.name, origin: target.origin },
+    };
+  } catch (fetchError) {
+    return { status: 0, bytes: null, classify: classifyHttpExchange({ fetchError }) };
   }
 }
 

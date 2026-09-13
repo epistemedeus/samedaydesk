@@ -9,6 +9,7 @@ import { join } from "node:path";
 import { EXECUTION_CONTRACT_VERSION } from "./contract.mjs";
 import { freezeRequest } from "./input-guard.mjs";
 import { runPaidOffer } from "./wrapper.mjs";
+import { createAcquisitionHttpHandler } from "./acquisition-http.mjs";
 
 const ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
 const MAX_BODY_BYTES = 8 * 1024 * 1024;
@@ -68,9 +69,21 @@ function readBody(req, limit) {
 export function createExecutionServer({
   execute = runPaidOffer, resultTtlMs = 24 * 60 * 60 * 1000,
   maxEntries = 1024, maxBodyBytes = MAX_BODY_BYTES,
+  acquisition = null,
 } = {}) {
   for (const value of [resultTtlMs, maxEntries, maxBodyBytes]) if (!Number.isSafeInteger(value) || value < 1) throw new Error("HTTP limits must be positive integers");
   const store = new Map();
+  const acquisitionHandler = acquisition?.reader
+    ? createAcquisitionHttpHandler({
+        reader: acquisition.reader,
+        resolvePrincipal: acquisition.resolvePrincipal,
+        clock: acquisition.clock,
+        forbiddenSeams: acquisition.forbiddenSeams || null,
+        gate: acquisition.gate || null,
+        maxPendingDownloads: acquisition.maxPendingDownloads,
+        openTimeoutMs: acquisition.openTimeoutMs,
+      })
+    : null;
   function expired(row) {
     if (row.state === "pending") return false;
     if (row.state === "expired" || Date.now() >= row.expiresAt) {
@@ -95,6 +108,10 @@ export function createExecutionServer({
     (async () => {
       const url = req.url || "/";
       if (req.method === "GET" && url === "/health") return end(200, { ok: true, contract: EXECUTION_CONTRACT_VERSION });
+      if (acquisitionHandler && req.method === "GET" && url.startsWith("/results/")) {
+        const handled = await acquisitionHandler(req, res);
+        if (handled) return;
+      }
       if (req.method === "GET" && url.startsWith("/results/")) {
         let id;
         try { id = decodeURIComponent(url.slice("/results/".length).split("?")[0]); }

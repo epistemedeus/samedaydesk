@@ -101,6 +101,7 @@ export async function fileService(options = {}) {
     artifactRoot: store.artifactRoot,
     maxAdmissions: options.maxAdmissions,
     maxConcurrentReads: options.maxConcurrentReads || 4,
+    maxQueuedReads: options.maxQueuedReads,
     openTimeoutMs: options.openTimeoutMs || 30_000,
     clock: options.clock || null,
     forbiddenSeams: seams.spies,

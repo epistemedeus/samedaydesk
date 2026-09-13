@@ -3,6 +3,8 @@ import { basename, dirname, join, resolve, sep } from "node:path";
 import { randomBytes } from "node:crypto";
 import { ConsumerRefuse } from "./errors.mjs";
 import { sha256Bytes } from "./digest-named.mjs";
+import { getArtifact, getResult } from "./client.mjs";
+import { FROZEN_REQUEST_HASH_VERSION } from "../../../../tools/managed-useful-jobs-order/lib/acquisition-constants.mjs";
 
 export const UNSUPPORTED_PORTABLE_ACQUISITION = "unsupported-portable-acquisition";
 
@@ -149,5 +151,120 @@ export function acquireLocalArtifacts({
     files,
     destDir: destRoot,
     reason: "Caller-selected local copies were verified by name, bytes, and sha256. HTTP path was not used.",
+  };
+}
+
+function acquisitionHeaders({ requestHash, artifactSha256, authorization }) {
+  const headers = {
+    "x-request-sha256": requestHash,
+    "x-request-hash-version": FROZEN_REQUEST_HASH_VERSION,
+  };
+  if (artifactSha256) headers["x-artifact-sha256"] = artifactSha256;
+  if (authorization) headers.authorization = authorization;
+  return headers;
+}
+
+/**
+ * Download promised files from HA2 into destDir. Never POSTs, settles, or pays.
+ */
+export async function acquireHttpArtifacts({
+  origin,
+  executionId,
+  requestHash,
+  expectedNames = [],
+  destDir,
+  authorization = null,
+  fetchImpl = fetch,
+}) {
+  if (!origin || !executionId || !requestHash || !destDir) {
+    return portableAcquisitionUnsupported({
+      reason: "HTTP acquisition requires origin, executionId, requestHash, and destDir",
+    });
+  }
+  const destRoot = resolve(destDir);
+  const headers = acquisitionHeaders({ requestHash, authorization });
+  const meta = await getResult(origin, executionId, { fetchImpl, headers });
+  if (meta.classify?.kind === "pending-result") {
+    throw new ConsumerRefuse("pending", "result is not yet available", { classify: meta.classify });
+  }
+  if (meta.status !== 200 || meta.body?.state !== "available") {
+    throw new ConsumerRefuse(meta.classify?.code || "not-found", "hosted result is not available", {
+      status: meta.status,
+      classify: meta.classify,
+    });
+  }
+  const body = meta.body;
+  if (body.purchaseAuthority === true || body.sold === true) {
+    throw new ConsumerRefuse("unexpected-sale", "hosted result claims a sale");
+  }
+  if (body.requestHash && body.requestHash !== requestHash) {
+    throw new ConsumerRefuse("request-hash-mismatch", "hosted requestHash does not match the ticket binding");
+  }
+  const outputs = Array.isArray(body.outputs) ? body.outputs : [];
+  const names = expectedNames.length ? [...expectedNames] : outputs.map((row) => row.name);
+  if (names.length !== 2) {
+    throw new ConsumerRefuse("missing-expected-outputs", "hosted acquisition expects two promised files");
+  }
+  const staging = `${destRoot}.${process.pid}.${randomBytes(4).toString("hex")}.staging`;
+  mkdirSync(dirname(destRoot), { recursive: true });
+  mkdirSync(staging, { recursive: true });
+  const files = [];
+  try {
+    for (const name of names) {
+      assertArtifactName(name);
+      const listed = outputs.find((row) => row && row.name === name);
+      if (!listed || !listed.sha256) {
+        throw new ConsumerRefuse("missing-artifact", `hosted metadata missing ${name}`, { name });
+      }
+      const got = await getArtifact(origin, executionId, name, {
+        fetchImpl,
+        headers: acquisitionHeaders({ requestHash, artifactSha256: listed.sha256, authorization }),
+      });
+      if (got.status !== 200 || !got.bytes) {
+        throw new ConsumerRefuse(got.classify?.code || "artifact-missing", `hosted artifact ${name} was not delivered`, {
+          name,
+          status: got.status,
+        });
+      }
+      if (got.bytes.length !== listed.bytes) {
+        throw new ConsumerRefuse("artifact-bytes-mismatch", `hosted artifact ${name} byte count does not match metadata`, {
+          name,
+          actual: got.bytes.length,
+          expected: listed.bytes,
+        });
+      }
+      const digest = sha256Bytes(got.bytes);
+      if (digest !== listed.sha256) {
+        throw new ConsumerRefuse("artifact-hash-mismatch", `hosted artifact ${name} sha256 does not match metadata`, {
+          name,
+          actual: digest,
+          expected: listed.sha256,
+        });
+      }
+      const destFile = join(staging, name);
+      if (!containedIn(staging, destFile)) {
+        throw new ConsumerRefuse("path-escape", "destination artifact escaped staging directory", { name });
+      }
+      writeFileSync(destFile, got.bytes);
+      files.push({ name, bytes: got.bytes.length, sha256: digest, path: join(destRoot, name) });
+    }
+    try {
+      lstatSync(destRoot);
+      throw new ConsumerRefuse("acquire-dest-exists", "acquire destination already exists", { destDir: destRoot });
+    } catch (err) {
+      if (err instanceof ConsumerRefuse) throw err;
+    }
+    renameSync(staging, destRoot);
+  } catch (err) {
+    rmSync(staging, { recursive: true, force: true });
+    throw err;
+  }
+  return {
+    code: "http-acquired",
+    httpArtifactsDelivered: true,
+    source: "http",
+    files,
+    destDir: destRoot,
+    reason: "Same-origin advertised promised files were hash/size verified into a staged directory.",
   };
 }

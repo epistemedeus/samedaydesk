@@ -2,6 +2,8 @@
 /**
  * Local loopback execution HTTP. Not a production deploy.
  * D14 owns an independent consumer of this interface.
+ * Durable HA2 acquisition is mounted only when createExecutionServer({ acquisition })
+ * is constructed with an injected HA1 reader and trusted principal adapter.
  */
 import { EXECUTION_CONTRACT_VERSION } from "../lib/contract.mjs";
 import { createExecutionServer, listenExecutionServer } from "../lib/http.mjs";

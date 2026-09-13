@@ -53,9 +53,10 @@ function throwIfAborted(signal) {
   if (signal?.aborted) throw abortError(signal);
 }
 
-export function createReadGate(max) {
+export function createReadGate(max, maxQueued = max) {
   let active = 0;
   const waiters = [];
+  const queuedCap = Number.isSafeInteger(maxQueued) && maxQueued >= 0 ? maxQueued : max;
 
   function makeRelease() {
     let released = false;
@@ -78,11 +79,20 @@ export function createReadGate(max) {
     get max() {
       return max;
     },
+    get maxQueued() {
+      return queuedCap;
+    },
     async acquire(signal) {
       throwIfAborted(signal);
       if (active < max) {
         active += 1;
         return { release: makeRelease(), waited: false };
+      }
+      if (waiters.length >= queuedCap) {
+        throw acquisitionRefuse(
+          "capacity-exhausted",
+          "pending download queue is full; timed-out waiters do not accumulate",
+        );
       }
       await new Promise((resolve, reject) => {
         let settled = false;
@@ -204,6 +214,7 @@ export function createAcquisitionService({
   artifactRoot = null,
   maxAdmissions = DEFAULT_MAX_ADMISSIONS,
   maxConcurrentReads = DEFAULT_MAX_CONCURRENT_READS,
+  maxQueuedReads = null,
   ttlSeconds = DEFAULT_TTL_SECONDS,
   openTimeoutMs = DEFAULT_OPEN_TIMEOUT_MS,
   clock = null,
@@ -224,7 +235,9 @@ export function createAcquisitionService({
     Number.isSafeInteger(maxConcurrentReads) && maxConcurrentReads > 0
       ? maxConcurrentReads
       : DEFAULT_MAX_CONCURRENT_READS;
-  const gate = createReadGate(readCap);
+  const queuedCap =
+    Number.isSafeInteger(maxQueuedReads) && maxQueuedReads >= 0 ? maxQueuedReads : readCap;
+  const gate = createReadGate(readCap, queuedCap);
   const timeoutMs =
     Number.isSafeInteger(openTimeoutMs) && openTimeoutMs > 0 ? openTimeoutMs : DEFAULT_OPEN_TIMEOUT_MS;
   const hooks = {

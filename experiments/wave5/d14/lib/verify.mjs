@@ -173,6 +173,18 @@ export function verifyTicketBoundResult(ticket, body, { retrieval, httpStatus } 
   if (body.purchaseAuthority === true || body.receipt?.purchaseAuthority === true) {
     addFailure(failures, "unexpected-purchase-authority", "result claims purchaseAuthority");
   }
+  if (ticket.requestHash && body.requestHash && ticket.requestHash !== body.requestHash) {
+    addFailure(failures, "request-hash-mismatch", "hosted requestHash does not match ticket binding", {
+      expected: ticket.requestHash,
+      actual: body.requestHash,
+    });
+  }
+  if (ticket.receiptSha256 && body.receiptSha256 && ticket.receiptSha256 !== body.receiptSha256) {
+    addFailure(failures, "receipt-hash-mismatch", "hosted receiptSha256 does not match ticket", {
+      expected: ticket.receiptSha256,
+      actual: body.receiptSha256,
+    });
+  }
   if (ticket.jobId && body.fundingState && ticket.declaredTerms?.fundingIntent === "reserved-fixture") {
     if (body.fundingState !== "reserved-fixture" && body.fundingState !== "rejected") {
       addFailure(failures, "funding-mismatch", "fundingState does not match declared reserved-fixture intent", {

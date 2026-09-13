@@ -5,6 +5,22 @@ import { EXECUTION_CONTRACT_VERSION, JOB_EXPECTED_OUTPUTS } from "./pins.mjs";
 import { assertExecutionId, parseHttpOrigin, resultsPathFor } from "./origin.mjs";
 import { digestFromSubmitted } from "./encode-inputs.mjs";
 import { resultIdentityHash } from "./digest-named.mjs";
+import { hashFrozenRequestV1 } from "../../../../tools/managed-useful-jobs-order/lib/acquisition-identity.mjs";
+import { FROZEN_REQUEST_HASH_VERSION } from "../../../../tools/managed-useful-jobs-order/lib/acquisition-constants.mjs";
+
+export function requestHashFromSubmitted(jobId, submitted) {
+  if (!jobId || !submitted || typeof submitted !== "object") return null;
+  try {
+    const inputs = Object.entries(submitted).map(([key, row]) => ({
+      flag: String(key).startsWith("--") ? key : `--${key}`,
+      sha256: row.sha256 || row.stagedSha256,
+      bytes: row.bytes,
+    }));
+    return hashFrozenRequestV1({ jobId, inputs });
+  } catch {
+    return null;
+  }
+}
 
 const REJECTED_HTTP_CODES = new Set([
   "invalid-json",
@@ -56,11 +72,14 @@ export function createTicket({
   const executionId = assertExecutionId(request.executionId);
   const parsed = parseHttpOrigin(origin);
   const outputs = expectedOutputs || JOB_EXPECTED_OUTPUTS[request.jobId] || [];
+  const requestHash = requestHashFromSubmitted(request.jobId, submitted);
   return {
     contract: EXECUTION_CONTRACT_VERSION,
     origin: parsed.origin,
     jobId: request.jobId,
     executionId,
+    requestHash,
+    requestHashVersion: requestHash ? FROZEN_REQUEST_HASH_VERSION : null,
     retrieval: { id: executionId, path: resultsPathFor(executionId) },
     request,
     submitted,
