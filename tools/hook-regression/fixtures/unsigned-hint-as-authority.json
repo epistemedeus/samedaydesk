@@ -1,0 +1,12 @@
+{
+  "comment": "SEED: treat unsigned bazaar hint as payment-signature authority. Must be rejected.",
+  "attempt": "unsigned-hint-as-authority",
+  "diagnostics": [
+    {
+      "field": "extensions.bazaar",
+      "present": false,
+      "signed": true,
+      "drift": "missing_hint"
+    }
+  ]
+}

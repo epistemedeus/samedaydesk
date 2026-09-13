@@ -1,0 +1,8 @@
+{
+  "comment": "SEED: install live ResourceServer onBeforeVerify/onBeforeSettle hooks. Must be rejected. G02 asserts rules; it does not install hooks.",
+  "attempt": "install-live-resource-server-hooks",
+  "installLiveHooks": true,
+  "onBeforeVerify": true,
+  "onBeforeSettle": true,
+  "registerIndexingPayloadContinuity": true
+}
