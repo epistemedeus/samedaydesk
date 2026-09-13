@@ -7,9 +7,10 @@ export const D14_DIR = join(here, "..");
 export const REPO_ROOT = join(here, "../../../..");
 
 export const EXECUTION_CONTRACT_VERSION = "samedaydesk.paid-useful-jobs.execution.v1";
-export const CATALOG_VERSION = "1.4.4";
+export const CATALOG_VERSION = "1.4.5";
 export const RUNTIME_PIN = "c6f1464222169f2d32247c978dc5007d82a2aa03";
-export const ARCHIVE_PIN = "e9528c3b1195f5ab5d388b73465c31bd422f5d3d";
+export const ARCHIVE_PIN = "5078eb9d220deb66bc4d50095038efc2e5b95faa";
+export const ARCHIVE_PIN_144 = "e9528c3b1195f5ab5d388b73465c31bd422f5d3d";
 export const ARCHIVE_PIN_143 = "8a811bbadba7edc6c926b319b0839cd2f01e5896";
 
 /** Historical D01 pin. Spawn must not git-fetch this. */

@@ -1,7 +1,7 @@
 # Thin HTTP consumer for execution.v1 (W5-D14 / CW70)
 
 Fetch-only client of `samedaydesk.paid-useful-jobs.execution.v1` on useful-jobs
-**1.4.4 unpublished** (runtime pin `c6f1464222169f2d32247c978dc5007d82a2aa03`).
+**1.4.5 unpublished** (runtime pin `c6f1464222169f2d32247c978dc5007d82a2aa03`).
 Immutable 1.4.3 `a18ab918` does not contain wrapper.mjs. It is not a
 second useful-jobs server and it does not vendor the wrapper.
 

@@ -24,8 +24,8 @@ describe("W5-D14 unit client (no engine, no git fetch)", { timeout: 30_000 }, ()
     assert.equal(spawnSrc.includes("git fetch"), false);
     assert.equal(spawnSrc.includes("worktree add"), false);
     assert.match(RUNTIME_PIN, /^c6f1464/);
-    assert.match(ARCHIVE_PIN, /^e9528c3/);
-    assert.equal(CATALOG_VERSION, "1.4.4");
+    assert.match(ARCHIVE_PIN, /^5078eb9/);
+    assert.equal(CATALOG_VERSION, "1.4.5");
   });
 
   it("consumer refuses non-JSON bytes instead of sending a shared-disk path", () => {

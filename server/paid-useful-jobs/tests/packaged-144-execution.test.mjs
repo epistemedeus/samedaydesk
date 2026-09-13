@@ -189,14 +189,13 @@ describe("packaged 1.4.4 frozen candidate: wrapper/interrupt plus known-bad M01/
     }
   });
 
-  it("cold install of candidate bytes: kit CLI list plus SDS wrapper execute", async () => {
-    const discovery = JSON.parse(readFileSync(join(root, "client/public/discovery/useful-jobs.json"), "utf8"));
-    assert.equal(discovery.version, "1.4.4");
-    assert.equal(discovery.sha256, pin144.sha256);
-    const payload = readFileSync(join(root, "client/public", discovery.archive.path.replace(/^\//, "")));
+  it("cold install of frozen 1.4.4 bytes: kit CLI list plus SDS wrapper execute", async () => {
+    const payload = readFileSync(archive144);
+    assert.equal(payload.length, pin144.bytes);
     assert.equal(sha(payload), pin144.sha256);
+    const archivePath = "/for-agents/useful-jobs/useful-jobs-1.4.4.tar.gz";
     const server = createServer((request, response) => {
-      if (request.url !== discovery.archive.path) {
+      if (request.url !== archivePath) {
         response.writeHead(404);
         response.end();
         return;
@@ -208,7 +207,24 @@ describe("packaged 1.4.4 frozen candidate: wrapper/interrupt plus known-bad M01/
     const coldRoot = tempDir("cold-144-");
     try {
       const origin = "http://127.0.0.1:" + server.address().port;
-      const acquired = await execFileAsync("bash", ["-lc", discovery.coldStart], {
+      const acquire = `useful_jobs_acquire() {
+  local origin="\${USEFUL_JOBS_ORIGIN:-$1}"
+  local bytes=${pin144.bytes}
+  local sha=${pin144.sha256}
+  local work tgz root
+  work=$(mktemp -d "\${TMPDIR:-/tmp}/useful-jobs.XXXXXX") || return 1
+  tgz="$work/useful-jobs-1.4.4.tar.gz"
+  root="$work/useful-jobs-1.4.4"
+  curl -fsSL --max-time 60 -o "$tgz" "$origin/for-agents/useful-jobs/useful-jobs-1.4.4.tar.gz" || { rm -rf "$work"; return 1; }
+  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); n=len(b); e=int(sys.argv[2]); (n==e) or sys.exit((sys.stderr.write("size %s != %s\\n" % (n, e)) or 1)); h=hashlib.sha256(b).hexdigest(); (h==sys.argv[3]) or sys.exit((sys.stderr.write("sha256 %s != %s\\n" % (h, sys.argv[3])) or 1))' "$tgz" "$bytes" "$sha" || { rm -rf "$work"; return 1; }
+  tar -xzf "$tgz" -C "$work" || { rm -rf "$work"; return 1; }
+  [ -f "$root/bin/useful-jobs.mjs" ] || { rm -rf "$work"; return 1; }
+  printf '%s\\n' "$root"
+  return 0
+}
+kit=$(useful_jobs_acquire) || exit 1
+printf '%s\\n' "$kit"`;
+      const acquired = await execFileAsync("bash", ["-lc", acquire], {
         cwd: coldRoot,
         env: { ...process.env, TMPDIR: coldRoot, USEFUL_JOBS_ORIGIN: origin },
         timeout: 60_000,

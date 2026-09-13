@@ -1,25 +1,25 @@
 {
   "schema": "samedaydesk.for-agents.useful-jobs.v1",
   "package": "useful-jobs",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "title": "Offline useful jobs package",
   "summary": "Ten offline jobs: lockfile pin-delta first, plus JSON Schema drift, route-table diff, page-change, and the original six for API changes, budgets, feeds, and delivery evidence. Acquire with bash, curl, python3, tar, and mktemp; then run on local Node 22. Verify size and sha256 before extract. Samples are labeled SAMPLE. page-change --example is refused. Callers supply their own files. Free local package; not hosted execution.",
   "page": "https://samedaydesk.com/for-agents/useful-jobs",
-  "archiveUrl": "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.4.tar.gz",
+  "archiveUrl": "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.5.tar.gz",
   "archive": {
-    "path": "/for-agents/useful-jobs/useful-jobs-1.4.4.tar.gz",
-    "url": "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.4.tar.gz",
-    "kitPath": "/kit/useful-jobs-1.4.4.tar.gz",
-    "sha256": "ff4934096e2ba2c95f52c9e364647b455009c36710723f754f3f63ea0dcb5aac",
-    "bytes": 5252886
+    "path": "/for-agents/useful-jobs/useful-jobs-1.4.5.tar.gz",
+    "url": "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.5.tar.gz",
+    "kitPath": "/kit/useful-jobs-1.4.5.tar.gz",
+    "sha256": "ea14851bd3ed091993acf91bda8430d2d9f621a96f11e8d4aa2b4efda0097e4e",
+    "bytes": 5255012
   },
   "previous": {
-    "version": "1.4.3",
-    "archive": "/for-agents/useful-jobs/useful-jobs-1.4.3.tar.gz",
-    "kitArchive": "/kit/useful-jobs-1.4.3.tar.gz",
-    "sha256": "a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09",
-    "bytes": 2615491,
-    "rootName": "useful-jobs-1.4.3"
+    "version": "1.4.4",
+    "archive": "/for-agents/useful-jobs/useful-jobs-1.4.4.tar.gz",
+    "kitArchive": "/kit/useful-jobs-1.4.4.tar.gz",
+    "sha256": "ff4934096e2ba2c95f52c9e364647b455009c36710723f754f3f63ea0dcb5aac",
+    "bytes": 5252886,
+    "rootName": "useful-jobs-1.4.4"
   },
   "immutableArchives": [
     {
@@ -85,10 +85,18 @@
       "sha256": "a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09",
       "bytes": 2615491,
       "rootName": "useful-jobs-1.4.3"
+    },
+    {
+      "version": "1.4.4",
+      "archive": "/for-agents/useful-jobs/useful-jobs-1.4.4.tar.gz",
+      "kitArchive": "/kit/useful-jobs-1.4.4.tar.gz",
+      "sha256": "ff4934096e2ba2c95f52c9e364647b455009c36710723f754f3f63ea0dcb5aac",
+      "bytes": 5252886,
+      "rootName": "useful-jobs-1.4.4"
     }
   ],
-  "sha256": "ff4934096e2ba2c95f52c9e364647b455009c36710723f754f3f63ea0dcb5aac",
-  "bytes": 5252886,
+  "sha256": "ea14851bd3ed091993acf91bda8430d2d9f621a96f11e8d4aa2b4efda0097e4e",
+  "bytes": 5255012,
   "node": ">=22",
   "offline": true,
   "purchaseAuthority": false,
@@ -114,9 +122,9 @@
     "repeat-job-record"
   ],
   "install": [
-    "useful_jobs_acquire() {\n  local origin=\"${USEFUL_JOBS_ORIGIN:-${1:-https://samedaydesk.com}}\"\n  local bytes=5252886\n  local sha=ff4934096e2ba2c95f52c9e364647b455009c36710723f754f3f63ea0dcb5aac\n  local work tgz root\n  work=$(mktemp -d \"${TMPDIR:-/tmp}/useful-jobs.XXXXXX\") || return 1\n  tgz=\"$work/useful-jobs-1.4.4.tar.gz\"\n  root=\"$work/useful-jobs-1.4.4\"\n  curl -fsSL --max-time 60 -o \"$tgz\" \"$origin/for-agents/useful-jobs/useful-jobs-1.4.4.tar.gz\" || { rm -rf \"$work\"; return 1; }\n  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); n=len(b); e=int(sys.argv[2]); (n==e) or sys.exit((sys.stderr.write(\"size %s != %s\\n\" % (n, e)) or 1)); h=hashlib.sha256(b).hexdigest(); (h==sys.argv[3]) or sys.exit((sys.stderr.write(\"sha256 %s != %s\\n\" % (h, sys.argv[3])) or 1))' \"$tgz\" \"$bytes\" \"$sha\" || { rm -rf \"$work\"; return 1; }\n  tar -xzf \"$tgz\" -C \"$work\" || { rm -rf \"$work\"; return 1; }\n  [ -f \"$root/bin/useful-jobs.mjs\" ] || { rm -rf \"$work\"; return 1; }\n  (cd \"$root\" && node bin/useful-jobs.mjs list >&2) || { rm -rf \"$work\"; return 1; }\n  printf '%s\\n' \"$root\"\n  return 0\n}\nkit=$(useful_jobs_acquire) || exit 1\nprintf '%s\\n' \"$kit\""
+    "useful_jobs_acquire() {\n  local origin=\"${USEFUL_JOBS_ORIGIN:-${1:-https://samedaydesk.com}}\"\n  local bytes=5255012\n  local sha=ea14851bd3ed091993acf91bda8430d2d9f621a96f11e8d4aa2b4efda0097e4e\n  local work tgz root\n  work=$(mktemp -d \"${TMPDIR:-/tmp}/useful-jobs.XXXXXX\") || return 1\n  tgz=\"$work/useful-jobs-1.4.5.tar.gz\"\n  root=\"$work/useful-jobs-1.4.5\"\n  curl -fsSL --max-time 60 -o \"$tgz\" \"$origin/for-agents/useful-jobs/useful-jobs-1.4.5.tar.gz\" || { rm -rf \"$work\"; return 1; }\n  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); n=len(b); e=int(sys.argv[2]); (n==e) or sys.exit((sys.stderr.write(\"size %s != %s\\n\" % (n, e)) or 1)); h=hashlib.sha256(b).hexdigest(); (h==sys.argv[3]) or sys.exit((sys.stderr.write(\"sha256 %s != %s\\n\" % (h, sys.argv[3])) or 1))' \"$tgz\" \"$bytes\" \"$sha\" || { rm -rf \"$work\"; return 1; }\n  tar -xzf \"$tgz\" -C \"$work\" || { rm -rf \"$work\"; return 1; }\n  [ -f \"$root/bin/useful-jobs.mjs\" ] || { rm -rf \"$work\"; return 1; }\n  (cd \"$root\" && node bin/useful-jobs.mjs list >&2) || { rm -rf \"$work\"; return 1; }\n  printf '%s\\n' \"$root\"\n  return 0\n}\nkit=$(useful_jobs_acquire) || exit 1\nprintf '%s\\n' \"$kit\""
   ],
-  "coldStart": "useful_jobs_acquire() {\n  local origin=\"${USEFUL_JOBS_ORIGIN:-${1:-https://samedaydesk.com}}\"\n  local bytes=5252886\n  local sha=ff4934096e2ba2c95f52c9e364647b455009c36710723f754f3f63ea0dcb5aac\n  local work tgz root\n  work=$(mktemp -d \"${TMPDIR:-/tmp}/useful-jobs.XXXXXX\") || return 1\n  tgz=\"$work/useful-jobs-1.4.4.tar.gz\"\n  root=\"$work/useful-jobs-1.4.4\"\n  curl -fsSL --max-time 60 -o \"$tgz\" \"$origin/for-agents/useful-jobs/useful-jobs-1.4.4.tar.gz\" || { rm -rf \"$work\"; return 1; }\n  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); n=len(b); e=int(sys.argv[2]); (n==e) or sys.exit((sys.stderr.write(\"size %s != %s\\n\" % (n, e)) or 1)); h=hashlib.sha256(b).hexdigest(); (h==sys.argv[3]) or sys.exit((sys.stderr.write(\"sha256 %s != %s\\n\" % (h, sys.argv[3])) or 1))' \"$tgz\" \"$bytes\" \"$sha\" || { rm -rf \"$work\"; return 1; }\n  tar -xzf \"$tgz\" -C \"$work\" || { rm -rf \"$work\"; return 1; }\n  [ -f \"$root/bin/useful-jobs.mjs\" ] || { rm -rf \"$work\"; return 1; }\n  (cd \"$root\" && node bin/useful-jobs.mjs list >&2) || { rm -rf \"$work\"; return 1; }\n  printf '%s\\n' \"$root\"\n  return 0\n}\nkit=$(useful_jobs_acquire) || exit 1\nprintf '%s\\n' \"$kit\"",
+  "coldStart": "useful_jobs_acquire() {\n  local origin=\"${USEFUL_JOBS_ORIGIN:-${1:-https://samedaydesk.com}}\"\n  local bytes=5255012\n  local sha=ea14851bd3ed091993acf91bda8430d2d9f621a96f11e8d4aa2b4efda0097e4e\n  local work tgz root\n  work=$(mktemp -d \"${TMPDIR:-/tmp}/useful-jobs.XXXXXX\") || return 1\n  tgz=\"$work/useful-jobs-1.4.5.tar.gz\"\n  root=\"$work/useful-jobs-1.4.5\"\n  curl -fsSL --max-time 60 -o \"$tgz\" \"$origin/for-agents/useful-jobs/useful-jobs-1.4.5.tar.gz\" || { rm -rf \"$work\"; return 1; }\n  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); n=len(b); e=int(sys.argv[2]); (n==e) or sys.exit((sys.stderr.write(\"size %s != %s\\n\" % (n, e)) or 1)); h=hashlib.sha256(b).hexdigest(); (h==sys.argv[3]) or sys.exit((sys.stderr.write(\"sha256 %s != %s\\n\" % (h, sys.argv[3])) or 1))' \"$tgz\" \"$bytes\" \"$sha\" || { rm -rf \"$work\"; return 1; }\n  tar -xzf \"$tgz\" -C \"$work\" || { rm -rf \"$work\"; return 1; }\n  [ -f \"$root/bin/useful-jobs.mjs\" ] || { rm -rf \"$work\"; return 1; }\n  (cd \"$root\" && node bin/useful-jobs.mjs list >&2) || { rm -rf \"$work\"; return 1; }\n  printf '%s\\n' \"$root\"\n  return 0\n}\nkit=$(useful_jobs_acquire) || exit 1\nprintf '%s\\n' \"$kit\"",
   "acquireTools": [
     "bash",
     "curl",
@@ -135,8 +143,8 @@
     "sourceCoverageVerified": false
   },
   "sourceRepo": "epistemedeus/samedaydesk",
-  "sourceCommit": "e9528c3b1195f5ab5d388b73465c31bd422f5d3d",
-  "archiveFreeze": "e9528c3b1195f5ab5d388b73465c31bd422f5d3d",
+  "sourceCommit": "5078eb9d220deb66bc4d50095038efc2e5b95faa",
+  "archiveFreeze": "5078eb9d220deb66bc4d50095038efc2e5b95faa",
   "overlaySourceFiles": {
     "server/paid-useful-jobs/lib/continuity.mjs": "3029a7b6127f304b3e4a59cc62c312fbb81fd34550cd2b247f2cd037175ebb1a",
     "server/paid-useful-jobs/lib/contract.mjs": "a3dd954d237e13d0f4eeb403c454a95b9dd910cca0019e88d30ff3b5e9066d73",
@@ -193,7 +201,7 @@
     "experiments/wave5/m01/lib/contract.mjs": "e8e0f3341a97e2674ab267d0c1f1c920b3a97e3289bf7331d050cc93a9848d16",
     "experiments/wave5/m01/lib/d01-adapter.mjs": "d6a2fe32830b2490dda65c44216230724b80e9e06c3191e3eef0fda130537d30",
     "experiments/wave5/m01/lib/d01-root.mjs": "9cb83c3bf845bd8bae5fcc4b78f07759ae896f20c9a2c53d737f298b77876285",
-    "experiments/wave5/m01/lib/engine-root.mjs": "c0d683f5f3a51d5adadfefa3ace4d2619f98421596e0dec4f98187d356ccbd17",
+    "experiments/wave5/m01/lib/engine-root.mjs": "00903ac6233ab5404a33c35da5a8c2922b49f6affe0c5fed131df34734b90646",
     "experiments/wave5/m01/lib/invoke.mjs": "c555836cb8f3b49ea6809a3cccd6f2840b73623ea0c3470d6cd670f149f8a87f",
     "experiments/wave5/m01/lib/paths.mjs": "86db7a304aac9afc1332c16b5ce35968ccd4dce566a540ca622f9d789a496a80",
     "experiments/wave5/m01/lib/schema-match.mjs": "c32fdcfb6cc2c25b8752499347018883c42e187839e0d5afa69ef71ea8f02287",
@@ -205,6 +213,7 @@
     "tools/managed-useful-jobs-order/lib/errors.mjs": "4d97a8fa66cf7f2585db7e924ab1f077049a0f408d48e9ecd306d71f442a4230",
     "tools/managed-useful-jobs-order/lib/extract-guard.mjs": "9e18d184bbdec90f83767b65b1560a4b48abcd6dbab04bb8fc18b41fc12043a8",
     "tools/managed-useful-jobs-order/lib/listener.mjs": "01f187172d74edfb4381e6834b6885c6565832b0be4dedf041f04261f13db08c",
+    "tools/managed-useful-jobs-order/lib/pg-cluster.mjs": "adb548697c0c2c38f161e2e74533f86203f13ec559862de8313a622f87806477",
     "tools/managed-useful-jobs-order/lib/pid.mjs": "ecca908be0332e3299895fd14d4ee8ba8fb0f04aafe15c1a0599f7f5ed1b6e30",
     "tools/managed-useful-jobs-order/lib/pins.mjs": "da84c93d7b690a5cc228550619a6fe8a0fe5c37a39d829e7fab811f23cbd3905",
     "tools/managed-useful-jobs-order/lib/sample-guard.mjs": "da6062f0bf7bd6cae08fa8e2944b4f396a0c59dd2a14c0ee35ca3e390c1dfb72",
@@ -291,6 +300,8 @@
     "experiments/wave5/m01/catalog.json": "bccd02e0890c4e573f0af95cef651e884f67b3cc0ea079e1e1175ef37f1d6512",
     "tools/job-output-atomicity/index.mjs": "ddc5aebe3490e02828752f484ab57e663e807d9345f0767f4a548f1dbaa3f2b5",
     "tools/job-output-atomicity/PIN.json": "eba62db24a497d3888b26532bd1eb1a1985a82cd68d2e91ff08640644444c14a",
+    "tools/managed-useful-jobs-order/package.json": "838e2705d56e0e93ba0535327b40a3fc1571e093c1fbba9cb7c15632ad05a423",
+    "tools/managed-useful-jobs-order/package-lock.json": "70ccc56642b2bc1c5605b668221f3071fc678984ec870a6e689bf317fc88577f",
     "client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
     "client/public/for-agents/useful-jobs/useful-jobs-1.0.0.sha256.json": "f240b4172851f68d0bde84fd76600f13211be42056379716cf92d444f5a196e4"
   }

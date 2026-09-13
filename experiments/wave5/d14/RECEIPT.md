@@ -3,7 +3,7 @@
 **Task:** W5-D14 / CW70 cold HTTP consumer of CURRENT runtime
 **Repo:** `epistemedeus/samedaydesk`
 **Feature branch:** `codex/h7-delivery-20260912`
-**Runtime pin:** `c6f1464222169f2d32247c978dc5007d82a2aa03` (useful-jobs **1.4.4 unpublished**; 1.4.3 `a18ab918` remains immutable)
+**Runtime pin:** `c6f1464222169f2d32247c978dc5007d82a2aa03` (useful-jobs **1.4.5 unpublished**; 1.4.4 `ff493409` and 1.4.3 `a18ab918` remain immutable)
 **Contract:** `samedaydesk.paid-useful-jobs.execution.v1`
 **Owned paths:** `experiments/wave5/d14/` `experiments/codex-window/cw70-cold-http-consumer-current/`
 

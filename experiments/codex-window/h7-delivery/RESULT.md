@@ -13,16 +13,18 @@ Native Grok Heavy (`grok-4.6`, effort xhigh) on Cursor Cloud VM. Hostname `curso
 | Archive pin (immutable 1.4.3) | `8a811bbadba7edc6c926b319b0839cd2f01e5896` |
 | Overlay source packed into 1.4.4 | `e9528c3b1195f5ab5d388b73465c31bd422f5d3d` |
 | 1.4.4 package commit | `74a3c11f366c4e02148f5f51913152bb4aad9b3a` |
+| Overlay source packed into 1.4.5 | `5078eb9d220deb66bc4d50095038efc2e5b95faa` |
 | Pin fix (vendor-temp) | `e122c26657977ce3a2d41642095e999db1125b53` |
 | Previous pin (ancestor, **not** release-ready) | `6007fcfa27074f9a594248e47296f1afa4f8385d` |
 | Unpublished 1.4.3 archive | **2615491** bytes, sha256 `a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09` — **does not contain wrapper.mjs**; git blob `f85c326…` **byte-identical**; **not labeled fixed** |
-| Unpublished 1.4.4 candidate | **5252886** bytes, sha256 `ff4934096e2ba2c95f52c9e364647b455009c36710723f754f3f63ea0dcb5aac` — **does** include SDS wrapper publication rollback + interrupt overlay |
+| Unpublished 1.4.4 candidate | **5252886** bytes, sha256 `ff4934096e2ba2c95f52c9e364647b455009c36710723f754f3f63ea0dcb5aac` — wrapper/interrupt overlay; **frozen**; M01 still git-fetches; `pg` not declared |
+| Unpublished 1.4.5 candidate | **5255012** bytes, sha256 `ea14851bd3ed091993acf91bda8430d2d9f621a96f11e8d4aa2b4efda0097e4e` — packaged `engines/<id>` resolution + declared `pg` 8.23.0 |
 | Pin branch | `codex/useful-jobs-core-integration-20260912` (consumers previously stacked on vendor-temp `8a811bba`) |
 | Based on | `30345f69f16aca93bb95511ee4da62975c98cc04` |
 | Start HEAD (import only) | `fe8057f395bc665b629e12dbff0db0c264f0eb46` |
 | Rebind merge | `559fa3b` (`8a811bba` into consumer branch; no donor-history rewrite) |
 | Execution contract | `samedaydesk.paid-useful-jobs.execution.v1` |
-| Public catalog | `client/public/for-agents/useful-jobs/catalog.json` version **1.4.4** |
+| Public catalog | `client/public/for-agents/useful-jobs/catalog.json` version **1.4.5** |
 | Legacy wrapper extract | useful-jobs **1.0.0** archive `6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51` / 2,522,418 bytes |
 | M01 / lockfile-pin-delta | in-tree source-identity pin (not forced equal to the 1.0.0 archive) |
 | Node | v22.22.2 |
@@ -34,7 +36,39 @@ Native Grok Heavy (`grok-4.6`, effort xhigh) on Cursor Cloud VM. Hostname `curso
 
 Envelope `executionId` is **top-level**. `receipt.v1` may omit nested `executionId`. `fileEntry()` rows include absolute `path` and omit `kind`. Named-byte projection is `name` / `kind` (default file) / `bytes` / `sha256`. HTTP `POST /execute` + `GET /results/:id` has **no artifact download route**. HTTP `path` is not acquisition authority. When `Authorization` is present on execute, GET `/results/:id` with a different principal is **403 `principal-mismatch`**. Unauthenticated existing clients are unchanged.
 
-## 1.4.4 candidate package (this turn)
+## 1.4.5 candidate package (this turn)
+
+Do **not** overwrite unpublished 1.4.4 `ff493409` or 1.4.3 `a18ab918`. Neither is labeled fixed. 1.4.3 still has `lib/common.mjs` and **no** `wrapper.mjs`.
+
+Extracted 1.4.4 reproduced the remaining cold-package defects on a clean tree:
+
+- Advertised M01 `lockfile-pin-delta` with journey fixtures: `ok:false` `engine-crash` `git fetch of engine pin 5f0f189f… failed: fatal: not a git repository` while `engines/lockfile-pin-delta/bin/lockfile-delta.mjs` was present and `tools/lockfile-pin-delta` was absent (~60s).
+- Extracted `store-postgres.mjs` `import 'pg'`: `ERR_MODULE_NOT_FOUND` without a hidden host `node_modules` symlink.
+
+Repair is general layout/entry resolution in `experiments/wave5/m01/lib/engine-root.mjs` (`packagedEngineRoot` → `engines/<id>` with the same `cli.relativeBin` as in-tree `tools/<id>`; git fetch is not a packaged-runtime path). Postgres is declared as exact `pg` 8.23.0 in `tools/managed-useful-jobs-order/package.json` + lockfile; cluster helper is package-owned `lib/pg-cluster.mjs`. **No `node_modules` in the archive.** Cold install: `cd tools/managed-useful-jobs-order && npm ci --omit=dev --no-fund --no-audit`.
+
+1.4.5 was packed with parameterized `build-useful-jobs-overlay.mjs` via `build-useful-jobs-v145.mjs` from frozen 1.4.4. Compact receipt: `evidence/pr145-145-candidate.json`.
+
+| Pack | Pass | Fail | Notes |
+| --- | --- | --- | --- |
+| `packaged-145-execution.test.mjs` (extracted 1.4.5) | 9 | 0 | 1.4.3+1.4.4 frozen; no node_modules in tarball; M01 lockfile + json-schema + PR51 vendor-budget-impact; rollback; interrupt journal=1; cold acquire+lockfile; HTTP 403; **npm ci pg 8.23.0** then PG **55595**; d14 portable unsupported then local acquire |
+| `packaged-144-execution.test.mjs` (extracted 1.4.4) | 9 | 0 | frozen bytes; wrapper/interrupt/HTTP/portable still hold; **known-bad** M01 git-fetch; **known-bad** missing `pg` without host symlink |
+| `vendor-temp-lifecycle.test.mjs` | 9 | 0 | PR143 leak correction |
+| `publication-rollback.test.mjs` in-tree | 5 | 0 | positive control |
+| `interrupt-before-complete.test.mjs` in-tree | 1 | 0 | positive control |
+| `invoke-lockfile.test.mjs` in-tree | 7 | 0 | checkout still uses `tools/<id>` |
+| d14 `http-consumer.test.mjs` | 12 | 0 | consumer source pin `c6f1464` / catalog **1.4.5** |
+
+**Ready (candidate package, not production):** extracted 1.4.5 advertised M01 and PR51 jobs run from a clean extract; publication rollback and interrupt hold; cold install without host `node_modules`; real PG 55595 after declared `pg` install; HTTP principal and honest portable acquisition. 1.4.4 and 1.4.3 left byte-identical.
+
+**Missing / not this package:**
+- No product deploy, main merge, sale, or payment-authority change. Cash $0.
+- HTTP still has no artifact download route; portable remains `unsupported-portable-acquisition` with explicit `--local-artifacts` / `--acquire-to`.
+- Process-local HTTP cache; restart does not recover IDs.
+- Ledger CLI `--operation-id` still stamps H7 unbound `settlementJoin` (no `operationIdFound`); pre-existing honesty.
+- PR145 remains a stacked draft. Do not default-merge.
+
+## 1.4.4 candidate package (prior turn)
 
 Do **not** label unpublished 1.4.3 `a18ab918` as fixed. That tarball is still **2615491** bytes, git blob `f85c326…`, listing has `lib/common.mjs` and **no** `wrapper.mjs`.
 
@@ -52,16 +86,7 @@ Gates were run against **extracted candidate bytes** (not source-only) plus H7 c
 | d14 `http-consumer.test.mjs` | 12 | 0 | consumer source pin `c6f1464` / catalog **1.4.4** |
 | H7 cold journey | 1 | 0 | consumer source; catalog **1.4.4**; portable unsupported + local acquire |
 
-**Ready (candidate package, not production):** extracted 1.4.4 includes and executes publication rollback + interrupt; cold install, real PG 55595, HTTP principal, and portable gates passed against candidate bytes and d14 consumer source; 1.4.3 left byte-identical.
-
-**Missing / not this package:**
-- No product deploy, main merge, sale, or payment-authority change. Cash $0.
-- HTTP still has no artifact download route; portable remains `unsupported-portable-acquisition` with explicit `--local-artifacts` / `--acquire-to`.
-- Process-local HTTP cache; restart does not recover IDs.
-- Extracted `store-postgres.mjs` `import 'pg'` needs a host driver (not packed).
-- Extracted SDS wrapper M01 jobs still resolve `tools/<id>` (kit CLI uses `engines/<id>`).
-- Ledger CLI `--operation-id` still stamps H7 unbound `settlementJoin` (no `operationIdFound`); pre-existing honesty, not a 1.4.4 extract miss.
-- PR145 remains a stacked draft. Do not default-merge.
+**Ready then (not production):** extracted 1.4.4 wrapper/interrupt/HTTP/portable. M01 layout and declared `pg` were still missing on a clean tree (fixed in 1.4.5).
 
 ## PR145 rebind onto integration `c6f1464` (prior turn)
 
