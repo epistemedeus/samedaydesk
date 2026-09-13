@@ -1,0 +1,11 @@
+Copied from read-only F08 pin, not from SDS main (F08 is absent on main).
+
+repo: epistemedeus/samedaydesk
+ref: fable/f08-paid-wrappers
+sha: bae3e7cd5034b21019fb272a99d88db964b831ee
+paths:
+  server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/before.json
+  server/paid-useful-jobs/fixtures/caller/vendor-budget-impact/after.json
+
+Caller-supplied pricing rows. Not a SAMPLE kit fixture and not a live quote.
+F08 wrapper kernel was not copied into this module.
