@@ -1,0 +1,19 @@
+{
+  "expectedStatus": 402,
+  "httpStatus": 402,
+  "paid": false,
+  "sold": false,
+  "success": false,
+  "note": "Copied from fixtures/buyer-runtimes/catalog.json contract plus agent402 contract state. HTTP 402 is unpaid, not delivery.",
+  "contract": {
+    "x402Version": 2,
+    "scheme": "exact",
+    "network": "eip155:8453",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "amount": "5000",
+    "maxAmountRequired": "5000",
+    "priceUsd": "0.005",
+    "decimals": 6
+  }
+}
