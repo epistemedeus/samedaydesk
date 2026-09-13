@@ -1,0 +1,46 @@
+{
+  "schema": "h21.repaired-replay.v1",
+  "repairSourceCommit": "27f0730604adf236e0f3ad818a30b5f43be6e656",
+  "archive": "useful-jobs-1.4.7.tar.gz",
+  "bytes": 5255824,
+  "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+  "pgPort": 42251,
+  "heapMiB": 768,
+  "concurrency": 1,
+  "lock": "/tmp/h21/runtime-tmp/test.lock",
+  "packs": [
+    {
+      "pack": "packaged-147",
+      "exitCode": 0,
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "vendor-temp-extracted-147",
+      "exitCode": 0,
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "real-interrupt-147",
+      "exitCode": 0,
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  ],
+  "checkoutHeadDuringReplay": "27f0730604adf236e0f3ad818a30b5f43be6e656",
+  "harnessSource": "experiments/codex-window/h21-package-release-gate/replay-repaired.py",
+  "harnessNote": "Harness and adapted-test recipe are recorded in the final gate commit; runtime source is repairSourceCommit."
+}

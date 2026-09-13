@@ -1,0 +1,71 @@
+TAP version 13
+# Subtest: packaged 1.4.5 extracted bytes: advertised M01/PR51, rollback, interrupt, cold, PG, HTTP, portable
+    # Subtest: leaves 1.4.3 a18ab918 and 1.4.4 ff493409 byte-identical
+    ok 1 - leaves 1.4.3 a18ab918 and 1.4.4 ff493409 byte-identical
+      ---
+      duration_ms: 52.905199
+      type: 'test'
+      ...
+    # Subtest: 1.4.5 archive matches pin, has wrapper/interrupt/engines, and contains no node_modules
+    ok 2 - 1.4.5 archive matches pin, has wrapper/interrupt/engines, and contains no node_modules
+      ---
+      duration_ms: 45.844243
+      type: 'test'
+      ...
+    # Subtest: extracted advertised M01 lockfile-pin-delta and json-schema-webhook-drift plus PR51 vendor-budget-impact
+    ok 3 - extracted advertised M01 lockfile-pin-delta and json-schema-webhook-drift plus PR51 vendor-budget-impact
+      ---
+      duration_ms: 383.86342
+      type: 'test'
+      ...
+    # Subtest: extracted publishCompleteOutputs rolls back caller artifacts
+    ok 4 - extracted publishCompleteOutputs rolls back caller artifacts
+      ---
+      duration_ms: 469.515078
+      type: 'test'
+      ...
+    # Subtest: extracted create-order interrupt path does not rerun the engine
+    ok 5 - extracted create-order interrupt path does not rerun the engine
+      ---
+      duration_ms: 348.741291
+      type: 'test'
+      ...
+    # Subtest: cold install of 1.4.5 extract runs advertised lockfile-pin-delta without host node_modules
+    ok 6 - cold install of 1.4.5 extract runs advertised lockfile-pin-delta without host node_modules
+      ---
+      duration_ms: 328.922703
+      type: 'test'
+      ...
+    # Subtest: extracted HTTP principal binding returns 403 principal-mismatch
+    ok 7 - extracted HTTP principal binding returns 403 principal-mismatch
+      ---
+      duration_ms: 248.285349
+      type: 'test'
+      ...
+    # Subtest: cold-installed pg 8.23.0 then extracted Postgres store on 37139
+    ok 8 - cold-installed pg 8.23.0 then extracted Postgres store on 37139
+      ---
+      duration_ms: 1560.339384
+      type: 'test'
+      ...
+    # Subtest: portable consumer source against extracted serve-execution: unsupported then local acquire
+    ok 9 - portable consumer source against extracted serve-execution: unsupported then local acquire
+      ---
+      duration_ms: 597.157695
+      type: 'test'
+      ...
+    1..9
+ok 1 - packaged 1.4.5 extracted bytes: advertised M01/PR51, rollback, interrupt, cold, PG, HTTP, portable
+  ---
+  duration_ms: 4088.236123
+  type: 'suite'
+  ...
+1..1
+# tests 9
+# suites 1
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4235.357127

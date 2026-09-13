@@ -1,0 +1,84 @@
+{
+  "schema": "h21.replay.v1",
+  "sourceCommit": "88ecb31cbf22a1472ae3136d57a118d689ccb435",
+  "pgPort": null,
+  "socketPreflightError": "[Errno 1] Operation not permitted",
+  "incomplete": [
+    "HTTP cold acquire/principal/portable",
+    "real Postgres",
+    "HTTP consumer pack"
+  ],
+  "tmpdir": "/tmp/h21/runtime-tmp",
+  "lock": "/tmp/h21/runtime-tmp/test.lock",
+  "heapMiB": 768,
+  "concurrency": 1,
+  "adaptation": "Temporary 1.4.5 test copy: repository root + unused PG port only; assertions otherwise unchanged.",
+  "packs": [
+    {
+      "pack": "packaged-145",
+      "source": "packaged-145-execution.test.mjs",
+      "exitCode": 1,
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "packaged-144-negative",
+      "source": "server/paid-useful-jobs/tests/packaged-144-execution.test.mjs",
+      "exitCode": 1,
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "vendor-temp-extracted-145",
+      "source": "server/paid-useful-jobs/tests/vendor-temp-lifecycle.test.mjs",
+      "exitCode": 1,
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "publication-source",
+      "source": "server/paid-useful-jobs/test/publication-rollback.test.mjs",
+      "exitCode": 1,
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "interrupt-source",
+      "source": "tools/managed-useful-jobs-order/test/interrupt-before-complete.test.mjs",
+      "exitCode": 0,
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "lockfile-source",
+      "source": "experiments/wave5/m01/test/invoke-lockfile.test.mjs",
+      "exitCode": 1,
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "schema": "h21.release-gate.v1",
+  "decision": "approve-1.4.7-narrow-offline",
+  "repairSourceCommit": "27f0730604adf236e0f3ad818a30b5f43be6e656",
+  "acceptance": {
+    "pass": 87,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "hostedDesignTodo": 10,
+  "rejectedArchives": {
+    "1.4.5": {
+      "pass": 11,
+      "fail": 4
+    },
+    "1.4.6": {
+      "pass": 14,
+      "fail": 1
+    }
+  },
+  "packs": [
+    {
+      "pack": "builder-and-skeleton",
+      "tests": 11,
+      "pass": 1,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 10
+    },
+    {
+      "pack": "http-consumer-source",
+      "tests": 12,
+      "pass": 12,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "interrupt-source",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "lockfile-source",
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "packaged-144-negative",
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "packaged-145",
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "packaged-147",
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "public-145-resume",
+      "tests": 15,
+      "pass": 11,
+      "fail": 4,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "public-146-resume",
+      "tests": 15,
+      "pass": 14,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "public-147",
+      "tests": 15,
+      "pass": 15,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "publication-source",
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "real-interrupt-147",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "vendor-temp-extracted-145",
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "pack": "vendor-temp-extracted-147",
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  ],
+  "purchaseAuthority": false,
+  "cashUsd": 0,
+  "publicCatalogPromoted": false,
+  "mainMerged": false,
+  "deployed": false
+}

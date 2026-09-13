@@ -1,0 +1,116 @@
+{
+  "schema": "h21.remote-environment.v1",
+  "observedAtUtc": "2026-09-13",
+  "cwd": "/tmp/h21/wt",
+  "runtime": {
+    "kind": "native Codex CLI",
+    "version": "0.154.0",
+    "model": "gpt-6-astra",
+    "reasoningEffort": "xhigh",
+    "provider": "openai",
+    "jobs": 1,
+    "childAgents": 0,
+    "auth": "ChatGPT subscription; login status verified",
+    "authStoreLocation": "$HOME/.codex",
+    "apiKeyUsed": false,
+    "node": "v22.22.2",
+    "npm": "10.9.7",
+    "postgres": "16",
+    "cliPath": "/tmp/codex-canary-d/prefix/node_modules/@openai/codex/bin/codex.js"
+  },
+  "perRunConfig": {
+    "sandbox": "workspace-write",
+    "approval_policy": "on-request",
+    "approvals_reviewer": "auto_review",
+    "sandbox_workspace_write.network_access": true,
+    "globalConfigEdited": false,
+    "managedDeniesPreserved": true,
+    "protectedGitWrites": "Use on-request escalation with auto-review; ordinary index writes remain read-only."
+  },
+  "session": {
+    "id": "01a09a0f-1261-74f0-b1b0-0e7fb0c2a86b",
+    "resumeOnThisVm": "cd /tmp/h21/wt && node /tmp/codex-canary-d/prefix/node_modules/@openai/codex/bin/codex.js -a on-request -m gpt-6-astra -s workspace-write -c 'model_reasoning_effort=\"xhigh\"' -c 'approval_policy=\"on-request\"' -c 'approvals_reviewer=\"auto_review\"' -c 'sandbox_workspace_write.network_access=true' exec --sandbox workspace-write --cd /tmp/h21/wt --json --color never --ignore-user-config -o /tmp/h21/heavy-logs/h21-resume.FINAL-MESSAGE.txt resume 01a09a0f-1261-74f0-b1b0-0e7fb0c2a86b -",
+    "collect": {
+      "controllerFinal": "/tmp/h21/heavy-logs/FINAL-MESSAGE.txt",
+      "nativeResumeFinal": "/tmp/h21/heavy-logs/h21-resume.FINAL-MESSAGE.txt",
+      "events": "/tmp/h21/heavy-logs/h21-resume.stdout.jsonl",
+      "stderr": "/tmp/h21/heavy-logs/h21-resume.stderr.log",
+      "configReadback": "/tmp/h21/heavy-logs/h21-resume.config-readback.txt",
+      "finalExport": "/tmp/h21/heavy-logs/final-export.json",
+      "sessionHistory": "$HOME/.codex/sessions/2026/09/13/rollout-2026-09-13T09-17-54-01a09a0f-1261-74f0-b1b0-0e7fb0c2a86b.jsonl"
+    },
+    "migrationNote": "Resume takes the next prompt on stdin and needs existing local session history. A fresh VM restores Git and reauthenticates, then continues from RELEASE-DECISION.md; Git does not transfer a Codex session. Do not copy credential homes or publish raw controller/session logs."
+  },
+  "git": {
+    "repository": "https://github.com/epistemedeus/samedaydesk.git",
+    "branch": "codex/h21-package-release-gate-20260913",
+    "base": "88ecb31cbf22a1472ae3136d57a118d689ccb435",
+    "repairSourceCommit": "27f0730604adf236e0f3ad818a30b5f43be6e656",
+    "closeoutIdentity": "The commit containing this record. Exact final local/remote HEAD equality is collected in controllerFinal and finalExport; avoid a self-referential tracked commit stamp.",
+    "restore": [
+      "git clone --branch codex/h21-package-release-gate-20260913 --single-branch https://github.com/epistemedeus/samedaydesk.git /tmp/h21/wt",
+      "git -C /tmp/h21/wt rev-parse HEAD",
+      "git -C /tmp/h21/wt ls-remote origin refs/heads/codex/h21-package-release-gate-20260913"
+    ],
+    "draftPrLookup": "gh pr list --repo epistemedeus/samedaydesk --head codex/h21-package-release-gate-20260913 --state all --json number,url,isDraft,baseRefName",
+    "reviewBase": "codex/h7-delivery-20260912"
+  },
+  "reauthOnFreshVm": [
+    "Reauthenticate GitHub with the VM-approved Git credential flow before cloning the private repository.",
+    "Install trusted Codex CLI (observed 0.154.0), Node >=22 and PostgreSQL 16; select gpt-6-astra with xhigh effort.",
+    "codex login --device-auth",
+    "codex login status",
+    "Use ChatGPT subscription authentication. Do not export access tokens, use an OpenAI API key, or copy credential homes."
+  ],
+  "replay": {
+    "tmpdir": "/tmp/h21/runtime-tmp",
+    "flock": "/tmp/h21/runtime-tmp/test.lock",
+    "nodeOptions": "--max-old-space-size=768",
+    "testConcurrency": 1,
+    "nodeTestIsolation": "standard child-process isolation",
+    "pgPort": "Choose an unused port dynamically; replay used 37139 (1.4.5) and 42251 (1.4.7). Never assume 55595 is free.",
+    "commands": [
+      "python3 experiments/codex-window/h21-package-release-gate/replay.py",
+      "python3 experiments/codex-window/h21-package-release-gate/replay-repaired.py",
+      "python3 experiments/codex-window/h21-package-release-gate/verify-binding.py",
+      "TMPDIR=/tmp/h21/runtime-tmp NODE_OPTIONS=--max-old-space-size=768 H21_CANDIDATE=1.4.7 flock /tmp/h21/runtime-tmp/test.lock node --test --test-reporter=tap --test-concurrency=1 experiments/codex-window/h21-package-release-gate/test/public-binding.test.mjs"
+    ],
+    "acceptance": {
+      "pass": 87,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "hostedTodoExcluded": 10
+    },
+    "negativePublicControls": {
+      "1.4.5": {
+        "pass": 11,
+        "fail": 4
+      },
+      "1.4.6": {
+        "pass": 14,
+        "fail": 1
+      }
+    },
+    "evidence": "evidence/gate-summary.json"
+  },
+  "environmentProof": {
+    "ownedLocalhostHttp": {
+      "status": 200,
+      "port": 36335,
+      "tornDown": true
+    },
+    "protectedGitMetadataWrite": "approved by auto-review; source commit created",
+    "featureBranchExport": "approved preflight push and remote readback succeeded; final readback recorded by closeout",
+    "historicalRefusals": "evidence/launcher-blocked/ (previous approval-never/network-disabled launch); initial resumed normal index write refusal in evidence/resume-preflight.json",
+    "remainingEnvironmentBlockers": []
+  },
+  "boundaries": {
+    "cashUsd": 0,
+    "purchaseAuthority": false,
+    "mainMerge": false,
+    "deploy": false,
+    "livePayments": false,
+    "protectedTreesEdited": false
+  }
+}

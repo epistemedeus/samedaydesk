@@ -1,0 +1,182 @@
+TAP version 13
+# Subtest: lockfile journey writes pin-delta matching catalog schema
+not ok 1 - lockfile journey writes pin-delta matching catalog schema
+  ---
+  duration_ms: 48.096657
+  type: 'test'
+  location: '/tmp/h21/wt/experiments/wave5/m01/test/invoke-lockfile.test.mjs:10:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'transport-failure'
+    - 'analysis'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'analysis'
+  actual: 'transport-failure'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/h21/wt/experiments/wave5/m01/test/invoke-lockfile.test.mjs:16:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: identical lockfiles are informational no-change, not a transport failure
+not ok 2 - identical lockfiles are informational no-change, not a transport failure
+  ---
+  duration_ms: 44.955582
+  type: 'test'
+  location: '/tmp/h21/wt/experiments/wave5/m01/test/invoke-lockfile.test.mjs:28:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'transport-failure'
+    - 'analysis'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'analysis'
+  actual: 'transport-failure'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/h21/wt/experiments/wave5/m01/test/invoke-lockfile.test.mjs:31:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: HTML lockfile is a valid refusal, not wrapper success
+not ok 3 - HTML lockfile is a valid refusal, not wrapper success
+  ---
+  duration_ms: 37.480213
+  type: 'test'
+  location: '/tmp/h21/wt/experiments/wave5/m01/test/invoke-lockfile.test.mjs:37:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'transport-failure'
+    - 'refused'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'refused'
+  actual: 'transport-failure'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/h21/wt/experiments/wave5/m01/test/invoke-lockfile.test.mjs:42:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: integrity-only pin change is actionable via pin fields
+not ok 4 - integrity-only pin change is actionable via pin fields
+  ---
+  duration_ms: 45.358495
+  type: 'test'
+  location: '/tmp/h21/wt/experiments/wave5/m01/test/invoke-lockfile.test.mjs:49:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'transport-failure'
+    - 'analysis'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'analysis'
+  actual: 'transport-failure'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/h21/wt/experiments/wave5/m01/test/invoke-lockfile.test.mjs:55:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: resolved-only git pin change is actionable
+not ok 5 - resolved-only git pin change is actionable
+  ---
+  duration_ms: 46.106971
+  type: 'test'
+  location: '/tmp/h21/wt/experiments/wave5/m01/test/invoke-lockfile.test.mjs:64:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'transport-failure'
+    - 'analysis'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'analysis'
+  actual: 'transport-failure'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/h21/wt/experiments/wave5/m01/test/invoke-lockfile.test.mjs:69:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: constant hasher cannot hide an integrity-only pin change
+ok 6 - constant hasher cannot hide an integrity-only pin change
+  ---
+  duration_ms: 9.518152
+  type: 'test'
+  ...
+# Subtest: catalog matcher fails when a promised output name is absent
+not ok 7 - catalog matcher fails when a promised output name is absent
+  ---
+  duration_ms: 47.40972
+  type: 'test'
+  location: '/tmp/h21/wt/experiments/wave5/m01/test/invoke-lockfile.test.mjs:87:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'transport-failure'
+    - 'incomplete-delivery'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'incomplete-delivery'
+  actual: 'transport-failure'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/h21/wt/experiments/wave5/m01/test/invoke-lockfile.test.mjs:101:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 1
+# fail 6
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 301.015919

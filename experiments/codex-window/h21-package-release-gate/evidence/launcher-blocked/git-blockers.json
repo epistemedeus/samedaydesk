@@ -1,0 +1,25 @@
+[
+  {
+    "command": [
+      "git",
+      "add",
+      "--",
+      "experiments/codex-window/h21-package-release-gate",
+      "client/public/discovery/useful-jobs.json",
+      "client/src/data/usefulJobsKit.json",
+      "server/paid-useful-jobs/scripts/build-useful-jobs-overlay.mjs"
+    ],
+    "exitCode": 128,
+    "output": "fatal: Unable to create '/workspace/.git/worktrees/wt5/index.lock': Read-only file system\n"
+  },
+  {
+    "command": [
+      "git",
+      "ls-remote",
+      "origin",
+      "refs/heads/codex/h21-package-release-gate-20260913"
+    ],
+    "exitCode": 128,
+    "output": "fatal: unable to access 'https://github.com/epistemedeus/samedaydesk/': Could not resolve host: github.com\n"
+  }
+]

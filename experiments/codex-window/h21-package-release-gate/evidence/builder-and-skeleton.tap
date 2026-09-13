@@ -1,0 +1,76 @@
+TAP version 13
+# Subtest: overlay builder refuses an already existing 1.4.5 before any write
+ok 1 - overlay builder refuses an already existing 1.4.5 before any write
+  ---
+  duration_ms: 61.077235
+  type: 'test'
+  ...
+# Subtest: GET repeated, missed, expired, pending, and restarted IDs leaves execution/payment/outbox attempt counters unchanged
+ok 2 - GET repeated, missed, expired, pending, and restarted IDs leaves execution/payment/outbox attempt counters unchanged # TODO
+  ---
+  duration_ms: 0.589416
+  type: 'test'
+  ...
+# Subtest: authenticated A may retrieve only A + executionId + frozen requestHash; B/anonymous learn no result or artifact metadata
+ok 3 - authenticated A may retrieve only A + executionId + frozen requestHash; B/anonymous learn no result or artifact metadata # TODO
+  ---
+  duration_ms: 0.121598
+  type: 'test'
+  ...
+# Subtest: same ID with changed frozen input, terms, principal, receipt or output tuple refuses, including after restart
+ok 4 - same ID with changed frozen input, terms, principal, receipt or output tuple refuses, including after restart # TODO
+  ---
+  duration_ms: 0.081564
+  type: 'test'
+  ...
+# Subtest: commit-before-response interruption recovers the same result; precommit ambiguity never starts another engine
+ok 5 - commit-before-response interruption recovers the same result; precommit ambiguity never starts another engine # TODO
+  ---
+  duration_ms: 0.648846
+  type: 'test'
+  ...
+# Subtest: expiry is persisted, checked on every read, survives restart, and keeps an admission tombstone after byte deletion
+ok 6 - expiry is persisted, checked on every read, survives restart, and keeps an admission tombstone after byte deletion # TODO
+  ---
+  duration_ms: 0.108321
+  type: 'test'
+  ...
+# Subtest: only the promised named files, byte lengths and hashes are served; substituted or truncated files refuse before headers
+ok 7 - only the promised named files, byte lengths and hashes are served; substituted or truncated files refuse before headers # TODO
+  ---
+  duration_ms: 0.068937
+  type: 'test'
+  ...
+# Subtest: traversal, encoding aliases, NUL, slash/backslash, absolute paths, symlinks, hardlinks, devices and path-swap races refuse
+ok 8 - traversal, encoding aliases, NUL, slash/backslash, absolute paths, symlinks, hardlinks, devices and path-swap races refuse # TODO
+  ---
+  duration_ms: 0.057076
+  type: 'test'
+  ...
+# Subtest: per-file/total/count/time/concurrency bounds hold; Range and redirects refuse; abort releases handles and never executes
+ok 9 - per-file/total/count/time/concurrency bounds hold; Range and redirects refuse; abort releases handles and never executes # TODO
+  ---
+  duration_ms: 0.05724
+  type: 'test'
+  ...
+# Subtest: D14 downloads from a second directory with no shared host path and verifies principal/request/receipt/output binding
+ok 10 - D14 downloads from a second directory with no shared host path and verifies principal/request/receipt/output binding # TODO
+  ---
+  duration_ms: 0.173405
+  type: 'test'
+  ...
+# Subtest: existing mailbox/outbox identity and acknowledgment semantics remain; download and callback ack never imply a sale or buyer acceptance
+ok 11 - existing mailbox/outbox identity and acknowledgment semantics remain; download and callback ack never imply a sale or buyer acceptance # TODO
+  ---
+  duration_ms: 0.242466
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 10
+# duration_ms 179.932817

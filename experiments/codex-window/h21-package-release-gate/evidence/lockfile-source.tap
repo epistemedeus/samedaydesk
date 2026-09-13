@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: lockfile journey writes pin-delta matching catalog schema
+ok 1 - lockfile journey writes pin-delta matching catalog schema
+  ---
+  duration_ms: 46.618304
+  type: 'test'
+  ...
+# Subtest: identical lockfiles are informational no-change, not a transport failure
+ok 2 - identical lockfiles are informational no-change, not a transport failure
+  ---
+  duration_ms: 43.451282
+  type: 'test'
+  ...
+# Subtest: HTML lockfile is a valid refusal, not wrapper success
+ok 3 - HTML lockfile is a valid refusal, not wrapper success
+  ---
+  duration_ms: 37.730286
+  type: 'test'
+  ...
+# Subtest: integrity-only pin change is actionable via pin fields
+ok 4 - integrity-only pin change is actionable via pin fields
+  ---
+  duration_ms: 44.940052
+  type: 'test'
+  ...
+# Subtest: resolved-only git pin change is actionable
+ok 5 - resolved-only git pin change is actionable
+  ---
+  duration_ms: 43.107436
+  type: 'test'
+  ...
+# Subtest: constant hasher cannot hide an integrity-only pin change
+ok 6 - constant hasher cannot hide an integrity-only pin change
+  ---
+  duration_ms: 9.331021
+  type: 'test'
+  ...
+# Subtest: catalog matcher fails when a promised output name is absent
+ok 7 - catalog matcher fails when a promised output name is absent
+  ---
+  duration_ms: 43.086948
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 328.906738

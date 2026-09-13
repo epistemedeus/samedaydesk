@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: /tmp/h21/wt/experiments/wave5/m01/test/invoke-lockfile.test.mjs
+not ok 1 - /tmp/h21/wt/experiments/wave5/m01/test/invoke-lockfile.test.mjs
+  ---
+  duration_ms: 314.560741
+  type: 'test'
+  location: '/tmp/h21/wt/experiments/wave5/m01/test/invoke-lockfile.test.mjs:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 321.543294

@@ -1,0 +1,12 @@
+{
+  "schema": "h21.private-acquisition.v1",
+  "version": "1.4.7",
+  "publicClaim": false,
+  "bytes": 5255824,
+  "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+  "purchaseAuthority": false,
+  "archive": {
+    "path": "/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz"
+  },
+  "coldStart": "useful_jobs_acquire() {\n  local origin=\"${USEFUL_JOBS_ORIGIN:-${1:-https://samedaydesk.com}}\"\n  local bytes=5255824\n  local sha=e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec\n  local work tgz root\n  work=$(mktemp -d \"${TMPDIR:-/tmp}/useful-jobs.XXXXXX\") || return 1\n  tgz=\"$work/useful-jobs-1.4.7.tar.gz\"\n  root=\"$work/useful-jobs-1.4.7\"\n  curl -fsSL --max-time 60 -o \"$tgz\" \"$origin/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz\" || { rm -rf \"$work\"; return 1; }\n  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); n=len(b); e=int(sys.argv[2]); (n==e) or sys.exit((sys.stderr.write(\"size %s != %s\\n\" % (n, e)) or 1)); h=hashlib.sha256(b).hexdigest(); (h==sys.argv[3]) or sys.exit((sys.stderr.write(\"sha256 %s != %s\\n\" % (h, sys.argv[3])) or 1))' \"$tgz\" \"$bytes\" \"$sha\" || { rm -rf \"$work\"; return 1; }\n  tar -xzf \"$tgz\" -C \"$work\" || { rm -rf \"$work\"; return 1; }\n  [ -f \"$root/bin/useful-jobs.mjs\" ] || { rm -rf \"$work\"; return 1; }\n  (cd \"$root\" && node bin/useful-jobs.mjs list >&2) || { rm -rf \"$work\"; return 1; }\n  printf '%s\\n' \"$root\"\n  return 0\n}\nkit=$(useful_jobs_acquire) || exit 1\nprintf '%s\\n' \"$kit\""
+}

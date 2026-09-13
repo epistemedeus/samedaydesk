@@ -1,0 +1,103 @@
+TAP version 13
+# Subtest: W5-D14 unit client (no engine, no git fetch)
+    # Subtest: in-tree serve-execution.mjs exists; git-fetch fallback is gone
+    ok 1 - in-tree serve-execution.mjs exists; git-fetch fallback is gone
+      ---
+      duration_ms: 0.778674
+      type: 'test'
+      ...
+    # Subtest: consumer refuses non-JSON bytes instead of sending a shared-disk path
+    ok 2 - consumer refuses non-JSON bytes instead of sending a shared-disk path
+      ---
+      duration_ms: 45.096372
+      type: 'test'
+      ...
+    # Subtest: closed port is http-transport-failure, not an analysis refusal
+    ok 3 - closed port is http-transport-failure, not an analysis refusal
+      ---
+      duration_ms: 86.030603
+      type: 'test'
+      ...
+    # Subtest: invalid execution id is refused before network I/O
+    ok 4 - invalid execution id is refused before network I/O
+      ---
+      duration_ms: 42.017805
+      type: 'test'
+      ...
+    # Subtest: fetch --base at a different origin is refused
+    ok 5 - fetch --base at a different origin is refused
+      ---
+      duration_ms: 37.866465
+      type: 'test'
+      ...
+    # Subtest: userinfo, query, fragment, and encoded traversal are rejected
+    ok 6 - userinfo, query, fragment, and encoded traversal are rejected
+      ---
+      duration_ms: 0.500954
+      type: 'test'
+      ...
+    # Subtest: ticketFromSubmit keeps caller id when POST is lost
+    ok 7 - ticketFromSubmit keeps caller id when POST is lost
+      ---
+      duration_ms: 0.62581
+      type: 'test'
+      ...
+    # Subtest: internally consistent substituted inputs are not caller proof
+    ok 8 - internally consistent substituted inputs are not caller proof
+      ---
+      duration_ms: 5.803062
+      type: 'test'
+      ...
+    # Subtest: job substitution fails ticket verification even if executionId matches
+    ok 9 - job substitution fails ticket verification even if executionId matches
+      ---
+      duration_ms: 0.368267
+      type: 'test'
+      ...
+    1..9
+ok 1 - W5-D14 unit client (no engine, no git fetch)
+  ---
+  duration_ms: 220.203395
+  type: 'suite'
+  ...
+# Subtest: W5-D14 ticket persisted before POST
+    # Subtest: atomic ticket with caller executionId exists before the server reads the body
+    ok 1 - atomic ticket with caller executionId exists before the server reads the body
+      ---
+      duration_ms: 88.409249
+      type: 'test'
+      ...
+    # Subtest: does not generate a new id when resubmitting an existing ticket
+    ok 2 - does not generate a new id when resubmitting an existing ticket
+      ---
+      duration_ms: 165.483737
+      type: 'test'
+      ...
+    1..2
+ok 2 - W5-D14 ticket persisted before POST
+  ---
+  duration_ms: 254.114622
+  type: 'suite'
+  ...
+# Subtest: W5-D14 labelled incomplete HTTP 200
+    # Subtest: ok:true with incomplete delivery is not analysis-outcome over real HTTP
+    ok 1 - ok:true with incomplete delivery is not analysis-outcome over real HTTP
+      ---
+      duration_ms: 9.59598
+      type: 'test'
+      ...
+    1..1
+ok 3 - W5-D14 labelled incomplete HTTP 200
+  ---
+  duration_ms: 9.716701
+  type: 'suite'
+  ...
+1..3
+# tests 12
+# suites 3
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 575.896342

@@ -1,0 +1,22 @@
+[
+  {
+    "command": [
+      "git",
+      "push",
+      "origin",
+      "HEAD:refs/heads/codex/h21-package-release-gate-20260913"
+    ],
+    "exitCode": 0,
+    "output": "remote: \nremote: Create a pull request for 'codex/h21-package-release-gate-20260913' on GitHub by visiting:        \nremote:      https://github.com/epistemedeus/samedaydesk/pull/new/codex/h21-package-release-gate-20260913        \nremote: \nTo https://github.com/epistemedeus/samedaydesk\n * [new branch]      HEAD -> codex/h21-package-release-gate-20260913\n"
+  },
+  {
+    "command": [
+      "git",
+      "ls-remote",
+      "origin",
+      "refs/heads/codex/h21-package-release-gate-20260913"
+    ],
+    "exitCode": 0,
+    "output": "88ecb31cbf22a1472ae3136d57a118d689ccb435\trefs/heads/codex/h21-package-release-gate-20260913\n"
+  }
+]

@@ -1,0 +1,640 @@
+TAP version 13
+# Subtest: 158 overlay manifest entries bind frozen source to extracted 1.4.5 (and unchanged 1.4.6 overlay)
+ok 1 - 158 overlay manifest entries bind frozen source to extracted 1.4.5 (and unchanged 1.4.6 overlay)
+  ---
+  duration_ms: 380.740205
+  type: 'test'
+  ...
+# Subtest: public and kit archive copies retain all three immutable pins
+ok 2 - public and kit archive copies retain all three immutable pins
+  ---
+  duration_ms: 33.641488
+  type: 'test'
+  ...
+# Subtest: discovery download command, public catalog, and overlay source identifiers agree
+ok 3 - discovery download command, public catalog, and overlay source identifiers agree
+  ---
+  duration_ms: 6.384878
+  type: 'test'
+  ...
+# Subtest: clean extract contains no node_modules or dependency symlinks
+ok 4 - clean extract contains no node_modules or dependency symlinks
+  ---
+  duration_ms: 4.668943
+  type: 'test'
+  ...
+# Subtest: public catalog argv executes lockfile-pin-delta with real caller fixture bytes
+ok 5 - public catalog argv executes lockfile-pin-delta with real caller fixture bytes
+  ---
+  duration_ms: 109.789166
+  type: 'test'
+  ...
+# Subtest: public catalog argv executes json-schema-webhook-drift with real caller fixture bytes
+ok 6 - public catalog argv executes json-schema-webhook-drift with real caller fixture bytes
+  ---
+  duration_ms: 103.635078
+  type: 'test'
+  ...
+# Subtest: public catalog argv executes route-table-diff with real caller fixture bytes
+ok 7 - public catalog argv executes route-table-diff with real caller fixture bytes
+  ---
+  duration_ms: 141.642521
+  type: 'test'
+  ...
+# Subtest: public catalog argv executes page-change-offline-job with real caller fixture bytes
+ok 8 - public catalog argv executes page-change-offline-job with real caller fixture bytes
+  ---
+  duration_ms: 107.218404
+  type: 'test'
+  ...
+# Subtest: public catalog argv executes vendor-budget-impact with real caller fixture bytes
+not ok 9 - public catalog argv executes vendor-budget-impact with real caller fixture bytes
+  ---
+  duration_ms: 255.313874
+  type: 'test'
+  location: '/tmp/h21/wt/experiments/codex-window/h21-package-release-gate/test/public-binding.test.mjs:104:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/h21/wt/experiments/codex-window/h21-package-release-gate/test/public-binding.test.mjs:107:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: public lockfile-pin-delta failed second destination preserves caller bytes and cleans scratch
+not ok 10 - public lockfile-pin-delta failed second destination preserves caller bytes and cleans scratch
+  ---
+  duration_ms: 106.861748
+  type: 'test'
+  location: '/tmp/h21/wt/experiments/codex-window/h21-package-release-gate/test/public-binding.test.mjs:115:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + '{\n' +
+    +   '  "schema": "samedaydesk.lockfile-pin-delta.v1",\n' +
+    +   '  "appId": "lockfile-pin-delta",\n' +
+    +   '  "ok": true,\n' +
+    +   '  "status": "actionable",\n' +
+    +   '  "purchaseAuthority": false,\n' +
+    +   '  "paidValueClaim": false,\n' +
+    +   '  "settlement": "nonsettling-prototype",\n' +
+    +   '  "equality": "pin-fields",\n' +
+    +   '  "lockfileVersion": {\n' +
+    +   '    "before": 3,\n' +
+    +   '    "after": 3\n' +
+    +   '  },\n' +
+    +   '  "mapSource": {\n' +
+    +   '    "before": "packages",\n' +
+    +   '    "after": "packages"\n' +
+    +   '  },\n' +
+    +   '  "counts": {\n' +
+    +   '    "beforePins": 2,\n' +
+    +   '    "afterPins": 2,\n' +
+    +   '    "added": 0,\n' +
+    +   '    "removed": 0,\n' +
+    +   '    "changed": 1,\n' +
+    +   '    "unchanged": 1,\n' +
+    +   '    "missingIntegrity": 0\n' +
+    +   '  },\n' +
+    +   '  "added": [],\n' +
+    +   '  "removed": [],\n' +
+    +   '  "changed": [\n' +
+    +   '    {\n' +
+    +   '      "id": "node_modules/fixture-alpha",\n' +
+    +   '      "name": "fixture-alpha",\n' +
+    +   '      "before": {\n' +
+    +   '        "id": "node_modules/fixture-alpha",\n' +
+    +   '        "name": "fixture-alpha",\n' +
+    +   '        "version": "1.0.0",\n' +
+    +   '        "integrity": "sha512-l/0QZeYH6WYJLVF9qn9Rymjnrjn7Oi0ExEDpGIQ337qIpPWJQhd5TSVlE2YOET42IWoCns7YnU02SuLR7aduBA==",\n' +
+    +   '        "resolved": "https://example.invalid/fixture-alpha-1.0.0.tgz",\n' +
+    +   '        "gitCommit": null,\n' +
+    +   '        "link": false,\n' +
+    +   '        "dev": false,\n' +
+    +   '        "peer": false,\n' +
+    +   '        "optional": false,\n' +
+    +   '        "devOptional": false,\n' +
+    +   '        "os": null,\n' +
+    +   '        "cpu": null,\n' +
+    +   '        "libc": null,\n' +
+    +   '        "termsHash": "8bac8074d0f1cb674beac8227e85b3dce81336bdb5ee289ce0b22bcad6f7fc67",\n' +
+    +   '        "missingIntegrity": false\n' +
+    +   '      },\n' +
+    +   '      "after": {\n' +
+    +   '        "id": "node_modules/fixture-alpha",\n' +
+    +   '        "name": "fixture-alpha",\n' +
+    +   '        "version": "1.0.1",\n' +
+    +   '        "integrity": "sha512-wVVmY4V8n45/SbnRdhRHz/Ug91u4hs7gEBP5Yd72r7o7mg5C2TOxvLSeMKRgw14M/WfRYzHIQr63JaNtAVJntA==",\n' +
+    +   '        "resolved": "https://example.invalid/fixture-alpha-1.0.1.tgz",\n' +
+    +   '        "gitCommit": null,\n' +
+    +   '        "link": false,\n' +
+    +   '        "dev": false,\n' +
+    +   '        "peer": false,\n' +
+    +   '        "optional": false,\n' +
+    +   '        "devOptional": false,\n' +
+    +   '        "os": null,\n' +
+    +   '        "cpu": null,\n' +
+    +   '        "libc": null,\n' +
+    +   '        "termsHash": "2c02426ae5ed4cdb39eb866f280cc54128448da7f257b9559158c77bf95935a2",\n' +
+    +   '        "missingIntegrity": false\n' +
+    +   '      },\n' +
+    +   '      "changeKinds": [\n' +
+    +   '        "version",\n' +
+    +   '        "integrity",\n' +
+    +   '        "resolved"\n' +
+    +   '      ]\n' +
+    +   '    }\n' +
+    +   '  ],\n' +
+    +   '  "gaps": [],\n' +
+    +   '  "caller": {\n' +
+    +   '    "before": "/tmp/h21/runtime-tmp/h21-public-CyPojm/useful-jobs-1.4.5/engines/lockfile-pin-delta/fixtures/journey/before.json",\n' +
+    +   '    "after": "/tmp/h21/runtime-tmp/h21-public-CyPojm/useful-jobs-1.4.5/engines/lockfile-pin-delta/fixtures/journey/after.json",\n' +
+    +   '    "exampleMode": false,\n' +
+    +   '    "sampleLabel": "caller-input",\n' +
+    +   '    "notCustomerDemand": true,\n' +
+    +   '    "notMarketFact": true\n' +
+    +   '  },\n' +
+    +   '  "provenance": "fixture",\n' +
+    +   '  "generatedAt": "2026-09-13T09:32:01.722Z"\n' +
+    +   '}\n'
+    - 'previous caller artifact\n'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    previous caller artifact
+    
+  actual: |-
+    {
+      "schema": "samedaydesk.lockfile-pin-delta.v1",
+      "appId": "lockfile-pin-delta",
+      "ok": true,
+      "status": "actionable",
+      "purchaseAuthority": false,
+      "paidValueClaim": false,
+      "settlement": "nonsettling-prototype",
+      "equality": "pin-fields",
+      "lockfileVersion": {
+        "before": 3,
+        "after": 3
+      },
+      "mapSource": {
+        "before": "packages",
+        "after": "packages"
+      },
+      "counts": {
+        "beforePins": 2,
+        "afterPins": 2,
+        "added": 0,
+        "removed": 0,
+        "changed": 1,
+        "unchanged": 1,
+        "missingIntegrity": 0
+      },
+      "added": [],
+      "removed": [],
+      "changed": [
+        {
+          "id": "node_modules/fixture-alpha",
+          "name": "fixture-alpha",
+          "before": {
+            "id": "node_modules/fixture-alpha",
+            "name": "fixture-alpha",
+            "version": "1.0.0",
+            "integrity": "sha512-l/0QZeYH6WYJLVF9qn9Rymjnrjn7Oi0ExEDpGIQ337qIpPWJQhd5TSVlE2YOET42IWoCns7YnU02SuLR7aduBA==",
+            "resolved": "https://example.invalid/fixture-alpha-1.0.0.tgz",
+            "gitCommit": null,
+            "link": false,
+            "dev": false,
+            "peer": false,
+            "optional": false,
+            "devOptional": false,
+            "os": null,
+            "cpu": null,
+            "libc": null,
+            "termsHash": "8bac8074d0f1cb674beac8227e85b3dce81336bdb5ee289ce0b22bcad6f7fc67",
+            "missingIntegrity": false
+          },
+          "after": {
+            "id": "node_modules/fixture-alpha",
+            "name": "fixture-alpha",
+            "version": "1.0.1",
+            "integrity": "sha512-wVVmY4V8n45/SbnRdhRHz/Ug91u4hs7gEBP5Yd72r7o7mg5C2TOxvLSeMKRgw14M/WfRYzHIQr63JaNtAVJntA==",
+            "resolved": "https://example.invalid/fixture-alpha-1.0.1.tgz",
+            "gitCommit": null,
+            "link": false,
+            "dev": false,
+            "peer": false,
+            "optional": false,
+            "devOptional": false,
+            "os": null,
+            "cpu": null,
+            "libc": null,
+            "termsHash": "2c02426ae5ed4cdb39eb866f280cc54128448da7f257b9559158c77bf95935a2",
+            "missingIntegrity": false
+          },
+          "changeKinds": [
+            "version",
+            "integrity",
+            "resolved"
+          ]
+        }
+      ],
+      "gaps": [],
+      "caller": {
+        "before": "/tmp/h21/runtime-tmp/h21-public-CyPojm/useful-jobs-1.4.5/engines/lockfile-pin-delta/fixtures/journey/before.json",
+        "after": "/tmp/h21/runtime-tmp/h21-public-CyPojm/useful-jobs-1.4.5/engines/lockfile-pin-delta/fixtures/journey/after.json",
+        "exampleMode": false,
+        "sampleLabel": "caller-input",
+        "notCustomerDemand": true,
+        "notMarketFact": true
+      },
+      "provenance": "fixture",
+      "generatedAt": "2026-09-13T09:32:01.722Z"
+    }
+    
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/h21/wt/experiments/codex-window/h21-package-release-gate/test/public-binding.test.mjs:122:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: public lockfile-pin-delta successful explicit publication releases scratch
+not ok 11 - public lockfile-pin-delta successful explicit publication releases scratch
+  ---
+  duration_ms: 109.43833
+  type: 'test'
+  location: '/tmp/h21/wt/experiments/codex-window/h21-package-release-gate/test/public-binding.test.mjs:126:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + [
+    +   'uj-lockfile-pin-delta-aerFWa'
+    + ]
+    - []
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0: 'uj-lockfile-pin-delta-aerFWa'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/h21/wt/experiments/codex-window/h21-package-release-gate/test/public-binding.test.mjs:129:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: public json-schema-webhook-drift failed second destination preserves caller bytes and cleans scratch
+not ok 12 - public json-schema-webhook-drift failed second destination preserves caller bytes and cleans scratch
+  ---
+  duration_ms: 108.885244
+  type: 'test'
+  location: '/tmp/h21/wt/experiments/codex-window/h21-package-release-gate/test/public-binding.test.mjs:115:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + '{\n' +
+    +   '  "schema": "samedaydesk.json-schema-webhook-drift.v1",\n' +
+    +   '  "schemaVersion": 2,\n' +
+    +   '  "kind": "json-schema",\n' +
+    +   '  "usedOnly": true,\n' +
+    +   '  "notOpenApi": true,\n' +
+    +   '  "notApiUpgradeBrief": true,\n' +
+    +   '  "purchaseAuthority": false,\n' +
+    +   '  "sold": false,\n' +
+    +   '  "customerBrief": false,\n' +
+    +   '  "sample": false,\n' +
+    +   '  "exampleMode": false,\n' +
+    +   '  "notMarketFact": true,\n' +
+    +   '  "notCustomerDemand": true,\n' +
+    +   '  "payment": {\n' +
+    +   '    "settling": false,\n' +
+    +   '    "prototype": true,\n' +
+    +   '    "paid": false\n' +
+    +   '  },\n' +
+    +   '  "provenance": "caller-input",\n' +
+    +   '  "inputs": {\n' +
+    +   '    "before": "sha256:45770745727a82e1a7d6b8e7850c6774a48cb4cdfa03e3aa73674e14b6e8057c",\n' +
+    +   '    "after": "sha256:9952ae04811c80c7b9451ec83d18ec46e80fcdf980b0d792c7c99aeee8041caf",\n' +
+    +   '    "used": "sha256:6f77939c3486d7a6696293628506ef4e20ee292c2e9c284742fd4626fa1baa04",\n' +
+    +   '    "beforeBytes": 238,\n' +
+    +   '    "afterBytes": 239,\n' +
+    +   '    "usedBytes": 41\n' +
+    +   '  },\n' +
+    +   '  "impact": {\n' +
+    +   '    "breaking": [\n' +
+    +   '      {\n' +
+    +   '        "pointer": "/properties/amount",\n' +
+    +   '        "class": "breaking",\n' +
+    +   '        "reason": "type-change",\n' +
+    +   '        "before": {\n' +
+    +   '          "kind": "schema-object",\n' +
+    +   '          "type": "number",\n' +
+    +   '          "format": null,\n' +
+    +   '          "enum": null,\n' +
+    +   '          "constJson": null,\n' +
+    +   '          "required": null,\n' +
+    +   '          "additionalProperties": null,\n' +
+    +   '          "properties": null,\n' +
+    +   '          "propertiesKeys": null,\n' +
+    +   '          "items": null,\n' +
+    +   '          "itemsType": null,\n' +
+    +   '          "minLength": null,\n' +
+    +   '          "maxLength": null,\n' +
+    +   '          "minimum": null,\n' +
+    +   '          "maximum": null,\n' +
+    +   '          "exclusiveMinimum": null,\n' +
+    +   '          "exclusiveMaximum": null,\n' +
+    +   '          "minItems": null,\n' +
+    +   '          "maxItems": null,\n' +
+    +   '          "pattern": null,\n' +
+    +   '          "nullable": false,\n' +
+    +   '          "unsupportedKeywords": null\n' +
+    +   '        },\n' +
+    +   '        "after": {\n' +
+    +   '          "kind": "schema-object",\n' +
+    +   '          "type": "string",\n' +
+    +   '          "format": null,\n' +
+    +   '          "enum": null,\n' +
+    +   '          "constJson": null,\n' +
+    +   '          "required": null,\n' +
+    +   '          "additionalProperties": null,\n' +
+    +   '          "properties": null,\n' +
+    +   '          "propertiesKeys": null,\n' +
+    +   '          "items": null,\n' +
+    +   '          "itemsType": null,\n' +
+    +   '          "minLength": null,\n' +
+    +   '          "maxLength": null,\n' +
+    +   '          "minimum": null,\n' +
+    +   '          "maximum": null,\n' +
+    +   '          "exclusiveMinimum": null,\n' +
+    +   '          "exclusiveMaximum": null,\n' +
+    +   '          "minItems": null,\n' +
+    +   '          "maxItems": null,\n' +
+    +   '          "pattern": null,\n' +
+    +   '          "nullable": false,\n' +
+    +   '          "unsupportedKeywords": null\n' +
+    +   '        }\n' +
+    +   '      }\n' +
+    +   '    ],\n' +
+    +   '    "compatible": [],\n' +
+    +   '    "added": [],\n' +
+    +   '    "deleted": [],\n' +
+    +   '    "unknown": [],\n' +
+    +   '    "unchangedCount": 0,\n' +
+    +   '    "informationalCount": 0,\n' +
+    +   '    "ignoredUnused": true\n' +
+    +   '  },\n' +
+    +   '  "status": "actionable",\n' +
+    +   '  "ok": true,\n' +
+    +   '  "appId": "json-schema-webhook-drift",\n' +
+    +   '  "summary": "Used-path drift: 1 breaking, 0 compatible, 0 deleted, 0 unknown. Unused paths ignored.",\n' +
+    +   '  "uncertainties": [],\n' +
+    +   '  "laterIntegrationBindings": [\n' +
+    +   '    {\n' +
+    +   '      "id": "useful-jobs-catalog",\n' +
+    +   '      "status": "not-bound",\n' +
+    +   '      "note": "PR51 catalog is contrast only. Root owns catalog admission."\n' +
+    +   '    },\n' +
+    +   '    {\n' +
+    +   '      "id": "i01-hash-terms",\n' +
+    +   '      "status": "pinned-hasher",\n' +
+    +   '      "note": "Neo PR54 hashTermsVersion contract. Earned-work kernel not imported."\n' +
+    +   '    }\n' +
+    +   '  ],\n' +
+    +   '  "caller": {\n' +
+    +   '    "exampleMode": false,\n' +
+    +   '    "sampleLabel": "caller-input",\n' +
+    +   '    "notMarketFact": true,\n' +
+    +   '    "notCustomerDemand": true\n' +
+    +   '  },\n' +
+    +   '  "termsVersion": "sha256:fcf68b0885b7c4bbe44e8e90e1e5469468553949d369a44b9b0ff1ca6af57db3"\n' +
+    +   '}\n'
+    - 'previous caller artifact\n'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    previous caller artifact
+    
+  actual: |-
+    {
+      "schema": "samedaydesk.json-schema-webhook-drift.v1",
+      "schemaVersion": 2,
+      "kind": "json-schema",
+      "usedOnly": true,
+      "notOpenApi": true,
+      "notApiUpgradeBrief": true,
+      "purchaseAuthority": false,
+      "sold": false,
+      "customerBrief": false,
+      "sample": false,
+      "exampleMode": false,
+      "notMarketFact": true,
+      "notCustomerDemand": true,
+      "payment": {
+        "settling": false,
+        "prototype": true,
+        "paid": false
+      },
+      "provenance": "caller-input",
+      "inputs": {
+        "before": "sha256:45770745727a82e1a7d6b8e7850c6774a48cb4cdfa03e3aa73674e14b6e8057c",
+        "after": "sha256:9952ae04811c80c7b9451ec83d18ec46e80fcdf980b0d792c7c99aeee8041caf",
+        "used": "sha256:6f77939c3486d7a6696293628506ef4e20ee292c2e9c284742fd4626fa1baa04",
+        "beforeBytes": 238,
+        "afterBytes": 239,
+        "usedBytes": 41
+      },
+      "impact": {
+        "breaking": [
+          {
+            "pointer": "/properties/amount",
+            "class": "breaking",
+            "reason": "type-change",
+            "before": {
+              "kind": "schema-object",
+              "type": "number",
+              "format": null,
+              "enum": null,
+              "constJson": null,
+              "required": null,
+              "additionalProperties": null,
+              "properties": null,
+              "propertiesKeys": null,
+              "items": null,
+              "itemsType": null,
+              "minLength": null,
+              "maxLength": null,
+              "minimum": null,
+              "maximum": null,
+              "exclusiveMinimum": null,
+              "exclusiveMaximum": null,
+              "minItems": null,
+              "maxItems": null,
+              "pattern": null,
+              "nullable": false,
+              "unsupportedKeywords": null
+            },
+            "after": {
+              "kind": "schema-object",
+              "type": "string",
+              "format": null,
+              "enum": null,
+              "constJson": null,
+              "required": null,
+              "additionalProperties": null,
+              "properties": null,
+              "propertiesKeys": null,
+              "items": null,
+              "itemsType": null,
+              "minLength": null,
+              "maxLength": null,
+              "minimum": null,
+              "maximum": null,
+              "exclusiveMinimum": null,
+              "exclusiveMaximum": null,
+              "minItems": null,
+              "maxItems": null,
+              "pattern": null,
+              "nullable": false,
+              "unsupportedKeywords": null
+            }
+          }
+        ],
+        "compatible": [],
+        "added": [],
+        "deleted": [],
+        "unknown": [],
+        "unchangedCount": 0,
+        "informationalCount": 0,
+        "ignoredUnused": true
+      },
+      "status": "actionable",
+      "ok": true,
+      "appId": "json-schema-webhook-drift",
+      "summary": "Used-path drift: 1 breaking, 0 compatible, 0 deleted, 0 unknown. Unused paths ignored.",
+      "uncertainties": [],
+      "laterIntegrationBindings": [
+        {
+          "id": "useful-jobs-catalog",
+          "status": "not-bound",
+          "note": "PR51 catalog is contrast only. Root owns catalog admission."
+        },
+        {
+          "id": "i01-hash-terms",
+          "status": "pinned-hasher",
+          "note": "Neo PR54 hashTermsVersion contract. Earned-work kernel not imported."
+        }
+      ],
+      "caller": {
+        "exampleMode": false,
+        "sampleLabel": "caller-input",
+        "notMarketFact": true,
+        "notCustomerDemand": true
+      },
+      "termsVersion": "sha256:fcf68b0885b7c4bbe44e8e90e1e5469468553949d369a44b9b0ff1ca6af57db3"
+    }
+    
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/h21/wt/experiments/codex-window/h21-package-release-gate/test/public-binding.test.mjs:122:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: public json-schema-webhook-drift successful explicit publication releases scratch
+not ok 13 - public json-schema-webhook-drift successful explicit publication releases scratch
+  ---
+  duration_ms: 106.620068
+  type: 'test'
+  location: '/tmp/h21/wt/experiments/codex-window/h21-package-release-gate/test/public-binding.test.mjs:126:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + [
+    +   'uj-json-schema-webhook-drift-8S4X3q'
+    + ]
+    - []
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0: 'uj-json-schema-webhook-drift-8S4X3q'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/h21/wt/experiments/codex-window/h21-package-release-gate/test/public-binding.test.mjs:129:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: public page-change --example remains refused without purchase authority
+not ok 14 - public page-change --example remains refused without purchase authority
+  ---
+  duration_ms: 102.721838
+  type: 'test'
+  location: '/tmp/h21/wt/experiments/codex-window/h21-package-release-gate/test/public-binding.test.mjs:133:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /sample_as_delivered_watch/. Input:
+    
+    ''
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: ''
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/h21/wt/experiments/codex-window/h21-package-release-gate/test/public-binding.test.mjs:137:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 8
+# fail 6
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1767.514898

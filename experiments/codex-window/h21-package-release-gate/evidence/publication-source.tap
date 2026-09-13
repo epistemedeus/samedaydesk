@@ -1,0 +1,47 @@
+TAP version 13
+# Subtest: d18 refused publication does not overwrite caller artifacts
+    # Subtest: failed second-name copy leaves the preexisting first artifact bytes
+    ok 1 - failed second-name copy leaves the preexisting first artifact bytes
+      ---
+      duration_ms: 261.048329
+      type: 'test'
+      ...
+    # Subtest: injected failure after first install restores preexisting dest and removes a new dest
+    ok 2 - injected failure after first install restores preexisting dest and removes a new dest
+      ---
+      duration_ms: 1.667223
+      type: 'test'
+      ...
+    # Subtest: injected failure after first install removes a destination that did not previously exist
+    ok 3 - injected failure after first install removes a destination that did not previously exist
+      ---
+      duration_ms: 1.190819
+      type: 'test'
+      ...
+    # Subtest: failed restore keeps uniquely owned backups and reports rollback-incomplete
+    ok 4 - failed restore keeps uniquely owned backups and reports rollback-incomplete
+      ---
+      duration_ms: 1.16756
+      type: 'test'
+      ...
+    # Subtest: createExecutor uses the same rollback after first successful publication
+    ok 5 - createExecutor uses the same rollback after first successful publication
+      ---
+      duration_ms: 225.820676
+      type: 'test'
+      ...
+    1..5
+ok 1 - d18 refused publication does not overwrite caller artifacts
+  ---
+  duration_ms: 491.695732
+  type: 'suite'
+  ...
+1..1
+# tests 5
+# suites 1
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 564.659398

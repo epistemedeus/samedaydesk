@@ -1,0 +1,85 @@
+TAP version 13
+# Subtest: packaged 1.4.5 extracted bytes: advertised M01/PR51, rollback, interrupt, cold, PG, HTTP, portable
+    # Subtest: leaves 1.4.3 a18ab918 and 1.4.4 ff493409 byte-identical
+    ok 1 - leaves 1.4.3 a18ab918 and 1.4.4 ff493409 byte-identical
+      ---
+      duration_ms: 52.710343
+      type: 'test'
+      ...
+    # Subtest: 1.4.5 archive matches pin, has wrapper/interrupt/engines, and contains no node_modules
+    ok 2 - 1.4.5 archive matches pin, has wrapper/interrupt/engines, and contains no node_modules
+      ---
+      duration_ms: 43.535799
+      type: 'test'
+      ...
+    # Subtest: extracted advertised M01 lockfile-pin-delta and json-schema-webhook-drift plus PR51 vendor-budget-impact
+    not ok 3 - extracted advertised M01 lockfile-pin-delta and json-schema-webhook-drift plus PR51 vendor-budget-impact
+      ---
+      duration_ms: 94.560032
+      type: 'test'
+      location: '/tmp/h21/runtime-tmp/h21-replay-_sgwoxic/packaged-145-execution.test.mjs:100:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        engine transport engine-crash
+        
+        false !== true
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: true
+      actual: false
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///tmp/h21/runtime-tmp/h21-replay-_sgwoxic/packaged-145-execution.test.mjs:112:12)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    # Subtest: extracted publishCompleteOutputs rolls back caller artifacts
+    not ok 4 - extracted publishCompleteOutputs rolls back caller artifacts
+      ---
+      duration_ms: 465.629495
+      type: 'test'
+      location: '/tmp/h21/runtime-tmp/h21-replay-_sgwoxic/packaged-145-execution.test.mjs:150:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+        + actual - expected
+        
+        + 'engine-crash'
+        - 'publication-failed'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'publication-failed'
+      actual: 'engine-crash'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///tmp/h21/runtime-tmp/h21-replay-_sgwoxic/packaged-145-execution.test.mjs:212:14)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    # Subtest: extracted create-order interrupt path does not rerun the engine
+    ok 5 - extracted create-order interrupt path does not rerun the engine
+      ---
+      duration_ms: 335.785564
+      type: 'test'
+      ...
+    1..5
+not ok 1 - packaged 1.4.5 extracted bytes: advertised M01/PR51, rollback, interrupt, cold, PG, HTTP, portable
+  ---
+  duration_ms: 1008.663254
+  type: 'suite'
+  location: '/tmp/h21/runtime-tmp/h21-replay-_sgwoxic/packaged-145-execution.test.mjs:44:1'
+  failureType: 'subtestsFailed'
+  error: '2 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 5
+# suites 1
+# pass 3
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1112.005877

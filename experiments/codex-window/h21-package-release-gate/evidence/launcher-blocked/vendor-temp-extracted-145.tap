@@ -1,0 +1,100 @@
+TAP version 13
+# Subtest: normal exit removes exact extraction and reuses it within one process
+ok 1 - normal exit removes exact extraction and reuses it within one process
+  ---
+  duration_ms: 56.90291
+  type: 'test'
+  ...
+# Subtest: explicit cleanup is idempotent and permits a fresh extraction
+ok 2 - explicit cleanup is idempotent and permits a fresh extraction
+  ---
+  duration_ms: 55.477278
+  type: 'test'
+  ...
+# Subtest: partial extraction failure cleans immediately and does not poison retry
+ok 3 - partial extraction failure cleans immediately and does not poison retry
+  ---
+  duration_ms: 59.223634
+  type: 'test'
+  ...
+# Subtest: SIGTERM cleans scratch and preserves signal exit
+not ok 4 - SIGTERM cleans scratch and preserves signal exit
+  ---
+  duration_ms: 5015.587682
+  type: 'test'
+  location: '/tmp/h21/wt/server/paid-useful-jobs/tests/vendor-temp-lifecycle.test.mjs:56:45'
+  failureType: 'cancelledByParent'
+  error: 'Promise resolution is still pending but the event loop has already resolved'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    process.emit (node:events:519:28)
+  ...
+# Subtest: SIGINT cleans scratch and preserves signal exit
+not ok 5 - SIGINT cleans scratch and preserves signal exit
+  ---
+  duration_ms: 0
+  type: 'test'
+  location: '/tmp/h21/wt/server/paid-useful-jobs/tests/vendor-temp-lifecycle.test.mjs:56:45'
+  failureType: 'cancelledByParent'
+  error: 'Promise resolution is still pending but the event loop has already resolved'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    process.emit (node:events:519:28)
+  ...
+# Subtest: SIGTERM preserves an existing on application handler without redelivery
+not ok 6 - SIGTERM preserves an existing on application handler without redelivery
+  ---
+  duration_ms: 0
+  type: 'test'
+  location: '/tmp/h21/wt/server/paid-useful-jobs/tests/vendor-temp-lifecycle.test.mjs:74:3'
+  failureType: 'cancelledByParent'
+  error: 'Promise resolution is still pending but the event loop has already resolved'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    process.emit (node:events:519:28)
+  ...
+# Subtest: SIGTERM preserves an existing once application handler without redelivery
+not ok 7 - SIGTERM preserves an existing once application handler without redelivery
+  ---
+  duration_ms: 0
+  type: 'test'
+  location: '/tmp/h21/wt/server/paid-useful-jobs/tests/vendor-temp-lifecycle.test.mjs:74:3'
+  failureType: 'cancelledByParent'
+  error: 'Promise resolution is still pending but the event loop has already resolved'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    process.emit (node:events:519:28)
+  ...
+# Subtest: SIGINT preserves an existing on application handler without redelivery
+not ok 8 - SIGINT preserves an existing on application handler without redelivery
+  ---
+  duration_ms: 0
+  type: 'test'
+  location: '/tmp/h21/wt/server/paid-useful-jobs/tests/vendor-temp-lifecycle.test.mjs:74:3'
+  failureType: 'cancelledByParent'
+  error: 'Promise resolution is still pending but the event loop has already resolved'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    process.emit (node:events:519:28)
+  ...
+# Subtest: SIGINT preserves an existing once application handler without redelivery
+not ok 9 - SIGINT preserves an existing once application handler without redelivery
+  ---
+  duration_ms: 0
+  type: 'test'
+  location: '/tmp/h21/wt/server/paid-useful-jobs/tests/vendor-temp-lifecycle.test.mjs:74:3'
+  failureType: 'cancelledByParent'
+  error: 'Promise resolution is still pending but the event loop has already resolved'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    process.emit (node:events:519:28)
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 3
+# fail 0
+# cancelled 6
+# skipped 0
+# todo 0
+# duration_ms 5201.63404

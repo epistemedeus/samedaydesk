@@ -1,0 +1,25 @@
+{
+  "loopback": {
+    "ok": false,
+    "errno": 1,
+    "error": "[Errno 1] Operation not permitted"
+  },
+  "nodeChildStdio": {
+    "defaultPipedStdin": {
+      "status": 0,
+      "error": "EPERM"
+    },
+    "nodeStreamToPipe": {
+      "status": 0,
+      "stdout": ""
+    },
+    "writeSyncToPipe": {
+      "status": 0,
+      "stdout": "probe"
+    }
+  },
+  "probeExit": 0,
+  "gitMetadata": "git add: /workspace/.git/worktrees/wt5/index.lock read-only (exit 128)",
+  "npmCi": "registry.npmjs.org EAI_AGAIN (exit 1), exact declared npm ci flags",
+  "pgStarted": false
+}

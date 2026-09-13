@@ -1,0 +1,26 @@
+{
+  "ownedHttp": {
+    "ok": true,
+    "port": 36335,
+    "status": 200
+  },
+  "gitStage": {
+    "exitCode": 128,
+    "output": "fatal: Unable to create '/workspace/.git/worktrees/wt5/index.lock': Read-only file system\n"
+  },
+  "gitStageApproved": {
+    "exitCode": 0,
+    "reviewer": "auto_review",
+    "scope": "four reviewed H21 source files"
+  },
+  "featureExport": {
+    "exitCode": 0,
+    "remoteHead": "88ecb31cbf22a1472ae3136d57a118d689ccb435"
+  },
+  "gitFeatureExportApproved": {
+    "exitCode": 0,
+    "reviewer": "auto_review",
+    "remoteHead": "88ecb31cbf22a1472ae3136d57a118d689ccb435",
+    "branch": "codex/h21-package-release-gate-20260913"
+  }
+}

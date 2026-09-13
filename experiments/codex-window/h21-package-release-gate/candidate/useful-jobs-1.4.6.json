@@ -1,0 +1,31 @@
+{
+  "schema": "h21.review-candidate.v1",
+  "version": "1.4.6",
+  "releaseReady": false,
+  "bytes": 5255807,
+  "sha256": "158898eaa301ccbea8bf2ed03b37031d5ef8ba1c1c7d083ad6224e3cf092f9b8",
+  "base": {
+    "version": "1.4.5",
+    "bytes": 5255012,
+    "sha256": "ea14851bd3ed091993acf91bda8430d2d9f621a96f11e8d4aa2b4efda0097e4e",
+    "overlaySource": "5078eb9d220deb66bc4d50095038efc2e5b95faa",
+    "packageCommit": "7f9c1623d836aa761186b0ceba8dc98f1ea11fc4"
+  },
+  "repairSource": "experiments/codex-window/h21-package-release-gate/repair/public-cli-1.4.6.patch",
+  "repairCommit": null,
+  "repairCommitNote": "Built from the uncommitted provisional patch during the initial launch. The exact rejected patch was later preserved in 27f0730604adf236e0f3ad818a30b5f43be6e656; this is not a claim that the archive was built from that commit.",
+  "changedPaths": [
+    "bin/useful-jobs.mjs",
+    "package.json",
+    "catalog.json",
+    "jobs-outcomes.json",
+    "client/public/for-agents/useful-jobs/catalog.json",
+    "client/public/for-agents/useful-jobs/jobs-outcomes.json",
+    "README.md"
+  ],
+  "purchaseAuthority": false,
+  "publicDiscoveryChanged": false,
+  "status": "rejected-review-candidate",
+  "rejection": "PR51 input/output collision guard bypassed by unnecessary parent isolation; preserved negative control, fixed in 1.4.7",
+  "releaseDecision": "../RELEASE-DECISION.md"
+}

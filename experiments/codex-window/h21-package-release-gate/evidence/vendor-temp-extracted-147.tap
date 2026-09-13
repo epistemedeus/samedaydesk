@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: normal exit removes exact extraction and reuses it within one process
+ok 1 - normal exit removes exact extraction and reuses it within one process
+  ---
+  duration_ms: 52.918838
+  type: 'test'
+  ...
+# Subtest: explicit cleanup is idempotent and permits a fresh extraction
+ok 2 - explicit cleanup is idempotent and permits a fresh extraction
+  ---
+  duration_ms: 52.155897
+  type: 'test'
+  ...
+# Subtest: partial extraction failure cleans immediately and does not poison retry
+ok 3 - partial extraction failure cleans immediately and does not poison retry
+  ---
+  duration_ms: 52.028699
+  type: 'test'
+  ...
+# Subtest: SIGTERM cleans scratch and preserves signal exit
+ok 4 - SIGTERM cleans scratch and preserves signal exit
+  ---
+  duration_ms: 51.234641
+  type: 'test'
+  ...
+# Subtest: SIGINT cleans scratch and preserves signal exit
+ok 5 - SIGINT cleans scratch and preserves signal exit
+  ---
+  duration_ms: 46.599235
+  type: 'test'
+  ...
+# Subtest: SIGTERM preserves an existing on application handler without redelivery
+ok 6 - SIGTERM preserves an existing on application handler without redelivery
+  ---
+  duration_ms: 128.028026
+  type: 'test'
+  ...
+# Subtest: SIGTERM preserves an existing once application handler without redelivery
+ok 7 - SIGTERM preserves an existing once application handler without redelivery
+  ---
+  duration_ms: 125.910022
+  type: 'test'
+  ...
+# Subtest: SIGINT preserves an existing on application handler without redelivery
+ok 8 - SIGINT preserves an existing on application handler without redelivery
+  ---
+  duration_ms: 126.989765
+  type: 'test'
+  ...
+# Subtest: SIGINT preserves an existing once application handler without redelivery
+ok 9 - SIGINT preserves an existing once application handler without redelivery
+  ---
+  duration_ms: 127.784674
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 818.511235

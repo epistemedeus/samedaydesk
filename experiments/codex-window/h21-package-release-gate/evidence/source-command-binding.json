@@ -1,0 +1,43 @@
+{
+  "schema": "h21.source-command-binding.v1",
+  "sourceCommit": "5078eb9d220deb66bc4d50095038efc2e5b95faa",
+  "overlayEntries": 158,
+  "overlayMismatches": 0,
+  "engineFiles": {
+    "lockfile-pin-delta": 76,
+    "json-schema-webhook-drift": 74,
+    "route-table-diff": 40,
+    "page-change-offline-job": 44
+  },
+  "engineMismatches": 0,
+  "publicEntryFiles": [
+    "bin/useful-jobs.mjs",
+    "lib/common.mjs",
+    "lib/owned-spawn.mjs",
+    "apps/lockfile-pin-delta/cli.mjs",
+    "apps/json-schema-webhook-drift/cli.mjs",
+    "apps/route-table-diff/cli.mjs",
+    "apps/page-change-offline-job/cli.mjs",
+    "apps/vendor-budget-impact/cli.mjs"
+  ],
+  "publicEntryMismatches": 0,
+  "candidateChangedPaths": [
+    "README.md",
+    "bin/useful-jobs.mjs",
+    "catalog.json",
+    "client/public/for-agents/useful-jobs/catalog.json",
+    "client/public/for-agents/useful-jobs/jobs-outcomes.json",
+    "jobs-outcomes.json",
+    "package.json"
+  ],
+  "candidateUnexpectedChanges": 0,
+  "candidateCliMatchesReviewerSource": true,
+  "oldPublicEnginePins": "Not locally available as Git objects; binding is to the supplied overlay source SHA, not an asserted replay of those historical refs.",
+  "commandRoutes": {
+    "publicM01": "catalog cli -> bin/useful-jobs.mjs -> apps/<id>/cli.mjs -> engines/<id>/bin",
+    "sdsM01": "server/paid-useful-jobs/bin/cli.mjs -> wrapper -> M01 d01-adapter -> packaged engines/<id>",
+    "publicPR51": "bin/useful-jobs.mjs -> apps/vendor-budget-impact/cli.mjs -> packaged vendor-pins",
+    "sdsPR51": "wrapper -> nested immutable useful-jobs 1.0.0 archive; distinct from public 1.4.5 app semantics"
+  },
+  "purchaseAuthority": false
+}

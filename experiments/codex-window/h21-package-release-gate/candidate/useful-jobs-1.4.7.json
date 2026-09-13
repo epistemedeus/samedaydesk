@@ -1,0 +1,29 @@
+{
+  "schema": "h21.review-candidate.v1",
+  "version": "1.4.7",
+  "status": "review-candidate",
+  "releaseDecision": "../RELEASE-DECISION.md",
+  "bytes": 5255824,
+  "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+  "base": {
+    "version": "1.4.5",
+    "bytes": 5255012,
+    "sha256": "ea14851bd3ed091993acf91bda8430d2d9f621a96f11e8d4aa2b4efda0097e4e",
+    "overlaySource": "5078eb9d220deb66bc4d50095038efc2e5b95faa",
+    "packageCommit": "7f9c1623d836aa761186b0ceba8dc98f1ea11fc4"
+  },
+  "repairSource": "experiments/codex-window/h21-package-release-gate/repair/public-cli.patch",
+  "repairCommit": "27f0730604adf236e0f3ad818a30b5f43be6e656",
+  "repairCommitNote": "Public CLI and build recipe committed before this archive was built.",
+  "changedPaths": [
+    "bin/useful-jobs.mjs",
+    "package.json",
+    "catalog.json",
+    "jobs-outcomes.json",
+    "client/public/for-agents/useful-jobs/catalog.json",
+    "client/public/for-agents/useful-jobs/jobs-outcomes.json",
+    "README.md"
+  ],
+  "purchaseAuthority": false,
+  "publicDiscoveryChanged": false
+}
