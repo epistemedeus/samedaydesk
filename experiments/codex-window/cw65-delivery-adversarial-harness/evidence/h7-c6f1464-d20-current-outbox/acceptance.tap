@@ -1,0 +1,18 @@
+TAP version 13
+# (node:356730) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: d20-current-outbox
+ok 1 - d20-current-outbox
+  ---
+  duration_ms: 809.737115
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 875.382397

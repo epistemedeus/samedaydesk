@@ -1,0 +1,14 @@
+{
+  "rows": [
+    {
+      "field": "gpt-4.1-input",
+      "value": 4.0,
+      "unit": "USD/1M-tokens"
+    },
+    {
+      "field": "gpt-4.1-output",
+      "value": 8.0,
+      "unit": "USD/1M-tokens"
+    }
+  ]
+}

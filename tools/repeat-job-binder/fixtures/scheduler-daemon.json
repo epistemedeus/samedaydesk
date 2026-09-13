@@ -1,0 +1,7 @@
+{
+  "schema": "s242.repeat-job-record.v1",
+  "family": "pricing-row-unit",
+  "scheduleHint": "cron",
+  "schedulerDaemon": true,
+  "note": "Forged manifest. Binder must refuse. Not a daemon and never cron install."
+}

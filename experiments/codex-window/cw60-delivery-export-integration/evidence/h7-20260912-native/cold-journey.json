@@ -1,0 +1,187 @@
+{
+  "producer": "/tmp/h7/wt/server/paid-useful-jobs/bin/cli.mjs",
+  "source": {
+    "package": "@samedaydesk/lockfile-pin-delta",
+    "version": "5f0f189fd3e88eabfeca2b95b2da644e58374372",
+    "purchaseAuthority": false,
+    "cli": "node bin/lockfile-delta.mjs",
+    "archiveSha256": "367ca7096bcced4a0475a6d55a44147c9cae1a36f4295c30cd1e94c0ebbd174e",
+    "archiveBytes": 196,
+    "sourceRepo": "epistemedeus/samedaydesk",
+    "sourceCommit": "5f0f189fd3e88eabfeca2b95b2da644e58374372",
+    "ownedPath": "tools/lockfile-pin-delta/",
+    "source": "in-tree",
+    "catalogPin": {
+      "sha256": "367ca7096bcced4a0475a6d55a44147c9cae1a36f4295c30cd1e94c0ebbd174e",
+      "bytes": 196,
+      "version": "5f0f189fd3e88eabfeca2b95b2da644e58374372",
+      "package": "@samedaydesk/lockfile-pin-delta"
+    },
+    "executable": {
+      "sha256": "caa8ffc224c05ec813e47d9cecba6d3e5a8db408a46ebc3983bb493fe102db75",
+      "bytes": 1336,
+      "bin": "/tmp/h7/wt/tools/lockfile-pin-delta/bin/lockfile-delta.mjs",
+      "source": "in-tree"
+    }
+  },
+  "jobId": "lockfile-pin-delta",
+  "transport": "ok",
+  "analysis": {
+    "status": "actionable",
+    "outcome": "actionable",
+    "identityVerified": null
+  },
+  "outputs": [
+    {
+      "name": "pin-delta.json",
+      "path": "/tmp/h7/runtime-tmp/cw60/puj-lockfile-pin-delta-out-9uVCob/pin-delta.json",
+      "bytes": 2500,
+      "sha256": "9d6cb8e6c181be9fe30aa9d71494b109bebaeabe7123cc22facfe2e95f961d4b"
+    },
+    {
+      "name": "pin-delta.md",
+      "path": "/tmp/h7/runtime-tmp/cw60/puj-lockfile-pin-delta-out-9uVCob/pin-delta.md",
+      "bytes": 768,
+      "sha256": "ef7acdb299fa1016636c2d18034196e272cddbe7f730ba23861be4b65b8e1022"
+    }
+  ],
+  "outputsDigest": "b5241e4dd6c5c20a040e4e49c78ce3f1e526c5dbf3a28f07d0f82ba39d5d66fe",
+  "export": {
+    "zipSha256": "sha256:3db576e655f68e440e78eb2ce025a31305f037891a1b5f787fdbfc083b6a9120",
+    "termsVersion": "sha256:45e02f028f0147b4f62b2b2177531abb37b5f9fcca5fda0a98130ce140d8af03",
+    "completeness": {
+      "bound": true,
+      "consumer": "tools/job-output-atomicity/index.mjs (current source)",
+      "ok": true,
+      "classification": "complete",
+      "code": null
+    }
+  },
+  "receiverPid": 321610,
+  "senderPid": 321632,
+  "callbackPath": "/bound?revision=1",
+  "commitBeforeAck": true,
+  "replaySingleRecord": true,
+  "event": {
+    "eventId": "evt_e265b4f3eb311f1d41282c711cb9be543cf4ab323112260874dec8c04dceb040",
+    "deliveryState": "delivered",
+    "sample": false,
+    "sold": false,
+    "sale": false,
+    "buyerAccepted": false,
+    "callbackAcknowledged": true,
+    "termsHash": "e265b4f3eb311f1d41282c711cb9be543cf4ab323112260874dec8c04dceb040",
+    "termsVersion": 1,
+    "mappingId": "samedaydesk.paid-useful-jobs.receipt.v1->job-delivery-outbox.terms.v1",
+    "bodyHash": "23806bfa13b5254bb709423b58c4a8d2a68623546c462bcc5d087c3e1056a0dd",
+    "callbackUrl": "http://127.0.0.1:39733/bound?revision=1",
+    "callbackDestination": {
+      "origin": "http://127.0.0.1:39733",
+      "path": "/bound?revision=1",
+      "canonical": "http://127.0.0.1:39733/bound?revision=1"
+    },
+    "payload": {
+      "schema": "samedaydesk.job-delivery-outbox.callback.v1",
+      "eventId": "evt_e265b4f3eb311f1d41282c711cb9be543cf4ab323112260874dec8c04dceb040",
+      "jobId": "lockfile-pin-delta",
+      "engineArchiveIdentity": "367ca7096bcced4a0475a6d55a44147c9cae1a36f4295c30cd1e94c0ebbd174e:196",
+      "engine": {
+        "package": "@samedaydesk/lockfile-pin-delta",
+        "version": "5f0f189fd3e88eabfeca2b95b2da644e58374372",
+        "purchaseAuthority": false,
+        "archiveSha256": "367ca7096bcced4a0475a6d55a44147c9cae1a36f4295c30cd1e94c0ebbd174e",
+        "archiveBytes": 196
+      },
+      "outputs": [
+        {
+          "name": "pin-delta.json",
+          "kind": "file",
+          "bytes": 2500,
+          "sha256": "9d6cb8e6c181be9fe30aa9d71494b109bebaeabe7123cc22facfe2e95f961d4b"
+        },
+        {
+          "name": "pin-delta.md",
+          "kind": "file",
+          "bytes": 768,
+          "sha256": "ef7acdb299fa1016636c2d18034196e272cddbe7f730ba23861be4b65b8e1022"
+        }
+      ],
+      "outputsDigest": "b5241e4dd6c5c20a040e4e49c78ce3f1e526c5dbf3a28f07d0f82ba39d5d66fe",
+      "fundingState": "unfunded",
+      "sold": false,
+      "sample": false,
+      "sampleReasons": [],
+      "purchaseAuthority": false,
+      "liveSettlement": "out-of-scope",
+      "buyerAccepted": false,
+      "sale": false,
+      "termsHash": "e265b4f3eb311f1d41282c711cb9be543cf4ab323112260874dec8c04dceb040",
+      "termsVersion": 1,
+      "mappingId": "samedaydesk.paid-useful-jobs.receipt.v1->job-delivery-outbox.terms.v1",
+      "mappingVersion": 1,
+      "callbackOrigin": "http://127.0.0.1:39733",
+      "callbackDestination": {
+        "origin": "http://127.0.0.1:39733",
+        "path": "/bound?revision=1",
+        "canonical": "http://127.0.0.1:39733/bound?revision=1"
+      },
+      "artifact": {
+        "zipSha256": "sha256:3db576e655f68e440e78eb2ce025a31305f037891a1b5f787fdbfc083b6a9120",
+        "termsVersion": "sha256:45e02f028f0147b4f62b2b2177531abb37b5f9fcca5fda0a98130ce140d8af03",
+        "receiptSha256": "sha256:aed8308c9d8c66ce930e4739c8d626cf8b6858d2892568241837f7c2d2b03409"
+      },
+      "deliveryTerms": {
+        "schema": "samedaydesk.job-delivery-outbox.terms.v1",
+        "mappingId": "samedaydesk.paid-useful-jobs.receipt.v1->job-delivery-outbox.terms.v1",
+        "mappingVersion": 1,
+        "sourceSchema": "samedaydesk.paid-useful-jobs.receipt.v1",
+        "sourceTermsVersion": null,
+        "termsVersion": 1,
+        "jobId": "lockfile-pin-delta",
+        "engineArchiveIdentity": "367ca7096bcced4a0475a6d55a44147c9cae1a36f4295c30cd1e94c0ebbd174e:196",
+        "fundingState": "unfunded",
+        "sold": false,
+        "sample": false,
+        "purchaseAuthority": false,
+        "liveSettlement": "out-of-scope",
+        "outputsDigest": "b5241e4dd6c5c20a040e4e49c78ce3f1e526c5dbf3a28f07d0f82ba39d5d66fe",
+        "callbackDestination": "http://127.0.0.1:39733/bound?revision=1",
+        "sourceTermsHash": null,
+        "artifact": {
+          "zipSha256": "sha256:3db576e655f68e440e78eb2ce025a31305f037891a1b5f787fdbfc083b6a9120",
+          "termsVersion": "sha256:45e02f028f0147b4f62b2b2177531abb37b5f9fcca5fda0a98130ce140d8af03",
+          "receiptSha256": "sha256:aed8308c9d8c66ce930e4739c8d626cf8b6858d2892568241837f7c2d2b03409"
+        }
+      }
+    },
+    "createdAt": "2026-09-12T09:50:52.920Z",
+    "updatedAt": "2026-09-12T09:50:53.787Z",
+    "attempts": [
+      {
+        "attemptId": "att_55460f3f-e88d-44a0-b4ad-54dfa7ec60f5",
+        "recordedAt": "2026-09-12T09:50:53.022Z",
+        "outcome": "delivered",
+        "httpStatus": 200,
+        "ack": {
+          "schema": "samedaydesk.job-delivery-outbox.ack.v1",
+          "ack": true,
+          "eventId": "evt_e265b4f3eb311f1d41282c711cb9be543cf4ab323112260874dec8c04dceb040",
+          "callbackPath": "/bound?revision=1",
+          "outputsDigest": "b5241e4dd6c5c20a040e4e49c78ce3f1e526c5dbf3a28f07d0f82ba39d5d66fe",
+          "termsHash": "e265b4f3eb311f1d41282c711cb9be543cf4ab323112260874dec8c04dceb040",
+          "zipSha256": "sha256:3db576e655f68e440e78eb2ce025a31305f037891a1b5f787fdbfc083b6a9120",
+          "exportTermsVersion": "sha256:45e02f028f0147b4f62b2b2177531abb37b5f9fcca5fda0a98130ce140d8af03",
+          "buyerAccepted": false,
+          "sale": false,
+          "receivedAt": "2026-09-12T09:50:53.073Z"
+        },
+        "error": null,
+        "completedAt": "2026-09-12T09:50:53.787Z"
+      }
+    ]
+  },
+  "mailboxPickup": {
+    "ok": true
+  },
+  "sold": false
+}

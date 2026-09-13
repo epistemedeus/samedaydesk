@@ -1,0 +1,6 @@
+{
+  "ready": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-interrupt-before-commit-001/cases/d20-mailbox-interrupt-before-commit/ack-barrier.json",
+  "release": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-interrupt-before-commit-001/cases/d20-mailbox-interrupt-before-commit/ack-release",
+  "destination": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-interrupt-before-commit-001/cases/d20-mailbox-interrupt-before-commit/mailbox/cw65-mail/envelope.json",
+  "timing": "after"
+}

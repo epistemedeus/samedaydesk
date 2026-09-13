@@ -1,0 +1,28 @@
+{
+  "ok": true,
+  "request": {
+    "orderId": "cw65-corrupt",
+    "engineId": "vendor-budget-impact",
+    "fundingState": "unfunded",
+    "enginePin": {
+      "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "bytes": 2522418,
+      "version": "1.0.0",
+      "package": "useful-jobs"
+    },
+    "inputs": [
+      {
+        "flag": "--before",
+        "path": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-corrupt-order-no-rerun-001/cases/d20-corrupt-order-no-rerun/inputs/corrupt-before.json",
+        "sha256": "42e2b35f726eaed48fbb3ce5aae486a3f555c9f2159db900a8d8dd717b4823dd",
+        "bytes": 146
+      },
+      {
+        "flag": "--after",
+        "path": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-corrupt-order-no-rerun-001/cases/d20-corrupt-order-no-rerun/inputs/corrupt-after.json",
+        "sha256": "101d5d49adf16d4475208c5d64a2e9d1c08334b7c0858f2295c9b4609e63500e",
+        "bytes": 146
+      }
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema": "samedaydesk.result-mailbox.pickup.v1",
+  "ok": false,
+  "refused": true,
+  "code": "invalid-request-id",
+  "error": "requestId cannot be a path traversal token",
+  "status": "invalid-request-id",
+  "deliveredToBuyer": false,
+  "sample": false,
+  "purchaseAuthority": false,
+  "sold": false,
+  "liveSettlement": "out-of-scope",
+  "detail": null,
+  "requestId": "..",
+  "retrievedAt": "2026-09-12T07:00:00.000Z"
+}

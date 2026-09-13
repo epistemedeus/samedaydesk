@@ -1,0 +1,62 @@
+{
+  "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+  "jobId": "vendor-budget-impact",
+  "engine": {
+    "package": "useful-jobs",
+    "version": "1.4.3",
+    "purchaseAuthority": false,
+    "cli": "node bin/useful-jobs.mjs run <id>",
+    "archiveSha256": "a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09",
+    "archiveBytes": 2615491
+  },
+  "inputsDigest": "41b190e6a80bb828fd26c597c0e8c7d2778fdad31f58e25cd0dbc000c535417c",
+  "outputsDigest": "376ec14d4313cd7df8be21689db553f5befaec77e0cf179e01ef0a575aa36311",
+  "inputs": [
+    {
+      "name": "before",
+      "bytes": 281,
+      "sha256": "c477e516ce555fd9b80bf5f3c25fc9d3389fb79db32ab1f5d601b355d7328499"
+    },
+    {
+      "name": "after",
+      "bytes": 352,
+      "sha256": "5fe4ec1dbf3945ddb008f63ffee78cfea02559afa68b185eb80e57c42dbb3ee9"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "budget-impact.json",
+      "kind": "file",
+      "bytes": 2494,
+      "sha256": "d7beb2ca3c6eafd6684725c16544cf51f9e9b188cffcbcb42e4d3fcbc702c587"
+    },
+    {
+      "name": "budget-impact.md",
+      "kind": "file",
+      "bytes": 1198,
+      "sha256": "9f4523ceff167515cbb2a85ddf887cb23089150102f551c1859c651af342583a"
+    }
+  ],
+  "fundingState": "reserved-fixture",
+  "sold": false,
+  "sample": false,
+  "sampleReasons": [],
+  "purchaseAuthority": false,
+  "liveSettlement": "out-of-scope",
+  "fixturePrice": null,
+  "payment": {
+    "fixture": true,
+    "purchaseAuthority": false,
+    "liveSettleAttempted": false,
+    "liveSettleAllowed": false,
+    "fundingState": "reserved-fixture"
+  },
+  "continuity": null,
+  "engineResult": {
+    "ok": true,
+    "status": "actionable",
+    "digest": "4ad94dfd79e44d68",
+    "refused": false
+  },
+  "outDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-c6f1464-d20-current-outbox/cases/d20-current-outbox/outbox-job-out"
+}

@@ -1,0 +1,115 @@
+{
+  "schema": "samedaydesk.job-delivery-outbox.store.v1",
+  "events": {
+    "evt_e30e602c603b4851d6ea5ca8bbd96ec84f3dd5e0205b23368b2fbb979088413a": {
+      "eventId": "evt_e30e602c603b4851d6ea5ca8bbd96ec84f3dd5e0205b23368b2fbb979088413a",
+      "bodyHash": "1ec4425adba786fee7a0cddd04bf39b8ebf776353c497fe45dfafa770a5610b7",
+      "termsHash": "e30e602c603b4851d6ea5ca8bbd96ec84f3dd5e0205b23368b2fbb979088413a",
+      "termsVersion": 1,
+      "mappingId": "samedaydesk.paid-useful-jobs.receipt.v1->job-delivery-outbox.terms.v1",
+      "deliveryState": "delivered",
+      "sample": false,
+      "sold": false,
+      "buyerAccepted": false,
+      "sale": false,
+      "callbackAcknowledged": true,
+      "callbackUrl": "http://127.0.0.1:46275/callback",
+      "callbackDestination": {
+        "origin": "http://127.0.0.1:46275",
+        "path": "/callback",
+        "canonical": "http://127.0.0.1:46275/callback"
+      },
+      "payload": {
+        "schema": "samedaydesk.job-delivery-outbox.callback.v1",
+        "eventId": "evt_e30e602c603b4851d6ea5ca8bbd96ec84f3dd5e0205b23368b2fbb979088413a",
+        "jobId": "vendor-budget-impact",
+        "engineArchiveIdentity": "a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09:2615491",
+        "engine": {
+          "package": "useful-jobs",
+          "version": "1.4.3",
+          "purchaseAuthority": false,
+          "archiveSha256": "a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09",
+          "archiveBytes": 2615491
+        },
+        "outputs": [
+          {
+            "name": "budget-impact.json",
+            "kind": "file",
+            "bytes": 2494,
+            "sha256": "d7beb2ca3c6eafd6684725c16544cf51f9e9b188cffcbcb42e4d3fcbc702c587"
+          },
+          {
+            "name": "budget-impact.md",
+            "kind": "file",
+            "bytes": 1198,
+            "sha256": "9f4523ceff167515cbb2a85ddf887cb23089150102f551c1859c651af342583a"
+          }
+        ],
+        "outputsDigest": "376ec14d4313cd7df8be21689db553f5befaec77e0cf179e01ef0a575aa36311",
+        "fundingState": "reserved-fixture",
+        "sold": false,
+        "sample": false,
+        "sampleReasons": [],
+        "purchaseAuthority": false,
+        "liveSettlement": "out-of-scope",
+        "buyerAccepted": false,
+        "sale": false,
+        "termsHash": "e30e602c603b4851d6ea5ca8bbd96ec84f3dd5e0205b23368b2fbb979088413a",
+        "termsVersion": 1,
+        "mappingId": "samedaydesk.paid-useful-jobs.receipt.v1->job-delivery-outbox.terms.v1",
+        "mappingVersion": 1,
+        "callbackOrigin": "http://127.0.0.1:46275",
+        "callbackDestination": {
+          "origin": "http://127.0.0.1:46275",
+          "path": "/callback",
+          "canonical": "http://127.0.0.1:46275/callback"
+        },
+        "artifact": null,
+        "deliveryTerms": {
+          "schema": "samedaydesk.job-delivery-outbox.terms.v1",
+          "mappingId": "samedaydesk.paid-useful-jobs.receipt.v1->job-delivery-outbox.terms.v1",
+          "mappingVersion": 1,
+          "sourceSchema": "samedaydesk.paid-useful-jobs.receipt.v1",
+          "sourceTermsVersion": null,
+          "termsVersion": 1,
+          "jobId": "vendor-budget-impact",
+          "engineArchiveIdentity": "a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09:2615491",
+          "fundingState": "reserved-fixture",
+          "sold": false,
+          "sample": false,
+          "purchaseAuthority": false,
+          "liveSettlement": "out-of-scope",
+          "outputsDigest": "376ec14d4313cd7df8be21689db553f5befaec77e0cf179e01ef0a575aa36311",
+          "callbackDestination": "http://127.0.0.1:46275/callback",
+          "sourceTermsHash": null,
+          "artifact": null
+        }
+      },
+      "createdAt": "2026-09-12T13:25:24.051Z",
+      "updatedAt": "2026-09-12T13:25:24.183Z",
+      "attempts": [
+        {
+          "attemptId": "att_8e4a3212-9934-4da6-9305-21c62e31bd0f",
+          "recordedAt": "2026-09-12T13:25:24.153Z",
+          "outcome": "delivered",
+          "httpStatus": 200,
+          "ack": {
+            "schema": "samedaydesk.job-delivery-outbox.ack.v1",
+            "ack": true,
+            "eventId": "evt_e30e602c603b4851d6ea5ca8bbd96ec84f3dd5e0205b23368b2fbb979088413a",
+            "callbackPath": "/callback",
+            "outputsDigest": "376ec14d4313cd7df8be21689db553f5befaec77e0cf179e01ef0a575aa36311",
+            "termsHash": "e30e602c603b4851d6ea5ca8bbd96ec84f3dd5e0205b23368b2fbb979088413a",
+            "zipSha256": null,
+            "exportTermsVersion": null,
+            "buyerAccepted": false,
+            "sale": false,
+            "receivedAt": "2026-09-12T13:25:24.172Z"
+          },
+          "error": null,
+          "completedAt": "2026-09-12T13:25:24.183Z"
+        }
+      ]
+    }
+  }
+}

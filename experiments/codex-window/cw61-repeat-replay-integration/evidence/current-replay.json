@@ -1,0 +1,173 @@
+{
+  "ok": true,
+  "job": "vendor-budget-impact",
+  "engineKind": "d01-wrapper",
+  "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+  "classification": "labelled-drift",
+  "jsonIdentical": true,
+  "allBytesEqual": false,
+  "files": [
+    {
+      "name": "budget-impact.json",
+      "existsA": true,
+      "existsB": true,
+      "bytesEqual": false,
+      "jsonIdentical": true,
+      "timestampChatterOnly": true,
+      "missing": false,
+      "sha256a": "2ed41e0707987a7d3b0dc73db990b1cbd1201512c899da5a6f3059430d2365da",
+      "sha256b": "0c50b9572045e98da5ded243727dabffbd09a0e009cdcb71f5681ae3af7d2929"
+    },
+    {
+      "name": "budget-impact.md",
+      "existsA": true,
+      "existsB": true,
+      "bytesEqual": true,
+      "jsonIdentical": false,
+      "timestampChatterOnly": false,
+      "missing": false,
+      "sha256a": "8e7507cf90f2d4b48671e6d47ca6edd4b8f7668e6e512d8ed522479e3422997c",
+      "sha256b": "8e7507cf90f2d4b48671e6d47ca6edd4b8f7668e6e512d8ed522479e3422997c"
+    }
+  ],
+  "outputNames": [
+    "budget-impact.json",
+    "budget-impact.md"
+  ],
+  "captured": true,
+  "identityRule": "Catalog filenames only. Ignore ISO envelope generatedAt and standalone Generated: timestamps. Nested timestamps and report body data remain semantic. Replay agreement does not establish correctness. Reviewed legacy caller paths bind staged bytes; path-dependent digests are verified before normalization. Partial/refused analysis never verifies identity.",
+  "inputsIdentical": true,
+  "analysisIdentical": true,
+  "identityVerified": true,
+  "semanticCorrectnessVerified": false,
+  "sample": false,
+  "sampleReasons": [],
+  "acceptanceClass": "local-runtime",
+  "purchaseAuthority": false,
+  "terms": {
+    "schema": "samedaydesk.output-replay-harness.wrapper-terms.v1",
+    "jobId": "vendor-budget-impact",
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+    "catalogOutputs": [
+      "budget-impact.json",
+      "budget-impact.md"
+    ],
+    "inputsA": {
+      "before": {
+        "sha256": "07c62382df2082776499137e253afe77a0b7e1984510955b64a9d1881e4fb6a5",
+        "bytes": 67
+      },
+      "after": {
+        "sha256": "1196b40a5fdf8b07832dc8378f1c53ba358104a19099949a18ed626b360ef3ff",
+        "bytes": 67
+      }
+    },
+    "inputsB": {
+      "before": {
+        "sha256": "07c62382df2082776499137e253afe77a0b7e1984510955b64a9d1881e4fb6a5",
+        "bytes": 67
+      },
+      "after": {
+        "sha256": "1196b40a5fdf8b07832dc8378f1c53ba358104a19099949a18ed626b360ef3ff",
+        "bytes": 67
+      }
+    },
+    "engine": {
+      "package": "useful-jobs",
+      "version": "1.0.0",
+      "purchaseAuthority": false,
+      "cli": "node bin/useful-jobs.mjs run <id>",
+      "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "archiveBytes": 2522418,
+      "sourceRepo": "epistemedeus/pilot",
+      "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+      "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+      "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+    },
+    "sample": false,
+    "purchaseAuthority": false
+  },
+  "termsVersion": "sha256:7b48eac408ee774f4c0d7331b055aace52ee40addf09c25712dfff0932945ac6",
+  "runs": [
+    {
+      "pid": 180558,
+      "executionId": "90eab599-96e3-4b48-9e99-641dc55e488b",
+      "processExit": 0,
+      "transport": "ok",
+      "analysis": {
+        "status": "actionable",
+        "outcome": "actionable",
+        "identityVerified": null
+      },
+      "delivery": {
+        "status": "complete",
+        "complete": true,
+        "expected": [
+          "budget-impact.json",
+          "budget-impact.md"
+        ],
+        "present": [
+          "budget-impact.json",
+          "budget-impact.md"
+        ],
+        "missing": [],
+        "unexpected": [],
+        "publishedDir": "/workspace/pilot/tmp/cw61-astra-repeat-replay-integration-20260912/src/experiments/codex-window/cw61-repeat-replay-integration/evidence/current-replay-a"
+      },
+      "outDir": "/workspace/pilot/tmp/cw61-astra-repeat-replay-integration-20260912/src/experiments/codex-window/cw61-repeat-replay-integration/evidence/current-replay-a",
+      "wrapperBin": "/workspace/pilot/tmp/cw61-astra-repeat-replay-integration-20260912/src/server/paid-useful-jobs/bin/cli.mjs",
+      "engine": {
+        "package": "useful-jobs",
+        "version": "1.0.0",
+        "purchaseAuthority": false,
+        "cli": "node bin/useful-jobs.mjs run <id>",
+        "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+        "archiveBytes": 2522418,
+        "sourceRepo": "epistemedeus/pilot",
+        "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+        "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+        "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+      }
+    },
+    {
+      "pid": 180653,
+      "executionId": "095e0ac4-d661-4b15-88b5-6ec09ca78dd7",
+      "processExit": 0,
+      "transport": "ok",
+      "analysis": {
+        "status": "actionable",
+        "outcome": "actionable",
+        "identityVerified": null
+      },
+      "delivery": {
+        "status": "complete",
+        "complete": true,
+        "expected": [
+          "budget-impact.json",
+          "budget-impact.md"
+        ],
+        "present": [
+          "budget-impact.json",
+          "budget-impact.md"
+        ],
+        "missing": [],
+        "unexpected": [],
+        "publishedDir": "/workspace/pilot/tmp/cw61-astra-repeat-replay-integration-20260912/src/experiments/codex-window/cw61-repeat-replay-integration/evidence/current-replay-b"
+      },
+      "outDir": "/workspace/pilot/tmp/cw61-astra-repeat-replay-integration-20260912/src/experiments/codex-window/cw61-repeat-replay-integration/evidence/current-replay-b",
+      "wrapperBin": "/workspace/pilot/tmp/cw61-astra-repeat-replay-integration-20260912/src/server/paid-useful-jobs/bin/cli.mjs",
+      "engine": {
+        "package": "useful-jobs",
+        "version": "1.0.0",
+        "purchaseAuthority": false,
+        "cli": "node bin/useful-jobs.mjs run <id>",
+        "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+        "archiveBytes": 2522418,
+        "sourceRepo": "epistemedeus/pilot",
+        "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+        "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+        "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+buyer-value-ledger notices
+===========================
+
+This module wraps the published SameDayDesk useful-jobs 1.0.0 archive and
+reads tools/evidence-records closed sets. It does not relicense those works.
+
+- useful-jobs 1.0.0: MIT (archive LICENSE / NOTICE). Nested vendor-pins keep
+  their original licenses; prefer the copy inside the pinned archive.
+- evidence-records: SameDayDesk in-repo validator; import, do not fork.
+- Hash of a labelled request follows the I01/S275 stable-JSON SHA-256
+  contract (Neo PR54 owns earned-work core). This module does not copy that
+  kernel.
+
+No purchase, live settlement, or organic-demand authority is granted here.
+Samples (--example) are labelled fixtures, not customers or market facts.
+Banked 8.105 USDC is not this job's revenue. The Pilot 2 USDC envelope is a
+proposed portfolio budget, not a posted offer and not a per-run price.

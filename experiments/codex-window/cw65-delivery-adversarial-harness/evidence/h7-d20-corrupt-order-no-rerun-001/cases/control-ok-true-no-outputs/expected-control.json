@@ -1,0 +1,12 @@
+{
+  "expected": "rejected",
+  "observed": {
+    "kind": "broken-engine-hidden-by-wrapper-success",
+    "accepted": false,
+    "hiddenByWrapperSuccess": true,
+    "domainOutcome": null,
+    "outputCount": 0,
+    "requiredOutputCount": 2
+  },
+  "readinessEvidence": false
+}

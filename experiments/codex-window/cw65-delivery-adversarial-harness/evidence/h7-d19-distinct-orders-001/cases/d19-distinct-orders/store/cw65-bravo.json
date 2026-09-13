@@ -1,0 +1,226 @@
+{
+  "orderId": "cw65-bravo",
+  "termsHash": "e63f8c0d686f2185b3922dba49ea0f7c595ccf89bd33f39193d3ddd896a7049f",
+  "engineId": "vendor-budget-impact",
+  "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+  "request": {
+    "engineId": "vendor-budget-impact",
+    "orderId": "cw65-bravo",
+    "enginePin": {
+      "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "bytes": 2522418,
+      "version": "1.0.0",
+      "package": "useful-jobs"
+    },
+    "inputs": [
+      {
+        "flag": "--before",
+        "path": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-distinct-orders-001/cases/d19-distinct-orders/inputs/order-bravo-before.json",
+        "sha256": "ba69dd54123830ac4316b0192bcb1546750302e176f991f0fc1904af643fccbb",
+        "bytes": 154
+      },
+      {
+        "flag": "--after",
+        "path": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-distinct-orders-001/cases/d19-distinct-orders/inputs/order-bravo-after.json",
+        "sha256": "b213838b731118fe82abd5851b95a3db4315308431271c5005c697c6be5b87bb",
+        "bytes": 154
+      }
+    ],
+    "fundingState": "unfunded"
+  },
+  "holderToken": "cb62ca35-0b56-4a26-a815-5ae3ba16cfc0",
+  "holderPid": 319936,
+  "status": "complete",
+  "result": {
+    "schema": "samedaydesk.useful-jobs-consumer.v1",
+    "ok": true,
+    "orderId": "cw65-bravo",
+    "engineId": "vendor-budget-impact",
+    "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+    "archiveBytes": 2522418,
+    "enginePin": {
+      "package": "useful-jobs",
+      "version": "1.0.0",
+      "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "bytes": 2522418,
+      "cli": "bin/useful-jobs.mjs"
+    },
+    "inputs": [
+      {
+        "flag": "--before",
+        "path": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-distinct-orders-001/cases/d19-distinct-orders/inputs/order-bravo-before.json",
+        "sha256": "ba69dd54123830ac4316b0192bcb1546750302e176f991f0fc1904af643fccbb",
+        "bytes": 154
+      },
+      {
+        "flag": "--after",
+        "path": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-distinct-orders-001/cases/d19-distinct-orders/inputs/order-bravo-after.json",
+        "sha256": "b213838b731118fe82abd5851b95a3db4315308431271c5005c697c6be5b87bb",
+        "bytes": 154
+      }
+    ],
+    "inputSha256": [
+      "ba69dd54123830ac4316b0192bcb1546750302e176f991f0fc1904af643fccbb",
+      "b213838b731118fe82abd5851b95a3db4315308431271c5005c697c6be5b87bb"
+    ],
+    "outputs": [
+      {
+        "name": "budget-impact.json",
+        "bytes": 1316,
+        "sha256": "0a2ca046f033263a90be821c43b06e45743e419c8b3c31b9274874bb7c177238"
+      },
+      {
+        "name": "budget-impact.md",
+        "bytes": 360,
+        "sha256": "1ad6982749189a3e7211450f6b90963d0c01b82866fdc492c8ec910f45b9df0c"
+      }
+    ],
+    "sold": false,
+    "charged": false,
+    "purchaseAuthority": false,
+    "schedulerDaemon": false,
+    "example": false,
+    "sample": false,
+    "fundingState": "unfunded",
+    "termsHash": "e63f8c0d686f2185b3922dba49ea0f7c595ccf89bd33f39193d3ddd896a7049f",
+    "termsSchema": "samedaydesk.useful-jobs-order-terms.v1",
+    "replayed": false,
+    "acceptanceClass": "local-runtime",
+    "liveCatalogItem": false,
+    "productionExpressRoute": false,
+    "competingRunner": false,
+    "outDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-distinct-orders-001/cases/d19-distinct-orders/published/bravo",
+    "runOutDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-Cz5PW4/d19-distinct-orders/puj-vendor-budget-impact-out-78utgq",
+    "publishedDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-distinct-orders-001/cases/d19-distinct-orders/published/bravo",
+    "wrapper": {
+      "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+      "testedD01Sha": "fe8057f395bc665b629e12dbff0db0c264f0eb46",
+      "executionId": "daa60be9-e26d-4916-8ae6-fd273d5c9033",
+      "transport": "ok",
+      "analysis": {
+        "status": "actionable",
+        "outcome": "actionable",
+        "identityVerified": null
+      },
+      "delivery": {
+        "status": "complete",
+        "complete": true,
+        "expected": [
+          "budget-impact.json",
+          "budget-impact.md"
+        ],
+        "present": [
+          "budget-impact.json",
+          "budget-impact.md"
+        ],
+        "missing": [],
+        "unexpected": [],
+        "publishedDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-distinct-orders-001/cases/d19-distinct-orders/published/bravo"
+      },
+      "receipt": {
+        "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+        "jobId": "vendor-budget-impact",
+        "engine": {
+          "package": "useful-jobs",
+          "version": "1.0.0",
+          "purchaseAuthority": false,
+          "cli": "node bin/useful-jobs.mjs run <id>",
+          "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+          "archiveBytes": 2522418,
+          "sourceRepo": "epistemedeus/pilot",
+          "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+          "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+          "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+        },
+        "inputsDigest": "d3d250506293f858c19eb59d58b92f4fab4e7e86a0feabe4c484510632642124",
+        "outputsDigest": "7a386477e8812ffeec62efba8dd2d57a7c4415bdd9fb9ad73867b13709affa81",
+        "inputs": [
+          {
+            "name": "before",
+            "kind": "file",
+            "bytes": 154,
+            "sha256": "ba69dd54123830ac4316b0192bcb1546750302e176f991f0fc1904af643fccbb"
+          },
+          {
+            "name": "after",
+            "kind": "file",
+            "bytes": 154,
+            "sha256": "b213838b731118fe82abd5851b95a3db4315308431271c5005c697c6be5b87bb"
+          }
+        ],
+        "inputRoot": null,
+        "outputs": [
+          {
+            "name": "budget-impact.json",
+            "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-Cz5PW4/d19-distinct-orders/puj-vendor-budget-impact-out-78utgq/budget-impact.json",
+            "bytes": 1316,
+            "sha256": "0a2ca046f033263a90be821c43b06e45743e419c8b3c31b9274874bb7c177238"
+          },
+          {
+            "name": "budget-impact.md",
+            "path": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-Cz5PW4/d19-distinct-orders/puj-vendor-budget-impact-out-78utgq/budget-impact.md",
+            "bytes": 360,
+            "sha256": "1ad6982749189a3e7211450f6b90963d0c01b82866fdc492c8ec910f45b9df0c"
+          }
+        ],
+        "fundingState": "unfunded",
+        "sold": false,
+        "sample": false,
+        "sampleReasons": [],
+        "purchaseAuthority": false,
+        "liveSettlement": "out-of-scope",
+        "fixturePrice": {
+          "labelled": true,
+          "live": false,
+          "publishedToLiveCatalog": false,
+          "jobId": "vendor-budget-impact",
+          "amountUsdc": "0.02",
+          "amountAtomic": "20000",
+          "payTo": "0x0000000000000000000000000000000000000F08",
+          "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+        },
+        "payment": {
+          "fixture": false,
+          "purchaseAuthority": false,
+          "liveSettleAttempted": false,
+          "liveSettleAllowed": false,
+          "fundingState": "unfunded"
+        },
+        "continuity": null,
+        "engineResult": {
+          "ok": true,
+          "status": "actionable",
+          "digest": "99e7645f303731b2",
+          "refused": false,
+          "identityVerified": null
+        },
+        "outDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-Cz5PW4/d19-distinct-orders/puj-vendor-budget-impact-out-78utgq",
+        "publishedDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-distinct-orders-001/cases/d19-distinct-orders/published/bravo",
+        "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+        "transport": "ok",
+        "analysis": {
+          "status": "actionable",
+          "outcome": "actionable",
+          "identityVerified": null
+        },
+        "delivery": {
+          "status": "complete",
+          "complete": true,
+          "expected": [
+            "budget-impact.json",
+            "budget-impact.md"
+          ],
+          "present": [
+            "budget-impact.json",
+            "budget-impact.md"
+          ],
+          "missing": [],
+          "unexpected": [],
+          "publishedDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-distinct-orders-001/cases/d19-distinct-orders/published/bravo"
+        },
+        "runOutDir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-Cz5PW4/d19-distinct-orders/puj-vendor-budget-impact-out-78utgq"
+      }
+    }
+  },
+  "executionCount": 1
+}

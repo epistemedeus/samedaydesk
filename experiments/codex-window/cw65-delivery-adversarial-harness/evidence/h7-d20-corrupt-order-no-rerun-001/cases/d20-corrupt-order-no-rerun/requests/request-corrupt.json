@@ -1,0 +1,19 @@
+{
+  "mode": "order-request",
+  "orderId": "cw65-corrupt",
+  "fixture": {
+    "jobId": "vendor-budget-impact",
+    "inputs": {
+      "before": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-corrupt-order-no-rerun-001/cases/d20-corrupt-order-no-rerun/inputs/corrupt-before.json",
+      "after": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-corrupt-order-no-rerun-001/cases/d20-corrupt-order-no-rerun/inputs/corrupt-after.json"
+    },
+    "outputs": [
+      "budget-impact.json",
+      "budget-impact.md"
+    ],
+    "inputHashes": {
+      "before": "42e2b35f726eaed48fbb3ce5aae486a3f555c9f2159db900a8d8dd717b4823dd",
+      "after": "101d5d49adf16d4475208c5d64a2e9d1c08334b7c0858f2295c9b4609e63500e"
+    }
+  }
+}

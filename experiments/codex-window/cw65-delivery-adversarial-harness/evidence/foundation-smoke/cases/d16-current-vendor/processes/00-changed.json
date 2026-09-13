@@ -1,0 +1,23 @@
+{
+  "pid": 281457,
+  "command": "/workspace/pilot/toolchain/node-v22.23.2-linux-x64/bin/node",
+  "args": [
+    "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src/server/paid-useful-jobs/bin/cli.mjs",
+    "run",
+    "vendor-budget-impact",
+    "--before",
+    "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/foundation-smoke/cases/d16-current-vendor/inputs/vendor-before.json",
+    "--after",
+    "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/foundation-smoke/cases/d16-current-vendor/inputs/vendor-after.json",
+    "--out-dir",
+    "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/foundation-smoke/cases/d16-current-vendor/published/changed"
+  ],
+  "cwd": "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src",
+  "heapMB": 768,
+  "tmpdir": "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/scratch-closeout/cw65-owned-lgYH2q/d16-current-vendor",
+  "startedAt": "2026-09-12T09:15:29.648Z",
+  "endedAt": "2026-09-12T09:15:30.129Z",
+  "status": 0,
+  "signal": null,
+  "timedOut": false
+}

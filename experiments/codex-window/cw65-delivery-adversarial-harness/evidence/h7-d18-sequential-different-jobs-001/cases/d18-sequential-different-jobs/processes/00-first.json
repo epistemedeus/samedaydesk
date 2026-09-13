@@ -1,0 +1,23 @@
+{
+  "pid": 318661,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/server/paid-useful-jobs/bin/cli.mjs",
+    "run",
+    "vendor-budget-impact",
+    "--before",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-sequential-different-jobs-001/cases/d18-sequential-different-jobs/inputs/vendor-before.json",
+    "--after",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-sequential-different-jobs-001/cases/d18-sequential-different-jobs/inputs/vendor-after.json",
+    "--out-dir",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-sequential-different-jobs-001/cases/d18-sequential-different-jobs/shared-publication"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-LIJzyh/d18-sequential-different-jobs",
+  "startedAt": "2026-09-12T09:47:25.158Z",
+  "endedAt": "2026-09-12T09:47:25.465Z",
+  "status": 0,
+  "signal": null,
+  "timedOut": false
+}

@@ -1,0 +1,15 @@
+{
+  "mode": "http",
+  "origin": "http://127.0.0.1:35951",
+  "path": "/execute",
+  "body": {
+    "jobId": "vendor-budget-impact",
+    "executionId": "cw65-http",
+    "inputs": {
+      "before": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-http-body-and-key-001/cases/d19-http-body-and-key/inputs/http-before.json",
+      "after": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-http-body-and-key-001/cases/d19-http-body-and-key/inputs/http-after.json"
+    },
+    "outDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-http-body-and-key-001/cases/d19-http-body-and-key/published/http"
+  },
+  "headers": {}
+}

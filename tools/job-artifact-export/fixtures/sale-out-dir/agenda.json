@@ -1,0 +1,40 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "feed-agenda",
+  "status": "actionable",
+  "summary": "Caller feed delta (fixture sale label, not a settled customer delivery)",
+  "actions": [
+    {
+      "priority": "high",
+      "kind": "agenda-added",
+      "key": "item-1",
+      "note": "Caller-owned feed entry. Not a SAMPLE kit example."
+    }
+  ],
+  "gaps": [],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "before": "/tmp/w4-commerce-15-sale-fixture/before.xml",
+    "after": "/tmp/w4-commerce-15-sale-fixture/after.xml",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "family": "rss-atom-brief",
+    "ok": true
+  },
+  "events": [
+    {
+      "kind": "added",
+      "key": "item-1",
+      "title": "Caller delta",
+      "link": null,
+      "updated": null
+    }
+  ],
+  "digest": "salefixture000001"
+}

@@ -1,0 +1,67 @@
+{
+  "orderId": "cw65-interrupt",
+  "termsHash": "c57768d24aa0592ff42aab15156f5ec0ae355e885a0e0e793b9718458569cb10",
+  "engineId": "vendor-budget-impact",
+  "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+  "request": {
+    "engineId": "vendor-budget-impact",
+    "orderId": "cw65-interrupt",
+    "enginePin": {
+      "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "bytes": 2522418,
+      "version": "1.0.0",
+      "package": "useful-jobs"
+    },
+    "inputs": [
+      {
+        "flag": "--before",
+        "path": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-c6f1464-d20-order-interrupt-before-complete/cases/d20-order-interrupt-before-complete/inputs/interrupt-before.json",
+        "sha256": "0aaac5bbae2de4cdc5bd2ba942b0f49a91d544250cee837dfd83236b884bd7bc",
+        "bytes": 150
+      },
+      {
+        "flag": "--after",
+        "path": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-c6f1464-d20-order-interrupt-before-complete/cases/d20-order-interrupt-before-complete/inputs/interrupt-after.json",
+        "sha256": "ba8d74b8eac7428c8b26c852e19e5ebe0c2eeebf489a73498d1f71c8fca47b35",
+        "bytes": 150
+      }
+    ],
+    "fundingState": "unfunded"
+  },
+  "holderToken": "8156a8ad-c947-4055-91b6-ef9f7fed1242",
+  "holderPid": 356104,
+  "status": "complete",
+  "result": {
+    "schema": "samedaydesk.useful-jobs-consumer.v1",
+    "ok": false,
+    "orderId": "cw65-interrupt",
+    "engineId": "vendor-budget-impact",
+    "sold": false,
+    "charged": false,
+    "purchaseAuthority": false,
+    "schedulerDaemon": false,
+    "sample": false,
+    "code": "interrupted-incomplete",
+    "error": "order already recorded an engine execution that never completed; refusing a second engine run",
+    "falsifier": "F-ORDER",
+    "detail": {
+      "orderId": "cw65-interrupt",
+      "executionCount": 1
+    },
+    "httpStatus": 409,
+    "liveCatalogItem": false,
+    "productionExpressRoute": false,
+    "acceptanceClass": "fixture",
+    "wrapper": {
+      "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+      "testedD01Sha": "80aeb7be9e2c2e180641196a92f371edb9cf2eb9",
+      "executionId": null,
+      "transport": null,
+      "analysis": null,
+      "delivery": {
+        "complete": false
+      }
+    }
+  },
+  "executionCount": 1
+}

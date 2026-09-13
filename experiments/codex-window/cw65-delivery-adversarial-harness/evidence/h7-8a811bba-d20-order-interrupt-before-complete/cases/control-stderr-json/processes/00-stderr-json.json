@@ -1,0 +1,15 @@
+{
+  "pid": 340782,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/experiments/wave5/d16/fixtures/broken-engines/stderr-json.mjs"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-nuDkcQ/control-stderr-json",
+  "startedAt": "2026-09-12T12:09:09.735Z",
+  "endedAt": "2026-09-12T12:09:09.767Z",
+  "status": 2,
+  "signal": null,
+  "timedOut": false
+}

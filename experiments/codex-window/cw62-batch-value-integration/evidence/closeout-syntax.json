@@ -1,0 +1,8 @@
+{
+  "kind": "syntax-only",
+  "command": "node --check <each owned .mjs>",
+  "files": 75,
+  "passed": 75,
+  "failures": [],
+  "runtimeAcceptance": false
+}

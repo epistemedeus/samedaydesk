@@ -1,0 +1,26 @@
+{
+  "ready": false,
+  "controls": {
+    "status": "pass",
+    "readinessCredit": 0,
+    "raw": "controls.tap"
+  },
+  "acceptance": {
+    "pass": 0,
+    "fail": 1,
+    "incomplete": 0,
+    "process": {
+      "status": 1,
+      "signal": null
+    },
+    "raw": "acceptance.tap"
+  },
+  "runtimeUnchanged": true,
+  "cases": [
+    {
+      "id": "d16-current-vendor",
+      "status": "fail",
+      "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- '4ad52f15-fcc0-4f96-8666-681cede5051f'\n"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "pid": 321102,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/server/paid-useful-jobs/bin/cli.mjs",
+    "run",
+    "vendor-budget-impact",
+    "--before",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-interrupt-after-commit-001/cases/d20-mailbox-interrupt-after-commit/inputs/delivery-before.json",
+    "--after",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-interrupt-after-commit-001/cases/d20-mailbox-interrupt-after-commit/inputs/delivery-after.json",
+    "--out-dir",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-interrupt-after-commit-001/cases/d20-mailbox-interrupt-after-commit/published/delivery"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-atKgoA/d20-mailbox-interrupt-after-commit",
+  "startedAt": "2026-09-12T09:48:10.226Z",
+  "endedAt": "2026-09-12T09:48:10.527Z",
+  "status": 0,
+  "signal": null,
+  "timedOut": false
+}

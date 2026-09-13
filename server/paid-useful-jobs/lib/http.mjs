@@ -13,6 +13,19 @@ import { runPaidOffer } from "./wrapper.mjs";
 const ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
 const MAX_BODY_BYTES = 8 * 1024 * 1024;
 function failure(code, message, status = 400) { return Object.assign(new Error(message), { code, status }); }
+/** Loopback process-local principal. Bearer token if present; otherwise the raw Authorization value. */
+export function callerPrincipal(req) {
+  const raw = req?.headers?.authorization;
+  if (raw == null || raw === "") return null;
+  const text = String(Array.isArray(raw) ? raw[0] : raw).trim();
+  if (!text) return null;
+  const bearer = /^Bearer\s+(\S+)$/i.exec(text);
+  return bearer ? bearer[1] : text;
+}
+function principalMismatch(row, caller) {
+  if (!row?.principal) return false;
+  return row.principal !== caller;
+}
 function canonical(value) {
   if (Buffer.isBuffer(value)) return { bytes: value.length, sha256: createHash("sha256").update(value).digest("hex") };
   if (Array.isArray(value)) return value.map(canonical);
@@ -89,6 +102,9 @@ export function createExecutionServer({
         if (!ID.test(id)) throw failure("invalid-execution-id", "Invalid execution ID");
         const row = store.get(id);
         if (!row) return error(404, "not-found", "Execution not found in this process");
+        if (principalMismatch(row, callerPrincipal(req))) {
+          return error(403, "principal-mismatch", "Result is bound to a different HTTP principal in this process");
+        }
         return reply(id, row);
       }
       if (req.method === "POST" && (url === "/execute" || url === "/execute/")) {
@@ -100,13 +116,17 @@ export function createExecutionServer({
         if (typeof id !== "string" || !ID.test(id)) throw failure("invalid-execution-id", "Execution ID must be 1-128 safe characters");
         request.executionId = id;
         const { frozen, hash } = frozenIdentity(request);
+        const principal = callerPrincipal(req);
         const existing = store.get(id);
         if (existing) {
           if (existing.requestHash !== hash) return error(409, "execution-id-conflict", "Execution ID is bound to different request bytes");
+          if (principalMismatch(existing, principal)) {
+            return error(403, "principal-mismatch", "Result is bound to a different HTTP principal in this process");
+          }
           return reply(id, existing);
         }
         if (store.size >= maxEntries) return error(503, "execution-cache-full", "Process-local execution cache is full; no execution started");
-        const row = { requestHash: hash, state: "pending", pending: null, body: null, expiresAt: null, httpStatus: 200 };
+        const row = { requestHash: hash, principal, state: "pending", pending: null, body: null, expiresAt: null, httpStatus: 200 };
         store.set(id, row);
         row.pending = Promise.resolve().then(() => execute(frozen)).then((result) => {
           if (!result || typeof result !== "object" || Array.isArray(result) || (result.executionId && result.executionId !== id)) throw new Error("Execution result identity mismatch");

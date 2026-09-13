@@ -1,0 +1,10 @@
+{
+  "label": "cw65-caller-frozen",
+  "rows": [
+    {
+      "field": "frozen-input",
+      "value": 2,
+      "unit": "USD/1M-tokens"
+    }
+  ]
+}

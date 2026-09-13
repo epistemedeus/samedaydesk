@@ -1,0 +1,13 @@
+{
+  "ok": false,
+  "refused": true,
+  "code": "digest-mismatch",
+  "error": "Artifact bytes differ from envelope identity",
+  "status": "digest-mismatch",
+  "deliveredToBuyer": false,
+  "sample": false,
+  "purchaseAuthority": false,
+  "sold": false,
+  "liveSettlement": "out-of-scope",
+  "detail": null
+}

@@ -1,0 +1,19 @@
+{
+  "name": "cw65-lock",
+  "version": "1.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "cw65-lock",
+      "version": "1.0.0",
+      "dependencies": {
+        "cw65-lib": "^1.0.0"
+      }
+    },
+    "node_modules/cw65-lib": {
+      "version": "1.1.0",
+      "resolved": "https://registry.invalid/cw65-lib/-/cw65-lib-1.1.0.tgz"
+    }
+  }
+}

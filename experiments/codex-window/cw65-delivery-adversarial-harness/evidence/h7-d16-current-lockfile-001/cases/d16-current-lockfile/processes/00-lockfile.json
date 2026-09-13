@@ -1,0 +1,23 @@
+{
+  "pid": 317610,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/server/paid-useful-jobs/bin/cli.mjs",
+    "run",
+    "lockfile-pin-delta",
+    "--before",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d16-current-lockfile-001/cases/d16-current-lockfile/inputs/lockfile-before.json",
+    "--after",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d16-current-lockfile-001/cases/d16-current-lockfile/inputs/lockfile-after.json",
+    "--out-dir",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d16-current-lockfile-001/cases/d16-current-lockfile/published/lockfile"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-FJtMME/d16-current-lockfile",
+  "startedAt": "2026-09-12T09:46:23.985Z",
+  "endedAt": "2026-09-12T09:46:24.115Z",
+  "status": 0,
+  "signal": null,
+  "timedOut": false
+}

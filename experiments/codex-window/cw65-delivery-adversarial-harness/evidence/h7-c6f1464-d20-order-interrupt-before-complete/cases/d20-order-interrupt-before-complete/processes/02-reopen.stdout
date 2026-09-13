@@ -1,0 +1,32 @@
+{
+  "schema": "samedaydesk.useful-jobs-consumer.v1",
+  "ok": false,
+  "orderId": "cw65-interrupt",
+  "engineId": "vendor-budget-impact",
+  "sold": false,
+  "charged": false,
+  "purchaseAuthority": false,
+  "schedulerDaemon": false,
+  "sample": false,
+  "code": "interrupted-incomplete",
+  "error": "order already recorded an engine execution that never completed; refusing a second engine run",
+  "falsifier": "F-ORDER",
+  "detail": {
+    "orderId": "cw65-interrupt",
+    "executionCount": 1
+  },
+  "httpStatus": 409,
+  "liveCatalogItem": false,
+  "productionExpressRoute": false,
+  "acceptanceClass": "fixture",
+  "wrapper": {
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+    "testedD01Sha": "80aeb7be9e2c2e180641196a92f371edb9cf2eb9",
+    "executionId": null,
+    "transport": null,
+    "analysis": null,
+    "delivery": {
+      "complete": false
+    }
+  }
+}

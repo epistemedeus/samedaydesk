@@ -1,0 +1,12 @@
+{
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "--max-old-space-size=768",
+    "--test",
+    "--test-concurrency=1",
+    "--test-reporter=tap",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/test/controls.test.mjs"
+  ],
+  "status": 0,
+  "signal": null
+}

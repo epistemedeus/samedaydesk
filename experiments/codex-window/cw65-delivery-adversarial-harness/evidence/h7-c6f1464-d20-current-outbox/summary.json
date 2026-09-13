@@ -1,0 +1,31 @@
+{
+  "ready": false,
+  "selectedOnly": true,
+  "selected": {
+    "id": "d20-current-outbox",
+    "status": "pass"
+  },
+  "controls": {
+    "status": "pass",
+    "readinessCredit": 0,
+    "raw": "controls.tap"
+  },
+  "acceptance": {
+    "pass": 1,
+    "fail": 0,
+    "incomplete": 0,
+    "process": {
+      "status": 0,
+      "signal": null
+    },
+    "raw": "acceptance.tap"
+  },
+  "runtimeUnchanged": true,
+  "cases": [
+    {
+      "id": "d20-current-outbox",
+      "status": "pass",
+      "message": null
+    }
+  ]
+}

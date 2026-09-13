@@ -1,0 +1,15 @@
+{
+  "pid": 316419,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/experiments/wave5/d16/fixtures/broken-engines/invalid-json.mjs"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/runtime-tmp/cw65/scratch-controls/control-invalid-json",
+  "startedAt": "2026-09-12T09:44:59.154Z",
+  "endedAt": "2026-09-12T09:44:59.181Z",
+  "status": 0,
+  "signal": null,
+  "timedOut": false
+}

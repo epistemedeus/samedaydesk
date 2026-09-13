@@ -1,0 +1,56 @@
+=== frozen-refs changed after ===
+(node:316509) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:316515) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: CLI: changed after is analyzed from frozen-current, not the live path
+ok 1 - CLI: changed after is analyzed from frozen-current, not the live path
+  ---
+  duration_ms: 560.196283
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 629.148178
+=== frozen-refs clean units ===
+(node:316591) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:316597) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: CLI: clean comparable units with numeric change are actionable from frozen-current
+not ok 1 - CLI: clean comparable units with numeric change are actionable from frozen-current
+  ---
+  duration_ms: 203.742007
+  type: 'test'
+  location: '/tmp/h7/wt/tools/repeat-job-binder/test/frozen-refs.test.mjs:119:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    expected status 0 got 2: {"ok":false,"refused":true,"code":"input-digest-mismatch","error":"Declared currentInputs digests do not match local file bytes","detail":{"mismatches":[{"slot":"before","path":"../../pricing/a/before.json","resolved":"/tmp/h7/runtime-tmp/cw61/w5-d09-cli-clean-8qApLq/clean-before.json","declaredBytes":404,"actualBytes":210,"declaredSha256":"93a88b9a585a72927c6de66f22aef60cbe5dcf8f7b37096a33f577e8321614b6","actualSha256":"27ec158c385c1e9f3bc4a85f1175a98da491e79b094c08fe14d7def78bf80683"}]},"schedulerDaemon":false,"purchaseAuthority":false,"settling":false,"paidValueClaim":false}
+    
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    runNode (file:///tmp/h7/wt/tools/repeat-job-binder/test/helpers.mjs:55:17)
+    runBind (file:///tmp/h7/wt/tools/repeat-job-binder/test/helpers.mjs:65:10)
+    TestContext.<anonymous> (file:///tmp/h7/wt/tools/repeat-job-binder/test/frozen-refs.test.mjs:128:17)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 269.781781

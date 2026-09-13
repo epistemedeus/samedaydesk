@@ -1,0 +1,69 @@
+TAP version 13
+# Subtest: import recomputes immutable terms even when zip checksum is refreshed
+ok 1 - import recomputes immutable terms even when zip checksum is refreshed
+  ---
+  duration_ms: 61.074102
+  type: 'test'
+  ...
+# Subtest: import preserves an existing linked destination
+ok 2 - import preserves an existing linked destination
+  ---
+  duration_ms: 16.761612
+  type: 'test'
+  ...
+# Subtest: export refuses hardlinked inputs
+ok 3 - export refuses hardlinked inputs
+  ---
+  duration_ms: 1.881084
+  type: 'test'
+  ...
+# Subtest: zip refuses duplicate members
+ok 4 - zip refuses duplicate members
+  ---
+  duration_ms: 0.425548
+  type: 'test'
+  ...
+# Subtest: zip refuses local/central path disagreement
+ok 5 - zip refuses local/central path disagreement
+  ---
+  duration_ms: 0.219625
+  type: 'test'
+  ...
+# Subtest: zip refuses Unix symbolic link attributes
+ok 6 - zip refuses Unix symbolic link attributes
+  ---
+  duration_ms: 0.358689
+  type: 'test'
+  ...
+# Subtest: receiver rejects a same-origin request at a different path
+not ok 7 - receiver rejects a same-origin request at a different path
+  ---
+  duration_ms: 34.882938
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw60-astra-delivery-export-integration-20260912/src/experiments/codex-window/cw60-delivery-export-integration/test/boundaries.test.mjs:63:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    200 !== 404
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 404
+  actual: 200
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw60-astra-delivery-export-integration-20260912/src/experiments/codex-window/cw60-delivery-export-integration/test/boundaries.test.mjs:71:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 6
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 300.559863

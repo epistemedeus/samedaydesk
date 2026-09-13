@@ -1,0 +1,40 @@
+{
+  "schema": "samedaydesk.result-mailbox.pickup.v1",
+  "ok": true,
+  "refused": false,
+  "status": "retrieved",
+  "deliveredToBuyer": false,
+  "acknowledged": false,
+  "sample": false,
+  "sampleReasons": [],
+  "requestId": "cw65-mail",
+  "jobId": "vendor-budget-impact",
+  "retrievedAt": "2026-09-12T07:00:00.000Z",
+  "expiry": {
+    "expiresAt": "2026-09-13T07:00:00Z",
+    "clock": "2026-09-12T07:00:00.000Z",
+    "state": "unexpired",
+    "expired": false
+  },
+  "artifacts": [
+    {
+      "name": "budget-impact.json",
+      "bytes": 1344,
+      "sha256": "bcd236d2a619932884fa0daab1981a7f3e901bddfcfcf2580ff350d59f114fe7",
+      "ok": true
+    },
+    {
+      "name": "budget-impact.md",
+      "bytes": 354,
+      "sha256": "dbe59473cdf79fce207c88f632bc62aad6e04d9b59d410fbb95b93f36c65e39c",
+      "ok": true
+    }
+  ],
+  "outDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-wrong-body-key-and-bytes-001/cases/d20-mailbox-wrong-body-key-and-bytes/pickup",
+  "purchaseAuthority": false,
+  "sold": false,
+  "liveSettlement": "out-of-scope",
+  "termsVersion": "sha256:8a014f7d6db9a5a2a9010d9f7cc84e51abeac911d3c225ff7ef619a6f3a0f0c0",
+  "evidenceClass": "local-runtime",
+  "pickupPath": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-wrong-body-key-and-bytes-001/cases/d20-mailbox-wrong-body-key-and-bytes/pickup/pickup.json"
+}

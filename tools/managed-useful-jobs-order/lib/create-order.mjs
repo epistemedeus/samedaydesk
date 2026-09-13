@@ -385,6 +385,33 @@ async function createOrderStrict(raw, options = {}) {
     return { ...reservation.record.result, replayed: true };
   }
 
+  const priorExecutions = Number(reservation.record?.executionCount || 0);
+  if (reservation.kind === "adopt" && priorExecutions > 0) {
+    const interrupted = new OrderRefuse(
+      "interrupted-incomplete",
+      "order already recorded an engine execution that never completed; refusing a second engine run",
+      {
+        httpStatus: 409,
+        falsifier: "F-ORDER",
+        detail: {
+          orderId: request.orderId,
+          executionCount: priorExecutions,
+        },
+      },
+    );
+    const refused = formatRefuse(interrupted, raw);
+    refused.wrapper = {
+      contract: wrapper.version || EXECUTION_CONTRACT_PIN,
+      testedD01Sha: TESTED_D01_SHA,
+      executionId: reservation.record.inFlightExecutionId || null,
+      transport: null,
+      analysis: null,
+      delivery: { complete: false },
+    };
+    await store.complete(request.orderId, refused);
+    return refused;
+  }
+
   const outDir = options.outDir || mkdtempSync(join(tmpdir(), "managed-order-out-"));
   mkdirSync(outDir, { recursive: true });
 

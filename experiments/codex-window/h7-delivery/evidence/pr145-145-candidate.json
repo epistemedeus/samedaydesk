@@ -1,0 +1,68 @@
+{
+  "schema": "h7.pr145-145-candidate.v1",
+  "session": "01a094f5-dde1-70e1-ad54-481c90a8cd67",
+  "branch": "codex/h7-delivery-20260912",
+  "draftPr": "https://github.com/epistemedeus/samedaydesk/pull/145",
+  "runtimePin": "c6f1464222169f2d32247c978dc5007d82a2aa03",
+  "repairSha": "080cc62e7bc83f76431d916df34aea6d30875401",
+  "overlaySourceCommit": "5078eb9d220deb66bc4d50095038efc2e5b95faa",
+  "packageCommit": "7f9c1623d836aa761186b0ceba8dc98f1ea11fc4",
+  "catalogVersion": "1.4.5",
+  "reproducedOn144": {
+    "m01Lockfile": {
+      "ok": false,
+      "code": "engine-crash",
+      "error": "git fetch of engine pin 5f0f189fd3e88eabfeca2b95b2da644e58374372 failed: fatal: not a git repository (or any of the parent directories): .git",
+      "enginesBinPresent": true,
+      "toolsPathPresent": false
+    },
+    "pgImport": {
+      "code": "ERR_MODULE_NOT_FOUND",
+      "message": "Cannot find package 'pg' imported from .../tools/managed-useful-jobs-order/lib/store-postgres.mjs"
+    }
+  },
+  "candidate": {
+    "name": "useful-jobs-1.4.5",
+    "bytes": 5255012,
+    "sha256": "ea14851bd3ed091993acf91bda8430d2d9f621a96f11e8d4aa2b4efda0097e4e",
+    "containsWrapperFixes": true,
+    "packagedEngineResolution": true,
+    "declaredPg": "8.23.0",
+    "nodeModulesInArchive": false
+  },
+  "immutable144": {
+    "name": "useful-jobs-1.4.4",
+    "bytes": 5252886,
+    "sha256": "ff4934096e2ba2c95f52c9e364647b455009c36710723f754f3f63ea0dcb5aac",
+    "labeledFixed": false
+  },
+  "immutable143": {
+    "name": "useful-jobs-1.4.3",
+    "bytes": 2615491,
+    "sha256": "a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09",
+    "gitBlob": "f85c32615c6746fb86575257bf669358fa61d7e1",
+    "containsWrapperFixes": false,
+    "labeledFixed": false
+  },
+  "gates": {
+    "packaged145Extracted": { "pass": 9, "fail": 0 },
+    "packaged144FrozenKnownBad": { "pass": 9, "fail": 0 },
+    "vendorTemp": { "pass": 9, "fail": 0 },
+    "publicationRollbackInTree": { "pass": 5, "fail": 0 },
+    "interruptInTree": { "pass": 1, "fail": 0 },
+    "invokeLockfileInTree": { "pass": 7, "fail": 0 },
+    "d14Unit": { "pass": 12, "fail": 0 },
+    "pgPort": 55595
+  },
+  "payment": {
+    "usefulPaidWork": false,
+    "sold": false,
+    "purchaseAuthority": false,
+    "cashUsd": 0
+  },
+  "knownBad": [
+    "claiming 1.4.3 archive a18ab918 contains wrapper.mjs",
+    "claiming 1.4.4 ff493409 is a clean-tree M01/pg package",
+    "6007fcfa as release-ready 1.4.3"
+  ]
+}

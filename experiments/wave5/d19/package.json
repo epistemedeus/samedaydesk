@@ -1,0 +1,18 @@
+{
+  "name": "w5-d19-multiprocess-order-ledger",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Multi-process tests for Co20 managed orders and Co16 buyer-value ledger. Not a competing runner or kernel.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "harness": "node bin/d19.mjs",
+    "test:intended": "node bin/d19.mjs --assert-intended"
+  },
+  "dependencies": {
+    "pg": "^8.23.0"
+  }
+}

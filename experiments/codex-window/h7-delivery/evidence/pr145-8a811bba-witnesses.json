@@ -1,0 +1,99 @@
+{
+  "schema": "h7.pr145-8a811bba-witnesses.v1",
+  "observedAtUtc": "2026-09-12T12:09:11Z",
+  "nativeParentSessionId": "01a094f5-dde1-70e1-ad54-481c90a8cd67",
+  "sourceShaTested": "4c4298713f8caba4fd34541797097b0f4b97f03c",
+  "runtimePin": "8a811bbadba7edc6c926b319b0839cd2f01e5896",
+  "runtimePinFix": "e122c26657977ce3a2d41642095e999db1125b53",
+  "previousPinNotReleaseReady": "6007fcfa27074f9a594248e47296f1afa4f8385d",
+  "unpublished143": {
+    "bytes": 2615491,
+    "sha256": "a18ab918b5a6f60a6981903694aeba41d7d30dd8ad3e336f1d7b8fd22cf62b09"
+  },
+  "draftPrs": {
+    "pr143": "https://github.com/epistemedeus/samedaydesk/pull/143",
+    "pr145": "https://github.com/epistemedeus/samedaydesk/pull/145"
+  },
+  "paymentAuthority": {
+    "usefulPaidWork": false,
+    "sold": false,
+    "charged": false,
+    "purchaseAuthority": false,
+    "fundingState": "unfunded-or-rejected",
+    "acceptanceClass": "local-runtime",
+    "ackIsNotBuyerAcceptance": true,
+    "livePay": false,
+    "cashUsd": 0
+  },
+  "knownGoodControl": {
+    "id": "vendor-temp-lifecycle-application-handler-without-redelivery",
+    "command": "flock /tmp/h7/runtime-tmp/test.lock node --test --test-concurrency=1 server/paid-useful-jobs/tests/vendor-temp-lifecycle.test.mjs",
+    "pass": 9,
+    "fail": 0,
+    "note": "Includes four application-handler-without-redelivery cases. This is the PR143 leak correction. wrapper.mjs and managed-useful-jobs-order were not in the PR143 file list."
+  },
+  "knownBadOnCurrentPin": [
+    {
+      "id": "d20-order-interrupt-before-complete",
+      "status": "fail",
+      "blocksPr143": false,
+      "owner": "tools/managed-useful-jobs-order",
+      "evidence": "experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-8a811bba-d20-order-interrupt-before-complete",
+      "runtimeUnchanged": true,
+      "selectedOnlyReady": false,
+      "exit": 2,
+      "assertion": "ambiguous order automatically reran a completed real engine (2 !== 1)",
+      "stage": "before-complete",
+      "before": 1,
+      "after": 2,
+      "replayed": false,
+      "firstExecutionId": "1ec7e90e-77b4-4c1d-b1f7-1a8073b47827",
+      "reopenExecutionId": "653c2020-d399-4cdf-98a0-7858b8ddf423",
+      "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "archiveNote": "legacy 1.0.0 wrapper archive, not unpublished 1.4.3 kit a18ab918",
+      "testedD01Sha": "4c4298713f8caba4fd34541797097b0f4b97f03c",
+      "sold": false,
+      "cause": "recordExecution appends executions.jsonl independently of store.complete; reopen treats non-complete status as a new engine run"
+    },
+    {
+      "id": "d18-publication-rollback",
+      "status": "fail",
+      "blocksPr143": false,
+      "owner": "server/paid-useful-jobs/lib/wrapper.mjs publishCompleteOutputs",
+      "evidence": "experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-8a811bba-d18-publication-rollback",
+      "runtimeUnchanged": true,
+      "selectedOnlyReady": false,
+      "exit": 2,
+      "assertion": "failed publication partially overwrote an existing caller artifact",
+      "beforeBytes": 34,
+      "beforeText": "previous caller-owned publication\n",
+      "afterBytes": 1323,
+      "afterSchema": "s233.useful-application.artifact.v1",
+      "resultOk": false,
+      "sold": false,
+      "executionId": "0f8aaaba-d10d-4426-888c-7ba7ccd7bc30",
+      "secondCopyError": "EISDIR copyfile budget-impact.md onto a directory occupying that name",
+      "cause": "publishCompleteOutputs copies expected names one-by-one with copyFileSync; no staging/atomic rename/rollback"
+    }
+  ],
+  "doesNotBlockPr143": [
+    "d20-order-interrupt-before-complete",
+    "d18-publication-rollback",
+    "d19-http-principal-boundary",
+    "d19-current-ledger",
+    "d20-current-outbox",
+    "CW60/61/62/70 later consumer features on PR145",
+    "PG 55590-55595 untested",
+    "unsupported-portable-acquisition"
+  ],
+  "canShipIndependently": {
+    "pr143VendorTempLeakCorrection": true,
+    "pr145ConsumerStack": false,
+    "currentRuntimeDeliveryReady": false
+  },
+  "treesUnchangedVsPin": {
+    "wrapper.mjs": "a991d18cbb14d5510c09733f5082c86267017d3c",
+    "store-file.mjs": "cdca4a36a8cd2cb07b32510c0e258a5aecb6b175",
+    "release/lib/common.mjs": "ef1610de040ab6663f88582950037aa29bc1ec22"
+  }
+}

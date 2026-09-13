@@ -1,0 +1,30 @@
+{
+  "ok": false,
+  "classification": "unknown",
+  "code": "output-digest-mismatch",
+  "error": "output budget-impact.json digest does not match receipt",
+  "liveSettlement": "out-of-scope",
+  "purchaseAuthority": false,
+  "sold": false,
+  "testedProducer": {
+    "repo": "epistemedeus/samedaydesk",
+    "ref": "codex/w5-d01-20260911",
+    "sha": "fe8057f395bc665b629e12dbff0db0c264f0eb46",
+    "cli": "server/paid-useful-jobs/bin/cli.mjs"
+  },
+  "root": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-current-verifier-corruption-001/cases/d18-current-verifier-corruption/corruptions/changed-bytes",
+  "jobId": "vendor-budget-impact",
+  "name": "budget-impact.json",
+  "evidenceClass": "local-runtime",
+  "producerNotes": [
+    {
+      "code": "absolute-path-not-portable",
+      "name": "budget-impact.json",
+      "declaredPath": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-BImdAE/d18-current-verifier-corruption/puj-vendor-budget-impact-out-XuZ66z/budget-impact.json",
+      "binding": "basename-under-root"
+    }
+  ],
+  "analysisOk": true,
+  "analysisStatus": "actionable",
+  "analysisRefused": false
+}

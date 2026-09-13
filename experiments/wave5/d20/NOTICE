@@ -1,0 +1,13 @@
+W5-D20 is a thin consumer. It spawns pinned mailbox and outbox CLIs. It does
+not copy those kernels into this directory.
+
+Mailbox license (Co02 pin baf09dc591c83aec94e0cf42c5c64076fc5b98e3):
+  tools/result-mailbox/LICENSE in that tree (MIT). Nested useful-jobs archive
+  licenses stay inside the published tarball. I01 hasher license stays under
+  tools/result-mailbox/vendor/i01-funded-task-terms/LICENSE.
+
+Outbox license (Co09 pin 828d8942fb1631aba92a9116dc9fbde0ee1dd258):
+  tools/job-delivery-outbox/LICENSE in that tree (MIT).
+
+F08 wrapper (PR52 aeef964fa188443078958d9d6d393afae1d542ee) stays in
+server/paid-useful-jobs/ on the starting ref. This harness does not vendor it.

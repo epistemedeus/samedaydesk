@@ -1,0 +1,11 @@
+{
+  "command": "NODE_OPTIONS=--max-old-space-size=768 node --test --test-concurrency=1 experiments/codex-window/cw70-cold-http-consumer-current/test/consumer-foundation.test.mjs",
+  "exitCode": 1,
+  "tests": 5,
+  "pass": 1,
+  "fail": 4,
+  "runtimeExecuted": false,
+  "networkUsed": false,
+  "note": "Deliberately failing specifications against imported source; implementation deferred by quota-reset closeout instruction.",
+  "logNormalization": "Trailing whitespace stripped from TAP blank lines only."
+}

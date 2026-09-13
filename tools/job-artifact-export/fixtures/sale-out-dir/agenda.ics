@@ -1,0 +1,11 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//job-artifact-export sale fixture//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:salefixture000001-1@feed-agenda.caller
+DTSTAMP:20260911T000000Z
+SUMMARY:added: Caller delta
+DESCRIPTION:Caller-owned feed delta. Not a kit example. Not customer-delivery.
+END:VEVENT
+END:VCALENDAR

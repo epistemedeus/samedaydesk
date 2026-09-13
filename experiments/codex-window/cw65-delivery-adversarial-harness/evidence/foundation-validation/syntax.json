@@ -1,0 +1,75 @@
+{
+  "kind": "syntax-only",
+  "provider": "Grok VM/node_grok_bot_vm",
+  "hostname": "cursor",
+  "concurrency": 1,
+  "heapMiB": 768,
+  "results": [
+    {
+      "path": "experiments/codex-window/cw65-delivery-adversarial-harness/lib/context.mjs",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "path": "experiments/codex-window/cw65-delivery-adversarial-harness/lib/oracle.mjs",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "path": "experiments/codex-window/cw65-delivery-adversarial-harness/run.mjs",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "path": "experiments/codex-window/cw65-delivery-adversarial-harness/test/acceptance.test.mjs",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "path": "experiments/codex-window/cw65-delivery-adversarial-harness/test/controls.test.mjs",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "path": "experiments/codex-window/cw65-delivery-adversarial-harness/workers/current.mjs",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "path": "experiments/codex-window/cw65-delivery-adversarial-harness/workers/fs-barrier.mjs",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "path": "experiments/wave5/d16/current.mjs",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "path": "experiments/wave5/d18/current.mjs",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "path": "experiments/wave5/d19/current.mjs",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "path": "experiments/wave5/d20/current.mjs",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

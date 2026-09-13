@@ -1,0 +1,16 @@
+{
+  "pid": 356245,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/workers/current.mjs",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-c6f1464-d19-http-principal-boundary/cases/d19-http-principal-boundary/requests/principal-a.json"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-I5dvPj/d19-http-principal-boundary",
+  "startedAt": "2026-09-12T13:24:59.465Z",
+  "endedAt": "2026-09-12T13:24:59.810Z",
+  "status": 0,
+  "signal": null,
+  "timedOut": false
+}

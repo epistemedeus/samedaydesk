@@ -1,0 +1,15 @@
+{
+  "archives": {
+    "d14-abd8619.tar": {
+      "bytes": 61440,
+      "sha256": "dd9435aa05ec96d23bb611f0976327be14bd777d5894948f458fe8e3c60a7889"
+    },
+    "runtime-a9aaa0f.tar.gz": {
+      "bytes": 2562539,
+      "sha256": "d251284456d0a5696538c66e1e7fd9249cd2ba2e613f76358a87079a363439f4"
+    }
+  },
+  "runtimeFilesVerified": 35,
+  "d14ImportByteIdentical": true,
+  "runtimeLaunchTested": false
+}

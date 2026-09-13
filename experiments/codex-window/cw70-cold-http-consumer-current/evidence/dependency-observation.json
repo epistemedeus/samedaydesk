@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-09-12T09:16:27.916375+00:00",
+  "sourceInput": "abd861927cda6e3501b4a35289a4b284695cc493",
+  "frozenRuntime": "a9aaa0f8a3bb996948e6033f743b62c4e5417882",
+  "observedIntegrationBranch": "codex/useful-jobs-core-integration-20260912",
+  "observedIntegrationHead": "30345f69f16aca93bb95511ee4da62975c98cc04",
+  "observedMainHead": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+  "mainMismatch": "Main does not contain the frozen execution core. Review base is the existing core integration branch, not main.",
+  "frozenManifestFileChanges": [
+    {
+      "path": "client/public/for-agents/useful-jobs/catalog.json",
+      "frozenSha256": "e813959e11d9f7ff6db9948d777449ca38d1aa064e8d4c2953f7fc3a0babbc01",
+      "observedIntegrationSha256": "cb8eb4da9991c037847205caf27bf31371229aa3f9c0192d4773e949b43cd461"
+    }
+  ],
+  "otherChanges": [],
+  "action": "Recorded only. No rebase, merge, runtime update or shared-path write."
+}

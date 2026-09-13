@@ -1,0 +1,10 @@
+{
+  "label": "cw65-caller-http",
+  "rows": [
+    {
+      "field": "http-input",
+      "value": 2,
+      "unit": "USD/1M-tokens"
+    }
+  ]
+}

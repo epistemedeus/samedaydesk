@@ -1,0 +1,44 @@
+=== partial current receipt ===
+(node:321314) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:321320) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: partial current receipt, changed exact output, missing bundle and swapped receipt refuse
+ok 1 - partial current receipt, changed exact output, missing bundle and swapped receipt refuse
+  ---
+  duration_ms: 670.95418
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 734.202218
+exit:0
+=== different receiver process ===
+(node:321416) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:321422) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: different receiver process has an independent commit and destination identity
+ok 1 - different receiver process has an independent commit and destination identity
+  ---
+  duration_ms: 896.554513
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 957.937686
+exit:0

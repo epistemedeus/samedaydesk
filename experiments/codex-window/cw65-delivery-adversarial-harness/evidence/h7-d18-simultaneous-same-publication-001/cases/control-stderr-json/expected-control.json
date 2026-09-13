@@ -1,0 +1,12 @@
+{
+  "expected": "rejected",
+  "observed": {
+    "kind": "engine-nonzero-exit",
+    "accepted": false,
+    "hiddenByWrapperSuccess": false,
+    "domainOutcome": null,
+    "status": 2,
+    "code": "engine-refused"
+  },
+  "readinessEvidence": false
+}

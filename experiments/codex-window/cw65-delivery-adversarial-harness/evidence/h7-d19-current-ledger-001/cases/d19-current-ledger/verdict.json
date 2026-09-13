@@ -1,0 +1,11 @@
+{
+  "id": "d19-current-ledger",
+  "startedAt": "2026-09-12T09:46:30.743Z",
+  "endedAt": "2026-09-12T09:46:30.744Z",
+  "status": "incomplete",
+  "error": {
+    "message": "buyer-value-ledger is a sibling H7 slice, not a completed CW65 independent countercheck. Historical Co16 loaders are excluded; ledger persistence and settlement binding remain incomplete here.",
+    "code": "CURRENT_SURFACE_MISSING",
+    "stack": "Error: buyer-value-ledger is a sibling H7 slice, not a completed CW65 independent countercheck. Historical Co16 loaders are excluded; ledger persistence and settlement binding remain incomplete here.\n    at missing (file:///tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/lib/oracle.mjs:67:23)\n    at cases (file:///tmp/h7/wt/experiments/wave5/d19/current.mjs:84:5)\n    at TestContext.<anonymous> (file:///tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/test/acceptance.test.mjs:14:17)\n    at Test.runInAsyncScope (node:async_hooks:214:14)\n    at Test.run (node:internal/test_runner/test:1047:25)\n    at Test.start (node:internal/test_runner/test:944:17)\n    at startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)"
+  }
+}

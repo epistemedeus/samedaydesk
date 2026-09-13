@@ -1,0 +1,15 @@
+{
+  "schema": "s176.next-run-manifest.v1",
+  "family": "pricing-row-unit",
+  "parser": "s134-pricing-table-change",
+  "schedulerDaemon": false,
+  "sourceMeta": {
+    "note": "Forged next-run with no frozen currentInputs. Binder must refuse."
+  },
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "paidValueClaim": false,
+  "freeOffline": true
+}

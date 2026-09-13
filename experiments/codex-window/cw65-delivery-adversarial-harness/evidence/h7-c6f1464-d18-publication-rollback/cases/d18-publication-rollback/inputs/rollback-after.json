@@ -1,0 +1,10 @@
+{
+  "label": "cw65-caller-rollback",
+  "rows": [
+    {
+      "field": "rollback-input",
+      "value": 3,
+      "unit": "USD/1M-tokens"
+    }
+  ]
+}

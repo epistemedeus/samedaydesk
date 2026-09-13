@@ -1,0 +1,44 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "vendor-budget-impact",
+  "status": "actionable",
+  "summary": "Budget-impact scan: fieldChanges=1 unitChanges=0 conflicting=0 unknown=0",
+  "actions": [
+    {
+      "priority": "medium",
+      "kind": "review-price-field",
+      "fieldKey": "principal-input",
+      "note": "Price/field delta in curated fixture rows - not a live quote."
+    }
+  ],
+  "gaps": [],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "before": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-I5dvPj/d19-http-principal-boundary/puj-vendor-budget-impact-Vr6S1X/inputs/before.json",
+    "after": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-I5dvPj/d19-http-principal-boundary/puj-vendor-budget-impact-Vr6S1X/inputs/after.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "family": "pricing-row-unit",
+    "counts": {
+      "beforeRows": 1,
+      "afterRows": 1,
+      "added": 0,
+      "removed": 0,
+      "fieldChanges": 1,
+      "unitChanges": 0,
+      "conflicting": 0,
+      "unchanged": 0,
+      "unknown": 0
+    },
+    "ok": true
+  },
+  "generatedAt": "2026-09-12T13:24:59.788Z",
+  "purchaseAuthority": false,
+  "digest": "44f4686a80b61554"
+}

@@ -1,0 +1,83 @@
+{
+  "firstPid": 319716,
+  "secondPid": 319728,
+  "reservation": {
+    "stage": "reserved",
+    "pid": 319716,
+    "outcome": {
+      "kind": "created",
+      "record": {
+        "orderId": "cw65-same-order",
+        "termsHash": "5043bb1ecd917188cf1b029468b949cb3f71dad022d5588e223e90d172dc92c2",
+        "engineId": "vendor-budget-impact",
+        "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+        "request": {
+          "engineId": "vendor-budget-impact",
+          "orderId": "cw65-same-order",
+          "enginePin": {
+            "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+            "bytes": 2522418,
+            "version": "1.0.0",
+            "package": "useful-jobs"
+          },
+          "inputs": [
+            {
+              "flag": "--before",
+              "path": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-simultaneous-orders-001/cases/d19-simultaneous-orders/inputs/same-order-before.json",
+              "sha256": "28f85230bc1c1d9f8145c269a58b22d427bfd8052d8afdda0ecca07ec7cf92c2",
+              "bytes": 152
+            },
+            {
+              "flag": "--after",
+              "path": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-simultaneous-orders-001/cases/d19-simultaneous-orders/inputs/same-order-after.json",
+              "sha256": "b11cdb10fc3576dfdf418ac9e2a84a48d6ed31810cc374a10a8b4c5168f1d427",
+              "bytes": 152
+            }
+          ],
+          "fundingState": "unfunded"
+        },
+        "holderToken": "357c26cc-6430-4af0-9e26-30b64e081a26",
+        "holderPid": 319716,
+        "status": "reserved",
+        "result": null,
+        "executionCount": 0
+      }
+    },
+    "durable": {
+      "orderId": "cw65-same-order",
+      "termsHash": "5043bb1ecd917188cf1b029468b949cb3f71dad022d5588e223e90d172dc92c2",
+      "engineId": "vendor-budget-impact",
+      "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "request": {
+        "engineId": "vendor-budget-impact",
+        "orderId": "cw65-same-order",
+        "enginePin": {
+          "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+          "bytes": 2522418,
+          "version": "1.0.0",
+          "package": "useful-jobs"
+        },
+        "inputs": [
+          {
+            "flag": "--before",
+            "path": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-simultaneous-orders-001/cases/d19-simultaneous-orders/inputs/same-order-before.json",
+            "sha256": "28f85230bc1c1d9f8145c269a58b22d427bfd8052d8afdda0ecca07ec7cf92c2",
+            "bytes": 152
+          },
+          {
+            "flag": "--after",
+            "path": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-simultaneous-orders-001/cases/d19-simultaneous-orders/inputs/same-order-after.json",
+            "sha256": "b11cdb10fc3576dfdf418ac9e2a84a48d6ed31810cc374a10a8b4c5168f1d427",
+            "bytes": 152
+          }
+        ],
+        "fundingState": "unfunded"
+      },
+      "holderToken": "357c26cc-6430-4af0-9e26-30b64e081a26",
+      "holderPid": 319716,
+      "status": "reserved",
+      "result": null,
+      "executionCount": 0
+    }
+  }
+}

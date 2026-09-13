@@ -1,0 +1,11 @@
+{
+  "expected": "rejected",
+  "observed": {
+    "kind": "engine-invalid-json",
+    "accepted": false,
+    "hiddenByWrapperSuccess": true,
+    "domainOutcome": null,
+    "sliced": false
+  },
+  "readinessEvidence": false
+}

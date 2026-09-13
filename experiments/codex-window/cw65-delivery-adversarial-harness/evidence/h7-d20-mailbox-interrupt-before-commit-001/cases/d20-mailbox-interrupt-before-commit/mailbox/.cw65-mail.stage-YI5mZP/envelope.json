@@ -1,0 +1,68 @@
+{
+  "schema": "samedaydesk.result-mailbox.envelope.v1",
+  "schemaVersion": 1,
+  "termsVersion": "sha256:8a014f7d6db9a5a2a9010d9f7cc84e51abeac911d3c225ff7ef619a6f3a0f0c0",
+  "termsRevision": 0,
+  "requestId": "cw65-mail",
+  "jobId": "vendor-budget-impact",
+  "completedAt": "2026-09-12T07:00:00.000Z",
+  "expiresAt": "2026-09-13T07:00:00Z",
+  "sample": false,
+  "sampleReasons": [],
+  "deliveredToBuyer": false,
+  "purchaseAuthority": false,
+  "sold": false,
+  "liveSettlement": "out-of-scope",
+  "payment": {
+    "class": "nonsettling-prototype",
+    "fixture": true,
+    "purchaseAuthority": false,
+    "liveSettleAttempted": false,
+    "liveSettleAllowed": false
+  },
+  "engine": {
+    "purchaseAuthority": false
+  },
+  "engineResult": {
+    "ok": true,
+    "status": "actionable",
+    "digest": "f8c82fac4299ca68335c2cb04105d363216f7abf5a59f2662ef21ff0eef8333b"
+  },
+  "artifacts": [
+    {
+      "name": "budget-impact.json",
+      "bytes": 1345,
+      "sha256": "c2b38ead07937c56ed0f7044880e715959aa6192bc7d585bcd69f7af0124b263"
+    },
+    {
+      "name": "budget-impact.md",
+      "bytes": 357,
+      "sha256": "815782b8e057cc79dd22f534b7fff6223d232520b81475e386a55adb6e388440"
+    }
+  ],
+  "artifactsDigest": "852547d016980e681c1a3678f0df6fb88674e67ffc27da1043cc14c74af41d54",
+  "d01": {
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+    "pin": "fe8057f395bc665b629e12dbff0db0c264f0eb46",
+    "executionId": "5aa5af3e-88c8-420d-8cc8-6304a6480e5e",
+    "transport": "ok",
+    "analysis": {
+      "status": "actionable",
+      "outcome": "actionable",
+      "identityVerified": null
+    },
+    "deliveryComplete": true,
+    "outputIdentity": [
+      {
+        "name": "budget-impact.json",
+        "bytes": 1345,
+        "sha256": "c2b38ead07937c56ed0f7044880e715959aa6192bc7d585bcd69f7af0124b263"
+      },
+      {
+        "name": "budget-impact.md",
+        "bytes": 357,
+        "sha256": "815782b8e057cc79dd22f534b7fff6223d232520b81475e386a55adb6e388440"
+      }
+    ]
+  }
+}

@@ -1,0 +1,184 @@
+TAP version 13
+# Subtest: journey CLI: one version/integrity bump; brief lists it; unchanged omitted
+ok 1 - journey CLI: one version/integrity bump; brief lists it; unchanged omitted
+  ---
+  duration_ms: 59.205625
+  type: 'test'
+  ...
+# Subtest: seeded failure: HTML input refuses
+ok 2 - seeded failure: HTML input refuses
+  ---
+  duration_ms: 53.833401
+  type: 'test'
+  ...
+# Subtest: seeded failure: lockfile without integrity is labelled partial
+ok 3 - seeded failure: lockfile without integrity is labelled partial
+  ---
+  duration_ms: 55.847562
+  type: 'test'
+  ...
+# Subtest: seeded failure: SAMPLE as customer delta refuses
+ok 4 - seeded failure: SAMPLE as customer delta refuses
+  ---
+  duration_ms: 108.514246
+  type: 'test'
+  ...
+# Subtest: package.json-only input refuses
+ok 5 - package.json-only input refuses
+  ---
+  duration_ms: 51.101374
+  type: 'test'
+  ...
+# Subtest: lockfileVersion 1 refuses
+ok 6 - lockfileVersion 1 refuses
+  ---
+  duration_ms: 48.340776
+  type: 'test'
+  ...
+# Subtest: integrity change without version change is a change
+ok 7 - integrity change without version change is a change
+  ---
+  duration_ms: 4.232332
+  type: 'test'
+  ...
+# Subtest: lockfileVersion 2 packages map is preferred over dependencies
+ok 8 - lockfileVersion 2 packages map is preferred over dependencies
+  ---
+  duration_ms: 1.231147
+  type: 'test'
+  ...
+# Subtest: lockfileVersion 2 dependencies-only map walks nested pins
+ok 9 - lockfileVersion 2 dependencies-only map walks nested pins
+  ---
+  duration_ms: 1.619603
+  type: 'test'
+  ...
+# Subtest: added and removed pins are listed; unchanged scoped pin omitted
+ok 10 - added and removed pins are listed; unchanged scoped pin omitted
+  ---
+  duration_ms: 2.183615
+  type: 'test'
+  ...
+# Subtest: missing required inputs refuse
+ok 11 - missing required inputs refuse
+  ---
+  duration_ms: 47.965045
+  type: 'test'
+  ...
+# Subtest: missing input file refuses
+ok 12 - missing input file refuses
+  ---
+  duration_ms: 50.440628
+  type: 'test'
+  ...
+# Subtest: --example writes labeled fixture outputs, not a customer delta
+ok 13 - --example writes labeled fixture outputs, not a customer delta
+  ---
+  duration_ms: 65.074051
+  type: 'test'
+  ...
+# Subtest: CLI: git resolved SHA change is a pin change; stable package omitted
+ok 14 - CLI: git resolved SHA change is a pin change; stable package omitted
+  ---
+  duration_ms: 58.015206
+  type: 'test'
+  ...
+# Subtest: CLI: lockfileVersion 2 dependencies git resolved SHA change is detected
+ok 15 - CLI: lockfileVersion 2 dependencies git resolved SHA change is detected
+  ---
+  duration_ms: 60.541049
+  type: 'test'
+  ...
+# Subtest: process: constant injected hasher cannot erase integrity byte difference
+ok 16 - process: constant injected hasher cannot erase integrity byte difference
+  ---
+  duration_ms: 52.524761
+  type: 'test'
+  ...
+# Subtest: injected hasher cannot invent a change when pin fields match
+ok 17 - injected hasher cannot invent a change when pin fields match
+  ---
+  duration_ms: 0.867972
+  type: 'test'
+  ...
+# Subtest: injected hashPinTerms still annotates termsHash; I01-shaped constant is not pin equality
+ok 18 - injected hashPinTerms still annotates termsHash; I01-shaped constant is not pin equality
+  ---
+  duration_ms: 0.642154
+  type: 'test'
+  ...
+# Subtest: default terms hash changes when integrity or resolved changes at same version
+ok 19 - default terms hash changes when integrity or resolved changes at same version
+  ---
+  duration_ms: 0.54365
+  type: 'test'
+  ...
+# Subtest: source does not spawn npm or call the registry
+ok 20 - source does not spawn npm or call the registry
+  ---
+  duration_ms: 0.762447
+  type: 'test'
+  ...
+# Subtest: help exits 0
+ok 21 - help exits 0
+  ---
+  duration_ms: 48.691581
+  type: 'test'
+  ...
+# Subtest: runLockfileDelta throws CliRefuse for HTML
+ok 22 - runLockfileDelta throws CliRefuse for HTML
+  ---
+  duration_ms: 0.818531
+  type: 'test'
+  ...
+# Subtest: local-runtime: SDS package-lock.json is lockfileVersion 3 with packages map
+ok 23 - local-runtime: SDS package-lock.json is lockfileVersion 3 with packages map
+  ---
+  duration_ms: 3.94021
+  type: 'test'
+  ...
+# Subtest: local-runtime: self-compare of SDS lock omits unchanged names and stays nonsettling
+ok 24 - local-runtime: self-compare of SDS lock omits unchanged names and stays nonsettling
+  ---
+  duration_ms: 4.609597
+  type: 'test'
+  ...
+# Subtest: local-runtime: bumping zod version+integrity lists only that pin
+ok 25 - local-runtime: bumping zod version+integrity lists only that pin
+  ---
+  duration_ms: 5.004412
+  type: 'test'
+  ...
+# Subtest: local HTTP: parser accepts lockfile bytes served by a loopback server (test-only)
+ok 26 - local HTTP: parser accepts lockfile bytes served by a loopback server (test-only)
+  ---
+  duration_ms: 28.530513
+  type: 'test'
+  ...
+# Subtest: CLI against SDS lock vs in-memory clone writes fixture-distinct provenance local-runtime
+ok 27 - CLI against SDS lock vs in-memory clone writes fixture-distinct provenance local-runtime
+  ---
+  duration_ms: 6.922682
+  type: 'test'
+  ...
+# Subtest: CLI: SDS zod resolved-only change is detected with version and integrity unchanged
+ok 28 - CLI: SDS zod resolved-only change is detected with version and integrity unchanged
+  ---
+  duration_ms: 68.396692
+  type: 'test'
+  ...
+# Subtest: local HTTP: git-resolved after lock bytes compare to before file
+ok 29 - local HTTP: git-resolved after lock bytes compare to before file
+  ---
+  duration_ms: 8.321223
+  type: 'test'
+  ...
+1..29
+# tests 29
+# suites 0
+# pass 29
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1106.946362

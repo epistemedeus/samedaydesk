@@ -1,0 +1,11 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//useful-jobs Feed Agenda//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:samplefixture0001-1@feed-agenda.sample
+DTSTAMP:20260911T000000Z
+SUMMARY:added: Sample item
+DESCRIPTION:SAMPLE fixture feed delta. Not a live deadline.
+END:VEVENT
+END:VCALENDAR

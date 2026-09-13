@@ -277,6 +277,38 @@ describe("W5-D01 execution contract", { timeout: 180_000 }, () => {
     }
   });
 
+  it("HTTP result retrieval is bound to the execute Authorization principal", async () => {
+    const { server } = createExecutionServer();
+    const { origin } = await listenExecutionServer(server);
+    try {
+      const posted = await fetch(`${origin}/execute`, {
+        method: "POST",
+        headers: { "content-type": "application/json", authorization: "Bearer cw65-synthetic-principal-a" },
+        body: JSON.stringify({
+          jobId: "vendor-budget-impact",
+          executionId: "cw65-principal-unit",
+          inputs: callerBudget(),
+        }),
+      });
+      assert.equal(posted.status, 200);
+      const body = await posted.json();
+      assert.equal(body.ok, true, body.error);
+      const foreign = await fetch(`${origin}/results/cw65-principal-unit`, {
+        headers: { authorization: "Bearer cw65-synthetic-principal-b" },
+      });
+      assert.equal(foreign.status, 403);
+      const foreignBody = await foreign.json();
+      assert.equal(foreignBody.code, "principal-mismatch");
+      const owner = await fetch(`${origin}/results/cw65-principal-unit`, {
+        headers: { authorization: "Bearer cw65-synthetic-principal-a" },
+      });
+      assert.equal(owner.status, 200);
+      assert.equal((await owner.json()).executionId, "cw65-principal-unit");
+    } finally {
+      server.close();
+    }
+  });
+
   it("serve-execution.mjs process binds loopback and answers /health", async () => {
     const child = spawn(process.execPath, [serve], {
       cwd: REPO_ROOT,

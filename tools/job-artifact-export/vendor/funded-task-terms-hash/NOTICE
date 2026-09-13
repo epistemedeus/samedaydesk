@@ -1,0 +1,11 @@
+Isolated hasher pin for W4-commerce-15.
+
+Source: epistemedeus/neomorphic-io
+Commit: 819fa637ecf5e5177c84efc16fcaa18d57017631 (Neo PR54, I01 integration)
+Paths: packs/funded-task-terms/src/hash.mjs, packs/funded-task-terms/src/canonical.mjs
+License: MIT (see LICENSE)
+
+This directory is a hashed-terms adapter pin, not a competing earned-work
+kernel. Do not treat it as services/earned-work or as original F01 occupancy.
+Later integration may inject the live @neomorphic/funded-task-terms hash export
+instead of this pin.

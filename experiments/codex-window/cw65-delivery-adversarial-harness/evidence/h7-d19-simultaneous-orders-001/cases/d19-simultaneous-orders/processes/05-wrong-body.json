@@ -1,0 +1,16 @@
+{
+  "pid": 319795,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/workers/current.mjs",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-simultaneous-orders-001/cases/d19-simultaneous-orders/requests/wrong-body.json"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-XSy6JH/d19-simultaneous-orders",
+  "startedAt": "2026-09-12T09:47:44.583Z",
+  "endedAt": "2026-09-12T09:47:44.684Z",
+  "status": 2,
+  "signal": null,
+  "timedOut": false
+}

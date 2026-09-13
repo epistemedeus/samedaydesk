@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "samedaydesk-useful-jobs"
+version = "1.1.0"
+description = "MIT Python 3 client that verifies, extracts, and runs SameDayDesk useful-jobs via Node."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [{ name = "SameDayDesk Python client authors" }]
+dependencies = []
+
+[project.scripts]
+samedaydesk-useful-jobs = "samedaydesk_useful_jobs.cli:main"
+
+[project.urls]
+Homepage = "https://samedaydesk.com/for-agents/useful-jobs"
+
+[tool.setuptools.packages.find]
+include = ["samedaydesk_useful_jobs"]
+
+[tool.setuptools.package-data]
+samedaydesk_useful_jobs = ["pins.json"]

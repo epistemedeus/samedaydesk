@@ -1,0 +1,23 @@
+{
+  "pid": 337889,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/server/paid-useful-jobs/bin/cli.mjs",
+    "run",
+    "vendor-budget-impact",
+    "--before",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-pin-8a811bba-vendor-001/cases/d16-current-vendor/inputs/vendor-before.json",
+    "--after",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-pin-8a811bba-vendor-001/cases/d16-current-vendor/inputs/vendor-after.json",
+    "--out-dir",
+    "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-pin-8a811bba-vendor-001/cases/d16-current-vendor/published/changed"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-t5oece/d16-current-vendor",
+  "startedAt": "2026-09-12T11:09:50.477Z",
+  "endedAt": "2026-09-12T11:09:50.787Z",
+  "status": 0,
+  "signal": null,
+  "timedOut": false
+}

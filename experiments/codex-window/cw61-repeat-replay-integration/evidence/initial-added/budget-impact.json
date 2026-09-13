@@ -1,0 +1,43 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "vendor-budget-impact",
+  "status": "actionable",
+  "summary": "Budget-impact scan: fieldChanges=0 unitChanges=0 conflicting=0 unknown=0",
+  "actions": [
+    {
+      "priority": "low",
+      "kind": "no-budget-delta",
+      "note": "No field/unit deltas in curated rows"
+    }
+  ],
+  "gaps": [],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "before": "/tmp/cw61-control-initial-6UmSBu/puj-vendor-budget-impact-aDvhZG/inputs/before.json",
+    "after": "/tmp/cw61-control-initial-6UmSBu/puj-vendor-budget-impact-aDvhZG/inputs/after.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "family": "pricing-row-unit",
+    "counts": {
+      "beforeRows": 1,
+      "afterRows": 2,
+      "added": 1,
+      "removed": 0,
+      "fieldChanges": 0,
+      "unitChanges": 0,
+      "conflicting": 0,
+      "unchanged": 1,
+      "unknown": 0
+    },
+    "ok": true
+  },
+  "generatedAt": "2026-09-12T07:06:21.377Z",
+  "purchaseAuthority": false,
+  "digest": "fd11936bb32370e0"
+}

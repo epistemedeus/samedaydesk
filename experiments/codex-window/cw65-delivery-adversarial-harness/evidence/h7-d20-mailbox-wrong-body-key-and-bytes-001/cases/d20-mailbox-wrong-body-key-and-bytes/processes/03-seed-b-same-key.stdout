@@ -1,0 +1,15 @@
+{
+  "ok": false,
+  "refused": true,
+  "code": "request-id-conflict",
+  "error": "requestId already holds different delivery bytes or terms",
+  "status": "request-id-conflict",
+  "deliveredToBuyer": false,
+  "sample": false,
+  "purchaseAuthority": false,
+  "sold": false,
+  "liveSettlement": "out-of-scope",
+  "detail": {
+    "requestId": "cw65-mail"
+  }
+}

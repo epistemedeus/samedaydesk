@@ -1,0 +1,10 @@
+{
+  "label": "cw65-caller-bravo",
+  "rows": [
+    {
+      "field": "bravo-input",
+      "value": 3,
+      "unit": "USD/1M-tokens"
+    }
+  ]
+}

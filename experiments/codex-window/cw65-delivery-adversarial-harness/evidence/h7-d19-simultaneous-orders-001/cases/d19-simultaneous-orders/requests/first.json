@@ -1,0 +1,35 @@
+{
+  "mode": "order",
+  "request": {
+    "orderId": "cw65-same-order",
+    "engineId": "vendor-budget-impact",
+    "fundingState": "unfunded",
+    "enginePin": {
+      "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "bytes": 2522418,
+      "version": "1.0.0",
+      "package": "useful-jobs"
+    },
+    "inputs": [
+      {
+        "flag": "--before",
+        "path": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-simultaneous-orders-001/cases/d19-simultaneous-orders/inputs/same-order-before.json",
+        "sha256": "28f85230bc1c1d9f8145c269a58b22d427bfd8052d8afdda0ecca07ec7cf92c2",
+        "bytes": 152
+      },
+      {
+        "flag": "--after",
+        "path": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-simultaneous-orders-001/cases/d19-simultaneous-orders/inputs/same-order-after.json",
+        "sha256": "b11cdb10fc3576dfdf418ac9e2a84a48d6ed31810cc374a10a8b4c5168f1d427",
+        "bytes": 152
+      }
+    ]
+  },
+  "store": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-simultaneous-orders-001/cases/d19-simultaneous-orders/store",
+  "outDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-simultaneous-orders-001/cases/d19-simultaneous-orders/published/first",
+  "barrier": {
+    "stage": "reserved",
+    "ready": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-simultaneous-orders-001/cases/d19-simultaneous-orders/reserved.json",
+    "release": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-simultaneous-orders-001/cases/d19-simultaneous-orders/release"
+  }
+}

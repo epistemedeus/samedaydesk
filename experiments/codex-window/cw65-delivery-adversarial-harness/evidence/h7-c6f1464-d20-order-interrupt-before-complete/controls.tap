@@ -1,0 +1,66 @@
+TAP version 13
+# (node:355970) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: expected rejection: decoy-json
+ok 1 - expected rejection: decoy-json
+  ---
+  duration_ms: 29.797292
+  type: 'test'
+  ...
+# Subtest: expected rejection: empty-stdout
+ok 2 - expected rejection: empty-stdout
+  ---
+  duration_ms: 22.415609
+  type: 'test'
+  ...
+# Subtest: expected rejection: invalid-json
+ok 3 - expected rejection: invalid-json
+  ---
+  duration_ms: 26.015345
+  type: 'test'
+  ...
+# Subtest: expected rejection: nonzero
+ok 4 - expected rejection: nonzero
+  ---
+  duration_ms: 21.154973
+  type: 'test'
+  ...
+# Subtest: expected rejection: ok-false
+ok 5 - expected rejection: ok-false
+  ---
+  duration_ms: 25.939596
+  type: 'test'
+  ...
+# Subtest: expected rejection: ok-true-no-outputs
+ok 6 - expected rejection: ok-true-no-outputs
+  ---
+  duration_ms: 29.525596
+  type: 'test'
+  ...
+# Subtest: expected rejection: stderr-json
+ok 7 - expected rejection: stderr-json
+  ---
+  duration_ms: 26.957912
+  type: 'test'
+  ...
+# Subtest: expected rejection: hang
+ok 8 - expected rejection: hang
+  ---
+  duration_ms: 252.730195
+  type: 'test'
+  ...
+# Subtest: independent identity oracle rejects foreign execution, inputs, nested digest, and changed bytes
+ok 9 - independent identity oracle rejects foreign execution, inputs, nested digest, and changed bytes
+  ---
+  duration_ms: 4.837375
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 503.911037

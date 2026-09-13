@@ -1,0 +1,17 @@
+{
+  "schema": "samedaydesk.result-mailbox.ack.v1",
+  "ok": true,
+  "refused": false,
+  "status": "already-acknowledged",
+  "deliveredToBuyer": true,
+  "sample": false,
+  "requestId": "cw65-mail",
+  "jobId": "vendor-budget-impact",
+  "acknowledgedAt": "2026-09-12T07:00:00.000Z",
+  "retrieved": false,
+  "purchaseAuthority": false,
+  "sold": false,
+  "liveSettlement": "out-of-scope",
+  "termsVersion": "sha256:8a014f7d6db9a5a2a9010d9f7cc84e51abeac911d3c225ff7ef619a6f3a0f0c0",
+  "evidenceClass": "local-runtime"
+}

@@ -1,0 +1,5 @@
+{
+  "mode": "server",
+  "ready": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-http-body-and-key-001/cases/d19-http-body-and-key/server-ready.json",
+  "calls": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d19-http-body-and-key-001/cases/d19-http-body-and-key/engine-calls.jsonl"
+}

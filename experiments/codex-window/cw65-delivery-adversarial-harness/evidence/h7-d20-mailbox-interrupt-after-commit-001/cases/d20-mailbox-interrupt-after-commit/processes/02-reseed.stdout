@@ -1,0 +1,104 @@
+{
+  "ok": true,
+  "status": "seeded",
+  "deliveredToBuyer": false,
+  "replayed": true,
+  "sample": false,
+  "requestId": "cw65-mail",
+  "jobId": "vendor-budget-impact",
+  "envelopePath": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-interrupt-after-commit-001/cases/d20-mailbox-interrupt-after-commit/mailbox/cw65-mail/envelope.json",
+  "artifactsDir": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d20-mailbox-interrupt-after-commit-001/cases/d20-mailbox-interrupt-after-commit/mailbox/cw65-mail/artifacts",
+  "envelope": {
+    "schema": "samedaydesk.result-mailbox.envelope.v1",
+    "schemaVersion": 1,
+    "termsVersion": "sha256:8a014f7d6db9a5a2a9010d9f7cc84e51abeac911d3c225ff7ef619a6f3a0f0c0",
+    "termsRevision": 0,
+    "requestId": "cw65-mail",
+    "jobId": "vendor-budget-impact",
+    "completedAt": "2026-09-12T07:00:00.000Z",
+    "expiresAt": "2026-09-13T07:00:00Z",
+    "sample": false,
+    "sampleReasons": [],
+    "deliveredToBuyer": false,
+    "purchaseAuthority": false,
+    "sold": false,
+    "liveSettlement": "out-of-scope",
+    "payment": {
+      "class": "nonsettling-prototype",
+      "fixture": true,
+      "purchaseAuthority": false,
+      "liveSettleAttempted": false,
+      "liveSettleAllowed": false
+    },
+    "engine": {
+      "purchaseAuthority": false
+    },
+    "engineResult": {
+      "ok": true,
+      "status": "actionable",
+      "digest": "87f5fa80d67524195b79ab86971c89fecb2e2a4ddafcab0665ab104b661275ff"
+    },
+    "artifacts": [
+      {
+        "name": "budget-impact.json",
+        "bytes": 1343,
+        "sha256": "a749b85a8900153b52a3aae00e9cdc5cbac453fd8ccd0534d3f7b7864b57bc8c"
+      },
+      {
+        "name": "budget-impact.md",
+        "bytes": 357,
+        "sha256": "815782b8e057cc79dd22f534b7fff6223d232520b81475e386a55adb6e388440"
+      }
+    ],
+    "artifactsDigest": "6ccf104bbc79d6989cf39e4b0c561d069dabf400d6d26a3d3ea139fa254706e6",
+    "d01": {
+      "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+      "pin": "fe8057f395bc665b629e12dbff0db0c264f0eb46",
+      "executionId": "8da2b584-5769-4211-9162-2bc4cf558aa0",
+      "transport": "ok",
+      "analysis": {
+        "status": "actionable",
+        "outcome": "actionable",
+        "identityVerified": null
+      },
+      "deliveryComplete": true,
+      "outputIdentity": [
+        {
+          "name": "budget-impact.json",
+          "bytes": 1343,
+          "sha256": "a749b85a8900153b52a3aae00e9cdc5cbac453fd8ccd0534d3f7b7864b57bc8c"
+        },
+        {
+          "name": "budget-impact.md",
+          "bytes": 357,
+          "sha256": "815782b8e057cc79dd22f534b7fff6223d232520b81475e386a55adb6e388440"
+        }
+      ]
+    }
+  },
+  "evidenceClass": "local-runtime",
+  "d01": {
+    "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+    "pin": "fe8057f395bc665b629e12dbff0db0c264f0eb46",
+    "executionId": "8da2b584-5769-4211-9162-2bc4cf558aa0",
+    "transport": "ok",
+    "analysis": {
+      "status": "actionable",
+      "outcome": "actionable",
+      "identityVerified": null
+    },
+    "deliveryComplete": true,
+    "outputIdentity": [
+      {
+        "name": "budget-impact.json",
+        "bytes": 1343,
+        "sha256": "a749b85a8900153b52a3aae00e9cdc5cbac453fd8ccd0534d3f7b7864b57bc8c"
+      },
+      {
+        "name": "budget-impact.md",
+        "bytes": 357,
+        "sha256": "815782b8e057cc79dd22f534b7fff6223d232520b81475e386a55adb6e388440"
+      }
+    ]
+  }
+}

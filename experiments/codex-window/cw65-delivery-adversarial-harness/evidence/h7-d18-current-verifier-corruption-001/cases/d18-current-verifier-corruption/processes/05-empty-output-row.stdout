@@ -1,0 +1,22 @@
+{
+  "ok": false,
+  "classification": "unknown",
+  "code": "empty-output-object",
+  "error": "empty or nameless output objects cannot count complete",
+  "liveSettlement": "out-of-scope",
+  "purchaseAuthority": false,
+  "sold": false,
+  "testedProducer": {
+    "repo": "epistemedeus/samedaydesk",
+    "ref": "codex/w5-d01-20260911",
+    "sha": "fe8057f395bc665b629e12dbff0db0c264f0eb46",
+    "cli": "server/paid-useful-jobs/bin/cli.mjs"
+  },
+  "root": "/tmp/h7/wt/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/h7-d18-current-verifier-corruption-001/cases/d18-current-verifier-corruption/corruptions/empty-output-row",
+  "jobId": "vendor-budget-impact",
+  "evidenceClass": "local-runtime",
+  "producerNotes": [],
+  "analysisOk": true,
+  "analysisStatus": "actionable",
+  "analysisRefused": false
+}

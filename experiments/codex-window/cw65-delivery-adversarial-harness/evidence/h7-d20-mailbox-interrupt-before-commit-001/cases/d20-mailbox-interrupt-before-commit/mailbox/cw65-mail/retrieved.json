@@ -1,0 +1,10 @@
+{
+  "schema": "samedaydesk.result-mailbox.pickup.v1",
+  "status": "retrieved",
+  "requestId": "cw65-mail",
+  "jobId": "vendor-budget-impact",
+  "retrievedAt": "2026-09-12T07:00:00.000Z",
+  "deliveredToBuyer": false,
+  "acknowledged": false,
+  "artifactsDigest": "852547d016980e681c1a3678f0df6fb88674e67ffc27da1043cc14c74af41d54"
+}

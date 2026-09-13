@@ -1,0 +1,15 @@
+{
+  "pid": 318364,
+  "command": "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
+  "args": [
+    "/tmp/h7/wt/experiments/wave5/d16/fixtures/broken-engines/nonzero.mjs"
+  ],
+  "cwd": "/tmp/h7/wt",
+  "heapMB": 768,
+  "tmpdir": "/tmp/h7/wt/.cw65-owned-tmp/cw65-owned-APsc8D/control-nonzero",
+  "startedAt": "2026-09-12T09:46:30.283Z",
+  "endedAt": "2026-09-12T09:46:30.302Z",
+  "status": 7,
+  "signal": null,
+  "timedOut": false
+}
