@@ -4,11 +4,13 @@ import {
   FROZEN_REQUEST_HASH_VERSION,
   HA1_JOB_IDS,
   MANAGED_ORDER_TERMS_SCHEMA,
+  MATERIALIZED_INPUT_SCHEMA,
   MAX_FILE_BYTES,
   MAX_METADATA_BYTES,
   MAX_OUTPUT_FILES,
   MAX_TOTAL_BYTES,
   PROMISED_OUTPUTS,
+  PUBLICATION_IDENTITY_SCHEMA,
   REQUEST_HASH_ALGORITHM,
 } from "./acquisition-constants.mjs";
 import { acquisitionRefuse } from "./acquisition-errors.mjs";
@@ -43,6 +45,110 @@ function sortValue(value) {
  * termsHash (orderId + engine pin) and from the HTTP frozen-request hash unless
  * an explicit hashesReconciled flag records that canonicalization was reconciled.
  */
+export function looksLikeJsonText(value) {
+  if (typeof value !== "string") return false;
+  const t = value.trim();
+  return (t.startsWith("{") && t.endsWith("}")) || (t.startsWith("[") && t.endsWith("]"));
+}
+
+/**
+ * Versioned projection of HTTP JSON text as consumed by the execution materializer:
+ * a terminal newline is added when the source lacks one. Source identity is audit
+ * data only; acquisition hashes use materializedBytes/materializedSha256.
+ */
+export function materializeHttpJsonText(sourceText) {
+  if (typeof sourceText !== "string") {
+    throw acquisitionRefuse("invalid-binding", "HTTP JSON input must be a string");
+  }
+  const sourceBuf = Buffer.from(sourceText, "utf8");
+  const materializedText = sourceText.endsWith("\n") ? sourceText : `${sourceText}\n`;
+  const materializedBuf = Buffer.from(materializedText, "utf8");
+  return {
+    schema: MATERIALIZED_INPUT_SCHEMA,
+    sourceBytes: sourceBuf.length,
+    sourceSha256: sha256Bytes(sourceBuf),
+    materializedText,
+    materializedBytes: materializedBuf.length,
+    materializedSha256: sha256Bytes(materializedBuf),
+  };
+}
+
+export function inputFlag(key) {
+  const text = String(key);
+  return text.startsWith("--") ? text : `--${text}`;
+}
+
+/** Engine-consumed HTTP JSON tuples. Extra source* fields are audit-only. */
+export function acquisitionInputsFromHttpRequest(inputs) {
+  const rows = [];
+  for (const [key, value] of Object.entries(inputs || {})) {
+    if (typeof value !== "string" || !looksLikeJsonText(value)) continue;
+    const projection = materializeHttpJsonText(value);
+    rows.push({
+      flag: inputFlag(key),
+      sha256: projection.materializedSha256,
+      bytes: projection.materializedBytes,
+      sourceSha256: projection.sourceSha256,
+      sourceBytes: projection.sourceBytes,
+    });
+  }
+  return rows.sort((a, b) => a.flag.localeCompare(b.flag));
+}
+
+export function hashHttpRequestAcquisitionV1(jobId, inputs) {
+  return hashFrozenRequestV1({ jobId, inputs: acquisitionInputsFromHttpRequest(inputs) });
+}
+
+export function publicationIdentityV1({
+  executionId,
+  jobId,
+  requestHash,
+  requestHashVersion = FROZEN_REQUEST_HASH_VERSION,
+  receiptSha256,
+  outputsDigest,
+  outputs,
+}) {
+  const projected = namedOutputsProjection(outputs);
+  const digest = outputsDigest || digestNamedOutputs(projected);
+  return {
+    schema: PUBLICATION_IDENTITY_SCHEMA,
+    executionId,
+    jobId,
+    requestHash: assertSha256(requestHash, "requestHash"),
+    requestHashVersion: requestHashVersion || FROZEN_REQUEST_HASH_VERSION,
+    receiptSha256: assertSha256(receiptSha256, "receiptSha256"),
+    outputsDigest: assertSha256(digest, "outputsDigest"),
+    outputs: projected,
+  };
+}
+
+export function hashPublicationIdentityV1(fields) {
+  return sha256Text(stableStringify(publicationIdentityV1(fields)));
+}
+
+export function publicationFieldsFromBody(body) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) return null;
+  if (
+    !body.executionId ||
+    !body.jobId ||
+    !body.requestHash ||
+    !body.receiptSha256 ||
+    !body.outputsDigest ||
+    !Array.isArray(body.outputs)
+  ) {
+    return null;
+  }
+  return {
+    executionId: body.executionId,
+    jobId: body.jobId,
+    requestHash: body.requestHash,
+    requestHashVersion: body.requestHashVersion || FROZEN_REQUEST_HASH_VERSION,
+    receiptSha256: body.receiptSha256,
+    outputsDigest: body.outputsDigest,
+    outputs: body.outputs,
+  };
+}
+
 export function hashFrozenRequestV1({ jobId, inputs }) {
   assertJobId(jobId);
   const rows = (inputs || [])

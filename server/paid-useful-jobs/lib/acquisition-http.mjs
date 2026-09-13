@@ -5,6 +5,7 @@
 import { EXECUTION_CONTRACT_VERSION } from "./contract.mjs";
 import { FROZEN_REQUEST_HASH_VERSION } from "../../../tools/managed-useful-jobs-order/lib/acquisition-constants.mjs";
 import { AcquisitionRefuse } from "../../../tools/managed-useful-jobs-order/lib/acquisition-errors.mjs";
+import { hashPublicationIdentityV1 } from "../../../tools/managed-useful-jobs-order/lib/acquisition-identity.mjs";
 
 const ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
 const SHA256 = /^[a-f0-9]{64}$/;
@@ -34,10 +35,64 @@ function extractBearerToken(req) {
 export function createStaticPrincipalAdapter(tokenToPrincipal) {
   const map =
     tokenToPrincipal instanceof Map ? tokenToPrincipal : new Map(Object.entries(tokenToPrincipal || {}));
-  return function resolvePrincipal(req) {
+  return async function resolvePrincipal(req) {
     const token = extractBearerToken(req);
     if (!token) return null;
     return map.get(token) || null;
+  };
+}
+
+/**
+ * Bounds live HTTP responses (including paused sockets) independently of the
+ * HA1 file-read gate. Held from admission through finish/close.
+ */
+export function createResponseSemaphore({ max = 8, timeoutMs = 30_000 } = {}) {
+  const cap = Number.isSafeInteger(max) && max > 0 ? max : 8;
+  const limitMs = Number.isSafeInteger(timeoutMs) && timeoutMs > 0 ? timeoutMs : 30_000;
+  let active = 0;
+
+  return {
+    get active() {
+      return active;
+    },
+    get max() {
+      return cap;
+    },
+    get timeoutMs() {
+      return limitMs;
+    },
+    tryAcquire(req, res) {
+      if (active >= cap) return null;
+      active += 1;
+      let released = false;
+      const release = () => {
+        if (released) return;
+        released = true;
+        active -= 1;
+        if (timer != null) clearTimeout(timer);
+        try {
+          req?.socket?.setTimeout?.(0);
+        } catch {
+          /* already closed */
+        }
+      };
+      const timer = setTimeout(() => {
+        try {
+          if (!res.writableEnded && !res.destroyed) res.destroy();
+        } catch {
+          /* already closed */
+        }
+        release();
+      }, limitMs);
+      try {
+        req?.socket?.setNoDelay?.(true);
+      } catch {
+        /* no socket yet */
+      }
+      res.once("finish", release);
+      res.once("close", release);
+      return { release };
+    },
   };
 }
 
@@ -140,6 +195,49 @@ function pendingCount(gate) {
   return Number(gate.active || 0) + Number(gate.queued || 0);
 }
 
+async function writeWithBackpressure(res, bytes, { signal, chunkSize = 16 * 1024 } = {}) {
+  if (res.destroyed || res.writableEnded) return;
+  let offset = 0;
+  const chunk = Number.isSafeInteger(chunkSize) && chunkSize > 0 ? chunkSize : 16 * 1024;
+  while (offset < bytes.length) {
+    if (signal?.aborted || res.destroyed) {
+      if (!res.destroyed) {
+        try {
+          res.destroy();
+        } catch {
+          /* already closed */
+        }
+      }
+      return;
+    }
+    const next = Math.min(offset + chunk, bytes.length);
+    const slice = bytes.subarray(offset, next);
+    offset = next;
+    const ok = res.write(slice);
+    if (!ok) {
+      await new Promise((resolve) => {
+        const done = () => {
+          res.off("drain", done);
+          res.off("close", done);
+          signal?.removeEventListener?.("abort", done);
+          resolve();
+        };
+        res.once("drain", done);
+        res.once("close", done);
+        if (signal) {
+          if (signal.aborted) {
+            done();
+            return;
+          }
+          signal.addEventListener("abort", done, { once: true });
+        }
+      });
+    }
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  }
+  if (!res.destroyed && !res.writableEnded) res.end();
+}
+
 export function createAcquisitionHttpHandler({
   reader,
   resolvePrincipal,
@@ -147,6 +245,8 @@ export function createAcquisitionHttpHandler({
   forbiddenSeams = null,
   gate = null,
   maxPendingDownloads = null,
+  maxActiveResponses = null,
+  responseTimeoutMs = 30_000,
   requestHashVersion = FROZEN_REQUEST_HASH_VERSION,
   openTimeoutMs = 30_000,
 } = {}) {
@@ -162,8 +262,13 @@ export function createAcquisitionHttpHandler({
       : gate?.max
         ? gate.max + (gate.maxQueued || 0)
         : null;
+  const responseMax =
+    Number.isSafeInteger(maxActiveResponses) && maxActiveResponses > 0
+      ? maxActiveResponses
+      : pendingCap || 8;
+  const responses = createResponseSemaphore({ max: responseMax, timeoutMs: responseTimeoutMs });
 
-  return async function handleAcquisition(req, res) {
+  async function handleAcquisition(req, res) {
     let parsed;
     try {
       parsed = parseRawPath(req.url || "/");
@@ -189,7 +294,7 @@ export function createAcquisitionHttpHandler({
       return true;
     }
 
-    const principalId = resolvePrincipal(req);
+    const principalId = await Promise.resolve(resolvePrincipal(req));
     if (!principalId) {
       endJson(res, 404, errorBody("not-found", "Execution not found"));
       return true;
@@ -200,7 +305,11 @@ export function createAcquisitionHttpHandler({
       return true;
     }
     const presentedVersion = header(req, "x-request-hash-version");
-    if (presentedVersion && presentedVersion !== requestHashVersion) {
+    if (!presentedVersion) {
+      endJson(res, 400, errorBody("invalid-binding", "X-Request-Hash-Version is required"));
+      return true;
+    }
+    if (presentedVersion !== requestHashVersion) {
       endJson(
         res,
         409,
@@ -213,6 +322,11 @@ export function createAcquisitionHttpHandler({
 
     if (pendingCap != null && pendingCount(gate) >= pendingCap) {
       endJson(res, 503, errorBody("capacity-exhausted", "pending download count is at the configured bound"));
+      return true;
+    }
+    const held = responses.tryAcquire(req, res);
+    if (!held) {
+      endJson(res, 503, errorBody("capacity-exhausted", "active HTTP response count is at the configured bound"));
       return true;
     }
 
@@ -232,6 +346,15 @@ export function createAcquisitionHttpHandler({
       if (parsed.kind === "metadata") {
         const result = await reader.get(binding, now, { clock, signal: ac.signal });
         if (result.state === "available") {
+          const publicationIdentitySha256 = hashPublicationIdentityV1({
+            executionId: result.executionId,
+            jobId: result.jobId,
+            requestHash: result.requestHash,
+            requestHashVersion,
+            receiptSha256: result.receiptSha256,
+            outputsDigest: result.outputsDigest,
+            outputs: result.outputs,
+          });
           endJson(res, 200, {
             ok: true,
             state: "available",
@@ -244,6 +367,7 @@ export function createAcquisitionHttpHandler({
             receiptSha256: result.receiptSha256,
             outputsDigest: result.outputsDigest,
             outputs: result.outputs,
+            publicationIdentitySha256,
             termsVersion: result.termsVersion,
             sample: result.sample,
             expiresAt: result.expiresAt,
@@ -287,7 +411,7 @@ export function createAcquisitionHttpHandler({
         "accept-ranges": "none",
         ...PRIVATE_HEADERS,
       });
-      res.end(bytes);
+      await writeWithBackpressure(res, bytes, { signal: ac.signal });
       return true;
     } catch (err) {
       if (forbiddenSeams && typeof forbiddenSeams === "object") {
@@ -310,5 +434,7 @@ export function createAcquisitionHttpHandler({
     } finally {
       req.off?.("aborted", onAbort);
     }
-  };
+  }
+  handleAcquisition.responseSemaphore = responses;
+  return handleAcquisition;
 }

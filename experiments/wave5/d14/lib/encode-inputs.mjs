@@ -5,6 +5,7 @@ import { ConsumerRefuse } from "./errors.mjs";
 import { digestNamedBytes, sha256Bytes } from "./digest-named.mjs";
 import { JOB_EXPECTED_OUTPUTS } from "./pins.mjs";
 import { assertExecutionId } from "./origin.mjs";
+import { materializeHttpJsonText } from "../../../../tools/managed-useful-jobs-order/lib/acquisition-identity.mjs";
 
 export { ConsumerRefuse, sha256Bytes };
 
@@ -15,11 +16,11 @@ export function looksJsonText(value) {
 }
 
 export function stagedText(text) {
-  return text.endsWith("\n") ? text : `${text}\n`;
+  return materializeHttpJsonText(text).materializedText;
 }
 
 export function stagedSha256(text) {
-  return sha256Bytes(Buffer.from(stagedText(text), "utf8"));
+  return materializeHttpJsonText(text).materializedSha256;
 }
 
 export function generateExecutionId() {
@@ -51,12 +52,17 @@ export function encodeInputFile(key, filePath) {
       path: abs,
     });
   }
+  const projection = materializeHttpJsonText(text);
   return {
     key,
     text,
     bytes: buf.length,
     sha256: sha256Bytes(buf),
-    stagedSha256: stagedSha256(text),
+    stagedSha256: projection.materializedSha256,
+    materializedBytes: projection.materializedBytes,
+    materializedSha256: projection.materializedSha256,
+    sourceBytes: projection.sourceBytes,
+    sourceSha256: projection.sourceSha256,
   };
 }
 
@@ -82,6 +88,10 @@ export function encodeExecuteRequest({
       bytes: encoded.bytes,
       sha256: encoded.sha256,
       stagedSha256: encoded.stagedSha256,
+      materializedBytes: encoded.materializedBytes,
+      materializedSha256: encoded.materializedSha256,
+      sourceBytes: encoded.sourceBytes,
+      sourceSha256: encoded.sourceSha256,
     };
   }
   const request = { jobId, inputs, executionId: id };
@@ -114,11 +124,10 @@ export function assertNoFilesystemPaths(request, forbiddenSubstrings) {
 
 export function digestFromSubmitted(submitted = {}) {
   return digestNamedBytes(
-    Object.entries(submitted).map(([name, row]) => ({
-      name,
-      kind: "file",
-      bytes: row.bytes,
-      sha256: row.stagedSha256,
-    })),
+    Object.entries(submitted).map(([name, row]) => {
+      const sha256 = row.materializedSha256 || row.stagedSha256;
+      const bytes = Number.isSafeInteger(row.materializedBytes) ? row.materializedBytes : row.bytes;
+      return { name, kind: "file", bytes, sha256 };
+    }),
   );
 }

@@ -1,6 +1,8 @@
 export const ACQUISITION_SCHEMA = "samedaydesk.managed-order-acquisition.v1";
 export const FROZEN_REQUEST_HASH_VERSION = "samedaydesk.acquisition-frozen-request.v1";
 export const HTTP_FROZEN_REQUEST_HASH_VERSION = "samedaydesk.http-frozen-request.v1";
+export const MATERIALIZED_INPUT_SCHEMA = "samedaydesk.acquisition-materialized-input.v1";
+export const PUBLICATION_IDENTITY_SCHEMA = "samedaydesk.acquisition-publication-identity.v1";
 export const MANAGED_ORDER_TERMS_SCHEMA = "samedaydesk.useful-jobs-order-terms.v1";
 export const REQUEST_HASH_ALGORITHM = "sha256";
 export const EXECUTION_CONTRACT = "samedaydesk.paid-useful-jobs.execution.v1";

@@ -140,7 +140,15 @@ try {
     });
     writeTicketAtomic(ticketPath, ticket);
 
-    const posted = await postExecute(origin, encoded.request, { timeoutMs: timeoutMs(120_000) });
+    const authorization = args.authorization
+      ? String(args.authorization).startsWith("Bearer ")
+        ? String(args.authorization)
+        : `Bearer ${args.authorization}`
+      : process.env.D14_AUTHORIZATION || null;
+    const posted = await postExecute(origin, encoded.request, {
+      timeoutMs: timeoutMs(120_000),
+      authorization,
+    });
     const next = updateTicketAfterPost(ticket, posted);
     writeTicketAtomic(ticketPath, next);
     const analysisOk = posted.classify.kind === "analysis-outcome" && posted.classify.ok === true;
@@ -240,6 +248,7 @@ try {
         expectedNames: ticket.expectedOutputs || got.body.outputs.map((row) => row.name),
         destDir,
         authorization,
+        manifest: got.body,
       });
     }
 

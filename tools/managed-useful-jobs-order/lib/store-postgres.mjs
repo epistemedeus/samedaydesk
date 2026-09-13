@@ -1,4 +1,5 @@
 import { mkdirSync, readFileSync } from "node:fs";
+import { AsyncLocalStorage } from "node:async_hooks";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import pg from "pg";
@@ -81,44 +82,118 @@ export async function createPostgresStore({
   maxAdmissions = DEFAULT_MAX_ADMISSIONS,
   statementTimeoutMs = 30_000,
 } = {}) {
-  const client = new pg.Client(connectionString ? { connectionString } : clientConfig);
-  await client.connect();
-  await client.query(`CREATE SCHEMA IF NOT EXISTS ${quoteIdent(schema)}`);
-  await client.query(`SET search_path TO ${quoteIdent(schema)}`);
-  if (Number.isSafeInteger(statementTimeoutMs) && statementTimeoutMs > 0) {
-    await client.query(`SET statement_timeout = ${statementTimeoutMs}`);
+  const cfg = connectionString ? { connectionString } : { ...clientConfig };
+  const boot = new pg.Client(cfg);
+  await boot.connect();
+  try {
+    await boot.query(`CREATE SCHEMA IF NOT EXISTS ${quoteIdent(schema)}`);
+    await boot.query(`SET search_path TO ${quoteIdent(schema)}`);
+    if (Number.isSafeInteger(statementTimeoutMs) && statementTimeoutMs > 0) {
+      await boot.query(`SET statement_timeout = ${statementTimeoutMs}`);
+    }
+    await boot.query(SQL);
+    await boot.query(ACQUISITION_SQL);
+  } finally {
+    await boot.end();
   }
-  await client.query(SQL);
-  await client.query(ACQUISITION_SQL);
+
+  const pool = new pg.Pool({ ...cfg, max: 8 });
+  const als = new AsyncLocalStorage();
+  const timeoutSql =
+    Number.isSafeInteger(statementTimeoutMs) && statementTimeoutMs > 0
+      ? `SET statement_timeout = ${statementTimeoutMs}`
+      : null;
+
+  async function prepare(client) {
+    if (client.__ha1Prepared) return;
+    await client.query(`SET search_path TO ${quoteIdent(schema)}`);
+    if (timeoutSql) await client.query(timeoutSql);
+    client.__ha1Prepared = true;
+  }
+
+  async function withClient(fn) {
+    const existing = als.getStore();
+    if (existing) return fn(existing);
+    const leased = await pool.connect();
+    try {
+      await prepare(leased);
+      return await als.run(leased, () => fn(leased));
+    } finally {
+      leased.release();
+    }
+  }
+
+  async function withTx(fn) {
+    const existing = als.getStore();
+    if (existing?.__ha1InTx) return fn(existing);
+    if (existing) {
+      await existing.query("BEGIN");
+      existing.__ha1InTx = true;
+      try {
+        const result = await fn(existing);
+        await existing.query("COMMIT");
+        existing.__ha1InTx = false;
+        return result;
+      } catch (err) {
+        existing.__ha1InTx = false;
+        try {
+          await existing.query("ROLLBACK");
+        } catch {
+          /* already rolled back */
+        }
+        throw err;
+      }
+    }
+    return withClient(async (client) => {
+      await client.query("BEGIN");
+      client.__ha1InTx = true;
+      try {
+        const result = await fn(client);
+        await client.query("COMMIT");
+        return result;
+      } catch (err) {
+        try {
+          await client.query("ROLLBACK");
+        } catch {
+          /* already rolled back */
+        }
+        throw err;
+      } finally {
+        client.__ha1InTx = false;
+      }
+    });
+  }
+
   const cap =
     Number.isSafeInteger(maxAdmissions) && maxAdmissions > 0 ? maxAdmissions : DEFAULT_MAX_ADMISSIONS;
   if (artifactRoot) mkdirSync(artifactRoot, { recursive: true, mode: 0o700 });
 
-  return {
+  const store = {
     kind: "postgres",
     schema,
     artifactRoot,
     maxAdmissions: cap,
     async get(orderId) {
-      const { rows } = await client.query(
-        `SELECT order_id, terms_hash, status, holder_pid, holder_token, execution_count, engine_id,
+      const { rows } = await withClient((client) =>
+        client.query(
+          `SELECT order_id, terms_hash, status, holder_pid, holder_token, execution_count, engine_id,
                 archive_sha256, request_json, result_json, created_at
          FROM managed_useful_jobs_orders WHERE order_id = $1`,
-        [orderId],
+          [orderId],
+        ),
       );
       return mapRow(rows[0]);
     },
     async reserve(record) {
-      await client.query("BEGIN");
       try {
-        const { rows } = await client.query(
-          `SELECT order_id, terms_hash, status, holder_pid, holder_token, execution_count, engine_id,
+        return await withTx(async (client) => {
+          const { rows } = await client.query(
+            `SELECT order_id, terms_hash, status, holder_pid, holder_token, execution_count, engine_id,
                   archive_sha256, request_json, result_json, created_at
            FROM managed_useful_jobs_orders WHERE order_id = $1 FOR UPDATE`,
-          [record.orderId],
-        );
-        if (!rows[0]) {
-          try {
+            [record.orderId],
+          );
+          if (!rows[0]) {
             const inserted = await client.query(
               `INSERT INTO managed_useful_jobs_orders
                 (order_id, terms_hash, status, holder_pid, holder_token, execution_count, engine_id, archive_sha256, request_json)
@@ -135,51 +210,37 @@ export async function createPostgresStore({
                 JSON.stringify(record.request),
               ],
             );
-            await client.query("COMMIT");
             return { kind: "created", record: mapRow(inserted.rows[0]) };
-          } catch (err) {
-            if (err && err.code === "23505") {
-              await client.query("ROLLBACK");
-              return this.reserve(record);
-            }
-            throw err;
           }
-        }
-        const existing = mapRow(rows[0]);
-        if (existing.termsHash !== record.termsHash) {
-          await client.query("COMMIT");
-          return { kind: "conflict", record: existing };
-        }
-        if (existing.status === "complete" && existing.result) {
-          await client.query("COMMIT");
-          return { kind: "replay", record: existing };
-        }
-        if (liveOtherHolder(existing, record)) {
-          await client.query("COMMIT");
-          return { kind: "held", record: existing };
-        }
-        const adopted = await client.query(
-          `UPDATE managed_useful_jobs_orders
+          const existing = mapRow(rows[0]);
+          if (existing.termsHash !== record.termsHash) {
+            return { kind: "conflict", record: existing };
+          }
+          if (existing.status === "complete" && existing.result) {
+            return { kind: "replay", record: existing };
+          }
+          if (liveOtherHolder(existing, record)) {
+            return { kind: "held", record: existing };
+          }
+          const adopted = await client.query(
+            `UPDATE managed_useful_jobs_orders
            SET holder_pid = $2, holder_token = $3, status = 'reserved', updated_at = NOW()
            WHERE order_id = $1
            RETURNING order_id, terms_hash, status, holder_pid, holder_token, execution_count, engine_id,
                      archive_sha256, request_json, result_json, created_at`,
-          [record.orderId, process.pid, record.holderToken || null],
-        );
-        await client.query("COMMIT");
-        return { kind: "adopt", record: mapRow(adopted.rows[0]) };
+            [record.orderId, process.pid, record.holderToken || null],
+          );
+          return { kind: "adopt", record: mapRow(adopted.rows[0]) };
+        });
       } catch (err) {
-        try {
-          await client.query("ROLLBACK");
-        } catch {
-          /* already rolled back */
+        if (err && err.code === "23505") {
+          return store.reserve(record);
         }
         throw err;
       }
     },
     async recordExecution(entry) {
-      await client.query("BEGIN");
-      try {
+      await withTx(async (client) => {
         await client.query(
           `UPDATE managed_useful_jobs_orders
            SET execution_count = execution_count + 1, updated_at = NOW()
@@ -191,20 +252,18 @@ export async function createPostgresStore({
            VALUES ($1, $2, $3)`,
           [entry.orderId, entry.termsHash, process.pid],
         );
-        await client.query("COMMIT");
-      } catch (err) {
-        await client.query("ROLLBACK");
-        throw err;
-      }
+      });
     },
     async complete(orderId, result) {
-      const { rows } = await client.query(
-        `UPDATE managed_useful_jobs_orders
+      const { rows } = await withClient((client) =>
+        client.query(
+          `UPDATE managed_useful_jobs_orders
          SET status = 'complete', result_json = $2::jsonb, holder_pid = $3, updated_at = NOW()
          WHERE order_id = $1
          RETURNING order_id, terms_hash, status, holder_pid, holder_token, execution_count, engine_id,
                    archive_sha256, request_json, result_json, created_at`,
-        [orderId, JSON.stringify(result), process.pid],
+          [orderId, JSON.stringify(result), process.pid],
+        ),
       );
       if (!rows[0]) {
         throw new OrderRefuse("missing-reservation", `cannot complete missing order ${orderId}`);
@@ -213,14 +272,18 @@ export async function createPostgresStore({
     },
     async listExecutions(orderId = null) {
       const { rows } = orderId
-        ? await client.query(
-            `SELECT order_id, terms_hash, holder_pid, created_at
+        ? await withClient((client) =>
+            client.query(
+              `SELECT order_id, terms_hash, holder_pid, created_at
              FROM managed_useful_jobs_executions WHERE order_id = $1 ORDER BY id`,
-            [orderId],
+              [orderId],
+            ),
           )
-        : await client.query(
-            `SELECT order_id, terms_hash, holder_pid, created_at
+        : await withClient((client) =>
+            client.query(
+              `SELECT order_id, terms_hash, holder_pid, created_at
              FROM managed_useful_jobs_executions ORDER BY id`,
+            ),
           );
       return rows.map((row) => ({
         orderId: row.order_id,
@@ -230,7 +293,7 @@ export async function createPostgresStore({
       }));
     },
     async put(record) {
-      const outcome = await this.reserve(record);
+      const outcome = await store.reserve(record);
       if (outcome.kind === "conflict") {
         throw new OrderRefuse(
           "f-order",
@@ -250,48 +313,40 @@ export async function createPostgresStore({
         return { replayed: true, record: outcome.record };
       }
       if (record.result) {
-        await this.complete(record.orderId, record.result);
+        await store.complete(record.orderId, record.result);
       }
       return { replayed: false, record };
     },
     async close() {
-      await client.end();
+      await pool.end();
     },
     async getAcquisition(executionId) {
-      const { rows } = await client.query(
-        `SELECT metadata_json FROM managed_useful_jobs_acquisitions WHERE execution_id = $1`,
-        [executionId],
+      const { rows } = await withClient((client) =>
+        client.query(`SELECT metadata_json FROM managed_useful_jobs_acquisitions WHERE execution_id = $1`, [
+          executionId,
+        ]),
       );
       return acquisitionFromRow(rows[0]);
     },
     async countAdmissions() {
-      const { rows } = await client.query(
-        `SELECT COUNT(*)::int AS n FROM managed_useful_jobs_acquisitions`,
+      const { rows } = await withClient((client) =>
+        client.query(`SELECT COUNT(*)::int AS n FROM managed_useful_jobs_acquisitions`),
       );
       return rows[0]?.n || 0;
     },
     async withAcquisitionLock(executionId, fn) {
-      await client.query("BEGIN");
-      try {
+      return withTx(async (client) => {
         await client.query(
           `SELECT execution_id FROM managed_useful_jobs_acquisitions WHERE execution_id = $1 FOR UPDATE`,
           [executionId],
         );
-        const result = await fn();
-        await client.query("COMMIT");
-        return result;
-      } catch (err) {
-        try {
-          await client.query("ROLLBACK");
-        } catch {
-          /* already rolled back */
-        }
-        throw err;
-      }
+        return fn();
+      });
     },
     async saveAcquisitionUnlocked(record) {
-      await client.query(
-        `UPDATE managed_useful_jobs_acquisitions SET
+      await withClient((client) =>
+        client.query(
+          `UPDATE managed_useful_jobs_acquisitions SET
            principal_id = $2,
            request_hash = $3,
            request_hash_algorithm = $4,
@@ -315,34 +370,33 @@ export async function createPostgresStore({
            metadata_json = $22::jsonb,
            updated_at = NOW()
          WHERE execution_id = $1`,
-        acquisitionParams(record),
+          acquisitionParams(record),
+        ),
       );
       return record;
     },
     async admitAcquisition(record, { maxAdmissions: limit } = {}) {
-      const cap = Number.isSafeInteger(limit) && limit > 0 ? limit : this.maxAdmissions;
-      await client.query("BEGIN");
+      const capNow = Number.isSafeInteger(limit) && limit > 0 ? limit : store.maxAdmissions;
       try {
-        await client.query("LOCK TABLE managed_useful_jobs_acquisitions IN SHARE ROW EXCLUSIVE MODE");
-        const existing = await client.query(
-          `SELECT metadata_json FROM managed_useful_jobs_acquisitions WHERE execution_id = $1`,
-          [record.executionId],
-        );
-        if (existing.rows[0]) {
-          const rec = acquisitionFromRow(existing.rows[0]);
-          await client.query("COMMIT");
-          if (sameAdmissionIdentity(rec, record)) return { kind: "identical", record: rec };
-          return { kind: "conflict", record: rec };
-        }
-        const counted = await client.query(
-          `SELECT COUNT(*)::int AS n FROM managed_useful_jobs_acquisitions`,
-        );
-        if ((counted.rows[0]?.n || 0) >= cap) {
-          await client.query("COMMIT");
-          return { kind: "capacity" };
-        }
-        await client.query(
-          `INSERT INTO managed_useful_jobs_acquisitions (
+        return await withTx(async (client) => {
+          await client.query("LOCK TABLE managed_useful_jobs_acquisitions IN SHARE ROW EXCLUSIVE MODE");
+          const existing = await client.query(
+            `SELECT metadata_json FROM managed_useful_jobs_acquisitions WHERE execution_id = $1`,
+            [record.executionId],
+          );
+          if (existing.rows[0]) {
+            const rec = acquisitionFromRow(existing.rows[0]);
+            if (sameAdmissionIdentity(rec, record)) return { kind: "identical", record: rec };
+            return { kind: "conflict", record: rec };
+          }
+          const counted = await client.query(
+            `SELECT COUNT(*)::int AS n FROM managed_useful_jobs_acquisitions`,
+          );
+          if ((counted.rows[0]?.n || 0) >= capNow) {
+            return { kind: "capacity" };
+          }
+          await client.query(
+            `INSERT INTO managed_useful_jobs_acquisitions (
              execution_id, principal_id, request_hash, request_hash_algorithm, request_hash_version,
              managed_order_terms_hash, managed_order_terms_schema, hashes_reconciled,
              job_id, terms_version, sample, receipt_sha256, outputs_digest, outputs_json,
@@ -351,21 +405,20 @@ export async function createPostgresStore({
              $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14::jsonb,
              $15, $16::timestamptz, $17::timestamptz, $18, $19, $20, $21, $22::jsonb
            )`,
-          acquisitionParams(record),
-        );
-        await client.query("COMMIT");
-        return { kind: "created", record };
+            acquisitionParams(record),
+          );
+          return { kind: "created", record };
+        });
       } catch (err) {
-        try {
-          await client.query("ROLLBACK");
-        } catch {
-          /* already rolled back */
-        }
         if (err && err.code === "23505") {
-          return this.admitAcquisition(record, { maxAdmissions: cap });
+          return store.admitAcquisition(record, { maxAdmissions: capNow });
         }
         throw err;
       }
     },
+    async withLeasedClient(fn) {
+      return withClient(fn);
+    },
   };
+  return store;
 }

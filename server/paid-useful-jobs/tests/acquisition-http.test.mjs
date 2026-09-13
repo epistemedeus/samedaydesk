@@ -15,7 +15,9 @@ import {
   admitAndPublish,
   fileService,
   pairFor,
+  sha256,
 } from "../../../tools/managed-useful-jobs-order/test/acquisition-helpers.mjs";
+import { digestNamedOutputs } from "../../../tools/managed-useful-jobs-order/lib/acquisition-identity.mjs";
 
 const FROZEN_VERSION = "samedaydesk.acquisition-frozen-request.v1";
 
@@ -27,7 +29,15 @@ function close(server) {
   return new Promise((resolve) => server.close(() => resolve()));
 }
 
-async function startHosted({ service, seams, clock, maxPendingDownloads = 8, execute } = {}) {
+async function startHosted({
+  service,
+  seams,
+  clock,
+  maxPendingDownloads = 8,
+  maxActiveResponses,
+  responseTimeoutMs = 30_000,
+  execute,
+} = {}) {
   const { service: svc, seams: defaultSeams } = service
     ? { service, seams }
     : await fileService({ maxConcurrentReads: 2, maxQueuedReads: 2 });
@@ -51,6 +61,8 @@ async function startHosted({ service, seams, clock, maxPendingDownloads = 8, exe
       forbiddenSeams: spies.spies,
       gate: svc.maxConcurrentReads,
       maxPendingDownloads,
+      maxActiveResponses,
+      responseTimeoutMs,
       openTimeoutMs: 2_000,
     },
   });
@@ -61,6 +73,7 @@ async function startHosted({ service, seams, clock, maxPendingDownloads = 8, exe
     server: serverBundle.server,
     origin: addr.origin,
     executeCalls: () => executeCalls,
+    acquisitionHandler: serverBundle.acquisitionHandler,
   };
 }
 
@@ -178,10 +191,15 @@ describe("HA2 acquisition HTTP", { timeout: 60_000 }, () => {
       assert.equal(other.body.outputs, undefined);
       const anon = await getJson(host.origin, `/results/${published.executionId}`, {
         "x-request-sha256": published.requestHash,
+        "x-request-hash-version": FROZEN_VERSION,
       });
       assert.equal(anon.status, 404);
       const rawAuth = await fetch(`${host.origin}/results/${published.executionId}`, {
-        headers: { authorization: "not-a-bearer", "x-request-sha256": published.requestHash },
+        headers: {
+          authorization: "not-a-bearer",
+          "x-request-sha256": published.requestHash,
+          "x-request-hash-version": FROZEN_VERSION,
+        },
       });
       assert.equal(rawAuth.status, 404);
     } finally {
@@ -189,7 +207,7 @@ describe("HA2 acquisition HTTP", { timeout: 60_000 }, () => {
     }
   });
 
-  it("same ID with changed frozen input, terms, principal, receipt or output tuple refuses, including after restart", async () => {
+  it("same ID with a wrong request hash or hash version refuses (receipt/output substitution is covered on the D14 ticket path)", async () => {
     const { service, seams } = await fileService();
     const published = await admitAndPublish(service, { executionId: "exec-http-mismatch" });
     const host = await startHosted({ service, seams });
@@ -240,7 +258,7 @@ describe("HA2 acquisition HTTP", { timeout: 60_000 }, () => {
     }
   });
 
-  it("traversal, encoding aliases, NUL, slash/backslash, absolute paths refuse", async () => {
+  it("traversal, encoding aliases, nested slash, and backslash refuse at the HTTP parser or handler", async () => {
     const { service, seams } = await fileService();
     const published = await admitAndPublish(service, { executionId: "exec-http-path" });
     const host = await startHosted({ service, seams });
@@ -250,6 +268,30 @@ describe("HA2 acquisition HTTP", { timeout: 60_000 }, () => {
         const res = await fetch(`${host.origin}/results/${published.executionId}/artifacts/${name}`, { headers: hdrs });
         assert.ok(res.status === 400 || res.status === 404, name);
       }
+      const origin = new URL(host.origin);
+      const sock = await connectRaw(origin);
+      sock.write(
+        [
+          `GET /results/${published.executionId}/artifacts/pin-delta.json%00x HTTP/1.1`,
+          `Host: ${origin.host}`,
+          "Authorization: Bearer token-a",
+          `X-Request-SHA256: ${published.requestHash}`,
+          `X-Request-Hash-Version: ${FROZEN_VERSION}`,
+          `X-Artifact-SHA256: ${published.pair.outputs[0].sha256}`,
+          "Connection: close",
+          "",
+          "",
+        ].join("\r\n"),
+      );
+      const raw = await new Promise((resolve) => {
+        const chunks = [];
+        sock.on("data", (c) => chunks.push(c));
+        sock.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+        sock.on("close", () => resolve(Buffer.concat(chunks).toString("utf8")));
+        setTimeout(() => resolve(Buffer.concat(chunks).toString("utf8")), 400);
+      });
+      sock.destroy();
+      assert.ok(/ 400 | 404 /m.test(raw) || raw.length === 0, raw.slice(0, 200));
     } finally {
       await close(host.server);
     }
@@ -286,6 +328,104 @@ describe("HA2 acquisition HTTP", { timeout: 60_000 }, () => {
       assert.equal(host.executeCalls(), 0);
     } finally {
       service.hooks.beforeOpen = null;
+      await close(host.server);
+    }
+  });
+
+  it("paused artifact sockets count against the HTTP response semaphore, distinct from the file-read gate", async () => {
+    const { service, seams } = await fileService({ maxConcurrentReads: 4, maxQueuedReads: 4 });
+    const json = Buffer.alloc(1_048_576, 97);
+    const md = Buffer.from("# pause\n");
+    const outputs = [
+      { name: "pin-delta.json", kind: "file", bytes: json.length, sha256: sha256(json) },
+      { name: "pin-delta.md", kind: "file", bytes: md.length, sha256: sha256(md) },
+    ];
+    const pair = {
+      jobId: "lockfile-pin-delta",
+      names: outputs.map((row) => row.name),
+      bodies: [json, md],
+      outputs,
+      files: [
+        { metadata: outputs[0], bytes: json },
+        { metadata: outputs[1], bytes: md },
+      ],
+      outputsDigest: digestNamedOutputs(outputs),
+    };
+    const published = await admitAndPublish(service, { executionId: "exec-http-pause", pair });
+    const host = await startHosted({
+      service,
+      seams,
+      maxPendingDownloads: 8,
+      maxActiveResponses: 1,
+      responseTimeoutMs: 800,
+    });
+    let sock;
+    try {
+      const origin = new URL(host.origin);
+      sock = await connectRaw(origin);
+      let headerText = "";
+      const headersReady = new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error("headers not received")), 800);
+        const chunks = [];
+        const onData = (c) => {
+          chunks.push(c);
+          const text = Buffer.concat(chunks).toString("latin1");
+          if (text.includes("\r\n\r\n")) {
+            headerText = text.slice(0, text.indexOf("\r\n\r\n"));
+            sock.pause();
+            sock.off("data", onData);
+            clearTimeout(timer);
+            resolve();
+          }
+        };
+        sock.on("data", onData);
+        sock.on("error", (err) => {
+          clearTimeout(timer);
+          reject(err);
+        });
+      });
+      sock.write(
+        [
+          `GET /results/${published.executionId}/artifacts/pin-delta.json HTTP/1.1`,
+          `Host: ${origin.host}`,
+          "Authorization: Bearer token-a",
+          `X-Request-SHA256: ${published.requestHash}`,
+          `X-Request-Hash-Version: ${FROZEN_VERSION}`,
+          `X-Artifact-SHA256: ${published.pair.outputs[0].sha256}`,
+          "Connection: keep-alive",
+          "",
+          "",
+        ].join("\r\n"),
+      );
+      await headersReady;
+      const sem = host.acquisitionHandler?.responseSemaphore;
+      assert.match(headerText, /^HTTP\/1\.1 200 /);
+      await until(() => sem.active === 1, "response permit held after pause", 400);
+      assert.equal(sem.active, 1, `active=${sem.active} max=${sem.max}`);
+      assert.equal(service.maxConcurrentReads.active, 0);
+      const busy = await fetch(`${host.origin}/results/${published.executionId}/artifacts/pin-delta.md`, {
+        headers: headers("token-a", published.requestHash, {
+          "x-artifact-sha256": published.pair.outputs[1].sha256,
+        }),
+      });
+      assert.equal(busy.status, 503);
+      const body = await busy.json();
+      assert.equal(body.code, "capacity-exhausted");
+      sock.destroy();
+      await until(() => host.acquisitionHandler.responseSemaphore.active === 0, "response permit released", 800);
+      const follow = await fetch(`${host.origin}/results/${published.executionId}/artifacts/pin-delta.md`, {
+        headers: headers("token-a", published.requestHash, {
+          "x-artifact-sha256": published.pair.outputs[1].sha256,
+        }),
+      });
+      assert.equal(follow.status, 200);
+      assert.equal(host.executeCalls(), 0);
+    } finally {
+      try {
+        sock?.destroy();
+      } catch {
+        /* already closed */
+      }
       await close(host.server);
     }
   });
@@ -415,7 +555,11 @@ describe("HA2 acquisition HTTP", { timeout: 60_000 }, () => {
       const res = await fetch(`${addr.origin}/results/exec-none/artifacts/pin-delta.json`);
       assert.notEqual(res.status, 200);
       const meta = await fetch(`${addr.origin}/results/exec-none`, {
-        headers: { "x-request-sha256": "a".repeat(64), authorization: "Bearer token-a" },
+        headers: {
+          "x-request-sha256": "a".repeat(64),
+          "x-request-hash-version": FROZEN_VERSION,
+          authorization: "Bearer token-a",
+        },
       });
       assert.equal(meta.status, 404);
     } finally {

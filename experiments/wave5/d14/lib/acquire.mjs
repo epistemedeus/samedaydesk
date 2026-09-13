@@ -5,6 +5,10 @@ import { ConsumerRefuse } from "./errors.mjs";
 import { sha256Bytes } from "./digest-named.mjs";
 import { getArtifact, getResult } from "./client.mjs";
 import { FROZEN_REQUEST_HASH_VERSION } from "../../../../tools/managed-useful-jobs-order/lib/acquisition-constants.mjs";
+import {
+  hashPublicationIdentityV1,
+  publicationFieldsFromBody,
+} from "../../../../tools/managed-useful-jobs-order/lib/acquisition-identity.mjs";
 
 export const UNSUPPORTED_PORTABLE_ACQUISITION = "unsupported-portable-acquisition";
 
@@ -167,6 +171,48 @@ function acquisitionHeaders({ requestHash, artifactSha256, authorization }) {
 /**
  * Download promised files from HA2 into destDir. Never POSTs, settles, or pays.
  */
+function assertCompletePublicationManifest(body, requestHash) {
+  if (!body || typeof body !== "object") {
+    throw new ConsumerRefuse("missing-manifest", "hosted acquisition requires a verified publication manifest");
+  }
+  if (body.purchaseAuthority === true || body.sold === true) {
+    throw new ConsumerRefuse("unexpected-sale", "hosted result claims a sale");
+  }
+  if (!body.requestHash) {
+    throw new ConsumerRefuse("missing-request-hash", "hosted manifest omitted requestHash");
+  }
+  if (body.requestHash !== requestHash) {
+    throw new ConsumerRefuse("request-hash-mismatch", "hosted requestHash does not match the ticket binding");
+  }
+  if (!body.requestHashVersion) {
+    throw new ConsumerRefuse("missing-request-hash-version", "hosted manifest omitted requestHashVersion");
+  }
+  if (body.requestHashVersion !== FROZEN_REQUEST_HASH_VERSION) {
+    throw new ConsumerRefuse("request-hash-version-mismatch", "hosted requestHashVersion does not match the acquisition binding");
+  }
+  if (!body.receiptSha256) {
+    throw new ConsumerRefuse("missing-receipt-hash", "hosted manifest omitted receiptSha256");
+  }
+  if (!body.outputsDigest) {
+    throw new ConsumerRefuse("missing-outputs-digest", "hosted manifest omitted outputsDigest");
+  }
+  if (!Array.isArray(body.outputs) || body.outputs.length !== 2) {
+    throw new ConsumerRefuse("missing-expected-outputs", "hosted acquisition expects two promised files");
+  }
+  const fields = publicationFieldsFromBody(body);
+  if (!fields) {
+    throw new ConsumerRefuse("missing-publication-identity", "hosted manifest is missing publicationIdentityV1 fields");
+  }
+  if (!body.publicationIdentitySha256) {
+    throw new ConsumerRefuse("missing-publication-identity", "hosted manifest omitted publicationIdentitySha256");
+  }
+  const expected = hashPublicationIdentityV1(fields);
+  if (body.publicationIdentitySha256 !== expected) {
+    throw new ConsumerRefuse("publication-identity-mismatch", "hosted publicationIdentitySha256 does not match the manifest tuples");
+  }
+  return body;
+}
+
 export async function acquireHttpArtifacts({
   origin,
   executionId,
@@ -175,6 +221,7 @@ export async function acquireHttpArtifacts({
   destDir,
   authorization = null,
   fetchImpl = fetch,
+  manifest = null,
 }) {
   if (!origin || !executionId || !requestHash || !destDir) {
     return portableAcquisitionUnsupported({
@@ -183,23 +230,21 @@ export async function acquireHttpArtifacts({
   }
   const destRoot = resolve(destDir);
   const headers = acquisitionHeaders({ requestHash, authorization });
-  const meta = await getResult(origin, executionId, { fetchImpl, headers });
-  if (meta.classify?.kind === "pending-result") {
-    throw new ConsumerRefuse("pending", "result is not yet available", { classify: meta.classify });
+  let body = manifest;
+  if (!body) {
+    const meta = await getResult(origin, executionId, { fetchImpl, headers });
+    if (meta.classify?.kind === "pending-result") {
+      throw new ConsumerRefuse("pending", "result is not yet available", { classify: meta.classify });
+    }
+    if (meta.status !== 200 || meta.body?.state !== "available") {
+      throw new ConsumerRefuse(meta.classify?.code || "not-found", "hosted result is not available", {
+        status: meta.status,
+        classify: meta.classify,
+      });
+    }
+    body = meta.body;
   }
-  if (meta.status !== 200 || meta.body?.state !== "available") {
-    throw new ConsumerRefuse(meta.classify?.code || "not-found", "hosted result is not available", {
-      status: meta.status,
-      classify: meta.classify,
-    });
-  }
-  const body = meta.body;
-  if (body.purchaseAuthority === true || body.sold === true) {
-    throw new ConsumerRefuse("unexpected-sale", "hosted result claims a sale");
-  }
-  if (body.requestHash && body.requestHash !== requestHash) {
-    throw new ConsumerRefuse("request-hash-mismatch", "hosted requestHash does not match the ticket binding");
-  }
+  body = assertCompletePublicationManifest(body, requestHash);
   const outputs = Array.isArray(body.outputs) ? body.outputs : [];
   const names = expectedNames.length ? [...expectedNames] : outputs.map((row) => row.name);
   if (names.length !== 2) {
@@ -219,6 +264,7 @@ export async function acquireHttpArtifacts({
       const got = await getArtifact(origin, executionId, name, {
         fetchImpl,
         headers: acquisitionHeaders({ requestHash, artifactSha256: listed.sha256, authorization }),
+        maxBodyBytes: listed.bytes,
       });
       if (got.status !== 200 || !got.bytes) {
         throw new ConsumerRefuse(got.classify?.code || "artifact-missing", `hosted artifact ${name} was not delivered`, {

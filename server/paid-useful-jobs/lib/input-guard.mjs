@@ -5,6 +5,7 @@ import { getJob, optionalKeys, requiredKeys } from "./jobs.mjs";
 import { sha256Bytes } from "./digest.mjs";
 import { WrapperRefuse, refuse } from "./errors.mjs";
 import { validateStagedInput } from "./input-schema.mjs";
+import { materializeHttpJsonText } from "../../../tools/managed-useful-jobs-order/lib/acquisition-identity.mjs";
 
 export { WrapperRefuse, refuse };
 
@@ -245,9 +246,10 @@ export function materializeInputs(jobId, request, workDir, { getJob: getJobFn = 
       writeFileSync(filePath, text);
       if (key === "job") stageJobDocumentSiblings(request, workDir, filePath, buf);
     } else if (typeof value === "string" && looksJsonText(value)) {
-      bytes = Buffer.byteLength(value, "utf8");
+      const projection = materializeHttpJsonText(value);
+      bytes = projection.materializedBytes;
       assertNotOversize(key, bytes);
-      const buf = Buffer.from(value, "utf8");
+      const buf = Buffer.from(projection.materializedText, "utf8");
       try {
         JSON.parse(value);
       } catch (err) {
@@ -255,7 +257,7 @@ export function materializeInputs(jobId, request, workDir, { getJob: getJobFn = 
       }
       validateStagedInput(job, key, buf);
       filePath = join(workDir, `${key}.json`);
-      writeFileSync(filePath, value.endsWith("\n") ? value : `${value}\n`);
+      writeFileSync(filePath, projection.materializedText);
       if (key === "job") stageJobDocumentSiblings(request, workDir, filePath, buf);
     } else if (typeof value === "string") {
       filePath = resolve(value);
@@ -299,7 +301,15 @@ export function materializeInputs(jobId, request, workDir, { getJob: getJobFn = 
     }
 
     files[key] = filePath;
-    entries.push({ name: key, path: filePath, bytes: bytes ?? statSync(filePath).size, kind: "file" });
+    const entry = { name: key, path: filePath, bytes: bytes ?? statSync(filePath).size, kind: "file" };
+    if (typeof value === "string" && looksJsonText(value)) {
+      const projection = materializeHttpJsonText(value);
+      entry.bytes = projection.materializedBytes;
+      entry.sha256 = projection.materializedSha256;
+      entry.sourceBytes = projection.sourceBytes;
+      entry.sourceSha256 = projection.sourceSha256;
+    }
+    entries.push(entry);
   }
 
   return { example, files, entries, job };

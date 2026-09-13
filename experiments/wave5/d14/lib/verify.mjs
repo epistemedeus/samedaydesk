@@ -2,6 +2,11 @@ import { EXECUTION_CONTRACT_VERSION } from "./pins.mjs";
 import { digestFromSubmitted } from "./encode-inputs.mjs";
 import { digestNamedBytes, projectNamedMeta, resultIdentityHash } from "./digest-named.mjs";
 import { resultsPathFor } from "./origin.mjs";
+import {
+  hashPublicationIdentityV1,
+  publicationFieldsFromBody,
+} from "../../../../tools/managed-useful-jobs-order/lib/acquisition-identity.mjs";
+import { FROZEN_REQUEST_HASH_VERSION } from "../../../../tools/managed-useful-jobs-order/lib/acquisition-constants.mjs";
 
 const TERMS_PROOF_LIMIT = {
   verifiedWhenPresent: [
@@ -14,7 +19,8 @@ const TERMS_PROOF_LIMIT = {
     "expected output names and output metadata digest",
     "sold is not true",
     "purchaseAuthority is not true",
-    "pinned POST identity when a successful POST body was observed",
+    "pinned publicationIdentityV1 when a successful POST observed a durable publication",
+    "legacy process-local POST envelope hash when no publication identity was pinned",
   ],
   notVerifiedFromGet: [
     "caller payment.accepted object",
@@ -82,26 +88,29 @@ export function verifyTicketBoundResult(ticket, body, { retrieval, httpStatus } 
     });
   }
 
+  const hostedAvailable = body.state === "available" && Boolean(body.requestHash) && !body.analysis;
   const submitted = ticket.submitted || {};
   const receiptInputs = Array.isArray(body.receipt?.inputs) ? body.receipt.inputs : [];
-  if (Object.keys(submitted).length) {
+  if (!hostedAvailable && Object.keys(submitted).length) {
     for (const [name, row] of Object.entries(submitted)) {
       const found = receiptInputs.find((entry) => entry && entry.name === name);
       if (!found) {
         addFailure(failures, "input-missing", `receipt is missing ticket input ${name}`, { name });
         continue;
       }
-      if (found.bytes !== row.bytes) {
+      const expectedBytes = Number.isSafeInteger(row.materializedBytes) ? row.materializedBytes : row.bytes;
+      const expectedSha = row.materializedSha256 || row.stagedSha256;
+      if (found.bytes !== expectedBytes) {
         addFailure(failures, "input-bytes-mismatch", `input ${name} byte count does not match ticket`, {
           name,
-          expected: row.bytes,
+          expected: expectedBytes,
           actual: found.bytes,
         });
       }
-      if (found.sha256 !== row.stagedSha256) {
+      if (found.sha256 !== expectedSha) {
         addFailure(failures, "input-digest-mismatch", `input ${name} staged sha256 does not match ticket`, {
           name,
-          expected: row.stagedSha256,
+          expected: expectedSha,
           actual: found.sha256,
         });
       }
@@ -173,17 +182,41 @@ export function verifyTicketBoundResult(ticket, body, { retrieval, httpStatus } 
   if (body.purchaseAuthority === true || body.receipt?.purchaseAuthority === true) {
     addFailure(failures, "unexpected-purchase-authority", "result claims purchaseAuthority");
   }
+  if (hostedAvailable) {
+    if (!body.requestHashVersion) {
+      addFailure(failures, "missing-request-hash-version", "hosted result omitted requestHashVersion");
+    } else if (
+      (ticket.requestHashVersion || FROZEN_REQUEST_HASH_VERSION) !== body.requestHashVersion
+    ) {
+      addFailure(failures, "request-hash-version-mismatch", "hosted requestHashVersion does not match ticket", {
+        expected: ticket.requestHashVersion || FROZEN_REQUEST_HASH_VERSION,
+        actual: body.requestHashVersion,
+      });
+    }
+  }
   if (ticket.requestHash && body.requestHash && ticket.requestHash !== body.requestHash) {
     addFailure(failures, "request-hash-mismatch", "hosted requestHash does not match ticket binding", {
       expected: ticket.requestHash,
       actual: body.requestHash,
     });
   }
+  if (hostedAvailable && ticket.requestHash && !body.requestHash) {
+    addFailure(failures, "missing-request-hash", "hosted result omitted requestHash");
+  }
   if (ticket.receiptSha256 && body.receiptSha256 && ticket.receiptSha256 !== body.receiptSha256) {
     addFailure(failures, "receipt-hash-mismatch", "hosted receiptSha256 does not match ticket", {
       expected: ticket.receiptSha256,
       actual: body.receiptSha256,
     });
+  }
+  if (hostedAvailable && !body.receiptSha256) {
+    addFailure(failures, "missing-receipt-hash", "hosted result omitted receiptSha256");
+  }
+  if (hostedAvailable && !body.outputsDigest) {
+    addFailure(failures, "missing-outputs-digest", "hosted result omitted outputsDigest");
+  }
+  if (hostedAvailable && !Array.isArray(body.outputs)) {
+    addFailure(failures, "missing-outputs", "hosted result omitted output tuples");
   }
   if (ticket.jobId && body.fundingState && ticket.declaredTerms?.fundingIntent === "reserved-fixture") {
     if (body.fundingState !== "reserved-fixture" && body.fundingState !== "rejected") {
@@ -195,7 +228,28 @@ export function verifyTicketBoundResult(ticket, body, { retrieval, httpStatus } 
 
   const identityHash = resultIdentityHash(body);
   let postIdentityMatch = null;
-  if (ticket.postIdentity?.bodySha256) {
+  const pinnedPublication =
+    ticket.postIdentity?.publicationIdentitySha256 || ticket.publicationIdentitySha256 || null;
+  if (pinnedPublication) {
+    const fields = publicationFieldsFromBody(body);
+    let actual = body.publicationIdentitySha256 || null;
+    if (!actual && fields) {
+      try {
+        actual = hashPublicationIdentityV1(fields);
+      } catch {
+        actual = null;
+      }
+    }
+    postIdentityMatch = actual === pinnedPublication;
+    if (!postIdentityMatch) {
+      addFailure(
+        failures,
+        "publication-identity-mismatch",
+        "GET publicationIdentityV1 does not match the pinned successful POST publication",
+        { expected: pinnedPublication, actual },
+      );
+    }
+  } else if (ticket.postIdentity?.bodySha256 && !hostedAvailable) {
     postIdentityMatch = identityHash === ticket.postIdentity.bodySha256;
     if (!postIdentityMatch) {
       addFailure(

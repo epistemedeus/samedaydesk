@@ -10,6 +10,7 @@ import { EXECUTION_CONTRACT_VERSION } from "./contract.mjs";
 import { freezeRequest } from "./input-guard.mjs";
 import { runPaidOffer } from "./wrapper.mjs";
 import { createAcquisitionHttpHandler } from "./acquisition-http.mjs";
+import { admitHttpAcquisition, canPublishJob, publishHttpAcquisition } from "./acquisition-publish.mjs";
 
 const ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
 const MAX_BODY_BYTES = 8 * 1024 * 1024;
@@ -73,6 +74,7 @@ export function createExecutionServer({
 } = {}) {
   for (const value of [resultTtlMs, maxEntries, maxBodyBytes]) if (!Number.isSafeInteger(value) || value < 1) throw new Error("HTTP limits must be positive integers");
   const store = new Map();
+  const writer = acquisition?.writer || null;
   const acquisitionHandler = acquisition?.reader
     ? createAcquisitionHttpHandler({
         reader: acquisition.reader,
@@ -81,9 +83,17 @@ export function createExecutionServer({
         forbiddenSeams: acquisition.forbiddenSeams || null,
         gate: acquisition.gate || null,
         maxPendingDownloads: acquisition.maxPendingDownloads,
+        maxActiveResponses: acquisition.maxActiveResponses,
+        responseTimeoutMs: acquisition.responseTimeoutMs,
         openTimeoutMs: acquisition.openTimeoutMs,
       })
     : null;
+  async function resolveRequestPrincipal(req) {
+    if (typeof acquisition?.resolvePrincipal === "function") {
+      return await Promise.resolve(acquisition.resolvePrincipal(req));
+    }
+    return callerPrincipal(req);
+  }
   function expired(row) {
     if (row.state === "pending") return false;
     if (row.state === "expired" || Date.now() >= row.expiresAt) {
@@ -119,7 +129,7 @@ export function createExecutionServer({
         if (!ID.test(id)) throw failure("invalid-execution-id", "Invalid execution ID");
         const row = store.get(id);
         if (!row) return error(404, "not-found", "Execution not found in this process");
-        if (principalMismatch(row, callerPrincipal(req))) {
+        if (principalMismatch(row, await resolveRequestPrincipal(req))) {
           return error(403, "principal-mismatch", "Result is bound to a different HTTP principal in this process");
         }
         return reply(id, row);
@@ -133,7 +143,7 @@ export function createExecutionServer({
         if (typeof id !== "string" || !ID.test(id)) throw failure("invalid-execution-id", "Execution ID must be 1-128 safe characters");
         request.executionId = id;
         const { frozen, hash } = frozenIdentity(request);
-        const principal = callerPrincipal(req);
+        const principal = await resolveRequestPrincipal(req);
         const existing = store.get(id);
         if (existing) {
           if (existing.requestHash !== hash) return error(409, "execution-id-conflict", "Execution ID is bound to different request bytes");
@@ -145,20 +155,58 @@ export function createExecutionServer({
         if (store.size >= maxEntries) return error(503, "execution-cache-full", "Process-local execution cache is full; no execution started");
         const row = { requestHash: hash, principal, state: "pending", pending: null, body: null, expiresAt: null, httpStatus: 200 };
         store.set(id, row);
-        row.pending = Promise.resolve().then(() => execute(frozen)).then((result) => {
-          if (!result || typeof result !== "object" || Array.isArray(result) || (result.executionId && result.executionId !== id)) throw new Error("Execution result identity mismatch");
-          row.body = { ...result, executionId: id };
-        }).catch((err) => {
-          row.httpStatus = 500;
-          row.body = { ok: false, code: "internal-error", transport: "internal-error", outcome: "unknown", error: err.message, executionId: id, contract: EXECUTION_CONTRACT_VERSION };
-        }).finally(() => { row.state = "complete"; row.expiresAt = Date.now() + resultTtlMs; row.pending = null; });
+        row.pending = Promise.resolve()
+          .then(async () => {
+            let admission = null;
+            if (writer && principal && canPublishJob(frozen.jobId)) {
+              admission = await admitHttpAcquisition({
+                writer,
+                frozen,
+                principalId: principal,
+                clock: acquisition.clock,
+              });
+            }
+            const result = await execute(frozen);
+            if (!result || typeof result !== "object" || Array.isArray(result) || (result.executionId && result.executionId !== id)) {
+              throw new Error("Execution result identity mismatch");
+            }
+            row.body = { ...result, executionId: id };
+            if (admission && result.ok === true) {
+              const published = await publishHttpAcquisition({
+                writer,
+                frozen,
+                principalId: principal,
+                result,
+                requestHash: admission.requestHash,
+                expiresAt: admission.admitted?.record?.expiresAt,
+              });
+              row.body = { ...row.body, ...published };
+            }
+          })
+          .catch((err) => {
+            row.httpStatus = err.status || err.httpStatus || 500;
+            row.body = {
+              ok: false,
+              code: err.code || "internal-error",
+              transport: "internal-error",
+              outcome: "unknown",
+              error: err.message,
+              executionId: id,
+              contract: EXECUTION_CONTRACT_VERSION,
+            };
+          })
+          .finally(() => {
+            row.state = "complete";
+            row.expiresAt = Date.now() + resultTtlMs;
+            row.pending = null;
+          });
         return reply(id, row);
       }
       return error(404, "not-found", "Route not found");
     })().catch((err) => error(err.status || 500, err.code || "internal-error", err.message));
   });
   server.requestTimeout = 30_000;
-  return { server, store };
+  return { server, store, acquisitionHandler };
 }
 export function listenExecutionServer(server, { host = "127.0.0.1", port = 0 } = {}) {
   return new Promise((resolve) => {

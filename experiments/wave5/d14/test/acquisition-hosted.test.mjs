@@ -16,6 +16,8 @@ import {
   fileService,
   tmpDir,
 } from "../../../../tools/managed-useful-jobs-order/test/acquisition-helpers.mjs";
+import { createFileStore } from "../../../../tools/managed-useful-jobs-order/lib/store-file.mjs";
+import { createAcquisitionService } from "../../../../tools/managed-useful-jobs-order/lib/acquisition.mjs";
 import { acquireHttpArtifacts } from "../lib/acquire.mjs";
 import { getResult } from "../lib/client.mjs";
 import { runCli, runCliAsync, tmpWork } from "./helpers.mjs";
@@ -74,7 +76,7 @@ function writeTicket(host, extra = {}) {
 }
 
 describe("HA3 D14 hosted acquisition obligations", { timeout: 60_000 }, () => {
-  it("D14 downloads from a second directory with no shared host path and verifies principal/request/receipt/output binding", async () => {
+  it("pre-published HA2 reader still downloads into a second directory (not D14 submit continuity; see acquisition-composition.test.mjs)", async () => {
     const host = await hostedPair();
     try {
       const { work, ticketPath, outPath } = writeTicket(host);
@@ -161,12 +163,13 @@ describe("HA3 D14 hosted acquisition obligations", { timeout: 60_000 }, () => {
     }
   });
 
-  it("commit-before-response interruption recovers the same result; precommit ambiguity never starts another engine", async () => {
+  it("repeated GETs of an already-published record return the same receipt; a separate pending admission is not queried over HTTP", async () => {
     const host = await hostedPair();
     try {
       const hdrs = {
         authorization: "Bearer token-a",
         "x-request-sha256": host.published.requestHash,
+        "x-request-hash-version": FROZEN_REQUEST_HASH_VERSION,
       };
       const first = await fetch(`${host.origin}/results/${host.published.executionId}`, { headers: hdrs });
       const lost = await first.json();
@@ -192,19 +195,27 @@ describe("HA3 D14 hosted acquisition obligations", { timeout: 60_000 }, () => {
     }
   });
 
-  it("expiry is persisted, checked on every read, survives restart, and keeps an admission tombstone after byte deletion", async () => {
-    const { service, seams } = await fileService();
+  it("expiry is persisted, checked on every read, survives store reopen, and keeps an admission tombstone after byte deletion", async () => {
+    const { service, store, seams, dir } = await fileService();
     const published = await admitAndPublish(service, { executionId: "exec-d14-ttl" });
     await service.expire(
       { principalId: PRINCIPAL_A, executionId: published.executionId, requestHash: published.requestHash },
       SERVER_LATER,
     );
+    await store.close();
+    const reopened = createFileStore(dir);
+    const restarted = createAcquisitionService({
+      store: reopened,
+      artifactRoot: reopened.artifactRoot,
+      clock: () => SERVER_LATER,
+      forbiddenSeams: seams.spies,
+    });
     const { server } = createExecutionServer({
       execute: async () => {
         throw new Error("no execute");
       },
       acquisition: {
-        reader: service.reader,
+        reader: restarted.reader,
         resolvePrincipal: createStaticPrincipalAdapter({ "token-a": PRINCIPAL_A }),
         clock: () => SERVER_LATER,
         forbiddenSeams: seams.spies,
@@ -216,10 +227,11 @@ describe("HA3 D14 hosted acquisition obligations", { timeout: 60_000 }, () => {
         headers: {
           authorization: "Bearer token-a",
           "x-request-sha256": published.requestHash,
+          "x-request-hash-version": FROZEN_REQUEST_HASH_VERSION,
         },
       });
       assert.equal(res.status, 410);
-      const tomb = await service.reader.get(
+      const tomb = await restarted.reader.get(
         { principalId: PRINCIPAL_A, executionId: published.executionId, requestHash: published.requestHash },
         SERVER_LATER,
       );

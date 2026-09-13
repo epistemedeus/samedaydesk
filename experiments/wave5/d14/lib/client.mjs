@@ -215,7 +215,7 @@ function abortError(code, message) {
   return Object.assign(new Error(message), { code });
 }
 
-async function readTextBounded(response, { limit, bodyMs }) {
+async function readStreamBounded(response, { limit, bodyMs, asText }) {
   const reason = abortError("body-timeout", "response body timed out");
   const ac = new AbortController();
   const timer = setTimeout(() => ac.abort(reason), bodyMs);
@@ -261,17 +261,34 @@ async function readTextBounded(response, { limit, bodyMs }) {
         }
         chunks.push(buf);
       }
-      return Buffer.concat(chunks).toString("utf8");
+      const bytes = Buffer.concat(chunks);
+      return asText ? bytes.toString("utf8") : bytes;
     }
-    const text = await response.text();
+    if (asText) {
+      const text = await response.text();
+      throwIfAborted();
+      if (Buffer.byteLength(text, "utf8") > limit) {
+        throw abortError("response-too-large", "response body exceeds limit");
+      }
+      return text;
+    }
+    const buf = Buffer.from(await response.arrayBuffer());
     throwIfAborted();
-    if (Buffer.byteLength(text, "utf8") > limit) {
+    if (buf.length > limit) {
       throw abortError("response-too-large", "response body exceeds limit");
     }
-    return text;
+    return buf;
   } finally {
     clearTimeout(timer);
   }
+}
+
+async function readTextBounded(response, { limit, bodyMs }) {
+  return readStreamBounded(response, { limit, bodyMs, asText: true });
+}
+
+async function readBytesBounded(response, { limit, bodyMs }) {
+  return readStreamBounded(response, { limit, bodyMs, asText: false });
 }
 
 async function readJsonResponse(response, { maxBodyBytes = MAX_HTTP_BODY_BYTES, bodyTimeoutMs = 30_000 } = {}) {
@@ -349,7 +366,14 @@ export async function getHealth(
 export async function postExecute(
   origin,
   request,
-  { fetchImpl = fetch, timeoutMs = 120_000, bodyTimeoutMs = 120_000, maxBodyBytes = MAX_HTTP_BODY_BYTES } = {},
+  {
+    fetchImpl = fetch,
+    timeoutMs = 120_000,
+    bodyTimeoutMs = 120_000,
+    maxBodyBytes = MAX_HTTP_BODY_BYTES,
+    headers = {},
+    authorization = null,
+  } = {},
 ) {
   let target;
   try {
@@ -359,9 +383,11 @@ export async function postExecute(
     return validationFailure(err);
   }
   try {
+    const hdrs = { "content-type": "application/json", ...headers };
+    if (authorization) hdrs.authorization = authorization;
     const response = await fetchImpl(target.url, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: hdrs,
       body: JSON.stringify(request),
       ...FETCH_DEFAULTS,
       signal: AbortSignal.timeout(timeoutMs),
@@ -446,12 +472,17 @@ export async function getArtifact(
         body: read.body,
       };
     }
-    const buf = Buffer.from(await response.arrayBuffer());
-    if (buf.length > maxBodyBytes) {
+    let buf;
+    try {
+      buf = await readBytesBounded(response, {
+        limit: maxBodyBytes,
+        bodyMs: timeoutMs,
+      });
+    } catch (consumeError) {
       return {
         status: response.status,
         bytes: null,
-        classify: { kind: "http-transport-failure", code: "response-too-large", httpStatus: response.status },
+        classify: classifyHttpExchange({ consumeError, status: response.status }),
       };
     }
     return {

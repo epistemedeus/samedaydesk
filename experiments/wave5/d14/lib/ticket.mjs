@@ -5,17 +5,37 @@ import { EXECUTION_CONTRACT_VERSION, JOB_EXPECTED_OUTPUTS } from "./pins.mjs";
 import { assertExecutionId, parseHttpOrigin, resultsPathFor } from "./origin.mjs";
 import { digestFromSubmitted } from "./encode-inputs.mjs";
 import { resultIdentityHash } from "./digest-named.mjs";
-import { hashFrozenRequestV1 } from "../../../../tools/managed-useful-jobs-order/lib/acquisition-identity.mjs";
+import {
+  hashFrozenRequestV1,
+  hashPublicationIdentityV1,
+  inputFlag,
+  publicationFieldsFromBody,
+} from "../../../../tools/managed-useful-jobs-order/lib/acquisition-identity.mjs";
 import { FROZEN_REQUEST_HASH_VERSION } from "../../../../tools/managed-useful-jobs-order/lib/acquisition-constants.mjs";
+
+function materializedTuple(key, row) {
+  const sha256 = row.materializedSha256 || row.stagedSha256;
+  if (!sha256) return null;
+  if (Number.isSafeInteger(row.materializedBytes)) {
+    return { flag: inputFlag(key), sha256, bytes: row.materializedBytes };
+  }
+  // Source already equaled materialized (terminal newline present).
+  if (row.stagedSha256 && row.sha256 === row.stagedSha256 && Number.isSafeInteger(row.bytes)) {
+    return { flag: inputFlag(key), sha256: row.sha256, bytes: row.bytes };
+  }
+  return null;
+}
 
 export function requestHashFromSubmitted(jobId, submitted) {
   if (!jobId || !submitted || typeof submitted !== "object") return null;
   try {
-    const inputs = Object.entries(submitted).map(([key, row]) => ({
-      flag: String(key).startsWith("--") ? key : `--${key}`,
-      sha256: row.sha256 || row.stagedSha256,
-      bytes: row.bytes,
-    }));
+    const inputs = [];
+    for (const [key, row] of Object.entries(submitted)) {
+      const tuple = materializedTuple(key, row);
+      if (!tuple) return null;
+      inputs.push(tuple);
+    }
+    if (!inputs.length) return null;
     return hashFrozenRequestV1({ jobId, inputs });
   } catch {
     return null;
@@ -113,11 +133,25 @@ export function updateTicketAfterPost(ticket, posted) {
     durableExactlyOnce: false,
   };
   if (posted?.status === 200 && posted.body && typeof posted.body === "object") {
+    const fields = publicationFieldsFromBody(posted.body);
+    let publicationIdentitySha256 = posted.body.publicationIdentitySha256 || null;
+    if (!publicationIdentitySha256 && fields) {
+      try {
+        publicationIdentitySha256 = hashPublicationIdentityV1(fields);
+      } catch {
+        publicationIdentitySha256 = null;
+      }
+    }
     next.postIdentity = {
       httpStatus: posted.status,
       bodySha256: posted.bodySha256 || resultIdentityHash(posted.body),
       executionId: posted.body.executionId || null,
+      publicationIdentitySha256,
     };
+    if (publicationIdentitySha256) next.publicationIdentitySha256 = publicationIdentitySha256;
+    if (posted.body.requestHash) next.publishedRequestHash = posted.body.requestHash;
+    if (posted.body.receiptSha256) next.receiptSha256 = posted.body.receiptSha256;
+    if (posted.body.outputsDigest) next.outputsDigest = posted.body.outputsDigest;
     if (posted.body.executionId && posted.body.executionId !== executionId) {
       next.serverIdentityMismatch = posted.body.executionId;
     }
@@ -133,9 +167,9 @@ export function ticketFromSubmit({ origin, request, submitted, posted, frozen, e
 
 export function writeTicketAtomic(filePath, ticket) {
   const abs = resolve(filePath);
-  mkdirSync(dirname(abs), { recursive: true });
+  mkdirSync(dirname(abs), { recursive: true, mode: 0o700 });
   const tmp = `${abs}.${process.pid}.tmp`;
-  writeFileSync(tmp, `${JSON.stringify(ticket, null, 2)}\n`);
+  writeFileSync(tmp, `${JSON.stringify(ticket, null, 2)}\n`, { mode: 0o600 });
   renameSync(tmp, abs);
 }
 

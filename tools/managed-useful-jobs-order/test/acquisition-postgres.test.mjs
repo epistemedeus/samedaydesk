@@ -268,4 +268,40 @@ describe("HA1 real PostgreSQL durable retrieval", { timeout: 180_000 }, () => {
       cluster.stop();
     }
   });
+
+  it("same-store concurrent admits use leased clients; statement_timeout is observed on a slow query", async () => {
+    if (!havePg) {
+      throw new Error("postgresql-16 initdb/pg_ctl missing; missing dependency is incomplete, not a skip");
+    }
+    const cluster = startDisposablePostgres();
+    const artifacts = artifactDir();
+    let store;
+    try {
+      store = await createPostgresStore({
+        clientConfig: cluster.clientConfig,
+        schema: "ha1_acq_lease",
+        artifactRoot: artifacts,
+        statementTimeoutMs: 500,
+      });
+      const shown = await store.withLeasedClient(async (client) => {
+        const { rows } = await client.query("SHOW statement_timeout");
+        return rows[0].statement_timeout;
+      });
+      assert.ok(/500ms|0.5s|500/i.test(String(shown)), `statement_timeout=${shown}`);
+      const service = createAcquisitionService({ store, artifactRoot: artifacts, clock: () => SERVER_LATER });
+      const [a, b] = await Promise.all([
+        admitAndPublish(service, { executionId: "exec-lease-a" }),
+        admitAndPublish(service, { executionId: "exec-lease-b" }),
+      ]);
+      assert.equal(a.outcome === "created" || a.outcome === "identical", true);
+      assert.equal(b.outcome === "created" || b.outcome === "identical", true);
+      await assert.rejects(
+        () => store.withLeasedClient((client) => client.query("SELECT pg_sleep(2)")),
+        (err) => err && (err.code === "57014" || /timeout/i.test(String(err.message))),
+      );
+    } finally {
+      if (store) await store.close().catch(() => {});
+      cluster.stop();
+    }
+  });
 });

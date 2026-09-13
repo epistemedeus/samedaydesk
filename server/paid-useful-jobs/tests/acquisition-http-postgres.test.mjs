@@ -47,10 +47,20 @@ describe("HA2 acquisition HTTP on real PostgreSQL", { timeout: 180_000 }, () => 
       });
       server = bundle.server;
       const addr = await listenExecutionServer(server, { host: "127.0.0.1", port: 0 });
+      const shown = await store.withLeasedClient(async (client) => {
+        const { rows } = await client.query("SHOW statement_timeout");
+        return rows[0].statement_timeout;
+      });
+      assert.ok(/5s|5000/i.test(String(shown)), `statement_timeout=${shown}`);
+      await Promise.all([
+        admitAndPublish(service, { executionId: "exec-http-pg-conc-a" }),
+        admitAndPublish(service, { executionId: "exec-http-pg-conc-b" }),
+      ]);
       const res = await fetch(`${addr.origin}/results/${published.executionId}`, {
         headers: {
           authorization: "Bearer token-a",
           "x-request-sha256": published.requestHash,
+          "x-request-hash-version": "samedaydesk.acquisition-frozen-request.v1",
         },
       });
       assert.equal(res.status, 200);
@@ -82,6 +92,7 @@ describe("HA2 acquisition HTTP on real PostgreSQL", { timeout: 180_000 }, () => 
         headers: {
           authorization: "Bearer token-a",
           "x-request-sha256": published.requestHash,
+          "x-request-hash-version": "samedaydesk.acquisition-frozen-request.v1",
         },
       });
       assert.equal(again.status, 200);
