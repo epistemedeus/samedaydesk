@@ -230,10 +230,16 @@ test("discovery, catalog, outcomes, and page share one archive pin and commands"
   assert.equal(discovery.install.join("\n"), USEFUL_JOBS_COLD_START);
   assert.deepEqual(discovery.acquireTools, [...USEFUL_JOBS_ACQUIRE_TOOLS]);
   assert.equal(discovery.runtime, USEFUL_JOBS_RUNTIME);
-  assert.match(discovery.summary, /bash, curl, python3, tar, and mktemp/i);
+  assert.match(discovery.summary, /Ten offline jobs for lockfile changes/i);
   assert.match(discovery.summary, /Node 22/i);
+  assert.doesNotMatch(discovery.summary, /H21/);
   assert.match(discovery.note, /Acquire tools/i);
   assert.match(discovery.note, /Node >= 22/i);
+  assert.match(
+    discovery.note,
+    /Release 1\.4\.7 adds fresh verification for lockfile-pin-delta/,
+  );
+  assert.doesNotMatch(discovery.note, /H21/);
   assert.deepEqual(
     catalog.jobs.map((j) => j.id),
     JOBS,
@@ -261,14 +267,18 @@ test("discovery, catalog, outcomes, and page share one archive pin and commands"
   assert.match(page, /USEFUL_JOBS_ACQUIRE_TOOLS/);
   assert.match(page, /USEFUL_JOBS_RUNTIME/);
   assert.match(page, /Turn changing files into/);
-  assert.match(page, /Ten offline jobs: lockfile pin-delta first/);
+  assert.match(page, /Ten offline jobs for lockfile changes/);
   assert.match(page, /Acquisition tools/);
   assert.match(page, /Free local package only/);
+  assert.match(page, /Release 1\.4\.7 adds fresh verification/);
+  assert.doesNotMatch(page, /H21/);
   assert.match(crawler, /Turn changing files into useful next steps/i);
   assert.match(crawler, /bash/);
   assert.match(crawler, /curl/);
   assert.match(crawler, /python3/);
   assert.match(crawler, /Free local package/i);
+  assert.match(crawler, /Release 1\.4\.7 adds fresh verification/);
+  assert.doesNotMatch(crawler, /H21/);
   assert.ok(!/no purchase authority/i.test(crawler));
   assert.match(crawler, new RegExp(USEFUL_JOBS_ARCHIVE_SHA256));
 });

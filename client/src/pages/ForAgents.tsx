@@ -223,13 +223,12 @@ export default function ForAgents() {
             <h2 id="useful-jobs-title">Run local useful jobs on files you already hold</h2>
           </div>
           <p className={styles.jobCopy}>
-            Download one Node 22 archive (current public 1.4.7) for lockfile pin-delta, JSON Schema
-            drift, route-table diff, page-change, vendor-budget-impact, plus five inherited jobs:
-            API upgrade briefs, feed agendas, evidence CI annotations, listing repair packets, and
-            repeat job records. H21 newly reviewed five of the ten; the other five were inherited.
-            Verify size and sha256 before extract. Labeled samples need <code>--example</code> except
-            page-change. Ordinary callers supply their own files. No purchase or scheduler
-            authority. Details and cold-start commands:{" "}
+            Archive 1.4.7 contains all ten useful offline jobs: lockfile changes, JSON Schema drift,
+            route changes, page changes, pricing snapshots, API upgrades, feed agendas, CI
+            evidence, listing repairs, and repeat-job records. Verify size and sha256 before
+            extract. Labeled samples need <code>--example</code> except page-change. Ordinary
+            callers supply their own files. No purchase or scheduler authority. Details and
+            cold-start commands:{" "}
             <Link className={styles.inlineLink} to="/for-agents/useful-jobs">
               /for-agents/useful-jobs
             </Link>

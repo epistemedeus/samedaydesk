@@ -3,7 +3,7 @@
   "package": "useful-jobs",
   "version": "1.4.7",
   "title": "Offline useful jobs package",
-  "summary": "Ten offline jobs: lockfile pin-delta first, plus JSON Schema drift, route-table diff, page-change, vendor-budget-impact, and five inherited jobs for API changes, feeds, and delivery evidence. H21 newly reviewed five of the ten; the other five were inherited, not newly reviewed. Acquire with bash, curl, python3, tar, and mktemp; then run on local Node 22. Verify size and sha256 before extract. Samples are labeled SAMPLE. page-change --example is refused. Callers supply their own files. Free local package; not hosted execution.",
+  "summary": "Ten offline jobs for lockfile changes, JSON Schema drift, route changes, page changes, pricing snapshots, API upgrades, feed agendas, CI evidence, listing repairs, and repeat-job records. Download and verify the archive, then run on Node 22 with your own files. Free local package; not hosted execution.",
   "page": "https://samedaydesk.com/for-agents/useful-jobs",
   "archiveUrl": "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz",
   "archive": {
@@ -131,5 +131,5 @@
   ],
   "runtime": "Node >= 22 (offline after extract)",
   "freeOffline": true,
-  "note": "Free local package. Paid hosted extract on /for-agents stays a separate product and is not started by these jobs. No new public paid HTTP merchant route is claimed. Acquire tools are host utilities for download/verify/extract only; offline runs need Node >= 22 after extract. H21 newly reviewed five jobs (lockfile-pin-delta, json-schema-webhook-drift, route-table-diff, page-change-offline-job, vendor-budget-impact); the other five were inherited, not newly reviewed. Version 1.4.0 remains at /for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz. Version 1.3.0 remains at /for-agents/useful-jobs/useful-jobs-1.3.0.tar.gz. Version 1.2.0 remains at /for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz. Version 1.1.0 remains at /for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz. Version 1.0.0 remains at /for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz."
+  "note": "Free local package. Paid hosted extract on /for-agents stays a separate product and is not started by these jobs. No new public paid HTTP merchant route is claimed. Acquire tools are host utilities for download/verify/extract only; offline runs need Node >= 22 after extract. Release 1.4.7 adds fresh verification for lockfile-pin-delta, json-schema-webhook-drift, route-table-diff, page-change-offline-job, and vendor-budget-impact. The other five jobs are carried forward without a new review. Version 1.4.0 remains at /for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz. Version 1.3.0 remains at /for-agents/useful-jobs/useful-jobs-1.3.0.tar.gz. Version 1.2.0 remains at /for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz. Version 1.1.0 remains at /for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz. Version 1.0.0 remains at /for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz."
 }

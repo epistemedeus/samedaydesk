@@ -559,8 +559,13 @@ export const CONSUMER_REPEAT_SHELL = Object.freeze({
 
 export const USEFUL_JOBS_PATH = "/for-agents/useful-jobs";
 export const USEFUL_JOBS_TITLE = "Offline useful jobs for agent callers | SameDayDesk";
-export const USEFUL_JOBS_DESCRIPTION =
-  "Ten offline jobs: lockfile pin-delta first, plus JSON Schema drift, route-table diff, page-change, vendor-budget-impact, and five inherited jobs for API changes, feeds, and delivery evidence. H21 newly reviewed five of the ten; the other five were inherited, not newly reviewed. Acquire with bash, curl, python3, tar, and mktemp; then run on local Node 22. Verify size and sha256 before extract. Samples are labeled SAMPLE. page-change --example is refused. Callers supply their own files. Free local package; not hosted execution.";
+/** Customer-facing intro/SEO. Install tools and --example limits stay in detailed sections. */
+export const USEFUL_JOBS_PUBLIC_SUMMARY =
+  "Ten offline jobs for lockfile changes, JSON Schema drift, route changes, page changes, pricing snapshots, API upgrades, feed agendas, CI evidence, listing repairs, and repeat-job records. Download and verify the archive, then run on Node 22 with your own files. Free local package; not hosted execution.";
+/** Precise release note for boundary/note surfaces only — not the headline. */
+export const USEFUL_JOBS_RELEASE_NOTE =
+  "Release 1.4.7 adds fresh verification for lockfile-pin-delta, json-schema-webhook-drift, route-table-diff, page-change-offline-job, and vendor-budget-impact. The other five jobs are carried forward without a new review.";
+export const USEFUL_JOBS_DESCRIPTION = USEFUL_JOBS_PUBLIC_SUMMARY;
 export const USEFUL_JOBS_CANONICAL = `${SITE_ORIGIN}${USEFUL_JOBS_PATH}`;
 export const USEFUL_JOBS_ARCHIVE = USEFUL_JOBS_KIT.archive;
 export const USEFUL_JOBS_ARCHIVE_SHA256 = USEFUL_JOBS_KIT.sha256;
@@ -671,15 +676,7 @@ export const USEFUL_JOBS_REPEAT_USE = [
 export const USEFUL_JOBS_CRAWLER_HTML = `
       <h1>Offline useful jobs for agent callers</h1>
       <p>
-        Turn changing files into useful next steps. SameDayDesk publishes ten offline
-        jobs: lockfile pin-delta first, plus JSON Schema drift, route-table diff, page-change,
-        vendor-budget-impact, and five inherited jobs for API changes, feeds, and delivery evidence.
-        H21 newly reviewed five of the ten; the other five were inherited, not newly reviewed.
-        Acquire the archive
-        with <code>bash</code>, <code>curl</code>, <code>python3</code>, <code>tar</code>,
-        and <code>mktemp</code>; then run on local Node 22. Labeled samples need
-        <code>--example</code> except page-change, which refuses it. Callers supply their own files. Free local package; it does
-        not start hosted extract on <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>. Not a paid HTTP merchant route.
+        Turn changing files into useful next steps. ${USEFUL_JOBS_PUBLIC_SUMMARY}
       </p>
       <p>
         Machine discovery:
@@ -712,6 +709,7 @@ export const USEFUL_JOBS_CRAWLER_HTML = `
         Scope: free local package only. Missing inputs or digest mismatch stop the job.
         Partial vendor or listing evidence stays non-final. Evidence CI annotations from
         caller packets stay unattested. This package does not run hosted extract.
+        ${USEFUL_JOBS_RELEASE_NOTE}
       </p>
     `;
 

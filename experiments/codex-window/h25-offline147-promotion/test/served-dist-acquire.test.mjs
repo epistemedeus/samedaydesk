@@ -153,14 +153,24 @@ test("served dist: documented acquire, list, and nonpayment", { timeout: 240_000
     assert.equal(shellRes.status, 200, "built route shell must be served from dist");
     const html = shellRes.body.toString("utf8");
     assert.match(html, /Free local package/i);
-    assert.match(html, /not hosted execution|does not start hosted extract/i);
+    assert.match(html, /not hosted execution|does not start hosted extract|does not run hosted extract/i);
     assert.doesNotMatch(html, /start hosted extract on \/for-agents and pay/i);
     assert.doesNotMatch(html, /purchaseAuthority":\s*true/);
     assert.match(html, /e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec/);
     assert.match(html, /useful-jobs-1\.4\.7\.tar\.gz/);
-    assert.match(html, /H21 newly reviewed five of the ten/);
+    assert.match(
+      html,
+      /Release 1\.4\.7 adds fresh verification for lockfile-pin-delta, json-schema-webhook-drift, route-table-diff, page-change-offline-job, and vendor-budget-impact/,
+    );
+    assert.match(html, /The other five jobs are carried forward without a new review/);
+    assert.doesNotMatch(html, /H21/);
+    assert.doesNotMatch(html, /inherited jobs/);
     const pageHtml = pageRes.body.toString("utf8");
     assert.doesNotMatch(pageHtml, /purchaseAuthority":\s*true/);
+    assert.doesNotMatch(pageHtml, /H21/);
+    assert.doesNotMatch(discovery.summary, /H21/);
+    assert.doesNotMatch(discovery.note, /H21/);
+    assert.match(discovery.note, /Release 1\.4\.7 adds fresh verification/);
 
     const acquire = await spawnAsync("bash", ["-c", `${USEFUL_JOBS_COLD_START}\n`], {
       cwd: work,
@@ -194,6 +204,11 @@ test("served dist: documented acquire, list, and nonpayment", { timeout: 240_000
   } finally {
     if (preview.pid && !preview.killed) {
       try {
+        spawnSync("pkill", ["-TERM", "-P", String(preview.pid)]);
+      } catch {
+        /* no children */
+      }
+      try {
         process.kill(preview.pid, "SIGTERM");
       } catch {
         /* already exited */
@@ -202,6 +217,11 @@ test("served dist: documented acquire, list, and nonpayment", { timeout: 240_000
     await new Promise((done) => {
       const t = setTimeout(() => {
         if (preview.pid) {
+          try {
+            spawnSync("pkill", ["-KILL", "-P", String(preview.pid)]);
+          } catch {
+            /* no children */
+          }
           try {
             process.kill(preview.pid, "SIGKILL");
           } catch {

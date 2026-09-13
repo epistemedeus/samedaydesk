@@ -13,6 +13,7 @@ import {
   USEFUL_JOBS_COLD_START,
   USEFUL_JOBS_DESCRIPTION,
   USEFUL_JOBS_INSTALL,
+  USEFUL_JOBS_RELEASE_NOTE,
   USEFUL_JOBS_RUNTIME,
 } from "../../../../client/src/data/machineEntry.mjs";
 
@@ -71,7 +72,7 @@ const discovery = {
     "Free local package. Paid hosted extract on /for-agents stays a separate product and is not started by these jobs.",
     "No new public paid HTTP merchant route is claimed.",
     "Acquire tools are host utilities for download/verify/extract only; offline runs need Node >= 22 after extract.",
-    "H21 newly reviewed five jobs (lockfile-pin-delta, json-schema-webhook-drift, route-table-diff, page-change-offline-job, vendor-budget-impact); the other five were inherited, not newly reviewed.",
+    USEFUL_JOBS_RELEASE_NOTE,
     "Version 1.4.0 remains at /for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz.",
     "Version 1.3.0 remains at /for-agents/useful-jobs/useful-jobs-1.3.0.tar.gz.",
     "Version 1.2.0 remains at /for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz.",
