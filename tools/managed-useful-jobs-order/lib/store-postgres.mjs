@@ -1,12 +1,15 @@
-import { readFileSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import pg from "pg";
 import { OrderRefuse } from "./errors.mjs";
 import { liveOtherHolder } from "./pid.mjs";
+import { DEFAULT_MAX_ADMISSIONS } from "./acquisition-constants.mjs";
+import { sameAdmissionIdentity } from "./acquisition-identity.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const SQL = readFileSync(join(here, "../sql/orders.sql"), "utf8");
+const ACQUISITION_SQL = readFileSync(join(here, "../sql/acquisition.sql"), "utf8");
 
 function quoteIdent(name) {
   if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)) {
@@ -36,20 +39,62 @@ function mapRow(row) {
  * Isolated order store. Not the I01 earned-work kernel and not a money ledger.
  * Terms hash is the I01-style identity of the bound work. D01 receipt hashes stay nested.
  */
+function acquisitionFromRow(row) {
+  if (!row) return null;
+  const meta = row.metadata_json;
+  if (meta && typeof meta === "object" && !Array.isArray(meta)) return meta;
+  return null;
+}
+
+function acquisitionParams(record) {
+  return [
+    record.executionId,
+    record.principalId,
+    record.requestHash,
+    record.requestHashAlgorithm,
+    record.requestHashVersion,
+    record.managedOrderTermsHash,
+    record.managedOrderTermsSchema,
+    record.hashesReconciled === true,
+    record.jobId,
+    record.termsVersion,
+    Boolean(record.sample),
+    record.receiptSha256,
+    record.outputsDigest,
+    record.outputs ? JSON.stringify(record.outputs) : null,
+    record.state,
+    record.createdAt,
+    record.expiresAt,
+    false,
+    false,
+    Boolean(record.bytesPurged),
+    record.orderId || null,
+    JSON.stringify(record),
+  ];
+}
+
 export async function createPostgresStore({
   connectionString = null,
   clientConfig = null,
   schema = "managed_useful_jobs_order",
+  artifactRoot = null,
+  maxAdmissions = DEFAULT_MAX_ADMISSIONS,
 } = {}) {
   const client = new pg.Client(connectionString ? { connectionString } : clientConfig);
   await client.connect();
   await client.query(`CREATE SCHEMA IF NOT EXISTS ${quoteIdent(schema)}`);
   await client.query(`SET search_path TO ${quoteIdent(schema)}`);
   await client.query(SQL);
+  await client.query(ACQUISITION_SQL);
+  const cap =
+    Number.isSafeInteger(maxAdmissions) && maxAdmissions > 0 ? maxAdmissions : DEFAULT_MAX_ADMISSIONS;
+  if (artifactRoot) mkdirSync(artifactRoot, { recursive: true, mode: 0o700 });
 
   return {
     kind: "postgres",
     schema,
+    artifactRoot,
+    maxAdmissions: cap,
     async get(orderId) {
       const { rows } = await client.query(
         `SELECT order_id, terms_hash, status, holder_pid, holder_token, execution_count, engine_id,
@@ -207,6 +252,116 @@ export async function createPostgresStore({
     },
     async close() {
       await client.end();
+    },
+    async getAcquisition(executionId) {
+      const { rows } = await client.query(
+        `SELECT metadata_json FROM managed_useful_jobs_acquisitions WHERE execution_id = $1`,
+        [executionId],
+      );
+      return acquisitionFromRow(rows[0]);
+    },
+    async countAdmissions() {
+      const { rows } = await client.query(
+        `SELECT COUNT(*)::int AS n FROM managed_useful_jobs_acquisitions`,
+      );
+      return rows[0]?.n || 0;
+    },
+    async withAcquisitionLock(executionId, fn) {
+      await client.query("BEGIN");
+      try {
+        await client.query(
+          `SELECT execution_id FROM managed_useful_jobs_acquisitions WHERE execution_id = $1 FOR UPDATE`,
+          [executionId],
+        );
+        const result = await fn();
+        await client.query("COMMIT");
+        return result;
+      } catch (err) {
+        try {
+          await client.query("ROLLBACK");
+        } catch {
+          /* already rolled back */
+        }
+        throw err;
+      }
+    },
+    async saveAcquisitionUnlocked(record) {
+      await client.query(
+        `UPDATE managed_useful_jobs_acquisitions SET
+           principal_id = $2,
+           request_hash = $3,
+           request_hash_algorithm = $4,
+           request_hash_version = $5,
+           managed_order_terms_hash = $6,
+           managed_order_terms_schema = $7,
+           hashes_reconciled = $8,
+           job_id = $9,
+           terms_version = $10,
+           sample = $11,
+           receipt_sha256 = $12,
+           outputs_digest = $13,
+           outputs_json = $14::jsonb,
+           state = $15,
+           created_at = $16::timestamptz,
+           expires_at = $17::timestamptz,
+           purchase_authority = $18,
+           sold = $19,
+           bytes_purged = $20,
+           order_id = $21,
+           metadata_json = $22::jsonb,
+           updated_at = NOW()
+         WHERE execution_id = $1`,
+        acquisitionParams(record),
+      );
+      return record;
+    },
+    async admitAcquisition(record, { maxAdmissions: limit } = {}) {
+      const cap = Number.isSafeInteger(limit) && limit > 0 ? limit : this.maxAdmissions;
+      await client.query("BEGIN");
+      try {
+        await client.query("LOCK TABLE managed_useful_jobs_acquisitions IN SHARE ROW EXCLUSIVE MODE");
+        const existing = await client.query(
+          `SELECT metadata_json FROM managed_useful_jobs_acquisitions WHERE execution_id = $1`,
+          [record.executionId],
+        );
+        if (existing.rows[0]) {
+          const rec = acquisitionFromRow(existing.rows[0]);
+          await client.query("COMMIT");
+          if (sameAdmissionIdentity(rec, record)) return { kind: "identical", record: rec };
+          return { kind: "conflict", record: rec };
+        }
+        const counted = await client.query(
+          `SELECT COUNT(*)::int AS n FROM managed_useful_jobs_acquisitions`,
+        );
+        if ((counted.rows[0]?.n || 0) >= cap) {
+          await client.query("COMMIT");
+          return { kind: "capacity" };
+        }
+        await client.query(
+          `INSERT INTO managed_useful_jobs_acquisitions (
+             execution_id, principal_id, request_hash, request_hash_algorithm, request_hash_version,
+             managed_order_terms_hash, managed_order_terms_schema, hashes_reconciled,
+             job_id, terms_version, sample, receipt_sha256, outputs_digest, outputs_json,
+             state, created_at, expires_at, purchase_authority, sold, bytes_purged, order_id, metadata_json
+           ) VALUES (
+             $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14::jsonb,
+             $15, $16::timestamptz, $17::timestamptz, $18, $19, $20, $21, $22::jsonb
+           )`,
+          acquisitionParams(record),
+        );
+        await client.query("COMMIT");
+        return { kind: "created", record };
+      } catch (err) {
+        try {
+          await client.query("ROLLBACK");
+        } catch {
+          /* already rolled back */
+        }
+        if (err && err.code === "23505") {
+          return this.admitAcquisition(record, { maxAdmissions: cap });
+        }
+        throw err;
+      }
     },
   };
 }

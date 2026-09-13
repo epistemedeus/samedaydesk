@@ -1,0 +1,79 @@
+{
+  "schema": "h27.remote-environment.v1",
+  "observedAtUtc": "2026-09-13T12:12:26Z",
+  "cwd": "/tmp/h27/wt",
+  "runtime": {
+    "kind": "native Grok Heavy",
+    "cli": "/home/ubuntu/.grok/bin/grok",
+    "cliVersion": "1.0.25",
+    "cliBuild": "f7e67d6988e2",
+    "model": "grok-4.6",
+    "effort": "xhigh",
+    "providerIdentityNote": "Hostname cursor is not provider identity. Product runtime is Grok 4.6.",
+    "jobs": 1,
+    "childAgents": 0,
+    "auth": "grok.com subscription",
+    "authStoreLocation": "/home/ubuntu/.grok/auth.json",
+    "loggedIn": true,
+    "apiKeyUsed": false,
+    "node": "v22.22.2",
+    "postgres": "16.15",
+    "pgBin": "/usr/lib/postgresql/16/bin",
+    "argvContains": "-m grok-4.6 --effort xhigh"
+  },
+  "controller": {
+    "kind": "Cursor Cloud",
+    "id": "bc-ec55ab26-6e23-4562-9c7a-649331bdba1f",
+    "implementsProduct": false
+  },
+  "session": {
+    "newParent": true,
+    "didNotResume": [
+      "da4d24f2-628a-4df5-9b51-596bfc1d6313",
+      "01a094f5-dde1-70e1-ad54-481c90a8cd67",
+      "01a09456-c82b-7b41-ad58-e5557da52ed3",
+      "01a09a0f-1261-74f0-b1b0-0e7fb0c2a86b"
+    ]
+  },
+  "git": {
+    "repository": "https://github.com/epistemedeus/samedaydesk.git",
+    "branch": "codex/h27-artifact-retrieval-20260913",
+    "startHead": "44b8ca0f01429b4d21ee38887405bec90ea77461",
+    "repairSourceCommit": "27f0730604adf236e0f3ad818a30b5f43be6e656",
+    "publicMainNotEdited": "775051602d91f42ca1aa920054cfd7a451982940",
+    "compare": "https://github.com/epistemedeus/samedaydesk/compare/codex/h21-package-release-gate-20260913...codex/h27-artifact-retrieval-20260913",
+    "draftPr": {
+      "created": false,
+      "classification": "Do not gh pr create; GH App 403 is expected"
+    }
+  },
+  "replay": {
+    "tmpdir": "/tmp/h27/runtime-tmp",
+    "flock": "/tmp/h27/runtime-tmp/test.lock",
+    "nodeOptions": "--max-old-space-size=768",
+    "testConcurrency": 1,
+    "pgPort": "Unused port chosen by startDisposablePostgres (55000 + random 4000). listen_addresses empty. Teardown on success and failure.",
+    "commands": [
+      "cd /tmp/h27/wt/tools/managed-useful-jobs-order && npm ci --omit=dev --no-fund --no-audit",
+      "TMPDIR=/tmp/h27/runtime-tmp NODE_OPTIONS=--max-old-space-size=768 flock /tmp/h27/runtime-tmp/test.lock node --test --test-reporter=tap --test-concurrency=1 tools/managed-useful-jobs-order/test/acquisition-file.test.mjs tools/managed-useful-jobs-order/test/acquisition-hostile.test.mjs tools/managed-useful-jobs-order/test/acquisition-known-bad.test.mjs tools/managed-useful-jobs-order/test/acquisition-hooks.test.mjs tools/managed-useful-jobs-order/test/acquisition-postgres.test.mjs experiments/codex-window/h21-package-release-gate/test/hosted-acquisition.skeleton.test.mjs"
+    ],
+    "acceptance": {
+      "ha1Pass": 31,
+      "ha1Fail": 0,
+      "ha1Cancelled": 0,
+      "ha1Skipped": 0,
+      "h21SkeletonTodoExcluded": 10
+    }
+  },
+  "boundaries": {
+    "cashUsd": 0,
+    "purchaseAuthority": false,
+    "mainMerge": false,
+    "deploy": false,
+    "livePayments": false,
+    "protectedTreesEdited": false,
+    "httpRoutesEdited": false,
+    "d14Edited": false,
+    "publicArchivesEdited": false
+  }
+}

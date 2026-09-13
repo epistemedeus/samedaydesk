@@ -1,5 +1,15 @@
 import { randomUUID } from "node:crypto";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync } from "node:fs";
+import {
+  closeSync,
+  constants,
+  existsSync,
+  fstatSync,
+  mkdirSync,
+  mkdtempSync,
+  openSync,
+  readFileSync,
+  readSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { OrderRefuse, formatRefuse } from "./errors.mjs";
@@ -12,6 +22,19 @@ import { inspectSample, collectLabeledSampleDigests } from "./sample-guard.mjs";
 import { createFileStore } from "./store-file.mjs";
 import { loadExecutionContract, EXECUTION_CONTRACT_PIN, TESTED_D01_SHA } from "./wrapper-client.mjs";
 import { pidAlive, sleep } from "./pid.mjs";
+import { HA1_JOB_IDS } from "./acquisition-constants.mjs";
+import { AcquisitionRefuse } from "./acquisition-errors.mjs";
+import {
+  assertTrustedAuth,
+  refuseUntrustedRequestFields,
+} from "./acquisition-binding.mjs";
+import { parseServerClock } from "./acquisition-clock.mjs";
+import {
+  digestNamedOutputs,
+  hashFrozenRequestV1,
+  hashReceiptProjection,
+  namedOutputsProjection,
+} from "./acquisition-identity.mjs";
 
 function earlyRefuse(raw) {
   const extractHit = findExtractUrl(raw);
@@ -246,8 +269,89 @@ function applyFundingCheck(wrapper, raw, request) {
   return { fundingState: request.fundingState, sold: false };
 }
 
+function mapAcquisitionRefuse(err) {
+  if (err instanceof AcquisitionRefuse) {
+    return new OrderRefuse(err.code, err.message, {
+      httpStatus: err.httpStatus,
+      detail: err.detail || {},
+    });
+  }
+  return err;
+}
+
+function trustedAcquisitionPrincipal(raw, options) {
+  try {
+    refuseUntrustedRequestFields(raw);
+    if (!options.acquisition) return null;
+    return assertTrustedAuth(options.auth);
+  } catch (err) {
+    throw mapAcquisitionRefuse(err);
+  }
+}
+
+function namedOutputsFromOffer(offer) {
+  return namedOutputsProjection(
+    (offer.outputs || []).map((row) => ({
+      name: row.name,
+      kind: row.kind || "file",
+      bytes: row.bytes,
+      sha256: row.sha256,
+    })),
+  );
+}
+
+function readOfferOutputFile(outDir, row) {
+  const path = join(outDir, row.name);
+  let fd;
+  try {
+    fd = openSync(path, constants.O_RDONLY | constants.O_NOFOLLOW);
+  } catch (err) {
+    throw new OrderRefuse("invalid-execution-result", `cannot open completed output ${row.name}`, {
+      detail: { error: String(err?.message || err) },
+    });
+  }
+  try {
+    const st = fstatSync(fd);
+    if (!st.isFile() || st.nlink !== 1) {
+      throw new OrderRefuse("invalid-execution-result", `completed output ${row.name} is not a regular unlinked file`);
+    }
+    const buf = Buffer.alloc(st.size);
+    let offset = 0;
+    while (offset < st.size) {
+      const n = readSync(fd, buf, offset, st.size - offset, offset);
+      if (n === 0) break;
+      offset += n;
+    }
+    const digest = sha256Bytes(buf);
+    if (buf.length !== row.bytes || digest !== row.sha256) {
+      throw new OrderRefuse("invalid-execution-result", `completed output ${row.name} does not match the receipt tuple`);
+    }
+    return {
+      metadata: { name: row.name, kind: "file", bytes: row.bytes, sha256: row.sha256 },
+      bytes: buf,
+    };
+  } finally {
+    closeSync(fd);
+  }
+}
+
+function verifiedFilesFromOffer(offer, job) {
+  const outDir = offer.runOutDir || offer.outDir;
+  if (!outDir) {
+    throw new OrderRefuse("invalid-execution-result", "completed offer is missing an isolated outDir");
+  }
+  return (job.outputs || []).map((name) => {
+    const row = (offer.outputs || []).find((item) => item.name === name);
+    if (!row) {
+      throw new OrderRefuse("invalid-execution-result", `completed offer is missing output ${name}`);
+    }
+    return readOfferOutputFile(outDir, row);
+  });
+}
+
 async function createOrderStrict(raw, options = {}) {
   earlyRefuse(raw);
+  const principalId = trustedAcquisitionPrincipal(raw, options);
   const pins = options.pins || loadPins();
   const catalog = options.catalog || loadCatalog(pins.catalogPath);
   const request = normalizeRequest(raw, {
@@ -385,6 +489,10 @@ async function createOrderStrict(raw, options = {}) {
     return { ...reservation.record.result, replayed: true };
   }
 
+  const executionId = raw.executionId || randomUUID();
+  let frozenRequestHash = null;
+  let admittedExpiresAt = null;
+
   const priorExecutions = Number(reservation.record?.executionCount || 0);
   if (reservation.kind === "adopt" && priorExecutions > 0) {
     const interrupted = new OrderRefuse(
@@ -415,7 +523,31 @@ async function createOrderStrict(raw, options = {}) {
   const outDir = options.outDir || mkdtempSync(join(tmpdir(), "managed-order-out-"));
   mkdirSync(outDir, { recursive: true });
 
-  const executionId = raw.executionId || randomUUID();
+  if (options.acquisition && principalId && HA1_JOB_IDS.includes(request.engineId)) {
+    frozenRequestHash = hashFrozenRequestV1({
+      jobId: request.engineId,
+      inputs: request.inputs,
+    });
+    try {
+      const serverNow = parseServerClock(options.serverNow, "serverNow").iso;
+      const admitted = await options.acquisition.admit({
+        principalId,
+        executionId,
+        requestHash: frozenRequestHash,
+        managedOrderTermsHash: termsHash,
+        jobId: request.engineId,
+        termsVersion: ORDER_TERMS_SCHEMA,
+        sample: false,
+        createdAt: serverNow,
+        serverNow,
+        orderId: request.orderId,
+      });
+      admittedExpiresAt = admitted.record.expiresAt;
+    } catch (err) {
+      throw mapAcquisitionRefuse(err);
+    }
+  }
+
   await store.recordExecution({
     orderId: request.orderId,
     termsHash,
@@ -485,6 +617,35 @@ async function createOrderStrict(raw, options = {}) {
   }
 
   const result = buildSuccessResult({ request, pins, termsHash, offer, outDir });
+  if (options.acquisition && principalId && HA1_JOB_IDS.includes(request.engineId)) {
+    const outputs = namedOutputsFromOffer(offer);
+    const files = verifiedFilesFromOffer(offer, job);
+    try {
+      await options.acquisition.publishCompleted(
+        {
+          state: "available",
+          principalId,
+          executionId,
+          requestHash: frozenRequestHash,
+          jobId: request.engineId,
+          receiptSha256: hashReceiptProjection(offer.receipt || offer, {
+            executionId,
+            jobId: request.engineId,
+          }),
+          outputsDigest: digestNamedOutputs(outputs),
+          outputs,
+          termsVersion: ORDER_TERMS_SCHEMA,
+          sample: Boolean(offer.sample),
+          expiresAt: admittedExpiresAt,
+          purchaseAuthority: false,
+          sold: false,
+        },
+        files,
+      );
+    } catch (err) {
+      throw mapAcquisitionRefuse(err);
+    }
+  }
   await store.complete(request.orderId, result);
   return result;
 }
