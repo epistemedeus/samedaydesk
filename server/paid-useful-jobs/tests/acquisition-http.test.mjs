@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import http from "node:http";
+import net from "node:net";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
@@ -75,6 +77,39 @@ async function getJson(origin, path, hdrs) {
   const res = await fetch(`${origin}${path}`, { headers: hdrs, redirect: "error" });
   const body = await res.json().catch(() => null);
   return { status: res.status, body, headers: res.headers };
+}
+
+async function until(predicate, label, ms = 400) {
+  const start = Date.now();
+  while (Date.now() - start < ms) {
+    if (predicate()) return;
+    await new Promise((resolve) => setTimeout(resolve, 5));
+  }
+  throw new Error(`timed out waiting for ${label}`);
+}
+
+function artifactRequestLines(origin, published) {
+  return [
+    `GET /results/${published.executionId}/artifacts/pin-delta.json HTTP/1.1`,
+    `Host: ${origin.host}`,
+    "Authorization: Bearer token-a",
+    `X-Request-SHA256: ${published.requestHash}`,
+    `X-Request-Hash-Version: ${FROZEN_VERSION}`,
+    `X-Artifact-SHA256: ${published.pair.outputs[0].sha256}`,
+    "Connection: close",
+    "",
+    "",
+  ].join("\r\n");
+}
+
+async function connectRaw(origin) {
+  const sock = net.connect({ host: origin.hostname, port: Number(origin.port) });
+  sock.on("error", () => {});
+  await new Promise((resolve, reject) => {
+    sock.once("connect", resolve);
+    sock.once("error", reject);
+  });
+  return sock;
 }
 
 describe("HA2 acquisition HTTP", { timeout: 60_000 }, () => {
@@ -248,18 +283,124 @@ describe("HA2 acquisition HTTP", { timeout: 60_000 }, () => {
       release();
       const ok = await first;
       assert.equal(ok.status, 200);
-      const ac = new AbortController();
-      ac.abort();
-      await assert.rejects(() =>
-        fetch(`${host.origin}/results/${published.executionId}/artifacts/pin-delta.json`, {
-          headers: { ...hdrs, "x-artifact-sha256": published.pair.outputs[0].sha256 },
-          signal: ac.signal,
-        }),
-      );
       assert.equal(host.executeCalls(), 0);
     } finally {
       service.hooks.beforeOpen = null;
       await close(host.server);
+    }
+  });
+
+  it("pre-aborted fetch AbortController rejects locally before the request is sent (does not prove in-flight server cancellation)", async () => {
+    const { service, seams } = await fileService({ maxConcurrentReads: 1, maxQueuedReads: 0 });
+    const published = await admitAndPublish(service, { executionId: "exec-http-preabort" });
+    const host = await startHosted({ service, seams });
+    try {
+      const ac = new AbortController();
+      ac.abort();
+      await assert.rejects(
+        () =>
+          fetch(`${host.origin}/results/${published.executionId}/artifacts/pin-delta.json`, {
+            headers: headers("token-a", published.requestHash, {
+              "x-artifact-sha256": published.pair.outputs[0].sha256,
+            }),
+            signal: ac.signal,
+          }),
+        (err) => err?.name === "AbortError" || err?.name === "TimeoutError" || Boolean(err),
+      );
+      assert.equal(service.maxConcurrentReads.active, 0);
+      assert.equal(service.maxConcurrentReads.queued, 0);
+      assert.equal(host.executeCalls(), 0);
+    } finally {
+      await close(host.server);
+    }
+  });
+
+  it("in-flight client disconnect after beforeOpen admission aborts the reader, returns permits, and a follow-up GET succeeds before openTimeout", async () => {
+    const modes = ["destroy", "resetAndDestroy", "end"];
+    for (const mode of modes) {
+      const { service, seams } = await fileService({
+        maxConcurrentReads: 1,
+        maxQueuedReads: 0,
+        openTimeoutMs: 30_000,
+      });
+      const published = await admitAndPublish(service, { executionId: `exec-http-disc-${mode}` });
+      const host = await startHosted({ service, seams });
+      let sawAbort = false;
+      let markAdmitted;
+      const admitted = new Promise((resolve) => {
+        markAdmitted = resolve;
+      });
+      let sock;
+      let clientReq;
+      service.hooks.beforeOpen = ({ signal }) =>
+        new Promise((_resolve, reject) => {
+          markAdmitted();
+          const onAbort = () => {
+            sawAbort = true;
+            reject(signal.reason || new Error("aborted"));
+          };
+          if (signal.aborted) {
+            onAbort();
+            return;
+          }
+          signal.addEventListener("abort", onAbort, { once: true });
+        });
+      try {
+        const origin = new URL(host.origin);
+        if (mode === "destroy") {
+          clientReq = http.request({
+            hostname: origin.hostname,
+            port: origin.port,
+            path: `/results/${published.executionId}/artifacts/pin-delta.json`,
+            method: "GET",
+            headers: headers("token-a", published.requestHash, {
+              "x-artifact-sha256": published.pair.outputs[0].sha256,
+              connection: "close",
+            }),
+          });
+          clientReq.on("error", () => {});
+          clientReq.on("response", (res) => {
+            res.on("error", () => {});
+            res.resume();
+          });
+          clientReq.end();
+        } else {
+          sock = await connectRaw(origin);
+          sock.write(artifactRequestLines(origin, published));
+        }
+        await admitted;
+        assert.equal(service.maxConcurrentReads.active, 1, `${mode}: gate held after admission`);
+        if (mode === "destroy") clientReq.destroy();
+        else if (mode === "resetAndDestroy") sock.resetAndDestroy();
+        else sock.end();
+        await until(() => sawAbort, `${mode}: reader signal abort`, 400);
+        await until(
+          () => service.maxConcurrentReads.active === 0 && service.maxConcurrentReads.queued === 0,
+          `${mode}: permits returned`,
+          400,
+        );
+        service.hooks.beforeOpen = null;
+        const follow = await fetch(`${host.origin}/results/${published.executionId}/artifacts/pin-delta.json`, {
+          headers: headers("token-a", published.requestHash, {
+            "x-artifact-sha256": published.pair.outputs[0].sha256,
+          }),
+        });
+        assert.equal(follow.status, 200, `${mode}: follow-up GET`);
+        assert.equal(host.executeCalls(), 0);
+      } finally {
+        service.hooks.beforeOpen = null;
+        try {
+          clientReq?.destroy();
+        } catch {
+          /* already closed */
+        }
+        try {
+          sock?.destroy();
+        } catch {
+          /* already closed */
+        }
+        await close(host.server);
+      }
     }
   });
 

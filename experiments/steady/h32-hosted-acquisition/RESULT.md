@@ -31,7 +31,7 @@ Executed as real tests in HA2/HA3 (not by deleting H21 TODOs). H21 `hosted-acqui
 
 ## TAP
 
-Combined HA1+HA2+HA3+skeleton:
+Combined HA1+HA2+HA3+skeleton (native H32 close):
 
 `# tests 63` `# pass 53` `# fail 0` `# skipped 0` `# todo 10`
 
@@ -46,6 +46,24 @@ Combined HA1+HA2+HA3+skeleton:
 | HA1 interrupt + hygiene (separate) | 4 | 0 | 0 |
 
 Known-bad: process-local Map without a durable reader still has no artifact route. Missing hosted ticket hash still reports `unsupported-portable-acquisition`.
+
+## Root abort-control retention (not a product fix)
+
+In-flight loopback disconnect on original `e1ec5c6` **falsified** a leaked-reader leak: `req.aborted` aborted the held `beforeOpen` in 12ms, permits `0+0`, follow-up GET 200 (`destroy` / `resetAndDestroy` / `end`). Node v22.22.2. Full receipt: [ROOT-ABORT-CONTROL.md](./ROOT-ABORT-CONTROL.md).
+
+Controller retained that experiment as HA2 tests only. No `acquisition-http.mjs` listener change. Pre-aborted `fetch` remains a separate labelled case (local reject, not in-flight proof).
+
+Combined replay after test retention (this VM):
+
+`# tests 65` `# pass 55` `# fail 0` `# skipped 0` `# todo 10`
+
+| Pack | Pass | Fail | Todo |
+| --- | --- | --- | --- |
+| HA1 acquisition | 39 | 0 | 0 |
+| HA2 `acquisition-http.test.mjs` | **9** | 0 | 0 |
+| HA2 postgres | 1 | 0 | 0 |
+| HA3 hosted | 6 | 0 | 0 |
+| H21 skeleton (excluded from pass) | 0 | 0 | **10** |
 
 ## Known hosted-deployment step (not performed)
 
