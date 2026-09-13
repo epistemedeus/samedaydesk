@@ -1,6 +1,19 @@
 # S260 useful-jobs source review (independent)
 
-## Current public download (1.2.0)
+## Current public download (1.4.7) — H25 PUBLIC OFFLINE promotion
+
+- Public archive: `useful-jobs-1.4.7.tar.gz` **5255824** bytes
+- SHA256: `e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec`
+- Kit mirror `/kit/useful-jobs-1.4.7.tar.gz`
+- Repair/build source pin: `27f0730604adf236e0f3ad818a30b5f43be6e656`
+- H21 already completed/exported `44b8ca0f01429b4d21ee38887405bec90ea77461` (**87/0**). This promotion does not rerun that audit.
+- Catalog lists the same ten job ids as public 1.4.0. **H21 newly reviewed five:** `lockfile-pin-delta`, `json-schema-webhook-drift`, `route-table-diff`, `page-change-offline-job`, `vendor-budget-impact`. **The other five were inherited, not newly reviewed.**
+- Free local offline only. `purchaseAuthority: false`. `paidHostedClaim: false`. No hosted execution, no payment.
+- Previous public 1.4.0 / 1.3.0 / 1.2.0 / 1.1.0 / 1.0.0 URLs remain byte-identical. Unpublished 1.4.1–1.4.6 are not historical public downloads.
+- Rejected as public-command packages: 1.4.5 (`ea14851b…`) and 1.4.6 (`158898ea…`).
+- HA1 / HA2 / HA3 hosted acquisition remains out of this job.
+
+## Historical public download (1.2.0)
 
 - Public archive: `useful-jobs-1.2.0.tar.gz` **2579117** bytes
 - SHA256: `dec31ea66f1605fb9578c7d15c9583b130c6e2c0b82b5e6b93422381a04461eb`

@@ -223,9 +223,10 @@ export default function ForAgents() {
             <h2 id="useful-jobs-title">Run local useful jobs on files you already hold</h2>
           </div>
           <p className={styles.jobCopy}>
-            Download one Node 22 archive for lockfile pin-delta, JSON Schema drift, route-table
-            diff, page-change, plus the original six: API upgrade briefs, vendor budget impact, feed
-            agendas, evidence CI annotations, listing repair packets, and repeat job records.
+            Download one Node 22 archive (current public 1.4.7) for lockfile pin-delta, JSON Schema
+            drift, route-table diff, page-change, vendor-budget-impact, plus five inherited jobs:
+            API upgrade briefs, feed agendas, evidence CI annotations, listing repair packets, and
+            repeat job records. H21 newly reviewed five of the ten; the other five were inherited.
             Verify size and sha256 before extract. Labeled samples need <code>--example</code> except
             page-change. Ordinary callers supply their own files. No purchase or scheduler
             authority. Details and cold-start commands:{" "}

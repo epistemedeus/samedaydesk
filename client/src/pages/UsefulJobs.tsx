@@ -46,10 +46,11 @@ export default function UsefulJobs() {
           </h1>
           <p className={styles.lead}>
             Ten offline jobs: lockfile pin-delta first, plus JSON Schema drift, route-table
-            diff, page-change, and the original six for API changes, budgets, feeds, and delivery
-            evidence. Download one archive, verify size and sha256, then run labeled{" "}
-            <code>--example</code> samples or your own files on local Node 22. Page-change refuses{" "}
-            <code>--example</code>.
+            diff, page-change, vendor-budget-impact, and five inherited jobs for API changes,
+            feeds, and delivery evidence. H21 newly reviewed five of the ten; the other five were
+            inherited, not newly reviewed. Download one archive, verify size and sha256, then run
+            labeled <code>--example</code> samples or your own files on local Node 22. Page-change
+            refuses <code>--example</code>.
           </p>
         </header>
 
@@ -149,7 +150,8 @@ export default function UsefulJobs() {
               <strong>
                 <code>vendor-budget-impact</code>.
               </strong>{" "}
-              Scan curated pricing-row JSON for field/unit deltas. Inputs:{" "}
+              Compare caller-supplied pricing snapshots for added, removed, changed, and
+              incomparable-unit rows. Not a bill calculator or live quote. Inputs:{" "}
               <code>--before --after</code>. Outputs: <code>budget-impact.json/.md</code>.
             </li>
             <li>
@@ -218,9 +220,25 @@ export default function UsefulJobs() {
               <Link className={styles.inlineLink} to="/for-agents">
                 /for-agents
               </Link>
-              . It is not a live paid merchant route. Partial vendor or listing evidence stays
-              non-final. Evidence CI annotations from caller packets stay unattested. Repeat job
-              records are operator documents, not a running scheduler. Version 1.1.0 remains at{" "}
+              . It is not a live paid merchant route. H21 newly reviewed{" "}
+              <code>lockfile-pin-delta</code>, <code>json-schema-webhook-drift</code>,{" "}
+              <code>route-table-diff</code>, <code>page-change-offline-job</code>, and{" "}
+              <code>vendor-budget-impact</code>. The other five jobs in this archive were
+              inherited, not newly reviewed. Partial vendor or listing evidence stays non-final.
+              Evidence CI annotations from caller packets stay unattested. Repeat job records are
+              operator documents, not a running scheduler. Version 1.4.0 remains at{" "}
+              <a className={styles.inlineLink} href="/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz">
+                useful-jobs-1.4.0.tar.gz
+              </a>
+              . Version 1.3.0 remains at{" "}
+              <a className={styles.inlineLink} href="/for-agents/useful-jobs/useful-jobs-1.3.0.tar.gz">
+                useful-jobs-1.3.0.tar.gz
+              </a>
+              . Version 1.2.0 remains at{" "}
+              <a className={styles.inlineLink} href="/for-agents/useful-jobs/useful-jobs-1.2.0.tar.gz">
+                useful-jobs-1.2.0.tar.gz
+              </a>
+              . Version 1.1.0 remains at{" "}
               <a className={styles.inlineLink} href="/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz">
                 useful-jobs-1.1.0.tar.gz
               </a>

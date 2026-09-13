@@ -560,7 +560,7 @@ export const CONSUMER_REPEAT_SHELL = Object.freeze({
 export const USEFUL_JOBS_PATH = "/for-agents/useful-jobs";
 export const USEFUL_JOBS_TITLE = "Offline useful jobs for agent callers | SameDayDesk";
 export const USEFUL_JOBS_DESCRIPTION =
-  "Ten offline jobs: lockfile pin-delta first, plus JSON Schema drift, route-table diff, page-change, and the original six for API changes, budgets, feeds, and delivery evidence. Acquire with bash, curl, python3, tar, and mktemp; then run on local Node 22. Verify size and sha256 before extract. Samples are labeled SAMPLE. page-change --example is refused. Callers supply their own files. Free local package; not hosted execution.";
+  "Ten offline jobs: lockfile pin-delta first, plus JSON Schema drift, route-table diff, page-change, vendor-budget-impact, and five inherited jobs for API changes, feeds, and delivery evidence. H21 newly reviewed five of the ten; the other five were inherited, not newly reviewed. Acquire with bash, curl, python3, tar, and mktemp; then run on local Node 22. Verify size and sha256 before extract. Samples are labeled SAMPLE. page-change --example is refused. Callers supply their own files. Free local package; not hosted execution.";
 export const USEFUL_JOBS_CANONICAL = `${SITE_ORIGIN}${USEFUL_JOBS_PATH}`;
 export const USEFUL_JOBS_ARCHIVE = USEFUL_JOBS_KIT.archive;
 export const USEFUL_JOBS_ARCHIVE_SHA256 = USEFUL_JOBS_KIT.sha256;
@@ -673,7 +673,9 @@ export const USEFUL_JOBS_CRAWLER_HTML = `
       <p>
         Turn changing files into useful next steps. SameDayDesk publishes ten offline
         jobs: lockfile pin-delta first, plus JSON Schema drift, route-table diff, page-change,
-        and the original six for API changes, budgets, feeds, and delivery evidence. Acquire the archive
+        vendor-budget-impact, and five inherited jobs for API changes, feeds, and delivery evidence.
+        H21 newly reviewed five of the ten; the other five were inherited, not newly reviewed.
+        Acquire the archive
         with <code>bash</code>, <code>curl</code>, <code>python3</code>, <code>tar</code>,
         and <code>mktemp</code>; then run on local Node 22. Labeled samples need
         <code>--example</code> except page-change, which refuses it. Callers supply their own files. Free local package; it does
