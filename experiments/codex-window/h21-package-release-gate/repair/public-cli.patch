@@ -1,0 +1,49 @@
+--- a/bin/useful-jobs.mjs
++++ b/bin/useful-jobs.mjs
+@@ -7,0 +8 @@
++import { publishCompleteOutputs } from "../server/paid-useful-jobs/lib/wrapper.mjs";
+@@ -122,10 +122,0 @@
+-function publishOutputs(fromDir, toDir, names) {
+-  if (!fromDir || !toDir || fromDir === toDir) return;
+-  fs.mkdirSync(toDir, { recursive: true });
+-  for (const name of names) {
+-    const src = path.join(fromDir, name);
+-    if (fs.existsSync(src) && fs.statSync(src).isFile()) {
+-      fs.copyFileSync(src, path.join(toDir, name));
+-    }
+-  }
+-}
+@@ -159,8 +150,23 @@
+-  const r = await spawnOwned(process.execPath, [j.script, ...childArgv], {
+-    cwd: ROOT,
+-    timeoutMs: DEFAULT_OWNED_TIMEOUT_MS,
+-  });
+-
+-  const promised = j.outputs || [];
+-  if (isolated && r.status === 0 && promisedComplete(isolated, promised) && callerOut?.value) {
+-    publishOutputs(isolated, callerOut.value, promised);
++  let r;
++  try {
++    r = await spawnOwned(process.execPath, [j.script, ...childArgv], {
++      cwd: ROOT,
++      timeoutMs: DEFAULT_OWNED_TIMEOUT_MS,
++    });
++
++    const promised = j.outputs || [];
++    if (isolated && r.status === 0 && promisedComplete(isolated, promised) && callerOut?.value) {
++      publishCompleteOutputs(isolated, callerOut.value, promised);
++    }
++  } catch (err) {
++    process.stderr.write(`${JSON.stringify({ ok: false, refused: true,
++      code: err.code || "publication-failed", error: err.message,
++      detail: err.detail || null, purchaseAuthority: false })}\n`);
++    process.exitCode = 1;
++    return;
++  } finally {
++    // Without callerOut a successful isolated directory is the result location.
++    // Explicit publication and failed runs do not retain scratch artifacts.
++    if (isolated && (callerOut || r?.status !== 0)) {
++      fs.rmSync(isolated, { recursive: true, force: true });
++    }
+@@ -213,0 +220 @@
++  process.exit(process.exitCode || 0);

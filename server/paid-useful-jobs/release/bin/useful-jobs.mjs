@@ -5,6 +5,7 @@
  * Owned children run in a process group and are reaped on timeout or SIGTERM.
  */
 import fs from "node:fs";
+import { publishCompleteOutputs } from "../server/paid-useful-jobs/lib/wrapper.mjs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -119,16 +120,6 @@ function promisedComplete(dir, names) {
   });
 }
 
-function publishOutputs(fromDir, toDir, names) {
-  if (!fromDir || !toDir || fromDir === toDir) return;
-  fs.mkdirSync(toDir, { recursive: true });
-  for (const name of names) {
-    const src = path.join(fromDir, name);
-    if (fs.existsSync(src) && fs.statSync(src).isFile()) {
-      fs.copyFileSync(src, path.join(toDir, name));
-    }
-  }
-}
 
 function rewriteOutDir(text, fromDir, toDir) {
   if (!text || !fromDir || !toDir || fromDir === toDir) return text;
@@ -156,14 +147,29 @@ async function runJob(jobId, argv) {
     else childArgv.push("--out-dir", isolated);
   }
 
-  const r = await spawnOwned(process.execPath, [j.script, ...childArgv], {
-    cwd: ROOT,
-    timeoutMs: DEFAULT_OWNED_TIMEOUT_MS,
-  });
+  let r;
+  try {
+    r = await spawnOwned(process.execPath, [j.script, ...childArgv], {
+      cwd: ROOT,
+      timeoutMs: DEFAULT_OWNED_TIMEOUT_MS,
+    });
 
-  const promised = j.outputs || [];
-  if (isolated && r.status === 0 && promisedComplete(isolated, promised) && callerOut?.value) {
-    publishOutputs(isolated, callerOut.value, promised);
+    const promised = j.outputs || [];
+    if (isolated && r.status === 0 && promisedComplete(isolated, promised) && callerOut?.value) {
+      publishCompleteOutputs(isolated, callerOut.value, promised);
+    }
+  } catch (err) {
+    process.stderr.write(`${JSON.stringify({ ok: false, refused: true,
+      code: err.code || "publication-failed", error: err.message,
+      detail: err.detail || null, purchaseAuthority: false })}\n`);
+    process.exitCode = 1;
+    return;
+  } finally {
+    // Without callerOut a successful isolated directory is the result location.
+    // Explicit publication and failed runs do not retain scratch artifacts.
+    if (isolated && (callerOut || r?.status !== 0)) {
+      fs.rmSync(isolated, { recursive: true, force: true });
+    }
   }
 
   const stdout =
@@ -211,6 +217,7 @@ if (cmd === "run") {
     process.exit(2);
   }
   await runJob(jobId, rest.slice(1));
+  process.exit(process.exitCode || 0);
 }
 
 process.stderr.write(JSON.stringify({ ok: false, error: `unknown command ${cmd}` }) + "\n");

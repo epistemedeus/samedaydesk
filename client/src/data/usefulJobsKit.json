@@ -11,7 +11,7 @@
   "sourceRepo": "epistemedeus/samedaydesk",
   "sourceCommit": "5078eb9d220deb66bc4d50095038efc2e5b95faa",
   "archiveFreeze": "5078eb9d220deb66bc4d50095038efc2e5b95faa",
-  "reviewedSource": "817a00ca226a94b0e198b29fcd06245b2a92adec",
+  "reviewedSource": "5078eb9d220deb66bc4d50095038efc2e5b95faa",
   "node": ">=22",
   "offline": true,
   "purchaseAuthority": false,

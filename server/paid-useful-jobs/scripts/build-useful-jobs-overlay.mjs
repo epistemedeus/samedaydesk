@@ -70,6 +70,9 @@ export function packUsefulJobsOverlay({
     }
     throw new Error(`${name} exists but sha256 is not the frozen pin ${freezeExistingSha}`);
   }
+  if (existsSync(existing) || existsSync(join(mirror, name + ".tar.gz"))) {
+    throw new Error(`refusing to overwrite existing archive ${name}; choose a new version`);
+  }
 
   const immutable = [];
   for (const v of immutableVersions) {
@@ -144,6 +147,14 @@ export function packUsefulJobsOverlay({
 
   for (const rel of DEFAULT_OVERLAY_DIRS) copyTree(join(repo, rel), join(stage, rel));
   for (const rel of DEFAULT_OVERLAY_FILES) copyFile(rel);
+
+  // The public catalog invokes this top-level entry, separately from the SDS CLI.
+  // Carry its publication repair forward instead of inheriting the previous bin.
+  const publicCliSource = "server/paid-useful-jobs/release/bin/useful-jobs.mjs";
+  copyFileSync(join(repo, publicCliSource), join(stage, "bin/useful-jobs.mjs"));
+  const publicCommandSourceFiles = {
+    "bin/useful-jobs.mjs": { sourcePath: publicCliSource, sha256: sha(readFileSync(join(repo, publicCliSource))) },
+  };
 
   const wrapperSrc = readFileSync(join(stage, "server/paid-useful-jobs/lib/wrapper.mjs"), "utf8");
   if (!wrapperSrc.includes("export function publishCompleteOutputs") || !wrapperSrc.includes("rollback-incomplete")) {
@@ -228,6 +239,7 @@ export function packUsefulJobsOverlay({
     sourceRepo: "epistemedeus/samedaydesk",
     sourceCommit: exec("git", ["rev-parse", "HEAD"]),
     sourceFiles,
+    publicCommandSourceFiles,
     nestedPinsVerified: true,
     nestedIdentityArchive: {
       name: "useful-jobs-1.0.0",
@@ -267,6 +279,12 @@ export function packUsefulJobsOverlay({
     value.sourceRepo = pin.sourceRepo;
     value.sourceCommit = pin.sourceCommit;
     value.archiveFreeze = pin.sourceCommit;
+    if ("reviewedSource" in value) value.reviewedSource = pin.sourceCommit;
+    if (value.pins) {
+      value.pins = { ...value.pins, sourceRepo: pin.sourceRepo,
+        sourceCommit: pin.sourceCommit, archiveFreeze: pin.sourceCommit,
+        reviewedSource: pin.sourceCommit };
+    }
     value.overlaySourceFiles = sourceFiles;
     value.purchaseAuthority = false;
     const oldPrev = {
