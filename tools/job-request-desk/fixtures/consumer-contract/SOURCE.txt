@@ -1,0 +1,7 @@
+Pinned packet-only consumer contract. Improve from current catalog/archive;
+do not treat this as a live money API.
+
+repo: epistemedeus/pilot
+ref: codex/w4-plan-commerce-20260911
+sha: c621646897e6fe1dccf0e5993aea63b5bc1f6bd3
+path: overview/research/cursor-wave4-20260911/planning/commerce/consumer-contract/samedaydesk.useful-jobs-consumer.v1.json
