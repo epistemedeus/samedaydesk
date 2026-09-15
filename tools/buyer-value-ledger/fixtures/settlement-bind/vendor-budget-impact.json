@@ -1,0 +1,13 @@
+{
+  "schema": "samedaydesk.buyer-value-ledger.settlement-bind.v1",
+  "note": "Ledger overlay only. Not an evidence-records document and not live paid work. Terms hash is not the request hash.",
+  "jobId": "vendor-budget-impact",
+  "recordId": "bvl-vendor-budget-impact-local-bind",
+  "settlement": {
+    "operationId": "bvl-vendor-budget-impact-local-bind",
+    "jobId": "vendor-budget-impact",
+    "amountUsdc": "0",
+    "buyerClass": "unknown",
+    "validDeliveryStatus": "local_runtime_outputs_digested"
+  }
+}
