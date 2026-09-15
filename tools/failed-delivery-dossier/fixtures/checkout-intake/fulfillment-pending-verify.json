@@ -1,0 +1,19 @@
+{
+  "verify": {
+    "verified": true,
+    "orderId": "order_pi_http_2",
+    "fulfillmentPending": true,
+    "reason": "Payment received; task intake needs reconciliation. Contact support before delivery."
+  },
+  "order": {
+    "id": "order_pi_http_2",
+    "status": "intake_required",
+    "stripe_payment_intent": "pi_http_2",
+    "upload_path": null,
+    "meta": {
+      "intake": null,
+      "fulfillment_issue": "missing_attempt_intake_snapshot",
+      "payment_attempt_id": null
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+  "jobId": "vendor-budget-impact",
+  "fundingState": "rejected",
+  "sold": false,
+  "sample": true,
+  "sampleReasons": ["example-flag"],
+  "label": "SAMPLE",
+  "status": "delivered",
+  "purchaseAuthority": false,
+  "liveSettlement": "out-of-scope",
+  "code": "sample-not-a-sale",
+  "error": "SAMPLE labelled delivered must not be packed as a delivery in hand"
+}
