@@ -1,0 +1,9 @@
+{
+  "label": "caller",
+  "note": "W4-commerce-08 caller-supplied pricing rows. Not a SAMPLE kit fixture and not a live quote.",
+  "rows": [
+    { "field": "batch-alpha-input", "value": 2.4, "unit": "USD/1M-tokens" },
+    { "field": "batch-alpha-output", "value": 9.5, "unit": "USD/1M-tokens" },
+    { "field": "batch-alpha-embed", "value": 0.08, "unit": "USD/1M-tokens" }
+  ]
+}
