@@ -1,0 +1,43 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "note": "Caller before catalog for the useful-jobs journey. Includes current PUBLIC_SHELLS useful-jobs and terms. Not the live published table.",
+  "routes": [
+    {
+      "path": "/for-agents",
+      "title": "Practical agent jobs | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents"
+    },
+    {
+      "path": "/for-agents/record-repeat",
+      "title": "Compare OpenAPI, prices, keyed CSV, and feeds offline | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents/record-repeat"
+    },
+    {
+      "path": "/for-agents/distribution-repair",
+      "title": "Diagnose why a listed tool cannot run | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents/distribution-repair"
+    },
+    {
+      "path": "/for-agents/consumer-repeat",
+      "title": "Run local consumer evidence jobs offline | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents/consumer-repeat"
+    },
+    {
+      "path": "/for-agents/useful-jobs",
+      "title": "Offline useful jobs for agent callers | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents/useful-jobs"
+    },
+    {
+      "path": "/terms",
+      "title": "Terms of Service | SameDayDesk",
+      "canonical": "https://samedaydesk.com/terms"
+    },
+    {
+      "path": "/privacy",
+      "title": "Privacy Policy | SameDayDesk",
+      "canonical": "https://samedaydesk.com/privacy"
+    }
+  ]
+}
