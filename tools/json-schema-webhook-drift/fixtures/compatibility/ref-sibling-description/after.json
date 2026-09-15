@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","$defs":{"Amt":{"type":"number"}},"type":"object","properties":{"amount":{"$ref":"#/$defs/Amt","description":"caller display only"}}}

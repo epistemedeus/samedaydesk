@@ -1,0 +1,11 @@
+{
+  "id": "evt_sample_webhook",
+  "type": "payment_intent.succeeded",
+  "data": {
+    "object": {
+      "amount": 1000,
+      "currency": "usd",
+      "debug": "trace"
+    }
+  }
+}
