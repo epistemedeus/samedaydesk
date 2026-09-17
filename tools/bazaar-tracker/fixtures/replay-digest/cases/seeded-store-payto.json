@@ -1,0 +1,17 @@
+{
+  "id": "seeded-store-payto",
+  "kind": "seeded",
+  "live402Path": "../live/extract-402.json",
+  "httpStatus": 402,
+  "committedRoute": "https://agents.samedaydesk.com/extract",
+  "expectedCommittedDigest": "04c1554d7a4471803f05781245df70cb0ae3dc73b9df78c555c7324c3b1ca60e",
+  "compactObservationAttempt": {
+    "digest": "04c1554d7a4471803f05781245df70cb0ae3dc73b9df78c555c7324c3b1ca60e",
+    "scheme": "exact",
+    "network": "eip155:8453",
+    "amount": "5000",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+  },
+  "note": "SEEDING FAILURE: compact observation stores ACCEPTS_COMPACT_KEYS including payTo/amount. Join must reject. Do not treat as a real observation."
+}

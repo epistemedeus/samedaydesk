@@ -1,0 +1,14 @@
+{
+  "id": "seeded-absence-as-demand",
+  "kind": "seeded",
+  "live402Path": "../live/extract-402.json",
+  "httpStatus": 402,
+  "committedRoute": "https://agents.samedaydesk.com/extract/batch",
+  "payloadOverride": {
+    "resourceUrl": "https://agents.samedaydesk.com/extract/batch"
+  },
+  "claims": {
+    "treatAbsenceAsDemand": true
+  },
+  "note": "SEEDING FAILURE: /extract/batch is not one of the 8 committed SDS routes. Catalog absence is not buyer demand."
+}

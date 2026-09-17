@@ -1,0 +1,397 @@
+{
+  "provenance": {
+    "url": "https://agents.samedaydesk.com/extract?url=https://example.com",
+    "retrievedAt": "2026-09-17T12:44:15Z",
+    "httpStatus": 402,
+    "paymentResponseHeader": false,
+    "paid": false,
+    "note": "Unpaid GET frozen for cold replay. No PAYMENT-SIGNATURE. Do not treat as PAYMENT-RESPONSE.",
+    "research": {
+      "pr": "https://github.com/epistemedeus/pilot/pull/193",
+      "sha": "606d41e047cb55ab16cdb09750ea381a646a4885",
+      "candidate": "R11-BZ-01"
+    }
+  },
+  "body": {
+    "x402Version": 2,
+    "error": "Payment required",
+    "resource": {
+      "url": "https://agents.samedaydesk.com/extract?url=https://example.com",
+      "description": "Extract a public HTTP(S) web page into structured JSON with a clean text excerpt for LLM workflows: title, description, JSON-LD, Open Graph/Twitter metadata, headings, links, and AI-readiness signals. Fetches without JavaScript rendering, follows redirects, and applies a 12-second timeout and 3 MB read cap. The paid JSON keeps requestedUrl, finalUrl, source HTTP status, sourceOk, a nullable error, and capture limits; the excerpt is not the full page. Use /read for longer cleaned Markdown.",
+      "mimeType": "application/json",
+      "serviceName": "SameDayDesk",
+      "tags": [
+        "web",
+        "web-extraction",
+        "clean-text",
+        "llm-ready",
+        "structured-json"
+      ],
+      "iconUrl": "https://samedaydesk.com/favicon.svg"
+    },
+    "accepts": [
+      {
+        "scheme": "exact",
+        "network": "eip155:8453",
+        "amount": "5000",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+        "maxTimeoutSeconds": 300,
+        "extra": {
+          "name": "USD Coin",
+          "version": "2",
+          "serviceName": "SameDayDesk",
+          "tags": [
+            "web",
+            "web-extraction",
+            "clean-text",
+            "llm-ready",
+            "structured-json"
+          ]
+        },
+        "description": "Extract a public HTTP(S) web page into structured JSON with a clean text excerpt for LLM workflows: title, description, JSON-LD, Open Graph/Twitter metadata, headings, links, and AI-readiness signals. Fetches without JavaScript rendering, follows redirects, and applies a 12-second timeout and 3 MB read cap. The paid JSON keeps requestedUrl, finalUrl, source HTTP status, sourceOk, a nullable error, and capture limits; the excerpt is not the full page. Use /read for longer cleaned Markdown.",
+        "maxAmountRequired": "5000",
+        "mimeType": "application/json",
+        "outputSchema": {
+          "input": {
+            "type": "http",
+            "queryParams": {
+              "url": {
+                "type": "string",
+                "description": "Public http(s) URL to extract.",
+                "required": true,
+                "default": "https://example.com"
+              }
+            },
+            "method": "GET"
+          },
+          "output": {
+            "type": "json",
+            "example": {
+              "ok": true,
+              "requestedUrl": "https://example.com",
+              "finalUrl": "https://example.com",
+              "url": "https://example.com",
+              "status": 200,
+              "sourceOk": true,
+              "error": null,
+              "title": "Example Domain",
+              "description": null,
+              "jsonLd": [],
+              "aiReadiness": {
+                "hasJsonLd": false,
+                "schemaTypes": []
+              },
+              "capture": {
+                "method": "http-get-no-javascript",
+                "javascriptExecuted": false,
+                "textTruncated": false,
+                "bodyTruncated": false
+              }
+            }
+          }
+        }
+      }
+    ],
+    "extensions": {
+      "payment-identifier": {
+        "info": {
+          "required": false
+        },
+        "schema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "required": {
+              "type": "boolean"
+            },
+            "id": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 128,
+              "pattern": "^[a-zA-Z0-9_-]+$"
+            }
+          },
+          "required": [
+            "required"
+          ]
+        }
+      },
+      "builder-code": {
+        "info": {
+          "a": "bc_lqj09bnf"
+        },
+        "schema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "a": {
+              "type": "string",
+              "pattern": "^[a-z0-9_]{1,32}$",
+              "description": "App builder code"
+            },
+            "w": {
+              "type": "string",
+              "pattern": "^[a-z0-9_]{1,32}$",
+              "description": "Wallet builder code"
+            },
+            "s": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[a-z0-9_]{1,32}$"
+              },
+              "description": "Service builder codes"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "offer-receipt": {
+        "info": {
+          "offers": [
+            {
+              "format": "eip712",
+              "acceptIndex": 0,
+              "payload": {
+                "version": 1,
+                "resourceUrl": "https://agents.samedaydesk.com/extract?url=https://example.com",
+                "scheme": "exact",
+                "network": "eip155:8453",
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+                "amount": "5000",
+                "validUntil": 1789649355
+              },
+              "signature": "0x1b611f38545460ad5e858a8a889693db66e1c3b0f65562bff545bfec172572204cf9fb8d2816c82b75e33ee80dbe838d90cb1499039e8ce3de14673be2ccd6b21b"
+            }
+          ]
+        },
+        "schema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "offers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "format": {
+                    "type": "string"
+                  },
+                  "acceptIndex": {
+                    "type": "integer"
+                  },
+                  "payload": {
+                    "type": "object",
+                    "properties": {
+                      "version": {
+                        "type": "integer"
+                      },
+                      "resourceUrl": {
+                        "type": "string"
+                      },
+                      "scheme": {
+                        "type": "string"
+                      },
+                      "network": {
+                        "type": "string"
+                      },
+                      "asset": {
+                        "type": "string"
+                      },
+                      "payTo": {
+                        "type": "string"
+                      },
+                      "amount": {
+                        "type": "string"
+                      },
+                      "validUntil": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "version",
+                      "resourceUrl",
+                      "scheme",
+                      "network",
+                      "asset",
+                      "payTo",
+                      "amount"
+                    ]
+                  },
+                  "signature": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "format",
+                  "signature"
+                ]
+              }
+            }
+          },
+          "required": [
+            "offers"
+          ]
+        }
+      },
+      "bazaar": {
+        "info": {
+          "input": {
+            "type": "http",
+            "queryParams": {
+              "url": "https://example.com"
+            },
+            "method": "GET"
+          },
+          "output": {
+            "type": "json",
+            "example": {
+              "ok": true,
+              "requestedUrl": "https://example.com",
+              "finalUrl": "https://example.com",
+              "url": "https://example.com",
+              "status": 200,
+              "sourceOk": true,
+              "error": null,
+              "title": "Example Domain",
+              "description": null,
+              "jsonLd": [],
+              "aiReadiness": {
+                "hasJsonLd": false,
+                "schemaTypes": []
+              },
+              "capture": {
+                "method": "http-get-no-javascript",
+                "javascriptExecuted": false,
+                "textTruncated": false,
+                "bodyTruncated": false
+              }
+            }
+          }
+        },
+        "schema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "input": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "const": "http"
+                },
+                "method": {
+                  "type": "string",
+                  "enum": [
+                    "GET"
+                  ]
+                },
+                "queryParams": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "description": "Public http(s) URL to extract."
+                    }
+                  },
+                  "required": [
+                    "url"
+                  ]
+                }
+              },
+              "required": [
+                "type",
+                "method"
+              ],
+              "additionalProperties": false
+            },
+            "output": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "example": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "requestedUrl": {
+                      "type": "string"
+                    },
+                    "finalUrl": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "integer"
+                    },
+                    "sourceOk": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "jsonLd": {
+                      "type": "array"
+                    },
+                    "openGraph": {
+                      "type": "object"
+                    },
+                    "headings": {
+                      "type": "object"
+                    },
+                    "links": {
+                      "type": "array"
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "aiReadiness": {
+                      "type": "object"
+                    },
+                    "capture": {
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "url",
+                    "title",
+                    "status",
+                    "sourceOk",
+                    "requestedUrl",
+                    "finalUrl"
+                  ]
+                }
+              },
+              "required": [
+                "type"
+              ]
+            }
+          },
+          "required": [
+            "input"
+          ]
+        }
+      }
+    }
+  }
+}

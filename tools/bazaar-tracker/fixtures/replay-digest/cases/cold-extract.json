@@ -1,0 +1,14 @@
+{
+  "id": "cold-extract",
+  "kind": "join",
+  "live402Path": "../live/extract-402.json",
+  "httpStatus": 402,
+  "committedRoute": "https://agents.samedaydesk.com/extract",
+  "expectedCommittedDigest": "04c1554d7a4471803f05781245df70cb0ae3dc73b9df78c555c7324c3b1ca60e",
+  "claims": {
+    "treatAbsenceAsDemand": false,
+    "builderCodeIsBuyerIdentity": false,
+    "hasPaymentResponse": false
+  },
+  "note": "Cold unpaid replay: hash live description+accepts+extensions, join origin+pathname to committed SDS /extract digest, project offer-receipt payload keys, never write payTo into compact observations."
+}
