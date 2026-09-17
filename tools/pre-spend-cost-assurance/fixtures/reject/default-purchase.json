@@ -1,0 +1,18 @@
+{
+  "schema": "samedaydesk.pre-spend-cost-assurance.plan.v1",
+  "id": "default-purchase",
+  "purchaseAuthorized": true,
+  "autoPay": true,
+  "default": "purchase",
+  "network": "eip155:8453",
+  "currency": "USDC",
+  "lines": [
+    {
+      "tool": "extract",
+      "route": "/extract",
+      "amountAtomic": "5000",
+      "paid": false,
+      "httpStatus": 402
+    }
+  ]
+}
