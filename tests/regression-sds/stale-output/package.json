@@ -1,0 +1,11 @@
+{
+  "name": "samedaydesk-regression-sds-stale-output",
+  "private": true,
+  "type": "module",
+  "description": "SDS stale-output regression: reject ok/pass on outdated sha/version or fabricated freshness. Write boundary tests/regression-sds/stale-output/**.",
+  "scripts": {
+    "test": "node --test --test-concurrency=1 *.test.mjs",
+    "corpus": "node run.mjs --json",
+    "seeded-failure": "node run.mjs --seeded-failure --json"
+  }
+}
