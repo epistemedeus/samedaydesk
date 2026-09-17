@@ -1,0 +1,32 @@
+{
+  "schema": "sds.listing_repair.source_observation.v1",
+  "url": "https://example.test/listing/operator-beta",
+  "file": "fixtures-extra/ok/active.source.json",
+  "observedAt": "2026-09-17T12:00:00.000Z",
+  "digest": "sha256:0be66c7b3da3e1dbcbfd8b5acabf830a6582ea3402ef11e68b287f956ac52ae6",
+  "snapshot": {
+    "url": "https://example.test/listing/operator-beta",
+    "agentId": "agent-beta",
+    "listingStatus": "PUBLIC_ACTIVE",
+    "title": "Operator Beta (live)",
+    "freeVsPriced": "discovery_free_run_priced",
+    "routes": {
+      "/changelog": {
+        "path": "/changelog",
+        "present": true
+      },
+      "/docs": {
+        "path": "/docs",
+        "present": false
+      },
+      "/pricing": {
+        "path": "/pricing",
+        "present": true
+      },
+      "/support": {
+        "path": "/support",
+        "present": true
+      }
+    }
+  }
+}
