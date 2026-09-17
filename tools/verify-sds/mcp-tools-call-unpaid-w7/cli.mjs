@@ -30,6 +30,10 @@ import {
   assertUnpaidCallAllowed,
 } from "./lib/client.mjs";
 import { runSeeded } from "./lib/refuse.mjs";
+import {
+  resolveLoopbackMcpUrl,
+  refuseLiveFlag,
+} from "./lib/origin.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -91,10 +95,11 @@ Seeded failures (exit ≠ 0, clear code, paymentSent=false):
   --seeded-failure stripe-path
 
 Options:
-  --origin URL            MCP base origin (default: loopback fixture)
+  --origin URL            http loopback MCP origin only (default: spawned fixture)
   --tool NAME             free tool for isError demo (default: ${UNPAID_CALL_TOOL})
   --json / --pretty       JSON envelope on stdout
   --fixture PATH          load seeded fixture JSON
+  --live                  refused (LIVE_REFUSE); live apex is cite-apex only
 
 Default unpaid call tool: ${UNPAID_CALL_TOOL}
 Free tools: ${FREE_TOOLS.join(", ")}
@@ -103,7 +108,7 @@ Never send: PAYMENT-SIGNATURE, X-PAYMENT, stripe-signature
 `;
 }
 
-async function runUnpaidIsErrorCall({ origin, tool }) {
+async function runUnpaidIsErrorCall({ origin, tool, live }) {
   const toolName = tool || UNPAID_CALL_TOOL;
   const evidence = [
     {
@@ -113,22 +118,28 @@ async function runUnpaidIsErrorCall({ origin, tool }) {
     },
   ];
 
-  // Refuse paid tool before any server spin-up.
   try {
+    if (live) refuseLiveFlag();
     assertUnpaidCallAllowed("tools/call", { name: toolName });
   } catch (e) {
     return envelope({
       ok: false,
       command: "tools/call",
       feature: FEATURE,
-      status: e.code === "PAID_REFUSE" ? "fail" : "usage",
-      error: failError(e.code || "USAGE", e.message, { tool: e.tool || toolName }),
+      status: e.code === "PAID_REFUSE" || e.code === "LIVE_REFUSE" || e.code === "STRIPE_PATH_REFUSE"
+        ? "fail"
+        : "usage",
+      error: failError(e.code || "USAGE", e.message, {
+        tool: e.tool || toolName,
+        origin: e.origin,
+        path: e.path,
+      }),
       result: {
         refused: true,
         tool: e.tool || toolName,
         paymentSent: false,
         paidToolsCallPosted: false,
-        note: "Paid / unknown tool refused before POST",
+        note: "Paid / unknown / live origin refused before POST",
       },
     });
   }
@@ -139,9 +150,27 @@ async function runUnpaidIsErrorCall({ origin, tool }) {
 
   try {
     if (origin) {
-      mcpUrl = origin.replace(/\/$/, "").endsWith("/mcp")
-        ? origin.replace(/\/$/, "")
-        : `${origin.replace(/\/$/, "")}/mcp`;
+      try {
+        mcpUrl = resolveLoopbackMcpUrl(origin);
+      } catch (e) {
+        return envelope({
+          ok: false,
+          command: "tools/call",
+          feature: FEATURE,
+          status: e.code === "USAGE" ? "usage" : "fail",
+          error: failError(e.code || "LIVE_REFUSE", e.message, {
+            origin: e.origin || origin,
+            path: e.path,
+          }),
+          result: {
+            refused: true,
+            origin,
+            paymentSent: false,
+            paidToolsCallPosted: false,
+            neverPostedCall: true,
+          },
+        });
+      }
       source = "origin";
     } else {
       handle = await startFixtureServer();
@@ -161,7 +190,7 @@ async function runUnpaidIsErrorCall({ origin, tool }) {
       call: { status: session.called.status, tool: toolName },
     });
 
-    if (session.initialize.status !== 200 || session.called.status !== 200) {
+    if (session.initialize.status !== 200 || !session.called || session.called.status !== 200) {
       return envelope({
         ok: false,
         command: "tools/call",
@@ -169,7 +198,7 @@ async function runUnpaidIsErrorCall({ origin, tool }) {
         evidence,
         error: failError("HOST_BUILD", "MCP HTTP non-200", {
           initialize: session.initialize.status,
-          call: session.called.status,
+          call: session.called?.status ?? null,
         }),
       });
     }
@@ -317,12 +346,17 @@ async function runColdHarness() {
 
 function loadFixture(path) {
   const full = isAbsolute(path) ? path : join(process.cwd(), path);
-  if (!existsSync(full)) {
+  let candidate = full;
+  if (!existsSync(candidate)) {
     const alt = join(here, path);
-    if (existsSync(alt)) return JSON.parse(readFileSync(alt, "utf8"));
-    return null;
+    if (!existsSync(alt)) return { error: `fixture not found: ${path}` };
+    candidate = alt;
   }
-  return JSON.parse(readFileSync(full, "utf8"));
+  try {
+    return { data: JSON.parse(readFileSync(candidate, "utf8")) };
+  } catch {
+    return { error: `fixture JSON parse failed: ${path}` };
+  }
 }
 
 async function main() {
@@ -347,20 +381,46 @@ async function main() {
     return;
   }
 
+  if (parsed.flags.live === true) {
+    let liveErr;
+    try {
+      refuseLiveFlag();
+    } catch (e) {
+      liveErr = e;
+    }
+    const env = envelope({
+      ok: false,
+      command: parsed.tokens[0] || "live",
+      feature: FEATURE,
+      status: "fail",
+      error: failError(liveErr?.code || "LIVE_REFUSE", liveErr?.message || "refusing --live"),
+      result: {
+        refused: true,
+        live: true,
+        paymentSent: false,
+        paidToolsCallPosted: false,
+        neverPostedCall: true,
+      },
+    });
+    emitEnvelope(env, { pretty: parsed.pretty, human: true });
+    process.exitCode = exitFor(env);
+    return;
+  }
+
   let env;
 
   if (parsed.fixture) {
-    const fix = loadFixture(parsed.fixture);
-    if (!fix) {
+    const loaded = loadFixture(parsed.fixture);
+    if (loaded.error) {
       env = envelope({
         ok: false,
         command: "fixture",
         status: "usage",
-        error: failError("USAGE", `fixture not found: ${parsed.fixture}`),
+        error: failError("USAGE", loaded.error),
       });
     } else {
-      const seedId = fix.seededId || fix.id;
-      env = runSeeded(seedId, fix.opts || {});
+      const seedId = loaded.data.seededId || loaded.data.id;
+      env = runSeeded(seedId, loaded.data.opts || {});
     }
   } else if (parsed.seededId) {
     env = runSeeded(parsed.seededId, {
@@ -408,11 +468,13 @@ async function main() {
         env = await runUnpaidIsErrorCall({
           origin: parsed.flags.origin,
           tool: toolArg,
+          live: parsed.flags.live === true,
         });
       } else if (tokens[0] === "call") {
         env = await runUnpaidIsErrorCall({
           origin: parsed.flags.origin,
           tool: tokens[1] || parsed.flags.tool || UNPAID_CALL_TOOL,
+          live: parsed.flags.live === true,
         });
       } else if (tokens[0] === "tools" && tokens[1] === "list") {
         env = envelope({

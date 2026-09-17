@@ -4,8 +4,11 @@
  * Allows unpaid free-tool tools/call against loopback fixture only.
  */
 import http from "node:http";
-import https from "node:https";
 import { FORBIDDEN_HEADERS, PAID_TOOL, FREE_TOOLS } from "./catalog.mjs";
+import {
+  assertLoopbackUnpaidOrigin,
+  MAX_MCP_BODY_BYTES,
+} from "./origin.mjs";
 
 function normalizeHeaderMap(headers = {}) {
   const out = {};
@@ -83,8 +86,7 @@ export function postMcp(url, payload, { headers = {}, timeoutMs = 15_000 } = {})
     throw err;
   }
 
-  const u = new URL(url);
-  const lib = u.protocol === "https:" ? https : http;
+  const u = assertLoopbackUnpaidOrigin(url);
   const safeHeaders = {
     "content-type": "application/json",
     accept: "application/json",
@@ -97,11 +99,17 @@ export function postMcp(url, payload, { headers = {}, timeoutMs = 15_000 } = {})
   }
 
   return new Promise((resolve, reject) => {
-    const req = lib.request(
+    let settled = false;
+    const finish = (fn, value) => {
+      if (settled) return;
+      settled = true;
+      fn(value);
+    };
+    const req = http.request(
       {
         protocol: u.protocol,
         hostname: u.hostname,
-        port: u.port || (u.protocol === "https:" ? 443 : 80),
+        port: u.port || 80,
         path: `${u.pathname}${u.search}`,
         method: "POST",
         headers: {
@@ -112,7 +120,18 @@ export function postMcp(url, payload, { headers = {}, timeoutMs = 15_000 } = {})
       },
       (res) => {
         const chunks = [];
-        res.on("data", (c) => chunks.push(c));
+        let size = 0;
+        res.on("data", (c) => {
+          size += c.length;
+          if (size > MAX_MCP_BODY_BYTES) {
+            req.destroy();
+            const err = new Error("MCP response too large");
+            err.code = "RUNTIME";
+            finish(reject, err);
+            return;
+          }
+          chunks.push(c);
+        });
         res.on("end", () => {
           const body = Buffer.concat(chunks).toString("utf8");
           let json = null;
@@ -121,7 +140,7 @@ export function postMcp(url, payload, { headers = {}, timeoutMs = 15_000 } = {})
           } catch {
             json = null;
           }
-          resolve({
+          finish(resolve, {
             status: res.statusCode,
             headers: res.headers,
             body,
@@ -134,12 +153,12 @@ export function postMcp(url, payload, { headers = {}, timeoutMs = 15_000 } = {})
       req.destroy();
       const err = new Error("MCP request timeout");
       err.code = "RUNTIME";
-      reject(err);
+      finish(reject, err);
     });
     req.on("error", (e) => {
       const err = new Error(e.message);
       err.code = "RUNTIME";
-      reject(err);
+      finish(reject, err);
     });
     req.write(encoded);
     req.end();
@@ -163,7 +182,11 @@ export async function initializeSession(mcpUrl) {
  */
 export async function callUnpaidTool(mcpUrl, toolName, args = {}) {
   assertUnpaidCallAllowed("tools/call", { name: toolName });
+  assertLoopbackUnpaidOrigin(mcpUrl);
   const initialize = await initializeSession(mcpUrl);
+  if (initialize.status !== 200 || !initialize.json?.result) {
+    return { initialize, called: null, toolName };
+  }
   const called = await postMcp(
     mcpUrl,
     rpc(2, "tools/call", { name: toolName, arguments: args }),

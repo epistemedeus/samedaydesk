@@ -14,6 +14,7 @@ const result = spawnSync(process.execPath, [cli, "run", "--json"], {
   encoding: "utf8",
   cwd: join(here, "../../.."),
   env: process.env,
+  timeout: 30_000,
 });
 
 process.stdout.write(result.stdout || "");

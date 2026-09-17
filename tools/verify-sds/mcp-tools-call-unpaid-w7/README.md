@@ -39,6 +39,10 @@ node tools/verify-sds/mcp-tools-call-unpaid-w7/cli.mjs tools/call check_ai_readi
 # Paid tool refuse (never POST) — exit ≠ 0, PAID_REFUSE
 node tools/verify-sds/mcp-tools-call-unpaid-w7/cli.mjs tools/call generate_complete_fix_pack --json
 
+# Live origin / --live refuse (never POST) — exit 1, LIVE_REFUSE
+node tools/verify-sds/mcp-tools-call-unpaid-w7/cli.mjs tools/call --live --json
+node tools/verify-sds/mcp-tools-call-unpaid-w7/cli.mjs tools/call --origin https://samedaydesk.com --json
+
 # Seeded paid refuses — exit 1, clear error.code
 node tools/verify-sds/mcp-tools-call-unpaid-w7/cli.mjs --seeded-failure paid-tool-call --json
 node tools/verify-sds/mcp-tools-call-unpaid-w7/cli.mjs --seeded-failure payment-signature --json
@@ -57,6 +61,8 @@ node --test tools/verify-sds/mcp-tools-call-unpaid-w7/cli.test.mjs
 - `boundary.paidToolsCallPosted` always `false`
 - Never sends `PAYMENT-SIGNATURE`, `X-PAYMENT`, or `stripe-signature`
 - Never POSTs `tools/call` for `generate_complete_fix_pack`
+- `--origin` must be `http` loopback (`127.0.0.1` / `localhost` / `::1`); live apex is `cite-apex` only
+- `--live` is `LIVE_REFUSE` (exit 1)
 - No Stripe/x402 spend, no price/SKU edits, no merge
 
 ## Layout
@@ -67,6 +73,7 @@ run-harness.mjs         cold acceptance entry
 cli.test.mjs            node:test
 lib/catalog.mjs         five tools + seeds + forbidden headers
 lib/envelope.mjs        JSON envelope (W0-B2-shaped)
+lib/origin.mjs          loopback-only origin + body cap
 lib/fixture-server.mjs  loopback /mcp (node:http) → unpaid isError
 lib/client.mjs          unpaid POST client + isError shape assert
 lib/refuse.mjs          seeded paid / signature / stripe refuses

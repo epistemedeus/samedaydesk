@@ -3,7 +3,16 @@ import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { MCP_TOOL_NAMES } from "../../../server/lib/mcp-tool-inventory.js";
+import { MCP_TOOLS, PAID_TOOL, UNPAID_CALL_TOOL } from "./lib/catalog.mjs";
+import { postMcp, callUnpaidTool, assertIsErrorShape } from "./lib/client.mjs";
+import { startFixtureServer } from "./lib/fixture-server.mjs";
+import {
+  assertLoopbackUnpaidOrigin,
+  resolveLoopbackMcpUrl,
+} from "./lib/origin.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "../../..");
@@ -138,4 +147,89 @@ test("cite-apex documents live URL without payment", () => {
   assert.equal(result.json.boundary.paymentSent, false);
   assert.equal(result.json.boundary.paidToolsCallPosted, false);
   assert.match(result.json.result.url, /samedaydesk\.com\/mcp/);
+});
+
+test("catalog tools match shipped mcp-tool-inventory", () => {
+  assert.deepEqual([...MCP_TOOLS], [...MCP_TOOL_NAMES]);
+  assert.equal(PAID_TOOL, "generate_complete_fix_pack");
+  assert.ok(MCP_TOOL_NAMES.includes(UNPAID_CALL_TOOL));
+});
+
+test("--live refuses LIVE_REFUSE; never posts", () => {
+  const result = run(["tools/call", "--live", "--json"]);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "LIVE_REFUSE");
+  assert.equal(result.json.boundary.paymentSent, false);
+  assert.equal(result.json.boundary.paidToolsCallPosted, false);
+  assert.equal(result.json.result.neverPostedCall, true);
+});
+
+test("--origin live apex refuses without POST", () => {
+  const result = run(["tools/call", "--origin", "https://samedaydesk.com", "--json"]);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.error.code, "LIVE_REFUSE");
+  assert.equal(result.json.boundary.paymentSent, false);
+  assert.equal(result.json.result.neverPostedCall, true);
+});
+
+test("--origin checkout-session query refuses STRIPE_PATH_REFUSE", () => {
+  const result = run([
+    "tools/call",
+    "--origin",
+    "http://127.0.0.1:9/mcp?cs=cs_live_seeded",
+    "--json",
+  ]);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.error.code, "STRIPE_PATH_REFUSE");
+  assert.equal(result.json.boundary.paymentSent, false);
+});
+
+test("malformed --fixture JSON is USAGE not RUNTIME", () => {
+  const dir = mkdtempSync(join(tmpdir(), "w7-fix-"));
+  const bad = join(dir, "bad.json");
+  writeFileSync(bad, "{not json");
+  const result = run(["--fixture", bad, "--json"]);
+  assert.equal(result.status, 2, result.stderr + result.stdout);
+  assert.equal(result.json.error.code, "USAGE");
+  assert.match(result.json.error.message, /parse failed/);
+});
+
+test("postMcp refuses live HTTPS apex without a socket", () => {
+  assert.throws(
+    () =>
+      postMcp("https://samedaydesk.com/mcp", {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "initialize",
+      }),
+    (e) => e && e.code === "LIVE_REFUSE",
+  );
+});
+
+test("resolveLoopbackMcpUrl accepts http loopback /mcp", () => {
+  assert.equal(
+    resolveLoopbackMcpUrl("http://127.0.0.1:4123/mcp"),
+    "http://127.0.0.1:4123/mcp",
+  );
+  assert.equal(
+    resolveLoopbackMcpUrl("http://127.0.0.1:4123"),
+    "http://127.0.0.1:4123/mcp",
+  );
+  assert.throws(() => assertLoopbackUnpaidOrigin("https://agents.samedaydesk.com/mcp"), {
+    code: "LIVE_REFUSE",
+  });
+});
+
+test("callUnpaidTool against in-process loopback origin yields isError", async () => {
+  const handle = await startFixtureServer();
+  try {
+    const mcpUrl = resolveLoopbackMcpUrl(handle.origin);
+    const session = await callUnpaidTool(mcpUrl, UNPAID_CALL_TOOL, {});
+    assert.equal(session.initialize.status, 200);
+    const shape = assertIsErrorShape(session.called);
+    assert.equal(shape.isError, true);
+  } finally {
+    await handle.close();
+  }
 });

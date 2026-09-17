@@ -13,6 +13,7 @@ import {
   PAID_TOOL,
   FREE_TOOLS,
 } from "./catalog.mjs";
+import { MAX_MCP_BODY_BYTES } from "./origin.mjs";
 
 const TOOL_DEFS = MCP_TOOLS.map((name) => ({
   name,
@@ -73,7 +74,6 @@ function handleRpc(msg) {
       return okMsg(id, { tools: TOOL_DEFS });
     case "tools/call": {
       const name = params?.name;
-      // Always return isError shape for unpaid demo — never execute paid work.
       return okMsg(id, unpaidIsErrorResult(name || "unknown"));
     }
     default:
@@ -81,10 +81,21 @@ function handleRpc(msg) {
   }
 }
 
-function readBody(req) {
+function readBody(req, maxBytes = MAX_MCP_BODY_BYTES) {
   return new Promise((resolve, reject) => {
     const chunks = [];
-    req.on("data", (c) => chunks.push(c));
+    let size = 0;
+    req.on("data", (c) => {
+      size += c.length;
+      if (size > maxBytes) {
+        const err = new Error("request body too large");
+        err.code = "BODY_TOO_LARGE";
+        req.destroy();
+        reject(err);
+        return;
+      }
+      chunks.push(c);
+    });
     req.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
     req.on("error", reject);
   });
@@ -150,8 +161,11 @@ export function startFixtureServer({ port = 0 } = {}) {
       const raw = await readBody(req);
       body = raw ? JSON.parse(raw) : null;
     } catch (e) {
-      res.writeHead(400, { "content-type": "application/json" });
-      res.end(JSON.stringify(errMsg(null, -32700, `parse error: ${e.message}`)));
+      if (!res.headersSent) {
+        const status = e.code === "BODY_TOO_LARGE" ? 413 : 400;
+        res.writeHead(status, { "content-type": "application/json" });
+        res.end(JSON.stringify(errMsg(null, -32700, `parse error: ${e.message}`)));
+      }
       return;
     }
 
@@ -188,6 +202,9 @@ export function startFixtureServer({ port = 0 } = {}) {
         url: `${origin}/mcp`,
         close: () =>
           new Promise((res, rej) => {
+            if (typeof server.closeAllConnections === "function") {
+              server.closeAllConnections();
+            }
             server.close((err) => (err ? rej(err) : res()));
           }),
       });
