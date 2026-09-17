@@ -1,0 +1,22 @@
+{
+  "id": "sources-additive-as-demand",
+  "surface": "observatory",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "server/lib/observatory/contract.js",
+  "expectedReasons": ["absence_as_demand", "sources_additive_as_demand"],
+  "defect": "Non-additive observatory sources summed into a cross-source demand total.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "observatory",
+    "notAdditive": true,
+    "additivity": "summed",
+    "sourcesAdditiveAsDemand": true,
+    "crossSourceTotal": 8841,
+    "hasDemand": true,
+    "demandCount": 8841,
+    "demandSignal": "high",
+    "message": "non-additive sources summed as demand"
+  }
+}
