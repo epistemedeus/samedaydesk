@@ -1,0 +1,10 @@
+{
+  "seeds": [
+    "claim-match",
+    "absence-as-demand",
+    "ghost-tracker",
+    "live",
+    "payment-signature"
+  ],
+  "note": "Each seed must exit nonzero, paymentSent=false, liveFetch=false."
+}
