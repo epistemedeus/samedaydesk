@@ -1,0 +1,11 @@
+{
+  "name": "samedaydesk-regression-corpus",
+  "private": true,
+  "type": "module",
+  "description": "Executable fixtures for known SameDayDesk merchant/buyer/verifier/pack defects. Write boundary tests/regression/corpus/**.",
+  "scripts": {
+    "test": "node --test --test-concurrency=1 corpus.test.mjs cli-proof.test.mjs classify-http.test.mjs spawn.test.mjs",
+    "corpus": "node run.mjs --json",
+    "seeded-failure": "node run.mjs --seeded-failure --json"
+  }
+}

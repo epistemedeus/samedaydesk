@@ -1,0 +1,13 @@
+{
+  "schema": "samedaydesk.regression-corpus.seed.v1",
+  "id": "buyer.archive-wrong-digest",
+  "surface": "buyer",
+  "kind": "product",
+  "evaluate": "buyer.archive-wrong-digest",
+  "claimedVerdict": "reject",
+  "productMust": "reject",
+  "expectCode": "wrong-digest",
+  "title": "Honest SHA mismatch claim matches product reject",
+  "defect": "A fixture that claims the true product verdict must not be reported as SEED_REJECT.",
+  "origin": "experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs"
+}
