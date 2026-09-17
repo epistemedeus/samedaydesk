@@ -1,4 +1,4 @@
-import { cpSync, mkdtempSync, readFileSync } from "node:fs";
+import { cpSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DATA_ROOT, SEEDED_FAILURES_DIR, loadPin } from "./paths.mjs";
@@ -6,10 +6,19 @@ import { ingestFile } from "./ingest.mjs";
 import { invalidateById, refuseRepublication } from "./invalidate.mjs";
 import { loadStore, validateStore, versionsIndex } from "./store.mjs";
 
-function copyStore() {
+function copyStore(sourceRoot = DATA_ROOT) {
   const dir = mkdtempSync(join(tmpdir(), "work-terms-"));
-  cpSync(DATA_ROOT, dir, { recursive: true });
+  cpSync(sourceRoot, dir, { recursive: true });
   return dir;
+}
+
+function withCopiedStore(sourceRoot, fn) {
+  const dir = copyStore(sourceRoot);
+  try {
+    return fn(dir);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 }
 
 export function seededFailurePrivateTerms() {
@@ -31,87 +40,96 @@ export function seededFailurePrivateTerms() {
   };
 }
 
-export function proveInvalidation() {
-  const root = copyStore();
-  const before = loadStore(root);
-  const target = before.records.find((item) => item.record.status === "current");
-  if (!target) {
-    return { ok: false, code: "no_current_record", message: "dataset has no current record to invalidate" };
-  }
-  const documentKind = target.record.documentKind;
-  const platformId = target.record.platformId;
-  const currentBefore = before.records.filter(
-    (item) =>
-      item.record.platformId === platformId &&
-      item.record.documentKind === documentKind &&
-      item.record.status === "current",
-  );
-  const result = invalidateById(root, target.record.id, {
-    write: true,
-    reason: "rights_withdrawn",
-    note: "seeded invalidation proof: republication withdrawn for this copy",
-    actor: "operator",
-    at: "2026-09-17T00:00:00.000Z",
+export function proveInvalidation(sourceRoot = DATA_ROOT) {
+  return withCopiedStore(sourceRoot, (root) => {
+    const before = loadStore(root);
+    const target = before.records.find((item) => item.record.status === "current");
+    if (!target) {
+      return { ok: false, code: "no_current_record", message: "dataset has no current record to invalidate" };
+    }
+    const documentKind = target.record.documentKind;
+    const platformId = target.record.platformId;
+    const currentBefore = before.records.filter(
+      (item) =>
+        item.record.platformId === platformId &&
+        item.record.documentKind === documentKind &&
+        item.record.status === "current",
+    );
+    const result = invalidateById(root, target.record.id, {
+      write: true,
+      reason: "rights_withdrawn",
+      note: "seeded invalidation proof: republication withdrawn for this copy",
+      actor: "operator",
+      at: "2026-09-17T00:00:00.000Z",
+    });
+    const after = loadStore(root);
+    const reloaded = after.records.find((item) => item.record.id === target.record.id);
+    const stillCurrent = after.records.filter(
+      (item) =>
+        item.record.platformId === platformId &&
+        item.record.documentKind === documentKind &&
+        item.record.status === "current",
+    );
+    const reuse = refuseRepublication(reloaded.record);
+    const storeOk = validateStore(after).ok;
+    return {
+      ok:
+        result.ok === true &&
+        storeOk === true &&
+        reloaded.record.status === "invalidated" &&
+        reloaded.record.invalidation?.reason === "rights_withdrawn" &&
+        stillCurrent.length === currentBefore.length - 1 &&
+        reuse.allowed === false &&
+        reuse.code === "invalidated_not_republishable",
+      recordId: target.record.id,
+      platformId,
+      documentKind,
+      currentBefore: currentBefore.map((item) => item.record.id),
+      currentAfter: stillCurrent.map((item) => item.record.id),
+      status: reloaded.record.status,
+      invalidation: reloaded.record.invalidation,
+      republicationAfter: reuse,
+      storeOk,
+    };
   });
-  const after = loadStore(root);
-  const reloaded = after.records.find((item) => item.record.id === target.record.id);
-  const stillCurrent = after.records.filter(
-    (item) =>
-      item.record.platformId === platformId &&
-      item.record.documentKind === documentKind &&
-      item.record.status === "current",
-  );
-  const reuse = refuseRepublication(reloaded.record);
-  return {
-    ok:
-      result.ok === true &&
-      reloaded.record.status === "invalidated" &&
-      reloaded.record.invalidation?.reason === "rights_withdrawn" &&
-      stillCurrent.length === currentBefore.length - 1 &&
-      reuse.allowed === false &&
-      reuse.code === "invalidated_not_republishable",
-    root,
-    recordId: target.record.id,
-    platformId,
-    documentKind,
-    currentBefore: currentBefore.map((item) => item.record.id),
-    currentAfter: stillCurrent.map((item) => item.record.id),
-    status: reloaded.record.status,
-    invalidation: reloaded.record.invalidation,
-    republicationAfter: reuse,
-  };
 }
 
-export function proveSupersession() {
-  const root = copyStore();
-  const fixture = JSON.parse(readFileSync(join(SEEDED_FAILURES_DIR, "..", "ingest", "valid-public-reobservation.json"), "utf8"));
-  const result = ingestFile(root, join(SEEDED_FAILURES_DIR, "..", "ingest", "valid-public-reobservation.json"), {
-    write: true,
+export function proveSupersession(sourceRoot = DATA_ROOT) {
+  return withCopiedStore(sourceRoot, (root) => {
+    const fixture = JSON.parse(
+      readFileSync(join(SEEDED_FAILURES_DIR, "..", "ingest", "valid-public-reobservation.json"), "utf8"),
+    );
+    const result = ingestFile(root, join(SEEDED_FAILURES_DIR, "..", "ingest", "valid-public-reobservation.json"), {
+      write: true,
+    });
+    const after = loadStore(root);
+    const previous = after.records.find((item) => item.record.id === fixture.version.supersedes);
+    const newest = after.records.find((item) => item.record.id === fixture.id);
+    const current = after.records.filter(
+      (item) =>
+        item.record.platformId === fixture.platformId &&
+        item.record.documentKind === fixture.documentKind &&
+        item.record.status === "current",
+    );
+    const storeOk = validateStore(after).ok;
+    return {
+      ok:
+        result.ok === true &&
+        result.accepted === true &&
+        storeOk === true &&
+        previous?.record.status === "superseded" &&
+        newest?.record.status === "current" &&
+        current.length === 1 &&
+        current[0].record.id === fixture.id,
+      supersededId: fixture.version.supersedes,
+      newId: fixture.id,
+      previousStatus: previous?.record.status || null,
+      newStatus: newest?.record.status || null,
+      currentIds: current.map((item) => item.record.id),
+      ingest: { ok: result.ok, code: result.code, superseded: result.superseded },
+      storeOk,
+    };
   });
-  const after = loadStore(root);
-  const previous = after.records.find((item) => item.record.id === fixture.version.supersedes);
-  const newest = after.records.find((item) => item.record.id === fixture.id);
-  const current = after.records.filter(
-    (item) =>
-      item.record.platformId === fixture.platformId &&
-      item.record.documentKind === fixture.documentKind &&
-      item.record.status === "current",
-  );
-  return {
-    ok:
-      result.ok === true &&
-      result.accepted === true &&
-      previous?.record.status === "superseded" &&
-      newest?.record.status === "current" &&
-      current.length === 1 &&
-      current[0].record.id === fixture.id,
-    supersededId: fixture.version.supersedes,
-    newId: fixture.id,
-    previousStatus: previous?.record.status || null,
-    newStatus: newest?.record.status || null,
-    currentIds: current.map((item) => item.record.id),
-    ingest: { ok: result.ok, code: result.code, superseded: result.superseded },
-  };
 }
 
 export function versionsAndRightsExplicit(store) {
@@ -137,8 +155,8 @@ export function verify(root = DATA_ROOT) {
   const validated = validateStore(store);
   const explicit = versionsAndRightsExplicit(store);
   const seeded = seededFailurePrivateTerms();
-  const invalidation = proveInvalidation();
-  const supersession = proveSupersession();
+  const invalidation = proveInvalidation(root);
+  const supersession = proveSupersession(root);
   const versions = versionsIndex(store);
   const current = store.records.filter((item) => item.record.status === "current");
   const ok =

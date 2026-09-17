@@ -3,7 +3,7 @@ import { ACCESS_PRIVATE, ACCESS_PUBLIC, PRIVATE_SCRAPE_METHODS } from "./schema.
 const PRIVATE_PATH_RE =
   /\/(dashboard|account|settings|admin|login|signin|private|internal|staff|employees?|members|my-jobs|my-account)(\/|$)/i;
 const PRIVATE_HOST_RE =
-  /^(localhost|127\.0\.0\.1|0\.0\.0\.0|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[0-1])\.\d+\.\d+)$/i;
+  /^(localhost|127\.0\.0\.1|0\.0\.0\.0|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[0-1])\.\d+\.\d+|169\.254\.\d+\.\d+|metadata\.google\.internal)$/i;
 const CONFIDENTIAL_RE =
   /\b(confidential|do not distribute|internal only|not for publication|nda applies|employee only)\b/i;
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { DATA_ROOT, SEEDED_FAILURES_DIR, loadPin } from "../lib/paths.mjs";
+import { DATA_ROOT, loadPin } from "../lib/paths.mjs";
 import { ingestFile } from "../lib/ingest.mjs";
 import { invalidateById, refuseRepublication } from "../lib/invalidate.mjs";
 import { loadJson, loadStore, validateStore, versionsIndex } from "../lib/store.mjs";

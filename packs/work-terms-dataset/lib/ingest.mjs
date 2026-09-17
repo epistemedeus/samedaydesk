@@ -1,7 +1,7 @@
 import { validateRecord } from "./validate.mjs";
 import { detectPrivateTerms } from "./private-terms.mjs";
 import { detectH04Leak } from "./h04.mjs";
-import { documentKey, loadJson, loadStore, writeRecord } from "./store.mjs";
+import { documentKey, loadJson, loadStore, rememberWrittenRecord, writeRecord } from "./store.mjs";
 
 function primaryCode(errors, preferred) {
   const hit = errors.find((item) => preferred.includes(item.code));
@@ -77,10 +77,85 @@ export function ingestRecord(store, candidate, options = {}) {
     };
   }
 
+  const existingVersionIds = new Set(
+    store.records.map((item) => item.record.version?.id).filter((id) => typeof id === "string"),
+  );
+  if (existingVersionIds.has(candidate.version.id)) {
+    return {
+      ok: false,
+      accepted: false,
+      refused: true,
+      code: "duplicate_version",
+      message: `version ${candidate.version.id} already exists`,
+      errors: [{ code: "duplicate_version", path: "version.id", message: "duplicate" }],
+    };
+  }
+
+  const named = (store.catalog.platforms || []).find((platform) => platform && platform.id === candidate.platformId);
+  if (!named) {
+    return {
+      ok: false,
+      accepted: false,
+      refused: true,
+      code: "unlisted_platform",
+      message: `platform ${candidate.platformId} is not a named source in the catalog`,
+      errors: [{ code: "unlisted_platform", path: "platformId", message: "unnamed platform" }],
+    };
+  }
+  if (!Array.isArray(named.documents) || !named.documents.includes(candidate.documentKind)) {
+    return {
+      ok: false,
+      accepted: false,
+      refused: true,
+      code: "unlisted_document_kind",
+      message: `documentKind ${candidate.documentKind} is not named for ${candidate.platformId}`,
+      errors: [{ code: "unlisted_document_kind", path: "documentKind", message: "unnamed document kind" }],
+    };
+  }
+
+  if (candidate.status !== "current") {
+    return {
+      ok: false,
+      accepted: false,
+      refused: true,
+      code: "ingest_requires_current",
+      message: "ingest accepts only current observations; use invalidate for withdrawals",
+      errors: [{ code: "ingest_requires_current", path: "status", message: "status must be current" }],
+    };
+  }
+
   const key = documentKey(candidate);
   const previousCurrent = store.records.filter(
     (item) => documentKey(item.record) === key && item.record.status === "current",
   );
+
+  if (previousCurrent.length > 0) {
+    const currentIds = previousCurrent.map((item) => item.record.id);
+    if (!currentIds.includes(candidate.version.supersedes)) {
+      return {
+        ok: false,
+        accepted: false,
+        refused: true,
+        code: "missing_version",
+        message: "version.supersedes must name the current record being replaced",
+        errors: [{ code: "missing_version", path: "version.supersedes", message: "must name current record" }],
+      };
+    }
+    const latest = previousCurrent
+      .map((item) => item.record.version?.observedAt || "")
+      .sort()
+      .at(-1);
+    if (candidate.version.observedAt <= latest) {
+      return {
+        ok: false,
+        accepted: false,
+        refused: true,
+        code: "stale_observation",
+        message: "new current observation must have a later observedAt than the current version",
+        errors: [{ code: "stale_observation", path: "version.observedAt", message: "not later than current" }],
+      };
+    }
+  }
 
   const superseded = [];
   if (write) {
@@ -91,6 +166,7 @@ export function ingestRecord(store, candidate, options = {}) {
     }
     const filePath = writeRecord(store.root, candidate);
     store.records.push({ filePath, file: `${candidate.id}.json`, record: candidate });
+    rememberWrittenRecord(store, candidate);
   } else {
     for (const item of previousCurrent) superseded.push(item.record.id);
   }

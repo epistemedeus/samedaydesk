@@ -37,6 +37,14 @@ export const REPUBLICATION_RIGHTS = Object.freeze([
 
 export const STATUSES = Object.freeze(["current", "superseded", "invalidated"]);
 
+export const INVALIDATION_ACTORS = Object.freeze(["operator", "ingest-supersede", "policy"]);
+
+export const REPUBLICATION_FORBIDDEN = Object.freeze([
+  "metadata_only",
+  "no_republication",
+  "unknown_counsel",
+]);
+
 export const INVALIDATION_REASONS = Object.freeze([
   "rights_withdrawn",
   "access_became_private",
@@ -162,6 +170,28 @@ export const H04_MARKERS = Object.freeze([
 export const ID_RE = /^[a-z][a-z0-9-]{2,95}$/;
 export const PLATFORM_RE = /^[a-z][a-z0-9-]{1,63}$/;
 export const RFC3339_RE = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})Z$/;
+
+export function isRfc3339Utc(value) {
+  if (typeof value !== "string") return false;
+  const match = RFC3339_RE.exec(value);
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const hour = Number(match[4]);
+  const minute = Number(match[5]);
+  const second = Number(match[6]);
+  if (month < 1 || month > 12 || hour > 23 || minute > 59 || second > 59) return false;
+  const dt = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+  return (
+    dt.getUTCFullYear() === year &&
+    dt.getUTCMonth() === month - 1 &&
+    dt.getUTCDate() === day &&
+    dt.getUTCHours() === hour &&
+    dt.getUTCMinutes() === minute &&
+    dt.getUTCSeconds() === second
+  );
+}
 export const HTTPS_RE = /^https:\/\/[A-Za-z0-9][A-Za-z0-9.-]{0,253}(?::\d{1,5})?(?:\/[\x21-\x7E]*)?$/;
 export const TEXT_RE = /^[\x20-\x7E\n]{1,800}$/;
 export const STATEMENT_RE = /^[\x20-\x7E]{16,400}$/;

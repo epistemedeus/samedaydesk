@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { appendFileSync, readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { basename, join } from "node:path";
 import { catalogPath, coveragePath, invalidationsPath, recordsDir, versionsPath } from "./paths.mjs";
 import { validateCatalog, validateRecord } from "./validate.mjs";
@@ -40,7 +40,11 @@ export function indexVersions(records) {
     byKey.get(key).push(item);
   }
   for (const group of byKey.values()) {
-    group.sort((a, b) => a.record.version.observedAt.localeCompare(b.record.version.observedAt));
+    group.sort((a, b) => {
+      const left = a.record?.version?.observedAt || "";
+      const right = b.record?.version?.observedAt || "";
+      return left.localeCompare(right);
+    });
   }
   return byKey;
 }
@@ -119,10 +123,40 @@ export function validateStore(store) {
     });
   }
 
-  const named = new Set((store.catalog.platforms || []).map((p) => p.id));
+  const named = new Map();
+  for (const platform of store.catalog.platforms || []) {
+    if (platform && typeof platform.id === "string") {
+      named.set(platform.id, new Set(Array.isArray(platform.documents) ? platform.documents : []));
+    }
+  }
   for (const id of platformIds) {
     if (!named.has(id)) {
       errors.push({ code: "unlisted_platform", path: id, message: "record platform is not named in catalog" });
+    }
+  }
+  for (const item of store.records) {
+    const docs = named.get(item.record.platformId);
+    if (docs && !docs.has(item.record.documentKind)) {
+      errors.push({
+        code: "unlisted_document_kind",
+        path: item.file,
+        message: `documentKind ${item.record.documentKind} is not named for ${item.record.platformId}`,
+      });
+    }
+  }
+
+  const versionsFile = versionsPath(store.root);
+  if (!existsSync(versionsFile)) {
+    errors.push({ code: "missing_version", path: "versions.json", message: "versions index required" });
+  } else {
+    const committed = loadJson(versionsFile);
+    const expected = versionsIndex(store);
+    if (JSON.stringify(committed) !== JSON.stringify(expected)) {
+      errors.push({
+        code: "stale_versions_index",
+        path: "versions.json",
+        message: "versions.json does not match records",
+      });
     }
   }
 
@@ -159,13 +193,13 @@ export function versionsIndex(store) {
       documentKind,
       versions: group.map((item) => ({
         recordId: item.record.id,
-        versionId: item.record.version.id,
-        label: item.record.version.label,
-        observedAt: item.record.version.observedAt,
+        versionId: item.record.version?.id ?? null,
+        label: item.record.version?.label ?? null,
+        observedAt: item.record.version?.observedAt ?? null,
         status: item.record.status,
-        supersedes: item.record.version.supersedes,
-        republicationRight: item.record.republication.right,
-        attributionUrl: item.record.attribution.canonicalUrl,
+        supersedes: item.record.version?.supersedes ?? null,
+        republicationRight: item.record.republication?.right ?? null,
+        attributionUrl: item.record.attribution?.canonicalUrl ?? null,
         invalidation: item.record.invalidation,
       })),
     });
@@ -185,8 +219,17 @@ export function writeJson(filePath, value) {
 export function appendInvalidation(root, event) {
   const filePath = invalidationsPath(root);
   mkdirSync(root, { recursive: true });
-  const line = `${JSON.stringify(event)}\n`;
-  writeFileSync(filePath, existsSync(filePath) ? `${readFileSync(filePath, "utf8")}${line}` : line);
+  appendFileSync(filePath, `${JSON.stringify(event)}\n`);
+}
+
+export function rememberWrittenRecord(store, record) {
+  const rel = `records/${record.id}.json`;
+  if (!Array.isArray(store.catalog.recordFiles)) store.catalog.recordFiles = [];
+  if (!store.catalog.recordFiles.includes(rel)) {
+    store.catalog.recordFiles = [...store.catalog.recordFiles, rel].sort();
+  }
+  writeJson(catalogPath(store.root), store.catalog);
+  writeVersions(store.root, store);
 }
 
 export function writeRecord(root, record) {

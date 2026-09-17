@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { readdirSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { PACK_ROOT } from "../lib/paths.mjs";
@@ -20,6 +22,14 @@ test("verify proves versions, republication, invalidation, and seeded refusal", 
   assert.deepEqual(report.disjointFrom, ["H04 licensed regression packs"]);
   assert.equal(report.pin.liveScrape, false);
   assert.equal(report.pin.universalCoverage, false);
+});
+
+test("verify does not leak copied stores in tmpdir", () => {
+  const before = new Set(readdirSync(tmpdir()).filter((name) => name.startsWith("work-terms-")));
+  const report = verify();
+  assert.equal(report.ok, true);
+  const leaked = readdirSync(tmpdir()).filter((name) => name.startsWith("work-terms-") && !before.has(name));
+  assert.deepEqual(leaked, []);
 });
 
 test("cli verify exits 0 against the real dataset", () => {

@@ -6,6 +6,7 @@ import test from "node:test";
 import { DATA_ROOT, PACK_ROOT } from "../lib/paths.mjs";
 import { loadStore, validateStore, versionsIndex } from "../lib/store.mjs";
 import { validateRecord } from "../lib/validate.mjs";
+import { RFC3339_RE } from "../lib/schema.mjs";
 
 test("committed store validates", () => {
   const store = loadStore(DATA_ROOT);
@@ -42,6 +43,30 @@ test("versions index lists every record and never claims universal coverage", ()
   assert.deepEqual(ids, store.records.map((item) => item.record.id).sort());
   const committed = JSON.parse(readFileSync(join(DATA_ROOT, "versions.json"), "utf8"));
   assert.deepEqual(committed, index);
+});
+
+test("impossible calendar timestamps are not accepted as RFC3339", () => {
+  const store = loadStore(DATA_ROOT);
+  const rec = structuredClone(store.records.find((item) => item.record.id === "gofrantic-charter-2026-08-08").record);
+  rec.id = "gofrantic-charter-bad-date";
+  rec.version.id = "gofrantic-charter-bad-date-v";
+  rec.version.observedAt = "2026-13-40T25:61:61.000Z";
+  assert.equal(RFC3339_RE.test(rec.version.observedAt), true);
+  const result = validateRecord(rec);
+  assert.equal(result.ok, false);
+  assert.ok(result.errors.some((item) => item.path === "version.observedAt"));
+});
+
+test("link-local metadata hosts are refused as private terms", () => {
+  const store = loadStore(DATA_ROOT);
+  const rec = structuredClone(store.records.find((item) => item.record.id === "gofrantic-charter-2026-08-08").record);
+  rec.id = "gofrantic-charter-link-local";
+  rec.version.id = "gofrantic-charter-link-local-v";
+  rec.attribution.canonicalUrl = "https://169.254.169.254/latest/meta-data";
+  rec.attribution.retrievedFrom = "https://169.254.169.254/latest/meta-data";
+  const result = validateRecord(rec);
+  assert.equal(result.ok, false);
+  assert.ok(result.errors.some((item) => item.code === "private_terms_scrape"));
 });
 
 test("cli validate exits 0 on the committed dataset", () => {

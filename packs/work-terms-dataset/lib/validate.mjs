@@ -10,6 +10,8 @@ import {
   FORBIDDEN_RECORD_KEYS,
   HTTPS_RE,
   ID_RE,
+  isRfc3339Utc,
+  INVALIDATION_ACTORS,
   INVALIDATION_KEYS,
   INVALIDATION_REASONS,
   NOTE_RE,
@@ -21,7 +23,6 @@ import {
   RECORD_SCHEMA,
   REPUBLICATION_KEYS,
   REPUBLICATION_RIGHTS,
-  RFC3339_RE,
   ROBOTS_KEYS,
   STATEMENT_RE,
   STATUSES,
@@ -95,6 +96,14 @@ function expectHttps(value, path, errors, optional = false) {
   return expectString(value, HTTPS_RE, path, errors, "invalid_url");
 }
 
+function expectRfc3339(value, path, errors, code = "invalid_shape") {
+  if (!isRfc3339Utc(value)) {
+    errors.push(error(code, path, "invalid RFC3339 UTC timestamp"));
+    return false;
+  }
+  return true;
+}
+
 export function validateRecord(record) {
   const errors = [];
   if (!isPlainObject(record)) {
@@ -133,20 +142,6 @@ export function validateRecord(record) {
     errors.push(error("universal_coverage_claim", "coverage.universal", "universal coverage is forbidden"));
   }
 
-  if (
-    record.republication &&
-    record.republication.mayStoreFullBody === true &&
-    record.republication.right !== "public_license"
-  ) {
-    errors.push(
-      error(
-        "full_body_without_republication_right",
-        "republication.mayStoreFullBody",
-        "full body storage requires public_license",
-      ),
-    );
-  }
-
   if (record.republication && record.republication.mayCommerciallyResell === true) {
     errors.push(
       error(
@@ -179,9 +174,9 @@ function validateVersion(version) {
   requireKeys(version, VERSION_KEYS, "version", errors);
   expectString(version.id, ID_RE, "version.id", errors, "missing_version");
   expectString(version.label, /^[\x20-\x7E]{1,80}$/, "version.label", errors, "missing_version");
-  expectString(version.observedAt, RFC3339_RE, "version.observedAt", errors, "missing_version");
+  expectRfc3339(version.observedAt, "version.observedAt", errors, "missing_version");
   if (version.effectiveDate !== null) {
-    expectString(version.effectiveDate, RFC3339_RE, "version.effectiveDate", errors);
+    expectRfc3339(version.effectiveDate, "version.effectiveDate", errors);
   }
   if (version.lastUpdatedLabel !== null) {
     expectString(version.lastUpdatedLabel, /^[\x20-\x7E]{1,80}$/, "version.lastUpdatedLabel", errors);
@@ -325,14 +320,12 @@ function validateClauses(clauses, republication) {
     requireKeys(clause, CLAUSE_KEYS, path, errors);
     expectString(clause.id, ID_RE, `${path}.id`, errors);
     expectString(clause.summary, NOTE_RE, `${path}.summary`, errors);
-    if (clause.quote === null) {
-      if (quotesAllowed && max > 0) {
-        // ok: summary-only clause
+    if (clause.quote !== null) {
+      if (!quotesAllowed || max === 0) {
+        errors.push(error("excerpt_not_allowed", `${path}.quote`, "this republication right forbids quotes"));
+      } else if (typeof clause.quote !== "string" || clause.quote.length === 0 || clause.quote.length > max || !QUOTE_RE.test(clause.quote)) {
+        errors.push(error("excerpt_too_long", `${path}.quote`, `quote must be 1..${max} printable chars`));
       }
-    } else if (!quotesAllowed || max === 0) {
-      errors.push(error("excerpt_not_allowed", `${path}.quote`, "this republication right forbids quotes"));
-    } else if (typeof clause.quote !== "string" || clause.quote.length === 0 || clause.quote.length > max || !QUOTE_RE.test(clause.quote)) {
-      errors.push(error("excerpt_too_long", `${path}.quote`, `quote must be 1..${max} printable chars`));
     }
     if (clause.quoteSourceUrl !== null) {
       expectHttps(clause.quoteSourceUrl, `${path}.quoteSourceUrl`, errors);
@@ -350,10 +343,10 @@ function validateInvalidation(status, invalidation) {
     }
     allowKeys(invalidation, INVALIDATION_KEYS, "invalidation", errors);
     requireKeys(invalidation, INVALIDATION_KEYS, "invalidation", errors);
-    expectString(invalidation.at, RFC3339_RE, "invalidation.at", errors);
+    expectRfc3339(invalidation.at, "invalidation.at", errors);
     expectEnum(invalidation.reason, INVALIDATION_REASONS, "invalidation.reason", errors);
     expectString(invalidation.note, NOTE_RE, "invalidation.note", errors);
-    expectEnum(invalidation.actor, ["operator", "ingest-supersede", "policy"], "invalidation.actor", errors);
+    expectEnum(invalidation.actor, INVALIDATION_ACTORS, "invalidation.actor", errors);
   } else if (invalidation !== null) {
     errors.push(error("invalid_shape", "invalidation", "invalidation must be null unless status is invalidated"));
   }
@@ -392,6 +385,27 @@ export function validateCatalog(catalog) {
   }
   if (!Array.isArray(catalog.platforms) || catalog.platforms.length === 0) {
     errors.push(error("invalid_shape", "platforms", "named platforms required"));
+  } else {
+    for (let i = 0; i < catalog.platforms.length; i += 1) {
+      const platform = catalog.platforms[i];
+      const path = `platforms[${i}]`;
+      if (!isPlainObject(platform)) {
+        errors.push(error("invalid_shape", path, "platform must be an object"));
+        continue;
+      }
+      if (typeof platform.id !== "string" || !PLATFORM_RE.test(platform.id)) {
+        errors.push(error("invalid_shape", `${path}.id`, "platform id required"));
+      }
+      if (!Array.isArray(platform.documents) || platform.documents.length === 0) {
+        errors.push(error("invalid_shape", `${path}.documents`, "named documents required"));
+      } else {
+        for (let j = 0; j < platform.documents.length; j += 1) {
+          if (!DOCUMENT_KINDS.includes(platform.documents[j])) {
+            errors.push(error("invalid_shape", `${path}.documents[${j}]`, "unknown document kind"));
+          }
+        }
+      }
+    }
   }
   if (!Array.isArray(catalog.coverageGaps) || catalog.coverageGaps.length === 0) {
     errors.push(error("universal_coverage_claim", "coverageGaps", "gaps must be listed; silence would imply universal coverage"));

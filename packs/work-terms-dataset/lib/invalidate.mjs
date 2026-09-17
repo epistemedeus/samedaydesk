@@ -1,5 +1,5 @@
-import { INVALIDATION_REASONS } from "./schema.mjs";
-import { appendInvalidation, loadStore, writeRecord } from "./store.mjs";
+import { INVALIDATION_ACTORS, INVALIDATION_REASONS, NOTE_RE, REPUBLICATION_FORBIDDEN, isRfc3339Utc } from "./schema.mjs";
+import { appendInvalidation, loadStore, writeRecord, writeVersions } from "./store.mjs";
 import { currentRecords, documentKey } from "./store.mjs";
 
 export function invalidateRecord(store, recordId, spec) {
@@ -17,12 +17,28 @@ export function invalidateRecord(store, recordId, spec) {
       message: `reason must be one of ${INVALIDATION_REASONS.join(", ")}`,
     };
   }
-  if (typeof note !== "string" || note.length < 8) {
+  if (typeof note !== "string" || note.length < 8 || !NOTE_RE.test(note)) {
     return {
       ok: false,
       invalidated: false,
       code: "invalid_shape",
       message: "invalidation note required",
+    };
+  }
+  if (!INVALIDATION_ACTORS.includes(actor)) {
+    return {
+      ok: false,
+      invalidated: false,
+      code: "invalid_shape",
+      message: `actor must be one of ${INVALIDATION_ACTORS.join(", ")}`,
+    };
+  }
+  if (!isRfc3339Utc(at)) {
+    return {
+      ok: false,
+      invalidated: false,
+      code: "invalid_shape",
+      message: "invalidation at must be RFC3339 UTC",
     };
   }
 
@@ -60,6 +76,7 @@ export function invalidateRecord(store, recordId, spec) {
       actor,
       previousStatus,
     });
+    writeVersions(store.root, store);
   }
 
   return {
@@ -71,7 +88,7 @@ export function invalidateRecord(store, recordId, spec) {
     invalidation,
     dryRun: !write,
     currentAfter: currentRecords(store.records)
-      .filter((record) => documentKey(record) === documentKey(item.record))
+      .filter((record) => documentKey(record) === documentKey(item.record) && record.id !== recordId)
       .map((record) => record.id),
   };
 }
@@ -105,7 +122,7 @@ export function refuseRepublication(record) {
     };
   }
   const right = record.republication?.right;
-  if (!right || right === "no_republication" || right === "metadata_only") {
+  if (!right || REPUBLICATION_FORBIDDEN.includes(right)) {
     return {
       allowed: false,
       code: "republication_not_granted",
