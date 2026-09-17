@@ -24,15 +24,30 @@ export function runCli(args, { cwd = REPO } = {}) {
   });
 }
 
+function resolveDefaultBase() {
+  for (const ref of ["origin/main", "origin/master", "main"]) {
+    const result = spawnSync("git", ["rev-parse", "--verify", "--quiet", ref], {
+      encoding: "utf8",
+      cwd: REPO,
+    });
+    if (result.status === 0) return ref;
+  }
+  throw new Error("no default base ref (origin/main, origin/master, or main)");
+}
+
 export function changedPathsVsMain() {
+  const base = resolveDefaultBase();
   const cmds = [
-    ["diff", "--name-only", "origin/main"],
-    ["diff", "--cached", "--name-only", "origin/main"],
+    ["diff", "--name-only", base],
+    ["diff", "--cached", "--name-only", base],
     ["ls-files", "--others", "--exclude-standard"],
   ];
   const names = new Set();
   for (const args of cmds) {
     const result = spawnSync("git", args, { encoding: "utf8", cwd: REPO });
+    if (result.status !== 0 && args[0] === "diff") {
+      throw new Error(`git ${args.join(" ")} failed: ${result.stderr || result.stdout}`);
+    }
     for (const line of String(result.stdout || "").split("\n")) {
       const name = line.trim();
       if (name) names.add(name);

@@ -46,25 +46,33 @@ export function ensureKit() {
     }
   }
   if (!gotLock) {
-    if (existsSync(cli)) return kit;
+    if (existsSync(ready) && existsSync(cli)) return kit;
     throw new Error("timeout waiting for useful-jobs archive extract");
   }
 
   try {
-    if (!existsSync(cli)) {
-      const buf = readFileSync(KIT_ARCHIVE_PATH);
-      if (buf.length !== KIT_ARCHIVE_BYTES) {
-        throw new Error(`useful-jobs archive size ${buf.length} != ${KIT_ARCHIVE_BYTES}`);
-      }
-      const digest = sha256Bytes(buf);
-      if (digest !== KIT_ARCHIVE_SHA256) {
-        throw new Error(`useful-jobs archive sha256 ${digest} != ${KIT_ARCHIVE_SHA256}`);
-      }
-      const tar = spawnSync("tar", ["-xzf", KIT_ARCHIVE_PATH, "-C", dest], { encoding: "utf8" });
-      if (tar.status !== 0) throw new Error(tar.stderr || "tar extract failed");
+    if (existsSync(ready) && existsSync(cli)) return kit;
+    const buf = readFileSync(KIT_ARCHIVE_PATH);
+    if (buf.length !== KIT_ARCHIVE_BYTES) {
+      throw new Error(`useful-jobs archive size ${buf.length} != ${KIT_ARCHIVE_BYTES}`);
     }
+    const digest = sha256Bytes(buf);
+    if (digest !== KIT_ARCHIVE_SHA256) {
+      throw new Error(`useful-jobs archive sha256 ${digest} != ${KIT_ARCHIVE_SHA256}`);
+    }
+    if (existsSync(kit)) rmSync(kit, { recursive: true, force: true });
+    const tar = spawnSync("tar", ["-xzf", KIT_ARCHIVE_PATH, "-C", dest], { encoding: "utf8" });
+    if (tar.status !== 0) throw new Error(tar.stderr || "tar extract failed");
+    if (!existsSync(cli)) throw new Error("useful-jobs extract did not produce CLI");
     writeFileSync(ready, `${KIT_VERSION} ${KIT_ARCHIVE_SHA256}\n`);
     return kit;
+  } catch (err) {
+    try {
+      rmSync(ready, { force: true });
+    } catch {
+      // keep throwing the extract error
+    }
+    throw err;
   } finally {
     rmSync(lockPath, { recursive: true, force: true });
   }

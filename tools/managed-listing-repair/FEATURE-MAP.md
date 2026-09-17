@@ -8,5 +8,5 @@
 | Engine | Current public useful-jobs kit `listing-repair-packet` (1.4.7 inherited job; originated PR51). Not reimplemented. |
 | State | `publishAuthorized` always false; `accepted_correction` always false; suggestion is not a publish; `sold` always false; `purchaseAuthorized` always false |
 | Tests | `cd tools/managed-listing-repair && node --test --test-concurrency=1 test/*.test.mjs` |
-| Write boundary | `tools/managed-listing-repair/**` only |
+| Write boundary | `tools/managed-listing-repair/**` only (`--out` may also write outside the repo; in-repo paths outside this prefix are refused) |
 | Account prerequisite | None. Offline. No wallet, facilitator, chain, queue, or new account. |

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "node:test";
 import { runManagedListingRepair } from "../lib/repair.mjs";
@@ -118,5 +119,80 @@ describe("seeded fail-closed refusals", () => {
     assert.equal(body.sold, false);
     assert.equal(body.detail.engineStatus, "refused");
     assert.equal(body.detail.kitVersion, "1.4.7");
+  });
+
+  it("rejects packet.publishAuthorized without --publish", () => {
+    const spawned = runCli(
+      ["journey", "--fixture", "fixtures/invalid/packet-publish-authorized.json"],
+      { cwd: TOOL_DIR },
+    );
+    assert.equal(spawned.status, 1, spawned.stdout);
+    const body = JSON.parse(spawned.stdout);
+    assert.equal(body.ok, false);
+    assert.equal(body.code, "auto_publish_rejected");
+    assert.equal(body.publishAuthorized, false);
+    assert.equal(body.sold, false);
+  });
+
+  it("rejects an operator packet field that the engine did not diagnose", () => {
+    const spawned = runCli(
+      ["journey", "--fixture", "fixtures/invalid/packet-engine-mismatch.json"],
+      { cwd: TOOL_DIR },
+    );
+    assert.equal(spawned.status, 1, spawned.stdout);
+    const body = JSON.parse(spawned.stdout);
+    assert.equal(body.ok, false);
+    assert.equal(body.code, "suggestion_not_grounded");
+    assert.equal(body.publishAuthorized, false);
+    assert.equal(body.accepted_correction, false);
+    assert.equal(body.sold, false);
+    assert.deepEqual(body.detail.fields, ["priceUsd"]);
+  });
+
+  it("rejects camelCase packet.acceptedCorrection", () => {
+    const spawned = runCli(
+      ["journey", "--fixture", "fixtures/invalid/packet-accepted-correction-camel.json"],
+      { cwd: TOOL_DIR },
+    );
+    assert.equal(spawned.status, 1, spawned.stdout);
+    const body = JSON.parse(spawned.stdout);
+    assert.equal(body.ok, false);
+    assert.equal(body.code, "accepted_correction_rejected");
+    assert.equal(body.accepted_correction, false);
+  });
+
+  it("rejects --out into a sibling tools directory", () => {
+    const dest = join(REPO, "tools/offer-routing/mlr-hijack.json");
+    const result = runManagedListingRepair({
+      fixturePath: OK_FIXTURE,
+      outPath: dest,
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.code, "write_boundary_rejected");
+    assert.equal(existsSync(dest), false);
+  });
+
+  it("rejects a missing fixture file as JSON, not an ENOENT crash", () => {
+    const spawned = runCli(
+      ["journey", "--fixture", "/no/such/mlr.json"],
+      { cwd: TOOL_DIR },
+    );
+    assert.equal(spawned.status, 1, spawned.stderr);
+    const body = JSON.parse(spawned.stdout);
+    assert.equal(body.ok, false);
+    assert.equal(body.code, "fixture_not_found");
+    assert.equal(body.publishAuthorized, false);
+  });
+
+  it("does not leak sds-mlr work directories after a journey", () => {
+    const before = new Set(
+      readdirSync(tmpdir()).filter((name) => name.startsWith("sds-mlr-") && !name.startsWith("sds-mlr-kit-")),
+    );
+    const result = runManagedListingRepair({ fixturePath: OK_FIXTURE });
+    assert.equal(result.ok, true);
+    const leaked = readdirSync(tmpdir()).filter(
+      (name) => name.startsWith("sds-mlr-") && !name.startsWith("sds-mlr-kit-") && !before.has(name),
+    );
+    assert.deepEqual(leaked, []);
   });
 });

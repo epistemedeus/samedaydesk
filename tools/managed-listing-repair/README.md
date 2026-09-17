@@ -48,6 +48,20 @@ node bin/managed-listing-repair.mjs journey --fixture fixtures/invalid/unsupport
 # exit 1, code engine_refused
 ```
 
+A packet that sets `publishAuthorized` without `--publish` is rejected:
+
+```bash
+node bin/managed-listing-repair.mjs journey --fixture fixtures/invalid/packet-publish-authorized.json
+# exit 1, code auto_publish_rejected
+```
+
+An operator packet field the engine did not diagnose is rejected:
+
+```bash
+node bin/managed-listing-repair.mjs journey --fixture fixtures/invalid/packet-engine-mismatch.json
+# exit 1, code suggestion_not_grounded
+```
+
 ## Tests
 
 From this directory (no root `package.json` script):
@@ -66,3 +80,7 @@ Seeded fail-closed:
 4. editing F08 (`server/paid-useful-jobs/`)
 5. changing live prices
 6. wrapping a 1.4.7 unsupported-provider engine refusal as a successful repair
+7. packet `publishAuthorized` true (authority flag on the packet, not only CLI)
+8. operator packet field not grounded in engine actions
+9. `--out` into a sibling tools directory
+10. missing fixture file (JSON `fixture_not_found`, not an ENOENT crash)

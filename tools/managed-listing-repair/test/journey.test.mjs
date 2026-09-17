@@ -101,4 +101,17 @@ describe("literal user journey", () => {
     assert.equal(written.purchaseAuthorized, false);
     assert.equal(written.sold, false);
   });
+
+  it("allows --out under the owned out/ directory", () => {
+    const out = join(TOOL_DIR, "out/journey.json");
+    const spawned = runCli(
+      ["journey", "--fixture", "fixtures/ok.json", "--out", out],
+      { cwd: TOOL_DIR },
+    );
+    assert.equal(spawned.status, 0, spawned.stderr + spawned.stdout);
+    assert.equal(existsSync(out), true);
+    const written = JSON.parse(readFileSync(out, "utf8"));
+    assert.equal(written.publishAuthorized, false);
+    assert.equal(written.suggestion.engineStatus, "actionable");
+  });
 });

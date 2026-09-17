@@ -17,7 +17,15 @@ function isPlainObject(value) {
 
 export function loadFixtureFile(filePath) {
   const abs = resolve(filePath);
-  const text = readFileSync(abs, "utf8");
+  let text;
+  try {
+    text = readFileSync(abs, "utf8");
+  } catch (err) {
+    if (err && err.code === "ENOENT") {
+      throw new FixtureRefuse("fixture_not_found", `Fixture not found: ${abs}`, { path: abs });
+    }
+    throw err;
+  }
   let object;
   try {
     object = JSON.parse(text);

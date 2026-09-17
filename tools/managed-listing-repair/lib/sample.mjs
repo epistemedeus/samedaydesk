@@ -52,6 +52,7 @@ export function packetWantsAcceptedCorrection(packet) {
   if (!isPlainObject(packet)) return false;
   return (
     packet.accepted_correction === true ||
+    packet.acceptedCorrection === true ||
     packet.status === "accepted_correction" ||
     packet.disposition === "accepted_correction"
   );

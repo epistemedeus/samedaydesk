@@ -51,10 +51,19 @@ function parseArgs(argv) {
     } else if (arg === "--publish-authorized") out.publishAuthorized = true;
     else if (arg === "--accepted-correction") out.acceptedCorrection = true;
     else if (arg === "--write-f08") out.editF08 = true;
-    else if (arg === "--fixture") out.fixturePath = rest[++i];
-    else if (arg === "--out") out.outPath = rest[++i];
-    else if (arg === "--f08-path") out.f08Path = rest[++i];
-    else throw new Error(`Unknown arg: ${arg}`);
+    else if (arg === "--fixture") {
+      const value = rest[++i];
+      if (!value || value.startsWith("-")) throw new Error("--fixture requires a file path");
+      out.fixturePath = value;
+    } else if (arg === "--out") {
+      const value = rest[++i];
+      if (!value || value.startsWith("-")) throw new Error("--out requires a file path");
+      out.outPath = value;
+    } else if (arg === "--f08-path") {
+      const value = rest[++i];
+      if (!value || value.startsWith("-")) throw new Error("--f08-path requires a file path");
+      out.f08Path = value;
+    } else throw new Error(`Unknown arg: ${arg}`);
   }
   return out;
 }
@@ -76,18 +85,40 @@ export async function main(argv = process.argv.slice(2)) {
     return 2;
   }
 
-  const result = runManagedListingRepair({
-    fixturePath: args.fixturePath,
-    outPath: args.outPath,
-    example: args.example,
-    publish: args.publish,
-    autoPublish: args.autoPublish,
-    publishAuthorized: args.publishAuthorized,
-    acceptedCorrection: args.acceptedCorrection,
-    editF08: args.editF08,
-    writeF08: args.writeF08,
-    f08Path: args.f08Path,
-  });
+  let result;
+  try {
+    result = runManagedListingRepair({
+      fixturePath: args.fixturePath,
+      outPath: args.outPath,
+      example: args.example,
+      publish: args.publish,
+      autoPublish: args.autoPublish,
+      publishAuthorized: args.publishAuthorized,
+      acceptedCorrection: args.acceptedCorrection,
+      editF08: args.editF08,
+      writeF08: args.writeF08,
+      f08Path: args.f08Path,
+    });
+  } catch (err) {
+    process.stdout.write(
+      `${JSON.stringify(
+        {
+          ok: false,
+          refused: true,
+          code: "internal_error",
+          error: err instanceof Error ? err.message : String(err),
+          publishAuthorized: false,
+          accepted_correction: false,
+          sold: false,
+          purchaseAuthority: false,
+          purchaseAuthorized: false,
+        },
+        null,
+        2,
+      )}\n`,
+    );
+    return 1;
+  }
 
   if (!result.ok) {
     process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);

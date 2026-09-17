@@ -60,7 +60,9 @@ node --test --test-concurrency=1 test/*.test.mjs
 
 Seeded fail-closed: auto-publish; SAMPLE as accepted correction; no-op sold as
 a fix; editing F08; changing live prices; wrapping a 1.4.7 unsupported-provider
-engine refusal as a successful repair.
+engine refusal as a successful repair; packet `publishAuthorized` true;
+operator packet field not grounded in engine actions; `--out` outside
+`tools/managed-listing-repair/`; missing fixture file.
 
 ## Gaps
 

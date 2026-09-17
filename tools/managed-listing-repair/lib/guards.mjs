@@ -6,6 +6,7 @@ import {
   PUBLIC_CATALOG_PREFIXES,
   REPO_ROOT,
   F08_OWNED_PREFIX,
+  WRITE_BOUNDARY_PREFIX,
 } from "./pins.mjs";
 
 function posixRel(abs) {
@@ -79,7 +80,23 @@ export function classifyWritePath(filePath) {
       path: posixRel(abs),
     };
   }
+  if (isInsideRepo(abs) && !isWriteBoundaryPath(abs)) {
+    return {
+      ok: false,
+      code: "write_boundary_rejected",
+      message: "Refusing to write outside tools/managed-listing-repair/",
+      path: posixRel(abs),
+    };
+  }
   return { ok: true, path: existsSync(abs) ? posixRel(abs) : abs };
+}
+
+export function isWriteBoundaryPath(filePath) {
+  if (!filePath) return false;
+  const abs = resolve(filePath);
+  if (!isInsideRepo(abs)) return false;
+  const rel = posixRel(abs);
+  return rel === WRITE_BOUNDARY_PREFIX.slice(0, -1) || rel.startsWith(WRITE_BOUNDARY_PREFIX);
 }
 
 export function wantsAutoPublish(request, caseObject) {
@@ -90,9 +107,12 @@ export function wantsAutoPublish(request, caseObject) {
     request?.publishAuthorized === true ||
     request?.bazaarPublish === true ||
     caseObject?.publishAuthorized === true ||
+    caseObject?.publish_authorized === true ||
     caseObject?.publish === true ||
     packet?.publish === true ||
     packet?.autoPublish === true ||
+    packet?.publishAuthorized === true ||
+    packet?.publish_authorized === true ||
     packet?.status === "published" ||
     packet?.disposition === "published"
   );
@@ -119,4 +139,25 @@ export function countChangedFields(packet) {
   const changes = Array.isArray(packet?.changes) ? packet.changes : [];
   return changes.filter((change) => change && typeof change === "object" && !Object.is(change.from, change.to))
     .length;
+}
+
+/** Route-shaped fields must appear in engine sourceRefs/notes; other fields must appear as the field name. */
+export function suggestionGroundedInEngine(changes, actions) {
+  const hay = (Array.isArray(actions) ? actions : [])
+    .map((action) => {
+      const refs = Array.isArray(action?.sourceRefs) ? action.sourceRefs.join("\n") : "";
+      return `${refs}\n${action?.note || ""}`;
+    })
+    .join("\n")
+    .toLowerCase();
+  if (!hay) return false;
+  const list = Array.isArray(changes) ? changes : [];
+  if (!list.length) return false;
+  return list.every((change) => {
+    const field = String(change?.field || "");
+    if (!field) return false;
+    const route = field.match(/^routes\.(\/[^.]+)/);
+    if (route) return hay.includes(route[1].toLowerCase());
+    return hay.includes(field.toLowerCase());
+  });
 }

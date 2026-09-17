@@ -5,6 +5,7 @@ export {
   isF08Path,
   isLivePricePath,
   isNoopPacket,
+  suggestionGroundedInEngine,
   wantsAutoPublish,
 } from "./lib/guards.mjs";
 export { bindEvidenceDigest, bindSuggestionDigest } from "./lib/digest.mjs";

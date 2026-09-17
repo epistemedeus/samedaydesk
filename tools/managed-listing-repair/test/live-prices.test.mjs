@@ -5,6 +5,7 @@ import { describe, it } from "node:test";
 import {
   KIT_ARCHIVE_BYTES,
   KIT_ARCHIVE_PATH,
+  KIT_ARCHIVE_PATH_PUBLIC,
   KIT_ARCHIVE_SHA256,
   KIT_VERSION,
   LIVE_EXTRACT_PRICE_USDC,
@@ -65,6 +66,9 @@ describe("live SDS prices, F08, and homepage stay unchanged", () => {
     assert.equal(sha256Bytes(buf), KIT_ARCHIVE_SHA256);
     assert.equal(KIT_ARCHIVE_SHA256, "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec");
     assert.equal(KIT_ARCHIVE_BYTES, 5255824);
+    const publicBuf = readFileSync(KIT_ARCHIVE_PATH_PUBLIC);
+    assert.equal(publicBuf.length, KIT_ARCHIVE_BYTES);
+    assert.equal(sha256Bytes(publicBuf), KIT_ARCHIVE_SHA256);
   });
 
   it("write boundary is tools/managed-listing-repair only", () => {
