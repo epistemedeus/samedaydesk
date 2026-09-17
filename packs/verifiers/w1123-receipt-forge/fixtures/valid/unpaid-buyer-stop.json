@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "samedaydesk.receipt-forge.claim.v1",
+  "claimId": "rf_w1123_unpaid_buyer_stop",
+  "receiptId": "cr_w1123_unpaid_buyer_stop",
+  "kind": "unpaid_buyer_stop",
+  "statusClass": "unpaid",
+  "origin": "https://agents.samedaydesk.com",
+  "resource": "https://agents.samedaydesk.com/extract?url=https://example.com",
+  "route": "/extract",
+  "method": "GET",
+  "httpStatus": null,
+  "charged": false,
+  "paymentSent": false,
+  "observedAt": "2026-09-17T12:04:00.000Z",
+  "completeness": "truncated",
+  "authorityClass": "seller_observed",
+  "request": {
+    "method": "GET",
+    "url": "https://agents.samedaydesk.com/extract?url=https://example.com",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "accepts": [
+    {
+      "scheme": "exact",
+      "network": "eip155:8453",
+      "amount": "5000",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    }
+  ],
+  "joinKeys": [
+    "receipt_id",
+    "resource",
+    "amount",
+    "pay_to"
+  ],
+  "source": {
+    "kind": "buyer_runtime_fixture",
+    "path": "fixtures/buyer-runtimes/coinbase-x402/states/stop.json",
+    "note": "Committed coinbase-x402 buyer stop. No wallet, no PAYMENT-SIGNATURE, no facilitator settle."
+  },
+  "unknownWhenAbsent": [
+    "http_response",
+    "paid_body",
+    "facilitator_settlement"
+  ],
+  "prohibitedInferences": [
+    "receipt_forged",
+    "copied_settlement",
+    "fabricated_settlement",
+    "receipt_replay",
+    "payment_header_forge",
+    "http_402_is_delivery"
+  ],
+  "integrity": {
+    "alg": "sha256",
+    "claimedDigest": "sha256:2028cda4d53b95fccd60a2a570e04d1747dfb5d1b52d8997ad1e8dd27d0c24a6"
+  }
+}
