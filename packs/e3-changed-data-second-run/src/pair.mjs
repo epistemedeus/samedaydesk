@@ -1,17 +1,45 @@
 import { existsSync, readFileSync, statSync } from "node:fs";
-import { dirname, isAbsolute, resolve } from "node:path";
+import { dirname, isAbsolute, relative, resolve } from "node:path";
 import { fail } from "./failures.mjs";
 import { fixtureFingerprint, sha256Bytes } from "./hash.mjs";
 import { JOB_ID, PAIR_SCHEMA } from "./paths.mjs";
 
+const SAFE_RUN_ID = /^[A-Za-z0-9._-]{1,64}$/;
+
 function readJson(path) {
   return JSON.parse(readFileSync(path, "utf8"));
+}
+
+function looksLikeUrl(value) {
+  return typeof value === "string" && /^https?:\/\//i.test(value.trim());
+}
+
+export function isSafeRunId(value) {
+  return typeof value === "string" && SAFE_RUN_ID.test(value) && value !== "." && value !== "..";
 }
 
 export function resolveMaybe(baseDir, value) {
   if (typeof value !== "string" || !value) return null;
   if (isAbsolute(value)) return value;
   return resolve(baseDir, value);
+}
+
+function resolveInside(baseDir, value, label) {
+  if (typeof value !== "string" || !value) {
+    return fail("invalid_job_document", `${label} is not a held local file`);
+  }
+  if (looksLikeUrl(value)) {
+    return fail("invalid_job_document", `${label} must be a local file, not a URL`);
+  }
+  const resolved = isAbsolute(value) ? value : resolve(baseDir, value);
+  const rel = relative(baseDir, resolved);
+  if (!rel || rel.startsWith("..") || isAbsolute(rel)) {
+    return fail("invalid_job_document", `${label} must stay in the job directory`);
+  }
+  if (!existsSync(resolved) || !statSync(resolved).isFile()) {
+    return fail("invalid_job_document", `${label} is not a held local file`);
+  }
+  return { ok: true, path: resolved };
 }
 
 export function loadPairDocument(pairPath) {
@@ -30,8 +58,8 @@ export function loadPairDocument(pairPath) {
   if (body.schema !== PAIR_SCHEMA) {
     return fail("invalid_pair", `schema must be ${PAIR_SCHEMA}`, { path: pairPath });
   }
-  if (body.jobId && body.jobId !== JOB_ID) {
-    return fail("job_not_page_change", `jobId ${body.jobId} is not ${JOB_ID}`);
+  if (body.jobId !== JOB_ID) {
+    return fail("job_not_page_change", `jobId ${body.jobId || "(missing)"} is not ${JOB_ID}`);
   }
   if (!Array.isArray(body.runs) || body.runs.length !== 2) {
     return fail("needs_two_runs", "pair.runs must contain exactly two runs", {
@@ -48,32 +76,37 @@ export function loadHeldJob(jobPath) {
   let job;
   try {
     job = readJson(jobPath);
-  } catch (err) {
-    return fail("invalid_job_document", err?.message || "job is not JSON", { path: jobPath });
+  } catch {
+    return fail("invalid_job_document", "job is not JSON", { path: jobPath });
   }
-  if (!job || typeof job !== "object") {
+  if (!job || typeof job !== "object" || Array.isArray(job)) {
     return fail("invalid_job_document", "job is not a JSON object", { path: jobPath });
   }
+  if (typeof job.clock !== "string" || !job.clock.trim()) {
+    return fail("invalid_job_document", "job.clock is required", { path: jobPath });
+  }
+  if (!Array.isArray(job.fields) || job.fields.length === 0) {
+    return fail("invalid_job_document", "job.fields must be a non-empty array", { path: jobPath });
+  }
+  if (job.retryPayment === true || job.replayPayment === true || job.fetch === true || job.live === true) {
+    return fail("invalid_job_document", "held job requests payment, retry, or live fetch", { path: jobPath });
+  }
   const jobDir = dirname(resolve(jobPath));
-  const beforePath = resolveMaybe(jobDir, job.before);
-  const afterPath = resolveMaybe(jobDir, job.after);
-  if (!beforePath || !existsSync(beforePath) || !statSync(beforePath).isFile()) {
-    return fail("invalid_job_document", "job.before is not a held local file", { path: jobPath });
-  }
-  if (!afterPath || !existsSync(afterPath) || !statSync(afterPath).isFile()) {
-    return fail("invalid_job_document", "job.after is not a held local file", { path: jobPath });
-  }
-  const beforeBuf = readFileSync(beforePath);
-  const afterBuf = readFileSync(afterPath);
-  const fields = Array.isArray(job.fields) ? job.fields.map((item) => String(item)) : [];
+  const before = resolveInside(jobDir, job.before, "job.before");
+  if (before.ok !== true) return { ...before, path: jobPath };
+  const after = resolveInside(jobDir, job.after, "job.after");
+  if (after.ok !== true) return { ...after, path: jobPath };
+  const beforeBuf = readFileSync(before.path);
+  const afterBuf = readFileSync(after.path);
+  const fields = job.fields.map((item) => String(item));
   const beforeSha256 = sha256Bytes(beforeBuf);
   const afterSha256 = sha256Bytes(afterBuf);
   return {
     ok: true,
     jobPath: resolve(jobPath),
     job,
-    beforePath,
-    afterPath,
+    beforePath: before.path,
+    afterPath: after.path,
     fields,
     beforeSha256,
     afterSha256,
@@ -85,17 +118,34 @@ export function resolvePairRuns(loaded) {
   if (loaded.ok !== true) return loaded;
   const pairDir = dirname(loaded.path);
   const resolved = [];
+  const seenIds = new Set();
   for (const [index, run] of loaded.pair.runs.entries()) {
-    if (!run || typeof run !== "object") {
+    if (!run || typeof run !== "object" || Array.isArray(run)) {
       return fail("invalid_pair", `runs[${index}] is not an object`);
+    }
+    const id = typeof run.id === "string" && run.id ? run.id : `run-${index + 1}`;
+    if (!isSafeRunId(id)) {
+      return fail("invalid_pair", `runs[${index}].id is not a single path segment`, { runId: id });
+    }
+    if (seenIds.has(id)) {
+      return fail("invalid_pair", `duplicate run id ${id}`, { runId: id });
+    }
+    seenIds.add(id);
+    if (typeof run.jobPath !== "string" || !run.jobPath) {
+      return fail("invalid_pair", `runs[${index}].jobPath is missing`);
+    }
+    if (looksLikeUrl(run.jobPath)) {
+      return fail("invalid_pair", "jobPath must be a local path, not a URL", {
+        path: run.jobPath,
+      });
     }
     const jobPath = resolveMaybe(pairDir, run.jobPath);
     const held = loadHeldJob(jobPath);
     if (held.ok !== true) return held;
     resolved.push({
       index,
-      id: typeof run.id === "string" && run.id ? run.id : `run-${index + 1}`,
-      evidenceClass: run.evidenceClass,
+      id,
+      evidenceClass: typeof run.evidenceClass === "string" ? run.evidenceClass.trim() : run.evidenceClass,
       callerIdentity: run.callerIdentity ?? null,
       demandClass: run.demandClass ?? null,
       jobPath: held.jobPath,

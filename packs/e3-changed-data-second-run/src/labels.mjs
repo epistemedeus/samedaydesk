@@ -16,7 +16,7 @@ export function isOwnerIdentity(value) {
 export function normalizeEvidenceClass(value) {
   if (typeof value !== "string") return null;
   const trimmed = value.trim();
-  return EVIDENCE_CLASSES.includes(trimmed) ? trimmed : trimmed;
+  return EVIDENCE_CLASSES.includes(trimmed) ? trimmed : null;
 }
 
 export function isAllowedEvidenceClass(value) {

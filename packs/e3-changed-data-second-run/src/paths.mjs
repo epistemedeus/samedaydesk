@@ -13,7 +13,6 @@ export const PROMISED_OUTPUTS = Object.freeze(["page-change.json", "page-change.
 
 export const ARCHIVE_REL = "client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz";
 export const ARCHIVE_META_REL = "client/public/for-agents/useful-jobs/useful-jobs-1.4.7.sha256.json";
-export const CATALOG_REL = "client/public/for-agents/useful-jobs/catalog.json";
 
 export function archivePath(repoRoot = REPO_ROOT) {
   return join(repoRoot, ARCHIVE_REL);
@@ -21,10 +20,6 @@ export function archivePath(repoRoot = REPO_ROOT) {
 
 export function archiveMetaPath(repoRoot = REPO_ROOT) {
   return join(repoRoot, ARCHIVE_META_REL);
-}
-
-export function catalogPath(repoRoot = REPO_ROOT) {
-  return join(repoRoot, CATALOG_REL);
 }
 
 export const PAIR_FILES = Object.freeze({

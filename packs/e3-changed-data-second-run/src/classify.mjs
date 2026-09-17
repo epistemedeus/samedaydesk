@@ -1,14 +1,11 @@
 import { fail } from "./failures.mjs";
-import { isAllowedEvidenceClass, isOwnerIdentity } from "./labels.mjs";
+import { isAllowedEvidenceClass, isOwnerIdentity, normalizeEvidenceClass } from "./labels.mjs";
 
 function demandIsRepeat(value) {
   return value === "repeat_demand" || value === "repeat-demand" || value === "repeatDemand";
 }
 
-/**
- * Label owner QA vs independent. Refuse same fixture twice as repeat demand.
- * Classification does not spawn the engine; the caller still has to run it.
- */
+/** Refuse same-fixture replay labelled as demand. Does not spawn the engine. */
 export function classifyPair(resolved) {
   if (resolved.ok !== true) return resolved;
   const [run1, run2] = resolved.runs;
@@ -17,19 +14,20 @@ export function classifyPair(resolved) {
   }
 
   for (const run of resolved.runs) {
-    if (!run.evidenceClass) {
+    const evidenceClass = normalizeEvidenceClass(run.evidenceClass) ?? run.evidenceClass;
+    if (!evidenceClass) {
       return fail("missing_evidence_class", `run ${run.id} is missing evidenceClass`, {
         runId: run.id,
       });
     }
-    if (!isAllowedEvidenceClass(run.evidenceClass)) {
+    if (!isAllowedEvidenceClass(evidenceClass)) {
       return fail(
         "unknown_evidence_class",
         `run ${run.id} evidenceClass ${run.evidenceClass} is not owner_qa/independent/recruited/unknown`,
         { runId: run.id, evidenceClass: run.evidenceClass },
       );
     }
-    if (run.evidenceClass === "independent" && isOwnerIdentity(run.callerIdentity)) {
+    if (evidenceClass === "independent" && isOwnerIdentity(run.callerIdentity)) {
       return fail(
         "owner_identity_labelled_independent",
         `run ${run.id} callerIdentity ${run.callerIdentity || "pack-operator"} cannot be independent`,
@@ -39,15 +37,15 @@ export function classifyPair(resolved) {
   }
 
   const sameFixture = run1.fingerprint === run2.fingerprint;
-  const pairDemand = resolved.demandClass;
-  const runDemand = run1.demandClass || run2.demandClass;
-  const labelledRepeat = demandIsRepeat(pairDemand) || demandIsRepeat(runDemand);
+  const demandValues = [resolved.demandClass, ...resolved.runs.map((run) => run.demandClass)];
+  const labelledDemand = demandValues.find(demandIsRepeat);
+  const labelledRepeat = Boolean(labelledDemand);
 
   if (sameFixture && labelledRepeat) {
     return fail("same_fixture_labelled_repeat_demand", undefined, {
       seeded: "same_fixture_labelled_repeat_demand",
       fingerprint: run1.fingerprint,
-      demandClass: pairDemand,
+      demandClass: labelledDemand,
     });
   }
   if (sameFixture) {
@@ -62,9 +60,9 @@ export function classifyPair(resolved) {
       isOwnerIdentity(run1.callerIdentity) ||
       isOwnerIdentity(run2.callerIdentity);
     if (ownerTouched) {
-      return fail("owner_qa_labelled_repeat_demand", undefined, { demandClass: pairDemand });
+      return fail("owner_qa_labelled_repeat_demand", undefined, { demandClass: labelledDemand });
     }
-    return fail("unproven_repeat_demand", undefined, { demandClass: pairDemand });
+    return fail("unproven_repeat_demand", undefined, { demandClass: labelledDemand });
   }
 
   const labelsDistinct = run1.evidenceClass !== run2.evidenceClass;

@@ -78,9 +78,6 @@ function successShell({ resolved, classified, kit, runs, spawned, outDir = null 
   };
 }
 
-/**
- * Run the actual page-change-offline-job twice with labelled evidence classes.
- */
 export function runChangedDataPair({
   pairPath,
   outDir = null,

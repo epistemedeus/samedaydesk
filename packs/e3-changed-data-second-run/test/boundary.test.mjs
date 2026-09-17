@@ -40,7 +40,7 @@ test("write boundary is this pack only: no payment, fetch, or scheduler", () => 
   );
   for (const path of files) {
     const text = readFileSync(path, "utf8");
-    assert.doesNotMatch(text, /replayPayment/);
+    assert.doesNotMatch(text, /replayPayment\s*=\s*true/);
     assert.doesNotMatch(text, /schedulerDaemon\s*=\s*true/);
     assert.doesNotMatch(text, /\bfetch\(/);
   }

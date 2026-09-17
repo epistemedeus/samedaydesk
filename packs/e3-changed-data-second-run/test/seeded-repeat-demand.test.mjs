@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { classifyPair } from "../src/classify.mjs";
@@ -51,6 +52,52 @@ test("CLI never exits 0 for the seeded repeat-demand fixture", () => {
   assert.equal(proc.status, 2);
   assert.match(proc.stdout, /"ok":\s*false/);
   assert.match(proc.stdout, /same_fixture_labelled_repeat_demand/);
+});
+
+test("run2 demandClass repeat_demand is not hidden by run1 demandClass none", () => {
+  const dir = mkdtempSync(join(tmpdir(), "e3-demand-or-"));
+  const job1 = PAIR_FILES.ownerQaVsIndependent.replace(
+    "pairs/owner-qa-vs-independent.json",
+    "owner-qa/run-1/job.json",
+  );
+  const job2 = PAIR_FILES.ownerQaVsIndependent.replace(
+    "pairs/owner-qa-vs-independent.json",
+    "independent/run-2/job.json",
+  );
+  const pairPath = join(dir, "pair.json");
+  writeFileSync(
+    pairPath,
+    `${JSON.stringify(
+      {
+        schema: "samedaydesk.e3-changed-data-second-run.v1",
+        jobId: "page-change-offline-job",
+        demandClass: "none",
+        runs: [
+          {
+            id: "run-1",
+            evidenceClass: "owner_qa",
+            callerIdentity: "pack-operator",
+            demandClass: "none",
+            jobPath: job1,
+          },
+          {
+            id: "run-2",
+            evidenceClass: "independent",
+            callerIdentity: "declared-independent-caller",
+            demandClass: "repeat_demand",
+            jobPath: job2,
+          },
+        ],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  const result = runChangedDataPair({ pairPath, spawn: false, repoRoot: REPO_ROOT });
+  assert.equal(result.ok, false, JSON.stringify(result));
+  assert.equal(result.failure.class, "owner_qa_labelled_repeat_demand");
+  assert.equal(result.failure.demandClass, "repeat_demand");
+  assert.notEqual(result.repeatDemand, true);
 });
 
 test("same fixture twice without the repeat-demand label is still not a second run", () => {

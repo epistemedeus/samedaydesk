@@ -8,6 +8,14 @@ import { resolve } from "node:path";
 import { fail } from "../src/failures.mjs";
 import { pairPathForMode, runChangedDataPair } from "../src/run.mjs";
 
+function takePath(argv, i, flag) {
+  const value = argv[i + 1];
+  if (value == null || value.startsWith("--")) {
+    return { error: fail("usage", `${flag} requires a path`) };
+  }
+  return { value, next: i + 1 };
+}
+
 function parseArgs(argv) {
   const args = {
     mode: "owner-qa-vs-independent",
@@ -21,10 +29,17 @@ function parseArgs(argv) {
     else if (a === "--owner-qa") args.mode = "owner-qa";
     else if (a === "--seeded-fixture") args.mode = "seeded-fixture";
     else if (a === "--pair") {
+      const taken = takePath(argv, i, "--pair");
+      if (taken.error) return { error: taken.error };
       args.mode = "pair";
-      args.pairPath = argv[++i];
-    } else if (a === "--out-dir") args.outDir = argv[++i];
-    else if (a === "--compact") args.pretty = false;
+      args.pairPath = taken.value;
+      i = taken.next;
+    } else if (a === "--out-dir") {
+      const taken = takePath(argv, i, "--out-dir");
+      if (taken.error) return { error: taken.error };
+      args.outDir = taken.value;
+      i = taken.next;
+    } else if (a === "--compact") args.pretty = false;
     else if (a === "--help" || a === "-h") args.help = true;
     else {
       return { error: fail("usage", `unknown argument: ${a}`) };
