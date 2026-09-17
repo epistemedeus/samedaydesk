@@ -1,0 +1,11 @@
+Cold acquire path (preferred):
+  client/public/kit/useful-jobs-1.4.7.tar.gz
+  sha256: e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec
+  bytes: 5255824
+  SUT: apps/listing-repair-packet
+  Run: tar -xzf … && cd useful-jobs-1.4.7 && node bin/useful-jobs.mjs run listing-repair-packet --example
+  Mirror: client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz
+
+example-1.4.7.packet.json is a captured --example repair-packet.json from that archive.
+It is labelled sample (caller.exampleMode / sampleLabel=explicit-example) and MUST NOT
+verify as accepted_correction / publishable correction.

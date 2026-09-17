@@ -1,0 +1,37 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "listing-repair-packet",
+  "status": "informational",
+  "summary": "Listing repair packet status=diagnosed",
+  "actions": [],
+  "gaps": [
+    "Route repair is owner guidance — not invented revenue or lost-customer proof"
+  ],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "tool": "distribution-repair",
+    "status": "diagnosed",
+    "ok": true
+  },
+  "generatedAt": "2026-09-11T12:00:00.000Z",
+  "sourceLinked": true,
+  "asOf": "2026-09-11T12:00:00.000Z",
+  "sourceObservation": {
+    "url": "https://example.test/listing/operator-alpha",
+    "file": "fixtures/ok/ok-source.json",
+    "observedAt": "2026-09-11T12:00:00.000Z",
+    "digest": "sha256:9559de283d38b9111f555d7d59a74f428e0cf5637d6f2b85ac8c0a99d0bdb717"
+  },
+  "claimedLane": "suggestion",
+  "evidence": true,
+  "suggestion": true,
+  "publish": false
+}
