@@ -37,6 +37,22 @@ const ROOT_KEYS = Object.freeze([
   "prohibitedInferences",
 ]);
 
+const DROP_GIT_ENV = new Set([
+  "GIT_DIR",
+  "GIT_WORK_TREE",
+  "GIT_OBJECT_DIRECTORY",
+  "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+  "GIT_COMMON_DIR",
+  "GIT_QUARANTINE_PATH",
+  "GIT_INDEX_FILE",
+  "GIT_PREFIX",
+  "GIT_NAMESPACE",
+  "GIT_REPLACE_REF_BASE",
+  "GIT_CEILING_DIRECTORIES",
+  "GIT_DISCOVERY_ACROSS_FILESYSTEM",
+  "GIT_EXEC_PATH",
+]);
+
 export function defaultCatalogPath() {
   return DEFAULT_CATALOG;
 }
@@ -88,19 +104,24 @@ export function defaultGitDirs({ extraGitDirs = [] } = {}) {
   for (const dir of extraGitDirs) add(dir);
   add(OBJECT_STORE);
   add(REPO_GIT);
-  add(cwdGitDir());
   return dirs;
 }
 
-function cwdGitDir() {
-  const result = spawnSync("git", ["rev-parse", "--absolute-git-dir"], {
-    encoding: "utf8",
-    timeout: 5000,
-    env: { ...process.env, GIT_TERMINAL_PROMPT: "0" },
-  });
-  if (result.status !== 0) return null;
-  const dir = (result.stdout || "").trim();
-  return dir || null;
+function gitSpawnEnv() {
+  const env = {};
+  for (const key of Object.keys(process.env)) {
+    if (DROP_GIT_ENV.has(key) || key.startsWith("GIT_CONFIG_")) continue;
+    const value = process.env[key];
+    if (value !== undefined) env[key] = value;
+  }
+  env.GIT_TERMINAL_PROMPT = "0";
+  env.GIT_NO_REPLACE_OBJECTS = "1";
+  env.GIT_NO_LAZY_FETCH = "1";
+  env.GIT_OPTIONAL_LOCKS = "0";
+  env.GIT_CONFIG_NOSYSTEM = "1";
+  env.GIT_CONFIG_GLOBAL = "/dev/null";
+  env.GIT_CONFIG_SYSTEM = "/dev/null";
+  return env;
 }
 
 function error(code, path, message) {
@@ -135,8 +156,9 @@ function expectString(value, re, path, errors, code = "invalid_shape") {
 }
 
 /**
- * Run `git cat-file -t` against each local git directory until one knows the
- * object. No remotes, no GitHub API. A miss is `claimed_hash_unbound_object`.
+ * Bind `hash` with `git cat-file -t` on the given local git dirs only.
+ * Inherited GIT_DIR / GIT_OBJECT_DIRECTORY / alternates are stripped.
+ * A miss is `claimed_hash_unbound_object`.
  */
 export function catFileType(hash, gitDirs = defaultGitDirs()) {
   if (typeof hash !== "string" || !HASH_RE.test(hash)) {
@@ -151,11 +173,12 @@ export function catFileType(hash, gitDirs = defaultGitDirs()) {
   }
 
   const attempts = [];
+  const env = gitSpawnEnv();
   for (const gitDir of gitDirs) {
-    const result = spawnSync("git", ["--git-dir", gitDir, "cat-file", "-t", hash], {
+    const result = spawnSync("git", ["--git-dir", gitDir, "cat-file", "-t", "--", hash], {
       encoding: "utf8",
       timeout: 5000,
-      env: { ...process.env, GIT_TERMINAL_PROMPT: "0" },
+      env,
     });
     const objectType = (result.stdout || "").trim() || null;
     attempts.push({
@@ -324,7 +347,9 @@ export function evaluateClaim(input, { catalog = loadCatalog(), gitDirs = defaul
         errors.push(...bound.errors);
       }
     }
-  } else if (hasSignature) {
+  }
+
+  if (hasSignature) {
     if (typeof input.claimedSignature !== "string" || input.claimedSignature.length === 0) {
       errors.push(error("invalid_shape", "$.claimedSignature", "invalid claimedSignature"));
     } else {
@@ -336,10 +361,6 @@ export function evaluateClaim(input, { catalog = loadCatalog(), gitDirs = defaul
         ),
       );
     }
-  }
-
-  if (hasSignature && input.claimedSignature !== null && typeof input.claimedSignature !== "string") {
-    errors.push(error("invalid_shape", "$.claimedSignature", "claimedSignature must be a string or null"));
   }
 
   if (input.adoption === "owner_adopted") {

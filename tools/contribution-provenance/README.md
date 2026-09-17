@@ -40,8 +40,15 @@ Labels are declared on fixtures. They are not fetched from GitHub.
 1. `fixtures/object-store` — vendored commit `072f8d04026bb29a62dbf8a761a2ae62abbdc663`
 2. This repository's `.git` — SameDayDesk objects such as pin `775051602d91`
 
+Additional stores must be passed as `--git-dir`. The process cwd and inherited
+`GIT_DIR` / `GIT_OBJECT_DIRECTORY` / `GIT_ALTERNATE_OBJECT_DIRECTORIES` do not
+expand or replace those stores.
+
 A SHA present in neither store is unresolved, matching
 `experiments/s134-record-jobs/PINS.md` (`c0255ac`).
+
+A non-null `claimedSignature` does not bind. This tool only binds
+`claimedHash` via `git cat-file -t`.
 
 ## Non-goals
 

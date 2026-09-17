@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync } from "node:fs";
+import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
+import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
@@ -13,6 +14,7 @@ import {
   bindClaimedHash,
   catFileType,
   defaultGitDirs,
+  evaluateClaim,
   evaluateFile,
   invalidFixtureDir,
   listJsonFiles,
@@ -36,12 +38,65 @@ function gitCatFile(gitDir, hash) {
   });
 }
 
-function runCli(args) {
+function runCli(args, options = {}) {
   return spawnSync(process.execPath, [cli, ...args], {
     encoding: "utf8",
     timeout: 15000,
-    env: { ...process.env, GIT_TERMINAL_PROMPT: "0" },
+    cwd: options.cwd,
+    env: { ...process.env, GIT_TERMINAL_PROMPT: "0", ...(options.env ?? {}) },
   });
+}
+
+function withEnv(extra, fn) {
+  const saved = new Map();
+  for (const [key, value] of Object.entries(extra)) {
+    saved.set(key, Object.hasOwn(process.env, key) ? process.env[key] : undefined);
+    if (value === undefined) delete process.env[key];
+    else process.env[key] = value;
+  }
+  try {
+    return fn();
+  } finally {
+    for (const [key, previous] of saved) {
+      if (previous === undefined) delete process.env[key];
+      else process.env[key] = previous;
+    }
+  }
+}
+
+function makeIsolatedCommitRepo() {
+  const dir = mkdtempSync(join(tmpdir(), "contribution-provenance-inject-"));
+  const gitEnv = { ...process.env, GIT_TERMINAL_PROMPT: "0" };
+  delete gitEnv.GIT_DIR;
+  delete gitEnv.GIT_WORK_TREE;
+  delete gitEnv.GIT_OBJECT_DIRECTORY;
+  delete gitEnv.GIT_ALTERNATE_OBJECT_DIRECTORIES;
+  gitEnv.GIT_AUTHOR_NAME = "t";
+  gitEnv.GIT_AUTHOR_EMAIL = "t@t.example";
+  gitEnv.GIT_COMMITTER_NAME = "t";
+  gitEnv.GIT_COMMITTER_EMAIL = "t@t.example";
+  const init = spawnSync("git", ["init"], { cwd: dir, encoding: "utf8", env: gitEnv });
+  assert.equal(init.status, 0, init.stderr);
+  writeFileSync(join(dir, "payload.txt"), "injected-object-body\n");
+  const add = spawnSync("git", ["add", "payload.txt"], { cwd: dir, encoding: "utf8", env: gitEnv });
+  assert.equal(add.status, 0, add.stderr);
+  const commit = spawnSync(
+    "git",
+    ["-c", "commit.gpgsign=false", "-c", "user.name=t", "-c", "user.email=t@t.example", "commit", "-m", "inject"],
+    { cwd: dir, encoding: "utf8", env: gitEnv },
+  );
+  assert.equal(commit.status, 0, commit.stderr);
+  const rev = spawnSync("git", ["rev-parse", "HEAD"], { cwd: dir, encoding: "utf8", env: gitEnv });
+  assert.equal(rev.status, 0, rev.stderr);
+  return { dir, gitDir: join(dir, ".git"), hash: rev.stdout.trim() };
+}
+
+function requiredInferences() {
+  return [
+    "claimed_hash_unbound_object",
+    "comment_text_is_not_adoption",
+    "solution_shaped_text_is_lead",
+  ];
 }
 
 test("catalog closed sets are owner|member|commenter|app", () => {
@@ -189,6 +244,94 @@ test("CLI rejects commenter-as-adoption", () => {
     join(invalidFixtureDir(), "commenter-as-adoption.json"),
   ]);
   assert.equal(proc.status, 0, proc.stderr + proc.stdout);
+});
+
+test("bound hash does not waive a claimed signature that does not bind", () => {
+  const result = evaluateClaim({
+    schemaVersion: catalog.schemaVersion,
+    claimId: "bound-hash-unbound-signature-inline",
+    actorLabel: "commenter",
+    adoption: "object_bound",
+    claimedHash: VERANTIS_PR2_HEAD,
+    claimedSignature: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGARBAGE",
+    surface: "issue_comment",
+    text: "bound hash plus garbage signature",
+    prohibitedInferences: requiredInferences(),
+  });
+  assert.equal(result.ok, false);
+  assert.equal(result.objectType, "commit");
+  assert.ok(result.errors.some((item) => item.code === UNBOUND_CODE && item.path === "$.claimedSignature"));
+
+  const proc = runCli([
+    "--expect-reject",
+    UNBOUND_CODE,
+    "--claim",
+    join(invalidFixtureDir(), "bound-hash-unbound-signature.json"),
+  ]);
+  assert.equal(proc.status, 0, proc.stderr + proc.stdout);
+});
+
+test("GIT_OBJECT_DIRECTORY does not bind a foreign object or hide 072f8d0", () => {
+  const injected = makeIsolatedCommitRepo();
+  try {
+    withEnv({ GIT_OBJECT_DIRECTORY: join(injected.gitDir, "objects") }, () => {
+      const foreign = bindClaimedHash(injected.hash);
+      assert.equal(foreign.ok, false, JSON.stringify(foreign));
+      assert.equal(foreign.code, UNBOUND_CODE);
+      const pinned = bindClaimedHash(VERANTIS_PR2_ABBREV);
+      assert.equal(pinned.ok, true, JSON.stringify(pinned));
+      assert.equal(pinned.objectType, "commit");
+    });
+  } finally {
+    rmSync(injected.dir, { recursive: true, force: true });
+  }
+});
+
+test("GIT_ALTERNATE_OBJECT_DIRECTORIES does not bind a foreign object", () => {
+  const injected = makeIsolatedCommitRepo();
+  try {
+    const proc = runCli(["--hash", injected.hash], {
+      env: { GIT_ALTERNATE_OBJECT_DIRECTORIES: join(injected.gitDir, "objects") },
+    });
+    assert.notEqual(proc.status, 0, proc.stdout);
+    const body = JSON.parse(proc.stdout);
+    assert.equal(body.ok, false);
+    assert.equal(body.code, UNBOUND_CODE);
+  } finally {
+    rmSync(injected.dir, { recursive: true, force: true });
+  }
+});
+
+test("cwd git directory is not an implicit object store", () => {
+  const injected = makeIsolatedCommitRepo();
+  try {
+    const fromInjected = runCli(["--hash", injected.hash], { cwd: injected.dir });
+    assert.notEqual(fromInjected.status, 0, fromInjected.stdout);
+    const body = JSON.parse(fromInjected.stdout);
+    assert.equal(body.ok, false);
+    assert.equal(body.code, UNBOUND_CODE);
+
+    const explicit = runCli(["--git-dir", injected.gitDir, "--hash", injected.hash]);
+    assert.equal(explicit.status, 0, explicit.stderr + explicit.stdout);
+    const explicitBody = JSON.parse(explicit.stdout);
+    assert.equal(explicitBody.ok, true);
+    assert.equal(explicitBody.objectType, "commit");
+  } finally {
+    rmSync(injected.dir, { recursive: true, force: true });
+  }
+});
+
+test("GIT_DIR does not add a third object store", () => {
+  const injected = makeIsolatedCommitRepo();
+  try {
+    const proc = runCli(["--hash", injected.hash], { env: { GIT_DIR: injected.gitDir } });
+    assert.notEqual(proc.status, 0, proc.stdout);
+    const body = JSON.parse(proc.stdout);
+    assert.equal(body.ok, false);
+    assert.equal(body.code, UNBOUND_CODE);
+  } finally {
+    rmSync(injected.dir, { recursive: true, force: true });
+  }
 });
 
 test("source does not call GitHub or mutate remotes", () => {

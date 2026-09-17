@@ -30,8 +30,11 @@ Usage:
   node tools/contribution-provenance/cli.mjs --suite
   node tools/contribution-provenance/cli.mjs --expect-reject ${UNBOUND_CODE} --hash <sha>
   node tools/contribution-provenance/cli.mjs --expect-reject <code> --claim <file.json>
+  node tools/contribution-provenance/cli.mjs --git-dir <path> --hash <sha>
 
 Runs local git cat-file -t only. No GitHub API, no remotes, no upstream mutation.
+Default stores are the vendored object-store and this repository .git.
+Inherited GIT_DIR / GIT_OBJECT_DIRECTORY do not expand the bind set.
 Solution-shaped text is a lead. Commenter text is never adoption.
 `);
   process.exit(0);
