@@ -36,7 +36,7 @@ test("verify binds published 1.4.7, leaves engines unmodified, records seeded re
   const sha = createHash("sha256").update(readFileSync(archive)).digest("hex");
   assert.equal(sha, PIN.engine.sha256);
 
-  const r = runDesk(["verify", "--receipt", join(PACK_ROOT, "receipts", "verify-run.json")]);
+  const r = runDesk(["verify", "--receipt", join(PACK_ROOT, "out", "verify-run.json")]);
   assert.equal(r.status, 0, r.stderr + r.stdout);
   const body = parseReceipt(r);
   assert.equal(body.ok, true);
@@ -56,5 +56,6 @@ test("verify binds published 1.4.7, leaves engines unmodified, records seeded re
   assert.equal(body.repeatDemand, false);
   assert.equal(body.h32PrivatePrimitivesReopened, false);
   assert.equal(body.callerFilesUnchanged, true);
+  assert.equal(existsSync(join(PACK_ROOT, "out/verify-run.json")), true);
   assert.equal(existsSync(join(PACK_ROOT, "receipts/verify-run.json")), true);
 });
