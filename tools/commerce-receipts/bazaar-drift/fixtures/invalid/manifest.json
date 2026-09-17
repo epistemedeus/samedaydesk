@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipts.bazaar-drift.invalid-manifest.v1",
+  "cases": [
+    {
+      "file": "read-claimed-match.json",
+      "code": "amount_drift"
+    },
+    {
+      "file": "absence-as-demand.json",
+      "code": "absence_as_demand"
+    },
+    {
+      "file": "paid-as-unpaid.json",
+      "code": "paid_as_unpaid"
+    },
+    {
+      "file": "payto-in-compact.json",
+      "code": "payto_in_compact"
+    },
+    {
+      "file": "float-money.json",
+      "code": "float_money"
+    },
+    {
+      "file": "catalog-presence-as-demand.json",
+      "code": "catalog_presence_is_demand"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipts.bazaar-drift.case.v1",
+  "id": "receipt-only-not-demand",
+  "kind": "pair",
+  "listing": null,
+  "receipt": {
+    "schemaVersion": "samedaydesk.commerce-receipt.v1",
+    "receiptId": "cr_unpaid_settlement_proof_402",
+    "kind": "unpaid_payment_required",
+    "statusClass": "unpaid",
+    "origin": "https://agents.samedaydesk.com",
+    "resource": "https://agents.samedaydesk.com/commerce/settlement-proof",
+    "route": "/commerce/settlement-proof",
+    "method": "GET",
+    "httpStatus": 402,
+    "charged": false,
+    "paymentSent": false,
+    "accepts": [
+      {
+        "scheme": "exact",
+        "network": "eip155:8453",
+        "amount": "5000",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+      }
+    ]
+  },
+  "claims": {
+    "match": false,
+    "treatAbsenceAsDemand": false,
+    "catalogPresenceIsDemand": false
+  }
+}

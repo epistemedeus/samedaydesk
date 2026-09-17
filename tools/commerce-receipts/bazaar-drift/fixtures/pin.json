@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipts.bazaar-drift.pin.v1",
+  "id": "sds-bazaar-vs-unpaid-receipt-2026-09-03",
+  "origin": "https://agents.samedaydesk.com",
+  "sellerId": "samedaydesk",
+  "observedAt": "2026-09-03T10:52:00.000Z",
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "rewriteAuthorized": false,
+  "purchaseAuthority": false,
+  "liveCdp": false,
+  "expectedBazaarCount": 8,
+  "expectedAlignedCount": 7,
+  "expectedAmountDriftCount": 1,
+  "expectedReadAmountDrift": {
+    "path": "/read",
+    "bazaarAmount": "50000",
+    "receiptAmount": "5000",
+    "note": "Agent402 priceConflict: bazaar 0.05 vs origin unpaid 402 / OpenAPI 0.005. Atomic USDC 6dp."
+  },
+  "expectedReceiptOnlyPaths": ["/commerce/settlement-proof"],
+  "sources": {
+    "bazaarListings": "fixtures/bazaar/sds-listings.json",
+    "receipts": "fixtures/receipts/sds-unpaid.json",
+    "committedObservations": "data/bazaar-tracker/observations.json",
+    "originX402": "fixtures/presence/catalog/x402.json",
+    "lqdist1": "docs/lqdist1-distribution-audit/evidence/agent402-seller-bounded.json"
+  }
+}

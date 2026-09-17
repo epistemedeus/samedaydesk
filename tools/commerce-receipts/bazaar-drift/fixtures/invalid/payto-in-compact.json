@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipts.bazaar-drift.case.v1",
+  "id": "payto-in-compact",
+  "kind": "pair",
+  "note": "Aligned extract pair, but compact observation stores payTo. Compact keys stay digest-only.",
+  "listing": {
+    "seller": "SameDayDesk",
+    "sellerId": "samedaydesk",
+    "resource": "https://agents.samedaydesk.com/extract",
+    "path": "/extract",
+    "method": "GET",
+    "description": "Extract a public page",
+    "accepts": [
+      {
+        "scheme": "exact",
+        "network": "eip155:8453",
+        "amount": "5000",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+      }
+    ]
+  },
+  "receipt": {
+    "schemaVersion": "samedaydesk.commerce-receipt.v1",
+    "receiptId": "cr_unpaid_extract_402",
+    "kind": "unpaid_payment_required",
+    "statusClass": "unpaid",
+    "origin": "https://agents.samedaydesk.com",
+    "resource": "https://agents.samedaydesk.com/extract?url=https://example.com",
+    "route": "/extract",
+    "method": "GET",
+    "httpStatus": 402,
+    "charged": false,
+    "paymentSent": false,
+    "accepts": [
+      {
+        "scheme": "exact",
+        "network": "eip155:8453",
+        "amount": "5000",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+      }
+    ]
+  },
+  "compactObservation": {
+    "route": "https://agents.samedaydesk.com/extract",
+    "digest": "04c1554d7a4471803f05781245df70cb0ae3dc73b9df78c555c7324c3b1ca60e",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "amount": "5000"
+  },
+  "claims": {
+    "match": true
+  }
+}

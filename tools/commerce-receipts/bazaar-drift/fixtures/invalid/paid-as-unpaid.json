@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipts.bazaar-drift.case.v1",
+  "id": "paid-as-unpaid",
+  "kind": "pair",
+  "note": "Unpaid extract 402 with in-tree facilitator settlement 0x2916cfe2 attached. Naive statusClass unpaid. Honest paid_as_unpaid.",
+  "listing": {
+    "seller": "SameDayDesk",
+    "sellerId": "samedaydesk",
+    "resource": "https://agents.samedaydesk.com/extract",
+    "path": "/extract",
+    "method": "GET",
+    "description": "Extract a public page",
+    "accepts": [
+      {
+        "scheme": "exact",
+        "network": "eip155:8453",
+        "amount": "5000",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+      }
+    ]
+  },
+  "receipt": {
+    "schemaVersion": "samedaydesk.commerce-receipt.v1",
+    "receiptId": "cr_paid_as_unpaid_extract",
+    "kind": "unpaid_payment_required",
+    "statusClass": "unpaid",
+    "origin": "https://agents.samedaydesk.com",
+    "resource": "https://agents.samedaydesk.com/extract?url=https://example.com",
+    "route": "/extract",
+    "method": "GET",
+    "httpStatus": 402,
+    "charged": false,
+    "paymentSent": false,
+    "accepts": [
+      {
+        "scheme": "exact",
+        "network": "eip155:8453",
+        "amount": "5000",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+      }
+    ],
+    "settlement": {
+      "operationId": "agent402-external-validation-purchase-2026-08-29",
+      "amountUsdc": "0.010",
+      "transaction": "0x2916cfe2c5200fca2a21f8b854fe963ef70d4ed90d59c7444cef16dd21056ef7",
+      "facilitatorOrPayoutRef": "x402_v2_coinbase_cdp"
+    }
+  },
+  "claims": {
+    "match": true
+  }
+}

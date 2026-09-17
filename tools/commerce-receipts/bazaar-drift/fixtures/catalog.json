@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipts.bazaar-drift.catalog.v1",
+  "recordSchemaVersion": "samedaydesk.commerce-receipts.bazaar-drift.case.v1",
+  "product": "samedaydesk-commerce-receipts-bazaar-drift",
+  "pack": "bazaar-drift",
+  "origin": "https://agents.samedaydesk.com",
+  "sellerId": "samedaydesk",
+  "expectedBazaarCount": 8,
+  "expectedBazaarPaths": [
+    "/deep-audit",
+    "/defi/morpho-position",
+    "/enrich",
+    "/extract",
+    "/read",
+    "/scan",
+    "/schemaforge",
+    "/wallet-enrich"
+  ],
+  "expectedReadAmountDrift": {
+    "path": "/read",
+    "bazaarAmount": "50000",
+    "receiptAmount": "5000",
+    "evidence": "docs/lqdist1-distribution-audit/evidence/agent402-seller-bounded.json"
+  },
+  "expectedReceiptOnlyPaths": ["/commerce/settlement-proof"],
+  "pin": {
+    "scheme": "exact",
+    "network": "eip155:8453",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+  },
+  "requiredProhibitedInferences": [
+    "amount_drift",
+    "claim_match",
+    "absence_as_demand",
+    "paid_as_unpaid",
+    "payto_in_compact",
+    "catalog_presence_is_demand"
+  ],
+  "designatedSeed": {
+    "id": "read-claimed-match",
+    "file": "invalid/read-claimed-match.json",
+    "code": "amount_drift",
+    "naiveRule": "same-path-unpaid"
+  },
+  "boundary": {
+    "write": "tools/commerce-receipts/bazaar-drift/**",
+    "paymentSent": false,
+    "checkoutMutated": false,
+    "registryMutated": false,
+    "published": false,
+    "neoKernelVendor": false,
+    "liveCdp": false,
+    "statement": "Offline SDS bazaar-listing vs unpaid commerce-receipt drift. Catalog absence is not demand. Compact observations stay digest-only. No pay, publish, or neo-kernel-vendor."
+  }
+}
