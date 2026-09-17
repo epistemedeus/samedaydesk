@@ -1,0 +1,5 @@
+Declared-independent held extracts for E3 labelling tests.
+
+Label: independent / declared-independent-caller. Distinct caller identity
+and distinct files from the owner-QA widget. Not organic demand, not
+repeat demand, not a paying customer.

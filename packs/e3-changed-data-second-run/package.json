@@ -1,0 +1,19 @@
+{
+  "name": "@samedaydesk/e3-changed-data-second-run",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Actual caller of page-change-offline-job with a changed-input second run. Owner QA vs independent are labelled. Same fixture twice is not repeat demand.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "e3-changed-data-second-run": "./bin/run.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "run": "node bin/run.mjs --owner-qa-vs-independent",
+    "run:owner-qa": "node bin/run.mjs --owner-qa",
+    "seeded-failure": "node bin/run.mjs --seeded-fixture"
+  }
+}

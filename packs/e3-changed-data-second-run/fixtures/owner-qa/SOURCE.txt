@@ -1,0 +1,5 @@
+Owner QA held extracts for E3.
+
+Label: owner_qa / pack-operator. Not independent use, organic demand,
+or repeat demand. A second owner-QA run with a new after file is still
+owner QA.

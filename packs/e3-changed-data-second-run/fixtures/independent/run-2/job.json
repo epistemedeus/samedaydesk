@@ -1,0 +1,9 @@
+{
+  "id": "e3-independent-run-2",
+  "title": "Declared-independent catalog selected-field change (v1 to v2)",
+  "clock": "2026-09-17T14:30:00.000Z",
+  "fields": ["title", "description", "headings"],
+  "limits": { "maxStaleMs": null },
+  "before": "./before.json",
+  "after": "./after.json"
+}
