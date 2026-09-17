@@ -1,0 +1,31 @@
+{
+  "schema": "samedaydesk.output-contract-evaluation.case.v1",
+  "caseId": "seeded-live-sku-refused",
+  "proposal": {
+    "priceUsdc": "5.000",
+    "live": true,
+    "skuPublished": true,
+    "payment": "none",
+    "charged": false
+  },
+  "promisedContract": {
+    "method": "GET",
+    "route": "/extract",
+    "requiredPaths": ["ok"]
+  },
+  "output": {
+    "httpStatus": 200,
+    "body": {
+      "ok": true
+    }
+  },
+  "settlement": {
+    "operationId": "seeded-live-sku-refused",
+    "amountUsdc": "5.000",
+    "buyerClass": "unknown",
+    "validDeliveryStatus": "unknown"
+  },
+  "policy": {
+    "onInvalid": "preserve_settlement"
+  }
+}
