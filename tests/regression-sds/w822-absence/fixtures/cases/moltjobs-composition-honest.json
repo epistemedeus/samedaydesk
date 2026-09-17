@@ -1,0 +1,23 @@
+{
+  "id": "moltjobs-composition-honest",
+  "surface": "observatory",
+  "class": "honest-withheld",
+  "expectReject": false,
+  "cite": "server/lib/observatory/adapters/moltjobs.js",
+  "defect": null,
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "observatory",
+    "sourceId": "moltjobs",
+    "composition": true,
+    "refusedRatioKey": "marketplaceJobs_over_totalJobs_as_conversion",
+    "demand": false,
+    "paidDemand": false,
+    "notDemand": true,
+    "demandSignal": "withheld",
+    "withheldConclusions": ["demand", "conversion_funnel", "paid_demand_population"],
+    "additivity": "not_additive",
+    "message": "totals vs marketplace recorded as composition; conversion to paid demand withheld"
+  }
+}
