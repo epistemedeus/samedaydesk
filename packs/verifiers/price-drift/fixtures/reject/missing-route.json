@@ -1,0 +1,17 @@
+{
+  "schema": "samedaydesk.price-drift.observation.v1",
+  "id": "missing-route",
+  "sourceKind": "committed_catalog",
+  "charged": false,
+  "httpStatus": 402,
+  "purchaseAuthority": false,
+  "routes": [
+    {
+      "id": "extract",
+      "route": "/extract",
+      "method": "GET",
+      "amount": "0.005",
+      "amountAtomic": "5000"
+    }
+  ]
+}
