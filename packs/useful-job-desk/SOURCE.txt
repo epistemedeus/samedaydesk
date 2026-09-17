@@ -1,0 +1,11 @@
+Pack: useful-job-desk
+Role: caller + receipts only
+Engine: published useful-jobs 1.4.7 (client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz)
+Pin: PIN.json (bytes 5255824, sha256 e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec)
+
+This pack owns its caller files under callers/. It binds and invokes the
+published 1.4.7 CLI. It does not copy, patch, or rewrite engines/.
+It does not reopen H32 private primitives (paid-useful-jobs HTTP tickets,
+managed-useful-jobs-order, result-mailbox hosted acquisition).
+It is disjoint from tests/v6-*/**, packs/e3-changed-data-second-run/**,
+and packs/e4-maintained-runtime-discovery/**.

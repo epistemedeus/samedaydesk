@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "samedaydesk.useful-job-desk.receipt.v1",
+  "title": "useful-job-desk receipt",
+  "type": "object",
+  "required": [
+    "schema",
+    "ok",
+    "refused",
+    "delivered",
+    "code",
+    "purchaseAuthority",
+    "organicDemand",
+    "repeatDemand",
+    "h32PrivatePrimitivesReopened",
+    "engine"
+  ],
+  "properties": {
+    "schema": { "const": "samedaydesk.useful-job-desk.receipt.v1" },
+    "ok": { "type": "boolean" },
+    "refused": { "type": "boolean" },
+    "delivered": { "type": "boolean" },
+    "code": { "type": "string" },
+    "purchaseAuthority": { "const": false },
+    "organicDemand": { "const": false },
+    "repeatDemand": { "const": false },
+    "h32PrivatePrimitivesReopened": { "const": false },
+    "engine": {
+      "type": "object",
+      "required": ["version", "sha256", "enginesModified"],
+      "properties": {
+        "version": { "const": "1.4.7" },
+        "sha256": {
+          "const": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec"
+        },
+        "enginesModified": { "type": "boolean" }
+      }
+    }
+  }
+}
