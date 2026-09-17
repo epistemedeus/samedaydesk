@@ -58,3 +58,9 @@ test("unknown seeded-failure id is usage exit 2", () => {
   assert.equal(result.status, 2);
   assert.equal(result.json.error.code, "USAGE");
 });
+
+test("missing --seeded-failure value is usage exit 2", () => {
+  const result = run(["--seeded-failure", "--json"]);
+  assert.equal(result.status, 2);
+  assert.equal(result.json.error.code, "USAGE");
+});

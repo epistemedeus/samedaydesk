@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, sep } from "node:path";
 import { spawnSync } from "node:child_process";
 import { USEFUL_JOBS_PIN } from "./paths.mjs";
 
@@ -33,7 +33,10 @@ export function ensureUsefulJobsKit(root) {
   const cli = join(kit, "bin/useful-jobs.mjs");
   if (!existsSync(cli)) {
     mkdirSync(destRoot, { recursive: true });
-    const tar = spawnSync("tar", ["-xzf", archive, "-C", destRoot], { encoding: "utf8" });
+    const tar = spawnSync("tar", ["-xzf", archive, "-C", destRoot], {
+      encoding: "utf8",
+      timeout: 30_000,
+    });
     if (tar.status !== 0) {
       const error = new Error("useful_jobs_extract_failed");
       error.detail = { stderr: tar.stderr };
@@ -43,7 +46,7 @@ export function ensureUsefulJobsKit(root) {
   if (!existsSync(cli)) {
     throw new Error("useful_jobs_cli_missing");
   }
-  if (kit.startsWith(root)) {
+  if (kit.startsWith(root) || !kit.startsWith(`${destRoot}${sep}`)) {
     throw new Error("useful_jobs_extract_inside_repo");
   }
   return kit;

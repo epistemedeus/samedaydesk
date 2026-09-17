@@ -74,7 +74,8 @@
         "stdoutJson": { "type": "object" },
         "destExists": { "type": "boolean" },
         "httpStatus": { "type": "integer" },
-        "kind": { "type": "string" }
+        "kind": { "type": "string" },
+        "missing": { "type": "array", "items": { "type": "string" } }
       }
     },
     "expectCorpus": {

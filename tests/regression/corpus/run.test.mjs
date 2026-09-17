@@ -57,3 +57,10 @@ test("corpus run against real product artifacts exits 0 and catches both seeds",
   assert.equal(route.observed.json.selected, null);
   assert.equal(route.falseReject, true);
 });
+
+test("missing --case value is usage exit 2", () => {
+  const result = run(["--case", "--json"]);
+  assert.equal(result.status, 2);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "USAGE");
+});

@@ -10,6 +10,12 @@ import { executeCase } from "./lib/execute.mjs";
 import { loadCorpus } from "./lib/load.mjs";
 import { repoRoot } from "./lib/paths.mjs";
 
+function takeValue(argv, i, flag) {
+  const value = argv[i + 1];
+  if (!value || value.startsWith("-")) return { error: flag };
+  return { value, consumed: 1 };
+}
+
 function parseArgs(argv) {
   const out = { json: false, dryRun: false, caseId: null, seededFailure: null, list: false };
   for (let i = 0; i < argv.length; i++) {
@@ -17,9 +23,21 @@ function parseArgs(argv) {
     if (arg === "--json") out.json = true;
     else if (arg === "--dry-run") out.dryRun = true;
     else if (arg === "--list") out.list = true;
-    else if (arg === "--case") out.caseId = argv[++i];
-    else if (arg === "--seeded-failure") out.seededFailure = argv[++i];
-    else if (arg === "--help" || arg === "-h") out.help = true;
+    else if (arg === "--case") {
+      const taken = takeValue(argv, i, "--case");
+      if (taken.error) out.unknown = taken.error;
+      else {
+        out.caseId = taken.value;
+        i += taken.consumed;
+      }
+    } else if (arg === "--seeded-failure") {
+      const taken = takeValue(argv, i, "--seeded-failure");
+      if (taken.error) out.unknown = taken.error;
+      else {
+        out.seededFailure = taken.value;
+        i += taken.consumed;
+      }
+    } else if (arg === "--help" || arg === "-h") out.help = true;
     else {
       out.unknown = arg;
     }
@@ -56,7 +74,22 @@ async function runSelected(cases, { root, dryRun }) {
       });
       continue;
     }
-    const observed = await executeCase(loaded, { root });
+    let observed;
+    try {
+      observed = await executeCase(loaded, { root });
+    } catch (err) {
+      observed = {
+        exitCode: 64,
+        json: {
+          ok: false,
+          refused: true,
+          code: "execute-error",
+          message: String(err.message || err),
+        },
+        timedOut: false,
+        destExists: null,
+      };
+    }
     const evaluated = evaluateCase(loaded.spec, observed);
     results.push({
       ...evaluated,
@@ -206,7 +239,7 @@ if (args.seededFailure) {
       boundary: target.spec.boundary,
     }),
   );
-  process.exit(okSeed ? 1 : 1);
+  process.exit(1);
 }
 
 const results = await runSelected(selected, { root, dryRun: args.dryRun });

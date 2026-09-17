@@ -40,12 +40,13 @@ function spawnArgv(argv, { cwd, timeoutMs }) {
     env: { ...process.env, PAYMENT_SENT: "false" },
   });
   const json = parseJsonLoose(result.stdout) || parseJsonLoose(result.stderr);
+  const timedOut = result.error?.code === "ETIMEDOUT";
   return {
-    exitCode: result.status == null ? 64 : result.status,
+    exitCode: timedOut ? 124 : result.status == null ? 64 : result.status,
     stdout: result.stdout,
     stderr: result.stderr,
     json,
-    timedOut: result.signal === "SIGTERM" && result.status === null,
+    timedOut,
   };
 }
 
@@ -120,30 +121,23 @@ async function runSpaUnknown(spec, ctx) {
       kind: res.statusCode === 200 ? "ok" : "http_error",
       body: res.body,
       destExists: null,
+      timedOut: false,
     };
   } finally {
     rmSync(dist, { recursive: true, force: true });
   }
 }
 
-export async function executeCase(loaded, { root }) {
+async function runKind(loaded, ctx) {
   const spec = loaded.spec;
-  const tmp = mkdtempSync(join(tmpdir(), `sds-corpus-${spec.id}-`));
-  const ctx = {
-    root,
-    case: loaded.dir,
-    tmp,
-    node: process.execPath,
-    kit: "",
-  };
   const kind = spec.execute.kind;
 
   if (kind === "spawn" || kind === "kit-spawn") {
-    if (kind === "kit-spawn") ctx.kit = ensureUsefulJobsKit(root);
+    if (kind === "kit-spawn") ctx.kit = ensureUsefulJobsKit(ctx.root);
     const argv = spec.execute.argv.map((item) => expand(item, ctx));
     const dest = spec.execute.dest ? expand(spec.execute.dest, ctx) : null;
     const spawned = spawnArgv(argv, {
-      cwd: root,
+      cwd: ctx.root,
       timeoutMs: spec.execute.timeoutMs || 30_000,
     });
     return {
@@ -170,6 +164,7 @@ export async function executeCase(loaded, { root }) {
       kind: kindName,
       body: fixture.body,
       destExists: null,
+      timedOut: false,
     };
   }
 
@@ -178,7 +173,7 @@ export async function executeCase(loaded, { root }) {
   }
 
   if (kind === "mcp-required-tools") {
-    const { MCP_TOOL_NAMES } = await import(join(root, "server/lib/mcp-tool-inventory.js"));
+    const { MCP_TOOL_NAMES } = await import(join(ctx.root, "server/lib/mcp-tool-inventory.js"));
     const required = [...MCP_TOOL_NAMES, ...(spec.execute.requiredExtra || [])];
     const missing = required.filter((name) => !MCP_TOOL_NAMES.includes(name));
     return {
@@ -191,12 +186,13 @@ export async function executeCase(loaded, { root }) {
         toolsCalled: false,
       },
       destExists: null,
+      timedOut: false,
     };
   }
 
   if (kind === "presence-offline") {
     const { resolveForAgentsColdRead } = await import(
-      join(root, "tools/presence/for-agents-cold-read.mjs")
+      join(ctx.root, "tools/presence/for-agents-cold-read.mjs")
     );
     const result = await resolveForAgentsColdRead({
       preferFixture: true,
@@ -214,12 +210,13 @@ export async function executeCase(loaded, { root }) {
         liveObserved: result.liveObserved,
       },
       destExists: null,
+      timedOut: false,
     };
   }
 
   if (kind === "payment-replay") {
     const { inspectPaymentAuthority } = await import(
-      join(root, "tools/recurring-job-recipes/lib/payment-guard.mjs")
+      join(ctx.root, "tools/recurring-job-recipes/lib/payment-guard.mjs")
     );
     const result = inspectPaymentAuthority(
       { payment: { attempted: true, receiptId: "corpus-receipt", charged: true } },
@@ -234,8 +231,29 @@ export async function executeCase(loaded, { root }) {
         attempted: result.attempted,
       },
       destExists: null,
+      timedOut: false,
     };
   }
 
   throw new Error(`unknown_execute_kind:${kind}`);
+}
+
+export async function executeCase(loaded, { root }) {
+  const spec = loaded.spec;
+  const kind = spec.execute.kind;
+  const needsTmp = kind === "spawn" || kind === "kit-spawn";
+  const tmp = needsTmp ? mkdtempSync(join(tmpdir(), `sds-corpus-${process.pid}-${spec.id}-`)) : "";
+  const ctx = {
+    root,
+    case: loaded.dir,
+    tmp,
+    node: process.execPath,
+    kit: "",
+  };
+  try {
+    const observed = await runKind(loaded, ctx);
+    return { ...observed, timedOut: Boolean(observed.timedOut) };
+  } finally {
+    if (tmp) rmSync(tmp, { recursive: true, force: true });
+  }
 }

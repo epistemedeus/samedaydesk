@@ -106,6 +106,13 @@ export function evaluateCase(spec, observed) {
       actual: observed.json?.missing,
     });
   }
+  if (observed.timedOut) {
+    mismatches.push({
+      path: "timedOut",
+      expected: false,
+      actual: true,
+    });
+  }
 
   const honestCasePass = mismatches.length === 0;
   const naiveCasePass = naive === "accept";
@@ -127,6 +134,7 @@ export function evaluateCase(spec, observed) {
       httpStatus: observed.httpStatus ?? null,
       kind: observed.kind ?? null,
       destExists: observed.destExists ?? null,
+      timedOut: Boolean(observed.timedOut),
     },
   };
 }

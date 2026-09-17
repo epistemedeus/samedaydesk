@@ -6,6 +6,67 @@ export function readJson(path) {
   return JSON.parse(readFileSync(path, "utf8"));
 }
 
+function assertAllowed(value, allowed, label) {
+  if (!allowed.includes(value)) throw new Error(`${label}:${value}`);
+}
+
+export function validateCaseSpec(spec, schema, id = spec?.id) {
+  if (!spec || typeof spec !== "object" || Array.isArray(spec)) {
+    throw new Error(`case_not_object:${id}`);
+  }
+  for (const key of schema.required) {
+    if (spec[key] === undefined) throw new Error(`case_missing:${id}:${key}`);
+  }
+  if (schema.additionalProperties === false) {
+    for (const key of Object.keys(spec)) {
+      if (!(key in schema.properties)) throw new Error(`case_unknown_field:${id}:${key}`);
+    }
+  }
+  if (spec.schemaVersion !== 1) throw new Error(`case_schema:${id}`);
+  if (spec.repo !== "samedaydesk") throw new Error(`case_repo:${id}`);
+  assertAllowed(spec.surface, schema.properties.surface.enum, `case_surface:${id}`);
+  assertAllowed(spec.class, schema.properties.class.enum, `case_class:${id}`);
+  assertAllowed(spec.source?.kind, schema.properties.source.properties.kind.enum, `case_source:${id}`);
+  assertAllowed(spec.execute?.kind, schema.properties.execute.properties.kind.enum, `case_execute:${id}`);
+  assertAllowed(
+    spec.expectCorpus?.productVerdict,
+    schema.properties.expectCorpus.properties.productVerdict.enum,
+    `case_verdict:${id}`,
+  );
+  assertAllowed(
+    spec.expectCorpus?.naiveRule,
+    schema.properties.expectCorpus.properties.naiveRule.enum,
+    `case_naive:${id}`,
+  );
+  if (spec.boundary?.paymentSent !== false || spec.boundary?.toolsCalled !== false) {
+    throw new Error(`case_boundary:${id}`);
+  }
+  if (Array.isArray(spec.roles)) {
+    for (const role of spec.roles) {
+      assertAllowed(role, schema.properties.roles.items.enum, `case_role:${id}`);
+    }
+  }
+  if (spec.class === "seeded-false-accept" && !spec.roles?.includes("seeded-false-accept")) {
+    throw new Error(`case_roles:${id}`);
+  }
+  if (spec.class === "seeded-false-reject" && !spec.roles?.includes("seeded-false-reject")) {
+    throw new Error(`case_roles:${id}`);
+  }
+  if ((spec.execute.kind === "spawn" || spec.execute.kind === "kit-spawn") && !Array.isArray(spec.execute.argv)) {
+    throw new Error(`case_argv:${id}`);
+  }
+  if (spec.execute.kind === "classify-http" && !spec.execute.fixture) {
+    throw new Error(`case_fixture:${id}`);
+  }
+}
+
+export function assertCatalogRowMatchesSpec(row, spec) {
+  if (!row || row.id !== spec.id) throw new Error(`catalog_row_mismatch:${spec.id}`);
+  if (row.surface !== spec.surface || row.feature !== spec.feature || row.class !== spec.class) {
+    throw new Error(`catalog_row_mismatch:${spec.id}`);
+  }
+}
+
 export function loadCatalog() {
   const catalog = readJson(CATALOG_PATH);
   if (catalog.schemaVersion !== 1) throw new Error("catalog_schema");
@@ -24,15 +85,11 @@ export function discoverCaseIds() {
     .sort();
 }
 
-export function loadCase(id) {
+export function loadCase(id, schema = readJson(SCHEMA_PATH)) {
   const dir = join(CASES_DIR, id);
   const spec = readJson(join(dir, "case.json"));
   if (spec.id !== id) throw new Error(`case_id_mismatch:${id}`);
-  if (spec.schemaVersion !== 1) throw new Error(`case_schema:${id}`);
-  if (spec.repo !== "samedaydesk") throw new Error(`case_repo:${id}`);
-  if (spec.boundary?.paymentSent !== false || spec.boundary?.toolsCalled !== false) {
-    throw new Error(`case_boundary:${id}`);
-  }
+  validateCaseSpec(spec, schema, id);
   return { id, dir, spec };
 }
 
@@ -49,12 +106,18 @@ export function loadCorpus() {
     throw error;
   }
   const cases = catalogIds.map((id) => {
-    const loaded = loadCase(id);
+    const loaded = loadCase(id, schema);
     const row = catalog.cases.find((item) => item.id === id);
-    if (row.surface !== loaded.spec.surface || row.feature !== loaded.spec.feature) {
-      throw new Error(`catalog_row_mismatch:${id}`);
-    }
+    assertCatalogRowMatchesSpec(row, loaded.spec);
     return loaded;
   });
+  const seededAccept = cases.find((item) => item.id === catalog.seededFalseAccept);
+  if (!seededAccept || seededAccept.spec.class !== "seeded-false-accept") {
+    throw new Error("catalog_seeded_false_accept");
+  }
+  const seededReject = cases.find((item) => item.id === catalog.seededFalseReject);
+  if (!seededReject || seededReject.spec.class !== "seeded-false-reject") {
+    throw new Error("catalog_seeded_false_reject");
+  }
   return { catalog, schema, cases };
 }
