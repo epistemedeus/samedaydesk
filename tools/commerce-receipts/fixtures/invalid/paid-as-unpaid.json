@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipt.v1",
+  "receiptId": "cr_seed_paid_as_unpaid",
+  "kind": "unpaid_payment_required",
+  "statusClass": "unpaid",
+  "origin": "https://agents.samedaydesk.com",
+  "resource": "https://agents.samedaydesk.com/extract?url=https://example.com",
+  "route": "/extract",
+  "method": "GET",
+  "httpStatus": 402,
+  "charged": false,
+  "paymentSent": false,
+  "observedAt": "2026-08-29T20:31:18.000Z",
+  "completeness": "truncated",
+  "authorityClass": "seller_observed",
+  "request": {
+    "method": "GET",
+    "url": "https://agents.samedaydesk.com/extract?url=https://example.com",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "accepts": [
+    {
+      "scheme": "exact",
+      "network": "eip155:8453",
+      "amount": "5000",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    }
+  ],
+  "settlement": {
+    "operationId": "agent402-external-validation-purchase-2026-08-29",
+    "amountUsdc": "0.010",
+    "transaction": "0x2916cfe2c5200fca2a21f8b854fe963ef70d4ed90d59c7444cef16dd21056ef7",
+    "facilitatorOrPayoutRef": "x402_v2_coinbase_cdp"
+  },
+  "joinKeys": ["receipt_id", "resource", "amount", "pay_to"],
+  "source": {
+    "kind": "live_unpaid_402",
+    "path": "tools/evidence-records/fixtures/settlements/agent402-external-validation-purchase-2026-08-29.json",
+    "note": "Seeded failure: statusClass unpaid with a facilitator settlement transaction attached."
+  },
+  "unknownWhenAbsent": [
+    "paid_body"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "offer_is_settlement",
+    "http_402_is_delivery",
+    "payment_header_is_unpaid"
+  ]
+}
