@@ -1,0 +1,23 @@
+{
+  "name": "@samedaydesk/listing-repair-verifier",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "R14-01 SDS listing-repair oracle over useful-jobs 1.4.7 packets. Rejects stale, fabricated, false, and publish attempts. Never publishes a catalog.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "listing-repair-verifier": "./bin/listing-repair-verifier.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "verify": "node ./bin/listing-repair-verifier.mjs verify",
+    "stamp-fixtures": "node ./src/stamp-fixtures.mjs"
+  },
+  "license": "MIT"
+}
