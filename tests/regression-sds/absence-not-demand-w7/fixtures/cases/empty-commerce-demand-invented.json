@@ -1,0 +1,20 @@
+{
+  "id": "empty-commerce-demand-invented",
+  "surface": "commerce-demand",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "expectedReasons": ["absence_as_demand", "empty_commerce_demand_invented"],
+  "defect": "Empty /v0/commerce-demand.json payload invented as positive paid demand.",
+  "output": {
+    "ok": true,
+    "verdict": "demand",
+    "surface": "commerce-demand",
+    "commerceDemandEmpty": true,
+    "commerceDemand": [],
+    "paidDemand": true,
+    "demandCount": 7,
+    "demandSignal": "high",
+    "inventedDemand": true,
+    "message": "invented demand from empty commerce-demand"
+  }
+}
