@@ -1,0 +1,69 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "0",
+    "displayUsdc": "0.00",
+    "meaning": "Caller-owned held extract-batch. Not a live fetch or payment."
+  },
+  "jobId": "e3b0000000000000000000000000000000000000000000000000000000000002",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "https://example.test/e3/independent-catalog",
+      "status": "success",
+      "data": {
+        "title": "Independent catalog v2",
+        "description": "Declared-independent catalog description. Not organic demand.",
+        "headings": {
+          "h1": ["Independent catalog v2"],
+          "h2": ["Catalog"]
+        }
+      },
+      "notes": [],
+      "error": null,
+      "finalUrl": "https://example.test/e3/independent-catalog",
+      "httpStatus": 200,
+      "provenance": {
+        "transport": "held-local-sentinel",
+        "requestedAt": "2026-09-17T14:00:00.000Z",
+        "completedAt": "2026-09-17T14:00:00.000Z",
+        "fetchedAt": "2026-09-17T14:00:00.000Z",
+        "finalUrl": "https://example.test/e3/independent-catalog",
+        "httpStatus": 200,
+        "note": "Declared-independent held sentinel. Not page-content freshness and not organic demand."
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 1,
+    "bytes": 820,
+    "wallMs": 5,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 820,
+    "requests": 1,
+    "wallMs": 5,
+    "hostingCosts": "none",
+    "modelCosts": "none",
+    "monetaryMargin": null,
+    "note": "Held local sentinel; not socket billing."
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": false,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}

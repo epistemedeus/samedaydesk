@@ -1,0 +1,22 @@
+{
+  "schema": "samedaydesk.e3-changed-data-second-run.v1",
+  "jobId": "page-change-offline-job",
+  "demandClass": "repeat_demand",
+  "organicDemand": true,
+  "note": "SEEDED FAILURE. Same held fixture twice labelled as repeat demand. A naive runner that treats two CLI successes as demand would accept this. This caller must refuse.",
+  "runs": [
+    {
+      "id": "run-1",
+      "evidenceClass": "owner_qa",
+      "callerIdentity": "pack-operator",
+      "jobPath": "../owner-qa/run-1/job.json"
+    },
+    {
+      "id": "run-2",
+      "evidenceClass": "owner_qa",
+      "callerIdentity": "pack-operator",
+      "demandClass": "repeat_demand",
+      "jobPath": "../owner-qa/run-1/job.json"
+    }
+  ]
+}
