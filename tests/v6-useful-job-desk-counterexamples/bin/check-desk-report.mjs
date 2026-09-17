@@ -9,13 +9,29 @@ import { resolve } from "node:path";
 import { checkDeskReport, fail } from "../lib/check-report.mjs";
 import { SEEDED_REPORT } from "../lib/paths.mjs";
 
+function takeValue(argv, i, flag) {
+  const value = argv[i + 1];
+  if (value === undefined || value.startsWith("-")) {
+    return { error: fail("usage", `${flag} requires a value`) };
+  }
+  return { value };
+}
+
 function parseArgs(argv) {
   const args = { reportPath: null, outDir: null, seeded: false, pretty: true };
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
-    if (a === "--report") args.reportPath = argv[++i];
-    else if (a === "--out-dir") args.outDir = argv[++i];
-    else if (a === "--seeded-fixture") {
+    if (a === "--report") {
+      const taken = takeValue(argv, i, "--report");
+      if (taken.error) return taken;
+      args.reportPath = taken.value;
+      i += 1;
+    } else if (a === "--out-dir") {
+      const taken = takeValue(argv, i, "--out-dir");
+      if (taken.error) return taken;
+      args.outDir = taken.value;
+      i += 1;
+    } else if (a === "--seeded-fixture") {
       args.seeded = true;
       args.reportPath = SEEDED_REPORT;
     } else if (a === "--compact") args.pretty = false;

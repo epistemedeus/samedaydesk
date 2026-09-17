@@ -1,5 +1,5 @@
 import { existsSync, statSync } from "node:fs";
-import { isAbsolute, join, resolve } from "node:path";
+import { isAbsolute, relative, resolve } from "node:path";
 import { loadCommittedCatalog, promisedOutputs } from "./catalog.mjs";
 import {
   extractJsonObjects,
@@ -32,19 +32,38 @@ export function fail(failureClass, message, extra = {}) {
   };
 }
 
+export function hasDeliveredFlag(report) {
+  if (!report || typeof report !== "object") return false;
+  return (
+    report.delivered === true ||
+    report.status === "delivered" ||
+    report.delivery?.complete === true ||
+    report.delivery?.status === "complete"
+  );
+}
+
 export function claimsDelivered(report) {
   if (!report || typeof report !== "object") return false;
-  if (report.delivered === true) return true;
-  if (report.status === "delivered") return true;
-  if (report.delivery?.complete === true) return true;
-  if (report.delivery?.status === "complete") return true;
+  if (hasDeliveredFlag(report)) return true;
   if (report.ok === true && report.refused !== true) return true;
   return false;
 }
 
+function outputStaysInOutDir(outDir, name) {
+  if (!outDir || typeof name !== "string" || !name.trim() || name.includes("\0")) {
+    return false;
+  }
+  const root = resolve(outDir);
+  const target = resolve(root, name);
+  const rel = relative(root, target);
+  if (!rel || isAbsolute(rel)) return false;
+  if (rel.split(/[\\/]/).some((part) => part === "..")) return false;
+  return true;
+}
+
 function isPresentFile(outDir, name) {
-  if (!outDir) return false;
-  const p = join(outDir, name);
+  if (!outputStaysInOutDir(outDir, name)) return false;
+  const p = resolve(outDir, name);
   try {
     return existsSync(p) && statSync(p).isFile();
   } catch {
@@ -68,10 +87,6 @@ export function resolveReportOutDir(report, { reportPath = null, outDir = null }
   return resolve(base, declared);
 }
 
-/**
- * Black-box honesty check for a useful-job desk report.
- * Does not import engines or J6 desk internals.
- */
 export function checkDeskReport(report, options = {}) {
   if (!report || typeof report !== "object" || Array.isArray(report)) {
     return fail("missing_report", "desk report is not a JSON object");
@@ -84,21 +99,29 @@ export function checkDeskReport(report, options = {}) {
   const files = inspectOutputs(outDir, expected);
   const deliveredClaim = claimsDelivered(report);
   const parseableFailure = parseableErrorFields(report);
+  const extra = {
+    seeded: options.seeded === true ? "missing_output_reported_delivered" : undefined,
+    jobId,
+    outDir,
+    expected: files.expected,
+    present: files.present,
+    missing: files.missing,
+    deliveredClaim: true,
+  };
 
-  if (deliveredClaim && files.missing.length) {
-    return fail(
-      "missing_output_reported_delivered",
-      `missing output cannot report delivered: ${files.missing.join(", ")}`,
-      {
-        seeded: options.seeded === true ? "missing_output_reported_delivered" : undefined,
-        jobId,
-        outDir,
-        expected: files.expected,
-        present: files.present,
-        missing: files.missing,
-        deliveredClaim: true,
-      },
-    );
+  if (deliveredClaim && (files.missing.length > 0 || files.expected.length === 0)) {
+    const message =
+      files.expected.length === 0
+        ? "delivered claim with no catalog-promised output files"
+        : `missing output cannot report delivered: ${files.missing.join(", ")}`;
+    return fail("missing_output_reported_delivered", message, extra);
+  }
+
+  if (parseableFailure && hasDeliveredFlag(report)) {
+    return fail("delivered_claim_on_failure", "failure report also claimed delivered", {
+      jobId,
+      outDir,
+    });
   }
 
   if (deliveredClaim) {
@@ -120,13 +143,6 @@ export function checkDeskReport(report, options = {}) {
       "failure is not parseable JSON with ok:false and error or code",
       { jobId, outDir, expected: files.expected, present: files.present, missing: files.missing },
     );
-  }
-
-  if (report.delivered === true || report.status === "delivered" || report.delivery?.complete === true) {
-    return fail("delivered_claim_on_failure", "failure report also claimed delivered", {
-      jobId,
-      outDir,
-    });
   }
 
   return {
@@ -174,26 +190,34 @@ export function checkDeskProcess(proc, options = {}) {
       });
     }
     const checked = checkDeskReport(
-      { ...merged, ok: merged.ok !== false },
+      { ...merged, ok: true, refused: false },
       { ...options, outDir: options.outDir || merged.outDir },
     );
     if (checked.ok !== true) return { ...checked, status };
+    if (parseableErrorFields(merged)) {
+      return {
+        ...fail("delivered_claim_on_failure", "exit 0 with a parseable failure report", {
+          jobId: merged.jobId,
+        }),
+        status,
+      };
+    }
     return { ...checked, status };
   }
 
-  const fromProc =
-    (parseableErrorFromProcess && parseableErrorFromProcess({ stdout, stderr })) ||
-    parseableErrorFields(merged);
+  const fromProc = parseableErrorFromProcess({ stdout, stderr }) || parseableErrorFields(merged);
 
   if (merged && claimsDelivered(merged)) {
     const checked = checkDeskReport(merged, { ...options, outDir: options.outDir || merged.outDir });
     if (checked.failure?.class === "missing_output_reported_delivered") {
       return { ...checked, status };
     }
-    return fail("delivered_claim_on_failure", "nonzero exit claimed delivered", {
+    return {
+      ...fail("delivered_claim_on_failure", "nonzero exit claimed delivered", {
+        jobId: merged.jobId,
+      }),
       status,
-      jobId: merged.jobId,
-    });
+    };
   }
 
   if (!fromProc) {

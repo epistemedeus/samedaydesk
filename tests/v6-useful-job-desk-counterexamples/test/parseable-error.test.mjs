@@ -58,6 +58,9 @@ test("parseableErrorFields requires ok:false plus error or code", () => {
   });
   assert.equal(parsed.parseable, true);
   assert.equal(parsed.code, "missing-required-inputs");
+  assert.equal(parsed.refused, true);
+  const notRefused = parseableErrorFields({ ok: false, error: "plain" });
+  assert.equal(notRefused.refused, false);
 });
 
 test("findParseableError reads JSON from mixed stderr", () => {

@@ -54,8 +54,15 @@ test("real CLI --example writes both promised files; delivered claim is honest",
   assert.equal(proc.status, 0, proc.stderr || proc.stdout);
   assert.equal(existsSync(join(outDir, "pin-delta.json")), true);
   assert.equal(existsSync(join(outDir, "pin-delta.md")), true);
+  const native = extractJsonObjects(proc.stdout)[0];
+  assert.equal(native.ok, true);
+  assert.equal(native.appId, "lockfile-pin-delta");
+  const processChecked = checkDeskProcess(proc, { jobId: "lockfile-pin-delta", outDir });
+  assert.equal(processChecked.ok, true, JSON.stringify(processChecked));
+  assert.equal(processChecked.delivered, true);
+  assert.equal(processChecked.status, 0);
   const report = {
-    ...extractJsonObjects(proc.stdout)[0],
+    ...native,
     jobId: "lockfile-pin-delta",
     outDir,
     delivered: true,

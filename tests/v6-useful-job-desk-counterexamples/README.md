@@ -21,7 +21,9 @@ Existing surfaces consumed (not invented):
 `delivery.complete` / `delivery.status: "complete"` is a delivery claim.
 The catalog's `outputs` for that `jobId` must all exist as regular files
 under the report's `outDir`. Missing even one file is
-`missing_output_reported_delivered`.
+`missing_output_reported_delivered`. A delivery claim with no promised
+outputs, or an output name that escapes `outDir`, is the same refusal.
+`ok: false` plus a delivered flag is `delivered_claim_on_failure`.
 
 A naive `if (report.ok) accept` would accept the seeded fixture. This
 oracle does not.

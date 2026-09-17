@@ -51,24 +51,49 @@ test("SOURCE-NOTICE records the J6 disjoint and engine kill", () => {
   assert.match(notice, /missing-output-reported-delivered/);
 });
 
-test("git diff vs HEAD does not touch production engines", () => {
-  const diff = spawnSync("git", ["diff", "--name-only", "HEAD"], {
-    encoding: "utf8",
-    cwd: REPO_ROOT,
-  });
-  const untracked = spawnSync("git", ["ls-files", "--others", "--exclude-standard"], {
-    encoding: "utf8",
-    cwd: REPO_ROOT,
-  });
-  const names = `${diff.stdout || ""}\n${untracked.stdout || ""}`
+function git(args) {
+  return spawnSync("git", args, { encoding: "utf8", cwd: REPO_ROOT });
+}
+
+function lines(stdout) {
+  return String(stdout || "")
     .split("\n")
     .map((s) => s.trim())
     .filter(Boolean);
-  assert.ok(names.length > 0, "expected pack files to be untracked or modified");
-  for (const name of names) {
-    assert.equal(name.startsWith("engines/"), false, name);
-    assert.equal(name.includes("/engines/"), false, name);
-    assert.equal(name.startsWith("packs/useful-job-desk"), false, name);
-    assert.match(name, /^tests\/v6-useful-job-desk-counterexamples\//, name);
+}
+
+function assertInPack(name, label) {
+  assert.equal(name.startsWith("engines/"), false, `${label}: ${name}`);
+  assert.equal(name.includes("/engines/"), false, `${label}: ${name}`);
+  assert.equal(name.startsWith("packs/useful-job-desk"), false, `${label}: ${name}`);
+  assert.match(name, /^tests\/v6-useful-job-desk-counterexamples\//, `${label}: ${name}`);
+}
+
+test("branch and dirty tree stay inside the write boundary", () => {
+  const tracked = lines(git(["ls-files", "tests/v6-useful-job-desk-counterexamples"]).stdout);
+  assert.ok(tracked.length > 0, "expected tracked pack files");
+  for (const name of tracked) assertInPack(name, "tracked");
+
+  const dirty = [
+    ...lines(git(["diff", "--name-only", "HEAD"]).stdout),
+    ...lines(git(["diff", "--name-only", "--cached"]).stdout),
+    ...lines(git(["ls-files", "--others", "--exclude-standard"]).stdout),
+  ];
+  for (const name of dirty) assertInPack(name, "dirty");
+
+  const shas = lines(git(["log", "--pretty=%H", "-n", "50"]).stdout);
+  let base = null;
+  for (const sha of shas) {
+    const parent = git(["rev-parse", "--verify", "--quiet", `${sha}^`]);
+    if (parent.status !== 0) continue;
+    const changed = lines(git(["diff", "--name-only", `${sha}^`, sha]).stdout);
+    if (changed.some((name) => !name.startsWith("tests/v6-useful-job-desk-counterexamples/"))) {
+      base = sha;
+      break;
+    }
   }
+  assert.ok(base, "expected an ancestor commit outside the pack");
+  const branch = lines(git(["diff", "--name-only", `${base}...HEAD`]).stdout);
+  assert.ok(branch.length > 0, "expected pack files vs the last non-pack ancestor");
+  for (const name of branch) assertInPack(name, "branch");
 });

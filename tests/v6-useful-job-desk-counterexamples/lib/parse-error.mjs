@@ -69,7 +69,7 @@ export function parseableErrorFields(obj) {
   return {
     ok: false,
     parseable: true,
-    refused: obj.refused === true || true,
+    refused: obj.refused === true,
     code: code || "unspecified-error",
     error: error || code,
     detail: obj.detail && typeof obj.detail === "object" ? obj.detail : obj.failure || null,
