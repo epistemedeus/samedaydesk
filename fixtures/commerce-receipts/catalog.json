@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipt.catalog.v1",
+  "recordSchemaVersion": "samedaydesk.commerce-receipt.v1",
+  "product": "samedaydesk-commerce-receipts",
+  "pack": "unpaid-only",
+  "statusClasses": ["unpaid"],
+  "kinds": [
+    "unpaid_payment_required",
+    "unpaid_offer",
+    "unpaid_probe",
+    "unpaid_buyer_stop"
+  ],
+  "completeness": ["complete", "sampled", "truncated", "unknown"],
+  "authorityClasses": [
+    "seller_observed",
+    "provider_returned",
+    "independently_reconciled",
+    "provider_authoritative"
+  ],
+  "sourceKinds": [
+    "live_unpaid_402",
+    "lqdist1_followup_probe",
+    "buyer_runtime_fixture",
+    "catalog_x402"
+  ],
+  "requiredJoinKeys": ["receipt_id", "resource", "amount", "pay_to"],
+  "requiredProhibitedInferences": [
+    "paid_as_unpaid",
+    "offer_is_settlement",
+    "http_402_is_delivery",
+    "payment_header_is_unpaid"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "offer_is_settlement",
+    "http_402_is_delivery",
+    "payment_header_is_unpaid",
+    "empty_402_body_is_delivery"
+  ],
+  "pin": {
+    "origin": "https://agents.samedaydesk.com",
+    "scheme": "exact",
+    "network": "eip155:8453",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+  },
+  "designatedSeed": {
+    "id": "paid-as-unpaid",
+    "file": "invalid/paid-as-unpaid.json",
+    "code": "paid_as_unpaid",
+    "naiveRule": "statusClass-unpaid"
+  },
+  "boundary": {
+    "paymentSent": false,
+    "checkoutMutated": false,
+    "registryMutated": false,
+    "published": false,
+    "statement": "Unpaid-only SDS commerce receipt fixtures. HTTP 402 and unpaid buyer stop are not settlement. A paid body, payment header, charged flag, or transaction labeled unpaid is paid_as_unpaid."
+  }
+}
