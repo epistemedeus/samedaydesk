@@ -1,0 +1,34 @@
+{
+  "schema": "samedaydesk.price-drift.observation.v1",
+  "id": "extra-sku",
+  "sourceKind": "committed_catalog",
+  "charged": false,
+  "httpStatus": 402,
+  "purchaseAuthority": false,
+  "newSku": true,
+  "routes": [
+    {
+      "id": "extract",
+      "route": "/extract",
+      "method": "GET",
+      "amount": "0.005",
+      "amountAtomic": "5000"
+    },
+    {
+      "id": "seller-integrity-audit",
+      "route": "/commerce/seller-integrity-audit",
+      "method": "GET",
+      "amount": "0.01",
+      "amountAtomic": "10000"
+    },
+    {
+      "id": "verifier-as-sku",
+      "route": "/commerce/price-drift-eval",
+      "method": "GET",
+      "amount": "5.00",
+      "amountAtomic": "5000000",
+      "proposed": true,
+      "newSku": true
+    }
+  ]
+}
