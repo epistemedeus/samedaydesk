@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { findRepoRoot, PIN } from "./paths.mjs";
-import { sha256Buffer, sha256File } from "./hash.mjs";
+import { sha256Buffer, sha256File, sha256Tree } from "./hash.mjs";
 
 function refuse(code, message, extra = {}) {
   const err = new Error(message);
@@ -81,6 +81,20 @@ export function bindEngine({ repoRoot, archivePath } = {}) {
     refuse("cli-missing", `extracted 1.4.7 is missing ${PIN.engine.cli} or engines/`);
   }
 
+  const enginesTree = sha256Tree(enginesDir);
+  if (
+    PIN.engine.enginesTreeSha256 &&
+    (enginesTree.sha256 !== PIN.engine.enginesTreeSha256 ||
+      enginesTree.fileCount !== PIN.engine.enginesFileCount)
+  ) {
+    refuse("engines-rewritten", "extracted engines/ tree does not match the 1.4.7 pin", {
+      observedSha256: enginesTree.sha256,
+      expectedSha256: PIN.engine.enginesTreeSha256,
+      observedFileCount: enginesTree.fileCount,
+      expectedFileCount: PIN.engine.enginesFileCount,
+    });
+  }
+
   return {
     repoRoot: root,
     archive,
@@ -92,6 +106,8 @@ export function bindEngine({ repoRoot, archivePath } = {}) {
     enginesDir,
     catalogPath,
     kitMatches,
+    enginesTreeSha256: enginesTree.sha256,
+    enginesFileCount: enginesTree.fileCount,
     purchaseAuthority: false,
     hostedAcquisition: false,
   };

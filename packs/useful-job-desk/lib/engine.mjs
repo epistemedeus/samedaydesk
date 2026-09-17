@@ -1,6 +1,7 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { spawnSync } from "node:child_process";
-import { join } from "node:path";
+import { isAbsolute, join, relative, resolve } from "node:path";
+import { outputFingerprint } from "./hash.mjs";
 import { PIN } from "./paths.mjs";
 
 function parseJsonBlobs(text) {
@@ -35,12 +36,59 @@ export function promisedOutputs(kitRoot, jobId) {
   }
 }
 
+export function outputStaysInOutDir(outDir, name) {
+  if (!outDir || typeof name !== "string" || !name.trim() || name.includes("\0")) return false;
+  const root = resolve(outDir);
+  const target = resolve(root, name);
+  const rel = relative(root, target);
+  if (!rel || isAbsolute(rel)) return false;
+  if (rel.split(/[\\/]/).some((part) => part === "..")) return false;
+  return true;
+}
+
+export function isPresentFile(outDir, name) {
+  if (!outputStaysInOutDir(outDir, name)) return false;
+  const p = resolve(outDir, name);
+  try {
+    return existsSync(p) && statSync(p).isFile();
+  } catch {
+    return false;
+  }
+}
+
 export function outputsPresent(outDir, names) {
   if (!outDir || !names?.length) return [];
-  return names.filter((name) => existsSync(join(outDir, name)));
+  return names.filter((name) => isPresentFile(outDir, name));
+}
+
+function argsIncludeExample(args) {
+  return args.some((a) => a === "--example" || a.startsWith("--example="));
 }
 
 export function runPublishedJob(bound, { job, args = [], outDir } = {}) {
+  if (argsIncludeExample(args)) {
+    return {
+      job,
+      argv: ["node", PIN.engine.cli, "run", job, ...args],
+      status: 2,
+      stdout: "",
+      stderr: "",
+      engineJson: null,
+      digest: null,
+      outputFingerprint: null,
+      engineStatus: null,
+      outDir: outDir || null,
+      promisedOutputs: promisedOutputs(bound.kitRoot, job),
+      presentOutputs: [],
+      missingOutputs: promisedOutputs(bound.kitRoot, job),
+      delivered: false,
+      code: "example-not-caller-file",
+      cliInvoked: false,
+      engineVersion: bound.version,
+      engineSha256: bound.sha256,
+    };
+  }
+
   const cli = bound.cli;
   const argv = ["run", job, ...args];
   if (outDir && !args.includes("--out-dir")) {
@@ -58,12 +106,14 @@ export function runPublishedJob(bound, { job, args = [], outDir } = {}) {
   const stdout = r.stdout || "";
   const stderr = r.stderr || "";
   const parsed = [...parseJsonBlobs(stdout), ...parseJsonBlobs(stderr)];
-  const engineJson = parsed.find((j) => j && typeof j === "object" && (j.appId || j.ok !== undefined)) || null;
+  const engineJson =
+    parsed.find((j) => j && typeof j === "object" && (j.appId || j.ok !== undefined)) || null;
   const promised = promisedOutputs(bound.kitRoot, job);
   const present = outputsPresent(outDir, promised);
   const engineOk = r.status === 0 && engineJson?.ok !== false;
   const missing = promised.filter((name) => !present.includes(name));
   const delivered = Boolean(engineOk && promised.length > 0 && missing.length === 0);
+  const fingerprint = delivered ? outputFingerprint(outDir, promised) : null;
 
   return {
     job,
@@ -73,6 +123,7 @@ export function runPublishedJob(bound, { job, args = [], outDir } = {}) {
     stderr,
     engineJson,
     digest: engineJson?.digest || null,
+    outputFingerprint: fingerprint,
     engineStatus: engineJson?.status || null,
     outDir: outDir || engineJson?.outDir || null,
     promisedOutputs: promised,

@@ -45,7 +45,10 @@ test("verify binds published 1.4.7, leaves engines unmodified, records seeded re
   assert.equal(body.engine.version, "1.4.7");
   assert.equal(body.engine.sha256, PIN.engine.sha256);
   assert.equal(body.engine.enginesModified, false);
+  assert.equal(body.engine.enginesSha256Before, PIN.engine.enginesTreeSha256);
   assert.equal(body.engine.enginesSha256Before, body.engine.enginesSha256After);
+  assert.equal(body.seededFailure.cliInvoked, true);
+  assert.equal(body.seededFailure.status, 2);
   assert.equal(body.engine.cliInvoked, true);
   assert.equal(body.seededFailure.refused, true);
   assert.equal(body.seededFailure.delivered, false);

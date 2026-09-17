@@ -14,7 +14,9 @@ Pin: `5255824` bytes, sha256
 3. Run owned callers through `bin/useful-jobs.mjs`.
 4. Run a changed-input second pass without overwriting caller files.
 5. Write an honest receipt. `delivered` requires engine exit 0 and promised
-   output files. Repeat demand stays false.
+   output files as regular files. Changed-input repeats compare a stable
+   output fingerprint, not a `generatedAt`-tainted digest. Repeat demand
+   stays false.
 
 Disjoint from `tests/v6-*/**`, `packs/e3-changed-data-second-run/**`, and
 `packs/e4-maintained-runtime-discovery/**`.

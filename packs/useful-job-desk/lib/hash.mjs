@@ -44,3 +44,44 @@ export function fileRecord(filePath, { packRoot } = {}) {
     sha256: sha256Buffer(buf),
   };
 }
+
+const VOLATILE_OUTPUT_KEYS = new Set(["generatedAt", "outDir", "caller", "digest"]);
+
+export function stripVolatile(value) {
+  if (Array.isArray(value)) return value.map(stripVolatile);
+  if (value && typeof value === "object") {
+    const out = {};
+    for (const key of Object.keys(value).sort()) {
+      if (VOLATILE_OUTPUT_KEYS.has(key)) continue;
+      out[key] = stripVolatile(value[key]);
+    }
+    return out;
+  }
+  return value;
+}
+
+export function fileFingerprint(filePath) {
+  const buf = readFileSync(filePath);
+  if (filePath.endsWith(".json")) {
+    try {
+      return sha256Buffer(Buffer.from(`${JSON.stringify(stripVolatile(JSON.parse(buf.toString("utf8"))))}\n`));
+    } catch {
+      return sha256Buffer(buf);
+    }
+  }
+  return sha256Buffer(buf);
+}
+
+export function outputFingerprint(outDir, names) {
+  const list = [...(names || [])].sort();
+  if (!outDir || list.length === 0) return null;
+  const h = createHash("sha256");
+  for (const name of list) {
+    const abs = join(outDir, name);
+    h.update(name);
+    h.update("\0");
+    h.update(fileFingerprint(abs));
+    h.update("\0");
+  }
+  return h.digest("hex");
+}

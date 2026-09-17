@@ -23,3 +23,8 @@ export function parseReceipt(r) {
   }
   return JSON.parse(text);
 }
+
+export function resolveReportedOutDir(outDir) {
+  if (!outDir) return outDir;
+  return outDir.startsWith("/") ? outDir : join(PACK_ROOT, outDir);
+}

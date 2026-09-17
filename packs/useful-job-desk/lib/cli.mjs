@@ -1,11 +1,14 @@
+import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { join, resolve } from "node:path";
-import { tmpdir } from "node:os";
+import { isAbsolute, join, relative, resolve } from "node:path";
 import { bindEngine } from "./bind.mjs";
 import { runPublishedJob } from "./engine.mjs";
 import { fileRecord, sha256File, sha256Tree } from "./hash.mjs";
 import { DESK_JOBS, H32_PRIVATE_MARKERS, PACK_ROOT, PIN } from "./paths.mjs";
+import { evaluateRepeatLabel, isLabelledRepeatDemand } from "./repeat.mjs";
 import { baseReceipt, honestDelivered, printReceipt, writeReceipt } from "./receipt.mjs";
+
+const JOB_ID = /^[a-z0-9-]+$/;
 
 export function parseArgs(argv) {
   const out = { _: [] };
@@ -16,11 +19,18 @@ export function parseArgs(argv) {
       break;
     }
     if (a.startsWith("--")) {
-      const key = a.slice(2);
+      const body = a.slice(2);
+      const eq = body.indexOf("=");
+      if (eq !== -1) {
+        const key = body.slice(0, eq);
+        const value = body.slice(eq + 1);
+        out[key] = value === "" || value === "true" ? true : value === "false" ? false : value;
+        continue;
+      }
       const next = argv[i + 1];
-      if (!next || next.startsWith("--")) out[key] = true;
+      if (!next || next.startsWith("--")) out[body] = true;
       else {
-        out[key] = next;
+        out[body] = next;
         i += 1;
       }
     } else out._.push(a);
@@ -64,6 +74,31 @@ function refuse(code, message, extra = {}, exitCode = 2) {
     }),
     exitCode,
   );
+}
+
+function publicPath(filePath) {
+  if (!filePath) return filePath;
+  const abs = resolve(String(filePath));
+  const rel = relative(PACK_ROOT, abs);
+  if (rel && !rel.startsWith("..") && !isAbsolute(rel)) return rel;
+  return abs;
+}
+
+function assertJobId(job) {
+  if (!job) refuse("missing-required-inputs", "command requires --job", { missing: ["job"] });
+  if (!JOB_ID.test(String(job))) {
+    refuse("invalid-job-id", `job id is not a single catalog token: ${job}`, { job });
+  }
+}
+
+function assertOutDirSafe(outDir) {
+  if (!outDir) return;
+  const abs = resolve(outDir);
+  const callers = join(PACK_ROOT, "callers");
+  const rel = relative(callers, abs);
+  if (rel === "" || (!rel.startsWith("..") && !isAbsolute(rel))) {
+    refuse("out-dir-overwrites-callers", "out-dir may not write into callers/", { outDir: abs });
+  }
 }
 
 function snapshotCallers(paths) {
@@ -151,14 +186,25 @@ function summarizeRun(run) {
     status: run.status,
     delivered: run.delivered,
     digest: run.digest,
+    outputFingerprint: run.outputFingerprint,
     engineStatus: run.engineStatus,
-    outDir: run.outDir,
+    outDir: publicPath(run.outDir),
     promisedOutputs: run.promisedOutputs,
     presentOutputs: run.presentOutputs,
     missingOutputs: run.missingOutputs,
     code: run.code || null,
-    cliInvoked: true,
+    cliInvoked: run.cliInvoked !== false,
   };
+}
+
+function distinctChangedDelivery(first, second) {
+  return Boolean(
+    first.delivered &&
+      second.delivered &&
+      first.outputFingerprint &&
+      second.outputFingerprint &&
+      first.outputFingerprint !== second.outputFingerprint,
+  );
 }
 
 function cmdPin() {
@@ -200,17 +246,18 @@ function cmdRun(args) {
     refuse("example-not-caller-file", "--example is a labeled kit sample, not an owned caller file");
   }
   const job = args.job || args._[0];
-  if (!job) refuse("missing-required-inputs", "run requires --job", { missing: ["job"] });
+  assertJobId(job);
   const before = args.before ? resolve(String(args.before)) : null;
   const after = args.after ? resolve(String(args.after)) : null;
   requireFiles([
     ["before", before],
     ["after", after],
   ]);
-  const bound = bindOrRefuse(args);
   const outDir = args["out-dir"]
     ? resolve(String(args["out-dir"]))
     : join(PACK_ROOT, "out", "run", job);
+  assertOutDirSafe(outDir);
+  const bound = bindOrRefuse(args);
   mkdirSync(outDir, { recursive: true });
   const callerBefore = snapshotCallers([before, after, args.used && resolve(String(args.used))]);
   const run = runPublishedJob(bound, { job, args: jobArgsFromFlags({ ...args, "out-dir": outDir }), outDir });
@@ -237,39 +284,12 @@ function cmdRun(args) {
   exitReceipt(receipt, run.delivered ? 0 : 2);
 }
 
-function evaluateRepeatLabel({ afterSha, afterRepeatSha, labelledRepeatDemand }) {
-  const sameFixture = afterSha === afterRepeatSha;
-  const changedInput = !sameFixture;
-  if (labelledRepeatDemand && sameFixture) {
-    return {
-      refuse: true,
-      code: "same-fixture-labelled-repeat-demand",
-      message: "same fixture twice labelled repeat demand is refused",
-    };
-  }
-  if (labelledRepeatDemand && changedInput) {
-    return {
-      refuse: true,
-      code: "repeat-demand-unproved",
-      message: "changed-input repeat is not organic repeat demand",
-    };
-  }
-  if (sameFixture) {
-    return {
-      refuse: true,
-      code: "unchanged-input-repeat",
-      message: "repeat requires a changed after file",
-    };
-  }
-  return { refuse: false, code: "changed-input-repeat", message: "changed-input second run" };
-}
-
 function cmdRepeat(args) {
   if (args.example === true) {
     refuse("example-not-caller-file", "--example is a labeled kit sample, not an owned caller file");
   }
   const job = args.job;
-  if (!job) refuse("missing-required-inputs", "repeat requires --job", { missing: ["job"] });
+  assertJobId(job);
   const before = args.before ? resolve(String(args.before)) : null;
   const after = args.after ? resolve(String(args.after)) : null;
   const afterRepeat = args["after-repeat"] ? resolve(String(args["after-repeat"])) : null;
@@ -278,7 +298,7 @@ function cmdRepeat(args) {
     ["after", after],
     ["after-repeat", afterRepeat],
   ]);
-  const labelledRepeatDemand = Boolean(args["label-repeat-demand"] || args["repeat-demand"]);
+  const labelledRepeatDemand = isLabelledRepeatDemand(args);
   const afterSha = sha256File(after);
   const afterRepeatSha = sha256File(afterRepeat);
   const decision = evaluateRepeatLabel({ afterSha, afterRepeatSha, labelledRepeatDemand });
@@ -294,8 +314,9 @@ function cmdRepeat(args) {
     refuse(decision.code, decision.message, { repeat: repeatMeta });
   }
 
-  const bound = bindOrRefuse(args);
   const outRoot = args["out-dir"] ? resolve(String(args["out-dir"])) : join(PACK_ROOT, "out", "repeat", job);
+  assertOutDirSafe(outRoot);
+  const bound = bindOrRefuse(args);
   const firstDir = join(outRoot, "first");
   const secondDir = join(outRoot, "second");
   mkdirSync(firstDir, { recursive: true });
@@ -304,12 +325,14 @@ function cmdRepeat(args) {
   const first = runCallerJob(bound, { job, before, after, used: args.used, outDir: firstDir });
   const second = runCallerJob(bound, { job, before, after: afterRepeat, used: args.used, outDir: secondDir });
   const callerAfter = snapshotCallers([before, after, afterRepeat]);
-  const delivered = first.delivered && second.delivered && first.digest && second.digest && first.digest !== second.digest;
+  const delivered = distinctChangedDelivery(first, second);
   const receipt = baseReceipt({
     ok: delivered,
     refused: !delivered,
     delivered,
-    code: delivered ? "changed-input-repeat" : first.code || second.code || "repeat-not-delivered",
+    code: delivered
+      ? "changed-input-repeat"
+      : first.code || second.code || "repeat-outputs-not-distinct",
     message: delivered
       ? "changed-input second run delivered different engine output"
       : "repeat did not deliver two distinct engine results",
@@ -334,6 +357,7 @@ function cmdDesk(args) {
   }
   const bound = bindOrRefuse(args);
   const outRoot = args["out-dir"] ? resolve(String(args["out-dir"])) : join(PACK_ROOT, "out", "desk");
+  assertOutDirSafe(outRoot);
   const enginesBefore = existsSync(bound.enginesDir) ? sha256Tree(bound.enginesDir) : null;
   const callerPaths = DESK_JOBS.flatMap((j) => [j.before, j.after, j.afterRepeat]);
   const callerBefore = snapshotCallers(callerPaths);
@@ -371,7 +395,8 @@ function cmdDesk(args) {
       first: summarizeRun(first),
       second: summarizeRun(second),
       distinctDigest: Boolean(first.digest && second.digest && first.digest !== second.digest),
-      delivered: first.delivered && second.delivered && first.digest !== second.digest,
+      distinctOutput: distinctChangedDelivery(first, second),
+      delivered: distinctChangedDelivery(first, second),
     });
   }
   const enginesAfter = existsSync(bound.enginesDir) ? sha256Tree(bound.enginesDir) : null;
@@ -417,9 +442,8 @@ function cmdVerify(args) {
   }
 
   const enginesBefore = sha256Tree(bound.enginesDir);
-  const outRoot = args["out-dir"]
-    ? resolve(String(args["out-dir"]))
-    : join(tmpdir(), `useful-job-desk-verify-${Date.now().toString(36)}`);
+  const outRoot = args["out-dir"] ? resolve(String(args["out-dir"])) : join(PACK_ROOT, "out", "verify");
+  assertOutDirSafe(outRoot);
   mkdirSync(outRoot, { recursive: true });
   const callerPaths = DESK_JOBS.flatMap((j) => [j.before, j.after, j.afterRepeat]);
   const callerBefore = snapshotCallers(callerPaths);
@@ -449,23 +473,52 @@ function cmdVerify(args) {
       first: summarizeRun(first),
       second: summarizeRun(second),
       distinctDigest: Boolean(first.digest && second.digest && first.digest !== second.digest),
-      delivered: first.delivered && second.delivered && first.digest !== second.digest,
+      distinctOutput: distinctChangedDelivery(first, second),
+      delivered: distinctChangedDelivery(first, second),
     });
   }
 
   const vendor = DESK_JOBS.find((j) => j.id === "vendor-budget-impact");
-  const seeded = evaluateRepeatLabel({
-    afterSha: sha256File(vendor.after),
-    afterRepeatSha: sha256File(vendor.after),
-    labelledRepeatDemand: true,
-  });
+  const seededProc = spawnSync(
+    process.execPath,
+    [
+      join(PACK_ROOT, "bin/useful-job-desk.mjs"),
+      "repeat",
+      "--job",
+      vendor.id,
+      "--before",
+      vendor.before,
+      "--after",
+      vendor.after,
+      "--after-repeat",
+      vendor.after,
+      "--label-repeat-demand",
+    ],
+    {
+      encoding: "utf8",
+      cwd: bound.repoRoot,
+      maxBuffer: 1024 * 1024,
+      env: { ...process.env, USEFUL_JOBS_ORIGIN: "" },
+    },
+  );
+  let seededBody = null;
+  try {
+    seededBody = JSON.parse(String(seededProc.stdout || "").trim());
+  } catch {
+    seededBody = null;
+  }
   const seededFailure = {
     fixture: "callers/vendor/after.json used twice",
     labelledRepeatDemand: true,
-    refused: seeded.refuse === true,
-    delivered: false,
-    code: seeded.code,
-    message: seeded.message,
+    cliInvoked: true,
+    status: seededProc.status,
+    refused:
+      seededProc.status === 2 &&
+      seededBody?.ok === false &&
+      seededBody?.code === "same-fixture-labelled-repeat-demand",
+    delivered: seededBody?.delivered === true,
+    code: seededBody?.code || "seeded-failure-unparseable",
+    message: seededBody?.message || "seeded same-fixture CLI did not refuse",
     repeatDemand: false,
   };
 
@@ -476,7 +529,9 @@ function cmdVerify(args) {
   const ok =
     deskOk &&
     seededFailure.refused &&
+    seededFailure.delivered === false &&
     seededFailure.code === "same-fixture-labelled-repeat-demand" &&
+    enginesBefore.sha256 === PIN.engine.enginesTreeSha256 &&
     !enginesModified &&
     callersUnchanged(callerBefore, callerAfter);
 

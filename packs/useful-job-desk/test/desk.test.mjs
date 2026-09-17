@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 import { createHash } from "node:crypto";
-import { PACK_ROOT, REPO_ROOT, parseReceipt, runDesk } from "./helpers.mjs";
+import { PACK_ROOT, REPO_ROOT, parseReceipt, resolveReportedOutDir, runDesk } from "./helpers.mjs";
 
 const PIN = JSON.parse(readFileSync(join(PACK_ROOT, "PIN.json"), "utf8"));
 
@@ -44,13 +44,14 @@ test("desk runs owned callers on the real 1.4.7 engine", () => {
   for (const family of body.families) {
     assert.equal(family.delivered, true);
     assert.equal(family.changedInput, true);
-    assert.equal(family.distinctDigest, true);
+    assert.equal(family.distinctOutput, true);
+    assert.notEqual(family.first.outputFingerprint, family.second.outputFingerprint);
     assert.equal(family.first.cliInvoked, true);
     assert.equal(family.first.delivered, true);
     assert.equal(family.second.delivered, true);
     assert.notEqual(family.first.digest, family.second.digest);
     for (const name of family.first.promisedOutputs) {
-      assert.equal(existsSync(join(family.first.outDir, name)), true, name);
+      assert.equal(existsSync(join(resolveReportedOutDir(family.first.outDir), name)), true, name);
     }
   }
   const lockBefore = readFileSync(join(PACK_ROOT, "callers/lockfile/before.json"));
@@ -59,6 +60,25 @@ test("desk runs owned callers on the real 1.4.7 engine", () => {
   const vendorRec = body.callerFiles.find((f) => f.path.endsWith("callers/vendor/after.json"));
   assert.equal(lockRec.sha256, sha256(lockBefore));
   assert.equal(vendorRec.sha256, sha256(vendorAfter));
+});
+
+test("out-dir inside callers/ is refused", () => {
+  const r = runDesk([
+    "run",
+    "--job",
+    "vendor-budget-impact",
+    "--before",
+    join(PACK_ROOT, "callers/vendor/before.json"),
+    "--after",
+    join(PACK_ROOT, "callers/vendor/after.json"),
+    "--out-dir",
+    join(PACK_ROOT, "callers/vendor"),
+  ]);
+  assert.equal(r.status, 2);
+  const body = parseReceipt(r);
+  assert.equal(body.ok, false);
+  assert.equal(body.delivered, false);
+  assert.equal(body.code, "out-dir-overwrites-callers");
 });
 
 test("--example is refused as not an owned caller file", () => {

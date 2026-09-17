@@ -12,7 +12,9 @@
     "kitPath": "client/public/kit/useful-jobs-1.4.7.tar.gz",
     "sidecarPath": "client/public/for-agents/useful-jobs/useful-jobs-1.4.7.sha256.json",
     "sourceRepo": "epistemedeus/samedaydesk",
-    "sourceCommit": "27f0730604adf236e0f3ad818a30b5f43be6e656"
+    "sourceCommit": "27f0730604adf236e0f3ad818a30b5f43be6e656",
+    "enginesTreeSha256": "38dfe6ffa89ae8e4e57bf014ea57049d1e8e07c61253783d18d97e42ae9ddc19",
+    "enginesFileCount": 234
   },
   "purchaseAuthority": false,
   "hostedAcquisition": false,
