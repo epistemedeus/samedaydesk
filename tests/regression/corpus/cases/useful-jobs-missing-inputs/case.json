@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "useful-jobs-missing-inputs",
+  "repo": "samedaydesk",
+  "surface": "pack",
+  "feature": "useful-jobs",
+  "class": "regression",
+  "defect": "useful-jobs 1.4.7 run lockfile-pin-delta without --before/--after is missing-required-inputs exit 2. A suite that treats any nonzero as a broken product false-rejects a mapped refuse.",
+  "source": {
+    "kind": "r1-seed",
+    "job": "W0-R1-verification",
+    "pin": "775051602d91"
+  },
+  "execute": {
+    "kind": "kit-spawn",
+    "timeoutMs": 20000,
+    "argv": [
+      "{{node}}",
+      "{{kit}}/bin/useful-jobs.mjs",
+      "run",
+      "lockfile-pin-delta"
+    ]
+  },
+  "expectProduct": {
+    "exitCode": 2,
+    "stdoutJson": {
+      "ok": false,
+      "refused": true,
+      "code": "missing-required-inputs",
+      "purchaseAuthority": false
+    }
+  },
+  "expectCorpus": {
+    "productVerdict": "reject",
+    "naiveRule": "exit0"
+  },
+  "boundary": {
+    "paymentSent": false,
+    "toolsCalled": false
+  }
+}

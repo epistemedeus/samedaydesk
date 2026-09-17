@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "offer-routing-complete-issue",
+  "repo": "samedaydesk",
+  "surface": "merchant",
+  "feature": "offer-routing",
+  "class": "seeded-false-reject",
+  "roles": ["seeded-false-reject"],
+  "defect": "complete_issue_discussion must not select paid HTML extract. Router returns ok:false selected:null exit 2. Treating that nonzero as a broken CLI false-rejects a mapped refuse.",
+  "source": {
+    "kind": "r1-seed",
+    "job": "W0-R1-verification",
+    "pin": "775051602d91"
+  },
+  "execute": {
+    "kind": "spawn",
+    "timeoutMs": 10000,
+    "argv": [
+      "{{node}}",
+      "tools/offer-routing/route-job.mjs",
+      "{{root}}/tools/offer-routing/fixtures/complete-issue-discussion.job.json"
+    ]
+  },
+  "expectProduct": {
+    "exitCode": 2,
+    "stdoutJson": {
+      "ok": false,
+      "selected": null,
+      "paid": false,
+      "executionAuthorized": false,
+      "warnings": ["complete_issue_acquisition_unavailable"]
+    }
+  },
+  "expectCorpus": {
+    "productVerdict": "reject",
+    "naiveRule": "exit0"
+  },
+  "boundary": {
+    "paymentSent": false,
+    "toolsCalled": false
+  }
+}

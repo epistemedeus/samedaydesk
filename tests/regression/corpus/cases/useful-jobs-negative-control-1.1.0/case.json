@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "useful-jobs-negative-control-1.1.0",
+  "repo": "samedaydesk",
+  "surface": "buyer",
+  "feature": "archive-acquisition",
+  "class": "regression",
+  "defect": "Immutable useful-jobs 1.1.0 must not satisfy the current 1.4.7 digest. Feeding the old archive with the live sha is wrong-digest, dest not written, and must not count as acquire success.",
+  "source": {
+    "kind": "r1-seed",
+    "job": "W0-R1-verification",
+    "pin": "775051602d91"
+  },
+  "execute": {
+    "kind": "spawn",
+    "timeoutMs": 20000,
+    "dest": "{{tmp}}/must-not-write-110.tgz",
+    "argv": [
+      "{{node}}",
+      "experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs",
+      "--from",
+      "{{root}}/client/public/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz",
+      "--expected-sha256",
+      "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+      "--expected-bytes",
+      "2577606",
+      "--dest",
+      "{{tmp}}/must-not-write-110.tgz"
+    ]
+  },
+  "expectProduct": {
+    "exitCode": 0,
+    "destExists": false,
+    "stdoutJson": {
+      "ok": false,
+      "refused": true,
+      "code": "wrong-digest",
+      "extracted": false
+    }
+  },
+  "expectCorpus": {
+    "productVerdict": "reject",
+    "naiveRule": "exit0"
+  },
+  "boundary": {
+    "paymentSent": false,
+    "toolsCalled": false
+  }
+}

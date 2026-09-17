@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "archive-missing-args",
+  "repo": "samedaydesk",
+  "surface": "buyer",
+  "feature": "archive-acquisition",
+  "class": "regression",
+  "defect": "obtain-archive.mjs missing --from/--expected-sha256/--expected-bytes/--dest prints ok:false missing-args then process.exit(0). Must not be treated as acquire success.",
+  "source": {
+    "kind": "r1-seed",
+    "job": "W0-R1-verification",
+    "pin": "775051602d91"
+  },
+  "execute": {
+    "kind": "spawn",
+    "timeoutMs": 10000,
+    "argv": [
+      "{{node}}",
+      "experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs"
+    ]
+  },
+  "expectProduct": {
+    "exitCode": 0,
+    "stdoutJson": {
+      "ok": false,
+      "refused": true,
+      "code": "missing-args"
+    }
+  },
+  "expectCorpus": {
+    "productVerdict": "reject",
+    "naiveRule": "exit0"
+  },
+  "boundary": {
+    "paymentSent": false,
+    "toolsCalled": false
+  }
+}

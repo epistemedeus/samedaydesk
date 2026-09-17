@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "useful-jobs-html-lockfile",
+  "repo": "samedaydesk",
+  "surface": "pack",
+  "feature": "useful-jobs",
+  "class": "regression",
+  "defect": "lockfile-pin-delta must refuse HTML masquerading as package-lock.json (html-input). Do not parse challenge/error HTML as a lockfile.",
+  "source": {
+    "kind": "product-test",
+    "ref": "experiments/s260-useful-jobs-public-integration/test/public-1.1.0-cold.test.mjs"
+  },
+  "execute": {
+    "kind": "kit-spawn",
+    "timeoutMs": 20000,
+    "argv": [
+      "{{node}}",
+      "{{kit}}/bin/useful-jobs.mjs",
+      "run",
+      "lockfile-pin-delta",
+      "--before",
+      "{{case}}/not-a-lock.html",
+      "--after",
+      "{{case}}/not-a-lock.html",
+      "--out-dir",
+      "{{tmp}}/out-html"
+    ]
+  },
+  "expectProduct": {
+    "exitCode": 2,
+    "stdoutJson": {
+      "ok": false,
+      "refused": true,
+      "code": "html-input",
+      "purchaseAuthority": false
+    }
+  },
+  "expectCorpus": {
+    "productVerdict": "reject",
+    "naiveRule": "exit0"
+  },
+  "boundary": {
+    "paymentSent": false,
+    "toolsCalled": false
+  }
+}

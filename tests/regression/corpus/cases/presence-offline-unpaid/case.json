@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "presence-offline-unpaid",
+  "repo": "samedaydesk",
+  "surface": "buyer",
+  "feature": "for-agents-cold-read",
+  "class": "regression",
+  "defect": "preferFixture:true must stay offline_fixture with paid:false and zero network. A live 200 must not be invented from dated fixtures.",
+  "source": {
+    "kind": "product-test",
+    "ref": "tools/presence/for-agents-cold-read.mjs"
+  },
+  "execute": {
+    "kind": "presence-offline"
+  },
+  "expectProduct": {
+    "exitCode": 0,
+    "stdoutJson": {
+      "ok": true,
+      "outcome": "offline_fixture",
+      "paid": false,
+      "liveObserved": false
+    }
+  },
+  "expectCorpus": {
+    "productVerdict": "accept",
+    "naiveRule": "exit0"
+  },
+  "boundary": {
+    "paymentSent": false,
+    "toolsCalled": false
+  }
+}

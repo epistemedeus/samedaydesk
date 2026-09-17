@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "x402-unpaid-extract-402",
+  "repo": "samedaydesk",
+  "surface": "merchant",
+  "feature": "x402-unpaid-discovery",
+  "class": "regression",
+  "defect": "GET /extract without payment is HTTP 402. Completing the fetch is not product success and must not POST payment headers.",
+  "source": {
+    "kind": "r1-seed",
+    "job": "W0-R1-verification",
+    "pin": "775051602d91"
+  },
+  "execute": {
+    "kind": "classify-http",
+    "fixture": "response.json"
+  },
+  "expectProduct": {
+    "exitCode": 0,
+    "httpStatus": 402,
+    "kind": "payment_required",
+    "stdoutJson": {
+      "ok": false,
+      "kind": "payment_required",
+      "status": 402
+    }
+  },
+  "expectCorpus": {
+    "productVerdict": "reject",
+    "naiveRule": "http-200"
+  },
+  "boundary": {
+    "paymentSent": false,
+    "toolsCalled": false
+  }
+}

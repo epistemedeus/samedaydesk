@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://samedaydesk.com/regression/corpus/case.schema.json",
+  "title": "SameDayDesk regression corpus case",
+  "description": "One known past defect as an executable fixture. Shared shape with Neo tests/regression/corpus: catalog + cases/<id>/case.json + run.mjs. Product-local fields stay in execute/expect*.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "repo",
+    "surface",
+    "feature",
+    "class",
+    "defect",
+    "source",
+    "execute",
+    "expectProduct",
+    "expectCorpus",
+    "boundary"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "repo": { "const": "samedaydesk" },
+    "surface": { "enum": ["merchant", "buyer", "verifier", "pack"] },
+    "feature": { "type": "string", "minLength": 1 },
+    "class": { "enum": ["regression", "seeded-false-accept", "seeded-false-reject"] },
+    "roles": {
+      "type": "array",
+      "items": { "enum": ["seeded-false-accept", "seeded-false-reject"] }
+    },
+    "defect": { "type": "string", "minLength": 1 },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": { "enum": ["observed", "github-issue", "product-test", "r1-seed"] },
+        "job": { "type": "string" },
+        "pin": { "type": "string" },
+        "ref": { "type": "string" }
+      }
+    },
+    "execute": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "spawn",
+            "kit-spawn",
+            "classify-http",
+            "spa-unknown",
+            "mcp-required-tools",
+            "presence-offline",
+            "payment-replay"
+          ]
+        },
+        "argv": { "type": "array", "items": { "type": "string" } },
+        "timeoutMs": { "type": "integer", "minimum": 1000 },
+        "dest": { "type": "string" },
+        "fixture": { "type": "string" },
+        "path": { "type": "string" },
+        "requiredExtra": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "expectProduct": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "exitCode": { "type": "integer" },
+        "stdoutJson": { "type": "object" },
+        "destExists": { "type": "boolean" },
+        "httpStatus": { "type": "integer" },
+        "kind": { "type": "string" }
+      }
+    },
+    "expectCorpus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["productVerdict", "naiveRule"],
+      "properties": {
+        "productVerdict": { "enum": ["accept", "reject"] },
+        "naiveRule": { "enum": ["exit0", "http-200", "html-body"] }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["paymentSent", "toolsCalled"],
+      "properties": {
+        "paymentSent": { "const": false },
+        "toolsCalled": { "const": false }
+      }
+    }
+  }
+}
