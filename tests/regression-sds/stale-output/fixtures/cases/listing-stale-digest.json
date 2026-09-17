@@ -1,0 +1,24 @@
+{
+  "id": "listing-stale-digest",
+  "surface": "listing",
+  "feature": "listing-repair",
+  "class": "stale",
+  "expectReject": true,
+  "expectedReasons": ["greenwash", "stale_listing_digest", "stale_observed_at"],
+  "defect": "Listing repair output claims ok while sourceObservation.digest mismatches expectedDigest and observedAt is marked stale.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "listing",
+    "expectedDigest": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+    "digest": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "sourceObservation": {
+      "url": "https://example.test/listing/stale-case",
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "digest": "sha256:2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f"
+    },
+    "staleObservedAt": true,
+    "observedAtSkew": "stale",
+    "publish": false
+  }
+}
