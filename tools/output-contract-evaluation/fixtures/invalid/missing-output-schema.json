@@ -1,0 +1,26 @@
+{
+  "x402Version": 2,
+  "items": [
+    {
+      "resource": {
+        "routeTemplate": "/extract",
+        "mimeType": "application/json"
+      },
+      "request": {
+        "method": "GET",
+        "schema": {
+          "type": "object",
+          "required": ["url"],
+          "properties": {
+            "url": { "type": "string" }
+          }
+        }
+      },
+      "accepts": [
+        {
+          "scheme": "exact"
+        }
+      ]
+    }
+  ]
+}

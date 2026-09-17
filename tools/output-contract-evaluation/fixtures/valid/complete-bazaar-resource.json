@@ -1,0 +1,33 @@
+{
+  "x402Version": 2,
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "resources": [
+    {
+      "resource": "https://agents.samedaydesk.com/extract",
+      "serviceName": "SameDayDesk",
+      "type": "http",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "outputSchema": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ok", "title", "url"],
+            "properties": {
+              "ok": { "type": "boolean" },
+              "title": { "type": "string" },
+              "url": { "type": "string" }
+            }
+          }
+        }
+      ],
+      "extensions": {
+        "bazaar": {
+          "info": {
+            "input": { "method": "GET" }
+          }
+        }
+      }
+    }
+  ]
+}

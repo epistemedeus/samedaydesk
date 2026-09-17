@@ -1,0 +1,14 @@
+{
+  "kind": "single_route",
+  "method": "GET",
+  "path": "/extract",
+  "mediaType": "application/json",
+  "schema": {
+    "type": "object",
+    "required": ["ok"],
+    "properties": {
+      "ok": { "type": "boolean" }
+    }
+  },
+  "registryPublish": true
+}
