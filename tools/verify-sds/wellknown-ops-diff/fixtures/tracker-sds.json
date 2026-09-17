@@ -1,0 +1,50 @@
+{
+  "schema": "samedaydesk.tracker-sds.v1",
+  "source": "data/bazaar-tracker/observations.json",
+  "sellerId": "samedaydesk",
+  "observedAt": "2026-09-03T09:54:04.798Z",
+  "rowCount": 8,
+  "note": "Compact SDS tracker projection. Digests only; no payment terms.",
+  "routes": [
+    {
+      "route": "https://agents.samedaydesk.com/deep-audit",
+      "path": "/deep-audit",
+      "digest": "1347a5d010209bb86fdc0b50c4ab5d7e8a81d74c32fab396c21e8ea17f29f442"
+    },
+    {
+      "route": "https://agents.samedaydesk.com/defi/morpho-position",
+      "path": "/defi/morpho-position",
+      "digest": "6653ecd60fc9b4b7a721b52c01a17de337f6b8819533b6828d5ccf6f3d201e00"
+    },
+    {
+      "route": "https://agents.samedaydesk.com/enrich",
+      "path": "/enrich",
+      "digest": "f0f32b1a5378cfea8fbf79ede63667acbb6bceb227a69a58ffa3cc1f31d71623"
+    },
+    {
+      "route": "https://agents.samedaydesk.com/extract",
+      "path": "/extract",
+      "digest": "04c1554d7a4471803f05781245df70cb0ae3dc73b9df78c555c7324c3b1ca60e"
+    },
+    {
+      "route": "https://agents.samedaydesk.com/read",
+      "path": "/read",
+      "digest": "f5f901894aefbda4336df5aee716084218fa3e6eda9da5558e572b7c77d999fd"
+    },
+    {
+      "route": "https://agents.samedaydesk.com/scan",
+      "path": "/scan",
+      "digest": "de0452675f6b3954d0da0e805f196e183ad50f22332231a2a873d17792938db6"
+    },
+    {
+      "route": "https://agents.samedaydesk.com/schemaforge",
+      "path": "/schemaforge",
+      "digest": "e4a146c2290e1b1466cf78892be91966231cc664bc66a2a8ed50f2b63e4941c3"
+    },
+    {
+      "route": "https://agents.samedaydesk.com/wallet-enrich",
+      "path": "/wallet-enrich",
+      "digest": "d2aba405138b518f301827fe46a6a97af39b696020e0c6cda1b1378eefa46c57"
+    }
+  ]
+}
