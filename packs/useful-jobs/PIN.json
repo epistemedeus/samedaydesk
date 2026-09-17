@@ -1,0 +1,39 @@
+{
+  "schema": "samedaydesk.useful-jobs.skill-list-help.pin.v1",
+  "pack": "useful-jobs",
+  "skill": {
+    "name": "useful-jobs",
+    "sourcePath": "packs/useful-jobs/SKILL.md",
+    "archivePath": "SKILL.md",
+    "advertisedCommands": ["list", "help"]
+  },
+  "engine": {
+    "package": "useful-jobs",
+    "version": "1.4.7",
+    "rootName": "useful-jobs-1.4.7",
+    "cli": "bin/useful-jobs.mjs",
+    "bytes": 5255824,
+    "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+    "archivePath": "client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz",
+    "kitPath": "client/public/kit/useful-jobs-1.4.7.tar.gz",
+    "sidecarPath": "client/public/for-agents/useful-jobs/useful-jobs-1.4.7.sha256.json",
+    "sourceRepo": "epistemedeus/samedaydesk",
+    "sourceCommit": "27f0730604adf236e0f3ad818a30b5f43be6e656"
+  },
+  "jobs": [
+    "lockfile-pin-delta",
+    "json-schema-webhook-drift",
+    "route-table-diff",
+    "page-change-offline-job",
+    "api-upgrade-brief",
+    "vendor-budget-impact",
+    "feed-agenda",
+    "evidence-ci-annotation",
+    "listing-repair-packet",
+    "repeat-job-record"
+  ],
+  "purchaseAuthority": false,
+  "hostedAcquisition": false,
+  "schedulerDaemon": false,
+  "publish": false
+}
