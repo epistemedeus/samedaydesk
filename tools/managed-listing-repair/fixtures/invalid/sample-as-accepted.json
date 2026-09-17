@@ -1,0 +1,94 @@
+{
+  "schema": "samedaydesk.managed-listing-repair.case.v1",
+  "clock": "2026-09-11T19:00:00.000Z",
+  "label": "SAMPLE",
+  "sample": true,
+  "source": {
+    "kind": "listing_observation",
+    "listingId": "sample-listing",
+    "observedAt": "2026-09-11T19:00:00.000Z",
+    "url": "https://example.test/listing/sample",
+    "fields": {
+      "listingStatus": "PUBLIC_STALE"
+    }
+  },
+  "packet": {
+    "kind": "repair_packet",
+    "label": "SAMPLE",
+    "sampleLabel": "SAMPLE",
+    "status": "accepted_correction",
+    "accepted_correction": true,
+    "changes": [
+      {
+        "field": "listingStatus",
+        "from": "PUBLIC_STALE",
+        "to": "PUBLIC_ACTIVE"
+      }
+    ]
+  },
+  "engineInput": {
+    "schema": "pilot.s185.distribution_repair_input.v1",
+    "inputId": "f05-sample",
+    "clock": "2026-09-11T19:00:00.000Z",
+    "identity": {
+      "provider": "fixture",
+      "jobRef": "sample-listing",
+      "sharedEvidenceId": "sample-listing",
+      "sourceTag": "catalog"
+    },
+    "discovery": {
+      "captureStatus": "ok",
+      "catalogComplete": true,
+      "listing": {
+        "url": "https://example.test/listing/sample",
+        "agentId": "sample-listing",
+        "listingStatus": "PUBLIC_STALE"
+      }
+    },
+    "record": {
+      "routeRegressionInput": {
+        "schema": "x402.r2.record.route_regression_input.v1",
+        "reportId": "f05-sample",
+        "title": "SAMPLE packet",
+        "demo": true,
+        "sourceLabel": "synthetic-fixture",
+        "baseline": {
+          "label": "baseline",
+          "capturedAt": "2026-09-01T00:00:00.000Z",
+          "routes": [
+            {
+              "path": "/",
+              "url": "https://example.test/",
+              "status": 200,
+              "accessibility": "ok",
+              "title": "Home"
+            }
+          ]
+        },
+        "current": {
+          "label": "current",
+          "capturedAt": "2026-09-11T00:00:00.000Z",
+          "captureIncomplete": false,
+          "coverageComplete": true,
+          "routes": [
+            {
+              "path": "/",
+              "url": "https://example.test/",
+              "status": 200,
+              "accessibility": "ok",
+              "title": "Home"
+            }
+          ]
+        },
+        "feedId": "f05-sample"
+      }
+    },
+    "callerProvenance": {
+      "suppliedBy": "operator",
+      "syntheticFixture": true,
+      "sampleLabel": "SAMPLE",
+      "notCustomer": true,
+      "notMarketFact": true
+    }
+  }
+}

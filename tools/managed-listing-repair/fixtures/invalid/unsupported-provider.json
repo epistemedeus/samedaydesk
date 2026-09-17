@@ -1,0 +1,110 @@
+{
+  "schema": "samedaydesk.managed-listing-repair.case.v1",
+  "clock": "2026-09-11T19:00:00.000Z",
+  "source": {
+    "kind": "listing_observation",
+    "listingId": "fixture-unsupported-provider",
+    "observedAt": "2026-09-11T19:00:00.000Z",
+    "url": "https://example.test/listing/fixture-unsupported-provider",
+    "fields": {
+      "listingStatus": "PUBLIC_ACTIVE",
+      "title": "Owner listing",
+      "routes./docs.status": 404
+    }
+  },
+  "packet": {
+    "kind": "repair_packet",
+    "engineJob": "listing-repair-packet",
+    "changes": [
+      {
+        "field": "routes./docs.status",
+        "from": 404,
+        "to": 200
+      }
+    ]
+  },
+  "engineInput": {
+    "schema": "pilot.s185.distribution_repair_input.v1",
+    "inputId": "f05-unsupported-provider",
+    "clock": "2026-09-11T19:00:00.000Z",
+    "identity": {
+      "provider": "fixture",
+      "jobRef": "fixture-unsupported-provider",
+      "sharedEvidenceId": "fixture-unsupported-provider",
+      "sourceTag": "catalog"
+    },
+    "discovery": {
+      "captureStatus": "ok",
+      "catalogComplete": true,
+      "listing": {
+        "url": "https://example.test/listing/fixture-unsupported-provider",
+        "agentId": "fixture-unsupported-provider",
+        "listingStatus": "PUBLIC_ACTIVE",
+        "freeVsPriced": "discovery_free_run_priced",
+        "title": "Owner listing"
+      }
+    },
+    "record": {
+      "routeRegressionInput": {
+        "schema": "x402.r2.record.route_regression_input.v1",
+        "reportId": "f05-unsupported-provider",
+        "title": "Unsupported complete-capture provider",
+        "demo": false,
+        "sourceLabel": "operator-fixture",
+        "baseline": {
+          "label": "baseline-2026-09-01",
+          "capturedAt": "2026-09-01T00:00:00.000Z",
+          "routes": [
+            {
+              "path": "/",
+              "url": "https://example.test/",
+              "status": 200,
+              "finalUrl": "https://example.test/",
+              "accessibility": "ok",
+              "title": "Home"
+            },
+            {
+              "path": "/docs",
+              "url": "https://example.test/docs",
+              "status": 200,
+              "finalUrl": "https://example.test/docs",
+              "accessibility": "ok",
+              "title": "Docs"
+            }
+          ]
+        },
+        "current": {
+          "label": "current-2026-09-11",
+          "capturedAt": "2026-09-11T00:00:00.000Z",
+          "captureIncomplete": false,
+          "coverageComplete": true,
+          "routes": [
+            {
+              "path": "/",
+              "url": "https://example.test/",
+              "status": 200,
+              "finalUrl": "https://example.test/",
+              "accessibility": "ok",
+              "title": "Home"
+            },
+            {
+              "path": "/docs",
+              "url": "https://example.test/docs",
+              "status": 404,
+              "finalUrl": "https://example.test/docs",
+              "accessibility": "ok",
+              "title": "Missing Docs"
+            }
+          ]
+        },
+        "feedId": "f05-unsupported-provider"
+      }
+    },
+    "callerProvenance": {
+      "suppliedBy": "operator",
+      "syntheticFixture": true,
+      "notCustomer": true,
+      "notMarketFact": true
+    }
+  }
+}
