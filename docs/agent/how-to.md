@@ -45,6 +45,7 @@ The repeat digest must differ from the first caller-alpha run.
 `page-change-offline-job` does not fetch and does not accept `--example`.
 Supply a job document whose sibling before/after JSON is already on disk.
 
+<!-- follow-the-doc:step id=page-held -->
 ```bash
 node "$kit/bin/useful-jobs.mjs" run page-change-offline-job \
   --job "$kit/samples/page/h04-page-01/job.json" \

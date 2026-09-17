@@ -12,11 +12,13 @@ import {
   mkdtempSync,
   readFileSync,
   readdirSync,
+  realpathSync,
   rmSync,
+  statSync,
 } from "node:fs";
 import http from "node:http";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -43,7 +45,6 @@ function parseArgs(argv) {
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--json") out.json = true;
-    else if (a === "--no-json") out.json = false;
     else if (a === "--seeded-failure") {
       out.seededFailure = argv[i + 1] || "";
       i++;
@@ -93,6 +94,7 @@ function readDocs() {
 }
 
 function spawnAsync(cmd, args, opts = {}) {
+  const timeoutMs = opts.timeoutMs ?? 120000;
   return new Promise((resolveP, reject) => {
     const child = spawn(cmd, args, {
       cwd: opts.cwd,
@@ -101,44 +103,121 @@ function spawnAsync(cmd, args, opts = {}) {
     });
     let stdout = "";
     let stderr = "";
+    let timedOut = false;
+    const timer = setTimeout(() => {
+      timedOut = true;
+      child.kill("SIGKILL");
+    }, timeoutMs);
     child.stdout.on("data", (c) => {
       stdout += c.toString("utf8");
     });
     child.stderr.on("data", (c) => {
       stderr += c.toString("utf8");
     });
-    child.on("error", reject);
-    child.on("close", (status) => resolveP({ status: status ?? 1, stdout, stderr }));
+    child.on("error", (err) => {
+      clearTimeout(timer);
+      reject(err);
+    });
+    child.on("close", (status) => {
+      clearTimeout(timer);
+      resolveP({
+        status: timedOut ? 124 : status ?? 1,
+        stdout,
+        stderr,
+        timedOut,
+      });
+    });
   });
 }
 
-function servePublic({ poisonDigest = false } = {}) {
-  const archiveFile = join(publicRoot, ARCHIVE_URL_PATH.replace(/^\//, ""));
-  const good = readFileSync(archiveFile);
+export function resolvePublicFile(root, reqUrl) {
+  let urlPath;
+  try {
+    urlPath = decodeURIComponent(String(reqUrl || "/").split("?")[0]);
+  } catch {
+    return { ok: false, status: 400, reason: "bad-url" };
+  }
+  if (urlPath.includes("\0")) {
+    return { ok: false, status: 400, reason: "bad-url" };
+  }
+  const rel = urlPath.replace(/^\/+/, "");
+  const file = resolve(root, rel);
+  const relToRoot = relative(root, file);
+  if (relToRoot === "" || relToRoot === ".." || relToRoot.startsWith(`..${sep}`)) {
+    return { ok: false, status: 404, reason: "outside-root" };
+  }
+  let realRoot;
+  let realFile;
+  try {
+    realRoot = realpathSync(root);
+    realFile = realpathSync(file);
+  } catch {
+    return { ok: false, status: 404, reason: "missing" };
+  }
+  const relReal = relative(realRoot, realFile);
+  if (relReal === "" || relReal === ".." || relReal.startsWith(`..${sep}`)) {
+    return { ok: false, status: 404, reason: "outside-root" };
+  }
+  let st;
+  try {
+    st = statSync(realFile);
+  } catch {
+    return { ok: false, status: 404, reason: "missing" };
+  }
+  if (!st.isFile()) {
+    return { ok: false, status: 404, reason: "not-a-file" };
+  }
+  return { ok: true, file: realFile };
+}
+
+export function servePublic({ poisonDigest = false } = {}) {
   const poison = poisonDigest ? Buffer.alloc(EXPECTED_BYTES, 0x5a) : null;
   const server = http.createServer((req, res) => {
-    const urlPath = decodeURIComponent((req.url || "/").split("?")[0]);
-    if (poisonDigest && urlPath === ARCHIVE_URL_PATH) {
+    try {
+      if (req.method !== "GET" && req.method !== "HEAD") {
+        res.writeHead(405);
+        res.end();
+        return;
+      }
+      const urlPath = String(req.url || "/").split("?")[0];
+      let decoded = urlPath;
+      try {
+        decoded = decodeURIComponent(urlPath);
+      } catch {
+        res.writeHead(400);
+        res.end("bad request");
+        return;
+      }
+      if (poisonDigest && decoded === ARCHIVE_URL_PATH) {
+        res.writeHead(200, {
+          "content-type": "application/gzip",
+          "content-length": String(poison.length),
+        });
+        if (req.method === "HEAD") res.end();
+        else res.end(poison);
+        return;
+      }
+      const located = resolvePublicFile(publicRoot, urlPath);
+      if (!located.ok) {
+        res.writeHead(located.status);
+        res.end(located.reason || "missing");
+        return;
+      }
+      const buf = readFileSync(located.file);
       res.writeHead(200, {
-        "content-type": "application/gzip",
-        "content-length": String(poison.length),
+        "content-type": "application/octet-stream",
+        "content-length": String(buf.length),
       });
-      res.end(poison);
-      return;
+      if (req.method === "HEAD") res.end();
+      else res.end(buf);
+    } catch {
+      if (!res.headersSent) {
+        res.writeHead(500);
+        res.end("error");
+      } else {
+        res.destroy();
+      }
     }
-    const rel = urlPath.replace(/^\//, "");
-    const file = resolve(publicRoot, rel);
-    if (!file.startsWith(publicRoot) || !existsSync(file)) {
-      res.writeHead(404);
-      res.end("missing");
-      return;
-    }
-    const buf = readFileSync(file);
-    res.writeHead(200, {
-      "content-type": "application/octet-stream",
-      "content-length": String(buf.length),
-    });
-    res.end(buf);
   });
   return new Promise((resolveP) => {
     server.listen(0, "127.0.0.1", () => {
@@ -149,6 +228,9 @@ function servePublic({ poisonDigest = false } = {}) {
         stop: () =>
           new Promise((done) => {
             server.close(() => done());
+            if (typeof server.closeAllConnections === "function") {
+              server.closeAllConnections();
+            }
           }),
       });
     });
@@ -164,11 +246,11 @@ function pinCheck(docs) {
   const discovery = JSON.parse(readFileSync(discoveryPath, "utf8"));
   const fixture = JSON.parse(readFileSync(fixturePath, "utf8"));
   const texts = [
-    docs.tutorial,
-    docs.howto,
-    docs.reference,
-    docs.readme,
-    docs.explanation,
+    ["tutorial.md", docs.tutorial],
+    ["how-to.md", docs.howto],
+    ["reference.md", docs.reference],
+    ["README.md", docs.readme],
+    ["explanation.md", docs.explanation],
   ];
   const problems = [];
   if (buf.length !== EXPECTED_BYTES) {
@@ -189,9 +271,10 @@ function pinCheck(docs) {
   if (fixture.expectedSha256 !== EXPECTED_SHA || fixture.expectedBytes !== EXPECTED_BYTES) {
     problems.push("docs/agent fixture pin drift");
   }
-  for (const t of texts) {
-    if (!t.includes(EXPECTED_SHA)) problems.push("a docs page is missing the sha256 pin");
-    if (!t.includes(String(EXPECTED_BYTES))) problems.push("a docs page is missing the byte pin");
+  problems.push(...discoveryAuthorityProblems(discovery, kit));
+  for (const [name, t] of texts) {
+    if (!t.includes(EXPECTED_SHA)) problems.push(`${name} is missing the sha256 pin`);
+    if (!t.includes(String(EXPECTED_BYTES))) problems.push(`${name} is missing the byte pin`);
   }
   const acquire = docs.steps.find((s) => s.id === "acquire");
   if (!acquire) problems.push("tutorial is missing tagged acquire step");
@@ -206,13 +289,21 @@ function pinCheck(docs) {
       problems.push("acquire fence is not the published discovery.coldStart");
     }
   }
-  const requiredSteps = ["acquire", "list-help", "example-lockfile", "caller-alpha"];
+  const requiredSteps = [
+    "acquire",
+    "list-help",
+    "example-lockfile",
+    "caller-alpha",
+    "caller-repeat",
+    "page-held",
+  ];
   for (const id of requiredSteps) {
     if (!docs.steps.some((s) => s.id === id)) problems.push(`missing step ${id}`);
   }
-  const requiredFailures = ["missing-required-inputs", "example-on-page-change"];
-  for (const id of requiredFailures) {
-    if (!docs.failures.some((s) => s.id === id)) problems.push(`missing seeded fence ${id}`);
+  for (const spec of fixture.failures) {
+    if (spec.kind === "cli" && !docs.failures.some((s) => s.id === spec.id)) {
+      problems.push(`missing seeded fence ${spec.id}`);
+    }
   }
   return {
     ok: problems.length === 0,
@@ -259,12 +350,10 @@ ${acquireScript}
 }
 
 async function runHappyPath({ origin, cwd, docs }) {
-  const ordered = ["acquire", "list-help", "example-lockfile", "caller-alpha", "caller-repeat"];
+  if (!docs.steps.length) throw new Error("missing follow-the-doc steps");
   const parts = [];
-  for (const id of ordered) {
-    const step = docs.steps.find((s) => s.id === id);
-    if (!step) throw new Error(`missing follow-the-doc step ${id}`);
-    parts.push(`# step ${id}\n${step.script}\n`);
+  for (const step of docs.steps) {
+    parts.push(`# step ${step.id}\n${step.script}\n`);
   }
   const script = `set -euo pipefail
 ${parts.join("\n")}
@@ -303,14 +392,63 @@ function matchOutput(r, pattern) {
   return new RegExp(pattern, "i").test(text);
 }
 
+export function discoveryAuthorityProblems(discovery, kit) {
+  const problems = [];
+  if (discovery.version !== "1.4.7" || kit.version !== "1.4.7") {
+    problems.push("version pin drift");
+  }
+  for (const [name, obj] of [
+    ["discovery", discovery],
+    ["kit", kit],
+  ]) {
+    if (obj.purchaseAuthority !== false) {
+      problems.push(`${name} purchaseAuthority must be false`);
+    }
+    if (obj.paidHostedClaim !== false) {
+      problems.push(`${name} paidHostedClaim must be false`);
+    }
+    if (obj.schedulerDaemon !== false) {
+      problems.push(`${name} schedulerDaemon must be false`);
+    }
+  }
+  if (
+    discovery.archive?.sha256 !== EXPECTED_SHA ||
+    discovery.archive?.bytes !== EXPECTED_BYTES
+  ) {
+    problems.push("discovery.archive pin drift");
+  }
+  return problems;
+}
+
+function readJsonDigest(file) {
+  try {
+    const j = JSON.parse(readFileSync(file, "utf8"));
+    return typeof j.digest === "string" && j.digest ? j.digest : null;
+  } catch {
+    return null;
+  }
+}
+
+export function expectSeededRejected(spec, r, extra = {}) {
+  if (!spec?.expect) return r.status !== 0;
+  const expect = spec.expect;
+  if (expect.exitNonZero && r.status === 0) return false;
+  if (expect.extracted === false && extra.extracted) return false;
+  if (expect.executed === false && extra.executed) return false;
+  if (expect.outputMatches && !matchOutput(r, expect.outputMatches)) return false;
+  return true;
+}
+
 export async function runFollowTheDoc({ seededFailure = null } = {}) {
   const docs = readDocs();
   const pins = pinCheck(docs);
   const fixture = JSON.parse(readFileSync(fixturePath, "utf8"));
+  const knownIds = new Set(fixture.failures.map((f) => f.id));
   const wanted =
     seededFailure && seededFailure !== "all"
       ? [seededFailure]
       : fixture.failures.map((f) => f.id);
+  const unknownWanted = wanted.filter((id) => !knownIds.has(id));
 
   if (!pins.ok) {
     return {
@@ -323,6 +461,21 @@ export async function runFollowTheDoc({ seededFailure = null } = {}) {
       tutorial: null,
       seededFailures: [],
       problems: pins.problems,
+    };
+  }
+
+  if (unknownWanted.length) {
+    return {
+      ok: false,
+      code: "unknown-seeded-failure",
+      surface: "useful-jobs",
+      version: "1.4.7",
+      paid: false,
+      liveMerchantExtract: false,
+      pins: pins.archive,
+      tutorial: null,
+      seededFailures: [],
+      problems: unknownWanted.map((id) => `unknown seeded-failure ${id}`),
     };
   }
 
@@ -341,7 +494,11 @@ export async function runFollowTheDoc({ seededFailure = null } = {}) {
           acquireScript: acquire.script,
         });
         const extracted = kitExtracted(poisonWork);
-        const rejected = r.status !== 0 && !extracted;
+        const spec = fixture.failures.find((f) => f.id === "digest-mismatch");
+        const rejected = expectSeededRejected(spec, r, {
+          extracted,
+          executed: extracted,
+        });
         seeded.push({
           id: "digest-mismatch",
           rejected,
@@ -355,48 +512,64 @@ export async function runFollowTheDoc({ seededFailure = null } = {}) {
       }
     }
 
+    const needCli = wanted.some((id) => {
+      const spec = fixture.failures.find((f) => f.id === id);
+      return spec && spec.kind === "cli";
+    });
     const needHappy =
-      !seededFailure ||
-      seededFailure === "all" ||
-      wanted.some((id) => id !== "digest-mismatch");
-    if (needHappy || !seededFailure) {
+      !seededFailure || seededFailure === "all" || needCli;
+    if (needHappy) {
       const srv = await servePublic({ poisonDigest: false });
       const happyWork = mkdtempSync(join(work, "happy-"));
       try {
         const r = await runHappyPath({ origin: srv.origin, cwd: happyWork, docs });
         const kitOk = Boolean(r.kit) && existsSync(join(r.kit, "bin/useful-jobs.mjs"));
-        const exampleOk = /"ok"\s*:\s*true/.test(r.stdout) || /"ok"\s*:\s*true/.test(r.stderr);
+        const exampleOk =
+          /"ok"\s*:\s*true/.test(r.stdout) || /"ok"\s*:\s*true/.test(r.stderr);
         const listMatched = /lockfile-pin-delta/.test(r.stdout + r.stderr);
+        const d1 = readJsonDigest(
+          join(happyWork, "out/caller-alpha/upgrade-brief.json"),
+        );
+        const d2 = readJsonDigest(
+          join(happyWork, "out/caller-alpha-repeat/upgrade-brief.json"),
+        );
+        const repeatChanged = Boolean(d1 && d2 && d1 !== d2);
+        const pageChangeOk = existsSync(
+          join(happyWork, "out/page-h04/page-change.json"),
+        );
         tutorial = {
           exitCode: r.status,
           kit: r.kit,
           kitOk,
           listMatched,
           exampleOk,
+          repeatChanged,
+          pageChangeOk,
           stdoutTail: String(r.stdout || "").slice(-800),
           stderrTail: String(r.stderr || "").slice(-800),
         };
 
-        if (r.status === 0 && kitOk && wanted.includes("missing-required-inputs")) {
-          const fence = docs.failures.find((f) => f.id === "missing-required-inputs");
-          const fr = await runCliFailure({ kit: r.kit, cwd: happyWork, fence });
-          seeded.push({
-            id: "missing-required-inputs",
-            rejected: fr.status !== 0 && matchOutput(fr, "missing-required-inputs|required"),
-            exitCode: fr.status,
-            output: `${fr.stdout}\n${fr.stderr}`.slice(0, 600),
-          });
-        }
-        if (r.status === 0 && kitOk && wanted.includes("example-on-page-change")) {
-          const fence = docs.failures.find((f) => f.id === "example-on-page-change");
-          const fr = await runCliFailure({ kit: r.kit, cwd: happyWork, fence });
-          seeded.push({
-            id: "example-on-page-change",
-            rejected:
-              fr.status !== 0 && matchOutput(fr, "sample_as_delivered_watch|SAMPLE"),
-            exitCode: fr.status,
-            output: `${fr.stdout}\n${fr.stderr}`.slice(0, 600),
-          });
+        if (r.status === 0 && kitOk) {
+          for (const spec of fixture.failures) {
+            if (!wanted.includes(spec.id) || spec.kind !== "cli") continue;
+            const fence = docs.failures.find((f) => f.id === spec.id);
+            if (!fence) {
+              seeded.push({
+                id: spec.id,
+                rejected: false,
+                exitCode: 1,
+                output: "missing tagged fence",
+              });
+              continue;
+            }
+            const fr = await runCliFailure({ kit: r.kit, cwd: happyWork, fence });
+            seeded.push({
+              id: spec.id,
+              rejected: expectSeededRejected(spec, fr),
+              exitCode: fr.status,
+              output: `${fr.stdout}\n${fr.stderr}`.slice(0, 600),
+            });
+          }
         }
       } finally {
         await srv.stop();
@@ -406,16 +579,16 @@ export async function runFollowTheDoc({ seededFailure = null } = {}) {
     rmSync(work, { recursive: true, force: true });
   }
 
-  const happyOk =
-    seededFailure && seededFailure !== "all"
-      ? true
-      : Boolean(
-          tutorial &&
-            tutorial.exitCode === 0 &&
-            tutorial.kitOk &&
-            tutorial.listMatched &&
-            tutorial.exampleOk,
-        );
+  const happyOk = tutorial
+    ? Boolean(
+        tutorial.exitCode === 0 &&
+          tutorial.kitOk &&
+          tutorial.listMatched &&
+          tutorial.exampleOk &&
+          tutorial.repeatChanged &&
+          tutorial.pageChangeOk,
+      )
+    : wanted.every((id) => id === "digest-mismatch");
   const seededOk =
     seeded.length === wanted.length && seeded.every((s) => s.rejected === true);
   const problems = [];
