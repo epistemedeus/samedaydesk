@@ -1,0 +1,152 @@
+{
+  "schema": "samedaydesk.verify-sds.feature-map.v1",
+  "feature": "useful-jobs",
+  "slice": "useful-jobs-only",
+  "goal": "exact caller files → promised json+md",
+  "entrypoint": "extract archive bin/useful-jobs.mjs; page /for-agents/useful-jobs",
+  "command": "node bin/useful-jobs.mjs list --json",
+  "state": "extracted 1.4.7 outside the repo; purchaseAuthority:false",
+  "tests": "node tools/verify-sds/features/useful-jobs/bin/prove.mjs --json",
+  "prerequisite": "Node 22, committed public 1.4.7 archive on default branch",
+  "outOfScope": [
+    "publish",
+    "registry",
+    "payment",
+    "checkout",
+    "neomorphic-io",
+    "hosted-mcp",
+    "x402-pay",
+    "tools/call"
+  ],
+  "pin": {
+    "package": "useful-jobs",
+    "version": "1.4.7",
+    "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+    "bytes": 5255824,
+    "rootName": "useful-jobs-1.4.7",
+    "cli": "bin/useful-jobs.mjs",
+    "node": ">=22",
+    "purchaseAuthority": false,
+    "paidHostedClaim": false,
+    "schedulerDaemon": false,
+    "sourceRepo": "epistemedeus/samedaydesk",
+    "sourceCommit": "27f0730604adf236e0f3ad818a30b5f43be6e656"
+  },
+  "surfaces": {
+    "page": "/for-agents/useful-jobs",
+    "discovery": "/discovery/useful-jobs.json",
+    "catalog": "/for-agents/useful-jobs/catalog.json",
+    "outcomes": "/for-agents/useful-jobs/jobs-outcomes.json",
+    "publicArchive": "/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz",
+    "kitArchive": "/kit/useful-jobs-1.4.7.tar.gz",
+    "sha256Json": "/for-agents/useful-jobs/useful-jobs-1.4.7.sha256.json",
+    "kitJson": "client/src/data/usefulJobsKit.json",
+    "obtainBin": "experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs"
+  },
+  "firstOffer": "lockfile-pin-delta",
+  "jobs": [
+    {
+      "id": "lockfile-pin-delta",
+      "requiredInputs": ["--before", "--after"],
+      "outputs": ["pin-delta.json", "pin-delta.md"],
+      "sampleAvailable": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "json-schema-webhook-drift",
+      "requiredInputs": ["--before", "--after", "--used"],
+      "outputs": ["drift-brief.json", "drift-brief.md"],
+      "sampleAvailable": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "route-table-diff",
+      "requiredInputs": ["--before", "--after", "--out-dir"],
+      "outputs": ["route-diff.json", "route-diff.md"],
+      "sampleAvailable": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "page-change-offline-job",
+      "requiredInputs": ["--job", "--out-dir"],
+      "outputs": ["page-change.json", "page-change.md"],
+      "sampleAvailable": false,
+      "exampleRefused": "sample_as_delivered_watch"
+    },
+    {
+      "id": "api-upgrade-brief",
+      "requiredInputs": ["--before", "--after", "--used"],
+      "outputs": ["upgrade-brief.json", "upgrade-brief.md"],
+      "sampleAvailable": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "vendor-budget-impact",
+      "requiredInputs": ["--before", "--after"],
+      "outputs": ["budget-impact.json", "budget-impact.md"],
+      "sampleAvailable": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "feed-agenda",
+      "requiredInputs": ["--before", "--after"],
+      "outputs": ["agenda.json", "agenda.ics"],
+      "sampleAvailable": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "evidence-ci-annotation",
+      "requiredInputs": ["--input"],
+      "outputs": ["annotations.json", "annotations.md"],
+      "sampleAvailable": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "listing-repair-packet",
+      "requiredInputs": ["--input"],
+      "outputs": ["repair-packet.json", "repair-packet.md"],
+      "sampleAvailable": true,
+      "exampleFlag": "--example"
+    },
+    {
+      "id": "repeat-job-record",
+      "requiredInputs": ["--next-run"],
+      "outputs": ["repeat-job.json", "repeat-job.md"],
+      "sampleAvailable": true,
+      "exampleFlag": "--example"
+    }
+  ],
+  "subFeatures": [
+    "list returns ten job ids from catalog.json in map order",
+    "lockfile-pin-delta writes pin-delta.json + pin-delta.md from caller before/after",
+    "missing-required-inputs refuses run lockfile-pin-delta with no files (product exit 2)",
+    "page-change-offline-job has no --example; --example is sample_as_delivered_watch"
+  ],
+  "seededFailures": {
+    "missing-required-inputs": {
+      "feature": "useful-jobs",
+      "jobId": "lockfile-pin-delta",
+      "argv": ["run", "lockfile-pin-delta"],
+      "productCode": "missing-required-inputs",
+      "expectChildExitNonzero": true
+    },
+    "sha-mismatch": {
+      "feature": "useful-jobs",
+      "code": "wrong-digest",
+      "expectedSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "useRealBytes": true,
+      "extract": false
+    },
+    "silent-empty-success": {
+      "feature": "useful-jobs",
+      "code": "silent-empty-success",
+      "fixture": "fixtures/seeded/silent-empty-success.json"
+    }
+  },
+  "negativeControl": {
+    "version": "1.1.0",
+    "sha256": "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534",
+    "bytes": 2577606,
+    "note": "1.1.0 remains as an immutable public archive; this slice does not treat it as current."
+  }
+}

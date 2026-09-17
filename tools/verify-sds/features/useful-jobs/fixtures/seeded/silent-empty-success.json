@@ -1,0 +1,10 @@
+{
+  "id": "silent-empty-success",
+  "feature": "useful-jobs",
+  "code": "silent-empty-success",
+  "list": {
+    "ok": true,
+    "jobs": []
+  },
+  "note": "ok:true with zero job ids is not a useful-jobs pass."
+}

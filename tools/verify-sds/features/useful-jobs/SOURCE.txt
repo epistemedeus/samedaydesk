@@ -1,0 +1,13 @@
+SDS verify feature-map slice for useful-jobs only.
+
+Authoritative inputs: samedaydesk default branch public useful-jobs 1.4.7
+  archive 5255824 bytes
+  sha256  e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec
+  sourceCommit 27f0730604adf236e0f3ad818a30b5f43be6e656
+
+This directory maps and proves that shipped archive. It does not pack a
+new tarball, publish, refresh a registry, pay, checkout, or import
+neomorphic-io.
+
+Obtain path reused (read-only): experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs
+obtain-archive currently exits 0 on ok:false; this prove CLI remaps that to exit 1.
