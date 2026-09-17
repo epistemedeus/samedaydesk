@@ -13,6 +13,7 @@
     "build": "npm run test:hosted-startup && npm --prefix client install --include=dev && npm --prefix client run build",
     "test:hosted-startup": "node --test server/scripts/test-hosted-startup.js",
     "start": "node server/index.js",
+    "verify": "node tools/verify/cli.mjs",
     "lint": "npm --prefix client run lint",
     "test:seller-repair-briefs": "node --test client/scripts/sellerRepairBriefs.test.ts client/scripts/sellerResolvedCases.test.ts",
     "test:verified-feed": "node --test client/scripts/generateVerifiedFeed.test.mjs client/scripts/refreshVerifiedFeed.test.mjs",

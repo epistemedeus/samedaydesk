@@ -1,0 +1,6 @@
+{
+  "id": "missing-required-mcp-tool",
+  "seededId": "missing-required-mcp-tool",
+  "command": "mcp",
+  "feature": "apex-mcp"
+}
