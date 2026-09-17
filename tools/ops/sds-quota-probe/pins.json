@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "samedaydesk.ops.quota-probe.pins.v1",
+  "product": "samedaydesk",
+  "note": "Declared SameDayDesk caps read from local source. This is not remaining headroom, GitHub live quota, payment capacity, or a tools/call budget.",
+  "mcpToolNames": [
+    "check_ai_readiness",
+    "generate_complete_fix_pack",
+    "plan_taskmarket_delegation",
+    "browse_taskmarket_tasks",
+    "track_taskmarket_task"
+  ],
+  "windows": [
+    {
+      "id": "pulse.recent_cap",
+      "providerId": "samedaydesk",
+      "sourcePath": "server/lib/pulse.js",
+      "sourcePattern": "const RECENT_CAP = 80",
+      "authorityClass": "seller_observed",
+      "windowKind": "declared_cap",
+      "limit": 80,
+      "unit": "recent_events"
+    },
+    {
+      "id": "pulse.mcp_batch_max",
+      "providerId": "samedaydesk",
+      "sourcePath": "server/lib/pulse.js",
+      "sourcePattern": "const MCP_BATCH_MAX = 25",
+      "authorityClass": "seller_observed",
+      "windowKind": "declared_cap",
+      "limit": 25,
+      "unit": "mcp_messages"
+    },
+    {
+      "id": "pulse.mcp_method_max_len",
+      "providerId": "samedaydesk",
+      "sourcePath": "server/lib/pulse.js",
+      "sourcePattern": "const MCP_METHOD_MAX_LEN = 128",
+      "authorityClass": "seller_observed",
+      "windowKind": "declared_cap",
+      "limit": 128,
+      "unit": "chars"
+    },
+    {
+      "id": "observatory.fetch_timeout_ms",
+      "providerId": "samedaydesk",
+      "sourcePath": "server/lib/observatory/bounded-fetch.js",
+      "sourcePattern": "export const DEFAULT_TIMEOUT_MS = 8000",
+      "authorityClass": "seller_observed",
+      "windowKind": "declared_cap",
+      "limit": 8000,
+      "unit": "ms"
+    },
+    {
+      "id": "observatory.max_response_bytes",
+      "providerId": "samedaydesk",
+      "sourcePath": "server/lib/observatory/bounded-fetch.js",
+      "sourcePattern": "export const MAX_RESPONSE_BYTES = 256 * 1024",
+      "authorityClass": "seller_observed",
+      "windowKind": "declared_cap",
+      "limit": 262144,
+      "unit": "bytes"
+    },
+    {
+      "id": "observatory.max_redirects",
+      "providerId": "samedaydesk",
+      "sourcePath": "server/lib/observatory/bounded-fetch.js",
+      "sourcePattern": "export const MAX_REDIRECTS = 3",
+      "authorityClass": "seller_observed",
+      "windowKind": "declared_cap",
+      "limit": 3,
+      "unit": "hops"
+    },
+    {
+      "id": "tools.ai_readiness.fetch_timeout_ms",
+      "providerId": "samedaydesk",
+      "sourcePath": "server/routes/tools.js",
+      "sourcePattern": "const FETCH_TIMEOUT_MS = 10000",
+      "authorityClass": "seller_observed",
+      "windowKind": "declared_cap",
+      "limit": 10000,
+      "unit": "ms"
+    },
+    {
+      "id": "tools.ai_readiness.max_bytes",
+      "providerId": "samedaydesk",
+      "sourcePath": "server/routes/tools.js",
+      "sourcePattern": "const MAX_BYTES = 2_500_000",
+      "authorityClass": "seller_observed",
+      "windowKind": "declared_cap",
+      "limit": 2500000,
+      "unit": "bytes"
+    },
+    {
+      "id": "presence.for_agents.max_body_bytes",
+      "providerId": "samedaydesk",
+      "sourcePath": "tools/presence/for-agents-cold-read.mjs",
+      "sourcePattern": "export const MAX_BODY_BYTES = 262144",
+      "authorityClass": "seller_observed",
+      "windowKind": "declared_cap",
+      "limit": 262144,
+      "unit": "bytes"
+    },
+    {
+      "id": "mcp.tool_inventory",
+      "providerId": "samedaydesk",
+      "sourcePath": "server/lib/mcp-tool-inventory.js",
+      "sourcePattern": "export const MCP_TOOL_NAMES = Object.freeze([",
+      "authorityClass": "seller_observed",
+      "windowKind": "declared_cap",
+      "limit": 5,
+      "unit": "tools",
+      "rpcMethod": "tools/list"
+    }
+  ]
+}

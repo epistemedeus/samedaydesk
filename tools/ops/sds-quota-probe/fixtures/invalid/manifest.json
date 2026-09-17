@@ -1,0 +1,29 @@
+{
+  "consume-quota-tools-call.json": {
+    "code": "consume_quota_refused"
+  },
+  "http-429-as-headroom.json": {
+    "code": "http_429_is_not_headroom"
+  },
+  "http-402-as-remaining.json": {
+    "code": "http_402_is_not_remaining"
+  },
+  "sum-across-windows.json": {
+    "code": "sum_across_windows"
+  },
+  "money-movement.json": {
+    "code": "money_movement_refused"
+  },
+  "mutating-http.json": {
+    "code": "mutating_http_refused"
+  },
+  "checkout-intent.json": {
+    "code": "money_movement_refused"
+  },
+  "auto-retry-on-retry-after.json": {
+    "code": "auto_retry_refused"
+  },
+  "paid-fixpack-call.json": {
+    "code": "consume_quota_refused"
+  }
+}

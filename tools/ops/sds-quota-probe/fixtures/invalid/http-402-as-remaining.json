@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "samedaydesk.ops.quota-probe.v1",
+  "mode": "read_only",
+  "observedAt": "2026-09-17T12:00:00.000Z",
+  "windows": [
+    {
+      "id": "sds.extract",
+      "providerId": "samedaydesk",
+      "surface": "GET https://agents.samedaydesk.com/extract",
+      "authorityClass": "provider_returned",
+      "windowKind": "rate_limit",
+      "limit": 12,
+      "remaining": 12,
+      "used": 0,
+      "unit": "requests",
+      "httpStatus": 402,
+      "httpMethod": "GET",
+      "consumesQuota": false
+    }
+  ]
+}

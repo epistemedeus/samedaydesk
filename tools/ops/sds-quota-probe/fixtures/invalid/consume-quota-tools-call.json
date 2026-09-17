@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "samedaydesk.ops.quota-probe.v1",
+  "mode": "read_only",
+  "observedAt": "2026-09-17T12:00:00.000Z",
+  "windows": [
+    {
+      "id": "mcp.tools_call",
+      "providerId": "samedaydesk",
+      "surface": "https://samedaydesk.com/mcp",
+      "authorityClass": "seller_observed",
+      "windowKind": "rate_limit",
+      "limit": 100,
+      "remaining": 99,
+      "used": 1,
+      "unit": "calls",
+      "httpStatus": 200,
+      "httpMethod": "POST",
+      "rpcMethod": "tools/call",
+      "consumesQuota": true
+    }
+  ]
+}
