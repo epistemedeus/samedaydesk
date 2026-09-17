@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "samedaydesk.contribution-provenance.v1",
+  "claimId": "unknown-actor-label",
+  "actorLabel": "contributor",
+  "adoption": "lead",
+  "surface": "issue_comment",
+  "text": "Closed set is owner|member|commenter|app.",
+  "notes": "contributor is not a fixture label.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "comment_text_is_not_adoption",
+    "solution_shaped_text_is_lead"
+  ]
+}
