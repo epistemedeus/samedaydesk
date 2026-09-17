@@ -1,0 +1,12 @@
+{
+  "schema": "samedaydesk.for-agents.useful-jobs.v1",
+  "package": "useful-job-desk",
+  "version": "0.0.0",
+  "jobs": ["not-this-pack"],
+  "archive": {
+    "path": "/not/this",
+    "url": "https://samedaydesk.com/not/this",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "bytes": 1
+  }
+}

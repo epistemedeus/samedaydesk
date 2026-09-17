@@ -1,0 +1,6 @@
+{
+  "schema": "samedaydesk.for-agents.useful-jobs.v1",
+  "package": "useful-jobs",
+  "version": "1.4.7",
+  "jobs": ["lockfile-pin-delta"]
+}

@@ -1,0 +1,21 @@
+E4 maintained-runtime useful-job discovery
+==========================================
+
+Owning repo: epistemedeus/samedaydesk
+Write boundary: packs/e4-maintained-runtime-discovery/**
+
+This pack is a consumer of already-published SameDayDesk surfaces:
+
+- client/public/discovery/useful-jobs.json
+  live: https://samedaydesk.com/discovery/useful-jobs.json
+- client/public/for-agents/useful-jobs/catalog.json
+  live: https://samedaydesk.com/for-agents/useful-jobs/catalog.json
+- client/public/llms.txt
+  live: https://samedaydesk.com/llms.txt
+
+It does not add a public discovery schema, catalog endpoint, or homepage
+route. It does not own packs/useful-job-desk (J6) or any E3 pack.
+
+The maintained client GET/reads those surfaces the same way a runtime
+already can: HTTP JSON plus the llms.txt pointer. Empty 2xx bodies and
+ok:true documents with no jobs are explicit failures, not success.

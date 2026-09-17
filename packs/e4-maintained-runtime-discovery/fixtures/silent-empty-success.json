@@ -1,0 +1,8 @@
+{
+  "ok": true,
+  "status": 200,
+  "schema": "samedaydesk.for-agents.useful-jobs.v1",
+  "package": "useful-jobs",
+  "jobs": [],
+  "offer": null
+}
