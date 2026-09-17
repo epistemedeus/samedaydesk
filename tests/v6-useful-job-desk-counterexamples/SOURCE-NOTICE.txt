@@ -1,0 +1,20 @@
+V6 black-box counterexamples for the useful-job desk
+====================================================
+
+Owning repo: epistemedeus/samedaydesk
+Write boundary: tests/v6-useful-job-desk-counterexamples/**
+
+This pack is a black-box oracle over already-published SameDayDesk surfaces:
+
+- client/public/for-agents/useful-jobs/catalog.json
+- client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz
+- node bin/useful-jobs.mjs inside that archive (spawned as a subprocess)
+
+It does not own or import J6 packs/useful-job-desk. It does not edit
+production engines. It does not reimplement job analysis.
+
+Property: a desk report cannot claim delivered (ok:true / status:delivered /
+delivered:true / delivery.complete) when a catalog-promised output file is
+missing. Failures must be nonzero-exit and parseable JSON.
+
+Seeded counterexample: fixtures/missing-output-reported-delivered/

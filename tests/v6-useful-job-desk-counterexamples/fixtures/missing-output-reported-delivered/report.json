@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "status": "delivered",
+  "delivered": true,
+  "jobId": "lockfile-pin-delta",
+  "outDir": "./out",
+  "outputs": ["pin-delta.json", "pin-delta.md"],
+  "delivery": {
+    "status": "complete",
+    "complete": true,
+    "expected": ["pin-delta.json", "pin-delta.md"],
+    "present": ["pin-delta.json", "pin-delta.md"],
+    "missing": []
+  }
+}

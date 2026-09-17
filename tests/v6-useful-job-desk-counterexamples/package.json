@@ -1,0 +1,17 @@
+{
+  "name": "@samedaydesk/v6-useful-job-desk-counterexamples",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Black-box counterexamples for the useful-job desk. Missing output cannot report delivered. Failures are nonzero and parseable. Disjoint from J6 implementation paths and production engines.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "v6-check-desk-report": "./bin/check-desk-report.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "seeded": "node bin/check-desk-report.mjs --seeded-fixture"
+  }
+}
