@@ -1,0 +1,25 @@
+{
+  "id": "spoofed-147-label-110-bytes",
+  "surface": "useful-jobs-archive",
+  "class": "stale-archive",
+  "expectReject": true,
+  "expectedReasons": [
+    "stale_archive",
+    "stale_as_current",
+    "stale_sha",
+    "stale_bytes"
+  ],
+  "defect": "Labeled 1.4.7 while sha+bytes are the stale 1.1.0 archive.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "claimedCurrent": true,
+    "feature": "useful-jobs",
+    "surface": "useful-jobs-archive",
+    "version": "1.4.7",
+    "sha256": "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534",
+    "bytes": 2577606,
+    "rootName": "useful-jobs-1.4.7",
+    "message": "version label 1.4.7 on 1.1.0 bytes"
+  }
+}
