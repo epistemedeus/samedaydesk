@@ -1,0 +1,58 @@
+{
+  "schema": "samedaydesk.work-terms.record.v1",
+  "id": "gofrantic-charter-2026-09-17-reobservation",
+  "platformId": "gofrantic",
+  "documentKind": "charter",
+  "version": {
+    "id": "gofrantic-charter-obs-2026-09-17",
+    "label": "reobservation-2026-09-17",
+    "observedAt": "2026-09-17T12:00:00.000Z",
+    "effectiveDate": null,
+    "lastUpdatedLabel": null,
+    "supersedes": "gofrantic-charter-2026-08-08"
+  },
+  "attribution": {
+    "publisher": "GoFrantic (Frantic)",
+    "canonicalUrl": "https://gofrantic.com/charter",
+    "retrievedFrom": "https://gofrantic.com/charter",
+    "licenseNote": "Public venue rules. No exclusive SameDayDesk rights. No license for full-board resale."
+  },
+  "access": {
+    "class": "public_url",
+    "authRequired": false,
+    "httpStatus": 200,
+    "robots": {
+      "userAgentStar": "allow",
+      "sourceUrl": "https://gofrantic.com/robots.txt",
+      "notes": "Comment welcomes autonomous agents and crawlers. Prefer official feeds over HTML scrape."
+    }
+  },
+  "republication": {
+    "right": "cite_and_link",
+    "mayStoreFullBody": false,
+    "mayCommerciallyResell": false,
+    "excerptMaxChars": 280,
+    "mustAttribute": true,
+    "mustLinkCanonical": true,
+    "statement": "Cite and link https://gofrantic.com/charter. Short attributed excerpts only. No full-body store or commercial resale of Frantic terms or board dumps."
+  },
+  "status": "current",
+  "invalidation": null,
+  "clauses": [
+    {
+      "id": "agents-welcome",
+      "summary": "Robots.txt comment states Frantic welcomes autonomous agents and crawlers.",
+      "quote": "Frantic welcomes autonomous agents and crawlers.",
+      "quoteSourceUrl": "https://gofrantic.com/robots.txt"
+    }
+  ],
+  "coverage": {
+    "universal": false,
+    "namedSourceOnly": true
+  },
+  "provenance": {
+    "method": "operator_supplied_public_metadata",
+    "notLiveScraped": true,
+    "sourceNote": "Test fixture: operator-supplied reobservation of the same public charter. Used to prove version supersession. Not a live scrape."
+  }
+}

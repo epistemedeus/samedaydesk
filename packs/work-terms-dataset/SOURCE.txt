@@ -1,0 +1,21 @@
+Pack: work-terms-dataset
+Role: maintained public work-terms dataset (versions, invalidation, attribution, republication rights)
+Dataset: data/work-terms
+Pin: PIN.json (liveScrape false, universalCoverage false)
+
+This pack maintains operator-supplied metadata about named public work-platform
+terms. It does not scrape. It does not fetch private, auth-gated, dashboard,
+or NDA terms. Ingest of a private-terms scrape is refused (code
+private_terms_scrape).
+
+Coverage is named-source only. The catalog lists coverage gaps. The pack
+does not claim a complete or universal corpus of work terms.
+
+Republication rights are explicit on every record. Full terms bodies are
+never stored. Commercial resale of third-party terms is refused.
+
+Invalidation is first-class: an invalidated record is not current and must
+not be republished.
+
+Disjoint from H04 licensed regression packs (no hidden evaluator answers,
+gold labels, or licensed eval fixtures).

@@ -1,0 +1,63 @@
+{
+  "schema": "samedaydesk.work-terms.record.v1",
+  "id": "samedaydesk-terms-stub-2026-09-17",
+  "platformId": "samedaydesk",
+  "documentKind": "placeholder_stub",
+  "version": {
+    "id": "samedaydesk-terms-stub-obs-2026-09-17",
+    "label": "committed-stub-7750516",
+    "observedAt": "2026-09-17T00:00:00.000Z",
+    "effectiveDate": null,
+    "lastUpdatedLabel": "Legal copy coming soon.",
+    "supersedes": null
+  },
+  "attribution": {
+    "publisher": "SameDayDesk",
+    "canonicalUrl": "https://samedaydesk.com/terms",
+    "retrievedFrom": "https://samedaydesk.com/terms",
+    "licenseNote": "First-party placeholder. Not operative legal terms. No republication of a finished ToS that does not exist."
+  },
+  "access": {
+    "class": "public_url",
+    "authRequired": false,
+    "httpStatus": null,
+    "robots": {
+      "userAgentStar": "allow",
+      "sourceUrl": "https://samedaydesk.com/robots.txt",
+      "notes": "Committed client/public/robots.txt allows /. Observation is the committed App.tsx stub, not a live scrape."
+    }
+  },
+  "republication": {
+    "right": "metadata_only",
+    "mayStoreFullBody": false,
+    "mayCommerciallyResell": false,
+    "excerptMaxChars": 0,
+    "mustAttribute": true,
+    "mustLinkCanonical": true,
+    "statement": "Metadata only. The /terms route is a stub and is not operative work terms. Do not republish it as a finished ToS."
+  },
+  "status": "invalidated",
+  "invalidation": {
+    "at": "2026-09-17T00:00:00.000Z",
+    "reason": "placeholder_not_operative",
+    "note": "Committed /terms route is a stub (Legal copy coming soon). Not operative work terms.",
+    "actor": "policy"
+  },
+  "clauses": [
+    {
+      "id": "stub-not-operative",
+      "summary": "client/src/App.tsx mounts StubPage title Terms of Service with note Legal copy coming soon.",
+      "quote": null,
+      "quoteSourceUrl": "https://samedaydesk.com/terms"
+    }
+  ],
+  "coverage": {
+    "universal": false,
+    "namedSourceOnly": true
+  },
+  "provenance": {
+    "method": "committed_first_party_source",
+    "notLiveScraped": true,
+    "sourceNote": "Observed in epistemedeus/samedaydesk@775051602d91f42ca1aa920054cfd7a451982940 client/src/App.tsx /terms stub. Not a live scrape."
+  }
+}

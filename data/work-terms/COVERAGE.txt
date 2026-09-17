@@ -1,0 +1,22 @@
+SameDayDesk work-terms dataset coverage
+
+This dataset covers only the named public sources below. It is not a complete or universal corpus of work terms.
+
+Included platforms (named-source only):
+- gofrantic (charter; no formal /terms page on observation date)
+- taskmarket (draft terms + draft acceptable use)
+- bountybook (public terms)
+- moltjobs (public terms)
+- superteam (public agent skill/rules; site /terms 404 on observation date)
+- agoragentic (public terms; listing harvest forbidden)
+- samedaydesk (first-party /terms stub, invalidated as not operative)
+
+Known gaps (not an attack surface, not completeness):
+- taskforce: no public Terms; task inventory is API-key gated
+- worq: no Terms or robots found on 2026-08-08 check
+- every other work platform, marketplace, employer, or contractor ToS not named above
+
+This pack does not scrape. Private, auth-gated, dashboard, NDA, and
+employee-only terms are refused on ingest.
+
+Disjoint from H04 licensed regression packs.
