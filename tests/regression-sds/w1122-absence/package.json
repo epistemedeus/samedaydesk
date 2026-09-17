@@ -1,0 +1,11 @@
+{
+  "name": "samedaydesk-regression-sds-w1122-absence",
+  "private": true,
+  "type": "module",
+  "description": "SDS absence≠demand regression (w1122): cold-read observatory/pulse/QA pins; reject invented demand from absence; seeded MCP surface GET refuse. Write boundary tests/regression-sds/w1122-absence/**.",
+  "scripts": {
+    "test": "node --test --test-concurrency=1 *.test.mjs",
+    "corpus": "node run.mjs --json",
+    "seeded-failure": "node run.mjs --seeded-failure --json"
+  }
+}

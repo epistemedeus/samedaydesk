@@ -1,0 +1,24 @@
+{
+  "id": "unique-humans-estimate-as-demand",
+  "surface": "pulse",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "server/lib/pulse.js",
+  "expectedReasons": ["absence_as_demand", "unique_humans_as_demand"],
+  "defect": "In-process uniqueHumansEstimate sold as paid customers / demand.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "pulse",
+    "uniqueHumansAsDemand": true,
+    "paidDemand": true,
+    "paidCustomers": 7,
+    "demandSignal": "paid",
+    "uniqueHumansEstimate": {
+      "count": 7,
+      "scope": "current_process_only",
+      "meaning": "Coarse in-process human-ish estimate from this Node process only. Not durable, not cross-process unique, and not payment or demand evidence."
+    },
+    "message": "uniqueHumansEstimate invented as demand"
+  }
+}

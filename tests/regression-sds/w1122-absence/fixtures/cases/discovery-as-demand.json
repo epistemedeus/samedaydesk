@@ -1,0 +1,21 @@
+{
+  "id": "discovery-as-demand",
+  "surface": "discovery",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "client/src/data/machineEntry.mjs",
+  "expectedReasons": ["absence_as_demand", "discovery_as_demand"],
+  "defect": "Discovery/presence snapshot treated as market demand.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "discovery",
+    "discovery": true,
+    "discoveryAsDemand": true,
+    "hasDemand": true,
+    "demandCount": 3,
+    "demandSignal": "present",
+    "sourceNote": "Discovery is not authorization, settlement, demand, or revenue.",
+    "message": "discovery snapshot invented as demand"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "id": "organic-heuristic-as-paid-demand",
+  "surface": "observatory",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "server/lib/observatory/adapters/x402stats.js",
+  "expectedReasons": ["absence_as_demand", "organic_heuristic_as_paid_demand"],
+  "defect": "Provider organicSellers heuristic claimed as proven organic/paid demand.",
+  "output": {
+    "ok": true,
+    "status": "ok",
+    "surface": "observatory",
+    "organicHeuristic": true,
+    "evidenceClass": "organic_heuristic",
+    "organicDemandProven": true,
+    "paidCustomersFromOrganic": true,
+    "demand": true,
+    "demandCount": 1200,
+    "sourceNote": "Provider heuristic organicSellers. Not independently verified organic demand and not a paid-customer count.",
+    "paidActivity": {
+      "available": false,
+      "reason": "organic is heuristic, not paid customers"
+    },
+    "message": "treated organic heuristic as paid demand"
+  }
+}
