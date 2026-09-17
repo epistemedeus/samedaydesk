@@ -1,0 +1,57 @@
+{
+  "schema": "samedaydesk.agent-sds.path-policy.v1",
+  "purpose": "Cold SDS agent follow may run only unpaid in-repo helpers named here. Wrong paths are refused and never executed.",
+  "allowedPathPrefixes": [
+    "tools/presence/",
+    "tools/offer-routing/",
+    "tools/result-reuse/",
+    "docs/agent-sds/"
+  ],
+  "refuse": [
+    {
+      "id": "neomorphic_vendor",
+      "match": "vendor/neomorphic",
+      "reason": "neomorphic_out_of_scope"
+    },
+    {
+      "id": "neomorphic_io",
+      "match": "neomorphic.io",
+      "reason": "neomorphic_io_out_of_scope"
+    },
+    {
+      "id": "paid_extract_batch",
+      "match": "/extract/batch",
+      "reason": "paid_extract_not_cold_follow"
+    },
+    {
+      "id": "paid_extract",
+      "match": "/extract",
+      "reason": "paid_extract_not_cold_follow"
+    },
+    {
+      "id": "checkout_api",
+      "match": "/api/checkout",
+      "reason": "checkout_mutation_refused"
+    },
+    {
+      "id": "checkout_route",
+      "match": "server/routes/checkout",
+      "reason": "checkout_mutation_refused"
+    },
+    {
+      "id": "stripe_buy",
+      "match": "buy.stripe.com",
+      "reason": "payment_mutation_refused"
+    },
+    {
+      "id": "pricing_module",
+      "match": "server/pricing",
+      "reason": "pricing_mutation_refused"
+    },
+    {
+      "id": "mcp_registry_live",
+      "match": "registry.modelcontextprotocol.io",
+      "reason": "registry_live_not_cold_follow"
+    }
+  ]
+}
