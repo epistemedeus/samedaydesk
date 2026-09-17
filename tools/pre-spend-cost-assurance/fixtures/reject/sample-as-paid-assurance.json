@@ -1,0 +1,21 @@
+{
+  "schema": "samedaydesk.pre-spend-cost-assurance.plan.v1",
+  "id": "sample-as-paid-assurance",
+  "label": "SAMPLE",
+  "sample": true,
+  "kind": "SAMPLE",
+  "paid": true,
+  "assured": true,
+  "paidAssurance": true,
+  "purchaseAuthorized": false,
+  "network": "eip155:8453",
+  "currency": "USDC",
+  "lines": [
+    {
+      "tool": "extract",
+      "route": "/extract",
+      "amountAtomic": "5000",
+      "httpStatus": 402
+    }
+  ]
+}
