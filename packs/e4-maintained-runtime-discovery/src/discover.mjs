@@ -80,9 +80,11 @@ export async function discoverOffer({
     catalogRead = readCommittedSurface(SURFACES.catalog, repoRoot);
     llmsRead = readCommittedSurface(SURFACES.llms, repoRoot);
   } else {
-    discoveryRead = await fetchSurface(SURFACES.discovery, { fetchImpl });
-    catalogRead = await fetchSurface(SURFACES.catalog, { fetchImpl });
-    llmsRead = await fetchSurface(SURFACES.llms, { fetchImpl });
+    [discoveryRead, catalogRead, llmsRead] = await Promise.all([
+      fetchSurface(SURFACES.discovery, { fetchImpl }),
+      fetchSurface(SURFACES.catalog, { fetchImpl }),
+      fetchSurface(SURFACES.llms, { fetchImpl }),
+    ]);
   }
 
   const surfaces = {
@@ -112,9 +114,9 @@ export async function discoverOffer({
   if (isFailure(catalog)) {
     return { ...catalog, client: "e4-maintained-runtime", mode, surfaces };
   }
-  if (catalog.catalog.version && catalog.catalog.version !== parsed.offer.version) {
+  if (catalog.catalog.version !== parsed.offer.version) {
     return {
-      ...fail("catalog_job_mismatch", "catalog version does not match discovery version", {
+      ...fail("catalog_invalid", "catalog version does not match discovery version", {
         discoveryVersion: parsed.offer.version,
         catalogVersion: catalog.catalog.version,
       }),

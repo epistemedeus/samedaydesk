@@ -4,6 +4,7 @@ import {
   DISCOVERY_SCHEMA,
   LLMS_REQUIRED_POINTERS,
   PACKAGE_ID,
+  SITE_ORIGIN,
   SURFACES,
 } from "./surfaces.mjs";
 
@@ -11,9 +12,33 @@ function isPlainObject(value) {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
 
-function looksLikeNaiveSuccess(doc) {
-  if (!isPlainObject(doc)) return false;
-  if (doc.ok === false || doc.error) return false;
+function textHasExactUrl(text, url) {
+  let from = 0;
+  while (from < text.length) {
+    const i = text.indexOf(url, from);
+    if (i === -1) return false;
+    const next = text[i + url.length];
+    if (!next || !/[A-Za-z0-9/_-]/.test(next)) return true;
+    from = i + 1;
+  }
+  return false;
+}
+
+function maintainedHttpsUrl(value, { exactPath = null, pathPrefixes = null } = {}) {
+  if (typeof value !== "string" || !value.trim()) return false;
+  let parsed;
+  try {
+    parsed = new URL(value);
+  } catch {
+    return false;
+  }
+  if (parsed.protocol !== "https:" || parsed.origin !== SITE_ORIGIN) return false;
+  if (parsed.username || parsed.password) return false;
+  if (parsed.search || parsed.hash) return false;
+  if (exactPath != null) return parsed.pathname === exactPath;
+  if (pathPrefixes) {
+    return pathPrefixes.some((prefix) => parsed.pathname === prefix || parsed.pathname.startsWith(`${prefix}/`));
+  }
   return true;
 }
 
@@ -63,7 +88,7 @@ export function parseDiscoveryDocument(raw, { httpStatus = null, source = "disco
     return fail("invalid_document", "discovery body must be a JSON object", { source });
   }
 
-  if (doc.ok === false || (doc.error && !doc.jobs)) {
+  if (doc.ok === false || doc.error) {
     return fail("explicit_document_error", String(doc.error || doc.message || "document declared failure"), {
       source,
       documentError: doc.error || doc.message || true,
@@ -88,24 +113,8 @@ export function parseDiscoveryDocument(raw, { httpStatus = null, source = "disco
   const ids = jobIdsFromDiscovery(jobs);
   const archive = archiveFrom(doc);
   const version = typeof doc.version === "string" && doc.version.trim() ? doc.version.trim() : null;
-  const hasOfferShape =
-    Boolean(version) &&
-    ids.length > 0 &&
-    isPlainObject(archive) &&
-    typeof archive.sha256 === "string" &&
-    archive.sha256.length === 64 &&
-    Number.isInteger(archive.bytes) &&
-    archive.bytes > 0 &&
-    (typeof archive.url === "string" || typeof archive.path === "string" || typeof doc.archiveUrl === "string");
 
-  if (!hasOfferShape && looksLikeNaiveSuccess(doc)) {
-    if (ids.length > 0) {
-      return fail("missing_archive", "jobs named but archive sha256/bytes/url missing", {
-        httpStatus,
-        source,
-        jobCount: ids.length,
-      });
-    }
+  if (!Array.isArray(jobs) || jobs.length === 0) {
     return fail(
       "silent_empty_success",
       "2xx JSON looks successful but names no useful-jobs offer (empty object, ok:true, or empty jobs)",
@@ -126,11 +135,8 @@ export function parseDiscoveryDocument(raw, { httpStatus = null, source = "disco
   if (doc.package !== PACKAGE_ID) {
     return fail("wrong_package", "missing package useful-jobs", { source });
   }
-  if (!Array.isArray(jobs) || jobs.length === 0) {
-    return fail("silent_empty_success", "jobs array is missing or empty", {
-      source,
-      seeded: "silent_empty_success",
-    });
+  if (!version) {
+    return fail("invalid_document", "version is missing or blank", { source });
   }
   for (const id of ids) {
     if (typeof id !== "string" || !id.trim()) {
@@ -140,9 +146,16 @@ export function parseDiscoveryDocument(raw, { httpStatus = null, source = "disco
   if (ids.length !== jobs.length) {
     return fail("empty_job_id", "jobs array contains a non-id entry", { source });
   }
+  if (new Set(ids).size !== ids.length) {
+    return fail("empty_job_id", "duplicate job id", { source, jobs: ids });
+  }
 
   if (!isPlainObject(archive)) {
-    return fail("missing_archive", "archive object missing", { source });
+    return fail("missing_archive", "jobs named but archive sha256/bytes/url missing", {
+      httpStatus,
+      source,
+      jobCount: ids.length,
+    });
   }
   if (!/^[0-9a-f]{64}$/i.test(String(archive.sha256 || ""))) {
     return fail("missing_archive", "archive.sha256 must be 64 hex chars", { source });
@@ -151,16 +164,45 @@ export function parseDiscoveryDocument(raw, { httpStatus = null, source = "disco
     return fail("missing_archive", "archive.bytes must be a positive integer", { source });
   }
   const archiveUrl = archive.url || doc.archiveUrl || null;
-  const archivePath = archive.path || null;
+  const archivePath = typeof archive.path === "string" && archive.path.trim() ? archive.path.trim() : null;
   if (!archiveUrl && !archivePath) {
     return fail("missing_archive", "archive.url or archive.path required", { source });
+  }
+  const archivePrefixes = ["/for-agents/useful-jobs", "/kit"];
+  if (archiveUrl && !maintainedHttpsUrl(archiveUrl, { pathPrefixes: archivePrefixes })) {
+    return fail("invalid_document", "archive.url is not a maintained SameDayDesk https URL", {
+      source,
+      archiveUrl,
+    });
+  }
+  if (archivePath && !archivePrefixes.some((prefix) => archivePath === prefix || archivePath.startsWith(`${prefix}/`))) {
+    return fail("invalid_document", "archive.path is not a maintained useful-jobs path", {
+      source,
+      archivePath,
+    });
   }
 
   if (doc.paidHostedClaim === true) {
     return fail("paid_hosted_claim_not_this_offer", "useful-jobs is a free offline package", { source });
   }
 
+  if (typeof doc.page === "string" && doc.page.trim() && !maintainedHttpsUrl(doc.page.trim(), { exactPath: SURFACES.page.path })) {
+    return fail("invalid_document", "page is not the maintained useful-jobs URL", { source, page: doc.page });
+  }
+  if (
+    typeof doc.jobsCatalogUrl === "string" &&
+    doc.jobsCatalogUrl.trim() &&
+    !maintainedHttpsUrl(doc.jobsCatalogUrl.trim(), { exactPath: SURFACES.catalog.path })
+  ) {
+    return fail("invalid_document", "jobsCatalogUrl is not the maintained catalog URL", {
+      source,
+      jobsCatalogUrl: doc.jobsCatalogUrl,
+    });
+  }
+
   const page = typeof doc.page === "string" && doc.page.trim() ? doc.page.trim() : SURFACES.page.url;
+  const catalogUrl =
+    typeof doc.jobsCatalogUrl === "string" && doc.jobsCatalogUrl.trim() ? doc.jobsCatalogUrl.trim() : SURFACES.catalog.url;
 
   return {
     ok: true,
@@ -173,7 +215,7 @@ export function parseDiscoveryDocument(raw, { httpStatus = null, source = "disco
       page,
       discoveryPath: SURFACES.discovery.path,
       discoveryUrl: SURFACES.discovery.url,
-      catalogUrl: typeof doc.jobsCatalogUrl === "string" ? doc.jobsCatalogUrl : SURFACES.catalog.url,
+      catalogUrl,
       archive: {
         path: archivePath,
         url: archiveUrl,
@@ -223,6 +265,9 @@ export function parseCatalogDocument(raw, expectedJobIds, { source = "catalog" }
       return fail("empty_job_id", "catalog job missing id", { source });
     }
   }
+  if (new Set(ids).size !== ids.length) {
+    return fail("empty_job_id", "duplicate catalog job id", { source, jobs: ids });
+  }
   const expected = [...expectedJobIds];
   const sameLength = ids.length === expected.length;
   const sameSet =
@@ -234,7 +279,14 @@ export function parseCatalogDocument(raw, expectedJobIds, { source = "catalog" }
       catalogJobs: ids,
     });
   }
-  const firstOffer = typeof doc.firstOffer === "string" ? doc.firstOffer : ids[0];
+  const firstOffer = typeof doc.firstOffer === "string" && doc.firstOffer.trim() ? doc.firstOffer.trim() : ids[0];
+  if (!ids.includes(firstOffer)) {
+    return fail("catalog_job_mismatch", "catalog firstOffer is not in catalog jobs", {
+      source,
+      firstOffer,
+      catalogJobs: ids,
+    });
+  }
   return {
     ok: true,
     catalog: {
@@ -253,7 +305,7 @@ export function parseLlmsPointer(raw, { source = "llms" } = {}) {
   if (!text.trim()) {
     return fail("llms_pointer_missing", "llms.txt body is empty", { source });
   }
-  const missing = LLMS_REQUIRED_POINTERS.filter((needle) => !text.includes(needle));
+  const missing = LLMS_REQUIRED_POINTERS.filter((needle) => !textHasExactUrl(text, needle));
   if (missing.length) {
     return fail("llms_pointer_missing", `llms.txt missing ${missing.join(", ")}`, { source, missing });
   }

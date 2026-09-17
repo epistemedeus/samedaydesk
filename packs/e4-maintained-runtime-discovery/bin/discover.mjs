@@ -14,8 +14,13 @@ function parseArgs(argv) {
     if (a === "--committed") args.mode = "committed";
     else if (a === "--live") args.mode = "live";
     else if (a === "--fixture") {
+      const pathArg = argv[i + 1];
+      if (!pathArg || pathArg.startsWith("-")) {
+        return { error: fail("usage", "--fixture requires a path") };
+      }
       args.mode = "fixture";
-      args.fixturePath = argv[++i];
+      args.fixturePath = pathArg;
+      i += 1;
     } else if (a === "--compact") args.pretty = false;
     else if (a === "--help" || a === "-h") args.help = true;
     else {

@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { fail } from "./failures.mjs";
+import { fail, isFailure } from "./failures.mjs";
 import { FETCH_TIMEOUT_MS, MAX_BODY_BYTES, SURFACES } from "./surfaces.mjs";
 
 export function sha256Bytes(buf) {
@@ -33,6 +33,9 @@ export function readCommittedSurface(surface, repoRoot) {
     return fail("committed_surfaces_unavailable", `missing ${surface.committedRel}`, { path });
   }
   const buf = readFileSync(path);
+  if (buf.length > MAX_BODY_BYTES) {
+    return fail("body_too_large", `body ${buf.length} exceeds ${MAX_BODY_BYTES}`, { path });
+  }
   return {
     ok: true,
     surface: surface.id,
@@ -44,6 +47,51 @@ export function readCommittedSurface(surface, repoRoot) {
     sha256: sha256Bytes(buf),
     body: buf.toString("utf8"),
   };
+}
+
+async function readBoundedBody(res, url) {
+  const declared = Number(res.headers.get("content-length"));
+  if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) {
+    await res.body?.cancel?.().catch(() => {});
+    return fail("body_too_large", `content-length ${declared} exceeds ${MAX_BODY_BYTES}`, { url });
+  }
+  if (!res.body || typeof res.body.getReader !== "function") {
+    try {
+      const ab = await res.arrayBuffer();
+      const buf = Buffer.from(ab);
+      if (buf.length > MAX_BODY_BYTES) {
+        return fail("body_too_large", `body ${buf.length} exceeds ${MAX_BODY_BYTES}`, { url });
+      }
+      return { ok: true, buf };
+    } catch (err) {
+      return fail("transport_error", err?.message || "body read failed", { url });
+    }
+  }
+  const reader = res.body.getReader();
+  const chunks = [];
+  let bytes = 0;
+  try {
+    for (;;) {
+      const part = await reader.read();
+      if (part.done) break;
+      bytes += part.value.byteLength;
+      if (bytes > MAX_BODY_BYTES) {
+        await reader.cancel().catch(() => {});
+        return fail("body_too_large", `body ${bytes} exceeds ${MAX_BODY_BYTES}`, { url });
+      }
+      chunks.push(Buffer.from(part.value));
+    }
+  } catch (err) {
+    await reader.cancel().catch(() => {});
+    return fail("transport_error", err?.message || "body read failed", { url });
+  } finally {
+    try {
+      reader.releaseLock();
+    } catch {
+      // cancel() already released the lock
+    }
+  }
+  return { ok: true, buf: bytes ? Buffer.concat(chunks, bytes) : Buffer.alloc(0) };
 }
 
 export async function fetchSurface(surface, { fetchImpl = fetch } = {}) {
@@ -77,23 +125,9 @@ export async function fetchSurface(surface, { fetchImpl = fetch } = {}) {
       observedAt,
     });
   }
-  const declared = Number(res.headers.get("content-length"));
-  if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) {
-    await res.body?.cancel?.().catch(() => {});
-    return fail("body_too_large", `content-length ${declared} exceeds ${MAX_BODY_BYTES}`, {
-      url: surface.url,
-    });
-  }
-  let buf;
-  try {
-    const ab = await res.arrayBuffer();
-    buf = Buffer.from(ab);
-  } catch (err) {
-    return fail("transport_error", err?.message || "body read failed", { url: surface.url });
-  }
-  if (buf.length > MAX_BODY_BYTES) {
-    return fail("body_too_large", `body ${buf.length} exceeds ${MAX_BODY_BYTES}`, { url: surface.url });
-  }
+  const bounded = await readBoundedBody(res, surface.url);
+  if (isFailure(bounded)) return bounded;
+  const buf = bounded.buf;
   return {
     ok: true,
     surface: surface.id,
@@ -109,9 +143,12 @@ export async function fetchSurface(surface, { fetchImpl = fetch } = {}) {
 
 export function readFixtureFile(path) {
   if (!existsSync(path)) {
-    return fail("committed_surfaces_unavailable", `fixture not found: ${path}`, { path });
+    return fail("usage", `fixture not found: ${path}`, { path });
   }
   const buf = readFileSync(path);
+  if (buf.length > MAX_BODY_BYTES) {
+    return fail("body_too_large", `body ${buf.length} exceeds ${MAX_BODY_BYTES}`, { path });
+  }
   return {
     ok: true,
     surface: "discovery",

@@ -1,7 +1,4 @@
-/**
- * Existing published surfaces. This file does not invent URLs or schemas.
- * Kill condition for this job: a new discovery framework or homepage rewrite.
- */
+/** Existing published SameDayDesk surfaces; this pack does not invent URLs or schemas. */
 export const SITE_ORIGIN = "https://samedaydesk.com";
 
 export const DISCOVERY_SCHEMA = "samedaydesk.for-agents.useful-jobs.v1";
@@ -40,8 +37,8 @@ export const SURFACES = Object.freeze({
 });
 
 export const LLMS_REQUIRED_POINTERS = Object.freeze([
-  "/discovery/useful-jobs.json",
-  "/for-agents/useful-jobs",
+  `${SITE_ORIGIN}/discovery/useful-jobs.json`,
+  `${SITE_ORIGIN}/for-agents/useful-jobs`,
 ]);
 
 export const MAX_BODY_BYTES = 262144;
