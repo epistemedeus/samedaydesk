@@ -1,0 +1,21 @@
+{
+  "schema": "samedaydesk.mcp-iserror-not-settle.case.v1",
+  "id": "x402-settlement-failed-claimed-settle",
+  "expect": "reject",
+  "http": { "status": 200 },
+  "rpc": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "isError": true,
+      "content": [{ "type": "text", "text": "Settlement failed after verify" }],
+      "_meta": {
+        "x402/payment-response": {
+          "success": false,
+          "error": "settle_failed"
+        }
+      }
+    }
+  },
+  "claim": { "settled": true, "basis": "no_error_field" }
+}

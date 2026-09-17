@@ -1,0 +1,20 @@
+{
+  "schema": "samedaydesk.mcp-iserror-not-settle.case.v1",
+  "id": "sds-unpaid-fixpack-iserror",
+  "expect": "pass",
+  "notes": "SameDayDesk generate_complete_fix_pack without a license. HTTP 200 + isError true is a tool error, not settlement.",
+  "http": { "status": 200 },
+  "rpc": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "No license provided.\n\nTo get the complete Fix Pack: buy at https://buy.stripe.com/8x4gA0xA9DF9dd13YeZ20h ($39). After paying you'll see your license code; call this tool again with url + that license."
+        }
+      ],
+      "isError": true
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "samedaydesk.mcp-iserror-not-settle.case.v1",
+  "id": "iserror-string-true-claimed-settle",
+  "expect": "reject",
+  "http": { "status": 200 },
+  "rpc": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "content": [{ "type": "text", "text": "failed" }],
+      "isError": "true"
+    }
+  },
+  "claim": { "settled": true, "basis": "jsonrpc_ok" }
+}

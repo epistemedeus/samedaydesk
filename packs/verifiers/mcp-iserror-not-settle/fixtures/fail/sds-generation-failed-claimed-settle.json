@@ -1,0 +1,24 @@
+{
+  "schema": "samedaydesk.mcp-iserror-not-settle.case.v1",
+  "id": "sds-generation-failed-claimed-settle",
+  "expect": "reject",
+  "notes": "Seeded failure. Tool text says payment is verified; isError still means the MCP call did not settle.",
+  "http": { "status": 200 },
+  "rpc": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Your payment is verified, but auto-generation hit an error (timeout). Email help@samedaydesk.com with your url (example.com) and license and we'll deliver your Fix Pack right away."
+        }
+      ],
+      "isError": true
+    }
+  },
+  "claim": {
+    "settled": true,
+    "basis": "payment_verified_text"
+  }
+}
