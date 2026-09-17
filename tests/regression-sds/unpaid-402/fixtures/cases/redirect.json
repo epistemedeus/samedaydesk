@@ -1,0 +1,14 @@
+{
+  "id": "redirect",
+  "class": "defect",
+  "evaluate": "observation-fixture",
+  "expected": "reject",
+  "expectCode": "redirect",
+  "defect": "A 302 off the allowlisted example URL is a failed observation, not a current unpaid-402 claim.",
+  "origin": "fixtures/verified-feed/observations/extract-redirect.json",
+  "asOf": "2026-09-03T12:00:00.000Z",
+  "observation": {
+    "kind": "redirect",
+    "location": "https://evil.example/phish"
+  }
+}

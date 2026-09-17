@@ -1,0 +1,14 @@
+{
+  "id": "timeout",
+  "class": "defect",
+  "evaluate": "observation-fixture",
+  "expected": "reject",
+  "expectCode": "timeout",
+  "defect": "Timeout is a failed observation. lastObservation stays null; no current unpaid-402 claim.",
+  "origin": "fixtures/verified-feed/observations/extract-timeout.json",
+  "asOf": "2026-09-03T12:00:00.000Z",
+  "observation": {
+    "kind": "timeout",
+    "detail": "fixture_timeout"
+  }
+}

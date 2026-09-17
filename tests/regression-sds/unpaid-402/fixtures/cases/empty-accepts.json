@@ -1,0 +1,21 @@
+{
+  "id": "empty-accepts",
+  "class": "defect",
+  "evaluate": "parse-payload",
+  "expected": "reject",
+  "expectCode": "missing_accepts",
+  "seededFalseAccept": true,
+  "defect": "HTTP 402 with accepts:[] used to look like a valid unpaid contract because status was 402. Product parseUnpaid402Payload requires a non-empty accepts array.",
+  "origin": "X22/X5 classify-http fixture body {\"error\":\"Payment Required\",\"accepts\":[]}",
+  "http": {
+    "status": 402,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "error": "Payment Required",
+      "accepts": []
+    },
+    "url": "https://agents.samedaydesk.com/extract?url=https://example.com"
+  }
+}

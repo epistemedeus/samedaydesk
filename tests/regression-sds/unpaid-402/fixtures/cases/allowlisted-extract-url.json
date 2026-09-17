@@ -1,0 +1,9 @@
+{
+  "id": "allowlisted-extract-url",
+  "class": "control",
+  "evaluate": "allowlist",
+  "expected": "accept",
+  "expectCode": "allowlisted",
+  "defect": "Control: the committed SameDayDesk GET /extract example URL is allowlisted for unpaid-402 observation.",
+  "exampleUrl": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com"
+}
