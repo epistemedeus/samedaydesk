@@ -1,0 +1,32 @@
+{
+  "wrong-amount.json": {
+    "code": "wrong_amount",
+    "seed": true
+  },
+  "missing-amount.json": {
+    "code": "missing_amount",
+    "seed": true
+  },
+  "forged-settlement.json": {
+    "code": "forged_settlement",
+    "seed": true
+  },
+  "wrong-amount-scaled-five.json": {
+    "code": "wrong_amount"
+  },
+  "decimal-as-atomic.json": {
+    "code": "wrong_units"
+  },
+  "wrong-units-10000-as-dollars.json": {
+    "code": "wrong_units"
+  },
+  "get-extract-as-batch.json": {
+    "code": "not_batch_route"
+  },
+  "live-price-edit.json": {
+    "code": "live_price_edit"
+  },
+  "payment-header-forge.json": {
+    "code": "forged_settlement"
+  }
+}
