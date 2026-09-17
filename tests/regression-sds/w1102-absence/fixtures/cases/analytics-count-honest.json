@@ -1,0 +1,26 @@
+{
+  "id": "analytics-count-honest",
+  "surface": "evidence-records",
+  "class": "honest-withheld",
+  "expectReject": false,
+  "cite": "tools/evidence-records/catalog.json",
+  "defect": null,
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "evidence-records",
+    "evidenceClass": "analytics_count",
+    "analyticsCount": 128,
+    "demand": false,
+    "paidDemand": false,
+    "notDemand": true,
+    "demandSignal": "withheld",
+    "withheldConclusions": [
+      "demand"
+    ],
+    "prohibitedInferences": [
+      "analytics_count_is_independent_demand"
+    ],
+    "message": "analytics count is not independent demand; demand withheld"
+  }
+}

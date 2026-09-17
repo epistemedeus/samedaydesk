@@ -1,0 +1,33 @@
+{
+  "id": "mcp-surface-get-as-demand",
+  "surface": "pulse",
+  "class": "absence-as-demand",
+  "seededAbsenceAsDemand": true,
+  "expectReject": true,
+  "cite": "server/lib/pulse.js",
+  "expectedReasons": [
+    "absence_as_demand",
+    "mcp_surface_get_as_demand",
+    "treat_absence_as_demand"
+  ],
+  "defect": "Seeded: GET /mcp surface hits treated as buyers/demand (absence≠demand).",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "verdict": "accept",
+    "pass": true,
+    "surface": "pulse",
+    "mcpSurfaceGetAsDemand": true,
+    "treatAbsenceAsDemand": true,
+    "absenceAsDemand": true,
+    "demand": true,
+    "paidDemand": true,
+    "demandCount": 19,
+    "action": "treat_as_demand",
+    "mcpSurfaceGet": {
+      "requests": 19,
+      "meaning": "GET /mcp hits the MCP endpoint setup or purchase-return plain-text surface. May be a browser, monitor, registry probe, or client check. Not unique agents, buyers, demand, payment, or protocol use."
+    },
+    "message": "mcp surface GET → treat as demand (seeded fail)"
+  }
+}
