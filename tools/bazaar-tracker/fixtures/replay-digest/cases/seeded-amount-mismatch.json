@@ -1,0 +1,12 @@
+{
+  "id": "seeded-amount-mismatch",
+  "kind": "seeded",
+  "live402Path": "../live/extract-402.json",
+  "httpStatus": 402,
+  "committedRoute": "https://agents.samedaydesk.com/extract",
+  "expectedCommittedDigest": "04c1554d7a4471803f05781245df70cb0ae3dc73b9df78c555c7324c3b1ca60e",
+  "payloadOverride": {
+    "amount": "1"
+  },
+  "note": "SEEDING FAILURE: string-compare payload.amount to accepts[0].amount; copying 1 onto extract 5000 must reject. No unit conversion."
+}
