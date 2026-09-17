@@ -1,7 +1,6 @@
 import {
   REPAIR_CONTACT_LIFECYCLE,
   findRepairContactLifecycle,
-  findSellerRepairBrief,
   isRepairContactLifecycle,
   type RepairContactLifecycle,
   type RepairContactLifecycleRecord,
@@ -30,62 +29,62 @@ export const PULSE_ANONYMOUS_SPOOFABLE_STATES = Object.freeze([
 ] as const satisfies readonly RepairContactLifecycle[]);
 
 export const REPAIR_CONTACT_LIFECYCLE_FIXTURE = Object.freeze({
-  published: {
+  published: Object.freeze({
     state: "published",
     authority: "public_brief",
     uniqueVisitor: false,
     spoofable: false,
     demand: false,
-  },
-  attempted_dispatch: {
+  }),
+  attempted_dispatch: Object.freeze({
     state: "attempted_dispatch",
     authority: "outbound_attempt",
     uniqueVisitor: false,
     spoofable: false,
     demand: false,
-  },
-  bounce: {
+  }),
+  bounce: Object.freeze({
     state: "bounce",
     authority: "transport_bounce",
     uniqueVisitor: false,
     spoofable: false,
     demand: false,
-  },
-  anonymous_view: {
+  }),
+  anonymous_view: Object.freeze({
     state: "anonymous_view",
     authority: "pulse_anonymous_spoofable",
     uniqueVisitor: false,
     spoofable: true,
     demand: false,
-  },
-  scope_click: {
+  }),
+  scope_click: Object.freeze({
     state: "scope_click",
     authority: "pulse_anonymous_spoofable",
     uniqueVisitor: false,
     spoofable: true,
     demand: false,
-  },
-  reply: {
+  }),
+  reply: Object.freeze({
     state: "reply",
     authority: "seller_attributed_reply",
     uniqueVisitor: false,
     spoofable: false,
     demand: false,
-  },
-  repair_merged: {
+  }),
+  repair_merged: Object.freeze({
     state: "repair_merged",
     authority: "upstream_merge",
     uniqueVisitor: false,
     spoofable: false,
     demand: false,
-  },
-  paid: {
+  }),
+  paid: Object.freeze({
     state: "paid",
     authority: "payment",
     uniqueVisitor: false,
     spoofable: false,
     demand: false,
-  },
+  }),
 } as const satisfies Record<RepairContactLifecycle, RepairContactLifecycleFixtureRow>);
 
 export const REPAIR_CONTACT_LIFECYCLE_ENUM_EXAMPLES = Object.freeze(
@@ -105,7 +104,7 @@ export function describeRepairContactLifecycle(
 }
 
 export function isAnonymousSpoofablePulseState(state: RepairContactLifecycle): boolean {
-  return state === "anonymous_view" || state === "scope_click";
+  return PULSE_ANONYMOUS_SPOOFABLE_STATES.some((item) => item === state);
 }
 
 export function lookupRepairContactLifecycle(
@@ -119,11 +118,10 @@ export function assertKnownFindingLifecycle(id: string): RepairContactLifecycleR
   if (record == null) {
     throw new Error(`unknown_finding_id:${id}`);
   }
-  if (findSellerRepairBrief(id) == null) {
-    throw new Error(`unknown_finding_id:${id}`);
-  }
-  if (!isRepairContactLifecycle(record.state)) {
-    throw new Error(`unknown_lifecycle_state:${String(record.state)}`);
+  for (const state of record.observed) {
+    if (!isRepairContactLifecycle(state)) {
+      throw new Error(`unknown_lifecycle_state:${String(state)}`);
+    }
   }
   return record;
 }

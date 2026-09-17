@@ -458,12 +458,12 @@ export type RepairContactLifecycleRecord = Readonly<{
 }>;
 
 export function furthestRepairContactLifecycle(
-  observed: readonly RepairContactLifecycle[],
+  observed: readonly unknown[],
 ): RepairContactLifecycle | null {
   let latest: RepairContactLifecycle | null = null;
   let latestIndex = -1;
   for (const state of observed) {
-    if (!isRepairContactLifecycle(state)) continue;
+    if (!isRepairContactLifecycle(state)) return null;
     const index = REPAIR_CONTACT_LIFECYCLE.indexOf(state);
     if (index > latestIndex) {
       latest = state;
@@ -483,7 +483,7 @@ export function findRepairContactLifecycle(
   return Object.freeze({
     findingId: brief.id,
     state,
-    observed: brief.contactLifecycle,
+    observed: Object.freeze(brief.contactLifecycle.slice()),
   });
 }
 
@@ -504,4 +504,15 @@ export function sellerRepairScopeMailto(brief: SellerRepairBrief): string {
     "Or send the free schema proposal first.",
   ].join("\n");
   return `mailto:contact@samedaydesk.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+for (const brief of sellerRepairBriefs) {
+  if (
+    !brief.contactLifecycle.includes("published") ||
+    furthestRepairContactLifecycle(brief.contactLifecycle) == null
+  ) {
+    throw new Error(`invalid_contact_lifecycle:${brief.id}`);
+  }
+  Object.freeze(brief.contactLifecycle);
+  Object.freeze(brief);
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env -S node --experimental-strip-types
 import { findRepairContactLifecycle } from "../../client/src/data/repairContactLifecycle.ts";
 
 const id = process.argv[2] ?? null;

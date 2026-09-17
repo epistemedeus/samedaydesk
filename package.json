@@ -15,6 +15,7 @@
     "start": "node server/index.js",
     "lint": "npm --prefix client run lint",
     "test:seller-repair-briefs": "node --test client/scripts/sellerRepairBriefs.test.ts client/scripts/sellerResolvedCases.test.ts",
+    "test:repair-contact-lifecycle": "node --experimental-strip-types --test tests/repair-contact-lifecycle/repair-contact-lifecycle.test.ts",
     "test:verified-feed": "node --test client/scripts/generateVerifiedFeed.test.mjs client/scripts/refreshVerifiedFeed.test.mjs",
     "verified-feed:write": "node client/scripts/writeVerifiedFeed.mjs",
     "verified-feed:refresh": "node client/scripts/refreshVerifiedFeed.mjs",

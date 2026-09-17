@@ -158,3 +158,44 @@ test("observed fixture does not invent paid, merged, reply, or unique visitors",
   assert.equal(findRepairContactLifecycle("agenttoll-market-radar-20260901")?.state, "published");
   assert.equal(findRepairContactLifecycle("argonaut-ecb-fx-reference-20260902")?.state, "published");
 });
+
+test("unknown lifecycle tokens fail closed instead of being skipped", () => {
+  assert.equal(furthestRepairContactLifecycle(["published", "not-a-state"]), null);
+  assert.equal(furthestRepairContactLifecycle(["paid", "spoofed"]), null);
+  assert.equal(furthestRepairContactLifecycle([null, "published"]), null);
+});
+
+test("lookup results and fixture rows cannot invent paid or unique visitors", () => {
+  const record = findRepairContactLifecycle("hypernatt-liq-radar-20260830");
+  assert.ok(record);
+  assert.throws(() => {
+    (record.observed as string[]).push("paid");
+  }, TypeError);
+  const brief = findSellerRepairBrief("hypernatt-liq-radar-20260830");
+  assert.ok(brief);
+  assert.throws(() => {
+    (brief.contactLifecycle as string[]).push("paid");
+  }, TypeError);
+  assert.throws(() => {
+    (brief as { contactLifecycle: RepairContactLifecycle[] }).contactLifecycle = ["paid"];
+  }, TypeError);
+  assert.equal(findRepairContactLifecycle("hypernatt-liq-radar-20260830")?.state, "published");
+  assert.equal(
+    findRepairContactLifecycle("hypernatt-liq-radar-20260830")?.observed.includes("paid"),
+    false,
+  );
+
+  const row = describeRepairContactLifecycle("anonymous_view");
+  assert.throws(() => {
+    (row as { uniqueVisitor: boolean }).uniqueVisitor = true;
+  }, TypeError);
+  assert.throws(() => {
+    (row as { demand: boolean }).demand = true;
+  }, TypeError);
+  assert.throws(() => {
+    (REPAIR_CONTACT_LIFECYCLE_FIXTURE.paid as { authority: string }).authority = "public_brief";
+  }, TypeError);
+  assert.equal(describeRepairContactLifecycle("anonymous_view").uniqueVisitor, false);
+  assert.equal(describeRepairContactLifecycle("anonymous_view").demand, false);
+  assert.equal(REPAIR_CONTACT_LIFECYCLE_FIXTURE.paid.authority, "payment");
+});
