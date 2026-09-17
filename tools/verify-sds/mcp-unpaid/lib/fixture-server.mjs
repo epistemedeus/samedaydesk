@@ -108,6 +108,16 @@ export function startFixtureServer({ port = 0 } = {}) {
     }
 
     const url = new URL(req.url || "/", "http://127.0.0.1");
+    if (url.searchParams.has("cs") || /(?:^|[?&])cs=/.test(req.url || "")) {
+      res.writeHead(400, { "content-type": "application/json" });
+      res.end(
+        JSON.stringify({
+          error: "STRIPE_PATH_REFUSE",
+          message: "fixture refuses Stripe license query",
+        }),
+      );
+      return;
+    }
     if (url.pathname !== "/mcp" && url.pathname !== "/mcp/") {
       res.writeHead(404, { "content-type": "application/json" });
       res.end(JSON.stringify({ error: "not found; fixture mounts /mcp only" }));
@@ -178,8 +188,10 @@ export function startFixtureServer({ port = 0 } = {}) {
   });
 
   return new Promise((resolve, reject) => {
-    server.once("error", reject);
+    const onErr = (err) => reject(err);
+    server.once("error", onErr);
     server.listen(port, "127.0.0.1", () => {
+      server.removeListener("error", onErr);
       const addr = server.address();
       const origin = `http://127.0.0.1:${addr.port}`;
       resolve({

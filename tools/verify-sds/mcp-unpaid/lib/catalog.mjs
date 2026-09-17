@@ -30,13 +30,38 @@ export const FORBIDDEN_HEADERS = Object.freeze([
   "stripe-signature",
 ]);
 
-/** Paths that imply Stripe / checkout spend — refuse. */
+/** Paths / hosts that imply Stripe / checkout spend — refuse. */
 export const PAYMENT_STOP_PATHS = Object.freeze([
   "/api/checkout",
   "/api/stripe/webhook",
   "/checkout",
   "/mcp?cs=",
+  "buy.stripe.com",
 ]);
+
+/**
+ * True when a URL or path is a Stripe / checkout / cs_ license path.
+ * Used fail-closed so --origin cannot POST to payment surfaces.
+ */
+export function looksLikePaymentUrl(value) {
+  const s = String(value || "");
+  if (!s) return false;
+  const lower = s.toLowerCase();
+  for (const p of PAYMENT_STOP_PATHS) {
+    if (lower.includes(p.toLowerCase())) return true;
+  }
+  if (/(?:^|[?&/])cs=|cs_test_|cs_live_|\/api\/stripe\b/i.test(s)) return true;
+  try {
+    const u = new URL(s);
+    if (u.searchParams.has("cs") && String(u.searchParams.get("cs") || "").length > 0) {
+      return true;
+    }
+    if (/(^|\.)stripe\.com$/i.test(u.hostname)) return true;
+  } catch {
+    /* relative path or non-URL */
+  }
+  return false;
+}
 
 export const FEATURE = "mcp-unpaid";
 

@@ -4,6 +4,10 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { readFileSync } from "node:fs";
+import { MCP_TOOL_NAMES } from "../../../server/lib/mcp-tool-inventory.js";
+import { MCP_TOOLS } from "./lib/catalog.mjs";
+import { listTools, postMcp, resolveMcpUrl, toolNames } from "./lib/client.mjs";
+import { startFixtureServer } from "./lib/fixture-server.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "../../..");
@@ -49,9 +53,7 @@ test("tools/call refuse is non-zero; toolsCalled false; never pays", () => {
   const result = run(["tools/call", "generate_complete_fix_pack", "--json"]);
   assert.notEqual(result.status, 0, result.stderr + result.stdout);
   assert.equal(result.json.ok, false);
-  assert.ok(
-    result.json.error.code === "PAID_REFUSE" || result.json.error.code === "USAGE",
-  );
+  assert.equal(result.json.error.code, "PAID_REFUSE");
   assert.equal(result.json.boundary.paymentSent, false);
   assert.equal(result.json.boundary.toolsCalled, false);
   assert.equal(result.json.result.refused, true);
@@ -134,4 +136,97 @@ test("cite-apex documents live URL without calling tools", () => {
   assert.equal(result.json.boundary.toolsCalled, false);
   assert.equal(result.json.boundary.paymentSent, false);
   assert.match(result.json.result.url, /samedaydesk\.com\/mcp/);
+});
+
+test("unknown seeded-failure is rejected", () => {
+  const result = run(["--seeded-failure", "not-a-real-seed", "--json"]);
+  assert.equal(result.status, 2, result.stderr + result.stdout);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "USAGE");
+  assert.equal(result.json.boundary.paymentSent, false);
+  assert.equal(result.json.boundary.toolsCalled, false);
+});
+
+test("bare --seeded-failure does not consume --json as seed id", () => {
+  const result = run(["--seeded-failure", "--json"]);
+  assert.equal(result.status, 2, result.stderr + result.stdout);
+  assert.equal(result.json.error.code, "USAGE");
+  assert.match(result.json.error.message, /missing value for --seeded-failure/);
+});
+
+test("origin buy.stripe.com is STRIPE_PATH_REFUSE before any live POST", () => {
+  const result = run([
+    "tools/list",
+    "--origin",
+    "https://buy.stripe.com/8x24gA0xA9DF9dd13YeZ20h",
+    "--json",
+  ]);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.error.code, "STRIPE_PATH_REFUSE");
+  assert.equal(result.json.boundary.paymentSent, false);
+  assert.equal(result.json.result.neverOpenedCheckout, true);
+});
+
+test("origin mcp?cs= is STRIPE_PATH_REFUSE and does not rewrite query", () => {
+  const result = run([
+    "tools/list",
+    "--origin",
+    "https://samedaydesk.com/mcp?cs=cs_test_fake",
+    "--json",
+  ]);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.error.code, "STRIPE_PATH_REFUSE");
+  assert.equal(result.json.boundary.paymentSent, false);
+});
+
+test("catalog five tools match shipped mcp-tool-inventory", () => {
+  assert.deepEqual([...MCP_TOOLS], [...MCP_TOOL_NAMES]);
+});
+
+test("postMcp refuses PAYMENT-SIGNATURE before any socket", () => {
+  assert.throws(
+    () =>
+      postMcp(
+        "http://127.0.0.1:1/mcp",
+        { jsonrpc: "2.0", id: 1, method: "initialize" },
+        { headers: { "PAYMENT-SIGNATURE": "seeded-fake-sig" } },
+      ),
+    (e) => e.code === "PAYMENT_HEADER_REFUSE",
+  );
+});
+
+test("postMcp refuses paid tools/call before any socket", () => {
+  assert.throws(
+    () =>
+      postMcp("http://127.0.0.1:1/mcp", {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "tools/call",
+        params: { name: "generate_complete_fix_pack" },
+      }),
+    (e) => e.code === "PAID_REFUSE",
+  );
+});
+
+test("resolveMcpUrl joins /mcp without appending onto query strings", () => {
+  assert.equal(resolveMcpUrl("http://127.0.0.1:9"), "http://127.0.0.1:9/mcp");
+  assert.equal(resolveMcpUrl("http://127.0.0.1:9/mcp/"), "http://127.0.0.1:9/mcp");
+  assert.throws(
+    () => resolveMcpUrl("https://samedaydesk.com/mcp?cs=cs_test_fake"),
+    (e) => e.code === "STRIPE_PATH_REFUSE",
+  );
+});
+
+test("listTools against loopback origin via resolveMcpUrl", async () => {
+  const handle = await startFixtureServer();
+  try {
+    const url = resolveMcpUrl(handle.origin);
+    assert.equal(url, handle.url);
+    const session = await listTools(url);
+    assert.equal(session.initialize.status, 200);
+    assert.equal(session.listed.status, 200);
+    assert.deepEqual(toolNames(session.listed), [...MCP_TOOLS]);
+  } finally {
+    await handle.close();
+  }
 });

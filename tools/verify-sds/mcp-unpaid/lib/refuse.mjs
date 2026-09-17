@@ -8,6 +8,7 @@ import {
   FORBIDDEN_HEADERS,
   SEEDED,
   FEATURE,
+  looksLikePaymentUrl,
 } from "./catalog.mjs";
 import { envelope, failError } from "./envelope.mjs";
 import { assertNoPaymentHeaders, assertUnpaidCallAllowed } from "./client.mjs";
@@ -87,26 +88,17 @@ export function refusePaymentSignature({
 }
 
 export function refuseStripePath({ path = "/api/checkout" } = {}) {
-  const matched = PAYMENT_STOP_PATHS.some(
-    (p) => path === p || path.startsWith(p) || (p.endsWith("=") && path.includes(p)),
-  );
-  if (!matched) {
-    // Still refuse unknown stripe-ish paths that look like cs_ license redemption.
-    const looksPaid =
-      /stripe|checkout|buy\.stripe\.com|cs_test_|cs_live_/i.test(path) ||
-      path.includes("cs=");
-    if (!looksPaid) {
-      return envelope({
-        ok: false,
-        command: "seeded",
-        feature: FEATURE,
-        error: failError("STRIPE_PATH_REFUSE", `path not recognized as payment stop: ${path}`, {
-          path,
-          stops: [...PAYMENT_STOP_PATHS],
-        }),
-        result: { seed: "stripe-path", path, refused: false },
-      });
-    }
+  if (!looksLikePaymentUrl(path)) {
+    return envelope({
+      ok: false,
+      command: "seeded",
+      feature: FEATURE,
+      error: failError("STRIPE_PATH_REFUSE", `path not recognized as payment stop: ${path}`, {
+        path,
+        stops: [...PAYMENT_STOP_PATHS],
+      }),
+      result: { seed: "stripe-path", path, refused: false },
+    });
   }
   return envelope({
     ok: false,

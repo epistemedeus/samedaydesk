@@ -21,10 +21,16 @@ import {
   SEEDED,
   PAID_TOOL,
   APEX_ORIGIN,
+  looksLikePaymentUrl,
 } from "./lib/catalog.mjs";
 import { envelope, emitEnvelope, exitFor, failError } from "./lib/envelope.mjs";
 import { startFixtureServer } from "./lib/fixture-server.mjs";
-import { listTools, toolNames, assertUnpaidCallAllowed } from "./lib/client.mjs";
+import {
+  listTools,
+  toolNames,
+  assertUnpaidCallAllowed,
+  resolveMcpUrl,
+} from "./lib/client.mjs";
 import { runSeeded } from "./lib/refuse.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -45,14 +51,33 @@ function parseArgs(argv) {
     else if (a === "--pretty") out.pretty = true;
     else if (a === "--human") out.json = false;
     else if (a === "--seeded-failure") {
-      out.seededId = argv[++i];
-      if (!out.seededId) out.missing = "--seeded-failure";
+      const next = argv[i + 1];
+      if (!next || next.startsWith("--")) out.missing = "--seeded-failure";
+      else {
+        out.seededId = next;
+        i++;
+      }
     } else if (a === "--fixture") {
-      out.fixture = argv[++i];
+      const next = argv[i + 1];
+      if (!next || next.startsWith("--")) out.missing = "--fixture";
+      else {
+        out.fixture = next;
+        i++;
+      }
     } else if (a === "--origin") {
-      out.flags.origin = argv[++i];
+      const next = argv[i + 1];
+      if (!next || next.startsWith("--")) out.missing = "--origin";
+      else {
+        out.flags.origin = next;
+        i++;
+      }
     } else if (a === "--path") {
-      out.flags.path = argv[++i];
+      const next = argv[i + 1];
+      if (!next || next.startsWith("--")) out.missing = "--path";
+      else {
+        out.flags.path = next;
+        i++;
+      }
     } else if (a === "--live") {
       out.flags.live = true;
     } else if (a.startsWith("--")) {
@@ -86,7 +111,7 @@ Seeded failures (exit ≠ 0, clear code, paymentSent=false, toolsCalled=false):
   --seeded-failure stripe-path
 
 Options:
-  --origin URL            MCP base origin (default: loopback fixture)
+  --origin URL            MCP base origin (default: loopback fixture; Stripe/cs= refused)
   --live                  optional read-only cite of ${APEX_ORIGIN}/mcp (no call)
   --json / --pretty       JSON envelope on stdout
   --fixture PATH          load seeded fixture JSON
@@ -112,9 +137,38 @@ async function runList({ origin, live }) {
 
   try {
     if (origin) {
-      mcpUrl = origin.replace(/\/$/, "").endsWith("/mcp")
-        ? origin.replace(/\/$/, "")
-        : `${origin.replace(/\/$/, "")}/mcp`;
+      if (looksLikePaymentUrl(origin)) {
+        return envelope({
+          ok: false,
+          command: "tools/list",
+          feature: FEATURE,
+          status: "fail",
+          error: failError(
+            "STRIPE_PATH_REFUSE",
+            `refusing Stripe/checkout path in unpaid harness: ${origin}`,
+            { origin },
+          ),
+          result: {
+            refused: true,
+            path: origin,
+            paymentSent: false,
+            toolsCalled: false,
+            neverOpenedCheckout: true,
+          },
+        });
+      }
+      try {
+        mcpUrl = resolveMcpUrl(origin);
+      } catch (e) {
+        return envelope({
+          ok: false,
+          command: "tools/list",
+          feature: FEATURE,
+          status: e.code === "USAGE" ? "usage" : "fail",
+          error: failError(e.code || "USAGE", e.message, { origin }),
+          result: { refused: true, path: origin, paymentSent: false, toolsCalled: false },
+        });
+      }
       source = "origin";
     } else if (live) {
       // Live is cite-only documentation path — still use fixture for proof so

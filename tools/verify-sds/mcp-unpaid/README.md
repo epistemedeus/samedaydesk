@@ -44,6 +44,7 @@ node --test tools/verify-sds/mcp-unpaid/cli.test.mjs
 - `boundary.paymentSent` always `false`
 - `boundary.toolsCalled` always `false` (list-only)
 - Never sends `PAYMENT-SIGNATURE`, `X-PAYMENT`, or `stripe-signature`
+- `--origin` Stripe / `cs=` / `buy.stripe.com` URLs refuse with `STRIPE_PATH_REFUSE` (no live POST)
 - No Stripe/x402 spend, no price/SKU edits, no merge
 
 ## Layout

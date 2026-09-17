@@ -4,7 +4,9 @@
  */
 import http from "node:http";
 import https from "node:https";
-import { FORBIDDEN_HEADERS, PAID_TOOL } from "./catalog.mjs";
+import { FORBIDDEN_HEADERS, PAID_TOOL, looksLikePaymentUrl } from "./catalog.mjs";
+
+const FORBIDDEN_HEADER_KEYS = FORBIDDEN_HEADERS.map((h) => h.toLowerCase());
 
 function normalizeHeaderMap(headers = {}) {
   const out = {};
@@ -60,6 +62,45 @@ export function assertUnpaidCallAllowed(method, params, { allowFreeCall = false 
   return true;
 }
 
+/**
+ * Guard: refuse Stripe / checkout / cs_ license URLs before any socket.
+ */
+export function assertNoPaymentUrl(value) {
+  if (looksLikePaymentUrl(value)) {
+    const err = new Error(`refusing Stripe/checkout path in unpaid harness: ${value}`);
+    err.code = "STRIPE_PATH_REFUSE";
+    err.path = value;
+    throw err;
+  }
+  return true;
+}
+
+/**
+ * Normalize an --origin value to a /mcp URL. Rejects payment query/hosts.
+ * Does not append "/mcp" onto an existing query string.
+ */
+export function resolveMcpUrl(origin) {
+  const trimmed = String(origin || "").trim();
+  if (!trimmed) {
+    const err = new Error("missing MCP origin");
+    err.code = "USAGE";
+    throw err;
+  }
+  assertNoPaymentUrl(trimmed);
+  let u;
+  try {
+    u = new URL(trimmed);
+  } catch {
+    const err = new Error(`invalid MCP origin: ${trimmed}`);
+    err.code = "USAGE";
+    throw err;
+  }
+  assertNoPaymentUrl(u.toString());
+  let path = u.pathname.replace(/\/+$/, "") || "";
+  if (!path.endsWith("/mcp")) path = `${path}/mcp`;
+  return `${u.origin}${path}`;
+}
+
 function rpc(id, method, params) {
   const body = { jsonrpc: "2.0", id, method };
   if (params !== undefined) body.params = params;
@@ -71,6 +112,7 @@ function rpc(id, method, params) {
  */
 export function postMcp(url, payload, { headers = {}, timeoutMs = 15_000 } = {}) {
   assertNoPaymentHeaders(headers);
+  assertNoPaymentUrl(url);
   if (payload?.method === "tools/call") {
     assertUnpaidCallAllowed(payload.method, payload.params, { allowFreeCall: false });
   }
@@ -91,7 +133,7 @@ export function postMcp(url, payload, { headers = {}, timeoutMs = 15_000 } = {})
   // Only forward non-forbidden caller headers (none expected for unpaid list).
   for (const [k, v] of Object.entries(headers)) {
     const lower = k.toLowerCase();
-    if (FORBIDDEN_HEADERS.map((h) => h.toLowerCase()).includes(lower)) continue;
+    if (FORBIDDEN_HEADER_KEYS.includes(lower)) continue;
     if (lower === "content-type" || lower === "accept") continue;
     safeHeaders[k] = v;
   }
