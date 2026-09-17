@@ -1,0 +1,13 @@
+{
+  "id": "seeded-extract-batch-absence-as-demand",
+  "seeded": true,
+  "note": "SEEDING FAILURE: committed SDS rowCount 8 has no /extract/batch. Catalog absence is not demand.",
+  "freshnessClock": "observedAt",
+  "clock": "2026-09-17T11:45:00.000Z",
+  "maxAgeMs": 86400000,
+  "claim": {
+    "treatAbsenceAsDemand": true,
+    "absenceIsDemand": true,
+    "missingRoute": "https://agents.samedaydesk.com/extract/batch"
+  }
+}

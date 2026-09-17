@@ -1,0 +1,98 @@
+{
+  "agents.samedaydesk.com": {
+    "status": 200,
+    "body": {
+      "partialResults": false,
+      "searchMethod": "hybrid",
+      "resources": [
+        {
+          "resource": "https://agents.samedaydesk.com/extract",
+          "type": "http",
+          "x402Version": 2,
+          "description": "Extract a public HTTP(S) web page into structured JSON",
+          "accepts": [
+            {
+              "scheme": "exact",
+              "network": "eip155:8453",
+              "amount": "5000"
+            }
+          ],
+          "lastUpdated": "2026-09-17T04:03:29.265Z",
+          "quality": {
+            "l30DaysTotalCalls": 14,
+            "l30DaysUniquePayers": 10,
+            "lastCalledAt": "2026-09-17T04:03:29.265Z"
+          },
+          "extensions": {
+            "bazaar": {
+              "info": {
+                "input": { "method": "GET" },
+                "output": { "type": "json" }
+              }
+            }
+          }
+        },
+        {
+          "resource": "https://agents.samedaydesk.com/extract/batch",
+          "type": "http",
+          "x402Version": 2,
+          "description": "Extract a batch of public HTTP(S) pages",
+          "accepts": [
+            {
+              "scheme": "exact",
+              "network": "eip155:8453",
+              "amount": "10000"
+            }
+          ],
+          "lastUpdated": "2026-09-08T00:00:00.000Z",
+          "quality": {
+            "l30DaysTotalCalls": 1,
+            "l30DaysUniquePayers": 1,
+            "lastCalledAt": "2026-09-08T00:00:00.000Z"
+          },
+          "extensions": {
+            "bazaar": {
+              "info": {
+                "input": { "method": "POST" },
+                "output": { "type": "json" }
+              }
+            }
+          }
+        },
+        {
+          "resource": "https://agents.samedaydesk.com/defi/morpho-position",
+          "type": "http",
+          "x402Version": 2,
+          "description": "Morpho borrower position snapshot",
+          "accepts": [
+            {
+              "scheme": "exact",
+              "network": "eip155:8453",
+              "amount": "5000"
+            }
+          ],
+          "lastUpdated": "2026-09-03T09:54:04.798Z",
+          "quality": {
+            "l30DaysTotalCalls": 2,
+            "l30DaysUniquePayers": 1,
+            "lastCalledAt": "2026-09-03T09:54:04.798Z"
+          },
+          "extensions": {
+            "bazaar": {
+              "info": {
+                "input": { "method": "GET" }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "*": {
+    "status": 200,
+    "body": {
+      "partialResults": false,
+      "resources": []
+    }
+  }
+}

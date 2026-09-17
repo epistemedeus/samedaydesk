@@ -1,0 +1,27 @@
+{
+  "id": "seeded-lastCalledAt-as-removal",
+  "seeded": true,
+  "note": "SEEDING FAILURE: treat quality.lastCalledAt as a removal clock. Adapter must reject. Do not treat as a real freshness case.",
+  "freshnessClock": "quality.lastCalledAt",
+  "clock": "2026-09-17T11:45:00.000Z",
+  "maxAgeMs": 86400000,
+  "claim": {
+    "lastCalledAtIsRemovalClock": true,
+    "removeWhenLastCalledAtStale": true,
+    "useQualityAsRemovalClock": true,
+    "dropWhenLastCalledAtOlderThanMs": 604800000,
+    "dropRoutesBecauseLastCalledAt": [
+      "https://agents.samedaydesk.com/extract/batch"
+    ]
+  },
+  "catalogQuality": {
+    "resource": "https://agents.samedaydesk.com/extract/batch",
+    "lastCalledAt": "2026-09-08T00:00:00.000Z",
+    "l30DaysTotalCalls": 1,
+    "l30DaysUniquePayers": 1
+  },
+  "expect": {
+    "status": "removed",
+    "lastCalledAtIsRemovalClock": true
+  }
+}

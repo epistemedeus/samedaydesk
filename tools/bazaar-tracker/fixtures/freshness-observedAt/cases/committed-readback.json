@@ -1,0 +1,22 @@
+{
+  "id": "committed-readback-stale-at-2026-09-17",
+  "observation": "committed",
+  "readback": true,
+  "freshnessClock": "observedAt",
+  "clock": "2026-09-17T11:45:00.000Z",
+  "maxAgeMs": 86400000,
+  "expect": {
+    "status": "stale",
+    "latestObservationAt": "2026-09-03T09:54:04.798Z",
+    "ageMs": 1216255202,
+    "sdsRowCount": 8,
+    "lastCalledAtIsRemovalClock": false
+  },
+  "sources": [
+    {
+      "url": "file://data/bazaar-tracker/observations.json",
+      "date": "2026-09-03T09:54:04.798Z",
+      "quote": "observedAt 2026-09-03T09:54:04.798Z captureSource live; no per-route freshness field"
+    }
+  ]
+}
