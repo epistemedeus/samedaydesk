@@ -1,0 +1,51 @@
+{
+  "schema": "samedaydesk.work-terms.record.v1",
+  "id": "universal-coverage-seeded-failure",
+  "platformId": "gofrantic",
+  "documentKind": "charter",
+  "version": {
+    "id": "universal-claim-v1",
+    "label": "claims-universal",
+    "observedAt": "2026-09-17T00:00:00.000Z",
+    "effectiveDate": null,
+    "lastUpdatedLabel": null,
+    "supersedes": null
+  },
+  "attribution": {
+    "publisher": "GoFrantic (Frantic)",
+    "canonicalUrl": "https://gofrantic.com/charter",
+    "retrievedFrom": "https://gofrantic.com/charter",
+    "licenseNote": "Public venue rules."
+  },
+  "access": {
+    "class": "public_url",
+    "authRequired": false,
+    "httpStatus": 200,
+    "robots": {
+      "userAgentStar": "allow",
+      "sourceUrl": "https://gofrantic.com/robots.txt",
+      "notes": "Allow /."
+    }
+  },
+  "republication": {
+    "right": "cite_and_link",
+    "mayStoreFullBody": false,
+    "mayCommerciallyResell": false,
+    "excerptMaxChars": 280,
+    "mustAttribute": true,
+    "mustLinkCanonical": true,
+    "statement": "Cite and link the charter. Seeded failure for a universal coverage claim."
+  },
+  "status": "current",
+  "invalidation": null,
+  "clauses": [],
+  "coverage": {
+    "universal": true,
+    "namedSourceOnly": false
+  },
+  "provenance": {
+    "method": "operator_supplied_public_metadata",
+    "notLiveScraped": true,
+    "sourceNote": "Seeded failure: this candidate claims universal coverage and must be refused."
+  }
+}

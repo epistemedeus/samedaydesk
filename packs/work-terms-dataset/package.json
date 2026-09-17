@@ -1,0 +1,15 @@
+{
+  "name": "@samedaydesk/work-terms-dataset",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "Maintained public work-terms dataset with versions, invalidation, attribution, and explicit republication rights. Does not scrape private terms. Does not claim universal coverage. Disjoint from H04.",
+  "scripts": {
+    "verify": "node bin/work-terms.mjs verify",
+    "validate": "node bin/work-terms.mjs validate",
+    "seeded-failure": "node bin/work-terms.mjs seeded-failure",
+    "test": "node --test test/*.test.mjs"
+  }
+}
