@@ -1,5 +1,25 @@
+export const REPAIR_CONTACT_LIFECYCLE = Object.freeze([
+  "published",
+  "attempted_dispatch",
+  "bounce",
+  "anonymous_view",
+  "scope_click",
+  "reply",
+  "repair_merged",
+  "paid",
+] as const);
+
+export type RepairContactLifecycle = (typeof REPAIR_CONTACT_LIFECYCLE)[number];
+
+const REPAIR_CONTACT_LIFECYCLE_SET: ReadonlySet<string> = new Set(REPAIR_CONTACT_LIFECYCLE);
+
+export function isRepairContactLifecycle(value: unknown): value is RepairContactLifecycle {
+  return typeof value === "string" && REPAIR_CONTACT_LIFECYCLE_SET.has(value);
+}
+
 export type SellerRepairBrief = Readonly<{
   id: string;
+  contactLifecycle: readonly RepairContactLifecycle[];
   seller: string;
   origin: string;
   route: string;
@@ -18,6 +38,7 @@ export type SellerRepairBrief = Readonly<{
 export const sellerRepairBriefs = Object.freeze([
   {
     id: "hypernatt-liq-radar-20260830",
+    contactLifecycle: ["published"],
     seller: "HyperNatt Terminal",
     origin: "https://hypernatt.com",
     route: "/api/m2m/liq-radar",
@@ -53,6 +74,7 @@ export const sellerRepairBriefs = Object.freeze([
   },
   {
     id: "onesource-erc20-balance-20260830",
+    contactLifecycle: ["published"],
     seller: "OneSource",
     origin: "https://api.onesource.io",
     route: "/api/chain/erc20-balance",
@@ -88,6 +110,7 @@ export const sellerRepairBriefs = Object.freeze([
   },
   {
     id: "402-com-tr-morpho-health-20260830",
+    contactLifecycle: ["published"],
     seller: "x402 Bazaar",
     origin: "https://402.com.tr",
     route: "/api/x402/morpho-health",
@@ -130,6 +153,7 @@ export const sellerRepairBriefs = Object.freeze([
   },
   {
     id: "scrape402-crypto-20260830",
+    contactLifecycle: ["published"],
     seller: "scrape402",
     origin: "https://x402.shizu.me",
     route: "/crypto",
@@ -170,6 +194,7 @@ export const sellerRepairBriefs = Object.freeze([
   },
   {
     id: "vibe-springs-btc-usd-20260830",
+    contactLifecycle: ["published"],
     seller: "Vibe Springs",
     origin: "https://vibesprings.net",
     route: "/api/price/btc-usd",
@@ -209,6 +234,7 @@ export const sellerRepairBriefs = Object.freeze([
   },
   {
     id: "blockrun-exa-search-20260830",
+    contactLifecycle: ["published"],
     seller: "BlockRun",
     origin: "https://blockrun.ai",
     route: "/api/v1/exa/search",
@@ -251,6 +277,7 @@ export const sellerRepairBriefs = Object.freeze([
   },
   {
     id: "exa-direct-search-20260830",
+    contactLifecycle: ["published"],
     seller: "Exa",
     origin: "https://api.exa.ai",
     route: "/search",
@@ -291,6 +318,7 @@ export const sellerRepairBriefs = Object.freeze([
   },
   {
     id: "driftflight-image-generation-20260830",
+    contactLifecycle: ["published", "attempted_dispatch", "bounce"],
     seller: "Driftflight via ZeroClick",
     origin: "https://agents.driftflight.com",
     route: "/v1/images/generate",
@@ -327,6 +355,7 @@ export const sellerRepairBriefs = Object.freeze([
   },
   {
     id: "agenttoll-market-radar-20260901",
+    contactLifecycle: ["published"],
     seller: "AgentToll",
     origin: "https://agenttoll.dev",
     route: "/paid/x402/market-radar",
@@ -369,6 +398,7 @@ export const sellerRepairBriefs = Object.freeze([
   },
   {
     id: "argonaut-ecb-fx-reference-20260902",
+    contactLifecycle: ["published"],
     seller: "ArgonautWorks ECB FX Reference",
     origin: "https://official-fx-reference.vercel.app",
     route: "/api/v1/convert",
@@ -419,6 +449,42 @@ const briefsById = new Map(sellerRepairBriefs.map((brief) => [brief.id, brief]))
 export function findSellerRepairBrief(id: string | null): SellerRepairBrief | null {
   if (!id) return null;
   return briefsById.get(id) ?? null;
+}
+
+export type RepairContactLifecycleRecord = Readonly<{
+  findingId: string;
+  state: RepairContactLifecycle;
+  observed: readonly RepairContactLifecycle[];
+}>;
+
+export function furthestRepairContactLifecycle(
+  observed: readonly RepairContactLifecycle[],
+): RepairContactLifecycle | null {
+  let latest: RepairContactLifecycle | null = null;
+  let latestIndex = -1;
+  for (const state of observed) {
+    if (!isRepairContactLifecycle(state)) continue;
+    const index = REPAIR_CONTACT_LIFECYCLE.indexOf(state);
+    if (index > latestIndex) {
+      latest = state;
+      latestIndex = index;
+    }
+  }
+  return latest;
+}
+
+export function findRepairContactLifecycle(
+  id: string | null,
+): RepairContactLifecycleRecord | null {
+  const brief = findSellerRepairBrief(id);
+  if (!brief) return null;
+  const state = furthestRepairContactLifecycle(brief.contactLifecycle);
+  if (state == null) return null;
+  return Object.freeze({
+    findingId: brief.id,
+    state,
+    observed: brief.contactLifecycle,
+  });
 }
 
 export function sellerRepairBriefUrl(id: string): string {
