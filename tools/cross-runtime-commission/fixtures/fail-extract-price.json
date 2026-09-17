@@ -1,0 +1,12 @@
+{
+  "schema": "samedaydesk.cross-runtime-commission.fixture.v1",
+  "id": "fail-extract-price",
+  "jobId": "listing-repair-packet",
+  "input": "fixtures/listing/caller-ok.json",
+  "liveExtractPriceUsdc": "0.01",
+  "runtimes": [
+    { "label": "node22-local", "kind": "local" },
+    { "label": "node22-container-fixture", "kind": "container-fixture" }
+  ],
+  "notes": "Seeded failure: changing extract $0.005."
+}
