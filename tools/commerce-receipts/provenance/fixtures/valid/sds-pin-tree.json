@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipts.provenance.v1",
+  "claimId": "sds-pin-tree",
+  "kind": "contribution",
+  "claimedHash": "778581173c6f23994aed1bb6ce9dc25d7b5b326a",
+  "sourceRepository": "epistemedeus/samedaydesk",
+  "surface": "git_tree",
+  "expectedObjectType": "tree",
+  "notes": "Tree of SDS checkout pin 775051602d91. SHA binds a git object that is not a commit.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "json_substitutes_for_cat_file",
+    "money_movement"
+  ]
+}

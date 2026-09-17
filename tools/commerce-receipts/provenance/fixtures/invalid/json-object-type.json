@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipts.provenance.v1",
+  "claimId": "json-object-type",
+  "kind": "contribution",
+  "claimedHash": "c0255ac",
+  "sourceRepository": "epistemedeus/samedaydesk",
+  "surface": "git_commit",
+  "objectType": "commit",
+  "notes": "JSON objectType does not bind. c0255ac is still unbound.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "json_substitutes_for_cat_file",
+    "money_movement"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "wrong-sha.json": {
+    "code": "claimed_hash_unbound_object"
+  },
+  "wrong-sha-full.json": {
+    "code": "claimed_hash_unbound_object"
+  },
+  "commit-as-blob.json": {
+    "code": "object_type_mismatch"
+  },
+  "json-object-type.json": {
+    "code": "json_substitutes_for_cat_file"
+  },
+  "money-movement.json": {
+    "code": "money_movement"
+  },
+  "unknown-source.json": {
+    "code": "unknown_source_repository"
+  }
+}
