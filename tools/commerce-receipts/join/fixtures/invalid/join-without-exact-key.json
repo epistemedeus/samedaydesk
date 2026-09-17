@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipts.join.v1",
+  "mode": "read_only",
+  "receipts": [
+    {
+      "party": "buyer",
+      "sourceKind": "buyer_attested_receipt",
+      "authorityClass": "provider_returned",
+      "receiptId": "rcpt_buyer_nokey_seed",
+      "joinKeys": {
+        "receipt_id": "rcpt_sds_join_nokey"
+      },
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "status": "attested",
+      "joins": [
+        {
+          "otherParty": "seller"
+        }
+      ]
+    },
+    {
+      "party": "seller",
+      "sourceKind": "seller_ledger_line",
+      "authorityClass": "seller_observed",
+      "receiptId": "rcpt_seller_nokey_seed",
+      "joinKeys": {
+        "operation_id": "op_sds_join_nokey"
+      },
+      "observedAt": "2026-09-17T00:00:01.000Z",
+      "status": "ledger_line"
+    }
+  ]
+}
