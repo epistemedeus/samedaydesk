@@ -1,0 +1,9 @@
+{
+  "ok": true,
+  "advertised": [
+    { "slug": "agent_workflow", "priceUsd": 149, "surface": "fixture" },
+    { "slug": "agent_mcp_server", "priceUsd": 349, "surface": "fixture" },
+    { "slug": "machine_payment_route", "priceUsd": 499, "surface": "fixture" },
+    { "slug": "agent_storefront", "priceUsd": 999, "surface": "fixture" }
+  ]
+}
