@@ -23,6 +23,6 @@ export function classifyResponse({ status, headers, body }) {
   }
   if (challengeHtml && /hcdn|cloudflare/i.test(`${server}\n${text}`)) return "cdn_challenge";
   if (status === 402) return "payment_required";
-  if (status >= 200 && status < 400) return "ok";
+  if (status >= 200 && status < 300) return "ok";
   return "http_error";
 }

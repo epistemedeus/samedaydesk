@@ -191,7 +191,7 @@ async function main(argv = process.argv.slice(2)) {
       status: "fail",
       cases: [row],
       error: {
-        code: "SEED_REJECT",
+        code: caught ? "SEED_REJECT" : "SEED_MISS",
         message: caught
           ? `seeded ${row.seeded} caught: ${entry.id} claimed ${row.claimedVerdict}, product ${row.observedVerdict}`
           : `seeded fixture ${entry.id} did not diverge from claimed verdict ${row.claimedVerdict}`,

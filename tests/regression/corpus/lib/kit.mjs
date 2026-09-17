@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, sep } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -46,7 +46,8 @@ export function ensureUsefulJobsKit() {
   const destRoot = join(tmpdir(), `sds-corpus-${USEFUL_JOBS_PIN.version}`);
   const kit = join(destRoot, USEFUL_JOBS_PIN.rootName);
   const cli = join(kit, "bin/useful-jobs.mjs");
-  if (!existsSync(cli)) {
+  const ready = join(destRoot, ".ok");
+  if (!existsSync(cli) || !existsSync(ready)) {
     mkdirSync(destRoot, { recursive: true });
     const tar = spawnSync("tar", ["-xzf", archive, "-C", destRoot], {
       encoding: "utf8",
@@ -57,6 +58,7 @@ export function ensureUsefulJobsKit() {
       error.detail = { stderr: tar.stderr };
       throw error;
     }
+    writeFileSync(ready, `${USEFUL_JOBS_PIN.sha256}\n`);
   }
   if (!existsSync(cli)) {
     throw new Error("useful_jobs_cli_missing");

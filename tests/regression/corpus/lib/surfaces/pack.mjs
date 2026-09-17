@@ -6,7 +6,7 @@ import { rejectForbidden } from "../../../../../experiments/s185-distribution-re
 import { CORPUS_ROOT, REPO_ROOT } from "../root.mjs";
 import { accept, reject } from "../result.mjs";
 import { ensureUsefulJobsKit } from "../kit.mjs";
-import { parseJsonLoose, refuseFromJson, runNode } from "../spawn.mjs";
+import { childEnv, parseJsonLoose, refuseFromJson, runNode } from "../spawn.mjs";
 
 function runKit(args, { timeoutMs = 20_000 } = {}) {
   const kit = ensureUsefulJobsKit();
@@ -22,7 +22,7 @@ function runKit(args, { timeoutMs = 20_000 } = {}) {
       cwd: REPO_ROOT,
       encoding: "utf8",
       timeout: timeoutMs,
-      env: { ...process.env, PAYMENT_SENT: "false" },
+      env: childEnv(),
     });
     const timedOut = result.error?.code === "ETIMEDOUT";
     return {

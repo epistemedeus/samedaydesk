@@ -97,6 +97,19 @@ test("run.mjs --fixture false-reject.json exits 1 with SEED_REJECT false-reject"
   assert.equal(result.json.cases[0].claimedVerdict, "reject");
 });
 
+test("matching claimed verdict is SEED_MISS, not SEED_REJECT", () => {
+  const result = run([
+    "--fixture",
+    "tests/regression/corpus/fixtures/seeded/matching-wrong-digest.json",
+    "--json",
+  ]);
+  assert.equal(result.status, 1, result.stderr || result.stdout);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "SEED_MISS");
+  assert.equal(result.json.cases[0].claimedVerdict, "reject");
+  assert.equal(result.json.cases[0].observedVerdict, "reject");
+});
+
 test("write boundary stays inside tests/regression/corpus", () => {
   const catalog = JSON.parse(readFileSync(join(here, "catalog.json"), "utf8"));
   assert.equal(catalog.writeBoundary, "tests/regression/corpus/**");

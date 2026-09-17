@@ -69,6 +69,23 @@ async function spaStatus(pathname) {
   }
 }
 
+export function judgeCdnFixture(fixture) {
+  const kind = classifyResponse(fixture);
+  if (kind === "cdn_challenge") {
+    return reject("cdn_challenge", "hcdn/JS-challenge HTML is not a product 200.", {
+      product: { kind, status: fixture.status },
+    });
+  }
+  if (kind === "ok" || fixture.status === 200) {
+    return accept("cdn_as_product_200", "hcdn challenge HTML was treated as a product 200.", {
+      product: { kind, status: fixture.status },
+    });
+  }
+  return reject(kind, "hcdn/JS-challenge HTML is not a product 200.", {
+    product: { kind, status: fixture.status },
+  });
+}
+
 export async function evaluateMerchant(id) {
   if (id === "merchant.offer-routing-complete-issue") {
     const job = JSON.parse(
@@ -119,15 +136,7 @@ export async function evaluateMerchant(id) {
 
   if (id === "merchant.cdn-challenge") {
     const fixture = JSON.parse(readFileSync(join(CORPUS_ROOT, "fixtures/http/cdn-challenge.json"), "utf8"));
-    const kind = classifyResponse(fixture);
-    if (kind === "ok" || fixture.status === 200) {
-      return accept("cdn_as_product_200", "hcdn challenge HTML was treated as a product 200.", {
-        product: { kind, status: fixture.status },
-      });
-    }
-    return reject("cdn_challenge", "hcdn/JS-challenge HTML is not a product 200.", {
-      product: { kind, status: fixture.status },
-    });
+    return judgeCdnFixture(fixture);
   }
 
   if (id === "merchant.x402-unpaid-extract") {

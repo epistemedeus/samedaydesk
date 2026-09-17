@@ -5,6 +5,17 @@ import { spawnSync } from "node:child_process";
 import { REPO_ROOT } from "./root.mjs";
 import { accept, reject } from "./result.mjs";
 
+const PAYMENT_ENV = /^(STRIPE_|PAYMENT_|X402_)/i;
+
+export function childEnv(base = process.env) {
+  const env = { ...base, PAYMENT_SENT: "false" };
+  for (const key of Object.keys(env)) {
+    if (key === "PAYMENT_SENT") continue;
+    if (PAYMENT_ENV.test(key)) delete env[key];
+  }
+  return env;
+}
+
 export function parseJsonLoose(text) {
   const raw = String(text || "").trim();
   if (!raw) return null;
@@ -41,7 +52,7 @@ export function runNode(relScript, args, { timeoutMs = 20_000, destName = null, 
       cwd: REPO_ROOT,
       encoding: "utf8",
       timeout: timeoutMs,
-      env: { ...process.env, PAYMENT_SENT: "false" },
+      env: childEnv(),
     });
     const timedOut = result.error?.code === "ETIMEDOUT";
     const json = parseJsonLoose(result.stdout) || parseJsonLoose(result.stderr);
