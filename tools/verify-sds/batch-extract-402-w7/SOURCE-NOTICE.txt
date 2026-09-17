@@ -1,0 +1,16 @@
+W7 SDS batch-extract 402 amount gate (unpaid HTTP 402 only).
+
+Primary pin (native POST /extract/batch, not GET /extract rewrite):
+  10000 atomic Base USDC = 0.01 display. Flat attempt quote for 1-5 URLs.
+  tools/presence/fixtures/for-agents-cold-read/agents-llms.txt
+  tools/recurring-job-recipes/fixtures/merchant/record/product-jsonld/delivery/extract-batch.json
+    (quote.amountAtomic only; that fixture is charged:true delivery-shaped and is not an unpaid 402)
+  tools/result-reuse/fixtures/accepted-extract-batch.json (quote pin only)
+  client/public/llms.txt
+
+Contrast pin (must not be used as the batch amount):
+  GET /extract = 5000 atomic (0.005) in fixtures/presence/catalog/x402.json
+  POST /extract/batch is absent from that 23-item catalog.
+
+This pack does not pay, checkout, publish, attach neo, mutate a registry,
+send PAYMENT-SIGNATURE, call Stripe, or fetch the live catalog.

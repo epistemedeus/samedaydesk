@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "samedaydesk.batch-extract-402-w7.unpaid.v1",
+  "fixtureId": "w7_live_price_edit",
+  "kind": "unpaid_payment_required",
+  "statusClass": "unpaid",
+  "origin": "https://agents.samedaydesk.com",
+  "resource": "https://agents.samedaydesk.com/extract/batch",
+  "route": "/extract/batch",
+  "method": "POST",
+  "httpStatus": 402,
+  "charged": false,
+  "paymentSent": false,
+  "observedAt": "2026-09-17T13:00:00.000Z",
+  "amountAtomic": "10000",
+  "amountDisplayUsd": "0.01",
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "extra": {
+    "name": "USD Coin",
+    "version": "2"
+  },
+  "request": {
+    "method": "POST",
+    "url": "https://agents.samedaydesk.com/extract/batch",
+    "headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    }
+  },
+  "batch": {
+    "urlCount": 1,
+    "urlCountMin": 1,
+    "urlCountMax": 5,
+    "quoteKind": "flat_attempt"
+  },
+  "editLivePrice": true,
+  "proposedAmountAtomic": "5000",
+  "source": {
+    "kind": "live_price_edit",
+    "path": "tools/verify-sds/batch-extract-402-w7/matrix.json",
+    "capturedAt": "2026-09-17T13:00:00.000Z",
+    "note": "Attempt to edit the live extract/batch amount. This pack refuses live price edits."
+  },
+  "unknownWhenAbsent": [
+    "paid_body",
+    "facilitator_settlement",
+    "payment_header"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "get_extract_rewrite_is_batch",
+    "atomic_is_display_usd",
+    "http_402_is_delivery",
+    "copied_settlement_is_batch_payment"
+  ]
+}
