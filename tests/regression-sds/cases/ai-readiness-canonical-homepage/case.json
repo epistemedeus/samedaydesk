@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "ai-readiness-canonical-homepage",
+  "repo": "samedaydesk",
+  "surface": "merchant",
+  "feature": "hosted-readback",
+  "class": "regression",
+  "defect": "GitHub issue #1 item 2: /tools/ai-readiness is a real route but AiReadiness.tsx sets title/description only. The SPA shell hardcodes homepage canonical, so crawlers still see https://samedaydesk.com/.",
+  "source": {
+    "kind": "github-issue",
+    "ref": "https://github.com/epistemedeus/samedaydesk/issues/1"
+  },
+  "execute": {
+    "kind": "source-canonical"
+  },
+  "expectProduct": {
+    "exitCode": 1,
+    "stdoutJson": {
+      "ok": false,
+      "setsTitle": true,
+      "setsCanonical": false,
+      "homepageCanonicalHardcoded": true,
+      "defect": true
+    }
+  },
+  "expectCorpus": {
+    "productVerdict": "reject",
+    "naiveRule": "exit0"
+  },
+  "boundary": {
+    "paymentSent": false,
+    "toolsCalled": false
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "id": "archive-wrong-digest",
+  "repo": "samedaydesk",
+  "surface": "buyer",
+  "feature": "archive-acquisition",
+  "class": "seeded-false-green",
+  "roles": ["seeded-false-green", "seeded-false-accept"],
+  "defect": "obtain-archive.mjs prints ok:false code wrong-digest then process.exit(0). A wrapper that treats exit 0 as success false-greens a SHA mismatch and must be caught.",
+  "source": {
+    "kind": "r1-seed",
+    "job": "W0-X22-sds-regression-corpus",
+    "ref": "experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs"
+  },
+  "execute": {
+    "kind": "spawn",
+    "timeoutMs": 15000,
+    "dest": "{{tmp}}/must-not-write.tgz",
+    "argv": [
+      "{{node}}",
+      "experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs",
+      "--from",
+      "{{case}}/source.bin",
+      "--expected-sha256",
+      "0000000000000000000000000000000000000000000000000000000000000000",
+      "--expected-bytes",
+      "17",
+      "--dest",
+      "{{tmp}}/must-not-write.tgz"
+    ]
+  },
+  "expectProduct": {
+    "exitCode": 0,
+    "destExists": false,
+    "stdoutJson": {
+      "ok": false,
+      "refused": true,
+      "code": "wrong-digest",
+      "extracted": false,
+      "executed": false
+    }
+  },
+  "expectCorpus": {
+    "productVerdict": "reject",
+    "naiveRule": "exit0"
+  },
+  "boundary": {
+    "paymentSent": false,
+    "toolsCalled": false
+  }
+}

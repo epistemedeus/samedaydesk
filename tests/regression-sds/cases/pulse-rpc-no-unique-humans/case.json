@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "pulse-rpc-no-unique-humans",
+  "repo": "samedaydesk",
+  "surface": "merchant",
+  "feature": "pulse-durable",
+  "class": "regression",
+  "defect": "Pulse durable-store defect 4: RPC payload must omit uniqueHumans fingerprint sets and raw request data.",
+  "source": {
+    "kind": "product-test",
+    "ref": "server/scripts/test-pulse-durable-store.js"
+  },
+  "execute": {
+    "kind": "pulse-rpc-payload"
+  },
+  "expectProduct": {
+    "exitCode": 0,
+    "stdoutJson": {
+      "ok": true,
+      "uniqueHumans": false,
+      "rawRequestData": false
+    }
+  },
+  "expectCorpus": {
+    "productVerdict": "accept",
+    "naiveRule": "exit0"
+  },
+  "boundary": {
+    "paymentSent": false,
+    "toolsCalled": false
+  }
+}
