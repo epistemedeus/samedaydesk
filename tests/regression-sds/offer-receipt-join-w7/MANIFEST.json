@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "feature": "offer-receipt-join-w7",
+  "repo": "samedaydesk",
+  "writeBoundary": "tests/regression-sds/offer-receipt-join-w7/**",
+  "principle": {
+    "id": "offer-receipt-exact-join",
+    "statement": "An SDS catalog/402 accept joins an unsigned offer-receipt payload only on exact keys (origin+pathname, amount string, network, asset, scheme, payTo). A join is not settlement. Amounts are never unit-converted."
+  },
+  "seededMismatch": "amount-mismatch",
+  "catalogPin": {
+    "path": "fixtures/presence/catalog/x402.json",
+    "origin": "https://agents.samedaydesk.com",
+    "extract": { "routeTemplate": "/extract", "amount": "5000" },
+    "read": { "routeTemplate": "/read", "amount": "5000" },
+    "scan": { "routeTemplate": "/scan", "amount": "200000" }
+  },
+  "cases": [
+    {
+      "id": "cold-extract-join",
+      "file": "fixtures/cases/cold-extract-join.json",
+      "expect": "accept",
+      "class": "exact-key-join"
+    },
+    {
+      "id": "cold-read-join",
+      "file": "fixtures/cases/cold-read-join.json",
+      "expect": "accept",
+      "class": "exact-key-join"
+    },
+    {
+      "id": "cold-scan-join",
+      "file": "fixtures/cases/cold-scan-join.json",
+      "expect": "accept",
+      "class": "exact-key-join"
+    },
+    {
+      "id": "amount-mismatch",
+      "file": "fixtures/cases/amount-mismatch.json",
+      "expect": "reject",
+      "class": "mismatch",
+      "seededMismatch": true
+    },
+    {
+      "id": "route-mismatch",
+      "file": "fixtures/cases/route-mismatch.json",
+      "expect": "reject",
+      "class": "mismatch"
+    },
+    {
+      "id": "payto-mismatch",
+      "file": "fixtures/cases/payto-mismatch.json",
+      "expect": "reject",
+      "class": "mismatch"
+    },
+    {
+      "id": "network-mismatch",
+      "file": "fixtures/cases/network-mismatch.json",
+      "expect": "reject",
+      "class": "mismatch"
+    },
+    {
+      "id": "unit-conversion-as-match",
+      "file": "fixtures/cases/unit-conversion-as-match.json",
+      "expect": "reject",
+      "class": "mismatch"
+    },
+    {
+      "id": "invented-receipt-field",
+      "file": "fixtures/cases/invented-receipt-field.json",
+      "expect": "reject",
+      "class": "mismatch"
+    },
+    {
+      "id": "offer-as-settlement",
+      "file": "fixtures/cases/offer-as-settlement.json",
+      "expect": "reject",
+      "class": "mismatch"
+    },
+    {
+      "id": "join-without-exact-key",
+      "file": "fixtures/cases/join-without-exact-key.json",
+      "expect": "reject",
+      "class": "mismatch"
+    },
+    {
+      "id": "money-movement",
+      "file": "fixtures/cases/money-movement.json",
+      "expect": "reject",
+      "class": "money-movement"
+    }
+  ],
+  "counts": {
+    "total": 12,
+    "accept": 3,
+    "reject": 9,
+    "seededMismatch": 1
+  },
+  "boundary": {
+    "paymentSent": false,
+    "stripeOrX402": false,
+    "neoPublish": false,
+    "liveFetch": false
+  }
+}

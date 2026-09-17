@@ -1,0 +1,48 @@
+{
+  "id": "amount-mismatch",
+  "kind": "seeded",
+  "class": "mismatch",
+  "expect": "reject",
+  "seededMismatch": true,
+  "httpStatus": 402,
+  "charged": false,
+  "paymentSent": false,
+  "offerFromCatalog": "/extract",
+  "receipt": {
+    "kind": "unpaid_offer",
+    "statusClass": "unpaid",
+    "origin": "https://agents.samedaydesk.com",
+    "resource": "https://agents.samedaydesk.com/extract?url=https://example.com",
+    "route": "/extract",
+    "httpStatus": 402,
+    "charged": false,
+    "paymentSent": false,
+    "offerReceipt": {
+      "offers": [
+        {
+          "format": "eip712",
+          "acceptIndex": 0,
+          "payload": {
+            "version": 1,
+            "resourceUrl": "https://agents.samedaydesk.com/extract?url=https://example.com",
+            "scheme": "exact",
+            "network": "eip155:8453",
+            "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+            "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+            "amount": "1"
+          }
+        }
+      ]
+    }
+  },
+  "claims": {
+    "independentlySettled": false,
+    "treatOfferAsSettlement": false,
+    "amountUnitConverted": false
+  },
+  "naive": {
+    "verdict": "accept",
+    "because": "statusClass is unpaid and HTTP 402; a naive unpaid check would join"
+  },
+  "note": "SEEDING FAILURE: string-compare payload.amount to catalog/accepts amount. Copying 1 onto extract 5000 must reject. No unit conversion."
+}
