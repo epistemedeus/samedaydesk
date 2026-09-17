@@ -1,0 +1,11 @@
+{
+  "id": "missing-timestamp",
+  "kind": "classify",
+  "fetchedAt": "2026-09-17T12:00:00.000Z",
+  "providerTimestamp": null,
+  "expect": {
+    "observatoryState": "missing",
+    "marketObsState": "missing",
+    "clocksDistinct": true
+  }
+}

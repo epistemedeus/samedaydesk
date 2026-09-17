@@ -1,0 +1,82 @@
+{
+  "schema": "sds.regression.clock-skew.manifest.v1",
+  "engine": {
+    "classify": "server/lib/observatory/contract.js#classifyProviderTimestamp",
+    "marketObs": "server/routes/market-observations.js#refineSourceTimeState",
+    "moltjobs": "server/lib/observatory/adapters/moltjobs.js#observe",
+    "x402stats": "server/lib/observatory/adapters/x402stats.js#observe"
+  },
+  "pinnedFetchedAt": "2026-09-17T12:00:00.000Z",
+  "windows": {
+    "observatoryFutureSkewMs": 120000,
+    "observatoryStaleMs": 7200000,
+    "marketObsStaleMs": 3600000
+  },
+  "cases": [
+    {
+      "id": "fresh-ok",
+      "file": "fresh-ok.json",
+      "kind": "classify"
+    },
+    {
+      "id": "within-skew",
+      "file": "within-skew.json",
+      "kind": "classify"
+    },
+    {
+      "id": "future-skew-boundary",
+      "file": "future-skew-boundary.json",
+      "kind": "classify"
+    },
+    {
+      "id": "future-skew",
+      "file": "future-skew.json",
+      "kind": "classify"
+    },
+    {
+      "id": "future-skew-day",
+      "file": "future-skew-day.json",
+      "kind": "classify"
+    },
+    {
+      "id": "stale-boundary-ok",
+      "file": "stale-boundary-ok.json",
+      "kind": "classify"
+    },
+    {
+      "id": "stale-observatory",
+      "file": "stale-observatory.json",
+      "kind": "classify"
+    },
+    {
+      "id": "stale-market-obs-only",
+      "file": "stale-market-obs-only.json",
+      "kind": "classify"
+    },
+    {
+      "id": "missing-timestamp",
+      "file": "missing-timestamp.json",
+      "kind": "classify"
+    },
+    {
+      "id": "invalid-timestamp",
+      "file": "invalid-timestamp.json",
+      "kind": "classify"
+    },
+    {
+      "id": "adapter-future-skew",
+      "file": "adapter-future-skew.json",
+      "kind": "adapter"
+    },
+    {
+      "id": "adapter-stale-keeps-metrics",
+      "file": "adapter-stale-keeps-metrics.json",
+      "kind": "adapter"
+    },
+    {
+      "id": "adapter-within-skew",
+      "file": "adapter-within-skew.json",
+      "kind": "adapter"
+    }
+  ]
+}

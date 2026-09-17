@@ -1,0 +1,20 @@
+{
+  "id": "adapter-future-skew",
+  "kind": "adapter",
+  "fetchedAt": "2026-09-17T12:00:00.000Z",
+  "providerTimestamp": "2026-09-17T12:05:00.000Z",
+  "expect": {
+    "observatoryState": "invalid",
+    "marketObsState": "ok",
+    "clocksDistinct": true,
+    "moltjobs": {
+      "providerTimestampState": "invalid",
+      "jobCount": 12
+    },
+    "x402stats": {
+      "providerTimestampState": "invalid",
+      "availability": "partial",
+      "sellers_30d": 47303
+    }
+  }
+}
