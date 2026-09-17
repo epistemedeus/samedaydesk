@@ -1,0 +1,33 @@
+{
+  "schema": "sds.listing_repair.bind.pins.v1",
+  "usefulJobs": "1.4.7",
+  "archiveBytes": 5255824,
+  "archiveSha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+  "kitPath": "client/public/kit/useful-jobs-1.4.7.tar.gz",
+  "forAgentsPath": "client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz",
+  "job": "listing-repair-packet",
+  "sut": "apps/listing-repair-packet",
+  "cliSha256": "4ccda94e10e857109377a99b52050b07ad177bb05e85ff24f0ed1d8b158ece56",
+  "boundarySha256": "12010bf92ef4e2836f824ffa5d3291ee2fa0e61d6a526378c71472a23b6b275e",
+  "cli": "node bin/useful-jobs.mjs run listing-repair-packet --input …",
+  "exampleCli": "node bin/useful-jobs.mjs run listing-repair-packet --example",
+  "mismatchInput": "samples/listing/mismatch.json",
+  "exampleInput": "samples/listing/caller-alpha.json",
+  "outputs": [
+    "repair-packet.json",
+    "repair-packet.md"
+  ],
+  "packetSchema": "s233.useful-application.artifact.v1",
+  "purchaseAuthority": false,
+  "republishKit": false,
+  "archivePin": {
+    "ok": true,
+    "path": "/home/ubuntu/heavy-work/W0-R14-07-listing-repair-bind-packet/repo/client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz",
+    "bytes": 5255824,
+    "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+    "expectedBytes": 5255824,
+    "expectedSha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+    "purchaseAuthority": false,
+    "republishKit": false
+  }
+}

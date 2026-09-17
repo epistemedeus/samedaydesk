@@ -1,0 +1,18 @@
+{
+  "schema": "sds.listing_repair_bind.fixtures.v1",
+  "stampedAt": "2026-09-17T12:33:41.110Z",
+  "files": [
+    "fixtures/cold/example.packet.json",
+    "fixtures/cold/example.source.json",
+    "fixtures/cold/example.bind.json",
+    "fixtures/cold/mismatch.packet.json",
+    "fixtures/cold/mismatch.source.json",
+    "fixtures/cold/mismatch.bind.json",
+    "fixtures/cold/mutated.source.json",
+    "fixtures/reject/mismatch-claimed-accepted-correction.packet.json",
+    "fixtures/reject/legacy-corrections.packet.json",
+    "fixtures/reject/publish-attempt.packet.json",
+    "fixtures/pins.json"
+  ],
+  "note": "Cold packets are unmodified 1.4.7 engine output. Sources wrap the kit listing inputs. Kit is not republished."
+}
