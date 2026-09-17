@@ -1,0 +1,17 @@
+{
+  "callerOwned": true,
+  "callerId": "useful-job-desk-vendor",
+  "sample": false,
+  "rows": [
+    {
+      "field": "desk-operator-input",
+      "value": 4.0,
+      "unit": "USD/1M-tokens"
+    },
+    {
+      "field": "desk-operator-output",
+      "value": 12.0,
+      "unit": "USD/1M-tokens"
+    }
+  ]
+}

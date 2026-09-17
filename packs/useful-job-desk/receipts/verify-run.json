@@ -1,0 +1,162 @@
+{
+  "schema": "samedaydesk.useful-job-desk.receipt.v1",
+  "pack": "useful-job-desk",
+  "engine": {
+    "package": "useful-jobs",
+    "version": "1.4.7",
+    "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+    "bytes": 5255824,
+    "cli": "bin/useful-jobs.mjs",
+    "enginesModified": false,
+    "cliInvoked": true,
+    "kitRoot": "useful-jobs-1.4.7",
+    "enginesSha256Before": "38dfe6ffa89ae8e4e57bf014ea57049d1e8e07c61253783d18d97e42ae9ddc19",
+    "enginesSha256After": "38dfe6ffa89ae8e4e57bf014ea57049d1e8e07c61253783d18d97e42ae9ddc19"
+  },
+  "purchaseAuthority": false,
+  "hostedAcquisition": false,
+  "schedulerDaemon": false,
+  "organicDemand": false,
+  "repeatDemand": false,
+  "h32PrivatePrimitivesReopened": false,
+  "callerOwned": true,
+  "ok": true,
+  "refused": false,
+  "delivered": true,
+  "code": "verify-passed",
+  "message": "real 1.4.7 engine, owned callers, changed-input repeat, seeded same-fixture refuse, engines unmodified",
+  "families": [
+    {
+      "job": "lockfile-pin-delta",
+      "family": "lockfile",
+      "changedInput": true,
+      "first": {
+        "job": "lockfile-pin-delta",
+        "status": 0,
+        "delivered": true,
+        "digest": "cdc0f3d7cb46b4082b548d09ed3e58bc35be505582bd95fd67840386fce3ec27",
+        "engineStatus": "actionable",
+        "outDir": "/tmp/useful-job-desk-verify-mu5gp94v/lockfile/first",
+        "promisedOutputs": [
+          "pin-delta.json",
+          "pin-delta.md"
+        ],
+        "presentOutputs": [
+          "pin-delta.json",
+          "pin-delta.md"
+        ],
+        "missingOutputs": [],
+        "code": null,
+        "cliInvoked": true
+      },
+      "second": {
+        "job": "lockfile-pin-delta",
+        "status": 0,
+        "delivered": true,
+        "digest": "3bf26a06c54f6a9dc0dc8ddd49aabdd74f9f885adaf4d725bd473d08664c1ec5",
+        "engineStatus": "actionable",
+        "outDir": "/tmp/useful-job-desk-verify-mu5gp94v/lockfile/second",
+        "promisedOutputs": [
+          "pin-delta.json",
+          "pin-delta.md"
+        ],
+        "presentOutputs": [
+          "pin-delta.json",
+          "pin-delta.md"
+        ],
+        "missingOutputs": [],
+        "code": null,
+        "cliInvoked": true
+      },
+      "distinctDigest": true,
+      "delivered": true
+    },
+    {
+      "job": "vendor-budget-impact",
+      "family": "vendor",
+      "changedInput": true,
+      "first": {
+        "job": "vendor-budget-impact",
+        "status": 0,
+        "delivered": true,
+        "digest": "631d0a4497a0683e",
+        "engineStatus": "actionable",
+        "outDir": "/tmp/useful-job-desk-verify-mu5gp94v/vendor/first",
+        "promisedOutputs": [
+          "budget-impact.json",
+          "budget-impact.md"
+        ],
+        "presentOutputs": [
+          "budget-impact.json",
+          "budget-impact.md"
+        ],
+        "missingOutputs": [],
+        "code": null,
+        "cliInvoked": true
+      },
+      "second": {
+        "job": "vendor-budget-impact",
+        "status": 0,
+        "delivered": true,
+        "digest": "eef037f690e539b1",
+        "engineStatus": "actionable",
+        "outDir": "/tmp/useful-job-desk-verify-mu5gp94v/vendor/second",
+        "promisedOutputs": [
+          "budget-impact.json",
+          "budget-impact.md"
+        ],
+        "presentOutputs": [
+          "budget-impact.json",
+          "budget-impact.md"
+        ],
+        "missingOutputs": [],
+        "code": null,
+        "cliInvoked": true
+      },
+      "distinctDigest": true,
+      "delivered": true
+    }
+  ],
+  "seededFailure": {
+    "fixture": "callers/vendor/after.json used twice",
+    "labelledRepeatDemand": true,
+    "refused": true,
+    "delivered": false,
+    "code": "same-fixture-labelled-repeat-demand",
+    "message": "same fixture twice labelled repeat demand is refused",
+    "repeatDemand": false
+  },
+  "callerFiles": [
+    {
+      "path": "callers/lockfile/before.json",
+      "bytes": 691,
+      "sha256": "f0c59173523d328a17040837564113bf8068aa382beaf8f6c83b9085886481e8"
+    },
+    {
+      "path": "callers/lockfile/after.json",
+      "bytes": 691,
+      "sha256": "313b1f3e5b7ab65d0a1efe4b7a87953e2dcf6c125f99f227f8c82bda99c52a1e"
+    },
+    {
+      "path": "callers/lockfile/after-repeat.json",
+      "bytes": 691,
+      "sha256": "a2b030762d6614fe364eb087534d13875eac190ffa053ef68543ed7536a3fc82"
+    },
+    {
+      "path": "callers/vendor/before.json",
+      "bytes": 305,
+      "sha256": "ff30eee1576758c87487d87faabc17e9d60feab3845704dfee8f66b5d2db955c"
+    },
+    {
+      "path": "callers/vendor/after.json",
+      "bytes": 305,
+      "sha256": "3160bd85865b25c25b1be5ff485af579db10d49369fb5a45bb75ae8212fd252b"
+    },
+    {
+      "path": "callers/vendor/after-repeat.json",
+      "bytes": 305,
+      "sha256": "46cdde4c793e09aa63a55e8f71fc911f9e43d912f74ac6b90d013750fbe2597c"
+    }
+  ],
+  "callerFilesUnchanged": true
+}
