@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "repo": "samedaydesk",
+  "seeds": [
+    {
+      "id": "sha-mismatch",
+      "feature": "archive-acquisition",
+      "why": "obtain-archive.mjs prints ok:false wrong-digest then process.exit(0). Verifier must remap to exit 1.",
+      "command": ["node", "tools/verify/cli.mjs", "--seeded-failure", "sha-mismatch", "--json"],
+      "expectExit": 1,
+      "errorCode": "SEED_REJECT",
+      "productCode": "wrong-digest",
+      "childExit": 0
+    },
+    {
+      "id": "missing-required-mcp-tool",
+      "feature": "apex-mcp",
+      "why": "tools/list on shipped server/index.js must include the five apex tools. Injecting an extra required name proves the missing-tool reject.",
+      "command": ["node", "tools/verify/cli.mjs", "--seeded-failure", "missing-required-mcp-tool", "--json"],
+      "expectExit": 1,
+      "errorCode": "SEED_REJECT",
+      "missing": ["does_not_exist_required_tool"]
+    },
+    {
+      "id": "missing-required-inputs",
+      "feature": "useful-jobs",
+      "why": "useful-jobs run lockfile-pin-delta without --before/--after is missing-required-inputs. Feeding that seed to the verifier is exit 1.",
+      "command": ["node", "tools/verify/cli.mjs", "--seeded-failure", "missing-required-inputs", "--json"],
+      "expectExit": 1,
+      "errorCode": "SEED_REJECT",
+      "productCode": "missing-required-inputs"
+    }
+  ]
+}
