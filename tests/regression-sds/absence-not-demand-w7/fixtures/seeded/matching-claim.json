@@ -1,0 +1,14 @@
+{
+  "id": "matching-claim",
+  "surface": "observatory",
+  "class": "matching-claim",
+  "expectReject": false,
+  "defect": "Control: no absence evidence and no demand claim — product agrees with accept.",
+  "output": {
+    "ok": true,
+    "status": "ok",
+    "surface": "observatory",
+    "demand": false,
+    "message": "no absence, no demand claim"
+  }
+}

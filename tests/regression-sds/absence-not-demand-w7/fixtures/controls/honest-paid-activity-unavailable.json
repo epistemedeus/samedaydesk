@@ -1,0 +1,18 @@
+{
+  "id": "honest-paid-activity-unavailable",
+  "surface": "observatory",
+  "class": "honest-absence-report",
+  "expectReject": false,
+  "defect": "Control: observatory reports paidActivity.available=false without inventing demand.",
+  "output": {
+    "ok": true,
+    "status": "ok",
+    "surface": "observatory",
+    "paidActivity": {
+      "available": false,
+      "reason": "x402stats snapshot has no registered-vs-paid split; organic is heuristic, not paid demand.",
+      "reconcile": { "state": "missing", "composed": null }
+    },
+    "message": "paid activity unavailable; not inventing demand"
+  }
+}
