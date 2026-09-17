@@ -60,7 +60,9 @@
     "bazaar-tracker": "node tools/bazaar-tracker/cli.mjs",
     "bazaar-tracker:readback": "node tools/bazaar-tracker/cli.mjs --readback",
     "test:bazaar-tracker": "node --test tools/bazaar-tracker/test.mjs tools/lqtrack1/replay-pr18-disposition.test.mjs",
-    "replay:pr18": "node tools/lqtrack1/replay-pr18-disposition.mjs"
+    "replay:pr18": "node tools/lqtrack1/replay-pr18-disposition.mjs",
+    "test:listing-repair-verifier": "npm test --prefix packs/verifiers/listing-repair",
+    "listing-repair-verifier": "node packs/verifiers/listing-repair/bin/listing-repair-verifier.mjs"
   },
   "dependencies": {
     "@neomorphic/correspondence": "file:./vendor/neomorphic-correspondence",
@@ -76,4 +78,3 @@
     "concurrently": "^10.0.3"
   }
 }
-

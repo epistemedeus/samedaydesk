@@ -1,0 +1,49 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "listing-repair-packet",
+  "status": "actionable",
+  "summary": "Listing repair packet status=diagnosed",
+  "actions": [
+    {
+      "priority": "high",
+      "kind": "owner-repair",
+      "note": "title: Operator Beta Draft → Operator Beta",
+      "sourceRefs": [
+        "field:title"
+      ],
+      "field": "title",
+      "from": "Operator Beta Draft",
+      "to": "Operator Beta"
+    }
+  ],
+  "gaps": [
+    "Route repair is owner guidance — not invented revenue or lost-customer proof"
+  ],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "tool": "distribution-repair",
+    "status": "diagnosed",
+    "ok": true
+  },
+  "generatedAt": "2026-09-17T12:00:00.000Z",
+  "sourceLinked": true,
+  "asOf": "2026-09-17T12:00:00.000Z",
+  "sourceObservation": {
+    "url": "https://example.test/listing/operator-beta",
+    "file": "fixtures-extra/ok/alt-title.source.json",
+    "observedAt": "2026-09-17T12:00:00.000Z",
+    "digest": "sha256:d990f8febacedef5d096556bba2ebf351d54633e02cf90a86867b4076a496e6e"
+  },
+  "claimedLane": "suggestion",
+  "evidence": true,
+  "suggestion": true,
+  "publish": false
+}

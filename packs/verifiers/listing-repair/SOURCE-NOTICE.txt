@@ -1,0 +1,11 @@
+Adapted from epistemedeus/neomorphic-io PR #51
+  commit dbf5bac12dd11c766a772ff479779ac318667391
+  path   packs/listing-repair-verifier/**
+
+Rebind for SameDayDesk useful-jobs 1.4.7:
+  - owner-repair actions[] (not 1.0.0 corrections[])
+  - archive sha256 e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec
+  - independent oracle only; does not ship a second listing-repair engine
+  - honesty.mjs inlined (no packs/capability-preflight dependency on SDS)
+
+Cold SUT obtain: client/public/kit/useful-jobs-1.4.7.tar.gz (also for-agents mirror).

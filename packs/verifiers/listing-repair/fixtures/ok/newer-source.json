@@ -1,0 +1,28 @@
+{
+  "schema": "sds.listing_repair.source_observation.v1",
+  "url": "https://example.test/listing/operator-alpha",
+  "file": "fixtures/ok/newer-source.json",
+  "observedAt": "2026-09-11T16:00:00.000Z",
+  "digest": "sha256:ae3dc301899a0290a56de14223fe6fd4f38ad4d93984c2e442701e81328ade7a",
+  "snapshot": {
+    "url": "https://example.test/listing/operator-alpha",
+    "agentId": "agent-alpha",
+    "listingStatus": "PendingReview",
+    "title": "Operator Alpha (refreshed capture)",
+    "freeVsPriced": "discovery_free_run_priced",
+    "routes": {
+      "/changelog": {
+        "path": "/changelog",
+        "present": true
+      },
+      "/docs": {
+        "path": "/docs",
+        "present": true
+      },
+      "/pricing": {
+        "path": "/pricing",
+        "present": true
+      }
+    }
+  }
+}

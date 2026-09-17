@@ -1,0 +1,174 @@
+{
+  "schema": "sds.listing_repair_verifier.fixtures_extra.v1",
+  "pack": "W0-X76",
+  "base": "bot/r14-01-listing-repair@67029972c0dcd8bdfbe2e4a3a353e0e297b805c7",
+  "note": "Extra corpus only under fixtures-extra/**. Never accept publish:true or purchaseAuthority:true as ok.",
+  "stampedAt": "2026-09-17T12:13:32.849Z",
+  "counts": {
+    "cases": 20,
+    "ok": 4,
+    "reject": 16
+  },
+  "cases": [
+    {
+      "id": "ok-status-repair",
+      "expect": "ok",
+      "expectedExit": 0,
+      "packet": "fixtures-extra/ok/ok-status-repair.packet.json",
+      "source": "fixtures-extra/ok/base.source.json",
+      "notes": "canonical PendingReview→PUBLIC_ACTIVE"
+    },
+    {
+      "id": "ok-route-docs",
+      "expect": "ok",
+      "expectedExit": 0,
+      "packet": "fixtures-extra/ok/ok-route-docs.packet.json",
+      "source": "fixtures-extra/ok/base.source.json",
+      "notes": "owner-repair route:/docs"
+    },
+    {
+      "id": "ok-title-repair",
+      "expect": "ok",
+      "expectedExit": 0,
+      "packet": "fixtures-extra/ok/ok-title-repair.packet.json",
+      "source": "fixtures-extra/ok/alt-title.source.json",
+      "notes": "title Draft → Operator Beta"
+    },
+    {
+      "id": "ok-multi-action",
+      "expect": "ok",
+      "expectedExit": 0,
+      "packet": "fixtures-extra/ok/ok-multi-action.packet.json",
+      "source": "fixtures-extra/ok/base.source.json",
+      "notes": "status + route multi-action"
+    },
+    {
+      "id": "stale-observed-at",
+      "expect": "reject",
+      "expectedExit": 1,
+      "packet": "fixtures-extra/reject/stale-observed-at.packet.json",
+      "source": "fixtures-extra/reject/stale.source.json",
+      "notes": "observedAt older than asOf → stale_observed_at"
+    },
+    {
+      "id": "fabricated-sample",
+      "expect": "reject",
+      "expectedExit": 1,
+      "packet": "fixtures-extra/reject/fabricated-sample.packet.json",
+      "source": "fixtures-extra/ok/base.source.json",
+      "notes": "exampleMode + SAMPLE label"
+    },
+    {
+      "id": "publish-attempt",
+      "expect": "reject",
+      "expectedExit": 1,
+      "packet": "fixtures-extra/reject/publish-attempt.packet.json",
+      "source": "fixtures-extra/ok/base.source.json",
+      "notes": "publish:true + claimedLane publish — must exit 1"
+    },
+    {
+      "id": "missing-source",
+      "expect": "reject",
+      "expectedExit": 1,
+      "packet": "fixtures-extra/reject/missing-source.packet.json",
+      "source": null,
+      "notes": "packet omits sourceObservation"
+    },
+    {
+      "id": "noop-false-correction",
+      "expect": "reject",
+      "expectedExit": 1,
+      "packet": "fixtures-extra/reject/noop-false-correction.packet.json",
+      "source": "fixtures-extra/ok/active.source.json",
+      "notes": "to-value already on source → false_correction"
+    },
+    {
+      "id": "already-correct",
+      "expect": "reject",
+      "expectedExit": 1,
+      "packet": "fixtures-extra/reject/already-correct.packet.json",
+      "source": "fixtures-extra/ok/active.source.json",
+      "notes": "claims PendingReview→PUBLIC_ACTIVE but source already PUBLIC_ACTIVE"
+    },
+    {
+      "id": "adv-greenwash-market-fact",
+      "expect": "reject",
+      "expectedExit": 1,
+      "packet": "fixtures-extra/adversarial/adv-greenwash-market-fact.packet.json",
+      "source": "fixtures-extra/ok/base.source.json",
+      "notes": "notMarketFact:false → market_fact_claim"
+    },
+    {
+      "id": "adv-wrong-digest",
+      "expect": "reject",
+      "expectedExit": 1,
+      "packet": "fixtures-extra/adversarial/adv-wrong-digest.packet.json",
+      "source": "fixtures-extra/ok/base.source.json",
+      "notes": "bound digest all-zeros → stale_source_digest / mismatch"
+    },
+    {
+      "id": "adv-future-observed-at",
+      "expect": "reject",
+      "expectedExit": 1,
+      "packet": "fixtures-extra/adversarial/adv-future-observed-at.packet.json",
+      "source": "fixtures-extra/adversarial/future.source.json",
+      "notes": "future observedAt still older than future asOf → stale_observed_at"
+    },
+    {
+      "id": "adv-route-tamper",
+      "expect": "reject",
+      "expectedExit": 1,
+      "packet": "fixtures-extra/adversarial/adv-route-tamper.packet.json",
+      "source": "fixtures-extra/ok/base.source.json",
+      "notes": "route:/admin not in snapshot → route_ref_missing"
+    },
+    {
+      "id": "false-actionable",
+      "expect": "reject",
+      "expectedExit": 1,
+      "packet": "fixtures-extra/reject/false-actionable.packet.json",
+      "source": "fixtures-extra/ok/base.source.json",
+      "notes": "status=actionable with empty actions[]"
+    },
+    {
+      "id": "invented-field",
+      "expect": "reject",
+      "expectedExit": 1,
+      "packet": "fixtures-extra/reject/invented-field.packet.json",
+      "source": "fixtures-extra/ok/base.source.json",
+      "notes": "field not in snapshot"
+    },
+    {
+      "id": "from-mismatch",
+      "expect": "reject",
+      "expectedExit": 1,
+      "packet": "fixtures-extra/reject/from-mismatch.packet.json",
+      "source": "fixtures-extra/ok/base.source.json",
+      "notes": "from does not match source listingStatus"
+    },
+    {
+      "id": "adv-purchase-authority",
+      "expect": "reject",
+      "expectedExit": 1,
+      "packet": "fixtures-extra/adversarial/adv-purchase-authority.packet.json",
+      "source": "fixtures-extra/ok/base.source.json",
+      "notes": "purchaseAuthority:true must reject — never accept"
+    },
+    {
+      "id": "locator-mismatch",
+      "expect": "reject",
+      "expectedExit": 1,
+      "packet": "fixtures-extra/reject/locator-mismatch.packet.json",
+      "source": "fixtures-extra/ok/base.source.json",
+      "notes": "packet binds wrong listing URL"
+    },
+    {
+      "id": "invalid-kind",
+      "expect": "reject",
+      "expectedExit": 1,
+      "packet": "fixtures-extra/reject/invalid-kind.packet.json",
+      "source": "fixtures-extra/ok/base.source.json",
+      "notes": "kind not in OWNER_ACTION_KINDS"
+    }
+  ]
+}
