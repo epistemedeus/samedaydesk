@@ -1,0 +1,25 @@
+{
+  "schema": "samedaydesk.output-contract-evaluation.case.v1",
+  "caseId": "seeded-missing-settlement",
+  "proposal": {
+    "priceUsdc": "5.000",
+    "live": false,
+    "skuPublished": false,
+    "payment": "none",
+    "charged": false
+  },
+  "promisedContract": {
+    "method": "GET",
+    "route": "/extract",
+    "requiredPaths": ["ok"]
+  },
+  "output": {
+    "httpStatus": 200,
+    "body": {
+      "ok": true
+    }
+  },
+  "policy": {
+    "onInvalid": "preserve_settlement"
+  }
+}

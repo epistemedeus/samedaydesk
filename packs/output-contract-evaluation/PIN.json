@@ -1,0 +1,12 @@
+{
+  "schema": "samedaydesk.package-pin.v1",
+  "packageId": "output-contract-evaluation",
+  "sourceRepo": "epistemedeus/samedaydesk",
+  "engine": "tools/output-contract-evaluation",
+  "nodeEngines": ">=22",
+  "cashUsd": 0,
+  "proposedPriceUsdc": "5.000",
+  "live": false,
+  "skuPublished": false,
+  "notes": "Proposed $5 evaluation. Offline. Settlement is preserved when output is invalid. Does not charge or publish."
+}

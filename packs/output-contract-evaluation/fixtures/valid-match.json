@@ -1,0 +1,37 @@
+{
+  "schema": "samedaydesk.output-contract-evaluation.case.v1",
+  "caseId": "extract-output-contract-valid-match",
+  "proposal": {
+    "priceUsdc": "5.000",
+    "live": false,
+    "skuPublished": false,
+    "payment": "none",
+    "charged": false
+  },
+  "promisedContract": {
+    "method": "GET",
+    "route": "/extract",
+    "mimeType": "application/json",
+    "requiredPaths": ["ok", "title", "url"]
+  },
+  "output": {
+    "httpStatus": 200,
+    "body": {
+      "ok": true,
+      "title": "Example Domain",
+      "url": "https://example.com/",
+      "description": "Example Domain"
+    }
+  },
+  "settlement": {
+    "operationId": "extract-output-contract-valid-match",
+    "amountUsdc": "0.005",
+    "buyerClass": "unknown",
+    "validDeliveryStatus": "seller_http_200_and_listing_marked_x402_verified",
+    "transaction": "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "facilitatorOrPayoutRef": "x402_v2_coinbase_cdp"
+  },
+  "policy": {
+    "onInvalid": "preserve_settlement"
+  }
+}

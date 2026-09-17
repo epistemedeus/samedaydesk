@@ -1,0 +1,40 @@
+{
+  "schema": "samedaydesk.output-contract-evaluation.case.v1",
+  "caseId": "agent402-external-validation-purchase-2026-08-29",
+  "proposal": {
+    "priceUsdc": "5.000",
+    "live": false,
+    "skuPublished": false,
+    "payment": "none",
+    "charged": false
+  },
+  "promisedContract": {
+    "method": "GET",
+    "route": "/commerce/seller-integrity-audit",
+    "mimeType": "application/json",
+    "requiredPaths": ["current", "history", "source"]
+  },
+  "output": {
+    "httpStatus": 200,
+    "decision": "repair_required",
+    "body": {
+      "decision": "repair_required",
+      "requestedPathGuarantees": {
+        "current": false,
+        "history": false,
+        "source": false
+      }
+    }
+  },
+  "settlement": {
+    "operationId": "agent402-external-validation-purchase-2026-08-29",
+    "amountUsdc": "0.010",
+    "buyerClass": "unknown",
+    "validDeliveryStatus": "seller_http_200_repair_required_no_buyer_owned_output_enforcement",
+    "transaction": "0x2916cfe2c5200fca2a21f8b854fe963ef70d4ed90d59c7444cef16dd21056ef7",
+    "facilitatorOrPayoutRef": "x402_v2_coinbase_cdp"
+  },
+  "policy": {
+    "onInvalid": "preserve_settlement"
+  }
+}

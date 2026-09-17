@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "samedaydesk.output-contract-evaluation.result.v1",
+  "title": "Output-contract evaluation result",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["ok", "schema", "paid", "paymentSent"],
+  "properties": {
+    "ok": { "type": "boolean" },
+    "schema": { "const": "samedaydesk.output-contract-evaluation.result.v1" },
+    "decision": { "enum": ["valid", "invalid", null] },
+    "outputValid": { "type": ["boolean", "null"] },
+    "settlementPreserved": { "type": "boolean" },
+    "settlementMutated": { "type": "boolean" },
+    "paid": { "const": false },
+    "paymentSent": { "const": false },
+    "proposal": {
+      "type": "object",
+      "properties": {
+        "priceUsdc": { "const": "5.000" },
+        "live": { "const": false },
+        "skuPublished": { "const": false },
+        "charged": { "const": false }
+      }
+    }
+  }
+}
