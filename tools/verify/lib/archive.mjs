@@ -130,9 +130,22 @@ export async function runArchive(parsed, { root, dryRun = false } = {}) {
       ok: true,
       command: "archive",
       dryRun: true,
-      feature: action === "negative-control" ? "archive-acquisition" : "archive-acquisition",
+      feature: "archive-acquisition",
       evidence,
       result: { argv, version: pin.version, seeded },
+    });
+  }
+
+  if (isInsideRepo(dest, root) || (extract && isInsideRepo(extract, root))) {
+    return envelope({
+      ok: false,
+      command: "archive",
+      feature: "archive-acquisition",
+      evidence,
+      error: failError("HOST_BUILD", "archive dest/extract-dir must be outside the git tree", {
+        dest,
+        extractDir: extract,
+      }),
     });
   }
 

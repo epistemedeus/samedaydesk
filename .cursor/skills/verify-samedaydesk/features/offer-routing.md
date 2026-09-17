@@ -24,8 +24,8 @@ Map a job description onto an existing SameDayDesk offer. Never invents payment 
 
 Preconditions: none.
 
-- **Mapped refuse.** `node tools/verify/cli.mjs prove --feature offer-routing --json`. Exit 0 after observing product reject (`--expect-product-reject`).
-- **Raw pack.** `node tools/verify/cli.mjs pack run offer-routing --json` follows child exit (2 today).
+- **Mapped refuse.** `node tools/verify/cli.mjs prove --feature offer-routing --json`. Exit 0 after observing product reject (`--expect-product-reject`). Product child is exit **2** (`selected:null`); the wrapper without that flag is envelope `HOST_BUILD` **exit 1**.
+- **Raw pack.** `node tools/verify/cli.mjs pack run offer-routing --json` is exit 1 unless `--expect-product-reject`.
 
 ## Gotchas
 

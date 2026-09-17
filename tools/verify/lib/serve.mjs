@@ -297,7 +297,7 @@ export async function runServe(parsed, { root, dryRun = false } = {}) {
       ok: false,
       command: "serve",
       evidence,
-      error: failError("RUNTIME", error.message),
+      error: failError("HOST_BUILD", error.message, error.detail),
     });
   }
 }

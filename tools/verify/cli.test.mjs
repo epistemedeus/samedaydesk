@@ -126,3 +126,32 @@ test("dry-run serve argv is node server/index.js", () => {
   assert.equal(result.status, 0, result.stderr);
   assert.deepEqual(result.json.result.argv, ["node", "server/index.js"]);
 });
+
+test("archive dest inside the repo is refused", () => {
+  const result = run([
+    "archive",
+    "acquire",
+    "--dest",
+    "tools/verify/artifacts/useful-jobs-1.4.7.tar.gz",
+    "--extract-dir",
+    "tools/verify/artifacts",
+    "--json",
+  ]);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "HOST_BUILD");
+  assert.match(result.json.error.message, /outside the git tree/);
+});
+
+test("openapi fixture pin is 1.23.40", () => {
+  const result = run(["openapi", "check", "--json"]);
+  assert.equal(result.status, 0, result.stderr + result.stdout);
+  assert.equal(result.json.result.fixtureVersion, "1.23.40");
+});
+
+test("fetch POST is usage and never sent", () => {
+  const result = run(["fetch", "--method", "POST", "--path", "/api/health", "--origin", "http://127.0.0.1:9", "--json"]);
+  assert.equal(result.status, 2);
+  assert.equal(result.json.error.code, "USAGE");
+  assert.equal(result.json.boundary.paymentSent, false);
+});

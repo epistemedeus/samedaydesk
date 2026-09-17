@@ -24,6 +24,25 @@ function run(args, timeout = 60_000) {
   return { ...result, json };
 }
 
+test("prove result-reuse preview supplies required caller fields", { timeout: 30_000 }, () => {
+  const result = run(["prove", "--feature", "result-reuse", "--json"], 30_000);
+  assert.equal(result.status, 0, result.stderr + result.stdout);
+  assert.equal(result.json.ok, true);
+  assert.equal(result.json.feature, "result-reuse");
+  assert.equal(result.json.result.childExit, 0);
+  assert.equal(result.json.result.json?.ok, true);
+});
+
+test("result-reuse export without --opt-in is seeded refuse and does not write", { timeout: 30_000 }, () => {
+  const result = run(["pack", "run", "result-reuse", "--seeded-failure", "--json"], 30_000);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "SEED_REJECT");
+  assert.equal(result.json.result.childExit, 1);
+  assert.equal(result.json.result.destExists, false);
+  assert.match(JSON.stringify(result.json.result.product || result.json.error), /opt-in/);
+});
+
 test("prove hosted-readback keeps the host up for /api/health", { timeout: 60_000 }, () => {
   const result = run(["prove", "--feature", "hosted-readback", "--json"], 60_000);
   assert.equal(result.status, 0, result.stderr + result.stdout);

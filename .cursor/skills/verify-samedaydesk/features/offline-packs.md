@@ -14,7 +14,7 @@ Local OpenAPI/CSV/price/RSS compare (s176) and listing diagnosis (s185). Files o
 ## Sub-features
 
 - `s176-sample` `sample --all` walks the four families.
-- `s176-html` pricing HTML is `unsupported-pricing-format` (child may exit 0).
+- `s176-html` pricing HTML is `unsupported-html-extraction` (`sample --recipe R-PRICE-REFUSE-HTML`; child may exit 0).
 - `s185-positive` `sample --positive`.
 - `s185-malformed` `diagnose examples/malformed.json` is `forbidden_claim`.
 

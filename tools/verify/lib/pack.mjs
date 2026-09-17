@@ -248,15 +248,25 @@ export async function runPack(parsed, { root, dryRun = false } = {}) {
   }
 
   if (seeded) {
+    const dest = childArgv.includes("--out") ? childArgv[childArgv.indexOf("--out") + 1] : null;
+    const destExists = dest ? existsSync(dest) : false;
+    const observed = ran.code !== 0 && !destExists;
     return envelope({
       ok: false,
       command: "pack",
       feature: spec.feature,
       evidence,
-      error: failError("SEED_REJECT", `${id} seeded input rejected`, {
-        childExit: ran.code,
-        product: json,
-      }),
+      error: failError(
+        "SEED_REJECT",
+        observed ? `${id} seeded input rejected` : `expected ${id} seeded refuse`,
+        {
+          childExit: ran.code,
+          product: json,
+          destExists,
+          observedRefuse: observed,
+        },
+      ),
+      result: { childExit: ran.code, product: json, destExists, observedRefuse: observed },
     });
   }
 

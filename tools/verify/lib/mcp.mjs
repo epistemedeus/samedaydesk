@@ -252,13 +252,14 @@ export async function runMcp(parsed, { root, dryRun = false } = {}) {
     }
     return await withHost(root, async (handle) => evaluate(await listOnOrigin(handle.origin)));
   } catch (error) {
+    const usage = error.code === "USAGE";
     return envelope({
       ok: false,
       command: "mcp",
       feature: "apex-mcp",
       evidence,
-      status: error.code === "USAGE" ? "usage" : "error",
-      error: failError(error.code === "USAGE" ? "USAGE" : "RUNTIME", error.message, error.detail),
+      status: usage ? "usage" : "fail",
+      error: failError(usage ? "USAGE" : "HOST_BUILD", error.message, error.detail),
       boundary: { paymentSent: false, toolsCalled: false },
     });
   }

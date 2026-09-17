@@ -54,6 +54,16 @@ test("missing-required-inputs seed observes product refuse and exits 1", { timeo
   assert.equal(result.json.result.observedRefuse, true);
 });
 
+test("missing required MCP tool seed exits 1 without tools/call", { timeout: 30_000 }, () => {
+  const result = run(["--seeded-failure", "missing-required-mcp-tool", "--json"], 30_000);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "SEED_REJECT");
+  assert.equal(result.json.error.message, "missing required MCP tool");
+  assert.deepEqual(result.json.error.detail.missing, ["does_not_exist_required_tool"]);
+  assert.equal(result.json.boundary.toolsCalled, false);
+});
+
 test("seeded pack with succeeding list does not claim missing-required-inputs", { timeout: 120_000 }, () => {
   const result = run(
     ["pack", "run", "useful-jobs", "--seeded-failure", "missing-required-inputs", "--json", "--", "list", "--json"],

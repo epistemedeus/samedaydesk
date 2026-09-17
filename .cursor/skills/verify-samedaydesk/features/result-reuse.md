@@ -25,8 +25,9 @@ Turn already-held JSON into a task-memory observation. Preview is free. Write re
 
 Preconditions: none.
 
-- **Preview.** `node tools/verify/cli.mjs pack run result-reuse --json`.
-- **Seeded write refuse.** `pack run result-reuse -- -- export --out /tmp/reuse.json` (no `--opt-in`) is product exit 1.
+- **Preview.** `node tools/verify/cli.mjs pack run result-reuse --json` (includes `--task-id`/`--subject`/`--sequence`/`--clock`; preview does not write).
+- **Seeded write refuse.** `pack run result-reuse --seeded-failure --json` exports without `--opt-in` and must exit 1 (`refusing to write without --opt-in`). Dest must not be written.
+- **Missing `--out`.** `pack run result-reuse -- -- export --input tools/result-reuse/fixtures/accepted-page-change.json --task-id vendor-watch --subject vendor-page-result --sequence 1 --clock 2026-09-09T10:00:00Z` is product exit 1 `export requires --out`.
 
 ## Gotchas
 

@@ -7,7 +7,7 @@ Copy or download the public useful-jobs tarball, verify bytes+sha256, then extra
 | goal | bytes+sha then extract outside the repo |
 | entrypoint | `experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs` |
 | command | `archive acquire` / `archive negative-control` |
-| state | 1.4.7 sha `e2e9b44e…69dec`, 5255824 bytes; 1.1.0 kept as negative |
+| state | 1.4.7 sha `e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec`, 5255824 bytes; 1.1.0 negative control sha `de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534`, 2577606 bytes |
 | tests | s260 obtain refuses bad status/size/digest; `public-1.1.0-cold.test.mjs` |
 | prerequisite | bash/curl/python3/tar/mktemp; Node 22 |
 
@@ -35,5 +35,6 @@ Preconditions:
 ## Gotchas
 
 - Do not copy obtain-archive `process.exit(0)` on refuse into the verifier.
+- `--dest` / `--extract-dir` inside this git tree is refused (`outsideRepo` must be true).
 - Apex download 403 from this VM is `cdn_challenge`; use the committed public files as `--from`.
 - Immutable archives 1.0.0–1.4.0 stay as negatives; 1.1.0 is the required control.

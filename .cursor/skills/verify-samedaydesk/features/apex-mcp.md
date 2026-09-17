@@ -39,5 +39,6 @@ Preconditions:
 
 - `test:mcp` mounts `mcpRouter` only. Host proof is `server/index.js`.
 - Gateway MCP (24 tools, merchant repo) is **not** this surface.
-- Apex `https://samedaydesk.com/mcp` from a challenged VM is `cdn_challenge`.
+- Apex `https://samedaydesk.com/mcp` GET may return product help text (HTTP 200, `server: hcdn`). That is not `tools/list`. Host proof is shipped `server/index.js` POST initialize then `tools/list`.
+- HTTP 403 with `server: hcdn` or challenge HTML is `cdn_challenge`, never a product 200.
 - Do not buy the $39 Fix Pack or pass a `cs_` license.

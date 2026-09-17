@@ -54,7 +54,7 @@ Always `--json` for agents. Prefer `--dry-run` before anything that would spawn 
 | Public + protocol routes | `node tools/verify/cli.mjs routes --json` |
 | GET local health | `node tools/verify/cli.mjs fetch --path /api/health --json` |
 | Unpaid gateway | `node tools/verify/cli.mjs fetch --target gateway-unpaid --json` |
-| Apex TLS | `node tools/verify/cli.mjs fetch --target apex --path /mcp --json` (403 → `cdn_challenge`) |
+| Apex TLS | `node tools/verify/cli.mjs fetch --target apex --path /mcp --json` (hcdn 403 → `cdn_challenge`, never product 200; GET 200 help text is not `tools/list`) |
 | OpenAPI fixture vs live | `node tools/verify/cli.mjs openapi check --json` (`--live` reports drift) |
 | useful-jobs 1.4.7 acquire | `node tools/verify/cli.mjs archive acquire --json` (dest **outside** the repo) |
 | 1.1.0 negative control | `node tools/verify/cli.mjs archive negative-control --json` |
