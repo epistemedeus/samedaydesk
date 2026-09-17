@@ -40,6 +40,18 @@ export async function runOpenApi(parsed, { root, dryRun = false } = {}) {
   const fixture = readJson(fixturePath);
   const fixtureVersion = fixture?.info?.version || null;
   evidence.push({ kind: "fixture-version", version: fixtureVersion });
+  if (fixtureVersion !== OPENAPI_FIXTURE_VERSION) {
+    return envelope({
+      ok: false,
+      command: "openapi",
+      feature: "x402-unpaid-discovery",
+      evidence,
+      error: failError("HOST_BUILD", "OpenAPI fixture version drifted from pin", {
+        expected: OPENAPI_FIXTURE_VERSION,
+        actual: fixtureVersion,
+      }),
+    });
+  }
   let live = null;
   if (parsed.flags.live) {
     live = await httpRequest(`${GATEWAY_ORIGIN}/openapi.json`, {

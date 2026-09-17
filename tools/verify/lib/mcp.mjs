@@ -170,6 +170,19 @@ export async function runMcp(parsed, { root, dryRun = false } = {}) {
         preview: previewBody(session.listed.body, 400),
       },
     });
+    if (session.initialize.kind === "network" || session.listed.kind === "network") {
+      return envelope({
+        ok: false,
+        command: "mcp",
+        feature: "apex-mcp",
+        evidence,
+        error: failError("HOST_BUILD", "MCP HTTP failed", {
+          initialize: session.initialize.body,
+          list: session.listed.body,
+        }),
+        boundary: { paymentSent: false, toolsCalled: false },
+      });
+    }
     if (session.initialize.kind === "cdn_challenge" || session.listed.kind === "cdn_challenge") {
       return envelope({
         ok: false,

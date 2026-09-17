@@ -1,6 +1,6 @@
 import { existsSync, mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { envelope, failError } from "./envelope.mjs";
 import { USEFUL_JOBS_NEGATIVE, USEFUL_JOBS_PIN } from "./catalog.mjs";
 import { kitPath, obtainArchiveBin } from "./repo.mjs";
@@ -38,6 +38,11 @@ function pinFor(version) {
 
 function outsideDir(prefix) {
   return mkdtempSync(join(tmpdir(), prefix));
+}
+
+function isInsideRepo(dest, root) {
+  const rel = relative(resolve(root), resolve(dest));
+  return rel === "" || !rel.startsWith("..");
 }
 
 export function obtainArgv({ root, from, sha, bytes, dest, extractDir }) {
@@ -117,7 +122,7 @@ export async function runArchive(parsed, { root, dryRun = false } = {}) {
   const evidence = [
     { kind: "pin", version: pin.version, sha256: pin.sha256, bytes: pin.bytes },
     { kind: "argv", argv: argv.map((item, i) => (i === 0 ? "node" : item === process.execPath ? "node" : item)) },
-    { kind: "outside-repo", dest, extractDir: extract, insideRepo: String(dest).startsWith(root) },
+    { kind: "outside-repo", dest, extractDir: extract, insideRepo: isInsideRepo(dest, root) },
   ];
 
   if (dryRun) {
@@ -260,7 +265,7 @@ export async function runArchive(parsed, { root, dryRun = false } = {}) {
         bytes: pin.bytes,
         dest,
         extractDir: extract,
-        outsideRepo: !String(dest).startsWith(root),
+        outsideRepo: !isInsideRepo(dest, root),
         negativeControl: true,
         catalogVersion: kit.version,
         currentVersion: USEFUL_JOBS_PIN.version,
@@ -305,7 +310,7 @@ export async function runArchive(parsed, { root, dryRun = false } = {}) {
       bytes: json.bytes || pin.bytes,
       dest: json.dest || dest,
       extractDir: json.extractDir || extract,
-      outsideRepo: !String(dest).startsWith(root),
+      outsideRepo: !isInsideRepo(dest, root),
       cli: listCli,
       catalogVersion: kit?.version || pin.version,
       list,

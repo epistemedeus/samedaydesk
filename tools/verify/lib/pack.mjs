@@ -143,7 +143,31 @@ export async function runPack(parsed, { root, dryRun = false } = {}) {
       });
     }
 
-    if (seeded || missingInputs && childArgv[0] === "run") {
+    if (seeded) {
+      const observed =
+        Boolean(missingInputs) &&
+        ran.code !== 0 &&
+        (json?.code === "missing-required-inputs" ||
+          /missing-required-inputs/.test(`${ran.stdout}\n${ran.stderr}`));
+      return envelope({
+        ok: false,
+        command: "pack",
+        feature: spec.feature,
+        evidence,
+        error: failError(
+          "SEED_REJECT",
+          observed ? "missing-required-inputs" : "expected useful-jobs missing-required-inputs refuse",
+          {
+            childExit: ran.code,
+            productCode: json?.code || null,
+            observedRefuse: observed,
+          },
+        ),
+        result: { childExit: ran.code, product: json, observedRefuse: observed },
+      });
+    }
+
+    if (missingInputs && childArgv[0] === "run") {
       return envelope({
         ok: false,
         command: "pack",

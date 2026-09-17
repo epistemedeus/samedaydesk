@@ -37,3 +37,5 @@ Preconditions: Node 22, root deps.
 - `dev:server` uses `--env-file=.env`. Verify start does **not** load `.env` and deletes Stripe/Resend keys from the child env.
 - Browser-smoke is loopback Chrome, not production fetch.
 - Live apex 403 HTML is `cdn_challenge`.
+- `serve once` tears the listener down before returning. `prove --feature hosted-readback` keeps `server/index.js` up for the health fetch, then stops it.
+- `serve start` reuses a pid file only when `/api/health` still answers `{service:"samedaydesk"}`. A dead or reused pid is not killed.

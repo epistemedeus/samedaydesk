@@ -38,39 +38,52 @@ export function assertNoPaymentHeaders(headers = {}) {
 export async function httpRequest(url, { method = "GET", body = null, headers = {}, timeoutMs = 15_000 } = {}) {
   assertNoPaymentHeaders(headers);
   const upper = String(method || "GET").toUpperCase();
-  const response = await fetch(url, {
-    method: upper,
-    body,
-    headers,
-    redirect: "manual",
-    signal: AbortSignal.timeout(timeoutMs),
-  });
-  const text = await response.text();
-  let json = null;
-  const contentType = response.headers.get("content-type") || "";
-  if (/json/i.test(contentType) || text.trim().startsWith("{") || text.trim().startsWith("[")) {
-    try {
-      json = JSON.parse(text);
-    } catch {
-      json = null;
+  try {
+    const response = await fetch(url, {
+      method: upper,
+      body,
+      headers,
+      redirect: "manual",
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+    const text = await response.text();
+    let json = null;
+    const contentType = response.headers.get("content-type") || "";
+    if (/json/i.test(contentType) || text.trim().startsWith("{") || text.trim().startsWith("[")) {
+      try {
+        json = JSON.parse(text);
+      } catch {
+        json = null;
+      }
     }
+    const kind = classifyResponse({
+      status: response.status,
+      headers: response.headers,
+      body: text,
+      url,
+    });
+    return {
+      url,
+      method: upper,
+      status: response.status,
+      contentType,
+      server: response.headers.get("server") || "",
+      body: text,
+      json,
+      kind,
+    };
+  } catch (error) {
+    return {
+      url,
+      method: upper,
+      status: 0,
+      contentType: "",
+      server: "",
+      body: error?.message || String(error),
+      json: null,
+      kind: "network",
+    };
   }
-  const kind = classifyResponse({
-    status: response.status,
-    headers: response.headers,
-    body: text,
-    url,
-  });
-  return {
-    url,
-    method: upper,
-    status: response.status,
-    contentType,
-    server: response.headers.get("server") || "",
-    body: text,
-    json,
-    kind,
-  };
 }
 
 export function previewBody(text, max = 240) {

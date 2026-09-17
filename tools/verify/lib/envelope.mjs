@@ -39,10 +39,10 @@ export function envelope(partial = {}) {
     feature: partial.feature ?? null,
     evidence: Array.isArray(partial.evidence) ? partial.evidence : [],
     error: partial.error ?? null,
+    // Verifier never pays and never POSTs tools/call; callers cannot flip these.
     boundary: {
       paymentSent: false,
       toolsCalled: false,
-      ...(partial.boundary || {}),
     },
   };
   if (partial.result !== undefined) body.result = partial.result;

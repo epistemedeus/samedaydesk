@@ -141,6 +141,8 @@ async function main(argv) {
       error: failError("RUNTIME", error?.message || String(error)),
     });
   }
+  env.dryRun = Boolean(ctx.dryRun);
+  env.boundary = { paymentSent: false, toolsCalled: false };
   emitEnvelope(env, { pretty: parsed.pretty, root });
   return exitFor(env);
 }

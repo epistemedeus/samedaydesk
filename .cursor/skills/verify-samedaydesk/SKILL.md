@@ -62,7 +62,7 @@ Always `--json` for agents. Prefer `--dry-run` before anything that would spawn 
 | Apex MCP list | `node tools/verify/cli.mjs mcp tools/list --json` |
 | Cite Pilot live MCP | `node tools/verify/cli.mjs mcp cite-pilot --json` |
 | for-agents fixture read | `node tools/verify/cli.mjs presence cold-read --json` |
-| Mapped feature | `node tools/verify/cli.mjs prove --feature apex-mcp --json` |
+| Mapped feature | `node tools/verify/cli.mjs prove --feature apex-mcp --json` (hosted-readback keeps the host up for fetch) |
 | Seeded fail | `node tools/verify/cli.mjs --seeded-failure sha-mismatch --json` |
 
 `mcp tools/list` spawns shipped `server/index.js` (or reuses `serve start`) and POSTs `initialize` then `tools/list` **before** any `tools/call`. This verifier never calls tools (`boundary.toolsCalled` stays false). `mcp tools/call` is usage. Five apex tools: `check_ai_readiness`, `generate_complete_fix_pack`, `plan_taskmarket_delegation`, `browse_taskmarket_tasks`, `track_taskmarket_task`. Paid Fix Pack needs Stripe `cs_` — do not buy.

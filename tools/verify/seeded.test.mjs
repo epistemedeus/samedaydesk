@@ -42,3 +42,27 @@ test("fixture pointer yields the same SHA mismatch reject", () => {
   assert.equal(result.json.ok, false);
   assert.equal(result.json.error.code, "SEED_REJECT");
 });
+
+test("missing-required-inputs seed observes product refuse and exits 1", { timeout: 120_000 }, () => {
+  const result = run(["--seeded-failure", "missing-required-inputs", "--json"], 120_000);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "SEED_REJECT");
+  assert.equal(result.json.error.message, "missing-required-inputs");
+  assert.notEqual(result.json.result.childExit, 0);
+  assert.equal(result.json.result.product.code, "missing-required-inputs");
+  assert.equal(result.json.result.observedRefuse, true);
+});
+
+test("seeded pack with succeeding list does not claim missing-required-inputs", { timeout: 120_000 }, () => {
+  const result = run(
+    ["pack", "run", "useful-jobs", "--seeded-failure", "missing-required-inputs", "--json", "--", "list", "--json"],
+    120_000,
+  );
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "SEED_REJECT");
+  assert.match(result.json.error.message, /expected useful-jobs missing-required-inputs refuse/);
+  assert.equal(result.json.result.childExit, 0);
+  assert.equal(result.json.result.observedRefuse, false);
+});

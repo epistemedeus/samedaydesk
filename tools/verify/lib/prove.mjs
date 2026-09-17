@@ -5,7 +5,7 @@ import { runFetch } from "./fetch.mjs";
 import { runMcp } from "./mcp.mjs";
 import { runPack } from "./pack.mjs";
 import { runPresence } from "./presence.mjs";
-import { runServe } from "./serve.mjs";
+import { withHost } from "./serve.mjs";
 import { runRoutes } from "./routes.mjs";
 
 export async function runProve(parsed, ctx) {
@@ -46,19 +46,50 @@ export async function runProve(parsed, ctx) {
   } else if (spec.command === "fetch") {
     if (spec.target) inner.flags.target = spec.target;
     if (spec.path) inner.flags.path = spec.path;
-    if (spec.path === "/api/health" && !inner.flags.origin && !ctx.dryRun) {
-      const once = await runServe({ ...inner, tokens: ["once"] }, ctx);
-      if (!once.ok) return { ...once, command: "prove", feature: id };
-      const routes = await runRoutes(ctx);
-      inner.flags.origin = once.result?.origin;
-      const fetched = await runFetch(inner, ctx);
-      return {
-        ...fetched,
-        command: "prove",
-        feature: id,
-        evidence: [...(routes.evidence || []), ...(fetched.evidence || [])],
-        result: { serve: once.result, fetch: fetched.result, routes: routes.result },
-      };
+    if (spec.path === "/api/health" && !inner.flags.origin) {
+      if (ctx.dryRun) {
+        inner.flags.origin = "http://127.0.0.1:0";
+        const routes = await runRoutes(ctx);
+        const fetched = await runFetch(inner, ctx);
+        return {
+          ...fetched,
+          command: "prove",
+          feature: id,
+          dryRun: true,
+          evidence: [...(routes.evidence || []), ...(fetched.evidence || [])],
+          result: { would: ["node server/index.js", "routes", "GET /api/health"] },
+        };
+      }
+      try {
+        return await withHost(ctx.root, async (handle) => {
+          inner.flags.origin = handle.origin;
+          const routes = await runRoutes(ctx);
+          if (!routes.ok) return { ...routes, command: "prove", feature: id };
+          const fetched = await runFetch(inner, ctx);
+          return {
+            ...fetched,
+            command: "prove",
+            feature: id,
+            evidence: [...(routes.evidence || []), ...(fetched.evidence || [])],
+            result: {
+              serve: {
+                origin: handle.origin,
+                health: handle.health?.json,
+                status: handle.health?.status,
+              },
+              fetch: fetched.result,
+              routes: routes.result,
+            },
+          };
+        });
+      } catch (error) {
+        return envelope({
+          ok: false,
+          command: "prove",
+          feature: id,
+          error: failError("HOST_BUILD", error.message, error.detail),
+        });
+      }
     }
     result = await runFetch(inner, ctx);
   } else if (spec.command === "presence") {

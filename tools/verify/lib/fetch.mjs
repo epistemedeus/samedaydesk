@@ -22,7 +22,7 @@ function originKind(url) {
 
 function classifyQuote(quote) {
   return {
-    kind: quote.kind,
+    responseKind: quote.kind,
     status: quote.status,
     url: quote.url,
     method: quote.method,
@@ -89,6 +89,16 @@ export async function runFetch(parsed, { root, dryRun = false } = {}) {
       quotes.push(await fetchOne(`${GATEWAY_ORIGIN}${path}`));
     }
     evidence.push(...quotes.map((quote) => ({ kind: "http", ...classifyQuote(quote) })));
+    const network = quotes.find((quote) => quote.kind === "network");
+    if (network) {
+      return envelope({
+        ok: false,
+        command: "fetch",
+        feature: "x402-unpaid-discovery",
+        evidence,
+        error: failError("HOST_BUILD", `gateway fetch failed: ${network.body}`),
+      });
+    }
     const challenge = quotes.find((quote) => quote.kind === "cdn_challenge");
     if (challenge) {
       return envelope({
@@ -144,6 +154,15 @@ export async function runFetch(parsed, { root, dryRun = false } = {}) {
     }
     const quote = await fetchOne(url);
     evidence.push({ kind: "http", ...classifyQuote(quote) });
+    if (quote.kind === "network") {
+      return envelope({
+        ok: false,
+        command: "fetch",
+        evidence,
+        error: failError("HOST_BUILD", `GET ${url} failed: ${quote.body}`),
+        result: classifyQuote(quote),
+      });
+    }
     if (quote.kind === "cdn_challenge") {
       return envelope({
         ok: false,
@@ -175,12 +194,13 @@ export async function runFetch(parsed, { root, dryRun = false } = {}) {
   }
 
   const live = readServeState(root);
-  const origin = parsed.flags.origin || live?.origin;
+  const origin = parsed.flags.origin || live?.origin || (dryRun ? "http://127.0.0.1:0" : null);
   if (!origin) {
     return envelope({
       ok: false,
       command: "fetch",
       status: "usage",
+      dryRun,
       error: failError("USAGE", "fetch --path needs --origin or a live `serve start` pid"),
     });
   }
@@ -214,7 +234,17 @@ export async function runFetch(parsed, { root, dryRun = false } = {}) {
   }
 
   const quote = await fetchOne(url, method);
-  evidence.push({ kind: "http", ...classifyQuote(quote) });
+  evidence.push({ kind: "http", path, ...classifyQuote(quote) });
+  if (quote.kind === "network") {
+    return envelope({
+      ok: false,
+      command: "fetch",
+      feature: "hosted-readback",
+      evidence,
+      error: failError("HOST_BUILD", `${method} ${url} failed: ${quote.body}`),
+      result: { status: 0, json: null },
+    });
+  }
   if (quote.kind === "cdn_challenge") {
     return envelope({
       ok: false,

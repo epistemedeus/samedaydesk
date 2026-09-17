@@ -93,3 +93,36 @@ test("dry-run build lists npm run build", () => {
   assert.match(blob, /npm run build/);
   assert.match(blob, /test:hosted-startup/);
 });
+
+test("dead-origin fetch is HOST_BUILD exit 1, not RUNTIME 64", () => {
+  const result = run(["fetch", "--path", "/api/health", "--origin", "http://127.0.0.1:1", "--json"]);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "HOST_BUILD");
+  assert.notEqual(result.json.status, "error");
+});
+
+test("dry-run prove hosted-readback does not require a live origin", () => {
+  const result = run(["prove", "--feature", "hosted-readback", "--dry-run", "--json"]);
+  assert.equal(result.status, 0, result.stderr + result.stdout);
+  assert.equal(result.json.ok, true);
+  assert.equal(result.json.dryRun, true);
+  assert.equal(result.json.feature, "hosted-readback");
+});
+
+test("serve once evidence kind stays http", { timeout: 30_000 }, () => {
+  const result = run(["serve", "once", "--json"], { timeout: 30_000 });
+  assert.equal(result.status, 0, result.stderr + result.stdout);
+  assert.equal(result.json.ok, true);
+  const http = (result.json.evidence || []).find((row) => row.path === "/api/health");
+  assert.ok(http, "expected /api/health evidence");
+  assert.equal(http.kind, "http");
+  assert.equal(http.status, 200);
+  assert.equal(http.json.service, "samedaydesk");
+});
+
+test("dry-run serve argv is node server/index.js", () => {
+  const result = run(["serve", "once", "--dry-run", "--json"]);
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(result.json.result.argv, ["node", "server/index.js"]);
+});

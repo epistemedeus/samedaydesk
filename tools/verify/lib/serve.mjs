@@ -146,7 +146,7 @@ export async function runServe(parsed, { root, dryRun = false } = {}) {
       command: "serve",
       dryRun: true,
       evidence,
-      result: { would: action, argv: ["npm", "start"] },
+      result: { would: action, argv: ["node", "server/index.js"], start: "npm start → node server/index.js" },
     });
   }
 
@@ -196,7 +196,14 @@ export async function runServe(parsed, { root, dryRun = false } = {}) {
         }),
         { port: requestedPort },
       );
-      evidence.push({ kind: "http", path: "/api/health", ...quote.health, origin: quote.origin });
+      evidence.push({
+        kind: "http",
+        path: "/api/health",
+        status: quote.health.status,
+        json: quote.health.json,
+        responseKind: quote.health.kind,
+        origin: quote.origin,
+      });
       return envelope({
         ok: true,
         command: "serve",
@@ -225,17 +232,26 @@ export async function runServe(parsed, { root, dryRun = false } = {}) {
 
   const prior = readServeState(root);
   if (prior?.pid) {
+    let ours = false;
     try {
       process.kill(prior.pid, 0);
+      if (prior.origin) {
+        const health = await httpRequest(`${prior.origin}/api/health`, { timeoutMs: 2000 });
+        ours = health.status === 200 && health.json?.service === "samedaydesk";
+      }
+    } catch {
+      ours = false;
+    }
+    if (ours) {
       return envelope({
         ok: true,
         command: "serve",
         evidence,
         result: { alreadyRunning: true, ...prior },
       });
-    } catch {
-      clearServeState(root);
     }
+    // Dead pid or PID reuse: drop the file. Do not kill a process that is not our health.
+    clearServeState(root);
   }
 
   try {

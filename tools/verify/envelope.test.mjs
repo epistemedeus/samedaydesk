@@ -58,3 +58,13 @@ test("usage exits 2", () => {
   });
   assert.equal(exitFor(env), EXIT.USAGE);
 });
+
+test("envelope pins paymentSent and toolsCalled false", () => {
+  const env = envelope({
+    ok: true,
+    command: "doctor",
+    boundary: { paymentSent: true, toolsCalled: true },
+  });
+  assert.equal(env.boundary.paymentSent, false);
+  assert.equal(env.boundary.toolsCalled, false);
+});
