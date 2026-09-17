@@ -1,8 +1,8 @@
-import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
-import { findRepoRoot, PIN } from "./paths.mjs";
+import { EXTRACT_TIMEOUT_MS, findRepoRoot, PIN } from "./paths.mjs";
 import { sha256Buffer, sha256File } from "./hash.mjs";
 
 function refuse(code, message, extra = {}) {
@@ -58,28 +58,33 @@ export function bindEngine({ repoRoot, archivePath } = {}) {
     }
   }
 
-  const extractRoot = join(
-    tmpdir(),
-    `useful-job-desk-${PIN.engine.sha256.slice(0, 16)}-${process.pid}`,
-  );
+  const extractRoot = mkdtempSync(join(tmpdir(), "useful-job-desk-"));
   const kitRoot = join(extractRoot, PIN.engine.rootName);
   const cli = join(kitRoot, PIN.engine.cli);
   const enginesDir = join(kitRoot, "engines");
   const catalogPath = join(kitRoot, "catalog.json");
-  const kitReady = () => existsSync(cli) && existsSync(enginesDir) && existsSync(catalogPath);
-  if (!kitReady()) {
-    if (existsSync(extractRoot)) rmSync(extractRoot, { recursive: true, force: true });
-    mkdirSync(extractRoot, { recursive: true });
+  const dispose = () => {
+    rmSync(extractRoot, { recursive: true, force: true });
+  };
+  try {
     const tar = spawnSync("tar", ["-xzf", archive, "-C", extractRoot], {
       encoding: "utf8",
+      timeout: EXTRACT_TIMEOUT_MS,
     });
-    if (tar.status !== 0) {
-      refuse("extract-failed", tar.stderr || "tar extract failed");
+    if (tar.error?.code === "ETIMEDOUT") {
+      refuse("extract-timeout", "tar extract timed out");
     }
+    if (tar.status !== 0) {
+      refuse("extract-failed", tar.stderr || tar.error?.message || "tar extract failed");
+    }
+    if (!existsSync(cli) || !existsSync(enginesDir) || !existsSync(catalogPath)) {
+      refuse("cli-missing", `extracted 1.4.7 is missing ${PIN.engine.cli} or engines/`);
+    }
+  } catch (err) {
+    dispose();
+    throw err;
   }
-  if (!kitReady()) {
-    refuse("cli-missing", `extracted 1.4.7 is missing ${PIN.engine.cli} or engines/`);
-  }
+  process.once("exit", dispose);
 
   return {
     repoRoot: root,

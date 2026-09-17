@@ -13,12 +13,6 @@
     "enginesSha256Before": "38dfe6ffa89ae8e4e57bf014ea57049d1e8e07c61253783d18d97e42ae9ddc19",
     "enginesSha256After": "38dfe6ffa89ae8e4e57bf014ea57049d1e8e07c61253783d18d97e42ae9ddc19"
   },
-  "purchaseAuthority": false,
-  "hostedAcquisition": false,
-  "schedulerDaemon": false,
-  "organicDemand": false,
-  "repeatDemand": false,
-  "h32PrivatePrimitivesReopened": false,
   "callerOwned": true,
   "ok": true,
   "refused": false,
@@ -34,9 +28,9 @@
         "job": "lockfile-pin-delta",
         "status": 0,
         "delivered": true,
-        "digest": "cdc0f3d7cb46b4082b548d09ed3e58bc35be505582bd95fd67840386fce3ec27",
+        "digest": "650d2b6f9116cb713ad6606d1b3ed7047bbd8bdedcec7df28653c4d1c3f9b955",
         "engineStatus": "actionable",
-        "outDir": "/tmp/useful-job-desk-verify-mu5gp94v/lockfile/first",
+        "outDir": "/tmp/useful-job-desk-verify-mu5jljf2/lockfile/first",
         "promisedOutputs": [
           "pin-delta.json",
           "pin-delta.md"
@@ -53,9 +47,9 @@
         "job": "lockfile-pin-delta",
         "status": 0,
         "delivered": true,
-        "digest": "3bf26a06c54f6a9dc0dc8ddd49aabdd74f9f885adaf4d725bd473d08664c1ec5",
+        "digest": "2b3ee00c09e012b4e7eecb8d420f0377d0da8a5a2408a85f7b376ebc99fe34d9",
         "engineStatus": "actionable",
-        "outDir": "/tmp/useful-job-desk-verify-mu5gp94v/lockfile/second",
+        "outDir": "/tmp/useful-job-desk-verify-mu5jljf2/lockfile/second",
         "promisedOutputs": [
           "pin-delta.json",
           "pin-delta.md"
@@ -79,9 +73,9 @@
         "job": "vendor-budget-impact",
         "status": 0,
         "delivered": true,
-        "digest": "631d0a4497a0683e",
+        "digest": "3f9648a3a6a9c897",
         "engineStatus": "actionable",
-        "outDir": "/tmp/useful-job-desk-verify-mu5gp94v/vendor/first",
+        "outDir": "/tmp/useful-job-desk-verify-mu5jljf2/vendor/first",
         "promisedOutputs": [
           "budget-impact.json",
           "budget-impact.md"
@@ -98,9 +92,9 @@
         "job": "vendor-budget-impact",
         "status": 0,
         "delivered": true,
-        "digest": "eef037f690e539b1",
+        "digest": "6b76800c2d557eac",
         "engineStatus": "actionable",
-        "outDir": "/tmp/useful-job-desk-verify-mu5gp94v/vendor/second",
+        "outDir": "/tmp/useful-job-desk-verify-mu5jljf2/vendor/second",
         "promisedOutputs": [
           "budget-impact.json",
           "budget-impact.md"
@@ -124,7 +118,9 @@
     "delivered": false,
     "code": "same-fixture-labelled-repeat-demand",
     "message": "same fixture twice labelled repeat demand is refused",
-    "repeatDemand": false
+    "repeatDemand": false,
+    "status": 2,
+    "cliInvoked": true
   },
   "callerFiles": [
     {
@@ -158,5 +154,11 @@
       "sha256": "46cdde4c793e09aa63a55e8f71fc911f9e43d912f74ac6b90d013750fbe2597c"
     }
   ],
-  "callerFilesUnchanged": true
+  "callerFilesUnchanged": true,
+  "purchaseAuthority": false,
+  "hostedAcquisition": false,
+  "schedulerDaemon": false,
+  "organicDemand": false,
+  "repeatDemand": false,
+  "h32PrivatePrimitivesReopened": false
 }

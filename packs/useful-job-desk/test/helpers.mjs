@@ -12,6 +12,7 @@ export function runDesk(args, opts = {}) {
     encoding: "utf8",
     cwd: opts.cwd || REPO_ROOT,
     maxBuffer: 20 * 1024 * 1024,
+    timeout: opts.timeout ?? 240_000,
     env: { ...process.env, ...(opts.env || {}) },
   });
 }

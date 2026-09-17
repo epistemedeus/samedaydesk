@@ -1,11 +1,80 @@
-import { existsSync, mkdirSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { existsSync, mkdirSync, readdirSync, readFileSync, realpathSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { bindEngine } from "./bind.mjs";
 import { runPublishedJob } from "./engine.mjs";
 import { fileRecord, sha256File, sha256Tree } from "./hash.mjs";
-import { DESK_JOBS, H32_PRIVATE_MARKERS, PACK_ROOT, PIN } from "./paths.mjs";
+import {
+  CALLERS_ROOT,
+  DESK_JOBS,
+  H32_PRIVATE_MARKERS,
+  PACK_ROOT,
+  PIN,
+  RUN_TIMEOUT_MS,
+  pathIsInside,
+} from "./paths.mjs";
 import { baseReceipt, honestDelivered, printReceipt, writeReceipt } from "./receipt.mjs";
+
+const DESK_CLI = join(PACK_ROOT, "bin/useful-job-desk.mjs");
+
+export function hasFlag(args, name) {
+  return Object.prototype.hasOwnProperty.call(args, name);
+}
+
+export function flagOn(value) {
+  if (value === undefined || value === false || value === null) return false;
+  if (value === true) return true;
+  const s = String(value).trim().toLowerCase();
+  if (s === "" || s === "false" || s === "0" || s === "no") return false;
+  return true;
+}
+
+function callersRootReal() {
+  return realpathSync(CALLERS_ROOT);
+}
+
+function ownedCallerPath(filePath) {
+  const abs = resolve(String(filePath));
+  if (!existsSync(abs)) refuse("input-missing", `caller file not found: ${filePath}`, { path: abs });
+  const real = realpathSync(abs);
+  if (!statSync(real).isFile() || !pathIsInside(callersRootReal(), real)) {
+    refuse("not-owned-caller-file", `caller file must be an owned file under callers/: ${filePath}`, {
+      path: abs,
+    });
+  }
+  return real;
+}
+
+function assertSafeOutDir(outDir) {
+  if (!outDir) return;
+  const abs = resolve(String(outDir));
+  let check = abs;
+  try {
+    check = realpathSync(abs);
+  } catch {
+    // mkdir happens after this check
+  }
+  if (pathIsInside(callersRootReal(), check)) {
+    refuse("out-dir-inside-callers", "out-dir must not write into callers/", { outDir: abs });
+  }
+}
+
+function refuseExample(args) {
+  if (hasFlag(args, "example")) {
+    refuse("example-not-caller-file", "--example is a labeled kit sample, not an owned caller file");
+  }
+}
+
+function repeatPairDelivered(first, second) {
+  return Boolean(
+    first?.delivered &&
+      second?.delivered &&
+      first.digest &&
+      second.digest &&
+      first.digest !== second.digest,
+  );
+}
 
 export function parseArgs(argv) {
   const out = { _: [] };
@@ -104,7 +173,6 @@ export function assertNoH32Reopen() {
     const rel = file.slice(PACK_ROOT.length + 1);
     if (rel === "PIN.json" || rel === "SOURCE.txt" || rel === "README.md") continue;
     if (rel.startsWith("lib/paths.mjs")) continue;
-    if (rel.startsWith("lib/cli.mjs")) continue;
     if (rel.startsWith("test/")) continue;
     const text = readFileSync(file, "utf8");
     for (const marker of H32_PRIVATE_MARKERS) {
@@ -136,10 +204,12 @@ function jobArgsFromFlags(args) {
 
 function runCallerJob(bound, { job, before, after, used, outDir }) {
   const args = ["--before", before, "--after", after];
-  if (used) args.push("--used", used);
+  if (used) args.push("--used", resolve(String(used)));
   const run = runPublishedJob(bound, { job, args, outDir });
   run.delivered = honestDelivered(run);
-  if (run.status === 0 && !run.delivered) {
+  if (run.timedOut) {
+    run.code = "engine-timeout";
+  } else if (run.status === 0 && !run.delivered) {
     run.code = "missing-output-not-delivered";
   }
   return run;
@@ -196,24 +266,28 @@ function cmdBind(args) {
 }
 
 function cmdRun(args) {
-  if (args.example === true) {
-    refuse("example-not-caller-file", "--example is a labeled kit sample, not an owned caller file");
-  }
+  refuseExample(args);
   const job = args.job || args._[0];
   if (!job) refuse("missing-required-inputs", "run requires --job", { missing: ["job"] });
-  const before = args.before ? resolve(String(args.before)) : null;
-  const after = args.after ? resolve(String(args.after)) : null;
   requireFiles([
-    ["before", before],
-    ["after", after],
+    ["before", args.before],
+    ["after", args.after],
   ]);
-  const bound = bindOrRefuse(args);
+  const before = ownedCallerPath(args.before);
+  const after = ownedCallerPath(args.after);
+  const used = args.used ? ownedCallerPath(args.used) : null;
   const outDir = args["out-dir"]
     ? resolve(String(args["out-dir"]))
     : join(PACK_ROOT, "out", "run", job);
+  assertSafeOutDir(outDir);
+  const bound = bindOrRefuse(args);
   mkdirSync(outDir, { recursive: true });
-  const callerBefore = snapshotCallers([before, after, args.used && resolve(String(args.used))]);
-  const run = runPublishedJob(bound, { job, args: jobArgsFromFlags({ ...args, "out-dir": outDir }), outDir });
+  const callerBefore = snapshotCallers([before, after, used]);
+  const run = runPublishedJob(bound, {
+    job,
+    args: jobArgsFromFlags({ ...args, before, after, used, "out-dir": outDir }),
+    outDir,
+  });
   run.delivered = honestDelivered(run);
   const callerAfter = snapshotCallers(callerBefore.map((f) => f.abs));
   const receipt = baseReceipt({
@@ -265,20 +339,18 @@ function evaluateRepeatLabel({ afterSha, afterRepeatSha, labelledRepeatDemand })
 }
 
 function cmdRepeat(args) {
-  if (args.example === true) {
-    refuse("example-not-caller-file", "--example is a labeled kit sample, not an owned caller file");
-  }
+  refuseExample(args);
   const job = args.job;
   if (!job) refuse("missing-required-inputs", "repeat requires --job", { missing: ["job"] });
-  const before = args.before ? resolve(String(args.before)) : null;
-  const after = args.after ? resolve(String(args.after)) : null;
-  const afterRepeat = args["after-repeat"] ? resolve(String(args["after-repeat"])) : null;
   requireFiles([
-    ["before", before],
-    ["after", after],
-    ["after-repeat", afterRepeat],
+    ["before", args.before],
+    ["after", args.after],
+    ["after-repeat", args["after-repeat"]],
   ]);
-  const labelledRepeatDemand = Boolean(args["label-repeat-demand"] || args["repeat-demand"]);
+  const before = ownedCallerPath(args.before);
+  const after = ownedCallerPath(args.after);
+  const afterRepeat = ownedCallerPath(args["after-repeat"]);
+  const labelledRepeatDemand = flagOn(args["label-repeat-demand"]) || flagOn(args["repeat-demand"]);
   const afterSha = sha256File(after);
   const afterRepeatSha = sha256File(afterRepeat);
   const decision = evaluateRepeatLabel({ afterSha, afterRepeatSha, labelledRepeatDemand });
@@ -294,17 +366,19 @@ function cmdRepeat(args) {
     refuse(decision.code, decision.message, { repeat: repeatMeta });
   }
 
-  const bound = bindOrRefuse(args);
   const outRoot = args["out-dir"] ? resolve(String(args["out-dir"])) : join(PACK_ROOT, "out", "repeat", job);
+  assertSafeOutDir(outRoot);
+  const bound = bindOrRefuse(args);
   const firstDir = join(outRoot, "first");
   const secondDir = join(outRoot, "second");
   mkdirSync(firstDir, { recursive: true });
   mkdirSync(secondDir, { recursive: true });
-  const callerBefore = snapshotCallers([before, after, afterRepeat]);
-  const first = runCallerJob(bound, { job, before, after, used: args.used, outDir: firstDir });
-  const second = runCallerJob(bound, { job, before, after: afterRepeat, used: args.used, outDir: secondDir });
-  const callerAfter = snapshotCallers([before, after, afterRepeat]);
-  const delivered = first.delivered && second.delivered && first.digest && second.digest && first.digest !== second.digest;
+  const used = args.used ? ownedCallerPath(args.used) : null;
+  const callerBefore = snapshotCallers([before, after, afterRepeat, used]);
+  const first = runCallerJob(bound, { job, before, after, used, outDir: firstDir });
+  const second = runCallerJob(bound, { job, before, after: afterRepeat, used, outDir: secondDir });
+  const callerAfter = snapshotCallers([before, after, afterRepeat, used]);
+  const delivered = repeatPairDelivered(first, second);
   const receipt = baseReceipt({
     ok: delivered,
     refused: !delivered,
@@ -329,11 +403,10 @@ function cmdRepeat(args) {
 }
 
 function cmdDesk(args) {
-  if (args.example === true) {
-    refuse("example-not-caller-file", "--example is a labeled kit sample, not an owned caller file");
-  }
-  const bound = bindOrRefuse(args);
+  refuseExample(args);
   const outRoot = args["out-dir"] ? resolve(String(args["out-dir"])) : join(PACK_ROOT, "out", "desk");
+  assertSafeOutDir(outRoot);
+  const bound = bindOrRefuse(args);
   const enginesBefore = existsSync(bound.enginesDir) ? sha256Tree(bound.enginesDir) : null;
   const callerPaths = DESK_JOBS.flatMap((j) => [j.before, j.after, j.afterRepeat]);
   const callerBefore = snapshotCallers(callerPaths);
@@ -371,7 +444,7 @@ function cmdDesk(args) {
       first: summarizeRun(first),
       second: summarizeRun(second),
       distinctDigest: Boolean(first.digest && second.digest && first.digest !== second.digest),
-      delivered: first.delivered && second.delivered && first.digest !== second.digest,
+      delivered: repeatPairDelivered(first, second),
     });
   }
   const enginesAfter = existsSync(bound.enginesDir) ? sha256Tree(bound.enginesDir) : null;
@@ -405,7 +478,8 @@ function cmdDesk(args) {
 }
 
 function cmdVerify(args) {
-  const bound = bindOrRefuse(args);
+  refuseExample(args);
+  if (args["out-dir"]) assertSafeOutDir(resolve(String(args["out-dir"])));
   const h32Hits = assertNoH32Reopen();
   if (h32Hits.length) {
     refuse("h32-private-primitives-reopened", "pack source references H32 private primitives", {
@@ -416,10 +490,12 @@ function cmdVerify(args) {
     refuse("engines-vendored", "pack must not vendor engines/; bind the published 1.4.7 archive");
   }
 
+  const bound = bindOrRefuse(args);
   const enginesBefore = sha256Tree(bound.enginesDir);
   const outRoot = args["out-dir"]
     ? resolve(String(args["out-dir"]))
     : join(tmpdir(), `useful-job-desk-verify-${Date.now().toString(36)}`);
+  assertSafeOutDir(outRoot);
   mkdirSync(outRoot, { recursive: true });
   const callerPaths = DESK_JOBS.flatMap((j) => [j.before, j.after, j.afterRepeat]);
   const callerBefore = snapshotCallers(callerPaths);
@@ -449,24 +525,50 @@ function cmdVerify(args) {
       first: summarizeRun(first),
       second: summarizeRun(second),
       distinctDigest: Boolean(first.digest && second.digest && first.digest !== second.digest),
-      delivered: first.delivered && second.delivered && first.digest !== second.digest,
+      delivered: repeatPairDelivered(first, second),
     });
   }
 
   const vendor = DESK_JOBS.find((j) => j.id === "vendor-budget-impact");
-  const seeded = evaluateRepeatLabel({
-    afterSha: sha256File(vendor.after),
-    afterRepeatSha: sha256File(vendor.after),
-    labelledRepeatDemand: true,
-  });
+  const seededChild = spawnSync(
+    process.execPath,
+    [
+      DESK_CLI,
+      "repeat",
+      "--job",
+      vendor.id,
+      "--before",
+      vendor.before,
+      "--after",
+      vendor.after,
+      "--after-repeat",
+      vendor.after,
+      "--label-repeat-demand",
+    ],
+    {
+      encoding: "utf8",
+      cwd: bound.repoRoot,
+      timeout: RUN_TIMEOUT_MS,
+      maxBuffer: 20 * 1024 * 1024,
+      env: { ...process.env, USEFUL_JOBS_ORIGIN: "" },
+    },
+  );
+  let seededBody = null;
+  try {
+    seededBody = JSON.parse(String(seededChild.stdout || "").trim());
+  } catch {
+    seededBody = null;
+  }
   const seededFailure = {
     fixture: "callers/vendor/after.json used twice",
     labelledRepeatDemand: true,
-    refused: seeded.refuse === true,
+    refused: seededChild.status === 2 && seededBody?.code === "same-fixture-labelled-repeat-demand",
     delivered: false,
-    code: seeded.code,
-    message: seeded.message,
+    code: seededBody?.code || "seeded-failure-unexecuted",
+    message: seededBody?.message || "seeded failure CLI did not return a receipt",
     repeatDemand: false,
+    status: seededChild.status == null ? 1 : seededChild.status,
+    cliInvoked: true,
   };
 
   const enginesAfter = sha256Tree(bound.enginesDir);

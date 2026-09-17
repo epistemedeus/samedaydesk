@@ -1,10 +1,18 @@
-import { dirname, join, resolve } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const PACK_ROOT = resolve(HERE, "..");
+export const CALLERS_ROOT = join(PACK_ROOT, "callers");
 export const PIN = JSON.parse(readFileSync(join(PACK_ROOT, "PIN.json"), "utf8"));
+export const RUN_TIMEOUT_MS = 180_000;
+export const EXTRACT_TIMEOUT_MS = 60_000;
+
+export function pathIsInside(root, target) {
+  const rel = relative(resolve(root), resolve(target));
+  return rel === "" || (!rel.startsWith("..") && !isAbsolute(rel));
+}
 
 export function findRepoRoot({ repoRoot } = {}) {
   if (repoRoot) {

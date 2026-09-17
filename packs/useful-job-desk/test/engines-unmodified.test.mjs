@@ -10,7 +10,7 @@ const PIN = JSON.parse(readFileSync(join(PACK_ROOT, "PIN.json"), "utf8"));
 
 test("pack does not vendor engines or reopen H32 private primitives", () => {
   assert.equal(existsSync(join(PACK_ROOT, "engines")), false);
-  const skip = new Set(["PIN.json", "SOURCE.txt", "README.md", "lib/paths.mjs", "lib/cli.mjs"]);
+  const skip = new Set(["PIN.json", "SOURCE.txt", "README.md", "lib/paths.mjs"]);
   function walk(dir) {
     for (const name of readdirSync(dir, { withFileTypes: true })) {
       if (name.name === "out" || name.name === ".tmp" || name.name === "node_modules") continue;
@@ -50,6 +50,8 @@ test("verify binds published 1.4.7, leaves engines unmodified, records seeded re
   assert.equal(body.seededFailure.refused, true);
   assert.equal(body.seededFailure.delivered, false);
   assert.equal(body.seededFailure.code, "same-fixture-labelled-repeat-demand");
+  assert.equal(body.seededFailure.cliInvoked, true);
+  assert.equal(body.seededFailure.status, 2);
   assert.equal(body.repeatDemand, false);
   assert.equal(body.h32PrivatePrimitivesReopened, false);
   assert.equal(body.callerFilesUnchanged, true);
