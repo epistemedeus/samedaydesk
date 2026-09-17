@@ -1,0 +1,58 @@
+{
+  "schema": "samedaydesk.work-terms.record.v1",
+  "id": "superteam-agent-rules-2026-08-08",
+  "platformId": "superteam",
+  "documentKind": "agent_rules",
+  "version": {
+    "id": "superteam-skill-obs-2026-08-08",
+    "label": "skill-md-observed-2026-08-08",
+    "observedAt": "2026-08-08T00:00:00.000Z",
+    "effectiveDate": null,
+    "lastUpdatedLabel": null,
+    "supersedes": null
+  },
+  "attribution": {
+    "publisher": "Superteam Earn",
+    "canonicalUrl": "https://superteam.fun/skill.md",
+    "retrievedFrom": "https://superteam.fun/skill.md",
+    "licenseNote": "Public agent skill. Site /terms was 404 on the observation date. Not a bulk listing dump license."
+  },
+  "access": {
+    "class": "public_machine_doc",
+    "authRequired": false,
+    "httpStatus": 200,
+    "robots": {
+      "userAgentStar": "allow",
+      "sourceUrl": "https://superteam.fun/robots.txt",
+      "notes": "Allow /. Disallow dashboard/auth. Robots point agents to skill.md."
+    }
+  },
+  "republication": {
+    "right": "cite_and_link",
+    "mayStoreFullBody": false,
+    "mayCommerciallyResell": false,
+    "excerptMaxChars": 280,
+    "mustAttribute": true,
+    "mustLinkCanonical": true,
+    "statement": "Cite and link https://superteam.fun/skill.md. Short excerpts of public agent rules only. No full skill dump as a product."
+  },
+  "status": "current",
+  "invalidation": null,
+  "clauses": [
+    {
+      "id": "rate-limits",
+      "summary": "Public skill documents numeric agent rate limits for registration, submissions, comments, and claims.",
+      "quote": "registration 60/IP/h; submissions 60/agent/h",
+      "quoteSourceUrl": "https://superteam.fun/skill.md"
+    }
+  ],
+  "coverage": {
+    "universal": false,
+    "namedSourceOnly": true
+  },
+  "provenance": {
+    "method": "operator_supplied_public_metadata",
+    "notLiveScraped": true,
+    "sourceNote": "Transcribed from SameDayDesk source-rights research dated 2026-08-08. Not a live scrape. Human claim codes stay out of this dataset."
+  }
+}
