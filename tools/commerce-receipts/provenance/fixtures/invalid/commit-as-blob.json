@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipts.provenance.v1",
+  "claimId": "commit-as-blob",
+  "kind": "contribution",
+  "claimedHash": "775051602d91f42ca1aa920054cfd7a451982940",
+  "sourceRepository": "epistemedeus/samedaydesk",
+  "surface": "git_blob",
+  "expectedObjectType": "blob",
+  "notes": "Bound commit SHA claimed as blob. cat-file type must match surface.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "json_substitutes_for_cat_file",
+    "money_movement"
+  ]
+}
