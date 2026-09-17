@@ -1,4 +1,4 @@
-import { basename, posix } from "node:path";
+import { posix } from "node:path";
 import {
   APP_ID,
   COMPLETION_LABEL,
@@ -37,17 +37,15 @@ export function locatorPresent(obj) {
   return Boolean(loc.url || loc.file);
 }
 
-function fileKey(p) {
-  if (!p) return null;
-  return basename(posix.normalize(String(p).replaceAll("\\", "/")));
-}
-
 export function locatorsMatch(bind, source) {
   const a = locatorOf(bind);
   const b = locatorOf(source);
   if (a.url && b.url) return a.url === b.url;
   if (a.file && b.file) {
-    return fileKey(a.file) === fileKey(b.file) || a.file === b.file;
+    if (a.file === b.file) return true;
+    const na = posix.normalize(String(a.file).replaceAll("\\", "/"));
+    const nb = posix.normalize(String(b.file).replaceAll("\\", "/"));
+    return na === nb;
   }
   return false;
 }
@@ -70,10 +68,7 @@ function labelText(value) {
 export function isSamplePacket(packet) {
   if (!isPlainObject(packet)) return false;
   if (packet.caller?.exampleMode === true || packet.exampleMode === true) return true;
-  if (packet.labelledSample === true || packet.callerProvenance?.syntheticFixture === true) {
-    const sl = labelText(packet.callerProvenance?.sampleLabel || packet.sampleLabel || packet.caller?.sampleLabel);
-    if (!sl || SAMPLE_LABELS.includes(sl) || /sample/i.test(sl)) return true;
-  }
+  if (packet.labelledSample === true || packet.callerProvenance?.syntheticFixture === true) return true;
   const labels = [
     packet.caller?.sampleLabel,
     packet.sampleLabel,
@@ -81,7 +76,7 @@ export function isSamplePacket(packet) {
   ];
   for (const l of labels) {
     const t = labelText(l);
-    if (SAMPLE_LABELS.includes(t)) return true;
+    if (SAMPLE_LABELS.includes(t) || /sample/i.test(t)) return true;
   }
   return false;
 }
@@ -199,7 +194,7 @@ function sourceRefsOk(action, snapshot) {
     if (typeof ref !== "string") continue;
     if (ref.startsWith("route:")) {
       const path = ref.slice("route:".length);
-      if (routes.size && !routes.has(path)) return false;
+      if (!path || !routes.has(path)) return false;
     }
     if (ref.startsWith("field:")) {
       const field = ref.slice("field:".length);
@@ -207,6 +202,18 @@ function sourceRefsOk(action, snapshot) {
     }
   }
   return true;
+}
+
+const GLOBAL_UNLIST_RE = /global(?:ly)?\s+unlist/i;
+
+export function claimsGlobalUnlist(packet) {
+  if (!isPlainObject(packet)) return false;
+  const texts = [];
+  if (typeof packet.summary === "string") texts.push(packet.summary);
+  for (const a of Array.isArray(packet.actions) ? packet.actions : []) {
+    if (isPlainObject(a) && typeof a.note === "string") texts.push(a.note);
+  }
+  return texts.some((t) => GLOBAL_UNLIST_RE.test(t));
 }
 
 /**
@@ -234,6 +241,7 @@ export function verifyListingRepair({ packet, source = null, flags = {} } = {}) 
   if (isPlainObject(packet) && packet.notMarketFact === false) {
     add(REASON.MARKET_FACT_CLAIM);
   }
+  if (claimsGlobalUnlist(packet)) add(REASON.GLOBAL_UNLIST_CLAIM);
 
   const sourceOk = isSourceObservation(source);
   const bind = isPlainObject(packet) ? packet.sourceObservation : null;
@@ -275,7 +283,13 @@ export function verifyListingRepair({ packet, source = null, flags = {} } = {}) 
 
     const digestAligned = bound === current;
     if (locatorsMatch(bind, source) && digestAligned && locatorPresent(source) && source.observedAt) {
-      sourceBound = true;
+      const bindObserved = typeof bind.observedAt === "string" ? bind.observedAt.trim() : "";
+      const sourceObserved = typeof source.observedAt === "string" ? source.observedAt.trim() : "";
+      if (bindObserved && sourceObserved && bindObserved !== sourceObserved) {
+        add(REASON.SOURCE_OBSERVED_AT_MISMATCH);
+      } else {
+        sourceBound = true;
+      }
     }
   }
 

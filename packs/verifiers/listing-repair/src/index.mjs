@@ -6,6 +6,8 @@ export {
   collectFieldCorrections,
   isSamplePacket,
   isSourceObservation,
+  locatorsMatch,
+  claimsGlobalUnlist,
 } from "./verify.mjs";
 export { f12CorpusPresent } from "./f12-optional.mjs";
 export { main, runVerify } from "./cli.mjs";

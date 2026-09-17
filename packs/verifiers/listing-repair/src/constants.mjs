@@ -40,6 +40,8 @@ export const REASON = Object.freeze({
   FORBIDDEN_COMPLETION_LABEL: "forbidden_completion_label",
   PURCHASE_AUTHORITY_CLAIMED: "purchase_authority_claimed",
   MARKET_FACT_CLAIM: "market_fact_claim",
+  GLOBAL_UNLIST_CLAIM: "global_unlist_claim",
+  SOURCE_OBSERVED_AT_MISMATCH: "source_observed_at_mismatch",
 });
 
 export const SAMPLE_LABELS = Object.freeze(["SAMPLE", "explicit-example", "sample"]);

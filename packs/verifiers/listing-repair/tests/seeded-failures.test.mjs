@@ -143,3 +143,63 @@ test("http(s) --source is live SDS write, not a fetch", () => {
   assert.equal(status, 1);
   assertRejected(body, REASON.LIVE_SDS_WRITE);
 });
+
+test("labelledSample true is fabricated even with caller-input label", () => {
+  const { status, body } = verdict([
+    "verify",
+    "--packet",
+    "fixtures/reject/labelled-sample-unlabelled.packet.json",
+    "--source",
+    "fixtures/ok/ok-source.json",
+  ]);
+  assert.equal(status, 1);
+  assertRejected(body, REASON.FABRICATED_SAMPLE);
+});
+
+test("route ref against a snapshot with no routes is route_ref_missing", () => {
+  const { status, body } = verdict([
+    "verify",
+    "--packet",
+    "fixtures/reject/empty-routes.packet.json",
+    "--source",
+    "fixtures/reject/empty-routes.source.json",
+  ]);
+  assert.equal(status, 1);
+  assertRejected(body, REASON.ROUTE_REF_MISSING);
+});
+
+test("bind observedAt must match the provided source observedAt", () => {
+  const { status, body } = verdict([
+    "verify",
+    "--packet",
+    "fixtures/reject/observed-at-mismatch.packet.json",
+    "--source",
+    "fixtures/ok/ok-source.json",
+  ]);
+  assert.equal(status, 1);
+  assertRejected(body, REASON.SOURCE_OBSERVED_AT_MISMATCH);
+});
+
+test("same-basename file locators in different directories do not match", () => {
+  const { status, body } = verdict([
+    "verify",
+    "--packet",
+    "fixtures/reject/basename-locator.packet.json",
+    "--source",
+    "fixtures/reject/decoy/ok-source.json",
+  ]);
+  assert.equal(status, 1);
+  assertRejected(body, REASON.SOURCE_LOCATOR_MISMATCH);
+});
+
+test("global unlist claim is rejected even when notMarketFact stays true", () => {
+  const { status, body } = verdict([
+    "verify",
+    "--packet",
+    "fixtures/adversarial/adv-global-unlist-claim.packet.json",
+    "--source",
+    "fixtures/ok/ok-source.json",
+  ]);
+  assert.equal(status, 1);
+  assertRejected(body, REASON.GLOBAL_UNLIST_CLAIM);
+});

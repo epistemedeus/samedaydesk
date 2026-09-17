@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { isAbsolute, join, normalize, resolve } from "node:path";
+import { isAbsolute, resolve } from "node:path";
 
 export function parseArgs(argv) {
   const out = { _: [] };
@@ -28,8 +28,4 @@ export function resolveInputPath(p, cwd = process.cwd()) {
 
 export function loadJson(filePath) {
   return JSON.parse(readFileSync(filePath, "utf8"));
-}
-
-export function packRootFrom(metaUrlDir) {
-  return normalize(join(metaUrlDir, ".."));
 }

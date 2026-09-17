@@ -39,11 +39,14 @@ Captured example: `fixtures/cold/example-1.4.7.packet.json` — labelled SAMPLE 
 | Attempt | `reasons[]` |
 | --- | --- |
 | Stale `observedAt` older than packet `asOf` | `stale_observed_at` |
+| Bind `observedAt` disagrees with `--source` | `source_observed_at_mismatch` |
 | Newer source digest without refresh | `stale_source_digest` |
-| SAMPLE / `--example` | `fabricated_sample` |
+| SAMPLE / `--example` / `labelledSample` | `fabricated_sample` |
 | Field not in the source snapshot | `invented_field` |
+| Route ref against a snapshot with no such route | `route_ref_missing` |
 | No-op fix (to-value already on source) | `false_correction` |
 | Legacy `corrections[]` without `actions[]` | `legacy_corrections_shape` |
+| Global unlist claim in summary or action notes | `global_unlist_claim` |
 | `--publish` / live SDS write | `publish_attempted` / `live_sds_write` |
 
 ## Tests

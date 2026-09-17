@@ -2,18 +2,23 @@
   "schema": "s233.useful-application.artifact.v1",
   "appId": "listing-repair-packet",
   "status": "actionable",
-  "summary": "Global unlisting achieved",
+  "summary": "Listing repair packet status=diagnosed",
   "actions": [
     {
       "priority": "high",
       "kind": "owner-repair",
-      "note": "Globally unlisted from all catalogs forever",
+      "note": "listingStatus: PendingReview → PUBLIC_ACTIVE (source-bound field correction)",
       "sourceRefs": [
-        "route:/docs"
-      ]
+        "field:listingStatus"
+      ],
+      "field": "listingStatus",
+      "from": "PendingReview",
+      "to": "PUBLIC_ACTIVE"
     }
   ],
-  "gaps": [],
+  "gaps": [
+    "Route repair is owner guidance — not invented revenue or lost-customer proof"
+  ],
   "notMarketFact": true,
   "notCustomerDemand": true,
   "noPurchaseAuthority": true,
@@ -40,5 +45,6 @@
   "claimedLane": "suggestion",
   "evidence": true,
   "suggestion": true,
-  "publish": false
+  "publish": false,
+  "labelledSample": true
 }

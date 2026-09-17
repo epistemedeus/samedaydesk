@@ -1,0 +1,14 @@
+{
+  "schema": "sds.listing_repair.source_observation.v1",
+  "url": "https://example.test/listing/operator-alpha",
+  "file": "fixtures/reject/empty-routes.source.json",
+  "observedAt": "2026-09-11T12:00:00.000Z",
+  "digest": "sha256:b74ff8c9372aa8519ffc3dc12cc50b94b3bb7badc1821da73278852d4b850465",
+  "snapshot": {
+    "url": "https://example.test/listing/operator-alpha",
+    "agentId": "agent-alpha",
+    "listingStatus": "PendingReview",
+    "title": "Operator Alpha",
+    "freeVsPriced": "discovery_free_run_priced"
+  }
+}

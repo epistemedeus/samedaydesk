@@ -1,13 +1,13 @@
 {
   "schema": "sds.listing_repair_verifier.fixtures.v1",
-  "stampedAt": "2026-09-17T12:08:27.537Z",
+  "stampedAt": "2026-09-17T12:46:21.161Z",
   "files": [
     "fixtures/ok/ok-source.json",
     "fixtures/ok/newer-source.json",
     "fixtures/reject/already-correct.source.json",
     "fixtures/reject/stale-observed-at.source.json",
-    "fixtures/ok/ok-packet.json",
-    "fixtures/ok/ok-route-packet.json",
+    "fixtures/ok/ok.packet.json",
+    "fixtures/ok/ok-route.packet.json",
     "fixtures/ok/ok-multi-action.packet.json",
     "fixtures/ok/ok-partial-status.packet.json",
     "fixtures/ok/ok-refused-status.packet.json",
@@ -38,12 +38,18 @@
     "fixtures/adversarial/adv-https-source-in-packet.packet.json",
     "fixtures/ok/ok-informational.packet.json",
     "fixtures/reject/missing-actions-informational.packet.json",
-    "fixtures/reject/corrections-and-empty-actions.packet.json"
+    "fixtures/reject/corrections-and-empty-actions.packet.json",
+    "fixtures/reject/labelled-sample-unlabelled.packet.json",
+    "fixtures/reject/observed-at-mismatch.packet.json",
+    "fixtures/reject/empty-routes.source.json",
+    "fixtures/reject/empty-routes.packet.json",
+    "fixtures/reject/decoy/ok-source.json",
+    "fixtures/reject/basename-locator.packet.json"
   ],
   "counts": {
-    "files": 37,
+    "files": 43,
     "ok": 9,
-    "reject": 19,
+    "reject": 25,
     "adversarial": 8,
     "cold": 0,
     "sample": 1

@@ -38,14 +38,13 @@ const okSnapshot = {
 const okDigest = snapshotDigest(okSnapshot);
 
 function sourceOf(file, snapshot, observedAt = DEMO_CLOCK_ISO, url = OK_LISTING_URL) {
-  return {
-    schema: SOURCE_SCHEMA,
-    url,
-    file,
-    observedAt,
-    digest: snapshotDigest(snapshot),
-    snapshot,
-  };
+  const out = { schema: SOURCE_SCHEMA };
+  if (typeof url === "string" && url.trim()) out.url = url.trim();
+  out.file = file;
+  out.observedAt = observedAt;
+  out.digest = snapshotDigest(snapshot);
+  out.snapshot = snapshot;
+  return out;
 }
 
 function packetShell(extra) {
@@ -116,10 +115,10 @@ files.push(
 );
 
 // --- ok packets ---
-files.push(write("fixtures/ok/ok-packet.json", packetShell({})));
+files.push(write("fixtures/ok/ok.packet.json", packetShell({})));
 files.push(
   write(
-    "fixtures/ok/ok-route-packet.json",
+    "fixtures/ok/ok-route.packet.json",
     packetShell({
       actions: [
         {
@@ -385,6 +384,7 @@ const adversarial = [
     actions: [{ priority: "high", kind: "owner-repair", note: "Globally unlisted from all catalogs forever", sourceRefs: ["route:/docs"] }],
     gaps: [],
     summary: "Global unlisting achieved",
+    notMarketFact: true,
   })],
   ["adv-digest-tamper.packet.json", packetShell({
     sourceObservation: {
@@ -411,8 +411,75 @@ const extras = [
     actions: [],
     corrections: [{ field: "title", from: "Operator Alpha", to: "Renamed" }],
   })],
+  ["fixtures/reject/labelled-sample-unlabelled.packet.json", packetShell({
+    labelledSample: true,
+    caller: { exampleMode: false, sampleLabel: "caller-input", notMarketFact: true, notCustomerDemand: true },
+  })],
+  ["fixtures/reject/observed-at-mismatch.packet.json", packetShell({
+    sourceObservation: {
+      url: OK_LISTING_URL,
+      file: "fixtures/ok/ok-source.json",
+      observedAt: "2026-09-11T11:00:00.000Z",
+      digest: okDigest,
+    },
+  })],
 ];
 for (const [rel, body] of extras) files.push(write(rel, body));
+
+const emptyRoutesSnapshot = {
+  url: OK_LISTING_URL,
+  agentId: "agent-alpha",
+  listingStatus: "PendingReview",
+  title: "Operator Alpha",
+  freeVsPriced: "discovery_free_run_priced",
+};
+const emptyRoutesDigest = snapshotDigest(emptyRoutesSnapshot);
+files.push(
+  write(
+    "fixtures/reject/empty-routes.source.json",
+    sourceOf("fixtures/reject/empty-routes.source.json", emptyRoutesSnapshot),
+  ),
+);
+files.push(
+  write(
+    "fixtures/reject/empty-routes.packet.json",
+    packetShell({
+      actions: [
+        {
+          priority: "high",
+          kind: "owner-repair",
+          note: "/docs: update_listed_route_or_redirect_target",
+          sourceRefs: ["route:/docs"],
+        },
+      ],
+      sourceObservation: {
+        url: OK_LISTING_URL,
+        file: "fixtures/reject/empty-routes.source.json",
+        observedAt: DEMO_CLOCK_ISO,
+        digest: emptyRoutesDigest,
+      },
+    }),
+  ),
+);
+
+files.push(
+  write(
+    "fixtures/reject/decoy/ok-source.json",
+    sourceOf("fixtures/reject/decoy/ok-source.json", okSnapshot, DEMO_CLOCK_ISO, null),
+  ),
+);
+files.push(
+  write(
+    "fixtures/reject/basename-locator.packet.json",
+    packetShell({
+      sourceObservation: {
+        file: "fixtures/ok/ok-source.json",
+        observedAt: DEMO_CLOCK_ISO,
+        digest: okDigest,
+      },
+    }),
+  ),
+);
 
 writeFileSync(join(root, "fixtures/MANIFEST.json"), JSON.stringify({
   schema: "sds.listing_repair_verifier.fixtures.v1",
