@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.sha-bind-unpaid.w8.v1",
+  "bindId": "sbu_w8_coinbase_x402_stop",
+  "wave": "w8",
+  "statusClass": "unpaid",
+  "kind": "unpaid_buyer_stop",
+  "paymentSent": false,
+  "charged": false,
+  "artifact": {
+    "path": "fixtures/buyer-runtimes/coinbase-x402/states/stop.json",
+    "sha256": "692217b3d1a05befe0063cbe6b9f10555e46e2580f418a07e7dc169337e9e4e9",
+    "bytes": 1254
+  },
+  "claims": {
+    "state": "stop",
+    "reason": "no wallet",
+    "paymentSent": false,
+    "charged": false
+  },
+  "observationWindow": {
+    "start": "2026-09-10T00:00:00.000Z",
+    "end": "2026-09-17T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "complete",
+  "authorityClass": "seller_observed",
+  "unknownWhenAbsent": [
+    "whether_any_other_runtime_continued_into_payment"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "sha_mismatch_is_bound",
+    "unbound_bytes_are_evidence",
+    "settlement_is_unpaid",
+    "http_402_is_delivery"
+  ]
+}

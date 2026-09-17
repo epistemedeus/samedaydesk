@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.sha-bind-unpaid.w8.v1",
+  "bindId": "sbu_w8_agent402_discover",
+  "wave": "w8",
+  "statusClass": "unpaid",
+  "kind": "unpaid_discover",
+  "paymentSent": false,
+  "charged": false,
+  "artifact": {
+    "path": "fixtures/buyer-runtimes/agent402/states/discover.json",
+    "sha256": "f176760f01ffbd373bc96ba3314956470ee7fdd0a04c3f9be3296e44dedf2076",
+    "bytes": 3264
+  },
+  "claims": {
+    "state": "discover",
+    "origin": "https://agents.samedaydesk.com",
+    "extractRoute": "/extract",
+    "paymentSent": false,
+    "charged": false
+  },
+  "observationWindow": {
+    "start": "2026-09-10T00:00:00.000Z",
+    "end": "2026-09-17T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "complete",
+  "authorityClass": "seller_observed",
+  "unknownWhenAbsent": [
+    "whether_discovery_was_followed_by_a_paid_retry"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "sha_mismatch_is_bound",
+    "unbound_bytes_are_evidence",
+    "settlement_is_unpaid",
+    "http_402_is_delivery"
+  ]
+}
