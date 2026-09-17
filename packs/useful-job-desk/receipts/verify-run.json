@@ -34,9 +34,11 @@
         "job": "lockfile-pin-delta",
         "status": 0,
         "delivered": true,
-        "digest": "4e98794cbb95b0acb964e0c039e7fadeb245fc8dd6a2497f7a596f43d3fff225",
+        "digest": "dfe2b45cb22b6f8e003f3845a3bc97198d289ebd52229ae7cbbcb485890bf9c5",
         "outputFingerprint": "8658e1b14ef73d8078aa9c8b4bbb3575b9e03d404e2bf4f77a917baaf7c09de7",
         "engineStatus": "actionable",
+        "engineAppId": "lockfile-pin-delta",
+        "engineProvenance": "caller-supplied",
         "outDir": "out/verify/lockfile/first",
         "promisedOutputs": [
           "pin-delta.json",
@@ -54,9 +56,11 @@
         "job": "lockfile-pin-delta",
         "status": 0,
         "delivered": true,
-        "digest": "67c7e45caee511bf2e6298440e4d8fd570027b5477a2acd95f7cb3c51d1e6060",
+        "digest": "fbfde0edbdefe565f54bb22fb07484cc0b2c3e2362832b799311fd6b3a1c72e4",
         "outputFingerprint": "2f5005e1c0b1fc78ef20da62f0256557925d611e00edd1ad4dd08a8e88f7096b",
         "engineStatus": "actionable",
+        "engineAppId": "lockfile-pin-delta",
+        "engineProvenance": "caller-supplied",
         "outDir": "out/verify/lockfile/second",
         "promisedOutputs": [
           "pin-delta.json",
@@ -85,6 +89,8 @@
         "digest": "631d0a4497a0683e",
         "outputFingerprint": "bf6c7594b7cf66f159700d4481918aa69aa5d41dc302b1bd709f5d13495508c5",
         "engineStatus": "actionable",
+        "engineAppId": "vendor-budget-impact",
+        "engineProvenance": null,
         "outDir": "out/verify/vendor/first",
         "promisedOutputs": [
           "budget-impact.json",
@@ -105,6 +111,8 @@
         "digest": "eef037f690e539b1",
         "outputFingerprint": "c1af4200fc2542d37b55f6d4776985555e682c98ac8b4d481c464ffafe944a48",
         "engineStatus": "actionable",
+        "engineAppId": "vendor-budget-impact",
+        "engineProvenance": null,
         "outDir": "out/verify/vendor/second",
         "promisedOutputs": [
           "budget-impact.json",

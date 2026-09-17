@@ -85,6 +85,7 @@ test("seeded failure: same fixture twice labelled repeat demand", () => {
   assert.equal(body.refused, true);
   assert.equal(body.delivered, false);
   assert.equal(body.code, "same-fixture-labelled-repeat-demand");
+  assert.equal(body.error, "same fixture twice labelled repeat demand is refused");
   assert.equal(body.repeat.sameFixture, true);
   assert.equal(body.repeat.labelledRepeatDemand, true);
   assert.equal(body.repeat.changedInput, false);

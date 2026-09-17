@@ -69,6 +69,7 @@ function refuse(code, message, extra = {}, exitCode = 2) {
       refused: true,
       delivered: false,
       code,
+      error: message,
       message,
       ...extra,
     }),
@@ -138,8 +139,7 @@ export function assertNoH32Reopen() {
   for (const file of collectPackSources()) {
     const rel = file.slice(PACK_ROOT.length + 1);
     if (rel === "PIN.json" || rel === "SOURCE.txt" || rel === "README.md") continue;
-    if (rel.startsWith("lib/paths.mjs")) continue;
-    if (rel.startsWith("lib/cli.mjs")) continue;
+    if (rel === "lib/paths.mjs") continue;
     if (rel.startsWith("test/")) continue;
     const text = readFileSync(file, "utf8");
     for (const marker of H32_PRIVATE_MARKERS) {
@@ -188,6 +188,8 @@ function summarizeRun(run) {
     digest: run.digest,
     outputFingerprint: run.outputFingerprint,
     engineStatus: run.engineStatus,
+    engineAppId: run.engineJson?.appId || null,
+    engineProvenance: run.engineJson?.provenance || null,
     outDir: publicPath(run.outDir),
     promisedOutputs: run.promisedOutputs,
     presentOutputs: run.presentOutputs,
@@ -271,6 +273,11 @@ function cmdRun(args) {
     message: run.delivered
       ? `real ${PIN.engine.version} engine delivered promised outputs`
       : "engine did not deliver promised outputs",
+    jobId: job,
+    outDir: publicPath(outDir),
+    promisedOutputs: run.promisedOutputs,
+    presentOutputs: run.presentOutputs,
+    missingOutputs: run.missingOutputs,
     callerFiles: publicCallerFiles(callerBefore),
     callerFilesUnchanged: callersUnchanged(callerBefore, callerAfter),
     run: summarizeRun(run),

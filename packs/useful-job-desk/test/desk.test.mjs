@@ -49,6 +49,7 @@ test("desk runs owned callers on the real 1.4.7 engine", () => {
     assert.equal(family.first.cliInvoked, true);
     assert.equal(family.first.delivered, true);
     assert.equal(family.second.delivered, true);
+    assert.equal(family.first.engineAppId, family.job);
     assert.notEqual(family.first.digest, family.second.digest);
     for (const name of family.first.promisedOutputs) {
       assert.equal(existsSync(join(resolveReportedOutDir(family.first.outDir), name)), true, name);
@@ -60,6 +61,33 @@ test("desk runs owned callers on the real 1.4.7 engine", () => {
   const vendorRec = body.callerFiles.find((f) => f.path.endsWith("callers/vendor/after.json"));
   assert.equal(lockRec.sha256, sha256(lockBefore));
   assert.equal(vendorRec.sha256, sha256(vendorAfter));
+});
+
+test("run receipt names jobId and outDir so delivered is checkable", () => {
+  const outDir = join(PACK_ROOT, "out", "test-run-lock");
+  const r = runDesk([
+    "run",
+    "--job",
+    "lockfile-pin-delta",
+    "--before",
+    join(PACK_ROOT, "callers/lockfile/before.json"),
+    "--after",
+    join(PACK_ROOT, "callers/lockfile/after.json"),
+    "--out-dir",
+    outDir,
+  ]);
+  assert.equal(r.status, 0, r.stderr + r.stdout);
+  const body = parseReceipt(r);
+  assert.equal(body.ok, true);
+  assert.equal(body.delivered, true);
+  assert.equal(body.jobId, "lockfile-pin-delta");
+  assert.equal(body.run.engineAppId, "lockfile-pin-delta");
+  const resolved = resolveReportedOutDir(body.outDir);
+  for (const name of body.promisedOutputs) {
+    assert.equal(existsSync(join(resolved, name)), true, name);
+  }
+  assert.deepEqual(body.presentOutputs.sort(), ["pin-delta.json", "pin-delta.md"]);
+  assert.deepEqual(body.missingOutputs, []);
 });
 
 test("out-dir inside callers/ is refused", () => {

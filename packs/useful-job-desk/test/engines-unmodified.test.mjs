@@ -10,7 +10,7 @@ const PIN = JSON.parse(readFileSync(join(PACK_ROOT, "PIN.json"), "utf8"));
 
 test("pack does not vendor engines or reopen H32 private primitives", () => {
   assert.equal(existsSync(join(PACK_ROOT, "engines")), false);
-  const skip = new Set(["PIN.json", "SOURCE.txt", "README.md", "lib/paths.mjs", "lib/cli.mjs"]);
+  const skip = new Set(["PIN.json", "SOURCE.txt", "README.md", "lib/paths.mjs"]);
   function walk(dir) {
     for (const name of readdirSync(dir, { withFileTypes: true })) {
       if (name.name === "out" || name.name === ".tmp" || name.name === "node_modules") continue;
