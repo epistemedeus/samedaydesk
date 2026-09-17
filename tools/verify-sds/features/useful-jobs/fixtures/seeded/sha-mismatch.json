@@ -1,0 +1,8 @@
+{
+  "id": "sha-mismatch",
+  "feature": "useful-jobs",
+  "code": "wrong-digest",
+  "expectedSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "useRealBytes": true,
+  "extract": false
+}
