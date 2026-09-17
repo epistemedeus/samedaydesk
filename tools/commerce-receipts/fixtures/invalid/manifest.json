@@ -1,0 +1,24 @@
+{
+  "paid-as-unpaid.json": {
+    "code": "paid_as_unpaid",
+    "seed": true
+  },
+  "charged-true-as-unpaid.json": {
+    "code": "paid_as_unpaid"
+  },
+  "payment-header-as-unpaid.json": {
+    "code": "paid_as_unpaid"
+  },
+  "settlement-tx-as-unpaid.json": {
+    "code": "paid_as_unpaid"
+  },
+  "settled-offer-receipt-as-unpaid.json": {
+    "code": "paid_as_unpaid"
+  },
+  "http-200-paid-body-as-unpaid.json": {
+    "code": "paid_as_unpaid"
+  },
+  "status-class-paid.json": {
+    "code": "not_unpaid"
+  }
+}
