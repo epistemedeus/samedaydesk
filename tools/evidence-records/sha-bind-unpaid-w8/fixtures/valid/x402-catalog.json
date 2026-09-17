@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.sha-bind-unpaid.w8.v1",
+  "bindId": "sbu_w8_x402_catalog",
+  "wave": "w8",
+  "statusClass": "unpaid",
+  "kind": "unpaid_catalog",
+  "paymentSent": false,
+  "charged": false,
+  "artifact": {
+    "path": "fixtures/presence/catalog/x402.json",
+    "sha256": "ca5d55d2b0fb5a35ec158cdcd2c49db53a618b428ca7a5f2090b75091b60071d",
+    "bytes": 52527
+  },
+  "claims": {
+    "x402Version": 2,
+    "itemCount": 23,
+    "extractAmount": "5000",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "network": "eip155:8453",
+    "paymentSent": false,
+    "charged": false
+  },
+  "observationWindow": {
+    "start": "2026-09-10T00:00:00.000Z",
+    "end": "2026-09-17T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "sampled",
+  "authorityClass": "provider_returned",
+  "unknownWhenAbsent": [
+    "listings_not_present_in_this_committed_catalog_snapshot",
+    "buyer_demand_for_listed_resources"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "sha_mismatch_is_bound",
+    "unbound_bytes_are_evidence",
+    "settlement_is_unpaid",
+    "http_402_is_delivery",
+    "catalog_presence_is_demand"
+  ]
+}

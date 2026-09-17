@@ -1,0 +1,241 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.sha-bind-unpaid.w8.catalog.v1",
+  "recordSchemaVersion": "samedaydesk.evidence-record.sha-bind-unpaid.w8.v1",
+  "product": "samedaydesk-sha-bind-unpaid-w8",
+  "wave": "w8",
+  "pack": "unpaid-only",
+  "statusClasses": ["unpaid"],
+  "kinds": [
+    "unpaid_payment_required",
+    "unpaid_offer",
+    "unpaid_buyer_stop",
+    "unpaid_discover",
+    "unpaid_catalog",
+    "unpaid_traffic_record",
+    "unpaid_mcp_inventory"
+  ],
+  "completeness": ["complete", "sampled", "truncated", "unknown"],
+  "authorityClasses": [
+    "seller_observed",
+    "provider_returned",
+    "independently_reconciled",
+    "provider_authoritative"
+  ],
+  "requiredProhibitedInferences": [
+    "paid_as_unpaid",
+    "sha_mismatch_is_bound",
+    "unbound_bytes_are_evidence",
+    "settlement_is_unpaid",
+    "http_402_is_delivery"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "sha_mismatch_is_bound",
+    "unbound_bytes_are_evidence",
+    "settlement_is_unpaid",
+    "http_402_is_delivery",
+    "catalog_presence_is_demand",
+    "payment_header_is_unpaid",
+    "tools_list_is_paid_call"
+  ],
+  "window": {
+    "start": "2026-09-10T00:00:00.000Z",
+    "end": "2026-09-17T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "pin": {
+    "origin": "https://agents.samedaydesk.com",
+    "scheme": "exact",
+    "network": "eip155:8453",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "extractAmount": "5000",
+    "toolsBlockSha256": "068cbfdb8ddab4dac7eef335d51fbe347728d6ccca65bef0365a3eb831db6caf"
+  },
+  "designatedSeed": {
+    "id": "sha-mismatch",
+    "file": "invalid/sha-mismatch.json",
+    "code": "sha_mismatch",
+    "naiveRule": "statusClass-unpaid"
+  },
+  "boundary": {
+    "write": "tools/evidence-records/sha-bind-unpaid-w8/**",
+    "paymentSent": false,
+    "published": false,
+    "stripe": false,
+    "statement": "W8 unpaid SDS evidence bound to SHA-256 of committed artifact bytes. A matching unpaid label with a wrong digest is sha_mismatch. Stripe, facilitator settlement, and transaction hashes cannot be labeled unpaid. No pay, publish, or Stripe."
+  },
+  "pins": [
+    {
+      "bindId": "sbu_w8_extract_402",
+      "kind": "unpaid_payment_required",
+      "path": "fixtures/verified-feed/observations/extract-current.json",
+      "sha256": "b011ae152a072f85fa6080bfd1c208e21ddb964804da802942e5e125993d773f",
+      "bytes": 890,
+      "claims": {
+        "httpStatus": 402,
+        "route": "/extract",
+        "amount": "5000",
+        "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "paymentSent": false,
+        "charged": false
+      }
+    },
+    {
+      "bindId": "sbu_w8_agent402_stop",
+      "kind": "unpaid_buyer_stop",
+      "path": "fixtures/buyer-runtimes/agent402/states/stop.json",
+      "sha256": "f31f209d8f05d3f60b1199a4deb1379b835fe6c63421fdeb4bc1519e75210121",
+      "bytes": 1221,
+      "claims": {
+        "state": "stop",
+        "reason": "no wallet",
+        "paymentSent": false,
+        "charged": false
+      }
+    },
+    {
+      "bindId": "sbu_w8_coinbase_x402_stop",
+      "kind": "unpaid_buyer_stop",
+      "path": "fixtures/buyer-runtimes/coinbase-x402/states/stop.json",
+      "sha256": "692217b3d1a05befe0063cbe6b9f10555e46e2580f418a07e7dc169337e9e4e9",
+      "bytes": 1254,
+      "claims": {
+        "state": "stop",
+        "reason": "no wallet",
+        "paymentSent": false,
+        "charged": false
+      }
+    },
+    {
+      "bindId": "sbu_w8_agent402_contract",
+      "kind": "unpaid_offer",
+      "path": "fixtures/buyer-runtimes/agent402/states/contract.json",
+      "sha256": "950ebbba47c369ab7b192fe9f95ebc472f105a1cb44adbfb9ab2fc748e00ce18",
+      "bytes": 1570,
+      "claims": {
+        "expectedStatus": 402,
+        "amount": "5000",
+        "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "paymentSent": false,
+        "charged": false
+      }
+    },
+    {
+      "bindId": "sbu_w8_agent402_discover",
+      "kind": "unpaid_discover",
+      "path": "fixtures/buyer-runtimes/agent402/states/discover.json",
+      "sha256": "f176760f01ffbd373bc96ba3314956470ee7fdd0a04c3f9be3296e44dedf2076",
+      "bytes": 3264,
+      "claims": {
+        "state": "discover",
+        "origin": "https://agents.samedaydesk.com",
+        "extractRoute": "/extract",
+        "paymentSent": false,
+        "charged": false
+      }
+    },
+    {
+      "bindId": "sbu_w8_x402_catalog",
+      "kind": "unpaid_catalog",
+      "path": "fixtures/presence/catalog/x402.json",
+      "sha256": "ca5d55d2b0fb5a35ec158cdcd2c49db53a618b428ca7a5f2090b75091b60071d",
+      "bytes": 52527,
+      "claims": {
+        "x402Version": 2,
+        "itemCount": 23,
+        "extractAmount": "5000",
+        "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "network": "eip155:8453",
+        "paymentSent": false,
+        "charged": false
+      }
+    },
+    {
+      "bindId": "sbu_w8_operator_validation",
+      "kind": "unpaid_traffic_record",
+      "path": "tools/evidence-records/fixtures/valid/operator-validation.json",
+      "sha256": "415c499728fb59de0686f9be8ce67f929180f81aa99b086efa0578c0cb92b44f",
+      "bytes": 1130,
+      "claims": {
+        "recordId": "evr_operator_validation_20260901",
+        "sourceKind": "operator_validation",
+        "paymentSent": false,
+        "charged": false
+      }
+    },
+    {
+      "bindId": "sbu_w8_indexnow_receipt",
+      "kind": "unpaid_traffic_record",
+      "path": "tools/evidence-records/fixtures/valid/indexnow-receipt.json",
+      "sha256": "c4071d30643a87d45d20386d3787832f5734e226daf58ea07975159cc19cb5fc",
+      "bytes": 1041,
+      "claims": {
+        "recordId": "evr_indexnow_receipt_20260901",
+        "sourceKind": "indexnow_receipt",
+        "paymentSent": false,
+        "charged": false
+      }
+    },
+    {
+      "bindId": "sbu_w8_bazaar_listing",
+      "kind": "unpaid_traffic_record",
+      "path": "tools/evidence-records/fixtures/valid/bazaar-listing.json",
+      "sha256": "85d93545b40f3706bc1ef6e883c81267628485d03a2bac26542509c29118af49",
+      "bytes": 1026,
+      "claims": {
+        "recordId": "evr_bazaar_listing_20260901",
+        "sourceKind": "bazaar_listing",
+        "paymentSent": false,
+        "charged": false
+      }
+    },
+    {
+      "bindId": "sbu_w8_mcp_tool_inventory",
+      "kind": "unpaid_mcp_inventory",
+      "path": "server/lib/mcp-tool-inventory.js",
+      "sha256": "4e64a986a37d6ed736bb9c4afe3e6d00dfc7443214d5a28c36af3ca5de4c6e57",
+      "bytes": 288,
+      "claims": {
+        "toolNames": [
+          "check_ai_readiness",
+          "generate_complete_fix_pack",
+          "plan_taskmarket_delegation",
+          "browse_taskmarket_tasks",
+          "track_taskmarket_task"
+        ],
+        "toolsBlockSha256": "068cbfdb8ddab4dac7eef335d51fbe347728d6ccca65bef0365a3eb831db6caf",
+        "paymentSent": false,
+        "charged": false
+      }
+    }
+  ],
+  "paidRefuse": [
+    {
+      "path": "tools/evidence-records/fixtures/valid/stripe-event.json",
+      "reason": "stripe_event is paid provider evidence",
+      "code": "paid_as_unpaid",
+      "sha256": "4b19f47e1780b4f0617dd59505e55165e0626e03b18c6762ba186bdf87998f8c",
+      "bytes": 1069
+    },
+    {
+      "path": "tools/evidence-records/fixtures/valid/x402-facilitator-settlement.json",
+      "reason": "x402 facilitator settlement is not unpaid",
+      "code": "paid_as_unpaid",
+      "sha256": "7a87241f38ab6c308753e1d5536c680a7dad2c241c669ce0c5e2aa236ee755df",
+      "bytes": 1185
+    },
+    {
+      "path": "tools/evidence-records/fixtures/settlements/frantic-42-revenue-2026-06-25.json",
+      "reason": "banked settlement transaction cannot be unpaid",
+      "code": "paid_as_unpaid",
+      "sha256": "b2d970d77ef47f9cff3e30d44a782a8906fec6acf2636aba61fad4977a5d2fea",
+      "bytes": 1413
+    }
+  ]
+}

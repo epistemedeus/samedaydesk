@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.sha-bind-unpaid.w8.v1",
+  "bindId": "sbu_w8_frantic_42",
+  "wave": "w8",
+  "statusClass": "unpaid",
+  "kind": "unpaid_traffic_record",
+  "paymentSent": false,
+  "charged": false,
+  "artifact": {
+    "path": "tools/evidence-records/fixtures/settlements/frantic-42-revenue-2026-06-25.json",
+    "sha256": "b2d970d77ef47f9cff3e30d44a782a8906fec6acf2636aba61fad4977a5d2fea",
+    "bytes": 1413
+  },
+  "claims": {
+    "recordId": "frantic-42-revenue-2026-06-25",
+    "sourceKind": "external_work_payout",
+    "paymentSent": false,
+    "charged": false
+  },
+  "observationWindow": {
+    "start": "2026-09-10T00:00:00.000Z",
+    "end": "2026-09-17T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "complete",
+  "authorityClass": "independently_reconciled",
+  "unknownWhenAbsent": [
+    "whether_the_payout_is_a_product_sku"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "sha_mismatch_is_bound",
+    "unbound_bytes_are_evidence",
+    "settlement_is_unpaid",
+    "http_402_is_delivery"
+  ]
+}
