@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "mcp-missing-required-tool",
+  "repo": "samedaydesk",
+  "surface": "merchant",
+  "feature": "apex-mcp",
+  "class": "regression",
+  "defect": "Shipped Express /mcp tools/list is the five apex tools. Requiring a nonexistent name must reject without tools/call or payment.",
+  "source": {
+    "kind": "product-test",
+    "ref": "server/lib/mcp-tool-inventory.js"
+  },
+  "execute": {
+    "kind": "mcp-required-tools",
+    "requiredExtra": ["does_not_exist_required_tool"]
+  },
+  "expectProduct": {
+    "exitCode": 1,
+    "missing": ["does_not_exist_required_tool"],
+    "stdoutJson": {
+      "ok": false,
+      "toolsCalled": false,
+      "missing": ["does_not_exist_required_tool"],
+      "tools": [
+        "check_ai_readiness",
+        "generate_complete_fix_pack",
+        "plan_taskmarket_delegation",
+        "browse_taskmarket_tasks",
+        "track_taskmarket_task"
+      ]
+    }
+  },
+  "expectCorpus": {
+    "productVerdict": "reject",
+    "naiveRule": "exit0"
+  },
+  "boundary": {
+    "paymentSent": false,
+    "toolsCalled": false
+  }
+}

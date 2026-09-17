@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "correspondence-unconfigured",
+  "repo": "samedaydesk",
+  "surface": "merchant",
+  "feature": "shared-host",
+  "class": "regression",
+  "defect": "S51: unconfigured correspondence must expose enabled:false healthz and leave SDS /api/health 200. Isolation replay does not edit vendor/neomorphic-correspondence.",
+  "source": {
+    "kind": "product-test",
+    "ref": "docs/S51-RESULT.md"
+  },
+  "execute": {
+    "kind": "correspondence-unconfigured"
+  },
+  "expectProduct": {
+    "exitCode": 0,
+    "httpStatus": 200,
+    "stdoutJson": {
+      "ok": true,
+      "inspectKind": "unconfigured",
+      "sdsHealth": 200,
+      "sdsOk": true,
+      "correspondenceEnabled": false,
+      "correspondenceReason": "unconfigured"
+    }
+  },
+  "expectCorpus": {
+    "productVerdict": "accept",
+    "naiveRule": "exit0"
+  },
+  "boundary": {
+    "paymentSent": false,
+    "toolsCalled": false
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "issue1-captured-soft-404",
+  "repo": "samedaydesk",
+  "surface": "merchant",
+  "feature": "hosted-readback",
+  "class": "regression",
+  "defect": "Captured issue #1: /this-page-does-not-exist-xyz123 returned HTTP 200 with the homepage bytes. Naive HTTP-200 scoring false-greens a crawler soft-404.",
+  "source": {
+    "kind": "github-issue",
+    "ref": "https://github.com/epistemedeus/samedaydesk/issues/1"
+  },
+  "execute": {
+    "kind": "soft-404-capture",
+    "fixture": "response.json",
+    "path": "/this-page-does-not-exist-xyz123"
+  },
+  "expectProduct": {
+    "exitCode": 0,
+    "httpStatus": 200,
+    "kind": "soft_404",
+    "stdoutJson": {
+      "ok": false,
+      "kind": "soft_404",
+      "status": 200,
+      "homepageLike": true
+    }
+  },
+  "expectCorpus": {
+    "productVerdict": "reject",
+    "naiveRule": "http-200"
+  },
+  "boundary": {
+    "paymentSent": false,
+    "toolsCalled": false
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "path": "/this-page-does-not-exist-xyz123",
+  "status": 200,
+  "headers": {
+    "content-type": "text/html; charset=utf-8"
+  },
+  "body": "<!doctype html><html lang=\"en\"><head><title>SameDayDesk: agent commerce, built and shipped</title><link rel=\"canonical\" href=\"https://samedaydesk.com/\" /></head><body>homepage shell</body></html>",
+  "url": "https://samedaydesk.com/this-page-does-not-exist-xyz123",
+  "note": "Pinned from GitHub issue #1: unknown path byte-identical to homepage, HTTP 200."
+}
