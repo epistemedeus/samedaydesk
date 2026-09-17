@@ -1,0 +1,201 @@
+{
+  "pin": {
+    "url": "https://agents.samedaydesk.com/.well-known/agent-payment-evidence.json",
+    "retrievedAt": "2026-09-17T11:30:14Z",
+    "httpStatus": 200,
+    "researchSha": "606d41e047cb55ab16cdb09750ea381a646a4885",
+    "researchPr": "https://github.com/epistemedeus/pilot/pull/193",
+    "note": "Pinned well-known evidence ops for bazaar-tracker 8-vs-26. Catalog presence or absence is not buyer demand. Not a CDP live poll."
+  },
+  "schemaVersion": "agent-payment-policy.purchase-evidence-manifest.v1",
+  "service": {
+    "origin": "https://agents.samedaydesk.com",
+    "version": "1.23.49"
+  },
+  "manifestDigest": "sha256:09957f390d7a7163daa057a3fc3fcb217ce662044cd7e3c99b5edb5d76673820",
+  "operationCount": 26,
+  "operations": [
+    {
+      "method": "GET",
+      "path": "/chain/solana-transaction-receipt",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/chain/transaction-receipt",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/commerce/contract-qualified-search",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/commerce/payment-offer-preflight",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/commerce/seller-integrity-audit",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/commerce/settlement-proof",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/deep-audit",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/defi/morpho-market-underwrite",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/defi/morpho-position",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/defi/morpho-preliquidation-replay",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/defi/morpho-protection",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/distribution/agent-discoverability-audit",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/distribution/agent-surface-budget-audit",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/enrich",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/extract",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/read",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/scan",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/schemaforge",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/wallet-enrich",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/work/opportunity-preflight",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/commerce/payment-offer-preflight",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/extract/batch",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/lockfile-pin-delta",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/security/stateful-wallet-policy-conformance",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/security/wallet-policy-conformance",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/work/opportunity-preflight",
+      "receipt": {
+        "x402": "PAYMENT-RESPONSE with signed offer-receipt extension and settlement reference"
+      }
+    }
+  ]
+}
