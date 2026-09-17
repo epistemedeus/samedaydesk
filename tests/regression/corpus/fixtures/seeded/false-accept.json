@@ -1,0 +1,13 @@
+{
+  "schema": "samedaydesk.regression-corpus.seed.v1",
+  "id": "seeded.false-accept.archive-wrong-digest",
+  "surface": "buyer",
+  "kind": "false_accept",
+  "evaluate": "buyer.archive-wrong-digest",
+  "claimedVerdict": "accept",
+  "productMust": "reject",
+  "expectCode": "wrong-digest",
+  "title": "obtain-archive SHA mismatch claimed acquired",
+  "defect": "Hostile fixture claims a SHA mismatch should be accepted because obtain-archive exits 0.",
+  "origin": "experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs"
+}

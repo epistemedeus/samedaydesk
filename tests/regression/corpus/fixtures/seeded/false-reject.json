@@ -1,0 +1,13 @@
+{
+  "schema": "samedaydesk.regression-corpus.seed.v1",
+  "id": "seeded.false-reject.valid-record",
+  "surface": "verifier",
+  "kind": "false_reject",
+  "evaluate": "verifier.valid-record",
+  "claimedVerdict": "reject",
+  "productMust": "accept",
+  "expectCode": "valid_record",
+  "title": "Valid evidence record claimed invalid",
+  "defect": "Hostile fixture claims a current valid evidence record should be rejected as unsigned.",
+  "origin": "tools/evidence-records/fixtures/valid/indexnow-receipt.json"
+}

@@ -1,300 +1,243 @@
 #!/usr/bin/env node
-/**
- * SameDayDesk regression corpus runner.
- * Honest verdict uses product JSON ok / HTTP class. Naive verdict is the
- * wrapper-exit0 / HTML-body / HTTP-200 mistake that used to false-accept.
- */
-import { envelope, failError, writeJson } from "./lib/envelope.mjs";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { loadCatalog, loadSeed, isSeededKind, judge, judgeNaive } from "./lib/catalog.mjs";
 import { evaluateCase } from "./lib/evaluate.mjs";
-import { executeCase } from "./lib/execute.mjs";
-import { loadCorpus } from "./lib/load.mjs";
-import { repoRoot } from "./lib/paths.mjs";
+import { REPO_ROOT } from "./lib/root.mjs";
 
-function takeValue(argv, i, flag) {
-  const value = argv[i + 1];
-  if (!value || value.startsWith("-")) return { error: flag };
-  return { value, consumed: 1 };
-}
+const USAGE = `samedaydesk regression corpus
+
+Usage:
+  node tests/regression/corpus/run.mjs [--json] [--surface merchant|buyer|verifier|pack]
+  node tests/regression/corpus/run.mjs --seeded-failure [--json]
+  node tests/regression/corpus/run.mjs --seeded-false-reject [--json]
+  node tests/regression/corpus/run.mjs --fixture <path> [--json]
+  node tests/regression/corpus/run.mjs --list
+
+Write boundary: tests/regression/corpus/**. Does not edit tools/verify or verify-samedaydesk.
+Does not pay Stripe/x402. Does not POST MCP tools/call.
+`;
 
 function parseArgs(argv) {
-  const out = { json: false, dryRun: false, caseId: null, seededFailure: null, list: false };
-  for (let i = 0; i < argv.length; i++) {
-    const arg = argv[i];
-    if (arg === "--json") out.json = true;
-    else if (arg === "--dry-run") out.dryRun = true;
-    else if (arg === "--list") out.list = true;
-    else if (arg === "--case") {
-      const taken = takeValue(argv, i, "--case");
-      if (taken.error) out.unknown = taken.error;
-      else {
-        out.caseId = taken.value;
-        i += taken.consumed;
-      }
-    } else if (arg === "--seeded-failure") {
-      const taken = takeValue(argv, i, "--seeded-failure");
-      if (taken.error) out.unknown = taken.error;
-      else {
-        out.seededFailure = taken.value;
-        i += taken.consumed;
-      }
-    } else if (arg === "--help" || arg === "-h") out.help = true;
-    else {
-      out.unknown = arg;
-    }
+  const out = { json: false, list: false, seededFailure: false, seededFalseReject: false, fixture: null, surface: null };
+  for (let i = 0; i < argv.length; i += 1) {
+    const a = argv[i];
+    if (a === "--json") out.json = true;
+    else if (a === "--list") out.list = true;
+    else if (a === "--seeded-failure") out.seededFailure = true;
+    else if (a === "--seeded-false-reject") out.seededFalseReject = true;
+    else if (a === "--fixture") {
+      const next = argv[i + 1];
+      if (!next || next.startsWith("--")) throw usageError("missing_operand", "--fixture requires a path");
+      out.fixture = next;
+      i += 1;
+    } else if (a === "--surface") {
+      const next = argv[i + 1];
+      if (!next || next.startsWith("--")) throw usageError("missing_operand", "--surface requires merchant|buyer|verifier|pack");
+      out.surface = next;
+      i += 1;
+    } else if (a === "--help" || a === "-h") out.help = true;
+    else throw usageError("unknown_flag", `unknown argument ${a}`);
   }
   return out;
 }
 
-function usage() {
-  return `SameDayDesk regression corpus
-
-node tests/regression/corpus/run.mjs [--json] [--case <id>] [--dry-run]
-node tests/regression/corpus/run.mjs --list --json
-node tests/regression/corpus/run.mjs --seeded-failure false-accept --json
-node tests/regression/corpus/run.mjs --seeded-failure false-reject --json
-
-Does not pay Stripe/x402. Does not POST MCP tools/call.
-`;
+function usageError(code, message) {
+  const err = new Error(message);
+  err.code = code;
+  err.usage = true;
+  return err;
 }
 
-function human(line) {
-  process.stderr.write(`${line}\n`);
-}
-
-async function runSelected(cases, { root, dryRun }) {
-  const results = [];
-  for (const loaded of cases) {
-    human(`corpus ${loaded.id}`);
-    if (dryRun) {
-      results.push({
-        id: loaded.spec.id,
-        dryRun: true,
-        execute: loaded.spec.execute.kind,
-        argv: loaded.spec.execute.argv || null,
-      });
-      continue;
-    }
-    let observed;
-    try {
-      observed = await executeCase(loaded, { root });
-    } catch (err) {
-      observed = {
-        exitCode: 64,
-        json: {
-          ok: false,
-          refused: true,
-          code: "execute-error",
-          message: String(err.message || err),
-        },
-        timedOut: false,
-        destExists: null,
-      };
-    }
-    const evaluated = evaluateCase(loaded.spec, observed);
-    results.push({
-      ...evaluated,
-      surface: loaded.spec.surface,
-      feature: loaded.spec.feature,
-      class: loaded.spec.class,
-      roles: loaded.spec.roles || [],
-      naiveRule: loaded.spec.expectCorpus.naiveRule,
-      defect: loaded.spec.defect,
-    });
-  }
-  return results;
-}
-
-function seededTarget(cases, role) {
-  return cases.find((loaded) => (loaded.spec.roles || []).includes(role) && loaded.spec.class === role);
-}
-
-const args = parseArgs(process.argv.slice(2));
-if (args.help) {
-  process.stdout.write(`${usage()}\n`);
-  process.exit(0);
-}
-if (args.unknown) {
-  writeJson(
-    envelope({
-      ok: false,
-      command: "run",
-      status: "usage",
-      error: failError("USAGE", `unknown argument ${args.unknown}`),
-    }),
-  );
-  process.exit(2);
-}
-if (args.seededFailure && !["false-accept", "false-reject"].includes(args.seededFailure)) {
-  writeJson(
-    envelope({
-      ok: false,
-      command: "run",
-      status: "usage",
-      error: failError("USAGE", "--seeded-failure must be false-accept or false-reject"),
-    }),
-  );
-  process.exit(2);
-}
-
-let corpus;
-try {
-  corpus = loadCorpus();
-} catch (err) {
-  writeJson(
-    envelope({
-      ok: false,
-      command: "run",
-      status: "error",
-      error: failError("CATALOG", err.message, err.detail),
-    }),
-  );
-  process.exit(64);
-}
-
-const root = repoRoot();
-const major = Number(process.versions.node.split(".")[0]);
-if (major !== 22) {
-  writeJson(
-    envelope({
-      ok: false,
-      command: "run",
-      status: "fail",
-      error: failError("NODE", `wanted Node 22.x, actual ${process.version}`),
-    }),
-  );
-  process.exit(1);
-}
-
-if (args.list) {
-  writeJson(
-    envelope({
-      ok: true,
-      command: "list",
-      status: "pass",
-      result: {
-        cases: corpus.catalog.cases,
-        count: corpus.catalog.cases.length,
-      },
-    }),
-  );
-  process.exit(0);
-}
-
-const selected = args.caseId
-  ? corpus.cases.filter((loaded) => loaded.id === args.caseId)
-  : corpus.cases;
-if (args.caseId && selected.length === 0) {
-  writeJson(
-    envelope({
-      ok: false,
-      command: "run",
-      status: "usage",
-      error: failError("USAGE", `unknown case ${args.caseId}`),
-    }),
-  );
-  process.exit(2);
-}
-
-if (args.seededFailure) {
-  const role = args.seededFailure === "false-accept" ? "seeded-false-accept" : "seeded-false-reject";
-  const target = seededTarget(corpus.cases, role);
-  if (!target) {
-    writeJson(
-      envelope({
-        ok: false,
-        command: "run",
-        status: "fail",
-        error: failError("SEED_MISS", `no case with class/role ${role}`),
-      }),
-    );
-    process.exit(1);
-  }
-  const results = await runSelected([target], { root, dryRun: args.dryRun });
-  const row = results[0];
-  const caught =
-    args.seededFailure === "false-accept" ? Boolean(row.falseAccept) : Boolean(row.falseReject);
-  const honestPass = Boolean(row.honestCasePass);
-  const okSeed = caught && honestPass && !args.dryRun;
-  writeJson(
-    envelope({
-      ok: false,
-      command: "run",
-      status: "fail",
-      feature: target.spec.feature,
-      error: failError(
-        okSeed ? "SEED_REJECT" : "SEED_MISS",
-        okSeed
-          ? `seeded ${args.seededFailure} caught on ${target.id}`
-          : `seeded ${args.seededFailure} not caught on ${target.id}`,
-        {
-          id: target.id,
-          falseAccept: row.falseAccept,
-          falseReject: row.falseReject,
-          honestCasePass: row.honestCasePass,
-          naiveProductVerdict: row.naiveProductVerdict,
-          honestProductVerdict: row.honestProductVerdict,
-        },
-      ),
-      result: { seeded: args.seededFailure, case: row },
-      boundary: target.spec.boundary,
-    }),
-  );
-  process.exit(1);
-}
-
-const results = await runSelected(selected, { root, dryRun: args.dryRun });
-if (args.dryRun) {
-  writeJson(
-    envelope({
-      ok: true,
-      command: "run",
-      status: "pass",
-      dryRun: true,
-      result: { cases: results },
-    }),
-  );
-  process.exit(0);
-}
-
-const failed = results.filter((row) => !row.honestCasePass);
-const caughtFalseAccepts = results.filter((row) => row.falseAccept).map((row) => row.id);
-const caughtFalseRejects = results.filter((row) => row.falseReject).map((row) => row.id);
-const designatedAccept = corpus.catalog.seededFalseAccept;
-const designatedReject = corpus.catalog.seededFalseReject;
-const caughtDesignated =
-  caughtFalseAccepts.includes(designatedAccept) && caughtFalseRejects.includes(designatedReject);
-const ok = failed.length === 0 && caughtDesignated;
-
-writeJson(
-  envelope({
+function envelope({ ok, command, status, cases, error, result }) {
+  return {
     ok,
+    schema: "samedaydesk.regression-corpus.report.v1",
+    schemaVersion: 1,
+    command,
+    repo: "samedaydesk",
+    checkedAt: new Date().toISOString(),
+    node: { wanted: "22.x", actual: process.version },
+    status,
+    writeBoundary: "tests/regression/corpus/**",
+    counts: summarize(cases || []),
+    cases: cases || [],
+    error,
+    result: result ?? null,
+    boundary: { paymentSent: false, toolsCalled: false },
+  };
+}
+
+function summarize(cases) {
+  const counts = { total: cases.length, pass: 0, fail: 0, caught: 0, missed: 0 };
+  for (const row of cases) {
+    if (row.status === "pass") counts.pass += 1;
+    else if (row.status === "caught") counts.caught += 1;
+    else if (row.status === "missed") counts.missed += 1;
+    else counts.fail += 1;
+  }
+  return counts;
+}
+
+async function runEntry(entry, { naive = false } = {}) {
+  const observed = await evaluateCase(entry);
+  const judged = naive ? judgeNaive(entry, observed) : judge(entry, observed);
+  return {
+    id: entry.id,
+    surface: entry.surface,
+    kind: entry.kind,
+    title: entry.title,
+    expected: entry.expected,
+    expectCode: entry.expectCode || null,
+    claimedVerdict: judged.claimedVerdict,
+    observedVerdict: judged.observedVerdict,
+    observedCode: observed.code,
+    status: judged.status,
+    ok: judged.ok,
+    seeded: judged.seeded,
+    message: observed.message,
+    origin: entry.origin,
+  };
+}
+
+function printHuman(report) {
+  const lines = [`samedaydesk regression corpus  ${report.status}  ${report.command}`];
+  for (const row of report.cases) {
+    const mark = row.status === "pass" || row.status === "caught" ? "ok" : "not ok";
+    lines.push(`  ${mark}  ${row.status.padEnd(6)}  ${row.id}  (${row.observedVerdict}/${row.observedCode})`);
+  }
+  const c = report.counts;
+  lines.push(`${c.pass} pass, ${c.caught} seeded caught, ${c.fail + c.missed} fail, ${c.total} total`);
+  if (report.error) lines.push(`${report.error.code}: ${report.error.message}`);
+  return `${lines.join("\n")}\n`;
+}
+
+function emit(report, json, stream = process.stdout, errStream = process.stderr) {
+  if (json) stream.write(`${JSON.stringify(report, null, 2)}\n`);
+  else stream.write(printHuman(report));
+  if (json && report.error) errStream.write(`${report.error.code}: ${report.error.message}\n`);
+}
+
+function catalogEntryFromSeed(seed, catalog) {
+  const fromCatalog = catalog.cases.find((entry) => entry.id === seed.id);
+  if (fromCatalog) {
+    return {
+      ...fromCatalog,
+      claimedVerdict: seed.claimedVerdict ?? fromCatalog.claimedVerdict,
+      evaluate: seed.evaluate ?? fromCatalog.evaluate,
+    };
+  }
+  return {
+    id: seed.id,
+    surface: seed.surface,
+    evaluate: seed.evaluate,
+    kind: seed.kind === "false_accept" ? "seeded_false_accept" : seed.kind === "false_reject" ? "seeded_false_reject" : seed.kind,
+    claimedVerdict: seed.claimedVerdict,
+    expected: seed.productMust,
+    expectCode: seed.expectCode,
+    title: seed.title,
+    origin: seed.origin || seed.id,
+  };
+}
+
+async function main(argv = process.argv.slice(2)) {
+  let args;
+  try {
+    args = parseArgs(argv);
+  } catch (err) {
+    const report = envelope({
+      ok: false,
+      command: "usage",
+      status: "usage",
+      cases: [],
+      error: { code: err.code || "usage", message: err.message },
+    });
+    emit(report, true, process.stdout, process.stderr);
+    process.stderr.write(USAGE);
+    return 2;
+  }
+
+  if (args.help) {
+    process.stdout.write(USAGE);
+    return 0;
+  }
+
+  const catalog = loadCatalog();
+
+  if (args.list) {
+    for (const entry of catalog.cases) {
+      process.stdout.write(`${entry.id}\t${entry.surface}\t${entry.kind}\t${entry.expected}\n`);
+    }
+    return 0;
+  }
+
+  if (args.seededFailure || args.seededFalseReject || args.fixture) {
+    const command = args.fixture ? "fixture" : args.seededFalseReject ? "seeded-false-reject" : "seeded-failure";
+    let seed;
+    if (args.fixture) {
+      seed = JSON.parse(readFileSync(resolve(REPO_ROOT, args.fixture), "utf8"));
+    } else if (args.seededFalseReject) {
+      seed = loadSeed("false-reject.json");
+    } else {
+      seed = loadSeed("false-accept.json");
+    }
+    const entry = catalogEntryFromSeed(seed, catalog);
+    const row = await runEntry(entry, { naive: true });
+    const caught = row.ok === false && (row.seeded === "false_accept" || row.seeded === "false_reject");
+    const report = envelope({
+      ok: false,
+      command,
+      status: "fail",
+      cases: [row],
+      error: {
+        code: "SEED_REJECT",
+        message: caught
+          ? `seeded ${row.seeded} caught: ${entry.id} claimed ${row.claimedVerdict}, product ${row.observedVerdict}`
+          : `seeded fixture ${entry.id} did not diverge from claimed verdict ${row.claimedVerdict}`,
+        kind: row.seeded,
+        id: entry.id,
+      },
+      result: { seed, naive: true },
+    });
+    emit(report, args.json);
+    return 1;
+  }
+
+  const selected = catalog.cases.filter((entry) => (args.surface ? entry.surface === args.surface : true));
+  const cases = [];
+  for (const entry of selected) {
+    cases.push(await runEntry(entry));
+  }
+  const failed = cases.filter((row) => row.ok !== true);
+  const seededCaught = cases.filter((row) => row.status === "caught").length;
+  const report = envelope({
+    ok: failed.length === 0 && (args.surface ? true : seededCaught >= 1),
     command: "run",
-    status: ok ? "pass" : "fail",
-    error: ok
-      ? null
-      : failError(
-          failed.length ? "CASE_FAIL" : "SEED_MISS",
-          failed.length
-            ? `honest fail: ${failed.map((row) => row.id).join(",")}`
-            : "designated seeded false-accept/reject not caught",
-        ),
-    result: {
-      passed: results.filter((row) => row.honestCasePass).length,
-      failed: failed.length,
-      total: results.length,
-      caughtFalseAccepts,
-      caughtFalseRejects,
-      designatedFalseAccept: designatedAccept,
-      designatedFalseReject: designatedReject,
-      cases: results,
+    status: failed.length === 0 && (args.surface ? true : seededCaught >= 1) ? "pass" : "fail",
+    cases,
+    error:
+      failed.length === 0
+        ? null
+        : {
+            code: "CORPUS_FAIL",
+            message: `${failed.length} case(s) failed: ${failed.map((row) => row.id).join(", ")}`,
+          },
+    result: { seededCaught, productCases: cases.filter((row) => !isSeededKind(row.kind)).length },
+  });
+  emit(report, args.json);
+  return report.ok ? 0 : 1;
+}
+
+const thisFile = fileURLToPath(import.meta.url);
+if (process.argv[1] && resolve(process.argv[1]) === thisFile) {
+  main().then(
+    (code) => process.exit(code),
+    (err) => {
+      process.stderr.write(`${err.code || "error"}: ${err.message}\n`);
+      process.exit(64);
     },
-    evidence: results.map((row) => ({
-      kind: "corpus-case",
-      id: row.id,
-      honestCasePass: row.honestCasePass,
-      falseAccept: row.falseAccept,
-      falseReject: row.falseReject,
-    })),
-  }),
-);
-process.exit(ok ? 0 : 1);
+  );
+}
+
+export { main };

@@ -1,105 +1,232 @@
 {
-  "schemaVersion": 1,
+  "schema": "samedaydesk.regression-corpus.catalog.v1",
   "repo": "samedaydesk",
-  "shape": "tests/regression/corpus/{schema.json,catalog.json,run.mjs,lib/,cases/<id>/case.json}",
+  "writeBoundary": "tests/regression/corpus/**",
   "surfaces": ["merchant", "buyer", "verifier", "pack"],
-  "seededFalseAccept": "archive-wrong-digest",
-  "seededFalseReject": "offer-routing-complete-issue",
-  "boundary": {
-    "paymentSent": false,
-    "toolsCalled": false,
-    "write": "tests/regression/corpus/**"
-  },
   "cases": [
     {
-      "id": "archive-wrong-digest",
-      "surface": "buyer",
-      "feature": "archive-acquisition",
-      "class": "seeded-false-accept"
-    },
-    {
-      "id": "archive-missing-args",
-      "surface": "buyer",
-      "feature": "archive-acquisition",
-      "class": "regression"
-    },
-    {
-      "id": "useful-jobs-missing-inputs",
-      "surface": "pack",
-      "feature": "useful-jobs",
-      "class": "regression"
-    },
-    {
-      "id": "useful-jobs-html-lockfile",
-      "surface": "pack",
-      "feature": "useful-jobs",
-      "class": "regression"
-    },
-    {
-      "id": "useful-jobs-negative-control-1.1.0",
-      "surface": "buyer",
-      "feature": "archive-acquisition",
-      "class": "regression"
-    },
-    {
-      "id": "offer-routing-complete-issue",
+      "id": "merchant.offer-routing-complete-issue",
       "surface": "merchant",
-      "feature": "offer-routing",
-      "class": "seeded-false-reject"
+      "evaluate": "merchant.offer-routing-complete-issue",
+      "kind": "product",
+      "expected": "reject",
+      "expectCode": "complete_issue_acquisition_unavailable",
+      "title": "complete_issue_discussion must not select paid HTML extract",
+      "defect": "Issue-comment jobs used to be routed onto paid HTML extract offers.",
+      "origin": "tools/offer-routing/fixtures/complete-issue-discussion.job.json"
     },
     {
-      "id": "result-reuse-missing-out",
+      "id": "merchant.spa-unknown-path",
+      "surface": "merchant",
+      "evaluate": "merchant.spa-unknown-path",
+      "kind": "product",
+      "expected": "reject",
+      "expectCode": "spa_unknown_404",
+      "title": "Unknown SPA path is HTTP 404, not a product 200",
+      "defect": "Unknown HTML paths used to look like a 200 SPA shell to crawlers.",
+      "origin": "server/lib/spa-fallback.js"
+    },
+    {
+      "id": "merchant.mcp-missing-required-tool",
+      "surface": "merchant",
+      "evaluate": "merchant.mcp-missing-required-tool",
+      "kind": "product",
+      "expected": "reject",
+      "expectCode": "missing_required_tool",
+      "title": "Apex MCP tools/list does not invent extra names",
+      "defect": "Requiring a nonexistent tool used to look like a successful tools/list.",
+      "origin": "server/lib/mcp-tool-inventory.js"
+    },
+    {
+      "id": "merchant.cdn-challenge",
+      "surface": "merchant",
+      "evaluate": "merchant.cdn-challenge",
+      "kind": "product",
+      "expected": "reject",
+      "expectCode": "cdn_challenge",
+      "title": "hcdn challenge HTML is not a product 200",
+      "defect": "Gateway 403 HTML was treated as a successful hosted readback.",
+      "origin": "tests/regression/corpus/fixtures/http/cdn-challenge.json"
+    },
+    {
+      "id": "merchant.x402-unpaid-extract",
+      "surface": "merchant",
+      "evaluate": "merchant.x402-unpaid-extract",
+      "kind": "product",
+      "expected": "reject",
+      "expectCode": "payment_required",
+      "title": "Unpaid /extract stays HTTP 402",
+      "defect": "Unpaid extract 402 used to be classified as product success. Corpus does not pay.",
+      "origin": "tests/regression/corpus/fixtures/http/x402-unpaid.json"
+    },
+    {
+      "id": "buyer.archive-wrong-digest",
       "surface": "buyer",
-      "feature": "result-reuse",
-      "class": "regression"
+      "evaluate": "buyer.archive-wrong-digest",
+      "kind": "product",
+      "expected": "reject",
+      "expectCode": "wrong-digest",
+      "title": "obtain-archive SHA mismatch refuses extract",
+      "defect": "obtain-archive.mjs prints ok:false wrong-digest then process.exit(0). Wrapper-exit0 false-accepts a SHA mismatch.",
+      "origin": "experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs"
     },
     {
-      "id": "evidence-organic-label",
+      "id": "buyer.archive-missing-args",
+      "surface": "buyer",
+      "evaluate": "buyer.archive-missing-args",
+      "kind": "product",
+      "expected": "reject",
+      "expectCode": "missing-args",
+      "title": "obtain-archive missing args is a refuse",
+      "defect": "Missing --from/--dest still exited 0 and looked like acquire success.",
+      "origin": "experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs"
+    },
+    {
+      "id": "buyer.result-reuse-missing-out",
+      "surface": "buyer",
+      "evaluate": "buyer.result-reuse-missing-out",
+      "kind": "product",
+      "expected": "reject",
+      "expectCode": "export_requires_out",
+      "title": "result-reuse export without --out refuses",
+      "defect": "Export without --out used to look like a written reuse observation.",
+      "origin": "tools/result-reuse/cli.mjs"
+    },
+    {
+      "id": "buyer.presence-offline-unpaid",
+      "surface": "buyer",
+      "evaluate": "buyer.presence-offline-unpaid",
+      "kind": "product",
+      "expected": "accept",
+      "expectCode": "offline_fixture",
+      "title": "preferFixture stays unpaid offline_fixture",
+      "defect": "Control: dated for-agents fixtures must not be treated as live paid observation.",
+      "origin": "tools/presence/for-agents-cold-read.mjs"
+    },
+    {
+      "id": "buyer.negative-control-1.1.0",
+      "surface": "buyer",
+      "evaluate": "buyer.negative-control-1.1.0",
+      "kind": "product",
+      "expected": "reject",
+      "expectCode": "wrong-digest",
+      "title": "useful-jobs 1.1.0 does not satisfy the 1.4.7 digest",
+      "defect": "Feeding the immutable 1.1.0 archive with the live sha used to look like acquire success.",
+      "origin": "client/public/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz"
+    },
+    {
+      "id": "verifier.valid-record",
       "surface": "verifier",
-      "feature": "evidence-records",
-      "class": "regression"
+      "evaluate": "verifier.valid-record",
+      "kind": "product",
+      "expected": "accept",
+      "expectCode": "valid_record",
+      "title": "Shipped valid evidence fixture still verifies",
+      "defect": "Control: a current valid evidence record must still validate.",
+      "origin": "tools/evidence-records/fixtures/valid/indexnow-receipt.json"
     },
     {
-      "id": "payment-replay-blocked",
+      "id": "verifier.organic-label",
       "surface": "verifier",
-      "feature": "recurring-recipes",
-      "class": "regression"
+      "evaluate": "verifier.organic-label",
+      "kind": "product",
+      "expected": "reject",
+      "expectCode": "organic_label_for_controlled_or_incentivized_traffic",
+      "title": "Organic label on controlled traffic is rejected",
+      "defect": "Operator-controlled or incentivized traffic labeled organic used to pass.",
+      "origin": "tools/evidence-records/fixtures/invalid/organic-label-for-controlled-traffic.json"
     },
     {
-      "id": "presence-offline-unpaid",
-      "surface": "buyer",
-      "feature": "for-agents-cold-read",
-      "class": "regression"
+      "id": "verifier.payment-replay-blocked",
+      "surface": "verifier",
+      "evaluate": "verifier.payment-replay-blocked",
+      "kind": "product",
+      "expected": "reject",
+      "expectCode": "payment_replay_blocked",
+      "title": "Prior payment receipt is not replay authority",
+      "defect": "A prior receipt used to look like authority to charge again.",
+      "origin": "tools/recurring-job-recipes/lib/payment-guard.mjs"
     },
     {
-      "id": "mcp-missing-required-tool",
-      "surface": "merchant",
-      "feature": "apex-mcp",
-      "class": "regression"
-    },
-    {
-      "id": "spa-unknown-path-not-200",
-      "surface": "merchant",
-      "feature": "hosted-readback",
-      "class": "regression"
-    },
-    {
-      "id": "cdn-challenge-not-product-200",
-      "surface": "merchant",
-      "feature": "hosted-readback",
-      "class": "regression"
-    },
-    {
-      "id": "x402-unpaid-extract-402",
-      "surface": "merchant",
-      "feature": "x402-unpaid-discovery",
-      "class": "regression"
-    },
-    {
-      "id": "s185-missing-input-exit0",
+      "id": "pack.useful-jobs-missing-inputs",
       "surface": "pack",
-      "feature": "offline-packs",
-      "class": "regression"
+      "evaluate": "pack.useful-jobs-missing-inputs",
+      "kind": "product",
+      "expected": "reject",
+      "expectCode": "missing-required-inputs",
+      "title": "useful-jobs lockfile-pin-delta without inputs refuses",
+      "defect": "Mapped refuse exit 2 used to look like a broken CLI instead of a required refuse.",
+      "origin": "client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz"
+    },
+    {
+      "id": "pack.useful-jobs-html-lockfile",
+      "surface": "pack",
+      "evaluate": "pack.useful-jobs-html-lockfile",
+      "kind": "product",
+      "expected": "reject",
+      "expectCode": "html-input",
+      "title": "HTML is not a package-lock.json",
+      "defect": "Challenge/error HTML used to be parsed as a lockfile.",
+      "origin": "tests/regression/corpus/fixtures/pack/not-a-lock.html"
+    },
+    {
+      "id": "pack.s185-missing-input",
+      "surface": "pack",
+      "evaluate": "pack.s185-missing-input",
+      "kind": "product",
+      "expected": "reject",
+      "expectCode": "missing-input",
+      "title": "s185 diagnose on a missing file refuses",
+      "defect": "distribution-repair diagnose prints ok:false missing-input then process.exit(0).",
+      "origin": "experiments/s185-distribution-repair-package/bin/distribution-repair.mjs"
+    },
+    {
+      "id": "pack.s185-forbidden-claim",
+      "surface": "pack",
+      "evaluate": "pack.s185-forbidden-claim",
+      "kind": "product",
+      "expected": "reject",
+      "expectCode": "forbidden_claim",
+      "title": "Pack diagnosis refuses invented revenue",
+      "defect": "Invented revenue fields used to look like a completed diagnosis.",
+      "origin": "experiments/s185-distribution-repair-package/src/validate.mjs"
+    },
+    {
+      "id": "pack.missing-input-file",
+      "surface": "pack",
+      "evaluate": "pack.missing-input-file",
+      "kind": "product",
+      "expected": "reject",
+      "expectCode": "input_not_found",
+      "title": "Missing pack input path fails closed",
+      "defect": "A missing --input file must not look like a completed pack run.",
+      "origin": "tests/regression/corpus/fixtures/pack/does-not-exist.json"
+    },
+    {
+      "id": "seeded.false-accept.archive-wrong-digest",
+      "surface": "buyer",
+      "evaluate": "buyer.archive-wrong-digest",
+      "kind": "seeded_false_accept",
+      "claimedVerdict": "accept",
+      "expected": "reject",
+      "expectCode": "wrong-digest",
+      "title": "Seeded false-accept: SHA mismatch claimed acquired",
+      "defect": "Hostile fixture claims obtain-archive SHA mismatch should be accepted because the wrapper exits 0.",
+      "origin": "tests/regression/corpus/fixtures/seeded/false-accept.json",
+      "fixture": "fixtures/seeded/false-accept.json"
+    },
+    {
+      "id": "seeded.false-reject.valid-record",
+      "surface": "verifier",
+      "evaluate": "verifier.valid-record",
+      "kind": "seeded_false_reject",
+      "claimedVerdict": "reject",
+      "expected": "accept",
+      "expectCode": "valid_record",
+      "title": "Seeded false-reject: valid evidence claimed invalid",
+      "defect": "Hostile fixture claims a current valid evidence record should be rejected as unsigned.",
+      "origin": "tests/regression/corpus/fixtures/seeded/false-reject.json",
+      "fixture": "fixtures/seeded/false-reject.json"
     }
   ]
 }

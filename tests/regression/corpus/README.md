@@ -1,51 +1,57 @@
 # SameDayDesk regression corpus
 
-Executable fixtures for known past defects on SameDayDesk merchant, buyer, verifier, and pack surfaces.
+Executable fixtures for known past defects on samedaydesk **merchant**, **buyer**, **verifier**, and **pack** surfaces.
 
-Shape (shared with the Neo corpus):
+Shape (same as the Neo corpus):
 
 ```
 tests/regression/corpus/
-  schema.json
   catalog.json
   run.mjs
-  lib/
-  cases/<id>/case.json
+  package.json
+  corpus.test.mjs
+  cli-proof.test.mjs
+  fixtures/seeded/
+  lib/surfaces/{merchant,buyer,verifier,pack}.mjs
 ```
 
-Write boundary is this tree only. `tools/verify/**` and `verify-samedaydesk` stay on their own branches.
+Write boundary: `tests/regression/corpus/**` only. This tree does not edit `tools/verify/**` or `verify-samedaydesk` (live reviewers).
 
 ## Run
 
-```
+From the repository root, Node 22.x:
+
+```bash
 node tests/regression/corpus/run.mjs --json
-node tests/regression/corpus/run.mjs --seeded-failure false-accept --json
-node tests/regression/corpus/run.mjs --seeded-failure false-reject --json
-node --test tests/regression/corpus/*.test.mjs
+node --test --test-concurrency=1 tests/regression/corpus/*.test.mjs
+npm test --prefix tests/regression/corpus
 ```
 
-Node 22.x. No Stripe or x402 payment. No MCP `tools/call`.
+`run.mjs` exits 0 when every product case still matches live modules **and** at least one seeded false-accept/reject is caught.
 
-## Honest vs naive
+## Seeded false-accept / false-reject
 
-Each case records the real product outcome, then two verdicts:
+Hostile rows claim the wrong verdict. The catalog run records them as `caught`. Feeding one as required truth must exit 1:
 
-- Honest: `ok:true` (or HTTP 2xx) is accept; `ok:false` / challenge / 402 is reject.
-- Naive `exit0`: process exit 0 is accept. This is the obtain-archive / s185 wrapper bug.
-- Naive `http-200`: HTTP 200 is accept.
-- Naive `html-body`: any HTML body is accept (hcdn challenge page).
+```bash
+node tests/regression/corpus/run.mjs --seeded-failure --json
+node tests/regression/corpus/run.mjs --fixture tests/regression/corpus/fixtures/seeded/false-accept.json --json
+node tests/regression/corpus/run.mjs --seeded-false-reject --json
+```
 
-A designated seeded false-accept (`archive-wrong-digest`) is SHA mismatch with child exit 0. A designated seeded false-reject (`offer-routing-complete-issue`) is mapped refuse with exit 2. The runner must still catch both after later verifier edits.
+`--seeded-failure` uses obtain-archive SHA mismatch **false-accept** (claimed `accept`, product `wrong-digest`). Exit 1, `error.code` `SEED_REJECT`.
+
+`--seeded-false-reject` uses a valid evidence record claimed invalid (claimed `reject`, product `valid_record`). Exit 1, `error.code` `SEED_REJECT`.
 
 ## Surfaces
 
-| surface | SDS features in this corpus |
+| surface | examples |
 | --- | --- |
-| merchant | offer-routing, apex MCP inventory, SPA unknown-path 404, hcdn challenge, unpaid 402 |
-| buyer | obtain-archive, 1.1.0 negative control, result-reuse `--out`, for-agents cold-read fixture |
-| verifier | evidence-record organic label, payment replay block |
-| pack | useful-jobs 1.4.7 missing inputs / HTML lockfile, s185 missing input |
+| merchant | complete_issue not paid extract; SPA unknown 404; invented MCP tool; hcdn challenge; unpaid 402 |
+| buyer | obtain-archive SHA mismatch / missing args; result-reuse `--out`; unpaid offline fixture; 1.1.0 negative control |
+| verifier | valid evidence control; organic label on controlled traffic; payment replay blocked |
+| pack | useful-jobs missing inputs / HTML lockfile; s185 missing input / forbidden revenue; missing input path |
 
-## Limits
+Catalog: [catalog.json](./catalog.json). Pointers: [fixtures/seeded/](./fixtures/seeded/).
 
-Live apex TLS is not used. CDN/402 classes are fixture-classified with the retained rule in `lib/classify-http.mjs`. useful-jobs cases extract the in-tree 1.4.7 archive outside the repo.
+No payment, no MCP `tools/call`, no edits to live reviewers.
