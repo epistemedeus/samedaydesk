@@ -1,0 +1,34 @@
+{
+  "schema": "samedaydesk.lab-verify.jobs.v1",
+  "repo": "samedaydesk",
+  "offline": true,
+  "paymentSent": false,
+  "toolsCalled": false,
+  "jobs": [
+    {
+      "id": "useful-jobs",
+      "title": "useful-jobs 1.4.7 pin, extract, list",
+      "summary": "Hash the committed 1.4.7 kit, extract outside the git tree, and run bin/useful-jobs.mjs list --json. 1.1.0 is a negative control, not current.",
+      "offline": true,
+      "network": false,
+      "payment": false
+    },
+    {
+      "id": "packs",
+      "title": "Offline pack archives and distribution-repair sample",
+      "summary": "Verify record-repeat, distribution-repair, and consumer-repeat kit sha/bytes against discovery, then run the in-tree distribution-repair sample --positive.",
+      "offline": true,
+      "network": false,
+      "payment": false
+    },
+    {
+      "id": "mcp",
+      "title": "Shipped Express MCP tool inventory",
+      "summary": "Read server/lib/mcp-tool-inventory.js and require the five shipped tool names. Never POST tools/call.",
+      "offline": true,
+      "network": false,
+      "payment": false,
+      "toolsCalled": false
+    }
+  ]
+}
