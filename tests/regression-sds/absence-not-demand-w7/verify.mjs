@@ -4,14 +4,10 @@
  * Default: expect reject → exit 0 when classifier rejects.
  * --expect accept: seeded absence-as-demand must exit 1 (SEED_REJECT).
  */
-import { readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import { classifyAbsenceAsDemand } from "./lib/classify.mjs";
 import { envelope } from "./lib/envelope.mjs";
+import { loadFixture } from "./lib/fixture.mjs";
 import { PRINCIPLE } from "./lib/pin.mjs";
-
-const here = dirname(fileURLToPath(import.meta.url));
 
 function usage() {
   return `usage: node verify.mjs [--json] [--fixture <path>] [--expect reject|accept] [--as-accept]
@@ -25,6 +21,7 @@ function parseArgs(argv) {
     expect: "reject",
     asAccept: false,
     help: false,
+    usageError: null,
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -35,31 +32,81 @@ function parseArgs(argv) {
       out.asAccept = true;
       out.expect = "accept";
     } else if (a === "--expect") {
-      out.expect = String(argv[++i] || "reject");
+      const v = argv[i + 1];
+      if (v == null || v.startsWith("-")) {
+        out.usageError = { code: "USAGE", message: "missing --expect value" };
+      } else {
+        i += 1;
+        if (v !== "reject" && v !== "accept") {
+          out.usageError = { code: "USAGE", message: `unknown --expect ${v}` };
+        } else out.expect = v;
+      }
     } else if (a === "--fixture") {
-      out.fixture = String(argv[++i] || "");
-    } else if (!a.startsWith("-") && !out.fixture) {
+      const v = argv[i + 1];
+      if (v == null || v.startsWith("-")) {
+        out.usageError = { code: "USAGE", message: "missing --fixture value" };
+      } else {
+        i += 1;
+        out.fixture = v;
+      }
+    } else if (a.startsWith("-")) {
+      out.usageError = {
+        code: a === "--live" ? "LIVE_FORBIDDEN" : "UNKNOWN_ARGUMENT",
+        message: `unknown argument ${a}`,
+      };
+    } else if (!out.fixture) {
       out.fixture = a;
+    } else {
+      out.usageError = { code: "UNKNOWN_ARGUMENT", message: `unknown argument ${a}` };
     }
   }
   return out;
 }
 
-function loadFixture(pathArg) {
-  const abs = resolve(here, pathArg);
-  const raw = JSON.parse(readFileSync(abs, "utf8"));
-  return { abs, raw };
+function writeEnvelope(body, json, textLine) {
+  if (json) process.stdout.write(JSON.stringify(body) + "\n");
+  else console.log(textLine);
+}
+
+function fail(args, code, message, extra = {}) {
+  const body = envelope({
+    command: "verify",
+    status: "fail",
+    ok: false,
+    error: { code, message },
+    result: extra.result ?? null,
+  });
+  writeEnvelope(body, args.json !== false, `FAIL ${code} ${message}`);
+  process.exitCode = extra.exit ?? 2;
 }
 
 function main(argv = process.argv.slice(2)) {
   const args = parseArgs(argv);
-  if (args.help || !args.fixture) {
+  if (args.help) {
     console.error(usage());
-    process.exitCode = args.help ? 0 : 2;
+    process.exitCode = 0;
+    return;
+  }
+  if (args.usageError) {
+    fail(args, args.usageError.code, args.usageError.message);
+    return;
+  }
+  if (!args.fixture) {
+    fail(args, "USAGE", usage());
     return;
   }
 
-  const { abs, raw } = loadFixture(args.fixture);
+  let loaded;
+  try {
+    loaded = loadFixture(args.fixture);
+  } catch (e) {
+    fail(args, e.code || "FIXTURE_INVALID", e.message, {
+      exit: e.code === "USAGE" ? 2 : 2,
+    });
+    return;
+  }
+
+  const { abs, raw } = loaded;
   const output = raw.output || raw;
   const meta = {
     surface: raw.surface || output.surface,
@@ -90,20 +137,32 @@ function main(argv = process.argv.slice(2)) {
       status = "pass";
       exit = 0;
     }
+  } else if (!verdict.reject) {
+    ok = false;
+    status = "fail";
+    exit = 1;
+    error = {
+      code: "FALSE_ACCEPT",
+      message: `fixture ${raw.id || "case"} expected reject, classifier did not flag absence-as-demand`,
+      reasons: verdict.reasons,
+    };
   } else {
-    if (verdict.reject) {
-      ok = true;
-      status = "pass";
-      exit = 0;
-    } else {
+    const expected = Array.isArray(raw.expectedReasons) ? raw.expectedReasons : [];
+    const missing = expected.filter((r) => !verdict.reasons.includes(r));
+    if (missing.length) {
       ok = false;
       status = "fail";
       exit = 1;
       error = {
-        code: "FALSE_ACCEPT",
-        message: `fixture ${raw.id || "case"} was not rejected (would treat absence as demand)`,
+        code: "REASON_MISMATCH",
+        message: `fixture ${raw.id || "case"} missing reasons ${missing.join(",")}`,
+        missing,
         reasons: verdict.reasons,
       };
+    } else {
+      ok = true;
+      status = "pass";
+      exit = 0;
     }
   }
 
@@ -140,13 +199,11 @@ function main(argv = process.argv.slice(2)) {
     },
   });
 
-  if (args.json) {
-    process.stdout.write(JSON.stringify(body) + "\n");
-  } else {
-    console.log(
-      `${ok ? "PASS" : "FAIL"} ${raw.id} reject=${verdict.reject} absenceAsDemand=${verdict.absenceAsDemand} reasons=${JSON.stringify(verdict.reasons)}`,
-    );
-  }
+  writeEnvelope(
+    body,
+    args.json,
+    `${ok ? "PASS" : "FAIL"} ${raw.id} reject=${verdict.reject} absenceAsDemand=${verdict.absenceAsDemand} reasons=${JSON.stringify(verdict.reasons)}`,
+  );
   process.exitCode = exit;
 }
 

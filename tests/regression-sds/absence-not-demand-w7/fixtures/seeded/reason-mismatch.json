@@ -1,0 +1,15 @@
+{
+  "id": "reason-mismatch",
+  "surface": "observatory",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "expectedReasons": ["absence_as_demand", "not_a_real_reason"],
+  "defect": "Seeded: expectedReasons includes a reason the classifier does not emit.",
+  "output": {
+    "ok": true,
+    "paidDemand": true,
+    "paidCustomers": 1,
+    "paidActivity": { "available": false },
+    "message": "invented paid demand; expectedReasons include a missing class"
+  }
+}

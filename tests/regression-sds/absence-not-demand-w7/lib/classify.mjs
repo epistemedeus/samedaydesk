@@ -49,7 +49,10 @@ function evidenceAbsent(output, meta = {}) {
   if (output.routeAbsent === true || output.route_absent === true || evidence?.routeAbsent === true) {
     reasons.push("route_absent");
   }
-  if (output.missingRoute === true || typeof output.missingRouteId === "string") {
+  if (
+    output.missingRoute === true ||
+    (typeof output.missingRouteId === "string" && output.missingRouteId.length > 0)
+  ) {
     reasons.push("route_absent");
   }
   if (output.pricingRowAbsent === true || output.pricingRowsEmpty === true) {
@@ -94,6 +97,22 @@ function evidenceAbsent(output, meta = {}) {
  * @returns {{ reject: boolean, absenceAsDemand: boolean, reasons: string[], detail: object }}
  */
 export function classifyAbsenceAsDemand(output, meta = {}) {
+  if (!output || typeof output !== "object" || Array.isArray(output)) {
+    return {
+      reject: false,
+      absenceAsDemand: false,
+      reasons: [],
+      detail: {
+        claimedSuccess: false,
+        claimedDemand: false,
+        absenceReasons: [],
+        principle: PRINCIPLE,
+        surface: meta.surface || "unknown",
+        invalidOutput: true,
+      },
+    };
+  }
+
   const absenceReasons = evidenceAbsent(output, meta);
   const demanded = claimDemand(output);
   const success = claimSuccess(output);
@@ -114,8 +133,8 @@ export function classifyAbsenceAsDemand(output, meta = {}) {
     reasons.push("invented_demand");
   }
 
-  // Core defect: absence evidence + demand/success claim
-  if (absenceReasons.length > 0 && (demanded || success)) {
+  // Absence plus a demand claim is the defect; ok:true alone is an honest report.
+  if (absenceReasons.length > 0 && demanded) {
     if (absenceReasons.includes("paid_activity_unavailable") || absenceReasons.includes("paid_activity_missing")) {
       reasons.push("unavailable_paid_activity_as_demand");
     }
