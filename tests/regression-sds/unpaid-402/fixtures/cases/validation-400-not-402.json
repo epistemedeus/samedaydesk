@@ -1,0 +1,18 @@
+{
+  "id": "validation-400-not-402",
+  "class": "defect",
+  "evaluate": "parse-payload",
+  "expected": "reject",
+  "expectCode": "status_400",
+  "defect": "Empty-body validation 400 is not an unpaid-402 challenge. Schema-valid input is required to reach 402 on some SDS routes.",
+  "http": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "error": "validation",
+      "message": "query too short"
+    }
+  }
+}

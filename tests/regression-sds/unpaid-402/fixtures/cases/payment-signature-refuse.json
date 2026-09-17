@@ -1,0 +1,13 @@
+{
+  "id": "payment-signature-refuse",
+  "class": "defect",
+  "evaluate": "secrets",
+  "expected": "reject",
+  "expectCode": "secret_material",
+  "defect": "Unpaid-402 observation must not carry PAYMENT-SIGNATURE / X-PAYMENT. This pack never settles.",
+  "material": {
+    "headers": {
+      "PAYMENT-SIGNATURE": "REFUSED_NOT_SENT"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "malformed-network",
+  "class": "defect",
+  "evaluate": "parse-payload",
+  "expected": "reject",
+  "expectCode": "malformed_accept",
+  "defect": "Compound network strings such as \"Base or Polygon\" are not a single CAIP-2 identifier.",
+  "http": {
+    "status": 402,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "x402Version": 2,
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "Base or Polygon",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "amount": "5000"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "invalid-json",
+  "class": "defect",
+  "evaluate": "parse-payload",
+  "expected": "reject",
+  "expectCode": "body_not_json",
+  "defect": "A 402 HTML/text body is not a live unpaid-402 contract.",
+  "origin": "fixtures/verified-feed/observations/extract-invalid-json.json",
+  "http": {
+    "status": 402,
+    "headers": {
+      "content-type": "text/html"
+    },
+    "body": "<html>not json</html>"
+  }
+}

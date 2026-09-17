@@ -1,0 +1,50 @@
+{
+  "id": "extract-current",
+  "class": "control",
+  "evaluate": "parse-payload",
+  "expected": "accept",
+  "expectCode": "current_unpaid_402",
+  "seededFalseReject": true,
+  "defect": "Control: a valid unpaid GET /extract 402 with atomic amount, asset, and a single CAIP-2 network is a current contract. Completing the fetch is not settlement.",
+  "origin": "fixtures/verified-feed/observations/extract-current.json",
+  "http": {
+    "status": 402,
+    "headers": {
+      "content-type": "application/json",
+      "payment-required": "fixture"
+    },
+    "body": {
+      "x402Version": 2,
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "amount": "5000",
+          "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+          "outputSchema": {
+            "output": {
+              "example": {
+                "aiReadiness": {},
+                "description": "",
+                "jsonLd": [],
+                "ok": true,
+                "title": "",
+                "url": ""
+              }
+            }
+          }
+        }
+      ],
+      "extensions": {
+        "bazaar": {
+          "schema": {
+            "properties": {
+              "output": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

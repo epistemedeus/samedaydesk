@@ -1,0 +1,18 @@
+{
+  "id": "failed-500",
+  "class": "defect",
+  "evaluate": "parse-payload",
+  "expected": "reject",
+  "expectCode": "status_500",
+  "defect": "Non-402 failure is not a current unpaid-402 claim. lastObservation stays null.",
+  "origin": "fixtures/verified-feed/observations/read-failed.json",
+  "http": {
+    "status": 500,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "error": "internal"
+    }
+  }
+}

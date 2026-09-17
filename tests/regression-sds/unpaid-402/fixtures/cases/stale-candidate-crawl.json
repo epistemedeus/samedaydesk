@@ -1,0 +1,9 @@
+{
+  "id": "stale-candidate-crawl",
+  "class": "defect",
+  "evaluate": "candidate-crawl",
+  "expected": "reject",
+  "expectCode": "stale_current_claim",
+  "defect": "buildCandidateCrawl must not copy stale lastVerified into a current live_unpaid_402 claim.",
+  "asOf": "2026-09-17T12:00:00.000Z"
+}
