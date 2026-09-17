@@ -1,0 +1,39 @@
+{
+  "schema": "samedaydesk.verify-sds.w1020-mcp-unpaid.v1",
+  "wave": "w1020",
+  "feature": "w1020-mcp-unpaid",
+  "ownedPath": "tools/verify-sds/w1020-mcp-unpaid/**",
+  "protocol": "2024-11-05",
+  "serverInfo": {
+    "name": "samedaydesk-agent-tools",
+    "version": "1.2.0"
+  },
+  "tools": [
+    "check_ai_readiness",
+    "generate_complete_fix_pack",
+    "plan_taskmarket_delegation",
+    "browse_taskmarket_tasks",
+    "track_taskmarket_task"
+  ],
+  "paidTool": "generate_complete_fix_pack",
+  "listOnly": true,
+  "never": [
+    "PAYMENT-SIGNATURE",
+    "X-PAYMENT",
+    "stripe-signature",
+    "tools/call of generate_complete_fix_pack",
+    "Stripe checkout",
+    "price/SKU edits",
+    "publish"
+  ],
+  "prior": {
+    "x70": "PR162 bot/w0-x70-mcp-unpaid tools/verify-sds/mcp-unpaid/**",
+    "x70rev": "PR182 heavy/w0-x70-mcp-unpaid-rev (Stripe/cs= refuse before socket)",
+    "x135": "PR175 tools/verify-sds/mcp-tools-call-unpaid-w7/** (tools/call isError; not this path)",
+    "b2": "PR148 heavy/w0-b2-verify-sds tools/verify/lib/mcp.mjs (patterns only)"
+  },
+  "shippedCite": {
+    "inventory": "server/lib/mcp-tool-inventory.js",
+    "route": "server/routes/mcp.js"
+  }
+}
