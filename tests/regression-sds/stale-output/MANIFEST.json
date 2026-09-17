@@ -1,0 +1,75 @@
+{
+  "schema": "samedaydesk.regression-sds.stale-output.catalog.v1",
+  "schemaVersion": 1,
+  "feature": "stale-output",
+  "repo": "samedaydesk",
+  "writeBoundary": "tests/regression-sds/stale-output/**",
+  "currentPin": {
+    "version": "1.4.7",
+    "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+    "bytes": 5255824
+  },
+  "seededGreenwash": "greenwash-stale-pin",
+  "cases": [
+    {
+      "id": "useful-jobs-stale-sha",
+      "file": "fixtures/cases/useful-jobs-stale-sha.json",
+      "surface": "useful-jobs",
+      "expect": "reject",
+      "class": "stale"
+    },
+    {
+      "id": "useful-jobs-stale-version",
+      "file": "fixtures/cases/useful-jobs-stale-version.json",
+      "surface": "useful-jobs",
+      "expect": "reject",
+      "class": "stale"
+    },
+    {
+      "id": "fabricated-fresh-stamp",
+      "file": "fixtures/cases/fabricated-fresh-stamp.json",
+      "surface": "verify",
+      "expect": "reject",
+      "class": "fabricated"
+    },
+    {
+      "id": "greenwash-stale-pin",
+      "file": "fixtures/cases/greenwash-stale-pin.json",
+      "surface": "useful-jobs",
+      "expect": "reject",
+      "class": "greenwash",
+      "seededGreenwash": true
+    },
+    {
+      "id": "listing-stale-digest",
+      "file": "fixtures/cases/listing-stale-digest.json",
+      "surface": "listing",
+      "expect": "reject",
+      "class": "stale"
+    },
+    {
+      "id": "verify-outdated-sha-pass",
+      "file": "fixtures/cases/verify-outdated-sha-pass.json",
+      "surface": "verify",
+      "expect": "reject",
+      "class": "stale"
+    },
+    {
+      "id": "current-pin-honest",
+      "file": "fixtures/cases/current-pin-honest.json",
+      "surface": "useful-jobs",
+      "expect": "accept",
+      "class": "control"
+    }
+  ],
+  "counts": {
+    "total": 7,
+    "reject": 6,
+    "accept": 1,
+    "greenwash": 1
+  },
+  "boundary": {
+    "paymentSent": false,
+    "stripeOrX402": false
+  }
+}

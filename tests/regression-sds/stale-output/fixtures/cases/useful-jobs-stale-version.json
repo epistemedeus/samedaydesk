@@ -1,0 +1,25 @@
+{
+  "schema": "samedaydesk.regression-sds.stale-output.fixture.v1",
+  "id": "useful-jobs-stale-version",
+  "surface": "useful-jobs",
+  "feature": "useful-jobs",
+  "class": "stale",
+  "expectReject": true,
+  "expectedReasons": ["greenwash", "stale_version", "stale_sha", "stale_bytes"],
+  "defect": "Claims pass while advertising outdated version 1.1.0 as the live kit.",
+  "origin": "client/public/for-agents/useful-jobs/useful-jobs-1.1.0.sha256.json",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "feature": "useful-jobs",
+    "surface": "useful-jobs",
+    "version": "1.1.0",
+    "sha256": "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534",
+    "bytes": 2577606,
+    "result": {
+      "version": "1.1.0",
+      "sha256": "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534",
+      "bytes": 2577606
+    }
+  }
+}
