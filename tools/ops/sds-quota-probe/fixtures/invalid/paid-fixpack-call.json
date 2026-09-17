@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "samedaydesk.ops.quota-probe.v1",
+  "mode": "read_only",
+  "observedAt": "2026-09-17T12:00:00.000Z",
+  "windows": [
+    {
+      "id": "mcp.fixpack",
+      "providerId": "samedaydesk",
+      "surface": "https://samedaydesk.com/mcp",
+      "authorityClass": "seller_observed",
+      "windowKind": "rate_limit",
+      "limit": 1,
+      "remaining": 0,
+      "used": 1,
+      "httpStatus": 200,
+      "httpMethod": "POST",
+      "rpcMethod": "tools/call",
+      "consumesQuota": false,
+      "toolNames": [
+        "check_ai_readiness",
+        "generate_complete_fix_pack",
+        "plan_taskmarket_delegation",
+        "browse_taskmarket_tasks",
+        "track_taskmarket_task"
+      ]
+    }
+  ]
+}
