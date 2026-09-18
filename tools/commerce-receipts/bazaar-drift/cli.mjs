@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 import { parseArgs } from "node:util";
+import { pathToFileURL } from "node:url";
+import { resolve } from "node:path";
 import {
   SEEDED_FAILURE,
   SEEDED_FAILURE_ALIASES,
@@ -10,44 +12,7 @@ import {
   runSuite,
 } from "./lib.mjs";
 
-const refused = refusedFlag(process.argv.slice(2));
-if (refused) {
-  process.stdout.write(
-    `${JSON.stringify({
-      ok: false,
-      schema: "samedaydesk.commerce-receipt.bazaar-drift.result.v1",
-      decision: "reject",
-      code: "REFUSED",
-      error: {
-        code: "REFUSED",
-        message: `${refused} is refused. This pack is unpaid offline bazaar-drift only.`,
-      },
-      paid: false,
-      paymentSent: false,
-      rematerialized: false,
-      liveSdsPricesUnchanged: true,
-      liveCdp: false,
-    })}\n`,
-  );
-  process.exit(2);
-}
-
-const { values, positionals } = parseArgs({
-  allowPositionals: true,
-  options: {
-    cold: { type: "boolean", default: false },
-    "from-repo": { type: "boolean", default: false },
-    suite: { type: "boolean", default: false },
-    "seeded-failure": { type: "string" },
-    case: { type: "string" },
-    "expect-reject": { type: "string" },
-    pretty: { type: "boolean", default: false },
-    help: { type: "boolean", default: false },
-  },
-});
-
-if (values.help) {
-  process.stdout.write(`SameDayDesk bazaar-drift commerce receipt (offline, unpaid).
+const HELP = `SameDayDesk bazaar-drift commerce receipt (offline, unpaid).
 
 Usage:
   node tools/commerce-receipts/bazaar-drift/cli.mjs --cold --pretty
@@ -66,113 +31,167 @@ Usage:
 
 Does not pay, checkout, publish, rematerialize, or rewrite SKUs.
 --live/--pay/--checkout/--publish/--rematerialize/--settle/--neo/--neo-kernel-vendor are refused (exit 2).
-`);
-  process.exit(0);
-}
+--seeded-failure exits 1 only when the designated seed is caught; a missed or accepted seed exits 2.
+`;
 
-const indent = values.pretty ? 2 : 0;
+export function runCli(argv = process.argv.slice(2), io = process) {
+  const refused = refusedFlag(argv);
+  if (refused) {
+    io.stdout.write(
+      `${JSON.stringify({
+        ok: false,
+        schema: "samedaydesk.commerce-receipt.bazaar-drift.result.v1",
+        decision: "reject",
+        code: "REFUSED",
+        error: {
+          code: "REFUSED",
+          message: `${refused} is refused. This pack is unpaid offline bazaar-drift only.`,
+        },
+        paid: false,
+        paymentSent: false,
+        rematerialized: false,
+        liveSdsPricesUnchanged: true,
+        liveCdp: false,
+      })}\n`,
+    );
+    return 2;
+  }
 
-function write(value, code) {
-  process.stdout.write(`${JSON.stringify(value, null, indent)}\n`);
-  process.exit(code);
-}
+  let values;
+  let positionals;
+  try {
+    ({ values, positionals } = parseArgs({
+      args: argv,
+      allowPositionals: true,
+      options: {
+        cold: { type: "boolean", default: false },
+        "from-repo": { type: "boolean", default: false },
+        suite: { type: "boolean", default: false },
+        "seeded-failure": { type: "string" },
+        case: { type: "string" },
+        "expect-reject": { type: "string" },
+        pretty: { type: "boolean", default: false },
+        help: { type: "boolean", default: false },
+      },
+    }));
+  } catch (cause) {
+    io.stderr.write(`${cause.message}\n`);
+    return 2;
+  }
 
-const modes = [
-  values.cold || values["from-repo"],
-  values.suite,
-  Boolean(values["seeded-failure"]),
-  Boolean(values.case) || positionals.length > 0,
-].filter(Boolean).length;
+  const indent = values.pretty ? 2 : 0;
+  const write = (value, code) => {
+    io.stdout.write(`${JSON.stringify(value, null, indent)}\n`);
+    return code;
+  };
 
-if (modes !== 1) {
-  process.stderr.write("Use exactly one of --cold/--from-repo, --suite, --seeded-failure, or --case.\n");
-  process.exit(2);
-}
+  if (values.help) {
+    io.stdout.write(HELP);
+    return 0;
+  }
 
-if (values.suite) {
-  const report = runSuite();
-  write(
-    {
-      ok: report.ok,
-      command: "suite",
-      passed: report.passed,
-      failed: report.failed,
-      total: report.total,
-      results: report.results.map((item) => ({
-        name: item.name,
-        expect: item.expect,
-        expectedCode: item.expectedCode,
-        ok: item.ok,
-        decision: item.decision,
-        codes: item.codes,
-      })),
-    },
-    report.ok ? 0 : 1,
-  );
-}
+  const modes = [
+    values.cold || values["from-repo"],
+    values.suite,
+    Boolean(values["seeded-failure"]),
+    Boolean(values.case) || positionals.length > 0,
+  ].filter(Boolean).length;
 
-if (values["seeded-failure"]) {
-  if (!SEEDED_FAILURE_ALIASES.includes(values["seeded-failure"])) {
-    write(
+  if (modes !== 1) {
+    io.stderr.write("Use exactly one of --cold/--from-repo, --suite, --seeded-failure, or --case.\n");
+    return 2;
+  }
+
+  if (values.suite) {
+    const report = runSuite();
+    return write(
+      {
+        ok: report.ok,
+        command: "suite",
+        passed: report.passed,
+        failed: report.failed,
+        total: report.total,
+        results: report.results.map((item) => ({
+          name: item.name,
+          expect: item.expect,
+          expectedCode: item.expectedCode,
+          ok: item.ok,
+          decision: item.decision,
+          codes: item.codes,
+        })),
+      },
+      report.ok ? 0 : 1,
+    );
+  }
+
+  if (values["seeded-failure"]) {
+    if (!SEEDED_FAILURE_ALIASES.includes(values["seeded-failure"])) {
+      return write(
+        {
+          ok: false,
+          command: "seeded-failure",
+          error: { code: "USAGE", message: "--seeded-failure must be rematerialized-read" },
+        },
+        2,
+      );
+    }
+    const seed = evaluateSeededFailure();
+    return write(
       {
         ok: false,
         command: "seeded-failure",
-        error: { code: "USAGE", message: "--seeded-failure must be rematerialized-read" },
+        seed: SEEDED_FAILURE,
+        error: seed.error,
+        caught: seed.caught,
+        result: {
+          file: seed.filePath ?? null,
+          caseId: seed.result?.caseId ?? null,
+          naiveVerdict: seed.result?.naiveVerdict ?? null,
+          honestVerdict: seed.result?.honestVerdict ?? null,
+          decision: seed.result?.decision ?? null,
+          codes: seed.result?.codes ?? [],
+          priceConflicts: seed.result?.priceConflicts ?? [],
+          rematerialized: seed.result?.rematerialized ?? null,
+          liveSdsPricesUnchanged: seed.result?.liveSdsPricesUnchanged ?? null,
+          paid: seed.result?.paid ?? null,
+        },
       },
-      2,
+      seed.caught ? 1 : 2,
     );
   }
-  const seed = evaluateSeededFailure();
-  write(
-    {
-      ok: false,
-      command: "seeded-failure",
-      seed: SEEDED_FAILURE,
-      error: seed.error,
-      caught: seed.caught,
-      result: {
-        file: seed.filePath ?? null,
-        caseId: seed.result?.caseId ?? null,
-        naiveVerdict: seed.result?.naiveVerdict ?? null,
-        honestVerdict: seed.result?.honestVerdict ?? null,
-        decision: seed.result?.decision ?? null,
-        codes: seed.result?.codes ?? [],
-        priceConflicts: seed.result?.priceConflicts ?? [],
-        rematerialized: seed.result?.rematerialized ?? null,
-        liveSdsPricesUnchanged: seed.result?.liveSdsPricesUnchanged ?? null,
-        paid: seed.result?.paid ?? null,
+
+  if (values.cold || values["from-repo"]) {
+    const result = evaluateCold();
+    return write({ ...result, command: values["from-repo"] ? "from-repo" : "cold" }, result.ok ? 0 : 1);
+  }
+
+  const casePath = values.case || positionals[0];
+  const result = evaluateFile(casePath);
+  if (values["expect-reject"]) {
+    const ok = !result.ok && result.codes.includes(values["expect-reject"]);
+    return write(
+      {
+        ok,
+        expectReject: values["expect-reject"],
+        file: result.filePath,
+        caseId: result.caseId,
+        naiveVerdict: result.naiveVerdict,
+        honestVerdict: result.honestVerdict,
+        decision: result.decision,
+        codes: result.codes,
+        errors: result.errors,
+        rematerialized: result.rematerialized,
+        liveSdsPricesUnchanged: result.liveSdsPricesUnchanged,
+        paid: result.paid,
       },
-    },
-    1,
-  );
+      ok ? 0 : 1,
+    );
+  }
+
+  return write(result, result.ok ? 0 : 1);
 }
 
-if (values.cold || values["from-repo"]) {
-  const result = evaluateCold();
-  write({ ...result, command: values["from-repo"] ? "from-repo" : "cold" }, result.ok ? 0 : 1);
+const isMain = process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url;
+if (isMain) {
+  process.exit(runCli());
 }
-
-const casePath = values.case || positionals[0];
-const result = evaluateFile(casePath);
-if (values["expect-reject"]) {
-  const ok = !result.ok && result.codes.includes(values["expect-reject"]);
-  write(
-    {
-      ok,
-      expectReject: values["expect-reject"],
-      file: result.filePath,
-      caseId: result.caseId,
-      naiveVerdict: result.naiveVerdict,
-      honestVerdict: result.honestVerdict,
-      decision: result.decision,
-      codes: result.codes,
-      errors: result.errors,
-      rematerialized: result.rematerialized,
-      liveSdsPricesUnchanged: result.liveSdsPricesUnchanged,
-      paid: result.paid,
-    },
-    ok ? 0 : 1,
-  );
-}
-
-write(result, result.ok ? 0 : 1);

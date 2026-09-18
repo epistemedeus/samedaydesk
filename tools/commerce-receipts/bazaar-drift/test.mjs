@@ -189,6 +189,10 @@ test("CLI --seeded-failure rematerialized-read exits 1", () => {
   assert.equal(body.result.codes.includes("rematerialized_claim"), true);
   assert.equal(body.result.liveSdsPricesUnchanged, true);
   assert.equal(body.result.rematerialized, false);
+  assert.equal(
+    body.result.file,
+    "tools/commerce-receipts/bazaar-drift/fixtures/reject/rematerialized-read.json",
+  );
   const alias = runCli(["--seeded-failure", "read-claimed-match"]);
   assert.equal(alias.status, 1, alias.stderr || alias.stdout);
   assert.equal(JSON.parse(alias.stdout).error.code, "SEED_REJECT");
@@ -241,4 +245,23 @@ test("catalog designated seed and cold case paths exist", () => {
   assert.equal(catalog.designatedSeed.code, "rematerialized_claim");
   assert.equal(loadJson(DEFAULT_COLD_CASE).caseId, "cold-committed");
   assert.equal(loadJson(designatedSeedPath()).caseId, "rematerialized-read");
+});
+
+test("an accepted cold case is not a caught seeded failure", () => {
+  const seed = evaluateSeededFailure({
+    ...catalog,
+    designatedSeed: { ...catalog.designatedSeed, file: "cases/cold-committed.json" },
+  });
+  assert.equal(seed.caught, false);
+  assert.equal(seed.error.code, "SEED_ACCEPTED");
+});
+
+test("foreign-origin bazaar pin is not joined as SameDayDesk", () => {
+  const pin = structuredClone(loadBazaarPin());
+  pin.listings = pin.listings.map((row) =>
+    row.route === "/read" ? { ...row, resource: "https://evil.example/read" } : row,
+  );
+  const result = evaluateCold({ bazaarPin: pin });
+  assert.equal(result.ok, false);
+  assert.equal(result.codes.includes("foreign_origin"), true);
 });

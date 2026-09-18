@@ -291,6 +291,12 @@ export function crossCheckPins(originPin, bazaarPin, { root = REPO_ROOT } = {}) 
   }
   const observedRoutes = new Set(observation.routes.map((row) => row.route));
   for (const row of bazaarPin.listings ?? []) {
+    const host = hostOf(row.resource);
+    if (host && host !== SDS_HOST) {
+      errors.push(
+        error("foreign_origin", `bazaar:${row.route}`, `listing host ${host} is not ${SDS_HOST}`),
+      );
+    }
     if (!observedRoutes.has(row.route)) {
       errors.push(error("pin_repo_mismatch", `observation:${row.route}`, "not in committed SDS observation"));
     }
@@ -674,6 +680,7 @@ export function evaluateSeededFailure(catalog = loadCatalog()) {
     };
   }
   const filePath = designatedSeedPath(catalog);
+  const shown = relativeIfPossible(filePath);
   const input = loadJson(filePath);
   const result = evaluateCase(input, { catalog });
   const caught =
@@ -687,7 +694,7 @@ export function evaluateSeededFailure(catalog = loadCatalog()) {
     return {
       ok: false,
       caught: false,
-      filePath,
+      filePath: shown,
       result,
       error: {
         code: result.ok ? "SEED_ACCEPTED" : "SEED_MISS",
@@ -700,7 +707,7 @@ export function evaluateSeededFailure(catalog = loadCatalog()) {
   return {
     ok: false,
     caught: true,
-    filePath,
+    filePath: shown,
     result,
     error: {
       code: "SEED_REJECT",
@@ -716,7 +723,7 @@ export function evaluateFile(filePath, options = {}) {
   } catch (cause) {
     return {
       ok: false,
-      filePath,
+      filePath: relativeIfPossible(filePath),
       schema: RESULT_SCHEMA,
       decision: "reject",
       code: "invalid_json",
@@ -728,7 +735,7 @@ export function evaluateFile(filePath, options = {}) {
       ...honestyEnvelope(),
     };
   }
-  return { ...evaluateCase(input, options), filePath };
+  return { ...evaluateCase(input, options), filePath: relativeIfPossible(filePath) };
 }
 
 export function runSuite(catalog = loadCatalog()) {
@@ -745,7 +752,7 @@ export function runSuite(catalog = loadCatalog()) {
     }
     results.push({
       name,
-      filePath,
+      filePath: relativeIfPossible(filePath),
       expect: spec.expect,
       expectedCode: spec.code ?? null,
       ok: matched,

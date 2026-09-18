@@ -51,6 +51,7 @@ node tools/commerce-receipts/bazaar-drift/cli.mjs --seeded-failure read-claimed-
 ```
 
 Exit 1, `error.code` `SEED_REJECT`, `codes` includes `rematerialized_claim`.
+A missed or accepted seed exits 2. Bazaar pin resources must be the SDS host.
 
 Other refusals under `fixtures/reject/`:
 
