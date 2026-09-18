@@ -104,12 +104,40 @@
       "expect": "reject",
       "class": "absence-as-demand",
       "expectedReasons": ["absence_as_demand", "unpaid_402_trace_as_demand"]
+    },
+    {
+      "id": "moltjobs-unlabeled-composition-as-demand",
+      "file": "fixtures/cases/moltjobs-unlabeled-composition-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "composition_as_conversion"]
+    },
+    {
+      "id": "liquidity-unlabeled-as-demand",
+      "file": "fixtures/cases/liquidity-unlabeled-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "liquidity_funnel_as_demand"]
+    },
+    {
+      "id": "x402stats-series-unlabeled-as-demand",
+      "file": "fixtures/cases/x402stats-series-unlabeled-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "series_buyers_as_unique_humans"]
+    },
+    {
+      "id": "buyer-setup-nested-as-demand",
+      "file": "fixtures/cases/buyer-setup-nested-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "unpaid_402_trace_as_demand"]
     }
   ],
   "counts": {
-    "total": 14,
+    "total": 18,
     "accept": 4,
-    "reject": 10,
+    "reject": 14,
     "seededAbsenceAsDemand": 1
   },
   "boundary": {

@@ -55,3 +55,7 @@ node --test tests/regression-sds/w822-absence/*.test.mjs
 | liquidity-funnel-as-demand | absence-as-demand | reject |
 | series-buyers-as-unique-humans | absence-as-demand | reject |
 | unpaid-402-trace-as-demand | absence-as-demand | reject |
+| moltjobs-unlabeled-composition-as-demand | absence-as-demand | reject |
+| liquidity-unlabeled-as-demand | absence-as-demand | reject |
+| x402stats-series-unlabeled-as-demand | absence-as-demand | reject |
+| buyer-setup-nested-as-demand | absence-as-demand | reject |

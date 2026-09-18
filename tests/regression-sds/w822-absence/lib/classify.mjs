@@ -1,17 +1,42 @@
 /**
- * Classify claim envelopes that treat SDS absence as demand (w822).
- *
- * Distinct from w7 (route/catalog/organic/pricing/commerce) and w1122
- * (pulse GET /mcp, owner-QA, uniqueHumans). This classifier covers:
- * documented-unavailable x402scan, moltjobs composition≠conversion,
- * non-additive sources, missing≠zero, stale/partial, scoped no-change,
- * presence snapshots, liquidity-as-funnel, series-buyers-as-humans,
- * unpaid 402 traces.
+ * Absence of SDS evidence is not market or paid demand.
  */
 import { PRINCIPLE } from "./root.mjs";
 
 function asObject(value) {
   return value && typeof value === "object" && !Array.isArray(value) ? value : null;
+}
+
+function claimBags(output, meta = {}) {
+  const bags = [];
+  for (const obj of [output, meta]) {
+    if (!asObject(obj)) continue;
+    bags.push(obj);
+    if (asObject(obj.claims)) bags.push(obj.claims);
+    if (asObject(obj.evidence)) {
+      bags.push(obj.evidence);
+      if (asObject(obj.evidence.claims)) bags.push(obj.evidence.claims);
+    }
+    if (asObject(obj.payment)) bags.push(obj.payment);
+  }
+  return bags;
+}
+
+function ratioKeys(paid) {
+  const rows = Array.isArray(paid?.refusedRatios) ? paid.refusedRatios : [];
+  return rows
+    .map((row) => (asObject(row) ? row.key : row))
+    .filter((key) => typeof key === "string" && key.length > 0);
+}
+
+function doesNotEstablishList(output, paid) {
+  const lists = [paid?.doesNotEstablish, output?.doesNotEstablish];
+  const out = [];
+  for (const list of lists) {
+    if (!Array.isArray(list)) continue;
+    for (const item of list) out.push(String(item));
+  }
+  return out;
 }
 
 export function claimDemand(output) {
@@ -47,14 +72,15 @@ export function claimDemand(output) {
   return false;
 }
 
-export function demandWithheld(output) {
-  if (!asObject(output)) return false;
-  if (output.notDemand === true) return true;
-  if (output.claims && output.claims.notDemand === true) return true;
-  if (output.demand === false && output.paidDemand === false) return true;
-  if (output.demandSignal === "withheld" || output.demandSignal === "absent-not-demand") return true;
-  const withheld = output.withheldConclusions;
-  if (Array.isArray(withheld) && withheld.some((item) => /demand/i.test(String(item)))) return true;
+export function demandWithheld(output, meta = {}) {
+  if (!asObject(output) && !asObject(meta)) return false;
+  for (const bag of claimBags(output, meta)) {
+    if (bag.notDemand === true) return true;
+    if (bag.demandSignal === "withheld" || bag.demandSignal === "absent-not-demand") return true;
+    const withheld = bag.withheldConclusions;
+    if (Array.isArray(withheld) && withheld.some((item) => /demand/i.test(String(item)))) return true;
+  }
+  if (asObject(output) && output.demand === false && output.paidDemand === false) return true;
   return false;
 }
 
@@ -64,6 +90,11 @@ export function evidenceAbsent(output, meta = {}) {
 
   const paid = asObject(output.paidActivity) || asObject(meta.paidActivity);
   const claims = asObject(output.claims);
+  const evidence = asObject(output.evidence) || asObject(meta.evidence);
+  const nestedClaims = asObject(evidence?.claims) || claims;
+  const payment = asObject(output.payment) || asObject(meta.payment);
+  const refused = ratioKeys(paid);
+  const doesNot = doesNotEstablishList(output, paid);
 
   if (paid && paid.available === false) reasons.push("paid_activity_unavailable");
   if (paid && (paid.state === "missing" || asObject(paid.reconcile)?.state === "missing")) {
@@ -87,7 +118,9 @@ export function evidenceAbsent(output, meta = {}) {
     output.composition === true ||
     output.compositionAsConversion === true ||
     output.refusedRatioKey === "marketplaceJobs_over_totalJobs_as_conversion" ||
-    output.evidenceClass === "composition_not_conversion"
+    refused.includes("marketplaceJobs_over_totalJobs_as_conversion") ||
+    output.evidenceClass === "composition_not_conversion" ||
+    sourceId === "moltjobs"
   ) {
     reasons.push("composition_not_conversion");
   }
@@ -142,7 +175,11 @@ export function evidenceAbsent(output, meta = {}) {
   if (
     output.liquidityNotFunnel === true ||
     output.liquidityFunnelAsDemand === true ||
-    output.evidenceClass === "liquidity_not_funnel"
+    output.evidenceClass === "liquidity_not_funnel" ||
+    output.conversionFunnel === true ||
+    (typeof output.paidCustomers === "number" && output.paidCustomers > 0 && sourceId === "moltjobs") ||
+    refused.some((key) => /everPaid_over_registered|bidding30d_over_registered|everPaid_over_bidding/.test(key)) ||
+    doesNot.some((item) => /conversion funnel/i.test(item))
   ) {
     reasons.push("liquidity_not_funnel");
   }
@@ -150,7 +187,10 @@ export function evidenceAbsent(output, meta = {}) {
   if (
     output.seriesBuyersNotHumans === true ||
     output.seriesBuyersAsUniqueHumans === true ||
-    output.evidenceClass === "series_buyers_not_humans"
+    output.evidenceClass === "series_buyers_not_humans" ||
+    sourceId === "x402stats" ||
+    refused.some((key) => /series_buyers/.test(key)) ||
+    doesNot.some((item) => /unique humans/i.test(item))
   ) {
     reasons.push("series_buyers_not_humans");
   }
@@ -161,11 +201,19 @@ export function evidenceAbsent(output, meta = {}) {
     output.buyerSetupTraceAsDemand === true ||
     output.unpaid402AsDemand === true ||
     output.surface === "buyer-setup-trace" ||
-    meta.surface === "buyer-setup-trace"
+    meta.surface === "buyer-setup-trace" ||
+    output.recipeId === "buyer-setup-trace" ||
+    evidence?.kind === "buyer_setup_trace"
   ) {
     reasons.push("unpaid_402_trace");
   }
   if (output.paymentSent === false && (output.buyerSetupTrace === true || output.unpaid402 === true)) {
+    reasons.push("unpaid_402_trace");
+  }
+  if (
+    (nestedClaims?.paymentSent === false || payment?.paid === false || payment?.signed === false) &&
+    (output.recipeId === "buyer-setup-trace" || evidence?.kind === "buyer_setup_trace" || output.surface === "buyer-setup-trace")
+  ) {
     reasons.push("unpaid_402_trace");
   }
 
@@ -176,7 +224,7 @@ export function evidenceAbsent(output, meta = {}) {
     reasons.push("explicit_absence");
   }
 
-  if (claims?.notDemand === true && claimDemand(output)) {
+  if ((nestedClaims?.notDemand === true || claims?.notDemand === true) && claimDemand(output)) {
     reasons.push("contradiction_not_demand");
   }
 
@@ -203,7 +251,7 @@ function treatsAbsenceAsZero(output) {
 export function classifyAbsenceAsDemand(output, meta = {}) {
   const absenceReasons = evidenceAbsent(output, meta);
   const demanded = claimDemand(output);
-  const withheld = demandWithheld(output);
+  const withheld = demandWithheld(output, meta);
   const asZero = treatsAbsenceAsZero(output);
   const reasons = [];
   const detail = {
@@ -231,6 +279,10 @@ export function classifyAbsenceAsDemand(output, meta = {}) {
     if (absenceReasons.includes("missing_not_zero")) {
       reasons.push("missing_as_zero_demand");
     }
+  }
+
+  if (demanded && withheld) {
+    reasons.push("contradiction_not_demand");
   }
 
   if (absenceReasons.length > 0 && demanded) {
@@ -269,7 +321,7 @@ export function classifyAbsenceAsDemand(output, meta = {}) {
     if (absenceReasons.includes("unpaid_402_trace")) {
       reasons.push("unpaid_402_trace_as_demand");
     }
-    if (absenceReasons.includes("contradiction_not_demand")) {
+    if (absenceReasons.includes("contradiction_not_demand") && !reasons.includes("contradiction_not_demand")) {
       reasons.push("contradiction_not_demand");
     }
     if (absenceReasons.includes("explicit_absence") && !reasons.includes("treat_absence_as_demand")) {

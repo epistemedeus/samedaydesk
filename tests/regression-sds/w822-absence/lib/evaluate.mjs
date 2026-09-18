@@ -26,7 +26,7 @@ export function evaluateFixture(raw, expect = "reject") {
       exit = 1;
       error = {
         code: raw.seededAbsenceAsDemand ? "SEED_REJECT" : "FALSE_REJECT",
-        message: verdict.reject
+        message: raw.seededAbsenceAsDemand
           ? `seeded accept refused: ${raw.id || "case"} treats absence as demand`
           : `fixture ${raw.id || "case"} rejected unexpectedly`,
         reasons: verdict.reasons,

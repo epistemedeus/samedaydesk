@@ -71,7 +71,7 @@ async function main(argv = process.argv.slice(2)) {
   } catch (error) {
     const body = failEnvelope("run", { code: error.code || "BAD_ARGS", message: error.message });
     process.stdout.write(`${JSON.stringify(body)}\n`);
-    process.exitCode = error.code === "LIVE_FORBIDDEN" ? 2 : 2;
+    process.exitCode = 2;
     return;
   }
 
