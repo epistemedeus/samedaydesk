@@ -42,8 +42,10 @@ node tools/verify-sds/wellknown-ops-diff/cli.mjs --seeded-failure live
 node tools/verify-sds/wellknown-ops-diff/cli.mjs --seeded-failure payment-signature
 ```
 
-`--live` exits 2 (`LIVE_REFUSE`). Seeded claim/demand/ghost exits 1. Cold diff
-exits 0 when the committed 8-vs-23 gap is reported honestly.
+`--live` and `--live=*` exit 2 (`LIVE_REFUSE`). Missing values for `--wellknown`,
+`--tracker`, `--claim`, `--fixture`, and `--seeded-failure` exit 2 (`USAGE`)
+instead of consuming the next dashed flag as a path. Seeded claim/demand/ghost
+exits 1. Cold diff exits 0 when the committed 8-vs-23 gap is reported honestly.
 
 ## Seeded failures
 
@@ -59,4 +61,4 @@ exits 0 when the committed 8-vs-23 gap is reported honestly.
 
 - Presence catalog capture: `fixtures/presence/catalog/x402.json`
 - Bazaar tracker SDS seller: `data/bazaar-tracker/observations.json`
-- Related (out of this write boundary): PR 186 `tools/bazaar-tracker` 8-vs-26 evidence ops
+- Related (out of this write boundary): `tools/bazaar-tracker` SDS seller coverage in `data/bazaar-tracker/observations.json`

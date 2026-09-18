@@ -103,6 +103,26 @@ export function refuseStripePath({ path = "/api/checkout" } = {}) {
 }
 
 export function claimMatchEnvelope(diff) {
+  if (diff.aligned) {
+    return envelope({
+      ok: false,
+      command: "seeded",
+      feature: FEATURE,
+      status: "fail",
+      error: failError(
+        "SEED_GAP_VANISHED",
+        "claim-match seed requires the committed well-known vs tracker gap; catalogs are aligned",
+        { seed: "claim-match", aligned: true },
+      ),
+      result: {
+        seed: "claim-match",
+        refused: true,
+        claim: "aligned",
+        aligned: true,
+        catalogAbsenceIsDemand: false,
+      },
+    });
+  }
   return envelope({
     ok: false,
     command: "seeded",
@@ -133,6 +153,26 @@ export function claimMatchEnvelope(diff) {
 
 export function absenceAsDemandEnvelope(diff) {
   const sample = diff.wellKnownOnly?.[0] ?? null;
+  if (!sample) {
+    return envelope({
+      ok: false,
+      command: "seeded",
+      feature: FEATURE,
+      status: "fail",
+      error: failError(
+        "SEED_GAP_VANISHED",
+        "absence-as-demand seed requires a well-known-only route; none remain",
+        { seed: "absence-as-demand", wellKnownOnlyPathCount: 0 },
+      ),
+      result: {
+        seed: "absence-as-demand",
+        refused: true,
+        treatAbsenceAsDemand: false,
+        catalogAbsenceIsDemand: false,
+        wellKnownOnlyPaths: [],
+      },
+    });
+  }
   return envelope({
     ok: false,
     command: "seeded",
@@ -140,7 +180,7 @@ export function absenceAsDemandEnvelope(diff) {
     status: "fail",
     error: failError(
       "ABSENCE_IS_NOT_DEMAND",
-      `seeded claim that well-known-only ${sample ? opLabel(sample) : "ops"} are buyer demand is rejected`,
+      `seeded claim that well-known-only ${opLabel(sample)} are buyer demand is rejected`,
       {
         seed: "absence-as-demand",
         sample,

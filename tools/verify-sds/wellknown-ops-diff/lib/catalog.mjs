@@ -52,7 +52,16 @@ export const FORBIDDEN_OUTPUT_FIELDS = Object.freeze([
   "asset",
   "network",
   "facilitator",
+  "accepts",
 ]);
+
+export class CatalogLoadError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "CatalogLoadError";
+    this.code = "USAGE";
+  }
+}
 export const FORBIDDEN_INVENTED_FIELDS = Object.freeze([
   "loyaltyPoints",
   "throughBlock",
@@ -118,9 +127,14 @@ export function resolvePath(path, cwd = process.cwd()) {
 export function loadJson(path) {
   const full = resolvePath(path);
   if (!full || !existsSync(full)) {
-    throw new Error(`json not found: ${path}`);
+    throw new CatalogLoadError(`json not found: ${path}`);
   }
-  return JSON.parse(readFileSync(full, "utf8"));
+  try {
+    return JSON.parse(readFileSync(full, "utf8"));
+  } catch (error) {
+    if (error instanceof CatalogLoadError) throw error;
+    throw new CatalogLoadError(`invalid json: ${path}`);
+  }
 }
 
 function stripQuery(urlLike) {
@@ -248,29 +262,39 @@ function sortOps(ops) {
 export function loadWellKnown(path = DEFAULT_WELLKNOWN_ARTIFACT) {
   const full = resolvePath(path) || path;
   const doc = loadJson(full);
-  return {
-    path: full,
-    source: relativeToRepo(full),
-    x402Version: doc?.x402Version ?? null,
-    lastUpdated: doc?.lastUpdated ?? null,
-    ops: opsFromWellKnown(doc),
-  };
+  try {
+    return {
+      path: full,
+      source: relativeToRepo(full),
+      x402Version: doc?.x402Version ?? null,
+      lastUpdated: doc?.lastUpdated ?? null,
+      ops: opsFromWellKnown(doc),
+    };
+  } catch (error) {
+    if (error instanceof CatalogLoadError) throw error;
+    throw new CatalogLoadError(error.message);
+  }
 }
 
 export function loadTracker(path = DEFAULT_TRACKER_ARTIFACT) {
   const full = resolvePath(path) || path;
   const doc = loadJson(full);
-  const seller = doc?.sources?.[CDP_DISCOVERY_SOURCE]?.sellers?.[SDS_SELLER_ID];
-  return {
-    path: full,
-    source: relativeToRepo(full),
-    observedAt: doc?.observedAt ?? null,
-    captureSource: doc?.captureSource ?? null,
-    schema: doc?.schema ?? null,
-    sellerId: SDS_SELLER_ID,
-    partial: Boolean(seller?.partial),
-    routes: routesFromTracker(doc),
-  };
+  try {
+    const seller = doc?.sources?.[CDP_DISCOVERY_SOURCE]?.sellers?.[SDS_SELLER_ID];
+    return {
+      path: full,
+      source: relativeToRepo(full),
+      observedAt: doc?.observedAt ?? null,
+      captureSource: doc?.captureSource ?? null,
+      schema: doc?.schema ?? null,
+      sellerId: SDS_SELLER_ID,
+      partial: Boolean(seller?.partial),
+      routes: routesFromTracker(doc),
+    };
+  } catch (error) {
+    if (error instanceof CatalogLoadError) throw error;
+    throw new CatalogLoadError(error.message);
+  }
 }
 
 export function relativeToRepo(path) {

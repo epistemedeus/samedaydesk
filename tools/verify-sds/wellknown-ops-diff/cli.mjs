@@ -15,6 +15,7 @@ import { isAbsolute, join } from "node:path";
 import {
   COMPACT_TRACKER,
   COMPACT_WELLKNOWN,
+  CatalogLoadError,
   DEFAULT_TRACKER_ARTIFACT,
   DEFAULT_WELLKNOWN_ARTIFACT,
   PACK_ROOT,
@@ -36,6 +37,31 @@ import {
   runSeeded,
 } from "./lib/refuse.mjs";
 
+const VALUE_FLAGS = Object.freeze({
+  wellknown: true,
+  tracker: true,
+  claim: true,
+  fixture: true,
+  header: true,
+  path: true,
+});
+
+function flagName(token) {
+  if (typeof token !== "string" || !token.startsWith("--")) return null;
+  const body = token.slice(2);
+  const eq = body.indexOf("=");
+  return (eq === -1 ? body : body.slice(0, eq)).toLowerCase();
+}
+
+function isLiveFlag(token) {
+  const name = flagName(token);
+  return name === "live" || (name != null && name.startsWith("live-"));
+}
+
+function isValueToken(token) {
+  return typeof token === "string" && token.length > 0 && !token.startsWith("-");
+}
+
 function parseArgs(argv) {
   const out = {
     tokens: [],
@@ -47,32 +73,86 @@ function parseArgs(argv) {
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
-    if (a === "--help" || a === "-h") out.help = true;
-    else if (a === "--json") out.json = true;
-    else if (a === "--pretty") out.pretty = true;
-    else if (a === "--human") out.json = false;
-    else if (a === "--seeded-failure") {
-      out.seededId = argv[++i];
-      if (!out.seededId) out.missing = "--seeded-failure";
-    } else if (a === "--wellknown") out.flags.wellknown = argv[++i];
-    else if (a === "--tracker") out.flags.tracker = argv[++i];
-    else if (a === "--claim") out.flags.claim = argv[++i];
-    else if (a === "--fixture") out.flags.fixture = argv[++i];
-    else if (a === "--live") out.flags.live = true;
-    else if (a.startsWith("--")) {
-      const key = a.slice(2);
+    if (a === "--help" || a === "-h") {
+      out.help = true;
+      continue;
+    }
+    if (a === "--json") {
+      out.json = true;
+      continue;
+    }
+    if (a === "--pretty") {
+      out.pretty = true;
+      continue;
+    }
+    if (a === "--human") {
+      out.json = false;
+      out.pretty = true;
+      continue;
+    }
+    if (isLiveFlag(a)) {
+      out.flags.live = true;
+      out.flags.liveFlag = a;
+      continue;
+    }
+
+    const name = flagName(a);
+    const eq = typeof a === "string" ? a.indexOf("=") : -1;
+    const inline = eq >= 2 && a.startsWith("--") ? a.slice(eq + 1) : null;
+
+    if (name === "seeded-failure") {
+      const value = inline != null ? inline : argv[i + 1];
+      if (inline == null && isValueToken(argv[i + 1])) i++;
+      if (!isValueToken(value)) out.missing = "--seeded-failure";
+      else out.seededId = value;
+      continue;
+    }
+
+    if (name && VALUE_FLAGS[name]) {
+      const value = inline != null ? inline : argv[i + 1];
+      if (inline == null && isValueToken(argv[i + 1])) i++;
+      if (!isValueToken(value)) out.missing = `--${name}`;
+      else out.flags[name] = value;
+      continue;
+    }
+
+    if (typeof a === "string" && a.startsWith("--")) {
+      const key = name || a.slice(2);
       const next = argv[i + 1];
-      if (next && !next.startsWith("--")) {
+      if (inline != null) out.flags[key] = inline || true;
+      else if (isValueToken(next)) {
         out.flags[key] = next;
         i++;
       } else {
         out.flags[key] = true;
       }
-    } else {
-      out.tokens.push(a);
+      continue;
     }
+
+    out.tokens.push(a);
   }
   return out;
+}
+
+function usageEnvelope(command, message, detail) {
+  return envelope({
+    ok: false,
+    command,
+    status: "usage",
+    error: failError("USAGE", message, detail),
+  });
+}
+
+function loadOrUsage(command, fn) {
+  try {
+    return fn();
+  } catch (error) {
+    const message = error?.message || String(error);
+    const usage = error instanceof CatalogLoadError
+      || /json not found|invalid json|has no items|missing SDS seller/i.test(message);
+    if (usage) return usageEnvelope(command, message);
+    throw error;
+  }
 }
 
 function usage() {
@@ -94,10 +174,18 @@ Options:
   --tracker PATH          bazaar-tracker observations (default: data/bazaar-tracker/observations.json)
   --claim PATH            extra claim JSON evaluated against the diff
   --json / --pretty       JSON envelope on stdout
-  --live                  refused (this pack is offline)
+  --live / --live=*       refused (this pack is offline)
 
 Catalog absence is not buyer demand. Never send PAYMENT-SIGNATURE, X-PAYMENT, or Stripe.
 `;
+}
+
+function readJsonFile(full) {
+  try {
+    return JSON.parse(readFileSync(full, "utf8"));
+  } catch {
+    throw new CatalogLoadError(`invalid json: ${full}`);
+  }
 }
 
 function loadOptionalJson(path) {
@@ -105,10 +193,10 @@ function loadOptionalJson(path) {
   const full = resolvePath(path);
   if (!full || !existsSync(full)) {
     const alt = isAbsolute(path) ? path : join(PACK_ROOT, path);
-    if (existsSync(alt)) return JSON.parse(readFileSync(alt, "utf8"));
+    if (existsSync(alt)) return readJsonFile(alt);
     return null;
   }
-  return JSON.parse(readFileSync(full, "utf8"));
+  return readJsonFile(full);
 }
 
 function loadGhostTracker() {
@@ -155,22 +243,19 @@ function diffEnvelope(wellKnown, tracker, { command = "diff", claims = null } = 
 }
 
 function coldDiff(parsed) {
-  const wellKnown = loadWellKnown(parsed.flags.wellknown || DEFAULT_WELLKNOWN_ARTIFACT);
-  const tracker = loadTracker(parsed.flags.tracker || DEFAULT_TRACKER_ARTIFACT);
-  const claims = parsed.flags.claim ? loadOptionalJson(parsed.flags.claim) : null;
-  if (parsed.flags.claim && !claims) {
-    return envelope({
-      ok: false,
-      command: "diff",
-      status: "usage",
-      error: failError("USAGE", `claim file not found: ${parsed.flags.claim}`),
-    });
-  }
-  return diffEnvelope(wellKnown, tracker, { claims });
+  return loadOrUsage("diff", () => {
+    const wellKnown = loadWellKnown(parsed.flags.wellknown || DEFAULT_WELLKNOWN_ARTIFACT);
+    const tracker = loadTracker(parsed.flags.tracker || DEFAULT_TRACKER_ARTIFACT);
+    const claims = parsed.flags.claim ? loadOptionalJson(parsed.flags.claim) : null;
+    if (parsed.flags.claim && !claims) {
+      return usageEnvelope("diff", `claim file not found: ${parsed.flags.claim}`);
+    }
+    return diffEnvelope(wellKnown, tracker, { claims });
+  });
 }
 
 function seededFromDiff(seedId, parsed) {
-  if (seedId === "live") return refuseLive();
+  if (seedId === "live") return refuseLive({ flag: parsed.flags.liveFlag || "--live" });
   if (seedId === "payment-signature") {
     return refusePaymentSignature({ header: parsed.flags.header || "PAYMENT-SIGNATURE" });
   }
@@ -178,29 +263,31 @@ function seededFromDiff(seedId, parsed) {
     return refuseStripePath({ path: parsed.flags.path || "/api/checkout" });
   }
 
-  const wellKnown = loadWellKnown(parsed.flags.wellknown || DEFAULT_WELLKNOWN_ARTIFACT);
-  if (seedId === "ghost-tracker") {
-    const tracker = loadGhostTracker();
-    const report = runDiff({
-      wellKnown,
-      tracker,
-      expectedTrackerCount: null,
-    });
-    if ((report.trackerOnly ?? []).length === 0) {
-      return envelope({
-        ok: false,
-        command: "seeded",
-        error: failError("RUNTIME", "ghost-tracker fixture did not produce a tracker-only route"),
+  return loadOrUsage("seeded", () => {
+    const wellKnown = loadWellKnown(parsed.flags.wellknown || DEFAULT_WELLKNOWN_ARTIFACT);
+    if (seedId === "ghost-tracker") {
+      const tracker = loadGhostTracker();
+      const report = runDiff({
+        wellKnown,
+        tracker,
+        expectedTrackerCount: null,
       });
+      if ((report.trackerOnly ?? []).length === 0) {
+        return envelope({
+          ok: false,
+          command: "seeded",
+          error: failError("RUNTIME", "ghost-tracker fixture did not produce a tracker-only route"),
+        });
+      }
+      return ghostTrackerEnvelope(report);
     }
-    return ghostTrackerEnvelope(report);
-  }
 
-  const tracker = loadTracker(parsed.flags.tracker || DEFAULT_TRACKER_ARTIFACT);
-  const report = runDiff({ wellKnown, tracker });
-  if (seedId === "claim-match") return claimMatchEnvelope(report);
-  if (seedId === "absence-as-demand") return absenceAsDemandEnvelope(report);
-  return runSeeded(seedId, parsed.flags);
+    const tracker = loadTracker(parsed.flags.tracker || DEFAULT_TRACKER_ARTIFACT);
+    const report = runDiff({ wellKnown, tracker });
+    if (seedId === "claim-match") return claimMatchEnvelope(report);
+    if (seedId === "absence-as-demand") return absenceAsDemandEnvelope(report);
+    return runSeeded(seedId, parsed.flags);
+  });
 }
 
 async function runColdHarness() {
@@ -282,21 +369,17 @@ async function main() {
 
   let env;
   if (parsed.flags.live) {
-    env = refuseLive();
+    env = refuseLive({ flag: parsed.flags.liveFlag || "--live" });
   } else if (parsed.seededId) {
     env = seededFromDiff(parsed.seededId, parsed);
   } else if (parsed.flags.fixture) {
-    const fix = loadOptionalJson(parsed.flags.fixture);
-    if (!fix) {
-      env = envelope({
-        ok: false,
-        command: "fixture",
-        status: "usage",
-        error: failError("USAGE", `fixture not found: ${parsed.flags.fixture}`),
-      });
-    } else {
-      env = seededFromDiff(fix.seededId || fix.id, { flags: { ...parsed.flags, ...fix.opts } });
-    }
+    env = loadOrUsage("fixture", () => {
+      const fix = loadOptionalJson(parsed.flags.fixture);
+      if (!fix) {
+        return usageEnvelope("fixture", `fixture not found: ${parsed.flags.fixture}`);
+      }
+      return seededFromDiff(fix.seededId || fix.id, { flags: { ...parsed.flags, ...fix.opts } });
+    });
   } else {
     const t0 = parsed.tokens[0];
     if (t0 === "run") env = await runColdHarness();

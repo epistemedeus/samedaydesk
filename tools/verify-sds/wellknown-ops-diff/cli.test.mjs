@@ -18,7 +18,8 @@ import {
   outputTouchesForbidden,
   routesFromTracker,
 } from "./lib/catalog.mjs";
-import { evaluateClaims, runDiff } from "./lib/diff.mjs";
+import { GHOST_TRACKER_ROUTE, evaluateClaims, runDiff } from "./lib/diff.mjs";
+import { absenceAsDemandEnvelope, claimMatchEnvelope } from "./lib/refuse.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(here, "../../..");
@@ -55,6 +56,10 @@ test("real tracker artifact has the eight SDS routes", () => {
   assert.deepEqual(tracker.routes.map((row) => row.path), [...EXPECTED_TRACKER_PATHS]);
   const compact = loadTracker(COMPACT_TRACKER);
   assert.deepEqual(compact.routes.map((row) => row.path), [...EXPECTED_TRACKER_PATHS]);
+  assert.deepEqual(
+    compact.routes.map((row) => row.digest),
+    tracker.routes.map((row) => row.digest),
+  );
 });
 
 test("cold diff of real artifacts is 8 vs 23 with settlement-proof untracked", () => {
@@ -126,6 +131,9 @@ test("seeded ghost-tracker route is rejected", () => {
   const ghosts = result.json.result.trackerOnly.map((row) => row.path);
   assert.ok(ghosts.includes("/invented-ghost-op"));
   assert.equal(result.json.result.inWellKnown, false);
+  assert.ok(
+    result.json.result.trackerOnly.every((row) => row.reason === GHOST_TRACKER_ROUTE),
+  );
 });
 
 test("seeded --live is refused with exit 2", () => {
@@ -217,4 +225,85 @@ test("compact and live parsers accept both x402 items and observation records", 
     },
   });
   assert.equal(fromObs[0].path, "/extract");
+});
+
+test("--live=true is refused, not a cold-diff pass", () => {
+  const result = runCli(["--live=true", "--json"]);
+  assert.equal(result.status, 2, result.stderr);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "LIVE_REFUSE");
+  assert.match(result.json.error.message, /--live=true/);
+  assert.equal(result.json.boundary.liveFetch, false);
+  assert.equal(result.json.result.refused, true);
+});
+
+test("value flags do not swallow the next dashed flag", () => {
+  const wellknown = runCli(["diff", "--wellknown", "--json"]);
+  assert.equal(wellknown.status, 2, wellknown.stderr);
+  assert.equal(wellknown.json.error.code, "USAGE");
+  assert.match(wellknown.json.error.message, /missing value for --wellknown/);
+
+  const claim = runCli(["diff", "--claim", "--json"]);
+  assert.equal(claim.status, 2, claim.stderr);
+  assert.match(claim.json.error.message, /missing value for --claim/);
+
+  const seeded = runCli(["--seeded-failure", "--json"]);
+  assert.equal(seeded.status, 2, seeded.stderr);
+  assert.match(seeded.json.error.message, /missing value for --seeded-failure/);
+
+  const fixture = runCli(["--fixture", "--json"]);
+  assert.equal(fixture.status, 2, fixture.stderr);
+  assert.match(fixture.json.error.message, /missing value for --fixture/);
+});
+
+test("missing well-known artifact is USAGE, not RUNTIME 64", () => {
+  const result = runCli(["diff", "--json", "--wellknown", "/no/such/x402.json"]);
+  assert.equal(result.status, 2, result.stderr);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "USAGE");
+  assert.match(result.json.error.message, /json not found/);
+  assert.notEqual(result.json.command, "runtime");
+});
+
+test("--seeded-failure=claim-match equals form is rejected", () => {
+  const result = runCli(["--seeded-failure=claim-match", "--json"]);
+  assert.equal(result.status, 1, result.stderr);
+  assert.equal(result.json.error.code, "CLAIM_ALIGNED");
+  assert.equal(result.json.result.aligned, false);
+});
+
+test("ghost tracker-only rows are not labeled catalog absence", () => {
+  const report = runDiff({
+    wellKnown: loadWellKnown(DEFAULT_WELLKNOWN_ARTIFACT),
+    tracker: loadTracker(join(here, "fixtures/seeded/ghost-tracker.json")),
+    expectedTrackerCount: null,
+  });
+  assert.ok(report.trackerOnly.length >= 1);
+  assert.ok(report.trackerOnly.every((row) => row.reason === GHOST_TRACKER_ROUTE));
+  assert.ok(report.wellKnownOnly.every((row) => row.reason !== GHOST_TRACKER_ROUTE));
+});
+
+test("claim-match and absence-as-demand seeds fail closed if the gap vanished", () => {
+  const wellKnown = loadWellKnown(DEFAULT_WELLKNOWN_ARTIFACT);
+  const alignedTracker = {
+    source: "synthetic-aligned",
+    routes: wellKnown.ops.map((op) => ({
+      route: op.resource,
+      path: op.path,
+      digest: null,
+    })),
+  };
+  const report = runDiff({
+    wellKnown,
+    tracker: alignedTracker,
+    expectedTrackerCount: null,
+  });
+  assert.equal(report.aligned, true);
+  const match = claimMatchEnvelope(report);
+  assert.equal(match.ok, false);
+  assert.equal(match.error.code, "SEED_GAP_VANISHED");
+  assert.equal(match.result.aligned, true);
+  const demand = absenceAsDemandEnvelope(report);
+  assert.equal(demand.ok, false);
+  assert.equal(demand.error.code, "SEED_GAP_VANISHED");
 });

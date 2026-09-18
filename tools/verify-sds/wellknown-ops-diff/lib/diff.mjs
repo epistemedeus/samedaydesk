@@ -10,6 +10,7 @@ import {
 
 export const DIFF_SCHEMA = "samedaydesk.wellknown-ops-vs-tracker.v1";
 export const ABSENCE_IS_NOT_DEMAND = "catalog_absence_is_not_demand";
+export const GHOST_TRACKER_ROUTE = "ghost_tracker_route";
 
 export function hasPath(rows, path) {
   return (rows ?? []).some((row) => row.path === path);
@@ -67,7 +68,7 @@ export function diffWellKnownToTracker(wellKnown, tracker, {
       route: row.route,
       class: "tracker-only",
       buyerDemand: false,
-      reason: ABSENCE_IS_NOT_DEMAND,
+      reason: GHOST_TRACKER_ROUTE,
     }));
 
   const wellKnownOnlyPaths = [...new Set(wellKnownOnly.map((row) => row.path))].sort();
