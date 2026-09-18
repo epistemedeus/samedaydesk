@@ -1,0 +1,12 @@
+{
+  "name": "@samedaydesk/verify-sds-w1021-402-matrix",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "description": "SDS verify slice for the unpaid x402 amount matrix (w1021). No payment, publish, neo, or checkout.",
+  "bin": {
+    "prove-w1021-402-matrix": "./bin/prove.mjs"
+  }
+}
