@@ -1,0 +1,11 @@
+{
+  "id": "silent-empty-success",
+  "seededId": "silent-empty-success",
+  "feature": "mcp-skills-list",
+  "ok": true,
+  "resultType": "complete",
+  "skills": [],
+  "note": "HTTP-shaped success with empty skills. Naive if (doc.ok) return success would accept this. The verifier must reject it.",
+  "expectExit": 1,
+  "errorCode": "SILENT_EMPTY"
+}

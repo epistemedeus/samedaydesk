@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "repo": "samedaydesk",
+  "feature": "mcp-skills-list",
+  "seeds": [
+    {
+      "id": "silent-empty-success",
+      "why": "HTTP-shaped {ok:true, skills:[]} must not count as a skills/list. Naive if (doc.ok) would accept it.",
+      "command": ["node", "tools/verify-sds/mcp-skills-list/cli.mjs", "--seeded-failure", "silent-empty-success", "--json"],
+      "expectExit": 1,
+      "errorCode": "SILENT_EMPTY",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "missing-skill",
+      "why": "A list that omits web-extract is not the SDS well-known catalog.",
+      "command": ["node", "tools/verify-sds/mcp-skills-list/cli.mjs", "--seeded-failure", "missing-skill", "--json"],
+      "expectExit": 1,
+      "errorCode": "MISSING_SKILL",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "digest-mismatch",
+      "why": "A forged sha256 on SKILL.md is not a listing. Digests bind to committed fixture bytes.",
+      "command": ["node", "tools/verify-sds/mcp-skills-list/cli.mjs", "--seeded-failure", "digest-mismatch", "--json"],
+      "expectExit": 1,
+      "errorCode": "DIGEST_MISMATCH",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "tools-call",
+      "why": "skills/list verify never POSTs tools/call.",
+      "command": ["node", "tools/verify-sds/mcp-skills-list/cli.mjs", "--seeded-failure", "tools-call", "--json"],
+      "expectExit": 1,
+      "errorCode": "TOOLS_CALL_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "protocol-2026-07-28-only",
+      "why": "SDS apex fail-closes initialize to 2024-11-05. A 2026-07-28-only handshake is not a transport migration.",
+      "command": ["node", "tools/verify-sds/mcp-skills-list/cli.mjs", "--seeded-failure", "protocol-2026-07-28-only", "--json"],
+      "expectExit": 1,
+      "errorCode": "PROTOCOL_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    }
+  ]
+}
