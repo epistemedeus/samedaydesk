@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { runColdCohort } from "../src/cohort.mjs";
+import { REQUIRED_CASE_IDS, runColdCohort } from "../src/cohort.mjs";
 import { FUTURE_SKEW_MS, STALE_PROVIDER_MS, SOURCE_TIME_STALE_MS } from "../src/engine.mjs";
 
 test("cold cohort: published engines classify skew windows and keep clocks distinct", () => {
@@ -8,12 +8,18 @@ test("cold cohort: published engines classify skew windows and keep clocks disti
   assert.equal(report.schema, "sds.regression.clock-skew.v1");
   assert.equal(report.mode, "cold");
   assert.equal(report.ok, true, JSON.stringify(report.cases.filter((item) => !item.ok), null, 2));
-  assert.equal(report.caseCount, 13);
+  assert.equal(report.caseCount, REQUIRED_CASE_IDS.length);
+  assert.equal(report.caseCount, 15);
   assert.equal(report.failedCount, 0);
+  assert.equal(report.invariants.ok, true);
+  assert.equal(report.invariants.requiredCasesPresent, true);
+  assert.equal(report.invariants.windowsMatchPublished, true);
+  assert.equal(report.invariants.noOrphanFixtures, true);
   assert.equal(report.invariants.futureSkewNotOk, true);
   assert.equal(report.invariants.withinSkewOk, true);
   assert.equal(report.invariants.staleNotZeroed, true);
   assert.equal(report.invariants.clocksDistinct, true);
+  assert.equal(report.invariants.marketObsBoundaryOk, true);
   assert.equal(report.invariants.payment, false);
   assert.equal(report.invariants.checkout, false);
   assert.equal(report.invariants.publish, false);
@@ -30,6 +36,10 @@ test("cold cohort: published engines classify skew windows and keep clocks disti
   assert.equal(byId["stale-observatory"].observatoryState, "stale");
   assert.equal(byId["stale-market-obs-only"].observatoryState, "ok");
   assert.equal(byId["stale-market-obs-only"].marketObsState, "stale");
+  assert.equal(byId["stale-market-obs-boundary"].observatoryState, "ok");
+  assert.equal(byId["stale-market-obs-boundary"].marketObsState, "ok");
+  assert.equal(byId["stale-market-obs-just-stale"].observatoryState, "ok");
+  assert.equal(byId["stale-market-obs-just-stale"].marketObsState, "stale");
   assert.equal(byId["missing-timestamp"].observatoryState, "missing");
   assert.equal(byId["invalid-timestamp"].observatoryState, "invalid");
   assert.equal(byId["invalid-timestamp"].marketObsState, "schema_drift");

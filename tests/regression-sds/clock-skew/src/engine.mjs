@@ -178,3 +178,13 @@ export function naiveStaleRewrite(envelope) {
     })),
   };
 }
+
+export function naiveRefineSourceTimeInclusive(sourceTime, fetchedAt) {
+  if (typeof sourceTime !== "string" || !sourceTime) return "missing";
+  const sourceMs = Date.parse(sourceTime);
+  if (!Number.isFinite(sourceMs)) return "schema_drift";
+  const fetchedMs = typeof fetchedAt === "string" ? Date.parse(fetchedAt) : Number.NaN;
+  if (!Number.isFinite(fetchedMs)) return "ok";
+  if (fetchedMs - sourceMs >= SOURCE_TIME_STALE_MS) return "stale";
+  return "ok";
+}

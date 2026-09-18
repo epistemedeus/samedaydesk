@@ -1,3 +1,4 @@
+import { readdirSync } from "node:fs";
 import { join } from "node:path";
 import {
   ENGINE_CLASSIFY,
@@ -9,13 +10,46 @@ import {
   readJson,
 } from "./paths.mjs";
 import {
+  FUTURE_SKEW_MS,
   PINNED_NOW_MS,
+  SOURCE_TIME_STALE_MS,
+  STALE_PROVIDER_MS,
   classifyPair,
   metricValue,
   runAdapters,
 } from "./engine.mjs";
 
 export const SCHEMA = "sds.regression.clock-skew.v1";
+
+export const REQUIRED_CASE_IDS = Object.freeze([
+  "fresh-ok",
+  "within-skew",
+  "future-skew-boundary",
+  "future-skew",
+  "future-skew-day",
+  "stale-boundary-ok",
+  "stale-observatory",
+  "stale-market-obs-only",
+  "stale-market-obs-boundary",
+  "stale-market-obs-just-stale",
+  "missing-timestamp",
+  "invalid-timestamp",
+  "adapter-future-skew",
+  "adapter-stale-keeps-metrics",
+  "adapter-within-skew",
+]);
+
+const FUTURE_SKEW_IDS = Object.freeze([
+  "future-skew",
+  "future-skew-day",
+  "adapter-future-skew",
+]);
+const WITHIN_SKEW_IDS = Object.freeze([
+  "within-skew",
+  "future-skew-boundary",
+  "adapter-within-skew",
+]);
+const STALE_ADAPTER_IDS = Object.freeze(["adapter-stale-keeps-metrics"]);
 
 export function loadManifest() {
   return readJson(join(FIXTURES, "manifest.json"));
@@ -36,6 +70,23 @@ function checkExpect(actual, expected, errors, prefix) {
 
 export function runCase(entry) {
   const loaded = entry.file ? fixture(entry.file) : {};
+  if (loaded.id && entry.id && loaded.id !== entry.id) {
+    return {
+      id: entry.id,
+      ok: false,
+      kind: entry.kind || loaded.kind || null,
+      file: entry.file || null,
+      fetchedAt: loaded.fetchedAt ?? null,
+      providerTimestamp: loaded.providerTimestamp ?? null,
+      observatoryState: null,
+      observatoryTimestamp: null,
+      marketObsState: null,
+      clocksDistinct: true,
+      moltjobs: null,
+      x402stats: null,
+      errors: [`id mismatch: fixture ${JSON.stringify(loaded.id)} vs manifest ${JSON.stringify(entry.id)}`],
+    };
+  }
   entry = { ...loaded, ...entry };
   const fetchedAt = entry.fetchedAt;
   const raw = Object.prototype.hasOwnProperty.call(entry, "providerTimestamp")
@@ -86,7 +137,8 @@ export function runCase(entry) {
     const sellers = metricValue(adapters.x402stats, "sellers_30d");
     checkExpect(jobCount, molt.jobCount ?? 12, errors, "moltjobs.jobCount");
     checkExpect(sellers, x402.sellers_30d ?? 47303, errors, "x402stats.sellers_30d");
-    if (expect.staleNotZeroed !== false) {
+    const clockIsSkewed = pair.observatory.state === "stale" || pair.observatory.state === "invalid";
+    if (expect.staleNotZeroed === true || (expect.staleNotZeroed !== false && clockIsSkewed)) {
       if (jobCount === 0 || sellers === 0) {
         errors.push("stale/invalid clock must not rewrite metrics to zero");
       }
@@ -132,13 +184,85 @@ export function runCase(entry) {
   };
 }
 
+export function orphanFixtureFiles(manifest) {
+  const listed = new Set((manifest.cases || []).map((entry) => entry.file));
+  return readdirSync(FIXTURES).filter(
+    (name) => name.endsWith(".json") && name !== "manifest.json" && !listed.has(name),
+  );
+}
+
+export function evaluateInvariants(cases, manifest) {
+  const byId = Object.fromEntries((cases || []).map((item) => [item.id, item]));
+  const requiredCasesPresent = REQUIRED_CASE_IDS.every((id) => Boolean(byId[id]));
+  const windows = manifest && manifest.windows ? manifest.windows : {};
+  const windowsMatchPublished =
+    windows.observatoryFutureSkewMs === FUTURE_SKEW_MS
+    && windows.observatoryStaleMs === STALE_PROVIDER_MS
+    && windows.marketObsStaleMs === SOURCE_TIME_STALE_MS;
+  const noOrphanFixtures = orphanFixtureFiles(manifest).length === 0;
+  const futureSkewNotOk = FUTURE_SKEW_IDS.every(
+    (id) => byId[id]?.ok === true && byId[id]?.observatoryState === "invalid",
+  );
+  const withinSkewOk = WITHIN_SKEW_IDS.every(
+    (id) => byId[id]?.ok === true && byId[id]?.observatoryState === "ok",
+  );
+  const staleNotZeroed = STALE_ADAPTER_IDS.every(
+    (id) =>
+      byId[id]?.ok === true
+      && byId[id]?.observatoryState === "stale"
+      && byId[id]?.moltjobs?.jobCount === 12
+      && byId[id]?.x402stats?.sellers_30d === 47303,
+  );
+  const clocksDistinct = (cases || []).length > 0 && (cases || []).every((item) => item.clocksDistinct === true);
+  const marketObsBoundaryOk =
+    byId["stale-market-obs-boundary"]?.ok === true
+    && byId["stale-market-obs-boundary"]?.observatoryState === "ok"
+    && byId["stale-market-obs-boundary"]?.marketObsState === "ok"
+    && byId["stale-market-obs-just-stale"]?.ok === true
+    && byId["stale-market-obs-just-stale"]?.observatoryState === "ok"
+    && byId["stale-market-obs-just-stale"]?.marketObsState === "stale";
+  const payment = false;
+  const checkout = false;
+  const publish = false;
+  const neomorphicIo = false;
+  const ok =
+    requiredCasesPresent
+    && windowsMatchPublished
+    && noOrphanFixtures
+    && futureSkewNotOk
+    && withinSkewOk
+    && staleNotZeroed
+    && clocksDistinct
+    && marketObsBoundaryOk
+    && payment === false
+    && checkout === false
+    && publish === false
+    && neomorphicIo === false;
+  return {
+    ok,
+    requiredCasesPresent,
+    windowsMatchPublished,
+    noOrphanFixtures,
+    futureSkewNotOk,
+    withinSkewOk,
+    staleNotZeroed,
+    clocksDistinct,
+    marketObsBoundaryOk,
+    payment,
+    checkout,
+    publish,
+    neomorphicIo,
+  };
+}
+
 export function runColdCohort() {
   const manifest = loadManifest();
   const cases = manifest.cases.map((entry) => runCase(entry));
   const failed = cases.filter((item) => !item.ok);
+  const invariants = evaluateInvariants(cases, manifest);
   return {
     schema: SCHEMA,
-    ok: failed.length === 0,
+    ok: failed.length === 0 && invariants.ok === true,
     mode: "cold",
     engine: {
       classify: ENGINE_CLASSIFY,
@@ -149,21 +273,6 @@ export function runColdCohort() {
     caseCount: cases.length,
     failedCount: failed.length,
     cases,
-    invariants: {
-      futureSkewNotOk: cases
-        .filter((item) => item.id === "future-skew" || item.id === "future-skew-day" || item.id === "adapter-future-skew")
-        .every((item) => item.ok && item.observatoryState === "invalid"),
-      withinSkewOk: cases
-        .filter((item) => item.id === "within-skew" || item.id === "future-skew-boundary" || item.id === "adapter-within-skew")
-        .every((item) => item.ok && item.observatoryState === "ok"),
-      staleNotZeroed: cases
-        .filter((item) => item.kind === "adapter" && item.observatoryState === "stale")
-        .every((item) => item.moltjobs?.jobCount === 12 && item.x402stats?.sellers_30d === 47303),
-      clocksDistinct: cases.every((item) => item.clocksDistinct === true),
-      payment: false,
-      checkout: false,
-      publish: false,
-      neomorphicIo: false,
-    },
+    invariants,
   };
 }

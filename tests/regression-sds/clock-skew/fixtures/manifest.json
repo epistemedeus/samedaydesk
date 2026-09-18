@@ -54,6 +54,16 @@
       "kind": "classify"
     },
     {
+      "id": "stale-market-obs-boundary",
+      "file": "stale-market-obs-boundary.json",
+      "kind": "classify"
+    },
+    {
+      "id": "stale-market-obs-just-stale",
+      "file": "stale-market-obs-just-stale.json",
+      "kind": "classify"
+    },
+    {
       "id": "missing-timestamp",
       "file": "missing-timestamp.json",
       "kind": "classify"

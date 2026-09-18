@@ -12,6 +12,7 @@ import {
   classifyPair,
   metricValue,
   naiveClassify,
+  naiveRefineSourceTimeInclusive,
   naiveStaleRewrite,
   runAdapters,
 } from "./engine.mjs";
@@ -45,22 +46,32 @@ function futureAsOk() {
   const pair = classifyPair(probe.providerTimestamp, probe.fetchedAt, PINNED_NOW_MS);
   const naive = naiveClassify(probe.providerTimestamp);
   const adapters = runAdapters(probe.fetchedAt, probe.providerTimestamp, PINNED_NOW_MS);
-  const rejected =
-    pair.observatory.state === "invalid" &&
-    naive.state === "ok" &&
-    probe.claim.observatoryState === "ok" &&
-    adapters.moltjobs.providerTimestampState === "invalid" &&
-    adapters.x402stats.providerTimestampState === "invalid" &&
-    adapters.x402stats.availability === "partial" &&
-    metricValue(adapters.moltjobs, "jobCount") === 12 &&
-    metricValue(adapters.x402stats, "sellers_30d") === 47303;
+  const engineInvalid =
+    pair.observatory.state === "invalid"
+    && adapters.moltjobs.providerTimestampState === "invalid"
+    && adapters.x402stats.providerTimestampState === "invalid";
+  const naiveOk = naive.state === "ok" && probe.claim.observatoryState === "ok";
+  const metricsKept =
+    metricValue(adapters.moltjobs, "jobCount") === 12
+    && metricValue(adapters.x402stats, "sellers_30d") === 47303;
+  const rejected = engineInvalid && naiveOk && metricsKept;
+  let code;
+  let message;
+  if (rejected) {
+    code = "future_skew_not_ok";
+    message = "Published classifyProviderTimestamp rejects a provider clock more than FUTURE_SKEW_MS ahead; naive ok-claim is refused";
+  } else if (!engineInvalid) {
+    code = "future_skew_accepted";
+    message = "future-skewed provider clock was accepted as ok";
+  } else {
+    code = "future_skew_probe_incomplete";
+    message = "future skew was invalid but the naive-ok claim or kept-metrics invariant did not hold";
+  }
   return report({
     id: "future-as-ok",
     rejected,
-    code: rejected ? "future_skew_not_ok" : "future_skew_accepted",
-    message: rejected
-      ? "Published classifyProviderTimestamp rejects a provider clock more than FUTURE_SKEW_MS ahead; naive ok-claim is refused"
-      : "future-skewed provider clock was accepted as ok",
+    code,
+    message,
     extra: {
       fetchedAt: probe.fetchedAt,
       providerTimestamp: probe.providerTimestamp,
@@ -137,6 +148,33 @@ function collapseClocks() {
   });
 }
 
+function marketObsBoundaryAsStale() {
+  const probe = seededFixture("market-obs-boundary-as-stale.json");
+  const pair = classifyPair(probe.providerTimestamp, probe.fetchedAt, PINNED_NOW_MS);
+  const naive = naiveRefineSourceTimeInclusive(probe.providerTimestamp, probe.fetchedAt);
+  const rejected =
+    pair.marketObsState === "ok"
+    && pair.observatory.state === "ok"
+    && naive === "stale"
+    && probe.claim.marketObsState === "stale";
+  return report({
+    id: "market-obs-boundary-as-stale",
+    rejected,
+    code: rejected ? "market_obs_boundary_not_stale" : "market_obs_boundary_marked_stale",
+    message: rejected
+      ? "Published refineSourceTimeState keeps an exactly SOURCE_TIME_STALE_MS-old clock ok; naive inclusive-stale claim is refused"
+      : "exact market-obs stale boundary was marked stale",
+    extra: {
+      fetchedAt: probe.fetchedAt,
+      providerTimestamp: probe.providerTimestamp,
+      engineMarketObsState: pair.marketObsState,
+      engineObservatoryState: pair.observatory.state,
+      naiveMarketObsState: naive,
+      claim: probe.claim,
+    },
+  });
+}
+
 function paymentToCorrectClock() {
   const probe = seededFixture("payment-to-correct-clock.json");
   const refused =
@@ -163,6 +201,7 @@ const HANDLERS = {
   "stale-as-fresh-zero": staleAsFreshZero,
   "collapse-clocks": collapseClocks,
   "payment-to-correct-clock": paymentToCorrectClock,
+  "market-obs-boundary-as-stale": marketObsBoundaryAsStale,
 };
 
 export function listSeededFailures() {

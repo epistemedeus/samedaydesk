@@ -32,7 +32,48 @@ test("CLI --seeded-failure list names future-as-ok", () => {
 
 test("CLI refuses --checkout", () => {
   const result = run(["--checkout"]);
-  assert.notEqual(result.status, 0);
+  assert.equal(result.status, 2, result.stderr);
   const body = JSON.parse(result.stderr);
   assert.equal(body.error.code, "payment-forbidden");
+});
+
+test("CLI refuses --pay", () => {
+  const result = run(["--pay"]);
+  assert.equal(result.status, 2, result.stderr);
+  const body = JSON.parse(result.stderr);
+  assert.equal(body.error.code, "payment-forbidden");
+});
+
+test("CLI --seeded-failure without id is usage", () => {
+  const result = run(["--seeded-failure"]);
+  assert.equal(result.status, 2, result.stderr);
+  const body = JSON.parse(result.stderr);
+  assert.equal(body.error.code, "usage");
+  assert.match(body.error.message, /missing --seeded-failure id/);
+});
+
+test("CLI cold run pins market-obs 1h boundary and published windows", () => {
+  const result = run(["cold"]);
+  assert.equal(result.status, 0, result.stderr);
+  const body = JSON.parse(result.stdout);
+  assert.equal(body.ok, true);
+  assert.equal(body.caseCount, 15);
+  assert.equal(body.invariants.windowsMatchPublished, true);
+  assert.equal(body.invariants.requiredCasesPresent, true);
+  assert.equal(body.invariants.marketObsBoundaryOk, true);
+  const byId = Object.fromEntries(body.cases.map((item) => [item.id, item]));
+  assert.equal(byId["stale-market-obs-boundary"].marketObsState, "ok");
+  assert.equal(byId["stale-market-obs-just-stale"].marketObsState, "stale");
+  assert.equal(byId["stale-market-obs-just-stale"].observatoryState, "ok");
+});
+
+test("CLI seeded market-obs-boundary-as-stale is refused", () => {
+  const result = run(["--seeded-failure", "market-obs-boundary-as-stale"]);
+  assert.equal(result.status, 0, result.stderr);
+  const body = JSON.parse(result.stdout);
+  assert.equal(body.ok, true);
+  assert.equal(body.rejected, true);
+  assert.equal(body.code, "market_obs_boundary_not_stale");
+  assert.equal(body.engineMarketObsState, "ok");
+  assert.equal(body.naiveMarketObsState, "stale");
 });

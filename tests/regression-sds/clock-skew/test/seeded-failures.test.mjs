@@ -8,6 +8,7 @@ test("seeded failure list is exhaustive and stable", () => {
     "stale-as-fresh-zero",
     "collapse-clocks",
     "payment-to-correct-clock",
+    "market-obs-boundary-as-stale",
   ]);
 });
 
@@ -43,6 +44,16 @@ test("seeded: payment/checkout to correct a clock is refused", () => {
   assert.equal(result.code, "payment_forbidden");
   assert.equal(result.paymentSent, false);
   assert.equal(result.checkout, false);
+});
+
+test("seeded: exact 1h market-obs clock claimed stale is refused", () => {
+  const result = runSeededFailure("market-obs-boundary-as-stale");
+  assert.equal(result.ok, true, JSON.stringify(result, null, 2));
+  assert.equal(result.rejected, true);
+  assert.equal(result.code, "market_obs_boundary_not_stale");
+  assert.equal(result.engineMarketObsState, "ok");
+  assert.equal(result.naiveMarketObsState, "stale");
+  assert.equal(result.paymentSent, false);
 });
 
 test("unknown seeded failure id is itself a failure", () => {

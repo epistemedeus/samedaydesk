@@ -35,11 +35,14 @@ function parseArgs(argv) {
     if (arg === "--help" || arg === "-h") flags.help = true;
     else if (arg === "--seeded-failure") {
       const value = argv[i + 1];
-      if (!value || value.startsWith("-")) flags.listSeeded = true;
-      else {
-        flags.seeded = value;
-        i += 1;
+      if (!value || value.startsWith("-")) {
+        throw Object.assign(
+          new Error("missing --seeded-failure id; use list or a named probe"),
+          { code: "usage" },
+        );
       }
+      flags.seeded = value;
+      i += 1;
     } else if (arg === "--list-seeded-failures") {
       flags.listSeeded = true;
     } else if (!arg.startsWith("-") && !command) {
@@ -57,6 +60,7 @@ Usage:
   node tests/regression-sds/clock-skew/run.mjs
   node tests/regression-sds/clock-skew/run.mjs cold
   node tests/regression-sds/clock-skew/run.mjs --seeded-failure future-as-ok
+  node tests/regression-sds/clock-skew/run.mjs --seeded-failure market-obs-boundary-as-stale
   node tests/regression-sds/clock-skew/run.mjs --seeded-failure list
   node tests/regression-sds/clock-skew/run.mjs test
 
@@ -109,7 +113,7 @@ if (isMain) {
     },
     (error) => {
       process.stderr.write(`${JSON.stringify({ error: { code: error.code || "cli", message: error.message } })}\n`);
-      process.exitCode = error.code === "payment-forbidden" ? 2 : 1;
+      process.exitCode = error.code === "payment-forbidden" || error.code === "usage" ? 2 : 1;
     },
   );
 }
