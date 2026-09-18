@@ -138,6 +138,10 @@ function main(argv = process.argv.slice(2)) {
     }
     const { raw } = loadFixture(seed.file);
     const evaluated = evaluateFixture(raw, "accept", pins);
+    const rejected =
+      evaluated.verdict.reject === true &&
+      (evaluated.verdict.staleAsCurrent === true ||
+        evaluated.result.reasons.includes("stale_as_current"));
     const body = envelope({
       command: "seeded-stale-as-current",
       status: "fail",
@@ -161,11 +165,17 @@ function main(argv = process.argv.slice(2)) {
             }
           : null,
       ].filter(Boolean),
-      error: {
-        code: "SEED_REJECT",
-        message: `seeded stale-as-current ${seed.id} refused when fed as accept`,
-        reasons: evaluated.result.reasons,
-      },
+      error: rejected
+        ? {
+            code: "SEED_REJECT",
+            message: `seeded stale-as-current ${seed.id} refused when fed as accept`,
+            reasons: evaluated.result.reasons,
+          }
+        : {
+            code: "SEED_NOT_REJECTED",
+            message: `seeded stale-as-current ${seed.id} was not rejected when fed as accept`,
+            reasons: evaluated.result.reasons,
+          },
       result: {
         id: seed.id,
         childOk: evaluated.ok,

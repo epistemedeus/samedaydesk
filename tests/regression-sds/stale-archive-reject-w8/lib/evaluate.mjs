@@ -81,6 +81,54 @@ export function evaluateFixture(raw, expect = "reject", pins = null) {
     };
   }
 
+  if (ok && probe) {
+    if (expectAccept) {
+      if (probe.ok !== true || probe.refused === true) {
+        ok = false;
+        status = "fail";
+        exit = 1;
+        error = {
+          code: "PROBE_FAIL",
+          message: `obtain-archive probe for ${raw.id || "case"} did not accept the current pin`,
+          probe: {
+            ok: probe.ok,
+            refused: probe.refused,
+            code: probe.code,
+            childExit: probe.childExit,
+          },
+        };
+      }
+    } else if (probe.refused !== true) {
+      ok = false;
+      status = "fail";
+      exit = 1;
+      error = {
+        code: "PROBE_NOT_REFUSED",
+        message: `obtain-archive probe for ${raw.id || "case"} did not refuse the stale archive`,
+        probe: {
+          ok: probe.ok,
+          refused: probe.refused,
+          code: probe.code,
+          childExit: probe.childExit,
+        },
+      };
+    } else if (raw.probe?.expectCode && probe.code !== raw.probe.expectCode) {
+      ok = false;
+      status = "fail";
+      exit = 1;
+      error = {
+        code: "PROBE_CODE_MISMATCH",
+        message: `obtain-archive probe for ${raw.id || "case"} code ${probe.code} != ${raw.probe.expectCode}`,
+        probe: {
+          ok: probe.ok,
+          refused: probe.refused,
+          code: probe.code,
+          childExit: probe.childExit,
+        },
+      };
+    }
+  }
+
   return {
     ok,
     status,

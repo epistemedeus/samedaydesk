@@ -105,16 +105,27 @@ export function runObtainArchive({
 }
 
 export function probeObtain(probe, current) {
-  const expected =
-    probe.expected === "current" || probe.expected == null
-      ? { sha256: current.sha256, bytes: current.bytes }
-      : {
-          sha256: probe.expectedSha256 || current.sha256,
-          bytes: probe.expectedBytes ?? current.bytes,
-        };
-  return runObtainArchive({
-    fromRel: probe.fromRel,
-    expectedSha256: expected.sha256,
-    expectedBytes: expected.bytes,
-  });
+  try {
+    const expected =
+      probe.expected === "current" || probe.expected == null
+        ? { sha256: current.sha256, bytes: current.bytes }
+        : {
+            sha256: probe.expectedSha256 || current.sha256,
+            bytes: probe.expectedBytes ?? current.bytes,
+          };
+    return runObtainArchive({
+      fromRel: probe.fromRel,
+      expectedSha256: expected.sha256,
+      expectedBytes: expected.bytes,
+    });
+  } catch (error) {
+    return {
+      ok: false,
+      refused: false,
+      code: error.code || "obtain-failed",
+      message: error.message,
+      childExit: 2,
+      destExists: false,
+    };
+  }
 }

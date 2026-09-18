@@ -131,3 +131,39 @@ test("--live and --pay are refused", () => {
   assert.equal(pay.status, 2);
   assert.equal(JSON.parse(pay.stdout.trim()).error.code, "PAY_REFUSE");
 });
+
+test("verify unknown flag exits 2 with envelope, not a silent pass", () => {
+  const r = runNode("verify.mjs", [
+    "--json",
+    "--fixture",
+    "fixtures/cases/stale-110-as-current.json",
+    "--bogus",
+  ]);
+  assert.equal(r.status, 2, r.stderr || r.stdout);
+  const body = JSON.parse(r.stdout.trim());
+  assert.equal(body.ok, false);
+  assert.equal(body.error.code, "unknown_flag");
+});
+
+test("verify missing fixture exits 1 with FIXTURE_MISSING envelope", () => {
+  const r = runNode("verify.mjs", [
+    "--json",
+    "--fixture",
+    "fixtures/cases/does-not-exist.json",
+  ]);
+  assert.equal(r.status, 1, r.stderr || r.stdout);
+  const body = JSON.parse(r.stdout.trim());
+  assert.equal(body.ok, false);
+  assert.equal(body.error.code, "FIXTURE_MISSING");
+});
+
+test("verify --live is refused", () => {
+  const r = runNode("verify.mjs", [
+    "--live",
+    "--json",
+    "--fixture",
+    "fixtures/cases/stale-110-as-current.json",
+  ]);
+  assert.equal(r.status, 2);
+  assert.equal(JSON.parse(r.stdout.trim()).error.code, "LIVE_REFUSE");
+});

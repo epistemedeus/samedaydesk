@@ -29,26 +29,63 @@ function parseArgs(argv) {
     else if (a === "--json") out.json = true;
     else if (a === "--no-json") out.json = false;
     else if (a === "--as-accept") out.expect = "accept";
-    else if (a === "--expect") out.expect = String(argv[++i] || "reject");
-    else if (a === "--fixture") out.fixture = String(argv[++i] || "");
-    else if (REFUSED_FLAGS.includes(a) || a.startsWith("--pay") || a.startsWith("--stripe")) {
+    else if (a === "--expect") {
+      const v = argv[++i];
+      if (v == null || String(v).startsWith("-")) {
+        const err = new Error("--expect requires reject|accept");
+        err.code = "unknown_flag";
+        throw err;
+      }
+      out.expect = String(v);
+    } else if (a === "--fixture") {
+      const v = argv[++i];
+      if (v == null || String(v).startsWith("-")) {
+        const err = new Error("--fixture requires a path");
+        err.code = "unknown_flag";
+        throw err;
+      }
+      out.fixture = String(v);
+    } else if (REFUSED_FLAGS.includes(a) || a.startsWith("--pay") || a.startsWith("--stripe")) {
       out.refused = a;
     } else if (!a.startsWith("-") && !out.fixture) out.fixture = a;
+    else if (a.startsWith("-")) {
+      const err = new Error(`unknown argument ${a}`);
+      err.code = "unknown_flag";
+      throw err;
+    } else {
+      const err = new Error(`unknown argument ${a}`);
+      err.code = "unknown_flag";
+      throw err;
+    }
   }
   return out;
 }
 
+function failEnvelope(error, extra = {}) {
+  return envelope({
+    command: "verify",
+    status: "fail",
+    ok: false,
+    error,
+    result: extra.result || null,
+    evidence: extra.evidence || [],
+  });
+}
+
 function main(argv = process.argv.slice(2)) {
-  const args = parseArgs(argv);
+  let args;
+  try {
+    args = parseArgs(argv);
+  } catch (error) {
+    const body = failEnvelope({ code: error.code || "BAD_ARGS", message: error.message });
+    process.stdout.write(`${JSON.stringify(body)}\n`);
+    process.exitCode = 2;
+    return;
+  }
   if (args.refused) {
-    const body = envelope({
-      command: "verify",
-      status: "fail",
-      ok: false,
-      error: {
-        code: args.refused === "--live" ? "LIVE_REFUSE" : "PAY_REFUSE",
-        message: `refused flag ${args.refused}`,
-      },
+    const body = failEnvelope({
+      code: args.refused === "--live" ? "LIVE_REFUSE" : "PAY_REFUSE",
+      message: `refused flag ${args.refused}`,
     });
     process.stdout.write(`${JSON.stringify(body)}\n`);
     process.exitCode = 2;
@@ -60,9 +97,29 @@ function main(argv = process.argv.slice(2)) {
     return;
   }
 
-  const pins = loadPins();
-  const { abs, raw } = loadFixture(args.fixture);
-  const evaluated = evaluateFixture(raw, args.expect, pins);
+  let pins;
+  let abs;
+  let raw;
+  let evaluated;
+  try {
+    pins = loadPins();
+    if (!pins.ok) {
+      const body = failEnvelope(pins.error, {
+        evidence: [{ kind: "pins", total: pins.total, failed: pins.failed, rows: pins.rows }],
+      });
+      process.stdout.write(`${JSON.stringify(body)}\n`);
+      process.exitCode = 1;
+      return;
+    }
+    ({ abs, raw } = loadFixture(args.fixture));
+    evaluated = evaluateFixture(raw, args.expect, pins);
+  } catch (error) {
+    const code = error.code || "UNCAUGHT";
+    const body = failEnvelope({ code, message: error.message });
+    process.stdout.write(`${JSON.stringify(body)}\n`);
+    process.exitCode = code === "FIXTURE_ESCAPE" || code === "unknown_flag" ? 2 : 1;
+    return;
+  }
   const body = envelope({
     command: "verify",
     status: evaluated.status,
@@ -107,4 +164,10 @@ function main(argv = process.argv.slice(2)) {
   process.exitCode = evaluated.exit;
 }
 
-main();
+try {
+  main();
+} catch (error) {
+  const body = failEnvelope({ code: "UNCAUGHT", message: error.message });
+  process.stdout.write(`${JSON.stringify(body)}\n`);
+  process.exitCode = 1;
+}

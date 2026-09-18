@@ -18,7 +18,8 @@
     "fromRel": "client/public/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz",
     "expected": "override",
     "expectedSha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
-    "expectedBytes": 2577606
+    "expectedBytes": 2577606,
+    "expectCode": "wrong-digest"
   },
   "output": {
     "ok": true,

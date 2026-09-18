@@ -176,7 +176,7 @@ function readJsonPin(rel, expected) {
   }
   const json = JSON.parse(readFileSync(abs, "utf8"));
   const missing = [];
-  if (json.sha256 !== expected.sha256) missing.push("sha256");
+  if (String(json.sha256 || "").toLowerCase() !== expected.sha256) missing.push("sha256");
   if (json.bytes !== expected.bytes) missing.push("bytes");
   const name = json.name || json.version;
   if (expected.rootName && name && name !== expected.rootName && json.version !== expected.version) {

@@ -35,6 +35,12 @@ function normSha(s) {
   return /^[0-9a-f]{64}$/.test(t) ? t : null;
 }
 
+function normBytes(v) {
+  if (typeof v === "number" && Number.isFinite(v)) return v;
+  if (typeof v === "string" && /^\d+$/.test(v.trim())) return Number(v.trim());
+  return null;
+}
+
 function compareSemver(a, b) {
   const pa = String(a)
     .split(".")
@@ -64,7 +70,9 @@ function identityFrom(output) {
       normSha(output.archive?.sha256) ||
       normSha(output.result?.sha256) ||
       null,
-    bytes: output.bytes ?? output.pin?.bytes ?? output.archive?.bytes ?? output.result?.bytes ?? null,
+    bytes: normBytes(
+      output.bytes ?? output.pin?.bytes ?? output.archive?.bytes ?? output.result?.bytes,
+    ),
   };
 }
 

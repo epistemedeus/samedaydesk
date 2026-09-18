@@ -55,3 +55,15 @@ test("obtain refuse plus success claim adds product_refuse", () => {
   assert.ok(v.reasons.includes("product_refuse"));
   assert.ok(v.reasons.includes("stale_bytes"));
 });
+
+test("string bytes still match stale 1.1.0 pin", () => {
+  const v = classifyStaleArchive({
+    ok: true,
+    claimedCurrent: true,
+    version: "1.1.0",
+    sha256: "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534",
+    bytes: "2577606",
+  });
+  assert.equal(v.reject, true);
+  assert.ok(v.reasons.includes("stale_bytes"), JSON.stringify(v.reasons));
+});

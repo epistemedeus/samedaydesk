@@ -24,6 +24,8 @@ node --test --test-concurrency=1 tests/regression-sds/stale-archive-reject-w8/*.
 ```
 
 `--live`, `--pay`, `--stripe`, `--publish`, `--neo` exit 2 (`LIVE_REFUSE` / `PAY_REFUSE`).
+Unknown `verify.mjs` flags exit 2 (`unknown_flag`). A missing fixture exits 1 (`FIXTURE_MISSING`) with a JSON envelope.
+Obtain-archive cases fail closed if the real child does not refuse stale bytes (`PROBE_NOT_REFUSED`) or does not accept current 1.4.7 (`PROBE_FAIL`).
 
 ## Cases
 

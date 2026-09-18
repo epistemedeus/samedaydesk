@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { CORPUS_ROOT } from "./root.mjs";
 
@@ -12,6 +12,11 @@ export function loadFixture(rel) {
   if (abs !== root && !abs.startsWith(`${root}/`)) {
     const err = new Error(`fixture path escapes corpus: ${rel}`);
     err.code = "FIXTURE_ESCAPE";
+    throw err;
+  }
+  if (!existsSync(abs)) {
+    const err = new Error(`missing fixture ${rel}`);
+    err.code = "FIXTURE_MISSING";
     throw err;
   }
   const raw = JSON.parse(readFileSync(abs, "utf8"));
