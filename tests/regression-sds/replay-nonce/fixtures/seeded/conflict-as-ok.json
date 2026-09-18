@@ -1,0 +1,13 @@
+{
+  "id": "conflict-as-ok",
+  "defect": "Treat a conflicting payload on a consumed flush-id nonce as a successful apply.",
+  "flushId": "a0000000-0000-4000-8000-000000000099",
+  "observedFrom": "2026-09-18T12:00:00.000Z",
+  "firstDelta": { "total": 2, "humans": 2 },
+  "secondDelta": { "total": 3, "humans": 3 },
+  "claim": {
+    "secondStatus": "applied",
+    "error": null,
+    "snapshotTotal": 5
+  }
+}
