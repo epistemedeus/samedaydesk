@@ -1,0 +1,27 @@
+{
+  "id": "empty-tool-map-honest",
+  "surface": "pulse",
+  "class": "honest-withheld",
+  "expectReject": false,
+  "cite": "server/lib/pulse.js",
+  "defect": null,
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "pulse",
+    "demand": false,
+    "paidDemand": false,
+    "notDemand": true,
+    "demandSignal": "withheld",
+    "withheldConclusions": [
+      "demand",
+      "paid_demand_population"
+    ],
+    "toolCallsByName": {
+      "counts": {},
+      "coverage": "known_from_observed_from",
+      "meaning": "An empty counts map does not mean zero tools/call messages over the broader MCP protocol window."
+    },
+    "message": "empty counts map recorded; demand withheld; not proven zero"
+  }
+}
