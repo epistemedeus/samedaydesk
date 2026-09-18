@@ -8,9 +8,14 @@ import {
   liveFetch,
   loadCohort,
   readIncomingDocument,
+  readObservation,
   readbackReport,
   runTracker,
 } from "./lib.mjs";
+import {
+  DEFAULT_EVIDENCE_FIXTURE,
+  runEightVsTwentySix,
+} from "./sds-evidence-diff.mjs";
 
 const { values } = parseArgs({
   options: {
@@ -18,6 +23,9 @@ const { values } = parseArgs({
     from: { type: "string" },
     fixture: { type: "string" },
     readback: { type: "boolean", default: false },
+    "eight-vs-26": { type: "boolean", default: false },
+    evidence: { type: "string" },
+    claim: { type: "string" },
     cohort: { type: "string" },
     "data-dir": { type: "string" },
     "observed-at": { type: "string" },
@@ -27,7 +35,12 @@ const { values } = parseArgs({
   allowPositionals: false,
 });
 
-if (values.help || (!values.live && !values.from && !values.fixture && !values.readback)) {
+if (values["eight-vs-26"] && values.live) {
+  process.stderr.write("8-vs-26 refuses --live (no owner CDP, no bazaar-tracker --live).\n");
+  process.exit(2);
+}
+
+if (values.help || (!values.live && !values.from && !values.fixture && !values.readback && !values["eight-vs-26"])) {
   process.stderr.write(`Bazaar rematerialization tracker (one-shot CLI; no cron, no daemon).
 
 Usage:
@@ -35,11 +48,16 @@ Usage:
   node tools/bazaar-tracker/cli.mjs --from <snapshot-or-observations.json>
   node tools/bazaar-tracker/cli.mjs --fixture <cdp-search-fixture.json>
   node tools/bazaar-tracker/cli.mjs --readback
+  node tools/bazaar-tracker/cli.mjs --eight-vs-26
+  node tools/bazaar-tracker/cli.mjs --eight-vs-26 --claim <claims.json>
 
 --live              fetch current CDP Bazaar discovery rows for the repaired-seller cohort
 --from <file>       treat an existing snapshot or compact observation as the new observation
 --fixture <file>    offline CDP search responses keyed by query (tests)
 --readback          print the committed compact observation and changelog (no network)
+--eight-vs-26       diff committed SDS routes vs pinned well-known evidence ops (no CDP)
+--evidence <file>   evidence ops JSON (default fixtures/evidence-ops-1.23.49.json)
+--claim <file>      extra claims; catalog absence as demand or invented receipt fields exit 1
 --cohort <file>     default tools/bazaar-tracker/cohort.json
 --data-dir <dir>    default data/bazaar-tracker
 --observed-at <iso> pin the observation timestamp
@@ -49,16 +67,22 @@ Pilot one-shot (not a schedule):
   pilot-vm-job --repo epistemedeus/samedaydesk -- \\
     node tools/bazaar-tracker/cli.mjs --live
 
---live is not part of npm run build or the ordinary test scripts.
+--live is not part of npm run build, --eight-vs-26, or the ordinary test scripts.
 Full snapshots stay under data/bazaar-tracker/snapshots/ and are gitignored.
 Git tracks a URL+hash observations.json plus CHANGELOG.md and changelog.jsonl.
 `);
   process.exit(values.help ? 0 : 2);
 }
 
-const modes = [values.live, Boolean(values.from), Boolean(values.fixture), values.readback].filter(Boolean).length;
+const modes = [
+  values.live,
+  Boolean(values.from),
+  Boolean(values.fixture),
+  values.readback,
+  values["eight-vs-26"],
+].filter(Boolean).length;
 if (modes !== 1) {
-  process.stderr.write("Use exactly one of --live, --from, --fixture, or --readback.\n");
+  process.stderr.write("Use exactly one of --live, --from, --fixture, --readback, or --eight-vs-26.\n");
   process.exit(2);
 }
 
@@ -68,6 +92,25 @@ if (values.readback) {
   const report = readbackReport(dataDir);
   process.stdout.write(`${values.pretty ? JSON.stringify(report, null, 2) : JSON.stringify(report)}\n`);
   process.exit(report.ok ? 0 : 1);
+}
+
+if (values["eight-vs-26"]) {
+  const observation = readObservation(dataDir);
+  if (!observation) {
+    process.stderr.write("8-vs-26 needs a committed observations.json (read-only; no --live).\n");
+    process.exit(1);
+  }
+  try {
+    const evidencePath = values.evidence || DEFAULT_EVIDENCE_FIXTURE;
+    const evidence = JSON.parse(readFileSync(evidencePath, "utf8"));
+    const claims = values.claim ? JSON.parse(readFileSync(values.claim, "utf8")) : null;
+    const report = runEightVsTwentySix({ observation, evidence, claims });
+    process.stdout.write(`${values.pretty ? JSON.stringify(report, null, 2) : JSON.stringify(report)}\n`);
+    process.exit(report.ok ? 0 : 1);
+  } catch (error) {
+    process.stderr.write(`${error?.message || error}\n`);
+    process.exit(1);
+  }
 }
 
 const cohort = loadCohort(values.cohort || DEFAULT_COHORT_PATH);

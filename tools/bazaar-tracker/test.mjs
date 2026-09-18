@@ -25,6 +25,14 @@ import {
   snapshotFromRows,
   writeObservation,
 } from "./lib.mjs";
+import {
+  ABSENCE_IS_NOT_DEMAND,
+  COMMITTED_SDS_PATHS,
+  DEFAULT_EVIDENCE_FIXTURE,
+  hasOp,
+  pathFromResource,
+  runEightVsTwentySix,
+} from "./sds-evidence-diff.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cli = join(here, "cli.mjs");
@@ -281,6 +289,7 @@ test("CLI without --live, --from, --fixture, or --readback does not probe the ne
   assert.match(result.stderr, /pilot-vm-job/);
   assert.match(result.stderr, /no cron, no daemon/);
   assert.match(result.stderr, /--readback/);
+  assert.match(result.stderr, /--eight-vs-26/);
 });
 
 test("compact observations store only a resource URL plus a content digest", () => {
@@ -432,6 +441,219 @@ test("CLI --from an edited compact observation reports only the edited fields", 
     assert.equal(report.changes[0].field, "digest");
     assert.equal(report.changes[0].after, route.digest);
     assert.equal(report.changes.every((row) => !["description", "accepts.0.amount", "payTo"].includes(row.field)), true);
+  } finally {
+    rmSync(dataDir, { recursive: true, force: true });
+  }
+});
+
+test("pathFromResource is exact: /extract does not match /extract/batch", () => {
+  assert.equal(pathFromResource("https://agents.samedaydesk.com/extract"), "/extract");
+  assert.equal(pathFromResource("https://agents.samedaydesk.com/extract/batch"), "/extract/batch");
+  assert.notEqual(
+    pathFromResource("https://agents.samedaydesk.com/extract"),
+    pathFromResource("https://agents.samedaydesk.com/extract/batch"),
+  );
+});
+
+test("8-vs-26 cold diff: committed 8 SDS routes vs pinned 26 evidence ops", () => {
+  const observation = JSON.parse(readFileSync(join(here, "../../data/bazaar-tracker/observations.json"), "utf8"));
+  const evidence = JSON.parse(readFileSync(DEFAULT_EVIDENCE_FIXTURE, "utf8"));
+  const report = runEightVsTwentySix({ observation, evidence });
+  assert.equal(report.ok, true, report.reasons.join("; "));
+  assert.equal(report.schema, "samedaydesk.bazaar-8-vs-26.v1");
+  assert.equal(report.cron, false);
+  assert.equal(report.daemon, false);
+  assert.equal(report.liveCdp, false);
+  assert.equal(report.catalogAbsenceIsDemand, false);
+  assert.equal(report.absenceIsDemand, false);
+  assert.equal(report.sdsRowCount, 8);
+  assert.equal(report.evidenceOpCount, 26);
+  assert.equal(report.trackedAndLiveCount, 8);
+  assert.equal(report.liveUntrackedOpCount, 18);
+  assert.equal(report.liveUntrackedPathCount, 16);
+  assert.equal(report.trackedNotInEvidenceCount, 0);
+  assert.deepEqual(report.sdsPaths.slice().sort(), COMMITTED_SDS_PATHS.slice().sort());
+  assert.equal(hasOp(report.liveUntracked, "GET", "/commerce/settlement-proof"), true);
+  assert.equal(hasOp(report.liveUntracked, "POST", "/extract/batch"), true);
+  assert.equal(hasOp(report.trackedAndLive, "GET", "/extract"), true);
+  assert.equal(hasOp(report.trackedAndLive, "POST", "/extract/batch"), false);
+  const batch = report.liveUntracked.find((row) => row.path === "/extract/batch");
+  assert.equal(batch.buyerDemand, false);
+  assert.equal(batch.reason, ABSENCE_IS_NOT_DEMAND);
+  assert.match(batch.receiptX402, /PAYMENT-RESPONSE with signed offer-receipt/);
+  const serialized = JSON.stringify(report);
+  assert.equal(serialized.includes("payTo"), false);
+  assert.equal(serialized.includes("loyaltyPoints"), false);
+});
+
+test("8-vs-26 rejects treating missing POST /extract/batch as buyer demand", () => {
+  const observation = JSON.parse(readFileSync(join(here, "../../data/bazaar-tracker/observations.json"), "utf8"));
+  const evidence = JSON.parse(readFileSync(DEFAULT_EVIDENCE_FIXTURE, "utf8"));
+  const claims = JSON.parse(readFileSync(join(here, "fixtures/seeded-absence-as-demand.json"), "utf8"));
+  const report = runEightVsTwentySix({ observation, evidence, claims });
+  assert.equal(report.ok, false);
+  assert.equal(report.seededRejected, true);
+  assert.equal(report.catalogAbsenceIsDemand, false);
+  assert.ok(report.reasons.includes("treat_absence_as_demand"));
+  assert.ok(report.reasons.includes("treat_absence_as_demand:POST /extract/batch"), report.reasons.join("; "));
+});
+
+test("8-vs-26 rejects invented receipt fields without live schema", () => {
+  const observation = JSON.parse(readFileSync(join(here, "../../data/bazaar-tracker/observations.json"), "utf8"));
+  const evidence = JSON.parse(readFileSync(DEFAULT_EVIDENCE_FIXTURE, "utf8"));
+  const claims = JSON.parse(readFileSync(join(here, "fixtures/seeded-invented-field.json"), "utf8"));
+  const report = runEightVsTwentySix({ observation, evidence, claims });
+  assert.equal(report.ok, false);
+  assert.equal(report.seededRejected, true);
+  assert.ok(
+    report.reasons.some((reason) => reason.startsWith("invented_receipt_field_without_live_schema:")),
+    report.reasons.join("; "),
+  );
+  assert.ok(report.invented.includes("loyaltyPoints"));
+  assert.ok(report.invented.includes("throughBlock"));
+});
+
+test("CLI --eight-vs-26 cold run uses committed observations and does not write", () => {
+  const dataDir = join(here, "../../data/bazaar-tracker");
+  const before = readFileSync(join(dataDir, "observations.json"), "utf8");
+  const result = spawnSync(
+    process.execPath,
+    [cli, "--eight-vs-26", "--pretty", "--data-dir", dataDir],
+    { encoding: "utf8" },
+  );
+  assert.equal(result.status, 0, result.stderr);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.ok, true, result.stdout);
+  assert.equal(report.sdsRowCount, 8);
+  assert.equal(report.evidenceOpCount, 26);
+  assert.equal(report.liveCdp, false);
+  assert.equal(hasOp(report.liveUntracked, "GET", "/commerce/settlement-proof"), true);
+  assert.equal(hasOp(report.liveUntracked, "POST", "/extract/batch"), true);
+  assert.equal(readFileSync(join(dataDir, "observations.json"), "utf8"), before);
+});
+
+test("CLI --eight-vs-26 --claim seeded absence-as-demand exits 1", () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      cli,
+      "--eight-vs-26",
+      "--claim",
+      join(here, "fixtures/seeded-absence-as-demand.json"),
+      "--data-dir",
+      join(here, "../../data/bazaar-tracker"),
+    ],
+    { encoding: "utf8" },
+  );
+  assert.equal(result.status, 1, result.stderr);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.ok, false);
+  assert.equal(report.seededRejected, true);
+  assert.ok(report.reasons.includes("treat_absence_as_demand:POST /extract/batch"), result.stdout);
+});
+
+test("CLI --eight-vs-26 refuses --live", () => {
+  const result = spawnSync(
+    process.execPath,
+    [cli, "--eight-vs-26", "--live"],
+    { encoding: "utf8" },
+  );
+  assert.equal(result.status, 2);
+  assert.match(result.stderr, /refuses --live/);
+  assert.match(result.stderr, /no owner CDP/);
+});
+
+function cloneCommittedEightVsTwentySix() {
+  return {
+    observation: JSON.parse(readFileSync(join(here, "../../data/bazaar-tracker/observations.json"), "utf8")),
+    evidence: JSON.parse(readFileSync(DEFAULT_EVIDENCE_FIXTURE, "utf8")),
+  };
+}
+
+test("8-vs-26 rejects SDS path swap that keeps declared rowCount 8", () => {
+  const { observation, evidence } = cloneCommittedEightVsTwentySix();
+  const seller = observation.sources[CDP_DISCOVERY_SOURCE].sellers.samedaydesk;
+  delete seller.routes["https://agents.samedaydesk.com/extract"];
+  seller.routes["https://agents.samedaydesk.com/not-in-evidence"] = { digest: "aa".repeat(32) };
+  seller.rowCount = 8;
+  const report = runEightVsTwentySix({ observation, evidence });
+  assert.equal(report.ok, false, report.reasons.join("; "));
+  assert.ok(report.reasons.some((reason) => reason.startsWith("sds_paths_mismatch:")), report.reasons.join("; "));
+  assert.ok(report.reasons.includes("tracked_not_in_evidence:/not-in-evidence"), report.reasons.join("; "));
+  assert.equal(report.trackedNotInEvidenceCount, 1);
+});
+
+test("8-vs-26 rejects dropping an SDS route while leaving declared rowCount 8", () => {
+  const { observation, evidence } = cloneCommittedEightVsTwentySix();
+  const seller = observation.sources[CDP_DISCOVERY_SOURCE].sellers.samedaydesk;
+  delete seller.routes["https://agents.samedaydesk.com/extract"];
+  const report = runEightVsTwentySix({ observation, evidence });
+  assert.equal(report.ok, false, report.reasons.join("; "));
+  assert.equal(report.sdsRowCount, 7);
+  assert.ok(report.reasons.includes("sds_row_count_declared_8:actual_7"), report.reasons.join("; "));
+  assert.ok(report.reasons.includes("sds_row_count_expected_8:got_7"), report.reasons.join("; "));
+  assert.ok(report.reasons.some((reason) => reason.startsWith("sds_paths_mismatch:")), report.reasons.join("; "));
+});
+
+test("8-vs-26 rejects a declared evidence.operationCount that does not match ops", () => {
+  const { observation, evidence } = cloneCommittedEightVsTwentySix();
+  evidence.operationCount = 99;
+  const report = runEightVsTwentySix({ observation, evidence });
+  assert.equal(report.ok, false, report.reasons.join("; "));
+  assert.equal(report.evidenceOpCount, 26);
+  assert.ok(report.reasons.includes("evidence_operation_count_declared_99:actual_26"), report.reasons.join("; "));
+});
+
+test("CLI --eight-vs-26 --claim seeded invented receipt fields exits 1", () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      cli,
+      "--eight-vs-26",
+      "--claim",
+      join(here, "fixtures/seeded-invented-field.json"),
+      "--data-dir",
+      join(here, "../../data/bazaar-tracker"),
+    ],
+    { encoding: "utf8" },
+  );
+  assert.equal(result.status, 1, result.stderr);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.ok, false);
+  assert.equal(report.seededRejected, true);
+  assert.ok(report.invented.includes("loyaltyPoints"), result.stdout);
+  assert.ok(report.reasons.some((reason) => reason.startsWith("invented_receipt_field_without_live_schema:")), result.stdout);
+});
+
+test("CLI --eight-vs-26 with empty data-dir exits 1 and does not write", () => {
+  const dataDir = tempDataDir();
+  try {
+    const result = spawnSync(
+      process.execPath,
+      [cli, "--eight-vs-26", "--data-dir", dataDir],
+      { encoding: "utf8" },
+    );
+    assert.equal(result.status, 1, result.stderr);
+    assert.match(result.stderr, /needs a committed observations.json/);
+    assert.equal(result.stdout, "");
+  } finally {
+    rmSync(dataDir, { recursive: true, force: true });
+  }
+});
+
+test("CLI --eight-vs-26 exits 1 when SDS seller is missing from observations", () => {
+  const dataDir = tempDataDir();
+  try {
+    const observation = JSON.parse(readFileSync(join(here, "../../data/bazaar-tracker/observations.json"), "utf8"));
+    delete observation.sources[CDP_DISCOVERY_SOURCE].sellers.samedaydesk;
+    writeFileSync(join(dataDir, "observations.json"), `${JSON.stringify(observation)}\n`);
+    const result = spawnSync(
+      process.execPath,
+      [cli, "--eight-vs-26", "--data-dir", dataDir],
+      { encoding: "utf8" },
+    );
+    assert.equal(result.status, 1, result.stderr);
+    assert.match(result.stderr, /SDS seller samedaydesk missing from observation/);
   } finally {
     rmSync(dataDir, { recursive: true, force: true });
   }
