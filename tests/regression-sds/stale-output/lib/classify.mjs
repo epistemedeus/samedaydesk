@@ -2,7 +2,7 @@
  * Classify useful-jobs / listing / verify output for stale or greenwashed claims.
  * Greenwash = claims ok/pass/success while pin/version/sha/stamp is stale or fabricated.
  */
-import { CURRENT_PIN, STALE_PINS } from "./pin.mjs";
+import { CURRENT_PIN, FABRICATED_SHA, STALE_PINS } from "./pin.mjs";
 
 const STALE_VERSIONS = new Set(Object.keys(STALE_PINS));
 
@@ -24,7 +24,7 @@ function normSha(s) {
 
 /**
  * @param {object} output - claimed product/verify/listing output
- * @param {object} [meta] - fixture meta (surface, expectedReasons)
+ * @param {object} [meta] - fixture meta (surface)
  * @returns {{ reject: boolean, greenwash: boolean, reasons: string[], detail: object }}
  */
 export function classifyStaleOutput(output, meta = {}) {
@@ -48,11 +48,17 @@ export function classifyStaleOutput(output, meta = {}) {
     normSha(output.digest) ||
     normSha(output.sourceObservation?.digest) ||
     null;
-  const bytes =
+  const bytesRaw =
     output.bytes ??
     output.pin?.bytes ??
     output.result?.bytes ??
     null;
+  const bytes =
+    bytesRaw == null || bytesRaw === ""
+      ? null
+      : Number.isFinite(Number(bytesRaw))
+        ? Number(bytesRaw)
+        : null;
   const freshStamp =
     output.freshStamp ||
     output.freshAt ||
@@ -67,21 +73,19 @@ export function classifyStaleOutput(output, meta = {}) {
 
   detail.observed = { version, sha256: sha, bytes, freshStamp, observedAt, stampSource };
 
-  // Stale version relative to current pin
   if (version && version !== CURRENT_PIN.version) {
     if (STALE_VERSIONS.has(version) || compareSemver(version, CURRENT_PIN.version) < 0) {
       reasons.push("stale_version");
     }
   }
 
-  // Sha not equal to current pin
   if (sha && sha !== CURRENT_PIN.sha256) {
     const knownStale = Object.values(STALE_PINS).some((p) => p.sha256 === sha);
-    if (knownStale) reasons.push("stale_sha");
+    if (sha === FABRICATED_SHA) reasons.push("fabricated_sha");
+    else if (knownStale) reasons.push("stale_sha");
     else reasons.push("sha_mismatch");
   }
 
-  // Bytes mismatch with current pin when claiming useful-jobs acquire/verify
   if (
     (meta.surface === "useful-jobs" || output.feature === "useful-jobs") &&
     typeof bytes === "number" &&
@@ -90,7 +94,6 @@ export function classifyStaleOutput(output, meta = {}) {
     reasons.push("stale_bytes");
   }
 
-  // Fabricated fresh stamp: claims freshness without matching current pin
   if (output.fabricatedFresh === true || stampSource === "fabricated") {
     reasons.push("fabricated_fresh_stamp");
   }
@@ -103,7 +106,6 @@ export function classifyStaleOutput(output, meta = {}) {
     }
   }
 
-  // Listing: source digest stale vs declared expectedDigest / pin
   if (meta.surface === "listing" || output.surface === "listing") {
     const expected = normSha(output.expectedDigest) || CURRENT_PIN.sha256;
     const got =
@@ -115,15 +117,6 @@ export function classifyStaleOutput(output, meta = {}) {
     }
     if (output.observedAtSkew === "stale" || output.staleObservedAt === true) {
       reasons.push("stale_observed_at");
-    }
-  }
-
-  // Verify surface: outdated sha claimed as pass
-  if (meta.surface === "verify" || output.surface === "verify") {
-    if (sha && sha !== CURRENT_PIN.sha256) {
-      if (!reasons.includes("stale_sha") && !reasons.includes("sha_mismatch")) {
-        reasons.push("stale_sha");
-      }
     }
   }
 

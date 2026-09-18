@@ -4,7 +4,7 @@
   "feature": "listing-repair",
   "class": "stale",
   "expectReject": true,
-  "expectedReasons": ["greenwash", "stale_listing_digest", "stale_observed_at"],
+  "expectedReasons": ["greenwash", "stale_sha", "stale_listing_digest", "stale_observed_at"],
   "defect": "Listing repair output claims ok while sourceObservation.digest mismatches expectedDigest and observedAt is marked stale.",
   "output": {
     "ok": true,

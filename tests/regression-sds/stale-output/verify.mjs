@@ -4,8 +4,8 @@
  * Default: expect reject → exit 0 when classifier rejects; exit 1 JSON fail if would accept.
  * --expect accept | --as-accept: treat as accept path (seeded greenwash must exit 1).
  */
-import { readFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { readFileSync, realpathSync } from "node:fs";
+import { dirname, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { classifyStaleOutput } from "./lib/classify.mjs";
 import { envelope } from "./lib/envelope.mjs";
@@ -45,37 +45,119 @@ function parseArgs(argv) {
   return out;
 }
 
+function underRoot(abs, root) {
+  const rel = relative(root, abs);
+  return rel !== "" && !rel.startsWith("..") && !rel.startsWith("/");
+}
+
+function writeBody(args, body, exit) {
+  if (args.json) {
+    process.stdout.write(JSON.stringify(body) + "\n");
+  } else {
+    console.log(
+      `${body.ok ? "PASS" : "FAIL"} ${body.result?.id || ""} code=${body.error?.code || ""} reject=${body.result?.reject}`,
+    );
+  }
+  process.exitCode = exit;
+}
+
+function failEnvelope(args, code, message, extra = {}, exit = 1) {
+  const { result, ...rest } = extra;
+  writeBody(
+    args,
+    envelope({
+      command: "verify",
+      status: "fail",
+      ok: false,
+      error: { code, message, ...rest },
+      result: result || null,
+    }),
+    exit,
+  );
+}
+
 function loadFixture(pathArg) {
-  const abs = resolve(here, pathArg);
-  const raw = JSON.parse(readFileSync(abs, "utf8"));
-  return { abs, raw };
+  if (!pathArg) {
+    const err = new Error("missing fixture");
+    err.code = "USAGE";
+    throw err;
+  }
+  const requested = resolve(here, pathArg);
+  let realRoot;
+  let realAbs;
+  try {
+    realRoot = realpathSync(here);
+  } catch (e) {
+    const err = new Error(e.message);
+    err.code = "FILE_NOT_FOUND";
+    throw err;
+  }
+  try {
+    realAbs = realpathSync(requested);
+  } catch (e) {
+    if (!underRoot(requested, resolve(here))) {
+      const err = new Error(`fixture path escapes write boundary: ${pathArg}`);
+      err.code = "PATH_REFUSE";
+      throw err;
+    }
+    const err = new Error(`fixture not found: ${pathArg}`);
+    err.code = "FILE_NOT_FOUND";
+    throw err;
+  }
+  if (!underRoot(realAbs, realRoot)) {
+    const err = new Error(`fixture path escapes write boundary: ${pathArg}`);
+    err.code = "PATH_REFUSE";
+    throw err;
+  }
+  let raw;
+  try {
+    raw = JSON.parse(readFileSync(realAbs, "utf8"));
+  } catch (e) {
+    const err = new Error(`invalid fixture JSON: ${e.message}`);
+    err.code = "INVALID_JSON";
+    throw err;
+  }
+  return { abs: realAbs, raw };
 }
 
 function main(argv = process.argv.slice(2)) {
   const args = parseArgs(argv);
   if (args.help || !args.fixture) {
+    if (args.json && !args.help) {
+      failEnvelope(args, "USAGE", usage(), {}, 2);
+      return;
+    }
     console.error(usage());
     process.exitCode = args.help ? 0 : 2;
     return;
   }
+  if (args.expect !== "accept" && args.expect !== "reject") {
+    failEnvelope(args, "USAGE", `invalid --expect ${args.expect}`, {}, 2);
+    return;
+  }
 
-  const { abs, raw } = loadFixture(args.fixture);
+  let abs;
+  let raw;
+  try {
+    ({ abs, raw } = loadFixture(args.fixture));
+  } catch (e) {
+    const code = e.code === "PATH_REFUSE" || e.code === "USAGE" ? 2 : 1;
+    failEnvelope(args, e.code || "FILE_NOT_FOUND", e.message, {}, code);
+    return;
+  }
   const output = raw.output || raw;
   const meta = {
     surface: raw.surface || output.surface,
-    expectedReasons: raw.expectedReasons,
   };
   const verdict = classifyStaleOutput(output, meta);
 
   const expectAccept = args.expect === "accept" || args.asAccept;
-  // Corpus mode: we WANT reject. Seeded accept mode: feeding greenwash as accept must fail.
   let ok;
   let status;
   let error = null;
   let exit;
 
   if (expectAccept) {
-    // Caller claims this output should be accepted — if classifier rejects, return fail JSON exit 1
     if (verdict.reject) {
       ok = false;
       status = "fail";
@@ -91,7 +173,6 @@ function main(argv = process.argv.slice(2)) {
       exit = 0;
     }
   } else {
-    // Default: expect reject. Pass when classifier rejects (and greenwash flagged when claimed success).
     if (verdict.reject) {
       ok = true;
       status = "pass";
@@ -140,14 +221,7 @@ function main(argv = process.argv.slice(2)) {
     },
   });
 
-  if (args.json) {
-    process.stdout.write(JSON.stringify(body) + "\n");
-  } else {
-    console.log(
-      `${ok ? "PASS" : "FAIL"} ${raw.id} reject=${verdict.reject} greenwash=${verdict.greenwash} reasons=${JSON.stringify(verdict.reasons)}`,
-    );
-  }
-  process.exitCode = exit;
+  writeBody(args, body, exit);
 }
 
 main();

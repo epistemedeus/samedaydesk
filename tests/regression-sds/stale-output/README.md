@@ -28,9 +28,17 @@ node tests/regression-sds/stale-output/run.mjs --json
 # Seeded greenwash fed as accept → exit 1, error.code SEED_REJECT
 node tests/regression-sds/stale-output/run.mjs --seeded-greenwash --json
 
+# Seeded current pin (negative control) → exit 1, error.code SEED_FALSE_ACCEPT
+node tests/regression-sds/stale-output/run.mjs --seeded-greenwash \
+  --seed-file fixtures/cases/current-pin-ok.json --json
+
 # Direct verify of greenwash as accept
 node tests/regression-sds/stale-output/verify.mjs \
   --fixture fixtures/cases/greenwash-stale-pin.json --expect accept --json
+
+# Fixture path outside the package → exit 2 PATH_REFUSE
+node tests/regression-sds/stale-output/verify.mjs \
+  --fixture /tmp/stale-output-outside.json --json
 
 node --test tests/regression-sds/stale-output/corpus.test.mjs
 ```

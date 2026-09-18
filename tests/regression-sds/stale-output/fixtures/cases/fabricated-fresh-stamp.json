@@ -4,7 +4,7 @@
   "feature": "verify",
   "class": "fabricated",
   "expectReject": true,
-  "expectedReasons": ["greenwash", "stale_sha", "fabricated_fresh_stamp"],
+  "expectedReasons": ["greenwash", "fabricated_sha", "fabricated_fresh_stamp"],
   "defect": "Verify output claims ok with a fabricated freshStamp while sha is not the current pin.",
   "output": {
     "ok": true,
