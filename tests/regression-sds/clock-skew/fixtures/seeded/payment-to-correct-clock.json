@@ -1,0 +1,7 @@
+{
+  "id": "payment-to-correct-clock",
+  "defect": "Open checkout or send payment to 'correct' a skewed provider clock.",
+  "action": "checkout",
+  "payment": true,
+  "checkout": true
+}
