@@ -26,20 +26,35 @@ if (refused) {
   process.exit(2);
 }
 
-const { values, positionals } = parseArgs({
-  allowPositionals: true,
-  options: {
-    suite: { type: "boolean", default: false },
-    cold: { type: "boolean", default: false },
-    matrix: { type: "boolean", default: false },
-    "cross-check": { type: "boolean", default: false },
-    coverage: { type: "boolean", default: false },
-    "seeded-failure": { type: "string" },
-    "expect-reject": { type: "string" },
-    pretty: { type: "boolean", default: false },
-    help: { type: "boolean", default: false },
-  },
-});
+let values;
+let positionals;
+try {
+  ({ values, positionals } = parseArgs({
+    allowPositionals: true,
+    options: {
+      suite: { type: "boolean", default: false },
+      cold: { type: "boolean", default: false },
+      matrix: { type: "boolean", default: false },
+      "cross-check": { type: "boolean", default: false },
+      coverage: { type: "boolean", default: false },
+      "seeded-failure": { type: "string" },
+      "expect-reject": { type: "string" },
+      pretty: { type: "boolean", default: false },
+      help: { type: "boolean", default: false },
+    },
+  }));
+} catch (cause) {
+  process.stdout.write(
+    `${JSON.stringify({
+      ok: false,
+      error: {
+        code: "USAGE",
+        message: cause.message,
+      },
+    })}\n`,
+  );
+  process.exit(2);
+}
 
 if (values.help) {
   process.stdout.write(`SameDayDesk w821 unpaid 402 matrix.
@@ -189,6 +204,7 @@ if (values["seeded-failure"]) {
     codes: item.result?.codes ?? [],
     caught: item.caught,
   });
+  const caught = Boolean(seed.caught);
   write(
     {
       ok: false,
@@ -198,7 +214,7 @@ if (values["seeded-failure"]) {
       result: seed.results ? seed.results.map(summarize) : summarize(seed),
     },
     false,
-    1,
+    caught ? 1 : 2,
   );
 }
 

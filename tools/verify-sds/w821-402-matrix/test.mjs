@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
   DEFAULT_MATRIX,
@@ -32,6 +33,7 @@ import {
   routeKey,
   runSuite,
   validateFile,
+  validateMatrix,
   validateRecord,
 } from "./lib.mjs";
 
@@ -397,4 +399,85 @@ test("lib and CLI stay inside the write boundary and do not pay", () => {
   assert.equal(PACK_ROOT, here);
   assert.equal(DEFAULT_MATRIX, join(here, "matrix.json"));
   assert.match(ROOT, /samedaydesk|repo$/);
+});
+
+test("request url must equal the pinned resource", () => {
+  const record = cloneValid("unpaid-402-extract-5000.json");
+  record.request.url = "https://agents.samedaydesk.com/read?url=https%3A%2F%2Fexample.com";
+  const result = evaluateRecord(record, matrix);
+  assert.equal(result.ok, false);
+  assert.ok(result.codes.includes("resource_mismatch"));
+});
+
+test("gateway extra on extract is pin_mismatch", () => {
+  const record = cloneValid("unpaid-402-extract-5000.json");
+  record.extra = {
+    name: "GatewayWalletBatched",
+    version: "1",
+    verifyingContract: "0x77777777Dcc4d5A8B6E418Fd04D8997ef11000eE",
+  };
+  const result = evaluateRecord(record, matrix);
+  assert.equal(result.ok, false);
+  assert.ok(result.codes.includes("pin_mismatch"));
+});
+
+test("omitted gateway maxTimeoutSeconds is pin_mismatch", () => {
+  const record = cloneValid("unpaid-402-gateway-commerce-payment-offer-preflight-5000.json");
+  delete record.maxTimeoutSeconds;
+  const result = evaluateRecord(record, matrix);
+  assert.equal(result.ok, false);
+  assert.ok(result.codes.includes("pin_mismatch"));
+});
+
+test("cross-check rejects catalog payTo, extra, timeout, and lastUpdated drift", () => {
+  const catalog = loadJson(join(ROOT, "fixtures/presence/catalog/x402.json"));
+  catalog.lastUpdated = 1;
+  catalog.x402Version = 1;
+  catalog.items[0].accepts[0].payTo = "0x0000000000000000000000000000000000000001";
+  catalog.items[0].accepts[0].maxTimeoutSeconds = 1;
+  catalog.items[0].accepts[0].extra = { name: "FAKE", version: "9" };
+  const dir = mkdtempSync(join(tmpdir(), "w821-cross-"));
+  const catalogPath = join(dir, "x402.json");
+  writeFileSync(catalogPath, JSON.stringify(catalog));
+  const cross = crossCheckInTreeCatalog(matrix, catalogPath);
+  assert.equal(cross.ok, false, JSON.stringify(cross.findings));
+  const codes = cross.findings.map((item) => item.code);
+  assert.ok(codes.includes("payto_drift"), JSON.stringify(codes));
+  assert.ok(codes.includes("timeout_drift"), JSON.stringify(codes));
+  assert.ok(codes.includes("extra_drift"), JSON.stringify(codes));
+  assert.ok(codes.includes("last_updated_drift"), JSON.stringify(codes));
+  assert.ok(codes.includes("x402_version_drift"), JSON.stringify(codes));
+});
+
+test("CLI --seeded-failure without a value is USAGE exit 2", () => {
+  const result = runCli(["--seeded-failure"]);
+  assert.equal(result.status, 2, result.stderr || result.stdout);
+  const body = JSON.parse(result.stdout);
+  assert.equal(body.error.code, "USAGE");
+});
+
+test("designated seed file cannot escape fixtures", () => {
+  assert.throws(
+    () => designatedSeedPath(matrix, { id: "escape", file: "../../../package.json", code: "stale_listed_amount" }),
+    /stay under fixtures/,
+  );
+});
+
+test("uncaught designated seed is SEED_MISS", () => {
+  const mutated = structuredClone(matrix);
+  mutated.knownStaleListings = [];
+  const amount = evaluateSeededFailure("bad-amount", mutated);
+  assert.equal(amount.caught, false);
+  assert.equal(amount.error.code, "SEED_MISS");
+  assert.ok(amount.result.codes.includes("amount_mismatch"));
+});
+
+test("validateMatrix rejects duplicate routes and uniqueAmount count drift", () => {
+  const dup = structuredClone(matrix);
+  dup.routes.push({ ...dup.routes[0] });
+  const result = validateMatrix(dup);
+  assert.equal(result.ok, false);
+  const codes = result.findings.map((item) => item.code);
+  assert.ok(codes.includes("duplicate_route"), JSON.stringify(codes));
+  assert.ok(codes.includes("unique_amount_count"), JSON.stringify(codes));
 });

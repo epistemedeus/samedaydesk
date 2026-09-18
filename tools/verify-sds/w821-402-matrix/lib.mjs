@@ -1,5 +1,5 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -97,6 +97,24 @@ function isPlainObject(value) {
   return proto === Object.prototype || proto === null;
 }
 
+function extraEqual(left, right) {
+  if (left === right) return true;
+  if (!isPlainObject(left) || !isPlainObject(right)) return false;
+  const keys = ownKeys(left);
+  if (keys.length !== ownKeys(right).length) return false;
+  for (const key of keys) {
+    if (!Object.hasOwn(right, key) || left[key] !== right[key]) return false;
+  }
+  return true;
+}
+
+function confineUnder(root, candidate) {
+  const resolved = resolve(root, candidate);
+  const rel = relative(root, resolved);
+  if (!rel || rel.startsWith("..") || isAbsolute(rel)) return null;
+  return resolved;
+}
+
 function ownKeys(value) {
   return Object.getOwnPropertyNames(value);
 }
@@ -187,6 +205,49 @@ export function loadInvalidManifest(manifestPath = INVALID_MANIFEST) {
   return JSON.parse(readFileSync(manifestPath, "utf8"));
 }
 
+export function validateMatrix(matrix) {
+  const findings = [];
+  if (!isPlainObject(matrix) || !isPlainObject(matrix.pin) || !Array.isArray(matrix.routes)) {
+    return { ok: false, findings: [{ code: "invalid_shape", message: "matrix must contain pin and routes" }] };
+  }
+  const seen = new Set();
+  const amountCounts = new Map();
+  const decimals = matrix.pin.decimals;
+  for (const row of matrix.routes) {
+    const key = routeKey(row.method, row.route);
+    if (seen.has(key)) findings.push({ code: "duplicate_route", key });
+    seen.add(key);
+    amountCounts.set(row.amountAtomic, (amountCounts.get(row.amountAtomic) || 0) + 1);
+    const expectedDisplay = atomicToDisplay(row.amountAtomic, decimals);
+    if (expectedDisplay !== row.amountDisplayUsd) {
+      findings.push({
+        code: "display_mismatch",
+        key,
+        amountAtomic: row.amountAtomic,
+        amountDisplayUsd: row.amountDisplayUsd,
+      });
+    }
+  }
+  if (Array.isArray(matrix.uniqueAmounts)) {
+    for (const item of matrix.uniqueAmounts) {
+      const actual = amountCounts.get(item.amountAtomic) || 0;
+      if (actual !== item.routeCount) {
+        findings.push({
+          code: "unique_amount_count",
+          amountAtomic: item.amountAtomic,
+          declared: item.routeCount,
+          actual,
+        });
+      }
+      const expectedDisplay = atomicToDisplay(item.amountAtomic, decimals);
+      if (expectedDisplay !== item.amountDisplayUsd) {
+        findings.push({ code: "unique_amount_display", amountAtomic: item.amountAtomic });
+      }
+    }
+  }
+  return { ok: findings.length === 0, findings };
+}
+
 export function loadMatrix(matrixPath = DEFAULT_MATRIX) {
   const matrix = loadJson(matrixPath);
   if (!isPlainObject(matrix) || !isPlainObject(matrix.pin) || !Array.isArray(matrix.routes)) {
@@ -194,6 +255,10 @@ export function loadMatrix(matrixPath = DEFAULT_MATRIX) {
   }
   if (matrix.schemaVersion !== MATRIX_SCHEMA_VERSION) {
     throw new Error(`matrix schemaVersion must be ${MATRIX_SCHEMA_VERSION}`);
+  }
+  const integrity = validateMatrix(matrix);
+  if (!integrity.ok) {
+    throw new Error(`matrix integrity failed: ${JSON.stringify(integrity.findings)}`);
   }
   return matrix;
 }
@@ -220,7 +285,15 @@ export function resolveSeedSpec(name, matrix = loadMatrix()) {
 
 export function designatedSeedPath(matrix = loadMatrix(), seed = null) {
   const spec = seed || designatedSeeds(matrix)[0] || matrix.designatedSeed;
-  return join(FIXTURE_ROOT, spec.file);
+  const file = String(spec?.file || "");
+  if (!file || isAbsolute(file)) {
+    throw new Error("seed file must be a relative path under fixtures");
+  }
+  const confined = confineUnder(FIXTURE_ROOT, file);
+  if (!confined) {
+    throw new Error("seed file must stay under fixtures");
+  }
+  return confined;
 }
 
 export function routeKey(method, route) {
@@ -301,6 +374,8 @@ function validateRequest(request, record, errors) {
   }
   if (typeof request.url !== "string" || !request.url.startsWith(RESOURCE_PREFIX)) {
     errors.push(error("invalid_shape", "$.request.url", "request url must be an SDS origin URL"));
+  } else if (request.url !== record.resource) {
+    errors.push(error("resource_mismatch", "$.request.url", "request url must equal resource"));
   }
   if (Object.hasOwn(request, "headers")) {
     if (!isPlainObject(request.headers)) {
@@ -378,9 +453,7 @@ export function validateRecord(input, matrix = loadMatrix()) {
   if (input.httpStatus !== 402 && input.httpStatus !== 200) {
     errors.push(error("invalid_shape", "$.httpStatus", "httpStatus must be 402 or 200"));
   }
-  if (input.httpStatus === 402 && input.statusClass === "unpaid" && input.kind === "unpaid_payment_required") {
-    // expected unpaid challenge
-  } else if (input.httpStatus !== 402 && input.statusClass === "unpaid") {
+  if (input.httpStatus !== 402 && input.statusClass === "unpaid") {
     errors.push(
       error("bad_status", "$.httpStatus", "unpaid 402 fixtures cannot carry HTTP 200 or other non-402 status"),
     );
@@ -555,8 +628,24 @@ export function validateRecord(input, matrix = loadMatrix()) {
         ),
       );
     }
-    if (Object.hasOwn(input, "maxTimeoutSeconds") && input.maxTimeoutSeconds !== row.maxTimeoutSeconds) {
-      errors.push(error("pin_mismatch", "$.maxTimeoutSeconds", "maxTimeoutSeconds is not the catalog pin"));
+    if (Object.hasOwn(row, "maxTimeoutSeconds")) {
+      if (!Object.hasOwn(input, "maxTimeoutSeconds") || input.maxTimeoutSeconds !== row.maxTimeoutSeconds) {
+        errors.push(error("pin_mismatch", "$.maxTimeoutSeconds", "maxTimeoutSeconds is not the catalog pin"));
+      }
+    }
+    if (row.network && input.network !== row.network) {
+      errors.push(error("pin_mismatch", "$.network", "network is not the route pin"));
+    }
+    if (row.asset && typeof input.asset === "string" && ADDR_RE.test(input.asset) && addr(input.asset) !== addr(row.asset)) {
+      errors.push(error("pin_mismatch", "$.asset", "asset is not the route pin"));
+    }
+    if (row.payTo && typeof input.payTo === "string" && ADDR_RE.test(input.payTo) && addr(input.payTo) !== addr(row.payTo)) {
+      errors.push(error("pin_mismatch", "$.payTo", "payTo is not the route pin"));
+    }
+    if (isPlainObject(row.extra)) {
+      if (!Object.hasOwn(input, "extra") || !extraEqual(input.extra, row.extra)) {
+        errors.push(error("pin_mismatch", "$.extra", "extra does not match the catalog pin for this route"));
+      }
     }
   }
 
@@ -660,7 +749,18 @@ function seedResultPayload(seed, filePath, result, caught, error) {
 }
 
 export function evaluateOneSeededFailure(seed, matrix = loadMatrix()) {
-  const filePath = designatedSeedPath(matrix, seed);
+  let filePath;
+  try {
+    filePath = designatedSeedPath(matrix, seed);
+  } catch (cause) {
+    return seedResultPayload(
+      seed,
+      null,
+      { ok: false, errors: [], codes: [], naiveVerdict: "reject", honestVerdict: "reject" },
+      false,
+      { code: "SEED_MISS", message: cause.message },
+    );
+  }
   const result = validateFile(filePath, matrix);
   const codes = result.errors.map((item) => item.code);
   const caught =
@@ -744,7 +844,8 @@ export function crossCheckInTreeCatalog(matrix = loadMatrix(), catalogPath = IN_
   for (const item of items) {
     const route = item?.resource?.routeTemplate;
     const method = item?.request?.method;
-    const amount = item?.accepts?.[0]?.amount;
+    const accept = item?.accepts?.[0];
+    const amount = accept?.amount;
     const resource = item?.resource?.url;
     const key = routeKey(method, route);
     seen.add(key);
@@ -764,6 +865,48 @@ export function crossCheckInTreeCatalog(matrix = loadMatrix(), catalogPath = IN_
     if (row.resource !== resource) {
       findings.push({ code: "resource_drift", key });
     }
+    if (row.network && row.network !== accept?.network) {
+      findings.push({ code: "network_drift", key, matrix: row.network, catalog: accept?.network });
+    }
+    if (row.asset && addr(row.asset) !== addr(accept?.asset)) {
+      findings.push({ code: "asset_drift", key });
+    }
+    if (row.payTo && addr(row.payTo) !== addr(accept?.payTo)) {
+      findings.push({ code: "payto_drift", key });
+    }
+    if (row.maxTimeoutSeconds !== accept?.maxTimeoutSeconds) {
+      findings.push({
+        code: "timeout_drift",
+        key,
+        matrix: row.maxTimeoutSeconds,
+        catalog: accept?.maxTimeoutSeconds,
+      });
+    }
+    if (!extraEqual(row.extra, accept?.extra)) {
+      findings.push({ code: "extra_drift", key });
+    }
+  }
+  if (
+    isPlainObject(matrix.inTreeCatalog) &&
+    Object.hasOwn(matrix.inTreeCatalog, "lastUpdated") &&
+    catalog.lastUpdated !== matrix.inTreeCatalog.lastUpdated
+  ) {
+    findings.push({
+      code: "last_updated_drift",
+      matrix: matrix.inTreeCatalog.lastUpdated,
+      catalog: catalog.lastUpdated ?? null,
+    });
+  }
+  if (
+    isPlainObject(matrix.inTreeCatalog) &&
+    Object.hasOwn(matrix.inTreeCatalog, "x402Version") &&
+    catalog.x402Version !== matrix.inTreeCatalog.x402Version
+  ) {
+    findings.push({
+      code: "x402_version_drift",
+      matrix: matrix.inTreeCatalog.x402Version,
+      catalog: catalog.x402Version ?? null,
+    });
   }
   for (const row of matrix.routes) {
     const key = routeKey(row.method, row.route);
@@ -817,14 +960,22 @@ export function coverageReport(matrix = loadMatrix()) {
   const uniqueMissing = matrix.uniqueAmounts
     .filter((item) => !uniqueCovered.has(item.amountAtomic))
     .map((item) => item.amountAtomic);
+  const actualCounts = new Map();
+  for (const row of matrix.routes) {
+    actualCounts.set(row.amountAtomic, (actualCounts.get(row.amountAtomic) || 0) + 1);
+  }
+  const uniqueAmountCountMismatches = (matrix.uniqueAmounts || [])
+    .filter((item) => (actualCounts.get(item.amountAtomic) || 0) !== item.routeCount)
+    .map((item) => item.amountAtomic);
   return {
-    ok: missing.length === 0 && uniqueMissing.length === 0,
+    ok: missing.length === 0 && uniqueMissing.length === 0 && uniqueAmountCountMismatches.length === 0,
     validFixtures: files.length,
     matrixRoutes: matrix.routes.length,
     uniqueAmounts: matrix.uniqueAmounts.length,
     uniqueCovered: uniqueCovered.size,
     missingRoutes: missing,
     missingAmounts: uniqueMissing,
+    uniqueAmountCountMismatches,
   };
 }
 

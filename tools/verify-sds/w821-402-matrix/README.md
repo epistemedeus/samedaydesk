@@ -51,7 +51,8 @@ naive-accept / honest-reject.
 ## Seeded failures
 
 `--seeded-failure all` runs the three designated seeds and exits 1 with
-`error.code` `SEED_REJECT` when each is caught.
+`error.code` `SEED_REJECT` when each is caught. If a designated seed is
+accepted or misses its code, the CLI exits 2 with `SEED_MISS` / `SEED_ACCEPTED`.
 
 | Seed | Fixture | Honest code |
 | --- | --- | --- |
