@@ -99,8 +99,10 @@ function extractBlock(src, startMarker, endMarker) {
 
 assert.deepEqual([...MCP_TOOL_NAMES], EXPECTED_NAMES);
 assert.match(mcpSource, /const PROTOCOL_VERSION = "2024-11-05"/);
+assert.match(mcpSource, /protocolVersion:\s*PROTOCOL_VERSION/);
 assert.equal(mcpSource.includes("2025-11-25"), false);
 assert.equal(mcpSource.includes("2026-07-28"), false);
+assert.equal(mcpSource.includes("2999-01-01"), false);
 assert.equal(mcpSource.includes("params?.protocolVersion || PROTOCOL_VERSION"), false);
 assert.match(mcpSource, /name: "samedaydesk-agent-tools"/);
 assert.match(mcpSource, /Unknown tool:/);
@@ -177,25 +179,35 @@ const server = http.createServer(async (req, res) => {
   const chunks = [];
   for await (const chunk of req) chunks.push(chunk);
   const msg = JSON.parse(Buffer.concat(chunks).toString("utf8"));
-  const encoded = JSON.stringify(msg);
-  assert.equal(encoded.includes('"tools/call"'), false, "discovery POST must not include tools/call");
+  if (JSON.stringify(msg).includes('"tools/call"')) {
+    res.writeHead(400, { "content-type": "application/json" });
+    res.end(JSON.stringify({ ok: false, rejected: true, code: "PAID_REFUSE" }));
+    return;
+  }
   const out = handle(msg);
   res.writeHead(200, { "content-type": "application/json" });
   res.end(JSON.stringify(out));
 });
 
+try {
 await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
-const { port } = server.address();
+const addr = server.address();
+assert.equal(typeof addr, "object");
+assert.equal(addr.address, "127.0.0.1");
+const { port } = addr;
 const origin = `http://127.0.0.1:${port}/mcp`;
 
 async function rpc(method, params, id = 1) {
   assert.notEqual(method, "tools/call", "unpaid discovery must not invoke tools/call");
   const body = { jsonrpc: "2.0", id, method };
   if (params !== undefined) body.params = params;
+  const encoded = JSON.stringify(body);
+  assert.equal(encoded.includes('"tools/call"'), false, "discovery POST must not include tools/call");
   const response = await fetch(origin, {
     method: "POST",
     headers: { "content-type": "application/json", accept: "application/json" },
-    body: JSON.stringify(body),
+    body: encoded,
+    signal: AbortSignal.timeout(5000),
   });
   return { status: response.status, json: await response.json() };
 }
@@ -214,6 +226,7 @@ const initOfferedNewer = await rpc("initialize", {
   capabilities: {},
   clientInfo: { name: "sds-howto-unpaid-mcp", version: "0" },
 }, 2);
+assert.equal(initOfferedNewer.status, 200);
 assert.equal(initOfferedNewer.json.result.protocolVersion, PROTOCOL);
 
 const listed = await rpc("tools/list", {}, 7);
@@ -221,11 +234,35 @@ assert.equal(listed.status, 200);
 assert.deepEqual(listed.json.result.tools.map((tool) => tool.name), EXPECTED_NAMES);
 assert.equal(JSON.stringify(listed.json).includes("tools/call"), false);
 
-const banner = await fetch(origin);
+const banner = await fetch(origin, { signal: AbortSignal.timeout(5000) });
 assert.equal(banner.status, 200);
 assert.match(await banner.text(), /samedaydesk agent tools MCP server/);
 
-await new Promise((resolve, reject) => server.close((err) => (err ? reject(err) : resolve())));
+const csRefuse = await fetch(`${origin}?cs=cs_test_seeded`, { signal: AbortSignal.timeout(5000) });
+assert.equal(csRefuse.status, 400);
+assert.equal((await csRefuse.json()).code, "STRIPE_PATH_REFUSE");
+
+const payRefuse = await fetch(origin, {
+  method: "POST",
+  headers: {
+    "content-type": "application/json",
+    accept: "application/json",
+    "PAYMENT-SIGNATURE": "e30=",
+  },
+  body: JSON.stringify({
+    jsonrpc: "2.0",
+    id: 1,
+    method: "initialize",
+    params: {
+      protocolVersion: PROTOCOL,
+      capabilities: {},
+      clientInfo: { name: "sds-howto-unpaid-mcp", version: "0" },
+    },
+  }),
+  signal: AbortSignal.timeout(5000),
+});
+assert.equal(payRefuse.status, 400);
+assert.equal((await payRefuse.json()).code, "PAYMENT_HEADER_REFUSE");
 
 console.log(JSON.stringify({
   ok: true,
@@ -245,13 +282,21 @@ console.log(JSON.stringify({
   paidToolCalled: false,
   toolsBlockSha256: FROZEN_TOOLS_BLOCK_SHA256,
   origin,
+  loopbackBind: addr.address,
+  stripePathRefused: true,
+  paymentHeaderRefused: true,
 }, null, 2));
+} finally {
+await new Promise((resolve, reject) => server.close((err) => (err ? reject(err) : resolve())));
+}
 JS
 ```
 
 Expected: exit **0** and JSON with `"ok": true`, `"paid": false`,
 `"toolsCalled": false`, `"protocolVersion": "2024-11-05"`,
-`"paidToolListed": "generate_complete_fix_pack"`, `"paidToolCalled": false`.
+`"paidToolListed": "generate_complete_fix_pack"`, `"paidToolCalled": false`,
+`"stripePathRefused": true`, `"paymentHeaderRefused": true`,
+`"loopbackBind": "127.0.0.1"`.
 
 The loopback catalog is extracted from `server/routes/mcp.js`. It is not a
 second product and it does not execute tool handlers.
@@ -263,9 +308,16 @@ The seed below is intentional. It asks this how-to to `tools/call`
 a `cs_` license, or opening Stripe. Discovery refuses **before** POST.
 
 ```bash
-SDS_HOWTO_SEED=paid-tool-call node --input-type=module <<'JS'
+(
+  set +e
+  SDS_HOWTO_SEED="${SDS_HOWTO_SEED:-paid-tool-call}" node --input-type=module <<'JS'
 const PAID_TOOL = "generate_complete_fix_pack";
-const FORBIDDEN_HEADERS = ["PAYMENT-SIGNATURE", "X-PAYMENT", "stripe-signature"];
+const FORBIDDEN_HEADERS = [
+  "PAYMENT-SIGNATURE",
+  "X-PAYMENT",
+  "stripe-signature",
+  "Authorization",
+];
 const PAYMENT_STOP_PATHS = ["/api/checkout", "/api/stripe/webhook", "/checkout", "/mcp?cs="];
 const NEO_STOP = [
   "vendor/neomorphic-correspondence",
@@ -281,6 +333,13 @@ const KNOWN = [
   "neo-kernel-vendor",
 ];
 
+let networkCalls = 0;
+const fetchImpl = globalThis.fetch;
+globalThis.fetch = async (...args) => {
+  networkCalls += 1;
+  return fetchImpl(...args);
+};
+
 function fail(code, message, extra = {}) {
   const body = {
     ok: false,
@@ -293,6 +352,8 @@ function fail(code, message, extra = {}) {
     publishAttempted: false,
     neoKernelVendor: false,
     ...extra,
+    neverPostedCall: networkCalls === 0,
+    networkCalls,
   };
   console.log(JSON.stringify(body, null, 2));
   console.error(message);
@@ -301,10 +362,11 @@ function fail(code, message, extra = {}) {
 
 const seed = process.env.SDS_HOWTO_SEED || "paid-tool-call";
 if (seed === "paid-tool-call") {
+  const forbiddenMethod = "tools/call";
   fail(
     "PAID_REFUSE",
     "tools/call of generate_complete_fix_pack is paid; unpaid MCP discovery does not settle",
-    { seed, tool: PAID_TOOL, neverPostedCall: true },
+    { seed, tool: PAID_TOOL, forbiddenMethod },
   );
 }
 if (seed === "payment-signature") {
@@ -337,16 +399,21 @@ if (seed === "neo-kernel-vendor") {
 }
 fail("UNKNOWN_SEED", `unknown seeded failure: ${seed}`, { seed, known: KNOWN });
 JS
-echo "seeded_exit:$?"
+  echo "seeded_exit:$?"
+)
 ```
 
 Expected: the Node process exits **1**. Stdout is JSON with
 `"ok": false`, `"rejected": true`, `"code": "PAID_REFUSE"`,
-`"neverPostedCall": true`, `"paymentAttempted": false`. Stderr matches
+`"neverPostedCall": true`, `"networkCalls": 0`, `"paymentAttempted": false`.
+Stderr matches
 `tools/call of generate_complete_fix_pack is paid; unpaid MCP discovery does not settle`.
 `seeded_exit:1`.
 
-Replay other named refusals with the same fence:
+Replay other named refusals with the same fence by setting `SDS_HOWTO_SEED`
+(the fence defaults to `paid-tool-call` and does not hardcode that value over
+a caller-supplied seed). Under `set -e`, the subshell still prints
+`seeded_exit:1`.
 
 | `SDS_HOWTO_SEED` | Exit | `code` |
 | --- | --- | --- |
@@ -365,9 +432,10 @@ rejection. This how-to still must not POST `tools/call` to observe it.
 
 Network is not required. If you already have it, the same three methods
 against the deployed apex must match the cold catalog. Do not follow with
-`tools/call`.
+`tools/call`. The commands below are a `text` fence, not `bash`, so a
+follow-the-doc extractor must not auto-run them.
 
-```bash
+```text
 curl -sS https://samedaydesk.com/mcp
 curl -sS -H 'content-type: application/json' -H 'accept: application/json' \
   -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"sds-howto-unpaid-mcp","version":"0"}}}' \
