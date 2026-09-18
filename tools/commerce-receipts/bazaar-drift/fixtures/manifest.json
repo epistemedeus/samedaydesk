@@ -1,0 +1,10 @@
+{
+  "cold-committed.json": { "expect": "hold", "file": "cases/cold-committed.json" },
+  "rematerialized-read.json": { "expect": "reject", "code": "rematerialized_claim", "file": "reject/rematerialized-read.json" },
+  "rewrite-origin.json": { "expect": "reject", "code": "edit_live_prices", "file": "reject/rewrite-origin.json" },
+  "absence-as-demand.json": { "expect": "reject", "code": "treat_absence_as_demand", "file": "reject/absence-as-demand.json" },
+  "lastCalledAt-removal.json": { "expect": "reject", "code": "last_called_at_is_not_a_clock", "file": "reject/lastCalledAt-removal.json" },
+  "paid-as-unpaid.json": { "expect": "reject", "code": "paid_as_unpaid", "file": "reject/paid-as-unpaid.json" },
+  "float-money.json": { "expect": "reject", "code": "float_money", "file": "reject/float-money.json" },
+  "purchase-authority.json": { "expect": "reject", "code": "purchase_authority", "file": "reject/purchase-authority.json" }
+}

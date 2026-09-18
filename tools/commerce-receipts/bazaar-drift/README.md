@@ -1,57 +1,72 @@
-# SDS bazaar-listing vs unpaid commerce-receipt drift
+# SDS bazaar-drift commerce receipt
 
-Offline join of Coinbase Bazaar SameDayDesk listings to unpaid origin 402
-commerce receipts. HTTP 402 is not settlement. Catalog absence is not
-demand. Compact observations stay digest-only.
+Offline comparator for Coinbase Bazaar SameDayDesk listings versus the
+recorded origin catalog. It reports drift. It does not rematerialize a
+Bazaar row, rewrite origin prices, pay, publish, or call CDP.
 
-This pack does not pay, checkout, publish, call CDP, attach
-neo-kernel-vendor, or rewrite live prices. Write boundary:
-`tools/commerce-receipts/bazaar-drift/**`.
+Write boundary: `tools/commerce-receipts/bazaar-drift/**`.
 
-```
-node tools/commerce-receipts/bazaar-drift/cli.mjs --cold
-node tools/commerce-receipts/bazaar-drift/cli.mjs --seeded-failure read-claimed-match
-node tools/commerce-receipts/bazaar-drift/cli.mjs --expect-reject amount_drift tools/commerce-receipts/bazaar-drift/fixtures/invalid/read-claimed-match.json
-node tools/commerce-receipts/bazaar-drift/cli.mjs tools/commerce-receipts/bazaar-drift/fixtures/valid/extract-aligned.json
-node --test tools/commerce-receipts/bazaar-drift/test.mjs
-```
+## Recorded conflict
 
-`--live`, `--pay`, `--payment`, `--checkout`, `--publish`, `--registry`,
-`--refresh`, `--settle`, `--neo`, and `--neo-kernel-vendor` are refused
-(exit 2).
+Committed evidence still disagrees on `GET /read`:
+
+| Surface | Amount | Atomic (USDC, 6 decimals) |
+| --- | --- | --- |
+| SDS origin OpenAPI 1.23.40 / unpaid 402 | `0.005` | `5000` |
+| Bazaar merchant listing | `0.05` | `50000` |
+
+Agent402's seller snapshot records `priceConflict: true` on that route.
+The other seven Bazaar SDS routes match origin amounts. Catalog absence
+(17 live origin ops not in the eight Bazaar rows) is not buyer demand.
+`quality.lastCalledAt` is not a removal clock.
 
 ## Cold run
 
-`--cold` joins the pinned eight SDS Bazaar routes to unpaid origin 402
-amounts taken from `fixtures/presence/catalog/x402.json`.
+Pins are copied from committed repo files and cross-checked on every run:
 
-| Path | Bazaar atomic | Receipt atomic |
-| --- | ---: | ---: |
-| `/extract` and six other listed routes | match origin | match origin |
-| `/read` | `50000` | `5000` |
-| `/commerce/settlement-proof` | absent | `5000` |
+- `docs/lqdist1-distribution-audit/per-route-table.json` (25 paid ops)
+- `fixtures/presence/listings/bazaar-merchant.json` (8 SDS-host listings)
+- `data/bazaar-tracker/observations.json` (SDS `rowCount` 8)
+- `docs/lqdist1-distribution-audit/evidence/agent402-seller-bounded.json`
 
-The `/read` row is the documented Agent402 `priceConflict` (bazaar 0.05 vs
-origin/OpenAPI 0.005). Cold exit 0 means the audit still reports that HOLD
-and does not treat bazaar-absent origin routes as buyer demand.
+```
+node tools/commerce-receipts/bazaar-drift/cli.mjs --cold --pretty
+node tools/commerce-receipts/bazaar-drift/cli.mjs --from-repo --pretty
+```
 
-Naive verdict is same-path plus `statusClass: unpaid` → match. Honest
-verdict compares atomic integer-string amounts.
+Exit 0. `ok: true`, `decision: hold`, `code: bazaar_price_conflict`,
+`rematerialized: false`, `liveSdsPricesUnchanged: true`, `paid: false`.
+The receipt keeps origin `/read` at `0.005`.
 
 ## Seeded failure
 
-`fixtures/invalid/read-claimed-match.json` copies the `/read` pair and
-claims `match: true`. Naive accept. Honest reject `amount_drift`.
+`fixtures/reject/rematerialized-read.json` claims the stale Bazaar `/read`
+row was rematerialized to `0.005`. Naive verdict accepts
+`claims.rematerialized`. Honest verdict rejects: the committed listing is
+still `50000`.
 
 ```
-node tools/commerce-receipts/bazaar-drift/cli.mjs --seeded-failure read-claimed-match
+node tools/commerce-receipts/bazaar-drift/cli.mjs --seeded-failure rematerialized-read --pretty
+node tools/commerce-receipts/bazaar-drift/cli.mjs --seeded-failure read-claimed-match --pretty
 ```
 
-Exit 1, `error.code` `SEED_REJECT`, `codes` includes `amount_drift`.
+Exit 1, `error.code` `SEED_REJECT`, `codes` includes `rematerialized_claim`.
 
-## Compact observations
+Other refusals under `fixtures/reject/`:
 
-Full listing snapshots may carry `accepts` for the amount compare. The
-compact projection emitted by `--cold` is `{ route, seller, sellerId,
-source, digest }` only. A compact object that stores `payTo` or `amount`
-is `payto_in_compact` / `payment_terms_in_compact`.
+| Fixture | Code |
+| --- | --- |
+| `rewrite-origin.json` | `edit_live_prices` |
+| `absence-as-demand.json` | `treat_absence_as_demand` |
+| `lastCalledAt-removal.json` | `last_called_at_is_not_a_clock` |
+| `paid-as-unpaid.json` | `paid_as_unpaid` |
+| `float-money.json` | `float_money` |
+| `purchase-authority.json` | `purchase_authority` |
+
+`--live`, `--pay`, `--checkout`, `--publish`, `--rematerialize`,
+`--settle`, `--neo`, and `--neo-kernel-vendor` exit 2.
+
+```
+node --test tools/commerce-receipts/bazaar-drift/test.mjs
+node tools/commerce-receipts/bazaar-drift/cli.mjs --suite
+```

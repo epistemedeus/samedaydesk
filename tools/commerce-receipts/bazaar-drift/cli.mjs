@@ -1,234 +1,178 @@
 #!/usr/bin/env node
-import { pathToFileURL } from "node:url";
-import { resolve } from "node:path";
 import { parseArgs } from "node:util";
 import {
   SEEDED_FAILURE,
-  codesFrom,
+  SEEDED_FAILURE_ALIASES,
+  evaluateCold,
   evaluateFile,
   evaluateSeededFailure,
   refusedFlag,
-  runCold,
   runSuite,
 } from "./lib.mjs";
 
-const HELP = `SameDayDesk bazaar-listing vs unpaid commerce-receipt drift (offline).
-
-Joins Coinbase Bazaar SDS listings to unpaid origin 402 receipts by
-origin+pathname. Catalog absence is not demand. Compact observations stay
-digest-only. Does not pay, checkout, publish, call CDP, or touch neo.
-
-Usage:
-  node tools/commerce-receipts/bazaar-drift/cli.mjs --cold
-  node tools/commerce-receipts/bazaar-drift/cli.mjs --suite
-  node tools/commerce-receipts/bazaar-drift/cli.mjs --seeded-failure read-claimed-match
-  node tools/commerce-receipts/bazaar-drift/cli.mjs --expect-reject amount_drift <file.json>
-  node tools/commerce-receipts/bazaar-drift/cli.mjs <file.json>
-
---cold             honest audit of pinned 8 SDS bazaar routes vs unpaid receipts
---suite            accept every valid fixture and reject every invalid fixture
---seeded-failure   require the designated /read claim-match seed to be caught (exit 1)
---expect-reject    require the named error code on a single file
---pretty           indent JSON
-
---live/--pay/--payment/--checkout/--publish/--registry/--refresh/--settle/--neo/--neo-kernel-vendor are refused.
-`;
-
-function writeJson(value, pretty) {
-  return `${JSON.stringify(value, null, pretty ? 2 : 0)}\n`;
+const refused = refusedFlag(process.argv.slice(2));
+if (refused) {
+  process.stdout.write(
+    `${JSON.stringify({
+      ok: false,
+      schema: "samedaydesk.commerce-receipt.bazaar-drift.result.v1",
+      decision: "reject",
+      code: "REFUSED",
+      error: {
+        code: "REFUSED",
+        message: `${refused} is refused. This pack is unpaid offline bazaar-drift only.`,
+      },
+      paid: false,
+      paymentSent: false,
+      rematerialized: false,
+      liveSdsPricesUnchanged: true,
+      liveCdp: false,
+    })}\n`,
+  );
+  process.exit(2);
 }
 
-export function runCli(argv = process.argv.slice(2), io = process) {
-  const refused = refusedFlag(argv);
-  if (refused) {
-    io.stdout.write(
-      writeJson(
-        {
-          ok: false,
-          error: {
-            code: "REFUSED",
-            message: `${refused} is refused. This pack is unpaid bazaar-vs-receipt drift only. No pay, publish, or neo-kernel-vendor.`,
-          },
-        },
-        false,
-      ),
-    );
-    return 2;
-  }
+const { values, positionals } = parseArgs({
+  allowPositionals: true,
+  options: {
+    cold: { type: "boolean", default: false },
+    "from-repo": { type: "boolean", default: false },
+    suite: { type: "boolean", default: false },
+    "seeded-failure": { type: "string" },
+    case: { type: "string" },
+    "expect-reject": { type: "string" },
+    pretty: { type: "boolean", default: false },
+    help: { type: "boolean", default: false },
+  },
+});
 
-  let values;
-  let positionals;
-  try {
-    ({ values, positionals } = parseArgs({
-      args: argv,
-      allowPositionals: true,
-      options: {
-        help: { type: "boolean", default: false },
-        pretty: { type: "boolean", default: false },
-        cold: { type: "boolean", default: false },
-        suite: { type: "boolean", default: false },
-        "seeded-failure": { type: "string" },
-        "expect-reject": { type: "string" },
-      },
-    }));
-  } catch (cause) {
-    io.stderr.write(`${cause.message}\n`);
-    return 2;
-  }
+if (values.help) {
+  process.stdout.write(`SameDayDesk bazaar-drift commerce receipt (offline, unpaid).
 
-  const pretty = values.pretty === true;
-  const write = (value, code) => {
-    io.stdout.write(writeJson(value, pretty));
-    return code;
-  };
+Usage:
+  node tools/commerce-receipts/bazaar-drift/cli.mjs --cold --pretty
+  node tools/commerce-receipts/bazaar-drift/cli.mjs --from-repo --pretty
+  node tools/commerce-receipts/bazaar-drift/cli.mjs --seeded-failure rematerialized-read --pretty
+  node tools/commerce-receipts/bazaar-drift/cli.mjs --suite
+  node tools/commerce-receipts/bazaar-drift/cli.mjs --case tools/commerce-receipts/bazaar-drift/fixtures/reject/rewrite-origin.json --expect-reject edit_live_prices
 
-  if (values.help) {
-    io.stdout.write(HELP);
-    return 0;
-  }
+--cold             compare committed origin 1.23.40 vs Bazaar SDS listings (8 routes)
+--from-repo        same as --cold; pins are cross-checked against repo evidence
+--seeded-failure   require rematerialized-read to be caught (exit 1)
+--suite            every fixture matches its expected hold/reject code
+--case <file>      evaluate one case JSON
+--expect-reject    require the named error code on --case
+--pretty           indent JSON
 
-  const selected = [values.cold, values.suite, Boolean(values["seeded-failure"])].filter(Boolean).length;
-  if (selected > 1) {
-    io.stderr.write("Use only one of --cold, --suite, or --seeded-failure.\n");
-    return 2;
-  }
+Does not pay, checkout, publish, rematerialize, or rewrite SKUs.
+--live/--pay/--checkout/--publish/--rematerialize/--settle/--neo/--neo-kernel-vendor are refused (exit 2).
+`);
+  process.exit(0);
+}
 
-  if (values.cold) {
-    if (positionals.length > 0 || values["expect-reject"]) {
-      io.stderr.write("--cold does not take files or --expect-reject.\n");
-      return 2;
-    }
-    const cold = runCold();
-    return write(cold, cold.ok ? 0 : 1);
-  }
+const indent = values.pretty ? 2 : 0;
 
-  if (values.suite) {
-    if (positionals.length > 0 || values["expect-reject"]) {
-      io.stderr.write("--suite does not take files or --expect-reject.\n");
-      return 2;
-    }
-    const report = runSuite();
-    return write(
-      {
-        ok: report.ok,
-        command: "suite",
-        paid: false,
-        live: false,
-        network: false,
-        neo: false,
-        published: false,
-        passed: report.passed,
-        failed: report.failed,
-        total: report.total,
-        results: report.results.map((item) => ({
-          file: item.filePath,
-          expect: item.expect,
-          expectedCode: item.expectedCode ?? null,
-          ok: item.ok,
-          codes: item.errors.map((error) => error.code),
-        })),
-      },
-      report.ok ? 0 : 1,
-    );
-  }
+function write(value, code) {
+  process.stdout.write(`${JSON.stringify(value, null, indent)}\n`);
+  process.exit(code);
+}
 
-  if (values["seeded-failure"]) {
-    if (values["seeded-failure"] !== SEEDED_FAILURE) {
-      return write(
-        {
-          ok: false,
-          command: "seeded-failure",
-          error: {
-            code: "USAGE",
-            message: "--seeded-failure must be read-claimed-match",
-          },
-        },
-        2,
-      );
-    }
-    if (positionals.length > 0 || values["expect-reject"]) {
-      io.stderr.write("--seeded-failure does not take files or --expect-reject.\n");
-      return 2;
-    }
-    const seed = evaluateSeededFailure();
-    return write(
-      {
-        ok: false,
-        command: "seeded-failure",
-        seed: SEEDED_FAILURE,
-        error: seed.error,
-        result: {
-          file: seed.filePath ?? null,
-          path: seed.result?.path ?? null,
-          bazaarAmount: seed.result?.bazaarAmount ?? null,
-          receiptAmount: seed.result?.receiptAmount ?? null,
-          naiveVerdict: seed.result?.naiveVerdict ?? null,
-          honestVerdict: seed.result?.honestVerdict ?? null,
-          codes: seed.result ? codesFrom(seed.result) : [],
-          caught: seed.caught,
-        },
-      },
-      1,
-    );
-  }
+const modes = [
+  values.cold || values["from-repo"],
+  values.suite,
+  Boolean(values["seeded-failure"]),
+  Boolean(values.case) || positionals.length > 0,
+].filter(Boolean).length;
 
-  if (positionals.length === 0) {
-    io.stderr.write(HELP);
-    return 2;
-  }
+if (modes !== 1) {
+  process.stderr.write("Use exactly one of --cold/--from-repo, --suite, --seeded-failure, or --case.\n");
+  process.exit(2);
+}
 
-  const expectedCode = values["expect-reject"];
-  if (expectedCode && positionals.length !== 1) {
-    io.stderr.write("--expect-reject requires exactly one file.\n");
-    return 2;
-  }
-
-  if (expectedCode) {
-    const result = evaluateFile(positionals[0]);
-    const codes = codesFrom(result);
-    const ok = result.ok === false && codes.includes(expectedCode);
-    return write(
-      {
-        ok,
-        expectReject: expectedCode,
-        file: result.filePath,
-        path: result.path ?? null,
-        bazaarAmount: result.bazaarAmount ?? null,
-        receiptAmount: result.receiptAmount ?? null,
-        naiveVerdict: result.naiveVerdict,
-        honestVerdict: result.honestVerdict,
-        codes,
-        errors: result.errors,
-      },
-      ok ? 0 : 1,
-    );
-  }
-
-  if (positionals.length === 1) {
-    const result = evaluateFile(positionals[0]);
-    return write(result, result.ok ? 0 : 1);
-  }
-
-  const results = positionals.map((filePath) => evaluateFile(filePath));
-  const failed = results.filter((item) => !item.ok);
-  return write(
+if (values.suite) {
+  const report = runSuite();
+  write(
     {
-      ok: failed.length === 0,
-      passed: results.length - failed.length,
-      failed: failed.length,
-      total: results.length,
-      results: results.map((item) => ({
-        file: item.filePath,
+      ok: report.ok,
+      command: "suite",
+      passed: report.passed,
+      failed: report.failed,
+      total: report.total,
+      results: report.results.map((item) => ({
+        name: item.name,
+        expect: item.expect,
+        expectedCode: item.expectedCode,
         ok: item.ok,
-        path: item.path ?? null,
-        codes: codesFrom(item),
+        decision: item.decision,
+        codes: item.codes,
       })),
     },
-    failed.length === 0 ? 0 : 1,
+    report.ok ? 0 : 1,
   );
 }
 
-const isMain = process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url;
-if (isMain) {
-  process.exit(runCli());
+if (values["seeded-failure"]) {
+  if (!SEEDED_FAILURE_ALIASES.includes(values["seeded-failure"])) {
+    write(
+      {
+        ok: false,
+        command: "seeded-failure",
+        error: { code: "USAGE", message: "--seeded-failure must be rematerialized-read" },
+      },
+      2,
+    );
+  }
+  const seed = evaluateSeededFailure();
+  write(
+    {
+      ok: false,
+      command: "seeded-failure",
+      seed: SEEDED_FAILURE,
+      error: seed.error,
+      caught: seed.caught,
+      result: {
+        file: seed.filePath ?? null,
+        caseId: seed.result?.caseId ?? null,
+        naiveVerdict: seed.result?.naiveVerdict ?? null,
+        honestVerdict: seed.result?.honestVerdict ?? null,
+        decision: seed.result?.decision ?? null,
+        codes: seed.result?.codes ?? [],
+        priceConflicts: seed.result?.priceConflicts ?? [],
+        rematerialized: seed.result?.rematerialized ?? null,
+        liveSdsPricesUnchanged: seed.result?.liveSdsPricesUnchanged ?? null,
+        paid: seed.result?.paid ?? null,
+      },
+    },
+    1,
+  );
 }
+
+if (values.cold || values["from-repo"]) {
+  const result = evaluateCold();
+  write({ ...result, command: values["from-repo"] ? "from-repo" : "cold" }, result.ok ? 0 : 1);
+}
+
+const casePath = values.case || positionals[0];
+const result = evaluateFile(casePath);
+if (values["expect-reject"]) {
+  const ok = !result.ok && result.codes.includes(values["expect-reject"]);
+  write(
+    {
+      ok,
+      expectReject: values["expect-reject"],
+      file: result.filePath,
+      caseId: result.caseId,
+      naiveVerdict: result.naiveVerdict,
+      honestVerdict: result.honestVerdict,
+      decision: result.decision,
+      codes: result.codes,
+      errors: result.errors,
+      rematerialized: result.rematerialized,
+      liveSdsPricesUnchanged: result.liveSdsPricesUnchanged,
+      paid: result.paid,
+    },
+    ok ? 0 : 1,
+  );
+}
+
+write(result, result.ok ? 0 : 1);

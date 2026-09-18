@@ -4,213 +4,241 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import {
-  EXPECTED_BAZAAR_COUNT,
-  EXPECTED_BAZAAR_PATHS,
-  EXPECTED_READ_DRIFT,
+  DEFAULT_COLD_CASE,
+  REPO_ROOT,
   SEEDED_FAILURE,
-  compactRoute,
-  comparePair,
+  designatedSeedPath,
+  diffBazaarToOrigin,
+  evaluateCold,
   evaluateFile,
   evaluateSeededFailure,
-  projectCompact,
-  runCold,
+  loadBazaarPin,
+  loadCatalog,
+  loadJson,
+  loadOriginPin,
+  loadRepoAgent402ReadConflict,
+  loadRepoBazaarListings,
+  loadRepoOriginOps,
+  loadRepoSdsObservation,
+  naiveVerdict,
   runSuite,
 } from "./lib.mjs";
+import { atomicToDecimal, decimalToAtomic } from "./money.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cli = join(here, "cli.mjs");
-const extractAligned = join(here, "fixtures/valid/extract-aligned.json");
-const receiptOnly = join(here, "fixtures/valid/receipt-only-not-demand.json");
-const seedFile = join(here, "fixtures/invalid/read-claimed-match.json");
-const absenceFile = join(here, "fixtures/invalid/absence-as-demand.json");
-const paidFile = join(here, "fixtures/invalid/paid-as-unpaid.json");
-const compactFile = join(here, "fixtures/invalid/payto-in-compact.json");
-const floatFile = join(here, "fixtures/invalid/float-money.json");
+const catalog = loadCatalog();
 
 function runCli(args) {
-  return spawnSync(process.execPath, [cli, ...args], { encoding: "utf8" });
+  return spawnSync(process.execPath, [cli, ...args], {
+    cwd: REPO_ROOT,
+    encoding: "utf8",
+    maxBuffer: 2 * 1024 * 1024,
+  });
 }
 
-test("CLI --cold reports eight SDS bazaar routes and the documented /read amount drift", () => {
-  const result = runCli(["--cold"]);
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const report = JSON.parse(result.stdout);
-  assert.equal(report.ok, true);
-  assert.equal(report.command, "cold");
-  assert.equal(report.paid, false);
-  assert.equal(report.live, false);
-  assert.equal(report.network, false);
-  assert.equal(report.neo, false);
-  assert.equal(report.published, false);
-  assert.equal(report.liveCdp, false);
-  assert.equal(report.catalogAbsenceIsDemand, false);
-  assert.equal(report.absenceIsDemand, false);
-  assert.equal(report.bazaarRowCount, EXPECTED_BAZAAR_COUNT);
-  assert.deepEqual(report.bazaarPaths, [...EXPECTED_BAZAAR_PATHS]);
-  assert.equal(report.alignedCount, 7);
-  assert.equal(report.amountDriftCount, 1);
-  assert.deepEqual(report.amountDrift, [
+test("USDC six-decimal roundtrip matches SDS pins", () => {
+  assert.equal(decimalToAtomic("0.005"), "5000");
+  assert.equal(decimalToAtomic("0.05"), "50000");
+  assert.equal(decimalToAtomic("0.2"), "200000");
+  assert.equal(decimalToAtomic("0.25"), "250000");
+  assert.equal(decimalToAtomic("0.01"), "10000");
+  assert.equal(decimalToAtomic("0.002"), "2000");
+  assert.equal(atomicToDecimal("5000"), "0.005");
+  assert.equal(atomicToDecimal("50000"), "0.05");
+});
+
+test("bundled pins match committed origin table, bazaar merchant, and SDS observation", () => {
+  const originPin = loadOriginPin();
+  const bazaarPin = loadBazaarPin();
+  const repoOps = loadRepoOriginOps();
+  const repoListings = loadRepoBazaarListings();
+  const observation = loadRepoSdsObservation();
+  const agent402 = loadRepoAgent402ReadConflict();
+
+  assert.equal(originPin.paidOperationCount, 25);
+  assert.equal(originPin.operations.length, 25);
+  assert.equal(repoOps.length, 25);
+  assert.equal(bazaarPin.listings.length, 8);
+  assert.equal(repoListings.length, 8);
+  assert.equal(observation.rowCount, 8);
+  assert.equal(agent402.priceConflict, true);
+
+  const readOrigin = originPin.operations.find((op) => op.route === "/read");
+  const readBazaar = bazaarPin.listings.find((row) => row.route === "/read");
+  assert.equal(readOrigin.amount, "0.005");
+  assert.equal(readOrigin.amountAtomic, "5000");
+  assert.equal(readBazaar.amount, "0.05");
+  assert.equal(readBazaar.amountAtomic, "50000");
+  assert.equal(repoListings.find((row) => row.route === "/read").amountAtomic, "50000");
+  assert.equal(repoOps.find((op) => op.route === "/read" && op.method === "GET").amount, "0.005");
+});
+
+test("diff reports GET /read amount drift and live-untracked settlement-proof", () => {
+  const diff = diffBazaarToOrigin(loadBazaarPin(), loadOriginPin());
+  assert.equal(diff.bazaarSdsRouteCount, 8);
+  assert.equal(diff.originPaidOpCount, 25);
+  assert.equal(diff.priceConflicts.length, 1);
+  assert.deepEqual(
     {
-      path: "/read",
-      bazaarAmount: EXPECTED_READ_DRIFT.bazaarAmount,
-      receiptAmount: EXPECTED_READ_DRIFT.receiptAmount,
-      buyerDemand: false,
-    },
-  ]);
-  assert.equal(report.receiptOnlyCount, 1);
-  assert.equal(report.receiptOnly[0].path, "/commerce/settlement-proof");
-  assert.equal(report.receiptOnly[0].buyerDemand, false);
-  assert.equal(report.receiptOnly[0].reason, "catalog_absence_is_not_demand");
-  const compactBlob = JSON.stringify(report.compactObservation);
-  assert.equal(compactBlob.includes("payTo"), false);
-  assert.equal(compactBlob.includes("\"amount\""), false);
-  for (const row of report.compactObservation) {
-    assert.deepEqual(Object.keys(row).sort(), ["digest", "route", "seller", "sellerId", "source"]);
-    assert.match(row.digest, /^[0-9a-f]{64}$/);
-  }
-});
-
-test("CLI --seeded-failure read-claimed-match is naive-accept / honest-reject", () => {
-  const result = runCli(["--seeded-failure", SEEDED_FAILURE]);
-  assert.equal(result.status, 1, result.stderr || result.stdout);
-  const report = JSON.parse(result.stdout);
-  assert.equal(report.ok, false);
-  assert.equal(report.error.code, "SEED_REJECT");
-  assert.equal(report.result.caught, true);
-  assert.equal(report.result.path, "/read");
-  assert.equal(report.result.bazaarAmount, "50000");
-  assert.equal(report.result.receiptAmount, "5000");
-  assert.equal(report.result.naiveVerdict, "accept");
-  assert.equal(report.result.honestVerdict, "reject");
-  assert.equal(report.result.codes.includes("amount_drift"), true);
-  assert.equal(report.result.codes.includes("claim_match"), true);
-});
-
-test("CLI --expect-reject amount_drift on the designated seed", () => {
-  const result = runCli(["--expect-reject", "amount_drift", seedFile]);
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const report = JSON.parse(result.stdout);
-  assert.equal(report.ok, true);
-  assert.equal(report.expectReject, "amount_drift");
-  assert.equal(report.naiveVerdict, "accept");
-  assert.equal(report.honestVerdict, "reject");
-});
-
-test("CLI accepts the aligned extract pair", () => {
-  const result = runCli([extractAligned]);
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const report = JSON.parse(result.stdout);
-  assert.equal(report.ok, true);
-  assert.equal(report.path, "/extract");
-  assert.equal(report.aligned, true);
-  assert.equal(report.bazaarAmount, "5000");
-  assert.equal(report.receiptAmount, "5000");
-});
-
-test("CLI --suite accepts valid fixtures and rejects invalid ones", () => {
-  const result = runCli(["--suite"]);
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const report = JSON.parse(result.stdout);
-  assert.equal(report.ok, true);
-  assert.equal(report.failed, 0);
-  assert.ok(report.total >= 8);
-});
-
-test("CLI refuses live, pay, publish, and neo-kernel-vendor", () => {
-  for (const flag of ["--live", "--pay", "--publish", "--neo-kernel-vendor"]) {
-    const result = runCli([flag]);
-    assert.equal(result.status, 2, flag);
-    const report = JSON.parse(result.stdout);
-    assert.equal(report.ok, false);
-    assert.equal(report.error.code, "REFUSED");
-  }
-});
-
-test("CLI without a mode does not probe the network", () => {
-  const result = runCli([]);
-  assert.equal(result.status, 2);
-  assert.match(result.stderr, /bazaar-listing vs unpaid commerce-receipt/);
-  assert.match(result.stderr, /neo-kernel-vendor/);
-});
-
-test("receipt-only origin route is not buyer demand", () => {
-  const result = evaluateFile(receiptOnly);
-  assert.equal(result.ok, true);
-  assert.equal(result.class, "receipt-only");
-  assert.equal(result.buyerDemand, false);
-  assert.equal(result.catalogAbsenceIsDemand, false);
-});
-
-test("absence-as-demand, paid-as-unpaid, payto-in-compact, and float-money reject", () => {
-  const absence = evaluateFile(absenceFile);
-  assert.equal(absence.ok, false);
-  assert.equal(absence.naiveVerdict, "accept");
-  assert.equal(codesIncludes(absence, "absence_as_demand"), true);
-
-  const paid = evaluateFile(paidFile);
-  assert.equal(paid.ok, false);
-  assert.equal(paid.naiveVerdict, "accept");
-  assert.equal(codesIncludes(paid, "paid_as_unpaid"), true);
-  assert.match(JSON.stringify(paid), /0x2916cfe2/);
-
-  const compact = evaluateFile(compactFile);
-  assert.equal(compact.ok, false);
-  assert.equal(codesIncludes(compact, "payto_in_compact"), true);
-
-  const floats = evaluateFile(floatFile);
-  assert.equal(floats.ok, false);
-  assert.equal(codesIncludes(floats, "float_money"), true);
-});
-
-test("compact projection of listing snapshots drops payment terms", () => {
-  const listing = {
-    resource: "https://agents.samedaydesk.com/extract",
-    seller: "SameDayDesk",
-    sellerId: "samedaydesk",
-    description: "Extract a public page",
-    accepts: [{ scheme: "exact", amount: "5000", payTo: "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee" }],
-  };
-  const compact = compactRoute(listing);
-  assert.deepEqual(Object.keys(compact).sort(), ["digest", "route", "seller", "sellerId", "source"]);
-  const blob = JSON.stringify(projectCompact([listing]));
-  assert.equal(blob.includes("payTo"), false);
-  assert.equal(blob.includes("5000"), false);
-});
-
-test("comparePair reports /read drift without inventing demand", () => {
-  const compared = comparePair(
-    {
-      resource: "https://agents.samedaydesk.com/read",
-      accepts: [{ scheme: "exact", amount: "50000", network: "eip155:8453" }],
+      method: diff.priceConflicts[0].method,
+      route: diff.priceConflicts[0].route,
+      originAmount: diff.priceConflicts[0].originAmount,
+      bazaarAmount: diff.priceConflicts[0].bazaarAmount,
+      originAtomic: diff.priceConflicts[0].originAtomic,
+      bazaarAtomic: diff.priceConflicts[0].bazaarAtomic,
     },
     {
-      statusClass: "unpaid",
-      resource: "https://agents.samedaydesk.com/read?url=https://example.com",
+      method: "GET",
       route: "/read",
-      httpStatus: 402,
-      charged: false,
-      paymentSent: false,
-      accepts: [{ scheme: "exact", amount: "5000", network: "eip155:8453" }],
+      originAmount: "0.005",
+      bazaarAmount: "0.05",
+      originAtomic: "5000",
+      bazaarAtomic: "50000",
     },
   );
-  assert.equal(compared.naiveVerdict, "accept");
-  assert.equal(compared.honestVerdict, "reject");
-  assert.equal(compared.path, "/read");
-  assert.equal(compared.buyerDemand, false);
-  assert.equal(compared.errors.some((item) => item.code === "amount_drift"), true);
+  assert.equal(
+    diff.liveUntracked.some((row) => row.method === "GET" && row.route === "/commerce/settlement-proof"),
+    true,
+  );
+  assert.equal(
+    diff.liveUntracked.some((row) => row.method === "GET" && row.route === "/commerce/seller-integrity-audit"),
+    true,
+  );
+  assert.equal(diff.liveUntracked.every((row) => row.buyerDemand === false), true);
 });
 
-test("runCold and evaluateSeededFailure stay in-process with the same verdicts as the CLI", () => {
-  const cold = runCold();
-  assert.equal(cold.ok, true);
-  assert.equal(cold.amountDriftCount, 1);
+test("cold committed case holds on /read and does not rematerialize or pay", () => {
+  const result = evaluateCold();
+  assert.equal(result.ok, true);
+  assert.equal(result.decision, "hold");
+  assert.equal(result.code, "bazaar_price_conflict");
+  assert.equal(result.rematerialized, false);
+  assert.equal(result.liveSdsPricesUnchanged, true);
+  assert.equal(result.paid, false);
+  assert.equal(result.paymentSent, false);
+  assert.equal(result.catalogAbsenceIsDemand, false);
+  assert.equal(result.liveCdp, false);
+  assert.equal(result.bazaarSdsRouteCount, 8);
+  assert.equal(result.originPaidOpCount, 25);
+  assert.equal(result.receipt.route, "/read");
+  assert.equal(result.receipt.originAmount, "0.005");
+  assert.equal(result.receipt.bazaarAmount, "0.05");
+  assert.equal(result.artifacts.agent402ReadConflict.priceConflict, true);
+});
+
+test("seeded rematerialized-read is naive-accept honest-reject", () => {
   const seed = evaluateSeededFailure();
   assert.equal(seed.caught, true);
+  assert.equal(seed.ok, false);
   assert.equal(seed.error.code, "SEED_REJECT");
-  const suite = runSuite();
-  assert.equal(suite.ok, true, JSON.stringify(suite.results.filter((item) => !item.ok), null, 2));
+  assert.equal(seed.result.naiveVerdict, "accept");
+  assert.equal(seed.result.honestVerdict, "reject");
+  assert.equal(seed.result.codes.includes("rematerialized_claim"), true);
+  assert.equal(seed.result.rematerialized, false);
+  assert.equal(seed.result.liveSdsPricesUnchanged, true);
+  assert.equal(seed.result.priceConflicts[0].bazaarAtomic, "50000");
+  const input = loadJson(designatedSeedPath());
+  assert.equal(naiveVerdict(input), "accept");
+  assert.equal(input.claims.rematerialized, true);
 });
 
-function codesIncludes(result, code) {
-  return (result.errors ?? []).some((item) => item.code === code);
-}
+test("suite holds the cold case and rejects every seeded fixture", () => {
+  const report = runSuite();
+  assert.equal(report.ok, true, JSON.stringify(report.results.filter((item) => !item.ok), null, 2));
+  assert.equal(report.total, 8);
+});
+
+test("CLI --cold exits 0 and quotes GET /read 0.05 vs 0.005", () => {
+  const proc = runCli(["--cold", "--pretty"]);
+  assert.equal(proc.status, 0, proc.stderr || proc.stdout);
+  const body = JSON.parse(proc.stdout);
+  assert.equal(body.ok, true);
+  assert.equal(body.command, "cold");
+  assert.equal(body.decision, "hold");
+  assert.equal(body.code, "bazaar_price_conflict");
+  assert.equal(body.priceConflicts[0].route, "/read");
+  assert.equal(body.priceConflicts[0].bazaarAmount, "0.05");
+  assert.equal(body.priceConflicts[0].originAmount, "0.005");
+  assert.equal(body.rematerialized, false);
+  assert.equal(body.paid, false);
+  assert.equal(body.bazaarSdsRouteCount, 8);
+  assert.equal(body.originPaidOpCount, 25);
+});
+
+test("CLI --from-repo matches --cold against the same committed artifacts", () => {
+  const proc = runCli(["--from-repo", "--pretty"]);
+  assert.equal(proc.status, 0, proc.stderr || proc.stdout);
+  const body = JSON.parse(proc.stdout);
+  assert.equal(body.command, "from-repo");
+  assert.equal(body.artifacts.originTable, "docs/lqdist1-distribution-audit/per-route-table.json");
+  assert.equal(body.artifacts.bazaarMerchant, "fixtures/presence/listings/bazaar-merchant.json");
+  assert.equal(body.artifacts.observation, "data/bazaar-tracker/observations.json");
+  assert.equal(body.priceConflicts[0].bazaarAtomic, "50000");
+});
+
+test("CLI --seeded-failure rematerialized-read exits 1", () => {
+  const proc = runCli(["--seeded-failure", SEEDED_FAILURE, "--pretty"]);
+  assert.equal(proc.status, 1, proc.stderr || proc.stdout);
+  const body = JSON.parse(proc.stdout);
+  assert.equal(body.ok, false);
+  assert.equal(body.caught, true);
+  assert.equal(body.error.code, "SEED_REJECT");
+  assert.equal(body.result.naiveVerdict, "accept");
+  assert.equal(body.result.honestVerdict, "reject");
+  assert.equal(body.result.codes.includes("rematerialized_claim"), true);
+  assert.equal(body.result.liveSdsPricesUnchanged, true);
+  assert.equal(body.result.rematerialized, false);
+  const alias = runCli(["--seeded-failure", "read-claimed-match"]);
+  assert.equal(alias.status, 1, alias.stderr || alias.stdout);
+  assert.equal(JSON.parse(alias.stdout).error.code, "SEED_REJECT");
+});
+
+test("CLI --live and --pay are refused with exit 2", () => {
+  for (const flag of ["--live", "--pay", "--publish", "--rematerialize", "--checkout", "--neo-kernel-vendor"]) {
+    const proc = runCli([flag]);
+    assert.equal(proc.status, 2, flag);
+    const body = JSON.parse(proc.stdout);
+    assert.equal(body.ok, false);
+    assert.equal(body.code, "REFUSED");
+    assert.equal(body.rematerialized, false);
+    assert.equal(body.liveSdsPricesUnchanged, true);
+  }
+});
+
+test("CLI --expect-reject catches rewrite-origin and absence-as-demand", () => {
+  const rewrite = runCli([
+    "--case",
+    "tools/commerce-receipts/bazaar-drift/fixtures/reject/rewrite-origin.json",
+    "--expect-reject",
+    "edit_live_prices",
+    "--pretty",
+  ]);
+  assert.equal(rewrite.status, 0, rewrite.stderr || rewrite.stdout);
+  const absence = runCli([
+    "--case",
+    "tools/commerce-receipts/bazaar-drift/fixtures/reject/absence-as-demand.json",
+    "--expect-reject",
+    "treat_absence_as_demand",
+  ]);
+  assert.equal(absence.status, 0, absence.stderr || absence.stdout);
+});
+
+test("float-money and paid-as-unpaid fixtures fail closed", () => {
+  const floatCase = evaluateFile(join(here, "fixtures/reject/float-money.json"));
+  assert.equal(floatCase.ok, false);
+  assert.equal(floatCase.codes.includes("float_money"), true);
+  const paid = evaluateFile(join(here, "fixtures/reject/paid-as-unpaid.json"));
+  assert.equal(paid.ok, false);
+  assert.equal(paid.codes.includes("paid_as_unpaid"), true);
+  const clock = evaluateFile(join(here, "fixtures/reject/lastCalledAt-removal.json"));
+  assert.equal(clock.ok, false);
+  assert.equal(clock.codes.includes("last_called_at_is_not_a_clock"), true);
+});
+
+test("catalog designated seed and cold case paths exist", () => {
+  assert.equal(catalog.designatedSeed.id, SEEDED_FAILURE);
+  assert.equal(catalog.designatedSeed.code, "rematerialized_claim");
+  assert.equal(loadJson(DEFAULT_COLD_CASE).caseId, "cold-committed");
+  assert.equal(loadJson(designatedSeedPath()).caseId, "rematerialized-read");
+});

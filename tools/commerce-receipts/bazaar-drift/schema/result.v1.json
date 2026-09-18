@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://samedaydesk.com/schema/commerce-receipt.bazaar-drift.result.v1.json",
+  "title": "SameDayDesk bazaar-drift commerce receipt",
+  "description": "Offline comparison of Coinbase Bazaar SDS listings against the recorded origin catalog. HTTP 402 and catalog presence are not settlement or demand.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "ok",
+    "schema",
+    "decision",
+    "code",
+    "rematerialized",
+    "liveSdsPricesUnchanged",
+    "paid",
+    "paymentSent",
+    "catalogAbsenceIsDemand"
+  ],
+  "properties": {
+    "ok": { "type": "boolean" },
+    "schema": { "const": "samedaydesk.commerce-receipt.bazaar-drift.result.v1" },
+    "decision": { "type": "string", "enum": ["hold", "reject", "match"] },
+    "code": { "type": "string" },
+    "rematerialized": { "type": "boolean", "const": false },
+    "liveSdsPricesUnchanged": { "type": "boolean", "const": true },
+    "paid": { "type": "boolean", "const": false },
+    "paymentSent": { "type": "boolean", "const": false },
+    "catalogAbsenceIsDemand": { "type": "boolean", "const": false }
+  }
+}
