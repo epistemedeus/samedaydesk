@@ -1,0 +1,15 @@
+{
+  "schema": "samedaydesk.bazaar-drift.case.v1",
+  "caseId": "float-money",
+  "claims": {
+    "rematerialized": false
+  },
+  "bazaarListings": [
+    {
+      "resource": "https://agents.samedaydesk.com/read",
+      "route": "/read",
+      "method": "GET",
+      "amount": 0.05
+    }
+  ]
+}

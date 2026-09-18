@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://samedaydesk.com/schema/bazaar-drift.case.v1.json",
+  "title": "SameDayDesk bazaar-drift case",
+  "description": "Offline claim envelope compared against committed SDS origin and Bazaar pins. Shape only; policy is in lib.mjs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "caseId"],
+  "properties": {
+    "schema": { "const": "samedaydesk.bazaar-drift.case.v1" },
+    "caseId": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{2,95}$" },
+    "claims": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "bazaarListings": { "type": "array" },
+    "originOperations": { "type": "array" },
+    "settlement": { "type": ["object", "null"] }
+  }
+}

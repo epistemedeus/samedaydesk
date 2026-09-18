@@ -1,0 +1,24 @@
+{
+  "schema": "samedaydesk.bazaar-drift.case.v1",
+  "caseId": "rematerialized-read",
+  "claims": {
+    "rematerialized": true,
+    "rematerializedRoutes": ["/read"],
+    "rewriteOrigin": false,
+    "treatAbsenceAsDemand": false,
+    "lastCalledAtIsRemovalClock": false,
+    "purchaseAuthority": false,
+    "paid": false,
+    "charged": false
+  },
+  "bazaarListings": [
+    {
+      "resource": "https://agents.samedaydesk.com/read",
+      "route": "/read",
+      "method": "GET",
+      "amount": "0.005",
+      "amountAtomic": "5000",
+      "note": "Naive overlay: pretend the stale Bazaar /read row was rematerialized to origin 0.005."
+    }
+  ]
+}

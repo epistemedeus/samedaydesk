@@ -1,0 +1,12 @@
+{
+  "schema": "samedaydesk.bazaar-drift.case.v1",
+  "caseId": "absence-as-demand",
+  "claims": {
+    "rematerialized": false,
+    "treatAbsenceAsDemand": true,
+    "catalogAbsenceIsDemand": true,
+    "demandRoutes": [
+      { "method": "GET", "route": "/commerce/settlement-proof", "buyerDemand": true }
+    ]
+  }
+}

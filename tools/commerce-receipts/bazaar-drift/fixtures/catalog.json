@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "samedaydesk.bazaar-drift.catalog.v1",
+  "resultSchema": "samedaydesk.commerce-receipt.bazaar-drift.result.v1",
+  "caseSchema": "samedaydesk.bazaar-drift.case.v1",
+  "product": "samedaydesk-bazaar-drift",
+  "pack": "unpaid-bazaar-drift",
+  "origin": "https://agents.samedaydesk.com",
+  "expectedBazaarRouteCount": 8,
+  "expectedOriginOpCount": 25,
+  "requiredLiveUntracked": [
+    { "method": "GET", "route": "/commerce/settlement-proof" },
+    { "method": "GET", "route": "/commerce/seller-integrity-audit" }
+  ],
+  "designatedSeed": {
+    "id": "rematerialized-read",
+    "file": "reject/rematerialized-read.json",
+    "code": "rematerialized_claim",
+    "naiveRule": "claims.rematerialized"
+  },
+  "requiredProhibitedInferences": [
+    "rematerialized_without_new_observation",
+    "bazaar_amount_is_origin_price",
+    "catalog_absence_is_demand",
+    "last_called_at_is_removal_clock",
+    "rewrite_origin_to_match_bazaar",
+    "paid_as_unpaid"
+  ],
+  "boundary": {
+    "paymentSent": false,
+    "checkoutMutated": false,
+    "registryMutated": false,
+    "published": false,
+    "liveCdp": false,
+    "rewriteAuthorized": false,
+    "statement": "Offline SDS bazaar-drift commerce receipt. Reports GET /read Bazaar 0.05 vs origin 0.005. Does not rematerialize, pay, publish, or rewrite SKUs. Catalog absence is not demand. quality.lastCalledAt is not a removal clock."
+  }
+}
