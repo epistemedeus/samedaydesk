@@ -57,7 +57,7 @@ Usage:
 --readback          print the committed compact observation and changelog (no network)
 --eight-vs-26       diff committed SDS routes vs pinned well-known evidence ops (no CDP)
 --evidence <file>   evidence ops JSON (default fixtures/evidence-ops-1.23.49.json)
---claim <file>      extra claims; treating catalog absence as demand exits 1
+--claim <file>      extra claims; catalog absence as demand or invented receipt fields exit 1
 --cohort <file>     default tools/bazaar-tracker/cohort.json
 --data-dir <dir>    default data/bazaar-tracker
 --observed-at <iso> pin the observation timestamp
@@ -100,12 +100,17 @@ if (values["eight-vs-26"]) {
     process.stderr.write("8-vs-26 needs a committed observations.json (read-only; no --live).\n");
     process.exit(1);
   }
-  const evidencePath = values.evidence || DEFAULT_EVIDENCE_FIXTURE;
-  const evidence = JSON.parse(readFileSync(evidencePath, "utf8"));
-  const claims = values.claim ? JSON.parse(readFileSync(values.claim, "utf8")) : null;
-  const report = runEightVsTwentySix({ observation, evidence, claims });
-  process.stdout.write(`${values.pretty ? JSON.stringify(report, null, 2) : JSON.stringify(report)}\n`);
-  process.exit(report.ok ? 0 : 1);
+  try {
+    const evidencePath = values.evidence || DEFAULT_EVIDENCE_FIXTURE;
+    const evidence = JSON.parse(readFileSync(evidencePath, "utf8"));
+    const claims = values.claim ? JSON.parse(readFileSync(values.claim, "utf8")) : null;
+    const report = runEightVsTwentySix({ observation, evidence, claims });
+    process.stdout.write(`${values.pretty ? JSON.stringify(report, null, 2) : JSON.stringify(report)}\n`);
+    process.exit(report.ok ? 0 : 1);
+  } catch (error) {
+    process.stderr.write(`${error?.message || error}\n`);
+    process.exit(1);
+  }
 }
 
 const cohort = loadCohort(values.cohort || DEFAULT_COHORT_PATH);

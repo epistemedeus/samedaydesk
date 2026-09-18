@@ -58,16 +58,20 @@ export function sdsRoutesFromObservation(observation, sellerId = SDS_SELLER_ID) 
     throw new Error(`SDS seller ${sellerId} missing from observation`);
   }
   const urls = Object.keys(seller.routes || {}).sort();
+  const routes = urls.map((route) => ({
+    route,
+    path: pathFromResource(route),
+    digest: seller.routes[route]?.digest ?? null,
+  }));
+  const paths = [...new Set(routes.map((row) => row.path).filter(Boolean))].sort();
   return {
     sellerId,
     name: seller.name ?? null,
-    rowCount: seller.rowCount ?? urls.length,
+    declaredRowCount: seller.rowCount ?? null,
+    rowCount: paths.length,
     partial: Boolean(seller.partial),
-    routes: urls.map((route) => ({
-      route,
-      path: pathFromResource(route),
-      digest: seller.routes[route]?.digest ?? null,
-    })),
+    routes,
+    paths,
   };
 }
 
@@ -96,24 +100,36 @@ function sortOps(rows) {
   return [...rows].sort((left, right) => opKey(left.method, left.path).localeCompare(opKey(right.method, right.path)));
 }
 
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 export function inventedFieldHits(value) {
   const blob = typeof value === "string" ? value : JSON.stringify(value ?? {});
-  return FORBIDDEN_INVENTED_FIELDS.filter((name) => new RegExp(`\\b${name}\\b`).test(blob));
+  return FORBIDDEN_INVENTED_FIELDS.filter((name) => new RegExp(`\\b${escapeRegExp(name)}\\b`).test(blob));
 }
 
 export function diffSdsRoutesToEvidence(observation, evidence, {
   expectedSdsRowCount = 8,
   expectedEvidenceOpCount = 26,
+  expectedSdsPaths = COMMITTED_SDS_PATHS,
   requireLiveUntracked = REQUIRED_LIVE_UNTRACKED,
 } = {}) {
   const sds = sdsRoutesFromObservation(observation);
   const ops = normalizeEvidenceOperations(evidence);
-  const trackedPaths = new Set(sds.routes.map((row) => row.path).filter(Boolean));
+  const trackedPaths = new Set(sds.paths);
   const evidencePaths = new Set(ops.map((row) => row.path));
 
   const trackedAndLive = [];
   const liveUntracked = [];
+  const seenOps = new Set();
+  const reasons = [];
   for (const op of ops) {
+    const key = opKey(op.method, op.path);
+    if (seenOps.has(key)) {
+      reasons.push(`duplicate_evidence_op:${key}`);
+    }
+    seenOps.add(key);
     if (trackedPaths.has(op.path)) {
       const route = sds.routes.find((row) => row.path === op.path);
       trackedAndLive.push({
@@ -143,14 +159,29 @@ export function diffSdsRoutesToEvidence(observation, evidence, {
       class: "tracked-not-in-evidence",
       buyerDemand: false,
       reason: ABSENCE_IS_NOT_DEMAND,
-    }));
+    }))
+    .sort((left, right) => left.path.localeCompare(right.path) || String(left.route).localeCompare(String(right.route)));
 
-  const reasons = [];
+  if (sds.declaredRowCount != null && sds.declaredRowCount !== sds.rowCount) {
+    reasons.push(`sds_row_count_declared_${sds.declaredRowCount}:actual_${sds.rowCount}`);
+  }
   if (expectedSdsRowCount != null && sds.rowCount !== expectedSdsRowCount) {
     reasons.push(`sds_row_count_expected_${expectedSdsRowCount}:got_${sds.rowCount}`);
   }
+  if (expectedSdsPaths != null) {
+    const expectedPaths = [...expectedSdsPaths].map((path) => normalizePath(path)).filter(Boolean).sort();
+    if (expectedPaths.join("\n") !== sds.paths.join("\n")) {
+      reasons.push(`sds_paths_mismatch:got_${sds.paths.join(",")}`);
+    }
+  }
+  if (evidence?.operationCount != null && Number(evidence.operationCount) !== ops.length) {
+    reasons.push(`evidence_operation_count_declared_${evidence.operationCount}:actual_${ops.length}`);
+  }
   if (expectedEvidenceOpCount != null && ops.length !== expectedEvidenceOpCount) {
     reasons.push(`evidence_op_count_expected_${expectedEvidenceOpCount}:got_${ops.length}`);
+  }
+  if (trackedNotInEvidence.length > 0) {
+    reasons.push(`tracked_not_in_evidence:${trackedNotInEvidence.map((row) => row.path).join(",")}`);
   }
   for (const required of requireLiveUntracked) {
     if (!hasOp(liveUntracked, required.method, required.path)) {
@@ -175,8 +206,9 @@ export function diffSdsRoutesToEvidence(observation, evidence, {
     evidenceRetrievedAt: evidence?.pin?.retrievedAt ?? evidence?.retrievedAt ?? null,
     evidenceManifestDigest: evidence?.manifestDigest ?? null,
     sdsRowCount: sds.rowCount,
+    sdsDeclaredRowCount: sds.declaredRowCount,
     sdsPartial: sds.partial,
-    sdsPaths: sds.routes.map((row) => row.path),
+    sdsPaths: sds.paths,
     evidenceOpCount: ops.length,
     trackedAndLiveCount: trackedAndLive.length,
     liveUntrackedOpCount: liveUntracked.length,
@@ -229,11 +261,13 @@ export function runEightVsTwentySix({
   claims = null,
   expectedSdsRowCount = 8,
   expectedEvidenceOpCount = 26,
+  expectedSdsPaths = COMMITTED_SDS_PATHS,
   requireLiveUntracked = REQUIRED_LIVE_UNTRACKED,
 } = {}) {
   const diff = diffSdsRoutesToEvidence(observation, evidence, {
     expectedSdsRowCount,
     expectedEvidenceOpCount,
+    expectedSdsPaths,
     requireLiveUntracked,
   });
   const claimReport = claims

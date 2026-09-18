@@ -123,4 +123,6 @@ When only the digest-only observation is present, content edits surface as
 5. `--eight-vs-26` against committed SDS `rowCount` 8 and the pinned 26 evidence
    ops reports live-untracked `GET /commerce/settlement-proof` and
    `POST /extract/batch` with `catalogAbsenceIsDemand: false`. A seeded claim that
-   missing `/extract/batch` is buyer demand exits 1. Do not run `--live`.
+   missing `/extract/batch` is buyer demand exits 1. SDS path drift, a declared
+   `rowCount` that does not match actual routes, or tracked routes missing from
+   evidence also fail closed. Do not run `--live`.
