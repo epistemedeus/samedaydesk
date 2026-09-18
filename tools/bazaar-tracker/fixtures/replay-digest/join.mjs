@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 /**
  * Replay-only join of a committed bazaar-observation digest to a frozen
- * unpaid offer-receipt payload. Does not call CDP, does not run tracker
- * --live, and never writes data/bazaar-tracker (so payTo/amount cannot
- * land in committed observations).
+ * unpaid offer-receipt payload. Refuses CDP, tracker --live, and writes
+ * under data/bazaar-tracker so payTo/amount cannot land in Git.
  */
 import { mkdtempSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -35,6 +34,15 @@ export const LIVE_PAYLOAD_KEYS = Object.freeze([
   "amount",
   "validUntil",
 ]);
+export const REQUIRED_PAYLOAD_KEYS = Object.freeze([
+  "version",
+  "resourceUrl",
+  "scheme",
+  "network",
+  "asset",
+  "payTo",
+  "amount",
+]);
 export const FORBIDDEN_COMPACT_KEYS = Object.freeze([
   "payTo",
   "amount",
@@ -56,16 +64,39 @@ export const INVENTED_FIELDS = Object.freeze([
   "uniqueVisitors",
 ]);
 
-function loadJson(path) {
-  return JSON.parse(readFileSync(path, "utf8"));
-}
-
 function displayRepoPath(path) {
   const resolved = resolve(path);
   if (resolved === ROOT || resolved.startsWith(`${ROOT}/`)) {
     return resolved.slice(ROOT.length + 1) || ".";
   }
   return path;
+}
+
+function loadJson(path) {
+  let text;
+  try {
+    text = readFileSync(path, "utf8");
+  } catch (error) {
+    throw new Error(`cannot read ${displayRepoPath(path)}: ${error.code || "io_error"}`);
+  }
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(`invalid JSON: ${displayRepoPath(path)}`);
+  }
+}
+
+function assertInside(path, root, label) {
+  const resolved = resolve(path);
+  const base = resolve(root);
+  if (resolved !== base && !resolved.startsWith(`${base}/`)) {
+    throw new Error(`${label} is outside the replay-digest fixture directory`);
+  }
+  return resolved;
+}
+
+function leafKey(path) {
+  return String(path).split(".").pop();
 }
 
 function unwrap402(doc) {
@@ -105,6 +136,12 @@ export function offerPayload(body) {
   return offers[0]?.payload && typeof offers[0].payload === "object" ? offers[0].payload : null;
 }
 
+function offerEntries(body) {
+  const offers = body?.extensions?.["offer-receipt"]?.info?.offers;
+  if (!Array.isArray(offers)) return [];
+  return offers.filter((offer) => offer?.payload && typeof offer.payload === "object");
+}
+
 function objectKeyPaths(value, prefix = "") {
   const out = [];
   if (!value || typeof value !== "object") return out;
@@ -125,8 +162,7 @@ function objectKeyPaths(value, prefix = "") {
 export function compactForbiddenHits(value) {
   const hits = [];
   for (const path of objectKeyPaths(value)) {
-    const leaf = path.split(".").pop();
-    if (FORBIDDEN_COMPACT_KEYS.includes(leaf)) hits.push(path);
+    if (FORBIDDEN_COMPACT_KEYS.includes(leafKey(path))) hits.push(path);
   }
   return hits;
 }
@@ -159,7 +195,48 @@ function applyPayloadMutations(body, caseDoc) {
   if (caseDoc.payloadExtra && typeof caseDoc.payloadExtra === "object") {
     Object.assign(payload, caseDoc.payloadExtra);
   }
+  if (Array.isArray(caseDoc.payloadRemove)) {
+    for (const key of caseDoc.payloadRemove) delete payload[key];
+  }
   return clone;
+}
+
+function inventedFieldNames(payloads) {
+  const names = [];
+  for (const payload of payloads) {
+    for (const key of Object.keys(payload)) {
+      if (!LIVE_PAYLOAD_KEYS.includes(key)) names.push(key);
+    }
+    for (const name of INVENTED_FIELDS) {
+      if (objectKeyPaths(payload).some((path) => leafKey(path) === name)) names.push(name);
+    }
+  }
+  return [...new Set(names)];
+}
+
+function addReason(reasons, reason) {
+  if (!reasons.includes(reason)) reasons.push(reason);
+}
+
+export function applyFromReplay(report, replay) {
+  const hits = Array.isArray(replay?.forbiddenHits) ? replay.forbiddenHits : [];
+  const payToHit = Boolean(replay?.payToStored) || hits.some((path) => leafKey(path) === "payTo");
+  const otherHits = hits.filter((path) => leafKey(path) !== "payTo");
+  report.fromReplay = {
+    liveDigest: replay?.liveDigest ?? null,
+    writtenDigest: replay?.writtenDigest ?? null,
+    payToStored: payToHit,
+    forbiddenHits: hits,
+  };
+  if (payToHit) {
+    addReason(report.reasons, "payto_written_to_compact_observation");
+    report.payToStored = true;
+  }
+  if (otherHits.length) {
+    addReason(report.reasons, `payment_terms_written_to_compact_observation:${otherHits.join(",")}`);
+  }
+  if (payToHit || otherHits.length) report.ok = false;
+  return report;
 }
 
 export function evaluateJoin(caseDoc, { observations, observationsPath = DEFAULT_OBSERVATIONS } = {}) {
@@ -167,10 +244,15 @@ export function evaluateJoin(caseDoc, { observations, observationsPath = DEFAULT
   const claims = caseDoc.claims && typeof caseDoc.claims === "object" ? caseDoc.claims : {};
   const route = caseDoc.committedRoute || EXTRACT_ROUTE;
   const expectedDigest = caseDoc.expectedCommittedDigest || COMMITTED_EXTRACT_DIGEST;
-  const httpStatus = caseDoc.httpStatus ?? caseDoc.live402?.provenance?.httpStatus ?? 402;
+  const httpStatus = caseDoc.httpStatus ?? caseDoc.live402?.provenance?.httpStatus ?? null;
+  const paid = caseDoc.paid === true || caseDoc.live402?.provenance?.paid === true;
+  const paymentResponseHeader =
+    caseDoc.paymentResponseHeader === true
+    || caseDoc.live402?.provenance?.paymentResponseHeader === true;
   const body = applyPayloadMutations(caseDoc.live402.body, caseDoc);
   const row = liveRowFrom402(body, { resource: route });
-  const payload = offerPayload(body);
+  const entries = offerEntries(body);
+  const payload = entries[0]?.payload ?? null;
   const liveDigest = routeContentDigest(row);
   const compact = compactRouteObservation(row);
   const compactRecord = observationRecordFromSnapshot(
@@ -181,14 +263,13 @@ export function evaluateJoin(caseDoc, { observations, observationsPath = DEFAULT
   );
   const committed = committedRoute(observations, route);
   const payloadKeys = payload ? Object.keys(payload) : [];
-  const extraPayloadKeys = payloadKeys.filter((key) => !LIVE_PAYLOAD_KEYS.includes(key));
-  const invented = [
-    ...extraPayloadKeys.filter((key) => INVENTED_FIELDS.includes(key) || !LIVE_PAYLOAD_KEYS.includes(key)),
-    ...INVENTED_FIELDS.filter((name) => objectKeyPaths(payload || {}).some((path) => path.split(".").pop() === name)),
-  ];
-  const inventedUnique = [...new Set(invented)];
-  const acceptAmount = row.accepts?.[0]?.amount ?? null;
+  const inventedUnique = inventedFieldNames(entries.map((entry) => entry.payload));
+  const acceptIndex = Number.isInteger(entries[0]?.acceptIndex) ? entries[0].acceptIndex : 0;
+  const accept = row.accepts?.[acceptIndex] ?? row.accepts?.[0] ?? null;
+  const acceptAmount = accept?.amount ?? null;
   const payloadAmount = payload?.amount ?? null;
+  const acceptPayTo = accept?.payTo ?? null;
+  const payloadPayTo = payload?.payTo ?? null;
   const amountMatchesAccepts = acceptAmount != null && payloadAmount != null && String(acceptAmount) === String(payloadAmount);
   const joinLeft = originPathname(route);
   const joinRight = originPathname(payload?.resourceUrl || body?.resource?.url || "");
@@ -198,52 +279,61 @@ export function evaluateJoin(caseDoc, { observations, observationsPath = DEFAULT
     ...compactForbiddenHits(compactRecord),
     ...compactForbiddenHits(caseDoc.compactObservationAttempt || null),
   ];
-  const compactSerialized = `${JSON.stringify(compact)}${JSON.stringify(compactRecord)}${caseDoc.compactObservationAttempt ? JSON.stringify(caseDoc.compactObservationAttempt) : ""}`;
+  const missingRequired = payload
+    ? REQUIRED_PAYLOAD_KEYS.filter((key) => payload[key] == null)
+    : [];
 
   if (httpStatus !== 402) {
-    reasons.push(`unpaid_402_required:http=${httpStatus}`);
+    addReason(reasons, `unpaid_402_required:http=${httpStatus}`);
   }
-  if (claims.paymentResponse === true || claims.hasPaymentResponse === true) {
-    reasons.push("payment_response_claimed_on_unpaid_402");
+  if (paid) {
+    addReason(reasons, "paid_unpaid_402");
+  }
+  if (claims.paymentResponse === true || claims.hasPaymentResponse === true || paymentResponseHeader) {
+    addReason(reasons, "payment_response_claimed_on_unpaid_402");
   }
   if (claims.builderCodeIsBuyerIdentity === true) {
-    reasons.push("builder_code_is_not_buyer_identity");
+    addReason(reasons, "builder_code_is_not_buyer_identity");
+  }
+  if (claims.treatAbsenceAsDemand === true) {
+    addReason(reasons, "treat_absence_as_demand");
   }
   if (!payload) {
-    reasons.push("offer_receipt_payload_missing");
+    addReason(reasons, "offer_receipt_payload_missing");
   }
   if (inventedUnique.length) {
-    reasons.push(`invented_receipt_field_without_live_schema:${inventedUnique.join(",")}`);
+    addReason(reasons, `invented_receipt_field_without_live_schema:${inventedUnique.join(",")}`);
   }
-  if (payload && acceptAmount != null && payloadAmount != null && !amountMatchesAccepts) {
-    reasons.push(`amount_mismatch:accepts=${acceptAmount},payload=${payloadAmount}`);
+  if (missingRequired.length) {
+    addReason(reasons, `missing_required_payload_key:${missingRequired.join(",")}`);
+  }
+  if (payload && payloadAmount != null && acceptAmount != null && !amountMatchesAccepts) {
+    addReason(reasons, `amount_mismatch:accepts=${acceptAmount},payload=${payloadAmount}`);
+  } else if (payload && payloadAmount != null && acceptAmount == null) {
+    addReason(reasons, "amount_mismatch:accepts_missing");
+  }
+  if (payload && payloadPayTo != null && acceptPayTo != null && String(payloadPayTo) !== String(acceptPayTo)) {
+    addReason(reasons, `payto_mismatch:accepts=${acceptPayTo},payload=${payloadPayTo}`);
   }
   if (payload && joinLeft && joinRight && !joinKeyMatch) {
-    reasons.push(`join_key_mismatch:left=${joinLeft},right=${joinRight}`);
+    addReason(reasons, `join_key_mismatch:left=${joinLeft},right=${joinRight}`);
   }
   if (!committed) {
-    if (claims.treatAbsenceAsDemand === true) {
-      reasons.push("treat_absence_as_demand");
-    } else {
-      reasons.push(`route_absent:${route}`);
-    }
+    addReason(reasons, `route_absent:${route}`);
   } else if (expectedDigest && committed.digest !== expectedDigest) {
-    reasons.push(`committed_digest_unexpected:${committed.digest}`);
+    addReason(reasons, `committed_digest_unexpected:${committed.digest}`);
   }
-  if (committed && liveDigest !== committed.digest && claims.treatAbsenceAsDemand === true) {
-    reasons.push("treat_absence_as_demand");
+  if (compactHits.some((path) => leafKey(path) === "payTo")) {
+    addReason(reasons, "payto_written_to_compact_observation");
   }
-  if (compactHits.some((path) => path.split(".").pop() === "payTo") || compactSerialized.includes("payTo")) {
-    reasons.push("payto_written_to_compact_observation");
-  }
-  const otherHits = compactHits.filter((path) => path.split(".").pop() !== "payTo");
+  const otherHits = compactHits.filter((path) => leafKey(path) !== "payTo");
   if (otherHits.length) {
-    reasons.push(`payment_terms_written_to_compact_observation:${otherHits.join(",")}`);
+    addReason(reasons, `payment_terms_written_to_compact_observation:${otherHits.join(",")}`);
   }
 
   const digestMatch = Boolean(committed && liveDigest === committed.digest);
-  const payToPresent = payload ? Object.hasOwn(payload, "payTo") : false;
-  const payToStored = compactHits.some((path) => path.split(".").pop() === "payTo") || JSON.stringify(compactRecord).includes("payTo");
+  const payToPresent = payload ? payload.payTo != null : false;
+  const payToStored = compactHits.some((path) => leafKey(path) === "payTo");
 
   return {
     schema: JOIN_SCHEMA,
@@ -289,7 +379,8 @@ export function loadCase(path, { observationsPath = DEFAULT_OBSERVATIONS } = {})
   const livePath = caseDoc.live402Path
     ? (isAbsolute(caseDoc.live402Path) ? caseDoc.live402Path : resolve(dirname(casePath), caseDoc.live402Path))
     : join(here, "live/extract-402.json");
-  const live402 = unwrap402(loadJson(livePath));
+  const confinedLive = assertInside(livePath, here, "live402Path");
+  const live402 = unwrap402(loadJson(confinedLive));
   const observations = loadJson(observationsPath);
   return {
     casePath,
@@ -299,7 +390,7 @@ export function loadCase(path, { observationsPath = DEFAULT_OBSERVATIONS } = {})
   };
 }
 
-export async function replayThroughTracker(caseDoc, { observations }) {
+export async function replayThroughTracker(caseDoc) {
   const dataDir = mkdtempSync(join(tmpdir(), "replay-digest-"));
   try {
     const route = caseDoc.committedRoute || EXTRACT_ROUTE;
@@ -327,14 +418,13 @@ export async function replayThroughTracker(caseDoc, { observations }) {
       source: "fixture",
     });
     const written = loadJson(report.observationPath);
-    const serialized = JSON.stringify(written);
     const hits = compactForbiddenHits(written);
     return {
       dataDir,
       observationPath: report.observationPath,
       liveDigest: routeContentDigest(row),
       writtenDigest: written?.sources?.[CDP_DISCOVERY_SOURCE]?.sellers?.samedaydesk?.routes?.[row.resource]?.digest ?? null,
-      payToStored: serialized.includes("payTo") || hits.some((path) => path.split(".").pop() === "payTo"),
+      payToStored: hits.some((path) => leafKey(path) === "payTo"),
       forbiddenHits: hits,
       changeCount: report.changeCount,
     };
@@ -372,25 +462,47 @@ Usage:
 --pretty       indent JSON
 
 Does not write data/bazaar-tracker. Compact observation keys stay [digest].
+Refuses --live, --cdp, and --pay.
 `);
 }
 
 async function main() {
-  const { values, positionals } = parseArgs({
-    allowPositionals: true,
-    options: {
-      pretty: { type: "boolean", default: false },
-      seeded: { type: "boolean", default: false },
-      suite: { type: "boolean", default: false },
-      "from-replay": { type: "boolean", default: false },
-      observations: { type: "string" },
-      help: { type: "boolean", default: false },
-    },
-  });
+  let values;
+  let positionals;
+  try {
+    ({ values, positionals } = parseArgs({
+      allowPositionals: true,
+      options: {
+        pretty: { type: "boolean", default: false },
+        seeded: { type: "boolean", default: false },
+        suite: { type: "boolean", default: false },
+        "from-replay": { type: "boolean", default: false },
+        observations: { type: "string" },
+        live: { type: "boolean", default: false },
+        cdp: { type: "boolean", default: false },
+        pay: { type: "boolean", default: false },
+        help: { type: "boolean", default: false },
+      },
+    }));
+  } catch (error) {
+    process.stderr.write(`${error.message}\n`);
+    printUsage();
+    process.exit(2);
+  }
+
+  if (values.live || values.cdp || values.pay) {
+    process.stderr.write("Replay digest join refuses --live, --cdp, and --pay.\n");
+    process.exit(2);
+  }
 
   if (values.help || (!values.suite && positionals.length === 0)) {
     printUsage();
     process.exit(values.help ? 0 : 2);
+  }
+
+  if (values.suite && positionals.length) {
+    process.stderr.write("Pass --suite without CASE.json.\n");
+    process.exit(2);
   }
 
   const indent = values.pretty ? 2 : 0;
@@ -437,18 +549,8 @@ async function main() {
   });
 
   if (values["from-replay"]) {
-    const replay = await replayThroughTracker(loaded.caseDoc, { observations: loaded.observations });
-    report.fromReplay = {
-      liveDigest: replay.liveDigest,
-      writtenDigest: replay.writtenDigest,
-      payToStored: replay.payToStored,
-      forbiddenHits: replay.forbiddenHits,
-    };
-    if (replay.payToStored) {
-      report.reasons.push("payto_written_to_compact_observation");
-      report.ok = false;
-      report.payToStored = true;
-    }
+    const replay = await replayThroughTracker(loaded.caseDoc);
+    applyFromReplay(report, replay);
   }
 
   process.stdout.write(`${JSON.stringify(report, null, indent)}\n`);
@@ -460,5 +562,10 @@ async function main() {
 
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1]);
 if (isMain) {
-  await main();
+  try {
+    await main();
+  } catch (error) {
+    process.stderr.write(`${error.message}\n`);
+    process.exit(2);
+  }
 }

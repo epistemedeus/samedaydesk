@@ -1,0 +1,10 @@
+{
+  "id": "seeded-paid-unpaid-402",
+  "kind": "seeded",
+  "live402Path": "../live/extract-402.json",
+  "httpStatus": 402,
+  "committedRoute": "https://agents.samedaydesk.com/extract",
+  "expectedCommittedDigest": "04c1554d7a4471803f05781245df70cb0ae3dc73b9df78c555c7324c3b1ca60e",
+  "paid": true,
+  "note": "SEEDING FAILURE: paid=true on an unpaid HTTP 402 is not settlement or PAYMENT-RESPONSE."
+}

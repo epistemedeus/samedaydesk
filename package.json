@@ -59,7 +59,7 @@
     "test:presence": "node --test tools/presence/test.mjs tools/presence/registry-consumer.test.mjs tools/presence/for-agents-cold-read.test.mjs",
     "bazaar-tracker": "node tools/bazaar-tracker/cli.mjs",
     "bazaar-tracker:readback": "node tools/bazaar-tracker/cli.mjs --readback",
-    "test:bazaar-tracker": "node --test tools/bazaar-tracker/test.mjs tools/lqtrack1/replay-pr18-disposition.test.mjs",
+    "test:bazaar-tracker": "node --test tools/bazaar-tracker/test.mjs tools/bazaar-tracker/fixtures/replay-digest/test.mjs tools/lqtrack1/replay-pr18-disposition.test.mjs",
     "replay:pr18": "node tools/lqtrack1/replay-pr18-disposition.mjs"
   },
   "dependencies": {
