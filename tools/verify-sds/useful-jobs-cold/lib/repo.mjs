@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, realpathSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { USEFUL_JOBS_PIN } from "./pin.mjs";
@@ -26,8 +26,25 @@ export function obtainArchiveBin(root) {
   return join(root, USEFUL_JOBS_PIN.obtainArchiveBin);
 }
 
+/** First existing ancestor, with symlinks resolved. Missing dest still follows a linked parent. */
+export function realExisting(p) {
+  let cur = resolve(p);
+  for (;;) {
+    if (existsSync(cur)) {
+      try {
+        return realpathSync(cur);
+      } catch {
+        return cur;
+      }
+    }
+    const parent = dirname(cur);
+    if (parent === cur) return cur;
+    cur = parent;
+  }
+}
+
 export function isInsideRepo(dest, root) {
-  const rel = relative(resolve(root), resolve(dest));
+  const rel = relative(realExisting(root), realExisting(dest));
   return rel === "" || (!rel.startsWith("..") && !rel.startsWith("/"));
 }
 

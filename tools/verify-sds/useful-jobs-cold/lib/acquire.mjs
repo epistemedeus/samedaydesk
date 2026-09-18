@@ -3,8 +3,8 @@
  * Patterns cited from PR148 tools/verify/lib/archive.mjs (remapRefuse).
  * Never writes catalog/public; dest always outside repo by default.
  */
-import { existsSync } from "node:fs";
-import { mkdtempSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { existsSync, mkdtempSync, readFileSync, statSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -32,16 +32,21 @@ function clip(s, n = 1200) {
 }
 
 function parseJsonOutput(stdout) {
-  if (!stdout) return null;
-  const text = String(stdout).trim();
-  // Prefer last JSON object (obtain-archive prints one object).
-  const start = text.indexOf("{");
-  if (start < 0) return null;
+  const raw = String(stdout || "").trim();
+  if (!raw) return null;
   try {
-    return JSON.parse(text.slice(start));
+    return JSON.parse(raw);
   } catch {
-    // try last line
-    const lines = text.split("\n").filter(Boolean);
+    const start = raw.indexOf("{");
+    const end = raw.lastIndexOf("}");
+    if (start >= 0 && end > start) {
+      try {
+        return JSON.parse(raw.slice(start, end + 1));
+      } catch {
+        /* fall through */
+      }
+    }
+    const lines = raw.split("\n").filter(Boolean);
     for (let i = lines.length - 1; i >= 0; i--) {
       try {
         return JSON.parse(lines[i]);
@@ -51,6 +56,29 @@ function parseJsonOutput(stdout) {
     }
     return null;
   }
+}
+
+function filePin(path) {
+  if (!existsSync(path)) return { exists: false, isFile: false, sha256: null, bytes: null };
+  const st = statSync(path);
+  if (!st.isFile()) return { exists: true, isFile: false, sha256: null, bytes: st.size };
+  const buf = readFileSync(path);
+  return {
+    exists: true,
+    isFile: true,
+    bytes: buf.length,
+    sha256: createHash("sha256").update(buf).digest("hex"),
+  };
+}
+
+function spawnEnv() {
+  return {
+    PATH: process.env.PATH || "/usr/bin:/bin",
+    HOME: process.env.HOME || "",
+    TMPDIR: process.env.TMPDIR || tmpdir(),
+    LANG: process.env.LANG || "C",
+    NO_COLOR: "1",
+  };
 }
 
 export function obtainArgv({ root, from, sha, bytes, dest, extractDir }) {
@@ -111,7 +139,7 @@ function runObtain(argv, { cwd, timeoutMs = 60_000 } = {}) {
   const ran = spawnSync(argv[0], argv.slice(1), {
     encoding: "utf8",
     cwd,
-    env: process.env,
+    env: spawnEnv(),
     timeout: timeoutMs,
     maxBuffer: 8 * 1024 * 1024,
   });
@@ -224,6 +252,20 @@ export function coldAcquire(opts = {}) {
         ? resolve(opts.extractDir)
         : dirname(dest);
 
+  if (extractDir && isInsideRepo(extractDir, root)) {
+    return envelope({
+      ok: false,
+      command: "acquire",
+      feature: FEATURE,
+      evidence,
+      error: failError("DEST_INSIDE_REPO", "extractDir must be outside the repo checkout", {
+        dest,
+        extractDir,
+        root,
+      }),
+    });
+  }
+
   const argv = obtainArgv({
     root,
     from,
@@ -277,11 +319,14 @@ export function coldAcquire(opts = {}) {
 
   if (seeded) {
     const mapped = remapRefuse(ran, { expectedCode, seeded: true });
+    const destOnDisk = existsSync(dest);
     const okFail =
       mapped.refused &&
       mapped.matches &&
-      (mapped.remapped || mapped.childExit !== 0) &&
-      mapped.json?.extracted !== true;
+      mapped.remapped &&
+      mapped.json?.extracted !== true &&
+      mapped.json?.destExists !== true &&
+      destOnDisk !== true;
 
     if (!okFail) {
       return envelope({
@@ -327,6 +372,7 @@ export function coldAcquire(opts = {}) {
         childExit: mapped.childExit,
         remappedFromChildExit0: mapped.remapped,
         destExists: mapped.json?.destExists === true,
+        destOnDisk,
         extracted: false,
         refused: true,
         paymentSent: false,
@@ -364,9 +410,29 @@ export function coldAcquire(opts = {}) {
     });
   }
 
-  const gotSha = String(json.sha256 || "").toLowerCase();
-  const gotBytes = Number(json.bytes);
-  if (gotSha !== pin.sha256 || gotBytes !== pin.bytes) {
+  const written = json.dest || dest;
+  if (isInsideRepo(written, root) || (extractDir && isInsideRepo(extractDir, root))) {
+    return envelope({
+      ok: false,
+      command: "acquire",
+      feature: FEATURE,
+      evidence,
+      error: failError("DEST_INSIDE_REPO", "product wrote dest inside repo", {
+        dest: written,
+        extractDir,
+      }),
+    });
+  }
+
+  const disk = filePin(written);
+  const gotSha = disk.sha256 || String(json.sha256 || "").toLowerCase();
+  const gotBytes = disk.bytes ?? Number(json.bytes);
+  if (
+    !disk.exists ||
+    disk.isFile !== true ||
+    disk.sha256 !== pin.sha256 ||
+    disk.bytes !== pin.bytes
+  ) {
     return envelope({
       ok: false,
       command: "acquire",
@@ -375,19 +441,8 @@ export function coldAcquire(opts = {}) {
       error: failError("PIN_MISMATCH", "acquired archive does not match 1.4.7 pin", {
         gotSha,
         gotBytes,
+        disk,
         pin,
-      }),
-    });
-  }
-
-  if (isInsideRepo(json.dest || dest, root)) {
-    return envelope({
-      ok: false,
-      command: "acquire",
-      feature: FEATURE,
-      evidence,
-      error: failError("DEST_INSIDE_REPO", "product wrote dest inside repo", {
-        dest: json.dest || dest,
       }),
     });
   }
@@ -399,14 +454,15 @@ export function coldAcquire(opts = {}) {
     evidence,
     result: {
       version: pin.version,
-      sha256: gotSha,
-      bytes: gotBytes,
-      dest: json.dest || dest,
+      sha256: disk.sha256,
+      bytes: disk.bytes,
+      dest: written,
       extractDir: json.extractDir || extractDir,
       outsideRepo: true,
       source,
       from,
       obtainedVia: "obtain-archive.mjs",
+      verifiedOnDisk: true,
       paymentSent: false,
       catalogWritten: false,
       publicWritten: false,
@@ -452,9 +508,13 @@ export function runHarness(opts = {}) {
   const coldOk = cold.ok === true;
   const seedsOk =
     wrongSha.ok === false &&
+    wrongSha.error?.code === "SEED_REJECT" &&
     wrongSha.result?.productCode === "wrong-digest" &&
+    wrongSha.result?.remappedFromChildExit0 === true &&
     wrongBytes.ok === false &&
-    wrongBytes.result?.productCode === "wrong-size";
+    wrongBytes.error?.code === "SEED_REJECT" &&
+    wrongBytes.result?.productCode === "wrong-size" &&
+    wrongBytes.result?.remappedFromChildExit0 === true;
 
   const allOk = coldOk && seedsOk;
   return envelope({

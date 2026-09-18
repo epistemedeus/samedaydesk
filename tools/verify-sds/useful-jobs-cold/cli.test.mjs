@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
+import { existsSync, readdirSync, readFileSync, symlinkSync, unlinkSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
@@ -44,6 +47,27 @@ test("isInsideRepo detects checkout membership", () => {
   assert.equal(isInsideRepo("/tmp/outside-dest.tar.gz", r), false);
 });
 
+test("isInsideRepo follows dest parent symlink into checkout", () => {
+  const r = defaultRoot();
+  const kit = join(r, "client/public/kit");
+  const link = join(tmpdir(), `sds-uj-inside-link-${process.pid}`);
+  try {
+    symlinkSync(kit, link);
+    assert.equal(isInsideRepo(join(link, "x.tar.gz"), r), true);
+  } finally {
+    try {
+      unlinkSync(link);
+    } catch {
+      /* ignore */
+    }
+  }
+});
+
+test("parseJsonOutput reads pretty object despite trailing text", () => {
+  const pretty = 'note\n{\n  "ok": false,\n  "code": "wrong-digest"\n}\ntrailing';
+  assert.equal(parseJsonOutput(pretty)?.code, "wrong-digest");
+});
+
 test("remapRefuse remaps product ok:false + child exit 0", () => {
   const mapped = remapRefuse({
     status: 0,
@@ -70,9 +94,15 @@ test("cold acquire exit 0 JSON with sha+bytes+version", () => {
   assert.equal(ran.json?.result?.sha256, USEFUL_JOBS_PIN.sha256);
   assert.equal(ran.json?.result?.bytes, USEFUL_JOBS_PIN.bytes);
   assert.equal(ran.json?.result?.outsideRepo, true);
+  assert.equal(ran.json?.result?.verifiedOnDisk, true);
   assert.equal(ran.json?.boundary?.paymentSent, false);
   assert.equal(ran.json?.boundary?.catalogWritten, false);
   assert.equal(ran.json?.boundary?.publicWritten, false);
+  const destPath = ran.json?.result?.dest;
+  assert.equal(existsSync(destPath), true);
+  const disk = readFileSync(destPath);
+  assert.equal(disk.length, USEFUL_JOBS_PIN.bytes);
+  assert.equal(createHash("sha256").update(disk).digest("hex"), USEFUL_JOBS_PIN.sha256);
 });
 
 test("seeded wrong-sha exit ≠0 SEED_REJECT wrong-digest", () => {
@@ -100,4 +130,92 @@ test("harness run exit 0 coldOk+seedsOk", () => {
   assert.equal(ran.json?.ok, true);
   assert.equal(ran.json?.result?.coldOk, true);
   assert.equal(ran.json?.result?.seedsOk, true);
+  const steps = ran.json?.result?.steps || [];
+  const shaStep = steps.find((s) => s.step === "seeded:wrong-sha");
+  const bytesStep = steps.find((s) => s.step === "seeded:wrong-bytes");
+  assert.equal(shaStep?.remappedFromChildExit0, true);
+  assert.equal(bytesStep?.remappedFromChildExit0, true);
+  assert.equal(shaStep?.code, "SEED_REJECT");
+  assert.equal(bytesStep?.code, "SEED_REJECT");
+});
+
+test("dest inside checkout is DEST_INSIDE_REPO", () => {
+  const dest = join(root, "tools/verify-sds/useful-jobs-cold/_should-not-write.tar.gz");
+  const ran = runCli(["acquire", "--json", "--dest", dest, "--no-extract"]);
+  assert.notEqual(ran.status, 0);
+  assert.equal(ran.json?.error?.code, "DEST_INSIDE_REPO");
+  assert.equal(existsSync(dest), false);
+});
+
+test("dest symlink into kit is DEST_INSIDE_REPO and does not write public", () => {
+  const kit = join(root, "client/public/kit");
+  const before = new Set(readdirSync(kit));
+  const link = join(tmpdir(), `sds-uj-cold-link-${process.pid}`);
+  try {
+    symlinkSync(kit, link);
+    const dest = join(link, `_rev-probe-${process.pid}.tar.gz`);
+    const ran = runCli(["acquire", "--json", "--dest", dest, "--no-extract"]);
+    assert.notEqual(ran.status, 0);
+    assert.equal(ran.json?.error?.code, "DEST_INSIDE_REPO");
+    assert.equal(existsSync(dest), false);
+    const after = new Set(readdirSync(kit));
+    for (const name of after) {
+      assert.equal(before.has(name), true, `kit gained ${name}`);
+    }
+  } finally {
+    try {
+      unlinkSync(link);
+    } catch {
+      /* ignore */
+    }
+  }
+});
+
+test("seeded wrong-sha does not write dest", () => {
+  const dest = join(tmpdir(), `sds-uj-seed-${process.pid}.tar.gz`);
+  try {
+    const ran = runCli(["--seeded-failure", "wrong-sha", "--json", "--dest", dest]);
+    assert.notEqual(ran.status, 0);
+    assert.equal(ran.json?.error?.code, "SEED_REJECT");
+    assert.equal(ran.json?.result?.destExists, false);
+    assert.equal(ran.json?.result?.destOnDisk, false);
+    assert.equal(existsSync(dest), false);
+  } finally {
+    try {
+      unlinkSync(dest);
+    } catch {
+      /* ignore */
+    }
+  }
+});
+
+test("unknown seeded failure is USAGE exit 2", () => {
+  const ran = runCli(["--seeded-failure", "not-a-seed", "--json"]);
+  assert.equal(ran.status, 2);
+  assert.equal(ran.json?.ok, false);
+  assert.equal(ran.json?.error?.code, "USAGE");
+});
+
+test("sha-mismatch alias remaps wrong-digest", () => {
+  const ran = runCli(["--seeded-failure", "sha-mismatch", "--json"]);
+  assert.notEqual(ran.status, 0);
+  assert.equal(ran.json?.error?.code, "SEED_REJECT");
+  assert.equal(ran.json?.result?.productCode, "wrong-digest");
+  assert.equal(ran.json?.result?.seed, "wrong-sha");
+  assert.equal(ran.json?.result?.remappedFromChildExit0, true);
+});
+
+test("missing --dest value is USAGE", () => {
+  const ran = runCli(["acquire", "--dest"]);
+  assert.equal(ran.status, 2);
+  assert.equal(ran.json?.error?.code, "USAGE");
+});
+
+test("for-agents twin acquire matches pin", () => {
+  const ran = runCli(["acquire", "--json", "--source", "for-agents", "--no-extract"]);
+  assert.equal(ran.status, 0, ran.stderr || ran.stdout);
+  assert.equal(ran.json?.ok, true);
+  assert.equal(ran.json?.result?.sha256, USEFUL_JOBS_PIN.sha256);
+  assert.equal(ran.json?.result?.bytes, USEFUL_JOBS_PIN.bytes);
+  assert.equal(ran.json?.result?.verifiedOnDisk, true);
 });

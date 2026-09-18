@@ -36,10 +36,13 @@ function parseArgs(argv) {
       if (!out.seededId) out.missing = "--seeded-failure";
     } else if (a === "--source") {
       out.flags.source = argv[++i];
+      if (!out.flags.source) out.missing = "--source";
     } else if (a === "--dest") {
       out.flags.dest = argv[++i];
+      if (!out.flags.dest) out.missing = "--dest";
     } else if (a === "--root") {
       out.flags.root = argv[++i];
+      if (!out.flags.root) out.missing = "--root";
     } else if (a === "--no-extract") {
       out.flags.extract = false;
     } else if (a.startsWith("--")) {

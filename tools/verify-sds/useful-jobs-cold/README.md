@@ -28,3 +28,4 @@ node --test tools/verify-sds/useful-jobs-cold/cli.test.mjs
 - Cite-only W0-B2 PR148 `tools/verify/**` (never edit)
 - Never Stripe/x402 pay; never write catalog/public
 - obtain-archive product exits 0 on refuse → verifier remaps to exit 1 (`SEED_REJECT`)
+- dest/extractDir may not resolve (via symlink) into the checkout; sha+bytes are hashed on disk after copy
