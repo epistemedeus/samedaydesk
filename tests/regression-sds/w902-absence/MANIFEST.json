@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "feature": "absence-not-demand-w902",
+  "repo": "samedaydesk",
+  "writeBoundary": "tests/regression-sds/w902-absence/**",
+  "disjointFrom": [
+    "tests/regression-sds/absence-not-demand-w7/**",
+    "tests/regression-sds/w822-absence/**",
+    "tests/regression-sds/w1102-absence/**",
+    "tests/regression-sds/w1122-absence/**"
+  ],
+  "principle": {
+    "id": "absence-not-demand",
+    "statement": "Documented-unavailable sources, refused conversion ratios, non-additive snapshots, missing-not-zero metrics, empty pulse tool maps, GET /mcp surface hits, owner-QA issues, catalog counts, unpaid 402 traces, and discovery snapshots are not market or paid demand. Unavailable, partial, empty, and stale are not zeros and are not demand."
+  },
+  "seededAbsenceAsDemand": "x402scan-unavailable-as-demand",
+  "cases": [
+    {
+      "id": "x402scan-unavailable-honest",
+      "file": "fixtures/cases/x402scan-unavailable-honest.json",
+      "expect": "accept",
+      "class": "honest-withheld"
+    },
+    {
+      "id": "missing-metrics-not-zero-honest",
+      "file": "fixtures/cases/missing-metrics-not-zero-honest.json",
+      "expect": "accept",
+      "class": "honest-withheld"
+    },
+    {
+      "id": "owner-qa-not-demand-honest",
+      "file": "fixtures/cases/owner-qa-not-demand-honest.json",
+      "expect": "accept",
+      "class": "honest-withheld"
+    },
+    {
+      "id": "empty-tool-map-honest",
+      "file": "fixtures/cases/empty-tool-map-honest.json",
+      "expect": "accept",
+      "class": "honest-withheld"
+    },
+    {
+      "id": "discovery-not-demand-honest",
+      "file": "fixtures/cases/discovery-not-demand-honest.json",
+      "expect": "accept",
+      "class": "honest-withheld"
+    },
+    {
+      "id": "x402scan-unavailable-as-demand",
+      "file": "fixtures/cases/x402scan-unavailable-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "seededAbsenceAsDemand": true,
+      "expectedReasons": ["absence_as_demand", "x402scan_unavailable_as_demand"]
+    },
+    {
+      "id": "moltjobs-composition-as-conversion",
+      "file": "fixtures/cases/moltjobs-composition-as-conversion.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "composition_as_conversion"]
+    },
+    {
+      "id": "sources-additive-as-demand",
+      "file": "fixtures/cases/sources-additive-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "sources_additive_as_demand"]
+    },
+    {
+      "id": "missing-as-zero-then-demand",
+      "file": "fixtures/cases/missing-as-zero-then-demand.json",
+      "expect": "reject",
+      "class": "absence-as-zero",
+      "expectedReasons": ["absence_as_demand", "missing_as_zero_demand"]
+    },
+    {
+      "id": "stale-partial-as-demand",
+      "file": "fixtures/cases/stale-partial-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "stale_partial_as_demand"]
+    },
+    {
+      "id": "owner-qa-issue-as-demand",
+      "file": "fixtures/cases/owner-qa-issue-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "owner_qa_as_demand"]
+    },
+    {
+      "id": "pulse-empty-tool-map-as-demand",
+      "file": "fixtures/cases/pulse-empty-tool-map-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "empty_tool_map_as_demand"]
+    },
+    {
+      "id": "mcp-surface-get-as-demand",
+      "file": "fixtures/cases/mcp-surface-get-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "mcp_surface_get_as_demand"]
+    },
+    {
+      "id": "unpaid-402-trace-as-demand",
+      "file": "fixtures/cases/unpaid-402-trace-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "unpaid_402_trace_as_demand"]
+    },
+    {
+      "id": "catalog-count-as-demand",
+      "file": "fixtures/cases/catalog-count-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "catalog_count_as_demand"]
+    },
+    {
+      "id": "unique-humans-estimate-as-demand",
+      "file": "fixtures/cases/unique-humans-estimate-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "unique_humans_as_demand"]
+    }
+  ],
+  "counts": {
+    "total": 16,
+    "accept": 5,
+    "reject": 11,
+    "seededAbsenceAsDemand": 1
+  },
+  "boundary": {
+    "paymentSent": false,
+    "stripeOrX402": false,
+    "neoPublish": false,
+    "liveFetch": false
+  }
+}
