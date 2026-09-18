@@ -1,0 +1,39 @@
+{
+  "schema": "samedaydesk.verify-sds.w1021-402-matrix.pin.v1",
+  "wave": "w1021",
+  "feature": "402-matrix",
+  "catalogPath": "fixtures/presence/catalog/x402.json",
+  "lastUpdated": 1788454976,
+  "x402Version": 2,
+  "itemCount": 23,
+  "uniqueAmountCount": 8,
+  "origin": "https://agents.samedaydesk.com",
+  "scheme": "exact",
+  "network": "eip155:8453",
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "decimals": 6,
+  "assetSymbol": "USDC",
+  "uniqueAmounts": [
+    "2000",
+    "5000",
+    "10000",
+    "20000",
+    "50000",
+    "100000",
+    "200000",
+    "250000"
+  ],
+  "knownStaleListing": {
+    "id": "stale-listed-amount",
+    "surface": "bazaar",
+    "route": "/read",
+    "method": "GET",
+    "listedAmountAtomic": "50000",
+    "catalogAmountAtomic": "5000",
+    "listedAmountDisplayUsd": "0.05",
+    "catalogAmountDisplayUsd": "0.005"
+  },
+  "purchaseAuthority": false,
+  "live": false
+}
