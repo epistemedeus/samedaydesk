@@ -1,0 +1,9 @@
+{
+  "id": "payment-signature",
+  "seededId": "payment-signature",
+  "wave": "w900",
+  "feature": "w900-mcp-unpaid",
+  "opts": { "header": "PAYMENT-SIGNATURE", "value": "seeded-fake-sig" },
+  "expectExit": 1,
+  "errorCode": "PAYMENT_HEADER_REFUSE"
+}
