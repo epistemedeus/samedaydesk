@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "samedaydesk.w1041-402-matrix.unpaid.v1",
+  "fixtureId": "stale-listed-amount",
+  "kind": "unpaid_payment_required",
+  "statusClass": "unpaid",
+  "origin": "https://agents.samedaydesk.com",
+  "resource": "https://agents.samedaydesk.com/read?url=https%3A%2F%2Fexample.com",
+  "route": "/read",
+  "method": "GET",
+  "httpStatus": 402,
+  "charged": false,
+  "paymentSent": false,
+  "observedAt": "2026-09-03T17:03:44.000Z",
+  "amountAtomic": "50000",
+  "amountDisplayUsd": "0.05",
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "maxTimeoutSeconds": 300,
+  "extra": {
+    "name": "USD Coin",
+    "version": "2"
+  },
+  "request": {
+    "method": "GET",
+    "url": "https://agents.samedaydesk.com/read?url=https%3A%2F%2Fexample.com"
+  },
+  "source": {
+    "kind": "bazaar",
+    "capturedAt": "2026-08-08T20:40:49.000Z",
+    "path": "fixtures/presence/listings/bazaar-merchant.json",
+    "note": "Copies the real Bazaar /read listing amount 50000 over an unpaid 402 shape. Catalog pin is 5000."
+  },
+  "listedSurface": "bazaar",
+  "listedAmountAtomic": "50000",
+  "unknownWhenAbsent": ["settlement", "payment-signature"],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "stale_listed_amount_is_catalog",
+    "atomic_is_display_usd",
+    "http_402_is_delivery",
+    "amount_mismatch_is_unpaid_match"
+  ]
+}

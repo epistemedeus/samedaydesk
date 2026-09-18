@@ -1,0 +1,13 @@
+{
+  "designated": "stale-listed-amount",
+  "seeds": [
+    "stale-listed-amount",
+    "wrong-units",
+    "paid-as-unpaid",
+    "http-200-as-unpaid",
+    "extract-amount-drift",
+    "live-price-edit"
+  ],
+  "naiveRule": "statusClass-unpaid",
+  "note": "Each seed is HTTP-shaped unpaid. Honest evaluation rejects. Designated seed is the real Bazaar /read 50000 vs catalog 5000."
+}
