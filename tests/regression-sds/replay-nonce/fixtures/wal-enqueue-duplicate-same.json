@@ -1,0 +1,14 @@
+{
+  "id": "wal-enqueue-duplicate-same",
+  "kind": "fallback",
+  "flushId": "a0000000-0000-4000-8000-000000000099",
+  "steps": [
+    { "action": "enqueue", "delta": { "total": 2, "humans": 2 } },
+    { "action": "enqueue", "delta": { "total": 2, "humans": 2 } }
+  ],
+  "expect": {
+    "outcomes": ["queued", "duplicate_same"],
+    "pendingCount": 1,
+    "corrupt": false
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "fresh-nonce-applies",
+  "kind": "store",
+  "steps": [
+    {
+      "flushId": "a0000000-0000-4000-8000-000000000099",
+      "delta": { "total": 2, "humans": 2 },
+      "expectStatus": "applied"
+    },
+    {
+      "flushId": "a0000000-0000-4000-8000-000000000098",
+      "delta": { "total": 3, "humans": 3 },
+      "expectStatus": "applied"
+    }
+  ],
+  "expect": {
+    "acks": ["applied", "applied"],
+    "snapshotTotal": 5,
+    "error": null
+  }
+}

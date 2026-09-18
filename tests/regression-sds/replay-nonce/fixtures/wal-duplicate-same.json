@@ -1,0 +1,21 @@
+{
+  "id": "wal-duplicate-same",
+  "kind": "wal-state",
+  "pendingFlushes": [
+    {
+      "flushId": "a0000000-0000-4000-8000-000000000099",
+      "createdAt": "2026-09-18T12:00:00.000Z",
+      "delta": { "total": 2, "humans": 2 }
+    },
+    {
+      "flushId": "a0000000-0000-4000-8000-000000000099",
+      "createdAt": "2026-09-18T12:00:00.000Z",
+      "delta": { "total": 2, "humans": 2 }
+    }
+  ],
+  "expect": {
+    "ok": true,
+    "pendingCount": 1,
+    "error": null
+  }
+}

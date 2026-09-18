@@ -1,0 +1,12 @@
+{
+  "id": "consumed-nonce-reissued",
+  "defect": "Reissue a consumed flush-id nonce with a new delta as a fresh apply.",
+  "flushId": "a0000000-0000-4000-8000-000000000099",
+  "observedFrom": "2026-09-18T12:00:00.000Z",
+  "firstDelta": { "total": 2, "humans": 2 },
+  "reissueDelta": { "total": 9, "humans": 9 },
+  "claim": {
+    "reissued": true,
+    "secondStatus": "applied"
+  }
+}
