@@ -20,10 +20,11 @@ import {
   PRESENCE_SKILLS_INDEX_REL,
   SEEDED,
   SKILL_NAMES,
+  looksLikePaymentUrl,
 } from "./lib/catalog.mjs";
 import { envelope, emitEnvelope, exitFor, failError } from "./lib/envelope.mjs";
 import { startFixtureServer } from "./lib/fixture-server.mjs";
-import { listSkills } from "./lib/client.mjs";
+import { listSkills, resolveMcpUrl } from "./lib/client.mjs";
 import { acceptInitialize, acceptSkillsList } from "./lib/accept.mjs";
 import { loadExpectedSkills, loadPresenceIndex, presenceNames } from "./lib/skills.mjs";
 import { runSeeded } from "./lib/refuse.mjs";
@@ -47,12 +48,26 @@ function parseArgs(argv) {
     else if (a === "--pretty") out.pretty = true;
     else if (a === "--human") out.json = false;
     else if (a === "--seeded-failure") {
-      out.seededId = argv[++i];
-      if (!out.seededId) out.missing = "--seeded-failure";
+      const next = argv[i + 1];
+      if (!next || next.startsWith("--")) out.missing = "--seeded-failure";
+      else {
+        out.seededId = next;
+        i++;
+      }
     } else if (a === "--fixture") {
-      out.fixture = argv[++i];
+      const next = argv[i + 1];
+      if (!next || next.startsWith("--")) out.missing = "--fixture";
+      else {
+        out.fixture = next;
+        i++;
+      }
     } else if (a === "--origin") {
-      out.flags.origin = argv[++i];
+      const next = argv[i + 1];
+      if (!next || next.startsWith("--")) out.missing = "--origin";
+      else {
+        out.flags.origin = next;
+        i++;
+      }
     } else if (a === "--live") {
       out.flags.live = true;
     } else if (a.startsWith("--")) {
@@ -87,9 +102,13 @@ Seeded failures (exit ≠ 0, clear code, paymentSent=false, toolsCalled=false):
   --seeded-failure digest-mismatch
   --seeded-failure tools-call
   --seeded-failure protocol-2026-07-28-only
+  --seeded-failure payment-signature
+  --seeded-failure stripe-path
+  --seeded-failure method-not-found-as-success
+  --seeded-failure wellknown-as-skills-list
 
 Options:
-  --origin URL            MCP base origin (default: loopback fixture)
+  --origin URL            MCP base origin (default: loopback fixture; Stripe/cs= refused)
   --live                  optional read-only cite of ${APEX_ORIGIN}/mcp (no call)
   --json / --pretty       JSON envelope on stdout
   --fixture PATH          load seeded fixture JSON
@@ -116,9 +135,38 @@ async function runList({ origin, live }) {
 
   try {
     if (origin) {
-      mcpUrl = origin.replace(/\/$/, "").endsWith("/mcp")
-        ? origin.replace(/\/$/, "")
-        : `${origin.replace(/\/$/, "")}/mcp`;
+      if (looksLikePaymentUrl(origin)) {
+        return envelope({
+          ok: false,
+          command: "skills/list",
+          feature: FEATURE,
+          status: "fail",
+          error: failError(
+            "STRIPE_PATH_REFUSE",
+            `refusing Stripe/checkout path in unpaid harness: ${origin}`,
+            { origin },
+          ),
+          result: {
+            refused: true,
+            path: origin,
+            paymentSent: false,
+            toolsCalled: false,
+            neverOpenedCheckout: true,
+          },
+        });
+      }
+      try {
+        mcpUrl = resolveMcpUrl(origin);
+      } catch (e) {
+        return envelope({
+          ok: false,
+          command: "skills/list",
+          feature: FEATURE,
+          status: e.code === "USAGE" ? "usage" : "fail",
+          error: failError(e.code || "USAGE", e.message, { origin }),
+          result: { refused: true, path: origin, paymentSent: false, toolsCalled: false },
+        });
+      }
       source = "origin";
     } else if (live) {
       evidence.push({
@@ -359,6 +407,7 @@ async function main() {
     env = runSeeded(parsed.seededId, {
       tool: parsed.flags.tool,
       header: parsed.flags.header,
+      path: parsed.flags.path,
     });
   } else {
     const t0 = parsed.tokens[0];

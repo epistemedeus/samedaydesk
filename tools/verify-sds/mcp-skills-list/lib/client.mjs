@@ -4,7 +4,7 @@
  */
 import http from "node:http";
 import https from "node:https";
-import { FORBIDDEN_HEADERS, MCP_PROTOCOL } from "./catalog.mjs";
+import { FORBIDDEN_HEADERS, MCP_PROTOCOL, looksLikePaymentUrl } from "./catalog.mjs";
 
 function normalizeHeaderMap(headers = {}) {
   const out = {};
@@ -26,6 +26,41 @@ export function assertNoPaymentHeaders(headers = {}) {
     }
   }
   return true;
+}
+
+export function assertNoPaymentUrl(value) {
+  if (looksLikePaymentUrl(value)) {
+    const err = new Error(`refusing Stripe/checkout path in unpaid harness: ${value}`);
+    err.code = "STRIPE_PATH_REFUSE";
+    err.path = value;
+    throw err;
+  }
+  return true;
+}
+
+/**
+ * Normalize an --origin value to a /mcp URL. Rejects payment query/hosts.
+ */
+export function resolveMcpUrl(origin) {
+  const trimmed = String(origin || "").trim();
+  if (!trimmed) {
+    const err = new Error("missing MCP origin");
+    err.code = "USAGE";
+    throw err;
+  }
+  assertNoPaymentUrl(trimmed);
+  let u;
+  try {
+    u = new URL(trimmed);
+  } catch {
+    const err = new Error(`invalid MCP origin: ${trimmed}`);
+    err.code = "USAGE";
+    throw err;
+  }
+  assertNoPaymentUrl(u.toString());
+  let path = u.pathname.replace(/\/+$/, "") || "";
+  if (!path.endsWith("/mcp")) path = `${path}/mcp`;
+  return `${u.origin}${path}`;
 }
 
 export function assertListOnly(method, params) {
@@ -53,6 +88,7 @@ export function rpc(id, method, params) {
 
 export function postMcp(url, payload, { headers = {}, timeoutMs = 15_000 } = {}) {
   assertNoPaymentHeaders(headers);
+  assertNoPaymentUrl(url);
   assertListOnly(payload?.method, payload?.params);
   const encoded = JSON.stringify(payload);
   if (/"PAYMENT-SIGNATURE"|PAYMENT-SIGNATURE/i.test(encoded)) {

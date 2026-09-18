@@ -5,6 +5,8 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { SKILL_NAMES } from "./lib/catalog.mjs";
+import { listSkills, postMcp, resolveMcpUrl } from "./lib/client.mjs";
+import { startFixtureServer } from "./lib/fixture-server.mjs";
 import { loadExpectedSkills, loadPresenceIndex, presenceNames } from "./lib/skills.mjs";
 import { REPO_ROOT } from "./lib/paths.mjs";
 
@@ -133,6 +135,8 @@ test("cold run-harness exit 0 (list ok + seeds refuse)", () => {
   assert.equal(json.result.seedsOk, true);
   assert.equal(json.boundary.paymentSent, false);
   assert.equal(json.boundary.toolsCalled, false);
+  const seedSteps = json.result.steps.filter((s) => s.step.startsWith("seeded:"));
+  assert.equal(seedSteps.length, 9);
 });
 
 test("presence skills-index names match catalog", () => {
@@ -162,4 +166,132 @@ test("skills-index fixture matches catalog three", () => {
   const index = JSON.parse(readFileSync(join(here, "fixtures/skills-index.json"), "utf8"));
   assert.deepEqual(index.skills, [...SKILL_NAMES]);
   assert.equal(index.protocol, "2024-11-05");
+});
+
+test("seeded payment-signature exit 1; header never sent", () => {
+  const result = run(["--seeded-failure", "payment-signature", "--json"]);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "PAYMENT_HEADER_REFUSE");
+  assert.equal(result.json.boundary.paymentSent, false);
+  assert.equal(result.json.result.headerNeverSent, true);
+});
+
+test("seeded stripe-path exit 1 with STRIPE_PATH_REFUSE", () => {
+  const result = run(["--seeded-failure", "stripe-path", "--json"]);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "STRIPE_PATH_REFUSE");
+  assert.equal(result.json.boundary.paymentSent, false);
+  assert.equal(result.json.boundary.toolsCalled, false);
+  assert.equal(result.json.result.neverOpenedCheckout, true);
+});
+
+test("seeded method-not-found-as-success exit 1 with METHOD_NOT_FOUND", () => {
+  const result = run(["--seeded-failure", "method-not-found-as-success", "--json"]);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "METHOD_NOT_FOUND");
+  assert.equal(result.json.result.refused, true);
+  assert.equal(result.json.result.liveApexToday, "-32601");
+  assert.equal(result.json.result.committedSkillsListCase, false);
+  assert.equal(result.json.boundary.paymentSent, false);
+});
+
+test("seeded wellknown-as-skills-list exit 1", () => {
+  const result = run(["--seeded-failure", "wellknown-as-skills-list", "--json"]);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "WELLKNOWN_IS_NOT_SKILLS_LIST");
+  assert.equal(result.json.result.hasDigest, false);
+  assert.equal(result.json.boundary.paymentSent, false);
+});
+
+test("unknown seeded-failure is rejected", () => {
+  const result = run(["--seeded-failure", "not-a-real-seed", "--json"]);
+  assert.equal(result.status, 2, result.stderr + result.stdout);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "USAGE");
+  assert.equal(result.json.boundary.paymentSent, false);
+});
+
+test("bare --seeded-failure does not consume --json as seed id", () => {
+  const result = run(["--seeded-failure", "--json"]);
+  assert.equal(result.status, 2, result.stderr + result.stdout);
+  assert.equal(result.json.error.code, "USAGE");
+  assert.match(result.json.error.message, /missing value for --seeded-failure/);
+});
+
+test("origin buy.stripe.com is STRIPE_PATH_REFUSE before any live POST", () => {
+  const result = run([
+    "skills/list",
+    "--origin",
+    "https://buy.stripe.com/8x24gA0xA9DF9dd13YeZ20h",
+    "--json",
+  ]);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.error.code, "STRIPE_PATH_REFUSE");
+  assert.equal(result.json.boundary.paymentSent, false);
+  assert.equal(result.json.result.neverOpenedCheckout, true);
+});
+
+test("origin mcp?cs= is STRIPE_PATH_REFUSE and does not rewrite query", () => {
+  const result = run([
+    "skills/list",
+    "--origin",
+    "https://samedaydesk.com/mcp?cs=cs_test_fake",
+    "--json",
+  ]);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.error.code, "STRIPE_PATH_REFUSE");
+  assert.equal(result.json.boundary.paymentSent, false);
+});
+
+test("postMcp refuses PAYMENT-SIGNATURE before any socket", () => {
+  assert.throws(
+    () =>
+      postMcp(
+        "http://127.0.0.1:1/mcp",
+        { jsonrpc: "2.0", id: 1, method: "initialize" },
+        { headers: { "PAYMENT-SIGNATURE": "seeded-fake-sig" } },
+      ),
+    (e) => e.code === "PAYMENT_HEADER_REFUSE",
+  );
+});
+
+test("postMcp refuses tools/call before any socket", () => {
+  assert.throws(
+    () =>
+      postMcp("http://127.0.0.1:1/mcp", {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "tools/call",
+        params: { name: "generate_complete_fix_pack" },
+      }),
+    (e) => e.code === "TOOLS_CALL_REFUSE",
+  );
+});
+
+test("resolveMcpUrl joins /mcp without appending onto query strings", () => {
+  assert.equal(resolveMcpUrl("http://127.0.0.1:9"), "http://127.0.0.1:9/mcp");
+  assert.equal(resolveMcpUrl("http://127.0.0.1:9/mcp/"), "http://127.0.0.1:9/mcp");
+  assert.throws(
+    () => resolveMcpUrl("https://samedaydesk.com/mcp?cs=cs_test_fake"),
+    (e) => e.code === "STRIPE_PATH_REFUSE",
+  );
+});
+
+test("listSkills against loopback origin via resolveMcpUrl", async () => {
+  const handle = await startFixtureServer();
+  try {
+    const url = resolveMcpUrl(handle.origin);
+    assert.equal(url, handle.url);
+    const session = await listSkills(url);
+    assert.equal(session.initialize.status, 200);
+    assert.equal(session.listed.status, 200);
+    const names = session.listed.json.result.skills.map((s) => s.frontmatter.name);
+    assert.deepEqual(names, [...SKILL_NAMES]);
+  } finally {
+    await handle.close();
+  }
 });

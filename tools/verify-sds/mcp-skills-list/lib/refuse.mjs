@@ -1,11 +1,22 @@
 /**
  * Seeded refuse paths. Always returns envelope with paymentSent=false, toolsCalled=false.
  */
-import { FEATURE, SEEDED, SKILL_NAMES, skillUri } from "./catalog.mjs";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import {
+  FEATURE,
+  FORBIDDEN_HEADERS,
+  PAYMENT_STOP_PATHS,
+  SEEDED,
+  SKILL_NAMES,
+  looksLikePaymentUrl,
+  skillUri,
+} from "./catalog.mjs";
 import { envelope, failError } from "./envelope.mjs";
 import { acceptInitialize, acceptSkillsList } from "./accept.mjs";
 import { assertListOnly, assertNoPaymentHeaders } from "./client.mjs";
-import { loadExpectedSkills, skillEntry } from "./skills.mjs";
+import { loadExpectedSkills, loadPresenceIndex, skillEntry } from "./skills.mjs";
+import { REPO_ROOT } from "./paths.mjs";
 
 function caught(code, message, result, detail) {
   return envelope({
@@ -146,11 +157,111 @@ export function refusePaymentSignature({
       result: { seed: "payment-signature", header, refused: false },
     });
   } catch (e) {
-    return caught(e.code || "PAYMENT_HEADER_REFUSE", e.message, {
-      seed: "payment-signature",
-      header: e.header || header,
-      headerNeverSent: true,
+    return caught(
+      e.code || "PAYMENT_HEADER_REFUSE",
+      e.message,
+      {
+        seed: "payment-signature",
+        header: e.header || header,
+        headerNeverSent: true,
+      },
+      { header: e.header || header, forbidden: [...FORBIDDEN_HEADERS] },
+    );
+  }
+}
+
+export function refuseStripePath({ path = "/api/checkout" } = {}) {
+  if (!looksLikePaymentUrl(path)) {
+    return envelope({
+      ok: false,
+      command: "seeded",
+      feature: FEATURE,
+      error: failError("STRIPE_PATH_REFUSE", `path not recognized as payment stop: ${path}`, {
+        path,
+        stops: [...PAYMENT_STOP_PATHS],
+      }),
+      result: { seed: "stripe-path", path, refused: false },
     });
+  }
+  return envelope({
+    ok: false,
+    command: "seeded",
+    feature: FEATURE,
+    status: "fail",
+    error: failError(
+      "STRIPE_PATH_REFUSE",
+      `refusing Stripe/checkout path in unpaid harness: ${path}`,
+      { path, stops: [...PAYMENT_STOP_PATHS] },
+    ),
+    result: {
+      seed: "stripe-path",
+      path,
+      refused: true,
+      paymentSent: false,
+      toolsCalled: false,
+      neverOpenedCheckout: true,
+    },
+  });
+}
+
+export function refuseMethodNotFoundAsSuccess() {
+  try {
+    acceptSkillsList({
+      error: { code: -32601, message: "Method not found: skills/list" },
+      claimedOk: true,
+    });
+    return envelope({
+      ok: false,
+      command: "seeded",
+      feature: FEATURE,
+      error: failError("METHOD_NOT_FOUND", "expected refuse for -32601 claimed as success"),
+      result: { seed: "method-not-found-as-success", refused: false },
+    });
+  } catch (e) {
+    const mcpPath = join(REPO_ROOT, "server/routes/mcp.js");
+    const src = existsSync(mcpPath) ? readFileSync(mcpPath, "utf8") : "";
+    const hasSkillsListCase = /case\s+["']skills\/list["']/.test(src);
+    return caught(
+      e.code || "METHOD_NOT_FOUND",
+      e.message,
+      {
+        seed: "method-not-found-as-success",
+        liveApexToday: "-32601",
+        committedSkillsListCase: hasSkillsListCase,
+        neverPostedCall: true,
+      },
+      e.detail,
+    );
+  }
+}
+
+export function refuseWellknownAsSkillsList() {
+  const presence = loadPresenceIndex(REPO_ROOT) || {
+    skills: SKILL_NAMES.map((name) => ({ name, files: ["SKILL.md"] })),
+  };
+  try {
+    acceptSkillsList(presence);
+    return envelope({
+      ok: false,
+      command: "seeded",
+      feature: FEATURE,
+      error: failError(
+        "WELLKNOWN_IS_NOT_SKILLS_LIST",
+        "expected refuse for well-known HTTP index treated as skills/list",
+      ),
+      result: { seed: "wellknown-as-skills-list", refused: false },
+    });
+  } catch (e) {
+    return caught(
+      e.code || "WELLKNOWN_IS_NOT_SKILLS_LIST",
+      e.message,
+      {
+        seed: "wellknown-as-skills-list",
+        httpIndex: "tools/presence/fixtures/for-agents-cold-read/skills-index.json",
+        hasDigest: false,
+      },
+      e.detail,
+    );
   }
 }
 
@@ -172,6 +283,12 @@ export function runSeeded(seedId, opts = {}) {
   if (seedId === "digest-mismatch") return refuseDigestMismatch();
   if (seedId === "tools-call") return refuseToolsCall(opts);
   if (seedId === "protocol-2026-07-28-only") return refuseProtocol20260728Only();
+  if (seedId === "payment-signature") return refusePaymentSignature(opts);
+  if (seedId === "stripe-path") {
+    return refuseStripePath({ path: opts.path || "/api/checkout" });
+  }
+  if (seedId === "method-not-found-as-success") return refuseMethodNotFoundAsSuccess();
+  if (seedId === "wellknown-as-skills-list") return refuseWellknownAsSkillsList();
   return envelope({
     ok: false,
     command: "seeded",

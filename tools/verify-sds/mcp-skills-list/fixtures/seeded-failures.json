@@ -42,6 +42,38 @@
       "expectExit": 1,
       "errorCode": "PROTOCOL_REFUSE",
       "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "payment-signature",
+      "why": "Never send PAYMENT-SIGNATURE / X-PAYMENT. Seed proves the refuse before any wire I/O.",
+      "command": ["node", "tools/verify-sds/mcp-skills-list/cli.mjs", "--seeded-failure", "payment-signature", "--json"],
+      "expectExit": 1,
+      "errorCode": "PAYMENT_HEADER_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "stripe-path",
+      "why": "Stripe checkout / webhook / cs_ license redemption paths are out of unpaid skills/list scope.",
+      "command": ["node", "tools/verify-sds/mcp-skills-list/cli.mjs", "--seeded-failure", "stripe-path", "--json"],
+      "expectExit": 1,
+      "errorCode": "STRIPE_PATH_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "method-not-found-as-success",
+      "why": "JSON-RPC -32601 (live apex today) is not a skills/list. Claiming it already works must fail.",
+      "command": ["node", "tools/verify-sds/mcp-skills-list/cli.mjs", "--seeded-failure", "method-not-found-as-success", "--json"],
+      "expectExit": 1,
+      "errorCode": "METHOD_NOT_FOUND",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "wellknown-as-skills-list",
+      "why": "HTTP /.well-known/skills/index.json (name/description/files, no digest) is not SEP-2640 skills/list.",
+      "command": ["node", "tools/verify-sds/mcp-skills-list/cli.mjs", "--seeded-failure", "wellknown-as-skills-list", "--json"],
+      "expectExit": 1,
+      "errorCode": "WELLKNOWN_IS_NOT_SKILLS_LIST",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
     }
   ]
 }

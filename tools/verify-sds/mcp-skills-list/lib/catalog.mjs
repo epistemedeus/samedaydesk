@@ -42,9 +42,34 @@ export const PAYMENT_STOP_PATHS = Object.freeze([
   "/api/stripe/webhook",
   "/checkout",
   "/mcp?cs=",
-  "/extract",
+  "buy.stripe.com",
   "/extract/batch",
 ]);
+
+/**
+ * True when a URL or path is a Stripe / checkout / cs_ license / paid extract path.
+ * Fail-closed so --origin cannot POST to payment surfaces.
+ */
+export function looksLikePaymentUrl(value) {
+  const s = String(value || "");
+  if (!s) return false;
+  const lower = s.toLowerCase();
+  for (const p of PAYMENT_STOP_PATHS) {
+    if (lower.includes(p.toLowerCase())) return true;
+  }
+  if (/(?:^|[?&/])cs=|cs_test_|cs_live_|\/api\/stripe\b/i.test(s)) return true;
+  if (/(?:^|[^a-z])\/extract(?:\?|$|\/)/i.test(s)) return true;
+  try {
+    const u = new URL(s);
+    if (u.searchParams.has("cs") && String(u.searchParams.get("cs") || "").length > 0) {
+      return true;
+    }
+    if (/(^|\.)stripe\.com$/i.test(u.hostname)) return true;
+  } catch {
+    /* relative path or non-URL */
+  }
+  return false;
+}
 
 export const SEEDED = Object.freeze({
   "silent-empty-success": {
@@ -75,6 +100,30 @@ export const SEEDED = Object.freeze({
     id: "protocol-2026-07-28-only",
     why: "SDS apex fail-closes initialize to 2024-11-05. A 2026-07-28-only handshake is not a transport migration and is not this list.",
     errorCode: "PROTOCOL_REFUSE",
+    expectExit: 1,
+  },
+  "payment-signature": {
+    id: "payment-signature",
+    why: "Never send PAYMENT-SIGNATURE / X-PAYMENT. Seed proves the refuse before any wire I/O.",
+    errorCode: "PAYMENT_HEADER_REFUSE",
+    expectExit: 1,
+  },
+  "stripe-path": {
+    id: "stripe-path",
+    why: "Stripe checkout / webhook / cs_ license redemption paths are out of unpaid skills/list scope.",
+    errorCode: "STRIPE_PATH_REFUSE",
+    expectExit: 1,
+  },
+  "method-not-found-as-success": {
+    id: "method-not-found-as-success",
+    why: "JSON-RPC -32601 (live apex today) is not a skills/list. Claiming it already works must fail.",
+    errorCode: "METHOD_NOT_FOUND",
+    expectExit: 1,
+  },
+  "wellknown-as-skills-list": {
+    id: "wellknown-as-skills-list",
+    why: "HTTP /.well-known/skills/index.json (name/description/files, no digest) is not SEP-2640 skills/list.",
+    errorCode: "WELLKNOWN_IS_NOT_SKILLS_LIST",
     expectExit: 1,
   },
 });

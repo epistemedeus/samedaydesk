@@ -101,6 +101,16 @@ export function startFixtureServer({ port = 0 } = {}) {
     }
 
     const url = new URL(req.url || "/", "http://127.0.0.1");
+    if (url.searchParams.has("cs") || /(?:^|[?&])cs=/.test(req.url || "")) {
+      res.writeHead(400, { "content-type": "application/json" });
+      res.end(
+        JSON.stringify({
+          error: "STRIPE_PATH_REFUSE",
+          message: "fixture refuses Stripe license query",
+        }),
+      );
+      return;
+    }
     if (url.pathname !== "/mcp" && url.pathname !== "/mcp/") {
       res.writeHead(404, { "content-type": "application/json" });
       res.end(JSON.stringify({ error: "not found; fixture mounts /mcp only" }));

@@ -40,6 +40,10 @@ node tools/verify-sds/mcp-skills-list/cli.mjs --seeded-failure missing-skill --j
 node tools/verify-sds/mcp-skills-list/cli.mjs --seeded-failure digest-mismatch --json
 node tools/verify-sds/mcp-skills-list/cli.mjs --seeded-failure tools-call --json
 node tools/verify-sds/mcp-skills-list/cli.mjs --seeded-failure protocol-2026-07-28-only --json
+node tools/verify-sds/mcp-skills-list/cli.mjs --seeded-failure payment-signature --json
+node tools/verify-sds/mcp-skills-list/cli.mjs --seeded-failure stripe-path --json
+node tools/verify-sds/mcp-skills-list/cli.mjs --seeded-failure method-not-found-as-success --json
+node tools/verify-sds/mcp-skills-list/cli.mjs --seeded-failure wellknown-as-skills-list --json
 
 # Cold harness (list ok + all seeds refuse) — exit 0
 node tools/verify-sds/mcp-skills-list/run-harness.mjs
@@ -53,6 +57,9 @@ node --test tools/verify-sds/mcp-skills-list/cli.test.mjs
 - `boundary.paymentSent` always `false`
 - `boundary.toolsCalled` always `false` (list-only)
 - Never sends `PAYMENT-SIGNATURE`, `X-PAYMENT`, or `stripe-signature`
+- `--origin` Stripe / `cs=` / `buy.stripe.com` URLs refuse with `STRIPE_PATH_REFUSE` (no live POST)
+- JSON-RPC `-32601` is not a catalog (`method-not-found-as-success`)
+- HTTP `/.well-known/skills/index.json` is not SEP-2640 `skills/list` (`wellknown-as-skills-list`)
 - No Stripe/x402 spend, no price/SKU edits, no neo, no merge, no registry publish
 
 ## Layout

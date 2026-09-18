@@ -43,6 +43,15 @@ export function acceptInitialize(result) {
 }
 
 export function acceptSkillsList(result, expected) {
+  const rpcError = result?.error;
+  if (rpcError && (rpcError.code === -32601 || rpcError.code === "-32601")) {
+    fail(
+      "METHOD_NOT_FOUND",
+      "refusing claim that skills/list already works: JSON-RPC -32601 is not a catalog",
+      { code: rpcError.code, message: rpcError.message || "Method not found: skills/list" },
+    );
+  }
+
   if (result && result.ok === true && (!Array.isArray(result.skills) || result.skills.length === 0)) {
     fail("SILENT_EMPTY", "refusing HTTP-shaped success with empty skills list", {
       ok: true,
@@ -53,6 +62,17 @@ export function acceptSkillsList(result, expected) {
   const skills = result?.skills;
   if (!Array.isArray(skills)) {
     fail("SILENT_EMPTY", "skills/list result.skills must be an array", { result });
+  }
+
+  const wellKnownShape = skills.some(
+    (s) => s && Array.isArray(s.files) && s.resources == null && s.frontmatter == null,
+  );
+  if (wellKnownShape) {
+    fail(
+      "WELLKNOWN_IS_NOT_SKILLS_LIST",
+      "HTTP /.well-known/skills/index.json is not SEP-2640 skills/list (no skill:// uri, no resources digest)",
+      { sample: skills[0] },
+    );
   }
   if (skills.length === 0) {
     fail("SILENT_EMPTY", "empty skills/list is not a SDS skills catalog", { skillCount: 0 });
