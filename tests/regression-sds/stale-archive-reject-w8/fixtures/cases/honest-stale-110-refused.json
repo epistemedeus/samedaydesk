@@ -1,0 +1,20 @@
+{
+  "id": "honest-stale-110-refused",
+  "surface": "useful-jobs-archive",
+  "class": "honest-refuse",
+  "expectReject": false,
+  "defect": "None. 1.1.0 is named as the W0-B2 negative control and is not claimed current.",
+  "output": {
+    "ok": false,
+    "refused": true,
+    "claimedCurrent": false,
+    "code": "wrong-size",
+    "feature": "useful-jobs",
+    "surface": "useful-jobs-archive",
+    "version": "1.1.0",
+    "sha256": "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534",
+    "bytes": 2577606,
+    "rootName": "useful-jobs-1.1.0",
+    "message": "1.1.0 is the W0-B2 negative control, not current useful-jobs 1.4.7"
+  }
+}

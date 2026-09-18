@@ -1,0 +1,35 @@
+{
+  "id": "obtain-stale-110-wrong-digest",
+  "surface": "obtain-archive",
+  "class": "stale-archive",
+  "expectReject": true,
+  "expectedReasons": [
+    "stale_archive",
+    "stale_as_current",
+    "stale_version",
+    "stale_sha",
+    "stale_bytes",
+    "negative_control_110",
+    "product_refuse"
+  ],
+  "defect": "1.1.0 bytes presented as the current 1.4.7 digest. obtain-archive child exits 0 with wrong-digest, refused:true.",
+  "probe": {
+    "kind": "obtain-archive",
+    "fromRel": "client/public/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz",
+    "expected": "override",
+    "expectedSha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+    "expectedBytes": 2577606,
+    "expectCode": "wrong-digest"
+  },
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "claimedCurrent": true,
+    "feature": "useful-jobs",
+    "surface": "obtain-archive",
+    "version": "1.1.0",
+    "sha256": "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534",
+    "bytes": 2577606,
+    "message": "digest matched current pin"
+  }
+}
