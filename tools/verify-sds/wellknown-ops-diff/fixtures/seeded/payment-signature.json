@@ -1,0 +1,8 @@
+{
+  "id": "payment-signature",
+  "seededId": "payment-signature",
+  "opts": {
+    "header": "PAYMENT-SIGNATURE"
+  },
+  "note": "Seeded refuse: never send PAYMENT-SIGNATURE."
+}

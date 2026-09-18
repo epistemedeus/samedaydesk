@@ -1,0 +1,7 @@
+{
+  "id": "claim-match",
+  "seededId": "claim-match",
+  "claim": "aligned",
+  "aligned": true,
+  "note": "Seeded lie: well-known ops and tracker SDS routes match. The committed gap must reject this."
+}
