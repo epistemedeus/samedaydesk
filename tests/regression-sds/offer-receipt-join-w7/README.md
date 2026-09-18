@@ -54,6 +54,7 @@ node --test --test-concurrency=1 tests/regression-sds/offer-receipt-join-w7/*.te
 | invented-receipt-field | reject | `loyaltyPoints` / `throughBlock` |
 | offer-as-settlement | reject | unsigned offer plus copied tx labeled settled |
 | join-without-exact-key | reject | no shared join key |
+| missing-amount | reject | payload omits amount; partial keys are not a join |
 | money-movement | reject | `mode: pay` / `intent: checkout` |
 
 Offer signatures and `validUntil` are omitted as volatile. Fixtures are

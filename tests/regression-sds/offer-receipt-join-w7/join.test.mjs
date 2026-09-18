@@ -12,6 +12,7 @@ import {
 } from "./lib/pin.mjs";
 import { loadCatalogOffer, loadExtractDigest, originPathname } from "./lib/catalog.mjs";
 import { joinOfferReceipt } from "./lib/join.mjs";
+import { seededMismatchOutcome } from "./lib/seeded.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -113,4 +114,52 @@ test("invented fields, settlement object, missing keys, and pay mode reject", ()
   const pay = joinOfferReceipt(loadCase("money-movement"));
   assert.equal(pay.joined, false);
   assert.ok(pay.reasons.includes("money_movement_refused"));
+});
+
+test("omitting payload.amount or payTo is not an exact-key join", () => {
+  const missingAmount = joinOfferReceipt(loadCase("missing-amount"));
+  assert.equal(missingAmount.joined, false);
+  assert.equal(missingAmount.mismatch, true);
+  assert.ok(missingAmount.reasons.includes("join_key_missing:amount"), JSON.stringify(missingAmount.reasons));
+
+  const omitPayTo = structuredClone(loadCase("cold-extract-join"));
+  delete omitPayTo.receipt.offerReceipt.offers[0].payload.payTo;
+  const v = joinOfferReceipt(omitPayTo);
+  assert.equal(v.joined, false);
+  assert.ok(v.reasons.includes("join_key_missing:payTo"), JSON.stringify(v.reasons));
+});
+
+test("decimal scan amount is unit conversion, not extract-5000-only", () => {
+  const scan = loadCase("cold-scan-join");
+  scan.receipt.offerReceipt.offers[0].payload.amount = "0.2";
+  scan.claims = {};
+  const v = joinOfferReceipt(scan);
+  assert.equal(v.joined, false);
+  assert.ok(v.reasons.includes("unit_conversion"), JSON.stringify(v.reasons));
+  assert.ok(
+    v.reasons.some((r) => r === "amount_mismatch:offer=200000,receipt=0.2"),
+    JSON.stringify(v.reasons),
+  );
+});
+
+test("seededMismatchOutcome is SEED_REJECT only when the child actually refused", () => {
+  const rejected = seededMismatchOutcome({
+    status: 1,
+    body: {
+      ok: false,
+      result: { joined: false, mismatch: true, reasons: ["amount_mismatch:offer=5000,receipt=1"] },
+    },
+  });
+  assert.equal(rejected.code, "SEED_REJECT");
+  assert.equal(rejected.reject, true);
+
+  const falseAccept = seededMismatchOutcome({
+    status: 0,
+    body: {
+      ok: true,
+      result: { joined: true, mismatch: false, reasons: ["exact_key_join"] },
+    },
+  });
+  assert.equal(falseAccept.code, "FALSE_ACCEPT");
+  assert.equal(falseAccept.reject, false);
 });

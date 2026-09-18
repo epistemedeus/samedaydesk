@@ -229,6 +229,11 @@ export function joinOfferReceipt(caseDoc) {
   }
 
   if (payload && offer) {
+    for (const key of EXACT_JOIN_KEYS) {
+      if (!exact[key].left || !exact[key].right) {
+        reasons.push(`join_key_missing:${key}`);
+      }
+    }
     if (exact.origin_pathname.left && exact.origin_pathname.right && !exact.origin_pathname.match) {
       reasons.push(
         `join_key_mismatch:left=${exact.origin_pathname.left},right=${exact.origin_pathname.right}`,
@@ -256,15 +261,9 @@ export function joinOfferReceipt(caseDoc) {
   if (claims.amountUnitConverted === true) {
     reasons.push("unit_conversion");
   }
-  if (
-    typeof payload?.amount === "string" &&
-    typeof offer?.amount === "string" &&
-    payload.amount.includes(".") &&
-    offer.amount === "5000" &&
-    (payload.amount === "0.005" || Number(payload.amount) * 1e6 === Number(offer.amount))
-  ) {
+  if (typeof payload?.amount === "string" && payload.amount.includes(".")) {
     reasons.push("unit_conversion");
-    if (!reasons.some((r) => r.startsWith("amount_mismatch"))) {
+    if (!reasons.some((r) => r.startsWith("amount_mismatch")) && offer?.amount != null) {
       reasons.push(`amount_mismatch:offer=${offer.amount},receipt=${payload.amount}`);
     }
   }
@@ -273,6 +272,7 @@ export function joinOfferReceipt(caseDoc) {
     (r) =>
       r.startsWith("amount_mismatch") ||
       r.startsWith("join_key_mismatch") ||
+      r.startsWith("join_key_missing") ||
       r.startsWith("network_mismatch") ||
       r.startsWith("asset_mismatch") ||
       r.startsWith("scheme_mismatch") ||
@@ -290,12 +290,10 @@ export function joinOfferReceipt(caseDoc) {
   const joinable =
     !moneyBlocked &&
     Boolean(payload && offer) &&
-    presentKeys.length > 0 &&
-    EXACT_JOIN_KEYS.every((key) => !exact[key].left || !exact[key].right || exact[key].match) &&
+    EXACT_JOIN_KEYS.every((key) => exact[key].match) &&
     !mismatch &&
     !reasons.includes("offer_as_settlement") &&
     !reasons.includes("paid_as_unpaid") &&
-    !reasons.includes("invented_receipt_field") &&
     !reasons.some((r) => r.startsWith("invented_receipt_field")) &&
     !reasons.some((r) => r.startsWith("catalog_pin_mismatch")) &&
     !reasons.includes("offer_receipt_payload_missing") &&

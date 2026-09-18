@@ -14,6 +14,8 @@ function runNode(script, args) {
   return spawnSync(process.execPath, [join(here, script), ...args], {
     encoding: "utf8",
     cwd: here,
+    timeout: 30_000,
+    killSignal: "SIGKILL",
   });
 }
 
@@ -61,6 +63,9 @@ test("seeded amount mismatch as accept exits ≠0 with SEED_REJECT", () => {
   const body = JSON.parse(r.stdout.trim());
   assert.equal(body.ok, false);
   assert.equal(body.error.code, "SEED_REJECT");
+  assert.equal(body.result.joined, false);
+  assert.equal(body.result.childOk, false);
+  assert.notEqual(body.error.code, "FALSE_ACCEPT");
   const reasons = body.result?.reasons || body.error?.reasons || [];
   assert.ok(
     reasons.some((item) => String(item).startsWith("amount_mismatch")),
@@ -87,4 +92,27 @@ test("--pay is refused", () => {
   assert.equal(r.status, 2);
   const body = JSON.parse(r.stdout.trim());
   assert.equal(body.error.code, "money_movement_refused");
+});
+
+test("verify refuses fixtures outside the pack", () => {
+  const r = runNode("verify.mjs", ["--json", "--fixture", "/etc/hostname", "--expect", "accept"]);
+  assert.equal(r.status, 2, r.stderr || r.stdout);
+  const body = JSON.parse(r.stdout.trim());
+  assert.equal(body.ok, false);
+  assert.equal(body.error.code, "FIXTURE_OUTSIDE_PACK");
+});
+
+test("missing-amount fixture rejects through verify", () => {
+  const r = runNode("verify.mjs", [
+    "--json",
+    "--fixture",
+    "fixtures/cases/missing-amount.json",
+    "--expect",
+    "reject",
+  ]);
+  assert.equal(r.status, 0, r.stderr || r.stdout);
+  const body = JSON.parse(r.stdout.trim());
+  assert.equal(body.ok, true);
+  assert.equal(body.result.joined, false);
+  assert.ok(body.result.reasons.includes("join_key_missing:amount"));
 });

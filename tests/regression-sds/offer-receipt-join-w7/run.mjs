@@ -11,6 +11,7 @@ import { spawnSync } from "node:child_process";
 import { envelope } from "./lib/envelope.mjs";
 import { PRINCIPLE, SEEDED_MISMATCH_ID } from "./lib/pin.mjs";
 import { refusedArgv } from "./lib/refuse.mjs";
+import { seededMismatchOutcome } from "./lib/seeded.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const manifest = JSON.parse(readFileSync(join(here, "MANIFEST.json"), "utf8"));
@@ -39,12 +40,24 @@ function runVerify(fixtureRel, expect) {
   const r = spawnSync(process.execPath, args, {
     encoding: "utf8",
     cwd: here,
+    timeout: 30_000,
+    killSignal: "SIGKILL",
   });
   let body;
   try {
     body = JSON.parse(String(r.stdout || "").trim() || "{}");
   } catch {
     body = { ok: false, parseError: true, stdout: r.stdout, stderr: r.stderr };
+  }
+  if (r.error || r.signal || r.status == null) {
+    body = {
+      ok: false,
+      timedOut: r.signal === "SIGKILL" || r.error?.code === "ETIMEDOUT",
+      signal: r.signal || null,
+      error: r.error ? String(r.error.message || r.error) : null,
+      stdout: r.stdout,
+      stderr: r.stderr,
+    };
   }
   return { status: r.status ?? 1, body, stderr: r.stderr };
 }
@@ -94,6 +107,7 @@ seeded mismatch: feed amount-mismatch as accept (exit ≠0 SEED_REJECT)`);
       return;
     }
     const { status, body } = runVerify(seed.file, "accept");
+    const outcome = seededMismatchOutcome({ status, body });
     const out = envelope({
       command: "seeded-mismatch",
       status: "fail",
@@ -104,17 +118,18 @@ seeded mismatch: feed amount-mismatch as accept (exit ≠0 SEED_REJECT)`);
         { kind: "child", status, body },
       ],
       error: {
-        code: "SEED_REJECT",
-        message: `seeded mismatch ${seed.id} refused when fed as accept`,
-        reasons: body.result?.reasons || body.error?.reasons || [],
+        code: outcome.code,
+        message: `seeded mismatch ${seed.id} ${outcome.code === "SEED_REJECT" ? "refused when fed as accept" : "joined when fed as accept"}`,
+        reasons: outcome.reasons,
       },
       result: {
         id: seed.id,
         childExit: status,
-        childOk: body.ok,
-        reject: true,
-        mismatch: true,
-        reasons: body.result?.reasons || [],
+        childOk: body.ok === true,
+        joined: body.result?.joined === true,
+        reject: outcome.reject,
+        mismatch: outcome.mismatch,
+        reasons: outcome.reasons,
       },
     });
     process.stdout.write(JSON.stringify(out) + "\n");
@@ -173,7 +188,7 @@ seeded mismatch: feed amount-mismatch as accept (exit ≠0 SEED_REJECT)`);
     },
   });
 
-  process.stdout.write(JSON.stringify(out) + "\n");
+  if (args.json) process.stdout.write(JSON.stringify(out) + "\n");
   process.exitCode = ok ? 0 : 1;
 }
 

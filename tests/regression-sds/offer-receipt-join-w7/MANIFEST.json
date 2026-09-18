@@ -84,6 +84,12 @@
       "class": "mismatch"
     },
     {
+      "id": "missing-amount",
+      "file": "fixtures/cases/missing-amount.json",
+      "expect": "reject",
+      "class": "mismatch"
+    },
+    {
       "id": "money-movement",
       "file": "fixtures/cases/money-movement.json",
       "expect": "reject",
@@ -91,9 +97,9 @@
     }
   ],
   "counts": {
-    "total": 12,
+    "total": 13,
     "accept": 3,
-    "reject": 9,
+    "reject": 10,
     "seededMismatch": 1
   },
   "boundary": {

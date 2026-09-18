@@ -6,9 +6,10 @@
  * --expect accept on a mismatch → exit 1 SEED_REJECT.
  */
 import { readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { envelope } from "./lib/envelope.mjs";
+import { confineFixture } from "./lib/confine.mjs";
 import { joinOfferReceipt } from "./lib/join.mjs";
 import { PRINCIPLE, SEEDED_MISMATCH_ID } from "./lib/pin.mjs";
 import { refusedArgv } from "./lib/refuse.mjs";
@@ -65,8 +66,39 @@ function main(argv = process.argv.slice(2)) {
     return;
   }
 
-  const abs = resolve(here, args.fixture);
-  const raw = JSON.parse(readFileSync(abs, "utf8"));
+  const confined = confineFixture(args.fixture, here);
+  if (!confined.ok) {
+    const body = envelope({
+      command: "verify",
+      status: "fail",
+      ok: false,
+      error: { code: confined.code, message: confined.message, path: confined.abs },
+      result: null,
+    });
+    process.stdout.write(JSON.stringify(body) + "\n");
+    process.exitCode = 2;
+    return;
+  }
+  const abs = confined.abs;
+  let raw;
+  try {
+    raw = JSON.parse(readFileSync(abs, "utf8"));
+  } catch (err) {
+    const body = envelope({
+      command: "verify",
+      status: "fail",
+      ok: false,
+      error: {
+        code: "FIXTURE_INVALID",
+        message: `fixture is not JSON: ${err?.message || err}`,
+        path: abs,
+      },
+      result: null,
+    });
+    process.stdout.write(JSON.stringify(body) + "\n");
+    process.exitCode = 2;
+    return;
+  }
   const verdict = joinOfferReceipt(raw);
   const expect = args.expect || raw.expect || (raw.seededMismatch ? "reject" : "accept");
   const expectAccept = expect === "accept";
