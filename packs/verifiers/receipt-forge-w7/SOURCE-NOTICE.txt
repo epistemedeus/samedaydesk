@@ -1,0 +1,5 @@
+SameDayDesk local pack. Offline unpaid receipt-forge verification only.
+Does not pay, publish, fetch, or call neo. Settlement pin
+0x2916cfe2c5200fca2a21f8b854fe963ef70d4ed90d59c7444cef16dd21056ef7
+is the in-tree agent402-external-validation-purchase-2026-08-29 observation.
+A matching digest is not chain settlement.
