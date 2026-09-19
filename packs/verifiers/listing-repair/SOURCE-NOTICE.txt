@@ -1,0 +1,19 @@
+R14-07 listing-repair oracle bind (SameDayDesk).
+
+Binds to useful-jobs 1.4.7 listing-repair-packet repair-packet.json
+(owner-repair actions[] + listing snapshot digest). Does not invent
+1.0.0 corrections[] and does not rewrite engine packets with a synthetic
+sourceObservation.
+
+Kit pin (read-only, not republished):
+  useful-jobs-1.4.7.tar.gz
+  sha256 e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec
+  5255824 bytes
+  overlay cli.mjs 4ccda94e10e857109377a99b52050b07ad177bb05e85ff24f0ed1d8b158ece56
+
+Pattern reuse (not vendored, not a neo write):
+  R14-01 verify.mjs / neo PR51 dbf5bac12dd11c766a772ff479779ac318667391
+
+purchaseAuthority: false
+republishKit: false
+No catalog publish. No payment. No neomorphic-io.

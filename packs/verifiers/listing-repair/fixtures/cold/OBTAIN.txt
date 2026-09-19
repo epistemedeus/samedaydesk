@@ -1,0 +1,21 @@
+Cold obtain of useful-jobs 1.4.7 (already in this repo; do not republish):
+
+  client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz
+  sha256 e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec
+  bytes 5255824
+
+  tar -xzf client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz -C "$TMP"
+  cd "$TMP/useful-jobs-1.4.7"
+  node bin/useful-jobs.mjs run listing-repair-packet --example --out-dir "$TMP/out-example"
+  node bin/useful-jobs.mjs run listing-repair-packet \
+    --input samples/listing/mismatch.json --out-dir "$TMP/out-mismatch"
+
+Then judge $TMP/out-example/repair-packet.json and
+$TMP/out-mismatch/repair-packet.json with:
+
+  node packs/verifiers/listing-repair/bin/listing-repair-verifier.mjs verify \
+    --packet <repair-packet.json> --source <listing input or source observation>
+
+Or run the pack runner (extracts, runs, verifies):
+
+  node packs/verifiers/listing-repair/scripts/cold-bind.mjs

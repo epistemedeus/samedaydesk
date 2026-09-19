@@ -1,0 +1,35 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "listing-repair-packet",
+  "status": "refused",
+  "summary": "Listing repair packet status=mismatch",
+  "actions": [
+    {
+      "priority": "high",
+      "kind": "fix-identity-or-source-join",
+      "note": "Mismatched or refused join; do not invent identity."
+    }
+  ],
+  "gaps": [
+    "Discovery/listing identity and record identity do not share provider/jobRef/sharedEvidenceId — unrelated sources must not join",
+    "Route repair is owner guidance — not invented revenue or lost-customer proof"
+  ],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "input": "/tmp/listing-repair-stamp-rkg3Qr/useful-jobs-1.4.7/samples/listing/mismatch.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "tool": "distribution-repair",
+    "status": "mismatch",
+    "ok": true
+  },
+  "generatedAt": "2026-09-17T12:33:41.071Z",
+  "sourceLinked": true,
+  "digest": "5caa9c19bada9dbf"
+}
