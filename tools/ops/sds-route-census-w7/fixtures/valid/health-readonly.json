@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "samedaydesk.ops.sds-route-census.w7.v1",
+  "claimId": "health-readonly",
+  "mode": "read_only",
+  "origin": "local-source",
+  "live": false,
+  "probed": false,
+  "neo": false,
+  "publish": false,
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "class": "read_only",
+      "readOnly": true,
+      "moneyMovement": false,
+      "probed": false
+    }
+  ]
+}

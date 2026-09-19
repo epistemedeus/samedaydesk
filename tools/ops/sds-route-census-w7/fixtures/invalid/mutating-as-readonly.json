@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "samedaydesk.ops.sds-route-census.w7.v1",
+  "claimId": "mutating-as-readonly",
+  "mode": "read_only",
+  "origin": "local-source",
+  "routes": [
+    {
+      "method": "POST",
+      "path": "/api/uploads/signed-url",
+      "class": "read_only",
+      "readOnly": true,
+      "moneyMovement": false
+    }
+  ]
+}
