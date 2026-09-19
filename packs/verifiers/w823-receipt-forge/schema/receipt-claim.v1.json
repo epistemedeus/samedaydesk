@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://samedaydesk.com/schema/w823-receipt-forge-claim.v1.json",
+  "title": "SameDayDesk w823 receipt-forge claim",
+  "description": "Closed unpaid SDS receipt claim with a SHA-256 digest. Shape only; forge policy is enforced by the verifier. Digest mismatch is receipt_forged. Copied or fabricated settlement, replay, and payment headers are rejected.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "claimId",
+    "receiptId",
+    "kind",
+    "statusClass",
+    "origin",
+    "resource",
+    "route",
+    "method",
+    "httpStatus",
+    "charged",
+    "paymentSent",
+    "observedAt",
+    "completeness",
+    "authorityClass",
+    "request",
+    "accepts",
+    "joinKeys",
+    "source",
+    "unknownWhenAbsent",
+    "prohibitedInferences",
+    "integrity"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "samedaydesk.receipt-forge.claim.v1"
+    },
+    "claimId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{2,95}$"
+    },
+    "receiptId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{2,95}$"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "unpaid_payment_required",
+        "unpaid_offer",
+        "unpaid_probe",
+        "unpaid_buyer_stop"
+      ]
+    },
+    "statusClass": {
+      "type": "string",
+      "const": "unpaid"
+    },
+    "origin": {
+      "type": "string",
+      "const": "https://agents.samedaydesk.com"
+    },
+    "resource": {
+      "type": "string",
+      "minLength": 12,
+      "maxLength": 2048
+    },
+    "route": {
+      "type": "string",
+      "pattern": "^/[^?#]*$"
+    },
+    "method": {
+      "type": "string",
+      "enum": ["GET", "POST"]
+    },
+    "httpStatus": {
+      "type": ["integer", "null"]
+    },
+    "charged": {
+      "type": "boolean",
+      "const": false
+    },
+    "paymentSent": {
+      "type": "boolean",
+      "const": false
+    },
+    "observedAt": {
+      "type": "string"
+    },
+    "completeness": {
+      "type": "string",
+      "enum": ["complete", "sampled", "truncated", "unknown"]
+    },
+    "authorityClass": {
+      "type": "string",
+      "enum": ["seller_observed", "provider_returned"]
+    },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "url", "headers"],
+      "properties": {
+        "method": { "type": "string", "enum": ["GET", "POST"] },
+        "url": { "type": "string" },
+        "headers": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "accepts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4
+    },
+    "offerReceipt": {
+      "type": "object"
+    },
+    "settlement": {
+      "type": ["object", "null"]
+    },
+    "joinKeys": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "source": {
+      "type": "object"
+    },
+    "unknownWhenAbsent": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "prohibitedInferences": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alg", "claimedDigest"],
+      "properties": {
+        "alg": { "const": "sha256" },
+        "claimedDigest": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        }
+      }
+    }
+  }
+}

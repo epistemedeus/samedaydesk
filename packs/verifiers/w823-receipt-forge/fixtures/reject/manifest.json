@@ -1,0 +1,27 @@
+{
+  "forged-digest.json": {
+    "id": "forged-digest",
+    "code": "receipt_forged",
+    "naiveRule": "well-formed-digest-string"
+  },
+  "copied-settlement.json": {
+    "id": "copied-settlement",
+    "code": "copied_settlement"
+  },
+  "fabricated-tx.json": {
+    "id": "fabricated-tx",
+    "code": "fabricated_settlement"
+  },
+  "replay-receipt.json": {
+    "id": "replay-receipt",
+    "code": "receipt_replay"
+  },
+  "payment-header-forge.json": {
+    "id": "payment-header-forge",
+    "code": "payment_header_forge"
+  },
+  "payto-swap.json": {
+    "id": "payto-swap",
+    "code": "pin_mismatch"
+  }
+}
