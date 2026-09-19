@@ -1,0 +1,12 @@
+{
+  "id": "tools-sha-mismatch",
+  "seededId": "tools-sha-mismatch",
+  "wave": "w800",
+  "feature": "w800-mcp-unpaid",
+  "opts": {
+    "expectedSha": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "expectExit": 1,
+  "errorCode": "TOOLS_SHA_MISMATCH",
+  "note": "Naive accept would treat any sha as the pin. Honest verdict is reject against committed server/routes/mcp.js."
+}

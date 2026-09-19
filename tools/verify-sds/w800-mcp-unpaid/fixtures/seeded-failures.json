@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "repo": "samedaydesk",
+  "wave": "w800",
+  "feature": "w800-mcp-unpaid",
+  "seeds": [
+    {
+      "id": "paid-tool-call",
+      "why": "tools/call of generate_complete_fix_pack is the Stripe Fix Pack path; harness must refuse without POSTing call or payment.",
+      "command": ["node", "tools/verify-sds/w800-mcp-unpaid/cli.mjs", "--seeded-failure", "paid-tool-call", "--json"],
+      "expectExit": 1,
+      "errorCode": "PAID_REFUSE",
+      "boundary": { "paymentSent": false, "paidToolsCallPosted": false }
+    },
+    {
+      "id": "payment-signature",
+      "why": "Never send PAYMENT-SIGNATURE / X-PAYMENT. Seed proves the refuse before any wire I/O.",
+      "command": ["node", "tools/verify-sds/w800-mcp-unpaid/cli.mjs", "--seeded-failure", "payment-signature", "--json"],
+      "expectExit": 1,
+      "errorCode": "PAYMENT_HEADER_REFUSE",
+      "boundary": { "paymentSent": false, "paidToolsCallPosted": false }
+    },
+    {
+      "id": "stripe-path",
+      "why": "Stripe checkout / webhook / cs_ license redemption paths are out of unpaid scope.",
+      "command": ["node", "tools/verify-sds/w800-mcp-unpaid/cli.mjs", "--seeded-failure", "stripe-path", "--json"],
+      "expectExit": 1,
+      "errorCode": "STRIPE_PATH_REFUSE",
+      "boundary": { "paymentSent": false, "paidToolsCallPosted": false }
+    },
+    {
+      "id": "tools-sha-mismatch",
+      "why": "A tampered expected tools-block sha must fail closed against committed server/routes/mcp.js.",
+      "command": ["node", "tools/verify-sds/w800-mcp-unpaid/cli.mjs", "--seeded-failure", "tools-sha-mismatch", "--json"],
+      "expectExit": 1,
+      "errorCode": "TOOLS_SHA_MISMATCH",
+      "boundary": { "paymentSent": false, "paidToolsCallPosted": false }
+    },
+    {
+      "id": "paid-as-unpaid",
+      "why": "Paid Fix Pack result labeled unpaid (isError=false without license) must be rejected.",
+      "command": ["node", "tools/verify-sds/w800-mcp-unpaid/cli.mjs", "--seeded-failure", "paid-as-unpaid", "--json"],
+      "expectExit": 1,
+      "errorCode": "PAID_AS_UNPAID",
+      "boundary": { "paymentSent": false, "paidToolsCallPosted": false }
+    }
+  ]
+}
