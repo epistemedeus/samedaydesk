@@ -1,0 +1,7 @@
+Honesty-only rebase of SDS PR56 (W3-11 F05 managed listing repair).
+
+Origin: https://github.com/epistemedeus/samedaydesk/pull/56
+PR51 origin merge for listing-repair-packet: 5b97d1b02e786acd1895cfa1508087ae3f7a1545
+Current engine: useful-jobs 1.4.7 listing-repair-packet (inherited, not reimplemented).
+Write boundary: tools/managed-listing-repair/**
+No neomorphic-io. No publish, registry, payment, or checkout mutation.
