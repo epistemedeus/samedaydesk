@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "samedaydesk.ops.sds-route-census.w7.v1",
+  "claimId": "neo-host",
+  "mode": "read_only",
+  "origin": "https://neomorphic.io",
+  "neo": true,
+  "loadNeo": true,
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "class": "read_only",
+      "readOnly": true
+    }
+  ]
+}

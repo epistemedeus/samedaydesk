@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "samedaydesk.ops.sds-route-census.w7.v1",
+  "claimId": "payment-as-readonly",
+  "mode": "read_only",
+  "origin": "local-source",
+  "live": false,
+  "routes": [
+    {
+      "method": "POST",
+      "path": "/api/checkout/create-payment-intent",
+      "class": "read_only",
+      "readOnly": true,
+      "moneyMovement": false,
+      "probed": false
+    }
+  ]
+}
