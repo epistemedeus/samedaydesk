@@ -93,9 +93,15 @@ export function detectKind(doc) {
   return "unknown";
 }
 
-function walkForbidden(value, path, forbidden, hits) {
+const SCHEMA_FIELD_NAME_KEYS = new Set(["properties", "patternProperties", "example", "examples"]);
+
+function forbiddenKeySet(catalog) {
+  return new Set((catalog.catalogOnlyForbiddenKeys || []).map((key) => String(key).toLowerCase()));
+}
+
+function walkForbidden(value, path, forbidden, hits, flagKeys = true) {
   if (Array.isArray(value)) {
-    value.forEach((item, index) => walkForbidden(item, `${path}[${index}]`, forbidden, hits));
+    value.forEach((item, index) => walkForbidden(item, `${path}[${index}]`, forbidden, hits, flagKeys));
     return hits;
   }
   if (!isPlainObject(value)) {
@@ -106,16 +112,17 @@ function walkForbidden(value, path, forbidden, hits) {
   }
   for (const key of ownKeys(value)) {
     const next = path === "$" ? `$.${key}` : `${path}.${key}`;
-    if (forbidden.has(key)) {
+    if (flagKeys && forbidden.has(key.toLowerCase())) {
       hits.push(error("catalog_only_violation", next, `catalog-only evaluation rejects ${key}`));
     }
-    walkForbidden(value[key], next, forbidden, hits);
+    const nextFlag = flagKeys && !SCHEMA_FIELD_NAME_KEYS.has(key);
+    walkForbidden(value[key], next, forbidden, hits, nextFlag);
   }
   return hits;
 }
 
 export function detectCatalogOnlyViolations(value, catalog = loadCatalog()) {
-  return walkForbidden(value, "$", new Set(catalog.catalogOnlyForbiddenKeys), []);
+  return walkForbidden(value, "$", forbiddenKeySet(catalog), []);
 }
 
 function cleanMediaType(value) {
@@ -290,7 +297,7 @@ export function evaluateOutputContract(input, catalog = loadCatalog()) {
   const required = Array.isArray(schema.required) ? schema.required : [];
   const hasProps = isPlainObject(properties) && ownKeys(properties).length > 0;
 
-  if (isUnconstrainedObject(schema) || (!hasProps && required.length === 0)) {
+  if (isUnconstrainedObject(schema)) {
     if (example && exampleKeys(example).length > 0) {
       errors.push(error("example_is_not_schema", "$.example", "example keys do not constrain an unconstrained object"));
       return {
@@ -308,6 +315,22 @@ export function evaluateOutputContract(input, catalog = loadCatalog()) {
     return {
       ok: false,
       completeness: "unconstrained",
+      catalogEligible: false,
+      mediaType,
+      requiredPaths: [],
+      propertyNames: [],
+      exampleKeys: exampleKeys(example),
+      errors,
+    };
+  }
+
+  if (!hasProps && required.length === 0) {
+    errors.push(
+      error("invalid_shape", "$.schema", "catalog output contract must be a typed object with named properties"),
+    );
+    return {
+      ok: false,
+      completeness: "absent",
       catalogEligible: false,
       mediaType,
       requiredPaths: [],
@@ -364,7 +387,13 @@ export function evaluateOutputContract(input, catalog = loadCatalog()) {
   };
 }
 
-function fromOpenApiOperation(op) {
+function pickContentMediaType(content, catalog) {
+  const keys = ownKeys(content);
+  const allowed = new Set((catalog.mediaTypes || []).map((item) => cleanMediaType(item)).filter(Boolean));
+  return keys.find((key) => allowed.has(cleanMediaType(key))) || keys.sort()[0];
+}
+
+function fromOpenApiOperation(op, catalog) {
   const success = isPlainObject(op?.responses) ? op.responses["200"] || op.responses["201"] || null : null;
   if (!isPlainObject(success) || ownKeys(success).length === 0) {
     return { emptySuccess: true, mediaType: null, schema: null, example: null };
@@ -373,7 +402,7 @@ function fromOpenApiOperation(op) {
   if (!content || ownKeys(content).length === 0) {
     return { emptySuccess: true, mediaType: null, schema: null, example: null };
   }
-  const mediaType = ownKeys(content).sort()[0];
+  const mediaType = pickContentMediaType(content, catalog);
   const media = content[mediaType];
   return {
     emptySuccess: false,
@@ -393,7 +422,7 @@ function evaluateOpenApiPaid(doc, catalog) {
       if (!HTTP_METHODS.has(method.toLowerCase())) continue;
       const op = methods[method];
       if (!isPlainObject(op) || !isPlainObject(op["x-payment-info"])) continue;
-      const extracted = fromOpenApiOperation(op);
+      const extracted = fromOpenApiOperation(op, catalog);
       const contract = extracted.emptySuccess
         ? {
             ok: false,
@@ -802,21 +831,57 @@ function readConsumerFile(relPath, catalog) {
   }
 }
 
+function consumerEvidenceFailure(catalog, errors) {
+  return {
+    schemaVersion: catalog.reportSchemaVersion,
+    mode: "catalog-only",
+    ok: false,
+    fetched: false,
+    paid: false,
+    registryWrite: false,
+    catalogEligible: false,
+    errors,
+  };
+}
+
 export function evaluateSdsConsumerEvidence(catalog = loadCatalog()) {
   const pins = catalog.consumerEvidence;
-  const openapi = readConsumerFile(pins.openapi, catalog);
-  const x402 = readConsumerFile(pins.x402, catalog);
-  const bazaar = readConsumerFile(pins.bazaar, catalog);
-  const crawl = readConsumerFile(pins.conformanceCrawl, catalog);
-  const buyer = readConsumerFile(pins.buyerRuntimeCatalog, catalog);
-  const jobs = readConsumerFile(pins.usefulJobsCatalog, catalog);
-
-  const observationDir = join(ROOT, pins.verifiedFeedObservations);
-  const observationFiles = listJsonFiles(observationDir);
-  const observations = observationFiles.map((filePath) => ({
-    digest: fileDigest(filePath),
-    result: evaluateDocument(loadJson(filePath), catalog),
-  }));
+  if (!pins || typeof pins !== "object") {
+    return consumerEvidenceFailure(catalog, [
+      error("consumer_evidence_missing", "$.consumerEvidence", "catalog must declare consumerEvidence paths"),
+    ]);
+  }
+  let openapi;
+  let x402;
+  let bazaar;
+  let crawl;
+  let buyer;
+  let jobs;
+  let observationFiles;
+  try {
+    openapi = readConsumerFile(pins.openapi, catalog);
+    x402 = readConsumerFile(pins.x402, catalog);
+    bazaar = readConsumerFile(pins.bazaar, catalog);
+    crawl = readConsumerFile(pins.conformanceCrawl, catalog);
+    buyer = readConsumerFile(pins.buyerRuntimeCatalog, catalog);
+    jobs = readConsumerFile(pins.usefulJobsCatalog, catalog);
+    observationFiles = listJsonFiles(join(ROOT, pins.verifiedFeedObservations));
+  } catch (cause) {
+    return consumerEvidenceFailure(catalog, cause.errors || [
+      error("consumer_evidence_missing", "$", String(cause.message || cause)),
+    ]);
+  }
+  let observations;
+  try {
+    observations = observationFiles.map((filePath) => ({
+      digest: fileDigest(filePath),
+      result: evaluateDocument(loadJson(filePath), catalog),
+    }));
+  } catch (cause) {
+    return consumerEvidenceFailure(catalog, [
+      error("consumer_evidence_missing", pins.verifiedFeedObservations, String(cause.message || cause)),
+    ]);
+  }
 
   const openapiEval = evaluateDocument(openapi.doc, catalog);
   const x402Eval = evaluateDocument(x402.doc, catalog);

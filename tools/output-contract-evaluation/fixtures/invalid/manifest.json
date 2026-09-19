@@ -7,6 +7,8 @@
   "media-type-missing.json": { "code": "media_type_missing" },
   "payment-checkout.json": { "code": "catalog_only_violation" },
   "registry-publish.json": { "code": "catalog_only_violation" },
+  "capitalized-checkout.json": { "code": "catalog_only_violation" },
+  "non-object-schema.json": { "code": "invalid_shape" },
   "unresolved-ref.json": { "code": "unresolved_ref" },
   "observation-crawl.json": { "code": "observation_is_not_catalog_declaration" }
 }

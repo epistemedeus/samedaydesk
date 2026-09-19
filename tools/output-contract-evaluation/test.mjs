@@ -12,6 +12,7 @@ import {
   evaluateOutputContract,
   evaluateSdsConsumerEvidence,
   invalidFixtureDir,
+  listJsonFiles,
   loadCatalog,
   loadInvalidManifest,
   loadJson,
@@ -119,8 +120,10 @@ test("suite accepts valid fixtures and rejects each seeded failure code", () => 
   const report = runSuite(catalog);
   assert.equal(report.failed, 0, JSON.stringify(report.results.filter((item) => !item.ok), null, 2));
   const manifest = loadInvalidManifest();
-  assert.equal(Object.keys(manifest).length, 10);
-  assert.equal(report.total, 4 + 10);
+  const invalidFiles = listJsonFiles(invalidFixtureDir());
+  const validFiles = listJsonFiles(validFixtureDir());
+  assert.equal(Object.keys(manifest).length, invalidFiles.length);
+  assert.equal(report.total, validFiles.length + invalidFiles.length);
 });
 
 test("CLI --suite and --expect-reject match the library", () => {
@@ -207,6 +210,107 @@ test("seeded payment-checkout fixture is rejected", () => {
   const result = evaluateFile(join(invalidFixtureDir(), "payment-checkout.json"), catalog);
   assert.equal(result.ok, false);
   assert.ok(result.errors.some((item) => item.code === "catalog_only_violation"));
+});
+
+test("schema property names and example payload keys are not catalog-only violations", () => {
+  const named = evaluateFile(join(validFixtureDir(), "schema-property-named-checkout.json"), catalog);
+  assert.equal(named.ok, true, JSON.stringify(named.errors, null, 2));
+  assert.equal(named.catalogEligible, true);
+  assert.equal(named.completeness, "complete");
+  assert.equal(
+    named.errors.some((item) => item.code === "catalog_only_violation"),
+    false,
+  );
+
+  const namedCli = runCli([
+    "--file",
+    "tools/output-contract-evaluation/fixtures/valid/schema-property-named-checkout.json",
+  ]);
+  assert.equal(namedCli.status, 0, namedCli.stderr);
+  const report = JSON.parse(namedCli.stdout);
+  assert.equal(report.ok, true);
+  assert.equal(report.catalogEligible, true);
+});
+
+test("capitalized Checkout envelope is still a catalog-only violation", () => {
+  const result = runCli([
+    "--expect-reject",
+    "catalog_only_violation",
+    "tools/output-contract-evaluation/fixtures/invalid/capitalized-checkout.json",
+  ]);
+  assert.equal(result.status, 0, result.stderr);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.ok, true);
+  assert.equal(report.catalogEligible, false);
+  assert.ok(report.codes.includes("catalog_only_violation"));
+});
+
+test("OpenAPI prefers application/json over alphabetically earlier */*", () => {
+  const result = runCli([
+    "--file",
+    "tools/output-contract-evaluation/fixtures/valid/openapi-wildcard-and-json.json",
+  ]);
+  assert.equal(result.status, 0, result.stdout);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.ok, true);
+  assert.equal(report.catalogEligible, true);
+  assert.equal(report.completeness, "complete");
+  assert.equal(report.codes.includes("media_type_missing"), false);
+  assert.equal(report.codes.includes("unconstrained_object"), false);
+});
+
+test("non-object schemas are invalid_shape, not unconstrained objects", () => {
+  const result = runCli([
+    "--expect-reject",
+    "invalid_shape",
+    "tools/output-contract-evaluation/fixtures/invalid/non-object-schema.json",
+  ]);
+  assert.equal(result.status, 0, result.stderr);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.ok, true);
+  assert.equal(report.completeness, "absent");
+  assert.equal(report.catalogEligible, false);
+  assert.equal(report.codes.includes("unconstrained_object"), false);
+
+  const combinator = evaluateOutputContract({
+    mediaType: "application/json",
+    schema: {
+      anyOf: [{ type: "object", required: ["ok"], properties: { ok: { type: "boolean" } } }],
+    },
+  });
+  assert.equal(combinator.ok, false);
+  assert.equal(combinator.catalogEligible, false);
+  assert.ok(combinator.errors.some((item) => item.code === "invalid_shape"));
+  assert.equal(
+    combinator.errors.some((item) => item.code === "unconstrained_object"),
+    false,
+  );
+});
+
+test("missing consumer evidence is JSON-rejected, not an uncaught throw", () => {
+  const broken = {
+    ...catalog,
+    consumerEvidence: { ...catalog.consumerEvidence, openapi: "no-such-openapi.json" },
+  };
+  const report = evaluateSdsConsumerEvidence(broken);
+  assert.equal(report.ok, false);
+  assert.equal(report.fetched, false);
+  assert.equal(report.paid, false);
+  assert.equal(report.registryWrite, false);
+  assert.equal(report.catalogEligible, false);
+  assert.ok(report.errors.some((item) => item.code === "consumer_evidence_missing"));
+});
+
+test("top-level checkout still cannot stand in for an output contract", () => {
+  const result = runCli([
+    "--expect-reject",
+    "catalog_only_violation",
+    "tools/output-contract-evaluation/fixtures/invalid/payment-checkout.json",
+  ]);
+  assert.equal(result.status, 0, result.stderr);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.ok, true);
+  assert.ok(report.codes.includes("catalog_only_violation"));
 });
 
 test("OpenAPI and x402 join only on exact METHOD path", () => {
