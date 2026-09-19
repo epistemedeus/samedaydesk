@@ -211,6 +211,20 @@ export function indexRoutes(matrix = loadMatrix()) {
   return byKey;
 }
 
+export function extraMatches(left, right) {
+  const a = isPlainObject(left) ? left : {};
+  const b = isPlainObject(right) ? right : {};
+  const keys = new Set([...ownKeys(a), ...ownKeys(b)]);
+  for (const key of keys) {
+    if (key === "verifyingContract") {
+      if (addr(a[key]) !== addr(b[key])) return false;
+      continue;
+    }
+    if (a[key] !== b[key]) return false;
+  }
+  return true;
+}
+
 export function isPaymentHeaderName(name) {
   return PAYMENT_HEADER_RE.test(String(name || ""));
 }
@@ -274,6 +288,8 @@ function validateRequest(request, record, errors) {
   }
   if (typeof request.url !== "string" || !request.url.startsWith(RESOURCE_PREFIX)) {
     errors.push(error("invalid_shape", "$.request.url", "request url must be an SDS origin URL"));
+  } else if (typeof record.resource === "string" && request.url !== record.resource) {
+    errors.push(error("resource_mismatch", "$.request.url", "request url must equal resource"));
   }
   if (Object.hasOwn(request, "headers")) {
     if (!isPlainObject(request.headers)) {
@@ -351,9 +367,7 @@ export function validateRecord(input, matrix = loadMatrix()) {
   if (input.httpStatus !== 402 && input.httpStatus !== 200) {
     errors.push(error("invalid_shape", "$.httpStatus", "httpStatus must be 402 or 200"));
   }
-  if (input.httpStatus === 402 && input.statusClass === "unpaid" && input.kind === "unpaid_payment_required") {
-    // expected unpaid challenge
-  } else if (input.httpStatus !== 402 && input.statusClass === "unpaid") {
+  if (input.httpStatus !== 402 && input.statusClass === "unpaid") {
     errors.push(error("invalid_shape", "$.httpStatus", "unpaid challenge kinds must be 402"));
   }
 
@@ -424,6 +438,9 @@ export function validateRecord(input, matrix = loadMatrix()) {
       errors.push(error("invalid_shape", "$.extra", "extra must be an object"));
     } else {
       allowKeys(input.extra, EXTRA_KEYS, "$.extra", errors);
+      if (Object.hasOwn(input.extra, "verifyingContract")) {
+        expectString(input.extra.verifyingContract, ADDR_RE, "$.extra.verifyingContract", errors);
+      }
     }
   }
   if (Object.hasOwn(input, "maxTimeoutSeconds") && !Number.isInteger(input.maxTimeoutSeconds)) {
@@ -526,8 +543,13 @@ export function validateRecord(input, matrix = loadMatrix()) {
         ),
       );
     }
-    if (Object.hasOwn(input, "maxTimeoutSeconds") && input.maxTimeoutSeconds !== row.maxTimeoutSeconds) {
+    if (!Object.hasOwn(input, "maxTimeoutSeconds") || input.maxTimeoutSeconds !== row.maxTimeoutSeconds) {
       errors.push(error("pin_mismatch", "$.maxTimeoutSeconds", "maxTimeoutSeconds is not the catalog pin"));
+    }
+    if (Object.hasOwn(row, "extra")) {
+      if (!Object.hasOwn(input, "extra") || !isPlainObject(input.extra) || !extraMatches(input.extra, row.extra)) {
+        errors.push(error("pin_mismatch", "$.extra", "extra is not the catalog pin"));
+      }
     }
   }
 
@@ -694,6 +716,22 @@ export function crossCheckInTreeCatalog(matrix = loadMatrix(), catalogPath = IN_
     if (row.resource !== resource) {
       findings.push({ code: "resource_drift", key });
     }
+    const accept = item?.accepts?.[0];
+    if (row.network !== accept?.network) {
+      findings.push({ code: "network_drift", key });
+    }
+    if (addr(row.asset) !== addr(accept?.asset)) {
+      findings.push({ code: "asset_drift", key });
+    }
+    if (addr(row.payTo) !== addr(accept?.payTo)) {
+      findings.push({ code: "payTo_drift", key });
+    }
+    if (row.maxTimeoutSeconds !== accept?.maxTimeoutSeconds) {
+      findings.push({ code: "timeout_drift", key });
+    }
+    if (!extraMatches(row.extra, accept?.extra)) {
+      findings.push({ code: "extra_drift", key });
+    }
   }
   for (const row of matrix.routes) {
     const key = routeKey(row.method, row.route);
@@ -746,21 +784,31 @@ export function coverageReport(matrix = loadMatrix()) {
   const uniqueMissing = matrix.uniqueAmounts
     .filter((item) => !uniqueCovered.has(item.amountAtomic))
     .map((item) => item.amountAtomic);
+  const routeCounts = new Map();
+  for (const row of matrix.routes) {
+    routeCounts.set(row.amountAtomic, (routeCounts.get(row.amountAtomic) || 0) + 1);
+  }
+  const uniqueCountMismatch = matrix.uniqueAmounts
+    .filter((item) => routeCounts.get(item.amountAtomic) !== item.routeCount)
+    .map((item) => item.amountAtomic);
   return {
-    ok: missing.length === 0 && uniqueMissing.length === 0,
+    ok: missing.length === 0 && uniqueMissing.length === 0 && uniqueCountMismatch.length === 0,
     validFixtures: files.length,
     matrixRoutes: matrix.routes.length,
     uniqueAmounts: matrix.uniqueAmounts.length,
     uniqueCovered: uniqueCovered.size,
     missingRoutes: missing,
     missingAmounts: uniqueMissing,
+    uniqueCountMismatch,
   };
 }
 
 export function refusedFlag(argv) {
   for (const arg of argv) {
-    const name = String(arg).replace(/^--/, "");
-    if (REFUSED_FLAGS.includes(name)) return arg;
+    const raw = String(arg);
+    if (!raw.startsWith("--")) continue;
+    const name = raw.slice(2).split("=")[0];
+    if (REFUSED_FLAGS.includes(name)) return `--${name}`;
   }
   return null;
 }

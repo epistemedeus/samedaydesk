@@ -25,19 +25,34 @@ if (refused) {
   process.exit(2);
 }
 
-const { values, positionals } = parseArgs({
-  allowPositionals: true,
-  options: {
-    suite: { type: "boolean", default: false },
-    matrix: { type: "boolean", default: false },
-    "cross-check": { type: "boolean", default: false },
-    coverage: { type: "boolean", default: false },
-    "seeded-failure": { type: "string" },
-    "expect-reject": { type: "string" },
-    pretty: { type: "boolean", default: false },
-    help: { type: "boolean", default: false },
-  },
-});
+let values;
+let positionals;
+try {
+  ({ values, positionals } = parseArgs({
+    allowPositionals: true,
+    options: {
+      suite: { type: "boolean", default: false },
+      matrix: { type: "boolean", default: false },
+      "cross-check": { type: "boolean", default: false },
+      coverage: { type: "boolean", default: false },
+      "seeded-failure": { type: "string" },
+      "expect-reject": { type: "string" },
+      pretty: { type: "boolean", default: false },
+      help: { type: "boolean", default: false },
+    },
+  }));
+} catch (cause) {
+  process.stdout.write(
+    `${JSON.stringify({
+      ok: false,
+      error: {
+        code: "USAGE",
+        message: cause.message,
+      },
+    })}\n`,
+  );
+  process.exit(2);
+}
 
 if (values.help) {
   process.stdout.write(`SameDayDesk W7 unpaid amount-matrix fixtures.
@@ -179,7 +194,7 @@ if (values["seeded-failure"]) {
       },
     },
     false,
-    1,
+    seed.caught ? 1 : 2,
   );
 }
 

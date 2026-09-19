@@ -18,7 +18,9 @@ node --test tools/commerce-receipts/amount-matrix-w7/test.mjs
 ```
 
 `--live`, `--pay`, `--payment`, `--checkout`, `--publish`, `--registry`,
-`--refresh`, `--settle`, and `--neo` are refused (exit 2).
+`--refresh`, `--settle`, and `--neo` are refused (exit 2), including
+`--live=true` forms. Extra, timeout, asset, payTo, and request URL are
+pinned to the in-tree catalog row.
 
 ## Amount matrix
 

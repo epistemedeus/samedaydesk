@@ -214,8 +214,8 @@ test("CLI accepts a valid unpaid extract 5000 fixture", () => {
   assert.equal(body.results[0].amountAtomic, "5000");
 });
 
-test("CLI refuses --live, --pay, --payment, --publish, and --neo", () => {
-  for (const flag of ["--live", "--pay", "--payment", "--checkout", "--publish", "--registry", "--neo"]) {
+test("CLI refuses --live, --pay, --payment, --publish, --neo, and --live=true", () => {
+  for (const flag of ["--live", "--pay", "--payment", "--checkout", "--publish", "--registry", "--neo", "--live=true"]) {
     const result = runCli([flag, "--suite"]);
     assert.equal(result.status, 2, flag);
     const body = JSON.parse(result.stdout);
@@ -266,6 +266,62 @@ test("unknown --seeded-failure is usage exit 2", () => {
   assert.equal(result.status, 2, result.stdout);
   const body = JSON.parse(result.stdout);
   assert.equal(body.error.code, "USAGE");
+});
+
+test("catalog extra and request url are pinned to the matrix row", () => {
+  const extraDrift = cloneValid("unpaid-402-extract-5000.json");
+  extraDrift.extra = { name: "GatewayWalletBatched", version: "1" };
+  const extraResult = evaluateRecord(extraDrift, matrix);
+  assert.equal(extraResult.ok, false);
+  assert.ok(extraResult.codes.includes("pin_mismatch"));
+
+  const omitted = cloneValid("unpaid-402-extract-5000.json");
+  delete omitted.extra;
+  const omittedResult = evaluateRecord(omitted, matrix);
+  assert.equal(omittedResult.ok, false);
+  assert.ok(omittedResult.codes.includes("pin_mismatch"));
+
+  const urlDrift = cloneValid("unpaid-402-extract-5000.json");
+  urlDrift.request.url = "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fevil.example";
+  const urlResult = evaluateRecord(urlDrift, matrix);
+  assert.equal(urlResult.ok, false);
+  assert.ok(urlResult.codes.includes("resource_mismatch"));
+
+  const gateway = cloneValid("unpaid-402-gateway-commerce-payment-offer-preflight-5000.json");
+  gateway.extra = { name: "USD Coin", version: "2" };
+  const gatewayResult = evaluateRecord(gateway, matrix);
+  assert.equal(gatewayResult.ok, false);
+  assert.ok(gatewayResult.codes.includes("pin_mismatch"));
+
+  const timeoutOmitted = cloneValid("unpaid-402-gateway-commerce-payment-offer-preflight-5000.json");
+  delete timeoutOmitted.maxTimeoutSeconds;
+  const timeoutResult = evaluateRecord(timeoutOmitted, matrix);
+  assert.equal(timeoutResult.ok, false);
+  assert.ok(timeoutResult.codes.includes("pin_mismatch"));
+});
+
+test("CLI unknown flags and missing --seeded-failure value are JSON USAGE exit 2", () => {
+  const unknown = runCli(["--bogus"]);
+  assert.equal(unknown.status, 2, unknown.stderr || unknown.stdout);
+  const unknownBody = JSON.parse(unknown.stdout);
+  assert.equal(unknownBody.error.code, "USAGE");
+
+  const missing = runCli(["--seeded-failure"]);
+  assert.equal(missing.status, 2, missing.stderr || missing.stdout);
+  const missingBody = JSON.parse(missing.stdout);
+  assert.equal(missingBody.error.code, "USAGE");
+});
+
+test("uniqueAmounts.routeCount matches the matrix routes", () => {
+  const coverage = coverageReport(matrix);
+  assert.deepEqual(coverage.uniqueCountMismatch, []);
+  const counts = new Map();
+  for (const row of matrix.routes) {
+    counts.set(row.amountAtomic, (counts.get(row.amountAtomic) || 0) + 1);
+  }
+  for (const item of matrix.uniqueAmounts) {
+    assert.equal(counts.get(item.amountAtomic), item.routeCount, item.amountAtomic);
+  }
 });
 
 test("lib and CLI stay inside the write boundary and do not pay", () => {
