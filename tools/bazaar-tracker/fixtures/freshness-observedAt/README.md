@@ -14,6 +14,11 @@ node tools/bazaar-tracker/fixtures/freshness-observedAt/run.mjs --seeded cases/s
 node --test tools/bazaar-tracker/fixtures/freshness-observedAt/test.mjs
 ```
 
+`--case` / `--seeded` paths resolve relative to this fixture directory, so
+`cases/seeded-lastCalledAt-as-removal.json` works from the repo root.
+
 Pinned: committed `observedAt` `2026-09-03T09:54:04.798Z` is `stale` at
 `2026-09-17T11:45:00.000Z` (`ageMs` 1216255202, `maxAgeMs` 86400000).
-Seeded `quality.lastCalledAt` removal claim exits 1.
+Seeded `quality.lastCalledAt` removal, `lastUpdated` removal, invented
+completeness watermark, and invented receipt fields exit 1. An invalid
+`--clock` keeps `latestObservationAt` and fails closed (`invalid_clock`).

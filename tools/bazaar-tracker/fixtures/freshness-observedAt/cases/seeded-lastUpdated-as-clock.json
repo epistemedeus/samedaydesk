@@ -1,0 +1,13 @@
+{
+  "id": "seeded-lastUpdated-as-clock",
+  "seeded": true,
+  "note": "SEEDING FAILURE: treat catalog lastUpdated as a removal clock. Adapter must reject. lastUpdated is volatile, not observedAt.",
+  "freshnessClock": "observedAt",
+  "clock": "2026-09-17T11:45:00.000Z",
+  "maxAgeMs": 86400000,
+  "claim": {
+    "lastUpdatedIsRemovalClock": true,
+    "useLastUpdatedAsRemovalClock": true,
+    "dropWhenLastUpdatedOlderThanMs": 86400000
+  }
+}

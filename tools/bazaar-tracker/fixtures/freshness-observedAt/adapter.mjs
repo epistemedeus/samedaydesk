@@ -3,9 +3,9 @@
  * quality.lastCalledAt / lastUpdated are not clocks and not a removal signal.
  * Never writes observations.json, never calls CDP, never runs tracker --live.
  */
-import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join, basename, resolve, relative } from "node:path";
+import { dirname, join, basename, resolve, relative, isAbsolute } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import {
@@ -57,14 +57,20 @@ export const QUALITY_SEARCH_FIXTURE = join(here, "cdp/search-quality-not-a-clock
 const LAST_CALLED_CLOCK_NAMES = new Set([
   "lastCalledAt",
   "quality.lastCalledAt",
-  "quality",
+]);
+const LAST_UPDATED_CLOCK_NAMES = new Set([
   "lastUpdated",
+  "quality.lastUpdated",
+]);
+const QUALITY_METRIC_CLOCK_NAMES = new Set([
+  "quality",
   "l30DaysTotalCalls",
   "l30DaysUniquePayers",
 ]);
+const SPAWN_TIMEOUT_MS = 30_000;
 
 export function typedFreshnessView({ latestTs, latestMs, generatedAtMs, maxAgeMs }) {
-  if (latestTs === null || latestMs === null || !Number.isFinite(latestMs) || !Number.isFinite(generatedAtMs)) {
+  if (latestTs === null || latestMs === null) {
     return {
       latestObservationAt: null,
       ageMs: 0,
@@ -88,10 +94,25 @@ export function parseIsoMs(value) {
 }
 
 export function freshnessFromObservation(observation, { clock = DEFAULT_CLOCK, maxAgeMs = DEFAULT_MAX_AGE_MS } = {}) {
-  const observedAt = observation?.observedAt ?? null;
-  const latestMs = parseIsoMs(observedAt);
+  const latestMs = parseIsoMs(observation?.observedAt ?? null);
   const generatedAtMs = parseIsoMs(clock);
-  const latestTs = latestMs === null ? null : new Date(latestMs).toISOString();
+  if (latestMs === null) {
+    return typedFreshnessView({
+      latestTs: null,
+      latestMs: null,
+      generatedAtMs,
+      maxAgeMs,
+    });
+  }
+  const latestTs = new Date(latestMs).toISOString();
+  if (generatedAtMs === null) {
+    return {
+      latestObservationAt: latestTs,
+      ageMs: 0,
+      maxAgeMs,
+      status: "stale",
+    };
+  }
   return typedFreshnessView({
     latestTs,
     latestMs,
@@ -130,12 +151,16 @@ function asList(value) {
   return [value];
 }
 
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function inventedHits(doc) {
   const blob = JSON.stringify(doc);
   const named = asList(doc.receiptFields).map((item) => (typeof item === "string" ? item : item?.name)).filter(Boolean);
   const hits = new Set();
   for (const name of FORBIDDEN_INVENTED) {
-    const re = new RegExp(`\\b${name.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&")}\\b`);
+    const re = new RegExp(`\\b${escapeRegExp(name)}\\b`);
     if (re.test(blob) || named.includes(name)) hits.add(name);
   }
   return [...hits];
@@ -167,6 +192,30 @@ function usesLastCalledAtAsClock(doc) {
   return false;
 }
 
+function usesLastUpdatedAsClock(doc) {
+  const clock = freshnessClockOf(doc);
+  if (LAST_UPDATED_CLOCK_NAMES.has(clock)) return true;
+  const claim = doc?.claim && typeof doc.claim === "object" ? doc.claim : {};
+  return (
+    claim.lastUpdatedIsRemovalClock === true
+    || claim.useLastUpdatedAsRemovalClock === true
+    || claim.useLastUpdatedAsClock === true
+    || claim.dropWhenLastUpdatedOlderThanMs != null
+  );
+}
+
+function usesQualityMetricAsClock(doc) {
+  const clock = freshnessClockOf(doc);
+  if (QUALITY_METRIC_CLOCK_NAMES.has(clock)) return true;
+  const claim = doc?.claim && typeof doc.claim === "object" ? doc.claim : {};
+  return (
+    claim.useQualityAsClock === true
+    || claim.qualityIsRemovalClock === true
+    || claim.l30DaysUniquePayersIsClock === true
+    || claim.l30DaysTotalCallsIsClock === true
+  );
+}
+
 function treatsAbsenceAsDemand(doc) {
   const claim = doc?.claim && typeof doc.claim === "object" ? doc.claim : {};
   return claim.treatAbsenceAsDemand === true || claim.absenceIsDemand === true;
@@ -182,6 +231,22 @@ function inventsCompletenessWatermark(doc) {
 
 export function loadJson(path) {
   return JSON.parse(readFileSync(path, "utf8"));
+}
+
+export function resolveCasePath(input) {
+  if (input == null || input === "") return input;
+  const candidates = [];
+  if (isAbsolute(input)) candidates.push(input);
+  else {
+    candidates.push(resolve(input));
+    candidates.push(resolve(here, input));
+    candidates.push(resolve(CASES_DIR, input));
+    candidates.push(resolve(CASES_DIR, basename(input)));
+  }
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) return candidate;
+  }
+  return isAbsolute(input) ? input : resolve(input);
 }
 
 export function listCaseFiles(dir = CASES_DIR) {
@@ -222,11 +287,20 @@ export function evaluateCase(doc, observation, { clock = DEFAULT_CLOCK, maxAgeMs
   const invented = inventedHits(doc);
   const clockName = freshnessClockOf(doc);
 
+  if (parseIsoMs(caseClock) === null) {
+    reasons.push("invalid_clock");
+  }
   if (clockName !== "observedAt") {
     reasons.push("freshness_clock_must_be_observedAt");
   }
   if (usesLastCalledAtAsClock(doc)) {
     reasons.push("lastCalledAt_is_not_a_removal_clock");
+  }
+  if (usesLastUpdatedAsClock(doc)) {
+    reasons.push("lastUpdated_is_not_a_removal_clock");
+  }
+  if (usesQualityMetricAsClock(doc)) {
+    reasons.push("quality_is_not_a_removal_clock");
   }
   if (treatsAbsenceAsDemand(doc)) {
     reasons.push("catalog_absence_is_not_demand");
@@ -322,6 +396,8 @@ export function loadCommittedObservation(dataDir = DEFAULT_DATA_DIR) {
 export function spawnReadback(dataDir = DEFAULT_DATA_DIR, { cli = TRACKER_CLI } = {}) {
   const result = spawnSync(process.execPath, [cli, "--readback", "--pretty", "--data-dir", dataDir], {
     encoding: "utf8",
+    timeout: SPAWN_TIMEOUT_MS,
+    killSignal: "SIGKILL",
   });
   let report = null;
   try {
@@ -358,7 +434,7 @@ export function proveLastCalledAtIsNotRemovalClock({
     const first = spawnSync(
       process.execPath,
       [cli, "--fixture", fixturePath, "--data-dir", dataDir, "--observed-at", COMMITTED_OBSERVED_AT],
-      { encoding: "utf8" },
+      { encoding: "utf8", timeout: SPAWN_TIMEOUT_MS, killSignal: "SIGKILL" },
     );
     if (first.status !== 0) {
       return {
@@ -386,7 +462,7 @@ export function proveLastCalledAtIsNotRemovalClock({
     const second = spawnSync(
       process.execPath,
       [cli, "--from", editedPath, "--data-dir", dataDir, "--observed-at", DEFAULT_CLOCK],
-      { encoding: "utf8" },
+      { encoding: "utf8", timeout: SPAWN_TIMEOUT_MS, killSignal: "SIGKILL" },
     );
     if (second.status !== 0) {
       return {
@@ -434,6 +510,9 @@ export function committedFreshnessReport(observation, { clock = DEFAULT_CLOCK, m
   const freshness = freshnessFromObservation(observation, { clock, maxAgeMs });
   const routes = sdsRoutes(observation);
   const reasons = [];
+  if (parseIsoMs(clock) === null) {
+    reasons.push("invalid_clock");
+  }
   if (observation?.schema !== OBSERVATION_SCHEMA) {
     reasons.push("unexpected_observation_schema");
   }
@@ -476,14 +555,16 @@ export function runFreshnessPack({
   casePath = null,
   seededPath = null,
   proveVolatile = true,
+  caseFiles: injectedCaseFiles = null,
 } = {}) {
   const readback = spawnReadback(dataDir);
   const observation = loadCommittedObservation(dataDir);
   const committed = committedFreshnessReport(observation, { clock, maxAgeMs });
 
   let caseFiles = [];
-  if (casePath) caseFiles = [resolve(casePath)];
-  else if (seededPath) caseFiles = [resolve(seededPath)];
+  if (injectedCaseFiles) caseFiles = injectedCaseFiles.map((path) => resolveCasePath(path));
+  else if (casePath) caseFiles = [resolveCasePath(casePath)];
+  else if (seededPath) caseFiles = [resolveCasePath(seededPath)];
   else caseFiles = listCaseFiles();
 
   const cases = caseFiles.map((path) => ({ path, doc: loadJson(path) }));
@@ -496,7 +577,7 @@ export function runFreshnessPack({
 
   let ok = readback.status === 0 && Boolean(readback.report?.ok) && committed.ok && pack.ok;
   if (volatile) ok = ok && volatile.ok;
-  if (seededPath && pack.seededRejected !== true) ok = false;
+  if (!casePath && pack.seededRejected !== true) ok = false;
 
   const sds = (readback.report?.sellers || []).find((seller) => seller.id === "samedaydesk") || null;
 

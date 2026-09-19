@@ -15,6 +15,7 @@ import {
   loadJson,
   proveLastCalledAtIsNotRemovalClock,
   resolveCaseObservation,
+  resolveCasePath,
   runFreshnessPack,
   spawnReadback,
 } from "./adapter.mjs";
@@ -94,13 +95,24 @@ if (values.readback) {
 }
 
 if (values.case || values.seeded) {
-  const path = values.case || values.seeded;
-  const doc = loadJson(path);
+  const requested = values.case || values.seeded;
+  const path = resolveCasePath(requested);
+  let doc;
+  try {
+    doc = loadJson(path);
+  } catch (error) {
+    process.stderr.write(`cannot read case ${requested}: ${error.code || error.message}\n`);
+    process.exit(2);
+  }
   if (values.seeded) doc.seeded = true;
   const observation = resolveCaseObservation(doc, loadCommittedObservation(dataDir), path);
   const report = evaluateCase(doc, observation, { clock: doc.clock || clock, maxAgeMs: doc.maxAgeMs ?? maxAgeMs });
   report.path = path;
   report.seeded = isSeededCase(doc, path) || Boolean(values.seeded);
+  if (report.seeded && report.ok && values.case) {
+    report.ok = false;
+    report.reasons = [...report.reasons, "seeded_failure_was_accepted"];
+  }
 
   if (values["prove-volatile"] && !values["skip-volatile"]) {
     report.volatileProof = proveLastCalledAtIsNotRemovalClock();

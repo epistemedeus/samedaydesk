@@ -18,9 +18,11 @@ import {
   evaluateCase,
   freshnessFromObservation,
   isSeededCase,
+  listCaseFiles,
   loadCommittedObservation,
   loadJson,
   proveLastCalledAtIsNotRemovalClock,
+  resolveCasePath,
   runFreshnessPack,
   sdsRowCount,
   typedFreshnessView,
@@ -36,10 +38,14 @@ import {
 } from "../../lib.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
+const repoRoot = join(here, "../../../..");
 const runCli = join(here, "run.mjs");
 const seededLastCalledAt = join(here, "cases/seeded-lastCalledAt-as-removal.json");
 const seededInvented = join(here, "cases/seeded-invented-field.json");
 const seededAbsence = join(here, "cases/seeded-treat-absence-as-demand.json");
+const seededLastUpdated = join(here, "cases/seeded-lastUpdated-as-clock.json");
+const seededWatermark = join(here, "cases/seeded-completeness-watermark.json");
+const lastCalledAtNotClock = join(here, "cases/lastCalledAt-not-observedAt.json");
 
 function spawnRun(args) {
   return spawnSync(process.execPath, [runCli, ...args], { encoding: "utf8" });
@@ -230,4 +236,117 @@ test("runFreshnessPack does not greenwash a seeded lastCalledAt accept", () => {
   const lastCalled = pack.pack.reports.find((row) => row.id === "seeded-lastCalledAt-as-removal");
   assert.equal(lastCalled.ok, false);
   assert.equal(lastCalled.seeded, true);
+});
+
+test("invalid clock keeps latestObservationAt and fails closed", () => {
+  const view = freshnessFromObservation(
+    { observedAt: COMMITTED_OBSERVED_AT },
+    { clock: "not-a-date", maxAgeMs: DEFAULT_MAX_AGE_MS },
+  );
+  assert.equal(view.latestObservationAt, COMMITTED_OBSERVED_AT);
+  assert.notEqual(view.status, "no_observations");
+  const report = committedFreshnessReport(loadCommittedObservation(), { clock: "not-a-date" });
+  assert.equal(report.ok, false);
+  assert.ok(report.reasons.includes("invalid_clock"));
+  assert.equal(report.freshness.latestObservationAt, COMMITTED_OBSERVED_AT);
+});
+
+test("quality.lastCalledAt without observedAt is no_observations", () => {
+  const doc = loadJson(lastCalledAtNotClock);
+  const observation = doc.observation;
+  const view = freshnessFromObservation(observation, { clock: DEFAULT_CLOCK, maxAgeMs: DEFAULT_MAX_AGE_MS });
+  assert.equal(view.status, "no_observations");
+  assert.equal(view.latestObservationAt, null);
+  const report = evaluateCase(doc, observation);
+  assert.equal(report.ok, true, report.reasons.join(","));
+  assert.equal(report.claims.lastCalledAtIsRemovalClock, false);
+});
+
+test("seeded lastUpdated-as-clock is rejected", () => {
+  const report = evaluateCase(loadJson(seededLastUpdated), loadCommittedObservation());
+  assert.equal(report.ok, false);
+  assert.ok(report.reasons.includes("lastUpdated_is_not_a_removal_clock"));
+});
+
+test("seeded completeness watermark is rejected", () => {
+  const report = evaluateCase(loadJson(seededWatermark), loadCommittedObservation());
+  assert.equal(report.ok, false);
+  assert.ok(report.reasons.includes("completeness_watermark_invented"));
+});
+
+test("CLI --case relative cases/ path from repo root exits 1 with JSON", () => {
+  const result = spawnSync(
+    process.execPath,
+    [runCli, "--case", "cases/seeded-lastCalledAt-as-removal.json", "--pretty"],
+    { encoding: "utf8", cwd: repoRoot },
+  );
+  assert.equal(result.status, 1, result.stderr || result.stdout);
+  assert.equal(result.stderr.includes("ENOENT"), false, result.stderr);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.ok, false);
+  assert.ok(report.reasons.includes("lastCalledAt_is_not_a_removal_clock"));
+});
+
+test("CLI --seeded relative cases/ path from repo root exits 0", () => {
+  const result = spawnSync(
+    process.execPath,
+    [runCli, "--seeded", "cases/seeded-lastCalledAt-as-removal.json", "--pretty"],
+    { encoding: "utf8", cwd: repoRoot },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.ok, true);
+  assert.equal(report.seededRejected, true);
+});
+
+test("CLI --case lastUpdated exits 1", () => {
+  const result = spawnRun(["--case", seededLastUpdated, "--pretty"]);
+  assert.equal(result.status, 1, result.stdout);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.ok, false);
+  assert.ok(report.reasons.includes("lastUpdated_is_not_a_removal_clock"));
+});
+
+test("CLI --case seeded file that would otherwise pass is not accepted", () => {
+  const dir = mkdtempSync(join(tmpdir(), "bazaar-freshness-seeded-ok-"));
+  try {
+    const path = join(dir, "seeded-harmless.json");
+    writeFileSync(
+      path,
+      `${JSON.stringify({
+        id: "seeded-harmless",
+        seeded: true,
+        note: "SEEDING FAILURE: empty claim must not be accepted",
+        freshnessClock: "observedAt",
+        clock: DEFAULT_CLOCK,
+        maxAgeMs: DEFAULT_MAX_AGE_MS,
+        expect: {
+          status: "stale",
+          latestObservationAt: COMMITTED_OBSERVED_AT,
+          ageMs: COMMITTED_AGE_MS,
+        },
+      })}\n`,
+    );
+    const result = spawnRun(["--case", path, "--pretty"]);
+    assert.equal(result.status, 1, result.stdout);
+    const report = JSON.parse(result.stdout);
+    assert.equal(report.ok, false);
+    assert.ok(report.reasons.includes("seeded_failure_was_accepted"));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("default pack without seeded files is not ok", () => {
+  const good = listCaseFiles().filter((path) => !isSeededCase(loadJson(path), path));
+  assert.ok(good.length > 0);
+  const pack = runFreshnessPack({ proveVolatile: false, caseFiles: good });
+  assert.equal(pack.pack.seededRejected, null);
+  assert.equal(pack.ok, false);
+});
+
+test("resolveCasePath finds fixture-relative cases/ from repo root", () => {
+  assert.equal(resolveCasePath(seededLastCalledAt), seededLastCalledAt);
+  const resolved = resolveCasePath("cases/seeded-lastCalledAt-as-removal.json");
+  assert.equal(resolved, seededLastCalledAt);
 });

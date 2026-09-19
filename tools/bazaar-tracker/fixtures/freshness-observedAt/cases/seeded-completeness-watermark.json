@@ -1,0 +1,13 @@
+{
+  "id": "seeded-completeness-watermark",
+  "seeded": true,
+  "note": "SEEDING FAILURE: invent a completeness watermark. Adapter must reject. Kill condition: new completeness watermark field.",
+  "freshnessClock": "observedAt",
+  "clock": "2026-09-17T11:45:00.000Z",
+  "maxAgeMs": 86400000,
+  "claim": {
+    "completeCensus": true,
+    "throughBlockCompleteness": "complete"
+  },
+  "inventWatermark": true
+}
