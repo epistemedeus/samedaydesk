@@ -52,6 +52,9 @@ test("catalog, schema, and designated seed agree", () => {
   assert.equal(schema.properties.paymentSent.type, "boolean");
   assert.equal(schema.properties.statusClass.const, undefined);
   assert.equal(schema.properties.charged.const, undefined);
+  assert.equal(schema.properties.paymentSent.const, undefined);
+  assert.equal(schema.properties.resource.maxLength, 2048);
+  assert.equal(schema.properties.request.properties.url.maxLength, 2048);
   assert.equal(schema.properties.joinKeys.minItems, 4);
   assert.equal(schema.properties.joinKeys.maxItems, 16);
   assert.equal(schema.properties.joinKeys.uniqueItems, true);
@@ -89,6 +92,37 @@ test("gateway unpaid fixture resource matches in-tree x402 OpenAPI example url",
   const record = loadJson(join(VALID_FIXTURES, "unpaid-402-gateway-payment-offer-preflight.json"));
   assert.equal(record.resource, gateway.resource.url);
   assert.equal(record.request.url, gateway.resource.url);
+});
+
+test("extract unpaid fixtures match in-tree x402 catalog example url", () => {
+  const x402 = loadJson(join(ROOT, "fixtures/presence/catalog/x402.json"));
+  const extract = x402.items.find((item) => item.resource.routeTemplate === "/extract");
+  assert.ok(extract, "in-tree x402 catalog missing /extract");
+  const names = [
+    "unpaid-402-extract.json",
+    "unpaid-buyer-runtime-stop.json",
+    "unpaid-offer-receipt-extract.json",
+  ];
+  for (const name of names) {
+    const record = loadJson(join(VALID_FIXTURES, name));
+    assert.equal(record.resource, extract.resource.url, name);
+    assert.equal(record.request.url, extract.resource.url, name);
+  }
+  const offer = loadJson(join(VALID_FIXTURES, "unpaid-offer-receipt-extract.json"));
+  assert.equal(offer.offerReceipt.offers[0].payload.resourceUrl, extract.resource.url);
+});
+
+test("valid fixture amounts match in-tree x402 catalog for the same route", () => {
+  const x402 = loadJson(join(ROOT, "fixtures/presence/catalog/x402.json"));
+  const byRoute = new Map(
+    x402.items.map((item) => [item.resource.routeTemplate, item.accepts[0].amount]),
+  );
+  for (const filePath of listJsonFiles(VALID_FIXTURES)) {
+    const record = loadJson(filePath);
+    const amount = byRoute.get(record.route);
+    assert.ok(amount, `${basename(filePath)} missing x402 amount for ${record.route}`);
+    assert.equal(record.accepts[0].amount, amount, basename(filePath));
+  }
 });
 
 test("every valid fixture is accepted as unpaid", () => {
@@ -244,6 +278,22 @@ test("CLI unknown flag and missing --seeded-failure value are USAGE exit 2", () 
   assert.equal(JSON.parse(missing.stdout).error.code, "USAGE");
 });
 
+test("CLI missing command and mixed --cold args are JSON USAGE exit 2", () => {
+  const none = runCli([]);
+  assert.equal(none.status, 2, none.stderr || none.stdout);
+  assert.equal(JSON.parse(none.stdout).error.code, "USAGE");
+  const mixed = runCli(["--cold", "tools/commerce-receipts/fixtures/valid/unpaid-402-extract.json"]);
+  assert.equal(mixed.status, 2, mixed.stderr || mixed.stdout);
+  assert.equal(JSON.parse(mixed.stdout).error.code, "USAGE");
+  const seededExtra = runCli([
+    "--seeded-failure",
+    "paid-as-unpaid",
+    "tools/commerce-receipts/fixtures/invalid/paid-as-unpaid.json",
+  ]);
+  assert.equal(seededExtra.status, 2, seededExtra.stderr || seededExtra.stdout);
+  assert.equal(JSON.parse(seededExtra.stdout).error.code, "USAGE");
+});
+
 test("charged true labeled unpaid is paid_as_unpaid", () => {
   const record = cloneValid("unpaid-402-extract.json");
   record.charged = true;
@@ -259,6 +309,29 @@ test("PAYMENT-SIGNATURE labeled unpaid is paid_as_unpaid", () => {
   const result = validateRecord(record, catalog);
   assert.equal(result.ok, false);
   assert.ok(result.errors.some((item) => item.code === "paid_as_unpaid"));
+});
+
+test("X-PAYMENT-RESPONSE and padded payment header names are paid_as_unpaid", () => {
+  const responseHeader = cloneValid("unpaid-402-extract.json");
+  responseHeader.request.headers["X-PAYMENT-RESPONSE"] = "seeded";
+  const responseResult = validateRecord(responseHeader, catalog);
+  assert.equal(responseResult.ok, false);
+  assert.ok(responseResult.errors.some((item) => item.code === "paid_as_unpaid"));
+
+  const padded = cloneValid("unpaid-402-extract.json");
+  padded.request.headers[" X-PAYMENT "] = "seeded";
+  const paddedResult = validateRecord(padded, catalog);
+  assert.equal(paddedResult.ok, false);
+  assert.ok(paddedResult.errors.some((item) => item.code === "paid_as_unpaid"));
+});
+
+test("resource longer than 2048 is invalid_shape", () => {
+  const record = cloneValid("unpaid-402-extract.json");
+  record.resource = `${record.resource}${"a".repeat(2048)}`;
+  record.request.url = record.resource;
+  const result = evaluateRecord(record, catalog);
+  assert.equal(result.ok, false);
+  assert.ok(result.codes.includes("invalid_shape"));
 });
 
 test("statusClass paid is not_unpaid even without settlement", () => {
@@ -321,7 +394,10 @@ test("designated seed pointing at a valid unpaid fixture is SEED_ACCEPTED", () =
 test("valid fixtures never carry a payment header or settlement", () => {
   for (const filePath of listJsonFiles(VALID_FIXTURES)) {
     const raw = readFileSync(filePath, "utf8");
-    assert.doesNotMatch(raw, /"PAYMENT-SIGNATURE"|"X-PAYMENT"|"PAYMENT-RESPONSE"/);
+    assert.doesNotMatch(
+      raw,
+      /"PAYMENT-SIGNATURE"|"X-PAYMENT-RESPONSE"|"X-PAYMENT"|"PAYMENT-RESPONSE"/,
+    );
     const record = loadJson(filePath);
     assert.equal(Object.hasOwn(record, "settlement"), false, basename(filePath));
     assert.notEqual(record.offerReceipt?.receipt != null, true, basename(filePath));

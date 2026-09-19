@@ -25,7 +25,9 @@ const ADDR_RE = /^0x[0-9a-fA-F]{40}$/;
 const TX_RE = /^0x[a-f0-9]{64}$/;
 const RFC3339_RE = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})Z$/;
 const RESOURCE_PREFIX = "https://agents.samedaydesk.com/";
-const PAYMENT_HEADER_RE = /^(PAYMENT-SIGNATURE|X-PAYMENT|PAYMENT-RESPONSE)$/i;
+const RESOURCE_MAX = 2048;
+const PAYMENT_HEADER_RE =
+  /^(PAYMENT-SIGNATURE|X-PAYMENT-RESPONSE|X-PAYMENT|PAYMENT-RESPONSE)$/i;
 const HTTP_METHODS = new Set(["GET", "POST"]);
 const HTTP_CHALLENGE_KINDS = new Set([
   "unpaid_payment_required",
@@ -206,7 +208,7 @@ export function designatedSeedPath(catalog = loadCatalog()) {
 }
 
 export function isPaymentHeaderName(name) {
-  return PAYMENT_HEADER_RE.test(String(name || ""));
+  return PAYMENT_HEADER_RE.test(String(name || "").trim());
 }
 
 export function naiveVerdict(record) {
@@ -314,7 +316,11 @@ function validateRequest(request, record, errors) {
   } else if (request.method !== record.method) {
     errors.push(error("invalid_shape", "$.request.method", "request.method must equal method"));
   }
-  if (typeof request.url !== "string" || !request.url.startsWith(RESOURCE_PREFIX)) {
+  if (
+    typeof request.url !== "string" ||
+    !request.url.startsWith(RESOURCE_PREFIX) ||
+    request.url.length > RESOURCE_MAX
+  ) {
     errors.push(error("invalid_shape", "$.request.url", "url must be on the SDS origin"));
   } else if (typeof record.resource === "string" && request.url !== record.resource) {
     errors.push(error("request_url_mismatch", "$.request.url", "request.url must equal resource"));
@@ -445,7 +451,11 @@ export function validateRecord(input, catalog = loadCatalog()) {
   if (input.origin !== catalog.pin.origin) {
     errors.push(error("pin_mismatch", "$.origin", "origin is not the SDS pin"));
   }
-  if (typeof input.resource !== "string" || !input.resource.startsWith(RESOURCE_PREFIX)) {
+  if (
+    typeof input.resource !== "string" ||
+    !input.resource.startsWith(RESOURCE_PREFIX) ||
+    input.resource.length > RESOURCE_MAX
+  ) {
     errors.push(error("invalid_shape", "$.resource", "resource must be on the SDS origin"));
   } else {
     try {

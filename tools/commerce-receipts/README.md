@@ -18,8 +18,9 @@ node --test tools/commerce-receipts/test.mjs
 
 `--live`, `--pay`, `--payment`, `--checkout`, `--publish`, `--registry`,
 `--refresh`, `--settle`, `--neo`, and `--neo-kernel-vendor` are refused
-(exit 2), including `--flag=value` forms. Unknown flags and missing
-`--seeded-failure` values are JSON `USAGE` (exit 2).
+(exit 2), including `--flag=value` forms. Unknown flags, missing
+`--seeded-failure` values, mixed `--cold`/`--seeded-failure` args, and a
+missing command are JSON `USAGE` (exit 2).
 
 ## Unpaid-only
 
@@ -55,7 +56,7 @@ JSON Schema: `schema/commerce-receipt.v1.json`. Catalog:
 | `charged` / `paymentSent` | must be false |
 | `httpStatus` | `402` for challenge kinds; `null` for `unpaid_buyer_stop` |
 | `accepts` | exact Base USDC to the SDS pin `payTo` |
-| `resource` / `route` / `request.url` | pathname equals `route`; `request.url` equals `resource` |
+| `resource` / `route` / `request.url` | pathname equals `route`; `request.url` equals `resource`; catalog-sourced extract/gateway records use the in-tree x402 example URL string |
 | `offerReceipt.offers` | unsigned offer identity; payload scheme/network/asset/payTo/amount/resourceUrl must match accept + resource; not settlement |
 | `offerReceipt.receipt` | if present → `paid_as_unpaid` |
 | `settlement` | if present → `paid_as_unpaid` |

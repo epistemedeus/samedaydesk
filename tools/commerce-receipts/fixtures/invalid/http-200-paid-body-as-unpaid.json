@@ -4,7 +4,7 @@
   "kind": "unpaid_payment_required",
   "statusClass": "unpaid",
   "origin": "https://agents.samedaydesk.com",
-  "resource": "https://agents.samedaydesk.com/extract?url=https://example.com",
+  "resource": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
   "route": "/extract",
   "method": "GET",
   "httpStatus": 200,
@@ -15,7 +15,7 @@
   "authorityClass": "seller_observed",
   "request": {
     "method": "GET",
-    "url": "https://agents.samedaydesk.com/extract?url=https://example.com",
+    "url": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
     "headers": {
       "Accept": "application/json"
     }

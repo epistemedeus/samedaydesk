@@ -78,10 +78,23 @@ function write(value, ok, code = ok ? 0 : 1) {
   process.exit(code);
 }
 
+function failUsage(message) {
+  write(
+    {
+      ok: false,
+      error: {
+        code: "USAGE",
+        message,
+      },
+    },
+    false,
+    2,
+  );
+}
+
 if (values.cold || values.suite) {
   if (positionals.length > 0 || values["expect-reject"] || values["seeded-failure"]) {
-    process.stderr.write("--cold/--suite does not take files, --expect-reject, or --seeded-failure.\n");
-    process.exit(2);
+    failUsage("--cold/--suite does not take files, --expect-reject, or --seeded-failure.");
   }
   const report = runSuite();
   write(
@@ -124,8 +137,7 @@ if (values["seeded-failure"]) {
     );
   }
   if (positionals.length > 0 || values["expect-reject"]) {
-    process.stderr.write("--seeded-failure does not take files or --expect-reject.\n");
-    process.exit(2);
+    failUsage("--seeded-failure does not take files or --expect-reject.");
   }
   const seed = evaluateSeededFailure();
   write(
@@ -150,14 +162,14 @@ if (values["seeded-failure"]) {
 }
 
 if (positionals.length === 0) {
-  process.stderr.write("Pass --cold, --suite, --seeded-failure paid-as-unpaid, --help, or one or more JSON files.\n");
-  process.exit(2);
+  failUsage(
+    "Pass --cold, --suite, --seeded-failure paid-as-unpaid, --help, or one or more JSON files.",
+  );
 }
 
 const expectedCode = values["expect-reject"];
 if (expectedCode && positionals.length !== 1) {
-  process.stderr.write("--expect-reject requires exactly one file.\n");
-  process.exit(2);
+  failUsage("--expect-reject requires exactly one file.");
 }
 
 const results = positionals.map((filePath) => validateFile(filePath));
