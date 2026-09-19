@@ -134,8 +134,59 @@ test("https --source is live SDS write, not a fetch", () => {
   assertRejected(body, REASON.LIVE_SDS_WRITE);
 });
 
+test("non-SDS https --source is also live_sds_write, not a fetch", () => {
+  const { status, body } = verdict([
+    "verify",
+    "--packet",
+    "fixtures/cold/example.packet.json",
+    "--source",
+    "https://example.com/listing.json",
+  ]);
+  assert.equal(status, 1);
+  assertRejected(body, REASON.LIVE_SDS_WRITE);
+});
+
 test("missing --source is missing_source_observation", () => {
   const { status, body } = verdict(["verify", "--packet", "fixtures/cold/example.packet.json"]);
   assert.equal(status, 1);
   assertRejected(body, REASON.MISSING_SOURCE_OBSERVATION);
+});
+
+test("diagnosed --input caller-alpha packet vs mismatch.json is not accepted_correction", () => {
+  const { status, body } = verdict([
+    "verify",
+    "--packet",
+    "fixtures/cold/input-alpha.packet.json",
+    "--source",
+    "fixtures/cold/mismatch.source.json",
+  ]);
+  assert.equal(status, 1);
+  assertRejected(body, REASON.SOURCE_LOCATOR_MISMATCH);
+  assert.equal(body.checks.sourceBound, false);
+});
+
+test("partial capture packet is not accepted_correction", () => {
+  const { status, body } = verdict([
+    "verify",
+    "--packet",
+    "fixtures/cold/partial.packet.json",
+    "--source",
+    "fixtures/cold/partial.source.json",
+  ]);
+  assert.equal(status, 1);
+  assertRejected(body, REASON.PARTIAL_NOT_FINAL);
+});
+
+test("bind sidecar packetDigest mismatch is packet_digest_mismatch", () => {
+  const { status, body } = verdict([
+    "verify",
+    "--packet",
+    "fixtures/cold/input-alpha.packet.json",
+    "--source",
+    "fixtures/cold/example.source.json",
+    "--bind",
+    "fixtures/cold/example.bind.json",
+  ]);
+  assert.equal(status, 1);
+  assertRejected(body, REASON.PACKET_DIGEST_MISMATCH);
 });

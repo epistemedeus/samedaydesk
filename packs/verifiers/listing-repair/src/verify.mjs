@@ -13,7 +13,15 @@ import {
   SOURCE_SCHEMA,
   VERDICT_SCHEMA,
 } from "./constants.mjs";
-import { bindPacketDigest, bindSource, extractRoutePaths, isListingInput, isSourceObservation } from "./bind.mjs";
+import {
+  bindPacketDigest,
+  bindSidecarPairs,
+  bindSource,
+  callerInputMatchesSource,
+  extractRoutePaths,
+  isListingInput,
+  isSourceObservation,
+} from "./bind.mjs";
 import { jsonEqual, normalizeDigest } from "./digest.mjs";
 import { buildHonesty } from "./honesty.mjs";
 
@@ -132,8 +140,21 @@ function isRefresh(packet, boundDigest, currentDigest) {
   return from === boundDigest && to === currentDigest;
 }
 
+function isHttpUrl(value) {
+  return typeof value === "string" && /^https?:\/\//i.test(value.trim());
+}
+
 function looksLikeLiveSds(value) {
-  return typeof value === "string" && /samedaydesk\.com/i.test(value) && /^https?:\/\//i.test(value.trim());
+  return isHttpUrl(value) && /samedaydesk\.com/i.test(value);
+}
+
+function kitShaMatches(value) {
+  if (value == null) return true;
+  const got = String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/^sha256:/, "");
+  return got === PINS.archiveSha256;
 }
 
 function publishAttempted(packet, flags) {
@@ -150,7 +171,8 @@ function publishAttempted(packet, flags) {
 }
 
 function liveSdsWrite(packet, flags) {
-  if (looksLikeLiveSds(flags.sourcePath) || looksLikeLiveSds(flags.liveSourceUrl)) return true;
+  // Any http(s) --source is a live fetch/write attempt; the oracle never fetches.
+  if (isHttpUrl(flags.sourcePath) || isHttpUrl(flags.liveSourceUrl)) return true;
   if (!isPlainObject(packet)) return false;
   return (
     looksLikeLiveSds(packet.publishTo) ||
@@ -250,9 +272,12 @@ export function verifyListingRepair({ packet, source = null, bind = null, flags 
     if (packet?.claimedLane === LANE.ACCEPTED_CORRECTION) add(REASON.CORRECTION_FROM_MISMATCH);
   }
 
-  if (isPlainObject(bind?.kit) && bind.kit.sha256 && bind.kit.sha256 !== PINS.archiveSha256) {
+  if (isPlainObject(bind?.kit) && bind.kit.sha256 && !kitShaMatches(bind.kit.sha256)) {
     add(REASON.KIT_PIN_MISMATCH);
   }
+
+  const partial = isPlainObject(packet) && packet.status === "partial";
+  if (partial) add(REASON.PARTIAL_NOT_FINAL);
 
   const sourcePresent = isSourceObservation(source) || isListingInput(source);
   const bound = bindSource(sourcePresent ? source : null, bind);
@@ -291,9 +316,7 @@ export function verifyListingRepair({ packet, source = null, bind = null, flags 
 
     const packetDigests = bindPacketDigest(packet, bind);
     if (packetDigests.fromBind && packetDigests.claimed && packetDigests.fromBind !== packetDigests.claimed) {
-      // Packet bytes no longer match the generating bind (caller.input path or actions drifted).
-      stale = true;
-      add(REASON.STALE_SOURCE_DIGEST);
+      add(REASON.PACKET_DIGEST_MISMATCH);
     }
 
     const observedAt = parseTime(bound.observedAt);
@@ -304,7 +327,12 @@ export function verifyListingRepair({ packet, source = null, bind = null, flags 
     }
 
     const digestAligned = bound.declared === bound.computed;
-    sourceBound = digestAligned && Boolean(bound.computed);
+    const callerMatch = callerInputMatchesSource(packet, source, flags);
+    const sidecarPaired = bindSidecarPairs(packet, source, bind);
+    const paired = callerMatch === true || sidecarPaired === true;
+    if (callerMatch === false && !sidecarPaired) add(REASON.SOURCE_LOCATOR_MISMATCH);
+    else if (!paired) add(REASON.UNBOUND_PACKET_SOURCE);
+    sourceBound = digestAligned && Boolean(bound.computed) && paired;
   }
 
   const snapshot = bound.snapshot;

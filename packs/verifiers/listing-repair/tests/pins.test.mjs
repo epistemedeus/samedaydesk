@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { dirname, join } from "node:path";
+import { readFileSync } from "node:fs";
+import { dirname, isAbsolute, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { OWNER_ACTION_KINDS, PINS } from "../src/constants.mjs";
@@ -21,10 +22,18 @@ test("pins bind useful-jobs 1.4.7 archive sha and overlay hashes", () => {
 test("repo 1.4.7 archive bytes match the pin (kit not republished)", () => {
   const archive = findKitArchive(repoRootFromPack(pack));
   assert.ok(archive, "expected 1.4.7 archive in repo");
-  const pin = pinKitArchive(archive);
+  const pin = pinKitArchive(archive, { repoRoot: repoRootFromPack(pack) });
   assert.equal(pin.ok, true, JSON.stringify(pin));
   assert.equal(pin.sha256, PINS.archiveSha256);
   assert.equal(pin.bytes, PINS.archiveBytes);
+  assert.equal(pin.path, PINS.forAgentsPath);
+  assert.equal(isAbsolute(pin.path), false);
+});
+
+test("committed pins.json does not embed a host absolute path", () => {
+  const pins = JSON.parse(readFileSync(join(pack, "fixtures/pins.json"), "utf8"));
+  assert.equal(pins.archivePin.path, PINS.forAgentsPath);
+  assert.equal(isAbsolute(pins.archivePin.path), false);
 });
 
 test("collectOwnerActions ignores corrections[]-only packets", () => {

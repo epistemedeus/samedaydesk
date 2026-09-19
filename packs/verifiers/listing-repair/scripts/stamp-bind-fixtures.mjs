@@ -36,7 +36,7 @@ if (!archive) {
   console.error("kit archive not found");
   process.exit(2);
 }
-const pin = pinKitArchive(archive);
+const pin = pinKitArchive(archive, { repoRoot });
 if (!pin.ok) {
   console.error("kit pin mismatch", pin);
   process.exit(2);
@@ -45,7 +45,10 @@ if (!pin.ok) {
 const work = mkdtempSync(join(tmpdir(), "listing-repair-stamp-"));
 const files = [];
 try {
-  const tar = spawnSync("tar", ["-xzf", archive, "-C", work], { encoding: "utf8" });
+  const tar = spawnSync("tar", ["-xzf", archive, "-C", work], {
+    encoding: "utf8",
+    timeout: 120_000,
+  });
   if (tar.status !== 0) throw new Error(tar.stderr);
   const kit = join(work, "useful-jobs-1.4.7");
 
@@ -54,6 +57,7 @@ try {
     const r = spawnSync(process.execPath, [join(kit, "bin/useful-jobs.mjs"), "run", "listing-repair-packet", ...args, "--out-dir", outDir], {
       encoding: "utf8",
       cwd: kit,
+      timeout: 120_000,
     });
     if (r.status !== 0) throw new Error(`${args.join(" ")}: ${r.stderr}\n${r.stdout}`);
     return JSON.parse(readFileSync(join(outDir, "repair-packet.json"), "utf8"));
@@ -90,6 +94,25 @@ try {
       }),
     ),
   );
+
+  const inputAlphaPacket = runJob(["--input", join(kit, "samples/listing/caller-alpha.json")], join(work, "out-input-alpha"));
+  files.push(write("fixtures/cold/input-alpha.packet.json", inputAlphaPacket));
+  files.push(
+    write(
+      "fixtures/cold/input-alpha.bind.json",
+      makeBindRecord({
+        packet: inputAlphaPacket,
+        source: exampleSource,
+        kit: { version: PINS.usefulJobs, sha256: PINS.archiveSha256, bytes: PINS.archiveBytes },
+      }),
+    ),
+  );
+
+  const partialPacket = runJob(["--input", join(kit, "samples/listing/partial.json")], join(work, "out-partial"));
+  const partialListing = JSON.parse(readFileSync(join(kit, "samples/listing/partial.json"), "utf8"));
+  const partialSource = wrapListingAsSource(partialListing, { file: "samples/listing/partial.json" });
+  files.push(write("fixtures/cold/partial.packet.json", partialPacket));
+  files.push(write("fixtures/cold/partial.source.json", partialSource));
 
   const mutated = mutateListing(mismatchListing);
   files.push(

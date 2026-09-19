@@ -22,7 +22,7 @@
   "republishKit": false,
   "archivePin": {
     "ok": true,
-    "path": "/home/ubuntu/heavy-work/W0-R14-07-listing-repair-bind-packet/repo/client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz",
+    "path": "client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz",
     "bytes": 5255824,
     "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
     "expectedBytes": 5255824,

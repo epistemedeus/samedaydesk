@@ -28,11 +28,21 @@ export function hashFile(filePath) {
   return { bytes: buf.length, sha256: createHash("sha256").update(buf).digest("hex") };
 }
 
-export function pinKitArchive(archivePath) {
+export function repoRelativePath(absPath, repoRoot) {
+  const a = resolve(absPath);
+  const r = resolve(repoRoot);
+  if (a === r) return ".";
+  const prefix = r.endsWith("/") ? r : `${r}/`;
+  if (a.startsWith(prefix)) return a.slice(prefix.length);
+  return absPath;
+}
+
+export function pinKitArchive(archivePath, { repoRoot = null } = {}) {
   const { bytes, sha256 } = hashFile(archivePath);
+  const path = repoRoot ? repoRelativePath(archivePath, repoRoot) : archivePath;
   return {
     ok: bytes === PINS.archiveBytes && sha256 === PINS.archiveSha256,
-    path: archivePath,
+    path,
     bytes,
     sha256,
     expectedBytes: PINS.archiveBytes,

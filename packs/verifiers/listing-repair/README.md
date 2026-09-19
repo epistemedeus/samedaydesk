@@ -47,8 +47,13 @@ then verifies the engine's `repair-packet.json`.
 | 1.4.7 `--example` packet | `fabricated_sample` (not `accepted_correction`) |
 | `samples/listing/mismatch.json` packet | `mismatch_not_correction` |
 | Mutated listing snapshot vs bind digest | `stale_source_digest` |
+| `--input caller-alpha.json` packet vs `mismatch.json` (shared routes, different listing) | `source_locator_mismatch` |
+| `samples/listing/partial.json` packet | `partial_not_final` |
+| Bind sidecar `packetDigest` ≠ packet | `packet_digest_mismatch` |
 | Legacy `corrections[]` without `actions[]` | `legacy_corrections_shape` |
-| `--publish` / live SDS URL as `--source` | `publish_attempted` / `live_sds_write` |
+| `--publish` / any `http(s)` `--source` | `publish_attempted` / `live_sds_write` |
+
+`--input samples/listing/caller-alpha.json` (not `--example`) against that listing is `ok: true` with `accepted_correction: true`. Pairing uses `packet.caller.input` basename and/or the `--bind` sidecar; route-ref presence alone is not a bind.
 
 ## Tests
 

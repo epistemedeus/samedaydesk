@@ -1,3 +1,4 @@
+import { basename, posix } from "node:path";
 import {
   BIND_SCHEMA,
   LISTING_INPUT_SCHEMA,
@@ -116,6 +117,58 @@ export function bindPacketDigest(packet, bind = null) {
   const claimed = isPlainObject(packet) ? normalizePacketDigest(packet.digest) : null;
   const fromBind = isPlainObject(bind) ? normalizePacketDigest(bind.packetDigest) : null;
   return { claimed, fromBind };
+}
+
+export function fileBasename(p) {
+  if (p == null) return null;
+  const s = String(p).trim();
+  if (!s) return null;
+  return basename(posix.normalize(s.replaceAll("\\", "/")));
+}
+
+export function packetCallerInput(packet) {
+  if (!isPlainObject(packet)) return null;
+  const input = packet.caller?.input;
+  return typeof input === "string" && input.trim() ? input.trim() : null;
+}
+
+export function sourceFileCandidates(source, flags = {}) {
+  const out = [];
+  if (isPlainObject(source)) {
+    const nested = isPlainObject(source.locator) ? source.locator : {};
+    for (const v of [source.file, nested.file]) {
+      if (typeof v === "string" && v.trim()) out.push(v.trim());
+    }
+  }
+  if (typeof flags.sourcePath === "string" && flags.sourcePath.trim() && !/^https?:\/\//i.test(flags.sourcePath)) {
+    out.push(flags.sourcePath.trim());
+  }
+  return out;
+}
+
+/**
+ * Pair a 1.4.7 packet to a listing via caller.input basename.
+ * Real engine packets do not embed sourceDigest; caller.input is the join key.
+ * true = names agree, false = both sides named and disagree, null = not enough names.
+ */
+export function callerInputMatchesSource(packet, source, flags = {}) {
+  const caller = packetCallerInput(packet);
+  if (!caller) return null;
+  const callerKey = fileBasename(caller);
+  if (!callerKey) return null;
+  const keys = sourceFileCandidates(source, flags).map(fileBasename).filter(Boolean);
+  if (!keys.length) return null;
+  return keys.includes(callerKey);
+}
+
+/** Sidecar pairs this packet digest + this snapshot digest from the generating run. */
+export function bindSidecarPairs(packet, source, bind) {
+  if (!isPlainObject(bind)) return false;
+  const src = bindSource(source, bind);
+  if (!src.ok || !src.computed || !src.bound || src.bound !== src.computed) return false;
+  const pd = bindPacketDigest(packet, bind);
+  if (!pd.fromBind || !pd.claimed || pd.fromBind !== pd.claimed) return false;
+  return true;
 }
 
 export function wrapListingAsSource(listing, extra = {}) {

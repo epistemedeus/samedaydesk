@@ -4,7 +4,7 @@ Write boundary: `packs/verifiers/listing-repair/**` only.
 
 | ID | Intent | This pack | Status |
 | --- | --- | --- | --- |
-| R14-07 | Bind oracle to real 1.4.7 `repair-packet.json` (owner-repair actions + source digest) | `src/verify.mjs`, `src/bind.mjs`, `scripts/cold-bind.mjs` | Implemented |
+| R14-07 | Bind oracle to real 1.4.7 `repair-packet.json` (owner-repair actions + source digest) | `src/verify.mjs`, `src/bind.mjs` (`caller.input` / `--bind` pair), `scripts/cold-bind.mjs` | Implemented |
 | R14-01 | Sibling oracle CLI (synthetic `sourceObservation` / field rows) | Not copied; this bind judges unmodified engine packets | Parallel PR #159 |
 | Engine | `listing-repair-packet` in useful-jobs 1.4.7 | **Read-only** — extract and run; do not republish | Pin `e2e9b44e…69dec` |
 

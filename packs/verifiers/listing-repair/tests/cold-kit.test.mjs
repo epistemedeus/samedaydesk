@@ -35,4 +35,17 @@ test("cold 1.4.7 extract + engine run + oracle bind (real repair-packet.json)", 
 
   assert.ok(body.mutated.reasons.includes("stale_source_digest"));
   assert.ok(body.publish.reasons.includes("publish_attempted"));
+
+  assert.equal(body.positive.ok, true);
+  assert.equal(body.positive.verifyExit, 0);
+  assert.equal(body.positive.accepted_correction, true);
+  assert.equal(body.positive.exampleMode, false);
+  assert.deepEqual(body.positive.reasons, []);
+
+  assert.equal(body.cross.accepted_correction, false);
+  assert.ok(body.cross.reasons.includes("source_locator_mismatch"));
+
+  assert.equal(body.partial.packetStatus, "partial");
+  assert.equal(body.partial.accepted_correction, false);
+  assert.ok(body.partial.reasons.includes("partial_not_final"));
 });

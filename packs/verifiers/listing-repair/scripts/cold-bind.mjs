@@ -13,17 +13,19 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { wrapListingAsSource } from "../src/bind.mjs";
+import { makeBindRecord, wrapListingAsSource } from "../src/bind.mjs";
 import { PINS } from "../src/constants.mjs";
 import { snapshotDigest } from "../src/digest.mjs";
 import { findKitArchive, hashFile, pinKitArchive, repoRootFromPack } from "../src/kit.mjs";
 import { verifyListingRepair } from "../src/verify.mjs";
 
+const SPAWN = { encoding: "utf8", timeout: 120_000, maxBuffer: 8 * 1024 * 1024 };
+
 const packRoot = dirname(fileURLToPath(new URL(".", import.meta.url)));
 const repoRoot = repoRootFromPack(packRoot);
 
 function runJson(cmd, args, cwd) {
-  const r = spawnSync(cmd, args, { encoding: "utf8", cwd });
+  const r = spawnSync(cmd, args, { ...SPAWN, cwd });
   let json = null;
   const text = String(r.stdout || "").trim();
   if (text) {
@@ -54,7 +56,7 @@ export function runColdBind({ keepTmp = false } = {}) {
   if (!archive) {
     return { ok: false, error: "kit archive not found", repoRoot };
   }
-  const pin = pinKitArchive(archive);
+  const pin = pinKitArchive(archive, { repoRoot });
   const work = mkdtempSync(join(tmpdir(), "listing-repair-bind-147-"));
   const report = {
     schema: "sds.listing_repair.bind_cold.v1",
@@ -67,11 +69,14 @@ export function runColdBind({ keepTmp = false } = {}) {
     mismatch: null,
     mutated: null,
     publish: null,
+    positive: null,
+    cross: null,
+    partial: null,
     work,
   };
 
   try {
-    const tar = spawnSync("tar", ["-xzf", archive, "-C", work], { encoding: "utf8" });
+    const tar = spawnSync("tar", ["-xzf", archive, "-C", work], { ...SPAWN });
     if (tar.status !== 0) {
       report.ok = false;
       report.error = `tar extract failed: ${tar.stderr}`;
@@ -180,6 +185,95 @@ export function runColdBind({ keepTmp = false } = {}) {
       publish: publishVerdict.checks.publish,
     };
 
+    const positiveOut = join(work, "out-positive");
+    mkdirSync(positiveOut, { recursive: true });
+    const positiveInput = join(kit, "samples/listing/caller-alpha.json");
+    const positiveRun = runJson(
+      process.execPath,
+      [
+        join(kit, "bin/useful-jobs.mjs"),
+        "run",
+        "listing-repair-packet",
+        "--input",
+        positiveInput,
+        "--out-dir",
+        positiveOut,
+      ],
+      kit,
+    );
+    const positivePacket = JSON.parse(readFileSync(join(positiveOut, "repair-packet.json"), "utf8"));
+    const positiveSource = wrapListingAsSource(exampleListing, {
+      file: "samples/listing/caller-alpha.json",
+    });
+    const positiveBind = makeBindRecord({
+      packet: positivePacket,
+      source: positiveSource,
+      kit: { version: PINS.usefulJobs, sha256: PINS.archiveSha256, bytes: PINS.archiveBytes },
+    });
+    const positiveVerdict = verifyListingRepair({
+      packet: positivePacket,
+      source: positiveSource,
+      bind: positiveBind,
+      flags: { sourcePath: positiveInput },
+    });
+    report.positive = {
+      engineExit: positiveRun.status,
+      packetStatus: positivePacket.status,
+      exampleMode: positivePacket.caller?.exampleMode === true,
+      verifyExit: positiveVerdict.ok ? 0 : 1,
+      ok: positiveVerdict.ok,
+      reasons: positiveVerdict.reasons,
+      accepted_correction: positiveVerdict.checks.accepted_correction,
+      sourceBound: positiveVerdict.checks.sourceBound,
+      envelopeBound: positiveVerdict.checks.envelopeBound,
+    };
+
+    const crossVerdict = verifyListingRepair({
+      packet: positivePacket,
+      source: mismatchSource,
+      flags: { sourcePath: mismatchInput },
+    });
+    report.cross = {
+      verifyExit: crossVerdict.ok ? 0 : 1,
+      reasons: crossVerdict.reasons,
+      accepted_correction: crossVerdict.checks.accepted_correction,
+      sourceBound: crossVerdict.checks.sourceBound,
+    };
+
+    const partialOut = join(work, "out-partial");
+    mkdirSync(partialOut, { recursive: true });
+    const partialInput = join(kit, "samples/listing/partial.json");
+    const partialRun = runJson(
+      process.execPath,
+      [
+        join(kit, "bin/useful-jobs.mjs"),
+        "run",
+        "listing-repair-packet",
+        "--input",
+        partialInput,
+        "--out-dir",
+        partialOut,
+      ],
+      kit,
+    );
+    const partialPacket = JSON.parse(readFileSync(join(partialOut, "repair-packet.json"), "utf8"));
+    const partialListing = JSON.parse(readFileSync(partialInput, "utf8"));
+    const partialSource = wrapListingAsSource(partialListing, {
+      file: "samples/listing/partial.json",
+    });
+    const partialVerdict = verifyListingRepair({
+      packet: partialPacket,
+      source: partialSource,
+      flags: { sourcePath: partialInput },
+    });
+    report.partial = {
+      engineExit: partialRun.status,
+      packetStatus: partialPacket.status,
+      verifyExit: partialVerdict.ok ? 0 : 1,
+      reasons: partialVerdict.reasons,
+      accepted_correction: partialVerdict.checks.accepted_correction,
+    };
+
     const checks = {
       kitPin: pin.ok === true,
       overlayCli: report.overlay.cliPinOk === true,
@@ -199,6 +293,19 @@ export function runColdBind({ keepTmp = false } = {}) {
         report.mutated.verifyExit === 1 && report.mutated.reasons.includes("stale_source_digest"),
       publishRefused:
         report.publish.verifyExit === 1 && report.publish.reasons.includes("publish_attempted"),
+      positiveBound:
+        report.positive.verifyExit === 0 &&
+        report.positive.ok === true &&
+        report.positive.accepted_correction === true &&
+        report.positive.exampleMode === false &&
+        report.positive.packetStatus === "actionable",
+      crossListingRefused:
+        report.cross.accepted_correction === false &&
+        report.cross.reasons.includes("source_locator_mismatch"),
+      partialNotFinal:
+        report.partial.packetStatus === "partial" &&
+        report.partial.accepted_correction === false &&
+        report.partial.reasons.includes("partial_not_final"),
       kitUnchanged: pin.sha256 === PINS.archiveSha256 && pin.bytes === PINS.archiveBytes,
     };
     report.checks = checks;

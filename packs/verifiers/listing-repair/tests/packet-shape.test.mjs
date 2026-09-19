@@ -32,6 +32,25 @@ test("committed --example packet is a real 1.4.7 envelope (no corrections[], no 
   assert.equal(typeof packet.digest, "string");
 });
 
+test("committed --input caller-alpha packet is diagnosed, not --example", () => {
+  const packet = load("fixtures/cold/input-alpha.packet.json");
+  assert.equal(packet.schema, PACKET_SCHEMA);
+  assert.equal(packet.appId, "listing-repair-packet");
+  assert.equal(packet.status, "actionable");
+  assert.equal(packet.caller.exampleMode, false);
+  assert.equal(packet.caller.sampleLabel, "caller-input");
+  assert.equal(Object.hasOwn(packet, "corrections"), false);
+  assert.equal(Object.hasOwn(packet, "sourceObservation"), false);
+  assert.ok(packet.actions.every((a) => a.kind === "owner-repair"));
+});
+
+test("committed partial packet is non-final 1.4.7 output", () => {
+  const packet = load("fixtures/cold/partial.packet.json");
+  assert.equal(packet.status, "partial");
+  assert.equal(packet.caller.exampleMode, false);
+  assert.equal(Object.hasOwn(packet, "corrections"), false);
+});
+
 test("committed mismatch packet is refused 1.4.7 output, not accepted_correction material", () => {
   const packet = load("fixtures/cold/mismatch.packet.json");
   assert.equal(packet.schema, PACKET_SCHEMA);

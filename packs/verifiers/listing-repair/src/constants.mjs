@@ -45,6 +45,9 @@ export const REASON = Object.freeze({
   MARKET_FACT_CLAIM: "market_fact_claim",
   NOT_147_ENVELOPE: "not_1_4_7_envelope",
   KIT_PIN_MISMATCH: "kit_pin_mismatch",
+  PACKET_DIGEST_MISMATCH: "packet_digest_mismatch",
+  PARTIAL_NOT_FINAL: "partial_not_final",
+  UNBOUND_PACKET_SOURCE: "unbound_packet_source",
 });
 
 export const SAMPLE_LABELS = Object.freeze(["SAMPLE", "explicit-example", "sample"]);
@@ -81,9 +84,12 @@ export const PINS = Object.freeze({
 export const HONESTY_PACK_NOTES = Object.freeze([
   "R14-07 binds the oracle to shipped useful-jobs 1.4.7 repair-packet.json (owner-repair actions[] + source digest).",
   "Does not invent 1.0.0 corrections[] or packet.sourceObservation on engine output.",
+  "Packet-to-listing bind is caller.input basename and/or the bind sidecar; shared routes are not a bind.",
   "SAMPLE / --example packets cannot pass as accepted_correction.",
   "samples/listing/mismatch.json cannot be accepted_correction.",
   "Mutated listing snapshot digest vs bind is stale_source_digest.",
+  "A diagnosed packet is not accepted_correction for a different listing that happens to share routes.",
+  "Partial/incomplete capture packets are not accepted_correction.",
   "Evidence, suggestion, and publish stay separate. The verifier never publishes a catalog.",
   "purchaseAuthority is always false. Kit bytes stay e2e9b44e…69dec; this pack does not republish 1.4.7.",
 ]);
