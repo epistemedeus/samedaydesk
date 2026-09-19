@@ -221,6 +221,8 @@ function validateRequest(request, claim, errors) {
   }
   if (typeof request.url !== "string" || !request.url.startsWith(RESOURCE_PREFIX)) {
     errors.push(error("invalid_shape", "$.request.url", "url must be on the SDS origin"));
+  } else if (request.url !== claim.resource) {
+    errors.push(error("invalid_shape", "$.request.url", "request.url must equal resource"));
   }
   if (!isPlainObject(request.headers)) {
     errors.push(error("invalid_shape", "$.request.headers", "headers must be an object"));
@@ -313,7 +315,9 @@ function validateSettlement(settlement, claim, catalog, errors) {
   }
   const receiptOk = claim.receiptId === known.boundReceiptId;
   const resourceOk = claim.resource === known.boundResource;
-  if (!receiptOk || !resourceOk) {
+  const routeOk = claim.route === known.boundRoute;
+  const urlOk = claim.request?.url === known.boundResource;
+  if (!receiptOk || !resourceOk || !routeOk || !urlOk) {
     errors.push(
       error(
         "copied_settlement",
@@ -400,6 +404,18 @@ export function validateClaim(input, catalog = loadCatalog()) {
   }
   if (typeof input.resource !== "string" || !input.resource.startsWith(RESOURCE_PREFIX)) {
     errors.push(error("invalid_shape", "$.resource", "resource must be on the SDS origin"));
+  } else {
+    try {
+      const resourceUrl = new URL(input.resource);
+      if (resourceUrl.origin !== SDS_PIN.origin) {
+        errors.push(error("pin_mismatch", "$.resource", "resource origin is not the SDS pin"));
+      }
+      if (typeof input.route === "string" && resourceUrl.pathname !== input.route) {
+        errors.push(error("invalid_shape", "$.route", "route must be the pathname of resource"));
+      }
+    } catch {
+      errors.push(error("invalid_shape", "$.resource", "resource must be an absolute SDS URL"));
+    }
   }
   expectString(input.route, ROUTE_RE, "$.route", errors);
   if (!HTTP_METHODS.includes(input.method)) {
@@ -454,6 +470,13 @@ export function validateClaim(input, catalog = loadCatalog()) {
     validateOfferReceipt(input.offerReceipt, input, errors);
   }
   if (Object.hasOwn(input, "settlement") && input.settlement !== null) {
+    errors.push(
+      error(
+        "paid_as_unpaid",
+        "$.settlement",
+        "settlement cannot appear on an unpaid claim; HTTP 402 is not delivery",
+      ),
+    );
     validateSettlement(input.settlement, input, catalog, errors);
   }
 
@@ -511,7 +534,11 @@ export function validateClaim(input, catalog = loadCatalog()) {
     }
   }
 
-  const spent = new Set(catalog.pin.spentReceiptIds ?? [SPENT_RECEIPT_ID]);
+  const spent = new Set([
+    SPENT_RECEIPT_ID,
+    KNOWN_SETTLEMENT.boundReceiptId,
+    ...(catalog.pin.spentReceiptIds ?? []),
+  ]);
   if (typeof input.receiptId === "string" && spent.has(input.receiptId)) {
     errors.push(
       error("receipt_replay", "$.receiptId", "receiptId is pinned as already spent and cannot authorize a new unpaid claim"),

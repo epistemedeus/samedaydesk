@@ -232,6 +232,72 @@ const payToSwap = stampIntegrity({
   ],
 });
 
+const paidAsUnpaid = stampIntegrity({
+  ...baseUnpaid({
+    claimId: "rf_paid_as_unpaid",
+    receiptId: KNOWN_SETTLEMENT.boundReceiptId,
+    kind: "unpaid_payment_required",
+    resource: KNOWN_SETTLEMENT.boundResource,
+    route: KNOWN_SETTLEMENT.boundRoute,
+    method: "GET",
+    httpStatus: 402,
+    observedAt: "2026-08-29T00:00:00.000Z",
+    source: {
+      kind: "live_unpaid_402",
+      note: "In-tree facilitator settlement attached to an unpaid 402 of the bound identity.",
+    },
+    unknownWhenAbsent: ["paid_body", "chain_finality"],
+  }),
+  settlement: {
+    operationId: KNOWN_SETTLEMENT.operationId,
+    amountUsdc: KNOWN_SETTLEMENT.amountUsdc,
+    transaction: KNOWN_SETTLEMENT.transaction,
+    facilitatorOrPayoutRef: KNOWN_SETTLEMENT.facilitatorOrPayoutRef,
+  },
+});
+
+const boundReceiptReplay = stampIntegrity(
+  baseUnpaid({
+    claimId: "rf_bound_receipt_replay",
+    receiptId: KNOWN_SETTLEMENT.boundReceiptId,
+    kind: "unpaid_payment_required",
+    resource: "https://agents.samedaydesk.com/extract?url=https://example.com",
+    route: "/extract",
+    method: "GET",
+    httpStatus: 402,
+    observedAt: "2026-09-17T12:12:00.000Z",
+    source: {
+      kind: "live_unpaid_402",
+      note: "Pinned paid observation receiptId replayed as a new unpaid extract 402.",
+    },
+    unknownWhenAbsent: ["paid_body", "facilitator_settlement"],
+  }),
+);
+
+const routeUrlMismatch = stampIntegrity({
+  ...baseUnpaid({
+    claimId: "rf_route_url_mismatch",
+    receiptId: "cr_route_url_mismatch",
+    kind: "unpaid_payment_required",
+    resource: "https://agents.samedaydesk.com/extract?url=https://example.com",
+    route: "/extract",
+    method: "GET",
+    httpStatus: 402,
+    observedAt: "2026-09-17T12:03:06.000Z",
+    source: {
+      kind: "live_unpaid_402",
+      note: "route and request.url name seller-integrity-audit while resource stays extract.",
+    },
+    unknownWhenAbsent: ["paid_body", "facilitator_settlement"],
+  }),
+  route: KNOWN_SETTLEMENT.boundRoute,
+  request: {
+    method: "GET",
+    url: KNOWN_SETTLEMENT.boundResource,
+    headers: { Accept: "application/json" },
+  },
+});
+
 writeJson(join(validDir, "unpaid-402-extract.json"), extract);
 writeJson(join(validDir, "unpaid-buyer-stop.json"), buyerStop);
 writeJson(join(rejectDir, "forged-digest.json"), forged);
@@ -240,6 +306,9 @@ writeJson(join(rejectDir, "fabricated-tx.json"), fabricated);
 writeJson(join(rejectDir, "replay-receipt.json"), replay);
 writeJson(join(rejectDir, "payment-header-forge.json"), paymentHeader);
 writeJson(join(rejectDir, "payto-swap.json"), payToSwap);
+writeJson(join(rejectDir, "paid-as-unpaid.json"), paidAsUnpaid);
+writeJson(join(rejectDir, "bound-receipt-replay.json"), boundReceiptReplay);
+writeJson(join(rejectDir, "route-url-mismatch.json"), routeUrlMismatch);
 
 writeJson(join(rejectDir, "manifest.json"), {
   "forged-digest.json": {
@@ -267,6 +336,18 @@ writeJson(join(rejectDir, "manifest.json"), {
     id: "payto-swap",
     code: "pin_mismatch",
   },
+  "paid-as-unpaid.json": {
+    id: "paid-as-unpaid",
+    code: "paid_as_unpaid",
+  },
+  "bound-receipt-replay.json": {
+    id: "bound-receipt-replay",
+    code: "receipt_replay",
+  },
+  "route-url-mismatch.json": {
+    id: "route-url-mismatch",
+    code: "invalid_shape",
+  },
 });
 
 writeJson(join(fixtures, "catalog.json"), {
@@ -290,7 +371,7 @@ writeJson(join(fixtures, "catalog.json"), {
   pin: {
     ...SDS_PIN,
     settlements: [KNOWN_SETTLEMENT],
-    spentReceiptIds: [SPENT_RECEIPT_ID],
+    spentReceiptIds: [SPENT_RECEIPT_ID, KNOWN_SETTLEMENT.boundReceiptId],
   },
   boundary: {
     paymentSent: false,

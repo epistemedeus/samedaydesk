@@ -90,7 +90,7 @@ test("every reject fixture is rejected with the declared code", () => {
 test("cold suite accepts valid and rejects seeded forges", () => {
   const report = runSuite(catalog);
   assert.equal(report.ok, true, JSON.stringify(report.results.filter((item) => !item.ok), null, 2));
-  assert.equal(report.total, 8);
+  assert.equal(report.total, 11);
   assert.equal(report.failed, 0);
 });
 
@@ -120,7 +120,7 @@ test("CLI --cold exits 0", () => {
   assert.equal(body.command, "cold");
   assert.equal(body.live, false);
   assert.equal(body.paymentSent, false);
-  assert.equal(body.passed, 8);
+  assert.equal(body.passed, 11);
   assert.equal(body.failed, 0);
 });
 
@@ -174,6 +174,9 @@ test("CLI copied-settlement, fabricated-tx, replay, payment header, payTo swap",
     ["replay-receipt.json", "receipt_replay"],
     ["payment-header-forge.json", "payment_header_forge"],
     ["payto-swap.json", "pin_mismatch"],
+    ["paid-as-unpaid.json", "paid_as_unpaid"],
+    ["bound-receipt-replay.json", "receipt_replay"],
+    ["route-url-mismatch.json", "invalid_shape"],
   ];
   for (const [name, code] of cases) {
     const proc = runCli([
@@ -208,4 +211,51 @@ test("mutating a valid receipt after stamping is receipt_forged", () => {
   assert.equal(restampedResult.ok, false);
   assert.ok(restampedResult.codes.includes("pin_mismatch"));
   assert.equal(restampedResult.codes.includes("receipt_forged"), false);
+});
+
+test("bound facilitator settlement on unpaid is paid_as_unpaid, not accept", () => {
+  const extract = loadJson(join(VALID_FIXTURES, "unpaid-402-extract.json"));
+  const bound = stampIntegrity({
+    ...structuredClone(extract),
+    claimId: "rf_probe_bound",
+    receiptId: KNOWN_SETTLEMENT.boundReceiptId,
+    resource: KNOWN_SETTLEMENT.boundResource,
+    route: KNOWN_SETTLEMENT.boundRoute,
+    request: {
+      method: "GET",
+      url: KNOWN_SETTLEMENT.boundResource,
+      headers: { Accept: "application/json" },
+    },
+    settlement: {
+      operationId: KNOWN_SETTLEMENT.operationId,
+      amountUsdc: KNOWN_SETTLEMENT.amountUsdc,
+      transaction: KNOWN_SETTLEMENT.transaction,
+      facilitatorOrPayoutRef: KNOWN_SETTLEMENT.facilitatorOrPayoutRef,
+    },
+  });
+  const result = evaluateClaim(bound, catalog);
+  assert.equal(result.ok, false);
+  assert.equal(result.honestVerdict, "reject");
+  assert.ok(result.codes.includes("paid_as_unpaid"));
+  assert.ok(result.codes.includes("receipt_replay"));
+});
+
+test("resource, route, and request.url must name one SDS surface", () => {
+  const extract = loadJson(join(VALID_FIXTURES, "unpaid-402-extract.json"));
+  const split = stampIntegrity({
+    ...structuredClone(extract),
+    claimId: "rf_mismatch_probe",
+    receiptId: "cr_mismatch_probe",
+    route: KNOWN_SETTLEMENT.boundRoute,
+    request: {
+      method: "GET",
+      url: KNOWN_SETTLEMENT.boundResource,
+      headers: { Accept: "application/json" },
+    },
+  });
+  delete split.settlement;
+  const result = evaluateClaim(split, catalog);
+  assert.equal(result.ok, false);
+  assert.ok(result.codes.includes("invalid_shape"));
+  assert.equal(result.codes.includes("receipt_forged"), false);
 });

@@ -56,13 +56,18 @@ file exits 1.
 | `replay-receipt.json` | `receipt_replay` |
 | `payment-header-forge.json` | `payment_header_forge` |
 | `payto-swap.json` | `pin_mismatch` |
+| `paid-as-unpaid.json` | `paid_as_unpaid` (bound facilitator settlement on unpaid 402) |
+| `bound-receipt-replay.json` | `receipt_replay` (paid observation id reused as extract 402) |
+| `route-url-mismatch.json` | `invalid_shape` (`resource`, `route`, and `request.url` disagree) |
 
 ## Honesty
 
 Naive accept is a well-formed `receiptId`, SDS origin, and `sha256:` digest
 string. Honest accept recomputes the digest over canonical JSON (keys sorted,
-`integrity` stripped) and checks the local pin. A matching self-digest is not
-chain settlement. `executionVerified` is not claimed.
+`integrity` stripped) and checks the local pin. `resource`, `route`, and
+`request.url` must name one SDS surface. A non-null `settlement` on an unpaid
+claim is `paid_as_unpaid`. The in-tree paid observation id is spent. A matching
+self-digest is not chain settlement. `executionVerified` is not claimed.
 
 Known settlement pin is the in-tree facilitator observation
 `agent402-external-validation-purchase-2026-08-29`. This pack does not fetch
