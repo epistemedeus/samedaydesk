@@ -1,0 +1,11 @@
+{
+  "kind": "single_route",
+  "method": "GET",
+  "path": "/crypto",
+  "mediaType": "application/json",
+  "example": {
+    "pair": "BTC-USD",
+    "amount": "1",
+    "currency": "USD"
+  }
+}

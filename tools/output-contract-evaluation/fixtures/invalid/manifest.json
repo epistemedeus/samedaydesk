@@ -1,0 +1,14 @@
+{
+  "unconstrained-object.json": { "code": "unconstrained_object" },
+  "example-only.json": { "code": "example_is_not_schema" },
+  "missing-output-schema.json": { "code": "output_schema_absent" },
+  "empty-openapi-200.json": { "code": "empty_openapi_success" },
+  "required-paths-missing.json": { "code": "required_paths_missing" },
+  "media-type-missing.json": { "code": "media_type_missing" },
+  "payment-checkout.json": { "code": "catalog_only_violation" },
+  "registry-publish.json": { "code": "catalog_only_violation" },
+  "capitalized-checkout.json": { "code": "catalog_only_violation" },
+  "non-object-schema.json": { "code": "invalid_shape" },
+  "unresolved-ref.json": { "code": "unresolved_ref" },
+  "observation-crawl.json": { "code": "observation_is_not_catalog_declaration" }
+}

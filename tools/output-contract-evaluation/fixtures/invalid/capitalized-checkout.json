@@ -1,0 +1,16 @@
+{
+  "kind": "single_route",
+  "method": "GET",
+  "path": "/extract",
+  "mediaType": "application/json",
+  "schema": {
+    "type": "object",
+    "required": ["ok"],
+    "properties": {
+      "ok": { "type": "boolean" }
+    }
+  },
+  "Checkout": {
+    "session": "cs_test_case_fold"
+  }
+}

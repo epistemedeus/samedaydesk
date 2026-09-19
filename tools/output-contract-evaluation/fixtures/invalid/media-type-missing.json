@@ -1,0 +1,12 @@
+{
+  "kind": "single_route",
+  "method": "GET",
+  "path": "/extract",
+  "schema": {
+    "type": "object",
+    "required": ["ok"],
+    "properties": {
+      "ok": { "type": "boolean" }
+    }
+  }
+}
