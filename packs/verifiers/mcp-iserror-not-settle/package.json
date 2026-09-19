@@ -1,0 +1,22 @@
+{
+  "name": "@samedaydesk/mcp-iserror-not-settle",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Offline verifier: SameDayDesk MCP isError true is never settlement. HTTP 200 and JSON-RPC result are not settle evidence. Pins server/routes/mcp.js; never pays or publishes.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "mcp-iserror-not-settle": "./bin/verify.mjs"
+  },
+  "scripts": {
+    "cold": "node bin/verify.mjs --committed",
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "seeded-failure": "node bin/verify.mjs --seeded-failure",
+    "verify": "node ./bin/verify.mjs --committed"
+  },
+  "exports": {
+    ".": "./src/index.mjs"
+  }
+}

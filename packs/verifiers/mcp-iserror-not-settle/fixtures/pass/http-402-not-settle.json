@@ -1,0 +1,6 @@
+{
+  "schema": "samedaydesk.mcp-iserror-not-settle.case.v1",
+  "id": "http-402-not-settle",
+  "expect": "pass",
+  "http": { "status": 402 }
+}

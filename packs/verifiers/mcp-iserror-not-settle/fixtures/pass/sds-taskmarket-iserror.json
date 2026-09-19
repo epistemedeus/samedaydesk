@@ -1,0 +1,14 @@
+{
+  "schema": "samedaydesk.mcp-iserror-not-settle.case.v1",
+  "id": "sds-taskmarket-iserror",
+  "expect": "pass",
+  "http": { "status": 200 },
+  "rpc": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "content": [{ "type": "text", "text": "TaskMarket tool error: reward_usdc exceeds max_spend_usdc" }],
+      "isError": true
+    }
+  }
+}

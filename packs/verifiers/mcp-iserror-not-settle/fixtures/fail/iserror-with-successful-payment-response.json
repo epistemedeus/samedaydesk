@@ -1,0 +1,22 @@
+{
+  "schema": "samedaydesk.mcp-iserror-not-settle.case.v1",
+  "id": "iserror-with-successful-payment-response",
+  "expect": "reject",
+  "notes": "Wire-level contradiction: isError true plus x402/payment-response success true. Implicit settle claim is rejected.",
+  "http": { "status": 200 },
+  "rpc": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "isError": true,
+      "content": [{ "type": "text", "text": "tool failed after pay" }],
+      "_meta": {
+        "x402/payment-response": {
+          "success": true,
+          "transaction": "0xdeadbeef",
+          "network": "eip155:84532"
+        }
+      }
+    }
+  }
+}

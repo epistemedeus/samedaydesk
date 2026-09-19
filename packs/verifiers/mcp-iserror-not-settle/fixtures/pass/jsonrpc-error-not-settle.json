@@ -1,0 +1,11 @@
+{
+  "schema": "samedaydesk.mcp-iserror-not-settle.case.v1",
+  "id": "jsonrpc-error-not-settle",
+  "expect": "pass",
+  "http": { "status": 200 },
+  "rpc": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "error": { "code": -32602, "message": "Unknown tool: settle_now" }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schema": "samedaydesk.mcp-iserror-not-settle.case.v1",
+  "id": "x402-payment-required-iserror",
+  "expect": "pass",
+  "notes": "x402 MCP PaymentRequired is a tool result with isError true. That is a challenge, not a settle.",
+  "http": { "status": 200 },
+  "rpc": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "isError": true,
+      "structuredContent": {
+        "x402Version": 2,
+        "error": "Payment required to access this resource",
+        "resource": {
+          "url": "mcp://tool/generate_complete_fix_pack",
+          "description": "Complete AI-readiness Fix Pack"
+        },
+        "accepts": [
+          {
+            "scheme": "exact",
+            "network": "eip155:84532",
+            "amount": "39000000",
+            "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          }
+        ]
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"x402Version\":2,\"error\":\"Payment required to access this resource\",\"accepts\":[{\"scheme\":\"exact\"}]}"
+        }
+      ]
+    }
+  }
+}
