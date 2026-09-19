@@ -1,0 +1,8 @@
+{
+  "seededId": "forged-complete",
+  "claim": {
+    "complete": true,
+    "delivery": "in_full"
+  },
+  "note": "Lie: accepted-extract-batch.json (partial:true, 1 failed source) is a complete delivery."
+}
