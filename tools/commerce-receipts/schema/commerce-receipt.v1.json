@@ -46,7 +46,9 @@
     },
     "statusClass": {
       "type": "string",
-      "const": "unpaid"
+      "minLength": 1,
+      "maxLength": 32,
+      "description": "This pack accepts unpaid only. Other values are not_unpaid in the validator."
     },
     "origin": {
       "type": "string",
@@ -70,13 +72,11 @@
     },
     "charged": {
       "type": "boolean",
-      "const": false,
-      "description": "Must be false. charged true labeled unpaid is paid_as_unpaid."
+      "description": "Must be false for unpaid. charged true labeled unpaid is paid_as_unpaid in the validator."
     },
     "paymentSent": {
       "type": "boolean",
-      "const": false,
-      "description": "Must be false. A sent payment labeled unpaid is paid_as_unpaid."
+      "description": "Must be false for unpaid. A sent payment labeled unpaid is paid_as_unpaid in the validator."
     },
     "observedAt": {
       "type": "string",
@@ -201,9 +201,12 @@
     },
     "joinKeys": {
       "type": "array",
+      "minItems": 4,
+      "maxItems": 16,
+      "uniqueItems": true,
       "items": {
         "type": "string",
-        "enum": ["receipt_id", "resource", "amount", "pay_to"]
+        "pattern": "^[a-z][a-z0-9_]{1,95}$"
       }
     },
     "source": {
@@ -227,10 +230,16 @@
     },
     "unknownWhenAbsent": {
       "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true,
       "items": { "type": "string" }
     },
     "prohibitedInferences": {
       "type": "array",
+      "minItems": 4,
+      "maxItems": 16,
+      "uniqueItems": true,
       "items": { "type": "string" }
     }
   }

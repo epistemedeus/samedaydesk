@@ -47,9 +47,16 @@ test("catalog, schema, and designated seed agree", () => {
   const schema = loadSchema(DEFAULT_SCHEMA);
   assert.equal(schema.properties.schemaVersion.const, catalog.recordSchemaVersion);
   assert.deepEqual(schema.properties.kind.enum, catalog.kinds);
-  assert.equal(schema.properties.statusClass.const, "unpaid");
-  assert.equal(schema.properties.charged.const, false);
-  assert.equal(schema.properties.paymentSent.const, false);
+  assert.equal(schema.properties.statusClass.type, "string");
+  assert.equal(schema.properties.charged.type, "boolean");
+  assert.equal(schema.properties.paymentSent.type, "boolean");
+  assert.equal(schema.properties.statusClass.const, undefined);
+  assert.equal(schema.properties.charged.const, undefined);
+  assert.equal(schema.properties.joinKeys.minItems, 4);
+  assert.equal(schema.properties.joinKeys.maxItems, 16);
+  assert.equal(schema.properties.joinKeys.uniqueItems, true);
+  assert.equal(schema.properties.unknownWhenAbsent.minItems, 1);
+  assert.equal(schema.properties.prohibitedInferences.minItems, 4);
   assert.equal(schema.additionalProperties, false);
   assert.equal(catalog.designatedSeed.id, SEEDED_FAILURE);
   assert.equal(catalog.designatedSeed.code, "paid_as_unpaid");
@@ -71,6 +78,17 @@ test("catalog pin matches in-tree x402 extract accept", () => {
   assert.equal(accept.payTo, catalog.pin.payTo);
   assert.equal(accept.asset, catalog.pin.asset);
   assert.equal(accept.amount, "5000");
+});
+
+test("gateway unpaid fixture resource matches in-tree x402 OpenAPI example url", () => {
+  const x402 = loadJson(join(ROOT, "fixtures/presence/catalog/x402.json"));
+  const gateway = x402.items.find(
+    (item) => item.resource.routeTemplate === "/gateway/commerce/payment-offer-preflight",
+  );
+  assert.ok(gateway, "in-tree x402 catalog missing gateway payment-offer-preflight");
+  const record = loadJson(join(VALID_FIXTURES, "unpaid-402-gateway-payment-offer-preflight.json"));
+  assert.equal(record.resource, gateway.resource.url);
+  assert.equal(record.request.url, gateway.resource.url);
 });
 
 test("every valid fixture is accepted as unpaid", () => {
