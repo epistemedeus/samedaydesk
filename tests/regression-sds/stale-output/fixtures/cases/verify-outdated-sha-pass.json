@@ -1,0 +1,20 @@
+{
+  "id": "verify-outdated-sha-pass",
+  "surface": "verify",
+  "feature": "verify",
+  "class": "stale",
+  "expectReject": true,
+  "expectedReasons": ["greenwash", "stale_sha"],
+  "defect": "Verify surface claims pass with outdated 1.0.0 archive sha presented as current.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "verify",
+    "version": "1.4.7",
+    "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+    "result": {
+      "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+      "version": "1.4.7"
+    }
+  }
+}

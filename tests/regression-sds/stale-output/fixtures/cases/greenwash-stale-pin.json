@@ -1,0 +1,27 @@
+{
+  "id": "greenwash-stale-pin",
+  "surface": "useful-jobs",
+  "feature": "useful-jobs",
+  "class": "greenwash",
+  "seededGreenwash": true,
+  "expectReject": true,
+  "expectedReasons": ["greenwash", "stale_version", "stale_sha", "stale_bytes"],
+  "defect": "Seeded greenwash: claims ok/pass success while pin/version/sha are stale 1.4.0 (not current 1.4.7).",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "verdict": "pass",
+    "pass": true,
+    "feature": "useful-jobs",
+    "surface": "useful-jobs",
+    "version": "1.4.0",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215,
+    "pin": {
+      "version": "1.4.0",
+      "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+      "bytes": 2575215
+    },
+    "message": "useful-jobs verify passed (greenwashed stale pin)"
+  }
+}

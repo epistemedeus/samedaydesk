@@ -1,0 +1,19 @@
+{
+  "id": "useful-jobs-stale-sha",
+  "surface": "useful-jobs",
+  "feature": "useful-jobs",
+  "class": "stale",
+  "expectReject": true,
+  "expectedReasons": ["greenwash", "stale_sha", "stale_bytes"],
+  "defect": "Claims ok/pass on useful-jobs acquire while sha+bytes are the stale 1.1.0 pin, not current 1.4.7.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "feature": "useful-jobs",
+    "surface": "useful-jobs",
+    "version": "1.4.7",
+    "sha256": "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534",
+    "bytes": 2577606,
+    "message": "acquired useful-jobs successfully"
+  }
+}
