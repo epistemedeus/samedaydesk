@@ -1,0 +1,14 @@
+{
+  "id": "no-observations-when-observedAt-missing",
+  "observation": "empty",
+  "freshnessClock": "observedAt",
+  "clock": "2026-09-17T11:45:00.000Z",
+  "maxAgeMs": 86400000,
+  "expect": {
+    "status": "no_observations",
+    "latestObservationAt": null,
+    "ageMs": 0,
+    "sdsRowCount": 0,
+    "lastCalledAtIsRemovalClock": false
+  }
+}

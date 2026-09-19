@@ -1,0 +1,43 @@
+{
+  "id": "lastCalledAt-present-without-observedAt-is-no_observations",
+  "note": "quality.lastCalledAt on a row is not a freshness clock. Missing observedAt is no_observations.",
+  "freshnessClock": "observedAt",
+  "clock": "2026-09-17T11:45:00.000Z",
+  "maxAgeMs": 86400000,
+  "observation": {
+    "schemaVersion": 3,
+    "schema": "samedaydesk.bazaar-observation.v3",
+    "observedAt": null,
+    "captureSource": "fixture",
+    "sources": {
+      "cdp-discovery": {
+        "endpoint": null,
+        "sellerCount": 1,
+        "routeCount": 1,
+        "sellers": {
+          "samedaydesk": {
+            "id": "samedaydesk",
+            "name": "SameDayDesk",
+            "rowCount": 1,
+            "routes": {
+              "https://agents.samedaydesk.com/extract": {
+                "digest": "04c1554d7a4471803f05781245df70cb0ae3dc73b9df78c555c7324c3b1ca60e",
+                "quality": {
+                  "lastCalledAt": "2026-09-17T04:03:29.265Z",
+                  "l30DaysTotalCalls": 14,
+                  "l30DaysUniquePayers": 10
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "expect": {
+    "status": "no_observations",
+    "latestObservationAt": null,
+    "ageMs": 0,
+    "lastCalledAtIsRemovalClock": false
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "id": "seeded-invented-loyaltyPoints-freshness",
+  "seeded": true,
+  "note": "SEEDING FAILURE: invented receipt fields without live schema citation. Adapter must reject.",
+  "freshnessClock": "observedAt",
+  "clock": "2026-09-17T11:45:00.000Z",
+  "maxAgeMs": 86400000,
+  "receiptFields": ["loyaltyPoints", "uniqueVisitors"],
+  "claim": {
+    "loyaltyPoints": 42,
+    "uniqueVisitors": 99
+  }
+}

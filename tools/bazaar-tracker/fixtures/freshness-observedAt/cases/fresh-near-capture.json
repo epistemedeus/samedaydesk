@@ -1,0 +1,13 @@
+{
+  "id": "fresh-when-clock-is-near-observedAt",
+  "observation": "committed",
+  "freshnessClock": "observedAt",
+  "clock": "2026-09-03T10:00:00.000Z",
+  "maxAgeMs": 900000,
+  "expect": {
+    "status": "fresh",
+    "latestObservationAt": "2026-09-03T09:54:04.798Z",
+    "ageMs": 355202,
+    "lastCalledAtIsRemovalClock": false
+  }
+}

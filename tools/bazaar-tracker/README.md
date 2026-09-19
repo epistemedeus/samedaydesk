@@ -71,6 +71,17 @@ npm run test:bazaar-tracker
 
 `--live` is not part of `npm run build` or the ordinary test scripts.
 
+## Observation freshness (readback-only)
+
+Age is `clock - observations.json observedAt`. Catalog `quality.lastCalledAt` and
+`lastUpdated` are not removal clocks. The adapter refuses `--live`.
+
+```
+node tools/bazaar-tracker/fixtures/freshness-observedAt/run.mjs --pretty
+node tools/bazaar-tracker/fixtures/freshness-observedAt/run.mjs --case cases/seeded-lastCalledAt-as-removal.json
+node --test tools/bazaar-tracker/fixtures/freshness-observedAt/test.mjs
+```
+
 ## How Pilot runs it (`pilot-vm-job`)
 
 Pilot should invoke this as a single VM job that starts, writes the local snapshot
