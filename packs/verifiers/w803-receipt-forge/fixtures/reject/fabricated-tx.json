@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "samedaydesk.receipt-forge.claim.v1",
+  "claimId": "rf_w803_fabricated_tx",
+  "receiptId": "cr_w803_fabricated_tx",
+  "kind": "unpaid_payment_required",
+  "statusClass": "unpaid",
+  "origin": "https://agents.samedaydesk.com",
+  "resource": "https://agents.samedaydesk.com/extract?url=https://example.com",
+  "route": "/extract",
+  "method": "GET",
+  "httpStatus": 402,
+  "charged": false,
+  "paymentSent": false,
+  "observedAt": "2026-09-17T12:03:06.000Z",
+  "completeness": "truncated",
+  "authorityClass": "seller_observed",
+  "request": {
+    "method": "GET",
+    "url": "https://agents.samedaydesk.com/extract?url=https://example.com",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "accepts": [
+    {
+      "scheme": "exact",
+      "network": "eip155:8453",
+      "amount": "5000",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    }
+  ],
+  "joinKeys": [
+    "receipt_id",
+    "resource",
+    "amount",
+    "pay_to"
+  ],
+  "source": {
+    "kind": "live_unpaid_402",
+    "note": "Made-up settlement hash with a matching self-digest."
+  },
+  "unknownWhenAbsent": [
+    "paid_body",
+    "chain_finality"
+  ],
+  "prohibitedInferences": [
+    "receipt_forged",
+    "copied_settlement",
+    "fabricated_settlement",
+    "receipt_replay",
+    "payment_header_forge",
+    "http_402_is_delivery"
+  ],
+  "settlement": {
+    "operationId": "forged-local-tx",
+    "amountUsdc": "0.010",
+    "transaction": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+    "facilitatorOrPayoutRef": "x402_v2_coinbase_cdp"
+  },
+  "integrity": {
+    "alg": "sha256",
+    "claimedDigest": "sha256:4fbe3672d2ef3ab7f820fb3571217957dd8a45da3124cc33482638e7ed3de475"
+  }
+}
