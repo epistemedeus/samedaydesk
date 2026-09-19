@@ -1,0 +1,10 @@
+{
+  "id": "seeded-missing-amount",
+  "kind": "seeded",
+  "live402Path": "../live/extract-402.json",
+  "httpStatus": 402,
+  "committedRoute": "https://agents.samedaydesk.com/extract",
+  "expectedCommittedDigest": "04c1554d7a4471803f05781245df70cb0ae3dc73b9df78c555c7324c3b1ca60e",
+  "payloadRemove": ["amount"],
+  "note": "SEEDING FAILURE: offer-receipt payload.amount is required; dropping it must not fail-open."
+}
