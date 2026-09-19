@@ -52,8 +52,10 @@ is a stop, not a reason to invent names.
 
 This command reads committed MCP source, serves that catalog on loopback
 `node:http` (no Express, no `npm install`), POSTs `initialize` and
-`tools/list` with **no** `tools/call`, and exits 0. It sends no payment
-header and does not open Stripe.
+`tools/list`, then proves the loopback refuses `?cs=`, a payment header,
+malformed JSON, and `tools/call` (HTTP 400, no handler execution). The
+`rpc()` helper still refuses to send `tools/call`. It does not open Stripe
+or POST to the live apex.
 
 ```bash
 node --input-type=module <<'JS'
@@ -178,7 +180,14 @@ const server = http.createServer(async (req, res) => {
   }
   const chunks = [];
   for await (const chunk of req) chunks.push(chunk);
-  const msg = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+  let msg;
+  try {
+    msg = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+  } catch {
+    res.writeHead(400, { "content-type": "application/json" });
+    res.end(JSON.stringify({ ok: false, rejected: true, code: "MALFORMED_JSON" }));
+    return;
+  }
   if (JSON.stringify(msg).includes('"tools/call"')) {
     res.writeHead(400, { "content-type": "application/json" });
     res.end(JSON.stringify({ ok: false, rejected: true, code: "PAID_REFUSE" }));
@@ -232,6 +241,7 @@ assert.equal(initOfferedNewer.json.result.protocolVersion, PROTOCOL);
 const listed = await rpc("tools/list", {}, 7);
 assert.equal(listed.status, 200);
 assert.deepEqual(listed.json.result.tools.map((tool) => tool.name), EXPECTED_NAMES);
+assert.match(listed.json.result.tools.find((tool) => tool.name === PAID_TOOL).description, /^PAID\./);
 assert.equal(JSON.stringify(listed.json).includes("tools/call"), false);
 
 const banner = await fetch(origin, { signal: AbortSignal.timeout(5000) });
@@ -240,7 +250,9 @@ assert.match(await banner.text(), /samedaydesk agent tools MCP server/);
 
 const csRefuse = await fetch(`${origin}?cs=cs_test_seeded`, { signal: AbortSignal.timeout(5000) });
 assert.equal(csRefuse.status, 400);
-assert.equal((await csRefuse.json()).code, "STRIPE_PATH_REFUSE");
+const csJson = await csRefuse.json();
+assert.equal(csJson.code, "STRIPE_PATH_REFUSE");
+const stripePathRefused = csJson.rejected === true;
 
 const payRefuse = await fetch(origin, {
   method: "POST",
@@ -262,7 +274,37 @@ const payRefuse = await fetch(origin, {
   signal: AbortSignal.timeout(5000),
 });
 assert.equal(payRefuse.status, 400);
-assert.equal((await payRefuse.json()).code, "PAYMENT_HEADER_REFUSE");
+const payJson = await payRefuse.json();
+assert.equal(payJson.code, "PAYMENT_HEADER_REFUSE");
+const paymentHeaderRefused = payJson.rejected === true;
+
+const malformed = await fetch(origin, {
+  method: "POST",
+  headers: { "content-type": "application/json", accept: "application/json" },
+  body: "{not-json",
+  signal: AbortSignal.timeout(5000),
+});
+assert.equal(malformed.status, 400);
+assert.equal((await malformed.json()).code, "MALFORMED_JSON");
+
+const callRefuse = await fetch(origin, {
+  method: "POST",
+  headers: { "content-type": "application/json", accept: "application/json" },
+  body: JSON.stringify({
+    jsonrpc: "2.0",
+    id: 9,
+    method: "tools/call",
+    params: { name: PAID_TOOL, arguments: { url: "https://example.com", license: "cs_test_seeded" } },
+  }),
+  signal: AbortSignal.timeout(5000),
+});
+assert.equal(callRefuse.status, 400);
+const callJson = await callRefuse.json();
+assert.equal(callJson.code, "PAID_REFUSE");
+const loopbackCallRefused = callJson.rejected === true;
+assert.equal(stripePathRefused, true);
+assert.equal(paymentHeaderRefused, true);
+assert.equal(loopbackCallRefused, true);
 
 console.log(JSON.stringify({
   ok: true,
@@ -283,8 +325,9 @@ console.log(JSON.stringify({
   toolsBlockSha256: FROZEN_TOOLS_BLOCK_SHA256,
   origin,
   loopbackBind: addr.address,
-  stripePathRefused: true,
-  paymentHeaderRefused: true,
+  stripePathRefused,
+  paymentHeaderRefused,
+  loopbackCallRefused,
 }, null, 2));
 } finally {
 await new Promise((resolve, reject) => server.close((err) => (err ? reject(err) : resolve())));
@@ -296,7 +339,7 @@ Expected: exit **0** and JSON with `"ok": true`, `"paid": false`,
 `"toolsCalled": false`, `"protocolVersion": "2024-11-05"`,
 `"paidToolListed": "generate_complete_fix_pack"`, `"paidToolCalled": false`,
 `"stripePathRefused": true`, `"paymentHeaderRefused": true`,
-`"loopbackBind": "127.0.0.1"`.
+`"loopbackCallRefused": true`, `"loopbackBind": "127.0.0.1"`.
 
 The loopback catalog is extracted from `server/routes/mcp.js`. It is not a
 second product and it does not execute tool handlers.
