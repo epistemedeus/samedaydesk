@@ -1,0 +1,17 @@
+MCP isError ≠ settle verifier
+=============================
+
+Owning repo: epistemedeus/samedaydesk
+Write boundary: packs/verifiers/mcp-iserror-not-settle/**
+
+This pack is a read-only oracle over already-committed SameDayDesk MCP
+tool-result handling:
+
+- server/routes/mcp.js   (okMsg JSON-RPC result envelope + isError: true sites)
+
+It does not edit MCP routes. It does not call live /mcp, Stripe, x402
+payment, or neomorphic-io. It does not publish.
+
+An MCP tool failure is a successful JSON-RPC result with isError true on
+HTTP 200. That envelope is not settlement. Claiming settled on it is
+rejected. Empty committed sources with no isError sites are not ok:true.

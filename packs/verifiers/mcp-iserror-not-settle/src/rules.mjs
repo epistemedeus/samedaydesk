@@ -1,8 +1,10 @@
 /** Invariant: MCP tool-result isError is never settlement. */
 
 export const PACK_ID = "mcp-iserror-not-settle";
+export const VERIFIER = "mcp-iserror-not-settle";
 export const CASE_SCHEMA = "samedaydesk.mcp-iserror-not-settle.case.v1";
 export const REPORT_SCHEMA = "samedaydesk.mcp-iserror-not-settle.report.v1";
+export const MCP_REL = "server/routes/mcp.js";
 
 export const PAYMENT_RESPONSE_META_KEY = "x402/payment-response";
 export const PAYMENT_META_KEY = "x402/payment";
@@ -16,6 +18,7 @@ export const FORBIDDEN_FLAGS = Object.freeze([
   "--neo",
   "--deploy",
   "--facilitator",
+  "--checkout",
 ]);
 
 export const NAIVE_SETTLE_BASES = Object.freeze([
@@ -46,4 +49,23 @@ export const CODES = Object.freeze({
   INVARIANT_HOLDS: "invariant_holds",
   MALFORMED_CASE: "malformed_case",
   FORBIDDEN_FLAG: "forbidden_flag",
+  PUBLISH_ATTEMPTED: "publish_attempted",
+  CHECKOUT_TOUCHED: "checkout_touched",
+  COMMITTED_SURFACES_UNAVAILABLE: "committed_surfaces_unavailable",
+  OKMSG_MISSING: "okmsg_missing",
+  ISERROR_SITES_MISSING: "iserror_sites_missing",
+  ISERROR_NOT_VIA_OKMSG: "iserror_not_via_okmsg",
+  HTTP_JSON_MISSING: "http_json_missing",
+  DERIVED_SETTLE_CLAIM_NOT_REJECTED: "derived_settle_claim_not_rejected",
+  USAGE: "usage",
 });
+
+export const HONESTY_NOTES = Object.freeze([
+  "Independent oracle over SameDayDesk MCP tool results. isError true is never settlement.",
+  "HTTP 200 and a JSON-RPC result (no error field) are the MCP success envelope, not a paid receipt.",
+  "server/routes/mcp.js is the committed surface. This pack records it; it does not rewrite it.",
+  "okMsg(id, result) is the SDS isError envelope. errMsg is a protocol error. Neither is settle.",
+  "This pack does not call Stripe, x402 facilitators, or https://samedaydesk.com/mcp.",
+  "A successful tool result without isError is not_proven settlement here.",
+  "purchaseAuthority is always false. paid is always false. liveTouched is always false.",
+]);

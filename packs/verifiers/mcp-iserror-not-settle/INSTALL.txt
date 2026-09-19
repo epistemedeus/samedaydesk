@@ -1,15 +1,17 @@
 MCP isError ≠ settle verifier (offline)
 
-Requires Node 20 or 22. No npm install.
+Requires Node 22. No npm install.
 
-Cold run:
-  node bin/verify.mjs --suite
+Cold run (real server/routes/mcp.js):
+  node bin/verify.mjs --committed
 
 Seeded failure (must exit 1):
   node bin/verify.mjs --case fixtures/fail/sds-http-200-unpaid-fixpack-claimed-settle.json
 
 From the samedaydesk repo root:
-  node packs/verifiers/mcp-iserror-not-settle/bin/verify.mjs --suite
+  node packs/verifiers/mcp-iserror-not-settle/bin/verify.mjs --committed
+  node packs/verifiers/mcp-iserror-not-settle/bin/verify.mjs --case \
+    packs/verifiers/mcp-iserror-not-settle/fixtures/fail/sds-http-200-unpaid-fixpack-claimed-settle.json
   node --test packs/verifiers/mcp-iserror-not-settle/test/*.test.mjs
 
-Refused flags: --live --pay --paid --payment --publish --neo --deploy --facilitator
+Refused flags: --live --pay --paid --payment --publish --neo --deploy --facilitator --checkout

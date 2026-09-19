@@ -27,20 +27,29 @@ a Stripe license check. A ledger that banks those as paid is wrong.
 
 ## Cold start
 
-No install. Node 20+. From this directory or the repo root:
+No install. Node 22. From the repo root the default command pins the real
+`server/routes/mcp.js` (sha256, `okMsg` result envelope, `isError: true` sites)
+and rejects a synthetic HTTP 200 settle claim against that committed text.
 
 ```bash
 node packs/verifiers/mcp-iserror-not-settle/bin/verify.mjs
-node packs/verifiers/mcp-iserror-not-settle/bin/verify.mjs --suite
+node packs/verifiers/mcp-iserror-not-settle/bin/verify.mjs --committed
 ```
 
-Exit 0 means every `fixtures/pass` case passed the invariant and every
-`fixtures/fail` case was rejected.
+Exit 0 means every committed `isError` site is a JSON-RPC **result** (not
+settle) and claiming `settled: true` on those envelopes is rejected.
+
+Replay pack fixtures:
+
+```bash
+node packs/verifiers/mcp-iserror-not-settle/bin/verify.mjs --suite
+```
 
 ## Seeded failure
 
 The canonical reject is HTTP 200 + unpaid Fix Pack `isError` claimed as
-settled because the transport succeeded:
+settled because the transport succeeded. A naive `HTTP 2xx && result &&
+!error` ledger would accept it.
 
 ```bash
 node packs/verifiers/mcp-iserror-not-settle/bin/verify.mjs --case \
@@ -66,7 +75,7 @@ node --test packs/verifiers/mcp-iserror-not-settle/test/*.test.mjs
 ## Limits
 
 - No `--live`, `--pay`, `--payment`, `--publish`, `--neo`, `--deploy`.
-- Does not fetch `https://samedaydesk.com/mcp`.
+- Does not fetch a live MCP URL.
 - Does not change prices, SKUs, or payment rails.
 - A successful tool result with `x402/payment-response` is `not_proven` here.
   Chain / facilitator proof is a different pack.

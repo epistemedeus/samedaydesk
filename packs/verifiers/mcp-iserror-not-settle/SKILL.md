@@ -1,6 +1,6 @@
 ---
 name: mcp-iserror-not-settle
-description: Offline SameDayDesk verifier that refuses to treat MCP isError true, JSON-RPC errors, or HTTP 200 as settlement. Run the bundled suite or a caller case file. No live, pay, or publish flags.
+description: Offline SameDayDesk verifier that refuses to treat MCP isError true, JSON-RPC errors, or HTTP 200 as settlement. Pins server/routes/mcp.js on a cold run. No live, pay, or publish flags.
 ---
 
 # mcp-iserror-not-settle
@@ -10,13 +10,13 @@ Cold-agent skill for the SameDayDesk MCP isError≠settle verifier.
 ## Cold start
 
 ```bash
-node packs/verifiers/mcp-iserror-not-settle/bin/verify.mjs --suite
+node packs/verifiers/mcp-iserror-not-settle/bin/verify.mjs --committed
 ```
 
 From this pack directory:
 
 ```bash
-node bin/verify.mjs --suite
+node bin/verify.mjs --committed
 ```
 
 ## Seeded failure
@@ -26,7 +26,8 @@ node packs/verifiers/mcp-iserror-not-settle/bin/verify.mjs --case \
   packs/verifiers/mcp-iserror-not-settle/fixtures/fail/sds-http-200-unpaid-fixpack-claimed-settle.json
 ```
 
-Non-zero exit. `isError: true` plus a settle claim is rejected.
+Non-zero exit. `isError: true` plus a settle claim is rejected. A naive HTTP
+2xx JSON-RPC-result ledger would accept that file.
 
 ## Rules
 
