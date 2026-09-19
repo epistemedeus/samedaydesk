@@ -1,0 +1,34 @@
+{
+  "id": "x402scan-unavailable-as-demand",
+  "surface": "observatory",
+  "class": "absence-as-demand",
+  "seededAbsenceAsDemand": true,
+  "expectReject": true,
+  "cite": "server/lib/observatory/contract.js",
+  "expectedReasons": ["absence_as_demand", "x402scan_unavailable_as_demand", "treat_absence_as_demand"],
+  "defect": "Seeded: documented-unavailable x402scan (micropayment, never called as success) treated as demand.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "verdict": "accept",
+    "pass": true,
+    "surface": "observatory",
+    "sourceId": "x402scan",
+    "availability": "unavailable",
+    "called": false,
+    "documentedUnavailable": true,
+    "x402scanAsDemand": true,
+    "treatAbsenceAsDemand": true,
+    "absenceAsDemand": true,
+    "demand": true,
+    "paidDemand": true,
+    "demandCount": 1,
+    "action": "treat_as_demand",
+    "recommendation": "call_unavailable_as_demand",
+    "paidActivity": {
+      "available": false,
+      "reason": "x402scan data endpoints require micropayment; documented only, never called as success"
+    },
+    "message": "documented unavailable x402scan treated as demand (seeded fail)"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "samedaydesk-regression-sds-w822-absence",
+  "private": true,
+  "type": "module",
+  "description": "SDS absence≠demand regression (w822): cold-read x402scan/moltjobs/additivity/no-change pins; reject invented demand from absence; seeded x402scan documented-unavailable refuse. Write boundary tests/regression-sds/w822-absence/**.",
+  "scripts": {
+    "test": "node --test --test-concurrency=1 *.test.mjs",
+    "corpus": "node run.mjs --json",
+    "seeded-failure": "node run.mjs --seeded-failure --json"
+  }
+}

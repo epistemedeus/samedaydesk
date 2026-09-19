@@ -1,0 +1,27 @@
+{
+  "id": "x402scan-unavailable-honest",
+  "surface": "observatory",
+  "class": "honest-withheld",
+  "expectReject": false,
+  "cite": "server/lib/observatory/contract.js",
+  "defect": null,
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "observatory",
+    "sourceId": "x402scan",
+    "availability": "unavailable",
+    "called": false,
+    "documentedUnavailable": true,
+    "demand": false,
+    "paidDemand": false,
+    "notDemand": true,
+    "demandSignal": "withheld",
+    "withheldConclusions": ["demand", "paid_demand_population", "settlement"],
+    "paidActivity": {
+      "available": false,
+      "reason": "x402scan data endpoints require micropayment; documented only, never called as success"
+    },
+    "message": "x402scan documented unavailable; demand withheld; never called as success"
+  }
+}

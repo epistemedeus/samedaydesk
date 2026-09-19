@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "feature": "absence-not-demand-w822",
+  "repo": "samedaydesk",
+  "writeBoundary": "tests/regression-sds/w822-absence/**",
+  "disjointFrom": "tests/regression-sds/absence-not-demand-w7/**",
+  "principle": {
+    "id": "absence-not-demand",
+    "statement": "Documented-unavailable sources, refused conversion ratios, non-additive snapshots, missing-not-zero metrics, scoped no-change, presence snapshots, and unpaid 402 traces are not market or paid demand. Unavailable, partial, empty, and stale are not zeros and are not demand."
+  },
+  "seededAbsenceAsDemand": "x402scan-unavailable-as-demand",
+  "cases": [
+    {
+      "id": "x402scan-unavailable-honest",
+      "file": "fixtures/cases/x402scan-unavailable-honest.json",
+      "expect": "accept",
+      "class": "honest-withheld"
+    },
+    {
+      "id": "moltjobs-composition-honest",
+      "file": "fixtures/cases/moltjobs-composition-honest.json",
+      "expect": "accept",
+      "class": "honest-withheld"
+    },
+    {
+      "id": "missing-metrics-not-zero-honest",
+      "file": "fixtures/cases/missing-metrics-not-zero-honest.json",
+      "expect": "accept",
+      "class": "honest-withheld"
+    },
+    {
+      "id": "scoped-no-change-honest",
+      "file": "fixtures/cases/scoped-no-change-honest.json",
+      "expect": "accept",
+      "class": "honest-withheld"
+    },
+    {
+      "id": "x402scan-unavailable-as-demand",
+      "file": "fixtures/cases/x402scan-unavailable-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "seededAbsenceAsDemand": true,
+      "expectedReasons": ["absence_as_demand", "x402scan_unavailable_as_demand"]
+    },
+    {
+      "id": "moltjobs-composition-as-conversion",
+      "file": "fixtures/cases/moltjobs-composition-as-conversion.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "composition_as_conversion"]
+    },
+    {
+      "id": "sources-additive-as-demand",
+      "file": "fixtures/cases/sources-additive-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "sources_additive_as_demand"]
+    },
+    {
+      "id": "missing-as-zero-then-demand",
+      "file": "fixtures/cases/missing-as-zero-then-demand.json",
+      "expect": "reject",
+      "class": "absence-as-zero",
+      "expectedReasons": ["absence_as_demand", "missing_as_zero_demand"]
+    },
+    {
+      "id": "stale-partial-as-demand",
+      "file": "fixtures/cases/stale-partial-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "stale_partial_as_demand"]
+    },
+    {
+      "id": "scoped-no-change-as-demand",
+      "file": "fixtures/cases/scoped-no-change-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "scoped_no_change_as_demand"]
+    },
+    {
+      "id": "presence-snapshot-as-demand",
+      "file": "fixtures/cases/presence-snapshot-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "presence_snapshot_as_demand"]
+    },
+    {
+      "id": "liquidity-funnel-as-demand",
+      "file": "fixtures/cases/liquidity-funnel-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "liquidity_funnel_as_demand"]
+    },
+    {
+      "id": "series-buyers-as-unique-humans",
+      "file": "fixtures/cases/series-buyers-as-unique-humans.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "series_buyers_as_unique_humans"]
+    },
+    {
+      "id": "unpaid-402-trace-as-demand",
+      "file": "fixtures/cases/unpaid-402-trace-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "unpaid_402_trace_as_demand"]
+    },
+    {
+      "id": "moltjobs-unlabeled-composition-as-demand",
+      "file": "fixtures/cases/moltjobs-unlabeled-composition-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "composition_as_conversion"]
+    },
+    {
+      "id": "liquidity-unlabeled-as-demand",
+      "file": "fixtures/cases/liquidity-unlabeled-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "liquidity_funnel_as_demand"]
+    },
+    {
+      "id": "x402stats-series-unlabeled-as-demand",
+      "file": "fixtures/cases/x402stats-series-unlabeled-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "series_buyers_as_unique_humans"]
+    },
+    {
+      "id": "buyer-setup-nested-as-demand",
+      "file": "fixtures/cases/buyer-setup-nested-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "unpaid_402_trace_as_demand"]
+    }
+  ],
+  "counts": {
+    "total": 18,
+    "accept": 4,
+    "reject": 14,
+    "seededAbsenceAsDemand": 1
+  },
+  "boundary": {
+    "paymentSent": false,
+    "stripeOrX402": false,
+    "neoPublish": false,
+    "liveFetch": false
+  }
+}
