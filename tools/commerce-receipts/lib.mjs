@@ -316,6 +316,8 @@ function validateRequest(request, record, errors) {
   }
   if (typeof request.url !== "string" || !request.url.startsWith(RESOURCE_PREFIX)) {
     errors.push(error("invalid_shape", "$.request.url", "url must be on the SDS origin"));
+  } else if (typeof record.resource === "string" && request.url !== record.resource) {
+    errors.push(error("request_url_mismatch", "$.request.url", "request.url must equal resource"));
   }
   if (!isPlainObject(request.headers)) {
     errors.push(error("invalid_shape", "$.request.headers", "headers must be an object"));
@@ -358,12 +360,29 @@ function validateOfferReceipt(offerReceipt, record, errors) {
         }
         allowKeys(offer.payload, PAYLOAD_KEYS, `${path}.payload`, errors);
         requireKeys(offer.payload, PAYLOAD_KEYS, `${path}.payload`, errors);
+        if (!Number.isInteger(offer.payload.version) || offer.payload.version < 1) {
+          errors.push(error("invalid_shape", `${path}.payload.version`, "version must be a positive integer"));
+        }
         const accept = accepts[offer.acceptIndex];
-        if (accept && offer.payload.amount !== accept.amount) {
-          errors.push(error("offer_accept_mismatch", `${path}.payload.amount`, "offer amount must equal accept amount"));
+        if (accept && offer.payload.scheme !== accept.scheme) {
+          errors.push(error("offer_accept_mismatch", `${path}.payload.scheme`, "offer scheme must equal accept scheme"));
+        }
+        if (accept && offer.payload.network !== accept.network) {
+          errors.push(error("offer_accept_mismatch", `${path}.payload.network`, "offer network must equal accept network"));
+        }
+        if (accept && addr(offer.payload.asset) !== addr(accept.asset)) {
+          errors.push(error("offer_accept_mismatch", `${path}.payload.asset`, "offer asset must equal accept asset"));
         }
         if (accept && addr(offer.payload.payTo) !== addr(accept.payTo)) {
           errors.push(error("offer_accept_mismatch", `${path}.payload.payTo`, "offer payTo must equal accept payTo"));
+        }
+        if (accept && offer.payload.amount !== accept.amount) {
+          errors.push(error("offer_accept_mismatch", `${path}.payload.amount`, "offer amount must equal accept amount"));
+        }
+        if (typeof record.resource === "string" && offer.payload.resourceUrl !== record.resource) {
+          errors.push(
+            error("offer_accept_mismatch", `${path}.payload.resourceUrl`, "offer resourceUrl must equal resource"),
+          );
         }
       }
     }
@@ -428,6 +447,15 @@ export function validateRecord(input, catalog = loadCatalog()) {
   }
   if (typeof input.resource !== "string" || !input.resource.startsWith(RESOURCE_PREFIX)) {
     errors.push(error("invalid_shape", "$.resource", "resource must be on the SDS origin"));
+  } else {
+    try {
+      const resourceUrl = new URL(input.resource);
+      if (typeof input.route === "string" && ROUTE_RE.test(input.route) && resourceUrl.pathname !== input.route) {
+        errors.push(error("resource_route_mismatch", "$.route", "route must equal the resource pathname"));
+      }
+    } catch {
+      errors.push(error("invalid_shape", "$.resource", "resource must be a URL on the SDS origin"));
+    }
   }
   expectString(input.route, ROUTE_RE, "$.route", errors);
   if (!HTTP_METHODS.has(input.method)) {
@@ -668,8 +696,10 @@ export function evaluateSeededFailure(catalog = loadCatalog()) {
 
 export function refusedFlag(argv) {
   for (const arg of argv) {
-    const name = String(arg).replace(/^--/, "");
-    if (REFUSED_FLAGS.includes(name)) return arg;
+    const raw = String(arg);
+    if (!raw.startsWith("--")) continue;
+    const name = raw.slice(2).split("=")[0];
+    if (REFUSED_FLAGS.includes(name)) return `--${name}`;
   }
   return null;
 }

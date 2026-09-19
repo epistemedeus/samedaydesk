@@ -202,14 +202,28 @@ test("CLI refuses --live, --pay, --publish, and --neo", () => {
     "--checkout",
     "--publish",
     "--registry",
+    "--refresh",
+    "--settle",
     "--neo",
     "--neo-kernel-vendor",
+    "--live=true",
+    "--pay=now",
+    "--neo-kernel-vendor=1",
   ]) {
     const result = runCli([flag, "--cold"]);
     assert.equal(result.status, 2, flag);
     const body = JSON.parse(result.stdout);
-    assert.equal(body.error.code, "REFUSED");
+    assert.equal(body.error.code, "REFUSED", flag);
   }
+});
+
+test("CLI unknown flag and missing --seeded-failure value are USAGE exit 2", () => {
+  const unknown = runCli(["--foo"]);
+  assert.equal(unknown.status, 2, unknown.stderr || unknown.stdout);
+  assert.equal(JSON.parse(unknown.stdout).error.code, "USAGE");
+  const missing = runCli(["--seeded-failure"]);
+  assert.equal(missing.status, 2, missing.stderr || missing.stdout);
+  assert.equal(JSON.parse(missing.stdout).error.code, "USAGE");
 });
 
 test("charged true labeled unpaid is paid_as_unpaid", () => {
@@ -244,6 +258,46 @@ test("offer payload amount mismatch is rejected", () => {
   const result = validateRecord(record, catalog);
   assert.equal(result.ok, false);
   assert.ok(result.errors.some((item) => item.code === "offer_accept_mismatch"));
+});
+
+test("offer payload scheme, network, asset, and resourceUrl must match accept", () => {
+  const record = cloneValid("unpaid-offer-receipt-extract.json");
+  record.offerReceipt.offers[0].payload.scheme = "upto";
+  record.offerReceipt.offers[0].payload.network = "eip155:1";
+  record.offerReceipt.offers[0].payload.asset = "0x0000000000000000000000000000000000000001";
+  record.offerReceipt.offers[0].payload.resourceUrl = "https://agents.samedaydesk.com/scan";
+  const result = validateRecord(record, catalog);
+  assert.equal(result.ok, false);
+  const paths = result.errors.filter((item) => item.code === "offer_accept_mismatch").map((item) => item.path);
+  assert.ok(paths.includes("$.offerReceipt.offers[0].payload.scheme"));
+  assert.ok(paths.includes("$.offerReceipt.offers[0].payload.network"));
+  assert.ok(paths.includes("$.offerReceipt.offers[0].payload.asset"));
+  assert.ok(paths.includes("$.offerReceipt.offers[0].payload.resourceUrl"));
+});
+
+test("resource pathname and request.url must match the receipt identity", () => {
+  const routed = cloneValid("unpaid-402-extract.json");
+  routed.route = "/scan";
+  const routedResult = evaluateRecord(routed, catalog);
+  assert.equal(routedResult.ok, false);
+  assert.ok(routedResult.codes.includes("resource_route_mismatch"));
+
+  const urlDrift = cloneValid("unpaid-402-extract.json");
+  urlDrift.request.url = "https://agents.samedaydesk.com/scan";
+  const urlResult = evaluateRecord(urlDrift, catalog);
+  assert.equal(urlResult.ok, false);
+  assert.ok(urlResult.codes.includes("request_url_mismatch"));
+});
+
+test("designated seed pointing at a valid unpaid fixture is SEED_ACCEPTED", () => {
+  const broken = structuredClone(catalog);
+  broken.designatedSeed = {
+    ...catalog.designatedSeed,
+    file: "valid/unpaid-402-extract.json",
+  };
+  const seed = evaluateSeededFailure(broken);
+  assert.equal(seed.caught, false);
+  assert.equal(seed.error.code, "SEED_ACCEPTED");
 });
 
 test("valid fixtures never carry a payment header or settlement", () => {

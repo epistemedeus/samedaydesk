@@ -18,7 +18,8 @@ node --test tools/commerce-receipts/test.mjs
 
 `--live`, `--pay`, `--payment`, `--checkout`, `--publish`, `--registry`,
 `--refresh`, `--settle`, `--neo`, and `--neo-kernel-vendor` are refused
-(exit 2).
+(exit 2), including `--flag=value` forms. Unknown flags and missing
+`--seeded-failure` values are JSON `USAGE` (exit 2).
 
 ## Unpaid-only
 
@@ -41,6 +42,7 @@ node tools/commerce-receipts/cli.mjs --seeded-failure paid-as-unpaid
 ```
 
 Exit 1, `error.code` `SEED_REJECT`, `codes` includes `paid_as_unpaid`.
+If the seed is not caught (`SEED_ACCEPTED` / `SEED_MISS`), exit 2.
 
 ## Record fields
 
@@ -53,7 +55,8 @@ JSON Schema: `schema/commerce-receipt.v1.json`. Catalog:
 | `charged` / `paymentSent` | must be false |
 | `httpStatus` | `402` for challenge kinds; `null` for `unpaid_buyer_stop` |
 | `accepts` | exact Base USDC to the SDS pin `payTo` |
-| `offerReceipt.offers` | unsigned offer identity; not settlement |
+| `resource` / `route` / `request.url` | pathname equals `route`; `request.url` equals `resource` |
+| `offerReceipt.offers` | unsigned offer identity; payload scheme/network/asset/payTo/amount/resourceUrl must match accept + resource; not settlement |
 | `offerReceipt.receipt` | if present → `paid_as_unpaid` |
 | `settlement` | if present → `paid_as_unpaid` |
 | `joinKeys` | `receipt_id`, `resource`, `amount`, `pay_to` (declared, not joined here) |
