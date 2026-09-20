@@ -20,16 +20,22 @@ const FORBIDDEN = new Set([
   "--live",
 ]);
 
+function forbiddenFlag(arg) {
+  if (typeof arg !== "string" || !arg.startsWith("-")) return false;
+  const name = arg.toLowerCase().split("=")[0];
+  return FORBIDDEN.has(name);
+}
+
 function writeJson(value) {
   process.stdout.write(`${JSON.stringify(value, null, 2)}\n`);
 }
 
 function parseArgs(argv) {
-  const flags = { help: false, seeded: null, listSeeded: false };
+  const flags = Object.assign(Object.create(null), { help: false, seeded: null, listSeeded: false });
   let command = null;
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
-    if (FORBIDDEN.has(arg) || arg.startsWith("--pay=") || arg.startsWith("--checkout=")) {
+    if (forbiddenFlag(arg)) {
       throw Object.assign(new Error(`forbidden flag: ${arg}`), { code: "payment-forbidden" });
     }
     if (arg === "--help" || arg === "-h") flags.help = true;

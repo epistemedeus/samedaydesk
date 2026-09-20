@@ -36,3 +36,10 @@ test("CLI refuses --checkout", () => {
   const body = JSON.parse(result.stderr);
   assert.equal(body.error.code, "payment-forbidden");
 });
+
+test("CLI refuses --live=url as payment-forbidden", () => {
+  const result = run(["--live=https://example.com"]);
+  assert.equal(result.status, 2, result.stderr);
+  const body = JSON.parse(result.stderr);
+  assert.equal(body.error.code, "payment-forbidden");
+});

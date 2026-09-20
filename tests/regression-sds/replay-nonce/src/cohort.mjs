@@ -29,6 +29,12 @@ export function loadManifest() {
   return readJson(join(FIXTURES, "manifest.json"));
 }
 
+export function resolveFlushId(step, entry) {
+  if (step && Object.prototype.hasOwnProperty.call(step, "flushId")) return step.flushId;
+  if (entry && Object.prototype.hasOwnProperty.call(entry, "flushId")) return entry.flushId;
+  return PINNED_NONCE_A;
+}
+
 function checkExpect(actual, expected, errors, prefix) {
   if (expected === undefined) return;
   if (actual !== expected) {
@@ -49,12 +55,14 @@ async function runStoreCase(entry) {
   const { store } = createStore();
   const errors = [];
   const acks = [];
+  const flushIds = [];
   const stepErrors = [];
   for (const step of entry.steps || []) {
-    const flushId = step.flushId || entry.flushId || PINNED_NONCE_A;
+    const flushId = resolveFlushId(step, entry);
     const delta = makeDelta(step.delta || {});
     const result = await applyFlush(store, flushId, delta);
     acks.push(result.status);
+    flushIds.push(result.flushId);
     stepErrors.push(result.error);
     if (step.expectError) {
       checkExpect(result.error, step.expectError, errors, `step ${flushId} error`);
@@ -67,12 +75,14 @@ async function runStoreCase(entry) {
   checkDeep(acks, expect.acks, errors, "acks");
   checkExpect(snapshot.total, expect.snapshotTotal, errors, "snapshotTotal");
   if (expect.errors) checkDeep(stepErrors, expect.errors, errors, "errors");
+  if (expect.flushIds) checkDeep(flushIds, expect.flushIds, errors, "flushIds");
   if (expect.error === null) {
     const unexpected = stepErrors.filter((code, i) => code && !(entry.steps?.[i]?.expectError));
     if (unexpected.length) errors.push(`unexpected errors: ${unexpected.join(",")}`);
   }
   return {
     acks,
+    flushIds,
     stepErrors,
     snapshotTotal: snapshot.total,
     snapshotHumans: snapshot.humans,
@@ -83,7 +93,7 @@ async function runStoreCase(entry) {
 function runWalEntryCase(entry) {
   const raw = {
     flushId: Object.prototype.hasOwnProperty.call(entry, "flushId") ? entry.flushId : PINNED_NONCE_A,
-    createdAt: entry.createdAt || PINNED_CREATED_AT,
+    createdAt: Object.prototype.hasOwnProperty.call(entry, "createdAt") ? entry.createdAt : PINNED_CREATED_AT,
     delta: entry.omitDelta ? undefined : makeDelta(entry.delta || { total: 1, humans: 1 }),
   };
   if (entry.omitFlushId) delete raw.flushId;
@@ -118,15 +128,15 @@ function runFallbackCase(entry) {
     for (const step of entry.steps || []) {
       if (step.action === "enqueue") {
         const result = fallback.enqueuePendingFlush(hydrateWalEntry({
-          flushId: step.flushId || entry.flushId || PINNED_NONCE_A,
+          flushId: resolveFlushId(step, entry),
           createdAt: PINNED_CREATED_AT,
           delta: step.delta || { total: 2, humans: 2 },
         }));
         outcomes.push(result.outcome);
       } else if (step.action === "record") {
         const result = fallback.recordSuccessfulFlush({
-          flushId: step.flushId || entry.flushId || PINNED_NONCE_A,
-          status: step.status || "applied",
+          flushId: resolveFlushId(step, entry),
+          status: step.status ?? "applied",
           at: PINNED_CREATED_AT,
         });
         outcomes.push(result.outcome);
@@ -166,27 +176,38 @@ function runSqlCase(entry) {
 }
 
 export async function runCase(entry) {
-  const loaded = entry.file ? fixture(entry.file) : {};
-  entry = { ...loaded, ...entry };
-  let detail;
-  if (entry.kind === "store") detail = await runStoreCase(entry);
-  else if (entry.kind === "wal-entry") detail = runWalEntryCase(entry);
-  else if (entry.kind === "wal-state") detail = runWalStateCase(entry);
-  else if (entry.kind === "fallback") detail = runFallbackCase(entry);
-  else if (entry.kind === "sql-source") detail = runSqlCase(entry);
-  else detail = { caseErrors: [`unknown kind ${entry.kind}`] };
+  try {
+    const loaded = entry.file ? fixture(entry.file) : {};
+    entry = { ...loaded, ...entry };
+    let detail;
+    if (entry.kind === "store") detail = await runStoreCase(entry);
+    else if (entry.kind === "wal-entry") detail = runWalEntryCase(entry);
+    else if (entry.kind === "wal-state") detail = runWalStateCase(entry);
+    else if (entry.kind === "fallback") detail = runFallbackCase(entry);
+    else if (entry.kind === "sql-source") detail = runSqlCase(entry);
+    else detail = { caseErrors: [`unknown kind ${entry.kind}`] };
 
-  const caseErrors = detail.caseErrors || [];
-  const { caseErrors: _ignored, ok: engineOk, ...rest } = detail;
-  return {
-    id: entry.id,
-    ok: caseErrors.length === 0,
-    kind: entry.kind,
-    file: entry.file,
-    engineOk: engineOk ?? null,
-    ...rest,
-    errors: caseErrors,
-  };
+    const caseErrors = detail.caseErrors || [];
+    const { caseErrors: _ignored, ok: engineOk, ...rest } = detail;
+    return {
+      id: entry.id,
+      ok: caseErrors.length === 0,
+      kind: entry.kind,
+      file: entry.file,
+      engineOk: engineOk ?? null,
+      ...rest,
+      errors: caseErrors,
+    };
+  } catch (err) {
+    return {
+      id: entry?.id ?? null,
+      ok: false,
+      kind: entry?.kind ?? null,
+      file: entry?.file,
+      engineOk: null,
+      errors: [String(err.code || err.message || err)],
+    };
+  }
 }
 
 export async function runColdCohort() {
@@ -221,7 +242,9 @@ export async function runColdCohort() {
         byId["conflicting-replay"]?.ok === true
         && (byId["conflicting-replay"]?.stepErrors || []).includes("pulse_flush_id_conflict")
         && byId["conflicting-replay"]?.snapshotTotal === 2,
-      freshNonceApplies: byId["fresh-nonce-applies"]?.snapshotTotal === 5,
+      freshNonceApplies:
+        byId["fresh-nonce-applies"]?.ok === true
+        && byId["fresh-nonce-applies"]?.snapshotTotal === 5,
       invalidNonceRejected: byId["invalid-flush-id"]?.ok === true,
       sqlUuidNonce: byId["sql-nonce-is-uuid"]?.ok === true,
       payment: false,

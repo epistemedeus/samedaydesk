@@ -24,8 +24,9 @@ const ENGINES = {
   sql: ENGINE_SQL,
 };
 
-function report({ id, rejected, code, message, extra = {} }) {
+export function buildSeededReport({ id, rejected, code, message, extra = {} }) {
   return {
+    ...extra,
     schema: SCHEMA,
     ok: rejected === true,
     mode: "seeded-failure",
@@ -37,8 +38,11 @@ function report({ id, rejected, code, message, extra = {} }) {
     paymentSent: false,
     checkout: false,
     publish: false,
-    ...extra,
   };
+}
+
+function report(args) {
+  return buildSeededReport(args);
 }
 
 async function replayAsFreshApply() {
@@ -161,20 +165,28 @@ function paymentToMintNonce() {
   });
 }
 
-const HANDLERS = {
+const HANDLERS = Object.assign(Object.create(null), {
   "replay-as-fresh-apply": replayAsFreshApply,
   "conflict-as-ok": conflictAsOk,
   "consumed-nonce-reissued": consumedNonceReissued,
   "payment-to-mint-nonce": paymentToMintNonce,
-};
+});
 
 export function listSeededFailures() {
   return Object.keys(HANDLERS);
 }
 
 export async function runSeededFailure(id) {
+  if (typeof id !== "string" || !Object.hasOwn(HANDLERS, id)) {
+    return report({
+      id,
+      rejected: false,
+      code: "unknown_seeded_failure",
+      message: `unknown seeded failure ${id}`,
+    });
+  }
   const handler = HANDLERS[id];
-  if (!handler) {
+  if (typeof handler !== "function") {
     return report({
       id,
       rejected: false,

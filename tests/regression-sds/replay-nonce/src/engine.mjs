@@ -126,7 +126,7 @@ export function readPulseSql() {
 export function sqlNonceContract(sql = readPulseSql()) {
   return {
     uuidArg: /create or replace function public\.pulse_apply_delta\(p_flush_id uuid, p_delta jsonb\)/.test(sql),
-    nullNonce: /if p_flush_id is null then[\s\S]*raise exception 'pulse_invalid_flush_id'/.test(sql),
+    nullNonce: /if p_flush_id is null then\s+raise exception 'pulse_invalid_flush_id'/.test(sql),
     conflict: /raise exception 'pulse_flush_id_conflict'/.test(sql),
     alreadyApplied: /'status', 'already_applied'/.test(sql),
     receipts: /create table if not exists public\.pulse_flush_receipts/.test(sql),
