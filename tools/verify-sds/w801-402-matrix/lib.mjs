@@ -31,7 +31,9 @@ const ADDR_RE = /^0x[0-9a-fA-F]{40}$/;
 const TX_RE = /^0x[a-f0-9]{64}$/;
 const RFC3339_RE = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})Z$/;
 const RESOURCE_PREFIX = "https://agents.samedaydesk.com/";
-const PAYMENT_HEADER_RE = /^(PAYMENT-SIGNATURE|X-PAYMENT|PAYMENT-RESPONSE)$/i;
+const RESOURCE_MAX = 2048;
+const PAYMENT_HEADER_RE =
+  /^(PAYMENT-SIGNATURE|X-PAYMENT-RESPONSE|X-PAYMENT|PAYMENT-RESPONSE)$/i;
 const HTTP_METHODS = new Set(["GET", "POST"]);
 const FORBIDDEN_KEYS = new Set(["__proto__", "prototype", "constructor"]);
 
@@ -309,7 +311,7 @@ export function indexRoutes(matrix = loadMatrix()) {
 }
 
 export function isPaymentHeaderName(name) {
-  return PAYMENT_HEADER_RE.test(String(name || ""));
+  return PAYMENT_HEADER_RE.test(String(name || "").trim());
 }
 
 export function naiveVerdict(record) {
@@ -372,7 +374,11 @@ function validateRequest(request, record, errors) {
   if (request.method !== record.method) {
     errors.push(error("invalid_shape", "$.request.method", "request method must equal method"));
   }
-  if (typeof request.url !== "string" || !request.url.startsWith(RESOURCE_PREFIX)) {
+  if (
+    typeof request.url !== "string" ||
+    !request.url.startsWith(RESOURCE_PREFIX) ||
+    request.url.length > RESOURCE_MAX
+  ) {
     errors.push(error("invalid_shape", "$.request.url", "request url must be an SDS origin URL"));
   } else if (request.url !== record.resource) {
     errors.push(error("resource_mismatch", "$.request.url", "request url must equal resource"));
@@ -438,7 +444,11 @@ export function validateRecord(input, matrix = loadMatrix()) {
   if (!HTTP_METHODS.has(input.method)) {
     errors.push(error("invalid_shape", "$.method", "method must be GET or POST"));
   }
-  if (typeof input.resource !== "string" || !input.resource.startsWith(RESOURCE_PREFIX)) {
+  if (
+    typeof input.resource !== "string" ||
+    !input.resource.startsWith(RESOURCE_PREFIX) ||
+    input.resource.length > RESOURCE_MAX
+  ) {
     errors.push(error("invalid_shape", "$.resource", "resource must be an SDS origin URL"));
   }
   if (parseRfc3339(input.observedAt) === null) {
@@ -483,7 +493,12 @@ export function validateRecord(input, matrix = loadMatrix()) {
 
   if (typeof input.amountDisplayUsd !== "string" || !DISPLAY_RE.test(input.amountDisplayUsd)) {
     errors.push(error("invalid_shape", "$.amountDisplayUsd", "amountDisplayUsd must be a decimal string"));
-  } else if (atomicOk && ATOMIC_RE.test(input.amountAtomic) && input.amountDisplayUsd === input.amountAtomic) {
+  } else if (
+    atomicOk &&
+    ATOMIC_RE.test(input.amountAtomic) &&
+    (input.amountDisplayUsd === input.amountAtomic ||
+      Number(input.amountDisplayUsd) === Number(input.amountAtomic))
+  ) {
     errors.push(
       error(
         "wrong_units",
@@ -603,7 +618,11 @@ export function validateRecord(input, matrix = loadMatrix()) {
           `listed ${stale.listedAmountAtomic} is not catalog ${stale.catalogAmountAtomic} for ${stale.route}`,
         ),
       );
-    } else if (ATOMIC_RE.test(String(input.amountAtomic)) && input.amountAtomic !== row.amountAtomic) {
+    } else if (
+      typeof input.amountAtomic === "string" &&
+      ATOMIC_RE.test(input.amountAtomic) &&
+      input.amountAtomic !== row.amountAtomic
+    ) {
       errors.push(
         error(
           "amount_mismatch",
@@ -613,7 +632,8 @@ export function validateRecord(input, matrix = loadMatrix()) {
       );
     }
     if (
-      ATOMIC_RE.test(String(input.amountAtomic)) &&
+      typeof input.amountAtomic === "string" &&
+      ATOMIC_RE.test(input.amountAtomic) &&
       input.amountAtomic === row.amountAtomic &&
       typeof input.amountDisplayUsd === "string" &&
       DISPLAY_RE.test(input.amountDisplayUsd) &&
@@ -844,11 +864,16 @@ export function crossCheckInTreeCatalog(matrix = loadMatrix(), catalogPath = IN_
   for (const item of items) {
     const route = item?.resource?.routeTemplate;
     const method = item?.request?.method;
-    const accept = item?.accepts?.[0];
-    const amount = accept?.amount;
+    const accepts = Array.isArray(item?.accepts) ? item.accepts : [];
     const resource = item?.resource?.url;
     const key = routeKey(method, route);
     seen.add(key);
+    if (accepts.length !== 1) {
+      findings.push({ code: "accepts_not_exact", key, count: accepts.length });
+      continue;
+    }
+    const accept = accepts[0];
+    const amount = accept?.amount;
     const row = matrix.routes.find((entry) => entry.method === method && entry.route === route);
     if (!row) {
       findings.push({ code: "matrix_missing_route", key, amount, resource });
@@ -981,8 +1006,10 @@ export function coverageReport(matrix = loadMatrix()) {
 
 export function refusedFlag(argv) {
   for (const arg of argv) {
-    const name = String(arg).replace(/^--/, "");
-    if (REFUSED_FLAGS.includes(name)) return arg;
+    const raw = String(arg);
+    if (!raw.startsWith("--")) continue;
+    const name = raw.slice(2).split("=")[0];
+    if (REFUSED_FLAGS.includes(name)) return `--${name}`;
   }
   return null;
 }

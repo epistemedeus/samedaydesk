@@ -92,6 +92,20 @@ function write(value, ok, code = ok ? 0 : 1) {
   process.exit(code);
 }
 
+function failUsage(message) {
+  write(
+    {
+      ok: false,
+      error: {
+        code: "USAGE",
+        message,
+      },
+    },
+    false,
+    2,
+  );
+}
+
 const suiteRequested = Boolean(values.suite || values.cold);
 const exclusive =
   Number(suiteRequested) +
@@ -101,14 +115,12 @@ const exclusive =
   Number(Boolean(values["seeded-failure"]));
 
 if (exclusive > 1) {
-  process.stderr.write("Pass only one of --cold/--suite, --matrix, --cross-check, --coverage, or --seeded-failure.\n");
-  process.exit(2);
+  failUsage("Pass only one of --cold/--suite, --matrix, --cross-check, --coverage, or --seeded-failure.");
 }
 
 if (suiteRequested) {
   if (positionals.length > 0 || values["expect-reject"]) {
-    process.stderr.write("--cold/--suite does not take files or --expect-reject.\n");
-    process.exit(2);
+    failUsage("--cold/--suite does not take files or --expect-reject.");
   }
   const report = runSuite();
   const coverage = coverageReport();
@@ -188,8 +200,7 @@ if (values["seeded-failure"]) {
     );
   }
   if (positionals.length > 0 || values["expect-reject"]) {
-    process.stderr.write("--seeded-failure does not take files or --expect-reject.\n");
-    process.exit(2);
+    failUsage("--seeded-failure does not take files or --expect-reject.");
   }
   const seed = evaluateSeededFailure(requested);
   const summarize = (item) => ({
@@ -219,16 +230,14 @@ if (values["seeded-failure"]) {
 }
 
 if (positionals.length === 0) {
-  process.stderr.write(
-    "Pass --cold, --suite, --matrix, --cross-check, --coverage, --seeded-failure all, --help, or one or more JSON files.\n",
+  failUsage(
+    "Pass --cold, --suite, --matrix, --cross-check, --coverage, --seeded-failure all, --help, or one or more JSON files.",
   );
-  process.exit(2);
 }
 
 const expectedCode = values["expect-reject"];
 if (expectedCode && positionals.length !== 1) {
-  process.stderr.write("--expect-reject requires exactly one file.\n");
-  process.exit(2);
+  failUsage("--expect-reject requires exactly one file.");
 }
 
 const results = positionals.map((filePath) => validateFile(filePath));

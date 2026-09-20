@@ -303,13 +303,44 @@ test("CLI accepts a valid unpaid extract 5000 fixture", () => {
   assert.equal(body.results[0].amountAtomic, "5000");
 });
 
-test("CLI refuses --live, --pay, --payment, --publish, --settle, and --neo", () => {
-  for (const flag of ["--live", "--pay", "--payment", "--checkout", "--publish", "--registry", "--settle", "--neo"]) {
+test("CLI refuses --live, --pay, --payment, --publish, --settle, --neo, and equals forms", () => {
+  for (const flag of [
+    "--live",
+    "--pay",
+    "--payment",
+    "--checkout",
+    "--publish",
+    "--registry",
+    "--refresh",
+    "--settle",
+    "--neo",
+    "--live=true",
+    "--pay=now",
+  ]) {
     const result = runCli([flag, "--cold"]);
     assert.equal(result.status, 2, flag);
     const body = JSON.parse(result.stdout);
-    assert.equal(body.error.code, "REFUSED");
+    assert.equal(body.error.code, "REFUSED", flag);
   }
+});
+
+test("CLI missing command and mixed --cold args are JSON USAGE exit 2", () => {
+  const none = runCli([]);
+  assert.equal(none.status, 2, none.stderr || none.stdout);
+  assert.equal(JSON.parse(none.stdout).error.code, "USAGE");
+  const mixed = runCli(["--cold", "tools/verify-sds/w801-402-matrix/fixtures/valid/unpaid-402-extract-5000.json"]);
+  assert.equal(mixed.status, 2, mixed.stderr || mixed.stdout);
+  assert.equal(JSON.parse(mixed.stdout).error.code, "USAGE");
+  const exclusive = runCli(["--cold", "--matrix"]);
+  assert.equal(exclusive.status, 2, exclusive.stderr || exclusive.stdout);
+  assert.equal(JSON.parse(exclusive.stdout).error.code, "USAGE");
+  const seededExtra = runCli([
+    "--seeded-failure",
+    "bad-amount",
+    "tools/verify-sds/w801-402-matrix/fixtures/invalid/stale-listed-amount.json",
+  ]);
+  assert.equal(seededExtra.status, 2, seededExtra.stderr || seededExtra.stdout);
+  assert.equal(JSON.parse(seededExtra.stdout).error.code, "USAGE");
 });
 
 test("5000 atomic claimed as 5000 dollars is wrong_units", () => {
@@ -348,6 +379,40 @@ test("HTTP 200 labeled unpaid is bad_status", () => {
   assert.equal(result.naiveVerdict, "accept");
 });
 
+test("X-PAYMENT-RESPONSE and padded payment header names are paid_as_unpaid", () => {
+  const responseHeader = cloneValid("unpaid-402-extract-5000.json");
+  responseHeader.request.headers["X-PAYMENT-RESPONSE"] = "seeded";
+  const responseResult = evaluateRecord(responseHeader, matrix);
+  assert.equal(responseResult.ok, false);
+  assert.ok(responseResult.codes.includes("paid_as_unpaid"));
+  assert.equal(responseResult.naiveVerdict, "accept");
+
+  const padded = cloneValid("unpaid-402-extract-5000.json");
+  padded.request.headers[" X-PAYMENT "] = "seeded";
+  const paddedResult = evaluateRecord(padded, matrix);
+  assert.equal(paddedResult.ok, false);
+  assert.ok(paddedResult.codes.includes("paid_as_unpaid"));
+  assert.equal(paddedResult.naiveVerdict, "accept");
+});
+
+test("resource and request.url longer than 2048 are invalid_shape", () => {
+  const record = cloneValid("unpaid-402-extract-5000.json");
+  record.resource = `${record.resource}${"a".repeat(2048)}`;
+  record.request.url = record.resource;
+  const result = evaluateRecord(record, matrix);
+  assert.equal(result.ok, false);
+  assert.ok(result.codes.includes("invalid_shape"));
+});
+
+test("display 5000.0 for atomic 5000 is wrong_units", () => {
+  const record = cloneValid("unpaid-402-extract-5000.json");
+  record.amountDisplayUsd = "5000.0";
+  const result = evaluateRecord(record, matrix);
+  assert.equal(result.ok, false);
+  assert.ok(result.codes.includes("wrong_units"));
+  assert.equal(result.naiveVerdict, "accept");
+});
+
 test("copied settlement on unpaid 402 is forged_settle", () => {
   const record = cloneValid("unpaid-402-extract-5000.json");
   record.settlement = {
@@ -364,7 +429,7 @@ test("copied settlement on unpaid 402 is forged_settle", () => {
 test("valid fixtures never carry a payment header, settlement, or live edit", () => {
   for (const filePath of listJsonFiles(VALID_FIXTURES)) {
     const raw = readFileSync(filePath, "utf8");
-    assert.doesNotMatch(raw, /"PAYMENT-SIGNATURE"|"X-PAYMENT"|"PAYMENT-RESPONSE"/);
+    assert.doesNotMatch(raw, /"PAYMENT-SIGNATURE"|"X-PAYMENT-RESPONSE"|"X-PAYMENT"|"PAYMENT-RESPONSE"/);
     const record = loadJson(filePath);
     assert.equal(Object.hasOwn(record, "settlement"), false, basename(filePath));
     assert.equal(Object.hasOwn(record, "editLivePrice"), false, basename(filePath));
@@ -447,6 +512,28 @@ test("cross-check rejects catalog payTo, extra, timeout, and lastUpdated drift",
   assert.ok(codes.includes("extra_drift"), JSON.stringify(codes));
   assert.ok(codes.includes("last_updated_drift"), JSON.stringify(codes));
   assert.ok(codes.includes("x402_version_drift"), JSON.stringify(codes));
+});
+
+test("cross-check refuses a second catalog accept instead of matching accepts[0]", () => {
+  const catalog = loadJson(join(ROOT, "fixtures/presence/catalog/x402.json"));
+  catalog.items[0].accepts.push({
+    scheme: "exact",
+    network: "eip155:8453",
+    asset: catalog.items[0].accepts[0].asset,
+    amount: "1",
+    payTo: catalog.items[0].accepts[0].payTo,
+    maxTimeoutSeconds: 300,
+    extra: catalog.items[0].accepts[0].extra,
+  });
+  const dir = mkdtempSync(join(tmpdir(), "w801-accepts-"));
+  const catalogPath = join(dir, "x402.json");
+  writeFileSync(catalogPath, JSON.stringify(catalog));
+  const cross = crossCheckInTreeCatalog(matrix, catalogPath);
+  assert.equal(cross.ok, false, JSON.stringify(cross.findings));
+  assert.ok(
+    cross.findings.some((item) => item.code === "accepts_not_exact"),
+    JSON.stringify(cross.findings),
+  );
 });
 
 test("CLI --seeded-failure without a value is USAGE exit 2", () => {
