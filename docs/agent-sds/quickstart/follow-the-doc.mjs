@@ -35,6 +35,20 @@ const FORBIDDEN_FLAGS = new Set([
   "--live",
 ]);
 
+const FORBIDDEN_FENCE_PATTERNS = [
+  { id: "extract-batch", re: /\/extract\/batch/i },
+  { id: "pay-flag", re: /(?:^|[\s;])--pay(?:ment)?(?:\s|=|$)/ },
+  { id: "checkout-flag", re: /(?:^|[\s;])--checkout(?:\s|=|$)/ },
+  { id: "publish-flag", re: /(?:^|[\s;])--publish(?:\s|=|$)/ },
+  { id: "registry-flag", re: /(?:^|[\s;])--registry(?:\s|=|$)/ },
+  { id: "live-flag", re: /(?:^|[\s;])--live(?:\s|=|$)/ },
+  { id: "npm-install", re: /npm\s+install/i },
+  { id: "neomorphic", re: /neomorphic\.io/i },
+];
+
+const MAX_SPAWN_OUTPUT = 1_048_576;
+const SPAWN_KILL_GRACE_MS = 250;
+
 export const LLMS_SHA =
   "95f951f0b309357f01286fa4a032fdb0830e9633b323a065a1575e8204cc0b2d";
 export const SKILLS_SHA =
@@ -53,11 +67,16 @@ function extractTagged(md) {
   return { steps, failures };
 }
 
+function flagName(a) {
+  const eq = String(a).indexOf("=");
+  return eq === -1 ? a : a.slice(0, eq);
+}
+
 export function parseArgs(argv) {
   const out = { json: true, seededFailure: null };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
-    if (FORBIDDEN_FLAGS.has(a) || a.startsWith("--pay=") || a.startsWith("--checkout=")) {
+    if (FORBIDDEN_FLAGS.has(flagName(a))) {
       throw Object.assign(new Error(`forbidden flag: ${a}`), {
         code: "payment-forbidden",
       });
@@ -79,6 +98,11 @@ export function parseArgs(argv) {
   return out;
 }
 
+export function fenceContractProblems(script) {
+  const text = String(script || "");
+  return FORBIDDEN_FENCE_PATTERNS.filter((p) => p.re.test(text)).map((p) => p.id);
+}
+
 export function readDocs() {
   const tutorial = readFileSync(tutorialPath, "utf8");
   const readme = readFileSync(readmePath, "utf8");
@@ -86,38 +110,89 @@ export function readDocs() {
   return { tutorial, readme, ...tagged };
 }
 
-function spawnBash(script, { timeoutMs = 60000 } = {}) {
+function childEnv() {
+  const env = { ...process.env };
+  delete env.BASH_ENV;
+  delete env.ENV;
+  delete env.CDPATH;
+  return env;
+}
+
+function appendCapped(current, chunk) {
+  if (current.length >= MAX_SPAWN_OUTPUT) return current;
+  const text = chunk.toString("utf8");
+  const room = MAX_SPAWN_OUTPUT - current.length;
+  return current + (text.length > room ? text.slice(0, room) : text);
+}
+
+function killProcessGroup(child) {
+  if (child.pid) {
+    try {
+      process.kill(-child.pid, "SIGKILL");
+    } catch {
+      // ESRCH if the group is already gone
+    }
+  }
+  try {
+    child.kill("SIGKILL");
+  } catch {
+    // already dead
+  }
+}
+
+export function spawnBash(script, { timeoutMs = 60000 } = {}) {
   return new Promise((resolveP, reject) => {
-    const child = spawn("bash", ["-lc", script], {
+    const child = spawn("bash", ["-c", script], {
       cwd: repoRoot,
-      env: { ...process.env },
+      env: childEnv(),
       stdio: ["ignore", "pipe", "pipe"],
+      detached: true,
     });
     let stdout = "";
     let stderr = "";
     let timedOut = false;
+    let settled = false;
+    let graceTimer;
+    const finish = (fn) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      clearTimeout(graceTimer);
+      fn();
+    };
     const timer = setTimeout(() => {
       timedOut = true;
-      child.kill("SIGKILL");
+      killProcessGroup(child);
+      graceTimer = setTimeout(() => {
+        finish(() =>
+          resolveP({
+            status: 124,
+            stdout,
+            stderr,
+            timedOut: true,
+          }),
+        );
+      }, SPAWN_KILL_GRACE_MS);
     }, timeoutMs);
     child.stdout.on("data", (c) => {
-      stdout += c.toString("utf8");
+      stdout = appendCapped(stdout, c);
     });
     child.stderr.on("data", (c) => {
-      stderr += c.toString("utf8");
+      stderr = appendCapped(stderr, c);
     });
     child.on("error", (err) => {
-      clearTimeout(timer);
-      reject(err);
+      killProcessGroup(child);
+      finish(() => reject(err));
     });
     child.on("close", (status) => {
-      clearTimeout(timer);
-      resolveP({
-        status: timedOut ? 124 : status ?? 1,
-        stdout,
-        stderr,
-        timedOut,
-      });
+      finish(() =>
+        resolveP({
+          status: timedOut ? 124 : status ?? 1,
+          stdout,
+          stderr,
+          timedOut,
+        }),
+      );
     });
   });
 }
@@ -146,6 +221,7 @@ function combined(r) {
 }
 
 export function expectSeededRejected(spec, r, extra = {}) {
+  if (r?.timedOut) return false;
   if (!spec?.expect) return r.status !== 0;
   const expect = spec.expect;
   if (expect.exitNonZero && r.status === 0) return false;
@@ -172,21 +248,42 @@ export function expectSeededRejected(spec, r, extra = {}) {
   return true;
 }
 
-export function pinCheck(docs = readDocs()) {
+export function pinCheck(docs = readDocs(), fixture = null) {
   const problems = [];
-  const fixture = JSON.parse(readFileSync(fixturePath, "utf8"));
-  const capture = loadCaptureMeta();
+  let parsed = fixture;
+  if (!parsed) {
+    try {
+      parsed = JSON.parse(readFileSync(fixturePath, "utf8"));
+    } catch (err) {
+      return {
+        ok: false,
+        problems: [`seeded-failures.json: ${err.message}`],
+        fixturePins: [],
+      };
+    }
+  }
+  let capture;
+  try {
+    capture = loadCaptureMeta();
+  } catch (err) {
+    problems.push(`capture.json: ${err.message}`);
+    capture = { freeAlternates: [] };
+  }
   const texts = [
     ["tutorial.md", docs.tutorial],
     ["README.md", docs.readme],
   ];
 
-  for (const pin of fixture.fixturePins) {
-    const got = sha256File(pin.bodyFile);
-    if (got !== pin.sha256) {
-      problems.push(`fixture ${pin.bodyFile} sha ${got} != ${pin.sha256}`);
+  for (const pin of parsed.fixturePins || []) {
+    try {
+      const got = sha256File(pin.bodyFile);
+      if (got !== pin.sha256) {
+        problems.push(`fixture ${pin.bodyFile} sha ${got} != ${pin.sha256}`);
+      }
+    } catch (err) {
+      problems.push(`fixture ${pin.bodyFile}: ${err.message}`);
     }
-    const captured = capture.freeAlternates.find((a) => a.id === pin.id);
+    const captured = (capture.freeAlternates || []).find((a) => a.id === pin.id);
     if (!captured || captured.sha256 !== pin.sha256) {
       problems.push(`capture.json drift for ${pin.id}`);
     }
@@ -220,9 +317,15 @@ export function pinCheck(docs = readDocs()) {
   for (const id of REQUIRED_STEPS) {
     if (!docs.steps.some((s) => s.id === id)) problems.push(`missing step ${id}`);
   }
-  for (const spec of fixture.failures) {
+  for (const spec of parsed.failures || []) {
     if (!docs.failures.some((s) => s.id === spec.id)) {
       problems.push(`missing seeded fence ${spec.id}`);
+    }
+  }
+
+  for (const item of [...docs.steps, ...docs.failures]) {
+    for (const id of fenceContractProblems(item.script)) {
+      problems.push(`fence ${item.id} contains forbidden ${id}`);
     }
   }
 
@@ -234,11 +337,15 @@ export function pinCheck(docs = readDocs()) {
   if (route && !route.script.includes("page-change-evidence.job.json")) {
     problems.push("route-page-change fence is not the page-change fixture");
   }
+  const exportFence = docs.failures.find((s) => s.id === "export-without-opt-in");
+  if (exportFence && /(?:^|[\s;])--opt-in(?:\s|=|$)/.test(exportFence.script)) {
+    problems.push("export-without-opt-in fence must not pass --opt-in");
+  }
 
   return {
     ok: problems.length === 0,
     problems,
-    fixturePins: fixture.fixturePins,
+    fixturePins: parsed.fixturePins,
   };
 }
 
@@ -266,6 +373,7 @@ async function runHappy(docs) {
       coldJson?.outcome === "offline_fixture" &&
       coldJson?.paid === false &&
       coldJson?.liveObserved === false &&
+      coldJson?.coverage === "partial_discovery_not_apex_guide" &&
       Array.isArray(coldJson?.sources) &&
       coldJson.sources.length === 2,
   };
