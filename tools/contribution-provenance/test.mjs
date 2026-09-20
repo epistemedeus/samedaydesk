@@ -99,6 +99,14 @@ function requiredInferences() {
   ];
 }
 
+function acceptedAdoption(result) {
+  return result.ok ? result.adoption : null;
+}
+
+function hasCode(result, code) {
+  return result.errors.some((item) => item.code === code);
+}
+
 test("catalog closed sets are owner|member|commenter|app", () => {
   assert.deepEqual(catalog.actorLabels, ["owner", "member", "commenter", "app"]);
   assert.deepEqual(catalog.adoptionStates, ["lead", "object_bound", "owner_adopted"]);
@@ -153,12 +161,15 @@ test("SDS pin 775051602d91 is commit in this repository", () => {
 test("every valid fixture is accepted and labels cover the closed set", () => {
   const files = listJsonFiles(validFixtureDir());
   const labels = new Set();
+  const adoptions = new Set();
   for (const filePath of files) {
     const result = evaluateFile(filePath);
     assert.equal(result.ok, true, `${filePath}: ${JSON.stringify(result.errors)}`);
     labels.add(result.actorLabel);
+    adoptions.add(result.adoption);
   }
   assert.deepEqual([...labels].sort(), [...catalog.actorLabels].sort());
+  assert.deepEqual([...adoptions].sort(), [...catalog.adoptionStates].sort());
 });
 
 test("every invalid fixture is rejected with the declared code", () => {
@@ -190,6 +201,8 @@ test("commenter bound object is not owner adoption", () => {
   assert.equal(result.actorLabel, "commenter");
   assert.equal(result.objectType, "commit");
   assert.equal(result.adoption, "object_bound");
+  assert.equal(acceptedAdoption(result), "object_bound");
+  assert.notEqual(acceptedAdoption(result), "owner_adopted");
 });
 
 test("solution-shaped text without a hash is a lead", () => {
@@ -200,6 +213,113 @@ test("solution-shaped text without a hash is a lead", () => {
   assert.equal(result.objectType, null);
   assert.equal(result.textIsLeadOnly, true);
   assert.equal(result.claimedHash, null);
+  assert.equal(acceptedAdoption(result), "lead");
+  assert.notEqual(acceptedAdoption(result), "owner_adopted");
+});
+
+test("owner_adopted acceptance-rule boundary", () => {
+  const ownerAdopted = evaluateFile(join(validFixtureDir(), "owner-adopted-sds-pin.json"));
+  assert.equal(ownerAdopted.ok, true, JSON.stringify(ownerAdopted.errors));
+  assert.equal(ownerAdopted.actorLabel, "owner");
+  assert.equal(ownerAdopted.objectType, "commit");
+  assert.equal(ownerAdopted.claimedHash, SDS_PIN);
+  assert.equal(acceptedAdoption(ownerAdopted), "owner_adopted");
+
+  const commenterBound = evaluateFile(join(validFixtureDir(), "commenter-verantis-pr2.json"));
+  assert.equal(commenterBound.ok, true);
+  assert.equal(commenterBound.objectType, "commit");
+  assert.notEqual(acceptedAdoption(commenterBound), "owner_adopted");
+
+  const fakeComment = evaluateFile(join(invalidFixtureDir(), "commenter-as-adoption.json"));
+  assert.equal(fakeComment.ok, false);
+  assert.equal(fakeComment.actorLabel, "commenter");
+  assert.equal(fakeComment.objectType, "commit");
+  assert.ok(hasCode(fakeComment, "comment_text_is_not_adoption"));
+  assert.equal(acceptedAdoption(fakeComment), null);
+
+  const ownerUnresolved = evaluateFile(join(invalidFixtureDir(), "owner-unresolved-adoption.json"));
+  assert.equal(ownerUnresolved.ok, false);
+  assert.equal(ownerUnresolved.actorLabel, "owner");
+  assert.equal(ownerUnresolved.objectType, null);
+  assert.ok(hasCode(ownerUnresolved, UNBOUND_CODE));
+  assert.equal(acceptedAdoption(ownerUnresolved), null);
+
+  const memberBound = evaluateFile(join(validFixtureDir(), "member-bound.json"));
+  assert.equal(memberBound.ok, true);
+  assert.equal(memberBound.objectType, "commit");
+  assert.notEqual(acceptedAdoption(memberBound), "owner_adopted");
+
+  const memberAdopt = evaluateFile(join(invalidFixtureDir(), "member-as-adoption.json"));
+  assert.equal(memberAdopt.ok, false);
+  assert.equal(memberAdopt.actorLabel, "member");
+  assert.equal(memberAdopt.objectType, "commit");
+  assert.ok(hasCode(memberAdopt, "actor_cannot_adopt"));
+  assert.equal(acceptedAdoption(memberAdopt), null);
+
+  const textLead = evaluateFile(join(validFixtureDir(), "commenter-solution-text-lead.json"));
+  assert.equal(textLead.ok, true);
+  assert.notEqual(acceptedAdoption(textLead), "owner_adopted");
+
+  const textAsAdoption = evaluateFile(join(invalidFixtureDir(), "solution-text-as-adoption.json"));
+  assert.equal(textAsAdoption.ok, false);
+  assert.equal(textAsAdoption.objectType, null);
+  assert.equal(textAsAdoption.claimedHash, null);
+  assert.ok(hasCode(textAsAdoption, "comment_text_is_not_adoption"));
+  assert.equal(acceptedAdoption(textAsAdoption), null);
+
+  const appBound = evaluateFile(join(validFixtureDir(), "app-bound.json"));
+  assert.equal(appBound.ok, true);
+  assert.notEqual(acceptedAdoption(appBound), "owner_adopted");
+
+  const anyUnresolved = evaluateClaim({
+    schemaVersion: catalog.schemaVersion,
+    claimId: "any-actor-unresolved-adoption",
+    actorLabel: "app",
+    adoption: "owner_adopted",
+    claimedHash: S122_UNRESOLVED,
+    surface: "workflow_app",
+    text: "unresolved hash cannot be owner_adopted",
+    prohibitedInferences: requiredInferences(),
+  });
+  assert.equal(anyUnresolved.ok, false);
+  assert.ok(hasCode(anyUnresolved, UNBOUND_CODE));
+  assert.equal(acceptedAdoption(anyUnresolved), null);
+});
+
+test("lead, object_bound, and owner_adopted are non-collapsible", () => {
+  assert.equal(new Set(catalog.adoptionStates).size, 3);
+  assert.notEqual("lead", "object_bound");
+  assert.notEqual("lead", "owner_adopted");
+  assert.notEqual("object_bound", "owner_adopted");
+
+  const lead = evaluateFile(join(validFixtureDir(), "commenter-solution-text-lead.json"));
+  const objectBound = evaluateFile(join(validFixtureDir(), "owner-sds-pin.json"));
+  const ownerAdopted = evaluateFile(join(validFixtureDir(), "owner-adopted-sds-pin.json"));
+  const commenterBound = evaluateFile(join(validFixtureDir(), "commenter-verantis-pr2.json"));
+
+  assert.equal(acceptedAdoption(lead), "lead");
+  assert.equal(acceptedAdoption(objectBound), "object_bound");
+  assert.equal(acceptedAdoption(ownerAdopted), "owner_adopted");
+  assert.equal(acceptedAdoption(commenterBound), "object_bound");
+
+  assert.equal(objectBound.actorLabel, "owner");
+  assert.equal(ownerAdopted.actorLabel, "owner");
+  assert.equal(objectBound.claimedHash, ownerAdopted.claimedHash);
+  assert.equal(objectBound.objectType, "commit");
+  assert.equal(ownerAdopted.objectType, "commit");
+  assert.notEqual(acceptedAdoption(objectBound), acceptedAdoption(ownerAdopted));
+
+  const outcomes = new Set([
+    `${acceptedAdoption(lead)}:${lead.actorLabel}`,
+    `${acceptedAdoption(objectBound)}:${objectBound.actorLabel}`,
+    `${acceptedAdoption(ownerAdopted)}:${ownerAdopted.actorLabel}`,
+    `${acceptedAdoption(commenterBound)}:${commenterBound.actorLabel}`,
+  ]);
+  assert.equal(outcomes.size, 4);
+
+  assert.notEqual(acceptedAdoption(lead), "owner_adopted");
+  assert.notEqual(acceptedAdoption(objectBound), "owner_adopted");
+  assert.notEqual(acceptedAdoption(commenterBound), "owner_adopted");
 });
 
 test("CLI --hash 072f8d0 exits 0 with objectType commit", () => {
@@ -244,6 +364,44 @@ test("CLI rejects commenter-as-adoption", () => {
     join(invalidFixtureDir(), "commenter-as-adoption.json"),
   ]);
   assert.equal(proc.status, 0, proc.stderr + proc.stdout);
+  const body = JSON.parse(proc.stdout);
+  assert.equal(body.ok, true);
+  assert.equal(body.expectReject, "comment_text_is_not_adoption");
+  assert.equal(body.actorLabel, "commenter");
+  assert.equal(body.objectType, "commit");
+  assert.ok(body.codes.includes("comment_text_is_not_adoption"));
+
+  const raw = runCli(["--claim", join(invalidFixtureDir(), "commenter-as-adoption.json")]);
+  assert.notEqual(raw.status, 0);
+  const rawBody = JSON.parse(raw.stdout);
+  assert.equal(rawBody.ok, false);
+  assert.equal(rawBody.actorLabel, "commenter");
+  assert.equal(rawBody.objectType, "commit");
+  assert.notEqual(rawBody.ok && rawBody.adoption === "owner_adopted", true);
+  assert.equal(acceptedAdoption(rawBody), null);
+});
+
+test("CLI accepts owner_adopted SDS pin and rejects owner unresolved adoption", () => {
+  const accepted = runCli(["--claim", join(validFixtureDir(), "owner-adopted-sds-pin.json")]);
+  assert.equal(accepted.status, 0, accepted.stderr + accepted.stdout);
+  const acceptedBody = JSON.parse(accepted.stdout);
+  assert.equal(acceptedBody.ok, true);
+  assert.equal(acceptedBody.actorLabel, "owner");
+  assert.equal(acceptedBody.adoption, "owner_adopted");
+  assert.equal(acceptedBody.objectType, "commit");
+
+  const rejected = runCli([
+    "--expect-reject",
+    UNBOUND_CODE,
+    "--claim",
+    join(invalidFixtureDir(), "owner-unresolved-adoption.json"),
+  ]);
+  assert.equal(rejected.status, 0, rejected.stderr + rejected.stdout);
+  const rejectedBody = JSON.parse(rejected.stdout);
+  assert.equal(rejectedBody.ok, true);
+  assert.equal(rejectedBody.expectReject, UNBOUND_CODE);
+  assert.equal(rejectedBody.actorLabel, "owner");
+  assert.equal(rejectedBody.objectType, null);
 });
 
 test("bound hash does not waive a claimed signature that does not bind", () => {
