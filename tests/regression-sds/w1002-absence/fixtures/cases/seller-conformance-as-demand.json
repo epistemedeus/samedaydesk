@@ -1,0 +1,26 @@
+{
+  "id": "seller-conformance-as-demand",
+  "surface": "seller-conformance",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "server/lib/spa-route-shells.js",
+  "expectedReasons": [
+    "absence_as_demand",
+    "seller_conformance_as_demand"
+  ],
+  "defect": "Seller-conformance inspection (validation, not marketplace demand) treated as organic or repeat demand.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "seller-conformance",
+    "sellerConformance": true,
+    "sellerConformanceAsDemand": true,
+    "inspectionAsDemand": true,
+    "demand": true,
+    "paidDemand": true,
+    "organicDemandProven": true,
+    "demandSignal": "paid",
+    "demandCount": 1,
+    "message": "seller-conformance inspection treated as organic demand"
+  }
+}

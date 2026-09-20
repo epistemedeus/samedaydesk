@@ -1,0 +1,32 @@
+{
+  "id": "buyer-setup-nested-as-demand",
+  "surface": "buyer-setup-trace",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "tools/recurring-job-recipes/recipes/buyer-setup-trace.mjs",
+  "expectedReasons": [
+    "absence_as_demand",
+    "unpaid_402_trace_as_demand"
+  ],
+  "defect": "Unlabeled: real buyer-setup-trace return shape (nested evidence.claims.notDemand, payment.paid false) plus demand.",
+  "output": {
+    "ok": true,
+    "recipeId": "buyer-setup-trace",
+    "outcome": "unchanged",
+    "payment": {
+      "signed": false,
+      "paid": false
+    },
+    "evidence": {
+      "kind": "buyer_setup_trace",
+      "claims": {
+        "liveFreeInspectionOnly": true,
+        "paymentSigned": false,
+        "paymentSent": false,
+        "notDemand": true
+      }
+    },
+    "demand": true,
+    "message": "nested unpaid 402 buyer-setup trace treated as demand"
+  }
+}

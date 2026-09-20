@@ -1,0 +1,27 @@
+{
+  "id": "moltjobs-composition-as-conversion",
+  "surface": "observatory",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "server/lib/observatory/adapters/moltjobs.js",
+  "expectedReasons": [
+    "absence_as_demand",
+    "composition_as_conversion"
+  ],
+  "defect": "Totals vs marketplace composition claimed as conversion from attention to paid demand.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "observatory",
+    "sourceId": "moltjobs",
+    "composition": true,
+    "compositionAsConversion": true,
+    "refusedRatioKey": "marketplaceJobs_over_totalJobs_as_conversion",
+    "conversionFunnel": true,
+    "demand": true,
+    "paidDemand": true,
+    "demandCount": 48,
+    "demandSignal": "paid",
+    "message": "marketplaceJobs/totalJobs invented as conversion to paid demand"
+  }
+}

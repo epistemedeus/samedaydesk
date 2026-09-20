@@ -1,0 +1,24 @@
+{
+  "id": "presence-snapshot-as-demand",
+  "surface": "presence",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "tools/presence/REGISTRY-CONSUMER.md",
+  "expectedReasons": [
+    "absence_as_demand",
+    "presence_snapshot_as_demand"
+  ],
+  "defect": "MCP registry presence snapshot treated as market demand or a publish.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "presence",
+    "presenceSnapshot": true,
+    "presenceSnapshotAsDemand": true,
+    "hasDemand": true,
+    "demandCount": 1,
+    "demandSignal": "present",
+    "sourceNote": "This snapshot is not demand and not a publish.",
+    "message": "presence snapshot invented as demand"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "id": "catalog-count-as-demand",
+  "surface": "registry",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "server/lib/observatory/adapters/smithery-mcp.js",
+  "expectedReasons": [
+    "absence_as_demand",
+    "catalog_count_as_demand"
+  ],
+  "defect": "Catalog registration totalCount/useCount sold as traffic or paid demand.",
+  "output": {
+    "ok": true,
+    "pass": true,
+    "surface": "registry",
+    "catalogOnly": true,
+    "evidenceClass": "catalog_registration",
+    "catalogCountAsDemand": true,
+    "useCountAsDemand": true,
+    "hasDemand": true,
+    "demandCount": 8841,
+    "sourceNote": "pagination.totalCount is catalog registrations, not traffic or paid customers.",
+    "paidActivity": {
+      "available": false,
+      "reason": "Registry listings are not traffic, paid customers, or heartbeats."
+    },
+    "message": "catalog count invented as demand"
+  }
+}
