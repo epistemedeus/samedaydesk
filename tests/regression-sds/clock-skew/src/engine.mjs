@@ -5,6 +5,7 @@
  */
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import vm from "node:vm";
 import {
   FUTURE_SKEW_MS,
   STALE_PROVIDER_MS,
@@ -17,17 +18,30 @@ import { REPO } from "./paths.mjs";
 const MARKET_ROUTE = join(REPO, "server/routes/market-observations.js");
 const MARKET_SRC = readFileSync(MARKET_ROUTE, "utf8");
 
-function extractConst(source, name) {
-  const match = source.match(new RegExp(`export const ${name} = ([^;]+);`));
-  if (!match) throw new Error(`published ${name} missing from ${MARKET_ROUTE}`);
-  return Function(`"use strict"; return (${match[1]});`)();
+export function isNumericLiteralExpr(expr) {
+  return typeof expr === "string" && /^[\d\s.*+\-/()]+$/.test(expr.trim());
 }
 
-function extractFunction(source, name) {
+export function extractNumericConst(source, name, fileLabel = MARKET_ROUTE) {
+  const match = source.match(new RegExp(`export const ${name} = ([^;]+);`));
+  if (!match) throw new Error(`published ${name} missing from ${fileLabel}`);
+  const expr = match[1].trim();
+  if (!isNumericLiteralExpr(expr)) {
+    throw new Error(`published ${name} is not a numeric literal expression: ${expr}`);
+  }
+  const value = Function(`"use strict"; return (${expr});`)();
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    throw new Error(`published ${name} did not evaluate to a finite number`);
+  }
+  return value;
+}
+
+function extractFunction(source, name, fileLabel = MARKET_ROUTE) {
   const start = source.indexOf(`export function ${name}(`);
-  if (start < 0) throw new Error(`published ${name} missing from ${MARKET_ROUTE}`);
+  if (start < 0) throw new Error(`published ${name} missing from ${fileLabel}`);
   const header = source.slice(start);
   const brace = header.indexOf("{");
+  if (brace < 0) throw new Error(`published ${name} has no body`);
   let depth = 0;
   for (let i = brace; i < header.length; i++) {
     if (header[i] === "{") depth += 1;
@@ -39,11 +53,17 @@ function extractFunction(source, name) {
   throw new Error(`published ${name} is unclosed`);
 }
 
-export const SOURCE_TIME_STALE_MS = extractConst(MARKET_SRC, "SOURCE_TIME_STALE_MS");
-export const refineSourceTimeState = Function(
-  "SOURCE_TIME_STALE_MS",
-  `"use strict"; ${extractFunction(MARKET_SRC, "refineSourceTimeState")}; return refineSourceTimeState;`,
-)(SOURCE_TIME_STALE_MS);
+export function compileRefineSourceTimeState(source, sourceTimeStaleMs, fileLabel = MARKET_ROUTE) {
+  const fnSrc = extractFunction(source, "refineSourceTimeState", fileLabel);
+  const sandbox = Object.create(null);
+  sandbox.SOURCE_TIME_STALE_MS = sourceTimeStaleMs;
+  sandbox.Date = Date;
+  sandbox.Number = Number;
+  return vm.runInNewContext(`${fnSrc}\nrefineSourceTimeState;`, sandbox, { timeout: 1000 });
+}
+
+export const SOURCE_TIME_STALE_MS = extractNumericConst(MARKET_SRC, "SOURCE_TIME_STALE_MS");
+export const refineSourceTimeState = compileRefineSourceTimeState(MARKET_SRC, SOURCE_TIME_STALE_MS);
 
 export const PINNED_FETCHED_AT = "2026-09-17T12:00:00.000Z";
 export const PINNED_NOW_MS = Date.parse(PINNED_FETCHED_AT);

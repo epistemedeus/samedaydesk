@@ -44,6 +44,32 @@ test("CLI refuses --pay", () => {
   assert.equal(body.error.code, "payment-forbidden");
 });
 
+test("CLI refuses --payment=1 as payment-forbidden, not unknown option", () => {
+  const result = run(["--payment=1"]);
+  assert.equal(result.status, 2, result.stderr);
+  const body = JSON.parse(result.stderr);
+  assert.equal(body.error.code, "payment-forbidden");
+  assert.match(body.error.message, /--payment=1/);
+});
+
+test("CLI refuses --publish=registry", () => {
+  const result = run(["--publish=registry"]);
+  assert.equal(result.status, 2, result.stderr);
+  const body = JSON.parse(result.stderr);
+  assert.equal(body.error.code, "payment-forbidden");
+});
+
+test("CLI seeded future-as-ok is refused", () => {
+  const result = run(["--seeded-failure", "future-as-ok"]);
+  assert.equal(result.status, 0, result.stderr);
+  const body = JSON.parse(result.stdout);
+  assert.equal(body.ok, true);
+  assert.equal(body.rejected, true);
+  assert.equal(body.code, "future_skew_not_ok");
+  assert.equal(body.engineState, "invalid");
+  assert.equal(body.naiveState, "ok");
+});
+
 test("CLI --seeded-failure without id is usage", () => {
   const result = run(["--seeded-failure"]);
   assert.equal(result.status, 2, result.stderr);

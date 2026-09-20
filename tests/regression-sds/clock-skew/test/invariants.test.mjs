@@ -50,3 +50,47 @@ test("required case list matches the cold cohort", () => {
   const report = runColdCohort();
   assert.deepEqual(report.cases.map((item) => item.id), [...REQUIRED_CASE_IDS]);
 });
+
+test("invariants fail closed when a required case is present but failed", () => {
+  const report = runColdCohort();
+  const mutated = report.cases.map((item) =>
+    item.id === "invalid-timestamp" ? { ...item, ok: false, errors: ["mutated"] } : item,
+  );
+  const invariants = evaluateInvariants(mutated, loadManifest());
+  assert.equal(invariants.requiredCasesPresent, true);
+  assert.equal(invariants.requiredCasesOk, false);
+  assert.equal(invariants.ok, false);
+});
+
+test("invariants fail closed when market-obs boundary fixture is not at SOURCE_TIME_STALE_MS", () => {
+  const report = runColdCohort();
+  const drifted = report.cases.map((item) =>
+    item.id === "stale-market-obs-boundary"
+      ? { ...item, providerTimestamp: "2026-09-17T11:30:00.000Z" }
+      : item,
+  );
+  const invariants = evaluateInvariants(drifted, loadManifest());
+  assert.equal(invariants.marketObsBoundaryOk, true);
+  assert.equal(invariants.windowDeltasMatchPublished, false);
+  assert.equal(invariants.ok, false);
+});
+
+test("invariants fail closed when a duplicate case id hides a failed first copy", () => {
+  const report = runColdCohort();
+  const original = report.cases.find((item) => item.id === "future-skew");
+  const duplicated = [{ ...original, ok: false, observatoryState: "ok" }, ...report.cases];
+  const invariants = evaluateInvariants(duplicated, loadManifest());
+  assert.equal(invariants.noDuplicateCaseIds, false);
+  assert.equal(invariants.futureSkewNotOk, true);
+  assert.equal(invariants.ok, false);
+});
+
+test("invariants fail closed when a case drifts off the pinned observer clock", () => {
+  const report = runColdCohort();
+  const drifted = report.cases.map((item) =>
+    item.id === "fresh-ok" ? { ...item, fetchedAt: "2026-09-17T13:00:00.000Z" } : item,
+  );
+  const invariants = evaluateInvariants(drifted, loadManifest());
+  assert.equal(invariants.pinnedFetchedAtMatch, false);
+  assert.equal(invariants.ok, false);
+});

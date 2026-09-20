@@ -13,13 +13,18 @@ test("cold cohort: published engines classify skew windows and keep clocks disti
   assert.equal(report.failedCount, 0);
   assert.equal(report.invariants.ok, true);
   assert.equal(report.invariants.requiredCasesPresent, true);
+  assert.equal(report.invariants.requiredCasesOk, true);
+  assert.equal(report.invariants.noDuplicateCaseIds, true);
   assert.equal(report.invariants.windowsMatchPublished, true);
   assert.equal(report.invariants.noOrphanFixtures, true);
+  assert.equal(report.invariants.seededInventoryMatch, true);
+  assert.equal(report.invariants.pinnedFetchedAtMatch, true);
   assert.equal(report.invariants.futureSkewNotOk, true);
   assert.equal(report.invariants.withinSkewOk, true);
   assert.equal(report.invariants.staleNotZeroed, true);
   assert.equal(report.invariants.clocksDistinct, true);
   assert.equal(report.invariants.marketObsBoundaryOk, true);
+  assert.equal(report.invariants.windowDeltasMatchPublished, true);
   assert.equal(report.invariants.payment, false);
   assert.equal(report.invariants.checkout, false);
   assert.equal(report.invariants.publish, false);

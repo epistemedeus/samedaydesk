@@ -6,11 +6,14 @@ import {
   ENGINE_MOLTJOBS,
   ENGINE_X402STATS,
   FIXTURES,
+  SEEDED_FAILURE_IDS,
   fixture,
   readJson,
+  seededFixtureNames,
 } from "./paths.mjs";
 import {
   FUTURE_SKEW_MS,
+  PINNED_FETCHED_AT,
   PINNED_NOW_MS,
   SOURCE_TIME_STALE_MS,
   STALE_PROVIDER_MS,
@@ -191,15 +194,41 @@ export function orphanFixtureFiles(manifest) {
   );
 }
 
+function ageMs(item) {
+  const fetched = Date.parse(item?.fetchedAt);
+  const provider = Date.parse(item?.providerTimestamp);
+  if (!Number.isFinite(fetched) || !Number.isFinite(provider)) return Number.NaN;
+  return fetched - provider;
+}
+
+function leadMs(item) {
+  const fetched = Date.parse(item?.fetchedAt);
+  const provider = Date.parse(item?.providerTimestamp);
+  if (!Number.isFinite(fetched) || !Number.isFinite(provider)) return Number.NaN;
+  return provider - fetched;
+}
+
 export function evaluateInvariants(cases, manifest) {
-  const byId = Object.fromEntries((cases || []).map((item) => [item.id, item]));
+  const list = cases || [];
+  const ids = list.map((item) => item.id);
+  const byId = Object.fromEntries(list.map((item) => [item.id, item]));
   const requiredCasesPresent = REQUIRED_CASE_IDS.every((id) => Boolean(byId[id]));
+  const requiredCasesOk = REQUIRED_CASE_IDS.every((id) => byId[id]?.ok === true);
+  const noDuplicateCaseIds = ids.length === new Set(ids).size;
   const windows = manifest && manifest.windows ? manifest.windows : {};
   const windowsMatchPublished =
     windows.observatoryFutureSkewMs === FUTURE_SKEW_MS
     && windows.observatoryStaleMs === STALE_PROVIDER_MS
     && windows.marketObsStaleMs === SOURCE_TIME_STALE_MS;
   const noOrphanFixtures = orphanFixtureFiles(manifest).length === 0;
+  const seededNames = seededFixtureNames();
+  const seededInventoryMatch =
+    seededNames.length === SEEDED_FAILURE_IDS.length
+    && SEEDED_FAILURE_IDS.every((id) => seededNames.includes(`${id}.json`));
+  const pinnedFetchedAtMatch =
+    manifest?.pinnedFetchedAt === PINNED_FETCHED_AT
+    && list.length > 0
+    && list.every((item) => item.fetchedAt === PINNED_FETCHED_AT);
   const futureSkewNotOk = FUTURE_SKEW_IDS.every(
     (id) => byId[id]?.ok === true && byId[id]?.observatoryState === "invalid",
   );
@@ -213,7 +242,7 @@ export function evaluateInvariants(cases, manifest) {
       && byId[id]?.moltjobs?.jobCount === 12
       && byId[id]?.x402stats?.sellers_30d === 47303,
   );
-  const clocksDistinct = (cases || []).length > 0 && (cases || []).every((item) => item.clocksDistinct === true);
+  const clocksDistinct = list.length > 0 && list.every((item) => item.clocksDistinct === true);
   const marketObsBoundaryOk =
     byId["stale-market-obs-boundary"]?.ok === true
     && byId["stale-market-obs-boundary"]?.observatoryState === "ok"
@@ -221,19 +250,31 @@ export function evaluateInvariants(cases, manifest) {
     && byId["stale-market-obs-just-stale"]?.ok === true
     && byId["stale-market-obs-just-stale"]?.observatoryState === "ok"
     && byId["stale-market-obs-just-stale"]?.marketObsState === "stale";
+  const windowDeltasMatchPublished =
+    leadMs(byId["future-skew-boundary"]) === FUTURE_SKEW_MS
+    && leadMs(byId["future-skew"]) === FUTURE_SKEW_MS + 1000
+    && ageMs(byId["stale-boundary-ok"]) === STALE_PROVIDER_MS
+    && ageMs(byId["stale-observatory"]) === STALE_PROVIDER_MS + 1000
+    && ageMs(byId["stale-market-obs-boundary"]) === SOURCE_TIME_STALE_MS
+    && ageMs(byId["stale-market-obs-just-stale"]) === SOURCE_TIME_STALE_MS + 1000;
   const payment = false;
   const checkout = false;
   const publish = false;
   const neomorphicIo = false;
   const ok =
     requiredCasesPresent
+    && requiredCasesOk
+    && noDuplicateCaseIds
     && windowsMatchPublished
     && noOrphanFixtures
+    && seededInventoryMatch
+    && pinnedFetchedAtMatch
     && futureSkewNotOk
     && withinSkewOk
     && staleNotZeroed
     && clocksDistinct
     && marketObsBoundaryOk
+    && windowDeltasMatchPublished
     && payment === false
     && checkout === false
     && publish === false
@@ -241,13 +282,18 @@ export function evaluateInvariants(cases, manifest) {
   return {
     ok,
     requiredCasesPresent,
+    requiredCasesOk,
+    noDuplicateCaseIds,
     windowsMatchPublished,
     noOrphanFixtures,
+    seededInventoryMatch,
+    pinnedFetchedAtMatch,
     futureSkewNotOk,
     withinSkewOk,
     staleNotZeroed,
     clocksDistinct,
     marketObsBoundaryOk,
+    windowDeltasMatchPublished,
     payment,
     checkout,
     publish,

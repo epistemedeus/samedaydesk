@@ -24,7 +24,9 @@ Exit `0` prints a JSON report (`schema: sds.regression.clock-skew.v1`) with
 every fixture outcome. Future-skewed clocks are `invalid`, stale clocks stay
 stale without rewriting metrics to zero, provider timestamps stay distinct
 from observer `fetchedAt`, and an exactly `SOURCE_TIME_STALE_MS`-old clock
-stays market-obs `ok` (strict greater-than). Missing required case ids or a
+stays market-obs `ok` (strict greater-than). Missing required case ids, a
+present-but-failed required case, duplicate ids, a drifted pinned observer
+clock, a boundary fixture whose delta is no longer the published window, or a
 manifest window that drifts from the published constants fail the cohort.
 
 ## Seeded failure
@@ -46,8 +48,9 @@ Named probes:
 | `payment-to-correct-clock` | `payment_forbidden` |
 | `market-obs-boundary-as-stale` | `market_obs_boundary_not_stale` (exact 1h stays `ok`; naive `>=` is refused) |
 
-`--seeded-failure` without an id is usage (exit 2). `--pay` / `--checkout` are
-forbidden (exit 2).
+`--seeded-failure` without an id is usage (exit 2). `--pay` / `--payment` /
+`--checkout` / `--publish` / `--live` (including `--flag=value`) are forbidden
+(exit 2).
 
 ## Tests
 

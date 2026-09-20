@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { SEEDED_FAILURE_IDS } from "../src/paths.mjs";
 import { listSeededFailures, runSeededFailure } from "../src/seeded.mjs";
 
 test("seeded failure list is exhaustive and stable", () => {
+  assert.deepEqual(listSeededFailures(), [...SEEDED_FAILURE_IDS]);
   assert.deepEqual(listSeededFailures(), [
     "future-as-ok",
     "stale-as-fresh-zero",

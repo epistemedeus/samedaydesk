@@ -11,7 +11,7 @@ import { listSeededFailures, runSeededFailure } from "./src/seeded.mjs";
 
 const PACK = dirname(fileURLToPath(import.meta.url));
 
-const FORBIDDEN = new Set([
+const FORBIDDEN = Object.freeze([
   "--pay",
   "--payment",
   "--checkout",
@@ -19,6 +19,10 @@ const FORBIDDEN = new Set([
   "--registry",
   "--live",
 ]);
+
+function isForbiddenFlag(arg) {
+  return FORBIDDEN.some((flag) => arg === flag || arg.startsWith(`${flag}=`));
+}
 
 function writeJson(value) {
   process.stdout.write(`${JSON.stringify(value, null, 2)}\n`);
@@ -29,7 +33,7 @@ function parseArgs(argv) {
   let command = null;
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
-    if (FORBIDDEN.has(arg) || arg.startsWith("--pay=") || arg.startsWith("--checkout=")) {
+    if (isForbiddenFlag(arg)) {
       throw Object.assign(new Error(`forbidden flag: ${arg}`), { code: "payment-forbidden" });
     }
     if (arg === "--help" || arg === "-h") flags.help = true;
@@ -80,7 +84,7 @@ export async function runCli(argv, { stdout = process.stdout } = {}) {
     const result = spawnSync(
       process.execPath,
       ["--test", "--test-concurrency=1", join(PACK, "test")],
-      { stdio: "inherit", cwd: PACK },
+      { stdio: "inherit", cwd: PACK, timeout: 120_000 },
     );
     return result.status ?? 1;
   }
