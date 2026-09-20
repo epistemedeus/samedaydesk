@@ -174,7 +174,7 @@ export function loadInvalidManifest(manifestPath = INVALID_MANIFEST) {
 }
 
 export function refusedFlag(argv) {
-  return argv.find((arg) => REFUSED_FLAGS.has(arg)) ?? null;
+  return argv.find((arg) => REFUSED_FLAGS.has(String(arg).split("=")[0])) ?? null;
 }
 
 export function deriveFixtureKey(label) {
@@ -258,8 +258,8 @@ function parseTime(value, path, errors) {
     return null;
   }
   const ms = Date.parse(value);
-  if (!Number.isFinite(ms)) {
-    errors.push(error("invalid_timestamp", path, "timestamp is not parseable"));
+  if (!Number.isFinite(ms) || new Date(ms).toISOString() !== value) {
+    errors.push(error("invalid_timestamp", path, "timestamp is not a real RFC3339 instant"));
     return null;
   }
   return ms;
@@ -418,7 +418,10 @@ function validateBody(body, path, errors) {
     errors.push(error("invalid_body", `${path}.accepts`, "accepts must have 1-4 entries"));
     return;
   }
-  validateAccept(body.accepts[0], `${path}.accepts[0]`, errors);
+  for (let i = 0; i < body.accepts.length; i += 1) {
+    validateAccept(body.accepts[i], `${path}.accepts[${i}]`, errors);
+    if (errors.length > 0) return;
+  }
 }
 
 function materializeKey(entry, path, errors) {
@@ -456,6 +459,14 @@ function materializeKey(entry, path, errors) {
     notAfter = parseTime(entry.notAfter, `${path}.notAfter`, errors);
   }
   if (errors.length > 0) return null;
+  if (entry.status === "previous" && notAfter == null) {
+    errors.push(error("invalid_window", `${path}.notAfter`, "previous keys require a notAfter overlap"));
+    return null;
+  }
+  if (entry.status === "current" && notAfter != null) {
+    errors.push(error("invalid_window", `${path}.notAfter`, "current keys must not close notAfter"));
+    return null;
+  }
   if (notAfter != null && notAfter <= notBefore) {
     errors.push(error("invalid_window", path, "notAfter must be after notBefore"));
     return null;
@@ -588,6 +599,16 @@ function validateReceipt(receipt, path, errors) {
     errors.push(error("invalid_kid", `${path}.kid`, "kid must match sds-hmac-[a-z0-9-]+"));
   }
   validateBody(receipt.body, `${path}.body`, errors);
+  if (
+    typeof receipt.receiptId === "string" &&
+    receipt.body &&
+    typeof receipt.body.receiptId === "string" &&
+    receipt.receiptId !== receipt.body.receiptId
+  ) {
+    errors.push(
+      error("receipt_id_mismatch", `${path}.receiptId`, "receiptId must match body.receiptId"),
+    );
+  }
   return receipt;
 }
 
@@ -612,6 +633,10 @@ export function applyRotate(materialized, nowIso, overlapMs, rotateTo, errors) {
   }
   if (typeof rotateTo.label !== "string" || !LABEL_RE.test(rotateTo.label)) {
     errors.push(error("invalid_label", "$.rotateTo.label", "label must be a fixture.* public label"));
+    return materialized;
+  }
+  if (materialized.length >= MAX_KEYS) {
+    errors.push(error("invalid_keyring", "$.rotateTo", `keyring must have 1-${MAX_KEYS} keys after rotate`));
     return materialized;
   }
   if (findKey(materialized, rotateTo.kid)) {
@@ -755,7 +780,7 @@ export function evaluate(pack, options = {}) {
         overlapMs: pack.overlapMs,
       };
     }
-  } else if (pack.intent === "expire") {
+  } else if (pack.intent === "expire" || pack.intent === "verify") {
     ring = applyExpire(ring, nowMs);
   } else if (pack.overlapMs != null) {
     errors.push(error("additional_property", "$.overlapMs", "overlapMs is only valid on rotate"));

@@ -31,7 +31,8 @@ verifier that ignores key status accepts it. Honest rotation rejects
 `retired_key_after_overlap`.
 
 `--pay`, `--checkout`, `--neo`, and `--publish` exit 2
-(`money_movement_refused`).
+(`money_movement_refused`). `--out` must be a `.json` file inside this
+package.
 
 ## HMAC
 

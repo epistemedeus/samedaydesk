@@ -191,6 +191,62 @@ write(join(invalidDir, "previous-cannot-sign.json"), {
   ],
 });
 
+write(join(invalidDir, "previous-open-ended.json"), {
+  schemaVersion: SCHEMA,
+  intent: "verify",
+  now: AFTER,
+  keyring: {
+    keys: [
+      key(KID_A, LABEL_A, "previous", BEFORE, null),
+      key(KID_B, LABEL_B, "current", NOW, null),
+    ],
+  },
+  receipts: [signedA],
+});
+
+write(join(invalidDir, "current-closed-window.json"), {
+  schemaVersion: SCHEMA,
+  intent: "verify",
+  now: NOW,
+  keyring: { keys: [key(KID_A, LABEL_A, "current", BEFORE, AFTER)] },
+  receipts: [signedA],
+});
+
+const extraAcceptBody = {
+  ...body,
+  accepts: [
+    body.accepts[0],
+    {
+      scheme: "upto",
+      network: "eip155:1",
+      amount: "1",
+      asset: "0x0000000000000000000000000000000000000001",
+      payTo: "0x0000000000000000000000000000000000000002",
+      extra: "sneak",
+    },
+  ],
+};
+write(join(invalidDir, "second-accept.json"), {
+  schemaVersion: SCHEMA,
+  intent: "verify",
+  now: NOW,
+  keyring: { keys: [key(KID_A, LABEL_A, "current", BEFORE, null)] },
+  receipts: [receipt(extraAcceptBody, KID_A, LABEL_A)],
+});
+
+write(join(invalidDir, "receipt-id-mismatch.json"), {
+  schemaVersion: SCHEMA,
+  intent: "verify",
+  now: NOW,
+  keyring: { keys: [key(KID_A, LABEL_A, "current", BEFORE, null)] },
+  receipts: [
+    {
+      ...signedA,
+      receiptId: "cr_other_receipt_id",
+    },
+  ],
+});
+
 write(join(invalidDir, "manifest.json"), {
   schemaVersion: "samedaydesk.commerce-receipts.hmac-rotate.invalid-manifest.v1",
   cases: [
@@ -203,6 +259,10 @@ write(join(invalidDir, "manifest.json"), {
     { file: "money-movement.json", code: "money_movement_refused" },
     { file: "invented-field.json", code: "invented_receipt_field" },
     { file: "previous-cannot-sign.json", code: "previous_key_cannot_sign" },
+    { file: "previous-open-ended.json", code: "invalid_window" },
+    { file: "current-closed-window.json", code: "invalid_window" },
+    { file: "second-accept.json", code: "additional_property" },
+    { file: "receipt-id-mismatch.json", code: "receipt_id_mismatch" },
   ],
 });
 

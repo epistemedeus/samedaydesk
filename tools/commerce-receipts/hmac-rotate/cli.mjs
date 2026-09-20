@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { mkdirSync, writeFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
+import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import {
   SEEDED_FAILURES,
@@ -27,15 +27,32 @@ Usage:
   node tools/commerce-receipts/hmac-rotate/cli.mjs --seeded-failure forged-mac
   node tools/commerce-receipts/hmac-rotate/cli.mjs --expect-reject retired_key_after_overlap <file.json>
   node tools/commerce-receipts/hmac-rotate/cli.mjs --input <pack.json>
+  node tools/commerce-receipts/hmac-rotate/cli.mjs --cold --out tools/commerce-receipts/hmac-rotate/out.json
 
 --cold             sign, rotate with overlap, dual-verify, then refuse the retired kid
 --suite            accept every valid fixture and reject every invalid fixture
 --seeded-failure   require the named poison pack to be caught
 --expect-reject    require the named error code on a single file
+--out              write JSON inside this package only (must end in .json)
 --pretty           indent JSON
 
 --pay/--checkout/--payment/--settle/--live/--neo/--publish/--registry are refused.
 `;
+
+const PACKAGE_ROOT = dirname(fileURLToPath(import.meta.url));
+
+function boundOutPath(raw) {
+  const outPath = resolve(raw);
+  if (!outPath.endsWith(".json")) {
+    return { ok: false, message: "out path must be a .json file inside tools/commerce-receipts/hmac-rotate" };
+  }
+  const rel = relative(PACKAGE_ROOT, outPath);
+  const parts = rel.split(sep);
+  if (rel === "" || parts[0] === ".." || isAbsolute(rel)) {
+    return { ok: false, message: "out path must stay inside tools/commerce-receipts/hmac-rotate" };
+  }
+  return { ok: true, outPath };
+}
 
 function writeJson(value, pretty) {
   return `${JSON.stringify(value, null, pretty ? 2 : 0)}\n`;
@@ -91,12 +108,40 @@ export function runCli(argv = process.argv.slice(2), io = process) {
   }
 
   const pretty = values.pretty === true;
+  let boundedOut = null;
+  if (values.out) {
+    const bounded = boundOutPath(values.out);
+    if (!bounded.ok) {
+      io.stdout.write(
+        writeJson(
+          {
+            ok: false,
+            decision: "invalid-input",
+            reasons: ["out_path_refused"],
+            errors: [
+              {
+                code: "out_path_refused",
+                path: values.out,
+                message: bounded.message,
+              },
+            ],
+            moneyMovement: false,
+            neo: false,
+            publish: false,
+            checkout: false,
+          },
+          pretty,
+        ),
+      );
+      return 2;
+    }
+    boundedOut = bounded.outPath;
+  }
   const write = (value, code) => {
     const text = writeJson(value, pretty);
-    if (values.out) {
-      const outPath = resolve(values.out);
-      mkdirSync(dirname(outPath), { recursive: true });
-      writeFileSync(outPath, text);
+    if (boundedOut) {
+      mkdirSync(dirname(boundedOut), { recursive: true });
+      writeFileSync(boundedOut, text);
     }
     io.stdout.write(text);
     return code;

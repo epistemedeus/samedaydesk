@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { existsSync, unlinkSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -194,6 +195,254 @@ test("subprocess cold run matches in-process envelope", () => {
   const body = JSON.parse(child.stdout);
   assert.equal(body.ok, true);
   assert.equal(body.mode, "cold");
+});
+
+test("previous key without notAfter is invalid_window", () => {
+  const result = evaluateFile(join(here, "fixtures/invalid/previous-open-ended.json"));
+  assert.equal(result.ok, false);
+  assert.equal(codesFrom(result).includes("invalid_window"), true);
+});
+
+test("current key with notAfter is invalid_window", () => {
+  const result = evaluateFile(join(here, "fixtures/invalid/current-closed-window.json"));
+  assert.equal(result.ok, false);
+  assert.equal(codesFrom(result).includes("invalid_window"), true);
+});
+
+test("second accepts entry extra property is refused", () => {
+  const result = evaluateFile(join(here, "fixtures/invalid/second-accept.json"));
+  assert.equal(result.ok, false);
+  assert.equal(codesFrom(result).includes("additional_property"), true);
+});
+
+test("envelope receiptId must match body.receiptId", () => {
+  const result = evaluateFile(join(here, "fixtures/invalid/receipt-id-mismatch.json"));
+  assert.equal(result.ok, false);
+  assert.equal(codesFrom(result).includes("receipt_id_mismatch"), true);
+});
+
+test("verify at notAfter reports retired in the public keyring", () => {
+  const body = {
+    receiptId: "cr_unpaid_extract_402",
+    kind: "unpaid_payment_required",
+    statusClass: "unpaid",
+    origin: "https://agents.samedaydesk.com",
+    resource: "https://agents.samedaydesk.com/extract?url=https://example.com",
+    route: "/extract",
+    method: "GET",
+    httpStatus: 402,
+    charged: false,
+    paymentSent: false,
+    observedAt: "2026-09-17T11:30:14.000Z",
+    completeness: "truncated",
+    authorityClass: "seller_observed",
+    accepts: [
+      {
+        scheme: "exact",
+        network: "eip155:8453",
+        amount: "5000",
+        asset: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        payTo: "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      },
+    ],
+  };
+  const kidA = "sds-hmac-2026-09-a";
+  const kidB = "sds-hmac-2026-09-b";
+  const result = evaluate({
+    schemaVersion: SCHEMA,
+    intent: "verify",
+    now: "2026-09-17T13:00:00.000Z",
+    keyring: {
+      keys: [
+        {
+          kid: kidA,
+          label: "fixture.a",
+          status: "previous",
+          notBefore: "2026-09-17T00:00:00.000Z",
+          notAfter: "2026-09-17T13:00:00.000Z",
+        },
+        {
+          kid: kidB,
+          label: "fixture.b",
+          status: "current",
+          notBefore: "2026-09-17T12:00:00.000Z",
+          notAfter: null,
+        },
+      ],
+    },
+    receipts: [
+      {
+        receiptId: body.receiptId,
+        kid: kidA,
+        mac: signBody(deriveFixtureKey("fixture.a"), kidA, body),
+        body,
+      },
+    ],
+  });
+  assert.equal(result.ok, false);
+  assert.equal(codesFrom(result).includes("retired_key_after_overlap"), true);
+  const statuses = Object.fromEntries(result.keyring.keys.map((item) => [item.kid, item.status]));
+  assert.equal(statuses[kidA], "retired");
+  assert.equal(statuses[kidB], "current");
+  assert.equal(result.naive.ok, true);
+});
+
+test("rotate refuses a ninth key", () => {
+  const body = {
+    receiptId: "cr_unpaid_extract_402",
+    kind: "unpaid_payment_required",
+    statusClass: "unpaid",
+    origin: "https://agents.samedaydesk.com",
+    resource: "https://agents.samedaydesk.com/extract?url=https://example.com",
+    route: "/extract",
+    method: "GET",
+    httpStatus: 402,
+    charged: false,
+    paymentSent: false,
+    observedAt: "2026-09-17T11:30:14.000Z",
+    completeness: "truncated",
+    authorityClass: "seller_observed",
+    accepts: [
+      {
+        scheme: "exact",
+        network: "eip155:8453",
+        amount: "5000",
+        asset: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        payTo: "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      },
+    ],
+  };
+  const letters = ["a", "b", "c", "d", "e", "f", "g", "h"];
+  const keys = letters.map((letter, index) => ({
+    kid: `sds-hmac-bulk-${letter}`,
+    label: `fixture.bulk${letter}`,
+    status: index === 7 ? "current" : "retired",
+    notBefore: "2026-09-17T00:00:00.000Z",
+    notAfter: index === 7 ? null : "2026-09-17T13:00:00.000Z",
+  }));
+  const currentKid = "sds-hmac-bulk-h";
+  const result = evaluate({
+    schemaVersion: SCHEMA,
+    intent: "rotate",
+    now: "2026-09-17T12:00:00.000Z",
+    overlapMs: 3600000,
+    keyring: { keys },
+    rotateTo: { kid: "sds-hmac-bulk-i", label: "fixture.bulki" },
+    receipts: [
+      {
+        receiptId: body.receiptId,
+        kid: currentKid,
+        mac: signBody(deriveFixtureKey("fixture.bulkh"), currentKid, body),
+        body,
+      },
+    ],
+  });
+  assert.equal(result.ok, false);
+  assert.equal(codesFrom(result).includes("invalid_keyring"), true);
+});
+
+test("Feb 31 is not a real timestamp", () => {
+  const body = {
+    receiptId: "cr_unpaid_extract_402",
+    kind: "unpaid_payment_required",
+    statusClass: "unpaid",
+    origin: "https://agents.samedaydesk.com",
+    resource: "https://agents.samedaydesk.com/extract?url=https://example.com",
+    route: "/extract",
+    method: "GET",
+    httpStatus: 402,
+    charged: false,
+    paymentSent: false,
+    observedAt: "2026-09-17T11:30:14.000Z",
+    completeness: "truncated",
+    authorityClass: "seller_observed",
+    accepts: [
+      {
+        scheme: "exact",
+        network: "eip155:8453",
+        amount: "5000",
+        asset: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        payTo: "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      },
+    ],
+  };
+  const kid = "sds-hmac-2026-09-a";
+  const result = evaluate({
+    schemaVersion: SCHEMA,
+    intent: "verify",
+    now: "2026-02-31T12:00:00.000Z",
+    keyring: {
+      keys: [
+        {
+          kid,
+          label: "fixture.a",
+          status: "current",
+          notBefore: "2026-09-17T00:00:00.000Z",
+          notAfter: null,
+        },
+      ],
+    },
+    receipts: [
+      {
+        receiptId: body.receiptId,
+        kid,
+        mac: signBody(deriveFixtureKey("fixture.a"), kid, body),
+        body,
+      },
+    ],
+  });
+  assert.equal(result.ok, false);
+  assert.equal(codesFrom(result).includes("invalid_timestamp"), true);
+});
+
+test("CLI --pay=true is money_movement_refused", () => {
+  const paid = captureCli(["--pay=true", "--cold"]);
+  assert.equal(paid.code, 2);
+  const body = parse(paid.stdout);
+  assert.equal(body.ok, false);
+  assert.equal(body.errors[0].code, "money_movement_refused");
+});
+
+test("CLI --out outside the package is refused", () => {
+  const target = "/tmp/hmac-rotate-should-not-write.json";
+  try {
+    unlinkSync(target);
+  } catch {
+    // absent is fine
+  }
+  const ran = captureCli(["--cold", "--out", target]);
+  assert.equal(ran.code, 2);
+  const body = parse(ran.stdout);
+  assert.equal(body.errors[0].code, "out_path_refused");
+  assert.equal(existsSync(target), false);
+});
+
+test("CLI --out inside the package writes json", () => {
+  const target = join(here, "amendment-out.json");
+  try {
+    unlinkSync(target);
+  } catch {
+    // absent is fine
+  }
+  try {
+    const ran = captureCli(["--cold", "--out", target]);
+    assert.equal(ran.code, 0, ran.stdout);
+    assert.equal(existsSync(target), true);
+    const dumped = parse(ran.stdout);
+    assert.equal(dumped.ok, true);
+  } finally {
+    try {
+      unlinkSync(target);
+    } catch {
+      // absent is fine
+    }
+  }
+});
+
+test("CLI unknown seeded failure exits 2", () => {
+  const ran = captureCli(["--seeded-failure", "not-a-real-id"]);
+  assert.equal(ran.code, 2);
+  assert.match(ran.stderr, /unknown seeded failure/);
 });
 
 test("sign then verify is stable for a fixture label", () => {
