@@ -69,6 +69,49 @@ export function refuseCheckoutPath({ path = "/api/checkout" } = {}) {
   });
 }
 
+export function refuseNeo({ vendor = "neomorphic/neo-kernel-vendor" } = {}) {
+  return envelope({
+    ok: false,
+    command: "seeded",
+    feature: FEATURE,
+    status: "fail",
+    error: failError(
+      "NEO_VENDOR_REFUSE",
+      `${vendor} is out of scope for SDS double-charge-guard`,
+      { vendor, seed: "neo" },
+    ),
+    result: {
+      seed: "neo",
+      vendor,
+      refused: true,
+      paymentSent: false,
+      neoPublished: false,
+      published: false,
+    },
+  });
+}
+
+export function refusePublish() {
+  return envelope({
+    ok: false,
+    command: "seeded",
+    feature: FEATURE,
+    status: "fail",
+    error: failError(
+      "PUBLISH_REFUSE",
+      "refusing registry/publish in unpaid SDS double-charge-guard",
+      { seed: "publish" },
+    ),
+    result: {
+      seed: "publish",
+      refused: true,
+      paymentSent: false,
+      published: false,
+      neoPublished: false,
+    },
+  });
+}
+
 export function refusePaymentHeader({ header = "PAYMENT-SIGNATURE" } = {}) {
   const forbidden = FORBIDDEN_HEADERS.some(
     (h) => h.toLowerCase() === String(header).toLowerCase(),
@@ -255,6 +298,12 @@ export async function runSeeded(seedId, engine, opts = {}) {
   }
   if (seedId === "checkout-path") {
     return refuseCheckoutPath({ path: opts.path || "/api/checkout" });
+  }
+  if (seedId === "payment-signature") {
+    return refusePaymentHeader({ header: opts.header || "PAYMENT-SIGNATURE" });
+  }
+  if (seedId === "neo") {
+    return refuseNeo();
   }
   return envelope({
     ok: false,

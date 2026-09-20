@@ -39,6 +39,11 @@ export function envelope(partial = {}) {
     boundary: {
       paymentSent: false,
       toolsCalled: false,
+      checkoutPosted: false,
+      stripeCharged: false,
+      liveFetch: false,
+      neoPublished: false,
+      published: false,
     },
   };
   if (partial.result !== undefined) body.result = partial.result;

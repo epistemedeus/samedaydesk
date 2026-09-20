@@ -36,6 +36,8 @@ node tools/verify-sds/double-charge-guard/cli.mjs --seeded-failure retrieve-fail
 node tools/verify-sds/double-charge-guard/cli.mjs --seeded-failure changed-facts-bypass --json
 node tools/verify-sds/double-charge-guard/cli.mjs --seeded-failure live-stripe --json
 node tools/verify-sds/double-charge-guard/cli.mjs --seeded-failure checkout-path --json
+node tools/verify-sds/double-charge-guard/cli.mjs --seeded-failure payment-signature --json
+node tools/verify-sds/double-charge-guard/cli.mjs --seeded-failure neo --json
 
 # Cold harness (engine ok + all seeds refuse) — exit 0
 node tools/verify-sds/double-charge-guard/run-harness.mjs
@@ -44,13 +46,28 @@ node tools/verify-sds/double-charge-guard/run-harness.mjs
 node --test tools/verify-sds/double-charge-guard/cli.test.mjs
 ```
 
+## Seeded failures
+
+| Seed | Code | Meaning |
+| --- | --- | --- |
+| `second-charge` | `DOUBLE_CHARGE_CLAIM_REFUSE` | Retry of the same attempt reused one PI; a second-charge claim is refused |
+| `retrieve-fail-recreate` | `RETRIEVE_RECREATE_REFUSE` | Uncertain retrieve keeps the original PI (503); naive recreate is refused |
+| `changed-facts-bypass` | `FACTS_BYPASS_REFUSE` | Changed facts stay on the open attempt (409); bypass is refused |
+| `live-stripe` | `LIVE_STRIPE_REFUSE` | Never call `api.stripe.com` |
+| `checkout-path` | `CHECKOUT_PATH_REFUSE` | Never POST `/api/checkout` |
+| `payment-signature` | `PAYMENT_HEADER_REFUSE` | Never send `PAYMENT-SIGNATURE` |
+| `neo` | `NEO_VENDOR_REFUSE` | `neomorphic/neo-kernel-vendor` is out of scope |
+
+`--neo` / `--publish` flags refuse before the engine loads. `--pay` / `--checkout` / `--live` refuse as `PAYMENT_FORBIDDEN`.
+
 ## Boundary
 
 - `boundary.paymentSent` always `false`
 - `boundary.toolsCalled` always `false`
+- `boundary.checkoutPosted` / `stripeCharged` / `liveFetch` / `neoPublished` / `published` always `false`
 - Never sends `PAYMENT-SIGNATURE`, `X-PAYMENT`, or `stripe-signature`
-- Never `--pay` / `--checkout` / `--live` / `--publish`
-- No Stripe/x402 spend, no price/SKU edits, no merge
+- Never `--pay` / `--checkout` / `--live` / `--publish` / `--neo`
+- No Stripe/x402 spend, no price/SKU edits, no neo kernel, no merge
 
 ## Layout
 

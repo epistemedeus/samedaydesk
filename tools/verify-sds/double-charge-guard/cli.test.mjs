@@ -144,6 +144,40 @@ test("forbidden --pay flag is refused", () => {
   assert.equal(result.json.error.code, "PAYMENT_FORBIDDEN");
 });
 
+test("seeded payment-signature exit 1; header never sent", () => {
+  const result = run(["--seeded-failure", "payment-signature", "--json"]);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.error.code, "PAYMENT_HEADER_REFUSE");
+  assert.equal(result.json.result.headerNeverSent, true);
+  assert.equal(result.json.boundary.paymentSent, false);
+});
+
+test("seeded neo exit 1 with NEO_VENDOR_REFUSE", () => {
+  const result = run(["--seeded-failure", "neo", "--json"]);
+  assert.equal(result.status, 1, result.stderr + result.stdout);
+  assert.equal(result.json.error.code, "NEO_VENDOR_REFUSE");
+  assert.equal(result.json.result.refused, true);
+  assert.equal(result.json.result.neoPublished, false);
+  assert.equal(result.json.boundary.neoPublished, false);
+  assert.equal(result.json.boundary.published, false);
+});
+
+test("forbidden --neo flag is refused without running the engine", () => {
+  const result = run(["--neo", "--json"]);
+  assert.notEqual(result.status, 0);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "NEO_VENDOR_REFUSE");
+  assert.equal(result.json.boundary.neoPublished, false);
+  assert.equal(result.json.result.refused, true);
+});
+
+test("forbidden --publish flag is refused", () => {
+  const result = run(["--publish", "--json"]);
+  assert.notEqual(result.status, 0);
+  assert.equal(result.json.error.code, "PUBLISH_REFUSE");
+  assert.equal(result.json.result.published, false);
+});
+
 test("cold run-harness exit 0 (engine ok + seeds refuse)", () => {
   const result = spawnSync(process.execPath, [harness], {
     cwd: root,

@@ -16,6 +16,7 @@ import { fileURLToPath } from "node:url";
 import {
   COLD_CASES,
   FEATURE,
+  FLAG_ERROR_CODES,
   FORBIDDEN_FLAGS,
   SEEDED,
 } from "./lib/catalog.mjs";
@@ -23,7 +24,7 @@ import { citePublishedEngine } from "./lib/cite.mjs";
 import { envelope, emitEnvelope, exitFor, failError } from "./lib/envelope.mjs";
 import { runColdCases } from "./lib/guard.mjs";
 import { loadPublishedEngine } from "./lib/load-engine.mjs";
-import { runSeeded } from "./lib/refuse.mjs";
+import { refuseNeo, refusePublish, runSeeded } from "./lib/refuse.mjs";
 import { resolveRoot } from "./lib/repo.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -42,12 +43,14 @@ Seeded failures (exit ≠ 0, clear code, paymentSent=false):
   --seeded-failure changed-facts-bypass
   --seeded-failure live-stripe
   --seeded-failure checkout-path
+  --seeded-failure payment-signature
+  --seeded-failure neo
 
 Options:
   --json / --pretty       JSON envelope on stdout
   --fixture PATH          load seeded fixture JSON
 
-Never: --pay --checkout --live --publish --stripe-key. Never api.stripe.com.
+Never: --pay --checkout --live --publish --neo --stripe-key. Never api.stripe.com.
 Engine: server/lib/payment-attempt.js + server/lib/fulfill.js (copied, unpaid stubs).
 `;
 }
@@ -137,6 +140,8 @@ function evidenceCite(cite, copies) {
       checkoutOpened: false,
       liveStripe: false,
       toolsCalled: false,
+      neoPublished: false,
+      published: false,
     },
   ];
 }
@@ -282,12 +287,28 @@ async function main() {
   const root = resolveRoot(process.cwd());
 
   if (parsed.forbidden) {
+    const flagName = String(parsed.forbidden).split("=")[0];
+    if (flagName === "--neo") {
+      const env = refuseNeo();
+      env.result = { ...env.result, flag: parsed.forbidden };
+      emitEnvelope(env, { pretty: parsed.pretty });
+      process.exitCode = exitFor(env);
+      return;
+    }
+    if (flagName === "--publish") {
+      const env = refusePublish();
+      env.result = { ...env.result, flag: parsed.forbidden };
+      emitEnvelope(env, { pretty: parsed.pretty });
+      process.exitCode = exitFor(env);
+      return;
+    }
+    const code = FLAG_ERROR_CODES[flagName] || "PAYMENT_FORBIDDEN";
     const env = envelope({
       ok: false,
       command: "unknown",
       status: "fail",
       error: failError(
-        "PAYMENT_FORBIDDEN",
+        code,
         `forbidden flag in unpaid double-charge-guard: ${parsed.forbidden}`,
         { flag: parsed.forbidden, forbidden: [...FORBIDDEN_FLAGS] },
       ),

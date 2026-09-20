@@ -57,7 +57,13 @@ export const FORBIDDEN_FLAGS = Object.freeze([
   "--stripe-key",
   "--secret-key",
   "--sk",
+  "--neo",
 ]);
+
+export const FLAG_ERROR_CODES = Object.freeze({
+  "--neo": "NEO_VENDOR_REFUSE",
+  "--publish": "PUBLISH_REFUSE",
+});
 
 export const FORBIDDEN_HEADERS = Object.freeze([
   "PAYMENT-SIGNATURE",
@@ -103,6 +109,18 @@ export const SEEDED = Object.freeze({
     id: "checkout-path",
     why: "This verifier does not open /api/checkout or hosted Stripe Checkout.",
     errorCode: "CHECKOUT_PATH_REFUSE",
+    expectExit: 1,
+  },
+  "payment-signature": {
+    id: "payment-signature",
+    why: "Never send PAYMENT-SIGNATURE / X-PAYMENT. Seed proves the refuse before any wire I/O.",
+    errorCode: "PAYMENT_HEADER_REFUSE",
+    expectExit: 1,
+  },
+  neo: {
+    id: "neo",
+    why: "neomorphic/neo-kernel-vendor is out of scope for SDS double-charge-guard.",
+    errorCode: "NEO_VENDOR_REFUSE",
     expectExit: 1,
   },
 });

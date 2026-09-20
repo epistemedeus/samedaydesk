@@ -72,6 +72,34 @@
       "expectExit": 1,
       "errorCode": "CHECKOUT_PATH_REFUSE",
       "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "payment-signature",
+      "why": "Never send PAYMENT-SIGNATURE / X-PAYMENT.",
+      "command": [
+        "node",
+        "tools/verify-sds/double-charge-guard/cli.mjs",
+        "--seeded-failure",
+        "payment-signature",
+        "--json"
+      ],
+      "expectExit": 1,
+      "errorCode": "PAYMENT_HEADER_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "neo",
+      "why": "neomorphic/neo-kernel-vendor is out of scope for SDS double-charge-guard.",
+      "command": [
+        "node",
+        "tools/verify-sds/double-charge-guard/cli.mjs",
+        "--seeded-failure",
+        "neo",
+        "--json"
+      ],
+      "expectExit": 1,
+      "errorCode": "NEO_VENDOR_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false, "neoPublished": false }
     }
   ]
 }
