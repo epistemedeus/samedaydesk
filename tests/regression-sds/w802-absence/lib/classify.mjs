@@ -56,40 +56,65 @@ function doesNotEstablishList(output, paid) {
   return out;
 }
 
-export function claimDemand(output) {
-  if (!asObject(output)) return false;
-  if (output.demand === true || output.hasDemand === true || output.paidDemand === true) return true;
-  if (output.treatAbsenceAsDemand === true || output.absenceAsDemand === true) return true;
-  if (output.inventedDemand === true) return true;
-  if (output.marketDemand === true || output.organicDemandProven === true) return true;
-  if (output.x402scanAsDemand === true || output.documentedUnavailableAsDemand === true) return true;
-  if (output.compositionAsConversion === true || output.sourcesAdditiveAsDemand === true) return true;
-  if (output.scopedNoChangeAsDemand === true || output.presenceSnapshotAsDemand === true) return true;
-  if (output.liquidityFunnelAsDemand === true || output.seriesBuyersAsUniqueHumans === true) return true;
-  if (output.buyerSetupTraceAsDemand === true || output.unpaid402AsDemand === true) return true;
-  if (output.stalePartialAsDemand === true || output.missingAsZeroDemand === true) return true;
-  if (output.conversionFunnel === true) return true;
-  if (output.paidCustomersFromOrganic === true) return true;
-  if (output.useCountAsDemand === true || output.catalogCountAsDemand === true) return true;
-  if (output.mcpSurfaceGetAsDemand === true || output.uniqueHumansAsDemand === true) return true;
-  if (output.discoveryAsDemand === true || output.ownerQaAsDemand === true) return true;
-  if (output.analyticsCountAsDemand === true || output.catalogPresenceAsDemand === true) return true;
-  if (output.verdict === "demand") return true;
-  if (output.action === "create_demand" || output.action === "treat_as_demand") return true;
+const POSITIVE_SIGNAL = /^(present|positive|high|paid|true)$/i;
+const DECIMAL = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/;
+
+/** Finite decimal only. Bools, NaN, Infinity, hex, and empty strings are not counts. */
+export function finiteNumber(value) {
+  if (typeof value === "boolean" || typeof value === "bigint") return null;
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!DECIMAL.test(trimmed)) return null;
+    const n = Number(trimmed);
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
+}
+
+function bagClaimsDemand(bag) {
+  if (!asObject(bag)) return false;
+  if (bag.demand === true || bag.hasDemand === true || bag.paidDemand === true) return true;
+  if (bag.treatAbsenceAsDemand === true || bag.absenceAsDemand === true) return true;
+  if (bag.inventedDemand === true) return true;
+  if (bag.marketDemand === true || bag.organicDemandProven === true) return true;
+  if (bag.x402scanAsDemand === true || bag.documentedUnavailableAsDemand === true) return true;
+  if (bag.compositionAsConversion === true || bag.sourcesAdditiveAsDemand === true) return true;
+  if (bag.scopedNoChangeAsDemand === true || bag.presenceSnapshotAsDemand === true) return true;
+  if (bag.liquidityFunnelAsDemand === true || bag.seriesBuyersAsUniqueHumans === true) return true;
+  if (bag.buyerSetupTraceAsDemand === true || bag.unpaid402AsDemand === true) return true;
+  if (bag.stalePartialAsDemand === true || bag.missingAsZeroDemand === true) return true;
+  if (bag.conversionFunnel === true) return true;
+  if (bag.paidCustomersFromOrganic === true) return true;
+  if (bag.useCountAsDemand === true || bag.catalogCountAsDemand === true) return true;
+  if (bag.mcpSurfaceGetAsDemand === true || bag.uniqueHumansAsDemand === true) return true;
+  if (bag.discoveryAsDemand === true || bag.ownerQaAsDemand === true) return true;
+  if (bag.analyticsCountAsDemand === true || bag.catalogPresenceAsDemand === true) return true;
+  if (bag.verdict === "demand") return true;
+  if (bag.action === "create_demand" || bag.action === "treat_as_demand") return true;
   if (
-    output.recommendation === "add_route_as_demand" ||
-    output.recommendation === "fill_absence_as_demand" ||
-    output.recommendation === "call_unavailable_as_demand"
+    bag.recommendation === "add_route_as_demand" ||
+    bag.recommendation === "fill_absence_as_demand" ||
+    bag.recommendation === "call_unavailable_as_demand"
   ) {
     return true;
   }
-  if (typeof output.demandSignal === "string" && /^(present|positive|high|paid)$/i.test(output.demandSignal)) {
-    return true;
-  }
-  if (typeof output.paidCustomers === "number" && output.paidCustomers > 0) return true;
-  if (typeof output.demandCount === "number" && output.demandCount > 0) return true;
-  if (typeof output.crossSourceTotal === "number" && output.crossSourceTotal > 0 && output.additivity === "summed") {
-    return true;
+  if (typeof bag.demand === "string" && POSITIVE_SIGNAL.test(bag.demand)) return true;
+  if (typeof bag.demandSignal === "string" && POSITIVE_SIGNAL.test(bag.demandSignal)) return true;
+  if (bag.paidCustomers === true || bag.demandCount === true) return true;
+  const paidCustomers = finiteNumber(bag.paidCustomers);
+  if (paidCustomers != null && paidCustomers > 0) return true;
+  const demandCount = finiteNumber(bag.demandCount);
+  if (demandCount != null && demandCount > 0) return true;
+  const cross = finiteNumber(bag.crossSourceTotal);
+  if (cross != null && cross > 0 && bag.additivity === "summed") return true;
+  return false;
+}
+
+export function claimDemand(output, meta = {}) {
+  if (!asObject(output) && !asObject(meta)) return false;
+  for (const bag of claimBags(output, meta)) {
+    if (bagClaimsDemand(bag)) return true;
   }
   return false;
 }
@@ -286,7 +311,7 @@ export function evidenceAbsent(output, meta = {}) {
     reasons.push("explicit_absence");
   }
 
-  if ((nestedClaims?.notDemand === true || claims?.notDemand === true) && claimDemand(output)) {
+  if ((nestedClaims?.notDemand === true || claims?.notDemand === true) && claimDemand(output, meta)) {
     reasons.push("contradiction_not_demand");
   }
 
@@ -312,7 +337,7 @@ function treatsAbsenceAsZero(output) {
  */
 export function classifyAbsenceAsDemand(output, meta = {}) {
   const absenceReasons = evidenceAbsent(output, meta);
-  const demanded = claimDemand(output);
+  const demanded = claimDemand(output, meta);
   const withheld = demandWithheld(output, meta);
   const asZero = treatsAbsenceAsZero(output);
   const reasons = [];

@@ -8,6 +8,7 @@ export function evaluateFixture(raw, expect = "reject") {
     absence: raw.absence,
     paidActivity: raw.paidActivity,
     evidence: raw.evidence,
+    claims: raw.claims,
     sourceId: raw.sourceId || output.sourceId,
     availability: raw.availability || output.availability,
   };
@@ -38,9 +39,23 @@ export function evaluateFixture(raw, expect = "reject") {
     }
   } else if (expect === "reject") {
     if (verdict.reject) {
-      ok = true;
-      status = "pass";
-      exit = 0;
+      const expected = Array.isArray(raw.expectedReasons) ? raw.expectedReasons : [];
+      const missing = expected.filter((code) => !verdict.reasons.includes(code));
+      if (missing.length) {
+        ok = false;
+        status = "fail";
+        exit = 1;
+        error = {
+          code: "REASON_MISMATCH",
+          message: `fixture ${raw.id || "case"} missing reasons ${missing.join(",")}`,
+          missing,
+          reasons: verdict.reasons,
+        };
+      } else {
+        ok = true;
+        status = "pass";
+        exit = 0;
+      }
     } else {
       ok = false;
       status = "fail";

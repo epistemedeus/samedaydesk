@@ -164,12 +164,33 @@
       "expect": "reject",
       "class": "absence-as-demand",
       "expectedReasons": ["absence_as_demand", "series_buyers_as_unique_humans"]
+    },
+    {
+      "id": "nested-claims-as-demand",
+      "file": "fixtures/cases/nested-claims-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "x402scan_unavailable_as_demand"]
+    },
+    {
+      "id": "x402stats-string-buyers-as-demand",
+      "file": "fixtures/cases/x402stats-string-buyers-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "series_buyers_as_unique_humans"]
+    },
+    {
+      "id": "liquidity-unlabeled-as-demand",
+      "file": "fixtures/cases/liquidity-unlabeled-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "liquidity_funnel_as_demand"]
     }
   ],
   "counts": {
-    "total": 22,
+    "total": 25,
     "accept": 6,
-    "reject": 16,
+    "reject": 19,
     "seededAbsenceAsDemand": 1
   },
   "boundary": {

@@ -19,7 +19,7 @@ Usage:
   node tests/regression-sds/w802-absence/run.mjs --list
 
 Write boundary: tests/regression-sds/w802-absence/**. Does not pay Stripe/x402.
---live is refused.
+--live and --pay are refused.
 `;
 
 function parseArgs(argv) {
@@ -37,6 +37,10 @@ function parseArgs(argv) {
     else if (a === "--live") {
       const err = new Error("--live is refused: this corpus never pays or fetches");
       err.code = "LIVE_FORBIDDEN";
+      throw err;
+    } else if (a === "--pay" || a.startsWith("--pay=") || a === "--stripe") {
+      const err = new Error("--pay is refused: this corpus never pays or fetches");
+      err.code = "PAY_FORBIDDEN";
       throw err;
     } else if (
       a === "--seeded-absence-as-demand" ||

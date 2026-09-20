@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { classifyAbsenceAsDemand, claimDemand, demandWithheld } from "./lib/classify.mjs";
+import { classifyAbsenceAsDemand, claimDemand, demandWithheld, finiteNumber } from "./lib/classify.mjs";
 
 test("honest withheld absence does not invent demand", () => {
   const v = classifyAbsenceAsDemand({
@@ -167,4 +167,67 @@ test("nested buyer-setup-trace evidence plus demand is rejected", () => {
   assert.equal(v.reject, true, JSON.stringify(v.reasons));
   assert.ok(v.reasons.includes("unpaid_402_trace_as_demand"));
   assert.equal(v.detail.demandWithheld, true);
+});
+
+test("nested claims.demand on documented-unavailable x402scan is rejected", () => {
+  const v = classifyAbsenceAsDemand({
+    sourceId: "x402scan",
+    documentedUnavailable: true,
+    called: false,
+    paidActivity: { available: false },
+    claims: { demand: true, paidDemand: true, demandCount: 9 },
+  });
+  assert.equal(v.reject, true, JSON.stringify(v.reasons));
+  assert.equal(v.detail.claimedDemand, true);
+  assert.ok(v.reasons.includes("x402scan_unavailable_as_demand"));
+  assert.equal(claimDemand({ claims: { demand: true } }), true);
+});
+
+test("nested claims.demand plus notDemand is a contradiction reject", () => {
+  const v = classifyAbsenceAsDemand({
+    claims: { demand: true, notDemand: true },
+  });
+  assert.equal(v.reject, true, JSON.stringify(v.reasons));
+  assert.ok(v.reasons.includes("contradiction_not_demand"));
+});
+
+test("numeric-string x402stats paidCustomers is rejected", () => {
+  const v = classifyAbsenceAsDemand({
+    sourceId: "x402stats",
+    paidCustomers: "1200",
+  });
+  assert.equal(v.reject, true, JSON.stringify(v.reasons));
+  assert.ok(v.reasons.includes("series_buyers_as_unique_humans"));
+});
+
+test("non-finite and bool counts are not numeric demand", () => {
+  assert.equal(finiteNumber(true), null);
+  assert.equal(finiteNumber(NaN), null);
+  assert.equal(finiteNumber(Infinity), null);
+  assert.equal(finiteNumber("0x10"), null);
+  assert.equal(finiteNumber("1200"), 1200);
+  const inf = classifyAbsenceAsDemand({
+    sourceId: "x402stats",
+    paidCustomers: Infinity,
+  });
+  assert.equal(inf.detail.claimedDemand, false, JSON.stringify(inf));
+  assert.equal(inf.reject, false);
+  const boolCount = classifyAbsenceAsDemand({
+    sourceId: "x402stats",
+    paidCustomers: true,
+  });
+  assert.equal(boolCount.reject, true, JSON.stringify(boolCount.reasons));
+  assert.ok(boolCount.reasons.includes("series_buyers_as_unique_humans"));
+});
+
+test("unlabeled moltjobs conversionFunnel is rejected as liquidity-as-funnel", () => {
+  const v = classifyAbsenceAsDemand({
+    sourceId: "moltjobs",
+    conversionFunnel: true,
+    demand: true,
+    paidDemand: true,
+    paidCustomers: 62,
+  });
+  assert.equal(v.reject, true, JSON.stringify(v.reasons));
+  assert.ok(v.reasons.includes("liquidity_funnel_as_demand"));
 });

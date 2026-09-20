@@ -122,3 +122,44 @@ test("--live is refused without paying", () => {
   assert.equal(body.error.code, "LIVE_FORBIDDEN");
   assert.equal(body.boundary.paymentSent, false);
 });
+
+test("--pay is refused on run and verify", () => {
+  const runPay = runNode("run.mjs", ["--pay=now", "--json"]);
+  assert.equal(runPay.status, 2, runPay.stdout);
+  const runBody = JSON.parse(runPay.stdout.trim());
+  assert.equal(runBody.ok, false);
+  assert.equal(runBody.error.code, "PAY_FORBIDDEN");
+  assert.equal(runBody.boundary.paymentSent, false);
+
+  const verifyPay = runNode("verify.mjs", [
+    "--pay",
+    "--json",
+    "--fixture",
+    "fixtures/cases/x402scan-unavailable-as-demand.json",
+  ]);
+  assert.equal(verifyPay.status, 2, verifyPay.stdout);
+  const verifyBody = JSON.parse(verifyPay.stdout.trim());
+  assert.equal(verifyBody.ok, false);
+  assert.equal(verifyBody.error.code, "PAY_FORBIDDEN");
+  assert.equal(verifyBody.boundary.paymentSent, false);
+});
+
+test("verify confines fixtures to fixtures/*.json and envelopes parse errors", () => {
+  const escaped = runNode("verify.mjs", ["--json", "--fixture", "package.json", "--expect", "reject"]);
+  assert.equal(escaped.status, 2, escaped.stdout);
+  const escapedBody = JSON.parse(escaped.stdout.trim());
+  assert.equal(escapedBody.ok, false);
+  assert.equal(escapedBody.error.code, "FIXTURE_ESCAPE");
+
+  const readme = runNode("verify.mjs", ["--json", "--fixture", "fixtures/seeded/README.md"]);
+  assert.equal(readme.status, 2, readme.stdout);
+  const readmeBody = JSON.parse(readme.stdout.trim());
+  assert.equal(readmeBody.ok, false);
+  assert.equal(readmeBody.error.code, "FIXTURE_INVALID");
+
+  const unknown = runNode("verify.mjs", ["--json", "--unknown-flag"]);
+  assert.equal(unknown.status, 2, unknown.stdout);
+  const unknownBody = JSON.parse(unknown.stdout.trim());
+  assert.equal(unknownBody.ok, false);
+  assert.equal(unknownBody.error.code, "unknown_flag");
+});

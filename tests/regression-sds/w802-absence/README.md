@@ -63,3 +63,6 @@ node --test tests/regression-sds/w802-absence/*.test.mjs
 | buyer-setup-nested-as-demand | absence-as-demand | reject |
 | moltjobs-unlabeled-composition-as-demand | absence-as-demand | reject |
 | x402stats-series-unlabeled-as-demand | absence-as-demand | reject |
+| nested-claims-as-demand | absence-as-demand | reject |
+| x402stats-string-buyers-as-demand | absence-as-demand | reject |
+| liquidity-unlabeled-as-demand | absence-as-demand | reject |
