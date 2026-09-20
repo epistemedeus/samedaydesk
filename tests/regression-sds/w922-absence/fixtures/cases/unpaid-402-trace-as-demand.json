@@ -1,0 +1,29 @@
+{
+  "id": "unpaid-402-trace-as-demand",
+  "surface": "buyer-setup-trace",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "tools/recurring-job-recipes/recipes/buyer-setup-trace.mjs",
+  "expectedReasons": [
+    "absence_as_demand",
+    "unpaid_402_trace_as_demand"
+  ],
+  "defect": "Unpaid 402 buyer-setup inspection (paymentSent false) promoted as demand.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "buyer-setup-trace",
+    "unpaid402": true,
+    "buyerSetupTrace": true,
+    "buyerSetupTraceAsDemand": true,
+    "paymentSent": false,
+    "paymentSigned": false,
+    "demand": true,
+    "marketDemand": true,
+    "claims": {
+      "notDemand": true,
+      "paymentSent": false
+    },
+    "message": "unpaid 402 buyer-setup trace treated as demand"
+  }
+}
