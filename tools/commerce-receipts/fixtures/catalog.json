@@ -42,7 +42,9 @@
     "scheme": "exact",
     "network": "eip155:8453",
     "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
-    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "x402Catalog": "fixtures/presence/catalog/x402.json",
+    "extractResource": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com"
   },
   "designatedSeed": {
     "id": "paid-as-unpaid",
@@ -57,6 +59,6 @@
     "registryMutated": false,
     "published": false,
     "neoKernelVendor": false,
-    "statement": "Unpaid-only SDS commerce receipt fixtures. HTTP 402 and unpaid buyer stop are not settlement. A paid body, payment header, charged flag, or transaction labeled unpaid is paid_as_unpaid. No pay, publish, or neo-kernel-vendor."
+    "statement": "Unpaid-only SDS commerce receipt fixtures. HTTP 402 and unpaid buyer stop are not settlement. Extract resources pin to the in-tree x402 catalog URL. A paid body, payment header (including padded or X-PAYMENT-RESPONSE), charged flag, or transaction labeled unpaid is paid_as_unpaid. Header presence is not settlement. No pay, publish, or neo-kernel-vendor."
   }
 }

@@ -1,8 +1,10 @@
 # Unpaid SameDayDesk commerce receipt fixtures
 
 Typed unpaid-only commerce receipts for `agents.samedaydesk.com`. HTTP 402
-and an unpaid buyer stop are not settlement. A paid body, payment header,
-`charged: true`, or transaction labeled unpaid is `paid_as_unpaid`.
+and an unpaid buyer stop are not settlement. Extract resources pin to the
+in-tree x402 catalog URL. A paid body, payment header (including padded
+names and `X-PAYMENT-RESPONSE`), `charged: true`, or transaction labeled
+unpaid is `paid_as_unpaid`. Header presence is not settlement.
 
 This is a fixture pack and validator. It does not pay, checkout, publish,
 attach neo-kernel-vendor, or mutate a registry. Write boundary:
@@ -56,10 +58,11 @@ JSON Schema: `schema/commerce-receipt.v1.json`. Catalog:
 | `charged` / `paymentSent` | must be false |
 | `httpStatus` | `402` for challenge kinds; `null` for `unpaid_buyer_stop` |
 | `accepts` | exact Base USDC to the SDS pin `payTo` |
-| `resource` / `route` / `request.url` | pathname equals `route`; `request.url` equals `resource`; catalog-sourced extract/gateway records use the in-tree x402 example URL string |
+| `resource` / `route` / `request.url` | pathname equals `route`; `request.url` equals `resource`; `/extract` canonicalizes to `pin.extractResource` from the in-tree x402 catalog URL |
 | `offerReceipt.offers` | unsigned offer identity; payload scheme/network/asset/payTo/amount/resourceUrl must match accept + resource; not settlement |
-| `offerReceipt.receipt` | if present → `paid_as_unpaid` |
-| `settlement` | if present → `paid_as_unpaid` |
+| `offerReceipt.receipt` | if present → `paid_as_unpaid` (settlement evidence) |
+| `settlement` | if present → `paid_as_unpaid` (settlement evidence) |
+| payment headers | `PAYMENT-SIGNATURE`, `X-PAYMENT`, `X-PAYMENT-RESPONSE`, `PAYMENT-RESPONSE`, including padded/ZWSP names → `paid_as_unpaid`. Not settlement. |
 | `joinKeys` | `receipt_id`, `resource`, `amount`, `pay_to` (declared, not joined here) |
 
 Required prohibited inferences: `paid_as_unpaid`, `offer_is_settlement`,

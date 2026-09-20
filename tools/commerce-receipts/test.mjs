@@ -12,10 +12,15 @@ import {
   SEEDED_FAILURE,
   REFUSED_FLAGS,
   VALID_FIXTURES,
+  canonicalizeResourceUrl,
   collectPaidEvidence,
+  collectPaymentHeaderEvidence,
+  collectSettlementEvidence,
   designatedSeedPath,
   evaluateRecord,
   evaluateSeededFailure,
+  extractCatalogResource,
+  isPaymentHeaderName,
   listJsonFiles,
   loadCatalog,
   loadInvalidManifest,
@@ -65,6 +70,11 @@ test("catalog, schema, and designated seed agree", () => {
   assert.equal(catalog.designatedSeed.code, "paid_as_unpaid");
   assert.equal(catalog.pack, "unpaid-only");
   assert.equal(catalog.pin.origin, "https://agents.samedaydesk.com");
+  assert.equal(catalog.pin.x402Catalog, "fixtures/presence/catalog/x402.json");
+  assert.equal(
+    catalog.pin.extractResource,
+    "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+  );
   assert.equal(catalog.boundary.write, "tools/commerce-receipts/**");
   assert.equal(catalog.boundary.paymentSent, false);
   assert.equal(catalog.boundary.published, false);
@@ -81,6 +91,8 @@ test("catalog pin matches in-tree x402 extract accept", () => {
   assert.equal(accept.payTo, catalog.pin.payTo);
   assert.equal(accept.asset, catalog.pin.asset);
   assert.equal(accept.amount, "5000");
+  assert.equal(extract.resource.url, catalog.pin.extractResource);
+  assert.equal(extractCatalogResource(catalog), extract.resource.url);
 });
 
 test("gateway unpaid fixture resource matches in-tree x402 OpenAPI example url", () => {
@@ -160,8 +172,8 @@ test("every invalid fixture is rejected with the declared code", () => {
 test("suite accepts unpaid fixtures and rejects each invalid code", () => {
   const report = runSuite(catalog);
   assert.equal(report.failed, 0, JSON.stringify(report.results.filter((item) => !item.ok)));
-  assert.equal(report.passed, 14);
-  assert.equal(report.total, 14);
+  assert.equal(report.passed, 17);
+  assert.equal(report.total, 17);
 });
 
 test("designated paid-as-unpaid seed is naive-accept honest-reject", () => {
@@ -185,7 +197,7 @@ test("CLI --suite exits 0", () => {
   const body = JSON.parse(result.stdout);
   assert.equal(body.ok, true);
   assert.equal(body.failed, 0);
-  assert.equal(body.total, 14);
+  assert.equal(body.total, 17);
   assert.equal(body.paid, false);
   assert.equal(body.live, false);
 });
@@ -202,7 +214,7 @@ test("CLI --cold exits 0 (offline, unpaid)", () => {
   assert.equal(body.neo, false);
   assert.equal(body.published, false);
   assert.equal(body.failed, 0);
-  assert.equal(body.total, 14);
+  assert.equal(body.total, 17);
 });
 
 test("CLI --seeded-failure paid-as-unpaid exits 1 with SEED_REJECT", () => {
@@ -314,15 +326,21 @@ test("PAYMENT-SIGNATURE labeled unpaid is paid_as_unpaid", () => {
 test("X-PAYMENT-RESPONSE and padded payment header names are paid_as_unpaid", () => {
   const responseHeader = cloneValid("unpaid-402-extract.json");
   responseHeader.request.headers["X-PAYMENT-RESPONSE"] = "seeded";
-  const responseResult = validateRecord(responseHeader, catalog);
+  const responseResult = evaluateRecord(responseHeader, catalog);
   assert.equal(responseResult.ok, false);
-  assert.ok(responseResult.errors.some((item) => item.code === "paid_as_unpaid"));
+  assert.ok(responseResult.codes.includes("paid_as_unpaid"));
+  assert.equal(responseResult.settled, false);
+  assert.equal(responseResult.settlementEvidence.length, 0);
+  assert.ok(responseResult.paymentHeaderEvidence.length > 0);
 
   const padded = cloneValid("unpaid-402-extract.json");
   padded.request.headers[" X-PAYMENT "] = "seeded";
-  const paddedResult = validateRecord(padded, catalog);
+  const paddedResult = evaluateRecord(padded, catalog);
   assert.equal(paddedResult.ok, false);
-  assert.ok(paddedResult.errors.some((item) => item.code === "paid_as_unpaid"));
+  assert.ok(paddedResult.codes.includes("paid_as_unpaid"));
+  assert.equal(paddedResult.naiveVerdict, "accept");
+  assert.equal(paddedResult.honestVerdict, "reject");
+  assert.equal(paddedResult.settled, false);
 });
 
 test("resource longer than 2048 is invalid_shape", () => {
@@ -435,4 +453,145 @@ test("designated seed settlement tx matches in-tree facilitator evidence", () =>
   assert.equal(seed.settlement.operationId, evidence.settlement.operationId);
   assert.equal(seed.settlement.amountUsdc, evidence.settlement.amountUsdc);
   assert.match(seed.settlement.transaction, /^0x[a-f0-9]{64}$/);
+});
+
+test("X74-001 padded and X-PAYMENT-RESPONSE evidence cannot become an unpaid receipt", () => {
+  const names = [
+    " X-PAYMENT-RESPONSE ",
+    "\tX-PAYMENT-RESPONSE\t",
+    "X-PAYMENT-RESPONSE\u200b",
+    "x-payment-response",
+    " PAYMENT-SIGNATURE ",
+  ];
+  for (const name of names) {
+    assert.equal(isPaymentHeaderName(name), true, name);
+    const record = cloneValid("unpaid-402-extract.json");
+    record.request.headers[name] = "seeded-not-a-live-payload";
+    const result = evaluateRecord(record, catalog);
+    assert.equal(result.ok, false, name);
+    assert.equal(result.naiveVerdict, "accept", name);
+    assert.equal(result.honestVerdict, "reject", name);
+    assert.ok(result.codes.includes("paid_as_unpaid"), name);
+    assert.equal(result.settled, false, name);
+  }
+
+  const paddedFile = validateFile(join(INVALID_FIXTURES, "padded-payment-header-as-unpaid.json"), catalog);
+  assert.equal(paddedFile.ok, false);
+  assert.equal(paddedFile.naiveVerdict, "accept");
+  assert.equal(paddedFile.honestVerdict, "reject");
+  assert.ok(paddedFile.codes.includes("paid_as_unpaid"));
+  assert.equal(paddedFile.settled, false);
+});
+
+test("X74-002 extract resources pin to the x402 catalog URL", () => {
+  const x402 = loadJson(join(ROOT, catalog.pin.x402Catalog));
+  const extract = x402.items.find((item) => item.resource.routeTemplate === "/extract");
+  assert.equal(catalog.pin.extractResource, extract.resource.url);
+  assert.equal(
+    canonicalizeResourceUrl("https://agents.samedaydesk.com/extract?url=https://example.com"),
+    canonicalizeResourceUrl(catalog.pin.extractResource),
+  );
+
+  const encoded = evaluateRecord(cloneValid("unpaid-402-extract.json"), catalog);
+  assert.equal(encoded.ok, true);
+  assert.equal(encoded.catalogResource, catalog.pin.extractResource);
+
+  const decoded = cloneValid("unpaid-402-extract.json");
+  decoded.resource = "https://agents.samedaydesk.com/extract?url=https://example.com";
+  decoded.request.url = decoded.resource;
+  const decodedResult = evaluateRecord(decoded, catalog);
+  assert.equal(decodedResult.ok, true, JSON.stringify(decodedResult.errors));
+  assert.equal(decodedResult.catalogResource, catalog.pin.extractResource);
+
+  const swapped = cloneValid("unpaid-402-extract.json");
+  swapped.resource = "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fevil.example";
+  swapped.request.url = swapped.resource;
+  const swappedResult = evaluateRecord(swapped, catalog);
+  assert.equal(swappedResult.ok, false);
+  assert.ok(swappedResult.codes.includes("catalog_resource_mismatch"));
+  assert.equal(swappedResult.catalogResource, catalog.pin.extractResource);
+});
+
+test("X74-003 payment header presence is not settlement", () => {
+  const headerOnly = cloneValid("unpaid-402-extract.json");
+  headerOnly.request.headers["X-PAYMENT-RESPONSE"] = "seeded";
+  const headerResult = evaluateRecord(headerOnly, catalog);
+  assert.equal(headerResult.ok, false);
+  assert.ok(headerResult.codes.includes("paid_as_unpaid"));
+  assert.equal(headerResult.settled, false);
+  assert.equal(headerResult.settlementEvidence.length, 0);
+  assert.equal(collectSettlementEvidence(headerOnly).length, 0);
+  assert.ok(collectPaymentHeaderEvidence(headerOnly).length > 0);
+  assert.equal(Object.hasOwn(headerOnly, "settlement"), false);
+
+  const settled = evaluateRecord(loadJson(designatedSeedPath(catalog)), catalog);
+  assert.equal(settled.settled, true);
+  assert.ok(settled.settlementEvidence.length > 0);
+  assert.equal(settled.paymentHeaderEvidence.length, 0);
+});
+
+test("X74-004 regression matrix for padded headers, catalog pin, and header-only", () => {
+  const validRecord = cloneValid("unpaid-402-extract.json");
+  const validMatching = evaluateRecord(validRecord, catalog);
+  assert.equal(validMatching.ok, true);
+  assert.equal(validRecord.statusClass, "unpaid");
+  assert.equal(validMatching.honestVerdict, "accept");
+  assert.equal(validMatching.settled, false);
+  assert.equal(validMatching.catalogResource, catalog.pin.extractResource);
+
+  const paddedPayload = cloneValid("unpaid-402-extract.json");
+  paddedPayload.request.headers["\tX-PAYMENT-RESPONSE\u200b "] = "  padded-payload  ";
+  const paddedResult = evaluateRecord(paddedPayload, catalog);
+  assert.equal(paddedResult.ok, false);
+  assert.ok(paddedResult.codes.includes("paid_as_unpaid"));
+  assert.equal(paddedResult.settled, false);
+
+  const fakeHeader = validateFile(join(INVALID_FIXTURES, "x-payment-response-as-unpaid.json"), catalog);
+  assert.equal(fakeHeader.ok, false);
+  assert.ok(fakeHeader.codes.includes("paid_as_unpaid"));
+  assert.equal(fakeHeader.settled, false);
+
+  const mismatched = validateFile(join(INVALID_FIXTURES, "extract-resource-not-catalog.json"), catalog);
+  assert.equal(mismatched.ok, false);
+  assert.ok(mismatched.codes.includes("catalog_resource_mismatch"));
+
+  const duplicateFields = cloneValid("unpaid-402-extract.json");
+  duplicateFields.receipt = { transaction: "0xabc" };
+  const duplicateResult = evaluateRecord(duplicateFields, catalog);
+  assert.equal(duplicateResult.ok, false);
+  assert.ok(duplicateResult.codes.includes("additional_property"));
+
+  const malformed = cloneValid("unpaid-402-extract.json");
+  malformed.request.headers["X-PAYMENT-RESPONSE"] = "{not-a-receipt";
+  const malformedResult = evaluateRecord(malformed, catalog);
+  assert.equal(malformedResult.ok, false);
+  assert.ok(malformedResult.codes.includes("paid_as_unpaid"));
+  assert.equal(malformedResult.settled, false);
+});
+
+test("CLI rejects padded payment evidence as paid_as_unpaid and not settlement", () => {
+  const file = "tools/commerce-receipts/fixtures/invalid/padded-payment-header-as-unpaid.json";
+  const rejected = runCli(["--expect-reject", "paid_as_unpaid", file]);
+  assert.equal(rejected.status, 0, rejected.stderr || rejected.stdout);
+  const body = JSON.parse(rejected.stdout);
+  assert.equal(body.ok, true);
+  assert.equal(body.naiveVerdict, "accept");
+  assert.equal(body.honestVerdict, "reject");
+  assert.equal(body.settled, false);
+  assert.ok(body.codes.includes("paid_as_unpaid"));
+
+  const raw = runCli([file]);
+  assert.equal(raw.status, 1, raw.stderr || raw.stdout);
+  const rawBody = JSON.parse(raw.stdout);
+  assert.equal(rawBody.ok, false);
+  assert.equal(rawBody.results[0].settled, false);
+  assert.ok(rawBody.results[0].codes.includes("paid_as_unpaid"));
+});
+
+test("note text mentioning a payment header is not paid evidence", () => {
+  const record = cloneValid("unpaid-402-extract.json");
+  record.source.note = "X-PAYMENT-RESPONSE must not be inferred as unpaid or as settlement.";
+  const result = evaluateRecord(record, catalog);
+  assert.equal(result.ok, true, JSON.stringify(result.errors));
+  assert.equal(collectPaidEvidence(record).length, 0);
 });

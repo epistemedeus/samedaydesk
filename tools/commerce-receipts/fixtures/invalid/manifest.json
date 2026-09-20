@@ -9,6 +9,12 @@
   "payment-header-as-unpaid.json": {
     "code": "paid_as_unpaid"
   },
+  "padded-payment-header-as-unpaid.json": {
+    "code": "paid_as_unpaid"
+  },
+  "x-payment-response-as-unpaid.json": {
+    "code": "paid_as_unpaid"
+  },
   "settlement-tx-as-unpaid.json": {
     "code": "paid_as_unpaid"
   },
@@ -17,6 +23,9 @@
   },
   "http-200-paid-body-as-unpaid.json": {
     "code": "paid_as_unpaid"
+  },
+  "extract-resource-not-catalog.json": {
+    "code": "catalog_resource_mismatch"
   },
   "status-class-paid.json": {
     "code": "not_unpaid"

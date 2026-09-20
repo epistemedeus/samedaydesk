@@ -26,8 +26,11 @@ const TX_RE = /^0x[a-f0-9]{64}$/;
 const RFC3339_RE = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})Z$/;
 const RESOURCE_PREFIX = "https://agents.samedaydesk.com/";
 const RESOURCE_MAX = 2048;
+const EXTRACT_ROUTE = "/extract";
 const PAYMENT_HEADER_RE =
   /^(PAYMENT-SIGNATURE|X-PAYMENT-RESPONSE|X-PAYMENT|PAYMENT-RESPONSE)$/i;
+const HEADER_FORMAT_RE = /[\u200B-\u200D\uFEFF]/g;
+const HEADER_SPACE_RE = /[\u0000-\u0020\u007F\u00A0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]+/g;
 const HTTP_METHODS = new Set(["GET", "POST"]);
 const HTTP_CHALLENGE_KINDS = new Set([
   "unpaid_payment_required",
@@ -207,15 +210,58 @@ export function designatedSeedPath(catalog = loadCatalog()) {
   return join(FIXTURE_ROOT, catalog.designatedSeed.file);
 }
 
+export function normalizeHeaderName(name) {
+  return String(name || "")
+    .replace(HEADER_FORMAT_RE, "")
+    .replace(HEADER_SPACE_RE, " ")
+    .trim();
+}
+
 export function isPaymentHeaderName(name) {
-  return PAYMENT_HEADER_RE.test(String(name || "").trim());
+  return PAYMENT_HEADER_RE.test(normalizeHeaderName(name));
+}
+
+export function canonicalizeResourceUrl(value) {
+  if (typeof value !== "string" || value.length === 0 || value.length > RESOURCE_MAX) return null;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:" || url.username || url.password) return null;
+    const params = [...url.searchParams.entries()].sort((left, right) => {
+      if (left[0] === right[0]) return left[1].localeCompare(right[1]);
+      return left[0].localeCompare(right[0]);
+    });
+    const out = new URL(`${url.origin}${url.pathname}`);
+    for (const [key, param] of params) out.searchParams.append(key, param);
+    return out.href;
+  } catch {
+    return null;
+  }
+}
+
+export function extractCatalogResource(catalog = loadCatalog()) {
+  const pinned = catalog?.pin?.extractResource;
+  return typeof pinned === "string" ? pinned : null;
+}
+
+function resourcePathname(value) {
+  try {
+    return new URL(value).pathname;
+  } catch {
+    return null;
+  }
+}
+
+function isExtractReceipt(record) {
+  if (!isPlainObject(record)) return false;
+  if (record.route === EXTRACT_ROUTE) return true;
+  return resourcePathname(record.resource) === EXTRACT_ROUTE;
 }
 
 export function naiveVerdict(record) {
   return record && record.statusClass === "unpaid" ? "accept" : "reject";
 }
 
-export function collectPaidEvidence(record) {
+export function collectSettlementEvidence(record) {
   const hits = [];
   if (!isPlainObject(record)) return hits;
   if (record.charged === true) {
@@ -241,21 +287,32 @@ export function collectPaidEvidence(record) {
       ),
     );
   }
-  const headers = isPlainObject(record.request) ? record.request.headers : null;
-  if (isPlainObject(headers)) {
-    for (const name of ownKeys(headers)) {
-      if (isPaymentHeaderName(name)) {
+  return hits;
+}
+
+export function collectPaymentHeaderEvidence(record) {
+  const hits = [];
+  function walk(value, path, depth) {
+    if (depth > 8 || !isPlainObject(value)) return;
+    for (const key of ownKeys(value)) {
+      if (isPaymentHeaderName(key)) {
         hits.push(
           error(
             "paid_as_unpaid",
-            `$.request.headers.${name}`,
+            `${path}.${key}`,
             "payment header cannot be labeled unpaid",
           ),
         );
       }
+      walk(value[key], `${path}.${key}`, depth + 1);
     }
   }
+  walk(record, "$", 0);
   return hits;
+}
+
+export function collectPaidEvidence(record) {
+  return [...collectSettlementEvidence(record), ...collectPaymentHeaderEvidence(record)];
 }
 
 function validateAccept(accept, index, catalog, errors) {
@@ -467,6 +524,21 @@ export function validateRecord(input, catalog = loadCatalog()) {
       errors.push(error("invalid_shape", "$.resource", "resource must be a URL on the SDS origin"));
     }
   }
+
+  if (isExtractReceipt(input)) {
+    const pinned = extractCatalogResource(catalog);
+    const want = canonicalizeResourceUrl(pinned);
+    const got = canonicalizeResourceUrl(input.resource);
+    if (!want || !got || got !== want) {
+      errors.push(
+        error(
+          "catalog_resource_mismatch",
+          "$.resource",
+          "extract resource must equal the pinned x402 catalog URL",
+        ),
+      );
+    }
+  }
   expectString(input.route, ROUTE_RE, "$.route", errors);
   if (!HTTP_METHODS.has(input.method)) {
     errors.push(error("invalid_shape", "$.method", "method is not GET or POST"));
@@ -593,14 +665,21 @@ export function validateRecord(input, catalog = loadCatalog()) {
 
 export function evaluateRecord(input, catalog = loadCatalog()) {
   const result = validateRecord(input, catalog);
-  const paidEvidence = collectPaidEvidence(input);
+  const settlementEvidence = collectSettlementEvidence(input);
+  const paymentHeaderEvidence = collectPaymentHeaderEvidence(input);
+  const paidEvidence = [...settlementEvidence, ...paymentHeaderEvidence];
   const naive = naiveVerdict(input);
   const honest = result.ok ? "accept" : "reject";
+  const catalogResource = isExtractReceipt(input) ? extractCatalogResource(catalog) : null;
   return {
     ...result,
     naiveVerdict: naive,
     honestVerdict: honest,
     paidEvidence,
+    settlementEvidence,
+    paymentHeaderEvidence,
+    catalogResource,
+    settled: settlementEvidence.length > 0,
     codes: result.errors.map((item) => item.code),
   };
 }
