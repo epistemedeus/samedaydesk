@@ -35,6 +35,19 @@ function writeJson(value, pretty) {
   return `${JSON.stringify(value, null, pretty ? 2 : 0)}\n`;
 }
 
+function usageError(io, message, pretty = false) {
+  io.stdout.write(
+    writeJson({
+      ok: false,
+      error: {
+        code: "USAGE",
+        message,
+      },
+    }, pretty),
+  );
+  return 2;
+}
+
 export function runCli(argv = process.argv.slice(2), io = process) {
   const refused = refusedFlag(argv);
   if (refused) {
@@ -66,8 +79,7 @@ export function runCli(argv = process.argv.slice(2), io = process) {
       },
     }));
   } catch (cause) {
-    io.stderr.write(`${cause.message}\n`);
-    return 2;
+    return usageError(io, cause.message);
   }
 
   const pretty = values.pretty === true;
@@ -83,8 +95,7 @@ export function runCli(argv = process.argv.slice(2), io = process) {
 
   if (values.cold) {
     if (positionals.length > 0 || values["expect-reject"] || values["seeded-failure"] || values.suite) {
-      io.stderr.write("--cold does not take files, --suite, --expect-reject, or --seeded-failure.\n");
-      return 2;
+      return usageError(io, "--cold does not take files, --suite, --expect-reject, or --seeded-failure.", pretty);
     }
     const report = runCold();
     return write(
@@ -119,8 +130,7 @@ export function runCli(argv = process.argv.slice(2), io = process) {
 
   if (values.suite) {
     if (positionals.length > 0 || values["expect-reject"] || values["seeded-failure"]) {
-      io.stderr.write("--suite does not take files, --expect-reject, or --seeded-failure.\n");
-      return 2;
+      return usageError(io, "--suite does not take files, --expect-reject, or --seeded-failure.", pretty);
     }
     const report = runSuite();
     return write(
@@ -159,8 +169,7 @@ export function runCli(argv = process.argv.slice(2), io = process) {
       );
     }
     if (positionals.length > 0 || values["expect-reject"]) {
-      io.stderr.write("--seeded-failure does not take files or --expect-reject.\n");
-      return 2;
+      return usageError(io, "--seeded-failure does not take files or --expect-reject.", pretty);
     }
     const seed = evaluateSeededFailure();
     return write(
@@ -190,14 +199,16 @@ export function runCli(argv = process.argv.slice(2), io = process) {
   }
 
   if (positionals.length === 0) {
-    io.stderr.write("Pass --cold, --suite, --seeded-failure forged-digest, --help, or one or more JSON files.\n");
-    return 2;
+    return usageError(
+      io,
+      "Pass --cold, --suite, --seeded-failure forged-digest, --help, or one or more JSON files.",
+      pretty,
+    );
   }
 
   const expectedCode = values["expect-reject"];
   if (expectedCode && positionals.length !== 1) {
-    io.stderr.write("--expect-reject requires exactly one file.\n");
-    return 2;
+    return usageError(io, "--expect-reject requires exactly one file.", pretty);
   }
 
   const results = positionals.map((filePath) => validateFile(filePath));

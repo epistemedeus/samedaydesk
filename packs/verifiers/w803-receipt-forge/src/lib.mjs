@@ -25,6 +25,7 @@ import {
   REQUEST_KEYS,
   REQUIRED_JOIN_KEYS,
   REQUIRED_PROHIBITED_INFERENCES,
+  RESOURCE_MAX,
   RESOURCE_PREFIX,
   RFC3339_RE,
   ROOT_KEYS,
@@ -162,7 +163,7 @@ export function designatedSeedPath(catalog = loadCatalog()) {
 }
 
 export function isPaymentHeaderName(name) {
-  return PAYMENT_HEADER_RE.test(String(name || ""));
+  return PAYMENT_HEADER_RE.test(String(name || "").trim());
 }
 
 export function naiveVerdict(claim) {
@@ -228,8 +229,14 @@ function validateRequest(request, claim, errors) {
   } else if (request.method !== claim.method) {
     errors.push(error("invalid_shape", "$.request.method", "request.method must equal method"));
   }
-  if (typeof request.url !== "string" || !request.url.startsWith(RESOURCE_PREFIX)) {
-    errors.push(error("invalid_shape", "$.request.url", "url must be on the SDS origin"));
+  if (
+    typeof request.url !== "string" ||
+    !request.url.startsWith(RESOURCE_PREFIX) ||
+    request.url.length > RESOURCE_MAX
+  ) {
+    errors.push(error("invalid_shape", "$.request.url", "url must be on the SDS origin and at most 2048 characters"));
+  } else if (typeof claim.resource === "string" && request.url !== claim.resource) {
+    errors.push(error("invalid_shape", "$.request.url", "request.url must equal resource"));
   }
   if (!isPlainObject(request.headers)) {
     errors.push(error("invalid_shape", "$.request.headers", "headers must be an object"));
@@ -330,7 +337,15 @@ function validateSettlement(settlement, claim, catalog, errors) {
         "settlement transaction is bound to a different SDS receipt or resource",
       ),
     );
+    return;
   }
+  errors.push(
+    error(
+      "paid_as_unpaid",
+      "$.settlement",
+      "known settlement cannot be labeled unpaid",
+    ),
+  );
 }
 
 function validateIntegrity(claim, errors) {
@@ -407,8 +422,21 @@ export function validateClaim(input, catalog = loadCatalog()) {
   if (input.origin !== SDS_PIN.origin) {
     errors.push(error("pin_mismatch", "$.origin", "origin is not the SDS pin"));
   }
-  if (typeof input.resource !== "string" || !input.resource.startsWith(RESOURCE_PREFIX)) {
-    errors.push(error("invalid_shape", "$.resource", "resource must be on the SDS origin"));
+  if (
+    typeof input.resource !== "string" ||
+    !input.resource.startsWith(RESOURCE_PREFIX) ||
+    input.resource.length > RESOURCE_MAX
+  ) {
+    errors.push(error("invalid_shape", "$.resource", "resource must be on the SDS origin and at most 2048 characters"));
+  } else if (typeof input.route === "string" && ROUTE_RE.test(input.route)) {
+    try {
+      const pathname = new URL(input.resource).pathname;
+      if (pathname !== input.route) {
+        errors.push(error("invalid_shape", "$.route", "route must equal resource pathname"));
+      }
+    } catch {
+      errors.push(error("invalid_shape", "$.resource", "resource is not a URL"));
+    }
   }
   expectString(input.route, ROUTE_RE, "$.route", errors);
   if (!HTTP_METHODS.includes(input.method)) {
@@ -681,8 +709,10 @@ export function evaluateSeededFailure(catalog = loadCatalog()) {
 
 export function refusedFlag(argv) {
   for (const arg of argv) {
-    const name = String(arg).replace(/^--/, "");
-    if (REFUSED_FLAGS.includes(name)) return arg;
+    const raw = String(arg);
+    if (!raw.startsWith("--")) continue;
+    const name = raw.slice(2).split("=")[0];
+    if (REFUSED_FLAGS.includes(name)) return `--${name}`;
   }
   return null;
 }

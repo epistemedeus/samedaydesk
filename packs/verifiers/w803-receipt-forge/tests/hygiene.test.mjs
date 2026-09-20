@@ -22,6 +22,8 @@ test("refusedFlag catches live/pay/neo/publish before other work", () => {
   for (const flag of REFUSED_FLAGS) {
     assert.equal(refusedFlag([`--${flag}`, "--cold"]), `--${flag}`);
   }
+  assert.equal(refusedFlag(["--pay=now", "--cold"]), "--pay");
+  assert.equal(refusedFlag(["--live=true", "--cold"]), "--live");
   assert.equal(refusedFlag(["--cold"]), null);
 });
 

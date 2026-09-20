@@ -37,7 +37,7 @@ const ACCEPT = {
   extra: { name: "USD Coin", version: "2" },
 };
 
-const EXTRACT_RESOURCE = "https://agents.samedaydesk.com/extract?url=https://example.com";
+const EXTRACT_RESOURCE = "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com";
 
 function baseUnpaid({ claimId, receiptId, kind, resource, route, method, httpStatus, observedAt, source, unknownWhenAbsent }) {
   return {

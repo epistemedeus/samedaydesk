@@ -5,7 +5,7 @@
   "kind": "unpaid_buyer_stop",
   "statusClass": "unpaid",
   "origin": "https://agents.samedaydesk.com",
-  "resource": "https://agents.samedaydesk.com/extract?url=https://example.com",
+  "resource": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
   "route": "/extract",
   "method": "GET",
   "httpStatus": null,
@@ -16,7 +16,7 @@
   "authorityClass": "seller_observed",
   "request": {
     "method": "GET",
-    "url": "https://agents.samedaydesk.com/extract?url=https://example.com",
+    "url": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
     "headers": {
       "Accept": "application/json"
     }
@@ -61,6 +61,6 @@
   ],
   "integrity": {
     "alg": "sha256",
-    "claimedDigest": "sha256:173bd2e2314e5898fe64e9a4c739250b6013e128b8d5369e715a3b578e6e6a56"
+    "claimedDigest": "sha256:186672d24bdce3e5a1cc2d641f1c0cc9db7021205571056df3702e63dedda9ac"
   }
 }

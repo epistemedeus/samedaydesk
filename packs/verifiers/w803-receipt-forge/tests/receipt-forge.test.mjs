@@ -216,6 +216,125 @@ test("CLI refuses --live --pay --publish --neo", () => {
   }
 });
 
+test("CLI refuses --pay=now and --live=true as JSON REFUSED", () => {
+  for (const flag of ["--pay=now", "--live=true"]) {
+    const proc = runCli([flag, "--cold"]);
+    assert.equal(proc.status, 2, flag);
+    const body = JSON.parse(proc.stdout);
+    assert.equal(body.ok, false);
+    assert.equal(body.error.code, "REFUSED");
+  }
+});
+
+test("CLI usage errors are JSON USAGE exit 2", () => {
+  const empty = runCli([]);
+  assert.equal(empty.status, 2);
+  const emptyBody = JSON.parse(empty.stdout);
+  assert.equal(emptyBody.ok, false);
+  assert.equal(emptyBody.error.code, "USAGE");
+
+  const mixed = runCli(["--cold", "packs/verifiers/w803-receipt-forge/fixtures/valid/unpaid-402-extract.json"]);
+  assert.equal(mixed.status, 2);
+  const mixedBody = JSON.parse(mixed.stdout);
+  assert.equal(mixedBody.ok, false);
+  assert.equal(mixedBody.error.code, "USAGE");
+});
+
+test("X-PAYMENT-RESPONSE and padded payment header names are payment_header_forge", () => {
+  const original = loadJson(join(VALID_FIXTURES, "unpaid-402-extract.json"));
+  const responseHeader = stampIntegrity({
+    ...structuredClone(original),
+    claimId: "rf_w803_x_payment_response",
+    receiptId: "cr_w803_x_payment_response",
+    request: {
+      ...original.request,
+      headers: { Accept: "application/json", "X-PAYMENT-RESPONSE": "forged" },
+    },
+  });
+  const responseResult = evaluateClaim(responseHeader, catalog);
+  assert.equal(responseResult.ok, false);
+  assert.ok(responseResult.codes.includes("payment_header_forge"), JSON.stringify(responseResult.codes));
+
+  const padded = stampIntegrity({
+    ...structuredClone(original),
+    claimId: "rf_w803_padded_payment_header",
+    receiptId: "cr_w803_padded_payment_header",
+    request: {
+      ...original.request,
+      headers: { Accept: "application/json", " X-PAYMENT ": "forged" },
+    },
+  });
+  const paddedResult = evaluateClaim(padded, catalog);
+  assert.equal(paddedResult.ok, false);
+  assert.ok(paddedResult.codes.includes("payment_header_forge"), JSON.stringify(paddedResult.codes));
+});
+
+test("known settlement on its bound unpaid-labeled claim is paid_as_unpaid", () => {
+  const original = loadJson(join(VALID_FIXTURES, "unpaid-402-extract.json"));
+  const bound = stampIntegrity({
+    ...structuredClone(original),
+    claimId: "rf_w803_paid_as_unpaid_bound",
+    receiptId: KNOWN_SETTLEMENT.boundReceiptId,
+    resource: KNOWN_SETTLEMENT.boundResource,
+    route: KNOWN_SETTLEMENT.boundRoute,
+    request: {
+      method: "GET",
+      url: KNOWN_SETTLEMENT.boundResource,
+      headers: { Accept: "application/json" },
+    },
+    settlement: {
+      operationId: KNOWN_SETTLEMENT.operationId,
+      amountUsdc: KNOWN_SETTLEMENT.amountUsdc,
+      transaction: KNOWN_SETTLEMENT.transaction,
+      facilitatorOrPayoutRef: KNOWN_SETTLEMENT.facilitatorOrPayoutRef,
+    },
+  });
+  const result = evaluateClaim(bound, catalog);
+  assert.equal(result.ok, false, JSON.stringify(result.codes));
+  assert.equal(result.naiveVerdict, "accept");
+  assert.equal(result.honestVerdict, "reject");
+  assert.ok(result.codes.includes("paid_as_unpaid"), JSON.stringify(result.codes));
+  assert.equal(result.codes.includes("copied_settlement"), false);
+});
+
+test("resource longer than 2048 is invalid_shape", () => {
+  const original = loadJson(join(VALID_FIXTURES, "unpaid-402-extract.json"));
+  const longUrl = `${original.resource}&pad=${"a".repeat(2100)}`;
+  const claim = stampIntegrity({
+    ...structuredClone(original),
+    claimId: "rf_w803_long_resource",
+    receiptId: "cr_w803_long_resource",
+    resource: longUrl,
+    request: { ...original.request, url: longUrl },
+  });
+  const result = evaluateClaim(claim, catalog);
+  assert.equal(result.ok, false);
+  assert.ok(result.codes.includes("invalid_shape"), JSON.stringify(result.codes));
+  assert.ok(result.errors.some((item) => item.path === "$.resource"));
+});
+
+test("extract fixtures copy the committed catalog URL exactly", () => {
+  const x402 = loadJson(join(repoRoot, "fixtures/presence/catalog/x402.json"));
+  const extract = x402.items.find((item) => item?.resource?.routeTemplate === "/extract");
+  assert.equal(typeof extract.resource.url, "string");
+  const claim = loadJson(join(VALID_FIXTURES, "unpaid-402-extract.json"));
+  assert.equal(claim.resource, extract.resource.url);
+  assert.equal(claim.request.url, extract.resource.url);
+});
+
+test("route must equal resource pathname", () => {
+  const original = loadJson(join(VALID_FIXTURES, "unpaid-402-extract.json"));
+  const claim = stampIntegrity({
+    ...structuredClone(original),
+    claimId: "rf_w803_route_mismatch",
+    receiptId: "cr_w803_route_mismatch",
+    route: "/scan",
+  });
+  const result = evaluateClaim(claim, catalog);
+  assert.equal(result.ok, false);
+  assert.ok(result.errors.some((item) => item.path === "$.route"), JSON.stringify(result.errors));
+});
+
 test("mutating a valid receipt after stamping is receipt_forged", () => {
   const original = loadJson(join(VALID_FIXTURES, "unpaid-402-extract.json"));
   const tampered = structuredClone(original);

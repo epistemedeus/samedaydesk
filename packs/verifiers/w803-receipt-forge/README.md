@@ -26,8 +26,9 @@ settlement proof.
 
 ## Cold run
 
-`fixtures/valid/unpaid-402-extract.json` is an unpaid HTTP 402 on
-`https://agents.samedaydesk.com/extract` with SDS pin `payTo`
+`fixtures/valid/unpaid-402-extract.json` is an unpaid HTTP 402 on the
+committed catalog extract URL
+`https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com` with SDS pin `payTo`
 `0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee` (Base USDC exact, amount
 `5000`). The claimed digest matches the canonical body. Verdict `ok: true`.
 The accept is the committed presence catalog `/extract` row.

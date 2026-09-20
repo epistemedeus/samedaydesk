@@ -89,7 +89,8 @@ export const REFUSED_FLAGS = Object.freeze([
   "payment",
 ]);
 
-export const PAYMENT_HEADER_RE = /^(PAYMENT-SIGNATURE|X-PAYMENT|PAYMENT-RESPONSE)$/i;
+export const PAYMENT_HEADER_RE =
+  /^(PAYMENT-SIGNATURE|X-PAYMENT-RESPONSE|X-PAYMENT|PAYMENT-RESPONSE)$/i;
 
 export const RECEIPT_ID_RE = /^[a-z][a-z0-9_-]{2,95}$/;
 export const TOKEN_RE = /^[a-z][a-z0-9_]{1,95}$/;
@@ -102,6 +103,7 @@ export const TX_RE = /^0x[a-f0-9]{64}$/;
 export const RFC3339_RE = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})Z$/;
 export const DIGEST_RE = /^sha256:[a-f0-9]{64}$/;
 export const RESOURCE_PREFIX = "https://agents.samedaydesk.com/";
+export const RESOURCE_MAX = 2048;
 
 export const HTTP_METHODS = Object.freeze(["GET", "POST"]);
 

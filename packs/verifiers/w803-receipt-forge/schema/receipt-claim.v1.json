@@ -99,7 +99,7 @@
       "required": ["method", "url", "headers"],
       "properties": {
         "method": { "type": "string", "enum": ["GET", "POST"] },
-        "url": { "type": "string" },
+        "url": { "type": "string", "maxLength": 2048 },
         "headers": {
           "type": "object",
           "additionalProperties": { "type": "string" }
