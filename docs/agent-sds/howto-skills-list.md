@@ -84,7 +84,12 @@ matches). Expected `bounded_html_observation` with `no_payment` is
 node --input-type=module <<'JS'
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { resolveForAgentsColdRead, sha256File } from "./tools/presence/for-agents-cold-read.mjs";
+import {
+  APEX_FOR_AGENTS_URL,
+  AGENTS_SKILLS_URL,
+  resolveForAgentsColdRead,
+  sha256File,
+} from "./tools/presence/for-agents-cold-read.mjs";
 import { routeJob, routeJobFromFile } from "./tools/offer-routing/route-job.mjs";
 import { MCP_TOOL_NAMES } from "./server/lib/mcp-tool-inventory.js";
 
@@ -101,7 +106,7 @@ const MCP_TOOL_INVENTORY = [
   "browse_taskmarket_tasks",
   "track_taskmarket_task",
 ];
-const SKILLS_URL = "https://agents.samedaydesk.com/.well-known/skills/index.json";
+const SKILLS_URL = AGENTS_SKILLS_URL;
 
 const discovery = await resolveForAgentsColdRead({ preferFixture: true });
 assert.equal(discovery.outcome, "offline_fixture");
@@ -121,9 +126,10 @@ assert.equal(skills.url, SKILLS_URL);
 assert.equal(sha256File("skills-index.json"), SKILLS_SHA);
 
 const skillIndex = JSON.parse(skills.body);
+const listedNames = skillIndex.skills.map((s) => s.name);
 assert.ok(Array.isArray(skillIndex.skills));
-assert.equal(skillIndex.skills.length, 3);
-assert.deepEqual(skillIndex.skills.map((s) => s.name), SKILL_NAMES);
+assert.equal(listedNames.length, 3);
+assert.deepEqual(listedNames, SKILL_NAMES);
 assert.ok(skillIndex.skills.every((s) => Array.isArray(s.files) && s.files.includes("SKILL.md")));
 assert.match(skillIndex.skills[0].description, /GET \/extract/);
 assert.match(skillIndex.skills[0].description, /POST \/extract\/batch/);
@@ -132,8 +138,8 @@ assert.match(skillIndex.skills[1].description, /Do not use to purchase a second 
 assert.match(skillIndex.skills[2].description, /Do not fetch, pay/);
 assert.match(skillIndex.skills[2].description, /treat payment as useful output/);
 
-assert.equal(skillIndex.skills.length === 0, false, "silent empty skills list is not success");
-assert.ok(SKILL_NAMES.includes("web-extract"));
+assert.notEqual(listedNames.length, 0, "silent empty skills list is not success");
+assert.equal(listedNames.includes("web-extract"), true, "missing web-extract is a refuse");
 
 assert.deepEqual([...MCP_TOOL_NAMES], MCP_TOOL_INVENTORY);
 for (const name of SKILL_NAMES) {
@@ -167,13 +173,10 @@ assert.equal(noPayHtml.ok, false);
 assert.equal(noPayHtml.selected, null);
 assert.equal(noPayHtml.paid, false);
 assert.equal(noPayHtml.executionAuthorized, false);
-assert.equal(
-  noPayHtml.rejected.some(
-    (r) =>
-      r.offerId === "sdd.paid_html_extract" && r.reason === "constraint_no_payment",
-  ),
-  true,
-);
+const noPayHtmlReason = noPayHtml.rejected.find(
+  (r) => r.offerId === "sdd.paid_html_extract" && r.reason === "constraint_no_payment",
+)?.reason ?? null;
+assert.equal(noPayHtmlReason, "constraint_no_payment");
 
 const completeIssue = routeJobFromFile(
   "tools/offer-routing/fixtures/complete-issue-discussion.job.json",
@@ -182,10 +185,10 @@ assert.equal(completeIssue.ok, false);
 assert.equal(completeIssue.selected, null);
 assert.equal(completeIssue.paid, false);
 assert.equal(completeIssue.executionAuthorized, false);
-assert.equal(
-  completeIssue.warnings.includes("complete_issue_acquisition_unavailable"),
-  true,
-);
+const completeIssueWarning = completeIssue.warnings.find(
+  (w) => w === "complete_issue_acquisition_unavailable",
+) ?? null;
+assert.equal(completeIssueWarning, "complete_issue_acquisition_unavailable");
 assert.equal(
   completeIssue.rejected.some(
     (r) =>
@@ -206,6 +209,52 @@ try {
 }
 assert.equal(unknownFixtureCode, "unknown_fixture");
 
+const emptySkills = await resolveForAgentsColdRead({
+  fetchImpl: async (url) => {
+    if (url === APEX_FOR_AGENTS_URL) throw new TypeError("fetch failed");
+    if (url === AGENTS_SKILLS_URL) {
+      return new Response(JSON.stringify({ skills: [] }), { status: 200 });
+    }
+    return new Response("SameDayDesk public discovery", { status: 200 });
+  },
+});
+const emptySkillsAlt = emptySkills.alternates.find((a) => a.id === "agents_skills_index");
+assert.equal(emptySkills.paid, false);
+assert.equal(emptySkillsAlt.ok, false);
+assert.equal(emptySkillsAlt.errorClass, "invalid_skills_index");
+assert.equal(
+  emptySkills.sources.some((s) => s.id === "agents_skills_index"),
+  false,
+  "empty skills array is not a successful SDS skills list",
+);
+
+const truncated = await resolveForAgentsColdRead({
+  fetchImpl: async (url) => {
+    if (url === APEX_FOR_AGENTS_URL) throw new TypeError("fetch failed");
+    if (url === AGENTS_SKILLS_URL) {
+      return new Response(JSON.stringify({
+        skills: skillIndex.skills.filter((s) => s.name !== "web-extract"),
+      }), { status: 200 });
+    }
+    return new Response("SameDayDesk public discovery", { status: 200 });
+  },
+});
+const truncatedSource = truncated.sources.find((s) => s.id === "agents_skills_index");
+const truncatedNames = truncatedSource
+  ? JSON.parse(truncatedSource.body).skills.map((s) => s.name)
+  : [];
+assert.equal(truncatedNames.includes("web-extract"), false);
+assert.equal(
+  SKILL_NAMES.every((n) => truncatedNames.includes(n)),
+  false,
+  "skills list missing required web-extract is a refuse, not a partial success",
+);
+
+const mcpToolNamesAreDifferentInventory = SKILL_NAMES.every(
+  (name) => !MCP_TOOL_NAMES.includes(name),
+);
+assert.equal(mcpToolNamesAreDifferentInventory, true);
+
 console.log(JSON.stringify({
   ok: true,
   wave: WAVE,
@@ -222,18 +271,19 @@ console.log(JSON.stringify({
   skillsListMethod: "well-known-index-fixture",
   mcpSkillsListPosted: false,
   discoveryOutcome: discovery.outcome,
-  skillNames: SKILL_NAMES,
-  skillCount: SKILL_NAMES.length,
-  skillsSha256: SKILLS_SHA,
-  skillsUrl: SKILLS_URL,
+  skillNames: listedNames,
+  skillCount: listedNames.length,
+  skillsSha256: skills.sha256,
+  skillsUrl: skills.url,
   captureAuthority: skills.captureAuthority,
-  mcpToolNamesAreDifferentInventory: true,
+  mcpToolNamesAreDifferentInventory,
   pageChangeOffer: pageChange.selected.offerId,
   noPayHtmlSelected: noPayHtml.selected,
-  noPayHtmlReason: "constraint_no_payment",
+  noPayHtmlReason,
   completeIssueSelected: completeIssue.selected,
-  completeIssueWarning: "complete_issue_acquisition_unavailable",
+  completeIssueWarning,
   unknownFixtureRefused: unknownFixtureCode,
+  emptySkillsIndexRefused: emptySkillsAlt.errorClass,
 }, null, 2));
 JS
 ```
@@ -245,7 +295,10 @@ Expected: exit **0** and JSON with `"ok": true`, `"wave": "w0-x103"`,
 `"noPayHtmlSelected": null`, `"completeIssueSelected": null`,
 `"extractAttempted": false`, `"toolsCalled": false`,
 `"mcpSkillsListPosted": false`, `"neoKernelVendor": false`,
-`"unknownFixtureRefused": "unknown_fixture"`.
+`"unknownFixtureRefused": "unknown_fixture"`,
+`"emptySkillsIndexRefused": "invalid_skills_index"`.
+Receipt fields are taken from the fixture body, route result, and mock
+empty-index probe — not from pin constants.
 
 The same facts as separate public-entry commands (still no network, no
 pay):
@@ -253,7 +306,11 @@ pay):
 ```bash
 node --input-type=module -e 'import {resolveForAgentsColdRead} from "./tools/presence/for-agents-cold-read.mjs"; console.log(JSON.stringify(await resolveForAgentsColdRead({preferFixture:true}), null, 2))'
 node tools/offer-routing/route-job.mjs tools/offer-routing/fixtures/page-change-evidence.job.json
-node tools/offer-routing/route-job.mjs tools/offer-routing/fixtures/complete-issue-discussion.job.json; echo "complete_issue_exit:$?"
+(
+  set +e
+  node tools/offer-routing/route-job.mjs tools/offer-routing/fixtures/complete-issue-discussion.job.json
+  echo "complete_issue_exit:$?"
+)
 ```
 
 Expected: fixture cold-read `outcome: "offline_fixture"`, `paid: false`,
@@ -271,6 +328,7 @@ Existing unpaid suites (no `npm install`):
 ```bash
 node --test tools/presence/for-agents-cold-read.test.mjs
 node --test tools/offer-routing/route-job.test.mjs tools/offer-routing/review.test.mjs
+node --test scripts/howto-skills-list.test.mjs
 ```
 
 ## Seeded failure (required refusal)
@@ -282,7 +340,9 @@ paid `/extract` settlement. Do not “fix” it by posting extract, attaching
 Stripe.
 
 ```bash
-SDS_HOWTO_SEED="${SDS_HOWTO_SEED:-silent-empty-success}" node --input-type=module <<'JS'
+(
+  set +e
+  SDS_HOWTO_SEED="${SDS_HOWTO_SEED:-silent-empty-success}" node --input-type=module <<'JS'
 const WAVE = "w0-x103";
 const FORBIDDEN_HEADERS = ["PAYMENT-SIGNATURE", "X-PAYMENT", "stripe-signature", "Authorization"];
 const PAYMENT_STOP_PATHS = [
@@ -315,6 +375,7 @@ const KNOWN = [
 
 function fail(code, message, extra = {}) {
   const body = {
+    ...extra,
     ok: false,
     rejected: true,
     wave: WAVE,
@@ -327,7 +388,6 @@ function fail(code, message, extra = {}) {
     neoKernelVendor: false,
     toolsCalled: false,
     checkout: false,
-    ...extra,
   };
   console.log(JSON.stringify(body, null, 2));
   console.error(message);
@@ -405,7 +465,8 @@ if (seed === "mcp-skills-list") {
 }
 fail("UNKNOWN_SEED", `unknown seeded failure: ${seed}`, { seed, known: KNOWN });
 JS
-echo "seeded_exit:$?"
+  echo "seeded_exit:$?"
+)
 ```
 
 Expected: the Node process exits **1**. Stdout is JSON with
@@ -413,7 +474,7 @@ Expected: the Node process exits **1**. Stdout is JSON with
 `"neverPostedExtract": true`, `"paymentAttempted": false`,
 `"listed": []`. Stderr matches
 `empty skills array is not a successful SDS skills list; required web-extract, page-change, explicit-record`.
-`seeded_exit:1`.
+`seeded_exit:1`. Under `set -e`, the subshell still prints `seeded_exit:1`.
 
 Replay other named refusals with the same fence:
 
@@ -436,25 +497,44 @@ not acquire a complete GitHub issue discussion. Do not “fix” exit 2 by
 posting `/extract`.
 
 ```bash
-node tools/offer-routing/route-job.mjs tools/offer-routing/fixtures/complete-issue-discussion.job.json
-echo "complete_issue_exit:$?"
+(
+  set +e
+  node tools/offer-routing/route-job.mjs tools/offer-routing/fixtures/complete-issue-discussion.job.json
+  echo "complete_issue_exit:$?"
+)
 ```
 
-Expected: exit **2**, `ok: false`, `selected: null`,
+Expected: the CLI exits **2**. Stdout is `ok: false`, `selected: null`,
 `complete_issue_acquisition_unavailable`, `paid: false`,
-`executionAuthorized: false`. The common mistake
+`executionAuthorized: false`. `complete_issue_exit:2`. Under `set -e`,
+the subshell still prints that line. The common mistake
 `paid_html_extraction_for_complete_issue_comments` is avoided.
 
 A third seed: the cold-read helper refuses an unknown fixture path
 instead of hashing arbitrary files.
 
 ```bash
-node --input-type=module -e 'import {sha256File} from "./tools/presence/for-agents-cold-read.mjs"; sha256File("../../package.json")'
-echo "unknown_fixture_exit:$?"
+(
+  set +e
+  node --input-type=module <<'JS'
+import { sha256File } from "./tools/presence/for-agents-cold-read.mjs";
+try {
+  sha256File("../../package.json");
+  console.error("expected unknown_fixture");
+  process.exit(2);
+} catch (err) {
+  console.error(err?.message ?? String(err));
+  process.exit(1);
+}
+JS
+  echo "unknown_fixture_exit:$?"
+)
 ```
 
-Expected: exit **1**, stderr `unknown_fixture`. That is integrity, not a
-reason to fetch the live skills index or to pay.
+Expected: the Node process exits **1**. Stderr is `unknown_fixture` (no
+stack). `unknown_fixture_exit:1`. Under `set -e`, the subshell still
+prints that line. That is integrity, not a reason to fetch the live
+skills index or to pay.
 
 ## Do not run (wrong path for this how-to)
 
