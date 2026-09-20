@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "window": "w1000",
+  "at": "2026-09-20T10:00Z",
+  "job": "W0-X254",
+  "feature": "w1000-mcp-unpaid",
+  "repo": "samedaydesk",
+  "protocol": "2024-11-05",
+  "serverInfo": {
+    "name": "samedaydesk-agent-tools",
+    "version": "1.2.0"
+  },
+  "tools": [
+    "check_ai_readiness",
+    "generate_complete_fix_pack",
+    "plan_taskmarket_delegation",
+    "browse_taskmarket_tasks",
+    "track_taskmarket_task"
+  ],
+  "paidTool": "generate_complete_fix_pack",
+  "freeTools": [
+    "check_ai_readiness",
+    "plan_taskmarket_delegation",
+    "browse_taskmarket_tasks",
+    "track_taskmarket_task"
+  ],
+  "apexUrl": "https://samedaydesk.com/mcp",
+  "csQueryIsPaidRedirect": true,
+  "loopbackPostOnly": true,
+  "note": "w1000 unpaid harness lists the five apex tools, checks GET /mcp unpaid banner, pins the committed tools-block sha, and refuses paid tools/call, PAYMENT-SIGNATURE, Stripe paths, /mcp?cs=, --live, and non-loopback --origin before any socket.",
+  "cite": {
+    "inventory": "server/lib/mcp-tool-inventory.js",
+    "route": "server/routes/mcp.js",
+    "w0b2": "PR148 heavy/w0-b2-verify-sds tools/verify/lib/mcp.mjs (read-only patterns)",
+    "predecessor": "W0-X70 PR162 + W0-X70-rev PR182 tools/verify-sds/mcp-unpaid/** (different owned path)",
+    "w1020": "W0-X274 PR201 tools/verify-sds/w1020-mcp-unpaid/** (different owned path)",
+    "w1040": "W0-X294 PR235 tools/verify-sds/w1040-mcp-unpaid/** (different owned path)"
+  }
+}
