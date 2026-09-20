@@ -1,0 +1,7 @@
+{
+  "id": "live",
+  "seededId": "live",
+  "command": "seeded",
+  "feature": "useful-jobs-cold",
+  "expectCode": "LIVE_REFUSE"
+}
