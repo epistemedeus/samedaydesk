@@ -37,9 +37,11 @@ not a ghost**.
 | Attempt | `failure.class` |
 | --- | --- |
 | Advertised slug `sku_ghost_premium` (not in `OFFERS`) | `ghost_sku` |
+| Ghost slug with a real product `name` | `ghost_sku` |
+| Inherited keys `toString` / `constructor` | `ghost_sku` |
 | `{ok:true, advertised:[]}` | `silent_empty_success` |
 | `agent_workflow` advertised at $0.05 | `sku_price_mismatch` |
-| `editLivePrices: true` | `sku_change_refused` |
+| `editLivePrices: true` or `--edit-prices` (any mode) | `sku_change_refused` |
 | `--publish` / `--checkout` | `publish_attempted` / `checkout_touched` |
 
 A naive `if (doc.ok) return success` would accept the ghost-SKU fixture

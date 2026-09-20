@@ -16,12 +16,8 @@ export function centsOfAdvertisement(row) {
   if (Number.isInteger(row.amountCents)) return row.amountCents;
   if (Number.isInteger(row.amount)) return row.amount;
   if (row.priceUsd != null) return usdToCents(row.priceUsd);
-  if (row.price != null) {
-    const n = Number(row.price);
-    if (!Number.isFinite(n)) return null;
-    // Homepage catalog uses whole dollars (149), not cents.
-    return n >= 1000 ? Math.round(n) : Math.round(n * 100);
-  }
+  // Homepage catalog `price` is whole dollars (149), never cents.
+  if (row.price != null) return usdToCents(row.price);
   return null;
 }
 
@@ -37,19 +33,23 @@ export async function loadAuthoritativeOffers(pricingPath) {
     label: typeof rec?.label === "string" ? rec.label : slug,
     category: rec?.category || null,
   }));
-  const bySlug = Object.fromEntries(skus.map((s) => [s.slug, s]));
-  const byLabel = Object.fromEntries(skus.map((s) => [s.label, s]));
+  const bySlug = Object.create(null);
+  const byLabel = Object.create(null);
+  for (const s of skus) {
+    bySlug[s.slug] = s;
+    if (typeof s.label === "string" && s.label) byLabel[s.label] = s;
+  }
   return { offers, skus, bySlug, byLabel, getOffer: mod.getOffer };
 }
 
 export function parseClientCatalog(source) {
   const advertised = [];
-  const re = /slug:\s*"([a-z0-9_]+)"/g;
+  const re = /slug:\s*["']([a-z0-9_]+)["']/g;
   let m;
   while ((m = re.exec(source))) {
     const slug = m[1];
     const window = source.slice(m.index, m.index + 500);
-    const nameM = window.match(/name:\s*"([^"]+)"/);
+    const nameM = window.match(/name:\s*["']([^"']+)["']/);
     const priceM = window.match(/price:\s*(\d+)/);
     if (!priceM) continue;
     advertised.push({
@@ -78,7 +78,7 @@ export function parseLlmsPricedLines(source) {
   const section =
     start >= 0 ? source.slice(start, end > start ? end : undefined) : source;
   const advertised = [];
-  const re = /^-\s+(.+?):\s+\$(\d+)\.?\s*$/gm;
+  const re = /^-\s+(.+?):\s+\$(\d+)(?:\.\d{2})?\.?\s*$/gm;
   let m;
   while ((m = re.exec(section))) {
     const name = m[1].trim();

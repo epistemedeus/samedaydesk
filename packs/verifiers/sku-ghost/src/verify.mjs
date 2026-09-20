@@ -4,6 +4,7 @@ import {
   AUTHORITATIVE_REL,
   CLIENT_CATALOG_REL,
   CUSTOM_QUOTE_SLUG,
+  FAILURES,
   HONESTY_NOTES,
   LLMS_REL,
   PACKAGE_ID,
@@ -26,17 +27,40 @@ function sha256Text(text) {
   return createHash("sha256").update(String(text)).digest("hex");
 }
 
+function advertisedSlug(row) {
+  return typeof row?.slug === "string" && row.slug.trim() ? row.slug.trim() : "";
+}
+
 function resolveSlug(row, authoritative) {
-  if (row.slug && authoritative.bySlug[row.slug]) return row.slug;
+  const slug = advertisedSlug(row);
+  // Present slug is identity; name fallback is only for unlabeled dollar lines.
+  if (slug) return slug;
   if (row.name && authoritative.byLabel[row.name]) return authoritative.byLabel[row.name].slug;
-  return row.slug || null;
+  return null;
+}
+
+function lookupAuth(authoritative, slug) {
+  if (!slug || typeof slug !== "string") return null;
+  if (typeof authoritative.getOffer === "function") {
+    const rec = authoritative.getOffer(slug);
+    if (!rec) return null;
+    return {
+      slug,
+      amountCents: Number(rec.amount),
+      label: typeof rec.label === "string" ? rec.label : slug,
+    };
+  }
+  return Object.prototype.hasOwnProperty.call(authoritative.bySlug, slug)
+    ? authoritative.bySlug[slug]
+    : null;
 }
 
 function collectGhosts(advertised, authoritative) {
   const ghosts = [];
   for (const row of advertised) {
     const slug = resolveSlug(row, authoritative);
-    if (!slug || !authoritative.bySlug[slug]) {
+    const auth = lookupAuth(authoritative, slug);
+    if (!slug || !auth) {
       ghosts.push({
         class: "ghost_sku",
         slug: slug || row.slug || "",
@@ -46,7 +70,6 @@ function collectGhosts(advertised, authoritative) {
       });
       continue;
     }
-    const auth = authoritative.bySlug[slug];
     if (row.amountCents != null && row.amountCents !== auth.amountCents) {
       ghosts.push({
         class: "sku_price_mismatch",
@@ -120,6 +143,13 @@ export async function verifySkuGhost({
       seeded: flags.seeded || undefined,
     });
   }
+  if (flags.editPrices || flags.editSkus || flags.writePrices) {
+    return fail(
+      "sku_change_refused",
+      "live extract / homepage SKUs must not be edited; this pack only records them",
+      { seeded: "sku_change_refused" },
+    );
+  }
 
   if (!repoRoot) {
     return fail("committed_surfaces_unavailable", "existing committed SKU files were not found");
@@ -146,7 +176,7 @@ export async function verifySkuGhost({
     skus: authoritative.skus,
   };
 
-  if (mode === "fixture" || fixturePath || fixtureRaw != null) {
+  if (mode === "fixture") {
     const raw =
       fixtureRaw != null
         ? String(fixtureRaw)
@@ -196,7 +226,7 @@ export async function verifySkuGhost({
     const ghosts = collectGhosts(parsed.advertised, authoritative);
     if (ghosts.length > 0) {
       const cls = ghosts[0].class;
-      return fail(cls, FAILURE_MESSAGE[cls], {
+      return fail(cls, FAILURES[cls], {
         seeded: cls,
         ghosts,
         advertised: parsed.advertised,
@@ -281,7 +311,7 @@ export async function verifySkuGhost({
 
   if (ghosts.length > 0) {
     const cls = ghosts[0].class;
-    return fail(cls, FAILURE_MESSAGE[cls], {
+    return fail(cls, FAILURES[cls], {
       ghosts,
       advertised,
       unadvertised,
@@ -309,8 +339,3 @@ export async function verifySkuGhost({
     },
   });
 }
-
-const FAILURE_MESSAGE = {
-  ghost_sku: "Advertised SKU slug is not in server/pricing.js OFFERS",
-  sku_price_mismatch: "Advertised cents do not match server/pricing.js for that slug",
-};

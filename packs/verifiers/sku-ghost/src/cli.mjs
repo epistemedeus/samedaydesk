@@ -23,8 +23,10 @@ export function parseArgs(argv) {
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
-    if (a === "--committed") args.mode = "committed";
-    else if (a === "--fixture") {
+    if (a === "--committed") {
+      args.mode = "committed";
+      args.fixturePath = null;
+    } else if (a === "--fixture") {
       args.mode = "fixture";
       args.fixturePath = argv[++i];
     } else if (a === "--compact") args.pretty = false;
@@ -52,7 +54,13 @@ export async function main(argv = process.argv.slice(2), { stdout = process.stdo
     stdout.write(`${JSON.stringify(parsed.error, null, 2)}\n`);
     return 2;
   }
-  if (parsed.args.help) {
+  const refused = parsed.args.flags || {};
+  if (
+    parsed.args.help &&
+    !refused.publish &&
+    !refused.checkout &&
+    !refused.editPrices
+  ) {
     stderr.write(USAGE);
     return 0;
   }

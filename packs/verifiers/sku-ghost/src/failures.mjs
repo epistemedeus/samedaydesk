@@ -1,10 +1,14 @@
-import { FAILURES, REASON } from "./constants.mjs";
+import { FAILURES, REASON, VERDICT_SCHEMA, VERIFIER } from "./constants.mjs";
 
 export function fail(failureClass, message, extra = {}) {
   const cls = FAILURES[failureClass] ? failureClass : "usage";
+  const rest = { ...extra };
+  delete rest.class;
+  delete rest.message;
   return {
     ok: false,
-    verifier: "sku-ghost",
+    schema: VERDICT_SCHEMA,
+    verifier: VERIFIER,
     paid: false,
     purchaseAuthority: false,
     skuChange: false,
@@ -12,11 +16,11 @@ export function fail(failureClass, message, extra = {}) {
     checkoutTouched: false,
     publishAttempted: false,
     failure: {
+      ...rest,
       class: cls,
       message: String(message || FAILURES[cls] || FAILURES.usage),
-      ...extra,
     },
-    ghosts: extra.ghosts || [],
+    ghosts: Array.isArray(extra.ghosts) ? extra.ghosts : [],
   };
 }
 
