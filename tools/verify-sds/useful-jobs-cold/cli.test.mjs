@@ -1,15 +1,16 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync, symlinkSync, unlinkSync } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, symlinkSync, unlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { USEFUL_JOBS_PIN, WRONG_SHA, WRONG_BYTES } from "./lib/pin.mjs";
-import { remapRefuse, parseJsonOutput } from "./lib/acquire.mjs";
+import { remapRefuse, parseJsonOutput, resolveSource } from "./lib/acquire.mjs";
 import { isInsideRepo, defaultRoot } from "./lib/repo.mjs";
 import { parseArgs } from "./cli.mjs";
+import { SEEDED } from "./lib/pin.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "../../..");
@@ -282,6 +283,82 @@ test("--stripe / --checkout / --x402 / --payment refuse", () => {
     assert.equal(ran.json?.error?.code, "PAYMENT_REFUSE", flag);
     assert.equal(ran.json?.result?.paymentSent, false, flag);
   }
+});
+
+test("--buy-now and --pay=now are PAYMENT_REFUSE (prefix, not exact name)", () => {
+  for (const flag of ["--buy-now", "--pay=now", "--paypal"]) {
+    const ran = runCli(["acquire", flag, "--json"]);
+    assert.equal(ran.status, 2, flag);
+    assert.equal(ran.json?.error?.code, "PAYMENT_REFUSE", flag);
+    assert.equal(ran.json?.result?.paymentSent, false, flag);
+  }
+});
+
+test("--cdp is LIVE_REFUSE", () => {
+  const ran = runCli(["acquire", "--cdp", "--json"]);
+  assert.equal(ran.status, 2);
+  assert.equal(ran.json?.error?.code, "LIVE_REFUSE");
+  assert.equal(ran.json?.result?.liveFetch, false);
+});
+
+test("unknown --source kits is USAGE (does not silent-default to kit)", () => {
+  const dest = join(tmpdir(), `sds-uj-badsrc-${process.pid}.tar.gz`);
+  try {
+    const ran = runCli(["acquire", "--json", "--source", "kits", "--dest", dest, "--no-extract"]);
+    assert.equal(ran.status, 2, ran.stderr || ran.stdout);
+    assert.equal(ran.json?.ok, false);
+    assert.equal(ran.json?.error?.code, "USAGE");
+    assert.match(ran.json?.error?.message || "", /unknown --source/);
+    assert.equal(existsSync(dest), false);
+  } finally {
+    try {
+      unlinkSync(dest);
+    } catch {
+      /* ignore */
+    }
+  }
+});
+
+test("resolveSource allowlist", () => {
+  assert.equal(resolveSource(undefined).source, "kit");
+  assert.equal(resolveSource("kit").source, "kit");
+  assert.equal(resolveSource("KIT").source, "kit");
+  assert.equal(resolveSource("for-agents").source, "for-agents");
+  assert.equal(resolveSource("FOR-AGENTS").source, "for-agents");
+  assert.equal(resolveSource("public").source, "for-agents");
+  assert.equal(resolveSource("kits").invalid, true);
+  assert.equal(resolveSource("http://example.com").invalid, true);
+});
+
+test("user --dest does not extract into dirname(dest)", () => {
+  const dir = mkdtempSync(join(tmpdir(), "sds-uj-userdest-"));
+  const dest = join(dir, "archive.tar.gz");
+  try {
+    const ran = runCli(["acquire", "--json", "--dest", dest]);
+    assert.equal(ran.status, 0, ran.stderr || ran.stdout);
+    assert.equal(ran.json?.ok, true);
+    assert.equal(ran.json?.result?.dest, dest);
+    assert.equal(ran.json?.result?.extractDir == null, true);
+    assert.equal(existsSync(dest), true);
+    const names = readdirSync(dir);
+    assert.deepEqual(names, ["archive.tar.gz"]);
+  } finally {
+    try {
+      rmSync(dir, { recursive: true, force: true });
+    } catch {
+      /* ignore */
+    }
+  }
+});
+
+test("cite lists live and payment seeds", () => {
+  const ran = runCli(["cite", "--json"]);
+  assert.equal(ran.status, 0, ran.stderr || ran.stdout);
+  const seeded = ran.json?.result?.seeded || [];
+  assert.equal(seeded.includes("live"), true);
+  assert.equal(seeded.includes("payment"), true);
+  assert.equal(SEEDED.live.expectCode, "LIVE_REFUSE");
+  assert.equal(SEEDED.payment.expectCode, "PAYMENT_REFUSE");
 });
 
 test("--seeded-failure payment is PAYMENT_REFUSE", () => {

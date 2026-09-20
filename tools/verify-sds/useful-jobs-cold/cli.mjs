@@ -40,18 +40,28 @@ function isValueToken(token) {
 
 function isLiveFlag(token) {
   const name = flagName(token);
-  return name === "live" || (name != null && name.startsWith("live-"));
+  if (!name) return false;
+  return (
+    name === "live" ||
+    name.startsWith("live-") ||
+    name === "cdp" ||
+    name.startsWith("cdp-")
+  );
 }
 
 function isPaymentFlag(token) {
   const name = flagName(token);
   if (!name) return false;
   return (
-    /^(stripe|x402|checkout|payment|pay|buy|neo|publish)$/.test(name) ||
+    /^(stripe|x402|checkout|payment|pay|buy|neo|publish)(-.*)?$/.test(name) ||
     name.startsWith("payment") ||
     name.startsWith("stripe") ||
     name.startsWith("x402") ||
-    name.startsWith("checkout")
+    name.startsWith("checkout") ||
+    name.startsWith("pay") ||
+    name.startsWith("buy") ||
+    name.startsWith("neo") ||
+    name.startsWith("publish")
   );
 }
 
@@ -152,8 +162,10 @@ Seeded failures (exit ≠ 0; remaps obtain-archive child exit 0):
   --seeded-failure payment
 
 Options:
-  --source kit|for-agents   archive twin (default kit)
-  --dest PATH               must be outside repo
+  --source kit|for-agents   archive twin (default kit; unknown is USAGE)
+  --dest PATH               must be outside repo; does not extract into dirname
+  --extract-dir PATH        optional extract (must be outside repo)
+  --no-extract              skip extract (default for user --dest)
   --dry-run                 print argv only
   --json / --pretty
 

@@ -36,7 +36,19 @@ export const SEEDED = Object.freeze({
     remap: true,
     aliasOf: "wrong-sha",
   }),
+  live: Object.freeze({
+    id: "live",
+    expectCode: "LIVE_REFUSE",
+    remap: false,
+  }),
+  payment: Object.freeze({
+    id: "payment",
+    expectCode: "PAYMENT_REFUSE",
+    remap: false,
+  }),
 });
+
+export const SOURCES = Object.freeze(["kit", "for-agents"]);
 
 export const W0B2_CITE = Object.freeze({
   pr: 148,

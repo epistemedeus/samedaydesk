@@ -13,10 +13,12 @@ import {
   WRONG_SHA,
   WRONG_BYTES,
   SEEDED,
+  SOURCES,
   W0B2_CITE,
   FEATURE,
 } from "./pin.mjs";
 import { envelope, failError } from "./envelope.mjs";
+import { refuseLive, refusePayment } from "./refuse.mjs";
 import {
   resolveRoot,
   kitPath,
@@ -161,6 +163,15 @@ function resolveSeed(seededId) {
   return { ...SEEDED[id], id };
 }
 
+/** kit | for-agents only. Unknown values must not silent-default to kit. */
+export function resolveSource(raw) {
+  if (raw == null || raw === "") return { source: "kit" };
+  const s = String(raw).trim().toLowerCase();
+  if (s === "kit") return { source: "kit" };
+  if (s === "for-agents" || s === "public") return { source: "for-agents" };
+  return { invalid: true, raw: String(raw), known: SOURCES };
+}
+
 /**
  * Cold acquire of pin to dest outside repo.
  * @param {{ root?: string, source?: "kit"|"for-agents", dest?: string, extract?: boolean, dryRun?: boolean, seededId?: string|null }} opts
@@ -168,8 +179,9 @@ function resolveSeed(seededId) {
 export function coldAcquire(opts = {}) {
   const root = resolveRoot(opts.root);
   const pin = USEFUL_JOBS_PIN;
-  const source = opts.source === "for-agents" || opts.source === "public" ? "for-agents" : "kit";
+  const sourced = resolveSource(opts.source);
   const seeded = resolveSeed(opts.seededId);
+  const source = sourced.invalid ? null : sourced.source;
   const evidence = [
     {
       kind: "w0b2-cite",
@@ -180,9 +192,24 @@ export function coldAcquire(opts = {}) {
       version: pin.version,
       sha256: pin.sha256,
       bytes: pin.bytes,
-      source,
+      source: source || String(opts.source || ""),
     },
   ];
+
+  if (sourced.invalid) {
+    return envelope({
+      ok: false,
+      command: "acquire",
+      status: "usage",
+      feature: FEATURE,
+      evidence,
+      error: failError(
+        "USAGE",
+        `unknown --source ${JSON.stringify(sourced.raw)} (want kit|for-agents)`,
+        { known: sourced.known },
+      ),
+    });
+  }
 
   if (seeded?.unknown) {
     return envelope({
@@ -195,6 +222,13 @@ export function coldAcquire(opts = {}) {
         known: Object.keys(SEEDED),
       }),
     });
+  }
+
+  if (seeded?.id === "live") {
+    return refuseLive({ flag: "--seeded-failure live" });
+  }
+  if (seeded?.id === "payment") {
+    return refusePayment({ flag: "--seeded-failure payment" });
   }
 
   let from;
@@ -221,7 +255,8 @@ export function coldAcquire(opts = {}) {
     });
   }
 
-  const dest = opts.dest ? resolve(opts.dest) : outsideDest(pin);
+  const userDest = Boolean(opts.dest);
+  const dest = userDest ? resolve(opts.dest) : outsideDest(pin);
   if (isInsideRepo(dest, root)) {
     return envelope({
       ok: false,
@@ -245,13 +280,15 @@ export function coldAcquire(opts = {}) {
     }
   }
 
-  // Seeded mismatch: never extract.
+  // Seeded: never extract. User --dest: no dirname extract. Auto dest: extract in mkdtemp.
   const extractDir =
     seeded || opts.extract === false
       ? null
       : opts.extractDir
         ? resolve(opts.extractDir)
-        : dirname(dest);
+        : userDest
+          ? null
+          : dirname(dest);
 
   if (extractDir && isInsideRepo(extractDir, root)) {
     return envelope({
@@ -389,7 +426,7 @@ export function coldAcquire(opts = {}) {
         feature: FEATURE,
         evidence,
         error: failError(
-          mapped.remapped ? "SEED_REJECT" : "HOST_BUILD",
+          mapped.remapped ? "PRODUCT_REFUSE" : "HOST_BUILD",
           mapped.remapped
             ? `obtain-archive refused ${mapped.productCode} with child exit 0; remapped to nonzero`
             : `obtain-archive failed (${mapped.productCode || ran.code})`,

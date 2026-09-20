@@ -32,3 +32,6 @@ node --test tools/verify-sds/useful-jobs-cold/cli.test.mjs
 - obtain-archive product exits 0 on refuse → verifier remaps to exit 1 (`SEED_REJECT`)
 - dest/extractDir may not resolve (via symlink) into the checkout; sha+bytes are hashed on disk after copy
 - Value flags do not swallow `--json`
+- Unknown `--source` is USAGE (does not silent-default to kit)
+- User `--dest` does not extract into `dirname(dest)` (no `/tmp/useful-jobs-1.4.7` dump); auto mkdtemp dest may extract in-dir; `--extract-dir` is explicit
+- `--buy-now` / `--pay=now` / `--cdp` refuse (payment / live)

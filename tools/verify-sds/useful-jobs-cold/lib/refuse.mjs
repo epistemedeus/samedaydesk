@@ -12,7 +12,7 @@ export function refuseLive({ flag = "--live" } = {}) {
       `refusing ${flag}: useful-jobs-cold is an offline kit copy + sha/bytes gate. Never fetch live hosts, CDP, or agents.samedaydesk.com.`,
       {
         flag,
-        never: ["--live", "--live=true", "CDP", "agents.samedaydesk.com"],
+        never: ["--live", "--live=true", "--cdp", "CDP", "agents.samedaydesk.com"],
       },
     ),
     result: {
@@ -35,7 +35,7 @@ export function refusePayment({ flag = "--payment" } = {}) {
       `refusing ${flag}: useful-jobs-cold never Stripe, x402, checkout, payment, neo, or publish.`,
       {
         flag,
-        never: ["--stripe", "--x402", "--checkout", "--payment", "--neo", "--publish"],
+        never: ["--stripe", "--x402", "--checkout", "--payment", "--pay", "--buy", "--neo", "--publish"],
       },
     ),
     result: {
