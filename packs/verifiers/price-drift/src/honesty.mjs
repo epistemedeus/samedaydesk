@@ -23,6 +23,7 @@ export function liveRouteRecords() {
 
 export function honestyEnvelope(extra = {}) {
   return {
+    ...extra,
     purchaseAuthority: false,
     purchaseAuthorized: false,
     rewriteAuthorized: false,
@@ -44,6 +45,5 @@ export function honestyEnvelope(extra = {}) {
     repo: SDS_REPO,
     pack: PACK_DIR,
     neoTouched: false,
-    ...extra,
   };
 }

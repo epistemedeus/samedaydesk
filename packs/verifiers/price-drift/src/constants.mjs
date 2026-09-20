@@ -129,6 +129,8 @@ export const ERROR_CODES = Object.freeze({
   FORBIDDEN_CLAIM: "forbidden_claim",
   HTTP_402_AS_SUCCESS: "http_402_as_success",
   WRONG_UNITS: "wrong_units",
+  PIN_LIVE_MISMATCH: "pin_live_mismatch",
+  ORIGIN_DRIFT: "origin_drift",
 });
 
 export const HONESTY_NOTES = Object.freeze([

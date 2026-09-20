@@ -33,6 +33,9 @@ const cases = [
   ["publish.json", ERROR_CODES.PUBLISH_ATTEMPTED],
   ["live-http.json", ERROR_CODES.LIVE_HTTP_REFUSED],
   ["sample-as-live.json", ERROR_CODES.SAMPLE_AS_LIVE],
+  ["extra-sku-silent.json", ERROR_CODES.EXTRA_SKU],
+  ["charged-402.json", ERROR_CODES.HTTP_402_AS_SUCCESS],
+  ["foreign-origin.json", ERROR_CODES.ORIGIN_DRIFT],
 ];
 
 for (const [name, code] of cases) {

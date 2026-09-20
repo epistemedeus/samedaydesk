@@ -94,10 +94,6 @@ export function atomicToDecimal(atomic, decimals = USDC_DECIMALS) {
   const digits = abs.toString().padStart(decimals + 1, "0");
   const whole = digits.slice(0, digits.length - decimals) || "0";
   const frac = digits.slice(digits.length - decimals);
-  const trimmed = frac.replace(/0+$/, "");
-  const shown = trimmed.length === 0 ? `${whole}.0`.replace(/\.0$/, whole === "0" ? "0.0" : whole) : `${whole}.${trimmed}`;
-  // Keep at least one significant display form used by SDS pins: 0.005 / 0.01.
-  void shown;
   return `${negative ? "-" : ""}${whole}.${frac}`;
 }
 

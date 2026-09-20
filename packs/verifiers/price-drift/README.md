@@ -61,6 +61,12 @@ Other seeded refusals under `fixtures/reject/`:
 | `publish.json` | `publish_attempted` |
 | `live-http.json` | `live_http_refused` |
 | `sample-as-live.json` | `sample_as_live` |
+| `extra-sku-silent.json` | `extra_sku` |
+| `charged-402.json` | `http_402_as_success` |
+| `foreign-origin.json` | `origin_drift` |
+
+A pin that redefines recorded live amounts (extract `0.005` → `0.05`) is
+`pin_live_mismatch`, even if the observation matches that pin.
 
 `--live`, `--publish`, `--checkout`, `--pay`, and `https://` input paths
 exit 2.

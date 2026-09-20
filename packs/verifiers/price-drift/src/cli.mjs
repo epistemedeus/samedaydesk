@@ -55,22 +55,37 @@ export function statusPayload() {
 }
 
 export function doctorPayload() {
-  const pin = loadJson(resolveInputPath("fixtures/pin.json", PACK_ROOT));
-  const observation = loadJson(resolveInputPath("fixtures/ok-observation.json", PACK_ROOT));
-  const verdict = verifyDocuments({
-    pin,
-    observation,
-    paths: { pin: "fixtures/pin.json", observation: "fixtures/ok-observation.json" },
-  });
-  return {
-    ok: verdict.ok === true,
-    command: "doctor",
-    node: process.version,
-    fixturesReadable: true,
-    network: false,
-    honesty: honestyEnvelope(),
-    verify: verdict,
-  };
+  try {
+    const pin = loadJson(resolveInputPath("fixtures/pin.json", PACK_ROOT));
+    const observation = loadJson(resolveInputPath("fixtures/ok-observation.json", PACK_ROOT));
+    const verdict = verifyDocuments({
+      pin,
+      observation,
+      paths: { pin: "fixtures/pin.json", observation: "fixtures/ok-observation.json" },
+    });
+    return {
+      ok: verdict.ok === true,
+      command: "doctor",
+      node: process.version,
+      fixturesReadable: true,
+      network: false,
+      honesty: honestyEnvelope(),
+      verify: verdict,
+    };
+  } catch (err) {
+    const code =
+      err.code && Object.values(ERROR_CODES).includes(err.code) ? err.code : ERROR_CODES.INVALID_JSON;
+    return {
+      ok: false,
+      command: "doctor",
+      node: process.version,
+      fixturesReadable: false,
+      network: false,
+      code,
+      message: err.message,
+      honesty: honestyEnvelope(),
+    };
+  }
 }
 
 function refuseFlag(flag) {
@@ -135,7 +150,6 @@ export function runVerify(args, { cwd = process.cwd() } = {}) {
     observation = loadJson(resolveInputPath(args.observation, cwd));
   } catch (err) {
     const code = err.code && Object.values(ERROR_CODES).includes(err.code) ? err.code : ERROR_CODES.INVALID_JSON;
-    const exitCode = code === ERROR_CODES.LIVE_HTTP_REFUSED ? 2 : 2;
     return {
       payload: {
         ok: false,
@@ -147,7 +161,7 @@ export function runVerify(args, { cwd = process.cwd() } = {}) {
         purchaseAuthority: false,
         honesty: honestyEnvelope(),
       },
-      exitCode,
+      exitCode: 2,
     };
   }
 

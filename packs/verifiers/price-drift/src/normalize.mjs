@@ -1,16 +1,44 @@
-import { LIVE_ROUTES } from "./constants.mjs";
+import { LIVE_ORIGIN, LIVE_ROUTES, SAMPLE_MARKERS } from "./constants.mjs";
 import { isPlainObject } from "./money.mjs";
+
+export function originFromAbsoluteUrl(value) {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const candidate = trimmed.startsWith("//") ? `https:${trimmed}` : trimmed;
+  try {
+    const url = new URL(candidate);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+    const hostname = url.hostname.replace(/\.$/, "").toLowerCase();
+    if (!hostname) return null;
+    return `${url.protocol}//${hostname}`;
+  } catch {
+    return null;
+  }
+}
+
+export function isLiveSdsOrigin(origin) {
+  if (typeof origin !== "string" || !origin) return false;
+  return origin.replace(/\/$/, "").toLowerCase() === LIVE_ORIGIN.replace(/\/$/, "").toLowerCase();
+}
 
 function routeFromTemplate(value) {
   if (typeof value !== "string") return null;
   const trimmed = value.trim();
   if (!trimmed) return null;
+  if (trimmed.startsWith("//")) {
+    try {
+      return new URL(`https:${trimmed}`).pathname || null;
+    } catch {
+      return null;
+    }
+  }
   if (trimmed.startsWith("/")) return trimmed.split("?")[0];
   try {
     const url = new URL(trimmed);
     return url.pathname || null;
   } catch {
-    return trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+    return `/${trimmed}`;
   }
 }
 
@@ -61,6 +89,10 @@ export function normalizeRouteRow(raw) {
     routeFromTemplate(raw.resource?.routeTemplate) ||
     routeFromTemplate(raw.resource?.url) ||
     routeFromTemplate(raw.url);
+  const origin =
+    originFromAbsoluteUrl(raw.origin) ||
+    originFromAbsoluteUrl(raw.resource?.url) ||
+    originFromAbsoluteUrl(raw.url);
   const id = idFromRoute(route, raw.id || raw.tool);
   const amount =
     raw.amount != null
@@ -77,6 +109,7 @@ export function normalizeRouteRow(raw) {
   return {
     id,
     route,
+    origin,
     method: raw.method || raw.request?.method || "GET",
     amount: amount == null ? undefined : amount,
     amountAtomic: amountAtomic == null ? undefined : amountAtomic,
@@ -104,8 +137,8 @@ export function extractRouteList(doc) {
 export function looksLikeSample(doc, path) {
   const blob = `${path ?? ""}\n${JSON.stringify(doc ?? {})}`;
   if (doc?.sample === true || doc?.example === true || doc?.kind === "SAMPLE") return true;
-  if (typeof doc?.label === "string" && /SAMPLE|labelled_sample|explicit-example/i.test(doc.label)) {
+  if (typeof doc?.label === "string" && SAMPLE_MARKERS.some((m) => doc.label.includes(m))) {
     return true;
   }
-  return /SAMPLE|labelled_sample|labeled_sample|explicit-example|--example/.test(blob);
+  return SAMPLE_MARKERS.some((m) => blob.includes(m));
 }

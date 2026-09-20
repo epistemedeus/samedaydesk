@@ -2,6 +2,7 @@ import {
   ERROR_CODES,
   LIVE_ASSET,
   LIVE_NETWORK,
+  LIVE_ORIGIN,
   LIVE_PAY_TO,
   LIVE_ROUTES,
   OBSERVATION_SCHEMA,
@@ -17,10 +18,17 @@ import {
   isPlainObject,
   parseAtomicString,
 } from "./money.mjs";
-import { extractRouteList, looksLikeSample } from "./normalize.mjs";
+import {
+  extractRouteList,
+  isLiveSdsOrigin,
+  looksLikeSample,
+  originFromAbsoluteUrl,
+} from "./normalize.mjs";
 
 export function reject(code, message, extra = {}) {
+  const rest = strip(extra, ["reasons", "driftDetected", "honestyExtra"]);
   return {
+    ...rest,
     ok: false,
     schema: RESULT_SCHEMA,
     status: "reject",
@@ -32,12 +40,12 @@ export function reject(code, message, extra = {}) {
     liveSdsPricesUnchanged: true,
     driftDetected: extra.driftDetected === true,
     honesty: honestyEnvelope(extra.honestyExtra),
-    ...strip(extra, ["reasons", "driftDetected", "honestyExtra"]),
   };
 }
 
 export function pass(extra = {}) {
   return {
+    ...extra,
     ok: true,
     schema: RESULT_SCHEMA,
     status: "match",
@@ -48,8 +56,8 @@ export function pass(extra = {}) {
     rewriteAuthorized: false,
     liveSdsPricesUnchanged: true,
     driftDetected: false,
+    charged: false,
     honesty: honestyEnvelope(),
-    ...extra,
   };
 }
 
@@ -97,6 +105,77 @@ function pinIndex(pin) {
     }
   }
   return byId;
+}
+
+function pinMatchesLiveFindings(pins) {
+  const findings = [];
+  for (const live of Object.values(LIVE_ROUTES)) {
+    const pinned = pins.get(live.id);
+    if (!pinned) continue;
+    try {
+      if (pinned.amountAtomic == null) {
+        findings.push({
+          code: ERROR_CODES.PIN_LIVE_MISMATCH,
+          message: `pin ${live.id} is missing amountAtomic; recorded live SDS is ${live.amount} atomic ${live.amountAtomic}`,
+          route: live.route,
+        });
+        continue;
+      }
+      if (pinned.amount != null) {
+        assertAmountMatchesAtomic(pinned.amount, pinned.amountAtomic, `pin.${live.id}`);
+      }
+      const pinAtomic = parseAtomicString(pinned.amountAtomic, `pin.${live.id}.amountAtomic`);
+      const liveAtomic = parseAtomicString(live.amountAtomic, `live.${live.id}.amountAtomic`);
+      if (pinAtomic !== liveAtomic) {
+        findings.push({
+          code: ERROR_CODES.PIN_LIVE_MISMATCH,
+          message: `pin ${live.id} ${formatCompactUsdc(pinAtomic)} atomic ${pinAtomic} does not match recorded live SDS ${live.amount} atomic ${live.amountAtomic}`,
+          route: live.route,
+        });
+      }
+    } catch (err) {
+      findings.push({
+        code: err.code || ERROR_CODES.NONCANONICAL_MONEY,
+        message: err.message,
+        route: live.route,
+      });
+    }
+    const network = pinned.network || LIVE_NETWORK;
+    const asset = pinned.asset || LIVE_ASSET;
+    const payTo = pinned.payTo || LIVE_PAY_TO;
+    if (network !== LIVE_NETWORK) {
+      findings.push({
+        code: ERROR_CODES.NETWORK_DRIFT,
+        message: `pin ${live.id} network ${JSON.stringify(network)} does not match recorded ${LIVE_NETWORK}`,
+        route: live.route,
+      });
+    }
+    if (typeof asset === "string" && asset.toLowerCase() !== LIVE_ASSET.toLowerCase()) {
+      findings.push({
+        code: ERROR_CODES.ASSET_DRIFT,
+        message: `pin ${live.id} asset does not match recorded Base USDC`,
+        route: live.route,
+      });
+    }
+    if (typeof payTo === "string" && payTo.toLowerCase() !== LIVE_PAY_TO.toLowerCase()) {
+      findings.push({
+        code: ERROR_CODES.PAYTO_DRIFT,
+        message: `pin ${live.id} payTo does not match recorded recipient`,
+        route: live.route,
+      });
+    }
+  }
+  for (const [id, row] of pins.entries()) {
+    if (LIVE_ROUTES[id]) continue;
+    if (row.amount != null || row.amountAtomic != null) {
+      findings.push({
+        code: ERROR_CODES.EXTRA_SKU,
+        message: `pin introduces unrecorded billed SKU ${id} ${row.route ?? ""}`.trim(),
+        route: row.route,
+      });
+    }
+  }
+  return findings;
 }
 
 function claimsRewrite(observation, flags) {
@@ -193,6 +272,13 @@ function compareRoute(observed, pinned) {
       message: `${path} payTo does not match recorded recipient`,
     });
   }
+  if (observed.origin && !isLiveSdsOrigin(observed.origin)) {
+    findings.push({
+      code: ERROR_CODES.ORIGIN_DRIFT,
+      message: `${path} origin ${JSON.stringify(observed.origin)} is not recorded live SDS ${LIVE_ORIGIN}`,
+      route: pinned.route,
+    });
+  }
   return findings;
 }
 
@@ -252,14 +338,34 @@ export function verifyDocuments({ pin, observation, flags = {}, paths = {} }) {
     );
   }
 
+  if (observation.charged === true || observation.paid === true || observation.settled === true) {
+    return reject(
+      ERROR_CODES.HTTP_402_AS_SUCCESS,
+      "HTTP 402 is an unpaid paywall, never a charged observation",
+    );
+  }
   if (observation.httpStatus === 200 && observation.success === true && observation.charged !== false) {
     return reject(
       ERROR_CODES.HTTP_402_AS_SUCCESS,
       "HTTP 402 is an unpaid paywall, never success",
     );
   }
+  if (observation.httpStatus === 402 && observation.success === true) {
+    return reject(ERROR_CODES.HTTP_402_AS_SUCCESS, "HTTP 402 is an unpaid paywall, never success");
+  }
   if (observation.http402AsSuccess === true || observation.unpaidAsPaid === true) {
     return reject(ERROR_CODES.HTTP_402_AS_SUCCESS, "HTTP 402 is an unpaid paywall, never success");
+  }
+
+  const observedOrigin =
+    originFromAbsoluteUrl(observation.origin) ||
+    originFromAbsoluteUrl(observation.liveOrigin) ||
+    originFromAbsoluteUrl(observation.resource?.url);
+  if (observedOrigin && !isLiveSdsOrigin(observedOrigin)) {
+    return reject(
+      ERROR_CODES.ORIGIN_DRIFT,
+      `observation origin ${JSON.stringify(observedOrigin)} is not recorded live SDS ${LIVE_ORIGIN}`,
+    );
   }
 
   const sample =
@@ -272,6 +378,16 @@ export function verifyDocuments({ pin, observation, flags = {}, paths = {} }) {
   }
 
   const pins = pinIndex(pin);
+  const pinLiveFindings = pinMatchesLiveFindings(pins);
+  if (pinLiveFindings.length > 0) {
+    const primary = pinLiveFindings[0];
+    return reject(primary.code, primary.message, {
+      reasons: pinLiveFindings.map((f) => f.code),
+      findings: pinLiveFindings,
+      driftDetected: true,
+    });
+  }
+
   const observedRoutes = extractRouteList(observation);
   if (observedRoutes.length === 0) {
     return reject(ERROR_CODES.MISSING_REQUIRED_INPUTS, "observation has no routes");
@@ -286,7 +402,8 @@ export function verifyDocuments({ pin, observation, flags = {}, paths = {} }) {
     seenIds.add(row.id);
     const pinned = pins.get(row.id);
     if (!pinned) {
-      if (row.proposed || row.catalogWrite || observation.newSku === true) {
+      const billed = row.amount != null || row.amountAtomic != null;
+      if (billed || row.proposed || row.catalogWrite || observation.newSku === true) {
         findings.push({
           code: ERROR_CODES.EXTRA_SKU,
           message: `unpinned billed SKU ${row.id} ${row.route ?? ""} is a proposed catalog write; this pack does not add SKUs`,
@@ -339,6 +456,8 @@ export function verifyDocuments({ pin, observation, flags = {}, paths = {} }) {
         ERROR_CODES.PAYTO_DRIFT,
         ERROR_CODES.MISSING_REQUIRED_ROUTE,
         ERROR_CODES.EXTRA_SKU,
+        ERROR_CODES.ORIGIN_DRIFT,
+        ERROR_CODES.PIN_LIVE_MISMATCH,
       ].includes(f.code),
     );
     return reject(primary.code, primary.message, {

@@ -2,8 +2,11 @@ import { readFileSync, statSync } from "node:fs";
 import { isAbsolute, resolve } from "node:path";
 import { ERROR_CODES, MAX_INPUT_BYTES } from "./constants.mjs";
 
+const BLOCKED_FLAG_KEYS = new Set(["__proto__", "constructor", "prototype"]);
+
 export function parseArgs(argv) {
-  const args = { _: [] };
+  const args = Object.create(null);
+  args._ = [];
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === "--") {
@@ -13,11 +16,16 @@ export function parseArgs(argv) {
     if (a.startsWith("--")) {
       const key = a.slice(2);
       const next = argv[i + 1];
-      if (next == null || next.startsWith("--")) {
-        args[key] = true;
-      } else {
+      const takesValue = next != null && !next.startsWith("--");
+      if (BLOCKED_FLAG_KEYS.has(key) || key === "") {
+        if (takesValue) i += 1;
+        continue;
+      }
+      if (takesValue) {
         args[key] = next;
         i += 1;
+      } else {
+        args[key] = true;
       }
     } else {
       args._.push(a);

@@ -30,3 +30,4 @@ payment, publish, and `server/pricing.js`.
 | `--live` / `--checkout` / https path | `tests/cli.test.mjs` |
 | Float money, wrong units, extra SKU, publish | `tests/seeded-failures.test.mjs` |
 | Honesty: no purchase / rewrite / neo | `tests/honesty.test.mjs` |
+| Pin vs live, silent extra SKU, 402 charged, origin | `tests/review-amendments.test.mjs` |
