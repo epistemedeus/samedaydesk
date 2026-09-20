@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipts.hmac-rotate.invalid-manifest.v1",
+  "cases": [
+    {
+      "file": "retired-key-after-overlap.json",
+      "code": "retired_key_after_overlap"
+    },
+    {
+      "file": "forged-mac.json",
+      "code": "forged_mac"
+    },
+    {
+      "file": "future-key.json",
+      "code": "future_key"
+    },
+    {
+      "file": "key-reuse.json",
+      "code": "key_reuse"
+    },
+    {
+      "file": "overlap-missing.json",
+      "code": "overlap_required"
+    },
+    {
+      "file": "secret-in-receipt.json",
+      "code": "secret_in_pack"
+    },
+    {
+      "file": "money-movement.json",
+      "code": "money_movement_refused"
+    },
+    {
+      "file": "invented-field.json",
+      "code": "invented_receipt_field"
+    },
+    {
+      "file": "previous-cannot-sign.json",
+      "code": "previous_key_cannot_sign"
+    },
+    {
+      "file": "previous-open-ended.json",
+      "code": "invalid_window"
+    },
+    {
+      "file": "current-closed-window.json",
+      "code": "invalid_window"
+    },
+    {
+      "file": "second-accept.json",
+      "code": "additional_property"
+    },
+    {
+      "file": "receipt-id-mismatch.json",
+      "code": "receipt_id_mismatch"
+    }
+  ]
+}

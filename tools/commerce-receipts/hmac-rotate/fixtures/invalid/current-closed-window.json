@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipts.hmac-rotate.v1",
+  "intent": "verify",
+  "now": "2026-09-17T12:00:00.000Z",
+  "keyring": {
+    "keys": [
+      {
+        "kid": "sds-hmac-2026-09-a",
+        "label": "fixture.a",
+        "status": "current",
+        "notBefore": "2026-09-17T00:00:00.000Z",
+        "notAfter": "2026-09-17T13:00:00.000Z"
+      }
+    ]
+  },
+  "receipts": [
+    {
+      "receiptId": "cr_unpaid_extract_402",
+      "kid": "sds-hmac-2026-09-a",
+      "mac": "hmac-sha256:d64a7e79c266250b8522b1488086dc59739cfde852c0559322ca8357059de9b0",
+      "body": {
+        "receiptId": "cr_unpaid_extract_402",
+        "kind": "unpaid_payment_required",
+        "statusClass": "unpaid",
+        "origin": "https://agents.samedaydesk.com",
+        "resource": "https://agents.samedaydesk.com/extract?url=https://example.com",
+        "route": "/extract",
+        "method": "GET",
+        "httpStatus": 402,
+        "charged": false,
+        "paymentSent": false,
+        "observedAt": "2026-09-17T11:30:14.000Z",
+        "completeness": "truncated",
+        "authorityClass": "seller_observed",
+        "accepts": [
+          {
+            "scheme": "exact",
+            "network": "eip155:8453",
+            "amount": "5000",
+            "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+            "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+          }
+        ]
+      }
+    }
+  ]
+}
