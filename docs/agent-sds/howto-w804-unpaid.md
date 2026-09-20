@@ -40,7 +40,9 @@ is an unpaid challenge, not settlement.
 
 Speak MCP protocol **`2024-11-05`**. Do not send `PAYMENT-SIGNATURE`,
 `X-PAYMENT`, `stripe-signature`, or `Authorization`. Do not open
-`buy.stripe.com`. Naming `neo.agent_task_kit` in the offer matrix is
+`buy.stripe.com`. The listed Fix Pack URL
+`https://buy.stripe.com/8x24gA0xA9DF9dd13YeZ20h` is catalog text, not
+permission to checkout. Naming `neo.agent_task_kit` in the offer matrix is
 not permission to fetch or run it.
 
 Five apex tools (order is load-bearing; pin is
@@ -76,8 +78,10 @@ Committed pins (load-bearing):
 | Page-change offer | `sdd.page_change_offline` (`payment: none`) |
 | Complete-discussion warning | `complete_issue_acquisition_unavailable` |
 | Apex `TOOLS` block SHA-256 | `068cbfdb8ddab4dac7eef335d51fbe347728d6ccca65bef0365a3eb831db6caf` |
-| MCP protocol | `2024-11-05` |
+| MCP protocol | `2024-11-05` (source uses `protocolVersion: PROTOCOL_VERSION`; no client echo) |
+| Listed Fix Pack buy URL | `https://buy.stripe.com/8x24gA0xA9DF9dd13YeZ20h` (listed, never opened) |
 | `/extract` unpaid amount | `"5000"` atomic USDC on `eip155:8453` |
+| `/extract` catalog URL | `https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com` |
 | useful-jobs 1.4.7 SHA-256 | `e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec` |
 | useful-jobs bytes | `5255824` |
 
@@ -129,6 +133,23 @@ const CAPTURE_AT = "2026-09-09T20:55:00.000Z";
 function sha256(text) {
   return createHash("sha256").update(text, "utf8").digest("hex");
 }
+
+function extractBlock(src, startMarker, endMarker) {
+  const start = src.indexOf(startMarker);
+  const end = src.indexOf(endMarker, start);
+  assert.ok(start >= 0, `missing ${startMarker}`);
+  assert.ok(end > start, `missing ${endMarker}`);
+  return src.slice(start, end);
+}
+
+let networkCalls = 0;
+const fetchImpl = globalThis.fetch;
+globalThis.fetch = async (...args) => {
+  networkCalls += 1;
+  return fetchImpl(...args);
+};
+
+try {
 
 const mcpSource = readFileSync("server/routes/mcp.js", "utf8");
 const appSource = readFileSync("server/app.js", "utf8");
@@ -197,17 +218,29 @@ assert.equal(page.criteriaAssessment, "not_evaluated");
 
 assert.deepEqual([...MCP_TOOL_NAMES], EXPECTED_NAMES);
 assert.match(mcpSource, /const PROTOCOL_VERSION = "2024-11-05"/);
+assert.match(mcpSource, /protocolVersion:\s*PROTOCOL_VERSION/);
+assert.equal(mcpSource.includes("params?.protocolVersion || PROTOCOL_VERSION"), false);
 assert.equal(mcpSource.includes("2025-11-25"), false);
 assert.equal(mcpSource.includes("2026-07-28"), false);
+assert.equal(mcpSource.includes("2999-01-01"), false);
 assert.match(mcpSource, /name: "samedaydesk-agent-tools"/);
 assert.match(mcpSource, /PAID\. Returns the complete/);
 assert.equal(appSource.includes("paymentMiddleware"), false);
 assert.match(appSource, /app\.use\("\/mcp", mcpRouter\)/);
-const toolsBlock = mcpSource.slice(
-  mcpSource.indexOf("const TOOLS = ["),
-  mcpSource.indexOf("const okMsg"),
-);
+const toolsBlock = extractBlock(mcpSource, "const TOOLS = [", "const okMsg");
 assert.equal(sha256(toolsBlock), FROZEN_TOOLS_BLOCK_SHA256);
+const link = mcpSource.match(/const FIXPACK_LINK = "([^"]+)"/);
+assert.ok(link, "FIXPACK_LINK missing from MCP source");
+assert.equal(link[1], "https://buy.stripe.com/8x24gA0xA9DF9dd13YeZ20h");
+const tools = new Function(
+  "FIXPACK_LINK",
+  "MCP_TOOL_NAMES",
+  `${toolsBlock}\nreturn TOOLS;`,
+)(link[1], MCP_TOOL_NAMES);
+assert.deepEqual(tools.map((tool) => tool.name), EXPECTED_NAMES);
+const paidListed = tools.find((tool) => tool.name === PAID_TOOL);
+assert.match(paidListed.description, /^PAID\./);
+assert.equal(paidListed.description.includes(link[1]), true);
 assert.equal(EXPECTED_NAMES.includes(PAID_TOOL), true);
 assert.equal(PROTOCOL, "2024-11-05");
 
@@ -215,6 +248,11 @@ assert.equal(x402.x402Version, 2);
 assert.equal(x402.items.length, 23);
 const extract = x402.items.find((row) => row.resource.routeTemplate === "/extract");
 assert.equal(extract.request.method, "GET");
+assert.equal(
+  extract.resource.url,
+  "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+);
+assert.equal(extract.request.url, "https://agents.samedaydesk.com/extract");
 assert.equal(extract.accepts[0].amount, EXTRACT_AMOUNT);
 assert.equal(extract.accepts[0].network, "eip155:8453");
 assert.equal(extract.accepts[0].payTo, EXTRACT_PAY_TO);
@@ -222,7 +260,7 @@ assert.equal(extractObs.route, "/extract");
 assert.equal(extractObs.status, 402);
 assert.equal(extractObs.body.accepts[0].amount, EXTRACT_AMOUNT);
 assert.notEqual(extractObs.status, 200);
-assert.equal(extractObs.body.accepts[0].amount === "0.005", false);
+assert.notEqual(extractObs.body.accepts[0].amount, "0.005");
 
 const stop = loadRuntime("agent402").states.stop;
 assert.equal(stop.reason, "no wallet");
@@ -236,6 +274,8 @@ assert.equal(useful.paidHostedClaim, false);
 assert.equal(useful.offline, true);
 assert.equal(useful.sha256, USEFUL_JOBS_SHA256);
 assert.equal(useful.bytes, 5255824);
+assert.equal(useful.archive.sha256, useful.sha256);
+assert.equal(useful.archive.bytes, useful.bytes);
 
 const held = JSON.parse(
   readFileSync("tools/result-reuse/fixtures/accepted-page-change.json", "utf8"),
@@ -252,6 +292,8 @@ assert.equal(preview.publicSafeCertified, false);
 assert.equal(preview.purchaseRequiresPublish, false);
 assert.equal(preview.optInRequiredToWrite, true);
 assert.equal(preview.observation.execute, false);
+
+assert.equal(networkCalls, 0);
 
 console.log(
   JSON.stringify(
@@ -276,11 +318,18 @@ console.log(
       extractStatus: extractObs.status,
       usefulJobs: useful.version,
       purchaseAuthority: useful.purchaseAuthority,
+      networkCalls,
+      fixpackLinkListed: true,
+      buyUrlOpened: false,
+      toolsBlockSha256: FROZEN_TOOLS_BLOCK_SHA256,
     },
     null,
     2,
   ),
 );
+} finally {
+  globalThis.fetch = fetchImpl;
+}
 JS
 ```
 
@@ -291,7 +340,9 @@ Expected: Node exits **0**. Stdout is JSON with `"ok": true`, `"wave": "w804"`,
 `"http402IsSettlement": false`, `"discovery": "offline_fixture"`,
 `"pageChangeOffer": "sdd.page_change_offline"`, `"completeIssue": false`,
 `"extractAmount": "5000"`, `"extractStatus": 402`, `"usefulJobs": "1.4.7"`,
-`"purchaseAuthority": false`.
+`"purchaseAuthority": false`, `"networkCalls": 0`, `"fixpackLinkListed": true`,
+`"buyUrlOpened": false`. The listed Fix Pack buy URL is pinned from
+`FIXPACK_LINK` and is not fetched.
 
 The same unpaid facts as separate public-entry commands (still no
 network, no pay):
@@ -299,7 +350,11 @@ network, no pay):
 ```bash
 node --input-type=module -e 'import {resolveForAgentsColdRead} from "./tools/presence/for-agents-cold-read.mjs"; console.log(JSON.stringify(await resolveForAgentsColdRead({preferFixture:true}), null, 2))'
 node tools/offer-routing/route-job.mjs tools/offer-routing/fixtures/page-change-evidence.job.json
-node tools/offer-routing/route-job.mjs tools/offer-routing/fixtures/complete-issue-discussion.job.json; echo "complete_issue_exit:$?"
+(
+  set +e
+  node tools/offer-routing/route-job.mjs tools/offer-routing/fixtures/complete-issue-discussion.job.json
+  echo "complete_issue_exit:$?"
+)
 ```
 
 Expected: fixture cold-read `outcome: "offline_fixture"`, `paid: false`;
@@ -324,7 +379,12 @@ posting `/extract`, attaching `PAYMENT-SIGNATURE`, calling
 `generate_complete_fix_pack`, or opening Stripe.
 
 ```bash
-SDS_HOWTO_SEED="${SDS_HOWTO_SEED:-paid-extract}" node --input-type=module <<'JS'
+(
+  set +e
+  SDS_HOWTO_SEED="${SDS_HOWTO_SEED:-paid-extract}" node --input-type=module <<'JS'
+import { readFileSync } from "node:fs";
+import { routeJobFromFile } from "./tools/offer-routing/route-job.mjs";
+
 const WAVE = "w804";
 const PAID_TOOL = "generate_complete_fix_pack";
 const FORBIDDEN_HEADERS = ["PAYMENT-SIGNATURE", "X-PAYMENT", "stripe-signature", "Authorization"];
@@ -354,6 +414,13 @@ const KNOWN = [
   "complete-issue-as-extract",
 ];
 
+let networkCalls = 0;
+const fetchImpl = globalThis.fetch;
+globalThis.fetch = async (...args) => {
+  networkCalls += 1;
+  return fetchImpl(...args);
+};
+
 function fail(code, message, extra = {}) {
   const body = {
     ok: false,
@@ -369,6 +436,8 @@ function fail(code, message, extra = {}) {
     neoKernelVendor: false,
     http402IsSettlement: false,
     ...extra,
+    neverPostedExtract: networkCalls === 0,
+    networkCalls,
   };
   console.log(JSON.stringify(body, null, 2));
   console.error(message);
@@ -377,13 +446,26 @@ function fail(code, message, extra = {}) {
 
 const seed = process.env.SDS_HOWTO_SEED || "paid-extract";
 if (seed === "paid-extract" || seed === "complete-issue-as-extract") {
+  const complete = routeJobFromFile(
+    "tools/offer-routing/fixtures/complete-issue-discussion.job.json",
+  );
+  if (
+    complete.ok ||
+    complete.selected !== null ||
+    !complete.warnings.includes("complete_issue_acquisition_unavailable")
+  ) {
+    fail(
+      "SEED_NOT_REFUSED",
+      "complete_issue_discussion is no longer an honest miss; unpaid w804 still does not GET /extract",
+      { seed, completeOk: complete.ok },
+    );
+  }
   fail(
     "PAID_EXTRACT_REFUSE",
     "complete_issue_discussion is not a reason to GET/POST /extract; unpaid w804 does not settle",
     {
       seed,
       path: "https://agents.samedaydesk.com/extract",
-      neverPostedExtract: true,
       warning: "complete_issue_acquisition_unavailable",
       commonMistake: "paid_html_extraction_for_complete_issue_comments",
     },
@@ -432,28 +514,40 @@ if (seed === "paid-as-unpaid") {
   );
 }
 if (seed === "402-as-settlement") {
+  const x402 = JSON.parse(readFileSync("fixtures/presence/catalog/x402.json", "utf8"));
+  const extractObs = JSON.parse(
+    readFileSync("fixtures/verified-feed/observations/extract-current.json", "utf8"),
+  );
+  const extract = x402.items.find((row) => row.resource.routeTemplate === "/extract");
+  const catalogAmount = extract.accepts[0].amount;
+  const catalogStatus = extractObs.status;
   fail(
     "HTTP_402_NOT_SETTLEMENT",
-    "HTTP 402 amount 5000 is an unpaid challenge, not settlement; unpaid w804 does not settle",
+    `HTTP ${catalogStatus} amount ${catalogAmount} is an unpaid challenge, not settlement; unpaid w804 does not settle`,
     {
       seed,
-      catalogAmount: "5000",
-      catalogStatus: 402,
+      catalogAmount,
+      catalogStatus,
+      catalogUrl: extract.resource.url,
       neverSettled: true,
     },
   );
 }
 fail("UNKNOWN_SEED", `unknown seeded failure: ${seed}`, { seed, known: KNOWN });
 JS
-echo "seeded_exit:$?"
+  echo "seeded_exit:$?"
+)
 ```
 
 Expected: the Node process exits **1**. Stdout is JSON with
 `"ok": false`, `"rejected": true`, `"wave": "w804"`,
 `"code": "PAID_EXTRACT_REFUSE"`, `"neverPostedExtract": true`,
-`"paymentAttempted": false`. Stderr matches
+`"networkCalls": 0`, `"paymentAttempted": false`. Stderr matches
 `complete_issue_discussion is not a reason to GET/POST /extract; unpaid w804 does not settle`.
-`seeded_exit:1`.
+`seeded_exit:1`. Under `set -e`, the subshell still prints `seeded_exit:1`.
+The default seed first confirms the complete-issue route is still an honest
+miss, then refuses `/extract`. `402-as-settlement` reads the committed catalog
+amount instead of hardcoding it.
 
 Replay other named refusals with the same fence:
 
@@ -474,18 +568,24 @@ A second seed hits a real in-repo refuse (export is a write; unpaid
 preview is enough). Do not add `--opt-in` to “fix” it.
 
 ```bash
-node tools/result-reuse/cli.mjs export \
-  --input tools/result-reuse/fixtures/accepted-page-change.json \
-  --task-id vendor-watch --subject vendor-page-result --sequence 1 \
-  --clock "2026-09-19T00:00:00Z" \
-  --out /tmp/w804-must-not-write.json
-echo "reuse_export_exit:$?"
+(
+  set +e
+  OUT="$(mktemp -d)/w804-must-not-write.json"
+  node tools/result-reuse/cli.mjs export \
+    --input tools/result-reuse/fixtures/accepted-page-change.json \
+    --task-id vendor-watch --subject vendor-page-result --sequence 1 \
+    --clock "2026-09-19T00:00:00Z" \
+    --out "$OUT"
+  echo "reuse_export_exit:$?"
+  if [ -e "$OUT" ]; then echo "reuse_export_wrote:true"; else echo "reuse_export_wrote:false"; fi
+)
 ```
 
 Expected: exit **1** and
 `refusing to write without --opt-in; preview first and inspect included/omitted`.
-The file is not a settled observation. Do not retry with `--opt-in`
-from this how-to.
+`reuse_export_wrote:false`. The file is not a settled observation. Do not
+retry with `--opt-in` from this how-to. Under `set -e`, the subshell still
+prints `reuse_export_exit:1`.
 
 Unknown settlement flags on result-reuse also exit **1** (`unknown option`):
 `--live`, `--pay`, `--neo`, `--publish`.
@@ -540,9 +640,9 @@ does not download or execute it.
 - `tools/offer-routing/fixtures/page-change-evidence.job.json`
 - `tools/offer-routing/fixtures/complete-issue-discussion.job.json`
 - `tools/result-reuse/README.md` (preview default; export needs `--opt-in`)
-- `server/routes/mcp.js` (apex Streamable HTTP MCP)
+- `server/routes/mcp.js` (apex Streamable HTTP MCP; listed `FIXPACK_LINK` is not opened)
 - `server/lib/mcp-tool-inventory.js` (five names)
-- `fixtures/presence/catalog/x402.json` (23 origin routes; `/extract` amount `5000`)
+- `fixtures/presence/catalog/x402.json` (23 origin routes; `/extract` amount `5000`; encoded example URL)
 - `fixtures/verified-feed/observations/extract-current.json` (unpaid 402)
 - `fixtures/buyer-runtimes/agent402/states/stop.json` (no wallet, no settle)
 - `client/public/discovery/useful-jobs.json` (1.4.7 pin)
