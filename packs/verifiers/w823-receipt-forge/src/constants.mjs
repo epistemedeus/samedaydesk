@@ -89,7 +89,7 @@ export const REFUSED_FLAGS = Object.freeze([
   "payment",
 ]);
 
-export const PAYMENT_HEADER_RE = /^(PAYMENT-SIGNATURE|X-PAYMENT|PAYMENT-RESPONSE)$/i;
+export const PAYMENT_HEADER_RE = /^(PAYMENT-SIGNATURE|X-PAYMENT|X-PAYMENT-RESPONSE|PAYMENT-RESPONSE)$/i;
 
 export const RECEIPT_ID_RE = /^[a-z][a-z0-9_-]{2,95}$/;
 export const TOKEN_RE = /^[a-z][a-z0-9_]{1,95}$/;

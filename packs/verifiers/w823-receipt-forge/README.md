@@ -64,6 +64,10 @@ file exits 1.
 | `replay-receipt.json` | `receipt_replay` |
 | `payment-header-forge.json` | `payment_header_forge` |
 | `payto-swap.json` | `pin_mismatch` |
+| `bound-settlement-unpaid.json` | `copied_settlement` (known tx on the bound unpaid identity) |
+| `request-url-mismatch.json` | `invalid_shape` (`request.url` ≠ `resource`) |
+| `x-payment-response.json` | `payment_header_forge` |
+| `extract-amount-restamp.json` | `pin_mismatch` (honest digest, extract amount `1`) |
 
 ## Honesty
 
@@ -79,4 +83,9 @@ or re-settle that transaction.
 ## Boundary
 
 `--live`, `--pay`, `--checkout`, `--publish`, `--registry`, `--refresh`,
-`--settle`, `--neo`, and `--payment` exit 2 with `REFUSED`.
+`--settle`, `--neo`, and `--payment` (bare or `--flag=value`) exit 2 with
+`REFUSED`. `X-PAYMENT-RESPONSE` on an unpaid claim is `payment_header_forge`.
+A known facilitator tx on an unpaid claim is `copied_settlement` even when
+receipt and resource match the pin. `/extract` accepts must stay amount
+`5000`. `request.url` must equal `resource`; `route` must equal the resource
+pathname.

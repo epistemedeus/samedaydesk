@@ -241,6 +241,103 @@ const payToSwap = stampIntegrity({
   ],
 });
 
+const boundMatch = stampIntegrity({
+  ...baseUnpaid({
+    claimId: "rf_w823_bound_settlement_unpaid",
+    receiptId: KNOWN_SETTLEMENT.boundReceiptId,
+    kind: "unpaid_payment_required",
+    resource: KNOWN_SETTLEMENT.boundResource,
+    route: KNOWN_SETTLEMENT.boundRoute,
+    method: "GET",
+    httpStatus: 402,
+    observedAt: "2026-09-17T12:03:06.000Z",
+    source: {
+      kind: "live_unpaid_402",
+      note: "Known facilitator tx attached to the bound unpaid seller-integrity-audit claim.",
+    },
+    unknownWhenAbsent: ["paid_body", "chain_finality"],
+  }),
+  settlement: {
+    operationId: KNOWN_SETTLEMENT.operationId,
+    amountUsdc: KNOWN_SETTLEMENT.amountUsdc,
+    transaction: KNOWN_SETTLEMENT.transaction,
+    facilitatorOrPayoutRef: KNOWN_SETTLEMENT.facilitatorOrPayoutRef,
+  },
+});
+
+const urlMismatch = stampIntegrity({
+  ...baseUnpaid({
+    claimId: "rf_w823_request_url_mismatch",
+    receiptId: "cr_w823_request_url_mismatch",
+    kind: "unpaid_payment_required",
+    resource: EXTRACT_RESOURCE,
+    route: "/extract",
+    method: "GET",
+    httpStatus: 402,
+    observedAt: "2026-09-17T12:03:06.000Z",
+    source: {
+      kind: "live_unpaid_402",
+      note: "request.url points at seller-integrity-audit while resource stays /extract.",
+    },
+    unknownWhenAbsent: ["paid_body", "facilitator_settlement"],
+  }),
+  request: {
+    method: "GET",
+    url: KNOWN_SETTLEMENT.boundResource,
+    headers: { Accept: "application/json" },
+  },
+});
+
+const xPaymentResponse = stampIntegrity({
+  ...baseUnpaid({
+    claimId: "rf_w823_x_payment_response",
+    receiptId: "cr_w823_x_payment_response",
+    kind: "unpaid_payment_required",
+    resource: EXTRACT_RESOURCE,
+    route: "/extract",
+    method: "GET",
+    httpStatus: 402,
+    observedAt: "2026-09-17T12:03:06.000Z",
+    source: {
+      kind: "live_unpaid_402",
+      note: "X-PAYMENT-RESPONSE header attached to an unpaid 402.",
+    },
+    unknownWhenAbsent: ["paid_body", "facilitator_settlement"],
+  }),
+  request: {
+    method: "GET",
+    url: EXTRACT_RESOURCE,
+    headers: {
+      Accept: "application/json",
+      "X-PAYMENT-RESPONSE": "forged.settlement.bytes",
+    },
+  },
+});
+
+const extractAmountRestamp = stampIntegrity({
+  ...baseUnpaid({
+    claimId: "rf_w823_extract_amount_restamp",
+    receiptId: "cr_w823_extract_amount_restamp",
+    kind: "unpaid_payment_required",
+    resource: EXTRACT_RESOURCE,
+    route: "/extract",
+    method: "GET",
+    httpStatus: 402,
+    observedAt: "2026-09-17T12:03:06.000Z",
+    source: {
+      kind: "live_unpaid_402",
+      note: "Extract amount restamped to 1 after an honest digest. Pin is 5000.",
+    },
+    unknownWhenAbsent: ["paid_body", "facilitator_settlement"],
+  }),
+  accepts: [
+    {
+      ...ACCEPT,
+      amount: "1",
+    },
+  ],
+});
+
 writeJson(join(validDir, "unpaid-402-extract.json"), extract);
 writeJson(join(validDir, "unpaid-buyer-stop.json"), buyerStop);
 writeJson(join(rejectDir, "forged-digest.json"), forged);
@@ -249,6 +346,10 @@ writeJson(join(rejectDir, "fabricated-tx.json"), fabricated);
 writeJson(join(rejectDir, "replay-receipt.json"), replay);
 writeJson(join(rejectDir, "payment-header-forge.json"), paymentHeader);
 writeJson(join(rejectDir, "payto-swap.json"), payToSwap);
+writeJson(join(rejectDir, "bound-settlement-unpaid.json"), boundMatch);
+writeJson(join(rejectDir, "request-url-mismatch.json"), urlMismatch);
+writeJson(join(rejectDir, "x-payment-response.json"), xPaymentResponse);
+writeJson(join(rejectDir, "extract-amount-restamp.json"), extractAmountRestamp);
 
 writeJson(join(rejectDir, "manifest.json"), {
   "forged-digest.json": {
@@ -276,6 +377,22 @@ writeJson(join(rejectDir, "manifest.json"), {
     id: "payto-swap",
     code: "pin_mismatch",
   },
+  "bound-settlement-unpaid.json": {
+    id: "bound-settlement-unpaid",
+    code: "copied_settlement",
+  },
+  "request-url-mismatch.json": {
+    id: "request-url-mismatch",
+    code: "invalid_shape",
+  },
+  "x-payment-response.json": {
+    id: "x-payment-response",
+    code: "payment_header_forge",
+  },
+  "extract-amount-restamp.json": {
+    id: "extract-amount-restamp",
+    code: "pin_mismatch",
+  },
 });
 
 writeJson(join(fixtures, "catalog.json"), {
@@ -301,7 +418,7 @@ writeJson(join(fixtures, "catalog.json"), {
     ...SDS_PIN,
     extractAmount: EXTRACT_AMOUNT,
     settlements: [KNOWN_SETTLEMENT],
-    spentReceiptIds: [SPENT_RECEIPT_ID],
+    spentReceiptIds: [SPENT_RECEIPT_ID, KNOWN_SETTLEMENT.boundReceiptId],
   },
   boundary: {
     paymentSent: false,

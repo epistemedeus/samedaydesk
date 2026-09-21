@@ -3,6 +3,7 @@ import {
   COMMITTED,
   EXTRACT_AMOUNT,
   KNOWN_SETTLEMENT,
+  PAYMENT_HEADER_RE,
   SDS_PIN,
 } from "./constants.mjs";
 import { committedPath, findRepoRoot } from "./paths.mjs";
@@ -90,7 +91,7 @@ export function pinCommittedArtifacts(repoRoot = findRepoRoot()) {
       ? observation.value.headers
       : {};
     for (const name of Object.keys(headers)) {
-      if (/^(PAYMENT-SIGNATURE|X-PAYMENT|PAYMENT-RESPONSE)$/i.test(name)) {
+      if (PAYMENT_HEADER_RE.test(name)) {
         errors.push(
           error(
             "payment_header_forge",

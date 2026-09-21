@@ -43,7 +43,8 @@
       }
     ],
     "spentReceiptIds": [
-      "cr_spent_replay_w823"
+      "cr_spent_replay_w823",
+      "agent402-external-validation-purchase-2026-08-29"
     ]
   },
   "boundary": {

@@ -98,7 +98,7 @@ test("cold suite pins committed SDS artifacts and rejects seeded forges", () => 
   assert.equal(report.pin.ok, true, JSON.stringify(report.pin.errors, null, 2));
   assert.equal(report.suite.ok, true, JSON.stringify(report.suite.results.filter((item) => !item.ok), null, 2));
   assert.equal(report.ok, true);
-  assert.equal(report.suite.total, 8);
+  assert.equal(report.suite.total, 12);
   assert.equal(report.live, false);
   assert.equal(report.paymentSent, false);
 });
@@ -106,7 +106,7 @@ test("cold suite pins committed SDS artifacts and rejects seeded forges", () => 
 test("fixture-only suite still accepts valid and rejects forges", () => {
   const report = runSuite(catalog);
   assert.equal(report.ok, true, JSON.stringify(report.results.filter((item) => !item.ok), null, 2));
-  assert.equal(report.total, 8);
+  assert.equal(report.total, 12);
   assert.equal(report.failed, 0);
 });
 
@@ -140,9 +140,9 @@ test("CLI --cold exits 0 against committed SDS artifacts", () => {
   assert.equal(body.pin.extractAmount, EXTRACT_AMOUNT);
   assert.equal(body.pin.payTo, SDS_PIN.payTo);
   assert.equal(body.pin.settlementTransaction, KNOWN_SETTLEMENT.transaction);
-  assert.equal(body.passed, 9);
+  assert.equal(body.passed, 13);
   assert.equal(body.failed, 0);
-  assert.equal(body.total, 9);
+  assert.equal(body.total, 13);
 });
 
 test("CLI verifies the real unpaid extract fixture", () => {
@@ -195,6 +195,10 @@ test("CLI copied-settlement, fabricated-tx, replay, payment header, payTo swap",
     ["replay-receipt.json", "receipt_replay"],
     ["payment-header-forge.json", "payment_header_forge"],
     ["payto-swap.json", "pin_mismatch"],
+    ["bound-settlement-unpaid.json", "copied_settlement"],
+    ["request-url-mismatch.json", "invalid_shape"],
+    ["x-payment-response.json", "payment_header_forge"],
+    ["extract-amount-restamp.json", "pin_mismatch"],
   ];
   for (const [name, code] of cases) {
     const proc = runCli([
@@ -207,12 +211,22 @@ test("CLI copied-settlement, fabricated-tx, replay, payment header, payTo swap",
 });
 
 test("CLI refuses --live --pay --publish --neo", () => {
-  for (const flag of ["--live", "--pay", "--publish", "--neo", "--checkout", "--payment"]) {
+  for (const flag of [
+    "--live",
+    "--pay",
+    "--publish",
+    "--neo",
+    "--checkout",
+    "--payment",
+    "--pay=true",
+    "--live=true",
+    "--neo=1",
+  ]) {
     const proc = runCli([flag, "--cold"]);
     assert.equal(proc.status, 2, flag);
     const body = JSON.parse(proc.stdout);
-    assert.equal(body.ok, false);
-    assert.equal(body.error.code, "REFUSED");
+    assert.equal(body.ok, false, flag);
+    assert.equal(body.error.code, "REFUSED", flag);
   }
 });
 
@@ -237,4 +251,113 @@ test("committed pin helper matches CLI --cold pin", () => {
   assert.equal(pin.extractAmount, "5000");
   assert.match(pin.files.x402Catalog, /x402\.json$/);
   assert.match(pin.files.settlement, /agent402-external-validation-purchase-2026-08-29\.json$/);
+});
+
+test("known settlement on the bound unpaid identity is copied_settlement", () => {
+  const original = loadJson(join(VALID_FIXTURES, "unpaid-402-extract.json"));
+  const claim = stampIntegrity({
+    ...original,
+    claimId: "rf_w823_bound_match_probe",
+    receiptId: KNOWN_SETTLEMENT.boundReceiptId,
+    resource: KNOWN_SETTLEMENT.boundResource,
+    route: KNOWN_SETTLEMENT.boundRoute,
+    request: {
+      ...original.request,
+      url: KNOWN_SETTLEMENT.boundResource,
+    },
+    settlement: {
+      operationId: KNOWN_SETTLEMENT.operationId,
+      amountUsdc: KNOWN_SETTLEMENT.amountUsdc,
+      transaction: KNOWN_SETTLEMENT.transaction,
+      facilitatorOrPayoutRef: KNOWN_SETTLEMENT.facilitatorOrPayoutRef,
+    },
+  });
+  const result = evaluateClaim(claim, catalog);
+  assert.equal(result.ok, false);
+  assert.ok(result.codes.includes("copied_settlement"), JSON.stringify(result.codes));
+  assert.ok(result.codes.includes("receipt_replay"), JSON.stringify(result.codes));
+});
+
+test("request.url, route, extract amount, X-PAYMENT-RESPONSE, and offer index", () => {
+  const original = loadJson(join(VALID_FIXTURES, "unpaid-402-extract.json"));
+
+  const urlSwap = stampIntegrity({
+    ...original,
+    claimId: "rf_w823_url_probe",
+    receiptId: "cr_w823_url_probe",
+    request: { ...original.request, url: KNOWN_SETTLEMENT.boundResource },
+  });
+  const urlResult = evaluateClaim(urlSwap, catalog);
+  assert.equal(urlResult.ok, false);
+  assert.ok(urlResult.codes.includes("invalid_shape"));
+
+  const routeSwap = stampIntegrity({
+    ...original,
+    claimId: "rf_w823_route_probe",
+    receiptId: "cr_w823_route_probe",
+    route: KNOWN_SETTLEMENT.boundRoute,
+  });
+  const routeResult = evaluateClaim(routeSwap, catalog);
+  assert.equal(routeResult.ok, false);
+  assert.ok(routeResult.codes.includes("invalid_shape"));
+
+  const restamp = stampIntegrity({
+    ...original,
+    claimId: "rf_w823_amount_probe",
+    receiptId: "cr_w823_amount_probe",
+    accepts: [{ ...original.accepts[0], amount: "1" }],
+  });
+  const restampResult = evaluateClaim(restamp, catalog);
+  assert.equal(restampResult.ok, false);
+  assert.ok(restampResult.codes.includes("pin_mismatch"));
+  assert.equal(restampResult.codes.includes("receipt_forged"), false);
+
+  const header = stampIntegrity({
+    ...original,
+    claimId: "rf_w823_xpr_probe",
+    receiptId: "cr_w823_xpr_probe",
+    request: {
+      ...original.request,
+      headers: { ...original.request.headers, "X-PAYMENT-RESPONSE": "forge" },
+    },
+  });
+  const headerResult = evaluateClaim(header, catalog);
+  assert.equal(headerResult.ok, false);
+  assert.ok(headerResult.codes.includes("payment_header_forge"));
+
+  const offer = stampIntegrity({
+    ...original,
+    claimId: "rf_w823_offer_probe",
+    receiptId: "cr_w823_offer_probe",
+    offerReceipt: {
+      offers: [
+        {
+          format: "x402",
+          acceptIndex: 99,
+          payload: {
+            version: 2,
+            resourceUrl: original.resource,
+            scheme: SDS_PIN.scheme,
+            network: SDS_PIN.network,
+            asset: SDS_PIN.asset,
+            payTo: SDS_PIN.payTo,
+            amount: EXTRACT_AMOUNT,
+          },
+        },
+      ],
+    },
+  });
+  const offerResult = evaluateClaim(offer, catalog);
+  assert.equal(offerResult.ok, false);
+  assert.ok(offerResult.codes.includes("invalid_shape"));
+
+  const pathObj = stampIntegrity({
+    ...original,
+    claimId: "rf_w823_path_probe",
+    receiptId: "cr_w823_path_probe",
+    source: { ...original.source, path: { nested: true } },
+  });
+  const pathResult = evaluateClaim(pathObj, catalog);
+  assert.equal(pathResult.ok, false);
+  assert.ok(pathResult.codes.includes("invalid_shape"));
 });

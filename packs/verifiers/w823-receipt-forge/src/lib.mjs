@@ -7,6 +7,7 @@ import {
   AUTHORITY_CLASSES,
   COMPLETENESS,
   DIGEST_RE,
+  EXTRACT_AMOUNT,
   EXTRA_KEYS,
   FORBIDDEN_KEYS,
   HTTP_CHALLENGE_KINDS,
@@ -130,6 +131,15 @@ function addr(value) {
   return String(value || "").toLowerCase();
 }
 
+function sdsPathname(url) {
+  if (typeof url !== "string" || !url.startsWith(RESOURCE_PREFIX)) return null;
+  try {
+    return new URL(url).pathname;
+  } catch {
+    return null;
+  }
+}
+
 export function loadCatalog(catalogPath = DEFAULT_CATALOG) {
   const catalog = JSON.parse(readFileSync(catalogPath, "utf8"));
   if (!catalog || typeof catalog !== "object" || !catalog.pin) {
@@ -174,7 +184,7 @@ export function naiveVerdict(claim) {
   return "accept";
 }
 
-function validateAccept(accept, index, errors) {
+function validateAccept(accept, index, errors, claim = {}) {
   const path = `$.accepts[${index}]`;
   if (!isPlainObject(accept)) {
     errors.push(error("invalid_shape", path, "accept must be an object"));
@@ -189,6 +199,21 @@ function validateAccept(accept, index, errors) {
     errors.push(error("pin_mismatch", `${path}.network`, "network is not the SDS pin"));
   }
   expectString(accept.amount, AMOUNT_RE, `${path}.amount`, errors);
+  const extractRoute = claim.route === "/extract" || sdsPathname(claim.resource) === "/extract";
+  if (
+    extractRoute &&
+    typeof accept.amount === "string" &&
+    AMOUNT_RE.test(accept.amount) &&
+    accept.amount !== EXTRACT_AMOUNT
+  ) {
+    errors.push(
+      error(
+        "pin_mismatch",
+        `${path}.amount`,
+        `extract amount is ${accept.amount}, pin is ${EXTRACT_AMOUNT}`,
+      ),
+    );
+  }
   if (!expectString(accept.asset, ADDR_RE, `${path}.asset`, errors) || addr(accept.asset) !== addr(SDS_PIN.asset)) {
     if (typeof accept.asset === "string" && ADDR_RE.test(accept.asset)) {
       errors.push(error("pin_mismatch", `${path}.asset`, "asset is not the SDS pin"));
@@ -230,6 +255,8 @@ function validateRequest(request, claim, errors) {
   }
   if (typeof request.url !== "string" || !request.url.startsWith(RESOURCE_PREFIX)) {
     errors.push(error("invalid_shape", "$.request.url", "url must be on the SDS origin"));
+  } else if (typeof claim.resource === "string" && request.url !== claim.resource) {
+    errors.push(error("invalid_shape", "$.request.url", "request.url must equal resource"));
   }
   if (!isPlainObject(request.headers)) {
     errors.push(error("invalid_shape", "$.request.headers", "headers must be an object"));
@@ -286,6 +313,10 @@ function validateOfferReceipt(offerReceipt, claim, errors) {
       continue;
     }
     allowKeys(offer.payload, PAYLOAD_KEYS, `${path}.payload`, errors);
+    if (!Number.isInteger(offer.acceptIndex) || offer.acceptIndex < 0 || offer.acceptIndex >= accepts.length) {
+      errors.push(error("invalid_shape", `${path}.acceptIndex`, "acceptIndex is out of range"));
+      continue;
+    }
     const accept = accepts[offer.acceptIndex];
     if (accept && offer.payload.amount !== accept.amount) {
       errors.push(error("receipt_forged", `${path}.payload.amount`, "offer amount does not match accept"));
@@ -322,15 +353,15 @@ function validateSettlement(settlement, claim, catalog, errors) {
   }
   const receiptOk = claim.receiptId === known.boundReceiptId;
   const resourceOk = claim.resource === known.boundResource;
-  if (!receiptOk || !resourceOk) {
-    errors.push(
-      error(
-        "copied_settlement",
-        "$.settlement.transaction",
-        "settlement transaction is bound to a different SDS receipt or resource",
-      ),
-    );
-  }
+  errors.push(
+    error(
+      "copied_settlement",
+      "$.settlement.transaction",
+      receiptOk && resourceOk
+        ? "known settlement cannot appear on an unpaid SDS receipt"
+        : "settlement transaction is bound to a different SDS receipt or resource",
+    ),
+  );
 }
 
 function validateIntegrity(claim, errors) {
@@ -411,6 +442,10 @@ export function validateClaim(input, catalog = loadCatalog()) {
     errors.push(error("invalid_shape", "$.resource", "resource must be on the SDS origin"));
   }
   expectString(input.route, ROUTE_RE, "$.route", errors);
+  const resourcePath = sdsPathname(input.resource);
+  if (resourcePath && typeof input.route === "string" && ROUTE_RE.test(input.route) && input.route !== resourcePath) {
+    errors.push(error("invalid_shape", "$.route", "route must equal the resource URL pathname"));
+  }
   if (!HTTP_METHODS.includes(input.method)) {
     errors.push(error("invalid_shape", "$.method", "method is not GET or POST"));
   }
@@ -455,7 +490,7 @@ export function validateClaim(input, catalog = loadCatalog()) {
     errors.push(error("invalid_shape", "$.accepts", "accepts must contain 1 to 4 entries"));
   } else {
     for (let i = 0; i < input.accepts.length; i += 1) {
-      validateAccept(input.accepts[i], i, errors);
+      validateAccept(input.accepts[i], i, errors, input);
     }
   }
 
@@ -489,6 +524,9 @@ export function validateClaim(input, catalog = loadCatalog()) {
     if (Object.hasOwn(input.source, "capturedAt") && parseRfc3339(input.source.capturedAt) === null) {
       errors.push(error("invalid_shape", "$.source.capturedAt", "invalid capturedAt"));
     }
+    if (Object.hasOwn(input.source, "path")) {
+      expectString(input.source.path, SURFACE_RE, "$.source.path", errors);
+    }
     if (Object.hasOwn(input.source, "note")) {
       expectString(input.source.note, SURFACE_RE, "$.source.note", errors);
     }
@@ -520,7 +558,11 @@ export function validateClaim(input, catalog = loadCatalog()) {
     }
   }
 
-  const spent = new Set(catalog.pin.spentReceiptIds ?? [SPENT_RECEIPT_ID]);
+  const spent = new Set([
+    SPENT_RECEIPT_ID,
+    KNOWN_SETTLEMENT.boundReceiptId,
+    ...(catalog.pin.spentReceiptIds ?? []),
+  ]);
   if (typeof input.receiptId === "string" && spent.has(input.receiptId)) {
     errors.push(
       error("receipt_replay", "$.receiptId", "receiptId is pinned as already spent and cannot authorize a new unpaid claim"),
@@ -681,7 +723,7 @@ export function evaluateSeededFailure(catalog = loadCatalog()) {
 
 export function refusedFlag(argv) {
   for (const arg of argv) {
-    const name = String(arg).replace(/^--/, "");
+    const name = String(arg).replace(/^--/, "").split("=")[0];
     if (REFUSED_FLAGS.includes(name)) return arg;
   }
   return null;

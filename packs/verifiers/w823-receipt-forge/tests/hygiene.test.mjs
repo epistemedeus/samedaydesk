@@ -21,6 +21,7 @@ function walk(dir, acc = []) {
 test("refusedFlag catches live/pay/neo/publish before other work", () => {
   for (const flag of REFUSED_FLAGS) {
     assert.equal(refusedFlag([`--${flag}`, "--cold"]), `--${flag}`);
+    assert.equal(refusedFlag([`--${flag}=true`, "--cold"]), `--${flag}=true`);
   }
   assert.equal(refusedFlag(["--cold"]), null);
 });

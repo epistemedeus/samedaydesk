@@ -24,3 +24,5 @@ Boundary: this directory only. No neo, pay, publish, checkout, or live fetch.
 
 `forged-digest`: well-formed SDS origin + `sha256:` string, amount mutated
 `5000` → `1` after the digest was bound. Naive accept, honest `receipt_forged`.
+A restamped extract amount `1`, known tx on the bound unpaid identity,
+`X-PAYMENT-RESPONSE`, and `request.url` ≠ `resource` are also rejected.

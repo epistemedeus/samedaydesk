@@ -28,7 +28,8 @@ Usage:
 --expect-reject    require the named error code on a single file
 --pretty           indent JSON
 
---live/--pay/--checkout/--publish/--registry/--refresh/--settle/--neo/--payment are refused.
+--live/--pay/--checkout/--publish/--registry/--refresh/--settle/--neo/--payment
+(including --flag=value) are refused.
 `;
 
 function writeJson(value, pretty) {

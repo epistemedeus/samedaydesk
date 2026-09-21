@@ -12,8 +12,10 @@ Write boundary: `packs/verifiers/w823-receipt-forge/**` only.
 | Copied known tx onto `/extract` | `copied_settlement` | That extract was paid |
 | Invented tx | `fabricated_settlement` | |
 | Spent `receiptId` replay | `receipt_replay` | |
-| `PAYMENT-SIGNATURE` / `X-PAYMENT` / `PAYMENT-RESPONSE` on unpaid | `payment_header_forge` | |
-| `payTo` not the SDS pin | `pin_mismatch` | |
-| `--live` `--pay` `--checkout` `--publish` `--neo` `--settle` | CLI exit 2 `REFUSED` | |
+| `PAYMENT-SIGNATURE` / `X-PAYMENT` / `X-PAYMENT-RESPONSE` / `PAYMENT-RESPONSE` on unpaid | `payment_header_forge` | |
+| `payTo` not the SDS pin; `/extract` amount not `5000` | `pin_mismatch` | |
+| Known facilitator tx on an unpaid claim (including bound identity) | `copied_settlement` | That extract was paid |
+| `request.url` ≠ `resource`, or `route` ≠ resource pathname | `invalid_shape` | |
+| `--live` `--pay` `--checkout` `--publish` `--neo` `--settle` (`--flag=value` too) | CLI exit 2 `REFUSED` | |
 
 HTTP 402 is not delivery. `paymentSent` stays false.
