@@ -31,7 +31,8 @@ const ADDR_RE = /^0x[0-9a-fA-F]{40}$/;
 const TX_RE = /^0x[a-f0-9]{64}$/;
 const RFC3339_RE = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})Z$/;
 const RESOURCE_PREFIX = "https://agents.samedaydesk.com/";
-const PAYMENT_HEADER_RE = /^(PAYMENT-SIGNATURE|X-PAYMENT|PAYMENT-RESPONSE)$/i;
+const PAYMENT_HEADER_RE =
+  /^(X-PAYMENT|X-PAYMENT-RESPONSE|X-PAYMENT-SIGNATURE|PAYMENT-SIGNATURE|PAYMENT-RESPONSE)$/i;
 const HTTP_METHODS = new Set(["GET", "POST"]);
 const FORBIDDEN_KEYS = new Set(["__proto__", "prototype", "constructor"]);
 
@@ -309,7 +310,7 @@ export function indexRoutes(matrix = loadMatrix()) {
 }
 
 export function isPaymentHeaderName(name) {
-  return PAYMENT_HEADER_RE.test(String(name || ""));
+  return PAYMENT_HEADER_RE.test(String(name || "").trim());
 }
 
 export function naiveVerdict(record) {
@@ -325,12 +326,12 @@ export function collectPaidEvidence(record) {
   if (record.paymentSent === true) {
     hits.push(error("paid_as_unpaid", "$.paymentSent", "paymentSent true cannot be an unpaid 402 fixture"));
   }
-  if (Object.hasOwn(record, "settlement") && record.settlement !== null) {
+  if (Object.hasOwn(record, "settlement")) {
     hits.push(
       error(
         "forged_settle",
         "$.settlement",
-        "unpaid 402 fixture cannot carry a settlement object; this is a forged settle",
+        "unpaid 402 fixture cannot carry a settlement field; this is a forged settle",
       ),
     );
   }
@@ -461,7 +462,7 @@ export function validateRecord(input, matrix = loadMatrix()) {
 
   validateRequest(input.request, input, errors);
 
-  if (Object.hasOwn(input, "editLivePrice") && input.editLivePrice === true) {
+  if (Object.hasOwn(input, "editLivePrice")) {
     errors.push(error("live_price_edit", "$.editLivePrice", "live catalog amounts are not editable in this pack"));
   }
   if (Object.hasOwn(input, "proposedAmountAtomic")) {
@@ -483,7 +484,13 @@ export function validateRecord(input, matrix = loadMatrix()) {
 
   if (typeof input.amountDisplayUsd !== "string" || !DISPLAY_RE.test(input.amountDisplayUsd)) {
     errors.push(error("invalid_shape", "$.amountDisplayUsd", "amountDisplayUsd must be a decimal string"));
-  } else if (atomicOk && ATOMIC_RE.test(input.amountAtomic) && input.amountDisplayUsd === input.amountAtomic) {
+  } else if (
+    atomicOk &&
+    ATOMIC_RE.test(input.amountAtomic) &&
+    typeof input.amountDisplayUsd === "string" &&
+    (input.amountDisplayUsd === input.amountAtomic ||
+      new RegExp(`^${input.amountAtomic}(\\.0+)?$`).test(input.amountDisplayUsd))
+  ) {
     errors.push(
       error(
         "wrong_units",
@@ -844,46 +851,69 @@ export function crossCheckInTreeCatalog(matrix = loadMatrix(), catalogPath = IN_
   for (const item of items) {
     const route = item?.resource?.routeTemplate;
     const method = item?.request?.method;
-    const accept = item?.accepts?.[0];
-    const amount = accept?.amount;
     const resource = item?.resource?.url;
     const key = routeKey(method, route);
     seen.add(key);
     const row = matrix.routes.find((entry) => entry.method === method && entry.route === route);
-    if (!row) {
-      findings.push({ code: "matrix_missing_route", key, amount, resource });
-      continue;
-    }
-    if (row.amountAtomic !== amount) {
+    const rawAccepts = Array.isArray(item?.accepts) ? item.accepts : [];
+    if (rawAccepts.length !== 1) {
       findings.push({
-        code: "amount_drift",
+        code: "extra_accept",
         key,
-        matrixAmount: row.amountAtomic,
-        catalogAmount: amount,
+        count: rawAccepts.length,
       });
+    }
+    const accepts = rawAccepts.length > 0 ? rawAccepts : [undefined];
+    if (!row) {
+      findings.push({ code: "matrix_missing_route", key, amount: accepts[0]?.amount, resource });
+      continue;
     }
     if (row.resource !== resource) {
       findings.push({ code: "resource_drift", key });
     }
-    if (row.network && row.network !== accept?.network) {
-      findings.push({ code: "network_drift", key, matrix: row.network, catalog: accept?.network });
-    }
-    if (row.asset && addr(row.asset) !== addr(accept?.asset)) {
-      findings.push({ code: "asset_drift", key });
-    }
-    if (row.payTo && addr(row.payTo) !== addr(accept?.payTo)) {
-      findings.push({ code: "payto_drift", key });
-    }
-    if (row.maxTimeoutSeconds !== accept?.maxTimeoutSeconds) {
-      findings.push({
-        code: "timeout_drift",
-        key,
-        matrix: row.maxTimeoutSeconds,
-        catalog: accept?.maxTimeoutSeconds,
-      });
-    }
-    if (!extraEqual(row.extra, accept?.extra)) {
-      findings.push({ code: "extra_drift", key });
+    const pinnedScheme = row.scheme || matrix.pin?.scheme;
+    for (let index = 0; index < accepts.length; index += 1) {
+      const accept = accepts[index];
+      const amount = accept?.amount;
+      if (row.amountAtomic !== amount) {
+        findings.push({
+          code: "amount_drift",
+          key,
+          index,
+          matrixAmount: row.amountAtomic,
+          catalogAmount: amount,
+        });
+      }
+      if (pinnedScheme && accept?.scheme !== pinnedScheme) {
+        findings.push({
+          code: "scheme_drift",
+          key,
+          index,
+          matrix: pinnedScheme,
+          catalog: accept?.scheme ?? null,
+        });
+      }
+      if (row.network && row.network !== accept?.network) {
+        findings.push({ code: "network_drift", key, index, matrix: row.network, catalog: accept?.network });
+      }
+      if (row.asset && addr(row.asset) !== addr(accept?.asset)) {
+        findings.push({ code: "asset_drift", key, index });
+      }
+      if (row.payTo && addr(row.payTo) !== addr(accept?.payTo)) {
+        findings.push({ code: "payto_drift", key, index });
+      }
+      if (row.maxTimeoutSeconds !== accept?.maxTimeoutSeconds) {
+        findings.push({
+          code: "timeout_drift",
+          key,
+          index,
+          matrix: row.maxTimeoutSeconds,
+          catalog: accept?.maxTimeoutSeconds,
+        });
+      }
+      if (!extraEqual(row.extra, accept?.extra)) {
+        findings.push({ code: "extra_drift", key, index });
+      }
     }
   }
   if (

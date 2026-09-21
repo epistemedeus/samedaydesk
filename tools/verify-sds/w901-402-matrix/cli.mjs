@@ -93,6 +93,23 @@ function write(value, ok, code = ok ? 0 : 1) {
   process.exit(code);
 }
 
+try {
+runCommands();
+} catch (cause) {
+  write(
+    {
+      ok: false,
+      error: {
+        code: "MATRIX",
+        message: cause.message,
+      },
+    },
+    false,
+    2,
+  );
+}
+
+function runCommands() {
 const suiteRequested = Boolean(values.suite || values.cold);
 const exclusive =
   Number(suiteRequested) +
@@ -277,3 +294,4 @@ write(
   },
   failed.length === 0,
 );
+}

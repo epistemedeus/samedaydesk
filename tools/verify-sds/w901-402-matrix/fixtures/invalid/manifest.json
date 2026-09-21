@@ -28,5 +28,8 @@
   },
   "live-price-edit.json": {
     "code": "live_price_edit"
+  },
+  "settlement-null.json": {
+    "code": "forged_settle"
   }
 }

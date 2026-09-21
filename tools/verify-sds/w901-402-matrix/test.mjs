@@ -138,8 +138,8 @@ test("every invalid fixture is rejected with the declared code", () => {
 test("suite accepts unpaid fixtures, rejects invalids, and stays on the in-tree catalog", () => {
   const report = runSuite(matrix);
   assert.equal(report.failed, 0, JSON.stringify(report.results.filter((item) => !item.ok)));
-  assert.equal(report.passed, 32);
-  assert.equal(report.total, 32);
+  assert.equal(report.passed, 33);
+  assert.equal(report.total, 33);
 });
 
 test("designated seeds are naive-accept honest-reject", () => {
@@ -182,7 +182,7 @@ test("CLI --cold exits 0", () => {
   assert.equal(body.ok, true);
   assert.equal(body.command, "cold");
   assert.equal(body.failed, 0);
-  assert.equal(body.total, 32);
+  assert.equal(body.total, 33);
   assert.equal(body.coverage.ok, true);
   assert.equal(body.crossCheck.ok, true);
   assert.equal(body.boundary.paymentSent, false);
@@ -197,7 +197,7 @@ test("CLI --suite exits 0", () => {
   const body = JSON.parse(result.stdout);
   assert.equal(body.ok, true);
   assert.equal(body.failed, 0);
-  assert.equal(body.total, 32);
+  assert.equal(body.total, 33);
   assert.equal(body.coverage.ok, true);
   assert.equal(body.crossCheck.ok, true);
 });
@@ -492,4 +492,73 @@ test("validateMatrix rejects duplicate routes and uniqueAmount count drift", () 
   const codes = result.findings.map((item) => item.code);
   assert.ok(codes.includes("duplicate_route"), JSON.stringify(codes));
   assert.ok(codes.includes("unique_amount_count"), JSON.stringify(codes));
+});
+
+test("settlement null on unpaid 402 is forged_settle", () => {
+  const record = cloneValid("unpaid-402-extract-5000.json");
+  record.settlement = null;
+  const result = evaluateRecord(record, matrix);
+  assert.equal(result.ok, false);
+  assert.ok(result.codes.includes("forged_settle"));
+  assert.equal(result.naiveVerdict, "accept");
+  assert.equal(result.honestVerdict, "reject");
+});
+
+test("editLivePrice 1 and string true are live_price_edit", () => {
+  for (const value of [1, "true", false]) {
+    const record = cloneValid("unpaid-402-extract-5000.json");
+    record.editLivePrice = value;
+    const result = evaluateRecord(record, matrix);
+    assert.equal(result.ok, false, JSON.stringify({ value, codes: result.codes }));
+    assert.ok(result.codes.includes("live_price_edit"), JSON.stringify(result.codes));
+  }
+});
+
+test("padded PAYMENT-SIGNATURE and X-PAYMENT-RESPONSE are paid_as_unpaid", () => {
+  for (const name of [" PAYMENT-SIGNATURE", "PAYMENT-SIGNATURE ", "X-PAYMENT-RESPONSE"]) {
+    const record = cloneValid("unpaid-402-extract-5000.json");
+    record.request.headers[name] = "x";
+    const result = evaluateRecord(record, matrix);
+    assert.equal(result.ok, false, name);
+    assert.ok(result.codes.includes("paid_as_unpaid"), `${name} ${JSON.stringify(result.codes)}`);
+    assert.equal(result.naiveVerdict, "accept");
+  }
+});
+
+test("5000.0 display for atomic 5000 is wrong_units", () => {
+  const record = cloneValid("unpaid-402-extract-5000.json");
+  record.amountDisplayUsd = "5000.0";
+  const result = evaluateRecord(record, matrix);
+  assert.equal(result.ok, false);
+  assert.ok(result.codes.includes("wrong_units"), JSON.stringify(result.codes));
+});
+
+test("cross-check rejects extra accepts[] and scheme upto", () => {
+  const catalog = loadJson(join(ROOT, "fixtures/presence/catalog/x402.json"));
+  catalog.items[0].accepts[0].scheme = "upto";
+  catalog.items[0].accepts.push({
+    scheme: "upto",
+    network: catalog.items[0].accepts[0].network,
+    asset: catalog.items[0].accepts[0].asset,
+    amount: "1",
+    payTo: catalog.items[0].accepts[0].payTo,
+    maxTimeoutSeconds: 300,
+    extra: { name: "sneak", version: "9" },
+  });
+  const dir = mkdtempSync(join(tmpdir(), "w901-extra-accept-"));
+  const catalogPath = join(dir, "x402.json");
+  writeFileSync(catalogPath, JSON.stringify(catalog));
+  const cross = crossCheckInTreeCatalog(matrix, catalogPath);
+  assert.equal(cross.ok, false, JSON.stringify(cross.findings));
+  const codes = cross.findings.map((item) => item.code);
+  assert.ok(codes.includes("extra_accept"), JSON.stringify(codes));
+  assert.ok(codes.includes("scheme_drift"), JSON.stringify(codes));
+  assert.ok(codes.includes("amount_drift"), JSON.stringify(codes));
+});
+
+test("CLI --help --live is REFUSED exit 2", () => {
+  const result = runCli(["--help", "--live"]);
+  assert.equal(result.status, 2, result.stdout);
+  const body = JSON.parse(result.stdout);
+  assert.equal(body.error.code, "REFUSED");
 });

@@ -71,5 +71,6 @@ as Agent402 priceConflict: bazaar 0.05 vs origin/live 0.005.
 `forged-settle` copies a facilitator settlement transaction onto an unpaid
 HTTP 402. This pack never settles.
 
-Other rejects in the pack: `wrong_units` (5000-as-dollars and decimal-as-atomic),
-`amount_mismatch`, `paid_as_unpaid`, `live_price_edit`.
+Other rejects in the pack: `wrong_units` (5000-as-dollars, `5000.0`, and decimal-as-atomic),
+`amount_mismatch`, `paid_as_unpaid`, `live_price_edit`, `forged_settle` (including `settlement: null`).
+`--cross-check` rejects extra `accepts[]` entries and `scheme` drift off `exact`.
