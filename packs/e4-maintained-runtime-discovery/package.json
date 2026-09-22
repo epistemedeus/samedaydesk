@@ -1,0 +1,18 @@
+{
+  "name": "@samedaydesk/e4-maintained-runtime-discovery",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Maintained-runtime client that discovers the existing useful-jobs offer. Failures are explicit. Not a new discovery framework.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "e4-discover": "./bin/discover.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "discover": "node bin/discover.mjs --committed",
+    "discover:live": "node bin/discover.mjs --live"
+  }
+}
