@@ -32,6 +32,8 @@
     "test:observatory-capture": "node --test server/scripts/test-observatory-capture.js",
     "test:spa-route-shells": "node --test server/scripts/test-spa-route-shells.js",
     "test:useful-jobs-public": "node --test experiments/s260-useful-jobs-public-integration/test/*.test.mjs",
+    "test:e4-discovery": "node --test packs/e4-maintained-runtime-discovery/test/contracts.test.mjs packs/e4-maintained-runtime-discovery/test/discover.test.mjs packs/e4-maintained-runtime-discovery/test/silent-empty-success.test.mjs",
+    "test:agent-docs": "node --test docs/agent/follow-the-doc.test.mjs",
     "test:browser-desktop": "node --test tools/browser-smoke/desktop.test.mjs",
     "browser-desktop": "node tools/browser-smoke/desktop.mjs",
     "test:browser-mobile": "node --test tools/browser-smoke/mobile.test.mjs",

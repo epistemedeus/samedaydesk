@@ -1,0 +1,38 @@
+{
+  "surface": "useful-jobs",
+  "version": "1.4.7",
+  "archivePath": "/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz",
+  "expectedBytes": 5255824,
+  "expectedSha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+  "failures": [
+    {
+      "id": "digest-mismatch",
+      "kind": "acquire-poison",
+      "doc": "how-to.md",
+      "setup": "HTTP 200 body of expectedBytes filled with 0x5a",
+      "expect": {
+        "exitNonZero": true,
+        "extracted": false,
+        "executed": false
+      }
+    },
+    {
+      "id": "missing-required-inputs",
+      "kind": "cli",
+      "doc": "how-to.md",
+      "expect": {
+        "exitNonZero": true,
+        "outputMatches": "missing-required-inputs|required"
+      }
+    },
+    {
+      "id": "example-on-page-change",
+      "kind": "cli",
+      "doc": "how-to.md",
+      "expect": {
+        "exitNonZero": true,
+        "outputMatches": "sample_as_delivered_watch|SAMPLE"
+      }
+    }
+  ]
+}
