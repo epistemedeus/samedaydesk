@@ -1,0 +1,28 @@
+Price-drift verifier — SOURCE NOTICE
+
+Write repo: epistemedeus/samedaydesk
+Own directory: packs/verifiers/price-drift/
+Job: W0-X100. Not neomorphic-io. Not checkout. Not payment. Not publish.
+
+Recorded live SDS amounts (committed catalog / verified feed; not rewritten):
+  GET /extract                         0.005 USDC  atomic 5000
+  GET /commerce/seller-integrity-audit 0.01  USDC  atomic 10000
+  GET /read                            0.005 USDC  atomic 5000
+  GET /commerce/payment-offer-preflight 0.005 USDC atomic 5000
+  network eip155:8453
+  asset  0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
+  payTo  0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee
+
+Committed sources (read, not copied into runtime except as fixture pins):
+  fixtures/presence/catalog/x402.json
+  client/public/x402/verified.json
+
+This pack is an independent SDS oracle. It does not vendor
+neomorphic-io/packs/price-arithmetic-verifier (B04). It does not edit
+server/pricing.js or /.well-known/x402.
+
+Boundaries:
+  - Compare observation vs pin. Do not rewrite prices or SKUs.
+  - Cold fixture run only. --live and http(s) inputs are refused.
+  - purchaseAuthority is always false.
+  - Fixtures are not customers or market demand.
