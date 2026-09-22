@@ -1,0 +1,32 @@
+{
+  "schema": "samedaydesk.useful-job-desk.pin.v1",
+  "pack": "useful-job-desk",
+  "engine": {
+    "package": "useful-jobs",
+    "version": "1.4.7",
+    "rootName": "useful-jobs-1.4.7",
+    "cli": "bin/useful-jobs.mjs",
+    "bytes": 5255824,
+    "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+    "archivePath": "client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz",
+    "kitPath": "client/public/kit/useful-jobs-1.4.7.tar.gz",
+    "sidecarPath": "client/public/for-agents/useful-jobs/useful-jobs-1.4.7.sha256.json",
+    "sourceRepo": "epistemedeus/samedaydesk",
+    "sourceCommit": "27f0730604adf236e0f3ad818a30b5f43be6e656",
+    "enginesTreeSha256": "38dfe6ffa89ae8e4e57bf014ea57049d1e8e07c61253783d18d97e42ae9ddc19",
+    "enginesFileCount": 234,
+    "engineEntries": {
+      "lockfile-pin-delta": "engines/lockfile-pin-delta/bin/lockfile-delta.mjs"
+    }
+  },
+  "purchaseAuthority": false,
+  "hostedAcquisition": false,
+  "schedulerDaemon": false,
+  "h32PrivatePrimitives": "not-reopened",
+  "enginesModified": false,
+  "disjointFrom": [
+    "tests/v6-*/**",
+    "packs/e3-changed-data-second-run/**",
+    "packs/e4-maintained-runtime-discovery/**"
+  ]
+}

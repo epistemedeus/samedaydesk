@@ -1,0 +1,3 @@
+Owned by packs/useful-job-desk. These are caller files, not kit --example samples.
+Not a live quote, bill, customer, or repeat-demand observation.
+The desk must not overwrite these files when it writes outputs.

@@ -1,0 +1,3 @@
+Owned by packs/useful-job-desk. These are caller files, not kit --example samples.
+Do not label them SAMPLE. Do not treat them as organic or repeat demand.
+The desk must not overwrite these files when it writes outputs.
