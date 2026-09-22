@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "samedaydesk.contribution-provenance.v1",
+  "claimId": "app-bound-5b97d1b",
+  "actorLabel": "app",
+  "adoption": "object_bound",
+  "claimedHash": "5b97d1b02e786acd1895cfa1508087ae3f7a1545",
+  "claimedSignature": null,
+  "surface": "workflow_app",
+  "text": "Merge pull request #51 from epistemedeus/codex/s260-useful-jobs-public-integration-20260910",
+  "notes": "Bound SDS merge commit. actorLabel app is fixture-declared; this tool does not query GitHub Apps.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "comment_text_is_not_adoption",
+    "solution_shaped_text_is_lead"
+  ]
+}

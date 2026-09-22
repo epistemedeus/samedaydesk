@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "samedaydesk.contribution-provenance.v1",
+  "claimId": "owner-unresolved-adoption",
+  "actorLabel": "owner",
+  "adoption": "owner_adopted",
+  "claimedHash": "c0255ac",
+  "claimedSignature": null,
+  "surface": "commit",
+  "text": "Owner claims adoption of S122 merchant hash c0255ac.",
+  "notes": "Actor is owner but c0255ac is not a git object. owner_adopted requires a resolving hash.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "comment_text_is_not_adoption",
+    "solution_shaped_text_is_lead"
+  ]
+}
