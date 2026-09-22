@@ -10,24 +10,24 @@
  *   node tools/verify-sds/double-charge-guard/cli.mjs --seeded-failure second-charge [--json]
  *   node tools/verify-sds/double-charge-guard/cli.mjs run [--json]
  */
-import { existsSync, readFileSync } from "node:fs";
-import { dirname, isAbsolute, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import {
   COLD_CASES,
   FEATURE,
-  FLAG_ERROR_CODES,
   FORBIDDEN_FLAGS,
   SEEDED,
+  VALUE_FLAGS,
+  classifyForbiddenFlag,
+  flagName,
+  isValueToken,
+  seedNeedsEngine,
 } from "./lib/catalog.mjs";
 import { citePublishedEngine } from "./lib/cite.mjs";
 import { envelope, emitEnvelope, exitFor, failError } from "./lib/envelope.mjs";
+import { loadFixtureFile } from "./lib/fixture.mjs";
 import { runColdCases } from "./lib/guard.mjs";
 import { loadPublishedEngine } from "./lib/load-engine.mjs";
-import { refuseNeo, refusePublish, runSeeded } from "./lib/refuse.mjs";
+import { refuseLiveStripe, refuseNeo, refusePublish, runSeeded } from "./lib/refuse.mjs";
 import { resolveRoot } from "./lib/repo.mjs";
-
-const here = dirname(fileURLToPath(import.meta.url));
 
 function usage() {
   return `sds double-charge-guard — unpaid PaymentIntent / fulfill proofs
@@ -50,7 +50,8 @@ Options:
   --json / --pretty       JSON envelope on stdout
   --fixture PATH          load seeded fixture JSON
 
-Never: --pay --checkout --live --publish --neo --stripe-key. Never api.stripe.com.
+Never: --pay* --buy* --stripe* --x402* --live* --cdp* --publish* --neo* --stripe-key.
+--fixture is confined to this pack's fixtures/**/*.json. Unknown flags are USAGE.
 Engine: server/lib/payment-attempt.js + server/lib/fulfill.js (copied, unpaid stubs).
 `;
 }
@@ -63,60 +64,85 @@ function parseArgs(argv) {
     help: false,
     pretty: false,
     forbidden: null,
+    forbiddenCode: null,
+    forbiddenKind: null,
     missing: null,
     fixture: null,
+    unknownFlag: null,
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
-    if (FORBIDDEN_FLAGS.includes(a) || FORBIDDEN_FLAGS.some((f) => a.startsWith(`${f}=`))) {
-      out.forbidden = a;
+    const classified = classifyForbiddenFlag(a);
+    if (classified) {
+      if (!out.forbidden) {
+        out.forbidden = classified.flag;
+        out.forbiddenCode = classified.code;
+        out.forbiddenKind = classified.kind;
+      }
       continue;
     }
-    if (a === "--help" || a === "-h") out.help = true;
-    else if (a === "--json") out.flags.json = true;
-    else if (a === "--pretty") out.pretty = true;
-    else if (a === "--human") out.flags.human = true;
-    else if (a === "--seeded-failure") {
-      out.seededId = argv[++i];
-      if (!out.seededId || String(out.seededId).startsWith("-")) {
+    if (a === "--help" || a === "-h") {
+      out.help = true;
+      continue;
+    }
+    if (a === "--json") {
+      out.flags.json = true;
+      continue;
+    }
+    if (a === "--pretty") {
+      out.pretty = true;
+      continue;
+    }
+    if (a === "--human") {
+      out.flags.human = true;
+      continue;
+    }
+
+    const name = flagName(a);
+    const eq = typeof a === "string" ? a.indexOf("=") : -1;
+    const inline = eq >= 2 && a.startsWith("--") ? a.slice(eq + 1) : null;
+
+    if (name === "seeded-failure") {
+      const value = inline != null ? inline : argv[i + 1];
+      if (inline == null && isValueToken(argv[i + 1])) i++;
+      if (!isValueToken(value)) {
         out.missing = "--seeded-failure";
         out.seededId = null;
-      }
-    } else if (a === "--fixture") {
-      out.fixture = argv[++i];
-      if (!out.fixture) out.missing = "--fixture";
-    } else if (a === "--path") {
-      out.flags.path = argv[++i];
-    } else if (a === "--host") {
-      out.flags.host = argv[++i];
-    } else if (a.startsWith("--")) {
-      const key = a.slice(2);
-      const next = argv[i + 1];
-      if (next && !next.startsWith("--")) {
-        out.flags[key] = next;
-        i++;
-      } else {
-        out.flags[key] = true;
-      }
-    } else {
-      out.tokens.push(a);
+      } else out.seededId = value;
+      continue;
     }
+
+    if (name && VALUE_FLAGS[name]) {
+      const value = inline != null ? inline : argv[i + 1];
+      if (inline == null && isValueToken(argv[i + 1])) i++;
+      if (!isValueToken(value)) out.missing = `--${name}`;
+      else if (name === "fixture") out.fixture = value;
+      else out.flags[name] = value;
+      continue;
+    }
+
+    if (typeof a === "string" && a.startsWith("--")) {
+      if (!out.unknownFlag) out.unknownFlag = a;
+      continue;
+    }
+
+    out.tokens.push(a);
   }
   return out;
 }
 
-function loadFixture(path, root) {
-  const candidates = [];
-  if (isAbsolute(path)) candidates.push(path);
-  else {
-    candidates.push(join(process.cwd(), path));
-    candidates.push(join(root, path));
-    candidates.push(join(here, path));
-  }
-  for (const full of candidates) {
-    if (existsSync(full)) return JSON.parse(readFileSync(full, "utf8"));
-  }
-  return null;
+function fixtureErrorEnvelope(err, path) {
+  const code = err?.code || "RUNTIME";
+  const usage = code === "USAGE"
+    || code === "FIXTURE_ESCAPE"
+    || code === "FIXTURE_INVALID"
+    || code === "FIXTURE_MISSING";
+  return envelope({
+    ok: false,
+    command: "fixture",
+    status: usage ? "usage" : "error",
+    error: failError(code, err?.message || "fixture failed", { path }),
+  });
 }
 
 function evidenceCite(cite, copies) {
@@ -287,33 +313,27 @@ async function main() {
   const root = resolveRoot(process.cwd());
 
   if (parsed.forbidden) {
-    const flagName = String(parsed.forbidden).split("=")[0];
-    if (flagName === "--neo") {
-      const env = refuseNeo();
-      env.result = { ...env.result, flag: parsed.forbidden };
-      emitEnvelope(env, { pretty: parsed.pretty });
-      process.exitCode = exitFor(env);
-      return;
+    let env;
+    if (parsed.forbiddenKind === "neo") {
+      env = refuseNeo();
+    } else if (parsed.forbiddenKind === "publish") {
+      env = refusePublish();
+    } else if (parsed.forbiddenKind === "live") {
+      env = refuseLiveStripe({ host: parsed.flags.host || "https://api.stripe.com" });
+    } else {
+      env = envelope({
+        ok: false,
+        command: "unknown",
+        status: "fail",
+        error: failError(
+          parsed.forbiddenCode || "PAYMENT_FORBIDDEN",
+          `forbidden flag in unpaid double-charge-guard: ${parsed.forbidden}`,
+          { flag: parsed.forbidden, forbidden: [...FORBIDDEN_FLAGS] },
+        ),
+        result: { refused: true, paymentSent: false, flag: parsed.forbidden },
+      });
     }
-    if (flagName === "--publish") {
-      const env = refusePublish();
-      env.result = { ...env.result, flag: parsed.forbidden };
-      emitEnvelope(env, { pretty: parsed.pretty });
-      process.exitCode = exitFor(env);
-      return;
-    }
-    const code = FLAG_ERROR_CODES[flagName] || "PAYMENT_FORBIDDEN";
-    const env = envelope({
-      ok: false,
-      command: "unknown",
-      status: "fail",
-      error: failError(
-        code,
-        `forbidden flag in unpaid double-charge-guard: ${parsed.forbidden}`,
-        { flag: parsed.forbidden, forbidden: [...FORBIDDEN_FLAGS] },
-      ),
-      result: { refused: true, paymentSent: false, flag: parsed.forbidden },
-    });
+    env.result = { ...env.result, flag: parsed.forbidden, refused: true, paymentSent: false };
     emitEnvelope(env, { pretty: parsed.pretty });
     process.exitCode = exitFor(env);
     return;
@@ -333,6 +353,20 @@ async function main() {
     return;
   }
 
+  if (parsed.unknownFlag) {
+    const env = envelope({
+      ok: false,
+      command: "unknown",
+      status: "usage",
+      error: failError("unknown_flag", `unknown flag: ${parsed.unknownFlag}`, {
+        flag: parsed.unknownFlag,
+      }),
+    });
+    emitEnvelope(env, { pretty: parsed.pretty });
+    process.exitCode = exitFor(env);
+    return;
+  }
+
   if (parsed.help || parsed.tokens[0] === "help") {
     process.stderr.write(usage());
     const env = envelope({ ok: true, command: "help", feature: FEATURE });
@@ -342,47 +376,40 @@ async function main() {
   }
 
   let env;
-  const needsEngine =
-    parsed.seededId === "second-charge"
-    || parsed.seededId === "retrieve-fail-recreate"
-    || parsed.seededId === "changed-facts-bypass"
-    || parsed.fixture
-    || parsed.tokens[0] !== "cite";
-
-  let engine = null;
   const command = parsed.seededId
     ? "seeded"
     : parsed.fixture
       ? "fixture"
       : parsed.tokens[0] || "cold";
-
-  if (needsEngine && command !== "cite" && command !== "help") {
-    engine = await loadPublishedEngine(root);
-  }
+  const seedOpts = {
+    path: parsed.flags.path,
+    host: parsed.flags.host,
+    header: parsed.flags.header,
+  };
 
   if (parsed.fixture) {
-    const fix = loadFixture(parsed.fixture, root);
-    if (!fix) {
-      env = envelope({
-        ok: false,
-        command: "fixture",
-        status: "usage",
-        error: failError("USAGE", `fixture not found: ${parsed.fixture}`),
-      });
-    } else {
-      const seedId = fix.seededId || fix.id;
-      env = await runSeeded(seedId, engine, fix.opts || {});
+    let fix;
+    try {
+      fix = loadFixtureFile(parsed.fixture, root);
+    } catch (err) {
+      env = fixtureErrorEnvelope(err, parsed.fixture);
+      emitEnvelope(env, { pretty: parsed.pretty, human: true });
+      process.exitCode = exitFor(env);
+      return;
     }
+    const seedId = fix.seededId || fix.id;
+    const engine = seedNeedsEngine(seedId) ? await loadPublishedEngine(root) : null;
+    env = await runSeeded(seedId, engine, { ...seedOpts, ...(fix.opts || {}) });
   } else if (parsed.seededId) {
-    env = await runSeeded(parsed.seededId, engine, {
-      path: parsed.flags.path,
-      host: parsed.flags.host,
-    });
+    const engine = seedNeedsEngine(parsed.seededId) ? await loadPublishedEngine(root) : null;
+    env = await runSeeded(parsed.seededId, engine, seedOpts);
   } else if (command === "cite") {
     env = await runCite(root);
   } else if (command === "run") {
+    const engine = await loadPublishedEngine(root);
     env = await runHarness(root, engine);
   } else if (command === "cold" || parsed.tokens.length === 0) {
+    const engine = await loadPublishedEngine(root);
     env = await runCold(root, engine);
   } else {
     env = envelope({

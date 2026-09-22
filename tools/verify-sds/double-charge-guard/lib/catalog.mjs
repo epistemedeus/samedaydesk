@@ -63,7 +63,77 @@ export const FORBIDDEN_FLAGS = Object.freeze([
 export const FLAG_ERROR_CODES = Object.freeze({
   "--neo": "NEO_VENDOR_REFUSE",
   "--publish": "PUBLISH_REFUSE",
+  "--live": "LIVE_STRIPE_REFUSE",
 });
+
+/** Seeds that copy published engines. Refuse-only seeds must not load them. */
+export const ENGINE_SEEDS = Object.freeze([
+  "second-charge",
+  "retrieve-fail-recreate",
+  "changed-facts-bypass",
+]);
+
+export const VALUE_FLAGS = Object.freeze({
+  fixture: true,
+  path: true,
+  host: true,
+  header: true,
+});
+
+export function flagName(token) {
+  if (typeof token !== "string" || !token.startsWith("--")) return null;
+  const body = token.slice(2);
+  const eq = body.indexOf("=");
+  return (eq === -1 ? body : body.slice(0, eq)).toLowerCase();
+}
+
+export function isValueToken(token) {
+  return typeof token === "string" && token.length > 0 && !token.startsWith("-");
+}
+
+/**
+ * Prefix-match unpaid refuses so --pay-now / --buy / --live-stripe / --neo-kernel
+ * cannot fall through to a cold engine run.
+ */
+export function classifyForbiddenFlag(token) {
+  const name = flagName(token);
+  if (!name) return null;
+  if (name === "neo" || name.startsWith("neo-")) {
+    return { flag: token, code: "NEO_VENDOR_REFUSE", kind: "neo" };
+  }
+  if (name === "publish" || name.startsWith("publish-")) {
+    return { flag: token, code: "PUBLISH_REFUSE", kind: "publish" };
+  }
+  if (
+    name === "live"
+    || name.startsWith("live-")
+    || name === "cdp"
+    || name.startsWith("cdp-")
+  ) {
+    return { flag: token, code: "LIVE_STRIPE_REFUSE", kind: "live" };
+  }
+  if (
+    name === "sk"
+    || name.startsWith("sk-")
+    || name.startsWith("sk_")
+    || name === "secret-key"
+    || name.startsWith("secret-key")
+    || /^(stripe|x402|checkout|payment|pay|buy)(-.*)?$/.test(name)
+    || name.startsWith("stripe")
+    || name.startsWith("x402")
+    || name.startsWith("checkout")
+    || name.startsWith("pay")
+    || name.startsWith("buy")
+    || name.startsWith("payment")
+  ) {
+    return { flag: token, code: "PAYMENT_FORBIDDEN", kind: "payment" };
+  }
+  return null;
+}
+
+export function seedNeedsEngine(seedId) {
+  return ENGINE_SEEDS.includes(seedId);
+}
 
 export const FORBIDDEN_HEADERS = Object.freeze([
   "PAYMENT-SIGNATURE",

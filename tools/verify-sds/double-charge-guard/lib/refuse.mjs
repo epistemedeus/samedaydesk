@@ -33,22 +33,6 @@ export function refuseLiveStripe({ host = "https://api.stripe.com" } = {}) {
 }
 
 export function refuseCheckoutPath({ path = "/api/checkout" } = {}) {
-  const matched = PAYMENT_STOP_PATHS.some(
-    (p) => path === p || path.startsWith(p) || path.includes(p),
-  );
-  const looksPaid = /stripe|checkout|buy\.stripe\.com|sk_live|sk_test/i.test(path);
-  if (!matched && !looksPaid) {
-    return envelope({
-      ok: false,
-      command: "seeded",
-      feature: FEATURE,
-      error: failError("CHECKOUT_PATH_REFUSE", `path not recognized as payment stop: ${path}`, {
-        path,
-        stops: [...PAYMENT_STOP_PATHS],
-      }),
-      result: { seed: "checkout-path", path, refused: false },
-    });
-  }
   return envelope({
     ok: false,
     command: "seeded",
@@ -113,21 +97,6 @@ export function refusePublish() {
 }
 
 export function refusePaymentHeader({ header = "PAYMENT-SIGNATURE" } = {}) {
-  const forbidden = FORBIDDEN_HEADERS.some(
-    (h) => h.toLowerCase() === String(header).toLowerCase(),
-  );
-  if (!forbidden) {
-    return envelope({
-      ok: false,
-      command: "seeded",
-      feature: FEATURE,
-      error: failError("PAYMENT_HEADER_REFUSE", `header not forbidden: ${header}`, {
-        header,
-        forbidden: [...FORBIDDEN_HEADERS],
-      }),
-      result: { seed: "payment-signature", header, refused: false },
-    });
-  }
   return envelope({
     ok: false,
     command: "seeded",
@@ -135,7 +104,7 @@ export function refusePaymentHeader({ header = "PAYMENT-SIGNATURE" } = {}) {
     status: "fail",
     error: failError(
       "PAYMENT_HEADER_REFUSE",
-      `refusing to send forbidden payment header: ${header}`,
+      `refusing to send payment header in unpaid harness: ${header}`,
       { header, forbidden: [...FORBIDDEN_HEADERS] },
     ),
     result: {

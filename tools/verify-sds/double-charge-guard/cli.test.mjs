@@ -215,3 +215,125 @@ test("unknown seed is usage", () => {
   assert.equal(result.status, 2);
   assert.equal(result.json.error.code, "USAGE");
 });
+
+test("prefix --pay-now is refused without running cold", () => {
+  const result = run(["--pay-now", "--json"]);
+  assert.notEqual(result.status, 0);
+  assert.equal(result.json.ok, false);
+  assert.equal(result.json.error.code, "PAYMENT_FORBIDDEN");
+  assert.equal(result.json.boundary.paymentSent, false);
+  assert.equal(result.json.result.refused, true);
+  assert.equal(result.json.result.flag, "--pay-now");
+});
+
+test("prefix --buy-now is refused", () => {
+  const result = run(["--buy-now", "--json"]);
+  assert.notEqual(result.status, 0);
+  assert.equal(result.json.error.code, "PAYMENT_FORBIDDEN");
+  assert.equal(result.json.boundary.paymentSent, false);
+});
+
+test("prefix --stripe and --x402 are refused", () => {
+  for (const flag of ["--stripe", "--x402"]) {
+    const result = run([flag, "--json"]);
+    assert.notEqual(result.status, 0, flag);
+    assert.equal(result.json.error.code, "PAYMENT_FORBIDDEN", flag);
+  }
+});
+
+test("prefix --live --live-stripe --cdp are LIVE_STRIPE_REFUSE", () => {
+  for (const flag of ["--live", "--live-stripe", "--cdp"]) {
+    const result = run([flag, "--json"]);
+    assert.notEqual(result.status, 0, flag);
+    assert.equal(result.json.error.code, "LIVE_STRIPE_REFUSE", flag);
+    assert.equal(result.json.boundary.paymentSent, false, flag);
+    assert.equal(result.json.result.refused, true, flag);
+  }
+});
+
+test("prefix --neo-kernel is NEO_VENDOR_REFUSE", () => {
+  const result = run(["--neo-kernel", "--json"]);
+  assert.notEqual(result.status, 0);
+  assert.equal(result.json.error.code, "NEO_VENDOR_REFUSE");
+  assert.equal(result.json.boundary.neoPublished, false);
+});
+
+test("prefix --publish-npm is PUBLISH_REFUSE", () => {
+  const result = run(["--publish-npm", "--json"]);
+  assert.notEqual(result.status, 0);
+  assert.equal(result.json.error.code, "PUBLISH_REFUSE");
+  assert.equal(result.json.result.published, false);
+});
+
+test("unknown flag is usage and does not run cold", () => {
+  const result = run(["--not-a-flag", "--json"]);
+  assert.equal(result.status, 2);
+  assert.equal(result.json.error.code, "unknown_flag");
+  assert.equal(result.json.ok, false);
+});
+
+test("fixture package.json is FIXTURE_ESCAPE", () => {
+  const result = run(["--fixture", "package.json", "--json"]);
+  assert.equal(result.status, 2);
+  assert.equal(result.json.error.code, "FIXTURE_ESCAPE");
+});
+
+test("fixture path traversal is FIXTURE_ESCAPE", () => {
+  const result = run([
+    "--fixture",
+    "tools/verify-sds/double-charge-guard/fixtures/../../../../package.json",
+    "--json",
+  ]);
+  assert.equal(result.status, 2);
+  assert.equal(result.json.error.code, "FIXTURE_ESCAPE");
+});
+
+test("non-json fixture under fixtures/ is FIXTURE_INVALID", () => {
+  const result = run([
+    "--fixture",
+    "tools/verify-sds/double-charge-guard/fixtures/seeded/README.md",
+    "--json",
+  ]);
+  assert.equal(result.status, 2);
+  assert.equal(result.json.error.code, "FIXTURE_INVALID");
+});
+
+test("malformed fixture JSON is FIXTURE_INVALID not RUNTIME", () => {
+  const result = run([
+    "--fixture",
+    "tools/verify-sds/double-charge-guard/fixtures/invalid/malformed.json",
+    "--json",
+  ]);
+  assert.equal(result.status, 2, result.stderr + result.stdout);
+  assert.equal(result.json.error.code, "FIXTURE_INVALID");
+});
+
+test("checkout-path with unrecognized --path still refused", () => {
+  const result = run([
+    "--seeded-failure",
+    "checkout-path",
+    "--path",
+    "/health",
+    "--json",
+  ]);
+  assert.equal(result.status, 1);
+  assert.equal(result.json.error.code, "CHECKOUT_PATH_REFUSE");
+  assert.equal(result.json.result.refused, true);
+  assert.equal(result.json.result.neverOpenedCheckout, true);
+  assert.equal(result.json.boundary.paymentSent, false);
+});
+
+test("payment-signature with non-catalog --header still refused", () => {
+  const result = run([
+    "--seeded-failure",
+    "payment-signature",
+    "--header",
+    "Accept",
+    "--json",
+  ]);
+  assert.equal(result.status, 1);
+  assert.equal(result.json.error.code, "PAYMENT_HEADER_REFUSE");
+  assert.equal(result.json.result.refused, true);
+  assert.equal(result.json.result.headerNeverSent, true);
+  assert.equal(result.json.result.header, "Accept");
+});

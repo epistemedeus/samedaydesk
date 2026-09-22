@@ -58,7 +58,10 @@ node --test tools/verify-sds/double-charge-guard/cli.test.mjs
 | `payment-signature` | `PAYMENT_HEADER_REFUSE` | Never send `PAYMENT-SIGNATURE` |
 | `neo` | `NEO_VENDOR_REFUSE` | `neomorphic/neo-kernel-vendor` is out of scope |
 
-`--neo` / `--publish` flags refuse before the engine loads. `--pay` / `--checkout` / `--live` refuse as `PAYMENT_FORBIDDEN`.
+`--neo` / `--neo-*` / `--publish` / `--publish-*` refuse before the engine loads.
+`--pay*` / `--buy*` / `--stripe*` / `--x402*` / `--checkout*` refuse as `PAYMENT_FORBIDDEN`.
+`--live` / `--live-*` / `--cdp*` refuse as `LIVE_STRIPE_REFUSE`. Unknown flags are `unknown_flag` (exit 2).
+`--fixture` is confined to this pack's `fixtures/**/*.json` (realpath); escape is `FIXTURE_ESCAPE`.
 
 ## Boundary
 
@@ -66,7 +69,8 @@ node --test tools/verify-sds/double-charge-guard/cli.test.mjs
 - `boundary.toolsCalled` always `false`
 - `boundary.checkoutPosted` / `stripeCharged` / `liveFetch` / `neoPublished` / `published` always `false`
 - Never sends `PAYMENT-SIGNATURE`, `X-PAYMENT`, or `stripe-signature`
-- Never `--pay` / `--checkout` / `--live` / `--publish` / `--neo`
+- Never `--pay*` / `--buy*` / `--checkout*` / `--live*` / `--publish*` / `--neo*`
+- `--fixture` cannot read `package.json` or paths outside `fixtures/`
 - No Stripe/x402 spend, no price/SKU edits, no neo kernel, no merge
 
 ## Layout
@@ -82,6 +86,7 @@ lib/fixture-stripe.mjs  in-memory PaymentIntents + fulfill db
 lib/guard.mjs           cold cases against createOfferPaymentIntent / fulfill
 lib/refuse.mjs          seeded double-charge / live / checkout refuses
 lib/cite.mjs            source hash + required patterns
+lib/fixture.mjs         --fixture confined to pack fixtures/**/*.json
 fixtures/cold-retry.json
 fixtures/seeded-failures.json
 fixtures/seeded/*.json

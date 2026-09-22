@@ -84,15 +84,27 @@ export async function caseConcurrentCreates(engine) {
 export async function caseDuplicateFulfill(engine) {
   const store = engine.createMemoryPaymentAttemptStore();
   const sb = createMemoryFulfillDb();
+  const offer = engine.getOffer(OFFER_SLUG);
+  await store.insert({
+    id: "attempt_a",
+    user_id: "user_f",
+    offer: OFFER_SLUG,
+    amount: offer.amount,
+    currency: "usd",
+    status: engine.PAYMENT_ATTEMPT_STATUS.OPEN,
+    stripe_payment_intent: "pi_paid_a",
+    intake_snapshot: { details: "task a", uploadPath: "" },
+    intake_hash: "hash_a",
+  });
   const intent = {
     id: "pi_paid_a",
-    amount: engine.getOffer(OFFER_SLUG).amount,
+    amount: offer.amount,
     currency: "usd",
     receipt_email: "buyer@example.test",
     metadata: {
       uid: "user_f",
       offer: OFFER_SLUG,
-      amount: String(engine.getOffer(OFFER_SLUG).amount),
+      amount: String(offer.amount),
       payment_attempt_id: "attempt_a",
     },
   };
