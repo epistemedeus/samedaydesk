@@ -1,0 +1,23 @@
+{
+  "id": "observed-zero-not-unknown",
+  "surface": "market-observations",
+  "class": "honest-withheld",
+  "expectReject": false,
+  "cite": "server/lib/market-observations/normalize-market-stats.js",
+  "defect": null,
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "market-observations",
+    "observationClass": "observed_zero",
+    "demand": false,
+    "paidDemand": false,
+    "notDemand": true,
+    "demandSignal": "withheld",
+    "withheldConclusions": ["demand"],
+    "metrics": [
+      { "key": "paidCustomers", "value": 0, "state": "ok" }
+    ],
+    "message": "observed zero is a measurement, not a missing observation"
+  }
+}

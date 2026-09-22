@@ -1,0 +1,16 @@
+{
+  "schema": "samedaydesk.bazaar-drift.case.v1",
+  "caseId": "paid-as-unpaid",
+  "claims": {
+    "rematerialized": false,
+    "paid": false,
+    "charged": false,
+    "statusClass": "unpaid"
+  },
+  "settlement": {
+    "operationId": "agent402-external-validation-purchase-2026-08-29",
+    "amountUsdc": "0.010",
+    "transaction": "0x2916cfe2c5200fca2a21f8b854fe963ef70d4ed90d59c7444cef16dd21056ef7",
+    "facilitatorOrPayoutRef": "x402_v2_coinbase_cdp"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "samedaydesk.bazaar-drift.case.v1",
+  "caseId": "cold-committed",
+  "claims": {
+    "rematerialized": false,
+    "rewriteOrigin": false,
+    "treatAbsenceAsDemand": false,
+    "lastCalledAtIsRemovalClock": false,
+    "purchaseAuthority": false,
+    "paid": false,
+    "charged": false,
+    "catalogAbsenceIsDemand": false
+  }
+}

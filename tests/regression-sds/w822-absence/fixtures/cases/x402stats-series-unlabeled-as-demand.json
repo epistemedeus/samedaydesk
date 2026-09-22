@@ -1,0 +1,19 @@
+{
+  "id": "x402stats-series-unlabeled-as-demand",
+  "surface": "observatory",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "server/lib/observatory/adapters/x402stats.js",
+  "expectedReasons": ["absence_as_demand", "series_buyers_as_unique_humans"],
+  "defect": "Unlabeled: x402stats paidCustomers/paidDemand with no seriesBuyersAsUniqueHumans flag.",
+  "output": {
+    "ok": true,
+    "status": "ok",
+    "surface": "observatory",
+    "sourceId": "x402stats",
+    "paidDemand": true,
+    "paidCustomers": 1200,
+    "demandSignal": "paid",
+    "message": "unlabeled x402stats series buyers treated as unique-human paid demand"
+  }
+}

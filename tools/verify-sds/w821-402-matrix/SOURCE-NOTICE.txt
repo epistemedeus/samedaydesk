@@ -1,0 +1,15 @@
+w821 SDS 402 matrix (unpaid HTTP 402 only).
+
+Authority: in-tree fixtures/presence/catalog/x402.json
+  lastUpdated copied into matrix.json. That file is a dated fixture.
+  It is not a claim about today's live service. No live fetch. No catalog rewrite.
+
+Designated seeds (naive-accept / honest-reject):
+  bad-amount: GET /read listed 50000 vs catalog 5000
+    Documented at docs/lqdist1-distribution-audit/per-route-table.json
+    (Agent402 priceConflict: bazaar 0.05 vs origin/live 0.005).
+  bad-status: HTTP 200 labeled unpaid 402.
+  forged-settle: copied facilitator settlement attached to unpaid 402.
+
+This pack does not pay, checkout, publish, attach neo, mutate a registry,
+send PAYMENT-SIGNATURE, or call Stripe/x402 settlement.

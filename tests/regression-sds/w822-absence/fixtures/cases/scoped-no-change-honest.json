@@ -1,0 +1,21 @@
+{
+  "id": "scoped-no-change-honest",
+  "surface": "record-recipes",
+  "class": "honest-withheld",
+  "expectReject": false,
+  "cite": "experiments/s163-record-recipes/docs/consumers/next-run-manifest.md",
+  "defect": null,
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "record-recipes",
+    "scopedNoChange": true,
+    "paidValueClaim": false,
+    "demand": false,
+    "paidDemand": false,
+    "notDemand": true,
+    "demandSignal": "withheld",
+    "withheldConclusions": ["demand"],
+    "message": "scoped no-change is not runtime compatibility, not demand, not ROI"
+  }
+}

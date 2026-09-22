@@ -1,0 +1,25 @@
+{
+  "id": "moltjobs-unlabeled-composition-as-demand",
+  "surface": "observatory",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "server/lib/observatory/adapters/moltjobs.js",
+  "expectedReasons": ["absence_as_demand", "composition_as_conversion"],
+  "defect": "Unlabeled: moltjobs withheldConclusions and refused marketplaceJobs/totalJobs ratio claimed as demand (no *AsDemand flags).",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "observatory",
+    "sourceId": "moltjobs",
+    "withheldConclusions": ["demand", "conversion_funnel", "paid_demand_population"],
+    "paidActivity": {
+      "refusedRatios": [
+        { "key": "marketplaceJobs_over_totalJobs_as_conversion" }
+      ],
+      "doesNotEstablish": ["a registration-to-paid conversion funnel"]
+    },
+    "demand": true,
+    "demandCount": 48,
+    "message": "unlabeled moltjobs composition treated as demand"
+  }
+}
