@@ -1,0 +1,6 @@
+{
+  "id": "sha-mismatch",
+  "seededId": "sha-mismatch",
+  "command": "archive",
+  "feature": "archive-acquisition"
+}

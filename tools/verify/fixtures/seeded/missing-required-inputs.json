@@ -1,0 +1,8 @@
+{
+  "id": "missing-required-inputs",
+  "seededId": "missing-required-inputs",
+  "command": "pack",
+  "pack": "useful-jobs",
+  "argv": ["run", "lockfile-pin-delta"],
+  "feature": "useful-jobs"
+}
