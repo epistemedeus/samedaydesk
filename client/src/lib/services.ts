@@ -128,7 +128,7 @@ export const ALL_OFFERS: Offer[] = CATEGORIES.flatMap((category) => category.off
 export const flagship = ALL_OFFERS.find((offer) => offer.flagship)!;
 
 // Live Stripe Payment Links are inserted only after the matching product,
-// price, and metadata have been verified in the Neomorphic LLC account.
+// price, and metadata have been verified in the live Stripe account.
 export const PAYMENT_LINKS: Record<string, string> = {
   agent_workflow: "https://buy.stripe.com/7sY3cw8025np9dd282eZ20B",
   agent_mcp_server: "https://buy.stripe.com/eVq7sMdkmaHJ1KL6oieZ20C",

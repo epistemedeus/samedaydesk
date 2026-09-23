@@ -4,11 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AI search visibility tools (2026): free checkers, schema generators, and done-for-you fixes</title>
-<meta name="description" content="A practical, honest rundown of the tools for getting your site cited by AI search (ChatGPT, Perplexity, Google AI) in 2026: free readiness checkers, schema generators, paid citation monitors, and done-for-you fixes. What to use for each job." />
+<meta name="description" content="A readiness checker reads public files. It is not a citation monitor, and no third-party tool sees Google's AI systems. Last checked 2026-09-23." />
 <link rel="canonical" href="https://samedaydesk.com/guides/ai-search-visibility-tools-2026.html" />
 <meta property="og:type" content="article" />
-<meta property="og:title" content="AI search visibility tools (2026): what to use for each job" />
-<meta property="og:description" content="Free checkers, schema generators, paid monitors, and done-for-you fixes for AI-search visibility, compared honestly." />
+<meta property="og:title" content="AI search visibility tools (2026): what each job can prove" />
+<meta property="og:description" content="Separate readiness checks from citation checks. Last checked 2026-09-23." />
 <meta property="og:url" content="https://samedaydesk.com/guides/ai-search-visibility-tools-2026.html" />
 <meta property="og:image" content="https://samedaydesk.com/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
@@ -21,79 +21,81 @@
   .eyebrow{font:600 12px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--oxide);margin:0 0 1rem}
   h1{font-size:clamp(1.7rem,1.3rem+2vw,2.6rem);line-height:1.1;letter-spacing:-0.02em;margin:.2em 0}
   h2{font-size:1.35rem;margin:2rem 0 .5rem}
-  .lead{font-size:1.18rem;color:var(--dim)}
+  .lead{font-size:1.18rem;color:var(--ink)}
   table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.95rem}
   th,td{text-align:left;padding:.6rem .6rem;border-bottom:1px solid var(--line);vertical-align:top}
   th{font:600 12px/1 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
   .cta{background:#15181d;color:#f4f4f0;border-radius:14px;padding:1.6rem 1.5rem;margin:2.2rem 0}
   .cta h2{margin:0 0 .4rem;color:#fff}
   .cta a.btn{display:inline-block;margin:.5rem .5rem 0 0;background:#ccff00;color:#0a0b0d;font-weight:700;text-decoration:none;padding:.7rem 1.2rem;border-radius:9px}
-  .cta a.btn2{display:inline-block;margin:.5rem 0 0;color:#ccff00;border:1px solid #444;text-decoration:none;padding:.7rem 1.2rem;border-radius:9px}
   .muted{color:var(--dim);font-size:.9rem}
   footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--line);color:var(--dim);font-size:.9rem}
 </style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
- {"@type":"Article","headline":"AI search visibility tools (2026): free checkers, schema generators, and done-for-you fixes","datePublished":"2026-06-23","dateModified":"2026-08-08","author":{"@type":"Organization","name":"SameDayDesk"},"publisher":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"mainEntityOfPage":"https://samedaydesk.com/guides/ai-search-visibility-tools-2026.html"},
+ {"@type":"Article","headline":"AI search visibility tools (2026): what each job can prove","datePublished":"2026-06-23","dateModified":"2026-09-23","author":{"@type":"Organization","name":"SameDayDesk"},"publisher":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"mainEntityOfPage":"https://samedaydesk.com/guides/ai-search-visibility-tools-2026.html"},
  {"@type":"FAQPage","mainEntity":[
-   {"@type":"Question","name":"What's the difference between an AI-readiness checker and a citation monitor?","acceptedAnswer":{"@type":"Answer","text":"A readiness checker is a one-time scan of whether AI engines can crawl and understand your site (robots, schema, meta). A citation monitor is an ongoing paid service that tracks whether AI engines actually mention your brand over time. Most sites should fix readiness first, then decide if ongoing monitoring is worth it."}},
-   {"@type":"Question","name":"Do I need a paid tool to improve AI-search visibility?","acceptedAnswer":{"@type":"Answer","text":"No. The technical fundamentals (AI-crawler access, JSON-LD, titles/meta, sitemap) can be checked with free tools and fixed once. Paid monitoring tools are for ongoing tracking, mainly useful for larger brands."}},
-   {"@type":"Question","name":"What's the fastest way to fix my site?","acceptedAnswer":{"@type":"Answer","text":"Run a free readiness check to see your gaps, then either apply the fixes yourself with a schema generator or have them done for you. SameDayDesk's Fix Pack delivers the structured data, robots.txt, sitemap, and meta tags built for your site, same day."}}
- ]}
-]}
+   {"@type":"Question","name":"What is the difference between an AI readiness checker and a citation check?","acceptedAnswer":{"@type":"Answer","text":"A readiness checker reads public files such as robots.txt and the HTML a URL returns. A citation check records whether a live answer names the site. They are different jobs. A checker does not prove a citation."}},
+   {"@type":"Question","name":"Can a third-party tool see Google's AI rankings?","acceptedAnswer":{"@type":"Answer","text":"Google's generative AI optimization guide, last updated 2026-07-10, says no third-party tool has access to Google's internal ranking or AI systems. Use the Search Console generative AI performance report for Google."}},
+   {"@type":"Question","name":"Which OpenAI control matters for ChatGPT search answers?","acceptedAnswer":{"@type":"Answer","text":"OpenAI says OAI-SearchBot is the robots.txt control for ChatGPT search. Sites opted out of OAI-SearchBot will not be shown in ChatGPT search answers. GPTBot is the training crawler and is independent."}}
+  ]
+ }
+]
+}
 </script>
 </head>
 <body>
 <div class="wrap">
-  <p class="eyebrow">SameDayDesk · Guide · 2026</p>
-  <h1>AI search visibility tools in 2026: what to use for each job</h1>
-  <p class="lead">"Getting cited by AI search" has spawned a lot of tools. Most fall into four jobs. Here's what each does, and an honest take on when you actually need it, so you don't overpay for a problem you can fix once.</p>
+  <p class="eyebrow">SameDayDesk guide</p>
+  <h1>AI search visibility tools in 2026: what each job can prove</h1>
+  <p class="lead">An AI search visibility tool does one of two jobs, and they are not interchangeable. A readiness checker reads public files, such as robots.txt and the HTML a URL returns. A citation check records whether ChatGPT, Perplexity, or Google AI Overviews actually name the site. Google's guide, last updated 2026-07-10, says no third-party tool has access to Google's internal ranking or AI systems. OpenAI's crawler page says a site opted out of OAI-SearchBot will not be shown in ChatGPT search answers.</p>
+  <p class="muted">Last checked: 2026-09-23.</p>
 
-  <h2>The four jobs</h2>
+  <h2>Pick the job before you pick a product</h2>
   <table>
-    <thead><tr><th>Job</th><th>What it does</th><th>Cost</th><th>Who needs it</th></tr></thead>
-    <tbody>
-      <tr><td><b>1. Readiness check</b></td><td>One-time scan: can AI engines crawl + understand your site? (robots, JSON-LD, meta, sitemap)</td><td>Free</td><td>Everyone, first</td></tr>
-      <tr><td><b>2. Schema / fix generation</b></td><td>Generate the JSON-LD, robots.txt, and meta tags you're missing</td><td>Free (DIY) or low-cost done-for-you</td><td>Anyone failing the check</td></tr>
-      <tr><td><b>3. Citation monitoring</b></td><td>Ongoing tracking of whether AI engines mention your brand over time</td><td>Paid subscription</td><td>Larger brands, ongoing</td></tr>
-      <tr><td><b>4. Done-for-you audit + fix</b></td><td>Someone tests your real citations, benchmarks competitors, and implements the fixes</td><td>One-time service</td><td>Busy owners who want it handled</td></tr>
-    </tbody>
-  </table>
-
-  <h2>1. Free readiness checkers</h2>
-  <p>Start here. A readiness checker fetches your site + robots.txt and tells you whether AI crawlers are allowed and whether you have the structured data engines need. Our free one is at <a href="https://samedaydesk.com/tools/ai-readiness">samedaydesk.com/tools/ai-readiness</a> (or scan directly: <a href="https://samedaydesk.com/scan?url=example.com">/scan?url=yoursite.com</a>), no signup, instant score + fixes.</p>
-
-  <h2>2. Free schema / fix generators</h2>
-  <p>The most common gap is missing JSON-LD. You can generate it free with our <a href="https://samedaydesk.com/tools/schema-generator.html">schema generator</a>, then paste it into your site's <code>&lt;head&gt;</code>. Pair it with an AI-crawler-friendly robots.txt and a sitemap.</p>
-
-  <h2>3. Paid citation monitors</h2>
-  <p>A category of paid platforms (e.g. Profound, Otterly, Peec, and TopifyAI) tracks, over time, whether AI engines cite your brand for chosen prompts. This is genuinely useful for larger brands running ongoing campaigns. For most small sites, it's overkill before you've fixed the basics: monitoring won't help if engines still can't read you.</p>
-
-  <table>
-    <thead><tr><th>Example</th><th>What it adds</th><th>Current fit</th></tr></thead>
+    <thead><tr><th>Job</th><th>What it can honestly do</th><th>Start here</th></tr></thead>
     <tbody>
       <tr>
-        <td><b>TopifyAI</b></td>
-        <td>Tracks prompts and brand visibility across ChatGPT, Perplexity, Google AI Overview, and Gemini, with content and competitor workflows.</td>
-        <td>Free trial with no card. Published monthly tiers are $99 Starter, $199 Standard, and $399 Pro. Best for a team that has already fixed crawlability and wants daily prompt tracking; skip it if you only need a one-time technical repair. <a href="https://samedaydesk.com/go/topify/" rel="sponsored nofollow">Try TopifyAI →</a></td>
+        <td>Readiness check</td>
+        <td>Show whether OAI-SearchBot, PerplexityBot, and Googlebot are allowed, and whether the URL returns text. It cannot forecast a citation.</td>
+        <td><a href="https://samedaydesk.com/tools/ai-readiness">Free readiness check</a> and the <a href="https://samedaydesk.com/tools/ai-crawler-checker.html">crawler token check</a></td>
+      </tr>
+      <tr>
+        <td>Fix the files you can edit</td>
+        <td>Help you write a title, a robots.txt group, or optional structured data. Google says structured data is not required for generative AI search, and that llms.txt neither helps nor hurts Google Search.</td>
+        <td><a href="https://samedaydesk.com/tools/schema-generator.html">Schema generator</a>, used for rich results and clarity, not as an AI Overviews requirement</td>
+      </tr>
+      <tr>
+        <td>See Google's own AI impressions</td>
+        <td>Search Console's generative AI performance report, which Google documents. This is Google's measurement, not a vendor panel.</td>
+        <td><a href="https://developers.google.com/search/docs/fundamentals/ai-optimization-guide">Google's guide names the report</a></td>
+      </tr>
+      <tr>
+        <td>See whether live answers name you</td>
+        <td>Someone runs the prompts and writes down the answers. Ongoing monitors sold by other companies do a version of this. This page does not quote their prices.</td>
+        <td>The audit linked once below</td>
       </tr>
     </tbody>
   </table>
-  <p class="muted"><b>Affiliate disclosure:</b> the TopifyAI link above is a tracked referral. If a reader buys the $399 Pro plan, SameDayDesk may receive a $50 commission at no extra cost to the reader. That does not change our recommendation to fix the free technical fundamentals before paying for monitoring.</p>
 
-  <h2>4. Done-for-you fix and audit</h2>
-  <p>If you'd rather not hand-edit your site, a one-time service handles it. SameDayDesk's <b>Fix Pack ($39)</b> delivers the structured data, robots.txt, sitemap, and meta/Open Graph tags built for your exact site, same day. The deeper <b>AI-Search Visibility Audit ($199)</b> also tests whether ChatGPT/Perplexity/Google actually cite you and benchmarks named competitors.</p>
+  <h2>What the vendor pages change about tool shopping</h2>
+  <ul>
+    <li><a href="https://developers.openai.com/api/docs/bots">OpenAI</a>, checked 2026-09-23: search visibility and training are separate robots.txt tokens. A tool that reports only GPTBot has not checked the ChatGPT search control.</li>
+    <li><a href="https://docs.perplexity.ai/docs/resources/perplexity-crawlers">Perplexity</a>: PerplexityBot is the search crawler and is not a foundation-model training crawl. Perplexity-User generally ignores robots.txt, so a robots.txt allow does not govern those user-triggered fetches. The <a href="https://www.perplexity.ai/help-center/en/articles/10354969-how-does-perplexity-follow-robots-txt">help article modified 2026-09-14</a> says a Disallow stops full-text indexing by PerplexityBot.</li>
+    <li><a href="https://developers.google.com/search/docs/appearance/ai-features">Google AI features</a>, updated 2025-12-10: no extra technical requirements beyond being indexed and eligible for a snippet. <a href="https://developers.google.com/search/docs/fundamentals/ai-optimization-guide">The 2026-07-10 optimization guide</a> says to ignore special AI markup, including llms.txt, for Google Search, and to be wary of tools that promise rank or claim internal Google metrics.</li>
+  </ul>
+  <p>Paid prompt trackers can still be useful after the public controls are fixed, because a monitor cannot show you in ChatGPT search answers if OAI-SearchBot is disallowed. This page does not recommend a brand and does not repeat unpublished prices.</p>
 
   <div class="cta">
-    <h2>The honest short version</h2>
-    <p>Run a free check. If you fail, generate the fixes yourself for free, or have them done for you for $39. Save the paid monitoring tools for when you're a bigger brand with ongoing campaigns.</p>
-    <a class="btn" href="https://samedaydesk.com/tools/ai-readiness">Run the free check →</a>
-    <a class="btn" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · $39</a>
-    <a class="btn2" href="https://buy.stripe.com/3cIbJ2gwy2bdgFFfYSeZ20u">Full audit · $199</a>
+    <h2>One path for the done-for-you citation check</h2>
+    <p>Run the free check first if you only need the public files read. When you want the live answers checked and the gaps written down, use the AI Visibility Audit. The price is on that page.</p>
+    <a class="btn" href="https://samedaydesk.com/ai-visibility-audit.html">Open the AI Visibility Audit</a>
   </div>
 
-  <p class="muted">See also: <a href="https://samedaydesk.com/guides/get-cited-by-ai-search.html">the full AI-search checklist</a> · <a href="https://samedaydesk.com/reports/ai-search-readiness-saas-2026.html">we scanned 24 top SaaS sites</a>.</p>
-  <footer><p>By <a href="https://samedaydesk.com/">SameDayDesk</a>. We don't sell monitoring software; we fix sites. Clearly labeled TopifyAI links are affiliate links; other tool names are mentioned without compensation.</p></footer>
+  <p class="muted">Related: <a href="https://samedaydesk.com/guides/ai-readiness-checkers-compared-2026.html">what a readiness checker can prove</a>, <a href="https://samedaydesk.com/guides/ai-crawler-list-2026.html">the crawler tokens</a>, <a href="https://samedaydesk.com/guides/why-site-not-showing-up-in-chatgpt-2026.html">why a site is missing from ChatGPT</a>.</p>
+  <footer>
+    <p>Sources: <a href="https://developers.openai.com/api/docs/bots">OpenAI crawlers</a>, checked 2026-09-23; <a href="https://docs.perplexity.ai/docs/resources/perplexity-crawlers">Perplexity crawlers</a>; <a href="https://www.perplexity.ai/help-center/en/articles/10354969-how-does-perplexity-follow-robots-txt">Perplexity robots.txt help, modified 2026-09-14</a>; <a href="https://developers.google.com/search/docs/appearance/ai-features">Google AI features, updated 2025-12-10</a>; <a href="https://developers.google.com/search/docs/fundamentals/ai-optimization-guide">Google generative AI optimization, updated 2026-07-10</a>. Last checked: 2026-09-23.</p>
+  </footer>
 </div>
 </body>
 </html>

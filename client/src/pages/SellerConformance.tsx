@@ -211,7 +211,7 @@ export default function SellerConformance() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Open the Neomorphic fixed-scope page
+                Open the fixed-scope page
               </a>
               <a
                 className={styles.secondary}

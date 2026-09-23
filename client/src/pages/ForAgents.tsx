@@ -250,7 +250,7 @@ export default function ForAgents() {
             sequenced artifact after review. Partial and failed rows stay visible. Payment
             receipts are never automatically replayed. <code>buyer-setup-trace</code> stops at
             unpaid 402 and never infers wallet ownership from addresses. Optional local
-            Neomorphic observation export stays filesystem-local when shared mode is undeployed.
+            observation export stays filesystem-local when shared mode is undeployed.
             Offline fixture dry-runs do not call the merchant. No cron is installed. Owner QA
             is not demand.
           </p>

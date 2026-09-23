@@ -263,7 +263,7 @@ export const FOR_AGENTS_CRAWLER_HTML = `
         <code>buyer-setup-trace</code> is live free inspection of the AgentCash/x402 runtime and
         stops at unpaid 402 without signing or inferring wallet ownership from addresses.
         Payment receipts are never automatically replayed.
-        Optional local Neomorphic observation export stays filesystem-local when shared mode is
+        Optional local observation export stays filesystem-local when shared mode is
         undeployed. Offline runs avoid merchant charges; operator CPU and network remain
         costs_unknown. Listed batch price 0.01 USDC is not invoked here. No cron is installed.
         Owner QA issues are not demand.
