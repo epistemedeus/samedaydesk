@@ -1,0 +1,22 @@
+{
+  "schema": "samedaydesk.lab-verify.receipt.v1",
+  "schemaVersion": 1,
+  "jobId": "mcp",
+  "ok": true,
+  "clock": "2020-01-01T00:00:00.000Z",
+  "horizonHours": 24,
+  "pin": {
+    "mcp": {
+      "tools": [
+        "check_ai_readiness",
+        "generate_complete_fix_pack",
+        "plan_taskmarket_delegation",
+        "browse_taskmarket_tasks",
+        "track_taskmarket_task"
+      ]
+    }
+  },
+  "inputDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "resultDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "note": "Seeded stale clock. Lab-verify must reject."
+}

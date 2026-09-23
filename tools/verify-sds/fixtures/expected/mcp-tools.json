@@ -1,0 +1,9 @@
+{
+  "tools": [
+    "check_ai_readiness",
+    "generate_complete_fix_pack",
+    "plan_taskmarket_delegation",
+    "browse_taskmarket_tasks",
+    "track_taskmarket_task"
+  ]
+}
