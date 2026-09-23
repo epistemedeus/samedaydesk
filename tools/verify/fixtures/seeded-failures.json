@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "repo": "samedaydesk",
+  "feature": "apex-mcp",
+  "gatewayClient": false,
+  "seeds": [
+    {
+      "id": "absent-tool-not-32602",
+      "expectExit": 1,
+      "errorCode": "ABSENT_TOOL_NOT_32602",
+      "why": "Five apex tools and protocol 2024-11-05, but the absent tool returns isError instead of JSON-RPC -32602."
+    },
+    {
+      "id": "absent-tool-32601",
+      "expectExit": 1,
+      "errorCode": "ABSENT_TOOL_NOT_32602",
+      "why": "Absent tool returns JSON-RPC -32601. That is not -32602, so this host is rejected."
+    },
+    {
+      "id": "gateway-24-tool-list",
+      "expectExit": 1,
+      "errorCode": "GATEWAY_SURFACE",
+      "why": "A 24-tool list must not be accepted as the apex host. The fixture is local. No gateway client is used."
+    }
+  ]
+}

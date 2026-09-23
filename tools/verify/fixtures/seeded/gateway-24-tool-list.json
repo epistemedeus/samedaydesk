@@ -1,0 +1,37 @@
+{
+  "id": "gateway-24-tool-list",
+  "initialize": {
+    "protocolVersion": "2024-11-05",
+    "capabilities": { "tools": {} },
+    "serverInfo": { "name": "samedaydesk-agent-tools", "version": "1.2.0" }
+  },
+  "tools": [
+    "gateway_tool_01",
+    "gateway_tool_02",
+    "gateway_tool_03",
+    "gateway_tool_04",
+    "gateway_tool_05",
+    "gateway_tool_06",
+    "gateway_tool_07",
+    "gateway_tool_08",
+    "gateway_tool_09",
+    "gateway_tool_10",
+    "gateway_tool_11",
+    "gateway_tool_12",
+    "gateway_tool_13",
+    "gateway_tool_14",
+    "gateway_tool_15",
+    "gateway_tool_16",
+    "gateway_tool_17",
+    "gateway_tool_18",
+    "gateway_tool_19",
+    "gateway_tool_20",
+    "gateway_tool_21",
+    "gateway_tool_22",
+    "gateway_tool_23",
+    "gateway_tool_24"
+  ],
+  "absent": {
+    "error": { "code": -32602, "message": "Unknown tool" }
+  }
+}
