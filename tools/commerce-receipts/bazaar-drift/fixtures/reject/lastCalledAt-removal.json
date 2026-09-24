@@ -1,0 +1,14 @@
+{
+  "schema": "samedaydesk.bazaar-drift.case.v1",
+  "caseId": "last-called-at-removal",
+  "claims": {
+    "rematerialized": false,
+    "lastCalledAtIsRemovalClock": true,
+    "removeBecauseLastCalledAt": [
+      {
+        "route": "/read",
+        "lastCalledAt": "2026-08-08T20:40:49.535Z"
+      }
+    ]
+  }
+}

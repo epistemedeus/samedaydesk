@@ -34,6 +34,8 @@
     "test:useful-jobs-public": "node --test experiments/s260-useful-jobs-public-integration/test/*.test.mjs",
     "test:e4-discovery": "node --test packs/e4-maintained-runtime-discovery/test/contracts.test.mjs packs/e4-maintained-runtime-discovery/test/discover.test.mjs packs/e4-maintained-runtime-discovery/test/silent-empty-success.test.mjs",
     "test:agent-docs": "node --test docs/agent/follow-the-doc.test.mjs",
+    "unpaid:cold": "node docs/agent-sds/unpaid-cold.mjs",
+    "test:unpaid-cold": "node --test --test-concurrency=1 docs/agent-sds/unpaid-cold.test.mjs tools/verify-sds/w821-402-matrix/test.mjs tools/commerce-receipts/bazaar-drift/test.mjs tests/regression-sds/w822-absence/*.test.mjs",
     "test:browser-desktop": "node --test tools/browser-smoke/desktop.test.mjs",
     "browser-desktop": "node tools/browser-smoke/desktop.mjs",
     "test:browser-mobile": "node --test tools/browser-smoke/mobile.test.mjs",

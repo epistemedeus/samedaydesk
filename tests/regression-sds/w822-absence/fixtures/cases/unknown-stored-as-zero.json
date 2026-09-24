@@ -1,0 +1,19 @@
+{
+  "id": "unknown-stored-as-zero",
+  "surface": "market-observations",
+  "class": "unknown-as-zero",
+  "expectReject": true,
+  "cite": "server/lib/market-observations/normalize-market-stats.js",
+  "expectedReasons": ["absence_as_demand", "unknown_as_zero", "missing_as_zero_demand"],
+  "defect": "A missing observation stored as numeric zero is not a measurement of no demand.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "market-observations",
+    "missingMetrics": true,
+    "metrics": [
+      { "key": "jobCount", "value": 0, "state": "unknown" }
+    ],
+    "message": "unknown observation stored as numeric zero"
+  }
+}

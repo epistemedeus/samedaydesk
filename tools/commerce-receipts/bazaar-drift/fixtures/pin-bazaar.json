@@ -1,0 +1,93 @@
+{
+  "schema": "samedaydesk.bazaar-drift.bazaar-pin.v1",
+  "id": "sds-bazaar-merchant-8",
+  "sellerId": "samedaydesk",
+  "host": "agents.samedaydesk.com",
+  "origin": "https://agents.samedaydesk.com",
+  "recordedFrom": [
+    "fixtures/presence/listings/bazaar-merchant.json",
+    "data/bazaar-tracker/observations.json"
+  ],
+  "observationSchema": "samedaydesk.bazaar-observation.v3",
+  "observationObservedAt": "2026-09-03T09:54:04.798Z",
+  "observationRowCount": 8,
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "currency": "USDC",
+  "decimals": 6,
+  "listings": [
+    {
+      "resource": "https://agents.samedaydesk.com/deep-audit",
+      "route": "/deep-audit",
+      "method": "GET",
+      "amount": "0.25",
+      "amountAtomic": "250000",
+      "lastUpdated": "2026-08-08T20:40:55.977Z",
+      "digest": "1347a5d010209bb86fdc0b50c4ab5d7e8a81d74c32fab396c21e8ea17f29f442"
+    },
+    {
+      "resource": "https://agents.samedaydesk.com/defi/morpho-position",
+      "route": "/defi/morpho-position",
+      "method": "GET",
+      "amount": "0.02",
+      "amountAtomic": "20000",
+      "lastUpdated": "2026-08-27T00:23:29.425Z",
+      "digest": "6653ecd60fc9b4b7a721b52c01a17de337f6b8819533b6828d5ccf6f3d201e00"
+    },
+    {
+      "resource": "https://agents.samedaydesk.com/enrich",
+      "route": "/enrich",
+      "method": "GET",
+      "amount": "0.05",
+      "amountAtomic": "50000",
+      "lastUpdated": "2026-08-09T15:22:24.363Z",
+      "digest": "f0f32b1a5378cfea8fbf79ede63667acbb6bceb227a69a58ffa3cc1f31d71623"
+    },
+    {
+      "resource": "https://agents.samedaydesk.com/extract",
+      "route": "/extract",
+      "method": "GET",
+      "amount": "0.005",
+      "amountAtomic": "5000",
+      "lastUpdated": "2026-08-30T15:18:51.498Z",
+      "digest": "04c1554d7a4471803f05781245df70cb0ae3dc73b9df78c555c7324c3b1ca60e"
+    },
+    {
+      "resource": "https://agents.samedaydesk.com/read",
+      "route": "/read",
+      "method": "GET",
+      "amount": "0.05",
+      "amountAtomic": "50000",
+      "lastUpdated": "2026-08-08T20:40:49.722Z",
+      "digest": "f5f901894aefbda4336df5aee716084218fa3e6eda9da5558e572b7c77d999fd"
+    },
+    {
+      "resource": "https://agents.samedaydesk.com/scan",
+      "route": "/scan",
+      "method": "GET",
+      "amount": "0.2",
+      "amountAtomic": "200000",
+      "lastUpdated": "2026-08-08T20:40:52.186Z",
+      "digest": "de0452675f6b3954d0da0e805f196e183ad50f22332231a2a873d17792938db6"
+    },
+    {
+      "resource": "https://agents.samedaydesk.com/schemaforge",
+      "route": "/schemaforge",
+      "method": "GET",
+      "amount": "0.25",
+      "amountAtomic": "250000",
+      "lastUpdated": "2026-08-08T20:40:53.869Z",
+      "digest": "e4a146c2290e1b1466cf78892be91966231cc664bc66a2a8ed50f2b63e4941c3"
+    },
+    {
+      "resource": "https://agents.samedaydesk.com/wallet-enrich",
+      "route": "/wallet-enrich",
+      "method": "GET",
+      "amount": "0.05",
+      "amountAtomic": "50000",
+      "lastUpdated": "2026-08-09T15:22:34.083Z",
+      "digest": "d2aba405138b518f301827fe46a6a97af39b696020e0c6cda1b1378eefa46c57"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "schema": "samedaydesk.bazaar-drift.case.v1",
+  "caseId": "rewrite-origin",
+  "claims": {
+    "rematerialized": false,
+    "rewriteOrigin": true,
+    "proposedPrices": [
+      {
+        "method": "GET",
+        "route": "/read",
+        "amount": "0.05",
+        "amountAtomic": "50000"
+      }
+    ]
+  }
+}
