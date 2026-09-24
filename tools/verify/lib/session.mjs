@@ -4,7 +4,8 @@ import { existsSync, mkdtempSync } from "node:fs";
 import net from "node:net";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { ABSENT_TOOL_NAME, MCP_PROTOCOL } from "./catalog.mjs";
+import { ABSENT_TOOL_NAME, MCP_PROTOCOL, RPC_REQUEST_ID } from "./catalog.mjs";
+import { sessionFromProbeResponses } from "./judge.mjs";
 
 const FETCH_MS = 10_000;
 
@@ -52,7 +53,7 @@ export async function probeApex(origin) {
   const mcpUrl = mcpUrlForOrigin(origin);
   const initialize = await postRpc(mcpUrl, {
     jsonrpc: "2.0",
-    id: 1,
+    id: RPC_REQUEST_ID.initialize,
     method: "initialize",
     params: {
       protocolVersion: MCP_PROTOCOL,
@@ -62,13 +63,13 @@ export async function probeApex(origin) {
   });
   const listed = await postRpc(mcpUrl, {
     jsonrpc: "2.0",
-    id: 2,
+    id: RPC_REQUEST_ID.toolsList,
     method: "tools/list",
     params: {},
   });
   const absent = await postRpc(mcpUrl, {
     jsonrpc: "2.0",
-    id: 3,
+    id: RPC_REQUEST_ID.absent,
     method: "tools/call",
     params: { name: ABSENT_TOOL_NAME, arguments: {} },
   });
@@ -79,12 +80,7 @@ export async function probeApex(origin) {
     initialize,
     listed,
     absent,
-    session: {
-      protocol: initialize.json?.result?.protocolVersion ?? null,
-      serverInfo: initialize.json?.result?.serverInfo ?? null,
-      tools: listed.json?.result?.tools ?? null,
-      absent: absent.json,
-    },
+    session: sessionFromProbeResponses(initialize.json, listed.json, absent.json),
   };
 }
 
@@ -220,9 +216,34 @@ function readBody(req) {
   });
 }
 
+function envelopeOverride(fixture, key) {
+  const envelope = fixture?.envelope;
+  if (!envelope || typeof envelope !== "object" || Array.isArray(envelope)) return null;
+  const override = envelope[key];
+  if (!override || typeof override !== "object" || Array.isArray(override)) return null;
+  return override;
+}
+
+// A fixture may replace response identity. The default still echoes the request id.
+function withEnvelope(body, override) {
+  if (!override) return body;
+  const next = { ...body };
+  if (Object.prototype.hasOwnProperty.call(override, "jsonrpc")) next.jsonrpc = override.jsonrpc;
+  if (override.omitId === true) delete next.id;
+  else if (Object.prototype.hasOwnProperty.call(override, "id")) next.id = override.id;
+  if (override.omitResult === true) delete next.result;
+  if (override.omitError === true) delete next.error;
+  if (Object.prototype.hasOwnProperty.call(override, "error")) next.error = override.error;
+  if (Object.prototype.hasOwnProperty.call(override, "result")) next.result = override.result;
+  return next;
+}
+
 function seedRpc(fixture, message) {
   if (message?.method === "initialize") {
-    return { jsonrpc: "2.0", id: message.id, result: fixture.initialize };
+    return withEnvelope(
+      { jsonrpc: "2.0", id: message.id, result: fixture.initialize },
+      envelopeOverride(fixture, "initialize"),
+    );
   }
   if (message?.method === "tools/list") {
     const tools = (fixture.tools || []).map((tool) => (
@@ -230,13 +251,16 @@ function seedRpc(fixture, message) {
         ? { name: tool, description: "seed", inputSchema: { type: "object", properties: {} } }
         : tool
     ));
-    return { jsonrpc: "2.0", id: message.id, result: { tools } };
+    return withEnvelope(
+      { jsonrpc: "2.0", id: message.id, result: { tools } },
+      envelopeOverride(fixture, "tools/list"),
+    );
   }
   if (message?.method === "tools/call") {
-    if (fixture.absent?.error) {
-      return { jsonrpc: "2.0", id: message.id, error: fixture.absent.error };
-    }
-    return { jsonrpc: "2.0", id: message.id, result: fixture.absent?.result ?? { isError: true } };
+    const body = fixture.absent?.error
+      ? { jsonrpc: "2.0", id: message.id, error: fixture.absent.error }
+      : { jsonrpc: "2.0", id: message.id, result: fixture.absent?.result ?? { isError: true } };
+    return withEnvelope(body, envelopeOverride(fixture, "absent"));
   }
   return {
     jsonrpc: "2.0",

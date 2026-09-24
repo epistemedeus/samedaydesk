@@ -1,0 +1,21 @@
+{
+  "id": "absent-32602-null-id",
+  "initialize": {
+    "protocolVersion": "2024-11-05",
+    "capabilities": { "tools": {} },
+    "serverInfo": { "name": "samedaydesk-agent-tools", "version": "1.2.0" }
+  },
+  "tools": [
+    "check_ai_readiness",
+    "generate_complete_fix_pack",
+    "plan_taskmarket_delegation",
+    "browse_taskmarket_tasks",
+    "track_taskmarket_task"
+  ],
+  "absent": {
+    "error": { "code": -32602, "message": "Invalid params" }
+  },
+  "envelope": {
+    "absent": { "id": null }
+  }
+}
