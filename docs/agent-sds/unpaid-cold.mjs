@@ -383,13 +383,9 @@ drift, committed useful-jobs discovery, and the howto fences agree.
   );
 
   pushPath(exportedPaths, "howto", "docs/agent-sds/howto-unpaid-mcp.md");
+  // Containment is repoRoot, not "outside callerCwd": an ancestor cwd prefixes every absolute path.
   const pathsOk = exportedPaths.length > 0 && exportedPaths.every((item) => item.ok);
-  const callerOutside = relative(repoRoot, callerCwd).startsWith("..") || relative(repoRoot, callerCwd) === "..";
-  const pathsIgnoreCaller =
-    !callerOutside ||
-    exportedPaths.every((item) => item.absolute && !item.absolute.startsWith(callerCwd.endsWith(sep) ? callerCwd : `${callerCwd}${sep}`));
-
-  const ok = checks.every((item) => item.ok) && pathsOk && pathsIgnoreCaller;
+  const ok = checks.every((item) => item.ok) && pathsOk;
   emit(
     {
       ok,

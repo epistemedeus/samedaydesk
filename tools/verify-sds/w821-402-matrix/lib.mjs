@@ -12,10 +12,15 @@ export const DEFAULT_MATRIX = join(here, "matrix.json");
 export const INVALID_MANIFEST = join(INVALID_FIXTURES, "manifest.json");
 export const IN_TREE_X402 = join(ROOT, "fixtures/presence/catalog/x402.json");
 
+function escapesRepo(candidate) {
+  const rel = relative(ROOT, candidate);
+  return rel === ".." || rel.startsWith(`..${sep}`) || isAbsolute(rel);
+}
+
 /**
  * Relative CLI paths are repository paths, not the caller's cwd.
- * Absolute paths are used as given. A relative path that is not in the
- * repo falls back to the caller's cwd.
+ * Absolute paths are used as given. A relative path whose resolved
+ * location escapes the repository is rejected. There is no cwd fallback.
  */
 export function resolveReadable(filePath) {
   if (typeof filePath !== "string" || filePath.length === 0) {
@@ -24,14 +29,27 @@ export function resolveReadable(filePath) {
     throw err;
   }
   if (isAbsolute(filePath)) return filePath;
-  const fromRepo = resolve(ROOT, filePath);
-  if (existsSync(fromRepo)) return fromRepo;
-  return resolve(filePath);
+  const candidate = resolve(ROOT, filePath);
+  if (escapesRepo(candidate)) {
+    const err = new Error(`relative path escapes the repository: ${filePath}`);
+    err.code = "PATH_OUTSIDE_REPO";
+    throw err;
+  }
+  return candidate;
 }
 
 /** Repo-relative when the file is inside this clone; otherwise the absolute path. */
 export function presentPath(filePath) {
-  const abs = isAbsolute(filePath) ? filePath : resolveReadable(filePath);
+  if (typeof filePath !== "string" || filePath.length === 0) return filePath;
+  let abs;
+  if (isAbsolute(filePath)) abs = filePath;
+  else {
+    try {
+      abs = resolveReadable(filePath);
+    } catch {
+      return filePath;
+    }
+  }
   const rel = relative(ROOT, abs);
   if (!rel || rel === ".." || rel.startsWith(`..${sep}`) || isAbsolute(rel)) return abs;
   return rel;

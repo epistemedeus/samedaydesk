@@ -239,11 +239,24 @@ if (expectedCode && positionals.length !== 1) {
 }
 
 const results = positionals.map((filePath) => {
-  let resolved = filePath;
+  let resolved;
   try {
     resolved = resolveReadable(filePath);
-  } catch {
-    resolved = filePath;
+  } catch (cause) {
+    // Do not read the original relative string: it would resolve against the caller cwd.
+    const code = cause.code === "PATH_OUTSIDE_REPO" ? "PATH_OUTSIDE_REPO" : "invalid_shape";
+    return {
+      ok: false,
+      filePath,
+      fixtureId: null,
+      statusClass: null,
+      route: null,
+      amountAtomic: null,
+      naiveVerdict: "reject",
+      honestVerdict: "reject",
+      codes: [code],
+      errors: [{ code, path: "$", message: cause.message }],
+    };
   }
   const result = validateFile(resolved);
   return { ...result, filePath: presentPath(resolved) };

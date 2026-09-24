@@ -327,9 +327,15 @@ export function crossCheckPins(originPin, bazaarPin, { root = REPO_ROOT } = {}) 
   };
 }
 
+function escapesRepo(candidate) {
+  const rel = relative(REPO_ROOT, candidate);
+  return rel === ".." || rel.startsWith(`..${sep}`) || isAbsolute(rel);
+}
+
 /**
  * Relative CLI paths are repository paths, not the caller's cwd.
- * Absolute paths are used as given.
+ * Absolute paths are used as given. A relative path whose resolved
+ * location escapes the repository is rejected. There is no cwd fallback.
  */
 export function resolveReadable(filePath) {
   if (typeof filePath !== "string" || filePath.length === 0) {
@@ -338,13 +344,24 @@ export function resolveReadable(filePath) {
     throw err;
   }
   if (isAbsolute(filePath)) return filePath;
-  const fromRepo = resolve(REPO_ROOT, filePath);
-  if (existsSync(fromRepo)) return fromRepo;
-  return resolve(filePath);
+  const candidate = resolve(REPO_ROOT, filePath);
+  if (escapesRepo(candidate)) {
+    const err = new Error(`relative path escapes the repository: ${filePath}`);
+    err.code = "PATH_OUTSIDE_REPO";
+    throw err;
+  }
+  return candidate;
 }
 
 function relativeIfPossible(absPath) {
-  const abs = isAbsolute(absPath) ? absPath : resolveReadable(absPath);
+  let abs = absPath;
+  if (!isAbsolute(absPath)) {
+    try {
+      abs = resolveReadable(absPath);
+    } catch {
+      return absPath;
+    }
+  }
   const rel = relative(REPO_ROOT, abs);
   if (!rel || rel === ".." || rel.startsWith(`..${sep}`) || isAbsolute(rel)) return abs;
   return rel;
@@ -742,17 +759,19 @@ export function evaluateFile(filePath, options = {}) {
     resolved = resolveReadable(filePath);
     input = loadJson(resolved);
   } catch (cause) {
+    const escaped = cause.code === "PATH_OUTSIDE_REPO";
+    const code = escaped ? "PATH_OUTSIDE_REPO" : "invalid_json";
     return {
       ok: false,
-      filePath: relativeIfPossible(resolved),
+      filePath: escaped ? filePath : relativeIfPossible(resolved),
       schema: RESULT_SCHEMA,
       decision: "reject",
-      code: "invalid_json",
+      code,
       message: cause.message,
       naiveVerdict: "reject",
       honestVerdict: "reject",
-      codes: ["invalid_json"],
-      errors: [error("invalid_json", "$", cause.message)],
+      codes: [code],
+      errors: [error(code, "$", cause.message)],
       ...honestyEnvelope(),
     };
   }

@@ -18,7 +18,28 @@ function presentFixture(abs) {
 
 function usage() {
   return `usage: node verify.mjs [--json] [--fixture <path>] [--expect reject|accept]
-         node verify.mjs --fixture fixtures/cases/x402scan-unavailable-as-demand.json --expect accept`;
+         node verify.mjs --fixture fixtures/cases/x402scan-unavailable-as-demand.json --expect accept
+         --pay/--payment/--checkout/--settle/--publish/--live and other unknown options exit 2.`;
+}
+
+const REFUSED_FLAG_NAMES = new Set([
+  "live",
+  "pay",
+  "payment",
+  "checkout",
+  "settle",
+  "publish",
+  "registry",
+  "refresh",
+  "write",
+  "rematerialize",
+]);
+
+function optionName(arg) {
+  let name = arg.startsWith("--") ? arg.slice(2) : arg.slice(1);
+  const eq = name.indexOf("=");
+  if (eq !== -1) name = name.slice(0, eq);
+  return name;
 }
 
 function parseArgs(argv) {
@@ -34,13 +55,18 @@ function parseArgs(argv) {
     else if (a === "--json") out.json = true;
     else if (a === "--no-json") out.json = false;
     else if (a === "--as-accept") out.expect = "accept";
-    else if (a === "--live") {
-      const err = new Error("--live is refused: this corpus never pays or fetches");
-      err.code = "LIVE_FORBIDDEN";
-      throw err;
-    } else if (a === "--expect") out.expect = String(argv[++i] || "reject");
+    else if (a === "--expect") out.expect = String(argv[++i] || "reject");
     else if (a === "--fixture") out.fixture = String(argv[++i] || "");
-    else if (!a.startsWith("-") && !out.fixture) out.fixture = a;
+    else if (a.startsWith("-")) {
+      if (REFUSED_FLAG_NAMES.has(optionName(a))) {
+        const err = new Error(`${a} is refused: this verifier does not pay, settle, checkout, publish, write, or fetch`);
+        err.code = "REFUSED";
+        throw err;
+      }
+      const err = new Error(`unknown argument ${a}`);
+      err.code = "USAGE";
+      throw err;
+    } else if (!out.fixture) out.fixture = a;
   }
   return out;
 }

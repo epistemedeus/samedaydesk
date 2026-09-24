@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -30,6 +30,7 @@ import {
   loadJson,
   loadMatrix,
   naiveVerdict,
+  resolveReadable,
   routeKey,
   runSuite,
   validateFile,
@@ -419,6 +420,59 @@ test("CLI from another cwd exports the real fixture and refuses forged settlemen
   assert.equal(realpathSync(resolve(ROOT, exported)), realpathSync(join(ROOT, file)));
   assert.equal(existsSync(resolve(tmp, exported)), false);
   assert.equal(exported.startsWith(tmp), false);
+});
+
+test("relative ../outside.json is rejected even when the file exists", () => {
+  const outside = resolve(ROOT, "../outside.json");
+  const honest = join(VALID_FIXTURES, "unpaid-402-extract-5000.json");
+  writeFileSync(outside, readFileSync(honest));
+  try {
+    assert.equal(existsSync(outside), true);
+    assert.throws(
+      () => resolveReadable("../outside.json"),
+      (err) => {
+        assert.equal(err.code, "PATH_OUTSIDE_REPO");
+        return true;
+      },
+    );
+    const proc = runCli(["../outside.json"]);
+    assert.notEqual(proc.status, 0, proc.stdout);
+    const body = JSON.parse(proc.stdout);
+    assert.equal(body.ok, false);
+    assert.ok(body.results[0].codes.includes("PATH_OUTSIDE_REPO"));
+    assert.equal(body.results[0].fixtureId, null);
+    assert.notEqual(body.results[0].honestVerdict, "accept");
+    assert.equal(proc.stdout.includes(outside), false);
+  } finally {
+    rmSync(outside, { force: true });
+  }
+});
+
+test("caller cwd shadow case.json is not read", () => {
+  const tmp = mkdtempSync(join(tmpdir(), "w821-shadow-"));
+  const shadow = join(tmp, "case.json");
+  const honest = join(VALID_FIXTURES, "unpaid-402-extract-5000.json");
+  writeFileSync(shadow, readFileSync(honest));
+  try {
+    assert.equal(existsSync(join(ROOT, "case.json")), false);
+    assert.equal(resolveReadable("case.json"), resolve(ROOT, "case.json"));
+    const proc = spawnSync(process.execPath, [cli, "case.json"], {
+      cwd: tmp,
+      encoding: "utf8",
+      maxBuffer: 2 * 1024 * 1024,
+    });
+    assert.notEqual(proc.status, 0, proc.stdout);
+    const body = JSON.parse(proc.stdout);
+    assert.equal(body.ok, false);
+    assert.ok(body.results[0].codes.includes("invalid_shape"));
+    assert.equal(body.results[0].fixtureId ?? null, null);
+    assert.notEqual(body.results[0].honestVerdict, "accept");
+    assert.equal(String(body.results[0].file).startsWith(tmp), false);
+    assert.equal(proc.stdout.includes(tmp), false);
+    assert.equal(resolveReadable("/etc/hosts"), "/etc/hosts");
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
 });
 
 test("missing fixture and unknown flag are non-zero", () => {

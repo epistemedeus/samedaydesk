@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, realpathSync } from "node:fs";
+import { existsSync, mkdtempSync, realpathSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
@@ -66,14 +66,15 @@ function assertJourney(proc, cwd) {
   assert.equal(byId["howto-paid-refuse"].code, "PAID_REFUSE");
   assert.equal(byId["howto-paid-refuse"].nodeExit, 1);
   assert.ok(body.exportedPaths.length > 10);
-  const cwdReal = realpathSync(cwd);
-  const outsideCaller = cwdReal !== repoRoot && !cwdReal.startsWith(`${repoRoot}/`);
+  assert.equal(realpathSync(body.callerCwd), realpathSync(cwd));
+  assert.equal(realpathSync(body.repoRoot), repoRoot);
   for (const item of body.exportedPaths) {
     assert.equal(item.ok, true, JSON.stringify(item));
-    assert.equal(realpathSync(item.absolute), realpathSync(resolve(repoRoot, item.repoRelative)));
-    if (outsideCaller) {
-      assert.equal(item.absolute.startsWith(`${cwdReal}/`), false, item.absolute);
-    }
+    const real = realpathSync(item.absolute);
+    assert.equal(real, realpathSync(resolve(repoRoot, item.repoRelative)));
+    const rel = relative(repoRoot, real);
+    assert.ok(rel !== "" && rel !== ".." && !rel.startsWith(`..${sep}`) && !isAbsolute(rel), item.absolute);
+    assert.equal(real.startsWith(`${repoRoot}${sep}`), true, item.absolute);
     assert.equal(existsSync(item.absolute), true);
   }
   return body;
@@ -90,6 +91,38 @@ test("cold journey from another cwd still exports repository paths", () => {
   const proc = run([], tmp);
   const body = assertJourney(proc, tmp);
   assert.equal(realpathSync(body.callerCwd), realpathSync(tmp));
+  assert.notEqual(realpathSync(body.callerCwd), realpathSync(body.repoRoot));
+});
+
+test("cold journey from a sibling temp dir keeps exported paths inside the repository", () => {
+  const sibling = mkdtempSync(join(dirname(repoRoot), "unpaid-cold-sibling-"));
+  try {
+    const proc = run([], sibling);
+    const body = assertJourney(proc, sibling);
+    assert.notEqual(realpathSync(body.callerCwd), realpathSync(body.repoRoot));
+    const siblingReal = realpathSync(sibling);
+    for (const item of body.exportedPaths) {
+      assert.equal(item.absolute.startsWith(`${siblingReal}${sep}`), false, item.absolute);
+    }
+  } finally {
+    rmSync(sibling, { recursive: true, force: true });
+  }
+});
+
+test("cold journey from the repository parent keeps exported paths inside the repository", () => {
+  const parent = dirname(repoRoot);
+  const proc = run([], parent);
+  const body = assertJourney(proc, parent);
+  assert.notEqual(realpathSync(body.callerCwd), realpathSync(body.repoRoot));
+  assert.equal(realpathSync(body.repoRoot).startsWith(`${realpathSync(parent)}${sep}`), true);
+});
+
+test("cold journey from / keeps exported paths inside the repository when / is usable", () => {
+  const probe = spawnSync(process.execPath, ["-e", "process.exit(0)"], { cwd: "/" });
+  if (probe.error || probe.status !== 0) return;
+  const proc = run([], "/");
+  const body = assertJourney(proc, "/");
+  assert.equal(realpathSync(body.callerCwd), "/");
   assert.notEqual(realpathSync(body.callerCwd), realpathSync(body.repoRoot));
 });
 

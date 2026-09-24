@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, realpathSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -23,6 +23,7 @@ import {
   loadRepoOriginOps,
   loadRepoSdsObservation,
   naiveVerdict,
+  resolveReadable,
   runSuite,
 } from "./lib.mjs";
 import { atomicToDecimal, decimalToAtomic } from "./money.mjs";
@@ -274,6 +275,56 @@ test("CLI --case from another cwd exports the repository path", () => {
   assert.equal(realpathSync(resolve(REPO_ROOT, body.filePath)), realpathSync(join(REPO_ROOT, file)));
   assert.equal(existsSync(resolve(tmp, body.filePath)), false);
   assert.equal(String(body.filePath).startsWith(tmp), false);
+});
+
+test("relative ../outside.json is rejected even when the file exists", () => {
+  const outside = resolve(REPO_ROOT, "../outside.json");
+  writeFileSync(outside, readFileSync(DEFAULT_COLD_CASE));
+  try {
+    assert.equal(existsSync(outside), true);
+    assert.throws(
+      () => resolveReadable("../outside.json"),
+      (err) => {
+        assert.equal(err.code, "PATH_OUTSIDE_REPO");
+        return true;
+      },
+    );
+    const proc = runCli(["--case", "../outside.json"]);
+    assert.notEqual(proc.status, 0, proc.stdout);
+    const body = JSON.parse(proc.stdout);
+    assert.equal(body.ok, false);
+    assert.equal(body.code, "PATH_OUTSIDE_REPO");
+    assert.notEqual(body.decision, "hold");
+    assert.notEqual(body.caseId, "cold-committed");
+    assert.equal(proc.stdout.includes(outside), false);
+  } finally {
+    rmSync(outside, { force: true });
+  }
+});
+
+test("caller cwd shadow case.json is not read", () => {
+  const tmp = mkdtempSync(join(tmpdir(), "bazaar-shadow-"));
+  const shadow = join(tmp, "case.json");
+  writeFileSync(shadow, readFileSync(DEFAULT_COLD_CASE));
+  try {
+    assert.equal(existsSync(join(REPO_ROOT, "case.json")), false);
+    assert.equal(resolveReadable("case.json"), resolve(REPO_ROOT, "case.json"));
+    const proc = spawnSync(process.execPath, [cli, "--case", "case.json"], {
+      cwd: tmp,
+      encoding: "utf8",
+      maxBuffer: 2 * 1024 * 1024,
+    });
+    assert.notEqual(proc.status, 0, proc.stdout);
+    const body = JSON.parse(proc.stdout);
+    assert.equal(body.ok, false);
+    assert.notEqual(body.decision, "hold");
+    assert.notEqual(body.caseId, "cold-committed");
+    assert.equal(String(body.filePath).startsWith(tmp), false);
+    assert.equal(proc.stdout.includes(tmp), false);
+    assert.equal(resolveReadable("/etc/hosts"), "/etc/hosts");
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
 });
 
 test("missing case and unknown flag are non-zero", () => {

@@ -132,6 +132,36 @@ test("verify from another cwd exports the real fixture path", () => {
   assert.equal(body.result.observationClass, "unknown");
 });
 
+test("verify rejects payment-like flags and other unknown options", () => {
+  const honest = [
+    "--json",
+    "--fixture",
+    "fixtures/cases/missing-metrics-not-zero-honest.json",
+    "--expect",
+    "accept",
+  ];
+  const honestRun = runNode("verify.mjs", honest);
+  assert.equal(honestRun.status, 0, honestRun.stderr || honestRun.stdout);
+  assert.equal(JSON.parse(honestRun.stdout).ok, true);
+
+  for (const flag of ["--pay", "--payment", "--checkout", "--settle", "--publish", "--live", "--write"]) {
+    const proc = runNode("verify.mjs", [...honest, flag]);
+    assert.equal(proc.status, 2, `${flag} ${proc.stdout}`);
+    const body = JSON.parse(proc.stdout);
+    assert.equal(body.ok, false);
+    assert.equal(body.error.code, "REFUSED");
+    assert.notEqual(body.status, "pass");
+  }
+
+  for (const flag of ["--not-a-real-flag", "-z"]) {
+    const proc = runNode("verify.mjs", [...honest, flag]);
+    assert.equal(proc.status, 2, `${flag} ${proc.stdout}`);
+    const body = JSON.parse(proc.stdout);
+    assert.equal(body.ok, false);
+    assert.equal(body.error.code, "USAGE");
+  }
+});
+
 test("missing fixture and unknown flag exit 2", () => {
   const missing = runNode("verify.mjs", ["--json", "--fixture", "fixtures/cases/not-a-case.json"]);
   assert.equal(missing.status, 2, missing.stderr || missing.stdout);
