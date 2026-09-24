@@ -42,7 +42,7 @@
 - [How to hire AI agents](https://samedaydesk.com/guides/how-to-hire-ai-agents-2026.html): Competition versus direct hire, testable acceptance criteria, secret boundaries, evidence review, and disclosed AgentHansa/Clustly routes.
 - [Does llms.txt work?](https://samedaydesk.com/guides/does-llms-txt-work-2026.html)
 - [AI crawler list](https://samedaydesk.com/guides/ai-crawler-list-2026.html)
-- [AI search visibility tools compared](https://samedaydesk.com/guides/ai-search-visibility-tools-2026.html): Free checks, paid monitoring, and a clearly disclosed TopifyAI referral option.
+- [AI search visibility tools compared](https://samedaydesk.com/guides/ai-search-visibility-tools-2026.html): What a readiness checker can see, and one path to the AI Visibility Audit.
 - [Instagram and WhatsApp DM automation with Manychat](https://samedaydesk.com/guides/instagram-whatsapp-dm-automation-manychat-2026.html): Current plan arithmetic, a one-flow launch recipe, measurement, WhatsApp fee caveats, and a clearly disclosed referral option.
 - [llms.txt generator](https://samedaydesk.com/tools/llms-txt-generator.html)
 - [JSON-LD schema generator](https://samedaydesk.com/tools/schema-generator.html)
@@ -55,10 +55,9 @@
 
 ## Related properties
 
-SameDayDesk is the operating merchant and case-study surface of Neomorphic LLC. The following sites are separate products, not SameDayDesk services.
+SameDayDesk is the operating merchant. The following site is a separate product, not a SameDayDesk service.
 
 - [EIN.LLC](https://ein.llc/): US LLC formation and EIN activation.
-- [Neomorphic.io](https://neomorphic.io/): public experiment and machine-commerce trust lab.
 
 Last updated: 2026-09-09
 - [Source/record repeat jobs](https://samedaydesk.com/for-agents/record-repeat): One portable offline package for OpenAPI used-ops, pricing row/unit, keyed CSV, and RSS/Atom comparisons. Machine discovery at https://samedaydesk.com/discovery/record-repeat.json. Free local samples; optional existing paid extract stays separate.
