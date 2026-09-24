@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "repo": "samedaydesk",
+  "feature": "apex-mcp",
+  "gatewayClient": false,
+  "seeds": [
+    {
+      "id": "absent-tool-not-32602",
+      "expectExit": 1,
+      "errorCode": "ABSENT_TOOL_NOT_32602",
+      "why": "Five apex tools and protocol 2024-11-05, but the absent tool returns isError instead of JSON-RPC -32602."
+    },
+    {
+      "id": "absent-tool-32601",
+      "expectExit": 1,
+      "errorCode": "ABSENT_TOOL_NOT_32602",
+      "why": "Absent tool returns JSON-RPC -32601. That is not -32602, so this host is rejected."
+    },
+    {
+      "id": "gateway-24-tool-list",
+      "expectExit": 1,
+      "errorCode": "GATEWAY_SURFACE",
+      "why": "A 24-tool list must not be accepted as the apex host. The fixture is local. No gateway client is used."
+    },
+    {
+      "id": "absent-32602-wrong-id",
+      "expectExit": 1,
+      "errorCode": "RPC_RESPONSE_BIND",
+      "why": "Absent body is JSON-RPC -32602 but id 999 is not probe request id 3. The five apex tools stay in the fixture so a wrong id cannot false-pass."
+    },
+    {
+      "id": "absent-32602-null-id",
+      "expectExit": 1,
+      "errorCode": "RPC_RESPONSE_BIND",
+      "why": "Absent body is JSON-RPC -32602 with id null. Null is not request id 3."
+    },
+    {
+      "id": "absent-32602-missing-id",
+      "expectExit": 1,
+      "errorCode": "RPC_RESPONSE_BIND",
+      "why": "Absent body is JSON-RPC -32602 with the id field omitted. A response with no id is not request id 3."
+    },
+    {
+      "id": "initialize-wrong-id",
+      "expectExit": 1,
+      "errorCode": "RPC_RESPONSE_BIND",
+      "why": "Initialize result names the apex host and protocol 2024-11-05, but the response id is 999 instead of 1. Those result fields must not be trusted."
+    },
+    {
+      "id": "tools-list-missing-id",
+      "expectExit": 1,
+      "errorCode": "RPC_RESPONSE_BIND",
+      "why": "tools/list returns the apex five with no response id. The list is not request id 2, so the tool names must not be accepted."
+    }
+  ]
+}
