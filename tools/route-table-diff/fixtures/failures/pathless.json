@@ -1,0 +1,10 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "routes": [
+    {
+      "canonical": "https://samedaydesk.com/terms",
+      "title": "Terms of Service | SameDayDesk"
+    }
+  ]
+}

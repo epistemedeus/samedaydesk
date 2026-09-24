@@ -1,0 +1,18 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "note": "Percent-encoded hyphen is the same SDS path as /for-agents/useful-jobs. Collision is breaking.",
+  "routes": [
+    {
+      "path": "/for-agents/useful-jobs",
+      "title": "Offline useful jobs for agent callers | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents/useful-jobs"
+    },
+    {
+      "path": "/for-agents/useful%2Djobs",
+      "title": "Offline useful jobs encoded | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents/useful-jobs"
+    }
+  ]
+}

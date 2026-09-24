@@ -1,0 +1,31 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "sample",
+  "label": "SAMPLE",
+  "sampleLabel": "SAMPLE",
+  "publishedRouteTable": false,
+  "callerProvenance": {
+    "syntheticFixture": true,
+    "sampleLabel": "SAMPLE",
+    "notCustomer": true,
+    "notMarketFact": true
+  },
+  "note": "Labeled SAMPLE. Adds useful-jobs/v2 and changes /terms canonical. Not a published route table.",
+  "routes": [
+    {
+      "path": "/for-agents/useful-jobs",
+      "title": "Offline useful jobs for agent callers | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents/useful-jobs"
+    },
+    {
+      "path": "/for-agents/useful-jobs/v2",
+      "title": "Offline useful jobs v2 for agent callers | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents/useful-jobs/v2"
+    },
+    {
+      "path": "/terms",
+      "title": "Terms of Service | SameDayDesk",
+      "canonical": "https://samedaydesk.com/legal/terms"
+    }
+  ]
+}
